@@ -70,8 +70,6 @@ const StyledTab = styled.button<{ isActive: boolean }>`
   }
 `;
 
-
-
 const safeInstantToZonedDateTime = (
   instantStr: string,
   timeZone: string,
@@ -108,7 +106,8 @@ export const ObjectFilterDropdownDateTimeInput = () => {
   const isBetween = selectedOperandInDropdown === ViewFilterOperand.IS_BETWEEN;
 
   const currentValue = objectFilterDropdownCurrentRecordFilter?.value || '';
-  const { startValue: startStr, endValue: endStr } = parseRecordFilterBetweenValue(currentValue);
+  const { startValue: startStr, endValue: endStr } =
+    parseRecordFilterBetweenValue(currentValue);
 
   const startZonedDateTime = safeInstantToZonedDateTime(
     startStr,

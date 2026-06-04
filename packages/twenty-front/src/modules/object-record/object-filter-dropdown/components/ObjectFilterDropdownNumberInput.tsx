@@ -17,7 +17,6 @@ type ObjectFilterDropdownNumberInputProps = {
   filterDropdownId: string;
 };
 
-
 export const ObjectFilterDropdownNumberInput = ({
   filterDropdownId,
 }: ObjectFilterDropdownNumberInputProps) => {
@@ -52,9 +51,8 @@ export const ObjectFilterDropdownNumberInput = ({
 
   const isBetween = selectedOperandInDropdown === ViewFilterOperand.IS_BETWEEN;
 
-  const { startValue: minValue, endValue: maxValue } = parseRecordFilterBetweenValue(
-    objectFilterDropdownFilterValue,
-  );
+  const { startValue: minValue, endValue: maxValue } =
+    parseRecordFilterBetweenValue(objectFilterDropdownFilterValue);
 
   const handleSingleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;

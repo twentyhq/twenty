@@ -477,9 +477,8 @@ const buildDirectFieldGqlOperationFilter = ({
         }
 
         if (recordFilter.operand === RecordFilterOperand.IS_BETWEEN) {
-          const { startValue: startStr, endValue: endStr } = parseRecordFilterBetweenValue(
-            recordFilter.value
-          );
+          const { startValue: startStr, endValue: endStr } =
+            parseRecordFilterBetweenValue(recordFilter.value);
           if (!startStr || !endStr) return undefined;
 
           try {
@@ -595,9 +594,8 @@ const buildDirectFieldGqlOperationFilter = ({
             },
           };
         case RecordFilterOperand.IS_BETWEEN: {
-          const { startValue: minStr, endValue: maxStr } = parseRecordFilterBetweenValue(
-            recordFilter.value
-          );
+          const { startValue: minStr, endValue: maxStr } =
+            parseRecordFilterBetweenValue(recordFilter.value);
           const minValue = parseFloat(minStr);
           const maxValue = parseFloat(maxStr);
           if (isNaN(minValue) || isNaN(maxValue)) return undefined;
@@ -750,9 +748,8 @@ const buildDirectFieldGqlOperationFilter = ({
               },
             };
           case RecordFilterOperand.IS_BETWEEN: {
-            const { startValue: minStr, endValue: maxStr } = parseRecordFilterBetweenValue(
-              recordFilter.value
-            );
+            const { startValue: minStr, endValue: maxStr } =
+              parseRecordFilterBetweenValue(recordFilter.value);
             const minAmount = parseFloat(minStr);
             const maxAmount = parseFloat(maxStr);
             if (isNaN(minAmount) || isNaN(maxAmount)) return undefined;
