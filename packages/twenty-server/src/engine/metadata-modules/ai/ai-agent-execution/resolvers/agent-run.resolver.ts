@@ -4,9 +4,7 @@ import { Args, Mutation } from '@nestjs/graphql';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
-import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -24,13 +22,11 @@ export class AgentRunResolver {
   async runAgent(
     @Args('input') input: RunAgentInputDTO,
     @AuthWorkspace() workspace: FlatWorkspace,
-    @AuthApplication() application: FlatApplication,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<RunAgentResultDTO> {
     return this.agentRunService.run({
       workspace,
-      application,
       requestUserWorkspaceId: userWorkspaceId ?? null,
       input,
     });

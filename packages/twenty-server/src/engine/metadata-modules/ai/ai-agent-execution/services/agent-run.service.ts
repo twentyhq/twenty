@@ -5,7 +5,7 @@ import {
   type RunAgentResult,
 } from 'twenty-shared/application';
 
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
@@ -18,31 +18,39 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 export class AgentRunService {
   constructor(
     private readonly agentAsyncExecutorService: AgentAsyncExecutorService,
+    private readonly applicationService: ApplicationService,
     @InjectWorkspaceScopedRepository(AgentEntity)
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
   ) {}
 
   async run({
     workspace,
-    application,
     requestUserWorkspaceId,
     input,
   }: {
     workspace: FlatWorkspace;
-    application: FlatApplication;
     requestUserWorkspaceId: string | null;
     input: RunAgentInput;
   }): Promise<RunAgentResult> {
     const agent = await this.agentRepository.findOne(workspace.id, {
       where: {
         universalIdentifier: input.agentUniversalIdentifier,
-        applicationId: application.id,
       },
     });
 
     if (!agent) {
       throw new NotFoundException(
-        `Agent ${input.agentUniversalIdentifier} not found for this application`,
+        `Agent ${input.agentUniversalIdentifier} not found`,
+      );
+    }
+
+    const application = await this.applicationService.findById(
+      agent.applicationId,
+    );
+
+    if (!application) {
+      throw new NotFoundException(
+        `Application ${agent.applicationId} not found for agent ${input.agentUniversalIdentifier}`,
       );
     }
 

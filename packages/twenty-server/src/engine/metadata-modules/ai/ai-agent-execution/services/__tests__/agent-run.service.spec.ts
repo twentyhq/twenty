@@ -1,13 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { getRepositoryToken } from '@nestjs/typeorm';
-
-import { In } from 'typeorm';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -16,12 +10,12 @@ import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspa
 describe('AgentRunService', () => {
   let service: AgentRunService;
   let agentRepository: { findOne: jest.Mock };
-  let applicationRepository: { findOne: jest.Mock };
+  let applicationService: { findById: jest.Mock };
   let agentAsyncExecutorService: { executeAgent: jest.Mock };
 
   const workspace = { id: 'workspace-1' } as FlatWorkspace;
-  const application = { id: 'app-1' } as FlatApplication;
-  const standardApplicationId = 'standard-app-1';
+
+  const agent = { id: 'agent-1', applicationId: 'app-1' } as AgentEntity;
 
   const input = {
     agentUniversalIdentifier: 'agent-uid',
@@ -29,8 +23,10 @@ describe('AgentRunService', () => {
   };
 
   beforeEach(async () => {
-    agentRepository = { findOne: jest.fn() };
-    applicationRepository = { findOne: jest.fn() };
+    agentRepository = { findOne: jest.fn().mockResolvedValue(agent) };
+    applicationService = {
+      findById: jest.fn().mockResolvedValue({ id: 'app-1' }),
+    };
     agentAsyncExecutorService = {
       executeAgent: jest.fn().mockResolvedValue({
         result: { response: 'done' },
@@ -46,12 +42,12 @@ describe('AgentRunService', () => {
           useValue: agentAsyncExecutorService,
         },
         {
-          provide: getWorkspaceScopedRepositoryToken(AgentEntity),
-          useValue: agentRepository,
+          provide: ApplicationService,
+          useValue: applicationService,
         },
         {
-          provide: getRepositoryToken(ApplicationEntity),
-          useValue: applicationRepository,
+          provide: getWorkspaceScopedRepositoryToken(AgentEntity),
+          useValue: agentRepository,
         },
       ],
     }).compile();
@@ -59,31 +55,21 @@ describe('AgentRunService', () => {
     service = module.get(AgentRunService);
   });
 
-  it('runs an agent belonging to the calling app or the standard app', async () => {
-    applicationRepository.findOne.mockResolvedValue({
-      id: standardApplicationId,
-    });
-    agentRepository.findOne.mockResolvedValue({ id: 'agent-1' } as AgentEntity);
-
+  it('runs the agent found by its universal identifier and returns a success result', async () => {
     const result = await service.run({
       workspace,
-      application,
       requestUserWorkspaceId: 'user-workspace-1',
       input,
     });
 
-    expect(applicationRepository.findOne).toHaveBeenCalledWith({
-      where: {
-        universalIdentifier: TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-        workspaceId: workspace.id,
-      },
-    });
     expect(agentRepository.findOne).toHaveBeenCalledWith(workspace.id, {
       where: {
         universalIdentifier: input.agentUniversalIdentifier,
-        applicationId: In([application.id, standardApplicationId]),
       },
     });
+    expect(applicationService.findById).toHaveBeenCalledWith(
+      agent.applicationId,
+    );
     expect(result).toEqual({
       result: { response: 'done' },
       error: null,
@@ -91,11 +77,25 @@ describe('AgentRunService', () => {
     });
   });
 
-  it('returns an error result when the workspace ran out of credits', async () => {
-    applicationRepository.findOne.mockResolvedValue({
-      id: standardApplicationId,
+  it('builds the application auth context from the agent application', async () => {
+    await service.run({
+      workspace,
+      requestUserWorkspaceId: 'user-workspace-1',
+      input,
     });
-    agentRepository.findOne.mockResolvedValue({ id: 'agent-1' } as AgentEntity);
+
+    expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        authContext: {
+          type: 'application',
+          workspace,
+          application: { id: 'app-1' },
+        },
+      }),
+    );
+  });
+
+  it('returns an error result when the workspace ran out of credits', async () => {
     agentAsyncExecutorService.executeAgent.mockResolvedValue({
       result: { response: 'partial' },
       hasNoMoreAvailableCredits: true,
@@ -103,7 +103,6 @@ describe('AgentRunService', () => {
 
     const result = await service.run({
       workspace,
-      application,
       requestUserWorkspaceId: 'user-workspace-1',
       input,
     });
@@ -115,39 +114,31 @@ describe('AgentRunService', () => {
     });
   });
 
-  it('scopes the lookup to the calling app when the standard app is missing', async () => {
-    applicationRepository.findOne.mockResolvedValue(null);
-    agentRepository.findOne.mockResolvedValue({ id: 'agent-1' } as AgentEntity);
-
-    await service.run({
-      workspace,
-      application,
-      requestUserWorkspaceId: null,
-      input,
-    });
-
-    expect(agentRepository.findOne).toHaveBeenCalledWith(workspace.id, {
-      where: {
-        universalIdentifier: input.agentUniversalIdentifier,
-        applicationId: In([application.id]),
-      },
-    });
-  });
-
-  it('throws when no runnable agent matches the identifier', async () => {
-    applicationRepository.findOne.mockResolvedValue({
-      id: standardApplicationId,
-    });
+  it('throws when no agent matches the identifier', async () => {
     agentRepository.findOne.mockResolvedValue(null);
 
     await expect(
       service.run({
         workspace,
-        application,
         requestUserWorkspaceId: null,
         input,
       }),
-    ).rejects.toThrow(/not found for this application/);
+    ).rejects.toThrow(/not found/);
+
+    expect(applicationService.findById).not.toHaveBeenCalled();
+    expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
+  });
+
+  it("throws when the agent's application cannot be found", async () => {
+    applicationService.findById.mockResolvedValue(null);
+
+    await expect(
+      service.run({
+        workspace,
+        requestUserWorkspaceId: null,
+        input,
+      }),
+    ).rejects.toThrow(/not found/);
 
     expect(agentAsyncExecutorService.executeAgent).not.toHaveBeenCalled();
   });
