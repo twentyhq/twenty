@@ -14,11 +14,11 @@ class TwentyMCP:
 
     Two categories of tools exist behind /mcp:
 
-     - MCP-native: execute_tool, learn_tools, load_skills, get_tool_catalog,
-       search_help_center. These are the 5 surfaces exposed directly.
+     - MCP-native: execute_tool, learn_tools, load_skills,
+       search_help_center. These are the 4 surfaces exposed directly.
 
      - Workspace catalog: 250+ CRUD / view / workflow / dashboard tools
-       like find_companies, create_person, update_opportunity. These are
+       like find_many_companies, create_one_person, update_one_opportunity. These are
        reached through execute_tool as a dispatcher.
 
     call_tool(name, args) accepts both — catalog tools are routed via
@@ -30,7 +30,6 @@ class TwentyMCP:
         'execute_tool',
         'learn_tools',
         'load_skills',
-        'get_tool_catalog',
         'search_help_center',
     })
 
@@ -48,7 +47,7 @@ class TwentyMCP:
         """
         Call any Twenty tool by name.
 
-        Catalog tools (find_companies, create_person, …) are routed
+        Catalog tools (find_many_companies, create_one_person, …) are routed
         through execute_tool. MCP-native tools are called directly.
         The execute_tool envelope { success, message, result } is
         unwrapped so you always get the inner tool's result back.
@@ -61,7 +60,7 @@ class TwentyMCP:
             Tool result as parsed JSON
 
         Example:
-            companies = twenty.call_tool('find_companies', {'limit': 5})
+            companies = twenty.call_tool('find_many_companies', {'limit': 5})
             # companies == {'records': [...], 'count': '5'}
         """
         if not self._available:
@@ -86,34 +85,6 @@ class TwentyMCP:
                 return wrapped['result']
         return wrapped
 
-    def list_tools(self):
-        """
-        List all workspace catalog tools (250+), not the 5 MCP meta-tools.
-
-        Use call_tool(name, args) to invoke any of them — routing is
-        handled for you.
-
-        Returns:
-            Flat list of tool entries, each with name, description, and
-            category. get_tool_catalog groups by category internally; we
-            flatten for ergonomics.
-        """
-        catalog = self.call_tool('get_tool_catalog', {})
-        # get_tool_catalog returns { 'catalog': { '<category>': [tools...] } }
-        # Flatten to a single list; preserve the category as a per-tool field
-        # so the docstring's promise holds and consumers don't have to re-call
-        # the catalog. Leave untouched if the shape is unexpected.
-        if isinstance(catalog, dict):
-            grouped = catalog.get('catalog', catalog)
-            if isinstance(grouped, dict):
-                return [
-                    ({**tool, 'category': category}
-                     if isinstance(tool, dict) and 'category' not in tool
-                     else tool)
-                    for category, tools in grouped.items()
-                    for tool in tools
-                ]
-        return catalog
 
     def _raw_mcp_call(self, name: str, arguments: dict = None):
         """Low-level: issue a tools/call against the MCP surface verbatim."""
@@ -143,7 +114,7 @@ class TwentyMCP:
 # \`twenty\` is a pre-built instance of the TwentyMCP class above. It is
 # already bound in this module scope — DO NOT \`import twenty\`. There is
 # no Python package by that name. Just use it directly, e.g.:
-#     companies = twenty.call_tool('find_companies', {'limit': 10})
+#     companies = twenty.call_tool('find_many_companies', {'limit': 10})
 # --------------------------------------------------------------------------
 twenty = TwentyMCP()
 `;
