@@ -174,7 +174,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         labelSingular: i18nLabel(msg`Call Recording`),
         labelPlural: i18nLabel(msg`Call Recordings`),
         description: i18nLabel(msg`A recording of a meeting`),
-        icon: 'IconPhone',
+        icon: 'IconVideo',
         isSystem: true,
         isAuditLogged: false,
         labelIdentifierFieldMetadataName: 'title',
