@@ -24,7 +24,7 @@ describe('group-by resolvers - order by', () => {
           id: testCompanyId1,
           createdAt: '2025-03-03T09:30:00.000Z', // Monday
           address: { addressCity: 'Cuzco' },
-          position: 20,
+          employees: 20,
           annualRevenue: { amountMicros: 100 },
         },
       }),
@@ -37,7 +37,7 @@ describe('group-by resolvers - order by', () => {
           id: testCompanyId7,
           createdAt: '2025-03-03T09:30:00.000Z', // Monday
           address: { addressCity: 'Anvers' },
-          position: 19,
+          employees: 19,
           annualRevenue: { amountMicros: 100 },
         },
       }),
@@ -51,7 +51,7 @@ describe('group-by resolvers - order by', () => {
           id: testCompanyId2,
           createdAt: '2025-03-03T09:30:00.000Z', // Monday
           address: { addressCity: 'Cuzco' },
-          position: 19,
+          employees: 19,
           annualRevenue: { amountMicros: 105 },
         },
       }),
@@ -64,7 +64,7 @@ describe('group-by resolvers - order by', () => {
           id: testCompanyId3,
           createdAt: '2025-03-03T09:30:00.000Z', // Monday
           address: { addressCity: 'Dallas' },
-          position: 2,
+          employees: 2,
           annualRevenue: { amountMicros: 100 },
         },
       }),
@@ -77,7 +77,7 @@ describe('group-by resolvers - order by', () => {
           id: testCompanyId4,
           createdAt: '2025-01-02T12:00:00.000Z', // Thursday
           address: { addressCity: 'Paris' },
-          position: 10,
+          employees: 10,
           annualRevenue: { amountMicros: 100 },
         },
       }),
@@ -90,7 +90,7 @@ describe('group-by resolvers - order by', () => {
           id: testCompanyId5,
           createdAt: '2025-01-08T08:00:00.000Z', // Wednesday
           address: { addressCity: 'Barcelona' },
-          position: 5,
+          employees: 5,
           annualRevenue: { amountMicros: 100 },
         },
       }),
@@ -103,7 +103,7 @@ describe('group-by resolvers - order by', () => {
           id: testCompanyId6,
           createdAt: '2025-01-08T08:00:00.000Z', // Wednesday
           address: { addressCity: 'Barcelona' },
-          position: 1,
+          employees: 1,
           annualRevenue: { amountMicros: 100 },
         },
       }),
@@ -162,13 +162,13 @@ describe('group-by resolvers - order by', () => {
       orderBy,
       filter: filter2025,
       gqlFields: `
-        avgPosition
+        avgEmployees
       `,
     });
   };
 
   describe('valid cases', () => {
-    it('should order results in the right order - createdAt, avgPosition, addressCity', async () => {
+    it('should order results in the right order - createdAt, avgEmployees, addressCity', async () => {
       const response = await makeGraphqlAPIRequest(
         groupByAddressCreatedAtAndARR([
           {
@@ -179,7 +179,7 @@ describe('group-by resolvers - order by', () => {
           },
           {
             aggregate: {
-              avgPosition: 'AscNullsFirst',
+              avgEmployees: 'AscNullsFirst',
             },
           },
           {
@@ -200,57 +200,57 @@ describe('group-by resolvers - order by', () => {
         city: g.groupByDimensionValues?.[0],
         dayOfWeek: g.groupByDimensionValues?.[1],
         annualRevenue: g.groupByDimensionValues?.[2],
-        avgPosition: g.avgPosition,
+        avgEmployees: g.avgEmployees,
         totalCount: g.totalCount,
       }));
 
-      // Order by dayOfWeek (chronological) then avgPosition then city
+      // Order by dayOfWeek (chronological) then avgEmployees then city
       expect(groupInfos).toEqual([
         {
           city: 'Dallas',
           dayOfWeek: 'Monday',
-          avgPosition: 2,
+          avgEmployees: 2,
           totalCount: 1,
           annualRevenue: '100',
         },
         {
           city: 'Anvers',
           dayOfWeek: 'Monday',
-          avgPosition: 19,
+          avgEmployees: 19,
           totalCount: 1,
           annualRevenue: '100',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
-          avgPosition: 19,
+          avgEmployees: 19,
           totalCount: 1,
           annualRevenue: '105',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
-          avgPosition: 20,
+          avgEmployees: 20,
           totalCount: 1,
           annualRevenue: '100',
         },
         {
           city: 'Barcelona',
           dayOfWeek: 'Wednesday',
-          avgPosition: 3,
+          avgEmployees: 3,
           totalCount: 2,
           annualRevenue: '100',
         },
         {
           city: 'Paris',
           dayOfWeek: 'Thursday',
-          avgPosition: 10,
+          avgEmployees: 10,
           totalCount: 1,
           annualRevenue: '100',
         },
       ]);
     });
-    it('should order results in the right order - createdAt, addressCity, avgPosition', async () => {
+    it('should order results in the right order - createdAt, addressCity, avgEmployees', async () => {
       const response = await makeGraphqlAPIRequest(
         groupByAddressCreatedAtAndARR([
           {
@@ -266,7 +266,7 @@ describe('group-by resolvers - order by', () => {
           },
           {
             aggregate: {
-              avgPosition: 'AscNullsFirst',
+              avgEmployees: 'AscNullsFirst',
             },
           },
         ]),
@@ -280,57 +280,57 @@ describe('group-by resolvers - order by', () => {
         city: g.groupByDimensionValues?.[0],
         dayOfWeek: g.groupByDimensionValues?.[1],
         annualRevenue: g.groupByDimensionValues?.[2],
-        avgPosition: g.avgPosition,
+        avgEmployees: g.avgEmployees,
         totalCount: g.totalCount,
       }));
 
-      // Order by dayOfWeek (chronological) then addressCity then avgPosition
+      // Order by dayOfWeek (chronological) then addressCity then avgEmployees
       expect(groupInfos).toEqual([
         {
           city: 'Anvers',
           dayOfWeek: 'Monday',
-          avgPosition: 19,
+          avgEmployees: 19,
           totalCount: 1,
           annualRevenue: '100',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
-          avgPosition: 19,
+          avgEmployees: 19,
           totalCount: 1,
           annualRevenue: '105',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
-          avgPosition: 20,
+          avgEmployees: 20,
           totalCount: 1,
           annualRevenue: '100',
         },
         {
           city: 'Dallas',
           dayOfWeek: 'Monday',
-          avgPosition: 2,
+          avgEmployees: 2,
           totalCount: 1,
           annualRevenue: '100',
         },
         {
           city: 'Barcelona',
           dayOfWeek: 'Wednesday',
-          avgPosition: 3,
+          avgEmployees: 3,
           totalCount: 2,
           annualRevenue: '100',
         },
         {
           city: 'Paris',
           dayOfWeek: 'Thursday',
-          avgPosition: 10,
+          avgEmployees: 10,
           totalCount: 1,
           annualRevenue: '100',
         },
       ]);
     });
-    it('should order results in the right order - addressCity, createdAt, avgPosition', async () => {
+    it('should order results in the right order - addressCity, createdAt, avgEmployees', async () => {
       const response = await makeGraphqlAPIRequest(
         groupByAddressCreatedAtAndARR([
           {
@@ -346,7 +346,7 @@ describe('group-by resolvers - order by', () => {
           },
           {
             aggregate: {
-              avgPosition: 'AscNullsFirst',
+              avgEmployees: 'AscNullsFirst',
             },
           },
         ]),
@@ -360,7 +360,7 @@ describe('group-by resolvers - order by', () => {
         city: g.groupByDimensionValues?.[0],
         dayOfWeek: g.groupByDimensionValues?.[1],
         annualRevenue: g.groupByDimensionValues?.[2],
-        avgPosition: g.avgPosition,
+        avgEmployees: g.avgEmployees,
         totalCount: g.totalCount,
       }));
 
@@ -368,53 +368,53 @@ describe('group-by resolvers - order by', () => {
         {
           city: 'Anvers',
           dayOfWeek: 'Monday',
-          avgPosition: 19,
+          avgEmployees: 19,
           totalCount: 1,
           annualRevenue: '100',
         },
         {
           city: 'Barcelona',
           dayOfWeek: 'Wednesday',
-          avgPosition: 3,
+          avgEmployees: 3,
           totalCount: 2,
           annualRevenue: '100',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
-          avgPosition: 19,
+          avgEmployees: 19,
           totalCount: 1,
           annualRevenue: '105',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
-          avgPosition: 20,
+          avgEmployees: 20,
           totalCount: 1,
           annualRevenue: '100',
         },
         {
           city: 'Dallas',
           dayOfWeek: 'Monday',
-          avgPosition: 2,
+          avgEmployees: 2,
           totalCount: 1,
           annualRevenue: '100',
         },
         {
           city: 'Paris',
           dayOfWeek: 'Thursday',
-          avgPosition: 10,
+          avgEmployees: 10,
           totalCount: 1,
           annualRevenue: '100',
         },
       ]);
     });
-    it('should order results in the right order - avgPosition, createdAt, addressCity', async () => {
+    it('should order results in the right order - avgEmployees, createdAt, addressCity', async () => {
       const response = await makeGraphqlAPIRequest(
         groupByAddressCreatedAtAndARR([
           {
             aggregate: {
-              avgPosition: 'AscNullsFirst',
+              avgEmployees: 'AscNullsFirst',
             },
           },
           {
@@ -439,7 +439,7 @@ describe('group-by resolvers - order by', () => {
         city: g.groupByDimensionValues?.[0],
         dayOfWeek: g.groupByDimensionValues?.[1],
         annualRevenue: g.groupByDimensionValues?.[2],
-        avgPosition: g.avgPosition,
+        avgEmployees: g.avgEmployees,
         totalCount: g.totalCount,
       }));
 
@@ -447,42 +447,42 @@ describe('group-by resolvers - order by', () => {
         {
           city: 'Dallas',
           dayOfWeek: 'Monday',
-          avgPosition: 2,
+          avgEmployees: 2,
           totalCount: 1,
           annualRevenue: '100',
         },
         {
           city: 'Barcelona',
           dayOfWeek: 'Wednesday',
-          avgPosition: 3,
+          avgEmployees: 3,
           totalCount: 2,
           annualRevenue: '100',
         },
         {
           city: 'Paris',
           dayOfWeek: 'Thursday',
-          avgPosition: 10,
+          avgEmployees: 10,
           totalCount: 1,
           annualRevenue: '100',
         },
         {
           city: 'Anvers',
           dayOfWeek: 'Monday',
-          avgPosition: 19,
+          avgEmployees: 19,
           totalCount: 1,
           annualRevenue: '100',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
-          avgPosition: 19,
+          avgEmployees: 19,
           totalCount: 1,
           annualRevenue: '105',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
-          avgPosition: 20,
+          avgEmployees: 20,
           totalCount: 1,
           annualRevenue: '100',
         },
@@ -624,13 +624,13 @@ describe('group-by resolvers - order by', () => {
   describe('invalid cases', () => {
     it('should fail if attempt to order by a field that is not part of the groupBy', async () => {
       const response = await makeGraphqlAPIRequest(
-        groupByAddressCreatedAtAndARR([{ position: 'AscNullsFirst' }]),
+        groupByAddressCreatedAtAndARR([{ employees: 'AscNullsFirst' }]),
       );
 
       expect(response.body.errors).toBeDefined();
       expect(response.body.errors.length).toBe(1);
       expect(response.body.errors[0].message).toBe(
-        'Cannot order by a field that is not an aggregate nor in groupBy criteria: position.',
+        'Cannot order by a field that is not an aggregate nor in groupBy criteria: employees.',
       );
     });
 
@@ -667,7 +667,7 @@ describe('group-by resolvers - order by', () => {
         groupByAddressCreatedAtAndARR([
           {
             aggregate: {
-              avgPosition: 'AscNullsFirst',
+              avgEmployees: 'AscNullsFirst',
               avgAnnualRevenueAmountMicros: 'AscNullsFirst',
             },
           },
@@ -685,7 +685,7 @@ describe('group-by resolvers - order by', () => {
       const response = await makeGraphqlAPIRequest(
         groupByAddressCreatedAtAndARR([
           {
-            position: 'AscNullsFirst',
+            employees: 'AscNullsFirst',
             name: 'AscNullsFirst',
           },
         ]),
