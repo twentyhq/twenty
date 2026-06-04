@@ -20,7 +20,6 @@ export ARGOS_TOKEN
 export ARGOS_BUILD_NAME="${USERNAME}/twenty-ui"
 export ARGOS_BRANCH="$BRANCH"
 export ARGOS_COMMIT="$COMMIT"
-export ARGOS_REFERENCE_BRANCH="main"
 
 echo "Argos visual diff"
 echo "  API:        $ARGOS_API_BASE_URL"
@@ -33,7 +32,7 @@ npx http-server storybook-static --port 6007 --silent &
 HTTP_PID=$!
 trap "kill $HTTP_PID 2>/dev/null || true" EXIT
 
-timeout 30 bash -c 'until curl -sf http://localhost:6007 > /dev/null 2>&1; do sleep 1; done'
+for i in $(seq 1 30); do curl -sf http://localhost:6007 > /dev/null 2>&1 && break; sleep 1; done
 
 export STORYBOOK_URL="http://localhost:6007"
 npx vitest run
