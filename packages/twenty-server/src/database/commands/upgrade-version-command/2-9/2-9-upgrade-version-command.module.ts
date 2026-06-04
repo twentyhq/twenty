@@ -21,7 +21,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ApplicationModule,
     FieldMetadataModule,
     ObjectMetadataModule,
-    WorkspaceCacheModule,
     WorkspaceMigrationModule,
   ],
   providers: [
