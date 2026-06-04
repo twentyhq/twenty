@@ -40,7 +40,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import {
   type AdminAiModelConfig,
   SetAdminAiModelEnabledDocument,
@@ -303,7 +303,7 @@ export const SettingsAdminAiProviderDetail = () => {
   }
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       links={[
         {
           children: t`Other`,
@@ -439,6 +439,6 @@ export const SettingsAdminAiProviderDetail = () => {
         confirmButtonText={t`Remove`}
         confirmButtonAccent="danger"
       />
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

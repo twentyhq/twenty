@@ -9,7 +9,7 @@ import { ConfigVariableValueInput } from '@/settings/admin-panel/config-variable
 import { useConfigVariableActions } from '@/settings/admin-panel/config-variables/hooks/useConfigVariableActions';
 import { ConfigVariableEdit } from '@/settings/config-variables/components/ConfigVariableEdit';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath, type ConfigVariableValue } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -97,7 +97,7 @@ export const SettingsAdminConfigVariableDetails = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       links={[
         {
           children: t`Other`,
@@ -144,6 +144,6 @@ export const SettingsAdminConfigVariableDetails = () => {
           />
         }
       />
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };
