@@ -7,8 +7,8 @@ import {
 } from '@clickhouse/client';
 import request from 'supertest';
 
-import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
-import { type GenericTrackEvent } from 'src/engine/core-modules/audit/utils/events/workspace-event/track';
+import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/custom-domain/custom-domain-activated';
+import { type GenericTrackEvent } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/track';
 
 describe('ClickHouse Event Registration (integration)', () => {
   let clickHouseClient: ClickHouseClient;

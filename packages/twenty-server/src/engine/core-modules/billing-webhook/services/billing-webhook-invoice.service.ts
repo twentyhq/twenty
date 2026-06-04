@@ -7,8 +7,8 @@ import { type Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { PAYMENT_RECEIVED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/billing/payment-received';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
+import { PAYMENT_RECEIVED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/billing/payment-received';
 import { getSubscriptionIdFromInvoice } from 'src/engine/core-modules/billing-webhook/utils/get-subscription-id-from-invoice.util';
 import {
   BillingException,
@@ -43,7 +43,7 @@ export class BillingWebhookInvoiceService {
     private readonly billingCreditRolloverService: BillingCreditRolloverService,
     private readonly resourceCreditService: ResourceCreditService,
     private readonly stripeInvoiceService: StripeInvoiceService,
-    private readonly auditService: AuditService,
+    private readonly auditService: EventLogEmitterService,
   ) {}
 
   async processStripeEvent(

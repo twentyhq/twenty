@@ -20,7 +20,7 @@ import { AdminPanelStatisticsService } from 'src/engine/core-modules/admin-panel
 import { AdminPanelUserLookupService } from 'src/engine/core-modules/admin-panel/services/admin-panel-user-lookup.service';
 import { AdminPanelVersionService } from 'src/engine/core-modules/admin-panel/services/admin-panel-version.service';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
-import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
+import { EventLogsModule } from 'src/engine/core-modules/event-logs/event-logs.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
@@ -67,7 +67,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     TerminusModule,
     MetricsModule,
     FeatureFlagModule,
-    AuditModule,
+    EventLogsModule,
     TelemetryModule,
     ImpersonationModule,
     PermissionsModule,

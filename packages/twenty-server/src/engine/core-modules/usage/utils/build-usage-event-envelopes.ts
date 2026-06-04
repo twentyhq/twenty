@@ -1,7 +1,7 @@
 /* @license Enterprise */
 
 import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
-import { type WorkspaceEventEnvelope } from 'src/engine/core-modules/audit/types/workspace-event-envelope.type';
+import { type WorkspaceEventEnvelope } from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
 import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 
 export const buildUsageEventEnvelopes = (

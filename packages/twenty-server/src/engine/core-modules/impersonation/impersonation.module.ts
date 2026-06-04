@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
+import { EventLogsModule } from 'src/engine/core-modules/event-logs/event-logs.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { ImpersonationResolver } from 'src/engine/core-modules/impersonation/impersonation.resolver';
@@ -21,7 +21,7 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
     PermissionsModule,
     RoleModule,
     UserRoleModule,
-    AuditModule,
+    EventLogsModule,
     TypeOrmModule.forFeature([
       UserWorkspaceEntity,
       WorkspaceEntity,

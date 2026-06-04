@@ -9,8 +9,8 @@ import { Repository, type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { WORKSPACE_CREATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/workspace/workspace-created';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
+import { WORKSPACE_CREATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/workspace/workspace-created';
 import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import {
@@ -69,7 +69,7 @@ export class SignInUpService {
     private readonly applicationService: ApplicationService,
     private readonly fileCorePictureService: FileCorePictureService,
     private readonly enterprisePlanService: EnterprisePlanService,
-    private readonly auditService: AuditService,
+    private readonly auditService: EventLogEmitterService,
     @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}

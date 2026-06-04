@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
+import { EventLogsModule } from 'src/engine/core-modules/event-logs/event-logs.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -34,7 +34,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
       RoleEntity,
       RoleTargetEntity,
     ]),
-    AuditModule,
+    EventLogsModule,
     ContactCreationManagerModule,
     WorkspaceDataSourceModule,
     ObjectMetadataRepositoryModule.forFeature([

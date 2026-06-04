@@ -2,8 +2,8 @@ import crypto from 'crypto';
 
 import { ensureAbsoluteUrl } from 'twenty-shared/utils';
 
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { WEBHOOK_RESPONSE_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/webhook/webhook-response';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
+import { WEBHOOK_RESPONSE_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/webhook/webhook-response';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -15,7 +15,7 @@ import { type WebhookJobData } from 'src/engine/metadata-modules/webhook/types/w
 @Processor(MessageQueue.webhookQueue)
 export class CallWebhookJob {
   constructor(
-    private readonly auditService: AuditService,
+    private readonly auditService: EventLogEmitterService,
     private readonly metricsService: MetricsService,
     private readonly secureHttpClientService: SecureHttpClientService,
   ) {}

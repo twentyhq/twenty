@@ -73,7 +73,6 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
 import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/channel-sync.module';
 import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
 import { SendEmailModule } from 'src/modules/messaging/message-outbound-manager/send-email.module';
-import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { EventLogsModule } from './event-logs/event-logs.module';
 import { FileModule } from './file/file.module';
@@ -83,7 +82,6 @@ import { FileModule } from './file/file.module';
     EnvironmentModule,
     TwentyConfigModule.forRoot(),
     HealthModule,
-    AuditModule,
     AuthModule,
     BillingModule,
     BillingWebhookModule,
@@ -168,7 +166,7 @@ import { FileModule } from './file/file.module';
     },
   ],
   exports: [
-    AuditModule,
+    EventLogsModule,
     AuthModule,
     FeatureFlagModule,
     TimelineMessagingModule,
