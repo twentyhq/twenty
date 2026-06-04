@@ -100,7 +100,9 @@ export default defineConfig(({ command }) => {
         projects: ['tsconfig.json'],
       }),
       svgr(),
-      sassDts(),
+      // Generates typed *.module.scss.d.ts siblings (dev mode only — backed by
+      // sass-embedded). CI/build relies on the ambient src/scss-modules.d.ts.
+      sassDts({ esmExport: true, legacyFileFormat: true }),
       dts(dtsConfig),
       checker(checkersConfig),
       {

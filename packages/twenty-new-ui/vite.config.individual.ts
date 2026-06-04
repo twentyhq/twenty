@@ -1,7 +1,6 @@
 import react from '@vitejs/plugin-react-swc';
 import * as path from 'path';
 import { defineConfig } from 'vite';
-import sassDts from 'vite-plugin-sass-dts';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
@@ -48,7 +47,6 @@ export default defineConfig(() => {
         projects: ['tsconfig.json'],
       }),
       svgr(),
-      sassDts(),
     ],
     build: {
       cssCodeSplit: false,

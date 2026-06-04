@@ -1,43 +1,64 @@
 .root {
-  display: inline-flex;
-  align-items: center;
+  position: relative;
+  display: flex;
   flex-shrink: 0;
-  padding: 2px;
-  background: token(background-quaternary);
-  border-radius: token(border-radius-pill);
-  transition: background duration(fast) ease;
-
-  @include focus-ring;
+  align-items: center;
+  align-self: flex-start;
+  border-radius: 10px;
+  background-color: token(background-transparent-medium);
+  cursor: pointer;
+  transition: background-color duration(normal) ease;
 
   &[data-checked] {
-    background: token(color-blue);
+    background-color: var(--toggle-on-color, #{token(color-blue)});
   }
 
   &[data-disabled] {
-    opacity: 0.32;
-    cursor: not-allowed;
+    opacity: 0.5;
+    pointer-events: none;
   }
+}
+
+.centered {
+  align-self: center;
 }
 
 .small {
   width: 24px;
-  height: 14px;
+  height: 16px;
 }
 
 .medium {
   width: 32px;
-  height: 18px;
+  height: 20px;
 }
 
 .thumb {
+  position: absolute;
+  top: 50%;
+  left: 0;
   display: block;
-  width: 50%;
-  height: 100%;
-  background: token(background-primary);
   border-radius: 50%;
-  transition: translate duration(fast) ease;
+  background-color: token(background-primary);
+  transition: transform duration(normal) ease;
+}
 
-  .root[data-checked] & {
-    translate: 100% 0;
-  }
+.small .thumb {
+  width: 12px;
+  height: 12px;
+  transform: translate(2px, -50%);
+}
+
+.medium .thumb {
+  width: 16px;
+  height: 16px;
+  transform: translate(2px, -50%);
+}
+
+.small[data-checked] .thumb {
+  transform: translate(10px, -50%);
+}
+
+.medium[data-checked] .thumb {
+  transform: translate(14px, -50%);
 }

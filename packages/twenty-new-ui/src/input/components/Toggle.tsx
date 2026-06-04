@@ -3,24 +3,51 @@ import { clsx } from 'clsx';
 
 import styles from './Toggle.module.scss';
 
-type ToggleProps = {
+export type ToggleSize = 'small' | 'medium';
+
+export type ToggleProps = {
+  id?: string;
   value?: boolean;
-  onChange?: (value: boolean) => void;
+  onChange?: (value: boolean, e?: React.MouseEvent<HTMLDivElement>) => void;
+  color?: string;
+  toggleSize?: ToggleSize;
+  className?: string;
+  centered?: boolean;
   disabled?: boolean;
-  size?: 'small' | 'medium';
+  'aria-label'?: string;
+  'aria-labelledby'?: string;
 };
 
 export const Toggle = ({
-  value,
+  id,
+  value = false,
   onChange,
+  color,
+  toggleSize = 'medium',
+  className,
+  centered,
   disabled,
-  size = 'medium',
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
 }: ToggleProps) => (
   <Switch.Root
+    id={id}
     checked={value}
-    onCheckedChange={onChange}
     disabled={disabled}
-    className={clsx(styles.root, styles[size])}
+    onCheckedChange={(checked) => onChange?.(checked)}
+    aria-label={ariaLabel}
+    aria-labelledby={ariaLabelledBy}
+    className={clsx(
+      styles.root,
+      styles[toggleSize],
+      centered && styles.centered,
+      className,
+    )}
+    style={
+      color
+        ? ({ '--toggle-on-color': color } as React.CSSProperties)
+        : undefined
+    }
   >
     <Switch.Thumb className={styles.thumb} />
   </Switch.Root>
