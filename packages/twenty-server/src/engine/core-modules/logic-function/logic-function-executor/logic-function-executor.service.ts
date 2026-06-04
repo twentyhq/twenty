@@ -390,8 +390,7 @@ export class LogicFunctionExecutorService {
     return envMap;
   }
 
-  // Best-effort CLI log tail: gated on presence (skip serialize + publish when no
-  // `dev:function:logs` client is attached) and never throws into the executor.
+  // Best-effort: gated on CLI presence, and never throws into the executor.
   private async publishLogicFunctionLogsToCli({
     result,
     flatApplication,
@@ -463,9 +462,6 @@ export class LogicFunctionExecutorService {
         });
     }
 
-    // The CLI live tail (twenty dev:function:logs) is a separate low-latency
-    // channel from the durable applicationLog stream; publish off the hot path,
-    // only while a CLI is attached, and never let pub/sub disrupt execution.
     void this.publishLogicFunctionLogsToCli({
       result,
       flatApplication,

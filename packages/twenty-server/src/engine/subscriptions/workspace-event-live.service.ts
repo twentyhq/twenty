@@ -16,10 +16,8 @@ type WatchedGroup = {
   rows: Record<string, unknown>[];
 };
 
-// Presence-gated live fan-out for the unified event stream. A subscriber marks
-// its (workspace, table) watched with a TTL refreshed by the subscription
-// heartbeat; the consumer only publishes events for tables that are currently
-// watched, so unwatched (high-volume) types cost nothing.
+// Presence-gated live fan-out: a subscriber marks (workspace, table) watched with a heartbeat-
+// refreshed TTL, and the consumer only publishes to watched tables — so unwatched types cost nothing.
 @Injectable()
 export class WorkspaceEventLiveService {
   private readonly logger = new Logger(WorkspaceEventLiveService.name);
@@ -34,9 +32,7 @@ export class WorkspaceEventLiveService {
     return `workspaceEventLive:${workspaceId}:${key}`;
   }
 
-  // Presence is keyed by an arbitrary live-stream key — a ClickHouse table for
-  // the unified event stream, or a subscription channel for the CLI logic
-  // function tail — so any presence-gated publisher can reuse it.
+  // Keyed by an arbitrary live-stream key (a ClickHouse table, or the CLI logic-function channel).
   async markWatched(workspaceId: string, key: string): Promise<void> {
     await this.cacheStorageService.set<boolean>(
       this.getPresenceKey(workspaceId, key),
@@ -54,8 +50,7 @@ export class WorkspaceEventLiveService {
   }
 
   async publishWatched(events: WorkspaceEventEnvelope[]): Promise<void> {
-    // Group by (workspaceId, table) so a batch is published to the right
-    // workspace channel even if it ever spans more than one workspace.
+    // Group by (workspaceId, table) so each batch publishes to the right workspace channel.
     const groups = new Map<string, WatchedGroup>();
 
     for (const event of events) {
@@ -76,9 +71,7 @@ export class WorkspaceEventLiveService {
       groups.set(key, group);
     }
 
-    // Independent best-effort fan-out per group: allSettled so one workspace's
-    // failure neither aborts the others nor hides their own errors, and never
-    // rejects into the caller (a live-publish failure must not retry the job).
+    // allSettled: one group's failure neither aborts the others nor rejects into the caller (would retry the job).
     const results = await Promise.allSettled(
       [...groups.values()].map(async ({ workspaceId, table, rows }) => {
         if (!(await this.isWatched(workspaceId, table))) {

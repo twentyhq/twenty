@@ -37,9 +37,7 @@ export type ClickHouseApplicationLogRecord = {
   properties?: Record<string, unknown>;
 };
 
-// Maps a ClickHouse row (whether read back from a query or pushed live from the
-// write pipeline — the columns are the same) to the GraphQL EventLogRecord the
-// UI renders. Shared by the query resolver and the live subscription.
+// Maps a ClickHouse row (read back, or pushed live — same columns) to the GraphQL record.
 export const normalizeEventLogRecords = (
   records: Record<string, unknown>[],
   table: EventLogTable,

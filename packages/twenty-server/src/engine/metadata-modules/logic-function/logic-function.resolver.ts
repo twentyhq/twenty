@@ -260,8 +260,7 @@ export class LogicFunctionResolver {
     @Args('input') _: LogicFunctionLogsInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    // Register CLI presence (refreshed by the heartbeat) so the executor only
-    // serializes + publishes logs while a `dev:function:logs` client is attached.
+    // Register CLI presence (refreshed by the heartbeat) so the executor only publishes when watched.
     await this.workspaceEventLiveService.markWatched(
       workspace.id,
       SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,

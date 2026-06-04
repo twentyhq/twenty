@@ -25,17 +25,13 @@ const eventSinksProvider = {
     consoleEventSink: ConsoleEventSink,
   ): EventSink[] => {
     const registry: Record<string, EventSink | undefined> = {
-      // ClickHouse counts as a live destination only when it is configured, so
-      // isEnabled() reflects reality and producers can skip work when absent.
       clickhouse: twentyConfigService.get('CLICKHOUSE_URL')
         ? clickHouseEventSink
         : undefined,
       console: consoleEventSink,
     };
 
-    // Own-property check only: `in` would traverse the prototype chain, so a
-    // configured name like `constructor` would resolve to an inherited function
-    // and be (wrongly) treated as a sink, then crash on `.write()`.
+    // hasOwnProperty (not `in`): a configured name like `constructor` would otherwise resolve to an inherited function and crash on .write().
     const isKnownSinkName = (name: string): boolean =>
       Object.prototype.hasOwnProperty.call(registry, name.toLowerCase());
 

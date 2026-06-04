@@ -33,8 +33,6 @@ import {
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
-// Fills the settings body height so the tab itself never scrolls; only the
-// results table (below) scrolls, with the filter card pinned above it.
 const StyledRoot = styled.div`
   box-sizing: border-box;
   display: flex;
@@ -81,8 +79,6 @@ const StyledRecordCount = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
-// The results table scrolls internally and loads more as you reach the bottom;
-// it fills the height left by the filter card so the tab has a single scrollbar.
 const StyledTableWrapper = styled.div`
   flex: 1;
   min-height: 0;
@@ -99,10 +95,7 @@ export const SettingsLogs = () => {
   const billing = useAtomStateValue(billingState);
   const navigateSettings = useNavigateSettings();
 
-  // Access mirrors the backend: application logs are free; every other table
-  // needs the AUDIT_LOGS entitlement (granted by an Enterprise plan on Cloud, or
-  // a valid Enterprise key when self-hosted). Gating on the entitlement — rather
-  // than the signed-key flag — keeps the UI in sync with what the API will allow.
+  // Gate on the AUDIT_LOGS entitlement the API enforces, not the signed-key flag.
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const hasAuditLogsEntitlement =
     currentWorkspace?.billingEntitlements?.some(
@@ -142,8 +135,6 @@ export const SettingsLogs = () => {
       { skip: !canQuery },
     );
 
-  // Live tailing shows every event for the table; suppress it while filters are
-  // active so the view never mixes filtered history with unfiltered live rows.
   const hasActiveFilters =
     isDefined(filters.eventType) ||
     isDefined(filters.userWorkspaceId) ||
@@ -171,9 +162,6 @@ export const SettingsLogs = () => {
     setFilters(newFilters);
   };
 
-  // Application logs are free; every other table needs the AUDIT_LOGS entitlement.
-  // The API stays the source of truth (see the NO_ENTITLEMENT branch below), so an
-  // entitlement gap always lands on this upgrade path rather than a generic error.
   const renderEnterpriseUpgradeCard = () => (
     <Card rounded>
       <SettingsOptionCardContentButton

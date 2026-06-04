@@ -14,13 +14,8 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEventLiveService } from 'src/engine/subscriptions/workspace-event-live.service';
 
-// The unified event pipeline. Producers `enqueue()` batches onto the queue; the
-// consumer (and the durable object-event worker) `ingest()` them — persisting to
-// every configured sink and fanning out to live subscribers in one place.
-//
-// enqueue() lets queue errors propagate so producers can decide how to handle
-// them (analytics emitters swallow + log; they never block their caller). ingest()
-// throws on persistence failure so the consumer job retries.
+// The unified event pipeline. enqueue() propagates queue errors so producers decide how to
+// handle them; ingest() throws on persistence failure so the consumer job retries.
 @Injectable()
 export class WorkspaceEventSinkService {
   constructor(
@@ -31,8 +26,6 @@ export class WorkspaceEventSinkService {
     private readonly workspaceEventLiveService: WorkspaceEventLiveService,
   ) {}
 
-  // Whether any sink is configured; producers skip building events when nothing
-  // is listening.
   isEnabled(): boolean {
     return this.sinks.length > 0;
   }
@@ -49,10 +42,8 @@ export class WorkspaceEventSinkService {
   }
 
   async ingest(events: WorkspaceEventEnvelope[]): Promise<void> {
-    // Persistence must throw on failure so the consumer job retries. The live
-    // fan-out is awaited so the job isn't acked before it completes, but it
-    // swallows its own errors internally and so can never trigger a retry (which
-    // would double-write to ClickHouse).
+    // persist() throws so the job retries. publishWatched() is awaited but swallows its own
+    // errors, so a live-fan-out failure never retries the job (which would double-write).
     await this.persist(events);
     await this.workspaceEventLiveService.publishWatched(events);
   }

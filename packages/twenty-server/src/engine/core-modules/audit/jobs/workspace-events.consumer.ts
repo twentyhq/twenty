@@ -7,8 +7,6 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
-// Drains the unified queue: persists each batch to every sink and fans it out to
-// live subscribers, via the single WorkspaceEventSinkService.ingest path.
 @Processor(MessageQueue.workspaceEventsQueue)
 export class WorkspaceEventsConsumer {
   constructor(

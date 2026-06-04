@@ -14,9 +14,7 @@ import {
 } from 'src/engine/core-modules/audit/utils/build-event-envelope';
 import { type PageviewProperties } from 'src/engine/core-modules/audit/utils/events/pageview/pageview';
 
-// Typed emit facade for analytics events. Builds an envelope and hands it to the
-// unified pipeline; building (schema validation) and enqueuing are best-effort
-// and never crash the caller (auth, billing, impersonation, ...).
+// Typed emit facade: building (schema validation) + enqueuing are best-effort and never crash the caller.
 @Injectable()
 export class AuditService {
   private readonly logger = new Logger(AuditService.name);
@@ -66,8 +64,6 @@ export class AuditService {
 
       return { success: true };
     } catch (error) {
-      // Best-effort: a build (schema validation) or enqueue failure must never
-      // propagate to the calling flow.
       this.logger.error('Failed to emit workspace event', error);
 
       return { success: false };

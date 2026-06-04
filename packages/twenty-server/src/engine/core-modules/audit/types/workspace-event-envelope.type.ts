@@ -1,11 +1,5 @@
-// The five event streams that land in ClickHouse, expressed as a single
-// transport envelope. Each variant carries a fully-built row for its ClickHouse
-// table; a sink routes purely on `table`. This unifies the transport/sink layer
-// while keeping the producers semantically distinct.
-//
-// The row shapes mirror the columns each table is written with. They are the
-// write-side counterpart of the read-side records in
-// event-logs/event-logs.service.ts.
+// Transport envelope for the five event streams: each variant carries a fully-built ClickHouse
+// row, and a sink routes purely on `table`. Unifies transport/sink while keeping producers distinct.
 
 export type EventContextFields = {
   workspaceId?: string | null;
@@ -69,11 +63,9 @@ export type WorkspaceEventEnvelope =
 
 export type WorkspaceEventTable = WorkspaceEventEnvelope['table'];
 
-// Payload of a job on MessageQueue.workspaceEventsQueue.
 export type WorkspaceEventsJobData = {
   events: WorkspaceEventEnvelope[];
 };
 
-// Job name on MessageQueue.workspaceEventsQueue, kept here (not on the consumer
-// class) so producers can enqueue without importing the consumer.
+// Kept here (not on the consumer) so producers can enqueue without importing it.
 export const WORKSPACE_EVENTS_JOB_NAME = 'WorkspaceEventsConsumer';

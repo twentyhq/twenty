@@ -4,10 +4,7 @@ import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { type EventSink } from 'src/engine/core-modules/audit/sinks/event-sink';
 import { type WorkspaceEventEnvelope } from 'src/engine/core-modules/audit/types/workspace-event-envelope.type';
 
-// Writes every event type to its ClickHouse table — the only per-type logic is
-// the table name carried by the envelope. Throws on insert failure so the queue
-// consumer fails and BullMQ retries (at-least-once); no-ops when ClickHouse is
-// not configured.
+// Throws on insert failure so the consumer job retries (at-least-once); no-ops when ClickHouse is unconfigured.
 @Injectable()
 export class ClickHouseEventSink implements EventSink {
   constructor(private readonly clickHouseService: ClickHouseService) {}

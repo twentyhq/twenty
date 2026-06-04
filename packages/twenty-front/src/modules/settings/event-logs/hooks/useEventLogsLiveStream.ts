@@ -18,8 +18,6 @@ type EventLogsLivePayload = {
 // print() the static document once, not on every subscribe.
 const EVENT_LOGS_LIVE_SUBSCRIPTION_QUERY = print(EVENT_LOGS_LIVE_SUBSCRIPTION);
 
-// Tails the unified live event stream over the shared graphql-sse client. New
-// records are prepended; the list resets each time the subscription (re)opens.
 export const useEventLogsLiveStream = ({
   table,
   enabled,
@@ -53,12 +51,8 @@ export const useEventLogsLiveStream = ({
             setLiveRecords((previous) => [...incoming, ...previous]);
           }
         },
-        error: () => {
-          // graphql-sse reconnects automatically
-        },
-        complete: () => {
-          // stays open until disposed
-        },
+        error: () => {},
+        complete: () => {},
       },
     );
 

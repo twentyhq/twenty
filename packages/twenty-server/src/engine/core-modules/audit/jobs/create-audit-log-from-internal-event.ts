@@ -23,9 +23,7 @@ const OBJECT_EVENT_BY_SUFFIX = {
   '.upserted': OBJECT_RECORD_UPSERTED_EVENT,
 } as const;
 
-// Turns object-record mutations (the highest-volume event source) into
-// objectEvent envelopes and ingests them straight from this worker — it is
-// already durable, so it doesn't re-enqueue onto the unified queue.
+// Already on a durable worker, so object events are ingest()ed directly instead of re-enqueued.
 @Processor(MessageQueue.entityEventsToDbQueue)
 export class CreateAuditLogFromInternalEvent {
   constructor(
