@@ -63,7 +63,13 @@ export const useEffectiveDraftVersionId = (
     return { effectiveDraftId: previouslyKnownDraftId, lastDiscardedDraftId };
   }
 
-  setLastDiscardedDraftId(previouslyKnownDraftId);
+  const wasDiscarded =
+    isDefined(cachedDraft) && isDefined(cachedDraft.deletedAt);
+
+  if (wasDiscarded) {
+    setLastDiscardedDraftId(previouslyKnownDraftId);
+  }
+
   setPreviouslyKnownDraftId(undefined);
 
   return { effectiveDraftId: undefined, lastDiscardedDraftId };
