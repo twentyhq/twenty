@@ -8,7 +8,9 @@ import {
   Output,
   stepCountIs,
   type StepResult,
+  type SystemModelMessage,
   type ToolSet,
+  type UserModelMessage,
 } from 'ai';
 import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
 import { type ActorMetadata } from 'twenty-shared/types';
@@ -20,10 +22,18 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import {
+  createExecuteToolTool,
+  createLearnToolsTool,
+  EXECUTE_TOOL_TOOL_NAME,
+  LEARN_TOOLS_TOOL_NAME,
+} from 'src/engine/core-modules/tool-provider/tools';
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { buildAgentSystemPrompt } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-system-prompt.util';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { WORKFLOW_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-system-prompts.const';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -37,6 +47,10 @@ import {
   extractCacheCreationTokensFromSteps,
 } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
+import {
+  getCacheProviderOptions,
+  getCallLevelCacheProviderOptions,
+} from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-cache-breakpoint.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -144,51 +158,29 @@ export class AgentAsyncExecutorService {
       let tools: ToolSet = {};
       let providerOptions = {};
 
-      if (agent) {
-        const agentRoleId = await this.getAgentRoleId(
-          agent.id,
-          agent.workspaceId,
-        );
+      const agentRoleId = isDefined(agent)
+        ? await this.getAgentRoleId(agent.id, agent.workspaceId)
+        : undefined;
 
+      const { tools: registryTools, toolCatalog } =
+        await this.buildRegistryTools({
+          agentRoleId,
+          workspaceId,
+          authContext,
+          actorContext,
+        });
+
+      const systemPrompt = buildAgentSystemPrompt(
+        agent?.prompt ?? '',
+        toolCatalog,
+      );
+
+      if (isDefined(agent)) {
         const nativeModelToolOptions: NativeModelToolOptions = {
           webSearch: agent.modelConfiguration?.webSearch?.enabled === true,
           twitterSearch:
             agent.modelConfiguration?.twitterSearch?.enabled === true,
         };
-
-        let registryTools: ToolSet = {};
-
-        // Workflow agent registry tools are scoped exclusively by the agent
-        // permission-tab role. No role means no registry tools.
-        if (isDefined(agentRoleId)) {
-          const agentRolePermissionConfig: RolePermissionConfig = {
-            unionOf: [agentRoleId],
-          };
-
-          const toolProviderContext: ToolProviderContext = {
-            workspaceId: agent.workspaceId,
-            roleId: agentRoleId,
-            rolePermissionConfig: agentRolePermissionConfig,
-            authContext,
-            actorContext,
-            userId:
-              isDefined(authContext) && isUserAuthContext(authContext)
-                ? authContext.user.id
-                : undefined,
-            userWorkspaceId:
-              isDefined(authContext) && isUserAuthContext(authContext)
-                ? authContext.userWorkspaceId
-                : undefined,
-          };
-
-          registryTools = await this.toolRegistry.getToolsByCategories(
-            toolProviderContext,
-            {
-              categories: WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES,
-              wrapWithErrorContext: false,
-            },
-          );
-        }
 
         const nativeTools = this.nativeToolBinder.bind(
           registeredModel,
@@ -200,21 +192,35 @@ export class AgentAsyncExecutorService {
           ...nativeTools,
         };
 
-        providerOptions =
-          this.aiModelConfigService.getReasoningProviderOptions(
+        providerOptions = {
+          ...this.aiModelConfigService.getReasoningProviderOptions(
             registeredModel,
-          );
+          ),
+          ...getCallLevelCacheProviderOptions(registeredModel.sdkPackage),
+        };
       }
 
-      this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
+      this.logger.log(
+        `Generated ${Object.keys(tools).length} direct tools for agent`,
+      );
 
       let hasNoMoreAvailableCredits = false;
 
+      const systemMessage: SystemModelMessage = {
+        role: 'system',
+        content: systemPrompt,
+        providerOptions: getCacheProviderOptions(registeredModel.sdkPackage),
+      };
+
+      const userMessage: UserModelMessage = {
+        role: 'user',
+        content: [{ type: 'text', text: userPrompt }],
+      };
+
       const textResponse = await generateText({
-        system: `${WORKFLOW_SYSTEM_PROMPTS.BASE}\n\n${agent ? agent.prompt : ''}`,
-        tools,
         model: registeredModel.model,
-        prompt: userPrompt,
+        messages: [systemMessage, userMessage],
+        tools,
         stopWhen: (step) =>
           stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) ||
           hasNoMoreAvailableCredits,
@@ -376,5 +382,76 @@ export class AgentAsyncExecutorService {
         userWorkspaceId,
       );
     }
+  }
+
+  private async buildRegistryTools({
+    agentRoleId,
+    workspaceId,
+    authContext,
+    actorContext,
+  }: {
+    agentRoleId: string | undefined;
+    workspaceId: string;
+    authContext?: WorkspaceAuthContext;
+    actorContext?: ActorMetadata;
+  }): Promise<{ tools: ToolSet; toolCatalog: ToolIndexEntry[] }> {
+    if (!isDefined(agentRoleId)) {
+      return { tools: {}, toolCatalog: [] };
+    }
+
+    const agentRolePermissionConfig: RolePermissionConfig = {
+      unionOf: [agentRoleId],
+    };
+
+    const toolProviderContext: ToolProviderContext = {
+      workspaceId,
+      roleId: agentRoleId,
+      rolePermissionConfig: agentRolePermissionConfig,
+      authContext,
+      actorContext,
+      userId:
+        isDefined(authContext) && isUserAuthContext(authContext)
+          ? authContext.user.id
+          : undefined,
+      userWorkspaceId:
+        isDefined(authContext) && isUserAuthContext(authContext)
+          ? authContext.userWorkspaceId
+          : undefined,
+    };
+
+    const fullCatalog = await this.toolRegistry.getCatalog(toolProviderContext);
+
+    const categorySet = new Set(WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES);
+
+    const toolCatalog = fullCatalog.filter((entry) =>
+      categorySet.has(entry.category),
+    );
+
+    const toolContext = {
+      workspaceId,
+      roleId: agentRoleId,
+      userId:
+        isDefined(authContext) && isUserAuthContext(authContext)
+          ? authContext.user.id
+          : undefined,
+      userWorkspaceId:
+        isDefined(authContext) && isUserAuthContext(authContext)
+          ? authContext.userWorkspaceId
+          : undefined,
+    };
+
+    const tools: ToolSet = {
+      [LEARN_TOOLS_TOOL_NAME]: createLearnToolsTool(
+        this.toolRegistry,
+        toolContext,
+      ),
+      [EXECUTE_TOOL_TOOL_NAME]: createExecuteToolTool(
+        this.toolRegistry,
+        toolContext,
+        { compactOutput: true },
+      ),
+    };
+
+    return { tools, toolCatalog };
   }
 }

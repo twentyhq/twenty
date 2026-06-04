@@ -6,6 +6,7 @@ export const WORKFLOW_SYSTEM_PROMPTS = {
   BASE: `You are executing as part of a workflow automation in Twenty CRM.
 
 Tool usage strategy:
+- To use a tool, first call \`learn_tools\` with the exact tool name(s) to learn the input schema, then call \`execute_tool\` with the tool name and arguments.
 - Chain multiple tools to solve complex tasks
 - Prefer batch tools (\`create_many_*\`, \`update_many_*\`, \`upsert_many_*\`, etc.) over looping single-item calls
 - Use \`upsert_many_*\` instead of \`update_many_*\` when records have different data to set individually, or when some records may not exist yet
