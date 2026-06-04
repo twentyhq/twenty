@@ -17,6 +17,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
@@ -88,6 +89,21 @@ export class FieldMetadataController {
     return computeUniqueFieldMetadataIdsFromFlatIndexMaps(flatIndexMaps);
   }
 
+  private async loadStandardApplicationId(
+    workspaceId: string,
+  ): Promise<string | undefined> {
+    const { flatApplicationMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: ['flatApplicationMaps'] },
+      );
+
+    return Object.values(flatApplicationMaps.byId).find(
+      (application) =>
+        application?.universalIdentifier ===
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    )?.id;
+  }
+
   @Get()
   async findMany(
     @Req() request: AuthenticatedRequest,
@@ -101,8 +117,10 @@ export class FieldMetadataController {
       endingBefore: parseEndingBeforeRestRequest(request),
     });
 
-    const uniqueFieldMetadataIds =
-      await this.loadUniqueFieldMetadataIds(workspaceId);
+    const [uniqueFieldMetadataIds, standardApplicationId] = await Promise.all([
+      this.loadUniqueFieldMetadataIds(workspaceId),
+      this.loadStandardApplicationId(workspaceId),
+    ]);
 
     const result: {
       data: FieldMetadataDTO[];
@@ -110,7 +128,11 @@ export class FieldMetadataController {
       totalCount: number;
     } = {
       data: items.map((item) =>
-        fromFieldMetadataEntityToFieldMetadataDto(item, uniqueFieldMetadataIds),
+        fromFieldMetadataEntityToFieldMetadataDto(
+          item,
+          standardApplicationId,
+          uniqueFieldMetadataIds,
+        ),
       ),
       pageInfo,
       totalCount,
@@ -137,10 +159,13 @@ export class FieldMetadataController {
       );
     }
 
-    const uniqueFieldMetadataIds =
-      await this.loadUniqueFieldMetadataIds(workspaceId);
+    const [uniqueFieldMetadataIds, standardApplicationId] = await Promise.all([
+      this.loadUniqueFieldMetadataIds(workspaceId),
+      this.loadStandardApplicationId(workspaceId),
+    ]);
     const result = fromFieldMetadataEntityToFieldMetadataDto(
       field,
+      standardApplicationId,
       uniqueFieldMetadataIds,
     );
 

@@ -29,7 +29,6 @@ export const getFlatObjectMetadataMock = (
     imageIdentifierFieldMetadataId,
     isActive: true,
     isAuditLogged: true,
-    isCustom: true,
     isLabelSyncedWithName: false,
     isRemote: false,
     isSearchable: true,
@@ -67,7 +66,6 @@ export const getStandardFlatObjectMetadataMock = (
 ) => {
   return getFlatObjectMetadataMock({
     standardOverrides: {},
-    isCustom: false,
     isSystem: true,
     ...overrides,
   });

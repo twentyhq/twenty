@@ -91,7 +91,6 @@ describe('computeCursorArgFilter', () => {
     labelSingular: 'Person',
     labelPlural: 'People',
     targetTableName: 'person',
-    isCustom: false,
     isRemote: false,
     isActive: true,
     isSystem: false,

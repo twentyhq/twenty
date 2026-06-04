@@ -15,7 +15,6 @@ describe('generateFlatIndexMetadataWithNameOrThrow', () => {
   const companyObject = {
     universalIdentifier: 'obj-company',
     nameSingular: 'company',
-    isCustom: false,
   } as UniversalFlatObjectMetadata;
 
   const scalarUniqueField = {
@@ -61,8 +60,8 @@ describe('generateFlatIndexMetadataWithNameOrThrow', () => {
     objectMetadataUniversalIdentifier: companyObject.universalIdentifier,
     indexType: overrides.indexType,
     indexWhereClause: overrides.indexWhereClause ?? null,
-    isCustom: false,
     isUnique: overrides.isUnique,
+    isCustom: false,
     universalFlatIndexFieldMetadatas: overrides.fieldIds.map((id, order) => ({
       createdAt: now,
       updatedAt: now,

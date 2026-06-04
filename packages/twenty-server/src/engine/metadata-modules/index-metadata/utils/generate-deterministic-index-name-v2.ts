@@ -1,12 +1,13 @@
 import { createHash } from 'crypto';
 
+import { isTwentyStandardApplicationUniversalIdentifier } from 'src/engine/metadata-modules/utils/is-twenty-standard-application-universal-identifier.util';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 type GenerateDeterministicIndexNameArgs = {
   flatObjectMetadata: Pick<
     UniversalFlatObjectMetadata,
-    'nameSingular' | 'isCustom'
+    'nameSingular' | 'applicationUniversalIdentifier'
   >;
   isUnique?: boolean;
   orderedIndexColumnNames: string[];
@@ -25,7 +26,9 @@ export const generateDeterministicIndexNameV2 = ({
 
   const tableName = computeTableName(
     flatObjectMetadata.nameSingular,
-    flatObjectMetadata.isCustom,
+    !isTwentyStandardApplicationUniversalIdentifier(
+      flatObjectMetadata.applicationUniversalIdentifier,
+    ),
   );
 
   [tableName, ...orderedIndexColumnNames].forEach((column) => {

@@ -17,7 +17,6 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
     icon: 'IconTest',
     color: null,
     targetTableName: 'test',
-    isCustom: false,
     isRemote: false,
     isActive: true,
     isSystem: false,

@@ -31,7 +31,6 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       description: 'Test object for testing',
       targetTableName: 'test_objects',
       isSystem: false,
-      isCustom: false,
       isActive: true,
       isRemote: false,
       isAuditLogged: true,

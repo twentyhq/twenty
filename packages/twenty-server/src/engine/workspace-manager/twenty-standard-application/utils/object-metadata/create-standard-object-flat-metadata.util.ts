@@ -80,7 +80,6 @@ export const createStandardObjectFlatMetadata = <
     color: null,
     description,
     icon,
-    isCustom: false,
     isRemote: false,
     isActive: true,
     isSystem,

@@ -1,5 +1,6 @@
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isTwentyStandardApplicationUniversalIdentifier } from 'src/engine/metadata-modules/utils/is-twenty-standard-application-universal-identifier.util';
 
 export const fromFlatFieldMetadataToFieldMetadataDto = (
   flatFieldMetadata: FlatFieldMetadata,
@@ -22,13 +23,13 @@ export const fromFlatFieldMetadataToFieldMetadataDto = (
     workspaceId,
     defaultValue,
     isActive,
-    isCustom,
     isLabelSyncedWithName,
     isSystem,
     isUIReadOnly,
     options,
     morphId,
     applicationId,
+    applicationUniversalIdentifier,
   } = flatFieldMetadata;
 
   return {
@@ -41,7 +42,9 @@ export const fromFlatFieldMetadataToFieldMetadataDto = (
     workspaceId,
     defaultValue,
     isActive,
-    isCustom,
+    isCustom: !isTwentyStandardApplicationUniversalIdentifier(
+      applicationUniversalIdentifier,
+    ),
     isLabelSyncedWithName,
     isSystem,
     isUIReadOnly,

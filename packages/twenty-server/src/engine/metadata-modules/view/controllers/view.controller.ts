@@ -216,7 +216,6 @@ export class ViewController {
               labelSingular: objectMetadata.labelSingular,
               description: objectMetadata.description ?? undefined,
               icon: objectMetadata.icon ?? undefined,
-              isCustom: objectMetadata.isCustom,
               standardOverrides: objectMetadata.standardOverrides ?? undefined,
             },
             'labelPlural',

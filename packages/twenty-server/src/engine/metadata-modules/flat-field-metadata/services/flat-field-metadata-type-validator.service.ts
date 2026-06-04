@@ -28,9 +28,9 @@ const rejectUserCreation = (
     args: FlatFieldMetadataTypeValidationArgs<FieldMetadataType>,
   ): FlatFieldMetadataValidationError[] => {
     const isCreation = !isDefined(args.update);
-    const isCustomField = args.flatEntityToValidate.isCustom;
+    const isUserField = !args.flatEntityToValidate.isSystem;
 
-    if (isCreation && isCustomField) {
+    if (isCreation && isUserField) {
       return [
         {
           code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,

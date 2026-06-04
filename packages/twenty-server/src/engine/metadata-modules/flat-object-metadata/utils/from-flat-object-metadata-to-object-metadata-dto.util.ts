@@ -1,5 +1,6 @@
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
+import { isTwentyStandardApplicationUniversalIdentifier } from 'src/engine/metadata-modules/utils/is-twenty-standard-application-universal-identifier.util';
 
 export const fromFlatObjectMetadataToObjectMetadataDto = (
   flatObjectMetadata: FlatObjectMetadata,
@@ -16,7 +17,6 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
     id,
     universalIdentifier,
     isActive,
-    isCustom,
     isLabelSyncedWithName,
     isRemote,
     isSearchable,
@@ -30,13 +30,16 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
     imageIdentifierFieldMetadataId,
     labelIdentifierFieldMetadataId,
     applicationId,
+    applicationUniversalIdentifier,
   } = flatObjectMetadata;
 
   return {
     id,
     universalIdentifier,
     isActive,
-    isCustom,
+    isCustom: !isTwentyStandardApplicationUniversalIdentifier(
+      applicationUniversalIdentifier,
+    ),
     isLabelSyncedWithName,
     isRemote,
     isSearchable,

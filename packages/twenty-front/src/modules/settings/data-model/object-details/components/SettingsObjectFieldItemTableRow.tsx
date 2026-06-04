@@ -258,6 +258,7 @@ export const SettingsObjectFieldItemTableRow = ({
         ) : mode === 'view' ? (
           <SettingsObjectFieldInactiveActionDropdown
             isCustomField={fieldMetadataItem.isCustom === true}
+            isSystemField={fieldMetadataItem.isSystem === true}
             readonly={readonly}
             fieldMetadataItemId={fieldMetadataItem.id}
             onEdit={navigateToFieldEdit}

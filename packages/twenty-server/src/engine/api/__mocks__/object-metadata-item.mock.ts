@@ -436,7 +436,6 @@ export const objectMetadataItemMock: ObjectMetadataEntity = {
   description: 'Object description',
   icon: 'Icon123',
   targetTableName: 'DEPRECATED',
-  isCustom: false,
   isRemote: false,
   isActive: true,
   isSystem: false,

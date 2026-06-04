@@ -70,9 +70,6 @@ export class ObjectMetadataEntity
   targetTableName: string;
 
   @Column({ default: false })
-  isCustom: boolean;
-
-  @Column({ default: false })
   isRemote: boolean;
 
   @Column({ default: false })

@@ -13,6 +13,7 @@ import {
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { isTwentyStandardApplicationUniversalIdentifier } from 'src/engine/metadata-modules/utils/is-twenty-standard-application-universal-identifier.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
@@ -77,6 +78,7 @@ export class WorkspaceExportService {
 
     const objectMetadatas = await this.objectMetadataRepository.find({
       where: { workspaceId },
+      relations: { application: true },
     });
 
     const fieldMetadatas = await this.fieldMetadataRepository.find({
@@ -359,7 +361,9 @@ export class WorkspaceExportService {
 
       const tableName = computeTableName(
         objectMetadata.nameSingular,
-        objectMetadata.isCustom,
+        !isTwentyStandardApplicationUniversalIdentifier(
+          objectMetadata.application?.universalIdentifier,
+        ),
       );
 
       if (tableFilter && !tableFilter.includes(objectMetadata.nameSingular)) {

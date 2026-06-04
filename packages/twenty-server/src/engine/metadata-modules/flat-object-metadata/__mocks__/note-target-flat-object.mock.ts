@@ -10,7 +10,6 @@ export const NOTE_TARGET_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   icon: 'IconCheckbox',
   standardOverrides: null,
   targetTableName: 'DEPRECATED',
-  isCustom: false,
   isRemote: false,
   isActive: true,
   isSystem: true,

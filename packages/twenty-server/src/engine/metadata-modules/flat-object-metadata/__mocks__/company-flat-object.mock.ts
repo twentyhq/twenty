@@ -10,7 +10,6 @@ export const COMPANY_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   icon: 'IconBuildingSkyscraper',
   standardOverrides: null,
   targetTableName: 'DEPRECATED',
-  isCustom: false,
   isRemote: false,
   isActive: true,
   isSystem: false,

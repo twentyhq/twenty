@@ -64,7 +64,6 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
     namePlural: 'people',
     labelSingular: 'Person',
     labelPlural: 'People',
-    isCustom: false,
     isRemote: false,
     isActive: true,
     isSystem: false,

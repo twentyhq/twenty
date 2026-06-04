@@ -10,7 +10,6 @@ export const PERSON_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   icon: 'IconUser',
   standardOverrides: null,
   targetTableName: 'DEPRECATED',
-  isCustom: false,
   isRemote: false,
   isActive: true,
   isSystem: false,

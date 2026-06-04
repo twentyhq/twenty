@@ -45,7 +45,6 @@ export const getRelationTargetFlatFieldMetadataMock = ({
     icon: 'icon',
     id: faker.string.uuid(),
     isActive: true,
-    isCustom: true,
     name: 'flatFieldMetadataName',
     label: 'flat field metadata label',
     isNullable: true,

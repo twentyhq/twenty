@@ -10,17 +10,13 @@ import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadat
 export const resolveFieldMetadataStandardOverride = (
   fieldMetadata: Pick<
     FieldMetadataDTO,
-    'label' | 'description' | 'icon' | 'isCustom' | 'standardOverrides'
+    'label' | 'description' | 'icon' | 'standardOverrides'
   >,
   labelKey: 'label' | 'description' | 'icon',
   locale: keyof typeof APP_LOCALES | undefined,
   i18nInstance: I18n,
 ): string => {
   const safeLocale = locale ?? SOURCE_LOCALE;
-
-  if (fieldMetadata.isCustom) {
-    return fieldMetadata[labelKey] ?? '';
-  }
 
   if (labelKey === 'icon' && isDefined(fieldMetadata.standardOverrides?.icon)) {
     return fieldMetadata.standardOverrides.icon;

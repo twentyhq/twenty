@@ -10,7 +10,6 @@ export const TIMELINE_ACTIVITY_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   icon: 'IconTimelineEvent',
   standardOverrides: null,
   targetTableName: 'DEPRECATED',
-  isCustom: false,
   isRemote: false,
   isActive: true,
   isSystem: true,

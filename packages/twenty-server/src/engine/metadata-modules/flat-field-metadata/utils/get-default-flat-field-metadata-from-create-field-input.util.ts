@@ -32,7 +32,6 @@ export const getDefaultFlatFieldMetadata = ({
     description: createFieldInput.description ?? null,
     icon: createFieldInput.icon ?? null,
     isActive: true,
-    isCustom: true,
     isLabelSyncedWithName: createFieldInput.isLabelSyncedWithName ?? false,
     isNullable: generateNullable(
       createFieldInput.isNullable,

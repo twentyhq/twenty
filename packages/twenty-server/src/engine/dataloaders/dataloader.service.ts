@@ -328,7 +328,6 @@ export class DataloaderService {
                         label: flatFieldMetadata.label,
                         description: flatFieldMetadata.description ?? undefined,
                         icon: flatFieldMetadata.icon ?? undefined,
-                        isCustom: flatFieldMetadata.isCustom,
                         standardOverrides:
                           flatFieldMetadata.standardOverrides ?? undefined,
                       },

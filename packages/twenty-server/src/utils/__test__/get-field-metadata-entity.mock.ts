@@ -31,7 +31,6 @@ export const getMockFieldMetadataEntity = <
     fieldPermissions: [],
     icon: null,
     indexFieldMetadatas: [],
-    isCustom: true,
     isLabelSyncedWithName: false,
     isNullable: null,
     isUIReadOnly: false,

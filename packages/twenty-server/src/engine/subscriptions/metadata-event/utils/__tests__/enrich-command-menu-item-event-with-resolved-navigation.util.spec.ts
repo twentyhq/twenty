@@ -29,7 +29,6 @@ const makeFlatObjectMetadata = (
     labelPlural: 'People',
     labelSingular: 'Person',
     icon: 'IconUser',
-    isCustom: false,
     standardOverrides: null,
     ...overrides,
   }) as unknown as FlatObjectMetadata;

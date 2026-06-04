@@ -12,7 +12,6 @@ const mockObjectMetadata: FlatObjectMetadata = {
   workspaceId: 'workspaceId',
   labelSingular: 'Label Singular',
   labelPlural: 'Label Plural',
-  isCustom: false,
   isRemote: false,
   isActive: true,
   isSystem: false,

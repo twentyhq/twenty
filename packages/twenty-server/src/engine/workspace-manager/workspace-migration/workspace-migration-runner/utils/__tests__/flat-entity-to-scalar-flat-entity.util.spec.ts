@@ -27,7 +27,6 @@ describe('flatEntityToScalarFlatEntity', () => {
       standardOverrides: null,
       settings: null,
       universalSettings: null,
-      isCustom: true,
       isSystem: false,
       isUIReadOnly: false,
       isNullable: true,
