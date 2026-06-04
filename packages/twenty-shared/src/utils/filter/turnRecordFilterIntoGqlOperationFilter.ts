@@ -478,23 +478,31 @@ const buildDirectFieldGqlOperationFilter = ({
         if (recordFilter.operand === RecordFilterOperand.IS_BETWEEN) {
           const commaIndex = recordFilter.value.indexOf(',');
           if (commaIndex === -1) return undefined;
-          const startStr = recordFilter.value.slice(0, commaIndex);
-          const endStr = recordFilter.value.slice(commaIndex + 1);
+          const startStr = recordFilter.value.slice(0, commaIndex).trim();
+          const endStr = recordFilter.value.slice(commaIndex + 1).trim();
           if (!startStr || !endStr) return undefined;
-          return {
-            and: [
-              {
-                [fieldMetadataItem.name]: {
-                  gte: Temporal.Instant.from(startStr).toString(),
-                } as DateTimeFilter,
-              },
-              {
-                [fieldMetadataItem.name]: {
-                  lte: Temporal.Instant.from(endStr).toString(),
-                } as DateTimeFilter,
-              },
-            ],
-          };
+          
+          try {
+            const startInstant = Temporal.Instant.from(startStr).toString();
+            const endInstant = Temporal.Instant.from(endStr).toString();
+            
+            return {
+              and: [
+                {
+                  [fieldMetadataItem.name]: {
+                    gte: startInstant,
+                  } as DateTimeFilter,
+                },
+                {
+                  [fieldMetadataItem.name]: {
+                    lte: endInstant,
+                  } as DateTimeFilter,
+                },
+              ],
+            };
+          } catch {
+            return undefined;
+          }
         }
 
         const resolvedDateTime = Temporal.Instant.from(recordFilter.value);
