@@ -19,7 +19,7 @@ import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpe
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
@@ -123,7 +123,7 @@ export const SettingsAdminUserDetail = () => {
   }
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       links={[
         {
           children: t`Other`,
@@ -166,7 +166,8 @@ export const SettingsAdminUserDetail = () => {
               />
               {currentUser?.canImpersonate &&
                 activeWorkspace &&
-                isDefined(user) && (
+                isDefined(user) &&
+                user.id !== currentUser.id && (
                   <StyledButtonContainer>
                     <Button
                       Icon={IconEyeShare}
@@ -191,6 +192,6 @@ export const SettingsAdminUserDetail = () => {
           </>
         )}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

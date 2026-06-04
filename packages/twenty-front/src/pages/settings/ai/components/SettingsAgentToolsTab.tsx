@@ -1,80 +1,35 @@
-import { gql } from '@apollo/client';
-import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useState } from 'react';
 
-import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { ToolCategory } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconLock, IconPuzzle, IconTool } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MenuItemToggle } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import {
-  type SettingsAgentToolItem,
-  SettingsAgentToolsTable,
-} from '~/pages/settings/ai/components/SettingsAgentToolsTable';
+import { SettingsAgentToolsTable } from '~/pages/settings/ai/components/SettingsAgentToolsTable';
+import { useSettingsAgentToolsTable } from '~/pages/settings/ai/hooks/useSettingsAgentToolsTable';
+import { type SettingsAgentToolItem } from '~/pages/settings/ai/types/SettingsAgentToolItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
-
-const FIND_MANY_APPLICATIONS_FOR_TOOL_TABLE = gql`
-  query FindManyApplicationsForToolTable {
-    findManyApplications {
-      id
-      name
-      universalIdentifier
-      logo
-    }
-  }
-`;
-
-const FIND_MANY_MARKETPLACE_APPS_FOR_TOOL_TABLE = gql`
-  query FindManyMarketplaceAppsForToolTable {
-    findManyMarketplaceApps {
-      id
-      universalIdentifier
-      icon
-      logo
-    }
-  }
-`;
 
 const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsAgentToolsTab = () => {
-  const logicFunctions = useAtomStateValue(logicFunctionsSelector);
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const {
-    toolIndex,
-    loading: toolIndexLoading,
-    error: toolIndexError,
-  } = useGetToolIndex();
-  const { data: applicationsData } = useQuery<{
-    findManyApplications: Array<{
-      id: string;
-      name: string;
-      universalIdentifier: string;
-      logo?: string | null;
-    }>;
-  }>(FIND_MANY_APPLICATIONS_FOR_TOOL_TABLE);
-  const { data: marketplaceAppsData } = useQuery<{
-    findManyMarketplaceApps: Array<{
-      id: string;
-      universalIdentifier: string;
-      icon: string;
-      logo?: string | null;
-    }>;
-  }>(FIND_MANY_MARKETPLACE_APPS_FOR_TOOL_TABLE);
   const { t } = useLingui();
+  const {
+    allTools,
+    applicationById,
+    marketplaceAppByUniversalIdentifier,
+    currentWorkspace,
+    isLoading,
+  } = useSettingsAgentToolsTable();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [showCustomTools, setShowCustomTools] = useState(true);
   const [showManagedTools, setShowManagedTools] = useState(true);
@@ -88,42 +43,6 @@ export const SettingsAgentToolsTab = () => {
 
   const isCustom = (tool: SettingsAgentToolItem) =>
     isDefined(tool.applicationId);
-
-  const allTools: SettingsAgentToolItem[] = useMemo(
-    () => [
-      ...logicFunctions
-        .filter((fn) => isDefined(fn.toolTriggerSettings))
-        .map((fn) => ({
-          identifier: fn.id,
-          name: fn.name,
-          description: fn.description,
-          applicationId: fn.applicationId,
-        })),
-      ...toolIndex
-        .filter((tool) => tool.category !== ToolCategory.LOGIC_FUNCTION)
-        .map((tool) => ({
-          identifier: tool.name,
-          name: tool.name,
-          description: tool.description,
-          category: tool.category,
-          objectName: tool.objectName,
-          icon: tool.icon,
-        })),
-    ],
-    [logicFunctions, toolIndex],
-  );
-
-  const applicationById = new Map(
-    (applicationsData?.findManyApplications ?? []).map((application) => [
-      application.id,
-      application,
-    ]),
-  );
-  const marketplaceAppByUniversalIdentifier = new Map(
-    (marketplaceAppsData?.findManyMarketplaceApps ?? []).map(
-      (marketplaceApp) => [marketplaceApp.universalIdentifier, marketplaceApp],
-    ),
-  );
 
   const filteredTools = allTools
     .filter((tool) => {
@@ -149,8 +68,6 @@ export const SettingsAgentToolsTab = () => {
     })
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  const isLoading = toolIndexLoading && !toolIndexError;
-
   return (
     <Section>
       <H2Title
@@ -173,27 +90,21 @@ export const SettingsAgentToolsTab = () => {
                   <DropdownMenuItemsContainer>
                     <MenuItemToggle
                       LeftIcon={IconTool}
-                      onToggleChange={() =>
-                        setShowCustomTools(!showCustomTools)
-                      }
+                      onToggleChange={setShowCustomTools}
                       toggled={showCustomTools}
                       text={t`Custom`}
                       toggleSize="small"
                     />
                     <MenuItemToggle
                       LeftIcon={IconLock}
-                      onToggleChange={() =>
-                        setShowManagedTools(!showManagedTools)
-                      }
+                      onToggleChange={setShowManagedTools}
                       toggled={showManagedTools}
                       text={t`Managed`}
                       toggleSize="small"
                     />
                     <MenuItemToggle
                       LeftIcon={IconPuzzle}
-                      onToggleChange={() =>
-                        setShowStandardTools(!showStandardTools)
-                      }
+                      onToggleChange={setShowStandardTools}
                       toggled={showStandardTools}
                       text={t`Standard`}
                       toggleSize="small"

@@ -11,6 +11,7 @@ import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
 import {
@@ -76,6 +77,7 @@ export class EventLogsService {
   constructor(
     private readonly clickHouseService: ClickHouseService,
     private readonly billingService: BillingService,
+    private readonly enterprisePlanService: EnterprisePlanService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
@@ -84,7 +86,7 @@ export class EventLogsService {
     workspaceId: string,
     input: EventLogQueryInput,
   ): Promise<EventLogQueryResult> {
-    await this.validateAccess(workspaceId);
+    await this.validateAccess(workspaceId, input.table);
 
     if (!ALLOWED_TABLES.includes(input.table)) {
       throw new BadRequestException(`Invalid table: ${input.table}`);
@@ -171,11 +173,25 @@ export class EventLogsService {
     };
   }
 
-  private async validateAccess(workspaceId: string): Promise<void> {
+  private async validateAccess(
+    workspaceId: string,
+    table: EventLogTable,
+  ): Promise<void> {
     if (!this.clickHouseService.getMainClient()) {
       throw new EventLogsException(
         'Audit logs require ClickHouse to be configured. Please set the CLICKHOUSE_URL environment variable.',
         EventLogsExceptionCode.CLICKHOUSE_NOT_CONFIGURED,
+      );
+    }
+
+    if (table === EventLogTable.APPLICATION_LOG) {
+      return;
+    }
+
+    if (!this.enterprisePlanService.isValid()) {
+      throw new EventLogsException(
+        'Audit logs require an Enterprise subscription.',
+        EventLogsExceptionCode.NO_ENTITLEMENT,
       );
     }
 
