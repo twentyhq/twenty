@@ -91,7 +91,6 @@ export const FavoritesSection = () => {
 
   const handleAddFavorite = (event?: React.MouseEvent) => {
     event?.stopPropagation();
-    // Open the section so the newly added favorite is revealed once it exists.
     openNavigationSection();
     setNavigationMenuItemEditSection('favorite');
     setPendingInsertionNavigationMenuItem(null);
@@ -118,8 +117,6 @@ export const FavoritesSection = () => {
     [deleteManyNavigationMenuItems],
   );
 
-  // Render the Favorites section only when at least one favorite exists; an
-  // empty section would leave a stray "Favorites" title above Workspace.
   if (topLevelItems.length === 0) {
     return null;
   }
