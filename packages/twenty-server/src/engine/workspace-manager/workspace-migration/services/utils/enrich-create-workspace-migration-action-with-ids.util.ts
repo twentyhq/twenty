@@ -80,6 +80,32 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
     string
   >();
 
+  const getOrAssignFieldId = (
+    universalIdentifier: string,
+    fallbackId: string | undefined,
+  ): string => {
+    const assignedFieldId =
+      fieldMetadataIdByUniversalIdentifier?.[universalIdentifier] ??
+      fieldIdToBeCreatedInMigrationByUniversalIdentifierMap.get(
+        universalIdentifier,
+      ) ??
+      fallbackId ??
+      v4();
+
+    if (
+      !fieldIdToBeCreatedInMigrationByUniversalIdentifierMap.has(
+        universalIdentifier,
+      )
+    ) {
+      fieldIdToBeCreatedInMigrationByUniversalIdentifierMap.set(
+        universalIdentifier,
+        assignedFieldId,
+      );
+    }
+
+    return assignedFieldId;
+  };
+
   const enrichedActions = workspaceMigration.actions.map((action) => {
     if (action.type !== 'create') {
       return action;
@@ -118,46 +144,19 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
         };
       }
       case 'fieldMetadata': {
-        const id =
-          fieldMetadataIdByUniversalIdentifier?.[
-            action.flatEntity.universalIdentifier
-          ] ??
-          action.id ??
-          v4();
+        const id = getOrAssignFieldId(
+          action.flatEntity.universalIdentifier,
+          action.id,
+        );
 
         const relatedFieldId = isDefined(
           action.relatedUniversalFlatFieldMetadata,
         )
-          ? (fieldMetadataIdByUniversalIdentifier?.[
-              action.relatedUniversalFlatFieldMetadata.universalIdentifier
-            ] ??
-            action.relatedFieldId ??
-            v4())
+          ? getOrAssignFieldId(
+              action.relatedUniversalFlatFieldMetadata.universalIdentifier,
+              action.relatedFieldId,
+            )
           : action.relatedFieldId;
-
-        if (
-          !fieldIdToBeCreatedInMigrationByUniversalIdentifierMap.has(
-            action.flatEntity.universalIdentifier,
-          )
-        ) {
-          fieldIdToBeCreatedInMigrationByUniversalIdentifierMap.set(
-            action.flatEntity.universalIdentifier,
-            id,
-          );
-        }
-
-        if (
-          isDefined(action.relatedUniversalFlatFieldMetadata) &&
-          isDefined(relatedFieldId) &&
-          !fieldIdToBeCreatedInMigrationByUniversalIdentifierMap.has(
-            action.relatedUniversalFlatFieldMetadata.universalIdentifier,
-          )
-        ) {
-          fieldIdToBeCreatedInMigrationByUniversalIdentifierMap.set(
-            action.relatedUniversalFlatFieldMetadata.universalIdentifier,
-            relatedFieldId,
-          );
-        }
 
         return {
           ...action,

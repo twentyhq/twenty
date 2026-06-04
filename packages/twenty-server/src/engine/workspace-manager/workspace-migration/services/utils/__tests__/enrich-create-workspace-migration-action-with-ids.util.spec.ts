@@ -97,6 +97,31 @@ describe('enrichCreateWorkspaceMigrationActionsWithIds', () => {
     ).toBe(enrichedTargetAction.id);
   });
 
+  it('should set relatedFieldId to the id already minted for the target by an earlier action', () => {
+    const targetAction = buildCreateFieldAction({
+      fieldUniversalIdentifier: 'target',
+    });
+    const junctionAction = buildCreateFieldAction({
+      fieldUniversalIdentifier: 'junction',
+      relatedFieldUniversalIdentifier: 'target',
+    });
+
+    const { workspaceMigration } = enrichCreateWorkspaceMigrationActionsWithIds(
+      {
+        workspaceMigration: buildWorkspaceMigration([
+          targetAction,
+          junctionAction,
+        ]),
+        idByUniversalIdentifierByMetadataName: {},
+      },
+    );
+
+    const [enrichedTargetAction, enrichedJunctionAction] =
+      workspaceMigration.actions as UniversalCreateFieldAction[];
+
+    expect(enrichedJunctionAction.relatedFieldId).toBe(enrichedTargetAction.id);
+  });
+
   it('should use the provided external id over a generated one', () => {
     const action = buildCreateFieldAction({ fieldUniversalIdentifier: 'a' });
 
