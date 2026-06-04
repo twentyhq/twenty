@@ -31,9 +31,6 @@ export class ToolRegistryService {
     private readonly toolExecutorService: ToolExecutorService,
   ) {}
 
-  // Returns ToolIndexEntry[] (lightweight, no schemas).
-  // Underlying data (metadata, permissions) is already cached by WorkspaceCacheService.
-  // Providers run in parallel since they are independent.
   async getCatalog(context: ToolProviderContext): Promise<ToolIndexEntry[]> {
     const results = await Promise.all(
       this.providers.map(async (provider) => {
@@ -50,16 +47,15 @@ export class ToolRegistryService {
     return results.flat();
   }
 
-  // On-demand schema generation for specific tools
   async resolveSchemas(
     toolNames: string[],
     context: ToolProviderContext,
+    precomputedCatalog?: ToolIndexEntry[],
   ): Promise<Map<string, object>> {
-    const index = await this.getCatalog(context);
+    const index = precomputedCatalog ?? (await this.getCatalog(context));
     const nameSet = new Set(toolNames);
     const matchingEntries = index.filter((entry) => nameSet.has(entry.name));
 
-    // Group matching entries by provider category
     const byCategory = new Map<string, ToolIndexEntry[]>();
 
     for (const entry of matchingEntries) {
@@ -180,7 +176,7 @@ export class ToolRegistryService {
     const nameSet = new Set(names);
     const matchingEntries = index.filter((entry) => nameSet.has(entry.name));
 
-    const schemas = await this.resolveSchemas(names, fullContext);
+    const schemas = await this.resolveSchemas(names, fullContext, index);
 
     const descriptors: ToolDescriptor[] = matchingEntries
       .filter((entry) => schemas.has(entry.name))
@@ -211,7 +207,7 @@ export class ToolRegistryService {
     let schemas: Map<string, object> | undefined;
 
     if (aspects.includes('schema')) {
-      schemas = await this.resolveSchemas(names, fullContext);
+      schemas = await this.resolveSchemas(names, fullContext, index);
     }
 
     return matchingEntries.map((entry) => {
