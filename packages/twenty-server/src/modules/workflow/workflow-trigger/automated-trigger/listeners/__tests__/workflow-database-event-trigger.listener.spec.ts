@@ -189,6 +189,50 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       expect(messageQueueService.add).not.toHaveBeenCalled();
     });
 
+    it('should trigger workflow when configured fields only match updated fields by case', async () => {
+      mockRepository.find.mockResolvedValue([
+        {
+          ...mockEventListeners[0],
+          settings: {
+            eventName: databaseEventName,
+            fields: ['Field1'],
+          },
+        },
+      ]);
+
+      await listener.handleObjectRecordUpdateEvent(mockPayload);
+
+      expect(messageQueueService.add).toHaveBeenCalledTimes(1);
+    });
+
+    it('should trigger workflow when updated fields are stale but configured field value changed', async () => {
+      mockRepository.find.mockResolvedValue([
+        {
+          ...mockEventListeners[0],
+          settings: {
+            eventName: databaseEventName,
+            fields: ['field1'],
+          },
+        },
+      ]);
+
+      await listener.handleObjectRecordUpdateEvent({
+        ...mockPayload,
+        events: [
+          {
+            ...mockPayload.events[0],
+            properties: {
+              updatedFields: ['differentFieldName'],
+              before: { field1: 'old-value' },
+              after: { field1: 'new-value' },
+            },
+          },
+        ],
+      });
+
+      expect(messageQueueService.add).toHaveBeenCalledTimes(1);
+    });
+
     it('should handle create events correctly', async () => {
       const createPayload: WorkspaceEventBatch<any> = {
         ...mockPayload,
