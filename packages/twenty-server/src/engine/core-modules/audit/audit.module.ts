@@ -33,9 +33,15 @@ const eventSinksProvider = {
       console: consoleEventSink,
     };
 
+    // Own-property check only: `in` would traverse the prototype chain, so a
+    // configured name like `constructor` would resolve to an inherited function
+    // and be (wrongly) treated as a sink, then crash on `.write()`.
+    const isKnownSinkName = (name: string): boolean =>
+      Object.prototype.hasOwnProperty.call(registry, name.toLowerCase());
+
     const configuredSinkNames = twentyConfigService.get('EVENT_SINKS');
     const unknownSinkNames = configuredSinkNames.filter(
-      (name) => !(name.toLowerCase() in registry),
+      (name) => !isKnownSinkName(name),
     );
 
     if (unknownSinkNames.length > 0) {
@@ -45,6 +51,7 @@ const eventSinksProvider = {
     }
 
     return configuredSinkNames
+      .filter(isKnownSinkName)
       .map((name) => registry[name.toLowerCase()])
       .filter(isDefined);
   },
