@@ -4,9 +4,30 @@ import { type ToolSet } from 'ai';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { z } from 'zod';
 
+import {
+  compactRecord,
+  wrapInMetadataEnvelope,
+} from 'src/engine/core-modules/tool-provider/utils/compact-metadata-output.util';
 import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+
+const EXCLUDED_FIELD_NAMES = new Set([
+  'searchVector',
+  'deletedAt',
+  'position',
+  'updatedBy',
+]);
+
+const FIELD_STRIP_WHEN_NULLISH = [
+  'options',
+  'settings',
+  'defaultValue',
+  'description',
+  'icon',
+];
+
+const FIELD_STRIP_WHEN_FALSE = ['isLabelSyncedWithName', 'isUIReadOnly'];
 
 const GetFieldMetadataInputSchema = z.object({
   id: z
@@ -19,6 +40,12 @@ const GetFieldMetadataInputSchema = z.object({
     .uuid()
     .optional()
     .describe('Filter by object ID.'),
+  includeFullSystemFields: z
+    .boolean()
+    .default(false)
+    .describe(
+      'Return full payload for system fields. Default: false — system fields are returned as compact {id, name, type}.',
+    ),
   limit: z
     .number()
     .int()
@@ -116,14 +143,16 @@ export class FieldMetadataToolsFactory {
   generateTools(workspaceId: string): ToolSet {
     return {
       get_field_metadata: {
-        description: 'Retrieve field metadata from the workspace data model.',
+        description:
+          'Retrieve field metadata. Returns {workspaceId, applicationId, fields: [...]}. System fields are compact {id, name, type} by default; set includeFullSystemFields=true for full payload. Internal fields (searchVector, deletedAt, position, updatedBy) are excluded.',
         inputSchema: GetFieldMetadataInputSchema,
         execute: async (parameters: {
           id?: string;
           objectMetadataId?: string;
+          includeFullSystemFields?: boolean;
           limit?: number;
         }) => {
-          return this.fieldMetadataService.query({
+          const rawResults = await this.fieldMetadataService.query({
             filter: {
               workspaceId: { eq: workspaceId },
               ...(parameters.id ? { id: { eq: parameters.id } } : {}),
@@ -135,6 +164,33 @@ export class FieldMetadataToolsFactory {
             },
             paging: { limit: parameters.limit ?? 100 },
           });
+
+          const compactedFields = (
+            rawResults as unknown as Record<string, unknown>[]
+          )
+            .filter(
+              (field) =>
+                !EXCLUDED_FIELD_NAMES.has(field.name as string),
+            )
+            .map((field) => {
+              if (field.isSystem && !parameters.includeFullSystemFields) {
+                return {
+                  id: field.id,
+                  name: field.name,
+                  type: field.type,
+                };
+              }
+
+              return compactRecord(
+                { ...field },
+                {
+                  stripWhenNullish: FIELD_STRIP_WHEN_NULLISH,
+                  stripWhenFalse: FIELD_STRIP_WHEN_FALSE,
+                },
+              );
+            });
+
+          return wrapInMetadataEnvelope(compactedFields, 'fields');
         },
       },
       create_field_metadata: {
