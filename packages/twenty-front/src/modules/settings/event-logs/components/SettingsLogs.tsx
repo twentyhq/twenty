@@ -173,7 +173,11 @@ export const SettingsLogs = () => {
               variant="secondary"
               size="medium"
               ariaLabel={t`Refresh`}
-              onClick={() => refetch()}
+              onClick={() => {
+                if (canQuery) {
+                  void refetch();
+                }
+              }}
             />
           </StyledSelectorRow>
           <EventLogFilters
