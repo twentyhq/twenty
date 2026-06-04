@@ -116,7 +116,7 @@ export const buildPermissionSummaryFromRoleManifest = (
       Icon: IconCode,
     },
     [SystemPermissionFlag.AI]: {
-      label: 'Run AI agents and bill AI credits to your workspace',
+      label: 'Run AI agents',
       Icon: IconSparkles,
     },
   };
