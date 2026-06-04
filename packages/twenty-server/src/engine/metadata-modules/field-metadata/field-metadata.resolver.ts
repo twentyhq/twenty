@@ -47,7 +47,11 @@ export class FieldMetadataResolver {
     private readonly applicationService: ApplicationService,
   ) {}
 
-  @ResolveField(() => Boolean, { nullable: true })
+  @ResolveField(() => Boolean, {
+    nullable: true,
+    deprecationReason:
+      'isCustom is derived from the owning application and will be removed; a field is custom when it does not belong to the twenty-standard application.',
+  })
   async isCustom(
     @Parent() fieldMetadata: Pick<FieldMetadataDTO, 'applicationId'>,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

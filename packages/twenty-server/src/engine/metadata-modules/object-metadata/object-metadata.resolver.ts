@@ -50,7 +50,10 @@ export class ObjectMetadataResolver {
     private readonly applicationService: ApplicationService,
   ) {}
 
-  @ResolveField(() => Boolean)
+  @ResolveField(() => Boolean, {
+    deprecationReason:
+      'isCustom is derived from the owning application and will be removed; an object is custom when it does not belong to the twenty-standard application.',
+  })
   async isCustom(
     @Parent() objectMetadata: ObjectMetadataDTO,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

@@ -476,7 +476,7 @@ type Field {
   description: String
   icon: String
   standardOverrides: StandardOverrides
-  isCustom: Boolean
+  isCustom: Boolean @deprecated(reason: "isCustom is derived from the owning application and will be removed; a field is custom when it does not belong to the twenty-standard application.")
   isActive: Boolean
   isSystem: Boolean
   isUIReadOnly: Boolean
@@ -587,7 +587,6 @@ input ObjectFilter {
   and: [ObjectFilter!]
   or: [ObjectFilter!]
   id: UUIDFilterComparison
-  isCustom: BooleanFieldComparison
   isRemote: BooleanFieldComparison
   isActive: BooleanFieldComparison
   isSystem: BooleanFieldComparison
@@ -645,7 +644,7 @@ type Object {
   standardOverrides: ObjectStandardOverrides
   shortcut: String
   color: String
-  isCustom: Boolean!
+  isCustom: Boolean! @deprecated(reason: "isCustom is derived from the owning application and will be removed; an object is custom when it does not belong to the twenty-standard application.")
   isRemote: Boolean!
   isActive: Boolean!
   isSystem: Boolean!
@@ -680,7 +679,6 @@ input FieldFilter {
   and: [FieldFilter!]
   or: [FieldFilter!]
   id: UUIDFilterComparison
-  isCustom: BooleanFieldComparison
   isActive: BooleanFieldComparison
   isSystem: BooleanFieldComparison
   isUIReadOnly: BooleanFieldComparison
