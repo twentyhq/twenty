@@ -330,4 +330,22 @@ Developer Support`);
 
     expect(result).toBe('Plain text content');
   });
+
+  it('should preserve percent sequences instead of URI-decoding the body', () => {
+    const parsed: ParsedMail = {
+      text: 'See https://example.com/path%2Fto%2Ffile and a 100%20 budget cut',
+      attachments: [],
+      headers: [],
+      headerLines: [],
+    };
+
+    const result = extractMessageBodyText({
+      text: parsed.text,
+      html: parsed.html,
+    });
+
+    expect(result).toBe(
+      'See https://example.com/path%2Fto%2Ffile and a 100%20 budget cut',
+    );
+  });
 });

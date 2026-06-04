@@ -1,5 +1,4 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { safeDecodeURIComponent } from 'twenty-shared/utils';
 
 import { createHtmlToTextConverter } from 'src/modules/messaging/message-import-manager/utils/create-html-to-text-converter.util';
 import { extractTextWithoutReplyQuotations } from 'src/modules/messaging/message-import-manager/utils/extract-text-without-reply-quotations.util';
@@ -21,8 +20,7 @@ export const extractMessageBodyText = ({
 
   const textWithoutReplyQuotations =
     extractTextWithoutReplyQuotations(candidate);
-  const decodedText = safeDecodeURIComponent(textWithoutReplyQuotations);
-  const sanitizedText = sanitizeString(decodedText);
+  const sanitizedText = sanitizeString(textWithoutReplyQuotations);
 
   return normalizeMessageText(sanitizedText);
 };
