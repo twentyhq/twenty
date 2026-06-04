@@ -1,0 +1,27 @@
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/services/utils/__tests__/enrich-create-workspace-migration-action-with-ids.util.spec.ts
+  s_ccda17eaabba7a::t_a6014bc970b7bf 100-108,118-124
+  s_ccda17eaabba7a::t_c69fc30586d72e 109-117
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/services/utils/enrich-create-workspace-migration-action-with-ids.util.ts
+  s_ccda17eaabba7a::t_37c22f15fde7e4 83
+  s_ccda17eaabba7a::t_c9c315529616ed 148-150,156-157
+  s_ccda17eaabba7a::t_6e8c97fa3f1045 158
+  s_ccda17eaabba7a::t_8e0d210dfe0e82 84-86,88-90,103-105,107-108
+  s_ccda17eaabba7a::t_bce5ec15a5042f 147,155
+  s_ccda17eaabba7a::t_c5fc73cb1d6da3 87,91-102,106
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "151712f9ddcea60ffc1d932a8fcb5a52e481d612",
+  "prompts": {},
+  "sessions": {
+    "s_ccda17eaabba7a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b932cb9-a0b1-4bbb-9c58-8574d4b18520",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
