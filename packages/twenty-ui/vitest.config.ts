@@ -31,6 +31,7 @@ export default defineConfig({
             buildName: process.env.ARGOS_BUILD_NAME || undefined,
             branch: process.env.ARGOS_BRANCH || undefined,
             commit: process.env.ARGOS_COMMIT || undefined,
+            referenceCommit: process.env.ARGOS_REFERENCE_COMMIT || undefined,
           }),
         ],
         test: {
