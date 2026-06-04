@@ -522,7 +522,7 @@ export const METRO_OPTIONS: readonly SelectOptionMeta[] = [
   {
     key: 'coeurDAleneIdaho',
     value: 'COEUR_D_ALENE_IDAHO',
-    label: "Coeur D'Alene, Idaho",
+    label: "Coeur d'Alene, Idaho",
     color: 'gray',
     position: 74,
   },
@@ -1558,7 +1558,7 @@ export const METRO_OPTIONS: readonly SelectOptionMeta[] = [
   {
     key: 'mcallenTexas',
     value: 'MCALLEN_TEXAS',
-    label: 'Mcallen, Texas',
+    label: 'McAllen, Texas',
     color: 'bronze',
     position: 222,
   },

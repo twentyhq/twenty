@@ -11,21 +11,23 @@ Enriches **Person** and **Company** records with [People Data Labs](https://www.
 ## Data-model decisions
 
 ### Bundle scope
+
 Only the core PDL company fields are defined. Premium / Comprehensive / specialized fields
 (`inferred_revenue`, `linkedin_follower_count`, employee growth/churn/tenure, parent /
 subsidiary, exec movement, top employers, `funding_details`, …) are **out of scope** for this app.
 
 ### Enums → SELECT / MULTI_SELECT
+
 Every PDL enum that has a canonical file is a SELECT, **validated 0-missing/0-extra against
 PDL schema v34.1**:
 
-| Field | Type | Options |
-|---|---|---|
-| `pdlSeniority` (`job_title_levels`, array) | MULTI_SELECT | 10 |
-| `pdlFundingStages` (`funding_stages`, array) | MULTI_SELECT | 29 |
-| `pdlIndustry` / `pdlJobCompanyIndustry` (`industry`) | SELECT | 147 |
-| `pdlJobTitleSubRole` (`job_title_sub_role`) | SELECT | 106 |
-| `pdlJobTitleClass`, `pdlInferredSalary`, `pdlSex`, `pdlCompanyType`, `pdlSizeRange`, `pdlJobCompanySize`, `pdlLatestFundingStage`, `pdlLocationContinent`, `pdlLocationMetro`, `pdlMicExchange` | SELECT | 5 / 11 / 2 / 6 / 8 / 8 / 29 / 7 / 384 / 70 |
+| Field                                                                                                                                                                                           | Type         | Options                                    |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | ------------------------------------------ |
+| `pdlSeniority` (`job_title_levels`, array)                                                                                                                                                      | MULTI_SELECT | 10                                         |
+| `pdlFundingStages` (`funding_stages`, array)                                                                                                                                                    | MULTI_SELECT | 29                                         |
+| `pdlIndustry` / `pdlJobCompanyIndustry` (`industry`)                                                                                                                                            | SELECT       | 147                                        |
+| `pdlJobTitleSubRole` (`job_title_sub_role`)                                                                                                                                                     | SELECT       | 106                                        |
+| `pdlJobTitleClass`, `pdlInferredSalary`, `pdlSex`, `pdlCompanyType`, `pdlSizeRange`, `pdlJobCompanySize`, `pdlLatestFundingStage`, `pdlLocationContinent`, `pdlLocationMetro`, `pdlMicExchange` | SELECT       | 5 / 11 / 2 / 6 / 8 / 8 / 29 / 7 / 384 / 70 |
 
 - Option `value`s are normalized to **GraphQL enum names** (`united states` → `UNITED_STATES`):
   uppercase, accents stripped, non-alphanumeric → `_`, digit-leading prefixed.
@@ -35,38 +37,43 @@ PDL schema v34.1**:
   `pdlJobOnetCode`, `pdlLocationRegion`.
 
 ### Standard-field mapping
+
 `pdl*` shadows are **removed** where an equivalent standard field exists; the mapper writes
 the standard field instead:
 
-| Object | Removed shadow → standard target |
-|---|---|
-| Person | `pdlLinkedinUrl`→`linkedinLink`, `pdlJobTitle`→`jobTitle`, `pdlFullName`→`name`, `pdlWorkEmail`/`pdlPersonalEmails`→`emails`, `pdlMobilePhone`/`pdlPhoneNumbers`→`phones` |
-| Company | `pdlLinkedinUrl`→`linkedinLink`, `pdlWebsite`→`domainName`, `pdlDisplayName`→`name` |
+| Object  | Removed shadow → standard target                                                                                                                                          |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Person  | `pdlLinkedinUrl`→`linkedinLink`, `pdlJobTitle`→`jobTitle`, `pdlFullName`→`name`, `pdlWorkEmail`/`pdlPersonalEmails`→`emails`, `pdlMobilePhone`/`pdlPhoneNumbers`→`phones` |
+| Company | `pdlLinkedinUrl`→`linkedinLink`, `pdlWebsite`→`domainName`, `pdlDisplayName`→`name`                                                                                       |
 
 Shadows are **kept** where no reliable standard field is available: `pdlEmployeeCount`,
 `pdlTwitterUrl`.
-*Trade-off:* PDL's work/personal-email and mobile/other-phone distinction is dropped (folded
+_Trade-off:_ PDL's work/personal-email and mobile/other-phone distinction is dropped (folded
 into the standard bags).
 
 ### Location → ADDRESS composite
+
 - **Company** location → the **standard `address`** composite (street/city/state/postcode/country/geo).
 - **Person** has no standard address field → dedicated **`pdlLocation` (ADDRESS)**.
 - `pdlLocationMetro` (both) and `pdlLocationContinent` (company) stay SELECT — ADDRESS has no slot.
-  *Trade-off:* ADDRESS `country` is free text, so the country SELECT was dropped.
+  _Trade-off:_ ADDRESS `country` is free text, so the country SELECT was dropped.
 
 ### Relation
+
 Dedicated **`pdlCurrentCompany`** (Person `MANY_TO_ONE` → Company) ↔ inverse
 **`pdlCurrentEmployees`** (Company `ONE_TO_MANY` → Person). Deliberately **not** the standard
 `company` relation, so PDL's detected employer can't overwrite the user's CRM account link.
 
 ### Enrichment metadata
+
 - `pdlId` — PDL record id (re-enrich by id: more precise than by email).
 - `pdlLikelihood` (Person, NUMBER) — PDL match confidence 1–10.
-- `pdlEnrichmentStatus` (SELECT: `MATCHED` / `NO_MATCH` / `ERROR`) — distinguishes
+- `pdlEnrichmentStatus` (SELECT: `MATCHED` / `NOT_FOUND` / `ERROR`) — distinguishes
   "no match" from "never tried" (drives re-enrichment scheduling).
 - `pdlLastEnrichedAt` (DATE_TIME), `pdlRawPayload` (RAW_JSON, full response).
 
 ### Other
+
 - `pdlTotalFunding` is `CURRENCY` (mapper must convert the bare USD float → micros).
 - **Indexes**: `pdlId` and `pdlLastEnrichedAt` on both objects.
 - **Views**: a curated "People Data Labs" TABLE view per object.
@@ -84,7 +91,7 @@ The logic function (to be built) must:
 2. Call PDL Person and/or Company Enrichment with `PDL_API_KEY`; pass `min_likelihood` /
    `required_fields` to control match quality.
 3. On `200` → write fields + set `pdlEnrichmentStatus = MATCHED`; on `404` →
-   `NO_MATCH`; on error → `ERROR`.
+   `NOT_FOUND`; on error → `ERROR`.
 4. Respect PDL rate limits (queue / throttle on `429`).
 5. **TTL guard**: skip re-enrichment if `pdlLastEnrichedAt` is recent; prefer re-enriching by `pdlId`.
 

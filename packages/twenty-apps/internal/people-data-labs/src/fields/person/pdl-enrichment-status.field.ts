@@ -4,10 +4,12 @@ import {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
 
+import { ENRICHMENT_STATUS_OPTIONS } from 'src/constants/enrichment-status-options';
 import {
   PDL_FIELD_UNIVERSAL_IDENTIFIERS,
   PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS,
 } from 'src/constants/universal-identifiers';
+import { buildSelectOptions } from 'src/utils/build-select-options';
 
 export default defineField({
   universalIdentifier:
@@ -19,29 +21,8 @@ export default defineField({
   label: 'Enrichment Status',
   description: 'Outcome of the latest People Data Labs enrichment attempt.',
   isNullable: true,
-  options: [
-    {
-      id: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.personEnrichmentStatus
-        .matched,
-      value: 'MATCHED',
-      label: 'Matched',
-      color: 'green',
-      position: 0,
-    },
-    {
-      id: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.personEnrichmentStatus
-        .notFound,
-      value: 'NOT_FOUND',
-      label: 'No Match',
-      color: 'gray',
-      position: 1,
-    },
-    {
-      id: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.personEnrichmentStatus.error,
-      value: 'ERROR',
-      label: 'Error',
-      color: 'red',
-      position: 2,
-    },
-  ],
+  options: buildSelectOptions(
+    ENRICHMENT_STATUS_OPTIONS,
+    PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.personEnrichmentStatus,
+  ),
 });
