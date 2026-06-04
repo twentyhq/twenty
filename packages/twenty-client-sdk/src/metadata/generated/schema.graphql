@@ -803,6 +803,7 @@ enum ViewFilterOperand {
   IS_IN_FUTURE
   IS_TODAY
   VECTOR_SEARCH
+  IS_BETWEEN
 }
 
 type ViewGroup {
