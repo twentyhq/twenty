@@ -51,6 +51,11 @@ describe('getOperandsForFilterType', () => {
     RecordFilterOperand.IS_AFTER,
   ];
 
+  const dateTimeOperands = [
+    ...dateOperands,
+    RecordFilterOperand.IS_BETWEEN,
+  ]
+
   const relationOperand = [RecordFilterOperand.IS, RecordFilterOperand.IS_NOT];
 
   const testCases = [
@@ -76,7 +81,7 @@ describe('getOperandsForFilterType', () => {
     ],
     ['NUMBER', [...numberOperands, ...emptyOperands]],
     ['DATE', [...dateOperands, ...emptyOperands]],
-    ['DATE_TIME', [...dateOperands, ...emptyOperands]],
+    ['DATE_TIME', [...dateTimeOperands, ...emptyOperands]],
     ['RELATION', [...relationOperand, ...emptyOperands]],
   ] satisfies (
     | [FieldType, RecordFilterOperand[], CompositeFieldSubFieldName]

@@ -182,22 +182,13 @@ describe('isRecordFilterValueValid', () => {
       ).toBe(false);
     });
 
-    it('should return false when min is not a number', () => {
+    it('should return true when parts are non-numeric strings (e.g. ISO date instants)', () => {
       expect(
         isRecordFilterValueValid({
           operand: ViewFilterOperand.IS_BETWEEN,
-          value: 'abc,500',
+          value: '2024-01-01T00:00:00Z,2024-12-31T00:00:00Z',
         }),
-      ).toBe(false);
-    });
-
-    it('should return false when max is not a number', () => {
-      expect(
-        isRecordFilterValueValid({
-          operand: ViewFilterOperand.IS_BETWEEN,
-          value: '100,xyz',
-        }),
-      ).toBe(false);
+      ).toBe(true);
     });
   });
 });

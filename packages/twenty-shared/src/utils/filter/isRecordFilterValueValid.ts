@@ -19,12 +19,7 @@ export const isRecordFilterValueValid = (recordFilter: {
     if (commaIndex === -1) return false;
     const minPart = recordFilter.value.slice(0, commaIndex);
     const maxPart = recordFilter.value.slice(commaIndex + 1);
-    return (
-      minPart !== '' &&
-      maxPart !== '' &&
-      !isNaN(parseFloat(minPart)) &&
-      !isNaN(parseFloat(maxPart))
-    );
+    return minPart !== '' && maxPart !== '';
   }
 
   return (

@@ -107,6 +107,7 @@ exports[`getRecordFilterOperands returns the expected operands for filterType=DA
   "IS_TODAY",
   "IS_BEFORE",
   "IS_AFTER",
+  "IS_BETWEEN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]

@@ -80,6 +80,7 @@ export const FILTER_OPERANDS_MAP = {
     ViewFilterOperand.IS_TODAY,
     ViewFilterOperand.IS_BEFORE,
     ViewFilterOperand.IS_AFTER,
+    ViewFilterOperand.IS_BETWEEN,
     ...emptyOperands,
   ],
   DATE: [

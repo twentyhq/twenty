@@ -475,6 +475,28 @@ const buildDirectFieldGqlOperationFilter = ({
           };
         }
 
+        if (recordFilter.operand === RecordFilterOperand.IS_BETWEEN) {
+          const commaIndex = recordFilter.value.indexOf(',');
+          if (commaIndex === -1) return undefined;
+          const startStr = recordFilter.value.slice(0, commaIndex);
+          const endStr = recordFilter.value.slice(commaIndex + 1);
+          if (!startStr || !endStr) return undefined;
+          return {
+            and: [
+              {
+                [fieldMetadataItem.name]: {
+                  gte: Temporal.Instant.from(startStr).toString(),
+                } as DateTimeFilter,
+              },
+              {
+                [fieldMetadataItem.name]: {
+                  lte: Temporal.Instant.from(endStr).toString(),
+                } as DateTimeFilter,
+              },
+            ],
+          };
+        }
+
         const resolvedDateTime = Temporal.Instant.from(recordFilter.value);
 
         switch (recordFilter.operand) {
