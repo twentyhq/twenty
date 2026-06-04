@@ -2,7 +2,7 @@ import { RICH_APP_PATH } from '@/cli/__tests__/apps/fixture-paths';
 import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build';
 
 const POST_CARD_NUMBER_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
-  'c1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d';
+  'cd582d11-ea21-4dc3-b9c1-0298ce3b6b54';
 const ALL_POST_CARDS_VIEW_ID = 'b1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d';
 const POST_CARD_NUMBER_FIELD_UNIVERSAL_IDENTIFIER =
   '7b57bd63-5a4c-46ca-9d52-42c8f02d1df6';
