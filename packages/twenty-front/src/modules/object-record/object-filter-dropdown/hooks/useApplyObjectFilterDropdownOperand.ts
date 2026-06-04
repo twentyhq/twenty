@@ -87,9 +87,12 @@ export const useApplyObjectFilterDropdownOperand = () => {
           objectFilterDropdownCurrentRecordFilter.value,
         );
 
-        if (isDefined(firstBetweenValue)) {
+        if (isNonEmptyString(firstBetweenValue)) {
           recordFilterToUpsert.value = firstBetweenValue;
           recordFilterToUpsert.displayValue = firstBetweenValue;
+        } else {
+          recordFilterToUpsert.value = '';
+          recordFilterToUpsert.displayValue = '';
         }
       }
     } else if (isValuelessOperand) {
