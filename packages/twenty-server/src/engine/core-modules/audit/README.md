@@ -2,6 +2,8 @@
 
 This module provides analytics tracking functionality for the Twenty application.
 
+<!-- test: verify visual regression does not trigger for non-ui changes -->
+
 ## Usage
 
 ### Tracking Events
