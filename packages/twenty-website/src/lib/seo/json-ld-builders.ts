@@ -5,7 +5,7 @@ import type { Article } from '@/lib/articles';
 import { localeToUrlSegment } from '@/lib/i18n';
 import type { LocalReleaseNote } from '@/lib/releases/types';
 
-import type { JsonLdValue } from './JsonLd';
+import type { JsonLdValue } from './types/json-ld-value';
 import { getSiteUrl } from './site-url';
 
 type FaqEntryLike = {
