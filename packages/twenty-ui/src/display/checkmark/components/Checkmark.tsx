@@ -16,6 +16,7 @@ const StyledContainer = styled.div`
 `;
 
 export type CheckmarkProps = React.ComponentPropsWithoutRef<'div'> & {
+  /** Optional CSS class name for custom styling */
   className?: string;
 };
 
