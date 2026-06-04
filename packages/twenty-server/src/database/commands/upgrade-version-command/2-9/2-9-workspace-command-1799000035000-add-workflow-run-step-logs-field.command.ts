@@ -21,7 +21,7 @@ const WORKFLOW_RUN_UNIVERSAL_IDENTIFIER =
 const STEP_LOGS_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.workflowRun.fields.stepLogs.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.9.0', 1800000000000)
+@RegisteredWorkspaceCommand('2.9.0', 1799000035000)
 @Command({
   name: 'upgrade:2-9:add-workflow-run-step-logs-field',
   description:
