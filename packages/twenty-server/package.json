@@ -97,6 +97,7 @@
     "digest-fetch": "^3.1.1",
     "dompurify": "3.3.3",
     "dotenv": "16.4.5",
+    "email-reply-parser": "^2.3.5",
     "express": "4.22.1",
     "express-session": "^1.18.2",
     "file-type": "^21.3.1",
