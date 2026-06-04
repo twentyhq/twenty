@@ -671,12 +671,7 @@ const METADATA_ENTITY_SCHEMA_CONFIGS: Record<
       name: { type: 'string' },
       type: {
         type: 'string',
-        enum: [
-          'RECORD_INDEX',
-          'RECORD_PAGE',
-          'DASHBOARD',
-          'STANDALONE_PAGE',
-        ],
+        enum: ['RECORD_INDEX', 'RECORD_PAGE', 'DASHBOARD', 'STANDALONE_PAGE'],
         default: 'RECORD_PAGE',
       },
       objectMetadataId: { type: 'string', format: 'uuid' },
@@ -686,12 +681,7 @@ const METADATA_ENTITY_SCHEMA_CONFIGS: Record<
       name: { type: 'string' },
       type: {
         type: 'string',
-        enum: [
-          'RECORD_INDEX',
-          'RECORD_PAGE',
-          'DASHBOARD',
-          'STANDALONE_PAGE',
-        ],
+        enum: ['RECORD_INDEX', 'RECORD_PAGE', 'DASHBOARD', 'STANDALONE_PAGE'],
       },
       objectMetadataId: { type: 'string', format: 'uuid' },
     },
@@ -790,8 +780,7 @@ export const computeMetadataSchemaComponents = (
 ): Record<string, OpenAPIV3_1.SchemaObject> => {
   return metadataSchema.reduce(
     (schemas, item) => {
-      const entityConfig =
-        METADATA_ENTITY_SCHEMA_CONFIGS[item.nameSingular];
+      const entityConfig = METADATA_ENTITY_SCHEMA_CONFIGS[item.nameSingular];
 
       if (!entityConfig) {
         return schemas;
