@@ -5,12 +5,10 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
-import { extractTextWithoutReplyQuotations } from 'src/modules/messaging/message-import-manager/utils/extract-text-without-reply-quotations.util';
-import { normalizeMessageText } from 'src/modules/messaging/message-import-manager/utils/normalize-message-text.util';
 import { parseGmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-message.util';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { extractMessageBodyText } from 'src/modules/messaging/message-import-manager/utils/extract-message-body-text.util';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
-import { sanitizeString } from 'src/modules/messaging/message-import-manager/utils/sanitize-string.util';
 
 export const parseAndFormatGmailMessage = (
   message: gmailV1.Schema$Message,
@@ -26,7 +24,8 @@ export const parseAndFormatGmailMessage = (
     cc,
     bcc,
     headerMessageId,
-    text,
+    body,
+    isHtml,
     attachments,
     deliveredTo,
     labelIds,
@@ -60,10 +59,6 @@ export const parseAndFormatGmailMessage = (
     return null;
   }
 
-  const textWithoutReplyQuotations = text
-    ? extractTextWithoutReplyQuotations(text)
-    : '';
-
   return {
     externalId: id,
     headerMessageId,
@@ -72,7 +67,7 @@ export const parseAndFormatGmailMessage = (
     receivedAt: new Date(parseInt(internalDate)),
     direction: computeMessageDirection(from.address || '', connectedAccount),
     participants,
-    text: normalizeMessageText(sanitizeString(textWithoutReplyQuotations)),
+    text: extractMessageBodyText(isHtml ? { html: body } : { text: body }),
     attachments,
     messageFolderExternalIds: labelIds,
     labelIds,
