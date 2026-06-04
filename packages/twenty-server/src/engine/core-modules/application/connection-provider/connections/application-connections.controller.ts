@@ -22,10 +22,10 @@ import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-// @deprecated Superseded by the `appConnections` / `appConnection` GraphQL
-// queries on the metadata schema (ApplicationConnectionsResolver). The SDK
-// helpers (`listConnections`, `getConnection`) now call GraphQL. Kept for
-// backward compatibility with already-deployed app runtimes.
+/** @deprecated Superseded by the `appConnections` / `appConnection` GraphQL
+ * queries on the metadata schema (ApplicationConnectionsResolver). The SDK
+ * helpers (`listConnections`, `getConnection`) now call GraphQL. Kept for
+ * backward compatibility with already-deployed app runtimes. */
 @Controller('apps/connections')
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
 @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
