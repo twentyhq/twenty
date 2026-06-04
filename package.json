@@ -63,6 +63,7 @@
       "packages/twenty-client-sdk",
       "packages/twenty-cli",
       "packages/create-twenty-app",
+      "packages/twenty-codex-plugin",
       "packages/twenty-oxlint-rules",
       "packages/twenty-companion",
       "packages/twenty-claude-skills"
