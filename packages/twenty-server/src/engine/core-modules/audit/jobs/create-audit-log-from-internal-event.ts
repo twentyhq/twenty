@@ -78,16 +78,8 @@ export class CreateAuditLogFromInternalEvent {
     batch: WorkspaceEventBatch<ObjectRecordEvent>,
     eventData: ObjectRecordEvent,
   ) {
-    // Drop the (large) before/after snapshots; the diff and remaining fields
-    // are what the audit log keeps. Actions without them are unaffected.
-    const {
-      before: _before,
-      after: _after,
-      ...slimProperties
-    } = eventData.properties as Record<string, unknown>;
-
     return {
-      ...slimProperties,
+      ...eventData.properties,
       recordId: eventData.recordId,
       objectMetadataId: batch.objectMetadata.id,
     };

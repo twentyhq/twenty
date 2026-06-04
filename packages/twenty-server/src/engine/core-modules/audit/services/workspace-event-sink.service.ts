@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import {
   EVENT_SINKS,
@@ -17,10 +17,12 @@ import { WorkspaceEventLiveService } from 'src/engine/subscriptions/workspace-ev
 // The unified event pipeline. Producers `enqueue()` batches onto the queue; the
 // consumer (and the durable object-event worker) `ingest()` them — persisting to
 // every configured sink and fanning out to live subscribers in one place.
+//
+// enqueue() lets queue errors propagate so producers can decide how to handle
+// them (analytics emitters swallow + log; they never block their caller). ingest()
+// throws on persistence failure so the consumer job retries.
 @Injectable()
 export class WorkspaceEventSinkService {
-  private readonly logger = new Logger(WorkspaceEventSinkService.name);
-
   constructor(
     @Inject(EVENT_SINKS)
     private readonly sinks: EventSink[],
@@ -40,16 +42,10 @@ export class WorkspaceEventSinkService {
       return;
     }
 
-    try {
-      await this.workspaceEventsQueueService.add<WorkspaceEventsJobData>(
-        WORKSPACE_EVENTS_JOB_NAME,
-        { events },
-      );
-    } catch (error) {
-      // Emitting analytics is best-effort and fire-and-forget from request
-      // paths; a queue failure must never surface to the caller.
-      this.logger.error('Failed to enqueue workspace events', error);
-    }
+    await this.workspaceEventsQueueService.add<WorkspaceEventsJobData>(
+      WORKSPACE_EVENTS_JOB_NAME,
+      { events },
+    );
   }
 
   async ingest(events: WorkspaceEventEnvelope[]): Promise<void> {

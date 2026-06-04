@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -13,6 +13,8 @@ import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/ty
 
 @Injectable()
 export class UsageEventListener {
+  private readonly logger = new Logger(UsageEventListener.name);
+
   constructor(
     private readonly workspaceEventSinkService: WorkspaceEventSinkService,
   ) {}
@@ -28,8 +30,13 @@ export class UsageEventListener {
       return;
     }
 
-    await this.workspaceEventSinkService.enqueue(
-      buildUsageEventEnvelopes(payload.workspaceId, payload.events),
-    );
+    try {
+      await this.workspaceEventSinkService.enqueue(
+        buildUsageEventEnvelopes(payload.workspaceId, payload.events),
+      );
+    } catch (error) {
+      // Usage analytics is best-effort; never fail the emitting flow.
+      this.logger.error('Failed to enqueue usage events', error);
+    }
   }
 }

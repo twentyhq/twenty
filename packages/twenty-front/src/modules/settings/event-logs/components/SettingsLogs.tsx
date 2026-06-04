@@ -158,7 +158,7 @@ export const SettingsLogs = () => {
 
     return (
       <StyledResults>
-        <StyledRecordCount>{t`${displayedRecords.length} of ${totalCount}`}</StyledRecordCount>
+        <StyledRecordCount>{t`${displayedRecords.length} of ${totalCount + liveRecords.length}`}</StyledRecordCount>
         <StyledTableWrapper>
           <EventLogResultsTable
             records={displayedRecords}
