@@ -2,7 +2,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { isEncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/is-encrypted-string.util';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
@@ -57,18 +56,16 @@ export class EncryptSensitiveConfigStorageSlowInstanceCommand implements SlowIns
           continue;
         }
 
-        const plaintext = this.secretEncryptionService.decryptVersioned(
-          rawValue as EncryptedString,
-        );
+        const plaintext = this.secretEncryptionService.decrypt(
+          rawValue,
+        ) as PlaintextString;
 
         if (!isDefined(plaintext)) {
           continue;
         }
 
         const encrypted =
-          this.secretEncryptionService.encryptVersioned(
-            plaintext as PlaintextString,
-          );
+          this.secretEncryptionService.encryptVersioned(plaintext);
 
         await dataSource.query(
           `UPDATE "core"."keyValuePair"

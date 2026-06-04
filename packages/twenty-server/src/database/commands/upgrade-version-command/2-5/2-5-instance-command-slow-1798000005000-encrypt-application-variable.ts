@@ -3,7 +3,6 @@ import { Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
-import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { isEncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/is-encrypted-string.util';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
@@ -85,10 +84,9 @@ export class EncryptApplicationVariableSlowInstanceCommand
 
         if (looksLikeLegacyCtrCiphertext(row.value)) {
           try {
-            plaintext = this.secretEncryptionService.decryptVersioned(
-              row.value as EncryptedString,
-              { workspaceId: row.workspaceId },
-            );
+            plaintext = this.secretEncryptionService.decrypt(
+              row.value,
+            ) as PlaintextString;
           } catch (error) {
             this.logger.warn(
               `applicationVariable row ${row.id} value not valid ciphertext; treating as plaintext. ${

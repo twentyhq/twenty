@@ -1,9 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
+import {
+  SecretEncryptionException,
+  SecretEncryptionExceptionCode,
+} from 'src/engine/core-modules/secret-encryption/exceptions/secret-encryption.exception';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
 
 import { computeEncryptionKeyId } from './utils/compute-encryption-key-id.util';
@@ -22,9 +26,6 @@ type VersionedOptions = {
 
 @Injectable()
 export class SecretEncryptionService {
-  private readonly logger = new Logger(SecretEncryptionService.name);
-  private hasLoggedLegacyCtrDecryption = false;
-
   constructor(
     private readonly environmentConfigDriver: EnvironmentConfigDriver,
   ) {}
@@ -137,35 +138,25 @@ export class SecretEncryptionService {
 
     const parsed = parseSecretEncryptionEnvelopeOrThrow({ value });
 
-    if (parsed.version === 2) {
-      const keys = resolveEncryptionKeysOrThrow({
-        environmentConfigDriver: this.environmentConfigDriver,
-      });
-      const rawKey = pickEncryptionKeyByKeyIdOrThrow({
-        keyId: parsed.keyId,
-        keys,
-      });
-
-      return decryptAesGcmV2OrThrow({
-        payloadBase64: parsed.payload,
-        rawKey,
-        workspaceId: opts.workspaceId,
-      }) as PlaintextString;
+    if (parsed.version !== 2) {
+      throw new SecretEncryptionException(
+        'Expected an enc:v2 ciphertext envelope but received an unversioned value.',
+        SecretEncryptionExceptionCode.MALFORMED_ENVELOPE,
+      );
     }
 
-    this.warnLegacyCtrDecryptionOnce();
+    const keys = resolveEncryptionKeysOrThrow({
+      environmentConfigDriver: this.environmentConfigDriver,
+    });
+    const rawKey = pickEncryptionKeyByKeyIdOrThrow({
+      keyId: parsed.keyId,
+      keys,
+    });
 
-    return this.decrypt(value) as PlaintextString;
-  }
-
-  private warnLegacyCtrDecryptionOnce(): void {
-    if (this.hasLoggedLegacyCtrDecryption) {
-      return;
-    }
-
-    this.hasLoggedLegacyCtrDecryption = true;
-    this.logger.warn(
-      'Decrypted a legacy unprefixed AES-CTR ciphertext. These rows should be re-encrypted into the enc:v2 envelope in a follow-up migration.',
-    );
+    return decryptAesGcmV2OrThrow({
+      payloadBase64: parsed.payload,
+      rawKey,
+      workspaceId: opts.workspaceId,
+    }) as PlaintextString;
   }
 }

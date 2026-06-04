@@ -1,7 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
-import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { isEncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/is-encrypted-string.util';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
@@ -54,18 +53,16 @@ export class EncryptSigningKeyPrivateKeysSlowInstanceCommand implements SlowInst
           continue;
         }
 
-        const plaintext = this.secretEncryptionService.decryptVersioned(
-          row.privateKey as EncryptedString,
-        );
+        const plaintext = this.secretEncryptionService.decrypt(
+          row.privateKey,
+        ) as PlaintextString;
 
         if (!isDefined(plaintext)) {
           continue;
         }
 
         const encryptedPrivateKey =
-          this.secretEncryptionService.encryptVersioned(
-            plaintext as PlaintextString,
-          );
+          this.secretEncryptionService.encryptVersioned(plaintext);
 
         await dataSource.query(
           `UPDATE "core"."signingKey"

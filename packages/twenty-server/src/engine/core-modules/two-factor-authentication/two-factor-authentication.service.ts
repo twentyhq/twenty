@@ -10,7 +10,6 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
-import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
@@ -28,18 +27,8 @@ import {
 import { twoFactorAuthenticationMethodsValidator } from './two-factor-authentication.validation';
 
 import { OTPStatus } from './strategies/otp/otp.constants';
-import { SimpleSecretEncryptionUtil } from './utils/simple-secret-encryption.util';
 
 const PENDING_METHOD_REUSE_WINDOW_MS = 60 * 60 * 1000;
-
-// TODO: drop this helper, the `simpleSecretEncryptionUtil` dep, and the legacy
-// branch in `decryptStoredSecret` below once the 2.5 cross-upgrade window
-// closes and every TOTP secret row has been backfilled to enc:v2 by the
-// matching slow instance command.
-const buildLegacyTotpCbcPurpose = (
-  userId: string,
-  workspaceId: string,
-): string => `${userId}${workspaceId}otp-secret`;
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
@@ -49,28 +38,18 @@ export class TwoFactorAuthenticationService {
     private readonly twoFactorAuthenticationMethodRepository: WorkspaceScopedRepository<TwoFactorAuthenticationMethodEntity>,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly secretEncryptionService: SecretEncryptionService,
-    private readonly simpleSecretEncryptionUtil: SimpleSecretEncryptionUtil,
   ) {}
 
-  private async decryptStoredSecret({
+  private decryptStoredSecret({
     storedSecret,
-    userId,
     workspaceId,
   }: {
     storedSecret: EncryptedString;
-    userId: string;
     workspaceId: string;
-  }): Promise<PlaintextString> {
-    if (storedSecret.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)) {
-      return this.secretEncryptionService.decryptVersioned(storedSecret, {
-        workspaceId,
-      });
-    }
-
-    return this.simpleSecretEncryptionUtil.decryptSecret(
-      storedSecret,
-      buildLegacyTotpCbcPurpose(userId, workspaceId),
-    );
+  }): PlaintextString {
+    return this.secretEncryptionService.decryptVersioned(storedSecret, {
+      workspaceId,
+    });
   }
 
   /**
@@ -139,9 +118,8 @@ export class TwoFactorAuthenticationService {
       Date.now() - existing2FAMethod.createdAt.getTime() <
         PENDING_METHOD_REUSE_WINDOW_MS
     ) {
-      const existingSecret = await this.decryptStoredSecret({
+      const existingSecret = this.decryptStoredSecret({
         storedSecret: existing2FAMethod.secret,
-        userId,
         workspaceId,
       });
 
@@ -205,9 +183,8 @@ export class TwoFactorAuthenticationService {
       );
     }
 
-    const originalSecret = await this.decryptStoredSecret({
+    const originalSecret = this.decryptStoredSecret({
       storedSecret: userTwoFactorAuthenticationMethod.secret,
-      userId,
       workspaceId,
     });
 

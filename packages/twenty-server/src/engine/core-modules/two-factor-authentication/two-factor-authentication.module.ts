@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
-import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -15,7 +14,6 @@ import { TwoFactorAuthenticationResolver } from './two-factor-authentication.res
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
 
 import { TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
-import { SimpleSecretEncryptionUtil } from './utils/simple-secret-encryption.util';
 
 @Module({
   imports: [
@@ -23,9 +21,6 @@ import { SimpleSecretEncryptionUtil } from './utils/simple-secret-encryption.uti
     WorkspaceDomainsModule,
     MetricsModule,
     TokenModule,
-    // JwtModule is required by the deprecated SimpleSecretEncryptionUtil; drop
-    // it together with the util once the 2.5 cross-upgrade window closes.
-    JwtModule,
     SecretEncryptionModule,
     TypeOrmModule.forFeature([
       UserEntity,
@@ -37,7 +32,6 @@ import { SimpleSecretEncryptionUtil } from './utils/simple-secret-encryption.uti
   providers: [
     TwoFactorAuthenticationService,
     TwoFactorAuthenticationResolver,
-    SimpleSecretEncryptionUtil,
     provideWorkspaceScopedRepository(TwoFactorAuthenticationMethodEntity),
   ],
   exports: [TwoFactorAuthenticationService],
