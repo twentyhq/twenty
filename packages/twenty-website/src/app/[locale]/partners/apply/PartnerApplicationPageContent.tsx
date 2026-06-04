@@ -4,7 +4,7 @@ import { PartnerApplicationWizard } from '@/sections/PartnerApplication/wizard/P
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { useRouter } from 'next/navigation';
-import { useState, type ReactElement } from 'react';
+import { type ReactElement } from 'react';
 
 function PassTitle({ render }: { render?: ReactElement }) {
   return <>{render}</>;
@@ -52,13 +52,12 @@ const ApplyPageCard = styled.div`
 
 export function PartnerApplicationPageContent() {
   const router = useRouter();
-  const [resetSignal] = useState(0);
 
   return (
     <ApplyPageWrapper>
       <ApplyPageCard>
         <PartnerApplicationWizard
-          resetSignal={resetSignal}
+          resetSignal={0}
           onSuccess={() => router.push('/partners/list')}
           slots={PAGE_SLOTS}
         />
