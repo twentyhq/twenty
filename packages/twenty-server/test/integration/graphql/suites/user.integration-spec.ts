@@ -1,11 +1,104 @@
+import { randomUUID } from 'crypto';
+
+import gql from 'graphql-tag';
 import request from 'supertest';
+import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
+import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { signUpOperationFactory } from 'test/integration/graphql/utils/sign-up-operation-factory.util';
+import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
+
+const APPLE_WORKSPACE_INVITE_HASH = 'apple.dev-invite-hash';
+
+const signUpAndGetAccessToken = async (email: string) => {
+  const enablePublicInviteLinkMutation = {
+    query: `
+      mutation updateWorkspace {
+        updateWorkspace(data: { isPublicInviteLinkEnabled: true }) {
+          id
+          isPublicInviteLinkEnabled
+        }
+      }
+    `,
+  };
+
+  await client
+    .post('/metadata')
+    .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+    .send(enablePublicInviteLinkMutation)
+    .expect(200);
+
+  const signUpInWorkspaceMutation = gql`
+    mutation SignUpInWorkspace(
+      $email: String!
+      $password: String!
+      $workspaceInviteHash: String
+      $workspaceId: UUID
+    ) {
+      signUpInWorkspace(
+        email: $email
+        password: $password
+        workspaceInviteHash: $workspaceInviteHash
+        workspaceId: $workspaceId
+      ) {
+        loginToken {
+          token
+        }
+        workspace {
+          id
+          workspaceUrls {
+            subdomainUrl
+          }
+        }
+      }
+    }
+  `;
+
+  const signUpResponse = await makeMetadataAPIRequest(
+    {
+      query: signUpInWorkspaceMutation,
+      variables: {
+        email,
+        password: 'Password123!',
+        workspaceInviteHash: APPLE_WORKSPACE_INVITE_HASH,
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+      },
+    },
+    undefined,
+  );
+
+  expect(signUpResponse.status).toBe(200);
+  expect(signUpResponse.body.errors).toBeUndefined();
+
+  const signUpPayload = signUpResponse.body.data.signUpInWorkspace;
+
+  await testDataSource.query(
+    'UPDATE core."user" SET "isEmailVerified" = true WHERE email = $1',
+    [email],
+  );
+
+  const origin =
+    signUpPayload.workspace.workspaceUrls?.subdomainUrl ??
+    'http://localhost:3001';
+
+  const {
+    data: { getAuthTokensFromLoginToken: authTokensData },
+  } = await getAuthTokensFromLoginToken({
+    loginToken: signUpPayload.loginToken.token,
+    origin,
+    expectToFail: false,
+  });
+
+  return authTokensData.tokens.accessOrWorkspaceAgnosticToken.token;
+};
 
 describe('deleteUser', () => {
   it('should not allow to delete user if they are the unique admin of a workspace', async () => {
@@ -184,6 +277,101 @@ describe('deleteUser', () => {
       expect(
         role.workspaceMembers.find((wm) => wm.id === createdWorkspaceMemberId),
       ).toBeUndefined();
+    }
+  });
+});
+
+describe('updateUserEmail', () => {
+  let newUserAccessToken: string | undefined;
+
+  afterEach(async () => {
+    if (newUserAccessToken) {
+      await deleteUser({
+        accessToken: newUserAccessToken,
+        expectToFail: false,
+      });
+      newUserAccessToken = undefined;
+    }
+  });
+
+  it('should update email directly when IS_EMAIL_VERIFICATION_REQUIRED is false', async () => {
+    const originalEmail = `update-email-no-verif-${randomUUID()}@example.com`;
+    const updatedEmail = `updated-${randomUUID()}@example.com`;
+
+    newUserAccessToken = await signUpAndGetAccessToken(originalEmail);
+
+    const updateEmailMutation = gql`
+      mutation UpdateUserEmail($newEmail: String!) {
+        updateUserEmail(newEmail: $newEmail)
+      }
+    `;
+
+    const updateResponse = await makeMetadataAPIRequest(
+      {
+        query: updateEmailMutation,
+        variables: { newEmail: updatedEmail },
+      },
+      newUserAccessToken,
+    );
+
+    expect(updateResponse.status).toBe(200);
+    expect(updateResponse.body.errors).toBeUndefined();
+    expect(updateResponse.body.data.updateUserEmail).toBe(true);
+
+    const { data } = await getCurrentUser({
+      accessToken: newUserAccessToken,
+      expectToFail: false,
+    });
+
+    expect(data.currentUser.email).toBe(updatedEmail);
+  });
+
+  it('should not update email immediately when IS_EMAIL_VERIFICATION_REQUIRED is true', async () => {
+    const originalEmail = `update-email-with-verif-${randomUUID()}@example.com`;
+    const updatedEmail = `updated-verif-${randomUUID()}@example.com`;
+
+    newUserAccessToken = await signUpAndGetAccessToken(originalEmail);
+
+    await updateConfigVariable({
+      input: {
+        key: 'IS_EMAIL_VERIFICATION_REQUIRED',
+        value: true,
+      },
+    });
+
+    try {
+      const updateEmailMutation = gql`
+        mutation UpdateUserEmail($newEmail: String!) {
+          updateUserEmail(newEmail: $newEmail)
+        }
+      `;
+
+      const updateResponse = await makeMetadataAPIRequest(
+        {
+          query: updateEmailMutation,
+          variables: { newEmail: updatedEmail },
+        },
+        newUserAccessToken,
+      );
+
+      expect(updateResponse.status).toBe(200);
+      expect(updateResponse.body.errors).toBeUndefined();
+      expect(updateResponse.body.data.updateUserEmail).toBe(true);
+
+      // Email should remain unchanged — verification email was sent but not confirmed
+      const { data } = await getCurrentUser({
+        accessToken: newUserAccessToken,
+        expectToFail: false,
+      });
+
+      expect(data.currentUser.email).toBe(originalEmail);
+    } finally {
+      await updateConfigVariable({
+        input: {
+          key: 'IS_EMAIL_VERIFICATION_REQUIRED',
+          value: false,
+        },
+      });
     }
   });
 });
