@@ -64,6 +64,38 @@ Key points:
 - `description` (optional) provides context about what the agent does.
 - `icon` (optional) sets the icon displayed in the UI.
 - `modelId` (optional) overrides the default AI model used by the agent.
+- `responseFormat` (optional) controls the shape of the agent's output. Defaults to `{ type: 'text' }` for free-form text. Use `{ type: 'json', schema }` to force structured JSON output.
+
+By default an agent returns free-form text. To get structured output, set `responseFormat` to `{ type: 'json' }` and provide a `schema`:
+
+```ts src/agents/structured-agent.ts
+import { defineAgent } from 'twenty-sdk/define';
+
+export default defineAgent({
+  universalIdentifier: 'c4d5e6f7-a8b9-0123-cdef-456789012345',
+  name: 'lead-scorer',
+  label: 'Lead Scorer',
+  prompt: 'Score the lead and explain your reasoning.',
+  responseFormat: {
+    type: 'json',
+    schema: {
+      type: 'object',
+      properties: {
+        score: { type: 'number', description: 'Lead score from 0 to 100' },
+        summary: { type: 'string', description: 'Short reasoning for the score' },
+      },
+      required: ['score', 'summary'],
+      additionalProperties: false,
+    },
+  },
+});
+```
+
+Schema notes:
+- The schema is a flat object: each property's `type` must be a primitive (`string`, `number`, or `boolean`). Nested objects and arrays are not supported.
+- `description` (optional) on each property guides the model on what to put there.
+- `required` (optional) lists the properties the model must always return.
+- `additionalProperties: false` (optional) forbids any property not declared in `properties`.
 
 </Accordion>
 <Accordion title="runAgent" description="Run an agent from a logic function">
