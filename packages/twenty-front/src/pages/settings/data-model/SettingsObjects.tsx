@@ -3,7 +3,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -52,7 +52,7 @@ export const SettingsObjects = () => {
   ];
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`Data model`}
       actionButton={
         isDDLLocked ? (
@@ -77,7 +77,7 @@ export const SettingsObjects = () => {
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         { children: t`Objects` },
       ]}
@@ -114,6 +114,6 @@ export const SettingsObjects = () => {
           </UndecoratedLink>
         </Section>
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

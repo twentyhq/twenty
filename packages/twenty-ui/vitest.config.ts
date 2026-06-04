@@ -1,3 +1,4 @@
+import { argosVitestPlugin } from '@argos-ci/storybook/vitest-plugin';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import { playwright } from '@vitest/browser-playwright';
 import path from 'node:path';
@@ -20,6 +21,13 @@ export default defineConfig({
           storybookTest({
             configDir: path.join(dirname, '.storybook'),
             storybookScript: 'yarn storybook --no-open --port 6007',
+          }),
+          argosVitestPlugin({
+            uploadToArgos: !!process.env.ARGOS_TOKEN,
+            token: process.env.ARGOS_TOKEN,
+            apiBaseUrl: process.env.ARGOS_API_BASE_URL,
+            branch: process.env.ARGOS_BRANCH || undefined,
+            commit: process.env.ARGOS_COMMIT || undefined,
           }),
         ],
         test: {

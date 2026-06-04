@@ -1,7 +1,10 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 import { type ActorMetadata, FieldMetadataType } from 'twenty-shared/types';
-import { type WorkflowRunStepInfos } from 'twenty-shared/workflow';
+import {
+  type WorkflowRunStepInfos,
+  type WorkflowRunStepLogs,
+} from 'twenty-shared/workflow';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
@@ -66,6 +69,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   createdBy: ActorMetadata;
   updatedBy: ActorMetadata;
   state: WorkflowRunState;
+  stepLogs: WorkflowRunStepLogs | null;
   position: number;
   searchVector: string;
   workflowVersion: EntityRelation<WorkflowVersionWorkspaceEntity>;

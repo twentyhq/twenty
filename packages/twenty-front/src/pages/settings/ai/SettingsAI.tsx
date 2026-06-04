@@ -1,9 +1,8 @@
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
+import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
@@ -35,11 +34,6 @@ const SETTINGS_AI_HERO_INSTANCE_ID_PREFIX = 'settings-ai-hero';
 export const SettingsAI = () => {
   const { handleCreateTool, isCreatingTool } = useCreateTool();
 
-  const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
-    SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID,
-  );
-
   const tabs = [
     {
       id: SETTINGS_AI_TABS.TABS_IDS.OVERVIEW,
@@ -68,7 +62,11 @@ export const SettingsAI = () => {
     },
   ];
 
-  const resolvedTabId = activeTabId ?? SETTINGS_AI_TABS.TABS_IDS.OVERVIEW;
+  const resolvedTabId =
+    useSettingsActiveTabId(
+      SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID,
+      tabs.map((tab) => tab.id),
+    ) ?? SETTINGS_AI_TABS.TABS_IDS.OVERVIEW;
   const isOverviewTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.OVERVIEW;
   const isModelsTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.MODELS;
   const isSkillsTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.SKILLS;
@@ -76,8 +74,14 @@ export const SettingsAI = () => {
   const isUsageTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.USAGE;
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`AI`}
+      secondaryBar={
+        <SettingsTabBar
+          tabs={tabs}
+          componentInstanceId={SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID}
+        />
+      }
       actionButton={
         isSkillsTab ? (
           <UndecoratedLink to={getSettingsPath(SettingsPath.AiNewSkill)}>
@@ -102,7 +106,7 @@ export const SettingsAI = () => {
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         { children: t`AI` },
       ]}
@@ -136,16 +140,12 @@ export const SettingsAI = () => {
             playButtonAriaLabel={t`Watch AI demo`}
           />
         </Section>
-        <TabList
-          tabs={tabs}
-          componentInstanceId={SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID}
-        />
         {isOverviewTab && <SettingsAiOverviewTab />}
         {isModelsTab && <SettingsAiModelsTab />}
         {isSkillsTab && <SettingsAgentSkillsTab />}
         {isToolsTab && <SettingsAgentToolsTab />}
         {isUsageTab && <SettingsAiUsageTab />}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };
