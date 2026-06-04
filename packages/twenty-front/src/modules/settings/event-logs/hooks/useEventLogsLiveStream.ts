@@ -27,12 +27,15 @@ export const useEventLogsLiveStream = ({
   const sseClient = useAtomStateValue(sseClientState);
   const [liveRecords, setLiveRecords] = useState<EventLogRecord[]>([]);
 
+  // Reset the buffer only when the table changes; pausing/resuming keeps it.
+  useEffect(() => {
+    setLiveRecords([]);
+  }, [table]);
+
   useEffect(() => {
     if (!enabled || !isDefined(sseClient)) {
       return;
     }
-
-    setLiveRecords([]);
 
     const dispose = sseClient.subscribe<EventLogsLivePayload>(
       {

@@ -14,8 +14,8 @@ import { useEventLogs } from '@/settings/event-logs/hooks/useQueryEventLogs';
 import { type EventLogFiltersState } from '@/settings/event-logs/types/EventLogFiltersState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { IconRefresh } from 'twenty-ui/display';
-import { IconButton, Toggle } from 'twenty-ui/input';
+import { IconPlayerPause, IconPlayerPlay } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
 import { Card } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -37,17 +37,6 @@ const StyledSelectorRow = styled.div`
 const StyledSelectorGrow = styled.div`
   flex: 1;
   min-width: 0;
-`;
-
-const StyledLiveToggle = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledLiveLabel = styled.span`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 const StyledResults = styled.div`
@@ -84,46 +73,39 @@ export const SettingsLogs = () => {
     EventLogTable.PAGEVIEW,
   );
   const [filters, setFilters] = useState<EventLogFiltersState>({});
-  const [isLive, setIsLive] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
   const isApplicationLog = selectedTable === EventLogTable.APPLICATION_LOG;
   const canQuery =
     isClickHouseConfigured && (isApplicationLog || hasEnterpriseAccess);
 
-  const {
-    records,
-    totalCount,
-    hasNextPage,
-    loading,
-    error,
-    refetch,
-    loadMore,
-  } = useEventLogs(
-    {
-      table: selectedTable,
-      filters: {
-        eventType: filters.eventType,
-        userWorkspaceId: filters.userWorkspaceId,
-        dateRange: filters.dateRange
-          ? {
-              start: filters.dateRange.start?.toISOString(),
-              end: filters.dateRange.end?.toISOString(),
-            }
-          : undefined,
-        recordId: filters.recordId,
-        objectMetadataId: filters.objectMetadataId,
+  const { records, totalCount, hasNextPage, loading, error, loadMore } =
+    useEventLogs(
+      {
+        table: selectedTable,
+        filters: {
+          eventType: filters.eventType,
+          userWorkspaceId: filters.userWorkspaceId,
+          dateRange: filters.dateRange
+            ? {
+                start: filters.dateRange.start?.toISOString(),
+                end: filters.dateRange.end?.toISOString(),
+              }
+            : undefined,
+          recordId: filters.recordId,
+          objectMetadataId: filters.objectMetadataId,
+        },
+        first: RECORDS_PER_PAGE,
       },
-      first: RECORDS_PER_PAGE,
-    },
-    { skip: !canQuery },
-  );
+      { skip: !canQuery },
+    );
 
   const liveRecords = useEventLogsLiveStream({
     table: selectedTable,
-    enabled: isLive && canQuery,
+    enabled: !isPaused && canQuery,
   });
 
-  const displayedRecords = isLive ? [...liveRecords, ...records] : records;
+  const displayedRecords = [...liveRecords, ...records];
 
   const handleTableChange = (table: EventLogTable) => {
     setSelectedTable(table);
@@ -189,26 +171,14 @@ export const SettingsLogs = () => {
               />
             </StyledSelectorGrow>
             {canQuery && (
-              <StyledLiveToggle>
-                <StyledLiveLabel>{t`Live`}</StyledLiveLabel>
-                <Toggle
-                  value={isLive}
-                  onChange={setIsLive}
-                  toggleSize="small"
-                />
-              </StyledLiveToggle>
+              <IconButton
+                Icon={isPaused ? IconPlayerPlay : IconPlayerPause}
+                variant="secondary"
+                size="medium"
+                ariaLabel={isPaused ? t`Resume` : t`Pause`}
+                onClick={() => setIsPaused((previous) => !previous)}
+              />
             )}
-            <IconButton
-              Icon={IconRefresh}
-              variant="secondary"
-              size="medium"
-              ariaLabel={t`Refresh`}
-              onClick={() => {
-                if (canQuery) {
-                  void refetch();
-                }
-              }}
-            />
           </StyledSelectorRow>
           <EventLogFilters
             table={selectedTable}
