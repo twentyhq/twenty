@@ -2212,8 +2212,9 @@ export interface AgentMessagePart {
 }
 
 export interface RunAgentResult {
-    result: Scalars['JSON']
-    hasNoMoreAvailableCredits: Scalars['Boolean']
+    result?: Scalars['JSON']
+    error?: Scalars['String']
+    success: Scalars['Boolean']
     __typename: 'RunAgentResult'
 }
 
@@ -5235,7 +5236,8 @@ export interface AgentMessagePartGenqlSelection{
 
 export interface RunAgentResultGenqlSelection{
     result?: boolean | number
-    hasNoMoreAvailableCredits?: boolean | number
+    error?: boolean | number
+    success?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

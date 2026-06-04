@@ -2529,8 +2529,9 @@ type AgentMessagePart {
 }
 
 type RunAgentResult {
-  result: JSON!
-  hasNoMoreAvailableCredits: Boolean!
+  result: JSON
+  error: String
+  success: Boolean!
 }
 
 type ChannelSyncSuccess {

@@ -4747,8 +4747,9 @@ export type RunAgentInput = {
 
 export type RunAgentResult = {
   __typename?: 'RunAgentResult';
-  hasNoMoreAvailableCredits: Scalars['Boolean'];
-  result: Scalars['JSON'];
+  error?: Maybe<Scalars['String']>;
+  result?: Maybe<Scalars['JSON']>;
+  success: Scalars['Boolean'];
 };
 
 export type SsoConnection = {

@@ -5041,7 +5041,10 @@ export default {
             "result": [
                 15
             ],
-            "hasNoMoreAvailableCredits": [
+            "error": [
+                1
+            ],
+            "success": [
                 6
             ],
             "__typename": [
