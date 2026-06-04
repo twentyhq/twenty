@@ -40,12 +40,12 @@ export class WorkflowThrottlingWorkspaceService {
     );
   }
 
-  async throttleOrThrowIfHardLimitReached(workspaceId: string) {
+  async checkTriggerLoopOrThrow(workflowId: string) {
     await this.throttlerService.tokenBucketThrottleOrThrow(
-      this.getWorkflowExecutionHardThrottleCacheKey(workspaceId),
+      this.getWorkflowTriggerLoopCacheKey(workflowId),
       1,
-      this.twentyConfigService.get('WORKFLOW_EXEC_HARD_THROTTLE_LIMIT'),
-      this.twentyConfigService.get('WORKFLOW_EXEC_HARD_THROTTLE_TTL'),
+      this.twentyConfigService.get('WORKFLOW_TRIGGER_LOOP_LIMIT'),
+      this.twentyConfigService.get('WORKFLOW_TRIGGER_LOOP_TTL'),
     );
   }
 
@@ -172,9 +172,7 @@ export class WorkflowThrottlingWorkspaceService {
     return `workflow:execution-soft-throttle:${workspaceId}`;
   }
 
-  private getWorkflowExecutionHardThrottleCacheKey(
-    workspaceId: string,
-  ): string {
-    return `workflow:execution-hard-throttle:${workspaceId}`;
+  private getWorkflowTriggerLoopCacheKey(workflowId: string): string {
+    return `workflow:trigger-loop:${workflowId}`;
   }
 }

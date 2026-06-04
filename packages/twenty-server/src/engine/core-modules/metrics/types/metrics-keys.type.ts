@@ -20,7 +20,7 @@ export enum MetricsKeys {
   WorkflowRunCompleted = 'workflow-run/completed',
   WorkflowRunFailed = 'workflow-run/failed',
   WorkflowRunStopped = 'workflow-run/stopped',
-  WorkflowRunThrottled = 'workflow-run/throttled',
+  WorkflowRunTriggerLoopDetected = 'workflow-run/trigger-loop-detected',
   WorkflowRunFailedToEnqueue = 'workflow-run/failed/to-enqueue',
   WorkflowRunSystemError = 'workflow-run/system-error',
   AiChatToolExecutionSucceeded = 'ai-chat/tool-execution-succeeded',

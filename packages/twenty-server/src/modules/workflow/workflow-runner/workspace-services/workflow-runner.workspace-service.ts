@@ -80,11 +80,8 @@ export class WorkflowRunnerWorkspaceService {
     const isManualTrigger =
       workflowVersion.trigger?.type === WorkflowTriggerType.MANUAL;
 
-    const isHardThrottled = await this.checkHardThrottleLimit(workspaceId);
-
-    if (isHardThrottled) {
-      this.logger.log(`Workflow throttled for workspace ${workspaceId}`);
-      return this.createFailedWorkflowRun({
+    if (isManualTrigger) {
+      return this.enqueueWorkflowRun({
         workspaceId,
         workflowVersionId,
         initialWorkflowRunId,
@@ -93,13 +90,22 @@ export class WorkflowRunnerWorkspaceService {
       });
     }
 
-    if (isManualTrigger) {
-      return this.enqueueWorkflowRun({
+    const isTriggerLoop = await this.checkTriggerLoop(
+      workflowVersion.workflowId,
+    );
+
+    if (isTriggerLoop) {
+      this.logger.log(
+        `Trigger loop detected for workflow ${workflowVersion.workflowId} in workspace ${workspaceId}`,
+      );
+
+      return this.createFailedWorkflowRun({
         workspaceId,
         workflowVersionId,
         initialWorkflowRunId,
         source,
         payload,
+        error: 'Trigger loop detected',
       });
     }
 
@@ -261,17 +267,17 @@ export class WorkflowRunnerWorkspaceService {
     };
   }
 
-  private async checkHardThrottleLimit(workspaceId: string): Promise<boolean> {
+  private async checkTriggerLoop(workflowId: string): Promise<boolean> {
     try {
-      await this.workflowThrottlingWorkspaceService.throttleOrThrowIfHardLimitReached(
-        workspaceId,
+      await this.workflowThrottlingWorkspaceService.checkTriggerLoopOrThrow(
+        workflowId,
       );
 
       return false;
     } catch {
       void this.metricsService.incrementCounterForEvent({
-        key: MetricsKeys.WorkflowRunThrottled,
-        eventId: workspaceId,
+        key: MetricsKeys.WorkflowRunTriggerLoopDetected,
+        eventId: workflowId,
       });
 
       return true;
@@ -284,12 +290,14 @@ export class WorkflowRunnerWorkspaceService {
     initialWorkflowRunId,
     source,
     payload,
+    error,
   }: {
     workspaceId: string;
     workflowVersionId: string;
     initialWorkflowRunId?: string;
     source: ActorMetadata;
     payload: object;
+    error: string;
   }) {
     const workflowRunId =
       await this.workflowRunWorkspaceService.createWorkflowRun({
@@ -298,7 +306,7 @@ export class WorkflowRunnerWorkspaceService {
         createdBy: source,
         status: WorkflowRunStatus.FAILED,
         triggerPayload: payload,
-        error: 'Throttle limit reached',
+        error,
         workspaceId,
       });
 
@@ -334,6 +342,7 @@ export class WorkflowRunnerWorkspaceService {
         workspaceId,
         workflowRunId,
       },
+      { priority: 1 },
     );
 
     return { workflowRunId };
