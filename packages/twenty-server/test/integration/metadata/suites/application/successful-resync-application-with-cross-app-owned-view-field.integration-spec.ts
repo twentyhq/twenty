@@ -141,7 +141,7 @@ const findHumanObject = async () => {
   );
 };
 
-describe('Sync application with an API-owned view field on an app-owned view', () => {
+describe('Successful re-sync of an application whose app-owned view references a cross-app-owned view field', () => {
   beforeAll(async () => {
     await setupApplicationForSync({
       applicationUniversalIdentifier: TEST_APP_ID,
@@ -157,7 +157,7 @@ describe('Sync application with an API-owned view field on an app-owned view', (
     });
   });
 
-  it('should re-sync successfully when the app view has an API-created (workspace-owned) view field', async () => {
+  it('should re-sync successfully when the app-owned Body view carries a view field owned by another application', async () => {
     // 1. Initial sync: object Human + view Body (only arm + head view fields)
     await syncApplication({
       manifest: buildInitialManifest(),
