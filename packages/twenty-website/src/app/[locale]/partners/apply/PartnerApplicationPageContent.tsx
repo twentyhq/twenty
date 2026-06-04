@@ -17,7 +17,10 @@ function PassDescription({ render }: { render?: ReactElement }) {
 const PAGE_SLOTS = { Title: PassTitle, Description: PassDescription };
 
 const ApplyPageBackground = styled.div`
+  align-items: center;
   background: #0c0c0c;
+  display: flex;
+  justify-content: center;
   min-height: 100vh;
 `;
 
@@ -26,10 +29,9 @@ const ApplyPageContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${theme.spacing(4)};
-  margin-left: auto;
-  margin-right: auto;
   max-width: min(720px, 100%);
   padding: ${theme.spacing(5)} ${theme.spacing(4)};
+  width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     padding: ${theme.spacing(6)};
