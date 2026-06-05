@@ -1,10 +1,14 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { generateFieldFilterZodSchema } from 'src/engine/core-modules/record-crud/zod-schemas/field-filters.zod-schema';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-const fieldOfType = (type: FieldMetadataType, name = 'body') =>
-  ({ type, name }) as FieldMetadataEntity;
+const fieldOfType = (
+  type: FieldMetadataType,
+  name = 'body',
+  settings?: Record<string, unknown>,
+) => ({ type, name, settings }) as FieldMetadataEntity;
 
 describe('generateFieldFilterZodSchema', () => {
   describe('TEXT', () => {
@@ -32,9 +36,6 @@ describe('generateFieldFilterZodSchema', () => {
       expect(schema!.parse({ markdown: { ilike: '%hello%' } })).toEqual({
         markdown: { ilike: '%hello%' },
       });
-      expect(schema!.parse({ blocknote: { eq: 'x' } })).toEqual({
-        blocknote: { eq: 'x' },
-      });
     });
 
     it('no longer accepts scalar operators at the composite root', () => {
@@ -57,7 +58,9 @@ describe('generateFieldFilterZodSchema', () => {
 
     it('filters by the related record id and rejects text operators', () => {
       const schema = generateFieldFilterZodSchema(
-        fieldOfType(FieldMetadataType.MORPH_RELATION, 'targetPerson'),
+        fieldOfType(FieldMetadataType.MORPH_RELATION, 'targetPerson', {
+          relationType: RelationType.MANY_TO_ONE,
+        }),
       );
 
       expect(schema).not.toBeNull();

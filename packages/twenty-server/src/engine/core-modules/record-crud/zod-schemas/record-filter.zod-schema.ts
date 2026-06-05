@@ -47,15 +47,12 @@ export const generateRecordFilterSchema = ({
       return;
     }
 
-    // Relations filterable by their join column are keyed as `${name}Id`:
-    // MANY_TO_ONE relations and morph relations (each morph target also has an
-    // `${name}Id` join column).
-    const usesRelationIdKey =
-      (isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
-        field.settings?.relationType === RelationType.MANY_TO_ONE) ||
-      isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION);
+    const isManyToOneRelationField =
+      (isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) ||
+        isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION)) &&
+      field.settings?.relationType === RelationType.MANY_TO_ONE;
 
-    filterShape[usesRelationIdKey ? `${field.name}Id` : field.name] =
+    filterShape[isManyToOneRelationField ? `${field.name}Id` : field.name] =
       fieldFilter;
   });
 
