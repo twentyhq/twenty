@@ -53,6 +53,15 @@ describe('event-log registry', () => {
       expect(record.properties).toEqual({ a: 1 });
     });
 
+    it('parses the ClickHouse timestamp as UTC, not server-local time', () => {
+      const record = EVENT_LOG_TYPES[EventLogTable.WORKSPACE_EVENT].normalize({
+        event: 'user.signup',
+        timestamp,
+      });
+
+      expect(record.timestamp.toISOString()).toBe('2026-01-01T00:00:00.000Z');
+    });
+
     it('maps a pageview row from the name column', () => {
       const record = EVENT_LOG_TYPES[EventLogTable.PAGEVIEW].normalize({
         name: '/settings',
