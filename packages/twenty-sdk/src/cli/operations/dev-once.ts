@@ -35,6 +35,19 @@ export type AppDevOnceResult = {
   applicationUniversalIdentifier: string;
 };
 
+const reportMetadataChanges = (
+  data: unknown,
+  onProgress?: (message: string) => void,
+): void => {
+  const actions = Array.isArray((data as { actions?: unknown[] })?.actions)
+    ? (data as { actions: unknown[] }).actions
+    : [];
+
+  for (const event of formatSyncActionsSummary(actions)) {
+    onProgress?.(event.message);
+  }
+};
+
 const innerAppDevOnce = async (
   options: AppDevOnceOptions,
 ): Promise<CommandResult<AppDevOnceResult>> => {
@@ -150,14 +163,7 @@ const innerAppDevOnce = async (
       };
     }
 
-    const dryRunData = dryRunResult.data as { actions?: unknown[] } | undefined;
-    const actions = Array.isArray(dryRunData?.actions)
-      ? dryRunData.actions
-      : [];
-
-    for (const event of formatSyncActionsSummary(actions)) {
-      onProgress?.(event.message);
-    }
+    reportMetadataChanges(dryRunResult.data, onProgress);
 
     return {
       success: true,
@@ -262,6 +268,8 @@ const innerAppDevOnce = async (
       },
     };
   }
+
+  reportMetadataChanges(syncResult.data, onProgress);
 
   onProgress?.('Generating API client...');
 
