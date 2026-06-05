@@ -1,0 +1,9 @@
+packages/twenty-server/test/integration/metadata/suites/application/__snapshots__/successful-sync-application-workspace-migration.integration-spec.ts.snap
+  ai_agent 34,416
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "20367d48f23d799e4f9fd8926ed8193df4380eb2",
+  "prompts": {}
+}
