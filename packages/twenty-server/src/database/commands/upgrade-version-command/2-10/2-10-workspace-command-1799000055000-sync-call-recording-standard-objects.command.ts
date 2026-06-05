@@ -144,11 +144,9 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
       ];
 
     if (!isDefined(calendarEventObjectMetadata)) {
-      this.logger.log(
-        `calendarEvent object not found for workspace ${workspaceId}, skipping`,
+      throw new Error(
+        `calendarEvent object not found for workspace ${workspaceId}`,
       );
-
-      return;
     }
 
     const { twentyStandardFlatApplication } =
