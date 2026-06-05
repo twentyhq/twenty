@@ -91,6 +91,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
   }) {
     switch (step.type) {
       case WorkflowActionType.CODE: {
+        if (!isDefined(step.settings.input.logicFunctionId)) {
+          break;
+        }
+
         await this.logicFunctionFromSourceService.deleteOneWithSource({
           id: step.settings.input.logicFunctionId,
           workspaceId,

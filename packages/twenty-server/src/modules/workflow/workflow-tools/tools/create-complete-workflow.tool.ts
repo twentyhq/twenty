@@ -116,6 +116,15 @@ This is the most efficient way for AI to create workflows as it handles all the 
     activate?: boolean;
   }) => {
     try {
+      const codeSteps = parameters.steps.filter(
+        (step) => step.type === ('CODE' as string),
+      );
+
+      if (codeSteps.length > 0) {
+        throw new Error(
+          'CODE steps cannot be created via create_complete_workflow because it does not create the underlying logic function. Use create_workflow_version_step instead.',
+        );
+      }
       const workflowId = await createWorkflow({
         deps,
         context,
