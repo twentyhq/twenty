@@ -14,7 +14,10 @@ describe('formatSyncActionsSummary', () => {
       {
         type: 'create',
         metadataName: 'objectMetadata',
-        flatEntity: { universalIdentifier: 'uid-object', nameSingular: 'rocket' },
+        flatEntity: {
+          universalIdentifier: 'uid-object',
+          nameSingular: 'rocket',
+        },
       },
       {
         type: 'create',
@@ -67,7 +70,10 @@ describe('formatSyncActionsSummary', () => {
     const actions = Array.from({ length: 55 }, (_, index) => ({
       type: 'create',
       metadataName: 'fieldMetadata',
-      flatEntity: { universalIdentifier: `uid-${index}`, name: `field${index}` },
+      flatEntity: {
+        universalIdentifier: `uid-${index}`,
+        name: `field${index}`,
+      },
     }));
 
     const events = formatSyncActionsSummary(actions);
