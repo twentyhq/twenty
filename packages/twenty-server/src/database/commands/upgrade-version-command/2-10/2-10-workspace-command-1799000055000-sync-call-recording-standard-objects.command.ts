@@ -345,35 +345,50 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
 
     // Renames must commit before the create: a combined create + rename
     // migration trips the namePlural unique index.
-    if (
-      objectMetadataRenameUpdates.length > 0 ||
-      fieldMetadataRenameUpdates.length > 0
-    ) {
+    const collisionRenameMigrations = [
+      ...objectMetadataRenameUpdates.map((flatObjectMetadata) => ({
+        applicationUniversalIdentifier:
+          flatObjectMetadata.applicationUniversalIdentifier,
+        allFlatEntityOperationByMetadataName: {
+          objectMetadata: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: [],
+            flatEntityToUpdate: [flatObjectMetadata],
+          },
+        },
+      })),
+      ...fieldMetadataRenameUpdates.map((flatFieldMetadata) => ({
+        applicationUniversalIdentifier:
+          flatFieldMetadata.applicationUniversalIdentifier,
+        allFlatEntityOperationByMetadataName: {
+          fieldMetadata: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: [],
+            flatEntityToUpdate: [flatFieldMetadata],
+          },
+        },
+      })),
+    ];
+
+    // Collisions can belong to different applications, so each rename runs as
+    // its own migration scoped to the colliding entity's application.
+    for (const {
+      applicationUniversalIdentifier,
+      allFlatEntityOperationByMetadataName,
+    } of collisionRenameMigrations) {
       const renameResult =
         await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
           {
             isSystemBuild: true,
-            applicationUniversalIdentifier:
-              twentyStandardFlatApplication.universalIdentifier,
+            applicationUniversalIdentifier,
             workspaceId,
-            allFlatEntityOperationByMetadataName: {
-              objectMetadata: {
-                flatEntityToCreate: [],
-                flatEntityToDelete: [],
-                flatEntityToUpdate: objectMetadataRenameUpdates,
-              },
-              fieldMetadata: {
-                flatEntityToCreate: [],
-                flatEntityToDelete: [],
-                flatEntityToUpdate: fieldMetadataRenameUpdates,
-              },
-            },
+            allFlatEntityOperationByMetadataName,
           },
         );
 
       if (renameResult.status === 'fail') {
         throw new Error(
-          `Failed to rename CallRecording name collisions for workspace ${workspaceId}: ${JSON.stringify(
+          `Failed to rename CallRecording name collision for workspace ${workspaceId}: ${JSON.stringify(
             renameResult,
             null,
             2,
