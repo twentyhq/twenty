@@ -54,7 +54,9 @@ describe('UsageEventListener', () => {
   });
 
   it('skips when the batch has no workspaceId', async () => {
-    await listener.handleUsageRecordedEvent(buildBatch({ workspaceId: undefined }));
+    await listener.handleUsageRecordedEvent(
+      buildBatch({ workspaceId: undefined }),
+    );
 
     expect(enqueue).not.toHaveBeenCalled();
   });
