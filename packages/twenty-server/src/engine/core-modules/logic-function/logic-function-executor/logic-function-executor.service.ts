@@ -80,7 +80,7 @@ export class LogicFunctionExecutorService {
     private readonly secretEncryptionService: SecretEncryptionService,
     private readonly subscriptionService: SubscriptionService,
     private readonly workspaceEventLiveService: EventLogLiveService,
-    private readonly auditService: EventLogEmitterService,
+    private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly billingService: BillingService,
     private readonly billingUsageService: BillingUsageService,
@@ -452,8 +452,8 @@ export class LogicFunctionExecutorService {
       executionId,
     }));
 
-    if (this.auditService.isEnabled()) {
-      void this.auditService
+    if (this.eventLogEmitterService.isEnabled()) {
+      void this.eventLogEmitterService
         .enqueue(buildApplicationLogEnvelopes(logEntries))
         .catch((error) => {
           this.logger.error('Failed to enqueue application logs', error);
@@ -467,7 +467,7 @@ export class LogicFunctionExecutorService {
       workspaceId,
     });
 
-    void this.auditService
+    void this.eventLogEmitterService
       .createContext({
         workspaceId,
       })

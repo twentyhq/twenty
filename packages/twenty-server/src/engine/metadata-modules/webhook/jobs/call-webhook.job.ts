@@ -15,7 +15,7 @@ import { type WebhookJobData } from 'src/engine/metadata-modules/webhook/types/w
 @Processor(MessageQueue.webhookQueue)
 export class CallWebhookJob {
   constructor(
-    private readonly auditService: EventLogEmitterService,
+    private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly metricsService: MetricsService,
     private readonly secureHttpClientService: SecureHttpClientService,
   ) {}
@@ -46,7 +46,7 @@ export class CallWebhookJob {
       webhookId: data.webhookId,
       eventName: data.eventName,
     };
-    const auditService = this.auditService.createContext({
+    const eventLogContext = this.eventLogEmitterService.createContext({
       workspaceId: data.workspaceId,
     });
 
@@ -89,7 +89,7 @@ export class CallWebhookJob {
 
       const success = response.status >= 200 && response.status < 300;
 
-      void auditService.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
+      void eventLogContext.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
         status: response.status,
         success,
         ...commonPayload,
@@ -105,7 +105,7 @@ export class CallWebhookJob {
         err.message.includes('internal IP address') &&
         err.message.includes('is not allowed');
 
-      void auditService.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
+      void eventLogContext.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
         success: false,
         ...commonPayload,
         ...(err.response && { status: err.response.status }),

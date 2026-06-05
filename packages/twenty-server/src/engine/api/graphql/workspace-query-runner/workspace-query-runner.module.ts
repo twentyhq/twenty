@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TelemetryListener } from 'src/engine/api/graphql/workspace-query-runner/listeners/telemetry.listener';
 import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
-import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
@@ -19,7 +18,6 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
     WorkspaceDataSourceModule,
     WorkspaceQueryHookModule,
     TypeOrmModule.forFeature([FeatureFlagEntity]),
-    EventLogEmitterModule,
     TelemetryModule,
     FileModule,
     RecordTransformerModule,

@@ -33,7 +33,9 @@ import { EventLogEmitterService } from './event-log-emitter.service';
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
 export class EventLogEmitterResolver {
-  constructor(private readonly auditService: EventLogEmitterService) {}
+  constructor(
+    private readonly eventLogEmitterService: EventLogEmitterService,
+  ) {}
 
   // preparing for new name
   async createPageview(
@@ -61,7 +63,7 @@ export class EventLogEmitterResolver {
       );
     }
 
-    const analyticsContext = this.auditService.createContext({
+    const analyticsContext = this.eventLogEmitterService.createContext({
       workspaceId: workspace.id,
       userId: user?.id,
     });
@@ -83,7 +85,7 @@ export class EventLogEmitterResolver {
     workspace: WorkspaceEntity | undefined,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
   ) {
-    const analyticsContext = this.auditService.createContext({
+    const analyticsContext = this.eventLogEmitterService.createContext({
       workspaceId: workspace?.id,
       userId: user?.id,
     });

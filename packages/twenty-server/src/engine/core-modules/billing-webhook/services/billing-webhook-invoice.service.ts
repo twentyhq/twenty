@@ -43,7 +43,7 @@ export class BillingWebhookInvoiceService {
     private readonly billingCreditRolloverService: BillingCreditRolloverService,
     private readonly resourceCreditService: ResourceCreditService,
     private readonly stripeInvoiceService: StripeInvoiceService,
-    private readonly auditService: EventLogEmitterService,
+    private readonly eventLogEmitterService: EventLogEmitterService,
   ) {}
 
   async processStripeEvent(
@@ -169,7 +169,7 @@ export class BillingWebhookInvoiceService {
     if (isDefined(billingCustomer)) {
       await this.delaySuspendedWorkspaceCleanup(billingCustomer);
 
-      await this.auditService
+      await this.eventLogEmitterService
         .createContext({ workspaceId: billingCustomer.workspaceId })
         .insertWorkspaceEvent(PAYMENT_RECEIVED_EVENT, {
           amountPaid: data.object.amount_paid,

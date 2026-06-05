@@ -23,7 +23,7 @@ export class MessagingMonitoringService {
   }: MessagingMonitoringTrackInput): Promise<void> {
     // TODO: replace once we have Prometheus
     /*
-    await this.auditService
+    await this.eventLogEmitterService
       .createContext({
         userId,
         workspaceId,

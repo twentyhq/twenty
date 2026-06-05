@@ -98,7 +98,7 @@ export class AuthService {
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly i18nService: I18nService,
-    private readonly auditService: EventLogEmitterService,
+    private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly createSSOConnectedAccountService: CreateSSOConnectedAccountService,
@@ -426,7 +426,7 @@ export class AuthService {
   }): Promise<AuthTokens> {
     const correlationId = randomUUID();
 
-    const analytics = this.auditService.createContext({
+    const analytics = this.eventLogEmitterService.createContext({
       workspaceId,
       userId: _impersonatorUserId,
     });

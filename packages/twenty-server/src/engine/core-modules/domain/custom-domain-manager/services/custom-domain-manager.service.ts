@@ -30,7 +30,7 @@ export class CustomDomainManagerService {
     private readonly publicDomainRepository: Repository<PublicDomainEntity>,
     private readonly billingService: BillingService,
     private readonly dnsManagerService: DnsManagerService,
-    private readonly auditService: EventLogEmitterService,
+    private readonly eventLogEmitterService: EventLogEmitterService,
   ) {}
 
   async isCustomDomainEnabled(workspaceId: string) {
@@ -112,7 +112,7 @@ export class CustomDomainManagerService {
 
       await this.workspaceRepository.save(workspace);
 
-      const analytics = this.auditService.createContext({
+      const analytics = this.eventLogEmitterService.createContext({
         workspaceId: workspace.id,
       });
 
