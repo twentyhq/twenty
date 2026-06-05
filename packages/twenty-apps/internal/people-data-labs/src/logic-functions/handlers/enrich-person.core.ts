@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { buildPersonNameParam } from 'src/logic-functions/utils/build-person-name-param';
@@ -37,6 +38,10 @@ export const enrichPersonCore = async (
   client: CoreApiClient = new CoreApiClient(),
 ): Promise<EnrichResult> => {
   const { recordId, force } = input;
+
+  if (!isNonEmptyString(recordId)) {
+    throw new Error('recordId is required');
+  }
 
   const node = await readPerson(client, recordId);
   if (!isDefined(node)) {
@@ -105,7 +110,7 @@ export const enrichPersonCore = async (
       updatePerson: {
         __args: {
           id: recordId,
-          data: { pdlEnrichmentStatus: 'ERROR', pdlLastEnrichedAt: enrichedAt },
+          data: pruneUndefined({ pdlEnrichmentStatus: 'ERROR' }),
         },
         id: true,
       },

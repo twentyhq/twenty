@@ -82,6 +82,15 @@ describe('enrichCompanyCore', () => {
     expect(result.success).toBe(false);
     expect(result.status).toBe('ERROR');
     expect(result.error).toBe('boom');
+    expect(captured.data?.pdlEnrichmentStatus).toBe('ERROR');
+    expect(Object.keys(captured.data ?? {})).toEqual(['pdlEnrichmentStatus']);
+  });
+
+  it('throws when recordId is missing', async () => {
+    await expect(
+      enrichCompanyCore({ recordId: '' }, createCoreApiClientMock()),
+    ).rejects.toThrow('recordId is required');
+    expect(enrichCompanyMock).not.toHaveBeenCalled();
   });
 
   it('skips when there is no usable identifier', async () => {

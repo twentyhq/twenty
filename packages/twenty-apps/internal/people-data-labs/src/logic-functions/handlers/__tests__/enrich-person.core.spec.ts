@@ -109,6 +109,14 @@ describe('enrichPersonCore', () => {
     expect(result.status).toBe('ERROR');
     expect(result.error).toBe('boom');
     expect(captured.data?.pdlEnrichmentStatus).toBe('ERROR');
+    expect(Object.keys(captured.data ?? {})).toEqual(['pdlEnrichmentStatus']);
+  });
+
+  it('throws when recordId is missing', async () => {
+    await expect(
+      enrichPersonCore({ recordId: '' }, createCoreApiClientMock()),
+    ).rejects.toThrow('recordId is required');
+    expect(enrichPersonMock).not.toHaveBeenCalled();
   });
 
   it('skips a recently enriched record without calling PDL', async () => {

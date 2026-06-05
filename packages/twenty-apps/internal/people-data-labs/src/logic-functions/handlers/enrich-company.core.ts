@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { buildSkippedResult } from 'src/logic-functions/utils/build-skipped-result';
@@ -30,6 +31,10 @@ export const enrichCompanyCore = async (
   client: CoreApiClient = new CoreApiClient(),
 ): Promise<EnrichResult> => {
   const { recordId, force } = input;
+
+  if (!isNonEmptyString(recordId)) {
+    throw new Error('recordId is required');
+  }
 
   const node = await readCompany(client, recordId);
   if (!isDefined(node)) {
@@ -89,7 +94,7 @@ export const enrichCompanyCore = async (
       updateCompany: {
         __args: {
           id: recordId,
-          data: { pdlEnrichmentStatus: 'ERROR', pdlLastEnrichedAt: enrichedAt },
+          data: pruneUndefined({ pdlEnrichmentStatus: 'ERROR' }),
         },
         id: true,
       },
