@@ -10,8 +10,6 @@ type EventLogTableSelectorProps = {
   onChange: (value: EventLogTable) => void;
 };
 
-// Exhaustive label map: a new EventLogTable value fails to compile until labeled.
-// Insertion order here drives the displayed option order.
 const TABLE_LABELS: Record<EventLogTable, MessageDescriptor> = {
   [EventLogTable.PAGEVIEW]: msg`Page Views`,
   [EventLogTable.WORKSPACE_EVENT]: msg`Workspace Events`,

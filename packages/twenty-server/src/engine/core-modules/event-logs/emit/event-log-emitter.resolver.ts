@@ -87,8 +87,6 @@ export class EventLogEmitterResolver {
     }
 
     if (isTrackAnalyticsInput(createAnalyticsInput)) {
-      // For track events, we need to determine if it's a workspace or object event
-      // Since we don't have recordId and objectMetadataId in the input, we use insertWorkspaceEvent
       return eventLogContext.insertWorkspaceEvent(
         createAnalyticsInput.event,
         createAnalyticsInput.properties ?? {},

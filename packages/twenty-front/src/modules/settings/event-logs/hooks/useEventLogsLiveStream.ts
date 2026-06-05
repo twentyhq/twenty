@@ -16,7 +16,6 @@ type EventLogsLivePayload = {
   eventLogsLive: EventLogRecord[] | null;
 };
 
-// print() the static document once, not on every subscribe.
 const EVENT_LOGS_LIVE_SUBSCRIPTION_QUERY = print(EVENT_LOGS_LIVE_SUBSCRIPTION);
 
 export const useEventLogsLiveStream = ({
@@ -29,13 +28,10 @@ export const useEventLogsLiveStream = ({
   const sseClient = useAtomStateValue(sseClientState);
   const [liveRecords, setLiveRecords] = useState<EventLogRecord[]>([]);
 
-  // Reset the buffer when the table changes.
   useEffect(() => {
     setLiveRecords([]);
   }, [table]);
 
-  // Drop the buffer when the stream is disabled (paused or filtered) so stale
-  // records can't stay prepended and inflate the displayed count.
   useEffect(() => {
     if (!enabled) {
       setLiveRecords([]);

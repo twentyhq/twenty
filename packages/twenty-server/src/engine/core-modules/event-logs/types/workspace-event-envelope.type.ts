@@ -1,6 +1,3 @@
-// Transport envelope for the five event streams: each variant carries a fully-built ClickHouse
-// row, and a sink routes purely on `table`. Unifies transport/sink while keeping producers distinct.
-
 export type EventContextFields = {
   workspaceId?: string | null;
   userId?: string | null;
@@ -54,9 +51,7 @@ export type ApplicationLogRow = {
   message: string;
 };
 
-// The `table` discriminant must match the registry's clickHouseTable values
-// (EVENT_LOG_TYPES in registry/event-log-registry.ts) — the registry is the source
-// of truth for table names; keep these literals in sync with it.
+// The `table` literals must match the registry's clickHouseTable values (EVENT_LOG_TYPES).
 export type WorkspaceEventEnvelope =
   | { table: 'workspaceEvent'; row: AnalyticsEventRow }
   | { table: 'pageview'; row: PageviewRow }

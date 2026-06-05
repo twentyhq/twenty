@@ -19,8 +19,6 @@ import { EventLogsLiveResolver } from './event-logs-live.resolver';
 import { EventLogsResolver } from './event-logs.resolver';
 import { EventLogsService } from './event-logs.service';
 
-// Read/UI surface for event logs: GraphQL query + live subscription, entitlement-gated.
-// This is where billing, enterprise and permissions concerns live — kept off the producer path.
 @Module({
   imports: [
     ClickHouseModule,

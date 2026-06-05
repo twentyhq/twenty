@@ -4,7 +4,6 @@ import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { type EventSink } from 'src/engine/core-modules/event-logs/ingest/event-sink';
 import { type WorkspaceEventEnvelope } from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
 
-// Throws on insert failure so the consumer job retries (at-least-once); no-ops when ClickHouse is unconfigured.
 @Injectable()
 export class ClickHouseEventSink implements EventSink {
   constructor(private readonly clickHouseService: ClickHouseService) {}

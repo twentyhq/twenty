@@ -11,25 +11,15 @@ import {
   type UsageEventRow,
 } from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
 
-// A row read back from ClickHouse is the all-optional view of its write row: the write-only
-// transport markers ('type'/'version') are gone, `timestamp` is always selected, and any other
-// column may be missing from a given SELECT. One column definition per type, two derived shapes.
 type StoredRow<TRow> = Partial<Omit<TRow, 'type' | 'version'>> & {
   timestamp: string;
 };
 
-// workspaceEvent, pageview and objectEvent read back through one shape — the superset of their
-// columns — so a single generic normalizer serves all three.
 type StoredEventRow = StoredRow<ObjectEventRow & Pick<PageviewRow, 'name'>>;
 
-// Single source of truth for an event-log type: the ClickHouse table it lives in
-// (also its live presence key), who may read it, the column the free-text filter
-// matches, and how a stored row maps to the GraphQL record. Adding a type = one
-// entry here (+ a ClickHouse migration, and a producer adapter if it's a new source).
 export type EventLogTypeDefinition = {
   clickHouseTable: string;
-  // null = readable on every plan (applicationLog today); otherwise the billing
-  // entitlement the workspace must hold.
+  // null = free on every plan; otherwise the required billing entitlement
   requiresEntitlement: BillingEntitlementKey | null;
   eventFieldName: string;
   normalize: (row: Record<string, unknown>) => EventLogRecord;

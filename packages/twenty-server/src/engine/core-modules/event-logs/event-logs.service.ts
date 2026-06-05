@@ -174,10 +174,7 @@ export class EventLogsService {
       params.eventTypePattern = `%${filters.eventType.toLowerCase()}%`;
     }
 
-    // TODO: Legacy event tables (workspaceEvent, pageview, objectEvent) use
-    // userId because some actions are logged out. Usage events use
-    // userWorkspaceId directly which is more relevant in a workspace context.
-    // Consider migrating all event tables to userWorkspaceId for consistency.
+    // TODO: non-usage tables filter by userId (some actions are logged out) while usageEvent uses userWorkspaceId; migrate all to userWorkspaceId for consistency.
     if (isDefined(filters.userWorkspaceId)) {
       if (table === EventLogTable.APPLICATION_LOG) {
         // Application logs don't have a user column

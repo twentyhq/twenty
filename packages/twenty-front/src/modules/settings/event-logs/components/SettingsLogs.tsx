@@ -95,7 +95,6 @@ export const SettingsLogs = () => {
   const billing = useAtomStateValue(billingState);
   const navigateSettings = useNavigateSettings();
 
-  // Gate on the AUDIT_LOGS entitlement the API enforces, not the signed-key flag.
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const hasAuditLogsEntitlement =
     currentWorkspace?.billingEntitlements?.some(
@@ -110,7 +109,6 @@ export const SettingsLogs = () => {
   const [filters, setFilters] = useState<EventLogFiltersState>({});
   const [isPaused, setIsPaused] = useState(false);
 
-  // Free on every plan — keep in sync with EVENT_LOG_TYPES[*].requiresEntitlement on the server
   const isApplicationLog = selectedTable === EventLogTable.APPLICATION_LOG;
   const canQuery =
     isClickHouseConfigured && (isApplicationLog || hasAuditLogsEntitlement);

@@ -51,8 +51,6 @@ const eventSinksProvider = {
   inject: [TwentyConfigService, ClickHouseEventSink, ConsoleEventSink],
 };
 
-// Sink layer: persists events to the configured sinks (ClickHouse) + live fan-out. Used by the
-// emitter (direct write) and by the worker's internal-event adapter for object/record events.
 @Module({
   imports: [ClickHouseModule, EventLogLiveModule],
   providers: [

@@ -67,7 +67,6 @@ export class EventLogsLiveResolver {
     @Args('table', { type: () => EventLogTable }) table: EventLogTable,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    // Same access rules as the query.
     await this.eventLogsService.validateAccess(workspace.id, table);
 
     const clickHouseTable = getClickHouseTableName(table);

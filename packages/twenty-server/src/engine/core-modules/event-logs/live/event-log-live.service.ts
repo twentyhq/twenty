@@ -16,8 +16,6 @@ type WatchedGroup = {
   rows: Record<string, unknown>[];
 };
 
-// Presence-gated live fan-out: a subscriber marks (workspace, table) watched with a heartbeat-
-// refreshed TTL, and the consumer only publishes to watched tables — so unwatched types cost nothing.
 @Injectable()
 export class EventLogLiveService {
   private readonly logger = new Logger(EventLogLiveService.name);
@@ -32,7 +30,6 @@ export class EventLogLiveService {
     return `workspaceEventLive:${workspaceId}:${key}`;
   }
 
-  // Keyed by an arbitrary live-stream key (a ClickHouse table, or the CLI logic-function channel).
   async markWatched(workspaceId: string, key: string): Promise<void> {
     await this.cacheStorageService.set<boolean>(
       this.getPresenceKey(workspaceId, key),
@@ -50,7 +47,6 @@ export class EventLogLiveService {
   }
 
   async publishWatched(events: WorkspaceEventEnvelope[]): Promise<void> {
-    // Group by (workspaceId, table) so each batch publishes to the right workspace channel.
     const groups = new Map<string, WatchedGroup>();
 
     for (const event of events) {
@@ -71,7 +67,6 @@ export class EventLogLiveService {
       groups.set(key, group);
     }
 
-    // allSettled: one group's failure neither aborts the others nor rejects into the caller (would retry the job).
     const results = await Promise.allSettled(
       [...groups.values()].map(async ({ workspaceId, table, rows }) => {
         if (!(await this.isWatched(workspaceId, table))) {

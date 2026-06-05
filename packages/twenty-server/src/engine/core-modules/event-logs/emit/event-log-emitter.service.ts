@@ -17,9 +17,6 @@ import {
   type WorkspaceEventEnvelope,
 } from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
 
-// Producer-facing emit API. Builds schema-validated envelopes and writes them straight through the
-// sink (ClickHouse batches server-side via async_insert) plus the live fan-out. Best-effort:
-// failures are logged, never thrown back to the caller.
 @Injectable()
 export class EventLogEmitterService {
   private readonly logger = new Logger(EventLogEmitterService.name);

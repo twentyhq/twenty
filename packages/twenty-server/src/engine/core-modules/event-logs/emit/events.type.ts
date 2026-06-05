@@ -47,7 +47,6 @@ import {
   type WorkspaceCreatedTrackEvent,
 } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/workspace/workspace-created';
 
-// Define all track event names
 export type TrackEventName =
   | typeof CUSTOM_DOMAIN_ACTIVATED_EVENT
   | typeof CUSTOM_DOMAIN_DEACTIVATED_EVENT
@@ -62,7 +61,6 @@ export type TrackEventName =
   | typeof WORKSPACE_CREATED_EVENT
   | typeof PAYMENT_RECEIVED_EVENT;
 
-// Map event names to their corresponding event types
 export interface TrackEvents {
   [CUSTOM_DOMAIN_ACTIVATED_EVENT]: CustomDomainActivatedTrackEvent;
   [CUSTOM_DOMAIN_DEACTIVATED_EVENT]: CustomDomainDeactivatedTrackEvent;

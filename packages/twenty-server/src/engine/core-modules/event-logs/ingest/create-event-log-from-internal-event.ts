@@ -23,7 +23,6 @@ const OBJECT_EVENT_BY_SUFFIX = {
   '.upserted': OBJECT_RECORD_UPSERTED_EVENT,
 } as const;
 
-// Already on a durable worker, so object events are ingest()ed directly instead of re-enqueued.
 @Processor(MessageQueue.entityEventsToDbQueue)
 export class CreateEventLogFromInternalEvent {
   constructor(

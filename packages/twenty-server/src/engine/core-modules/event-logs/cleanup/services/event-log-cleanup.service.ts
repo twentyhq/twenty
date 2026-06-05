@@ -35,15 +35,10 @@ export class EventLogCleanupService {
 
     cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
 
-    // One workspace-level retention applies to every table (including the high-volume
-    // applicationLog). Per-type retention isn't a product requirement yet — revisit here
-    // if audit vs. debug logs ever need different windows.
     for (const table of Object.values(EventLogTable)) {
       const tableName = getClickHouseTableName(table);
 
       try {
-        // ClickHouse ALTER TABLE DELETE is async by default
-        // We use lightweight deletes (mutations) which are efficient
         const success = await this.clickHouseService.executeCommand(
           `ALTER TABLE ${tableName} DELETE WHERE "workspaceId" = {workspaceId:String} AND "timestamp" < {cutoffDate:DateTime64(3)}`,
           {

@@ -334,22 +334,11 @@ export class LogicFunctionExecutorService {
       [DEFAULT_APP_ACCESS_TOKEN_NAME]: applicationAccessToken.token,
       [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
       APPLICATION_ID: flatApplication.id,
-      // Server variables first, workspace variables override. Workspace-level
-      // values let a specific tenant customize a server default.
       ...serverVariables,
       ...workspaceVariables,
     };
   }
 
-  // Resolves encrypted server-level variables (ApplicationRegistrationVariable)
-  // for the application's registration. Returns an empty object when the
-  // application isn't linked to a registration (legacy LOCAL apps).
-  //
-  // Runs on every logic function execution — the query is indexed on
-  // applicationRegistrationId and filters unfilled rows server-side. Most
-  // apps have 0-3 server variables so the round-trip is cheap, but if this
-  // becomes a hot path, move to a WorkspaceCacheProvider mirroring
-  // WorkspaceApplicationVariableMapCacheService.
   private async buildServerVariableEnvMap(
     applicationRegistrationId: string | null,
   ): Promise<Record<string, string>> {
@@ -367,16 +356,6 @@ export class LogicFunctionExecutorService {
 
     const envMap: Record<string, string> = {};
 
-    // ApplicationRegistrationVariable.encryptedValue is always written
-    // encrypted (ApplicationRegistrationVariableService.createVariable and
-    // .updateVariable call encrypt unconditionally), independent of
-    // `isSecret`. `isSecret` is display metadata — the storage contract is
-    // not conditional, so decryption isn't either.
-    //
-    // Registration variables are server-level config — any installed
-    // application across any workspace must be able to read them — so they
-    // use the instance-scoped versioned envelope (no workspaceId in the HKDF
-    // info).
     for (const variable of serverVariables) {
       if (variable.encryptedValue !== '') {
         envMap[variable.key] = this.secretEncryptionService.decryptVersioned(
@@ -388,7 +367,6 @@ export class LogicFunctionExecutorService {
     return envMap;
   }
 
-  // Best-effort: gated on CLI presence, and never throws into the executor.
   private async publishLogicFunctionLogsToCli({
     result,
     flatApplication,
@@ -410,7 +388,6 @@ export class LogicFunctionExecutorService {
         return;
       }
 
-      // CLI `dev:function:logs` tail — kept alongside the generalized WORKSPACE_EVENTS_CHANNEL
       await this.subscriptionService.publish({
         channel: SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,
         workspaceId,
@@ -453,7 +430,6 @@ export class LogicFunctionExecutorService {
       executionId,
     }));
 
-    // gate here to skip building N application-log envelopes when no sink is configured
     if (this.eventLogEmitterService.isEnabled()) {
       void this.eventLogEmitterService
         .dispatch(buildApplicationLogEnvelopes(logEntries))

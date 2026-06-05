@@ -107,9 +107,6 @@ export class EntityEventsToDbListener {
       ),
     );
 
-    // Hard deletes (DESTROYED) aren't in the object-event taxonomy (only
-    // created/updated/deleted/upserted) and have no timeline activity, so neither job
-    // runs for them — the audit job would otherwise be enqueued only to no-op.
     if (isAuditLogBatchEvent && action !== DatabaseEventAction.DESTROYED) {
       promises.push(
         this.entityEventsToDbQueueService.add<WorkspaceEventBatch<T>>(
