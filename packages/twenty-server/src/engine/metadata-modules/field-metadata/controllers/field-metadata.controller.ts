@@ -17,7 +17,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -47,6 +46,7 @@ import {
 import { FieldMetadataRestApiExceptionFilter } from 'src/engine/metadata-modules/field-metadata/filters/field-metadata-rest-api-exception.filter';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
+import { getTwentyStandardApplicationId } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computeUniqueFieldMetadataIdsFromFlatIndexMaps } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-flat-index-maps.util';
 import {
@@ -98,11 +98,8 @@ export class FieldMetadataController {
         { workspaceId, flatMapsKeys: ['flatApplicationMaps'] },
       );
 
-    const standardApplicationId = Object.values(flatApplicationMaps.byId).find(
-      (application) =>
-        application?.universalIdentifier ===
-        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-    )?.id;
+    const standardApplicationId =
+      getTwentyStandardApplicationId(flatApplicationMaps);
 
     if (!isDefined(standardApplicationId)) {
       throw new FieldMetadataException(

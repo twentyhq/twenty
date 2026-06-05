@@ -17,7 +17,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, Repository } from 'typeorm';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -52,6 +51,7 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata-modules/object-metadata/utils/from-object-metadata-entity-to-object-metadata-dto.util';
+import { getTwentyStandardApplicationId } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id.util';
 import {
   toLegacyObjectMetadataCreateResponse,
   toLegacyObjectMetadataDeleteResponse,
@@ -102,11 +102,8 @@ export class ObjectMetadataController {
         { workspaceId, flatMapsKeys: ['flatApplicationMaps'] },
       );
 
-    const standardApplicationId = Object.values(flatApplicationMaps.byId).find(
-      (application) =>
-        application?.universalIdentifier ===
-        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-    )?.id;
+    const standardApplicationId =
+      getTwentyStandardApplicationId(flatApplicationMaps);
 
     if (!isDefined(standardApplicationId)) {
       throw new ObjectMetadataException(
