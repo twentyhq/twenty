@@ -6,7 +6,9 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 
-const OBJECT_KEY = getMetadataFlatEntityMapsKey(ALL_METADATA_NAME.objectMetadata);
+const OBJECT_KEY = getMetadataFlatEntityMapsKey(
+  ALL_METADATA_NAME.objectMetadata,
+);
 
 const buildMapsWith = (
   entities: { universalIdentifier: string; nameSingular: string }[],
