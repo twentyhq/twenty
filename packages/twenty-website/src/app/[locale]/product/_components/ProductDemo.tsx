@@ -16,7 +16,8 @@ import NextImage from 'next/image';
 
 const RootWrapper = styled.div`
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
   position: relative;
   width: 100%;
 `;
@@ -56,8 +57,9 @@ const StyledSection = styled.section`
 
 const StyledContainer = styled(Container)`
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   justify-items: center;
+  min-width: 0;
   padding-bottom: ${theme.spacing(16)};
   padding-left: ${theme.spacing(4)};
   padding-right: ${theme.spacing(4)};
