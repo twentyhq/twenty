@@ -185,6 +185,8 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       orderByWithIdCondition,
       limit,
       isForwardPagination,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
     );
 
     if (!isForwardPagination) {

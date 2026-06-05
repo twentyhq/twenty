@@ -9,7 +9,6 @@ import { CaseStudyCatalogPromo } from '@/sections/CaseStudyCatalog';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { PartnerSignoff } from '@/app/[locale]/partners/components/PartnerSignoff';
 import { PartnerTestimonials } from '@/app/[locale]/partners/components/PartnerTestimonials';
-import { PartnerThreeCards } from '@/app/[locale]/partners/components/PartnerThreeCards';
 import { theme } from '@/theme';
 import { buildRouteMetadata } from '@/lib/seo';
 import { styled } from '@linaria/react';
@@ -57,8 +56,6 @@ export default async function PartnerPage({ params }: PartnerPageProps) {
           entries={CASE_STUDY_CATALOG_ENTRIES}
         />
       </PromoSpacing>
-
-      <PartnerThreeCards />
 
       <PartnerTestimonials />
 

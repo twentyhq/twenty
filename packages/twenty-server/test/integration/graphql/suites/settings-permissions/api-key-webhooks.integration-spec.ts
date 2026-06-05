@@ -33,9 +33,8 @@ describe('api key and webhooks permissions', () => {
         });
     });
 
-    // A non-session token (here API_KEY; PLAYGROUND shares the same access path)
-    // must not mint a durable API key, otherwise a short-lived token could
-    // escalate into a long-lived one. RequireAccessTokenGuard enforces this.
+    // Non-ACCESS tokens (API_KEY here, PLAYGROUND same path) must never mint
+    // an API key — enforced by RequireAccessTokenGuard.
     it('should reject a non-ACCESS token even with API key permission', async () => {
       const queryData = {
         query: `
@@ -65,7 +64,7 @@ describe('api key and webhooks permissions', () => {
       const queryData = {
         query: `
         mutation createApiKey {
-          createApiKey(input: { name: "escalation", expiresAt: "2025-01-01T00:00:00Z" }) {
+          createApiKey(input: { name: "escalation", expiresAt: "2025-01-01T00:00:00Z", roleId: "20202020-0000-4000-8000-000000000000" }) {
             id
           }
         }

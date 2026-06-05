@@ -1,9 +1,7 @@
 import { styled } from '@linaria/react';
 
-import {
-  SettingsDevelopersWebhookTableRow,
-  WEBHOOK_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
-} from '@/settings/developers/components/SettingsDevelopersWebhookTableRow';
+import { SettingsDevelopersWebhookTableRow } from '@/settings/developers/components/SettingsDevelopersWebhookTableRow';
+import { WEBHOOK_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/settings/developers/constants/WebhookTableRowGridTemplateColumns';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';

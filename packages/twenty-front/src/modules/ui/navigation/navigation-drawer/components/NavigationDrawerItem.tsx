@@ -52,9 +52,6 @@ export type NavigationDrawerItemProps = {
   onClick?: () => void;
   Icon?: IconComponent | ((props: TablerIconsProps) => JSX.Element);
   iconColor?: string | null;
-  // Wrap the plain icon in a soft grey tile (no border) — used by the
-  // settings drawer so its icons read as a uniform group without picking
-  // up TintedIconTile's bordered colored treatment.
   withIconBackground?: boolean;
   active?: boolean;
   modifier?: NavigationDrawerItemModifier;
@@ -206,10 +203,6 @@ const StyledIcon = styled.div`
   margin-right: ${themeCssVariables.spacing[2]};
 `;
 
-// Soft grey background-only tile (no border) used by the settings drawer.
-// Sized one step larger than the icon so the icon sits with a couple of
-// pixels of breathing room on every side. radius.md matches the rest of
-// the App's small-card / tile language; radius.sm read as sharp squares.
 const StyledIconBackgroundTile = styled.div`
   align-items: center;
   background-color: ${themeCssVariables.background.tertiary};

@@ -1,4 +1,5 @@
 import { type ParsedLogLine } from 'src/engine/core-modules/application-logs/types/parsed-log-line.type';
+import { stripAnsiEscapes } from 'src/engine/core-modules/application-logs/utils/strip-ansi-escapes.util';
 
 // Matches: 2024-01-01T00:00:00.000Z INFO some message
 const LOG_LINE_REGEX =
@@ -18,14 +19,14 @@ export const parseApplicationLogLines = (rawLogs: string): ParsedLogLine[] => {
       return {
         timestamp: new Date(match[1]),
         level: match[2],
-        message: match[3],
+        message: stripAnsiEscapes(match[3]),
       };
     }
 
     return {
       timestamp: new Date(),
       level: 'INFO',
-      message: line,
+      message: stripAnsiEscapes(line),
     };
   });
 };

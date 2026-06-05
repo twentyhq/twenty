@@ -12,6 +12,7 @@ export default defineView({
   icon: 'IconUserPlus',
   objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
   type: ViewType.TABLE,
+  position: 1,
   fields: [
     { universalIdentifier: 'b4f505d7-3849-4a74-a27f-1c91733702b5', fieldMetadataUniversalIdentifier: 'a0000001-0000-4000-8000-000000000001', position: 0, isVisible: true },
     { universalIdentifier: '8a39e510-e533-4cd7-9b65-5e16b5f773d0', fieldMetadataUniversalIdentifier: '2ca9856f-f54a-4326-9ff3-668fd7da0b50', position: 1, isVisible: true },

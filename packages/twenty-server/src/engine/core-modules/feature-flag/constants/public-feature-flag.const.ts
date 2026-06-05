@@ -20,6 +20,22 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
         'Enable many-to-many relations through junction tables configuration',
     },
   },
+  {
+    key: FeatureFlagKey.IS_SETTINGS_DISCOVERY_HERO_ENABLED,
+    metadata: {
+      label: 'Settings Discovery Hero',
+      description:
+        'Show the per-page hero illustration + video walkthrough modal on settings pages',
+    },
+  },
+  {
+    key: FeatureFlagKey.IS_WORKFLOW_RUN_STEP_LOGS_ENABLED,
+    metadata: {
+      label: 'Workflow Run Step Logs',
+      description:
+        'Persist and display per-step observability logs (token usage, tool calls, HTTP bodies, serverless function output) on workflow runs',
+    },
+  },
   ...(process.env.CLOUDFLARE_API_KEY
     ? [
         // {

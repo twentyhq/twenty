@@ -441,6 +441,7 @@ type LogicFunction {
   description: String
   runtime: String!
   timeoutSeconds: Float!
+  executionMode: LogicFunctionExecutionMode!
   sourceHandlerPath: String!
   handlerName: String!
   cronTriggerSettings: JSON
@@ -452,6 +453,11 @@ type LogicFunction {
   universalIdentifier: UUID
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+enum LogicFunctionExecutionMode {
+  LIVE
+  PREBUILT
 }
 
 type StandardOverrides {
@@ -1779,6 +1785,9 @@ enum FeatureFlagKey {
   IS_EMAIL_GROUP_ENABLED
   IS_JUNCTION_RELATIONS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
+  IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
+  IS_SETTINGS_DISCOVERY_HERO_ENABLED
+  IS_WORKFLOW_RUN_STEP_LOGS_ENABLED
 }
 
 type WorkspaceUrls {
@@ -2121,6 +2130,18 @@ type FieldConnection {
 
   """Array of edges."""
   edges: [FieldEdge!]!
+}
+
+type AppConnection {
+  id: ID!
+  providerName: String!
+  name: String!
+  handle: String!
+  visibility: String!
+  userWorkspaceId: String!
+  accessToken: String!
+  scopes: [String!]!
+  authFailedAt: String
 }
 
 type ResendEmailVerificationToken {
@@ -2518,6 +2539,12 @@ type AgentMessagePart {
   fileUrl: String
   providerMetadata: JSON
   createdAt: DateTime!
+}
+
+type RunAgentResult {
+  result: JSON
+  error: String
+  success: Boolean!
 }
 
 type ChannelSyncSuccess {
@@ -2979,6 +3006,7 @@ type Query {
   ): IndexConnection!
   findManyAgents: [Agent!]!
   findOneAgent(input: AgentIdInput!): Agent!
+  myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   getRoles: [Role!]!
   getToolIndex: [ToolIndexEntry!]!
   getToolInputSchema(toolName: String!): JSON
@@ -2999,9 +3027,10 @@ type Query {
   getViewGroup(id: String!): ViewGroup
   myMessageFolders(messageChannelId: UUID): [MessageFolder!]!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
-  myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   minimalMetadata: MinimalMetadata!
+  appConnections(filter: ListAppConnectionsInput): [AppConnection!]!
+  appConnection(id: ID!): AppConnection!
   findWorkspaceAiStats: WorkspaceAiStats!
   chatThreads: [AgentChatThread!]!
   chatThread(id: UUID!): AgentChatThread!
@@ -3054,6 +3083,12 @@ input LogicFunctionIdInput {
 input AgentIdInput {
   """The id of the agent."""
   id: UUID!
+}
+
+input ListAppConnectionsInput {
+  providerName: String
+  userWorkspaceId: String
+  visibility: String
 }
 
 input EventLogQueryInput {
@@ -3218,6 +3253,7 @@ type Mutation {
   createOneAgent(input: CreateAgentInput!): Agent!
   updateOneAgent(input: UpdateAgentInput!): Agent!
   deleteOneAgent(input: AgentIdInput!): Agent!
+  deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   updateWorkspaceMemberRole(workspaceMemberId: UUID!, roleId: UUID!): WorkspaceMember!
   createOneRole(createRoleInput: CreateRoleInput!): Role!
   updateOneRole(updateRoleInput: UpdateRoleInput!): Role!
@@ -3228,6 +3264,7 @@ type Mutation {
   upsertRowLevelPermissionPredicates(input: UpsertRowLevelPermissionPredicatesInput!): UpsertRowLevelPermissionPredicatesResult!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   removeRoleFromAgent(agentId: UUID!): Boolean!
+  runAgent(input: RunAgentInput!): RunAgentResult!
   createWebhook(input: CreateWebhookInput!): Webhook!
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   deleteWebhook(id: UUID!): Webhook!
@@ -3245,7 +3282,6 @@ type Mutation {
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
   createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
   deleteEmailGroupChannel(id: UUID!): MessageChannel!
-  deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
@@ -4082,6 +4118,11 @@ input RowLevelPermissionPredicateGroupInput {
   parentRowLevelPermissionPredicateGroupId: UUID
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator!
   positionInRowLevelPermissionPredicateGroup: Float
+}
+
+input RunAgentInput {
+  agentUniversalIdentifier: String!
+  prompt: String!
 }
 
 input CreateWebhookInput {

@@ -246,10 +246,10 @@ export class TwentyConfigService {
 
   private maskSensitiveValue<T extends keyof ConfigVariables>(
     key: T,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     value: any,
     metadata: ConfigVariablesMetadataOptions,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
   ): any {
     if (key in CONFIG_VARIABLES_MASKING_CONFIG) {
       if (!isString(value)) {

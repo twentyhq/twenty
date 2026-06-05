@@ -14,7 +14,15 @@ const make = (overrides: Partial<MarketplacePartner>): MarketplacePartner => ({
   calendarLink: 'https://calendly.com/p',
   region: [],
   languagesSpoken: [],
-  deploymentExpertise: [],
+  partnerScope: [],
+  hourlyRateUsd: null,
+  projectBudgetMinUsd: null,
+  projectBudgetTypicalUsd: null,
+  linkedinUrl: '',
+  profilePictureUrl: '',
+  city: '',
+  country: '',
+  skills: [],
   ...overrides,
 });
 
@@ -22,19 +30,19 @@ const felix = make({
   slug: 'felix',
   region: ['EUROPE', 'US', 'APAC'],
   languagesSpoken: ['ENGLISH', 'FRENCH'],
-  deploymentExpertise: ['CLOUD', 'SELF_HOST'],
+  partnerScope: ['HOSTING', 'DEVELOPMENT'],
 });
 const rashad = make({
   slug: 'rashad',
   region: ['US', 'EUROPE'],
   languagesSpoken: ['ENGLISH', 'FRENCH'],
-  deploymentExpertise: ['CLOUD'],
+  partnerScope: ['DEVELOPMENT'],
 });
 const acme = make({
   slug: 'acme',
   region: ['MENA'],
   languagesSpoken: ['ENGLISH'],
-  deploymentExpertise: ['SELF_HOST'],
+  partnerScope: ['SUPPORT'],
 });
 
 const all = [felix, rashad, acme] as const;
@@ -48,7 +56,7 @@ describe('filterPartners', () => {
     const c: FilterCriteria = {
       regions: new Set(['MENA']),
       languages: new Set(),
-      deployments: new Set(),
+      categories: new Set(),
     };
     expect(filterPartners(all, c)).toEqual([acme]);
   });
@@ -57,25 +65,43 @@ describe('filterPartners', () => {
     const c: FilterCriteria = {
       regions: new Set(['APAC', 'MENA']),
       languages: new Set(),
-      deployments: new Set(),
+      categories: new Set(),
     };
     expect(filterPartners(all, c)).toEqual([felix, acme]);
   });
 
-  it('combines facets with AND', () => {
+  it('combines region + language facets with AND', () => {
     const c: FilterCriteria = {
       regions: new Set(['EUROPE']),
       languages: new Set(['FRENCH']),
-      deployments: new Set(),
+      categories: new Set(),
     };
     expect(filterPartners(all, c)).toEqual([felix, rashad]);
+  });
+
+  it('filters by a single category', () => {
+    const c: FilterCriteria = {
+      regions: new Set(),
+      languages: new Set(),
+      categories: new Set(['SUPPORT']),
+    };
+    expect(filterPartners(all, c)).toEqual([acme]);
+  });
+
+  it('filters by multiple categories (OR within facet)', () => {
+    const c: FilterCriteria = {
+      regions: new Set(),
+      languages: new Set(),
+      categories: new Set(['HOSTING', 'SUPPORT']),
+    };
+    expect(filterPartners(all, c)).toEqual([felix, acme]);
   });
 
   it('returns empty when no partner matches', () => {
     const c: FilterCriteria = {
       regions: new Set(),
       languages: new Set(['GERMAN']),
-      deployments: new Set(),
+      categories: new Set(),
     };
     expect(filterPartners(all, c)).toEqual([]);
   });
@@ -84,7 +110,7 @@ describe('filterPartners', () => {
     const c: FilterCriteria = {
       regions: new Set(['EUROPE']),
       languages: new Set(['FRENCH']),
-      deployments: new Set(['SELF_HOST']),
+      categories: new Set(['HOSTING']),
     };
     expect(filterPartners(all, c)).toEqual([felix]);
   });
@@ -103,7 +129,7 @@ describe('hasAnyFilter', () => {
       hasAnyFilter({ ...EMPTY_CRITERIA, languages: new Set(['ENGLISH']) }),
     ).toBe(true);
     expect(
-      hasAnyFilter({ ...EMPTY_CRITERIA, deployments: new Set(['CLOUD']) }),
+      hasAnyFilter({ ...EMPTY_CRITERIA, categories: new Set(['HOSTING']) }),
     ).toBe(true);
   });
 });
