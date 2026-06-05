@@ -9,7 +9,7 @@ export interface ExceptionHandlerOptions {
     name: string;
   };
   document?: string;
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   additionalData?: Record<string, any>;
   user?: ExceptionHandlerUser | null;
   workspace?: ExceptionHandlerWorkspace | null;
