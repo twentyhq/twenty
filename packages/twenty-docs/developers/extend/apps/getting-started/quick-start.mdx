@@ -127,14 +127,16 @@ yarn twenty dev --once
 |---------|----------|-------------|
 | `yarn twenty dev` | Watches and re-syncs on every change. Runs until you stop it. | Interactive local development. |
 | `yarn twenty dev --once` | Single build + sync, exits `0` on success, `1` on failure. | CI, pre-commit hooks, AI agents, scripted workflows. |
+| `yarn twenty dev --once --dry-run` | Builds and prints the metadata changes **without applying them**. | Inspecting what a sync would change before committing to it. |
 
-Both modes need an authenticated remote.
+Both modes need an authenticated remote. See [Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery#previewing-changes-dry-run) for more on `--dry-run`.
 
 ### Dev mode options
 
 | Flag | Description |
 |------|-------------|
 | `--once` | Build and sync once, then exit. |
+| `--dry-run` | With `--once`, preview the metadata changes without applying them. Writes nothing. |
 | `--debounceMs <ms>` | Set the file-change debounce delay in milliseconds (default: `2000`). |
 | `--verbose` / `--debug` | Show detailed build logs, sync requests, and error traces. |
 

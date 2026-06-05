@@ -8761,6 +8761,9 @@ export default {
                     "manifest": [
                         15,
                         "JSON!"
+                    ],
+                    "dryRun": [
+                        6
                     ]
                 }
             ],

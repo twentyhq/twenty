@@ -2,7 +2,7 @@ import { validate as uuidValidate, version as uuidVersion } from 'uuid';
 
 import { type FieldManifest, type Manifest } from 'twenty-shared/application';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 const MIN_UUID_VERSION = 4;
 
@@ -150,20 +150,14 @@ export const manifestValidate = (manifest: Manifest) => {
 
   if (invalidUniversalIdentifiers.length > 0) {
     errors.push(
-      `Duplicate universal identifiers: ${invalidUniversalIdentifiers.join(', ')}`,
+      `Invalid universal identifiers: ${invalidUniversalIdentifiers.join(', ')}`,
     );
   }
 
-  if (!isNonEmptyArray(manifest.objects)) {
-    warnings.push('No object defined');
-  }
-
-  if (!isNonEmptyArray(manifest.logicFunctions)) {
-    warnings.push('No logic function defined');
-  }
-
-  if (!isNonEmptyArray(manifest.frontComponents)) {
-    warnings.push('No front component defined');
+  for (const agent of manifest.agents) {
+    if (!isDefined(agent.responseFormat)) {
+      warnings.push(`Agent "${agent.name}" has no responseFormat defined`);
+    }
   }
 
   const allFields: Pick<

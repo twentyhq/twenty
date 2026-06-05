@@ -3314,6 +3314,7 @@ export type MutationStopAgentChatStreamArgs = {
 
 
 export type MutationSyncApplicationArgs = {
+  dryRun?: InputMaybe<Scalars['Boolean']>;
   manifest: Scalars['JSON'];
 };
 

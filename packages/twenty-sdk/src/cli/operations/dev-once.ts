@@ -1,5 +1,5 @@
 import path from 'path';
-import { OUTPUT_DIR, type Manifest } from 'twenty-shared/application';
+import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
 import {
@@ -13,12 +13,14 @@ import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
-import { formatSyncActionsSummary } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
+import { formatSyncActionsSummaryFromData } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
+import { getSyncErrorRecoveryHint } from '@/cli/utilities/error/get-sync-error-recovery-hint';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
+import chalk from 'chalk';
 
 export type AppDevOnceOptions = {
   appPath: string;
@@ -38,13 +40,15 @@ const reportMetadataChanges = (
   data: unknown,
   onProgress?: (message: string) => void,
 ): void => {
-  const actions = Array.isArray((data as { actions?: unknown[] })?.actions)
-    ? (data as { actions: unknown[] }).actions
-    : [];
-
-  for (const event of formatSyncActionsSummary(actions)) {
+  for (const event of formatSyncActionsSummaryFromData(data)) {
     onProgress?.(event.message);
   }
+};
+
+const appendRecoveryHint = (message: string, error: unknown): string => {
+  const hint = getSyncErrorRecoveryHint(error);
+
+  return hint ? `${message}\n\n${hint}` : message;
 };
 
 const innerAppDevOnce = async (
@@ -98,7 +102,7 @@ const innerAppDevOnce = async (
   }
 
   for (const warning of manifestResult.warnings) {
-    onProgress?.(`⚠ ${warning}`);
+    onProgress?.(chalk.yellow(`⚠ ${warning}`));
   }
 
   onProgress?.('Building application files...');
@@ -157,7 +161,7 @@ const innerAppDevOnce = async (
         success: false,
         error: {
           code: APP_ERROR_CODES.SYNC_FAILED,
-          message,
+          message: appendRecoveryHint(message, dryRunResult.error),
         },
       };
     }
@@ -263,7 +267,7 @@ const innerAppDevOnce = async (
       success: false,
       error: {
         code: APP_ERROR_CODES.SYNC_FAILED,
-        message,
+        message: appendRecoveryHint(message, syncResult.error),
       },
     };
   }

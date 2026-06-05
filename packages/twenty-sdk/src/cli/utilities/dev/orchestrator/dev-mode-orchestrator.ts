@@ -42,7 +42,7 @@ export class DevModeOrchestrator {
   private startWatchersStep: StartWatchersOrchestratorStep;
 
   constructor(options: DevModeOrchestratorOptions) {
-    this.debounceMs = options.debounceMs ?? 2_000;
+    this.debounceMs = options.debounceMs ?? 1_000;
     this.state = options.state;
     this.verbose = options.verbose ?? false;
 
