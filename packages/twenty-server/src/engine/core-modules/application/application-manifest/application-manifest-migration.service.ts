@@ -161,10 +161,12 @@ export class ApplicationManifestMigrationService {
     manifest,
     workspaceId,
     ownerFlatApplication,
+    dryRun = false,
   }: {
     manifest: Manifest;
     workspaceId: string;
     ownerFlatApplication: FlatApplication;
+    dryRun?: boolean;
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
@@ -224,6 +226,7 @@ export class ApplicationManifestMigrationService {
           workspaceId,
           dependencyAllFlatEntityMaps,
           additionalCacheDataMaps: { featureFlagsMap },
+          dryRun,
         },
       );
 
@@ -235,14 +238,16 @@ export class ApplicationManifestMigrationService {
     }
 
     this.logger.log(
-      `Metadata migration completed for application ${ownerFlatApplication.universalIdentifier}`,
+      `Metadata migration ${dryRun ? 'plan computed (dry run)' : 'completed'} for application ${ownerFlatApplication.universalIdentifier}`,
     );
 
-    await this.syncDefaultRoleAndSettingsCustomTab({
-      manifest,
-      workspaceId,
-      ownerFlatApplication,
-    });
+    if (!dryRun) {
+      await this.syncDefaultRoleAndSettingsCustomTab({
+        manifest,
+        workspaceId,
+        ownerFlatApplication,
+      });
+    }
 
     return {
       workspaceMigration: validateAndBuildResult.workspaceMigration,

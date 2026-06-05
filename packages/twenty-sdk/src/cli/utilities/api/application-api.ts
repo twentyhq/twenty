@@ -251,18 +251,21 @@ export class ApplicationApi {
     }
   }
 
-  async syncApplication(manifest: Manifest): Promise<ApiResponse> {
+  async syncApplication(
+    manifest: Manifest,
+    options?: { dryRun?: boolean },
+  ): Promise<ApiResponse> {
     try {
       const mutation = `
-        mutation SyncApplication($manifest: JSON!) {
-          syncApplication(manifest: $manifest) {
+        mutation SyncApplication($manifest: JSON!, $dryRun: Boolean) {
+          syncApplication(manifest: $manifest, dryRun: $dryRun) {
             applicationUniversalIdentifier
             actions
           }
         }
       `;
 
-      const variables = { manifest };
+      const variables = { manifest, dryRun: options?.dryRun ?? false };
 
       const response: AxiosResponse = await this.client.post(
         '/metadata',

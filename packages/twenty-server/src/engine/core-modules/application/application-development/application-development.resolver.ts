@@ -133,13 +133,28 @@ export class ApplicationDevelopmentResolver {
 
   @Mutation(() => WorkspaceMigrationDTO)
   async syncApplication(
-    @Args() { manifest }: ApplicationInput,
+    @Args() { manifest, dryRun }: ApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<WorkspaceMigrationDTO> {
     await this.throttlePerApplication(
       manifest.application.universalIdentifier,
       workspaceId,
     );
+
+    if (dryRun === true) {
+      const { workspaceMigration } =
+        await this.applicationSyncService.synchronizeFromManifest({
+          workspaceId,
+          manifest,
+          dryRun: true,
+        });
+
+      return {
+        applicationUniversalIdentifier:
+          workspaceMigration.applicationUniversalIdentifier,
+        actions: workspaceMigration.actions,
+      };
+    }
 
     return this.cacheLockService.withLock(
       () => this.applyManifestSync(manifest, workspaceId),
