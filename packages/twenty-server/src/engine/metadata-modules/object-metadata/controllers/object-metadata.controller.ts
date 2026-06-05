@@ -51,7 +51,7 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata-modules/object-metadata/utils/from-object-metadata-entity-to-object-metadata-dto.util';
-import { getTwentyStandardApplicationId } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id.util';
+import { getTwentyStandardApplicationIdOrThrow } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id-or-throw.util';
 import {
   toLegacyObjectMetadataCreateResponse,
   toLegacyObjectMetadataDeleteResponse,
@@ -102,17 +102,7 @@ export class ObjectMetadataController {
         { workspaceId, flatMapsKeys: ['flatApplicationMaps'] },
       );
 
-    const standardApplicationId =
-      getTwentyStandardApplicationId(flatApplicationMaps);
-
-    if (!isDefined(standardApplicationId)) {
-      throw new ObjectMetadataException(
-        `Could not find the twenty-standard application for workspace ${workspaceId}`,
-        ObjectMetadataExceptionCode.APPLICATION_NOT_FOUND,
-      );
-    }
-
-    return standardApplicationId;
+    return getTwentyStandardApplicationIdOrThrow(flatApplicationMaps);
   }
 
   @Get()

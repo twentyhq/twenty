@@ -37,7 +37,7 @@ import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-me
 import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { getTwentyStandardApplicationId } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id.util';
+import { getTwentyStandardApplicationIdOrThrow } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id-or-throw.util';
 
 export type RelationMetadataLoaderPayload = {
   workspaceId: string;
@@ -781,7 +781,7 @@ export class DataloaderService {
           );
 
         const twentyStandardApplicationId =
-          getTwentyStandardApplicationId(flatApplicationMaps);
+          getTwentyStandardApplicationIdOrThrow(flatApplicationMaps);
 
         return dataLoaderParams.map(
           ({ applicationId }) => applicationId !== twentyStandardApplicationId,
