@@ -131,7 +131,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   public async insert<T extends Record<string, any>>(
     table: string,
     values: T[],
@@ -162,7 +162,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
   // Method to execute a select query
   public async select<T>(
     query: string,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     params?: Record<string, any>,
     clientId?: string,
   ): Promise<T[]> {
@@ -229,7 +229,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
 
   public async executeCommand(
     query: string,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     params?: Record<string, any>,
     clientId?: string,
   ): Promise<boolean> {
@@ -255,7 +255,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   private async insertInChunks<T extends Record<string, any>>(
     client: ClickHouseClient,
     table: string,

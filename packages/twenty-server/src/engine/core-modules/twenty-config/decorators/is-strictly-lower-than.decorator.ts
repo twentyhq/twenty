@@ -16,10 +16,10 @@ export const IsStrictlyLowerThan = (
       constraints: [property],
       options: validationOptions,
       validator: {
-        // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         validate(value: any, args: ValidationArguments) {
           const [relatedPropertyName] = args.constraints;
-          // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+          // oxlint-disable-next-line typescript/no-explicit-any
           const relatedValue = (args.object as any)[relatedPropertyName];
 
           return (

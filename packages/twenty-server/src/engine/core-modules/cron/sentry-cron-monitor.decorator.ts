@@ -2,14 +2,14 @@ import * as Sentry from '@sentry/node';
 
 export function SentryCronMonitor(monitorSlug: string, schedule: string) {
   return function (
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     _target: any,
     _propertyKey: string,
     descriptor: PropertyDescriptor,
   ) {
     const originalMethod = descriptor.value;
 
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     descriptor.value = async function (...args: any[]) {
       if (!Sentry.isInitialized()) {
         return await originalMethod.apply(this, args);
