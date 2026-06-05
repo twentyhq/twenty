@@ -91,6 +91,10 @@ When local metadata looks wrong, escalate in this order and stop as soon as you'
 `yarn twenty docker:reset` deletes **all** data in your local instance — every workspace, record, and app. Only use it once the earlier steps have failed.
 </Warning>
 
+<Note>
+Hit a metadata error? Please [open an issue](https://github.com/twentyhq/twenty/issues/new/choose) and include the failing migration message (with its metadata type and `universalIdentifier`), the `Metadata changes` output from the sync, and the commands you ran.
+</Note>
+
 ## Avoid concurrent syncs on one workspace
 
 Syncing applies metadata migrations. Running several sync, deploy, or install operations against the **same workspace at the same time** — for example, multiple terminals or AI agents iterating in parallel — can interleave those migrations and leave metadata in a partially-applied state.
