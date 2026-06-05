@@ -169,7 +169,7 @@ export class BillingWebhookInvoiceService {
     if (isDefined(billingCustomer)) {
       await this.delaySuspendedWorkspaceCleanup(billingCustomer);
 
-      await this.eventLogEmitterService
+      void this.eventLogEmitterService
         .createContext({ workspaceId: billingCustomer.workspaceId })
         .insertWorkspaceEvent(PAYMENT_RECEIVED_EVENT, {
           amountPaid: data.object.amount_paid,

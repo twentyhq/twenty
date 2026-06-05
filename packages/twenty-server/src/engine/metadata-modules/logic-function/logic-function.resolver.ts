@@ -43,7 +43,7 @@ export class LogicFunctionResolver {
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly subscriptionService: SubscriptionService,
-    private readonly workspaceEventLiveService: EventLogLiveService,
+    private readonly eventLogLiveService: EventLogLiveService,
   ) {}
 
   @Query(() => LogicFunctionDTO)
@@ -261,7 +261,7 @@ export class LogicFunctionResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     // Register CLI presence (refreshed by the heartbeat) so the executor only publishes when watched.
-    await this.workspaceEventLiveService.markWatched(
+    await this.eventLogLiveService.markWatched(
       workspace.id,
       SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,
     );
@@ -273,7 +273,7 @@ export class LogicFunctionResolver {
 
     return wrapAsyncIteratorWithLifecycle(iterator, {
       onHeartbeat: async () => {
-        await this.workspaceEventLiveService.markWatched(
+        await this.eventLogLiveService.markWatched(
           workspace.id,
           SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,
         );

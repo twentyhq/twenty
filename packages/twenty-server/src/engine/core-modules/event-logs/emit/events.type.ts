@@ -46,10 +46,6 @@ import {
   type WORKSPACE_CREATED_EVENT,
   type WorkspaceCreatedTrackEvent,
 } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/workspace/workspace-created';
-import {
-  type WORKSPACE_ENTITY_CREATED_EVENT,
-  type WorkspaceEntityCreatedTrackEvent,
-} from 'src/engine/core-modules/event-logs/emit/events/workspace-event/workspace-entity/workspace-entity-created';
 
 // Define all track event names
 export type TrackEventName =
@@ -57,7 +53,6 @@ export type TrackEventName =
   | typeof CUSTOM_DOMAIN_DEACTIVATED_EVENT
   | typeof LOGIC_FUNCTION_EXECUTED_EVENT
   | typeof WEBHOOK_RESPONSE_EVENT
-  | typeof WORKSPACE_ENTITY_CREATED_EVENT
   | typeof MONITORING_EVENT
   | typeof OBJECT_RECORD_CREATED_EVENT
   | typeof OBJECT_RECORD_UPDATED_EVENT
@@ -73,7 +68,6 @@ export interface TrackEvents {
   [CUSTOM_DOMAIN_DEACTIVATED_EVENT]: CustomDomainDeactivatedTrackEvent;
   [LOGIC_FUNCTION_EXECUTED_EVENT]: LogicFunctionExecutedTrackEvent;
   [WEBHOOK_RESPONSE_EVENT]: WebhookResponseTrackEvent;
-  [WORKSPACE_ENTITY_CREATED_EVENT]: WorkspaceEntityCreatedTrackEvent;
   [USER_SIGNUP_EVENT]: UserSignupTrackEvent;
   [MONITORING_EVENT]: MonitoringTrackEvent;
   [OBJECT_RECORD_DELETED_EVENT]: ObjectRecordDeletedTrackEvent;

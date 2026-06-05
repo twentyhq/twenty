@@ -168,13 +168,13 @@ export class ImpersonationService {
       userId: impersonatorUserWorkspace.userId,
     });
 
-    await eventLogContext.insertWorkspaceEvent(MONITORING_EVENT, {
+    void eventLogContext.insertWorkspaceEvent(MONITORING_EVENT, {
       eventName: `${impersonationLevel}.impersonation.attempt`,
       message: `Impersonation attempt: targetUserId=${toImpersonateUserWorkspace.user.id}, workspaceId=${toImpersonateUserWorkspace.workspace.id}, impersonatorUserId=${impersonatorUserWorkspace.user.id}`,
     });
 
     try {
-      await eventLogContext.insertWorkspaceEvent(MONITORING_EVENT, {
+      void eventLogContext.insertWorkspaceEvent(MONITORING_EVENT, {
         eventName: `${impersonationLevel}.impersonation.login_token_attempt`,
         message: `Impersonation token generation attempt for user ${toImpersonateUserWorkspace.user.id}`,
       });
@@ -188,7 +188,7 @@ export class ImpersonationService {
         },
       );
 
-      await eventLogContext.insertWorkspaceEvent(MONITORING_EVENT, {
+      void eventLogContext.insertWorkspaceEvent(MONITORING_EVENT, {
         eventName: `${impersonationLevel}.impersonation.login_token_generated`,
         message: `Impersonation token generated successfully for user ${toImpersonateUserWorkspace.user.id}`,
       });
@@ -203,7 +203,7 @@ export class ImpersonationService {
         loginToken,
       };
     } catch {
-      await eventLogContext.insertWorkspaceEvent(MONITORING_EVENT, {
+      void eventLogContext.insertWorkspaceEvent(MONITORING_EVENT, {
         eventName: `${impersonationLevel}.impersonation.login_token_failed`,
         message: `Impersonation token generation failed for targetUserId=${toImpersonateUserWorkspace.user.id}`,
       });

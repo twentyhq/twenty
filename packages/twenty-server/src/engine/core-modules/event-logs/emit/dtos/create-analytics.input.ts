@@ -1,12 +1,6 @@
 import { ArgsType, Field, registerEnumType } from '@nestjs/graphql';
 
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsObject,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsEnum, IsObject, IsOptional, IsString } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
 import { TrackEventName } from 'src/engine/core-modules/event-logs/emit/events.type';
@@ -20,19 +14,6 @@ enum AnalyticsType {
 registerEnumType(AnalyticsType, {
   name: 'AnalyticsType',
 });
-
-// deprecated
-@ArgsType()
-export class CreateAnalyticsInput {
-  @Field({ description: 'Type of the event' })
-  @IsNotEmpty()
-  @IsString()
-  action: string;
-
-  @Field(() => GraphQLJSON, { description: 'Event payload in JSON format' })
-  @IsObject()
-  payload: JSON;
-}
 
 @ArgsType()
 export class CreateAnalyticsInputV2 {

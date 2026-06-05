@@ -1,5 +1,5 @@
 import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
-import { type AuditCommonPropertiesType } from 'src/engine/core-modules/event-logs/emit/common.type';
+import { type EventCommonPropertiesType } from 'src/engine/core-modules/event-logs/emit/common.type';
 import {
   type TrackEventName,
   type TrackEventProperties,
@@ -13,7 +13,7 @@ import {
   type GenericTrackEvent,
 } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/track';
 
-const common = (): Record<AuditCommonPropertiesType, string> => ({
+const common = (): Record<EventCommonPropertiesType, string> => ({
   timestamp: formatDateTimeForClickHouse(new Date()),
   version: '1',
 });

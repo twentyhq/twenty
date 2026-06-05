@@ -35,6 +35,9 @@ export class EventLogCleanupService {
 
     cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
 
+    // One workspace-level retention applies to every table (including the high-volume
+    // applicationLog). Per-type retention isn't a product requirement yet — revisit here
+    // if audit vs. debug logs ever need different windows.
     for (const table of Object.values(EventLogTable)) {
       const tableName = getClickHouseTableName(table);
 

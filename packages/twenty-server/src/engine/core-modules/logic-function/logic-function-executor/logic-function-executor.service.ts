@@ -79,7 +79,7 @@ export class LogicFunctionExecutorService {
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly secretEncryptionService: SecretEncryptionService,
     private readonly subscriptionService: SubscriptionService,
-    private readonly workspaceEventLiveService: EventLogLiveService,
+    private readonly eventLogLiveService: EventLogLiveService,
     private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly billingService: BillingService,
@@ -401,7 +401,7 @@ export class LogicFunctionExecutorService {
     flatApplication: FlatApplication;
   }): Promise<void> {
     try {
-      const isWatched = await this.workspaceEventLiveService.isWatched(
+      const isWatched = await this.eventLogLiveService.isWatched(
         workspaceId,
         SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,
       );
@@ -410,6 +410,7 @@ export class LogicFunctionExecutorService {
         return;
       }
 
+      // CLI `dev:function:logs` tail — kept alongside the generalized WORKSPACE_EVENTS_CHANNEL
       await this.subscriptionService.publish({
         channel: SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,
         workspaceId,
@@ -452,6 +453,7 @@ export class LogicFunctionExecutorService {
       executionId,
     }));
 
+    // gate here to skip building N application-log envelopes when no sink is configured
     if (this.eventLogEmitterService.isEnabled()) {
       void this.eventLogEmitterService
         .enqueue(buildApplicationLogEnvelopes(logEntries))

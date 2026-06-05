@@ -20,6 +20,7 @@ import {
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
+import { MONITORING_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/monitoring/monitoring';
 import {
   AuthException,
   AuthExceptionCode,
@@ -426,12 +427,12 @@ export class AuthService {
   }): Promise<AuthTokens> {
     const correlationId = randomUUID();
 
-    const analytics = this.eventLogEmitterService.createContext({
+    const eventLogContext = this.eventLogEmitterService.createContext({
       workspaceId,
       userId: _impersonatorUserId,
     });
 
-    await analytics.insertWorkspaceEvent('Monitoring', {
+    void eventLogContext.insertWorkspaceEvent(MONITORING_EVENT, {
       eventName: 'workspace.impersonation.attempted',
       message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
@@ -457,7 +458,7 @@ export class AuthService {
       true,
     );
 
-    await analytics.insertWorkspaceEvent('Monitoring', {
+    void eventLogContext.insertWorkspaceEvent(MONITORING_EVENT, {
       eventName: 'workspace.impersonation.issued',
       message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
     });

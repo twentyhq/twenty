@@ -37,17 +37,6 @@ export class EventLogEmitterResolver {
     private readonly eventLogEmitterService: EventLogEmitterService,
   ) {}
 
-  // preparing for new name
-  async createPageview(
-    @Args()
-    createAnalyticsInput: CreateAnalyticsInputV2,
-    @AuthWorkspace({ allowUndefined: true })
-    workspace: WorkspaceEntity | undefined,
-    @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
-  ) {
-    return this.trackAnalytics(createAnalyticsInput, workspace, user);
-  }
-
   @Mutation(() => Analytics)
   @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
   async createObjectEvent(
@@ -63,12 +52,12 @@ export class EventLogEmitterResolver {
       );
     }
 
-    const analyticsContext = this.eventLogEmitterService.createContext({
+    const eventLogContext = this.eventLogEmitterService.createContext({
       workspaceId: workspace.id,
       userId: user?.id,
     });
 
-    return analyticsContext.createObjectEvent(createObjectEventInput.event, {
+    return eventLogContext.createObjectEvent(createObjectEventInput.event, {
       ...createObjectEventInput.properties,
       recordId: createObjectEventInput.recordId,
       objectMetadataId: createObjectEventInput.objectMetadataId,
@@ -85,13 +74,13 @@ export class EventLogEmitterResolver {
     workspace: WorkspaceEntity | undefined,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
   ) {
-    const analyticsContext = this.eventLogEmitterService.createContext({
+    const eventLogContext = this.eventLogEmitterService.createContext({
       workspaceId: workspace?.id,
       userId: user?.id,
     });
 
     if (isPageviewAnalyticsInput(createAnalyticsInput)) {
-      return analyticsContext.createPageviewEvent(
+      return eventLogContext.createPageviewEvent(
         createAnalyticsInput.name,
         createAnalyticsInput.properties ?? {},
       );
@@ -100,7 +89,7 @@ export class EventLogEmitterResolver {
     if (isTrackAnalyticsInput(createAnalyticsInput)) {
       // For track events, we need to determine if it's a workspace or object event
       // Since we don't have recordId and objectMetadataId in the input, we use insertWorkspaceEvent
-      return analyticsContext.insertWorkspaceEvent(
+      return eventLogContext.insertWorkspaceEvent(
         createAnalyticsInput.event,
         createAnalyticsInput.properties ?? {},
       );

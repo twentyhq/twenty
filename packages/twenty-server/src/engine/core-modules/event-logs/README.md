@@ -1,74 +1,57 @@
-# Analytics Module
+# Event Logs
 
-This module provides analytics tracking functionality for the Twenty application.
+This module records workspace events, object events, pageviews, and application logs, persists them to ClickHouse, and exposes them for reading and live streaming.
 
-## Usage
+## Emitting events
 
-### Tracking Events
+Inject `EventLogEmitterService` and call `createContext()` to get a context bound to a workspace (and optionally a user). The context exposes three emit methods:
 
-The `AuditService` provides a `createContext` method that returns an object with three methods:
-
-- `insertWorkspaceEvent`: For tracking workspace-level events
-- `createObjectEvent`: For tracking object-level events that include record and metadata IDs
-- `createPageviewEvent`: For tracking page views
+- `insertWorkspaceEvent(event, properties)` — workspace-level events
+- `createObjectEvent(event, properties)` — events tied to a record (`recordId` + `objectMetadataId`)
+- `createPageviewEvent(name, properties)` — pageviews
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/track/custom-domain/custom-domain-activated';
+
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
+import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/custom-domain/custom-domain-activated';
 
 @Injectable()
 export class MyService {
-  constructor(private readonly auditService: AuditService) {}
+  constructor(private readonly eventLogEmitterService: EventLogEmitterService) {}
 
-  async doSomething() {
-    // Create an analytics context
-    const auditService = this.auditService.createContext({
-      workspaceId: 'workspace-id',
-      userId: 'user-id',
+  async doSomething(workspaceId: string) {
+    const eventLogContext = this.eventLogEmitterService.createContext({
+      workspaceId,
     });
 
-    // Track a workspace event
-    auditService.insertWorkspaceEvent(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
-
-    // Track an object event
-    auditService.createObjectEvent(OBJECT_RECORD_CREATED_EVENT, {
-      recordId: 'record-id',
-      objectMetadataId: 'object-metadata-id',
-      // other properties
-    });
-
-    // Track a pageview
-    auditService.createPageviewEvent('page-name', {
-      href: '/path',
-      locale: 'en-US',
-      // other properties
-    });
+    // Emitting is best-effort and never throws into the caller, so it can be
+    // fire-and-forget.
+    void eventLogContext.insertWorkspaceEvent(CUSTOM_DOMAIN_ACTIVATED_EVENT, {});
   }
 }
 ```
 
-### Adding New Events
+Emitting only builds and enqueues the event (schema validation + a queue job). Persistence happens later in the worker, so `createContext()` does no work when no sink is configured (`isEnabled()` is false).
 
-To add a new event:
+## Adding a new event
 
-1. Create a new file in the `src/engine/core-modules/analytics/utils/events/track` directory
-2. Define the event name, schema, and type
-3. Register the event using the `registerEvent` function
-4. Update the `TrackEventName` and `TrackEventProperties` types in `src/engine/core-modules/analytics/utils/events/event-types.ts`
+Events live under `emit/events/<group>/<name>.ts`, where `<group>` is `workspace-event`, `object-event`, or `pageview`.
 
-Example:
+1. Create the file, define the event name constant and a Zod schema, and register it with `registerEvent`.
+2. Add the event name and type to the `TrackEventName` union and `TrackEvents` map in `emit/events.type.ts`.
 
 ```typescript
-// src/engine/core-modules/analytics/utils/events/track/my-feature/my-event.ts
+// emit/events/workspace-event/my-feature/my-event.ts
 import { z } from 'zod';
 
-import { registerEvent } from 'src/engine/core-modules/analytics/utils/events/track/track';
+import { registerEvent } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/track';
 
 export const MY_EVENT = 'My Event' as const;
-export const myEventSchema = z.object({
+
+export const myEventSchema = z.strictObject({
   event: z.literal(MY_EVENT),
-  properties: z.object({
+  properties: z.strictObject({
     myProperty: z.string(),
   }),
 });
@@ -78,71 +61,13 @@ export type MyEventTrackEvent = z.infer<typeof myEventSchema>;
 registerEvent(MY_EVENT, myEventSchema);
 ```
 
-Then update the `events.type.ts` file:
+## Structure
 
-```typescript
-// src/engine/core-modules/analytics/types/events.type.ts
-import {
-  MY_EVENT,
-  MyEventTrackEvent,
-} from '../utils/events/track/my-feature/my-event';
+The module is split by responsibility:
 
-// Add to the union type
-export type TrackEventName = typeof MY_EVENT;
-// ... other event names;
+- `emit/` — the producer-facing `EventLogEmitterService`, the event definitions, and their registry (`eventsRegistry` in `emit/events/workspace-event/track.ts`).
+- `ingest/` — the worker-side consumer and the sinks (ClickHouse, console) that persist enqueued events.
+- `live/` — presence-gated live fan-out: subscribers mark `(workspace, table)` watched with a heartbeat-refreshed TTL, and the consumer only publishes to watched tables.
+- viewer — the read API (`event-logs.service.ts`, `event-logs.resolver.ts`, `event-logs-live.resolver.ts`) that queries ClickHouse and streams updates.
 
-// Add to the TrackEvents interface
-export interface TrackEvents {
-  [MY_EVENT]: MyEventTrackEvent;
-  // ... other event types
-}
-
-// The TrackEventProperties type will automatically use the new event
-export type TrackEventProperties<T extends TrackEventName> =
-  T extends keyof TrackEvents ? TrackEvents[T]['properties'] : object;
-```
-
-## API
-
-### AuditService
-
-#### createContext(context?)
-
-Creates an analytics context with the given user ID and workspace ID.
-
-- `context` (optional): An object with `userId` and `workspaceId` properties
-
-Returns an object with the following methods:
-
-- `insertWorkspaceEvent<T extends TrackEventName>(event: T, properties: TrackEventProperties<T>)`: Tracks a workspace-level event
-- `createObjectEvent<T extends TrackEventName>(event: T, properties: TrackEventProperties<T> & { recordId: string; objectMetadataId: string })`: Tracks an object-level event
-- `createPageviewEvent(name: string, properties: Partial<PageviewProperties>)`: Tracks a pageview
-
-### Types
-
-#### TrackEventName
-
-A union type of all registered event names, plus `string` for backward compatibility.
-
-#### TrackEventProperties<T>
-
-A mapped type that maps each event name to its corresponding properties type. It uses the `TrackEvents` interface to provide a more maintainable and type-safe way to map event names to their properties.
-
-```typescript
-// Define the mapping between event names and their event types
-export interface TrackEvents {
-  [EVENT_NAME_1]: Event1Type;
-  [EVENT_NAME_2]: Event2Type;
-  // ... other event types
-}
-
-// Use the mapping to extract properties for each event type
-export type TrackEventProperties<T extends TrackEventName> =
-  T extends keyof TrackEvents ? TrackEvents[T]['properties'] : object;
-```
-
-This approach makes it easier to add new events without having to modify a complex nested conditional type.
-
-#### PageviewProperties
-
-Properties for pageview events, including href, locale, pathname, referrer, sessionId, timeZone, and userAgent.
+`registry/event-log-registry.ts` holds `EVENT_LOG_TYPES`, the per-type source of truth keyed by `EventLogTable`: the ClickHouse table (also its live presence key), the billing entitlement required to read it, the free-text filter field, and how a stored row maps to a GraphQL record. Adding a new event-log type is one entry here (plus a ClickHouse migration).

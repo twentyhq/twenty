@@ -112,11 +112,11 @@ export class CustomDomainManagerService {
 
       await this.workspaceRepository.save(workspace);
 
-      const analytics = this.eventLogEmitterService.createContext({
+      const eventLogContext = this.eventLogEmitterService.createContext({
         workspaceId: workspace.id,
       });
 
-      void analytics.insertWorkspaceEvent(
+      void eventLogContext.insertWorkspaceEvent(
         workspace.isCustomDomainEnabled
           ? CUSTOM_DOMAIN_ACTIVATED_EVENT
           : CUSTOM_DOMAIN_DEACTIVATED_EVENT,

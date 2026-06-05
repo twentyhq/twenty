@@ -14,9 +14,9 @@ const getEventLogEmitterExceptionUserFriendlyMessage = (
 ) => {
   switch (code) {
     case EventLogEmitterExceptionCode.INVALID_TYPE:
-      return msg`Invalid audit type.`;
+      return msg`Invalid event type.`;
     case EventLogEmitterExceptionCode.INVALID_INPUT:
-      return msg`Invalid audit input.`;
+      return msg`Invalid event input.`;
     default:
       assertUnreachable(code);
   }

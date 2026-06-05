@@ -54,6 +54,9 @@ export type ApplicationLogRow = {
   message: string;
 };
 
+// The `table` discriminant must match the registry's clickHouseTable values
+// (EVENT_LOG_TYPES in registry/event-log-registry.ts) — the registry is the source
+// of truth for table names; keep these literals in sync with it.
 export type WorkspaceEventEnvelope =
   | { table: 'workspaceEvent'; row: AnalyticsEventRow }
   | { table: 'pageview'; row: PageviewRow }
