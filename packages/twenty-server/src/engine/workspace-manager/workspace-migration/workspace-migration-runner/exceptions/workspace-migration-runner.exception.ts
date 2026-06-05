@@ -1,6 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { assertUnreachable, CustomError, isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, CustomError } from 'twenty-shared/utils';
 
 import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
 
@@ -34,12 +34,13 @@ export type WorkspaceMigrationRunnerExecutionErrors = {
   actionTranspilation?: Error;
 };
 
-const getActionUniversalIdentifier = (
+const getActionUniversalIdentifierOrThrow = (
   action: AllUniversalWorkspaceMigrationAction,
-): string | undefined =>
-  action.type === 'create'
+): string => {
+  return action.type === 'create'
     ? action.flatEntity?.universalIdentifier
     : action.universalIdentifier;
+};
 
 const {
   // oxlint-disable-next-line unused-imports/no-unused-vars
@@ -69,10 +70,10 @@ export class WorkspaceMigrationRunnerException extends CustomError {
 
   constructor(args: WorkspaceMigrationRunnerExceptionConstructorArgs) {
     if (args.code === WorkspaceMigrationRunnerExceptionCode.EXECUTION_FAILED) {
-      const universalIdentifier = getActionUniversalIdentifier(args.action);
-      const identifierClause = isDefined(universalIdentifier)
-        ? ` (universalIdentifier: ${universalIdentifier})`
-        : '';
+      const universalIdentifier = getActionUniversalIdentifierOrThrow(
+        args.action,
+      );
+      const identifierClause = ` (universalIdentifier: ${universalIdentifier})`;
 
       super(
         `Migration action '${args.action.type}' for '${args.action.metadataName}'${identifierClause} failed`,

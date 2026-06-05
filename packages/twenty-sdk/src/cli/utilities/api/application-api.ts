@@ -251,7 +251,12 @@ export class ApplicationApi {
     }
   }
 
-  async syncApplication(manifest: Manifest): Promise<ApiResponse> {
+  async syncApplication(manifest: Manifest): Promise<
+    ApiResponse<{
+      applicationUniversalIdentifier: string;
+      actions: unknown[];
+    }>
+  > {
     try {
       const mutation = `
         mutation SyncApplication($manifest: JSON!) {
