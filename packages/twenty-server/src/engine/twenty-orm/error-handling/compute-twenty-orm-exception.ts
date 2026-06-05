@@ -58,6 +58,50 @@ export const computeTwentyORMException = async (
       );
     }
 
+    // NOT NULL constraint — a required field was missing
+    if (errorCode === POSTGRESQL_ERROR_CODES.NOT_NULL_VIOLATION) {
+      return new TwentyORMException(
+        error.message,
+        TwentyORMExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`A required field is missing. Please provide all required values and try again.`,
+        },
+      );
+    }
+
+    // FOREIGN KEY constraint — referenced record doesn't exist or can't be deleted
+    if (errorCode === POSTGRESQL_ERROR_CODES.FOREIGN_KEY_VIOLATION) {
+      return new TwentyORMException(
+        error.message,
+        TwentyORMExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`This operation references a record that does not exist or cannot be modified due to existing relationships.`,
+        },
+      );
+    }
+
+    // RESTRICT constraint — deletion blocked by a dependent record
+    if (errorCode === POSTGRESQL_ERROR_CODES.RESTRICT_VIOLATION) {
+      return new TwentyORMException(
+        error.message,
+        TwentyORMExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`This record cannot be deleted because it is still referenced by other records.`,
+        },
+      );
+    }
+
+    // CHECK constraint — a field value did not satisfy a database check
+    if (errorCode === POSTGRESQL_ERROR_CODES.CHECK_VIOLATION) {
+      return new TwentyORMException(
+        error.message,
+        TwentyORMExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`One or more field values are invalid. Please check your input and try again.`,
+        },
+      );
+    }
+
     if (
       isDefined(errorCode) &&
       Object.values(POSTGRESQL_ERROR_CODES).includes(errorCode)
@@ -69,3 +113,4 @@ export const computeTwentyORMException = async (
 
   return error;
 };
+
