@@ -109,7 +109,7 @@ export class ObjectMetadataToolsFactory {
     return {
       get_object_metadata: {
         description:
-          'Retrieve object metadata. Returns {workspaceId, applicationId, objects: [...]}. System objects are compact {id, nameSingular, namePlural} by default; set includeFullSystemObjects=true for full payload.',
+          'Retrieve object metadata. Returns an array of objects. System objects are compact {id, nameSingular, namePlural} by default; set includeFullSystemObjects=true for full payload.',
         inputSchema: GetObjectMetadataInputSchema,
         execute: async (parameters: {
           id?: string;

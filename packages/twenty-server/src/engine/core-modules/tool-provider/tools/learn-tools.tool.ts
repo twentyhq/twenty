@@ -19,7 +19,8 @@ export const learnToolsInputSchema = z.object({
     .default(['description', 'schema'])
     .describe(
       'What to learn: ["description"], ["schema"], or ["description", "schema"].',
-    ),});
+    ),
+});
 
 export type LearnToolsInput = z.infer<typeof learnToolsInputSchema>;
 
