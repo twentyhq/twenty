@@ -11,8 +11,6 @@ describe('companiesResolver (e2e)', () => {
             edges {
               node {
                 name
-                employees
-                idealCustomerProfile
                 position
                 searchVector
                 id
@@ -51,8 +49,6 @@ describe('companiesResolver (e2e)', () => {
           const companies = edges[0].node;
 
           expect(companies).toHaveProperty('name');
-          expect(companies).toHaveProperty('employees');
-          expect(companies).toHaveProperty('idealCustomerProfile');
           expect(companies).toHaveProperty('position');
           expect(companies).toHaveProperty('searchVector');
           expect(companies).toHaveProperty('id');

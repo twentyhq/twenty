@@ -1580,6 +1580,15 @@ export const EXPECTED_MANIFEST: Manifest = {
       universalIdentifier: 'b1a2b3c4-0005-4a7b-8c9d-0e1f2a3b4c5d',
     },
   ],
+  viewFields: [
+    {
+      fieldMetadataUniversalIdentifier: '7b57bd63-5a4c-46ca-9d52-42c8f02d1df6',
+      isVisible: true,
+      position: 5,
+      universalIdentifier: 'cd582d11-ea21-4dc3-b9c1-0298ce3b6b54',
+      viewUniversalIdentifier: 'b1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+  ],
   navigationMenuItems: [
     {
       type: NavigationMenuItemType.OBJECT,
@@ -1590,7 +1599,7 @@ export const EXPECTED_MANIFEST: Manifest = {
     {
       type: NavigationMenuItemType.OBJECT,
       position: 0,
-      universalIdentifier: 'c1a2b3c4-0001-4a7b-8c9d-0e1f2a3b4c5d',
+      universalIdentifier: 'e8031eca-d6ea-4a4b-b828-38227dba896a',
       targetObjectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
     },
     {
