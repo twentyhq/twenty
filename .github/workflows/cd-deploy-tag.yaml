@@ -18,9 +18,6 @@ jobs:
     timeout-minutes: 3
     runs-on: ubuntu-latest
     steps:
-      # twenty/v* deploys the engine (Docker image), npm/v* publishes the npm
-      # package family. Each maps to a distinct event_type so twenty-infra can
-      # run the two release trains independently.
       - name: Resolve dispatch target from tag
         id: target
         env:
