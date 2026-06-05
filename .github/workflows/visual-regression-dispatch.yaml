@@ -11,6 +11,7 @@ on:
 
 permissions:
   actions: read
+  contents: read
   pull-requests: read
 
 jobs:
@@ -106,7 +107,7 @@ jobs:
                 core.setOutput('sha', '');
               }
             } catch (error) {
-              core.warning(`Failed to compute merge base: ${error.message}`);
+              core.warning(`Failed to compute merge base: ${error instanceof Error ? error.message : String(error)}`);
               core.setOutput('sha', '');
             }
 
