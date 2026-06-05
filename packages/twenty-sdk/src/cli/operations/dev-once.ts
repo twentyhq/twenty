@@ -1,5 +1,5 @@
 import path from 'path';
-import { OUTPUT_DIR, type Manifest } from 'twenty-shared/application';
+import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
 import {
@@ -19,6 +19,7 @@ import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
+import chalk from 'chalk';
 
 export type AppDevOnceOptions = {
   appPath: string;
@@ -85,7 +86,7 @@ const innerAppDevOnce = async (
   }
 
   for (const warning of manifestResult.warnings) {
-    onProgress?.(`⚠ ${warning}`);
+    onProgress?.(chalk.yellow(`⚠ ${warning}`));
   }
 
   onProgress?.('Building application files...');
