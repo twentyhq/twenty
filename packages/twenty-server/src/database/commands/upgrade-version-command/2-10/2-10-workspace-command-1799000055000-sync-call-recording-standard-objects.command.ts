@@ -144,9 +144,11 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
       ];
 
     if (!isDefined(calendarEventObjectMetadata)) {
-      throw new Error(
-        `calendarEvent object not found for workspace ${workspaceId}`,
+      this.logger.warn(
+        `calendarEvent object not found for workspace ${workspaceId}, skipping CallRecording standard metadata sync`,
       );
+
+      return;
     }
 
     const { twentyStandardFlatApplication } =
