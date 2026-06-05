@@ -1,0 +1,85 @@
+packages/twenty-server/test/integration/messaging/messaging-stale-sync.integration-spec.ts
+  s_64c2aecabecc1e::t_465e06440e3c35 6
+  s_64c2aecabecc1e::t_8960ba976703d0 46-50,61-64,70-71
+  s_64c2aecabecc1e::t_85d70a7ae84b10 45,51-54
+  s_64c2aecabecc1e::t_22ae5304f47145 9,17-20
+packages/twenty-server/test/integration/messaging/messaging-sync-cursor.integration-spec.ts
+  s_64c2aecabecc1e::t_c2a4dd8b236b9d 40-53,61,75
+  s_64c2aecabecc1e::t_e186f7aafbc843 15
+packages/twenty-server/.env.test
+  s_64c2aecabecc1e::t_a8cbd6817784b8 17-18,21-23,37
+  s_64c2aecabecc1e::t_d8e8efa616c4ed 38-39
+packages/twenty-server/test/integration/messaging/messaging-failed-channel-recovery.integration-spec.ts
+  s_64c2aecabecc1e::t_8960ba976703d0 42-43,73-74
+  s_64c2aecabecc1e::t_41c18e0b9c1018 24-27,41,44,46-47,71-72,75-77
+  s_64c2aecabecc1e::t_e633e657739e9f 12
+  s_64c2aecabecc1e::t_7d773038f1e3f0 9,45
+packages/twenty-server/test/integration/messaging/messaging-rate-limit-throttle.integration-spec.ts
+  s_64c2aecabecc1e::t_c92c8ad18c7d0b 14
+  s_64c2aecabecc1e::t_a69aa75f8d3337 12
+  s_64c2aecabecc1e::t_e89bf20f9729dc 49-52,61,65,88,91-94
+  s_64c2aecabecc1e::t_8960ba976703d0 62-63,68,89-90
+  s_64c2aecabecc1e::t_ed588d9bdabff2 64,67
+packages/twenty-server/test/integration/messaging/gmail-message-list-fetch.integration-spec.ts
+  s_64c2aecabecc1e::t_44dddbcb70295b 2-4
+  s_64c2aecabecc1e::t_9243862889f657 15-26,28-31,41-42,50,60-63,67,69-73
+  s_64c2aecabecc1e::t_89aefb21aa8bf5 12
+  s_64c2aecabecc1e::t_0f52ad323c2fb9 52-56
+  s_64c2aecabecc1e::t_48dc3b8be2a0ba 14
+  s_64c2aecabecc1e::t_e56d0cd4d730f4 68
+  s_64c2aecabecc1e::t_85d2fd07dd0320 36
+  s_64c2aecabecc1e::t_07fe830ab0a2a7 38,43,51
+packages/twenty-server/test/integration/messaging/utils/seed-message-channel.util.ts
+  s_64c2aecabecc1e::t_f625ef9400480f 34
+packages/twenty-server/test/integration/messaging/messaging-token-refresh.integration-spec.ts
+  s_64c2aecabecc1e::t_8960ba976703d0 19,89-90
+  s_64c2aecabecc1e::t_e28f845157ed9b 22
+  s_64c2aecabecc1e::t_e9cc28ec45a87d 48-51,59,61-66,68,88,91-95
+packages/twenty-server/test/integration/utils/poll-until.util.ts
+  s_64c2aecabecc1e::t_597efe2cf5cd2e 1-24
+packages/twenty-server/test/integration/messaging/utils/query-messaging.util.ts
+  s_64c2aecabecc1e::t_aff2035bd711f0 14,20-61
+  s_64c2aecabecc1e::t_2ec30586c2f4dc 2-13,15-19,62-85,87-88,90,92-93,95-98,101,108
+  s_64c2aecabecc1e::t_b89cc74f2b5705 86,99-100,102-107
+  s_64c2aecabecc1e::t_acf69eede1841b 89,91,94
+packages/twenty-server/test/integration/messaging/gmail-folder-discovery.integration-spec.ts
+  s_64c2aecabecc1e::t_1ee318f76ee63d 19
+  s_64c2aecabecc1e::t_6a850e2c58f584 53
+  s_64c2aecabecc1e::t_ed3065915eaa9c 33
+  s_64c2aecabecc1e::t_22134e7bc507e1 18
+  s_64c2aecabecc1e::t_3c3708706d7949 67-72,83-88
+packages/twenty-server/test/integration/messaging/utils/gmail-mock.util.ts
+  s_64c2aecabecc1e::t_8da3ab6ff1d656 10-19
+  s_64c2aecabecc1e::t_11f175e13dcdee 139,148,158,161,164-165
+  s_64c2aecabecc1e::t_c8fd5435c98f1e 138,140-147,149-157,159-160,162-163,167
+  s_64c2aecabecc1e::t_ff38fe0f655ef2 166
+packages/twenty-server/test/integration/messaging/utils/connect-messaging-account.util.ts
+  s_64c2aecabecc1e::t_80045b86a49cdd 1-59,61-63,65-69,71-79
+  s_64c2aecabecc1e::t_13e63c2a732e54 60,64,70
+packages/twenty-server/test/integration/messaging/microsoft-folder-discovery.integration-spec.ts
+  s_64c2aecabecc1e::t_be6662cfed9e7d 23,25,30-31,33,53-57,59
+  s_64c2aecabecc1e::t_c0f0c098432673 11
+  s_64c2aecabecc1e::t_2e54c536fb467d 24,26-29
+  s_64c2aecabecc1e::t_6f8ad7203c957e 14
+packages/twenty-server/test/integration/utils/create-app.ts
+  s_64c2aecabecc1e::t_848b7bf8e8d38d 70-78
+  s_64c2aecabecc1e::t_3072b1edf10a12 21
+packages/twenty-server/test/integration/utils/http-mock.ts
+  s_64c2aecabecc1e::t_14b77dfebd2b92 27,31-37,40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "a73020eb45265bf5c68bbb83308b08fb4624c13f",
+  "prompts": {},
+  "sessions": {
+    "s_64c2aecabecc1e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "befcee8f-f902-4d17-8b17-17461180efe9",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
