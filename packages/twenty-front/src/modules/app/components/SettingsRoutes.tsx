@@ -690,7 +690,7 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={PermissionFlagType.AI}
+            settingsPermission={PermissionFlagType.AI_SETTINGS}
           />
         }
       >
