@@ -1,4 +1,5 @@
 import { formatPath } from '@/cli/utilities/file/file-path';
+import chalk from 'chalk';
 import type { Command } from 'commander';
 import { SyncableEntity } from 'twenty-shared/application';
 import { EntityAddCommand } from './add';
@@ -25,6 +26,14 @@ export const registerDevCommands = (program: Command): void => {
       dryRun?: boolean;
     },
   ) => {
+    if (options.dryRun && !options.once) {
+      console.warn(
+        chalk.yellow(
+          '--dry-run only applies with --once. Ignoring it; run `yarn twenty dev --once --dry-run` to preview changes.',
+        ),
+      );
+    }
+
     const commonOptions = {
       appPath: formatPath(appPath),
       verbose: options.verbose || options.debug,

@@ -7,8 +7,9 @@ import {
   type OrchestratorStateStepEvent,
   type OrchestratorStateSyncStatus,
 } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
-import { formatSyncActionsSummary } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
+import { formatSyncActionsSummaryFromData } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
+import { getSyncErrorRecoveryHint } from '@/cli/utilities/error/get-sync-error-recovery-hint';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { type Manifest } from 'twenty-shared/application';
 
@@ -70,10 +71,7 @@ export class SyncApplicationOrchestratorStep {
     const syncResult = await this.apiService.syncApplication(manifest);
 
     if (syncResult.success) {
-      const syncData = syncResult.data as { actions?: unknown[] } | undefined;
-      const actions = Array.isArray(syncData?.actions) ? syncData.actions : [];
-
-      events.push(...formatSyncActionsSummary(actions));
+      events.push(...formatSyncActionsSummaryFromData(syncResult.data));
       events.push({ message: '✓ Synced', status: 'success' });
       step.output = { syncStatus: 'synced', error: null };
       step.status = 'done';
@@ -99,6 +97,12 @@ export class SyncApplicationOrchestratorStep {
         message: `Sync failed with error: ${serializeError(syncResult.error)}`,
         status: 'error',
       });
+    }
+
+    const recoveryHint = getSyncErrorRecoveryHint(syncResult.error);
+
+    if (recoveryHint) {
+      events.push({ message: recoveryHint, status: 'info' });
     }
 
     const summaryMessage = errorEvents ? errorEvents[0].message : 'Sync failed';

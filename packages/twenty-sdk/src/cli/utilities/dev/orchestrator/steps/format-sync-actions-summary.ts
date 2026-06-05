@@ -59,6 +59,16 @@ const parseSyncAction = (action: unknown): ParsedSyncAction | null => {
   return { type, metadataName, label };
 };
 
+export const formatSyncActionsSummaryFromData = (
+  data: unknown,
+): OrchestratorStateStepEvent[] => {
+  const actions = Array.isArray((data as { actions?: unknown[] })?.actions)
+    ? (data as { actions: unknown[] }).actions
+    : [];
+
+  return formatSyncActionsSummary(actions);
+};
+
 export const formatSyncActionsSummary = (
   actions: unknown[],
 ): OrchestratorStateStepEvent[] => {

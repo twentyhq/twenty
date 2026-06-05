@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { formatSyncActionsSummary } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
+import {
+  formatSyncActionsSummary,
+  formatSyncActionsSummaryFromData,
+} from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
 
 describe('formatSyncActionsSummary', () => {
   it('reports no changes when the actions list is empty', () => {
@@ -97,6 +100,38 @@ describe('formatSyncActionsSummary', () => {
     ]);
 
     expect(events).toEqual([
+      { message: 'No metadata changes', status: 'info' },
+    ]);
+  });
+});
+
+describe('formatSyncActionsSummaryFromData', () => {
+  it('extracts the actions from a sync response and formats them', () => {
+    expect(
+      formatSyncActionsSummaryFromData({
+        applicationUniversalIdentifier: 'app-uid',
+        actions: [
+          {
+            type: 'create',
+            metadataName: 'fieldMetadata',
+            flatEntity: {
+              universalIdentifier: 'uid',
+              name: 'timelineActivities',
+            },
+          },
+        ],
+      }),
+    ).toEqual([
+      { message: 'Metadata changes: 1 created', status: 'info' },
+      { message: '  created fieldMetadata timelineActivities', status: 'info' },
+    ]);
+  });
+
+  it('reports no changes when the data has no actions array', () => {
+    expect(formatSyncActionsSummaryFromData(undefined)).toEqual([
+      { message: 'No metadata changes', status: 'info' },
+    ]);
+    expect(formatSyncActionsSummaryFromData({ actions: 'nope' })).toEqual([
       { message: 'No metadata changes', status: 'info' },
     ]);
   });
