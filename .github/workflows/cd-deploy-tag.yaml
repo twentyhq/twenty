@@ -7,7 +7,7 @@ on:
   push:
     tags:
       - 'twenty/v*'
-      - 'npm/v*'
+      - 'sdk/v*'
 
 defaults:
   run:
@@ -27,11 +27,11 @@ jobs:
             twenty/v*)
               event_type=auto-deploy-twenty
               ;;
-            npm/v*)
+            sdk/v*)
               event_type=auto-publish-npm
               ;;
             *)
-              echo "Unsupported tag '$REF_NAME', expected 'twenty/v*' or 'npm/v*'." >&2
+              echo "Unsupported tag '$REF_NAME', expected 'twenty/v*' or 'sdk/v*'." >&2
               exit 1
               ;;
           esac
