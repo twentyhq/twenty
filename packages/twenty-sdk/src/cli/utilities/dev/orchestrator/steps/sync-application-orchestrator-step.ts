@@ -70,10 +70,9 @@ export class SyncApplicationOrchestratorStep {
     const syncResult = await this.apiService.syncApplication(manifest);
 
     if (syncResult.success) {
-      const syncData = syncResult.data as { actions?: unknown[] } | undefined;
-      const actions = Array.isArray(syncData?.actions) ? syncData.actions : [];
+      const syncData = syncResult.data;
 
-      events.push(...formatSyncActionsSummary(actions));
+      events.push(...formatSyncActionsSummary(syncData.actions));
       events.push({ message: '✓ Synced', status: 'success' });
       step.output = { syncStatus: 'synced', error: null };
       step.status = 'done';

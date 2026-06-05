@@ -72,7 +72,12 @@ export class ApiService {
     return this.applicationApi.createDevelopmentApplication(...args);
   }
 
-  syncApplication(manifest: Manifest): Promise<ApiResponse> {
+  syncApplication(manifest: Manifest): Promise<
+    ApiResponse<{
+      applicationUniversalIdentifier: string;
+      actions: unknown[];
+    }>
+  > {
     return this.applicationApi.syncApplication(manifest);
   }
 
