@@ -16,6 +16,7 @@ import { validateMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-mo
 import { validateMorphRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util';
 import { validatePositionFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-position-flat-field-metadata.util';
 import { validateTsVectorFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util';
+import { isTwentyStandardApplicationUniversalIdentifier } from 'src/engine/metadata-modules/utils/is-twenty-standard-application-universal-identifier.util';
 
 const DEFAULT_NO_VALIDATION = (): FlatFieldMetadataValidationError[] => [];
 
@@ -28,9 +29,11 @@ const rejectUserCreation = (
     args: FlatFieldMetadataTypeValidationArgs<FieldMetadataType>,
   ): FlatFieldMetadataValidationError[] => {
     const isCreation = !isDefined(args.update);
-    const isUserField = !args.flatEntityToValidate.isSystem;
+    const isCustomField = !isTwentyStandardApplicationUniversalIdentifier(
+      args.flatEntityToValidate.applicationUniversalIdentifier,
+    );
 
-    if (isCreation && isUserField) {
+    if (isCreation && isCustomField) {
       return [
         {
           code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
