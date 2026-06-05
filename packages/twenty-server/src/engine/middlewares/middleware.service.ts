@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Request, type Response } from 'express';
@@ -24,6 +24,8 @@ import { type CustomException } from 'src/utils/custom-exception';
 
 @Injectable()
 export class MiddlewareService {
+  private readonly logger = new Logger(MiddlewareService.name);
+
   constructor(
     private readonly accessTokenService: AccessTokenService,
     private readonly workspaceStorageCacheService: WorkspaceCacheStorageService,
@@ -125,14 +127,37 @@ export class MiddlewareService {
       return;
     }
 
-    const data = await this.accessTokenService.validateTokenByRequest(request);
-    const metadataVersion = data.workspace
-      ? await this.workspaceStorageCacheService.getMetadataVersion(
-          data.workspace.id,
-        )
-      : undefined;
+    try {
+      const data =
+        await this.accessTokenService.validateTokenByRequest(request);
+      const metadataVersion = data.workspace
+        ? await this.workspaceStorageCacheService.getMetadataVersion(
+            data.workspace.id,
+          )
+        : undefined;
 
-    bindDataToRequestObject(data, request, metadataVersion);
+      bindDataToRequestObject(data, request, metadataVersion);
+    } catch (error) {
+      // When token validation fails, do not block the request. Public endpoints
+      // (e.g. validatePasswordResetToken, updatePasswordViaResetToken) must
+      // remain accessible even when the requester carries a stale or
+      // workspace-mismatched auth token. Authentication requirements are
+      // enforced by the guards declared on each resolver (WorkspaceAuthGuard,
+      // UserAuthGuard, etc.), not by this hydration middleware.
+      if (error instanceof AuthException) {
+        this.logger.warn(
+          `Token hydration skipped for GraphQL request: ${error.message} (code: ${error.code})`,
+        );
+
+        request.locale =
+          (request.headers['x-locale'] as keyof typeof APP_LOCALES) ??
+          SOURCE_LOCALE;
+
+        return;
+      }
+
+      throw error;
+    }
   }
 
   private hasErrorStatus(error: unknown): error is { status: number } {
