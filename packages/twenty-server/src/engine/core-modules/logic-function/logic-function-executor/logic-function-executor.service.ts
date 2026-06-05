@@ -456,9 +456,9 @@ export class LogicFunctionExecutorService {
     // gate here to skip building N application-log envelopes when no sink is configured
     if (this.eventLogEmitterService.isEnabled()) {
       void this.eventLogEmitterService
-        .enqueue(buildApplicationLogEnvelopes(logEntries))
+        .dispatch(buildApplicationLogEnvelopes(logEntries))
         .catch((error) => {
-          this.logger.error('Failed to enqueue application logs', error);
+          this.logger.error('Failed to record application logs', error);
         });
     }
 

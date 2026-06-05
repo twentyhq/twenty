@@ -15,7 +15,6 @@ import {
   type EventSink,
 } from 'src/engine/core-modules/event-logs/ingest/event-sink';
 import { WorkspaceEventSinkService } from 'src/engine/core-modules/event-logs/ingest/workspace-event-sink.service';
-import { WorkspaceEventsConsumer } from 'src/engine/core-modules/event-logs/ingest/workspace-events.consumer';
 import { EventLogLiveModule } from 'src/engine/core-modules/event-logs/live/event-log-live.module';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -52,7 +51,8 @@ const eventSinksProvider = {
   inject: [TwentyConfigService, ClickHouseEventSink, ConsoleEventSink],
 };
 
-// Worker-side consume → persist pipeline. Imported only by the worker (jobs) module.
+// Sink layer: persists events to the configured sinks (ClickHouse) + live fan-out. Used by the
+// emitter (direct write) and by the worker's internal-event adapter for object/record events.
 @Module({
   imports: [ClickHouseModule, EventLogLiveModule],
   providers: [
@@ -60,7 +60,6 @@ const eventSinksProvider = {
     ConsoleEventSink,
     eventSinksProvider,
     WorkspaceEventSinkService,
-    WorkspaceEventsConsumer,
     CreateEventLogFromInternalEvent,
   ],
   exports: [WorkspaceEventSinkService],

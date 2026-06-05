@@ -11,51 +11,33 @@ import {
   type TrackEventName,
   type TrackEventProperties,
 } from 'src/engine/core-modules/event-logs/emit/events.type';
-import { getAvailableSinkNames } from 'src/engine/core-modules/event-logs/ingest/event-sink-availability';
+import { WorkspaceEventSinkService } from 'src/engine/core-modules/event-logs/ingest/workspace-event-sink.service';
 import {
   type EventContextFields,
   type WorkspaceEventEnvelope,
-  WORKSPACE_EVENTS_JOB_NAME,
-  type WorkspaceEventsJobData,
 } from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-// Producer-facing emit API. Building (schema validation) and enqueuing are best-effort and never crash the caller.
-// Persistence happens later in the worker (WorkspaceEventSinkService.ingest), so this depends only on the queue.
+// Producer-facing emit API. Builds schema-validated envelopes and writes them straight through the
+// sink (ClickHouse batches server-side via async_insert) plus the live fan-out. Best-effort:
+// failures are logged, never thrown back to the caller.
 @Injectable()
 export class EventLogEmitterService {
   private readonly logger = new Logger(EventLogEmitterService.name);
 
   constructor(
-    @InjectMessageQueue(MessageQueue.workspaceEventsQueue)
-    private readonly workspaceEventsQueueService: MessageQueueService,
-    private readonly twentyConfigService: TwentyConfigService,
+    private readonly workspaceEventSinkService: WorkspaceEventSinkService,
   ) {}
 
-  // Config-derived so producers can skip work without constructing sinks; the consumer
-  // re-checks the resolved sinks before persisting.
   isEnabled(): boolean {
-    return (
-      getAvailableSinkNames(this.twentyConfigService.get('EVENT_SINKS'), {
-        hasClickhouseUrl: Boolean(
-          this.twentyConfigService.get('CLICKHOUSE_URL'),
-        ),
-      }).length > 0
-    );
+    return this.workspaceEventSinkService.isEnabled();
   }
 
-  async enqueue(events: WorkspaceEventEnvelope[]): Promise<void> {
-    if (!this.isEnabled() || events.length === 0) {
+  async dispatch(events: WorkspaceEventEnvelope[]): Promise<void> {
+    if (events.length === 0 || !this.isEnabled()) {
       return;
     }
 
-    await this.workspaceEventsQueueService.add<WorkspaceEventsJobData>(
-      WORKSPACE_EVENTS_JOB_NAME,
-      { events },
-    );
+    await this.workspaceEventSinkService.ingest(events);
   }
 
   createContext(context?: EventContextFields) {
@@ -92,7 +74,7 @@ export class EventLogEmitterService {
     buildEnvelope: () => WorkspaceEventEnvelope,
   ): Promise<{ success: boolean }> {
     try {
-      await this.enqueue([buildEnvelope()]);
+      await this.dispatch([buildEnvelope()]);
 
       return { success: true };
     } catch (error) {

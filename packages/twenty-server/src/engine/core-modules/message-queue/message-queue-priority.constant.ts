@@ -3,7 +3,6 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 export const MESSAGE_QUEUE_PRIORITY = {
   [MessageQueue.billingQueue]: 1,
   [MessageQueue.entityEventsToDbQueue]: 1,
-  [MessageQueue.workspaceEventsQueue]: 4,
   [MessageQueue.emailQueue]: 1,
   [MessageQueue.workflowQueue]: 2,
   [MessageQueue.webhookQueue]: 2,

@@ -31,12 +31,12 @@ export class UsageEventListener {
     }
 
     try {
-      await this.eventLogEmitterService.enqueue(
+      await this.eventLogEmitterService.dispatch(
         buildUsageEventEnvelopes(payload.workspaceId, payload.events),
       );
     } catch (error) {
       // Usage analytics is best-effort; never fail the emitting flow.
-      this.logger.error('Failed to enqueue usage events', error);
+      this.logger.error('Failed to record usage events', error);
     }
   }
 }

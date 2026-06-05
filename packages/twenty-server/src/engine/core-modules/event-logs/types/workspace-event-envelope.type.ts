@@ -65,10 +65,3 @@ export type WorkspaceEventEnvelope =
   | { table: 'applicationLog'; row: ApplicationLogRow };
 
 export type WorkspaceEventTable = WorkspaceEventEnvelope['table'];
-
-export type WorkspaceEventsJobData = {
-  events: WorkspaceEventEnvelope[];
-};
-
-// Kept here (not on the consumer) so producers can enqueue without importing it.
-export const WORKSPACE_EVENTS_JOB_NAME = 'WorkspaceEventsConsumer';
