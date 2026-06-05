@@ -4,9 +4,9 @@ type SyncCreateAction = {
   type: 'create';
   metadataName: AllMetadataName;
   flatEntity?: {
-    name?: string;
-    nameSingular?: string;
-    universalIdentifier?: string;
+    name?: string | null;
+    nameSingular?: string | null;
+    universalIdentifier?: string | null;
     [key: string]: unknown;
   };
 };
