@@ -188,7 +188,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         nextStepIds: [],
         settings: {
           input: {
-            logicFunctionId: 'function-id',
+            logicFunctionId: '550e8400-e29b-41d4-a716-446655440000',
           },
           outputSchema: {},
           errorHandlingOptions: {
@@ -206,7 +206,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
       expect(
         logicFunctionFromSourceService.deleteOneWithSource,
       ).toHaveBeenCalledWith({
-        id: 'function-id',
+        id: '550e8400-e29b-41d4-a716-446655440000',
         workspaceId: mockWorkspaceId,
       });
     });
