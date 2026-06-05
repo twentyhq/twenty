@@ -1,6 +1,10 @@
 # twenty-new-ui
 
-> **Status:** Planning. This is a design document; no implementation has started.
+> **Status:** Phase 0 — Foundations in progress. The package is scaffolded and builds
+> on SCSS Modules + Base UI; the theme layer is ported from `twenty-ui` with a parity
+> test, and the size/Storybook/a11y harnesses are wired up. Remaining Phase 0 work: the
+> CI diff-table workflow, the `twenty-ui` component inventory, and the `modules/ui` triage.
+> The sections below remain the design document for the full effort.
 
 `twenty-new-ui` is the next generation of Twenty's UI library, replacing [`twenty-ui`](../twenty-ui).
 It is built on a headless component library and a zero-runtime, CSS-variable styling layer.
@@ -30,8 +34,9 @@ components are now **in scope** — they migrate into `twenty-new-ui` (see [Appl
 
 ## Decision 1 — Headless library: Base UI
 
-Adopt **Base UI** (`@base-ui-components/react`, MIT) as the behavioral foundation; build Twenty's
-visual design on top of it.
+Adopt **Base UI** ([`mui/base-ui`](https://github.com/mui/base-ui), published to npm as
+[`@base-ui/react`](https://base-ui.com), MIT) as the behavioral foundation; build Twenty's visual
+design on top of it.
 
 | | Base UI | shadcn/ui | Radix |
 | --- | --- | --- | --- |
@@ -84,7 +89,7 @@ packages/twenty-new-ui/
 ├── vitest.config.ts        # storybook component tests
 ├── .storybook/
 ├── .size-limit.json        # per-entry bundle budgets
-├── scripts/                # generateBarrels.ts, generateTheme.ts
+├── scripts/                # generateBarrels.ts
 └── src/
     ├── styles/             # global: reset, theme vars, mixins, breakpoints
     ├── theme/ theme-constants/
@@ -106,8 +111,8 @@ as-is.
 
 - Keep the public API identical: `ThemeProvider`, `ThemeContext`, `useTheme`, the `themeCssVariables` shape, `ThemeType`, color helpers, and the `theme-light.css` / `theme-dark.css` exports.
 - Reuse `twenty-ui`'s token values verbatim to guarantee identical design.
-- Tokens are authored in `src/theme/` and generated into CSS variables + a typed accessor.
-- A generated-output diff test asserts the new theme CSS produces the same `--t-*` values as `twenty-ui`.
+- Tokens live in `src/theme/` (`THEME_LIGHT` / `THEME_DARK`); the `--t-*` CSS variables and the `themeCssVariables` accessor are static files mirrored token-for-token from `twenty-ui` (matching `twenty-ui`'s own static-CSS approach).
+- A theme parity test asserts the theme CSS and `themeCssVariables` stay identical to `twenty-ui`'s `--t-*` values.
 
 ## Component migration map
 
@@ -219,7 +224,7 @@ CI surfaces a per-PR diff table (`twenty-ui` vs `twenty-new-ui`) for size, a11y,
 
 - Vite library mode, dual ESM/CJS, `vite-plugin-dts`, `vite-plugin-svgr`; SCSS via Vite's built-in `sass`; no Babel.
 - `sideEffects: ["**/*.css", "**/*.scss"]`; emit per-entry CSS plus `style.css` / `theme-light.css` / `theme-dark.css`.
-- Public package (remove `private`); scoped name (e.g. `@twenty/ui`).
+- Public package (remove `private`); ships as `twenty-new-ui` until cut-over, then claims the `twenty-ui` name once the old package is removed.
 - **Changesets** for semver + changelog; GitHub Actions release with `npm publish --provenance`.
 - Declare `react` / `react-dom` as peer dependencies; validate the `exports`/types map with `publint` + `@arethetypeswrong/cli`.
 - Publish the Storybook as living documentation.
@@ -259,59 +264,10 @@ a passing visual-parity diff, and a within-budget size entry.
 
 ## Open questions
 
-1. Published package name/scope (proposed `@twenty/ui`).
+1. Published package name: `twenty-new-ui` now, renamed to `twenty-ui` at cut-over (Phase 6).
 2. Styling: confirm SCSS Modules vs vanilla-extract vs plain CSS Modules.
 3. Variants helper: `clsx` + `data-*` vs `cva`.
 4. Visual regression tooling: Chromatic vs self-hosted image snapshots.
 5. How aggressively to drop `framer-motion` in favor of CSS/Base UI transitions.
 6. Scope of `assets` / `testing` / `json-visualizer`: port verbatim or modernize.
 7. Where to draw the generic-vs-app-specific line for `modules/ui`, and whether hybrid components live as a headless core in `twenty-new-ui` with a thin app wrapper in `twenty-front`.
-
-## Appendix — example component pattern
-
-`src/input/components/Toggle.tsx`
-
-```tsx
-import { Switch } from '@base-ui-components/react/switch';
-import { clsx } from 'clsx';
-import styles from './Toggle.module.scss';
-
-type ToggleProps = {
-  value?: boolean;
-  onChange?: (value: boolean) => void;
-  disabled?: boolean;
-  size?: 'small' | 'medium';
-};
-
-export const Toggle = ({ value, onChange, disabled, size = 'medium' }: ToggleProps) => (
-  <Switch.Root
-    checked={value}
-    onCheckedChange={onChange}
-    disabled={disabled}
-    className={clsx(styles.root, styles[size])}
-  >
-    <Switch.Thumb className={styles.thumb} />
-  </Switch.Root>
-);
-```
-
-`src/input/components/Toggle.module.scss`
-
-```scss
-.root {
-  background: var(--t-background-quaternary);
-  border-radius: var(--t-border-radius-pill);
-  transition: background var(--t-animation-duration-fast) ease;
-
-  &[data-checked] { background: var(--t-color-blue); }
-  &[data-disabled] { opacity: 0.32; cursor: not-allowed; }
-}
-
-.thumb {
-  background: var(--t-background-primary);
-  border-radius: 50%;
-  transition: translate var(--t-animation-duration-fast) ease;
-
-  .root[data-checked] & { translate: 100% 0; }
-}
-```
