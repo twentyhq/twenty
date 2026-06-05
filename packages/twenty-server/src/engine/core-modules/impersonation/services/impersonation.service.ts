@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
-import { MONITORING_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/monitoring/monitoring';
+import { IMPERSONATION_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/impersonation/impersonation';
 import {
   AuthException,
   AuthExceptionCode,
@@ -168,14 +168,16 @@ export class ImpersonationService {
       userId: impersonatorUserWorkspace.userId,
     });
 
-    void eventLogContext.insertWorkspaceEvent(MONITORING_EVENT, {
-      eventName: `${impersonationLevel}.impersonation.attempt`,
+    void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
+      level: impersonationLevel,
+      action: 'attempt',
       message: `Impersonation attempt: targetUserId=${toImpersonateUserWorkspace.user.id}, workspaceId=${toImpersonateUserWorkspace.workspace.id}, impersonatorUserId=${impersonatorUserWorkspace.user.id}`,
     });
 
     try {
-      void eventLogContext.insertWorkspaceEvent(MONITORING_EVENT, {
-        eventName: `${impersonationLevel}.impersonation.login_token_attempt`,
+      void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
+        level: impersonationLevel,
+        action: 'login_token_attempt',
         message: `Impersonation token generation attempt for user ${toImpersonateUserWorkspace.user.id}`,
       });
 
@@ -188,8 +190,9 @@ export class ImpersonationService {
         },
       );
 
-      void eventLogContext.insertWorkspaceEvent(MONITORING_EVENT, {
-        eventName: `${impersonationLevel}.impersonation.login_token_generated`,
+      void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
+        level: impersonationLevel,
+        action: 'login_token_generated',
         message: `Impersonation token generated successfully for user ${toImpersonateUserWorkspace.user.id}`,
       });
 
@@ -203,8 +206,9 @@ export class ImpersonationService {
         loginToken,
       };
     } catch {
-      void eventLogContext.insertWorkspaceEvent(MONITORING_EVENT, {
-        eventName: `${impersonationLevel}.impersonation.login_token_failed`,
+      void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
+        level: impersonationLevel,
+        action: 'login_token_failed',
         message: `Impersonation token generation failed for targetUserId=${toImpersonateUserWorkspace.user.id}`,
       });
       throw new AuthException(

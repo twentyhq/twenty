@@ -13,7 +13,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
-import { MONITORING_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/monitoring/monitoring';
+import { IMPERSONATION_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/impersonation/impersonation';
 import {
   AuthException,
   AuthExceptionCode,
@@ -722,8 +722,9 @@ export class AuthResolver {
       userId: impersonatorUserWorkspace.user.id,
     });
 
-    void eventLogContext.insertWorkspaceEvent(MONITORING_EVENT, {
-      eventName: `${isServerLevelImpersonation ? 'server' : 'workspace'}.impersonation.token_exchange_attempt`,
+    void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
+      level: isServerLevelImpersonation ? 'server' : 'workspace',
+      action: 'token_exchange_attempt',
       message: `Impersonation token exchange attempt for ${targetUserEmail} by ${impersonatorUserWorkspace.user.id}`,
     });
 
@@ -733,8 +734,9 @@ export class AuthResolver {
 
     if (isServerLevelImpersonation) {
       if (!hasServerLevelImpersonatePermission) {
-        void eventLogContext.insertWorkspaceEvent(MONITORING_EVENT, {
-          eventName: 'server.impersonation.token_exchange_failed',
+        void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
+          level: 'server',
+          action: 'token_exchange_failed',
           message: `Server level impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
         });
 
@@ -744,8 +746,9 @@ export class AuthResolver {
         );
       }
 
-      void eventLogContext.insertWorkspaceEvent(MONITORING_EVENT, {
-        eventName: `server.impersonation.token_exchange_success`,
+      void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
+        level: 'server',
+        action: 'token_exchange_success',
         message: `Impersonation token exchanged for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
       });
 
@@ -766,8 +769,9 @@ export class AuthResolver {
       });
 
     if (!hasWorkspaceLevelImpersonatePermission) {
-      void eventLogContext.insertWorkspaceEvent(MONITORING_EVENT, {
-        eventName: 'workspace.impersonation.token_exchange_failed',
+      void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
+        level: 'workspace',
+        action: 'token_exchange_failed',
         message: `Impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
       });
       throw new AuthException(
@@ -776,8 +780,9 @@ export class AuthResolver {
       );
     }
 
-    void eventLogContext.insertWorkspaceEvent(MONITORING_EVENT, {
-      eventName: 'workspace.impersonation.token_exchange_success',
+    void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
+      level: 'workspace',
+      action: 'token_exchange_success',
       message: `Impersonation token exchanged for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
     });
 

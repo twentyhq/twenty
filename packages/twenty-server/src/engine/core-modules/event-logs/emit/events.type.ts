@@ -27,9 +27,9 @@ import {
   type LogicFunctionExecutedTrackEvent,
 } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/logic-function/logic-function-executed';
 import {
-  type MONITORING_EVENT,
-  type MonitoringTrackEvent,
-} from 'src/engine/core-modules/event-logs/emit/events/workspace-event/monitoring/monitoring';
+  type IMPERSONATION_EVENT,
+  type ImpersonationTrackEvent,
+} from 'src/engine/core-modules/event-logs/emit/events/workspace-event/impersonation/impersonation';
 import {
   type USER_SIGNUP_EVENT,
   type UserSignupTrackEvent,
@@ -53,7 +53,7 @@ export type TrackEventName =
   | typeof CUSTOM_DOMAIN_DEACTIVATED_EVENT
   | typeof LOGIC_FUNCTION_EXECUTED_EVENT
   | typeof WEBHOOK_RESPONSE_EVENT
-  | typeof MONITORING_EVENT
+  | typeof IMPERSONATION_EVENT
   | typeof OBJECT_RECORD_CREATED_EVENT
   | typeof OBJECT_RECORD_UPDATED_EVENT
   | typeof OBJECT_RECORD_DELETED_EVENT
@@ -69,7 +69,7 @@ export interface TrackEvents {
   [LOGIC_FUNCTION_EXECUTED_EVENT]: LogicFunctionExecutedTrackEvent;
   [WEBHOOK_RESPONSE_EVENT]: WebhookResponseTrackEvent;
   [USER_SIGNUP_EVENT]: UserSignupTrackEvent;
-  [MONITORING_EVENT]: MonitoringTrackEvent;
+  [IMPERSONATION_EVENT]: ImpersonationTrackEvent;
   [OBJECT_RECORD_DELETED_EVENT]: ObjectRecordDeletedTrackEvent;
   [OBJECT_RECORD_CREATED_EVENT]: ObjectRecordCreatedTrackEvent;
   [OBJECT_RECORD_UPDATED_EVENT]: ObjectRecordUpdatedTrackEvent;

@@ -20,7 +20,7 @@ import {
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
-import { MONITORING_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/monitoring/monitoring';
+import { IMPERSONATION_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/impersonation/impersonation';
 import {
   AuthException,
   AuthExceptionCode,
@@ -432,8 +432,9 @@ export class AuthService {
       userId: _impersonatorUserId,
     });
 
-    void eventLogContext.insertWorkspaceEvent(MONITORING_EVENT, {
-      eventName: 'workspace.impersonation.attempted',
+    void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
+      level: 'workspace',
+      action: 'attempted',
       message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
 
@@ -458,8 +459,9 @@ export class AuthService {
       true,
     );
 
-    void eventLogContext.insertWorkspaceEvent(MONITORING_EVENT, {
-      eventName: 'workspace.impersonation.issued',
+    void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
+      level: 'workspace',
+      action: 'issued',
       message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
 
