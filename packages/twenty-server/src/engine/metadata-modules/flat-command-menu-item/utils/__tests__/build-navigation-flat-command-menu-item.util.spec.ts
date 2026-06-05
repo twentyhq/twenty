@@ -1,8 +1,10 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { v5 } from 'uuid';
 
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import {
+  buildNavigationConditionalAvailabilityExpression,
   buildNavigationFlatCommandMenuItem,
   NAVIGATION_INTERPOLATED_ICON,
   NAVIGATION_INTERPOLATED_LABEL,
@@ -114,6 +116,21 @@ describe('buildNavigationFlatCommandMenuItem', () => {
     );
   });
 
+  it('should additionally gate conditionalAvailabilityExpression behind the feature flag for feature-flagged objects', () => {
+    const result = buildNavigationFlatCommandMenuItem({
+      ...baseArgs,
+      objectMetadata: {
+        ...baseObjectMetadata,
+        universalIdentifier: STANDARD_OBJECTS.callRecording.universalIdentifier,
+        nameSingular: 'callRecording',
+      },
+    });
+
+    expect(result.conditionalAvailabilityExpression).toBe(
+      'featureFlags.IS_CALL_RECORDING_ENABLED and targetObjectReadPermissions.callRecording',
+    );
+  });
+
   it('should set isPinned to false', () => {
     const result = buildNavigationFlatCommandMenuItem(baseArgs);
 
@@ -135,5 +152,36 @@ describe('buildNavigationFlatCommandMenuItem', () => {
 
     expect(result.createdAt).toBe('2026-01-01T00:00:00.000Z');
     expect(result.updatedAt).toBe('2026-01-01T00:00:00.000Z');
+  });
+});
+
+describe('buildNavigationConditionalAvailabilityExpression', () => {
+  it('gates the standard call recording object behind both the flag and read permission', () => {
+    expect(
+      buildNavigationConditionalAvailabilityExpression({
+        universalIdentifier: STANDARD_OBJECTS.callRecording.universalIdentifier,
+        nameSingular: 'callRecording',
+      }),
+    ).toBe(
+      'featureFlags.IS_CALL_RECORDING_ENABLED and targetObjectReadPermissions.callRecording',
+    );
+  });
+
+  it('returns only the read-permission expression for non-gated objects', () => {
+    expect(
+      buildNavigationConditionalAvailabilityExpression({
+        universalIdentifier: 'obj-universal-1',
+        nameSingular: 'person',
+      }),
+    ).toBe('targetObjectReadPermissions.person');
+  });
+
+  it('does not gate a custom object that reuses the callRecording name', () => {
+    expect(
+      buildNavigationConditionalAvailabilityExpression({
+        universalIdentifier: 'custom-object-universal-id',
+        nameSingular: 'callRecording',
+      }),
+    ).toBe('targetObjectReadPermissions.callRecording');
   });
 });
