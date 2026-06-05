@@ -14,14 +14,15 @@ export type AppPreviewFrameMode = 'static' | 'windowed';
 const APP_PREVIEW_FRAME_MAX_WIDTH = 1040;
 const APP_PREVIEW_FRAME_ASPECT_RATIO = '1280 / 832';
 
-const StaticFrameRoot = styled.div`
+const StaticFrameRoot = styled.div<{ $fill: boolean }>`
+  align-items: ${({ $fill }) => ($fill ? 'flex-start' : 'stretch')};
   display: flex;
   height: 100%;
   justify-content: center;
   width: 100%;
 `;
 
-const StaticShell = styled.div`
+const StaticShell = styled.div<{ $fill: boolean }>`
   aspect-ratio: ${APP_PREVIEW_FRAME_ASPECT_RATIO};
   background-color: ${VISUAL_TOKENS.background.primary};
   background-image: ${VISUAL_TOKENS.background.noisy};
@@ -31,7 +32,7 @@ const StaticShell = styled.div`
   display: flex;
   flex-direction: column;
   height: auto;
-  max-height: 100%;
+  max-height: ${({ $fill }) => ($fill ? 'none' : '100%')};
   max-width: ${APP_PREVIEW_FRAME_MAX_WIDTH}px;
   overflow: hidden;
   position: relative;
@@ -51,17 +52,22 @@ const StaticContent = styled.div`
 
 type AppPreviewFrameProps = {
   children: ReactNode;
+  fill?: boolean;
   mode: AppPreviewFrameMode;
 };
 
-export function AppPreviewFrame({ children, mode }: AppPreviewFrameProps) {
+export function AppPreviewFrame({
+  children,
+  fill = false,
+  mode,
+}: AppPreviewFrameProps) {
   if (mode === 'windowed') {
     return <AppWindow>{children}</AppWindow>;
   }
 
   return (
-    <StaticFrameRoot>
-      <StaticShell>
+    <StaticFrameRoot $fill={fill}>
+      <StaticShell $fill={fill}>
         <MacWindowBar interactive={false} />
         <StaticContent>{children}</StaticContent>
       </StaticShell>

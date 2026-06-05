@@ -31,9 +31,13 @@ import { useProductVisualAutoplay } from './use-product-visual-autoplay';
 
 const MAX_VISIBLE_RESPONSE_CHIPS = 3;
 
-const StyledRoot = styled.div`
+const StyledRoot = styled.div<{ $fill: boolean }>`
+  display: ${({ $fill }) => ($fill ? 'flex' : 'block')};
+  flex: ${({ $fill }) => ($fill ? '1' : 'none')};
+  flex-direction: column;
   isolation: isolate;
   margin-top: ${theme.spacing(5)};
+  min-height: 0;
   position: relative;
   text-align: left;
   width: 100%;
@@ -43,10 +47,13 @@ const StyledRoot = styled.div`
   }
 `;
 
-const ShellScene = styled.div`
-  aspect-ratio: 1280 / 832;
+const ShellScene = styled.div<{ $fill: boolean }>`
+  aspect-ratio: ${({ $fill }) => ($fill ? 'auto' : '1280 / 832')};
+  flex: ${({ $fill }) => ($fill ? '1' : '0 0 auto')};
   margin: 0 auto;
-  max-height: 740px;
+  max-height: ${({ $fill }) => ($fill ? 'none' : '740px')};
+  min-height: 0;
+  overflow: hidden;
   position: relative;
   width: 100%;
 `;
@@ -276,6 +283,7 @@ type ProductVisualProps = {
   cursorActive?: boolean;
   cursorLayer?: HTMLElement | null;
   desktopSidebarMode?: DesktopSidebarMode;
+  fill?: boolean;
   frameMode?: AppPreviewFrameMode;
   playbackEnabled?: boolean;
   visual: AppPreviewConfig;
@@ -388,6 +396,7 @@ export function ProductVisual({
   cursorActive = true,
   cursorLayer,
   desktopSidebarMode = 'expanded',
+  fill = false,
   frameMode = 'static',
   playbackEnabled = true,
   visual,
@@ -462,7 +471,7 @@ export function ProductVisual({
   );
 
   const previewShell = (
-    <AppPreviewFrame mode={frameMode}>
+    <AppPreviewFrame fill={fill} mode={frameMode}>
       <AppPreviewLayout
         activeItem={activeItem}
         activeItemId={activeItemId}
@@ -598,8 +607,8 @@ export function ProductVisual({
       : null;
 
   return (
-    <StyledRoot>
-      <ShellScene>
+    <StyledRoot $fill={fill}>
+      <ShellScene $fill={fill}>
         {frameMode === 'windowed' ? (
           <WindowOrderProvider>{previewShell}</WindowOrderProvider>
         ) : (

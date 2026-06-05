@@ -51,10 +51,14 @@ const imagePassthroughFragmentShader = `
     float imageAspect = imageSize.x / imageSize.y;
     float viewAspect = viewportSize.x / viewportSize.y;
 
-    // Cover by width: the full image width fills the viewport, cropping
-    // height as needed.
-    vec2 uv = vUv;
-    uv.y = (uv.y - 0.5) * (imageAspect / viewAspect) + 0.5;
+    vec2 uv = vUv - 0.5;
+    float coverRatio = imageAspect / viewAspect;
+    if (coverRatio > 1.0) {
+      uv.x /= coverRatio;
+    } else {
+      uv.y *= coverRatio;
+    }
+    uv += 0.5;
 
     float inBounds = step(0.0, uv.x) * step(uv.x, 1.0)
                    * step(0.0, uv.y) * step(uv.y, 1.0);

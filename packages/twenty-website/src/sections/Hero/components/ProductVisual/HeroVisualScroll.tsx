@@ -50,13 +50,9 @@ const INTRO_DASH_COLOR = '#4A38F5';
 const AI_DASH_COLOR = '#ffffff';
 
 const PatternOverlay = styled.div`
-  bottom: -100px;
-  height: 800px;
-  left: 50%;
+  inset: 0;
   pointer-events: none;
   position: absolute;
-  transform: translateX(-50%);
-  width: 100vw;
   z-index: 0;
 `;
 
@@ -217,7 +213,9 @@ const StackedTabCard = styled.div`
 `;
 
 const VisualWrapper = styled.div`
+  display: flex;
   flex: 1;
+  flex-direction: column;
   min-height: 0;
   overflow: hidden;
   position: relative;
@@ -487,6 +485,7 @@ export function HeroVisualScroll({
               collaborative
               cursorActive={morphProgress < 0.5}
               cursorLayer={introLayerEl}
+              fill
               playbackEnabled={false}
               visual={visual}
             />
@@ -602,6 +601,7 @@ export function HeroVisualScroll({
             <ProductVisual
               activeScene={activeTab + 1}
               aiPanelProgress={aiPanelProgress}
+              fill
               playbackEnabled={aiPlaybackEnabled}
               visual={visual}
             />
