@@ -1,14 +1,14 @@
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 
-import { CreateAuditLogFromInternalEvent } from 'src/engine/core-modules/event-logs/ingest/create-audit-log-from-internal-event';
+import { CreateEventLogFromInternalEvent } from 'src/engine/core-modules/event-logs/ingest/create-event-log-from-internal-event';
 import { WorkspaceEventSinkService } from 'src/engine/core-modules/event-logs/ingest/workspace-event-sink.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
-describe('CreateAuditLogFromInternalEvent', () => {
+describe('CreateEventLogFromInternalEvent', () => {
   it('ingests object events (persist + live fan-out) through the sink pipeline', async () => {
     const ingest = jest.fn().mockResolvedValue(undefined);
 
-    const handler = new CreateAuditLogFromInternalEvent({
+    const handler = new CreateEventLogFromInternalEvent({
       isEnabled: () => true,
       ingest,
     } as unknown as WorkspaceEventSinkService);

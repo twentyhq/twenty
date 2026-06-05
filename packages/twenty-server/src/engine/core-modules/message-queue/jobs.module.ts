@@ -14,7 +14,7 @@ import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
-import { EventLogsModule } from 'src/engine/core-modules/event-logs/event-logs.module';
+import { EventLogIngestionModule } from 'src/engine/core-modules/event-logs/ingest/event-log-ingestion.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { GenerateSdkClientJob } from 'src/engine/core-modules/sdk-client/jobs/generate-sdk-client.job';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
@@ -75,7 +75,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     SdkClientModule,
     WorkspaceCleanerModule,
     SubscriptionsModule,
-    EventLogsModule,
+    EventLogIngestionModule,
     AiAgentMonitorModule,
     AiChatModule,
     LogicFunctionModule,

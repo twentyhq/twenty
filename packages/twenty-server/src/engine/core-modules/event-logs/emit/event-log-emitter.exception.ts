@@ -4,31 +4,34 @@ import { assertUnreachable } from 'twenty-shared/utils';
 
 import { CustomException } from 'src/utils/custom-exception';
 
-export enum AuditExceptionCode {
+export enum EventLogEmitterExceptionCode {
   INVALID_TYPE = 'INVALID_TYPE',
   INVALID_INPUT = 'INVALID_INPUT',
 }
 
-const getAuditExceptionUserFriendlyMessage = (code: AuditExceptionCode) => {
+const getEventLogEmitterExceptionUserFriendlyMessage = (
+  code: EventLogEmitterExceptionCode,
+) => {
   switch (code) {
-    case AuditExceptionCode.INVALID_TYPE:
+    case EventLogEmitterExceptionCode.INVALID_TYPE:
       return msg`Invalid audit type.`;
-    case AuditExceptionCode.INVALID_INPUT:
+    case EventLogEmitterExceptionCode.INVALID_INPUT:
       return msg`Invalid audit input.`;
     default:
       assertUnreachable(code);
   }
 };
 
-export class AuditException extends CustomException<AuditExceptionCode> {
+export class EventLogEmitterException extends CustomException<EventLogEmitterExceptionCode> {
   constructor(
     message: string,
-    code: AuditExceptionCode,
+    code: EventLogEmitterExceptionCode,
     { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
   ) {
     super(message, code, {
       userFriendlyMessage:
-        userFriendlyMessage ?? getAuditExceptionUserFriendlyMessage(code),
+        userFriendlyMessage ??
+        getEventLogEmitterExceptionUserFriendlyMessage(code),
     });
   }
 }

@@ -23,7 +23,6 @@ import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/a
 import type { FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
-import { WorkspaceEventSinkService } from 'src/engine/core-modules/event-logs/ingest/workspace-event-sink.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/logic-function/logic-function-executed';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -82,7 +81,6 @@ export class LogicFunctionExecutorService {
     private readonly subscriptionService: SubscriptionService,
     private readonly workspaceEventLiveService: EventLogLiveService,
     private readonly auditService: EventLogEmitterService,
-    private readonly workspaceEventSinkService: WorkspaceEventSinkService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly billingService: BillingService,
     private readonly billingUsageService: BillingUsageService,
@@ -454,8 +452,8 @@ export class LogicFunctionExecutorService {
       executionId,
     }));
 
-    if (this.workspaceEventSinkService.isEnabled()) {
-      void this.workspaceEventSinkService
+    if (this.auditService.isEnabled()) {
+      void this.auditService
         .enqueue(buildApplicationLogEnvelopes(logEntries))
         .catch((error) => {
           this.logger.error('Failed to enqueue application logs', error);

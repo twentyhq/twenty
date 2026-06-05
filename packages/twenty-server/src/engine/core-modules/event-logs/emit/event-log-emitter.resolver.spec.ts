@@ -1,9 +1,9 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import {
-  AuditException,
-  AuditExceptionCode,
-} from 'src/engine/core-modules/event-logs/emit/audit.exception';
+  EventLogEmitterException,
+  EventLogEmitterExceptionCode,
+} from 'src/engine/core-modules/event-logs/emit/event-log-emitter.exception';
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -141,20 +141,20 @@ describe('EventLogEmitterResolver', () => {
     expect(result).toBe('Object event created');
   });
 
-  it('should throw an AuditException for invalid input', async () => {
+  it('should throw an EventLogEmitterException for invalid input', async () => {
     const invalidInput = { type: 'invalid' };
 
     await expect(
       resolver.trackAnalytics(invalidInput as any, undefined, undefined),
     ).rejects.toThrowError(
-      new AuditException(
+      new EventLogEmitterException(
         'Invalid analytics input',
-        AuditExceptionCode.INVALID_TYPE,
+        EventLogEmitterExceptionCode.INVALID_TYPE,
       ),
     );
   });
 
-  it('should throw an AuditException when workspace is missing for createObjectEvent', async () => {
+  it('should throw an EventLogEmitterException when workspace is missing for createObjectEvent', async () => {
     const input = {
       event: 'Object Record Created' as const,
       recordId: 'test-record-id',
@@ -164,7 +164,10 @@ describe('EventLogEmitterResolver', () => {
     await expect(
       resolver.createObjectEvent(input, undefined, undefined),
     ).rejects.toThrowError(
-      new AuditException('Missing workspace', AuditExceptionCode.INVALID_INPUT),
+      new EventLogEmitterException(
+        'Missing workspace',
+        EventLogEmitterExceptionCode.INVALID_INPUT,
+      ),
     );
   });
 });

@@ -6,7 +6,6 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
-import { EventLogsModule } from 'src/engine/core-modules/event-logs/event-logs.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { EmailVerificationModule } from 'src/engine/core-modules/email-verification/email-verification.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -48,7 +47,6 @@ import { UserService } from './services/user.service';
     TypeOrmModule.forFeature([KeyValuePairEntity, UserWorkspaceEntity]),
     UserVarsModule,
     UserWorkspaceModule,
-    EventLogsModule,
     UserRoleModule,
     FeatureFlagModule,
     PermissionsModule,

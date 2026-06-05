@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { EventLogsModule } from 'src/engine/core-modules/event-logs/event-logs.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.module';
@@ -30,7 +29,6 @@ import { AgentEntity } from './entities/agent.entity';
     AiModelsModule,
     AiAgentRoleModule,
     ThrottlerModule,
-    EventLogsModule,
     FileModule,
     ObjectMetadataModule,
     PermissionsModule,

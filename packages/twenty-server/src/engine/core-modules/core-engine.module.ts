@@ -74,7 +74,7 @@ import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/ch
 import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
 import { SendEmailModule } from 'src/modules/messaging/message-outbound-manager/send-email.module';
 import { ClientConfigModule } from './client-config/client-config.module';
-import { EventLogsModule } from './event-logs/event-logs.module';
+import { EventLogsViewerModule } from './event-logs/event-logs-viewer.module';
 import { FileModule } from './file/file.module';
 
 @Module({
@@ -155,7 +155,7 @@ import { FileModule } from './file/file.module';
     ImpersonationModule,
     TrashCleanupModule,
     DashboardModule,
-    EventLogsModule,
+    EventLogsViewerModule,
     PreInstalledAppsModule,
     AppBillingModule,
   ],
@@ -166,7 +166,7 @@ import { FileModule } from './file/file.module';
     },
   ],
   exports: [
-    EventLogsModule,
+    EventLogsViewerModule,
     AuthModule,
     FeatureFlagModule,
     TimelineMessagingModule,

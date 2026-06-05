@@ -1,14 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { WorkspaceEventSinkService } from 'src/engine/core-modules/event-logs/ingest/workspace-event-sink.service';
-import {
-  type TrackEventName,
-  type TrackEventProperties,
-} from 'src/engine/core-modules/event-logs/emit/events.type';
-import {
-  type EventContextFields,
-  type WorkspaceEventEnvelope,
-} from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
 import {
   buildObjectEventEnvelope,
   buildPageviewEnvelope,
@@ -16,15 +7,56 @@ import {
   computeEventContextFields,
 } from 'src/engine/core-modules/event-logs/emit/build-event-envelope';
 import { type PageviewProperties } from 'src/engine/core-modules/event-logs/emit/events/pageview/pageview';
+import {
+  type TrackEventName,
+  type TrackEventProperties,
+} from 'src/engine/core-modules/event-logs/emit/events.type';
+import { getAvailableSinkNames } from 'src/engine/core-modules/event-logs/ingest/event-sink-availability';
+import {
+  type EventContextFields,
+  type WorkspaceEventEnvelope,
+  WORKSPACE_EVENTS_JOB_NAME,
+  type WorkspaceEventsJobData,
+} from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-// Typed emit facade: building (schema validation) + enqueuing are best-effort and never crash the caller.
+// Producer-facing emit API. Building (schema validation) and enqueuing are best-effort and never crash the caller.
+// Persistence happens later in the worker (WorkspaceEventSinkService.ingest), so this depends only on the queue.
 @Injectable()
 export class EventLogEmitterService {
   private readonly logger = new Logger(EventLogEmitterService.name);
 
   constructor(
-    private readonly workspaceEventSinkService: WorkspaceEventSinkService,
+    @InjectMessageQueue(MessageQueue.workspaceEventsQueue)
+    private readonly workspaceEventsQueueService: MessageQueueService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
+
+  // Config-derived so producers can skip work without constructing sinks; the consumer
+  // re-checks the resolved sinks before persisting.
+  isEnabled(): boolean {
+    return (
+      getAvailableSinkNames(this.twentyConfigService.get('EVENT_SINKS'), {
+        hasClickhouseUrl: Boolean(
+          this.twentyConfigService.get('CLICKHOUSE_URL'),
+        ),
+      }).length > 0
+    );
+  }
+
+  async enqueue(events: WorkspaceEventEnvelope[]): Promise<void> {
+    if (!this.isEnabled() || events.length === 0) {
+      return;
+    }
+
+    await this.workspaceEventsQueueService.add<WorkspaceEventsJobData>(
+      WORKSPACE_EVENTS_JOB_NAME,
+      { events },
+    );
+  }
 
   createContext(context?: EventContextFields) {
     const contextFields = computeEventContextFields(context);
@@ -60,7 +92,7 @@ export class EventLogEmitterService {
     buildEnvelope: () => WorkspaceEventEnvelope,
   ): Promise<{ success: boolean }> {
     try {
-      await this.workspaceEventSinkService.enqueue([buildEnvelope()]);
+      await this.enqueue([buildEnvelope()]);
 
       return { success: true };
     } catch (error) {

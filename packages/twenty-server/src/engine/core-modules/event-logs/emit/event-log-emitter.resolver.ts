@@ -2,11 +2,11 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { AuditExceptionFilter } from 'src/engine/core-modules/event-logs/emit/audit-exception-filter';
+import { EventLogEmitterExceptionFilter } from 'src/engine/core-modules/event-logs/emit/event-log-emitter-exception.filter';
 import {
-  AuditException,
-  AuditExceptionCode,
-} from 'src/engine/core-modules/event-logs/emit/audit.exception';
+  EventLogEmitterException,
+  EventLogEmitterExceptionCode,
+} from 'src/engine/core-modules/event-logs/emit/event-log-emitter.exception';
 import { CreateObjectEventInput } from 'src/engine/core-modules/event-logs/emit/dtos/create-object-event.input';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -28,7 +28,10 @@ import { EventLogEmitterService } from './event-log-emitter.service';
 
 @MetadataResolver(() => Analytics)
 @UsePipes(ResolverValidationPipe)
-@UseFilters(AuditExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)
+@UseFilters(
+  EventLogEmitterExceptionFilter,
+  PreventNestToAutoLogGraphqlErrorsFilter,
+)
 export class EventLogEmitterResolver {
   constructor(private readonly auditService: EventLogEmitterService) {}
 
@@ -52,9 +55,9 @@ export class EventLogEmitterResolver {
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
   ) {
     if (!workspace) {
-      throw new AuditException(
+      throw new EventLogEmitterException(
         'Missing workspace',
-        AuditExceptionCode.INVALID_INPUT,
+        EventLogEmitterExceptionCode.INVALID_INPUT,
       );
     }
 
@@ -101,9 +104,9 @@ export class EventLogEmitterResolver {
       );
     }
 
-    throw new AuditException(
+    throw new EventLogEmitterException(
       'Invalid analytics input',
-      AuditExceptionCode.INVALID_TYPE,
+      EventLogEmitterExceptionCode.INVALID_TYPE,
     );
   }
 }

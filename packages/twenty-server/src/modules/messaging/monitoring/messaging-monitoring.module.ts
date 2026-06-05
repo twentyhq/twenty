@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { EventLogsModule } from 'src/engine/core-modules/event-logs/event-logs.module';
+import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
@@ -11,7 +11,7 @@ import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/ser
 
 @Module({
   imports: [
-    EventLogsModule,
+    EventLogEmitterModule,
     MessagingCommonModule,
     TypeOrmModule.forFeature([WorkspaceEntity, MessageChannelEntity]),
   ],

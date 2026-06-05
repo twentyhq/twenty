@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 
-import { WorkspaceEventSinkService } from 'src/engine/core-modules/event-logs/ingest/workspace-event-sink.service';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -38,7 +38,7 @@ describe('UsageEventListener', () => {
     listener = new UsageEventListener({
       enqueue,
       isEnabled,
-    } as unknown as WorkspaceEventSinkService);
+    } as unknown as EventLogEmitterService);
   });
 
   it('enqueues a usageEvent envelope for each event in the batch', async () => {

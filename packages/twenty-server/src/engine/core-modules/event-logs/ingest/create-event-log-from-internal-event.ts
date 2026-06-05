@@ -25,12 +25,12 @@ const OBJECT_EVENT_BY_SUFFIX = {
 
 // Already on a durable worker, so object events are ingest()ed directly instead of re-enqueued.
 @Processor(MessageQueue.entityEventsToDbQueue)
-export class CreateAuditLogFromInternalEvent {
+export class CreateEventLogFromInternalEvent {
   constructor(
     private readonly workspaceEventSinkService: WorkspaceEventSinkService,
   ) {}
 
-  @Process(CreateAuditLogFromInternalEvent.name)
+  @Process(CreateEventLogFromInternalEvent.name)
   async handle(batch: WorkspaceEventBatch<ObjectRecordEvent>): Promise<void> {
     if (!this.workspaceEventSinkService.isEnabled()) {
       return;
