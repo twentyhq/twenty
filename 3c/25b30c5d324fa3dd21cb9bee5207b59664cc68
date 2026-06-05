@@ -1,0 +1,30 @@
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/services/utils/enrich-create-workspace-migration-action-with-ids.util.ts
+  s_ccda17eaabba7a::t_ef5c6ff2e6cd4f 4
+  s_ccda17eaabba7a::t_5014a1280e6382 181-184
+  s_ccda17eaabba7a::t_cf57386c7e73b4 197-201,142
+  s_ccda17eaabba7a::t_37c22f15fde7e4 203
+  s_ccda17eaabba7a::t_8e0d210dfe0e82 204-206,208-210,223-225,228,84,92,105,145,147
+  s_ccda17eaabba7a::t_c5fc73cb1d6da3 207,211-214,216-222,226
+  s_ccda17eaabba7a::t_c29cc86db05028 252,262,264-267,295
+  s_ccda17eaabba7a::t_bcd6b6303aad73 269-277,282-285,192,85,88,93,98,107,111,114,124,127,138,140,148,152,166,170,173,245
+  s_ccda17eaabba7a::t_bce5ec15a5042f 278,286
+  s_ccda17eaabba7a::t_c9c315529616ed 279-281,287-288
+  s_ccda17eaabba7a::t_6e8c97fa3f1045 289
+  s_ccda17eaabba7a::t_2b641644a4081c 290-291
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "3c25b30c5d324fa3dd21cb9bee5207b59664cc68",
+  "prompts": {},
+  "sessions": {
+    "s_ccda17eaabba7a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b932cb9-a0b1-4bbb-9c58-8574d4b18520",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
