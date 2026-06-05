@@ -6,6 +6,12 @@ import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpre
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDataGridContainer = styled.div<{ headerRowHeight?: number }>`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+
   --rdg-background-color: ${themeCssVariables.background.primary};
   --rdg-border-color: ${themeCssVariables.border.color.medium};
   --rdg-color: ${themeCssVariables.font.color.primary};
