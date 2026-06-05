@@ -7,6 +7,7 @@ import {
 } from '@clickhouse/client';
 import request from 'supertest';
 
+import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -48,10 +49,9 @@ describe('Event Logs (integration)', () => {
       workspaceId: testWorkspaceId,
       userId: testUserWorkspaceId,
       name: i % 2 === 0 ? 'settings/profile' : 'objects/companies',
-      timestamp: new Date(now.getTime() - i * 60000)
-        .toISOString()
-        .replace('T', ' ')
-        .replace('Z', ''),
+      timestamp: formatDateTimeForClickHouse(
+        new Date(now.getTime() - i * 60000),
+      ),
       properties: { path: `/settings/${i}` },
     }));
 
@@ -64,10 +64,9 @@ describe('Event Logs (integration)', () => {
           : i % 3 === 1
             ? 'user.logout'
             : 'settings.updated',
-      timestamp: new Date(now.getTime() - i * 120000)
-        .toISOString()
-        .replace('T', ' ')
-        .replace('Z', ''),
+      timestamp: formatDateTimeForClickHouse(
+        new Date(now.getTime() - i * 120000),
+      ),
       properties: { action: `action_${i}` },
     }));
 
@@ -75,10 +74,9 @@ describe('Event Logs (integration)', () => {
       workspaceId: testWorkspaceId,
       userId: testUserWorkspaceId,
       event: i % 2 === 0 ? 'company.created' : 'company.updated',
-      timestamp: new Date(now.getTime() - i * 90000)
-        .toISOString()
-        .replace('T', ' ')
-        .replace('Z', ''),
+      timestamp: formatDateTimeForClickHouse(
+        new Date(now.getTime() - i * 90000),
+      ),
       properties: { field: `field_${i}` },
       recordId: `record-${i}`,
       objectMetadataId: i % 2 === 0 ? 'object-meta-1' : 'object-meta-2',
@@ -96,10 +94,9 @@ describe('Event Logs (integration)', () => {
       resourceId: `agent-${i}`,
       resourceContext: 'gpt-4o',
       metadata: {},
-      timestamp: new Date(now.getTime() - i * 60000)
-        .toISOString()
-        .replace('T', ' ')
-        .replace('Z', ''),
+      timestamp: formatDateTimeForClickHouse(
+        new Date(now.getTime() - i * 60000),
+      ),
     }));
 
     const applicationLogRecords = Array.from({ length: 8 }, (_, i) => ({
@@ -110,10 +107,9 @@ describe('Event Logs (integration)', () => {
       executionId: `exec-${i}`,
       level: i % 2 === 0 ? 'INFO' : 'ERROR',
       message: `log line ${i}`,
-      timestamp: new Date(now.getTime() - i * 60000)
-        .toISOString()
-        .replace('T', ' ')
-        .replace('Z', ''),
+      timestamp: formatDateTimeForClickHouse(
+        new Date(now.getTime() - i * 60000),
+      ),
     }));
 
     await clickHouseClient.insert({
