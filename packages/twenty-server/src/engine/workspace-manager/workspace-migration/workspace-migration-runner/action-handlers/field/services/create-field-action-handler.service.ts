@@ -49,17 +49,9 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     const {
       action,
       allFlatEntityMaps,
-      allFieldIdToBeCreatedInMigrationByUniversalIdentifierMap,
+      allFieldIdToBeCreatedInMigrationByUniversalIdentifierMap:
+        allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
     } = context;
-
-    if (!isDefined(allFieldIdToBeCreatedInMigrationByUniversalIdentifierMap)) {
-      throw new Error(
-        'Missing field id map for create field action transpilation',
-      );
-    }
-
-    const allFieldIdToBeCreatedInActionByUniversalIdentifierMap =
-      allFieldIdToBeCreatedInMigrationByUniversalIdentifierMap;
 
     const universalFlatFieldMetadatas = isDefined(
       action.relatedUniversalFlatFieldMetadata,

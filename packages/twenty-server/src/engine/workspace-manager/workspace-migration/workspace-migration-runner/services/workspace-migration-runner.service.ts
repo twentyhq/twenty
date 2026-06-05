@@ -297,6 +297,7 @@ export class WorkspaceMigrationRunnerService {
               action: invertedAction,
               allFlatEntityMaps,
               workspaceId,
+              allFieldIdToBeCreatedInMigrationByUniversalIdentifierMap,
             },
           },
         );
