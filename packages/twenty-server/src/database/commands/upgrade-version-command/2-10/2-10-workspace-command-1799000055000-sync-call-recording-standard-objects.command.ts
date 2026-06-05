@@ -3,6 +3,7 @@ import {
   STANDARD_OBJECTS,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -137,6 +138,19 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
       'flatCommandMenuItemMaps',
     ]);
 
+    const calendarEventObjectMetadata =
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.calendarEvent.universalIdentifier
+      ];
+
+    if (!isDefined(calendarEventObjectMetadata)) {
+      this.logger.log(
+        `calendarEvent object not found for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
+
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -197,7 +211,7 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
               CALL_RECORDING_OBJECT_METADATA_UNIVERSAL_IDENTIFIERS,
           }),
         flatEntityToDelete: [],
-        flatEntityToUpdate: objectMetadataRenameUpdates,
+        flatEntityToUpdate: [],
       },
       fieldMetadata: {
         flatEntityToCreate:
@@ -209,7 +223,7 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
               CALL_RECORDING_FIELD_METADATA_UNIVERSAL_IDENTIFIERS,
           }),
         flatEntityToDelete: [],
-        flatEntityToUpdate: fieldMetadataRenameUpdates,
+        flatEntityToUpdate: [],
       },
       index: {
         flatEntityToCreate:
@@ -292,15 +306,16 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
       commandMenuItem: navigationCommandMenuItemOperations,
     };
 
-    const totalOperationCount = Object.values(
-      allFlatEntityOperationByMetadataName,
-    ).reduce(
-      (total, operations) =>
-        total +
-        operations.flatEntityToCreate.length +
-        operations.flatEntityToUpdate.length,
-      0,
-    );
+    const totalOperationCount =
+      objectMetadataRenameUpdates.length +
+      fieldMetadataRenameUpdates.length +
+      Object.values(allFlatEntityOperationByMetadataName).reduce(
+        (total, operations) =>
+          total +
+          operations.flatEntityToCreate.length +
+          operations.flatEntityToUpdate.length,
+        0,
+      );
 
     if (totalOperationCount === 0) {
       this.logger.log(
@@ -328,6 +343,45 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
       );
 
       return;
+    }
+
+    // Renames must commit before the create: a combined create + rename
+    // migration trips the namePlural unique index.
+    if (
+      objectMetadataRenameUpdates.length > 0 ||
+      fieldMetadataRenameUpdates.length > 0
+    ) {
+      const renameResult =
+        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+          {
+            isSystemBuild: true,
+            applicationUniversalIdentifier:
+              twentyStandardFlatApplication.universalIdentifier,
+            workspaceId,
+            allFlatEntityOperationByMetadataName: {
+              objectMetadata: {
+                flatEntityToCreate: [],
+                flatEntityToDelete: [],
+                flatEntityToUpdate: objectMetadataRenameUpdates,
+              },
+              fieldMetadata: {
+                flatEntityToCreate: [],
+                flatEntityToDelete: [],
+                flatEntityToUpdate: fieldMetadataRenameUpdates,
+              },
+            },
+          },
+        );
+
+      if (renameResult.status === 'fail') {
+        throw new Error(
+          `Failed to rename CallRecording name collisions for workspace ${workspaceId}: ${JSON.stringify(
+            renameResult,
+            null,
+            2,
+          )}`,
+        );
+      }
     }
 
     const validateAndBuildResult =
