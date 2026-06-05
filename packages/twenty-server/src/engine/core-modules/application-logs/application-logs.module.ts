@@ -37,7 +37,7 @@ export class ApplicationLogsModule extends ConfigurableModuleClass {
   static forRootAsync(options: typeof ASYNC_OPTIONS_TYPE): DynamicModule {
     const provider = {
       provide: APPLICATION_LOG_DRIVER,
-      // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       useFactory: async (
         clickHouseService: ClickHouseService,
         ...args: unknown[]

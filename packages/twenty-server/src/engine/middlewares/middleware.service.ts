@@ -38,7 +38,7 @@ export class MiddlewareService {
     return !!token;
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   public writeRestResponseOnExceptionCaught(res: Response, error: any) {
     const statusCode = this.getStatus(error);
 
@@ -61,7 +61,7 @@ export class MiddlewareService {
     res.end();
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   public writeGraphqlResponseOnExceptionCaught(res: Response, error: any) {
     let errors;
 
@@ -139,7 +139,7 @@ export class MiddlewareService {
     return isDefined((error as { status: number })?.status);
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   private getStatus(error: any): number {
     if (this.hasErrorStatus(error)) {
       return error.status;

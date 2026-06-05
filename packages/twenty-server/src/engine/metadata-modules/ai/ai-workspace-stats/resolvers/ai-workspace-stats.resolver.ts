@@ -13,7 +13,10 @@ import { WorkspaceAiStatsDTO } from 'src/engine/metadata-modules/ai/ai-workspace
 import { AiWorkspaceStatsService } from 'src/engine/metadata-modules/ai/ai-workspace-stats/services/ai-workspace-stats.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
-@UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
+@UseGuards(
+  WorkspaceAuthGuard,
+  SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
+)
 @MetadataResolver()
 export class AiWorkspaceStatsResolver {
   constructor(
