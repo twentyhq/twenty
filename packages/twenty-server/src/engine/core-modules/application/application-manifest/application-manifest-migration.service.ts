@@ -79,6 +79,7 @@ export class ApplicationManifestMigrationService {
       agents: [],
       publicAssets: [],
       views: [],
+      viewFields: [],
       navigationMenuItems: [],
       pageLayouts: [],
       pageLayoutTabs: [],

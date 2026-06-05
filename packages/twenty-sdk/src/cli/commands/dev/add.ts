@@ -24,6 +24,7 @@ import { getAgentBaseFile } from '@/cli/utilities/entity/entity-agent-template';
 import { getConnectionProviderBaseFile } from '@/cli/utilities/entity/entity-connection-provider-template';
 import { getSkillBaseFile } from '@/cli/utilities/entity/entity-skill-template';
 import { getViewBaseFile } from '@/cli/utilities/entity/entity-view-template';
+import { getViewFieldBaseFile } from '@/cli/utilities/entity/entity-view-field-template';
 import { ensureDir, pathExists } from '@/cli/utilities/file/fs-utils';
 import { kebabCase } from '@/cli/utilities/string/kebab-case';
 
@@ -186,6 +187,14 @@ export class EntityAddCommand {
         const file = getViewBaseFile({
           name,
         });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.ViewField: {
+        const name = await this.getEntityName(entity);
+
+        const file = getViewFieldBaseFile({});
 
         return { name, file };
       }
