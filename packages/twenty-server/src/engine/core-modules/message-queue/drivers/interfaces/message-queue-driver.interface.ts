@@ -8,15 +8,21 @@ import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 export interface MessageQueueDriver {
-  add<T extends MessageQueueJobData>(
+  add<T extends MessageQueueJobData, TResult = void>(
     queueName: MessageQueue,
     jobName: string,
     data: T,
     options?: QueueJobOptions,
-  ): Promise<void>;
-  work<T extends MessageQueueJobData>(
+  ): Promise<TResult | void>;
+  work<T extends MessageQueueJobData, TResult = void>(
     queueName: MessageQueue,
-    handler: ({ data, id }: { data: T; id: string }) => Promise<void> | void,
+    handler: ({
+      data,
+      id,
+    }: {
+      data: T;
+      id: string;
+    }) => Promise<TResult> | TResult,
     options?: MessageQueueWorkerOptions,
   ): void;
   addCron<T extends MessageQueueJobData | undefined>({

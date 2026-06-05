@@ -27,12 +27,12 @@ export class MessageQueueService {
     }
   }
 
-  add<T extends MessageQueueJobData>(
+  add<T extends MessageQueueJobData, TResult = void>(
     jobName: string,
     data: T,
     options?: QueueJobOptions,
-  ): Promise<void> {
-    return this.driver.add(this.queueName, jobName, data, options);
+  ): Promise<TResult | void> {
+    return this.driver.add<T, TResult>(this.queueName, jobName, data, options);
   }
 
   addCron<T extends MessageQueueJobData | undefined>({
@@ -69,10 +69,10 @@ export class MessageQueueService {
     });
   }
 
-  work<T extends MessageQueueJobData>(
-    handler: (job: MessageQueueJob<T>) => Promise<void> | void,
+  work<T extends MessageQueueJobData, TResult = void>(
+    handler: (job: MessageQueueJob<T>) => Promise<TResult> | TResult,
     options?: MessageQueueWorkerOptions,
   ): void {
-    this.driver.work(this.queueName, handler, options);
+    this.driver.work<T, TResult>(this.queueName, handler, options);
   }
 }

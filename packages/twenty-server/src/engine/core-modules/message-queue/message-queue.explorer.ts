@@ -22,6 +22,7 @@ import { type MessageQueue } from 'src/engine/core-modules/message-queue/message
 import { QUEUE_WORKER_OPTIONS } from 'src/engine/core-modules/message-queue/message-queue-worker-options.constant';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
+import { isDefined } from 'twenty-shared/utils';
 
 interface ProcessorGroup {
   instance: object;
@@ -138,16 +139,24 @@ export class MessageQueueExplorer implements OnModuleInit {
     options?: MessageQueueWorkerOptions,
   ) {
     queue.work(async (job) => {
+      let result: unknown;
+
       for (const processorGroup of processorGroupCollection) {
-        await this.handleProcessor(processorGroup, job);
+        const groupResult = await this.handleProcessor(processorGroup, job);
+
+        if (isDefined(groupResult)) {
+          result = groupResult;
+        }
       }
+
+      return result;
     }, options);
   }
 
   private async handleProcessor(
     { instance, host, processMethodNames, isRequestScoped }: ProcessorGroup,
     job: MessageQueueJob<MessageQueueJobData>,
-  ) {
+  ): Promise<unknown> {
     const filteredProcessMethodNames = processMethodNames.filter(
       (processMethodName) => {
         const metadata = this.metadataAccessor.getProcessMetadata(
@@ -161,7 +170,7 @@ export class MessageQueueExplorer implements OnModuleInit {
 
     // Return early if no matching methods found
     if (filteredProcessMethodNames.length === 0) {
-      return;
+      return undefined;
     }
 
     if (isRequestScoped) {
@@ -186,13 +195,13 @@ export class MessageQueueExplorer implements OnModuleInit {
         contextId,
       );
 
-      await this.invokeProcessMethods(
+      return await this.invokeProcessMethods(
         contextInstance,
         filteredProcessMethodNames,
         job,
       );
     } else {
-      await this.invokeProcessMethods(
+      return await this.invokeProcessMethods(
         instance,
         filteredProcessMethodNames,
         job,
@@ -204,11 +213,13 @@ export class MessageQueueExplorer implements OnModuleInit {
     instance: object,
     processMethodNames: string[],
     job: MessageQueueJob<MessageQueueJobData>,
-  ) {
+  ): Promise<unknown> {
+    let result: unknown;
+
     for (const processMethodName of processMethodNames) {
       try {
         // @ts-expect-error legacy noImplicitAny
-        await instance[processMethodName].call(instance, job.data);
+        result = await instance[processMethodName].call(instance, job.data);
       } catch (err) {
         if (shouldCaptureException(err)) {
           this.exceptionHandlerService.captureExceptions([err]);
@@ -216,5 +227,7 @@ export class MessageQueueExplorer implements OnModuleInit {
         throw err;
       }
     }
+
+    return result;
   }
 }
