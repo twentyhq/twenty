@@ -100,7 +100,8 @@ export class MoveDemotedStandardFieldsToCustomApplicationCommand extends ActiveO
       }
 
       const isStillOwnedByStandardApplication =
-        flatFieldMetadata.applicationId === twentyStandardFlatApplication.id;
+        flatFieldMetadata.applicationId === twentyStandardFlatApplication.id &&
+        !flatFieldMetadata.isCustom;
 
       if (!isStillOwnedByStandardApplication) {
         continue;
@@ -130,6 +131,7 @@ export class MoveDemotedStandardFieldsToCustomApplicationCommand extends ActiveO
         { id },
         {
           applicationId: workspaceCustomFlatApplication.id,
+          isCustom: true,
           universalIdentifier: uuidv4(),
         },
       );

@@ -8,7 +8,6 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -98,7 +97,7 @@ export class RenameConflictingCustomFieldsCommand extends ActiveOrSuspendedWorks
         continue;
       }
 
-      if (belongsToTwentyStandardApp(conflictingField)) {
+      if (!conflictingField.isCustom) {
         this.logger.warn(
           `Non-custom field named "${fieldName}" exists on object ${objectUniversalIdentifier} for workspace ${workspaceId}; skipping rename`,
         );
