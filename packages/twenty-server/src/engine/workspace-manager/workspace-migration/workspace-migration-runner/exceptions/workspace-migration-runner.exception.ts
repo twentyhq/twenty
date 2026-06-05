@@ -41,9 +41,10 @@ const getActionUniversalIdentifierOrThrow = (
     const universalIdentifier = action.flatEntity?.universalIdentifier;
 
     if (!universalIdentifier) {
-      throw new Error(
-        `Missing universalIdentifier on create action for '${action.metadataName}'`,
-      );
+      throw new WorkspaceMigrationRunnerException({
+        message: `Missing universalIdentifier on create action for '${action.metadataName}'`,
+        code: WorkspaceMigrationRunnerExceptionCode.INTERNAL_SERVER_ERROR,
+      });
     }
 
     return universalIdentifier;
