@@ -20,6 +20,7 @@ import { In, Repository } from 'typeorm';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { parseEndingBeforeRestRequest } from 'src/engine/api/rest/input-request-parsers/ending-before-parser-utils/parse-ending-before-rest-request.util';
 import { parseLimitRestRequest } from 'src/engine/api/rest/input-request-parsers/limit-parser-utils/parse-limit-rest-request.util';
@@ -95,17 +96,26 @@ export class ObjectMetadataController {
 
   private async loadStandardApplicationId(
     workspaceId: string,
-  ): Promise<string | undefined> {
+  ): Promise<string> {
     const { flatApplicationMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         { workspaceId, flatMapsKeys: ['flatApplicationMaps'] },
       );
 
-    return Object.values(flatApplicationMaps.byId).find(
+    const standardApplicationId = Object.values(flatApplicationMaps.byId).find(
       (application) =>
         application?.universalIdentifier ===
         TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     )?.id;
+
+    if (!isDefined(standardApplicationId)) {
+      throw new ObjectMetadataException(
+        `Could not find the twenty-standard application for workspace ${workspaceId}`,
+        ObjectMetadataExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    return standardApplicationId;
   }
 
   @Get()
@@ -335,7 +345,7 @@ export class ObjectMetadataController {
     object: ObjectMetadataEntity,
     fields: FieldMetadataEntity[],
     uniqueFieldMetadataIds: ReadonlySet<string>,
-    standardApplicationId: string | undefined,
+    standardApplicationId: string,
   ): ObjectMetadataWithFieldsDTO {
     return {
       ...fromObjectMetadataEntityToObjectMetadataDto(
