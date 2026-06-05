@@ -6,7 +6,6 @@ import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/c
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { isTwentyStandardApplicationUniversalIdentifier } from 'src/engine/metadata-modules/utils/is-twenty-standard-application-universal-identifier.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
@@ -485,9 +484,7 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
       .filter(isDefined)
       .filter(
         (objectMetadata) =>
-          !isTwentyStandardApplicationUniversalIdentifier(
-            objectMetadata.applicationUniversalIdentifier,
-          ) &&
+          objectMetadata.isCustom &&
           !objectMetadata.isRemote &&
           !objectIdsWithRecordPageLayout.has(objectMetadata.id),
       );

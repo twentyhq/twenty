@@ -1,7 +1,7 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type FormatRecordSerializedRelationProperties } from 'twenty-shared/types';
 
-import { type OmitWasRemovedInUpgradeProperties } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
+import { type MakeWasRemovedInUpgradePropertiesOptional } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 
 import { type ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-relations.constant';
 import { type ALL_ONE_TO_MANY_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-one-to-many-metadata-relations.constant';
@@ -45,7 +45,7 @@ export type UniversalFlatEntityFrom<
   TMetadataName extends AllMetadataName =
     FromMetadataEntityToMetadataName<TEntity>,
 > = Omit<
-  OmitWasRemovedInUpgradeProperties<TEntity>,
+  MakeWasRemovedInUpgradePropertiesOptional<TEntity>,
   | 'applicationId'
   | 'workspaceId'
   | 'id'
