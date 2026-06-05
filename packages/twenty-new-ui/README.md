@@ -89,7 +89,7 @@ packages/twenty-new-ui/
 ├── vitest.config.ts        # storybook component tests
 ├── .storybook/
 ├── .size-limit.json        # per-entry bundle budgets
-├── scripts/                # generateBarrels.ts, generateTheme.ts
+├── scripts/                # generateBarrels.ts
 └── src/
     ├── styles/             # global: reset, theme vars, mixins, breakpoints
     ├── theme/ theme-constants/
@@ -111,8 +111,8 @@ as-is.
 
 - Keep the public API identical: `ThemeProvider`, `ThemeContext`, `useTheme`, the `themeCssVariables` shape, `ThemeType`, color helpers, and the `theme-light.css` / `theme-dark.css` exports.
 - Reuse `twenty-ui`'s token values verbatim to guarantee identical design.
-- Tokens are authored in `src/theme/` and generated into CSS variables + a typed accessor.
-- A generated-output diff test asserts the new theme CSS produces the same `--t-*` values as `twenty-ui`.
+- Tokens live in `src/theme/` (`THEME_LIGHT` / `THEME_DARK`); the `--t-*` CSS variables and the `themeCssVariables` accessor are static files mirrored token-for-token from `twenty-ui` (matching `twenty-ui`'s own static-CSS approach).
+- A theme parity test asserts the theme CSS and `themeCssVariables` stay identical to `twenty-ui`'s `--t-*` values.
 
 ## Component migration map
 
