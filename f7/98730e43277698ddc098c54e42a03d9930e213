@@ -1,0 +1,19 @@
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/create-field-action-handler.service.ts
+  s_4a10800c36ffe6::t_0a686bd265bafd 57-66,68-73
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "f798730e43277698ddc098c54e42a03d9930e213",
+  "prompts": {},
+  "sessions": {
+    "s_4a10800c36ffe6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9ecf403e-4e07-4937-9eb1-7db20c4f4c5f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
