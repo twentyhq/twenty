@@ -2,9 +2,9 @@ import { type ToolSet } from 'ai';
 import { z } from 'zod';
 
 import { type ToolCategory } from 'twenty-shared/ai';
+import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
-import { leanJsonSchema } from 'src/engine/core-modules/tool-provider/utils/lean-json-schema.util';
 
 export type ToolSetToDescriptorsOptions = {
   includeSchemas?: boolean;
@@ -37,9 +37,7 @@ export const toolSetToDescriptors = (
     let inputSchema: object;
 
     try {
-      inputSchema = leanJsonSchema(
-        z.toJSONSchema(tool.inputSchema as z.ZodType),
-      );
+      inputSchema = toToolJsonSchema(tool.inputSchema as z.ZodType);
     } catch {
       inputSchema = (tool.inputSchema ?? {}) as object;
     }
