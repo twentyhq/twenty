@@ -181,6 +181,7 @@ export class RestoreChannelAssociationScalarFieldMetadataCommand extends ActiveO
         label: fieldToRestore.label,
         description: fieldToRestore.description,
         icon: fieldToRestore.icon,
+        isCustom: false,
         isActive: true,
         isSystem: false,
         isNullable: fieldToRestore.isNullable,
