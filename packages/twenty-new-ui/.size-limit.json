@@ -6,6 +6,21 @@
     "import": "*"
   },
   {
+    "name": "accessibility",
+    "path": "dist/accessibility.mjs",
+    "limit": "10 kB"
+  },
+  {
+    "name": "assets",
+    "path": "dist/assets.mjs",
+    "limit": "10 kB"
+  },
+  {
+    "name": "testing",
+    "path": "dist/testing.mjs",
+    "limit": "10 kB"
+  },
+  {
     "name": "components",
     "path": "dist/components.mjs",
     "limit": "40 kB"

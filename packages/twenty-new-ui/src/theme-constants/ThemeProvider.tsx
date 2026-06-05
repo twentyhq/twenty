@@ -48,13 +48,14 @@ export type ThemeContextType = {
 };
 
 const computeThemeFromCss = (): ThemeType => {
-  const root = document?.documentElement;
-
-  if (!root || typeof getComputedStyle !== 'function') {
+  if (
+    typeof document === 'undefined' ||
+    typeof getComputedStyle !== 'function'
+  ) {
     return themeCssVariables as unknown as ThemeType;
   }
 
-  const computedStyle = getComputedStyle(root);
+  const computedStyle = getComputedStyle(document.documentElement);
 
   const resolve = (obj: Record<string, unknown>): Record<string, unknown> => {
     const result: Record<string, unknown> = {};
@@ -83,7 +84,8 @@ const computeThemeFromCss = (): ThemeType => {
 };
 
 const applyColorSchemeClass = (colorScheme: 'light' | 'dark') => {
-  const root = document?.documentElement;
+  if (typeof document === 'undefined') return;
+  const root = document.documentElement;
   if (!root?.classList) return;
   root.classList.toggle('dark', colorScheme === 'dark');
   root.classList.toggle('light', colorScheme === 'light');

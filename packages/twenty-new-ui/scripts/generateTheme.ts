@@ -40,13 +40,19 @@ const collectLeaves = (node: ThemeNode, path: string[] = []): FlatLeaf[] => {
   const leaves: FlatLeaf[] = [];
   for (const key of Object.keys(node)) {
     const value = node[key];
-    if (isLeaf(value))
+    if (isLeaf(value)) {
       leaves.push({
         path: [...path, key],
         light: value.light,
         dark: value.dark,
       });
-    else leaves.push(...collectLeaves(value, [...path, key]));
+    } else if (value !== null && typeof value === 'object') {
+      leaves.push(...collectLeaves(value, [...path, key]));
+    } else {
+      throw new Error(
+        `Invalid theme token at "${[...path, key].join('.')}": expected a { light, dark } leaf or a nested object, got ${typeof value}.`,
+      );
+    }
   }
   return leaves;
 };
