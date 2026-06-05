@@ -5,12 +5,12 @@
   align-items: center;
   align-self: flex-start;
   border-radius: 10px;
-  background-color: token(background-transparent-medium);
+  background-color: var(--t-background-transparent-medium);
   cursor: pointer;
   transition: background-color duration(normal) ease;
 
   &[data-checked] {
-    background-color: var(--toggle-on-color, #{token(color-blue)});
+    background-color: var(--toggle-on-color, var(--t-color-blue));
   }
 
   &[data-disabled] {
@@ -39,7 +39,7 @@
   left: 0;
   display: block;
   border-radius: 50%;
-  background-color: token(background-primary);
+  background-color: var(--t-background-primary);
   transition: transform duration(normal) ease;
 }
 

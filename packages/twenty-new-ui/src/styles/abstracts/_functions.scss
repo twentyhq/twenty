@@ -1,10 +1,5 @@
-// token(text-primary) => var(--t-text-primary)
-@function token($name) {
-  @return var(--t-#{$name});
-}
-
 // duration(fast) => calc(var(--t-animation-duration-fast) * 1s)
 // Theme animation durations are stored unitless; this scales them to seconds.
 @function duration($name) {
-  @return calc(#{token(animation-duration-#{$name})} * 1s);
+  @return calc(var(--t-animation-duration-#{$name}) * 1s);
 }
