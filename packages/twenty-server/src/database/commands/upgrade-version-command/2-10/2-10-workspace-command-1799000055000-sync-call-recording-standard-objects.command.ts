@@ -13,11 +13,12 @@ import {
   buildCalendarEventFieldRenameUpdates,
   buildCallRecordingObjectRenameUpdates,
 } from 'src/database/commands/upgrade-version-command/2-10/utils/call-recording-name-collision.util';
+import {
+  getExistingOrStandardFlatEntityOrThrow,
+  getStandardFlatEntitiesToCreateOrThrow,
+} from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -30,65 +31,11 @@ import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { type FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
-import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
-import { computeUniversalFlatEntityMapsFromToThroughMutation } from 'src/engine/workspace-manager/workspace-migration/utils/compute-universal-flat-entity-maps-from-to-through-mutation.util';
-import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
-import { getSubUniversalFlatEntityByUniversalIdentifiersMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-universal-flat-entity-by-universal-identifiers-maps-or-throw.util';
-import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 
 const getUniversalIdentifiers = (
   entitiesByName: Record<string, { universalIdentifier: string }>,
 ): string[] =>
   Object.values(entitiesByName).map((entity) => entity.universalIdentifier);
-
-const buildExistingFlatEntityMapsByUniversalIdentifiers = <
-  T extends SyncableFlatEntity,
->({
-  flatEntityMaps,
-  universalIdentifiers,
-}: {
-  flatEntityMaps: FlatEntityMaps<T>;
-  universalIdentifiers: readonly string[];
-}): FlatEntityMaps<T> => {
-  const subFlatEntityMaps = createEmptyFlatEntityMaps() as FlatEntityMaps<T>;
-
-  for (const universalIdentifier of universalIdentifiers) {
-    const flatEntity = flatEntityMaps.byUniversalIdentifier[universalIdentifier];
-
-    if (!isDefined(flatEntity)) {
-      continue;
-    }
-
-    addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
-      flatEntity,
-      flatEntityMapsToMutate: subFlatEntityMaps,
-    });
-  }
-
-  return subFlatEntityMaps;
-};
-
-const buildScopedStandardFromToFlatEntityMaps = <
-  T extends SyncableFlatEntity,
->({
-  existingFlatEntityMaps,
-  standardFlatEntityMaps,
-  universalIdentifiers,
-}: {
-  existingFlatEntityMaps: FlatEntityMaps<T>;
-  standardFlatEntityMaps: FlatEntityMaps<T>;
-  universalIdentifiers: readonly string[];
-}) => ({
-  from: buildExistingFlatEntityMapsByUniversalIdentifiers<T>({
-    flatEntityMaps: existingFlatEntityMaps,
-    universalIdentifiers,
-  }),
-  to: getSubUniversalFlatEntityByUniversalIdentifiersMapsOrThrow<T>({
-    universalFlatEntityMaps: standardFlatEntityMaps,
-    universalIdentifiers: [...universalIdentifiers],
-  }),
-});
 
 const CALL_RECORDING_OBJECT_METADATA_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.callRecording.universalIdentifier,
@@ -145,20 +92,6 @@ const CALL_RECORDING_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS = [
     .timeline.widgets.timeline.universalIdentifier,
 ];
 
-const CALL_RECORDING_SYNC_CACHE_KEYS = [
-  'flatObjectMetadataMaps',
-  'flatFieldMetadataMaps',
-  'flatIndexMaps',
-  'flatViewMaps',
-  'flatViewFieldMaps',
-  'flatViewFieldGroupMaps',
-  'flatPageLayoutMaps',
-  'flatPageLayoutTabMaps',
-  'flatPageLayoutWidgetMaps',
-  'flatCommandMenuItemMaps',
-  'featureFlagsMap',
-] as const;
-
 @RegisteredWorkspaceCommand('2.10.0', 1799000055000)
 @Command({
   name: 'upgrade:2-10:sync-call-recording-standard-objects',
@@ -181,7 +114,7 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
 
-    let {
+    const {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatIndexMaps,
@@ -192,11 +125,18 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
       flatPageLayoutTabMaps,
       flatPageLayoutWidgetMaps,
       flatCommandMenuItemMaps,
-      featureFlagsMap,
-    } = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      CALL_RECORDING_SYNC_CACHE_KEYS,
-    );
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+      'flatIndexMaps',
+      'flatViewMaps',
+      'flatViewFieldMaps',
+      'flatViewFieldGroupMaps',
+      'flatPageLayoutMaps',
+      'flatPageLayoutTabMaps',
+      'flatPageLayoutWidgetMaps',
+      'flatCommandMenuItemMaps',
+    ]);
 
     const calendarEventObjectMetadata =
       flatObjectMetadataMaps.byUniversalIdentifier[
@@ -216,10 +156,8 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
 
     const now = new Date().toISOString();
 
-    const {
-      allFlatEntityMaps: standardAllFlatEntityMaps,
-      idByUniversalIdentifierByMetadataName,
-    } = computeTwentyStandardApplicationAllFlatEntityMaps({
+    const { allFlatEntityMaps: standardAllFlatEntityMaps } =
+      computeTwentyStandardApplicationAllFlatEntityMaps({
         now,
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
@@ -240,6 +178,151 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
       }),
     );
 
+    const callRecordingObjectMetadataForNavigation =
+      getExistingOrStandardFlatEntityOrThrow<FlatObjectMetadata>({
+        standardFlatEntityMaps:
+          standardAllFlatEntityMaps.flatObjectMetadataMaps,
+        existingFlatEntityMaps: flatObjectMetadataMaps,
+        universalIdentifier: STANDARD_OBJECTS.callRecording.universalIdentifier,
+      });
+
+    const navigationCommandMenuItemOperations =
+      buildNavigationCommandMenuItemOperationsOrThrow({
+        existingFlatCommandMenuItemMaps: flatCommandMenuItemMaps,
+        objectMetadatasForNavigation: [
+          callRecordingObjectMetadataForNavigation,
+        ],
+        applicationId: twentyStandardFlatApplication.id,
+        workspaceId,
+        now,
+        renamedCollisionObjectMetadatas,
+      });
+
+    const allFlatEntityOperationByMetadataName = {
+      objectMetadata: {
+        flatEntityToCreate:
+          getStandardFlatEntitiesToCreateOrThrow<FlatObjectMetadata>({
+            standardFlatEntityMaps:
+              standardAllFlatEntityMaps.flatObjectMetadataMaps,
+            existingFlatEntityMaps: flatObjectMetadataMaps,
+            universalIdentifiers:
+              CALL_RECORDING_OBJECT_METADATA_UNIVERSAL_IDENTIFIERS,
+          }),
+        flatEntityToDelete: [],
+        flatEntityToUpdate: [],
+      },
+      fieldMetadata: {
+        flatEntityToCreate:
+          getStandardFlatEntitiesToCreateOrThrow<FlatFieldMetadata>({
+            standardFlatEntityMaps:
+              standardAllFlatEntityMaps.flatFieldMetadataMaps,
+            existingFlatEntityMaps: flatFieldMetadataMaps,
+            universalIdentifiers:
+              CALL_RECORDING_FIELD_METADATA_UNIVERSAL_IDENTIFIERS,
+          }),
+        flatEntityToDelete: [],
+        flatEntityToUpdate: [],
+      },
+      index: {
+        flatEntityToCreate:
+          getStandardFlatEntitiesToCreateOrThrow<FlatIndexMetadata>({
+            standardFlatEntityMaps: standardAllFlatEntityMaps.flatIndexMaps,
+            existingFlatEntityMaps: flatIndexMaps,
+            universalIdentifiers: CALL_RECORDING_INDEX_UNIVERSAL_IDENTIFIERS,
+          }),
+        flatEntityToDelete: [],
+        flatEntityToUpdate: [],
+      },
+      view: {
+        flatEntityToCreate: getStandardFlatEntitiesToCreateOrThrow<FlatView>({
+          standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewMaps,
+          existingFlatEntityMaps: flatViewMaps,
+          universalIdentifiers: CALL_RECORDING_VIEW_UNIVERSAL_IDENTIFIERS,
+        }),
+        flatEntityToDelete: [],
+        flatEntityToUpdate: [],
+      },
+      viewFieldGroup: {
+        flatEntityToCreate:
+          getStandardFlatEntitiesToCreateOrThrow<FlatViewFieldGroup>({
+            standardFlatEntityMaps:
+              standardAllFlatEntityMaps.flatViewFieldGroupMaps,
+            existingFlatEntityMaps: flatViewFieldGroupMaps,
+            universalIdentifiers:
+              CALL_RECORDING_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS,
+          }),
+        flatEntityToDelete: [],
+        flatEntityToUpdate: [],
+      },
+      viewField: {
+        flatEntityToCreate:
+          getStandardFlatEntitiesToCreateOrThrow<FlatViewField>({
+            standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
+            existingFlatEntityMaps: flatViewFieldMaps,
+            universalIdentifiers:
+              CALL_RECORDING_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
+          }),
+        flatEntityToDelete: [],
+        flatEntityToUpdate: [],
+      },
+      pageLayout: {
+        flatEntityToCreate:
+          getStandardFlatEntitiesToCreateOrThrow<FlatPageLayout>({
+            standardFlatEntityMaps:
+              standardAllFlatEntityMaps.flatPageLayoutMaps,
+            existingFlatEntityMaps: flatPageLayoutMaps,
+            universalIdentifiers:
+              CALL_RECORDING_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
+          }),
+        flatEntityToDelete: [],
+        flatEntityToUpdate: [],
+      },
+      pageLayoutTab: {
+        flatEntityToCreate:
+          getStandardFlatEntitiesToCreateOrThrow<FlatPageLayoutTab>({
+            standardFlatEntityMaps:
+              standardAllFlatEntityMaps.flatPageLayoutTabMaps,
+            existingFlatEntityMaps: flatPageLayoutTabMaps,
+            universalIdentifiers:
+              CALL_RECORDING_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIERS,
+          }),
+        flatEntityToDelete: [],
+        flatEntityToUpdate: [],
+      },
+      pageLayoutWidget: {
+        flatEntityToCreate:
+          getStandardFlatEntitiesToCreateOrThrow<FlatPageLayoutWidget>({
+            standardFlatEntityMaps:
+              standardAllFlatEntityMaps.flatPageLayoutWidgetMaps,
+            existingFlatEntityMaps: flatPageLayoutWidgetMaps,
+            universalIdentifiers:
+              CALL_RECORDING_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS,
+          }),
+        flatEntityToDelete: [],
+        flatEntityToUpdate: [],
+      },
+      commandMenuItem: navigationCommandMenuItemOperations,
+    };
+
+    const totalOperationCount =
+      objectMetadataRenameUpdates.length +
+      fieldMetadataRenameUpdates.length +
+      Object.values(allFlatEntityOperationByMetadataName).reduce(
+        (total, operations) =>
+          total +
+          operations.flatEntityToCreate.length +
+          operations.flatEntityToUpdate.length,
+        0,
+      );
+
+    if (totalOperationCount === 0) {
+      this.logger.log(
+        `CallRecording standard metadata already exists for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
+
     if (isDryRun) {
       if (objectMetadataRenameUpdates.length > 0) {
         this.logger.log(
@@ -254,7 +337,7 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
       }
 
       this.logger.log(
-        `[DRY RUN] Would sync CallRecording standard metadata for workspace ${workspaceId}`,
+        `[DRY RUN] Would apply ${totalOperationCount} CallRecording standard metadata operations for workspace ${workspaceId}`,
       );
 
       return;
@@ -297,145 +380,16 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
           )}`,
         );
       }
-
-      ({
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        flatIndexMaps,
-        flatViewMaps,
-        flatViewFieldMaps,
-        flatViewFieldGroupMaps,
-        flatPageLayoutMaps,
-        flatPageLayoutTabMaps,
-        flatPageLayoutWidgetMaps,
-        flatCommandMenuItemMaps,
-        featureFlagsMap,
-      } = await this.workspaceCacheService.getOrRecompute(
-        workspaceId,
-        CALL_RECORDING_SYNC_CACHE_KEYS,
-      ));
     }
 
-    const standardCallRecordingObjectMetadata =
-      findFlatEntityByUniversalIdentifierOrThrow<FlatObjectMetadata>({
-        flatEntityMaps: standardAllFlatEntityMaps.flatObjectMetadataMaps,
-        universalIdentifier: STANDARD_OBJECTS.callRecording.universalIdentifier,
-      });
-
-    const callRecordingObjectMetadataForNavigation =
-      flatObjectMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.callRecording.universalIdentifier
-      ] ?? standardCallRecordingObjectMetadata;
-
-    const navigationCommandMenuItemOperations =
-      buildNavigationCommandMenuItemOperationsOrThrow({
-        existingFlatCommandMenuItemMaps: flatCommandMenuItemMaps,
-        objectMetadatasForNavigation: [
-          callRecordingObjectMetadataForNavigation,
-        ],
-        applicationId: twentyStandardFlatApplication.id,
-        workspaceId,
-        now,
-        renamedCollisionObjectMetadatas,
-      });
-
-    const fromToAllFlatEntityMaps: FromToAllUniversalFlatEntityMaps = {
-      flatObjectMetadataMaps:
-        buildScopedStandardFromToFlatEntityMaps<FlatObjectMetadata>({
-          existingFlatEntityMaps: flatObjectMetadataMaps,
-          standardFlatEntityMaps: standardAllFlatEntityMaps.flatObjectMetadataMaps,
-          universalIdentifiers:
-            CALL_RECORDING_OBJECT_METADATA_UNIVERSAL_IDENTIFIERS,
-        }),
-      flatFieldMetadataMaps:
-        buildScopedStandardFromToFlatEntityMaps<FlatFieldMetadata>({
-          existingFlatEntityMaps: flatFieldMetadataMaps,
-          standardFlatEntityMaps: standardAllFlatEntityMaps.flatFieldMetadataMaps,
-          universalIdentifiers:
-            CALL_RECORDING_FIELD_METADATA_UNIVERSAL_IDENTIFIERS,
-        }),
-      flatIndexMaps: buildScopedStandardFromToFlatEntityMaps<FlatIndexMetadata>({
-        existingFlatEntityMaps: flatIndexMaps,
-        standardFlatEntityMaps: standardAllFlatEntityMaps.flatIndexMaps,
-        universalIdentifiers: CALL_RECORDING_INDEX_UNIVERSAL_IDENTIFIERS,
-      }),
-      flatViewMaps: buildScopedStandardFromToFlatEntityMaps<FlatView>({
-        existingFlatEntityMaps: flatViewMaps,
-        standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewMaps,
-        universalIdentifiers: CALL_RECORDING_VIEW_UNIVERSAL_IDENTIFIERS,
-      }),
-      flatViewFieldGroupMaps:
-        buildScopedStandardFromToFlatEntityMaps<FlatViewFieldGroup>({
-          existingFlatEntityMaps: flatViewFieldGroupMaps,
-          standardFlatEntityMaps:
-            standardAllFlatEntityMaps.flatViewFieldGroupMaps,
-          universalIdentifiers:
-            CALL_RECORDING_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS,
-        }),
-      flatViewFieldMaps:
-        buildScopedStandardFromToFlatEntityMaps<FlatViewField>({
-          existingFlatEntityMaps: flatViewFieldMaps,
-          standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
-          universalIdentifiers: CALL_RECORDING_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
-        }),
-      flatPageLayoutMaps:
-        buildScopedStandardFromToFlatEntityMaps<FlatPageLayout>({
-          existingFlatEntityMaps: flatPageLayoutMaps,
-          standardFlatEntityMaps: standardAllFlatEntityMaps.flatPageLayoutMaps,
-          universalIdentifiers: CALL_RECORDING_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
-        }),
-      flatPageLayoutTabMaps:
-        buildScopedStandardFromToFlatEntityMaps<FlatPageLayoutTab>({
-          existingFlatEntityMaps: flatPageLayoutTabMaps,
-          standardFlatEntityMaps:
-            standardAllFlatEntityMaps.flatPageLayoutTabMaps,
-          universalIdentifiers:
-            CALL_RECORDING_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIERS,
-        }),
-      flatPageLayoutWidgetMaps:
-        buildScopedStandardFromToFlatEntityMaps<FlatPageLayoutWidget>({
-          existingFlatEntityMaps: flatPageLayoutWidgetMaps,
-          standardFlatEntityMaps:
-            standardAllFlatEntityMaps.flatPageLayoutWidgetMaps,
-          universalIdentifiers:
-            CALL_RECORDING_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS,
-        }),
-      flatCommandMenuItemMaps:
-        computeUniversalFlatEntityMapsFromToThroughMutation<'commandMenuItem'>({
-          flatEntityMaps: structuredClone(flatCommandMenuItemMaps),
-          ...navigationCommandMenuItemOperations,
-        }),
-    };
-
-    const dependencyAllFlatEntityMaps = {
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatIndexMaps,
-      flatViewMaps,
-      flatViewFieldMaps,
-      flatViewFieldGroupMaps,
-      flatPageLayoutMaps,
-      flatPageLayoutTabMaps,
-      flatPageLayoutWidgetMaps,
-      flatCommandMenuItemMaps,
-    } satisfies Partial<AllUniversalFlatEntityMaps>;
-
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
-          buildOptions: {
-            isSystemBuild: true,
-            inferDeletionFromMissingEntities: false,
-            applicationUniversalIdentifier:
-              twentyStandardFlatApplication.universalIdentifier,
-          },
-          fromToAllFlatEntityMaps,
+          isSystemBuild: true,
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
           workspaceId,
-          additionalCacheDataMaps: {
-            featureFlagsMap,
-          },
-          dependencyAllFlatEntityMaps,
-          idByUniversalIdentifierByMetadataName,
+          allFlatEntityOperationByMetadataName,
         },
       );
 
@@ -449,21 +403,8 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
       );
     }
 
-    const appliedOperationCount =
-      objectMetadataRenameUpdates.length +
-      fieldMetadataRenameUpdates.length +
-      validateAndBuildResult.workspaceMigration.actions.length;
-
-    if (appliedOperationCount === 0) {
-      this.logger.log(
-        `CallRecording standard metadata already exists for workspace ${workspaceId}, skipping`,
-      );
-
-      return;
-    }
-
     this.logger.log(
-      `Applied ${appliedOperationCount} CallRecording standard metadata operations for workspace ${workspaceId}`,
+      `Applied ${totalOperationCount} CallRecording standard metadata operations for workspace ${workspaceId}`,
     );
   }
 }
