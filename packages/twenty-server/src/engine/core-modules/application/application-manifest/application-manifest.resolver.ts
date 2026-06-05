@@ -49,10 +49,7 @@ export class ApplicationManifestResolver {
         },
       );
 
-    const {
-      workspaceMigration,
-      fieldIdToBeCreatedInMigrationByUniversalIdentifierMap,
-    } = enrichCreateWorkspaceMigrationActionsWithIds({
+    const workspaceMigration = enrichCreateWorkspaceMigrationActionsWithIds({
       workspaceMigration: {
         actions: actions as AllUniversalWorkspaceMigrationAction[],
         applicationUniversalIdentifier:
@@ -64,8 +61,6 @@ export class ApplicationManifestResolver {
     await this.workspaceMigrationRunnerService.run({
       workspaceMigration,
       workspaceId,
-      allFieldIdToBeCreatedInMigrationByUniversalIdentifierMap:
-        fieldIdToBeCreatedInMigrationByUniversalIdentifierMap,
     });
 
     return true;

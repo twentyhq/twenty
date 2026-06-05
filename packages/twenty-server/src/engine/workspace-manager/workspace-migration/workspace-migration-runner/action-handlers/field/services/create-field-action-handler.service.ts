@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
@@ -46,12 +47,24 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   override async transpileUniversalActionToFlatAction(
     context: WorkspaceMigrationActionRunnerArgs<UniversalCreateFieldAction>,
   ): Promise<FlatCreateFieldAction> {
-    const {
-      action,
-      allFlatEntityMaps,
-      allFieldIdToBeCreatedInMigrationByUniversalIdentifierMap:
-        allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
-    } = context;
+    const { action, allFlatEntityMaps } = context;
+
+    const allFieldIdToBeCreatedInActionByUniversalIdentifierMap = new Map<
+      string,
+      string
+    >(Object.entries(action.fieldIdByUniversalIdentifier ?? {}));
+
+    allFieldIdToBeCreatedInActionByUniversalIdentifierMap.set(
+      action.flatEntity.universalIdentifier,
+      action.id ?? v4(),
+    );
+
+    if (isDefined(action.relatedUniversalFlatFieldMetadata)) {
+      allFieldIdToBeCreatedInActionByUniversalIdentifierMap.set(
+        action.relatedUniversalFlatFieldMetadata.universalIdentifier,
+        action.relatedFieldId ?? v4(),
+      );
+    }
 
     const universalFlatFieldMetadatas = isDefined(
       action.relatedUniversalFlatFieldMetadata,

@@ -170,14 +170,9 @@ export class WorkspaceMigrationRunnerService {
   run = async ({
     workspaceMigration: { actions, applicationUniversalIdentifier },
     workspaceId,
-    allFieldIdToBeCreatedInMigrationByUniversalIdentifierMap,
   }: {
     workspaceMigration: WorkspaceMigration;
     workspaceId: string;
-    allFieldIdToBeCreatedInMigrationByUniversalIdentifierMap: Map<
-      string,
-      string
-    >;
   }): Promise<{
     allFlatEntityMaps: AllFlatEntityMaps;
     metadataEvents: MetadataEvent[];
@@ -262,7 +257,6 @@ export class WorkspaceMigrationRunnerService {
                 allFlatEntityMaps,
                 queryRunner,
                 workspaceId,
-                allFieldIdToBeCreatedInMigrationByUniversalIdentifierMap,
               },
             },
           );
@@ -297,7 +291,6 @@ export class WorkspaceMigrationRunnerService {
               action: invertedAction,
               allFlatEntityMaps,
               workspaceId,
-              allFieldIdToBeCreatedInMigrationByUniversalIdentifierMap,
             },
           },
         );

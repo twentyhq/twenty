@@ -386,10 +386,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       return validateAndBuildResult;
     }
 
-    const {
-      workspaceMigration,
-      fieldIdToBeCreatedInMigrationByUniversalIdentifierMap,
-    } = enrichCreateWorkspaceMigrationActionsWithIds({
+    const workspaceMigration = enrichCreateWorkspaceMigrationActionsWithIds({
       idByUniversalIdentifierByMetadataName:
         idByUniversalIdentifierByMetadataName ?? {},
       workspaceMigration: validateAndBuildResult.workspaceMigration,
@@ -407,8 +404,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       await this.workspaceMigrationRunnerService.run({
         workspaceId: args.workspaceId,
         workspaceMigration,
-        allFieldIdToBeCreatedInMigrationByUniversalIdentifierMap:
-          fieldIdToBeCreatedInMigrationByUniversalIdentifierMap,
       });
 
     this.metadataEventEmitter.emitMetadataEvents({
