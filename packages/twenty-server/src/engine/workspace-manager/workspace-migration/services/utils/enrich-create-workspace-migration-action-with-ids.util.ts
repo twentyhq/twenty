@@ -114,7 +114,7 @@ const buildFieldIdByUniversalIdentifierForFieldActions = ({
 
 const getJunctionTargetFieldUniversalIdentifier = (
   universalSettings: UniversalCreateFieldAction['flatEntity']['universalSettings'],
-): string | undefined => {
+): string | null | undefined => {
   if (
     !isDefined(universalSettings) ||
     !('junctionTargetFieldUniversalIdentifier' in universalSettings)
@@ -138,7 +138,7 @@ const buildReferencedFieldIdByUniversalIdentifierForFieldAction = ({
 
   const referencedFieldIdByUniversalIdentifier: Record<string, string> = {};
 
-  const addReference = (universalIdentifier: string | undefined) => {
+  const addReference = (universalIdentifier: string | null | undefined) => {
     if (
       !isDefined(universalIdentifier) ||
       !isDefined(fieldIdByUniversalIdentifier[universalIdentifier])
