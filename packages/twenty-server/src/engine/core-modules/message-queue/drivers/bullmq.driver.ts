@@ -114,7 +114,7 @@ export class BullMQDriver
         Sentry.withIsolationScope(async () => {
           applyWorkspaceSentryContextFromJobData(job.data);
 
-          const queueLatency = Date.now() - job.timestamp;
+          const queueLatency = Math.max(0, Date.now() - job.timestamp);
 
           this.metricsService.recordHistogram({
             key: MetricsKeys.JobLatencyMs,
