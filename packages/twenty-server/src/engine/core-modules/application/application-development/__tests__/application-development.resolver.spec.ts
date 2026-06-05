@@ -118,4 +118,22 @@ describe('ApplicationDevelopmentResolver', () => {
 
     expect(synchronizeFromManifest).not.toHaveBeenCalled();
   });
+
+  it('computes the migration plan without acquiring the lock on a dry run', async () => {
+    const result = await resolver.syncApplication(
+      { manifest: buildManifest(), dryRun: true },
+      { id: WORKSPACE_ID } as WorkspaceEntity,
+    );
+
+    expect(withLock).not.toHaveBeenCalled();
+    expect(synchronizeFromManifest).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      manifest: expect.any(Object),
+      dryRun: true,
+    });
+    expect(result).toEqual({
+      applicationUniversalIdentifier: UNIVERSAL_IDENTIFIER,
+      actions: [],
+    });
+  });
 });

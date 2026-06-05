@@ -358,6 +358,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
   public async validateBuildAndRunWorkspaceMigrationFromTo(
     args: WorkspaceMigrationOrchestratorBuildArgs & {
       idByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
+      dryRun?: boolean;
     },
   ): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
@@ -365,7 +366,8 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         hasSchemaMetadataChanged: boolean;
       })
   > {
-    const { idByUniversalIdentifierByMetadataName, ...buildArgs } = args;
+    const { idByUniversalIdentifierByMetadataName, dryRun, ...buildArgs } =
+      args;
 
     const validateAndBuildResult =
       await this.workspaceMigrationBuildOrchestratorService
@@ -393,7 +395,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         })
       : validateAndBuildResult.workspaceMigration;
 
-    if (workspaceMigration.actions.length === 0) {
+    if (dryRun === true || workspaceMigration.actions.length === 0) {
       return {
         status: 'success',
         workspaceMigration,
