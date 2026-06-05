@@ -10,14 +10,14 @@ import { generateRecordName } from 'test/integration/utils/generate-record-name'
 import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 
 describe('Restricted fields', () => {
-  let personCity: string;
+  let personJobTitle: string;
   let memberRoleId: string;
   let personObjectId: string;
   let emailsFieldId: string;
   let phonesFieldId: string;
 
   beforeAll(async () => {
-    personCity = generateRecordName(TEST_PERSON_1_ID);
+    personJobTitle = generateRecordName(TEST_PERSON_1_ID);
 
     await makeRestAPIRequest({
       method: 'post',
@@ -35,7 +35,7 @@ describe('Restricted fields', () => {
       path: '/people',
       body: {
         id: TEST_PERSON_1_ID,
-        city: personCity,
+        jobTitle: personJobTitle,
         emails: {
           primaryEmail: 'test@test.com',
         },
@@ -242,14 +242,14 @@ describe('Restricted fields', () => {
         path: `/people/${TEST_PERSON_1_ID}`,
         bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
         body: {
-          city: 'Updated City',
+          jobTitle: 'Updated City',
         },
       })
         .expect(200)
         .expect((res) => {
           const updatedPerson = res.body.data.updatePerson;
 
-          expect(updatedPerson.city).toBe('Updated City');
+          expect(updatedPerson.jobTitle).toBe('Updated City');
         });
     });
   });
@@ -369,14 +369,14 @@ describe('Restricted fields', () => {
         path: `/people`,
         bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
         body: {
-          city: 'New City',
+          jobTitle: 'New City',
         },
       })
         .expect(201)
         .expect((res) => {
           const createdPerson = res.body.data.createPerson;
 
-          expect(createdPerson.city).toBe('New City');
+          expect(createdPerson.jobTitle).toBe('New City');
           expect(createdPerson.emails).toBeUndefined();
         });
     });
@@ -502,10 +502,10 @@ describe('Restricted fields', () => {
         bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
         body: [
           {
-            city: 'Batch City 1',
+            jobTitle: 'Batch City 1',
           },
           {
-            city: 'Batch City 2',
+            jobTitle: 'Batch City 2',
           },
         ],
       })
@@ -514,9 +514,9 @@ describe('Restricted fields', () => {
           const createdPeople = res.body.data.createPeople;
 
           expect(createdPeople).toHaveLength(2);
-          expect(createdPeople[0].city).toBe('Batch City 1');
+          expect(createdPeople[0].jobTitle).toBe('Batch City 1');
           expect(createdPeople[0].emails).toBeUndefined();
-          expect(createdPeople[1].city).toBe('Batch City 2');
+          expect(createdPeople[1].jobTitle).toBe('Batch City 2');
           expect(createdPeople[1].emails).toBeUndefined();
         });
     });
