@@ -110,6 +110,7 @@ export const SettingsLogs = () => {
   const [filters, setFilters] = useState<EventLogFiltersState>({});
   const [isPaused, setIsPaused] = useState(false);
 
+  // Free on every plan — keep in sync with EVENT_LOG_TYPES[*].requiresEntitlement on the server
   const isApplicationLog = selectedTable === EventLogTable.APPLICATION_LOG;
   const canQuery =
     isClickHouseConfigured && (isApplicationLog || hasAuditLogsEntitlement);
@@ -196,7 +197,7 @@ export const SettingsLogs = () => {
     if (!isClickHouseConfigured) {
       return (
         <SettingsEmptyPlaceholder>
-          {t`Audit logs require ClickHouse to be configured. Please contact your administrator.`}
+          {t`Logs require ClickHouse to be configured. Please contact your administrator.`}
         </SettingsEmptyPlaceholder>
       );
     }
@@ -208,7 +209,7 @@ export const SettingsLogs = () => {
 
       return (
         <SettingsEmptyPlaceholder>
-          {t`Something went wrong while loading audit logs. Please try again.`}
+          {t`Something went wrong while loading logs. Please try again.`}
         </SettingsEmptyPlaceholder>
       );
     }

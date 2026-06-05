@@ -10,7 +10,6 @@ export const GET_EVENT_LOGS = gql`
         properties
         recordId
         objectMetadataId
-        isCustom
       }
       totalCount
       pageInfo {

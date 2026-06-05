@@ -9,7 +9,6 @@ export const EVENT_LOGS_LIVE_SUBSCRIPTION = gql`
       properties
       recordId
       objectMetadataId
-      isCustom
     }
   }
 `;

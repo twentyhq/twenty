@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { EVENT_LOGS_LIVE_SUBSCRIPTION } from '@/settings/event-logs/graphql/subscriptions/EventLogsLiveSubscription';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { captureException } from '@sentry/react';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -28,10 +29,18 @@ export const useEventLogsLiveStream = ({
   const sseClient = useAtomStateValue(sseClientState);
   const [liveRecords, setLiveRecords] = useState<EventLogRecord[]>([]);
 
-  // Reset the buffer only when the table changes; pausing/resuming keeps it.
+  // Reset the buffer when the table changes.
   useEffect(() => {
     setLiveRecords([]);
   }, [table]);
+
+  // Drop the buffer when the stream is disabled (paused or filtered) so stale
+  // records can't stay prepended and inflate the displayed count.
+  useEffect(() => {
+    if (!enabled) {
+      setLiveRecords([]);
+    }
+  }, [enabled]);
 
   useEffect(() => {
     if (!enabled || !isDefined(sseClient)) {
@@ -51,7 +60,7 @@ export const useEventLogsLiveStream = ({
             setLiveRecords((previous) => [...incoming, ...previous]);
           }
         },
-        error: () => {},
+        error: (error) => captureException(error),
         complete: () => {},
       },
     );

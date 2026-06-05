@@ -20,7 +20,7 @@ export const useEventLogs = (
   input: EventLogQueryInput,
   options?: { skip?: boolean },
 ) => {
-  const { data, loading, error, refetch, fetchMore } = useQuery<
+  const { data, loading, error, fetchMore } = useQuery<
     EventLogsData,
     EventLogsVariables
   >(GET_EVENT_LOGS, {
@@ -70,7 +70,6 @@ export const useEventLogs = (
     hasNextPage,
     loading,
     error,
-    refetch,
     loadMore,
   };
 };
