@@ -60,7 +60,7 @@ export const createExecuteToolTool = (
       return {
         success: false,
         message: `Tool "${toolName}" is not available`,
-        error: `Tool "${toolName}" is not available in this context. Use learn_tools to discover available tools.`,
+        error: `Tool "${toolName}" is not available in this context. Use get_tool_catalog to discover available tools.`,
       };
     }
 

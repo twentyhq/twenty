@@ -1,6 +1,5 @@
 export const TOO_MANY_RELATION_QUERY_GQL_FIELDS = `
     id
-    city
     jobTitle
     avatarUrl
     intro

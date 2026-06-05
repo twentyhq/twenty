@@ -17,7 +17,7 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export interface CursorData {
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   [key: string]: any;
 }
 
@@ -49,7 +49,7 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
     flatObjectMetadata,
   );
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   const orderByValues: Record<string, any> = {};
 
   for (const orderByEntry of order ?? []) {
@@ -103,9 +103,9 @@ export const encodeCursorData = (cursorData: CursorData) => {
 };
 
 export const getCursor = (
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   args: FindManyResolverArgs<any, any>,
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
 ): Record<string, any> | undefined => {
   if (args.after) return decodeCursor(args.after);
   if (args.before) return decodeCursor(args.before);

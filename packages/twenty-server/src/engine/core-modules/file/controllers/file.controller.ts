@@ -118,7 +118,7 @@ export class FileController {
     @Param('fileFolder') fileFolder: SupportedFileFolder,
     @Param('id') fileId: string,
   ) {
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     const workspaceId = (req as any)?.workspaceId;
 
     const fileResponse = await this.fileService

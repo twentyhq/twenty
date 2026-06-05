@@ -6,7 +6,6 @@ import {
 } from 'twenty-shared/types';
 import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
-import { z } from 'zod';
 
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -17,6 +16,8 @@ import { generateCreateManyRecordInputSchema } from 'src/engine/core-modules/rec
 import { generateCreateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-record-input-schema.util';
 import { generateUpdateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-many-record-input-schema.util';
 import { generateUpdateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-record-input-schema.util';
+import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
+import { generateBulkDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/bulk-delete-tool.zod-schema';
 import { DeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/delete-tool.zod-schema';
 import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
@@ -33,6 +34,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ToolCategory } from 'twenty-shared/ai';
+import z from 'zod';
 
 @Injectable()
 export class DatabaseToolProvider implements ToolProvider {
@@ -112,13 +114,11 @@ export class DatabaseToolProvider implements ToolProvider {
         continue;
       }
 
-      const objectMetadata = {
-        ...flatObject,
-        fields: getFlatFieldsFromFlatObjectMetadata(
-          flatObject,
-          flatFieldMetadataMaps,
-        ),
-      };
+      const fields = includeSchemas
+        ? getFlatFieldsFromFlatObjectMetadata(flatObject, flatFieldMetadataMaps)
+        : [];
+
+      const objectMetadata = { ...flatObject, fields };
 
       const restrictedFields = permission.restrictedFields;
       const canBeManagedByAutomation = canObjectBeManagedByAutomation({
@@ -130,10 +130,10 @@ export class DatabaseToolProvider implements ToolProvider {
 
       if (permission.canReadObjectRecords) {
         descriptors.push({
-          name: `find_${snakePlural}`,
+          name: `find_many_${snakePlural}`,
           description: `Search for ${objectMetadata.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. Filter fields are top-level arguments — pass each field as its own key (e.g. { id: { eq: "record-id" } }, or { name: { firstName: { ilike: "%ada%" } } }); do NOT wrap them in a "filter" object and do NOT place a bare operator like "ilike"/"eq" at the top level. Combine conditions with and/or/not. Returns an array of matching records with their full data.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(shouldIncludeSchema(`find_${snakePlural}`) && {
+          ...(shouldIncludeSchema(`find_many_${snakePlural}`) && {
             inputSchema: leanJsonSchema(
               z.toJSONSchema(
                 generateFindToolInputSchema(objectMetadata, restrictedFields),
@@ -143,16 +143,16 @@ export class DatabaseToolProvider implements ToolProvider {
           executionRef: {
             kind: 'database_crud',
             objectNameSingular: objectMetadata.nameSingular,
-            operation: 'find',
+            operation: 'find_many',
           },
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
-          operation: 'find',
+          operation: 'find_many',
         });
 
         descriptors.push({
           name: `find_one_${snakeSingular}`,
-          description: `Retrieve a single ${objectMetadata.labelSingular} record by its unique ID. Use this when you know the exact record ID and need the complete record data. Returns the full record or an error if not found.`,
+          description: `Retrieve a single ${objectMetadata.labelSingular} by ID.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`find_one_${snakeSingular}`) && {
             inputSchema: leanJsonSchema(z.toJSONSchema(FindOneToolInputSchema)),
@@ -172,7 +172,9 @@ export class DatabaseToolProvider implements ToolProvider {
         const groupBySchema = shouldGenerateGroupBy
           ? generateGroupByToolInputSchema(objectMetadata, restrictedFields)
           : null;
+
         const hasGroupBySchema =
+          !includeSchemas ||
           groupBySchema !== null ||
           hasGroupByToolInputSchema(objectMetadata, restrictedFields);
 
@@ -183,7 +185,7 @@ export class DatabaseToolProvider implements ToolProvider {
             category: ToolCategory.DATABASE_CRUD,
             ...(shouldGenerateGroupBy &&
               groupBySchema && {
-                inputSchema: leanJsonSchema(z.toJSONSchema(groupBySchema)),
+                inputSchema: toToolJsonSchema(groupBySchema),
               }),
             executionRef: {
               kind: 'database_crud',
@@ -199,27 +201,22 @@ export class DatabaseToolProvider implements ToolProvider {
 
       if (permission.canUpdateObjectRecords && canBeManagedByAutomation) {
         descriptors.push({
-          name: `create_${snakeSingular}`,
+          name: `create_one_${snakeSingular}`,
           description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(shouldIncludeSchema(`create_${snakeSingular}`) && {
-            inputSchema: leanJsonSchema(
-              z.toJSONSchema(
-                generateCreateRecordInputSchema(
-                  objectMetadata,
-                  restrictedFields,
-                ),
-              ),
+          ...(shouldIncludeSchema(`create_one_${snakeSingular}`) && {
+            inputSchema: z.toJSONSchema(
+              generateCreateRecordInputSchema(objectMetadata, restrictedFields),
             ),
           }),
           executionRef: {
             kind: 'database_crud',
             objectNameSingular: objectMetadata.nameSingular,
-            operation: 'create',
+            operation: 'create_one',
           },
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
-          operation: 'create',
+          operation: 'create_one',
         });
 
         descriptors.push({
@@ -247,32 +244,27 @@ export class DatabaseToolProvider implements ToolProvider {
         });
 
         descriptors.push({
-          name: `update_${snakeSingular}`,
+          name: `update_one_${snakeSingular}`,
           description: `Update an existing ${objectMetadata.labelSingular} record. Provide the record ID and only the fields you want to change. Unspecified fields will remain unchanged. Returns the updated record with all current data.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(shouldIncludeSchema(`update_${snakeSingular}`) && {
-            inputSchema: leanJsonSchema(
-              z.toJSONSchema(
-                generateUpdateRecordInputSchema(
-                  objectMetadata,
-                  restrictedFields,
-                ),
-              ),
+          ...(shouldIncludeSchema(`update_one_${snakeSingular}`) && {
+            inputSchema: z.toJSONSchema(
+              generateUpdateRecordInputSchema(objectMetadata, restrictedFields),
             ),
           }),
           executionRef: {
             kind: 'database_crud',
             objectNameSingular: objectMetadata.nameSingular,
-            operation: 'update',
+            operation: 'update_one',
           },
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
-          operation: 'update',
+          operation: 'update_one',
         });
 
         descriptors.push({
           name: `update_many_${snakePlural}`,
-          description: `Update multiple ${objectMetadata.labelPlural} records matching a filter in a single operation. All matching records will receive the same field values. WARNING: Use specific filters to avoid unintended mass updates. Always verify the filter scope with a find query first. Returns the updated records.`,
+          description: `Apply the SAME field values to all ${objectMetadata.labelPlural} records matching a filter. Use when every matched record gets identical changes (e.g. bulk status change). For records that each have different data to update, use upsert_many_${snakePlural} instead. WARNING: Use specific filters to avoid unintended mass updates. Always verify the filter scope with a find query first.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`update_many_${snakePlural}`) && {
             inputSchema: leanJsonSchema(
@@ -293,24 +285,68 @@ export class DatabaseToolProvider implements ToolProvider {
           icon: flatObject.icon ?? undefined,
           operation: 'update_many',
         });
-      }
 
-      if (permission.canSoftDeleteObjectRecords && canBeManagedByAutomation) {
         descriptors.push({
-          name: `delete_${snakeSingular}`,
-          description: `Delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record is hidden from normal queries. This is reversible. Use this to remove records.`,
+          name: `upsert_many_${snakePlural}`,
+          description: `Insert or update multiple ${objectMetadata.labelPlural} records in a single call, where each record has its own individual data. Use this instead of update_many_${snakePlural} when records need different field values. Existing records are matched by unique fields and updated; records with no match are created. Maximum 20 records per call. Returns the upserted records.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(shouldIncludeSchema(`delete_${snakeSingular}`) && {
-            inputSchema: leanJsonSchema(z.toJSONSchema(DeleteToolInputSchema)),
+          ...(shouldIncludeSchema(`upsert_many_${snakePlural}`) && {
+            inputSchema: z.toJSONSchema(
+              generateCreateManyRecordInputSchema(
+                objectMetadata,
+                restrictedFields,
+              ),
+            ),
           }),
           executionRef: {
             kind: 'database_crud',
             objectNameSingular: objectMetadata.nameSingular,
-            operation: 'delete',
+            operation: 'upsert_many',
           },
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
-          operation: 'delete',
+          operation: 'upsert_many',
+        });
+      }
+
+      if (permission.canSoftDeleteObjectRecords) {
+        descriptors.push({
+          name: `delete_one_${snakeSingular}`,
+          description: `Delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record is hidden from normal queries. This is reversible. Use this to remove records.`,
+          category: ToolCategory.DATABASE_CRUD,
+          ...(includeSchemas && {
+            inputSchema: toToolJsonSchema(DeleteToolInputSchema),
+          }),
+          executionRef: {
+            kind: 'database_crud',
+            objectNameSingular: objectMetadata.nameSingular,
+            operation: 'delete_one',
+          },
+          objectName: objectMetadata.nameSingular,
+          icon: flatObject.icon ?? undefined,
+          operation: 'delete_one',
+        });
+
+        descriptors.push({
+          name: `delete_many_${snakePlural}`,
+          description: `Soft-delete multiple ${objectMetadata.labelPlural} records matching a filter in a single operation. Deleted records are hidden from normal queries and the operation is reversible. WARNING: Use specific filters to avoid unintended mass deletions.`,
+          category: ToolCategory.DATABASE_CRUD,
+          ...(includeSchemas && {
+            inputSchema: toToolJsonSchema(
+              generateBulkDeleteToolInputSchema(
+                objectMetadata,
+                restrictedFields,
+              ),
+            ),
+          }),
+          executionRef: {
+            kind: 'database_crud',
+            objectNameSingular: objectMetadata.nameSingular,
+            operation: 'delete_many',
+          },
+          objectName: objectMetadata.nameSingular,
+          icon: flatObject.icon ?? undefined,
+          operation: 'delete_many',
         });
       }
     }
@@ -324,14 +360,16 @@ export class DatabaseToolProvider implements ToolProvider {
     snakePlural: string,
   ): boolean {
     return (
-      toolNames.has(`find_${snakePlural}`) ||
+      toolNames.has(`find_many_${snakePlural}`) ||
       toolNames.has(`find_one_${snakeSingular}`) ||
       toolNames.has(`group_by_${snakePlural}`) ||
-      toolNames.has(`create_${snakeSingular}`) ||
+      toolNames.has(`create_one_${snakeSingular}`) ||
       toolNames.has(`create_many_${snakePlural}`) ||
-      toolNames.has(`update_${snakeSingular}`) ||
+      toolNames.has(`update_one_${snakeSingular}`) ||
       toolNames.has(`update_many_${snakePlural}`) ||
-      toolNames.has(`delete_${snakeSingular}`)
+      toolNames.has(`delete_one_${snakeSingular}`) ||
+      toolNames.has(`delete_many_${snakePlural}`) ||
+      toolNames.has(`upsert_many_${snakePlural}`)
     );
   }
 
