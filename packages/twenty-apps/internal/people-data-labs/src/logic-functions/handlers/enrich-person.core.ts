@@ -5,6 +5,7 @@ import { PdlInvalidInputError } from 'src/logic-functions/errors/pdl-invalid-inp
 import { PdlRecordNotFoundError } from 'src/logic-functions/errors/pdl-record-not-found-error';
 import { buildPersonNameParam } from 'src/logic-functions/utils/build-person-name-param';
 import { buildSkippedResult } from 'src/logic-functions/utils/build-skipped-result';
+import { findOrCreateCurrentCompany } from 'src/logic-functions/utils/find-or-create-current-company';
 import { toText } from 'src/logic-functions/utils/to-text';
 import { isWithinTtl } from 'src/logic-functions/utils/is-within-ttl';
 import { mapPerson } from 'src/logic-functions/utils/map-person';
@@ -138,9 +139,14 @@ export const enrichPersonCore = async (
     PERSON_EMPTY_CHECKS,
   );
 
+  const currentCompanyId = isDefined(node.company?.id)
+    ? undefined
+    : await findOrCreateCurrentCompany(client, outcome.data as PdlPersonData);
+
   const data = pruneUndefined({
     ...writableStandard,
     ...mapped.pdl,
+    companyId: currentCompanyId,
     pdlLikelihood: outcome.likelihood,
     pdlRawPayload: outcome.data,
     pdlLastEnrichedAt: enrichedAt,

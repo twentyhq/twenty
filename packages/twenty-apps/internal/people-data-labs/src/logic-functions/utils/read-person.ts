@@ -17,6 +17,7 @@ export const readPerson = async (
           phones: { primaryPhoneNumber: true },
           jobTitle: true,
           linkedinLink: { primaryLinkUrl: true },
+          company: { id: true },
           pdlId: true,
           pdlLastEnrichedAt: true,
         },

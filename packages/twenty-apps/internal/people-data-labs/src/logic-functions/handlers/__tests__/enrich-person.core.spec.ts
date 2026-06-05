@@ -18,12 +18,16 @@ type MutationRequest = {
   updatePerson: { __args: { data: Record<string, unknown> } };
 };
 
+const captureUpdatePerson = (captured: Captured) => (request: unknown) => {
+  if ('updatePerson' in (request as object)) {
+    captured.data = (request as MutationRequest).updatePerson.__args.data;
+  }
+};
+
 const buildClient = (node: PersonNode, captured: Captured) =>
   createCoreApiClientMock({
     queryResult: { people: { edges: [{ node }] } },
-    onMutation: (request) => {
-      captured.data = (request as MutationRequest).updatePerson.__args.data;
-    },
+    onMutation: captureUpdatePerson(captured),
   });
 
 beforeEach(() => {
@@ -60,6 +64,77 @@ describe('enrichPersonCore', () => {
     expect(typeof captured.data?.pdlLastEnrichedAt).toBe('string');
     expect(captured.data?.pdlRawPayload).toMatchObject({ id: 'pdl1' });
     expect('linkedinLink' in (captured.data ?? {})).toBe(false);
+  });
+
+  it('links the standard company (find-or-create) when the person has none', async () => {
+    enrichPersonMock.mockResolvedValue({
+      outcome: 'matched',
+      httpStatus: 200,
+      likelihood: 8,
+      data: {
+        id: 'pdl1',
+        work_email: 'jane@acme.com',
+        job_company_name: 'Acme',
+        job_company_website: 'acme.com',
+      },
+    });
+    const captured: Captured = {};
+    const client = createCoreApiClientMock({
+      queryResult: (request: unknown) =>
+        'companies' in (request as object)
+          ? { companies: { edges: [] } }
+          : { people: { edges: [{ node: PERSON_NODE_MOCK }] } },
+      mutationResult: (request: unknown) =>
+        'createCompany' in (request as object)
+          ? { createCompany: { id: 'co-new' } }
+          : {},
+      onMutation: captureUpdatePerson(captured),
+    });
+
+    await enrichPersonCore({ recordId: 'p1' }, client);
+
+    expect(captured.data?.companyId).toBe('co-new');
+  });
+
+  it('does not touch company when the person already has one', async () => {
+    enrichPersonMock.mockResolvedValue({
+      outcome: 'matched',
+      httpStatus: 200,
+      likelihood: 8,
+      data: { id: 'pdl1', work_email: 'jane@acme.com', job_company_name: 'Acme' },
+    });
+    const captured: Captured = {};
+    let companiesQueried = false;
+    let createCompanyCalled = false;
+    const client = createCoreApiClientMock({
+      queryResult: (request: unknown) => {
+        if ('companies' in (request as object)) {
+          companiesQueried = true;
+
+          return { companies: { edges: [] } };
+        }
+
+        return {
+          people: {
+            edges: [{ node: { ...PERSON_NODE_MOCK, company: { id: 'co-existing' } } }],
+          },
+        };
+      },
+      mutationResult: (request: unknown) => {
+        if ('createCompany' in (request as object)) {
+          createCompanyCalled = true;
+        }
+
+        return {};
+      },
+      onMutation: captureUpdatePerson(captured),
+    });
+
+    await enrichPersonCore({ recordId: 'p1' }, client);
+
+    expect(companiesQueried).toBe(false);
+    expect(createCompanyCalled).toBe(false);
+    expect('companyId' in (captured.data ?? {})).toBe(false);
   });
 
   it('does not overwrite a populated standard field', async () => {

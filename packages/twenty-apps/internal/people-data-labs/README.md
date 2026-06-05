@@ -27,8 +27,7 @@ trigger-agnostic core in `src/logic-functions/handlers/`:
 
 Run locally: `yarn twenty dev:function:exec -n enrich-person -p '{"recordId":"<id>"}'`.
 
-**Deferred to a later PR:** linking the `pdlCurrentCompany` relation (find-or-create a
-Company from `job_company_*`), enrichment metering/billing, and auto-enrichment triggers.
+**Deferred to a later PR:** enrichment metering/billing, and auto-enrichment triggers.
 
 ---
 
@@ -49,9 +48,9 @@ PDL schema v34.1**:
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ | ------------------------------------------ |
 | `pdlSeniority` (`job_title_levels`, array)                                                                                                                                                      | MULTI_SELECT | 10                                         |
 | `pdlFundingStages` (`funding_stages`, array)                                                                                                                                                    | MULTI_SELECT | 29                                         |
-| `pdlIndustry` / `pdlJobCompanyIndustry` (`industry`)                                                                                                                                            | SELECT       | 147                                        |
+| `pdlIndustry` (`industry`)                                                                                                                                                                      | SELECT       | 147                                        |
 | `pdlJobTitleSubRole` (`job_title_sub_role`)                                                                                                                                                     | SELECT       | 106                                        |
-| `pdlJobTitleClass`, `pdlInferredSalary`, `pdlSex`, `pdlCompanyType`, `pdlSizeRange`, `pdlJobCompanySize`, `pdlLatestFundingStage`, `pdlLocationContinent`, `pdlLocationMetro`, `pdlMicExchange` | SELECT       | 5 / 11 / 2 / 6 / 8 / 8 / 29 / 7 / 384 / 70 |
+| `pdlJobTitleClass`, `pdlInferredSalary`, `pdlSex`, `pdlCompanyType`, `pdlSizeRange`, `pdlLatestFundingStage`, `pdlLocationContinent`, `pdlLocationMetro`, `pdlMicExchange`                       | SELECT       | 5 / 11 / 2 / 6 / 8 / 29 / 7 / 384 / 70     |
 
 - Option `value`s are normalized to **GraphQL enum names** (`united states` → `UNITED_STATES`):
   uppercase, accents stripped, non-alphanumeric → `_`, digit-leading prefixed.
@@ -82,11 +81,19 @@ into the standard bags).
 - `pdlLocationMetro` (both) and `pdlLocationContinent` (company) stay SELECT — ADDRESS has no slot.
   _Trade-off:_ ADDRESS `country` is free text, so the country SELECT was dropped.
 
-### Relation
+### Current company → standard `company`
 
-Dedicated **`pdlCurrentCompany`** (Person `MANY_TO_ONE` → Company) ↔ inverse
-**`pdlCurrentEmployees`** (Company `ONE_TO_MANY` → Person). Deliberately **not** the standard
-`company` relation, so PDL's detected employer can't overwrite the user's CRM account link.
+PDL's detected current employer (`job_company_*`) is resolved to a Company record
+(**find-or-create**, matched by `pdlId` → domain → LinkedIn → name; created with
+`name` / `domainName` / `linkedinLink` + `pdlId` / `pdlIndustry` / `pdlSizeRange` when none
+matches) and linked via the **standard `company`** relation, **fill-only-if-empty** — it never
+overwrites a company the user already set, and the lookup is skipped entirely when the person
+already has one (no orphan companies).
+
+Company attributes live on the **Company** record, not denormalized on the Person. The earlier
+`pdlCurrentCompany` / `pdlCurrentEmployees` relation and the six `pdlJobCompany*` scalar fields
+were **removed** as duplicates of the standard `company` relation and the linked Company's own
+fields.
 
 ### Enrichment metadata
 
@@ -132,7 +139,8 @@ The logic function (to be built) must:
 10. **CURRENCY**: `total_funding_raised` (USD float) → `{ amountMicros: value × 1_000_000, currencyCode: 'USD' }`.
 11. **ADDRESS**: split PDL `location.*` into the composite — Company → standard `address`,
     Person → `pdlLocation`.
-12. **Relation**: resolve `job_company_id` → find/upsert a Company record → link `pdlCurrentCompany`.
+12. **Company**: resolve `job_company_*` → find-or-create a Company record → link the standard
+    `company` relation (fill-only-if-empty).
 13. **Dates**: handle partial PDL dates (`YYYY`, `YYYY-MM`) for `job_start_date`,
     `last_funding_date`, `birth_date`.
 14. Always set `pdlId`, `pdlLastEnrichedAt`, `pdlRawPayload`, `pdlLikelihood` (person).

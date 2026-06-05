@@ -21,8 +21,8 @@
     "test:integration": "vitest run --passWithNoTests"
   },
   "dependencies": {
-    "twenty-client-sdk": "2.4.0",
-    "twenty-sdk": "2.4.0"
+    "twenty-client-sdk": "2.9.1",
+    "twenty-sdk": "2.9.1"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",

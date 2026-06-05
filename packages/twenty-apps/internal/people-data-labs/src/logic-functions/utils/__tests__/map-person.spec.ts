@@ -25,7 +25,13 @@ describe('mapPerson', () => {
     expect(pdl.pdlJobRole).toBe('ENGINEERING');
     expect(pdl.pdlIndustry).toBe('ACCOUNTING');
     expect(pdl.pdlInferredSalary).toBe('FROM_45000_TO_55000');
-    expect(pdl.pdlJobCompanySize).toBe('ELEVEN_TO_FIFTY');
+  });
+
+  it('does not map company attributes onto the person', () => {
+    const { pdl } = mapPerson(PDL_PERSON_DATA_MOCK);
+
+    expect('pdlJobCompanyName' in pdl).toBe(false);
+    expect('pdlJobCompanySize' in pdl).toBe(false);
   });
 
   it('drops unknown multi-select values', () => {

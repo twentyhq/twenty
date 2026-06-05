@@ -8,7 +8,6 @@ import { JOB_TITLE_SUB_ROLE_OPTIONS } from 'src/constants/job-title-sub-role-opt
 import { METRO_OPTIONS } from 'src/constants/metro-options';
 import { SENIORITY_OPTIONS } from 'src/constants/seniority-options';
 import { SEX_OPTIONS } from 'src/constants/sex-options';
-import { SIZE_OPTIONS } from 'src/constants/size-options';
 import { toJsonArray } from 'src/logic-functions/utils/to-json-array';
 import { toNumber } from 'src/logic-functions/utils/to-number';
 import { toStringArray } from 'src/logic-functions/utils/to-string-array';
@@ -23,7 +22,6 @@ import { buildAllowedValues } from 'src/logic-functions/utils/build-allowed-valu
 import { pickMultiSelect } from 'src/logic-functions/utils/pick-multi-select';
 import { pickSelect } from 'src/logic-functions/utils/pick-select';
 import { salaryTransform } from 'src/logic-functions/utils/salary-transform';
-import { sizeTransform } from 'src/logic-functions/utils/size-transform';
 import { type MappedRecord } from 'src/types/mapped-record.type';
 import { type PdlPersonData } from 'src/types/pdl-person-data.type';
 import { pruneUndefined } from 'src/utils/prune-undefined';
@@ -36,7 +34,6 @@ const INDUSTRY_VALUES = buildAllowedValues(INDUSTRY_OPTIONS);
 const INFERRED_SALARY_VALUES = buildAllowedValues(INFERRED_SALARY_OPTIONS);
 const SEX_VALUES = buildAllowedValues(SEX_OPTIONS);
 const METRO_VALUES = buildAllowedValues(METRO_OPTIONS);
-const SIZE_VALUES = buildAllowedValues(SIZE_OPTIONS);
 
 export const mapPerson = (data: PdlPersonData): MappedRecord => {
   const emailEntries = (data.emails ?? []).map((entry) =>
@@ -111,17 +108,6 @@ export const mapPerson = (data: PdlPersonData): MappedRecord => {
       country: data.location_country,
       geo: data.location_geo,
     }),
-
-    pdlJobCompanyId: toText(data.job_company_id),
-    pdlJobCompanyName: toText(data.job_company_name),
-    pdlJobCompanyWebsite: buildLinks(data.job_company_website),
-    pdlJobCompanyLinkedinUrl: buildLinks(data.job_company_linkedin_url),
-    pdlJobCompanyIndustry: pickSelect(data.job_company_industry, INDUSTRY_VALUES),
-    pdlJobCompanySize: pickSelect(
-      data.job_company_size,
-      SIZE_VALUES,
-      sizeTransform,
-    ),
   });
 
   return { standard, pdl };
