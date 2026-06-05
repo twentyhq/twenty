@@ -285,7 +285,8 @@ export function HeroVisualScroll({
   const stackSpreadMetrics =
     stackTargetMetrics.length === tabs.length ? stackTargetMetrics : null;
   const stackWidth = stackSpreadMetrics?.[0]?.width ?? null;
-  const aiPlaybackEnabled = morphProgress >= 0.58;
+  const aiPanelProgress = clamp((morphProgress - 0.45) / 0.25);
+  const aiPlaybackEnabled = morphProgress >= 0.7;
 
   useEffect(() => {
     if (!menuSync) {
@@ -600,6 +601,7 @@ export function HeroVisualScroll({
             </PatternOverlay>
             <ProductVisual
               activeScene={activeTab + 1}
+              aiPanelProgress={aiPanelProgress}
               playbackEnabled={aiPlaybackEnabled}
               visual={visual}
             />

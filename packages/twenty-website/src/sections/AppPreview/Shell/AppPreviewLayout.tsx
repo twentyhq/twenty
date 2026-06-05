@@ -71,10 +71,23 @@ const IndexSurface = styled.div<{ $compactWorkflowPage: boolean }>`
   }
 `;
 
+const ASIDE_WIDTH = 280;
+const ASIDE_GAP = 8;
+
+const AsideSlot = styled.div`
+  flex: 0 0 auto;
+  overflow: hidden;
+
+  @media (max-width: ${theme.breakpoints.md}px) {
+    display: none;
+  }
+`;
+
 type AppPreviewLayoutProps = {
   activeItem?: SidebarItemDef;
   activeItemId: string;
   activeItemLabel: string;
+  asideProgress?: number;
   compactWorkflowPage?: boolean;
   desktopSidebarMode?: DesktopSidebarMode;
   favorites: SidebarItemDef[];
@@ -93,6 +106,7 @@ export function AppPreviewLayout({
   activeItem,
   activeItemId,
   activeItemLabel,
+  asideProgress = 1,
   compactWorkflowPage = false,
   desktopSidebarMode = 'expanded',
   favorites,
@@ -136,7 +150,7 @@ export function AppPreviewLayout({
           revealedObjectIds={revealedObjectIds}
         />
 
-        <ContentRow $hasAside={rightAside !== undefined}>
+        <ContentRow $hasAside={false}>
           <IndexSurface $compactWorkflowPage={compactWorkflowPage}>
             {showViewBar ? (
               <AppPreviewViewbar
@@ -151,7 +165,16 @@ export function AppPreviewLayout({
             {renderPageDefinition(page, onSelectPageItem)}
           </IndexSurface>
 
-          {rightAside}
+          {rightAside !== undefined ? (
+            <AsideSlot
+              style={{
+                marginLeft: `${ASIDE_GAP * Math.max(0, Math.min(1, asideProgress))}px`,
+                width: `${ASIDE_WIDTH * Math.max(0, Math.min(1, asideProgress))}px`,
+              }}
+            >
+              {rightAside}
+            </AsideSlot>
+          ) : null}
         </ContentRow>
       </RightPane>
     </AppLayout>

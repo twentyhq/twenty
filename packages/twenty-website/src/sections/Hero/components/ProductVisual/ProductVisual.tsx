@@ -271,6 +271,7 @@ const SendBtn = styled.span`
 
 type ProductVisualProps = {
   activeScene?: number;
+  aiPanelProgress?: number;
   collaborative?: boolean;
   cursorActive?: boolean;
   cursorLayer?: HTMLElement | null;
@@ -382,6 +383,7 @@ function renderAssistantText(paragraphs: string[], visibleLength: number) {
 
 export function ProductVisual({
   activeScene,
+  aiPanelProgress = 1,
   collaborative = false,
   cursorActive = true,
   cursorLayer,
@@ -465,6 +467,7 @@ export function ProductVisual({
         activeItem={activeItem}
         activeItemId={activeItemId}
         activeItemLabel={activeItemLabel}
+        asideProgress={aiPanelProgress}
         compactWorkflowPage={compactWorkflowPage}
         desktopSidebarMode={resolvedDesktopSidebarMode}
         favorites={favorites}

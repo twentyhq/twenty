@@ -113,6 +113,7 @@ export function TabButton({
       data-active={String(isActive)}
       id={id}
       onClick={onSelect}
+      onMouseDown={(event) => event.preventDefault()}
       role="tab"
       type="button"
     >
