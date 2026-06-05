@@ -37,9 +37,19 @@ export type WorkspaceMigrationRunnerExecutionErrors = {
 const getActionUniversalIdentifierOrThrow = (
   action: AllUniversalWorkspaceMigrationAction,
 ): string => {
-  return action.type === 'create'
-    ? action.flatEntity?.universalIdentifier
-    : action.universalIdentifier;
+  if (action.type === 'create') {
+    const universalIdentifier = action.flatEntity?.universalIdentifier;
+
+    if (!universalIdentifier) {
+      throw new Error(
+        `Missing universalIdentifier on create action for '${action.metadataName}'`,
+      );
+    }
+
+    return universalIdentifier;
+  }
+
+  return action.universalIdentifier;
 };
 
 const {
