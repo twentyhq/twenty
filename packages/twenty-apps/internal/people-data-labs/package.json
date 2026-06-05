@@ -16,8 +16,9 @@
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",
     "lint:fix": "oxlint --fix -c .oxlintrc.json .",
-    "test": "vitest run --passWithNoTests",
-    "test:watch": "vitest"
+    "test": "vitest run --config vitest.unit.config.ts --passWithNoTests",
+    "test:watch": "vitest --config vitest.unit.config.ts",
+    "test:integration": "vitest run --passWithNoTests"
   },
   "dependencies": {
     "twenty-client-sdk": "2.4.0",

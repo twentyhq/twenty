@@ -1,0 +1,81 @@
+import { type SelectOptionMeta } from 'src/types/select-option-meta.type';
+
+export const INFERRED_SALARY_OPTIONS: readonly SelectOptionMeta[] = [
+  {
+    key: 'under20000',
+    value: 'UNDER_20000',
+    label: '<20,000',
+    color: 'blue',
+    position: 0,
+  },
+  {
+    key: 'from20000To25000',
+    value: 'FROM_20000_TO_25000',
+    label: '20,000-25,000',
+    color: 'red',
+    position: 1,
+  },
+  {
+    key: 'from25000To35000',
+    value: 'FROM_25000_TO_35000',
+    label: '25,000-35,000',
+    color: 'green',
+    position: 2,
+  },
+  {
+    key: 'from35000To45000',
+    value: 'FROM_35000_TO_45000',
+    label: '35,000-45,000',
+    color: 'orange',
+    position: 3,
+  },
+  {
+    key: 'from45000To55000',
+    value: 'FROM_45000_TO_55000',
+    label: '45,000-55,000',
+    color: 'purple',
+    position: 4,
+  },
+  {
+    key: 'from55000To70000',
+    value: 'FROM_55000_TO_70000',
+    label: '55,000-70,000',
+    color: 'yellow',
+    position: 5,
+  },
+  {
+    key: 'from70000To85000',
+    value: 'FROM_70000_TO_85000',
+    label: '70,000-85,000',
+    color: 'pink',
+    position: 6,
+  },
+  {
+    key: 'from85000To100000',
+    value: 'FROM_85000_TO_100000',
+    label: '85,000-100,000',
+    color: 'cyan',
+    position: 7,
+  },
+  {
+    key: 'from100000To150000',
+    value: 'FROM_100000_TO_150000',
+    label: '100,000-150,000',
+    color: 'brown',
+    position: 8,
+  },
+  {
+    key: 'from150000To250000',
+    value: 'FROM_150000_TO_250000',
+    label: '150,000-250,000',
+    color: 'lime',
+    position: 9,
+  },
+  {
+    key: 'over250000',
+    value: 'OVER_250000',
+    label: '>250,000',
+    color: 'violet',
+    position: 10,
+  },
+];

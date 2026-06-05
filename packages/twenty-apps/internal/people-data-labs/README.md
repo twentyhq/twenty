@@ -2,9 +2,33 @@
 
 Enriches **Person** and **Company** records with [People Data Labs](https://www.peopledatalabs.com/) (PDL) data.
 
-> **Status: data-model scaffold.** This package defines the fields, relation, indexes,
-> views, role, and manifest. The enrichment **logic function (the "mapper") is not yet
-> implemented** — see [What the mapper must do](#what-the-mapper-must-do).
+> **Status: data model + enrichment mapper.** This package defines the fields, relation,
+> indexes, views, role, and manifest, and implements the enrichment **logic functions**
+> that call the PDL REST API and map the response onto the standard + `pdl*` fields.
+
+---
+
+## Enrichment logic functions
+
+`enrich-person` / `enrich-company` (workflow actions, for the manual record action) plus
+`enrich-person-tool` / `enrich-company-tool` (AI tools) all delegate to a shared,
+trigger-agnostic core in `src/logic-functions/handlers/`:
+
+- Read the record, guard against re-enriching within a TTL (`pdlLastEnrichedAt`), pick a
+  match identifier (person: `pdlId` → LinkedIn → email → name; company: `pdlId` → domain →
+  name), and call the PDL Person/Company Enrichment API (`src/logic-functions/utils/`).
+- On a match: fill **standard fields only when empty** (never clobber user data), always
+  (re)write `pdl*` fields, and set `pdlEnrichmentStatus = MATCHED`, `pdlLastEnrichedAt`,
+  `pdlRawPayload` (+ `pdlLikelihood` for Person). PDL `404` → `NOT_FOUND`; other errors →
+  `ERROR`. No identifier / fresh TTL → skipped with no writes.
+- SELECT/MULTI_SELECT values are normalized and dropped if not in the field's option set
+  (`src/logic-functions/utils/`); the option sets are the same `src/constants/*-options.ts`
+  the field definitions use.
+
+Run locally: `yarn twenty dev:function:exec -n enrich-person -p '{"recordId":"<id>"}'`.
+
+**Deferred to a later PR:** linking the `pdlCurrentCompany` relation (find-or-create a
+Company from `job_company_*`), enrichment metering/billing, and auto-enrichment triggers.
 
 ---
 

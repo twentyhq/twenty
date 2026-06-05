@@ -1,0 +1,12 @@
+import { type EnrichResult } from 'src/types/enrich-result.type';
+
+export const buildSkippedResult = (
+  recordId: string,
+  message: string,
+): EnrichResult => ({
+  success: true,
+  recordId,
+  status: 'SKIPPED',
+  updatedFields: [],
+  message,
+});

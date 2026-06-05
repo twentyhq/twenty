@@ -4,10 +4,12 @@ import {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
 
+import { SEX_OPTIONS } from 'src/constants/sex-options';
 import {
   PDL_FIELD_UNIVERSAL_IDENTIFIERS,
   PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS,
 } from 'src/constants/universal-identifiers';
+import { buildSelectOptions } from 'src/utils/build-select-options';
 
 export default defineField({
   universalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.person.pdlSex,
@@ -18,20 +20,8 @@ export default defineField({
   label: 'Sex',
   description: 'Sex returned by People Data Labs.',
   isNullable: true,
-  options: [
-    {
-      id: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.sex.male,
-      value: 'MALE',
-      label: 'Male',
-      color: 'blue',
-      position: 0,
-    },
-    {
-      id: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.sex.female,
-      value: 'FEMALE',
-      label: 'Female',
-      color: 'red',
-      position: 1,
-    },
-  ],
+  options: buildSelectOptions(
+    SEX_OPTIONS,
+    PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.sex,
+  ),
 });
