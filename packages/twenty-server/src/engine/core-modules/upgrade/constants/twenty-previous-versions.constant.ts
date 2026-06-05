@@ -21,5 +21,4 @@ export const TWENTY_PREVIOUS_VERSIONS = [
   '2.7.0',
   '2.8.0',
   '2.9.0',
-  '2.10.0',
 ] as const;
