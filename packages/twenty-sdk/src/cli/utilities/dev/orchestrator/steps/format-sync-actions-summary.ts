@@ -39,22 +39,17 @@ const parseSyncAction = (action: unknown): ParsedSyncAction | null => {
     return null;
   }
 
-  if (type === 'create') {
-    const flatEntity =
-      typeof record.flatEntity === 'object' && record.flatEntity !== null
-        ? (record.flatEntity as Record<string, unknown>)
-        : {};
+  const flatEntity =
+    typeof record.flatEntity === 'object' && record.flatEntity !== null
+      ? (record.flatEntity as Record<string, unknown>)
+      : {};
 
-    const label =
-      getStringProperty(flatEntity, 'name') ??
-      getStringProperty(flatEntity, 'nameSingular') ??
-      getStringProperty(flatEntity, 'universalIdentifier') ??
-      'unknown';
-
-    return { type, metadataName, label };
-  }
-
-  const label = getStringProperty(record, 'universalIdentifier') ?? 'unknown';
+  const label =
+    getStringProperty(flatEntity, 'name') ??
+    getStringProperty(flatEntity, 'nameSingular') ??
+    getStringProperty(flatEntity, 'universalIdentifier') ??
+    getStringProperty(record, 'universalIdentifier') ??
+    'unknown';
 
   return { type, metadataName, label };
 };

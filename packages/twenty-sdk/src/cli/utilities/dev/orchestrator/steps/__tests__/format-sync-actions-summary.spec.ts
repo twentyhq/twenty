@@ -54,6 +54,32 @@ describe('formatSyncActionsSummary', () => {
     ]);
   });
 
+  it('uses the entity name for update and delete actions that carry a flatEntity', () => {
+    const events = formatSyncActionsSummary([
+      {
+        type: 'update',
+        metadataName: 'objectMetadata',
+        universalIdentifier: 'uid-object',
+        flatEntity: {
+          universalIdentifier: 'uid-object',
+          nameSingular: 'rocket',
+        },
+      },
+      {
+        type: 'delete',
+        metadataName: 'fieldMetadata',
+        universalIdentifier: 'uid-field',
+        flatEntity: { universalIdentifier: 'uid-field', name: 'legacyField' },
+      },
+    ]);
+
+    expect(events).toEqual([
+      { message: 'Metadata changes: 1 updated, 1 deleted', status: 'info' },
+      { message: '  updated objectMetadata rocket', status: 'info' },
+      { message: '  deleted fieldMetadata legacyField', status: 'info' },
+    ]);
+  });
+
   it('falls back to the universal identifier when a created entity has no name', () => {
     const events = formatSyncActionsSummary([
       {
