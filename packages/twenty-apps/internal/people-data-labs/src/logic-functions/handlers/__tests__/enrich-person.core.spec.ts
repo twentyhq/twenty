@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCoreApiClientMock } from 'src/logic-functions/__mocks__/create-core-api-client-mock';
 import { PERSON_NODE_MOCK } from 'src/logic-functions/__mocks__/person-node.mock';
+import { PdlInvalidInputError } from 'src/logic-functions/errors/pdl-invalid-input-error';
+import { PdlRecordNotFoundError } from 'src/logic-functions/errors/pdl-record-not-found-error';
 import { enrichPersonCore } from 'src/logic-functions/handlers/enrich-person.core';
 import { enrichPerson } from 'src/logic-functions/utils/enrich-person';
 import { type PersonNode } from 'src/types/person-node.type';
@@ -112,10 +114,23 @@ describe('enrichPersonCore', () => {
     expect(Object.keys(captured.data ?? {})).toEqual(['pdlEnrichmentStatus']);
   });
 
-  it('throws when recordId is missing', async () => {
-    await expect(
-      enrichPersonCore({ recordId: '' }, createCoreApiClientMock()),
-    ).rejects.toThrow('recordId is required');
+  it('throws a PdlInvalidInputError when recordId is missing', async () => {
+    const promise = enrichPersonCore({ recordId: '' }, createCoreApiClientMock());
+
+    await expect(promise).rejects.toBeInstanceOf(PdlInvalidInputError);
+    await expect(promise).rejects.toThrow('recordId is required');
+    expect(enrichPersonMock).not.toHaveBeenCalled();
+  });
+
+  it('throws a PdlRecordNotFoundError when the person does not exist', async () => {
+    const client = createCoreApiClientMock({
+      queryResult: { people: { edges: [] } },
+    });
+
+    const promise = enrichPersonCore({ recordId: 'missing' }, client);
+
+    await expect(promise).rejects.toBeInstanceOf(PdlRecordNotFoundError);
+    await expect(promise).rejects.toThrow('Person missing not found');
     expect(enrichPersonMock).not.toHaveBeenCalled();
   });
 

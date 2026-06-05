@@ -1,6 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
+import { PdlInvalidInputError } from 'src/logic-functions/errors/pdl-invalid-input-error';
+import { PdlRecordNotFoundError } from 'src/logic-functions/errors/pdl-record-not-found-error';
 import { buildSkippedResult } from 'src/logic-functions/utils/build-skipped-result';
 import { toText } from 'src/logic-functions/utils/to-text';
 import { isWithinTtl } from 'src/logic-functions/utils/is-within-ttl';
@@ -33,12 +35,15 @@ export const enrichCompanyCore = async (
   const { recordId, force } = input;
 
   if (!isNonEmptyString(recordId)) {
-    throw new Error('recordId is required');
+    throw new PdlInvalidInputError('recordId is required');
   }
 
   const node = await readCompany(client, recordId);
   if (!isDefined(node)) {
-    throw new Error(`Company ${recordId} not found`);
+    throw new PdlRecordNotFoundError({
+      objectNameSingular: 'Company',
+      recordId,
+    });
   }
 
   if (force !== true && isWithinTtl(node.pdlLastEnrichedAt)) {

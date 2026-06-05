@@ -21,6 +21,7 @@ export default defineField({
     PDL_FIELD_UNIVERSAL_IDENTIFIERS.company.pdlCurrentEmployees,
   universalSettings: {
     relationType: RelationType.MANY_TO_ONE,
+    joinColumnName: 'pdlCurrentCompanyId',
   },
   icon: 'IconBuilding',
 });

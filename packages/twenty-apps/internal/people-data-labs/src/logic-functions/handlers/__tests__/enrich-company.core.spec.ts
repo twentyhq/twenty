@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { COMPANY_NODE_MOCK } from 'src/logic-functions/__mocks__/company-node.mock';
 import { createCoreApiClientMock } from 'src/logic-functions/__mocks__/create-core-api-client-mock';
+import { PdlInvalidInputError } from 'src/logic-functions/errors/pdl-invalid-input-error';
+import { PdlRecordNotFoundError } from 'src/logic-functions/errors/pdl-record-not-found-error';
 import { enrichCompanyCore } from 'src/logic-functions/handlers/enrich-company.core';
 import { enrichCompany } from 'src/logic-functions/utils/enrich-company';
 import { type CompanyNode } from 'src/types/company-node.type';
@@ -86,10 +88,23 @@ describe('enrichCompanyCore', () => {
     expect(Object.keys(captured.data ?? {})).toEqual(['pdlEnrichmentStatus']);
   });
 
-  it('throws when recordId is missing', async () => {
-    await expect(
-      enrichCompanyCore({ recordId: '' }, createCoreApiClientMock()),
-    ).rejects.toThrow('recordId is required');
+  it('throws a PdlInvalidInputError when recordId is missing', async () => {
+    const promise = enrichCompanyCore({ recordId: '' }, createCoreApiClientMock());
+
+    await expect(promise).rejects.toBeInstanceOf(PdlInvalidInputError);
+    await expect(promise).rejects.toThrow('recordId is required');
+    expect(enrichCompanyMock).not.toHaveBeenCalled();
+  });
+
+  it('throws a PdlRecordNotFoundError when the company does not exist', async () => {
+    const client = createCoreApiClientMock({
+      queryResult: { companies: { edges: [] } },
+    });
+
+    const promise = enrichCompanyCore({ recordId: 'missing' }, client);
+
+    await expect(promise).rejects.toBeInstanceOf(PdlRecordNotFoundError);
+    await expect(promise).rejects.toThrow('Company missing not found');
     expect(enrichCompanyMock).not.toHaveBeenCalled();
   });
 

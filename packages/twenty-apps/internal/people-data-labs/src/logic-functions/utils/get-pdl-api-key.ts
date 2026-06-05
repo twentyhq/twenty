@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { PdlConfigError } from 'src/logic-functions/utils/pdl-config-error';
+import { PdlConfigError } from 'src/logic-functions/errors/pdl-config-error';
 
 export const getPdlApiKey = (): string => {
   const apiKey = process.env.PDL_API_KEY;
