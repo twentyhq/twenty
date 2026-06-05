@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlHeadline',
   label: 'Headline',
   description: 'People Data Labs company headline or summary.',
+  icon: 'IconQuote',
   isNullable: true,
 });

@@ -20,6 +20,7 @@ export default defineField({
   name: 'pdlLocationContinent',
   label: 'Continent',
   description: 'People Data Labs canonical continent.',
+  icon: 'IconGlobe',
   isNullable: true,
   options: buildSelectOptions(
     LOCATION_CONTINENT_OPTIONS,

@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlTicker',
   label: 'Ticker',
   description: 'Company ticker returned by People Data Labs.',
+  icon: 'IconChartCandle',
   isNullable: true,
 });

@@ -15,5 +15,6 @@ export default defineField({
   name: 'pdlLinkedinUsername',
   label: 'LinkedIn Username',
   description: 'LinkedIn username returned by People Data Labs.',
+  icon: 'IconBrandLinkedin',
   isNullable: true,
 });

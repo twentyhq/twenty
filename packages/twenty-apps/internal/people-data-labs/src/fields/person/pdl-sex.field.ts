@@ -19,6 +19,7 @@ export default defineField({
   name: 'pdlSex',
   label: 'Sex',
   description: 'Sex returned by People Data Labs.',
+  icon: 'IconGenderBigender',
   isNullable: true,
   options: buildSelectOptions(
     SEX_OPTIONS,

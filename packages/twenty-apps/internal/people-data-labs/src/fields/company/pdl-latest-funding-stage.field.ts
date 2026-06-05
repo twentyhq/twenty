@@ -20,6 +20,7 @@ export default defineField({
   name: 'pdlLatestFundingStage',
   label: 'Latest Funding Stage',
   description: 'People Data Labs canonical latest funding stage.',
+  icon: 'IconTrendingUp',
   isNullable: true,
   options: buildSelectOptions(
     FUNDING_STAGE_OPTIONS,

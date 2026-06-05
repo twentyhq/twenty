@@ -20,6 +20,7 @@ export default defineField({
   name: 'pdlJobTitleSubRole',
   label: 'Job Sub-Role',
   description: 'People Data Labs canonical job sub-role.',
+  icon: 'IconSubtask',
   isNullable: true,
   options: buildSelectOptions(
     JOB_TITLE_SUB_ROLE_OPTIONS,

@@ -15,5 +15,6 @@ export default defineField({
   name: 'pdlAffiliatedProfiles',
   label: 'Affiliated Profiles',
   description: 'Affiliated company profiles returned by People Data Labs.',
+  icon: 'IconAffiliate',
   isNullable: true,
 });

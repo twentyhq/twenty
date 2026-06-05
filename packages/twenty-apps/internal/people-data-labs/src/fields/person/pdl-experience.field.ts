@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlExperience',
   label: 'Experience History',
   description: 'Experience history returned by People Data Labs.',
+  icon: 'IconTimeline',
   isNullable: true,
 });

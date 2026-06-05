@@ -20,6 +20,7 @@ export default defineField({
   name: 'pdlEnrichmentStatus',
   label: 'Enrichment Status',
   description: 'Outcome of the latest People Data Labs enrichment attempt.',
+  icon: 'IconProgressCheck',
   isNullable: true,
   options: buildSelectOptions(
     ENRICHMENT_STATUS_OPTIONS,

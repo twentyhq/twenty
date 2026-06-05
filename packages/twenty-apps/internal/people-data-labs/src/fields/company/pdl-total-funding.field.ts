@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlTotalFunding',
   label: 'Total Funding Raised',
   description: 'Total funding raised in USD returned by People Data Labs.',
+  icon: 'IconReportMoney',
   isNullable: true,
 });

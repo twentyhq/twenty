@@ -19,6 +19,7 @@ export default defineField({
   name: 'pdlFundingStages',
   label: 'Funding Stages',
   description: 'People Data Labs canonical funding stages.',
+  icon: 'IconChartArrowsVertical',
   isNullable: true,
   options: buildSelectOptions(
     FUNDING_STAGE_OPTIONS,

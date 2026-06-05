@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlLinkedinId',
   label: 'LinkedIn ID',
   description: 'LinkedIn identifier returned by People Data Labs.',
+  icon: 'IconBrandLinkedin',
   isNullable: true,
 });

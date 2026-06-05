@@ -19,6 +19,7 @@ export default defineField({
   name: 'pdlMicExchange',
   label: 'Stock Exchange (MIC)',
   description: 'People Data Labs canonical market identifier code.',
+  icon: 'IconBuildingBank',
   isNullable: true,
   options: buildSelectOptions(
     MIC_EXCHANGE_OPTIONS,

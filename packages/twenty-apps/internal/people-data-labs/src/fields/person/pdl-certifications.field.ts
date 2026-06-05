@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlCertifications',
   label: 'Certifications',
   description: 'Certifications returned by People Data Labs.',
+  icon: 'IconCertificate',
   isNullable: true,
 });

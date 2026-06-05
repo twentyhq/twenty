@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlJobCompanyId',
   label: 'Current Company PDL ID',
   description: 'Current company PDL identifier returned by People Data Labs.',
+  icon: 'IconId',
   isNullable: true,
 });

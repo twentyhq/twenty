@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlNaics',
   label: 'NAICS Codes',
   description: 'NAICS classification codes returned by People Data Labs.',
+  icon: 'IconNumbers',
   isNullable: true,
 });

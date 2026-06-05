@@ -15,5 +15,6 @@ export default defineField({
   name: 'pdlNumberFundingRounds',
   label: 'Number of Funding Rounds',
   description: 'Number of funding rounds returned by People Data Labs.',
+  icon: 'IconCoins',
   isNullable: true,
 });

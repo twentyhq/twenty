@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlEducation',
   label: 'Education History',
   description: 'Education history returned by People Data Labs.',
+  icon: 'IconSchool',
   isNullable: true,
 });

@@ -15,5 +15,6 @@ export default defineField({
   name: 'pdlJobCompanyLinkedinUrl',
   label: 'Current Company LinkedIn',
   description: 'Current company LinkedIn returned by People Data Labs.',
+  icon: 'IconBrandLinkedin',
   isNullable: true,
 });

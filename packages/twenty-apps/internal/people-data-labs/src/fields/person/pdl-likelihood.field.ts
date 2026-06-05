@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlLikelihood',
   label: 'Match Likelihood',
   description: 'People Data Labs match confidence score (1-10).',
+  icon: 'IconGauge',
   isNullable: true,
 });

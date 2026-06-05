@@ -19,6 +19,7 @@ export default defineField({
   name: 'pdlIndustry',
   label: 'Industry',
   description: 'People Data Labs canonical industry.',
+  icon: 'IconBuildingFactory2',
   isNullable: true,
   options: buildSelectOptions(
     INDUSTRY_OPTIONS,

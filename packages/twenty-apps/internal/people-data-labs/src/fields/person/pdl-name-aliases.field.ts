@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlNameAliases',
   label: 'Name Aliases',
   description: 'Name aliases returned by People Data Labs.',
+  icon: 'IconSignature',
   isNullable: true,
 });

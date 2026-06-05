@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlProfiles',
   label: 'Social Profiles',
   description: 'All social profiles returned by People Data Labs.',
+  icon: 'IconUserCircle',
   isNullable: true,
 });

@@ -19,6 +19,7 @@ export default defineField({
   name: 'pdlJobCompanySize',
   label: 'Current Company Size',
   description: 'Current company size range returned by People Data Labs.',
+  icon: 'IconChartBar',
   isNullable: true,
   options: buildSelectOptions(
     SIZE_OPTIONS,

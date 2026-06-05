@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlTwitterUrl',
   label: 'X / Twitter',
   description: 'X or Twitter profile returned by People Data Labs.',
+  icon: 'IconBrandX',
   isNullable: true,
 });

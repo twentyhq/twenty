@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlTags',
   label: 'Tags',
   description: 'Tags returned by People Data Labs.',
+  icon: 'IconTags',
   isNullable: true,
 });

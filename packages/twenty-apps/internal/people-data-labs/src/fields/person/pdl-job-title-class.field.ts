@@ -19,6 +19,7 @@ export default defineField({
   name: 'pdlJobTitleClass',
   label: 'Job Class',
   description: 'People Data Labs canonical job class.',
+  icon: 'IconCategory',
   isNullable: true,
   options: buildSelectOptions(
     JOB_TITLE_CLASS_OPTIONS,

@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlJobSummary',
   label: 'Job Summary',
   description: 'Current job summary returned by People Data Labs.',
+  icon: 'IconFileDescription',
   isNullable: true,
 });

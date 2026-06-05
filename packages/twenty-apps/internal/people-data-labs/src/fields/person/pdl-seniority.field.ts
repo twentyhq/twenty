@@ -19,6 +19,7 @@ export default defineField({
   name: 'pdlSeniority',
   label: 'Seniority',
   description: 'People Data Labs canonical job title levels.',
+  icon: 'IconStairsUp',
   isNullable: true,
   options: buildSelectOptions(
     SENIORITY_OPTIONS,

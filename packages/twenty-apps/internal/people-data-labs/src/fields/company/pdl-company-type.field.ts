@@ -19,6 +19,7 @@ export default defineField({
   name: 'pdlCompanyType',
   label: 'Company Type',
   description: 'People Data Labs canonical company type.',
+  icon: 'IconBuildingCommunity',
   isNullable: true,
   options: buildSelectOptions(
     COMPANY_TYPE_OPTIONS,

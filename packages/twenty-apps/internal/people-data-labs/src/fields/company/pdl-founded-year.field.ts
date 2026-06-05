@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlFoundedYear',
   label: 'Founded Year',
   description: 'Founding year returned by People Data Labs.',
+  icon: 'IconFlag',
   isNullable: true,
 });

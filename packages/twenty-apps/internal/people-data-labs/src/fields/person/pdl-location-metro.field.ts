@@ -19,6 +19,7 @@ export default defineField({
   name: 'pdlLocationMetro',
   label: 'Metro Area',
   description: 'People Data Labs canonical metro area.',
+  icon: 'IconMap2',
   isNullable: true,
   options: buildSelectOptions(
     METRO_OPTIONS,

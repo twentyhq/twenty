@@ -21,6 +21,7 @@ export default defineField({
   label: 'Current Company Industry',
   description:
     'Current company canonical industry returned by People Data Labs.',
+  icon: 'IconBuildingFactory2',
   isNullable: true,
   options: buildSelectOptions(
     INDUSTRY_OPTIONS,

@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlJobHistory',
   label: 'Job History',
   description: 'Job history returned by People Data Labs.',
+  icon: 'IconHistory',
   isNullable: true,
 });

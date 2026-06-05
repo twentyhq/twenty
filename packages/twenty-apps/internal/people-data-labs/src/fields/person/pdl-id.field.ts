@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlId',
   label: 'PDL ID',
   description: 'People Data Labs person identifier.',
+  icon: 'IconId',
   isNullable: true,
 });

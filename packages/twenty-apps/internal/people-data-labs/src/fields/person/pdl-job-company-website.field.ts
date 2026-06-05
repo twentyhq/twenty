@@ -15,5 +15,6 @@ export default defineField({
   name: 'pdlJobCompanyWebsite',
   label: 'Current Company Website',
   description: 'Current company website returned by People Data Labs.',
+  icon: 'IconWorld',
   isNullable: true,
 });
