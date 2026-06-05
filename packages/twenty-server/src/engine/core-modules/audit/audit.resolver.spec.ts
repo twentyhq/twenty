@@ -135,6 +135,7 @@ describe('AuditResolver', () => {
         additionalData: 'test-data',
         recordId: 'test-record-id',
         objectMetadataId: 'test-object-metadata-id',
+        isCustom: true,
       },
     );
     expect(result).toBe('Object event created');

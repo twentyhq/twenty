@@ -55,7 +55,6 @@ describe('flatEntityToScalarFlatEntity', () => {
   "icon": "IconTest",
   "id": "field-metadata-id",
   "isActive": true,
-  "isCustom": true,
   "isLabelSyncedWithName": false,
   "isNullable": true,
   "isSystem": false,
