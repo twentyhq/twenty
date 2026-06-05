@@ -1,4 +1,6 @@
 import { type OrchestratorStateStepEvent } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
+import { isObject, isString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 const MAX_DETAIL_LINES = 50;
 
@@ -20,11 +22,11 @@ const getStringProperty = (
 ): string | undefined => {
   const property = value[key];
 
-  return typeof property === 'string' ? property : undefined;
+  return isString(property) ? property : undefined;
 };
 
 const parseSyncAction = (action: unknown): ParsedSyncAction | null => {
-  if (typeof action !== 'object' || action === null) {
+  if (!isDefined(action) || !isObject(action)) {
     return null;
   }
 
@@ -39,10 +41,9 @@ const parseSyncAction = (action: unknown): ParsedSyncAction | null => {
     return null;
   }
 
-  const flatEntity =
-    typeof record.flatEntity === 'object' && record.flatEntity !== null
-      ? (record.flatEntity as Record<string, unknown>)
-      : {};
+  const flatEntity = isObject(record.flatEntity)
+    ? (record.flatEntity as Record<string, unknown>)
+    : {};
 
   const label =
     getStringProperty(flatEntity, 'name') ??
