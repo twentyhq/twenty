@@ -3,7 +3,7 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.10.0', 1780565794140)
+@RegisteredInstanceCommand('2.10.0', 1799000040000)
 export class AddIsBetweenOperandFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -17,9 +17,6 @@ export class AddIsBetweenOperandFastInstanceCommand implements FastInstanceComma
     );
     await queryRunner.query(
       'ALTER TABLE "core"."viewFilter" ALTER COLUMN "operand" DROP DEFAULT',
-    );
-    await queryRunner.query(
-      'UPDATE "core"."viewFilter" SET "operand" = \'CONTAINS\' WHERE "operand" = \'IS_BETWEEN\'',
     );
     await queryRunner.query(
       'ALTER TABLE "core"."viewFilter" ALTER COLUMN "operand" TYPE "core"."viewFilter_operand_enum_old" USING "operand"::"text"::"core"."viewFilter_operand_enum_old"',

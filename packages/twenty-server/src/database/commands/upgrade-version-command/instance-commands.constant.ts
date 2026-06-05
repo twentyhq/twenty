@@ -59,7 +59,7 @@ import { EmailingDomainTenantStatusAndGlobalUniquenessFastInstanceCommand } from
 import { AddLogicFunctionExecutionModeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-fast-1799000030000-add-logic-function-execution-mode';
 import { EncryptNonSecretApplicationVariableSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1798400000000-encrypt-non-secret-application-variable';
 import { MigrateAiModelPreferencesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1799000010000-migrate-ai-model-preferences';
-import { AddIsBetweenOperandFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-10/2-10-instance-command-fast-1780565794140-add-is-between-operand';
+import { AddIsBetweenOperandFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-10/2-10-instance-command-fast-1799000040000-add-is-between-operand';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
