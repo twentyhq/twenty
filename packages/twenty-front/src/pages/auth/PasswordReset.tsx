@@ -114,6 +114,9 @@ export const PasswordReset = () => {
       variables: {
         token: passwordResetToken ?? '',
       },
+      context: {
+        skipAuth: true,
+      },
       skip: !passwordResetToken || isTokenValid,
     },
   );
@@ -155,6 +158,9 @@ export const PasswordReset = () => {
         variables: {
           token: formData.passwordResetToken,
           newPassword: formData.newPassword,
+        },
+        context: {
+          skipAuth: true,
         },
       });
 

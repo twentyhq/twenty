@@ -262,4 +262,48 @@ describe('ApolloFactory', () => {
       );
     }
   }, 10000);
+
+  it('should skip authorization header when operation context sets skipAuth', async () => {
+    fetchMock.mockResponse(() =>
+      Promise.resolve({
+        body: JSON.stringify({
+          data: {
+            validatePasswordResetToken: {
+              id: 'id',
+              email: 'test@example.com',
+              hasPassword: true,
+            },
+          },
+        }),
+      }),
+    );
+
+    const options = createMockOptions();
+    const apolloFactory = new ApolloFactory(options);
+    const client = apolloFactory.getClient();
+
+    await client.query({
+      query: gql`
+        query ValidatePasswordResetToken($token: String!) {
+          validatePasswordResetToken(passwordResetToken: $token) {
+            id
+            email
+            hasPassword
+          }
+        }
+      `,
+      variables: {
+        token: 'test-reset-token',
+      },
+      context: {
+        skipAuth: true,
+      },
+    });
+
+    const [, fetchOptions] = fetchMock.mock.calls[0];
+
+    expect(
+      (fetchOptions?.headers as Record<string, string>)?.authorization,
+    ).toBeUndefined();
+  });
 });

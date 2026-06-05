@@ -108,8 +108,9 @@ export class ApolloFactory implements ApolloManager {
         uri: REST_API_BASE_URL,
       });
 
-      const authLink = setContext(async (_, { headers }) => {
+      const authLink = setContext(async (operation, { headers }) => {
         const tokenPair = getTokenPair();
+        const shouldSkipAuth = operation.getContext().skipAuth === true;
 
         const locale = this.currentWorkspaceMember?.locale ?? i18n.locale;
 
@@ -119,6 +120,20 @@ export class ApolloFactory implements ApolloManager {
               ...headers,
               ...optionHeaders,
               'x-locale': locale,
+            },
+          };
+        }
+
+        if (shouldSkipAuth) {
+          return {
+            headers: {
+              ...headers,
+              ...optionHeaders,
+              'x-locale': locale,
+              ...(isDefined(this.currentWorkspace?.metadataVersion) && {
+                'X-Schema-Version': `${this.currentWorkspace.metadataVersion}`,
+              }),
+              ...(this.appVersion && { 'X-App-Version': this.appVersion }),
             },
           };
         }
