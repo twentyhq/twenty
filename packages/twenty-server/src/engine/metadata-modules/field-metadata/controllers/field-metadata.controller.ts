@@ -16,10 +16,9 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { parseEndingBeforeRestRequest } from 'src/engine/api/rest/input-request-parsers/ending-before-parser-utils/parse-ending-before-rest-request.util';
 import { parseLimitRestRequest } from 'src/engine/api/rest/input-request-parsers/limit-parser-utils/parse-limit-rest-request.util';
@@ -29,6 +28,7 @@ import {
   type RestCursorPageInfo,
 } from 'src/engine/api/rest/metadata/utils/paginate-by-id-cursor.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+import { ApplicationRestApiExceptionFilter } from 'src/engine/core-modules/application/application-rest-api-exception.filter';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -46,9 +46,6 @@ import {
 import { FieldMetadataRestApiExceptionFilter } from 'src/engine/metadata-modules/field-metadata/filters/field-metadata-rest-api-exception.filter';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
-import { getTwentyStandardApplicationIdOrThrow } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id-or-throw.util';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { computeUniqueFieldMetadataIdsFromFlatIndexMaps } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-flat-index-maps.util';
 import {
   toLegacyFieldMetadataCreateResponse,
   toLegacyFieldMetadataDeleteResponse,
@@ -56,8 +53,11 @@ import {
   toLegacyFieldMetadataListResponse,
   toLegacyFieldMetadataUpdateResponse,
 } from 'src/engine/metadata-modules/field-metadata/utils/to-legacy-field-metadata-response.util';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
+import { computeUniqueFieldMetadataIdsFromFlatIndexMaps } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-flat-index-maps.util';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
+import { getTwentyStandardApplicationIdOrThrow } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id-or-throw.util';
 
 @Controller('rest/metadata/fields')
 @UseGuards(
@@ -68,6 +68,7 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/p
 @UseFilters(
   PermissionsRestApiExceptionFilter,
   FieldMetadataRestApiExceptionFilter,
+  ApplicationRestApiExceptionFilter,
 )
 @UsePipes(new ValidationPipe())
 export class FieldMetadataController {
