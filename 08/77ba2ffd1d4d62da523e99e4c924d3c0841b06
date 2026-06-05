@@ -1,0 +1,43 @@
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service.ts
+  s_ccda17eaabba7a::t_0918d4297c4586 410-411
+  s_ccda17eaabba7a::t_0a7686bcc40036 389-396
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service.ts
+  s_ccda17eaabba7a::t_6ba7e39bcaf046 173,177
+  s_ccda17eaabba7a::t_d96723b398b62f 178-180
+packages/twenty-server/src/engine/core-modules/application/application-manifest/application-manifest.resolver.ts
+  s_ccda17eaabba7a::t_52ff74b4e8a5ed 52-55,61-65,67-68
+  s_ccda17eaabba7a::t_cc4ec2f346ed88 22
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/create-field-action-handler.service.ts
+  s_ccda17eaabba7a::t_8c7911b85c6f8f 55-57,61-63
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/services/utils/__tests__/enrich-create-workspace-migration-action-with-ids.util.spec.ts
+  s_ccda17eaabba7a::t_a554844c9b74e0 92-93
+  s_ccda17eaabba7a::t_df460390926f4b 1-32,39,42-59,62-84,89-91,94-102,109,111,114-117
+  ai_agent 40-41,60-61,112-113
+  s_ccda17eaabba7a::t_38e34bc8e0e4de 33-38,85-88,103-108,110
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/services/utils/enrich-create-workspace-migration-action-with-ids.util.ts
+  s_ccda17eaabba7a::t_c29cc86db05028 121-126,131,133-136,164
+  s_ccda17eaabba7a::t_bcd6b6303aad73 138-147,151-154
+  s_ccda17eaabba7a::t_5014a1280e6382 69-72
+  s_ccda17eaabba7a::t_2b641644a4081c 148-150,155-160
+  s_ccda17eaabba7a::t_cf57386c7e73b4 78-82
+  s_ccda17eaabba7a::t_97881aa72c698a 92
+  s_ccda17eaabba7a::t_361816c1b2b6b2 229,233-235
+  s_ccda17eaabba7a::t_ef5c6ff2e6cd4f 3
+  s_ccda17eaabba7a::t_be74f919430bb9 236
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "0877ba2ffd1d4d62da523e99e4c924d3c0841b06",
+  "prompts": {},
+  "sessions": {
+    "s_ccda17eaabba7a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b932cb9-a0b1-4bbb-9c58-8574d4b18520",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
