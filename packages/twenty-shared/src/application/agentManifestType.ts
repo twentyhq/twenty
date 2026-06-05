@@ -1,3 +1,4 @@
+import { type AgentResponseFormat } from '@/ai/types/agent-response-format.type';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 
 export type AgentManifest = SyncableEntityOptions & {
@@ -7,4 +8,5 @@ export type AgentManifest = SyncableEntityOptions & {
   description?: string;
   prompt: string;
   modelId?: string;
+  responseFormat?: AgentResponseFormat;
 };

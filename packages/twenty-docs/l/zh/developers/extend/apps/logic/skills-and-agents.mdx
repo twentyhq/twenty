@@ -64,6 +64,75 @@ export default defineAgent({
 * `description`（可选）提供有关智能体功能的上下文。
 * `icon`（可选）设置在 UI 中显示的图标。
 * `modelId`（可选）会覆盖该智能体使用的默认 AI 模型。
+* `responseFormat`（可选）控制代理输出的结构形式。 对于自由格式文本，默认值为 `{ type: 'text' }`。 使用 `{ type: 'json', schema }` 来强制生成结构化 JSON 输出。
+
+默认情况下，代理返回自由格式文本。 要获取结构化输出，将 `responseFormat` 设置为 `{ type: 'json' }`，并提供一个 `schema`：
+
+```ts src/agents/structured-agent.ts
+import { defineAgent } from 'twenty-sdk/define';
+
+export default defineAgent({
+  universalIdentifier: 'c4d5e6f7-a8b9-0123-cdef-456789012345',
+  name: 'lead-scorer',
+  label: 'Lead Scorer',
+  prompt: 'Score the lead and explain your reasoning.',
+  responseFormat: {
+    type: 'json',
+    schema: {
+      type: 'object',
+      properties: {
+        score: { type: 'number', description: 'Lead score from 0 to 100' },
+        summary: { type: 'string', description: 'Short reasoning for the score' },
+      },
+      required: ['score', 'summary'],
+      additionalProperties: false,
+    },
+  },
+});
+```
+
+架构说明：
+* 该架构是一个扁平对象：每个属性的 `type` 必须是原始类型（`string`、`number` 或 `boolean`）。 不支持嵌套对象和数组。
+* 每个属性上的 `description`（可选）用于引导模型应在此处填入什么内容。
+* `required`（可选）列出模型必须始终返回的属性。
+* `additionalProperties: false`（可选）禁止任何未在 `properties` 中声明的属性。
+
+</Accordion>
+<Accordion title="runAgent" description="从逻辑函数中运行代理">
+
+`runAgent()` 允许逻辑函数运行你的应用的某个代理（及其技能和工具）。 通过你传递给 `defineAgent()` 的 `universalIdentifier` 来标识该代理：
+
+```ts src/logic-functions/run-enricher.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  prompt: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
+});
+```
+
+关键点：
+* 代理以**同步**方式运行，并且可以通过其自身的工具读取/更新记录 —— `runAgent()` 会在运行完成后才 resolve。
+* 一个应用只能运行它自己的代理。
+* 应用的[默认角色](/l/zh/developers/extend/apps/config/roles)必须授予 `AI` 权限标记 —— 在其 `permissionFlagUniversalIdentifiers` 中添加 `SystemPermissionFlag.AI`（或设置 `canAccessAllTools: true`）。
+  否则，`runAgent()` 会因权限错误而失败。
+* 在逻辑函数上设置较大的 `timeoutSeconds` 值 —— 代理运行可能需要数秒时间。
+* 当运行完成时，`success` 为 `true` 且 `result` 为非空；失败时，`success` 为 `false`，`result` 为 `null`，并且 `error` 保存失败原因（例如，当工作区在运行过程中耗尽 AI 额度时）。
+
+```ts src/roles/default-role.ts
+import { defineApplicationRole, SystemPermissionFlag } from 'twenty-sdk/define';
+
+export default defineApplicationRole({
+  universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
+  label: 'Default function role',
+  // runAgent() requires the AI permission flag on the app's default role.
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],
+});
+```
+
+<Warning>
+  \*\*避免循环：\*\*如果你从 `*.updated` 数据库事件触发器中调用 `runAgent()`，而代理又会更新同一条记录，请将触发器的 `updatedFields` 限定为代理永远不会写入的字段（例如来源 URL），或者在调用 `runAgent()` 之前检查任何目标字段是否仍为空。
+</Warning>
 
 </Accordion>
 </AccordionGroup>

@@ -2133,6 +2133,18 @@ type FieldConnection {
   edges: [FieldEdge!]!
 }
 
+type AppConnection {
+  id: ID!
+  providerName: String!
+  name: String!
+  handle: String!
+  visibility: String!
+  userWorkspaceId: String!
+  accessToken: String!
+  scopes: [String!]!
+  authFailedAt: String
+}
+
 type ResendEmailVerificationToken {
   success: Boolean!
 }
@@ -2528,6 +2540,12 @@ type AgentMessagePart {
   fileUrl: String
   providerMetadata: JSON
   createdAt: DateTime!
+}
+
+type RunAgentResult {
+  result: JSON
+  error: String
+  success: Boolean!
 }
 
 type ChannelSyncSuccess {
@@ -3012,6 +3030,8 @@ type Query {
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   minimalMetadata: MinimalMetadata!
+  appConnections(filter: ListAppConnectionsInput): [AppConnection!]!
+  appConnection(id: ID!): AppConnection!
   findWorkspaceAiStats: WorkspaceAiStats!
   chatThreads: [AgentChatThread!]!
   chatThread(id: UUID!): AgentChatThread!
@@ -3064,6 +3084,12 @@ input LogicFunctionIdInput {
 input AgentIdInput {
   """The id of the agent."""
   id: UUID!
+}
+
+input ListAppConnectionsInput {
+  providerName: String
+  userWorkspaceId: String
+  visibility: String
 }
 
 input EventLogQueryInput {
@@ -3239,6 +3265,7 @@ type Mutation {
   upsertRowLevelPermissionPredicates(input: UpsertRowLevelPermissionPredicatesInput!): UpsertRowLevelPermissionPredicatesResult!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   removeRoleFromAgent(agentId: UUID!): Boolean!
+  runAgent(input: RunAgentInput!): RunAgentResult!
   createWebhook(input: CreateWebhookInput!): Webhook!
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   deleteWebhook(id: UUID!): Webhook!
@@ -4092,6 +4119,11 @@ input RowLevelPermissionPredicateGroupInput {
   parentRowLevelPermissionPredicateGroupId: UUID
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator!
   positionInRowLevelPermissionPredicateGroup: Float
+}
+
+input RunAgentInput {
+  agentUniversalIdentifier: String!
+  prompt: String!
 }
 
 input CreateWebhookInput {
