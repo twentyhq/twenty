@@ -45,7 +45,7 @@ export class AppDevCommand {
 
       orchestratorState.onChange = () => uiStateManager.notify();
 
-      const { unmount } = await renderDevUI(uiStateManager);
+      const { unmount } = await renderDevUI(uiStateManager, options.verbose);
 
       this.unmountUI = unmount;
 

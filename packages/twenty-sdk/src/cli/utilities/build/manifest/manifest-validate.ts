@@ -150,7 +150,7 @@ export const manifestValidate = (manifest: Manifest) => {
 
   if (invalidUniversalIdentifiers.length > 0) {
     errors.push(
-      `Duplicate universal identifiers: ${invalidUniversalIdentifiers.join(', ')}`,
+      `Invalid universal identifiers: ${invalidUniversalIdentifiers.join(', ')}`,
     );
   }
 

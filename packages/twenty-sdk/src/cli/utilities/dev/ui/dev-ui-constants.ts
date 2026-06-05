@@ -157,6 +157,43 @@ export const groupEntitiesByType = (
   return grouped;
 };
 
+export type DevUiEntityStatusSummaryPart = {
+  status: OrchestratorStateFileStatus;
+  count: number;
+  label: string;
+};
+
+const ENTITY_STATUS_SUMMARY_ORDER: {
+  status: OrchestratorStateFileStatus;
+  label: string;
+}[] = [
+  { status: 'success', label: 'synced' },
+  { status: 'building', label: 'building' },
+  { status: 'uploading', label: 'uploading' },
+  { status: 'pending', label: 'pending' },
+  { status: 'error', label: 'error' },
+];
+
+export const summarizeEntityStatuses = (
+  entities: OrchestratorStateEntityInfo[],
+): DevUiEntityStatusSummaryPart[] => {
+  const counts: Record<OrchestratorStateFileStatus, number> = {
+    pending: 0,
+    building: 0,
+    uploading: 0,
+    success: 0,
+    error: 0,
+  };
+
+  for (const entity of entities) {
+    counts[entity.status] += 1;
+  }
+
+  return ENTITY_STATUS_SUMMARY_ORDER.filter(
+    ({ status }) => counts[status] > 0,
+  ).map(({ status, label }) => ({ status, count: counts[status], label }));
+};
+
 export const getApplicationUrl = (state: OrchestratorState): string | null => {
   const applicationId = state.steps.resolveApplication.output.applicationId;
 

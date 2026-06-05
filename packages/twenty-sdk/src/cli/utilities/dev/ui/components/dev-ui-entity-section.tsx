@@ -8,6 +8,7 @@ import {
   UPLOAD_FRAMES,
   mapFileStatusToDevUiStatus,
   shortenPath,
+  summarizeEntityStatuses,
 } from '@/cli/utilities/dev/ui/dev-ui-constants';
 import { useStatusIcon } from '@/cli/utilities/dev/ui/dev-ui-hooks';
 import { useInk } from '@/cli/utilities/dev/ui/dev-ui-ink-context';
@@ -62,6 +63,35 @@ export const DevUiEntitySection = ({
       </Text>
       {entities.map((entity) => (
         <DevUiEntityRow key={entity.path} entity={entity} />
+      ))}
+    </Box>
+  );
+};
+
+export const DevUiEntitySummary = ({
+  entities,
+}: {
+  entities: OrchestratorStateEntityInfo[];
+}): React.ReactElement | null => {
+  const { Box, Text } = useInk();
+
+  if (entities.length === 0) return null;
+
+  const parts = summarizeEntityStatuses(entities);
+
+  return (
+    <Box marginTop={1}>
+      <Text bold dimColor>
+        Entities{' '}
+      </Text>
+      {parts.map((part, index) => (
+        <Box key={part.status}>
+          {index > 0 && <Text dimColor> · </Text>}
+          <DevUiStatusIcon uiStatus={mapFileStatusToDevUiStatus(part.status)} />
+          <Text>
+            {part.count} {part.label}
+          </Text>
+        </Box>
       ))}
     </Box>
   );
