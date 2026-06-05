@@ -65,7 +65,7 @@ export const registerDevCommands = (program: Command): void => {
       '--dry-run',
       'Preview the metadata changes without applying them (requires --once)',
     )
-    .option('--debounceMs <ms>', 'Debounce in ms (default: 2 000)')
+    .option('--debounceMs <ms>', 'Debounce in ms (default: 1 000)')
     .option('-v, --verbose', 'Show detailed logs')
     .option('-d, --debug', 'Show detailed logs (alias for --verbose)')
     .action(devAction);
