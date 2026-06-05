@@ -91,7 +91,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
   }) {
     switch (step.type) {
       case WorkflowActionType.CODE: {
-        if (!isDefined(step.settings.input.logicFunctionId)) {
+        if (!isValidUuid(step.settings.input.logicFunctionId)) {
           break;
         }
 
