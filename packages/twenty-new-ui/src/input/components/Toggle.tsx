@@ -1,4 +1,4 @@
-import { Switch } from '@base-ui-components/react/switch';
+import { Switch } from '@base-ui/react/switch';
 import { clsx } from 'clsx';
 
 import styles from './Toggle.module.scss';

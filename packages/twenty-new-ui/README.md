@@ -34,8 +34,9 @@ components are now **in scope** — they migrate into `twenty-new-ui` (see [Appl
 
 ## Decision 1 — Headless library: Base UI
 
-Adopt **Base UI** (`@base-ui-components/react`, MIT) as the behavioral foundation; build Twenty's
-visual design on top of it.
+Adopt **Base UI** ([`mui/base-ui`](https://github.com/mui/base-ui), published to npm as
+[`@base-ui/react`](https://base-ui.com), MIT) as the behavioral foundation; build Twenty's visual
+design on top of it.
 
 | | Base UI | shadcn/ui | Radix |
 | --- | --- | --- | --- |
