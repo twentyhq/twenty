@@ -1,17 +1,5 @@
-import { type CalendarEventRecordingIntent } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording.types';
-
-export type CalendarEventRecordingIntentForMeeting = {
-  calendarEventId: string;
-  realMeetingKey: string;
-  eventIntent: CalendarEventRecordingIntent;
-};
-
-export type RealMeetingRecordingAggregate = {
-  realMeetingKey: string;
-  providerIntent: CalendarEventRecordingIntent;
-  calendarEventIds: string[];
-  activeCalendarEventIds: string[];
-};
+import { type CalendarEventRecordingIntentForMeeting } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording-intent-for-meeting.type';
+import { type RealMeetingRecordingAggregate } from 'src/modules/calendar/calendar-event-recording-manager/types/real-meeting-recording-aggregate.type';
 
 // Collapses many per-event intents into one decision per real meeting: a bot is requested when at
 // least one calendar event for that meeting is ACTIVE, so duplicate calendar rows never produce

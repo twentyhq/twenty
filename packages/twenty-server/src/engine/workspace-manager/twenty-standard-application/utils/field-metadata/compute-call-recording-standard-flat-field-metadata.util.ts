@@ -171,10 +171,17 @@ export const buildCallRecordingStandardFlatFieldMetadatas = ({
           color: 'green',
         },
         {
+          id: '28c6019d-e543-4d5a-a0b0-745999450270',
+          value: 'CANCELED',
+          label: i18nLabel(msg`Canceled`),
+          position: 5,
+          color: 'gray',
+        },
+        {
           id: '4800777e-54a8-4464-9c01-07d6eefd04da',
           value: 'FAILED_UNKNOWN',
           label: i18nLabel(msg`Failed`),
-          position: 5,
+          position: 6,
           color: 'gray',
         },
       ],

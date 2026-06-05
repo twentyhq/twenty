@@ -1,5 +1,5 @@
+import { type CalendarEventRecordingPolicyInput } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording-policy-input.type';
 import { evaluateCalendarEventRecordingDecision } from 'src/modules/calendar/calendar-event-recording-manager/utils/evaluate-calendar-event-recording-decision.util';
-import { type CalendarEventRecordingPolicyInput } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording.types';
 
 const NOW = new Date('2026-06-05T10:00:00.000Z');
 const FUTURE = '2026-06-05T11:00:00.000Z';

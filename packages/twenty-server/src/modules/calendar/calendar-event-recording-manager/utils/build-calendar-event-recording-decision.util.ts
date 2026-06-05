@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type CalendarEventRecordingDecisionForEvent } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording.types';
+import { type CalendarEventRecordingDecisionForEvent } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording-decision-for-event.type';
 import { computeRealMeetingKey } from 'src/modules/calendar/calendar-event-recording-manager/utils/compute-real-meeting-key.util';
 import { evaluateCalendarEventRecordingDecision } from 'src/modules/calendar/calendar-event-recording-manager/utils/evaluate-calendar-event-recording-decision.util';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';

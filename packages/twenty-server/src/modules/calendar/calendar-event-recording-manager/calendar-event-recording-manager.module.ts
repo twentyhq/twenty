@@ -6,16 +6,21 @@ import { CalendarEventRecordingDecisionJob } from 'src/modules/calendar/calendar
 import { CalendarEventRecordingListener } from 'src/modules/calendar/calendar-event-recording-manager/listeners/calendar-event-recording.listener';
 import { CalendarEventRecordingParticipantListener } from 'src/modules/calendar/calendar-event-recording-manager/listeners/calendar-event-recording-participant.listener';
 import { CalendarEventRecordingDecisionService } from 'src/modules/calendar/calendar-event-recording-manager/services/calendar-event-recording-decision.service';
+import { CalendarEventRecordingReconciliationService } from 'src/modules/calendar/calendar-event-recording-manager/services/calendar-event-recording-reconciliation.service';
 
 @Module({
   imports: [FeatureFlagModule],
   providers: [
     CalendarEventRecordingDecisionService,
+    CalendarEventRecordingReconciliationService,
     CalendarEventRecordingDecisionJob,
     CalendarEventRecordingListener,
     CalendarEventRecordingParticipantListener,
     CalendarEventRecordingEvaluateCommand,
   ],
-  exports: [CalendarEventRecordingDecisionService],
+  exports: [
+    CalendarEventRecordingDecisionService,
+    CalendarEventRecordingReconciliationService,
+  ],
 })
 export class CalendarEventRecordingManagerModule {}

@@ -5,10 +5,24 @@ const mockMessageQueueService = {
   add: jest.fn(),
 };
 
+const OLD_CALENDAR_EVENT = {
+  id: 'event-1',
+  conferenceLink: {
+    primaryLinkUrl: 'https://meet.google.com/abc-defg-hij',
+  },
+  iCalUid: 'ical-1',
+  startsAt: '2999-01-01T10:00:00.000Z',
+};
+
 const buildUpdatePayload = (updatedFields: string[]) =>
   ({
     workspaceId: 'workspace-1',
-    events: [{ recordId: 'event-1', properties: { updatedFields } }],
+    events: [
+      {
+        recordId: 'event-1',
+        properties: { updatedFields, before: OLD_CALENDAR_EVENT },
+      },
+    ],
   }) as any;
 
 describe('CalendarEventRecordingListener', () => {
@@ -36,10 +50,24 @@ describe('CalendarEventRecordingListener', () => {
     );
   });
 
-  it('should enqueue when the composite conferenceLink changed (surfaces under its parent name)', async () => {
+  it('should enqueue the current event and previous occurrence when the meeting key changed', async () => {
     await listener.handleUpdatedEvent(buildUpdatePayload(['conferenceLink']));
 
-    expect(mockMessageQueueService.add).toHaveBeenCalledTimes(1);
+    expect(mockMessageQueueService.add).toHaveBeenCalledWith(
+      CalendarEventRecordingDecisionJob.name,
+      {
+        workspaceId: 'workspace-1',
+        calendarEventIds: ['event-1'],
+        removedOccurrences: [
+          {
+            calendarEventId: 'event-1',
+            realMeetingKey:
+              'link:meet.google.com/abc-defg-hij:2999-01-01T10:00:00.000Z',
+            startsAt: '2999-01-01T10:00:00.000Z',
+          },
+        ],
+      },
+    );
   });
 
   it('should not enqueue when only an irrelevant field changed', async () => {
@@ -74,6 +102,7 @@ describe('CalendarEventRecordingListener', () => {
         calendarEventIds: [],
         removedOccurrences: [
           {
+            calendarEventId: 'event-1',
             realMeetingKey:
               'link:meet.google.com/abc-defg-hij:2999-01-01T10:00:00.000Z',
             startsAt: '2999-01-01T10:00:00.000Z',

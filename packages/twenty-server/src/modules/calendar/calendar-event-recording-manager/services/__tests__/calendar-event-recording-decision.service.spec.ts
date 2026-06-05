@@ -171,7 +171,11 @@ describe('CalendarEventRecordingDecisionService', () => {
         workspaceId: 'workspace-1',
         calendarEventIds: [],
         removedOccurrences: [
-          { realMeetingKey: MEETING_KEY, startsAt: '2999-01-01T10:00:00.000Z' },
+          {
+            calendarEventId: 'event-1',
+            realMeetingKey: MEETING_KEY,
+            startsAt: '2999-01-01T10:00:00.000Z',
+          },
         ],
       });
 
@@ -199,7 +203,11 @@ describe('CalendarEventRecordingDecisionService', () => {
         workspaceId: 'workspace-1',
         calendarEventIds: [],
         removedOccurrences: [
-          { realMeetingKey: MEETING_KEY, startsAt: '2999-01-01T10:00:00.000Z' },
+          {
+            calendarEventId: 'event-1',
+            realMeetingKey: MEETING_KEY,
+            startsAt: '2999-01-01T10:00:00.000Z',
+          },
         ],
       });
 

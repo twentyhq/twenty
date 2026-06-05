@@ -7,14 +7,10 @@ import { In } from 'typeorm';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import {
-  type CalendarEventRecordingDecisionResult,
-  type RemovedRecordingOccurrence,
-} from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording.types';
-import {
-  aggregateRecordingIntentByMeeting,
-  type RealMeetingRecordingAggregate,
-} from 'src/modules/calendar/calendar-event-recording-manager/utils/aggregate-recording-intent-by-meeting.util';
+import { type CalendarEventRecordingDecisionResult } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording-decision-result.type';
+import { type RealMeetingRecordingAggregate } from 'src/modules/calendar/calendar-event-recording-manager/types/real-meeting-recording-aggregate.type';
+import { type RemovedRecordingOccurrence } from 'src/modules/calendar/calendar-event-recording-manager/types/removed-recording-occurrence.type';
+import { aggregateRecordingIntentByMeeting } from 'src/modules/calendar/calendar-event-recording-manager/utils/aggregate-recording-intent-by-meeting.util';
 import { buildCalendarEventRecordingDecision } from 'src/modules/calendar/calendar-event-recording-manager/utils/build-calendar-event-recording-decision.util';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 

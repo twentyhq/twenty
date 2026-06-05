@@ -17,7 +17,7 @@ import {
   CalendarEventRecordingDecisionJob,
   type CalendarEventRecordingDecisionJobData,
 } from 'src/modules/calendar/calendar-event-recording-manager/jobs/calendar-event-recording-decision.job';
-import { type RemovedRecordingOccurrence } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording.types';
+import { type RemovedRecordingOccurrence } from 'src/modules/calendar/calendar-event-recording-manager/types/removed-recording-occurrence.type';
 import { computeRealMeetingKey } from 'src/modules/calendar/calendar-event-recording-manager/utils/compute-real-meeting-key.util';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
@@ -30,6 +30,12 @@ const RECORDING_RELEVANT_CALENDAR_EVENT_FIELDS = [
   'startsAt',
   'endsAt',
   'isCanceled',
+  'iCalUid',
+];
+
+const RECORDING_KEY_CALENDAR_EVENT_FIELDS = [
+  'conferenceLink',
+  'startsAt',
   'iCalUid',
 ];
 
@@ -58,15 +64,22 @@ export class CalendarEventRecordingListener {
       ObjectRecordUpdateEvent<CalendarEventWorkspaceEntity>
     >,
   ): Promise<void> {
-    const calendarEventIds = payload.events
+    const recordingRelevantEvents = payload.events.filter((event) =>
+      hasRecordingRelevantFieldChange(event.properties.updatedFields),
+    );
+    const calendarEventIds = recordingRelevantEvents.map(
+      (event) => event.recordId,
+    );
+    const removedOccurrences = recordingRelevantEvents
       .filter((event) =>
-        hasRecordingRelevantFieldChange(event.properties.updatedFields),
+        hasRecordingKeyFieldChange(event.properties.updatedFields),
       )
-      .map((event) => event.recordId);
+      .map((event) => buildRemovedOccurrence(event.properties.before));
 
     await this.enqueueDecision({
       workspaceId: payload.workspaceId,
       calendarEventIds,
+      removedOccurrences,
     });
   }
 
@@ -127,9 +140,17 @@ const hasRecordingRelevantFieldChange = (
     RECORDING_RELEVANT_CALENDAR_EVENT_FIELDS.includes(updatedField),
   );
 
+const hasRecordingKeyFieldChange = (
+  updatedFields: string[] | undefined,
+): boolean =>
+  (updatedFields ?? []).some((updatedField) =>
+    RECORDING_KEY_CALENDAR_EVENT_FIELDS.includes(updatedField),
+  );
+
 const buildRemovedOccurrence = (
   calendarEvent: CalendarEventWorkspaceEntity,
 ): RemovedRecordingOccurrence => ({
+  calendarEventId: calendarEvent.id,
   realMeetingKey: computeRealMeetingKey({
     calendarEventId: calendarEvent.id,
     conferenceLinkUrl: calendarEvent.conferenceLink?.primaryLinkUrl ?? null,

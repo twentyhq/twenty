@@ -1,10 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  type CalendarEventRecordingDecision,
-  type CalendarEventRecordingDecisionReason,
-  type CalendarEventRecordingPolicyInput,
-} from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording.types';
+import { type CalendarEventRecordingDecisionReason } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording-decision-reason.type';
+import { type CalendarEventRecordingDecision } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording-decision.type';
+import { type CalendarEventRecordingPolicyInput } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording-policy-input.type';
 
 type EvaluateCalendarEventRecordingDecisionArgs = {
   input: CalendarEventRecordingPolicyInput;
