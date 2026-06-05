@@ -10,6 +10,7 @@ import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/
 import { ToolCategory } from 'twenty-shared/ai';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
+import { leanJsonSchema } from 'src/engine/core-modules/tool-provider/utils/lean-json-schema.util';
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool';
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
@@ -158,7 +159,9 @@ export class ActionToolProvider implements ToolProvider {
       category: ToolCategory.ACTION,
       icon: 'IconPlayerPlay',
       ...(includeSchemas && {
-        inputSchema: z.toJSONSchema(tool.inputSchema as z.ZodType),
+        inputSchema: leanJsonSchema(
+          z.toJSONSchema(tool.inputSchema as z.ZodType),
+        ),
       }),
       executionRef: { kind: 'static', toolId },
     };

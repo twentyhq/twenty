@@ -3,10 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type ToolSet } from 'ai';
 import { z } from 'zod';
 
-import {
-  compactRecord,
-  wrapInMetadataEnvelope,
-} from 'src/engine/core-modules/tool-provider/utils/compact-metadata-output.util';
+import { compactMetadataOutput } from 'src/engine/core-modules/tool-provider/utils/compact-metadata-output.util';
 import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -123,35 +120,28 @@ export class ObjectMetadataToolsFactory {
             await this.objectMetadataService.findManyWithinWorkspace(
               workspaceId,
               {
-                ...(parameters.id
-                  ? { where: { id: parameters.id } }
-                  : {}),
+                ...(parameters.id ? { where: { id: parameters.id } } : {}),
                 take: parameters.limit ?? 100,
               },
             );
 
-          const compactedObjects = flatObjectMetadatas.map(
-            (flatObjectMetadata) => {
-              const dto = fromFlatObjectMetadataToObjectMetadataDto(
-                flatObjectMetadata,
-              );
+          return flatObjectMetadatas.map((flatObjectMetadata) => {
+            const dto =
+              fromFlatObjectMetadataToObjectMetadataDto(flatObjectMetadata);
 
-              if (dto.isSystem && !parameters.includeFullSystemObjects) {
-                return {
-                  id: dto.id,
-                  nameSingular: dto.nameSingular,
-                  namePlural: dto.namePlural,
-                };
-              }
+            if (dto.isSystem && !parameters.includeFullSystemObjects) {
+              return {
+                id: dto.id,
+                nameSingular: dto.nameSingular,
+                namePlural: dto.namePlural,
+              };
+            }
 
-              return compactRecord(
-                { ...dto },
-                { stripWhenNullish: OBJECT_STRIP_WHEN_NULLISH },
-              );
-            },
-          );
-
-          return wrapInMetadataEnvelope(compactedObjects, 'objects');
+            return compactMetadataOutput(
+              { ...dto },
+              { stripWhenNullish: OBJECT_STRIP_WHEN_NULLISH },
+            );
+          });
         },
       },
       create_object_metadata: {

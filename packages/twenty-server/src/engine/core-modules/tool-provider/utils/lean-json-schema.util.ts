@@ -1,12 +1,8 @@
-// Strips bloat from a Zod-generated JSON Schema to reduce learn_tools token cost.
-//  - Removes `$schema` (top-level only)
-//  - Removes `additionalProperties: false` at every level
+import { isObject, isString } from '@sniptt/guards';
 
-import { isObject, isString } from "@sniptt/guards";
-import { isDefined } from "twenty-shared/utils";
-
-//  - Removes `pattern` on UUID strings that already carry `format: "uuid"`
-export const leanJsonSchema = (schema: object): object => {
+export const leanJsonSchema = (
+  schema: Record<string, unknown>,
+): Record<string, unknown> => {
   return stripRecursive(structuredClone(schema), true);
 };
 
@@ -31,7 +27,7 @@ const stripRecursive = (
   }
 
   for (const value of Object.values(node)) {
-    if (isDefined(value) && isObject(value) && !Array.isArray(value)) {
+    if (isObject(value) && !Array.isArray(value)) {
       stripRecursive(value as Record<string, unknown>, false);
     }
 

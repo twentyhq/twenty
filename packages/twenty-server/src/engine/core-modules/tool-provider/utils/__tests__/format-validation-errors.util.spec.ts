@@ -71,9 +71,7 @@ describe('formatValidationErrors', () => {
     expect(result).toContain(
       '[fieldMetadata] Name must be camelCase (bad_field, another_bad)',
     );
-    expect(result).toContain(
-      '[fieldMetadata] Type is required (bad_field)',
-    );
+    expect(result).toContain('[fieldMetadata] Type is required (bad_field)');
   });
 
   it('should fall back to code when message is missing', () => {
@@ -185,9 +183,7 @@ describe('formatValidationErrors', () => {
 
   it('should skip entries with no errors array', () => {
     const error = buildException({
-      fieldMetadata: [
-        { flatEntityMinimalInformation: { name: 'test' } },
-      ],
+      fieldMetadata: [{ flatEntityMinimalInformation: { name: 'test' } }],
     });
 
     expect(formatValidationErrors(error)).toBe(

@@ -1,9 +1,6 @@
-import {
-  compactRecord,
-  wrapInMetadataEnvelope,
-} from 'src/engine/core-modules/tool-provider/utils/compact-metadata-output.util';
+import { compactMetadataOutput } from 'src/engine/core-modules/tool-provider/utils/compact-metadata-output.util';
 
-describe('compactRecord', () => {
+describe('compactMetadataOutput', () => {
   it('should strip keys with null values when listed in stripWhenNullish', () => {
     const record = {
       id: '123',
@@ -13,7 +10,7 @@ describe('compactRecord', () => {
       label: 'Test',
     };
 
-    const result = compactRecord(record, {
+    const result = compactMetadataOutput(record, {
       stripWhenNullish: ['description', 'icon'],
     });
 
@@ -32,7 +29,7 @@ describe('compactRecord', () => {
       label: 'Test',
     };
 
-    const result = compactRecord(record, {
+    const result = compactMetadataOutput(record, {
       stripWhenNullish: ['options', 'settings'],
     });
 
@@ -49,7 +46,7 @@ describe('compactRecord', () => {
       options: [{ label: 'A', value: 'A' }],
     };
 
-    const result = compactRecord(record, {
+    const result = compactMetadataOutput(record, {
       stripWhenNullish: ['description', 'options'],
     });
 
@@ -68,7 +65,7 @@ describe('compactRecord', () => {
       isActive: true,
     };
 
-    const result = compactRecord(record, {
+    const result = compactMetadataOutput(record, {
       stripWhenFalse: ['isLabelSyncedWithName', 'isUIReadOnly'],
     });
 
@@ -85,7 +82,7 @@ describe('compactRecord', () => {
       isUIReadOnly: true,
     };
 
-    const result = compactRecord(record, {
+    const result = compactMetadataOutput(record, {
       stripWhenFalse: ['isLabelSyncedWithName', 'isUIReadOnly'],
     });
 
@@ -107,7 +104,7 @@ describe('compactRecord', () => {
       options: null,
     };
 
-    const result = compactRecord(record, {
+    const result = compactMetadataOutput(record, {
       stripWhenNullish: ['description', 'options'],
       stripWhenFalse: ['isLabelSyncedWithName', 'isUIReadOnly'],
     });
@@ -123,7 +120,7 @@ describe('compactRecord', () => {
   it('should return a copy without modifying the original', () => {
     const record = { id: '123', description: null };
 
-    const result = compactRecord(record, {
+    const result = compactMetadataOutput(record, {
       stripWhenNullish: ['description'],
     });
 
@@ -134,80 +131,8 @@ describe('compactRecord', () => {
   it('should handle empty config gracefully', () => {
     const record = { id: '123', name: 'test' };
 
-    const result = compactRecord(record, {});
+    const result = compactMetadataOutput(record, {});
 
     expect(result).toEqual({ id: '123', name: 'test' });
-  });
-});
-
-describe('wrapInMetadataEnvelope', () => {
-  it('should hoist workspaceId and applicationId into envelope', () => {
-    const records = [
-      { id: '1', name: 'field1', workspaceId: 'ws-1', applicationId: 'app-1' },
-      { id: '2', name: 'field2', workspaceId: 'ws-1', applicationId: 'app-1' },
-    ];
-
-    const result = wrapInMetadataEnvelope(records, 'fields');
-
-    expect(result).toEqual({
-      workspaceId: 'ws-1',
-      applicationId: 'app-1',
-      fields: [
-        { id: '1', name: 'field1' },
-        { id: '2', name: 'field2' },
-      ],
-    });
-  });
-
-  it('should handle empty records array', () => {
-    const result = wrapInMetadataEnvelope([], 'fields');
-
-    expect(result).toEqual({
-      fields: [],
-    });
-  });
-
-  it('should handle records without hoisted keys', () => {
-    const records = [
-      { id: '1', name: 'obj1' },
-      { id: '2', name: 'obj2' },
-    ];
-
-    const result = wrapInMetadataEnvelope(records, 'objects');
-
-    expect(result).toEqual({
-      objects: [
-        { id: '1', name: 'obj1' },
-        { id: '2', name: 'obj2' },
-      ],
-    });
-  });
-
-  it('should support custom hoistKeys', () => {
-    const records = [
-      { id: '1', tenantId: 'tenant-1', name: 'test' },
-      { id: '2', tenantId: 'tenant-1', name: 'test2' },
-    ];
-
-    const result = wrapInMetadataEnvelope(records, 'items', ['tenantId']);
-
-    expect(result).toEqual({
-      tenantId: 'tenant-1',
-      items: [
-        { id: '1', name: 'test' },
-        { id: '2', name: 'test2' },
-      ],
-    });
-  });
-
-  it('should not mutate original records', () => {
-    const records = [
-      { id: '1', workspaceId: 'ws-1', applicationId: 'app-1' },
-    ];
-    const original = { ...records[0] };
-
-    wrapInMetadataEnvelope(records, 'fields');
-
-    expect(records[0]).toEqual(original);
   });
 });

@@ -16,7 +16,6 @@ const listNavigationMenuItemsSchema = z.object({
       "'workspace' = shared navigation, 'user' = current user's favorites, 'all' = both merged (default).",
     ),
   folderId: z
-    .string()
     .uuid()
     .optional()
     .describe('Only return items inside this folder.'),

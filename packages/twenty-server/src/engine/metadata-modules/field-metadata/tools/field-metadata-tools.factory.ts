@@ -4,10 +4,7 @@ import { type ToolSet } from 'ai';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { z } from 'zod';
 
-import {
-  compactRecord,
-  wrapInMetadataEnvelope,
-} from 'src/engine/core-modules/tool-provider/utils/compact-metadata-output.util';
+import { compactMetadataOutput } from 'src/engine/core-modules/tool-provider/utils/compact-metadata-output.util';
 import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -168,10 +165,7 @@ export class FieldMetadataToolsFactory {
           const compactedFields = (
             rawResults as unknown as Record<string, unknown>[]
           )
-            .filter(
-              (field) =>
-                !EXCLUDED_FIELD_NAMES.has(field.name as string),
-            )
+            .filter((field) => !EXCLUDED_FIELD_NAMES.has(field.name as string))
             .map((field) => {
               if (field.isSystem && !parameters.includeFullSystemFields) {
                 return {
@@ -181,7 +175,7 @@ export class FieldMetadataToolsFactory {
                 };
               }
 
-              return compactRecord(
+              return compactMetadataOutput(
                 { ...field },
                 {
                   stripWhenNullish: FIELD_STRIP_WHEN_NULLISH,
@@ -190,7 +184,7 @@ export class FieldMetadataToolsFactory {
               );
             });
 
-          return wrapInMetadataEnvelope(compactedFields, 'fields');
+          return compactedFields;
         },
       },
       create_field_metadata: {

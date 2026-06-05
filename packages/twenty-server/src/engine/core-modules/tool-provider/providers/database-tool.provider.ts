@@ -4,7 +4,7 @@ import {
   type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
 } from 'twenty-shared/types';
-import { camelToSnakeCase } from 'twenty-shared/utils';
+import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
@@ -26,6 +26,7 @@ import {
 } from 'src/engine/core-modules/record-crud/zod-schemas/group-by-tool.zod-schema';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
+import { leanJsonSchema } from 'src/engine/core-modules/tool-provider/utils/lean-json-schema.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -133,8 +134,10 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Search for ${objectMetadata.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. Filter fields are top-level arguments — pass each field as its own key (e.g. { id: { eq: "record-id" } }, or { name: { firstName: { ilike: "%ada%" } } }); do NOT wrap them in a "filter" object and do NOT place a bare operator like "ilike"/"eq" at the top level. Combine conditions with and/or/not. Returns an array of matching records with their full data.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`find_${snakePlural}`) && {
-            inputSchema: z.toJSONSchema(
-              generateFindToolInputSchema(objectMetadata, restrictedFields),
+            inputSchema: leanJsonSchema(
+              z.toJSONSchema(
+                generateFindToolInputSchema(objectMetadata, restrictedFields),
+              ),
             ),
           }),
           executionRef: {
@@ -152,7 +155,7 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Retrieve a single ${objectMetadata.labelSingular} record by its unique ID. Use this when you know the exact record ID and need the complete record data. Returns the full record or an error if not found.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`find_one_${snakeSingular}`) && {
-            inputSchema: z.toJSONSchema(FindOneToolInputSchema),
+            inputSchema: leanJsonSchema(z.toJSONSchema(FindOneToolInputSchema)),
           }),
           executionRef: {
             kind: 'database_crud',
@@ -180,7 +183,7 @@ export class DatabaseToolProvider implements ToolProvider {
             category: ToolCategory.DATABASE_CRUD,
             ...(shouldGenerateGroupBy &&
               groupBySchema && {
-                inputSchema: z.toJSONSchema(groupBySchema),
+                inputSchema: leanJsonSchema(z.toJSONSchema(groupBySchema)),
               }),
             executionRef: {
               kind: 'database_crud',
@@ -200,8 +203,13 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`create_${snakeSingular}`) && {
-            inputSchema: z.toJSONSchema(
-              generateCreateRecordInputSchema(objectMetadata, restrictedFields),
+            inputSchema: leanJsonSchema(
+              z.toJSONSchema(
+                generateCreateRecordInputSchema(
+                  objectMetadata,
+                  restrictedFields,
+                ),
+              ),
             ),
           }),
           executionRef: {
@@ -219,10 +227,12 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Create multiple ${objectMetadata.labelPlural} records in a single call. Provide an array of records, each containing the required fields. Maximum 20 records per call. Returns the created records.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`create_many_${snakePlural}`) && {
-            inputSchema: z.toJSONSchema(
-              generateCreateManyRecordInputSchema(
-                objectMetadata,
-                restrictedFields,
+            inputSchema: leanJsonSchema(
+              z.toJSONSchema(
+                generateCreateManyRecordInputSchema(
+                  objectMetadata,
+                  restrictedFields,
+                ),
               ),
             ),
           }),
@@ -241,8 +251,13 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Update an existing ${objectMetadata.labelSingular} record. Provide the record ID and only the fields you want to change. Unspecified fields will remain unchanged. Returns the updated record with all current data.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`update_${snakeSingular}`) && {
-            inputSchema: z.toJSONSchema(
-              generateUpdateRecordInputSchema(objectMetadata, restrictedFields),
+            inputSchema: leanJsonSchema(
+              z.toJSONSchema(
+                generateUpdateRecordInputSchema(
+                  objectMetadata,
+                  restrictedFields,
+                ),
+              ),
             ),
           }),
           executionRef: {
@@ -260,10 +275,12 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Update multiple ${objectMetadata.labelPlural} records matching a filter in a single operation. All matching records will receive the same field values. WARNING: Use specific filters to avoid unintended mass updates. Always verify the filter scope with a find query first. Returns the updated records.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`update_many_${snakePlural}`) && {
-            inputSchema: z.toJSONSchema(
-              generateUpdateManyRecordInputSchema(
-                objectMetadata,
-                restrictedFields,
+            inputSchema: leanJsonSchema(
+              z.toJSONSchema(
+                generateUpdateManyRecordInputSchema(
+                  objectMetadata,
+                  restrictedFields,
+                ),
               ),
             ),
           }),
@@ -284,7 +301,7 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record is hidden from normal queries. This is reversible. Use this to remove records.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`delete_${snakeSingular}`) && {
-            inputSchema: z.toJSONSchema(DeleteToolInputSchema),
+            inputSchema: leanJsonSchema(z.toJSONSchema(DeleteToolInputSchema)),
           }),
           executionRef: {
             kind: 'database_crud',

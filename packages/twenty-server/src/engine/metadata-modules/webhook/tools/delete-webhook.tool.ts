@@ -4,7 +4,7 @@ import { type WebhookToolContext } from 'src/engine/metadata-modules/webhook/too
 import { type WebhookToolDependencies } from 'src/engine/metadata-modules/webhook/tools/types/webhook-tool-dependencies.type';
 
 const deleteWebhookSchema = z.object({
-  id: z.string().uuid().describe('The id of the webhook to delete'),
+  id: z.uuid().describe('The id of the webhook to delete'),
 });
 
 type DeleteWebhookParams = z.infer<typeof deleteWebhookSchema>;
