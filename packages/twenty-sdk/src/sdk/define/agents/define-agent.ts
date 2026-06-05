@@ -4,6 +4,7 @@ import { type AgentManifest } from 'twenty-shared/application';
 
 export const defineAgent: DefineEntity<AgentManifest> = (config) => {
   const errors: string[] = [];
+  const warnings: string[] = [];
 
   if (!config.universalIdentifier) {
     errors.push('Agent must have a universalIdentifier');
@@ -21,5 +22,11 @@ export const defineAgent: DefineEntity<AgentManifest> = (config) => {
     errors.push('Agent must have a prompt');
   }
 
-  return createValidationResult({ config, errors });
+  if (!config.responseFormat) {
+    warnings.push(
+      `Agent '${config.name}' has no responseFormat, it will default to { type: 'text' }. Set it explicitly to control the agent's output shape.`,
+    );
+  }
+
+  return createValidationResult({ config, errors, warnings });
 };

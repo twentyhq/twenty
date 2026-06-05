@@ -239,7 +239,7 @@ describe('IndexMetadataService', () => {
           {
             id: 'field-currency',
             universalIdentifier: 'field-currency-universal',
-            name: 'annualRecurringRevenue',
+            name: 'annualRevenue',
             type: FieldMetadataType.CURRENCY,
           },
         ],
@@ -269,7 +269,7 @@ describe('IndexMetadataService', () => {
           {
             id: 'field-currency',
             universalIdentifier: 'field-currency-universal',
-            name: 'annualRecurringRevenue',
+            name: 'annualRevenue',
             type: FieldMetadataType.CURRENCY,
           },
         ],
