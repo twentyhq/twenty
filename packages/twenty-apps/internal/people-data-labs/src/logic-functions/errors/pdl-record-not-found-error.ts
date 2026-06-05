@@ -1,4 +1,5 @@
-import { PdlError, PdlErrorCode } from 'src/logic-functions/errors/pdl-error';
+import { PdlError } from 'src/logic-functions/errors/pdl-error';
+import { PdlErrorCode } from 'src/logic-functions/errors/pdl-error-code';
 
 export class PdlRecordNotFoundError extends PdlError {
   readonly objectNameSingular: string;
