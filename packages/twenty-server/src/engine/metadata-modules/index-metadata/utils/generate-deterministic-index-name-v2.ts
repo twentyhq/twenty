@@ -1,14 +1,11 @@
 import { createHash } from 'crypto';
 
-import { isTwentyStandardApplicationUniversalIdentifier } from 'src/engine/metadata-modules/utils/is-twenty-standard-application-universal-identifier.util';
+import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 type GenerateDeterministicIndexNameArgs = {
-  flatObjectMetadata: Pick<
-    UniversalFlatObjectMetadata,
-    'nameSingular' | 'applicationUniversalIdentifier'
-  >;
+  flatObjectMetadata: UniversalFlatObjectMetadata;
   isUnique?: boolean;
   orderedIndexColumnNames: string[];
   // Include the WHERE clause in the hash so a partial index on the same
@@ -26,9 +23,7 @@ export const generateDeterministicIndexNameV2 = ({
 
   const tableName = computeTableName(
     flatObjectMetadata.nameSingular,
-    !isTwentyStandardApplicationUniversalIdentifier(
-      flatObjectMetadata.applicationUniversalIdentifier,
-    ),
+    !belongsToTwentyStandardApp(flatObjectMetadata),
   );
 
   [tableName, ...orderedIndexColumnNames].forEach((column) => {

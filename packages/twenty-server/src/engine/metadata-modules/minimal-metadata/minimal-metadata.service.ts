@@ -16,7 +16,7 @@ import { MinimalMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata
 import { MinimalObjectMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-object-metadata.dto';
 import { MinimalViewDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-view.dto';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
-import { isTwentyStandardApplicationUniversalIdentifier } from 'src/engine/metadata-modules/utils/is-twenty-standard-application-universal-identifier.util';
+import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
@@ -104,9 +104,7 @@ export class MinimalMetadataService {
             i18nInstance,
           ),
           icon: flatObjectMetadata.icon ?? undefined,
-          isCustom: !isTwentyStandardApplicationUniversalIdentifier(
-            flatObjectMetadata.applicationUniversalIdentifier,
-          ),
+          isCustom: !belongsToTwentyStandardApp(flatObjectMetadata),
           isActive: flatObjectMetadata.isActive,
           isSystem: flatObjectMetadata.isSystem,
           isRemote: flatObjectMetadata.isRemote,

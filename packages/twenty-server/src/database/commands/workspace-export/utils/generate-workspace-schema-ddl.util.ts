@@ -2,7 +2,6 @@ import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-meta
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { isTwentyStandardApplicationUniversalIdentifier } from 'src/engine/metadata-modules/utils/is-twenty-standard-application-universal-identifier.util';
 import { buildSqlColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/utils/build-sql-column-definition.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import {
@@ -10,6 +9,7 @@ import {
   escapeLiteral,
 } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import {
   type CreateEnumOperationSpec,
   EnumOperation,
@@ -29,9 +29,8 @@ export const generateWorkspaceSchemaDdl = (
 
     const tableName = computeTableName(
       objectMetadata.nameSingular,
-      !isTwentyStandardApplicationUniversalIdentifier(
-        objectMetadata.application?.universalIdentifier,
-      ),
+      objectMetadata.application?.universalIdentifier !==
+        TWENTY_STANDARD_APPLICATION.universalIdentifier,
     );
     const fieldMetadatas = fieldsByObjectId.get(objectMetadata.id) ?? [];
 

@@ -13,8 +13,8 @@ import {
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { isTwentyStandardApplicationUniversalIdentifier } from 'src/engine/metadata-modules/utils/is-twenty-standard-application-universal-identifier.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -361,9 +361,8 @@ export class WorkspaceExportService {
 
       const tableName = computeTableName(
         objectMetadata.nameSingular,
-        !isTwentyStandardApplicationUniversalIdentifier(
-          objectMetadata.application?.universalIdentifier,
-        ),
+        objectMetadata.application?.universalIdentifier !==
+          TWENTY_STANDARD_APPLICATION.universalIdentifier,
       );
 
       if (tableFilter && !tableFilter.includes(objectMetadata.nameSingular)) {
