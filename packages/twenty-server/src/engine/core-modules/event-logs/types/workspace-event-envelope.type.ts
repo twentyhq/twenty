@@ -14,7 +14,7 @@ type AnalyticsEventRow = EventContextFields & {
   version: string;
 };
 
-type PageviewRow = EventContextFields & {
+export type PageviewRow = EventContextFields & {
   type: 'page';
   name: string;
   properties: Record<string, unknown>;
@@ -22,13 +22,13 @@ type PageviewRow = EventContextFields & {
   version: string;
 };
 
-type ObjectEventRow = AnalyticsEventRow & {
+export type ObjectEventRow = AnalyticsEventRow & {
   recordId: string;
   objectMetadataId: string;
   isCustom?: boolean;
 };
 
-type UsageEventRow = {
+export type UsageEventRow = {
   timestamp: string;
   workspaceId: string;
   periodStart?: string;
@@ -43,7 +43,7 @@ type UsageEventRow = {
   metadata: Record<string, unknown>;
 };
 
-type ApplicationLogRow = {
+export type ApplicationLogRow = {
   timestamp: string;
   workspaceId: string;
   applicationId: string;

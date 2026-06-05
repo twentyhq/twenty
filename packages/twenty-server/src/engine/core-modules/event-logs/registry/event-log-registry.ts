@@ -4,40 +4,23 @@ import { EventLogTable } from 'twenty-shared/types';
 
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { type EventLogRecord } from 'src/engine/core-modules/event-logs/dtos/event-log-result.dto';
+import {
+  type ApplicationLogRow,
+  type ObjectEventRow,
+  type PageviewRow,
+  type UsageEventRow,
+} from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
 
-type ClickHouseEventRow = {
-  event?: string;
-  name?: string;
+// A row read back from ClickHouse is the all-optional view of its write row: the write-only
+// transport markers ('type'/'version') are gone, `timestamp` is always selected, and any other
+// column may be missing from a given SELECT. One column definition per type, two derived shapes.
+type StoredRow<TRow> = Partial<Omit<TRow, 'type' | 'version'>> & {
   timestamp: string;
-  userId?: string;
-  properties?: Record<string, unknown>;
-  recordId?: string;
-  objectMetadataId?: string;
-  isCustom?: boolean;
 };
 
-type ClickHouseUsageEventRow = {
-  timestamp: string;
-  userWorkspaceId?: string;
-  resourceType?: string;
-  operationType?: string;
-  quantity?: number;
-  unit?: string;
-  creditsUsedMicro?: number;
-  resourceId?: string;
-  resourceContext?: string;
-  metadata?: Record<string, unknown>;
-};
-
-type ClickHouseApplicationLogRow = {
-  timestamp: string;
-  applicationId?: string;
-  logicFunctionId?: string;
-  logicFunctionName?: string;
-  executionId?: string;
-  level?: string;
-  message?: string;
-};
+// workspaceEvent, pageview and objectEvent read back through one shape — the superset of their
+// columns — so a single generic normalizer serves all three.
+type StoredEventRow = StoredRow<ObjectEventRow & Pick<PageviewRow, 'name'>>;
 
 // Single source of truth for an event-log type: the ClickHouse table it lives in
 // (also its live presence key), who may read it, the column the free-text filter
@@ -55,12 +38,12 @@ export type EventLogTypeDefinition = {
 const normalizeGenericEvent =
   (eventFieldName: 'event' | 'name') =>
   (row: Record<string, unknown>): EventLogRecord => {
-    const record = row as ClickHouseEventRow;
+    const record = row as StoredEventRow;
 
     return {
       event: record[eventFieldName] ?? '',
       timestamp: new Date(record.timestamp),
-      userId: record.userId,
+      userId: record.userId ?? undefined,
       properties: record.properties,
       recordId: record.recordId,
       objectMetadataId: record.objectMetadataId,
@@ -92,7 +75,7 @@ export const EVENT_LOG_TYPES: Record<EventLogTable, EventLogTypeDefinition> = {
     requiresEntitlement: BillingEntitlementKey.AUDIT_LOGS,
     eventFieldName: 'resourceType',
     normalize: (row) => {
-      const record = row as ClickHouseUsageEventRow;
+      const record = row as StoredRow<UsageEventRow>;
 
       return {
         event: record.resourceType ?? '',
@@ -115,7 +98,7 @@ export const EVENT_LOG_TYPES: Record<EventLogTable, EventLogTypeDefinition> = {
     requiresEntitlement: null,
     eventFieldName: 'logicFunctionName',
     normalize: (row) => {
-      const record = row as ClickHouseApplicationLogRow;
+      const record = row as StoredRow<ApplicationLogRow>;
 
       return {
         event: record.logicFunctionName ?? '',
