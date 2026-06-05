@@ -5,6 +5,7 @@ import {
   type IndexFieldMetadataLoaderPayload,
   type IndexMetadataLoaderPayload,
   type IsConfiguredLoaderPayload,
+  type IsCustomLoaderPayload,
   type MorphRelationLoaderPayload,
   type ObjectMetadataLoaderPayload,
   type RelationLoaderPayload,
@@ -92,4 +93,6 @@ export interface IDataloaders {
   >;
 
   isConfiguredLoader: DataLoader<IsConfiguredLoaderPayload, boolean>;
+
+  isCustomLoader: DataLoader<IsCustomLoaderPayload, boolean>;
 }

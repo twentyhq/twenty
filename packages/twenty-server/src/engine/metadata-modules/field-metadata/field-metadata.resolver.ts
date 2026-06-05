@@ -5,7 +5,6 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -44,7 +43,6 @@ export class FieldMetadataResolver {
   constructor(
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly i18nService: I18nService,
-    private readonly applicationService: ApplicationService,
   ) {}
 
   @ResolveField(() => Boolean, {
@@ -55,13 +53,12 @@ export class FieldMetadataResolver {
   async isCustom(
     @Parent() fieldMetadata: Pick<FieldMetadataDTO, 'applicationId'>,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Context() context: { loaders: IDataloaders },
   ): Promise<boolean> {
-    const { twentyStandardFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
-    return fieldMetadata.applicationId !== twentyStandardFlatApplication.id;
+    return context.loaders.isCustomLoader.load({
+      workspaceId,
+      applicationId: fieldMetadata.applicationId,
+    });
   }
 
   @ResolveField(() => String, { nullable: true })

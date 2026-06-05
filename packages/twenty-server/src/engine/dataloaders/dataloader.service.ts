@@ -37,6 +37,7 @@ import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-me
 import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 export type RelationMetadataLoaderPayload = {
   workspaceId: string;
@@ -116,6 +117,11 @@ export type IsConfiguredLoaderPayload = {
   applicationRegistrationId: string;
 };
 
+export type IsCustomLoaderPayload = {
+  workspaceId: string;
+  applicationId: string;
+};
+
 @Injectable()
 export class DataloaderService {
   constructor(
@@ -142,6 +148,7 @@ export class DataloaderService {
     const viewFilterGroupsByViewIdLoader =
       this.createViewFilterGroupsByViewIdLoader();
     const isConfiguredLoader = this.createIsConfiguredLoader();
+    const isCustomLoader = this.createIsCustomLoader();
 
     return {
       relationLoader,
@@ -158,6 +165,7 @@ export class DataloaderService {
       viewGroupsByViewIdLoader,
       viewFilterGroupsByViewIdLoader,
       isConfiguredLoader,
+      isCustomLoader,
     };
   }
 
@@ -754,6 +762,31 @@ export class DataloaderService {
 
         return params.map(
           (p) => resultMap.get(p.applicationRegistrationId) ?? true,
+        );
+      },
+    );
+  }
+
+  private createIsCustomLoader() {
+    return new DataLoader<IsCustomLoaderPayload, boolean>(
+      async (dataLoaderParams: IsCustomLoaderPayload[]) => {
+        const workspaceId = dataLoaderParams[0].workspaceId;
+
+        const { flatApplicationMaps } =
+          await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            {
+              workspaceId,
+              flatMapsKeys: ['flatApplicationMaps'],
+            },
+          );
+
+        const twentyStandardApplicationId =
+          flatApplicationMaps.idByUniversalIdentifier[
+            TWENTY_STANDARD_APPLICATION.universalIdentifier
+          ];
+
+        return dataLoaderParams.map(
+          ({ applicationId }) => applicationId !== twentyStandardApplicationId,
         );
       },
     );
