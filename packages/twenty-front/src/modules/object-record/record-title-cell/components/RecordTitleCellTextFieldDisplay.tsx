@@ -1,15 +1,17 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { isFieldFullNameValue } from '@/object-record/record-field/ui/types/guards/isFieldFullNameValue';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
 import { type RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDiv = styled.div`
   align-items: center;
@@ -33,6 +35,20 @@ const StyledEmptyText = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
 `;
 
+const parseRecordTitleTextFieldValue = (fieldValue: unknown): string => {
+  if (isNonEmptyString(fieldValue)) {
+    return fieldValue;
+  }
+
+  if (isFieldFullNameValue(fieldValue)) {
+    return [fieldValue.firstName, fieldValue.lastName]
+      .filter(isNonEmptyString)
+      .join(' ');
+  }
+
+  return '';
+};
+
 export const RecordTitleCellSingleTextDisplayMode = ({
   containerType,
 }: {
@@ -42,8 +58,10 @@ export const RecordTitleCellSingleTextDisplayMode = ({
 
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
-  const fieldValue = recordStore?.[fieldDefinition.metadata.fieldName];
-  const isEmpty = !isDefined(fieldValue) || fieldValue.trim() === '';
+  const fieldValue = parseRecordTitleTextFieldValue(
+    recordStore?.[fieldDefinition.metadata.fieldName],
+  );
+  const isEmpty = fieldValue.trim() === '';
 
   const { openRecordTitleCell } = useRecordTitleCell();
 
@@ -64,12 +82,7 @@ export const RecordTitleCellSingleTextDisplayMode = ({
       {isEmpty ? (
         <StyledEmptyText>{t`Untitled`}</StyledEmptyText>
       ) : (
-        <OverflowingTextWithTooltip
-          text={
-            recordStore?.[fieldDefinition.metadata.fieldName] ||
-            fieldDefinition.label
-          }
-        />
+        <OverflowingTextWithTooltip text={fieldValue || fieldDefinition.label} />
       )}
     </StyledDiv>
   );

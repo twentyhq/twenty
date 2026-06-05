@@ -1,12 +1,29 @@
+import { isNonEmptyString } from '@sniptt/guards';
+import { useEffect, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useEffect, useState } from 'react';
-import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+
+const parseOperationNameFromBody = (body: unknown): string | undefined => {
+  if (typeof body !== 'string') {
+    return undefined;
+  }
+
+  try {
+    const parsedBody = JSON.parse(body) as { operationName?: unknown };
+
+    return typeof parsedBody.operationName === 'string'
+      ? parsedBody.operationName
+      : undefined;
+  } catch {
+    return undefined;
+  }
+};
 
 export const SentryInitEffect = () => {
   const sentryConfig = useAtomStateValue(sentryConfigState);
@@ -47,6 +64,35 @@ export const SentryInitEffect = () => {
                 onunhandledrejection: false, // handled in PromiseRejectionEffect
               }),
             ],
+            beforeBreadcrumb: (breadcrumb, hint) => {
+              if (
+                breadcrumb.category === 'fetch' &&
+                breadcrumb.data?.status_code === 0
+              ) {
+                return null;
+              }
+
+              if (breadcrumb.category === 'fetch') {
+                const requestBody =
+                  hint?.input && Array.isArray(hint.input)
+                    ? hint.input[1]?.body
+                    : undefined;
+
+                const operationName = parseOperationNameFromBody(requestBody);
+
+                if (isNonEmptyString(operationName)) {
+                  return {
+                    ...breadcrumb,
+                    data: {
+                      ...breadcrumb.data,
+                      graphql_operation_name: operationName,
+                    },
+                  };
+                }
+              }
+
+              return breadcrumb;
+            },
             tracePropagationTargets: [
               'localhost:3001',
               REACT_APP_SERVER_BASE_URL,

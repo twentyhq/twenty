@@ -212,9 +212,11 @@ export class ApolloFactory implements ApolloManager {
       const sendToSentry = ({
         graphQLError,
         operation,
+        level = 'error',
       }: {
         graphQLError: GraphQLFormattedError;
         operation: ApolloLink.Operation;
+        level?: 'warning' | 'error';
       }) => {
         if (isDebugMode === true) {
           logDebug(
@@ -238,10 +240,17 @@ export class ApolloFactory implements ApolloManager {
                 if (isDefined(graphQLError.extensions.subCode)) {
                   fingerPrint.push(graphQLError.extensions.subCode as string);
                 }
+                if (isDefined(graphQLError.extensions.code)) {
+                  scope.setTag(
+                    'graphql.error.code',
+                    graphQLError.extensions.code as string,
+                  );
+                }
               }
 
               if (isDefined(operation.operationName)) {
                 scope.setExtra('operation', operation.operationName);
+                scope.setTag('graphql.operation.name', operation.operationName);
                 const genericOperationName = getGenericOperationName(
                   operation.operationName,
                 );
@@ -251,10 +260,16 @@ export class ApolloFactory implements ApolloManager {
                 }
               }
 
+              scope.setContext('graphql', {
+                operationName: operation.operationName,
+                path: graphQLError.path?.join('.'),
+              });
+
               if (!isEmpty(fingerPrint)) {
                 scope.setFingerprint(fingerPrint);
               }
 
+              scope.setLevel(level);
               captureException(error); // Sentry expects a JS error
             });
           })
@@ -301,7 +316,7 @@ export class ApolloFactory implements ApolloManager {
                 if (graphQLError.extensions?.isExpected === true) {
                   return;
                 }
-                sendToSentry({ graphQLError, operation });
+                sendToSentry({ graphQLError, operation, level: 'warning' });
                 return;
               }
               case 'INTERNAL_SERVER_ERROR': {
