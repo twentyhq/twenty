@@ -1,6 +1,7 @@
 import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import { type Manifest } from 'twenty-shared/application';
+import { type SyncAction } from 'twenty-shared/metadata';
 
 export class ApplicationApi {
   constructor(private readonly client: AxiosInstance) {}
@@ -251,7 +252,12 @@ export class ApplicationApi {
     }
   }
 
-  async syncApplication(manifest: Manifest): Promise<ApiResponse> {
+  async syncApplication(manifest: Manifest): Promise<
+    ApiResponse<{
+      applicationUniversalIdentifier: string;
+      actions: SyncAction[];
+    }>
+  > {
     try {
       const mutation = `
         mutation SyncApplication($manifest: JSON!) {
