@@ -1,3 +1,4 @@
+import { type SyncAction } from 'twenty-shared/metadata';
 import { describe, expect, it } from 'vitest';
 
 import { formatSyncActionsSummary } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
@@ -67,9 +68,9 @@ describe('formatSyncActionsSummary', () => {
   });
 
   it('truncates the detail lines when there are more changes than the display limit', () => {
-    const actions = Array.from({ length: 55 }, (_, index) => ({
-      type: 'create',
-      metadataName: 'fieldMetadata',
+    const actions: SyncAction[] = Array.from({ length: 55 }, (_, index) => ({
+      type: 'create' as const,
+      metadataName: 'fieldMetadata' as const,
       flatEntity: {
         universalIdentifier: `uid-${index}`,
         name: `field${index}`,
@@ -87,17 +88,5 @@ describe('formatSyncActionsSummary', () => {
       message: '  …and 5 more change(s)',
       status: 'info',
     });
-  });
-
-  it('ignores entries that are not recognizable migration actions', () => {
-    const events = formatSyncActionsSummary([
-      null,
-      'not-an-action',
-      { type: 'unknown', metadataName: 'fieldMetadata' },
-    ]);
-
-    expect(events).toEqual([
-      { message: 'No metadata changes', status: 'info' },
-    ]);
   });
 });
