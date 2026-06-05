@@ -1,5 +1,6 @@
 import path from 'path';
 import { OUTPUT_DIR, type Manifest } from 'twenty-shared/application';
+import { type SyncAction } from 'twenty-shared/metadata';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
 import {
@@ -35,14 +36,10 @@ export type AppDevOnceResult = {
 };
 
 const reportMetadataChanges = (
-  data: unknown,
+  data: { actions: SyncAction[] },
   onProgress?: (message: string) => void,
 ): void => {
-  const actions = Array.isArray((data as { actions?: unknown[] })?.actions)
-    ? (data as { actions: unknown[] }).actions
-    : [];
-
-  for (const event of formatSyncActionsSummary(actions)) {
+  for (const event of formatSyncActionsSummary(data.actions)) {
     onProgress?.(event.message);
   }
 };

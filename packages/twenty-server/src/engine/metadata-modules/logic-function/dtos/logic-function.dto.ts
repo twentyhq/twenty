@@ -38,7 +38,7 @@ registerEnumType(LogicFunctionExecutionMode, {
 
 @ObjectType('LogicFunction')
 @Authorize({
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   authorize: (context: any) => ({
     workspaceId: { eq: context?.req?.workspace?.id },
   }),

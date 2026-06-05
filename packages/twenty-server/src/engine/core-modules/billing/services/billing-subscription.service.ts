@@ -263,6 +263,7 @@ export class BillingSubscriptionService {
         billingSubscription.stripeSubscriptionId,
         {
           trial_end: 'now',
+          cancel_at_period_end: false,
         },
       );
 

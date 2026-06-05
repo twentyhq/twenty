@@ -37,9 +37,20 @@ export type WorkspaceMigrationRunnerExecutionErrors = {
 const getActionUniversalIdentifierOrThrow = (
   action: AllUniversalWorkspaceMigrationAction,
 ): string => {
-  return action.type === 'create'
-    ? action.flatEntity?.universalIdentifier
-    : action.universalIdentifier;
+  if (action.type === 'create') {
+    const universalIdentifier = action.flatEntity?.universalIdentifier;
+
+    if (!universalIdentifier) {
+      throw new WorkspaceMigrationRunnerException({
+        message: `Missing universalIdentifier on create action for '${action.metadataName}'`,
+        code: WorkspaceMigrationRunnerExceptionCode.INTERNAL_SERVER_ERROR,
+      });
+    }
+
+    return universalIdentifier;
+  }
+
+  return action.universalIdentifier;
 };
 
 const {
