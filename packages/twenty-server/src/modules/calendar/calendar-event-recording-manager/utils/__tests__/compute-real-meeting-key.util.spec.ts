@@ -1,7 +1,7 @@
 import { computeRealMeetingKey } from 'src/modules/calendar/calendar-event-recording-manager/utils/compute-real-meeting-key.util';
 
 describe('computeRealMeetingKey', () => {
-  it('should key on the normalized conference link when present', () => {
+  it('should key on the normalized conference link and occurrence start when present', () => {
     expect(
       computeRealMeetingKey({
         calendarEventId: 'event-1',
@@ -9,10 +9,10 @@ describe('computeRealMeetingKey', () => {
         iCalUid: 'ical-1',
         startsAt: '2026-06-05T11:00:00.000Z',
       }),
-    ).toBe('link:meet.google.com/abc-defg-hij');
+    ).toBe('link:meet.google.com/abc-defg-hij:2026-06-05T11:00:00.000Z');
   });
 
-  it('should produce the same key for two events sharing one meeting link', () => {
+  it('should produce the same key for two events sharing one meeting link at the same start', () => {
     const keyA = computeRealMeetingKey({
       calendarEventId: 'event-a',
       conferenceLinkUrl: 'https://meet.google.com/abc-defg-hij?authuser=0',
@@ -24,10 +24,28 @@ describe('computeRealMeetingKey', () => {
       calendarEventId: 'event-b',
       conferenceLinkUrl: 'http://www.meet.google.com/abc-defg-hij/',
       iCalUid: 'ical-b',
-      startsAt: '2026-06-05T11:30:00.000Z',
+      startsAt: '2026-06-05T11:00:00.000Z',
     });
 
     expect(keyA).toBe(keyB);
+  });
+
+  it('should separate recurring occurrences that reuse the same meeting link', () => {
+    const firstWeek = computeRealMeetingKey({
+      calendarEventId: 'event-a',
+      conferenceLinkUrl: 'https://meet.google.com/abc-defg-hij',
+      iCalUid: 'ical-a',
+      startsAt: '2026-06-05T11:00:00.000Z',
+    });
+
+    const secondWeek = computeRealMeetingKey({
+      calendarEventId: 'event-b',
+      conferenceLinkUrl: 'https://meet.google.com/abc-defg-hij',
+      iCalUid: 'ical-a',
+      startsAt: '2026-06-12T11:00:00.000Z',
+    });
+
+    expect(firstWeek).not.toBe(secondWeek);
   });
 
   it('should fall back to iCalUid and occurrence start when there is no link', () => {

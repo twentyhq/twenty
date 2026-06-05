@@ -23,6 +23,7 @@ const buildCalendarEvent = (
 
 const mockCalendarEventRepository = {
   findOne: jest.fn(),
+  find: jest.fn(),
 };
 
 const mockGlobalWorkspaceOrmManager = {
@@ -64,7 +65,8 @@ describe('CalendarEventRecordingDecisionService', () => {
       calendarEventId: 'event-1',
       found: true,
       recordingPreference: 'AUTO',
-      realMeetingKey: 'link:meet.google.com/abc-defg-hij',
+      realMeetingKey:
+        'link:meet.google.com/abc-defg-hij:2999-01-01T10:00:00.000Z',
       eventIntent: 'ACTIVE',
       reason: 'AUTO_POLICY_MATCHED',
     });
@@ -132,5 +134,78 @@ describe('CalendarEventRecordingDecisionService', () => {
     expect(result.found).toBe(false);
     expect(result.eventIntent).toBeNull();
     expect(result.realMeetingKey).toBeNull();
+  });
+
+  describe('evaluateMeetingOccurrences', () => {
+    const MEETING_KEY =
+      'link:meet.google.com/abc-defg-hij:2999-01-01T10:00:00.000Z';
+
+    it('should keep a meeting ACTIVE when a changed copy is OFF but another copy still wants it', async () => {
+      const offEvent = buildCalendarEvent({
+        id: 'event-off',
+        recordingPreference: 'OFF',
+      });
+      const onEvent = buildCalendarEvent({
+        id: 'event-on',
+        recordingPreference: 'ON',
+      });
+
+      mockCalendarEventRepository.find
+        .mockResolvedValueOnce([offEvent])
+        .mockResolvedValueOnce([offEvent, onEvent]);
+
+      const aggregates = await service.evaluateMeetingOccurrences({
+        workspaceId: 'workspace-1',
+        calendarEventIds: ['event-off'],
+      });
+
+      expect(aggregates).toHaveLength(1);
+      expect(aggregates[0].providerIntent).toBe('ACTIVE');
+      expect(aggregates[0].activeCalendarEventIds).toEqual(['event-on']);
+    });
+
+    it('should cancel a meeting whose only calendar event was removed', async () => {
+      mockCalendarEventRepository.find.mockResolvedValueOnce([]);
+
+      const aggregates = await service.evaluateMeetingOccurrences({
+        workspaceId: 'workspace-1',
+        calendarEventIds: [],
+        removedOccurrences: [
+          { realMeetingKey: MEETING_KEY, startsAt: '2999-01-01T10:00:00.000Z' },
+        ],
+      });
+
+      expect(aggregates).toEqual([
+        {
+          realMeetingKey: MEETING_KEY,
+          providerIntent: 'CANCELED',
+          calendarEventIds: [],
+          activeCalendarEventIds: [],
+        },
+      ]);
+    });
+
+    it('should keep a meeting ACTIVE when one copy is removed but a surviving copy still wants it', async () => {
+      const survivingOnEvent = buildCalendarEvent({
+        id: 'event-on',
+        recordingPreference: 'ON',
+      });
+
+      mockCalendarEventRepository.find.mockResolvedValueOnce([
+        survivingOnEvent,
+      ]);
+
+      const aggregates = await service.evaluateMeetingOccurrences({
+        workspaceId: 'workspace-1',
+        calendarEventIds: [],
+        removedOccurrences: [
+          { realMeetingKey: MEETING_KEY, startsAt: '2999-01-01T10:00:00.000Z' },
+        ],
+      });
+
+      expect(aggregates).toHaveLength(1);
+      expect(aggregates[0].providerIntent).toBe('ACTIVE');
+      expect(aggregates[0].activeCalendarEventIds).toEqual(['event-on']);
+    });
   });
 });

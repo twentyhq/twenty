@@ -18,7 +18,9 @@ export const computeRealMeetingKey = ({
   const normalizedConferenceLink = normalizeConferenceLink(conferenceLinkUrl);
 
   if (isDefined(normalizedConferenceLink)) {
-    return `link:${normalizedConferenceLink}`;
+    // Same link + same start = one occurrence synced to several calendars (dedupe to one bot);
+    // same link + different start = distinct recurring occurrences sharing a permalink (keep apart).
+    return `link:${normalizedConferenceLink}:${startsAt ?? ''}`;
   }
 
   if (isDefined(iCalUid) && iCalUid !== '') {

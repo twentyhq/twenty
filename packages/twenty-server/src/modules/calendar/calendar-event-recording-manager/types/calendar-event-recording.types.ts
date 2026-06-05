@@ -37,3 +37,20 @@ export type CalendarEventRecordingDecisionResult = {
   eventIntent: CalendarEventRecordingIntent | null;
   reason: CalendarEventRecordingDecisionReason | null;
 };
+
+// Per-event recording decision for a loaded calendar event, before it is aggregated by meeting.
+export type CalendarEventRecordingDecisionForEvent = {
+  calendarEventId: string;
+  recordingPreference: string;
+  realMeetingKey: string;
+  eventIntent: CalendarEventRecordingIntent;
+  reason: CalendarEventRecordingDecisionReason;
+  startsAt: string | null;
+};
+
+// A real meeting occurrence whose source calendar event was deleted. The key + start let the job
+// re-check the surviving calendar events for that occurrence and cancel a bot none of them want.
+export type RemovedRecordingOccurrence = {
+  realMeetingKey: string;
+  startsAt: string | null;
+};
