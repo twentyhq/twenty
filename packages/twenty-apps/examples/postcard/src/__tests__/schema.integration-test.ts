@@ -1,5 +1,5 @@
-import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application.config';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { describe, expect, it } from 'vitest';
 
 describe('App installation', () => {
@@ -7,11 +7,7 @@ describe('App installation', () => {
     const client = new MetadataApiClient();
 
     const result = await client.query({
-      findManyApplications: {
-        id: true,
-        name: true,
-        universalIdentifier: true,
-      },
+      findManyApplications: { id: true, name: true, universalIdentifier: true },
     });
 
     const app = result.findManyApplications.find(
@@ -29,10 +25,7 @@ describe('PostCard object', () => {
 
     const { objects } = await client.query({
       objects: {
-        __args: {
-          filter: { isCustom: { is: true } },
-          paging: { first: 50 },
-        },
+        __args: { paging: { first: 50 } },
         edges: {
           node: {
             nameSingular: true,
@@ -59,5 +52,4 @@ describe('PostCard object', () => {
     expect(names).toContain('deliveredAt');
     expect(names).toContain('recipient');
   });
-
 });
