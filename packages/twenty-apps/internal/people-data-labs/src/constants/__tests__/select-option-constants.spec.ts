@@ -29,9 +29,6 @@ const fieldOptions = (field: unknown): FieldOption[] => {
   return options ?? [];
 };
 
-// Guards the inline-options -> shared-constants refactor: every option must keep
-// a resolved universalIdentifier (a key mismatch surfaces as an undefined id),
-// and the field must expose exactly the values declared in its source constant.
 const cases: {
   name: string;
   field: unknown;
