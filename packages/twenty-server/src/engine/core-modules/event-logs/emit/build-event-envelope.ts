@@ -12,10 +12,9 @@ import {
 } from 'src/engine/core-modules/event-logs/emit/analytics.utils';
 import { type PageviewProperties } from 'src/engine/core-modules/event-logs/emit/events/pageview/pageview';
 
-export const computeEventContextFields = (context?: {
-  workspaceId?: string | null;
-  userId?: string | null;
-}): EventContextFields => ({
+export const computeEventContextFields = (
+  context?: EventContextFields,
+): EventContextFields => ({
   ...(context?.workspaceId ? { workspaceId: context.workspaceId } : {}),
   ...(context?.userId ? { userId: context.userId } : {}),
 });

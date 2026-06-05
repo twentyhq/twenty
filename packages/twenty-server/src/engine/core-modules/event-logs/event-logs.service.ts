@@ -141,19 +141,14 @@ export class EventLogsService {
       return;
     }
 
-    if (!this.enterprisePlanService.isValid()) {
-      throw new EventLogsException(
-        'Audit logs require an Enterprise subscription.',
-        EventLogsExceptionCode.NO_ENTITLEMENT,
-      );
-    }
+    const hasAccess =
+      this.enterprisePlanService.isValid() &&
+      (await this.billingService.hasEntitlement(
+        workspaceId,
+        requiredEntitlement,
+      ));
 
-    const hasEntitlement = await this.billingService.hasEntitlement(
-      workspaceId,
-      requiredEntitlement,
-    );
-
-    if (!hasEntitlement) {
+    if (!hasAccess) {
       throw new EventLogsException(
         'Audit logs require an Enterprise subscription.',
         EventLogsExceptionCode.NO_ENTITLEMENT,

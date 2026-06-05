@@ -1,5 +1,4 @@
-import { format } from 'date-fns';
-
+import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import { type AuditCommonPropertiesType } from 'src/engine/core-modules/event-logs/emit/common.type';
 import {
   type TrackEventName,
@@ -15,7 +14,7 @@ import {
 } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/track';
 
 const common = (): Record<AuditCommonPropertiesType, string> => ({
-  timestamp: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
+  timestamp: formatDateTimeForClickHouse(new Date()),
   version: '1',
 });
 

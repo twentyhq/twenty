@@ -37,7 +37,6 @@ type ClickHouseApplicationLogRow = {
   executionId?: string;
   level?: string;
   message?: string;
-  properties?: Record<string, unknown>;
 };
 
 // Single source of truth for an event-log type: the ClickHouse table it lives in
@@ -122,7 +121,6 @@ export const EVENT_LOG_TYPES: Record<EventLogTable, EventLogTypeDefinition> = {
         event: record.logicFunctionName ?? '',
         timestamp: new Date(record.timestamp),
         properties: {
-          ...(record.properties ?? {}),
           level: record.level,
           message: record.message,
           executionId: record.executionId,

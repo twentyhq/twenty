@@ -5,7 +5,10 @@ import {
   type TrackEventName,
   type TrackEventProperties,
 } from 'src/engine/core-modules/event-logs/emit/events.type';
-import { type WorkspaceEventEnvelope } from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
+import {
+  type EventContextFields,
+  type WorkspaceEventEnvelope,
+} from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
 import {
   buildObjectEventEnvelope,
   buildPageviewEnvelope,
@@ -23,10 +26,7 @@ export class EventLogEmitterService {
     private readonly workspaceEventSinkService: WorkspaceEventSinkService,
   ) {}
 
-  createContext(context?: {
-    workspaceId?: string | null | undefined;
-    userId?: string | null | undefined;
-  }) {
+  createContext(context?: EventContextFields) {
     const contextFields = computeEventContextFields(context);
 
     return {
