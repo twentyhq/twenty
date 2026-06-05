@@ -1,5 +1,6 @@
 {
-  "name": "@twenty/ui",
+  "name": "twenty-new-ui",
+  "//name": "Named `twenty-new-ui` because the target name `twenty-ui` is still taken by the existing packages/twenty-ui workspace (Yarn forbids duplicate workspace names). Renamed to `twenty-ui` at the Phase 6 cut-over once the old package is removed.",
   "version": "0.0.0",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",

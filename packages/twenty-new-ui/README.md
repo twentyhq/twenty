@@ -224,7 +224,7 @@ CI surfaces a per-PR diff table (`twenty-ui` vs `twenty-new-ui`) for size, a11y,
 
 - Vite library mode, dual ESM/CJS, `vite-plugin-dts`, `vite-plugin-svgr`; SCSS via Vite's built-in `sass`; no Babel.
 - `sideEffects: ["**/*.css", "**/*.scss"]`; emit per-entry CSS plus `style.css` / `theme-light.css` / `theme-dark.css`.
-- Public package (remove `private`); scoped name (e.g. `@twenty/ui`).
+- Public package (remove `private`); ships as `twenty-new-ui` until cut-over, then claims the `twenty-ui` name once the old package is removed.
 - **Changesets** for semver + changelog; GitHub Actions release with `npm publish --provenance`.
 - Declare `react` / `react-dom` as peer dependencies; validate the `exports`/types map with `publint` + `@arethetypeswrong/cli`.
 - Publish the Storybook as living documentation.
@@ -264,7 +264,7 @@ a passing visual-parity diff, and a within-budget size entry.
 
 ## Open questions
 
-1. Published package name/scope (proposed `@twenty/ui`).
+1. Published package name: `twenty-new-ui` now, renamed to `twenty-ui` at cut-over (Phase 6).
 2. Styling: confirm SCSS Modules vs vanilla-extract vs plain CSS Modules.
 3. Variants helper: `clsx` + `data-*` vs `cva`.
 4. Visual regression tooling: Chromatic vs self-hosted image snapshots.
