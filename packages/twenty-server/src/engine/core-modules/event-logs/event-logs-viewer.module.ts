@@ -13,6 +13,7 @@ import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { ClickHouseModule } from 'src/database/clickHouse/clickHouse.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 
 import { EventLogsLiveResolver } from './event-logs-live.resolver';
 import { EventLogsResolver } from './event-logs.resolver';
@@ -30,6 +31,7 @@ import { EventLogsService } from './event-logs.service';
     JwtModule,
     EventLogLiveModule,
     EventLogEmitterModule,
+    SubscriptionsModule,
     TypeOrmModule.forFeature([UserWorkspaceEntity]),
   ],
   providers: [
