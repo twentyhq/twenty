@@ -2,7 +2,6 @@
 
 import { EventLogTable } from 'twenty-shared/types';
 
-import { parseClickHouseDateTime } from 'src/database/clickHouse/clickHouse.util';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { type EventLogRecord } from 'src/engine/core-modules/event-logs/dtos/event-log-result.dto';
 import {
@@ -23,17 +22,19 @@ export type EventLogTypeDefinition = {
   // null = free on every plan; otherwise the required billing entitlement
   requiresEntitlement: BillingEntitlementKey | null;
   eventFieldName: string;
-  normalize: (row: Record<string, unknown>) => EventLogRecord;
+  // The shared dispatcher stamps `timestamp`; each type maps only its own fields.
+  normalize: (
+    row: Record<string, unknown>,
+  ) => Omit<EventLogRecord, 'timestamp'>;
 };
 
 const normalizeGenericEvent =
   (eventFieldName: 'event' | 'name') =>
-  (row: Record<string, unknown>): EventLogRecord => {
+  (row: Record<string, unknown>): Omit<EventLogRecord, 'timestamp'> => {
     const record = row as StoredEventRow;
 
     return {
       event: record[eventFieldName] ?? '',
-      timestamp: parseClickHouseDateTime(record.timestamp),
       userId: record.userId ?? undefined,
       properties: record.properties,
       recordId: record.recordId,
@@ -70,7 +71,6 @@ export const EVENT_LOG_TYPES: Record<EventLogTable, EventLogTypeDefinition> = {
 
       return {
         event: record.resourceType ?? '',
-        timestamp: parseClickHouseDateTime(record.timestamp),
         userId: record.userWorkspaceId,
         properties: {
           ...(record.metadata ?? {}),
@@ -93,7 +93,6 @@ export const EVENT_LOG_TYPES: Record<EventLogTable, EventLogTypeDefinition> = {
 
       return {
         event: record.logicFunctionName ?? '',
-        timestamp: parseClickHouseDateTime(record.timestamp),
         properties: {
           level: record.level,
           message: record.message,

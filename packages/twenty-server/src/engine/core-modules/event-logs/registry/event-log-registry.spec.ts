@@ -4,6 +4,7 @@ import {
   EVENT_LOG_TYPES,
   getClickHouseTableName,
 } from 'src/engine/core-modules/event-logs/registry/event-log-registry';
+import { normalizeEventLogRecords } from 'src/engine/core-modules/event-logs/utils/normalize-event-log-records';
 
 describe('event-log registry', () => {
   it('has a complete definition for every EventLogTable', () => {
@@ -54,10 +55,10 @@ describe('event-log registry', () => {
     });
 
     it('parses the ClickHouse timestamp as UTC, not server-local time', () => {
-      const record = EVENT_LOG_TYPES[EventLogTable.WORKSPACE_EVENT].normalize({
-        event: 'user.signup',
-        timestamp,
-      });
+      const [record] = normalizeEventLogRecords(
+        [{ event: 'user.signup', timestamp }],
+        EventLogTable.WORKSPACE_EVENT,
+      );
 
       expect(record.timestamp.toISOString()).toBe('2026-01-01T00:00:00.000Z');
     });
