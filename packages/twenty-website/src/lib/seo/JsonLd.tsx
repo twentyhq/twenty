@@ -1,3 +1,5 @@
+import serialize from 'serialize-javascript';
+
 type JsonLdPrimitive = boolean | number | string | null;
 
 export type JsonLdValue =
@@ -5,13 +7,10 @@ export type JsonLdValue =
   | JsonLdValue[]
   | { [key: string]: JsonLdValue | undefined };
 
-const serializeJsonLd = (data: JsonLdValue): string =>
-  JSON.stringify(data).replace(/</g, '\\u003c');
-
 export function JsonLd({ data }: { data: JsonLdValue }) {
   return (
     <script
-      dangerouslySetInnerHTML={{ __html: serializeJsonLd(data) }}
+      dangerouslySetInnerHTML={{ __html: serialize(data, { isJSON: true }) }}
       type="application/ld+json"
     />
   );

@@ -9,7 +9,7 @@ import { SettingsEmailingDomainVerificationRecords } from '@/settings/emailing-d
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/display';
@@ -64,7 +64,7 @@ export const SettingsEmailingDomainDetail = () => {
       enqueueSuccessSnackBar({
         message: t`Emailing domain deleted successfully`,
       });
-      navigateSettings(SettingsPath.Workspace);
+      navigateSettings(SettingsPath.WorkspaceEmail);
     } catch (deleteError) {
       enqueueErrorSnackBar({
         ...(CombinedGraphQLErrors.is(deleteError)
@@ -75,16 +75,16 @@ export const SettingsEmailingDomainDetail = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={emailingDomain.domain}
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
-          children: <Trans>Emailing Domains</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
+          children: <Trans>Email</Trans>,
+          href: getSettingsPath(SettingsPath.WorkspaceEmail),
         },
         { children: emailingDomain.domain },
       ]}
@@ -117,6 +117,6 @@ export const SettingsEmailingDomainDetail = () => {
         confirmButtonAccent="danger"
         loading={deleting}
       />
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

@@ -39,6 +39,17 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     });
   }
 
+  findOneBy(
+    workspaceId: string,
+    where: FindOptionsWhere<T>,
+  ): Promise<T | null> {
+    this.assertWorkspaceId(workspaceId);
+
+    return this.repository.findOneBy(
+      this.mergeWorkspaceIdIntoCriteria(workspaceId, where),
+    );
+  }
+
   find(workspaceId: string, options?: FindManyOptions<T>): Promise<T[]> {
     this.assertWorkspaceId(workspaceId);
 
@@ -57,6 +68,51 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     });
   }
 
+  findAndCount(
+    workspaceId: string,
+    options?: FindManyOptions<T>,
+  ): Promise<[T[], number]> {
+    this.assertWorkspaceId(workspaceId);
+
+    return this.repository.findAndCount({
+      ...options,
+      where: this.mergeWorkspaceIdIntoWhere(workspaceId, options?.where),
+    });
+  }
+
+  exists(workspaceId: string, options?: FindManyOptions<T>): Promise<boolean> {
+    this.assertWorkspaceId(workspaceId);
+
+    return this.repository.exists({
+      ...options,
+      where: this.mergeWorkspaceIdIntoWhere(workspaceId, options?.where),
+    });
+  }
+
+  existsBy(workspaceId: string, where: FindOptionsWhere<T>): Promise<boolean> {
+    this.assertWorkspaceId(workspaceId);
+
+    return this.repository.existsBy(
+      this.mergeWorkspaceIdIntoCriteria(workspaceId, where),
+    );
+  }
+
+  maximum(
+    workspaceId: string,
+    columnName: string,
+    where?: FindOptionsWhere<T>,
+  ): Promise<number | null> {
+    this.assertWorkspaceId(workspaceId);
+
+    return this.repository.maximum(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      columnName as any,
+      where
+        ? this.mergeWorkspaceIdIntoCriteria(workspaceId, where)
+        : ({ workspaceId } as FindOptionsWhere<T>),
+    );
+  }
+
   update(
     workspaceId: string,
     criteria: FindOptionsWhere<T>,
@@ -67,6 +123,36 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     return this.repository.update(
       this.mergeWorkspaceIdIntoCriteria(workspaceId, criteria),
       partialEntity,
+    );
+  }
+
+  increment(
+    workspaceId: string,
+    criteria: FindOptionsWhere<T>,
+    propertyPath: string,
+    value: number | string,
+  ): Promise<UpdateResult> {
+    this.assertWorkspaceId(workspaceId);
+
+    return this.repository.increment(
+      this.mergeWorkspaceIdIntoCriteria(workspaceId, criteria),
+      propertyPath,
+      value,
+    );
+  }
+
+  decrement(
+    workspaceId: string,
+    criteria: FindOptionsWhere<T>,
+    propertyPath: string,
+    value: number | string,
+  ): Promise<UpdateResult> {
+    this.assertWorkspaceId(workspaceId);
+
+    return this.repository.decrement(
+      this.mergeWorkspaceIdIntoCriteria(workspaceId, criteria),
+      propertyPath,
+      value,
     );
   }
 
@@ -91,6 +177,14 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
       this.mergeWorkspaceIdIntoCriteria(workspaceId, criteria),
     );
   }
+
+  // softRemove / recover / remove are intentionally absent.
+  // TypeORM's entity-based methods use only the primary key in the WHERE
+  // clause — stamping workspaceId on the entity object does not add an
+  // AND workspace_id = ? guard to the SQL. A leaked entity id could
+  // therefore act on a row from a different workspace.
+  // Use softDelete / delete (criteria-based) instead — they always include
+  // workspaceId in the WHERE clause.
 
   insert(
     workspaceId: string,

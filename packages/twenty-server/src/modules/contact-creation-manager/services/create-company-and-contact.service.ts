@@ -6,7 +6,8 @@ import chunk from 'lodash.chunk';
 import compact from 'lodash.compact';
 import {
   ConnectedAccountProvider,
-  type FieldActorSource,
+  FieldActorSource,
+  type FullNameMetadata,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type DeepPartial, type Repository } from 'typeorm';
@@ -112,6 +113,7 @@ export class CreateCompanyAndPersonService {
         const {
           contactsThatNeedPersonCreate,
           contactsThatNeedPersonRestore,
+          peopleToEnrichNames,
           workDomainNamesToCreate,
           shouldCreateOrRestorePeopleByHandleMap,
         } =
@@ -154,6 +156,11 @@ export class CreateCompanyAndPersonService {
 
         const restoredPeople = await this.createPersonService.restorePeople(
           peopleToRestore,
+          workspaceId,
+        );
+
+        await this.createPersonService.enrichPeopleNames(
+          peopleToEnrichNames,
           workspaceId,
         );
 
@@ -296,6 +303,11 @@ export class CreateCompanyAndPersonService {
       return !isNull(existingPerson.deletedAt);
     });
 
+    const peopleToEnrichNames = this.computePeopleToEnrichNames(
+      uniqueContacts,
+      shouldCreateOrRestorePeopleByHandleMap,
+    );
+
     const workDomainNamesToCreate = compact(
       [...contactsThatNeedPersonCreate, ...contactsThatNeedPersonRestore]
         .map((contact) => {
@@ -321,9 +333,91 @@ export class CreateCompanyAndPersonService {
     return {
       contactsThatNeedPersonCreate,
       contactsThatNeedPersonRestore,
+      peopleToEnrichNames,
       workDomainNamesToCreate,
       shouldCreateOrRestorePeopleByHandleMap,
     };
+  }
+
+  // Stages per-personId name enrichments for existing People auto-created via
+  // CALENDAR or EMAIL. Empty fields are filled from new sources (first
+  // non-empty value wins across multiple contacts mapping to the same Person);
+  // populated fields are never overwritten.
+  private computePeopleToEnrichNames(
+    uniqueContacts: Contact[],
+    shouldCreateOrRestorePeopleByHandleMap: Map<
+      string,
+      { existingPerson: PersonWorkspaceEntity }
+    >,
+  ): { personId: string; name: FullNameMetadata }[] {
+    const enrichmentByPersonId = new Map<
+      string,
+      { firstName: string; lastName: string }
+    >();
+
+    for (const contact of uniqueContacts) {
+      const existingPerson = shouldCreateOrRestorePeopleByHandleMap.get(
+        contact.handle.toLowerCase(),
+      )?.existingPerson;
+
+      if (!isDefined(existingPerson)) {
+        continue;
+      }
+
+      // Soft-deleted matches are restored earlier in the same job, so the
+      // enrichment UPDATE runs against an un-deleted row.
+      const existingSource = existingPerson.createdBy?.source;
+
+      if (
+        existingSource !== FieldActorSource.CALENDAR &&
+        existingSource !== FieldActorSource.EMAIL
+      ) {
+        continue;
+      }
+
+      const staged = enrichmentByPersonId.get(existingPerson.id);
+      const currentFirstName =
+        staged?.firstName ?? existingPerson.name?.firstName ?? '';
+      const currentLastName =
+        staged?.lastName ?? existingPerson.name?.lastName ?? '';
+      const firstNameIsEmpty = !isNonEmptyString(currentFirstName);
+      const lastNameIsEmpty = !isNonEmptyString(currentLastName);
+
+      if (!firstNameIsEmpty && !lastNameIsEmpty) {
+        continue;
+      }
+
+      const { firstName: parsedFirstName, lastName: parsedLastName } =
+        getFirstNameAndLastNameFromHandleAndDisplayName(
+          contact.handle,
+          contact.displayName,
+        );
+
+      const enrichedFirstName =
+        firstNameIsEmpty && isNonEmptyString(parsedFirstName)
+          ? parsedFirstName
+          : currentFirstName;
+      const enrichedLastName =
+        lastNameIsEmpty && isNonEmptyString(parsedLastName)
+          ? parsedLastName
+          : currentLastName;
+
+      if (
+        enrichedFirstName === currentFirstName &&
+        enrichedLastName === currentLastName
+      ) {
+        continue;
+      }
+
+      enrichmentByPersonId.set(existingPerson.id, {
+        firstName: enrichedFirstName,
+        lastName: enrichedLastName,
+      });
+    }
+
+    return Array.from(enrichmentByPersonId.entries()).map(
+      ([personId, name]) => ({ personId, name }),
+    );
   }
 
   formatPeopleToCreateFromContacts({

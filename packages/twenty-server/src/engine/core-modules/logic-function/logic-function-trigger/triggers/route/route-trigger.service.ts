@@ -5,7 +5,7 @@ import { Request } from 'express';
 import { match } from 'path-to-regexp';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Repository } from 'typeorm';
-import { HTTPMethod } from 'twenty-shared/types';
+import { HTTPMethod, isLogicFunctionHttpResponse } from 'twenty-shared/types';
 
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -25,6 +25,26 @@ import {
   LogicFunctionExecutorService,
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { CustomException } from 'src/utils/custom-exception';
+
+export type RouteTriggerResponse = {
+  statusCode: number;
+  headers: Record<string, string>;
+  body: unknown;
+};
+
+export const buildRouteTriggerResponse = (
+  data: unknown,
+): RouteTriggerResponse => {
+  if (isLogicFunctionHttpResponse(data)) {
+    return {
+      statusCode: data.status ?? 200,
+      headers: data.headers ?? {},
+      body: data.body,
+    };
+  }
+
+  return { statusCode: 200, headers: {}, body: data };
+};
 
 @Injectable()
 export class RouteTriggerService {
@@ -223,7 +243,7 @@ export class RouteTriggerService {
     }
 
     if (!isDefined(result)) {
-      return result;
+      return buildRouteTriggerResponse(result);
     }
 
     if (result.error) {
@@ -233,6 +253,6 @@ export class RouteTriggerService {
       );
     }
 
-    return result.data;
+    return buildRouteTriggerResponse(result.data);
   }
 }

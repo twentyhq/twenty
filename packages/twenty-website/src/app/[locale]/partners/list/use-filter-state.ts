@@ -4,7 +4,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 
 import type {
-  DeploymentExpertise,
+  PartnerScope,
   ServedGeo,
   SpokenLanguage,
 } from '@/lib/partners-api';
@@ -23,7 +23,7 @@ type UseFilterStateReturn = {
   criteria: FilterCriteria;
   toggleRegion: (geo: ServedGeo) => void;
   toggleLanguage: (lang: SpokenLanguage) => void;
-  toggleDeployment: (dep: DeploymentExpertise) => void;
+  toggleCategory: (scope: PartnerScope) => void;
   clearAll: () => void;
   hasAnyFilter: boolean;
 };
@@ -67,11 +67,11 @@ export const useFilterState = (): UseFilterStateReturn => {
     [criteria, writeCriteria],
   );
 
-  const toggleDeployment = useCallback(
-    (dep: DeploymentExpertise) => {
+  const toggleCategory = useCallback(
+    (scope: PartnerScope) => {
       writeCriteria({
         ...criteria,
-        deployments: toggleInSet(criteria.deployments, dep),
+        categories: toggleInSet(criteria.categories, scope),
       });
     },
     [criteria, writeCriteria],
@@ -81,7 +81,7 @@ export const useFilterState = (): UseFilterStateReturn => {
     writeCriteria({
       regions: new Set(),
       languages: new Set(),
-      deployments: new Set(),
+      categories: new Set(),
     });
   }, [writeCriteria]);
 
@@ -89,7 +89,7 @@ export const useFilterState = (): UseFilterStateReturn => {
     criteria,
     toggleRegion,
     toggleLanguage,
-    toggleDeployment,
+    toggleCategory,
     clearAll,
     hasAnyFilter: computeHasAnyFilter(criteria),
   };

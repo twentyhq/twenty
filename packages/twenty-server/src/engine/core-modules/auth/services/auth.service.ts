@@ -19,7 +19,8 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
+import { IMPERSONATION_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/impersonation/impersonation';
 import {
   AuthException,
   AuthExceptionCode,
@@ -45,10 +46,8 @@ import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
-import {
-  AuthContextUser,
-  JwtTokenTypeEnum,
-} from 'src/engine/core-modules/auth/types/auth-context.type';
+import { AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import {
   type AuthProviderWithPasswordType,
   type ExistingUserOrNewUser,
@@ -100,7 +99,7 @@ export class AuthService {
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly i18nService: I18nService,
-    private readonly auditService: AuditService,
+    private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly createSSOConnectedAccountService: CreateSSOConnectedAccountService,
@@ -428,13 +427,14 @@ export class AuthService {
   }): Promise<AuthTokens> {
     const correlationId = randomUUID();
 
-    const analytics = this.auditService.createContext({
+    const eventLogContext = this.eventLogEmitterService.createContext({
       workspaceId,
       userId: _impersonatorUserId,
     });
 
-    await analytics.insertWorkspaceEvent('Monitoring', {
-      eventName: 'workspace.impersonation.attempted',
+    void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
+      level: 'workspace',
+      action: 'attempted',
       message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
 
@@ -459,8 +459,9 @@ export class AuthService {
       true,
     );
 
-    await analytics.insertWorkspaceEvent('Monitoring', {
-      eventName: 'workspace.impersonation.issued',
+    void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
+      level: 'workspace',
+      action: 'issued',
       message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
 

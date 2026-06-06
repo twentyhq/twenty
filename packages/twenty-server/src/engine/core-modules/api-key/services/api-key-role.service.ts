@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { In, IsNull, Not, Repository } from 'typeorm';
+import { In, IsNull, Not } from 'typeorm';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
@@ -23,10 +22,10 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 @Injectable()
 export class ApiKeyRoleService {
   constructor(
-    @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
-    @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
+    @InjectWorkspaceScopedRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
+    @InjectWorkspaceScopedRepository(RoleEntity)
+    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
 
     @InjectWorkspaceScopedRepository(ApiKeyEntity)
     private readonly apiKeyRepository: WorkspaceScopedRepository<ApiKeyEntity>,
@@ -141,8 +140,8 @@ export class ApiKeyRoleService {
       );
     }
 
-    const role = await this.roleRepository.findOne({
-      where: { id: roleId, workspaceId },
+    const role = await this.roleRepository.findOne(workspaceId, {
+      where: { id: roleId },
     });
 
     if (!role) {
@@ -159,13 +158,15 @@ export class ApiKeyRoleService {
       );
     }
 
-    const existingRoleTarget = await this.roleTargetRepository.findOne({
-      where: {
-        apiKeyId,
-        roleId,
-        workspaceId,
+    const existingRoleTarget = await this.roleTargetRepository.findOne(
+      workspaceId,
+      {
+        where: {
+          apiKeyId,
+          roleId,
+        },
       },
-    });
+    );
 
     return {
       roleToAssignIsSameAsCurrentRole: Boolean(existingRoleTarget),
@@ -183,10 +184,9 @@ export class ApiKeyRoleService {
       return new Map();
     }
 
-    const roleTargets = await this.roleTargetRepository.find({
+    const roleTargets = await this.roleTargetRepository.find(workspaceId, {
       where: {
         apiKeyId: In(apiKeyIds),
-        workspaceId,
       },
       relations: ['role'],
     });
@@ -209,10 +209,9 @@ export class ApiKeyRoleService {
     roleId: string,
     workspaceId: string,
   ): Promise<ApiKeyEntity[]> {
-    const roleTargets = await this.roleTargetRepository.find({
+    const roleTargets = await this.roleTargetRepository.find(workspaceId, {
       where: {
         roleId,
-        workspaceId,
         apiKeyId: Not(IsNull()),
       },
     });

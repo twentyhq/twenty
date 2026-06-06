@@ -252,6 +252,51 @@ describe('computeCursorArgFilter', () => {
       ]);
     });
 
+    it('should handle dotted composite cursor keys', () => {
+      const cursor = {
+        'fullName.firstName': 'John',
+        'fullName.lastName': 'Doe',
+      } as any;
+      const orderBy = [
+        {
+          fullName: {
+            firstName: OrderByDirection.AscNullsLast,
+            lastName: OrderByDirection.AscNullsLast,
+          },
+        },
+      ];
+
+      const result = computeCursorArgFilter(
+        cursor,
+        orderBy,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        true,
+      );
+
+      expect(result).toEqual([
+        {
+          fullName: {
+            firstName: { gt: 'John' },
+          },
+        },
+        {
+          and: [
+            {
+              fullName: {
+                firstName: { eq: 'John' },
+              },
+            },
+            {
+              fullName: {
+                lastName: { gt: 'Doe' },
+              },
+            },
+          ],
+        },
+      ]);
+    });
+
     it('should handle composite field with backward pagination', () => {
       const cursor = {
         fullName: { firstName: 'John', lastName: 'Doe' },

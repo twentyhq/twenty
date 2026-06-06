@@ -64,6 +64,75 @@ Hauptpunkte:
 * `description` (optional) liefert Kontext dazu, was der Agent tut.
 * `icon` (optional) legt das in der UI angezeigte Symbol fest.
 * `modelId` (optional) überschreibt das vom Agenten verwendete Standard-KI-Modell.
+* `responseFormat` (optional) steuert die Form der Ausgabe des Agenten. Standardmäßig ist `{ type: 'text' }` für Freitext. Verwenden Sie `{ type: 'json', schema }`, um eine strukturierte JSON-Ausgabe zu erzwingen.
+
+Standardmäßig gibt ein Agent freien Text zurück. Um eine strukturierte Ausgabe zu erhalten, setzen Sie `responseFormat` auf `{ type: 'json' }` und geben Sie ein `schema` an:
+
+```ts src/agents/structured-agent.ts
+import { defineAgent } from 'twenty-sdk/define';
+
+export default defineAgent({
+  universalIdentifier: 'c4d5e6f7-a8b9-0123-cdef-456789012345',
+  name: 'lead-scorer',
+  label: 'Lead Scorer',
+  prompt: 'Score the lead and explain your reasoning.',
+  responseFormat: {
+    type: 'json',
+    schema: {
+      type: 'object',
+      properties: {
+        score: { type: 'number', description: 'Lead score from 0 to 100' },
+        summary: { type: 'string', description: 'Short reasoning for the score' },
+      },
+      required: ['score', 'summary'],
+      additionalProperties: false,
+    },
+  },
+});
+```
+
+Schema-Hinweise:
+* Das Schema ist ein flaches Objekt: Der `type` jeder Eigenschaft muss ein primitiver Typ sein (`string`, `number` oder `boolean`). Verschachtelte Objekte und Arrays werden nicht unterstützt.
+* `description` (optional) an jeder Eigenschaft leitet das Modell an, was dort eingetragen werden soll.
+* `required` (optional) listet die Eigenschaften auf, die das Modell immer zurückgeben muss.
+* `additionalProperties: false` (optional) verbietet alle Eigenschaften, die nicht in `properties` deklariert sind.
+
+</Accordion>
+<Accordion title="runAgent" description="Einen Agenten aus einer Logikfunktion ausführen">
+
+`runAgent()` ermöglicht es einer Logikfunktion, einen der Agenten Ihrer App auszuführen (mit seinen Fähigkeiten und Tools). Identifizieren Sie den Agenten über den `universalIdentifier`, den Sie an `defineAgent()` übergeben haben:
+
+```ts src/logic-functions/run-enricher.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  prompt: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
+});
+```
+
+Hauptpunkte:
+* Der Agent wird **synchron** ausgeführt und kann selbst Datensätze über seine eigenen Tools lesen/aktualisieren — `runAgent()` wird aufgelöst, sobald die Ausführung abgeschlossen ist.
+* Eine App kann nur ihre eigenen Agenten ausführen.
+* Die [Standardrolle](/l/de/developers/extend/apps/config/roles) der App muss das Berechtigungsflag `AI` gewähren — fügen Sie `SystemPermissionFlag.AI` zu ihren `permissionFlagUniversalIdentifiers` hinzu (oder setzen Sie `canAccessAllTools: true`).
+  Ohne dieses Flag schlägt `runAgent()` mit einem Berechtigungsfehler fehl.
+* Setzen Sie ein großzügiges `timeoutSeconds` für die Logikfunktion — Agentenläufe können mehrere Sekunden dauern.
+* `success` ist `true` und `result` ist nicht null, wenn der Lauf abgeschlossen ist; bei einem Fehler ist `success` `false`, `result` ist `null` und `error` enthält den Grund (zum Beispiel, wenn dem Workspace während des Laufs die AI-Credits ausgehen).
+
+```ts src/roles/default-role.ts
+import { defineApplicationRole, SystemPermissionFlag } from 'twenty-sdk/define';
+
+export default defineApplicationRole({
+  universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
+  label: 'Default function role',
+  // runAgent() requires the AI permission flag on the app's default role.
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],
+});
+```
+
+<Warning>
+  **Vermeiden Sie Schleifen:** Wenn Sie `runAgent()` von einem `*.updated`-Datenbankereignis-Trigger aus aufrufen und der Agent denselben Datensatz aktualisiert, schränken Sie den Trigger mit `updatedFields` auf ein Feld ein, das der Agent niemals beschreibt (z. B. die Quell-URL), oder prüfen Sie, ob eines der Zielfelder noch leer ist, bevor Sie `runAgent()` aufrufen.
+</Warning>
 
 </Accordion>
 </AccordionGroup>

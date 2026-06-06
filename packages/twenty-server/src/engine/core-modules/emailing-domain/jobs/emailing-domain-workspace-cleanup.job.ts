@@ -5,6 +5,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 
 export type EmailingDomainWorkspaceCleanupJobData = {
   workspaceId: string;
+  domains: string[];
 };
 
 @Processor(MessageQueue.deleteCascadeQueue)
@@ -13,11 +14,12 @@ export class EmailingDomainWorkspaceCleanupJob {
 
   @Process(EmailingDomainWorkspaceCleanupJob.name)
   async handle(data: EmailingDomainWorkspaceCleanupJobData): Promise<void> {
-    const { workspaceId } = data;
+    const { workspaceId, domains } = data;
 
     try {
-      await this.emailingDomainService.cleanupAllEmailingDomainsForWorkspace(
+      await this.emailingDomainService.cleanupEmailingDomainsForWorkspace(
         workspaceId,
+        domains,
       );
     } catch (error) {
       throw new Error(

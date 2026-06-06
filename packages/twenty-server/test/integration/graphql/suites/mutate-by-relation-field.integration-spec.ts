@@ -51,32 +51,27 @@ describe('Mutate by relation field (e2e)', () => {
         {
           id: TEST_PERSON_IDS.AIRBNB_ENGINEER,
           companyId: TEST_COMPANY_IDS.AIRBNB,
-          jobTitle: 'Engineer',
-          city: 'Original City',
+          jobTitle: 'Original City',
         },
         {
           id: TEST_PERSON_IDS.AIRBNB_DESIGNER,
           companyId: TEST_COMPANY_IDS.AIRBNB,
-          jobTitle: 'Designer',
-          city: 'Original City',
+          jobTitle: 'Original City',
         },
         {
           id: TEST_PERSON_IDS.STRIPE_ENGINEER,
           companyId: TEST_COMPANY_IDS.STRIPE,
-          jobTitle: 'Engineer',
-          city: 'Original City',
+          jobTitle: 'Original City',
         },
         {
           id: TEST_PERSON_IDS.NOTION_ENGINEER,
           companyId: TEST_COMPANY_IDS.NOTION,
-          jobTitle: 'Engineer',
-          city: 'Original City',
+          jobTitle: 'Original City',
         },
         {
           id: TEST_PERSON_IDS.UNAFFILIATED,
           companyId: null,
-          jobTitle: 'Engineer',
-          city: 'Original City',
+          jobTitle: 'Original City',
         },
       ],
       upsert: true,
@@ -112,8 +107,8 @@ describe('Mutate by relation field (e2e)', () => {
     const updateOperation = updateManyOperationFactory({
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',
-      gqlFields: 'id city',
-      data: { city: 'Updated City' },
+      gqlFields: 'id jobTitle',
+      data: { jobTitle: 'Updated City' },
       filter: {
         and: [
           { id: { in: ALL_TEST_PERSON_IDS } },
@@ -138,37 +133,37 @@ describe('Mutate by relation field (e2e)', () => {
     const findOperation = findManyOperationFactory({
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',
-      gqlFields: 'id city',
+      gqlFields: 'id jobTitle',
       filter: { id: { in: ALL_TEST_PERSON_IDS } },
     });
 
     const findResponse = await makeGraphqlAPIRequest(findOperation);
 
-    const cityByPersonId = Object.fromEntries(
+    const jobTitleByPersonId = Object.fromEntries(
       findResponse.body.data.people.edges.map(
-        (edge: { node: { id: string; city: string } }) => [
+        (edge: { node: { id: string; jobTitle: string } }) => [
           edge.node.id,
-          edge.node.city,
+          edge.node.jobTitle,
         ],
       ),
     );
 
-    expect(cityByPersonId[TEST_PERSON_IDS.AIRBNB_ENGINEER]).toEqual(
+    expect(jobTitleByPersonId[TEST_PERSON_IDS.AIRBNB_ENGINEER]).toEqual(
       'Updated City',
     );
-    expect(cityByPersonId[TEST_PERSON_IDS.AIRBNB_DESIGNER]).toEqual(
+    expect(jobTitleByPersonId[TEST_PERSON_IDS.AIRBNB_DESIGNER]).toEqual(
       'Updated City',
     );
 
     // Non-Airbnb rows must stay untouched — the JOIN must not widen the
     // mutation past the filter.
-    expect(cityByPersonId[TEST_PERSON_IDS.STRIPE_ENGINEER]).toEqual(
+    expect(jobTitleByPersonId[TEST_PERSON_IDS.STRIPE_ENGINEER]).toEqual(
       'Original City',
     );
-    expect(cityByPersonId[TEST_PERSON_IDS.NOTION_ENGINEER]).toEqual(
+    expect(jobTitleByPersonId[TEST_PERSON_IDS.NOTION_ENGINEER]).toEqual(
       'Original City',
     );
-    expect(cityByPersonId[TEST_PERSON_IDS.UNAFFILIATED]).toEqual(
+    expect(jobTitleByPersonId[TEST_PERSON_IDS.UNAFFILIATED]).toEqual(
       'Original City',
     );
   });
@@ -325,8 +320,8 @@ describe('Mutate by relation field (e2e)', () => {
     const updateOperation = updateManyOperationFactory({
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',
-      gqlFields: 'id city',
-      data: { city: 'Scalar Updated City' },
+      gqlFields: 'id jobTitle',
+      data: { jobTitle: 'Scalar Updated City' },
       filter: { id: { eq: TEST_PERSON_IDS.UNAFFILIATED } },
     });
 
@@ -334,7 +329,7 @@ describe('Mutate by relation field (e2e)', () => {
 
     expect(updateResponse.body.errors).toBeUndefined();
     expect(updateResponse.body.data.updatePeople).toHaveLength(1);
-    expect(updateResponse.body.data.updatePeople[0].city).toEqual(
+    expect(updateResponse.body.data.updatePeople[0].jobTitle).toEqual(
       'Scalar Updated City',
     );
   });

@@ -32,6 +32,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ApiKeyRoleService,
     PermissionsService,
     provideWorkspaceScopedRepository(ApiKeyEntity),
+    provideWorkspaceScopedRepository(RoleEntity),
+    provideWorkspaceScopedRepository(RoleTargetEntity),
   ],
   exports: [PermissionsService, ApiKeyRoleService],
 })

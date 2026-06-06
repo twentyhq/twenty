@@ -298,8 +298,8 @@ export default defineFrontComponent({
 Use `useSelectedRecordIds()` para lidar com vários registros selecionados. Isso é útil para operações em lote:
 
 ```tsx src/front-components/bulk-export.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { defineFrontComponent, numberOfSelectedRecords } from 'twenty-sdk/define';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 
@@ -383,11 +383,11 @@ export default defineCommandMenuItem({
 O campo `conditionalAvailabilityExpression` permite controlar quando um comando é visível com base no contexto da página atual. Importe variáveis tipadas e operadores de `twenty-sdk` para construir expressões:
 
 ```ts src/command-menu-items/bulk-update.command-menu-item.ts
-import { defineCommandMenuItem } from 'twenty-sdk/define';
 import {
+  defineCommandMenuItem,
   objectPermissions,
   everyEquals,
-} from 'twenty-sdk/front-component';
+} from 'twenty-sdk/define';
 
 export default defineCommandMenuItem({
   universalIdentifier: '...',

@@ -1,10 +1,10 @@
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import {
-  type ViewKey,
   type AggregateOperations,
   type ViewCalendarLayout,
   type ViewFilterGroupLogicalOperator,
   type ViewFilterOperand,
+  type ViewKey,
   type ViewOpenRecordIn,
   type ViewSortDirection,
   type ViewType,
@@ -25,6 +25,10 @@ export type ViewFieldManifest = SyncableEntityOptions & {
   position: number;
   aggregateOperation?: AggregateOperations;
   viewFieldGroupUniversalIdentifier?: string;
+};
+
+export type StandaloneViewFieldManifest = ViewFieldManifest & {
+  viewUniversalIdentifier: string;
 };
 
 export type ViewFilterManifest = SyncableEntityOptions & {

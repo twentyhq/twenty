@@ -194,6 +194,7 @@ export const GraphWidgetPieChart = ({
             enableArcLabels={false}
             tooltip={() => null}
             layers={[ArcsLayer, 'arcLinkLabels']}
+            id={(datum: PieChartDataItem) => `${id}:${String(datum.id)}`}
             arcLinkLabel={(datum: ComputedDatum<PieChartDataItem>) => {
               const formattedValue = getPieChartFormattedValue({
                 datum,

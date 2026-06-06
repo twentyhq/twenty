@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
+import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { FlatWebhookModule } from 'src/engine/metadata-modules/flat-webhook/flat-webhook.module';
@@ -11,7 +11,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
 @Module({
   imports: [
-    AuditModule,
+    EventLogEmitterModule,
     FlatWebhookModule,
     MetricsModule,
     SecureHttpClientModule,

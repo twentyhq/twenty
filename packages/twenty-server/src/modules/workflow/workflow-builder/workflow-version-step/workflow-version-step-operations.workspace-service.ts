@@ -27,6 +27,8 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
   WorkflowVersionStepException,
@@ -70,8 +72,8 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
     private readonly codeStepBuildService: CodeStepBuildService,
     private readonly agentService: AgentService,
-    @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
+    @InjectWorkspaceScopedRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
@@ -89,6 +91,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
   }) {
     switch (step.type) {
       case WorkflowActionType.CODE: {
+        if (!isValidUuid(step.settings.input.logicFunctionId)) {
+          break;
+        }
+
         await this.logicFunctionFromSourceService.deleteOneWithSource({
           id: step.settings.input.logicFunctionId,
           workspaceId,
@@ -100,12 +106,14 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           break;
         }
 
-        const roleTarget = await this.roleTargetRepository.findOne({
-          where: {
-            agentId: step.settings.input.agentId,
-            workspaceId,
+        const roleTarget = await this.roleTargetRepository.findOne(
+          workspaceId,
+          {
+            where: {
+              agentId: step.settings.input.agentId,
+            },
           },
-        });
+        );
 
         await this.agentService.deleteManyAgents({
           ids: [step.settings.input.agentId],

@@ -31,7 +31,7 @@ Report: {
 `;
 
 exports[`formatUpgradeErrorForStorage should format a WorkspaceMigrationRunnerException with EXECUTION_FAILED 1`] = `
-"[WorkspaceMigrationRunnerException] Migration action 'create' for 'objectMetadata' failed
+"[WorkspaceMigrationRunnerException] Migration action 'create' for 'objectMetadata' (universalIdentifier: test-object-uid) failed
 Code: EXECUTION_FAILED
 Action: create on objectMetadata
 Metadata error: column "label" cannot be null
