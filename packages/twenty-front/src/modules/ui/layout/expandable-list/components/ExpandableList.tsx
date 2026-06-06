@@ -110,13 +110,8 @@ export const ExpandableList = ({
     resetFirstHiddenChildIndex();
   }, [isChipCountDisplayed, children.length, resetFirstHiddenChildIndex]);
 
-  // Recompute the first hidden child when the available width changes.
-  // The overflow detection is only performed during the children ref pass, so
-  // without this the list would stay stuck on the number of items that fit at
-  // first measurement, even when the cell later grows wider (see #12039).
-  // We observe the outer container because its width tracks the available width
-  // independently of how many children are currently rendered, which avoids a
-  // measure -> trim -> shrink -> re-measure feedback loop.
+  // Recompute visible chips when the container width changes (see #12039).
+  // Observes the outer container to avoid a measure-trim-shrink feedback loop.
   useEffect(() => {
     const outerContainerElement = containerRef.current;
 
@@ -135,9 +130,9 @@ export const ExpandableList = ({
 
       const newWidth = entry.contentRect.width;
 
-      // Ignore sub-pixel fluctuations to avoid unnecessary recomputations
-      // and re-renders while a column is being resized.
-      if (Math.abs(newWidth - previousWidth) > 1) {
+      const RESIZE_THRESHOLD_PX = 1;
+
+      if (Math.abs(newWidth - previousWidth) > RESIZE_THRESHOLD_PX) {
         previousWidth = newWidth;
         resetFirstHiddenChildIndex();
       }
