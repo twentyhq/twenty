@@ -7,27 +7,51 @@ import { In } from 'typeorm';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type CalendarEventRecordingDecisionResult } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording-decision-result.type';
-import { type CalendarEventRecordingDecisionForMeeting } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording-decision-for-meeting.type';
+import { type CalendarEventRecordingPolicyReason } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording-policy-reason.type';
+import { type CalendarEventRecordingPolicyResultForMeeting } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording-policy-result-for-meeting.type';
 import { type RemovedCalendarEventRecordingOccurrence } from 'src/modules/calendar/calendar-event-recording-manager/types/removed-calendar-event-recording-occurrence.type';
-import { aggregateCalendarEventRecordingDecisionsByMeeting } from 'src/modules/calendar/calendar-event-recording-manager/utils/aggregate-calendar-event-recording-decisions-by-meeting.util';
-import { buildCalendarEventRecordingDecision } from 'src/modules/calendar/calendar-event-recording-manager/utils/build-calendar-event-recording-decision.util';
+import { aggregateCalendarEventRecordingPolicyResultsByMeeting } from 'src/modules/calendar/calendar-event-recording-manager/utils/aggregate-calendar-event-recording-policy-results-by-meeting.util';
+import { buildCalendarEventRecordingPolicyResult } from 'src/modules/calendar/calendar-event-recording-manager/utils/build-calendar-event-recording-policy-result.util';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
+type FoundCalendarEventRecordingPolicyResult = {
+  workspaceId: string;
+  calendarEventId: string;
+  found: true;
+  recordingPreference: string;
+  realMeetingKey: string;
+  shouldRecord: boolean;
+  reason: CalendarEventRecordingPolicyReason;
+};
+
+type NotFoundCalendarEventRecordingPolicyResult = {
+  workspaceId: string;
+  calendarEventId: string;
+  found: false;
+  recordingPreference: null;
+  realMeetingKey: null;
+  shouldRecord: null;
+  reason: null;
+};
+
+type CalendarEventRecordingPolicyResultForCalendarEvent =
+  | FoundCalendarEventRecordingPolicyResult
+  | NotFoundCalendarEventRecordingPolicyResult;
+
 @Injectable()
-export class CalendarEventRecordingDecisionService {
+export class CalendarEventRecordingPolicyService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  async evaluateCalendarEvent({
+  async resolveCalendarEventPolicyResult({
     workspaceId,
     calendarEventId,
   }: {
     workspaceId: string;
     calendarEventId: string;
-  }): Promise<CalendarEventRecordingDecisionResult> {
+  }): Promise<CalendarEventRecordingPolicyResultForCalendarEvent> {
     const isRecordingEnabledForWorkspace =
       await this.isRecordingEnabledForWorkspace(workspaceId);
 
@@ -48,19 +72,22 @@ export class CalendarEventRecordingDecisionService {
           return buildNotFoundResult({ workspaceId, calendarEventId });
         }
 
-        const decision = buildCalendarEventRecordingDecision(calendarEvent, {
-          isRecordingEnabledForWorkspace,
-          now: new Date(),
-        });
+        const policyResult = buildCalendarEventRecordingPolicyResult(
+          calendarEvent,
+          {
+            isRecordingEnabledForWorkspace,
+            now: new Date(),
+          },
+        );
 
         return {
           workspaceId,
           calendarEventId,
           found: true,
-          recordingPreference: decision.recordingPreference,
-          realMeetingKey: decision.realMeetingKey,
-          eventIntent: decision.eventIntent,
-          reason: decision.reason,
+          recordingPreference: policyResult.recordingPreference,
+          realMeetingKey: policyResult.realMeetingKey,
+          shouldRecord: policyResult.shouldRecord,
+          reason: policyResult.reason,
         };
       },
       buildSystemAuthContext(workspaceId),
@@ -68,8 +95,8 @@ export class CalendarEventRecordingDecisionService {
     );
   }
 
-  // Re-evaluate the current event set so one OFF duplicate does not cancel an active duplicate.
-  async evaluateMeetingOccurrences({
+  // Re-resolve the current event set so one OFF duplicate does not cancel a recording duplicate.
+  async resolveMeetingPolicyResults({
     workspaceId,
     calendarEventIds,
     removedOccurrences = [],
@@ -77,7 +104,7 @@ export class CalendarEventRecordingDecisionService {
     workspaceId: string;
     calendarEventIds: string[];
     removedOccurrences?: RemovedCalendarEventRecordingOccurrence[];
-  }): Promise<CalendarEventRecordingDecisionForMeeting[]> {
+  }): Promise<CalendarEventRecordingPolicyResultForMeeting[]> {
     const isRecordingEnabledForWorkspace =
       await this.isRecordingEnabledForWorkspace(workspaceId);
 
@@ -103,7 +130,7 @@ export class CalendarEventRecordingDecisionService {
 
         for (const changedCalendarEvent of changedCalendarEvents) {
           affectedMeetingKeys.add(
-            buildCalendarEventRecordingDecision(changedCalendarEvent, {
+            buildCalendarEventRecordingPolicyResult(changedCalendarEvent, {
               isRecordingEnabledForWorkspace,
               now,
             }).realMeetingKey,
@@ -137,7 +164,7 @@ export class CalendarEventRecordingDecisionService {
             : [];
 
         // A changed event with a null start is not returned by the anchor query; keep it so a
-        // link-less, iCalUid-less occurrence still evaluates against itself.
+        // link-less, iCalUid-less occurrence still resolves against itself.
         const occurrenceEventsById = new Map<
           string,
           CalendarEventWorkspaceEntity
@@ -150,46 +177,48 @@ export class CalendarEventRecordingDecisionService {
           occurrenceEventsById.set(calendarEvent.id, calendarEvent);
         }
 
-        const perEventRecordingDecisions = [...occurrenceEventsById.values()]
+        const perEventRecordingPolicyResults = [
+          ...occurrenceEventsById.values(),
+        ]
           .map((calendarEvent) =>
-            buildCalendarEventRecordingDecision(calendarEvent, {
+            buildCalendarEventRecordingPolicyResult(calendarEvent, {
               isRecordingEnabledForWorkspace,
               now,
             }),
           )
-          .filter((decision) =>
-            affectedMeetingKeys.has(decision.realMeetingKey),
+          .filter((policyResult) =>
+            affectedMeetingKeys.has(policyResult.realMeetingKey),
           )
-          .map((decision) => ({
-            calendarEventId: decision.calendarEventId,
-            realMeetingKey: decision.realMeetingKey,
-            eventIntent: decision.eventIntent,
+          .map((policyResult) => ({
+            calendarEventId: policyResult.calendarEventId,
+            realMeetingKey: policyResult.realMeetingKey,
+            shouldRecord: policyResult.shouldRecord,
           }));
 
-        const meetingDecisions =
-          aggregateCalendarEventRecordingDecisionsByMeeting(
-            perEventRecordingDecisions,
+        const meetingPolicyResults =
+          aggregateCalendarEventRecordingPolicyResultsByMeeting(
+            perEventRecordingPolicyResults,
           );
 
-        // If every event was removed, there is no per-event decision to aggregate.
-        const meetingKeysWithDecision = new Set(
-          meetingDecisions.map(
-            (meetingDecision) => meetingDecision.realMeetingKey,
+        // If every event was removed, there is no per-event policy result to aggregate.
+        const meetingKeysWithPolicyResult = new Set(
+          meetingPolicyResults.map(
+            (meetingPolicyResult) => meetingPolicyResult.realMeetingKey,
           ),
         );
 
         for (const meetingKey of affectedMeetingKeys) {
-          if (!meetingKeysWithDecision.has(meetingKey)) {
-            meetingDecisions.push({
+          if (!meetingKeysWithPolicyResult.has(meetingKey)) {
+            meetingPolicyResults.push({
               realMeetingKey: meetingKey,
-              meetingRecordingIntent: 'CANCELED',
+              shouldRecord: false,
               calendarEventIds: [],
-              activeCalendarEventIds: [],
+              recordingCalendarEventIds: [],
             });
           }
         }
 
-        return meetingDecisions;
+        return meetingPolicyResults;
       },
       buildSystemAuthContext(workspaceId),
       { lite: true },
@@ -212,12 +241,12 @@ const buildNotFoundResult = ({
 }: {
   workspaceId: string;
   calendarEventId: string;
-}): CalendarEventRecordingDecisionResult => ({
+}): CalendarEventRecordingPolicyResultForCalendarEvent => ({
   workspaceId,
   calendarEventId,
   found: false,
   recordingPreference: null,
   realMeetingKey: null,
-  eventIntent: null,
+  shouldRecord: null,
   reason: null,
 });

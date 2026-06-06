@@ -14,10 +14,8 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import {
-  CalendarEventRecordingDecisionJob,
-  type CalendarEventRecordingDecisionJobData,
-} from 'src/modules/calendar/calendar-event-recording-manager/jobs/calendar-event-recording-decision.job';
+import { CalendarEventRecordingPolicyJob } from 'src/modules/calendar/calendar-event-recording-manager/jobs/calendar-event-recording-policy.job';
+import { type CalendarEventRecordingPolicyJobData } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording-policy-job-data.type';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 
 // Participant matching is asynchronous, and AUTO depends on external participants.
@@ -36,7 +34,7 @@ export class CalendarEventRecordingParticipantListener {
       ObjectRecordCreateEvent<CalendarEventParticipantWorkspaceEntity>
     >,
   ): Promise<void> {
-    await this.enqueueParentDecision(
+    await this.enqueueParentPolicyCheck(
       payload.workspaceId,
       payload.events.map((event) => event.properties.after.calendarEventId),
     );
@@ -56,7 +54,7 @@ export class CalendarEventRecordingParticipantListener {
       )
       .map((event) => event.properties.after.calendarEventId);
 
-    await this.enqueueParentDecision(payload.workspaceId, calendarEventIds);
+    await this.enqueueParentPolicyCheck(payload.workspaceId, calendarEventIds);
   }
 
   @OnDatabaseBatchEvent('calendarEventParticipant', DatabaseEventAction.DELETED)
@@ -65,7 +63,7 @@ export class CalendarEventRecordingParticipantListener {
       ObjectRecordDeleteEvent<CalendarEventParticipantWorkspaceEntity>
     >,
   ): Promise<void> {
-    await this.enqueueParentDecision(
+    await this.enqueueParentPolicyCheck(
       payload.workspaceId,
       payload.events.map((event) => event.properties.before.calendarEventId),
     );
@@ -80,13 +78,13 @@ export class CalendarEventRecordingParticipantListener {
       ObjectRecordDestroyEvent<CalendarEventParticipantWorkspaceEntity>
     >,
   ): Promise<void> {
-    await this.enqueueParentDecision(
+    await this.enqueueParentPolicyCheck(
       payload.workspaceId,
       payload.events.map((event) => event.properties.before.calendarEventId),
     );
   }
 
-  private async enqueueParentDecision(
+  private async enqueueParentPolicyCheck(
     workspaceId: string,
     calendarEventIds: (string | null | undefined)[],
   ): Promise<void> {
@@ -98,8 +96,8 @@ export class CalendarEventRecordingParticipantListener {
       return;
     }
 
-    await this.messageQueueService.add<CalendarEventRecordingDecisionJobData>(
-      CalendarEventRecordingDecisionJob.name,
+    await this.messageQueueService.add<CalendarEventRecordingPolicyJobData>(
+      CalendarEventRecordingPolicyJob.name,
       {
         workspaceId,
         calendarEventIds: definedCalendarEventIds,

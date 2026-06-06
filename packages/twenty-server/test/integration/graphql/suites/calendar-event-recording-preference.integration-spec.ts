@@ -11,7 +11,7 @@ import { type MessageQueueService } from 'src/engine/core-modules/message-queue/
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-import { CalendarEventRecordingDecisionJob } from 'src/modules/calendar/calendar-event-recording-manager/jobs/calendar-event-recording-decision.job';
+import { CalendarEventRecordingPolicyJob } from 'src/modules/calendar/calendar-event-recording-manager/jobs/calendar-event-recording-policy.job';
 
 const TEST_WORKSPACE_SCHEMA = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
 
@@ -265,7 +265,7 @@ describe('calendar event recording preference lifecycle (e2e)', () => {
   const reconcileCalendarEventRecording = (
     changedCalendarEventIds: string[],
   ): Promise<void> =>
-    addCalendarQueueJob(CalendarEventRecordingDecisionJob.name, {
+    addCalendarQueueJob(CalendarEventRecordingPolicyJob.name, {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       calendarEventIds: changedCalendarEventIds,
       removedOccurrences: [],

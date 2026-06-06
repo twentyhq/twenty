@@ -1,4 +1,4 @@
-import { CalendarEventRecordingDecisionJob } from 'src/modules/calendar/calendar-event-recording-manager/jobs/calendar-event-recording-decision.job';
+import { CalendarEventRecordingPolicyJob } from 'src/modules/calendar/calendar-event-recording-manager/jobs/calendar-event-recording-policy.job';
 import { CalendarEventRecordingListener } from 'src/modules/calendar/calendar-event-recording-manager/listeners/calendar-event-recording.listener';
 
 const mockMessageQueueService = {
@@ -35,13 +35,13 @@ describe('CalendarEventRecordingListener', () => {
     );
   });
 
-  it('should enqueue a decision when a recording-relevant field changed', async () => {
+  it('should enqueue a policy check when a recording-relevant field changed', async () => {
     await listener.handleUpdatedEvent(
       buildUpdatePayload(['recordingPreference']),
     );
 
     expect(mockMessageQueueService.add).toHaveBeenCalledWith(
-      CalendarEventRecordingDecisionJob.name,
+      CalendarEventRecordingPolicyJob.name,
       {
         workspaceId: 'workspace-1',
         calendarEventIds: ['event-1'],
@@ -54,7 +54,7 @@ describe('CalendarEventRecordingListener', () => {
     await listener.handleUpdatedEvent(buildUpdatePayload(['conferenceLink']));
 
     expect(mockMessageQueueService.add).toHaveBeenCalledWith(
-      CalendarEventRecordingDecisionJob.name,
+      CalendarEventRecordingPolicyJob.name,
       {
         workspaceId: 'workspace-1',
         calendarEventIds: ['event-1'],
@@ -96,7 +96,7 @@ describe('CalendarEventRecordingListener', () => {
     } as any);
 
     expect(mockMessageQueueService.add).toHaveBeenCalledWith(
-      CalendarEventRecordingDecisionJob.name,
+      CalendarEventRecordingPolicyJob.name,
       {
         workspaceId: 'workspace-1',
         calendarEventIds: [],

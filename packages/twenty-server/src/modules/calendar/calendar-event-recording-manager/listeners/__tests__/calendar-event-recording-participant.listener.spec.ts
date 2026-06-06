@@ -1,4 +1,4 @@
-import { CalendarEventRecordingDecisionJob } from 'src/modules/calendar/calendar-event-recording-manager/jobs/calendar-event-recording-decision.job';
+import { CalendarEventRecordingPolicyJob } from 'src/modules/calendar/calendar-event-recording-manager/jobs/calendar-event-recording-policy.job';
 import { CalendarEventRecordingParticipantListener } from 'src/modules/calendar/calendar-event-recording-manager/listeners/calendar-event-recording-participant.listener';
 
 const mockMessageQueueService = {
@@ -15,14 +15,14 @@ describe('CalendarEventRecordingParticipantListener', () => {
     );
   });
 
-  it('should re-evaluate the parent calendar event when a participant is created', async () => {
+  it('should re-check the parent calendar event when a participant is created', async () => {
     await listener.handleCreatedEvent({
       workspaceId: 'workspace-1',
       events: [{ properties: { after: { calendarEventId: 'event-1' } } }],
     } as any);
 
     expect(mockMessageQueueService.add).toHaveBeenCalledWith(
-      CalendarEventRecordingDecisionJob.name,
+      CalendarEventRecordingPolicyJob.name,
       {
         workspaceId: 'workspace-1',
         calendarEventIds: ['event-1'],
@@ -31,7 +31,7 @@ describe('CalendarEventRecordingParticipantListener', () => {
     );
   });
 
-  it('should re-evaluate only when a participant workspace member relation changed', async () => {
+  it('should re-check only when a participant workspace member relation changed', async () => {
     await listener.handleUpdatedEvent({
       workspaceId: 'workspace-1',
       events: [
@@ -51,7 +51,7 @@ describe('CalendarEventRecordingParticipantListener', () => {
     } as any);
 
     expect(mockMessageQueueService.add).toHaveBeenCalledWith(
-      CalendarEventRecordingDecisionJob.name,
+      CalendarEventRecordingPolicyJob.name,
       {
         workspaceId: 'workspace-1',
         calendarEventIds: ['event-1'],
@@ -76,14 +76,14 @@ describe('CalendarEventRecordingParticipantListener', () => {
     expect(mockMessageQueueService.add).not.toHaveBeenCalled();
   });
 
-  it('should re-evaluate the parent calendar event when a participant is destroyed', async () => {
+  it('should re-check the parent calendar event when a participant is destroyed', async () => {
     await listener.handleDestroyedEvent({
       workspaceId: 'workspace-1',
       events: [{ properties: { before: { calendarEventId: 'event-1' } } }],
     } as any);
 
     expect(mockMessageQueueService.add).toHaveBeenCalledWith(
-      CalendarEventRecordingDecisionJob.name,
+      CalendarEventRecordingPolicyJob.name,
       {
         workspaceId: 'workspace-1',
         calendarEventIds: ['event-1'],

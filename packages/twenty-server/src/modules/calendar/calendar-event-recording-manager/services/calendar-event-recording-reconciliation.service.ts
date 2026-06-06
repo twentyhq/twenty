@@ -6,7 +6,8 @@ import { In } from 'typeorm';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type CalendarEventRecordingDecisionForMeeting } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording-decision-for-meeting.type';
+import { type CalendarEventRecordingPolicyResultForMeeting } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording-policy-result-for-meeting.type';
+import { type CalendarEventRecordingReconciliationResult } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording-reconciliation-result.type';
 import { type RemovedCalendarEventRecordingOccurrence } from 'src/modules/calendar/calendar-event-recording-manager/types/removed-calendar-event-recording-occurrence.type';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { type CallRecordingWorkspaceEntity } from 'src/modules/call-recording/standard-objects/call-recording.workspace-entity';
@@ -22,18 +23,6 @@ type ScheduledCallRecordingFields = Pick<
   'title' | 'status' | 'startedAt' | 'endedAt' | 'calendarEventId'
 >;
 
-type CalendarEventRecordingReconciliationAction =
-  | 'CREATED'
-  | 'UPDATED'
-  | 'CANCELED'
-  | 'SKIPPED';
-
-export type CalendarEventRecordingReconciliationResult = {
-  action: CalendarEventRecordingReconciliationAction;
-  realMeetingKey: string;
-  callRecordingId: string | null;
-};
-
 @Injectable()
 export class CalendarEventRecordingReconciliationService {
   constructor(
@@ -42,11 +31,11 @@ export class CalendarEventRecordingReconciliationService {
 
   async reconcileMeetingOccurrences({
     workspaceId,
-    meetingDecisions,
+    meetingPolicyResults,
     removedOccurrences = [],
   }: {
     workspaceId: string;
-    meetingDecisions: CalendarEventRecordingDecisionForMeeting[];
+    meetingPolicyResults: CalendarEventRecordingPolicyResultForMeeting[];
     removedOccurrences?: RemovedCalendarEventRecordingOccurrence[];
   }): Promise<CalendarEventRecordingReconciliationResult[]> {
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
@@ -67,23 +56,21 @@ export class CalendarEventRecordingReconciliationService {
           buildRemovedCalendarEventIdsByMeetingKey(removedOccurrences);
         const results: CalendarEventRecordingReconciliationResult[] = [];
 
-        for (const meetingDecision of [
-          ...meetingDecisions.filter(
-            (meetingDecision) =>
-              meetingDecision.meetingRecordingIntent === 'CANCELED',
+        for (const meetingPolicyResult of [
+          ...meetingPolicyResults.filter(
+            (meetingPolicyResult) => !meetingPolicyResult.shouldRecord,
           ),
-          ...meetingDecisions.filter(
-            (meetingDecision) =>
-              meetingDecision.meetingRecordingIntent === 'ACTIVE',
+          ...meetingPolicyResults.filter(
+            (meetingPolicyResult) => meetingPolicyResult.shouldRecord,
           ),
         ]) {
-          if (meetingDecision.meetingRecordingIntent === 'ACTIVE') {
+          if (meetingPolicyResult.shouldRecord) {
             results.push(
               await reconcileActiveMeeting({
-                meetingDecision,
+                meetingPolicyResult,
                 removedCalendarEventIds:
                   removedCalendarEventIdsByMeetingKey.get(
-                    meetingDecision.realMeetingKey,
+                    meetingPolicyResult.realMeetingKey,
                   ) ?? [],
                 calendarEventRepository,
                 callRecordingRepository,
@@ -92,10 +79,10 @@ export class CalendarEventRecordingReconciliationService {
           } else {
             results.push(
               await reconcileCanceledMeeting({
-                meetingDecision,
+                meetingPolicyResult,
                 removedCalendarEventIds:
                   removedCalendarEventIdsByMeetingKey.get(
-                    meetingDecision.realMeetingKey,
+                    meetingPolicyResult.realMeetingKey,
                   ) ?? [],
                 callRecordingRepository,
               }),
@@ -112,12 +99,12 @@ export class CalendarEventRecordingReconciliationService {
 }
 
 const reconcileActiveMeeting = async ({
-  meetingDecision,
+  meetingPolicyResult,
   removedCalendarEventIds,
   calendarEventRepository,
   callRecordingRepository,
 }: {
-  meetingDecision: CalendarEventRecordingDecisionForMeeting;
+  meetingPolicyResult: CalendarEventRecordingPolicyResultForMeeting;
   removedCalendarEventIds: string[];
   calendarEventRepository: Pick<
     WorkspaceRepository<CalendarEventWorkspaceEntity>,
@@ -129,19 +116,19 @@ const reconcileActiveMeeting = async ({
   >;
 }): Promise<CalendarEventRecordingReconciliationResult> => {
   const calendarEventIds = getUniqueSortedCalendarEventIds([
-    ...meetingDecision.calendarEventIds,
-    ...meetingDecision.activeCalendarEventIds,
+    ...meetingPolicyResult.calendarEventIds,
+    ...meetingPolicyResult.recordingCalendarEventIds,
     ...removedCalendarEventIds,
   ]);
 
   const representativeCalendarEventId = getUniqueSortedCalendarEventIds(
-    meetingDecision.activeCalendarEventIds,
+    meetingPolicyResult.recordingCalendarEventIds,
   )[0];
 
   if (!isDefined(representativeCalendarEventId)) {
     return {
       action: 'SKIPPED',
-      realMeetingKey: meetingDecision.realMeetingKey,
+      realMeetingKey: meetingPolicyResult.realMeetingKey,
       callRecordingId: null,
     };
   }
@@ -153,7 +140,7 @@ const reconcileActiveMeeting = async ({
   if (!isDefined(representativeCalendarEvent)) {
     return {
       action: 'SKIPPED',
-      realMeetingKey: meetingDecision.realMeetingKey,
+      realMeetingKey: meetingPolicyResult.realMeetingKey,
       callRecordingId: null,
     };
   }
@@ -176,7 +163,7 @@ const reconcileActiveMeeting = async ({
 
     return {
       action: 'UPDATED',
-      realMeetingKey: meetingDecision.realMeetingKey,
+      realMeetingKey: meetingPolicyResult.realMeetingKey,
       callRecordingId: existingCallRecording.id,
     };
   }
@@ -186,17 +173,17 @@ const reconcileActiveMeeting = async ({
 
   return {
     action: 'CREATED',
-    realMeetingKey: meetingDecision.realMeetingKey,
+    realMeetingKey: meetingPolicyResult.realMeetingKey,
     callRecordingId: insertResult.identifiers[0]?.id ?? null,
   };
 };
 
 const reconcileCanceledMeeting = async ({
-  meetingDecision,
+  meetingPolicyResult,
   removedCalendarEventIds,
   callRecordingRepository,
 }: {
-  meetingDecision: CalendarEventRecordingDecisionForMeeting;
+  meetingPolicyResult: CalendarEventRecordingPolicyResultForMeeting;
   removedCalendarEventIds: string[];
   callRecordingRepository: Pick<
     WorkspaceRepository<CallRecordingWorkspaceEntity>,
@@ -204,7 +191,7 @@ const reconcileCanceledMeeting = async ({
   >;
 }): Promise<CalendarEventRecordingReconciliationResult> => {
   const calendarEventIds = getUniqueSortedCalendarEventIds([
-    ...meetingDecision.calendarEventIds,
+    ...meetingPolicyResult.calendarEventIds,
     ...removedCalendarEventIds,
   ]);
   const cancellableCallRecordings = (
@@ -221,7 +208,7 @@ const reconcileCanceledMeeting = async ({
   if (cancellableCallRecordings.length === 0) {
     return {
       action: 'SKIPPED',
-      realMeetingKey: meetingDecision.realMeetingKey,
+      realMeetingKey: meetingPolicyResult.realMeetingKey,
       callRecordingId: null,
     };
   }
@@ -235,7 +222,7 @@ const reconcileCanceledMeeting = async ({
 
   return {
     action: 'CANCELED',
-    realMeetingKey: meetingDecision.realMeetingKey,
+    realMeetingKey: meetingPolicyResult.realMeetingKey,
     callRecordingId: cancellableCallRecordings[0]?.id ?? null,
   };
 };

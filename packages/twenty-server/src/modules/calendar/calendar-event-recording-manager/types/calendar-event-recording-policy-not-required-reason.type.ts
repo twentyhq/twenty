@@ -1,10 +1,8 @@
-export type CalendarEventRecordingDecisionReason =
+export type CalendarEventRecordingPolicyNotRequiredReason =
   | 'WORKSPACE_RECORDING_DISABLED'
   | 'EVENT_CANCELED'
   | 'PREFERENCE_OFF'
-  | 'PREFERENCE_ON'
   | 'PREFERENCE_ON_EVENT_NOT_UPCOMING'
-  | 'AUTO_POLICY_MATCHED'
   | 'AUTO_MISSING_CONFERENCE_LINK'
   | 'AUTO_EVENT_NOT_UPCOMING'
   | 'AUTO_NO_EXTERNAL_PARTICIPANT';

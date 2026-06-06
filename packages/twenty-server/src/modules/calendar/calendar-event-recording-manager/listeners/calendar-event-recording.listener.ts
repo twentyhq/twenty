@@ -13,15 +13,13 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import {
-  CalendarEventRecordingDecisionJob,
-  type CalendarEventRecordingDecisionJobData,
-} from 'src/modules/calendar/calendar-event-recording-manager/jobs/calendar-event-recording-decision.job';
+import { CalendarEventRecordingPolicyJob } from 'src/modules/calendar/calendar-event-recording-manager/jobs/calendar-event-recording-policy.job';
+import { type CalendarEventRecordingPolicyJobData } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording-policy-job-data.type';
 import { type RemovedCalendarEventRecordingOccurrence } from 'src/modules/calendar/calendar-event-recording-manager/types/removed-calendar-event-recording-occurrence.type';
 import { computeRealMeetingKey } from 'src/modules/calendar/calendar-event-recording-manager/utils/compute-real-meeting-key.util';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
-// Keep decision jobs focused on fields that can change recording behavior.
+// Keep policy jobs focused on fields that can change recording behavior.
 const RECORDING_RELEVANT_CALENDAR_EVENT_FIELDS = [
   'recordingPreference',
   'conferenceLink',
@@ -50,7 +48,7 @@ export class CalendarEventRecordingListener {
       ObjectRecordCreateEvent<CalendarEventWorkspaceEntity>
     >,
   ): Promise<void> {
-    await this.enqueueDecision({
+    await this.enqueuePolicyCheck({
       workspaceId: payload.workspaceId,
       calendarEventIds: payload.events.map((event) => event.recordId),
     });
@@ -74,7 +72,7 @@ export class CalendarEventRecordingListener {
       )
       .map((event) => buildRemovedOccurrence(event.properties.before));
 
-    await this.enqueueDecision({
+    await this.enqueuePolicyCheck({
       workspaceId: payload.workspaceId,
       calendarEventIds,
       removedOccurrences,
@@ -87,7 +85,7 @@ export class CalendarEventRecordingListener {
       ObjectRecordDeleteEvent<CalendarEventWorkspaceEntity>
     >,
   ): Promise<void> {
-    await this.enqueueDecision({
+    await this.enqueuePolicyCheck({
       workspaceId: payload.workspaceId,
       calendarEventIds: [],
       removedOccurrences: payload.events.map((event) =>
@@ -102,7 +100,7 @@ export class CalendarEventRecordingListener {
       ObjectRecordDestroyEvent<CalendarEventWorkspaceEntity>
     >,
   ): Promise<void> {
-    await this.enqueueDecision({
+    await this.enqueuePolicyCheck({
       workspaceId: payload.workspaceId,
       calendarEventIds: [],
       removedOccurrences: payload.events.map((event) =>
@@ -111,7 +109,7 @@ export class CalendarEventRecordingListener {
     });
   }
 
-  private async enqueueDecision({
+  private async enqueuePolicyCheck({
     workspaceId,
     calendarEventIds,
     removedOccurrences = [],
@@ -124,8 +122,8 @@ export class CalendarEventRecordingListener {
       return;
     }
 
-    await this.messageQueueService.add<CalendarEventRecordingDecisionJobData>(
-      CalendarEventRecordingDecisionJob.name,
+    await this.messageQueueService.add<CalendarEventRecordingPolicyJobData>(
+      CalendarEventRecordingPolicyJob.name,
       { workspaceId, calendarEventIds, removedOccurrences },
     );
   }

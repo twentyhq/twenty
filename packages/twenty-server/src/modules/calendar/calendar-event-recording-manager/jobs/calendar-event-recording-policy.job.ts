@@ -3,42 +3,36 @@ import { Logger, Scope } from '@nestjs/common';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { type RemovedCalendarEventRecordingOccurrence } from 'src/modules/calendar/calendar-event-recording-manager/types/removed-calendar-event-recording-occurrence.type';
-import { CalendarEventRecordingDecisionService } from 'src/modules/calendar/calendar-event-recording-manager/services/calendar-event-recording-decision.service';
+import { CalendarEventRecordingPolicyService } from 'src/modules/calendar/calendar-event-recording-manager/services/calendar-event-recording-policy.service';
 import { CalendarEventRecordingReconciliationService } from 'src/modules/calendar/calendar-event-recording-manager/services/calendar-event-recording-reconciliation.service';
-
-export type CalendarEventRecordingDecisionJobData = {
-  workspaceId: string;
-  calendarEventIds: string[];
-  removedOccurrences?: RemovedCalendarEventRecordingOccurrence[];
-};
+import { type CalendarEventRecordingPolicyJobData } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording-policy-job-data.type';
 
 @Processor({
   queueName: MessageQueue.calendarQueue,
   scope: Scope.REQUEST,
 })
-export class CalendarEventRecordingDecisionJob {
-  private readonly logger = new Logger(CalendarEventRecordingDecisionJob.name);
+export class CalendarEventRecordingPolicyJob {
+  private readonly logger = new Logger(CalendarEventRecordingPolicyJob.name);
 
   constructor(
-    private readonly calendarEventRecordingDecisionService: CalendarEventRecordingDecisionService,
+    private readonly calendarEventRecordingPolicyService: CalendarEventRecordingPolicyService,
     private readonly calendarEventRecordingReconciliationService: CalendarEventRecordingReconciliationService,
   ) {}
 
-  @Process(CalendarEventRecordingDecisionJob.name)
+  @Process(CalendarEventRecordingPolicyJob.name)
   async handle({
     workspaceId,
     calendarEventIds,
     removedOccurrences,
-  }: CalendarEventRecordingDecisionJobData): Promise<void> {
-    const meetingDecisions =
-      await this.calendarEventRecordingDecisionService.evaluateMeetingOccurrences(
+  }: CalendarEventRecordingPolicyJobData): Promise<void> {
+    const meetingPolicyResults =
+      await this.calendarEventRecordingPolicyService.resolveMeetingPolicyResults(
         { workspaceId, calendarEventIds, removedOccurrences },
       );
 
     const reconciliationResults =
       await this.calendarEventRecordingReconciliationService.reconcileMeetingOccurrences(
-        { workspaceId, meetingDecisions, removedOccurrences },
+        { workspaceId, meetingPolicyResults, removedOccurrences },
       );
 
     for (const reconciliationResult of reconciliationResults) {
