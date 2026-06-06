@@ -7,7 +7,6 @@ import {
   type SelectQueryBuilder,
 } from 'typeorm';
 
-import { type SecretEncryptionRotationSiteName } from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-name.constant';
 import {
   SecretEncryptionRotationHandler,
   type SecretEncryptionRotationContext,
@@ -23,9 +22,8 @@ const ZERO_UUID = '00000000-0000-0000-0000-000000000000';
 type EntityWithId = ObjectLiteral & { id: string };
 
 export type ColumnRotationSiteConfig<Entity extends EntityWithId> = {
-  siteName: SecretEncryptionRotationSiteName;
   repository: Repository<Entity>;
-  encryptedColumn: keyof Entity & string;
+  encryptedColumn: string;
   isWorkspaceScoped?: boolean;
   extraWhere?: Partial<Entity>;
 };
@@ -33,7 +31,6 @@ export type ColumnRotationSiteConfig<Entity extends EntityWithId> = {
 export class ColumnRotationSiteHandler<
   Entity extends EntityWithId = EntityWithId,
 > extends SecretEncryptionRotationHandler {
-  readonly siteName: SecretEncryptionRotationSiteName;
   private readonly logger = new Logger(ColumnRotationSiteHandler.name);
 
   constructor(
@@ -41,14 +38,14 @@ export class ColumnRotationSiteHandler<
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {
     super();
-    this.siteName = config.siteName;
   }
 
   async countRemaining({
     currentEncryptionKeyId,
-  }: {
-    currentEncryptionKeyId: string;
-  }): Promise<number> {
+  }: Pick<
+    SecretEncryptionRotationContext,
+    'siteName' | 'currentEncryptionKeyId'
+  >): Promise<number> {
     const currentEnvelopePattern =
       buildCurrentEncryptionKeyIdEnvelopeLikePattern(currentEncryptionKeyId);
 
@@ -62,6 +59,7 @@ export class ColumnRotationSiteHandler<
   }
 
   async rotate({
+    siteName,
     currentEncryptionKeyId,
     batchSize,
     dryRun,
@@ -92,7 +90,7 @@ export class ColumnRotationSiteHandler<
       }
 
       for (const row of rows) {
-        const rowOutcome = await this.rotateRow({ row, dryRun });
+        const rowOutcome = await this.rotateRow({ siteName, row, dryRun });
 
         outcome.rotated += rowOutcome.rotated;
         outcome.skipped += rowOutcome.skipped;
@@ -106,9 +104,11 @@ export class ColumnRotationSiteHandler<
   }
 
   private async rotateRow({
+    siteName,
     row,
     dryRun,
   }: {
+    siteName: SecretEncryptionRotationContext['siteName'];
     row: Entity;
     dryRun: boolean;
   }): Promise<SecretEncryptionRotationOutcome> {
@@ -116,9 +116,13 @@ export class ColumnRotationSiteHandler<
     const rowId = row.id;
     const currentValue = row[encryptedColumn] as string | null | undefined;
 
+    if (currentValue === '') {
+      return { rotated: 0, skipped: 1, errors: 0 };
+    }
+
     if (!isDefined(currentValue) || !isEncryptedString(currentValue)) {
       this.logger.error(
-        `[${this.siteName}] row ${rowId}: column '${encryptedColumn}' is not a versioned envelope, refusing to rotate.`,
+        `[${siteName}] row ${rowId}: column '${encryptedColumn}' is not a versioned envelope, refusing to rotate.`,
       );
 
       return { rotated: 0, skipped: 0, errors: 1 };
@@ -155,7 +159,7 @@ export class ColumnRotationSiteHandler<
 
       return { rotated: 1, skipped: 0, errors: 0 };
     } catch (error) {
-      this.logger.error(buildRotationErrorMessage(this.siteName, rowId, error));
+      this.logger.error(buildRotationErrorMessage(siteName, rowId, error));
 
       return { rotated: 0, skipped: 0, errors: 1 };
     }

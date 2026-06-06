@@ -27,7 +27,7 @@ import { getCompositeFieldMetadataCollection } from 'src/engine/twenty-orm/utils
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export function formatResult<T>(
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   data: any,
   flatObjectMetadata: FlatObjectMetadata | undefined,
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
@@ -246,7 +246,7 @@ export function getCompositeFieldMetadataMap(
 }
 
 function formatFieldMetadataValue(
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   value: any,
   fieldMetadataType: FieldMetadataType,
 ) {
@@ -321,7 +321,7 @@ function formatCompositeFieldValue(
  * or records with incomplete data.
  */
 function handleEmptyCompositeFields(
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   data: Record<string, any>,
   flatObjectMetadata: FlatObjectMetadata,
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
@@ -344,7 +344,7 @@ function handleEmptyCompositeFields(
       continue;
     }
 
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     const typedFieldValue = fieldValue as Record<string, any>;
 
     // Check if all required properties are null/undefined
@@ -377,7 +377,7 @@ function handleEmptyCompositeFields(
  */
 function getDefaultCompositeFieldValue(
   fieldType: FieldMetadataType,
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
 ): Record<string, any> | null {
   switch (fieldType) {
     case FieldMetadataType.ACTOR:
