@@ -9,8 +9,8 @@ Eine **Rolle** ist ein Berechtigungssatz: welche Objekte eine App lesen oder sch
 ```ts src/roles/restricted-company-role.ts
 import {
   defineRole,
-  PermissionFlag,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  SystemPermissionFlag,
 } from 'twenty-sdk/define';
 
 export default defineRole({
@@ -46,7 +46,7 @@ export default defineRole({
       canUpdateFieldValue: false,
     },
   ],
-  permissionFlags: [PermissionFlag.APPLICATIONS],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
 });
 ```
 
@@ -55,7 +55,7 @@ export default defineRole({
 Wenn Sie eine neue App erzeugen, erstellt die CLI eine Datei für die Standardrolle, die mit `defineApplicationRole()` deklariert ist:
 
 ```ts src/roles/default-role.ts
-import { defineApplicationRole, PermissionFlag } from 'twenty-sdk/define';
+import { defineApplicationRole } from 'twenty-sdk/define';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
@@ -74,7 +74,7 @@ export default defineApplicationRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [],
   fieldPermissions: [],
-  permissionFlags: [],
+  permissionFlagUniversalIdentifiers: [],
 });
 ```
 
@@ -90,5 +90,5 @@ Notizen:
 
 * Beginnen Sie mit der vorgegebenen Rolle und schränken Sie sie dann schrittweise ein – standardmäßig wird umfangreicher Lesezugriff gewährt, was selten das ist, was Sie in Produktionsumgebungen möchten.
 * Ersetzen Sie `objectPermissions` und `fieldPermissions` durch die genauen Objekte und Felder, die Ihre Funktionen tatsächlich benötigen.
-* `permissionFlags` steuern den Zugriff auf Funktionen auf Plattformebene. Halten Sie sie minimal.
+* `permissionFlagUniversalIdentifiers` steuern den Zugriff auf Funktionen auf Plattformebene. Halten Sie sie minimal.
 * Ein funktionierendes Beispiel finden Sie unter: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).

@@ -154,6 +154,36 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
+  callRecording: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'callRecording'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'callRecording',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier: STANDARD_OBJECTS.callRecording.universalIdentifier,
+        nameSingular: 'callRecording',
+        namePlural: 'callRecordings',
+        labelSingular: i18nLabel(msg`Call Recording`),
+        labelPlural: i18nLabel(msg`Call Recordings`),
+        description: i18nLabel(msg`A recording of a meeting`),
+        icon: 'IconVideo',
+        isSystem: true,
+        isAuditLogged: false,
+        labelIdentifierFieldMetadataName: 'title',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
   company: ({
     now,
     workspaceId,

@@ -306,14 +306,14 @@ Aggiungere un campo `command` a `defineFrontComponent` registra il componente ne
 Il campo `conditionalAvailabilityExpression` consente di controllare quando un comando è visibile in base al contesto della pagina corrente. Importa variabili tipizzate e operatori da `twenty-sdk` per costruire espressioni:
 
 ```tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
 import {
+  defineFrontComponent,
   pageType,
   numberOfSelectedRecords,
   objectPermissions,
   everyEquals,
   isDefined,
-} from 'twenty-sdk/front-component';
+} from 'twenty-sdk/define';
 
 export default defineFrontComponent({
   universalIdentifier: '...',

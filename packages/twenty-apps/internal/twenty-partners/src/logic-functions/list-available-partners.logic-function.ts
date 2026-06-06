@@ -4,53 +4,58 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 export const LIST_AVAILABLE_PARTNERS_LOGIC_FUNCTION_ID =
   '0f91164f-f492-41e8-9bb0-481be5a3d5b9';
 
-type Partner = {
-  id: string;
-  name: string | null;
-  slug: string | null;
-  introduction: string | null;
-  languagesSpoken: string[] | null;
-  deploymentExpertise: string[] | null;
-  region: string[] | null;
-  calendarLink: { primaryLinkUrl: string | null } | null;
-};
+// CoreApiClient is codegenerated from the synced workspace schema, so the query
+// selection is strictly typed. Keep the fetch in one place and derive the
+// response shape from it, so the HTTP contract can never drift from what we
+// actually ask the API for.
+const queryAvailablePartners = (client: CoreApiClient) =>
+  client.query({
+    partners: {
+      __args: {
+        filter: {
+          validationStage: { eq: 'VALIDATED' },
+          availability: { eq: 'AVAILABLE' },
+          slug: { neq: '' },
+        },
+        orderBy: [{ name: 'AscNullsLast' }],
+        first: 100,
+      },
+      edges: {
+        node: {
+          id: true,
+          name: true,
+          slug: true,
+          introduction: true,
+          languagesSpoken: true,
+          deploymentExpertise: true,
+          partnerScope: true,
+          region: true,
+          calendarLink: { primaryLinkUrl: true },
+          hourlyRate: { amountMicros: true, currencyCode: true },
+          projectBudgetMin: { amountMicros: true, currencyCode: true },
+          linkedin: { primaryLinkUrl: true },
+          profilePicture: { primaryLinkUrl: true },
+          skills: true,
+          city: true,
+          country: true,
+        },
+      },
+    },
+  });
+
+type AvailablePartner = NonNullable<
+  Awaited<ReturnType<typeof queryAvailablePartners>>['partners']
+>['edges'][number]['node'];
 
 type ListAvailablePartnersResult =
-  | { ok: true; count: number; partners: Partner[] }
+  | { ok: true; count: number; partners: AvailablePartner[] }
   | { ok: false; reason: string };
 
 const handler = async (): Promise<ListAvailablePartnersResult> => {
   try {
     const client = new CoreApiClient();
-
-    const result = await client.query({
-      partners: {
-        __args: {
-          filter: {
-            validationStage: { eq: 'VALIDATED' },
-            availability: { eq: 'AVAILABLE' },
-          },
-          orderBy: [{ name: 'AscNullsLast' }],
-          first: 100,
-        },
-        edges: {
-          node: {
-            id: true,
-            name: true,
-            slug: true,
-            introduction: true,
-            languagesSpoken: true,
-            deploymentExpertise: true,
-            region: true,
-            calendarLink: { primaryLinkUrl: true },
-          },
-        },
-      },
-    } as any);
-
-    const partners = (
-      (result?.partners?.edges ?? []) as Array<{ node: Partner }>
-    ).map((edge) => edge.node);
+    const result = await queryAvailablePartners(client);
+    const partners = (result.partners?.edges ?? []).map((edge) => edge.node);
 
     return { ok: true, count: partners.length, partners };
   } catch (err) {

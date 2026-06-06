@@ -10,7 +10,7 @@ export type TestFieldMetadataIds = {
 };
 
 // Uses well-known company fields that make semantic sense for chart configs:
-// - employees (number field, suitable for aggregation)
+// - position (number field, suitable for aggregation)
 // - name (text field, suitable for grouping)
 // - domainName (link field, suitable for secondary grouping)
 export const fetchTestFieldMetadataIds =
@@ -53,7 +53,7 @@ export const fetchTestFieldMetadataIds =
 
     return {
       objectMetadataId: companyObject.id,
-      fieldMetadataId1: findFieldByName('employees').id,
+      fieldMetadataId1: findFieldByName('position').id,
       fieldMetadataId2: findFieldByName('name').id,
       fieldMetadataId3: findFieldByName('domainName').id,
       fieldMetadataId3SubFieldName: 'primaryLinkUrl',

@@ -4,7 +4,7 @@ import { FindOneAdminApplicationRegistrationDocument } from '~/generated-admin/g
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { useLingui } from '@lingui/react/macro';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { APPLICATION_REGISTRATION_ADMIN_PATH } from '@/settings/admin-panel/apps/constants/ApplicationRegistrationAdminPath';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -102,7 +102,7 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={
         <StyledTitleContainer>
           <Avatar
@@ -134,6 +134,6 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
         />
         {renderActiveTabContent()}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

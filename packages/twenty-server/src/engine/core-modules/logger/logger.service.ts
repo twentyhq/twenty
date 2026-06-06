@@ -18,12 +18,12 @@ type LoggerDriverType = ConsoleLogger & {
 export class LoggerService implements LoggerServiceInterface {
   constructor(@Inject(LOGGER_DRIVER) private driver: LoggerDriverType) {}
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   log(message: any, category: string, ...optionalParams: any[]) {
     this.driver.log.apply(this.driver, [message, category, ...optionalParams]);
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   error(message: any, category: string, ...optionalParams: any[]) {
     this.driver.error.apply(this.driver, [
       message,
@@ -32,12 +32,12 @@ export class LoggerService implements LoggerServiceInterface {
     ]);
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   warn(message: any, category: string, ...optionalParams: any[]) {
     this.driver.warn.apply(this.driver, [message, category, ...optionalParams]);
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   debug?(message: any, category: string, ...optionalParams: any[]) {
     this.driver.debug?.apply(this.driver, [
       message,
@@ -46,7 +46,7 @@ export class LoggerService implements LoggerServiceInterface {
     ]);
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   verbose?(message: any, category: string, ...optionalParams: any[]) {
     this.driver.verbose?.apply(this.driver, [
       message,

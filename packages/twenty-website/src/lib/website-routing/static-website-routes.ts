@@ -58,6 +58,16 @@ export const STATIC_WEBSITE_ROUTES = [
     indexed: true,
   },
   {
+    id: 'partnersApply',
+    path: '/partners/apply',
+    title: msg`Become a Twenty Partner — Application`,
+    description: msg`Apply to join the Twenty certified partner ecosystem.`,
+    changeFrequency: 'yearly',
+    priority: 0,
+    indexed: false,
+    robotsDisallow: true,
+  },
+  {
     id: 'releases',
     path: '/releases',
     title: msg`Twenty Releases — What's New in the Open Source CRM`,
