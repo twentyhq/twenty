@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { CalendarEventRecordingPreferenceResolver } from 'src/engine/core-modules/calendar/calendar-event-recording-preference.resolver';
+import { CalendarEventRecordingPreferenceService } from 'src/engine/core-modules/calendar/calendar-event-recording-preference.service';
 import { TimelineCalendarEventResolver } from 'src/engine/core-modules/calendar/timeline-calendar-event.resolver';
 import { TimelineCalendarEventService } from 'src/engine/core-modules/calendar/timeline-calendar-event.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -18,6 +20,11 @@ import { UserModule } from 'src/engine/core-modules/user/user.module';
     ]),
   ],
   exports: [],
-  providers: [TimelineCalendarEventResolver, TimelineCalendarEventService],
+  providers: [
+    CalendarEventRecordingPreferenceResolver,
+    CalendarEventRecordingPreferenceService,
+    TimelineCalendarEventResolver,
+    TimelineCalendarEventService,
+  ],
 })
 export class TimelineCalendarEventModule {}

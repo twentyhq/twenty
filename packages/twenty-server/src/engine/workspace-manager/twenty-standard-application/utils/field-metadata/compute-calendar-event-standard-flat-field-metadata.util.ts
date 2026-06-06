@@ -413,6 +413,7 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       ),
       icon: 'IconSettingsAutomation',
       isNullable: false,
+      isUIReadOnly: true,
       defaultValue: "'AUTO'",
       options: [
         {
