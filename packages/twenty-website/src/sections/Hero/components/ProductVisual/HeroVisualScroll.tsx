@@ -235,12 +235,13 @@ const VisualWrapper = styled.div`
   z-index: 1;
 `;
 
-const MobileSection = styled.section`
+const MobileSection = styled.section<{ $secondary?: boolean }>`
   align-items: center;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding-top: ${theme.spacing(7.5)};
+  padding-top: ${({ $secondary }) =>
+    $secondary ? theme.spacing(12) : theme.spacing(7.5)};
   position: relative;
   row-gap: ${theme.spacing(6)};
   width: 100%;
@@ -417,7 +418,7 @@ export function HeroVisualScroll({
         </MobileVisualWrapper>
       </MobileSection>
 
-      <MobileSection style={{ backgroundColor: '#141414' }}>
+      <MobileSection $secondary style={{ backgroundColor: '#141414' }}>
         <StyledContainer>
           <HeadingGroup>
             <HeadingSlot style={{ color: theme.colors.secondary.text[100] }}>
