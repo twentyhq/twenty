@@ -1,7 +1,7 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
-import { SettingsPageHeader } from '@/settings/components/layout/SettingsPageHeader';
+import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
@@ -42,7 +42,7 @@ export const SettingsSkeletonLoader = () => {
           highlightColor={theme.background.transparent.lighter}
           borderRadius={4}
         >
-          <SettingsPageHeader
+          <PageCardHeader
             links={[
               {
                 children: (

@@ -11,15 +11,16 @@ import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-type SettingsPageHeaderProps = {
-  links: BreadcrumbProps['links'];
+type PageCardHeaderProps = {
+  links?: BreadcrumbProps['links'];
+  icon?: ReactNode;
   title?: ReactNode;
   tag?: ReactNode;
   actionButton?: ReactNode;
 };
 
 // minmax(0, 1fr) side tracks (not 1fr) let a long breadcrumb truncate instead of
-// pushing the centered title off its shared axis with the tabs and body.
+// pushing the centered title off its shared axis with the secondary bar and body.
 const StyledHeader = styled.div`
   align-items: center;
   background-color: ${themeCssVariables.background.secondary};
@@ -60,12 +61,15 @@ const StyledRight = styled.div`
   min-width: 0;
 `;
 
-export const SettingsPageHeader = ({
+// Shared primary bar for the page card (Settings and record pages). The icon
+// slot sits next to the centered title; links render a breadcrumb on the left.
+export const PageCardHeader = ({
   links,
+  icon,
   title,
   tag,
   actionButton,
-}: SettingsPageHeaderProps) => {
+}: PageCardHeaderProps) => {
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
 
@@ -75,9 +79,10 @@ export const SettingsPageHeader = ({
         {!isNavigationDrawerExpanded && (
           <NavigationDrawerCollapseButton direction="right" />
         )}
-        <Breadcrumb links={links} />
+        {isDefined(links) && <Breadcrumb links={links} />}
       </StyledLeft>
       <StyledTitle>
+        {!isMobile && icon}
         {!isMobile && isDefined(title) && title}
         {!isMobile && tag}
       </StyledTitle>
