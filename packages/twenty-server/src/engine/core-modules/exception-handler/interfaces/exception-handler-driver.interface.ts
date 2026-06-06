@@ -2,7 +2,7 @@ import { type ExceptionHandlerOptions } from 'src/engine/core-modules/exception-
 
 export interface ExceptionHandlerDriverInterface {
   captureExceptions(
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     exceptions: ReadonlyArray<any>,
     options?: ExceptionHandlerOptions,
   ): string[];

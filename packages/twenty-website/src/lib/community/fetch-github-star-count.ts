@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { unstable_cache } from 'next/cache';
 
 export const fetchGithubStarCount = unstable_cache(
@@ -13,12 +12,15 @@ export const fetchGithubStarCount = unstable_cache(
         headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
       }
 
-      const response = await axios.get(
+      const response = await fetch(
         'https://api.github.com/repos/twentyhq/twenty',
         { headers },
       );
 
-      return response.data.stargazers_count;
+      if (!response.ok) return null;
+
+      const data = (await response.json()) as { stargazers_count?: number };
+      return data.stargazers_count ?? null;
     } catch {
       return null;
     }

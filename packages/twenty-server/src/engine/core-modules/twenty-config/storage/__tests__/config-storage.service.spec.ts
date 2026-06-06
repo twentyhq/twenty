@@ -173,8 +173,7 @@ describe('ConfigStorageService', () => {
 
     it('should decrypt sensitive string values', async () => {
       const key = 'SENSITIVE_CONFIG' as keyof ConfigVariables;
-      const originalValue = 'sensitive-value';
-      const encryptedValue = 'sensitive-value';
+      const encryptedValue = 'enc:v2:deadbeef:sensitive-value';
 
       const mockRecord = createMockKeyValuePair(key as string, encryptedValue);
 
@@ -197,7 +196,7 @@ describe('ConfigStorageService', () => {
 
       const result = await service.get(key);
 
-      expect(result).toBe(originalValue);
+      expect(result).toBe(encryptedValue);
       expect(secretEncryptionService.decryptVersioned).toHaveBeenCalledWith(
         encryptedValue,
       );
@@ -538,7 +537,10 @@ describe('ConfigStorageService', () => {
 
     it('should decrypt sensitive string values in loadAll', async () => {
       const configVars: KeyValuePairEntity[] = [
-        createMockKeyValuePair('SENSITIVE_CONFIG', 'sensitive-value'),
+        createMockKeyValuePair(
+          'SENSITIVE_CONFIG',
+          'enc:v2:deadbeef:sensitive-value',
+        ),
         createMockKeyValuePair('NORMAL_CONFIG', 'normal-value'),
       ];
 
@@ -565,13 +567,13 @@ describe('ConfigStorageService', () => {
 
       expect(result.size).toBe(2);
       expect(result.get('SENSITIVE_CONFIG' as keyof ConfigVariables)).toBe(
-        'sensitive-value',
+        'enc:v2:deadbeef:sensitive-value',
       );
       expect(result.get('NORMAL_CONFIG' as keyof ConfigVariables)).toBe(
         'normal-value',
       );
       expect(secretEncryptionService.decryptVersioned).toHaveBeenCalledWith(
-        'sensitive-value',
+        'enc:v2:deadbeef:sensitive-value',
       );
     });
   });

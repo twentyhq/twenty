@@ -69,9 +69,9 @@ export const SettingsSSOSAMLForm = () => {
       e.target.value = '';
       if (!samlMetadataParsed.success) {
         return enqueueErrorSnackBar({
-          message: t`Invalid File`,
+          message: t`Invalid file: ${samlMetadataParsed.reason}`,
           options: {
-            duration: 2000,
+            duration: 5000,
           },
         });
       }

@@ -6,6 +6,8 @@ import { DataSource } from 'typeorm';
 import { buildSecretEncryptionServiceFromEnv } from 'test/integration/upgrade/utils/build-secret-encryption-service.util';
 
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
@@ -100,12 +102,16 @@ describe('2-5 slow instance command 1798000008000 - EncryptSensitiveConfigStorag
     const value = await readValue(id);
 
     expect(value.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)).toBe(true);
-    expect(secretEncryptionService.decryptVersioned(value)).toBe(plaintext);
+    expect(
+      secretEncryptionService.decryptVersioned(
+        value as EncryptedString,
+      ),
+    ).toBe(plaintext);
   });
 
   it('leaves enc:v2 rows untouched and is idempotent across re-runs', async () => {
     const plaintext = 'smtp-already-v2-username';
-    const preexistingV2 = secretEncryptionService.encryptVersioned(plaintext);
+    const preexistingV2 = secretEncryptionService.encryptVersioned(plaintext as PlaintextString);
     const id = await seedRow(preexistingV2);
 
     await command.runDataMigration(dataSource);

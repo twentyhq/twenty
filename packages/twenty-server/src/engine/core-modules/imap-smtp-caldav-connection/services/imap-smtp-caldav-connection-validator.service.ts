@@ -7,7 +7,7 @@ import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-er
 import { ConnectionParametersInput } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.input';
 import { connectionParametersUpdateSchema } from 'src/engine/core-modules/imap-smtp-caldav-connection/schemas/connection-parameters-update.schema';
 import { connectionParametersSchema } from 'src/engine/core-modules/imap-smtp-caldav-connection/schemas/connection-parameters.schema';
-import { type ConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+import { type PlaintextConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 
 @Injectable()
@@ -21,8 +21,11 @@ export class ImapSmtpCaldavValidatorService {
     existingProtocolParams,
   }: {
     params: ConnectionParametersInput;
-    existingProtocolParams: ConnectionParameters | null;
-  }): Promise<ConnectionParameters> {
+    // The caller decrypts the at-rest params before calling us so we work
+    // exclusively with plaintext passwords (either a new one supplied by
+    // the user or the previously decrypted existing one).
+    existingProtocolParams: PlaintextConnectionParameters | null;
+  }): Promise<PlaintextConnectionParameters> {
     if (!params) {
       throw new UserInputError('Protocol connection parameters are required', {
         userFriendlyMessage: msg`Please provide connection details to configure your email account.`,
@@ -61,8 +64,9 @@ export class ImapSmtpCaldavValidatorService {
       );
     }
 
-    const password =
-      validated.password ?? existingProtocolParams?.password ?? null;
+    const password = isNonEmptyString(validated.password)
+      ? validated.password
+      : (existingProtocolParams?.password ?? null);
 
     if (!isNonEmptyString(password)) {
       throw new UserInputError(

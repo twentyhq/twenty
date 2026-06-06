@@ -13,11 +13,7 @@ export const useShowFullscreen = () => {
         location,
         'settings/' + SettingsPath.RestPlayground + '/*',
       ) ||
-      isMatchingLocation(
-        location,
-        'settings/' + SettingsPath.GraphQLPlayground,
-      ) ||
-      isMatchingLocation(location, 'settings/' + SettingsPath.EventLogs)
+      isMatchingLocation(location, 'settings/' + SettingsPath.GraphQLPlayground)
     ) {
       return true;
     }

@@ -1,9 +1,10 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
-import { useInstallMarketplaceApp } from '@/marketplace/hooks/useInstallMarketplaceApp';
+import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
+import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -18,12 +19,14 @@ import {
   IconBook,
   IconBox,
   IconCommand,
+  IconEyeOff,
   IconGraph,
   IconInfoCircle,
   IconLego,
   IconListDetails,
   IconLock,
   IconShield,
+  InlineBanner,
 } from 'twenty-ui/display';
 import {
   ApplicationRegistrationSourceType,
@@ -31,7 +34,6 @@ import {
   FindOneApplicationByUniversalIdentifierDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
-import { SettingsApplicationDetailTitle } from '~/pages/settings/applications/components/SettingsApplicationDetailTitle';
 import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
 import { SettingsApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailContentTab';
 import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications/tabs/SettingsApplicationPermissionsTab';
@@ -45,7 +47,8 @@ export const SettingsAvailableApplicationDetails = () => {
   }>();
 
   const navigateSettings = useNavigateSettings();
-  const { install, isInstalling } = useInstallMarketplaceApp();
+  const { requestInstall, install, isInstalling, modalInstanceId } =
+    useInstallMarketplaceAppWithPermissionValidation();
   const { upgrade, isUpgrading } = useUpgradeApplication();
 
   const canInstallMarketplaceApps = useHasPermissionFlag(
@@ -231,7 +234,7 @@ export const SettingsAvailableApplicationDetails = () => {
             }}
             isInstalled={isAlreadyInstalled}
             canInstallMarketplaceApps={canInstallMarketplaceApps}
-            onInstall={handleInstall}
+            onInstall={requestInstall}
             isInstalling={isInstalling}
             hasUpdate={hasUpdate}
             onUpgrade={handleUpgrade}
@@ -269,11 +272,11 @@ export const SettingsAvailableApplicationDetails = () => {
 
   return (
     <CurrentApplicationContext.Provider value={application?.id ?? null}>
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         links={[
           {
             children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.General),
           },
           {
             children: t`Applications`,
@@ -281,23 +284,30 @@ export const SettingsAvailableApplicationDetails = () => {
           },
           { children: displayName },
         ]}
-        title={
-          <SettingsApplicationDetailTitle
-            displayName={displayName}
-            description={description}
-            applicationId={application?.id}
-            isUnlisted={isUnlisted}
-          />
-        }
+        title={displayName}
       >
         <SettingsPageContainer>
+          {isUnlisted && (
+            <InlineBanner
+              LeftIcon={IconEyeOff}
+              message={t`Application not listed on the marketplace. It was shared via a direct link`}
+            />
+          )}
           <TabList
             tabs={tabs}
             componentInstanceId={AVAILABLE_APPLICATION_DETAIL_ID}
           />
           {renderActiveTabContent()}
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
+      <SettingsApplicationInstallPermissionValidationModal
+        modalInstanceId={modalInstanceId}
+        appDisplayName={displayName}
+        appLogoUrl={app?.logoUrl}
+        defaultRole={defaultRole}
+        onAuthorize={handleInstall}
+        isInstalling={isInstalling}
+      />
     </CurrentApplicationContext.Provider>
   );
 };

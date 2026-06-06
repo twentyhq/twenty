@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { generateId } from 'ai';
 import {
@@ -8,7 +7,7 @@ import {
   isExtendedFileUIPart,
 } from 'twenty-shared/ai';
 import { FileFolder } from 'twenty-shared/types';
-import { In, Like, type Repository } from 'typeorm';
+import { In, Like } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
@@ -32,7 +31,8 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 type StreamAgentChatOptions = {
   threadId: string;
   userWorkspaceId: string;
@@ -49,10 +49,10 @@ export class AgentChatStreamingService {
   private readonly logger = new Logger(AgentChatStreamingService.name);
 
   constructor(
-    @InjectRepository(AgentChatThreadEntity)
-    private readonly threadRepository: Repository<AgentChatThreadEntity>,
-    @InjectRepository(FileEntity)
-    private readonly fileRepository: Repository<FileEntity>,
+    @InjectWorkspaceScopedRepository(AgentChatThreadEntity)
+    private readonly threadRepository: WorkspaceScopedRepository<AgentChatThreadEntity>,
+    @InjectWorkspaceScopedRepository(FileEntity)
+    private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     @InjectMessageQueue(MessageQueue.aiStreamQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly agentChatService: AgentChatService,
@@ -70,7 +70,7 @@ export class AgentChatStreamingService {
     messageId,
     fileAttachments,
   }: StreamAgentChatOptions): Promise<{ streamId: string; messageId: string }> {
-    const thread = await this.threadRepository.findOne({
+    const thread = await this.threadRepository.findOne(workspace.id, {
       where: {
         id: threadId,
         userWorkspaceId,
@@ -104,10 +104,11 @@ export class AgentChatStreamingService {
       workspaceId: workspace.id,
     });
 
-    await this.agentChatService.notifyThreadActivityUpdated(
+    await this.agentChatService.notifyThreadActivityUpdated({
       threadId,
       userWorkspaceId,
-    );
+      workspaceId: workspace.id,
+    });
 
     const previousMessages = await this.loadMessagesFromDB(
       threadId,
@@ -135,9 +136,11 @@ export class AgentChatStreamingService {
       },
     );
 
-    await this.threadRepository.update(thread.id, {
-      activeStreamId: streamId,
-    });
+    await this.threadRepository.update(
+      workspace.id,
+      { id: thread.id },
+      { activeStreamId: streamId },
+    );
 
     return { streamId, messageId: savedUserMessage.id };
   }
@@ -148,7 +151,7 @@ export class AgentChatStreamingService {
     workspaceId: string,
     hasTitle: boolean,
   ): Promise<void> {
-    const threadStatus = await this.threadRepository.findOne({
+    const threadStatus = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
       select: ['id', 'deletedAt'],
     });
@@ -157,8 +160,10 @@ export class AgentChatStreamingService {
       return;
     }
 
-    const queuedMessages =
-      await this.agentChatService.getQueuedMessages(threadId);
+    const queuedMessages = await this.agentChatService.getQueuedMessages({
+      threadId,
+      workspaceId,
+    });
 
     const nextQueued = queuedMessages[0];
 
@@ -181,16 +186,19 @@ export class AgentChatStreamingService {
       );
 
     if (messageText === '' && fileParts.length === 0) {
-      await this.agentChatService.deleteQueuedMessage(nextQueued.id);
+      await this.agentChatService.deleteQueuedMessage({
+        messageId: nextQueued.id,
+        workspaceId,
+      });
 
       return;
     }
 
-    const turnId = await this.agentChatService.promoteQueuedMessage(
-      nextQueued.id,
+    const turnId = await this.agentChatService.promoteQueuedMessage({
+      messageId: nextQueued.id,
       threadId,
       workspaceId,
-    );
+    });
 
     if (turnId === null) {
       return;
@@ -210,7 +218,9 @@ export class AgentChatStreamingService {
 
     const [uiMessages, thread] = await Promise.all([
       this.loadMessagesFromDB(threadId, userWorkspaceId, workspaceId),
-      this.threadRepository.findOneByOrFail({ id: threadId }),
+      this.threadRepository.findOneOrFail(workspaceId, {
+        where: { id: threadId },
+      }),
     ]);
 
     const streamId = generateId();
@@ -239,9 +249,11 @@ export class AgentChatStreamingService {
       },
     );
 
-    await this.threadRepository.update(threadId, {
-      activeStreamId: streamId,
-    });
+    await this.threadRepository.update(
+      workspaceId,
+      { id: threadId },
+      { activeStreamId: streamId },
+    );
   }
 
   private async loadMessagesFromDB(
@@ -249,10 +261,11 @@ export class AgentChatStreamingService {
     userWorkspaceId: string,
     workspaceId: string,
   ) {
-    const allMessages = await this.agentChatService.getMessagesForThread(
+    const allMessages = await this.agentChatService.getMessagesForThread({
       threadId,
       userWorkspaceId,
-    );
+      workspaceId,
+    });
 
     const filteredMessages = allMessages.filter(
       (message) => message.status !== AgentMessageStatus.QUEUED,
@@ -295,10 +308,9 @@ export class AgentChatStreamingService {
 
     const fileIds = fileAttachments.map((attachment) => attachment.id);
 
-    const validFiles = await this.fileRepository.find({
+    const validFiles = await this.fileRepository.find(workspaceId, {
       where: {
         id: In(fileIds),
-        workspaceId,
         path: Like(`${FileFolder.AgentChat}/%`),
       },
     });

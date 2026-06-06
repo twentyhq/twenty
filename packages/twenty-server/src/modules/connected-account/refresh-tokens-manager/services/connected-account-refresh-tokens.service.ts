@@ -6,6 +6,8 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { AppOAuthRefreshAccessTokenService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-refresh-tokens.service';
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
   ConnectedAccountRefreshAccessTokenException,
@@ -15,10 +17,23 @@ import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modu
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
 import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
 
-export type ConnectedAccountTokens = {
-  accessToken: string;
-  refreshToken: string | null;
+// Tokens flowing through this service can be in two states depending on
+// where they enter the pipeline. We model both shapes explicitly so the
+// type system can prevent the #20819 class of bug (mixing encrypted and
+// decrypted tokens in the same flow).
+export type ConnectedAccountPlaintextTokens = {
+  accessToken: PlaintextString;
+  refreshToken: PlaintextString | null;
 };
+
+export type ConnectedAccountEncryptedTokens = {
+  accessToken: EncryptedString;
+  refreshToken: EncryptedString | null;
+};
+
+// Public return type of resolveTokens: always encrypted (either fresh from
+// the database or freshly re-encrypted after a refresh round-trip).
+export type ConnectedAccountTokens = ConnectedAccountEncryptedTokens;
 
 const CONNECTED_ACCOUNT_ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60;
 
@@ -91,7 +106,7 @@ export class ConnectedAccountRefreshTokensService {
 
   private async performRefreshAndSave(
     connectedAccount: ConnectedAccountEntity,
-    encryptedRefreshToken: string,
+    encryptedRefreshToken: EncryptedString,
     workspaceId: string,
   ): Promise<ConnectedAccountTokens> {
     const decryptedRefreshToken =
@@ -166,9 +181,9 @@ export class ConnectedAccountRefreshTokensService {
 
   async refreshTokens(
     connectedAccount: ConnectedAccountEntity,
-    refreshToken: string,
+    refreshToken: PlaintextString,
     workspaceId: string,
-  ): Promise<ConnectedAccountTokens> {
+  ): Promise<ConnectedAccountPlaintextTokens> {
     try {
       switch (connectedAccount.provider) {
         case ConnectedAccountProvider.GOOGLE:

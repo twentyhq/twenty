@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { t } from '@lingui/core/macro';
 import {
@@ -8,7 +7,7 @@ import {
   ViewSortDirection,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
+import { IsNull } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -20,6 +19,7 @@ import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-m
 import { splitEntitiesByRemovalStrategy } from 'src/engine/metadata-modules/flat-entity/utils/split-entities-by-removal-strategy.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatPageLayoutWidgetConfigurationOfType } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/is-flat-page-layout-widget-configuration-of-type.util';
+import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { fromViewFieldOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-view-field/utils/from-view-field-overrides-to-universal-overrides.util';
@@ -42,6 +42,8 @@ import {
   ViewException,
   ViewExceptionCode,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -74,8 +76,8 @@ export class ViewWidgetUpsertService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
-    @InjectRepository(ViewEntity)
-    private readonly viewRepository: Repository<ViewEntity>,
+    @InjectWorkspaceScopedRepository(ViewEntity)
+    private readonly viewRepository: WorkspaceScopedRepository<ViewEntity>,
   ) {}
 
   async upsertViewWidget({
@@ -121,20 +123,35 @@ export class ViewWidgetUpsertService {
       flatEntityMaps: flatPageLayoutWidgetMaps,
     });
 
-    if (
-      !isDefined(widget) ||
-      !isFlatPageLayoutWidgetConfigurationOfType(
-        widget,
-        WidgetConfigurationType.RECORD_TABLE,
-      )
-    ) {
+    if (!isDefined(widget)) {
       throw new ViewException(
         t`Record table widget not found`,
         ViewExceptionCode.VIEW_WIDGET_NOT_FOUND,
       );
     }
 
-    const viewId = widget.configuration.viewId;
+    const isRecordTableWidget = isFlatPageLayoutWidgetConfigurationOfType(
+      widget,
+      WidgetConfigurationType.RECORD_TABLE,
+    );
+
+    const isFieldTableWidget =
+      isFlatPageLayoutWidgetConfigurationOfType(
+        widget,
+        WidgetConfigurationType.FIELD,
+      ) && widget.configuration.fieldDisplayMode === FieldDisplayMode.TABLE;
+
+    if (!isRecordTableWidget && !isFieldTableWidget) {
+      throw new ViewException(
+        t`Record table widget not found`,
+        ViewExceptionCode.VIEW_WIDGET_NOT_FOUND,
+      );
+    }
+
+    const viewId =
+      'viewId' in widget.configuration
+        ? widget.configuration.viewId
+        : undefined;
 
     if (!isDefined(viewId)) {
       throw new ViewException(
@@ -170,13 +187,15 @@ export class ViewWidgetUpsertService {
       !isDefined(input.viewFilters) &&
       !isDefined(input.viewSorts)
     ) {
-      const view = await this.viewRepository.findOne({
-        where: {
-          id: upsertContext.viewId,
-          workspaceId: upsertContext.workspaceId,
-          deletedAt: IsNull(),
+      const view = await this.viewRepository.findOne(
+        upsertContext.workspaceId,
+        {
+          where: {
+            id: upsertContext.viewId,
+            deletedAt: IsNull(),
+          },
         },
-      });
+      );
 
       if (!isDefined(view)) {
         throw new ViewException(
@@ -338,10 +357,9 @@ export class ViewWidgetUpsertService {
       );
     }
 
-    const view = await this.viewRepository.findOne({
+    const view = await this.viewRepository.findOne(upsertContext.workspaceId, {
       where: {
         id: upsertContext.viewId,
-        workspaceId: upsertContext.workspaceId,
         deletedAt: IsNull(),
       },
     });

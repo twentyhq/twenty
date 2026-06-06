@@ -44,8 +44,53 @@ A **camada de dados** de um app Twenty é o conjunto de dados que seu app *adici
 | **Objeto**  | Um novo tipo de registro personalizado (por exemplo, PostCard, Invoice) com seus próprios campos                                                 | `defineObject()`                         |
 | **Campo**   | Uma coluna em um objeto. Campos independentes podem estender objetos que você não criou (por exemplo, adicionar `loyaltyTier` ao objeto Company) | `defineField()`                          |
 | **Relação** | Um vínculo bidirecional entre dois objetos — ambos os lados declarados como campos                                                               | `defineField()` com `FieldType.RELATION` |
+| **Índice**  | Um índice de banco de dados para acelerar uma consulta recorrente em um dos seus objetos                                                         | `defineIndex()`                          |
 
-O SDK detecta esses elementos por meio de análise de AST em tempo de build, então a organização dos arquivos fica a seu critério — a convenção é `src/objects/` e `src/fields/`. UUIDs `universalIdentifier` estáveis conectam tudo em implantações diferentes.
+O SDK detecta esses elementos por meio de análise de AST em tempo de build, então a organização dos arquivos fica a seu critério — a convenção é `src/objects/`, `src/fields/` e `src/indexes/`. UUIDs `universalIdentifier` estáveis conectam tudo em implantações diferentes.
+
+## Índices (Opcional)
+
+Os apps podem incluir índices junto com seus objetos para manter rápidas as consultas recorrentes. O caso mais comum é uma coluna de status ou de chave estrangeira que você lê com frequência.
+
+```ts src/indexes/post-card-status.index.ts
+import { defineIndex } from 'twenty-sdk/define';
+
+import {
+  POST_CARD_UNIVERSAL_IDENTIFIER,
+  STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+} from '../objects/post-card.object';
+
+export default defineIndex({
+  universalIdentifier: 'b6e9d2a1-5a4c-46ca-9d52-42c8f02d1ff0',
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  fields: [
+    {
+      universalIdentifier: 'b6e9d2a1-5a4c-46ca-9d52-42c8f02d1ff1',
+      fieldUniversalIdentifier: STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+    },
+  ],
+});
+```
+
+### Índices únicos
+
+`defineIndex` aceita `isUnique: true` tanto para unicidade de uma única coluna quanto de múltiplas colunas. Este é o recurso recomendado — `defineField({ isUnique: true })` está obsoleto e será removido em uma versão futura.
+
+```ts
+defineIndex({
+  universalIdentifier: '…',
+  objectUniversalIdentifier: PERSON_UNIVERSAL_IDENTIFIER,
+  isUnique: true,
+  fields: [{ universalIdentifier: '…', fieldUniversalIdentifier: EMAIL_FIELD_UNIVERSAL_IDENTIFIER }],
+});
+```
+
+### Outras restrições
+
+* Cláusulas `WHERE` parciais permanecem sob controle do administrador — os apps não podem declará-las.
+* Cada objeto é limitado a 10 índices personalizados (os índices do próprio framework não contam).
+
+Ordene o array `fields` da forma como o Postgres deve usá-lo — coluna mais à esquerda primeiro, como em uma lista telefônica. Índices não são gratuitos: cada gravação na tabela os atualiza. Adicione um apenas quando você tiver uma consulta que precise dele.
 
 <Note>
 Procurando por **Application Config** ou **Roles & Permissions**? Esses descrevem o próprio app em vez dos dados que ele adiciona — eles ficam em [Config](/l/pt/developers/extend/apps/config/overview). Procurando por **Connections** (Linear, GitHub, Slack OAuth)? Essas existem para serem chamadas *a partir de* funções de lógica e ficam em [Logic](/l/pt/developers/extend/apps/logic/connections).

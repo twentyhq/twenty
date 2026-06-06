@@ -465,7 +465,6 @@ export class DevSeederDataService {
 
       await this.fileStorageService.writeFile({
         sourceFile,
-        mimeType: metadata.mimeType,
         fileFolder: FileFolder.FilesField,
         applicationUniversalIdentifier,
         workspaceId,

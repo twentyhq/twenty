@@ -1,6 +1,6 @@
 {
   "name": "twenty-client-sdk",
-  "version": "2.7.0",
+  "version": "2.11.0",
   "sideEffects": false,
   "license": "AGPL-3.0",
   "scripts": {
@@ -42,14 +42,14 @@
   "dependencies": {
     "@genql/cli": "^3.0.3",
     "@genql/runtime": "^2.10.0",
-    "esbuild": "^0.25.0",
+    "esbuild": "^0.28.0",
     "graphql": "^16.8.1"
   },
   "devDependencies": {
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "tsc-alias": "^1.8.16",
     "twenty-shared": "workspace:*",
-    "typescript": "^5.9.2",
+    "typescript": "^5.9.3",
     "vite": "^7.0.0",
     "vite-plugin-dts": "^4.5.4",
     "vite-tsconfig-paths": "^4.2.1",

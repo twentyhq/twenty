@@ -42,7 +42,7 @@ const CreateViewFilterInputSchema = z.object({
       z.record(z.string(), z.unknown()),
     ])
     .describe(
-      'Filter value. Format depends on operand and field type: string for TEXT/SELECT, number for NUMBER/CURRENCY, array of option values for MULTI_SELECT IS/IS_NOT, empty string "" for IS_EMPTY/IS_NOT_EMPTY operators.',
+      'Filter value. Format depends on operand and field type: string for TEXT, array of option values for SELECT/MULTI_SELECT (e.g. ["OPTION_1", "OPTION_2"]), number for NUMBER/CURRENCY, empty string "" for IS_EMPTY/IS_NOT_EMPTY operators.',
     ),
   subFieldName: z
     .string()
@@ -75,7 +75,9 @@ const UpdateViewFilterInputSchema = z.object({
       z.record(z.string(), z.unknown()),
     ])
     .optional()
-    .describe('New filter value'),
+    .describe(
+      'New filter value. Use array of option values for SELECT/MULTI_SELECT (e.g. ["OPTION_1"]).',
+    ),
   subFieldName: z
     .string()
     .optional()

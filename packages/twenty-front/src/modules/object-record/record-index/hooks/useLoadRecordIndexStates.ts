@@ -74,7 +74,13 @@ export const useLoadRecordIndexStates = () => {
   const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
 
   const loadRecordIndexStates = useCallback(
-    (view: View, objectMetadataItem: EnrichedObjectMetadataItem) => {
+    (
+      view: View,
+      objectMetadataItem: EnrichedObjectMetadataItem,
+      options?: { skipGlobalIndexStates?: boolean },
+    ) => {
+      const skipGlobalIndexStates = options?.skipGlobalIndexStates ?? false;
+
       const activeFieldMetadataItems = objectMetadataItem.fields.filter(
         (field) => field.isActive && !isHiddenSystemField(field),
       );
@@ -207,12 +213,16 @@ export const useLoadRecordIndexStates = () => {
 
       store.set(
         atom(null, (get, batchSet) => {
-          const existingFieldDefs = get(recordIndexFieldDefinitionsState.atom);
-          if (!isDeeplyEqual(existingFieldDefs, newFieldDefinitions)) {
-            batchSet(
+          if (!skipGlobalIndexStates) {
+            const existingFieldDefs = get(
               recordIndexFieldDefinitionsState.atom,
-              newFieldDefinitions,
             );
+            if (!isDeeplyEqual(existingFieldDefs, newFieldDefinitions)) {
+              batchSet(
+                recordIndexFieldDefinitionsState.atom,
+                newFieldDefinitions,
+              );
+            }
           }
 
           for (const viewField of view.viewFields) {
@@ -261,13 +271,15 @@ export const useLoadRecordIndexStates = () => {
             filters: contextStoreFilters,
           });
 
-          batchSet(recordIndexViewTypeState.atom, view.type);
-          batchSet(recordIndexOpenRecordInState.atom, view.openRecordIn);
+          if (!skipGlobalIndexStates) {
+            batchSet(recordIndexViewTypeState.atom, view.type);
+            batchSet(recordIndexOpenRecordInState.atom, view.openRecordIn);
 
-          batchSet(
-            recordIndexCalendarFieldMetadataIdState.atom,
-            view.calendarFieldMetadataId ?? null,
-          );
+            batchSet(
+              recordIndexCalendarFieldMetadataIdState.atom,
+              view.calendarFieldMetadataId ?? null,
+            );
+          }
 
           batchSet(
             recordIndexShouldHideEmptyRecordGroupsAtom,

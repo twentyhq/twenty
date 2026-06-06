@@ -1,6 +1,7 @@
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { addToNavPayloadRegistryState } from '@/navigation-menu-item/common/states/addToNavPayloadRegistryState';
+import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { viewableRecordIdState } from '@/object-record/record-side-panel/states/viewableRecordIdState';
@@ -110,6 +111,7 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
       store.set(sidePanelNavigationStackState.atom, []);
       store.set(selectedNavigationMenuItemIdInEditModeState.atom, null);
       store.set(pendingInsertionNavigationMenuItemState.atom, null);
+      store.set(navigationMenuItemEditSectionState.atom, 'workspace');
       store.set(addToNavPayloadRegistryState.atom, new Map());
       resetSelectedItem();
       store.set(hasUserSelectedSidePanelListItemState.atom, false);

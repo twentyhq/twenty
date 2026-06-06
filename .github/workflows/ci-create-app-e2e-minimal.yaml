@@ -120,7 +120,7 @@ jobs:
           echo "--- Checking package.json references correct SDK version ---"
           node -e "
             const pkg = require('./package.json');
-            const sdkVersion = pkg.dependencies['twenty-sdk'];
+            const sdkVersion = pkg.devDependencies['twenty-sdk'];
             if (!sdkVersion.startsWith('0.0.0-ci.')) {
               console.error('Expected twenty-sdk version to start with 0.0.0-ci., got:', sdkVersion);
               process.exit(1);

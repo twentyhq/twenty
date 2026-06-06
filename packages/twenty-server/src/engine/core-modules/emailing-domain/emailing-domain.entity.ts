@@ -9,19 +9,15 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import {
-  EmailingDomainDriver,
-  EmailingDomainStatus,
-} from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
+import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
+import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
+import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
 import { VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 @Entity({ name: 'emailingDomain', schema: 'core' })
 @ObjectType('EmailingDomain')
-@Unique('IDX_EMAILING_DOMAIN_DOMAIN_WORKSPACE_ID_UNIQUE', [
-  'domain',
-  'workspaceId',
-])
+@Unique('IDX_EMAILING_DOMAIN_DOMAIN_UNIQUE', ['domain'])
 export class EmailingDomainEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -55,4 +51,12 @@ export class EmailingDomainEntity extends WorkspaceRelatedEntity {
 
   @Column({ type: 'timestamptz', nullable: true })
   verifiedAt: Date | null;
+
+  @Column({
+    type: 'enum',
+    enum: Object.values(EmailingDomainTenantStatus),
+    default: EmailingDomainTenantStatus.ACTIVE,
+    nullable: false,
+  })
+  tenantStatus: EmailingDomainTenantStatus;
 }

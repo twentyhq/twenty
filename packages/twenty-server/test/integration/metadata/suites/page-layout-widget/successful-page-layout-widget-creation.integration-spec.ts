@@ -293,32 +293,6 @@ describe('Page layout widget creation should succeed', () => {
         }),
       },
     },
-    {
-      title: 'create a page layout widget with GAUGE_CHART full configuration',
-      context: {
-        widgetTitle: 'Gauge Chart Widget',
-        buildConfiguration: () => ({
-          configurationType: WidgetConfigurationType.GAUGE_CHART,
-          aggregateFieldMetadataId: testSetup.fieldMetadataId1,
-          aggregateOperation: AggregateOperations.SUM,
-          description: 'Completion percentage',
-          displayDataLabel: true,
-        }),
-      },
-    },
-    {
-      title:
-        'create a page layout widget with GAUGE_CHART minimal configuration',
-      context: {
-        widgetTitle: 'Gauge Chart Widget Minimal',
-        buildConfiguration: () => ({
-          configurationType: WidgetConfigurationType.GAUGE_CHART,
-          aggregateFieldMetadataId: testSetup.fieldMetadataId1,
-          aggregateOperation: AggregateOperations.COUNT_TRUE,
-          displayDataLabel: false,
-        }),
-      },
-    },
   ];
 
   beforeAll(async () => {

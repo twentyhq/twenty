@@ -1,12 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import { CASE_STUDY_HERO_IMAGES, type CaseStudyData } from '@/lib/customers';
-import {
-  getRouteI18n,
-  type LocaleRouteParams,
-} from '@/lib/i18n/utils/get-route-i18n';
+import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { buildLocalizedMetadata } from '@/lib/seo';
 import { Heading, HeadingPart } from '@/design-system/components';
-import { CaseStudyPageLayout } from '@/app/[locale]/customers/_components/CaseStudyPageLayout';
+import { CustomersCaseStudyPageLayout } from '@/app/[locale]/customers/_components/CustomersCaseStudyPageLayout';
 
 const HERO_IMAGE = CASE_STUDY_HERO_IMAGES.actEducation;
 
@@ -62,7 +59,7 @@ export default async function ActEducationCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`When the vendor`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`pulled the plug`)}
             </HeadingPart>
@@ -82,7 +79,7 @@ export default async function ActEducationCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`No more renting someone else's`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`structure`)}
             </HeadingPart>
@@ -101,7 +98,7 @@ export default async function ActEducationCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`Control without`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`the overhead`)}
             </HeadingPart>
@@ -119,7 +116,7 @@ export default async function ActEducationCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`Costs down more than`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">{i18n._(msg`90%`)}</HeadingPart>
           </Heading>
         ),
@@ -142,7 +139,7 @@ export default async function ActEducationCaseStudyPage({
   };
 
   return (
-    <CaseStudyPageLayout
+    <CustomersCaseStudyPageLayout
       caseStudy={caseStudy}
       path="/customers/act-education"
     />

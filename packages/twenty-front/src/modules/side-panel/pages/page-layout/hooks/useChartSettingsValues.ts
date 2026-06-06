@@ -47,9 +47,7 @@ export const useChartSettingsValues = ({
     configuration.__typename === 'LineChartConfiguration';
 
   const hasColorProperty =
-    isBarOrLineChart ||
-    configuration.__typename === 'GaugeChartConfiguration' ||
-    configuration.__typename === 'PieChartConfiguration';
+    isBarOrLineChart || configuration.__typename === 'PieChartConfiguration';
 
   const isPieChart = configuration.__typename === 'PieChartConfiguration';
 

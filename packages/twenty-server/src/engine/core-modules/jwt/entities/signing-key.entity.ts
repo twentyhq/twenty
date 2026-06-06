@@ -8,6 +8,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+
 @Entity({ name: 'signingKey', schema: 'core' })
 @Index('IDX_SIGNING_KEY_IS_CURRENT_UNIQUE', ['isCurrent'], {
   unique: true,
@@ -27,7 +29,7 @@ export class SigningKeyEntity {
   publicKey: string;
 
   @Column({ type: 'varchar', nullable: true })
-  privateKey: string | null;
+  privateKey: EncryptedString | null;
 
   @Column({ type: 'boolean', default: false })
   isCurrent: boolean;

@@ -28,7 +28,7 @@
   "resolutions": {
     "graphql": "16.8.1",
     "type-fest": "4.10.1",
-    "typescript": "5.9.2",
+    "typescript": "5.9.3",
     "nodemailer": "8.0.4",
     "graphql-redis-subscriptions/ioredis": "^5.6.0",
     "@lingui/core": "5.1.2",
@@ -52,6 +52,7 @@
       "packages/twenty-server",
       "packages/twenty-emails",
       "packages/twenty-ui",
+      "packages/twenty-new-ui",
       "packages/twenty-utils",
       "packages/twenty-zapier",
       "packages/twenty-website",
@@ -63,6 +64,7 @@
       "packages/twenty-client-sdk",
       "packages/twenty-cli",
       "packages/create-twenty-app",
+      "packages/twenty-codex-plugin",
       "packages/twenty-oxlint-rules",
       "packages/twenty-companion",
       "packages/twenty-claude-skills"

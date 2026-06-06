@@ -1,14 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { resolveInput } from 'twenty-shared/utils';
-import { type Repository } from 'typeorm';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
+import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -17,16 +18,21 @@ import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-e
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
+import { buildAiAgentStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-ai-agent-step-log.util';
+import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 
 import { isWorkflowAiAgentAction } from './guards/is-workflow-ai-agent-action.guard';
 
 @Injectable()
 export class AiAgentWorkflowAction implements WorkflowAction {
+  private readonly logger = new Logger(AiAgentWorkflowAction.name);
+
   constructor(
     private readonly aiAgentExecutionService: AgentAsyncExecutorService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
-    @InjectRepository(AgentEntity)
-    private readonly agentRepository: Repository<AgentEntity>,
+    private readonly workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
+    @InjectWorkspaceScopedRepository(AgentEntity)
+    private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
   ) {}
 
   async execute({
@@ -53,11 +59,8 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     let agent: AgentEntity | null = null;
 
     if (agentId) {
-      agent = await this.agentRepository.findOne({
-        where: {
-          id: agentId,
-          workspaceId,
-        },
+      agent = await this.agentRepository.findOne(workspaceId, {
+        where: { id: agentId },
       });
     }
 
@@ -76,28 +79,73 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         ? executionContext.authContext.userWorkspaceId
         : null;
 
-    const { result, hasNoMoreAvailableCredits } =
-      await this.aiAgentExecutionService.executeAgent({
-        agent,
-        userPrompt: resolveInput(prompt, context) as string,
-        actorContext: executionContext.isActingOnBehalfOfUser
-          ? executionContext.initiator
-          : undefined,
-        rolePermissionConfig: executionContext.rolePermissionConfig,
-        authContext: executionContext.authContext,
-        workspaceId,
-        userWorkspaceId,
-        operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
-      });
+    const startedAtMs = Date.now();
 
-    if (hasNoMoreAvailableCredits) {
+    const executionResult = await this.aiAgentExecutionService.executeAgent({
+      agent,
+      userPrompt: resolveInput(prompt, context) as string,
+      actorContext: executionContext.isActingOnBehalfOfUser
+        ? executionContext.initiator
+        : undefined,
+      authContext: executionContext.authContext,
+      workspaceId,
+      userWorkspaceId,
+      operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+    });
+
+    const durationMs = Date.now() - startedAtMs;
+
+    await this.persistStepLog({
+      workflowRunId: runInfo.workflowRunId,
+      workspaceId,
+      stepId: currentStepId,
+      executionResult,
+      durationMs,
+    });
+
+    if (executionResult.hasNoMoreAvailableCredits) {
       return {
         error: 'AI agent stopped: no more available credits.',
       };
     }
 
     return {
-      result,
+      result: executionResult.result,
     };
+  }
+
+  private async persistStepLog({
+    workflowRunId,
+    workspaceId,
+    stepId,
+    executionResult,
+    durationMs,
+  }: {
+    workflowRunId: string;
+    workspaceId: string;
+    stepId: string;
+    executionResult: AgentExecutionResult;
+    durationMs: number;
+  }): Promise<void> {
+    const stepLog = buildAiAgentStepLog({ executionResult, durationMs });
+
+    if (!stepLog) {
+      return;
+    }
+
+    try {
+      await this.workflowRunStepLogService.setStepLog({
+        workflowRunId,
+        workspaceId,
+        stepId,
+        stepLog,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to persist step log for workflowRun=${workflowRunId} step=${stepId}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
   }
 }

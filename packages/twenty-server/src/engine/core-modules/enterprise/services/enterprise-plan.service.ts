@@ -142,17 +142,8 @@ export class EnterprisePlanService implements OnModuleInit {
     return false;
   }
 
-  hasValidEnterpriseKey(): boolean {
-    return this.hasValidSignedEnterpriseKey() || this.checkLegacyKey();
-  }
-
   isValid(): boolean {
     return this.hasValidEnterpriseValidityToken();
-  }
-
-  private checkLegacyKey(): boolean {
-    // temporary
-    return isDefined(this.twentyConfigService.get('ENTERPRISE_KEY'));
   }
 
   isValidEnterpriseKeyFormat(key: string): boolean {

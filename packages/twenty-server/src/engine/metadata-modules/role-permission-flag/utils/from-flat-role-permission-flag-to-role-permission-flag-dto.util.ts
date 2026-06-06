@@ -1,4 +1,3 @@
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatPermissionFlagMaps } from 'src/engine/metadata-modules/flat-permission-flag/types/flat-permission-flag-maps.type';
@@ -28,6 +27,6 @@ export const fromFlatRolePermissionFlagToRolePermissionFlagDto = (
   return {
     id: flatRolePermissionFlag.id,
     roleId: flatRolePermissionFlag.roleId,
-    flag: permissionFlag.key as PermissionFlagType,
+    flag: permissionFlag.key,
   };
 };

@@ -2,7 +2,7 @@ import type { MessageDescriptor } from '@lingui/core';
 import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
 
 import type { Article } from '@/lib/articles';
-import { localeToUrlSegment } from '@/lib/i18n/utils/website-locale-segments';
+import { localeToUrlSegment } from '@/lib/i18n';
 import type { LocalReleaseNote } from '@/lib/releases/types';
 
 import type { JsonLdValue } from './JsonLd';
@@ -79,14 +79,6 @@ export const buildFaqPageJsonLd = (
   })),
 });
 
-const extractReleaseHeadline = (note: LocalReleaseNote): string => {
-  const match = note.content.match(/^\s*#\s+(.+?)\s*$/m);
-  if (match && match[1]) {
-    return match[1].trim();
-  }
-  return `Twenty ${note.release}`;
-};
-
 export const buildReleaseListJsonLd = (
   notes: readonly LocalReleaseNote[],
 ): JsonLdValue => {
@@ -107,7 +99,7 @@ export const buildReleaseListJsonLd = (
       item: {
         '@type': 'TechArticle',
         '@id': `${releasesUrl}#${note.release}`,
-        headline: extractReleaseHeadline(note),
+        headline: note.title,
         name: `Twenty ${note.release}`,
         url: `${releasesUrl}#${note.release}`,
         ...(note.date ? { datePublished: note.date } : {}),

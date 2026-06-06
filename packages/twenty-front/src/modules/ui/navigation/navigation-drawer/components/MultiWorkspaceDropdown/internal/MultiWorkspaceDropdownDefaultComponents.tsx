@@ -217,7 +217,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           onClick={() => setMultiWorkspaceDropdown('themes')}
         />
         <UndecoratedLink
-          to={getSettingsPath(SettingsPath.WorkspaceMembersPage)}
+          to={`${getSettingsPath(SettingsPath.WorkspaceMembersPage)}#invite`}
           onClick={() => {
             closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
           }}

@@ -1,4 +1,5 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
+import { useAddDraftViewForFieldRelationTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForFieldRelationTableWidget';
 import { getFieldWidgetAvailableDisplayModes } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
@@ -13,11 +14,13 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   type IconComponent,
   IconFileText,
   IconLayoutKanban,
   IconListDetails,
+  IconTable,
 } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import {
@@ -30,6 +33,7 @@ const DISPLAY_MODE_ICONS: Record<FieldDisplayMode, IconComponent> = {
   [FieldDisplayMode.CARD]: IconLayoutKanban,
   [FieldDisplayMode.EDITOR]: IconFileText,
   [FieldDisplayMode.VIEW]: IconListDetails,
+  [FieldDisplayMode.TABLE]: IconTable,
 };
 
 export const FieldWidgetLayoutDropdownContent = () => {
@@ -53,7 +57,10 @@ export const FieldWidgetLayoutDropdownContent = () => {
   const layoutOptions = useMemo(
     () =>
       fieldMetadataItem
-        ? getFieldWidgetAvailableDisplayModes(fieldMetadataItem.type)
+        ? getFieldWidgetAvailableDisplayModes(
+            fieldMetadataItem.type,
+            fieldMetadataItem.relation?.type,
+          )
         : [FieldDisplayMode.FIELD],
     [fieldMetadataItem],
   );
@@ -70,9 +77,40 @@ export const FieldWidgetLayoutDropdownContent = () => {
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
+  const { addDraftViewForFieldRelationTableWidget } =
+    useAddDraftViewForFieldRelationTableWidget(pageLayoutId);
+
   const { closeDropdown } = useCloseDropdown();
 
   const handleSelectLayout = (fieldDisplayMode: FieldDisplayMode) => {
+    const targetObjectMetadataId =
+      fieldMetadataItem?.relation?.targetObjectMetadata.id;
+    const inverseFieldMetadataId =
+      fieldMetadataItem?.relation?.targetFieldMetadata.id;
+
+    if (
+      fieldDisplayMode === FieldDisplayMode.TABLE &&
+      !isDefined(fieldConfiguration?.viewId) &&
+      isDefined(widgetInEditMode) &&
+      isDefined(targetObjectMetadataId) &&
+      isDefined(inverseFieldMetadataId)
+    ) {
+      const viewId = addDraftViewForFieldRelationTableWidget(
+        widgetInEditMode.id,
+        targetObjectMetadataId,
+        inverseFieldMetadataId,
+      );
+
+      updateCurrentWidgetConfig({
+        configToUpdate: {
+          fieldDisplayMode,
+          viewId,
+        },
+      });
+      closeDropdown();
+      return;
+    }
+
     updateCurrentWidgetConfig({
       configToUpdate: {
         fieldDisplayMode,
@@ -85,6 +123,7 @@ export const FieldWidgetLayoutDropdownContent = () => {
     [FieldDisplayMode.FIELD]: t`Field`,
     [FieldDisplayMode.CARD]: t`Card`,
     [FieldDisplayMode.EDITOR]: t`Editor`,
+    [FieldDisplayMode.TABLE]: t`Table`,
   };
 
   return (

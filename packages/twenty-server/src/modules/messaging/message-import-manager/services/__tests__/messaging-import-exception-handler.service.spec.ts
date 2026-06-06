@@ -1,5 +1,4 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { MessageChannelSyncStatus } from 'twenty-shared/types';
 
@@ -8,13 +7,14 @@ import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
 } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
-import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 
 describe('MessageImportExceptionHandlerService — refresh code dispatch', () => {
   let service: MessageImportExceptionHandlerService;
@@ -50,7 +50,7 @@ describe('MessageImportExceptionHandlerService — refresh code dispatch', () =>
       providers: [
         MessageImportExceptionHandlerService,
         {
-          provide: getRepositoryToken(MessageChannelEntity),
+          provide: getWorkspaceScopedRepositoryToken(MessageChannelEntity),
           useValue: messageChannelRepository,
         },
         {

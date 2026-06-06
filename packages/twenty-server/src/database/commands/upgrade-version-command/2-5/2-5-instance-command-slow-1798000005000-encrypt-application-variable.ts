@@ -3,6 +3,9 @@ import { Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+import { isEncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/is-encrypted-string.util';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
@@ -34,7 +37,9 @@ const looksLikeLegacyCtrCiphertext = (value: string): boolean =>
   LEGACY_CTR_LOOKS_LIKE_BASE64_RE.test(value);
 
 @RegisteredInstanceCommand('2.5.0', 1798000005000, { type: 'slow' })
-export class EncryptApplicationVariableSlowInstanceCommand implements SlowInstanceCommand {
+export class EncryptApplicationVariableSlowInstanceCommand
+  implements SlowInstanceCommand
+{
   private readonly logger = new Logger(
     EncryptApplicationVariableSlowInstanceCommand.name,
   );
@@ -72,12 +77,16 @@ export class EncryptApplicationVariableSlowInstanceCommand implements SlowInstan
           continue;
         }
 
-        let plaintext: string;
+        if (isEncryptedString(row.value)) {
+          continue;
+        }
+
+        let plaintext: PlaintextString;
 
         if (looksLikeLegacyCtrCiphertext(row.value)) {
           try {
             plaintext = this.secretEncryptionService.decryptVersioned(
-              row.value,
+              row.value as EncryptedString,
               { workspaceId: row.workspaceId },
             );
           } catch (error) {
@@ -86,13 +95,13 @@ export class EncryptApplicationVariableSlowInstanceCommand implements SlowInstan
                 error instanceof Error ? error.message : String(error)
               }`,
             );
-            plaintext = row.value;
+            plaintext = row.value as PlaintextString;
           }
         } else {
           this.logger.warn(
             `applicationVariable row ${row.id} value is not base64; treating as plaintext.`,
           );
-          plaintext = row.value;
+          plaintext = row.value as PlaintextString;
         }
 
         if (!isDefined(plaintext)) {

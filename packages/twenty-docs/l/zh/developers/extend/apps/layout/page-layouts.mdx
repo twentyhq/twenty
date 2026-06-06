@@ -65,16 +65,15 @@ export default definePageLayout({
 import {
   definePageLayoutTab,
   PageLayoutTabLayoutMode,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
 import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
-
-const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
-  '20202020-ab01-4001-8001-c0aba11c0100';
 
 export default definePageLayoutTab({
   universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
   pageLayoutUniversalIdentifier:
-    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage
+      .universalIdentifier,
   title: 'Hello World',
   position: 1000,
   icon: 'IconWorld',
@@ -97,6 +96,37 @@ export default definePageLayoutTab({
 ### 关键点
 
 * `pageLayoutUniversalIdentifier` 是**必需的**，并且必须在安装时指向一个已存在的页面布局——可以是标准的 Twenty 布局，也可以是由你自己的应用定义的布局。 当前不支持跨应用引用由其他已安装应用拥有的布局。 当父布局缺失时，安装会失败，并给出清晰的验证错误。
+
+* 对于标准 Twenty 布局，从 `twenty-sdk/define` 导入标识符：
+
+  ```ts
+  import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.personRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.opportunityRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.universalIdentifier
+  // …
+  ```
+
+  每个布局条目还会公开其 `tabs` 及其 `widgets`，因此你可以引用任意层级：
+
+  ```ts
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.universalIdentifier
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets.fields.universalIdentifier
+  ```
+
+  还提供了一个简短别名 `STANDARD_PAGE_LAYOUT`：
+
+  ```ts
+  import { STANDARD_PAGE_LAYOUT } from 'twenty-sdk/define';
+
+  STANDARD_PAGE_LAYOUT.companyRecordPage.universalIdentifier;
+  ```
+
 * `widgets` 仅作用于此选项卡——它们引用[前端组件](/l/zh/developers/extend/apps/layout/front-components)、视图等，其方式与在 `definePageLayout` 中内联定义的小部件完全相同。
+
 * `position` 控制目标布局中相对于现有选项卡的排序。 选择一个取值，使你的选项卡相对于内置选项卡位于你想要的位置。
+
 * 当你只想向现有布局进行添加时，请使用此功能，而不是 `definePageLayout`。 当你拥有整个布局时，请使用 `definePageLayout`。

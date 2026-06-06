@@ -45,6 +45,8 @@ import {
 import { FieldMetadataRestApiExceptionFilter } from 'src/engine/metadata-modules/field-metadata/filters/field-metadata-rest-api-exception.filter';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { computeUniqueFieldMetadataIdsFromFlatIndexMaps } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-flat-index-maps.util';
 import {
   toLegacyFieldMetadataCreateResponse,
   toLegacyFieldMetadataDeleteResponse,
@@ -72,7 +74,19 @@ export class FieldMetadataController {
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
+
+  private async loadUniqueFieldMetadataIds(
+    workspaceId: string,
+  ): Promise<ReadonlySet<string>> {
+    const { flatIndexMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: ['flatIndexMaps'] },
+      );
+
+    return computeUniqueFieldMetadataIdsFromFlatIndexMaps(flatIndexMaps);
+  }
 
   @Get()
   async findMany(
@@ -87,12 +101,17 @@ export class FieldMetadataController {
       endingBefore: parseEndingBeforeRestRequest(request),
     });
 
+    const uniqueFieldMetadataIds =
+      await this.loadUniqueFieldMetadataIds(workspaceId);
+
     const result: {
       data: FieldMetadataDTO[];
       pageInfo: RestCursorPageInfo;
       totalCount: number;
     } = {
-      data: items.map(fromFieldMetadataEntityToFieldMetadataDto),
+      data: items.map((item) =>
+        fromFieldMetadataEntityToFieldMetadataDto(item, uniqueFieldMetadataIds),
+      ),
       pageInfo,
       totalCount,
     };
@@ -118,7 +137,12 @@ export class FieldMetadataController {
       );
     }
 
-    const result = fromFieldMetadataEntityToFieldMetadataDto(field);
+    const uniqueFieldMetadataIds =
+      await this.loadUniqueFieldMetadataIds(workspaceId);
+    const result = fromFieldMetadataEntityToFieldMetadataDto(
+      field,
+      uniqueFieldMetadataIds,
+    );
 
     return (await this.isNewMetadataFormat(workspaceId))
       ? result

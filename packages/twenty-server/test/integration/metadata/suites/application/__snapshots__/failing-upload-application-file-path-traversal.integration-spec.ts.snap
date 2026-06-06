@@ -68,6 +68,78 @@ exports[`Upload application file should fail when filePath contains upward trave
 }
 `;
 
+exports[`Upload application file should fail when filePath has an invalid extension for BuiltFrontComponent (.js instead of .mjs) 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Invalid file extension. Allowed extensions: .mjs",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Upload application file should fail when filePath has an invalid extension for BuiltLogicFunction (.html) 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Invalid file extension. Allowed extensions: .mjs",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Upload application file should fail when filePath has an invalid extension for Dependencies (.sh instead of .json/.lock) 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Invalid file extension. Allowed extensions: .json, .lock",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Upload application file should fail when filePath has an invalid extension for Source (.js instead of .ts) 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Invalid file extension. Allowed extensions: .ts, .tsx, .json",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Upload application file should fail when filePath is a folder path without extension (bare UUID) 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Filename must have an extension",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Upload application file should fail when filePath is a nested folder path without extension 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Filename must have an extension",
+  "name": "UserInputError",
+}
+`;
+
 exports[`Upload application file should fail when filePath is an absolute path 1`] = `
 {
   "extensions": {

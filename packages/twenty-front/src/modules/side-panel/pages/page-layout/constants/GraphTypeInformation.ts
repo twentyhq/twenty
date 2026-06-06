@@ -1,5 +1,4 @@
 import { AGGREGATE_CHART_SETTINGS } from '@/side-panel/pages/page-layout/constants/AggregateChartSettings';
-import { GAUGE_CHART_SETTINGS } from '@/side-panel/pages/page-layout/constants/GaugeChartSettings';
 import { LINE_CHART_SETTINGS } from '@/side-panel/pages/page-layout/constants/LineChartSettings';
 import { PIE_CHART_SETTINGS } from '@/side-panel/pages/page-layout/constants/PieChartSettings';
 import { type ChartSettingsGroup } from '@/side-panel/pages/page-layout/types/ChartSettingsGroup';
@@ -13,7 +12,6 @@ import {
   IconChartLine,
   IconChartPie,
   type IconComponent,
-  IconGauge,
   IconSum,
 } from 'twenty-ui/display';
 import { BarChartLayout } from '~/generated-metadata/graphql';
@@ -50,10 +48,5 @@ export const GRAPH_TYPE_INFORMATION: Record<
     label: msg`Aggregate Chart`,
     icon: IconSum,
     settings: AGGREGATE_CHART_SETTINGS,
-  },
-  [GraphType.GAUGE]: {
-    label: msg`Gauge Chart`,
-    icon: IconGauge,
-    settings: GAUGE_CHART_SETTINGS,
   },
 };

@@ -43,6 +43,8 @@ export default defineField({
 
 * Locația fișierului depinde de dumneavoastră. Convenția este `src/fields/\<name>.field.ts`, dar SDK-ul detectează câmpuri oriunde în `src/`.
 
+* Pentru a adăuga o filă într-un layout standard de pagină (de ex. pagina de detalii pentru Task sau Company), folosește [`definePageLayoutTab`](/l/ro/developers/extend/apps/layout/page-layouts#definepagelayouttab) cu `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS` din `twenty-sdk/define`.
+
 ## Adăugarea unei relații la un obiect existent
 
 Pentru a adăuga un câmp de tip relație (de ex. pentru a lega obiectul personalizat de un `Person` standard), folosiți `defineField()` cu `FieldType.RELATION`. Modelul este același ca pentru relațiile inline, dar cu `objectUniversalIdentifier` setat explicit. Consultați [Relații](/l/ro/developers/extend/apps/data/relations) pentru modelul bidirecțional.

@@ -11,7 +11,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { CheckPublicDomainsValidRecordsCronCommand } from 'src/engine/core-modules/public-domain/crons/commands/check-public-domains-valid-records.cron.command';
 import { CheckPublicDomainsValidRecordsCronJob } from 'src/engine/core-modules/public-domain/crons/jobs/check-public-domains-valid-records.cron.job';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 @Module({
   imports: [
     NestjsQueryTypeOrmModule.forFeature([
@@ -28,6 +28,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     PublicDomainResolver,
     CheckPublicDomainsValidRecordsCronCommand,
     CheckPublicDomainsValidRecordsCronJob,
+    provideWorkspaceScopedRepository(PublicDomainEntity),
   ],
 })
 export class PublicDomainModule {}

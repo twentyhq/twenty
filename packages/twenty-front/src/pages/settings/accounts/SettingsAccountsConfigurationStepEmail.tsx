@@ -3,7 +3,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronRight, IconPlus } from 'twenty-ui/display';
@@ -27,7 +27,7 @@ export const SettingsAccountsConfigurationStepEmail = ({
   const { t } = useLingui();
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`1. Email`}
       links={[
         {
@@ -71,6 +71,6 @@ export const SettingsAccountsConfigurationStepEmail = ({
           messageChannel={messageChannel}
         />
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

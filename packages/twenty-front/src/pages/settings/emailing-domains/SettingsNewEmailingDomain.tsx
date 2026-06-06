@@ -2,7 +2,7 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -110,11 +110,11 @@ export const SettingsNewEmailingDomain = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`New Emailing Domain`}
       actionButton={
         <SaveAndCancelButtons
-          onCancel={() => navigate(SettingsPath.Applications)}
+          onCancel={() => navigate(SettingsPath.WorkspaceEmail)}
           onSave={handleSave}
           isSaveDisabled={!canSave}
         />
@@ -122,15 +122,11 @@ export const SettingsNewEmailingDomain = () => {
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
-          children: <Trans>Apps</Trans>,
-          href: getSettingsPath(SettingsPath.Applications),
-        },
-        {
-          children: <Trans>Emailing Domains</Trans>,
-          href: getSettingsPath(SettingsPath.Applications),
+          children: <Trans>Email</Trans>,
+          href: getSettingsPath(SettingsPath.WorkspaceEmail),
         },
         { children: <Trans>New Emailing Domain</Trans> },
       ]}
@@ -153,6 +149,6 @@ export const SettingsNewEmailingDomain = () => {
           />
         </Section>
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

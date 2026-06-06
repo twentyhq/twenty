@@ -1,12 +1,11 @@
-import { type EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
+import {
+  type EmailingDomainSendEmailInput,
+  type EmailingDomainSendEmailResult,
+} from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
+import { type EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
 
-export type DomainVerificationInput = {
-  domain: string;
-  workspaceId: string;
-};
-
-export type DomainStatusInput = {
+export type EmailingDomainResourceInput = {
   domain: string;
   workspaceId: string;
 };
@@ -14,14 +13,20 @@ export type DomainStatusInput = {
 export type EmailingDomainVerificationResult = {
   status: EmailingDomainStatus;
   verificationRecords: VerificationRecord[];
-  verifiedAt: Date | null;
 };
 
 export interface EmailingDomainDriverInterface {
+  provisionWorkspace(workspaceId: string): Promise<void>;
+  deprovisionWorkspace(workspaceId: string): Promise<void>;
   verifyDomain(
-    input: DomainVerificationInput,
+    input: EmailingDomainResourceInput,
   ): Promise<EmailingDomainVerificationResult>;
   getDomainStatus(
-    input: DomainStatusInput,
+    input: EmailingDomainResourceInput,
   ): Promise<EmailingDomainVerificationResult>;
+  registerDomain(input: EmailingDomainResourceInput): Promise<void>;
+  cleanupDomain(input: EmailingDomainResourceInput): Promise<void>;
+  sendEmail(
+    input: EmailingDomainSendEmailInput,
+  ): Promise<EmailingDomainSendEmailResult>;
 }

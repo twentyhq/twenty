@@ -9,7 +9,8 @@ import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/bil
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 const CREDIT_BALANCE_MICRO_UNIT = 1_000_000;
 
 const KNOWN_PLAN_KEYS: ReadonlySet<string> = new Set(
@@ -19,8 +20,8 @@ const KNOWN_PLAN_KEYS: ReadonlySet<string> = new Set(
 @Injectable()
 export class AdminPanelBillingService {
   constructor(
-    @InjectRepository(BillingCustomerEntity)
-    private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
+    @InjectWorkspaceScopedRepository(BillingCustomerEntity)
+    private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
     @InjectRepository(BillingPriceEntity)
     private readonly billingPriceRepository: Repository<BillingPriceEntity>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
@@ -35,7 +36,7 @@ export class AdminPanelBillingService {
     }
 
     const [customer, subscription] = await Promise.all([
-      this.billingCustomerRepository.findOne({ where: { workspaceId } }),
+      this.billingCustomerRepository.findOne(workspaceId, { where: {} }),
       this.billingSubscriptionService.getCurrentBillingSubscription({
         workspaceId,
       }),

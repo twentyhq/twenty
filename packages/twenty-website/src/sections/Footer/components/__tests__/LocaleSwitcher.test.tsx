@@ -4,13 +4,16 @@ jest.mock('next/navigation', () => ({
   usePathname: jest.fn(),
 }));
 
-jest.mock('@/lib/i18n/hooks/use-locale', () => ({
+// Keep the real locale data/helpers (now all exported from the one barrel);
+// only stub the React hook that reads request context.
+jest.mock('@/lib/i18n', () => ({
+  ...jest.requireActual('@/lib/i18n'),
   useLocale: jest.fn(),
 }));
 
 import { usePathname } from 'next/navigation';
 
-import { useLocale } from '@/lib/i18n/hooks/use-locale';
+import { useLocale } from '@/lib/i18n';
 import { LocaleSwitcher } from '@/sections/Footer/components/LocaleSwitcher';
 
 const mockUsePathname = usePathname as jest.MockedFunction<typeof usePathname>;

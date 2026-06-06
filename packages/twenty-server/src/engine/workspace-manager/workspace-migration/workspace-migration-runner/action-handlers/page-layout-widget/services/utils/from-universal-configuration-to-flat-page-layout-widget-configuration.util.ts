@@ -117,26 +117,6 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
       };
     }
 
-    case WidgetConfigurationType.GAUGE_CHART: {
-      const { aggregateFieldMetadataUniversalIdentifier, filter, ...rest } =
-        universalConfiguration;
-
-      const aggregateFieldMetadataId = resolveFieldMetadataIdOrThrow({
-        fieldMetadataUniversalIdentifier:
-          aggregateFieldMetadataUniversalIdentifier,
-        flatFieldMetadataMaps,
-      });
-
-      return {
-        ...rest,
-        aggregateFieldMetadataId,
-        filter: convertUniversalFilterToChartFilter({
-          filter,
-          flatFieldMetadataMaps,
-        }),
-      };
-    }
-
     case WidgetConfigurationType.PIE_CHART: {
       const {
         aggregateFieldMetadataUniversalIdentifier,
@@ -334,15 +314,36 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     }
 
     case WidgetConfigurationType.FIELD: {
-      const { fieldMetadataId: fieldMetadataUniversalIdentifier, ...rest } =
-        universalConfiguration;
+      const {
+        fieldMetadataId: fieldMetadataUniversalIdentifier,
+        viewId: viewUniversalIdentifier,
+        ...rest
+      } = universalConfiguration;
 
       const fieldMetadataId = resolveFieldMetadataIdOrThrow({
         fieldMetadataUniversalIdentifier,
         flatFieldMetadataMaps,
       });
 
-      return { ...rest, fieldMetadataId };
+      let viewId: string | undefined = undefined;
+
+      if (isDefined(viewUniversalIdentifier)) {
+        const flatView = findFlatEntityByUniversalIdentifier({
+          flatEntityMaps: flatViewMaps,
+          universalIdentifier: viewUniversalIdentifier,
+        });
+
+        if (!isDefined(flatView)) {
+          throw new FlatEntityMapsException(
+            `View not found for universal identifier: ${viewUniversalIdentifier}`,
+            FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+          );
+        }
+
+        viewId = flatView.id;
+      }
+
+      return { ...rest, fieldMetadataId, viewId };
     }
 
     case WidgetConfigurationType.VIEW:

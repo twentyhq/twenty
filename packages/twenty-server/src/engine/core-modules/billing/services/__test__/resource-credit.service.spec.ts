@@ -7,7 +7,7 @@ import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/bil
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { ResourceCreditService } from 'src/engine/core-modules/billing/services/resource-credit.service';
-
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 describe('ResourceCreditService', () => {
   let service: ResourceCreditService;
   let billingSubscriptionRepository: jest.Mocked<any>;
@@ -39,7 +39,7 @@ describe('ResourceCreditService', () => {
       providers: [
         ResourceCreditService,
         {
-          provide: getRepositoryToken(BillingSubscriptionEntity),
+          provide: getWorkspaceScopedRepositoryToken(BillingSubscriptionEntity),
           useValue: {
             findOne: jest.fn(),
           },
@@ -55,7 +55,7 @@ describe('ResourceCreditService', () => {
 
     service = module.get<ResourceCreditService>(ResourceCreditService);
     billingSubscriptionRepository = module.get(
-      getRepositoryToken(BillingSubscriptionEntity),
+      getWorkspaceScopedRepositoryToken(BillingSubscriptionEntity),
     );
   });
 
@@ -126,8 +126,10 @@ describe('ResourceCreditService', () => {
 
       billingSubscriptionRepository.findOne.mockResolvedValue(subscription);
 
-      const result =
-        await service.getResourceCreditRolloverParameters('sub_123');
+      const result = await service.getResourceCreditRolloverParameters(
+        'ws_1',
+        'sub_123',
+      );
 
       expect(result).toEqual({ tierQuantity: 5000, unitPriceCents: 5 });
     });
@@ -135,8 +137,10 @@ describe('ResourceCreditService', () => {
     it('returns null when subscription not found', async () => {
       billingSubscriptionRepository.findOne.mockResolvedValue(null);
 
-      const result =
-        await service.getResourceCreditRolloverParameters('sub_123');
+      const result = await service.getResourceCreditRolloverParameters(
+        'ws_1',
+        'sub_123',
+      );
 
       expect(result).toBeNull();
     });
@@ -146,8 +150,10 @@ describe('ResourceCreditService', () => {
         billingSubscriptionItems: [],
       });
 
-      const result =
-        await service.getResourceCreditRolloverParameters('sub_123');
+      const result = await service.getResourceCreditRolloverParameters(
+        'ws_1',
+        'sub_123',
+      );
 
       expect(result).toBeNull();
     });

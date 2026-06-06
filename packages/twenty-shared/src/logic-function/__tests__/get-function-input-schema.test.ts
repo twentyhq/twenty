@@ -26,6 +26,66 @@ describe('getFunctionInputSchema', () => {
     expect(result).toEqual([{ type: 'string' }, { type: 'number' }]);
   });
 
+  it('should parse any[] as an array with unknown items', () => {
+    const fileContent = `
+        export const main = (params: { briefs: any[] }): void => {
+          return;
+        };
+      `;
+    const result = getFunctionInputSchema(fileContent);
+
+    expect(result).toEqual([
+      {
+        type: 'object',
+        properties: {
+          briefs: { type: 'array', items: {} },
+        },
+      },
+    ]);
+  });
+
+  it('should parse Array<T> generic syntax the same way as T[]', () => {
+    const fileContent = `
+        export const main = (params: {
+          briefs: Array<any>;
+          names: Array<string>;
+          readonlyNames: ReadonlyArray<string>;
+        }): void => {
+          return;
+        };
+      `;
+    const result = getFunctionInputSchema(fileContent);
+
+    expect(result).toEqual([
+      {
+        type: 'object',
+        properties: {
+          briefs: { type: 'array', items: {} },
+          names: { type: 'array', items: { type: 'string' } },
+          readonlyNames: { type: 'array', items: { type: 'string' } },
+        },
+      },
+    ]);
+  });
+
+  it('should fall back to an unknown type for unrecognized type references', () => {
+    const fileContent = `
+        export const main = (params: { value: Map<string, number> }): void => {
+          return;
+        };
+      `;
+    const result = getFunctionInputSchema(fileContent);
+
+    expect(result).toEqual([
+      {
+        type: 'object',
+        properties: {
+          value: {},
+        },
+      },
+    ]);
+  });
+
   it('should analyze a complex function correctly', () => {
     const fileContent = `
         function testFunction(

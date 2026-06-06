@@ -5,7 +5,6 @@ import { type gmail_v1 } from 'googleapis';
 import { getAttachmentData } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/get-attachment-data.util';
 import { getBodyData } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/get-body-data.util';
 import { getPropertyFromHeaders } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/get-property-from-headers.util';
-import { createHtmlToTextConverter } from 'src/modules/messaging/message-import-manager/utils/create-html-to-text-converter.util';
 import { safeParseEmailAddressAddress } from 'src/modules/messaging/message-import-manager/utils/safe-parse-email-address-address.util';
 import { safeParseEmailAddresses } from 'src/modules/messaging/message-import-manager/utils/safe-parse-email-addresses.util';
 
@@ -31,10 +30,7 @@ export const parseGmailMessage = (message: gmail_v1.Schema$Message) => {
   const decodedBody = bodyResult
     ? Buffer.from(bodyResult.data, 'base64').toString()
     : '';
-
-  const text = bodyResult?.isHtml
-    ? createHtmlToTextConverter()(decodedBody)
-    : decodedBody;
+  const isHtml = bodyResult?.isHtml ?? false;
 
   const attachments = getAttachmentData(message);
 
@@ -45,14 +41,15 @@ export const parseGmailMessage = (message: gmail_v1.Schema$Message) => {
     historyId,
     internalDate,
     subject,
-    from: rawFrom ? safeParseEmailAddressAddress(rawFrom) : undefined,
+    from: rawFrom ? safeParseEmailAddresses(rawFrom)[0] : undefined,
     deliveredTo: rawDeliveredTo
       ? safeParseEmailAddressAddress(rawDeliveredTo)
       : undefined,
     to: rawTo ? safeParseEmailAddresses(rawTo) : [],
     cc: rawCc ? safeParseEmailAddresses(rawCc) : [],
     bcc: rawBcc ? safeParseEmailAddresses(rawBcc) : [],
-    text,
+    body: decodedBody,
+    isHtml,
     attachments,
     labelIds,
   };

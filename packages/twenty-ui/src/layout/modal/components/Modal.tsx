@@ -27,18 +27,23 @@ const StyledModalDiv = styled.div<{
 }>`
   display: flex;
   flex-direction: column;
-  box-shadow: ${({ overlay }) =>
-    overlay === 'dark'
+  box-shadow: ${({ overlay, size }) => {
+    if (size === 'fullscreen') return 'none';
+    return overlay === 'dark'
       ? themeCssVariables.boxShadow.superHeavy
       : overlay === 'transparent'
         ? 'none'
-        : themeCssVariables.boxShadow.strong};
-  background: ${({ overlay }) =>
-    overlay === 'transparent'
+        : themeCssVariables.boxShadow.strong;
+  }};
+  background: ${({ overlay, size }) => {
+    if (size === 'fullscreen') return themeCssVariables.background.primary;
+    return overlay === 'transparent'
       ? 'transparent'
-      : themeCssVariables.background.primary};
+      : themeCssVariables.background.primary;
+  }};
   color: ${themeCssVariables.font.color.primary};
-  border-radius: ${({ isMobile, overlay, smallBorderRadius }) => {
+  border-radius: ${({ isMobile, overlay, smallBorderRadius, size }) => {
+    if (size === 'fullscreen') return '0';
     if (isMobile === true || overlay === 'transparent') return '0';
     if (smallBorderRadius === true) return themeCssVariables.spacing[1];
     return themeCssVariables.border.radius.md;
@@ -51,6 +56,8 @@ const StyledModalDiv = styled.div<{
     gap !== undefined ? `var(--t-spacing-${gap})` : 'unset'};
 
   width: ${({ isMobile, size, narrowWidth }) => {
+    if (size === 'fullscreen')
+      return themeCssVariables.modal.size.fullscreen.width ?? 'auto';
     if (narrowWidth === true)
       return `calc(400px - ${themeCssVariables.spacing[32]})`;
     if (isMobile)
@@ -84,6 +91,8 @@ const StyledModalDiv = styled.div<{
     }
   }};
   height: ${({ isMobile, size, autoHeight }) => {
+    if (size === 'fullscreen')
+      return themeCssVariables.modal.size.fullscreen.height ?? 'auto';
     if (autoHeight === true) return 'auto';
     if (isMobile)
       return themeCssVariables.modal.size.fullscreen.height ?? 'auto';
@@ -94,7 +103,8 @@ const StyledModalDiv = styled.div<{
         return 'auto';
     }
   }};
-  max-height: ${({ isMobile }) => (isMobile ? 'none' : '90dvh')};
+  max-height: ${({ isMobile, size }) =>
+    isMobile || size === 'fullscreen' ? 'none' : '90dvh'};
 `;
 
 const AnimatedModalDiv = motion.create(StyledModalDiv);

@@ -80,8 +80,8 @@ export async function teardown() {
   const uninstallResult = await appUninstall({ appPath: APP_PATH });
 
   if (!uninstallResult.success) {
-    console.warn(
-      `App uninstall failed: ${uninstallResult.error?.message ?? 'Unknown error'}`,
+    throw new Error(
+      `App uninstall failed during teardown: ${JSON.stringify(uninstallResult.error, null, 2)}`,
     );
   }
 }

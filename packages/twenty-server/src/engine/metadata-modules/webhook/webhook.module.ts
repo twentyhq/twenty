@@ -13,6 +13,7 @@ import { WebhookGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modul
 import { WebhookToolWorkspaceService } from 'src/engine/metadata-modules/webhook/tools/services/webhook-tool.workspace-service';
 import { WebhookResolver } from 'src/engine/metadata-modules/webhook/webhook.resolver';
 import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -35,6 +36,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WebhookGraphqlApiExceptionInterceptor,
     WorkspaceMigrationGraphqlApiExceptionInterceptor,
     WebhookToolWorkspaceService,
+    provideWorkspaceScopedRepository(WebhookEntity),
   ],
   exports: [WebhookService, WebhookToolWorkspaceService],
 })

@@ -14,6 +14,8 @@ import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
@@ -35,8 +37,8 @@ export class DevSeederPermissionsService {
     private readonly objectPermissionService: ObjectPermissionService,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
+    @InjectWorkspaceScopedRepository(RoleEntity)
+    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
     private readonly fieldPermissionService: FieldPermissionService,
     private readonly roleTargetService: RoleTargetService,
     @InjectDataSource()
@@ -54,10 +56,9 @@ export class DevSeederPermissionsService {
     workspaceCustomFlatApplication: FlatApplication;
     light?: boolean;
   }) {
-    const adminRole = await this.roleRepository.findOne({
+    const adminRole = await this.roleRepository.findOne(workspaceId, {
       where: {
         universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
-        workspaceId,
       },
     });
 
@@ -269,12 +270,12 @@ export class DevSeederPermissionsService {
       },
     });
 
-    const personCityFieldMetadata = personObjectMetadata.fields.find(
-      (field) => field.name === 'city',
+    const personJobTitleFieldMetadata = personObjectMetadata.fields.find(
+      (field) => field.name === 'jobTitle',
     );
 
-    if (!personCityFieldMetadata) {
-      throw new Error('Person city field metadata not found');
+    if (!personJobTitleFieldMetadata) {
+      throw new Error('Person jobTitle field metadata not found');
     }
 
     const companyLinkedinLinkFieldMetadata = companyObjectMetadata.fields.find(
@@ -285,9 +286,9 @@ export class DevSeederPermissionsService {
       throw new Error('Company linkedin link field metadata not found');
     }
 
-    const readOnlyOnPersonCityFieldPermission = {
+    const readOnlyOnPersonJobTitleFieldPermission = {
       objectMetadataId: personObjectMetadata.id,
-      fieldMetadataId: personCityFieldMetadata.id,
+      fieldMetadataId: personJobTitleFieldMetadata.id,
       canReadFieldValue: null,
       canUpdateFieldValue: false,
     };
@@ -304,7 +305,7 @@ export class DevSeederPermissionsService {
       input: {
         roleId: customRole.id,
         fieldPermissions: [
-          readOnlyOnPersonCityFieldPermission,
+          readOnlyOnPersonJobTitleFieldPermission,
           noReadOnCompanyLinkedinLinkFieldPermission,
         ],
       },

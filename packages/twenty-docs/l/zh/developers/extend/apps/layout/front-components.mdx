@@ -196,6 +196,94 @@ export default defineFrontComponent({
 });
 ```
 
+## 调用逻辑函数
+
+前端组件在沙盒 Web Worker 中于浏览器端运行，而[逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions)在服务器端运行。 二者之间没有直接的进程内调用——前端组件通过 HTTP 访问逻辑函数。
+
+使用 `httpRouteTriggerSettings` 声明的逻辑函数会通过 `/s/` 端点暴露在 `${TWENTY_API_URL}/s\<path>` 下。 你的前端组件使用 `fetch` 调用该路由，并使用 Twenty 注入到 worker 中的 `TWENTY_APP_ACCESS_TOKEN` 进行身份验证。
+
+一个小型可复用的辅助函数可以让调用端保持简洁：
+
+```ts src/shared/call-app-route.ts
+export async function callAppRoute(
+  path: string,
+  body: Record<string, unknown>,
+): Promise<unknown> {
+  const apiUrl = process.env.TWENTY_API_URL ?? '';
+  const token = process.env.TWENTY_APP_ACCESS_TOKEN;
+
+  const res = await fetch(`${apiUrl}/s${path}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    throw new Error(`Logic function failed (${res.status})`);
+  }
+
+  return res.json();
+}
+```
+
+无头前端组件可以通过 `Command` 组件在挂载时执行调用，然后自动卸载：
+
+```tsx src/front-components/sync-prs.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+import { callAppRoute } from 'src/shared/call-app-route';
+
+const SyncPrs = () => {
+  const execute = async () => {
+    await callAppRoute('/github/fetch-prs', {
+      owner: 'twentyhq',
+      repo: 'twenty',
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-prs',
+  description: 'Triggers the fetch-prs logic function',
+  isHeadless: true,
+  component: SyncPrs,
+});
+```
+
+传递给 `callAppRoute` 的 `path` 必须与逻辑函数的 `httpRouteTriggerSettings.path` 匹配（`/s` 前缀由辅助函数添加）：
+
+```ts src/logic-functions/fetch-prs.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  const { owner, repo } = (event.body ?? {}) as { owner: string; repo: string };
+  // ...fetch from GitHub and persist records...
+  return { ok: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: '...',
+  name: 'fetch-prs',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/github/fetch-prs',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+<Note>
+`TWENTY_API_URL` 和 `TWENTY_APP_ACCESS_TOKEN` 会被自动注入——参见 [应用变量](#application-variables)。 由于机密应用变量永远不会暴露给前端组件，请将 API 密钥和其他敏感逻辑保留在逻辑函数中，而不是前端组件中。
+</Note>
+
 ## 访问运行时上下文
 
 在组件内部，使用 SDK 的 hooks 获取当前用户、记录和组件实例：
@@ -335,8 +423,8 @@ export default defineFrontComponent({
 使用 `useSelectedRecordIds()` 来处理多个已选记录。 这对于批量操作很有用：
 
 ```tsx src/front-components/bulk-export.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { defineFrontComponent, numberOfSelectedRecords } from 'twenty-sdk/define';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 

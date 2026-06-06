@@ -1,10 +1,8 @@
 import { type Equal, type Expect } from 'twenty-shared/testing';
+import { type EmptyObject } from 'twenty-shared/types';
 
 import { type ExtractJsonbProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/extract-jsonb-properties.type';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
-
-// oxlint-disable-next-line @typescripttypescript/no-empty-object-type
-type EmptyObject = {};
 
 type TestedRecord = {
   // Non-JsonbProperty fields

@@ -27,6 +27,8 @@ import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/to
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
@@ -45,8 +47,8 @@ export class EmailComposerService {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    @InjectRepository(FileEntity)
-    private readonly fileRepository: Repository<FileEntity>,
+    @InjectWorkspaceScopedRepository(FileEntity)
+    private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly fileService: FileService,
   ) {}
 
@@ -191,8 +193,8 @@ export class EmailComposerService {
 
     const fileIds = files.map((file) => file.id);
 
-    const fileEntities = await this.fileRepository.find({
-      where: { id: In(fileIds), workspaceId },
+    const fileEntities = await this.fileRepository.find(workspaceId, {
+      where: { id: In(fileIds) },
     });
 
     const fileEntityMap = new Map(
@@ -219,13 +221,20 @@ export class EmailComposerService {
     for (const fileMetadata of files) {
       const fileEntity = fileEntityMap.get(fileMetadata.id);
 
-      const { stream } = await this.fileService.getFileStreamById({
+      const fileStream = await this.fileService.getFileStreamById({
         fileId: fileMetadata.id,
         workspaceId,
         fileFolder,
       });
 
-      const buffer = await streamToBuffer(stream);
+      if (fileStream === null) {
+        throw new EmailToolException(
+          `Files not found: ${fileMetadata.name} (${fileMetadata.id})`,
+          EmailToolExceptionCode.FILE_NOT_FOUND,
+        );
+      }
+
+      const buffer = await streamToBuffer(fileStream.stream);
 
       attachments.push({
         filename: fileMetadata.name,

@@ -84,7 +84,7 @@ export const useGetConfigToUpdateAfterGraphTypeChange = ({
         configurationType: newConfigurationType,
       } as Partial<ChartConfiguration>;
 
-      if (graphType !== GraphType.AGGREGATE && graphType !== GraphType.GAUGE) {
+      if (graphType !== GraphType.AGGREGATE) {
         const objectMetadataItem = objectMetadataItems.find(
           (item) => item.id === widget.objectMetadataId,
         );

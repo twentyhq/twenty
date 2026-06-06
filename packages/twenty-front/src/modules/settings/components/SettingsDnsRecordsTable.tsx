@@ -91,6 +91,7 @@ export const SettingsDnsRecordsTable = ({
             <TableCell>{record.type}</TableCell>
             <StyledTableCellFontWrapper>
               <TableCell
+                overflow="hidden"
                 onClick={() => {
                   copyToClipboard(record.key || '');
                 }}
@@ -101,6 +102,7 @@ export const SettingsDnsRecordsTable = ({
 
             <StyledTableCellFontWrapper>
               <TableCell
+                overflow="hidden"
                 onClick={() => {
                   copyToClipboard(record.value);
                 }}
@@ -111,17 +113,17 @@ export const SettingsDnsRecordsTable = ({
 
             {hasPriorityRecords && (
               <StyledTableCellFontWrapper>
-                <TableCell>{record.priority}</TableCell>
+                <TableCell overflow="hidden">{record.priority}</TableCell>
               </StyledTableCellFontWrapper>
             )}
             {hasTtlRecords && (
               <StyledTableCellFontWrapper>
-                <TableCell>{record.ttl}</TableCell>
+                <TableCell overflow="hidden">{record.ttl}</TableCell>
               </StyledTableCellFontWrapper>
             )}
             {hasStatusRecords && (
               <StyledTableCellFontWrapper>
-                <TableCell>
+                <TableCell overflow="hidden">
                   {'status' in record ? (
                     <Status
                       color={record.statusColor}

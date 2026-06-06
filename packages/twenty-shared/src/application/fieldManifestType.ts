@@ -22,6 +22,12 @@ export type RegularFieldManifest<
   options?: FieldMetadataOptions<T>;
   universalSettings?: FieldMetadataUniversalSettings<T>;
   isNullable?: boolean;
+  /**
+   * @deprecated Use defineIndex({ isUnique: true, fields: [...] }) instead.
+   * Indexes are the SDK primitive for uniqueness — they support both single-
+   * and multi-column unique constraints with a single, consistent API. This
+   * field still works but will be removed in a future release.
+   */
   isUnique?: boolean;
   objectUniversalIdentifier: string;
 };

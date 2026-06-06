@@ -10,6 +10,7 @@ export enum EmailingDomainDriverExceptionCode {
   TEMPORARY_ERROR = 'TEMPORARY_ERROR',
   INSUFFICIENT_PERMISSIONS = 'INSUFFICIENT_PERMISSIONS',
   CONFIGURATION_ERROR = 'CONFIGURATION_ERROR',
+  SENDING_SUSPENDED = 'SENDING_SUSPENDED',
   UNKNOWN = 'UNKNOWN',
 }
 
@@ -23,6 +24,8 @@ const getEmailingDomainDriverExceptionUserFriendlyMessage = (
       return msg`Insufficient permissions for email domain.`;
     case EmailingDomainDriverExceptionCode.CONFIGURATION_ERROR:
       return msg`Email domain configuration error.`;
+    case EmailingDomainDriverExceptionCode.SENDING_SUSPENDED:
+      return msg`Sending is currently suspended for this email domain.`;
     case EmailingDomainDriverExceptionCode.TEMPORARY_ERROR:
     case EmailingDomainDriverExceptionCode.UNKNOWN:
       return STANDARD_ERROR_MESSAGE;

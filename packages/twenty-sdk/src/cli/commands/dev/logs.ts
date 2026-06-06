@@ -1,4 +1,5 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
+import { ConfigService } from '@/cli/utilities/config/config-service';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
 import { readManifestFromFile } from '@/cli/utilities/build/manifest/manifest-reader';
@@ -58,8 +59,12 @@ export class LogicFunctionLogsCommand {
         ? `function "${functionUniversalIdentifier || functionName}"`
         : 'functions';
 
+    const remoteName = ConfigService.getActiveRemote();
+
     console.log(
-      chalk.blue(`🚀 Watching ${appPath} ${functionIdentifier} logs:\n`),
+      chalk.blue(
+        `🚀 Watching ${appPath} ${functionIdentifier} logs on ${remoteName}:\n`,
+      ),
     );
   }
 }

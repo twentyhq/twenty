@@ -24,20 +24,6 @@ const SettingsRestPlayground = lazy(() =>
   ),
 );
 
-const SettingsAccountsCalendars = lazy(() =>
-  import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
-    (module) => ({
-      default: module.SettingsAccountsCalendars,
-    }),
-  ),
-);
-
-const SettingsAccountsEmails = lazy(() =>
-  import('~/pages/settings/accounts/SettingsAccountsEmails').then((module) => ({
-    default: module.SettingsAccountsEmails,
-  })),
-);
-
 const SettingsAccountsConfiguration = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsConfiguration').then(
     (module) => ({
@@ -122,14 +108,20 @@ const SettingsLogicFunctionDetail = lazy(() =>
   ),
 );
 
-const SettingsWorkspace = lazy(() =>
-  import('~/pages/settings/SettingsWorkspace').then((module) => ({
-    default: module.SettingsWorkspace,
+const SettingsGeneral = lazy(() =>
+  import('~/pages/settings/general/SettingsGeneral').then((module) => ({
+    default: module.SettingsGeneral,
+  })),
+);
+
+const SettingsWorkspaceEmail = lazy(() =>
+  import('~/pages/settings/email/SettingsWorkspaceEmail').then((module) => ({
+    default: module.SettingsWorkspaceEmail,
   })),
 );
 
 const SettingsWorkspaceEmailGroupChannelDetail = lazy(() =>
-  import('~/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail').then(
+  import('~/pages/settings/email/SettingsWorkspaceEmailGroupChannelDetail').then(
     (module) => ({
       default: module.SettingsWorkspaceEmailGroupChannelDetail,
     }),
@@ -151,9 +143,11 @@ const SettingsCustomDomainPage = lazy(() =>
 );
 
 const SettingsApiWebhooks = lazy(() =>
-  import('~/pages/settings/workspace/SettingsApiWebhooks').then((module) => ({
-    default: module.SettingsApiWebhooks,
-  })),
+  import('~/pages/settings/api-webhooks/SettingsApiWebhooks').then(
+    (module) => ({
+      default: module.SettingsApiWebhooks,
+    }),
+  ),
 );
 
 const SettingsAI = lazy(() =>
@@ -214,6 +208,12 @@ const SettingsApplicationCommandMenuItemDetail = lazy(() =>
   ),
 );
 
+const SettingsLayout = lazy(() =>
+  import('~/pages/settings/layout/SettingsLayout').then((module) => ({
+    default: module.SettingsLayout,
+  })),
+);
+
 const SettingsLayoutViewDetail = lazy(() =>
   import('~/pages/settings/layout/SettingsLayoutViewDetail').then((module) => ({
     default: module.SettingsLayoutViewDetail,
@@ -232,6 +232,14 @@ const SettingsAdminApplicationRegistrationDetail = lazy(() =>
   import('~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail').then(
     (module) => ({
       default: module.SettingsAdminApplicationRegistrationDetail,
+    }),
+  ),
+);
+
+const SettingsAdminApplicationRegistrationConfigVariableDetail = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigVariableDetail').then(
+    (module) => ({
+      default: module.SettingsAdminApplicationRegistrationConfigVariableDetail,
     }),
   ),
 );
@@ -299,13 +307,13 @@ const SettingsWorkspaceMember = lazy(() =>
 );
 
 const SettingsProfile = lazy(() =>
-  import('~/pages/settings/SettingsProfile').then((module) => ({
+  import('~/pages/settings/profile/SettingsProfile').then((module) => ({
     default: module.SettingsProfile,
   })),
 );
 
 const SettingsTwoFactorAuthenticationMethod = lazy(() =>
-  import('~/pages/settings/SettingsTwoFactorAuthenticationMethod').then(
+  import('~/pages/settings/profile/SettingsTwoFactorAuthenticationMethod').then(
     (module) => ({
       default: module.SettingsTwoFactorAuthenticationMethod,
     }),
@@ -326,20 +334,34 @@ const SettingsAccounts = lazy(() =>
   })),
 );
 
+const SettingsAccountsEmails = lazy(() =>
+  import('~/pages/settings/accounts/SettingsAccountsEmails').then((module) => ({
+    default: module.SettingsAccountsEmails,
+  })),
+);
+
+const SettingsAccountsCalendars = lazy(() =>
+  import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
+    (module) => ({
+      default: module.SettingsAccountsCalendars,
+    }),
+  ),
+);
+
 const SettingsBilling = lazy(() =>
-  import('~/pages/settings/SettingsBilling').then((module) => ({
+  import('~/pages/settings/billing/SettingsBilling').then((module) => ({
     default: module.SettingsBilling,
   })),
 );
 
 const SettingsUsage = lazy(() =>
-  import('~/pages/settings/SettingsUsage').then((module) => ({
+  import('~/pages/settings/billing/SettingsUsage').then((module) => ({
     default: module.SettingsUsage,
   })),
 );
 
 const SettingsUsageUserDetail = lazy(() =>
-  import('~/pages/settings/SettingsUsageUserDetail').then((module) => ({
+  import('~/pages/settings/billing/SettingsUsageUserDetail').then((module) => ({
     default: module.SettingsUsageUserDetail,
   })),
 );
@@ -381,18 +403,20 @@ const SettingsObjectNewFieldConfigure = lazy(() =>
     }),
   ),
 );
+
+const SettingsObjectNewIndex = lazy(() =>
+  import('~/pages/settings/data-model/new-index/SettingsObjectNewIndex').then(
+    (module) => ({
+      default: module.SettingsObjectNewIndex,
+    }),
+  ),
+);
 const SettingsObjectFieldEdit = lazy(() =>
   import('~/pages/settings/data-model/SettingsObjectFieldEdit').then(
     (module) => ({
       default: module.SettingsObjectFieldEdit,
     }),
   ),
-);
-
-const SettingsSecurity = lazy(() =>
-  import('~/pages/settings/security/SettingsSecurity').then((module) => ({
-    default: module.SettingsSecurity,
-  })),
 );
 
 const SettingsSecuritySSOIdentifyProvider = lazy(() =>
@@ -407,14 +431,6 @@ const SettingsSecurityApprovedAccessDomain = lazy(() =>
   import('~/pages/settings/security/SettingsSecurityApprovedAccessDomain').then(
     (module) => ({
       default: module.SettingsSecurityApprovedAccessDomain,
-    }),
-  ),
-);
-
-const SettingsEventLogs = lazy(() =>
-  import('~/pages/settings/security/event-logs/SettingsEventLogs').then(
-    (module) => ({
-      default: module.SettingsEventLogs,
     }),
   ),
 );
@@ -537,9 +553,9 @@ const SettingsAdminWorkspaceChatThread = lazy(() =>
   ),
 );
 
-const SettingsUpdates = lazy(() =>
-  import('~/pages/settings/updates/SettingsUpdates').then((module) => ({
-    default: module.SettingsUpdates,
+const SettingsCommunity = lazy(() =>
+  import('~/pages/settings/community/SettingsCommunity').then((module) => ({
+    default: module.SettingsCommunity,
   })),
 );
 
@@ -596,20 +612,20 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
       >
         <Route path={SettingsPath.Accounts} element={<SettingsAccounts />} />
         <Route
-          path={SettingsPath.NewAccount}
-          element={<SettingsNewAccount />}
-        />
-        <Route
-          path={SettingsPath.AccountsConfiguration}
-          element={<SettingsAccountsConfiguration />}
+          path={SettingsPath.AccountsEmails}
+          element={<SettingsAccountsEmails />}
         />
         <Route
           path={SettingsPath.AccountsCalendars}
           element={<SettingsAccountsCalendars />}
         />
         <Route
-          path={SettingsPath.AccountsEmails}
-          element={<SettingsAccountsEmails />}
+          path={SettingsPath.NewAccount}
+          element={<SettingsNewAccount />}
+        />
+        <Route
+          path={SettingsPath.AccountsConfiguration}
+          element={<SettingsAccountsConfiguration />}
         />
         <Route
           path={SettingsPath.NewImapSmtpCaldavConnection}
@@ -627,7 +643,11 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           />
         }
       >
-        <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
+        <Route path={SettingsPath.General} element={<SettingsGeneral />} />
+        <Route
+          path={SettingsPath.WorkspaceEmail}
+          element={<SettingsWorkspaceEmail />}
+        />
         <Route
           path={SettingsPath.NewEmailGroupChannel}
           element={<SettingsNewEmailGroupChannel />}
@@ -640,6 +660,40 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           path={SettingsPath.ApiWebhooks}
           element={<SettingsApiWebhooks />}
         />
+        <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
+        <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
+        <Route
+          path={SettingsPath.UsageUserDetail}
+          element={<SettingsUsageUserDetail />}
+        />
+        <Route
+          path={SettingsPath.Subdomain}
+          element={<SettingsSubdomainPage />}
+        />
+        <Route
+          path={SettingsPath.CustomDomain}
+          element={<SettingsCustomDomainPage />}
+        />
+        <Route
+          path={SettingsPath.NewEmailingDomain}
+          element={<SettingsNewEmailingDomain />}
+        />
+        <Route
+          path={SettingsPath.EmailingDomainDetail}
+          element={<SettingsEmailingDomainDetail />}
+        />
+        <Route
+          path={SettingsPath.PublicDomain}
+          element={<SettingPublicDomain />}
+        />
+      </Route>
+      <Route
+        element={
+          <SettingsProtectedRouteWrapper
+            settingsPermission={PermissionFlagType.AI_SETTINGS}
+          />
+        }
+      >
         <Route path={SettingsPath.AI} element={<SettingsAI />} />
         <Route path={SettingsPath.AiPrompts} element={<SettingsAiPrompts />} />
         <Route
@@ -674,32 +728,15 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           path={SettingsPath.LogicFunctionDetail}
           element={<SettingsLogicFunctionDetail />}
         />
-        <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
-        <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
-        <Route
-          path={SettingsPath.UsageUserDetail}
-          element={<SettingsUsageUserDetail />}
-        />
-        <Route
-          path={SettingsPath.Subdomain}
-          element={<SettingsSubdomainPage />}
-        />
-        <Route
-          path={SettingsPath.CustomDomain}
-          element={<SettingsCustomDomainPage />}
-        />
-        <Route
-          path={SettingsPath.NewEmailingDomain}
-          element={<SettingsNewEmailingDomain />}
-        />
-        <Route
-          path={SettingsPath.EmailingDomainDetail}
-          element={<SettingsEmailingDomainDetail />}
-        />
-        <Route
-          path={SettingsPath.PublicDomain}
-          element={<SettingPublicDomain />}
-        />
+      </Route>
+      <Route
+        element={
+          <SettingsProtectedRouteWrapper
+            settingsPermission={PermissionFlagType.LAYOUTS}
+          />
+        }
+      >
+        <Route path={SettingsPath.Layout} element={<SettingsLayout />} />
       </Route>
       <Route
         element={
@@ -741,6 +778,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.ObjectNewFieldConfigure}
           element={<SettingsObjectNewFieldConfigure />}
+        />
+        <Route
+          path={SettingsPath.ObjectNewIndex}
+          element={<SettingsObjectNewIndex />}
         />
         <Route
           path={SettingsPath.ObjectFieldEdit}
@@ -864,13 +905,19 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
       </Route>
 
       <Route
+        path="security"
+        element={
+          <Navigate to={getSettingsPath(SettingsPath.Security)} replace />
+        }
+      />
+
+      <Route
         element={
           <SettingsProtectedRouteWrapper
             settingsPermission={PermissionFlagType.SECURITY}
           />
         }
       >
-        <Route path={SettingsPath.Security} element={<SettingsSecurity />} />
         <Route
           path={SettingsPath.NewSSOIdentityProvider}
           element={<SettingsSecuritySSOIdentifyProvider />}
@@ -879,7 +926,6 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           path={SettingsPath.NewApprovedAccessDomain}
           element={<SettingsSecurityApprovedAccessDomain />}
         />
-        <Route path={SettingsPath.EventLogs} element={<SettingsEventLogs />} />
       </Route>
 
       {isAdminPageEnabled && (
@@ -944,6 +990,14 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
             element={<SettingsAdminApplicationRegistrationDetail />}
           />
           <Route
+            path={
+              SettingsPath.AdminPanelApplicationRegistrationConfigVariableDetails
+            }
+            element={
+              <SettingsAdminApplicationRegistrationConfigVariableDetail />
+            }
+          />
+          <Route
             path={SettingsPath.AdminPanelWorkspaceChatThread}
             element={<SettingsAdminWorkspaceChatThread />}
           />
@@ -957,7 +1011,7 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           />
         }
       >
-        <Route path={SettingsPath.Updates} element={<SettingsUpdates />} />
+        <Route path={SettingsPath.Community} element={<SettingsCommunity />} />
       </Route>
     </Routes>
   </Suspense>

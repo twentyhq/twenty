@@ -2,11 +2,14 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { isSafeRelativePath } from 'src/engine/core-modules/file-storage/utils/is-safe-relative-path.util';
+import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionExceptionCode } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
+import { isLogicFunctionReadyForPrebuiltInstall } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
@@ -48,25 +51,58 @@ export class FlatLogicFunctionValidatorService {
       return validationResult;
     }
 
-    if (
-      isDefined(flatEntityUpdate.builtHandlerPath) &&
-      !isSafeRelativePath(flatEntityUpdate.builtHandlerPath)
-    ) {
-      validationResult.errors.push({
-        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-        message: t`Built handler path contains unsafe characters`,
-        userFriendlyMessage: msg`Built handler path contains unsafe characters`,
+    if (isDefined(flatEntityUpdate.builtHandlerPath)) {
+      const builtPathResult = validateFilePath({
+        resourcePath: flatEntityUpdate.builtHandlerPath,
+        fileFolder: FileFolder.BuiltLogicFunction,
       });
+
+      if (!builtPathResult.isValid) {
+        validationResult.errors.push({
+          code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+          message: builtPathResult.error,
+          userFriendlyMessage: msg`Built handler path is invalid`,
+        });
+      }
     }
 
+    if (isDefined(flatEntityUpdate.sourceHandlerPath)) {
+      const sourcePathResult = validateFilePath({
+        resourcePath: flatEntityUpdate.sourceHandlerPath,
+        fileFolder: FileFolder.Source,
+      });
+
+      if (!sourcePathResult.isValid) {
+        validationResult.errors.push({
+          code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+          message: sourcePathResult.error,
+          userFriendlyMessage: msg`Source handler path is invalid`,
+        });
+      }
+    }
+
+    const mergedPrebuiltState = {
+      executionMode:
+        flatEntityUpdate.executionMode ??
+        existingFlatLogicFunction.executionMode,
+      isBuildUpToDate:
+        flatEntityUpdate.isBuildUpToDate ??
+        existingFlatLogicFunction.isBuildUpToDate,
+      checksum:
+        flatEntityUpdate.checksum !== undefined
+          ? flatEntityUpdate.checksum
+          : existingFlatLogicFunction.checksum,
+    };
+
     if (
-      isDefined(flatEntityUpdate.sourceHandlerPath) &&
-      !isSafeRelativePath(flatEntityUpdate.sourceHandlerPath)
+      mergedPrebuiltState.executionMode ===
+        LogicFunctionExecutionMode.PREBUILT &&
+      !isLogicFunctionReadyForPrebuiltInstall(mergedPrebuiltState)
     ) {
       validationResult.errors.push({
         code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-        message: t`Source handler path contains unsafe characters`,
-        userFriendlyMessage: msg`Source handler path contains unsafe characters`,
+        message: t`Logic function cannot be in PREBUILT mode without a fresh build and a checksum`,
+        userFriendlyMessage: msg`Logic function cannot be in PREBUILT mode without a fresh build and a checksum`,
       });
     }
 
@@ -136,25 +172,45 @@ export class FlatLogicFunctionValidatorService {
       });
     }
 
-    if (
-      isDefined(flatLogicFunctionToValidate.builtHandlerPath) &&
-      !isSafeRelativePath(flatLogicFunctionToValidate.builtHandlerPath)
-    ) {
-      validationResult.errors.push({
-        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-        message: t`Built handler path contains unsafe characters`,
-        userFriendlyMessage: msg`Built handler path contains unsafe characters`,
+    if (isDefined(flatLogicFunctionToValidate.builtHandlerPath)) {
+      const builtPathResult = validateFilePath({
+        resourcePath: flatLogicFunctionToValidate.builtHandlerPath,
+        fileFolder: FileFolder.BuiltLogicFunction,
       });
+
+      if (!builtPathResult.isValid) {
+        validationResult.errors.push({
+          code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+          message: builtPathResult.error,
+          userFriendlyMessage: msg`Built handler path is invalid`,
+        });
+      }
+    }
+
+    if (isDefined(flatLogicFunctionToValidate.sourceHandlerPath)) {
+      const sourcePathResult = validateFilePath({
+        resourcePath: flatLogicFunctionToValidate.sourceHandlerPath,
+        fileFolder: FileFolder.Source,
+      });
+
+      if (!sourcePathResult.isValid) {
+        validationResult.errors.push({
+          code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+          message: sourcePathResult.error,
+          userFriendlyMessage: msg`Source handler path is invalid`,
+        });
+      }
     }
 
     if (
-      isDefined(flatLogicFunctionToValidate.sourceHandlerPath) &&
-      !isSafeRelativePath(flatLogicFunctionToValidate.sourceHandlerPath)
+      flatLogicFunctionToValidate.executionMode ===
+        LogicFunctionExecutionMode.PREBUILT &&
+      !isLogicFunctionReadyForPrebuiltInstall(flatLogicFunctionToValidate)
     ) {
       validationResult.errors.push({
         code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-        message: t`Source handler path contains unsafe characters`,
-        userFriendlyMessage: msg`Source handler path contains unsafe characters`,
+        message: t`Logic function cannot be in PREBUILT mode without a fresh build and a checksum`,
+        userFriendlyMessage: msg`Logic function cannot be in PREBUILT mode without a fresh build and a checksum`,
       });
     }
 

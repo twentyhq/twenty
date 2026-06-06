@@ -1,5 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
 
 import { SecretEncryptionService } from './secret-encryption.service';
@@ -194,7 +196,7 @@ describe('SecretEncryptionService', () => {
 
     it('round-trips a v2 envelope and applies the mask', () => {
       const secret = 'sk-abcdefghij1234567890';
-      const encrypted = service.encryptVersioned(secret);
+      const encrypted = service.encryptVersioned(secret as PlaintextString);
 
       const result = service.decryptAndMaskVersioned({
         value: encrypted,
@@ -208,7 +210,9 @@ describe('SecretEncryptionService', () => {
     it('decrypts a workspace-scoped v2 envelope when given the matching workspaceId', () => {
       const workspaceId = '11111111-1111-1111-1111-111111111111';
       const secret = 'sk-workspace-bound-secret';
-      const encrypted = service.encryptVersioned(secret, { workspaceId });
+      const encrypted = service.encryptVersioned(secret as PlaintextString, {
+        workspaceId,
+      });
 
       const result = service.decryptAndMaskVersioned({
         value: encrypted,
@@ -223,13 +227,13 @@ describe('SecretEncryptionService', () => {
     it('returns null/undefined values as-is', () => {
       expect(
         service.decryptAndMaskVersioned({
-          value: null as unknown as string,
+          value: null as unknown as EncryptedString,
           mask,
         }),
       ).toBeNull();
       expect(
         service.decryptAndMaskVersioned({
-          value: undefined as unknown as string,
+          value: undefined as unknown as EncryptedString,
           mask,
         }),
       ).toBeUndefined();

@@ -106,12 +106,16 @@ describe('buildReleaseListJsonLd', () => {
         slug: '1.18.0',
         release: '1.18.0',
         date: '2026-04-01',
+        previewImage: '/images/releases/1.18/1.18.0-sidebar-items.webp',
+        title: 'Highlight one',
         content: '# Highlight one\n\nBody text\n\n# Highlight two\n',
       },
       {
         slug: '1.17.0',
         release: '1.17.0',
         date: '2026-03-15',
+        previewImage: '/images/releases/1.17/1.17.0-ai-chat.webp',
+        title: 'Real headline',
         content: '## Smaller heading\n\n# Real headline\n',
       },
     ];
@@ -138,17 +142,21 @@ describe('buildReleaseListJsonLd', () => {
     });
   });
 
-  it('falls back to "Twenty <release>" as the headline when the body has no h1', () => {
+  it('uses the typed release title instead of scraping the markdown body', () => {
     const data = buildReleaseListJsonLd([
       {
         slug: '0.1.0',
         release: '0.1.0',
         date: '2025-01-01',
+        previewImage: '/images/releases/0.10/0.10-json.webp',
+        title: 'Structured release title',
         content: 'Just paragraphs, no headings.\n',
       },
     ]) as { itemListElement: Array<Record<string, { headline: string }>> };
 
-    expect(data.itemListElement[0].item.headline).toBe('Twenty 0.1.0');
+    expect(data.itemListElement[0].item.headline).toBe(
+      'Structured release title',
+    );
   });
 
   it('omits datePublished when the frontmatter date is missing', () => {
@@ -157,6 +165,8 @@ describe('buildReleaseListJsonLd', () => {
         slug: '0.2.0',
         release: '0.2.0',
         date: '',
+        previewImage: '/images/releases/0.10/0.10-currency.webp',
+        title: 'Headline',
         content: '# Headline\n',
       },
     ]) as {

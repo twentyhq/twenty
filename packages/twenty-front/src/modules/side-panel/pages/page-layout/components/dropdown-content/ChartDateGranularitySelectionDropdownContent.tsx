@@ -67,8 +67,7 @@ const isChartConfiguration = (
     isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
     isWidgetConfigurationOfType(configuration, 'LineChartConfiguration') ||
     isWidgetConfigurationOfType(configuration, 'PieChartConfiguration') ||
-    isWidgetConfigurationOfType(configuration, 'AggregateChartConfiguration') ||
-    isWidgetConfigurationOfType(configuration, 'GaugeChartConfiguration')
+    isWidgetConfigurationOfType(configuration, 'AggregateChartConfiguration')
   );
 };
 

@@ -1,5 +1,6 @@
 import { appUninstall } from '@/cli/operations/uninstall';
 import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
+import { ConfigService } from '@/cli/utilities/config/config-service';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
@@ -12,7 +13,9 @@ export class AppUninstallCommand {
     appPath?: string;
     askForConfirmation: boolean;
   }): Promise<ApiResponse<any>> {
-    console.log(chalk.blue('🚀 Uninstall Twenty Application'));
+    const remoteName = ConfigService.getActiveRemote();
+
+    console.log(chalk.blue(`🚀 Uninstall Twenty Application on ${remoteName}`));
     console.log(chalk.gray(`📁 App Path: ${appPath}\n`));
 
     if (askForConfirmation && !(await this.confirmationPrompt())) {

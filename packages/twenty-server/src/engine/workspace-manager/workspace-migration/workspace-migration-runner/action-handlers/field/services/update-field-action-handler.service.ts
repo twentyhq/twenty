@@ -138,7 +138,21 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
     const { entityId, update } = flatAction;
 
-    await fieldMetadataRepository.update({ id: entityId, workspaceId }, update);
+    // isUnique is derived from IndexMetadata at cache build time and has
+    // no underlying column on fieldMetadata. It travels in the update
+    // payload only so per-type validators (e.g. FILES rejection) can run
+    // — the actual state change is handled by the side-effect index
+    // create/delete in handleIndexChangesDuringFieldUpdate.
+    const { isUnique: _droppedIsUnique, ...persistedUpdate } = update;
+
+    if (Object.keys(persistedUpdate).length === 0) {
+      return;
+    }
+
+    await fieldMetadataRepository.update(
+      { id: entityId, workspaceId },
+      persistedUpdate,
+    );
   }
 
   async executeForWorkspaceSchema(

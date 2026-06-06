@@ -65,16 +65,15 @@ Use isto quando você quiser apenas **adicionar** uma aba a um layout existente 
 import {
   definePageLayoutTab,
   PageLayoutTabLayoutMode,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
 import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
-
-const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
-  '20202020-ab01-4001-8001-c0aba11c0100';
 
 export default definePageLayoutTab({
   universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
   pageLayoutUniversalIdentifier:
-    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage
+      .universalIdentifier,
   title: 'Hello World',
   position: 1000,
   icon: 'IconWorld',
@@ -97,6 +96,37 @@ export default definePageLayoutTab({
 ### Pontos-chave
 
 * `pageLayoutUniversalIdentifier` é **obrigatório** e deve apontar para um layout de página que já exista no momento da instalação — seja um layout padrão da Twenty ou um definido pelo seu próprio aplicativo. Referências entre aplicativos para layouts pertencentes a outro aplicativo instalado não são compatíveis atualmente. Quando o layout pai estiver ausente, a instalação falha com um erro de validação claro.
+
+* Para layouts padrão do Twenty, importe identificadores de `twenty-sdk/define`:
+
+  ```ts
+  import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.personRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.opportunityRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.universalIdentifier
+  // …
+  ```
+
+  Cada entrada de layout também expõe suas `tabs` e seus `widgets`, para que você possa fazer referência a qualquer nível:
+
+  ```ts
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.universalIdentifier
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets.fields.universalIdentifier
+  ```
+
+  Um alias abreviado `STANDARD_PAGE_LAYOUT` também está disponível:
+
+  ```ts
+  import { STANDARD_PAGE_LAYOUT } from 'twenty-sdk/define';
+
+  STANDARD_PAGE_LAYOUT.companyRecordPage.universalIdentifier;
+  ```
+
 * `widgets` têm escopo apenas para esta aba — eles referenciam [front components](/l/pt/developers/extend/apps/layout/front-components), visualizações etc., exatamente como widgets definidos inline em `definePageLayout`.
+
 * `position` controla a ordenação em relação às abas existentes no layout de destino. Escolha um valor que posicione sua aba onde você deseja em relação às abas nativas.
+
 * Use isto em vez de `definePageLayout` quando você quiser apenas adicionar a um layout existente. Use `definePageLayout` quando você possuir todo o layout.

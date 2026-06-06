@@ -57,6 +57,7 @@ describe('formatUpgradeErrorForStorage', () => {
     const action = {
       type: 'create',
       metadataName: 'objectMetadata',
+      flatEntity: { universalIdentifier: 'test-object-uid' },
     } as unknown as AllUniversalWorkspaceMigrationAction;
 
     const error = new WorkspaceMigrationRunnerException({

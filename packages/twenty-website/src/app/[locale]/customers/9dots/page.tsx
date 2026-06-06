@@ -1,10 +1,7 @@
-import { CaseStudyPageLayout } from '@/app/[locale]/customers/_components/CaseStudyPageLayout';
+import { CustomersCaseStudyPageLayout } from '@/app/[locale]/customers/_components/CustomersCaseStudyPageLayout';
 import { Heading, HeadingPart } from '@/design-system/components';
 import { CASE_STUDY_HERO_IMAGES, type CaseStudyData } from '@/lib/customers';
-import {
-  getRouteI18n,
-  type LocaleRouteParams,
-} from '@/lib/i18n/utils/get-route-i18n';
+import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { buildLocalizedMetadata } from '@/lib/seo';
 import { msg } from '@lingui/core/macro';
 
@@ -39,10 +36,10 @@ export default async function NineDotsCaseStudyPage({
         <Heading as="h1" size="xl" weight="light">
           <HeadingPart fontFamily="serif">
             {i18n._(msg`A real estate agency on WhatsApp`)}
-          </HeadingPart>{' '}
+          </HeadingPart>
           <HeadingPart fontFamily="serif">{i18n._(msg`built a`)}</HeadingPart>
           <br />
-          <HeadingPart fontFamily="sans">{i18n._(msg`CRM`)}</HeadingPart>{' '}
+          <HeadingPart fontFamily="sans">{i18n._(msg`CRM`)}</HeadingPart>
           <HeadingPart fontFamily="serif">{i18n._(msg`around it`)}</HeadingPart>
         </Heading>
       ),
@@ -71,7 +68,7 @@ export default async function NineDotsCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`When the channel is`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`the business`)}
             </HeadingPart>
@@ -92,7 +89,7 @@ export default async function NineDotsCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`The CRM as a`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`control hub`)}
             </HeadingPart>
@@ -112,7 +109,7 @@ export default async function NineDotsCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="sans">
               {i18n._(msg`150 hours`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="serif">
               {i18n._(msg`saved every month`)}
             </HeadingPart>
@@ -135,5 +132,10 @@ export default async function NineDotsCaseStudyPage({
     },
   };
 
-  return <CaseStudyPageLayout caseStudy={caseStudy} path="/customers/9dots" />;
+  return (
+    <CustomersCaseStudyPageLayout
+      caseStudy={caseStudy}
+      path="/customers/9dots"
+    />
+  );
 }

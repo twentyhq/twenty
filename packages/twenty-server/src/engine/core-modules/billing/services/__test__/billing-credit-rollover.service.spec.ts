@@ -1,12 +1,11 @@
 /* @license Enterprise */
 
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
-
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 describe('BillingCreditRolloverService', () => {
   let service: BillingCreditRolloverService;
   let billingUsageService: jest.Mocked<
@@ -25,7 +24,7 @@ describe('BillingCreditRolloverService', () => {
           },
         },
         {
-          provide: getRepositoryToken(BillingCustomerEntity),
+          provide: getWorkspaceScopedRepositoryToken(BillingCustomerEntity),
           useValue: {
             update: jest.fn(),
           },
@@ -38,7 +37,7 @@ describe('BillingCreditRolloverService', () => {
     );
     billingUsageService = module.get(BillingUsageService);
     billingCustomerRepository = module.get(
-      getRepositoryToken(BillingCustomerEntity),
+      getWorkspaceScopedRepositoryToken(BillingCustomerEntity),
     );
   });
 
@@ -62,6 +61,7 @@ describe('BillingCreditRolloverService', () => {
       await service.processRolloverOnPeriodTransition(baseParams);
 
       expect(billingCustomerRepository.update).toHaveBeenCalledWith(
+        'ws_123',
         { stripeCustomerId: 'cus_123' },
         { creditBalanceMicro: 700 },
       );
@@ -75,6 +75,7 @@ describe('BillingCreditRolloverService', () => {
       await service.processRolloverOnPeriodTransition(baseParams);
 
       expect(billingCustomerRepository.update).toHaveBeenCalledWith(
+        'ws_123',
         { stripeCustomerId: 'cus_123' },
         { creditBalanceMicro: 1000 },
       );
@@ -88,6 +89,7 @@ describe('BillingCreditRolloverService', () => {
       await service.processRolloverOnPeriodTransition(baseParams);
 
       expect(billingCustomerRepository.update).toHaveBeenCalledWith(
+        'ws_123',
         { stripeCustomerId: 'cus_123' },
         { creditBalanceMicro: 0 },
       );
@@ -101,6 +103,7 @@ describe('BillingCreditRolloverService', () => {
       await service.processRolloverOnPeriodTransition(baseParams);
 
       expect(billingCustomerRepository.update).toHaveBeenCalledWith(
+        'ws_123',
         { stripeCustomerId: 'cus_123' },
         { creditBalanceMicro: 0 },
       );
@@ -115,6 +118,7 @@ describe('BillingCreditRolloverService', () => {
       await service.processRolloverOnPeriodTransition(params);
 
       expect(billingCustomerRepository.update).toHaveBeenCalledWith(
+        'ws_123',
         { stripeCustomerId: 'cus_123' },
         { creditBalanceMicro: 500 },
       );

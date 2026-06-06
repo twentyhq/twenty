@@ -1,5 +1,8 @@
 import { useMutation } from '@apollo/client/react';
-import { UpdateOneApplicationVariableDocument } from '~/generated-metadata/graphql';
+import {
+  FindOneApplicationDocument,
+  UpdateOneApplicationVariableDocument,
+} from '~/generated-metadata/graphql';
 
 export const useUpdateOneApplicationVariable = () => {
   const [mutate] = useMutation(UpdateOneApplicationVariableDocument);
@@ -13,7 +16,12 @@ export const useUpdateOneApplicationVariable = () => {
     value: string;
     applicationId: string;
   }) => {
-    return await mutate({ variables: { key, value, applicationId } });
+    return await mutate({
+      variables: { key, value, applicationId },
+      refetchQueries: [
+        { query: FindOneApplicationDocument, variables: { id: applicationId } },
+      ],
+    });
   };
 
   return { updateOneApplicationVariable };

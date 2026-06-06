@@ -1,4 +1,4 @@
-import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   Body,
   Container,
@@ -6,7 +6,6 @@ import {
   Heading,
   HeadingPart,
 } from '@/design-system/components';
-import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
@@ -38,26 +37,26 @@ const HeaderBody = styled(Body)`
 `;
 
 export function MarketplaceHeader() {
-  const i18n = getServerI18n();
-
   return (
     <Section>
       <StyledContainer>
         <Eyebrow>
           <HeadingPart fontFamily="sans">
-            {i18n._(msg`Marketplace`)}
+            <Trans>Marketplace</Trans>
           </HeadingPart>
         </Eyebrow>
         <Heading size="lg" weight="light">
-          <HeadingPart fontFamily="serif">{i18n._(msg`Find your`)}</HeadingPart>{' '}
-          <HeadingPart fontFamily="sans">
-            {i18n._(msg`Twenty partner`)}
-          </HeadingPart>
+          <Trans>
+            <HeadingPart fontFamily="serif">Find your</HeadingPart>
+            <HeadingPart fontFamily="sans">Twenty partner</HeadingPart>
+          </Trans>
         </Heading>
         <HeaderBody>
-          {i18n._(
-            msg`Twenty's certified partners help teams migrate, customise, and operate the open source CRM across regions, languages, and deployment models. Browse profiles and book a call.`,
-          )}
+          <Trans>
+            Twenty's certified partners help teams migrate, customise, and
+            operate the open source CRM across regions, languages, and
+            deployment models. Browse profiles and book a call.
+          </Trans>
         </HeaderBody>
       </StyledContainer>
     </Section>

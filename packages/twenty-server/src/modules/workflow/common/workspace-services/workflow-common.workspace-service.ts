@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -378,8 +378,17 @@ export class WorkflowCommonWorkspaceService {
     for (const workflowVersion of workflowVersions) {
       for (const step of workflowVersion.steps ?? []) {
         if (step.type === WorkflowActionType.CODE) {
+          const logicFunctionId = step.settings.input.logicFunctionId;
+
+          if (!isValidUuid(logicFunctionId)) {
+            this.logger.warn(
+              `Skipping destroy for CODE step with undefined logicFunctionId in workflow ${workflowId}`,
+            );
+            continue;
+          }
+
           await this.logicFunctionFromSourceService.deleteOneWithSource({
-            id: step.settings.input.logicFunctionId,
+            id: logicFunctionId,
             workspaceId,
           });
         }

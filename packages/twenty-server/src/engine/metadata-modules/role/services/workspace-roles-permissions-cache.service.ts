@@ -23,6 +23,8 @@ import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permi
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 
@@ -40,18 +42,18 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
   constructor(
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(ObjectPermissionEntity)
-    private readonly objectPermissionRepository: Repository<ObjectPermissionEntity>,
+    @InjectWorkspaceScopedRepository(RoleEntity)
+    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
+    @InjectWorkspaceScopedRepository(ObjectPermissionEntity)
+    private readonly objectPermissionRepository: WorkspaceScopedRepository<ObjectPermissionEntity>,
     @InjectRepository(RolePermissionFlagEntity)
     private readonly rolePermissionFlagRepository: Repository<RolePermissionFlagEntity>,
-    @InjectRepository(FieldPermissionEntity)
-    private readonly fieldPermissionRepository: Repository<FieldPermissionEntity>,
-    @InjectRepository(RowLevelPermissionPredicateEntity)
-    private readonly rowLevelPermissionPredicateRepository: Repository<RowLevelPermissionPredicateEntity>,
-    @InjectRepository(RowLevelPermissionPredicateGroupEntity)
-    private readonly rowLevelPermissionPredicateGroupRepository: Repository<RowLevelPermissionPredicateGroupEntity>,
+    @InjectWorkspaceScopedRepository(FieldPermissionEntity)
+    private readonly fieldPermissionRepository: WorkspaceScopedRepository<FieldPermissionEntity>,
+    @InjectWorkspaceScopedRepository(RowLevelPermissionPredicateEntity)
+    private readonly rowLevelPermissionPredicateRepository: WorkspaceScopedRepository<RowLevelPermissionPredicateEntity>,
+    @InjectWorkspaceScopedRepository(RowLevelPermissionPredicateGroupEntity)
+    private readonly rowLevelPermissionPredicateGroupRepository: WorkspaceScopedRepository<RowLevelPermissionPredicateGroupEntity>,
   ) {
     super();
   }
@@ -68,24 +70,18 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       rowLevelPermissionPredicateGroups,
       workspaceObjectMetadataCollection,
     ] = await Promise.all([
-      this.roleRepository.find({
-        where: { workspaceId },
-      }),
-      this.objectPermissionRepository.find({
-        where: { workspaceId },
-      }),
+      this.roleRepository.find(workspaceId),
+      this.objectPermissionRepository.find(workspaceId),
       this.rolePermissionFlagRepository.find({
         where: { workspaceId },
         relations: ['permissionFlag'],
       }),
-      this.fieldPermissionRepository.find({
-        where: { workspaceId },
+      this.fieldPermissionRepository.find(workspaceId),
+      this.rowLevelPermissionPredicateRepository.find(workspaceId, {
+        where: { deletedAt: IsNull() },
       }),
-      this.rowLevelPermissionPredicateRepository.find({
-        where: { workspaceId, deletedAt: IsNull() },
-      }),
-      this.rowLevelPermissionPredicateGroupRepository.find({
-        where: { workspaceId, deletedAt: IsNull() },
+      this.rowLevelPermissionPredicateGroupRepository.find(workspaceId, {
+        where: { deletedAt: IsNull() },
       }),
       this.getWorkspaceObjectMetadataCollection(workspaceId),
     ]);
@@ -283,11 +279,22 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
     const hasPermissionFromSettingPermissions = isDefined(
       rolePermissionFlags.find(
         (rolePermissionFlag) =>
-          rolePermissionFlag.permissionFlag.universalIdentifier ===
+          this.getRolePermissionFlagUniversalIdentifier(rolePermissionFlag) ===
           permissionFlagUniversalIdentifier,
       ),
     );
 
     return hasPermissionFromRole || hasPermissionFromSettingPermissions;
+  }
+
+  private getRolePermissionFlagUniversalIdentifier(
+    rolePermissionFlag: RolePermissionFlagEntity,
+  ): string {
+    // The `permissionFlag` relation is stripped during upgrades until the 2.6.0
+    // cursor (@WasIntroducedInUpgrade), so fall back to the legacy `flag` column.
+    return (
+      rolePermissionFlag.permissionFlag?.universalIdentifier ??
+      SystemPermissionFlag[rolePermissionFlag.flag]
+    );
   }
 }

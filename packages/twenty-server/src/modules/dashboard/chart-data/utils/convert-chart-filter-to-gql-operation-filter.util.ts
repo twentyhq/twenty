@@ -22,12 +22,14 @@ type ConvertChartFilterToGqlOperationFilterParams = {
   filter: ChartFilter | undefined;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   userTimezone: string;
+  currentWorkspaceMemberId?: string;
 };
 
 export const convertChartFilterToGqlOperationFilter = ({
   filter,
   flatFieldMetadataMaps,
   userTimezone,
+  currentWorkspaceMemberId,
 }: ConvertChartFilterToGqlOperationFilterParams): ObjectRecordFilter => {
   if (!isDefined(filter)) {
     return {};
@@ -81,6 +83,7 @@ export const convertChartFilterToGqlOperationFilter = ({
     recordFilterGroups: convertedRecordFilterGroups,
     filterValueDependencies: {
       timeZone: userTimezone,
+      currentWorkspaceMemberId,
     },
   });
 };

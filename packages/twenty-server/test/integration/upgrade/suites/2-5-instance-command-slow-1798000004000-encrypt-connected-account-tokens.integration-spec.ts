@@ -3,6 +3,7 @@ import { config } from 'dotenv';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { type EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
@@ -209,7 +210,7 @@ describe('2-5 slow instance command 1798000004000 - EncryptConnectedAccountToken
     const handle = `${TEST_ROW_HANDLE_PREFIX}v2`;
     const plaintext = 'v2-token';
     const preexistingV2Ciphertext = secretEncryptionService.encryptVersioned(
-      plaintext,
+      plaintext as PlaintextString,
       { workspaceId },
     );
 
@@ -246,7 +247,7 @@ describe('2-5 slow instance command 1798000004000 - EncryptConnectedAccountToken
     const accessPlaintext = 'mixed-access';
     const refreshPlaintext = 'mixed-refresh';
     const preexistingV2Access = secretEncryptionService.encryptVersioned(
-      accessPlaintext,
+      accessPlaintext as PlaintextString,
       { workspaceId },
     );
 

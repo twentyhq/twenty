@@ -14,6 +14,8 @@ import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 
@@ -21,16 +23,16 @@ import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/uti
 @WorkspaceCache('flatNavigationMenuItemMaps')
 export class WorkspaceFlatNavigationMenuItemMapCacheService extends WorkspaceCacheProvider<FlatNavigationMenuItemMaps> {
   constructor(
-    @InjectRepository(NavigationMenuItemEntity)
-    private readonly navigationMenuItemRepository: Repository<NavigationMenuItemEntity>,
+    @InjectWorkspaceScopedRepository(NavigationMenuItemEntity)
+    private readonly navigationMenuItemRepository: WorkspaceScopedRepository<NavigationMenuItemEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(ViewEntity)
-    private readonly viewRepository: Repository<ViewEntity>,
-    @InjectRepository(PageLayoutEntity)
-    private readonly pageLayoutRepository: Repository<PageLayoutEntity>,
+    @InjectWorkspaceScopedRepository(ViewEntity)
+    private readonly viewRepository: WorkspaceScopedRepository<ViewEntity>,
+    @InjectWorkspaceScopedRepository(PageLayoutEntity)
+    private readonly pageLayoutRepository: WorkspaceScopedRepository<PageLayoutEntity>,
   ) {
     super();
   }
@@ -45,8 +47,7 @@ export class WorkspaceFlatNavigationMenuItemMapCacheService extends WorkspaceCac
       views,
       pageLayouts,
     ] = await Promise.all([
-      this.navigationMenuItemRepository.find({
-        where: { workspaceId },
+      this.navigationMenuItemRepository.find(workspaceId, {
         withDeleted: true,
       }),
       this.applicationRepository.find({
@@ -59,13 +60,11 @@ export class WorkspaceFlatNavigationMenuItemMapCacheService extends WorkspaceCac
         select: ['id', 'universalIdentifier'],
         withDeleted: true,
       }),
-      this.viewRepository.find({
-        where: { workspaceId },
+      this.viewRepository.find(workspaceId, {
         select: ['id', 'universalIdentifier'],
         withDeleted: true,
       }),
-      this.pageLayoutRepository.find({
-        where: { workspaceId },
+      this.pageLayoutRepository.find(workspaceId, {
         select: ['id', 'universalIdentifier'],
         withDeleted: true,
       }),

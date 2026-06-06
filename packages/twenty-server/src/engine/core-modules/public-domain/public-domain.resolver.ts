@@ -1,11 +1,11 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
@@ -39,8 +39,8 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 @MetadataResolver()
 export class PublicDomainResolver {
   constructor(
-    @InjectRepository(PublicDomainEntity)
-    private readonly publicDomainRepository: Repository<PublicDomainEntity>,
+    @InjectWorkspaceScopedRepository(PublicDomainEntity)
+    private readonly publicDomainRepository: WorkspaceScopedRepository<PublicDomainEntity>,
     private readonly publicDomainService: PublicDomainService,
     private readonly dnsManagerService: DnsManagerService,
   ) {}
@@ -49,9 +49,7 @@ export class PublicDomainResolver {
   async findManyPublicDomains(
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<PublicDomainDTO[]> {
-    return await this.publicDomainRepository.find({
-      where: { workspaceId: currentWorkspace.id },
-    });
+    return this.publicDomainRepository.find(currentWorkspace.id);
   }
 
   @Mutation(() => PublicDomainDTO)
@@ -96,9 +94,10 @@ export class PublicDomainResolver {
     @Args() { domain }: PublicDomainInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<DomainValidRecords | undefined> {
-    const publicDomain = await this.publicDomainRepository.findOne({
-      where: { workspaceId: workspace.id, domain },
-    });
+    const publicDomain = await this.publicDomainRepository.findOne(
+      workspace.id,
+      { where: { domain } },
+    );
 
     assertIsDefinedOrThrow(
       publicDomain,

@@ -16,6 +16,8 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/role/services/workspace-roles-permissions-cache.service';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
+import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000000';
 const ROLE_ID = '11111111-1111-4111-8111-111111111111';
@@ -52,12 +54,14 @@ const createBaseRole = (
 
 describe('WorkspaceRolesPermissionsCacheService', () => {
   let service: WorkspaceRolesPermissionsCacheService;
-  let roleRepository: jest.Mocked<Pick<Repository<RoleEntity>, 'find'>>;
+  let roleRepository: jest.Mocked<
+    Pick<WorkspaceScopedRepository<RoleEntity>, 'find'>
+  >;
   let objectMetadataRepository: jest.Mocked<
     Pick<Repository<ObjectMetadataEntity>, 'find'>
   >;
   let objectPermissionRepository: jest.Mocked<
-    Pick<Repository<ObjectPermissionEntity>, 'find'>
+    Pick<WorkspaceScopedRepository<ObjectPermissionEntity>, 'find'>
   >;
   let rolePermissionFlagRepository: jest.Mocked<
     Pick<Repository<RolePermissionFlagEntity>, 'find'>
@@ -118,11 +122,11 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
           useValue: objectMetadataRepository,
         },
         {
-          provide: getRepositoryToken(RoleEntity),
+          provide: getWorkspaceScopedRepositoryToken(RoleEntity),
           useValue: roleRepository,
         },
         {
-          provide: getRepositoryToken(ObjectPermissionEntity),
+          provide: getWorkspaceScopedRepositoryToken(ObjectPermissionEntity),
           useValue: objectPermissionRepository,
         },
         {
@@ -130,15 +134,19 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
           useValue: rolePermissionFlagRepository,
         },
         {
-          provide: getRepositoryToken(FieldPermissionEntity),
+          provide: getWorkspaceScopedRepositoryToken(FieldPermissionEntity),
           useValue: fieldPermissionRepository,
         },
         {
-          provide: getRepositoryToken(RowLevelPermissionPredicateEntity),
+          provide: getWorkspaceScopedRepositoryToken(
+            RowLevelPermissionPredicateEntity,
+          ),
           useValue: rowLevelPermissionPredicateRepository,
         },
         {
-          provide: getRepositoryToken(RowLevelPermissionPredicateGroupEntity),
+          provide: getWorkspaceScopedRepositoryToken(
+            RowLevelPermissionPredicateGroupEntity,
+          ),
           useValue: rowLevelPermissionPredicateGroupRepository,
         },
       ],

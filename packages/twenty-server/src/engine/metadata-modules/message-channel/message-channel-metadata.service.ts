@@ -55,8 +55,15 @@ export class MessageChannelMetadataService {
         workspaceId,
       });
 
+    const sharedAccountIds =
+      await this.connectedAccountMetadataService.getWorkspaceSharedConnectedAccountIds(
+        { workspaceId },
+      );
+
     return this.findByConnectedAccountIds({
-      connectedAccountIds: userAccountIds,
+      connectedAccountIds: [
+        ...new Set([...userAccountIds, ...sharedAccountIds]),
+      ],
       workspaceId,
     });
   }
@@ -137,6 +144,16 @@ export class MessageChannelMetadataService {
       );
     }
 
+    const connectedAccount =
+      await this.connectedAccountMetadataService.findById({
+        id: messageChannel.connectedAccountId,
+        workspaceId,
+      });
+
+    if (connectedAccount?.visibility === 'workspace') {
+      return messageChannel;
+    }
+
     const userAccountIds =
       await this.connectedAccountMetadataService.getUserConnectedAccountIds({
         userWorkspaceId,
@@ -204,7 +221,7 @@ export class MessageChannelMetadataService {
       storageType !== StorageDriverType.S_3
     ) {
       throw new MessageChannelException(
-        'Email group is not configured: INBOUND_EMAIL_DOMAIN must be set and STORAGE_TYPE must be S3',
+        'Email handles are not configured: INBOUND_EMAIL_DOMAIN must be set and STORAGE_TYPE must be S3',
         MessageChannelExceptionCode.EMAIL_GROUP_NOT_CONFIGURED,
       );
     }
@@ -222,6 +239,7 @@ export class MessageChannelMetadataService {
       userWorkspaceId,
       accessToken: null,
       refreshToken: null,
+      visibility: 'workspace',
     });
 
     const messageChannel = await this.create({

@@ -80,10 +80,20 @@ jobs:
         with:
           name: storybook-twenty-front-component-renderer
           path: packages/twenty-front-component-renderer/storybook-static
+      - name: Resolve Playwright version
+        id: playwright-version
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: v4-playwright-browsers-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
       - name: Install Playwright
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: |
           cd packages/twenty-front-component-renderer
-          npx playwright install
+          npx playwright install chromium
       - name: Serve storybook & run tests
         run: |
           npx http-server packages/twenty-front-component-renderer/storybook-static --port 6008 --silent &

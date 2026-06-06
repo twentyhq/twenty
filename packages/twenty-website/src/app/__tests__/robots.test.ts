@@ -7,7 +7,12 @@ describe('robots', () => {
 
     expect(rule).toMatchObject({
       allow: '/',
-      disallow: ['/api/', '/halftone', '/enterprise/activate'],
+      disallow: [
+        '/api/',
+        '/partners/apply',
+        '/halftone',
+        '/enterprise/activate',
+      ],
       userAgent: '*',
     });
   });

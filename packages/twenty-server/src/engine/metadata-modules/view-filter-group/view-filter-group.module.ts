@@ -10,6 +10,7 @@ import { ViewFilterGroupResolver } from 'src/engine/metadata-modules/view-filter
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { ViewPermissionsModule } from 'src/engine/metadata-modules/view-permissions/view-permissions.module';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
@@ -24,7 +25,11 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ViewPermissionsModule,
   ],
   controllers: [ViewFilterGroupController],
-  providers: [ViewFilterGroupService, ViewFilterGroupResolver],
+  providers: [
+    ViewFilterGroupService,
+    ViewFilterGroupResolver,
+    provideWorkspaceScopedRepository(ViewFilterGroupEntity),
+  ],
   exports: [ViewFilterGroupService],
 })
 export class ViewFilterGroupModule {}

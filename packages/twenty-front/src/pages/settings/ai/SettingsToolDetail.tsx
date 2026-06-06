@@ -14,7 +14,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined, isValidUuid } from 'twenty-shared/utils';
@@ -169,7 +169,7 @@ export const SettingsToolDetail = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={
         isCustomTool ? (
           <SettingsLogicFunctionLabelContainer
@@ -183,7 +183,7 @@ export const SettingsToolDetail = () => {
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
           children: t`AI`,
@@ -263,6 +263,6 @@ export const SettingsToolDetail = () => {
         confirmButtonText={t`Delete`}
         loading={isDeleting}
       />
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

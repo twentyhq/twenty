@@ -19,6 +19,7 @@ import { ViewResolver } from 'src/engine/metadata-modules/view/resolvers/view.re
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewToolsFactory } from 'src/engine/metadata-modules/view/tools/view-tools.factory';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
@@ -46,6 +47,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ViewQueryParamsService,
     ViewToolsFactory,
     ViewWidgetUpsertService,
+    provideWorkspaceScopedRepository(ViewEntity),
   ],
   exports: [
     ViewService,

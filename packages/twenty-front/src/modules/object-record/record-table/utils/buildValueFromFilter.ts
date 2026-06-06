@@ -35,6 +35,7 @@ type ValueComputeContext = {
   options?: FilterOption[] | null;
   relationType?: RelationType;
   currentWorkspaceMember?: CurrentWorkspaceMember;
+  currentRecordId?: string;
   label?: string;
 };
 
@@ -231,14 +232,19 @@ const computeValueFromFilterRelation = (
   relationType?: RelationType,
   currentWorkspaceMember?: CurrentWorkspaceMember,
   label?: string,
+  currentRecordId?: string,
 ) => {
   switch (operand) {
     case ViewFilterOperand.IS: {
       const parsedValue = parseJson<{
         isCurrentWorkspaceMemberSelected: boolean;
+        isCurrentRecordSelected: boolean;
         selectedRecordIds: string[];
       }>(value);
       if (relationType === RelationType.MANY_TO_ONE) {
+        if (parsedValue?.isCurrentRecordSelected) {
+          return currentRecordId;
+        }
         if (label === 'Assignee') {
           return parsedValue?.isCurrentWorkspaceMemberSelected
             ? currentWorkspaceMember?.id
@@ -341,6 +347,7 @@ const VALUE_HANDLER_REGISTRY: Partial<Record<FieldMetadataType, ValueHandler>> =
       value,
       relationType,
       currentWorkspaceMember,
+      currentRecordId,
       label,
     }) =>
       computeValueFromFilterRelation(
@@ -349,6 +356,7 @@ const VALUE_HANDLER_REGISTRY: Partial<Record<FieldMetadataType, ValueHandler>> =
         relationType,
         currentWorkspaceMember,
         label,
+        currentRecordId,
       ),
     [FieldMetadataType.TS_VECTOR]: ({ operand, value }) =>
       computeValueFromFilterTSVector(
@@ -504,12 +512,14 @@ export const buildValueFromFilter = ({
   options,
   relationType,
   currentWorkspaceMember,
+  currentRecordId,
   label,
 }: {
   filter: RecordFilter;
   options?: FilterOption[] | null;
   relationType?: RelationType;
   currentWorkspaceMember?: CurrentWorkspaceMember;
+  currentRecordId?: string;
   label?: string;
 }) => {
   if (isCompositeFieldType(filter.type)) {
@@ -541,6 +551,7 @@ export const buildValueFromFilter = ({
     options,
     relationType,
     currentWorkspaceMember,
+    currentRecordId,
     label,
   });
 };

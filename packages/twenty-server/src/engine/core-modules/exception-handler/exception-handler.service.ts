@@ -13,7 +13,7 @@ export class ExceptionHandlerService {
   ) {}
 
   captureExceptions(
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     exceptions: ReadonlyArray<any>,
     options?: ExceptionHandlerOptions,
   ): string[] {

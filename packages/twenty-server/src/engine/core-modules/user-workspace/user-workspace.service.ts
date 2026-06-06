@@ -51,6 +51,8 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    // softRemove is not supported by WorkspaceScopedRepository.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     private readonly roleValidationService: RoleValidationService,
@@ -311,6 +313,9 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     return await this.userWorkspaceRepository.count({ where: { userId } });
   }
 
+  // TODO migrate roleTargetRepository to WorkspaceScopedRepository once workspaceId
+  // is threaded through all deleteUserWorkspace callers (user.service.ts does not
+  // currently have it at the call site).
   async deleteUserWorkspace({
     userWorkspaceId,
     softDelete = false,

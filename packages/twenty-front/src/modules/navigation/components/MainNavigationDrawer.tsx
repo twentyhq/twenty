@@ -16,12 +16,10 @@ export const MainNavigationDrawer = ({ className }: { className?: string }) => {
     navigationDrawerActiveTabState,
   );
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const hasAiSettingsPermission = useHasPermissionFlag(
-    PermissionFlagType.AI_SETTINGS,
-  );
+  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
   const showAiChatContent =
-    hasAiSettingsPermission &&
+    hasAiPermission &&
     navigationDrawerActiveTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY;
 
   return (

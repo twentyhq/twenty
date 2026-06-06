@@ -29,7 +29,8 @@ import { type BillingPortalCheckoutSessionParameters } from 'src/engine/core-mod
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @Injectable()
 export class BillingPortalWorkspaceService {
   protected readonly logger = new Logger(BillingPortalWorkspaceService.name);
@@ -38,10 +39,10 @@ export class BillingPortalWorkspaceService {
     private readonly stripeBillingPortalService: StripeBillingPortalService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
-    @InjectRepository(BillingSubscriptionEntity)
-    private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
-    @InjectRepository(BillingCustomerEntity)
-    private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
+    @InjectWorkspaceScopedRepository(BillingSubscriptionEntity)
+    private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
+    @InjectWorkspaceScopedRepository(BillingCustomerEntity)
+    private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
@@ -156,10 +157,13 @@ export class BillingPortalWorkspaceService {
       workspaceId: workspace.id,
     });
 
-    const customer = await this.billingCustomerRepository.findOne({
-      where: { workspaceId: workspace.id },
-      relations: ['billingSubscriptions'],
-    });
+    const customer = await this.billingCustomerRepository.findOne(
+      workspace.id,
+      {
+        where: {},
+        relations: ['billingSubscriptions'],
+      },
+    );
 
     const stripeSubscriptionLineItems = this.getStripeSubscriptionLineItems({
       quantity,
@@ -180,13 +184,13 @@ export class BillingPortalWorkspaceService {
     workspace: WorkspaceEntity,
     returnUrlPath?: string,
   ) {
-    const lastSubscription = await this.billingSubscriptionRepository.findOne({
-      where: {
-        workspaceId: workspace.id,
-        status: Not(SubscriptionStatus.Canceled),
+    const lastSubscription = await this.billingSubscriptionRepository.findOne(
+      workspace.id,
+      {
+        where: { status: Not(SubscriptionStatus.Canceled) },
+        order: { createdAt: 'DESC' },
       },
-      order: { createdAt: 'DESC' },
-    });
+    );
 
     if (!lastSubscription) {
       throw new Error('Error: missing subscription');

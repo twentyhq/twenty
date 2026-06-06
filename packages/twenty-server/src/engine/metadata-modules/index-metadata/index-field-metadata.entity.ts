@@ -10,9 +10,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'indexFieldMetadata', schema: 'core' })
 export class IndexFieldMetadataEntity implements Required<IndexFieldMetadataEntity> {
@@ -56,6 +57,16 @@ export class IndexFieldMetadataEntity implements Required<IndexFieldMetadataEnti
 
   @Column({ nullable: false })
   order: number;
+
+  // Null for scalar/relation fields. Set to the composite sub-property name
+  // (e.g. 'addressCity') when the index targets a single column of a
+  // composite-type parent.
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.8.0_AddSubFieldNameToIndexFieldMetadataFastInstanceCommand_1798200000000',
+  })
+  @Column({ type: 'text', nullable: true })
+  subFieldName: string | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

@@ -1,7 +1,7 @@
 import type { CaseStudyData } from '@/lib/customers';
 import { Container } from '@/design-system/components';
 import { CLIENT_ICONS } from '@/icons';
-import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
+import { getServerI18n } from '@/lib/i18n/server';
 import { LocalizedLink } from '@/lib/i18n';
 import { CustomerCasesCover } from '@/sections/CaseStudyCatalog/visuals/CustomerCasesCover';
 import { theme } from '@/theme';

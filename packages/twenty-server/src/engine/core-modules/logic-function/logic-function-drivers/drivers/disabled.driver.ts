@@ -27,4 +27,15 @@ export class DisabledDriver implements LogicFunctionDriver {
       LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED,
     );
   }
+
+  async installPrebuiltBundle(): Promise<void> {
+    throw new LogicFunctionException(
+      'Logic function prebuilt install is disabled. Set LOGIC_FUNCTION_TYPE to LOCAL or LAMBDA to enable.',
+      LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED,
+    );
+  }
+
+  async getInstalledBundleChecksum(): Promise<string | null> {
+    return null;
+  }
 }

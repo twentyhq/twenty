@@ -68,7 +68,7 @@ export class StripeInvoiceService {
     });
 
     await this.stripe.invoices.finalizeInvoice(invoice.id, {
-      auto_advance: true,
+      auto_advance: false,
     });
 
     await this.stripe.invoices.pay(invoice.id);

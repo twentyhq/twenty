@@ -1,4 +1,8 @@
 export { FrontComponentRenderer } from './host/components/FrontComponentRenderer';
+export {
+  FrontComponentInputFocusContext,
+  type SetEditableFocused,
+} from './host/contexts/FrontComponentInputFocusContext';
 export { componentRegistry } from './host/generated/host-component-registry';
 export { FrontComponentErrorEffect } from './remote/components/FrontComponentErrorEffect';
 export { FrontComponentInitializeHostCommunicationApiEffect } from './remote/components/FrontComponentInitializeHostCommunicationApiEffect';

@@ -65,16 +65,15 @@ Verwenden Sie dies, wenn Sie nur einen Tab zu einem vorhandenen Layout **hinzuf�
 import {
   definePageLayoutTab,
   PageLayoutTabLayoutMode,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
 import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
-
-const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
-  '20202020-ab01-4001-8001-c0aba11c0100';
 
 export default definePageLayoutTab({
   universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
   pageLayoutUniversalIdentifier:
-    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage
+      .universalIdentifier,
   title: 'Hello World',
   position: 1000,
   icon: 'IconWorld',
@@ -97,6 +96,37 @@ export default definePageLayoutTab({
 ### Hauptpunkte
 
 * `pageLayoutUniversalIdentifier` ist **erforderlich** und muss auf ein Seitenlayout verweisen, das zum Installationszeitpunkt bereits existiert – entweder ein standardmäßiges Twenty-Layout oder eines, das von Ihrer eigenen App definiert wurde. App-übergreifende Verweise auf Layouts, die einer anderen installierten App gehören, werden derzeit nicht unterstützt. Wenn das übergeordnete Layout fehlt, schlägt die Installation mit einem eindeutigen Validierungsfehler fehl.
+
+* Für Standard-Twenty-Layouts importieren Sie die Bezeichner aus `twenty-sdk/define`:
+
+  ```ts
+  import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.personRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.opportunityRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.universalIdentifier
+  // …
+  ```
+
+  Jeder Layout-Eintrag stellt außerdem seine `tabs` und deren `widgets` zur Verfügung, sodass Sie auf jede Ebene verweisen können:
+
+  ```ts
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.universalIdentifier
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets.fields.universalIdentifier
+  ```
+
+  Eine kurze Alias-Variable `STANDARD_PAGE_LAYOUT` ist ebenfalls verfügbar:
+
+  ```ts
+  import { STANDARD_PAGE_LAYOUT } from 'twenty-sdk/define';
+
+  STANDARD_PAGE_LAYOUT.companyRecordPage.universalIdentifier;
+  ```
+
 * `widgets` sind ausschließlich auf diesen Tab beschränkt – sie verweisen auf [Frontend-Komponenten](/l/de/developers/extend/apps/layout/front-components), Ansichten usw., genau wie Widgets, die inline in `definePageLayout` definiert sind.
+
 * `position` steuert die Reihenfolge im Zielseitenlayout relativ zu den vorhandenen Registerkarten. Wählen Sie einen Wert, der Ihre Registerkarte relativ zu integrierten Registerkarten an die gewünschte Position bringt.
+
 * Verwenden Sie dies anstelle von `definePageLayout`, wenn Sie einem vorhandenen Layout nur etwas hinzufügen möchten. Verwenden Sie `definePageLayout`, wenn Sie das gesamte Layout besitzen.

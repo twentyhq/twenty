@@ -2,7 +2,7 @@
 
 import { Body } from '@/design-system/components';
 import { CheckIcon } from '@/icons/informative/Check';
-import { getMessageDescriptorSource } from '@/lib/i18n/utils/get-message-descriptor-source';
+import { getMessageDescriptorSource } from '@/lib/i18n';
 import { theme } from '@/theme';
 import type { MessageDescriptor } from '@lingui/core';
 import { useLingui } from '@lingui/react';

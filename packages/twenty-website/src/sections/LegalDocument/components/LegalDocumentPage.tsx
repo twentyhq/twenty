@@ -104,17 +104,10 @@ export function LegalDocumentPage({
 }: LegalDocumentPageProps) {
   return (
     <>
-      <Menu.Root
+      <Menu
         backgroundColor={theme.colors.primary.background[100]}
-        scheme="primary"
-        navItems={menuData.navItems}
         socialLinks={menuData.socialLinks}
-      >
-        <Menu.Logo scheme="primary" />
-        <Menu.Nav scheme="primary" navItems={menuData.navItems} />
-        <Menu.Social scheme="primary" socialLinks={menuData.socialLinks} />
-        <Menu.Cta scheme="primary" />
-      </Menu.Root>
+      />
 
       <PageSection>
         <Container>

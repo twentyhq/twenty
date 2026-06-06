@@ -298,8 +298,8 @@ export default defineFrontComponent({
 Birden çok seçili kaydı yönetmek için `useSelectedRecordIds()` kullanın. Bu, toplu işlemler için kullanışlıdır:
 
 ```tsx src/front-components/bulk-export.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { defineFrontComponent, numberOfSelectedRecords } from 'twenty-sdk/define';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 
@@ -383,11 +383,11 @@ export default defineCommandMenuItem({
 `conditionalAvailabilityExpression` alanı, geçerli sayfa bağlamına göre bir komutun ne zaman görünür olacağını kontrol etmenizi sağlar. İfadeler oluşturmak için `twenty-sdk`'den türlendirilmiş değişkenleri ve operatörleri içe aktarın:
 
 ```ts src/command-menu-items/bulk-update.command-menu-item.ts
-import { defineCommandMenuItem } from 'twenty-sdk/define';
 import {
+  defineCommandMenuItem,
   objectPermissions,
   everyEquals,
-} from 'twenty-sdk/front-component';
+} from 'twenty-sdk/define';
 
 export default defineCommandMenuItem({
   universalIdentifier: '...',

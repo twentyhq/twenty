@@ -7,5 +7,4 @@ export const GRAPH_CONFIGURATION_TYPE_TO_CONFIG_TYPENAME: Partial<
   [WidgetConfigurationType.LINE_CHART]: 'LineChartConfiguration',
   [WidgetConfigurationType.PIE_CHART]: 'PieChartConfiguration',
   [WidgetConfigurationType.AGGREGATE_CHART]: 'AggregateChartConfiguration',
-  [WidgetConfigurationType.GAUGE_CHART]: 'GaugeChartConfiguration',
 } as const;

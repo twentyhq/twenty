@@ -38,6 +38,7 @@ import { ViewEntityLookupService } from 'src/engine/metadata-modules/view-permis
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
@@ -86,6 +87,12 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     UpdateViewSortPermissionGuard,
     DeleteViewSortPermissionGuard,
     DestroyViewSortPermissionGuard,
+    provideWorkspaceScopedRepository(ViewEntity),
+    provideWorkspaceScopedRepository(ViewFieldEntity),
+    provideWorkspaceScopedRepository(ViewFilterEntity),
+    provideWorkspaceScopedRepository(ViewFilterGroupEntity),
+    provideWorkspaceScopedRepository(ViewGroupEntity),
+    provideWorkspaceScopedRepository(ViewSortEntity),
   ],
   exports: [
     ViewService,

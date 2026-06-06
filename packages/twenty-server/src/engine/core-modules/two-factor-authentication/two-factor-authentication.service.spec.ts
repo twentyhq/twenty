@@ -1,5 +1,4 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 
@@ -10,7 +9,7 @@ import {
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import {
   TwoFactorAuthenticationException,
   TwoFactorAuthenticationExceptionCode,
@@ -79,7 +78,9 @@ describe('TwoFactorAuthenticationService', () => {
       providers: [
         TwoFactorAuthenticationService,
         {
-          provide: getRepositoryToken(TwoFactorAuthenticationMethodEntity),
+          provide: getWorkspaceScopedRepositoryToken(
+            TwoFactorAuthenticationMethodEntity,
+          ),
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
@@ -111,7 +112,7 @@ describe('TwoFactorAuthenticationService', () => {
       TwoFactorAuthenticationService,
     );
     repository = module.get(
-      getRepositoryToken(TwoFactorAuthenticationMethodEntity),
+      getWorkspaceScopedRepositoryToken(TwoFactorAuthenticationMethodEntity),
     );
     userWorkspaceService =
       module.get<UserWorkspaceService>(UserWorkspaceService);
@@ -201,9 +202,8 @@ describe('TwoFactorAuthenticationService', () => {
         rawSecret,
         { workspaceId: workspace.id },
       );
-      expect(repository.save).toHaveBeenCalledWith({
+      expect(repository.save).toHaveBeenCalledWith(workspace.id, {
         id: undefined,
-        workspaceId: workspace.id,
         userWorkspace: mockUserWorkspace,
         secret: encryptedSecret,
         status: 'PENDING',
@@ -223,6 +223,7 @@ describe('TwoFactorAuthenticationService', () => {
       );
 
       expect(repository.save).toHaveBeenCalledWith(
+        workspace.id,
         expect.objectContaining({
           secret: encryptedSecret,
           status: 'PENDING',
@@ -251,6 +252,7 @@ describe('TwoFactorAuthenticationService', () => {
         'otpauth://totp/test@example.com?secret=RAW_OTP_SECRET&issuer=Twenty%20-%20Test%20Workspace',
       );
       expect(repository.save).toHaveBeenCalledWith(
+        workspace.id,
         expect.objectContaining({
           id: existingMethod.id,
           secret: encryptedSecret,
@@ -374,6 +376,7 @@ describe('TwoFactorAuthenticationService', () => {
       // Should create new method since existing one is too old
       // (Don't check if totpStrategyMocks.initiate was called due to mocking complexity)
       expect(repository.save).toHaveBeenCalledWith(
+        workspace.id,
         expect.objectContaining({
           id: existingMethod.id,
           secret: encryptedSecret,
@@ -437,6 +440,7 @@ describe('TwoFactorAuthenticationService', () => {
       // Should create new method since createdAt is null
       // (Don't check if totpStrategyMocks.initiate was called due to mocking complexity)
       expect(repository.save).toHaveBeenCalledWith(
+        workspace.id,
         expect.objectContaining({
           id: existingMethod.id,
           secret: encryptedSecret,
@@ -484,6 +488,7 @@ describe('TwoFactorAuthenticationService', () => {
       });
 
       expect(repository.save).toHaveBeenCalledWith(
+        workspace.id,
         expect.objectContaining({
           status: OTPStatus.VERIFIED,
         }),
@@ -630,6 +635,7 @@ describe('TwoFactorAuthenticationService', () => {
       });
 
       expect(repository.save).toHaveBeenCalledWith(
+        workspace.id,
         expect.objectContaining({
           status: OTPStatus.VERIFIED,
         }),

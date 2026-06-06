@@ -65,16 +65,15 @@ Bunu yalnızca mevcut bir düzene **sekme eklemek** istediğinizde kullanın —
 import {
   definePageLayoutTab,
   PageLayoutTabLayoutMode,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
 import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
-
-const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
-  '20202020-ab01-4001-8001-c0aba11c0100';
 
 export default definePageLayoutTab({
   universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
   pageLayoutUniversalIdentifier:
-    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage
+      .universalIdentifier,
   title: 'Hello World',
   position: 1000,
   icon: 'IconWorld',
@@ -97,6 +96,37 @@ export default definePageLayoutTab({
 ### Önemli noktalar
 
 * `pageLayoutUniversalIdentifier` **zorunludur** ve kurulum anında zaten var olan bir sayfa düzenini işaret etmelidir — standart bir Twenty düzeni veya kendi uygulamanız tarafından tanımlanan bir düzen olabilir. Başka yüklü bir uygulamaya ait düzenlere uygulamalar arası referanslar bugün desteklenmemektedir. Üst düzen eksik olduğunda, kurulum net bir doğrulama hatasıyla başarısız olur.
+
+* Standart Twenty yerleşimleri için tanımlayıcıları `twenty-sdk/define` içinden içe aktarın:
+
+  ```ts
+  import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.personRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.opportunityRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.universalIdentifier
+  // …
+  ```
+
+  Her yerleşim girdisi ayrıca `tabs` ve bunların `widgets` ögelerini de açığa çıkarır, böylece herhangi bir düzeye başvurabilirsiniz:
+
+  ```ts
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.universalIdentifier
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets.fields.universalIdentifier
+  ```
+
+  Kısa bir takma ad `STANDARD_PAGE_LAYOUT` da kullanılabilir:
+
+  ```ts
+  import { STANDARD_PAGE_LAYOUT } from 'twenty-sdk/define';
+
+  STANDARD_PAGE_LAYOUT.companyRecordPage.universalIdentifier;
+  ```
+
 * `widgets` yalnızca bu sekmeyle sınırlıdır — satır içi olarak `definePageLayout` içinde tanımlanan widget'larda olduğu gibi, [ön uç bileşenlerine](/l/tr/developers/extend/apps/layout/front-components), görünümlere vb. tam olarak aynı şekilde referans verirler.
+
 * `position`, hedeflenen düzende mevcut sekmelere göre sıralamayı kontrol eder. Yerleşik sekmelere göre sekmenizi istediğiniz konuma yerleştirecek bir değer seçin.
+
 * Yalnızca mevcut bir düzene ekleme yapmak istediğinizde `definePageLayout` yerine bunu kullanın. Tüm düzene sahip olduğunuzda `definePageLayout` kullanın.

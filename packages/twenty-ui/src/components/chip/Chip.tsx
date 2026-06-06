@@ -103,8 +103,8 @@ const StyledContainer = styled.div<
       : 'inherit'};
 
   &:hover {
-    background-color: ${({ variant, disabled }) =>
-      variant === ChipVariant.Regular && !disabled
+    background-color: ${({ variant, disabled, clickable }) =>
+      variant === ChipVariant.Regular && !disabled && clickable
         ? themeCssVariables.background.transparent.light
         : variant === ChipVariant.Highlighted
           ? themeCssVariables.background.transparent.medium
@@ -114,8 +114,8 @@ const StyledContainer = styled.div<
   }
 
   &:active {
-    background-color: ${({ disabled, variant }) =>
-      variant === ChipVariant.Regular && !disabled
+    background-color: ${({ disabled, variant, clickable }) =>
+      variant === ChipVariant.Regular && !disabled && clickable
         ? themeCssVariables.background.transparent.medium
         : variant === ChipVariant.Highlighted
           ? themeCssVariables.background.transparent.strong

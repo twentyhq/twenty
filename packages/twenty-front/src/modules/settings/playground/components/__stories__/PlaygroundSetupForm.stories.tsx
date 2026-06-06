@@ -1,11 +1,12 @@
 import { PlaygroundSetupForm } from '@/settings/playground/components/PlaygroundSetupForm';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof PlaygroundSetupForm> = {
   title: 'Modules/Settings/Playground/PlaygroundSetupForm',
   component: PlaygroundSetupForm,
-  decorators: [ComponentDecorator, RouterDecorator],
+  decorators: [ComponentDecorator, RouterDecorator, SnackBarDecorator],
   parameters: {
     docs: {
       description: {

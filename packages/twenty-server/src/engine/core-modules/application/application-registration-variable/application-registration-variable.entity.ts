@@ -17,6 +17,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 
 @Entity({ name: 'applicationRegistrationVariable', schema: 'core' })
 @ObjectType('ApplicationRegistrationVariable')
@@ -42,7 +43,7 @@ export class ApplicationRegistrationVariableEntity {
   key: string;
 
   @Column({ nullable: false, type: 'text', default: '' })
-  encryptedValue: string;
+  encryptedValue: EncryptedString | '';
 
   @Field()
   @Column({ nullable: false, type: 'text', default: '' })

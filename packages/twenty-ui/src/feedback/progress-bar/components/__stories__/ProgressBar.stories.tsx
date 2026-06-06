@@ -24,6 +24,7 @@ export const Default: Story = {
 };
 
 export const Animated: Story = {
+  tags: ['!test'],
   argTypes: {
     value: { control: false },
   },

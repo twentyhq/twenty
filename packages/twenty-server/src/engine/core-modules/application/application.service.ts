@@ -23,6 +23,8 @@ import { FrontComponentEntity } from 'src/engine/metadata-modules/front-componen
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
@@ -37,12 +39,12 @@ export class ApplicationService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
-    @InjectRepository(AgentEntity)
-    private readonly agentRepository: Repository<AgentEntity>,
+    @InjectWorkspaceScopedRepository(AgentEntity)
+    private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
     @InjectRepository(FrontComponentEntity)
     private readonly frontComponentRepository: Repository<FrontComponentEntity>,
-    @InjectRepository(CommandMenuItemEntity)
-    private readonly commandMenuItemRepository: Repository<CommandMenuItemEntity>,
+    @InjectWorkspaceScopedRepository(CommandMenuItemEntity)
+    private readonly commandMenuItemRepository: WorkspaceScopedRepository<CommandMenuItemEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(ApplicationVariableEntity)
@@ -198,14 +200,14 @@ export class ApplicationService {
       this.logicFunctionRepository.find({
         where: { applicationId: application.id, workspaceId },
       }),
-      this.agentRepository.find({
-        where: { applicationId: application.id, workspaceId },
+      this.agentRepository.find(workspaceId, {
+        where: { applicationId: application.id },
       }),
       this.frontComponentRepository.find({
         where: { applicationId: application.id, workspaceId },
       }),
-      this.commandMenuItemRepository.find({
-        where: { applicationId: application.id, workspaceId },
+      this.commandMenuItemRepository.find(workspaceId, {
+        where: { applicationId: application.id },
       }),
       this.objectMetadataRepository.find({
         where: { applicationId: application.id, workspaceId },
@@ -411,7 +413,6 @@ export class ApplicationService {
 
     const packageJsonFile = await this.fileStorageService.writeFile({
       sourceFile: defaultPackageFields.packageJsonContent,
-      mimeType: undefined,
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId: application.workspaceId,
@@ -422,7 +423,6 @@ export class ApplicationService {
 
     const yarnLockFile = await this.fileStorageService.writeFile({
       sourceFile: defaultPackageFields.yarnLockContent,
-      mimeType: undefined,
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId: application.workspaceId,

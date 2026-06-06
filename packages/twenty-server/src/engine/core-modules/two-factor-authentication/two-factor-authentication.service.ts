@@ -1,21 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { authenticator } from 'otplib';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { TOTP_DEFAULT_CONFIGURATION } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/constants/totp.strategy.constants';
 import { TotpStrategy } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/totp.strategy';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -43,8 +45,8 @@ const buildLegacyTotpCbcPurpose = (
 // oxlint-disable-next-line twenty/inject-workspace-repository
 export class TwoFactorAuthenticationService {
   constructor(
-    @InjectRepository(TwoFactorAuthenticationMethodEntity)
-    private readonly twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethodEntity>,
+    @InjectWorkspaceScopedRepository(TwoFactorAuthenticationMethodEntity)
+    private readonly twoFactorAuthenticationMethodRepository: WorkspaceScopedRepository<TwoFactorAuthenticationMethodEntity>,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly secretEncryptionService: SecretEncryptionService,
     private readonly simpleSecretEncryptionUtil: SimpleSecretEncryptionUtil,
@@ -55,10 +57,10 @@ export class TwoFactorAuthenticationService {
     userId,
     workspaceId,
   }: {
-    storedSecret: string;
+    storedSecret: EncryptedString;
     userId: string;
     workspaceId: string;
-  }): Promise<string> {
+  }): Promise<PlaintextString> {
     if (storedSecret.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)) {
       return this.secretEncryptionService.decryptVersioned(storedSecret, {
         workspaceId,
@@ -116,7 +118,7 @@ export class TwoFactorAuthenticationService {
       });
 
     const existing2FAMethod =
-      await this.twoFactorAuthenticationMethodRepository.findOne({
+      await this.twoFactorAuthenticationMethodRepository.findOne(workspaceId, {
         where: {
           userWorkspace: { id: userWorkspace.id },
           strategy: TwoFactorAuthenticationStrategy.TOTP,
@@ -161,9 +163,8 @@ export class TwoFactorAuthenticationService {
       { workspaceId },
     );
 
-    await this.twoFactorAuthenticationMethodRepository.save({
+    await this.twoFactorAuthenticationMethodRepository.save(workspaceId, {
       id: existing2FAMethod?.id,
-      workspaceId,
       userWorkspace: userWorkspace,
       secret: encryptedSecret,
       status: context.status,
@@ -180,7 +181,7 @@ export class TwoFactorAuthenticationService {
     twoFactorAuthenticationStrategy: TwoFactorAuthenticationStrategy,
   ) {
     const userTwoFactorAuthenticationMethod =
-      await this.twoFactorAuthenticationMethodRepository.findOne({
+      await this.twoFactorAuthenticationMethodRepository.findOne(workspaceId, {
         where: {
           strategy: twoFactorAuthenticationStrategy,
           userWorkspace: {
@@ -226,7 +227,7 @@ export class TwoFactorAuthenticationService {
       );
     }
 
-    await this.twoFactorAuthenticationMethodRepository.save({
+    await this.twoFactorAuthenticationMethodRepository.save(workspaceId, {
       ...userTwoFactorAuthenticationMethod,
       status: OTPStatus.VERIFIED,
     });

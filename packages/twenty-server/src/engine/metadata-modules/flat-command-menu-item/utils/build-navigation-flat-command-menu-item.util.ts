@@ -1,3 +1,5 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v5 } from 'uuid';
 
@@ -15,6 +17,31 @@ export const NAVIGATION_INTERPOLATED_SHORT_LABEL =
   '${navigateToObjectMetadataItem.labelPlural}';
 export const NAVIGATION_INTERPOLATED_ICON =
   '${navigateToObjectMetadataItem.icon}';
+
+const NAVIGATION_FEATURE_FLAG_GATE_BY_OBJECT_UNIVERSAL_IDENTIFIER: Partial<
+  Record<string, FeatureFlagKey>
+> = {
+  [STANDARD_OBJECTS.callRecording.universalIdentifier]:
+    FeatureFlagKey.IS_CALL_RECORDING_ENABLED,
+};
+
+export const buildNavigationConditionalAvailabilityExpression = ({
+  universalIdentifier,
+  nameSingular,
+}: {
+  universalIdentifier: string;
+  nameSingular: string;
+}): string => {
+  const targetObjectReadPermissionExpression = `targetObjectReadPermissions.${nameSingular}`;
+  const featureFlagGate =
+    NAVIGATION_FEATURE_FLAG_GATE_BY_OBJECT_UNIVERSAL_IDENTIFIER[
+      universalIdentifier
+    ];
+
+  return isDefined(featureFlagGate)
+    ? `featureFlags.${featureFlagGate} and ${targetObjectReadPermissionExpression}`
+    : targetObjectReadPermissionExpression;
+};
 
 export const buildNavigationFlatCommandMenuItem = ({
   objectMetadata,
@@ -41,6 +68,12 @@ export const buildNavigationFlatCommandMenuItem = ({
     NAVIGATION_COMMAND_UUID_NAMESPACE,
   );
 
+  const conditionalAvailabilityExpression =
+    buildNavigationConditionalAvailabilityExpression({
+      universalIdentifier: objectMetadata.universalIdentifier,
+      nameSingular: objectMetadata.nameSingular,
+    });
+
   return {
     id: commandMenuItemId,
     universalIdentifier,
@@ -54,7 +87,7 @@ export const buildNavigationFlatCommandMenuItem = ({
     position,
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-    conditionalAvailabilityExpression: `targetObjectReadPermissions.${objectMetadata.nameSingular}`,
+    conditionalAvailabilityExpression,
     frontComponentId: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATION,

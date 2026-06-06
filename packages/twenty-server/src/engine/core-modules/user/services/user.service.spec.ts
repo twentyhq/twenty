@@ -10,6 +10,7 @@ import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-co
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -55,7 +56,10 @@ describe('UserService', () => {
         },
         {
           provide: WorkspaceService,
-          useValue: { deleteWorkspace: jest.fn() },
+          useValue: {
+            deleteWorkspace: jest.fn(),
+            suspendWorkspace: jest.fn(),
+          },
         },
         {
           provide: WorkspaceDomainsService,
@@ -108,6 +112,12 @@ describe('UserService', () => {
           provide: WorkspaceMemberTranspiler,
           useValue: {
             generateSignedAvatarUrl: jest.fn().mockReturnValue(''),
+          },
+        },
+        {
+          provide: TwentyConfigService,
+          useValue: {
+            get: jest.fn().mockReturnValue(false),
           },
         },
       ],
@@ -386,7 +396,8 @@ describe('UserService', () => {
 
       const res = await service.deleteUser('u2');
 
-      expect(workspaceService.deleteWorkspace).toHaveBeenCalledWith('w2');
+      expect(workspaceService.suspendWorkspace).toHaveBeenCalledWith('w2');
+      expect(workspaceService.deleteWorkspace).toHaveBeenCalledWith('w2', true);
       expect(res).toMatchObject({ id: 'u2' });
     });
 

@@ -5,7 +5,6 @@ import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository, type SelectQueryBuilder } from 'typeorm';
 
-import { SECRET_ENCRYPTION_ROTATION_SITE_NAME } from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-name.constant';
 import {
   SecretEncryptionRotationHandler,
   type SecretEncryptionRotationContext,
@@ -13,7 +12,10 @@ import {
 } from 'src/database/commands/secret-encryption-rotation/interfaces/secret-encryption-rotation-handler.interface';
 import { buildCurrentEncryptionKeyIdEnvelopeLikePattern } from 'src/database/commands/secret-encryption-rotation/utils/build-current-encryption-key-id-envelope-like-pattern.util';
 import { buildRotationErrorMessage } from 'src/database/commands/secret-encryption-rotation/utils/build-rotation-error-message.util';
-import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+import {
+  type EncryptedImapSmtpCaldavParams,
+  type ImapSmtpCaldavParams,
+} from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import {
   SecretEncryptionException,
@@ -26,8 +28,6 @@ const ZERO_UUID = '00000000-0000-0000-0000-000000000000';
 
 @Injectable()
 export class ConnectionParametersRotationHandler extends SecretEncryptionRotationHandler {
-  readonly siteName =
-    SECRET_ENCRYPTION_ROTATION_SITE_NAME.CONNECTED_ACCOUNT_CONNECTION_PARAMETERS;
   private readonly logger = new Logger(
     ConnectionParametersRotationHandler.name,
   );
@@ -42,13 +42,15 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
 
   async countRemaining({
     currentEncryptionKeyId,
-  }: {
-    currentEncryptionKeyId: string;
-  }): Promise<number> {
+  }: Pick<
+    SecretEncryptionRotationContext,
+    'siteName' | 'currentEncryptionKeyId'
+  >): Promise<number> {
     return this.buildRowToSelectQuery({ currentEncryptionKeyId }).getCount();
   }
 
   async rotate({
+    siteName,
     currentEncryptionKeyId,
     batchSize,
     dryRun,
@@ -88,9 +90,7 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
               workspaceId: row.workspaceId,
             });
         } catch (error) {
-          this.logger.error(
-            buildRotationErrorMessage(this.siteName, row.id, error),
-          );
+          this.logger.error(buildRotationErrorMessage(siteName, row.id, error));
           outcome.errors += 1;
           continue;
         }
@@ -133,10 +133,12 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
     connectionParameters,
     workspaceId,
   }: {
-    connectionParameters: ImapSmtpCaldavParams;
+    connectionParameters: EncryptedImapSmtpCaldavParams;
     workspaceId: string;
-  }): ImapSmtpCaldavParams {
-    const result: ImapSmtpCaldavParams = { ...connectionParameters };
+  }): EncryptedImapSmtpCaldavParams {
+    const result: EncryptedImapSmtpCaldavParams = {
+      ...connectionParameters,
+    };
 
     for (const protocol of ACCOUNT_TYPES) {
       const params = connectionParameters[protocol];

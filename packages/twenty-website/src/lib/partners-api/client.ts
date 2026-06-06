@@ -17,7 +17,6 @@ export const partnersApiFetch = async (
 
   const base = baseUrl.replace(/\/$/, '');
   const response = await fetch(`${base}${path}`, {
-    cache: 'no-store',
     ...init,
     headers: {
       Authorization: `Bearer ${apiKey}`,

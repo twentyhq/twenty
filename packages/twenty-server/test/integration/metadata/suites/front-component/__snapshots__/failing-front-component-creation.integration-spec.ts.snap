@@ -10,8 +10,8 @@ exports[`Front component creation should fail when builtComponentPath contains p
           "errors": [
             {
               "code": "INVALID_FRONT_COMPONENT_INPUT",
-              "message": "Built component path contains unsafe characters",
-              "userFriendlyMessage": "Built component path contains unsafe characters",
+              "message": "Resource path must not contain path traversal (..)",
+              "userFriendlyMessage": "Built component path is invalid",
             },
           ],
           "flatEntityMinimalInformation": {
@@ -29,7 +29,115 @@ exports[`Front component creation should fail when builtComponentPath contains p
       "frontComponent": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Built component path contains unsafe characters",
+    "userFriendlyMessage": "Built component path is invalid",
+  },
+  "message": "Multiple validation errors occurred while creating front component",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Front component creation should fail when builtComponentPath has a completely unrelated extension (.pdf) 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "frontComponent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FRONT_COMPONENT_INPUT",
+              "message": "Invalid file extension. Allowed extensions: .mjs",
+              "userFriendlyMessage": "Built component path is invalid",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "PdfExtTest",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "frontComponent",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 frontComponent",
+    "summary": {
+      "frontComponent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Built component path is invalid",
+  },
+  "message": "Multiple validation errors occurred while creating front component",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Front component creation should fail when builtComponentPath has an invalid extension (.js instead of .mjs) 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "frontComponent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FRONT_COMPONENT_INPUT",
+              "message": "Invalid file extension. Allowed extensions: .mjs",
+              "userFriendlyMessage": "Built component path is invalid",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "InvalidExtTest",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "frontComponent",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 frontComponent",
+    "summary": {
+      "frontComponent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Built component path is invalid",
+  },
+  "message": "Multiple validation errors occurred while creating front component",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Front component creation should fail when builtComponentPath is a folder path without extension (bare UUID) 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "frontComponent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FRONT_COMPONENT_INPUT",
+              "message": "Filename must have an extension",
+              "userFriendlyMessage": "Built component path is invalid",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "FolderPathTest",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "frontComponent",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 frontComponent",
+    "summary": {
+      "frontComponent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Built component path is invalid",
   },
   "message": "Multiple validation errors occurred while creating front component",
   "name": "GraphQLError",
@@ -46,8 +154,8 @@ exports[`Front component creation should fail when builtComponentPath is an abso
           "errors": [
             {
               "code": "INVALID_FRONT_COMPONENT_INPUT",
-              "message": "Built component path contains unsafe characters",
-              "userFriendlyMessage": "Built component path contains unsafe characters",
+              "message": "Resource path must be relative, not absolute",
+              "userFriendlyMessage": "Built component path is invalid",
             },
           ],
           "flatEntityMinimalInformation": {
@@ -65,7 +173,7 @@ exports[`Front component creation should fail when builtComponentPath is an abso
       "frontComponent": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Built component path contains unsafe characters",
+    "userFriendlyMessage": "Built component path is invalid",
   },
   "message": "Multiple validation errors occurred while creating front component",
   "name": "GraphQLError",
@@ -154,8 +262,8 @@ exports[`Front component creation should fail when sourceComponentPath contains 
           "errors": [
             {
               "code": "INVALID_FRONT_COMPONENT_INPUT",
-              "message": "Source component path contains unsafe characters",
-              "userFriendlyMessage": "Source component path contains unsafe characters",
+              "message": "Resource path must not contain path traversal (..)",
+              "userFriendlyMessage": "Source component path is invalid",
             },
           ],
           "flatEntityMinimalInformation": {
@@ -173,7 +281,79 @@ exports[`Front component creation should fail when sourceComponentPath contains 
       "frontComponent": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Source component path contains unsafe characters",
+    "userFriendlyMessage": "Source component path is invalid",
+  },
+  "message": "Multiple validation errors occurred while creating front component",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Front component creation should fail when sourceComponentPath has an invalid extension (.mjs instead of .ts/.tsx) 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "frontComponent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FRONT_COMPONENT_INPUT",
+              "message": "Invalid file extension. Allowed extensions: .ts, .tsx, .json",
+              "userFriendlyMessage": "Source component path is invalid",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "InvalidSourceExtTest",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "frontComponent",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 frontComponent",
+    "summary": {
+      "frontComponent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Source component path is invalid",
+  },
+  "message": "Multiple validation errors occurred while creating front component",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Front component creation should fail when sourceComponentPath is a folder path without extension 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "frontComponent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FRONT_COMPONENT_INPUT",
+              "message": "Filename must have an extension",
+              "userFriendlyMessage": "Source component path is invalid",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "FolderSourcePathTest",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "frontComponent",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 frontComponent",
+    "summary": {
+      "frontComponent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Source component path is invalid",
   },
   "message": "Multiple validation errors occurred while creating front component",
   "name": "GraphQLError",

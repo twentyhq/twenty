@@ -69,7 +69,10 @@ export const SettingsAgentModelCapabilities = ({
     return null;
   }
 
-  if (!nativeCapabilities.webSearch && !nativeCapabilities.twitterSearch) {
+  const showNativeWebSearch = nativeCapabilities.webSearch;
+  const showNativeTwitterSearch = nativeCapabilities.twitterSearch;
+
+  if (!showNativeWebSearch && !showNativeTwitterSearch) {
     return null;
   }
 
@@ -91,7 +94,7 @@ export const SettingsAgentModelCapabilities = ({
   };
 
   const capabilities = [
-    ...(nativeCapabilities.webSearch
+    ...(showNativeWebSearch
       ? [
           {
             key: 'webSearch' as const,
@@ -101,7 +104,7 @@ export const SettingsAgentModelCapabilities = ({
           },
         ]
       : []),
-    ...(nativeCapabilities.twitterSearch
+    ...(showNativeTwitterSearch
       ? [
           {
             key: 'twitterSearch' as const,

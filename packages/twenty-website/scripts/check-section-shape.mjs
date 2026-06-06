@@ -7,8 +7,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const SECTIONS_DIR = path.join(ROOT, 'src', 'sections');
 
-const SECTIONS_USING_NAMED_SLOTS = new Map([]);
-
 const LEAF_SECTIONS = new Set([
   'CaseStudy',
   'CaseStudyCatalog',
@@ -16,6 +14,11 @@ const LEAF_SECTIONS = new Set([
   'LegalDocument',
   'PartnerApplication',
   'Stepper',
+  // Visual-only modules: their layout shells moved to src/templates/, so they
+  // no longer own a section <Root> — they just expose visual components.
+  'Hero',
+  'ThreeCards',
+  'Testimonials',
 ]);
 
 async function listSections() {
@@ -59,30 +62,19 @@ async function findBarrel(sectionDir) {
 async function findRoot(sectionDir) {
   const sectionName = path.basename(sectionDir);
   const candidates = [
+    // Legacy compound sections own the <section> in components/Root.tsx.
     path.join(sectionDir, 'components', 'Root.tsx'),
+    // Single-file sections own it in <Section>.tsx (e.g. TrustedBy/TrustedBy.tsx).
     path.join(sectionDir, `${sectionName}.tsx`),
     path.join(sectionDir, `${sectionName}.ts`),
+    // Flat-primitive sections own it in a <Section>Section shell
+    // (e.g. Hero/components/HeroSection.tsx) consumed by page-local blocks.
+    path.join(sectionDir, 'components', `${sectionName}Section.tsx`),
   ];
   for (const candidate of candidates) {
     if (await fileExists(candidate)) return candidate;
   }
   return null;
-}
-
-function parseSlotIdentifiers(barrelContents) {
-  const exportMatch = barrelContents.match(
-    /export\s+const\s+\w+\s*=\s*\{([^}]+)\}/m,
-  );
-  if (!exportMatch) return null;
-  const body = exportMatch[1];
-  return body
-    .split(',')
-    .map((entry) => entry.trim())
-    .filter((entry) => entry.length > 0)
-    .map((entry) => {
-      const colon = entry.indexOf(':');
-      return colon === -1 ? entry : entry.slice(0, colon).trim();
-    });
 }
 
 const TOARRAY_REGEX = /Children\.toArray\s*\(/;
@@ -100,7 +92,7 @@ async function checkSection(name) {
   const barrel = await findBarrel(sectionDir);
   if (barrel === null) {
     violations.push(
-      `${name}: missing components/index.{ts,tsx} barrel — every section must expose a single compound export.`,
+      `${name}: missing a barrel (index.{ts,tsx}) — every section must expose its public API through one barrel (flat named exports; no compound objects).`,
     );
     return violations;
   }
@@ -124,55 +116,7 @@ async function checkSection(name) {
     }
   }
 
-  const slotsToCheck = SECTIONS_USING_NAMED_SLOTS.get(name);
-  if (slotsToCheck !== undefined) {
-    const barrelContents = await readFileOrNull(barrel);
-    const exportedSlotNames = barrelContents
-      ? parseSlotIdentifiers(barrelContents)
-      : null;
-    for (const slot of slotsToCheck) {
-      if (exportedSlotNames !== null && !exportedSlotNames.includes(slot)) {
-        violations.push(
-          `${name}: slot "${slot}" is declared in SECTIONS_USING_NAMED_SLOTS but is not exported from ${path.relative(
-            ROOT,
-            barrel,
-          )}. Either export it or remove the entry from check-section-shape.mjs.`,
-        );
-        continue;
-      }
-      const expected = `${name}.${slot}`;
-      const slotFile = await locateSlotFile(sectionDir, slot);
-      if (slotFile === null) {
-        violations.push(
-          `${name}: slot "${slot}" is declared in SECTIONS_USING_NAMED_SLOTS but no source file matches the conventional path (components/${slot}.tsx or components/${slot}/${slot}.tsx).`,
-        );
-        continue;
-      }
-      const contents = await readFileOrNull(slotFile);
-      if (contents === null) continue;
-      if (!contents.includes(`displayName = '${expected}'`)) {
-        violations.push(
-          `${name}: slot "${slot}" source (${path.relative(
-            ROOT,
-            slotFile,
-          )}) does not set ${slot}.displayName = '${expected}'. Root looks slots up by displayName; without it the slot silently fails to render.`,
-        );
-      }
-    }
-  }
-
   return violations;
-}
-
-async function locateSlotFile(sectionDir, slot) {
-  const candidates = [
-    path.join(sectionDir, 'components', `${slot}.tsx`),
-    path.join(sectionDir, 'components', slot, `${slot}.tsx`),
-  ];
-  for (const candidate of candidates) {
-    if (await fileExists(candidate)) return candidate;
-  }
-  return null;
 }
 
 async function main() {

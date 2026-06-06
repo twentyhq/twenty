@@ -122,8 +122,11 @@ export class FieldMetadataEntity<
   @Column({ nullable: true, default: true, type: 'boolean' })
   isNullable: boolean | null;
 
-  // Is this really nullable ?
-  @Column({ nullable: true, default: false, type: 'boolean' })
+  // Derived at flat-entity cache build time from the existence of a
+  // single-field UNIQUE IndexMetadata covering this field — never persisted
+  // on this entity. Kept on the type so flat-entity consumers continue to
+  // read field.isUnique without per-call derivation; the PG column was
+  // dropped by 1798300000000-drop-field-metadata-is-unique-column.ts.
   isUnique: boolean | null;
 
   @Column({ default: false })

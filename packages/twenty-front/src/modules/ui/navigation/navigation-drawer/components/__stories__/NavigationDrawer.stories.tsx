@@ -164,7 +164,7 @@ export const Settings: Story = {
           <NavigationDrawerSectionTitle label="Workspace" />
           <NavigationDrawerItem
             label="General"
-            to={getSettingsPath(SettingsPath.Workspace)}
+            to={getSettingsPath(SettingsPath.General)}
             Icon={IconSettings}
           />
           <NavigationDrawerItem

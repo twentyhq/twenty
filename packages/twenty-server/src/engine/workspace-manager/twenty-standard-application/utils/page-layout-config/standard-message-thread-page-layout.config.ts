@@ -1,4 +1,7 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  STANDARD_OBJECTS,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-shared/metadata';
 
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
@@ -12,11 +15,15 @@ import {
 
 const MESSAGE_THREAD_PAGE_TABS = {
   home: {
-    universalIdentifier: '20202020-f639-48a0-9a44-027cf4e3cd15',
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageThreadRecordPage.tabs
+        .home.universalIdentifier,
     ...TAB_PROPS.home,
     widgets: {
       emailThread: {
-        universalIdentifier: '20202020-d57e-44cb-b220-69a881feb9c3',
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageThreadRecordPage
+            .tabs.home.widgets.emailThread.universalIdentifier,
         ...WIDGET_PROPS.emailThread,
       },
     },
@@ -27,7 +34,9 @@ export const STANDARD_MESSAGE_THREAD_PAGE_LAYOUT_CONFIG = {
   name: 'Default Message Thread Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: STANDARD_OBJECTS.messageThread.universalIdentifier,
-  universalIdentifier: '20202020-95bb-40eb-a699-70e7ea02a79e',
+  universalIdentifier:
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageThreadRecordPage
+      .universalIdentifier,
   defaultTabUniversalIdentifier: null,
   tabs: MESSAGE_THREAD_PAGE_TABS,
 } as const satisfies StandardPageLayoutConfig;

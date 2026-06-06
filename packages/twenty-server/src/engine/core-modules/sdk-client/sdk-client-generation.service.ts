@@ -157,7 +157,6 @@ export class SdkClientGenerationService {
         fileFolder: FileFolder.GeneratedSdkClient,
         resourcePath: SDK_CLIENT_ARCHIVE_NAME,
         sourceFile: archiveBuffer,
-        mimeType: 'application/zip',
         settings: { isTemporaryFile: false, toDelete: false },
       });
 

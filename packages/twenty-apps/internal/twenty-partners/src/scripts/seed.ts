@@ -11,7 +11,7 @@
 //   tsx src/scripts/seed.ts
 
 import { config } from 'dotenv';
-config({ path: '.env.local' });
+config({ path: process.env.ENV_FILE ?? '.env.local' });
 
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
@@ -22,6 +22,14 @@ const requireEnv = (name: string): string => {
 };
 
 const CAL = 'https://calendly.com/placeholder';
+const usd = (dollars: number) => ({
+  amountMicros: dollars * 1_000_000,
+  currencyCode: 'USD',
+});
+// Deterministic placeholder avatars; pravatar returns a stable image per `u` seed.
+const avatar = (slug: string) => `https://i.pravatar.cc/300?u=${slug}`;
+const linkedin = (slug: string) =>
+  `https://www.linkedin.com/company/${slug}`;
 
 type Partner = {
   slug: string;
@@ -37,19 +45,23 @@ type Partner = {
   partnerScope: string[];
   typeOfTeam: string;
   country: string;
+  city: string;
+  hourlyRateUsd: number | null;
+  projectBudgetMinUsd: number | null;
+  skills: string[];
 };
 
 const PARTNERS: Partner[] = [
-  { slug: 'nine-dots-ventures', name: 'Nine Dots Ventures', validationStage: 'VALIDATED', availability: 'AVAILABLE', introduction: 'Boutique CRM implementer for real-estate workflows and WhatsApp automation.', calendarLink: CAL, deploymentExpertise: ['CLOUD', 'SELF_HOST'], region: ['EUROPE', 'MENA'], languagesSpoken: ['ENGLISH', 'FRENCH', 'ARABIC'], partnerTier: 'ADVANCED', partnerScope: ['DATA_MODEL', 'WORKFLOWS', 'APPS'], typeOfTeam: 'AGENCY', country: 'FRANCE' },
-  { slug: 'elevate-consulting', name: 'Elevate Consulting', validationStage: 'VALIDATED', availability: 'AVAILABLE', introduction: 'Revenue-operations partner for B2B SaaS teams scaling seed to Series C.', calendarLink: CAL, deploymentExpertise: ['CLOUD'], region: ['US', 'LATAM'], languagesSpoken: ['ENGLISH', 'SPANISH'], partnerTier: 'INTERMEDIATE', partnerScope: ['DATA_MIGRATION', 'DATA_MODEL'], typeOfTeam: 'AGENCY', country: 'UNITED_STATES' },
-  { slug: 'w3villa-technologies', name: 'W3Villa Technologies', validationStage: 'VALIDATED', availability: 'AVAILABLE', introduction: 'Engineering-heavy partner running large self-hosted Twenty deployments.', calendarLink: CAL, deploymentExpertise: ['CLOUD', 'SELF_HOST'], region: ['APAC', 'MENA'], languagesSpoken: ['ENGLISH', 'HINDI'], partnerTier: 'ADVANCED', partnerScope: ['HOSTING_ENVIRONMENT', 'APPS', 'WORKFLOWS'], typeOfTeam: 'AGENCY', country: 'INDIA' },
-  { slug: 'act-education', name: 'Act Education', validationStage: 'VALIDATED', availability: 'UNAVAILABLE', introduction: 'CRM partner for European education providers; compliance-first self-hosting.', calendarLink: CAL, deploymentExpertise: ['SELF_HOST'], region: ['EUROPE'], languagesSpoken: ['ENGLISH', 'GERMAN'], partnerTier: 'NEW', partnerScope: ['HOSTING_ENVIRONMENT', 'DATA_MODEL'], typeOfTeam: 'SOLO', country: 'GERMANY' },
-  { slug: 'netzero-systems', name: 'NetZero Systems', validationStage: 'VALIDATED', availability: 'AVAILABLE', introduction: 'LATAM go-to-market partner for climate-tech and renewable-energy companies.', calendarLink: CAL, deploymentExpertise: ['CLOUD'], region: ['LATAM', 'US'], languagesSpoken: ['ENGLISH', 'SPANISH', 'PORTUGUESE'], partnerTier: 'INTERMEDIATE', partnerScope: ['DATA_MODEL'], typeOfTeam: 'AGENCY', country: 'BRAZIL' },
-  { slug: 'meridian-craft', name: 'Meridian Craft', validationStage: 'VALIDATED', availability: 'AVAILABLE', introduction: 'APAC implementation studio for fintech and logistics; English + Chinese.', calendarLink: CAL, deploymentExpertise: ['CLOUD', 'SELF_HOST'], region: ['APAC', 'AFRICA'], languagesSpoken: ['ENGLISH', 'CHINESE', 'MALAY'], partnerTier: 'ADVANCED', partnerScope: ['APPS', 'WORKFLOWS'], typeOfTeam: 'AGENCY', country: 'SINGAPORE' },
-  { slug: 'applicant-studio', name: 'Applicant Studio', validationStage: 'APPLICATION', availability: 'UNAVAILABLE', introduction: 'New applicant; awaiting first review.', calendarLink: CAL, deploymentExpertise: ['CLOUD'], region: ['EUROPE'], languagesSpoken: ['ENGLISH', 'FRENCH'], partnerTier: 'NEW', partnerScope: ['DATA_MODEL'], typeOfTeam: 'SOLO', country: 'FRANCE' },
-  { slug: 'rising-crm', name: 'Rising CRM', validationStage: 'POTENTIAL', availability: 'AVAILABLE', introduction: 'Promising applicant in evaluation.', calendarLink: CAL, deploymentExpertise: ['CLOUD', 'SELF_HOST'], region: ['US'], languagesSpoken: ['ENGLISH'], partnerTier: 'NEW', partnerScope: ['WORKFLOWS', 'APPS'], typeOfTeam: 'AGENCY', country: 'UNITED_STATES' },
-  { slug: 'legacy-partners', name: 'Legacy Partners', validationStage: 'FORMER', availability: 'UNAVAILABLE', introduction: 'Former partner; no longer active in the program.', calendarLink: CAL, deploymentExpertise: ['SELF_HOST'], region: ['EUROPE'], languagesSpoken: ['ENGLISH', 'GERMAN'], partnerTier: 'INTERMEDIATE', partnerScope: ['HOSTING_ENVIRONMENT'], typeOfTeam: 'AGENCY', country: 'UNITED_KINGDOM' },
-  { slug: 'declined-co', name: 'Declined Co', validationStage: 'REJECTED', availability: 'UNAVAILABLE', introduction: 'Application rejected after review.', calendarLink: CAL, deploymentExpertise: ['CLOUD'], region: ['MENA'], languagesSpoken: ['ENGLISH', 'ARABIC'], partnerTier: 'NEW', partnerScope: ['APPS'], typeOfTeam: 'SOLO', country: 'UNITED_ARAB_EMIRATES' },
+  { slug: 'nine-dots-ventures', name: 'Nine Dots Ventures', validationStage: 'VALIDATED', availability: 'AVAILABLE', introduction: 'Boutique CRM implementer for real-estate workflows and WhatsApp automation. Nine Dots runs end-to-end Twenty rollouts for property managers and brokerages across Europe and MENA, with deep multi-language data models and AI-assisted lead intake.', calendarLink: CAL, deploymentExpertise: ['CLOUD', 'SELF_HOST'], region: ['EUROPE', 'MENA'], languagesSpoken: ['ENGLISH', 'FRENCH', 'ARABIC'], partnerTier: 'ADVANCED', partnerScope: ['DATA_MODEL', 'WORKFLOWS', 'APPS'], typeOfTeam: 'AGENCY', country: 'FRANCE', city: 'Paris', hourlyRateUsd: 250, projectBudgetMinUsd: 15000, skills: ['Real estate', 'WhatsApp', 'Multi-language', 'Workflows', 'Integrations', 'AI'] },
+  { slug: 'elevate-consulting', name: 'Elevate Consulting', validationStage: 'VALIDATED', availability: 'AVAILABLE', introduction: 'Revenue-operations partner for B2B SaaS teams scaling seed to Series C. Elevate moves teams off legacy CRMs onto Twenty with a four-week migration playbook, pipeline rebuilds, and analytics handoff.', calendarLink: CAL, deploymentExpertise: ['CLOUD'], region: ['US', 'LATAM'], languagesSpoken: ['ENGLISH', 'SPANISH'], partnerTier: 'INTERMEDIATE', partnerScope: ['DATA_MIGRATION', 'DATA_MODEL'], typeOfTeam: 'AGENCY', country: 'UNITED_STATES', city: 'Austin', hourlyRateUsd: 200, projectBudgetMinUsd: 20000, skills: ['RevOps', 'B2B SaaS', 'Data migration', 'Pipelines', 'Salesforce migration', 'HubSpot migration'] },
+  { slug: 'w3villa-technologies', name: 'W3Villa Technologies', validationStage: 'VALIDATED', availability: 'AVAILABLE', introduction: 'Engineering-heavy partner running large self-hosted Twenty deployments. Specializes in hardened Kubernetes hosting, custom integrations, and 24/7 support contracts for regulated industries across APAC and the Gulf.', calendarLink: CAL, deploymentExpertise: ['CLOUD', 'SELF_HOST'], region: ['APAC', 'MENA'], languagesSpoken: ['ENGLISH', 'HINDI'], partnerTier: 'ADVANCED', partnerScope: ['HOSTING_ENVIRONMENT', 'APPS', 'WORKFLOWS'], typeOfTeam: 'AGENCY', country: 'INDIA', city: 'Bangalore', hourlyRateUsd: 120, projectBudgetMinUsd: 10000, skills: ['Self-hosting', 'Kubernetes', 'DevOps', 'Integrations', 'Workflows', 'Enterprise support'] },
+  { slug: 'act-education', name: 'Act Education', validationStage: 'VALIDATED', availability: 'UNAVAILABLE', introduction: 'CRM partner for European education providers; compliance-first self-hosting on EU infrastructure with full GDPR data residency and student-record workflows.', calendarLink: CAL, deploymentExpertise: ['SELF_HOST'], region: ['EUROPE'], languagesSpoken: ['ENGLISH', 'GERMAN'], partnerTier: 'NEW', partnerScope: ['HOSTING_ENVIRONMENT', 'DATA_MODEL'], typeOfTeam: 'SOLO', country: 'GERMANY', city: 'Berlin', hourlyRateUsd: 180, projectBudgetMinUsd: 8000, skills: ['Education', 'Compliance', 'Self-hosting', 'GDPR', 'Data privacy'] },
+  { slug: 'netzero-systems', name: 'NetZero Systems', validationStage: 'VALIDATED', availability: 'AVAILABLE', introduction: 'LATAM go-to-market partner for climate-tech and renewable-energy companies. Builds bilingual sales pipelines, ESG reporting, and grant-management workflows on top of Twenty.', calendarLink: CAL, deploymentExpertise: ['CLOUD'], region: ['LATAM', 'US'], languagesSpoken: ['ENGLISH', 'SPANISH', 'PORTUGUESE'], partnerTier: 'INTERMEDIATE', partnerScope: ['DATA_MODEL'], typeOfTeam: 'AGENCY', country: 'BRAZIL', city: 'São Paulo', hourlyRateUsd: 150, projectBudgetMinUsd: 12000, skills: ['Climate tech', 'Renewable energy', 'ESG reporting', 'Bilingual pipelines', 'LATAM go-to-market'] },
+  { slug: 'meridian-craft', name: 'Meridian Craft', validationStage: 'VALIDATED', availability: 'AVAILABLE', introduction: 'APAC implementation studio for fintech and logistics. Senior team of ex-bank engineers building high-throughput Twenty deployments across Singapore, Hong Kong, and Kuala Lumpur.', calendarLink: CAL, deploymentExpertise: ['CLOUD', 'SELF_HOST'], region: ['APAC', 'AFRICA'], languagesSpoken: ['ENGLISH', 'CHINESE', 'MALAY'], partnerTier: 'ADVANCED', partnerScope: ['APPS', 'WORKFLOWS'], typeOfTeam: 'AGENCY', country: 'SINGAPORE', city: 'Singapore', hourlyRateUsd: 300, projectBudgetMinUsd: 25000, skills: ['Fintech', 'Logistics', 'APAC', 'High throughput', 'Custom apps', 'Performance tuning'] },
+  { slug: 'applicant-studio', name: 'Applicant Studio', validationStage: 'APPLICATION', availability: 'UNAVAILABLE', introduction: 'New applicant; awaiting first review.', calendarLink: CAL, deploymentExpertise: ['CLOUD'], region: ['EUROPE'], languagesSpoken: ['ENGLISH', 'FRENCH'], partnerTier: 'NEW', partnerScope: ['DATA_MODEL'], typeOfTeam: 'SOLO', country: 'FRANCE', city: 'Lyon', hourlyRateUsd: null, projectBudgetMinUsd: null, skills: ['Boutique', 'Design'] },
+  { slug: 'rising-crm', name: 'Rising CRM', validationStage: 'POTENTIAL', availability: 'AVAILABLE', introduction: 'Promising applicant in evaluation.', calendarLink: CAL, deploymentExpertise: ['CLOUD', 'SELF_HOST'], region: ['US'], languagesSpoken: ['ENGLISH'], partnerTier: 'NEW', partnerScope: ['WORKFLOWS', 'APPS'], typeOfTeam: 'AGENCY', country: 'UNITED_STATES', city: 'New York', hourlyRateUsd: null, projectBudgetMinUsd: null, skills: ['SMB', 'Quick setup'] },
+  { slug: 'legacy-partners', name: 'Legacy Partners', validationStage: 'FORMER', availability: 'UNAVAILABLE', introduction: 'Former partner; no longer active in the program.', calendarLink: CAL, deploymentExpertise: ['SELF_HOST'], region: ['EUROPE'], languagesSpoken: ['ENGLISH', 'GERMAN'], partnerTier: 'INTERMEDIATE', partnerScope: ['HOSTING_ENVIRONMENT'], typeOfTeam: 'AGENCY', country: 'UNITED_KINGDOM', city: 'London', hourlyRateUsd: null, projectBudgetMinUsd: null, skills: ['Enterprise', 'Self-hosting'] },
+  { slug: 'declined-co', name: 'Declined Co', validationStage: 'REJECTED', availability: 'UNAVAILABLE', introduction: 'Application rejected after review.', calendarLink: CAL, deploymentExpertise: ['CLOUD'], region: ['MENA'], languagesSpoken: ['ENGLISH', 'ARABIC'], partnerTier: 'NEW', partnerScope: ['APPS'], typeOfTeam: 'SOLO', country: 'UNITED_ARAB_EMIRATES', city: 'Dubai', hourlyRateUsd: null, projectBudgetMinUsd: null, skills: ['MENA', 'Arabic'] },
 ];
 
 const COMPANIES = [
@@ -89,13 +101,13 @@ const OPPORTUNITIES: Opp[] = [
   { name: 'Sunrise — vendor onboarding', companyName: 'Sunrise Logistics', matchStatus: 'LOST', numberOfSeats: 10, hostingType: 'CLOUD', subscriptionType: 'PRO', subscriptionFrequency: 'MONTHLY' },
 ];
 
-type Quote = { name: string; status: string; partnerSlug: string; oppName: string };
+type Quote = { name: string; status: string; partnerSlug: string; contentType: string[] };
 const QUOTES: Quote[] = [
-  { name: 'Sunrise APAC fleet — Nine Dots quote', status: 'WIP', partnerSlug: 'nine-dots-ventures', oppName: 'Sunrise — APAC fleet CRM' },
-  { name: 'Helix clinical — NetZero quote', status: 'INTERVIEW_SCHEDULED', partnerSlug: 'netzero-systems', oppName: 'Helix Bio — clinical trials CRM' },
-  { name: 'Acme rollout — Elevate quote', status: 'UNDER_CUSTOMER_PARTNER_REVIEW', partnerSlug: 'elevate-consulting', oppName: 'Acme RE — CRM rollout' },
-  { name: 'Sunrise LATAM — Nine Dots quote', status: 'APPROVED', partnerSlug: 'nine-dots-ventures', oppName: 'Sunrise — LATAM expansion' },
-  { name: 'Helix self-host — Meridian quote', status: 'REJECTED', partnerSlug: 'meridian-craft', oppName: 'Helix Bio — self-host evaluation' },
+  { name: 'Sunrise APAC fleet — Nine Dots quote', status: 'WIP', partnerSlug: 'nine-dots-ventures', contentType: ['PARTNER_QUOTE'] },
+  { name: 'Helix clinical — NetZero quote', status: 'INTERVIEW_SCHEDULED', partnerSlug: 'netzero-systems', contentType: ['PARTNER_QUOTE'] },
+  { name: 'Acme rollout — Elevate quote', status: 'UNDER_CUSTOMER_PARTNER_REVIEW', partnerSlug: 'elevate-consulting', contentType: ['PARTNER_QUOTE'] },
+  { name: 'Sunrise LATAM — Nine Dots quote', status: 'APPROVED', partnerSlug: 'nine-dots-ventures', contentType: ['PARTNER_QUOTE'] },
+  { name: 'Helix self-host — Meridian quote', status: 'REJECTED', partnerSlug: 'meridian-craft', contentType: ['CASE_STUDY'] },
 ];
 
 const nodes = (r: any, key: string): any[] => (r?.[key]?.edges ?? []).map((e: any) => e.node);
@@ -118,7 +130,12 @@ async function main() {
       introduction: p.introduction, calendarLink: { primaryLinkUrl: p.calendarLink },
       deploymentExpertise: p.deploymentExpertise, region: p.region, languagesSpoken: p.languagesSpoken,
       partnerTier: p.partnerTier, partnerScope: p.partnerScope, typeOfTeam: p.typeOfTeam,
-      country: p.country,
+      country: p.country, city: p.city,
+      skills: p.skills,
+      linkedin: { primaryLinkUrl: linkedin(p.slug) },
+      profilePicture: { primaryLinkUrl: avatar(p.slug) },
+      ...(p.hourlyRateUsd != null ? { hourlyRate: usd(p.hourlyRateUsd) } : {}),
+      ...(p.projectBudgetMinUsd != null ? { projectBudgetMin: usd(p.projectBudgetMinUsd) } : {}),
     };
     const id = partnerIdBySlug.get(p.slug);
     if (id) {
@@ -177,12 +194,12 @@ async function main() {
   // -- Partner quotes (upsert by name) --
   let quoteCount = 0;
   for (const q of QUOTES) {
-    const data = { name: q.name, status: q.status, partnerId: partnerIdBySlug.get(q.partnerSlug), opportunityId: oppIdByName.get(q.oppName) };
-    const existing = nodes(await client.query({ partnerQuotes: { __args: { filter: { name: { eq: q.name } }, first: 1 }, edges: { node: { id: true } } } } as any), 'partnerQuotes');
+    const data = { name: q.name, status: q.status, contentType: q.contentType, partnerId: partnerIdBySlug.get(q.partnerSlug) };
+    const existing = nodes(await client.query({ partnerContents: { __args: { filter: { name: { eq: q.name } }, first: 1 }, edges: { node: { id: true } } } } as any), 'partnerContents');
     if (existing[0]?.id) {
-      await client.mutation({ updatePartnerQuote: { __args: { id: existing[0].id, data }, id: true } } as any);
+      await client.mutation({ updatePartnerContent: { __args: { id: existing[0].id, data }, id: true } } as any);
     } else {
-      await client.mutation({ createPartnerQuote: { __args: { data }, id: true } } as any);
+      await client.mutation({ createPartnerContent: { __args: { data }, id: true } } as any);
     }
     quoteCount++;
   }
