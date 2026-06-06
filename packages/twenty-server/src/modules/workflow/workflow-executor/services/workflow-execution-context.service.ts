@@ -102,7 +102,9 @@ export class WorkflowExecutionContextService {
       .getWorkspaceMemberOrThrow({ workspaceMemberId, workspaceId })
       .catch((error) => {
         this.logger.warn(
-          `Could not resolve workspace member ${workspaceMemberId} in workspace ${workspaceId}, falling back to workspace-shared accounts: ${error.message}`,
+          `Could not resolve workspace member ${workspaceMemberId} in workspace ${workspaceId}, falling back to workspace-shared accounts: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
         );
 
         return undefined;
@@ -119,7 +121,9 @@ export class WorkflowExecutionContextService {
       })
       .catch((error) => {
         this.logger.warn(
-          `Could not resolve user workspace for user ${workspaceMember.userId} in workspace ${workspaceId}, falling back to workspace-shared accounts: ${error.message}`,
+          `Could not resolve user workspace for user ${workspaceMember.userId} in workspace ${workspaceId}, falling back to workspace-shared accounts: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
         );
 
         return undefined;
