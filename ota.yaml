@@ -1,9 +1,4 @@
 version: 1
-# Pressure-test note (local branch):
-# - Remove the service-backed `integration` and `docker-selfhost` workflows before an upstream PR
-#   unless we intentionally want the contract to claim database-backed integration coverage and the
-#   shipped Docker Compose self-host path in addition to the core CI-style verify and native-dev
-#   contributor lanes.
 project:
   name: twenty
   description: Twenty monorepo readiness slice covering contributor local setup (frontend, backend, worker), CI-style build/lint/typecheck/test tasks, and Docker Compose self-host startup
@@ -193,10 +188,8 @@ tasks:
       modes:
         native:
           context: host
-          run: yarn --immutable --check-cache
         container:
           context: app
-          run: yarn --immutable --check-cache
     requirements:
       toolchains:
         - node
@@ -295,10 +288,8 @@ tasks:
       modes:
         native:
           context: host
-          run: sh -c 'npx nx lint twenty-front && npx nx lint twenty-server'
         container:
           context: app
-          run: sh -c 'npx nx lint twenty-front && npx nx lint twenty-server'
     depends_on:
       - install
     requirements:
@@ -334,10 +325,8 @@ tasks:
       modes:
         native:
           context: host
-          run: sh -c 'npx nx typecheck twenty-front && npx nx typecheck twenty-server'
         container:
           context: app
-          run: sh -c 'npx nx typecheck twenty-front && npx nx typecheck twenty-server'
     depends_on:
       - install
     requirements:
@@ -393,10 +382,8 @@ tasks:
       modes:
         native:
           context: host
-          run: sh -c 'echo "verify checks passed"'
         container:
           context: app
-          run: sh -c 'echo "verify checks passed"'
     depends_on:
       - lint
       - typecheck
@@ -414,10 +401,8 @@ tasks:
       modes:
         native:
           context: host
-          run: sh -c 'npx nx test twenty-front && npx nx test twenty-server'
         container:
           context: app
-          run: sh -c 'npx nx test twenty-front && npx nx test twenty-server'
     depends_on:
       - install
       - setup:env
@@ -578,7 +563,6 @@ agent:
     - packages/twenty-utils
   protected_paths:
     - ota.yaml
-    - OTA_MATRIX.md
     - yarn.lock
     - package.json
     - .nvmrc
@@ -590,8 +574,8 @@ agent:
   bootstrap:
     ota:
       note: Install ota when missing so contributors and agents can run the readiness workflows declared in this contract.
-      sh: curl -fsSL https://dist.ota.run/install.sh | OTA_VERSION=v1.6.15 sh
-      powershell: $env:OTA_VERSION='v1.6.15'; irm https://dist.ota.run/install.ps1 | iex
+      sh: curl -fsSL https://dist.ota.run/install.sh | OTA_VERSION=v1.6.19 sh
+      powershell: $env:OTA_VERSION='v1.6.19'; irm https://dist.ota.run/install.ps1 | iex
   notes: |
     Use `ota tasks --use .` to list runnable tasks and review the agent-safe surface before execution.
     Use `ota run prepare:env:server .` for native/integration workflows and
@@ -602,7 +586,4 @@ agent:
     Use `ota up --workflow verify --container .` for the containerized CI-style verify path.
     Use `ota up --workflow integration --native .` for backend integration coverage.
     Use `ota up --workflow docker-selfhost --native .` for the repository self-host compose path.
-    This local pressure branch currently models both service-backed integration and Docker Compose
-    self-host workflows; keep those lanes only if an upstream PR intentionally claims that broader
-    repo truth rather than just the core contributor verify/dev slice.
     No tasks are agent-safe by default in this slice.
