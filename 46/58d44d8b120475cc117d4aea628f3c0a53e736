@@ -1,0 +1,56 @@
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type.ts
+  s_4a10800c36ffe6::t_62a826049736eb 18
+  s_4a10800c36ffe6::t_2123789ce38f16 19-21
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/services/utils/enrich-create-workspace-migration-action-with-ids.util.ts
+  s_ccda17eaabba7a::t_ef5c6ff2e6cd4f 4
+  s_ccda17eaabba7a::t_5014a1280e6382 181-184
+  s_ccda17eaabba7a::t_cf57386c7e73b4 197-201,142
+  s_ccda17eaabba7a::t_37c22f15fde7e4 203
+  s_ccda17eaabba7a::t_8e0d210dfe0e82 204-206,208-210,223-225,228,84,92,105,145,147
+  s_ccda17eaabba7a::t_c5fc73cb1d6da3 207,211-214,216-222,226
+  s_ccda17eaabba7a::t_c29cc86db05028 252,262,264-267,295
+  s_ccda17eaabba7a::t_bcd6b6303aad73 269-277,282-285,192,85,88,93,98,107,111,114,124,127,138,140,148,152,166,170,173,245
+  s_ccda17eaabba7a::t_bce5ec15a5042f 278,286
+  s_ccda17eaabba7a::t_c9c315529616ed 279-281,287-288
+  s_ccda17eaabba7a::t_6e8c97fa3f1045 289
+  s_ccda17eaabba7a::t_2b641644a4081c 290-291
+packages/twenty-server/src/engine/core-modules/application/application-manifest/application-manifest.resolver.ts
+  s_ccda17eaabba7a::t_cc4ec2f346ed88 23
+  s_ccda17eaabba7a::t_52ff74b4e8a5ed 53-56,67-71,73-74
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service.ts
+  s_ccda17eaabba7a::t_0a7686bcc40036 394-395
+  s_ccda17eaabba7a::t_0918d4297c4586 409-410
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/create-field-action-handler.service.ts
+  s_ccda17eaabba7a::t_8c7911b85c6f8f 51,56-57,61-63
+  s_4a10800c36ffe6::t_6525c96e653658 52-53
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service.ts
+  ai_agent 27
+  s_ccda17eaabba7a::t_6ba7e39bcaf046 173,177
+  s_ccda17eaabba7a::t_d96723b398b62f 178-180
+  s_4a10800c36ffe6::t_40f9a8f907cc92 249-251,264
+  s_4a10800c36ffe6::t_06db05ff6f3a98 300
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "4658d44d8b120475cc117d4aea628f3c0a53e736",
+  "prompts": {},
+  "sessions": {
+    "s_4a10800c36ffe6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9ecf403e-4e07-4937-9eb1-7db20c4f4c5f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_ccda17eaabba7a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b932cb9-a0b1-4bbb-9c58-8574d4b18520",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}

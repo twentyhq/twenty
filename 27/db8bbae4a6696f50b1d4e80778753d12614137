@@ -1,0 +1,43 @@
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/create-field-action-handler.service.ts
+  s_4a10800c36ffe6::t_6525c96e653658 56-57
+  s_ccda17eaabba7a::t_8c7911b85c6f8f 60,71,78
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
+  s_4a10800c36ffe6::t_7832d97ab3c646 18
+  s_4a10800c36ffe6::t_0282bbdc532975 37
+  s_4a10800c36ffe6::t_cdace8790e97ce 74-82
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type.ts
+  s_4a10800c36ffe6::t_62a826049736eb 19
+  s_4a10800c36ffe6::t_2123789ce38f16 20-22
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+  s_4a10800c36ffe6::t_1f2fe9e162712b 247
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service.ts
+  ai_agent 28
+  s_ccda17eaabba7a::t_6ba7e39bcaf046 174,178
+  s_ccda17eaabba7a::t_d96723b398b62f 179-181
+  s_4a10800c36ffe6::t_40f9a8f907cc92 253-255,269
+  s_4a10800c36ffe6::t_06db05ff6f3a98 305
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "27db8bbae4a6696f50b1d4e80778753d12614137",
+  "prompts": {},
+  "sessions": {
+    "s_4a10800c36ffe6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9ecf403e-4e07-4937-9eb1-7db20c4f4c5f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_ccda17eaabba7a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b932cb9-a0b1-4bbb-9c58-8574d4b18520",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
