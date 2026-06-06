@@ -145,6 +145,33 @@ const handler = async (event: RoutePayload) => {
 Başlık adları küçük harfe normalize edilir. Onlara küçük harfli anahtarlarla erişin (örneğin, `event.headers['content-type']`).
 </Note>
 
+#### Özel HTTP yanıtı
+
+Varsayılan olarak, işleyicinizden düz bir değer döndürmek, onu `200` yanıtı olarak geri gönderir (nesneler için JSON, stringler için `text/plain`). Durum kodunu ve yanıt üstbilgilerini kontrol etmek için, `twenty-sdk/logic-function` içinden bir `Response` döndürün:
+
+```ts
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  return new Response('<h1>Hello</h1>', {
+    status: 201,
+    headers: { 'content-type': 'text/html' },
+  });
+};
+```
+
+Güvenlik nedenleriyle, yanıt üstbilgileri bir izin listesiyle sınırlandırılmıştır. Listede yer almayan herhangi bir üstbilgi (örneğin `Set-Cookie`, `Access-Control-Allow-Origin` gibi CORS üstbilgileri veya özel `X-*` üstbilgileri), yanıt gönderilmeden önce sessizce yok sayılır. İzin verilen yanıt üstbilgileri şunlardır:
+
+* `content-type`
+* `content-language`
+* `content-disposition`
+* `cache-control`
+* `retry-after`
+
+<Note>
+Durum kodu geçerli bir HTTP durum kodu olmalıdır (100 ile 599 arasında). Yanıt üstbilgisi adları büyük/küçük harfe duyarsız olarak eşleştirilir.
+</Note>
+
 #### Veritabanı olay tetikleyicisi yükü
 
 Bir veritabanı olay tetikleyicisi mantık fonksiyonunuzu çağırdığında, değişen her kayıt için bir `DatabaseEventPayload` alır. Yük, kaynak çalışma alanı ve nesne hakkındaki üstveriyi, kayıt düzeyindeki olayla birleştirir.

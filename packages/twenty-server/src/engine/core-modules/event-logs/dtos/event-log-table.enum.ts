@@ -7,5 +7,3 @@ export const registerEventLogTableEnum = () => {
     name: 'EventLogTable',
   });
 };
-
-export { EventLogTable };
