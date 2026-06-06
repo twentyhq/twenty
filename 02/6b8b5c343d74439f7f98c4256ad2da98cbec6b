@@ -1,0 +1,55 @@
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/mail-sender/__tests__/draft-email.workflow-action.spec.ts
+  s_684fd1e9eab933::t_7f3cb473fe8d4e 65-67
+  s_684fd1e9eab933::t_4dbee77bc768f4 4
+  s_684fd1e9eab933::t_3f7c9974dc9517 62-64,68-69
+packages/twenty-server/src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+  s_684fd1e9eab933::t_e708594bebb50f 10
+  s_684fd1e9eab933::t_bed10206270b0c 26-27
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email.workflow-action.ts
+  s_684fd1e9eab933::t_4ef040f68bcd3f 21,23-27
+  s_684fd1e9eab933::t_afbfc95f87fb53 9
+packages/twenty-server/src/modules/workflow/workflow-executor/services/workflow-execution-context.service.ts
+  s_684fd1e9eab933::t_aa89c9cce332a5 15-16,19
+  s_684fd1e9eab933::t_502f6a1364d6bb 32,35-113
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/mail-sender/mail-sender-action.module.ts
+  s_684fd1e9eab933::t_47ad724c4d91ea 3,5-8,14-26
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/http-request/__tests__/http-request.workflow-action.spec.ts
+  s_684fd1e9eab933::t_63327f7e211af2 56-58,62-63
+  s_684fd1e9eab933::t_84dc94b9c09832 4
+  s_684fd1e9eab933::t_02c37817a6e89b 59-61
+packages/twenty-server/src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
+  s_684fd1e9eab933::t_1688799645785c 84-96
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/http-request/http-request.workflow-action.ts
+  s_684fd1e9eab933::t_614b23c26bf007 25,27-31
+  s_684fd1e9eab933::t_274f80005d7a7d 12
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/http-request/http-request-action.module.ts
+  s_684fd1e9eab933::t_600f2fa6d535e7 3,5-8,13-21
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/mail-sender/__tests__/send-email.workflow-action.spec.ts
+  s_684fd1e9eab933::t_a01fcbe45859ac 73-75
+  s_684fd1e9eab933::t_f3edf9e800731a 70-72,76-77
+  s_684fd1e9eab933::t_e7491413b24d97 4
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/tool-backed/tool-backed.workflow-action.ts
+  s_684fd1e9eab933::t_200eae47f97528 66-68
+  s_684fd1e9eab933::t_a1d7cfc7c6759a 65,69,73
+  s_684fd1e9eab933::t_bb56ca0e757ac2 10
+  s_684fd1e9eab933::t_8107a5d9f62319 31
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/mail-sender/draft-email.workflow-action.ts
+  s_684fd1e9eab933::t_a4a09c6b9759d8 21,23-27
+  s_684fd1e9eab933::t_ed0e384f3c7891 9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "026b8b5c343d74439f7f98c4256ad2da98cbec6b",
+  "prompts": {},
+  "sessions": {
+    "s_684fd1e9eab933": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5ca1b872-012d-466e-9779-57bdef42045e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
