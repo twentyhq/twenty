@@ -1,5 +1,6 @@
 import { RecordTableDeactivateRecordTableRowEffect } from '@/object-record/record-table/components/RecordTableDeactivateRecordTableRowEffect';
 import { RecordTableEmptyHasNewRecordEffect } from '@/object-record/record-table/components/RecordTableEmptyHasNewRecordEffect';
+import { RecordTableBodyDeleteHotkeyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDeleteHotkeyEffect';
 import { RecordTableBodyEscapeHotkeyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyEscapeHotkeyEffect';
 import { RecordTableBodyFocusClickOutsideEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyFocusClickOutsideEffect';
 import { RecordTableBodyFocusKeyboardEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyFocusKeyboardEffect';
@@ -30,6 +31,7 @@ export const RecordTableBodyEffectsWrapper = ({
         </>
       )}
       <RecordTableBodyEscapeHotkeyEffect />
+      <RecordTableBodyDeleteHotkeyEffect />
       <RecordTableBodyFocusKeyboardEffect />
       <RecordTableBodyFocusClickOutsideEffect tableBodyRef={tableBodyRef} />
       <RecordTableDeactivateRecordTableRowEffect />
