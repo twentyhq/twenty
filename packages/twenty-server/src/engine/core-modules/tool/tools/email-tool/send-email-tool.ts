@@ -70,6 +70,10 @@ export class SendEmailTool implements Tool {
       };
     } catch (error) {
       if (error instanceof EmailToolException) {
+        this.logger.warn(
+          `Email send failed with a handled email tool error (${error.code}) in workspace ${context.workspaceId}`,
+        );
+
         return {
           success: false,
           message: 'Failed to send email',
@@ -77,9 +81,11 @@ export class SendEmailTool implements Tool {
         };
       }
 
-      this.logger.error(`Failed to send email: ${error}`);
-
       if (isInsufficientPermissionsError(error)) {
+        this.logger.warn(
+          `Email send failed due to insufficient permissions in workspace ${context.workspaceId}`,
+        );
+
         return {
           success: false,
           message: 'Failed to send email due to insufficient permissions',
@@ -88,6 +94,11 @@ export class SendEmailTool implements Tool {
             'The user should disconnect and reconnect their account in Settings > Accounts to grant the required permissions.',
         };
       }
+
+      this.logger.error(
+        `Failed to send email in workspace ${context.workspaceId}`,
+        error instanceof Error ? error.stack : undefined,
+      );
 
       return {
         success: false,

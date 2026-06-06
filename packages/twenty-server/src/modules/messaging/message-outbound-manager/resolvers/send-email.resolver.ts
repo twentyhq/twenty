@@ -17,6 +17,7 @@ import { FileEmailAttachmentService } from 'src/engine/core-modules/file/file-em
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
+import { EmailToolException } from 'src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -107,7 +108,21 @@ export class SendEmailResolver {
         throw error;
       }
 
-      this.logger.error(`Failed to send email: ${error}`);
+      if (error instanceof EmailToolException) {
+        this.logger.warn(
+          `Send email mutation failed with a handled email tool error (${error.code}) in workspace ${workspace.id}`,
+        );
+
+        return {
+          success: false,
+          error: error.message,
+        };
+      }
+
+      this.logger.error(
+        `Failed to send email in workspace ${workspace.id}`,
+        error instanceof Error ? error.stack : undefined,
+      );
 
       return {
         success: false,

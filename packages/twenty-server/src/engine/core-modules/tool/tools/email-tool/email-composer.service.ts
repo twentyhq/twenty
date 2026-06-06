@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { toPlainText } from '@react-email/render';
@@ -39,8 +39,6 @@ type ParentThreadContext = {
 
 @Injectable()
 export class EmailComposerService {
-  private readonly logger = new Logger(EmailComposerService.name);
-
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(ConnectedAccountEntity)
@@ -87,6 +85,23 @@ export class EmailComposerService {
     );
   }
 
+  private isEmailCapableConnectedAccount(
+    connectedAccount: ConnectedAccountEntity,
+  ): boolean {
+    const isSmtpOnlyAccount =
+      connectedAccount.provider ===
+        ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
+      !isDefined(connectedAccount.connectionParameters?.IMAP);
+
+    if (isSmtpOnlyAccount) {
+      return isDefined(connectedAccount.connectionParameters?.SMTP);
+    }
+
+    return connectedAccount.messageChannels.some(
+      (messageChannel) => messageChannel.handle === connectedAccount.handle,
+    );
+  }
+
   private async getOrThrowFirstConnectedAccountId(
     workspaceId: string,
   ): Promise<string> {
@@ -96,6 +111,12 @@ export class EmailComposerService {
       async () => {
         const allAccounts = await this.connectedAccountRepository.find({
           where: { workspaceId },
+          relations: {
+            messageChannels: true,
+          },
+          order: {
+            createdAt: 'ASC',
+          },
         });
 
         if (!allAccounts || allAccounts.length === 0) {
@@ -105,7 +126,18 @@ export class EmailComposerService {
           );
         }
 
-        return allAccounts[0].id;
+        const firstEmailCapableAccount = allAccounts.find((connectedAccount) =>
+          this.isEmailCapableConnectedAccount(connectedAccount),
+        );
+
+        if (!isDefined(firstEmailCapableAccount)) {
+          throw new EmailToolException(
+            'No email-capable connected accounts found for this workspace',
+            EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
+          );
+        }
+
+        return firstEmailCapableAccount.id;
       },
       authContext,
     );

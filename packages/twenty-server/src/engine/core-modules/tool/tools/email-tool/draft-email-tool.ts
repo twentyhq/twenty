@@ -63,6 +63,10 @@ export class DraftEmailTool implements Tool {
       };
     } catch (error) {
       if (error instanceof EmailToolException) {
+        this.logger.warn(
+          `Draft creation failed with a handled email tool error (${error.code}) in workspace ${context.workspaceId}`,
+        );
+
         return {
           success: false,
           message: 'Failed to create draft',
@@ -70,9 +74,11 @@ export class DraftEmailTool implements Tool {
         };
       }
 
-      this.logger.error(`Failed to create draft: ${error}`);
-
       if (isInsufficientPermissionsError(error)) {
+        this.logger.warn(
+          `Draft creation failed due to insufficient permissions in workspace ${context.workspaceId}`,
+        );
+
         return {
           success: false,
           message: 'Failed to create draft due to insufficient permissions',
@@ -81,6 +87,11 @@ export class DraftEmailTool implements Tool {
             'The user should disconnect and reconnect their account in Settings > Accounts to grant the required permissions.',
         };
       }
+
+      this.logger.error(
+        `Failed to create draft in workspace ${context.workspaceId}`,
+        error instanceof Error ? error.stack : undefined,
+      );
 
       return {
         success: false,
