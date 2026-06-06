@@ -1,5 +1,13 @@
+import { randomUUID } from 'crypto';
+
+import gql from 'graphql-tag';
 import request from 'supertest';
+import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { signUpOperationFactory } from 'test/integration/graphql/utils/sign-up-operation-factory.util';
+import { signUpInWorkspaceAndGetAccessToken } from 'test/integration/graphql/utils/sign-up-in-workspace-and-get-access-token.util';
+import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
@@ -184,6 +192,103 @@ describe('deleteUser', () => {
       expect(
         role.workspaceMembers.find((wm) => wm.id === createdWorkspaceMemberId),
       ).toBeUndefined();
+    }
+  });
+});
+
+describe('updateUserEmail', () => {
+  let newUserAccessToken: string | undefined;
+
+  afterEach(async () => {
+    if (newUserAccessToken) {
+      await deleteUser({
+        accessToken: newUserAccessToken,
+        expectToFail: false,
+      });
+      newUserAccessToken = undefined;
+    }
+  });
+
+  it('should update email directly when IS_EMAIL_VERIFICATION_REQUIRED is false', async () => {
+    const originalEmail = `update-email-no-verif-${randomUUID()}@example.com`;
+    const updatedEmail = `updated-${randomUUID()}@example.com`;
+
+    newUserAccessToken =
+      await signUpInWorkspaceAndGetAccessToken(originalEmail);
+
+    const updateEmailMutation = gql`
+      mutation UpdateUserEmail($newEmail: String!) {
+        updateUserEmail(newEmail: $newEmail)
+      }
+    `;
+
+    const updateResponse = await makeMetadataAPIRequest(
+      {
+        query: updateEmailMutation,
+        variables: { newEmail: updatedEmail },
+      },
+      newUserAccessToken,
+    );
+
+    expect(updateResponse.status).toBe(200);
+    expect(updateResponse.body.errors).toBeUndefined();
+    expect(updateResponse.body.data.updateUserEmail).toBe(true);
+
+    const { data } = await getCurrentUser({
+      accessToken: newUserAccessToken,
+      expectToFail: false,
+    });
+
+    expect(data.currentUser.email).toBe(updatedEmail);
+  });
+
+  it('should not update email immediately when IS_EMAIL_VERIFICATION_REQUIRED is true', async () => {
+    const originalEmail = `update-email-with-verif-${randomUUID()}@example.com`;
+    const updatedEmail = `updated-verif-${randomUUID()}@example.com`;
+
+    newUserAccessToken =
+      await signUpInWorkspaceAndGetAccessToken(originalEmail);
+
+    await updateConfigVariable({
+      input: {
+        key: 'IS_EMAIL_VERIFICATION_REQUIRED',
+        value: true,
+      },
+    });
+
+    try {
+      const updateEmailMutation = gql`
+        mutation UpdateUserEmail($newEmail: String!) {
+          updateUserEmail(newEmail: $newEmail)
+        }
+      `;
+
+      const updateResponse = await makeMetadataAPIRequest(
+        {
+          query: updateEmailMutation,
+          variables: { newEmail: updatedEmail },
+        },
+        newUserAccessToken,
+      );
+
+      expect(updateResponse.status).toBe(200);
+      expect(updateResponse.body.errors).toBeUndefined();
+      expect(updateResponse.body.data.updateUserEmail).toBe(true);
+
+      // Email should remain unchanged — verification email was sent but not confirmed
+      const { data } = await getCurrentUser({
+        accessToken: newUserAccessToken,
+        expectToFail: false,
+      });
+
+      expect(data.currentUser.email).toBe(originalEmail);
+    } finally {
+      await updateConfigVariable({
+        input: {
+          key: 'IS_EMAIL_VERIFICATION_REQUIRED',
+          value: false,
+        },
+      });
     }
   });
 });

@@ -6,18 +6,16 @@ import { IconLock, IconUserPlus, IconUsers } from 'twenty-ui/display';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
+import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { Section } from 'twenty-ui/layout';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { SettingsWorkspaceMembersInviteTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab';
 import { SettingsWorkspaceMembersRolesTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersRolesTab';
 import { SettingsWorkspaceMembersTeamTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab';
-// TODO: replace with members-specific illustrations + recordings when designed.
-import placeholderHeroDark from '~/pages/settings/layout/assets/customize-illustration-dark.png';
-import placeholderHeroLight from '~/pages/settings/layout/assets/customize-illustration-light.png';
+import coverDark from '~/pages/settings/members/assets/cover-dark.png';
+import coverLight from '~/pages/settings/members/assets/cover-light.png';
 
 const MEMBERS_TAB_LIST_ID = 'members-tab-list';
 
@@ -32,11 +30,6 @@ export const SettingsWorkspaceMembers = () => {
 
   const hasRolesPermission = useHasPermissionFlag(PermissionFlagType.ROLES);
 
-  const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
-    MEMBERS_TAB_LIST_ID,
-  );
-
   const tabs = [
     { id: MEMBERS_TAB_TEAM_ID, title: t`Team`, Icon: IconUsers },
     { id: MEMBERS_TAB_INVITE_ID, title: t`Invite`, Icon: IconUserPlus },
@@ -44,6 +37,11 @@ export const SettingsWorkspaceMembers = () => {
       ? [{ id: MEMBERS_TAB_ROLES_ID, title: t`Roles`, Icon: IconLock }]
       : []),
   ];
+
+  const activeTabId = useSettingsActiveTabId(
+    MEMBERS_TAB_LIST_ID,
+    tabs.map((tab) => tab.id),
+  );
 
   const renderActiveTabContent = () => {
     switch (activeTabId) {
@@ -61,12 +59,15 @@ export const SettingsWorkspaceMembers = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`Members`}
+      secondaryBar={
+        <SettingsTabBar tabs={tabs} componentInstanceId={MEMBERS_TAB_LIST_ID} />
+      }
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         { children: <Trans>Members</Trans> },
       ]}
@@ -74,8 +75,8 @@ export const SettingsWorkspaceMembers = () => {
       <SettingsPageContainer>
         <Section>
           <SettingsDiscoveryHeroCard
-            lightSrc={placeholderHeroLight}
-            darkSrc={placeholderHeroDark}
+            lightSrc={coverLight}
+            darkSrc={coverDark}
             instanceIdPrefix={SETTINGS_MEMBERS_HERO_INSTANCE_ID_PREFIX}
             tabs={[
               {
@@ -104,9 +105,8 @@ export const SettingsWorkspaceMembers = () => {
             playButtonAriaLabel={t`Watch members demo`}
           />
         </Section>
-        <TabList tabs={tabs} componentInstanceId={MEMBERS_TAB_LIST_ID} />
         {renderActiveTabContent()}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

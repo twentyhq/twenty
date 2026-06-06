@@ -152,7 +152,7 @@ describe('Microsoft get messages service', () => {
     });
   });
 
-  it('Should set empty text for html responses', () => {
+  it('Should convert html responses to text', () => {
     const batchResponses: MicrosoftGraphBatchResponse[] =
       microsoftGraphBatchWithHtmlMessagesResponse;
     const connectedAccount = {
@@ -176,7 +176,7 @@ describe('Microsoft get messages service', () => {
       externalId: responseExample.body.id,
       subject: responseExample.body.subject,
       receivedAt: new Date(responseExample.body.receivedDateTime),
-      text: '',
+      text: 'test 4',
       headerMessageId: responseExample.body.internetMessageId,
       messageThreadExternalId: responseExample.body.conversationId,
       direction: 'OUTGOING',

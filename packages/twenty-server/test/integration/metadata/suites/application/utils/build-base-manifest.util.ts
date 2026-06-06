@@ -34,6 +34,7 @@ export const buildBaseManifest = ({
   frontComponents: [],
   publicAssets: [],
   views: [],
+  viewFields: [],
   navigationMenuItems: [],
   pageLayouts: [],
   pageLayoutTabs: [],

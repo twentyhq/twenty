@@ -21,7 +21,7 @@ export class CommandLogger {
     this.verboseFlag = options.verbose ?? false;
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   log(message: string, ...optionalParams: [...any, string?]) {
     this.logger.log(message, ...optionalParams);
   }
@@ -30,17 +30,17 @@ export class CommandLogger {
     this.logger.error(message, stack, context);
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   warn(message: string, ...optionalParams: [...any, string?]) {
     this.logger.warn(message, ...optionalParams);
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   debug(message: string, ...optionalParams: [...any, string?]) {
     this.logger.debug(message, ...optionalParams);
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   verbose(message: string, ...optionalParams: [...any, string?]) {
     if (this.verboseFlag) {
       this.logger.log(message, ...optionalParams);

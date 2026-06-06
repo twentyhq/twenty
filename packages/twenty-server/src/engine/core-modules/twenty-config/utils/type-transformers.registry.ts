@@ -31,7 +31,7 @@ export interface TypeTransformer<T> {
 
 export const typeTransformers: Record<
   ConfigVariableType,
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   TypeTransformer<any>
 > = {
   [ConfigVariableType.BOOLEAN]: {

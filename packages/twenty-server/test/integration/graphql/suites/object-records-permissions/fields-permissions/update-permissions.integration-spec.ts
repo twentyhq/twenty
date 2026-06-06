@@ -137,8 +137,8 @@ describe('Field update permissions restrictions', () => {
     await makeGraphqlAPIRequest(createCompanyOp);
     const createPersonOperation = createOneOperationFactory({
       objectMetadataSingularName: 'person',
-      gqlFields: 'id city',
-      data: { id: personId, city: 'Paris', companyId },
+      gqlFields: 'id jobTitle',
+      data: { id: personId, jobTitle: 'Paris', companyId },
     });
 
     await makeGraphqlAPIRequest(createPersonOperation);

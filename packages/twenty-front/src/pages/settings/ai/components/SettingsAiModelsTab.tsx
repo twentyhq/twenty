@@ -10,17 +10,17 @@ import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useMutation, useQuery } from '@apollo/client/react';
+import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import {
   AUTO_SELECT_FAST_MODEL_ID,
   AUTO_SELECT_SMART_MODEL_ID,
 } from 'twenty-shared/constants';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   H2Title,
   IconBolt,
@@ -32,12 +32,8 @@ import { SearchInput } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  GetAiSystemPromptPreviewDocument,
-  UpdateWorkspaceDocument,
-} from '~/generated-metadata/graphql';
+import { GetAiSystemPromptPreviewDocument } from '~/generated-metadata/graphql';
+import { useSettingsAiModelsActions } from '~/pages/settings/ai/hooks/useSettingsAiModelsActions';
 import { formatNumber } from '~/utils/format/formatNumber';
 
 const StyledCustomModelsContainer = styled.div`
@@ -49,14 +45,19 @@ const StyledCustomModelsContainer = styled.div`
 
 export const SettingsAiModelsTab = () => {
   const { theme } = useContext(ThemeContext);
-  const { enqueueErrorSnackBar } = useSnackBar();
-  const [currentWorkspace, setCurrentWorkspace] = useAtomState(
-    currentWorkspaceState,
-  );
-  const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const [searchQuery, setSearchQuery] = useState('');
+
   const { data: previewData } = useQuery(GetAiSystemPromptPreviewDocument);
   const aiModels = useAtomStateValue(aiModelsState);
+  const { useRecommendedModels, realModels, enabledModels } =
+    useWorkspaceAiModelAvailability();
+  const {
+    handleModelFieldChange,
+    handleUseRecommendedToggle,
+    handleModelToggle,
+    handleToggleAllVisibleModels,
+  } = useSettingsAiModelsActions();
 
   const systemPromptTokenCount =
     previewData?.getAiSystemPromptPreview.estimatedTokenCount;
@@ -66,9 +67,6 @@ export const SettingsAiModelsTab = () => {
         { abbreviate: true, decimals: 1 },
       )} tokens)`
     : t`Read the system prompts to understand how the AI works`;
-
-  const { useRecommendedModels, realModels, enabledModels } =
-    useWorkspaceAiModelAvailability();
 
   const currentSmartModel = currentWorkspace?.smartModel;
   const currentFastModel = currentWorkspace?.fastModel;
@@ -103,110 +101,11 @@ export const SettingsAiModelsTab = () => {
     };
   });
 
-  const handleModelFieldChange = async (
-    field: 'smartModel' | 'fastModel',
-    value: string,
-  ) => {
-    if (!currentWorkspace?.id) return;
-    const previousValue = currentWorkspace[field];
-    try {
-      setCurrentWorkspace({ ...currentWorkspace, [field]: value });
-      await updateWorkspace({ variables: { input: { [field]: value } } });
-    } catch {
-      setCurrentWorkspace({ ...currentWorkspace, [field]: previousValue });
-      enqueueErrorSnackBar({ message: t`Failed to update model` });
-    }
-  };
-
   const enabledModelIdSet = new Set(currentWorkspace?.enabledAiModelIds ?? []);
-
-  const handleUseRecommendedToggle = async (checked: boolean) => {
-    if (!currentWorkspace?.id) {
-      return;
-    }
-
-    const previousValue = currentWorkspace.useRecommendedModels;
-
-    let newEnabledIds = currentWorkspace.enabledAiModelIds ?? [];
-
-    if (!checked && previousValue) {
-      const recommendedModelIds = realModels
-        .filter((model) => model.isRecommended)
-        .map((model) => model.modelId);
-
-      newEnabledIds = recommendedModelIds;
-    }
-
-    try {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        useRecommendedModels: checked,
-        enabledAiModelIds: newEnabledIds,
-      });
-
-      await updateWorkspace({
-        variables: {
-          input: {
-            useRecommendedModels: checked,
-            enabledAiModelIds: newEnabledIds,
-          },
-        },
-      });
-    } catch {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        useRecommendedModels: previousValue,
-      });
-
-      enqueueErrorSnackBar({
-        message: t`Failed to update model selection mode`,
-      });
-    }
-  };
-
-  const handleModelToggle = async (
-    modelId: string,
-    isCurrentlyEnabled: boolean,
-  ) => {
-    if (!currentWorkspace?.id) {
-      return;
-    }
-
-    const previousEnabled = currentWorkspace.enabledAiModelIds ?? [];
-
-    const newEnabledIds = isCurrentlyEnabled
-      ? previousEnabled.filter((id) => id !== modelId)
-      : [...previousEnabled, modelId];
-
-    try {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        enabledAiModelIds: newEnabledIds,
-      });
-
-      await updateWorkspace({
-        variables: {
-          input: {
-            enabledAiModelIds: newEnabledIds,
-          },
-        },
-      });
-    } catch {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        enabledAiModelIds: previousEnabled,
-      });
-
-      enqueueErrorSnackBar({
-        message: t`Failed to update model availability`,
-      });
-    }
-  };
 
   const filteredModels = searchQuery.trim()
     ? realModels.filter((model) => {
         const query = searchQuery.toLowerCase();
-
         return (
           model.label.toLowerCase().includes(query) ||
           (model.modelFamily?.toLowerCase().includes(query) ?? false) ||
@@ -284,34 +183,12 @@ export const SettingsAiModelsTab = () => {
               models={filteredModels}
               isChecked={(model) => enabledModelIdSet.has(model.modelId)}
               onToggle={handleModelToggle}
-              onToggleAll={async (shouldCheckAll) => {
-                const previousIds = currentWorkspace?.enabledAiModelIds ?? [];
-                const visibleModelIds = new Set(
-                  filteredModels.map((m) => m.modelId),
-                );
-
-                const newEnabledIds = shouldCheckAll
-                  ? [...new Set([...previousIds, ...visibleModelIds])]
-                  : previousIds.filter((id) => !visibleModelIds.has(id));
-
-                try {
-                  setCurrentWorkspace({
-                    ...currentWorkspace!,
-                    enabledAiModelIds: newEnabledIds,
-                  });
-                  await updateWorkspace({
-                    variables: { input: { enabledAiModelIds: newEnabledIds } },
-                  });
-                } catch {
-                  setCurrentWorkspace({
-                    ...currentWorkspace!,
-                    enabledAiModelIds: previousIds,
-                  });
-                  enqueueErrorSnackBar({
-                    message: t`Failed to update model availability`,
-                  });
-                }
-              }}
+              onToggleAll={(shouldCheckAll) =>
+                handleToggleAllVisibleModels(
+                  shouldCheckAll,
+                  new Set(filteredModels.map((m) => m.modelId)),
+                )
+              }
               anchorPrefix="workspace-model-row"
             />
           </StyledCustomModelsContainer>

@@ -4,8 +4,6 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
-import { ApplicationLogsModule } from 'src/engine/core-modules/application-logs/application-logs.module';
-import { applicationLogsModuleFactory } from 'src/engine/core-modules/application-logs/application-logs.module-factory';
 import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-panel.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
@@ -75,9 +73,8 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
 import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/channel-sync.module';
 import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
 import { SendEmailModule } from 'src/modules/messaging/message-outbound-manager/send-email.module';
-import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
-import { EventLogsModule } from './event-logs/event-logs.module';
+import { EventLogsViewerModule } from './event-logs/event-logs-viewer.module';
 import { FileModule } from './file/file.module';
 
 @Module({
@@ -85,7 +82,6 @@ import { FileModule } from './file/file.module';
     EnvironmentModule,
     TwentyConfigModule.forRoot(),
     HealthModule,
-    AuditModule,
     AuthModule,
     BillingModule,
     BillingWebhookModule,
@@ -143,10 +139,6 @@ import { FileModule } from './file/file.module';
       useFactory: exceptionHandlerModuleFactory,
       inject: [TwentyConfigService, HttpAdapterHost],
     }),
-    ApplicationLogsModule.forRootAsync({
-      useFactory: applicationLogsModuleFactory,
-      inject: [TwentyConfigService],
-    }),
     EmailModule.forRoot(),
     CaptchaModule.forRoot(),
     EventEmitterModule.forRoot({
@@ -163,7 +155,7 @@ import { FileModule } from './file/file.module';
     ImpersonationModule,
     TrashCleanupModule,
     DashboardModule,
-    EventLogsModule,
+    EventLogsViewerModule,
     PreInstalledAppsModule,
     AppBillingModule,
   ],
@@ -174,7 +166,7 @@ import { FileModule } from './file/file.module';
     },
   ],
   exports: [
-    AuditModule,
+    EventLogsViewerModule,
     AuthModule,
     FeatureFlagModule,
     TimelineMessagingModule,
