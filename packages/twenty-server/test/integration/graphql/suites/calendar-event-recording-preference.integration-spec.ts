@@ -359,6 +359,7 @@ const findCallRecordingsByCalendarEventIds = async (
         id,
         title,
         status,
+        "recordingRequestStatus",
         "calendarEventId",
         "startedAt",
         "endedAt"
