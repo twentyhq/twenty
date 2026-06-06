@@ -260,13 +260,17 @@ if command -v npx &>/dev/null && [ -d node_modules ]; then
     ok "Database schema already initialized"
   else
     info "Initializing database schema (migrations + seed)..."
-    npx nx database:reset twenty-server
-    ok "Database schema initialized"
+    if npx nx run twenty-server:database:init:prod; then
+      ok "Database schema initialized"
+    else
+      fail "Database schema initialization failed"
+      exit 1
+    fi
   fi
 elif [ -d node_modules ]; then
-  info "Run 'npx nx database:reset twenty-server' to initialize schema"
+  info "Run 'npx nx run twenty-server:database:init:prod' to initialize schema"
 else
-  info "Run 'npx nx database:reset twenty-server' manually to initialize schema"
+  info "Run 'npx nx run twenty-server:database:init:prod' manually to initialize schema"
 fi
 
 # =============================================================================
