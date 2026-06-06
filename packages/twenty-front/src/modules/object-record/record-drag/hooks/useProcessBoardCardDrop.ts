@@ -40,8 +40,14 @@ export const useProcessBoardCardDrop = () => {
   );
 
   const processBoardCardDrop = useCallback(
-    (boardCardDropResult: DropResult, selectedRecordIds: string[]) => {
+    (
+      boardCardDropResult: DropResult,
+      selectedRecordIds: string[],
+      options?: { shouldUpdatePosition?: boolean },
+    ) => {
       if (!isDefined(selectFieldMetadataItem)) return;
+
+      const shouldUpdatePosition = options?.shouldUpdatePosition ?? true;
 
       processGroupDrop({
         groupDropResult: boardCardDropResult,
@@ -51,7 +57,10 @@ export const useProcessBoardCardDrop = () => {
           recordIndexRecordIdsByGroupCallbackFamilyState,
         onUpdateRecord: ({ recordId, position }, targetRecordGroupValue) => {
           updateDroppedRecordOnBoard(
-            { recordId, position },
+            {
+              recordId,
+              position: shouldUpdatePosition ? position : undefined,
+            },
             targetRecordGroupValue,
           );
         },
