@@ -1,0 +1,20 @@
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service.ts
+  s_ccda17eaabba7a::t_0a7686bcc40036 396
+  s_ccda17eaabba7a::t_0918d4297c4586 411-412
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "6c65d26ceddd5bfcf24fa9fc69e4ae67c006dee3",
+  "prompts": {},
+  "sessions": {
+    "s_ccda17eaabba7a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b932cb9-a0b1-4bbb-9c58-8574d4b18520",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}

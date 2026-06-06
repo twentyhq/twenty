@@ -1,0 +1,56 @@
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/services/utils/enrich-create-workspace-migration-action-with-ids.util.ts
+  s_ccda17eaabba7a::t_ef5c6ff2e6cd4f 4
+  s_ccda17eaabba7a::t_8e0d210dfe0e82 84,92,105,145,147,204-206,208-210,223-225,228
+  s_ccda17eaabba7a::t_bcd6b6303aad73 85,88,93,98,107,111,114,124,127,138,140,148,152,166,170,173,192,245,269-277,282-285
+  s_ccda17eaabba7a::t_cf57386c7e73b4 142,197-201
+  s_ccda17eaabba7a::t_5014a1280e6382 181-184
+  s_ccda17eaabba7a::t_37c22f15fde7e4 203
+  s_ccda17eaabba7a::t_c5fc73cb1d6da3 207,211-214,216-222,226
+  s_ccda17eaabba7a::t_c29cc86db05028 252,262,264-267,295
+  s_ccda17eaabba7a::t_bce5ec15a5042f 278,286
+  s_ccda17eaabba7a::t_c9c315529616ed 279-281,287-288
+  s_ccda17eaabba7a::t_6e8c97fa3f1045 289
+  s_ccda17eaabba7a::t_2b641644a4081c 290-291
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service.ts
+  s_ccda17eaabba7a::t_0a7686bcc40036 394-395
+  s_ccda17eaabba7a::t_0918d4297c4586 409-410
+packages/twenty-server/src/engine/core-modules/application/application-manifest/application-manifest.resolver.ts
+  s_ccda17eaabba7a::t_cc4ec2f346ed88 23
+  s_ccda17eaabba7a::t_52ff74b4e8a5ed 53-56,67-71,73-74
+packages/twenty-server/test/integration/metadata/suites/application/__snapshots__/successful-sync-application-workspace-migration.integration-spec.ts.snap
+  ai_agent 34,416
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-junction-target-settings.util.ts
+  s_4a10800c36ffe6::t_7832d97ab3c646 18
+  s_4a10800c36ffe6::t_0282bbdc532975 37
+  s_4a10800c36ffe6::t_cdace8790e97ce 74-82
+packages/twenty-server/src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+  s_4a10800c36ffe6::t_1f2fe9e162712b 247
+packages/twenty-server/src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/create-field-action-handler.service.ts
+  s_ccda17eaabba7a::t_8c7911b85c6f8f 51,56,67,74
+  s_4a10800c36ffe6::t_6525c96e653658 52-53
+  s_4a10800c36ffe6::t_0a686bd265bafd 57-66,68-73
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "bfb83e93b2a3787e9f2e098da6c359686a87d75b",
+  "prompts": {},
+  "sessions": {
+    "s_4a10800c36ffe6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9ecf403e-4e07-4937-9eb1-7db20c4f4c5f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_ccda17eaabba7a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b932cb9-a0b1-4bbb-9c58-8574d4b18520",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
