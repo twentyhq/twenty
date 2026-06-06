@@ -1,10 +1,11 @@
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
+
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
-import { useCallback } from 'react';
-import { useStore } from 'jotai';
 
 export const useMoveRecordField = (recordTableId?: string) => {
   const store = useStore();
@@ -25,9 +26,9 @@ export const useMoveRecordField = (recordTableId?: string) => {
       direction: 'before' | 'after';
       fieldMetadataItemIdToMove: string;
     }) => {
-      const sortedVisibleRecordFields = store.get(visibleRecordFields);
+      const currentVisibleRecordFields = store.get(visibleRecordFields);
 
-      const indexOfRecordFieldToMove = sortedVisibleRecordFields.findIndex(
+      const indexOfRecordFieldToMove = currentVisibleRecordFields.findIndex(
         (recordField) =>
           recordField.fieldMetadataItemId === fieldMetadataItemIdToMove,
       );
@@ -41,15 +42,15 @@ export const useMoveRecordField = (recordTableId?: string) => {
           ? indexOfRecordFieldToMove - 1
           : indexOfRecordFieldToMove + 1;
 
-      const targetArraySize = sortedVisibleRecordFields.length - 1;
+      const targetArraySize = currentVisibleRecordFields.length - 1;
 
       if (targetArrayIndex < 0 || targetArrayIndex > targetArraySize) {
         return;
       }
 
       const currentRecordField =
-        sortedVisibleRecordFields[indexOfRecordFieldToMove];
-      const targetRecordField = sortedVisibleRecordFields[targetArrayIndex];
+        currentVisibleRecordFields[indexOfRecordFieldToMove];
+      const targetRecordField = currentVisibleRecordFields[targetArrayIndex];
 
       const targetRecordFieldNewPosition = currentRecordField.position;
       const currentRecordFieldNewPosition = targetRecordField.position;
