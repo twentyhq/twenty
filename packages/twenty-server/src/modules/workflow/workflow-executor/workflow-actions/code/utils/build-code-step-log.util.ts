@@ -1,6 +1,6 @@
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
-import { parseApplicationLogLines } from 'src/engine/core-modules/application-logs/utils/parse-application-log-lines';
+import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
 import {
   type LogicFunctionExecuteError,
   type LogicFunctionExecuteResult,

@@ -1434,11 +1434,6 @@ type EnterpriseSubscriptionStatusDTO {
   isCancellationScheduled: Boolean!
 }
 
-type Analytics {
-  """Boolean that confirms query was dispatched"""
-  success: Boolean!
-}
-
 type VerificationRecord {
   type: String!
   key: String!
@@ -2621,6 +2616,11 @@ type SendEmailOutput {
   error: String
 }
 
+type Analytics {
+  """Boolean that confirms query was dispatched"""
+  success: Boolean!
+}
+
 type EventLogRecord {
   event: String!
   timestamp: DateTime!
@@ -3200,8 +3200,6 @@ type Mutation {
   updateApiKey(input: UpdateApiKeyInput!): ApiKey
   revokeApiKey(input: RevokeApiKeyInput!): ApiKey
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
-  createObjectEvent(event: String!, recordId: UUID!, objectMetadataId: UUID!, properties: JSON): Analytics!
-  trackAnalytics(type: AnalyticsType!, name: String, event: String, properties: JSON): Analytics!
   skipSyncEmailOnboardingStep: OnboardingStepSuccess!
   skipBookOnboardingStep: OnboardingStepSuccess!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
@@ -3344,6 +3342,8 @@ type Mutation {
   createSAMLIdentityProvider(input: SetupSAMLSsoInput!): SetupSso!
   deleteSSOIdentityProvider(input: DeleteSsoInput!): DeleteSso!
   editSSOIdentityProvider(input: EditSsoInput!): EditSso!
+  createObjectEvent(event: String!, recordId: UUID!, objectMetadataId: UUID!, properties: JSON): Analytics!
+  trackAnalytics(type: AnalyticsType!, name: String, event: String, properties: JSON): Analytics!
   duplicateDashboard(id: UUID!): DuplicatedDashboard!
   impersonate(userId: UUID!, workspaceId: UUID!): Impersonate!
   sendEmail(input: SendEmailInput!): SendEmailOutput!
@@ -3714,11 +3714,6 @@ input UpdateApiKeyInput {
 
 input RevokeApiKeyInput {
   id: UUID!
-}
-
-enum AnalyticsType {
-  PAGEVIEW
-  TRACK
 }
 
 input CreateApprovedAccessDomainInput {
@@ -4430,6 +4425,11 @@ input EditSsoInput {
   status: SSOIdentityProviderStatus!
 }
 
+enum AnalyticsType {
+  PAGEVIEW
+  TRACK
+}
+
 input SendEmailInput {
   connectedAccountId: String!
   to: String!
@@ -4498,6 +4498,7 @@ type Subscription {
   onEventSubscription(eventStreamId: String!): EventSubscription
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
   onAgentChatEvent(threadId: UUID!): AgentChatEvent!
+  eventLogsLive(table: EventLogTable!): [EventLogRecord!]
 }
 
 input LogicFunctionLogsInput {

@@ -50,10 +50,6 @@ export const SettingsGeneral = () => {
   );
 
   const renderActiveTabContent = () => {
-    if (activeTabId === GENERAL_TAB_LOGS) {
-      return <SettingsLogs />;
-    }
-
     if (activeTabId === GENERAL_TAB_SECURITY) {
       return <SettingsSecuritySettings />;
     }
@@ -97,7 +93,13 @@ export const SettingsGeneral = () => {
       }
       links={[{ children: t`Workspace` }, { children: t`General` }]}
     >
-      <SettingsPageContainer>{renderActiveTabContent()}</SettingsPageContainer>
+      {activeTabId === GENERAL_TAB_LOGS ? (
+        <SettingsLogs />
+      ) : (
+        <SettingsPageContainer>
+          {renderActiveTabContent()}
+        </SettingsPageContainer>
+      )}
     </SettingsPageLayout>
   );
 };

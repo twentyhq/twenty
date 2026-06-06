@@ -1091,12 +1091,6 @@ export interface EnterpriseSubscriptionStatusDTO {
     __typename: 'EnterpriseSubscriptionStatusDTO'
 }
 
-export interface Analytics {
-    /** Boolean that confirms query was dispatched */
-    success: Scalars['Boolean']
-    __typename: 'Analytics'
-}
-
 export interface VerificationRecord {
     type: Scalars['String']
     key: Scalars['String']
@@ -2314,6 +2308,12 @@ export interface SendEmailOutput {
     __typename: 'SendEmailOutput'
 }
 
+export interface Analytics {
+    /** Boolean that confirms query was dispatched */
+    success: Scalars['Boolean']
+    __typename: 'Analytics'
+}
+
 export interface EventLogRecord {
     event: Scalars['String']
     timestamp: Scalars['DateTime']
@@ -2724,8 +2724,6 @@ export interface Mutation {
     updateApiKey?: ApiKey
     revokeApiKey?: ApiKey
     assignRoleToApiKey: Scalars['Boolean']
-    createObjectEvent: Analytics
-    trackAnalytics: Analytics
     skipSyncEmailOnboardingStep: OnboardingStepSuccess
     skipBookOnboardingStep: OnboardingStepSuccess
     checkoutSession: BillingSession
@@ -2868,6 +2866,8 @@ export interface Mutation {
     createSAMLIdentityProvider: SetupSso
     deleteSSOIdentityProvider: DeleteSso
     editSSOIdentityProvider: EditSso
+    createObjectEvent: Analytics
+    trackAnalytics: Analytics
     duplicateDashboard: DuplicatedDashboard
     impersonate: Impersonate
     sendEmail: SendEmailOutput
@@ -2892,9 +2892,9 @@ export interface Mutation {
     __typename: 'Mutation'
 }
 
-export type AnalyticsType = 'PAGEVIEW' | 'TRACK'
-
 export type WorkspaceMigrationActionType = 'delete' | 'create' | 'update'
+
+export type AnalyticsType = 'PAGEVIEW' | 'TRACK'
 
 export type FileFolder = 'ProfilePicture' | 'WorkspaceLogo' | 'Attachment' | 'PersonPicture' | 'CorePicture' | 'File' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'EmailAttachment' | 'AppTarball' | 'GeneratedSdkClient'
 
@@ -2902,6 +2902,7 @@ export interface Subscription {
     onEventSubscription?: EventSubscription
     logicFunctionLogs: LogicFunctionLogs
     onAgentChatEvent: AgentChatEvent
+    eventLogsLive?: EventLogRecord[]
     __typename: 'Subscription'
 }
 
@@ -4045,13 +4046,6 @@ export interface EnterpriseSubscriptionStatusDTOGenqlSelection{
     cancelAt?: boolean | number
     currentPeriodEnd?: boolean | number
     isCancellationScheduled?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface AnalyticsGenqlSelection{
-    /** Boolean that confirms query was dispatched */
-    success?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5364,6 +5358,13 @@ export interface SendEmailOutputGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface AnalyticsGenqlSelection{
+    /** Boolean that confirms query was dispatched */
+    success?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface EventLogRecordGenqlSelection{
     event?: boolean | number
     timestamp?: boolean | number
@@ -5811,8 +5812,6 @@ export interface MutationGenqlSelection{
     updateApiKey?: (ApiKeyGenqlSelection & { __args: {input: UpdateApiKeyInput} })
     revokeApiKey?: (ApiKeyGenqlSelection & { __args: {input: RevokeApiKeyInput} })
     assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
-    createObjectEvent?: (AnalyticsGenqlSelection & { __args: {event: Scalars['String'], recordId: Scalars['UUID'], objectMetadataId: Scalars['UUID'], properties?: (Scalars['JSON'] | null)} })
-    trackAnalytics?: (AnalyticsGenqlSelection & { __args: {type: AnalyticsType, name?: (Scalars['String'] | null), event?: (Scalars['String'] | null), properties?: (Scalars['JSON'] | null)} })
     skipSyncEmailOnboardingStep?: OnboardingStepSuccessGenqlSelection
     skipBookOnboardingStep?: OnboardingStepSuccessGenqlSelection
     checkoutSession?: (BillingSessionGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null)} })
@@ -5955,6 +5954,8 @@ export interface MutationGenqlSelection{
     createSAMLIdentityProvider?: (SetupSsoGenqlSelection & { __args: {input: SetupSAMLSsoInput} })
     deleteSSOIdentityProvider?: (DeleteSsoGenqlSelection & { __args: {input: DeleteSsoInput} })
     editSSOIdentityProvider?: (EditSsoGenqlSelection & { __args: {input: EditSsoInput} })
+    createObjectEvent?: (AnalyticsGenqlSelection & { __args: {event: Scalars['String'], recordId: Scalars['UUID'], objectMetadataId: Scalars['UUID'], properties?: (Scalars['JSON'] | null)} })
+    trackAnalytics?: (AnalyticsGenqlSelection & { __args: {type: AnalyticsType, name?: (Scalars['String'] | null), event?: (Scalars['String'] | null), properties?: (Scalars['JSON'] | null)} })
     duplicateDashboard?: (DuplicatedDashboardGenqlSelection & { __args: {id: Scalars['UUID']} })
     impersonate?: (ImpersonateGenqlSelection & { __args: {userId: Scalars['UUID'], workspaceId: Scalars['UUID']} })
     sendEmail?: (SendEmailOutputGenqlSelection & { __args: {input: SendEmailInput} })
@@ -6356,6 +6357,7 @@ export interface SubscriptionGenqlSelection{
     onEventSubscription?: (EventSubscriptionGenqlSelection & { __args: {eventStreamId: Scalars['String']} })
     logicFunctionLogs?: (LogicFunctionLogsGenqlSelection & { __args: {input: LogicFunctionLogsInput} })
     onAgentChatEvent?: (AgentChatEventGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    eventLogsLive?: (EventLogRecordGenqlSelection & { __args: {table: EventLogTable} })
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6999,14 +7001,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isEnterpriseSubscriptionStatusDTO = (obj?: { __typename?: any } | null): obj is EnterpriseSubscriptionStatusDTO => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseSubscriptionStatusDTO"')
       return EnterpriseSubscriptionStatusDTO_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const Analytics_possibleTypes: string[] = ['Analytics']
-    export const isAnalytics = (obj?: { __typename?: any } | null): obj is Analytics => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAnalytics"')
-      return Analytics_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -8139,6 +8133,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const Analytics_possibleTypes: string[] = ['Analytics']
+    export const isAnalytics = (obj?: { __typename?: any } | null): obj is Analytics => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAnalytics"')
+      return Analytics_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const EventLogRecord_possibleTypes: string[] = ['EventLogRecord']
     export const isEventLogRecord = (obj?: { __typename?: any } | null): obj is EventLogRecord => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isEventLogRecord"')
@@ -8990,15 +8992,15 @@ export const enumUsageOperationType = {
    WEB_SEARCH: 'WEB_SEARCH' as const
 }
 
-export const enumAnalyticsType = {
-   PAGEVIEW: 'PAGEVIEW' as const,
-   TRACK: 'TRACK' as const
-}
-
 export const enumWorkspaceMigrationActionType = {
    delete: 'delete' as const,
    create: 'create' as const,
    update: 'update' as const
+}
+
+export const enumAnalyticsType = {
+   PAGEVIEW: 'PAGEVIEW' as const,
+   TRACK: 'TRACK' as const
 }
 
 export const enumFileFolder = {

@@ -28,10 +28,6 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
           response: true,
           request: true,
         },
-        clickhouse_settings: {
-          async_insert: 1,
-          wait_for_async_insert: 1,
-        },
         application: 'twenty',
         log: { level: ClickHouseLogLevel.OFF },
       });
@@ -87,10 +83,6 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
       compression: {
         response: true,
         request: true,
-      },
-      clickhouse_settings: {
-        async_insert: 1,
-        wait_for_async_insert: 1,
       },
       application: 'twenty',
       log: { level: ClickHouseLogLevel.OFF },
@@ -282,6 +274,10 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
         table,
         values: chunk,
         format: 'JSONEachRow',
+        clickhouse_settings: {
+          async_insert: 1,
+          wait_for_async_insert: 1,
+        },
       });
       chunk = [];
       currentSizeBytes = 0;
