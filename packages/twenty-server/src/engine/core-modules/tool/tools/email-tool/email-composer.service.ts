@@ -81,6 +81,19 @@ export class EmailComposerService {
       );
 
     if (!isDefined(connectedAccount)) {
+      const inaccessibleConnectedAccount =
+        await this.connectedAccountMetadataService.findById({
+          id: connectedAccountId,
+          workspaceId,
+        });
+
+      if (isDefined(inaccessibleConnectedAccount)) {
+        throw new EmailToolException(
+          `Connected Account '${connectedAccountId}' is private to another workspace member and cannot be used in this context`,
+          EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_ACCESSIBLE,
+        );
+      }
+
       throw new EmailToolException(
         `Connected Account '${connectedAccountId}' not found`,
         EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,

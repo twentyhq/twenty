@@ -6,6 +6,7 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { EmailWorkflowActionBase } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/email-workflow-action.base';
 import { isWorkflowSendEmailAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/guards/is-workflow-send-email-action.guard';
 import { type EmailStepLogMode } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/build-email-step-log.util';
@@ -17,8 +18,13 @@ export class SendEmailWorkflowAction extends EmailWorkflowActionBase {
   constructor(
     private readonly sendEmailTool: SendEmailTool,
     workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
+    workflowExecutionContextService: WorkflowExecutionContextService,
   ) {
-    super(SendEmailWorkflowAction.name, workflowRunStepLogService);
+    super(
+      SendEmailWorkflowAction.name,
+      workflowRunStepLogService,
+      workflowExecutionContextService,
+    );
   }
 
   protected getTool(): Tool {

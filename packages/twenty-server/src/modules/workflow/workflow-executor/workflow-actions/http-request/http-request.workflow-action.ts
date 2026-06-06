@@ -9,6 +9,7 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { isWorkflowHttpRequestAction } from 'src/modules/workflow/workflow-executor/workflow-actions/http-request/guards/is-workflow-http-request-action.guard';
 import { type WorkflowHttpRequestActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/http-request/types/workflow-http-request-action-input.type';
 import { buildHttpRequestStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/http-request/utils/build-http-request-step-log.util';
@@ -21,8 +22,13 @@ export class HttpRequestWorkflowAction extends ToolBackedWorkflowAction<Workflow
   constructor(
     private readonly httpTool: HttpTool,
     workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
+    workflowExecutionContextService: WorkflowExecutionContextService,
   ) {
-    super(HttpRequestWorkflowAction.name, workflowRunStepLogService);
+    super(
+      HttpRequestWorkflowAction.name,
+      workflowRunStepLogService,
+      workflowExecutionContextService,
+    );
   }
 
   protected getTool(): Tool {

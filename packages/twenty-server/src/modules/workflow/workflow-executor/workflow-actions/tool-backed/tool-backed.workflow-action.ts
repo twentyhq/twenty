@@ -7,6 +7,7 @@ import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.ty
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { type WorkflowAction as WorkflowActionContract } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
@@ -27,6 +28,7 @@ export abstract class ToolBackedWorkflowAction<
   protected constructor(
     loggerName: string,
     private readonly workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
+    private readonly workflowExecutionContextService: WorkflowExecutionContextService,
   ) {
     this.logger = new Logger(loggerName);
   }
@@ -60,9 +62,15 @@ export abstract class ToolBackedWorkflowAction<
     const preprocessed = await this.preprocessInput(rawInput, context);
     const resolvedInput = resolveInput(preprocessed, context) as TInput;
 
+    const userWorkspaceId =
+      await this.workflowExecutionContextService.getActingUserWorkspaceId(
+        runInfo,
+      );
+
     const startedAt = Date.now();
     const toolOutput = await this.getTool().execute(resolvedInput, {
       workspaceId: runInfo.workspaceId,
+      userWorkspaceId,
     });
     const durationMs = Date.now() - startedAt;
 

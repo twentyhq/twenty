@@ -12,8 +12,11 @@ import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/uti
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
 import { WorkflowRunWorkspaceService as WorkflowRunService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
@@ -26,7 +29,88 @@ export class WorkflowExecutionContextService {
     private readonly userRoleService: UserRoleService,
     private readonly applicationService: ApplicationService,
     private readonly roleService: RoleService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
+
+  async getActingUserWorkspaceId(runInfo: {
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<string | undefined> {
+    const workflowRun = await this.workflowRunService.getWorkflowRunOrFail({
+      workflowRunId: runInfo.workflowRunId,
+      workspaceId: runInfo.workspaceId,
+    });
+
+    const isManualRun =
+      workflowRun.createdBy.source === FieldActorSource.MANUAL &&
+      isDefined(workflowRun.createdBy.workspaceMemberId);
+
+    const workspaceMemberId = isManualRun
+      ? workflowRun.createdBy.workspaceMemberId
+      : await this.getWorkflowCreatorWorkspaceMemberId({
+          workflowId: workflowRun.workflowId,
+          workspaceId: runInfo.workspaceId,
+        });
+
+    if (!isDefined(workspaceMemberId)) {
+      return undefined;
+    }
+
+    return this.resolveUserWorkspaceId({
+      workspaceMemberId,
+      workspaceId: runInfo.workspaceId,
+    });
+  }
+
+  private async getWorkflowCreatorWorkspaceMemberId({
+    workflowId,
+    workspaceId,
+  }: {
+    workflowId: string;
+    workspaceId: string;
+  }): Promise<string | null | undefined> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    const workflow = await this.globalWorkspaceOrmManager
+      .executeInWorkspaceContext(async () => {
+        const workflowRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+            workspaceId,
+            'workflow',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        return workflowRepository.findOne({ where: { id: workflowId } });
+      }, authContext)
+      .catch(() => null);
+
+    return workflow?.createdBy?.workspaceMemberId;
+  }
+
+  private async resolveUserWorkspaceId({
+    workspaceMemberId,
+    workspaceId,
+  }: {
+    workspaceMemberId: string;
+    workspaceId: string;
+  }): Promise<string | undefined> {
+    const workspaceMember = await this.userWorkspaceService
+      .getWorkspaceMemberOrThrow({ workspaceMemberId, workspaceId })
+      .catch(() => undefined);
+
+    if (!isDefined(workspaceMember)) {
+      return undefined;
+    }
+
+    const userWorkspace = await this.userWorkspaceService
+      .getUserWorkspaceForUserOrThrow({
+        userId: workspaceMember.userId,
+        workspaceId,
+      })
+      .catch(() => undefined);
+
+    return userWorkspace?.id;
+  }
 
   async getExecutionContext(runInfo: {
     workflowRunId: string;
