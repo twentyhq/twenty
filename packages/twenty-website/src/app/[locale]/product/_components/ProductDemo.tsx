@@ -18,6 +18,7 @@ const RootWrapper = styled.div`
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   min-width: 0;
+  overflow: clip;
   position: relative;
   width: 100%;
 `;
@@ -84,7 +85,6 @@ const CtasContainer = styled.div`
 `;
 
 const PreviewRoot = styled.div`
-  margin-bottom: ${theme.spacing(11)};
   margin-top: ${theme.spacing(12)};
   width: 100%;
 
@@ -132,7 +132,11 @@ export function ProductDemo() {
             />
           </CtasContainer>
           <PreviewRoot>
-            <AppPreview showTerminal={false} visual={APP_PREVIEW_DATA.visual} />
+            <AppPreview
+              bleed
+              showTerminal={false}
+              visual={APP_PREVIEW_DATA.visual}
+            />
           </PreviewRoot>
         </StyledContainer>
       </StyledSection>
