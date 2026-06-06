@@ -75,7 +75,7 @@ export function HomeHero() {
           />
         </HeroCta>
       </HeroIntroGroup>
-      <AppPreview visual={APP_PREVIEW_DATA.visual} />
+      <AppPreview bleed visual={APP_PREVIEW_DATA.visual} />
     </HeroSection>
   );
 }

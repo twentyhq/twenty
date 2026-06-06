@@ -14,7 +14,7 @@ describe('terminal-window-geometry', () => {
 
   it('places the initial terminal at the desktop bottom-right anchor', () => {
     expect(getInitialTerminalLayout({ width: 1000, height: 700 })).toEqual({
-      position: { left: 620, top: 384 },
+      position: { left: 768, top: 448 },
       size: { width: 380, height: 220 },
     });
   });

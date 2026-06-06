@@ -28,6 +28,9 @@ const StyledAppPreview = styled.div`
   }
 `;
 
+const BLEED_WINDOW_WIDTH = 1040;
+const BLEED_WINDOW_HEIGHT = 676;
+
 const ShellScene = styled.div`
   aspect-ratio: 1 / 1;
   margin: 0 auto;
@@ -40,7 +43,15 @@ const ShellScene = styled.div`
   }
 `;
 
+const BleedShellScene = styled.div`
+  height: ${BLEED_WINDOW_HEIGHT}px;
+  margin: 0 auto ${theme.spacing(16)};
+  position: relative;
+  width: ${BLEED_WINDOW_WIDTH}px;
+`;
+
 type AppPreviewProps = {
+  bleed?: boolean;
   desktopSidebarMode?: DesktopSidebarMode;
   frameMode?: AppPreviewFrameMode;
   showTerminal?: boolean;
@@ -48,6 +59,7 @@ type AppPreviewProps = {
 };
 
 export function AppPreview({
+  bleed = false,
   desktopSidebarMode = 'expanded',
   frameMode,
   showTerminal = true,
@@ -115,15 +127,17 @@ export function AppPreview({
     </>
   );
 
+  const SceneBox = bleed ? BleedShellScene : ShellScene;
+
   return (
     <StyledAppPreview>
-      <ShellScene>
+      <SceneBox>
         {needsWindowOrder ? (
           <WindowOrderProvider>{previewContent}</WindowOrderProvider>
         ) : (
           previewContent
         )}
-      </ShellScene>
+      </SceneBox>
     </StyledAppPreview>
   );
 }
