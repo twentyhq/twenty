@@ -1,9 +1,6 @@
-import { CommandMenuForMobile } from '@/command-menu/components/CommandMenuForMobile';
-import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { InformationBannerWrapper } from '@/information-banner/components/InformationBannerWrapper';
 import { SettingsPageHeader } from '@/settings/components/layout/SettingsPageHeader';
 import { SettingsSecondaryBar } from '@/settings/components/layout/SettingsSecondaryBar';
-import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
@@ -68,8 +65,6 @@ export const SettingsPageLayout = ({
 }: SettingsPageLayoutProps) => {
   const isMobile = useIsMobile();
 
-  useCommandMenuHotKeys();
-
   return (
     <StyledRoot isMobile={isMobile}>
       <StyledMainCardWrapper>
@@ -89,7 +84,6 @@ export const SettingsPageLayout = ({
           </StyledBodyContent>
         </StyledCard>
       </StyledMainCardWrapper>
-      {isMobile ? <CommandMenuForMobile /> : <SidePanelForDesktop />}
     </StyledRoot>
   );
 };

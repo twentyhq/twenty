@@ -1,13 +1,10 @@
-import { CommandMenuForMobile } from '@/command-menu/components/CommandMenuForMobile';
-import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop';
-import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKeys';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-type MainContainerLayoutWithSidePanelProps = {
+type MainContainerLayoutProps = {
   children: ReactNode;
 };
 
@@ -54,12 +51,8 @@ const StyledPageBodyForMobileContainer = styled.div`
   }
 `;
 
-export const MainContainerLayoutWithSidePanel = ({
-  children,
-}: MainContainerLayoutWithSidePanelProps) => {
+export const MainContainerLayout = ({ children }: MainContainerLayoutProps) => {
   const isMobile = useIsMobile();
-
-  useCommandMenuHotKeys();
 
   if (isMobile) {
     return (
@@ -67,7 +60,6 @@ export const MainContainerLayoutWithSidePanel = ({
         <StyledPageBodyForMobileContainer>
           <PageBody>{children}</PageBody>
         </StyledPageBodyForMobileContainer>
-        <CommandMenuForMobile />
       </StyledMainContainerLayoutForMobile>
     );
   }
@@ -77,7 +69,6 @@ export const MainContainerLayoutWithSidePanel = ({
       <StyledPageBodyForDesktopContainer>
         <PageBody>{children}</PageBody>
       </StyledPageBodyForDesktopContainer>
-      <SidePanelForDesktop />
     </StyledMainContainerLayoutForDesktop>
   );
 };
