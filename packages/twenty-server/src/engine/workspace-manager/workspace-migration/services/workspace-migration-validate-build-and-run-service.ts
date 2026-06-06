@@ -388,12 +388,11 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       return validateAndBuildResult;
     }
 
-    const workspaceMigration = isDefined(idByUniversalIdentifierByMetadataName)
-      ? enrichCreateWorkspaceMigrationActionsWithIds({
-          idByUniversalIdentifierByMetadataName,
-          workspaceMigration: validateAndBuildResult.workspaceMigration,
-        })
-      : validateAndBuildResult.workspaceMigration;
+    const workspaceMigration = enrichCreateWorkspaceMigrationActionsWithIds({
+      idByUniversalIdentifierByMetadataName:
+        idByUniversalIdentifierByMetadataName ?? {},
+      workspaceMigration: validateAndBuildResult.workspaceMigration,
+    });
 
     if (dryRun === true || workspaceMigration.actions.length === 0) {
       return {

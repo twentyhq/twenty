@@ -1,13 +1,17 @@
+import { type SyncAction } from 'twenty-shared/metadata';
 import { describe, expect, it } from 'vitest';
 
-import {
-  formatSyncActionsSummary,
-  formatSyncActionsSummaryFromData,
-} from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
+import { formatSyncActionsSummary } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
 
 describe('formatSyncActionsSummary', () => {
   it('reports no changes when the actions list is empty', () => {
     expect(formatSyncActionsSummary([])).toEqual([
+      { message: 'No metadata changes', status: 'info' },
+    ]);
+  });
+
+  it('reports no changes when actions are missing from the response', () => {
+    expect(formatSyncActionsSummary(undefined)).toEqual([
       { message: 'No metadata changes', status: 'info' },
     ]);
   });
@@ -54,32 +58,6 @@ describe('formatSyncActionsSummary', () => {
     ]);
   });
 
-  it('uses the entity name for update and delete actions that carry a flatEntity', () => {
-    const events = formatSyncActionsSummary([
-      {
-        type: 'update',
-        metadataName: 'objectMetadata',
-        universalIdentifier: 'uid-object',
-        flatEntity: {
-          universalIdentifier: 'uid-object',
-          nameSingular: 'rocket',
-        },
-      },
-      {
-        type: 'delete',
-        metadataName: 'fieldMetadata',
-        universalIdentifier: 'uid-field',
-        flatEntity: { universalIdentifier: 'uid-field', name: 'legacyField' },
-      },
-    ]);
-
-    expect(events).toEqual([
-      { message: 'Metadata changes: 1 updated, 1 deleted', status: 'info' },
-      { message: '  updated objectMetadata rocket', status: 'info' },
-      { message: '  deleted fieldMetadata legacyField', status: 'info' },
-    ]);
-  });
-
   it('falls back to the universal identifier when a created entity has no name', () => {
     const events = formatSyncActionsSummary([
       {
@@ -96,9 +74,9 @@ describe('formatSyncActionsSummary', () => {
   });
 
   it('truncates the detail lines when there are more changes than the display limit', () => {
-    const actions = Array.from({ length: 55 }, (_, index) => ({
-      type: 'create',
-      metadataName: 'fieldMetadata',
+    const actions: SyncAction[] = Array.from({ length: 55 }, (_, index) => ({
+      type: 'create' as const,
+      metadataName: 'fieldMetadata' as const,
       flatEntity: {
         universalIdentifier: `uid-${index}`,
         name: `field${index}`,
@@ -116,49 +94,5 @@ describe('formatSyncActionsSummary', () => {
       message: '  …and 5 more change(s)',
       status: 'info',
     });
-  });
-
-  it('ignores entries that are not recognizable migration actions', () => {
-    const events = formatSyncActionsSummary([
-      null,
-      'not-an-action',
-      { type: 'unknown', metadataName: 'fieldMetadata' },
-    ]);
-
-    expect(events).toEqual([
-      { message: 'No metadata changes', status: 'info' },
-    ]);
-  });
-});
-
-describe('formatSyncActionsSummaryFromData', () => {
-  it('extracts the actions from a sync response and formats them', () => {
-    expect(
-      formatSyncActionsSummaryFromData({
-        applicationUniversalIdentifier: 'app-uid',
-        actions: [
-          {
-            type: 'create',
-            metadataName: 'fieldMetadata',
-            flatEntity: {
-              universalIdentifier: 'uid',
-              name: 'timelineActivities',
-            },
-          },
-        ],
-      }),
-    ).toEqual([
-      { message: 'Metadata changes: 1 created', status: 'info' },
-      { message: '  created fieldMetadata timelineActivities', status: 'info' },
-    ]);
-  });
-
-  it('reports no changes when the data has no actions array', () => {
-    expect(formatSyncActionsSummaryFromData(undefined)).toEqual([
-      { message: 'No metadata changes', status: 'info' },
-    ]);
-    expect(formatSyncActionsSummaryFromData({ actions: 'nope' })).toEqual([
-      { message: 'No metadata changes', status: 'info' },
-    ]);
   });
 });

@@ -1,5 +1,6 @@
 import path from 'path';
-import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
+import { OUTPUT_DIR, type Manifest } from 'twenty-shared/application';
+import { type SyncAction } from 'twenty-shared/metadata';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
 import {
@@ -13,7 +14,7 @@ import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
-import { formatSyncActionsSummaryFromData } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
+import { formatSyncActionsSummary } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
 import { getSyncErrorRecoveryHint } from '@/cli/utilities/error/get-sync-error-recovery-hint';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
@@ -37,10 +38,10 @@ export type AppDevOnceResult = {
 };
 
 const reportMetadataChanges = (
-  data: unknown,
+  data: { actions: SyncAction[] },
   onProgress?: (message: string) => void,
 ): void => {
-  for (const event of formatSyncActionsSummaryFromData(data)) {
+  for (const event of formatSyncActionsSummary(data.actions)) {
     onProgress?.(event.message);
   }
 };

@@ -5,6 +5,7 @@ import { FileApi } from '@/cli/utilities/api/file-api';
 import { LogicFunctionApi } from '@/cli/utilities/api/logic-function-api';
 import { SchemaApi } from '@/cli/utilities/api/schema-api';
 import { type Manifest } from 'twenty-shared/application';
+import { type SyncAction } from 'twenty-shared/metadata';
 
 type ApiServiceOptions = {
   disableInterceptors?: boolean;
@@ -75,7 +76,12 @@ export class ApiService {
   syncApplication(
     manifest: Manifest,
     options?: { dryRun?: boolean },
-  ): Promise<ApiResponse> {
+  ): Promise<
+    ApiResponse<{
+      applicationUniversalIdentifier: string;
+      actions: SyncAction[];
+    }>
+  > {
     return this.applicationApi.syncApplication(manifest, options);
   }
 

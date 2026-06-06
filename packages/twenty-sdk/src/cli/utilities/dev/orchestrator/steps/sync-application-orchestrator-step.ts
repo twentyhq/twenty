@@ -7,7 +7,7 @@ import {
   type OrchestratorStateStepEvent,
   type OrchestratorStateSyncStatus,
 } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
-import { formatSyncActionsSummaryFromData } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
+import { formatSyncActionsSummary } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
 import { getSyncErrorRecoveryHint } from '@/cli/utilities/error/get-sync-error-recovery-hint';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
@@ -71,7 +71,9 @@ export class SyncApplicationOrchestratorStep {
     const syncResult = await this.apiService.syncApplication(manifest);
 
     if (syncResult.success) {
-      events.push(...formatSyncActionsSummaryFromData(syncResult.data));
+      const syncData = syncResult.data;
+
+      events.push(...formatSyncActionsSummary(syncData.actions));
       events.push({ message: '✓ Synced', status: 'success' });
       step.output = { syncStatus: 'synced', error: null };
       step.status = 'done';
