@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
@@ -21,7 +21,7 @@ import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-neste
 import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/serializable-auth-context.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -50,6 +50,8 @@ import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/
 
 @Injectable()
 export class ObjectRecordEventPublisher {
+  private readonly logger = new Logger(ObjectRecordEventPublisher.name);
+
   constructor(
     private readonly subscriptionService: SubscriptionService,
     private readonly eventStreamService: EventStreamService,
@@ -219,16 +221,25 @@ export class ObjectRecordEventPublisher {
     }
 
     if (matchedEvents.length > 0) {
-      await this.enrichEventBatchWithNestedRelations({
-        objectMetadata: workspaceEventBatch.objectMetadata,
-        events: matchedEvents.map(
-          (matchedEvent) => matchedEvent.objectRecordEvent,
-        ),
-        streamData,
-        permissionsContext,
-        workspaceId: workspaceEventBatch.workspaceId,
-        roleId,
-      });
+      try {
+        await this.enrichEventBatchWithNestedRelations({
+          objectMetadata: workspaceEventBatch.objectMetadata,
+          events: matchedEvents.map(
+            (matchedEvent) => matchedEvent.objectRecordEvent,
+          ),
+          streamData,
+          permissionsContext,
+          workspaceId: workspaceEventBatch.workspaceId,
+          roleId,
+        });
+      } catch (error) {
+        this.logger.warn(
+          `Failed to enrich nested relations for ${workspaceEventBatch.name} subscription event, broadcasting without them: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+          error instanceof Error ? error.stack : undefined,
+        );
+      }
 
       const payload: EventStreamPayload = {
         objectRecordEventsWithQueryIds: matchedEvents,

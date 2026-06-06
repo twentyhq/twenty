@@ -1,4 +1,4 @@
-import { type LanguageModelUsage } from 'ai';
+import { type LanguageModelUsage, type StepResult, type ToolSet } from 'ai';
 
 export interface AgentExecutionResult {
   result: object;
@@ -6,4 +6,8 @@ export interface AgentExecutionResult {
   cacheCreationTokens: number;
   nativeWebSearchCallCount: number;
   hasNoMoreAvailableCredits: boolean;
+  steps?: StepResult<ToolSet>[];
+  modelId?: string;
+  totalCostInDollars?: number;
+  creditsUsedMicro?: number;
 }

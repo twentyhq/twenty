@@ -11,7 +11,7 @@ type FooterVisibilityGateProps = {
 export function FooterVisibilityGate({ children }: FooterVisibilityGateProps) {
   const route = useUnlocalizedPathname();
 
-  if (route === '/halftone') {
+  if (route === '/halftone' || route === '/partners/apply') {
     return null;
   }
 

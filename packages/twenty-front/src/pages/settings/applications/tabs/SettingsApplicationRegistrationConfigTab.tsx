@@ -48,7 +48,9 @@ export const SettingsApplicationRegistrationConfigTab = ({
     description: variable.description,
     value: variable.value ?? <Status color="gray" text={t`Not set`} />,
     to: getSettingsPath(
-      SettingsPath.ApplicationRegistrationConfigVariableDetails,
+      fromAdmin
+        ? SettingsPath.AdminPanelApplicationRegistrationConfigVariableDetails
+        : SettingsPath.ApplicationRegistrationConfigVariableDetails,
       {
         applicationRegistrationId,
         variableKey: variable.key,

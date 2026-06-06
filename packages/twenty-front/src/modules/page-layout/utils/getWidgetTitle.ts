@@ -15,8 +15,6 @@ export const getWidgetTitle = (
   switch (configuration.configurationType) {
     case WidgetConfigurationType.AGGREGATE_CHART:
       return `${t`Aggregate Chart`} ${index + 1}`;
-    case WidgetConfigurationType.GAUGE_CHART:
-      return `${t`Gauge Chart`} ${index + 1}`;
     case WidgetConfigurationType.PIE_CHART:
       return `${t`Pie Chart`} ${index + 1}`;
     case WidgetConfigurationType.BAR_CHART:

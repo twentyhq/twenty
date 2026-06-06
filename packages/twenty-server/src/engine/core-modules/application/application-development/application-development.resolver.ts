@@ -33,6 +33,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
@@ -51,6 +52,8 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const APP_DEV_RATE_LIMIT_MAX = 30;
 const APP_DEV_RATE_LIMIT_WINDOW_MS = 30_000;
+
+const APP_SYNC_LOCK_OPTIONS = { ttl: 60_000, ms: 500, maxRetries: 120 };
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -71,6 +74,7 @@ export class ApplicationDevelopmentResolver {
     private readonly sdkClientGenerationService: SdkClientGenerationService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly throttlerService: ThrottlerService,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
   @Mutation(() => DevelopmentApplicationDTO)
@@ -129,7 +133,7 @@ export class ApplicationDevelopmentResolver {
 
   @Mutation(() => WorkspaceMigrationDTO)
   async syncApplication(
-    @Args() { manifest }: ApplicationInput,
+    @Args() { manifest, dryRun }: ApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<WorkspaceMigrationDTO> {
     await this.throttlePerApplication(
@@ -137,6 +141,32 @@ export class ApplicationDevelopmentResolver {
       workspaceId,
     );
 
+    if (dryRun === true) {
+      const { workspaceMigration } =
+        await this.applicationSyncService.synchronizeFromManifest({
+          workspaceId,
+          manifest,
+          dryRun: true,
+        });
+
+      return {
+        applicationUniversalIdentifier:
+          workspaceMigration.applicationUniversalIdentifier,
+        actions: workspaceMigration.actions,
+      };
+    }
+
+    return this.cacheLockService.withLock(
+      () => this.applyManifestSync(manifest, workspaceId),
+      `app-sync:${workspaceId}`,
+      APP_SYNC_LOCK_OPTIONS,
+    );
+  }
+
+  private async applyManifestSync(
+    manifest: ApplicationInput['manifest'],
+    workspaceId: string,
+  ): Promise<WorkspaceMigrationDTO> {
     const applicationRegistrationId = await this.findApplicationRegistrationId(
       manifest.application.universalIdentifier,
     );

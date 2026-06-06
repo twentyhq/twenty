@@ -224,6 +224,12 @@ describe('AccessTokenService', () => {
     it('should throw an error if user is not found', async () => {
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue({} as WorkspaceEntity);
+      jest
+        .spyOn(userWorkspaceRepository, 'findOne')
+        .mockResolvedValue({} as UserWorkspaceEntity);
 
       await expect(
         service.generateAccessToken({
