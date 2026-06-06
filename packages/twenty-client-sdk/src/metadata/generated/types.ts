@@ -6150,6 +6150,9 @@ export default {
                     ]
                 }
             ],
+            "myConnectedAccounts": [
+                271
+            ],
             "getRoles": [
                 29
             ],
@@ -6231,9 +6234,6 @@ export default {
                         3
                     ]
                 }
-            ],
-            "myConnectedAccounts": [
-                271
             ],
             "myCalendarChannels": [
                 305,
@@ -7616,6 +7616,15 @@ export default {
                     ]
                 }
             ],
+            "deleteConnectedAccount": [
+                271,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
             "updateWorkspaceMemberRole": [
                 20,
                 {
@@ -7869,15 +7878,6 @@ export default {
             ],
             "deleteEmailGroupChannel": [
                 310,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "deleteConnectedAccount": [
-                271,
                 {
                     "id": [
                         3,

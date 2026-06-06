@@ -69,7 +69,7 @@ export class SendEmailResolver {
           files: input.files ?? [],
           inReplyTo: input.inReplyTo,
         },
-        { workspaceId: workspace.id },
+        { workspaceId: workspace.id, userWorkspaceId },
         { attachmentsFileFolder: FileFolder.EmailAttachment },
       );
 
