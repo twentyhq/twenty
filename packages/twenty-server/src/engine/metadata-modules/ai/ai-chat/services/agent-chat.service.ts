@@ -14,6 +14,7 @@ import {
   AgentMessageStatus,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
+import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import {
@@ -232,15 +233,17 @@ export class AgentChatService {
 
     if (uiMessage.parts && uiMessage.parts.length > 0) {
       const dbParts = mapUIMessagePartsToDBParts(
-        uiMessage.parts,
+        finalizeDanglingToolParts(uiMessage.parts),
         savedMessageId,
         workspaceId,
       );
 
-      await this.messagePartRepository.insert(
-        workspaceId,
-        dbParts as QueryDeepPartialEntity<AgentMessagePartEntity>[],
-      );
+      if (dbParts.length > 0) {
+        await this.messagePartRepository.insert(
+          workspaceId,
+          dbParts as QueryDeepPartialEntity<AgentMessagePartEntity>[],
+        );
+      }
     }
 
     return {
