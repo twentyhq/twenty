@@ -238,10 +238,12 @@ export class AgentChatService {
         workspaceId,
       );
 
-      await this.messagePartRepository.insert(
-        workspaceId,
-        dbParts as QueryDeepPartialEntity<AgentMessagePartEntity>[],
-      );
+      if (dbParts.length > 0) {
+        await this.messagePartRepository.insert(
+          workspaceId,
+          dbParts as QueryDeepPartialEntity<AgentMessagePartEntity>[],
+        );
+      }
     }
 
     return {

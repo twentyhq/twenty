@@ -45,10 +45,17 @@ describe('finalizeDanglingToolParts', () => {
     expect(finalizeDanglingToolParts([part])).toEqual([part]);
   });
 
-  it('leaves an input-streaming tool part untouched', () => {
+  it('drops an input-streaming tool part with incomplete arguments', () => {
     const part = buildToolPart('input-streaming');
 
-    expect(finalizeDanglingToolParts([part])).toEqual([part]);
+    expect(finalizeDanglingToolParts([part])).toEqual([]);
+  });
+
+  it('keeps surrounding parts when dropping an input-streaming part', () => {
+    const text = { type: 'text', text: 'hello' } as ExtendedUIMessagePart;
+    const streaming = buildToolPart('input-streaming');
+
+    expect(finalizeDanglingToolParts([text, streaming])).toEqual([text]);
   });
 
   it('leaves non-tool parts untouched', () => {
