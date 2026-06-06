@@ -304,11 +304,7 @@ export const useGraphQLErrorHandlerHook = <
           return;
         }
 
-        // Fire on any strictly-older client version, not just a major bump.
-        // A tab kept open across a minor or patch deploy keeps sending GraphQL
-        // documents built against the previous schema (e.g. selecting a field
-        // the server has since removed), which otherwise surfaces as opaque
-        // field errors instead of the "please refresh" prompt this check emits.
+        // Detect any strictly-older client version, not just major bumps.
         if (semver.lt(frontEndAppVersion, backendAppVersion)) {
           void options.metricsService.incrementCounterForEvent({
             key: MetricsKeys.AppVersionMismatch,
