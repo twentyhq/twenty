@@ -42,6 +42,7 @@ type StackTargetMetric = {
 const NAV_HEIGHT = 64;
 
 const MD_UP_QUERY = `(min-width: ${theme.breakpoints.md}px)`;
+const AI_PANEL_ONLY_MAX_WIDTH = 599.98;
 
 const PRODUCT_HERO_BACKGROUND_IMAGE =
   '/illustrations/generated/home-background-wheat.webp';
@@ -262,6 +263,11 @@ export function HeroVisualScroll({
     useHeroScrollProgress(trackRef);
   const menuSync = useProductHeroMenuSync();
   const isDesktop = useMediaQuery(MD_UP_QUERY, { serverFallback: true });
+  // Below 600px the board + AI panel can't coexist, so the AI section becomes a
+  // panel-only "Ask AI" view.
+  const isPhone = useMediaQuery(`(max-width: ${AI_PANEL_ONLY_MAX_WIDTH}px)`, {
+    serverFallback: false,
+  });
   const [activeTab, setActiveTab] = useState(0);
   const [introLayerEl, setIntroLayerEl] = useState<HTMLDivElement | null>(null);
   const [stackTargetMetrics, setStackTargetMetrics] = useState<
@@ -434,6 +440,7 @@ export function HeroVisualScroll({
             <ProductVisual
               activeScene={activeTab + 1}
               compact
+              panelOnly={isPhone}
               playbackEnabled
               visual={visual}
             />

@@ -79,6 +79,16 @@ const AsideSlot = styled.div`
   overflow: hidden;
 `;
 
+// Phone (<600px) AI experience: drop the CRM sidebar/board and let the AI panel
+// be the whole window.
+const PanelOnlyRoot = styled.div`
+  display: flex;
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 0;
+  width: 100%;
+`;
+
 type AppPreviewLayoutProps = {
   activeItem?: SidebarItemDef;
   activeItemId: string;
@@ -93,6 +103,7 @@ type AppPreviewLayoutProps = {
   onToggleFolder: (folderId: string) => void;
   openFolderIds: string[];
   page: PageDefinition;
+  panelOnly?: boolean;
   revealedObjectIds: string[];
   rightAside?: ReactNode;
   workspaceEntries: SidebarEntry[];
@@ -112,10 +123,15 @@ export function AppPreviewLayout({
   onToggleFolder,
   openFolderIds,
   page,
+  panelOnly = false,
   revealedObjectIds,
   rightAside,
   workspaceEntries,
 }: AppPreviewLayoutProps) {
+  if (panelOnly && rightAside !== undefined) {
+    return <PanelOnlyRoot>{rightAside}</PanelOnlyRoot>;
+  }
+
   const activeHeader = page.header;
   const showViewBar =
     page.type !== 'dashboard' &&

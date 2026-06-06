@@ -75,17 +75,18 @@ const ShellScene = styled.div<{
   width: ${({ $bleed }) => ($bleed ? `${WINDOW_MAX_WIDTH}px` : '100%')};
 `;
 
-const AiPanel = styled.aside`
+const AiPanel = styled.aside<{ $panelOnly: boolean }>`
   background: ${VISUAL_TOKENS.background.primary};
-  border: 1px solid ${VISUAL_TOKENS.border.color.medium};
-  border-radius: 8px;
+  border: ${({ $panelOnly }) =>
+    $panelOnly ? 'none' : `1px solid ${VISUAL_TOKENS.border.color.medium}`};
+  border-radius: ${({ $panelOnly }) => ($panelOnly ? '0' : '8px')};
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  width: 280px;
+  width: ${({ $panelOnly }) => ($panelOnly ? '100%' : '280px')};
 `;
 
 const AiPanelHeader = styled.div`
@@ -300,6 +301,7 @@ type ProductVisualProps = {
   desktopSidebarMode?: DesktopSidebarMode;
   fill?: boolean;
   frameMode?: AppPreviewFrameMode;
+  panelOnly?: boolean;
   playbackEnabled?: boolean;
   visual: AppPreviewConfig;
 };
@@ -415,6 +417,7 @@ export function ProductVisual({
   desktopSidebarMode = 'expanded',
   fill = false,
   frameMode = 'static',
+  panelOnly = false,
   playbackEnabled = true,
   visual,
 }: ProductVisualProps) {
@@ -503,10 +506,11 @@ export function ProductVisual({
         onToggleFolder={toggleFolder}
         openFolderIds={openFolderIds}
         page={effectivePage}
+        panelOnly={panelOnly}
         revealedObjectIds={revealedObjectIds}
         rightAside={
           collaborative ? undefined : (
-            <AiPanel>
+            <AiPanel $panelOnly={panelOnly}>
               <AiPanelHeader>
                 <AiHeaderBtn>
                   <IconX size={13} stroke={2} />
