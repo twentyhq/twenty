@@ -58,14 +58,14 @@ export class FixStandardRelationFieldLabelsIconsCommand extends ActiveOrSuspende
         'flatFieldMetadataMaps',
       ]);
 
+    const now = new Date().toISOString();
+
     const { allFlatEntityMaps: standardAllFlatEntityMaps } =
       computeTwentyStandardApplicationAllFlatEntityMaps({
-        now: new Date().toISOString(),
+        now,
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
-
-    const now = new Date().toISOString();
 
     const fieldsToUpdate = Object.values(
       standardAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
