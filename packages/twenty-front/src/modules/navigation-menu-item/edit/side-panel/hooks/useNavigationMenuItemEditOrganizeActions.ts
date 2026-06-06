@@ -120,12 +120,12 @@ export const useNavigationMenuItemEditOrganizeActions =
 
       if (isDefined(nextItem)) {
         setSelectedNavigationMenuItemIdInEditMode(nextItem.id);
-        const link = getNavigationMenuItemComputedLink(
-          nextItem,
+        const link = getNavigationMenuItemComputedLink({
+          item: nextItem,
           objectMetadataItems,
           views,
           lastVisitedViewPerObjectMetadataItem,
-        );
+        });
         if (isNonEmptyString(link)) {
           navigate(link);
         }

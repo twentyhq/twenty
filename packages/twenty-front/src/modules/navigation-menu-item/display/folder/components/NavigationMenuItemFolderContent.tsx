@@ -46,12 +46,12 @@ export const NavigationMenuItemFolderContent = ({
           objectMetadataItems,
           views,
         );
-        const computedLink = getNavigationMenuItemComputedLink(
-          navigationMenuItem,
+        const computedLink = getNavigationMenuItemComputedLink({
+          item: navigationMenuItem,
           objectMetadataItems,
           views,
           lastVisitedViewPerObjectMetadataItem,
-        );
+        });
         const objectNameSingular = getNavigationMenuItemObjectNameSingular(
           navigationMenuItem,
           objectMetadataItems,

@@ -78,22 +78,22 @@ export const useNavigationMenuItemFolderOpenState = ({
           if (item.type === NavigationMenuItemType.LINK) {
             return false;
           }
-          const computedLink = getNavigationMenuItemComputedLink(
+          const computedLink = getNavigationMenuItemComputedLink({
             item,
             objectMetadataItems,
             views,
             lastVisitedViewPerObjectMetadataItem,
-          );
+          });
           return isNonEmptyString(computedLink);
         },
       );
       if (isDefined(firstNonLinkItem)) {
-        const link = getNavigationMenuItemComputedLink(
-          firstNonLinkItem,
+        const link = getNavigationMenuItemComputedLink({
+          item: firstNonLinkItem,
           objectMetadataItems,
           views,
           lastVisitedViewPerObjectMetadataItem,
-        );
+        });
         if (isNonEmptyString(link)) {
           setLastClickedNavigationMenuItemId(firstNonLinkItem.id);
           navigate(link);

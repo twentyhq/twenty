@@ -68,12 +68,12 @@ export const useIdentifyActiveNavigationMenuItems = (): {
 
         if (isDefined(lastClickedItem)) {
           const lastClickedNavigationMenuItemLink =
-            getNavigationMenuItemComputedLink(
-              lastClickedItem,
+            getNavigationMenuItemComputedLink({
+              item: lastClickedItem,
               objectMetadataItems,
               views,
               lastVisitedViewPerObjectMetadataItem,
-            );
+            });
           const lastClickedObjectMetadataId =
             getObjectMetadataForNavigationMenuItem(
               lastClickedItem,
@@ -105,12 +105,12 @@ export const useIdentifyActiveNavigationMenuItems = (): {
             if (item.type !== NavigationMenuItemType.RECORD) {
               return false;
             }
-            const link = getNavigationMenuItemComputedLink(
+            const link = getNavigationMenuItemComputedLink({
               item,
               objectMetadataItems,
               views,
               lastVisitedViewPerObjectMetadataItem,
-            );
+            });
             return link === currentPath;
           })
           .map((item) => item.id);

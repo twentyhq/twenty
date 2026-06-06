@@ -89,21 +89,21 @@ export const WorkspaceSection = () => {
     const firstChild = workspaceNavigationMenuItemsSorted.find((navItem) => {
       if (navItem.folderId !== folderId) return false;
       if (navItem.type === NavigationMenuItemType.LINK) return false;
-      const link = getNavigationMenuItemComputedLink(
-        navItem,
+      const link = getNavigationMenuItemComputedLink({
+        item: navItem,
         objectMetadataItems,
         views,
         lastVisitedViewPerObjectMetadataItem,
-      );
+      });
       return isNonEmptyString(link);
     });
     if (firstChild) {
-      const link = getNavigationMenuItemComputedLink(
-        firstChild,
+      const link = getNavigationMenuItemComputedLink({
+        item: firstChild,
         objectMetadataItems,
         views,
         lastVisitedViewPerObjectMetadataItem,
-      );
+      });
       if (isNonEmptyString(link)) {
         navigate(link);
       }
@@ -125,12 +125,12 @@ export const WorkspaceSection = () => {
         pageIcon: getIcon(objectMetadataItem.icon),
       });
     }
-    const link = getNavigationMenuItemComputedLink(
+    const link = getNavigationMenuItemComputedLink({
       item,
       objectMetadataItems,
       views,
       lastVisitedViewPerObjectMetadataItem,
-    );
+    });
     if (isNonEmptyString(link)) {
       navigate(link);
     }

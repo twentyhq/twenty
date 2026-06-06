@@ -9,12 +9,17 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-export const getNavigationMenuItemComputedLink = (
-  item: NavigationMenuItem,
-  objectMetadataItems: EnrichedObjectMetadataItem[],
-  views: Pick<View, 'id' | 'objectMetadataId' | 'key'>[],
-  lastVisitedViewPerObjectMetadataItem?: Record<string, string> | null,
-): string => {
+export const getNavigationMenuItemComputedLink = ({
+  item,
+  objectMetadataItems,
+  views,
+  lastVisitedViewPerObjectMetadataItem,
+}: {
+  item: NavigationMenuItem;
+  objectMetadataItems: EnrichedObjectMetadataItem[];
+  views: Pick<View, 'id' | 'objectMetadataId' | 'key'>[];
+  lastVisitedViewPerObjectMetadataItem?: Record<string, string> | null;
+}): string => {
   switch (item.type) {
     case NavigationMenuItemType.OBJECT: {
       const lastVisitedViewId = isDefined(item.targetObjectMetadataId)
