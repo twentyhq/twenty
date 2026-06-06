@@ -125,8 +125,6 @@ export const WidgetCardShell = ({
                 widget.configuration,
                 widget.objectMetadataId,
               ]}
-              // Surface the underlying throw so the same fallback chip does
-              // not mask different bugs across widget types.
               onError={async (error) => {
                 const extra = {
                   widgetId: widget.id,
