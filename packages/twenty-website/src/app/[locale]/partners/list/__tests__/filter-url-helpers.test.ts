@@ -1,5 +1,5 @@
 import {
-  DEPLOYMENT_EXPERTISES,
+  PARTNER_SCOPES,
   SERVED_GEOS,
   SPOKEN_LANGUAGES,
 } from '@/lib/partners-api';
@@ -15,26 +15,26 @@ describe('parseCriteriaFromParams', () => {
     const c = parseCriteriaFromParams(new URLSearchParams());
     expect(c.regions.size).toBe(0);
     expect(c.languages.size).toBe(0);
-    expect(c.deployments.size).toBe(0);
+    expect(c.categories.size).toBe(0);
   });
 
   it('parses a CSV of valid values', () => {
     const c = parseCriteriaFromParams(
       new URLSearchParams(
-        'regions=EUROPE,US&languages=FRENCH&deployments=CLOUD',
+        'regions=EUROPE,US&languages=FRENCH&categories=HOSTING',
       ),
     );
     expect(c.regions).toEqual(new Set(['EUROPE', 'US']));
     expect(c.languages).toEqual(new Set(['FRENCH']));
-    expect(c.deployments).toEqual(new Set(['CLOUD']));
+    expect(c.categories).toEqual(new Set(['HOSTING']));
   });
 
   it('silently drops unknown values', () => {
     const c = parseCriteriaFromParams(
-      new URLSearchParams('regions=EUROPE,MARS,US&languages=KLINGON'),
+      new URLSearchParams('regions=EUROPE,MARS,US&categories=KLINGON'),
     );
     expect(c.regions).toEqual(new Set(['EUROPE', 'US']));
-    expect(c.languages.size).toBe(0);
+    expect(c.categories.size).toBe(0);
   });
 
   it('handles whitespace inside CSV values', () => {
@@ -51,7 +51,7 @@ describe('buildQueryString', () => {
       buildQueryString({
         regions: new Set(),
         languages: new Set(),
-        deployments: new Set(),
+        categories: new Set(),
       }),
     ).toBe('');
   });
@@ -60,20 +60,20 @@ describe('buildQueryString', () => {
     const original = {
       regions: new Set(['EUROPE', 'US']) as ReadonlySet<'EUROPE' | 'US'>,
       languages: new Set(['FRENCH']) as ReadonlySet<'FRENCH'>,
-      deployments: new Set(['CLOUD']) as ReadonlySet<'CLOUD'>,
+      categories: new Set(['HOSTING']) as ReadonlySet<'HOSTING'>,
     };
     const qs = buildQueryString(original as never);
     const parsed = parseCriteriaFromParams(new URLSearchParams(qs));
     expect(parsed.regions).toEqual(original.regions);
     expect(parsed.languages).toEqual(original.languages);
-    expect(parsed.deployments).toEqual(original.deployments);
+    expect(parsed.categories).toEqual(original.categories);
   });
 
   it('omits facets whose sets are empty', () => {
     const qs = buildQueryString({
       regions: new Set(['EUROPE']),
       languages: new Set(),
-      deployments: new Set(),
+      categories: new Set(),
     });
     expect(qs).toBe('regions=EUROPE');
   });
@@ -96,9 +96,9 @@ describe('toggleInSet', () => {
 });
 
 describe('enum constants are non-empty', () => {
-  it('covers all known regions, languages, deployments', () => {
+  it('covers all known regions, languages, categories', () => {
     expect(SERVED_GEOS.length).toBe(6);
-    expect(SPOKEN_LANGUAGES.length).toBe(5);
-    expect(DEPLOYMENT_EXPERTISES.length).toBe(2);
+    expect(SPOKEN_LANGUAGES.length).toBe(35);
+    expect(PARTNER_SCOPES.length).toBe(5);
   });
 });

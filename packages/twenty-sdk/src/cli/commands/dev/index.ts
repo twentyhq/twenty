@@ -22,6 +22,7 @@ export const registerDevCommands = (program: Command): void => {
       verbose?: boolean;
       debug?: boolean;
       debounceMs?: string;
+      dryRun?: boolean;
     },
   ) => {
     const commonOptions = {
@@ -33,7 +34,10 @@ export const registerDevCommands = (program: Command): void => {
     };
 
     if (options.once) {
-      await devOnceCommand.execute(commonOptions);
+      await devOnceCommand.execute({
+        ...commonOptions,
+        dryRun: options.dryRun,
+      });
 
       return;
     }
@@ -47,6 +51,10 @@ export const registerDevCommands = (program: Command): void => {
     .option(
       '-o, --once',
       'Build and sync once, then exit (useful for CI, scripts, and pre-commit hooks)',
+    )
+    .option(
+      '--dry-run',
+      'Preview the metadata changes without applying them (requires --once)',
     )
     .option('--debounceMs <ms>', 'Debounce in ms (default: 2 000)')
     .option('-v, --verbose', 'Show detailed logs')

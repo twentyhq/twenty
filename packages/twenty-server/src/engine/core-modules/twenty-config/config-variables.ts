@@ -17,7 +17,6 @@ import { type AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
-import { ApplicationLogDriver } from 'src/engine/core-modules/application-logs/interfaces/application-log-driver.enum';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
 import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.enum';
@@ -366,6 +365,16 @@ export class ConfigVariables {
   APPLICATION_REFRESH_TOKEN_EXPIRES_IN = '60d';
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TOKENS_DURATION,
+    description:
+      'Duration for which a playground token (in-app REST/GraphQL playground bearer) is valid',
+    type: ConfigVariableType.STRING,
+  })
+  @IsDuration()
+  @IsOptional()
+  PLAYGROUND_TOKEN_EXPIRES_IN = '2h';
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EMAIL_SETTINGS,
     description: 'Email address used as the sender for outgoing emails',
     type: ConfigVariableType.STRING,
@@ -556,15 +565,6 @@ export class ConfigVariables {
     process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT
       ? LogicFunctionDriverType.LOCAL
       : LogicFunctionDriverType.DISABLED;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
-    description:
-      'Configure whether console logs from logic functions are displayed in the terminal',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  LOGIC_FUNCTION_LOGS_ENABLED: false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
@@ -936,14 +936,12 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
     description:
-      'Driver used for application logs (Disabled, Console, or ClickHouse)',
-    type: ConfigVariableType.ENUM,
-    options: Object.values(ApplicationLogDriver),
+      'Ordered list of sinks the unified event pipeline writes to (e.g. clickhouse). The first is the read store.',
+    type: ConfigVariableType.ARRAY,
     isEnvOnly: true,
   })
   @IsOptional()
-  @CastToUpperSnakeCase()
-  APPLICATION_LOG_DRIVER: ApplicationLogDriver = ApplicationLogDriver.DISABLED;
+  EVENT_SINKS: string[] = ['clickhouse'];
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SUPPORT_CHAT_CONFIG,

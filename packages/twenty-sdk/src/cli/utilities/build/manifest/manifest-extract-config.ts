@@ -16,6 +16,7 @@ export enum TargetFunction {
   DefineConnectionProvider = 'defineConnectionProvider',
   DefineFrontComponent = 'defineFrontComponent',
   DefineView = 'defineView',
+  DefineViewField = 'defineViewField',
   DefineNavigationMenuItem = 'defineNavigationMenuItem',
   DefinePageLayout = 'definePageLayout',
   DefinePageLayoutTab = 'definePageLayoutTab',
@@ -36,6 +37,7 @@ export enum ManifestEntityKey {
   FrontComponents = 'frontComponents',
   PublicAssets = 'publicAssets',
   Views = 'views',
+  ViewFields = 'viewFields',
   NavigationMenuItems = 'navigationMenuItems',
   PageLayouts = 'pageLayouts',
   PageLayoutTabs = 'pageLayoutTabs',
@@ -66,6 +68,7 @@ export const TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING: Record<
     ManifestEntityKey.ConnectionProviders,
   [TargetFunction.DefineFrontComponent]: ManifestEntityKey.FrontComponents,
   [TargetFunction.DefineView]: ManifestEntityKey.Views,
+  [TargetFunction.DefineViewField]: ManifestEntityKey.ViewFields,
   [TargetFunction.DefineNavigationMenuItem]:
     ManifestEntityKey.NavigationMenuItems,
   [TargetFunction.DefinePageLayout]: ManifestEntityKey.PageLayouts,

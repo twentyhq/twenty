@@ -23,7 +23,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { Checkbox, Toggle } from 'twenty-ui/input';
 
 const StyledComboInputContainer = styled.div`
@@ -278,7 +278,7 @@ export const SettingsAdminNewAiModel = () => {
 
   return (
     <form onSubmit={form.handleSubmit(handleSave)}>
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={t`New Model`}
         links={[
           {
@@ -539,7 +539,7 @@ export const SettingsAdminNewAiModel = () => {
             />
           </Section>
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     </form>
   );
 };

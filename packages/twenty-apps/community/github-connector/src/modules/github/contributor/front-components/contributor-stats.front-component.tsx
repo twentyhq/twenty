@@ -1,10 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import {
-  enqueueSnackbar,
-  objectMetadataItem,
-  useRecordId,
-} from 'twenty-sdk/front-component';
+import { enqueueSnackbar, useRecordId } from 'twenty-sdk/front-component';
 
 import { THEME } from 'src/modules/github/contributor/components/theme';
 import { callAppRoute } from 'src/modules/shared/call-app-route';
@@ -682,12 +678,4 @@ export default defineFrontComponent({
   description:
     'Displays time-bucketed charts of PRs authored (merged only), merged and reviewed by a contributor over the last week, month, 3 months or year.',
   component: ContributorStats,
-  command: {
-    universalIdentifier: '7d3f2b9e-5c0a-4e8b-ad6e-2f9c3b4d5e6a',
-    label: 'Contributor Stats',
-    icon: 'IconChartBar',
-    isPinned: false,
-    conditionalAvailabilityExpression:
-      objectMetadataItem.nameSingular === 'contributor',
-  },
 });

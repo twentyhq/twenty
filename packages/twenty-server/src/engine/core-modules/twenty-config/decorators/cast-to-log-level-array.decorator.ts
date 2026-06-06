@@ -5,7 +5,7 @@ const VALID_LOG_LEVELS = ['log', 'error', 'warn', 'debug', 'verbose'];
 export const CastToLogLevelArray = () =>
   Transform(({ value }: { value: string }) => toLogLevelArray(value));
 
-// oxlint-disable-next-line @typescripttypescript/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 const toLogLevelArray = (value: any) => {
   if (typeof value === 'string') {
     const rawLogLevels = value.split(',').map((level) => level.trim());

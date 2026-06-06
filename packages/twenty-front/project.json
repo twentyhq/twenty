@@ -275,11 +275,6 @@
         "command": "dotenv npx vite-node scripts/generate-mock-data.ts"
       }
     },
-    "chromatic": {
-      "configurations": {
-        "ci": {}
-      }
-    },
     "lingui:extract": {
       "executor": "nx:run-commands",
       "dependsOn": ["^build"],

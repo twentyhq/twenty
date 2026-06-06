@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
+import { type SyncAction } from 'twenty-shared/metadata';
 
 @ObjectType('WorkspaceMigration')
 export class WorkspaceMigrationDTO {
@@ -8,5 +9,5 @@ export class WorkspaceMigrationDTO {
   applicationUniversalIdentifier: string;
 
   @Field(() => GraphQLJSON)
-  actions: unknown[];
+  actions: SyncAction[];
 }
