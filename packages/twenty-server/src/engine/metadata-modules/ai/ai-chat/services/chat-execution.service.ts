@@ -399,9 +399,7 @@ export class ChatExecutionService {
       stopWhen: (step) =>
         stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) || hasNoMoreAvailableCredits,
       experimental_telemetry: AI_TELEMETRY_CONFIG,
-      providerOptions: getCallLevelProviderOptions(
-        registeredModel.sdkPackage,
-      ),
+      providerOptions: getCallLevelProviderOptions(registeredModel.sdkPackage),
       prepareStep: ({ messages }) => {
         stepStartedAt = performance.now();
 

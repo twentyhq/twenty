@@ -283,23 +283,23 @@ export class AgentAsyncExecutorService {
                  Execution Results: ${textResponse.text}
 
                  Please generate the structured output based on the execution results and context above.`,
-        output: Output.object({ schema: jsonSchema(agentSchema) }),
-        providerOptions: getCallLevelProviderOptions(
-          registeredModel.sdkPackage,
-        ),
-        experimental_telemetry: AI_TELEMETRY_CONFIG,
-        onStepFinish: async (step) => {
-          const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-            await this.aiBillingService.decrementAndCheckAvailableCredits(
-              registeredModel.modelId,
-              {
-                usage: step.usage,
-                cacheCreationTokens: extractCacheCreationTokens(
-                  step.providerMetadata,
-                ),
-              },
-              workspaceId,
-            );
+          output: Output.object({ schema: jsonSchema(agentSchema) }),
+          providerOptions: getCallLevelProviderOptions(
+            registeredModel.sdkPackage,
+          ),
+          experimental_telemetry: AI_TELEMETRY_CONFIG,
+          onStepFinish: async (step) => {
+            const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
+              await this.aiBillingService.decrementAndCheckAvailableCredits(
+                registeredModel.modelId,
+                {
+                  usage: step.usage,
+                  cacheCreationTokens: extractCacheCreationTokens(
+                    step.providerMetadata,
+                  ),
+                },
+                workspaceId,
+              );
 
             if (stepHasNoMoreAvailableCredits) {
               hasNoMoreAvailableCredits = true;
