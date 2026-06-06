@@ -1,0 +1,22 @@
+packages/twenty-server/src/modules/workflow/workflow-executor/services/workflow-execution-context.service.ts
+  s_684fd1e9eab933::t_927c0474f312a3 1
+  s_684fd1e9eab933::t_9440e10699d690 87,89
+  s_684fd1e9eab933::t_101e606e49f0cd 103-109,120-126
+  s_684fd1e9eab933::t_f64b1f72786d0e 26-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "3b109ec14e058ea357c489045d18b881065e4720",
+  "prompts": {},
+  "sessions": {
+    "s_684fd1e9eab933": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5ca1b872-012d-466e-9779-57bdef42045e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
