@@ -6235,9 +6235,6 @@ export default {
                     ]
                 }
             ],
-            "myConnectedAccounts": [
-                271
-            ],
             "myCalendarChannels": [
                 305,
                 {
@@ -7919,15 +7916,6 @@ export default {
             ],
             "deleteEmailGroupChannel": [
                 310,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "deleteConnectedAccount": [
-                271,
                 {
                     "id": [
                         3,
