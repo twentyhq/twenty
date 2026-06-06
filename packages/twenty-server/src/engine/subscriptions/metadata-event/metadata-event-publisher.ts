@@ -67,22 +67,19 @@ export class MetadataEventPublisher {
       return undefined;
     }
 
-    const navigationMenuItem =
-      isDefined(properties.after) && typeof properties.after === 'object'
-        ? properties.after
-        : properties.before;
+    const after = properties.after as Record<string, unknown> | undefined;
+    const before = properties.before as Record<string, unknown> | undefined;
+    const navigationMenuItem = after ?? before;
 
-    if (
-      !isDefined(navigationMenuItem) ||
-      typeof navigationMenuItem !== 'object'
-    ) {
+    if (!isDefined(navigationMenuItem)) {
       return undefined;
     }
 
-    const userWorkspaceId = (navigationMenuItem as Record<string, unknown>)
-      .userWorkspaceId;
+    const { userWorkspaceId } = navigationMenuItem;
 
-    return typeof userWorkspaceId === 'string' ? [userWorkspaceId] : undefined;
+    return typeof userWorkspaceId === 'string' && userWorkspaceId.length > 0
+      ? [userWorkspaceId]
+      : undefined;
   }
 
   private async enrichMetadataEventBatch(
