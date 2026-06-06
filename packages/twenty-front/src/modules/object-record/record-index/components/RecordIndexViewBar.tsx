@@ -8,8 +8,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewType } from '@/views/types/ViewType';
 
-// The record index "view bar" (view picker + filter/sort/options), rendered as
-// the secondary bar of the page card — a sibling of the table, not part of it.
 export const RecordIndexViewBar = () => {
   const recordIndexViewType = useAtomStateValue(recordIndexViewTypeState);
 

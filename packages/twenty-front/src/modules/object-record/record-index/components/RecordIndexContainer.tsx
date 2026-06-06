@@ -29,8 +29,6 @@ const StyledContainerWithPadding = styled.div`
   min-height: 0;
 `;
 
-// The record index body (table / board / calendar). The view bar lives in the
-// page card's secondary bar (RecordIndexViewBar), not here.
 export const RecordIndexContainer = () => {
   const recordIndexViewType = useAtomStateValue(recordIndexViewTypeState);
 

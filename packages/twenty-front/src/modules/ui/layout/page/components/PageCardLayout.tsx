@@ -1,5 +1,4 @@
 import { InformationBannerWrapper } from '@/information-banner/components/InformationBannerWrapper';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -11,14 +10,12 @@ type PageCardLayoutProps = {
   children: ReactNode;
 };
 
-const StyledRoot = styled.div<{ isMobile: boolean }>`
+const StyledRoot = styled.div`
   display: flex;
   flex: 1;
   flex-direction: row;
   min-height: 0;
   min-width: 0;
-  padding: ${({ isMobile }) =>
-    isMobile ? themeCssVariables.spacing[1] : themeCssVariables.spacing[2]};
 `;
 
 const StyledMainCardWrapper = styled.div`
@@ -49,18 +46,13 @@ const StyledBodyContent = styled.div`
   width: 100%;
 `;
 
-// The page chrome shared by Settings and record pages: a single rounded card
-// holding a primary bar, an optional secondary bar, and the body. The side
-// panel renders as a sibling of this card (in MainAppLayoutWithSidePanel).
 export const PageCardLayout = ({
   header,
   secondaryBar,
   children,
 }: PageCardLayoutProps) => {
-  const isMobile = useIsMobile();
-
   return (
-    <StyledRoot isMobile={isMobile}>
+    <StyledRoot>
       <StyledMainCardWrapper>
         <StyledCard>
           {header}

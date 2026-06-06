@@ -13,14 +13,13 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type PageCardHeaderProps = {
   links?: BreadcrumbProps['links'];
+  breadcrumb?: ReactNode;
   icon?: ReactNode;
   title?: ReactNode;
   tag?: ReactNode;
   actionButton?: ReactNode;
 };
 
-// minmax(0, 1fr) side tracks (not 1fr) let a long breadcrumb truncate instead of
-// pushing the centered title off its shared axis with the secondary bar and body.
 const StyledHeader = styled.div`
   align-items: center;
   background-color: ${themeCssVariables.background.secondary};
@@ -61,10 +60,9 @@ const StyledRight = styled.div`
   min-width: 0;
 `;
 
-// Shared primary bar for the page card (Settings and record pages). The icon
-// slot sits next to the centered title; links render a breadcrumb on the left.
 export const PageCardHeader = ({
   links,
+  breadcrumb,
   icon,
   title,
   tag,
@@ -79,7 +77,9 @@ export const PageCardHeader = ({
         {!isNavigationDrawerExpanded && (
           <NavigationDrawerCollapseButton direction="right" />
         )}
-        {isDefined(links) && <Breadcrumb links={links} />}
+        {isDefined(breadcrumb)
+          ? breadcrumb
+          : isDefined(links) && <Breadcrumb links={links} />}
       </StyledLeft>
       <StyledTitle>
         {!isMobile && icon}

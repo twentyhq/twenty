@@ -2,19 +2,16 @@ import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLo
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledRoot = styled.div<{ isMobile: boolean }>`
+const StyledRoot = styled.div`
   display: flex;
   flex: 1;
   min-height: 0;
   min-width: 0;
-  padding: ${({ isMobile }) =>
-    isMobile ? themeCssVariables.spacing[1] : themeCssVariables.spacing[2]};
 `;
 
 const StyledCard = styled.div`
@@ -31,11 +28,10 @@ const StyledCard = styled.div`
 `;
 
 export const SettingsSkeletonLoader = () => {
-  const isMobile = useIsMobile();
   const { theme } = useContext(ThemeContext);
 
   return (
-    <StyledRoot isMobile={isMobile}>
+    <StyledRoot>
       <StyledCard>
         <SkeletonTheme
           baseColor={theme.background.tertiary}

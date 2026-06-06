@@ -4,16 +4,16 @@ import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { Outlet } from 'react-router-dom';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-// Persistent layout for every main-app page (records, settings, page layouts).
-// The side panel is a stable sibling of the routed <Outlet />, so it stays
-// mounted while the page content swaps and the AI chat keeps its state.
-const StyledRow = styled.div`
+const StyledRow = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex: 1;
   flex-direction: row;
   min-height: 0;
   min-width: 0;
+  padding: ${({ isMobile }) =>
+    isMobile ? themeCssVariables.spacing[1] : themeCssVariables.spacing[2]};
 `;
 
 const StyledContent = styled.div`
@@ -30,7 +30,7 @@ export const MainAppLayoutWithSidePanel = () => {
   useCommandMenuHotKeys();
 
   return (
-    <StyledRow>
+    <StyledRow isMobile={isMobile}>
       <StyledContent>
         <Outlet />
       </StyledContent>
