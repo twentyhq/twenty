@@ -77,10 +77,6 @@ const ASIDE_GAP = 8;
 const AsideSlot = styled.div`
   flex: 0 0 auto;
   overflow: hidden;
-
-  @media (max-width: ${theme.breakpoints.md}px) {
-    display: none;
-  }
 `;
 
 type AppPreviewLayoutProps = {

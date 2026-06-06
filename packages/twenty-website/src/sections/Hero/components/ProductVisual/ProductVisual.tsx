@@ -47,20 +47,32 @@ const StyledRoot = styled.div<{ $fill: boolean }>`
   }
 `;
 
-const BLEED_WINDOW_WIDTH = 1040;
-const BLEED_WINDOW_HEIGHT = 676;
+const WINDOW_MAX_WIDTH = 1040;
+const WINDOW_HEIGHT = 676;
 
-const ShellScene = styled.div<{ $fill: boolean; $bleed: boolean }>`
-  aspect-ratio: ${({ $fill, $bleed }) =>
-    $fill || $bleed ? 'auto' : '1280 / 832'};
-  flex: ${({ $fill, $bleed }) => ($fill && !$bleed ? '1' : '0 0 auto')};
-  height: ${({ $bleed }) => ($bleed ? `${BLEED_WINDOW_HEIGHT}px` : 'auto')};
+// bleed: fixed-width window that runs off the right edge when the viewport is
+// narrower than it. compact: same fixed height (no aspect scaling) but the width
+// fits the viewport (capped), so the board flexes while the sidebar + AI panel
+// stay legible — used by the morph so the AI panel never bleeds off-screen.
+const ShellScene = styled.div<{
+  $fill: boolean;
+  $bleed: boolean;
+  $compact: boolean;
+}>`
+  aspect-ratio: ${({ $fill, $bleed, $compact }) =>
+    $fill || $bleed || $compact ? 'auto' : '1280 / 832'};
+  flex: ${({ $fill, $bleed, $compact }) =>
+    $fill && !$bleed && !$compact ? '1' : '0 0 auto'};
+  height: ${({ $bleed, $compact }) =>
+    $bleed || $compact ? `${WINDOW_HEIGHT}px` : 'auto'};
   margin: 0 auto;
-  max-height: ${({ $fill, $bleed }) => ($fill || $bleed ? 'none' : '740px')};
+  max-height: ${({ $fill, $bleed, $compact }) =>
+    $fill || $bleed || $compact ? 'none' : '740px'};
+  max-width: ${({ $compact }) => ($compact ? `${WINDOW_MAX_WIDTH}px` : 'none')};
   min-height: 0;
   overflow: hidden;
   position: relative;
-  width: ${({ $bleed }) => ($bleed ? `${BLEED_WINDOW_WIDTH}px` : '100%')};
+  width: ${({ $bleed }) => ($bleed ? `${WINDOW_MAX_WIDTH}px` : '100%')};
 `;
 
 const AiPanel = styled.aside`
@@ -74,10 +86,6 @@ const AiPanel = styled.aside`
   min-height: 0;
   overflow: hidden;
   width: 280px;
-
-  @media (max-width: ${theme.breakpoints.md}px) {
-    display: none;
-  }
 `;
 
 const AiPanelHeader = styled.div`
@@ -286,6 +294,7 @@ type ProductVisualProps = {
   aiPanelProgress?: number;
   bleed?: boolean;
   collaborative?: boolean;
+  compact?: boolean;
   cursorActive?: boolean;
   cursorLayer?: HTMLElement | null;
   desktopSidebarMode?: DesktopSidebarMode;
@@ -400,6 +409,7 @@ export function ProductVisual({
   aiPanelProgress = 1,
   bleed = false,
   collaborative = false,
+  compact = false,
   cursorActive = true,
   cursorLayer,
   desktopSidebarMode = 'expanded',
@@ -478,7 +488,7 @@ export function ProductVisual({
   );
 
   const previewShell = (
-    <AppPreviewFrame fill={fill} mode={frameMode}>
+    <AppPreviewFrame compact={compact} fill={fill} mode={frameMode}>
       <AppPreviewLayout
         activeItem={activeItem}
         activeItemId={activeItemId}
@@ -615,7 +625,7 @@ export function ProductVisual({
 
   return (
     <StyledRoot $fill={fill}>
-      <ShellScene $bleed={bleed} $fill={fill}>
+      <ShellScene $bleed={bleed} $compact={compact} $fill={fill}>
         {frameMode === 'windowed' ? (
           <WindowOrderProvider>{previewShell}</WindowOrderProvider>
         ) : (

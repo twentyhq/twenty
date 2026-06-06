@@ -433,6 +433,7 @@ export function HeroVisualScroll({
             </PatternOverlay>
             <ProductVisual
               activeScene={activeTab + 1}
+              compact
               playbackEnabled
               visual={visual}
             />
@@ -500,8 +501,8 @@ export function HeroVisualScroll({
             </PatternOverlay>
             <ProductVisual
               activeScene={0}
-              bleed
               collaborative
+              compact
               cursorActive={morphProgress < 0.5}
               cursorLayer={introLayerEl}
               fill
@@ -620,6 +621,7 @@ export function HeroVisualScroll({
             <ProductVisual
               activeScene={activeTab + 1}
               aiPanelProgress={aiPanelProgress}
+              compact
               fill
               playbackEnabled={aiPlaybackEnabled}
               visual={visual}

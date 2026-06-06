@@ -14,16 +14,20 @@ export type AppPreviewFrameMode = 'static' | 'windowed';
 const APP_PREVIEW_FRAME_MAX_WIDTH = 1040;
 const APP_PREVIEW_FRAME_ASPECT_RATIO = '1280 / 832';
 
-const StaticFrameRoot = styled.div<{ $fill: boolean }>`
-  align-items: ${({ $fill }) => ($fill ? 'flex-start' : 'stretch')};
+const StaticFrameRoot = styled.div<{ $fill: boolean; $compact: boolean }>`
+  align-items: ${({ $fill, $compact }) =>
+    $fill && !$compact ? 'flex-start' : 'stretch'};
   display: flex;
   height: 100%;
   justify-content: center;
   width: 100%;
 `;
 
-const StaticShell = styled.div<{ $fill: boolean }>`
-  aspect-ratio: ${APP_PREVIEW_FRAME_ASPECT_RATIO};
+// compact fills the (fixed-height, fluid-width) scene box without aspect-ratio,
+// so the board reflows instead of the whole window scaling with width.
+const StaticShell = styled.div<{ $fill: boolean; $compact: boolean }>`
+  aspect-ratio: ${({ $compact }) =>
+    $compact ? 'auto' : APP_PREVIEW_FRAME_ASPECT_RATIO};
   background-color: ${VISUAL_TOKENS.background.primary};
   background-image: ${VISUAL_TOKENS.background.noisy};
   border: 1px solid ${VISUAL_TOKENS.border.color.medium};
@@ -31,9 +35,10 @@ const StaticShell = styled.div<{ $fill: boolean }>`
   box-shadow: ${WINDOW_SHADOWS.mobileResting};
   display: flex;
   flex-direction: column;
-  height: auto;
-  max-height: ${({ $fill }) => ($fill ? 'none' : '100%')};
-  max-width: ${APP_PREVIEW_FRAME_MAX_WIDTH}px;
+  height: ${({ $compact }) => ($compact ? '100%' : 'auto')};
+  max-height: ${({ $fill, $compact }) => ($fill || $compact ? 'none' : '100%')};
+  max-width: ${({ $compact }) =>
+    $compact ? 'none' : `${APP_PREVIEW_FRAME_MAX_WIDTH}px`};
   overflow: hidden;
   position: relative;
   width: 100%;
@@ -52,12 +57,14 @@ const StaticContent = styled.div`
 
 type AppPreviewFrameProps = {
   children: ReactNode;
+  compact?: boolean;
   fill?: boolean;
   mode: AppPreviewFrameMode;
 };
 
 export function AppPreviewFrame({
   children,
+  compact = false,
   fill = false,
   mode,
 }: AppPreviewFrameProps) {
@@ -66,8 +73,8 @@ export function AppPreviewFrame({
   }
 
   return (
-    <StaticFrameRoot $fill={fill}>
-      <StaticShell $fill={fill}>
+    <StaticFrameRoot $compact={compact} $fill={fill}>
+      <StaticShell $compact={compact} $fill={fill}>
         <MacWindowBar interactive={false} />
         <StaticContent>{children}</StaticContent>
       </StaticShell>
