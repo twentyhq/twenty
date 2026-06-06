@@ -82,6 +82,7 @@ const FullLayer = styled.div`
   justify-content: flex-start;
   padding-top: 94px;
   position: absolute;
+  row-gap: ${theme.spacing(6)};
 
   @media (min-width: ${theme.breakpoints.md}px) {
     padding-top: 112px;
@@ -228,14 +229,16 @@ const MobileSection = styled.section`
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding-bottom: ${theme.spacing(16)};
-  padding-top: 96px;
+  padding-top: ${theme.spacing(7.5)};
   position: relative;
+  row-gap: ${theme.spacing(6)};
   width: 100%;
 `;
 
 const MobileVisualWrapper = styled.div`
+  isolation: isolate;
   overflow: hidden;
+  padding-bottom: ${theme.spacing(16)};
   padding-left: ${theme.spacing(4)};
   padding-right: ${theme.spacing(4)};
   position: relative;
@@ -381,8 +384,16 @@ export function HeroVisualScroll({
           </StyledContainer>
 
           <MobileVisualWrapper>
+            <PatternOverlay style={{ opacity: 1.0, zIndex: -1 }}>
+              <ProductBackgroundHalftone
+                dashColor={INTRO_DASH_COLOR}
+                hoverColor={INTRO_DASH_COLOR}
+                imageUrl={PRODUCT_HERO_BACKGROUND_IMAGE}
+              />
+            </PatternOverlay>
             <ProductVisual
               activeScene={0}
+              bleed
               playbackEnabled={false}
               visual={visual}
             />
@@ -413,6 +424,13 @@ export function HeroVisualScroll({
           </StyledContainer>
 
           <MobileVisualWrapper>
+            <PatternOverlay style={{ opacity: 1.0, zIndex: -1 }}>
+              <ProductBackgroundHalftone
+                dashColor={AI_DASH_COLOR}
+                hoverColor={AI_DASH_COLOR}
+                imageUrl={PRODUCT_HERO_BACKGROUND_IMAGE}
+              />
+            </PatternOverlay>
             <ProductVisual
               activeScene={activeTab + 1}
               playbackEnabled
@@ -482,6 +500,7 @@ export function HeroVisualScroll({
             </PatternOverlay>
             <ProductVisual
               activeScene={0}
+              bleed
               collaborative
               cursorActive={morphProgress < 0.5}
               cursorLayer={introLayerEl}

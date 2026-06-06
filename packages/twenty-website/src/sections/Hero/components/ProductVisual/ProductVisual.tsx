@@ -47,15 +47,20 @@ const StyledRoot = styled.div<{ $fill: boolean }>`
   }
 `;
 
-const ShellScene = styled.div<{ $fill: boolean }>`
-  aspect-ratio: ${({ $fill }) => ($fill ? 'auto' : '1280 / 832')};
-  flex: ${({ $fill }) => ($fill ? '1' : '0 0 auto')};
+const BLEED_WINDOW_WIDTH = 1040;
+const BLEED_WINDOW_HEIGHT = 676;
+
+const ShellScene = styled.div<{ $fill: boolean; $bleed: boolean }>`
+  aspect-ratio: ${({ $fill, $bleed }) =>
+    $fill || $bleed ? 'auto' : '1280 / 832'};
+  flex: ${({ $fill, $bleed }) => ($fill && !$bleed ? '1' : '0 0 auto')};
+  height: ${({ $bleed }) => ($bleed ? `${BLEED_WINDOW_HEIGHT}px` : 'auto')};
   margin: 0 auto;
-  max-height: ${({ $fill }) => ($fill ? 'none' : '740px')};
+  max-height: ${({ $fill, $bleed }) => ($fill || $bleed ? 'none' : '740px')};
   min-height: 0;
   overflow: hidden;
   position: relative;
-  width: 100%;
+  width: ${({ $bleed }) => ($bleed ? `${BLEED_WINDOW_WIDTH}px` : '100%')};
 `;
 
 const AiPanel = styled.aside`
@@ -279,6 +284,7 @@ const SendBtn = styled.span`
 type ProductVisualProps = {
   activeScene?: number;
   aiPanelProgress?: number;
+  bleed?: boolean;
   collaborative?: boolean;
   cursorActive?: boolean;
   cursorLayer?: HTMLElement | null;
@@ -392,6 +398,7 @@ function renderAssistantText(paragraphs: string[], visibleLength: number) {
 export function ProductVisual({
   activeScene,
   aiPanelProgress = 1,
+  bleed = false,
   collaborative = false,
   cursorActive = true,
   cursorLayer,
@@ -608,7 +615,7 @@ export function ProductVisual({
 
   return (
     <StyledRoot $fill={fill}>
-      <ShellScene $fill={fill}>
+      <ShellScene $bleed={bleed} $fill={fill}>
         {frameMode === 'windowed' ? (
           <WindowOrderProvider>{previewShell}</WindowOrderProvider>
         ) : (
