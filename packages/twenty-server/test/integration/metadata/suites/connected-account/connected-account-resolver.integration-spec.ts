@@ -118,4 +118,37 @@ describe('connectedAccountResolver (e2e)', () => {
       expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
     });
   });
+
+  describe('sendEmail', () => {
+    it("should reject sending from another member's connected account", async () => {
+      const response = await makeMetadataAPIRequest({
+        query: gql`
+          mutation SendEmail($input: SendEmailInput!) {
+            sendEmail(input: $input) {
+              success
+              error
+            }
+          }
+        `,
+        variables: {
+          input: {
+            connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY,
+            to: 'recipient@example.com',
+            subject: 'Should never be sent',
+            body: '<p>Should never be sent</p>',
+          },
+        },
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body.errors).toBeUndefined();
+
+      const result = response.body.data.sendEmail;
+
+      expect(result.success).toBe(false);
+      expect(result.error).toMatchInlineSnapshot(
+        `"Connected account 20202020-0cc8-4d60-a3a4-803245698908 does not belong to user workspace 20202020-1e7c-43d9-a5db-685b5069d816"`,
+      );
+    });
+  });
 });

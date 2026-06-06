@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`successful find view with all sub-relations (e2e) Company View Structure Validation should successfully fetch complete view structure with all sub-relations in single GraphQL query 1`] = `
 {
@@ -84,18 +84,6 @@ exports[`successful find view with all sub-relations (e2e) Company View Structur
       "id": Any<String>,
       "isVisible": true,
       "position": 5,
-      "size": 150,
-      "updatedAt": Any<String>,
-      "viewFieldGroupId": null,
-      "viewId": Any<String>,
-    },
-    {
-      "createdAt": Any<String>,
-      "deletedAt": null,
-      "fieldMetadataId": Any<String>,
-      "id": Any<String>,
-      "isVisible": true,
-      "position": 6,
       "size": 170,
       "updatedAt": Any<String>,
       "viewFieldGroupId": null,
@@ -107,7 +95,7 @@ exports[`successful find view with all sub-relations (e2e) Company View Structur
       "fieldMetadataId": Any<String>,
       "id": Any<String>,
       "isVisible": true,
-      "position": 7,
+      "position": 6,
       "size": 170,
       "updatedAt": Any<String>,
       "viewFieldGroupId": null,

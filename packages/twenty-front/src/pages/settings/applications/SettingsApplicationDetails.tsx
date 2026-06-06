@@ -41,7 +41,6 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
-import { SettingsApplicationDetailTitle } from '~/pages/settings/applications/components/SettingsApplicationDetailTitle';
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
@@ -326,13 +325,7 @@ export const SettingsApplicationDetails = () => {
   return (
     <CurrentApplicationContext.Provider value={application?.id ?? null}>
       <SettingsPageLayout
-        title={
-          <SettingsApplicationDetailTitle
-            displayName={displayName}
-            description={description}
-            applicationId={application?.id}
-          />
-        }
+        title={displayName}
         links={[
           {
             children: t`Workspace`,

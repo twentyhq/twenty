@@ -17,7 +17,7 @@ Resolve the intended workspace before selecting a Twenty MCP server:
 Use the selected connected Twenty MCP server when it is available:
 
 ```text
-get_tool_catalog -> learn_tools -> execute_tool
+learn_tools -> execute_tool
 ```
 
 - Discover object, field, filter, and sort names before querying.

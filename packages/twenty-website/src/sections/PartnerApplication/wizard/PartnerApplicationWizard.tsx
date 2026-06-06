@@ -150,16 +150,29 @@ function StepRenderer({
   }
 }
 
+type DialogPrimitive = React.ComponentType<{ render?: React.ReactElement }>;
+
+type WizardSlots = {
+  Title?: DialogPrimitive;
+  Description?: DialogPrimitive;
+};
+
 type WizardProps = {
   resetSignal: number;
   onSuccess: () => void;
+  slots?: WizardSlots;
 };
 
 export function PartnerApplicationWizard({
   resetSignal,
   onSuccess,
+  slots,
 }: WizardProps) {
   const { i18n } = useLingui();
+  const {
+    Title = Modal.Title as DialogPrimitive,
+    Description = Modal.Description as DialogPrimitive,
+  } = slots ?? {};
   const controller = usePartnerApplicationState();
   const {
     state,
@@ -247,7 +260,7 @@ export function PartnerApplicationWizard({
     return (
       <>
         <TitleBlock>
-          <Modal.Title
+          <Title
             render={
               <TitleHeadingWrapper>
                 <Heading as="h2" size="lg" weight="light">
@@ -286,7 +299,7 @@ export function PartnerApplicationWizard({
       <TitleBlock>
         {stepIndex === 0 ? (
           <>
-            <Modal.Title
+            <Title
               render={
                 <TitleHeadingWrapper>
                   <Heading as="h2" size="lg" weight="light">
@@ -301,7 +314,7 @@ export function PartnerApplicationWizard({
                 </TitleHeadingWrapper>
               }
             />
-            <Modal.Description
+            <Description
               render={
                 <SubtitleStack>
                   <Body size="md">
@@ -319,7 +332,7 @@ export function PartnerApplicationWizard({
           {stepIndex === 0 ? (
             <HeaderLabel>{stepLabelNode}</HeaderLabel>
           ) : (
-            <Modal.Title render={<HeaderLabel>{stepLabelNode}</HeaderLabel>} />
+            <Title render={<HeaderLabel>{stepLabelNode}</HeaderLabel>} />
           )}
           <StepIndicator stepCount={STEPS.length} activeStepIndex={stepIndex} />
         </HeaderStrip>

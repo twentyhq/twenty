@@ -772,6 +772,11 @@ msgstr "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CR
 msgid "Apply to build"
 msgstr "Apply to build"
 
+#. js-lingui-id: zX3HUD
+#: src/lib/website-routing/static-website-routes.ts
+msgid "Apply to join the Twenty certified partner ecosystem."
+msgstr "Apply to join the Twenty certified partner ecosystem."
+
 #. js-lingui-id: 8HV3WN
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 #: src/app/[locale]/partners/list/components/chip-labels.ts
@@ -909,6 +914,11 @@ msgstr "become a genius!"
 msgid "Become a partner"
 msgstr "Become a partner"
 
+#. js-lingui-id: 7ysT6Z
+#: src/lib/website-routing/static-website-routes.ts
+msgid "Become a Twenty Partner — Application"
+msgstr "Become a Twenty Partner — Application"
+
 #. js-lingui-id: 0TCnEf
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Belarus 🇧🇾"
@@ -966,7 +976,6 @@ msgstr "Bolivia 🇧🇴"
 
 #. js-lingui-id: MkvsWx
 #: src/app/[locale]/partners/profile/[slug]/components/PartnerProfileCtas.tsx
-#: src/app/[locale]/partners/list/components/PartnerCard.tsx
 msgid "Book a call"
 msgstr "Book a call"
 
@@ -1252,6 +1261,11 @@ msgstr "Connected via API"
 #: src/app/[locale]/customers/alternative-partners/page.tsx
 msgid "Consulting"
 msgstr "Consulting"
+
+#. js-lingui-id: GsUBlG
+#: src/app/[locale]/partners/profile/[slug]/components/PartnerProfileCtas.tsx
+msgid "Contact {partnerName}"
+msgstr "Contact {partnerName}"
 
 #. js-lingui-id: Oii3vg
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -1882,6 +1896,7 @@ msgstr "Find a certified Twenty partner to migrate, customise, and operate your 
 
 #. js-lingui-id: TJ7HQl
 #: src/app/[locale]/pricing/_components/PricingEngagementBand.tsx
+#: src/app/[locale]/partners/components/PartnerApplication/PartnerSignoffCtas.tsx
 #: src/app/[locale]/partners/components/PartnerApplication/PartnerHeroCtas.tsx
 msgid "Find a partner"
 msgstr "Find a partner"
@@ -2188,6 +2203,11 @@ msgstr "Help"
 msgid "Help center"
 msgstr "Help center"
 
+#. js-lingui-id: LiWOgh
+#: src/app/[locale]/partners/profile/[slug]/components/PartnerProfileCtas.tsx
+msgid "Hey, I'm interested in meeting. Here's my project:"
+msgstr "Hey, I'm interested in meeting. Here's my project:"
+
 #. js-lingui-id: tGjibo
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 #: src/app/[locale]/partners/list/components/chip-labels.ts
@@ -2391,6 +2411,11 @@ msgstr "Integration"
 #: src/lib/website-routing/static-website-routes.ts
 msgid "Interactive halftone generator exported from Twenty."
 msgstr "Interactive halftone generator exported from Twenty."
+
+#. js-lingui-id: +83cJG
+#: src/app/[locale]/partners/profile/[slug]/components/PartnerProfileCtas.tsx
+msgid "Interested in meeting {partnerName}"
+msgstr "Interested in meeting {partnerName}"
 
 #. js-lingui-id: mdsMtj
 #: src/app/[locale]/customers/elevate-consulting/page.tsx
@@ -4036,7 +4061,6 @@ msgstr "Tajikistan 🇹🇯"
 #. js-lingui-id: JAKtcG
 #: src/sections/Footer/data.ts
 #: src/sections/Faq/Faq.tsx
-#: src/app/[locale]/partners/components/PartnerApplication/PartnerSignoffCtas.tsx
 #: src/app/[locale]/customers/_components/CustomersCatalogSignoff.tsx
 #: src/app/[locale]/customers/_components/CustomersCaseStudySignoff.tsx
 #: src/app/[locale]/(home)/_components/HomeHero.tsx
@@ -4662,6 +4686,11 @@ msgstr "View {0} on LinkedIn"
 #: src/app/[locale]/partners/profile/[slug]/components/PartnerProfileCtas.tsx
 msgid "View on LinkedIn"
 msgstr "View on LinkedIn"
+
+#. js-lingui-id: 73lp8c
+#: src/app/[locale]/partners/list/components/PartnerCard.tsx
+msgid "View profile"
+msgstr "View profile"
 
 #. js-lingui-id: BAzC1v
 #: src/app/[locale]/pricing/plan-table.data.ts
