@@ -1648,6 +1648,7 @@ export type FeatureFlag = {
 };
 
 export enum FeatureFlagKey {
+  IS_CALL_RECORDING_ENABLED = 'IS_CALL_RECORDING_ENABLED',
   IS_EMAIL_GROUP_ENABLED = 'IS_EMAIL_GROUP_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_JUNCTION_RELATIONS_ENABLED = 'IS_JUNCTION_RELATIONS_ENABLED',
@@ -3314,6 +3315,7 @@ export type MutationStopAgentChatStreamArgs = {
 
 
 export type MutationSyncApplicationArgs = {
+  dryRun?: InputMaybe<Scalars['Boolean']>;
   manifest: Scalars['JSON'];
 };
 
