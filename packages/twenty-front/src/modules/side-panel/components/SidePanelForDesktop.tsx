@@ -25,13 +25,18 @@ const StyledSidePanelWrapper = styled.div<{
   isOpen: boolean;
   isResizing: boolean;
 }>`
+  box-sizing: border-box;
   flex-shrink: 0;
   min-width: 0;
   overflow: hidden;
+  padding: ${({ isOpen }) =>
+    isOpen
+      ? `${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]} 0`
+      : '0'};
   transition: ${({ isResizing }) =>
     isResizing
       ? 'none'
-      : `width calc(${themeCssVariables.animation.duration.normal} * 1s)`};
+      : `width calc(${themeCssVariables.animation.duration.normal} * 1s), padding calc(${themeCssVariables.animation.duration.normal} * 1s)`};
   width: ${({ isOpen }) => (isOpen ? `var(${SIDE_PANEL_WIDTH_VAR})` : '0px')};
 `;
 

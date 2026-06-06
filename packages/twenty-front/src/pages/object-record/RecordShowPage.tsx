@@ -7,7 +7,7 @@ import { TimelineActivityContext } from '@/activities/timeline-activities/contex
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { MainContainerLayoutWithSidePanel } from '@/object-record/components/MainContainerLayoutWithSidePanel';
+import { MainContainerLayout } from '@/object-record/components/MainContainerLayout';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/components/PageLayoutRecordPageRenderer';
 import { RecordShowPageSSESubscribeEffect } from '@/object-record/record-show/components/RecordShowPageSSESubscribeEffect';
@@ -58,7 +58,7 @@ export const RecordShowPage = () => {
               <RecordShowCommandMenu />
               {!isLayoutCustomizationModeEnabled && <SidePanelToggleButton />}
             </RecordShowPageHeader>
-            <MainContainerLayoutWithSidePanel>
+            <MainContainerLayout>
               <TimelineActivityContext.Provider
                 value={{
                   recordId: objectRecordId,
@@ -76,7 +76,7 @@ export const RecordShowPage = () => {
                   recordId={objectRecordId}
                 />
               </TimelineActivityContext.Provider>
-            </MainContainerLayoutWithSidePanel>
+            </MainContainerLayout>
           </PageContainer>
         </CommandMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
