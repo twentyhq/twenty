@@ -553,6 +553,9 @@ export const STANDARD_OBJECTS = {
       status: {
         universalIdentifier: '3e617680-d93e-4309-a54f-90f69528bfd7',
       },
+      recordingRequestStatus: {
+        universalIdentifier: '7fd681c9-244c-4e98-8939-7b175d472638',
+      },
       applicationId: {
         universalIdentifier: '24ec1239-1240-42cb-8a2d-302632378e09',
       },
@@ -608,6 +611,9 @@ export const STANDARD_OBJECTS = {
           status: {
             universalIdentifier: '6c4a81a2-d9c1-4f82-984c-f97e083ca710',
           },
+          recordingRequestStatus: {
+            universalIdentifier: '3bdedacd-0fd5-4175-8d28-2fe41bb5aa77',
+          },
           title: {
             universalIdentifier: 'b1d5051b-071d-4514-93cf-704724cdc8f6',
           },
@@ -629,6 +635,9 @@ export const STANDARD_OBJECTS = {
           },
           status: {
             universalIdentifier: '93483569-fcd2-46cf-b576-9f0318ad2b3b',
+          },
+          recordingRequestStatus: {
+            universalIdentifier: '364a90b1-e9aa-4606-996b-46e579ebeb28',
           },
           startedAt: {
             universalIdentifier: '3fd00fbb-c153-45e3-b6e6-43d18d34052a',

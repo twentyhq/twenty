@@ -65,7 +65,7 @@ describe('CallRecording standard metadata build', () => {
     expect(recordingPreferenceField).toBeDefined();
   });
 
-  it('keeps the callRecording table view focused on its label identifier and status', () => {
+  it('keeps the callRecording table view focused on its label identifier and statuses', () => {
     const viewFieldFieldUniversalIdentifiers = Object.values(
       allFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier,
     )
@@ -78,11 +78,13 @@ describe('CallRecording standard metadata build', () => {
       )
       .map((viewField) => viewField.fieldMetadataUniversalIdentifier);
 
-    expect(viewFieldFieldUniversalIdentifiers).toHaveLength(3);
+    expect(viewFieldFieldUniversalIdentifiers).toHaveLength(4);
     expect(viewFieldFieldUniversalIdentifiers).toEqual(
       expect.arrayContaining([
         STANDARD_OBJECTS.callRecording.fields.title.universalIdentifier,
         STANDARD_OBJECTS.callRecording.fields.status.universalIdentifier,
+        STANDARD_OBJECTS.callRecording.fields.recordingRequestStatus
+          .universalIdentifier,
         STANDARD_OBJECTS.callRecording.fields.startedAt.universalIdentifier,
       ]),
     );
@@ -101,11 +103,13 @@ describe('CallRecording standard metadata build', () => {
       )
       .map((viewField) => viewField.fieldMetadataUniversalIdentifier);
 
-    expect(viewFieldFieldUniversalIdentifiers).toHaveLength(8);
+    expect(viewFieldFieldUniversalIdentifiers).toHaveLength(9);
     expect(viewFieldFieldUniversalIdentifiers).toEqual(
       expect.arrayContaining([
         STANDARD_OBJECTS.callRecording.fields.title.universalIdentifier,
         STANDARD_OBJECTS.callRecording.fields.status.universalIdentifier,
+        STANDARD_OBJECTS.callRecording.fields.recordingRequestStatus
+          .universalIdentifier,
         STANDARD_OBJECTS.callRecording.fields.startedAt.universalIdentifier,
         STANDARD_OBJECTS.callRecording.fields.endedAt.universalIdentifier,
         STANDARD_OBJECTS.callRecording.fields.video.universalIdentifier,

@@ -9,22 +9,25 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const CALL_RECORDING_STATUS_FIELD_UNIVERSAL_IDENTIFIER =
-  STANDARD_OBJECTS.callRecording.fields.status.universalIdentifier;
-
-const CANCELED_CALL_RECORDING_STATUS = 'CANCELED';
+const CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.callRecording.universalIdentifier;
+const CALL_RECORDING_REQUEST_STATUS_FIELD_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.callRecording.fields.recordingRequestStatus
+    .universalIdentifier;
+const CALL_RECORDING_REQUEST_STATUS_FIELD_NAME = 'recordingRequestStatus';
 
 @RegisteredWorkspaceCommand('2.11.0', 1799000060000)
 @Command({
-  name: 'upgrade:2-11:sync-call-recording-canceled-status',
+  name: 'upgrade:2-11:sync-call-recording-request-status',
   description:
-    'Add the CANCELED option to the CallRecording status field in existing workspaces',
+    'Create the CallRecording recordingRequestStatus field in existing workspaces',
 })
-export class SyncCallRecordingCanceledStatusCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class SyncCallRecordingRequestStatusCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -45,27 +48,48 @@ export class SyncCallRecordingCanceledStatusCommand extends ActiveOrSuspendedWor
         { workspaceId },
       );
 
-    const { flatFieldMetadataMaps } =
+    const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatFieldMetadataMaps',
+        'flatObjectMetadataMaps',
       ]);
 
-    const existingStatusField =
-      flatFieldMetadataMaps.byUniversalIdentifier[
-        CALL_RECORDING_STATUS_FIELD_UNIVERSAL_IDENTIFIER
+    const existingCallRecordingObjectMetadata =
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER
       ];
 
-    if (!isDefined(existingStatusField)) {
+    if (!isDefined(existingCallRecordingObjectMetadata)) {
       this.logger.log(
-        `CallRecording status field does not exist for workspace ${workspaceId}, skipping`,
+        `CallRecording object metadata does not exist for workspace ${workspaceId}, skipping`,
       );
 
       return;
     }
 
-    if (hasCanceledOption(existingStatusField)) {
+    const existingRecordingRequestStatusField =
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        CALL_RECORDING_REQUEST_STATUS_FIELD_UNIVERSAL_IDENTIFIER
+      ];
+
+    if (isDefined(existingRecordingRequestStatusField)) {
       this.logger.log(
-        `CallRecording status field already includes ${CANCELED_CALL_RECORDING_STATUS} for workspace ${workspaceId}, skipping`,
+        `CallRecording recordingRequestStatus field already exists for workspace ${workspaceId}, skipping`,
+      );
+
+      return;
+    }
+
+    if (
+      hasFieldNameConflict({
+        flatFieldMetadatas: Object.values(
+          flatFieldMetadataMaps.byUniversalIdentifier,
+        ).filter(isDefined),
+        callRecordingObjectMetadata: existingCallRecordingObjectMetadata,
+      })
+    ) {
+      this.logger.warn(
+        `Field name "${CALL_RECORDING_REQUEST_STATUS_FIELD_NAME}" is already taken on CallRecording for workspace ${workspaceId}; skipping`,
       );
 
       return;
@@ -78,25 +102,19 @@ export class SyncCallRecordingCanceledStatusCommand extends ActiveOrSuspendedWor
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
 
-    const standardStatusField =
+    const standardRecordingRequestStatusField =
       standardAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
-        CALL_RECORDING_STATUS_FIELD_UNIVERSAL_IDENTIFIER
+        CALL_RECORDING_REQUEST_STATUS_FIELD_UNIVERSAL_IDENTIFIER
       ];
 
-    if (!isDefined(standardStatusField?.options)) {
+    if (!isDefined(standardRecordingRequestStatusField)) {
       throw new Error(
-        `Standard CallRecording status field options not found for workspace ${workspaceId}`,
+        `Standard CallRecording recordingRequestStatus field not found for workspace ${workspaceId}`,
       );
     }
 
-    const statusFieldToUpdate: FlatFieldMetadata = {
-      ...existingStatusField,
-      options: standardStatusField.options,
-      updatedAt: new Date().toISOString(),
-    };
-
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Adding ${CANCELED_CALL_RECORDING_STATUS} to CallRecording status field for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Creating CallRecording recordingRequestStatus field for workspace ${workspaceId}`,
     );
 
     if (isDryRun) {
@@ -112,9 +130,9 @@ export class SyncCallRecordingCanceledStatusCommand extends ActiveOrSuspendedWor
           workspaceId,
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {
-              flatEntityToCreate: [],
+              flatEntityToCreate: [standardRecordingRequestStatusField],
               flatEntityToDelete: [],
-              flatEntityToUpdate: [statusFieldToUpdate],
+              flatEntityToUpdate: [],
             },
           },
         },
@@ -122,7 +140,7 @@ export class SyncCallRecordingCanceledStatusCommand extends ActiveOrSuspendedWor
 
     if (validateAndBuildResult.status === 'fail') {
       throw new Error(
-        `Failed to add ${CANCELED_CALL_RECORDING_STATUS} to CallRecording status field for workspace ${workspaceId}: ${JSON.stringify(
+        `Failed to create CallRecording recordingRequestStatus field for workspace ${workspaceId}: ${JSON.stringify(
           validateAndBuildResult,
           null,
           2,
@@ -131,12 +149,21 @@ export class SyncCallRecordingCanceledStatusCommand extends ActiveOrSuspendedWor
     }
 
     this.logger.log(
-      `Added ${CANCELED_CALL_RECORDING_STATUS} to CallRecording status field for workspace ${workspaceId}`,
+      `Created CallRecording recordingRequestStatus field for workspace ${workspaceId}`,
     );
   }
 }
 
-const hasCanceledOption = (fieldMetadata: FlatFieldMetadata): boolean =>
-  fieldMetadata.options?.some(
-    (option) => option.value === CANCELED_CALL_RECORDING_STATUS,
-  ) === true;
+const hasFieldNameConflict = ({
+  flatFieldMetadatas,
+  callRecordingObjectMetadata,
+}: {
+  flatFieldMetadatas: FlatFieldMetadata[];
+  callRecordingObjectMetadata: FlatObjectMetadata;
+}): boolean =>
+  flatFieldMetadatas.some(
+    (flatFieldMetadata) =>
+      flatFieldMetadata.objectMetadataUniversalIdentifier ===
+        callRecordingObjectMetadata.universalIdentifier &&
+      flatFieldMetadata.name === CALL_RECORDING_REQUEST_STATUS_FIELD_NAME,
+  );

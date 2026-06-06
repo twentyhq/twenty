@@ -12,6 +12,8 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { CalendarEventRecordingPolicyJob } from 'src/modules/calendar/calendar-event-recording-manager/jobs/calendar-event-recording-policy.job';
+import { CallRecordingRequestStatus } from 'src/modules/call-recording/common/enums/call-recording-request-status.enum';
+import { CallRecordingStatus } from 'src/modules/call-recording/common/enums/call-recording-status.enum';
 
 const TEST_WORKSPACE_SCHEMA = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
 
@@ -41,7 +43,8 @@ const CAN_UPDATE_CALENDAR_EVENT_RECORDING_PREFERENCE = gql`
 type CallRecordingRow = {
   id: string;
   title: string;
-  status: string;
+  status: CallRecordingStatus;
+  recordingRequestStatus: CallRecordingRequestStatus;
   calendarEventId: string;
   startedAt: string;
   endedAt: string;
@@ -124,17 +127,18 @@ describe('calendar event recording preference lifecycle (e2e)', () => {
 
     await reconcileCalendarEventRecording([calendarEventId]);
 
-    expect(await findCallRecordingsByCalendarEventIds([calendarEventId])).toEqual(
-      [
-        expect.objectContaining({
-          title: 'Customer sync',
-          status: 'SCHEDULED',
-          calendarEventId,
-          startedAt: FUTURE_START,
-          endedAt: FUTURE_END,
-        }),
-      ],
-    );
+    expect(
+      await findCallRecordingsByCalendarEventIds([calendarEventId]),
+    ).toEqual([
+      expect.objectContaining({
+        title: 'Customer sync',
+        status: CallRecordingStatus.SCHEDULED,
+        recordingRequestStatus: CallRecordingRequestStatus.REQUESTED,
+        calendarEventId,
+        startedAt: FUTURE_START,
+        endedAt: FUTURE_END,
+      }),
+    ]);
 
     const updateOffResponse = await updateCalendarEventRecordingPreference({
       calendarEventId,
@@ -145,14 +149,15 @@ describe('calendar event recording preference lifecycle (e2e)', () => {
 
     await reconcileCalendarEventRecording([calendarEventId]);
 
-    expect(await findCallRecordingsByCalendarEventIds([calendarEventId])).toEqual(
-      [
-        expect.objectContaining({
-          status: 'CANCELED',
-          calendarEventId,
-        }),
-      ],
-    );
+    expect(
+      await findCallRecordingsByCalendarEventIds([calendarEventId]),
+    ).toEqual([
+      expect.objectContaining({
+        status: CallRecordingStatus.SCHEDULED,
+        recordingRequestStatus: CallRecordingRequestStatus.CANCELED,
+        calendarEventId,
+      }),
+    ]);
   });
 
   it('rejects preference updates from users who are not participants', async () => {
@@ -233,7 +238,7 @@ describe('calendar event recording preference lifecycle (e2e)', () => {
       ]),
     ).toEqual([
       expect.objectContaining({
-        status: 'SCHEDULED',
+        status: CallRecordingStatus.SCHEDULED,
         calendarEventId: activeCalendarEventId,
       }),
     ]);

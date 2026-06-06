@@ -10,17 +10,18 @@ import { type CalendarEventRecordingPolicyResultForMeeting } from 'src/modules/c
 import { type CalendarEventRecordingReconciliationResult } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording-reconciliation-result.type';
 import { type RemovedCalendarEventRecordingOccurrence } from 'src/modules/calendar/calendar-event-recording-manager/types/removed-calendar-event-recording-occurrence.type';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
+import { CallRecordingRequestStatus } from 'src/modules/call-recording/common/enums/call-recording-request-status.enum';
+import { CallRecordingStatus } from 'src/modules/call-recording/common/enums/call-recording-status.enum';
 import { type CallRecordingWorkspaceEntity } from 'src/modules/call-recording/standard-objects/call-recording.workspace-entity';
-
-const CALL_RECORDING_STATUS = {
-  SCHEDULED: 'SCHEDULED',
-  CANCELED: 'CANCELED',
-  COMPLETED: 'COMPLETED',
-} as const;
 
 type ScheduledCallRecordingFields = Pick<
   CallRecordingWorkspaceEntity,
-  'title' | 'status' | 'startedAt' | 'endedAt' | 'calendarEventId'
+  | 'title'
+  | 'status'
+  | 'recordingRequestStatus'
+  | 'startedAt'
+  | 'endedAt'
+  | 'calendarEventId'
 >;
 
 @Injectable()
@@ -145,26 +146,38 @@ const reconcileActiveMeeting = async ({
     };
   }
 
-  const existingCallRecording = getFirstNonCompletedCallRecording(
-    await findCallRecordingsByCalendarEventIds({
-      callRecordingRepository,
-      calendarEventIds,
-    }),
+  const existingCallRecordings = await findCallRecordingsByCalendarEventIds({
+    callRecordingRepository,
+    calendarEventIds,
+  });
+  const existingPolicyManagedCallRecording = getFirstPolicyManagedCallRecording(
+    existingCallRecordings,
   );
   const callRecordingFields = buildScheduledCallRecordingFields(
     representativeCalendarEvent,
   );
 
-  if (isDefined(existingCallRecording)) {
+  if (isDefined(existingPolicyManagedCallRecording)) {
     await callRecordingRepository.update(
-      existingCallRecording.id,
+      existingPolicyManagedCallRecording.id,
       callRecordingFields,
     );
 
     return {
       action: 'UPDATED',
       realMeetingKey: meetingPolicyResult.realMeetingKey,
-      callRecordingId: existingCallRecording.id,
+      callRecordingId: existingPolicyManagedCallRecording.id,
+    };
+  }
+
+  const existingNonPolicyManagedOpenCallRecording =
+    getFirstNonPolicyManagedOpenCallRecording(existingCallRecordings);
+
+  if (isDefined(existingNonPolicyManagedOpenCallRecording)) {
+    return {
+      action: 'SKIPPED',
+      realMeetingKey: meetingPolicyResult.realMeetingKey,
+      callRecordingId: existingNonPolicyManagedOpenCallRecording.id,
     };
   }
 
@@ -201,8 +214,9 @@ const reconcileCanceledMeeting = async ({
     })
   ).filter(
     (callRecording) =>
-      callRecording.status !== CALL_RECORDING_STATUS.COMPLETED &&
-      callRecording.status !== CALL_RECORDING_STATUS.CANCELED,
+      callRecording.status === CallRecordingStatus.SCHEDULED &&
+      callRecording.recordingRequestStatus ===
+        CallRecordingRequestStatus.REQUESTED,
   );
 
   if (cancellableCallRecordings.length === 0) {
@@ -216,7 +230,9 @@ const reconcileCanceledMeeting = async ({
   await callRecordingRepository.updateMany(
     cancellableCallRecordings.map((callRecording) => ({
       criteria: callRecording.id,
-      partialEntity: { status: CALL_RECORDING_STATUS.CANCELED },
+      partialEntity: {
+        recordingRequestStatus: CallRecordingRequestStatus.CANCELED,
+      },
     })),
   );
 
@@ -250,7 +266,8 @@ const buildScheduledCallRecordingFields = (
   calendarEvent: CalendarEventWorkspaceEntity,
 ): ScheduledCallRecordingFields => ({
   title: calendarEvent.title,
-  status: CALL_RECORDING_STATUS.SCHEDULED,
+  status: CallRecordingStatus.SCHEDULED,
+  recordingRequestStatus: CallRecordingRequestStatus.REQUESTED,
   startedAt: calendarEvent.startsAt,
   endedAt: calendarEvent.endsAt,
   calendarEventId: calendarEvent.id,
@@ -272,17 +289,42 @@ const buildRemovedCalendarEventIdsByMeetingKey = (
   return calendarEventIdsByMeetingKey;
 };
 
-const getFirstNonCompletedCallRecording = (
+const getFirstPolicyManagedCallRecording = (
   callRecordings: CallRecordingWorkspaceEntity[],
 ): CallRecordingWorkspaceEntity | undefined =>
-  [...callRecordings]
-    .sort((firstCallRecording, secondCallRecording) =>
-      firstCallRecording.id.localeCompare(secondCallRecording.id),
-    )
-    .find(
-      (callRecording) =>
-        callRecording.status !== CALL_RECORDING_STATUS.COMPLETED,
-    );
+  getSortedCallRecordings(callRecordings).find(
+    (callRecording) =>
+      callRecording.status === CallRecordingStatus.SCHEDULED &&
+      (callRecording.recordingRequestStatus ===
+        CallRecordingRequestStatus.REQUESTED ||
+        callRecording.recordingRequestStatus ===
+          CallRecordingRequestStatus.CANCELED),
+  );
+
+const getFirstNonPolicyManagedOpenCallRecording = (
+  callRecordings: CallRecordingWorkspaceEntity[],
+): CallRecordingWorkspaceEntity | undefined =>
+  getSortedCallRecordings(callRecordings).find(
+    (callRecording) =>
+      callRecording.status !== CallRecordingStatus.COMPLETED &&
+      !isPolicyManagedCallRecording(callRecording),
+  );
+
+const isPolicyManagedCallRecording = (
+  callRecording: CallRecordingWorkspaceEntity,
+): boolean =>
+  callRecording.status === CallRecordingStatus.SCHEDULED &&
+  (callRecording.recordingRequestStatus ===
+    CallRecordingRequestStatus.REQUESTED ||
+    callRecording.recordingRequestStatus ===
+      CallRecordingRequestStatus.CANCELED);
+
+const getSortedCallRecordings = (
+  callRecordings: CallRecordingWorkspaceEntity[],
+): CallRecordingWorkspaceEntity[] =>
+  [...callRecordings].sort((firstCallRecording, secondCallRecording) =>
+    firstCallRecording.id.localeCompare(secondCallRecording.id),
+  );
 
 const getUniqueSortedCalendarEventIds = (calendarEventIds: string[]) =>
   [...new Set(calendarEventIds)].sort(
