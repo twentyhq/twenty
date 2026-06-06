@@ -1,0 +1,14 @@
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/mail-sender/__tests__/send-email.workflow-action.spec.ts
+  s_684fd1e9eab933::t_07bfa1c9df9a1e 51,62-64,77
+  s_684fd1e9eab933::t_2ef9dbe731fc2f 187-218
+packages/twenty-server/src/engine/core-modules/tool/tools/email-tool/__tests__/email-composer.service.spec.ts
+  s_684fd1e9eab933::t_45e9575605ffb6 293-314
+  s_684fd1e9eab933::t_5399f88d7d4f57 107-114
+  s_684fd1e9eab933::t_277ba366cee80f 195-212
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "e5ed2889ed4055663738d23e1443bb34f8b5d5d1",
+  "prompts": {}
+}
