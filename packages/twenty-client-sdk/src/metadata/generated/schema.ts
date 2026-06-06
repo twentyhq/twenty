@@ -1111,7 +1111,7 @@ export interface EmailingDomain {
     __typename: 'EmailingDomain'
 }
 
-export type EmailingDomainDriver = 'AWS_SES'
+export type EmailingDomainDriver = 'AWS_SES' | 'LOG'
 
 export type EmailingDomainStatus = 'PENDING' | 'VERIFIED' | 'FAILED' | 'TEMPORARY_FAILURE'
 
@@ -8733,7 +8733,8 @@ export const enumPageLayoutType = {
 }
 
 export const enumEmailingDomainDriver = {
-   AWS_SES: 'AWS_SES' as const
+   AWS_SES: 'AWS_SES' as const,
+   LOG: 'LOG' as const
 }
 
 export const enumEmailingDomainStatus = {

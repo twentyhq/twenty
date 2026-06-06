@@ -1454,6 +1454,7 @@ type EmailingDomain {
 
 enum EmailingDomainDriver {
   AWS_SES
+  LOG
 }
 
 enum EmailingDomainStatus {
