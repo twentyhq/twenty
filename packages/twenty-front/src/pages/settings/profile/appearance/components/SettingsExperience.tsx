@@ -1,6 +1,6 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FormatPreferencesSettings } from '@/settings/experience/components/FormatPreferencesSettings';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -15,7 +15,7 @@ export const SettingsExperience = () => {
   const { t } = useLingui();
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`Experience`}
       links={[
         {
@@ -54,6 +54,6 @@ export const SettingsExperience = () => {
         </Section>
         {/* Unified into FormatPreferencesSettings */}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

@@ -1,4 +1,4 @@
-import { type RawAuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 
 export type WorkspaceAuthContextType =
   | 'system'

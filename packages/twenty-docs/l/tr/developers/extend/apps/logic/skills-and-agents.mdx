@@ -64,6 +64,75 @@ export default defineAgent({
 * `description` (isteğe bağlı), ajanın ne yaptığı hakkında bağlam sağlar.
 * `icon` (isteğe bağlı), UI'de gösterilen simgeyi ayarlar.
 * `modelId` (isteğe bağlı), ajanın kullandığı varsayılan yapay zekâ modelini geçersiz kılar.
+* `responseFormat` (isteğe bağlı), ajan çıktısının şeklini kontrol eder. Serbest biçimli metin için varsayılan olarak `{ type: 'text' }` kullanılır. Yapılandırılmış JSON çıktısını zorunlu kılmak için `{ type: 'json', schema }` kullanın.
+
+Varsayılan olarak bir ajan serbest biçimli metin döndürür. Yapılandırılmış çıktı almak için, `responseFormat` değerini `{ type: 'json' }` yapın ve bir `schema` sağlayın:
+
+```ts src/agents/structured-agent.ts
+import { defineAgent } from 'twenty-sdk/define';
+
+export default defineAgent({
+  universalIdentifier: 'c4d5e6f7-a8b9-0123-cdef-456789012345',
+  name: 'lead-scorer',
+  label: 'Lead Scorer',
+  prompt: 'Score the lead and explain your reasoning.',
+  responseFormat: {
+    type: 'json',
+    schema: {
+      type: 'object',
+      properties: {
+        score: { type: 'number', description: 'Lead score from 0 to 100' },
+        summary: { type: 'string', description: 'Short reasoning for the score' },
+      },
+      required: ['score', 'summary'],
+      additionalProperties: false,
+    },
+  },
+});
+```
+
+Şema notları:
+* Şema düz bir nesnedir: her özelliğin `type` değeri, ilkel bir tür (`string`, `number` veya `boolean`) olmalıdır. İç içe nesneler ve diziler desteklenmez.
+* Her özellik üzerindeki `description` (isteğe bağlı), modele oraya ne koyması gerektiği konusunda yol gösterir.
+* `required` (isteğe bağlı), modelin her zaman döndürmesi gereken özellikleri listeler.
+* `additionalProperties: false` (isteğe bağlı), `properties` içinde tanımlanmamış herhangi bir özelliği yasaklar.
+
+</Accordion>
+<Accordion title="runAgent" description="Bir mantık işlevinden bir ajan çalıştırın">
+
+`runAgent()`, bir mantık işlevinin uygulamanızın ajanlarından birini (kendi yetenekleri ve araçlarıyla) çalıştırmasına olanak tanır. Ajanı, `defineAgent()` işlevine ilettiğiniz `universalIdentifier` ile belirleyin:
+
+```ts src/logic-functions/run-enricher.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  prompt: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
+});
+```
+
+Önemli noktalar:
+* Ajan **senkron** olarak çalışır ve kendi araçları aracılığıyla kayıtları kendisi okuyup/güncelleyebilir — işlem tamamlandığında `runAgent()` çözümlenir.
+* Bir uygulama yalnızca kendi ajanlarını çalıştırabilir.
+* Uygulamanın [varsayılan rolü](/l/tr/developers/extend/apps/config/roles), `AI` izin bayrağını vermelidir — `permissionFlagUniversalIdentifiers` içine `SystemPermissionFlag.AI` ekleyin (veya `canAccessAllTools: true` olarak ayarlayın).
+  Bu olmadan, `runAgent()` bir izin hatasıyla başarısız olur.
+* Mantık işlevi için cömert bir `timeoutSeconds` değeri ayarlayın — ajan çalışmaları birkaç saniye sürebilir.
+* Çalışma tamamlandığında `success` değeri `true` olur ve `result` boş olmayan bir değerdir; başarısızlık durumunda `success` değeri `false` olur, `result` değeri `null` olur ve `error` nedenini tutar (örneğin, çalışma ortasında çalışma alanının AI kredileri bittiğinde).
+
+```ts src/roles/default-role.ts
+import { defineApplicationRole, SystemPermissionFlag } from 'twenty-sdk/define';
+
+export default defineApplicationRole({
+  universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
+  label: 'Default function role',
+  // runAgent() requires the AI permission flag on the app's default role.
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],
+});
+```
+
+<Warning>
+  **Döngülerden kaçının:** Bir `*.updated` veritabanı olayı tetikleyicisinden `runAgent()` çağırırsanız ve ajan aynı kaydı güncelliyorsa, tetikleyiciyi, ajan tarafından asla yazılmayan bir alana (örneğin kaynak URL) göre `updatedFields` ile kapsamlandırın veya `runAgent()` çağırmadan önce herhangi bir hedef alanın hâlâ boş olup olmadığına göre koruma ekleyin.
+</Warning>
 
 </Accordion>
 </AccordionGroup>

@@ -10,7 +10,7 @@ import {
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
@@ -77,12 +77,12 @@ export const SettingsNewObject = () => {
   return (
     // oxlint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={t`New Object`}
         links={[
           {
             children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.General),
           },
           {
             children: t`Objects`,
@@ -114,7 +114,7 @@ export const SettingsNewObject = () => {
             />
           </Section>
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     </FormProvider>
   );
 };

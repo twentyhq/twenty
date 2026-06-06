@@ -4,6 +4,29 @@ import { createHash } from 'crypto';
 export const handler = async (event) => {
   const { code, params, env, handlerName } = event;
 
+  // oxlint-disable-next-line no-undef
+  const oldProcessEnv = { ...process.env };
+
+  try {
+    // oxlint-disable-next-line no-undef
+    process.env = { ...process.env, ...(env ?? {}) };
+
+    const mainFile = code
+      ? await loadFromPayload(code)
+      : await import('./prebuilt-logic-function.mjs');
+
+    const handlerFn = handlerName
+      .split('.')
+      .reduce((obj, key) => obj[key], mainFile);
+
+    return await handlerFn(params);
+  } finally {
+    // oxlint-disable-next-line no-undef
+    process.env = oldProcessEnv;
+  }
+};
+
+const loadFromPayload = async (code) => {
   // Use a content-hash filename so identical code is written once per
   // warm container and Node's ESM module cache can short-circuit subsequent
   // `import(mainPath)` calls. With random names, every warm invocation
@@ -23,31 +46,13 @@ export const handler = async (event) => {
   const codeHash = createHash('sha256').update(code).digest('hex');
   const mainPath = `/tmp/${codeHash}.mjs`;
 
-  // oxlint-disable-next-line no-undef
-  const oldProcessEnv = { ...process.env };
-
   try {
-    try {
-      await fs.access(mainPath);
-    } catch {
-      await fs.writeFile(mainPath, code, 'utf8');
-    }
-
-    // oxlint-disable-next-line no-undef
-    process.env = { ...process.env, ...(env ?? {}) };
-
-    const mainFile = await import(mainPath);
-
-    const handlerFn = handlerName
-      .split('.')
-      .reduce((obj, key) => obj[key], mainFile);
-
-    return await handlerFn(params);
-  } finally {
-    // Intentionally NOT removing `mainPath` here so subsequent warm
-    // invocations hit Node's ESM cache (see comment above).
-
-    // oxlint-disable-next-line no-undef
-    process.env = oldProcessEnv;
+    await fs.access(mainPath);
+  } catch {
+    await fs.writeFile(mainPath, code, 'utf8');
   }
+
+  // Intentionally NOT removing `mainPath` after import so subsequent warm
+  // invocations hit Node's ESM cache (see comment above).
+  return import(mainPath);
 };

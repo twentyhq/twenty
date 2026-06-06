@@ -39,7 +39,7 @@ export class SyncDriver implements MessageQueueDriver {
       id: '',
       name: jobName,
       // TODO: Fix this type issue
-      // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       data: data as any,
     });
   }

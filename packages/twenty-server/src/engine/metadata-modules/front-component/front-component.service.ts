@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import { Readable } from 'stream';
-
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { type FileResponse } from 'src/engine/core-modules/file/types/file-response.type';
+import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -32,6 +33,7 @@ export class FrontComponentService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
     private readonly fileStorageService: FileStorageService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async findAll(workspaceId: string): Promise<FrontComponentDTO[]> {
@@ -296,13 +298,13 @@ export class FrontComponentService {
     return frontComponent;
   }
 
-  async getBuiltComponentStream({
+  async getBuiltComponentPresignedUrlOrStream({
     frontComponentId,
     workspaceId,
   }: {
     frontComponentId: string;
     workspaceId: string;
-  }): Promise<Readable> {
+  }): Promise<FileResponse> {
     const frontComponent = await this.findByIdOrThrow(
       frontComponentId,
       workspaceId,
@@ -315,11 +317,29 @@ export class FrontComponentService {
       },
     );
 
-    return this.fileStorageService.readFile({
+    const mimeType = 'application/javascript';
+    const resourceIdentifier = {
       workspaceId,
       applicationUniversalIdentifier: application.universalIdentifier,
       fileFolder: FileFolder.BuiltFrontComponent,
       resourcePath: frontComponent.builtComponentPath,
+    };
+
+    const presignedUrl = await this.fileStorageService.getPresignedUrl({
+      ...resourceIdentifier,
+      expiresInSeconds: this.twentyConfigService.get(
+        'STORAGE_S3_PRESIGNED_URL_EXPIRES_IN',
+      ),
+      responseContentType: mimeType,
+      responseContentDisposition: getContentDisposition(mimeType),
     });
+
+    if (presignedUrl) {
+      return { type: 'redirect', presignedUrl };
+    }
+
+    const stream = await this.fileStorageService.readFile(resourceIdentifier);
+
+    return { type: 'stream', stream, mimeType };
   }
 }

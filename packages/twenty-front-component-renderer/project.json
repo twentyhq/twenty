@@ -22,6 +22,7 @@
     },
     "typecheck": {},
     "lint": {},
+    "test": {},
     "generate-remote-dom-elements": {
       "executor": "nx:run-commands",
       "cache": true,

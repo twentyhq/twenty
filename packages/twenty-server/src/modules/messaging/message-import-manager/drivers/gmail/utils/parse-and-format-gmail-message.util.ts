@@ -1,5 +1,4 @@
 import { type gmail_v1 as gmailV1 } from 'googleapis';
-import planer from 'planer';
 import { MessageParticipantRole } from 'twenty-shared/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -8,8 +7,8 @@ import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connect
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
 import { parseGmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-message.util';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { extractMessageBodyText } from 'src/modules/messaging/message-import-manager/utils/extract-message-body-text.util';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
-import { sanitizeString } from 'src/modules/messaging/message-import-manager/utils/sanitize-string.util';
 
 export const parseAndFormatGmailMessage = (
   message: gmailV1.Schema$Message,
@@ -25,7 +24,8 @@ export const parseAndFormatGmailMessage = (
     cc,
     bcc,
     headerMessageId,
-    text,
+    body,
+    isHtml,
     attachments,
     deliveredTo,
     labelIds,
@@ -59,10 +59,6 @@ export const parseAndFormatGmailMessage = (
     return null;
   }
 
-  const textWithoutReplyQuotations = text
-    ? planer.extractFrom(text, 'text/plain')
-    : '';
-
   return {
     externalId: id,
     headerMessageId,
@@ -71,7 +67,7 @@ export const parseAndFormatGmailMessage = (
     receivedAt: new Date(parseInt(internalDate)),
     direction: computeMessageDirection(from.address || '', connectedAccount),
     participants,
-    text: sanitizeString(textWithoutReplyQuotations),
+    text: extractMessageBodyText(isHtml ? { html: body } : { text: body }),
     attachments,
     messageFolderExternalIds: labelIds,
     labelIds,

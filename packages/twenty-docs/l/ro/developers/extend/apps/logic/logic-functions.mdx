@@ -145,6 +145,33 @@ const handler = async (event: RoutePayload) => {
 Numele anteturilor sunt normalizate la litere mici. Accesați-le folosind chei cu litere mici (de exemplu, `event.headers['content-type']`).
 </Note>
 
+#### Răspuns HTTP personalizat
+
+În mod implicit, returnarea unei valori simple din handler trimite înapoi un răspuns `200` (JSON pentru obiecte, `text/plain` pentru șiruri). Pentru a controla codul de stare și antetele răspunsului, returnează un `Response` din `twenty-sdk/logic-function`:
+
+```ts
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  return new Response('<h1>Hello</h1>', {
+    status: 201,
+    headers: { 'content-type': 'text/html' },
+  });
+};
+```
+
+Din motive de securitate, anteturile de răspuns sunt limitate la o listă de antete permise. Orice antet care nu se află pe listă (de exemplu, `Set-Cookie`, anteturi CORS precum `Access-Control-Allow-Origin` sau anteturi personalizate `X-*`) este eliminat în mod silențios înainte ca răspunsul să fie trimis. Anteturile de răspuns permise sunt:
+
+* `content-type`
+* `content-language`
+* `content-disposition`
+* `cache-control`
+* `retry-after`
+
+<Note>
+Codul de stare trebuie să fie un cod de stare HTTP valid (între 100 și 599). Numele anteturilor de răspuns sunt comparate fără a ține cont de majuscule și minuscule.
+</Note>
+
 #### Payload-ul declanșatorului de eveniment al bazei de date
 
 Când un declanșator de eveniment al bazei de date apelează funcția dvs. logică, aceasta primește un `DatabaseEventPayload` pentru fiecare înregistrare modificată. Payload-ul combină metadatele despre spațiul de lucru și obiectul sursă cu evenimentul la nivel de înregistrare.

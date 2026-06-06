@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { McpCoreController } from 'src/engine/api/mcp/controllers/mcp-core.controller';
 import { McpAuthGuard } from 'src/engine/api/mcp/guards/mcp-auth.guard';
+import { McpInstructionBuilderService } from 'src/engine/api/mcp/services/mcp-instruction-builder.service';
 import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
@@ -11,6 +12,7 @@ import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty
 import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-provider.module';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -21,6 +23,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     MetricsModule,
     TokenModule,
     WorkspaceCacheStorageModule,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     UserRoleModule,
     ToolProviderModule,
     SkillModule,
@@ -32,6 +35,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     JwtAuthGuard,
     McpAuthGuard,
     WorkspaceAuthGuard,
+    McpInstructionBuilderService,
     McpProtocolService,
     McpToolExecutorService,
   ],

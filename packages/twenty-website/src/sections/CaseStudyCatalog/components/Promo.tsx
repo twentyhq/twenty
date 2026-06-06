@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import type { CaseStudyCatalogEntry } from '@/lib/customers';
 import {
   Body,
@@ -8,8 +9,8 @@ import {
   HeadingPart,
 } from '@/design-system/components';
 import { PlusIcon, UsersIcon } from '@/icons';
-import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
-import { LocalizedLinkButton } from '@/lib/i18n/components/LocalizedLinkButton';
+import { getServerI18n } from '@/lib/i18n/server';
+import { LocalizedLinkButton } from '@/lib/i18n';
 import { PromoMic } from '@/sections/CaseStudyCatalog/visuals/PromoMic';
 import { theme } from '@/theme';
 import type { MessageDescriptor } from '@lingui/core';
@@ -21,8 +22,6 @@ const CONNECTED_TOP_OFFSET = '6px';
 const LINE_INSET = '20px';
 const TRUSTED_BY_BOTTOM_PADDING = 12;
 const TRUSTED_BY_BOTTOM_PADDING_DESKTOP = 16;
-
-const BODY = msg`Meet the teams who shaped Twenty into their own CRM with self-hosted deployments, AI-assisted workflows, and API-first product stacks.`;
 
 const Section = styled.section`
   background-color: ${theme.colors.primary.background[100]};
@@ -327,19 +326,23 @@ export function Promo({
         <TextColumn>
           <Eyebrow colorScheme="primary" markerHeight={6} markerWidth={14}>
             <HeadingPart fontFamily="mono">
-              {i18n._(msg`Customer Stories`)}
+              <Trans>Customer Stories</Trans>
             </HeadingPart>
           </Eyebrow>
           <Heading size="lg" weight="light">
-            <HeadingPart fontFamily="serif">
-              {i18n._(msg`How teams`)}
-            </HeadingPart>
-            <br />
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`built with Twenty`)}
-            </HeadingPart>
+            <Trans>
+              <HeadingPart fontFamily="serif">How teams</HeadingPart>
+              <br />
+              <HeadingPart fontFamily="sans">built with Twenty</HeadingPart>
+            </Trans>
           </Heading>
-          <PromoBody size="sm">{i18n._(BODY)}</PromoBody>
+          <PromoBody size="sm">
+            <Trans>
+              Meet the teams who shaped Twenty into their own CRM with
+              self-hosted deployments, AI-assisted workflows, and API-first
+              product stacks.
+            </Trans>
+          </PromoBody>
           <CtaRow>
             <LocalizedLinkButton
               color="secondary"

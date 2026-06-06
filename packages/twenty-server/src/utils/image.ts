@@ -1,4 +1,5 @@
 import { type AxiosInstance } from 'axios';
+import { isNonEmptyString } from '@sniptt/guards';
 
 const cropRegex = /([w|h])([0-9]+)/;
 
@@ -26,7 +27,7 @@ export const getImageBufferFromUrl = async (
   url: string,
   axiosInstance: AxiosInstance,
 ): Promise<Buffer> => {
-  if (!url || typeof url !== 'string' || url.trim().length === 0) {
+  if (!isNonEmptyString(url) || url.trim().length === 0) {
     throw new Error('Invalid URL provided: URL must be a non-empty string');
   }
 
@@ -52,7 +53,7 @@ export const getImageBufferFromUrl = async (
 
     const contentType = response.headers['content-type'];
 
-    if (contentType && !contentType.startsWith('image/')) {
+    if (isNonEmptyString(contentType) && !contentType.startsWith('image/')) {
       throw new Error(
         `Invalid content type: expected image/*, got ${contentType}`,
       );
