@@ -3,6 +3,10 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { CalendarEventRecordingPreferenceService } from 'src/engine/core-modules/calendar/calendar-event-recording-preference.service';
@@ -53,8 +57,9 @@ export class CalendarEventRecordingPreferenceResolver {
     const authContext = getWorkspaceAuthContext();
 
     if (!isUserAuthContext(authContext)) {
-      throw new Error(
+      throw new AuthException(
         'Calendar event recording preference updates require user authentication.',
+        AuthExceptionCode.UNAUTHENTICATED,
       );
     }
 
