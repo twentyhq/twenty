@@ -1,3 +1,8 @@
+import { useStore } from 'jotai';
+import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { type IconComponent } from 'twenty-ui/display';
+
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useMountCommand } from '@/command-menu-item/engine-command/hooks/useMountCommand';
 import { isEngineCommandMountedFamilySelector } from '@/command-menu-item/engine-command/selectors/isEngineCommandMountedFamilySelector';
@@ -6,14 +11,10 @@ import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/c
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
-import { waitForSidePanelClose } from '@/ui/layout/side-panel/utils/emitSidePanelCloseEvent';
+import { waitForSidePanelClose } from '@/ui/layout/side-panel/utils/waitForSidePanelClose';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useStore } from 'jotai';
-import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { type IconComponent } from 'twenty-ui/display';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 export const useCommandMenuItemClick = ({
@@ -76,10 +77,7 @@ export const useCommandMenuItemClick = ({
 
       closeCommandMenu();
 
-      if (
-        !item.isPinned &&
-        store.get(isSidePanelClosingState.atom)
-      ) {
+      if (!item.isPinned && store.get(isSidePanelClosingState.atom)) {
         await waitForSidePanelClose();
       }
 
