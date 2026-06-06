@@ -78,20 +78,9 @@ export const SYNC_STATUS_LABELS: Record<OrchestratorStateSyncStatus, string> = {
   error: 'Error',
 };
 
-export const SPINNER_FRAMES = [
-  '⠋',
-  '⠙',
-  '⠹',
-  '⠸',
-  '⠼',
-  '⠴',
-  '⠦',
-  '⠧',
-  '⠇',
-  '⠏',
-];
+export const SPINNER_FRAMES = ['◐', '◓', '◑', '◒'];
 
-export const UPLOAD_FRAMES = ['↑', '⇡', '↟', '⤒'];
+export const UPLOAD_FRAMES = ['↑', '⇡', '↑', '⇡'];
 
 export const ENTITY_LABELS: Record<SyncableEntity, string> = {
   [SyncableEntity.Object]: 'Objects',
