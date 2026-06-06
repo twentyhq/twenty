@@ -6,10 +6,9 @@ import {
   type RemoteElementEventListenerDefinition,
   type RemoteElementEventListenersDefinition,
 } from '@remote-dom/core/elements';
-import {
-  applySerializedEventTargetProperties,
-  type SerializedEventData,
-} from '@/constants/SerializedEventData';
+import { applySerializedEventProperties } from '@/constants/applySerializedEventProperties';
+import { applySerializedEventTargetProperties } from '@/constants/applySerializedEventTargetProperties';
+import { type SerializedEventData } from '@/types/SerializedEventData';
 
 export type HtmlCommonProperties = {
   id?: string;
@@ -94,9 +93,16 @@ const createSerializedEventConfig = (
       eventData,
     );
 
-    return new CustomEvent(eventType, {
+    const event = new CustomEvent(eventType, {
       detail: eventData,
     }) as RemoteEvent<SerializedEventData>;
+
+    applySerializedEventProperties(
+      event as unknown as Record<string, unknown>,
+      eventData,
+    );
+
+    return event;
   },
 });
 const HTML_COMMON_EVENTS_CONFIG = Object.fromEntries(

@@ -1,7 +1,6 @@
 'use client';
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
+import { Trans } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 
 import { theme } from '@/theme';
@@ -44,16 +43,16 @@ const EmptyStateClearButton = styled(ClearFiltersButton)`
 `;
 
 export function EmptyState({ onClearFilters }: EmptyStateProps) {
-  const { i18n } = useLingui();
-
   return (
     <Wrapper>
-      <Heading>{i18n._(msg`No partners match your filters`)}</Heading>
+      <Heading>
+        <Trans>No partners match your filters</Trans>
+      </Heading>
       <Subtitle>
-        {i18n._(msg`Try removing some filters or browse all partners.`)}
+        <Trans>Try removing some filters or browse all partners.</Trans>
       </Subtitle>
       <EmptyStateClearButton onClick={onClearFilters}>
-        {i18n._(msg`Clear filters`)}
+        <Trans>Clear filters</Trans>
       </EmptyStateClearButton>
     </Wrapper>
   );

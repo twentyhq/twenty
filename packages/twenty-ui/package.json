@@ -9,6 +9,7 @@
     "**/*.css"
   ],
   "devDependencies": {
+    "@argos-ci/storybook": "^6.0.6",
     "@babel/core": "^7.14.5",
     "@babel/preset-env": "^7.26.9",
     "@babel/preset-react": "^7.26.3",

@@ -423,8 +423,8 @@ export default defineFrontComponent({
 Folosiți `useSelectedRecordIds()` pentru a gestiona mai multe înregistrări selectate. Acest lucru este util pentru operațiuni în masă:
 
 ```tsx src/front-components/bulk-export.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { defineFrontComponent, numberOfSelectedRecords } from 'twenty-sdk/define';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 

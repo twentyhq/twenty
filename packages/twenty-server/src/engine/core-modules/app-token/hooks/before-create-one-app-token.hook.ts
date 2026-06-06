@@ -10,7 +10,7 @@ export class BeforeCreateOneAppToken<
 > implements BeforeCreateOneHook<T> {
   async run(
     instance: CreateOneInputType<T>,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     context: any,
   ): Promise<CreateOneInputType<T>> {
     const userId = context?.req?.user?.id;

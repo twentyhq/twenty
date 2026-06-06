@@ -17,6 +17,12 @@ type LoggedEventMatcher = {
   ctrlKey?: boolean;
   metaKey?: boolean;
   altKey?: boolean;
+  clientX?: number;
+  clientY?: number;
+  offsetX?: number;
+  offsetY?: number;
+  movementX?: number;
+  movementY?: number;
   files?: { name?: string; type?: string }[];
 };
 

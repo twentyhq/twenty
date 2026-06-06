@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   enqueueSnackbar,
-  objectMetadataItem,
   unmountFrontComponent,
   updateProgress,
 } from 'twenty-sdk/front-component';
@@ -97,12 +96,4 @@ export default defineFrontComponent({
   description: 'Fetches project items from GitHub Projects V2',
   isHeadless: true,
   component: FetchProjectItems,
-  command: {
-    universalIdentifier: '719cfe1c-d570-4c8c-89e6-88671c6ba1ea',
-    label: 'Fetch Project Items',
-    icon: 'IconLayoutKanban',
-    isPinned: false,
-    conditionalAvailabilityExpression:
-      objectMetadataItem.nameSingular === 'projectItem',
-  },
 });

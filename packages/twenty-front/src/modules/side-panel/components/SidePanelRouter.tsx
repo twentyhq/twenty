@@ -15,6 +15,7 @@ import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledSidePanelContent = styled.div`
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
 `;
 

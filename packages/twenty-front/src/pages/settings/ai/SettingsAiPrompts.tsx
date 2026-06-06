@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -71,11 +71,11 @@ export const SettingsAiPrompts = () => {
     : '';
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
         { children: t`System Prompt` },
@@ -156,6 +156,6 @@ export const SettingsAiPrompts = () => {
           </StyledFormContainer>
         </Section>
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

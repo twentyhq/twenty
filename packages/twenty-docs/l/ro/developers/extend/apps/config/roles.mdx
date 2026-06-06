@@ -9,8 +9,8 @@ Un **rol** este un set de permisiuni: ce obiecte poate citi sau scrie o aplicaț
 ```ts src/roles/restricted-company-role.ts
 import {
   defineRole,
-  PermissionFlag,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  SystemPermissionFlag,
 } from 'twenty-sdk/define';
 
 export default defineRole({
@@ -46,7 +46,7 @@ export default defineRole({
       canUpdateFieldValue: false,
     },
   ],
-  permissionFlags: [PermissionFlag.APPLICATIONS],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
 });
 ```
 
@@ -55,7 +55,7 @@ export default defineRole({
 Când generați o aplicație nouă, CLI creează un fișier de rol implicit declarat cu `defineApplicationRole()`:
 
 ```ts src/roles/default-role.ts
-import { defineApplicationRole, PermissionFlag } from 'twenty-sdk/define';
+import { defineApplicationRole } from 'twenty-sdk/define';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
@@ -74,7 +74,7 @@ export default defineApplicationRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [],
   fieldPermissions: [],
-  permissionFlags: [],
+  permissionFlagUniversalIdentifiers: [],
 });
 ```
 
@@ -90,5 +90,5 @@ Notițe:
 
 * Porniți de la rolul generat de scaffolding, apoi restrângeți-l progresiv — rolul implicit acordă acces larg la citire, ceea ce rareori este de dorit în producție.
 * Înlocuiți `objectPermissions` și `fieldPermissions` cu obiectele și câmpurile de care au nevoie efectiv funcțiile dvs.
-* `permissionFlags` controlează accesul la capabilități la nivelul platformei. Mențineți-le la minimum.
+* `permissionFlagUniversalIdentifiers` controlează accesul la capabilități la nivelul platformei. Mențineți-le la minimum.
 * Vedeți un exemplu funcțional: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
