@@ -35,7 +35,8 @@ import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/util
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @Injectable()
 export class BillingSubscriptionService {
   protected readonly logger = new Logger(BillingSubscriptionService.name);
@@ -44,38 +45,49 @@ export class BillingSubscriptionService {
     private readonly stripeSubscriptionService: StripeSubscriptionService,
     private readonly billingPriceService: BillingPriceService,
     private readonly billingPlanService: BillingPlanService,
-    @InjectRepository(BillingEntitlementEntity)
-    private readonly billingEntitlementRepository: Repository<BillingEntitlementEntity>,
+    @InjectWorkspaceScopedRepository(BillingEntitlementEntity)
+    private readonly billingEntitlementRepository: WorkspaceScopedRepository<BillingEntitlementEntity>,
+    @InjectWorkspaceScopedRepository(BillingSubscriptionEntity)
+    private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
+    // Stripe webhooks resolve by stripeCustomerId before any workspaceId
+    // is known. Used only when the criteria has no workspaceId.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
-    private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
+    private readonly billingSubscriptionRepositoryUnscoped: Repository<BillingSubscriptionEntity>,
     private readonly stripeCustomerService: StripeCustomerService,
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(BillingSubscriptionItemEntity)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
-    @InjectRepository(BillingCustomerEntity)
-    private readonly billingCustomerRepository: Repository<BillingSubscriptionEntity>,
+    @InjectWorkspaceScopedRepository(BillingCustomerEntity)
+    private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
     private readonly enterprisePlanService: EnterprisePlanService,
   ) {}
 
   async getBillingSubscriptions(workspaceId: string) {
-    return await this.billingSubscriptionRepository.find({
-      where: { workspaceId },
-    });
+    return await this.billingSubscriptionRepository.find(workspaceId);
   }
 
   async getCurrentBillingSubscription(criteria: {
     workspaceId?: string;
     stripeCustomerId?: string;
   }): Promise<BillingSubscriptionEntity | undefined> {
-    const notCanceledSubscriptions =
-      await this.billingSubscriptionRepository.find({
-        where: { ...criteria, status: Not(SubscriptionStatus.Canceled) },
-        relations: [
-          'billingSubscriptionItems',
-          'billingSubscriptionItems.billingProduct',
-        ],
-      });
+    const baseFindOptions = {
+      relations: [
+        'billingSubscriptionItems',
+        'billingSubscriptionItems.billingProduct',
+      ],
+    };
+
+    const notCanceledSubscriptions = isDefined(criteria.workspaceId)
+      ? await this.billingSubscriptionRepository.find(criteria.workspaceId, {
+          ...baseFindOptions,
+          where: { status: Not(SubscriptionStatus.Canceled) },
+        })
+      : await this.billingSubscriptionRepositoryUnscoped.find({
+          ...baseFindOptions,
+          where: { ...criteria, status: Not(SubscriptionStatus.Canceled) },
+        });
 
     if (notCanceledSubscriptions.length > 1) {
       throw new BillingException(
@@ -190,9 +202,7 @@ export class BillingSubscriptionService {
     const hasValidEnterprisePlan = this.enterprisePlanService.isValid();
 
     const entitlements = isBillingEnabled
-      ? await this.billingEntitlementRepository.find({
-          where: { workspaceId },
-        })
+      ? await this.billingEntitlementRepository.find(workspaceId)
       : [];
 
     const entitlementsByKey = entitlements.reduce(
@@ -216,11 +226,10 @@ export class BillingSubscriptionService {
     workspaceId: string,
     key: BillingEntitlementKey,
   ): Promise<boolean> {
-    const entitlement = await this.billingEntitlementRepository.findOneBy({
+    const entitlement = await this.billingEntitlementRepository.findOne(
       workspaceId,
-      key,
-      value: true,
-    });
+      { where: { key, value: true } },
+    );
 
     return entitlement?.value ?? false;
   }
@@ -254,6 +263,7 @@ export class BillingSubscriptionService {
         billingSubscription.stripeSubscriptionId,
         {
           trial_end: 'now',
+          cancel_at_period_end: false,
         },
       );
 
@@ -278,6 +288,7 @@ export class BillingSubscriptionService {
       );
 
     await this.billingCustomerRepository.upsert(
+      workspaceId,
       transformStripeSubscriptionEventToDatabaseCustomer(workspaceId, {
         object: subscription,
       }),
@@ -288,6 +299,7 @@ export class BillingSubscriptionService {
     );
 
     await this.billingSubscriptionRepository.upsert(
+      workspaceId,
       transformStripeSubscriptionEventToDatabaseSubscription(
         workspaceId,
         subscription,
@@ -298,9 +310,8 @@ export class BillingSubscriptionService {
       },
     );
 
-    const billingSubscriptions = await this.billingSubscriptionRepository.find({
-      where: { workspaceId },
-    });
+    const billingSubscriptions =
+      await this.billingSubscriptionRepository.find(workspaceId);
 
     const currentBillingSubscription = billingSubscriptions.find(
       (sub) => sub.stripeSubscriptionId === subscription.id,

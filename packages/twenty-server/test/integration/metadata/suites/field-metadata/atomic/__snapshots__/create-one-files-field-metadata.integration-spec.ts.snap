@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`createOne FILES field metadata - failing should fail to create files field with isUnique = true 1`] = `
 {
@@ -42,12 +42,32 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
           "type": "create",
         },
       ],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
     },
-    "message": "Validation failed for 1 fieldMetadata, 1 index",
+    "message": "Validation failed for 1 fieldMetadata, 1 viewField, 1 index",
     "summary": {
       "fieldMetadata": 1,
       "index": 1,
-      "totalErrors": 2,
+      "totalErrors": 3,
+      "viewField": 1,
     },
     "userFriendlyMessage": "Many validation errors",
   },
@@ -66,8 +86,8 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
-              "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
+              "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 60",
+              "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 60",
             },
           ],
           "flatEntityMinimalInformation": {
@@ -80,20 +100,40 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
           "type": "create",
         },
       ],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
     },
-    "message": "Validation failed for 1 fieldMetadata",
+    "message": "Validation failed for 1 fieldMetadata, 1 viewField",
     "summary": {
       "fieldMetadata": 1,
-      "totalErrors": 1,
+      "totalErrors": 2,
+      "viewField": 1,
     },
-    "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
+    "userFriendlyMessage": "Many validation errors",
   },
   "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
 }
 `;
 
-exports[`createOne FILES field metadata - failing should fail to create files field with maxNumberOfValues = 11 (exceeds max) 1`] = `
+exports[`createOne FILES field metadata - failing should fail to create files field with maxNumberOfValues = 61 (exceeds max) 1`] = `
 {
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
@@ -103,8 +143,8 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
-              "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
+              "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 60",
+              "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 60",
             },
           ],
           "flatEntityMinimalInformation": {
@@ -117,13 +157,33 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
           "type": "create",
         },
       ],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
     },
-    "message": "Validation failed for 1 fieldMetadata",
+    "message": "Validation failed for 1 fieldMetadata, 1 viewField",
     "summary": {
       "fieldMetadata": 1,
-      "totalErrors": 1,
+      "totalErrors": 2,
+      "viewField": 1,
     },
-    "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
+    "userFriendlyMessage": "Many validation errors",
   },
   "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
@@ -140,8 +200,8 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
-              "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
+              "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 60",
+              "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 60",
             },
           ],
           "flatEntityMinimalInformation": {
@@ -154,13 +214,33 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
           "type": "create",
         },
       ],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
     },
-    "message": "Validation failed for 1 fieldMetadata",
+    "message": "Validation failed for 1 fieldMetadata, 1 viewField",
     "summary": {
       "fieldMetadata": 1,
-      "totalErrors": 1,
+      "totalErrors": 2,
+      "viewField": 1,
     },
-    "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
+    "userFriendlyMessage": "Many validation errors",
   },
   "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",

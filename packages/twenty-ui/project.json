@@ -84,6 +84,14 @@
     },
     "storybook:test": {},
     "storybook:test:no-coverage": {},
+    "storybook:visual-diff": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["storybook:build"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "bash scripts/visual-diff.sh"
+      }
+    },
     "storybook:coverage": {}
   }
 }

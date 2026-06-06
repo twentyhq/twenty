@@ -8,6 +8,7 @@ import {
 import {
   createHtmlTagClickStory,
   createHtmlTagFocusStory,
+  createHtmlTagPointerStory,
 } from '@/__stories__/shared/test-utils/createHtmlElementStory';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
@@ -26,4 +27,8 @@ export const Click = createHtmlTagClickStory({
 
 export const FocusBlur = createHtmlTagFocusStory({
   frontComponentBundleName: 'svg-focus-blur',
+});
+
+export const Pointer = createHtmlTagPointerStory({
+  frontComponentBundleName: 'svg-pointer',
 });

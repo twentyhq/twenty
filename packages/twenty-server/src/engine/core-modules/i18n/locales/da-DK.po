@@ -459,6 +459,11 @@ msgstr "Der opstod en fejl under meddelelsesimporten"
 msgid "An error occurred during workspace migration."
 msgstr "Der opstod en fejl under migreringen af arbejdsområdet."
 
+#. js-lingui-id: X3mSup
+#: src/engine/core-modules/messaging-webhooks/messaging-webhook.exception.ts
+msgid "An error occurred while processing the webhook."
+msgstr ""
+
 #. js-lingui-id: S7yZl9
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
 msgid "An error occurred with two-factor authentication data."
@@ -1136,6 +1141,16 @@ msgstr "Kan ikke slette den sidste admin-bruger."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
 msgid "Cannot delete the only view for this object"
 msgstr "Kan ikke slette den eneste visning for dette objekt"
+
+#. js-lingui-id: aqua7x
+#: src/engine/metadata-modules/role/role.service.ts
+msgid "Cannot delete this role: it is still assigned to one or more agents, and the workspace default role cannot be assigned to agents. Please reassign these agents to another role first."
+msgstr ""
+
+#. js-lingui-id: mGasIh
+#: src/engine/metadata-modules/role/role.service.ts
+msgid "Cannot delete this role: it is still assigned to one or more API keys, and the workspace default role cannot be assigned to API keys. Please reassign these API keys to another role first."
+msgstr ""
 
 #. js-lingui-id: mWk3X+
 #: src/engine/metadata-modules/flat-field-metadata/utils/handle-index-changes-during-field-update.util.ts
@@ -3406,6 +3421,16 @@ msgstr "Ugyldigt morf-relationsinput"
 msgid "Invalid navigation menu item input."
 msgstr "Ugyldigt input til menupunkt i navigationsmenuen."
 
+#. js-lingui-id: pQNAUc
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
+msgid "Invalid newFieldDefaultVisibility for fields widget"
+msgstr ""
+
+#. js-lingui-id: 1FhQYt
+#: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
+msgid "Invalid newFieldDefaultVisibility for fields widget \"{widgetTitle}\". Expected a boolean"
+msgstr ""
+
 #. js-lingui-id: 5ZHOkh
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
 msgid "Invalid object input."
@@ -4146,6 +4171,14 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Logic function already exists"
 msgstr "Logikfunktion eksisterer allerede"
+
+#. js-lingui-id: MovvuJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
+msgid "Logic function cannot be in PREBUILT mode without a fresh build and a checksum"
+msgstr ""
 
 #. js-lingui-id: mZvaAV
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
@@ -5198,6 +5231,8 @@ msgstr "Sidelayoutet blev ikke fundet."
 #. js-lingui-id: qJ9V6q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-tab-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-tab-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-tab-validator.service.ts
@@ -5338,6 +5373,11 @@ msgstr ""
 #. js-lingui-id: E1zc7W
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgid "People linked to the company."
+msgstr ""
+
+#. js-lingui-id: XDAwzW
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
+msgid "Per-step observability payload (token usage, tool calls, log entries)"
 msgstr ""
 
 #. js-lingui-id: 3zRddX
@@ -5578,6 +5618,11 @@ msgstr "Positionens layoutMode \"{layoutMode}\" stemmer ikke overens med fanens 
 msgid "Position must be a finite number"
 msgstr "Position skal være et endeligt tal"
 
+#. js-lingui-id: YzUxdC
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Prebuilt bundle is not installed on the function. Rebuild and try again."
+msgstr ""
+
 #. js-lingui-id: TTHIbk
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "Preferred color scheme"
@@ -5710,6 +5755,7 @@ msgid "Record table widget has no associated view"
 msgstr ""
 
 #. js-lingui-id: KnnILY
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "Record table widget not found"
 msgstr ""
@@ -6145,6 +6191,11 @@ msgstr "SDK-klientarkivet blev ikke fundet. SDK-klienten er muligvis ikke blevet
 msgid "Search vector"
 msgstr "Søgevektor"
 
+#. js-lingui-id: CTcVpP
+#: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
+msgid "Sending is currently suspended for this email domain."
+msgstr ""
+
 #. js-lingui-id: hgvbYY
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "September"
@@ -6316,6 +6367,11 @@ msgstr "Statuser kan ikke sættes manuelt."
 #: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
 msgid "Step is not a form"
 msgstr "Trin er ikke en formular"
+
+#. js-lingui-id: nLBQ0Y
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
+msgid "Step logs"
+msgstr ""
 
 #. js-lingui-id: 1D+4NY
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -6842,6 +6898,16 @@ msgstr ""
 msgid "The singular and plural names cannot be the same for an object"
 msgstr "Entals- og flertalsnavnene kan ikke være ens for et objekt"
 
+#. js-lingui-id: 9bYo5E
+#: src/engine/core-modules/messaging-webhooks/messaging-webhook.exception.ts
+msgid "The webhook request could not be authenticated."
+msgstr ""
+
+#. js-lingui-id: 3nHyuH
+#: src/engine/core-modules/messaging-webhooks/messaging-webhook.exception.ts
+msgid "The webhook request could not be processed."
+msgstr ""
+
 #. js-lingui-id: 5N6QtE
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 msgid "The workflow automated trigger settings"
@@ -6986,6 +7052,11 @@ msgstr "Dette domæne er allerede taget."
 msgid "This email is already in use."
 msgstr "Denne e-mail er allerede i brug."
 
+#. js-lingui-id: mjE4RD
+#: src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service.ts
+msgid "This evaluation target could not be found."
+msgstr ""
+
 #. js-lingui-id: hsi+jf
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This feature is not enabled."
@@ -7094,11 +7165,13 @@ msgid "This record does not exist or has been deleted."
 msgstr "Denne post findes ikke eller er blevet slettet."
 
 #. js-lingui-id: rExecr
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This role cannot be assigned to agents."
 msgstr "Denne rolle kan ikke tildeles agenter."
 
 #. js-lingui-id: UP3ZAj
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This role cannot be assigned to API keys."
 msgstr "Denne rolle kan ikke tildeles API-nøgler."

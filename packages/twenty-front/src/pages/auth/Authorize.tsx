@@ -134,7 +134,7 @@ const OAUTH_SCOPE_ICONS: { [scope: string]: IconComponent | undefined } = {
 
 export const Authorize = () => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
+  const { theme, colorScheme } = useContext(ThemeContext);
   const navigate = useNavigateApp();
   const [searchParam] = useSearchParams();
   const { redirect } = useRedirect();
@@ -175,6 +175,18 @@ export const Authorize = () => {
     }
   }, [shouldRedirectToNotFound, navigate]);
 
+  const appendThemeToUrl = (urlString: string) => {
+    try {
+      const url = new URL(urlString);
+
+      url.searchParams.set('theme', colorScheme);
+
+      return url.toString();
+    } catch {
+      return urlString;
+    }
+  };
+
   const handleAuthorize = async () => {
     if (isDefined(clientId) && isDefined(redirectUrl)) {
       setIsAuthorizing(true);
@@ -188,7 +200,7 @@ export const Authorize = () => {
           state: state ?? undefined,
         },
         onCompleted: (responseData) => {
-          redirect(responseData.authorizeApp.redirectUrl);
+          redirect(appendThemeToUrl(responseData.authorizeApp.redirectUrl));
         },
         onError: (error) => {
           setIsAuthorizing(false);

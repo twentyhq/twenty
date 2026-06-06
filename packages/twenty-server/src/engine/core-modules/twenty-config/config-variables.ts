@@ -17,7 +17,6 @@ import { type AwsRegion } from 'src/engine/core-modules/twenty-config/interfaces
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
-import { ApplicationLogDriver } from 'src/engine/core-modules/application-logs/interfaces/application-log-driver.enum';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
 import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.enum';
@@ -42,9 +41,13 @@ import {
   ConfigVariableException,
   ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
-import { type AiModelPreferences } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-preferences.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
-import { DEFAULT_MODEL_PREFERENCES } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-model-preferences.util';
+import {
+  DEFAULT_DISABLED_MODELS,
+  DEFAULT_FAST_MODELS,
+  DEFAULT_RECOMMENDED_MODELS,
+  DEFAULT_SMART_MODELS,
+} from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-model-preferences.util';
 
 export class ConfigVariables {
   @ConfigVariablesMetadata({
@@ -362,6 +365,16 @@ export class ConfigVariables {
   APPLICATION_REFRESH_TOKEN_EXPIRES_IN = '60d';
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TOKENS_DURATION,
+    description:
+      'Duration for which a playground token (in-app REST/GraphQL playground bearer) is valid',
+    type: ConfigVariableType.STRING,
+  })
+  @IsDuration()
+  @IsOptional()
+  PLAYGROUND_TOKEN_EXPIRES_IN = '2h';
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EMAIL_SETTINGS,
     description: 'Email address used as the sender for outgoing emails',
     type: ConfigVariableType.STRING,
@@ -552,15 +565,6 @@ export class ConfigVariables {
     process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT
       ? LogicFunctionDriverType.LOCAL
       : LogicFunctionDriverType.DISABLED;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
-    description:
-      'Configure whether console logs from logic functions are displayed in the terminal',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  LOGIC_FUNCTION_LOGS_ENABLED: false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
@@ -932,14 +936,12 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
     description:
-      'Driver used for application logs (Disabled, Console, or ClickHouse)',
-    type: ConfigVariableType.ENUM,
-    options: Object.values(ApplicationLogDriver),
+      'Ordered list of sinks the unified event pipeline writes to (e.g. clickhouse). The first is the read store.',
+    type: ConfigVariableType.ARRAY,
     isEnvOnly: true,
   })
   @IsOptional()
-  @CastToUpperSnakeCase()
-  APPLICATION_LOG_DRIVER: ApplicationLogDriver = ApplicationLogDriver.DISABLED;
+  EVENT_SINKS: string[] = ['clickhouse'];
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SUPPORT_CHAT_CONFIG,
@@ -1116,6 +1118,23 @@ export class ConfigVariables {
   @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
   SERVER_URL = 'http://localhost:3000';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'When enabled, the served frontend resolves the API base URL from ' +
+      "the browser's current origin (window.location) instead of the " +
+      'baked-in SERVER_URL. Useful for self-hosted deployments reachable ' +
+      'from multiple hostnames (Tailscale IP, LAN DNS, SSH tunnel, public ' +
+      'DNS), where pinning a single SERVER_URL would break every other ' +
+      'host with CORS or unreachable-host errors. Read at startup by ' +
+      'generate-front-config; SERVER_URL is still used for all server-side ' +
+      'URL generation.',
+    type: ConfigVariableType.BOOLEAN,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  FRONT_AUTO_BASE_URL = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
@@ -1435,20 +1454,38 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'AI model admin preferences: disabled models, recommended models, and default fast/smart model lists. Managed via admin panel or env.',
-    type: ConfigVariableType.JSON,
+      'Ordered list of fast model IDs to use as defaults. Managed via admin panel or env.',
+    type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
-  AI_MODEL_PREFERENCES: AiModelPreferences = DEFAULT_MODEL_PREFERENCES;
+  AI_MODELS_DEFAULT_FAST: string[] = DEFAULT_FAST_MODELS;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Storage path for AI model preferences fallback (e.g. config/ai-model-preferences.json). Loaded at startup and used only when no value is set via AI_MODEL_PREFERENCES env var or the database.',
-    type: ConfigVariableType.STRING,
+      'Ordered list of smart model IDs to use as defaults. Managed via admin panel or env.',
+    type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
-  AI_MODEL_PREFERENCES_STORAGE_PATH?: string;
+  AI_MODELS_DEFAULT_SMART: string[] = DEFAULT_SMART_MODELS;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'List of recommended model IDs shown to workspaces using curated model selection. Managed via admin panel or env.',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  AI_MODELS_DEFAULT_RECOMMENDED: string[] = DEFAULT_RECOMMENDED_MODELS;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'List of model IDs disabled by default. Disabled models cannot be used by any workspace. Managed via admin panel or env.',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  AI_MODELS_DEFAULT_DISABLED: string[] = DEFAULT_DISABLED_MODELS;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

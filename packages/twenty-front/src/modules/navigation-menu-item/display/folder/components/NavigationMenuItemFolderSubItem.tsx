@@ -27,6 +27,7 @@ type NavigationMenuItemFolderSubItemProps = {
   navigationMenuItem: NavigationMenuItem;
   index: number;
   arrayLength: number;
+  selectedIndex: number;
   isDragging: boolean;
   rightOptions?: ReactNode;
   onClick?: () => void;
@@ -40,6 +41,7 @@ export const NavigationMenuItemFolderSubItem = ({
   navigationMenuItem,
   index,
   arrayLength,
+  selectedIndex,
   isDragging,
   rightOptions,
   onClick,
@@ -133,7 +135,7 @@ export const NavigationMenuItemFolderSubItem = ({
       subItemState={getNavigationSubItemLeftAdornment({
         index,
         arrayLength,
-        selectedIndex: isActive ? index : -1,
+        selectedIndex,
       })}
       rightOptions={rightOptions}
       isDragging={isDragging}

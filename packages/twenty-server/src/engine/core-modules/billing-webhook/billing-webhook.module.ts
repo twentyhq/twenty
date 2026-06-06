@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
+import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
 import { BillingWebhookController } from 'src/engine/core-modules/billing-webhook/billing-webhook.controller';
 import { BillingWebhookCustomerService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-customer.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-entitlement.service';
@@ -27,11 +27,12 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
-    AuditModule,
+    EventLogEmitterModule,
     FeatureFlagModule,
     StripeModule,
     MessageQueueModule,
@@ -62,6 +63,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingWebhookSubscriptionService,
     BillingWebhookSubscriptionScheduleService,
     BillingWebhookEntitlementService,
+    provideWorkspaceScopedRepository(BillingEntitlementEntity),
+    provideWorkspaceScopedRepository(BillingCustomerEntity),
   ],
 })
 export class BillingWebhookModule {}

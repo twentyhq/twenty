@@ -3,7 +3,6 @@ import { ModuleRef } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { AuditJobModule } from 'src/engine/core-modules/audit/jobs/audit-job.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
@@ -13,7 +12,9 @@ import { UpdateSubscriptionQuantityJob } from 'src/engine/core-modules/billing/j
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
+import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
+import { EventLogIngestionModule } from 'src/engine/core-modules/event-logs/ingest/event-log-ingestion.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { GenerateSdkClientJob } from 'src/engine/core-modules/sdk-client/jobs/generate-sdk-client.job';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
@@ -74,11 +75,12 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     SdkClientModule,
     WorkspaceCleanerModule,
     SubscriptionsModule,
-    AuditJobModule,
+    EventLogIngestionModule,
     AiAgentMonitorModule,
     AiChatModule,
     LogicFunctionModule,
     EnterpriseModule,
+    EmailingDomainModule,
   ],
   providers: [
     CleanSuspendedWorkspacesJob,

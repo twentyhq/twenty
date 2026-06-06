@@ -10,6 +10,8 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
@@ -27,8 +29,8 @@ export class WorkspaceManagerService {
     private readonly twentyStandardApplicationService: TwentyStandardApplicationService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
+    @InjectWorkspaceScopedRepository(RoleEntity)
+    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
     private readonly applicationService: ApplicationService,
   ) {}
 
@@ -97,10 +99,9 @@ export class WorkspaceManagerService {
     userId: string;
     workspaceCustomFlatApplication: FlatApplication;
   }): Promise<void> {
-    const adminRole = await this.roleRepository.findOne({
+    const adminRole = await this.roleRepository.findOne(workspaceId, {
       where: {
         universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
-        workspaceId,
       },
     });
 

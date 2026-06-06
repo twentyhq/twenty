@@ -20,7 +20,6 @@ import { AdminPanelStatisticsService } from 'src/engine/core-modules/admin-panel
 import { AdminPanelUserLookupService } from 'src/engine/core-modules/admin-panel/services/admin-panel-user-lookup.service';
 import { AdminPanelVersionService } from 'src/engine/core-modules/admin-panel/services/admin-panel-version.service';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
-import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
@@ -46,7 +45,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -67,7 +66,6 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     TerminusModule,
     MetricsModule,
     FeatureFlagModule,
-    AuditModule,
     TelemetryModule,
     ImpersonationModule,
     PermissionsModule,
@@ -98,6 +96,9 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     WorkerHealthIndicator,
     ConnectedAccountHealth,
     AppHealthIndicator,
+    provideWorkspaceScopedRepository(AgentMessageEntity),
+    provideWorkspaceScopedRepository(FeatureFlagEntity),
+    provideWorkspaceScopedRepository(BillingCustomerEntity),
   ],
   exports: [
     AdminPanelUserLookupService,

@@ -65,16 +65,15 @@ export default definePageLayout({
 import {
   definePageLayoutTab,
   PageLayoutTabLayoutMode,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
 import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
-
-const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
-  '20202020-ab01-4001-8001-c0aba11c0100';
 
 export default definePageLayoutTab({
   universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
   pageLayoutUniversalIdentifier:
-    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage
+      .universalIdentifier,
   title: 'Hello World',
   position: 1000,
   icon: 'IconWorld',
@@ -97,6 +96,37 @@ export default definePageLayoutTab({
 ### Основные моменты
 
 * `pageLayoutUniversalIdentifier` является **обязательным** и должен указывать на макет страницы, который уже существует на момент установки — либо стандартный макет Twenty, либо определённый вашим собственным приложением. Кросс-приложенческие ссылки на макеты, которыми владеет другое установленное приложение, на данный момент не поддерживаются. Если родительский макет отсутствует, установка завершается с понятной ошибкой проверки.
+
+* Для стандартных макетов Twenty импортируйте идентификаторы из `twenty-sdk/define`:
+
+  ```ts
+  import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.personRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.opportunityRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.universalIdentifier
+  // …
+  ```
+
+  Каждый элемент макета также предоставляет свои `tabs` и их `widgets`, поэтому вы можете ссылаться на любой уровень:
+
+  ```ts
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.universalIdentifier
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets.fields.universalIdentifier
+  ```
+
+  Также доступен короткий псевдоним `STANDARD_PAGE_LAYOUT`:
+
+  ```ts
+  import { STANDARD_PAGE_LAYOUT } from 'twenty-sdk/define';
+
+  STANDARD_PAGE_LAYOUT.companyRecordPage.universalIdentifier;
+  ```
+
 * `widgets` ограничены только этой вкладкой — они ссылаются на [front components](/l/ru/developers/extend/apps/layout/front-components), представления и т. п. точно так же, как виджеты, определённые непосредственно в `definePageLayout`.
+
 * `position` управляет порядком относительно существующих вкладок в целевом макете. Выберите значение, которое поместит вашу вкладку в нужное место относительно встроенных вкладок.
+
 * Используйте это вместо `definePageLayout`, когда вы хотите только добавить к существующему макету. Используйте `definePageLayout`, когда вы управляете всем макетом.

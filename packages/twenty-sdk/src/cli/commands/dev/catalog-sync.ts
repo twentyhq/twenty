@@ -12,7 +12,9 @@ export class CatalogSyncCommand {
       ConfigService.setActiveRemote(options.remote);
     }
 
-    console.log(chalk.blue('Syncing marketplace catalog...'));
+    const remoteName = ConfigService.getActiveRemote();
+
+    console.log(chalk.blue(`Syncing marketplace catalog on ${remoteName}...`));
 
     const apiService = new ApiService();
 

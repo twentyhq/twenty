@@ -12,7 +12,7 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsAccountsNewEmailGroupChannel = () => {
@@ -39,31 +39,31 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
       }
     } catch {
       enqueueErrorSnackBar({
-        message: t`Failed to create email group channel. Email group may not be configured on this server.`,
+        message: t`Failed to create email handle. Email handles may not be configured on this server.`,
       });
     }
   }, [createEmailGroupChannel, handle, navigate, enqueueErrorSnackBar, t]);
 
   return (
-    <SubMenuTopBarContainer
-      title={t`New Email Group`}
+    <SettingsPageLayout
+      title={t`New Email Handle`}
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
-          children: t`General`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          children: t`Email`,
+          href: getSettingsPath(SettingsPath.WorkspaceEmail),
         },
-        { children: t`New Email Group` },
+        { children: t`New Email Handle` },
       ]}
       actionButton={
         <SaveAndCancelButtons
           isSaveDisabled={!canSave}
           isCancelDisabled={loading}
           isLoading={loading}
-          onCancel={() => navigate(SettingsPath.Workspace)}
+          onCancel={() => navigate(SettingsPath.WorkspaceEmail)}
           onSave={handleSave}
         />
       }
@@ -72,10 +72,10 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
         <Section>
           <H2Title
             title={t`Email Address`}
-            description={t`Enter the email address you want to forward emails from (e.g. support@mycompany.com).`}
+            description={t`The address your workspace will send and receive email from (e.g. support@mycompany.com). Outbound sending requires the domain to be verified in Outbound Domains.`}
           />
           <SettingsTextInput
-            instanceId="email-group-handle"
+            instanceId="email-group-source"
             label={t`Source Email Address`}
             placeholder="support@mycompany.com"
             value={handle}
@@ -84,6 +84,6 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
           />
         </Section>
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

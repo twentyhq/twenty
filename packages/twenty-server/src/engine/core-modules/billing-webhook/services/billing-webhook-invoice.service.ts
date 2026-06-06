@@ -7,8 +7,8 @@ import { type Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { PAYMENT_RECEIVED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/billing/payment-received';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
+import { PAYMENT_RECEIVED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/billing/payment-received';
 import { getSubscriptionIdFromInvoice } from 'src/engine/core-modules/billing-webhook/utils/get-subscription-id-from-invoice.util';
 import {
   BillingException,
@@ -33,6 +33,8 @@ export class BillingWebhookInvoiceService {
   constructor(
     @InjectRepository(BillingSubscriptionItemEntity)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
+    // Stripe webhook: workspace discovered from BillingCustomer by stripeCustomerId.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
     @InjectRepository(WorkspaceEntity)
@@ -41,7 +43,7 @@ export class BillingWebhookInvoiceService {
     private readonly billingCreditRolloverService: BillingCreditRolloverService,
     private readonly resourceCreditService: ResourceCreditService,
     private readonly stripeInvoiceService: StripeInvoiceService,
-    private readonly auditService: AuditService,
+    private readonly eventLogEmitterService: EventLogEmitterService,
   ) {}
 
   async processStripeEvent(
@@ -120,6 +122,7 @@ export class BillingWebhookInvoiceService {
   ): Promise<void> {
     const params =
       await this.resourceCreditService.getResourceCreditRolloverParameters(
+        subscription.workspaceId,
         subscription.id,
       );
 
@@ -166,7 +169,7 @@ export class BillingWebhookInvoiceService {
     if (isDefined(billingCustomer)) {
       await this.delaySuspendedWorkspaceCleanup(billingCustomer);
 
-      await this.auditService
+      void this.eventLogEmitterService
         .createContext({ workspaceId: billingCustomer.workspaceId })
         .insertWorkspaceEvent(PAYMENT_RECEIVED_EVENT, {
           amountPaid: data.object.amount_paid,

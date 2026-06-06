@@ -31,11 +31,6 @@ export const seedFeatureFlags = async ({
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_EMAILING_DOMAIN_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
         workspaceId: workspaceId,
         value: true,
@@ -49,6 +44,11 @@ export const seedFeatureFlags = async ({
         key: FeatureFlagKey.IS_MARKETPLACE_SETTING_TAB_VISIBLE,
         workspaceId: workspaceId,
         value: true,
+      },
+      {
+        key: FeatureFlagKey.IS_SETTINGS_DISCOVERY_HERO_ENABLED,
+        workspaceId: workspaceId,
+        value: false,
       },
     ])
     .execute();

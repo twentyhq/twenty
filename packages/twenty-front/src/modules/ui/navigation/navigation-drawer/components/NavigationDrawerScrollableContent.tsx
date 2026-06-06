@@ -11,11 +11,10 @@ const StyledItemsContainer = styled.div`
   height: 100%;
 `;
 
-const StyledScrollableInnerContainer = styled.div<{ isMobile?: boolean }>`
+const StyledScrollableMobileInnerContainer = styled.div`
   height: 100%;
   padding-left: ${themeCssVariables.spacing[5]};
-  padding-right: ${({ isMobile }) =>
-    isMobile ? themeCssVariables.spacing[5] : themeCssVariables.spacing[8]};
+  padding-right: ${themeCssVariables.spacing[5]};
 `;
 
 export const NavigationDrawerScrollableContent = ({
@@ -34,10 +33,10 @@ export const NavigationDrawerScrollableContent = ({
       defaultEnableXScroll={false}
     >
       <StyledItemsContainer>
-        {isSettingsDrawer || isMobile ? (
-          <StyledScrollableInnerContainer isMobile={isMobile}>
+        {isMobile ? (
+          <StyledScrollableMobileInnerContainer>
             {children}
-          </StyledScrollableInnerContainer>
+          </StyledScrollableMobileInnerContainer>
         ) : (
           <>{children}</>
         )}
