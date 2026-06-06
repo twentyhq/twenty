@@ -48,6 +48,7 @@ const buildSendEmailStep = (input: Record<string, unknown>): WorkflowAction =>
 describe('SendEmailWorkflowAction', () => {
   let action: SendEmailWorkflowAction;
   let mockSendEmailTool: jest.Mocked<Pick<SendEmailTool, 'execute'>>;
+  let mockGetActingUserWorkspaceId: jest.Mock;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -58,6 +59,9 @@ describe('SendEmailWorkflowAction', () => {
         error: undefined,
       }),
     };
+    mockGetActingUserWorkspaceId = jest
+      .fn()
+      .mockResolvedValue('user-workspace-1');
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -70,9 +74,7 @@ describe('SendEmailWorkflowAction', () => {
         {
           provide: WorkflowExecutionContextService,
           useValue: {
-            getActingUserWorkspaceId: jest
-              .fn()
-              .mockResolvedValue('user-workspace-1'),
+            getActingUserWorkspaceId: mockGetActingUserWorkspaceId,
           },
         },
       ],
@@ -179,6 +181,38 @@ describe('SendEmailWorkflowAction', () => {
 
       expect(renderRichTextToHtml).not.toHaveBeenCalled();
       expect(mockSendEmailTool.execute).toHaveBeenCalled();
+    });
+  });
+
+  describe('acting user identity (regression #21177)', () => {
+    it('passes the acting user workspace id to the email tool', async () => {
+      await executeWithBody('hello');
+
+      expect(mockGetActingUserWorkspaceId).toHaveBeenCalledWith({
+        workspaceId: 'workspace-1',
+        workflowRunId: 'run-1',
+      });
+      expect(mockSendEmailTool.execute).toHaveBeenCalledWith(
+        expect.any(Object),
+        {
+          workspaceId: 'workspace-1',
+          userWorkspaceId: 'user-workspace-1',
+        },
+      );
+    });
+
+    it('passes undefined user workspace id when no acting user resolves', async () => {
+      mockGetActingUserWorkspaceId.mockResolvedValue(undefined);
+
+      await executeWithBody('hello');
+
+      expect(mockSendEmailTool.execute).toHaveBeenCalledWith(
+        expect.any(Object),
+        {
+          workspaceId: 'workspace-1',
+          userWorkspaceId: undefined,
+        },
+      );
     });
   });
 

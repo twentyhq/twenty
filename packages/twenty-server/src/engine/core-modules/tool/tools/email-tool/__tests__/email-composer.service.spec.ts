@@ -104,6 +104,14 @@ describe('EmailComposerService - connected account authorization', () => {
             ) ?? null,
           ),
       ),
+      findById: jest.fn(({ id, workspaceId }) =>
+        Promise.resolve(
+          accounts.find(
+            (account) =>
+              account.id === id && account.workspaceId === workspaceId,
+          ) ?? null,
+        ),
+      ),
       findAccessibleConnectedAccounts: jest.fn(
         ({ userWorkspaceId, workspaceId }) => {
           const accessibleAccounts = accounts.filter(
@@ -184,7 +192,24 @@ describe('EmailComposerService - connected account authorization', () => {
           }),
           bobContext,
         ),
-      ).rejects.toThrow();
+      ).rejects.toThrow(
+        `Connected Account '${aliceUserPrivateAccount.id}' is private to another workspace member and cannot be used in this context`,
+      );
+    });
+
+    it('should report not found for an account id that does not exist', async () => {
+      const bobContext: ToolExecutionContext = {
+        workspaceId: WORKSPACE_ID,
+        userWorkspaceId: BOB_USER_WORKSPACE_ID,
+      };
+      const ghostAccountId = randomUUID();
+
+      await expect(
+        compose(
+          buildComposeParams({ connectedAccountId: ghostAccountId }),
+          bobContext,
+        ),
+      ).rejects.toThrow(`Connected Account '${ghostAccountId}' not found`);
     });
 
     it('should allow a member to use their own user-private account', async () => {
@@ -265,7 +290,28 @@ describe('EmailComposerService - connected account authorization', () => {
           }),
           systemContext,
         ),
-      ).rejects.toThrow();
+      ).rejects.toThrow(
+        `Connected Account '${aliceUserPrivateAccount.id}' is private to another workspace member and cannot be used in this context`,
+      );
+    });
+
+    it('should allow a user-private account when the acting user owns it', async () => {
+      const workflowActingAsAliceContext: ToolExecutionContext = {
+        workspaceId: WORKSPACE_ID,
+        userWorkspaceId: ALICE_USER_WORKSPACE_ID,
+      };
+
+      const result = await compose(
+        buildComposeParams({ connectedAccountId: aliceUserPrivateAccount.id }),
+        workflowActingAsAliceContext,
+      );
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.connectedAccount.id).toBe(
+          aliceUserPrivateAccount.id,
+        );
+      }
     });
 
     it('should allow a workspace-visibility account when no userWorkspaceId is present', async () => {
