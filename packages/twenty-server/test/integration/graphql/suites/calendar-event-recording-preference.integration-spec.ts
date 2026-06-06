@@ -2,14 +2,16 @@ import { randomUUID } from 'crypto';
 
 import gql from 'graphql-tag';
 
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
-import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { CalendarEventRecordingDecisionService } from 'src/modules/calendar/calendar-event-recording-manager/services/calendar-event-recording-decision.service';
-import { CalendarEventRecordingReconciliationService } from 'src/modules/calendar/calendar-event-recording-manager/services/calendar-event-recording-reconciliation.service';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { CalendarEventRecordingDecisionJob } from 'src/modules/calendar/calendar-event-recording-manager/jobs/calendar-event-recording-decision.job';
 
 const TEST_WORKSPACE_SCHEMA = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
 
@@ -46,29 +48,31 @@ type CallRecordingRow = {
 };
 
 describe('calendar event recording preference lifecycle (e2e)', () => {
-  let calendarEventRecordingDecisionService: CalendarEventRecordingDecisionService;
-  let calendarEventRecordingReconciliationService: CalendarEventRecordingReconciliationService;
+  let addCalendarQueueJob: MessageQueueService['add'];
 
   beforeAll(async () => {
-    const globalWorkspaceOrmManager = global.app.get(
-      GlobalWorkspaceOrmManager,
-      {
-        strict: false,
-      },
+    const calendarQueue = global.app.get<MessageQueueService>(
+      getQueueToken(MessageQueue.calendarQueue),
     );
-    const featureFlagService = {
-      isFeatureEnabled: jest.fn().mockResolvedValue(true),
-    } as unknown as FeatureFlagService;
 
-    calendarEventRecordingDecisionService =
-      new CalendarEventRecordingDecisionService(
-        globalWorkspaceOrmManager,
-        featureFlagService,
-      );
-    calendarEventRecordingReconciliationService =
-      new CalendarEventRecordingReconciliationService(
-        globalWorkspaceOrmManager,
-      );
+    addCalendarQueueJob = calendarQueue.add.bind(calendarQueue);
+    jest.spyOn(calendarQueue, 'add').mockResolvedValue(undefined);
+
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_CALL_RECORDING_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
+  });
+
+  afterAll(async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_CALL_RECORDING_ENABLED,
+      value: false,
+      expectToFail: false,
+    });
+
+    jest.restoreAllMocks();
   });
 
   afterEach(async () => {
@@ -258,22 +262,14 @@ describe('calendar event recording preference lifecycle (e2e)', () => {
       token,
     );
 
-  const reconcileCalendarEventRecording = async (
+  const reconcileCalendarEventRecording = (
     changedCalendarEventIds: string[],
-  ) => {
-    const meetingDecisions =
-      await calendarEventRecordingDecisionService.evaluateMeetingOccurrences({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        calendarEventIds: changedCalendarEventIds,
-      });
-
-    await calendarEventRecordingReconciliationService.reconcileMeetingOccurrences(
-      {
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        meetingDecisions,
-      },
-    );
-  };
+  ): Promise<void> =>
+    addCalendarQueueJob(CalendarEventRecordingDecisionJob.name, {
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      calendarEventIds: changedCalendarEventIds,
+      removedOccurrences: [],
+    });
 });
 
 const seedCalendarEvent = async ({
@@ -351,8 +347,8 @@ const seedCalendarEventParticipant = async ({
 
 const findCallRecordingsByCalendarEventIds = async (
   calendarEventIds: string[],
-): Promise<CallRecordingRow[]> =>
-  global.testDataSource.query(
+): Promise<CallRecordingRow[]> => {
+  const callRecordings = await global.testDataSource.query(
     `
       SELECT
         id,
@@ -367,6 +363,20 @@ const findCallRecordingsByCalendarEventIds = async (
     `,
     [calendarEventIds],
   );
+
+  return callRecordings.map(normalizeCallRecordingRow);
+};
+
+const normalizeCallRecordingRow = (
+  callRecording: CallRecordingRow,
+): CallRecordingRow => ({
+  ...callRecording,
+  startedAt: normalizeTimestamp(callRecording.startedAt),
+  endedAt: normalizeTimestamp(callRecording.endedAt),
+});
+
+const normalizeTimestamp = (timestamp: string | Date): string =>
+  typeof timestamp === 'string' ? timestamp : new Date(timestamp).toISOString();
 
 const findCalendarEventRecordingPreference = async (
   calendarEventId: string,
