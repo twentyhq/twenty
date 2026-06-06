@@ -6,11 +6,11 @@ on:
       ota_repository:
         description: Ota source repository to build for this matrix run
         required: false
-        default: bobaikato/ota
+        default: ota-run/ota
       ota_ref:
         description: Ota branch, tag, or commit to build for this matrix run
         required: false
-        default: bobai/1.6.19-implementation
+        default: v1.6.19
   pull_request:
     paths:
       - 'ota.yaml'
@@ -76,10 +76,10 @@ jobs:
           yarn --version
 
       - name: Install ota from source
-        uses: ota-run/ota/.github/actions/install-ota-from-source@v1.6.18
+        uses: ota-run/ota/.github/actions/install-ota-from-source@v1.6.19
         with:
-          repository: ${{ github.event.inputs.ota_repository || 'bobaikato/ota' }}
-          ref: ${{ github.event.inputs.ota_ref || 'bobai/1.6.19-implementation' }}
+          repository: ${{ github.event.inputs.ota_repository || 'ota-run/ota' }}
+          ref: ${{ github.event.inputs.ota_ref || 'v1.6.19' }}
 
       - name: Assert ota minimum version from contract
         shell: bash
