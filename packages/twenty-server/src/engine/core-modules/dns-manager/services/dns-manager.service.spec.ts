@@ -5,7 +5,7 @@ import Cloudflare from 'cloudflare';
 import { type CustomHostnameCreateResponse } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
 import { AuditContextMock } from 'test/utils/audit-context.mock';
 
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { DnsManagerException } from 'src/engine/core-modules/dns-manager/exceptions/dns-manager.exception';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
@@ -30,7 +30,7 @@ describe('DnsManagerService', () => {
           },
         },
         {
-          provide: AuditService,
+          provide: EventLogEmitterService,
           useValue: {
             createContext: AuditContextMock,
           },

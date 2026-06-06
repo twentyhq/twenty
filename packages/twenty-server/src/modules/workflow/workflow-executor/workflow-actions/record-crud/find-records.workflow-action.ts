@@ -97,6 +97,7 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       limit: workflowActionInput.limit,
       authContext: executionContext.authContext,
       rolePermissionConfig: executionContext.rolePermissionConfig,
+      shouldBuildEffectiveSelectFields: false,
     });
 
     if (!toolOutput.success) {
