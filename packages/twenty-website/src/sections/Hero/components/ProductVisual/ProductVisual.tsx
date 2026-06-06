@@ -49,15 +49,19 @@ const StyledRoot = styled.div<{ $fill: boolean }>`
 
 const WINDOW_MAX_WIDTH = 1040;
 const WINDOW_HEIGHT = 676;
+// Phone (<600px) AI experience: the panel-only window is locked to a chat width.
+const PANEL_ONLY_WIDTH = 320;
 
 // bleed: fixed-width window that runs off the right edge when the viewport is
 // narrower than it. compact: same fixed height (no aspect scaling) but the width
 // fits the viewport (capped), so the board flexes while the sidebar + AI panel
 // stay legible — used by the morph so the AI panel never bleeds off-screen.
+// panelOnly: the compact window is capped to a fixed chat width.
 const ShellScene = styled.div<{
   $fill: boolean;
   $bleed: boolean;
   $compact: boolean;
+  $panelOnly: boolean;
 }>`
   aspect-ratio: ${({ $fill, $bleed, $compact }) =>
     $fill || $bleed || $compact ? 'auto' : '1280 / 832'};
@@ -68,7 +72,12 @@ const ShellScene = styled.div<{
   margin: 0 auto;
   max-height: ${({ $fill, $bleed, $compact }) =>
     $fill || $bleed || $compact ? 'none' : '740px'};
-  max-width: ${({ $compact }) => ($compact ? `${WINDOW_MAX_WIDTH}px` : 'none')};
+  max-width: ${({ $compact, $panelOnly }) =>
+    $panelOnly
+      ? `${PANEL_ONLY_WIDTH}px`
+      : $compact
+        ? `${WINDOW_MAX_WIDTH}px`
+        : 'none'};
   min-height: 0;
   overflow: hidden;
   position: relative;
@@ -629,7 +638,12 @@ export function ProductVisual({
 
   return (
     <StyledRoot $fill={fill}>
-      <ShellScene $bleed={bleed} $compact={compact} $fill={fill}>
+      <ShellScene
+        $bleed={bleed}
+        $compact={compact}
+        $fill={fill}
+        $panelOnly={panelOnly}
+      >
         {frameMode === 'windowed' ? (
           <WindowOrderProvider>{previewShell}</WindowOrderProvider>
         ) : (
