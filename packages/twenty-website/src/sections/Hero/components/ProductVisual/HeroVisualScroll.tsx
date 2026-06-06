@@ -62,6 +62,16 @@ const ScrollTrack = styled.section`
   margin-top: -${NAV_HEIGHT}px;
   position: relative;
   width: 100%;
+
+  @media (max-width: ${theme.breakpoints.md - 0.02}px) {
+    display: none;
+  }
+`;
+
+const MobileRoot = styled.div`
+  @media (min-width: ${theme.breakpoints.md}px) {
+    display: none;
+  }
 `;
 
 const StickyFrame = styled.div`
@@ -362,280 +372,293 @@ export function HeroVisualScroll({
     };
   }, [tabs]);
 
-  if (!isDesktop) {
-    return (
-      <div>
-        <MobileSection style={{ backgroundColor: '#ffffff' }}>
-          <StyledContainer>
-            <HeadingGroup>
-              <HeadingSlot style={{ color: theme.colors.primary.text[100] }}>
-                <ContentLayer data-active={true}>{introHeading}</ContentLayer>
-              </HeadingSlot>
-              <BodyText style={{ color: theme.colors.primary.text[60] }}>
-                <ContentLayer data-active={true}>{introBody}</ContentLayer>
-              </BodyText>
-            </HeadingGroup>
+  const mobileLayout = (
+    <MobileRoot>
+      <MobileSection style={{ backgroundColor: '#ffffff' }}>
+        <StyledContainer>
+          <HeadingGroup>
+            <HeadingSlot style={{ color: theme.colors.primary.text[100] }}>
+              <ContentLayer data-active={true}>{introHeading}</ContentLayer>
+            </HeadingSlot>
+            <BodyText style={{ color: theme.colors.primary.text[60] }}>
+              <ContentLayer data-active={true}>{introBody}</ContentLayer>
+            </BodyText>
+          </HeadingGroup>
 
-            <ActionSlot>
-              <CtaLayer data-active={true}>
-                <LinkButton
-                  color="secondary"
-                  href={ctaHref}
-                  label={ctaLabel}
-                  variant="contained"
-                />
-                {introSecondaryCta}
-              </CtaLayer>
-            </ActionSlot>
-          </StyledContainer>
+          <ActionSlot>
+            <CtaLayer data-active={true}>
+              <LinkButton
+                color="secondary"
+                href={ctaHref}
+                label={ctaLabel}
+                variant="contained"
+              />
+              {introSecondaryCta}
+            </CtaLayer>
+          </ActionSlot>
+        </StyledContainer>
 
-          <MobileVisualWrapper>
-            <PatternOverlay style={{ opacity: 1.0, zIndex: -1 }}>
+        <MobileVisualWrapper>
+          <PatternOverlay style={{ opacity: 1.0, zIndex: -1 }}>
+            {!isDesktop ? (
               <ProductBackgroundHalftone
                 dashColor={INTRO_DASH_COLOR}
                 hoverColor={INTRO_DASH_COLOR}
                 imageUrl={PRODUCT_HERO_BACKGROUND_IMAGE}
               />
-            </PatternOverlay>
-            <ProductVisual
-              activeScene={0}
-              bleed
-              playbackEnabled={false}
-              visual={visual}
-            />
-          </MobileVisualWrapper>
-        </MobileSection>
+            ) : null}
+          </PatternOverlay>
+          <ProductVisual
+            activeScene={0}
+            bleed
+            playbackEnabled={false}
+            visual={visual}
+          />
+        </MobileVisualWrapper>
+      </MobileSection>
 
-        <MobileSection style={{ backgroundColor: '#141414' }}>
-          <StyledContainer>
-            <HeadingGroup>
-              <HeadingSlot style={{ color: theme.colors.secondary.text[100] }}>
-                <ContentLayer data-active={true}>{aiHeading}</ContentLayer>
-              </HeadingSlot>
-              <BodyText style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                <ContentLayer data-active={true}>{aiBody}</ContentLayer>
-              </BodyText>
-            </HeadingGroup>
+      <MobileSection style={{ backgroundColor: '#141414' }}>
+        <StyledContainer>
+          <HeadingGroup>
+            <HeadingSlot style={{ color: theme.colors.secondary.text[100] }}>
+              <ContentLayer data-active={true}>{aiHeading}</ContentLayer>
+            </HeadingSlot>
+            <BodyText style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+              <ContentLayer data-active={true}>{aiBody}</ContentLayer>
+            </BodyText>
+          </HeadingGroup>
 
-            <ActionSlot>
-              <CtaLayer data-active={true}>
-                <TabButtons
-                  activeIndex={activeTab}
-                  idPrefix="product-hero-mobile"
-                  onSelect={setActiveTab}
-                  tabs={tabs}
-                />
-              </CtaLayer>
-            </ActionSlot>
-          </StyledContainer>
+          <ActionSlot>
+            <CtaLayer data-active={true}>
+              <TabButtons
+                activeIndex={activeTab}
+                idPrefix="product-hero-mobile"
+                onSelect={setActiveTab}
+                tabs={tabs}
+              />
+            </CtaLayer>
+          </ActionSlot>
+        </StyledContainer>
 
-          <MobileVisualWrapper>
-            <PatternOverlay style={{ opacity: 1.0, zIndex: -1 }}>
+        <MobileVisualWrapper>
+          <PatternOverlay style={{ opacity: 1.0, zIndex: -1 }}>
+            {!isDesktop ? (
               <ProductBackgroundHalftone
                 dashColor={AI_DASH_COLOR}
                 hoverColor={AI_DASH_COLOR}
                 imageUrl={PRODUCT_HERO_BACKGROUND_IMAGE}
               />
-            </PatternOverlay>
-            <ProductVisual
-              activeScene={activeTab + 1}
-              compact
-              panelOnly={isPhone}
-              playbackEnabled
-              visual={visual}
-            />
-          </MobileVisualWrapper>
-        </MobileSection>
-      </div>
-    );
-  }
+            ) : null}
+          </PatternOverlay>
+          <ProductVisual
+            activeScene={activeTab + 1}
+            compact
+            panelOnly={isPhone}
+            playbackEnabled={!isDesktop}
+            visual={visual}
+          />
+        </MobileVisualWrapper>
+      </MobileSection>
+    </MobileRoot>
+  );
 
   return (
-    <ScrollTrack ref={trackRef}>
-      <StickyFrame>
-        {/* BASE LAYER: INTRO */}
-        <FullLayer
-          ref={setIntroLayerEl}
-          style={{ backgroundColor: '#ffffff', transform: 'translateZ(0)' }}
-        >
-          <StyledContainer>
-            <HeadingGroup>
-              <HeadingSlot style={{ color: theme.colors.primary.text[100] }}>
-                <ContentLayer data-active={true}>{introHeading}</ContentLayer>
-                <ContentLayer data-active={false} style={{ opacity: 0 }}>
-                  {aiHeading}
-                </ContentLayer>
-              </HeadingSlot>
-              <BodyText style={{ color: theme.colors.primary.text[60] }}>
-                <ContentLayer data-active={true}>{introBody}</ContentLayer>
-                <ContentLayer data-active={false} style={{ opacity: 0 }}>
-                  {aiBody}
-                </ContentLayer>
-              </BodyText>
-            </HeadingGroup>
+    <>
+      {mobileLayout}
+      <ScrollTrack ref={trackRef}>
+        <StickyFrame>
+          {/* BASE LAYER: INTRO */}
+          <FullLayer
+            ref={setIntroLayerEl}
+            style={{ backgroundColor: '#ffffff', transform: 'translateZ(0)' }}
+          >
+            <StyledContainer>
+              <HeadingGroup>
+                <HeadingSlot style={{ color: theme.colors.primary.text[100] }}>
+                  <ContentLayer data-active={true}>{introHeading}</ContentLayer>
+                  <ContentLayer data-active={false} style={{ opacity: 0 }}>
+                    {aiHeading}
+                  </ContentLayer>
+                </HeadingSlot>
+                <BodyText style={{ color: theme.colors.primary.text[60] }}>
+                  <ContentLayer data-active={true}>{introBody}</ContentLayer>
+                  <ContentLayer data-active={false} style={{ opacity: 0 }}>
+                    {aiBody}
+                  </ContentLayer>
+                </BodyText>
+              </HeadingGroup>
 
-            <ActionSlot>
-              <CtaLayer data-active={true}>
-                <LinkButton
-                  color="secondary"
-                  href={ctaHref}
-                  label={ctaLabel}
-                  variant="contained"
-                />
-                {introSecondaryCta}
-              </CtaLayer>
-              <CtaLayer
-                data-active={false}
-                style={{ opacity: 0, pointerEvents: 'none' }}
-              >
-                <MeasureTabButtons
-                  activeIndex={activeTab}
-                  idPrefix="product-hero-intro"
-                  onSelect={setActiveTab}
-                  tabs={tabs}
-                />
-              </CtaLayer>
-            </ActionSlot>
-          </StyledContainer>
-
-          <VisualWrapper>
-            <PatternOverlay style={{ opacity: 1.0, zIndex: -1 }}>
-              <ProductBackgroundHalftone
-                dashColor={INTRO_DASH_COLOR}
-                hoverColor={INTRO_DASH_COLOR}
-                imageUrl={PRODUCT_HERO_BACKGROUND_IMAGE}
-              />
-            </PatternOverlay>
-            <ProductVisual
-              activeScene={0}
-              collaborative
-              compact
-              cursorActive={morphProgress < 0.5}
-              cursorLayer={introLayerEl}
-              fill
-              playbackEnabled={false}
-              visual={visual}
-            />
-          </VisualWrapper>
-        </FullLayer>
-
-        {/* TOP LAYER: AI (Wipes up from bottom) */}
-        <FullLayer
-          style={{
-            backgroundColor: '#141414',
-            clipPath: `inset(${100 - morphProgress * 100}% 0 0 0)`,
-            pointerEvents: morphProgress > 0.5 ? 'auto' : 'none',
-            // Prevent text from rendering sub-pixel anti-aliasing differently than the base layer
-            transform: 'translateZ(0)',
-          }}
-        >
-          <StyledContainer>
-            <HeadingGroup>
-              <HeadingSlot style={{ color: theme.colors.secondary.text[100] }}>
-                <ContentLayer data-active={false} style={{ opacity: 0 }}>
-                  {introHeading}
-                </ContentLayer>
-                <ContentLayer data-active={true}>{aiHeading}</ContentLayer>
-              </HeadingSlot>
-              <BodyText style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                <ContentLayer data-active={false} style={{ opacity: 0 }}>
-                  {introBody}
-                </ContentLayer>
-                <ContentLayer data-active={true}>{aiBody}</ContentLayer>
-              </BodyText>
-            </HeadingGroup>
-
-            <ActionSlot>
-              <CtaLayer
-                data-active={false}
-                style={{ opacity: 0, pointerEvents: 'none' }}
-              >
-                <LinkButton
-                  color="secondary"
-                  href={ctaHref}
-                  label={ctaLabel}
-                  variant="contained"
-                />
-              </CtaLayer>
-              <CtaLayer data-active={true}>
-                <MeasureTabButtons
-                  activeIndex={activeTab}
-                  containerRef={rowButtonsRef}
-                  idPrefix="product-hero-ai-measure"
-                  onSelect={setActiveTab}
-                  tabs={tabs}
-                />
-                <StackedTabDeck
-                  aria-hidden={selectorRevealReady ? undefined : 'true'}
-                  style={{
-                    ...stackStyle,
-                    pointerEvents: selectorRevealReady ? 'auto' : 'none',
-                  }}
+              <ActionSlot>
+                <CtaLayer data-active={true}>
+                  <LinkButton
+                    color="secondary"
+                    href={ctaHref}
+                    label={ctaLabel}
+                    variant="contained"
+                  />
+                  {introSecondaryCta}
+                </CtaLayer>
+                <CtaLayer
+                  data-active={false}
+                  style={{ opacity: 0, pointerEvents: 'none' }}
                 >
-                  {stackCards.map((tab, index) =>
-                    (() => {
-                      const targetMetric = stackSpreadMetrics?.[index];
-                      const width =
-                        stackWidth != null && targetMetric != null
-                          ? stackWidth +
-                            (targetMetric.width - stackWidth) *
-                              stackSpreadEasedProgress
-                          : (stackWidth ?? targetMetric?.width);
-                      const offset = targetMetric?.offset ?? 0;
+                  <MeasureTabButtons
+                    activeIndex={activeTab}
+                    idPrefix="product-hero-intro"
+                    onSelect={setActiveTab}
+                    tabs={tabs}
+                  />
+                </CtaLayer>
+              </ActionSlot>
+            </StyledContainer>
 
-                      return (
-                        <StackedTabCard
-                          key={index}
-                          style={{
-                            transform: `translate3d(calc(-50% + ${
-                              offset * stackSpreadEasedProgress
-                            }px), ${
-                              stackBaseOffsets[index] * (1 - stackAlignProgress)
-                            }px, 0) scale(${
-                              stackBaseScales[index] +
-                              (1 - stackBaseScales[index]) * stackAlignProgress
-                            })`,
-                            width: width ? `${width}px` : undefined,
-                            zIndex: 4 - index,
-                          }}
-                        >
-                          <TabButton
-                            controls={`product-hero-ai-stack-panel-${index}`}
-                            id={`product-hero-ai-stack-tab-${index}`}
-                            isActive={
-                              selectorRevealReady && index === activeTab
-                            }
-                            onSelect={() => setActiveTab(index)}
-                            tab={tab}
-                          />
-                        </StackedTabCard>
-                      );
-                    })(),
-                  )}
-                </StackedTabDeck>
-              </CtaLayer>
-            </ActionSlot>
-          </StyledContainer>
-
-          <VisualWrapper>
-            <PatternOverlay style={{ opacity: 1.0, zIndex: -1 }}>
-              <ProductBackgroundHalftone
-                dashColor={AI_DASH_COLOR}
-                hoverColor={AI_DASH_COLOR}
-                imageUrl={PRODUCT_HERO_BACKGROUND_IMAGE}
+            <VisualWrapper>
+              <PatternOverlay style={{ opacity: 1.0, zIndex: -1 }}>
+                {isDesktop ? (
+                  <ProductBackgroundHalftone
+                    dashColor={INTRO_DASH_COLOR}
+                    hoverColor={INTRO_DASH_COLOR}
+                    imageUrl={PRODUCT_HERO_BACKGROUND_IMAGE}
+                  />
+                ) : null}
+              </PatternOverlay>
+              <ProductVisual
+                activeScene={0}
+                collaborative
+                compact
+                cursorActive={morphProgress < 0.5}
+                cursorLayer={introLayerEl}
+                fill
+                playbackEnabled={false}
+                visual={visual}
               />
-            </PatternOverlay>
-            <ProductVisual
-              activeScene={activeTab + 1}
-              aiPanelProgress={aiPanelProgress}
-              compact
-              fill
-              playbackEnabled={aiPlaybackEnabled}
-              visual={visual}
-            />
-          </VisualWrapper>
-        </FullLayer>
-      </StickyFrame>
-    </ScrollTrack>
+            </VisualWrapper>
+          </FullLayer>
+
+          {/* TOP LAYER: AI (Wipes up from bottom) */}
+          <FullLayer
+            style={{
+              backgroundColor: '#141414',
+              clipPath: `inset(${100 - morphProgress * 100}% 0 0 0)`,
+              pointerEvents: morphProgress > 0.5 ? 'auto' : 'none',
+              // Prevent text from rendering sub-pixel anti-aliasing differently than the base layer
+              transform: 'translateZ(0)',
+            }}
+          >
+            <StyledContainer>
+              <HeadingGroup>
+                <HeadingSlot
+                  style={{ color: theme.colors.secondary.text[100] }}
+                >
+                  <ContentLayer data-active={false} style={{ opacity: 0 }}>
+                    {introHeading}
+                  </ContentLayer>
+                  <ContentLayer data-active={true}>{aiHeading}</ContentLayer>
+                </HeadingSlot>
+                <BodyText style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                  <ContentLayer data-active={false} style={{ opacity: 0 }}>
+                    {introBody}
+                  </ContentLayer>
+                  <ContentLayer data-active={true}>{aiBody}</ContentLayer>
+                </BodyText>
+              </HeadingGroup>
+
+              <ActionSlot>
+                <CtaLayer
+                  data-active={false}
+                  style={{ opacity: 0, pointerEvents: 'none' }}
+                >
+                  <LinkButton
+                    color="secondary"
+                    href={ctaHref}
+                    label={ctaLabel}
+                    variant="contained"
+                  />
+                </CtaLayer>
+                <CtaLayer data-active={true}>
+                  <MeasureTabButtons
+                    activeIndex={activeTab}
+                    containerRef={rowButtonsRef}
+                    idPrefix="product-hero-ai-measure"
+                    onSelect={setActiveTab}
+                    tabs={tabs}
+                  />
+                  <StackedTabDeck
+                    aria-hidden={selectorRevealReady ? undefined : 'true'}
+                    style={{
+                      ...stackStyle,
+                      pointerEvents: selectorRevealReady ? 'auto' : 'none',
+                    }}
+                  >
+                    {stackCards.map((tab, index) =>
+                      (() => {
+                        const targetMetric = stackSpreadMetrics?.[index];
+                        const width =
+                          stackWidth != null && targetMetric != null
+                            ? stackWidth +
+                              (targetMetric.width - stackWidth) *
+                                stackSpreadEasedProgress
+                            : (stackWidth ?? targetMetric?.width);
+                        const offset = targetMetric?.offset ?? 0;
+
+                        return (
+                          <StackedTabCard
+                            key={index}
+                            style={{
+                              transform: `translate3d(calc(-50% + ${
+                                offset * stackSpreadEasedProgress
+                              }px), ${
+                                stackBaseOffsets[index] *
+                                (1 - stackAlignProgress)
+                              }px, 0) scale(${
+                                stackBaseScales[index] +
+                                (1 - stackBaseScales[index]) *
+                                  stackAlignProgress
+                              })`,
+                              width: width ? `${width}px` : undefined,
+                              zIndex: 4 - index,
+                            }}
+                          >
+                            <TabButton
+                              controls={`product-hero-ai-stack-panel-${index}`}
+                              id={`product-hero-ai-stack-tab-${index}`}
+                              isActive={
+                                selectorRevealReady && index === activeTab
+                              }
+                              onSelect={() => setActiveTab(index)}
+                              tab={tab}
+                            />
+                          </StackedTabCard>
+                        );
+                      })(),
+                    )}
+                  </StackedTabDeck>
+                </CtaLayer>
+              </ActionSlot>
+            </StyledContainer>
+
+            <VisualWrapper>
+              <PatternOverlay style={{ opacity: 1.0, zIndex: -1 }}>
+                {isDesktop ? (
+                  <ProductBackgroundHalftone
+                    dashColor={AI_DASH_COLOR}
+                    hoverColor={AI_DASH_COLOR}
+                    imageUrl={PRODUCT_HERO_BACKGROUND_IMAGE}
+                  />
+                ) : null}
+              </PatternOverlay>
+              <ProductVisual
+                activeScene={activeTab + 1}
+                aiPanelProgress={aiPanelProgress}
+                compact
+                fill
+                playbackEnabled={aiPlaybackEnabled}
+                visual={visual}
+              />
+            </VisualWrapper>
+          </FullLayer>
+        </StickyFrame>
+      </ScrollTrack>
+    </>
   );
 }
