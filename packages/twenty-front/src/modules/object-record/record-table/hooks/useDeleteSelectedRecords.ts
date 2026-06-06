@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -19,11 +20,10 @@ export const useDeleteSelectedRecords = () => {
   const { deleteManyRecords } = useDeleteManyRecords({ objectNameSingular });
 
   const deleteSelectedRecords = useCallback(async () => {
-    if (objectPermissions.canSoftDeleteObjectRecords !== true) {
-      return;
-    }
+    const hasObjectSoftDeletePermissions =
+      objectPermissions.canSoftDeleteObjectRecords === true;
 
-    if (selectedRowIds.length === 0) {
+    if (!hasObjectSoftDeletePermissions || !isNonEmptyArray(selectedRowIds)) {
       return;
     }
 
