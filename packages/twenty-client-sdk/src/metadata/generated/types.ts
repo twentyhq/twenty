@@ -6150,11 +6150,11 @@ export default {
                     ]
                 }
             ],
-            "myConnectedAccounts": [
-                271
-            ],
             "getRoles": [
                 29
+            ],
+            "myConnectedAccounts": [
+                271
             ],
             "getToolIndex": [
                 277
@@ -7616,15 +7616,6 @@ export default {
                     ]
                 }
             ],
-            "deleteConnectedAccount": [
-                271,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
             "updateWorkspaceMemberRole": [
                 20,
                 {
@@ -7718,6 +7709,15 @@ export default {
                 6,
                 {
                     "agentId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "deleteConnectedAccount": [
+                271,
+                {
+                    "id": [
                         3,
                         "UUID!"
                     ]

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,6 +23,8 @@ import { WorkflowRunWorkspaceService as WorkflowRunService } from 'src/modules/w
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
 export class WorkflowExecutionContextService {
+  private readonly logger = new Logger(WorkflowExecutionContextService.name);
+
   constructor(
     private readonly workflowRunService: WorkflowRunService,
     private readonly userWorkspaceService: UserWorkspaceService,
@@ -71,18 +73,20 @@ export class WorkflowExecutionContextService {
   }): Promise<string | null | undefined> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    const workflow = await this.globalWorkspaceOrmManager
-      .executeInWorkspaceContext(async () => {
-        const workflowRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-            workspaceId,
-            'workflow',
-            { shouldBypassPermissionChecks: true },
-          );
+    const workflow =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          const workflowRepository =
+            await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+              workspaceId,
+              'workflow',
+              { shouldBypassPermissionChecks: true },
+            );
 
-        return workflowRepository.findOne({ where: { id: workflowId } });
-      }, authContext)
-      .catch(() => null);
+          return workflowRepository.findOne({ where: { id: workflowId } });
+        },
+        authContext,
+      );
 
     return workflow?.createdBy?.workspaceMemberId;
   }
@@ -96,7 +100,13 @@ export class WorkflowExecutionContextService {
   }): Promise<string | undefined> {
     const workspaceMember = await this.userWorkspaceService
       .getWorkspaceMemberOrThrow({ workspaceMemberId, workspaceId })
-      .catch(() => undefined);
+      .catch((error) => {
+        this.logger.warn(
+          `Could not resolve workspace member ${workspaceMemberId} in workspace ${workspaceId}, falling back to workspace-shared accounts: ${error.message}`,
+        );
+
+        return undefined;
+      });
 
     if (!isDefined(workspaceMember)) {
       return undefined;
@@ -107,7 +117,13 @@ export class WorkflowExecutionContextService {
         userId: workspaceMember.userId,
         workspaceId,
       })
-      .catch(() => undefined);
+      .catch((error) => {
+        this.logger.warn(
+          `Could not resolve user workspace for user ${workspaceMember.userId} in workspace ${workspaceId}, falling back to workspace-shared accounts: ${error.message}`,
+        );
+
+        return undefined;
+      });
 
     return userWorkspace?.id;
   }
