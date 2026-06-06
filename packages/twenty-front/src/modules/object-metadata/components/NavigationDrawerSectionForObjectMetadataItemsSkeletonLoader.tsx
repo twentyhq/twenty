@@ -10,6 +10,7 @@ const StyledSkeletonColumn = styled.div`
   gap: ${themeCssVariables.spacing[1]};
   height: 76px;
   padding-left: ${themeCssVariables.spacing[1]};
+  width: 100%;
 `;
 
 export const NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader: React.FC =
@@ -22,18 +23,9 @@ export const NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader: React.
         borderRadius={4}
       >
         <StyledSkeletonColumn>
-          <Skeleton
-            width={196}
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-          />
-          <Skeleton
-            width={196}
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-          />
-          <Skeleton
-            width={196}
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-          />
+          <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
+          <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
+          <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
         </StyledSkeletonColumn>
       </SkeletonTheme>
     );

@@ -6,12 +6,10 @@ import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledSkeletonContainer = styled.div`
   align-items: flex-start;
-
   display: flex;
   flex-direction: column;
   gap: 6px;
-  max-width: 196px;
-  min-width: 196px;
+  width: 100%;
 `;
 
 export const MainNavigationDrawerItemsSkeletonLoader = ({
@@ -38,7 +36,6 @@ export const MainNavigationDrawerItemsSkeletonLoader = ({
         {Array.from({ length }).map((_, index) => (
           <Skeleton
             key={index}
-            width={196}
             height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
           />
         ))}

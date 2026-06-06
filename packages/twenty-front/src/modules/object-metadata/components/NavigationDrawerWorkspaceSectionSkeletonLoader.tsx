@@ -17,6 +17,7 @@ const StyledRowsContainer = styled.div`
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
   padding-left: ${themeCssVariables.spacing[1]};
+  width: 100%;
 `;
 
 export const NavigationDrawerWorkspaceSectionSkeletonLoader = () => {
@@ -34,18 +35,9 @@ export const NavigationDrawerWorkspaceSectionSkeletonLoader = () => {
           />
         </StyledTitleSkeleton>
         <StyledRowsContainer>
-          <Skeleton
-            width={196}
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-          />
-          <Skeleton
-            width={196}
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-          />
-          <Skeleton
-            width={196}
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-          />
+          <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
+          <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
+          <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
         </StyledRowsContainer>
       </SkeletonTheme>
     </NavigationDrawerSection>

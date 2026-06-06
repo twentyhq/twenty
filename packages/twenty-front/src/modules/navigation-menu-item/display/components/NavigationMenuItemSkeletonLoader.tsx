@@ -16,6 +16,7 @@ const StyledSkeletonColumn = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
+  width: 100%;
 `;
 
 export const NavigationMenuItemSkeletonLoader = () => {
@@ -32,14 +33,8 @@ export const NavigationMenuItemSkeletonLoader = () => {
           height={SKELETON_LOADER_HEIGHT_SIZES.standard.xs}
         />
         <StyledSkeletonColumn>
-          <Skeleton
-            width={196}
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-          />
-          <Skeleton
-            width={196}
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-          />
+          <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
+          <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
         </StyledSkeletonColumn>
       </StyledSkeletonContainer>
     </SkeletonTheme>
