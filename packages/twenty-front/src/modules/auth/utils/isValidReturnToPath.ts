@@ -20,5 +20,13 @@ export const isValidReturnToPath = (path: string): boolean => {
     return false;
   }
 
+  // Browsers normalize "\" to "/", so "/\evil.com" resolves like the
+  // protocol-relative "//evil.com" (an external URL) even though it passes the
+  // "//" check above. Reject backslashes so a returnTo can only ever be a
+  // same-site absolute path.
+  if (path.includes('\\')) {
+    return false;
+  }
+
   return !EXCLUDED_PATH_PREFIXES.some((prefix) => path.startsWith(prefix));
 };

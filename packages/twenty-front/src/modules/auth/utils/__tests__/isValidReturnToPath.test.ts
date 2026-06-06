@@ -17,6 +17,13 @@ describe('isValidReturnToPath', () => {
     expect(isValidReturnToPath('//evil.com')).toBe(false);
   });
 
+  it('should return false for backslash-tricked paths', () => {
+    // Browsers normalize "\" to "/", so these resolve like "//evil.com".
+    expect(isValidReturnToPath('/\\evil.com')).toBe(false);
+    expect(isValidReturnToPath('/\\/evil.com')).toBe(false);
+    expect(isValidReturnToPath('/objects\\..\\evil')).toBe(false);
+  });
+
   it('should return false for onboarding paths', () => {
     expect(isValidReturnToPath('/create/workspace')).toBe(false);
     expect(isValidReturnToPath('/create/profile')).toBe(false);
