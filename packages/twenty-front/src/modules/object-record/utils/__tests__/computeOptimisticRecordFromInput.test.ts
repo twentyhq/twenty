@@ -276,10 +276,7 @@ describe('computeOptimisticRecordFromInput', () => {
     );
   });
 
-  // #15800: creating a record from a relation cell (e.g. Tasks/Notes) can carry
-  // a field that doesn't belong to the target object. The raw input trips the
-  // invariant above, but feeding the sanitized input (as the create hooks do)
-  // must not.
+  // Regression test for #15800
   it('should not throw when the input has been sanitized first', () => {
     const cache = new InMemoryCache();
     const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');

@@ -133,7 +133,7 @@ export const useCreateManyRecords = <
             currentWorkspaceMember: currentWorkspaceMember,
             recordInput: {
               ...baseOptimisticRecordInputCreatedBy,
-              ...recordToCreate,
+              ...sanitizedRecord,
             },
             objectPermissionsByObjectMetadataId,
           }),
