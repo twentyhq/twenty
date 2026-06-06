@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
+import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
 import { BillingWebhookController } from 'src/engine/core-modules/billing-webhook/billing-webhook.controller';
 import { BillingWebhookCustomerService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-customer.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-entitlement.service';
@@ -32,7 +32,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
 @Module({
   imports: [
-    AuditModule,
+    EventLogEmitterModule,
     FeatureFlagModule,
     StripeModule,
     MessageQueueModule,
