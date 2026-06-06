@@ -1,6 +1,7 @@
 import { type CountryCode } from 'libphonenumber-js';
-import { FieldMetadataType } from '../FieldMetadataType';
 import { type CompositeType } from '../composite-types/composite-type.interface';
+import { FieldMetadataType } from '../FieldMetadataType';
+import { PhoneType } from '../PhoneType';
 
 export const phonesCompositeType: CompositeType = {
   type: FieldMetadataType.PHONES,
@@ -27,6 +28,18 @@ export const phonesCompositeType: CompositeType = {
       isIncludedInUniqueConstraint: true,
     },
     {
+      name: 'primaryPhoneType',
+      type: FieldMetadataType.TEXT,
+      hidden: false,
+      isRequired: false,
+    },
+    {
+      name: 'primaryPhoneExtension',
+      type: FieldMetadataType.TEXT,
+      hidden: false,
+      isRequired: false,
+    },
+    {
       name: 'additionalPhones',
       type: FieldMetadataType.RAW_JSON,
       hidden: false,
@@ -39,6 +52,8 @@ export type AdditionalPhoneMetadata = {
   number: string;
   countryCode: CountryCode;
   callingCode: string;
+  phoneType?: PhoneType | null;
+  extension?: string | null;
 };
 
 type PrimaryPhoneMetadata<
@@ -48,5 +63,7 @@ type PrimaryPhoneMetadata<
 };
 
 export type PhonesMetadata = PrimaryPhoneMetadata & {
+  primaryPhoneType?: PhoneType | null;
+  primaryPhoneExtension?: string | null;
   additionalPhones: Array<AdditionalPhoneMetadata> | null;
 };

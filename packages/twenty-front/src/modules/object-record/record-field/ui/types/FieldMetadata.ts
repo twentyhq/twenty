@@ -4,6 +4,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type CurrencyCode } from 'twenty-shared/constants';
 import {
   ConnectedAccountProvider,
+  PhoneType,
   type AllowedAddressSubField,
   type FieldMetadataMultiItemSettings,
   type FileCategory,
@@ -333,12 +334,16 @@ export type PhoneRecord = {
   number: string;
   callingCode: string;
   countryCode: string;
+  phoneType?: PhoneType | null;
+  extension?: string | null;
 };
 
 export type FieldPhonesValue = {
   primaryPhoneNumber: string;
   primaryPhoneCountryCode: string;
   primaryPhoneCallingCode?: string;
+  primaryPhoneType?: PhoneType | null;
+  primaryPhoneExtension?: string | null;
   additionalPhones?: PhoneRecord[] | null;
 };
 

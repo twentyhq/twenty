@@ -1,3 +1,4 @@
+import { type PhoneRecord } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { PhoneDisplay } from '@/ui/field/display/components/PhoneDisplay';
 import { MultiItemFieldMenuItem } from './MultiItemFieldMenuItem';
 
@@ -6,7 +7,7 @@ type PhonesFieldMenuItemProps = {
   onEdit?: () => void;
   onSetAsPrimary?: () => void;
   onDelete?: () => void;
-  phone: { number: string; callingCode: string };
+  phone: PhoneRecord;
   showPrimaryIcon: boolean;
   showSetAsPrimaryButton: boolean;
 };
@@ -23,7 +24,7 @@ export const PhonesFieldMenuItem = ({
   return (
     <MultiItemFieldMenuItem
       dropdownId={dropdownId}
-      value={{ number: phone.number, callingCode: phone.callingCode }}
+      value={phone}
       onEdit={onEdit}
       onSetAsPrimary={onSetAsPrimary}
       onDelete={onDelete}

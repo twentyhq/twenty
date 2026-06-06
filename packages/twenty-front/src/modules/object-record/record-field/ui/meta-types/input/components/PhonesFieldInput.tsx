@@ -1,10 +1,10 @@
-import { t } from '@lingui/core/macro';
 import { usePhonesField } from '@/object-record/record-field/ui/meta-types/hooks/usePhonesField';
 import { PhonesFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/PhonesFieldMenuItem';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { phoneSchema } from '@/object-record/record-field/ui/validation-schemas/phoneSchema';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { parsePhoneNumber, type E164Number } from 'libphonenumber-js';
 import ReactPhoneNumberInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
@@ -168,6 +168,8 @@ export const PhonesFieldInput = () => {
             number: '',
             callingCode: '',
             countryCode: '',
+            phoneType: null,
+            extension: null,
           };
         }
 
@@ -177,6 +179,8 @@ export const PhonesFieldInput = () => {
             number: phone.nationalNumber,
             callingCode: `+${phone.countryCallingCode}`,
             countryCode: phone.country as string,
+            phoneType: null,
+            extension: null,
           };
         }
 
@@ -184,6 +188,8 @@ export const PhonesFieldInput = () => {
           number: '',
           callingCode: '',
           countryCode: '',
+          phoneType: null,
+          extension: null,
         };
       }}
       renderItem={({

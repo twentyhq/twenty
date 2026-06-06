@@ -47,21 +47,27 @@ export const PhonesDisplay = ({
                 value.primaryPhoneCallingCode ||
                 value.primaryPhoneCountryCode ||
                 '',
+              phoneType: value.primaryPhoneType,
+              extension: value.primaryPhoneExtension,
             }
           : null,
         ...parseAdditionalPhones(value?.additionalPhones),
       ]
         .filter(isDefined)
-        .map(({ number, callingCode }) => {
+        .map(({ number, callingCode, phoneType, extension }) => {
           return {
             number,
             callingCode,
+            phoneType,
+            extension,
           };
         }),
     [
       value?.primaryPhoneNumber,
       value?.primaryPhoneCallingCode,
       value?.primaryPhoneCountryCode,
+      value?.primaryPhoneType,
+      value?.primaryPhoneExtension,
       value?.additionalPhones,
     ],
   );
@@ -75,17 +81,25 @@ export const PhonesDisplay = ({
 
   return isFocused ? (
     <ExpandableList isChipCountDisplayed>
-      {phones.map(({ number, callingCode }, index) => {
+      {phones.map(({ number, callingCode, phoneType, extension }, index) => {
         const { parsedPhone, invalidPhone } =
           parsePhoneNumberOrReturnInvalidValue(callingCode + number);
         const URI = parsedPhone?.getURI();
+        const label = parsedPhone
+          ? parsedPhone.formatInternational()
+          : invalidPhone;
+        const displayLabel = [
+          label,
+          phoneType && `(${phoneType})`,
+          extension && `ext. ${extension}`,
+        ]
+          .filter(isDefined)
+          .join(' ');
         return (
           <RoundedLink
             key={index}
             href={URI || ''}
-            label={
-              parsedPhone ? parsedPhone.formatInternational() : invalidPhone
-            }
+            label={displayLabel}
             onClick={(event) =>
               onPhoneNumberClick?.(callingCode + number, event)
             }
@@ -95,17 +109,25 @@ export const PhonesDisplay = ({
     </ExpandableList>
   ) : (
     <StyledContainer>
-      {phones.map(({ number, callingCode }, index) => {
+      {phones.map(({ number, callingCode, phoneType, extension }, index) => {
         const { parsedPhone, invalidPhone } =
           parsePhoneNumberOrReturnInvalidValue(callingCode + number);
         const URI = parsedPhone?.getURI();
+        const label = parsedPhone
+          ? parsedPhone.formatInternational()
+          : invalidPhone;
+        const displayLabel = [
+          label,
+          phoneType && `(${phoneType})`,
+          extension && `ext. ${extension}`,
+        ]
+          .filter(isDefined)
+          .join(' ');
         return (
           <RoundedLink
             key={index}
             href={URI || ''}
-            label={
-              parsedPhone ? parsedPhone.formatInternational() : invalidPhone
-            }
+            label={displayLabel}
             onClick={(event) =>
               onPhoneNumberClick?.(callingCode + number, event)
             }
