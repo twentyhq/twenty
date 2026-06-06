@@ -37,7 +37,7 @@ export const FormSelectFieldInput = ({
   VariablePicker,
   options,
   readonly,
-  isNullable,
+  isNullable = true,
 }: FormSelectFieldInputProps) => {
   const { theme } = useContext(ThemeContext);
   const instanceId = useId();
@@ -97,14 +97,13 @@ export const FormSelectFieldInput = ({
     (option) => option.value === draftValue.value,
   );
 
-  const emptyOption =
-    isNullable === false
-      ? undefined
-      : {
-          label: label ? t`No ${label}` : t`No value`,
-          value: '',
-          icon: IconCircleOff,
-        };
+  const emptyOption = !isNullable
+    ? undefined
+    : {
+        label: label ? t`No ${label}` : t`No value`,
+        value: '',
+        icon: IconCircleOff,
+      };
 
   const handleUnlinkVariable = () => {
     setDraftValue({
