@@ -138,15 +138,10 @@ export class MiddlewareService {
 
       bindDataToRequestObject(data, request, metadataVersion);
     } catch (error) {
-      // When token validation fails, do not block the request. Public endpoints
-      // (e.g. validatePasswordResetToken, updatePasswordViaResetToken) must
-      // remain accessible even when the requester carries a stale or
-      // workspace-mismatched auth token. Authentication requirements are
-      // enforced by the guards declared on each resolver (WorkspaceAuthGuard,
-      // UserAuthGuard, etc.), not by this hydration middleware.
+      // Auth errors are handled by resolver guards, not this middleware.
       if (error instanceof AuthException) {
         this.logger.warn(
-          `Token hydration skipped for GraphQL request: ${error.message} (code: ${error.code})`,
+          `Token hydration skipped for GraphQL request (code: ${error.code})`,
         );
 
         request.locale =
