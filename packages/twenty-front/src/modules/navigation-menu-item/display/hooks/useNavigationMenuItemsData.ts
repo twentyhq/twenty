@@ -25,8 +25,10 @@ export const useNavigationMenuItemsData = (): NavigationMenuItemsData => {
     navigationMenuItemsDraftState,
   );
 
-  const userNavigationMenuItems = navigationMenuItems.filter((item) =>
-    isDefined(item.userWorkspaceId),
+  const userNavigationMenuItems = navigationMenuItems.filter(
+    (item) =>
+      isDefined(item.userWorkspaceId) &&
+      item.userWorkspaceId === currentWorkspaceMemberId,
   );
 
   const workspaceNavigationMenuItemsFromState =

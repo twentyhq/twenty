@@ -35,13 +35,51 @@ export class MetadataEventPublisher {
     await this.workspaceEventBroadcaster.broadcast({
       workspaceId: enrichedBatch.workspaceId,
       updatedCollectionHash: enrichedBatch.updatedCollectionHash,
-      events: enrichedBatch.events.map((event) => ({
-        type: event.type,
-        entityName: event.metadataName,
-        recordId: event.recordId,
-        properties: event.properties as Record<string, unknown>,
-      })),
+      events: enrichedBatch.events.map((event) => {
+        const properties = event.properties as Record<string, unknown>;
+        const recipientUserWorkspaceIds =
+          this.getRecipientUserWorkspaceIdsForMetadataEvent({
+            metadataName: event.metadataName,
+            properties,
+          });
+
+        return {
+          type: event.type,
+          entityName: event.metadataName,
+          recordId: event.recordId,
+          properties,
+          ...(isDefined(recipientUserWorkspaceIds)
+            ? { recipientUserWorkspaceIds }
+            : {}),
+        };
+      }),
     });
+  }
+
+  private getRecipientUserWorkspaceIdsForMetadataEvent({
+    metadataName,
+    properties,
+  }: {
+    metadataName: string;
+    properties: Record<string, unknown>;
+  }): string[] | undefined {
+    if (metadataName !== 'navigationMenuItem') {
+      return undefined;
+    }
+
+    const after = properties.after as Record<string, unknown> | undefined;
+    const before = properties.before as Record<string, unknown> | undefined;
+    const navigationMenuItem = after ?? before;
+
+    if (!isDefined(navigationMenuItem)) {
+      return undefined;
+    }
+
+    const { userWorkspaceId } = navigationMenuItem;
+
+    return typeof userWorkspaceId === 'string' && userWorkspaceId.length > 0
+      ? [userWorkspaceId]
+      : undefined;
   }
 
   private async enrichMetadataEventBatch(
