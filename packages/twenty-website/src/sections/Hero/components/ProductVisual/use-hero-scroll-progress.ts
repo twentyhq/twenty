@@ -25,7 +25,6 @@ export type HeroScrollState = {
   menuElevated: boolean;
   morphProgress: number;
   navProgress: number;
-  phase: 0 | 1;
 };
 
 const INITIAL_STATE: HeroScrollState = {
@@ -33,7 +32,6 @@ const INITIAL_STATE: HeroScrollState = {
   menuElevated: true,
   morphProgress: 0,
   navProgress: 0,
-  phase: 0,
 };
 
 export function useHeroScrollProgress(
@@ -85,7 +83,6 @@ export function useHeroScrollProgress(
       menuElevated: navProgress < 0.02 && !isCrossing,
       morphProgress,
       navProgress,
-      phase: morphProgress >= 0.5 ? 1 : 0,
     });
   }, [trackRef]);
 

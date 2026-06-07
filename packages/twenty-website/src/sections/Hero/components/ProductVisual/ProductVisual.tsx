@@ -13,14 +13,9 @@ import {
 } from '@tabler/icons-react';
 
 import type { AppPreviewConfig } from '@/sections/AppPreview';
-import {
-  AppPreviewFrame,
-  type AppPreviewFrameMode,
-} from '@/sections/AppPreview/AppWindow/AppPreviewFrame';
+import { AppPreviewFrame } from '@/sections/AppPreview/AppWindow/AppPreviewFrame';
 import { VISUAL_TOKENS } from '@/sections/AppPreview/Shared/utils/app-preview-tokens';
 import { AppPreviewLayout } from '@/sections/AppPreview/Shell/AppPreviewLayout';
-import { type DesktopSidebarMode } from '@/sections/AppPreview/Shell/AppPreviewSidebar';
-import { WindowOrderProvider } from '@/sections/AppPreview/WindowOrder/WindowOrderProvider';
 import { theme } from '@/theme';
 
 import { HERO_CURSORS, ProductHeroCursor } from './ProductHeroCursor';
@@ -301,9 +296,7 @@ type ProductVisualProps = {
   compactCursorTour?: boolean;
   cursorActive?: boolean;
   cursorLayer?: HTMLElement | null;
-  desktopSidebarMode?: DesktopSidebarMode;
   fill?: boolean;
-  frameMode?: AppPreviewFrameMode;
   panelOnly?: boolean;
   playbackEnabled?: boolean;
   visual: AppPreviewConfig;
@@ -418,9 +411,7 @@ export function ProductVisual({
   compactCursorTour = false,
   cursorActive = true,
   cursorLayer,
-  desktopSidebarMode = 'expanded',
   fill = false,
-  frameMode = 'static',
   panelOnly = false,
   playbackEnabled = true,
   visual,
@@ -459,9 +450,12 @@ export function ProductVisual({
     }
   }, [activeStepIndex, completedStepCount, streamedTextVisibleLength]);
 
-  const heroCursor = useProductHeroCursorAutoplay(collaborative && cursorActive, {
-    mobile: compactCursorTour,
-  });
+  const heroCursor = useProductHeroCursorAutoplay(
+    collaborative && cursorActive,
+    {
+      mobile: compactCursorTour,
+    },
+  );
 
   useEffect(() => {
     if (collaborative) {
@@ -482,9 +476,7 @@ export function ProductVisual({
     effectivePage.type === 'workflow' && effectivePage.nodes === undefined;
   const resolvedDesktopSidebarMode = collaborative
     ? 'collapsed'
-    : activeScene !== undefined && activeScene > 0
-      ? (selectedScene.sidebarMode ?? 'collapsed')
-      : desktopSidebarMode;
+    : (selectedScene.sidebarMode ?? 'collapsed');
   const visibleResponseChips = responseChips.slice(
     0,
     MAX_VISIBLE_RESPONSE_CHIPS,
@@ -495,7 +487,7 @@ export function ProductVisual({
   );
 
   const previewShell = (
-    <AppPreviewFrame compact={compact} mode={frameMode}>
+    <AppPreviewFrame compact={compact} mode="static">
       <AppPreviewLayout
         activeItem={activeItem}
         activeItemId={activeItemId}
@@ -638,11 +630,7 @@ export function ProductVisual({
   return (
     <StyledRoot $fill={fill}>
       <ShellScene $bleed={bleed} $compact={compact} $panelOnly={panelOnly}>
-        {frameMode === 'windowed' ? (
-          <WindowOrderProvider>{previewShell}</WindowOrderProvider>
-        ) : (
-          previewShell
-        )}
+        {previewShell}
       </ShellScene>
       {cursors}
     </StyledRoot>
