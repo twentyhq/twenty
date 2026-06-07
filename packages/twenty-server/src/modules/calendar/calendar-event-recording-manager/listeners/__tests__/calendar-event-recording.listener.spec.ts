@@ -70,8 +70,21 @@ describe('CalendarEventRecordingListener', () => {
     );
   });
 
-  it('should not enqueue when only an irrelevant field changed', async () => {
+  it('should enqueue a policy check when the title changed', async () => {
     await listener.handleUpdatedEvent(buildUpdatePayload(['title']));
+
+    expect(mockMessageQueueService.add).toHaveBeenCalledWith(
+      CalendarEventRecordingPolicyJob.name,
+      {
+        workspaceId: 'workspace-1',
+        calendarEventIds: ['event-1'],
+        removedOccurrences: [],
+      },
+    );
+  });
+
+  it('should not enqueue when only an irrelevant field changed', async () => {
+    await listener.handleUpdatedEvent(buildUpdatePayload(['description']));
 
     expect(mockMessageQueueService.add).not.toHaveBeenCalled();
   });

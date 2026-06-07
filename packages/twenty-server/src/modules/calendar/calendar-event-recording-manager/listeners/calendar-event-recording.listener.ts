@@ -19,8 +19,8 @@ import { type RemovedCalendarEventRecordingOccurrence } from 'src/modules/calend
 import { computeRealMeetingKey } from 'src/modules/calendar/calendar-event-recording-manager/utils/compute-real-meeting-key.util';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
-// Keep policy jobs focused on fields that can change recording behavior.
 const RECORDING_RELEVANT_CALENDAR_EVENT_FIELDS = [
+  'title',
   'recordingPreference',
   'conferenceLink',
   'startsAt',
