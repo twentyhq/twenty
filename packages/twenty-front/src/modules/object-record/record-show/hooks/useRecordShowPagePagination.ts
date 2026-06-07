@@ -250,10 +250,9 @@ export const useRecordShowPagePagination = (
     (id) => id === objectRecordId,
   );
 
-  const rankInViewFromParentViewIndex =
-    isSoftDeleteFilterActive && isDefined(parentViewComponentId)
-      ? recordIdsFromParentViewIndex.findIndex((id) => id === objectRecordId)
-      : -1;
+  const rankInViewFromParentViewIndex = isDefined(parentViewComponentId)
+    ? recordIdsFromParentViewIndex.findIndex((id) => id === objectRecordId)
+    : -1;
 
   const rankInView =
     rankInViewFromParentViewIndex > -1
