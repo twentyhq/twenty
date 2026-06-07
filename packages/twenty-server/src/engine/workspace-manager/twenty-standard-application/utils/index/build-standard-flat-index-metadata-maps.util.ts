@@ -7,6 +7,7 @@ import { buildAttachmentStandardFlatIndexMetadatas } from 'src/engine/workspace-
 import { buildBlocklistStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-blocklist-standard-flat-index-metadata.util';
 import { buildCalendarChannelEventAssociationStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-calendar-channel-event-association-standard-flat-index-metadata.util';
 import { buildCalendarEventParticipantStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-calendar-event-participant-standard-flat-index-metadata.util';
+import { buildCallRecordingStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-call-recording-standard-flat-index-metadata.util';
 import { buildCompanyStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-company-standard-flat-index-metadata.util';
 import { buildDashboardStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-dashboard-standard-flat-index-metadata.util';
 import { buildMessageCampaignStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-campaign-standard-flat-index-metadata.util';
@@ -44,6 +45,7 @@ const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
     buildCalendarChannelEventAssociationStandardFlatIndexMetadatas,
   calendarEventParticipant:
     buildCalendarEventParticipantStandardFlatIndexMetadatas,
+  callRecording: buildCallRecordingStandardFlatIndexMetadatas,
   company: buildCompanyStandardFlatIndexMetadatas,
   dashboard: buildDashboardStandardFlatIndexMetadatas,
   messageCampaign: buildMessageCampaignStandardFlatIndexMetadatas,

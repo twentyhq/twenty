@@ -84,11 +84,11 @@ export default defineCommandMenuItem({
 Поле `conditionalAvailabilityExpression` позволяет управлять видимостью команды в зависимости от текущего контекста страницы. Импортируйте типизированные переменные и операторы из `twenty-sdk`, чтобы составлять выражения:
 
 ```ts src/command-menu-items/bulk-update.command-menu-item.ts
-import { defineCommandMenuItem } from 'twenty-sdk/define';
 import {
+  defineCommandMenuItem,
   objectPermissions,
   everyEquals,
-} from 'twenty-sdk/front-component';
+} from 'twenty-sdk/define';
 
 export default defineCommandMenuItem({
   universalIdentifier: '...',

@@ -13,6 +13,7 @@ import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
+import { WorkflowRunStepLogsDetail } from '@/workflow/workflow-run/observability/WorkflowRunStepLogsDetail';
 import { WorkflowRunStepInputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepInputDetail';
 import { WorkflowRunStepNodeDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepNodeDetail';
 import { WorkflowRunStepOutputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepOutputDetail';
@@ -22,11 +23,18 @@ import {
 } from '@/workflow/workflow-steps/types/WorkflowRunTabId';
 import { getWorkflowRunStepExecutionStatus } from '@/workflow/workflow-steps/utils/getWorkflowRunStepExecutionStatus';
 import { WorkflowIteratorSubStepSwitcher } from '@/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
-import { isNull } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
+import { isNull } from '@sniptt/guards';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconLogin2, IconLogout, IconStepInto } from 'twenty-ui/display';
+import {
+  IconLogin2,
+  IconLogout,
+  IconStepInto,
+  IconTerminal,
+} from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -50,6 +58,10 @@ export const SidePanelWorkflowRunViewStepContent = () => {
   const workflowRunId = useWorkflowRunIdOrThrow();
 
   const workflowRun = useWorkflowRun({ workflowRunId });
+
+  const isStepLogsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_RUN_STEP_LOGS_ENABLED,
+  );
 
   const sidePanelPageComponentInstance = useComponentInstanceStateContext(
     SidePanelPageComponentInstanceContext,
@@ -113,6 +125,15 @@ export const SidePanelWorkflowRunViewStepContent = () => {
       Icon: IconLogin2,
       disabled: isInputTabDisabled,
     },
+    ...(isStepLogsEnabled
+      ? [
+          {
+            id: WorkflowRunTabId.LOGS,
+            title: t`Logs`,
+            Icon: IconTerminal,
+          } satisfies SingleTabProps<TabId>,
+        ]
+      : []),
   ];
 
   return (
@@ -157,6 +178,13 @@ export const SidePanelWorkflowRunViewStepContent = () => {
 
             {activeTabId === WorkflowRunTabId.INPUT ? (
               <WorkflowRunStepInputDetail
+                key={workflowSelectedNode}
+                stepId={workflowSelectedNode}
+              />
+            ) : null}
+
+            {isStepLogsEnabled && activeTabId === WorkflowRunTabId.LOGS ? (
+              <WorkflowRunStepLogsDetail
                 key={workflowSelectedNode}
                 stepId={workflowSelectedNode}
               />

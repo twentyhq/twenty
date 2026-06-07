@@ -11,18 +11,29 @@ import { shouldExcludeFieldFromAgentToolSchema } from 'src/engine/metadata-modul
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 // Builds the per-field filter shape and full recursive filter schema
-// for a given object metadata, reusable across find and updateMany tools
-export const generateRecordFilterSchema = (
-  objectMetadata: ObjectMetadataForToolSchema,
-  restrictedFields?: RestrictedFieldsPermissions,
-): {
+// for a given object metadata, reusable across find, delete, and updateMany tools
+export const generateRecordFilterSchema = ({
+  objectMetadata,
+  restrictedFields,
+  additionalExcludedFieldNames = [],
+}: {
+  objectMetadata: ObjectMetadataForToolSchema;
+  restrictedFields?: RestrictedFieldsPermissions;
+  additionalExcludedFieldNames?: string[];
+}): {
   filterShape: Record<string, z.ZodTypeAny>;
   filterSchema: z.ZodTypeAny;
 } => {
   const filterShape: Record<string, z.ZodTypeAny> = {};
 
   objectMetadata.fields.forEach((field) => {
-    if (shouldExcludeFieldFromAgentToolSchema(field)) {
+    if (
+      shouldExcludeFieldFromAgentToolSchema(
+        field,
+        true,
+        additionalExcludedFieldNames,
+      )
+    ) {
       return;
     }
 

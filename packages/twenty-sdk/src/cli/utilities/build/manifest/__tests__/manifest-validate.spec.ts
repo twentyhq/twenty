@@ -37,6 +37,7 @@ const validManifest: Manifest = {
   agents: [],
   publicAssets: [],
   views: [],
+  viewFields: [],
   navigationMenuItems: [],
   pageLayouts: [],
   pageLayoutTabs: [],

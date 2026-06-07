@@ -70,7 +70,7 @@ export class JwtWrapperService {
     return jwt.sign(payload as object, signingKey.privateKeyPem, signOptions);
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   verify<T extends object = any>(
     token: string,
     options?: { secret: string },
@@ -78,7 +78,7 @@ export class JwtWrapperService {
     return this.jwtService.verify(token, options);
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   decode<T = any>(payload: string, options?: jwt.DecodeOptions): T {
     return this.jwtService.decode(payload, options);
   }
@@ -129,7 +129,7 @@ export class JwtWrapperService {
   async verifyJwtToken(
     token: string,
     options?: JwtVerifyOptions,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
   ): Promise<any> {
     const header = decodeJwtHeader(token);
     const payload = this.decode<JwtPayload>(token, { json: true });

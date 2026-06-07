@@ -103,11 +103,10 @@ OAuth 需要支持[MCP 授权规范](https://modelcontextprotocol.io/specificati
 
 连接后，MCP 服务器会提供与 Twenty API 一一对应的工具。 推荐的工作流程是：
 
-1. **`get_tool_catalog`** — 发现所有可用工具
-2. **`learn_tools`** — 获取特定工具的输入模式
-3. **`execute_tool`** — 运行工具
+1. **`learn_tools`** — 获取特定工具的输入模式
+2. **`execute_tool`** — 运行工具
 
-您无需记住工具名称。 询问您的 AI 助手它能做什么，它会自动调用 `get_tool_catalog`。
+您无需记住工具名称。 询问您的 AI 助手它能做什么，它会自动调用 `learn_tools`。
 
 ## 权限
 

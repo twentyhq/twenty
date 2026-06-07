@@ -17,11 +17,11 @@ import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export type GraphqlQuerySelectedFieldsResult = {
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   select: Record<string, any>;
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   relations: Record<string, any>;
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   aggregate: Record<string, any>;
   relationFieldsCount: number;
   hasAtLeastTwoNestedOneToManyRelations: boolean;
@@ -48,7 +48,7 @@ export class GraphqlQuerySelectedFieldsParser {
   }
 
   parse(
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     graphqlSelectedFields: Partial<Record<string, any>>,
     flatObjectMetadata: FlatObjectMetadata,
     isFromOneToManyRelation?: boolean,
@@ -90,7 +90,7 @@ export class GraphqlQuerySelectedFieldsParser {
   }
 
   private parseRecordFields(
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     graphqlSelectedFields: Partial<Record<string, any>>,
     flatObjectMetadata: FlatObjectMetadata,
     accumulator: GraphqlQuerySelectedFieldsResult,
@@ -203,7 +203,7 @@ export class GraphqlQuerySelectedFieldsParser {
   }
 
   private parseConnectionField(
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     graphqlSelectedFields: Partial<Record<string, any>>,
     flatObjectMetadata: FlatObjectMetadata,
     accumulator: GraphqlQuerySelectedFieldsResult,
@@ -227,7 +227,7 @@ export class GraphqlQuerySelectedFieldsParser {
   }
 
   private isRootConnection(
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     graphqlSelectedFields: Partial<Record<string, any>>,
   ): boolean {
     return Object.keys(graphqlSelectedFields).includes('edges');
@@ -235,9 +235,9 @@ export class GraphqlQuerySelectedFieldsParser {
 
   private parseCompositeField(
     fieldMetadata: FlatFieldMetadata,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     fieldValue: any,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
   ): Record<string, any> {
     const compositeType = compositeTypeDefinitions.get(
       fieldMetadata.type as CompositeFieldMetadataType,
@@ -269,7 +269,7 @@ export class GraphqlQuerySelectedFieldsParser {
 
           return acc;
         },
-        // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         {} as Record<string, any>,
       );
   }

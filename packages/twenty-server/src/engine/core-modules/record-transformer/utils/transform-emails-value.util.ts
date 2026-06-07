@@ -2,9 +2,9 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'class-validator';
 
 export const transformEmailsValue = (
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   value: any,
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
 ): any => {
   if (!isDefined(value)) {
     return value;

@@ -19,6 +19,7 @@ export enum LogicFunctionExceptionCode {
   LOGIC_FUNCTION_DISABLED = 'LOGIC_FUNCTION_DISABLED',
   LOGIC_FUNCTION_INVALID_SEED_PROJECT = 'LOGIC_FUNCTION_INVALID_SEED_PROJECT',
   INVALID_LOGIC_FUNCTION_INPUT = 'INVALID_LOGIC_FUNCTION_INPUT',
+  LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED = 'LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED',
 }
 
 const getLogicFunctionExceptionUserFriendlyMessage = (
@@ -53,6 +54,8 @@ const getLogicFunctionExceptionUserFriendlyMessage = (
       return msg`Invalid seed project configuration.`;
     case LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT:
       return msg`Invalid logic function input.`;
+    case LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED:
+      return msg`Prebuilt bundle is not installed on the function. Rebuild and try again.`;
     default:
       assertUnreachable(code);
   }

@@ -11,14 +11,13 @@ import React, { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { EVENT_TO_REACT } from '@/constants/EventToReact';
-import {
-  type SerializedEventData,
-  type SerializedFileData,
-} from '@/constants/SerializedEventData';
+import { type SerializedEventData } from '@/types/SerializedEventData';
+import { type SerializedFileData } from '@/types/SerializedFileData';
 import {
   FrontComponentInputFocusContext,
   type SetEditableFocused,
 } from '@/host/contexts/FrontComponentInputFocusContext';
+import { sanitizeIframeSandbox } from '@/host/utils/sanitizeIframeSandbox';
 
 const INTERNAL_PROPS = new Set(['element', 'receiver', 'components']);
 
@@ -143,6 +142,12 @@ const serializeEvent = (event: unknown): SerializedEventData => {
   }
   if (isNumber(domEvent.clientY)) {
     serialized.clientY = domEvent.clientY;
+  }
+  if (isNumber(domEvent.x)) {
+    serialized.x = domEvent.x;
+  }
+  if (isNumber(domEvent.y)) {
+    serialized.y = domEvent.y;
   }
   if (isNumber(domEvent.pageX)) {
     serialized.pageX = domEvent.pageX;
@@ -309,10 +314,6 @@ const filterProps = <T extends object>(props: T): T => {
 
 type WrapperProps = { children?: React.ReactNode } & Record<string, unknown>;
 
-const FORCED_PROPS_BY_TAG: Record<string, Record<string, unknown>> = {
-  iframe: { sandbox: '' },
-};
-
 const TEXT_LIKE_INPUT_TYPES = new Set([
   'text',
   'search',
@@ -403,12 +404,16 @@ const createCaretPreservingElement = (
 };
 
 export const createHtmlHostWrapper = (htmlTag: string) => {
-  const forcedProps = FORCED_PROPS_BY_TAG[htmlTag];
   const isVoid = VOID_ELEMENTS.has(htmlTag);
+  const isIframe = htmlTag === 'iframe';
 
   return ({ children, ...props }: WrapperProps) => {
     const setEditableFocused = useContext(FrontComponentInputFocusContext);
     const reactProps = filterProps(props);
+
+    const forcedProps: Record<string, unknown> | undefined = isIframe
+      ? { sandbox: sanitizeIframeSandbox(reactProps.sandbox) }
+      : undefined;
 
     if (
       htmlTag === 'textarea' ||

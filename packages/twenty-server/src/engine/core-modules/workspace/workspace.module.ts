@@ -7,7 +7,6 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
-import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -56,7 +55,6 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
     StandardObjectsPrefillModule,
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        AuditModule,
         BillingModule,
         FileModule,
         TokenModule,

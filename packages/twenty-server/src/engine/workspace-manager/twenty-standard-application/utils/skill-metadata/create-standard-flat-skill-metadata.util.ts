@@ -183,7 +183,7 @@ For the fields you will create, make sure to create a good variety of field type
 
 STEP 0: Present a plan to the user and wait for approval.
 - Use list_object_metadata_items to see all available objects in the workspace
-- Use find_people (limit: 5) and find_companies (limit: 5) and find_opportunities (limit: 5) to understand the existing seed data shape
+- Use find_many_people (limit: 5) and find_many_companies (limit: 5) and find_many_opportunities (limit: 5) to understand the existing seed data shape
 - Based on the user's business type, propose a plan that lists:
   - How People, Companies, and Opportunities map to the domain story (e.g. "People = Candidates", "Companies = Employers")
   - The 2–3 custom objects you will create, each with a one-line description of their role
@@ -215,9 +215,9 @@ targetFieldIcon is like IconSomething, it's ok if it doesn't exist in the icon l
 STEP 6: Wait 3 seconds, for the backend side effects to be completed
 
 STEP 7: Rename and enrich the first N records of People, Companies, and Opportunities.
-- Use find_people (limit: 50, orderBy: [{ position: "AscNullsFirst" }]), find_companies (limit: 50, orderBy: [{ position: "AscNullsFirst" }]), find_opportunities (limit: 50, orderBy: [{ position: "AscNullsFirst" }]) to get the IDs of the first records in each table
+- Use find_many_people (limit: 50, orderBy: [{ position: "AscNullsFirst" }]), find_many_companies (limit: 50, orderBy: [{ position: "AscNullsFirst" }]), find_many_opportunities (limit: 50, orderBy: [{ position: "AscNullsFirst" }]) to get the IDs of the first records in each table
   - Ordering by position ascending gives the earliest-inserted records, which are contiguous in the table — this keeps the demo data tightly grouped and makes the workspace feel coherent
-- For each standard object, call update_people / update_companies / update_opportunities **individually per record** (one call per record) to set domain-relevant names and field values:
+- For each standard object, call update_one_person / update_one_company / update_one_opportunity **individually per record** (one call per record) to set domain-relevant names and field values:
   - **People**: replace nameFirstName + nameLastName with realistic names that fit the domain role (e.g. for a law firm: "Sophie Martin", "James O'Brien"; for a clinic: "Dr. Clara Reyes", "Marco Bianchi"). Also set jobTitle to a domain-appropriate title.
   - **Companies**: replace name with realistic company names that fit the domain (e.g. for a law firm: "Ashford & Partners", "Nexus Legal Group"; for a clinic: "Meridian Health Clinic", "CarePoint Medical").
   - **Opportunities**: replace name with a domain-relevant deal name (e.g. "Q2 retainer — Ashford & Partners", "New patient intake — Meridian Health").
@@ -636,9 +636,10 @@ print('Analysis complete!')
 instance of a class that has been pre-instantiated for you; just call methods
 on it directly.
 
-Real catalog tools follow the pattern \`find_<object>\` / \`find_one_<object>\` /
-\`create_<object>\` / \`update_<object>\` / \`delete_<object>\` /
-\`group_by_<object>\` — e.g. \`find_companies\`, \`find_people\`, \`create_person\`.
+Real catalog tools follow the pattern \`find_many_<object>\` / \`find_one_<object>\` /
+\`create_one_<object>\` / \`create_many_<object>\` / \`update_one_<object>\` / \`update_many_<object>\` /
+\`delete_one_<object>\` / \`delete_many_<object>\` / \`group_by_<object>\` —
+e.g. \`find_many_companies\`, \`find_one_company\`, \`create_one_person\`.
 Call \`twenty.list_tools()\` to discover exact names. Catalog tools are routed
 through \`execute_tool\` automatically, and the helper raises an Exception on
 server-side failures with the error message.
@@ -651,14 +652,14 @@ for tool in tools[:5]:
     print(f"- {tool['name']}")
 
 # Find records — returns { 'records': [...], 'count': '5' }
-companies = twenty.call_tool('find_companies', {'limit': 5, 'offset': 0})
+companies = twenty.call_tool('find_many_companies', {'limit': 5, 'offset': 0})
 for c in companies['records']:
     print(c['name'], c.get('employees'))
 
 # Create a record — arguments match the tool's inputSchema directly,
 # no nested 'data' wrapper. Use twenty.call_tool('learn_tools', ...) to
 # inspect a schema if unsure.
-result = twenty.call_tool('create_company', {
+result = twenty.call_tool('create_one_company', {
     'name': 'Acme Corp',
     'domainName': {'primaryLinkUrl': 'https://acme.com'},
     'position': 'first',
@@ -666,7 +667,7 @@ result = twenty.call_tool('create_company', {
 print(f"Created company id={result['id']}")
 
 # Update a record
-twenty.call_tool('update_person', {
+twenty.call_tool('update_one_person', {
     'id': 'person-uuid-here',
     'jobTitle': 'CEO',
 })

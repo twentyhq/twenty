@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ClickHouseModule } from 'src/database/clickHouse/clickHouse.module';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { BillingGaugeService } from 'src/engine/core-modules/billing/billing-gauge.service';
 import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolver';
 import { BillingSyncCustomerDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-customer-data.command';
@@ -49,6 +50,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 @Module({
   imports: [
     ClickHouseModule,
+    CoreEntityCacheModule,
     FeatureFlagModule,
     StripeModule,
     MessageQueueModule,

@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -70,7 +70,7 @@ describe('ImpersonationService', () => {
           },
         },
         {
-          provide: AuditService,
+          provide: EventLogEmitterService,
           useValue: {
             createContext: jest.fn().mockReturnValue({
               insertWorkspaceEvent: jest.fn(),
@@ -295,6 +295,43 @@ describe('ImpersonationService', () => {
         AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
       ),
     );
+  });
+
+  it('should throw an error when impersonating the same user', async () => {
+    const sameUserWorkspace = {
+      id: 'same-user-workspace-id',
+      userId: 'same-user-id',
+      workspaceId: 'workspace-id',
+      user: {
+        id: 'same-user-id',
+        email: 'same@example.com',
+        canImpersonate: true,
+        canAccessFullAdminPanel: false,
+      },
+      workspace: {
+        id: 'workspace-id',
+        allowImpersonation: true,
+      },
+      twoFactorAuthenticationMethods: [],
+    };
+
+    UserWorkspaceFindOneMock.mockResolvedValueOnce(sameUserWorkspace);
+    UserWorkspaceFindOneMock.mockResolvedValueOnce(sameUserWorkspace);
+
+    await expect(
+      service.impersonate(
+        'same-user-id',
+        'workspace-id',
+        'same-user-workspace-id',
+      ),
+    ).rejects.toThrow(
+      new AuthException(
+        'User cannot impersonate themselves',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      ),
+    );
+
+    expect(LoginTokenServiceGenerateLoginTokenMock).not.toHaveBeenCalled();
   });
 
   it('should throw an error when impersonation is not enabled for the workspace', async () => {

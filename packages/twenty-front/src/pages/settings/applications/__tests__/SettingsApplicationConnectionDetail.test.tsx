@@ -65,8 +65,8 @@ jest.mock('@/settings/components/SettingsPageContainer', () => ({
   ),
 }));
 
-jest.mock('@/ui/layout/page/components/SubMenuTopBarContainer', () => ({
-  SubMenuTopBarContainer: ({ children }: { children: ReactNode }) => (
+jest.mock('@/settings/components/layout/SettingsPageLayout', () => ({
+  SettingsPageLayout: ({ children }: { children: ReactNode }) => (
     <>{children}</>
   ),
 }));

@@ -65,6 +65,23 @@ export const HeaderMenuOpen: Story = {
   },
 };
 
+export const HeaderMenuStaysOpenAfterMoveRight: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await canvas.findAllByText('Linkedin', {}, { timeout: 3000 });
+
+    const headerMenuButton = await canvas.findByText('Domain Name');
+    await userEvent.click(headerMenuButton);
+
+    const moveRightButton = await body.findByText('Move right');
+    await userEvent.click(moveRightButton);
+
+    await body.findByText('Move right');
+  },
+};
+
 export const ScrolledLeft: Story = {
   parameters: {
     container: {

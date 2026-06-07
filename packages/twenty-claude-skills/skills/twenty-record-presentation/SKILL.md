@@ -13,7 +13,7 @@ Retrieve the Twenty records needed to answer the user's question, then present t
 
 Use the selected connected Twenty MCP server when it is available
 
-- `get_tool_catalog` → `learn_tools` → `execute_tool`
+- `learn_tools` → `execute_tool`
 - Discover the relevant object, fields, filters, and sort options instead of guessing exact API names.
 - Retrieve only the fields needed for the answer, plus the fields needed for ordering or disambiguation.
 - For "latest", "most recent", or "recent" requests, include the relevant timestamp field used for sorting.
