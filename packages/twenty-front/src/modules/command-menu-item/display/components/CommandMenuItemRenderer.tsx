@@ -60,7 +60,7 @@ const CommandMenuItemButtonRenderer = ({
   if (isInPreviewMode) {
     return (
       <StyledPreviewWrapper>
-        <CommandMenuButton command={command} />
+        <CommandMenuButton command={command} isPrimaryAction />
       </StyledPreviewWrapper>
     );
   }
@@ -70,6 +70,7 @@ const CommandMenuItemButtonRenderer = ({
       command={command}
       onClick={disabled ? undefined : handleClick}
       disabled={disabled}
+      isPrimaryAction
     />
   );
 };

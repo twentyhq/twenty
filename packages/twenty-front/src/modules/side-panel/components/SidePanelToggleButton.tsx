@@ -145,8 +145,8 @@ export const SidePanelToggleButton = () => {
           dataClickOutsideId={PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID}
           dataTestId="page-header-side-panel-button"
           size={isMobile ? 'medium' : 'small'}
-          variant={isSidePanelOpened ? 'secondary' : 'primary'}
-          accent={isSidePanelOpened ? 'default' : 'blue'}
+          variant="tertiary"
+          accent="default"
           hotkeys={[getOsControlSymbol(), 'K']}
           ariaLabel={ariaLabel}
           onClick={toggleSidePanelMenu}

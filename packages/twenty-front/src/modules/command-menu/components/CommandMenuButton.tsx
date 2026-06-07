@@ -28,6 +28,7 @@ export type CommandMenuButtonProps = {
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
   to?: string;
   disabled?: boolean;
+  isPrimaryAction?: boolean;
 };
 
 export const CommandMenuButton = ({
@@ -35,6 +36,7 @@ export const CommandMenuButton = ({
   onClick,
   to,
   disabled = false,
+  isPrimaryAction = false,
 }: CommandMenuButtonProps) => {
   const resolvedLabel = getCommandMenuItemLabel(command.label);
 
@@ -50,8 +52,8 @@ export const CommandMenuButton = ({
         <Button
           Icon={command.Icon}
           size="small"
-          variant="secondary"
-          accent={buttonAccent}
+          variant={isPrimaryAction ? 'primary' : 'secondary'}
+          accent={isPrimaryAction ? 'blue' : buttonAccent}
           to={to}
           onClick={onClick}
           disabled={disabled}

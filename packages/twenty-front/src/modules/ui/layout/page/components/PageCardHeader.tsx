@@ -25,9 +25,9 @@ const StyledHeader = styled.div`
   background-color: ${themeCssVariables.background.secondary};
   border-bottom: 1px solid ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
-  display: grid;
+  display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  justify-content: space-between;
   min-height: ${SIDE_PANEL_TOP_BAR_HEIGHT}px;
   padding: 0 ${themeCssVariables.spacing[3]};
   width: 100%;
@@ -36,7 +36,7 @@ const StyledHeader = styled.div`
 const StyledLeft = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing[1]};
+  gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
   overflow: hidden;
 `;
@@ -49,15 +49,14 @@ const StyledTitle = styled.div`
   font-weight: ${themeCssVariables.font.weight.semiBold};
   gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
-  text-align: center;
 `;
 
 const StyledRight = styled.div`
   align-items: center;
   display: flex;
+  flex-shrink: 0;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-end;
-  min-width: 0;
 `;
 
 export const PageCardHeader = ({
@@ -80,12 +79,15 @@ export const PageCardHeader = ({
         {isDefined(breadcrumb)
           ? breadcrumb
           : isDefined(links) && <Breadcrumb links={links} />}
+        {!isMobile &&
+          (isDefined(icon) || isDefined(title) || isDefined(tag)) && (
+            <StyledTitle>
+              {icon}
+              {isDefined(title) && title}
+              {tag}
+            </StyledTitle>
+          )}
       </StyledLeft>
-      <StyledTitle>
-        {!isMobile && icon}
-        {!isMobile && isDefined(title) && title}
-        {!isMobile && tag}
-      </StyledTitle>
       <StyledRight>{actionButton}</StyledRight>
     </StyledHeader>
   );
