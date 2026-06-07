@@ -387,7 +387,7 @@ export function ProductVisual({
   );
 
   const previewShell = (
-    <AppPreviewFrame compact={compact} mode="static">
+    <AppPreviewFrame compact={compact} floatingShadow mode="static">
       <AppPreviewLayout
         activeItem={activeItem}
         activeItemId={activeItemId}

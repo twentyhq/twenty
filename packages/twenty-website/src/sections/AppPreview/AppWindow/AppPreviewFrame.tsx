@@ -24,14 +24,19 @@ const StaticFrameRoot = styled.div`
 
 // compact fills the (fixed-height, fluid-width) scene box without aspect-ratio,
 // so the board reflows instead of the whole window scaling with width.
-const StaticShell = styled.div<{ $compact: boolean }>`
+// floatingShadow swaps the resting halo for a downward-biased shadow (product
+// hero only), so the soft shadow drops below instead of haloing above the title.
+const StaticShell = styled.div<{ $compact: boolean; $floatingShadow: boolean }>`
   aspect-ratio: ${({ $compact }) =>
     $compact ? 'auto' : APP_PREVIEW_FRAME_ASPECT_RATIO};
   background-color: ${VISUAL_TOKENS.background.primary};
   background-image: ${VISUAL_TOKENS.background.noisy};
   border: 1px solid ${VISUAL_TOKENS.border.color.medium};
   border-radius: 20px;
-  box-shadow: ${WINDOW_SHADOWS.mobileResting};
+  box-shadow: ${({ $floatingShadow }) =>
+    $floatingShadow
+      ? WINDOW_SHADOWS.mobileFloating
+      : WINDOW_SHADOWS.mobileResting};
   display: flex;
   flex-direction: column;
   height: ${({ $compact }) => ($compact ? '100%' : 'auto')};
@@ -43,7 +48,8 @@ const StaticShell = styled.div<{ $compact: boolean }>`
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    box-shadow: ${WINDOW_SHADOWS.resting};
+    box-shadow: ${({ $floatingShadow }) =>
+      $floatingShadow ? WINDOW_SHADOWS.floating : WINDOW_SHADOWS.resting};
   }
 `;
 
@@ -57,12 +63,14 @@ const StaticContent = styled.div`
 type AppPreviewFrameProps = {
   children: ReactNode;
   compact?: boolean;
+  floatingShadow?: boolean;
   mode: AppPreviewFrameMode;
 };
 
 export function AppPreviewFrame({
   children,
   compact = false,
+  floatingShadow = false,
   mode,
 }: AppPreviewFrameProps) {
   if (mode === 'windowed') {
@@ -71,7 +79,7 @@ export function AppPreviewFrame({
 
   return (
     <StaticFrameRoot>
-      <StaticShell $compact={compact}>
+      <StaticShell $compact={compact} $floatingShadow={floatingShadow}>
         <MacWindowBar interactive={false} />
         <StaticContent>{children}</StaticContent>
       </StaticShell>
