@@ -161,7 +161,7 @@ const HeadingGroup = styled.div`
 `;
 
 const ActionSlot = styled.div`
-  min-height: 64px;
+  min-height: 40px;
   position: relative;
   width: 100%;
 `;
