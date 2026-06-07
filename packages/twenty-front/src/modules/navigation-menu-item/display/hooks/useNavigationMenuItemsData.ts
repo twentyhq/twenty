@@ -11,12 +11,12 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 type NavigationMenuItemsData = {
   navigationMenuItems: NavigationMenuItem[];
   workspaceNavigationMenuItems: NavigationMenuItem[];
-  currentWorkspaceMemberId: string | undefined;
+  currentUserWorkspaceId: string | undefined;
 };
 
 export const useNavigationMenuItemsData = (): NavigationMenuItemsData => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const currentWorkspaceMemberId = currentWorkspaceMember?.id;
+  const currentUserWorkspaceId = currentWorkspaceMember?.userWorkspaceId;
   const navigationMenuItems = useAtomStateValue(navigationMenuItemsSelector);
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
@@ -40,6 +40,6 @@ export const useNavigationMenuItemsData = (): NavigationMenuItemsData => {
   return {
     navigationMenuItems: userNavigationMenuItems,
     workspaceNavigationMenuItems,
-    currentWorkspaceMemberId,
+    currentUserWorkspaceId,
   };
 };

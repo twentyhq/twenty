@@ -5,7 +5,7 @@ import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 
 export const useCreateNavigationMenuItemFolder = () => {
-  const { navigationMenuItems, currentWorkspaceMemberId } =
+  const { navigationMenuItems, currentUserWorkspaceId } =
     useNavigationMenuItemsData();
 
   const { createManyNavigationMenuItems } = useCreateManyNavigationMenuItems();
@@ -13,14 +13,14 @@ export const useCreateNavigationMenuItemFolder = () => {
   const createNewNavigationMenuItemFolder = async (
     name: string,
   ): Promise<void> => {
-    if (!name || !currentWorkspaceMemberId) {
+    if (!name || !currentUserWorkspaceId) {
       return;
     }
 
     const topLevelItems = navigationMenuItems.filter(
       (item) =>
         !isDefined(item.folderId) &&
-        item.userWorkspaceId === currentWorkspaceMemberId,
+        item.userWorkspaceId === currentUserWorkspaceId,
     );
 
     const minPosition =
@@ -34,7 +34,7 @@ export const useCreateNavigationMenuItemFolder = () => {
         name,
         targetRecordId: null,
         targetObjectMetadataId: null,
-        userWorkspaceId: currentWorkspaceMemberId,
+        userWorkspaceId: currentUserWorkspaceId,
         folderId: null,
         position: minPosition - 1,
       },
