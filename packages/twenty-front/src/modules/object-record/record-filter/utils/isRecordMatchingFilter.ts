@@ -433,9 +433,10 @@ export const isRecordMatchingFilter = ({
           });
         }
 
-        throw new Error(
-          `Not implemented yet, use UUID filter instead on the corresponding "${filterKey}Id" field`,
-        );
+        return isMatchingUUIDFilter({
+          uuidFilter: filterValue as UUIDFilter,
+          value: record[filterKey]?.id ?? null,
+        });
       }
       case FieldMetadataType.TS_VECTOR: {
         return isMatchingTSVectorFilter({
