@@ -281,6 +281,7 @@ export const ObjectOptionsDropdownCustomView = ({
                 LeftIcon={IconTrash}
                 text={t`Delete view`}
                 disabled={isDefaultView || isLastView}
+                accent="danger"
               />
             </SelectableListItem>
           </div>
