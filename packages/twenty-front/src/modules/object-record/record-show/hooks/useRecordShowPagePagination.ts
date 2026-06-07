@@ -12,6 +12,13 @@ import { useQueryVariablesFromParentView } from '@/views/hooks/useQueryVariables
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { isRecordFilterAboutSoftDelete } from '@/object-record/record-filter/utils/isRecordFilterAboutSoftDelete';
 
 export const useRecordShowPagePagination = (
   propsObjectNameSingular: string,
@@ -37,6 +44,28 @@ export const useRecordShowPagePagination = (
   }
 
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const contextStoreRecordShowParentView = useAtomComponentStateValue(
+    contextStoreRecordShowParentViewComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
+
+  const parentViewComponentId =
+    contextStoreRecordShowParentView?.parentViewComponentId;
+
+  const isSoftDeleteFilterActive =
+    contextStoreRecordShowParentView?.parentViewFilters.some((recordFilter) =>
+      isRecordFilterAboutSoftDelete({
+        recordFilter,
+        objectMetadataItems,
+      }),
+    ) ?? false;
+
+  const recordIdsFromParentViewIndex = useAtomComponentSelectorValue(
+    recordIndexAllRecordIdsComponentSelector,
+    parentViewComponentId ?? '',
+  );
 
   const { filter, orderBy } = useQueryVariablesFromParentView({
     objectMetadataItem,
@@ -51,6 +80,7 @@ export const useRecordShowPagePagination = (
       limit: 1,
       objectNameSingular,
       recordGqlFields: { id: true },
+      withSoftDeleted: isSoftDeleteFilterActive,
     });
 
   const currentRecordCursorFromRequest = currentRecordsPageInfo?.endCursor;
@@ -76,6 +106,7 @@ export const useRecordShowPagePagination = (
         : undefined,
       objectNameSingular,
       recordGqlFields: { id: true },
+      withSoftDeleted: isSoftDeleteFilterActive,
       onCompleted: (_, pagination) => {
         setTotalCountBefore(pagination?.totalCount ?? 0);
       },
@@ -99,6 +130,7 @@ export const useRecordShowPagePagination = (
         : undefined,
       objectNameSingular,
       recordGqlFields: { id: true },
+      withSoftDeleted: isSoftDeleteFilterActive,
       onCompleted: (_, pagination) => {
         setTotalCountAfter(pagination?.totalCount ?? 0);
       },
@@ -214,7 +246,19 @@ export const useRecordShowPagePagination = (
     setLastShowPageRecordId(objectRecordId);
   };
 
-  const rankInView = recordIdsInCache.findIndex((id) => id === objectRecordId);
+  const rankInViewFromCache = recordIdsInCache.findIndex(
+    (id) => id === objectRecordId,
+  );
+
+  const rankInViewFromParentViewIndex =
+    isSoftDeleteFilterActive && isDefined(parentViewComponentId)
+      ? recordIdsFromParentViewIndex.findIndex((id) => id === objectRecordId)
+      : -1;
+
+  const rankInView =
+    rankInViewFromParentViewIndex > -1
+      ? rankInViewFromParentViewIndex
+      : rankInViewFromCache;
 
   const rankFoundInView = rankInView > -1;
 
