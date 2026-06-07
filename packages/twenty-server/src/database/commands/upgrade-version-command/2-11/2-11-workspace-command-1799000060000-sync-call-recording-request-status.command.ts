@@ -6,10 +6,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -19,13 +21,19 @@ const CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER =
 const CALL_RECORDING_REQUEST_STATUS_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.callRecording.fields.recordingRequestStatus
     .universalIdentifier;
+const CALL_RECORDING_REQUEST_STATUS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
+  STANDARD_OBJECTS.callRecording.views.allCallRecordings.viewFields
+    .recordingRequestStatus.universalIdentifier,
+  STANDARD_OBJECTS.callRecording.views.callRecordingRecordPageFields.viewFields
+    .recordingRequestStatus.universalIdentifier,
+];
 const CALL_RECORDING_REQUEST_STATUS_FIELD_NAME = 'recordingRequestStatus';
 
 @RegisteredWorkspaceCommand('2.11.0', 1799000060000)
 @Command({
   name: 'upgrade:2-11:sync-call-recording-request-status',
   description:
-    'Create the CallRecording recordingRequestStatus field in existing workspaces',
+    'Create the CallRecording recordingRequestStatus metadata in existing workspaces',
 })
 export class SyncCallRecordingRequestStatusCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(
@@ -48,10 +56,11 @@ export class SyncCallRecordingRequestStatusCommand extends ActiveOrSuspendedWork
         { workspaceId },
       );
 
-    const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+    const { flatFieldMetadataMaps, flatObjectMetadataMaps, flatViewFieldMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatFieldMetadataMaps',
         'flatObjectMetadataMaps',
+        'flatViewFieldMaps',
       ]);
 
     const existingCallRecordingObjectMetadata =
@@ -72,15 +81,8 @@ export class SyncCallRecordingRequestStatusCommand extends ActiveOrSuspendedWork
         CALL_RECORDING_REQUEST_STATUS_FIELD_UNIVERSAL_IDENTIFIER
       ];
 
-    if (isDefined(existingRecordingRequestStatusField)) {
-      this.logger.log(
-        `CallRecording recordingRequestStatus field already exists for workspace ${workspaceId}, skipping`,
-      );
-
-      return;
-    }
-
     if (
+      !isDefined(existingRecordingRequestStatusField) &&
       hasFieldNameConflict({
         flatFieldMetadatas: Object.values(
           flatFieldMetadataMaps.byUniversalIdentifier,
@@ -102,19 +104,36 @@ export class SyncCallRecordingRequestStatusCommand extends ActiveOrSuspendedWork
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
 
-    const standardRecordingRequestStatusField =
-      standardAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
-        CALL_RECORDING_REQUEST_STATUS_FIELD_UNIVERSAL_IDENTIFIER
-      ];
+    const recordingRequestStatusFieldsToCreate =
+      getStandardFlatEntitiesToCreateOrThrow<FlatFieldMetadata>({
+        standardFlatEntityMaps: standardAllFlatEntityMaps.flatFieldMetadataMaps,
+        existingFlatEntityMaps: flatFieldMetadataMaps,
+        universalIdentifiers: [
+          CALL_RECORDING_REQUEST_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+        ],
+      });
+    const recordingRequestStatusViewFieldsToCreate =
+      getStandardFlatEntitiesToCreateOrThrow<FlatViewField>({
+        standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
+        existingFlatEntityMaps: flatViewFieldMaps,
+        universalIdentifiers:
+          CALL_RECORDING_REQUEST_STATUS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS,
+      });
 
-    if (!isDefined(standardRecordingRequestStatusField)) {
-      throw new Error(
-        `Standard CallRecording recordingRequestStatus field not found for workspace ${workspaceId}`,
+    const totalOperationCount =
+      recordingRequestStatusFieldsToCreate.length +
+      recordingRequestStatusViewFieldsToCreate.length;
+
+    if (totalOperationCount === 0) {
+      this.logger.log(
+        `CallRecording recordingRequestStatus metadata already exists for workspace ${workspaceId}, skipping`,
       );
+
+      return;
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Creating CallRecording recordingRequestStatus field for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Creating ${totalOperationCount} CallRecording recordingRequestStatus metadata item(s) for workspace ${workspaceId}`,
     );
 
     if (isDryRun) {
@@ -130,7 +149,12 @@ export class SyncCallRecordingRequestStatusCommand extends ActiveOrSuspendedWork
           workspaceId,
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {
-              flatEntityToCreate: [standardRecordingRequestStatusField],
+              flatEntityToCreate: recordingRequestStatusFieldsToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+            viewField: {
+              flatEntityToCreate: recordingRequestStatusViewFieldsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
@@ -140,7 +164,7 @@ export class SyncCallRecordingRequestStatusCommand extends ActiveOrSuspendedWork
 
     if (validateAndBuildResult.status === 'fail') {
       throw new Error(
-        `Failed to create CallRecording recordingRequestStatus field for workspace ${workspaceId}: ${JSON.stringify(
+        `Failed to create CallRecording recordingRequestStatus metadata for workspace ${workspaceId}: ${JSON.stringify(
           validateAndBuildResult,
           null,
           2,
@@ -149,7 +173,7 @@ export class SyncCallRecordingRequestStatusCommand extends ActiveOrSuspendedWork
     }
 
     this.logger.log(
-      `Created CallRecording recordingRequestStatus field for workspace ${workspaceId}`,
+      `Created ${totalOperationCount} CallRecording recordingRequestStatus metadata item(s) for workspace ${workspaceId}`,
     );
   }
 }
