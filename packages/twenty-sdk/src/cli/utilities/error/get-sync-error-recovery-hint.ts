@@ -1,12 +1,14 @@
+import { isObject, isString } from '@sniptt/guards';
+
 const getErrorMessage = (error: unknown): string => {
-  if (typeof error === 'string') {
+  if (isString(error)) {
     return error;
   }
 
-  if (typeof error === 'object' && error !== null) {
+  if (isObject(error)) {
     const message = (error as { message?: unknown }).message;
 
-    if (typeof message === 'string') {
+    if (isString(message)) {
       return message;
     }
   }
@@ -15,15 +17,11 @@ const getErrorMessage = (error: unknown): string => {
 };
 
 const getErrorCode = (error: unknown): string => {
-  if (typeof error === 'object' && error !== null) {
+  if (isObject(error)) {
     const extensions = (error as { extensions?: { code?: unknown } })
       .extensions;
 
-    if (
-      typeof extensions === 'object' &&
-      extensions !== null &&
-      typeof extensions.code === 'string'
-    ) {
+    if (isObject(extensions) && isString(extensions.code)) {
       return extensions.code;
     }
   }

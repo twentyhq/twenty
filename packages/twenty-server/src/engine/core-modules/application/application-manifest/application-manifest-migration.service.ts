@@ -6,7 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
-import { enrichSyncActionsWithFlatEntityInfo } from 'src/engine/core-modules/application/application-manifest/utils/enrich-sync-actions-with-flat-entity-info.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import {
   ApplicationException,
@@ -252,14 +251,7 @@ export class ApplicationManifestMigrationService {
     }
 
     return {
-      workspaceMigration: {
-        ...validateAndBuildResult.workspaceMigration,
-        actions: enrichSyncActionsWithFlatEntityInfo({
-          actions: validateAndBuildResult.workspaceMigration.actions,
-          fromAllFlatEntityMaps,
-          toAllUniversalFlatEntityMaps,
-        }),
-      },
+      workspaceMigration: validateAndBuildResult.workspaceMigration,
       hasSchemaMetadataChanged: validateAndBuildResult.hasSchemaMetadataChanged,
     };
   }
