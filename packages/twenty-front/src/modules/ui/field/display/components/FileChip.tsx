@@ -63,9 +63,7 @@ export const FileChip = ({
     setFailedThumbnailUrl(file.url);
   };
 
-  const fileIcon = (
-    <FileIcon fileCategory={fileCategory} size="small" />
-  );
+  const fileIcon = <FileIcon fileCategory={fileCategory} size="small" />;
 
   return (
     <>
