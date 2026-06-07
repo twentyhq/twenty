@@ -13,11 +13,19 @@ type Coordinate = { left: number; top: number };
 export type HeroCursorConfig = {
   color: string;
   home: Coordinate;
+  // Resting position used on the phone bleed layout, where the window runs off
+  // the right edge; defaults to home when unset. Tune per cursor.
+  mobileHome?: Coordinate;
   name: string;
 };
 
 export const HERO_CURSORS: HeroCursorConfig[] = [
-  { name: 'Alice', color: '#ffb08d', home: { left: 13, top: 34 } },
+  {
+    name: 'Alice',
+    color: '#ffb08d',
+    home: { left: 13, top: 34 },
+    mobileHome: { left: 13, top: -6 },
+  },
   { name: 'Ben', color: '#8db4ff', home: { left: 36, top: 90 } },
   { name: 'Cara', color: '#9ee7c5', home: { left: 90, top: 51 } },
 ];

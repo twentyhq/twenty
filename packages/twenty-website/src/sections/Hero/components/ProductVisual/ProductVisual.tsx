@@ -298,6 +298,7 @@ type ProductVisualProps = {
   bleed?: boolean;
   collaborative?: boolean;
   compact?: boolean;
+  compactCursorTour?: boolean;
   cursorActive?: boolean;
   cursorLayer?: HTMLElement | null;
   desktopSidebarMode?: DesktopSidebarMode;
@@ -414,6 +415,7 @@ export function ProductVisual({
   bleed = false,
   collaborative = false,
   compact = false,
+  compactCursorTour = false,
   cursorActive = true,
   cursorLayer,
   desktopSidebarMode = 'expanded',
@@ -457,9 +459,9 @@ export function ProductVisual({
     }
   }, [activeStepIndex, completedStepCount, streamedTextVisibleLength]);
 
-  const heroCursor = useProductHeroCursorAutoplay(
-    collaborative && cursorActive,
-  );
+  const heroCursor = useProductHeroCursorAutoplay(collaborative && cursorActive, {
+    mobile: compactCursorTour,
+  });
 
   useEffect(() => {
     if (collaborative) {
@@ -619,7 +621,11 @@ export function ProductVisual({
                 color={cursorConfig.color}
                 glideMs={isActive ? heroCursor.glideMs : undefined}
                 hidden={isActive && heroCursor.hidden}
-                home={cursorConfig.home}
+                home={
+                  compactCursorTour && cursorConfig.mobileHome
+                    ? cursorConfig.mobileHome
+                    : cursorConfig.home
+                }
                 name={cursorConfig.name}
                 target={isActive ? heroCursor.target : undefined}
               />

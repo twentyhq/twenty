@@ -38,7 +38,8 @@ const RECORD_ROW_ID = 'anthropic';
 
 const LOOP_START_INDEX = 0;
 
-const PHASES: TourPhase[] = [
+// Desktop tour — explores the record's Timeline/Notes/Calendar tabs.
+const DESKTOP_PHASES: TourPhase[] = [
   {
     activeCursor: 0,
     pageItemId: COMPANIES,
@@ -202,9 +203,105 @@ const PHASES: TourPhase[] = [
   },
 ];
 
+// Mobile tour — the three cursors strictly alternate (Alice -> Ben -> Cara) and
+// only touch elements that fit a narrow window: the Companies list, the record
+// Timeline tab, and the sidebar rails. No off-screen record Notes/Calendar tabs.
+const MOBILE_PHASES: TourPhase[] = [
+  // Alice opens the Anthropic record.
+  {
+    activeCursor: 0,
+    pageItemId: COMPANIES,
+    showRecord: false,
+    target: { kind: 'home' },
+    clicking: false,
+    hidden: false,
+    durationMs: 1400,
+  },
+  {
+    activeCursor: 0,
+    pageItemId: COMPANIES,
+    showRecord: false,
+    target: { kind: 'row', id: RECORD_ROW_ID },
+    clicking: false,
+    hidden: false,
+    durationMs: 1000,
+  },
+  {
+    activeCursor: 0,
+    pageItemId: COMPANIES,
+    showRecord: false,
+    target: { kind: 'row', id: RECORD_ROW_ID },
+    clicking: true,
+    hidden: false,
+    durationMs: 400,
+  },
+  // Ben reads the record, then navigates to People.
+  {
+    activeCursor: 1,
+    pageItemId: COMPANIES,
+    showRecord: true,
+    recordTab: 'Timeline',
+    target: { kind: 'home' },
+    clicking: false,
+    hidden: false,
+    durationMs: 1000,
+  },
+  {
+    activeCursor: 1,
+    pageItemId: COMPANIES,
+    showRecord: true,
+    recordTab: 'Timeline',
+    target: { kind: 'rail', id: PEOPLE },
+    clicking: false,
+    hidden: false,
+    durationMs: 900,
+  },
+  {
+    activeCursor: 1,
+    pageItemId: PEOPLE,
+    showRecord: false,
+    target: { kind: 'rail', id: PEOPLE },
+    clicking: true,
+    hidden: false,
+    durationMs: 400,
+  },
+  // Cara browses People, then loops back to Companies.
+  {
+    activeCursor: 2,
+    pageItemId: PEOPLE,
+    showRecord: false,
+    target: { kind: 'home' },
+    clicking: false,
+    hidden: false,
+    durationMs: 1000,
+  },
+  {
+    activeCursor: 2,
+    pageItemId: PEOPLE,
+    showRecord: false,
+    target: { kind: 'rail', id: COMPANIES },
+    clicking: false,
+    hidden: false,
+    durationMs: 900,
+  },
+  {
+    activeCursor: 2,
+    pageItemId: COMPANIES,
+    showRecord: false,
+    target: { kind: 'rail', id: COMPANIES },
+    clicking: true,
+    hidden: false,
+    durationMs: 400,
+  },
+];
+
 export function useProductHeroCursorAutoplay(
   enabled: boolean,
+  options: { mobile?: boolean } = {},
 ): ProductHeroTourState {
+  const { mobile = false } = options;
+  const phases = mobile ? MOBILE_PHASES : DESKTOP_PHASES;
+
   const [phaseIndex, setPhaseIndex] = useState(0);
 
   useEffect(() => {
@@ -215,14 +312,14 @@ export function useProductHeroCursorAutoplay(
 
     const timer = setTimeout(() => {
       setPhaseIndex((current) =>
-        current >= PHASES.length - 1 ? LOOP_START_INDEX : current + 1,
+        current >= phases.length - 1 ? LOOP_START_INDEX : current + 1,
       );
-    }, PHASES[phaseIndex].durationMs);
+    }, phases[phaseIndex].durationMs);
 
     return () => clearTimeout(timer);
-  }, [enabled, phaseIndex]);
+  }, [enabled, phaseIndex, phases]);
 
-  const phase = PHASES[phaseIndex];
+  const phase = phases[phaseIndex];
 
   return {
     activeCursor: phase.activeCursor,

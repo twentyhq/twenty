@@ -257,6 +257,13 @@ const MobileVisualWrapper = styled.div`
   width: 100%;
 `;
 
+// Non-clipping layer that hosts the collaboration cursors so they can sit above
+// the visual (like the desktop FullLayer); the inner wrapper still clips the bleed.
+const MobileCursorLayer = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
 export function HeroVisualScroll({
   aiBody,
   aiHeading,
@@ -281,6 +288,8 @@ export function HeroVisualScroll({
   });
   const [activeTab, setActiveTab] = useState(0);
   const [introLayerEl, setIntroLayerEl] = useState<HTMLDivElement | null>(null);
+  const [mobileIntroLayerEl, setMobileIntroLayerEl] =
+    useState<HTMLDivElement | null>(null);
   const [stackTargetMetrics, setStackTargetMetrics] = useState<
     StackTargetMetric[]
   >([]);
@@ -399,23 +408,29 @@ export function HeroVisualScroll({
           </ActionSlot>
         </StyledContainer>
 
-        <MobileVisualWrapper>
-          <PatternOverlay style={{ opacity: 1.0, zIndex: -1 }}>
-            {!isDesktop ? (
-              <ProductBackgroundHalftone
-                dashColor={INTRO_DASH_COLOR}
-                hoverColor={INTRO_DASH_COLOR}
-                imageUrl={PRODUCT_HERO_BACKGROUND_IMAGE}
-              />
-            ) : null}
-          </PatternOverlay>
-          <ProductVisual
-            activeScene={0}
-            bleed
-            playbackEnabled={false}
-            visual={visual}
-          />
-        </MobileVisualWrapper>
+        <MobileCursorLayer ref={setMobileIntroLayerEl}>
+          <MobileVisualWrapper>
+            <PatternOverlay style={{ opacity: 1.0, zIndex: -1 }}>
+              {!isDesktop ? (
+                <ProductBackgroundHalftone
+                  dashColor={INTRO_DASH_COLOR}
+                  hoverColor={INTRO_DASH_COLOR}
+                  imageUrl={PRODUCT_HERO_BACKGROUND_IMAGE}
+                />
+              ) : null}
+            </PatternOverlay>
+            <ProductVisual
+              activeScene={0}
+              bleed
+              collaborative
+              compactCursorTour
+              cursorActive={!isDesktop}
+              cursorLayer={mobileIntroLayerEl}
+              playbackEnabled={false}
+              visual={visual}
+            />
+          </MobileVisualWrapper>
+        </MobileCursorLayer>
       </MobileSection>
 
       <MobileSection $secondary style={{ backgroundColor: '#141414' }}>
