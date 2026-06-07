@@ -27,7 +27,6 @@ const StyledHeader = styled.div`
   box-sizing: border-box;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  justify-content: space-between;
   min-height: ${SIDE_PANEL_TOP_BAR_HEIGHT}px;
   padding: 0 ${themeCssVariables.spacing[3]};
   width: 100%;
@@ -54,9 +53,10 @@ const StyledTitle = styled.div`
 const StyledRight = styled.div`
   align-items: center;
   display: flex;
-  flex-shrink: 0;
+  flex: 1;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-end;
+  min-width: 0;
 `;
 
 export const PageCardHeader = ({
