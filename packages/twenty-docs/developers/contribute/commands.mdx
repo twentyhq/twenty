@@ -18,8 +18,8 @@ npx nx run twenty-server:worker    # Background worker
 
 ```bash
 npx nx database:reset twenty-server                          # Reset and seed database
-npx nx run twenty-server:database:migrate:prod               # Run migrations
-npx nx run twenty-server:database:migrate:generate --name <name> --type <fast|slow>  # Generate a migration
+npx nx run twenty-server:database:upgrade:run                # Run instance commands (migrate:prod is deprecated)
+npx nx run twenty-server:database:upgrade:generate --name <name> --type <fast|slow>  # Generate an instance command
 ```
 
 ## Linting

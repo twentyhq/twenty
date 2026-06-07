@@ -215,7 +215,7 @@
         "parallel": false
       }
     },
-    "database:migrate:generate": {
+    "database:upgrade:generate": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {

@@ -20,7 +20,7 @@ See `packages/twenty-server/docs/UPGRADE_COMMANDS.md` for full documentation.
 - **When changing a `*.entity.ts` file**, generate an instance command:
 
     ```bash
-    npx nx run twenty-server:database:migrate:generate --name <name> --type <fast|slow>
+    npx nx run twenty-server:database:upgrade:generate --name <name> --type <fast|slow>
     ```
 
 - **Fast commands** (`--type fast`, default) are for schema-only changes that must run immediately. They implement `FastInstanceCommand` with `up`/`down` methods and use the `@RegisteredInstanceCommand` decorator.
