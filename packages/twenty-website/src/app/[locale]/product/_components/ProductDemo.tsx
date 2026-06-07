@@ -132,11 +132,7 @@ export function ProductDemo() {
             />
           </CtasContainer>
           <PreviewRoot>
-            <AppPreview
-              bleed
-              showTerminal={false}
-              visual={APP_PREVIEW_DATA.visual}
-            />
+            <AppPreview showTerminal={false} visual={APP_PREVIEW_DATA.visual} />
           </PreviewRoot>
         </StyledContainer>
       </StyledSection>
