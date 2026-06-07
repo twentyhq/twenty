@@ -60,7 +60,7 @@ export const ViewPickerContentEditMode = () => {
     setViewPickerSelectedIcon(iconKey);
   };
 
-  const handleClose = async () => {
+  const handleGoBack = async () => {
     await updateViewFromCurrentState();
 
     setViewPickerMode('list');
@@ -71,7 +71,7 @@ export const ViewPickerContentEditMode = () => {
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
-            onClick={handleClose}
+            onClick={handleGoBack}
             Icon={IconChevronLeft}
           />
         }
