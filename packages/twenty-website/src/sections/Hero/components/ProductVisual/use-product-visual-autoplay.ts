@@ -15,6 +15,7 @@ import {
   TASKS_PAGE_ITEM_ID,
   type ProductVisualSceneDefinition,
 } from './product-visual.data';
+import { getVisibleLength } from './streamed-markdown';
 
 type AutoplayOptions = {
   externalScene?: number;
@@ -31,28 +32,6 @@ function getStreamProgress(streamedLength: number, fullTextLength: number) {
 
 function clamp(value: number) {
   return Math.max(0, Math.min(1, value));
-}
-
-function getVisibleTextLength(text: string) {
-  let length = 0;
-
-  for (let index = 0; index < text.length; index += 1) {
-    if (text[index] === '*' && text[index + 1] === '*') {
-      index += 1;
-      continue;
-    }
-
-    length += 1;
-  }
-
-  return length;
-}
-
-function getParagraphsVisibleLength(paragraphs: string[]) {
-  return paragraphs.reduce(
-    (total, paragraph) => total + getVisibleTextLength(paragraph),
-    0,
-  );
 }
 
 function buildFocusedOpportunitiesPage(
@@ -182,7 +161,7 @@ export function useProductVisualAutoplay(
 
   const selectedScene = PRODUCT_VISUAL_SCENES[selectedOption];
   const fullText = selectedScene.responseText;
-  const fullTextVisibleLength = getParagraphsVisibleLength(fullText);
+  const fullTextVisibleLength = getVisibleLength(fullText);
   const streamComplete = streamedLength >= fullTextVisibleLength;
   const streamProgress = getStreamProgress(
     streamedLength,

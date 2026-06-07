@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, type ReactNode } from 'react';
+import { Fragment, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 import { styled } from '@linaria/react';
@@ -21,6 +21,7 @@ import { theme } from '@/theme';
 import { HERO_CURSORS, ProductHeroCursor } from './ProductHeroCursor';
 import { ProductVisualAiSteps } from './ProductVisualAiSteps';
 import { ANTHROPIC_RECORD_PAGE } from './product-visual.data';
+import { sliceVisibleParagraphs } from './streamed-markdown';
 import { useProductHeroCursorAutoplay } from './use-product-hero-cursor-autoplay';
 import { useProductVisualAutoplay } from './use-product-visual-autoplay';
 
@@ -302,106 +303,6 @@ type ProductVisualProps = {
   visual: AppPreviewConfig;
 };
 
-function renderParagraphInline(
-  text: string,
-  visibleLength: number,
-  keyPrefix: string,
-) {
-  const parts: ReactNode[] = [];
-  let visibleRemaining = visibleLength;
-  let cursor = 0;
-  let partIndex = 0;
-
-  while (cursor < text.length && visibleRemaining > 0) {
-    const openIndex = text.indexOf('**', cursor);
-
-    if (openIndex === -1) {
-      const segment = text.slice(cursor, cursor + visibleRemaining);
-      parts.push(segment);
-      visibleRemaining -= segment.length;
-      break;
-    }
-
-    if (openIndex > cursor) {
-      const plainSegment = text.slice(cursor, openIndex);
-      const visiblePlainSegment = plainSegment.slice(0, visibleRemaining);
-
-      if (visiblePlainSegment.length > 0) {
-        parts.push(visiblePlainSegment);
-        visibleRemaining -= visiblePlainSegment.length;
-      }
-
-      if (visiblePlainSegment.length < plainSegment.length) {
-        break;
-      }
-    }
-
-    const closeIndex = text.indexOf('**', openIndex + 2);
-
-    if (closeIndex === -1) {
-      const trailingSegment = text.slice(
-        openIndex + 2,
-        openIndex + 2 + visibleRemaining,
-      );
-
-      if (trailingSegment.length > 0) {
-        parts.push(
-          <AiMsgStrong key={`${keyPrefix}-strong-${partIndex}`}>
-            {trailingSegment}
-          </AiMsgStrong>,
-        );
-        visibleRemaining -= trailingSegment.length;
-      }
-
-      break;
-    }
-
-    const boldSegment = text.slice(openIndex + 2, closeIndex);
-    const visibleBoldSegment = boldSegment.slice(0, visibleRemaining);
-
-    parts.push(
-      <AiMsgStrong key={`${keyPrefix}-strong-${partIndex}`}>
-        {visibleBoldSegment}
-      </AiMsgStrong>,
-    );
-    partIndex += 1;
-    visibleRemaining -= visibleBoldSegment.length;
-
-    if (visibleBoldSegment.length < boldSegment.length) {
-      break;
-    }
-
-    cursor = closeIndex + 2;
-  }
-
-  return { nodes: parts, consumed: visibleLength - visibleRemaining };
-}
-
-function renderAssistantText(paragraphs: string[], visibleLength: number) {
-  const blocks: ReactNode[] = [];
-  let visibleRemaining = visibleLength;
-
-  for (let index = 0; index < paragraphs.length; index += 1) {
-    if (visibleRemaining <= 0) {
-      break;
-    }
-
-    const { nodes, consumed } = renderParagraphInline(
-      paragraphs[index],
-      visibleRemaining,
-      `p-${index}`,
-    );
-
-    if (nodes.length > 0) {
-      blocks.push(<AiMsgParagraph key={`p-${index}`}>{nodes}</AiMsgParagraph>);
-    }
-
-    visibleRemaining -= consumed;
-  }
-
-  return blocks;
-}
-
 export function ProductVisual({
   activeScene,
   aiPanelProgress = 1,
@@ -529,10 +430,24 @@ export function ProductVisual({
                 {streamedTextVisibleLength > 0 ? (
                   <>
                     <AiMsg>
-                      {renderAssistantText(
+                      {sliceVisibleParagraphs(
                         selectedScene.responseText,
                         streamedTextVisibleLength,
-                      )}
+                      ).map((segments, paragraphIndex) => (
+                        <AiMsgParagraph key={paragraphIndex}>
+                          {segments.map((segment, segmentIndex) =>
+                            segment.bold ? (
+                              <AiMsgStrong key={segmentIndex}>
+                                {segment.text}
+                              </AiMsgStrong>
+                            ) : (
+                              <Fragment key={segmentIndex}>
+                                {segment.text}
+                              </Fragment>
+                            ),
+                          )}
+                        </AiMsgParagraph>
+                      ))}
                     </AiMsg>
                     {streamComplete && responseChips.length > 0 ? (
                       <EntityChips>
