@@ -6,7 +6,10 @@ import { In, Repository } from 'typeorm';
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type CalendarEventRecordingPreferenceDTO } from 'src/engine/core-modules/calendar/dtos/calendar-event-recording-preference.dto';
 import { type CalendarEventRecordingPreference } from 'src/engine/core-modules/calendar/types/calendar-event-recording-preference.type';
-import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  ForbiddenError,
+  NotFoundError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -72,12 +75,18 @@ export class CalendarEventRecordingPreferenceService {
           await this.globalWorkspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
             workspaceId,
             'calendarEvent',
-            { shouldBypassPermissionChecks: true },
           );
 
-        await calendarEventRepository.update(calendarEventId, {
-          recordingPreference,
-        });
+        const updateResult = await calendarEventRepository.update(
+          calendarEventId,
+          {
+            recordingPreference,
+          },
+        );
+
+        if ((updateResult.affected ?? 0) === 0) {
+          throw new NotFoundError('Calendar event not found.');
+        }
       },
       authContext,
       { lite: true },

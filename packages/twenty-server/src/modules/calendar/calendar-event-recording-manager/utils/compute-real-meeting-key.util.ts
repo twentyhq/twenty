@@ -1,3 +1,4 @@
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 type ComputeRealMeetingKeyInput = {
@@ -30,12 +31,17 @@ export const computeRealMeetingKey = ({
 const normalizeConferenceLink = (
   conferenceLinkUrl: string | null,
 ): string | null => {
-  if (!isDefined(conferenceLinkUrl) || conferenceLinkUrl.trim() === '') {
+  if (!isString(conferenceLinkUrl)) {
     return null;
   }
 
-  const withoutProtocol = conferenceLinkUrl
-    .trim()
+  const trimmedConferenceLinkUrl = conferenceLinkUrl.trim();
+
+  if (!isNonEmptyString(trimmedConferenceLinkUrl)) {
+    return null;
+  }
+
+  const withoutProtocol = trimmedConferenceLinkUrl
     .toLowerCase()
     .replace(/^https?:\/\//, '')
     .replace(/^www\./, '');

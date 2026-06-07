@@ -1,5 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  CALENDAR_EVENT_RECORDING_PREFERENCES,
+  type CalendarEventRecordingPreference,
+} from 'src/engine/core-modules/calendar/types/calendar-event-recording-preference.type';
 import { type CalendarEventRecordingPolicyResultForEvent } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording-policy-result-for-event.type';
 import { computeRealMeetingKey } from 'src/modules/calendar/calendar-event-recording-manager/utils/compute-real-meeting-key.util';
 import { resolveCalendarEventRecordingPolicyResult } from 'src/modules/calendar/calendar-event-recording-manager/utils/resolve-calendar-event-recording-policy-result.util';
@@ -30,10 +34,13 @@ export const buildCalendarEventRecordingPolicyResult = (
   const hasExternalParticipant = (
     calendarEvent.calendarEventParticipants ?? []
   ).some((participant) => !isDefined(participant.workspaceMemberId));
+  const recordingPreference = normalizeCalendarEventRecordingPreference(
+    calendarEvent.recordingPreference,
+  );
 
   const policyResult = resolveCalendarEventRecordingPolicyResult({
     input: {
-      recordingPreference: calendarEvent.recordingPreference,
+      recordingPreference,
       isCanceled: calendarEvent.isCanceled,
       startsAt: calendarEvent.startsAt,
       endsAt: calendarEvent.endsAt,
@@ -46,8 +53,23 @@ export const buildCalendarEventRecordingPolicyResult = (
 
   return {
     calendarEventId: calendarEvent.id,
-    recordingPreference: calendarEvent.recordingPreference,
+    recordingPreference,
     realMeetingKey,
     ...policyResult,
   };
 };
+
+const normalizeCalendarEventRecordingPreference = (
+  recordingPreference: string,
+): CalendarEventRecordingPreference =>
+  isCalendarEventRecordingPreference(recordingPreference)
+    ? recordingPreference
+    : 'AUTO';
+
+const isCalendarEventRecordingPreference = (
+  recordingPreference: string,
+): recordingPreference is CalendarEventRecordingPreference =>
+  CALENDAR_EVENT_RECORDING_PREFERENCES.some(
+    (calendarEventRecordingPreference) =>
+      calendarEventRecordingPreference === recordingPreference,
+  );

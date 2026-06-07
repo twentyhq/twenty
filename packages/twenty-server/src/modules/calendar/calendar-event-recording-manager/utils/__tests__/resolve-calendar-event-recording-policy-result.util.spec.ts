@@ -65,17 +65,6 @@ describe('resolveCalendarEventRecordingPolicyResult', () => {
       });
     });
 
-    it('should treat an unknown preference as AUTO', () => {
-      expect(
-        resolvePolicyResult(
-          buildPolicyInput({ recordingPreference: 'SOMETHING_ELSE' }),
-        ),
-      ).toEqual({
-        shouldRecord: true,
-        reason: 'AUTO_POLICY_MATCHED',
-      });
-    });
-
     it('should keep an in-progress meeting eligible via its end time', () => {
       expect(
         resolvePolicyResult(

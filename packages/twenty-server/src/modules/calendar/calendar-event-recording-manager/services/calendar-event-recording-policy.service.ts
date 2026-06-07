@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { type CalendarEventRecordingPreference } from 'src/engine/core-modules/calendar/types/calendar-event-recording-preference.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type CalendarEventRecordingPolicyReason } from 'src/modules/calendar/calendar-event-recording-manager/types/calendar-event-recording-policy-reason.type';
@@ -18,7 +19,7 @@ type FoundCalendarEventRecordingPolicyResult = {
   workspaceId: string;
   calendarEventId: string;
   found: true;
-  recordingPreference: string;
+  recordingPreference: CalendarEventRecordingPreference;
   realMeetingKey: string;
   shouldRecord: boolean;
   reason: CalendarEventRecordingPolicyReason;
@@ -127,15 +128,19 @@ export class CalendarEventRecordingPolicyService {
 
         const affectedMeetingKeys = new Set<string>();
         const occurrenceStartsAtAnchors = new Set<string>();
-
-        for (const changedCalendarEvent of changedCalendarEvents) {
-          affectedMeetingKeys.add(
-            buildCalendarEventRecordingPolicyResult(changedCalendarEvent, {
+        const changedCalendarEventPolicyResults = changedCalendarEvents.map(
+          (calendarEvent) =>
+            buildCalendarEventRecordingPolicyResult(calendarEvent, {
               isRecordingEnabledForWorkspace,
               now,
-            }).realMeetingKey,
-          );
+            }),
+        );
 
+        for (const policyResult of changedCalendarEventPolicyResults) {
+          affectedMeetingKeys.add(policyResult.realMeetingKey);
+        }
+
+        for (const changedCalendarEvent of changedCalendarEvents) {
           if (isDefined(changedCalendarEvent.startsAt)) {
             occurrenceStartsAtAnchors.add(changedCalendarEvent.startsAt);
           }
@@ -163,29 +168,34 @@ export class CalendarEventRecordingPolicyService {
               })
             : [];
 
-        // A changed event with a null start is not returned by the anchor query; keep it so a
-        // link-less, iCalUid-less occurrence still resolves against itself.
-        const occurrenceEventsById = new Map<
-          string,
-          CalendarEventWorkspaceEntity
-        >();
+        const perEventRecordingPolicyResultsByCalendarEventId = new Map(
+          changedCalendarEventPolicyResults.map((policyResult) => [
+            policyResult.calendarEventId,
+            policyResult,
+          ]),
+        );
 
-        for (const calendarEvent of [
-          ...occurrenceSiblingEvents,
-          ...changedCalendarEvents,
-        ]) {
-          occurrenceEventsById.set(calendarEvent.id, calendarEvent);
-        }
+        for (const calendarEvent of occurrenceSiblingEvents) {
+          if (
+            perEventRecordingPolicyResultsByCalendarEventId.has(
+              calendarEvent.id,
+            )
+          ) {
+            continue;
+          }
 
-        const perEventRecordingPolicyResults = [
-          ...occurrenceEventsById.values(),
-        ]
-          .map((calendarEvent) =>
+          perEventRecordingPolicyResultsByCalendarEventId.set(
+            calendarEvent.id,
             buildCalendarEventRecordingPolicyResult(calendarEvent, {
               isRecordingEnabledForWorkspace,
               now,
             }),
-          )
+          );
+        }
+
+        const perEventRecordingPolicyResults = [
+          ...perEventRecordingPolicyResultsByCalendarEventId.values(),
+        ]
           .filter((policyResult) =>
             affectedMeetingKeys.has(policyResult.realMeetingKey),
           )

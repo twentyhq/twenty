@@ -59,6 +59,19 @@ describe('computeRealMeetingKey', () => {
     ).toBe('ical:recurring-uid@google.com:2026-06-05T11:00:00.000Z');
   });
 
+  it('should ignore malformed conference link provider data', () => {
+    expect(
+      computeRealMeetingKey({
+        calendarEventId: 'event-1',
+        conferenceLinkUrl: {
+          primaryLinkUrl: 'not-a-string',
+        } as unknown as string,
+        iCalUid: 'recurring-uid@google.com',
+        startsAt: '2026-06-05T11:00:00.000Z',
+      }),
+    ).toBe('ical:recurring-uid@google.com:2026-06-05T11:00:00.000Z');
+  });
+
   it('should separate recurring occurrences by start time', () => {
     const firstOccurrence = computeRealMeetingKey({
       calendarEventId: 'event-1',

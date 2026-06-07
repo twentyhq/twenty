@@ -21,6 +21,12 @@ export enum CalendarChannelVisibility {
   SHARE_EVERYTHING = 'SHARE_EVERYTHING'
 }
 
+export type CalendarEventRecordingPreference = {
+  __typename?: 'CalendarEventRecordingPreference';
+  calendarEventId: Scalars['UUID'];
+  recordingPreference: Scalars['String'];
+};
+
 export type ComputeStepOutputSchemaInput = {
   /** Step JSON format */
   step: Scalars['JSON'];
@@ -144,6 +150,7 @@ export type Mutation = {
   stopWorkflowRun: WorkflowRun;
   submitFormStep: Scalars['Boolean'];
   testHttpRequest: TestHttpRequest;
+  updateCalendarEventRecordingPreference: CalendarEventRecordingPreference;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean'];
   updateWorkflowVersionStep: WorkflowAction;
@@ -225,6 +232,11 @@ export type MutationTestHttpRequestArgs = {
 };
 
 
+export type MutationUpdateCalendarEventRecordingPreferenceArgs = {
+  input: UpdateCalendarEventRecordingPreferenceInput;
+};
+
+
 export type MutationUpdateWorkflowRunStepArgs = {
   input: UpdateWorkflowRunStepInput;
 };
@@ -251,6 +263,7 @@ export type ObjectRecordFilterInput = {
 
 export type Query = {
   __typename?: 'Query';
+  canUpdateCalendarEventRecordingPreference: Scalars['Boolean'];
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromOpportunityId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
@@ -260,6 +273,11 @@ export type Query = {
   isMaintenanceModeBannerDismissed: Scalars['Boolean'];
   search: SearchResultConnection;
   workflowStepConnectedAccountHandle?: Maybe<ConnectedAccountHandleDto>;
+};
+
+
+export type QueryCanUpdateCalendarEventRecordingPreferenceArgs = {
+  calendarEventId: Scalars['UUID'];
 };
 
 
@@ -473,6 +491,11 @@ export type UuidFilter = {
   lt?: InputMaybe<Scalars['UUID']>;
   lte?: InputMaybe<Scalars['UUID']>;
   neq?: InputMaybe<Scalars['UUID']>;
+};
+
+export type UpdateCalendarEventRecordingPreferenceInput = {
+  calendarEventId: Scalars['UUID'];
+  recordingPreference: Scalars['String'];
 };
 
 export type UpdateWorkflowRunStepInput = {
