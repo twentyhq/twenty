@@ -273,14 +273,13 @@ export class MessageChannelMetadataService {
     fromAddress: string;
     userWorkspaceId: string;
     workspaceId: string;
-  }): Promise<MessageChannelEntity> {
+  }): Promise<MessageChannelDTO> {
     const existingChannel = await this.repository.findOne({
       where: {
         workspaceId,
         type: MessageChannelType.EMAIL_GROUP,
         connectedAccount: { handle: fromAddress },
       },
-      relations: { connectedAccount: true },
     });
 
     if (existingChannel) {
@@ -293,9 +292,7 @@ export class MessageChannelMetadataService {
       workspaceId,
     });
 
-    return this.repository.findOneOrFail({
-      where: { id: messageChannel.id, workspaceId },
-    });
+    return messageChannel;
   }
 
   async delete({

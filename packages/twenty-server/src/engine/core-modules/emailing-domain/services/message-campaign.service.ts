@@ -1,8 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, type Type } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { In } from 'typeorm';
+import { In, type ObjectLiteral } from 'typeorm';
 import { v4 } from 'uuid';
 
 import {
@@ -28,6 +28,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
+import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -69,6 +70,14 @@ type SendCampaignResult = {
 const SUBSCRIBED_STATUS = 'SUBSCRIBED';
 const PERSON_OBJECT_NAME = 'person';
 
+const toRawRecipient = (person: {
+  id: string;
+  emails?: { primaryEmail?: string | null } | null;
+}): RawCampaignRecipient => ({
+  personId: person.id,
+  email: person.emails?.primaryEmail ?? null,
+});
+
 @Injectable()
 export class MessageCampaignService {
   private readonly logger = new Logger(MessageCampaignService.name);
@@ -86,6 +95,16 @@ export class MessageCampaignService {
     // core module without a require-time TDZ.
     private readonly moduleRef: ModuleRef,
   ) {}
+
+  // System-context, permission-bypassing repository for a workspace entity.
+  private getWorkspaceRepository<T extends ObjectLiteral>(
+    workspaceId: string,
+    entity: Type<T>,
+  ) {
+    return this.globalWorkspaceOrmManager.getRepository(workspaceId, entity, {
+      shouldBypassPermissionChecks: true,
+    });
+  }
 
   // Orchestrates a campaign send: resolves the verified domain + email-group
   // channel, materializes one QUEUED message per recipient, and enqueues a send
@@ -129,6 +148,9 @@ export class MessageCampaignService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
+        const usesFilter =
+          isNonEmptyString(listId) || isNonEmptyString(recipientViewId);
+
         const rawRecipients = isNonEmptyString(listId)
           ? await this.resolveRecipientsFromList(workspaceId, listId)
           : isNonEmptyString(recipientViewId)
@@ -143,12 +165,10 @@ export class MessageCampaignService {
           MAX_CAMPAIGN_RECIPIENTS,
         );
 
-        const campaignRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            MessageCampaignWorkspaceEntity,
-            { shouldBypassPermissionChecks: true },
-          );
+        const campaignRepository = await this.getWorkspaceRepository(
+          workspaceId,
+          MessageCampaignWorkspaceEntity,
+        );
 
         const { identifiers } = await campaignRepository.insert({
           name: subject,
@@ -156,33 +176,30 @@ export class MessageCampaignService {
           bodyTemplate: html,
           fromAddress,
           status: CAMPAIGN_STATUS.SENDING,
-          recipientSource:
-            isNonEmptyString(listId) || isNonEmptyString(recipientViewId)
-              ? 'FILTER'
-              : 'LIST',
+          recipientSource: usesFilter ? 'FILTER' : 'LIST',
           recipientViewId: recipientViewId ?? null,
           topicId: messageTopicId,
         });
         const campaignId = identifiers[0].id;
 
-        for (const recipient of recipients) {
-          const messageId = await this.materializeCampaignMessage({
-            workspaceId,
-            campaignId,
-            messageChannelId: messageChannel.id,
-            fromAddress,
-            recipient,
-            subject,
-            text,
-          });
+        const messageIds = await this.materializeCampaignMessages({
+          workspaceId,
+          campaignId,
+          messageChannelId: messageChannel.id,
+          fromAddress,
+          recipients,
+          subject,
+          text,
+        });
 
+        for (let index = 0; index < recipients.length; index += 1) {
           await this.messageQueueService.add<SendCampaignEmailJobData>(
             SEND_CAMPAIGN_EMAIL_JOB,
             {
               workspaceId,
               campaignId,
-              messageId,
-              recipientEmail: recipient.email,
+              messageId: messageIds[index],
+              recipientEmail: recipients[index].email,
               emailingDomainId: emailingDomain.id,
               messageTopicId,
               fromAddress,
@@ -222,12 +239,10 @@ export class MessageCampaignService {
     const text = this.htmlToText(html);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageRepository =
-        await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          MessageWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
+      const messageRepository = await this.getWorkspaceRepository(
+        workspaceId,
+        MessageWorkspaceEntity,
+      );
 
       const message = await messageRepository.findOne({
         where: { id: messageId },
@@ -264,12 +279,10 @@ export class MessageCampaignService {
           headerMessageId: result.messageId,
         });
 
-        const associationRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            MessageChannelMessageAssociationWorkspaceEntity,
-            { shouldBypassPermissionChecks: true },
-          );
+        const associationRepository = await this.getWorkspaceRepository(
+          workspaceId,
+          MessageChannelMessageAssociationWorkspaceEntity,
+        );
 
         await associationRepository.update(
           { messageId },
@@ -306,12 +319,10 @@ export class MessageCampaignService {
     deliveryStatus: string;
   }): Promise<void> {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageRepository =
-        await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          MessageWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
+      const messageRepository = await this.getWorkspaceRepository(
+        workspaceId,
+        MessageWorkspaceEntity,
+      );
 
       const message = await messageRepository.findOne({
         where: { headerMessageId: providerMessageId },
@@ -328,27 +339,27 @@ export class MessageCampaignService {
         message.messageCampaignId,
       );
 
-      const campaignRepository =
-        await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          MessageCampaignWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
+      const campaignRepository = await this.getWorkspaceRepository(
+        workspaceId,
+        MessageCampaignWorkspaceEntity,
+      );
 
       await campaignRepository.update(message.messageCampaignId, counts);
     }, buildSystemAuthContext(workspaceId));
   }
 
-  // Materializes one outbound campaign message (QUEUED) + its thread, channel
-  // association and from/to participants, with the recipient's personId set
-  // directly (no participant matching, no contact auto-creation). Returns the
-  // message id. Must run inside an active workspace context.
-  private async materializeCampaignMessage({
+  // Materializes the campaign's outbound messages (QUEUED) + their threads,
+  // channel associations and from/to participants, with each recipient's
+  // personId set directly (no participant matching, no contact auto-creation).
+  // Written as four bulk inserts in one transaction. Returns the message ids,
+  // aligned with the recipients order. Must run inside an active workspace
+  // context.
+  private async materializeCampaignMessages({
     workspaceId,
     campaignId,
     messageChannelId,
     fromAddress,
-    recipient,
+    recipients,
     subject,
     text,
   }: {
@@ -356,82 +367,104 @@ export class MessageCampaignService {
     campaignId: string;
     messageChannelId: string;
     fromAddress: string;
-    recipient: CampaignRecipient;
+    recipients: CampaignRecipient[];
     subject: string;
     text: string;
-  }): Promise<string> {
-    const messageThreadRepository =
-      await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        MessageThreadWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
+  }): Promise<string[]> {
+    const now = new Date();
+    const rows = recipients.map((recipient) => ({
+      recipient,
+      threadId: v4(),
+      messageId: v4(),
+      // Temporary id; the send job overwrites it with the SES id so the stored
+      // ids match what the recipient receives (reply-threading).
+      temporaryExternalId: v4(),
+    }));
+
+    if (rows.length === 0) {
+      return [];
+    }
+
+    const messageThreadRepository = await this.getWorkspaceRepository(
+      workspaceId,
+      MessageThreadWorkspaceEntity,
+    );
+    const messageRepository = await this.getWorkspaceRepository(
+      workspaceId,
+      MessageWorkspaceEntity,
+    );
+    const associationRepository = await this.getWorkspaceRepository(
+      workspaceId,
+      MessageChannelMessageAssociationWorkspaceEntity,
+    );
+    const participantRepository = await this.getWorkspaceRepository(
+      workspaceId,
+      MessageParticipantWorkspaceEntity,
+    );
+
+    const workspaceDataSource =
+      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+
+    if (!workspaceDataSource) {
+      throw new Error(
+        `No workspace datasource available for workspace ${workspaceId}`,
       );
-    const messageRepository =
-      await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        MessageWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
-    const associationRepository =
-      await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        MessageChannelMessageAssociationWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
-    const participantRepository =
-      await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        MessageParticipantWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+    }
 
-    const threadId = v4();
-    const messageId = v4();
-    // Temporary identifier; the send job overwrites it with the SES id so the
-    // stored ids match what the recipient receives (reply-threading).
-    const temporaryExternalId = v4();
-
-    await messageThreadRepository.insert({ id: threadId });
-
-    await messageRepository.insert({
-      id: messageId,
-      headerMessageId: temporaryExternalId,
-      subject,
-      text,
-      receivedAt: new Date(),
-      messageThreadId: threadId,
-      messageCampaignId: campaignId,
-      deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
-    });
-
-    await associationRepository.insert({
-      id: v4(),
-      messageId,
-      messageChannelId,
-      messageExternalId: temporaryExternalId,
-      messageThreadExternalId: temporaryExternalId,
-      direction: MessageDirection.OUTGOING,
-    });
-
-    await participantRepository.insert([
-      {
-        id: v4(),
-        messageId,
-        role: MessageParticipantRole.FROM,
-        handle: fromAddress,
-        displayName: fromAddress,
+    await workspaceDataSource.transaction(
+      async (transactionManager: WorkspaceEntityManager) => {
+        await messageThreadRepository.insert(
+          rows.map((row) => ({ id: row.threadId })),
+          transactionManager,
+        );
+        await messageRepository.insert(
+          rows.map((row) => ({
+            id: row.messageId,
+            headerMessageId: row.temporaryExternalId,
+            subject,
+            text,
+            receivedAt: now,
+            messageThreadId: row.threadId,
+            messageCampaignId: campaignId,
+            deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
+          })),
+          transactionManager,
+        );
+        await associationRepository.insert(
+          rows.map((row) => ({
+            id: v4(),
+            messageId: row.messageId,
+            messageChannelId,
+            messageExternalId: row.temporaryExternalId,
+            messageThreadExternalId: row.temporaryExternalId,
+            direction: MessageDirection.OUTGOING,
+          })),
+          transactionManager,
+        );
+        await participantRepository.insert(
+          rows.flatMap((row) => [
+            {
+              id: v4(),
+              messageId: row.messageId,
+              role: MessageParticipantRole.FROM,
+              handle: fromAddress,
+              displayName: fromAddress,
+            },
+            {
+              id: v4(),
+              messageId: row.messageId,
+              role: MessageParticipantRole.TO,
+              handle: row.recipient.email,
+              displayName: row.recipient.email,
+              personId: row.recipient.personId,
+            },
+          ]),
+          transactionManager,
+        );
       },
-      {
-        id: v4(),
-        messageId,
-        role: MessageParticipantRole.TO,
-        handle: recipient.email,
-        displayName: recipient.email,
-        personId: recipient.personId,
-      },
-    ]);
+    );
 
-    return messageId;
+    return rows.map((row) => row.messageId);
   }
 
   // Derives the campaign counts from its messages and finalizes it once nothing
@@ -441,12 +474,10 @@ export class MessageCampaignService {
     workspaceId: string,
     campaignId: string,
   ): Promise<void> {
-    const messageRepository =
-      await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        MessageWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+    const messageRepository = await this.getWorkspaceRepository(
+      workspaceId,
+      MessageWorkspaceEntity,
+    );
 
     const queuedCount = await messageRepository.count({
       where: {
@@ -461,12 +492,10 @@ export class MessageCampaignService {
 
     const counts = await this.computeCampaignCounts(workspaceId, campaignId);
 
-    const campaignRepository =
-      await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        MessageCampaignWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+    const campaignRepository = await this.getWorkspaceRepository(
+      workspaceId,
+      MessageCampaignWorkspaceEntity,
+    );
 
     await campaignRepository.update(
       { id: campaignId, status: CAMPAIGN_STATUS.SENDING },
@@ -483,34 +512,34 @@ export class MessageCampaignService {
     workspaceId: string,
     campaignId: string,
   ): Promise<{ sentCount: number; failedCount: number; bouncedCount: number }> {
-    const messageRepository =
-      await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        MessageWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+    const messageRepository = await this.getWorkspaceRepository(
+      workspaceId,
+      MessageWorkspaceEntity,
+    );
 
-    const sentCount = await messageRepository.count({
-      where: {
-        messageCampaignId: campaignId,
-        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENT,
-      },
-    });
-    const failedCount = await messageRepository.count({
-      where: {
-        messageCampaignId: campaignId,
-        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
-      },
-    });
-    const bouncedCount = await messageRepository.count({
-      where: {
-        messageCampaignId: campaignId,
-        deliveryStatus: In([
-          CAMPAIGN_MESSAGE_DELIVERY_STATUS.BOUNCED,
-          CAMPAIGN_MESSAGE_DELIVERY_STATUS.COMPLAINED,
-        ]),
-      },
-    });
+    const [sentCount, failedCount, bouncedCount] = await Promise.all([
+      messageRepository.count({
+        where: {
+          messageCampaignId: campaignId,
+          deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENT,
+        },
+      }),
+      messageRepository.count({
+        where: {
+          messageCampaignId: campaignId,
+          deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
+        },
+      }),
+      messageRepository.count({
+        where: {
+          messageCampaignId: campaignId,
+          deliveryStatus: In([
+            CAMPAIGN_MESSAGE_DELIVERY_STATUS.BOUNCED,
+            CAMPAIGN_MESSAGE_DELIVERY_STATUS.COMPLAINED,
+          ]),
+        },
+      }),
+    ]);
 
     return { sentCount, failedCount, bouncedCount };
   }
@@ -554,10 +583,7 @@ export class MessageCampaignService {
       emails?: { primaryEmail?: string | null };
     }>;
 
-    return records.map((record) => ({
-      personId: record.id,
-      email: record.emails?.primaryEmail ?? null,
-    }));
+    return records.map(toRawRecipient);
   }
 
   // Resolves the recipients of a campaign from a list's hand-picked members.
@@ -565,12 +591,10 @@ export class MessageCampaignService {
     workspaceId: string,
     listId: string,
   ): Promise<RawCampaignRecipient[]> {
-    const listMemberRepository =
-      await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        MessageListMemberWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+    const listMemberRepository = await this.getWorkspaceRepository(
+      workspaceId,
+      MessageListMemberWorkspaceEntity,
+    );
 
     const members = await listMemberRepository.find({
       where: { listId },
@@ -586,12 +610,10 @@ export class MessageCampaignService {
     workspaceId: string,
     messageTopicId: string,
   ): Promise<RawCampaignRecipient[]> {
-    const subscriptionRepository =
-      await this.globalWorkspaceOrmManager.getRepository(
-        workspaceId,
-        MessageTopicSubscriptionWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+    const subscriptionRepository = await this.getWorkspaceRepository(
+      workspaceId,
+      MessageTopicSubscriptionWorkspaceEntity,
+    );
 
     const subscriptions = await subscriptionRepository.find({
       where: { topicId: messageTopicId, status: SUBSCRIBED_STATUS },
@@ -611,19 +633,15 @@ export class MessageCampaignService {
       return [];
     }
 
-    const personRepository = await this.globalWorkspaceOrmManager.getRepository(
+    const personRepository = await this.getWorkspaceRepository(
       workspaceId,
       PersonWorkspaceEntity,
-      { shouldBypassPermissionChecks: true },
     );
 
     const people = await personRepository.find({
       where: { id: In(personIds) },
     });
 
-    return people.map((person) => ({
-      personId: person.id,
-      email: person.emails?.primaryEmail ?? null,
-    }));
+    return people.map(toRawRecipient);
   }
 }
