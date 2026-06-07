@@ -1,8 +1,12 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type QueryRunner } from 'typeorm';
 
-export class AddLogEmailingDomainDriver1780754108000 implements MigrationInterface {
-  name = 'AddLogEmailingDomainDriver1780754108000';
+import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
+import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
+@RegisteredInstanceCommand('2.11.0', 1780754108000)
+export class AddLogEmailingDomainDriverFastInstanceCommand
+  implements FastInstanceCommand
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TYPE "core"."emailingDomain_driver_enum" ADD VALUE IF NOT EXISTS 'LOG' AFTER 'AWS_SES'`,

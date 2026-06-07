@@ -59,6 +59,7 @@ import { EmailingDomainTenantStatusAndGlobalUniquenessFastInstanceCommand } from
 import { AddLogicFunctionExecutionModeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-fast-1799000030000-add-logic-function-execution-mode';
 import { EncryptNonSecretApplicationVariableSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1798400000000-encrypt-non-secret-application-variable';
 import { MigrateAiModelPreferencesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1799000010000-migrate-ai-model-preferences';
+import { AddLogEmailingDomainDriverFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-11/2-11-instance-command-fast-1780754108000-add-log-emailing-domain-driver';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -120,4 +121,5 @@ export const INSTANCE_COMMANDS = [
   AddLogicFunctionExecutionModeFastInstanceCommand,
   MigrateAiModelPreferencesSlowInstanceCommand,
   EncryptNonSecretApplicationVariableSlowInstanceCommand,
+  AddLogEmailingDomainDriverFastInstanceCommand,
 ];
