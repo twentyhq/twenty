@@ -58,20 +58,13 @@ const PANEL_ONLY_WIDTH = 320;
 // stay legible — used by the morph so the AI panel never bleeds off-screen.
 // panelOnly: the compact window is capped to a fixed chat width.
 const ShellScene = styled.div<{
-  $fill: boolean;
   $bleed: boolean;
   $compact: boolean;
   $panelOnly: boolean;
 }>`
-  aspect-ratio: ${({ $fill, $bleed, $compact }) =>
-    $fill || $bleed || $compact ? 'auto' : '1280 / 832'};
-  flex: ${({ $fill, $bleed, $compact }) =>
-    $fill && !$bleed && !$compact ? '1' : '0 0 auto'};
-  height: ${({ $bleed, $compact }) =>
-    $bleed || $compact ? `${WINDOW_HEIGHT}px` : 'auto'};
+  flex: 0 0 auto;
+  height: ${WINDOW_HEIGHT}px;
   margin: 0 auto;
-  max-height: ${({ $fill, $bleed, $compact }) =>
-    $fill || $bleed || $compact ? 'none' : '740px'};
   max-width: ${({ $compact, $panelOnly }) =>
     $panelOnly
       ? `${PANEL_ONLY_WIDTH}px`
@@ -500,7 +493,7 @@ export function ProductVisual({
   );
 
   const previewShell = (
-    <AppPreviewFrame compact={compact} fill={fill} mode={frameMode}>
+    <AppPreviewFrame compact={compact} mode={frameMode}>
       <AppPreviewLayout
         activeItem={activeItem}
         activeItemId={activeItemId}
@@ -638,12 +631,7 @@ export function ProductVisual({
 
   return (
     <StyledRoot $fill={fill}>
-      <ShellScene
-        $bleed={bleed}
-        $compact={compact}
-        $fill={fill}
-        $panelOnly={panelOnly}
-      >
+      <ShellScene $bleed={bleed} $compact={compact} $panelOnly={panelOnly}>
         {frameMode === 'windowed' ? (
           <WindowOrderProvider>{previewShell}</WindowOrderProvider>
         ) : (
