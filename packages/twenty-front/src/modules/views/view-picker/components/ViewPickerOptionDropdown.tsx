@@ -35,6 +35,7 @@ type ViewPickerOptionDropdownProps = {
   >;
   onEdit: (event: React.MouseEvent<HTMLElement>, viewId: string) => void;
   handleViewSelect: (viewId: string) => void;
+  isCurrentView: boolean;
 };
 
 export const ViewPickerOptionDropdown = ({
@@ -43,6 +44,7 @@ export const ViewPickerOptionDropdown = ({
   onEdit,
   view,
   handleViewSelect,
+  isCurrentView = false,
 }: ViewPickerOptionDropdownProps) => {
   const dropdownId = `view-picker-options-${view.id}`;
 
@@ -120,6 +122,7 @@ export const ViewPickerOptionDropdown = ({
         RightIcon={getVisibilityIcon()}
         dropdownPlacement="bottom-start"
         dropdownId={`view-picker-options-${view.id}`}
+        selected={isCurrentView}
         dropdownContent={
           <DropdownContent>
             <DropdownMenuItemsContainer>
