@@ -10,7 +10,7 @@ import {
 } from 'class-validator';
 
 @InputType()
-export class SendMessageBroadcastInput {
+export class SendMessageCampaignInput {
   @Field(() => String)
   @IsUUID('4')
   messageTopicId: string;
@@ -22,12 +22,12 @@ export class SendMessageBroadcastInput {
   @IsUUID('4')
   recipientViewId?: string;
 
-  // Optional segment whose hand-picked members are the recipients (static audience).
+  // Optional list whose hand-picked members are the recipients (static audience).
   // Takes precedence over recipientViewId and topic subscribers when set.
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsUUID('4')
-  segmentId?: string;
+  listId?: string;
 
   @Field(() => String)
   @IsString()

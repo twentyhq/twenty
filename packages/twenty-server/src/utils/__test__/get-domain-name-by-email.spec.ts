@@ -42,20 +42,9 @@ describe('getDomainNameByEmail', () => {
     }
   });
 
-  it('should throw a UserInputError if email has more than one "@"', () => {
-    expect(() => getDomainNameByEmail('user@example@com')).toThrow(
-      UserInputError,
-    );
-
-    try {
-      getDomainNameByEmail('user@example@com');
-    } catch (error) {
-      expect(error).toBeInstanceOf(UserInputError);
-      expect(error.extensions.code).toBe(ErrorCode.BAD_USER_INPUT);
-      expect(error.extensions.userFriendlyMessage.message).toContain(
-        'The provided email address is not valid. Please use a standard email format (e.g., user@example.com).',
-      );
-    }
+  it('should return the domain after the last "@"', () => {
+    expect(getDomainNameByEmail('"a@b"@example.com')).toBe('example.com');
+    expect(getDomainNameByEmail('user@example@com')).toBe('com');
   });
 
   it('should throw a UserInputError if domain part is empty', () => {
@@ -111,11 +100,11 @@ describe('getDomainNameByEmail', () => {
     expect(getDomainNameByEmail('"user name"@example.com')).toBe('example.com');
   });
 
-  it.skip('should handle email with special characters in quoted local part', () => {
+  it('should handle email with special characters in quoted local part', () => {
     expect(getDomainNameByEmail('"user@#$%"@example.com')).toBe('example.com');
   });
 
-  it.skip('should handle email with quoted local part containing @', () => {
+  it('should handle email with quoted local part containing @', () => {
     expect(getDomainNameByEmail('"user@local"@example.com')).toBe(
       'example.com',
     );

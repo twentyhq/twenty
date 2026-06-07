@@ -522,19 +522,19 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  messageSubscriptions: createStandardRelationFieldFlatMetadata({
+  messageTopicSubscriptions: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
       type: FieldMetadataType.RELATION,
       morphId: null,
-      fieldName: 'messageSubscriptions',
+      fieldName: 'messageTopicSubscriptions',
       label: i18nLabel(msg`Topics`),
       description: i18nLabel(msg`Topics the contact is subscribed to`),
       icon: 'IconMailShare',
       isUIReadOnly: false,
       isNullable: true,
-      targetObjectName: 'messageSubscription',
+      targetObjectName: 'messageTopicSubscription',
       targetFieldName: 'person',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
@@ -545,19 +545,19 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  segmentMemberships: createStandardRelationFieldFlatMetadata({
+  listMemberships: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
       type: FieldMetadataType.RELATION,
       morphId: null,
-      fieldName: 'segmentMemberships',
-      label: i18nLabel(msg`Segments`),
-      description: i18nLabel(msg`Segments the contact belongs to`),
+      fieldName: 'listMemberships',
+      label: i18nLabel(msg`Lists`),
+      description: i18nLabel(msg`Lists the contact belongs to`),
       icon: 'IconUsersGroup',
       isUIReadOnly: false,
       isNullable: true,
-      targetObjectName: 'messageSegmentMember',
+      targetObjectName: 'messageListMember',
       targetFieldName: 'person',
       settings: {
         relationType: RelationType.ONE_TO_MANY,

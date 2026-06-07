@@ -847,7 +847,7 @@ export const STANDARD_OBJECTS = {
       suppressions: {
         universalIdentifier: 'c8e3f01b-2a5d-4e9f-8b7c-3d4e5f607182',
       },
-      broadcasts: {
+      campaigns: {
         universalIdentifier: 'ddb2a585-1a7f-4063-8aa6-7b9d1e5fc0bd',
       },
       timelineActivities: {
@@ -860,7 +860,7 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
-  messageBroadcast: {
+  messageCampaign: {
     universalIdentifier: '238acb94-dd4c-4036-bc55-19b99d821efd',
     fields: {
       id: { universalIdentifier: '819a9eb4-2738-49df-a302-76d2dc7d7114' },
@@ -918,6 +918,7 @@ export const STANDARD_OBJECTS = {
       timelineActivities: {
         universalIdentifier: 'd4e5f607-1829-4da3-8eb4-25f607182930',
       },
+      messages: { universalIdentifier: 'e5a177a7-512b-4778-928e-69777a528f7c' },
     },
     indexes: {
       topicIdIndex: {
@@ -928,7 +929,7 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
-  messageSubscription: {
+  messageTopicSubscription: {
     universalIdentifier: '71a8179f-9259-49cf-a4e6-9642b200d6aa',
     fields: {
       id: { universalIdentifier: '4bc69ce3-634a-482a-a9aa-73f3e3c66ed2' },
@@ -976,7 +977,7 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
-  messageSegment: {
+  messageList: {
     universalIdentifier: '826561ea-4816-411c-baa0-eec5e6ca8866',
     fields: {
       id: { universalIdentifier: 'd91c62db-28d1-4e96-83f9-2639dcdcc443' },
@@ -1015,7 +1016,7 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
-  messageSegmentMember: {
+  messageListMember: {
     universalIdentifier: '27773d24-8ce3-40f8-aa6c-1f590f2c08d2',
     fields: {
       id: { universalIdentifier: '606769a6-1783-4c2b-9e44-1d8389647f7c' },
@@ -1041,15 +1042,15 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '37f86c8d-6097-4ccd-9f08-027c1d40e9d6',
       },
       person: { universalIdentifier: '34288425-8805-42fb-8b98-ee13d09be3d3' },
-      segment: {
+      list: {
         universalIdentifier: 'd5402005-e8f9-4fbe-8696-b6723cd85018',
       },
     },
     indexes: {
-      segmentIdIndex: {
+      listIdIndex: {
         universalIdentifier: '61188470-6dcb-4b2a-b1a9-baeb688bccae',
       },
-      personSegmentUniqueIndex: {
+      personListUniqueIndex: {
         universalIdentifier: 'e5497dc2-1d72-418c-a389-a0645ca0195a',
       },
     },
@@ -1459,6 +1460,12 @@ export const STANDARD_OBJECTS = {
       messageChannelMessageAssociations: {
         universalIdentifier: '20202020-3cef-43a3-82c6-50e7cfbc9ae4',
       },
+      messageCampaign: {
+        universalIdentifier: '77cff00b-a0ba-48d6-80de-0d5ccf14e45b',
+      },
+      deliveryStatus: {
+        universalIdentifier: '209254fa-2b89-429d-a72a-c401c4bd5a78',
+      },
       createdBy: {
         universalIdentifier: '6e52bde4-ed41-4462-aa70-121e496270b4',
       },
@@ -1475,6 +1482,9 @@ export const STANDARD_OBJECTS = {
     indexes: {
       messageThreadIdIndex: {
         universalIdentifier: '7a05b45e-7aa6-4a7e-9bbc-299cbed53c96',
+      },
+      messageCampaignIdIndex: {
+        universalIdentifier: '79e777ca-7008-46c5-b3a6-3108b7c7dfb6',
       },
     },
     views: {
@@ -1926,10 +1936,10 @@ export const STANDARD_OBJECTS = {
       timelineActivities: {
         universalIdentifier: '20202020-a43e-4873-9c23-e522de906ce5',
       },
-      messageSubscriptions: {
+      messageTopicSubscriptions: {
         universalIdentifier: '082d2fba-437c-4ec8-acde-6dbfda45d50c',
       },
-      segmentMemberships: {
+      listMemberships: {
         universalIdentifier: '8b8d1be0-4c94-4413-a2c9-c7ede205a81d',
       },
       searchVector: {
@@ -2390,13 +2400,13 @@ export const STANDARD_OBJECTS = {
       targetDashboard: {
         universalIdentifier: '20202020-7864-48f5-af7c-9e4b60140948',
       },
-      targetMessageSegment: {
+      targetMessageList: {
         universalIdentifier: 'd9f4a1b2-3c5e-4d70-8e91-0a2b3c4d5e6f',
       },
       targetMessageTopic: {
         universalIdentifier: 'a1b2c3d4-5e6f-4a70-8b81-92c3d4e5f607',
       },
-      targetMessageBroadcast: {
+      targetMessageCampaign: {
         universalIdentifier: 'b2c3d4e5-6f70-4b81-8c92-03d4e5f60718',
       },
       linkedRecordCachedName: {

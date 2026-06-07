@@ -5,35 +5,35 @@ import {
   createStandardIndexFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/create-standard-index-flat-metadata.util';
 
-export const buildMessageSegmentMemberStandardFlatIndexMetadatas = ({
+export const buildMessageTopicSubscriptionStandardFlatIndexMetadatas = ({
   now,
   objectName,
   workspaceId,
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardIndexArgs<'messageSegmentMember'>, 'context'>): Record<
-  AllStandardObjectIndexName<'messageSegmentMember'>,
+}: Omit<CreateStandardIndexArgs<'messageTopicSubscription'>, 'context'>): Record<
+  AllStandardObjectIndexName<'messageTopicSubscription'>,
   FlatIndexMetadata
 > => ({
-  segmentIdIndex: createStandardIndexFlatMetadata({
+  topicIdIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      indexName: 'segmentIdIndex',
-      relatedFieldNames: ['segment'],
+      indexName: 'topicIdIndex',
+      relatedFieldNames: ['topic'],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
   }),
-  personSegmentUniqueIndex: createStandardIndexFlatMetadata({
+  personTopicUniqueIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      indexName: 'personSegmentUniqueIndex',
-      relatedFieldNames: ['person', 'segment'],
+      indexName: 'personTopicUniqueIndex',
+      relatedFieldNames: ['person', 'topic'],
       isUnique: true,
       indexWhereClause: '"deletedAt" IS NULL',
     },

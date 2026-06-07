@@ -48,9 +48,9 @@ export const CampaignComposerFields = ({
       />
       <FormSingleRecordPicker
         label={t`To`}
-        objectNameSingulars={['messageSegment']}
-        defaultValue={campaignState.segmentId}
-        onChange={campaignState.setSegmentId}
+        objectNameSingulars={['messageList']}
+        defaultValue={campaignState.listId}
+        onChange={campaignState.setListId}
       />
       <FormSingleRecordPicker
         label={t`Topic`}

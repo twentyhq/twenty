@@ -2898,8 +2898,8 @@ export default {
         },
         "EmailingDomainDriver": {},
         "EmailingDomainStatus": {},
-        "SendMessageBroadcastOutputDTO": {
-            "broadcastId": [
+        "SendMessageCampaignOutputDTO": {
+            "campaignId": [
                 1
             ],
             "sentCount": [
@@ -7376,12 +7376,12 @@ export default {
                     ]
                 }
             ],
-            "sendMessageBroadcast": [
+            "sendMessageCampaign": [
                 133,
                 {
                     "input": [
                         392,
-                        "SendMessageBroadcastInput!"
+                        "SendMessageCampaignInput!"
                     ]
                 }
             ],
@@ -9689,14 +9689,14 @@ export default {
                 1
             ]
         },
-        "SendMessageBroadcastInput": {
+        "SendMessageCampaignInput": {
             "messageTopicId": [
                 1
             ],
             "recipientViewId": [
                 1
             ],
-            "segmentId": [
+            "listId": [
                 1
             ],
             "subject": [

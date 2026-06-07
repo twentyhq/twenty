@@ -3,8 +3,8 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
-import { type MessageBroadcastWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-broadcast.workspace-entity';
-import { type MessageSubscriptionWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-subscription.workspace-entity';
+import { type MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
+import { type MessageTopicSubscriptionWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-topic-subscription.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 
@@ -17,7 +17,7 @@ export class MessageTopicWorkspaceEntity extends BaseWorkspaceEntity {
   description: string | null;
   subscriptionDefault: string;
   visibility: string;
-  subscriptions: EntityRelation<MessageSubscriptionWorkspaceEntity[]>;
-  broadcasts: EntityRelation<MessageBroadcastWorkspaceEntity[]>;
+  subscriptions: EntityRelation<MessageTopicSubscriptionWorkspaceEntity[]>;
+  broadcasts: EntityRelation<MessageCampaignWorkspaceEntity[]>;
   searchVector: string;
 }

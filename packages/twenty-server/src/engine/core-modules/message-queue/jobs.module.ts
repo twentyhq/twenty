@@ -14,6 +14,7 @@ import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.modu
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
+import { SendCampaignEmailJob } from 'src/engine/core-modules/emailing-domain/jobs/send-campaign-email.job';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { GenerateSdkClientJob } from 'src/engine/core-modules/sdk-client/jobs/generate-sdk-client.job';
@@ -86,6 +87,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     CleanSuspendedWorkspacesJob,
     CleanOnboardingWorkspacesJob,
     EmailSenderJob,
+    SendCampaignEmailJob,
     UpdateSubscriptionQuantityJob,
     HandleWorkspaceMemberDeletedJob,
     CleanWorkspaceDeletionWarningUserVarsJob,

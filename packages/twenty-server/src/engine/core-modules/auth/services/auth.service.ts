@@ -70,6 +70,7 @@ import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/worksp
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 // import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
 
 @Injectable()
@@ -893,7 +894,8 @@ export class AuthService {
     if (
       workspace?.approvedAccessDomains.some(
         (trustDomain) =>
-          trustDomain.isValidated && trustDomain.domain === email.split('@')[1],
+          trustDomain.isValidated &&
+          trustDomain.domain === getDomainFromEmail(email),
       )
     ) {
       return;

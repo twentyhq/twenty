@@ -13,7 +13,7 @@ import {
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { MessageSuppressionService } from 'src/engine/core-modules/emailing-domain/services/message-suppression.service';
-import { MessageSubscriptionService } from 'src/engine/core-modules/emailing-domain/services/message-subscription.service';
+import { MessageTopicSubscriptionService } from 'src/engine/core-modules/emailing-domain/services/message-topic-subscription.service';
 import {
   type UnsubscribeTokenPayload,
   UnsubscribeTokenService,
@@ -43,7 +43,7 @@ export class UnsubscribeController {
   constructor(
     private readonly unsubscribeTokenService: UnsubscribeTokenService,
     private readonly messageSuppressionService: MessageSuppressionService,
-    private readonly messageSubscriptionService: MessageSubscriptionService,
+    private readonly messageTopicSubscriptionService: MessageTopicSubscriptionService,
   ) {}
 
   // RFC 8058 one-click: mail clients POST here with no user interaction, so it
@@ -61,7 +61,7 @@ export class UnsubscribeController {
   async handlePreferencesPage(@Query('t') token: string): Promise<string> {
     const payload = this.verifyTokenOrThrow(token);
 
-    const topics = await this.messageSubscriptionService.getSubscribedTopics({
+    const topics = await this.messageTopicSubscriptionService.getSubscribedTopics({
       workspaceId: payload.workspaceId,
       emailAddress: payload.emailAddress,
     });
@@ -81,7 +81,7 @@ export class UnsubscribeController {
   ): Promise<string> {
     const payload = this.verifyTokenOrThrow(body.t);
 
-    await this.messageSubscriptionService.setSubscribedTopics({
+    await this.messageTopicSubscriptionService.setSubscribedTopics({
       workspaceId: payload.workspaceId,
       emailAddress: payload.emailAddress,
       subscribedTopicIds: this.normalizeTopicIds(body.topicId),
@@ -137,7 +137,7 @@ export class UnsubscribeController {
   ): Promise<void> {
     if (isNonEmptyString(payload.messageTopicId)) {
       const unsubscribedFromList =
-        await this.messageSubscriptionService.unsubscribeByEmail({
+        await this.messageTopicSubscriptionService.unsubscribeByEmail({
           workspaceId: payload.workspaceId,
           emailAddress: payload.emailAddress,
           topicId: payload.messageTopicId,

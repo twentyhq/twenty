@@ -6,17 +6,29 @@ import {
   createStandardIndexFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/create-standard-index-flat-metadata.util';
 
-export const buildMessageSegmentStandardFlatIndexMetadatas = ({
+export const buildMessageCampaignStandardFlatIndexMetadatas = ({
   now,
   objectName,
   workspaceId,
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardIndexArgs<'messageSegment'>, 'context'>): Record<
-  AllStandardObjectIndexName<'messageSegment'>,
+}: Omit<CreateStandardIndexArgs<'messageCampaign'>, 'context'>): Record<
+  AllStandardObjectIndexName<'messageCampaign'>,
   FlatIndexMetadata
 > => ({
+  topicIdIndex: createStandardIndexFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      indexName: 'topicIdIndex',
+      relatedFieldNames: ['topic'],
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   searchVectorGinIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,

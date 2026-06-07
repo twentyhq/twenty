@@ -4,14 +4,14 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { MessageSuppressionService } from 'src/engine/core-modules/emailing-domain/services/message-suppression.service';
-import { MessageSubscriptionSource } from 'src/engine/core-modules/emailing-domain/types/message-subscription-source.type';
-import { MessageSubscriptionStatus } from 'src/engine/core-modules/emailing-domain/types/message-subscription-status.type';
+import { MessageTopicSubscriptionSource } from 'src/engine/core-modules/emailing-domain/types/message-topic-subscription-source.type';
+import { MessageTopicSubscriptionStatus } from 'src/engine/core-modules/emailing-domain/types/message-topic-subscription-status.type';
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/message-suppression-source.type';
 import { type SubscribedTopic } from 'src/engine/core-modules/emailing-domain/types/subscribed-topic.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { MessageSubscriptionWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-subscription.workspace-entity';
+import { MessageTopicSubscriptionWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-topic-subscription.workspace-entity';
 import { MessageTopicWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-topic.workspace-entity';
 import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
 import { findPersonByPrimaryOrAdditionalEmail } from 'src/modules/match-participant/utils/find-person-by-primary-or-additional-email';
@@ -21,7 +21,7 @@ type SubscribeArgs = {
   workspaceId: string;
   personId: string;
   topicId: string;
-  source?: MessageSubscriptionSource;
+  source?: MessageTopicSubscriptionSource;
 };
 
 type UnsubscribeArgs = {
@@ -51,12 +51,12 @@ type UpsertSubscriptionStatusArgs = {
   workspaceId: string;
   personId: string;
   topicId: string;
-  status: MessageSubscriptionStatus;
-  source: MessageSubscriptionSource;
+  status: MessageTopicSubscriptionStatus;
+  source: MessageTopicSubscriptionSource;
 };
 
 @Injectable()
-export class MessageSubscriptionService {
+export class MessageTopicSubscriptionService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly messageSuppressionService: MessageSuppressionService,
@@ -66,13 +66,13 @@ export class MessageSubscriptionService {
     workspaceId,
     personId,
     topicId,
-    source = MessageSubscriptionSource.MANUAL,
+    source = MessageTopicSubscriptionSource.MANUAL,
   }: SubscribeArgs): Promise<void> {
     await this.upsertSubscriptionStatus({
       workspaceId,
       personId,
       topicId,
-      status: MessageSubscriptionStatus.SUBSCRIBED,
+      status: MessageTopicSubscriptionStatus.SUBSCRIBED,
       source,
     });
 
@@ -150,12 +150,12 @@ export class MessageSubscriptionService {
         const subscriptionRepository =
           await this.globalWorkspaceOrmManager.getRepository(
             workspaceId,
-            MessageSubscriptionWorkspaceEntity,
+            MessageTopicSubscriptionWorkspaceEntity,
             { shouldBypassPermissionChecks: true },
           );
 
         const subscriptions = await subscriptionRepository.find({
-          where: { personId, status: MessageSubscriptionStatus.SUBSCRIBED },
+          where: { personId, status: MessageTopicSubscriptionStatus.SUBSCRIBED },
         });
 
         if (!isNonEmptyArray(subscriptions)) {
@@ -273,7 +273,7 @@ export class MessageSubscriptionService {
       const subscriptionRepository =
         await this.globalWorkspaceOrmManager.getRepository(
           workspaceId,
-          MessageSubscriptionWorkspaceEntity,
+          MessageTopicSubscriptionWorkspaceEntity,
           { shouldBypassPermissionChecks: true },
         );
 
@@ -320,7 +320,7 @@ export class MessageSubscriptionService {
       const subscriptionRepository =
         await this.globalWorkspaceOrmManager.getRepository(
           workspaceId,
-          MessageSubscriptionWorkspaceEntity,
+          MessageTopicSubscriptionWorkspaceEntity,
           { shouldBypassPermissionChecks: true },
         );
 
@@ -331,7 +331,7 @@ export class MessageSubscriptionService {
 
       const now = new Date();
       const statusChangeTimestamp =
-        status === MessageSubscriptionStatus.SUBSCRIBED
+        status === MessageTopicSubscriptionStatus.SUBSCRIBED
           ? { subscribedAt: now }
           : { unsubscribedAt: now };
 

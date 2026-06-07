@@ -309,7 +309,7 @@ export const buildMessageTopicStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`People subscribed to this list`),
       icon: 'IconMailShare',
       isNullable: true,
-      targetObjectName: 'messageSubscription',
+      targetObjectName: 'messageTopicSubscription',
       targetFieldName: 'topic',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
@@ -343,19 +343,19 @@ export const buildMessageTopicStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  broadcasts: createStandardRelationFieldFlatMetadata({
+  campaigns: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
       type: FieldMetadataType.RELATION,
       morphId: null,
-      fieldName: 'broadcasts',
+      fieldName: 'campaigns',
       label: i18nLabel(msg`Campaigns`),
       description: i18nLabel(msg`Campaigns sent to this list`),
       icon: 'IconSend',
       isUIReadOnly: true,
       isNullable: true,
-      targetObjectName: 'messageBroadcast',
+      targetObjectName: 'messageCampaign',
       targetFieldName: 'topic',
       settings: {
         relationType: RelationType.ONE_TO_MANY,

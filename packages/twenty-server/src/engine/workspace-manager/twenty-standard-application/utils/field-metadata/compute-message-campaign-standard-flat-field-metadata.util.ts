@@ -15,9 +15,9 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { SEARCH_FIELDS_FOR_MESSAGE_BROADCAST } from 'src/modules/emailing/standard-objects/message-broadcast.workspace-entity';
+import { SEARCH_FIELDS_FOR_MESSAGE_CAMPAIGN } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 
-export const buildMessageBroadcastStandardFlatFieldMetadatas = ({
+export const buildMessageCampaignStandardFlatFieldMetadatas = ({
   now,
   objectName,
   workspaceId,
@@ -25,10 +25,10 @@ export const buildMessageBroadcastStandardFlatFieldMetadatas = ({
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
 }: Omit<
-  CreateStandardFieldArgs<'messageBroadcast', FieldMetadataType>,
+  CreateStandardFieldArgs<'messageCampaign', FieldMetadataType>,
   'context'
 >): Record<
-  AllStandardObjectFieldName<'messageBroadcast'>,
+  AllStandardObjectFieldName<'messageCampaign'>,
   FlatFieldMetadata
 > => {
   const base = {
@@ -163,7 +163,7 @@ export const buildMessageBroadcastStandardFlatFieldMetadatas = ({
         settings: {
           generatedType: 'STORED',
           asExpression: getTsVectorColumnExpressionFromFields(
-            SEARCH_FIELDS_FOR_MESSAGE_BROADCAST,
+            SEARCH_FIELDS_FOR_MESSAGE_CAMPAIGN,
           ),
         },
       },
@@ -384,7 +384,7 @@ export const buildMessageBroadcastStandardFlatFieldMetadatas = ({
         icon: 'IconMailbox',
         isNullable: true,
         targetObjectName: 'messageTopic',
-        targetFieldName: 'broadcasts',
+        targetFieldName: 'campaigns',
         settings: {
           relationType: RelationType.MANY_TO_ONE,
           onDelete: RelationOnDeleteAction.SET_NULL,
@@ -403,7 +403,24 @@ export const buildMessageBroadcastStandardFlatFieldMetadatas = ({
         icon: 'IconTimelineEvent',
         isNullable: true,
         targetObjectName: 'timelineActivity',
-        targetFieldName: 'targetMessageBroadcast',
+        targetFieldName: 'targetMessageCampaign',
+        settings: {
+          relationType: RelationType.ONE_TO_MANY,
+        },
+      },
+    }),
+    messages: createStandardRelationFieldFlatMetadata({
+      ...base,
+      context: {
+        type: FieldMetadataType.RELATION,
+        morphId: null,
+        fieldName: 'messages',
+        label: i18nLabel(msg`Messages`),
+        description: i18nLabel(msg`Messages sent as part of this campaign`),
+        icon: 'IconMessage',
+        isNullable: true,
+        targetObjectName: 'message',
+        targetFieldName: 'messageCampaign',
         settings: {
           relationType: RelationType.ONE_TO_MANY,
         },

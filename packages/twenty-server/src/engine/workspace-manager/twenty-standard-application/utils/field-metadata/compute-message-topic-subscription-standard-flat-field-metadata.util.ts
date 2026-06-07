@@ -16,7 +16,7 @@ import {
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 
-export const buildMessageSubscriptionStandardFlatFieldMetadatas = ({
+export const buildMessageTopicSubscriptionStandardFlatFieldMetadatas = ({
   now,
   objectName,
   workspaceId,
@@ -24,10 +24,10 @@ export const buildMessageSubscriptionStandardFlatFieldMetadatas = ({
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
 }: Omit<
-  CreateStandardFieldArgs<'messageSubscription', FieldMetadataType>,
+  CreateStandardFieldArgs<'messageTopicSubscription', FieldMetadataType>,
   'context'
 >): Record<
-  AllStandardObjectFieldName<'messageSubscription'>,
+  AllStandardObjectFieldName<'messageTopicSubscription'>,
   FlatFieldMetadata
 > => ({
   id: createStandardFieldFlatMetadata({
@@ -345,7 +345,7 @@ export const buildMessageSubscriptionStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isNullable: false,
       targetObjectName: 'person',
-      targetFieldName: 'messageSubscriptions',
+      targetFieldName: 'messageTopicSubscriptions',
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,

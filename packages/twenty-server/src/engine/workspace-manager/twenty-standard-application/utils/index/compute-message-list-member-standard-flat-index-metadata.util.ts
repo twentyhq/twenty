@@ -1,41 +1,41 @@
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { type AllStandardObjectIndexName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-index-name.type';
 import {
   type CreateStandardIndexArgs,
   createStandardIndexFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/create-standard-index-flat-metadata.util';
 
-export const buildMessageBroadcastStandardFlatIndexMetadatas = ({
+export const buildMessageListMemberStandardFlatIndexMetadatas = ({
   now,
   objectName,
   workspaceId,
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardIndexArgs<'messageBroadcast'>, 'context'>): Record<
-  AllStandardObjectIndexName<'messageBroadcast'>,
+}: Omit<CreateStandardIndexArgs<'messageListMember'>, 'context'>): Record<
+  AllStandardObjectIndexName<'messageListMember'>,
   FlatIndexMetadata
 > => ({
-  topicIdIndex: createStandardIndexFlatMetadata({
+  listIdIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      indexName: 'topicIdIndex',
-      relatedFieldNames: ['topic'],
+      indexName: 'listIdIndex',
+      relatedFieldNames: ['list'],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
   }),
-  searchVectorGinIndex: createStandardIndexFlatMetadata({
+  personListUniqueIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      indexName: 'searchVectorGinIndex',
-      relatedFieldNames: ['searchVector'],
-      indexType: IndexType.GIN,
+      indexName: 'personListUniqueIndex',
+      relatedFieldNames: ['person', 'list'],
+      isUnique: true,
+      indexWhereClause: '"deletedAt" IS NULL',
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

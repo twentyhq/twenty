@@ -14,9 +14,9 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { SEARCH_FIELDS_FOR_MESSAGE_SEGMENT } from 'src/modules/emailing/standard-objects/message-segment.workspace-entity';
+import { SEARCH_FIELDS_FOR_MESSAGE_LIST } from 'src/modules/emailing/standard-objects/message-list.workspace-entity';
 
-export const buildMessageSegmentStandardFlatFieldMetadatas = ({
+export const buildMessageListStandardFlatFieldMetadatas = ({
   now,
   objectName,
   workspaceId,
@@ -24,10 +24,10 @@ export const buildMessageSegmentStandardFlatFieldMetadatas = ({
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
 }: Omit<
-  CreateStandardFieldArgs<'messageSegment', FieldMetadataType>,
+  CreateStandardFieldArgs<'messageList', FieldMetadataType>,
   'context'
 >): Record<
-  AllStandardObjectFieldName<'messageSegment'>,
+  AllStandardObjectFieldName<'messageList'>,
   FlatFieldMetadata
 > => ({
   id: createStandardFieldFlatMetadata({
@@ -163,7 +163,7 @@ export const buildMessageSegmentStandardFlatFieldMetadatas = ({
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
       label: i18nLabel(msg`Position`),
-      description: i18nLabel(msg`Segment record position`),
+      description: i18nLabel(msg`List record position`),
       icon: 'IconHierarchy2',
       isSystem: true,
       isNullable: false,
@@ -181,7 +181,7 @@ export const buildMessageSegmentStandardFlatFieldMetadatas = ({
       fieldName: 'name',
       type: FieldMetadataType.TEXT,
       label: i18nLabel(msg`Name`),
-      description: i18nLabel(msg`The segment name`),
+      description: i18nLabel(msg`The list name`),
       icon: 'IconUsersGroup',
       isNullable: true,
     },
@@ -198,11 +198,11 @@ export const buildMessageSegmentStandardFlatFieldMetadatas = ({
       morphId: null,
       fieldName: 'members',
       label: i18nLabel(msg`Members`),
-      description: i18nLabel(msg`People in this segment`),
+      description: i18nLabel(msg`People in this list`),
       icon: 'IconUser',
       isNullable: true,
-      targetObjectName: 'messageSegmentMember',
-      targetFieldName: 'segment',
+      targetObjectName: 'messageListMember',
+      targetFieldName: 'list',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },
@@ -220,11 +220,11 @@ export const buildMessageSegmentStandardFlatFieldMetadatas = ({
       morphId: null,
       fieldName: 'timelineActivities',
       label: i18nLabel(msg`Events`),
-      description: i18nLabel(msg`Events linked to the segment`),
+      description: i18nLabel(msg`Events linked to the list`),
       icon: 'IconTimelineEvent',
       isNullable: true,
       targetObjectName: 'timelineActivity',
-      targetFieldName: 'targetMessageSegment',
+      targetFieldName: 'targetMessageList',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },
@@ -248,7 +248,7 @@ export const buildMessageSegmentStandardFlatFieldMetadatas = ({
       settings: {
         generatedType: 'STORED',
         asExpression: getTsVectorColumnExpressionFromFields(
-          SEARCH_FIELDS_FOR_MESSAGE_SEGMENT,
+          SEARCH_FIELDS_FOR_MESSAGE_LIST,
         ),
       },
     },

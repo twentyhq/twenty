@@ -262,6 +262,42 @@ export class MessageChannelMetadataService {
     return { messageChannel, forwardingAddress };
   }
 
+  // Resolves the workspace-owned email-group channel that sends from `fromAddress`
+  // (its connectedAccount.handle), creating it on demand. Used by campaign sends to
+  // persist + reply-thread their messages on a SHARE_EVERYTHING channel.
+  async getOrCreateEmailGroupChannel({
+    fromAddress,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    fromAddress: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<MessageChannelEntity> {
+    const existingChannel = await this.repository.findOne({
+      where: {
+        workspaceId,
+        type: MessageChannelType.EMAIL_GROUP,
+        connectedAccount: { handle: fromAddress },
+      },
+      relations: { connectedAccount: true },
+    });
+
+    if (existingChannel) {
+      return existingChannel;
+    }
+
+    const { messageChannel } = await this.createEmailGroupChannel({
+      handle: fromAddress,
+      userWorkspaceId,
+      workspaceId,
+    });
+
+    return this.repository.findOneOrFail({
+      where: { id: messageChannel.id, workspaceId },
+    });
+  }
+
   async delete({
     id,
     workspaceId,

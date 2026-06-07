@@ -17,6 +17,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { type MessageOutboundDriver } from 'src/modules/messaging/message-outbound-manager/interfaces/message-outbound-driver.interface';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
+import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 
 @Injectable()
 export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
@@ -75,7 +76,7 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
   private async resolveEmailingDomain(
     connectedAccount: ConnectedAccountEntity,
   ): Promise<EmailingDomainEntity> {
-    const handleDomain = connectedAccount.handle.split('@')[1];
+    const handleDomain = getDomainFromEmail(connectedAccount.handle);
 
     if (!isNonEmptyString(handleDomain)) {
       throw new MessageChannelException(

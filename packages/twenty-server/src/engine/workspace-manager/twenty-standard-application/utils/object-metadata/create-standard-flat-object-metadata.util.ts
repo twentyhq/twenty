@@ -274,26 +274,26 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
-  messageBroadcast: ({
+  messageCampaign: ({
     now,
     workspaceId,
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     dependencyFlatEntityMaps,
   }: Omit<
-    CreateStandardObjectArgs<'messageBroadcast'>,
+    CreateStandardObjectArgs<'messageCampaign'>,
     'context' | 'objectName'
   >) =>
     createStandardObjectFlatMetadata({
-      objectName: 'messageBroadcast',
+      objectName: 'messageCampaign',
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier:
-          STANDARD_OBJECTS.messageBroadcast.universalIdentifier,
-        nameSingular: 'messageBroadcast',
-        namePlural: 'messageBroadcasts',
-        labelSingular: i18nLabel(msg`Broadcast`),
-        labelPlural: i18nLabel(msg`Broadcasts`),
+          STANDARD_OBJECTS.messageCampaign.universalIdentifier,
+        nameSingular: 'messageCampaign',
+        namePlural: 'messageCampaigns',
+        labelSingular: i18nLabel(msg`Campaign`),
+        labelPlural: i18nLabel(msg`Campaigns`),
         description: i18nLabel(
           msg`A bulk email send to an audience, with delivery stats`,
         ),
@@ -306,26 +306,26 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
-  messageSubscription: ({
+  messageTopicSubscription: ({
     now,
     workspaceId,
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     dependencyFlatEntityMaps,
   }: Omit<
-    CreateStandardObjectArgs<'messageSubscription'>,
+    CreateStandardObjectArgs<'messageTopicSubscription'>,
     'context' | 'objectName'
   >) =>
     createStandardObjectFlatMetadata({
-      objectName: 'messageSubscription',
+      objectName: 'messageTopicSubscription',
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier:
-          STANDARD_OBJECTS.messageSubscription.universalIdentifier,
-        nameSingular: 'messageSubscription',
-        namePlural: 'messageSubscriptions',
-        labelSingular: i18nLabel(msg`Subscription`),
-        labelPlural: i18nLabel(msg`Subscriptions`),
+          STANDARD_OBJECTS.messageTopicSubscription.universalIdentifier,
+        nameSingular: 'messageTopicSubscription',
+        namePlural: 'messageTopicSubscriptions',
+        labelSingular: i18nLabel(msg`Topic Subscription`),
+        labelPlural: i18nLabel(msg`Topic Subscriptions`),
         description: i18nLabel(msg`A person's subscription status for a topic`),
         icon: 'IconMailShare',
         isSystem: true,
@@ -336,26 +336,26 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
-  messageSegment: ({
+  messageList: ({
     now,
     workspaceId,
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     dependencyFlatEntityMaps,
   }: Omit<
-    CreateStandardObjectArgs<'messageSegment'>,
+    CreateStandardObjectArgs<'messageList'>,
     'context' | 'objectName'
   >) =>
     createStandardObjectFlatMetadata({
-      objectName: 'messageSegment',
+      objectName: 'messageList',
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier:
-          STANDARD_OBJECTS.messageSegment.universalIdentifier,
-        nameSingular: 'messageSegment',
-        namePlural: 'messageSegments',
-        labelSingular: i18nLabel(msg`Segment`),
-        labelPlural: i18nLabel(msg`Segments`),
+          STANDARD_OBJECTS.messageList.universalIdentifier,
+        nameSingular: 'messageList',
+        namePlural: 'messageLists',
+        labelSingular: i18nLabel(msg`List`),
+        labelPlural: i18nLabel(msg`Lists`),
         description: i18nLabel(msg`A hand-picked audience of people`),
         icon: 'IconUsersGroup',
         isSystem: false,
@@ -367,27 +367,27 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
-  messageSegmentMember: ({
+  messageListMember: ({
     now,
     workspaceId,
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     dependencyFlatEntityMaps,
   }: Omit<
-    CreateStandardObjectArgs<'messageSegmentMember'>,
+    CreateStandardObjectArgs<'messageListMember'>,
     'context' | 'objectName'
   >) =>
     createStandardObjectFlatMetadata({
-      objectName: 'messageSegmentMember',
+      objectName: 'messageListMember',
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier:
-          STANDARD_OBJECTS.messageSegmentMember.universalIdentifier,
-        nameSingular: 'messageSegmentMember',
-        namePlural: 'messageSegmentMembers',
-        labelSingular: i18nLabel(msg`Segment Member`),
-        labelPlural: i18nLabel(msg`Segment Members`),
-        description: i18nLabel(msg`A person's membership in a segment`),
+          STANDARD_OBJECTS.messageListMember.universalIdentifier,
+        nameSingular: 'messageListMember',
+        namePlural: 'messageListMembers',
+        labelSingular: i18nLabel(msg`List Member`),
+        labelPlural: i18nLabel(msg`List Members`),
+        description: i18nLabel(msg`A person's membership in a list`),
         icon: 'IconUser',
         isSystem: true,
         labelIdentifierFieldMetadataName: 'id',

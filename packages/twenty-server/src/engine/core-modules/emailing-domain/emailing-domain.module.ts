@@ -15,9 +15,9 @@ import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/em
 import { EmailingDomainResolver } from 'src/engine/core-modules/emailing-domain/emailing-domain.resolver';
 import { EmailingDomainWorkspaceCleanupJob } from 'src/engine/core-modules/emailing-domain/jobs/emailing-domain-workspace-cleanup.job';
 import { EmailingDomainSenderService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-sender.service';
-import { MessageBroadcastService } from 'src/engine/core-modules/emailing-domain/services/message-broadcast.service';
+import { MessageCampaignService } from 'src/engine/core-modules/emailing-domain/services/message-campaign.service';
 import { MessageSuppressionService } from 'src/engine/core-modules/emailing-domain/services/message-suppression.service';
-import { MessageSubscriptionService } from 'src/engine/core-modules/emailing-domain/services/message-subscription.service';
+import { MessageTopicSubscriptionService } from 'src/engine/core-modules/emailing-domain/services/message-topic-subscription.service';
 import { EmailingDomainTenantStatusService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-tenant-status.service';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { UnsubscribeHostnameService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-hostname.service';
@@ -41,8 +41,8 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     EmailingDomainSenderService,
     EmailingDomainTenantStatusService,
     MessageSuppressionService,
-    MessageSubscriptionService,
-    MessageBroadcastService,
+    MessageTopicSubscriptionService,
+    MessageCampaignService,
     UnsubscribeTokenService,
   ],
   providers: [
@@ -50,8 +50,8 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     EmailingDomainSenderService,
     EmailingDomainTenantStatusService,
     MessageSuppressionService,
-    MessageSubscriptionService,
-    MessageBroadcastService,
+    MessageTopicSubscriptionService,
+    MessageCampaignService,
     UnsubscribeTokenService,
     UnsubscribeHostnameService,
     EmailingDomainResolver,

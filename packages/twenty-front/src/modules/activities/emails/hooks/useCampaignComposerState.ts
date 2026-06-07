@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import { useSendMessageBroadcast } from '@/activities/emails/hooks/useSendMessageBroadcast';
+import { useSendMessageCampaign } from '@/activities/emails/hooks/useSendMessageCampaign';
 
 type UseCampaignComposerStateArgs = {
   defaultSubject?: string;
@@ -12,12 +12,12 @@ export const useCampaignComposerState = ({
   onSent,
 }: UseCampaignComposerStateArgs) => {
   const [messageTopicId, setMessageTopicId] = useState<string | null>(null);
-  const [segmentId, setSegmentId] = useState<string | null>(null);
+  const [listId, setListId] = useState<string | null>(null);
   const [fromAddress, setFromAddress] = useState('');
   const [subject, setSubject] = useState(defaultSubject);
   const [body, setBody] = useState('');
 
-  const { sendMessageBroadcast, loading } = useSendMessageBroadcast();
+  const { sendMessageCampaign, loading } = useSendMessageCampaign();
 
   const canSend =
     messageTopicId !== null &&
@@ -34,9 +34,9 @@ export const useCampaignComposerState = ({
       return;
     }
 
-    const success = await sendMessageBroadcast({
+    const success = await sendMessageCampaign({
       messageTopicId,
-      segmentId: segmentId ?? undefined,
+      listId: listId ?? undefined,
       subject,
       body,
       fromAddress: fromAddress.trim(),
@@ -47,19 +47,19 @@ export const useCampaignComposerState = ({
     }
   }, [
     messageTopicId,
-    segmentId,
+    listId,
     fromAddress,
     subject,
     body,
-    sendMessageBroadcast,
+    sendMessageCampaign,
     onSent,
   ]);
 
   return {
     messageTopicId,
     setMessageTopicId,
-    segmentId,
-    setSegmentId,
+    listId,
+    setListId,
     fromAddress,
     setFromAddress,
     subject,

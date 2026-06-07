@@ -1118,11 +1118,11 @@ export type EmailingDomainDriver = 'AWS_SES'
 
 export type EmailingDomainStatus = 'PENDING' | 'VERIFIED' | 'FAILED' | 'TEMPORARY_FAILURE'
 
-export interface SendMessageBroadcastOutputDTO {
-    broadcastId: Scalars['String']
+export interface SendMessageCampaignOutputDTO {
+    campaignId: Scalars['String']
     sentCount: Scalars['Int']
     failedCount: Scalars['Int']
-    __typename: 'SendMessageBroadcastOutputDTO'
+    __typename: 'SendMessageCampaignOutputDTO'
 }
 
 export interface SendEmailViaDomainOutput {
@@ -2738,7 +2738,7 @@ export interface Mutation {
     deleteEmailingDomain: Scalars['Boolean']
     verifyEmailingDomain: EmailingDomain
     sendEmailViaEmailingDomain: SendEmailViaDomainOutput
-    sendMessageBroadcast: SendMessageBroadcastOutputDTO
+    sendMessageCampaign: SendMessageCampaignOutputDTO
     updateOneApplicationVariable: Scalars['Boolean']
     createPageLayoutWidget: PageLayoutWidget
     updatePageLayoutWidget: PageLayoutWidget
@@ -4059,8 +4059,8 @@ export interface EmailingDomainGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface SendMessageBroadcastOutputDTOGenqlSelection{
-    broadcastId?: boolean | number
+export interface SendMessageCampaignOutputDTOGenqlSelection{
+    campaignId?: boolean | number
     sentCount?: boolean | number
     failedCount?: boolean | number
     __typename?: boolean | number
@@ -5806,7 +5806,7 @@ export interface MutationGenqlSelection{
     deleteEmailingDomain?: { __args: {id: Scalars['String']} }
     verifyEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {id: Scalars['String']} })
     sendEmailViaEmailingDomain?: (SendEmailViaDomainOutputGenqlSelection & { __args: {input: SendEmailViaDomainInput} })
-    sendMessageBroadcast?: (SendMessageBroadcastOutputDTOGenqlSelection & { __args: {input: SendMessageBroadcastInput} })
+    sendMessageCampaign?: (SendMessageCampaignOutputDTOGenqlSelection & { __args: {input: SendMessageCampaignInput} })
     updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId: Scalars['UUID']} }
     createPageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {input: CreatePageLayoutWidgetInput} })
     updatePageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutWidgetInput} })
@@ -6107,7 +6107,7 @@ export interface GridPositionInput {row: Scalars['Float'],column: Scalars['Float
 
 export interface SendEmailViaDomainInput {emailingDomainId: Scalars['String'],to: Scalars['String'][],cc?: (Scalars['String'][] | null),bcc?: (Scalars['String'][] | null),subject: Scalars['String'],text: Scalars['String'],html?: (Scalars['String'] | null),from: Scalars['String'],replyTo?: (Scalars['String'][] | null)}
 
-export interface SendMessageBroadcastInput {messageTopicId: Scalars['String'],recipientViewId?: (Scalars['String'] | null),segmentId?: (Scalars['String'] | null),subject: Scalars['String'],body: Scalars['String'],fromAddress: Scalars['String']}
+export interface SendMessageCampaignInput {messageTopicId: Scalars['String'],recipientViewId?: (Scalars['String'] | null),listId?: (Scalars['String'] | null),subject: Scalars['String'],body: Scalars['String'],fromAddress: Scalars['String']}
 
 export interface CreatePageLayoutWidgetInput {pageLayoutTabId: Scalars['UUID'],title: Scalars['String'],type: WidgetType,objectMetadataId?: (Scalars['UUID'] | null),gridPosition: GridPositionInput,position?: (Scalars['JSON'] | null),configuration: Scalars['JSON']}
 
@@ -6990,10 +6990,10 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const SendMessageBroadcastOutputDTO_possibleTypes: string[] = ['SendMessageBroadcastOutputDTO']
-    export const isSendMessageBroadcastOutputDTO = (obj?: { __typename?: any } | null): obj is SendMessageBroadcastOutputDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isSendMessageBroadcastOutputDTO"')
-      return SendMessageBroadcastOutputDTO_possibleTypes.includes(obj.__typename)
+    const SendMessageCampaignOutputDTO_possibleTypes: string[] = ['SendMessageCampaignOutputDTO']
+    export const isSendMessageCampaignOutputDTO = (obj?: { __typename?: any } | null): obj is SendMessageCampaignOutputDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSendMessageCampaignOutputDTO"')
+      return SendMessageCampaignOutputDTO_possibleTypes.includes(obj.__typename)
     }
     
 

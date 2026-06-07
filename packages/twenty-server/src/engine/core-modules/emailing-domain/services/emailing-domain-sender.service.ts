@@ -21,7 +21,7 @@ import {
 import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { MessageSuppressionService } from 'src/engine/core-modules/emailing-domain/services/message-suppression.service';
-import { MessageSubscriptionService } from 'src/engine/core-modules/emailing-domain/services/message-subscription.service';
+import { MessageTopicSubscriptionService } from 'src/engine/core-modules/emailing-domain/services/message-topic-subscription.service';
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { EmailGroupMessageCategory } from 'src/engine/core-modules/emailing-domain/types/email-group-message-category.type';
@@ -31,6 +31,7 @@ import { buildUnsubscribeHeaders } from 'src/engine/core-modules/emailing-domain
 import { buildUnsubscribeHtmlFooter } from 'src/engine/core-modules/emailing-domain/utils/build-unsubscribe-html-footer.util';
 import { buildUnsubscribeTextFooter } from 'src/engine/core-modules/emailing-domain/utils/build-unsubscribe-text-footer.util';
 import { buildUnsubscribeUrls } from 'src/engine/core-modules/emailing-domain/utils/build-unsubscribe-urls.util';
+import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { isDefined } from 'twenty-shared/utils';
@@ -42,7 +43,7 @@ export class EmailingDomainSenderService {
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
     private readonly emailingDomainDriverFactory: EmailingDomainDriverFactory,
     private readonly messageSuppressionService: MessageSuppressionService,
-    private readonly messageSubscriptionService: MessageSubscriptionService,
+    private readonly messageTopicSubscriptionService: MessageTopicSubscriptionService,
     private readonly unsubscribeTokenService: UnsubscribeTokenService,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
@@ -163,7 +164,7 @@ export class EmailingDomainSenderService {
       );
     }
 
-    const fromAddressDomain = fromAddress.split('@')[1]?.toLowerCase();
+    const fromAddressDomain = getDomainFromEmail(fromAddress)?.toLowerCase();
 
     if (fromAddressDomain !== emailingDomain.domain.toLowerCase()) {
       throw new EmailingDomainDriverException(
@@ -237,7 +238,7 @@ export class EmailingDomainSenderService {
       return new Set();
     }
 
-    return this.messageSubscriptionService.getAddressesUnsubscribedFromList(
+    return this.messageTopicSubscriptionService.getAddressesUnsubscribedFromList(
       workspaceId,
       recipients,
       messageTopicId,

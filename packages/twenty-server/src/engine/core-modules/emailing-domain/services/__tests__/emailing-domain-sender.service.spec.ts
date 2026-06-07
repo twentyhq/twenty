@@ -6,7 +6,7 @@ import { type EmailingDomainEmailContent } from 'src/engine/core-modules/emailin
 import { type EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailingDomainSenderService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-sender.service';
 import { type MessageSuppressionService } from 'src/engine/core-modules/emailing-domain/services/message-suppression.service';
-import { type MessageSubscriptionService } from 'src/engine/core-modules/emailing-domain/services/message-subscription.service';
+import { type MessageTopicSubscriptionService } from 'src/engine/core-modules/emailing-domain/services/message-topic-subscription.service';
 import { type UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type Repository } from 'typeorm';
@@ -62,7 +62,7 @@ describe('EmailingDomainSenderService.sendEmail', () => {
             listUnsubscribedAddresses.map((address) => address.toLowerCase()),
           ),
         ),
-    } as unknown as MessageSubscriptionService;
+    } as unknown as MessageTopicSubscriptionService;
     const unsubscribeTokenService = {
       sign: jest.fn().mockReturnValue('signed-token'),
     } as unknown as UnsubscribeTokenService;

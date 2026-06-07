@@ -16,7 +16,7 @@ import {
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 
-export const buildMessageSegmentMemberStandardFlatFieldMetadatas = ({
+export const buildMessageListMemberStandardFlatFieldMetadatas = ({
   now,
   objectName,
   workspaceId,
@@ -24,10 +24,10 @@ export const buildMessageSegmentMemberStandardFlatFieldMetadatas = ({
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
 }: Omit<
-  CreateStandardFieldArgs<'messageSegmentMember', FieldMetadataType>,
+  CreateStandardFieldArgs<'messageListMember', FieldMetadataType>,
   'context'
 >): Record<
-  AllStandardObjectFieldName<'messageSegmentMember'>,
+  AllStandardObjectFieldName<'messageListMember'>,
   FlatFieldMetadata
 > => ({
   id: createStandardFieldFlatMetadata({
@@ -163,7 +163,7 @@ export const buildMessageSegmentMemberStandardFlatFieldMetadatas = ({
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
       label: i18nLabel(msg`Position`),
-      description: i18nLabel(msg`Segment member record position`),
+      description: i18nLabel(msg`List member record position`),
       icon: 'IconHierarchy2',
       isSystem: true,
       isNullable: false,
@@ -174,23 +174,23 @@ export const buildMessageSegmentMemberStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  segment: createStandardRelationFieldFlatMetadata({
+  list: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
       type: FieldMetadataType.RELATION,
       morphId: null,
-      fieldName: 'segment',
-      label: i18nLabel(msg`Segment`),
-      description: i18nLabel(msg`The segment the person belongs to`),
+      fieldName: 'list',
+      label: i18nLabel(msg`List`),
+      description: i18nLabel(msg`The list the person belongs to`),
       icon: 'IconUsersGroup',
       isNullable: false,
-      targetObjectName: 'messageSegment',
+      targetObjectName: 'messageList',
       targetFieldName: 'members',
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,
-        joinColumnName: 'segmentId',
+        joinColumnName: 'listId',
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -206,11 +206,11 @@ export const buildMessageSegmentMemberStandardFlatFieldMetadatas = ({
       morphId: null,
       fieldName: 'person',
       label: i18nLabel(msg`Person`),
-      description: i18nLabel(msg`The person in the segment`),
+      description: i18nLabel(msg`The person in the list`),
       icon: 'IconUser',
       isNullable: false,
       targetObjectName: 'person',
-      targetFieldName: 'segmentMemberships',
+      targetFieldName: 'listMemberships',
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,

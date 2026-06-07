@@ -2,7 +2,10 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 
+// Asserting variant of getDomainFromEmail: throws a UserInputError when the
+// address is empty or has no domain, instead of returning undefined.
 export const getDomainNameByEmail = (email: string) => {
   if (!isNonEmptyString(email)) {
     throw new UserInputError(
@@ -13,9 +16,7 @@ export const getDomainNameByEmail = (email: string) => {
     );
   }
 
-  const fields = email.split('@');
-
-  if (fields.length !== 2) {
+  if (!email.includes('@')) {
     throw new UserInputError(
       'The provided email address is not valid. Please use a standard email format (e.g., user@example.com).',
       {
@@ -24,9 +25,9 @@ export const getDomainNameByEmail = (email: string) => {
     );
   }
 
-  const domain = fields[1];
+  const domain = getDomainFromEmail(email);
 
-  if (!domain) {
+  if (!isNonEmptyString(domain)) {
     throw new UserInputError(
       'The provided email address is missing a domain. Please use a standard email format (e.g., user@example.com).',
       {

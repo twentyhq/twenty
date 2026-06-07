@@ -52,28 +52,28 @@ const PERSON_PAGE_TABS = {
           STANDARD_OBJECTS.person.fields.pointOfContactForOpportunities
             .universalIdentifier,
       },
-      messageSubscriptions: {
+      messageTopicSubscriptions: {
         universalIdentifier:
           STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.personRecordPage.tabs.home
-            .widgets.messageSubscriptions.universalIdentifier,
+            .widgets.messageTopicSubscriptions.universalIdentifier,
         title: 'Topics',
         type: WidgetType.FIELD,
         gridPosition: GRID_POSITIONS.FULL_WIDTH,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.FOURTH,
         fieldUniversalIdentifier:
-          STANDARD_OBJECTS.person.fields.messageSubscriptions
+          STANDARD_OBJECTS.person.fields.messageTopicSubscriptions
             .universalIdentifier,
       },
-      segmentMemberships: {
+      listMemberships: {
         universalIdentifier:
           STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.personRecordPage.tabs.home
-            .widgets.segmentMemberships.universalIdentifier,
-        title: 'Segments',
+            .widgets.listMemberships.universalIdentifier,
+        title: 'Lists',
         type: WidgetType.FIELD,
         gridPosition: GRID_POSITIONS.FULL_WIDTH,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.FIFTH,
         fieldUniversalIdentifier:
-          STANDARD_OBJECTS.person.fields.segmentMemberships.universalIdentifier,
+          STANDARD_OBJECTS.person.fields.listMemberships.universalIdentifier,
       },
     },
   },

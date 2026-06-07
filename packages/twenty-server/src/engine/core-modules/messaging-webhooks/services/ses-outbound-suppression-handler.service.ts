@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { CAMPAIGN_MESSAGE_DELIVERY_STATUS } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { MessageCampaignService } from 'src/engine/core-modules/emailing-domain/services/message-campaign.service';
 import { MessageSuppressionService } from 'src/engine/core-modules/emailing-domain/services/message-suppression.service';
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/message-suppression-source.type';
@@ -16,6 +18,7 @@ export class SesOutboundSuppressionHandlerService {
 
   constructor(
     private readonly messageSuppressionService: MessageSuppressionService,
+    private readonly messageCampaignService: MessageCampaignService,
   ) {}
 
   async handle(event: SesEventBridgeNotification): Promise<void> {
@@ -33,6 +36,23 @@ export class SesOutboundSuppressionHandlerService {
       );
 
       return;
+    }
+
+    // Record the per-recipient campaign outcome by correlating the SES send id.
+    // Additive to the address-level suppression below.
+    const providerMessageId = event.detail?.mail?.messageId;
+
+    if (isDefined(providerMessageId)) {
+      await this.messageCampaignService.recordDeliveryFailureByProviderMessageId(
+        {
+          workspaceId,
+          providerMessageId,
+          deliveryStatus:
+            event['detail-type'] === 'Email Complaint Received'
+              ? CAMPAIGN_MESSAGE_DELIVERY_STATUS.COMPLAINED
+              : CAMPAIGN_MESSAGE_DELIVERY_STATUS.BOUNCED,
+        },
+      );
     }
 
     const results = await Promise.allSettled(
