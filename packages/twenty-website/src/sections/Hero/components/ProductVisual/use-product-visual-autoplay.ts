@@ -7,14 +7,11 @@ import { useAppPreviewExperience } from '@/sections/AppPreview/Shell/use-app-pre
 import type {
   KanbanPageDefinition,
   PageDefinition,
-  WorkflowPageDefinition,
 } from '@/sections/AppPreview/types/app-preview-data';
 
 import {
   NEW_TASK_ROWS,
   PRODUCT_VISUAL_SCENES,
-  QONTO_RECORD_PAGE,
-  QONTO_RECORD_PAGE_INITIAL,
   TASKS_PAGE_ITEM_ID,
   type ProductVisualSceneDefinition,
 } from './product-visual.data';
@@ -23,20 +20,6 @@ type AutoplayOptions = {
   externalScene?: number;
   playbackEnabled?: boolean;
 };
-
-type ProductVisualScenePhase =
-  | 'base'
-  | 'focused'
-  | 'tasks-added'
-  | 'record-initial'
-  | 'record-note-focus'
-  | 'record-evidence'
-  | 'record-summary'
-  | 'workflow-trigger'
-  | 'workflow-iterator'
-  | 'workflow-send-email'
-  | 'workflow-return'
-  | 'workflow-final';
 
 function getStreamProgress(streamedLength: number, fullTextLength: number) {
   if (fullTextLength === 0) {
@@ -70,54 +53,6 @@ function getParagraphsVisibleLength(paragraphs: string[]) {
     (total, paragraph) => total + getVisibleTextLength(paragraph),
     0,
   );
-}
-
-function getScenePhase(
-  scene: ProductVisualSceneDefinition,
-  streamProgress: number,
-): ProductVisualScenePhase {
-  switch (scene.kind) {
-    case 'leadCreation':
-      return 'base';
-    case 'opportunityReview':
-      return streamProgress >= 0.18 ? 'focused' : 'base';
-    case 'taskCreation':
-      return streamProgress >= 0.18 ? 'tasks-added' : 'base';
-    case 'recordSummary':
-      if (streamProgress >= 0.62) {
-        return 'record-summary';
-      }
-
-      if (streamProgress >= 0.4) {
-        return 'record-evidence';
-      }
-
-      if (streamProgress >= 0.2) {
-        return 'record-note-focus';
-      }
-
-      return 'record-initial';
-    case 'dashboardCreation':
-      return 'base';
-    case 'workflowCreation':
-      if (streamProgress >= 0.88) {
-        return 'workflow-final';
-      }
-
-      if (streamProgress >= 0.7) {
-        return 'workflow-return';
-      }
-
-      if (streamProgress >= 0.5) {
-        return 'workflow-send-email';
-      }
-
-      if (streamProgress >= 0.28) {
-        return 'workflow-iterator';
-      }
-
-      return 'workflow-trigger';
-  }
 }
 
 function buildFocusedOpportunitiesPage(
@@ -161,161 +96,12 @@ function buildFocusedOpportunitiesPage(
   };
 }
 
-function buildWorkflowPageForPhase(
-  page: WorkflowPageDefinition,
-  phase: ProductVisualScenePhase,
-): WorkflowPageDefinition {
-  if (!page.nodes || phase === 'workflow-final') {
-    return page;
-  }
-
-  const [triggerNode, iteratorNode, sendEmailNode] = page.nodes;
-  const [loopLabel, completedLabel] = page.branchLabels ?? [];
-
-  if (!triggerNode) {
-    return page;
-  }
-
-  if (phase === 'workflow-trigger') {
-    return {
-      ...page,
-      branchLabels: [],
-      edges: [],
-      nodes: [triggerNode],
-      plusNode: undefined,
-    };
-  }
-
-  if (!iteratorNode) {
-    return page;
-  }
-
-  if (phase === 'workflow-iterator') {
-    return {
-      ...page,
-      branchLabels: [],
-      edges: [{ from: 'trigger', to: 'iterator', type: 'vertical' }],
-      nodes: [triggerNode, iteratorNode].filter(Boolean),
-      plusNode: undefined,
-    };
-  }
-
-  if (!sendEmailNode) {
-    return page;
-  }
-
-  if (phase === 'workflow-send-email') {
-    return {
-      ...page,
-      branchLabels: loopLabel ? [loopLabel] : [],
-      edges: [
-        { from: 'trigger', to: 'iterator', type: 'vertical' },
-        { from: 'iterator', to: 'send-email', type: 'loopRight' },
-      ],
-      nodes: [triggerNode, iteratorNode, sendEmailNode],
-      plusNode: undefined,
-    };
-  }
-
-  if (phase === 'workflow-return') {
-    return {
-      ...page,
-      branchLabels: loopLabel ? [loopLabel] : [],
-      edges: [
-        { from: 'trigger', to: 'iterator', type: 'vertical' },
-        { from: 'iterator', to: 'send-email', type: 'loopRight' },
-        { from: 'send-email', to: 'trigger', type: 'loopBack' },
-      ],
-      nodes: [triggerNode, iteratorNode, sendEmailNode],
-      plusNode: undefined,
-    };
-  }
-
-  return {
-    ...page,
-    branchLabels: [loopLabel, completedLabel].filter(Boolean),
-    edges: page.edges ?? [],
-    nodes: [triggerNode, iteratorNode, sendEmailNode],
-    plusNode: page.plusNode,
-  };
-}
-
-function buildRecordSummaryPage(
-  phase: ProductVisualScenePhase,
-): PageDefinition {
-  const basePage =
-    phase === 'record-initial' ? QONTO_RECORD_PAGE_INITIAL : QONTO_RECORD_PAGE;
-
-  if (phase === 'record-initial') {
-    return basePage;
-  }
-
-  if (phase === 'record-note-focus') {
-    return {
-      ...basePage,
-      notes: QONTO_RECORD_PAGE.notes.slice(0, 2).map((note, index) => ({
-        ...note,
-        highlighted: index === 0,
-      })),
-    };
-  }
-
-  if (phase === 'record-evidence') {
-    return {
-      ...QONTO_RECORD_PAGE,
-      record: {
-        ...QONTO_RECORD_PAGE.record,
-        relations: QONTO_RECORD_PAGE.record.relations.map((section) => ({
-          ...section,
-          items: section.items.map((item) => ({
-            ...item,
-            highlighted:
-              item.name === 'Q Global Holdings' ||
-              item.name === 'Qonto' ||
-              item.name === 'Alexandre',
-          })),
-        })),
-      },
-      notes: QONTO_RECORD_PAGE.notes.map((note, index) => ({
-        ...note,
-        highlighted: index < 2,
-      })),
-    };
-  }
-
-  return {
-    ...QONTO_RECORD_PAGE,
-    record: {
-      ...QONTO_RECORD_PAGE.record,
-      relations: QONTO_RECORD_PAGE.record.relations.map((section) => ({
-        ...section,
-        items: section.items.map((item) => ({
-          ...item,
-          highlighted:
-            item.name === 'Q Global Holdings' ||
-            item.name === 'Qonto' ||
-            item.name === 'Alexandre',
-        })),
-      })),
-    },
-    notes: QONTO_RECORD_PAGE.notes.map((note, index) => ({
-      ...note,
-      highlighted: index < 2,
-    })),
-  };
-}
-
 function resolveDisplayPage(
   activePage: PageDefinition,
   activeItemId: string,
-  phase: ProductVisualScenePhase,
   scene: ProductVisualSceneDefinition,
   streamProgress: number,
 ): PageDefinition {
-  if (scene.kind === 'recordSummary') {
-    return buildRecordSummaryPage(phase);
-  }
-
   if (scene.kind === 'opportunityReview' && activePage.type === 'kanban') {
     const generating = streamProgress === 0;
     const focusedPage = buildFocusedOpportunitiesPage(activePage, 1);
@@ -360,7 +146,7 @@ function resolveDisplayPage(
 
   if (scene.kind === 'workflowCreation' && activePage.type === 'workflow') {
     return {
-      ...buildWorkflowPageForPhase(activePage, 'workflow-final'),
+      ...activePage,
       generating: streamProgress === 0,
     };
   }
@@ -375,7 +161,6 @@ export function useProductVisualAutoplay(
   const { externalScene, playbackEnabled = true } = options;
   const [streamedLength, setStreamedLength] = useState(0);
   const [completedStepCount, setCompletedStepCount] = useState(0);
-  const [revealProgress, setRevealProgress] = useState(0);
   const selectedOption =
     externalScene !== undefined
       ? Math.max(0, Math.min(externalScene, PRODUCT_VISUAL_SCENES.length - 1))
@@ -403,11 +188,9 @@ export function useProductVisualAutoplay(
     streamedLength,
     fullTextVisibleLength,
   );
-  const scenePhase = getScenePhase(selectedScene, revealProgress);
   const displayPage = resolveDisplayPage(
     activePage,
     activeItemId,
-    scenePhase,
     selectedScene,
     streamProgress,
   );
@@ -484,35 +267,6 @@ export function useProductVisualAutoplay(
       }
     };
   }, [fullTextVisibleLength, playbackEnabled, selectPageItem, selectedScene]);
-
-  useEffect(() => {
-    if (!playbackEnabled || !streamComplete) {
-      setRevealProgress(0);
-      return undefined;
-    }
-
-    let progress = 0;
-    let interval: ReturnType<typeof setInterval> | undefined;
-
-    const startTimer = setTimeout(() => {
-      interval = setInterval(() => {
-        progress = Math.min(1, progress + 0.06);
-        setRevealProgress(progress);
-
-        if (progress >= 1 && interval) {
-          clearInterval(interval);
-        }
-      }, 45);
-    }, 300);
-
-    return () => {
-      clearTimeout(startTimer);
-
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, [playbackEnabled, streamComplete]);
 
   const agentSteps = selectedScene.steps ?? [];
   const preambleComplete = completedStepCount >= agentSteps.length;
