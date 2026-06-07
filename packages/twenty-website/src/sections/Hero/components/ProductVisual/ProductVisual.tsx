@@ -68,7 +68,6 @@ const ShellScene = styled.div<{
         ? `${WINDOW_MAX_WIDTH}px`
         : 'none'};
   min-height: 0;
-  overflow: hidden;
   position: relative;
   width: ${({ $bleed }) => ($bleed ? `${WINDOW_MAX_WIDTH}px` : '100%')};
 `;
