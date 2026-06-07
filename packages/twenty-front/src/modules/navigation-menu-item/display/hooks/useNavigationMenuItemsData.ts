@@ -42,6 +42,6 @@ export const useNavigationMenuItemsData = (): NavigationMenuItemsData => {
     navigationMenuItems: userNavigationMenuItems,
     workspaceNavigationMenuItems,
     currentWorkspaceMemberId,
-    currentUserWorkspaceId: currentWorkspaceMember?.userWorkspaceId,
+    currentUserWorkspaceId: currentWorkspaceMember?.userWorkspaceId ?? undefined,
   };
 };
