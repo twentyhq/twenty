@@ -8,6 +8,7 @@ import { type DraggableLocation } from '@hello-pangea/dnd';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { filterOutByProperty } from 'twenty-shared/utils';
+import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 export const useReorderColumns = (recordTableId?: string) => {
   const store = useStore();
@@ -54,9 +55,10 @@ export const useReorderColumns = (recordTableId?: string) => {
         return;
       }
 
-      const reorderedFields = [...draggableFields];
-      const [movedField] = reorderedFields.splice(source.index, 1);
-      reorderedFields.splice(destination.index, 0, movedField);
+      const reorderedFields = moveArrayItem(draggableFields, {
+        fromIndex: source.index,
+        toIndex: destination.index,
+      });
 
       const orderedPositions = draggableFields.map((field) => field.position);
 
