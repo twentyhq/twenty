@@ -41,7 +41,7 @@ export class MetricsService {
   }: {
     metricName: string;
     options: MetricOptions;
-    callback: () => number | Promise<number>;
+    callback: () => number;
     cacheValue?: boolean;
   }): ObservableGauge {
     return this.createObservableGaugeInternal({
@@ -63,9 +63,7 @@ export class MetricsService {
   }: {
     metricName: string;
     options: MetricOptions;
-    callback: () =>
-      | Array<{ value: number; attributes: Attributes }>
-      | Promise<Array<{ value: number; attributes: Attributes }>>;
+    callback: () => Array<{ value: number; attributes: Attributes }>;
     cacheValue?: boolean;
   }): ObservableGauge {
     return this.createObservableGaugeInternal({
