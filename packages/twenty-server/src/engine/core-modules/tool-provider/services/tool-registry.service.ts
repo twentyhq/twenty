@@ -47,6 +47,66 @@ export class ToolRegistryService {
     return results.flat();
   }
 
+  // Enumerate every tool name the workspace could expose, ignoring the
+  // caller's role permissions and the per-provider `isAvailable` gate. Used to
+  // tell "exists but forbidden" apart from "does not exist" when a lookup
+  // misses the permission-filtered catalog. This never produces an executable
+  // catalog — names only.
+  private async getUnrestrictedToolNames(
+    context: ToolProviderContext,
+  ): Promise<Set<string>> {
+    const results = await Promise.all(
+      this.providers.map(async (provider) => {
+        try {
+          const descriptors = await provider.generateDescriptors(context, {
+            includeSchemas: false,
+            ignorePermissions: true,
+          });
+
+          return descriptors.map((descriptor) => descriptor.name);
+        } catch (error) {
+          this.logger.warn(
+            `Failed to enumerate unrestricted tools for provider "${provider.category}": ${
+              error instanceof Error ? error.message : String(error)
+            }`,
+          );
+
+          return [];
+        }
+      }),
+    );
+
+    return new Set(results.flat());
+  }
+
+  // Split tool names the caller cannot currently use into those that exist in
+  // the workspace but are blocked by permissions ("forbidden") and those that
+  // do not exist at all ("notFound").
+  async classifyUnavailableTools(
+    names: string[],
+    context: ToolContext,
+  ): Promise<{ forbidden: string[]; notFound: string[] }> {
+    if (names.length === 0) {
+      return { forbidden: [], notFound: [] };
+    }
+
+    const fullContext = this.buildContextFromToolContext(context);
+    const unrestrictedNames = await this.getUnrestrictedToolNames(fullContext);
+
+    const forbidden: string[] = [];
+    const notFound: string[] = [];
+
+    for (const name of names) {
+      if (unrestrictedNames.has(name)) {
+        forbidden.push(name);
+      } else {
+        notFound.push(name);
+      }
+    }
+
+    return { forbidden, notFound };
+  }
+
   async resolveSchemas({
     toolNames,
     context,
@@ -254,6 +314,17 @@ export class ToolRegistryService {
       const entry = index.find((indexEntry) => indexEntry.name === toolName);
 
       if (!entry) {
+        const unrestrictedNames =
+          await this.getUnrestrictedToolNames(fullContext);
+
+        if (unrestrictedNames.has(toolName)) {
+          return {
+            success: false,
+            message: `Tool "${toolName}" is not permitted`,
+            error: `Tool "${toolName}" exists in this workspace but your role does not have permission to use it. Ask a workspace admin to grant access if you need it.`,
+          };
+        }
+
         return {
           success: false,
           message: `Tool "${toolName}" not found`,

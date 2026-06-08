@@ -56,13 +56,16 @@ export class ActionToolProvider implements ToolProvider {
     options?: GenerateDescriptorOptions,
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     const includeSchemas = options?.includeSchemas ?? true;
+    const ignorePermissions = options?.ignorePermissions ?? false;
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
-    const hasHttpPermission = await this.permissionsService.hasToolPermission(
-      context.rolePermissionConfig,
-      context.workspaceId,
-      PermissionFlagType.HTTP_REQUEST_TOOL,
-    );
+    const hasHttpPermission =
+      ignorePermissions ||
+      (await this.permissionsService.hasToolPermission(
+        context.rolePermissionConfig,
+        context.workspaceId,
+        PermissionFlagType.HTTP_REQUEST_TOOL,
+      ));
 
     if (hasHttpPermission) {
       descriptors.push(
@@ -70,11 +73,13 @@ export class ActionToolProvider implements ToolProvider {
       );
     }
 
-    const hasEmailPermission = await this.permissionsService.hasToolPermission(
-      context.rolePermissionConfig,
-      context.workspaceId,
-      PermissionFlagType.SEND_EMAIL_TOOL,
-    );
+    const hasEmailPermission =
+      ignorePermissions ||
+      (await this.permissionsService.hasToolPermission(
+        context.rolePermissionConfig,
+        context.workspaceId,
+        PermissionFlagType.SEND_EMAIL_TOOL,
+      ));
 
     if (hasEmailPermission) {
       descriptors.push(
@@ -107,11 +112,12 @@ export class ActionToolProvider implements ToolProvider {
 
     const hasCodeInterpreterPermission =
       this.codeInterpreterService.isEnabled() &&
-      (await this.permissionsService.hasToolPermission(
-        context.rolePermissionConfig,
-        context.workspaceId,
-        PermissionFlagType.CODE_INTERPRETER_TOOL,
-      ));
+      (ignorePermissions ||
+        (await this.permissionsService.hasToolPermission(
+          context.rolePermissionConfig,
+          context.workspaceId,
+          PermissionFlagType.CODE_INTERPRETER_TOOL,
+        )));
 
     if (hasCodeInterpreterPermission) {
       descriptors.push(

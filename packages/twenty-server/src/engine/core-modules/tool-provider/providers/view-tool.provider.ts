@@ -39,7 +39,10 @@ export class ViewToolProvider implements ToolProvider {
     context: ToolProviderContext,
     options?: GenerateDescriptorOptions,
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
-    const toolSet = await this.buildToolSet(context);
+    const toolSet = await this.buildToolSet(
+      context,
+      options?.ignorePermissions ?? false,
+    );
 
     return toolSetToDescriptors(toolSet, ToolCategory.VIEW, {
       includeSchemas: options?.includeSchemas ?? true,
@@ -51,12 +54,15 @@ export class ViewToolProvider implements ToolProvider {
     args: Record<string, unknown>,
     context: ToolProviderContext,
   ): Promise<ToolOutput> {
-    const toolSet = await this.buildToolSet(context);
+    const toolSet = await this.buildToolSet(context, false);
 
     return executeToolFromToolSet(toolSet, toolName, args, ToolCategory.VIEW);
   }
 
-  private async buildToolSet(context: ToolProviderContext): Promise<ToolSet> {
+  private async buildToolSet(
+    context: ToolProviderContext,
+    ignorePermissions: boolean,
+  ): Promise<ToolSet> {
     const workspaceMemberId = context.actorContext?.workspaceMemberId;
 
     const readTools = {
@@ -71,11 +77,12 @@ export class ViewToolProvider implements ToolProvider {
     };
 
     const hasViewPermission =
-      await this.permissionsService.checkRolesPermissions(
+      ignorePermissions ||
+      (await this.permissionsService.checkRolesPermissions(
         context.rolePermissionConfig,
         context.workspaceId,
         PermissionFlagType.VIEWS,
-      );
+      ));
 
     if (!hasViewPermission) {
       return readTools;

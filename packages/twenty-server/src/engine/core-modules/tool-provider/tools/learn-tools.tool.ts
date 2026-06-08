@@ -31,6 +31,7 @@ export type LearnToolsResultEntry = {
 export type LearnToolsResult = {
   tools: LearnToolsResultEntry[];
   notFound: string[];
+  forbidden: string[];
   message: string;
 };
 
@@ -45,6 +46,9 @@ export const createLearnToolsTool = (
   execute: async (parameters: LearnToolsInput): Promise<LearnToolsResult> => {
     const { toolNames, aspects } = parameters;
 
+    const excludedInContext = excludeTools
+      ? toolNames.filter((name) => excludeTools.has(name))
+      : [];
     const allowedNames = excludeTools
       ? toolNames.filter((name) => !excludeTools.has(name))
       : toolNames;
@@ -56,20 +60,38 @@ export const createLearnToolsTool = (
     );
 
     const foundNames = new Set(toolInfos.map((t) => t.name));
-    const notFound = toolNames.filter((name) => !foundNames.has(name));
+    const missingNames = allowedNames.filter((name) => !foundNames.has(name));
+
+    const { forbidden, notFound } =
+      await toolRegistry.classifyUnavailableTools(missingNames, context);
+
+    const messageParts = [
+      toolInfos.length > 0
+        ? `Learned ${toolInfos.length} tool(s): ${toolInfos.map((t) => t.name).join(', ')}.`
+        : `Learned 0 tool(s).`,
+    ];
+
+    if (forbidden.length > 0) {
+      messageParts.push(
+        `Not permitted (exist but your role lacks access): ${forbidden.join(', ')}.`,
+      );
+    }
+
+    if (excludedInContext.length > 0) {
+      messageParts.push(
+        `Not permitted through this interface: ${excludedInContext.join(', ')}.`,
+      );
+    }
 
     if (notFound.length > 0) {
-      return {
-        tools: toolInfos,
-        notFound,
-        message: `Learned ${toolInfos.length} tool(s). Could not find: ${notFound.join(', ')}.`,
-      };
+      messageParts.push(`Could not find: ${notFound.join(', ')}.`);
     }
 
     return {
       tools: toolInfos,
-      notFound: [],
-      message: `Learned ${toolInfos.length} tool(s): ${toolInfos.map((t) => t.name).join(', ')}.`,
+      notFound: [...notFound, ...excludedInContext],
+      forbidden,
+      message: messageParts.join(' '),
     };
   },
 });

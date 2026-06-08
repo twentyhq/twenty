@@ -68,20 +68,25 @@ export class DatabaseToolProvider implements ToolProvider {
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     const includeSchemas = options?.includeSchemas ?? true;
     const toolNames = options?.toolNames;
+    const ignorePermissions = options?.ignorePermissions ?? false;
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
-    const { rolesPermissions } =
-      await this.workspaceCacheService.getOrRecompute(context.workspaceId, [
-        'rolesPermissions',
-      ]);
+    let objectPermissions: ObjectsPermissions | null = null;
 
-    const objectPermissions = this.getObjectPermissions(
-      rolesPermissions,
-      context.rolePermissionConfig,
-    );
+    if (!ignorePermissions) {
+      const { rolesPermissions } =
+        await this.workspaceCacheService.getOrRecompute(context.workspaceId, [
+          'rolesPermissions',
+        ]);
 
-    if (!objectPermissions) {
-      return descriptors;
+      objectPermissions = this.getObjectPermissions(
+        rolesPermissions,
+        context.rolePermissionConfig,
+      );
+
+      if (!objectPermissions) {
+        return descriptors;
+      }
     }
 
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
@@ -97,9 +102,9 @@ export class DatabaseToolProvider implements ToolProvider {
     );
 
     for (const flatObject of allFlatObjects) {
-      const permission = objectPermissions[flatObject.id];
+      const permission = objectPermissions?.[flatObject.id];
 
-      if (!permission) {
+      if (!ignorePermissions && !permission) {
         continue;
       }
 
@@ -119,15 +124,23 @@ export class DatabaseToolProvider implements ToolProvider {
 
       const objectMetadata = { ...flatObject, fields };
 
-      const restrictedFields = permission.restrictedFields;
+      const restrictedFields = permission?.restrictedFields ?? {};
       const canBeManagedByAutomation = canObjectBeManagedByAutomation({
         nameSingular: objectMetadata.nameSingular,
       });
 
+      const canReadObjectRecords =
+        ignorePermissions || permission?.canReadObjectRecords;
+      const canWriteObjectRecords =
+        ignorePermissions ||
+        (permission?.canUpdateObjectRecords && canBeManagedByAutomation);
+      const canSoftDeleteObjectRecords =
+        ignorePermissions || permission?.canSoftDeleteObjectRecords;
+
       const shouldIncludeSchema = (name: string) =>
         includeSchemas && (!toolNames || toolNames.has(name));
 
-      if (permission.canReadObjectRecords) {
+      if (canReadObjectRecords) {
         descriptors.push({
           name: `find_many_${snakePlural}`,
           description: `Search for ${objectMetadata.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. Filter fields are top-level arguments — pass each field as its own key (e.g. { id: { eq: "record-id" } }, or { name: { firstName: { ilike: "%ada%" } } }); do NOT wrap them in a "filter" object and do NOT place a bare operator like "ilike"/"eq" at the top level. Combine conditions with and/or/not. Returns an array of matching records with their full data.`,
@@ -196,7 +209,7 @@ export class DatabaseToolProvider implements ToolProvider {
         }
       }
 
-      if (permission.canUpdateObjectRecords && canBeManagedByAutomation) {
+      if (canWriteObjectRecords) {
         descriptors.push({
           name: `create_one_${snakeSingular}`,
           description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
@@ -302,7 +315,7 @@ export class DatabaseToolProvider implements ToolProvider {
         });
       }
 
-      if (permission.canSoftDeleteObjectRecords) {
+      if (canSoftDeleteObjectRecords) {
         descriptors.push({
           name: `delete_one_${snakeSingular}`,
           description: `Delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record is hidden from normal queries. This is reversible. Use this to remove records.`,

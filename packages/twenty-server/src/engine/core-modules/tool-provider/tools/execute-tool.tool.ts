@@ -59,8 +59,8 @@ export const createExecuteToolTool = (
     if (options?.excludeTools?.has(toolName)) {
       return {
         success: false,
-        message: `Tool "${toolName}" is not available`,
-        error: `Tool "${toolName}" is not available in this context. Use get_tool_catalog to discover available tools.`,
+        message: `Tool "${toolName}" is not permitted`,
+        error: `Tool "${toolName}" exists but is not permitted to be used through this interface, so it cannot be executed here.`,
       };
     }
 
