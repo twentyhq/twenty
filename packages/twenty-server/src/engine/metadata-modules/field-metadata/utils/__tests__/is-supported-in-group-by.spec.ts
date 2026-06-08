@@ -1,9 +1,9 @@
 import { type CompositeProperty, FieldMetadataType } from 'twenty-shared/types';
 
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getGroupableSubFieldsForCompositeType } from 'src/engine/metadata-modules/field-metadata/utils/get-groupable-sub-fields-for-composite-type.util';
 import { isCompositePropertySupportedInGroupBy } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-property-supported-in-group-by.util';
 import { isFlatFieldMetadataSupportedInGroupBy } from 'src/engine/metadata-modules/field-metadata/utils/is-supported-in-group-by.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 const buildFlatFieldMetadata = (
   type: FieldMetadataType,
@@ -22,7 +22,7 @@ const buildCompositeProperty = (
 });
 
 describe('isFlatFieldMetadataSupportedInGroupBy', () => {
-  it('returns false for low-level field types', () => {
+  it('returns false for field types not supported in groupBy', () => {
     expect(
       isFlatFieldMetadataSupportedInGroupBy(
         buildFlatFieldMetadata(FieldMetadataType.TS_VECTOR),
@@ -41,6 +41,11 @@ describe('isFlatFieldMetadataSupportedInGroupBy', () => {
     expect(
       isFlatFieldMetadataSupportedInGroupBy(
         buildFlatFieldMetadata(FieldMetadataType.POSITION),
+      ),
+    ).toBe(false);
+    expect(
+      isFlatFieldMetadataSupportedInGroupBy(
+        buildFlatFieldMetadata(FieldMetadataType.MORPH_RELATION),
       ),
     ).toBe(false);
   });
