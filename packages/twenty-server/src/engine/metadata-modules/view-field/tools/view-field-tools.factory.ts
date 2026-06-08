@@ -21,10 +21,9 @@ const GetViewFieldsInputSchema = z.object({
 const CreateViewFieldInputSchema = z.object({
   viewId: z.string().uuid().describe('The ID of the view to add the field to.'),
   fieldMetadataId: z
-    .string()
     .uuid()
     .describe(
-      'The ID of the field metadata to add. Use get_fields_metadata to find available fields.',
+      'The ID of the field metadata to add. Use get_field_metadata to find available fields.',
     ),
   isVisible: z
     .boolean()
@@ -164,7 +163,7 @@ export class ViewFieldToolsFactory {
     return {
       create_view_field: {
         description:
-          'Add a new column to a view. View fields define which columns are shown in table or kanban views. First call get_fields_metadata to find the fieldMetadataId of the column to add, and get_views to find the target viewId.',
+          'Add a new column to a view. View fields define which columns are shown in table or kanban views. First call get_field_metadata to find the fieldMetadataId of the column to add, and get_views to find the target viewId.',
 
         inputSchema: CreateViewFieldInputSchema,
         execute: async (parameters: {

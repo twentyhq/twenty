@@ -51,7 +51,7 @@ export const createCreateCompleteDashboardTool = (
   name: 'create_complete_dashboard' as const,
   description: `Create a dashboard with layout, tab, and widgets.
 
-IMPORTANT: Before creating GRAPH widgets, you MUST use get_object_metadata and get_fields_metadata to get valid objectMetadataId and field IDs.
+IMPORTANT: Before creating GRAPH widgets, you MUST use get_object_metadata and get_field_metadata to get valid objectMetadataId and field IDs.
 
 GRID SYSTEM:
 - 12 columns (0-11), rows start at 0

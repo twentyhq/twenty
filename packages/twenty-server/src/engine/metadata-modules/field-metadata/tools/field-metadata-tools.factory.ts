@@ -135,7 +135,7 @@ export class FieldMetadataToolsFactory {
 
   generateTools(workspaceId: string): ToolSet {
     return {
-      get_fields_metadata: {
+      get_field_metadata: {
         description:
           "Returns an array of fields. System fields are returned as compact {id, name, type} — enough to know which fields exist and their types. Keep includeFullSystemFields at its default (false); only set it true when you specifically need a system field's full configuration (settings, defaultValue, relation targets). Internal fields (searchVector, position, updatedBy) are excluded.",
         inputSchema: GetFieldMetadataInputSchema,
