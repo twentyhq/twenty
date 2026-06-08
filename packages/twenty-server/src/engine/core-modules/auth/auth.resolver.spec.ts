@@ -4,6 +4,10 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
@@ -20,6 +24,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 import { AuthResolver } from './auth.resolver';
@@ -33,6 +38,11 @@ import { TransientTokenService } from './token/services/transient-token.service'
 
 describe('AuthResolver', () => {
   let resolver: AuthResolver;
+  let loginTokenService: LoginTokenService;
+  let workspaceDomainsService: WorkspaceDomainsService;
+  let userService: UserService;
+  let twoFactorAuthenticationService: TwoFactorAuthenticationService;
+  let authService: AuthService;
   const mock_CaptchaGuard: CanActivate = { canActivate: jest.fn(() => true) };
 
   beforeEach(async () => {
@@ -150,9 +160,70 @@ describe('AuthResolver', () => {
       .compile();
 
     resolver = module.get<AuthResolver>(AuthResolver);
+    loginTokenService = module.get<LoginTokenService>(LoginTokenService);
+    workspaceDomainsService = module.get<WorkspaceDomainsService>(
+      WorkspaceDomainsService,
+    );
+    userService = module.get<UserService>(UserService);
+    twoFactorAuthenticationService = module.get<TwoFactorAuthenticationService>(
+      TwoFactorAuthenticationService,
+    );
+    authService = module.get<AuthService>(AuthService);
   });
 
   it('should be defined', () => {
     expect(resolver).toBeDefined();
+  });
+
+  describe('getAuthTokensFromOTP', () => {
+    const input = {
+      loginToken: 'login-token',
+      otp: '123456',
+    } as Parameters<AuthResolver['getAuthTokensFromOTP']>[0];
+
+    beforeEach(() => {
+      loginTokenService.verifyLoginToken = jest.fn().mockResolvedValue({
+        sub: 'user@example.com',
+        authProvider: AuthProviderEnum.Password,
+        workspaceId: 'workspace-a',
+      });
+      userService.findUserByEmailOrThrow = jest
+        .fn()
+        .mockResolvedValue({ id: 'user-id' });
+      twoFactorAuthenticationService.validateStrategy = jest
+        .fn()
+        .mockResolvedValue(undefined);
+      authService.verify = jest.fn().mockResolvedValue({ tokens: {} });
+    });
+
+    it('rejects when the login token targets a different workspace than the origin', async () => {
+      workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace = jest
+        .fn()
+        .mockResolvedValue({ id: 'workspace-b' });
+
+      await expect(
+        resolver.getAuthTokensFromOTP(input, 'workspace-b.example.com'),
+      ).rejects.toThrow(
+        new AuthException(
+          'Token is not valid for this workspace',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        ),
+      );
+      expect(authService.verify).not.toHaveBeenCalled();
+    });
+
+    it('issues tokens when the login token matches the origin workspace', async () => {
+      workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace = jest
+        .fn()
+        .mockResolvedValue({ id: 'workspace-a' });
+
+      await resolver.getAuthTokensFromOTP(input, 'workspace-a.example.com');
+
+      expect(authService.verify).toHaveBeenCalledWith(
+        'user@example.com',
+        'workspace-a',
+        AuthProviderEnum.Password,
+      );
+    });
   });
 });

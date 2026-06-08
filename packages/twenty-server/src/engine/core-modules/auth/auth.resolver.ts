@@ -350,24 +350,15 @@ export class AuthResolver {
     twoFactorAuthenticationVerificationInput: TwoFactorAuthenticationVerificationInput,
     @Args('origin') origin: string,
   ): Promise<AuthTokens> {
-    const { sub: email, authProvider } =
-      await this.loginTokenService.verifyLoginToken(
-        twoFactorAuthenticationVerificationInput.loginToken,
-      );
-
-    const workspace =
-      await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
-        origin,
-      );
-
-    assertIsDefinedOrThrow(
-      workspace,
-
-      new AuthException(
-        'Workspace not found',
-        AuthExceptionCode.WORKSPACE_NOT_FOUND,
-      ),
+    const {
+      sub: email,
+      authProvider,
+      workspaceId,
+    } = await this.loginTokenService.verifyLoginToken(
+      twoFactorAuthenticationVerificationInput.loginToken,
     );
+
+    const workspace = await this.validateWorkspaceAccess(origin, workspaceId);
 
     const user = await this.userService.findUserByEmailOrThrow(email);
 
