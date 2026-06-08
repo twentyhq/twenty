@@ -1,6 +1,6 @@
 import { AppChip } from '@/applications/components/AppChip';
-import { Avatar } from 'twenty-ui/display';
-import { Chip, ChipAccent, ChipVariant } from 'twenty-ui/components';
+import { Avatar } from 'twenty-ui-deprecated/display';
+import { Chip, ChipAccent, ChipVariant } from 'twenty-ui-deprecated/components';
 import { isDefined } from 'twenty-shared/utils';
 
 type SettingsItemTypeTagProps = {

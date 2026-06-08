@@ -3,7 +3,7 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledTitleSkeleton = styled.div`
   align-items: center;

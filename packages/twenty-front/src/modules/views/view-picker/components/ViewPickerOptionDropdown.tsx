@@ -19,8 +19,8 @@ import {
   IconPencil,
   IconTrash,
   useIcons,
-} from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
+} from 'twenty-ui-deprecated/display';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
 import {
   PermissionFlagType,
   ViewVisibility,
@@ -56,7 +56,7 @@ export const ViewPickerOptionDropdown = ({
   const hasViewsPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
 
   const { createManyNavigationMenuItems } = useCreateManyNavigationMenuItems();
-  const { navigationMenuItems, currentWorkspaceMemberId } =
+  const { navigationMenuItems, currentUserWorkspaceId } =
     useNavigationMenuItemsData();
 
   // Users with VIEWS permission can edit all views
@@ -67,7 +67,7 @@ export const ViewPickerOptionDropdown = ({
   const isFavorite = navigationMenuItems.some(
     (item) =>
       item.viewId === view.id &&
-      item.userWorkspaceId === currentWorkspaceMemberId,
+      item.userWorkspaceId === currentUserWorkspaceId,
   );
 
   const handleDelete = () => {
@@ -92,7 +92,7 @@ export const ViewPickerOptionDropdown = ({
           id: uuidv4(),
           type: NavigationMenuItemType.VIEW,
           viewId: view.id,
-          userWorkspaceId: currentWorkspaceMemberId,
+          userWorkspaceId: currentUserWorkspaceId,
           position: maxPosition + 1,
         },
       ]);

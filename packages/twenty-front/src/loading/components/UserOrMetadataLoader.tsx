@@ -3,8 +3,11 @@ import { styled } from '@linaria/react';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
-import { ModalBackdrop } from 'twenty-ui/layout';
+import {
+  MOBILE_VIEWPORT,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
+import { ModalBackdrop } from 'twenty-ui-deprecated/layout';
 import { LeftPanelSkeletonLoader } from '~/loading/components/LeftPanelSkeletonLoader';
 import { RightPanelSkeletonLoader } from '~/loading/components/RightPanelSkeletonLoader';
 

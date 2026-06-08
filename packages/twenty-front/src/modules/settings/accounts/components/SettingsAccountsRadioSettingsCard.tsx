@@ -2,10 +2,10 @@ import { styled } from '@linaria/react';
 import { type MessageDescriptor } from '@lingui/core';
 import { Trans } from '@lingui/react';
 import { type ReactNode } from 'react';
-import { Radio } from 'twenty-ui/input';
-import { Card, CardContent } from 'twenty-ui/layout';
+import { Radio } from 'twenty-ui-deprecated/input';
+import { Card, CardContent } from 'twenty-ui-deprecated/layout';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 type SettingsAccountsRadioSettingsCardProps<Option extends { value: string }> =
   {

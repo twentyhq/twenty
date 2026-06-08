@@ -1,0 +1,29 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES2020",
+    "jsx": "react-jsx",
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "noEmit": true,
+    "types": ["node", "jest"],
+    "outDir": "../../.cache/tsc",
+    "paths": {
+      "@ui/*": ["./src/*"],
+      "@assets/*": ["./src/assets/*"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts",
+    ".storybook/*.ts",
+    ".storybook/*.tsx",
+    "jest.config.mjs",
+    "setupTests.ts",
+    "vite.config.ts"
+  ]
+}

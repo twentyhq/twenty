@@ -3,7 +3,10 @@ import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledSkeletonContainer = styled.div`
   display: flex;

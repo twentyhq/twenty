@@ -2,11 +2,10 @@ import { msg } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 
-import { APP_PREVIEW_DATA } from '@/app/[locale]/(home)/app-preview.data';
 import { HeadingPart, LinkButton } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
 import { WebGlMount } from '@/lib/visual-runtime';
-import { AppPreview } from '@/sections/AppPreview';
+import { APP_PREVIEW_DATA, AppPreview } from '@/sections/AppPreview';
 import { TalkToUsButton } from '@/sections/ContactCal';
 import { HeroBody, HeroCta, HeroHeading, HeroSection } from '@/templates/Hero';
 import { HomeBackgroundHalftone } from '@/sections/Hero/visuals/components/HomeBackgroundHalftone';

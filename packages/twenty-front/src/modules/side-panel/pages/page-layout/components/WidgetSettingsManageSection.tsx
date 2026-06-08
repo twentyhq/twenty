@@ -26,7 +26,7 @@ import {
   IconRefreshDot,
   IconSwitchHorizontal,
   IconTrash,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 
 const RESET_WIDGET_TO_DEFAULT_MODAL_ID = 'reset-widget-to-default-modal';
 const RESET_WIDGET_TO_DEFAULT_MENU_ITEM_ID =

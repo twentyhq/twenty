@@ -3,9 +3,9 @@ import { styled } from '@linaria/react';
 import { EmailComposerFields } from '@/activities/emails/components/EmailComposerFields';
 import { useEmailComposerState } from '@/activities/emails/hooks/useEmailComposerState';
 import { t } from '@lingui/core/macro';
-import { IconArrowBackUp } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconArrowBackUp } from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledFooterWarning = styled.span`
   color: ${themeCssVariables.color.red};

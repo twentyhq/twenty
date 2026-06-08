@@ -40,7 +40,7 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     workflowActionTriggerSettings:
       logicFunctionManifest.workflowActionTriggerSettings ?? null,
     isBuildUpToDate: true,
-    executionMode: LogicFunctionExecutionMode.PREBUILT,
+    executionMode: LogicFunctionExecutionMode.LIVE,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

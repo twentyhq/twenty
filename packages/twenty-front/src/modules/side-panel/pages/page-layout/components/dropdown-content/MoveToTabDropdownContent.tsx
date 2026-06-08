@@ -7,7 +7,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 export const MoveToTabDropdownContent = () => {

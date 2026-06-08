@@ -5,10 +5,13 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { IconChevronDown } from 'twenty-ui/display';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItemSelect } from 'twenty-ui/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconChevronDown } from 'twenty-ui-deprecated/display';
+import { type SelectOption } from 'twenty-ui-deprecated/input';
+import { MenuItemSelect } from 'twenty-ui-deprecated/navigation';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledDropdownMenuInnerSelectDropdownButton = styled.div`
   align-items: center;

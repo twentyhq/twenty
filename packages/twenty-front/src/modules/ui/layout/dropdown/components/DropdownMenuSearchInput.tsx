@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useInputFocusWithoutScrollOnMount } from '@/ui/input/hooks/useInputFocusWithoutScrollOnMount';
 import { styled } from '@linaria/react';
 import { forwardRef, type InputHTMLAttributes } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledDropdownMenuSearchInputContainer = styled.div`
   --vertical-padding: ${themeCssVariables.spacing[2]};

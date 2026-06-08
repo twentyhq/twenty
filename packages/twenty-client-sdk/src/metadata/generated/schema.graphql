@@ -1446,14 +1446,9 @@ type EmailingDomain {
   createdAt: DateTime!
   updatedAt: DateTime!
   domain: String!
-  driver: EmailingDomainDriver!
   status: EmailingDomainStatus!
   verificationRecords: [VerificationRecord!]
   verifiedAt: DateTime
-}
-
-enum EmailingDomainDriver {
-  AWS_SES
 }
 
 enum EmailingDomainStatus {
@@ -1783,7 +1778,6 @@ enum FeatureFlagKey {
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
   IS_SETTINGS_DISCOVERY_HERO_ENABLED
   IS_CALL_RECORDING_ENABLED
-  IS_WORKFLOW_RUN_STEP_LOGS_ENABLED
 }
 
 type WorkspaceUrls {
@@ -3007,7 +3001,6 @@ type Query {
   ): IndexConnection!
   findManyAgents: [Agent!]!
   findOneAgent(input: AgentIdInput!): Agent!
-  myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   getRoles: [Role!]!
   getToolIndex: [ToolIndexEntry!]!
   getToolInputSchema(toolName: String!): JSON
@@ -3028,6 +3021,7 @@ type Query {
   getViewGroup(id: String!): ViewGroup
   myMessageFolders(messageChannelId: UUID): [MessageFolder!]!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
+  myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   minimalMetadata: MinimalMetadata!
   appConnections(filter: ListAppConnectionsInput): [AppConnection!]!
@@ -3226,7 +3220,7 @@ type Mutation {
   resetPageLayoutToDefault(id: String!): PageLayout!
   resetPageLayoutWidgetToDefault(id: String!): PageLayoutWidget!
   resetPageLayoutTabToDefault(id: String!): PageLayoutTab!
-  createEmailingDomain(domain: String!, driver: EmailingDomainDriver!): EmailingDomain!
+  createEmailingDomain(domain: String!): EmailingDomain!
   deleteEmailingDomain(id: String!): Boolean!
   verifyEmailingDomain(id: String!): EmailingDomain!
   sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!
@@ -3252,7 +3246,6 @@ type Mutation {
   createOneAgent(input: CreateAgentInput!): Agent!
   updateOneAgent(input: UpdateAgentInput!): Agent!
   deleteOneAgent(input: AgentIdInput!): Agent!
-  deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   updateWorkspaceMemberRole(workspaceMemberId: UUID!, roleId: UUID!): WorkspaceMember!
   createOneRole(createRoleInput: CreateRoleInput!): Role!
   updateOneRole(updateRoleInput: UpdateRoleInput!): Role!
@@ -3281,6 +3274,7 @@ type Mutation {
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
   createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
   deleteEmailGroupChannel(id: UUID!): MessageChannel!
+  deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!

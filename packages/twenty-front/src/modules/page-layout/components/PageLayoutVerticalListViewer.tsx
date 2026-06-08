@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { useIsMobile } from 'twenty-ui/utilities';
+import { useIsMobile } from 'twenty-ui-deprecated/utilities';
 
 import { getPageLayoutVerticalListViewerVariant } from '@/page-layout/components/utils/getPageLayoutVerticalListViewerVariant';
 import { type PageLayoutVerticalListViewerVariant } from '@/page-layout/types/PageLayoutVerticalListViewerVariant';
@@ -7,7 +7,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledVerticalListContainer = styled.div<{
   variant: PageLayoutVerticalListViewerVariant;

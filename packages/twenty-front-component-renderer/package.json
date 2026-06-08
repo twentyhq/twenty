@@ -39,7 +39,7 @@
     "@types/react": "^18.2.39",
     "@types/react-dom": "^18.2.15",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
-    "@vitest/browser-playwright": "^4.0.18",
+    "@vitest/browser-playwright": "^4.1.0",
     "playwright": "^1.60.0",
     "prettier": "^3.1.1",
     "storybook": "^10.2.13",
@@ -49,7 +49,7 @@
     "tsx": "^4.7.0",
     "twenty-sdk": "workspace:*",
     "twenty-shared": "workspace:*",
-    "twenty-ui": "workspace:*",
+    "twenty-ui-deprecated": "workspace:*",
     "vite-plugin-dts": "^4.5.4",
     "vite-tsconfig-paths": "^4.2.1"
   },

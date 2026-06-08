@@ -1,5 +1,4 @@
 import react from '@vitejs/plugin-react-swc';
-import wyw from '@wyw-in-js/vite';
 import * as path from 'path';
 import { defineConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
@@ -16,13 +15,26 @@ export default defineConfig(() => {
   return {
     resolve: {
       alias: {
-        '@ui/': path.resolve(__dirname, 'src') + '/',
+        '@new-ui/': path.resolve(__dirname, 'src') + '/',
         '@assets/': path.resolve(__dirname, 'src/assets') + '/',
+        '@styles/': path.resolve(__dirname, 'src/styles') + '/',
       },
     },
     css: {
       modules: {
         localsConvention: 'camelCaseOnly',
+      },
+      preprocessorOptions: {
+        scss: {
+          api: 'modern-compiler',
+          loadPaths: [path.resolve(__dirname, 'src/styles')],
+          additionalData: [
+            `@use 'abstracts/functions' as *;`,
+            `@use 'abstracts/mixins' as *;`,
+            `@use 'abstracts/breakpoints' as *;`,
+            '',
+          ].join('\n'),
+        },
       },
     },
     root: __dirname,
@@ -35,14 +47,6 @@ export default defineConfig(() => {
         projects: ['tsconfig.json'],
       }),
       svgr(),
-      {
-        ...wyw({
-          babelOptions: {
-            presets: ['@babel/preset-typescript', '@babel/preset-react'],
-          },
-        }),
-        enforce: 'pre',
-      },
     ],
     build: {
       cssCodeSplit: false,

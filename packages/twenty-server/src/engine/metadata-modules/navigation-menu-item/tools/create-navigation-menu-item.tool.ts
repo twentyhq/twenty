@@ -18,7 +18,6 @@ const commonOptionalFields = {
     .optional()
     .describe('Position among siblings; defaults to the end.'),
   folderId: z
-    .string()
     .uuid()
     .optional()
     .describe('Parent folder id, if the item should live inside a folder.'),
@@ -84,7 +83,7 @@ const createNavigationMenuItemSchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal(NavigationMenuItemType.PAGE_LAYOUT),
     scope: navigationMenuItemScopeSchema,
-    pageLayoutId: z.string().uuid().describe('Id of the page layout to pin'),
+    pageLayoutId: z.string().describe('Id of the page layout to pin'),
     name: requiredNameField,
     ...commonOptionalFields,
   }),

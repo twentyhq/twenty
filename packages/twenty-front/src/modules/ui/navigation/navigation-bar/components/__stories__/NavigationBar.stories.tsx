@@ -5,9 +5,9 @@ import {
   IconList,
   IconSearch,
   IconSettings,
-} from 'twenty-ui/display';
-import { NavigationBar } from 'twenty-ui/navigation';
-import { ComponentDecorator } from 'twenty-ui/testing';
+} from 'twenty-ui-deprecated/display';
+import { NavigationBar } from 'twenty-ui-deprecated/navigation';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 const meta: Meta<typeof NavigationBar> = {

@@ -4,7 +4,11 @@ export type IsFilter = 'NULL' | 'NOT_NULL';
 
 export type UUIDFilter = {
   eq?: UUIDFilterValue;
+  gt?: UUIDFilterValue;
+  gte?: UUIDFilterValue;
   in?: UUIDFilterValue[];
+  lt?: UUIDFilterValue;
+  lte?: UUIDFilterValue;
   neq?: UUIDFilterValue;
   is?: IsFilter;
 };
@@ -21,7 +25,11 @@ export type BooleanFilter = {
 
 export type StringFilter = {
   eq?: string;
+  gt?: string;
+  gte?: string;
   in?: string[];
+  lt?: string;
+  lte?: string;
   neq?: string;
   startsWith?: string;
   like?: string;

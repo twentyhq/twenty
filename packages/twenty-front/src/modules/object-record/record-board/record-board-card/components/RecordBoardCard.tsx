@@ -32,8 +32,8 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedEaseInOut } from 'twenty-ui/utilities';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { AnimatedEaseInOut } from 'twenty-ui-deprecated/utilities';
 import { useDebouncedCallback } from 'use-debounce';
 
 const StyledCardContainer = styled.div<{ isPrimaryMultiDrag?: boolean }>`
