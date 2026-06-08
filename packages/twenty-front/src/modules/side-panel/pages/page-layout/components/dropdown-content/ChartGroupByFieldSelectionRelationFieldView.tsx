@@ -18,8 +18,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, useIcons } from 'twenty-ui/display';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { IconChevronLeft, useIcons } from 'twenty-ui-deprecated/display';
+import { MenuItem, MenuItemSelect } from 'twenty-ui-deprecated/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 type ChartGroupByFieldSelectionRelationFieldViewProps = {

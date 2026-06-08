@@ -1,8 +1,8 @@
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
-import { Tag } from 'twenty-ui/components';
-import { type SelectOption } from 'twenty-ui/input';
+import { Tag } from 'twenty-ui-deprecated/components';
+import { type SelectOption } from 'twenty-ui-deprecated/input';
 
 const StyledContainer = styled.div`
   align-items: center;

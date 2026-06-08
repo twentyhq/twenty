@@ -4,8 +4,8 @@ import { SettingsSecuritySSORowDropdownMenu } from '@/settings/security/componen
 import { type SSOIdentityProvider } from '@/settings/security/types/SSOIdentityProvider';
 import { getColorBySSOIdentityProviderStatus } from '@/settings/security/utils/getColorBySSOIdentityProviderStatus';
 import { styled } from '@linaria/react';
-import { Status } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Status } from 'twenty-ui-deprecated/display';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledRowRightContainer = styled.div`
   align-items: center;

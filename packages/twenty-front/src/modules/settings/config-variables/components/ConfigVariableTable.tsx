@@ -2,14 +2,17 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { Table } from '@/ui/layout/table/components/Table';
 import { styled } from '@linaria/react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { t } from '@lingui/core/macro';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import {
   IconChevronRight,
   OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 import { useContext } from 'react';
 
 const StyledTableBodyContainer = styled.div`

@@ -3,7 +3,7 @@ import { type ReactElement } from 'react';
 
 import { ActivityList } from '@/activities/components/ActivityList';
 import { type Task } from '@/activities/types/Task';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { TaskRow } from './TaskRow';
 
 type TaskListProps = {

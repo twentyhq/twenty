@@ -1,4 +1,4 @@
-import { GRAY_SCALE_LIGHT_ALPHA } from '@ui/theme/constants/GrayScaleLightAlpha';
+import { GRAY_SCALE_LIGHT_ALPHA } from '@new-ui/theme/constants/GrayScaleLightAlpha';
 
 export const BOX_SHADOW_LIGHT = {
   color: GRAY_SCALE_LIGHT_ALPHA.gray2,

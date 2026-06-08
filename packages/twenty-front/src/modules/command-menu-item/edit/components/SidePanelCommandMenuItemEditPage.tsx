@@ -30,10 +30,10 @@ import {
   IconPinnedOff,
   IconRefresh,
   useIcons,
-} from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { MenuItem, MenuItemDraggable } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { MenuItem, MenuItemDraggable } from 'twenty-ui-deprecated/navigation';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 

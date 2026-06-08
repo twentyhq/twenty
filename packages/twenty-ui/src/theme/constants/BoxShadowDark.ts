@@ -1,4 +1,4 @@
-import { RGBA } from '@ui/theme/constants/Rgba';
+import { RGBA } from '@new-ui/theme/constants/Rgba';
 
 /* oxlint-disable twenty/no-hardcoded-colors */
 export const BOX_SHADOW_DARK = {

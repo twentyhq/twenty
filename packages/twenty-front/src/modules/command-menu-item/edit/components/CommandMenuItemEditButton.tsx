@@ -1,4 +1,4 @@
-import { AnimatedIconCrossfade } from 'twenty-ui/utilities';
+import { AnimatedIconCrossfade } from 'twenty-ui-deprecated/utilities';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -7,8 +7,8 @@ import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconPencil, IconX } from 'twenty-ui/display';
-import { AnimatedButton } from 'twenty-ui/input';
+import { IconPencil, IconX } from 'twenty-ui-deprecated/display';
+import { AnimatedButton } from 'twenty-ui-deprecated/input';
 
 export const CommandMenuItemEditButton = () => {
   const { t } = useLingui();
