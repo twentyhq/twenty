@@ -1,3 +1,8 @@
+import { useStore } from 'jotai';
+import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { type IconComponent } from 'twenty-ui/display';
+
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useMountCommand } from '@/command-menu-item/engine-command/hooks/useMountCommand';
 import { isEngineCommandMountedFamilySelector } from '@/command-menu-item/engine-command/selectors/isEngineCommandMountedFamilySelector';
@@ -5,12 +10,11 @@ import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMe
 import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
+import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
+import { waitForSidePanelClose } from '@/ui/layout/side-panel/utils/waitForSidePanelClose';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { type IconComponent } from 'twenty-ui/display';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 export const useCommandMenuItemClick = ({
@@ -23,6 +27,7 @@ export const useCommandMenuItemClick = ({
   label: string;
 }) => {
   const { commandMenuContextApi } = useContext(CommandMenuContext);
+  const store = useStore();
   const mountCommand = useMountCommand();
   const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
 
@@ -56,7 +61,7 @@ export const useCommandMenuItemClick = ({
   const closeBehavior = shouldMountCommand
     ? ({
         closeSidePanelOnShowPageOptionsExecution: false,
-        closeSidePanelOnCommandMenuListExecution: false,
+        closeSidePanelOnCommandMenuListExecution: !item.isPinned,
       } as const)
     : ({} as const);
 
@@ -71,6 +76,10 @@ export const useCommandMenuItemClick = ({
       }
 
       closeCommandMenu();
+
+      if (!item.isPinned && store.get(isSidePanelClosingState.atom)) {
+        await waitForSidePanelClose();
+      }
 
       await mountCommand({
         engineCommandId: item.id,
