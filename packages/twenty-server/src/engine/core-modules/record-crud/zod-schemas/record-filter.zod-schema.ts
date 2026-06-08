@@ -28,11 +28,11 @@ export const generateRecordFilterSchema = ({
 
   objectMetadata.fields.forEach((field) => {
     if (
-      shouldExcludeFieldFromAgentToolSchema(
-        field,
-        true,
+      shouldExcludeFieldFromAgentToolSchema({
+        fieldName: field.name,
+        isSystem: field.isSystem,
         additionalExcludedFieldNames,
-      )
+      })
     ) {
       return;
     }
