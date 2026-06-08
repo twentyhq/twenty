@@ -96,8 +96,7 @@ export class MetricsService {
 
     gauge.addCallback(async (observableResult) => {
       if (cacheValue) {
-        const cachedResult =
-          await this.healthCacheStorage.get<T>(metricName);
+        const cachedResult = await this.healthCacheStorage.get<T>(metricName);
 
         if (isDefined(cachedResult)) {
           observeResult(observableResult, cachedResult);
