@@ -1,6 +1,7 @@
 import { type RecordGqlOperationOrderBy } from 'twenty-shared/types';
+import { isPlainObject } from 'twenty-shared/utils';
 
-import { isOrderByDirection } from '@/object-record/record-show/utils/isOrderByDirection';
+import { isOrderByDirection } from '@/object-record/graphql/utils/isOrderByDirection';
 
 const REVERSE_DIRECTION: Record<string, string> = {
   AscNullsFirst: 'DescNullsLast',
@@ -29,7 +30,7 @@ const reverseValue = (value: OrderByValue): OrderByValue => {
   if (isOrderByDirection(value)) {
     return (REVERSE_DIRECTION[value] ?? value) as OrderByValue;
   }
-  if (typeof value === 'object' && value !== null) {
+  if (isPlainObject(value)) {
     const reversed: OrderByEntry = {};
 
     for (const [key, subValue] of Object.entries(value as OrderByEntry)) {

@@ -2,8 +2,9 @@ import {
   type RecordGqlOperationFilter,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
+import { isPlainObject } from 'twenty-shared/utils';
 
-import { isOrderByDirection } from '@/object-record/record-show/utils/isOrderByDirection';
+import { isOrderByDirection } from '@/object-record/graphql/utils/isOrderByDirection';
 
 type CursorOrderByField = {
   fieldName: string;
@@ -50,7 +51,7 @@ const resolveOrderByFields = (
     for (const [fieldName, value] of Object.entries(entry)) {
       if (isOrderByDirection(value)) {
         fields.push({ fieldName, direction: value });
-      } else if (typeof value === 'object' && value !== null) {
+      } else if (isPlainObject(value)) {
         for (const [subFieldName, subValue] of Object.entries(
           value as Record<string, unknown>,
         )) {
