@@ -4,7 +4,10 @@ import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledBody = styled.div`
   display: flex;

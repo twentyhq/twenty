@@ -33,7 +33,7 @@
     "@electron/fuses": "^1.8.0",
     "@vercel/webpack-asset-relocator-loader": "^1.7.3",
     "css-loader": "^6.11.0",
-    "electron": "36.0.1",
+    "electron": "^39.8.5",
     "node-loader": "^2.1.0",
     "style-loader": "^3.3.4"
   },

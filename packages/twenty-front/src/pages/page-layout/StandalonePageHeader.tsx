@@ -6,8 +6,8 @@ import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useIcons } from 'twenty-ui-deprecated/display';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 
 type StandalonePageHeaderProps = {
   pageLayoutId: string;

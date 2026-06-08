@@ -5,7 +5,7 @@ import { action } from 'storybook/actions';
 import {
   ComponentDecorator,
   ComponentWithRouterDecorator,
-} from 'twenty-ui/testing';
+} from 'twenty-ui-deprecated/testing';
 import { SettingsRestPlayground } from '~/pages/settings/developers/playground/SettingsRestPlayground';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 

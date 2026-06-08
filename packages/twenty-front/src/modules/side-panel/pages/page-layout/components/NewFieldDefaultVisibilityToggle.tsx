@@ -3,7 +3,7 @@ import { useGetNewFieldDefaultVisibility } from '@/page-layout/widgets/fields/ho
 import { useUpdateNewFieldDefaultVisibility } from '@/page-layout/widgets/fields/hooks/useUpdateNewFieldDefaultVisibility';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useLingui } from '@lingui/react/macro';
-import { IconEye } from 'twenty-ui/display';
+import { IconEye } from 'twenty-ui-deprecated/display';
 
 export const NewFieldDefaultVisibilityToggle = ({
   pageLayoutId,

@@ -17,6 +17,11 @@
       "import": "./dist/metadata.mjs",
       "require": "./dist/metadata.cjs"
     },
+    "./rest": {
+      "types": "./dist/rest/index.d.ts",
+      "import": "./dist/rest.mjs",
+      "require": "./dist/rest.cjs"
+    },
     "./generate": {
       "types": "./dist/generate/index.d.ts",
       "import": "./dist/generate.mjs",
@@ -30,6 +35,9 @@
       ],
       "metadata": [
         "dist/metadata/index.d.ts"
+      ],
+      "rest": [
+        "dist/rest/index.d.ts"
       ],
       "generate": [
         "dist/generate/index.d.ts"

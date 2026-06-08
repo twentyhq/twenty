@@ -6,6 +6,7 @@ import packageJson from './package.json';
 const entries = [
   'src/core/index.ts',
   'src/metadata/index.ts',
+  'src/rest/index.ts',
   'src/generate/index.ts',
 ];
 

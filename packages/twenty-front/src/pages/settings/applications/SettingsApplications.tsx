@@ -8,8 +8,13 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconApps, IconCode, IconDownload, IconPlug } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
+import {
+  IconApps,
+  IconCode,
+  IconDownload,
+  IconPlug,
+} from 'twenty-ui-deprecated/display';
+import { Section } from 'twenty-ui-deprecated/layout';
 import coverDark from '~/pages/settings/applications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/applications/assets/cover-light.png';
 import {
