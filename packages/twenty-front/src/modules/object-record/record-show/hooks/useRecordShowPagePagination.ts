@@ -1,30 +1,29 @@
-import { isNonEmptyString } from '@sniptt/guards';
-import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useMemo, useRef } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
+import { isRecordFilterAboutSoftDelete } from '@/object-record/record-filter/utils/isRecordFilterAboutSoftDelete';
+import {
+  buildKeysetPaginationFilter,
+  extractOrderByFieldNames,
+  reverseOrderBy,
+} from '@/object-record/record-show/utils/buildKeysetPaginationFilter';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useRecordIdsFromFindManyCacheRootQuery } from '@/object-record/record-show/hooks/useRecordIdsFromFindManyCacheRootQuery';
 import { useQueryVariablesFromParentView } from '@/views/hooks/useQueryVariablesFromParentView';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
-import { isRecordFilterAboutSoftDelete } from '@/object-record/record-filter/utils/isRecordFilterAboutSoftDelete';
 
 export const useRecordShowPagePagination = (
   propsObjectNameSingular: string,
   propsObjectRecordId: string,
 ) => {
-  const { t } = useLingui();
   const {
     objectNameSingular: paramObjectNameSingular,
     objectRecordId: paramObjectRecordId,
@@ -36,250 +35,212 @@ export const useRecordShowPagePagination = (
 
   const setLastShowPageRecordId = useSetAtomState(lastShowPageRecordIdState);
 
-  const objectNameSingular = propsObjectNameSingular || paramObjectNameSingular;
+  const objectNameSingular =
+    propsObjectNameSingular || paramObjectNameSingular;
   const objectRecordId = propsObjectRecordId || paramObjectRecordId;
 
   if (!objectNameSingular || !objectRecordId) {
     throw new Error('Object name or Record id is not defined');
   }
 
-  const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const contextStoreRecordShowParentView = useAtomComponentStateValue(
+  const parentView = useAtomComponentStateValue(
     contextStoreRecordShowParentViewComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const parentViewComponentId =
-    contextStoreRecordShowParentView?.parentViewComponentId;
-
   const isSoftDeleteFilterActive =
-    contextStoreRecordShowParentView?.parentViewFilters.some((recordFilter) =>
-      isRecordFilterAboutSoftDelete({
-        recordFilter,
-        objectMetadataItems,
-      }),
+    parentView?.parentViewFilters.some((recordFilter) =>
+      isRecordFilterAboutSoftDelete({ recordFilter, objectMetadataItems }),
     ) ?? false;
-
-  const recordIdsFromParentViewIndex = useAtomComponentSelectorValue(
-    recordIndexAllRecordIdsComponentSelector,
-    parentViewComponentId ?? '',
-  );
 
   const { filter, orderBy } = useQueryVariablesFromParentView({
     objectMetadataItem,
   });
 
-  const { loading: loadingCursor, pageInfo: currentRecordsPageInfo } =
-    useFindManyRecords({
-      filter: {
-        id: { eq: objectRecordId },
-      },
-      orderBy,
-      limit: 1,
-      objectNameSingular,
-      recordGqlFields: { id: true },
-      withSoftDeleted: isSoftDeleteFilterActive,
-    });
+  const orderByGqlFields = useMemo(
+    () => extractOrderByFieldNames(orderBy),
+    [orderBy],
+  );
 
-  const currentRecordCursorFromRequest = currentRecordsPageInfo?.endCursor;
+  const reversedOrderBy = useMemo(() => reverseOrderBy(orderBy), [orderBy]);
 
-  const [totalCountBefore, setTotalCountBefore] = useState<number>(0);
-  const [totalCountAfter, setTotalCountAfter] = useState<number>(0);
+  const {
+    loading: loadingCurrentRecord,
+    records: currentRecords,
+  } = useFindManyRecords({
+    filter: { id: { eq: objectRecordId } },
+    orderBy,
+    limit: 1,
+    objectNameSingular,
+    recordGqlFields: { ...orderByGqlFields, deletedAt: true },
+    withSoftDeleted: true,
+  });
 
-  const { loading: loadingRecordBefore, records: recordsBefore } =
-    useFindManyRecords({
-      skip: loadingCursor,
-      fetchPolicy: 'network-only',
-      filter: {
-        ...filter,
-        id: { neq: objectRecordId },
-      },
-      orderBy,
-      limit: isNonEmptyString(currentRecordCursorFromRequest) ? 1 : undefined,
-      cursorFilter: isNonEmptyString(currentRecordCursorFromRequest)
-        ? {
-            cursorDirection: 'before',
-            cursor: currentRecordCursorFromRequest,
-          }
-        : undefined,
-      objectNameSingular,
-      recordGqlFields: { id: true },
-      withSoftDeleted: isSoftDeleteFilterActive,
-      onCompleted: (_, pagination) => {
-        setTotalCountBefore(pagination?.totalCount ?? 0);
-      },
-    });
+  const currentRecord = currentRecords[0];
+  const isCurrentRecordDeleted = isDefined(currentRecord?.deletedAt);
+  const withSoftDeleted = isSoftDeleteFilterActive || isCurrentRecordDeleted;
 
-  const { loading: loadingRecordAfter, records: recordsAfter } =
-    useFindManyRecords({
-      skip: loadingCursor,
-      filter: {
-        ...filter,
-        id: { neq: objectRecordId },
-      },
-      fetchPolicy: 'network-only',
-      orderBy,
-      limit: isNonEmptyString(currentRecordCursorFromRequest) ? 1 : undefined,
-      cursorFilter: currentRecordCursorFromRequest
-        ? {
-            cursorDirection: 'after',
-            cursor: currentRecordCursorFromRequest,
-          }
-        : undefined,
-      objectNameSingular,
-      recordGqlFields: { id: true },
-      withSoftDeleted: isSoftDeleteFilterActive,
-      onCompleted: (_, pagination) => {
-        setTotalCountAfter(pagination?.totalCount ?? 0);
-      },
-    });
+  const deletedOnlyFilter = isCurrentRecordDeleted
+    ? { deletedAt: { is: 'NOT_NULL' as const } }
+    : undefined;
 
-  const loading = loadingRecordAfter || loadingRecordBefore || loadingCursor;
+  const { beforeFilter, afterFilter } = useMemo(() => {
+    if (!currentRecord) {
+      return { beforeFilter: undefined, afterFilter: undefined };
+    }
+
+    const recordValues: Record<string, unknown> = {};
+
+    for (const fieldName of Object.keys(orderByGqlFields)) {
+      recordValues[fieldName] = currentRecord[fieldName];
+    }
+    recordValues['id'] = currentRecord.id;
+
+    return {
+      beforeFilter: buildKeysetPaginationFilter({
+        orderBy,
+        currentRecordValues: recordValues,
+        direction: 'before',
+      }),
+      afterFilter: buildKeysetPaginationFilter({
+        orderBy,
+        currentRecordValues: recordValues,
+        direction: 'after',
+      }),
+    };
+  }, [currentRecord, orderBy, orderByGqlFields]);
+
+  const hasKeysetFilters = isDefined(beforeFilter) && isDefined(afterFilter);
+  const skipNeighborQueries = loadingCurrentRecord || !hasKeysetFilters;
+
+  const baseNeighborOptions = {
+    skip: skipNeighborQueries,
+    objectNameSingular,
+    recordGqlFields: { id: true },
+    withSoftDeleted,
+    limit: 1,
+  };
+
+  const mergedFilter = combineFilters(filter, deletedOnlyFilter);
+
+  const {
+    loading: loadingRecordBefore,
+    records: recordsBefore,
+    totalCount: totalCountBefore,
+  } = useFindManyRecords({
+    ...baseNeighborOptions,
+    fetchPolicy: 'network-only',
+    filter: combineFilters(mergedFilter, beforeFilter),
+    orderBy: reversedOrderBy,
+  });
+
+  const {
+    loading: loadingRecordAfter,
+    records: recordsAfter,
+    totalCount: totalCountAfter,
+  } = useFindManyRecords({
+    ...baseNeighborOptions,
+    fetchPolicy: 'network-only',
+    filter: combineFilters(mergedFilter, afterFilter),
+    orderBy,
+  });
+
+  const { records: firstRecords } = useFindManyRecords({
+    ...baseNeighborOptions,
+    filter: mergedFilter,
+    orderBy,
+  });
+
+  const { records: lastRecords } = useFindManyRecords({
+    ...baseNeighborOptions,
+    filter: mergedFilter,
+    orderBy: reversedOrderBy,
+  });
+
+  const loading =
+    loadingRecordAfter ||
+    loadingRecordBefore ||
+    loadingCurrentRecord ||
+    !hasKeysetFilters;
 
   const recordBefore = recordsBefore[0];
   const recordAfter = recordsAfter[0];
 
-  const isFirstRecord = !loading && !isDefined(recordBefore);
-  const isLastRecord = !loading && !isDefined(recordAfter);
-
-  const { recordIdsInCache } = useRecordIdsFromFindManyCacheRootQuery({
-    objectNamePlural: objectMetadataItem.namePlural,
-    fieldVariables: {
-      filter,
-      orderBy,
-    },
-  });
-
-  const cacheIsAvailableForNavigation =
-    !loading &&
-    (totalCountAfter > 0 || totalCountBefore > 0) &&
-    recordIdsInCache.length > 0;
-
-  const canNavigateToPreviousRecord =
-    !isFirstRecord || (isFirstRecord && cacheIsAvailableForNavigation);
+  const navigateToRecord = (targetRecordId: string) => {
+    navigate(
+      AppPath.RecordShowPage,
+      { objectNameSingular, objectRecordId: targetRecordId },
+      { viewId: viewIdQueryParam },
+    );
+  };
 
   const navigateToPreviousRecord = () => {
-    if (loading) {
-      return;
-    }
+    if (loading) return;
 
-    if (isFirstRecord) {
-      if (cacheIsAvailableForNavigation) {
-        const lastRecordIdFromCache =
-          recordIdsInCache[recordIdsInCache.length - 1];
-
-        navigate(
-          AppPath.RecordShowPage,
-          {
-            objectNameSingular,
-            objectRecordId: lastRecordIdFromCache,
-          },
-          {
-            viewId: viewIdQueryParam,
-          },
-        );
-      }
-    } else {
-      navigate(
-        AppPath.RecordShowPage,
-        {
-          objectNameSingular,
-          objectRecordId: recordBefore.id,
-        },
-        {
-          viewId: viewIdQueryParam,
-        },
-      );
+    if (isDefined(recordBefore)) {
+      navigateToRecord(recordBefore.id);
+    } else if (isDefined(lastRecords[0])) {
+      navigateToRecord(lastRecords[0].id);
     }
   };
 
-  const canNavigateToNextRecord =
-    !isLastRecord || (isLastRecord && cacheIsAvailableForNavigation);
-
   const navigateToNextRecord = () => {
-    if (loading) {
-      return;
-    }
+    if (loading) return;
 
-    if (isLastRecord) {
-      if (cacheIsAvailableForNavigation) {
-        const firstRecordIdFromCache = recordIdsInCache[0];
-
-        navigate(
-          AppPath.RecordShowPage,
-          {
-            objectNameSingular,
-            objectRecordId: firstRecordIdFromCache,
-          },
-          {
-            viewId: viewIdQueryParam,
-          },
-        );
-      }
-    } else {
-      navigate(
-        AppPath.RecordShowPage,
-        {
-          objectNameSingular,
-          objectRecordId: recordAfter.id,
-        },
-        {
-          viewId: viewIdQueryParam,
-        },
-      );
+    if (isDefined(recordAfter)) {
+      navigateToRecord(recordAfter.id);
+    } else if (isDefined(firstRecords[0])) {
+      navigateToRecord(firstRecords[0].id);
     }
   };
 
   const navigateToIndexView = () => {
     navigate(
       AppPath.RecordIndexPage,
-      {
-        objectNamePlural: objectMetadataItem.namePlural,
-      },
-      {
-        viewId: viewIdQueryParam,
-      },
+      { objectNamePlural: objectMetadataItem.namePlural },
+      { viewId: viewIdQueryParam },
     );
-
     setLastShowPageRecordId(objectRecordId);
   };
 
-  const rankInViewFromCache = recordIdsInCache.findIndex(
-    (id) => id === objectRecordId,
-  );
+  const rankInView = isDefined(totalCountBefore) ? totalCountBefore : -1;
+  const totalCount =
+    rankInView > -1 && isDefined(totalCountAfter)
+      ? 1 + rankInView + totalCountAfter
+      : 0;
 
-  const rankInViewFromParentViewIndex = isDefined(parentViewComponentId)
-    ? recordIdsFromParentViewIndex.findIndex((id) => id === objectRecordId)
-    : -1;
+  // Preserve last settled values to avoid 0/0 flash during navigation
+  const cachedRef = useRef({ rankInView, totalCount });
 
-  const rankInView =
-    rankInViewFromParentViewIndex > -1
-      ? rankInViewFromParentViewIndex
-      : rankInViewFromCache;
-
-  const rankFoundInView = rankInView > -1;
-
-  const objectLabelPlural = objectMetadataItem.labelPlural;
-
-  const totalCount = 1 + Math.max(totalCountBefore, totalCountAfter);
-
-  const currentRank = rankInView + 1;
-  const viewNameWithCount = rankFoundInView
-    ? t`${currentRank} of ${totalCount} in ${objectLabelPlural}`
-    : t`${objectLabelPlural} (${totalCount})`;
+  if (!loading && rankInView > -1) {
+    cachedRef.current = { rankInView, totalCount };
+  }
 
   return {
-    viewName: viewNameWithCount,
     isLoadingPagination: loading,
     navigateToPreviousRecord,
     navigateToNextRecord,
     navigateToIndexView,
-    canNavigateToNextRecord,
-    canNavigateToPreviousRecord,
-    rankInView,
-    totalCount,
+    rankInView: loading ? cachedRef.current.rankInView : rankInView,
+    totalCount: loading ? cachedRef.current.totalCount : totalCount,
     objectMetadataItem,
   };
+};
+
+const combineFilters = (
+  ...filters: (Record<string, unknown> | undefined)[]
+) => {
+  const defined = filters.filter(
+    (f): f is Record<string, unknown> =>
+      isDefined(f) && Object.keys(f).length > 0,
+  );
+
+  if (defined.length <= 1) return defined[0] ?? {};
+
+  return { and: defined };
 };

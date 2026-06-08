@@ -56,7 +56,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
   objectLabel: string;
   labelIdentifierFieldMetadataItem?: FieldMetadataItem;
 }) => {
-  const { loading } = useFindOneRecord({
+  useFindOneRecord({
     objectNameSingular,
     objectRecordId,
     recordGqlFields: {
@@ -80,10 +80,6 @@ export const ObjectRecordShowPageBreadcrumb = ({
 
   const { navigateToIndexView, rankInView, totalCount } =
     useRecordShowPagePagination(objectNameSingular, objectRecordId);
-
-  if (loading) {
-    return null;
-  }
 
   return (
     <StyledEditableTitleContainer>
