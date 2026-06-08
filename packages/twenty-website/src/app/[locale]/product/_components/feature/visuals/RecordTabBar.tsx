@@ -12,7 +12,6 @@ import {
 
 import {
   BORDER_LIGHT,
-  CARD_ACCENT,
   CARD_FONT,
   CARD_TEXT,
   CARD_TEXT_SECONDARY,
