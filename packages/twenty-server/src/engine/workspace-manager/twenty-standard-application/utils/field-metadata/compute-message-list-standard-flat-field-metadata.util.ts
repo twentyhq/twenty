@@ -26,10 +26,7 @@ export const buildMessageListStandardFlatFieldMetadatas = ({
 }: Omit<
   CreateStandardFieldArgs<'messageList', FieldMetadataType>,
   'context'
->): Record<
-  AllStandardObjectFieldName<'messageList'>,
-  FlatFieldMetadata
-> => ({
+>): Record<AllStandardObjectFieldName<'messageList'>, FlatFieldMetadata> => ({
   id: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,

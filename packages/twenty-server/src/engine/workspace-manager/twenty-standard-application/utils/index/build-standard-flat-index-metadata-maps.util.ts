@@ -51,7 +51,8 @@ const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
   messageCampaign: buildMessageCampaignStandardFlatIndexMetadatas,
   messageSuppression: buildMessageSuppressionStandardFlatIndexMetadatas,
   messageTopic: buildMessageTopicStandardFlatIndexMetadatas,
-  messageTopicSubscription: buildMessageTopicSubscriptionStandardFlatIndexMetadatas,
+  messageTopicSubscription:
+    buildMessageTopicSubscriptionStandardFlatIndexMetadatas,
   messageList: buildMessageListStandardFlatIndexMetadatas,
   messageListMember: buildMessageListMemberStandardFlatIndexMetadatas,
   message: buildMessageStandardFlatIndexMetadatas,

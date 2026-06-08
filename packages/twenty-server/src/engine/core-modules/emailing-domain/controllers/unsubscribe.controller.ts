@@ -61,10 +61,11 @@ export class UnsubscribeController {
   async handlePreferencesPage(@Query('t') token: string): Promise<string> {
     const payload = this.verifyTokenOrThrow(token);
 
-    const topics = await this.messageTopicSubscriptionService.getSubscribedTopics({
-      workspaceId: payload.workspaceId,
-      emailAddress: payload.emailAddress,
-    });
+    const topics =
+      await this.messageTopicSubscriptionService.getSubscribedTopics({
+        workspaceId: payload.workspaceId,
+        emailAddress: payload.emailAddress,
+      });
 
     return buildUnsubscribePreferencesPage({
       token,

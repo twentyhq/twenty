@@ -19,20 +19,20 @@ import {
 const MESSAGE_LIST_PAGE_TABS = {
   home: {
     universalIdentifier:
-      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage.tabs
-        .home.universalIdentifier,
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage.tabs.home
+        .universalIdentifier,
     ...TAB_PROPS.home,
     widgets: {
       fields: {
         universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage
-            .tabs.home.widgets.fields.universalIdentifier,
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage.tabs
+            .home.widgets.fields.universalIdentifier,
         ...WIDGET_PROPS.fields,
       },
       members: {
         universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage
-            .tabs.home.widgets.members.universalIdentifier,
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage.tabs
+            .home.widgets.members.universalIdentifier,
         title: 'Members',
         type: WidgetType.FIELD,
         gridPosition: GRID_POSITIONS.FULL_WIDTH,
@@ -50,8 +50,8 @@ const MESSAGE_LIST_PAGE_TABS = {
     widgets: {
       tasks: {
         universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage
-            .tabs.tasks.widgets.tasks.universalIdentifier,
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage.tabs
+            .tasks.widgets.tasks.universalIdentifier,
         ...WIDGET_PROPS.tasks,
       },
     },
@@ -64,8 +64,8 @@ const MESSAGE_LIST_PAGE_TABS = {
     widgets: {
       notes: {
         universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage
-            .tabs.notes.widgets.notes.universalIdentifier,
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage.tabs
+            .notes.widgets.notes.universalIdentifier,
         ...WIDGET_PROPS.notes,
       },
     },
@@ -78,8 +78,8 @@ const MESSAGE_LIST_PAGE_TABS = {
     widgets: {
       files: {
         universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage
-            .tabs.files.widgets.files.universalIdentifier,
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage.tabs
+            .files.widgets.files.universalIdentifier,
         ...WIDGET_PROPS.files,
       },
     },
@@ -89,8 +89,7 @@ const MESSAGE_LIST_PAGE_TABS = {
 export const STANDARD_MESSAGE_LIST_PAGE_LAYOUT_CONFIG = {
   name: 'Default List Layout',
   type: PageLayoutType.RECORD_PAGE,
-  objectUniversalIdentifier:
-    STANDARD_OBJECTS.messageList.universalIdentifier,
+  objectUniversalIdentifier: STANDARD_OBJECTS.messageList.universalIdentifier,
   universalIdentifier:
     STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage
       .universalIdentifier,

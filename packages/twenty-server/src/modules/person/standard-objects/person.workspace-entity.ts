@@ -59,7 +59,9 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     CalendarEventParticipantWorkspaceEntity[]
   >;
   timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;
-  messageTopicSubscriptions: EntityRelation<MessageTopicSubscriptionWorkspaceEntity[]>;
+  messageTopicSubscriptions: EntityRelation<
+    MessageTopicSubscriptionWorkspaceEntity[]
+  >;
   listMemberships: EntityRelation<MessageListMemberWorkspaceEntity[]>;
   searchVector: string;
 }

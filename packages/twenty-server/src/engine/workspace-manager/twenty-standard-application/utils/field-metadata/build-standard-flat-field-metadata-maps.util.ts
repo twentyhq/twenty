@@ -56,7 +56,8 @@ const STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   messageCampaign: buildMessageCampaignStandardFlatFieldMetadatas,
   messageSuppression: buildMessageSuppressionStandardFlatFieldMetadatas,
   messageTopic: buildMessageTopicStandardFlatFieldMetadatas,
-  messageTopicSubscription: buildMessageTopicSubscriptionStandardFlatFieldMetadatas,
+  messageTopicSubscription:
+    buildMessageTopicSubscriptionStandardFlatFieldMetadatas,
   messageList: buildMessageListStandardFlatFieldMetadatas,
   messageListMember: buildMessageListMemberStandardFlatFieldMetadatas,
   message: buildMessageStandardFlatFieldMetadatas,

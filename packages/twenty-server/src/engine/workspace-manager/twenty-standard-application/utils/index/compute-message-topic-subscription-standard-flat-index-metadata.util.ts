@@ -12,7 +12,10 @@ export const buildMessageTopicSubscriptionStandardFlatIndexMetadatas = ({
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardIndexArgs<'messageTopicSubscription'>, 'context'>): Record<
+}: Omit<
+  CreateStandardIndexArgs<'messageTopicSubscription'>,
+  'context'
+>): Record<
   AllStandardObjectIndexName<'messageTopicSubscription'>,
   FlatIndexMetadata
 > => ({

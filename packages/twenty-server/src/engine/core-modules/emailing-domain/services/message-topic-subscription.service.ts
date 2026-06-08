@@ -155,7 +155,10 @@ export class MessageTopicSubscriptionService {
           );
 
         const subscriptions = await subscriptionRepository.find({
-          where: { personId, status: MessageTopicSubscriptionStatus.SUBSCRIBED },
+          where: {
+            personId,
+            status: MessageTopicSubscriptionStatus.SUBSCRIBED,
+          },
         });
 
         if (!isNonEmptyArray(subscriptions)) {

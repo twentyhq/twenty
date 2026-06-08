@@ -6,7 +6,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 
-@RegisteredWorkspaceCommand('2.9.0', 1799000030000)
+@RegisteredWorkspaceCommand('2.9.0', 1799000031000)
 @Command({
   name: 'upgrade:2-9:backfill-email-suppression-and-list-objects',
   description:
