@@ -1,17 +1,27 @@
-// Upserts one row-level-permission predicate per object (partner, person, company,
-// opportunity) on the Partner role: "partnerUser is the current workspace member".
+// Does two things on each run:
+//
+// 1. UPSERTS the 4 row-level-permission predicates on the Partner role — one for each
+//    target object (partner, person, company, opportunity): "partnerUser CONTAINS the
+//    current workspace member". These are configured out-of-band because the app
+//    manifest cannot ship RLS predicates. Re-run after every install or reinstall.
+//    The mutation is fully idempotent (upsert semantics).
+//
+//    Field choice: the metadata API exposes the relation field `partnerUser`
+//    (type RELATION) rather than a separate `partnerUserId` join-column field. The
+//    upsertRowLevelPermissionPredicates mutation accepts the RELATION field id directly.
+//    Operand: CONTAINS — confirmed working against this server version.
+//
+// 2. VERIFIES the Opportunity field permissions declared in `partner.role.ts` and
+//    deployed via `yarn twenty dev --once`. The script does NOT set these permissions:
+//    upsertFieldPermissions enforces an application-ownership check that rejects
+//    out-of-band changes to app-owned roles (ROLE_BELONGS_TO_ANOTHER_APPLICATION).
+//    The manifest is the correct and only supported mechanism for app-owned roles.
+//    If any expected field locks are missing, the script exits non-zero and instructs
+//    the operator to run `yarn twenty dev --once` to deploy the manifest.
 //
 // Usage:
 //   yarn rls:configure          # against .env.local
 //   yarn rls:configure:prod     # against .env.prod
-//
-// Run after every install or reinstall of the app so that the RLS predicates are
-// re-attached to the role (the app manifest cannot ship them).
-//
-// Field choice: the metadata API exposes the relation field `partnerUser` (type RELATION)
-// rather than a separate `partnerUserId` join-column field. The
-// upsertRowLevelPermissionPredicates mutation accepts the RELATION field id directly.
-// Operand: CONTAINS — confirmed working against this server version.
 
 import { config } from 'dotenv';
 config({ path: process.env.ENV_FILE ?? '.env.local' });
@@ -27,6 +37,17 @@ const requireEnv = (name: string): string => {
 // The four object names we need to configure RLS on.
 const TARGET_OBJECTS = ['partner', 'person', 'company', 'opportunity'] as const;
 type TargetObject = (typeof TARGET_OBJECTS)[number];
+
+// System / immutable Opportunity fields that must NOT be included in the
+// field-permission lock list. `stage` is also excluded because it is the one
+// field the Partner role should be allowed to update.
+const OPPORTUNITY_FIELD_LOCK_SKIP = new Set([
+  'id',
+  'createdAt',
+  'updatedAt',
+  'deletedAt',
+  'stage',
+]);
 
 type ObjectInfo = {
   objectMetadataId: string;
@@ -142,6 +163,54 @@ async function findFieldByName(
   }
 }
 
+// Collects every field on an object across all cursor pages.
+// Required for Opportunity which can grow; always paginate fully.
+async function collectAllFields(
+  metadataUrl: string,
+  apiKey: string,
+  objectId: string,
+): Promise<{ id: string; name: string; type: string }[]> {
+  const all: { id: string; name: string; type: string }[] = [];
+  let after: string | null = null;
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const pagingArg = after
+      ? `paging:{first:200, after:"${after}"}`
+      : `paging:{first:200}`;
+
+    const query = `{
+      object(id: "${objectId}") {
+        fields(${pagingArg}) {
+          edges { node { id name type } }
+          pageInfo { hasNextPage endCursor }
+        }
+      }
+    }`;
+
+    const data = await metadataFetch<{
+      object: { fields: FieldsPage };
+    }>(metadataUrl, apiKey, query);
+
+    for (const edge of data.object.fields.edges) {
+      all.push(edge.node);
+    }
+
+    if (!data.object.fields.pageInfo.hasNextPage) break;
+    after = data.object.fields.pageInfo.endCursor;
+  }
+
+  return all;
+}
+
+type FieldPermissionResult = {
+  id: string;
+  objectMetadataId: string;
+  fieldMetadataId: string;
+  canReadFieldValue: boolean | null;
+  canUpdateFieldValue: boolean | null;
+};
+
 type PredicateResult = {
   id: string;
   fieldMetadataId: string;
@@ -217,15 +286,24 @@ async function main() {
     'id',
   );
 
-  // ── 3. Resolve Partner role id ───────────────────────────────────────────────
-
+  // ── 3. Resolve Partner role id and fetch field permissions in one request ──────
+  //
   // getRoles returns a flat array (not a connection) and does NOT expose
   // universalIdentifier, so we match on the role label. This is the only available
   // discriminator: if the Partner role's label is renamed in partner.role.ts,
   // update the literal below to match.
+  // Fetching fieldPermissions here avoids a second getRoles call later in step 5.
   const rolesData = await metadataFetch<{
-    getRoles: { id: string; label: string }[];
-  }>(metadataUrl, apiKey, `{ getRoles { id label } }`);
+    getRoles: {
+      id: string;
+      label: string;
+      fieldPermissions: FieldPermissionResult[];
+    }[];
+  }>(
+    metadataUrl,
+    apiKey,
+    `{ getRoles { id label fieldPermissions { id fieldMetadataId objectMetadataId canUpdateFieldValue canReadFieldValue } } }`,
+  );
 
   const roles = rolesData.getRoles;
 
@@ -313,6 +391,80 @@ async function main() {
 
   console.log(
     `\n[rls:configure] Done — ${results.length}/${TARGET_OBJECTS.length} predicates upserted on Partner role`,
+  );
+
+  // ── 5. Verify Opportunity field permissions: read-all / update-stage-only ─────
+  //
+  // Opportunity field permissions for the Partner role are declared in
+  // src/roles/partner.role.ts and deployed by `yarn twenty dev --once` (manifest
+  // sync). They cannot be set here via upsertFieldPermissions because the server
+  // enforces an application-ownership check: the mutation always runs in the
+  // workspace Custom-app context, which does not match the Partner role's owning
+  // application (the partners app). Attempting to set them would return
+  // ROLE_BELONGS_TO_ANOTHER_APPLICATION. The manifest route is the correct
+  // and only supported mechanism for app-owned roles.
+  //
+  // This step queries the Partner role's existing fieldPermissions and prints the
+  // verification summary so a single run of `yarn rls:configure` confirms the
+  // full permission state (predicates + field locks) after a sync.
+
+  const oppInfo = objectInfoByName.get('opportunity') as ObjectInfo;
+  const oppObjectId = oppInfo.objectMetadataId;
+
+  const allOppFields = await collectAllFields(metadataUrl, apiKey, oppObjectId);
+  const oppFieldIdToName = new Map<string, string>(
+    allOppFields.map((f) => [f.id, f.name]),
+  );
+
+  // Build the expected lock set: every non-system, non-stage Opportunity field.
+  const expectedLockedNames = new Set<string>(
+    allOppFields
+      .filter((f) => !OPPORTUNITY_FIELD_LOCK_SKIP.has(f.name))
+      .map((f) => f.name),
+  );
+
+  // Filter to Opportunity field permissions that lock update access.
+  // partnerRole was fetched with fieldPermissions in step 3 — no second getRoles needed.
+  const oppLockedFps = partnerRole.fieldPermissions.filter(
+    (fp) =>
+      fp.objectMetadataId === oppObjectId && fp.canUpdateFieldValue === false,
+  );
+
+  const missingLocks = [...expectedLockedNames].filter(
+    (name) =>
+      !oppLockedFps.some(
+        (fp) => oppFieldIdToName.get(fp.fieldMetadataId) === name,
+      ),
+  );
+
+  const stageIsLocked = oppLockedFps.some(
+    (fp) => oppFieldIdToName.get(fp.fieldMetadataId) === 'stage',
+  );
+
+  if (stageIsLocked) {
+    console.warn(
+      `[rls:configure] WARNING: stage field is locked — it should be editable. ` +
+        `Remove it from fieldPermissions in partner.role.ts and re-sync.`,
+    );
+  }
+
+  if (missingLocks.length > 0) {
+    console.error(
+      `\n[rls:configure] DRIFT DETECTED: ${missingLocks.length} Opportunity field(s) ` +
+        `are NOT locked (canUpdateFieldValue: false) on the Partner role:\n` +
+        `  ${missingLocks.join(', ')}\n\n` +
+        `These permissions are declared in partner.role.ts and must be deployed via the\n` +
+        `app manifest. Run the following to deploy them:\n\n` +
+        `  yarn twenty dev --once -r <remote>\n\n` +
+        `(e.g. \`yarn twenty dev --once\` for local, ` +
+        `\`yarn twenty dev --once -r partner-twenty-com\` for prod)\n`,
+    );
+    process.exitCode = 1;
+    return;
+  }
+
+  console.log(
+    `[rls:configure] ✓ ${oppLockedFps.length} Opportunity fields locked (stage editable only) — field permissions verified`,
   );
 }
 
