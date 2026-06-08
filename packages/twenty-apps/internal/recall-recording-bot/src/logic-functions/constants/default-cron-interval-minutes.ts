@@ -1,0 +1,1 @@
+export const DEFAULT_CRON_INTERVAL_MINUTES = 5;
