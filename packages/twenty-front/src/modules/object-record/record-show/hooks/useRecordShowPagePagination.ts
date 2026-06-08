@@ -8,16 +8,14 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
 import { isRecordFilterAboutSoftDelete } from '@/object-record/record-filter/utils/isRecordFilterAboutSoftDelete';
-import {
-  buildKeysetPaginationFilter,
-  extractOrderByFieldNames,
-  reverseOrderBy,
-} from '@/object-record/record-show/utils/buildKeysetPaginationFilter';
+import { buildKeysetPaginationFilter } from '@/object-record/record-show/utils/buildKeysetPaginationFilter.util';
+import { extractOrderByFieldNames } from '@/object-record/record-show/utils/extractOrderByFieldNames.util';
+import { reverseOrderBy } from '@/object-record/record-show/utils/reverseOrderBy.util';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useQueryVariablesFromParentView } from '@/views/hooks/useQueryVariablesFromParentView';
 import { AppPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { combineFilters, isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useRecordShowPagePagination = (
@@ -120,7 +118,9 @@ export const useRecordShowPagePagination = (
     limit: 1,
   };
 
-  const mergedFilter = combineFilters(filter, deletedOnlyFilter);
+  const mergedFilter = combineFilters(
+    [filter, deletedOnlyFilter].filter(isDefined),
+  );
 
   const {
     loading: loadingRecordBefore,
@@ -129,7 +129,7 @@ export const useRecordShowPagePagination = (
   } = useFindManyRecords({
     ...baseNeighborOptions,
     fetchPolicy: 'network-only',
-    filter: combineFilters(mergedFilter, beforeFilter),
+    filter: combineFilters([mergedFilter, beforeFilter].filter(isDefined)),
     orderBy: reversedOrderBy,
   });
 
@@ -140,7 +140,7 @@ export const useRecordShowPagePagination = (
   } = useFindManyRecords({
     ...baseNeighborOptions,
     fetchPolicy: 'network-only',
-    filter: combineFilters(mergedFilter, afterFilter),
+    filter: combineFilters([mergedFilter, afterFilter].filter(isDefined)),
     orderBy,
   });
 
@@ -233,17 +233,4 @@ export const useRecordShowPagePagination = (
     totalCount: loading ? cachedPagination.totalCount : totalCount,
     objectMetadataItem,
   };
-};
-
-const combineFilters = (
-  ...filters: (Record<string, unknown> | undefined)[]
-) => {
-  const defined = filters.filter(
-    (f): f is Record<string, unknown> =>
-      isDefined(f) && Object.keys(f).length > 0,
-  );
-
-  if (defined.length <= 1) return defined[0] ?? {};
-
-  return { and: defined };
 };
