@@ -40,8 +40,8 @@ export const WorkflowEditActionFilter = ({
           <WorkflowEditActionFilterBodyEffect
             stepId={action.id}
             defaultValue={{
-              stepFilterGroups: action.settings.input.stepFilterGroups,
-              stepFilters: action.settings.input.stepFilters,
+              stepFilterGroups: action.settings.input?.stepFilterGroups,
+              stepFilters: action.settings.input?.stepFilters,
             }}
           />
         </StepFilterGroupsComponentInstanceContext.Provider>

@@ -54,9 +54,9 @@ export const WorkflowEditActionIfElseBody = ({
   action,
   actionOptions,
 }: WorkflowEditActionIfElseBodyProps) => {
-  const branches = action.settings.input.branches;
-  const stepFilterGroups = action.settings.input.stepFilterGroups ?? [];
-  const stepFilters = action.settings.input.stepFilters ?? [];
+  const branches = action.settings.input?.branches ?? [];
+  const stepFilterGroups = action.settings.input?.stepFilterGroups ?? [];
+  const stepFilters = action.settings.input?.stepFilters ?? [];
   const isReadonly = actionOptions.readonly === true;
 
   const { createStep } = useCreateStep();
