@@ -200,45 +200,22 @@ export default defineFrontComponent({
 
 Front-компоненты выполняются в браузере в изолированном Web Worker, в то время как [логические функции](/l/ru/developers/extend/apps/logic/logic-functions) выполняются на стороне сервера. Между ними нет прямого внутрипроцессного вызова — вместо этого front-компонент обращается к логической функции по HTTP.
 
-Логическая функция, объявленная с `httpRouteTriggerSettings`, доступна по эндпоинту `/s/` по адресу `${TWENTY_API_URL}/s\<path>`. Ваш front-компонент вызывает этот маршрут с помощью `fetch`, аутентифицируясь с использованием `TWENTY_APP_ACCESS_TOKEN`, который Twenty внедряет в worker.
+Логическая функция, объявленная с `httpRouteTriggerSettings`, доступна по эндпоинту `/s/` по адресу `${TWENTY_API_URL}/s\<path>`. Ваш front-компонент вызывает этот маршрут с помощью `RestApiClient` из `twenty-client-sdk/rest`, который аутентифицируется с использованием `TWENTY_APP_ACCESS_TOKEN`, который Twenty внедряет в worker.
 
-Небольшой переиспользуемый хелпер делает места вызова чище:
-
-```ts src/shared/call-app-route.ts
-export async function callAppRoute(
-  path: string,
-  body: Record<string, unknown>,
-): Promise<unknown> {
-  const apiUrl = process.env.TWENTY_API_URL ?? '';
-  const token = process.env.TWENTY_APP_ACCESS_TOKEN;
-
-  const res = await fetch(`${apiUrl}/s${path}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    body: JSON.stringify(body),
-  });
-
-  if (!res.ok) {
-    throw new Error(`Logic function failed (${res.status})`);
-  }
-
-  return res.json();
-}
-```
+`RestApiClient` создан именно для этого. Он считывает `TWENTY_API_URL` и `TWENTY_APP_ACCESS_TOKEN` из окружения worker, добавляет заголовок `Authorization: Bearer`, сериализует и парсит JSON и выбрасывает `RestApiClientError`, когда токен или URL отсутствуют или ответ не является 2xx — чтобы вам не приходилось реализовывать этот шаблонный код в каждом компоненте.
 
 Безголовый front-компонент может выполнить вызов при монтировании через компонент `Command`, а затем автоматически размонтироваться:
 
 ```tsx src/front-components/sync-prs.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/command';
-import { callAppRoute } from 'src/shared/call-app-route';
+import { RestApiClient } from 'twenty-client-sdk/rest';
 
 const SyncPrs = () => {
   const execute = async () => {
-    await callAppRoute('/github/fetch-prs', {
+    const client = new RestApiClient();
+
+    await client.post('/s/github/fetch-prs', {
       owner: 'twentyhq',
       repo: 'twenty',
     });
@@ -256,7 +233,7 @@ export default defineFrontComponent({
 });
 ```
 
-`path`, переданный в `callAppRoute`, должен совпадать с `httpRouteTriggerSettings.path` логической функции (префикс `/s` добавляется хелпером):
+Путь, передаваемый клиенту, — это общедоступный путь маршрута: значение `httpRouteTriggerSettings.path` для логической функции с префиксом `/s`. Сохраните `isAuthRequired: true`; клиент передает токен доступа к приложению Twenty mints для вашего компонента:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -283,6 +260,48 @@ export default defineLogicFunction({
 <Note>
 `TWENTY_API_URL` и `TWENTY_APP_ACCESS_TOKEN` внедряются автоматически — см. [переменные приложения](#application-variables). Поскольку секретные переменные приложения никогда не раскрываются front-компонентам, храните ключи API и другую конфиденциальную логику в логической функции, а не во front-компоненте.
 </Note>
+
+### Справочник по RestApiClient
+
+Импортируйте `RestApiClient` из `twenty-client-sdk/rest`. Он принадлежит к тому же семейству клиентов, что и `CoreApiClient` и `MetadataApiClient`, но предназначен для HTTP-маршрутов вашего приложения вместо GraphQL API.
+
+| Метод                             | Описание                                  |
+| --------------------------------- | ----------------------------------------- |
+| `get(path, options?)`             | Отправляет запрос `GET`                   |
+| `post(path, body?, options?)`     | Отправляет запрос `POST`                  |
+| `put(path, body?, options?)`      | Отправляет запрос `PUT`                   |
+| `patch(path, body?, options?)`    | Отправляет запрос `PATCH`                 |
+| `delete(path, options?)`          | Отправляет запрос `DELETE`                |
+| `request(method, path, options?)` | Универсальный запрос с любым HTTP-методом |
+
+В `options` принимаются `headers`, `query` (объект с параметрами строки запроса; значения, равные null или undefined, пропускаются) и `AbortSignal` через `signal`. Объект `body`, не являющийся `FormData`, автоматически сериализуется в JSON. При получении `401` клиент один раз обновляет токен доступа через хост и повторяет запрос.
+
+Базовый URL и токен по умолчанию берутся из окружения. При необходимости передавайте переопределения в конструктор — например, в тестах:
+
+```ts
+const client = new RestApiClient({
+  baseUrl: 'https://api.example.com',
+  token: 'my-token',
+});
+```
+
+Неудачные запросы выбрасывают `RestApiClientError`, предоставляющую `status`, `statusText`, `url` и разобранное `body`:
+
+```tsx
+import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
+
+const client = new RestApiClient();
+
+try {
+  const prs = await client.get('/s/github/fetch-prs', {
+    query: { state: 'open' },
+  });
+} catch (error) {
+  if (error instanceof RestApiClientError) {
+    console.error(error.status, error.body);
+  }
+}
+```
 
 ## Доступ к контексту времени выполнения
 
