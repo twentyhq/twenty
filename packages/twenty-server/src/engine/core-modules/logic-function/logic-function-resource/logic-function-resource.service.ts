@@ -5,6 +5,7 @@ import { promises as fs } from 'fs';
 import { dirname, join } from 'path';
 import { type QueryRunner } from 'typeorm';
 
+import semver from 'semver';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -299,6 +300,39 @@ export class LogicFunctionResourceService {
     }
 
     await Promise.all(promises);
+
+    await this.removeBuildTimeSdkFromDependencies(
+      join(inMemoryFolderPath, 'package.json'),
+    );
+  }
+
+  private async removeBuildTimeSdkFromDependencies(
+    packageJsonPath: string,
+  ): Promise<void> {
+    const packageJson = JSON.parse(
+      await fs.readFile(packageJsonPath, 'utf-8'),
+    ) as { dependencies?: Record<string, string> };
+
+    const dependencies = packageJson.dependencies;
+    const sdkVersionRange = dependencies?.['twenty-sdk'];
+
+    if (!isDefined(dependencies) || !isDefined(sdkVersionRange)) {
+      return;
+    }
+
+    const minimumVersion = semver.minVersion(sdkVersionRange);
+
+    if (!isDefined(minimumVersion) || !semver.gte(minimumVersion, '2.0.0')) {
+      return;
+    }
+
+    delete dependencies['twenty-sdk'];
+
+    await fs.writeFile(
+      packageJsonPath,
+      `${JSON.stringify(packageJson, null, 2)}\n`,
+      'utf-8',
+    );
   }
 
   async getBuiltCode({
