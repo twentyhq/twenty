@@ -13,11 +13,11 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { OTPInput } from 'input-otp';
 import { useState } from 'react';
-import { Chip } from 'twenty-ui/components';
-import { IconDotsVertical } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Chip } from 'twenty-ui-deprecated/components';
+import { IconDotsVertical } from 'twenty-ui-deprecated/display';
+import { LightIconButton } from 'twenty-ui-deprecated/input';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import {
   GetServerAdminsDocument,
   UpdateServerAdminAccessDocument,
@@ -133,12 +133,9 @@ export const SettingsAdminServerAdminAccess = ({
       enqueueSuccessSnackBar({
         message: t`Server administrator access updated.`,
       });
-    } catch (error) {
+    } catch {
       enqueueErrorSnackBar({
-        message:
-          error instanceof Error
-            ? error.message
-            : t`Failed to update server administrator access.`,
+        message: t`Failed to update server administrator access.`,
       });
     } finally {
       setOtp('');

@@ -281,7 +281,7 @@ export class AdminPanelServerAdminService {
             const i18n = this.i18nService.getI18nInstance(locale);
             const subject = i18n._(msg`Server administrator access changed`);
 
-            await Promise.allSettled(
+            const sendResults = await Promise.allSettled(
               recipients.map((recipient) =>
                 this.emailService.send({
                   from,
@@ -292,6 +292,16 @@ export class AdminPanelServerAdminService {
                 }),
               ),
             );
+
+            const failedCount = sendResults.filter(
+              (result) => result.status === 'rejected',
+            ).length;
+
+            if (failedCount > 0) {
+              this.logger.error(
+                `Failed to enqueue ${failedCount} server admin access notification email(s) for locale ${locale}`,
+              );
+            }
           },
         ),
       );

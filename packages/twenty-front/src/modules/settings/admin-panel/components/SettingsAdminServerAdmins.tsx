@@ -15,9 +15,12 @@ import {
   H2Title,
   IconChevronRight,
   OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { Section } from 'twenty-ui-deprecated/layout';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { GetServerAdminsDocument } from '~/generated-admin/graphql';
 
 const SERVER_ADMINS_GRID_TEMPLATE_COLUMNS = '2fr 1fr 1fr 36px';
@@ -31,7 +34,7 @@ export const SettingsAdminServerAdmins = () => {
   const { theme } = useContext(ThemeContext);
   const apolloAdminClient = useApolloAdminClient();
 
-  const { data, loading } = useQuery(GetServerAdminsDocument, {
+  const { data, loading, error } = useQuery(GetServerAdminsDocument, {
     client: apolloAdminClient,
   });
 
@@ -45,6 +48,8 @@ export const SettingsAdminServerAdmins = () => {
       />
       {loading ? (
         <SettingsSectionSkeletonLoader />
+      ) : error ? (
+        <StyledEmptyState>{t`Failed to load server administrators.`}</StyledEmptyState>
       ) : serverAdmins.length === 0 ? (
         <StyledEmptyState>{t`No server administrators found.`}</StyledEmptyState>
       ) : (
