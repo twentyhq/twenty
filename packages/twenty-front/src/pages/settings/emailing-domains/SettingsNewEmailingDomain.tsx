@@ -11,10 +11,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { useMutation } from '@apollo/client/react';
-import {
-  EmailingDomainDriver,
-  CreateEmailingDomainDocument,
-} from '~/generated-metadata/graphql';
+import { CreateEmailingDomainDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import {
   settingsEmailingDomainFormSchema,
@@ -31,7 +28,6 @@ export const SettingsNewEmailingDomain = () => {
 
   const [formValues, setFormValues] =
     useState<SettingsEmailingDomainFormValues>({
-      driver: EmailingDomainDriver.AWS_SES,
       domain: '',
     });
 
@@ -54,7 +50,7 @@ export const SettingsNewEmailingDomain = () => {
 
   const handleFieldChange = (
     field: keyof SettingsEmailingDomainFormValues,
-    value: string | EmailingDomainDriver,
+    value: string,
   ) => {
     setFormValues((prev) => ({
       ...prev,
@@ -82,7 +78,6 @@ export const SettingsNewEmailingDomain = () => {
       await createEmailingDomain({
         variables: {
           domain: formValues.domain,
-          driver: formValues.driver,
         },
         onCompleted: (data) => {
           enqueueSuccessSnackBar({

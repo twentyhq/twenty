@@ -184,6 +184,7 @@ export const generateColumns = (
                 }}
               >
                 <Toggle
+                  centered
                   value={row[columnKey] as boolean}
                   onChange={() => {
                     onRowChange({

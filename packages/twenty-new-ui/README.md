@@ -215,10 +215,62 @@ Apollo error formatting, and the icon/theme-color pickers tied to Twenty's icon 
 - **Workbench** — Storybook (`@storybook/react-vite`). Every component has stories covering variants, sizes, and states (via `storybook-addon-pseudo-states`), in light and dark, with `autodocs`.
 - **Functional** — component/interaction tests via `@storybook/addon-vitest` (real browser); unit tests (Jest) for hooks/utilities; coverage gate via `@storybook/addon-coverage`.
 - **Accessibility** — Storybook a11y addon (axe-core) with `parameters.a11y.test = 'error'` so violations fail CI.
-- **Visual parity** — visual regression (Chromatic or test-runner image snapshots) plus side-by-side stories rendering the old and new component with identical props; a pixel-diff threshold is the per-component acceptance gate.
+- **Visual parity** — visual regression via Argos (self-hosted) plus a cross-package comparison project that diffs `twenty-new-ui` stories against `twenty-ui` stories with identical names; a pixel-diff threshold is the per-component acceptance gate. See [Visual regression](#visual-regression) below.
 - **Performance & size** — `size-limit` per entry point with budgets; tree-shaking fixtures (importing one component must not pull the library); build-time tracking; render benchmarks via React Profiler; load-time via Lighthouse/Playwright on the built Storybook. As one concrete benchmark, a dedicated **stress story** renders a very large number of a single component (e.g. 10,000 buttons) and measures total render time — compared against the `twenty-ui` equivalent and gated against a budget to catch per-instance overhead regressions.
 
 CI surfaces a per-PR diff table (`twenty-ui` vs `twenty-new-ui`) for size, a11y, and visual changes.
+
+## Visual regression
+
+Two Argos projects (on argos.twenty-internal.com) provide visual regression in CI:
+
+1. **`twenty-new-ui`** — pixel diff of `twenty-new-ui` stories against the `main` branch baseline. Catches regressions introduced by a PR.
+2. **`twenty-ui-vs-new-ui`** — cross-package comparison. The baseline is always `twenty-ui` screenshots from `main`; PR builds upload `twenty-new-ui` screenshots and diff them against the `twenty-ui` baseline. This shows exactly which components still differ between the two implementations.
+
+For the cross-package comparison to produce meaningful diffs, stories in `twenty-new-ui` must use the **same title hierarchy** as `twenty-ui` (e.g. `UI/Input/Toggle`).
+
+### Local visual diff
+
+Run a pixel diff of `twenty-new-ui` components against `twenty-ui` using the self-hosted Argos instance.
+
+**Prerequisites:**
+- AWS SSO configured and logged in (`aws sso login --profile twenty-dev`)
+- `twenty-infra/super-cli` cloned (sibling of this repo)
+
+**1. Start the Argos tunnel**
+
+In the `twenty-infra/super-cli` directory:
+
+    yarn cli argos-tunnel
+
+This port-forwards the Argos service to `http://127.0.0.1:4002`.
+Wait until the CLI shows "Argos tunnel is running".
+
+**2. Set your Argos token**
+
+Create a `.env` file in `packages/twenty-new-ui/` (gitignored):
+
+    ARGOS_TOKEN=<your-token-from-argos-project-settings>
+
+**3. Run the visual diff**
+
+From the repo root:
+
+    npx nx storybook:visual-diff twenty-new-ui
+
+This builds Storybook, captures screenshots of every story, and uploads
+them to Argos with build name `<username>/twenty-new-ui`. The diff
+compares against the latest approved baseline.
+
+To run `twenty-ui`'s visual diff in the same Argos instance (to build the
+cross-package comparison baseline):
+
+    npx nx storybook:visual-diff twenty-ui
+
+**4. View results**
+
+Open `http://127.0.0.1:4002` in your browser (while the tunnel is running)
+to review diffs.
 
 ## Build & publishing
 
@@ -267,7 +319,7 @@ a passing visual-parity diff, and a within-budget size entry.
 1. Published package name: `twenty-new-ui` now, renamed to `twenty-ui` at cut-over (Phase 6).
 2. Styling: confirm SCSS Modules vs vanilla-extract vs plain CSS Modules.
 3. Variants helper: `clsx` + `data-*` vs `cva`.
-4. Visual regression tooling: Chromatic vs self-hosted image snapshots.
+4. ~~Visual regression tooling: Chromatic vs self-hosted image snapshots.~~ **Resolved:** Argos (self-hosted at argos.twenty-internal.com). See [Visual regression](#visual-regression).
 5. How aggressively to drop `framer-motion` in favor of CSS/Base UI transitions.
 6. Scope of `assets` / `testing` / `json-visualizer`: port verbatim or modernize.
 7. Where to draw the generic-vs-app-specific line for `modules/ui`, and whether hybrid components live as a headless core in `twenty-new-ui` with a thin app wrapper in `twenty-front`.

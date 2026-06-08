@@ -8,6 +8,7 @@ import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfa
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 
 import { ToolCategory } from 'twenty-shared/ai';
+import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
@@ -158,7 +159,7 @@ export class ActionToolProvider implements ToolProvider {
       category: ToolCategory.ACTION,
       icon: 'IconPlayerPlay',
       ...(includeSchemas && {
-        inputSchema: z.toJSONSchema(tool.inputSchema as z.ZodType),
+        inputSchema: toToolJsonSchema(tool.inputSchema as z.ZodType),
       }),
       executionRef: { kind: 'static', toolId },
     };
