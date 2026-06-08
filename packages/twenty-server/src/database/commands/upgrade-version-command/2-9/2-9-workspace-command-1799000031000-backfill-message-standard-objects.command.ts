@@ -48,6 +48,7 @@ const NEW_FIELDS_ON_EXISTING_OBJECTS_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.timelineActivity.fields.targetMessageCampaign
     .universalIdentifier,
   STANDARD_OBJECTS.message.fields.messageCampaign.universalIdentifier,
+  STANDARD_OBJECTS.message.fields.deliveryStatus.universalIdentifier,
 ];
 
 const MESSAGE_FIELD_UNIVERSAL_IDENTIFIERS = [
