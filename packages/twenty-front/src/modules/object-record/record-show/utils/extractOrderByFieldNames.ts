@@ -1,6 +1,6 @@
 import { type RecordGqlOperationOrderBy } from 'twenty-shared/types';
 
-import { isOrderByDirection } from '@/object-record/record-show/utils/isOrderByDirection.util';
+import { isOrderByDirection } from '@/object-record/record-show/utils/isOrderByDirection';
 
 export const extractOrderByFieldNames = (
   orderBy: RecordGqlOperationOrderBy,

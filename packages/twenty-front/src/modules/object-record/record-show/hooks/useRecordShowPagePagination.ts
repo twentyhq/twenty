@@ -8,9 +8,9 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
 import { isRecordFilterAboutSoftDelete } from '@/object-record/record-filter/utils/isRecordFilterAboutSoftDelete';
-import { buildKeysetPaginationFilter } from '@/object-record/record-show/utils/buildKeysetPaginationFilter.util';
-import { extractOrderByFieldNames } from '@/object-record/record-show/utils/extractOrderByFieldNames.util';
-import { reverseOrderBy } from '@/object-record/record-show/utils/reverseOrderBy.util';
+import { buildKeysetPaginationFilter } from '@/object-record/record-show/utils/buildKeysetPaginationFilter';
+import { extractOrderByFieldNames } from '@/object-record/record-show/utils/extractOrderByFieldNames';
+import { reverseOrderBy } from '@/object-record/record-show/utils/reverseOrderBy';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useQueryVariablesFromParentView } from '@/views/hooks/useQueryVariablesFromParentView';

@@ -3,7 +3,7 @@ import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import {
   type ResolvedOrderByField,
   resolveOrderByFields,
-} from '@/object-record/record-show/utils/resolveOrderByFields.util';
+} from '@/object-record/record-show/utils/resolveOrderByFields';
 
 const getFieldValue = (
   record: Record<string, unknown>,
