@@ -54,7 +54,10 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
     );
   }
 
-  if (belongsToTwentyStandardApp(flatFieldMetadataToDelete) || flatFieldMetadataToDelete.isSystem) {
+  if (
+    belongsToTwentyStandardApp(flatFieldMetadataToDelete) ||
+    flatFieldMetadataToDelete.isSystem
+  ) {
     throw new FieldMetadataException(
       `Cannot delete standard field "${flatFieldMetadataToDelete.name}"`,
       FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
