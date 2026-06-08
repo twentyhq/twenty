@@ -11,7 +11,10 @@ import {
   type IconComponent,
 } from 'twenty-ui-deprecated/display';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { v4 as uuidV4 } from 'uuid';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import {

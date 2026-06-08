@@ -9,10 +9,17 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
-import { Avatar, H2Title, IconChevronRight } from 'twenty-ui-deprecated/display';
+import {
+  Avatar,
+  H2Title,
+  IconChevronRight,
+} from 'twenty-ui-deprecated/display';
 import { SearchInput } from 'twenty-ui-deprecated/input';
 import { Section } from 'twenty-ui-deprecated/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { type UsageOperationType } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 

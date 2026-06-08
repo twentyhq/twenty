@@ -1,6 +1,9 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';

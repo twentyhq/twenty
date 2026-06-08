@@ -10,7 +10,11 @@ import { t } from '@lingui/core/macro';
 import { useCallback, useContext } from 'react';
 import { type ExtendedFileUIPart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { AvatarOrIcon, Chip, ChipVariant } from 'twenty-ui-deprecated/components';
+import {
+  AvatarOrIcon,
+  Chip,
+  ChipVariant,
+} from 'twenty-ui-deprecated/components';
 import { type IconComponent, IconX } from 'twenty-ui-deprecated/display';
 import { Loader } from 'twenty-ui-deprecated/feedback';
 import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';

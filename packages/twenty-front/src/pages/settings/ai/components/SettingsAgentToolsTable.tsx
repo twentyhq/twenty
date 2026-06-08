@@ -9,7 +9,10 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui-deprecated/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { SettingsToolIcon } from '~/pages/settings/ai/components/SettingsToolIcon';
 import {
   SettingsToolTableRow,

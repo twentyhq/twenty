@@ -5,7 +5,10 @@ import { useContext } from 'react';
 import { CalendarEventRow } from '@/activities/calendar/components/CalendarEventRow';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { CardContent } from 'twenty-ui-deprecated/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { type TimelineCalendarEvent } from '~/generated/graphql';
 
 type CalendarDayCardContentProps = {

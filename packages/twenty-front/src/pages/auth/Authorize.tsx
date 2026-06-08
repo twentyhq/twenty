@@ -17,7 +17,10 @@ import {
   IconUserCircle,
 } from 'twenty-ui-deprecated/display';
 import { ModalContent } from 'twenty-ui-deprecated/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import {
   AuthorizeAppDocument,
   FindApplicationRegistrationByClientIdDocument,

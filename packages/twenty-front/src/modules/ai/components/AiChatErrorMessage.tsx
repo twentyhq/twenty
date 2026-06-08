@@ -5,7 +5,10 @@ import { IconAlertCircle } from 'twenty-ui-deprecated/display';
 import { useContext } from 'react';
 
 import { type AiChatError } from '@/ai/types/AiChatError';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 const StyledErrorContainer = styled.div`

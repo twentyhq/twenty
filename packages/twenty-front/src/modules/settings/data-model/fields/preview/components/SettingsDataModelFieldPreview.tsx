@@ -13,7 +13,10 @@ import { SettingsDataModelSetLabelIdentifierRecordEffect } from '@/settings/data
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
 import { useIcons } from 'twenty-ui-deprecated/display';
 import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsDataModelFieldPreviewProps = {

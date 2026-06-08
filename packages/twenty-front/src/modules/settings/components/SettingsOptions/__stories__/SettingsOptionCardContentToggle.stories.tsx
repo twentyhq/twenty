@@ -2,7 +2,12 @@ import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsO
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { IconBell, IconLock, IconRobot, IconUsers } from 'twenty-ui-deprecated/display';
+import {
+  IconBell,
+  IconLock,
+  IconRobot,
+  IconUsers,
+} from 'twenty-ui-deprecated/display';
 import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 
 const StyledContainer = styled.div`

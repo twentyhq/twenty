@@ -13,7 +13,10 @@ import { IconCopy } from 'twenty-ui-deprecated/display';
 import { Loader } from 'twenty-ui-deprecated/feedback';
 import { MainButton } from 'twenty-ui-deprecated/input';
 import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 

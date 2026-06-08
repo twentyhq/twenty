@@ -12,7 +12,10 @@ import {
   TintedIconTile,
 } from 'twenty-ui-deprecated/display';
 import { type ThemeColor } from 'twenty-ui-deprecated/theme';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledIconChevronDownWrapper = styled.div<{
   disabled?: boolean;

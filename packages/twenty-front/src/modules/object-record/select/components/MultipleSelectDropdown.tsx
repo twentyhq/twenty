@@ -12,7 +12,10 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { Avatar } from 'twenty-ui-deprecated/display';
-import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui-deprecated/navigation';
+import {
+  MenuItem,
+  MenuItemMultiSelectAvatar,
+} from 'twenty-ui-deprecated/navigation';
 
 export const MultipleSelectDropdown = ({
   selectableListId,

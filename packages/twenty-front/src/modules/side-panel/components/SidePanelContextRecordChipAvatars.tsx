@@ -5,7 +5,10 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { Avatar } from 'twenty-ui-deprecated/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 const StyledIconWrapper = styled.div<{ withIconBackground?: boolean }>`
   align-items: center;
   background: ${({ withIconBackground }) =>

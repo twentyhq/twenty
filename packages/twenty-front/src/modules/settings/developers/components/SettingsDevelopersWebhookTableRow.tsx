@@ -9,7 +9,10 @@ import {
   OverflowingTextWithTooltip,
 } from 'twenty-ui-deprecated/display';
 import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { type Webhook } from '~/generated-metadata/graphql';
 
 const StyledIconChevronRightContainer = styled.span`

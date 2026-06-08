@@ -5,8 +5,16 @@ import { type BackgroundMockCompany } from '@/sign-in-background-mock/constants/
 import { BACKGROUND_MOCK_COLUMN_WIDTHS } from '@/sign-in-background-mock/constants/BackgroundMockColumnWidths';
 import { BACKGROUND_MOCK_TABLE_DIMENSIONS } from '@/sign-in-background-mock/constants/BackgroundMockTableDimensions';
 import { Avatar, IconLink } from 'twenty-ui-deprecated/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
-import { Chip, ChipAccent, ChipSize, ChipVariant } from 'twenty-ui-deprecated/components';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
+import {
+  Chip,
+  ChipAccent,
+  ChipSize,
+  ChipVariant,
+} from 'twenty-ui-deprecated/components';
 import { Checkbox } from 'twenty-ui-deprecated/input';
 import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
 

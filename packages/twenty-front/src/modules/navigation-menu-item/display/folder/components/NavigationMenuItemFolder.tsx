@@ -1,7 +1,14 @@
 import { Suspense, lazy, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, IconChevronRight, useIcons } from 'twenty-ui-deprecated/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  IconChevronDown,
+  IconChevronRight,
+  useIcons,
+} from 'twenty-ui-deprecated/display';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { useIsMobile } from 'twenty-ui-deprecated/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 

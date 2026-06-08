@@ -13,10 +13,16 @@ import {
   IconVariable,
   IconX,
 } from 'twenty-ui-deprecated/display';
-import { AnimatedLightIconButton, LightIconButton } from 'twenty-ui-deprecated/input';
+import {
+  AnimatedLightIconButton,
+  LightIconButton,
+} from 'twenty-ui-deprecated/input';
 import { AnimatedExpandableContainer } from 'twenty-ui-deprecated/layout';
 import { MenuItem } from 'twenty-ui-deprecated/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { WorkflowOutputFieldTypeSelector } from './WorkflowOutputFieldTypeSelector';
 type WorkflowOutputSchemaBuilderProps = {
   fields: OutputSchemaField[];

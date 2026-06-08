@@ -7,7 +7,10 @@ import {
   IconChevronDown,
   TintedIconTile,
 } from 'twenty-ui-deprecated/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledViewPicker = styled.div`
   align-items: center;

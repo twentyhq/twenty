@@ -6,7 +6,10 @@ import { JsonDisplay } from '@/ui/field/display/components/JsonDisplay';
 import { ExpandedFieldDisplay } from '@/ui/layout/expandable-list/components/ExpandedFieldDisplay';
 import { type JsonValue } from 'type-fest';
 import { isDefined } from 'twenty-shared/utils';
-import { isTwoFirstDepths, JsonTree } from 'twenty-ui-deprecated/json-visualizer';
+import {
+  isTwoFirstDepths,
+  JsonTree,
+} from 'twenty-ui-deprecated/json-visualizer';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 

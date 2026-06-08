@@ -1,5 +1,8 @@
 import { Avatar } from 'twenty-ui-deprecated/display';
-import { MenuItemSelectAvatar, UndecoratedLink } from 'twenty-ui-deprecated/navigation';
+import {
+  MenuItemSelectAvatar,
+  UndecoratedLink,
+} from 'twenty-ui-deprecated/navigation';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';

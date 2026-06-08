@@ -9,7 +9,10 @@ import { type SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/Sprea
 import { getFieldOptions } from '@/spreadsheet-import/utils/getFieldOptions';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { Tag, type TagColor } from 'twenty-ui-deprecated/components';
 import { IconChevronDown } from 'twenty-ui-deprecated/display';
 import { type SelectOption } from 'twenty-ui-deprecated/input';

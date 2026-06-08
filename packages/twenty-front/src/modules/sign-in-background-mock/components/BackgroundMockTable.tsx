@@ -12,7 +12,10 @@ import {
   useIcons,
 } from 'twenty-ui-deprecated/display';
 import { Checkbox } from 'twenty-ui-deprecated/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledTableWrapper = styled.div`
   display: flex;

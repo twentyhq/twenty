@@ -6,7 +6,10 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { ColorSample } from 'twenty-ui-deprecated/display';
 import { MenuItemSelect } from 'twenty-ui-deprecated/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { type ThemeColor } from 'twenty-ui-deprecated/theme';
 type ChartColorGradientOptionProps = {
   colorOption: {

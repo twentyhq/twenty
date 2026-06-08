@@ -6,7 +6,10 @@ import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconPaint } from 'twenty-ui-deprecated/display';
 import { GRAY_SCALE_LIGHT } from 'twenty-ui-deprecated/theme';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 import { LayoutCustomizationBarMenuDropdown } from '@/layout-customization/components/LayoutCustomizationBarMenuDropdown';
 import { LayoutCustomizationBarResetConfirmationModal } from '@/layout-customization/components/LayoutCustomizationBarResetConfirmationModal';

@@ -10,7 +10,10 @@ import { CommandMenuComponentInstanceContext } from '@/command-menu/states/conte
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui-deprecated/testing';
+import {
+  ComponentDecorator,
+  RouterDecorator,
+} from 'twenty-ui-deprecated/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';

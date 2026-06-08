@@ -14,7 +14,10 @@ import { type DropResult } from '@hello-pangea/dnd';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconEyeOff, useIcons } from 'twenty-ui-deprecated/display';
-import { MenuItemDraggable, MenuItemNavigate } from 'twenty-ui-deprecated/navigation';
+import {
+  MenuItemDraggable,
+  MenuItemNavigate,
+} from 'twenty-ui-deprecated/navigation';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 type RecordTableFieldsDropdownVisibleFieldsContentProps = {

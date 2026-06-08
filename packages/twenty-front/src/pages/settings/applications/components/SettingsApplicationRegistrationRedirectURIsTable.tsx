@@ -6,7 +6,10 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { IconX, OverflowingTextWithTooltip } from 'twenty-ui-deprecated/display';
+import {
+  IconX,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui-deprecated/display';
 import { IconButton } from 'twenty-ui-deprecated/input';
 
 type SettingsApplicationRegistrationRedirectURIsTableProps = {

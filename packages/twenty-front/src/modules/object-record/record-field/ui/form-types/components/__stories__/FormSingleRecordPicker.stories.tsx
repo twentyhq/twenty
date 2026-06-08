@@ -2,7 +2,10 @@ import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-typ
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui-deprecated/testing';
+import {
+  ComponentDecorator,
+  RouterDecorator,
+} from 'twenty-ui-deprecated/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';

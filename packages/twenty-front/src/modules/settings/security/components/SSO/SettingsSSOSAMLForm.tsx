@@ -18,7 +18,10 @@ import {
 } from 'twenty-ui-deprecated/display';
 import { Button } from 'twenty-ui-deprecated/input';
 import { Section } from 'twenty-ui-deprecated/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 

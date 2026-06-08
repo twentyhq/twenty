@@ -9,7 +9,10 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 export type SidePanelListProps = {
   selectableItemIds: string[];

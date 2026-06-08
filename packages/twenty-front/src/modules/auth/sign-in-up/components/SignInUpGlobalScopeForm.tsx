@@ -4,7 +4,10 @@ import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUr
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
-import { ClickToActionLink, UndecoratedLink } from 'twenty-ui-deprecated/navigation';
+import {
+  ClickToActionLink,
+  UndecoratedLink,
+} from 'twenty-ui-deprecated/navigation';
 
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/SignInUpWithCredentials';
@@ -30,7 +33,10 @@ import {
   IconChevronRight,
   IconPlus,
 } from 'twenty-ui-deprecated/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 

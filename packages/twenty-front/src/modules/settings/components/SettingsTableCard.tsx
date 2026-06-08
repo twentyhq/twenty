@@ -8,7 +8,10 @@ import {
   type IconComponent,
 } from 'twenty-ui-deprecated/display';
 import { Card } from 'twenty-ui-deprecated/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 export type TableItem = {
   Icon?: IconComponent;

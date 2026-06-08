@@ -15,7 +15,10 @@ import {
   useIcons,
   type IconComponent,
 } from 'twenty-ui-deprecated/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 type ApplicationInfo = {
   name: string;

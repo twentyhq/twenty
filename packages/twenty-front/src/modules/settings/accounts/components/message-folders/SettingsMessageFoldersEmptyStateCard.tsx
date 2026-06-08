@@ -3,7 +3,10 @@ import { t } from '@lingui/core/macro';
 import { IconFolder } from 'twenty-ui-deprecated/display';
 import { Section } from 'twenty-ui-deprecated/layout';
 import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledEmptyState = styled.div`
   align-items: center;

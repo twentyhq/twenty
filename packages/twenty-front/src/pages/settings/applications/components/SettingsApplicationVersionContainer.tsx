@@ -5,7 +5,11 @@ import { SettingsAdminVersionDisplay } from '@/settings/admin-panel/components/S
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCircleDot, IconStatusChange, IconUpload } from 'twenty-ui-deprecated/display';
+import {
+  IconCircleDot,
+  IconStatusChange,
+  IconUpload,
+} from 'twenty-ui-deprecated/display';
 import { Button } from 'twenty-ui-deprecated/input';
 import {
   ApplicationRegistrationSourceType,

@@ -11,7 +11,10 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useMemo, useState } from 'react';
 import { IconEyeOff, IconPlus } from 'twenty-ui-deprecated/display';
 import { Button, SearchInput } from 'twenty-ui-deprecated/input';
-import { MenuItemToggle, UndecoratedLink } from 'twenty-ui-deprecated/navigation';
+import {
+  MenuItemToggle,
+  UndecoratedLink,
+} from 'twenty-ui-deprecated/navigation';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { isNonEmptyString } from '@sniptt/guards';

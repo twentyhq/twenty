@@ -5,7 +5,10 @@ import { SettingsListSkeletonCard } from '@/settings/components/SettingsListSkel
 
 import { type IconComponent, IconPlus } from 'twenty-ui-deprecated/display';
 import { Card, CardFooter } from 'twenty-ui-deprecated/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { SettingsListItemCardContent } from './SettingsListItemCardContent';
 
 const StyledFooterContainer = styled.div`

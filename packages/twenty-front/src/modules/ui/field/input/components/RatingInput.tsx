@@ -6,7 +6,10 @@ import { useClearField } from '@/object-record/record-field/ui/hooks/useClearFie
 import { RATING_VALUES } from 'twenty-shared/constants';
 import { type FieldRatingValue } from 'twenty-shared/types';
 import { IconTwentyStarFilled } from 'twenty-ui-deprecated/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;

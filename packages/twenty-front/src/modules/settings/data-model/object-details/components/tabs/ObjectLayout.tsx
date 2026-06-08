@@ -4,10 +4,17 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title, IconLayoutDashboard, IconReload } from 'twenty-ui-deprecated/display';
+import {
+  H2Title,
+  IconLayoutDashboard,
+  IconReload,
+} from 'twenty-ui-deprecated/display';
 import { Button } from 'twenty-ui-deprecated/input';
 import { Section } from 'twenty-ui-deprecated/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';

@@ -24,7 +24,10 @@ import {
 } from 'twenty-ui-deprecated/display';
 import { Button } from 'twenty-ui-deprecated/input';
 import { Section } from 'twenty-ui-deprecated/layout';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
 
 type TabKey =

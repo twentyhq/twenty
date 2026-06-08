@@ -31,7 +31,10 @@ import {
 import { SearchInput } from 'twenty-ui-deprecated/input';
 import { Card, Section } from 'twenty-ui-deprecated/layout';
 import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { GetAiSystemPromptPreviewDocument } from '~/generated-metadata/graphql';
 import { useSettingsAiModelsActions } from '~/pages/settings/ai/hooks/useSettingsAiModelsActions';
 import { formatNumber } from '~/utils/format/formatNumber';

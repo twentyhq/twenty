@@ -4,7 +4,10 @@ import { useContext } from 'react';
 import { type EmailAttachment } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconUpload } from 'twenty-ui-deprecated/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 import { useUploadEmailAttachment } from '@/activities/emails/hooks/useUploadEmailAttachment';
 import { AttachmentChip } from '@/file/components/AttachmentChip';

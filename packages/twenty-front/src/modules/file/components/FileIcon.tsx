@@ -6,7 +6,10 @@ import { styled } from '@linaria/react';
 import { type FileCategory } from 'twenty-shared/types';
 import { AvatarOrIcon } from 'twenty-ui-deprecated/components';
 import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 type FileIconSize = 'small' | 'medium';
 

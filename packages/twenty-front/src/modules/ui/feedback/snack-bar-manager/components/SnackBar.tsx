@@ -17,7 +17,10 @@ import {
   IconSquareRoundedCheck,
   IconX,
 } from 'twenty-ui-deprecated/display';
-import { ProgressBar, useProgressAnimation } from 'twenty-ui-deprecated/feedback';
+import {
+  ProgressBar,
+  useProgressAnimation,
+} from 'twenty-ui-deprecated/feedback';
 import { LightButton, LightIconButton } from 'twenty-ui-deprecated/input';
 import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
 import {

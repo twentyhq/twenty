@@ -11,7 +11,10 @@ import {
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
 } from 'twenty-ui-deprecated/navigation';
-import { themeCssVariables, ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import {
+  themeCssVariables,
+  ThemeContext,
+} from 'twenty-ui-deprecated/theme-constants';
 const StyledTextContainer = styled.div`
   align-items: center;
   display: flex;

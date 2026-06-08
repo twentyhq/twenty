@@ -23,7 +23,10 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { IconX } from 'twenty-ui-deprecated/display';
 import { IconButton } from 'twenty-ui-deprecated/input';
 import { useIsMobile } from 'twenty-ui-deprecated/utilities';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledInputContainer = styled.div<{ isMobile: boolean }>`
   align-items: center;

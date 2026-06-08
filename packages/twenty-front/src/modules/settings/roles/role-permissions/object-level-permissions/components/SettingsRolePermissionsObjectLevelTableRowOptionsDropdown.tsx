@@ -4,7 +4,11 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
-import { IconDotsVertical, IconPencil, IconTrash } from 'twenty-ui-deprecated/display';
+import {
+  IconDotsVertical,
+  IconPencil,
+  IconTrash,
+} from 'twenty-ui-deprecated/display';
 import { IconButton } from 'twenty-ui-deprecated/input';
 import { MenuItem, UndecoratedLink } from 'twenty-ui-deprecated/navigation';
 

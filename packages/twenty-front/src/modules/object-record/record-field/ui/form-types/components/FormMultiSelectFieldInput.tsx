@@ -25,7 +25,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { VisibilityHidden } from 'twenty-ui-deprecated/accessibility';
 import { IconChevronDown } from 'twenty-ui-deprecated/display';
 import { type SelectOption } from 'twenty-ui-deprecated/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 type FormMultiSelectFieldInputProps = {
   label?: string;

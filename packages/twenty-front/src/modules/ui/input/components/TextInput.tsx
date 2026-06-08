@@ -14,11 +14,18 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { type IconComponent, IconEye, IconEyeOff } from 'twenty-ui-deprecated/display';
+import {
+  type IconComponent,
+  IconEye,
+  IconEyeOff,
+} from 'twenty-ui-deprecated/display';
 import { AutogrowWrapper } from 'twenty-ui-deprecated/utilities';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
   box-sizing: border-box;
   display: inline-flex;

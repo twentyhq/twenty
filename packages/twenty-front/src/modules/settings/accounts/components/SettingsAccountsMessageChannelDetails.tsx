@@ -7,7 +7,11 @@ import {
   MessageChannelType,
   type MessageFolderImportPolicy,
 } from 'twenty-shared/types';
-import { H2Title, IconBriefcase, IconUsers } from 'twenty-ui-deprecated/display';
+import {
+  H2Title,
+  IconBriefcase,
+  IconUsers,
+} from 'twenty-ui-deprecated/display';
 import { Card, Section } from 'twenty-ui-deprecated/layout';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 

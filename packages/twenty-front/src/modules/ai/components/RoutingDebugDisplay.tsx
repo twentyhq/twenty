@@ -4,7 +4,10 @@ import { useContext, useState } from 'react';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui-deprecated/display';
 import { JsonTree } from 'twenty-ui-deprecated/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui-deprecated/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 import { useLingui } from '@lingui/react/macro';
 import { type DataMessagePart } from 'twenty-shared/ai';

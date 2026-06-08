@@ -15,7 +15,10 @@ import {
 } from 'twenty-ui-deprecated/display';
 import { CodeEditor, LightIconButton } from 'twenty-ui-deprecated/input';
 import { AnimatedExpandableContainer } from 'twenty-ui-deprecated/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContainer = styled.div`

@@ -10,7 +10,11 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactElement, useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { H2Title, type IconComponent, IconKey } from 'twenty-ui-deprecated/display';
+import {
+  H2Title,
+  type IconComponent,
+  IconKey,
+} from 'twenty-ui-deprecated/display';
 import { Section } from 'twenty-ui-deprecated/layout';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { IdentityProviderType } from '~/generated-metadata/graphql';

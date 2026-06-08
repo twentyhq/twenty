@@ -2,7 +2,11 @@ import { type FieldActorValue } from '@/object-record/record-field/ui/types/Fiel
 
 import { t } from '@lingui/core/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { AvatarOrIcon, Chip, ChipVariant } from 'twenty-ui-deprecated/components';
+import {
+  AvatarOrIcon,
+  Chip,
+  ChipVariant,
+} from 'twenty-ui-deprecated/components';
 import {
   IconApi,
   IconCalendar,

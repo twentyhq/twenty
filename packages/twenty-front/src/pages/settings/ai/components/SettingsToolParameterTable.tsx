@@ -22,7 +22,10 @@ import {
 } from 'twenty-ui-deprecated/display';
 import { Button } from 'twenty-ui-deprecated/input';
 import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 type SchemaProperty = {
   type?: string;

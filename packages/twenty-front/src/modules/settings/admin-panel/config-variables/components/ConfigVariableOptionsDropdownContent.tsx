@@ -10,7 +10,11 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { t } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { IconChevronLeft, IconEye, IconEyeOff } from 'twenty-ui-deprecated/display';
+import {
+  IconChevronLeft,
+  IconEye,
+  IconEyeOff,
+} from 'twenty-ui-deprecated/display';
 import { MenuItem, MenuItemSelectTag } from 'twenty-ui-deprecated/navigation';
 import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';

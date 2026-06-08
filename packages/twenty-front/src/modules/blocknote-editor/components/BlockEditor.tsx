@@ -17,7 +17,10 @@ import {
 } from '@/blocknote-editor/components/CustomSlashMenu';
 import { useMentionMenu } from '@/mention/hooks/useMentionMenu';
 import { IconX } from 'twenty-ui-deprecated/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 interface BlockEditorProps {
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor;

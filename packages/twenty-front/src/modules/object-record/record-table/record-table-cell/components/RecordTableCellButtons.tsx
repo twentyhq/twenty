@@ -1,7 +1,10 @@
 import { styled } from '@linaria/react';
 import { type IconComponent } from 'twenty-ui-deprecated/display';
 import { LightIconButtonGroup } from 'twenty-ui-deprecated/input';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { AnimatedContainer } from 'twenty-ui-deprecated/utilities';
 
 const StyledButtonContainer = styled.div`

@@ -12,7 +12,10 @@ import {
   useIcons,
 } from 'twenty-ui-deprecated/display';
 import { LightIconButton } from 'twenty-ui-deprecated/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { useIsMobile } from 'twenty-ui-deprecated/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 

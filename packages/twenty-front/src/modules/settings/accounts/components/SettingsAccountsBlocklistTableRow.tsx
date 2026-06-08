@@ -3,7 +3,10 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { IconButton } from 'twenty-ui-deprecated/input';
-import { IconX, OverflowingTextWithTooltip } from 'twenty-ui-deprecated/display';
+import {
+  IconX,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui-deprecated/display';
 
 type SettingsAccountsBlocklistTableRowProps = {
   blocklistItem: BlocklistItem;

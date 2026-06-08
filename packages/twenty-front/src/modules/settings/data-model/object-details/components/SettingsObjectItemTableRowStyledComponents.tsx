@@ -1,6 +1,9 @@
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { styled } from '@linaria/react';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import React from 'react';
 
 export const SETTINGS_OBJECT_TABLE_COLUMN_WIDTH = '98.7px';

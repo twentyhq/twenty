@@ -22,7 +22,10 @@ import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
 import { IconGoogle, IconMicrosoft } from 'twenty-ui-deprecated/display';
 import { MainButton } from 'twenty-ui-deprecated/input';
 import { ClickToActionLink } from 'twenty-ui-deprecated/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { useMutation } from '@apollo/client/react';
 import {
   CalendarChannelVisibility,

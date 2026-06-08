@@ -24,7 +24,11 @@ import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipVariant } from 'twenty-ui-deprecated/components';
 import { IconEye, IconEyeOff } from 'twenty-ui-deprecated/display';
-import { Checkbox, CheckboxVariant, LightIconButton } from 'twenty-ui-deprecated/input';
+import {
+  Checkbox,
+  CheckboxVariant,
+  LightIconButton,
+} from 'twenty-ui-deprecated/input';
 
 const StyledCompactIconContainer = styled.div`
   align-items: center;

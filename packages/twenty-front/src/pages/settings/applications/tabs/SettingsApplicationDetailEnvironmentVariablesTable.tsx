@@ -10,7 +10,10 @@ import {
   TooltipDelay,
 } from 'twenty-ui-deprecated/display';
 import { Section } from 'twenty-ui-deprecated/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import { type ApplicationVariable } from '~/generated-metadata/graphql';
 

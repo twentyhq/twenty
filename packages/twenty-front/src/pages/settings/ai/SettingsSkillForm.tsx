@@ -29,7 +29,10 @@ import {
 } from 'twenty-ui-deprecated/display';
 import { Button } from 'twenty-ui-deprecated/input';
 import { Card, Section } from 'twenty-ui-deprecated/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { useMutation, useQuery } from '@apollo/client/react';
 import {
   ActivateSkillDocument,

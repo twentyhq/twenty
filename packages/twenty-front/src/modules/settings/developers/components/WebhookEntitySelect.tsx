@@ -27,7 +27,10 @@ import {
 } from 'twenty-ui-deprecated/display';
 import { type SelectOption } from 'twenty-ui-deprecated/input';
 import { MenuItemSelect } from 'twenty-ui-deprecated/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const WEBHOOK_ENTITY_DROPDOWN_ID = 'webhook-entity-select';
 

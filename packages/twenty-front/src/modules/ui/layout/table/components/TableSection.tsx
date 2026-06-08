@@ -1,8 +1,15 @@
 import { styled } from '@linaria/react';
 import { type ReactNode, useContext, useState } from 'react';
 import { TableBody } from './TableBody';
-import { IconChevronDown, IconChevronUp, Label } from 'twenty-ui-deprecated/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  IconChevronDown,
+  IconChevronUp,
+  Label,
+} from 'twenty-ui-deprecated/display';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 type TableSectionProps = {
   children: ReactNode;

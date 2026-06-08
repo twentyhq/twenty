@@ -18,7 +18,11 @@ import {
   TooltipDelay,
 } from 'twenty-ui-deprecated/display';
 import { Button } from 'twenty-ui-deprecated/input';
-import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui-deprecated/layout';
+import {
+  Section,
+  SectionAlignment,
+  SectionFontColor,
+} from 'twenty-ui-deprecated/layout';
 import {
   type ApplicationRegistration,
   DeleteApplicationRegistrationDocument,

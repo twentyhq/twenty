@@ -9,7 +9,10 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconPlus } from 'twenty-ui-deprecated/display';
 import { Button } from 'twenty-ui-deprecated/input';
 import { Section } from 'twenty-ui-deprecated/layout';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledButtonContainer = styled.div`
   display: flex;

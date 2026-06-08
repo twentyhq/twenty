@@ -7,7 +7,10 @@ import { motion } from 'framer-motion';
 import { useContext } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StyledText } from 'twenty-ui-deprecated/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledFullWidthMotionDiv = styled(motion.div)`
   width: 100%;

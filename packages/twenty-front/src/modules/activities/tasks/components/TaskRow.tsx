@@ -14,9 +14,15 @@ import { StopPropagationContainer } from '@/object-record/record-board/record-bo
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
 import { useContext } from 'react';
-import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui-deprecated/display';
+import {
+  IconCalendar,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui-deprecated/display';
 import { Checkbox, CheckboxShape } from 'twenty-ui-deprecated/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
 
 const StyledTaskBody = styled.div`

@@ -8,7 +8,10 @@ import {
   IconTrendingDown,
   IconTrendingUp,
 } from 'twenty-ui-deprecated/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 type GraphWidgetAggregateChartProps = {
   value: string | number;
   trendPercentage?: number;

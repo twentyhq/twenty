@@ -4,7 +4,10 @@ import { useMemo } from 'react';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
-import { IconCircleOff, type IconComponentProps } from 'twenty-ui-deprecated/display';
+import {
+  IconCircleOff,
+  type IconComponentProps,
+} from 'twenty-ui-deprecated/display';
 import { type SelectOption } from 'twenty-ui-deprecated/input';
 
 export const FormCountrySelectInput = ({

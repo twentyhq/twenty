@@ -1,7 +1,10 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { Logo } from '@/auth/components/Logo';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui-deprecated/testing';
+import {
+  ComponentDecorator,
+  RouterDecorator,
+} from 'twenty-ui-deprecated/testing';
 
 const logoUrl = 'https://picsum.photos/192/192';
 

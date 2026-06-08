@@ -22,7 +22,11 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconLockOpen, IconSettings, IconUserPlus } from 'twenty-ui-deprecated/display';
+import {
+  IconLockOpen,
+  IconSettings,
+  IconUserPlus,
+} from 'twenty-ui-deprecated/display';
 
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getDirtyFields } from '~/utils/getDirtyFields';

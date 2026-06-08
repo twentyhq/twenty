@@ -24,7 +24,10 @@ import {
   MenuItemSelectColor,
 } from 'twenty-ui-deprecated/navigation';
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { MAIN_COLOR_NAMES } from 'twenty-ui-deprecated/theme';
 
 const useColorLabels = (): ColorLabels => ({

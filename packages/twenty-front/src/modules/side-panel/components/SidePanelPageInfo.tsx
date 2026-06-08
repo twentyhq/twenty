@@ -22,7 +22,10 @@ import { NavigationMenuItemType, SidePanelPages } from 'twenty-shared/types';
 
 import { type SidePanelContextChipProps } from '@/side-panel/components/SidePanelContextChip';
 import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 const StyledPageTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.sm};

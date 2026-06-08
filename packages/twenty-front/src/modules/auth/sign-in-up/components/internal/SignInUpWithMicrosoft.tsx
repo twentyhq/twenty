@@ -9,7 +9,10 @@ import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { HorizontalSeparator, IconMicrosoft } from 'twenty-ui-deprecated/display';
+import {
+  HorizontalSeparator,
+  IconMicrosoft,
+} from 'twenty-ui-deprecated/display';
 import { MainButton } from 'twenty-ui-deprecated/input';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';

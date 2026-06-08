@@ -1,7 +1,10 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { SettingsApiKeysFieldItemTableRow } from '@/settings/developers/components/SettingsApiKeysFieldItemTableRow';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui-deprecated/testing';
+import {
+  ComponentDecorator,
+  RouterDecorator,
+} from 'twenty-ui-deprecated/testing';
 
 const meta: Meta<typeof SettingsApiKeysFieldItemTableRow> = {
   title: 'Modules/Settings/Developers/ApiKeys/SettingsApiKeysFieldItemTableRow',

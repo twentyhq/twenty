@@ -15,7 +15,10 @@ import { useContext, useMemo, useState } from 'react';
 
 import { IconEye, IconSearch, useIcons } from 'twenty-ui-deprecated/display';
 import { Card } from 'twenty-ui-deprecated/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 type SettingsObjectSearchSectionProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;

@@ -12,7 +12,10 @@ import {
   type IconComponent,
   IconDotsVertical,
 } from 'twenty-ui-deprecated/display';
-import { LightIconButton, type LightIconButtonProps } from 'twenty-ui-deprecated/input';
+import {
+  LightIconButton,
+  type LightIconButtonProps,
+} from 'twenty-ui-deprecated/input';
 import {
   type MenuItemAccent,
   MenuItemLeftContent,

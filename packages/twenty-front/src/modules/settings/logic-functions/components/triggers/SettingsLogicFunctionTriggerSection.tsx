@@ -3,7 +3,10 @@ import { useContext, type ReactNode } from 'react';
 import { H2Title } from 'twenty-ui-deprecated/display';
 import { Toggle } from 'twenty-ui/input';
 import { Section } from 'twenty-ui-deprecated/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledHeader = styled.div`
   align-items: center;

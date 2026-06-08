@@ -27,7 +27,10 @@ import {
 } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Avatar, IconLock, useIcons } from 'twenty-ui-deprecated/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export type NavigationDrawerItemForObjectMetadataItemProps = {

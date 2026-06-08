@@ -1,11 +1,19 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
-import { H2Title, IconKey, IconRobot, IconUsers } from 'twenty-ui-deprecated/display';
+import {
+  H2Title,
+  IconKey,
+  IconRobot,
+  IconUsers,
+} from 'twenty-ui-deprecated/display';
 import { Checkbox } from 'twenty-ui-deprecated/input';
 import { Section } from 'twenty-ui-deprecated/layout';
 import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
   align-items: center;

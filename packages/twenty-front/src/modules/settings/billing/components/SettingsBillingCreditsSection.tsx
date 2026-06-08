@@ -25,7 +25,10 @@ import { ProgressBar } from 'twenty-ui-deprecated/feedback';
 import { Button } from 'twenty-ui-deprecated/input';
 import { Section } from 'twenty-ui-deprecated/layout';
 import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { SubscriptionStatus } from '~/generated-metadata/graphql';
 
 const StyledCreditUsageFooterActions = styled.div`

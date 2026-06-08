@@ -1,4 +1,7 @@
-import { type IconComponent, type IconComponentProps } from 'twenty-ui-deprecated/display';
+import {
+  type IconComponent,
+  type IconComponentProps,
+} from 'twenty-ui-deprecated/display';
 
 import { ModelsDevProviderLogo } from '@/settings/admin-panel/ai/components/ModelsDevProviderLogo';
 

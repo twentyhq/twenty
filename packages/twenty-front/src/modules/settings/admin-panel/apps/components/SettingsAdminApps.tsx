@@ -14,11 +14,18 @@ import { t } from '@lingui/core/macro';
 import { type ReactNode, useContext, useState } from 'react';
 import { assertUnreachable, getSettingsPath } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
-import { H2Title, IconChevronRight, IconPinned } from 'twenty-ui-deprecated/display';
+import {
+  H2Title,
+  IconChevronRight,
+  IconPinned,
+} from 'twenty-ui-deprecated/display';
 import { SearchInput } from 'twenty-ui-deprecated/input';
 import { Section } from 'twenty-ui-deprecated/layout';
 import { MenuItemToggle } from 'twenty-ui-deprecated/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { Tag } from 'twenty-ui-deprecated/components';
 import {
   type ApplicationRegistrationFragmentFragment,

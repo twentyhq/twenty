@@ -12,7 +12,10 @@ import { useContext } from 'react';
 import { type Temporal } from 'temporal-polyfill';
 import { IconPlus } from 'twenty-ui-deprecated/display';
 import { Button } from 'twenty-ui-deprecated/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledButtonContainer = styled.div`
   height: auto;

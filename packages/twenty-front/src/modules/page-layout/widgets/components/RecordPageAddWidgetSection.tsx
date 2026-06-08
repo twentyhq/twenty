@@ -11,7 +11,10 @@ import {
   IconSquarePlus,
 } from 'twenty-ui-deprecated/display';
 import { MenuItem } from 'twenty-ui-deprecated/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledContainer = styled.div`
   border: 1px solid transparent;

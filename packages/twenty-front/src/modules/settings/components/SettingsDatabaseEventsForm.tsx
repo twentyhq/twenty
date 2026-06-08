@@ -4,7 +4,12 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconBox, IconNorthStar, IconPlus, IconTrash } from 'twenty-ui-deprecated/display';
+import {
+  IconBox,
+  IconNorthStar,
+  IconPlus,
+  IconTrash,
+} from 'twenty-ui-deprecated/display';
 import { IconButton, type SelectOption } from 'twenty-ui-deprecated/input';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 

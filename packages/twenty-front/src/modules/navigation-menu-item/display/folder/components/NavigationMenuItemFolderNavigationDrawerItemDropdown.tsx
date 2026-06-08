@@ -1,5 +1,9 @@
 import { useLingui } from '@lingui/react/macro';
-import { IconDotsVertical, IconPencil, IconTrash } from 'twenty-ui-deprecated/display';
+import {
+  IconDotsVertical,
+  IconPencil,
+  IconTrash,
+} from 'twenty-ui-deprecated/display';
 import { LightIconButton } from 'twenty-ui-deprecated/input';
 import { MenuItem } from 'twenty-ui-deprecated/navigation';
 

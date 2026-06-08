@@ -5,7 +5,12 @@ import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui-deprecated/components';
-import { H2Title, IconBolt, IconLock, IconRobot } from 'twenty-ui-deprecated/display';
+import {
+  H2Title,
+  IconBolt,
+  IconLock,
+  IconRobot,
+} from 'twenty-ui-deprecated/display';
 import { Card, Section } from 'twenty-ui-deprecated/layout';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 

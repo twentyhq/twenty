@@ -1,5 +1,10 @@
 import { styled } from '@linaria/react';
-import { H3Title, IconCheck, IconPencil, IconX } from 'twenty-ui-deprecated/display';
+import {
+  H3Title,
+  IconCheck,
+  IconPencil,
+  IconX,
+} from 'twenty-ui-deprecated/display';
 import { Button } from 'twenty-ui-deprecated/input';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';

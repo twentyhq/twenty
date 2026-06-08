@@ -1,7 +1,11 @@
 import { useContext, useId, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { styled } from '@linaria/react';
-import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui-deprecated/display';
+import {
+  AppTooltip,
+  TooltipDelay,
+  TooltipPosition,
+} from 'twenty-ui-deprecated/display';
 import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 import { isDefined, formatToShortNumber } from 'twenty-shared/utils';
 

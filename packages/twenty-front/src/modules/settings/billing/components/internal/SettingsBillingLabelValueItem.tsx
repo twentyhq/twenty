@@ -1,6 +1,10 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { AppTooltip, IconInfoCircle, TooltipDelay } from 'twenty-ui-deprecated/display';
+import {
+  AppTooltip,
+  IconInfoCircle,
+  TooltipDelay,
+} from 'twenty-ui-deprecated/display';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 type SettingsBillingLabelValueItemProps = {

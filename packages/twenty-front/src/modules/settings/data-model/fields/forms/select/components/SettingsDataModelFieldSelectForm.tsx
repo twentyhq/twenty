@@ -43,7 +43,10 @@ import {
 import { LightButton, LightIconButton } from 'twenty-ui-deprecated/input';
 import { CardContent, CardFooter } from 'twenty-ui-deprecated/layout';
 import { MenuItem } from 'twenty-ui-deprecated/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 
 export const settingsDataModelFieldSelectFormSchema = z.object({

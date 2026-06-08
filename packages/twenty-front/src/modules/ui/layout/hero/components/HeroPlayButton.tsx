@@ -1,7 +1,10 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { IconPlayerPlay } from 'twenty-ui-deprecated/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 type HeroPlayButtonProps = {
   onClick?: () => void;

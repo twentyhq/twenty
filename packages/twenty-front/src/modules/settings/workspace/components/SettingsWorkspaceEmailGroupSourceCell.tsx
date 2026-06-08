@@ -1,7 +1,10 @@
 import { styled } from '@linaria/react';
 
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
-import { IconMail, OverflowingTextWithTooltip } from 'twenty-ui-deprecated/display';
+import {
+  IconMail,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui-deprecated/display';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledNameCell = styled.div`

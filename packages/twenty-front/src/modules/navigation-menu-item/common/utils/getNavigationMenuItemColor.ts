@@ -6,7 +6,10 @@ import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_PAGE_LAYOUT } from '@/navigation-men
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { DEFAULT_THEME_COLOR_FALLBACK, type ThemeColor } from 'twenty-ui-deprecated/theme';
+import {
+  DEFAULT_THEME_COLOR_FALLBACK,
+  type ThemeColor,
+} from 'twenty-ui-deprecated/theme';
 
 export const getNavigationMenuItemColor = (
   navigationMenuItem: {

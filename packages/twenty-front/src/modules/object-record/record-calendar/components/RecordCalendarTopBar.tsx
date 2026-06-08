@@ -18,7 +18,10 @@ import {
   isDefined,
   turnPlainDateToShiftedDateInSystemTimeZone,
 } from 'twenty-shared/utils';
-import { IconChevronLeft, IconChevronRight } from 'twenty-ui-deprecated/display';
+import {
+  IconChevronLeft,
+  IconChevronRight,
+} from 'twenty-ui-deprecated/display';
 import { Button } from 'twenty-ui-deprecated/input';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 

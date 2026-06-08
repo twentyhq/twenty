@@ -22,7 +22,10 @@ import {
   InlineBanner,
 } from 'twenty-ui-deprecated/display';
 import { Card } from 'twenty-ui-deprecated/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { parseThemeColor } from 'twenty-ui-deprecated/utilities';
 import { type StringKeyOf } from 'type-fest';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';

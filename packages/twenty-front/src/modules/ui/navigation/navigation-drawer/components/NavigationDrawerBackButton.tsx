@@ -11,7 +11,10 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { useContext } from 'react';
 import { IconX } from 'twenty-ui-deprecated/display';
 import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 type NavigationDrawerBackButtonProps = {
   title: string;

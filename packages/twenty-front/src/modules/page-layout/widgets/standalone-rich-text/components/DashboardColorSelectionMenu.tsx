@@ -10,7 +10,10 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { themeCssVariables, ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import {
+  themeCssVariables,
+  ThemeContext,
+} from 'twenty-ui-deprecated/theme-constants';
 import { useContext } from 'react';
 
 const StyledColorMenuItem = styled.div`

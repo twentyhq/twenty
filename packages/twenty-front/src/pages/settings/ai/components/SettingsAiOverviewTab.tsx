@@ -20,7 +20,10 @@ import { Section } from 'twenty-ui-deprecated/layout';
 import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   FindWorkspaceAiStatsDocument,

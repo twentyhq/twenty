@@ -17,8 +17,14 @@ import { type AttachmentWithFile } from '@/activities/files/utils/filterAttachme
 import { FileIcon } from '@/file/components/FileIcon';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui-deprecated/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import {
+  IconCalendar,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui-deprecated/display';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { isNavigationModifierPressed } from 'twenty-ui-deprecated/utilities';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
