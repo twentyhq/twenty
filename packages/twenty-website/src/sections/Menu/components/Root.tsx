@@ -81,6 +81,7 @@ const MobileRightContainer = styled.div`
 type RootProps = {
   backgroundColor: string;
   children: ReactNode;
+  disableElevation?: boolean;
   enableBackdropBlur?: boolean;
   navItems: MenuNavItemType[];
   scrolledBackgroundColor?: string;
@@ -93,6 +94,7 @@ type RootProps = {
 export function Root({
   backgroundColor,
   children,
+  disableElevation = false,
   enableBackdropBlur = true,
   navItems,
   scrolledBackgroundColor,
@@ -150,7 +152,7 @@ export function Root({
       <ScrollTrackingEffect onScrollStateChange={handleScrollStateChange} />
       <StyledSection
         $enableBackdropBlur={enableBackdropBlur}
-        $isElevated={isScrolling || hasScrolled}
+        $isElevated={!disableElevation && (isScrolling || hasScrolled)}
         style={{ backgroundColor: resolvedBackgroundColor }}
       >
         <StyledContainer>

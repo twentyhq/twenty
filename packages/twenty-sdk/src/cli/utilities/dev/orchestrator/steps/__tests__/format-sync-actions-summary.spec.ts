@@ -10,6 +10,12 @@ describe('formatSyncActionsSummary', () => {
     ]);
   });
 
+  it('reports no changes when actions are missing from the response', () => {
+    expect(formatSyncActionsSummary(undefined)).toEqual([
+      { message: 'No metadata changes', status: 'info' },
+    ]);
+  });
+
   it('summarizes created, updated and deleted actions with their identifiers', () => {
     const events = formatSyncActionsSummary([
       {

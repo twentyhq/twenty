@@ -1,4 +1,1 @@
-export {
-  SettingsDatePickerInput as EventLogDatePickerInput,
-  type SettingsDatePickerInputProps as EventLogDatePickerInputProps,
-} from '@/settings/components/SettingsDatePickerInput';
+export { SettingsDatePickerInput as EventLogDatePickerInput } from '@/settings/components/SettingsDatePickerInput';

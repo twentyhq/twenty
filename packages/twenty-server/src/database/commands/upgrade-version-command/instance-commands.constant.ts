@@ -60,6 +60,7 @@ import { AddLogicFunctionExecutionModeFastInstanceCommand } from 'src/database/c
 import { EncryptNonSecretApplicationVariableSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1798400000000-encrypt-non-secret-application-variable';
 import { MigrateAiModelPreferencesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1799000010000-migrate-ai-model-preferences';
 import { DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-11/2-11-instance-command-fast-1780579070012-drop-is-custom-from-object-and-field-metadata';
+import { DropEmailingDomainDriverColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-11/2-11-instance-command-fast-1780926908000-drop-emailing-domain-driver-column';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -122,4 +123,5 @@ export const INSTANCE_COMMANDS = [
   MigrateAiModelPreferencesSlowInstanceCommand,
   EncryptNonSecretApplicationVariableSlowInstanceCommand,
   DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand,
+  DropEmailingDomainDriverColumnFastInstanceCommand,
 ];

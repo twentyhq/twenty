@@ -238,7 +238,6 @@ describe('WorkspaceEntityManager', () => {
         IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED: false,
         IS_SETTINGS_DISCOVERY_HERO_ENABLED: false,
         IS_CALL_RECORDING_ENABLED: false,
-        IS_WORKFLOW_RUN_STEP_LOGS_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
       eventEmitterService: {
