@@ -5,7 +5,10 @@ import { themeCssVariables as newThemeCssVariables } from '../themeCssVariables'
 import { themeCssVariables as oldThemeCssVariables } from '../../../../twenty-ui-deprecated/src/theme-constants/themeCssVariables';
 
 const NEW_DIR = resolve(__dirname, '..');
-const OLD_DIR = resolve(__dirname, '../../../../twenty-ui-deprecated/src/theme-constants');
+const OLD_DIR = resolve(
+  __dirname,
+  '../../../../twenty-ui-deprecated/src/theme-constants',
+);
 
 // Parse a theme CSS file into ordered [name, value] pairs, normalizing
 // whitespace so formatting differences (multi-line vs single-line values,

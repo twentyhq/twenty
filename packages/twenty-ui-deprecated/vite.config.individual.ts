@@ -26,7 +26,8 @@ export default defineConfig(() => {
       },
     },
     root: __dirname,
-    cacheDir: '../../node_modules/.vite/packages/twenty-ui-deprecated-individual',
+    cacheDir:
+      '../../node_modules/.vite/packages/twenty-ui-deprecated-individual',
     assetsInclude: ['src/**/*.svg'],
     plugins: [
       react(),
