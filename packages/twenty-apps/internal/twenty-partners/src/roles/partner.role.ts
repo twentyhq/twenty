@@ -5,14 +5,14 @@ import {
   PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
-// PLACEHOLDER role for external partners. Twenty has no row-level filtering yet,
-// so anyone assigned this role currently sees every record — do not hand out
-// until RLP ships and we can scope to records owned by the assigned user.
+// External partner self-service role. Scoped to the records owned by the assigned
+// workspace member via row-level predicates configured out-of-band (the app manifest
+// cannot ship RLS predicates). Run `yarn rls:configure` after install/reinstall.
 export default defineRole({
   universalIdentifier: PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Partner',
   description:
-    'PLACEHOLDER. External partner self-service role. Sees ALL Partner/Opportunity records today because Twenty does not yet support row-level record filtering. When RLP ships, scope these permissions to records owned by the assigned user. DO NOT assign to real external partners until then.',
+    'External partner self-service role. Sees and edits only its own Partner/Person/Company/Opportunity records via row-level permissions. Configure predicates with `yarn rls:configure` after install.',
   icon: 'IconBuildingStore',
   canBeAssignedToUsers: true,
   canUpdateAllSettings: false,
@@ -32,7 +32,7 @@ export default defineRole({
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
       canReadObjectRecords: true,
-      canUpdateObjectRecords: false,
+      canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     },
@@ -40,7 +40,7 @@ export default defineRole({
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
       canReadObjectRecords: true,
-      canUpdateObjectRecords: false,
+      canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     },
@@ -48,7 +48,7 @@ export default defineRole({
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
       canReadObjectRecords: true,
-      canUpdateObjectRecords: false,
+      canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     },
