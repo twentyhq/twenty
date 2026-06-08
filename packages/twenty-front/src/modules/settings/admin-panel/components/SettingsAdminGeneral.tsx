@@ -1,6 +1,7 @@
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
+import { SettingsAdminServerAdmins } from '@/settings/admin-panel/components/SettingsAdminServerAdmins';
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -77,13 +78,16 @@ export const SettingsAdminGeneral = () => {
   return (
     <>
       {canAccessFullAdminPanel && (
-        <Section>
-          <H2Title
-            title={t`About`}
-            description={t`Version of the application`}
-          />
-          <SettingsAdminVersionContainer />
-        </Section>
+        <>
+          <Section>
+            <H2Title
+              title={t`About`}
+              description={t`Version of the application`}
+            />
+            <SettingsAdminVersionContainer />
+          </Section>
+          <SettingsAdminServerAdmins />
+        </>
       )}
 
       {canImpersonate && (
