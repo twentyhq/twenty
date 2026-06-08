@@ -9,6 +9,7 @@ import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/u
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { styled } from '@linaria/react';
+import { useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
@@ -56,6 +57,8 @@ export const ObjectRecordShowPageBreadcrumb = ({
   objectLabel: string;
   labelIdentifierFieldMetadataItem?: FieldMetadataItem;
 }) => {
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
   const { loading } = useFindOneRecord({
     objectNameSingular,
     objectRecordId,
@@ -81,7 +84,11 @@ export const ObjectRecordShowPageBreadcrumb = ({
   const { navigateToIndexView, rankInView, totalCount } =
     useRecordShowPagePagination(objectNameSingular, objectRecordId);
 
-  if (loading) {
+  if (!loading && isInitialLoad) {
+    setIsInitialLoad(false);
+  }
+
+  if (isInitialLoad && loading) {
     return null;
   }
 
