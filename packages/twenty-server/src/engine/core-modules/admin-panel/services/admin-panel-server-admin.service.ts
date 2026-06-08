@@ -7,7 +7,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { ServerAdminAccessChangedEmail } from 'twenty-emails';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-import { Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { type ServerAdminDTO } from 'src/engine/core-modules/admin-panel/dtos/server-admin.dto';
@@ -24,6 +24,8 @@ import {
   TwoFactorAuthenticationExceptionCode,
 } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
+import { twoFactorAuthenticationMethodsValidator } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.validation';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
@@ -33,6 +35,8 @@ export class AdminPanelServerAdminService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
     private readonly emailService: EmailService,
@@ -53,6 +57,7 @@ export class AdminPanelServerAdminService {
   async updateServerAdminAccess({
     actor,
     actorWorkspaceId,
+    actorUserWorkspaceId,
     targetUserId,
     canAccessFullAdminPanel,
     canImpersonate,
@@ -60,6 +65,7 @@ export class AdminPanelServerAdminService {
   }: {
     actor: AuthContextUser;
     actorWorkspaceId: string;
+    actorUserWorkspaceId: string;
     targetUserId: string;
     canAccessFullAdminPanel?: boolean;
     canImpersonate?: boolean;
@@ -80,6 +86,7 @@ export class AdminPanelServerAdminService {
     await this.assertFreshStepUpAuthentication({
       actorUserId: actor.id,
       actorWorkspaceId,
+      actorUserWorkspaceId,
       otp,
     });
 
@@ -99,14 +106,34 @@ export class AdminPanelServerAdminService {
       targetUser.canAccessFullAdminPanel === true &&
       nextCanAccessFullAdminPanel === false;
 
-    if (isRevokingFullAdmin) {
-      await this.assertNotLastFullAdmin(targetUserId);
-    }
-
     targetUser.canAccessFullAdminPanel = nextCanAccessFullAdminPanel;
     targetUser.canImpersonate = nextCanImpersonate;
 
-    await this.userRepository.save(targetUser);
+    if (isRevokingFullAdmin) {
+      // Lock the current full-admin set inside a transaction so concurrent
+      // revocations are serialized and cannot together drop the instance to
+      // zero administrators (a count-then-save check would be a TOCTOU race).
+      await this.userRepository.manager.transaction(async (manager) => {
+        const lockedFullAdmins = await manager.find(UserEntity, {
+          where: { canAccessFullAdminPanel: true },
+          lock: { mode: 'pessimistic_write' },
+        });
+
+        const otherFullAdmins = lockedFullAdmins.filter(
+          (admin) => admin.id !== targetUserId,
+        );
+
+        if (otherFullAdmins.length === 0) {
+          throw new UserInputError(
+            'You cannot revoke admin panel access from the last server administrator.',
+          );
+        }
+
+        await manager.save(UserEntity, targetUser);
+      });
+    } else {
+      await this.userRepository.save(targetUser);
+    }
 
     // Auth guards and the JWT strategy read the cached user entity, so the
     // change must invalidate the cache to take effect without a restart.
@@ -130,15 +157,19 @@ export class AdminPanelServerAdminService {
 
   // Granting or revoking server-level admin rights is a high-privilege action,
   // so it requires a fresh second factor even though the caller is already an
-  // authenticated full admin. Mirrors the impersonation step-up: skipped in
-  // development to keep local workflows usable.
+  // authenticated full admin. This is a stronger gate than impersonation
+  // (which only checks that 2FA is enabled): we require an enrolled, verified
+  // 2FA method AND a fresh TOTP code. Skipped in development to keep local
+  // workflows usable.
   private async assertFreshStepUpAuthentication({
     actorUserId,
     actorWorkspaceId,
+    actorUserWorkspaceId,
     otp,
   }: {
     actorUserId: string;
     actorWorkspaceId: string;
+    actorUserWorkspaceId: string;
     otp?: string;
   }): Promise<void> {
     const isDevelopment =
@@ -154,6 +185,26 @@ export class AdminPanelServerAdminService {
       );
     }
 
+    const actorUserWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { id: actorUserWorkspaceId },
+      relations: ['twoFactorAuthenticationMethods'],
+    });
+
+    const hasVerifiedTwoFactor =
+      isDefined(actorUserWorkspace) &&
+      twoFactorAuthenticationMethodsValidator.areDefined(
+        actorUserWorkspace.twoFactorAuthenticationMethods,
+      ) &&
+      twoFactorAuthenticationMethodsValidator.areVerified(
+        actorUserWorkspace.twoFactorAuthenticationMethods,
+      );
+
+    if (!hasVerifiedTwoFactor) {
+      throw new UserInputError(
+        'Enable two-factor authentication before managing server administrators.',
+      );
+    }
+
     try {
       await this.twoFactorAuthenticationService.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
         actorUserId,
@@ -161,32 +212,16 @@ export class AdminPanelServerAdminService {
         actorWorkspaceId,
       );
     } catch (error) {
-      if (error instanceof TwoFactorAuthenticationException) {
-        if (error.code === TwoFactorAuthenticationExceptionCode.INVALID_OTP) {
-          throw new UserInputError('Invalid two-factor authentication code.');
-        }
-
-        throw new UserInputError(
-          'Enable two-factor authentication before managing server administrators.',
-        );
+      if (
+        error instanceof TwoFactorAuthenticationException &&
+        error.code === TwoFactorAuthenticationExceptionCode.INVALID_OTP
+      ) {
+        throw new UserInputError('Invalid two-factor authentication code.');
       }
 
+      // Surface genuine 2FA errors (e.g. a corrupted secret) instead of
+      // masking them as a configuration problem.
       throw error;
-    }
-  }
-
-  private async assertNotLastFullAdmin(targetUserId: string): Promise<void> {
-    const otherFullAdminsCount = await this.userRepository.count({
-      where: {
-        canAccessFullAdminPanel: true,
-        id: Not(targetUserId),
-      },
-    });
-
-    if (otherFullAdminsCount === 0) {
-      throw new UserInputError(
-        'You cannot revoke admin panel access from the last server administrator.',
-      );
     }
   }
 
@@ -217,32 +252,48 @@ export class AdminPanelServerAdminService {
         `${targetUser.firstName} ${targetUser.lastName}`.trim();
       const from = `${this.twentyConfigService.get('EMAIL_FROM_NAME')} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`;
 
+      // The email content depends only on the recipient's locale, so render
+      // once per distinct locale and reuse it for every recipient.
+      const recipientsByLocale = new Map<UserEntity['locale'], UserEntity[]>();
+
+      for (const recipient of recipientsById.values()) {
+        const locale = recipient.locale || SOURCE_LOCALE;
+        const localeRecipients = recipientsByLocale.get(locale) ?? [];
+
+        localeRecipients.push(recipient);
+        recipientsByLocale.set(locale, localeRecipients);
+      }
+
       await Promise.allSettled(
-        Array.from(recipientsById.values()).map(async (recipient) => {
-          const locale = recipient.locale || SOURCE_LOCALE;
+        Array.from(recipientsByLocale.entries()).map(
+          async ([locale, recipients]) => {
+            const emailTemplate = ServerAdminAccessChangedEmail({
+              actorName,
+              targetName,
+              targetEmail: targetUser.email,
+              canAccessFullAdminPanel: targetUser.canAccessFullAdminPanel,
+              canImpersonate: targetUser.canImpersonate,
+              locale,
+            });
+            const html = await render(emailTemplate, { pretty: true });
+            const text = await render(emailTemplate, { plainText: true });
 
-          const emailTemplate = ServerAdminAccessChangedEmail({
-            actorName,
-            targetName,
-            targetEmail: targetUser.email,
-            canAccessFullAdminPanel: targetUser.canAccessFullAdminPanel,
-            canImpersonate: targetUser.canImpersonate,
-            locale,
-          });
-          const html = await render(emailTemplate, { pretty: true });
-          const text = await render(emailTemplate, { plainText: true });
+            const i18n = this.i18nService.getI18nInstance(locale);
+            const subject = i18n._(msg`Server administrator access changed`);
 
-          const i18n = this.i18nService.getI18nInstance(locale);
-          const subject = i18n._(msg`Server administrator access changed`);
-
-          await this.emailService.send({
-            from,
-            to: recipient.email,
-            subject,
-            text,
-            html,
-          });
-        }),
+            await Promise.allSettled(
+              recipients.map((recipient) =>
+                this.emailService.send({
+                  from,
+                  to: recipient.email,
+                  subject,
+                  text,
+                  html,
+                }),
+              ),
+            );
+          },
+        ),
       );
     } catch (error) {
       this.logger.error(

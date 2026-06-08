@@ -67,9 +67,11 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UsageBreakdownItemDTO } from 'src/engine/core-modules/usage/dtos/usage-breakdown-item.dto';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
+import { NoImpersonationGuard } from 'src/engine/guards/no-impersonation.guard';
 import { ServerLevelImpersonateGuard } from 'src/engine/guards/server-level-impersonate.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
@@ -166,22 +168,27 @@ export class AdminPanelResolver {
     return this.adminStatisticsService.getTopWorkspaces(searchTerm);
   }
 
-  @UseGuards(AdminPanelGuard)
+  @UseGuards(AdminPanelGuard, NoImpersonationGuard)
   @Query(() => [ServerAdminDTO])
   async getServerAdmins(): Promise<ServerAdminDTO[]> {
     return this.adminServerAdminService.getServerAdmins();
   }
 
-  @UseGuards(AdminPanelGuard)
+  // NoImpersonationGuard prevents granting/revoking server admin rights from
+  // within an impersonation session, which would otherwise escalate an
+  // impersonator to a permanent full admin.
+  @UseGuards(AdminPanelGuard, NoImpersonationGuard)
   @Mutation(() => ServerAdminDTO)
   async updateServerAdminAccess(
     @Args() input: UpdateServerAdminAccessInput,
     @AuthUser() actor: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() actorUserWorkspaceId: string,
   ): Promise<ServerAdminDTO> {
     return this.adminServerAdminService.updateServerAdminAccess({
       actor,
       actorWorkspaceId: workspace.id,
+      actorUserWorkspaceId,
       targetUserId: input.userId,
       canAccessFullAdminPanel: input.canAccessFullAdminPanel,
       canImpersonate: input.canImpersonate,
