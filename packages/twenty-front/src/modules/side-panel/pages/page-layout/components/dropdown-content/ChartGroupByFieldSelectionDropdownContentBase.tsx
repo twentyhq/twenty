@@ -95,6 +95,8 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
         }
         return isFieldMetadataSupportedInGroupBy({
           type: field.type,
+          name: field.name,
+          isSystem: field.isSystem ?? false,
         });
       }),
     [sourceObjectMetadataItem?.fields, searchQuery],

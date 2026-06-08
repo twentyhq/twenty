@@ -2,25 +2,41 @@ import { FieldMetadataType } from '@/types';
 import { isFieldMetadataSupportedInGroupBy } from '@/utils/fieldMetadata/isFieldMetadataSupportedInGroupBy';
 
 describe('isFieldMetadataSupportedInGroupBy', () => {
-  it('returns false for non-groupable field types', () => {
+  it('returns false for field types not supported in groupBy', () => {
     expect(
       isFieldMetadataSupportedInGroupBy({
         type: FieldMetadataType.RAW_JSON,
+        name: 'rawJsonField',
+        isSystem: false,
       }),
     ).toBe(false);
     expect(
       isFieldMetadataSupportedInGroupBy({
         type: FieldMetadataType.TS_VECTOR,
+        name: 'tsVectorField',
+        isSystem: false,
       }),
     ).toBe(false);
     expect(
       isFieldMetadataSupportedInGroupBy({
         type: FieldMetadataType.FILES,
+        name: 'filesField',
+        isSystem: false,
       }),
     ).toBe(false);
     expect(
       isFieldMetadataSupportedInGroupBy({
         type: FieldMetadataType.POSITION,
+        name: 'position',
+        isSystem: false,
+      }),
+    ).toBe(false);
+    // Morph (polymorphic) relations can't be grouped by a single column
+    expect(
+      isFieldMetadataSupportedInGroupBy({
+        type: FieldMetadataType.MORPH_RELATION,
+        name: 'polymorphicHelper',
+        isSystem: false,
       }),
     ).toBe(false);
   });
@@ -29,6 +45,8 @@ describe('isFieldMetadataSupportedInGroupBy', () => {
     expect(
       isFieldMetadataSupportedInGroupBy({
         type: FieldMetadataType.SELECT,
+        name: 'stage',
+        isSystem: false,
       }),
     ).toBe(true);
   });
@@ -37,11 +55,15 @@ describe('isFieldMetadataSupportedInGroupBy', () => {
     expect(
       isFieldMetadataSupportedInGroupBy({
         type: FieldMetadataType.TEXT,
+        name: 'id',
+        isSystem: false,
       }),
     ).toBe(false);
     expect(
       isFieldMetadataSupportedInGroupBy({
-        type: FieldMetadataType.ACTOR,
+        type: FieldMetadataType.DATE_TIME,
+        name: 'deletedAt',
+        isSystem: false,
       }),
     ).toBe(false);
   });
@@ -50,6 +72,8 @@ describe('isFieldMetadataSupportedInGroupBy', () => {
     expect(
       isFieldMetadataSupportedInGroupBy({
         type: FieldMetadataType.TEXT,
+        name: 'customSystemField',
+        isSystem: true,
       }),
     ).toBe(false);
   });
@@ -58,11 +82,15 @@ describe('isFieldMetadataSupportedInGroupBy', () => {
     expect(
       isFieldMetadataSupportedInGroupBy({
         type: FieldMetadataType.DATE_TIME,
+        name: 'createdAt',
+        isSystem: true,
       }),
     ).toBe(true);
     expect(
       isFieldMetadataSupportedInGroupBy({
         type: FieldMetadataType.DATE_TIME,
+        name: 'updatedAt',
+        isSystem: true,
       }),
     ).toBe(true);
   });

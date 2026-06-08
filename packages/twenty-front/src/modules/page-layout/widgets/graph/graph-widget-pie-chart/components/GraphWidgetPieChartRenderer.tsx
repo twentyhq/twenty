@@ -18,11 +18,11 @@ import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 const GraphWidgetPieChart = lazy(() =>
-  import(
-    '@/page-layout/widgets/graph/graph-widget-pie-chart/components/GraphWidgetPieChart'
-  ).then((module) => ({
-    default: module.GraphWidgetPieChart,
-  })),
+  import('@/page-layout/widgets/graph/graph-widget-pie-chart/components/GraphWidgetPieChart').then(
+    (module) => ({
+      default: module.GraphWidgetPieChart,
+    }),
+  ),
 );
 
 export const GraphWidgetPieChartRenderer = () => {

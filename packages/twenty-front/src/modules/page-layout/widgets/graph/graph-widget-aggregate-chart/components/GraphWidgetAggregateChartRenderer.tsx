@@ -7,11 +7,11 @@ import { lazy, Suspense } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const GraphWidgetAggregateChart = lazy(() =>
-  import(
-    '@/page-layout/widgets/graph/graph-widget-aggregate-chart/components/GraphWidgetAggregateChart'
-  ).then((module) => ({
-    default: module.GraphWidgetAggregateChart,
-  })),
+  import('@/page-layout/widgets/graph/graph-widget-aggregate-chart/components/GraphWidgetAggregateChart').then(
+    (module) => ({
+      default: module.GraphWidgetAggregateChart,
+    }),
+  ),
 );
 
 export const GraphWidgetAggregateChartRenderer = () => {
