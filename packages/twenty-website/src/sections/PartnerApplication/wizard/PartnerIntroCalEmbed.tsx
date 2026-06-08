@@ -20,7 +20,12 @@ export function PartnerIntroCalEmbed({
   return (
     <Cal
       calLink={PARTNER_INTRO_CAL_LINK}
-      config={{ theme: 'dark', name, email, notes }}
+      config={{
+        theme: 'dark',
+        ...(name !== undefined ? { name } : {}),
+        ...(email !== undefined ? { email } : {}),
+        ...(notes !== undefined ? { notes } : {}),
+      }}
       style={{ minHeight: 520, overflow: 'auto', width: '100%' }}
     />
   );
