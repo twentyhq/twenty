@@ -59,6 +59,10 @@ export const RecordBoardQueryEffect = () => {
     recordBoardShouldFetchMoreComponentState,
   );
 
+  const setRecordBoardShouldFetchMore = useSetAtomComponentState(
+    recordBoardShouldFetchMoreComponentState,
+  );
+
   const { triggerRecordBoardFetchMore } = useTriggerRecordBoardFetchMore();
 
   const { triggerRecordBoardInitialQuery } =
@@ -88,7 +92,17 @@ export const RecordBoardQueryEffect = () => {
       recordBoardShouldFetchMore &&
       !queryIdentifierHasChanged
     ) {
-      triggerRecordBoardFetchMore();
+      // `recordBoardShouldFetchMore` latches true once the sentinel is in view
+      // (its rootMargin spans ~2 pages), and this effect only re-runs on the
+      // false->true edge. Reset it to false after each page that actually
+      // loaded records so the still-in-view observer re-asserts true and paging
+      // continues; it stops when the sentinel leaves view or a page returns no
+      // records (didFetchRecords === false).
+      triggerRecordBoardFetchMore().then((didFetchRecords) => {
+        if (didFetchRecords) {
+          setRecordBoardShouldFetchMore(false);
+        }
+      });
     }
   }, [
     triggerRecordBoardInitialQuery,
@@ -99,6 +113,7 @@ export const RecordBoardQueryEffect = () => {
     scrollWrapperHTMLElement,
     recordIndexRecordGroupsAreInInitialLoading,
     recordBoardShouldFetchMore,
+    setRecordBoardShouldFetchMore,
     triggerRecordBoardFetchMore,
     setLastRecordGroupIds,
     recordGroupIds,

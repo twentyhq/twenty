@@ -75,10 +75,12 @@ export const useTriggerRecordBoardFetchMore = () => {
     };
 
     if (isAlreadyFetchingMore) {
-      return;
+      return false;
     }
 
     store.set(recordBoardIsFetchingMore, true);
+
+    let didFetchRecords = false;
 
     const currentOffset = store.get(
       recordBoardCurrentGroupByQueryOffsetCallbackState,
@@ -99,7 +101,7 @@ export const useTriggerRecordBoardFetchMore = () => {
     if (!isNonEmptyArray(recordGroupValuesThatShouldBeFetched)) {
       cleanStateBeforeExit();
 
-      return;
+      return false;
     }
 
     const recordGroupOptionsFilter = computeRecordGroupOptionsFilter({
@@ -123,7 +125,7 @@ export const useTriggerRecordBoardFetchMore = () => {
     if (!isDefined(recordIndexGroupsRecordsGroupByLazyQueryResult)) {
       cleanStateBeforeExit();
 
-      return;
+      return false;
     }
 
     const queryFieldName =
@@ -135,7 +137,7 @@ export const useTriggerRecordBoardFetchMore = () => {
     if (!isDefined(groups)) {
       cleanStateBeforeExit();
 
-      return;
+      return false;
     }
 
     const sortedRecordGroupDefinitions = recordGroupDefinitions.toSorted(
@@ -188,6 +190,8 @@ export const useTriggerRecordBoardFetchMore = () => {
 
       upsertRecordsInStore({ partialRecords: newRecords });
 
+      didFetchRecords = true;
+
       if (newRecords.length < RECORD_BOARD_QUERY_PAGE_SIZE) {
         store.set(
           recordBoardShouldFetchMoreInColumnFamilyCallbackState(
@@ -210,6 +214,8 @@ export const useTriggerRecordBoardFetchMore = () => {
     }
 
     cleanStateBeforeExit();
+
+    return didFetchRecords;
   }, [
     store,
     objectMetadataItem,
