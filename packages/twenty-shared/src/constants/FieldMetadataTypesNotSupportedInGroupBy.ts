@@ -6,5 +6,4 @@ export const FIELD_METADATA_TYPES_NOT_SUPPORTED_IN_GROUP_BY =
     FieldMetadataType.RAW_JSON,
     FieldMetadataType.FILES,
     FieldMetadataType.POSITION,
-    FieldMetadataType.MORPH_RELATION,
   ]);

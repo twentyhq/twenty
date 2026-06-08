@@ -94,7 +94,7 @@ export const GraphWidgetPieChartRenderer = () => {
   }
 
   if (isDefined(error)) {
-    return <PageLayoutWidgetErrorDisplay widgetId={widget.id} />;
+    return <PageLayoutWidgetErrorDisplay widgetId={widget.id} error={error} />;
   }
 
   return (

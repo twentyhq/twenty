@@ -1,3 +1,5 @@
+import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
+
 import { type ChartFilters } from '@/side-panel/pages/page-layout/types/ChartFilters';
 import { dropChartRecordFiltersWithDeletedFields } from '@/side-panel/pages/page-layout/utils/dropChartRecordFiltersWithDeletedFields';
 
@@ -9,7 +11,11 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
         { id: 'filter-2', fieldMetadataId: 'deleted-field' },
       ],
       recordFilterGroups: [
-        { id: 'root', parentRecordFilterGroupId: undefined },
+        {
+          id: 'root',
+          parentRecordFilterGroupId: undefined,
+          logicalOperator: RecordFilterGroupLogicalOperator.AND,
+        },
       ],
     } as ChartFilters;
 
@@ -27,7 +33,11 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
     const chartFilters: ChartFilters = {
       recordFilters: [],
       recordFilterGroups: [
-        { id: 'root', parentRecordFilterGroupId: undefined },
+        {
+          id: 'root',
+          parentRecordFilterGroupId: undefined,
+          logicalOperator: RecordFilterGroupLogicalOperator.AND,
+        },
       ],
     } as ChartFilters;
 
@@ -37,7 +47,11 @@ describe('dropChartRecordFiltersWithDeletedFields', () => {
     });
 
     expect(result.recordFilterGroups).toEqual([
-      { id: 'root', parentRecordFilterGroupId: undefined },
+      {
+        id: 'root',
+        parentRecordFilterGroupId: undefined,
+        logicalOperator: RecordFilterGroupLogicalOperator.AND,
+      },
     ]);
   });
 

@@ -1,4 +1,4 @@
-import { FieldMetadataType } from '@/types';
+import { FieldMetadataType, RelationType } from '@/types';
 import { isFieldMetadataSupportedInGroupBy } from '@/utils/fieldMetadata/isFieldMetadataSupportedInGroupBy';
 
 describe('isFieldMetadataSupportedInGroupBy', () => {
@@ -31,14 +31,6 @@ describe('isFieldMetadataSupportedInGroupBy', () => {
         isSystem: false,
       }),
     ).toBe(false);
-    // Morph (polymorphic) relations can't be grouped by a single column
-    expect(
-      isFieldMetadataSupportedInGroupBy({
-        type: FieldMetadataType.MORPH_RELATION,
-        name: 'polymorphicHelper',
-        isSystem: false,
-      }),
-    ).toBe(false);
   });
 
   it('returns true for regular field types', () => {
@@ -47,6 +39,46 @@ describe('isFieldMetadataSupportedInGroupBy', () => {
         type: FieldMetadataType.SELECT,
         name: 'stage',
         isSystem: false,
+      }),
+    ).toBe(true);
+  });
+
+  it('returns false for ONE_TO_MANY relation fields', () => {
+    // ONE_TO_MANY relations keep their foreign key on the target object, so
+    // there is no column on this object to group by.
+    expect(
+      isFieldMetadataSupportedInGroupBy({
+        type: FieldMetadataType.MORPH_RELATION,
+        name: 'polymorphicHelperRockets',
+        isSystem: false,
+        relationType: RelationType.ONE_TO_MANY,
+      }),
+    ).toBe(false);
+    expect(
+      isFieldMetadataSupportedInGroupBy({
+        type: FieldMetadataType.RELATION,
+        name: 'opportunities',
+        isSystem: false,
+        relationType: RelationType.ONE_TO_MANY,
+      }),
+    ).toBe(false);
+  });
+
+  it('returns true for MANY_TO_ONE relation fields', () => {
+    expect(
+      isFieldMetadataSupportedInGroupBy({
+        type: FieldMetadataType.MORPH_RELATION,
+        name: 'polymorphicOwnerRocket',
+        isSystem: false,
+        relationType: RelationType.MANY_TO_ONE,
+      }),
+    ).toBe(true);
+    expect(
+      isFieldMetadataSupportedInGroupBy({
+        type: FieldMetadataType.RELATION,
+        name: 'company',
+        isSystem: false,
+        relationType: RelationType.MANY_TO_ONE,
       }),
     ).toBe(true);
   });
