@@ -9,7 +9,7 @@ import {
 } from 'twenty-ui-deprecated/theme-constants';
 import { ModalBackdrop } from 'twenty-ui-deprecated/layout';
 import { LeftPanelSkeletonLoader } from '~/loading/components/LeftPanelSkeletonLoader';
-import { RightPanelSkeletonLoader } from '~/loading/components/RightPanelSkeletonLoader';
+import { PageContentSkeletonLoader } from '~/loading/components/PageContentSkeletonLoader';
 
 const StyledContainer = styled.div`
   background: ${themeCssVariables.background.noisy};
@@ -44,7 +44,7 @@ export const UserOrMetadataLoader = () => {
       <StyledLeftPanelWrapper>
         <LeftPanelSkeletonLoader />
       </StyledLeftPanelWrapper>
-      <RightPanelSkeletonLoader />
+      <PageContentSkeletonLoader />
     </StyledContainer>
   );
 };

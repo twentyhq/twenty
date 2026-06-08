@@ -11,23 +11,22 @@ import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
-type SettingsPageHeaderProps = {
-  links: BreadcrumbProps['links'];
+type PageCardHeaderProps = {
+  links?: BreadcrumbProps['links'];
+  breadcrumb?: ReactNode;
+  icon?: ReactNode;
   title?: ReactNode;
   tag?: ReactNode;
   actionButton?: ReactNode;
 };
 
-// minmax(0, 1fr) side tracks (not 1fr) let a long breadcrumb truncate instead of
-// pushing the centered title off its shared axis with the tabs and body.
 const StyledHeader = styled.div`
   align-items: center;
   background-color: ${themeCssVariables.background.secondary};
   border-bottom: 1px solid ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
-  display: grid;
+  display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   min-height: ${SIDE_PANEL_TOP_BAR_HEIGHT}px;
   padding: 0 ${themeCssVariables.spacing[3]};
   width: 100%;
@@ -36,7 +35,7 @@ const StyledHeader = styled.div`
 const StyledLeft = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing[1]};
+  gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
   overflow: hidden;
 `;
@@ -49,23 +48,25 @@ const StyledTitle = styled.div`
   font-weight: ${themeCssVariables.font.weight.semiBold};
   gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
-  text-align: center;
 `;
 
 const StyledRight = styled.div`
   align-items: center;
   display: flex;
+  flex: 1;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-end;
   min-width: 0;
 `;
 
-export const SettingsPageHeader = ({
+export const PageCardHeader = ({
   links,
+  breadcrumb,
+  icon,
   title,
   tag,
   actionButton,
-}: SettingsPageHeaderProps) => {
+}: PageCardHeaderProps) => {
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
 
@@ -75,12 +76,18 @@ export const SettingsPageHeader = ({
         {!isNavigationDrawerExpanded && (
           <NavigationDrawerCollapseButton direction="right" />
         )}
-        <Breadcrumb links={links} />
+        {isDefined(breadcrumb)
+          ? breadcrumb
+          : isDefined(links) && <Breadcrumb links={links} />}
+        {!isMobile &&
+          (isDefined(icon) || isDefined(title) || isDefined(tag)) && (
+            <StyledTitle>
+              {icon}
+              {isDefined(title) && title}
+              {tag}
+            </StyledTitle>
+          )}
       </StyledLeft>
-      <StyledTitle>
-        {!isMobile && isDefined(title) && title}
-        {!isMobile && tag}
-      </StyledTitle>
       <StyledRight>{actionButton}</StyledRight>
     </StyledHeader>
   );
