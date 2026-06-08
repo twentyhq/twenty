@@ -3,8 +3,6 @@ import {
     GraphQLInterfaceType,
     GraphQLObjectType,
     isObjectType,
-    isRequiredInputField,
-    isNonNullType,
 } from 'graphql'
 import { fieldComment, typeComment } from '../common/comment'
 import { RenderContext } from '../common/RenderContext'

@@ -41,6 +41,7 @@ type GeneratedClient = {
 type CreateClient = (options: {
   url?: string;
   fetch?: typeof globalThis.fetch;
+  batch?: boolean;
 }) => GeneratedClient;
 
 const jsonResponse = (body: unknown, status = 200) =>
@@ -133,5 +134,23 @@ describe('Generated client queries the API (vendored genql runtime)', () => {
     await expect(
       client.query({ person: { __args: { id: '1' }, id: true } }),
     ).rejects.toThrow();
+  });
+
+  it('rejects (does not hang) when a batched request fails', async () => {
+    const fetchMock = vi.fn(async () => {
+      throw new Error('network down');
+    });
+
+    const client = createClient({
+      url: 'https://example.test/graphql',
+      fetch: fetchMock as unknown as typeof globalThis.fetch,
+      // batch is the path where the runtime previously swallowed fetch errors,
+      // leaving the caller's promise unsettled.
+      batch: true,
+    });
+
+    await expect(
+      client.query({ person: { __args: { id: '1' }, id: true } }),
+    ).rejects.toThrow(/network down/);
   });
 });

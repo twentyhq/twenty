@@ -24,15 +24,12 @@ export const loadConfiguredSchema = async (
     ? lexicographicSortSchema(document)
     : document;
 
-  try {
+  // A schema without a Query root is still renderable (e.g. metadata-only),
+  // matching upstream genql behaviour, so only run full validation — which
+  // requires a Query root — when one is present. (Checking the root directly
+  // avoids depending on a specific graphql error-message string.)
+  if (schema.getQueryType()) {
     assertValidSchema(schema);
-  } catch (e) {
-    // A schema without a Query root is still renderable (e.g. metadata-only),
-    // matching upstream genql behaviour.
-    if (e && (e as Error).message === 'Query root type must be provided.') {
-      return schema;
-    }
-    throw e;
   }
 
   return schema;
