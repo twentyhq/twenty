@@ -55,6 +55,11 @@ export const FOOTER_DATA: FooterDataType = {
           external: false,
         },
         { label: msg`Terms and Conditions`, href: '/terms', external: false },
+        {
+          label: msg`Trust Center`,
+          href: 'https://trust.twenty.com',
+          external: true,
+        },
       ],
     },
     {
