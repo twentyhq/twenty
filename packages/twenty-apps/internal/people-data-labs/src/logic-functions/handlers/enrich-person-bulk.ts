@@ -1,9 +1,9 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-import { enrichPersonCore } from 'src/logic-functions/handlers/enrich-person.core';
+import { enrichPersonCore } from 'src/logic-functions/handlers/enrich-person';
 import { runBulkEnrichment } from 'src/logic-functions/utils/run-bulk-enrichment';
-import { type BulkEnrichInput } from 'src/types/bulk-enrich-input.type';
-import { type BulkEnrichResult } from 'src/types/bulk-enrich-result.type';
+import { type BulkEnrichInput } from 'src/types/bulk-enrich-input';
+import { type BulkEnrichResult } from 'src/types/bulk-enrich-result';
 
 export const enrichPersonBulkCore = ({
   input,

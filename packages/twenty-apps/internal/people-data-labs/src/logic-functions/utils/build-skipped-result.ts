@@ -1,4 +1,4 @@
-import { type EnrichResult } from 'src/types/enrich-result.type';
+import { type EnrichResult } from 'src/types/enrich-result';
 
 export const buildSkippedResult = (
   recordId: string,

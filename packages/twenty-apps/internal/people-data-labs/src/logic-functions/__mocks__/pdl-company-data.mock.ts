@@ -1,4 +1,4 @@
-import { type PdlCompanyData } from 'src/types/pdl-company-data.type';
+import { type PdlCompanyData } from 'src/types/pdl-company-data';
 
 export const PDL_COMPANY_DATA_MOCK: PdlCompanyData = {
   id: 'pdl-company-1',

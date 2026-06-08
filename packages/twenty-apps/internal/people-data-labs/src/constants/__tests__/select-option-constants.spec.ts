@@ -9,7 +9,7 @@ import { LOCATION_CONTINENT_OPTIONS } from 'src/constants/location-continent-opt
 import { MIC_EXCHANGE_OPTIONS } from 'src/constants/mic-exchange-options';
 import { SENIORITY_OPTIONS } from 'src/constants/seniority-options';
 import { SEX_OPTIONS } from 'src/constants/sex-options';
-import { type SelectOptionMeta } from 'src/types/select-option-meta.type';
+import { type SelectOptionMeta } from 'src/types/select-option-meta';
 
 import companyTypeField from 'src/fields/company/pdl-company-type.field';
 import locationContinentField from 'src/fields/company/pdl-location-continent.field';

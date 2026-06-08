@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { createCoreApiClientMock } from 'src/logic-functions/__mocks__/create-core-api-client-mock';
 import { seedEnrichmentWorkflow } from 'src/logic-functions/utils/seed-enrichment-workflow';
-import { type EnrichmentWorkflowSeed } from 'src/types/enrichment-workflow-seed.type';
+import { type EnrichmentWorkflowSeed } from 'src/types/enrichment-workflow-seed';
 
 const SEED: EnrichmentWorkflowSeed = {
   objectNameSingular: 'company',

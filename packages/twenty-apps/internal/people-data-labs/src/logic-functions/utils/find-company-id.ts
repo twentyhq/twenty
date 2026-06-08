@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { findCompanyIdByFilter } from 'src/logic-functions/utils/find-company-id-by-filter';
-import { type CompanyMatchKeys } from 'src/types/company-match-keys.type';
+import { type CompanyMatchKeys } from 'src/types/company-match-keys';
 import { isDefined } from 'src/utils/is-defined';
 
 export const findCompanyId = async (

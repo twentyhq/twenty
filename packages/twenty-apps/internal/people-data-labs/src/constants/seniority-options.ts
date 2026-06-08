@@ -1,4 +1,4 @@
-import { type SelectOptionMeta } from 'src/types/select-option-meta.type';
+import { type SelectOptionMeta } from 'src/types/select-option-meta';
 
 export const SENIORITY_OPTIONS: readonly SelectOptionMeta[] = [
   {

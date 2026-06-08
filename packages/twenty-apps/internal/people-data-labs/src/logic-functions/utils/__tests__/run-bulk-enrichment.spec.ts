@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { runBulkEnrichment } from 'src/logic-functions/utils/run-bulk-enrichment';
-import { type EnrichResult } from 'src/types/enrich-result.type';
+import { type EnrichResult } from 'src/types/enrich-result';
 
 const matched = (recordId: string): EnrichResult => ({
   success: true,

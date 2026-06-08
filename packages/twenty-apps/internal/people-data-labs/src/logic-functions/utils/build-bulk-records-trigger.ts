@@ -1,4 +1,4 @@
-import { type WorkflowBulkRecordsTrigger } from 'src/types/workflow-bulk-records-trigger.type';
+import { type WorkflowBulkRecordsTrigger } from 'src/types/workflow-bulk-records-trigger';
 
 export const buildBulkRecordsTrigger = ({
   objectNameSingular,

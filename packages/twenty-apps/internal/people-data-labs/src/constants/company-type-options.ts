@@ -1,4 +1,4 @@
-import { type SelectOptionMeta } from 'src/types/select-option-meta.type';
+import { type SelectOptionMeta } from 'src/types/select-option-meta';
 
 export const COMPANY_TYPE_OPTIONS: readonly SelectOptionMeta[] = [
   {

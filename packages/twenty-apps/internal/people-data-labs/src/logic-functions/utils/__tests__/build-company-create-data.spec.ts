@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { buildCompanyCreateData } from 'src/logic-functions/utils/build-company-create-data';
-import { type PdlPersonData } from 'src/types/pdl-person-data.type';
+import { type PdlPersonData } from 'src/types/pdl-person-data';
 
 describe('buildCompanyCreateData', () => {
   it('maps job_company_* onto Company standard and pdl fields', () => {

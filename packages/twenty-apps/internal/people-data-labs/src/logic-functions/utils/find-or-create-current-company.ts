@@ -4,7 +4,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { buildCompanyCreateData } from 'src/logic-functions/utils/build-company-create-data';
 import { buildCompanyMatchKeys } from 'src/logic-functions/utils/build-company-match-keys';
 import { findCompanyId } from 'src/logic-functions/utils/find-company-id';
-import { type PdlPersonData } from 'src/types/pdl-person-data.type';
+import { type PdlPersonData } from 'src/types/pdl-person-data';
 import { isDefined } from 'src/utils/is-defined';
 import { isUniqueViolationError } from 'src/utils/is-unique-violation-error';
 

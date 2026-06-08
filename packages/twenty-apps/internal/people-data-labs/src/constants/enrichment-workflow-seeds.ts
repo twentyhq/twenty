@@ -1,5 +1,5 @@
 import { PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers';
-import { type EnrichmentWorkflowSeed } from 'src/types/enrichment-workflow-seed.type';
+import { type EnrichmentWorkflowSeed } from 'src/types/enrichment-workflow-seed';
 
 const ENRICHMENT_ICON = 'IconSparkles';
 

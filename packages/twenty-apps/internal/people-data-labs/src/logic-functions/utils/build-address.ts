@@ -1,7 +1,7 @@
 import { toText } from 'src/logic-functions/utils/to-text';
 import { parseGeo } from 'src/logic-functions/utils/parse-geo';
-import { type AddressParts } from 'src/types/address-parts.type';
-import { type AddressValue } from 'src/types/address-value.type';
+import { type AddressParts } from 'src/types/address-parts';
+import { type AddressValue } from 'src/types/address-value';
 import { isDefined } from 'src/utils/is-defined';
 
 export const buildAddress = (parts: AddressParts): AddressValue | undefined => {

@@ -14,10 +14,10 @@ import { isEmptyLinks } from 'src/logic-functions/utils/is-empty-links';
 import { isEmptyText } from 'src/logic-functions/utils/is-empty-text';
 import { readCompany } from 'src/logic-functions/utils/read-company';
 import { enrichCompany } from 'src/logic-functions/utils/enrich-company';
-import { type EnrichInput } from 'src/types/enrich-input.type';
-import { type EnrichResult } from 'src/types/enrich-result.type';
-import { type PdlCompanyData } from 'src/types/pdl-company-data.type';
-import { type PdlCompanyEnrichParams } from 'src/types/pdl-company-enrich-params.type';
+import { type EnrichInput } from 'src/types/enrich-input';
+import { type EnrichResult } from 'src/types/enrich-result';
+import { type PdlCompanyData } from 'src/types/pdl-company-data';
+import { type PdlCompanyEnrichParams } from 'src/types/pdl-company-enrich-params';
 import { isDefined } from 'src/utils/is-defined';
 import { pruneUndefined } from 'src/utils/prune-undefined';
 

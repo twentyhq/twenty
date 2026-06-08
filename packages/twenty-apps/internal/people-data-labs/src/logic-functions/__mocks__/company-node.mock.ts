@@ -1,4 +1,4 @@
-import { type CompanyNode } from 'src/types/company-node.type';
+import { type CompanyNode } from 'src/types/company-node';
 
 export const COMPANY_NODE_MOCK: CompanyNode = {
   id: 'c1',

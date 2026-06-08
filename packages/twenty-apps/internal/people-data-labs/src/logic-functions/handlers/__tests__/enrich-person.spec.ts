@@ -4,9 +4,9 @@ import { createCoreApiClientMock } from 'src/logic-functions/__mocks__/create-co
 import { PERSON_NODE_MOCK } from 'src/logic-functions/__mocks__/person-node.mock';
 import { PdlInvalidInputError } from 'src/logic-functions/errors/pdl-invalid-input-error';
 import { PdlRecordNotFoundError } from 'src/logic-functions/errors/pdl-record-not-found-error';
-import { enrichPersonCore } from 'src/logic-functions/handlers/enrich-person.core';
+import { enrichPersonCore } from 'src/logic-functions/handlers/enrich-person';
 import { enrichPerson } from 'src/logic-functions/utils/enrich-person';
-import { type PersonNode } from 'src/types/person-node.type';
+import { type PersonNode } from 'src/types/person-node';
 
 vi.mock('src/logic-functions/utils/enrich-person', () => ({ enrichPerson: vi.fn() }));
 

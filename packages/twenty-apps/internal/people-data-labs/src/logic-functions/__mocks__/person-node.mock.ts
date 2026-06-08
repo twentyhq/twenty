@@ -1,4 +1,4 @@
-import { type PersonNode } from 'src/types/person-node.type';
+import { type PersonNode } from 'src/types/person-node';
 
 export const PERSON_NODE_MOCK: PersonNode = {
   id: 'p1',

@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createCoreApiClientMock } from 'src/logic-functions/__mocks__/create-core-api-client-mock';
-import { enrichPersonBulkCore } from 'src/logic-functions/handlers/enrich-person-bulk.core';
-import { enrichPersonCore } from 'src/logic-functions/handlers/enrich-person.core';
-import { type EnrichResult } from 'src/types/enrich-result.type';
+import { enrichPersonBulkCore } from 'src/logic-functions/handlers/enrich-person-bulk';
+import { enrichPersonCore } from 'src/logic-functions/handlers/enrich-person';
+import { type EnrichResult } from 'src/types/enrich-result';
 
-vi.mock('src/logic-functions/handlers/enrich-person.core', () => ({
+vi.mock('src/logic-functions/handlers/enrich-person', () => ({
   enrichPersonCore: vi.fn(),
 }));
 

@@ -1,7 +1,7 @@
 import { definePostInstallLogicFunction } from 'twenty-sdk/define';
 
 import { PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers';
-import { postInstallCore } from 'src/logic-functions/handlers/post-install.core';
+import { postInstallCore } from 'src/logic-functions/handlers/post-install';
 
 const handler = async () => {
   const { seededWorkflows } = await postInstallCore();

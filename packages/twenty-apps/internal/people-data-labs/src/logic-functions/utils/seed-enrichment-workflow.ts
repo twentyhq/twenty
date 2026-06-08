@@ -3,8 +3,8 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { buildBulkRecordsTrigger } from 'src/logic-functions/utils/build-bulk-records-trigger';
 import { buildLogicFunctionStep } from 'src/logic-functions/utils/build-logic-function-step';
 import { findExistingWorkflowId } from 'src/logic-functions/utils/find-existing-workflow-id';
-import { type EnrichmentWorkflowSeed } from 'src/types/enrichment-workflow-seed.type';
-import { type SeedEnrichmentWorkflowResult } from 'src/types/seed-enrichment-workflow-result.type';
+import { type EnrichmentWorkflowSeed } from 'src/types/enrichment-workflow-seed';
+import { type SeedEnrichmentWorkflowResult } from 'src/types/seed-enrichment-workflow-result';
 import { isDefined } from 'src/utils/is-defined';
 
 export const seedEnrichmentWorkflow = async ({

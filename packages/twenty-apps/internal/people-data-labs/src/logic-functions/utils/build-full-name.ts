@@ -1,5 +1,5 @@
 import { toText } from 'src/logic-functions/utils/to-text';
-import { type FullNameValue } from 'src/types/full-name-value.type';
+import { type FullNameValue } from 'src/types/full-name-value';
 import { isDefined } from 'src/utils/is-defined';
 
 const WHITESPACE_REGEX = /\s+/;

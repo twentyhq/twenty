@@ -1,8 +1,8 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers';
-import { enrichPersonBulkCore } from 'src/logic-functions/handlers/enrich-person-bulk.core';
-import { type BulkEnrichInput } from 'src/types/bulk-enrich-input.type';
+import { enrichPersonBulkCore } from 'src/logic-functions/handlers/enrich-person-bulk';
+import { type BulkEnrichInput } from 'src/types/bulk-enrich-input';
 
 const handler = (input: BulkEnrichInput) => enrichPersonBulkCore({ input });
 

@@ -1,4 +1,4 @@
-import { type EnrichStatus } from 'src/types/enrich-status.type';
+import { type EnrichStatus } from 'src/types/enrich-status';
 
 export type EnrichResult = {
   success: boolean;

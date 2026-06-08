@@ -1,5 +1,5 @@
 import { toText } from 'src/logic-functions/utils/to-text';
-import { type PhonesValue } from 'src/types/phones-value.type';
+import { type PhonesValue } from 'src/types/phones-value';
 import { isDefined } from 'src/utils/is-defined';
 
 export const buildPhones = (

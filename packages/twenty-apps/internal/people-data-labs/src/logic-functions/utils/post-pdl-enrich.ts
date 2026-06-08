@@ -1,7 +1,7 @@
 import { isNumber, isObject } from '@sniptt/guards';
 
 import { getPdlApiKey } from 'src/logic-functions/utils/get-pdl-api-key';
-import { type PdlEnrichResult } from 'src/types/pdl-enrich-result.type';
+import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
 
 const PDL_BASE_URL = 'https://api.peopledatalabs.com/v5';
 

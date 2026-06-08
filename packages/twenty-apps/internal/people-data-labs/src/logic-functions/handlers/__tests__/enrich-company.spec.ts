@@ -4,9 +4,9 @@ import { COMPANY_NODE_MOCK } from 'src/logic-functions/__mocks__/company-node.mo
 import { createCoreApiClientMock } from 'src/logic-functions/__mocks__/create-core-api-client-mock';
 import { PdlInvalidInputError } from 'src/logic-functions/errors/pdl-invalid-input-error';
 import { PdlRecordNotFoundError } from 'src/logic-functions/errors/pdl-record-not-found-error';
-import { enrichCompanyCore } from 'src/logic-functions/handlers/enrich-company.core';
+import { enrichCompanyCore } from 'src/logic-functions/handlers/enrich-company';
 import { enrichCompany } from 'src/logic-functions/utils/enrich-company';
-import { type CompanyNode } from 'src/types/company-node.type';
+import { type CompanyNode } from 'src/types/company-node';
 
 vi.mock('src/logic-functions/utils/enrich-company', () => ({ enrichCompany: vi.fn() }));
 

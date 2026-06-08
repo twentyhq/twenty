@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { buildCompanyMatchKeys } from 'src/logic-functions/utils/build-company-match-keys';
-import { type PdlPersonData } from 'src/types/pdl-person-data.type';
+import { type PdlPersonData } from 'src/types/pdl-person-data';
 
 describe('buildCompanyMatchKeys', () => {
   it('extracts and trims the company identifiers from PDL data', () => {

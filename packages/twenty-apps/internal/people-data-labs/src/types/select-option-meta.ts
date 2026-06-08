@@ -1,4 +1,4 @@
-import { type TagColor } from 'src/types/tag-color.type';
+import { type TagColor } from 'src/types/tag-color';
 
 export type SelectOptionMeta = {
   key: string;

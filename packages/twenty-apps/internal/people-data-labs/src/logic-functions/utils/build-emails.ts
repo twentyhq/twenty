@@ -1,7 +1,7 @@
 import { isNonEmptyArray } from '@sniptt/guards';
 
 import { toText } from 'src/logic-functions/utils/to-text';
-import { type EmailsValue } from 'src/types/emails-value.type';
+import { type EmailsValue } from 'src/types/emails-value';
 import { isDefined } from 'src/utils/is-defined';
 
 export const buildEmails = (

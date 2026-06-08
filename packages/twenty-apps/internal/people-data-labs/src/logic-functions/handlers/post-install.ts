@@ -4,8 +4,8 @@ import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { ENRICHMENT_WORKFLOW_SEEDS } from 'src/constants/enrichment-workflow-seeds';
 import { resolveLogicFunctionId } from 'src/logic-functions/utils/resolve-logic-function-id';
 import { seedEnrichmentWorkflow } from 'src/logic-functions/utils/seed-enrichment-workflow';
-import { type PostInstallResult } from 'src/types/post-install-result.type';
-import { type SeedEnrichmentWorkflowResult } from 'src/types/seed-enrichment-workflow-result.type';
+import { type PostInstallResult } from 'src/types/post-install-result';
+import { type SeedEnrichmentWorkflowResult } from 'src/types/seed-enrichment-workflow-result';
 import { isDefined } from 'src/utils/is-defined';
 
 export const postInstallCore = async ({

@@ -1,7 +1,7 @@
 import { extractRecordIds } from 'src/logic-functions/utils/extract-record-ids';
-import { type BulkEnrichInput } from 'src/types/bulk-enrich-input.type';
-import { type BulkEnrichResult } from 'src/types/bulk-enrich-result.type';
-import { type EnrichResult } from 'src/types/enrich-result.type';
+import { type BulkEnrichInput } from 'src/types/bulk-enrich-input';
+import { type BulkEnrichResult } from 'src/types/bulk-enrich-result';
+import { type EnrichResult } from 'src/types/enrich-result';
 
 const toErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);

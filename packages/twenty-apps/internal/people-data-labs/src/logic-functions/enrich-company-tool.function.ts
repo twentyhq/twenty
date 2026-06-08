@@ -1,8 +1,8 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers';
-import { enrichCompanyCore } from 'src/logic-functions/handlers/enrich-company.core';
-import { type EnrichInput } from 'src/types/enrich-input.type';
+import { enrichCompanyCore } from 'src/logic-functions/handlers/enrich-company';
+import { type EnrichInput } from 'src/types/enrich-input';
 
 const handler = (input: EnrichInput) => enrichCompanyCore(input);
 

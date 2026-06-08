@@ -2,7 +2,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { describe, expect, it, vi } from 'vitest';
 
 import { findOrCreateCurrentCompany } from 'src/logic-functions/utils/find-or-create-current-company';
-import { type PdlPersonData } from 'src/types/pdl-person-data.type';
+import { type PdlPersonData } from 'src/types/pdl-person-data';
 
 type CompanyQueryRequest = {
   companies: { __args: { filter: Record<string, unknown> } };

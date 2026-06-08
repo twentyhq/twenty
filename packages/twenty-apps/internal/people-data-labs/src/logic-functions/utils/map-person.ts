@@ -22,8 +22,8 @@ import { buildAllowedValues } from 'src/logic-functions/utils/build-allowed-valu
 import { pickMultiSelect } from 'src/logic-functions/utils/pick-multi-select';
 import { pickSelect } from 'src/logic-functions/utils/pick-select';
 import { salaryTransform } from 'src/logic-functions/utils/salary-transform';
-import { type MappedRecord } from 'src/types/mapped-record.type';
-import { type PdlPersonData } from 'src/types/pdl-person-data.type';
+import { type MappedRecord } from 'src/types/mapped-record';
+import { type PdlPersonData } from 'src/types/pdl-person-data';
 import { pruneUndefined } from 'src/utils/prune-undefined';
 
 const SENIORITY_VALUES = buildAllowedValues(SENIORITY_OPTIONS);

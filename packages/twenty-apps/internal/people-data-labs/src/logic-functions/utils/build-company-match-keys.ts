@@ -1,6 +1,6 @@
 import { toText } from 'src/logic-functions/utils/to-text';
-import { type CompanyMatchKeys } from 'src/types/company-match-keys.type';
-import { type PdlPersonData } from 'src/types/pdl-person-data.type';
+import { type CompanyMatchKeys } from 'src/types/company-match-keys';
+import { type PdlPersonData } from 'src/types/pdl-person-data';
 import { pruneUndefined } from 'src/utils/prune-undefined';
 
 export const buildCompanyMatchKeys = (data: PdlPersonData): CompanyMatchKeys =>

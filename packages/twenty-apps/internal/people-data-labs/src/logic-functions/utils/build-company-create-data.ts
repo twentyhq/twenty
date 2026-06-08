@@ -5,7 +5,7 @@ import { buildLinks } from 'src/logic-functions/utils/build-links';
 import { pickSelect } from 'src/logic-functions/utils/pick-select';
 import { sizeTransform } from 'src/logic-functions/utils/size-transform';
 import { toText } from 'src/logic-functions/utils/to-text';
-import { type PdlPersonData } from 'src/types/pdl-person-data.type';
+import { type PdlPersonData } from 'src/types/pdl-person-data';
 import { pruneUndefined } from 'src/utils/prune-undefined';
 
 const INDUSTRY_VALUES = buildAllowedValues(INDUSTRY_OPTIONS);

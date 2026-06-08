@@ -1,6 +1,6 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { type PersonNode } from 'src/types/person-node.type';
+import { type PersonNode } from 'src/types/person-node';
 
 export const readPerson = async (
   client: CoreApiClient,

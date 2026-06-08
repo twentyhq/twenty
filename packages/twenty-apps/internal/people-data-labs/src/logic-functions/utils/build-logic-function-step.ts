@@ -1,4 +1,4 @@
-import { type WorkflowLogicFunctionStep } from 'src/types/workflow-logic-function-step.type';
+import { type WorkflowLogicFunctionStep } from 'src/types/workflow-logic-function-step';
 
 export const buildLogicFunctionStep = ({
   id,

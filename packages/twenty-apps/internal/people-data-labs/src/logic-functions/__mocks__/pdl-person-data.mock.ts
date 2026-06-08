@@ -1,4 +1,4 @@
-import { type PdlPersonData } from 'src/types/pdl-person-data.type';
+import { type PdlPersonData } from 'src/types/pdl-person-data';
 
 export const PDL_PERSON_DATA_MOCK: PdlPersonData = {
   id: 'pdl-person-1',

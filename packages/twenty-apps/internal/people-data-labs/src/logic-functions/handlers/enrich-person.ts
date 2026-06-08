@@ -18,10 +18,10 @@ import { isEmptyPhones } from 'src/logic-functions/utils/is-empty-phones';
 import { isEmptyText } from 'src/logic-functions/utils/is-empty-text';
 import { readPerson } from 'src/logic-functions/utils/read-person';
 import { enrichPerson } from 'src/logic-functions/utils/enrich-person';
-import { type EnrichInput } from 'src/types/enrich-input.type';
-import { type EnrichResult } from 'src/types/enrich-result.type';
-import { type PdlPersonData } from 'src/types/pdl-person-data.type';
-import { type PdlPersonEnrichParams } from 'src/types/pdl-person-enrich-params.type';
+import { type EnrichInput } from 'src/types/enrich-input';
+import { type EnrichResult } from 'src/types/enrich-result';
+import { type PdlPersonData } from 'src/types/pdl-person-data';
+import { type PdlPersonEnrichParams } from 'src/types/pdl-person-enrich-params';
 import { isDefined } from 'src/utils/is-defined';
 import { pruneUndefined } from 'src/utils/prune-undefined';
 

@@ -1,6 +1,6 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { type CompanyNode } from 'src/types/company-node.type';
+import { type CompanyNode } from 'src/types/company-node';
 
 export const readCompany = async (
   client: CoreApiClient,

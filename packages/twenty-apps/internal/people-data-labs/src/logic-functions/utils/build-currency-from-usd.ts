@@ -1,6 +1,6 @@
 import { isNumber } from '@sniptt/guards';
 
-import { type CurrencyValue } from 'src/types/currency-value.type';
+import { type CurrencyValue } from 'src/types/currency-value';
 
 export const buildCurrencyFromUsd = (
   amount: unknown,

@@ -18,8 +18,8 @@ import { buildAllowedValues } from 'src/logic-functions/utils/build-allowed-valu
 import { pickMultiSelect } from 'src/logic-functions/utils/pick-multi-select';
 import { pickSelect } from 'src/logic-functions/utils/pick-select';
 import { sizeTransform } from 'src/logic-functions/utils/size-transform';
-import { type MappedRecord } from 'src/types/mapped-record.type';
-import { type PdlCompanyData } from 'src/types/pdl-company-data.type';
+import { type MappedRecord } from 'src/types/mapped-record';
+import { type PdlCompanyData } from 'src/types/pdl-company-data';
 import { pruneUndefined } from 'src/utils/prune-undefined';
 
 const INDUSTRY_VALUES = buildAllowedValues(INDUSTRY_OPTIONS);

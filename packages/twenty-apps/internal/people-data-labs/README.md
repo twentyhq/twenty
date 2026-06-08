@@ -51,7 +51,7 @@ the whole selection to one function call. The post-install resolves each functio
 runtime id from its `universalIdentifier` (via the metadata API), publishes the
 version (`activateWorkflowVersion`) so the record action appears, and is
 **idempotent** — it skips a workflow whose name already exists
-(`src/logic-functions/handlers/post-install.core.ts`).
+(`src/logic-functions/handlers/post-install.ts`).
 
 **Deferred to a later PR:** enrichment metering/billing, and auto-enrichment
 triggers (on-create event + cron backfill).
