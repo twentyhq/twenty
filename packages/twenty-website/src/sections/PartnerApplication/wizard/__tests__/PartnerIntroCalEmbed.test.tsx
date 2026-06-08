@@ -23,6 +23,7 @@ jest.mock('@calcom/embed-react', () => ({
       data-notes={props.config?.notes}
     />
   ),
+  getCalApi: jest.fn(async () => jest.fn()),
 }));
 
 import { PartnerIntroCalEmbed } from '@/sections/PartnerApplication/wizard/PartnerIntroCalEmbed';
