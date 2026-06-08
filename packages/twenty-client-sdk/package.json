@@ -48,11 +48,14 @@
     "dist"
   ],
   "dependencies": {
-    "@genql/cli": "^3.0.3",
+    "@genql/runtime": "^2.10.0",
     "esbuild": "^0.28.0",
-    "graphql": "^16.8.1"
+    "graphql": "^16.8.1",
+    "lodash": "^4.17.21",
+    "prettier": "^2.8.8"
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.15",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "tsc-alias": "^1.8.16",
     "twenty-shared": "workspace:*",
