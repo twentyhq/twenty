@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useEffect, useId, useState, type CSSProperties } from 'react';
 
 import { styled } from '@linaria/react';
 
@@ -91,6 +91,7 @@ const LineSvg = styled.svg`
 
 export function DashboardLineChart({ data }: { data: DashboardLineChart }) {
   const [drawn, setDrawn] = useState(false);
+  const gradientId = `dashboard-line-fill-${useId().replace(/:/g, '')}`;
 
   useEffect(() => {
     const task = createAnimationFrameLoop({
@@ -142,7 +143,7 @@ export function DashboardLineChart({ data }: { data: DashboardLineChart }) {
         >
           <defs>
             <linearGradient
-              id="dashboard-line-fill"
+              id={gradientId}
               x1="0"
               y1="0"
               x2="0"
@@ -155,7 +156,7 @@ export function DashboardLineChart({ data }: { data: DashboardLineChart }) {
           <path
             className="line-area"
             d={areaPath}
-            fill="url(#dashboard-line-fill)"
+            fill={`url(#${gradientId})`}
             style={{ opacity: drawn ? 1 : 0 }}
           />
           <path

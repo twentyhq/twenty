@@ -1,3 +1,5 @@
+import { useId } from 'react';
+
 import { styled } from '@linaria/react';
 
 import type {
@@ -90,6 +92,7 @@ export function WorkflowEdges({
   nodes: ReadonlyArray<WorkflowNodeDefinition>;
   plusNode?: { x: number; y: number };
 }) {
+  const arrowId = `workflow-arrow-${useId().replace(/:/g, '')}`;
   const completedEdge = edges.find((e) => e.type === 'loopRight');
   const completedSourceNode = completedEdge
     ? getWorkflowNodeById(nodes, completedEdge.from)
@@ -142,7 +145,7 @@ export function WorkflowEdges({
     <CanvasOverlay aria-hidden viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}>
       <defs>
         <marker
-          id="workflow-arrow"
+          id={arrowId}
           markerHeight="6"
           markerWidth="6"
           orient="auto"
@@ -165,7 +168,7 @@ export function WorkflowEdges({
           d={getWorkflowEdgePath({ edge, nodes })}
           fill="none"
           markerEnd={
-            edge.type === 'loopBack' ? undefined : 'url(#workflow-arrow)'
+            edge.type === 'loopBack' ? undefined : `url(#${arrowId})`
           }
           pathLength={1}
           stroke={WORKFLOW_PAGE_COLORS.arrowStroke}
