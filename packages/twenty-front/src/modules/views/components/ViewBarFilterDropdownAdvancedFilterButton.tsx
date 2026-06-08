@@ -23,10 +23,10 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Pill } from 'twenty-ui/components';
-import { IconFilter } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Pill } from 'twenty-ui-deprecated/components';
+import { IconFilter } from 'twenty-ui-deprecated/display';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { v4 } from 'uuid';
 
 const StyledPillContainer = styled.span`

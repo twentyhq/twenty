@@ -10,7 +10,7 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
 import { isFieldFiles } from '@/object-record/record-field/ui/types/guards/isFieldFiles';
-import { IconPencil, type IconComponent } from 'twenty-ui/display';
+import { IconPencil, type IconComponent } from 'twenty-ui-deprecated/display';
 
 export const getFieldButtonIcon = (
   fieldDefinition:

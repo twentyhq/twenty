@@ -1,7 +1,6 @@
 // Entry point for the individual/self-contained build (vite.config.individual.ts).
-// This re-exports all public modules so a single .mjs bundle contains
-// every component with internal deps bundled, while React
-// remain external for the consumer's bundler to resolve.
+// Re-exports all public modules so a single bundle contains every component with
+// internal deps bundled, while React stays external for the consumer's bundler.
 
 export * from './accessibility';
 export * from './components';

@@ -2,7 +2,7 @@ import { ChartAxisNameSelectionDropdownContent } from '@/side-panel/pages/page-l
 import { CHART_CONFIGURATION_SETTING_LABELS } from '@/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
 import { type ChartSettingsItem } from '@/side-panel/pages/page-layout/types/ChartSettingsGroup';
-import { IconGizmo } from 'twenty-ui/display';
+import { IconGizmo } from 'twenty-ui-deprecated/display';
 
 export const AXIS_NAME_SETTING: ChartSettingsItem = {
   isBoolean: false,

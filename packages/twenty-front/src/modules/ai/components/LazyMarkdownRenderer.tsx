@@ -19,7 +19,7 @@ import {
 } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { getSafeUrl, isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 
 const TextWithRecordLinks = ({ text }: { text: string }) => {
   const parts: React.ReactNode[] = [];

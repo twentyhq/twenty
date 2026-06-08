@@ -69,6 +69,8 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/operations/overview',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_PUBLISHING:
     '/developers/extend/apps/operations/publishing',
+  DEVELOPERS_EXTEND_APPS_OPERATIONS_SYNC_AND_RECOVERY:
+    '/developers/extend/apps/operations/sync-and-recovery',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_TESTING:
     '/developers/extend/apps/operations/testing',
   DEVELOPERS_EXTEND_OAUTH: '/developers/extend/oauth',

@@ -14,9 +14,9 @@ import {
   IconTrash,
   IconX,
   OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+} from 'twenty-ui-deprecated/display';
+import { LightIconButton } from 'twenty-ui-deprecated/input';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
 import type { ApplicationVariable } from '~/generated-metadata/graphql';
 
 const StyledEditModeTableRow = (
