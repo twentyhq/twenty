@@ -1,0 +1,29 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-9/2-9-workspace-command-1799000031000-backfill-message-standard-objects.command.ts
+  s_b8aa3ee71a096f::t_27adf3ce7e4374 11
+  s_b8aa3ee71a096f::t_9d6fc53349aa80 38-41,51-60
+  s_b8aa3ee71a096f::t_9f1e1b56feef1a 50,70
+  s_b8aa3ee71a096f::t_15af74e78b5835 138-158
+  s_b8aa3ee71a096f::t_e69411ae62d9d6 276
+  s_b8aa3ee71a096f::t_d155b4e40a6220 23,102,106,289,375
+  s_b8aa3ee71a096f::t_9b633ea700e0a4 312-315,325
+  s_b8aa3ee71a096f::t_85a999e00e8406 6
+  s_b8aa3ee71a096f::t_4c8a377190f5ff 2-5,12,14-22,24-37,42-49,61-69,71-85,104,109-111,122-137,159-172,213-275,277-288,290-297,299-304,306,316-324,328-374,377
+  s_b8aa3ee71a096f::t_13905b0d419edc 173-212
+  s_b8aa3ee71a096f::t_df5ca3ac2ec209 86-98
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "5049e2f794a5ea84cb69c95f67e5c996e131a03f",
+  "prompts": {},
+  "sessions": {
+    "s_b8aa3ee71a096f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "729455bc-eec3-4b99-bbf8-066fb4359921",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
