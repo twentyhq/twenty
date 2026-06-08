@@ -1,5 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
@@ -8,37 +10,32 @@ import {
   getFlatFieldMetadataMock,
   getStandardFlatFieldMetadataMock,
 } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
 
 const buildFlatFieldMetadataMaps = (
   fields: ReturnType<typeof getFlatFieldMetadataMock>[],
-) => ({
-  byUniversalIdentifier: Object.fromEntries(
-    fields.map((field) => [field.universalIdentifier, field]),
-  ),
-  universalIdentifierById: Object.fromEntries(
-    fields.map((field) => [field.id, field.universalIdentifier]),
-  ),
-  universalIdentifiersByApplicationId: {},
-});
+) =>
+  fields.reduce(
+    (maps, field) =>
+      addFlatEntityToFlatEntityMapsOrThrow({
+        flatEntity: field,
+        flatEntityMaps: maps,
+      }),
+    createEmptyFlatEntityMaps(),
+  );
 
-const buildFlatObjectMetadataMaps = (objectId: string) => ({
-  byUniversalIdentifier: {
-    [objectId]: {
-      id: objectId,
-      universalIdentifier: objectId,
-      fieldUniversalIdentifiers: [],
-    },
-  },
-  universalIdentifierById: { [objectId]: objectId },
-  universalIdentifiersByApplicationId: {},
-});
+const buildFlatObjectMetadataMaps = (objectId: string) => {
+  const flatObject = getFlatObjectMetadataMock({
+    universalIdentifier: objectId,
+    id: objectId,
+  });
 
-const buildEmptyFlatIndexMaps = () => ({
-  byUniversalIdentifier: {},
-  universalIdentifierById: {},
-  universalIdentifiersByApplicationId: {},
-});
+  return addFlatEntityToFlatEntityMapsOrThrow({
+    flatEntity: flatObject,
+    flatEntityMaps: createEmptyFlatEntityMaps(),
+  });
+};
 
 describe('fromDeleteFieldInputToFlatFieldMetadatasToDelete', () => {
   it('should throw FIELD_METADATA_NOT_FOUND when field does not exist', () => {
@@ -47,7 +44,7 @@ describe('fromDeleteFieldInputToFlatFieldMetadatasToDelete', () => {
         deleteOneFieldInput: { id: 'non-existent-id' },
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps([]),
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps('obj-1'),
-        flatIndexMaps: buildEmptyFlatIndexMaps(),
+        flatIndexMaps: createEmptyFlatEntityMaps(),
       }),
     ).toThrow(
       expect.objectContaining({
@@ -70,7 +67,7 @@ describe('fromDeleteFieldInputToFlatFieldMetadatasToDelete', () => {
         deleteOneFieldInput: { id: standardField.id },
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps([standardField]),
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps(objectId),
-        flatIndexMaps: buildEmptyFlatIndexMaps(),
+        flatIndexMaps: createEmptyFlatEntityMaps(),
       }),
     ).toThrow(
       expect.objectContaining({
@@ -93,7 +90,7 @@ describe('fromDeleteFieldInputToFlatFieldMetadatasToDelete', () => {
         deleteOneFieldInput: { id: standardField.id },
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps([standardField]),
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps(objectId),
-        flatIndexMaps: buildEmptyFlatIndexMaps(),
+        flatIndexMaps: createEmptyFlatEntityMaps(),
       }),
     ).toThrow(new RegExp('Cannot delete standard field "city"'));
   });
@@ -111,7 +108,7 @@ describe('fromDeleteFieldInputToFlatFieldMetadatasToDelete', () => {
       deleteOneFieldInput: { id: customField.id },
       flatFieldMetadataMaps: buildFlatFieldMetadataMaps([customField]),
       flatObjectMetadataMaps: buildFlatObjectMetadataMaps(objectId),
-      flatIndexMaps: buildEmptyFlatIndexMaps(),
+      flatIndexMaps: createEmptyFlatEntityMaps(),
     });
 
     expect(result.flatFieldMetadatasToDelete).toContainEqual(
@@ -133,7 +130,7 @@ describe('fromDeleteFieldInputToFlatFieldMetadatasToDelete', () => {
         deleteOneFieldInput: { id: standardField.id },
         flatFieldMetadataMaps: buildFlatFieldMetadataMaps([standardField]),
         flatObjectMetadataMaps: buildFlatObjectMetadataMaps(objectId),
-        flatIndexMaps: buildEmptyFlatIndexMaps(),
+        flatIndexMaps: createEmptyFlatEntityMaps(),
       }),
     ).toThrow(FieldMetadataException);
   });
