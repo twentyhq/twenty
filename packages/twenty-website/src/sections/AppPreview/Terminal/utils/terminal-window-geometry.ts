@@ -12,7 +12,8 @@ export const TERMINAL_EDITOR_WIDTH = 720;
 export const TERMINAL_EDITOR_HEIGHT = 480;
 export const TERMINAL_MIN_WIDTH = 300;
 export const TERMINAL_MIN_HEIGHT = 200;
-export const TERMINAL_INITIAL_BOTTOM_OFFSET = 96;
+export const TERMINAL_INITIAL_BOTTOM_OFFSET = 32;
+export const TERMINAL_INITIAL_RIGHT_OFFSET = 148;
 export const TERMINAL_EDGE_GAP = 0;
 export const TERMINAL_MOBILE_PARENT_BREAKPOINT = 640;
 export const TERMINAL_MOBILE_OFFSET_X = 16;
@@ -113,7 +114,10 @@ export const getInitialTerminalLayout = (
 
   return {
     position: {
-      left: Math.max(0, bounds.width - size.width),
+      left: Math.max(
+        0,
+        bounds.width - size.width + TERMINAL_INITIAL_RIGHT_OFFSET,
+      ),
       top: Math.max(
         0,
         bounds.height - size.height - TERMINAL_INITIAL_BOTTOM_OFFSET,
