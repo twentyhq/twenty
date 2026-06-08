@@ -89,4 +89,65 @@ describe('postInstallCore', () => {
 
     warnSpy.mockRestore();
   });
+
+  it('continues seeding remaining workflows when one seed fails', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    const metadataClient = buildMetadataClient([
+      {
+        id: 'company-fn',
+        universalIdentifier:
+          PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichCompany,
+      },
+      {
+        id: 'person-fn',
+        universalIdentifier:
+          PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichPerson,
+      },
+    ]);
+
+    const coreClient = createCoreApiClientMock({
+      queryResult: (request: unknown) => {
+        const req = request as AnyRequest;
+        if ('workflows' in req) {
+          return { workflows: { edges: [] } };
+        }
+        if ('workflowVersions' in req) {
+          return {
+            workflowVersions: {
+              edges: [{ node: { id: 'version-1', status: 'DRAFT' } }],
+            },
+          };
+        }
+        return {};
+      },
+      mutationResult: (request: unknown) => {
+        const req = request as AnyRequest;
+        if ('createWorkflow' in req) {
+          const args = (req.createWorkflow as AnyRequest)?.__args as AnyRequest;
+          const workflowName = (args?.data as AnyRequest)?.name;
+          return workflowName === 'Enrich companies with People Data Labs'
+            ? { createWorkflow: {} }
+            : { createWorkflow: { id: 'workflow-person' } };
+        }
+        return {};
+      },
+    });
+
+    const result = await postInstallCore({ coreClient, metadataClient });
+
+    expect(result.seededWorkflows).toHaveLength(2);
+    expect(result.seededWorkflows[0]).toMatchObject({
+      objectNameSingular: 'company',
+      status: 'failed',
+    });
+    expect(result.seededWorkflows[0]?.error).toBeDefined();
+    expect(result.seededWorkflows[1]).toMatchObject({
+      objectNameSingular: 'person',
+      status: 'created',
+    });
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+
+    warnSpy.mockRestore();
+  });
 });

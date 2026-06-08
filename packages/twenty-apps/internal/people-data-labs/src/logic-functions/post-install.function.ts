@@ -2,16 +2,16 @@ import { definePostInstallLogicFunction } from 'twenty-sdk/define';
 
 import { PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers';
 import { postInstallCore } from 'src/logic-functions/handlers/post-install';
+import { type SeedEnrichmentWorkflowResult } from 'src/types/seed-enrichment-workflow-result';
 
 const handler = async () => {
   const { seededWorkflows } = await postInstallCore();
 
-  const createdCount = seededWorkflows.filter(
-    (workflow) => workflow.status === 'created',
-  ).length;
+  const countByStatus = (status: SeedEnrichmentWorkflowResult['status']) =>
+    seededWorkflows.filter((workflow) => workflow.status === status).length;
 
   console.log(
-    `[people-data-labs] Post-install seeded ${createdCount} enrichment workflow(s); ${seededWorkflows.length - createdCount} already existed.`,
+    `[people-data-labs] Post-install seeded ${countByStatus('created')} enrichment workflow(s); ${countByStatus('skipped')} already existed; ${countByStatus('failed')} failed.`,
   );
 
   return { seededWorkflows };

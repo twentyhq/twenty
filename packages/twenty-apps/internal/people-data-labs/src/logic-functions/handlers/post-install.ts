@@ -39,13 +39,28 @@ export const postInstallCore = async ({
       continue;
     }
 
-    const result = await seedEnrichmentWorkflow({
-      client: coreClient,
-      logicFunctionId,
-      seed,
-    });
+    try {
+      const result = await seedEnrichmentWorkflow({
+        client: coreClient,
+        logicFunctionId,
+        seed,
+      });
 
-    seededWorkflows.push(result);
+      seededWorkflows.push(result);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+
+      console.warn(
+        `[people-data-labs] Failed to seed "${seed.workflowName}": ${message}`,
+      );
+
+      seededWorkflows.push({
+        objectNameSingular: seed.objectNameSingular,
+        workflowName: seed.workflowName,
+        status: 'failed',
+        error: message,
+      });
+    }
   }
 
   return { seededWorkflows };
