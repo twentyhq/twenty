@@ -3,13 +3,11 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { styled } from '@linaria/react';
 import { useLocation } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 const StyledRightPanelContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 

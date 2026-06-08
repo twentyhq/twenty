@@ -4,16 +4,13 @@ import { SidePanelForDesktop } from '@/side-panel/components/SidePanelForDesktop
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { Outlet } from 'react-router-dom';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledRow = styled.div<{ isMobile: boolean }>`
+const StyledRow = styled.div`
   display: flex;
   flex: 1;
   flex-direction: row;
   min-height: 0;
   min-width: 0;
-  padding: ${({ isMobile }) =>
-    isMobile ? themeCssVariables.spacing[1] : themeCssVariables.spacing[2]};
 `;
 
 const StyledContent = styled.div`
@@ -30,7 +27,7 @@ export const MainAppLayoutWithSidePanel = () => {
   useCommandMenuHotKeys();
 
   return (
-    <StyledRow isMobile={isMobile}>
+    <StyledRow>
       <StyledContent>
         <Outlet />
       </StyledContent>

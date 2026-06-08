@@ -1,56 +1,54 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { PageBody } from '@/ui/layout/page/components/PageBody';
-import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
+import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
+import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledHeaderSkeleton = styled.div`
-  align-items: center;
-  background: ${themeCssVariables.background.noisy};
+const StyledBody = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  justify-content: space-between;
-  min-height: ${PAGE_BAR_MIN_HEIGHT}px;
   padding: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledHeaderLeft = styled.div`
-  flex: 1;
-`;
+type PageContentSkeletonLoaderProps = {
+  secondaryBar?: ReactNode;
+};
 
-export const PageContentSkeletonLoader = () => {
+export const PageContentSkeletonLoader = ({
+  secondaryBar,
+}: PageContentSkeletonLoaderProps) => {
   const { theme } = useContext(ThemeContext);
 
   return (
-    <>
-      <StyledHeaderSkeleton>
-        <StyledHeaderLeft>
-          <SkeletonTheme
-            baseColor={theme.background.tertiary}
-            highlightColor={theme.background.transparent.lighter}
-            borderRadius={4}
-          >
-            <Skeleton
-              height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
-              width={104}
-            />
-          </SkeletonTheme>
-        </StyledHeaderLeft>
-        <SkeletonTheme
-          baseColor={theme.background.tertiary}
-          highlightColor={theme.background.transparent.lighter}
-          borderRadius={4}
-        >
-          <Skeleton
-            width={132}
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+    <SkeletonTheme
+      baseColor={theme.background.tertiary}
+      highlightColor={theme.background.transparent.lighter}
+      borderRadius={4}
+    >
+      <PageCardLayout
+        header={
+          <PageCardHeader
+            icon={<Skeleton width={20} height={20} />}
+            title={
+              <Skeleton
+                width={120}
+                height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+              />
+            }
           />
-        </SkeletonTheme>
-      </StyledHeaderSkeleton>
-      <PageBody>{null}</PageBody>
-    </>
+        }
+        secondaryBar={secondaryBar}
+      >
+        <StyledBody>
+          <Skeleton
+            count={8}
+            height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
+          />
+        </StyledBody>
+      </PageCardLayout>
+    </SkeletonTheme>
   );
 };
