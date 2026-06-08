@@ -125,7 +125,6 @@ const FieldErrorBanner = styled.p`
   margin: 0;
 `;
 
-
 function StepRenderer({
   controller,
 }: {
