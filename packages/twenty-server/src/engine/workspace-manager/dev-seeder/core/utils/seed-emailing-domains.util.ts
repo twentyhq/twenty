@@ -1,6 +1,5 @@
 import { type QueryRunner } from 'typeorm';
 
-import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
 
@@ -27,7 +26,6 @@ export const seedEmailingDomains = async ({
     .into(`${schemaName}.${tableName}`, [
       'workspaceId',
       'domain',
-      'driver',
       'status',
       'verificationRecords',
       'verifiedAt',
@@ -38,7 +36,6 @@ export const seedEmailingDomains = async ({
       {
         workspaceId,
         domain,
-        driver: EmailingDomainDriver.LOG,
         status: EmailingDomainStatus.VERIFIED,
         verificationRecords: JSON.stringify([]),
         verifiedAt: new Date(),
