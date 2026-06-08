@@ -33,7 +33,7 @@
     "react-dom": "19.2.3",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
-    "serialize-javascript": "^6.0.2",
+    "serialize-javascript": "^7.0.5",
     "sharp": "^0.33.5",
     "stripe": "^20.3.1",
     "three": "^0.183.2",
