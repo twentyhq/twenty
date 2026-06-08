@@ -1,5 +1,5 @@
 import { FIELD_METADATA_TYPES_NOT_SUPPORTED_IN_GROUP_BY } from '@/constants';
-import { FieldMetadataType } from '@/types';
+import { type FieldMetadataType } from '@/types';
 
 export const isFieldMetadataSupportedInGroupBy = ({
   type,
