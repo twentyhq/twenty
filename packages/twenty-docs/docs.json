@@ -2161,7 +2161,7 @@
                     "pages": [
                       "l/de/developers/extend/apps/operations/overview",
                       "l/de/developers/extend/apps/operations/cli",
-                      "developers/extend/apps/operations/sync-and-recovery",
+                      "l/de/developers/extend/apps/operations/sync-and-recovery",
                       "l/de/developers/extend/apps/operations/testing",
                       "l/de/developers/extend/apps/operations/publishing"
                     ]
@@ -4326,7 +4326,7 @@
                     "pages": [
                       "l/pt/developers/extend/apps/operations/overview",
                       "l/pt/developers/extend/apps/operations/cli",
-                      "developers/extend/apps/operations/sync-and-recovery",
+                      "l/pt/developers/extend/apps/operations/sync-and-recovery",
                       "l/pt/developers/extend/apps/operations/testing",
                       "l/pt/developers/extend/apps/operations/publishing"
                     ]
@@ -4759,7 +4759,7 @@
                     "pages": [
                       "l/ro/developers/extend/apps/operations/overview",
                       "l/ro/developers/extend/apps/operations/cli",
-                      "developers/extend/apps/operations/sync-and-recovery",
+                      "l/ro/developers/extend/apps/operations/sync-and-recovery",
                       "l/ro/developers/extend/apps/operations/testing",
                       "l/ro/developers/extend/apps/operations/publishing"
                     ]
@@ -5192,7 +5192,7 @@
                     "pages": [
                       "l/ru/developers/extend/apps/operations/overview",
                       "l/ru/developers/extend/apps/operations/cli",
-                      "developers/extend/apps/operations/sync-and-recovery",
+                      "l/ru/developers/extend/apps/operations/sync-and-recovery",
                       "l/ru/developers/extend/apps/operations/testing",
                       "l/ru/developers/extend/apps/operations/publishing"
                     ]
@@ -5625,7 +5625,7 @@
                     "pages": [
                       "l/tr/developers/extend/apps/operations/overview",
                       "l/tr/developers/extend/apps/operations/cli",
-                      "developers/extend/apps/operations/sync-and-recovery",
+                      "l/tr/developers/extend/apps/operations/sync-and-recovery",
                       "l/tr/developers/extend/apps/operations/testing",
                       "l/tr/developers/extend/apps/operations/publishing"
                     ]
@@ -6058,7 +6058,7 @@
                     "pages": [
                       "l/zh/developers/extend/apps/operations/overview",
                       "l/zh/developers/extend/apps/operations/cli",
-                      "developers/extend/apps/operations/sync-and-recovery",
+                      "l/zh/developers/extend/apps/operations/sync-and-recovery",
                       "l/zh/developers/extend/apps/operations/testing",
                       "l/zh/developers/extend/apps/operations/publishing"
                     ]
