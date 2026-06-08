@@ -81,7 +81,14 @@ export const seedEnrichmentWorkflow = async ({
     },
   });
 
-  await client.mutation({
+  // createWorkflowVersionStep / updateWorkflowVersionStep / activateWorkflowVersion
+  // aren't on the app `/graphql` schema yet, so they're absent from the generated
+  // client types. Call them through an untyped handle until the SDK exposes them.
+  // See docs/workflow-seeding-sdk-plan.md.
+  const callUnsupportedMutation = (request: unknown): Promise<unknown> =>
+    client.mutation(request as never);
+
+  await callUnsupportedMutation({
     createWorkflowVersionStep: {
       __args: {
         input: {
@@ -104,14 +111,14 @@ export const seedEnrichmentWorkflow = async ({
     logicFunctionInput: seed.logicFunctionInput,
   });
 
-  await client.mutation({
+  await callUnsupportedMutation({
     updateWorkflowVersionStep: {
       __args: { input: { workflowVersionId: draftVersionId, step } },
       id: true,
     },
   });
 
-  await client.mutation({
+  await callUnsupportedMutation({
     activateWorkflowVersion: {
       __args: { workflowVersionId: draftVersionId },
     },
