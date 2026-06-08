@@ -446,9 +446,19 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
 
     user.isEmailVerified = true;
 
-    return queryRunner
+    const savedUser = queryRunner
       ? await queryRunner.manager.save(UserEntity, user)
       : await this.userRepository.save(user);
+
+    // Invalidate the cached user entity so auth guards and strategies read the
+    // fresh value instead of stale cached fields. Inside a transaction the
+    // caller owns invalidation after commit, so we only invalidate the
+    // committed (non-queryRunner) path here to avoid re-caching pre-commit data.
+    if (!queryRunner) {
+      await this.coreEntityCacheService.invalidate('user', userId);
+    }
+
+    return savedUser;
   }
 
   async updateEmailFromVerificationToken(userId: string, email: string) {
@@ -457,6 +467,8 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     user.email = email;
 
     const updatedUser = await this.userRepository.save(user);
+
+    await this.coreEntityCacheService.invalidate('user', user.id);
 
     await this.enqueueWorkspaceMemberEmailUpdate({
       userId: user.id,
