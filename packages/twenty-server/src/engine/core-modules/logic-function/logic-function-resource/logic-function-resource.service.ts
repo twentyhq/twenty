@@ -4,8 +4,6 @@ import crypto from 'crypto';
 import { promises as fs } from 'fs';
 import { dirname, join } from 'path';
 import { type QueryRunner } from 'typeorm';
-
-import semver from 'semver';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -317,12 +315,6 @@ export class LogicFunctionResourceService {
     const sdkVersionRange = dependencies?.['twenty-sdk'];
 
     if (!isDefined(dependencies) || !isDefined(sdkVersionRange)) {
-      return;
-    }
-
-    const minimumVersion = semver.minVersion(sdkVersionRange);
-
-    if (!isDefined(minimumVersion) || !semver.gte(minimumVersion, '2.0.0')) {
       return;
     }
 
