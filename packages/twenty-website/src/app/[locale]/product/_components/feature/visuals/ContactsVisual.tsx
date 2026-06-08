@@ -29,9 +29,11 @@ import { useHorizontalDragScroll } from '@/lib/dom/use-horizontal-drag-scroll';
 import { APP_PREVIEW_DATA } from '@/sections/AppPreview/app-preview.data';
 import {
   type CellValue,
+  type RowDef,
   type SidebarPageItemDef,
 } from '@/sections/AppPreview/types/app-preview-data';
 
+import { RecordPage } from './RecordPage';
 import {
   BG_DARK,
   BORDER_LIGHT,
@@ -69,6 +71,21 @@ const SELECT_TONES: Record<string, { bg: string; color: string }> = {
   red: { bg: 'rgba(239,68,68,0.16)', color: '#f87171' },
   teal: { bg: 'rgba(20,184,166,0.16)', color: '#5eead4' },
 };
+
+const SIDE_PANEL_FIELD_ORDER = [
+  'url',
+  'accountOwner',
+  'address',
+  'icp',
+  'arr',
+  'linkedin',
+  'createdBy',
+  'industry',
+  'mainContact',
+  'employees',
+  'opportunities',
+  'added',
+];
 
 const Root = styled.div`
   background: ${BG_DARK};
@@ -129,8 +146,7 @@ const ViewActions = styled.div`
   margin-left: auto;
 `;
 
-const TableViewport = styled.div<{ $dragging: boolean }>`
-  cursor: ${({ $dragging }) => ($dragging ? 'grabbing' : 'grab')};
+const TableViewport = styled.div`
   flex: 1;
   min-height: 0;
   min-width: 0;
@@ -167,9 +183,10 @@ const HeaderRow = styled.div`
   }
 `;
 
-const DataRow = styled.div<{ $index: number }>`
+const DataRow = styled.div<{ $clickable?: boolean; $index: number }>`
   animation: rowIn 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: ${({ $index }) => `${120 + $index * 60}ms`};
+  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
   display: flex;
 
   @keyframes rowIn {
@@ -402,6 +419,94 @@ const SelectChip = styled.span<{ $bg: string; $color: string }>`
   white-space: nowrap;
 `;
 
+const SideContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 14px 16px 18px;
+`;
+
+const SideIdentity = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 0 16px;
+`;
+
+const SideLogo = styled.img`
+  border-radius: 6px;
+  height: 36px;
+  object-fit: cover;
+  width: 36px;
+`;
+
+const SideLogoFallback = styled.div`
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: ${CARD_TEXT_SECONDARY};
+  display: flex;
+  font-size: 16px;
+  font-weight: 600;
+  height: 36px;
+  justify-content: center;
+  width: 36px;
+`;
+
+const SideName = styled.div`
+  color: ${CARD_TEXT};
+  font-size: 15px;
+  font-weight: 600;
+`;
+
+const SideCreated = styled.div`
+  color: ${CARD_TEXT_TERTIARY};
+  font-size: 11px;
+`;
+
+const FieldList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+const FieldRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  min-height: 30px;
+`;
+
+const FieldKey = styled.span`
+  align-items: center;
+  color: ${CARD_TEXT_TERTIARY};
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 12px;
+  gap: 6px;
+`;
+
+const FieldKeyIcon = styled.span`
+  align-items: center;
+  color: ${CARD_TEXT_TERTIARY};
+  display: inline-flex;
+
+  svg {
+    height: 14px;
+    width: 14px;
+  }
+`;
+
+const FieldValue = styled.span`
+  align-items: center;
+  display: inline-flex;
+  justify-content: flex-end;
+  min-width: 0;
+  overflow: hidden;
+`;
+
 const companiesEntry = APP_PREVIEW_DATA.visual.sidebar.workspace.find(
   (entry): entry is SidebarPageItemDef => entry.id === 'companies',
 );
@@ -480,15 +585,10 @@ type ContactsVisualProps = {
 
 export function ContactsVisual({ active: _active }: ContactsVisualProps) {
   const [checked, setChecked] = useState<Record<number, boolean>>({});
-  const {
-    dragging,
-    onPointerCancel,
-    onPointerDown,
-    onPointerLeave,
-    onPointerMove,
-    onPointerUp,
-    viewportRef,
-  } = useHorizontalDragScroll<HTMLDivElement>();
+  const [openedRecord, setOpenedRecord] = useState<RowDef | null>(null);
+  const { viewportRef } = useHorizontalDragScroll<HTMLDivElement>({
+    wheelScrollsHorizontally: true,
+  });
 
   if (!TABLE) {
     return null;
@@ -515,6 +615,63 @@ export function ContactsVisual({ active: _active }: ContactsVisualProps) {
     setChecked(next);
   };
 
+  const openRecord = (row: RowDef) => {
+    setOpenedRecord(row);
+  };
+
+  if (openedRecord) {
+    const companyCell = openedRecord.cells.company;
+    const recordName =
+      companyCell?.type === 'entity' ? companyCell.name : 'Record';
+    const recordLogo =
+      companyCell?.type === 'entity'
+        ? getSharedCompanyLogoUrlFromDomainName(companyCell.domain)
+        : undefined;
+    return (
+      <RecordPage
+        defaultTab="Timeline"
+        onBack={() => setOpenedRecord(null)}
+        title={recordName}
+        sidePanel={
+          <SideContent>
+            <SideIdentity>
+              {recordLogo ? (
+                <SideLogo alt="" src={recordLogo} />
+              ) : (
+                <SideLogoFallback>{recordName[0]}</SideLogoFallback>
+              )}
+              <SideName>{recordName}</SideName>
+              <SideCreated>Created 4 hours ago</SideCreated>
+            </SideIdentity>
+            <FieldList>
+              {SIDE_PANEL_FIELD_ORDER.map((fieldId) => {
+                const column = columns.find((item) => item.id === fieldId);
+                const cell = openedRecord.cells[fieldId];
+                if (!column || !cell) {
+                  return null;
+                }
+                const Icon = HEADER_ICONS[fieldId] ?? IconList;
+                return (
+                  <FieldRow key={fieldId}>
+                    <FieldKey>
+                      <FieldKeyIcon>
+                        <Icon />
+                      </FieldKeyIcon>
+                      {column.label}
+                    </FieldKey>
+                    <FieldValue>
+                      <Cells cell={cell} />
+                    </FieldValue>
+                  </FieldRow>
+                );
+              })}
+            </FieldList>
+          </SideContent>
+        }
+      />
+    );
+  }
+
   return (
     <Root>
       <ViewBar>
@@ -533,15 +690,7 @@ export function ContactsVisual({ active: _active }: ContactsVisualProps) {
         </ViewActions>
       </ViewBar>
 
-      <TableViewport
-        ref={viewportRef}
-        $dragging={dragging}
-        onPointerCancel={onPointerCancel}
-        onPointerDown={onPointerDown}
-        onPointerLeave={onPointerLeave}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-      >
+      <TableViewport ref={viewportRef}>
         <TableCanvas $width={totalWidth}>
           <HeaderRow>
             <CheckCol>
@@ -576,34 +725,58 @@ export function ContactsVisual({ active: _active }: ContactsVisualProps) {
             })}
           </HeaderRow>
 
-          {rows.map((row, index) => (
-            <DataRow key={row.id} $index={index}>
-              <CheckCol>
-                <CheckboxBox
-                  $checked={Boolean(checked[index])}
-                  onClick={() =>
-                    setChecked((prev) => ({ ...prev, [index]: !prev[index] }))
-                  }
-                  onPointerDown={(event) => event.stopPropagation()}
-                >
-                  {checked[index] ? <IconCheck /> : null}
-                </CheckboxBox>
-              </CheckCol>
-              {columns.map((column) => {
-                const cell = row.cells[column.id];
-                return (
-                  <Cell
-                    key={column.id}
-                    $align={column.align}
-                    $sticky={column.isFirstColumn}
-                    $width={column.width}
+          {rows.map((row, index) => {
+            const clickable = row.id === 'anthropic';
+            return (
+              <DataRow
+                key={row.id}
+                $clickable={clickable}
+                $index={index}
+                onClick={clickable ? () => openRecord(row) : undefined}
+                onKeyDown={
+                  clickable
+                    ? (event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault();
+                          openRecord(row);
+                        }
+                      }
+                    : undefined
+                }
+                role={clickable ? 'button' : undefined}
+                tabIndex={clickable ? 0 : undefined}
+              >
+                <CheckCol>
+                  <CheckboxBox
+                    $checked={Boolean(checked[index])}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setChecked((prev) => ({
+                        ...prev,
+                        [index]: !prev[index],
+                      }));
+                    }}
+                    onPointerDown={(event) => event.stopPropagation()}
                   >
-                    {cell ? <Cells cell={cell} /> : null}
-                  </Cell>
-                );
-              })}
-            </DataRow>
-          ))}
+                    {checked[index] ? <IconCheck /> : null}
+                  </CheckboxBox>
+                </CheckCol>
+                {columns.map((column) => {
+                  const cell = row.cells[column.id];
+                  return (
+                    <Cell
+                      key={column.id}
+                      $align={column.align}
+                      $sticky={column.isFirstColumn}
+                      $width={column.width}
+                    >
+                      {cell ? <Cells cell={cell} /> : null}
+                    </Cell>
+                  );
+                })}
+              </DataRow>
+            );
+          })}
         </TableCanvas>
       </TableViewport>
     </Root>

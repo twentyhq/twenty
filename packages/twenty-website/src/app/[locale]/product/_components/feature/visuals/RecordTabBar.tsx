@@ -32,7 +32,7 @@ const Tab = styled.button`
   background: none;
   border: none;
   color: ${CARD_TEXT_SECONDARY};
-  cursor: pointer;
+  cursor: default;
   display: flex;
   font-family: ${CARD_FONT};
   font-size: 12px;
@@ -45,6 +45,10 @@ const Tab = styled.button`
   svg {
     height: 15px;
     width: 15px;
+  }
+
+  &[data-clickable='true'] {
+    cursor: pointer;
   }
 
   &[data-active='true'] {
@@ -77,14 +81,13 @@ export function RecordTabBar({
     <TabBar>
       {TABS.map((item) => {
         const TabIcon = item.icon;
-        const isSwitchable = switchable.includes(item.label);
+        const clickable = switchable.includes(item.label) && Boolean(onSelect);
         return (
           <Tab
             data-active={active === item.label}
+            data-clickable={clickable}
             key={item.label}
-            onClick={
-              isSwitchable && onSelect ? () => onSelect(item.label) : undefined
-            }
+            onClick={clickable ? () => onSelect?.(item.label) : undefined}
             type="button"
           >
             <TabIcon />
