@@ -12,7 +12,9 @@ export type LearnToolsAspect = z.infer<typeof learnToolsAspectSchema>;
 export const learnToolsInputSchema = z.object({
   toolNames: z
     .array(z.string())
-    .describe('Exact tool names. Do not guess tool names.'),
+    .describe(
+      'Exact tool names. Do not guess tool names. Pass every tool you need to learn in this single array — do not make separate learn_tools calls per tool.',
+    ),
   aspects: z
     .array(learnToolsAspectSchema)
     .optional()
@@ -42,7 +44,7 @@ export const createLearnToolsTool = (
   excludeTools?: Set<string>,
 ) => ({
   description:
-    'Get input schemas for tools. Call this with exact tool names to learn the required arguments before calling execute_tool.',
+    'Get input schemas for tools. Pass all the tool names you need in a single call (toolNames accepts an array) rather than calling learn_tools once per tool. Call this with exact tool names to learn the required arguments before calling execute_tool.',
   inputSchema: learnToolsInputSchema,
   execute: async (parameters: LearnToolsInput): Promise<LearnToolsResult> => {
     const { toolNames, aspects } = parameters;

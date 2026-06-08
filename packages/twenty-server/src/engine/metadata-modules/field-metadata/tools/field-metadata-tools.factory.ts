@@ -37,7 +37,7 @@ const GetFieldMetadataInputSchema = z.object({
     .boolean()
     .default(false)
     .describe(
-      'Return full payload for system fields. Default: false — system fields are returned as compact {id, name, type}.',
+      "Keep false (default) for listing or inspecting fields — system fields then return as compact {id, name, type}, which is enough to know which fields exist and their types. Only set true when you specifically need a system field's full configuration (settings, defaultValue, relation targets).",
     ),
   limit: z
     .number()
@@ -137,7 +137,7 @@ export class FieldMetadataToolsFactory {
     return {
       get_fields_metadata: {
         description:
-          'Returns an array of fields. System fields are compact {id, name, type} by default; set includeFullSystemFields=true for full payload. Internal fields (searchVector, position, updatedBy) are excluded.',
+          "Returns an array of fields. System fields are returned as compact {id, name, type} — enough to know which fields exist and their types. Keep includeFullSystemFields at its default (false); only set it true when you specifically need a system field's full configuration (settings, defaultValue, relation targets). Internal fields (searchVector, position, updatedBy) are excluded.",
         inputSchema: GetFieldMetadataInputSchema,
         execute: async (parameters: {
           id?: string;

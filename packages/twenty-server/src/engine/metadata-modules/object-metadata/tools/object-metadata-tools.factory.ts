@@ -29,7 +29,7 @@ const GetObjectMetadataInputSchema = z.object({
     .boolean()
     .default(false)
     .describe(
-      'Return full payload for system objects. Default: false — system objects are returned as compact {id, nameSingular, namePlural}.',
+      "Keep false (default) for listing or locating objects — system objects then return as compact {id, nameSingular, namePlural}, which is enough to find an object and read its id. Only set true when you specifically need a system object's full configuration (e.g. building a relation to workspaceMember).",
     ),
   limit: z
     .number()
@@ -109,7 +109,7 @@ export class ObjectMetadataToolsFactory {
     return {
       get_object_metadata: {
         description:
-          'Retrieve object metadata. Returns an array of objects. System objects are compact {id, nameSingular, namePlural} by default; set includeFullSystemObjects=true for full payload.',
+          "List object metadata as an array. System objects are returned as compact {id, nameSingular, namePlural} — enough to locate an object by name and read its id. Keep includeFullSystemObjects at its default (false); only set it true when you specifically need a system object's full configuration.",
         inputSchema: GetObjectMetadataInputSchema,
         execute: async (parameters: {
           id?: string;
