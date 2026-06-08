@@ -7,6 +7,7 @@ jest.mock('@calcom/embed-react', () => ({
     calLink: string;
     config?: {
       theme?: string;
+      layout?: string;
       name?: string;
       email?: string;
       notes?: string;
@@ -16,6 +17,7 @@ jest.mock('@calcom/embed-react', () => ({
       data-testid="cal-embed"
       data-callink={props.calLink}
       data-theme={props.config?.theme}
+      data-layout={props.config?.layout}
       data-name={props.config?.name}
       data-email={props.config?.email}
       data-notes={props.config?.notes}
@@ -37,6 +39,7 @@ describe('PartnerIntroCalEmbed', () => {
 
     expect(html).toContain('data-callink="rashad-twenty/partner-intro"');
     expect(html).toContain('data-theme="dark"');
+    expect(html).toContain('data-layout="month_view"');
     expect(html).toContain('data-name="Ada Lovelace"');
     expect(html).toContain('data-email="ada@example.com"');
     expect(html).toContain('data-notes="Company: Acme"');

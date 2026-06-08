@@ -22,6 +22,7 @@ export function PartnerIntroCalEmbed({
       calLink={PARTNER_INTRO_CAL_LINK}
       config={{
         theme: 'dark',
+        layout: 'month_view',
         ...(name !== undefined ? { name } : {}),
         ...(email !== undefined ? { email } : {}),
         ...(notes !== undefined ? { notes } : {}),

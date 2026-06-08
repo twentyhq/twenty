@@ -17,6 +17,7 @@ export function PartnerApplicationModal({
   onClose,
 }: PartnerApplicationModalProps) {
   const [resetSignal, setResetSignal] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     if (open) setResetSignal((n) => n + 1);
@@ -29,8 +30,13 @@ export function PartnerApplicationModal({
         if (!next) onClose();
       }}
       className={partnerWizardPanelClass}
+      panelWidth={submitted ? 'min(960px, 100%)' : undefined}
     >
-      <PartnerApplicationWizard resetSignal={resetSignal} onSuccess={onClose} />
+      <PartnerApplicationWizard
+        resetSignal={resetSignal}
+        onSuccess={onClose}
+        onSubmittedChange={setSubmitted}
+      />
     </Modal.Root>
   );
 }

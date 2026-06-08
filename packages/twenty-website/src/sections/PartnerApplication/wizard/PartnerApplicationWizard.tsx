@@ -153,12 +153,14 @@ type WizardSlots = {
 type WizardProps = {
   resetSignal: number;
   onSuccess: () => void;
+  onSubmittedChange?: (submitted: boolean) => void;
   slots?: WizardSlots;
 };
 
 export function PartnerApplicationWizard({
   resetSignal,
   onSuccess,
+  onSubmittedChange,
   slots,
 }: WizardProps) {
   const { i18n } = useLingui();
@@ -180,6 +182,10 @@ export function PartnerApplicationWizard({
   useEffect(() => {
     reset();
   }, [resetSignal, reset]);
+
+  useEffect(() => {
+    onSubmittedChange?.(state.isSubmitted);
+  }, [state.isSubmitted, onSubmittedChange]);
 
   const stepId = getCurrentStepId(state);
   const stepIndex = state.stepIndex;
