@@ -1,4 +1,3 @@
-import { APP_PREVIEW_DATA } from '@/app/[locale]/(home)/app-preview.data';
 import {
   Container,
   Eyebrow,
@@ -7,7 +6,7 @@ import {
   LinkButton,
 } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
-import { AppPreview } from '@/sections/AppPreview';
+import { APP_PREVIEW_DATA, AppPreview } from '@/sections/AppPreview';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
@@ -17,7 +16,9 @@ import NextImage from 'next/image';
 
 const RootWrapper = styled.div`
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+  overflow: clip;
   position: relative;
   width: 100%;
 `;
@@ -57,8 +58,9 @@ const StyledSection = styled.section`
 
 const StyledContainer = styled(Container)`
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   justify-items: center;
+  min-width: 0;
   padding-bottom: ${theme.spacing(16)};
   padding-left: ${theme.spacing(4)};
   padding-right: ${theme.spacing(4)};
@@ -83,7 +85,6 @@ const CtasContainer = styled.div`
 `;
 
 const PreviewRoot = styled.div`
-  margin-bottom: ${theme.spacing(11)};
   margin-top: ${theme.spacing(12)};
   width: 100%;
 

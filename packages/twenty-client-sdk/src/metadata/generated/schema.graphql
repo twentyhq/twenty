@@ -1446,14 +1446,9 @@ type EmailingDomain {
   createdAt: DateTime!
   updatedAt: DateTime!
   domain: String!
-  driver: EmailingDomainDriver!
   status: EmailingDomainStatus!
   verificationRecords: [VerificationRecord!]
   verifiedAt: DateTime
-}
-
-enum EmailingDomainDriver {
-  AWS_SES
 }
 
 enum EmailingDomainStatus {
@@ -3226,7 +3221,7 @@ type Mutation {
   resetPageLayoutToDefault(id: String!): PageLayout!
   resetPageLayoutWidgetToDefault(id: String!): PageLayoutWidget!
   resetPageLayoutTabToDefault(id: String!): PageLayoutTab!
-  createEmailingDomain(domain: String!, driver: EmailingDomainDriver!): EmailingDomain!
+  createEmailingDomain(domain: String!): EmailingDomain!
   deleteEmailingDomain(id: String!): Boolean!
   verifyEmailingDomain(id: String!): EmailingDomain!
   sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!
