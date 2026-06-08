@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -35,8 +35,7 @@ export const useRecordShowPagePagination = (
 
   const setLastShowPageRecordId = useSetAtomState(lastShowPageRecordIdState);
 
-  const objectNameSingular =
-    propsObjectNameSingular || paramObjectNameSingular;
+  const objectNameSingular = propsObjectNameSingular || paramObjectNameSingular;
   const objectRecordId = propsObjectRecordId || paramObjectRecordId;
 
   if (!objectNameSingular || !objectRecordId) {
@@ -48,13 +47,13 @@ export const useRecordShowPagePagination = (
   });
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const parentView = useAtomComponentStateValue(
+  const contextStoreRecordShowParentView = useAtomComponentStateValue(
     contextStoreRecordShowParentViewComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
   const isSoftDeleteFilterActive =
-    parentView?.parentViewFilters.some((recordFilter) =>
+    contextStoreRecordShowParentView?.parentViewFilters.some((recordFilter) =>
       isRecordFilterAboutSoftDelete({ recordFilter, objectMetadataItems }),
     ) ?? false;
 
@@ -69,17 +68,15 @@ export const useRecordShowPagePagination = (
 
   const reversedOrderBy = useMemo(() => reverseOrderBy(orderBy), [orderBy]);
 
-  const {
-    loading: loadingCurrentRecord,
-    records: currentRecords,
-  } = useFindManyRecords({
-    filter: { id: { eq: objectRecordId } },
-    orderBy,
-    limit: 1,
-    objectNameSingular,
-    recordGqlFields: { ...orderByGqlFields, deletedAt: true },
-    withSoftDeleted: true,
-  });
+  const { loading: loadingCurrentRecord, records: currentRecords } =
+    useFindManyRecords({
+      filter: { id: { eq: objectRecordId } },
+      orderBy,
+      limit: 1,
+      objectNameSingular,
+      recordGqlFields: { ...orderByGqlFields, deletedAt: true },
+      withSoftDeleted: true,
+    });
 
   const currentRecord = currentRecords[0];
   const isCurrentRecordDeleted = isDefined(currentRecord?.deletedAt);
@@ -90,7 +87,7 @@ export const useRecordShowPagePagination = (
     : undefined;
 
   const { beforeFilter, afterFilter } = useMemo(() => {
-    if (!currentRecord) {
+    if (!isDefined(currentRecord)) {
       return { beforeFilter: undefined, afterFilter: undefined };
     }
 
@@ -171,6 +168,7 @@ export const useRecordShowPagePagination = (
   const recordBefore = recordsBefore[0];
   const recordAfter = recordsAfter[0];
 
+  // oxlint-disable-next-line twenty/no-navigate-prefer-link -- programmatic navigation from hook callbacks, <Link> not usable here
   const navigateToRecord = (targetRecordId: string) => {
     navigate(
       AppPath.RecordShowPage,
@@ -215,10 +213,18 @@ export const useRecordShowPagePagination = (
       : 0;
 
   // Preserve last settled values to avoid 0/0 flash during navigation
-  const cachedRef = useRef({ rankInView, totalCount });
+  const [cachedPagination, setCachedPagination] = useState({
+    rankInView,
+    totalCount,
+  });
 
   if (!loading && rankInView > -1) {
-    cachedRef.current = { rankInView, totalCount };
+    if (
+      cachedPagination.rankInView !== rankInView ||
+      cachedPagination.totalCount !== totalCount
+    ) {
+      setCachedPagination({ rankInView, totalCount });
+    }
   }
 
   return {
@@ -226,8 +232,8 @@ export const useRecordShowPagePagination = (
     navigateToPreviousRecord,
     navigateToNextRecord,
     navigateToIndexView,
-    rankInView: loading ? cachedRef.current.rankInView : rankInView,
-    totalCount: loading ? cachedRef.current.totalCount : totalCount,
+    rankInView: loading ? cachedPagination.rankInView : rankInView,
+    totalCount: loading ? cachedPagination.totalCount : totalCount,
     objectMetadataItem,
   };
 };

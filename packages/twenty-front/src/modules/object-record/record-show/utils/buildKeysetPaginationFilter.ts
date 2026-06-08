@@ -88,13 +88,15 @@ export const buildKeysetPaginationFilter = ({
 
   const orConditions: RecordGqlOperationFilter[] = fields.map(
     (field, index) => {
-      const equalityPrefixes = fields.slice(0, index).map((prevField) =>
-        buildFieldFilter(
-          prevField,
-          'eq',
-          getFieldValue(currentRecordValues, prevField),
-        ),
-      );
+      const equalityPrefixes = fields
+        .slice(0, index)
+        .map((prevField) =>
+          buildFieldFilter(
+            prevField,
+            'eq',
+            getFieldValue(currentRecordValues, prevField),
+          ),
+        );
 
       const asc = isAscending(field.direction);
       const operator = (asc ? isForward : !isForward) ? 'gt' : 'lt';
