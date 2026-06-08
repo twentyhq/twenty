@@ -6,6 +6,7 @@ import {
   type Meter,
   type MetricOptions,
   type ObservableGauge,
+  type ObservableResult,
 } from '@opentelemetry/api';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -40,23 +41,68 @@ export class MetricsService {
   }: {
     metricName: string;
     options: MetricOptions;
-    callback: () =>
-      | number
-      | Array<{ value: number; attributes: Attributes }>
-      | Promise<number | Array<{ value: number; attributes: Attributes }>>;
+    callback: () => number | Promise<number>;
     cacheValue?: boolean;
+  }): ObservableGauge {
+    return this.createObservableGaugeInternal({
+      metricName,
+      options,
+      callback,
+      cacheValue,
+      observeResult: (observableResult, result) => {
+        observableResult.observe(result);
+      },
+    });
+  }
+
+  createMultiObservableGauge({
+    metricName,
+    options,
+    callback,
+    cacheValue = false,
+  }: {
+    metricName: string;
+    options: MetricOptions;
+    callback: () =>
+      | Array<{ value: number; attributes: Attributes }>
+      | Promise<Array<{ value: number; attributes: Attributes }>>;
+    cacheValue?: boolean;
+  }): ObservableGauge {
+    return this.createObservableGaugeInternal({
+      metricName,
+      options,
+      callback,
+      cacheValue,
+      observeResult: (observableResult, observations) => {
+        for (const observation of observations) {
+          observableResult.observe(observation.value, observation.attributes);
+        }
+      },
+    });
+  }
+
+  private createObservableGaugeInternal<T>({
+    metricName,
+    options,
+    callback,
+    cacheValue,
+    observeResult,
+  }: {
+    metricName: string;
+    options: MetricOptions;
+    callback: () => T | Promise<T>;
+    cacheValue: boolean;
+    observeResult: (observableResult: ObservableResult, result: T) => void;
   }): ObservableGauge {
     const gauge = this.getMeter().createObservableGauge(metricName, options);
 
     gauge.addCallback(async (observableResult) => {
       if (cacheValue) {
         const cachedResult =
-          await this.healthCacheStorage.get<
-            number | Array<{ value: number; attributes: Attributes }>
-          >(metricName);
+          await this.healthCacheStorage.get<T>(metricName);
 
         if (isDefined(cachedResult)) {
-          this.observeResult(observableResult, cachedResult);
+          observeResult(observableResult, cachedResult);
 
           return;
         }
@@ -65,7 +111,7 @@ export class MetricsService {
       try {
         const result = await callback();
 
-        this.observeResult(observableResult, result);
+        observeResult(observableResult, result);
 
         if (cacheValue) {
           await this.healthCacheStorage.set(
@@ -83,23 +129,6 @@ export class MetricsService {
     });
 
     return gauge;
-  }
-
-  private observeResult(
-    observableResult: Parameters<
-      Parameters<ObservableGauge['addCallback']>[0]
-    >[0],
-    result: number | Array<{ value: number; attributes: Attributes }>,
-  ) {
-    if (typeof result === 'number') {
-      observableResult.observe(result);
-
-      return;
-    }
-
-    for (const observation of result) {
-      observableResult.observe(observation.value, observation.attributes);
-    }
   }
 
   createInfoGauge({
