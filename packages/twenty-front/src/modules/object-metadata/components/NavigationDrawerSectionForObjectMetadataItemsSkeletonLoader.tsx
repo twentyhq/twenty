@@ -1,4 +1,5 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
@@ -14,6 +15,11 @@ const StyledSkeletonColumn = styled.div`
   width: 100%;
 `;
 
+const fillSkeletonContainer = css`
+  display: block;
+  width: 100%;
+`;
+
 export const NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader: React.FC =
   () => {
     const { theme } = useContext(ThemeContext);
@@ -24,9 +30,18 @@ export const NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader: React.
         borderRadius={4}
       >
         <StyledSkeletonColumn>
-          <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
-          <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
-          <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
+          <Skeleton
+            containerClassName={fillSkeletonContainer}
+            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+          />
+          <Skeleton
+            containerClassName={fillSkeletonContainer}
+            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+          />
+          <Skeleton
+            containerClassName={fillSkeletonContainer}
+            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+          />
         </StyledSkeletonColumn>
       </SkeletonTheme>
     );

@@ -1,4 +1,5 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
@@ -9,6 +10,11 @@ const StyledSkeletonContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 6px;
+  width: 100%;
+`;
+
+const fillSkeletonContainer = css`
+  display: block;
   width: 100%;
 `;
 
@@ -36,6 +42,7 @@ export const MainNavigationDrawerItemsSkeletonLoader = ({
         {Array.from({ length }).map((_, index) => (
           <Skeleton
             key={index}
+            containerClassName={fillSkeletonContainer}
             height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
           />
         ))}

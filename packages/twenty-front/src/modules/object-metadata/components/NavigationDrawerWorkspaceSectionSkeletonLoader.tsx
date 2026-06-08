@@ -1,5 +1,6 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -21,6 +22,11 @@ const StyledRowsContainer = styled.div`
   width: 100%;
 `;
 
+const fillSkeletonContainer = css`
+  display: block;
+  width: 100%;
+`;
+
 export const NavigationDrawerWorkspaceSectionSkeletonLoader = () => {
   return (
     <NavigationDrawerSection>
@@ -36,9 +42,18 @@ export const NavigationDrawerWorkspaceSectionSkeletonLoader = () => {
           />
         </StyledTitleSkeleton>
         <StyledRowsContainer>
-          <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
-          <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
-          <Skeleton height={SKELETON_LOADER_HEIGHT_SIZES.standard.s} />
+          <Skeleton
+            containerClassName={fillSkeletonContainer}
+            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+          />
+          <Skeleton
+            containerClassName={fillSkeletonContainer}
+            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+          />
+          <Skeleton
+            containerClassName={fillSkeletonContainer}
+            height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+          />
         </StyledRowsContainer>
       </SkeletonTheme>
     </NavigationDrawerSection>
