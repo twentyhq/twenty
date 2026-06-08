@@ -80,6 +80,62 @@ export class MetricsService {
     return gauge;
   }
 
+  createMultiObservableGauge({
+    metricName,
+    options,
+    callback,
+    cacheValue = false,
+  }: {
+    metricName: string;
+    options: MetricOptions;
+    callback: () =>
+      | Array<{ value: number; attributes: Attributes }>
+      | Promise<Array<{ value: number; attributes: Attributes }>>;
+    cacheValue?: boolean;
+  }): ObservableGauge {
+    const gauge = this.getMeter().createObservableGauge(metricName, options);
+
+    gauge.addCallback(async (observableResult) => {
+      if (cacheValue) {
+        const cachedResult =
+          await this.healthCacheStorage.get<
+            Array<{ value: number; attributes: Attributes }>
+          >(metricName);
+
+        if (isDefined(cachedResult)) {
+          for (const observation of cachedResult) {
+            observableResult.observe(observation.value, observation.attributes);
+          }
+
+          return;
+        }
+      }
+
+      try {
+        const observations = await callback();
+
+        for (const observation of observations) {
+          observableResult.observe(observation.value, observation.attributes);
+        }
+
+        if (cacheValue) {
+          await this.healthCacheStorage.set(
+            metricName,
+            observations,
+            METRICS_CACHE_TTL,
+          );
+        }
+      } catch (error) {
+        this.logger.error(
+          `Failed to collect gauge metric ${metricName}`,
+          error,
+        );
+      }
+    });
+
+    return gauge;
+  }
+
   createInfoGauge({
     metricName,
     options,
