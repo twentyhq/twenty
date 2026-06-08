@@ -233,7 +233,7 @@ export default defineFrontComponent({
 });
 ```
 
-İstemciye iletilen yol, rotanın herkese açık yoludur — mantık fonksiyonunun `httpRouteTriggerSettings.path` değeri, başına `/s` eklenmiş hâlidir. `isAuthRequired: true` değerini koruyun; istemci, bileşeniniz için uygulama erişim jetonunu (app access token) sağlar Twenty mints:
+İstemciye iletilen yol, rotanın herkese açık yoludur — mantık fonksiyonunun `httpRouteTriggerSettings.path` değeri, başına `/s` eklenmiş hâlidir. `isAuthRequired: true` değerini koruyun; istemci, Twenty'nin bileşeniniz için oluşturduğu uygulama erişim jetonunu sağlar:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -261,7 +261,7 @@ export default defineLogicFunction({
 `TWENTY_API_URL` ve `TWENTY_APP_ACCESS_TOKEN` otomatik olarak enjekte edilir — bkz. [Uygulama değişkenleri](#application-variables). Gizli uygulama değişkenleri asla ön bileşenlere açığa çıkarılmadığından, API anahtarlarını ve diğer hassas mantığı ön bileşende değil, mantık işlevinin içinde tutun.
 </Note>
 
-### RestApiClient başvurusu
+### RestApiClient referansı
 
 `RestApiClient` öğesini `twenty-client-sdk/rest` içinden içe aktarın. `CoreApiClient` ve `MetadataApiClient` ile aynı istemci ailesine aittir, ancak GraphQL API yerine uygulamanızın HTTP rotalarını hedefler.
 
@@ -274,7 +274,7 @@ export default defineLogicFunction({
 | `delete(path, options?)`          | Bir `DELETE` isteği gönderir             |
 | `request(method, path, options?)` | Herhangi bir HTTP yöntemiyle genel istek |
 
-`options`, `headers`, `query` (sorgu dizesi parametrelerinin kaydı; null benzeri değerler atlanır) ve `signal` aracılığıyla bir `AbortSignal` kabul eder. `FormData` olmayan bir nesne `body` otomatik olarak JSON’a serileştirilir. `401` durumunda, istemci erişim jetonunu bir kez ana makine (host) üzerinden yeniler ve isteği yeniden dener.
+`options`, `headers`, `query` (sorgu dizesi parametrelerinin kaydı; null benzeri değerler atlanır) ve `signal` aracılığıyla bir `AbortSignal` kabul eder. `FormData` olmayan bir `body` nesnesi otomatik olarak JSON’a serileştirilir. `401` durumunda, istemci erişim jetonunu bir kez ana makine (host) üzerinden yeniler ve isteği yeniden dener.
 
 Temel URL ve jeton varsayılan olarak ortamdan çözümlenir. Gerektiğinde — örneğin testlerde — kurucuya (constructor) geçersiz kılmalar (override) iletin:
 
