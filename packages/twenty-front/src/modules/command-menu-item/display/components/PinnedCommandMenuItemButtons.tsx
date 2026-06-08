@@ -68,7 +68,7 @@ export const PinnedCommandMenuItemButtons = () => {
         <NodeDimension onDimensionChange={onContainerDimensionChange}>
           <StyledContainer>
             <StyledItemsContainer>
-              {pinnedInlineCommandMenuItems.map((item, index) => (
+              {pinnedInlineCommandMenuItems.map((item) => (
                 <StyledCommandMenuItemContainer
                   key={item.id}
                   layout
@@ -80,10 +80,7 @@ export const PinnedCommandMenuItemButtons = () => {
                     ease: 'easeInOut',
                   }}
                 >
-                  <CommandMenuItemRenderer
-                    item={item}
-                    isPrimaryAction={index === 0}
-                  />
+                  <CommandMenuItemRenderer item={item} />
                 </StyledCommandMenuItemContainer>
               ))}
             </StyledItemsContainer>

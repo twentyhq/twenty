@@ -11,7 +11,7 @@ import { motion } from 'framer-motion';
 import { useContext } from 'react';
 import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/display';
 import { AnimatedButton } from 'twenty-ui/input';
-import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledButtonWrapper = styled.div<{ alignToTop: boolean }>`
@@ -147,7 +147,6 @@ export const SidePanelToggleButton = () => {
           size={isMobile ? 'medium' : 'small'}
           variant="secondary"
           accent="default"
-          hotkeys={[getOsControlSymbol(), 'K']}
           ariaLabel={ariaLabel}
           onClick={toggleSidePanelMenu}
           animate={{

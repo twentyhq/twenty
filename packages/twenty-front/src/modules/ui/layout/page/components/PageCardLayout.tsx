@@ -27,7 +27,8 @@ const StyledMainCardWrapper = styled.div`
 
 const StyledCard = styled.div`
   background: ${themeCssVariables.background.primary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-left: 1px solid ${themeCssVariables.border.color.medium};
+  border-right: 1px solid ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
   display: flex;
   flex: 1;
