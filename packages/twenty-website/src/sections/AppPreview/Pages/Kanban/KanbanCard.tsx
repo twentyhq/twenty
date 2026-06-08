@@ -16,6 +16,7 @@ import type { CellEntity, CellPerson, KanbanCard } from '../../types';
 import { FaviconLogo } from '../../Shared/components/FaviconLogo';
 import { PersonAvatar } from '../../Shared/components/PersonAvatar';
 import { Chip } from '../../Shared/components/Chip';
+import { ChipVariant } from '../../Shared/utils/chip-variant';
 import {
   KANBAN_PAGE_COLORS,
   KANBAN_PAGE_FONT,
@@ -23,6 +24,7 @@ import {
 } from './kanban-page-theme';
 
 const Card = styled.div`
+  animation: kanbanCardAppear 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
   background: ${KANBAN_PAGE_COLORS.backgroundSecondary};
   border: 1px solid ${KANBAN_PAGE_COLORS.border};
   border-radius: 4px;
@@ -30,6 +32,17 @@ const Card = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
+
+  @keyframes kanbanCardAppear {
+    from {
+      opacity: 0;
+      transform: translateY(6px) scale(0.985);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
 `;
 
 const CardHeader = styled.div`
@@ -145,6 +158,7 @@ function EntityChip({ entity }: { entity: CellEntity }) {
       label={entity.name}
       leftComponent={<FaviconLogo domain={entity.domain} label={entity.name} />}
       maxWidth={152}
+      variant={ChipVariant.Highlighted}
     />
   );
 }
@@ -156,6 +170,7 @@ function PersonChip({ person }: { person: CellPerson }) {
       label={person.name}
       leftComponent={<PersonAvatar person={person} />}
       maxWidth={152}
+      variant={ChipVariant.Highlighted}
     />
   );
 }

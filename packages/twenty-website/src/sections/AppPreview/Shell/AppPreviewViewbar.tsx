@@ -19,11 +19,14 @@ const ViewbarBar = styled.div`
   display: flex;
   justify-content: space-between;
   min-width: 0;
-  padding: 8px 8px 8px 12px;
+  padding-bottom: 8px;
+  padding-left: 12px;
+  padding-right: 8px;
+  padding-top: 8px;
   width: 100%;
 `;
 
-const ViewSwitcher = styled.div`
+const ViewSwitcher = styled.div<{ $tableAligned?: boolean }>`
   align-items: center;
   display: flex;
   flex: 1 1 auto;
@@ -31,7 +34,10 @@ const ViewSwitcher = styled.div`
   height: 24px;
   min-width: 0;
   overflow: hidden;
-  padding: 0 4px;
+  padding-top: 0;
+  padding-right: 4px;
+  padding-bottom: 0;
+  padding-left: ${({ $tableAligned }) => ($tableAligned ? '0' : '4px')};
 `;
 
 const ViewName = styled.span`
@@ -103,10 +109,11 @@ export function AppPreviewViewbar({
   title,
 }: AppPreviewViewbarProps) {
   const showPageCount = count !== undefined;
+  const isTableAligned = pageType === 'table' && showListIcon;
 
   return (
     <ViewbarBar>
-      <ViewSwitcher aria-hidden="true">
+      <ViewSwitcher $tableAligned={isTableAligned} aria-hidden="true">
         {showListIcon ? (
           <>
             {pageType === 'kanban' ? (

@@ -1,6 +1,11 @@
-import { theme } from '@/theme';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 
+import { theme } from '@/theme';
+import {
+  SkeletonBar,
+  SkeletonBlock,
+} from '../../Shared/components/PreviewSkeleton';
 import type { WorkflowNodeDefinition } from './workflow-page-data';
 import {
   WORKFLOW_NODE_HEIGHT,
@@ -8,6 +13,24 @@ import {
   WORKFLOW_PAGE_FONT,
   WORKFLOW_PAGE_TABLER_STROKE,
 } from './workflow-page-theme';
+
+const nodeContentAppear = css`
+  animation: workflowNodeContentAppear 320ms ease both;
+  animation-delay: 80ms;
+
+  @keyframes workflowNodeContentAppear {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+`;
 
 const Node = styled.div<{ $index: number }>`
   align-items: center;
@@ -49,6 +72,13 @@ const NodeIconContainer = styled.div`
   width: 32px;
 `;
 
+const SkeletonIcon = styled(SkeletonBlock)`
+  border-radius: 4px;
+  flex: 0 0 auto;
+  height: 32px;
+  width: 32px;
+`;
+
 const NodeContent = styled.div`
   align-items: stretch;
   align-self: stretch;
@@ -62,7 +92,7 @@ const NodeContent = styled.div`
 `;
 
 const NodeLabel = styled.div`
-  color: ${WORKFLOW_PAGE_COLORS.textTertiary};
+  color: ${WORKFLOW_PAGE_COLORS.textLight};
   font-family: ${WORKFLOW_PAGE_FONT};
   font-size: 11px;
   font-weight: 600;
@@ -89,21 +119,37 @@ export function WorkflowNode({
   width,
   x,
   y,
-}: Omit<WorkflowNodeDefinition, 'id'> & { index?: number }) {
+  generating = false,
+}: Omit<WorkflowNodeDefinition, 'id'> & {
+  generating?: boolean;
+  index?: number;
+}) {
   return (
     <Node $index={index} style={{ left: x, top: y, width }}>
-      <NodeIconContainer>
-        <Icon
-          aria-hidden
-          color={iconColor}
-          size={20}
-          stroke={WORKFLOW_PAGE_TABLER_STROKE}
-        />
-      </NodeIconContainer>
-      <NodeContent>
-        <NodeLabel>{label}</NodeLabel>
-        <NodeTitle>{title}</NodeTitle>
-      </NodeContent>
+      {generating ? (
+        <>
+          <SkeletonIcon />
+          <NodeContent>
+            <SkeletonBar $height={8} $width="38%" />
+            <SkeletonBar $height={9} $width="72%" />
+          </NodeContent>
+        </>
+      ) : (
+        <>
+          <NodeIconContainer className={nodeContentAppear}>
+            <Icon
+              aria-hidden
+              color={iconColor}
+              size={20}
+              stroke={WORKFLOW_PAGE_TABLER_STROKE}
+            />
+          </NodeIconContainer>
+          <NodeContent>
+            <NodeLabel className={nodeContentAppear}>{label}</NodeLabel>
+            <NodeTitle className={nodeContentAppear}>{title}</NodeTitle>
+          </NodeContent>
+        </>
+      )}
     </Node>
   );
 }

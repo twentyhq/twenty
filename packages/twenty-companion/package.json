@@ -44,7 +44,7 @@
     "@anthropic-ai/sdk": "^0.40.1",
     "@recallai/desktop-sdk": "^2.0.0",
     "@timfish/forge-externals-plugin": "^0.2.1",
-    "axios": "^1.9.0",
+    "axios": "^1.16.0",
     "codemirror": "^6.0.1",
     "concurrently": "^9.2.1",
     "dotenv": "^16.5.0",
