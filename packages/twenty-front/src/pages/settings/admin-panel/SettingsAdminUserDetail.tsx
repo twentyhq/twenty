@@ -13,6 +13,7 @@ import {
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { SettingsAdminServerAdminAccess } from '@/settings/admin-panel/components/SettingsAdminServerAdminAccess';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
 import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
 import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpersonate';
@@ -149,6 +150,12 @@ export const SettingsAdminUserDetail = () => {
                 gridAutoColumns="1fr 4fr"
               />
             </Section>
+            {currentUser?.canAccessFullAdminPanel && isDefined(userId) && (
+              <SettingsAdminServerAdminAccess
+                userId={userId}
+                userLabel={displayName}
+              />
+            )}
             <Section>
               <H2Title
                 title={t`Workspaces`}
