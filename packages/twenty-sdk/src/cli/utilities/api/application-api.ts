@@ -1,7 +1,11 @@
 import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
-import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
+import { serializeError } from '@/cli/utilities/error/serialize-error';
+import axios, { type AxiosInstance } from 'axios';
 import { type Manifest } from 'twenty-shared/application';
-import { type SyncAction } from 'twenty-shared/metadata';
+import {
+  type MetadataValidationErrorResponse,
+  type SyncAction,
+} from 'twenty-shared/metadata';
 
 export class ApplicationApi {
   constructor(private readonly client: AxiosInstance) {}
@@ -256,10 +260,13 @@ export class ApplicationApi {
     manifest: Manifest,
     options?: { dryRun?: boolean },
   ): Promise<
-    ApiResponse<{
-      applicationUniversalIdentifier: string;
-      actions: SyncAction[];
-    }>
+    ApiResponse<
+      {
+        applicationUniversalIdentifier: string;
+        actions: SyncAction[];
+      },
+      MetadataValidationErrorResponse
+    >
   > {
     try {
       const mutation = `
@@ -273,7 +280,7 @@ export class ApplicationApi {
 
       const variables = { manifest, dryRun: options?.dryRun ?? false };
 
-      const response: AxiosResponse = await this.client.post(
+      const response = await this.client.post(
         '/metadata',
         {
           query: mutation,
@@ -290,7 +297,8 @@ export class ApplicationApi {
       if (response.data.errors) {
         return {
           success: false,
-          error: response.data.errors[0],
+          error: response.data.errors[0]?.extensions,
+          message: response.data.errors[0]?.message,
         };
       }
 
@@ -300,27 +308,9 @@ export class ApplicationApi {
         message: `Successfully synced application: ${manifest.application.displayName}`,
       };
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        const graphqlErrors = error.response.data?.errors;
-
-        if (Array.isArray(graphqlErrors) && graphqlErrors.length > 0) {
-          return {
-            success: false,
-            error: graphqlErrors[0]?.message || error.message,
-          };
-        }
-
-        return {
-          success: false,
-          error:
-            error.response.data?.message ||
-            `HTTP ${error.response.status}: ${error.message}`,
-        };
-      }
-
       return {
         success: false,
-        error: error instanceof Error ? error.message : error,
+        message: serializeError(error),
       };
     }
   }
@@ -337,7 +327,7 @@ export class ApplicationApi {
 
       const variables = { universalIdentifier };
 
-      const response: AxiosResponse = await this.client.post(
+      const response = await this.client.post(
         '/metadata',
         {
           query: mutation,

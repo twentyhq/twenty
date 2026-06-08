@@ -46,8 +46,11 @@ const reportMetadataChanges = (
   }
 };
 
-const appendRecoveryHint = (message: string, error: unknown): string => {
-  const hint = getSyncErrorRecoveryHint(error);
+const appendRecoveryHint = (
+  message: string,
+  errorMessage: string | undefined,
+): string => {
+  const hint = getSyncErrorRecoveryHint(errorMessage);
 
   return hint ? `${message}\n\n${hint}` : message;
 };
@@ -156,13 +159,13 @@ const innerAppDevOnce = async (
 
       const message = errorEvents
         ? errorEvents.map((event) => event.message).join('\n')
-        : `Dry run failed with error: ${serializeError(dryRunResult.error)}`;
+        : `Dry run failed with error: ${dryRunResult.message ?? 'Unknown error'}`;
 
       return {
         success: false,
         error: {
           code: APP_ERROR_CODES.SYNC_FAILED,
-          message: appendRecoveryHint(message, dryRunResult.error),
+          message: appendRecoveryHint(message, dryRunResult.message),
         },
       };
     }
@@ -262,13 +265,13 @@ const innerAppDevOnce = async (
 
     const message = errorEvents
       ? errorEvents.map((event) => event.message).join('\n')
-      : `Sync failed with error: ${serializeError(syncResult.error)}`;
+      : `Sync failed with error: ${syncResult.message ?? 'Unknown error'}`;
 
     return {
       success: false,
       error: {
         code: APP_ERROR_CODES.SYNC_FAILED,
-        message: appendRecoveryHint(message, syncResult.error),
+        message: appendRecoveryHint(message, syncResult.message),
       },
     };
   }
