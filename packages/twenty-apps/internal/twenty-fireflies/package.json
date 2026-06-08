@@ -27,6 +27,6 @@
     "@types/node": "^24.7.2",
     "oxlint": "^0.16.0",
     "typescript": "^5.9.3",
-    "vitest": "^3.1.1"
+    "vitest": "^3.2.6"
   }
 }
