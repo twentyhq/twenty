@@ -9,6 +9,7 @@ export const PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS = {
   enrichPersonTool: 'c1539ca9-6f57-4036-a2a7-621ec23a66e6',
   enrichCompany: 'c769fb49-d495-469f-a58f-1a69ab90ec24',
   enrichCompanyTool: '88d126e1-a8f4-49f2-883f-39a7fa69cede',
+  postInstall: '9de46f15-05ec-4314-84c1-b9919b545269',
 } as const;
 
 export const PDL_FIELD_UNIVERSAL_IDENTIFIERS = {

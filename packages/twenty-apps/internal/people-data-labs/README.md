@@ -2,17 +2,23 @@
 
 Enriches **Person** and **Company** records with [People Data Labs](https://www.peopledatalabs.com/) (PDL) data.
 
-> **Status: data model + enrichment mapper.** This package defines the fields, relation,
-> indexes, views, role, and manifest, and implements the enrichment **logic functions**
-> that call the PDL REST API and map the response onto the standard + `pdl*` fields.
+> **Status: data model + enrichment mapper + seeded workflows.** This package defines the
+> fields, relation, indexes, views, role, and manifest, implements the enrichment **logic
+> functions** that call the PDL REST API and map the response onto the standard + `pdl*`
+> fields, and seeds the manual "Enrich" record-action workflows on install.
 
 ---
 
 ## Enrichment logic functions
 
-`enrich-person` / `enrich-company` (workflow actions, for the manual record action) plus
-`enrich-person-tool` / `enrich-company-tool` (AI tools) all delegate to a shared,
+`enrich-person` / `enrich-company` (bulk workflow actions, for the manual record action) plus
+`enrich-person-tool` / `enrich-company-tool` (single-record AI tools) all delegate to a shared,
 trigger-agnostic core in `src/logic-functions/handlers/`:
+
+- The workflow-action functions accept a **list of records** (`{ records, force? }`) and loop
+  the single-record core over each, aggregating the outcome (`total` / `matched` / `notFound` /
+  `skipped` / `errored`); a per-record failure is captured as `ERROR` without aborting the batch
+  (`src/logic-functions/utils/run-bulk-enrichment.ts`). The AI tools stay single-record.
 
 - Read the record, guard against re-enriching within a TTL (`pdlLastEnrichedAt`), pick a
   match identifier (person: `pdlId` → LinkedIn → email → name; company: `pdlId` → domain →
@@ -25,9 +31,30 @@ trigger-agnostic core in `src/logic-functions/handlers/`:
   (`src/logic-functions/utils/`); the option sets are the same `src/constants/*-options.ts`
   the field definitions use.
 
-Run locally: `yarn twenty dev:function:exec -n enrich-person -p '{"recordId":"<id>"}'`.
+Run locally: `yarn twenty dev:function:exec -n enrich-person -p '{"records":[{"id":"<id>"}]}'`.
 
-**Deferred to a later PR:** enrichment metering/billing, and auto-enrichment triggers.
+### Seeded workflows (post-install)
+
+`post-install.function.ts` runs once on install and creates two ready-to-use
+enrichment workflows so the action is available out of the box:
+
+- **Enrich companies** — manual trigger available when one or more Companies are
+  selected → bulk-enriches them via `enrich-company`.
+- **Enrich people** — manual trigger available when one or more People are
+  selected → bulk-enriches them via `enrich-person`.
+
+Each workflow is a `MANUAL` / `BULK_RECORDS` trigger wired to a single
+`LOGIC_FUNCTION` step whose `records` input is bound to the selected records
+(`{{trigger.companies}}` / `{{trigger.people}}`). With `BULK_RECORDS` the action
+appears whenever one or more records are selected, and a single workflow run hands
+the whole selection to one function call. The post-install resolves each function's
+runtime id from its `universalIdentifier` (via the metadata API), publishes the
+version (`activateWorkflowVersion`) so the record action appears, and is
+**idempotent** — it skips a workflow whose name already exists
+(`src/logic-functions/handlers/post-install.core.ts`).
+
+**Deferred to a later PR:** enrichment metering/billing, and auto-enrichment
+triggers (on-create event + cron backfill).
 
 ---
 
