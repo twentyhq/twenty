@@ -6,13 +6,14 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { SettingsWorkspaceDomainCard } from '@/settings/domains/components/SettingsWorkspaceDomainCard';
+import { SettingsLogs } from '@/settings/event-logs/components/SettingsLogs';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsSecuritySettings } from '@/settings/security/components/SettingsSecuritySettings';
 import { NameField } from '@/settings/workspace/components/NameField';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { H2Title, IconKey, IconSettings } from 'twenty-ui/display';
+import { H2Title, IconHistory, IconKey, IconSettings } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
@@ -20,6 +21,7 @@ const SETTINGS_GENERAL_TABS_INSTANCE_ID = 'settings-general-tabs';
 
 const GENERAL_TAB_GENERAL = 'general';
 const GENERAL_TAB_SECURITY = 'security';
+const GENERAL_TAB_LOGS = 'logs';
 
 export const SettingsGeneral = () => {
   const { t } = useLingui();
@@ -35,7 +37,10 @@ export const SettingsGeneral = () => {
   const tabs = [
     { id: GENERAL_TAB_GENERAL, title: t`General`, Icon: IconSettings },
     ...(hasSecurityPermission
-      ? [{ id: GENERAL_TAB_SECURITY, title: t`Security`, Icon: IconKey }]
+      ? [
+          { id: GENERAL_TAB_SECURITY, title: t`Security`, Icon: IconKey },
+          { id: GENERAL_TAB_LOGS, title: t`Logs`, Icon: IconHistory },
+        ]
       : []),
   ];
 
@@ -45,7 +50,7 @@ export const SettingsGeneral = () => {
   );
 
   const renderActiveTabContent = () => {
-    if (hasSecurityPermission && activeTabId === GENERAL_TAB_SECURITY) {
+    if (activeTabId === GENERAL_TAB_SECURITY) {
       return <SettingsSecuritySettings />;
     }
 
@@ -88,7 +93,13 @@ export const SettingsGeneral = () => {
       }
       links={[{ children: t`Workspace` }, { children: t`General` }]}
     >
-      <SettingsPageContainer>{renderActiveTabContent()}</SettingsPageContainer>
+      {activeTabId === GENERAL_TAB_LOGS ? (
+        <SettingsLogs />
+      ) : (
+        <SettingsPageContainer>
+          {renderActiveTabContent()}
+        </SettingsPageContainer>
+      )}
     </SettingsPageLayout>
   );
 };

@@ -144,6 +144,33 @@ const handler = async (event: RoutePayload) => {
 Os nomes dos cabeçalhos são normalizados para minúsculas. Acesse-os usando chaves em minúsculas (por exemplo, `event.headers['content-type']`).
 </Note>
 
+#### Resposta HTTP personalizada
+
+Por padrão, retornar um valor simples do seu handler o envia de volta como uma resposta `200` (JSON para objetos, `text/plain` para strings). Para controlar o código de status e os cabeçalhos da resposta, retorne um `Response` de `twenty-sdk/logic-function`:
+
+```ts
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  return new Response('<h1>Hello</h1>', {
+    status: 201,
+    headers: { 'content-type': 'text/html' },
+  });
+};
+```
+
+Por motivos de segurança, os cabeçalhos de resposta são restringidos a uma lista de permissões. Qualquer cabeçalho que não esteja na lista (por exemplo, `Set-Cookie`, cabeçalhos CORS como `Access-Control-Allow-Origin` ou cabeçalhos personalizados `X-*`) é silenciosamente descartado antes de a resposta ser enviada. Os cabeçalhos de resposta permitidos são:
+
+* `content-type`
+* `content-language`
+* `content-disposition`
+* `cache-control`
+* `retry-after`
+
+<Note>
+O código de status deve ser um código de status HTTP válido (entre 100 e 599). Os nomes dos cabeçalhos de resposta são comparados sem distinção entre maiúsculas e minúsculas.
+</Note>
+
 #### Payload do gatilho de evento do banco de dados
 
 Quando um gatilho de evento do banco de dados invoca sua função lógica, ela recebe um `DatabaseEventPayload` por registro alterado. O payload combina metadados sobre o workspace e o objeto de origem com o evento em nível de registro.

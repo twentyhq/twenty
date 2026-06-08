@@ -14,7 +14,7 @@ import { CustomException } from 'src/utils/custom-exception';
 
 export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInterface {
   captureExceptions(
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     exceptions: ReadonlyArray<any>,
     options?: ExceptionHandlerOptions,
   ) {

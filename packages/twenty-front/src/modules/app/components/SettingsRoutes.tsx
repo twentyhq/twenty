@@ -435,14 +435,6 @@ const SettingsSecurityApprovedAccessDomain = lazy(() =>
   ),
 );
 
-const SettingsEventLogs = lazy(() =>
-  import('~/pages/settings/security/event-logs/SettingsEventLogs').then(
-    (module) => ({
-      default: module.SettingsEventLogs,
-    }),
-  ),
-);
-
 const SettingsNewEmailingDomain = lazy(() =>
   import('~/pages/settings/emailing-domains/SettingsNewEmailingDomain').then(
     (module) => ({
@@ -698,7 +690,7 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={PermissionFlagType.AI}
+            settingsPermission={PermissionFlagType.AI_SETTINGS}
           />
         }
       >
@@ -934,7 +926,6 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           path={SettingsPath.NewApprovedAccessDomain}
           element={<SettingsSecurityApprovedAccessDomain />}
         />
-        <Route path={SettingsPath.EventLogs} element={<SettingsEventLogs />} />
       </Route>
 
       {isAdminPageEnabled && (

@@ -777,6 +777,11 @@ msgstr "Des API, SDK et webhooks pour étendre Twenty et livrer des apps au-dess
 msgid "Apply to build"
 msgstr "Postuler pour développer"
 
+#. js-lingui-id: zX3HUD
+#: src/lib/website-routing/static-website-routes.ts
+msgid "Apply to join the Twenty certified partner ecosystem."
+msgstr ""
+
 #. js-lingui-id: 8HV3WN
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 #: src/app/[locale]/partners/list/components/chip-labels.ts
@@ -913,6 +918,11 @@ msgstr "devenez un génie !"
 #: src/app/[locale]/partners/components/PartnerApplication/BecomePartnerButton.tsx
 msgid "Become a partner"
 msgstr "Devenir partenaire"
+
+#. js-lingui-id: 7ysT6Z
+#: src/lib/website-routing/static-website-routes.ts
+msgid "Become a Twenty Partner — Application"
+msgstr ""
 
 #. js-lingui-id: 0TCnEf
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts

@@ -256,6 +256,19 @@ export type ApiKeyToken = {
   token: Scalars['String'];
 };
 
+export type AppConnection = {
+  __typename?: 'AppConnection';
+  accessToken: Scalars['String'];
+  authFailedAt?: Maybe<Scalars['String']>;
+  handle: Scalars['String'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  providerName: Scalars['String'];
+  scopes: Array<Scalars['String']>;
+  userWorkspaceId: Scalars['String'];
+  visibility: Scalars['String'];
+};
+
 export type AppToken = {
   __typename?: 'AppToken';
   createdAt: Scalars['DateTime'];
@@ -1635,6 +1648,7 @@ export type FeatureFlag = {
 };
 
 export enum FeatureFlagKey {
+  IS_CALL_RECORDING_ENABLED = 'IS_CALL_RECORDING_ENABLED',
   IS_EMAIL_GROUP_ENABLED = 'IS_EMAIL_GROUP_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_JUNCTION_RELATIONS_ENABLED = 'IS_JUNCTION_RELATIONS_ENABLED',
@@ -2116,6 +2130,12 @@ export type LineChartSeries = {
   label: Scalars['String'];
 };
 
+export type ListAppConnectionsInput = {
+  providerName?: InputMaybe<Scalars['String']>;
+  userWorkspaceId?: InputMaybe<Scalars['String']>;
+  visibility?: InputMaybe<Scalars['String']>;
+};
+
 export type Location = {
   __typename?: 'Location';
   lat?: Maybe<Scalars['Float']>;
@@ -2495,6 +2515,7 @@ export type Mutation = {
   resetPageLayoutWidgetToDefault: PageLayoutWidget;
   revokeApiKey?: Maybe<ApiKey>;
   rotateApplicationRegistrationClientSecret: RotateClientSecret;
+  runAgent: RunAgentResult;
   runEvaluationInput: AgentTurn;
   runWorkspaceMigration: Scalars['Boolean'];
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
@@ -3194,6 +3215,11 @@ export type MutationRotateApplicationRegistrationClientSecretArgs = {
 };
 
 
+export type MutationRunAgentArgs = {
+  input: RunAgentInput;
+};
+
+
 export type MutationRunEvaluationInputArgs = {
   agentId: Scalars['UUID'];
   input: Scalars['String'];
@@ -3289,6 +3315,7 @@ export type MutationStopAgentChatStreamArgs = {
 
 
 export type MutationSyncApplicationArgs = {
+  dryRun?: InputMaybe<Scalars['Boolean']>;
   manifest: Scalars['JSON'];
 };
 
@@ -4114,6 +4141,8 @@ export type Query = {
   agentTurns: Array<AgentTurn>;
   apiKey?: Maybe<ApiKey>;
   apiKeys: Array<ApiKey>;
+  appConnection: AppConnection;
+  appConnections: Array<AppConnection>;
   applicationConnectionProviders: Array<ApplicationConnectionProvider>;
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']>;
   barChartData: BarChartData;
@@ -4220,6 +4249,16 @@ export type QueryAgentTurnsArgs = {
 
 export type QueryApiKeyArgs = {
   input: GetApiKeyInput;
+};
+
+
+export type QueryAppConnectionArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryAppConnectionsArgs = {
+  filter?: InputMaybe<ListAppConnectionsInput>;
 };
 
 
@@ -4735,6 +4774,18 @@ export enum RowLevelPermissionPredicateOperand {
   VECTOR_SEARCH = 'VECTOR_SEARCH'
 }
 
+export type RunAgentInput = {
+  agentUniversalIdentifier: Scalars['String'];
+  prompt: Scalars['String'];
+};
+
+export type RunAgentResult = {
+  __typename?: 'RunAgentResult';
+  error?: Maybe<Scalars['String']>;
+  result?: Maybe<Scalars['JSON']>;
+  success: Scalars['Boolean'];
+};
+
 export type SsoConnection = {
   __typename?: 'SSOConnection';
   id: Scalars['UUID'];
@@ -4882,9 +4933,15 @@ export type StandardOverrides = {
 
 export type Subscription = {
   __typename?: 'Subscription';
+  eventLogsLive?: Maybe<Array<EventLogRecord>>;
   logicFunctionLogs: LogicFunctionLogs;
   onAgentChatEvent: AgentChatEvent;
   onEventSubscription?: Maybe<EventSubscription>;
+};
+
+
+export type SubscriptionEventLogsLiveArgs = {
+  table: EventLogTable;
 };
 
 
@@ -7348,6 +7405,20 @@ export type EnterpriseSubscriptionStatusQueryVariables = Exact<{ [key: string]: 
 
 export type EnterpriseSubscriptionStatusQuery = { __typename?: 'Query', enterpriseSubscriptionStatus?: { __typename?: 'EnterpriseSubscriptionStatusDTO', status: string, licensee?: string | null, expiresAt?: string | null, cancelAt?: string | null, currentPeriodEnd?: string | null, isCancellationScheduled: boolean } | null };
 
+export type EventLogsQueryVariables = Exact<{
+  input: EventLogQueryInput;
+}>;
+
+
+export type EventLogsQuery = { __typename?: 'Query', eventLogs: { __typename?: 'EventLogQueryResult', totalCount: number, records: Array<{ __typename?: 'EventLogRecord', event: string, timestamp: string, userId?: string | null, properties?: any | null, recordId?: string | null, objectMetadataId?: string | null }>, pageInfo: { __typename?: 'EventLogPageInfo', endCursor?: string | null, hasNextPage: boolean } } };
+
+export type EventLogsLiveSubscriptionVariables = Exact<{
+  table: EventLogTable;
+}>;
+
+
+export type EventLogsLiveSubscription = { __typename?: 'Subscription', eventLogsLive?: Array<{ __typename?: 'EventLogRecord', event: string, timestamp: string, userId?: string | null, properties?: any | null, recordId?: string | null, objectMetadataId?: string | null }> | null };
+
 export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
   input: UpdateLabPublicFeatureFlagInput;
 }>;
@@ -8197,6 +8268,8 @@ export const SetEnterpriseKeyDocument = {"kind":"Document","definitions":[{"kind
 export const EnterpriseCheckoutSessionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"EnterpriseCheckoutSession"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"billingInterval"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"enterpriseCheckoutSession"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"billingInterval"},"value":{"kind":"Variable","name":{"kind":"Name","value":"billingInterval"}}}]}]}}]} as unknown as DocumentNode<EnterpriseCheckoutSessionQuery, EnterpriseCheckoutSessionQueryVariables>;
 export const EnterprisePortalSessionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"EnterprisePortalSession"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"returnUrlPath"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"enterprisePortalSession"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"returnUrlPath"},"value":{"kind":"Variable","name":{"kind":"Name","value":"returnUrlPath"}}}]}]}}]} as unknown as DocumentNode<EnterprisePortalSessionQuery, EnterprisePortalSessionQueryVariables>;
 export const EnterpriseSubscriptionStatusDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"EnterpriseSubscriptionStatus"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"enterpriseSubscriptionStatus"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"licensee"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}},{"kind":"Field","name":{"kind":"Name","value":"cancelAt"}},{"kind":"Field","name":{"kind":"Name","value":"currentPeriodEnd"}},{"kind":"Field","name":{"kind":"Name","value":"isCancellationScheduled"}}]}}]}}]} as unknown as DocumentNode<EnterpriseSubscriptionStatusQuery, EnterpriseSubscriptionStatusQueryVariables>;
+export const EventLogsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"EventLogs"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"EventLogQueryInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"eventLogs"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"records"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"event"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"properties"}},{"kind":"Field","name":{"kind":"Name","value":"recordId"}},{"kind":"Field","name":{"kind":"Name","value":"objectMetadataId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"endCursor"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}}]}}]}}]}}]} as unknown as DocumentNode<EventLogsQuery, EventLogsQueryVariables>;
+export const EventLogsLiveDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"EventLogsLive"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"table"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"EventLogTable"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"eventLogsLive"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"table"},"value":{"kind":"Variable","name":{"kind":"Name","value":"table"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"event"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"properties"}},{"kind":"Field","name":{"kind":"Name","value":"recordId"}},{"kind":"Field","name":{"kind":"Name","value":"objectMetadataId"}}]}}]}}]} as unknown as DocumentNode<EventLogsLiveSubscription, EventLogsLiveSubscriptionVariables>;
 export const UpdateLabPublicFeatureFlagDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateLabPublicFeatureFlag"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateLabPublicFeatureFlagInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateLabPublicFeatureFlag"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<UpdateLabPublicFeatureFlagMutation, UpdateLabPublicFeatureFlagMutationVariables>;
 export const UploadWorkspaceMemberProfilePictureDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UploadWorkspaceMemberProfilePicture"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"file"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Upload"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uploadWorkspaceMemberProfilePicture"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"file"},"value":{"kind":"Variable","name":{"kind":"Name","value":"file"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]} as unknown as DocumentNode<UploadWorkspaceMemberProfilePictureMutation, UploadWorkspaceMemberProfilePictureMutationVariables>;
 export const UpdateUserEmailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateUserEmail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newEmail"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"verifyEmailRedirectPath"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateUserEmail"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"newEmail"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newEmail"}}},{"kind":"Argument","name":{"kind":"Name","value":"verifyEmailRedirectPath"},"value":{"kind":"Variable","name":{"kind":"Name","value":"verifyEmailRedirectPath"}}}]}]}}]} as unknown as DocumentNode<UpdateUserEmailMutation, UpdateUserEmailMutationVariables>;

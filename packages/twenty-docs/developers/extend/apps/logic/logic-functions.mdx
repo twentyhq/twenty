@@ -145,6 +145,33 @@ const handler = async (event: RoutePayload) => {
 Header names are normalized to lowercase. Access them using lowercase keys (e.g., `event.headers['content-type']`).
 </Note>
 
+#### Custom HTTP response
+
+By default, returning a plain value from your handler sends it back as a `200` response (JSON for objects, `text/plain` for strings). To control the status code and response headers, return a `Response` from `twenty-sdk/logic-function`:
+
+```ts
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  return new Response('<h1>Hello</h1>', {
+    status: 201,
+    headers: { 'content-type': 'text/html' },
+  });
+};
+```
+
+For security reasons, response headers are restricted to an allow-list. Any header that is not on the list (e.g. `Set-Cookie`, CORS headers such as `Access-Control-Allow-Origin`, or custom `X-*` headers) is silently dropped before the response is sent. The allowed response headers are:
+
+- `content-type`
+- `content-language`
+- `content-disposition`
+- `cache-control`
+- `retry-after`
+
+<Note>
+The status code must be a valid HTTP status code (between 100 and 599). Response header names are matched case-insensitively.
+</Note>
+
 #### Database event trigger payload
 
 When a database event trigger invokes your logic function, it receives one `DatabaseEventPayload` per changed record. The payload combines metadata about the source workspace and object with the record-level event.

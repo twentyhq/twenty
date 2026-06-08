@@ -47,7 +47,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
     });
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   authenticate(req: Request, options: any) {
     options = {
       ...options,
