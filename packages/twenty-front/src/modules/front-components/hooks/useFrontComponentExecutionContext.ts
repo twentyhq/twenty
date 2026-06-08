@@ -16,6 +16,8 @@ import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useR
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
+import { useSystemColorScheme } from '@/ui/theme/hooks/useSystemColorScheme';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
@@ -41,6 +43,16 @@ export const useFrontComponentExecutionContext = ({
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
 } => {
   const currentUser = useAtomStateValue(currentUserState);
+  const { colorScheme: colorSchemePreference } = useColorScheme();
+  const systemColorScheme = useSystemColorScheme();
+  // Resolve 'System' to a concrete scheme on the main thread; the Web Worker
+  // sandbox has no matchMedia, so this is the only place it can be resolved.
+  const resolvedColorScheme =
+    (colorSchemePreference === 'System'
+      ? systemColorScheme
+      : colorSchemePreference) === 'Dark'
+      ? 'Dark'
+      : 'Light';
   const navigateApp = useNavigateApp();
   const { requestAccessTokenRefresh } = useRequestApplicationTokenRefresh({
     frontComponentId,
@@ -141,6 +153,7 @@ export const useFrontComponentExecutionContext = ({
     userId: currentUser?.id ?? null,
     recordId: selectedRecordIds?.length === 1 ? selectedRecordIds[0] : null,
     selectedRecordIds: selectedRecordIds ?? [],
+    colorScheme: resolvedColorScheme,
   };
 
   const unmountFrontComponent: FrontComponentHostCommunicationApi['unmountFrontComponent'] =
