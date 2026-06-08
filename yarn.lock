@@ -33845,16 +33845,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:36.0.1":
-  version: 36.0.1
-  resolution: "electron@npm:36.0.1"
+"electron@npm:^39.8.5":
+  version: 39.8.10
+  resolution: "electron@npm:39.8.10"
   dependencies:
     "@electron/get": "npm:^2.0.0"
     "@types/node": "npm:^22.7.7"
     extract-zip: "npm:^2.0.1"
   bin:
     electron: cli.js
-  checksum: 10c0/be0dddedf67632ca2cedd2d037106ecabe617a59cb6f65d5fcf5b68455a82c753637441bec3cec2cf91625c36ad3fbf3251e466c1be15093e00ba1fe517eca47
+  checksum: 10c0/a62fc5a9d2cf96b4684547e14d2a9a1dc4350d66bcfdd2747d4154d6af3bdf8e4e0aae21dfaee55617035b870a3326b61102ef84b7bed5cd73040ec9b0ebe595
   languageName: node
   linkType: hard
 
@@ -56440,7 +56440,7 @@ __metadata:
     css-loader: "npm:^6.11.0"
     dotenv: "npm:^16.5.0"
     easymde: "npm:^2.20.0"
-    electron: "npm:36.0.1"
+    electron: "npm:^39.8.5"
     electron-squirrel-startup: "npm:^1.0.1"
     express: "npm:^4.18.2"
     marked: "npm:^5.0.0"
