@@ -62,8 +62,11 @@ import React, {
   useState,
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag, type TagColor } from 'twenty-ui/components';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Tag, type TagColor } from 'twenty-ui-deprecated/components';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 const StyledResetReactflowStyles = styled.div`
   --xy-node-background-color: none;
   --xy-node-border: none;

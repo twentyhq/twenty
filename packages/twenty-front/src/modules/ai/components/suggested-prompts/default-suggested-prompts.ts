@@ -5,7 +5,7 @@ import {
   IconLayoutDashboard,
   IconPlus,
   IconSettingsAutomation,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 
 export type SuggestedPrompt = {
   id: string;

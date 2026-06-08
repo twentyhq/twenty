@@ -7,7 +7,7 @@ import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/const
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { MainNavigationDrawerItemsSkeletonLoader } from '~/loading/components/MainNavigationDrawerItemsSkeletonLoader';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledAnimatedContainer = styled(motion.div)`
   align-items: center;

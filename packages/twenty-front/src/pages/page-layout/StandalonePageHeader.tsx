@@ -5,7 +5,7 @@ import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleBu
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui-deprecated/display';
 
 type StandalonePageHeaderProps = {
   pageLayoutId: string;

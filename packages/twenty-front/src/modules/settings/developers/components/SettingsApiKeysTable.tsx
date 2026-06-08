@@ -7,7 +7,7 @@ import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { useQuery } from '@apollo/client/react';
 import { GetApiKeysDocument } from '~/generated-metadata/graphql';
 
