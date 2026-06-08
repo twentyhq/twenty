@@ -2,19 +2,19 @@ import { type CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceSta
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
-  AUTO_SELECT_FAST_MODEL_ID,
-  AUTO_SELECT_SMART_MODEL_ID,
+    AUTO_SELECT_FAST_MODEL_ID,
+    AUTO_SELECT_SMART_MODEL_ID,
 } from 'twenty-shared/constants';
 import {
-  OnboardingStatus,
-  PermissionFlagType,
-  SubscriptionInterval,
-  SubscriptionStatus,
-  type User,
-  type Workspace,
-  WorkspaceActivationStatus,
-  WorkspaceMemberDateFormatEnum,
-  WorkspaceMemberTimeFormatEnum,
+    OnboardingStatus,
+    PermissionFlagType,
+    SubscriptionInterval,
+    SubscriptionStatus,
+    type User,
+    type Workspace,
+    WorkspaceActivationStatus,
+    WorkspaceMemberDateFormatEnum,
+    WorkspaceMemberTimeFormatEnum,
 } from '~/generated-metadata/graphql';
 import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
@@ -70,7 +70,6 @@ export const mockCurrentWorkspace = {
   isPublicInviteLinkEnabled: true,
   allowImpersonation: true,
   activationStatus: WorkspaceActivationStatus.ACTIVE,
-  hasValidEnterpriseKey: false,
   hasValidSignedEnterpriseKey: false,
   hasValidEnterpriseValidityToken: false,
   isGoogleAuthEnabled: true,

@@ -5970,7 +5970,6 @@ export type Workspace = {
   eventLogRetentionDays: Scalars['Float'];
   fastModel: Scalars['String'];
   featureFlags?: Maybe<Array<FeatureFlag>>;
-  hasValidEnterpriseKey: Scalars['Boolean'];
   hasValidEnterpriseValidityToken: Scalars['Boolean'];
   hasValidSignedEnterpriseKey: Scalars['Boolean'];
   id: Scalars['UUID'];
