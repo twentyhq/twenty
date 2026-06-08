@@ -18,7 +18,8 @@ const isAscendingOrder = (direction: string): boolean =>
 const computeOperator = (
   isAscending: boolean,
   isForwardPagination: boolean,
-): string => (isAscending ? isForwardPagination : !isForwardPagination) ? 'gt' : 'lt';
+): string =>
+  (isAscending ? isForwardPagination : !isForwardPagination) ? 'gt' : 'lt';
 
 const getCursorValue = (
   record: Record<string, unknown>,
