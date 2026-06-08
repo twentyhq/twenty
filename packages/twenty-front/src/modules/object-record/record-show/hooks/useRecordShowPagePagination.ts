@@ -1,17 +1,12 @@
 import { useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
-import { isRecordFilterAboutSoftDelete } from '@/object-record/record-filter/utils/isRecordFilterAboutSoftDelete';
 import { buildKeysetPaginationFilter } from '@/object-record/record-show/utils/buildKeysetPaginationFilter';
 import { extractOrderByFieldNames } from '@/object-record/record-show/utils/extractOrderByFieldNames';
 import { reverseOrderBy } from '@/object-record/record-show/utils/reverseOrderBy';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useQueryVariablesFromParentView } from '@/views/hooks/useQueryVariablesFromParentView';
 import { AppPath } from 'twenty-shared/types';
@@ -43,21 +38,11 @@ export const useRecordShowPagePagination = (
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
-  const { objectMetadataItems } = useObjectMetadataItems();
 
-  const contextStoreRecordShowParentView = useAtomComponentStateValue(
-    contextStoreRecordShowParentViewComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
-  );
-
-  const isSoftDeleteFilterActive =
-    contextStoreRecordShowParentView?.parentViewFilters.some((recordFilter) =>
-      isRecordFilterAboutSoftDelete({ recordFilter, objectMetadataItems }),
-    ) ?? false;
-
-  const { filter, orderBy } = useQueryVariablesFromParentView({
-    objectMetadataItem,
-  });
+  const { filter, orderBy, isSoftDeleteFilterActive } =
+    useQueryVariablesFromParentView({
+      objectMetadataItem,
+    });
 
   const orderByGqlFields = extractOrderByFieldNames(orderBy);
 
