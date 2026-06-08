@@ -87,11 +87,9 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       authContext,
     } = queryRunnerContext;
 
-    const objectMetadataNameSingular = flatObjectMetadata.nameSingular;
+    const objectAlias = getObjectAlias(flatObjectMetadata);
 
-    let queryBuilder = repository.createQueryBuilder(
-      objectMetadataNameSingular,
-    );
+    let queryBuilder = repository.createQueryBuilder(objectAlias);
 
     const groupByFields =
       this.groupByArgProcessor.validateAndTransformGroupByFieldsOrThrow({
@@ -100,8 +98,6 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       });
-
-    const objectAlias = getObjectAlias(flatObjectMetadata);
 
     this.addJoinForGroupByOnRelationFields({
       queryBuilder,
@@ -126,12 +122,12 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
       selectedAggregatedFields: args.selectedFieldsResult.aggregate,
       queryBuilder,
-      objectMetadataNameSingular,
+      objectMetadataNameSingular: objectAlias,
     });
 
     const groupByDefinitions = getGroupByDefinitions({
       groupByFields,
-      objectMetadataNameSingular,
+      objectMetadataNameSingular: objectAlias,
     });
 
     groupByDefinitions.forEach((groupByColumn, index) => {
@@ -308,7 +304,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     workspaceId: string;
     commonQueryParser: GraphqlQueryParser;
   }): Promise<void> {
-    const objectMetadataNameSingular = flatObjectMetadata.nameSingular;
+    const objectAlias = getObjectAlias(flatObjectMetadata);
 
     if (args.viewId) {
       appliedFilters = await this.addFiltersFromView({
@@ -322,7 +318,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
 
     commonQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataNameSingular,
+      objectAlias,
       appliedFilters,
     );
 

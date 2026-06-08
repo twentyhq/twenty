@@ -1,11 +1,14 @@
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-
-export const shouldExcludeFieldFromAgentToolSchema = (
-  field: FieldMetadataEntity | FlatFieldMetadata,
+export const shouldExcludeFieldFromAgentToolSchema = ({
+  fieldName,
+  isSystem,
   excludeId = true,
-  additionalExcludedFieldNames: string[] = [],
-): boolean => {
+  additionalExcludedFieldNames = [],
+}: {
+  fieldName: string;
+  isSystem: boolean;
+  excludeId?: boolean;
+  additionalExcludedFieldNames?: string[];
+}): boolean => {
   const excludedFieldNames = [
     'deletedAt',
     'searchVector',
@@ -17,5 +20,5 @@ export const shouldExcludeFieldFromAgentToolSchema = (
     excludedFieldNames.push('id');
   }
 
-  return excludedFieldNames.includes(field.name) || field.isSystem;
+  return excludedFieldNames.includes(fieldName) || isSystem;
 };
