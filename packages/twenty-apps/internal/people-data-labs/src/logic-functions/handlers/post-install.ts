@@ -52,6 +52,7 @@ export const postInstallCore = async ({
 
       console.warn(
         `[people-data-labs] Failed to seed "${seed.workflowName}": ${message}`,
+        error,
       );
 
       seededWorkflows.push({
