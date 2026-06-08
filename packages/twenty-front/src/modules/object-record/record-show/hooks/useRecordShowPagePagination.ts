@@ -4,7 +4,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
-import { buildKeysetPaginationFilter } from '@/object-record/record-show/utils/buildKeysetPaginationFilter';
+import { computeCursorArgFilter } from '@/object-record/record-show/utils/computeCursorArgFilter';
 import { extractOrderByFieldNames } from '@/object-record/record-show/utils/extractOrderByFieldNames';
 import { reverseOrderBy } from '@/object-record/record-show/utils/reverseOrderBy';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -80,18 +80,18 @@ export const useRecordShowPagePagination = (
       : undefined;
 
   const beforeFilter = isDefined(currentRecordKeysetValues)
-    ? buildKeysetPaginationFilter({
+    ? computeCursorArgFilter({
         orderBy,
-        currentRecordValues: currentRecordKeysetValues,
-        direction: 'before',
+        cursorRecordValues: currentRecordKeysetValues,
+        isForwardPagination: false,
       })
     : undefined;
 
   const afterFilter = isDefined(currentRecordKeysetValues)
-    ? buildKeysetPaginationFilter({
+    ? computeCursorArgFilter({
         orderBy,
-        currentRecordValues: currentRecordKeysetValues,
-        direction: 'after',
+        cursorRecordValues: currentRecordKeysetValues,
+        isForwardPagination: true,
       })
     : undefined;
 
@@ -162,7 +162,7 @@ export const useRecordShowPagePagination = (
   const recordBefore = recordsBefore[0];
   const recordAfter = recordsAfter[0];
 
-  // oxlint-disable-next-line twenty/no-navigate-prefer-link -- programmatic navigation from hook callbacks, <Link> not usable here
+  // oxlint-disable-next-line twenty/no-navigate-prefer-link
   const navigateToRecord = (targetRecordId: string) => {
     navigate(
       AppPath.RecordShowPage,
@@ -210,7 +210,6 @@ export const useRecordShowPagePagination = (
       ? 1 + rankInView + totalCountAfter
       : 0;
 
-  // Preserve last settled values to avoid 0/0 flash during navigation
   const [cachedPagination, setCachedPagination] = useState({
     rankInView,
     totalCount,
