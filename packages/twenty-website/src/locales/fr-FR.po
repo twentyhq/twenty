@@ -4375,6 +4375,11 @@ msgstr ""
 msgid "Trinidad & Tobago 🇹🇹"
 msgstr ""
 
+#. js-lingui-id: tdZpCd
+#: src/sections/Footer/data.ts
+msgid "Trust Center"
+msgstr ""
+
 #. js-lingui-id: KtyN0b
 #: src/sections/TrustedBy/TrustedBy.tsx
 msgid "trusted by"
