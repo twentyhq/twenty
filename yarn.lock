@@ -56710,7 +56710,7 @@ __metadata:
     twenty-ui: "workspace:*"
     type-fest: "npm:4.10.1"
     use-debounce: "npm:^10.0.0"
-    uuid: "npm:^9.0.0"
+    uuid: "npm:^11.1.1"
     vite-plugin-svgr: "npm:^4.3.0"
     vite-tsconfig-paths: "npm:^4.2.1"
     xlsx-ugnis: "npm:^0.19.3"
@@ -57043,7 +57043,7 @@ __metadata:
     type-fest: "npm:4.10.1"
     typeorm: "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch"
     unzipper: "npm:^0.12.3"
-    uuid: "npm:9.0.1"
+    uuid: "npm:^11.1.1"
     zod: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
@@ -57088,7 +57088,7 @@ __metadata:
     tsc-alias: "npm:^1.8.16"
     tsx: "npm:^4.19.3"
     typescript: "npm:^5.9.3"
-    uuid: "npm:^9.0.0"
+    uuid: "npm:^11.1.1"
     vite: "npm:^7.0.0"
     vite-plugin-dts: "npm:3.8.1"
     vite-tsconfig-paths: "npm:^4.2.1"
@@ -58646,6 +58646,15 @@ __metadata:
   bin:
     uuid: dist/esm/bin/uuid
   checksum: 10c0/34aa51b9874ae398c2b799c88a127701408cd581ee89ec3baa53509dd8728cbb25826f2a038f9465f8b7be446f0fbf11558862965b18d21c993684297628d4d3
+  languageName: node
+  linkType: hard
+
+"uuid@npm:^11.1.1":
+  version: 11.1.1
+  resolution: "uuid@npm:11.1.1"
+  bin:
+    uuid: dist/esm/bin/uuid
+  checksum: 10c0/9e3af58eba872ece5a5e76f4773a94fc78a0ef2c2444c38dbe6b42f41dadf76c01850fd783604f27986f6195e6286aef064d45987d401b2a33127b98ddf7c0c5
   languageName: node
   linkType: hard
 
