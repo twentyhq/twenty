@@ -94,8 +94,6 @@ export const SettingsAdminServerAdminAccess = ({
   );
 
   const serverAdmins = data?.getServerAdmins ?? [];
-  // A user with no access simply isn't in getServerAdmins, so both flags
-  // default to false — which is exactly what we want to render for them.
   const currentAccess = serverAdmins.find((admin) => admin.id === userId);
   const canAccessFullAdminPanel =
     currentAccess?.canAccessFullAdminPanel ?? false;
@@ -120,8 +118,6 @@ export const SettingsAdminServerAdminAccess = ({
     }
 
     try {
-      // Both flags can be sent in one mutation, so granting full access is a
-      // single change and a single notification email.
       await updateServerAdminAccess({
         variables: {
           userId,

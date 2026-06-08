@@ -175,9 +175,6 @@ export class AdminPanelResolver {
     return this.adminServerAdminService.getServerAdmins();
   }
 
-  // NoImpersonationGuard prevents granting/revoking server admin rights from
-  // within an impersonation session, which would otherwise escalate an
-  // impersonator to a permanent full admin.
   @UseGuards(AdminPanelGuard, NoImpersonationGuard)
   @Mutation(() => ServerAdminDTO)
   async updateServerAdminAccess(

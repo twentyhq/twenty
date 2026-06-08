@@ -109,11 +109,8 @@ export class AdminPanelServerAdminService {
     targetUser.canAccessFullAdminPanel = nextCanAccessFullAdminPanel;
     targetUser.canImpersonate = nextCanImpersonate;
 
-    if (isRevokingFullAdmin) {
-      // Lock the current full-admin set inside a transaction so concurrent
-      // revocations are serialized and cannot together drop the instance to
-      // zero administrators (a count-then-save check would be a TOCTOU race).
-      await this.userRepository.manager.transaction(async (manager) => {
+    await this.userRepository.manager.transaction(async (manager) => {
+      if (isRevokingFullAdmin) {
         const lockedFullAdmins = await manager.find(UserEntity, {
           where: { canAccessFullAdminPanel: true },
           lock: { mode: 'pessimistic_write' },
@@ -128,15 +125,11 @@ export class AdminPanelServerAdminService {
             'You cannot revoke admin panel access from the last server administrator.',
           );
         }
+      }
 
-        await manager.save(UserEntity, targetUser);
-      });
-    } else {
-      await this.userRepository.save(targetUser);
-    }
+      await manager.save(UserEntity, targetUser);
+    });
 
-    // Auth guards and the JWT strategy read the cached user entity, so the
-    // change must invalidate the cache to take effect without a restart.
     await this.coreEntityCacheService.invalidate('user', targetUserId);
 
     this.logger.log(
@@ -155,12 +148,6 @@ export class AdminPanelServerAdminService {
     return this.toServerAdminDTO(targetUser);
   }
 
-  // Granting or revoking server-level admin rights is a high-privilege action,
-  // so it requires a fresh second factor even though the caller is already an
-  // authenticated full admin. This is a stronger gate than impersonation
-  // (which only checks that 2FA is enabled): we require an enrolled, verified
-  // 2FA method AND a fresh TOTP code. Skipped in development to keep local
-  // workflows usable.
   private async assertFreshStepUpAuthentication({
     actorUserId,
     actorWorkspaceId,
@@ -219,15 +206,10 @@ export class AdminPanelServerAdminService {
         throw new UserInputError('Invalid two-factor authentication code.');
       }
 
-      // Surface genuine 2FA errors (e.g. a corrupted secret) instead of
-      // masking them as a configuration problem.
       throw error;
     }
   }
 
-  // Notify every full admin (and the affected user) so unexpected privilege
-  // changes are immediately visible. Best-effort: a failed send must not roll
-  // back the change that already succeeded.
   private async notifyAdministrators({
     actor,
     targetUser,
@@ -252,8 +234,6 @@ export class AdminPanelServerAdminService {
         `${targetUser.firstName} ${targetUser.lastName}`.trim();
       const from = `${this.twentyConfigService.get('EMAIL_FROM_NAME')} <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`;
 
-      // The email content depends only on the recipient's locale, so render
-      // once per distinct locale and reuse it for every recipient.
       const recipientsByLocale = new Map<UserEntity['locale'], UserEntity[]>();
 
       for (const recipient of recipientsById.values()) {

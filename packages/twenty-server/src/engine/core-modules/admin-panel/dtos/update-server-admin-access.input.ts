@@ -27,7 +27,6 @@ export class UpdateServerAdminAccessInput {
   @IsBoolean()
   canImpersonate?: boolean;
 
-  // Fresh TOTP step-up code, required outside development to authorize the change.
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
