@@ -58,6 +58,7 @@ export default defineConfig(() => {
           'node:fs/promises',
           'node:fs',
           'node:path',
+          'node:os',
         ],
         output: [
           {
