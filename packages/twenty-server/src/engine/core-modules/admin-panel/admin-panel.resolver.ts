@@ -71,6 +71,7 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
+import { AdminPanelOrImpersonateGuard } from 'src/engine/guards/admin-panel-or-impersonate.guard';
 import { NoImpersonationGuard } from 'src/engine/guards/no-impersonation.guard';
 import { ServerLevelImpersonateGuard } from 'src/engine/guards/server-level-impersonate.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -132,7 +133,7 @@ export class AdminPanelResolver {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
-  @UseGuards(ServerLevelImpersonateGuard)
+  @UseGuards(AdminPanelOrImpersonateGuard)
   @Query(() => UserLookup)
   async userLookupAdminPanel(
     @Args() userLookupInput: UserLookupInput,
@@ -142,7 +143,7 @@ export class AdminPanelResolver {
     );
   }
 
-  @UseGuards(ServerLevelImpersonateGuard)
+  @UseGuards(AdminPanelOrImpersonateGuard)
   @Query(() => [AdminPanelRecentUserDTO])
   async adminPanelRecentUsers(
     @Args('searchTerm', {
