@@ -4370,6 +4370,11 @@ msgstr "Training, Adoption & Support"
 msgid "Trinidad & Tobago 🇹🇹"
 msgstr "Trinidad & Tobago 🇹🇹"
 
+#. js-lingui-id: tdZpCd
+#: src/sections/Footer/data.ts
+msgid "Trust Center"
+msgstr "Trust Center"
+
 #. js-lingui-id: KtyN0b
 #: src/sections/TrustedBy/TrustedBy.tsx
 msgid "trusted by"
