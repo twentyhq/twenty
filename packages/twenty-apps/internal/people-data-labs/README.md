@@ -3,7 +3,7 @@
 Enriches **Person** and **Company** records with [People Data Labs](https://www.peopledatalabs.com/) (PDL) data.
 
 > **Status: data model + enrichment mapper + seeded workflows.** This package defines the
-> fields, relation, indexes, views, role, and manifest, implements the enrichment **logic
+> fields, relation, views, role, and manifest, implements the enrichment **logic
 > functions** that call the PDL REST API and map the response onto the standard + `pdl*`
 > fields, and seeds the manual "Enrich" record-action workflows on install.
 
@@ -133,7 +133,6 @@ fields.
 ### Other
 
 - `pdlTotalFunding` is `CURRENCY` (mapper must convert the bare USD float → micros).
-- **Indexes**: `pdlId` and `pdlLastEnrichedAt` on both objects.
 - **Views**: a curated "People Data Labs" TABLE view per object.
 - **Role**: read/update on Person & Company (object-level; tighten to field-scoped later).
 
