@@ -1,5 +1,9 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
-import { type DatabaseEventPayload, defineLogicFunction } from 'twenty-sdk/define';
+import { CoreApiClient, type CoreSchema } from 'twenty-client-sdk/core';
+import {
+  type DatabaseEventPayload,
+  defineLogicFunction,
+  type ObjectRecordCreateEvent,
+} from 'twenty-sdk/define';
 
 import { ON_PARTNER_APPLICATION_CREATED_FN_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
@@ -86,17 +90,12 @@ export function buildApplicationEmbed(
   return embed;
 }
 
-// The event 'after' hydrates the actor composite as a NESTED object
-// (after.createdBy.source), verified from the live partner.created payload.
-type PartnerCreatedAfter = {
-  id: string;
-  createdBy?: { source?: string | null } | null;
-};
-
 export const handler = async (
-  payload: DatabaseEventPayload,
+  payload: DatabaseEventPayload<ObjectRecordCreateEvent<CoreSchema.Partner>>,
 ): Promise<Record<string, unknown>> => {
-  const after = (payload?.properties as { after?: PartnerCreatedAfter } | undefined)?.after;
+  // The event 'after' hydrates the actor composite as a NESTED object — the
+  // generated Partner type matches the live partner.created payload shape.
+  const after = payload.properties.after;
   if (!after?.id) return {};
 
   // Form-only: the installed app stamps createdBy.source = 'APPLICATION'.
