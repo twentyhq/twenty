@@ -18,6 +18,8 @@ export type UniversalCreateFieldAction =
     >;
     // Optional ID for the related field (for API metadata).
     relatedFieldId?: string;
+    // IDs for fields created in the same migration, keyed by universal identifier.
+    fieldIdByUniversalIdentifier?: Record<string, string>;
   };
 
 export type UniversalUpdateFieldAction =

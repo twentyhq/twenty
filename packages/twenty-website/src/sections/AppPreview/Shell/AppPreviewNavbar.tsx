@@ -75,6 +75,15 @@ const BreadcrumbTag = styled.div`
   padding: 0 2px;
 `;
 
+const BreadcrumbIconSlot = styled.span`
+  align-items: center;
+  display: flex;
+  flex: 0 0 16px;
+  height: 16px;
+  justify-content: center;
+  width: 16px;
+`;
+
 const CrumbLabel = styled.span`
   color: ${COLORS.text};
   font-family: ${APP_FONT};
@@ -329,14 +338,14 @@ function renderDefaultActions(
 
 type AppPreviewNavbarProps = {
   activeItem?: SidebarItemDef;
-  activeLabel: string;
+  activeItemLabel: string;
   navbarActions?: NavbarAction[];
   revealedObjectIds: string[];
 };
 
 export function AppPreviewNavbar({
   activeItem,
-  activeLabel,
+  activeItemLabel,
   navbarActions,
   revealedObjectIds,
 }: AppPreviewNavbarProps) {
@@ -344,8 +353,12 @@ export function AppPreviewNavbar({
     <NavbarBar>
       <Breadcrumb>
         <BreadcrumbTag>
-          {activeItem ? renderPreviewIcon(activeItem.icon) : null}
-          <CrumbLabel>{activeLabel}</CrumbLabel>
+          {activeItem ? (
+            <BreadcrumbIconSlot>
+              {renderPreviewIcon(activeItem.icon)}
+            </BreadcrumbIconSlot>
+          ) : null}
+          <CrumbLabel>{activeItemLabel}</CrumbLabel>
         </BreadcrumbTag>
       </Breadcrumb>
 

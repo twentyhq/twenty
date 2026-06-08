@@ -10,11 +10,11 @@ import { ProductDemo } from '@/app/[locale]/product/_components/ProductDemo';
 import { ProductFeature } from '@/app/[locale]/product/_components/feature';
 import { Faq } from '@/sections/Faq';
 import { ProductHero } from '@/app/[locale]/product/_components/ProductHero';
-import { Menu, MENU_DATA } from '@/sections/Menu';
+import { ProductHeroMenuSync } from '@/sections/Hero/components/ProductVisual/product-hero-menu-sync';
+import { MENU_DATA } from '@/sections/Menu';
 import { ProductStepperSection } from '@/app/[locale]/product/_components/product-stepper';
 import { ProductThreeCards } from '@/app/[locale]/product/_components/ProductThreeCards';
 import { TrustedBy } from '@/sections/TrustedBy';
-import { theme } from '@/theme';
 import type { AppLocale } from 'twenty-shared/translations';
 
 export const generateMetadata = buildRouteMetadata('product');
@@ -41,12 +41,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
           i18n.locale as AppLocale,
         )}
       />
-      <Menu
-        backgroundColor={theme.colors.primary.background[100]}
-        socialLinks={menuSocialLinks}
-      />
-
-      <ProductHero />
+      <ProductHeroMenuSync socialLinks={menuSocialLinks}>
+        <ProductHero />
+      </ProductHeroMenuSync>
 
       <TrustedBy />
 

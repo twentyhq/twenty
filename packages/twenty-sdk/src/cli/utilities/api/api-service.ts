@@ -73,13 +73,16 @@ export class ApiService {
     return this.applicationApi.createDevelopmentApplication(...args);
   }
 
-  syncApplication(manifest: Manifest): Promise<
+  syncApplication(
+    manifest: Manifest,
+    options?: { dryRun?: boolean },
+  ): Promise<
     ApiResponse<{
       applicationUniversalIdentifier: string;
       actions: SyncAction[];
     }>
   > {
-    return this.applicationApi.syncApplication(manifest);
+    return this.applicationApi.syncApplication(manifest, options);
   }
 
   uninstallApplication(universalIdentifier: string): Promise<ApiResponse> {

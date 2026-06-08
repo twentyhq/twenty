@@ -24,15 +24,17 @@ const getActionLabel = (action: SyncAction): string => {
 };
 
 export const formatSyncActionsSummary = (
-  actions: SyncAction[],
+  actions: SyncAction[] | undefined,
 ): OrchestratorStateStepEvent[] => {
-  if (actions.length === 0) {
+  const definedActions = actions ?? [];
+
+  if (definedActions.length === 0) {
     return [{ message: 'No metadata changes', status: 'info' }];
   }
 
   const counts = { create: 0, update: 0, delete: 0 };
 
-  for (const action of actions) {
+  for (const action of definedActions) {
     counts[action.type] += 1;
   }
 
@@ -46,7 +48,7 @@ export const formatSyncActionsSummary = (
     { message: `Metadata changes: ${summaryParts.join(', ')}`, status: 'info' },
   ];
 
-  const visibleActions = actions.slice(0, MAX_DETAIL_LINES);
+  const visibleActions = definedActions.slice(0, MAX_DETAIL_LINES);
 
   for (const action of visibleActions) {
     events.push({
@@ -55,7 +57,7 @@ export const formatSyncActionsSummary = (
     });
   }
 
-  const hiddenCount = actions.length - visibleActions.length;
+  const hiddenCount = definedActions.length - visibleActions.length;
 
   if (hiddenCount > 0) {
     events.push({
