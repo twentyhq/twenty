@@ -11,7 +11,6 @@ import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager
 
 const EXCLUDED_FIELD_NAMES = new Set([
   'searchVector',
-  'deletedAt',
   'position',
   'updatedBy',
 ]);
@@ -22,6 +21,7 @@ const FIELD_STRIP_WHEN_NULLISH = [
   'defaultValue',
   'description',
   'icon',
+  'deletedAt',
 ];
 
 const FIELD_STRIP_WHEN_FALSE = ['isLabelSyncedWithName', 'isUIReadOnly'];
@@ -139,9 +139,9 @@ export class FieldMetadataToolsFactory {
 
   generateTools(workspaceId: string): ToolSet {
     return {
-      get_field_metadata: {
+      get_fields_metadata: {
         description:
-          'Retrieve field metadata. Returns an array of fields. System fields are compact {id, name, type} by default; set includeFullSystemFields=true for full payload. Internal fields (searchVector, deletedAt, position, updatedBy) are excluded.',
+          'Returns an array of fields. System fields are compact {id, name, type} by default; set includeFullSystemFields=true for full payload. Internal fields (searchVector, deletedAt, position, updatedBy) are excluded.',
         inputSchema: GetFieldMetadataInputSchema,
         execute: async (parameters: {
           id?: string;

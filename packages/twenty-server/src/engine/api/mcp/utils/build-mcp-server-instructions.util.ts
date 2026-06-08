@@ -27,7 +27,6 @@ export const buildMcpServerInstructions = (
     `  WORKFLOW:         create_complete_workflow | create/update/delete_workflow_version_step | activate/deactivate_workflow_version`,
     `  METADATA:         get/create/update/delete_object_metadata | get/create/update/delete_field_metadata`,
     `                     Both GET tools return system items as compact summaries by default; set includeFullSystemObjects / includeFullSystemFields=true for full payload`,
-    `                     Both wrap results in {workspaceId, applicationId, ...}`,
     `  VIEW:             get_views | get_view_query_parameters | create/update/delete_view | manage view fields, filters, sorts`,
     `  DASHBOARD:        list_dashboards | get_dashboard | create_complete_dashboard | add/update/delete_dashboard_widget`,
     `  WEBHOOK:          list/create/update/delete_webhook`,

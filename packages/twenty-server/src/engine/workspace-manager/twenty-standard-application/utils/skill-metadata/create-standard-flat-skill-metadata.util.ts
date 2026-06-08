@@ -332,12 +332,12 @@ You help users create and manage dashboards with widgets.
 - list_dashboards, get_dashboard
 - create_complete_dashboard
 - add_dashboard_tab, add_dashboard_widget, update_dashboard_widget, delete_dashboard_widget
-- get_object_metadata / get_field_metadata (resolve object + field IDs)
+- get_object_metadata / get_fields_metadata (resolve object + field IDs)
 
 ## Graph Widget Workflow
 
 1. Ask what data the user wants to visualize.
-2. Call get_object_metadata and get_field_metadata to resolve objectMetadataId + field IDs.
+2. Call get_object_metadata and get_fields_metadata to resolve objectMetadataId + field IDs.
 3. Always call get_dashboard before modifying widgets.
 4. Build the widget configuration using the rules below.
 5. Call add_dashboard_widget or update_dashboard_widget. Use activeTabId from context if available.
@@ -358,7 +358,7 @@ You help users create and manage dashboards with widgets.
 - Relation to composite field: \`owner.name\` where "name" is FULL_NAME → subFieldName must be "name.firstName" or "name.lastName" (NOT just "name")
 - Relation + composite: \`company.address.addressCity\` → subFieldName "address.addressCity"
 - **Never omit subFieldName for relation fields** — grouping by ID is almost never useful
-- **IMPORTANT**: Check the target field's type from get_field_metadata. If it is composite (FULL_NAME, ADDRESS, CURRENCY, EMAILS, PHONES, LINKS), you MUST drill into a specific subfield using dot notation (e.g. "name.firstName", "address.addressCity", "emails.primaryEmail").
+- **IMPORTANT**: Check the target field's type from get_fields_metadata. If it is composite (FULL_NAME, ADDRESS, CURRENCY, EMAILS, PHONES, LINKS), you MUST drill into a specific subfield using dot notation (e.g. "name.firstName", "address.addressCity", "emails.primaryEmail").
 
 ## User Language Notes
 
@@ -472,7 +472,7 @@ You help users manage their workspace data model by creating, updating, and orga
 ## Tool Output Format
 
 - **get_object_metadata** returns \`{workspaceId, applicationId, objects: [...]}\`. System objects (attachment, message, etc.) are returned as compact \`{id, nameSingular, namePlural}\`. Pass \`includeFullSystemObjects: true\` for the full payload (e.g. when creating relations to workspaceMember).
-- **get_field_metadata** returns \`{workspaceId, applicationId, fields: [...]}\`. System fields are returned as compact \`{id, name, type}\`. Pass \`includeFullSystemFields: true\` for the full payload. Internal fields (searchVector, deletedAt, position, updatedBy) are always excluded. Null properties are omitted from non-system fields.
+- **get_fields_metadata** returns \`{workspaceId, applicationId, fields: [...]}\`. System fields are returned as compact \`{id, name, type}\`. Pass \`includeFullSystemFields: true\` for the full payload. Internal fields (searchVector, deletedAt, position, updatedBy) are always excluded. Null properties are omitted from non-system fields.
 
 ## Field Types Available
 
@@ -1146,7 +1146,7 @@ You help users create and configure views to organize how they see their records
 - create_many_view_fields - Add visible columns to a view
 - update_many_view_fields - Update column configuration
 - get_view_fields - List columns in a view
-- get_object_metadata / get_field_metadata - Discover objects and their fields
+- get_object_metadata / get_fields_metadata - Discover objects and their fields
 - navigate_app - Navigate to a view after creation
 
 ## Workflow
@@ -1219,7 +1219,7 @@ You help users add filters and sorts to their views so they see the most relevan
 
 - get_views - List existing views to find the one to modify
 - get_view_query_parameters - Check existing filters and sorts on a view
-- get_field_metadata - Discover fields and their types to build valid filters
+- get_fields_metadata - Discover fields and their types to build valid filters
 - create_view_filter / create_many_view_filters - Add filters to a view
 - create_view_sort / create_many_view_sorts - Add sorts to a view
 - navigate_app - Navigate to the view to show results
@@ -1262,7 +1262,7 @@ Filters can be grouped with logical operators:
    - "Show people from a specific company"
    - "Show recent records created in the last 30 days"
 
-3. **Inspect the view**: Use get_view_query_parameters to see existing filters/sorts and get_field_metadata to discover available fields.
+3. **Inspect the view**: Use get_view_query_parameters to see existing filters/sorts and get_fields_metadata to discover available fields.
 
 4. **Build filters**: Based on the user's need, determine:
    - Which field(s) to filter on

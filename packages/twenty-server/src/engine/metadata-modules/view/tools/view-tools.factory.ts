@@ -101,7 +101,7 @@ const CreateViewInputSchema = z.object({
     .array(z.string())
     .optional()
     .describe(
-      'Field names to display in the view as columns (for TABLE) or cards (for KANBAN/CALENDAR). Fields are displayed in the order provided. Use get_field_metadata to find available field names.',
+      'Field names to display in the view as columns (for TABLE) or cards (for KANBAN/CALENDAR). Fields are displayed in the order provided. Use get_fields_metadata to find available field names.',
     ),
 });
 
@@ -174,7 +174,7 @@ export class ViewToolsFactory {
 
     if (!fieldMetadata) {
       throw new Error(
-        `Field "${fieldName}" not found on this object. Use get_field_metadata to list available fields.`,
+        `Field "${fieldName}" not found on this object. Use get_fields_metadata to list available fields.`,
       );
     }
 
@@ -204,7 +204,7 @@ export class ViewToolsFactory {
 
     if (!fieldMetadata) {
       throw new Error(
-        `Field "${fieldName}" not found on this object. Use get_field_metadata to list available fields.`,
+        `Field "${fieldName}" not found on this object. Use get_fields_metadata to list available fields.`,
       );
     }
 
@@ -240,7 +240,7 @@ export class ViewToolsFactory {
 
     if (!fieldMetadata) {
       throw new Error(
-        `Field "${fieldName}" not found on this object. Use get_field_metadata to list available fields.`,
+        `Field "${fieldName}" not found on this object. Use get_fields_metadata to list available fields.`,
       );
     }
 
