@@ -54,7 +54,7 @@ export class BullMQDriver
   ) {}
 
   onModuleInit() {
-    this.metricsService.createMultiObservableGauge({
+    this.metricsService.createObservableGauge({
       metricName: 'twenty_queue_jobs_waiting_total',
       options: { description: 'Current number of jobs waiting in queue' },
       callback: async () => {
