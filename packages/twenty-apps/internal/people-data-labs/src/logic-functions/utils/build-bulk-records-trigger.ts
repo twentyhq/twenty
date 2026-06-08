@@ -4,12 +4,10 @@ export const buildBulkRecordsTrigger = ({
   objectNameSingular,
   name,
   icon,
-  nextStepId,
 }: {
   objectNameSingular: string;
   name: string;
   icon: string;
-  nextStepId: string;
 }): WorkflowBulkRecordsTrigger => ({
   name,
   type: 'MANUAL',
@@ -23,5 +21,5 @@ export const buildBulkRecordsTrigger = ({
     icon,
     isPinned: false,
   },
-  nextStepIds: [nextStepId],
+  nextStepIds: [],
 });

@@ -7,6 +7,8 @@ import { type EnrichmentWorkflowSeed } from 'src/types/enrichment-workflow-seed'
 import { type SeedEnrichmentWorkflowResult } from 'src/types/seed-enrichment-workflow-result';
 import { isDefined } from 'src/utils/is-defined';
 
+const TRIGGER_STEP_ID = 'trigger';
+
 export const seedEnrichmentWorkflow = async ({
   client,
   logicFunctionId,
@@ -70,7 +72,29 @@ export const seedEnrichmentWorkflow = async ({
     objectNameSingular: seed.objectNameSingular,
     name: seed.triggerName,
     icon: seed.icon,
-    nextStepId: stepId,
+  });
+
+  await client.mutation({
+    updateWorkflowVersion: {
+      __args: { id: draftVersionId, data: { trigger } },
+      id: true,
+    },
+  });
+
+  await client.mutation({
+    createWorkflowVersionStep: {
+      __args: {
+        input: {
+          workflowVersionId: draftVersionId,
+          stepType: 'LOGIC_FUNCTION',
+          parentStepId: TRIGGER_STEP_ID,
+          id: stepId,
+          defaultSettings: { input: { logicFunctionId } },
+        },
+      },
+      triggerDiff: true,
+      stepsDiff: true,
+    },
   });
 
   const step = buildLogicFunctionStep({
@@ -81,8 +105,8 @@ export const seedEnrichmentWorkflow = async ({
   });
 
   await client.mutation({
-    updateWorkflowVersion: {
-      __args: { id: draftVersionId, data: { trigger, steps: [step] } },
+    updateWorkflowVersionStep: {
+      __args: { input: { workflowVersionId: draftVersionId, step } },
       id: true,
     },
   });

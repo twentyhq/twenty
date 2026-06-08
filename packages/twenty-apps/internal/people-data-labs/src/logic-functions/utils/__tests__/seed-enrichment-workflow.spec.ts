@@ -74,16 +74,35 @@ describe('seedEnrichmentWorkflow', () => {
       objectNameSingular: 'company',
     });
     expect(data.trigger.settings.objectType).toBe('company');
+    expect(data.trigger.nextStepIds).toEqual([]);
+    expect(data.steps).toBeUndefined();
 
-    expect(data.steps).toHaveLength(1);
-    expect(data.steps[0].type).toBe('LOGIC_FUNCTION');
-    expect(data.steps[0].settings.input.logicFunctionId).toBe(
+    const createStepRequest = mutations.find(
+      (request) => 'createWorkflowVersionStep' in request,
+    );
+    const createStepInput =
+      createStepRequest?.createWorkflowVersionStep.__args.input;
+    expect(createStepInput.workflowVersionId).toBe('version-1');
+    expect(createStepInput.stepType).toBe('LOGIC_FUNCTION');
+    expect(createStepInput.parentStepId).toBe('trigger');
+    expect(createStepInput.defaultSettings.input.logicFunctionId).toBe(
       'logic-function-1',
     );
-    expect(data.steps[0].settings.input.logicFunctionInput).toEqual({
+
+    const updateStepRequest = mutations.find(
+      (request) => 'updateWorkflowVersionStep' in request,
+    );
+    const updateStepInput =
+      updateStepRequest?.updateWorkflowVersionStep.__args.input;
+    expect(updateStepInput.workflowVersionId).toBe('version-1');
+    expect(updateStepInput.step.id).toBe(createStepInput.id);
+    expect(updateStepInput.step.type).toBe('LOGIC_FUNCTION');
+    expect(updateStepInput.step.settings.input.logicFunctionId).toBe(
+      'logic-function-1',
+    );
+    expect(updateStepInput.step.settings.input.logicFunctionInput).toEqual({
       records: '{{trigger.companies}}',
     });
-    expect(data.trigger.nextStepIds).toEqual([data.steps[0].id]);
 
     const activateRequest = mutations.find(
       (request) => 'activateWorkflowVersion' in request,

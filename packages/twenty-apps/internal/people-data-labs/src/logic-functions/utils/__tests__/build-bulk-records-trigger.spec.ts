@@ -3,12 +3,11 @@ import { describe, expect, it } from 'vitest';
 import { buildBulkRecordsTrigger } from 'src/logic-functions/utils/build-bulk-records-trigger';
 
 describe('buildBulkRecordsTrigger', () => {
-  it('builds a bulk-records manual trigger pointing at the next step', () => {
+  it('builds a bulk-records manual trigger with no next step wired', () => {
     const trigger = buildBulkRecordsTrigger({
       objectNameSingular: 'person',
       name: 'When people are selected',
       icon: 'IconSparkles',
-      nextStepId: 'step-1',
     });
 
     expect(trigger).toEqual({
@@ -21,7 +20,7 @@ describe('buildBulkRecordsTrigger', () => {
         icon: 'IconSparkles',
         isPinned: false,
       },
-      nextStepIds: ['step-1'],
+      nextStepIds: [],
     });
   });
 });
