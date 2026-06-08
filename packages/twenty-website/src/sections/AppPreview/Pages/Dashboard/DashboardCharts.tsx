@@ -142,13 +142,7 @@ export function DashboardLineChart({ data }: { data: DashboardLineChart }) {
           aria-hidden="true"
         >
           <defs>
-            <linearGradient
-              id={gradientId}
-              x1="0"
-              y1="0"
-              x2="0"
-              y2="1"
-            >
+            <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor={ACCENT} stopOpacity="0.22" />
               <stop offset="100%" stopColor={ACCENT} stopOpacity="0" />
             </linearGradient>

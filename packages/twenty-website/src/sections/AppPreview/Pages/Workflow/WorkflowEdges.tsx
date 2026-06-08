@@ -167,9 +167,7 @@ export function WorkflowEdges({
           key={`${edge.from}-${edge.to}-${edge.type}`}
           d={getWorkflowEdgePath({ edge, nodes })}
           fill="none"
-          markerEnd={
-            edge.type === 'loopBack' ? undefined : `url(#${arrowId})`
-          }
+          markerEnd={edge.type === 'loopBack' ? undefined : `url(#${arrowId})`}
           pathLength={1}
           stroke={WORKFLOW_PAGE_COLORS.arrowStroke}
           strokeLinecap="round"
