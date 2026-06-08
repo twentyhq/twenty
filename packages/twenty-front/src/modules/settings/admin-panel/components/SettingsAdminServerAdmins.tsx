@@ -119,6 +119,7 @@ export const SettingsAdminServerAdmins = () => {
     pendingChange?.field === 'canImpersonate'
       ? t`impersonation`
       : t`full admin panel access`;
+  const isRevoking = pendingChange?.nextValue === false;
 
   return (
     <Section>
@@ -191,14 +192,8 @@ export const SettingsAdminServerAdmins = () => {
       )}
       <ConfirmationModal
         modalInstanceId={SERVER_ADMIN_ACCESS_CONFIRMATION_MODAL_ID}
-        title={
-          pendingChange?.nextValue === false
-            ? t`Revoke access`
-            : t`Grant access`
-        }
-        confirmButtonAccent={
-          pendingChange?.nextValue === false ? 'danger' : 'blue'
-        }
+        title={isRevoking ? t`Revoke access` : t`Grant access`}
+        confirmButtonAccent={isRevoking ? 'danger' : 'blue'}
         confirmButtonText={t`Confirm`}
         onConfirmClick={handleConfirm}
         onClose={() => {
@@ -208,7 +203,7 @@ export const SettingsAdminServerAdmins = () => {
         subtitle={
           <StyledConfirmationContent>
             <div>
-              {pendingChange?.nextValue === false
+              {isRevoking
                 ? t`This will revoke ${fieldLabel} for ${pendingChange?.userLabel ?? ''}.`
                 : t`This will grant ${fieldLabel} to ${pendingChange?.userLabel ?? ''}.`}
             </div>

@@ -451,12 +451,8 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
       : await this.userRepository.save(user);
 
     // Invalidate the cached user entity so auth guards and strategies read the
-    // fresh value instead of stale cached fields. Inside a transaction the
-    // caller owns invalidation after commit, so we only invalidate the
-    // committed (non-queryRunner) path here to avoid re-caching pre-commit data.
-    if (!queryRunner) {
-      await this.coreEntityCacheService.invalidate('user', userId);
-    }
+    // fresh isEmailVerified value instead of a stale cached one.
+    await this.coreEntityCacheService.invalidate('user', userId);
 
     return savedUser;
   }
