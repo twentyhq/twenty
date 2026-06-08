@@ -1,5 +1,6 @@
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
+import { type LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
 export type LogicFunctionExecuteError = {
@@ -23,6 +24,13 @@ export type LogicFunctionExecuteParams = {
   payload: object;
   env?: Record<string, string>;
   timeoutMs?: number;
+  forceExecutionMode?: LogicFunctionExecutionMode;
+};
+
+export type LogicFunctionInstallPrebuiltBundleParams = {
+  flatLogicFunction: FlatLogicFunction;
+  flatApplication: FlatApplication;
+  applicationUniversalIdentifier: string;
 };
 
 export type LogicFunctionTranspileParams = {
@@ -43,6 +51,12 @@ export interface LogicFunctionDriver {
   transpile(
     params: LogicFunctionTranspileParams,
   ): Promise<LogicFunctionTranspileResult>;
+  installPrebuiltBundle(
+    params: LogicFunctionInstallPrebuiltBundleParams,
+  ): Promise<void>;
+  getInstalledBundleChecksum(
+    flatLogicFunction: FlatLogicFunction,
+  ): Promise<string | null>;
 }
 
 export enum LogicFunctionDriverType {

@@ -7,7 +7,7 @@ import { type ExceptionHandlerDriverInterface } from 'src/engine/core-modules/ex
 @Injectable()
 export class ExceptionHandlerMockService implements ExceptionHandlerDriverInterface {
   captureExceptions(
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     exceptions: readonly any[],
     _?: ExceptionHandlerOptions | undefined,
   ): string[] {

@@ -8,6 +8,8 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+const SETTINGS_CONTENT_MAX_WIDTH = 760;
+
 const StyledSettingsPageContainer = styled.div<{
   width?: number;
   isMobile?: boolean;
@@ -16,6 +18,8 @@ const StyledSettingsPageContainer = styled.div<{
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[8]};
+  margin: 0 auto;
+  max-width: ${SETTINGS_CONTENT_MAX_WIDTH}px;
   overflow: auto;
   padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[8]}
     ${themeCssVariables.spacing[8]};

@@ -20,8 +20,9 @@ type PartnersMarketplacePageProps = {
 export default async function PartnersMarketplacePage({
   params,
 }: PartnersMarketplacePageProps) {
-  const [, stats, livePartners] = await Promise.all([
+  const [, { locale }, stats, livePartners] = await Promise.all([
     getRouteI18n(params),
+    params,
     fetchCommunityStats(),
     getPartners(),
   ]);
@@ -37,7 +38,7 @@ export default async function PartnersMarketplacePage({
       <MarketplaceHeader />
 
       <Suspense fallback={null}>
-        <MarketplaceClient partners={livePartners} />
+        <MarketplaceClient partners={livePartners} locale={locale} />
       </Suspense>
     </>
   );

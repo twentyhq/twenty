@@ -84,11 +84,11 @@ export default defineCommandMenuItem({
 O campo `conditionalAvailabilityExpression` permite controlar quando um comando é visível com base no contexto da página atual. Importe variáveis tipadas e operadores de `twenty-sdk` para construir expressões:
 
 ```ts src/command-menu-items/bulk-update.command-menu-item.ts
-import { defineCommandMenuItem } from 'twenty-sdk/define';
 import {
+  defineCommandMenuItem,
   objectPermissions,
   everyEquals,
-} from 'twenty-sdk/front-component';
+} from 'twenty-sdk/define';
 
 export default defineCommandMenuItem({
   universalIdentifier: '...',

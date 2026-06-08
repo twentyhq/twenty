@@ -49,7 +49,10 @@ export const getPageLayoutWidgetDataSeedsV2 = (
 
   const companyIdFieldId = getFieldId(companyObject, 'id');
   const companyCreatedAtFieldId = getFieldId(companyObject, 'createdAt');
-  const companyArrFieldId = getFieldId(companyObject, 'annualRecurringRevenue');
+  const companyAnnualRevenueFieldId = getFieldId(
+    companyObject,
+    'annualRevenue',
+  );
   const companyNameFieldId = getFieldId(companyObject, 'name');
   const companyLinkedinLinkFieldId = getFieldId(companyObject, 'linkedinLink');
 
@@ -133,7 +136,7 @@ export const getPageLayoutWidgetDataSeedsV2 = (
       : null,
 
     // PIE chart: Revenue Distribution (Customer Analytics)
-    isDefined(companyArrFieldId) && isDefined(companyNameFieldId)
+    isDefined(companyAnnualRevenueFieldId) && isDefined(companyNameFieldId)
       ? ({
           id: generateSeedId(
             workspaceId,
@@ -155,7 +158,7 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           },
           configuration: {
             configurationType: WidgetConfigurationType.PIE_CHART,
-            aggregateFieldMetadataId: companyArrFieldId,
+            aggregateFieldMetadataId: companyAnnualRevenueFieldId,
             aggregateOperation: AggregateOperations.SUM,
             groupByFieldMetadataId: companyNameFieldId,
             orderBy: GraphOrderBy.VALUE_DESC,

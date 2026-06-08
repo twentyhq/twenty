@@ -1,5 +1,6 @@
 import path from 'path';
 import { OUTPUT_DIR, type Manifest } from 'twenty-shared/application';
+import { type SyncAction } from 'twenty-shared/metadata';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
 import {
@@ -13,6 +14,7 @@ import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
+import { formatSyncActionsSummary } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
@@ -22,6 +24,7 @@ import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
 export type AppDevOnceOptions = {
   appPath: string;
   verbose?: boolean;
+  dryRun?: boolean;
   onProgress?: (message: string) => void;
 };
 
@@ -32,10 +35,19 @@ export type AppDevOnceResult = {
   applicationUniversalIdentifier: string;
 };
 
+const reportMetadataChanges = (
+  data: { actions: SyncAction[] },
+  onProgress?: (message: string) => void,
+): void => {
+  for (const event of formatSyncActionsSummary(data.actions)) {
+    onProgress?.(event.message);
+  }
+};
+
 const innerAppDevOnce = async (
   options: AppDevOnceOptions,
 ): Promise<CommandResult<AppDevOnceResult>> => {
-  const { appPath, onProgress, verbose } = options;
+  const { appPath, onProgress, verbose, dryRun } = options;
 
   onProgress?.('Checking server...');
 
@@ -119,6 +131,47 @@ const innerAppDevOnce = async (
   });
 
   await writeManifestToOutput(appPath, manifest);
+
+  if (dryRun) {
+    onProgress?.(
+      'Computing metadata diff (dry run, nothing will be applied)...',
+    );
+
+    const dryRunResult = await apiService.syncApplication(manifest, {
+      dryRun: true,
+    });
+
+    if (!dryRunResult.success) {
+      const errorEvents = verbose
+        ? null
+        : formatManifestValidationErrors(dryRunResult.error);
+
+      const message = errorEvents
+        ? errorEvents.map((event) => event.message).join('\n')
+        : `Dry run failed with error: ${serializeError(dryRunResult.error)}`;
+
+      return {
+        success: false,
+        error: {
+          code: APP_ERROR_CODES.SYNC_FAILED,
+          message,
+        },
+      };
+    }
+
+    reportMetadataChanges(dryRunResult.data, onProgress);
+
+    return {
+      success: true,
+      data: {
+        outputDir: path.join(appPath, OUTPUT_DIR),
+        fileCount: buildResult.builtFileInfos.size,
+        applicationDisplayName: manifest.application.displayName,
+        applicationUniversalIdentifier:
+          manifest.application.universalIdentifier,
+      },
+    };
+  }
 
   onProgress?.('Registering application...');
 
@@ -211,6 +264,8 @@ const innerAppDevOnce = async (
       },
     };
   }
+
+  reportMetadataChanges(syncResult.data, onProgress);
 
   onProgress?.('Generating API client...');
 

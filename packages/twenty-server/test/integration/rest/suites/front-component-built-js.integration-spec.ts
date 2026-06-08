@@ -2,6 +2,7 @@ import { createFrontComponent } from 'test/integration/metadata/suites/front-com
 import { deleteFrontComponent } from 'test/integration/metadata/suites/front-component/utils/delete-front-component.util';
 import { seedBuiltFrontComponentFile } from 'test/integration/metadata/suites/front-component/utils/seed-built-front-component-file.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { expectOneNotInternalServerErrorHttpResponseSnapshot } from 'test/integration/utils/expect-one-not-internal-server-error-http-response-snapshot.util';
 
 const BUILT_COMPONENT_PATH = 'src/front-components/test-endpoint.mjs';
 
@@ -57,15 +58,51 @@ describe('Front component built JS endpoint', () => {
   it('should return 404 for a non-existent front component ID', async () => {
     const nonExistentId = '00000000-0000-0000-0000-000000000000';
 
-    await makeRestAPIRequest({
+    const response = await makeRestAPIRequest({
       method: 'get',
       path: `/front-components/${nonExistentId}`,
       bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-    })
-      .expect(404)
-      .expect((res) => {
-        expect(res.body.statusCode).toBe(404);
+    });
+
+    expectOneNotInternalServerErrorHttpResponseSnapshot(response);
+  });
+
+  it('should return 404 when front component exists but built file is missing on storage', async () => {
+    const missingBuiltPath = 'src/front-components/will-be-deleted.mjs';
+
+    const { cleanup } = await seedBuiltFrontComponentFile({
+      builtComponentPath: missingBuiltPath,
+    });
+
+    const { data } = await createFrontComponent({
+      expectToFail: false,
+      input: {
+        name: 'testMissingBuiltFile',
+        componentName: 'TestMissingBuiltFile',
+        sourceComponentPath: 'src/front-components/will-be-deleted.tsx',
+        builtComponentPath: missingBuiltPath,
+        builtComponentChecksum: 'will-be-deleted-checksum',
+      },
+    });
+
+    const missingFileComponentId = data.createFrontComponent.id;
+
+    cleanup();
+
+    try {
+      const response = await makeRestAPIRequest({
+        method: 'get',
+        path: `/front-components/${missingFileComponentId}`,
+        bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
+
+      expectOneNotInternalServerErrorHttpResponseSnapshot(response);
+    } finally {
+      await deleteFrontComponent({
+        expectToFail: false,
+        input: { id: missingFileComponentId },
+      });
+    }
   });
 
   it('should return 403 when no token is provided', async () => {

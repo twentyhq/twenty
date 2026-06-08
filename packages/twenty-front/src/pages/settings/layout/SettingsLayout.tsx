@@ -2,7 +2,7 @@ import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/us
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsLayoutItemsStats } from '@/settings/layout/components/SettingsLayoutItemsStats';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
@@ -68,7 +68,7 @@ export const SettingsLayout = () => {
   ];
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`Layout`}
       actionButton={
         <Button
@@ -83,7 +83,7 @@ export const SettingsLayout = () => {
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         { children: t`Layout` },
       ]}
@@ -106,6 +106,6 @@ export const SettingsLayout = () => {
           <SettingsLayoutItemsStats />
         </Section>
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

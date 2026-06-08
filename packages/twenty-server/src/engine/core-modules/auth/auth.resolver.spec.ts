@@ -4,7 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
@@ -136,7 +136,7 @@ describe('AuthResolver', () => {
           useValue: {},
         },
         {
-          provide: AuditService,
+          provide: EventLogEmitterService,
           useValue: {
             createContext: jest.fn().mockReturnValue({
               insertWorkspaceEvent: jest.fn(),

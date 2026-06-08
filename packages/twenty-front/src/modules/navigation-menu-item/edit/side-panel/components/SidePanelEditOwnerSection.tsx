@@ -4,7 +4,7 @@ import { IconApps } from 'twenty-ui/display';
 
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
+import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/edit/hooks/useSelectedNavigationMenuItemEditItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useQuery } from '@apollo/client/react';
@@ -20,14 +20,13 @@ export const SidePanelEditOwnerSection = ({
   const { t } = useLingui();
 
   const { selectedItem } = useSelectedNavigationMenuItemEditItem();
-  const { currentDraft } = useDraftNavigationMenuItems();
+  const { currentItems } = useNavigationMenuItemEditController();
 
-  const applicationIdFromDraft =
-    isDefined(selectedItem) && isDefined(currentDraft)
-      ? currentDraft.find((item) => item.id === selectedItem.id)?.applicationId
-      : undefined;
+  const applicationIdFromSection = isDefined(selectedItem)
+    ? currentItems.find((item) => item.id === selectedItem.id)?.applicationId
+    : undefined;
 
-  const applicationId = applicationIdProp ?? applicationIdFromDraft;
+  const applicationId = applicationIdProp ?? applicationIdFromSection;
 
   const { data } = useQuery(FindOneApplicationDocument, {
     variables: { id: applicationId ?? '' },

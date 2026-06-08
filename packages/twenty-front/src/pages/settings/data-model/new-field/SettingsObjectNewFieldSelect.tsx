@@ -5,7 +5,7 @@ import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/Set
 import { SettingsObjectNewFieldSelector } from '@/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector';
 import { type FieldType } from '@/settings/data-model/types/FieldType';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
@@ -64,12 +64,12 @@ export const SettingsObjectNewFieldSelect = () => {
     <FormProvider // oxlint-disable-next-line react/jsx-props-no-spreading
       {...formMethods}
     >
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={t`1. Select a field type`}
         links={[
           {
             children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.General),
           },
           { children: t`Objects`, href: getSettingsPath(SettingsPath.Objects) },
           {
@@ -87,7 +87,7 @@ export const SettingsObjectNewFieldSelect = () => {
             excludedFieldTypes={excludedFieldTypes}
           />
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     </FormProvider>
   );
 };

@@ -298,8 +298,8 @@ export default defineFrontComponent({
 Folosiți `useSelectedRecordIds()` pentru a gestiona mai multe înregistrări selectate. Acest lucru este util pentru operațiuni în masă:
 
 ```tsx src/front-components/bulk-export.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { defineFrontComponent, numberOfSelectedRecords } from 'twenty-sdk/define';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 
@@ -383,11 +383,11 @@ export default defineCommandMenuItem({
 Câmpul `conditionalAvailabilityExpression` vă permite să controlați când este vizibilă o comandă în funcție de contextul paginii curente. Importați variabile tipizate și operatori din `twenty-sdk` pentru a construi expresii:
 
 ```ts src/command-menu-items/bulk-update.command-menu-item.ts
-import { defineCommandMenuItem } from 'twenty-sdk/define';
 import {
+  defineCommandMenuItem,
   objectPermissions,
   everyEquals,
-} from 'twenty-sdk/front-component';
+} from 'twenty-sdk/define';
 
 export default defineCommandMenuItem({
   universalIdentifier: '...',

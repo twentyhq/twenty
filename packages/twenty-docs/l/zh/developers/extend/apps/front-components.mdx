@@ -298,8 +298,8 @@ export default defineFrontComponent({
 使用 `useSelectedRecordIds()` 来处理多个已选记录。 这对于批量操作很有用：
 
 ```tsx src/front-components/bulk-export.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { defineFrontComponent, numberOfSelectedRecords } from 'twenty-sdk/define';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 
@@ -383,11 +383,11 @@ export default defineCommandMenuItem({
 通过 `conditionalAvailabilityExpression` 字段，您可以基于当前页面上下文控制命令何时可见。 从 `twenty-sdk` 导入带类型的变量和运算符来构建表达式：
 
 ```ts src/command-menu-items/bulk-update.command-menu-item.ts
-import { defineCommandMenuItem } from 'twenty-sdk/define';
 import {
+  defineCommandMenuItem,
   objectPermissions,
   everyEquals,
-} from 'twenty-sdk/front-component';
+} from 'twenty-sdk/define';
 
 export default defineCommandMenuItem({
   universalIdentifier: '...',

@@ -147,10 +147,10 @@ export const generateGroupByToolInputSchema = (
           groupByEntries as [z.ZodTypeAny, z.ZodTypeAny, ...z.ZodTypeAny[]],
         );
 
-  const { filterShape, filterSchema } = generateRecordFilterSchema(
+  const { filterShape, filterSchema } = generateRecordFilterSchema({
     objectMetadata,
     restrictedFields,
-  );
+  });
 
   const availableAggregations = getAvailableAggregationsFromObjectFields(
     objectMetadata.fields.filter(

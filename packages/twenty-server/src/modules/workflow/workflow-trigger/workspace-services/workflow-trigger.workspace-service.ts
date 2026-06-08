@@ -136,6 +136,11 @@ export class WorkflowTriggerWorkspaceService {
           steps: workflowVersion.steps ?? [],
         });
 
+        await this.codeStepBuildService.switchCodeStepLogicFunctionsToPrebuilt({
+          workspaceId,
+          steps: workflowVersion.steps ?? [],
+        });
+
         await this.performActivationSteps(
           workflow,
           workflowVersion,

@@ -7,11 +7,11 @@ import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connect
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapMessageParserService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-parser.service';
-import { ImapMessageTextExtractorService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-text-extractor.service';
 import { ImapMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-messages-import-error-handler.service';
 import { parseMessageId } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-message-id.util';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { extractAddressesFromParsedEmail } from 'src/modules/messaging/message-import-manager/utils/extract-addresses-from-parsed-email.util';
+import { extractMessageBodyText } from 'src/modules/messaging/message-import-manager/utils/extract-message-body-text.util';
 import { extractParticipantsFromParsedEmail } from 'src/modules/messaging/message-import-manager/utils/extract-participants-from-parsed-email.util';
 import { extractThreadIdFromParsedEmail } from 'src/modules/messaging/message-import-manager/utils/extract-thread-id-from-parsed-email.util';
 import { sanitizeString } from 'src/modules/messaging/message-import-manager/utils/sanitize-string.util';
@@ -28,7 +28,6 @@ export class ImapGetMessagesService {
   constructor(
     private readonly imapClientProvider: ImapClientProvider,
     private readonly messageParser: ImapMessageParserService,
-    private readonly textExtractor: ImapMessageTextExtractorService,
     private readonly errorHandler: ImapMessagesImportErrorHandler,
   ) {}
 
@@ -167,9 +166,10 @@ export class ImapGetMessagesService {
     const fromAddresses = extractAddressesFromParsedEmail(parsed.from);
     const senderAddress = fromAddresses[0]?.address ?? '';
 
-    const text = sanitizeString(
-      this.textExtractor.extractTextWithoutReplyQuotations(parsed),
-    );
+    const text = extractMessageBodyText({
+      text: parsed.text,
+      html: parsed.html,
+    });
 
     return {
       externalId: `${folderPath}:${uid}`,

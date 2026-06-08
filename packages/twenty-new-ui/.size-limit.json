@@ -1,0 +1,78 @@
+[
+  {
+    "name": ". (root barrel)",
+    "path": "dist/index.mjs",
+    "limit": "60 kB",
+    "import": "*"
+  },
+  {
+    "name": "accessibility",
+    "path": "dist/accessibility.mjs",
+    "limit": "10 kB"
+  },
+  {
+    "name": "assets",
+    "path": "dist/assets.mjs",
+    "limit": "10 kB"
+  },
+  {
+    "name": "testing",
+    "path": "dist/testing.mjs",
+    "limit": "10 kB"
+  },
+  {
+    "name": "components",
+    "path": "dist/components.mjs",
+    "limit": "40 kB"
+  },
+  {
+    "name": "display",
+    "path": "dist/display.mjs",
+    "limit": "30 kB"
+  },
+  {
+    "name": "feedback",
+    "path": "dist/feedback.mjs",
+    "limit": "20 kB"
+  },
+  {
+    "name": "input",
+    "path": "dist/input.mjs",
+    "limit": "50 kB"
+  },
+  {
+    "name": "layout",
+    "path": "dist/layout.mjs",
+    "limit": "20 kB"
+  },
+  {
+    "name": "navigation",
+    "path": "dist/navigation.mjs",
+    "limit": "20 kB"
+  },
+  {
+    "name": "json-visualizer",
+    "path": "dist/json-visualizer.mjs",
+    "limit": "30 kB"
+  },
+  {
+    "name": "theme",
+    "path": "dist/theme.mjs",
+    "limit": "55 kB"
+  },
+  {
+    "name": "theme-constants",
+    "path": "dist/theme-constants.mjs",
+    "limit": "20 kB"
+  },
+  {
+    "name": "utilities",
+    "path": "dist/utilities.mjs",
+    "limit": "10 kB"
+  },
+  {
+    "name": "style.css",
+    "path": "dist/style.css",
+    "limit": "40 kB"
+  }
+]
