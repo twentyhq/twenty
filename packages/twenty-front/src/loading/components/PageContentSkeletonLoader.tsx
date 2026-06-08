@@ -41,6 +41,7 @@ export const PageContentSkeletonLoader = ({
           />
         }
         secondaryBar={secondaryBar}
+        showInformationBanner={false}
       >
         <StyledBody>
           <Skeleton

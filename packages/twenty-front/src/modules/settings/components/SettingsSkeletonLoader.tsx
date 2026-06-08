@@ -37,6 +37,7 @@ export const SettingsSkeletonLoader = () => {
             }
           />
         }
+        showInformationBanner={false}
       >
         <SettingsPageContainer>
           <SettingsSectionSkeletonLoader />

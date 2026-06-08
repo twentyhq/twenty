@@ -7,6 +7,7 @@ type PageCardLayoutProps = {
   header: ReactNode;
   secondaryBar?: ReactNode;
   children: ReactNode;
+  showInformationBanner?: boolean;
 };
 
 const StyledRoot = styled.div`
@@ -48,6 +49,7 @@ export const PageCardLayout = ({
   header,
   secondaryBar,
   children,
+  showInformationBanner = true,
 }: PageCardLayoutProps) => {
   return (
     <StyledRoot>
@@ -56,7 +58,7 @@ export const PageCardLayout = ({
           {header}
           {secondaryBar}
           <StyledBodyContent>
-            <InformationBannerWrapper />
+            {showInformationBanner && <InformationBannerWrapper />}
             {children}
           </StyledBodyContent>
         </StyledCard>
