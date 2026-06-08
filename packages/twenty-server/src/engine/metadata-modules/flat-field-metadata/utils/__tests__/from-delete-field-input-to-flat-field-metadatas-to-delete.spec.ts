@@ -1,3 +1,4 @@
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -133,5 +134,32 @@ describe('fromDeleteFieldInputToFlatFieldMetadatasToDelete', () => {
         flatIndexMaps: createEmptyFlatEntityMaps(),
       }),
     ).toThrow(FieldMetadataException);
+  });
+
+  it('should throw FIELD_MUTATION_NOT_ALLOWED when field belongs to twenty standard app', () => {
+    const objectId = 'obj-1';
+    const standardAppField = getFlatFieldMetadataMock({
+      universalIdentifier: 'standard-app-field-uid',
+      objectMetadataId: objectId,
+      type: FieldMetadataType.TEXT,
+      name: 'standardAppField',
+      isCustom: true,
+      isSystem: false,
+      applicationUniversalIdentifier:
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    });
+
+    expect(() =>
+      fromDeleteFieldInputToFlatFieldMetadatasToDelete({
+        deleteOneFieldInput: { id: standardAppField.id },
+        flatFieldMetadataMaps: buildFlatFieldMetadataMaps([standardAppField]),
+        flatObjectMetadataMaps: buildFlatObjectMetadataMaps(objectId),
+        flatIndexMaps: createEmptyFlatEntityMaps(),
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+      }),
+    );
   });
 });
