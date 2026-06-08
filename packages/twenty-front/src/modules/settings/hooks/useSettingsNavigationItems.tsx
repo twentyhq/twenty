@@ -171,7 +171,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`AI`,
           path: SettingsPath.AI,
           Icon: IconSparkles,
-          isHidden: !permissionMap[PermissionFlagType.AI],
+          isHidden: !permissionMap[PermissionFlagType.AI_SETTINGS],
         },
         {
           label: t`Email`,

@@ -1045,12 +1045,11 @@
         "name": "mistral-medium-latest",
         "label": "Mistral Medium (latest)",
         "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 1.5,
-        "outputCostPerMillionTokens": 7.5,
+        "inputCostPerMillionTokens": 0.4,
+        "outputCostPerMillionTokens": 2,
         "contextWindowTokens": 262144,
         "maxOutputTokens": 262144,
-        "modalities": ["image"],
-        "supportsReasoning": true
+        "modalities": ["image"]
       },
       {
         "name": "devstral-medium-latest",

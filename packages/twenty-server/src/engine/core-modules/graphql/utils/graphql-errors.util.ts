@@ -41,7 +41,7 @@ type RestrictedGraphQLErrorExtensions = {
 };
 
 export class BaseGraphQLError extends GraphQLError {
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   public extensions: Record<string, any>;
   override readonly name!: string;
   readonly locations: ReadonlyArray<SourceLocation> | undefined;
@@ -51,12 +51,12 @@ export class BaseGraphQLError extends GraphQLError {
   readonly nodes: ReadonlyArray<ASTNode> | undefined;
   public originalError: Error | undefined;
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   [key: string]: any;
   constructor(
     exceptionOrMessage: string | CustomException,
     code?: string,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     extensions?: Record<string, any>,
   ) {
     if (exceptionOrMessage instanceof CustomException) {
