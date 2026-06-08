@@ -1,16 +1,16 @@
-import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { loadSchema } from '@graphql-tools/load';
 import {
   assertValidSchema,
+  buildSchema,
   GraphQLSchema,
   lexicographicSortSchema,
 } from 'graphql';
 
 import { type Config } from '../config';
 
-// Loads the schema from the config string. The upstream genql codegen also
-// supported fetching the schema from a live endpoint (via undici/native-fetch);
-// Twenty always passes an SDL string, so that path is intentionally dropped.
+// Builds the schema from the config SDL string. The upstream genql codegen used
+// @graphql-tools' loadSchema and also supported fetching the schema from a live
+// endpoint (via undici/native-fetch). Twenty always passes an SDL string, so we
+// build it directly with graphql's buildSchema — no @graphql-tools or network.
 export const loadConfiguredSchema = async (
   config: Config,
 ): Promise<GraphQLSchema> => {
@@ -18,9 +18,7 @@ export const loadConfiguredSchema = async (
     throw new Error('`schema` must be defined in the config');
   }
 
-  const document = await loadSchema(config.schema, {
-    loaders: [new GraphQLFileLoader()],
-  });
+  const document = buildSchema(config.schema, { assumeValidSDL: true });
 
   const schema = config.sortProperties
     ? lexicographicSortSchema(document)

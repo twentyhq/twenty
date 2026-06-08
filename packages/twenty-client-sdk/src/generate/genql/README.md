@@ -23,6 +23,9 @@ in abandoned and vulnerable transitive packages (`undici`, `native-fetch`,
 - **Dropped `listr`** — the generation tasks now run as plain sequential
   `async` functions. File contents are unchanged.
 - **Replaced `fs-extra` / `mkdirp` / `rimraf`** with `node:fs`.
+- **Replaced `@graphql-tools/load`** with graphql's own `buildSchema` — Twenty
+  passes an SDL string, so the extra loader (and its dependency) is unnecessary.
+  Verified to produce byte-identical output.
 - **Runtime files are imported as `?raw` text** (`runtime-templates.ts`) instead
   of read from `node_modules` at generation time, so they ship with this bundle.
 - **`Config` was narrowed** to the schema-string inputs Twenty actually passes
@@ -33,7 +36,9 @@ in abandoned and vulnerable transitive packages (`undici`, `native-fetch`,
   supplies them) and the output is unchanged.
 
 The generated output is byte-for-byte identical to what `@genql/cli@3.0.5`
-produced (`prettier@^2.8` and `@graphql-tools/*` are retained for that reason).
+produced; `prettier@^2.8` is retained for that reason. The runtime query path is
+covered by `__tests__/generated-client-query.test.ts`, which drives a real
+generated client against a mock transport.
 
 ## License
 

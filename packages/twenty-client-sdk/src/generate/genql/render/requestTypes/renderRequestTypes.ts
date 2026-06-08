@@ -13,7 +13,6 @@ import { inputObjectType } from './inputObjectType'
 import { objectType } from './objectType'
 import { unionType } from './unionType'
 import { sortKeys } from '../common/support'
-import { emitWarning } from 'process'
 import { requestTypeName } from './requestTypeName'
 
 export const renderRequestTypes = (

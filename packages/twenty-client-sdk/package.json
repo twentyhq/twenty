@@ -49,8 +49,6 @@
   ],
   "dependencies": {
     "@genql/runtime": "^2.10.0",
-    "@graphql-tools/graphql-file-loader": "^7.5.17",
-    "@graphql-tools/load": "^7.8.14",
     "esbuild": "^0.28.0",
     "graphql": "^16.8.1",
     "lodash": "^4.17.21",
