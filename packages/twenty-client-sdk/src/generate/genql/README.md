@@ -25,6 +25,12 @@ in abandoned and vulnerable transitive packages (`undici`, `native-fetch`,
 - **Replaced `fs-extra` / `mkdirp` / `rimraf`** with `node:fs`.
 - **Runtime files are imported as `?raw` text** (`runtime-templates.ts`) instead
   of read from `node_modules` at generation time, so they ship with this bundle.
+- **`Config` was narrowed** to the schema-string inputs Twenty actually passes
+  (`schema`, `output`, `scalarTypes`, `sortProperties`). The introspection
+  (`endpoint`/`useGet`/`headers`), custom-`fetch` (`fetchImport`) and listr
+  (`verbose`) options were removed. The renderers are otherwise verbatim, so the
+  generated client still defaults its url/fetch to `undefined` (Twenty's wrapper
+  supplies them) and the output is unchanged.
 
 The generated output is byte-for-byte identical to what `@genql/cli@3.0.5`
 produced (`prettier@^2.8` and `@graphql-tools/*` are retained for that reason).
