@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { GraphQLUnionType, GraphQLInterfaceType } from 'graphql'
+import { GraphQLInterfaceType } from 'graphql'
 import { RenderContext } from '../common/RenderContext'
 import { typeComment } from '../common/comment'
 import { objectType } from './objectType'

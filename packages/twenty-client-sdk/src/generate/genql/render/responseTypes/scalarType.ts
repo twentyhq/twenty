@@ -1,6 +1,5 @@
 // @ts-nocheck
 import { GraphQLScalarType } from 'graphql'
-import { typeComment } from '../common/comment'
 import { RenderContext } from '../common/RenderContext'
 import { getTypeMappedAlias } from './typeMappedAlias'
 

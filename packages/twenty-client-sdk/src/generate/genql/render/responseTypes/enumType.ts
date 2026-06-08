@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { GraphQLEnumType } from 'graphql'
-import { fieldComment, typeComment } from '../common/comment'
+import { typeComment } from '../common/comment'
 import { RenderContext } from '../common/RenderContext'
 
 export const enumType = (type: GraphQLEnumType, ctx: RenderContext) => {

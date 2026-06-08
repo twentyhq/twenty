@@ -1,10 +1,7 @@
 // @ts-nocheck
-import { GraphQLEnumType, GraphQLSchema, isEnumType } from 'graphql'
+import { GraphQLSchema } from 'graphql'
 import { RenderContext } from '../common/RenderContext'
 import { RUNTIME_LIB_NAME } from '../../config'
-import { excludedTypes } from '../common/excludedTypes'
-
-import camelCase from 'lodash/camelCase'
 import { requestTypeName } from '../requestTypes/requestTypeName'
 
 const renderClientCode = (ctx: RenderContext) => {

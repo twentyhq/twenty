@@ -1,6 +1,5 @@
 // @ts-nocheck
 import { GraphQLNamedType } from 'graphql'
-import { typeComment } from '../common/comment'
 import { RenderContext } from '../common/RenderContext'
 
 const knownTypes: {

@@ -12,7 +12,6 @@ import {
 } from 'graphql'
 import { excludedTypes } from '../common/excludedTypes'
 import { RenderContext } from '../common/RenderContext'
-import { sortBy } from 'lodash'
 import { enumType } from './enumType'
 import { objectType } from './objectType'
 import { renderScalarTypes } from './scalarType'
