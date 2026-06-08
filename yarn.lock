@@ -7708,26 +7708,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@genql/runtime@npm:^2.10.0":
-  version: 2.10.0
-  resolution: "@genql/runtime@npm:2.10.0"
-  dependencies:
-    "@types/qs": "npm:^6.9.0"
-    "@types/ws": "npm:^6.0.1"
-    graphql-query-batcher: "npm:^1.0.1"
-    isomorphic-unfetch: "npm:^3.0.0"
-    lodash: "npm:^4.17.20"
-    subscriptions-transport-ws: "npm:^0.9.16"
-    tslib: "npm:^2.0.0"
-    utility-types: "npm:^3.10.0"
-    ws: "npm:^6.1.4"
-    zen-observable-ts: "npm:^0.8.21"
-  peerDependencies:
-    graphql: "*"
-  checksum: 10c0/e2a886c2469c933681e2b0ddd6a5b7f4cb12932251ba460e3cf2db4246817da79313ea4ba9769ec7cbe53ab9c1cb81ad8fcce6a969cd241185b79398d2a4f3c6
-  languageName: node
-  linkType: hard
-
 "@gitbeaker/core@npm:^38.12.1":
   version: 38.12.1
   resolution: "@gitbeaker/core@npm:38.12.1"
@@ -24232,15 +24212,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ws@npm:^6.0.1":
-  version: 6.0.4
-  resolution: "@types/ws@npm:6.0.4"
-  dependencies:
-    "@types/node": "npm:*"
-  checksum: 10c0/fa958e64596ca9487c3ed6012834de70b47f25d971f1950cfb8e6a99cb77ff340ae82ac7627744e01b58010674ef8ede07d5a2ac29ca9ad0d67a430fcc69ae14
-  languageName: node
-  linkType: hard
-
 "@types/ws@npm:^8.0.0":
   version: 8.5.12
   resolution: "@types/ws@npm:8.5.12"
@@ -28286,13 +28257,6 @@ __metadata:
   bin:
     astring: bin/astring
   checksum: 10c0/e7519544d9824494e80ef0e722bb3a0c543a31440d59691c13aeaceb75b14502af536b23f08db50aa6c632dafaade54caa25f0788aa7550b6b2d6e2df89e0830
-  languageName: node
-  linkType: hard
-
-"async-limiter@npm:~1.0.0":
-  version: 1.0.1
-  resolution: "async-limiter@npm:1.0.1"
-  checksum: 10c0/0693d378cfe86842a70d4c849595a0bb50dc44c11649640ca982fa90cbfc74e3cc4753b5a0847e51933f2e9c65ce8e05576e75e5e1fd963a086e673735b35969
   languageName: node
   linkType: hard
 
@@ -37510,13 +37474,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-query-batcher@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "graphql-query-batcher@npm:1.0.1"
-  checksum: 10c0/804d0f4064721a2116a16b9eac422e9233e85f4ab5b250cb8f83662725658ffde35779a8ae8211037f3dd2f9717de8cb63b394ad8057ce22171a83db2471196a
-  languageName: node
-  linkType: hard
-
 "graphql-redis-subscriptions@npm:2.7.0":
   version: 2.7.0
   resolution: "graphql-redis-subscriptions@npm:2.7.0"
@@ -40474,16 +40431,6 @@ __metadata:
   version: 3.0.1
   resolution: "isobject@npm:3.0.1"
   checksum: 10c0/03344f5064a82f099a0cd1a8a407f4c0d20b7b8485e8e816c39f249e9416b06c322e8dec5b842b6bb8a06de0af9cb48e7bc1b5352f0fadc2f0abac033db3d4db
-  languageName: node
-  linkType: hard
-
-"isomorphic-unfetch@npm:^3.0.0":
-  version: 3.1.0
-  resolution: "isomorphic-unfetch@npm:3.1.0"
-  dependencies:
-    node-fetch: "npm:^2.6.1"
-    unfetch: "npm:^4.2.0"
-  checksum: 10c0/d3b61fca06304db692b7f76bdfd3a00f410e42cfa7403c3b250546bf71589d18cf2f355922f57198e4cc4a9872d3647b20397a5c3edf1a347c90d57c83cf2a89
   languageName: node
   linkType: hard
 
@@ -55003,21 +54950,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"subscriptions-transport-ws@npm:^0.9.16":
-  version: 0.9.19
-  resolution: "subscriptions-transport-ws@npm:0.9.19"
-  dependencies:
-    backo2: "npm:^1.0.2"
-    eventemitter3: "npm:^3.1.0"
-    iterall: "npm:^1.2.1"
-    symbol-observable: "npm:^1.0.4"
-    ws: "npm:^5.2.0 || ^6.0.0 || ^7.0.0"
-  peerDependencies:
-    graphql: ">=0.10.0"
-  checksum: 10c0/6f2ade56865f0ba291d3ff82c79781b051c2374873bac853286fedfdbc05001b8c4018ab7cba44af667ead7f573e48d18892d58a8f9ca8d90dfb4bff5c125045
-  languageName: node
-  linkType: hard
-
 "sucrase@npm:^3.35.0":
   version: 3.35.0
   resolution: "sucrase@npm:3.35.0"
@@ -56376,7 +56308,6 @@ __metadata:
   resolution: "twenty-client-sdk@workspace:packages/twenty-client-sdk"
   dependencies:
     "@genql/cli": "npm:^3.0.3"
-    "@genql/runtime": "npm:^2.10.0"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
     esbuild: "npm:^0.28.0"
     graphql: "npm:^16.8.1"
@@ -56706,7 +56637,6 @@ __metadata:
   resolution: "twenty-sdk@workspace:packages/twenty-sdk"
   dependencies:
     "@genql/cli": "npm:^3.0.3"
-    "@genql/runtime": "npm:^2.10.0"
     "@prettier/sync": "npm:^0.5.2"
     "@sniptt/guards": "npm:^0.2.0"
     "@types/inquirer": "npm:^9.0.0"
@@ -57726,13 +57656,6 @@ __metadata:
   dependencies:
     pathe: "npm:^2.0.3"
   checksum: 10c0/e8556b4287fcf647f23db790eea2782cc79f182370718680e3aba4753d5fb7177abf5d6df489c8f74f7e3ad6cd554b8623cc01caf3e6f2d5548e69178adb1691
-  languageName: node
-  linkType: hard
-
-"unfetch@npm:^4.2.0":
-  version: 4.2.0
-  resolution: "unfetch@npm:4.2.0"
-  checksum: 10c0/a5c0a896a6f09f278b868075aea65652ad185db30e827cb7df45826fe5ab850124bf9c44c4dafca4bf0c55a0844b17031e8243467fcc38dd7a7d435007151f1b
   languageName: node
   linkType: hard
 
@@ -60186,15 +60109,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^6.1.4":
-  version: 6.2.4
-  resolution: "ws@npm:6.2.4"
-  dependencies:
-    async-limiter: "npm:~1.0.0"
-  checksum: 10c0/5c2b9474164f9cb68c7776a1d10b0461c186f3a69bffb1028fca33eba5ab7206a09173fb0b311d6c5a81c8cf148406f8deb0b7d899542ab8ca67407d99717dad
-  languageName: node
-  linkType: hard
-
 "ws@npm:^8.12.0, ws@npm:^8.13.0, ws@npm:^8.18.0, ws@npm:^8.18.3, ws@npm:^8.19.0":
   version: 8.21.0
   resolution: "ws@npm:8.21.0"
@@ -60865,23 +60779,6 @@ __metadata:
     jsonschema: "npm:1.2.2"
     lodash: "npm:4.17.21"
   checksum: 10c0/d08435d8221f7d6dbcb02a7a507bd63dbb9f2b9ee1d868da8d53e71e7fdc91426932957c2ff2afd8fc471749c17cf10a8d651e25f682af4c3fd0f11f5d76b5fd
-  languageName: node
-  linkType: hard
-
-"zen-observable-ts@npm:^0.8.21":
-  version: 0.8.21
-  resolution: "zen-observable-ts@npm:0.8.21"
-  dependencies:
-    tslib: "npm:^1.9.3"
-    zen-observable: "npm:^0.8.0"
-  checksum: 10c0/fe4a02f862b5f7e8ae0f86230c37b84c7d5611f5c206981afb4043e732d04cf7067a6cbe1ba82d20f18b735a3387937195a12542158a631d308ae3959a1d93c4
-  languageName: node
-  linkType: hard
-
-"zen-observable@npm:^0.8.0":
-  version: 0.8.15
-  resolution: "zen-observable@npm:0.8.15"
-  checksum: 10c0/71cc2f2bbb537300c3f569e25693d37b3bc91f225cefce251a71c30bc6bb3e7f8e9420ca0eb57f2ac9e492b085b8dfa075fd1e8195c40b83c951dd59c6e4fbf8
   languageName: node
   linkType: hard
 
