@@ -28,8 +28,8 @@
     "migrate:partner-scope:prod": "ENV_FILE=.env.prod tsx src/scripts/migrate-partner-scope.ts"
   },
   "dependencies": {
-    "twenty-client-sdk": "2.4.0",
-    "twenty-sdk": "2.4.0",
+    "twenty-client-sdk": "2.10.1",
+    "twenty-sdk": "2.10.1",
     "zod": "^4.1.11"
   },
   "devDependencies": {

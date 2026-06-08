@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@slack/web-api": "^7.8.0",
-    "twenty-sdk": "2.4.0"
+    "twenty-sdk": "2.10.1"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",

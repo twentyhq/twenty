@@ -20,7 +20,7 @@
     "test:watch": "vitest --config vitest.unit.config.ts"
   },
   "dependencies": {
-    "twenty-sdk": "2.3.1"
+    "twenty-sdk": "2.10.1"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
