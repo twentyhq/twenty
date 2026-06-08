@@ -54,27 +54,25 @@ export class BullMQDriver
   ) {}
 
   onModuleInit() {
-    this.metricsService.createObservableGauge({
-      metricName: 'twenty_queue_jobs_waiting_total',
-      options: { description: 'Current number of jobs waiting in queue' },
-      callback: async () => {
-        let totalWaiting = 0;
+    const gauge = this.metricsService
+      .getMeter()
+      .createObservableGauge('twenty_queue_jobs_waiting_total', {
+        description: 'Current number of jobs waiting in queue',
+      });
 
-        for (const [queueName, queue] of Object.entries(this.queueMap)) {
-          try {
-            const waitingCount = await queue.count();
+    gauge.addCallback(async (observableResult) => {
+      for (const [queueName, queue] of Object.entries(this.queueMap)) {
+        try {
+          const waitingCount = await queue.count();
 
-            totalWaiting += waitingCount;
-          } catch (error) {
-            this.logger.error(
-              `Failed to collect waiting jobs metrics for queue ${queueName}`,
-              error,
-            );
-          }
+          observableResult.observe(waitingCount, { queue: queueName });
+        } catch (error) {
+          this.logger.error(
+            `Failed to collect waiting jobs metrics for queue ${queueName}`,
+            error,
+          );
         }
-
-        return totalWaiting;
-      },
+      }
     });
   }
 
