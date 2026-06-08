@@ -39,6 +39,7 @@ export type CreateStandardMorphOrRelationFieldContext<
   settings: FieldMetadataSettings<F>;
   options?: FieldMetadataDefaultOption[] | FieldMetadataComplexOption[] | null;
   morphId: F extends FieldMetadataType.MORPH_RELATION ? string : null;
+  junctionTargetFieldUniversalIdentifier?: string;
 };
 
 export type CreateStandardRelationFieldArgs<
@@ -69,6 +70,7 @@ export const createStandardRelationFieldFlatMetadata = <
     options: fieldOptions = null,
     morphId,
     type,
+    junctionTargetFieldUniversalIdentifier,
   },
   standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
@@ -134,6 +136,11 @@ export const createStandardRelationFieldFlatMetadata = <
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     viewSortIds: [],
     viewSortUniversalIdentifiers: [],
-    universalSettings: settings,
+    universalSettings: {
+      ...settings,
+      ...(junctionTargetFieldUniversalIdentifier && {
+        junctionTargetFieldUniversalIdentifier,
+      }),
+    },
   };
 };
