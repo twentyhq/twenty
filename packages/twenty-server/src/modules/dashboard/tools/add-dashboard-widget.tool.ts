@@ -36,7 +36,7 @@ export const createAddDashboardWidgetTool = (
   description: `Add a widget to an existing dashboard tab.
 
 Use get_dashboard first to get pageLayoutTabId and existing widget positions.
-Use get_object_metadata and get_field_metadata to get objectMetadataId and field IDs for GRAPH widgets.
+Use get_object_metadata and get_fields_metadata to get objectMetadataId and field IDs for GRAPH widgets.
 
 For RECORD_TABLE widgets: create a dedicated view first with create_view (type TABLE), then pass its viewId in configuration. Never reuse an existing record index view.
 

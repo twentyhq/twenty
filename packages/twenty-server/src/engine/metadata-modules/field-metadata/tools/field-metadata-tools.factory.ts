@@ -141,7 +141,7 @@ export class FieldMetadataToolsFactory {
     return {
       get_fields_metadata: {
         description:
-          'Returns an array of fields. System fields are compact {id, name, type} by default; set includeFullSystemFields=true for full payload. Internal fields (searchVector, deletedAt, position, updatedBy) are excluded.',
+          'Returns an array of fields. System fields are compact {id, name, type} by default; set includeFullSystemFields=true for full payload. Internal fields (searchVector, position, updatedBy) are excluded.',
         inputSchema: GetFieldMetadataInputSchema,
         execute: async (parameters: {
           id?: string;
