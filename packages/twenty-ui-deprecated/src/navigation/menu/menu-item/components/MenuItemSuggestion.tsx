@@ -23,6 +23,8 @@ const StyledSuggestionMenuItem = styled.li<{
   --horizontal-padding: ${themeCssVariables.spacing[1]};
   --vertical-padding: ${themeCssVariables.spacing[2]};
 
+  /* Height below is sized against the content box. */
+  box-sizing: content-box;
   align-items: center;
 
   border-radius: ${themeCssVariables.border.radius.sm};
