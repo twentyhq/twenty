@@ -12,8 +12,8 @@ import { isFirstOverflowingChildElement } from '@/ui/layout/expandable-list/util
 import { isDefined } from 'twenty-shared/utils';
 import { ChipSize } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { AnimatedContainer } from 'twenty-ui/utilities';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { AnimatedContainer } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -109,6 +109,39 @@ export const ExpandableList = ({
   useEffect(() => {
     resetFirstHiddenChildIndex();
   }, [isChipCountDisplayed, children.length, resetFirstHiddenChildIndex]);
+
+  // Recompute visible chips when the container width changes (see #12039).
+  // Observes the outer container to avoid a measure-trim-shrink feedback loop.
+  useEffect(() => {
+    const outerContainerElement = containerRef.current;
+
+    if (!isDefined(outerContainerElement)) {
+      return;
+    }
+
+    let previousWidth = outerContainerElement.clientWidth;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      const entry = entries[0];
+
+      if (!isDefined(entry)) {
+        return;
+      }
+
+      const newWidth = entry.contentRect.width;
+
+      const RESIZE_THRESHOLD_PX = 1;
+
+      if (Math.abs(newWidth - previousWidth) > RESIZE_THRESHOLD_PX) {
+        previousWidth = newWidth;
+        resetFirstHiddenChildIndex();
+      }
+    });
+
+    resizeObserver.observe(outerContainerElement);
+
+    return () => resizeObserver.disconnect();
+  }, [resetFirstHiddenChildIndex]);
 
   const handleClickOutside = () => {
     setIsListExpanded(false);
