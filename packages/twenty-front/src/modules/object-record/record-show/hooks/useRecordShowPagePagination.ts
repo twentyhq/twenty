@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -61,12 +61,9 @@ export const useRecordShowPagePagination = (
     objectMetadataItem,
   });
 
-  const orderByGqlFields = useMemo(
-    () => extractOrderByFieldNames(orderBy),
-    [orderBy],
-  );
+  const orderByGqlFields = extractOrderByFieldNames(orderBy);
 
-  const reversedOrderBy = useMemo(() => reverseOrderBy(orderBy), [orderBy]);
+  const reversedOrderBy = reverseOrderBy(orderBy);
 
   const { loading: loadingCurrentRecord, records: currentRecords } =
     useFindManyRecords({
@@ -86,7 +83,7 @@ export const useRecordShowPagePagination = (
     ? { deletedAt: { is: 'NOT_NULL' as const } }
     : undefined;
 
-  const { beforeFilter, afterFilter } = useMemo(() => {
+  const { beforeFilter, afterFilter } = (() => {
     if (!isDefined(currentRecord)) {
       return { beforeFilter: undefined, afterFilter: undefined };
     }
@@ -110,7 +107,7 @@ export const useRecordShowPagePagination = (
         direction: 'after',
       }),
     };
-  }, [currentRecord, orderBy, orderByGqlFields]);
+  })();
 
   const hasKeysetFilters = isDefined(beforeFilter) && isDefined(afterFilter);
   const skipNeighborQueries = loadingCurrentRecord || !hasKeysetFilters;
