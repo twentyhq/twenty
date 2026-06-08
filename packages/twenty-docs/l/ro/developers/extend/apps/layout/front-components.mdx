@@ -233,7 +233,7 @@ export default defineFrontComponent({
 });
 ```
 
-Calea transmisă către client este calea publică a rutei — proprietatea `httpRouteTriggerSettings.path` a funcției logice, cu prefixul `/s`. Păstrează `isAuthRequired: true`; clientul furnizează tokenul de acces al aplicației Twenty mints pentru componenta ta:
+Calea transmisă către client este calea publică a rutei — proprietatea `httpRouteTriggerSettings.path` a funcției logice, cu prefixul `/s`. Păstrează `isAuthRequired: true`; clientul furnizează tokenul de acces al aplicației pe care Twenty îl emite pentru componenta ta:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -261,7 +261,7 @@ export default defineLogicFunction({
 `TWENTY_API_URL` și `TWENTY_APP_ACCESS_TOKEN` sunt injectate automat — vezi [Application variables](#application-variables). Deoarece variabilele de aplicație secrete nu sunt niciodată expuse componentelor de front, păstrează cheile API și altă logică sensibilă în funcția logică, nu în componenta de front.
 </Note>
 
-### Referință `RestApiClient`
+### Referință pentru `RestApiClient`
 
 Importă `RestApiClient` din `twenty-client-sdk/rest`. Face parte din aceeași familie de clienți ca `CoreApiClient` și `MetadataApiClient`, dar vizează rutele HTTP ale aplicației tale în locul API-ului GraphQL.
 
@@ -274,7 +274,7 @@ Importă `RestApiClient` din `twenty-client-sdk/rest`. Face parte din aceeași f
 | `delete(path, options?)`          | Trimite o cerere `DELETE`            |
 | `request(method, path, options?)` | Cerere generică cu orice metodă HTTP |
 
-`options` acceptă `headers`, `query` (un „record” de parametri de query-string; valorile nule sau nealocate sunt omise) și un `AbortSignal` prin `signal`. Un obiect `body` care nu este de tip `FormData` este serializat automat în JSON. La un `401`, clientul reîmprospătează o dată tokenul de acces prin gazdă și reîncearcă cererea.
+`options` acceptă `headers`, `query` (un „record” de parametri de query-string; valorile nule sau nedefinite sunt omise) și un `AbortSignal` prin `signal`. Un obiect `body` care nu este de tip `FormData` este serializat automat în JSON. La un `401`, clientul reîmprospătează o dată tokenul de acces prin gazdă și reîncearcă cererea.
 
 URL-ul de bază și tokenul sunt rezolvate din mediu în mod implicit. Transmite suprascrieri către constructor atunci când este necesar — de exemplu, în teste:
 

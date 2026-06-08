@@ -233,7 +233,7 @@ export default defineFrontComponent({
 });
 ```
 
-Путь, передаваемый клиенту, — это общедоступный путь маршрута: значение `httpRouteTriggerSettings.path` для логической функции с префиксом `/s`. Сохраните `isAuthRequired: true`; клиент передает токен доступа к приложению Twenty mints для вашего компонента:
+Путь, передаваемый клиенту, — это общедоступный путь маршрута: значение `httpRouteTriggerSettings.path` для логической функции с префиксом `/s`. Сохраните `isAuthRequired: true`; клиент передает токен доступа к приложению, который Twenty выпускает для вашего компонента:
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -285,7 +285,7 @@ const client = new RestApiClient({
 });
 ```
 
-Неудачные запросы выбрасывают `RestApiClientError`, предоставляющую `status`, `statusText`, `url` и разобранное `body`:
+Неудачные запросы выбрасывают `RestApiClientError`, который содержит `status`, `statusText`, `url` и распарсенное `body`:
 
 ```tsx
 import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
