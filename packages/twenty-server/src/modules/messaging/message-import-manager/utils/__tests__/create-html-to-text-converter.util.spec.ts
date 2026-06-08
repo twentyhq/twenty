@@ -1,3 +1,5 @@
+import * as planer from 'planer';
+
 import { createHtmlToTextConverter } from 'src/modules/messaging/message-import-manager/utils/create-html-to-text-converter.util';
 
 describe('createHtmlToTextConverter', () => {
@@ -30,5 +32,19 @@ describe('createHtmlToTextConverter', () => {
     expect(result).not.toContain('script');
     expect(result).not.toContain('alert');
     expect(result).toContain('Hello');
+  });
+
+  it('should fallback to sanitized html conversion when planner overflows the stack', () => {
+    const extractFromHtmlMock = jest
+      .spyOn(planer, 'extractFromHtml')
+      .mockImplementation(() => {
+        throw new RangeError('Maximum call stack size exceeded');
+      });
+
+    const result = convertHtmlToText('<p>Fallback content</p>');
+
+    expect(result).toBe('Fallback content');
+
+    extractFromHtmlMock.mockRestore();
   });
 });

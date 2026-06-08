@@ -32,6 +32,26 @@ export enum MessageImportSyncStep {
 
 @Injectable()
 export class MessageImportExceptionHandlerService {
+  public isTemporaryException(exception: unknown): boolean {
+    if (!(typeof exception === 'object' && isDefined(exception) && 'code' in exception)) {
+      return false;
+    }
+
+    switch (exception.code) {
+      case TwentyORMExceptionCode.QUERY_READ_TIMEOUT:
+      case MessageImportDriverExceptionCode.TEMPORARY_ERROR:
+      case ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR:
+      case MessageNetworkExceptionCode.ECONNABORTED:
+      case MessageNetworkExceptionCode.ENOTFOUND:
+      case MessageNetworkExceptionCode.ECONNRESET:
+      case MessageNetworkExceptionCode.ETIMEDOUT:
+      case MessageNetworkExceptionCode.ERR_NETWORK:
+        return true;
+      default:
+        return false;
+    }
+  }
+
   constructor(
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,

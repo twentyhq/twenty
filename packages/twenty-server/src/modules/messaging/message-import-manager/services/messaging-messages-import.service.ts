@@ -239,9 +239,18 @@ export class MessagingMessagesImportService {
             workspaceId,
           );
         } catch (error) {
-          this.logger.error(
-            `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Error (${error.code}) importing messages: ${error.message}`,
+          const isTemporaryException =
+            this.messageImportErrorHandlerService.isTemporaryException(error);
+          const loggerMethod = isTemporaryException
+            ? this.logger.warn.bind(this.logger)
+            : this.logger.error.bind(this.logger);
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
+
+          loggerMethod(
+            `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Error importing messages (batchSize=${messageIdsToFetch.length}): ${errorMessage}`,
           );
+
           await this.cacheStorage.setAdd(
             `messages-to-import:${workspaceId}:${messageChannel.id}`,
             messageIdsToFetch,
