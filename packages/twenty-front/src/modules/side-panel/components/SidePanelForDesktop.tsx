@@ -38,7 +38,6 @@ const StyledSidePanelWrapper = styled.div<{
 const StyledSidePanel = styled.aside`
   background: ${themeCssVariables.background.primary};
   border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
