@@ -17,9 +17,12 @@ export const useProcessTableColumnDrop = () => {
       const destination = headerColumnDropResult.destination;
 
       if (!isDefined(source) || !isDefined(destination)) return;
-      await reorderColumns({ source, destination });
 
-      resetRecordTableHeaderDragStates();
+      try {
+        await reorderColumns({ source, destination });
+      } finally {
+        resetRecordTableHeaderDragStates();
+      }
     },
     [reorderColumns, resetRecordTableHeaderDragStates],
   );
