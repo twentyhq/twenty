@@ -173,14 +173,14 @@ export const RecordTableContent = ({
         <RecordTableColumnWidthEffect />
         <RecordTableWidthEffect />
       </RecordTableStyleWrapper>
-      {/* <DragSelect */}
-      {/*   selectableItemsContainerRef={containerRef} */}
-      {/*   onDragSelectionStart={handleDragStart} */}
-      {/*   onDragSelectionChange={handleDragSelectionChange} */}
-      {/*   onDragSelectionEnd={handleDragEnd} */}
-      {/*   scrollWrapperComponentInstanceId={recordTableScrollWrapperId} */}
-      {/*   selectionBoundaryClass={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS} */}
-      {/* /> */}
+      <DragSelect
+        selectableItemsContainerRef={containerRef}
+        onDragSelectionStart={handleDragStart}
+        onDragSelectionChange={handleDragSelectionChange}
+        onDragSelectionEnd={handleDragEnd}
+        scrollWrapperComponentInstanceId={recordTableScrollWrapperId}
+        selectionBoundaryClass={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}
+      />
     </StyledTableContainer>
   );
 };

@@ -15,12 +15,14 @@ import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/rec
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
+import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { Draggable } from '@hello-pangea/dnd';
 import { cx } from '@linaria/core';
 import { styled } from '@linaria/react';
+import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledDragHandle = styled.div`
@@ -40,6 +42,8 @@ export const RecordTableHeaderCell = ({
   recordFieldIndex,
 }: RecordTableHeaderCellProps) => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();
+
+  const { setDragSelectionStartEnabled } = useDragSelect();
 
   const isRecordTableColumnHeadersReadOnly = useAtomComponentStateValue(
     isRecordTableColumnHeadersReadOnlyComponentState,
@@ -90,6 +94,14 @@ export const RecordTableHeaderCell = ({
     !isFirstRowActiveOrFocused ||
     isRecordTableScrolledVertically;
 
+  const handlePointerDown = useCallback(() => {
+    setDragSelectionStartEnabled(false);
+  }, [setDragSelectionStartEnabled]);
+
+  const handlePointerUp = useCallback(() => {
+    setDragSelectionStartEnabled(true);
+  }, [setDragSelectionStartEnabled]);
+
   return (
     <Draggable
       key={recordField.fieldMetadataItemId}
@@ -111,6 +123,8 @@ export const RecordTableHeaderCell = ({
           shouldDisplayBorderBottom={shouldDisplayBorderBottom}
           isResizing={isResizingAnyColumn}
           isReadOnly={isRecordTableColumnHeadersReadOnly}
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerUp}
           // oxlint-disable-next-line react/jsx-props-no-spreading
           {...draggableProvided.draggableProps}
         >

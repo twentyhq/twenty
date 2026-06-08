@@ -1,4 +1,5 @@
 import { useProcessTableColumnDrop } from '@/object-record/record-table/record-table-header/hooks/useProcessTableColumnDrop';
+import { useResetRecordTableHeaderDragStates } from '@/object-record/record-table/record-table-header/hooks/useResetRecordTableHeaderDragState';
 import { isRecordTableHeaderDropProcessingComponentState } from '@/object-record/record-table/record-table-header/states/isRecordTableHeaderDropProcessingComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { DragDropContext, type OnDragEndResponder } from '@hello-pangea/dnd';
@@ -10,12 +11,15 @@ export const RecordTableHeaderDragDropContext = ({
 }: React.PropsWithChildren) => {
   const store = useStore();
 
-  const { processTableColumnDrop } = useProcessTableColumnDrop();
-
   const isRecordTableHeaderDropProcessingCallbackState =
     useAtomComponentStateCallbackState(
       isRecordTableHeaderDropProcessingComponentState,
     );
+
+  const { processTableColumnDrop } = useProcessTableColumnDrop();
+
+  const { resetRecordTableHeaderDragStates } =
+    useResetRecordTableHeaderDragStates();
 
   const handleDragStart = useCallback(() => {
     store.set(isRecordTableHeaderDropProcessingCallbackState, true);
@@ -24,22 +28,18 @@ export const RecordTableHeaderDragDropContext = ({
   const handleDragEnd: OnDragEndResponder = useCallback(
     (result) => {
       if (!result.destination) {
-        store.set(isRecordTableHeaderDropProcessingCallbackState, false);
+        resetRecordTableHeaderDragStates();
         return;
       }
 
       try {
         processTableColumnDrop(result);
       } catch (error) {
-        store.set(isRecordTableHeaderDropProcessingCallbackState, false);
+        resetRecordTableHeaderDragStates();
         throw error;
       }
     },
-    [
-      processTableColumnDrop,
-      store,
-      isRecordTableHeaderDropProcessingCallbackState,
-    ],
+    [processTableColumnDrop, resetRecordTableHeaderDragStates],
   );
 
   return (

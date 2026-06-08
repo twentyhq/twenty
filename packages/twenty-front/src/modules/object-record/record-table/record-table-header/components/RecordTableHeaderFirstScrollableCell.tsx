@@ -25,6 +25,8 @@ import { Draggable } from '@hello-pangea/dnd';
 import { cx } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { filterOutByProperty, isDefined } from 'twenty-shared/utils';
+import { useCallback } from 'react';
+import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 
 const StyledDragHandle = styled.div`
   height: 100%;
@@ -34,6 +36,8 @@ const StyledDragHandle = styled.div`
 export const RecordTableHeaderFirstScrollableCell = () => {
   const { objectMetadataItem, visibleRecordFields } =
     useRecordTableContextOrThrow();
+
+  const { setDragSelectionStartEnabled } = useDragSelect();
 
   const isRecordTableColumnHeadersReadOnly = useAtomComponentStateValue(
     isRecordTableColumnHeadersReadOnlyComponentState,
@@ -93,6 +97,14 @@ export const RecordTableHeaderFirstScrollableCell = () => {
     isRecordTableHeaderDropProcessingComponentState,
   );
 
+  const handlePointerDown = useCallback(() => {
+    setDragSelectionStartEnabled(false);
+  }, [setDragSelectionStartEnabled]);
+
+  const handlePointerUp = useCallback(() => {
+    setDragSelectionStartEnabled(true);
+  }, [setDragSelectionStartEnabled]);
+
   if (!recordField) {
     return <></>;
   }
@@ -118,6 +130,8 @@ export const RecordTableHeaderFirstScrollableCell = () => {
           zIndex={TABLE_Z_INDEX.headerColumns.headerColumnsNormal}
           isResizing={isResizingAnyColumn}
           isReadOnly={isRecordTableColumnHeadersReadOnly}
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerUp}
           // oxlint-disable-next-line react/jsx-props-no-spreading
           {...draggableProvided.draggableProps}
         >
