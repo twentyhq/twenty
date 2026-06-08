@@ -13,6 +13,7 @@ const StyledTitleSkeleton = styled.div`
 `;
 
 const StyledRowsContainer = styled.div`
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
