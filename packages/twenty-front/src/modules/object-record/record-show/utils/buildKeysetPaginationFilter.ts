@@ -153,11 +153,14 @@ const REVERSE_DIRECTION: Record<string, string> = {
   DescNullsLast: 'AscNullsFirst',
 };
 
+type OrderByEntry = RecordGqlOperationOrderBy[number];
+type OrderByValue = OrderByEntry[string];
+
 export const reverseOrderBy = (
   orderBy: RecordGqlOperationOrderBy,
 ): RecordGqlOperationOrderBy =>
   orderBy.map((entry) => {
-    const reversed: Record<string, unknown> = {};
+    const reversed: OrderByEntry = {};
 
     for (const [key, value] of Object.entries(entry)) {
       reversed[key] = reverseValue(value);
@@ -166,16 +169,14 @@ export const reverseOrderBy = (
     return reversed;
   });
 
-const reverseValue = (value: unknown): unknown => {
+const reverseValue = (value: OrderByValue): OrderByValue => {
   if (isOrderByDirection(value)) {
-    return REVERSE_DIRECTION[value] ?? value;
+    return (REVERSE_DIRECTION[value] ?? value) as OrderByValue;
   }
   if (typeof value === 'object' && value !== null) {
-    const reversed: Record<string, unknown> = {};
+    const reversed: OrderByEntry = {};
 
-    for (const [key, subValue] of Object.entries(
-      value as Record<string, unknown>,
-    )) {
+    for (const [key, subValue] of Object.entries(value as OrderByEntry)) {
       reversed[key] = reverseValue(subValue);
     }
 
