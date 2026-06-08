@@ -1,0 +1,31 @@
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+  s_b8aa3ee71a096f::t_61048c6865dedc 2-3
+  s_b8aa3ee71a096f::t_a617f78ddbf875 512-514
+  s_b8aa3ee71a096f::t_13cbb6043837db 538-539
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
+  s_b8aa3ee71a096f::t_0d6761ac7662b3 2-3
+  s_b8aa3ee71a096f::t_f5dd334d54d603 208-209
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util.ts
+  s_b8aa3ee71a096f::t_128deb1ee1f7da 42
+  s_b8aa3ee71a096f::t_3aa5ae61c804fc 73
+  s_b8aa3ee71a096f::t_30c1fb30b9af2e 139-144
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-topic-standard-flat-field-metadata.util.ts
+  s_b8aa3ee71a096f::t_4976351fea0d69 319-321
+  s_b8aa3ee71a096f::t_ba496ca877b7b0 2-3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "23b5b6263eac2dd3fc3e41af92da14cae639c4d9",
+  "prompts": {},
+  "sessions": {
+    "s_b8aa3ee71a096f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "729455bc-eec3-4b99-bbf8-066fb4359921",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
