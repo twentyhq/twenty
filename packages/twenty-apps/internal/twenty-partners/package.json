@@ -1,6 +1,6 @@
 {
   "name": "twenty-partners",
-  "version": "0.4.0",
+  "version": "0.4.2",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
