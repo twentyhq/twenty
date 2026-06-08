@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 const ORDER_DIRECTIONS = new Set([
   'AscNullsFirst',
   'AscNullsLast',
@@ -6,4 +8,4 @@ const ORDER_DIRECTIONS = new Set([
 ]);
 
 export const isOrderByDirection = (value: unknown): value is string =>
-  typeof value === 'string' && ORDER_DIRECTIONS.has(value);
+  isNonEmptyString(value) && ORDER_DIRECTIONS.has(value);
