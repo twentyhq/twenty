@@ -37,6 +37,7 @@
     "@wyw-in-js/transform@npm:0.7.0": "patch:@wyw-in-js/transform@npm%3A0.7.0#~/.yarn/patches/@wyw-in-js-transform-npm-0.7.0-ba641dc99f.patch",
     "@opentelemetry/api": "1.9.1",
     "chokidar": "^3.6.0",
+    "tmp": "^0.2.7",
     "node-gyp": "^12.4.0",
     "cacache": "^20.0.0",
     "make-fetch-happen": "^15.0.0",
