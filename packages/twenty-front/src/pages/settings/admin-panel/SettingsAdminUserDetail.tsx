@@ -31,6 +31,7 @@ import {
   IconCalendar,
   IconEyeShare,
   IconId,
+  IconLock,
   IconMail,
   IconUser,
 } from 'twenty-ui/display';
@@ -92,6 +93,8 @@ export const SettingsAdminUserDetail = () => {
         }) ?? '',
     })) ?? [];
 
+  const displayName = userFullName || userId || '';
+
   const userInfoItems = [
     {
       Icon: IconUser,
@@ -115,9 +118,21 @@ export const SettingsAdminUserDetail = () => {
         ? new Date(user.createdAt).toLocaleDateString()
         : '',
     },
+    ...(currentUser?.canAccessFullAdminPanel && isDefined(userId)
+      ? [
+          {
+            Icon: IconLock,
+            label: t`Server access`,
+            value: (
+              <SettingsAdminServerAdminAccess
+                userId={userId}
+                userLabel={displayName}
+              />
+            ),
+          },
+        ]
+      : []),
   ];
-
-  const displayName = userFullName || userId || '';
 
   if (isLoading) {
     return <SettingsSkeletonLoader />;
@@ -150,12 +165,6 @@ export const SettingsAdminUserDetail = () => {
                 gridAutoColumns="1fr 4fr"
               />
             </Section>
-            {currentUser?.canAccessFullAdminPanel && isDefined(userId) && (
-              <SettingsAdminServerAdminAccess
-                userId={userId}
-                userLabel={displayName}
-              />
-            )}
             <Section>
               <H2Title
                 title={t`Workspaces`}
