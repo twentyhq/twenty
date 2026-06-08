@@ -136,4 +136,11 @@ describe('on-partner-application-created handler', () => {
     const result = await handler(createdEvent('APPLICATION'));
     expect(result).toEqual({ notified: false });
   });
+
+  it('reports notified: false on a non-2xx Discord response', async () => {
+    // fetch resolves on HTTP errors; the handler must not report these as delivered.
+    fetchMock.mockResolvedValue({ ok: false, status: 404, text: async () => 'Not Found' });
+    const result = await handler(createdEvent('APPLICATION'));
+    expect(result).toEqual({ notified: false });
+  });
 });

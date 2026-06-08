@@ -152,12 +152,21 @@ export const handler = async (
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), DISCORD_TIMEOUT_MS);
     try {
-      await fetch(webhookUrl, {
+      const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ embeds: [embed] }),
         signal: controller.signal,
       });
+      // fetch only rejects on network errors, not on HTTP error statuses, so a
+      // non-2xx (dead webhook, rejected payload, rate limit) must be detected
+      // explicitly — otherwise a failed post is reported as delivered.
+      if (!response.ok) {
+        console.warn(
+          `on-partner-application-created: Discord webhook responded ${response.status}`,
+        );
+        return { notified: false };
+      }
     } finally {
       clearTimeout(timeout);
     }
