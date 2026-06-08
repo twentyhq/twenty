@@ -6,7 +6,7 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { MainContainerLayout } from '@/object-record/components/MainContainerLayout';
 import { PageLayoutRenderer } from '@/page-layout/components/PageLayoutRenderer';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { PageContainer } from '@/ui/layout/page/components/PageContainer';
+import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { StandalonePageHeader } from '~/pages/page-layout/StandalonePageHeader';
@@ -19,14 +19,15 @@ export const StandalonePageLayoutPage = () => {
   }
 
   return (
-    <PageContainer>
-      <ContextStoreComponentInstanceContext.Provider
-        value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
+    <ContextStoreComponentInstanceContext.Provider
+      value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
+    >
+      <CommandMenuComponentInstanceContext.Provider
+        value={{ instanceId: pageLayoutId }}
       >
-        <CommandMenuComponentInstanceContext.Provider
-          value={{ instanceId: pageLayoutId }}
+        <PageCardLayout
+          header={<StandalonePageHeader pageLayoutId={pageLayoutId} />}
         >
-          <StandalonePageHeader pageLayoutId={pageLayoutId} />
           <LayoutRenderingProvider
             value={{
               targetRecordIdentifier: undefined,
@@ -38,8 +39,8 @@ export const StandalonePageLayoutPage = () => {
               <PageLayoutRenderer pageLayoutId={pageLayoutId} />
             </MainContainerLayout>
           </LayoutRenderingProvider>
-        </CommandMenuComponentInstanceContext.Provider>
-      </ContextStoreComponentInstanceContext.Provider>
-    </PageContainer>
+        </PageCardLayout>
+      </CommandMenuComponentInstanceContext.Provider>
+    </ContextStoreComponentInstanceContext.Provider>
   );
 };
