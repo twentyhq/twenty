@@ -66,31 +66,34 @@ export const useRecordShowPagePagination = (
     ? { deletedAt: { is: 'NOT_NULL' as const } }
     : undefined;
 
-  const { beforeFilter, afterFilter } = (() => {
-    if (!isDefined(currentRecord)) {
-      return { beforeFilter: undefined, afterFilter: undefined };
-    }
+  const currentRecordKeysetValues: Record<string, unknown> | undefined =
+    isDefined(currentRecord)
+      ? {
+          id: currentRecord.id,
+          ...Object.fromEntries(
+            Object.keys(orderByGqlFields).map((fieldName) => [
+              fieldName,
+              currentRecord[fieldName],
+            ]),
+          ),
+        }
+      : undefined;
 
-    const recordValues: Record<string, unknown> = {};
-
-    for (const fieldName of Object.keys(orderByGqlFields)) {
-      recordValues[fieldName] = currentRecord[fieldName];
-    }
-    recordValues['id'] = currentRecord.id;
-
-    return {
-      beforeFilter: buildKeysetPaginationFilter({
+  const beforeFilter = isDefined(currentRecordKeysetValues)
+    ? buildKeysetPaginationFilter({
         orderBy,
-        currentRecordValues: recordValues,
+        currentRecordValues: currentRecordKeysetValues,
         direction: 'before',
-      }),
-      afterFilter: buildKeysetPaginationFilter({
+      })
+    : undefined;
+
+  const afterFilter = isDefined(currentRecordKeysetValues)
+    ? buildKeysetPaginationFilter({
         orderBy,
-        currentRecordValues: recordValues,
+        currentRecordValues: currentRecordKeysetValues,
         direction: 'after',
-      }),
-    };
-  })();
+      })
+    : undefined;
 
   const hasKeysetFilters = isDefined(beforeFilter) && isDefined(afterFilter);
   const skipNeighborQueries = loadingCurrentRecord || !hasKeysetFilters;
@@ -129,23 +132,32 @@ export const useRecordShowPagePagination = (
     orderBy,
   });
 
-  const { records: firstRecords } = useFindManyRecords({
-    ...baseNeighborOptions,
-    filter: mergedFilter,
-    orderBy,
-  });
+  const isAtFirstRecord = !loadingRecordBefore && totalCountBefore === 0;
+  const isAtLastRecord = !loadingRecordAfter && totalCountAfter === 0;
 
-  const { records: lastRecords } = useFindManyRecords({
-    ...baseNeighborOptions,
-    filter: mergedFilter,
-    orderBy: reversedOrderBy,
-  });
+  const { loading: loadingFirstRecord, records: firstRecords } =
+    useFindManyRecords({
+      ...baseNeighborOptions,
+      skip: skipNeighborQueries || !isAtLastRecord,
+      filter: mergedFilter,
+      orderBy,
+    });
+
+  const { loading: loadingLastRecord, records: lastRecords } =
+    useFindManyRecords({
+      ...baseNeighborOptions,
+      skip: skipNeighborQueries || !isAtFirstRecord,
+      filter: mergedFilter,
+      orderBy: reversedOrderBy,
+    });
 
   const loading =
     loadingRecordAfter ||
     loadingRecordBefore ||
     loadingCurrentRecord ||
-    !hasKeysetFilters;
+    !hasKeysetFilters ||
+    (isAtLastRecord && loadingFirstRecord) ||
+    (isAtFirstRecord && loadingLastRecord);
 
   const recordBefore = recordsBefore[0];
   const recordAfter = recordsAfter[0];
@@ -163,9 +175,11 @@ export const useRecordShowPagePagination = (
     if (loading) return;
 
     if (isDefined(recordBefore)) {
-      navigateToRecord(recordBefore.id);
-    } else if (isDefined(lastRecords[0])) {
-      navigateToRecord(lastRecords[0].id);
+      return navigateToRecord(recordBefore.id);
+    }
+
+    if (isDefined(lastRecords[0])) {
+      return navigateToRecord(lastRecords[0].id);
     }
   };
 
@@ -173,9 +187,11 @@ export const useRecordShowPagePagination = (
     if (loading) return;
 
     if (isDefined(recordAfter)) {
-      navigateToRecord(recordAfter.id);
-    } else if (isDefined(firstRecords[0])) {
-      navigateToRecord(firstRecords[0].id);
+      return navigateToRecord(recordAfter.id);
+    }
+
+    if (isDefined(firstRecords[0])) {
+      return navigateToRecord(firstRecords[0].id);
     }
   };
 
