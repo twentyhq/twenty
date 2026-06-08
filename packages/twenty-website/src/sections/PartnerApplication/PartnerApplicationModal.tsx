@@ -20,7 +20,10 @@ export function PartnerApplicationModal({
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
-    if (open) setResetSignal((n) => n + 1);
+    if (open) {
+      setResetSignal((n) => n + 1);
+      setSubmitted(false);
+    }
   }, [open]);
 
   return (
@@ -35,7 +38,7 @@ export function PartnerApplicationModal({
       <PartnerApplicationWizard
         resetSignal={resetSignal}
         onSuccess={onClose}
-        onSubmittedChange={setSubmitted}
+        onSubmitted={() => setSubmitted(true)}
       />
     </Modal.Root>
   );

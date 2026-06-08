@@ -10,6 +10,7 @@ type DialogPrimitive = React.ComponentType<{ render?: React.ReactElement }>;
 
 type PartnerApplicationSuccessProps = {
   Title: DialogPrimitive;
+  Description: DialogPrimitive;
   titleSerif: string;
   titleSans: string;
   subtitle: string;
@@ -56,6 +57,7 @@ const BookLaterButton = styled.button`
 
 export function PartnerApplicationSuccess({
   Title,
+  Description,
   titleSerif,
   titleSans,
   subtitle,
@@ -85,9 +87,13 @@ export function PartnerApplicationSuccess({
         }
       />
       <SuccessView>
-        <Subtitle>
-          <Body size="md">{subtitle}</Body>
-        </Subtitle>
+        <Description
+          render={
+            <Subtitle>
+              <Body size="md">{subtitle}</Body>
+            </Subtitle>
+          }
+        />
         <EmbedFrame>
           <PartnerIntroCalEmbed
             name={prefill.name}

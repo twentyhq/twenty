@@ -18,7 +18,7 @@ jest.mock('@calcom/embed-react', () => ({
 
 import { PartnerApplicationSuccess } from '@/sections/PartnerApplication/wizard/PartnerApplicationSuccess';
 
-const PassthroughTitle = ({ render }: { render?: React.ReactElement }) => (
+const Passthrough = ({ render }: { render?: React.ReactElement }) => (
   <>{render}</>
 );
 
@@ -26,7 +26,8 @@ describe('PartnerApplicationSuccess', () => {
   it('renders the booking embed prefilled from the applicant plus an escape hatch', () => {
     const html = renderToStaticMarkup(
       <PartnerApplicationSuccess
-        Title={PassthroughTitle}
+        Title={Passthrough}
+        Description={Passthrough}
         titleSerif="Thanks, you are in."
         titleSans="Now book your intro call."
         subtitle="Grab 30 minutes so we can get to know your team."

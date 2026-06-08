@@ -153,14 +153,14 @@ type WizardSlots = {
 type WizardProps = {
   resetSignal: number;
   onSuccess: () => void;
-  onSubmittedChange?: (submitted: boolean) => void;
+  onSubmitted?: () => void;
   slots?: WizardSlots;
 };
 
 export function PartnerApplicationWizard({
   resetSignal,
   onSuccess,
-  onSubmittedChange,
+  onSubmitted,
   slots,
 }: WizardProps) {
   const { i18n } = useLingui();
@@ -182,10 +182,6 @@ export function PartnerApplicationWizard({
   useEffect(() => {
     reset();
   }, [resetSignal, reset]);
-
-  useEffect(() => {
-    onSubmittedChange?.(state.isSubmitted);
-  }, [state.isSubmitted, onSubmittedChange]);
 
   const stepId = getCurrentStepId(state);
   const stepIndex = state.stepIndex;
@@ -236,6 +232,7 @@ export function PartnerApplicationWizard({
           return;
         }
         setSubmitted();
+        onSubmitted?.();
       } catch {
         setSubmitError(
           i18n._(PARTNER_APPLICATION_MODAL_COPY.validation.submitFailed),
@@ -251,6 +248,7 @@ export function PartnerApplicationWizard({
       setSubmitError,
       setSubmitting,
       setSubmitted,
+      onSubmitted,
       i18n,
     ],
   );
@@ -259,6 +257,7 @@ export function PartnerApplicationWizard({
     return (
       <PartnerApplicationSuccess
         Title={Title}
+        Description={Description}
         titleSerif={i18n._(PARTNER_APPLICATION_MODAL_COPY.successTitleSerif)}
         titleSans={i18n._(PARTNER_APPLICATION_MODAL_COPY.successTitleSans)}
         subtitle={i18n._(PARTNER_APPLICATION_MODAL_COPY.bookIntroSubtitle)}
