@@ -3,9 +3,10 @@
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 
-import { ACCENT, ACCENT_DIM } from './dashboard-visual.data';
+import { ACCENT } from './dashboard-visual.data';
 import {
   BG_PANEL,
+  BG_TERTIARY,
   BORDER_COLOR,
   TEXT_MUTED,
   TEXT_PRIMARY,
@@ -100,7 +101,7 @@ export function DonutChart({ active, value }: DonutChartProps) {
             cy={SIZE / 2}
             fill="none"
             r={RADIUS}
-            stroke={ACCENT_DIM}
+            stroke={BG_TERTIARY}
             strokeWidth={STROKE_WIDTH}
           />
           <circle

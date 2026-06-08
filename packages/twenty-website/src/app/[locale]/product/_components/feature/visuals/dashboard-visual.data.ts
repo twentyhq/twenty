@@ -1,5 +1,4 @@
 export const ACCENT = '#4A38F5';
-export const ACCENT_DIM = 'rgba(74, 56, 245, 0.25)';
 export const ACCENT_SECONDARY = '#7938B2';
 
 export const BAR_DATA = [
