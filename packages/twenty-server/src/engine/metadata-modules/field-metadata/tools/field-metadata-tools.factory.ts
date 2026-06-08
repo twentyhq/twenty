@@ -9,11 +9,7 @@ import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/ut
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
-const EXCLUDED_FIELD_NAMES = new Set([
-  'searchVector',
-  'position',
-  'updatedBy',
-]);
+const EXCLUDED_FIELD_NAMES = new Set(['searchVector', 'position', 'updatedBy']);
 
 const FIELD_STRIP_WHEN_NULLISH = [
   'options',
