@@ -1,86 +1,77 @@
 'use client';
 
 import { styled } from '@linaria/react';
+import {
+  IconChevronLeft,
+  IconLock,
+  IconPaperclip,
+  IconPlus,
+} from '@tabler/icons-react';
 import { useState } from 'react';
 
+import { SHARED_PEOPLE_AVATAR_URLS } from '@/content/site/asset-paths';
+
+import { RecordTabBar } from './RecordTabBar';
+import {
+  BG_DARK,
+  BG_PANEL,
+  BORDER_LIGHT,
+  CARD_BORDER,
+  CARD_FONT,
+  CARD_TEXT,
+  CARD_TEXT_SECONDARY,
+  CARD_TEXT_TERTIARY,
+  TEXT_LIGHT,
+} from './visual-tokens';
+
 const Root = styled.div`
-  background-color: #191920;
+  background-color: ${BG_DARK};
   display: flex;
   flex-direction: column;
+  font-family: ${CARD_FONT};
   height: 100%;
   overflow: hidden;
   width: 100%;
 `;
 
-const TabBar = styled.div`
-  align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  display: flex;
-  gap: 0;
-  padding: 0 12px;
-`;
-
-const Tab = styled.span`
-  align-items: center;
-  color: rgba(255, 255, 255, 0.4);
-  display: flex;
-  font-size: 10.5px;
-  font-weight: 500;
-  gap: 4px;
-  padding: 9px 10px;
-  white-space: nowrap;
-
-  &[data-active='true'] {
-    border-bottom: 1.5px solid rgba(255, 255, 255, 0.85);
-    color: rgba(255, 255, 255, 0.85);
-  }
-`;
-
-const TabIcon = styled.span`
-  display: inline-flex;
-  flex-shrink: 0;
-  height: 11px;
-  width: 11px;
-`;
-
 const InboxHeader = styled.div`
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
+  flex-shrink: 0;
   justify-content: space-between;
-  padding: 8px 14px;
+  padding: 14px 16px 10px;
 `;
 
-const InboxLeft = styled.div`
+const InboxTitleWrap = styled.div`
   align-items: baseline;
   display: flex;
-  gap: 5px;
+  gap: 6px;
 `;
 
 const InboxTitle = styled.span`
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 11.5px;
+  color: ${CARD_TEXT};
+  font-size: 14px;
   font-weight: 600;
 `;
 
 const InboxCount = styled.span`
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 11px;
+  color: ${TEXT_LIGHT};
+  font-size: 14px;
 `;
 
-const ComposeButton = styled.button`
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 3px;
-  color: rgba(255, 255, 255, 0.65);
-  cursor: pointer;
-  font-size: 10px;
-  font-weight: 500;
-  padding: 3px 8px;
-  transition: border-color 0.12s ease;
+const ComposeBtn = styled.span`
+  align-items: center;
+  border: 1px solid ${CARD_BORDER};
+  border-radius: 6px;
+  color: ${CARD_TEXT_SECONDARY};
+  display: inline-flex;
+  font-size: 11px;
+  gap: 4px;
+  padding: 4px 8px;
 
-  &:hover {
-    border-color: rgba(255, 255, 255, 0.3);
+  svg {
+    height: 13px;
+    width: 13px;
   }
 `;
 
@@ -89,446 +80,394 @@ const EmailList = styled.div`
   flex: 1;
   flex-direction: column;
   min-height: 0;
+  overflow: hidden;
+  padding: 0 8px;
 `;
 
 const EmailRow = styled.div`
   align-items: center;
-  cursor: pointer;
+  border-radius: 6px;
+  box-sizing: border-box;
   display: flex;
   gap: 8px;
-  padding: 8px 14px;
-  transition: background-color 0.12s ease;
+  height: 44px;
+  padding: 0 8px;
 
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.03);
+  &[data-clickable='true'] {
+    cursor: pointer;
   }
 
-  &[data-selected='true'] {
-    background-color: rgba(255, 255, 255, 0.04);
+  &[data-clickable='true']:hover {
+    background: rgba(255, 255, 255, 0.03);
   }
 `;
 
-const AvatarSingle = styled.div`
+const Heading = styled.div`
   align-items: center;
-  border-radius: 50%;
-  color: #fff;
   display: flex;
   flex-shrink: 0;
-  font-size: 8px;
-  font-weight: 600;
-  height: 18px;
-  justify-content: center;
-  width: 18px;
-`;
-
-const AvatarStack = styled.div`
-  display: flex;
-  flex-shrink: 0;
-  width: 28px;
-`;
-
-const StackedAvatar = styled.div`
-  align-items: center;
-  border: 1.5px solid #191920;
-  border-radius: 50%;
-  color: #fff;
-  display: flex;
-  font-size: 6px;
-  font-weight: 700;
-  height: 16px;
-  justify-content: center;
-  margin-left: -5px;
-  width: 16px;
-
-  &:first-child {
-    margin-left: 0;
-  }
-`;
-
-const EmailBody = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  gap: 6px;
-  min-width: 0;
+  max-width: 118px;
   overflow: hidden;
 `;
 
-const SenderName = styled.span`
-  color: rgba(255, 255, 255, 0.85);
+const Avatars = styled.div`
+  align-items: center;
+  display: flex;
   flex-shrink: 0;
-  font-size: 11px;
-  font-weight: 500;
 `;
 
-const SenderCount = styled.span`
-  color: rgba(255, 255, 255, 0.35);
-  flex-shrink: 0;
-  font-size: 10px;
+const Avatar = styled.img`
+  border: 1.5px solid ${BG_DARK};
+  border-radius: 999px;
+  height: 19px;
+  object-fit: cover;
+  width: 19px;
+
+  & + & {
+    margin-left: -5px;
+  }
 `;
 
-const PreviewIcon = styled.span`
-  display: inline-flex;
-  flex-shrink: 0;
-  height: 10px;
-  width: 10px;
-`;
-
-const SubjectBold = styled.span`
-  color: rgba(255, 255, 255, 0.8);
-  flex-shrink: 0;
-  font-size: 11px;
-  font-weight: 600;
-`;
-
-const PreviewText = styled.span`
-  color: rgba(255, 255, 255, 0.35);
-  font-size: 11px;
+const SenderNames = styled.span`
+  color: ${CARD_TEXT};
+  font-size: 12px;
+  margin: 0 5px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
-const EmailMeta = styled.div`
-  align-items: center;
-  color: rgba(255, 255, 255, 0.3);
-  display: flex;
+const ThreadCount = styled.span`
+  color: ${CARD_TEXT_TERTIARY};
   flex-shrink: 0;
-  font-size: 10px;
-  gap: 4px;
-  padding-left: 8px;
+  font-size: 11px;
+`;
+
+const SubjectAndBody = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: 8px;
+  min-width: 0;
+  overflow: hidden;
+`;
+
+const Subject = styled.span`
+  color: ${CARD_TEXT};
+  font-size: 12px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
-const MetaIcon = styled.span`
-  display: inline-flex;
-  flex-shrink: 0;
-  height: 10px;
-  opacity: 0.5;
-  width: 10px;
+const BodyPreview = styled.span`
+  color: ${CARD_TEXT_TERTIARY};
+  flex: 1;
+  font-size: 12px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
-const TAB_PATHS = [
-  {
-    label: 'Timeline',
-    d: 'M8 2a6 6 0 1 0 0 12A6 6 0 0 0 8 2zM8 4.5V8l2.5 1.5',
-  },
-  {
-    label: 'Tasks',
-    d: 'M5 3h6a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM6 8l1.5 1.5L10 7',
-  },
-  { label: 'Notes', d: 'M4 4h8M4 7h8M4 10h5' },
-  {
-    label: 'Files',
-    d: 'M3 8.5a3 3 0 0 1 3-3h4.5a2 2 0 0 1 0 4H6.5a1 1 0 0 1 0-2H11',
-  },
-  {
-    label: 'Emails',
-    d: 'M2 5.5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-5zM2 5.5l6 4 6-4',
-  },
-  {
-    label: 'Calendar',
-    d: 'M5 3h6a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM3 7h10M6 2v2M10 2v2',
-  },
-];
+const NotShared = styled.span`
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid ${BORDER_LIGHT};
+  border-radius: 4px;
+  color: ${CARD_TEXT_TERTIARY};
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 11px;
+  gap: 4px;
+  min-width: 78px;
+  padding: 1px 6px;
+
+  svg {
+    height: 12px;
+    width: 12px;
+  }
+`;
+
+const ReceivedAt = styled.span`
+  color: ${CARD_TEXT_TERTIARY};
+  flex-shrink: 0;
+  font-size: 11px;
+  padding: 0 4px;
+  white-space: nowrap;
+`;
+
+const AttachIcon = styled.span`
+  align-items: center;
+  color: ${CARD_TEXT_TERTIARY};
+  display: inline-flex;
+  flex-shrink: 0;
+
+  svg {
+    height: 13px;
+    width: 13px;
+  }
+`;
 
 const DetailHeader = styled.div`
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: ${BG_PANEL};
+  border-bottom: 1px solid ${CARD_BORDER};
   display: flex;
+  flex-shrink: 0;
   gap: 8px;
-  padding: 8px 14px;
+  padding: 12px 14px;
 `;
 
-const BackButton = styled.button`
+const BackBtn = styled.button`
+  align-items: center;
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.5);
+  color: ${CARD_TEXT_SECONDARY};
   cursor: pointer;
   display: inline-flex;
   flex-shrink: 0;
-  padding: 2px;
+  padding: 0;
 
-  &:hover {
-    color: rgba(255, 255, 255, 0.8);
+  svg {
+    height: 16px;
+    width: 16px;
   }
 `;
 
 const DetailSubject = styled.span`
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 11.5px;
+  color: ${CARD_TEXT};
+  font-size: 14px;
   font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
-const DetailBody = styled.div`
+const MessageList = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 10px;
-  padding: 12px 14px;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 14px;
 `;
 
-const DetailSenderRow = styled.div`
+const Message = styled.div`
+  border-bottom: 1px solid ${BORDER_LIGHT};
+  padding: 12px 0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+`;
+
+const MsgHeader = styled.div`
   align-items: center;
   display: flex;
   gap: 8px;
+  margin-bottom: 8px;
 `;
 
-const DetailSenderName = styled.span`
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 11px;
+const MsgSender = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 6px;
+`;
+
+const MsgAvatar = styled.img`
+  border-radius: 999px;
+  height: 18px;
+  object-fit: cover;
+  width: 18px;
+`;
+
+const MsgSenderName = styled.span`
+  color: ${CARD_TEXT};
+  font-size: 12px;
   font-weight: 500;
 `;
 
-const DetailTime = styled.span`
-  color: rgba(255, 255, 255, 0.3);
-  font-size: 10px;
-  margin-left: auto;
+const MsgDate = styled.span`
+  color: ${CARD_TEXT_TERTIARY};
+  font-size: 11px;
 `;
 
-const DetailContent = styled.p`
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 11px;
-  line-height: 1.6;
+const MsgBody = styled.p`
+  color: ${CARD_TEXT_SECONDARY};
+  font-size: 12px;
+  line-height: 1.5;
   margin: 0;
 `;
 
-const EMAILS_DATA = [
+type ThreadMessage = {
+  sender: string;
+  avatar: string;
+  date: string;
+  body: string;
+};
+
+type Email = {
+  avatars: string[];
+  sender: string;
+  count: number;
+  subject?: string;
+  preview?: string;
+  attachment?: boolean;
+  date: string;
+  thread?: ThreadMessage[];
+};
+
+const EMAILS: Email[] = [
   {
+    avatars: [SHARED_PEOPLE_AVATAR_URLS.alexandreProt],
     sender: 'Alexandre',
-    subject: 'NDA Document - Private',
-    time: '1:30pm',
-    color: '#6366f1',
-    thread: [
-      {
-        sender: 'Alexandre',
-        color: '#6366f1',
-        time: '1:30pm',
-        body: 'Hi, please find the NDA attached for your review. This is confidential and not shared with external parties yet. Let me know once signed so I can countersign.',
-      },
-    ],
+    count: 2,
+    date: '1:30pm',
   },
   {
+    avatars: [
+      SHARED_PEOPLE_AVATAR_URLS.anonymousFelix,
+      SHARED_PEOPLE_AVATAR_URLS.anonymousLaura,
+    ],
     sender: 'Félix',
-    subject: 'Partnerships - Q4 Strategy',
-    time: '4 nov 2023',
-    color: '#f59e0b',
+    count: 4,
+    subject: 'Partnerships',
+    preview: "Hey team, I've been in touch with Notion and…",
+    attachment: true,
+    date: '4 nov 2023',
     thread: [
       {
         sender: 'Félix',
-        color: '#f59e0b',
-        time: '2 nov',
+        avatar: SHARED_PEOPLE_AVATAR_URLS.anonymousFelix,
+        date: '2 nov',
         body: "Hey team, I've been in touch with Notion and Figma about potential integrations. Both are open to co-marketing in Q4.",
       },
       {
         sender: 'Marie',
-        color: '#8b5cf6',
-        time: '3 nov',
+        avatar: SHARED_PEOPLE_AVATAR_URLS.anonymousLaura,
+        date: '3 nov',
         body: 'Great news! I can draft the partnership brief by Friday. Should we loop in product for the Notion integration?',
       },
       {
         sender: 'Félix',
-        color: '#f59e0b',
-        time: '4 nov',
+        avatar: SHARED_PEOPLE_AVATAR_URLS.anonymousFelix,
+        date: '4 nov',
         body: "Yes, let's set up a call next Tuesday. I'll send calendar invites. Attaching the proposal deck for review.",
       },
     ],
   },
 ];
 
-const ThreadMessage = styled.div`
-  border-left: 2px solid rgba(255, 255, 255, 0.06);
-  padding-left: 10px;
-`;
-
-function EmailDetail({
-  emailIndex,
-  onBack,
-}: {
-  emailIndex: number;
-  onBack: () => void;
-}) {
-  const email = EMAILS_DATA[emailIndex];
-  return (
-    <>
-      <DetailHeader>
-        <BackButton aria-label="Back to inbox" onClick={onBack}>
-          <svg
-            fill="none"
-            height="12"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeWidth="1.5"
-            viewBox="0 0 12 12"
-            width="12"
-          >
-            <path d="M7.5 2.5L4 6l3.5 3.5" />
-          </svg>
-        </BackButton>
-        <DetailSubject>{email.subject}</DetailSubject>
-      </DetailHeader>
-      <DetailBody>
-        {email.thread.map((msg, i) => (
-          <ThreadMessage key={i}>
-            <DetailSenderRow>
-              <AvatarSingle style={{ backgroundColor: msg.color }}>
-                {msg.sender[0]}
-              </AvatarSingle>
-              <DetailSenderName>{msg.sender}</DetailSenderName>
-              <DetailTime>{msg.time}</DetailTime>
-            </DetailSenderRow>
-            <DetailContent>{msg.body}</DetailContent>
-          </ThreadMessage>
-        ))}
-      </DetailBody>
-    </>
-  );
-}
-
 type EmailsVisualProps = {
   active: boolean;
 };
 
 export function EmailsVisual({ active: _active }: EmailsVisualProps) {
-  const [openEmail, setOpenEmail] = useState<number | null>(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const openEmail = openIndex !== null ? EMAILS[openIndex] : null;
+
+  if (openEmail?.thread) {
+    return (
+      <Root>
+        <RecordTabBar active="Emails" />
+        <DetailHeader>
+          <BackBtn
+            aria-label="Back to inbox"
+            onClick={() => setOpenIndex(null)}
+          >
+            <IconChevronLeft />
+          </BackBtn>
+          <DetailSubject>{openEmail.subject}</DetailSubject>
+        </DetailHeader>
+        <MessageList>
+          {openEmail.thread.map((message, index) => (
+            <Message key={index}>
+              <MsgHeader>
+                <MsgSender>
+                  <MsgAvatar alt="" src={message.avatar} />
+                  <MsgSenderName>{message.sender}</MsgSenderName>
+                </MsgSender>
+                <MsgDate>{message.date}</MsgDate>
+              </MsgHeader>
+              <MsgBody>{message.body}</MsgBody>
+            </Message>
+          ))}
+        </MessageList>
+      </Root>
+    );
+  }
 
   return (
     <Root>
-      <TabBar>
-        {TAB_PATHS.map((tab, index) => (
-          <Tab data-active={index === 4} key={tab.label}>
-            <TabIcon>
-              <svg
-                fill="none"
-                height="11"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeWidth="1.5"
-                viewBox="0 0 16 16"
-                width="11"
-              >
-                <path d={tab.d} />
-              </svg>
-            </TabIcon>
-            {tab.label}
-          </Tab>
-        ))}
-      </TabBar>
-
-      {openEmail === null ? (
-        <>
-          <InboxHeader>
-            <InboxLeft>
-              <InboxTitle>Inbox</InboxTitle>
-              <InboxCount>2</InboxCount>
-            </InboxLeft>
-            <ComposeButton>+ Compose</ComposeButton>
-          </InboxHeader>
-          <EmailList>
+      <RecordTabBar active="Emails" />
+      <InboxHeader>
+        <InboxTitleWrap>
+          <InboxTitle>Inbox</InboxTitle>
+          <InboxCount>{EMAILS.length}</InboxCount>
+        </InboxTitleWrap>
+        <ComposeBtn>
+          <IconPlus />
+          Compose
+        </ComposeBtn>
+      </InboxHeader>
+      <EmailList>
+        {EMAILS.map((email, index) => {
+          const canOpen = Boolean(email.subject && email.thread);
+          return (
             <EmailRow
-              data-selected={false}
-              onClick={() => setOpenEmail(0)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  setOpenEmail(0);
-                }
-              }}
-              role="button"
-              tabIndex={0}
+              data-clickable={canOpen}
+              key={`${email.sender}-${email.date}`}
+              onClick={canOpen ? () => setOpenIndex(index) : undefined}
+              onKeyDown={
+                canOpen
+                  ? (event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        setOpenIndex(index);
+                      }
+                    }
+                  : undefined
+              }
+              role={canOpen ? 'button' : undefined}
+              tabIndex={canOpen ? 0 : undefined}
             >
-              <AvatarSingle style={{ backgroundColor: '#6366f1' }}>
-                A
-              </AvatarSingle>
-              <EmailBody>
-                <SenderName>Alexandre..</SenderName>
-                <SenderCount>2</SenderCount>
-                <PreviewIcon>
-                  <svg
-                    fill="none"
-                    height="10"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeWidth="1.5"
-                    viewBox="0 0 12 12"
-                    width="10"
-                  >
-                    <rect height="5" rx="1" width="6" x="3" y="5.5" />
-                    <path d="M4.5 5.5V4a1.5 1.5 0 0 1 3 0v1.5" />
-                  </svg>
-                </PreviewIcon>
-                <PreviewText>Not shared</PreviewText>
-              </EmailBody>
-              <EmailMeta>1:30pm</EmailMeta>
+              <Heading>
+                <Avatars>
+                  {email.avatars.map((url, avatarIndex) => (
+                    <Avatar alt="" key={avatarIndex} src={url} />
+                  ))}
+                </Avatars>
+                <SenderNames>{email.sender}</SenderNames>
+                <ThreadCount>{email.count}</ThreadCount>
+              </Heading>
+              <SubjectAndBody>
+                {email.subject ? (
+                  <>
+                    <Subject>{email.subject}</Subject>
+                    {email.preview ? (
+                      <BodyPreview>{email.preview}</BodyPreview>
+                    ) : null}
+                  </>
+                ) : (
+                  <NotShared>
+                    <IconLock />
+                    Not shared
+                  </NotShared>
+                )}
+              </SubjectAndBody>
+              {email.attachment ? (
+                <AttachIcon>
+                  <IconPaperclip />
+                </AttachIcon>
+              ) : null}
+              <ReceivedAt>{email.date}</ReceivedAt>
             </EmailRow>
-
-            <EmailRow
-              data-selected={false}
-              onClick={() => setOpenEmail(1)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  setOpenEmail(1);
-                }
-              }}
-              role="button"
-              tabIndex={0}
-            >
-              <AvatarStack>
-                <StackedAvatar style={{ backgroundColor: '#f59e0b' }}>
-                  F
-                </StackedAvatar>
-                <StackedAvatar style={{ backgroundColor: '#8b5cf6' }}>
-                  M
-                </StackedAvatar>
-                <StackedAvatar style={{ backgroundColor: '#06b6d4' }}>
-                  K
-                </StackedAvatar>
-              </AvatarStack>
-              <EmailBody>
-                <SenderName>Félix..</SenderName>
-                <SenderCount>4</SenderCount>
-                <SubjectBold>Partnerships</SubjectBold>
-                <PreviewText>
-                  Hey team, I've been in touch with Notion and...
-                </PreviewText>
-              </EmailBody>
-              <EmailMeta>
-                <MetaIcon>
-                  <svg
-                    fill="none"
-                    height="10"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeWidth="1.5"
-                    viewBox="0 0 12 12"
-                    width="10"
-                  >
-                    <path d="M2.5 7a3 3 0 0 1 3-3H9a1.5 1.5 0 0 1 0 3H5.5a.75.75 0 0 1 0-1.5H9" />
-                  </svg>
-                </MetaIcon>
-                <MetaIcon>
-                  <svg
-                    fill="none"
-                    height="10"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeWidth="1.5"
-                    viewBox="0 0 12 12"
-                    width="10"
-                  >
-                    <rect height="7" rx="1.5" width="8" x="2" y="3" />
-                    <path d="M2 5.5h8M4.5 2v2M7.5 2v2" />
-                  </svg>
-                </MetaIcon>
-                4 nov 2023
-              </EmailMeta>
-            </EmailRow>
-          </EmailList>
-        </>
-      ) : (
-        <EmailDetail onBack={() => setOpenEmail(null)} emailIndex={openEmail} />
-      )}
+          );
+        })}
+      </EmailList>
     </Root>
   );
 }
