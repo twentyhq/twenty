@@ -1,4 +1,5 @@
-export { PlanTable } from './components';
+export { Root as PlanTableSection } from './components/Root';
+export { Content as PlanTableContent } from './components/Content';
 export type {
   PlanTableBodyRowDataType,
   PlanTableCalculatorDataType,

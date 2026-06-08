@@ -6,10 +6,8 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import {
-  type JwtPayload,
-  JwtTokenTypeEnum,
-} from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type JwtPayload } from 'src/engine/core-modules/auth/types/jwt-payload.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { JwtAuthStrategy } from './jwt.auth.strategy';
@@ -942,6 +940,56 @@ describe('JwtAuthStrategy', () => {
       expect(result.impersonationContext?.impersonatedUserWorkspaceId).toBe(
         validUserWorkspaceId,
       );
+    });
+  });
+
+  describe('PLAYGROUND token validation', () => {
+    // PLAYGROUND tokens are access-shaped but must never impersonate.
+    it('ignores isImpersonating and resolves first-person', async () => {
+      const validUserId = 'valid-user-id';
+      const validUserWorkspaceId = randomUUID();
+      const validWorkspaceId = randomUUID();
+
+      const payload = {
+        sub: validUserId,
+        type: JwtTokenTypeEnum.PLAYGROUND,
+        userWorkspaceId: validUserWorkspaceId,
+        workspaceId: validWorkspaceId,
+        isImpersonating: true,
+      };
+
+      workspaceStore[validWorkspaceId] = new WorkspaceEntity();
+      userStore[validUserId] = { id: validUserId, lastName: 'lastNameDefault' };
+
+      coreEntityCacheService.get.mockImplementation(
+        async (keyName: string, entityId: string) => {
+          if (keyName === 'workspaceEntity') {
+            return workspaceStore[entityId] ?? null;
+          }
+
+          if (keyName === 'user') {
+            return userStore[entityId] ?? null;
+          }
+
+          if (keyName === 'userWorkspaceEntity') {
+            return {
+              id: validUserWorkspaceId,
+              user: { id: validUserId, lastName: 'lastNameDefault' },
+              workspace: { id: validWorkspaceId },
+            };
+          }
+
+          return null;
+        },
+      );
+
+      strategy = createStrategy();
+
+      const result = await strategy.validate(payload as JwtPayload);
+
+      expect(result.impersonationContext).toBeUndefined();
+      expect(result.tokenType).toBe(JwtTokenTypeEnum.PLAYGROUND);
+      expect(result.userWorkspaceId).toBe(validUserWorkspaceId);
     });
   });
 });

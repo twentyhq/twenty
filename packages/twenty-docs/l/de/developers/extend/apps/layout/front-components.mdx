@@ -196,6 +196,94 @@ export default defineFrontComponent({
 });
 ```
 
+## Aufrufen einer Logikfunktion
+
+Front-Komponenten laufen browserseitig in einem isolierten Web Worker, während [Logikfunktionen](/l/de/developers/extend/apps/logic/logic-functions) serverseitig ausgeführt werden. Es gibt keinen direkten In-Process-Aufruf zwischen beiden – stattdessen ruft eine Front-Komponente eine Logikfunktion über HTTP auf.
+
+Eine mit `httpRouteTriggerSettings` deklarierte Logikfunktion wird unter dem `/s/`-Endpunkt unter `${TWENTY_API_URL}/s\<path>` bereitgestellt. Ihre Front-Komponente ruft diese Route mit `fetch` auf und authentifiziert sich dabei mit dem `TWENTY_APP_ACCESS_TOKEN`, das Twenty in den Worker injiziert.
+
+Ein kleiner wiederverwendbarer Helper hält die Aufrufstellen übersichtlich:
+
+```ts src/shared/call-app-route.ts
+export async function callAppRoute(
+  path: string,
+  body: Record<string, unknown>,
+): Promise<unknown> {
+  const apiUrl = process.env.TWENTY_API_URL ?? '';
+  const token = process.env.TWENTY_APP_ACCESS_TOKEN;
+
+  const res = await fetch(`${apiUrl}/s${path}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    throw new Error(`Logic function failed (${res.status})`);
+  }
+
+  return res.json();
+}
+```
+
+Eine headless Front-Komponente kann den Aufruf beim Mounten über die `Command`-Komponente ausführen und sich anschließend automatisch unmounten:
+
+```tsx src/front-components/sync-prs.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+import { callAppRoute } from 'src/shared/call-app-route';
+
+const SyncPrs = () => {
+  const execute = async () => {
+    await callAppRoute('/github/fetch-prs', {
+      owner: 'twentyhq',
+      repo: 'twenty',
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-prs',
+  description: 'Triggers the fetch-prs logic function',
+  isHeadless: true,
+  component: SyncPrs,
+});
+```
+
+Der an `callAppRoute` übergebene `path` muss dem `httpRouteTriggerSettings.path` der Logikfunktion entsprechen (das `/s`-Präfix wird vom Helper hinzugefügt):
+
+```ts src/logic-functions/fetch-prs.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  const { owner, repo } = (event.body ?? {}) as { owner: string; repo: string };
+  // ...fetch from GitHub and persist records...
+  return { ok: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: '...',
+  name: 'fetch-prs',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/github/fetch-prs',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+<Note>
+`TWENTY_API_URL` und `TWENTY_APP_ACCESS_TOKEN` werden automatisch injiziert – siehe [Anwendungsvariablen](#application-variables). Da geheime Anwendungsvariablen niemals in Front-Komponenten offengelegt werden, sollten API-Schlüssel und andere sensible Logik in der Logikfunktion verbleiben und nicht in der Front-Komponente.
+</Note>
+
 ## Zugriff auf den Laufzeitkontext
 
 Verwenden Sie innerhalb Ihrer Komponente SDK-Hooks, um auf den aktuellen Benutzer, den Datensatz und die Komponenteninstanz zuzugreifen:
@@ -335,8 +423,8 @@ export default defineFrontComponent({
 Verwenden Sie `useSelectedRecordIds()`, um mehrere ausgewählte Datensätze zu verwalten. Dies ist nützlich für Stapelvorgänge:
 
 ```tsx src/front-components/bulk-export.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { defineFrontComponent, numberOfSelectedRecords } from 'twenty-sdk/define';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 

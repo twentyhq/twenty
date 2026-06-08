@@ -18,13 +18,12 @@ import { ScrollToTopOnRouteChange } from '@/app/_components/ScrollToTopOnRouteCh
 import {
   I18nProvider,
   localeToUrlSegment,
-  PUBLIC_APP_LOCALE_LIST,
+  WEBSITE_LOCALE_LIST,
   resolveLocaleParam,
 } from '@/lib/i18n';
-import { getLocaleMessages } from '@/lib/i18n/utils/messages-by-locale';
-import { setServerI18n } from '@/lib/i18n/utils/set-server-i18n';
+import { getLocaleMessages, setServerI18n } from '@/lib/i18n/server';
 import { ContactCalModalRoot } from '@/sections/ContactCal';
-import { Footer, FOOTER_DATA } from '@/sections/Footer';
+import { Footer } from '@/sections/Footer';
 import { PartnerApplicationModalRoot } from '@/sections/PartnerApplication';
 
 const hostGrotesk = Host_Grotesk({
@@ -124,7 +123,7 @@ type LocaleLayoutParams = { locale: string };
 export const dynamicParams = false;
 
 export const generateStaticParams = (): LocaleLayoutParams[] =>
-  PUBLIC_APP_LOCALE_LIST.map((locale) => ({
+  WEBSITE_LOCALE_LIST.map((locale) => ({
     locale: localeToUrlSegment(locale),
   }));
 
@@ -162,14 +161,7 @@ const LocaleLayout = async ({
               <ScrollToTopOnRouteChange />
               <StyledMain>{children}</StyledMain>
               <FooterVisibilityGate>
-                <Footer.Root>
-                  <Footer.Logo />
-                  <Footer.Nav groups={FOOTER_DATA.navGroups} />
-                  <Footer.Bottom
-                    copyright={FOOTER_DATA.bottom.copyright}
-                    links={FOOTER_DATA.socialLinks}
-                  />
-                </Footer.Root>
+                <Footer />
               </FooterVisibilityGate>
             </PartnerApplicationModalRoot>
           </ContactCalModalRoot>

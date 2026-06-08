@@ -7,9 +7,9 @@ import type {
 } from '@/sections/Salesforce/types';
 import { useAnimatedNumber } from '@/lib/animation';
 import { useLingui } from '@lingui/react';
+import { Trans } from '@lingui/react/macro';
 import type { MessageDescriptor } from '@lingui/core';
 import { theme } from '@/theme';
-import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useRef } from 'react';
 
@@ -698,7 +698,7 @@ export function PricingWindow({
                 {i18n._(pricing.featureSectionHeading)}
               </SectionLabel>
               <SelectAllButton onClick={onSelectAll} type="button">
-                {i18n._(msg`Select all`)}
+                <Trans>Select all</Trans>
               </SelectAllButton>
             </SectionHeader>
             {pricing.addons.map((addon) => {

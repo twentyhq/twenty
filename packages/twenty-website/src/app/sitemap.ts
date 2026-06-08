@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
 
-import { PUBLIC_APP_LOCALE_LIST, localeToUrlSegment } from '@/lib/i18n';
+import { WEBSITE_LOCALE_LIST, localeToUrlSegment } from '@/lib/i18n';
 import { getSiteUrl } from '@/lib/seo';
 import {
   getIndexedWebsiteRoutes,
@@ -19,7 +19,7 @@ const buildLocalizedUrl = (locale: AppLocale, path: string): string => {
 };
 
 const getRouteLocales = (route: WebsiteRoute): readonly AppLocale[] =>
-  route.localeMode === 'source' ? [SOURCE_LOCALE] : PUBLIC_APP_LOCALE_LIST;
+  route.localeMode === 'source' ? [SOURCE_LOCALE] : WEBSITE_LOCALE_LIST;
 
 const buildLanguageAlternates = (
   path: string,

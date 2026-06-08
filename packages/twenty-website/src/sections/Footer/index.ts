@@ -1,4 +1,4 @@
-export { Footer } from './components';
+export { Footer } from './components/Footer';
 export { FOOTER_DATA } from './data';
 export type {
   FooterBottomType,

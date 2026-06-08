@@ -116,7 +116,7 @@ const NavigationMenuItemFolderReadOnlyContent = ({
   const { theme } = useContext(ThemeContext);
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
 
-  const { isOpen, handleToggle, hasActiveChild } =
+  const { isOpen, handleToggle, hasActiveChild, activeChildIndex } =
     useNavigationMenuItemFolderOpenState({
       folderId,
       folderChildrenNavigationMenuItems: navigationMenuItems,
@@ -165,6 +165,7 @@ const NavigationMenuItemFolderReadOnlyContent = ({
           navigationMenuItem={navigationMenuItem}
           index={index}
           arrayLength={navigationMenuItems.length}
+          selectedIndex={activeChildIndex}
           isDragging={false}
         />
       ))}

@@ -11,7 +11,6 @@ describe('peopleResolver (e2e)', () => {
             edges {
               node {
                 jobTitle
-                city
                 avatarUrl
                 position
                 searchVector

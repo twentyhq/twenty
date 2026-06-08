@@ -24,6 +24,12 @@ export type LoggedEventEntry = {
   scrollLeft?: number;
   deltaX?: number;
   deltaY?: number;
+  clientX?: number;
+  clientY?: number;
+  offsetX?: number;
+  offsetY?: number;
+  movementX?: number;
+  movementY?: number;
 };
 
 const EVENT_LOG_STYLE = {
@@ -214,6 +220,36 @@ export const useEventLog = () => {
       const deltaY = pickFromRecords(records, 'deltaY', isNumberValue);
       if (isDefined(deltaY)) {
         entry.deltaY = deltaY;
+      }
+
+      const clientX = pickFromRecords(records, 'clientX', isNumberValue);
+      if (isDefined(clientX)) {
+        entry.clientX = clientX;
+      }
+
+      const clientY = pickFromRecords(records, 'clientY', isNumberValue);
+      if (isDefined(clientY)) {
+        entry.clientY = clientY;
+      }
+
+      const offsetX = pickFromRecords(records, 'offsetX', isNumberValue);
+      if (isDefined(offsetX)) {
+        entry.offsetX = offsetX;
+      }
+
+      const offsetY = pickFromRecords(records, 'offsetY', isNumberValue);
+      if (isDefined(offsetY)) {
+        entry.offsetY = offsetY;
+      }
+
+      const movementX = pickFromRecords(records, 'movementX', isNumberValue);
+      if (isDefined(movementX)) {
+        entry.movementX = movementX;
+      }
+
+      const movementY = pickFromRecords(records, 'movementY', isNumberValue);
+      if (isDefined(movementY)) {
+        entry.movementY = movementY;
       }
 
       return [...previousEntries, entry];

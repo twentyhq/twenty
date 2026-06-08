@@ -13,7 +13,7 @@ export const kebabCaseDeep = <T>(value: T): KebabCasedPropertiesDeep<T> => {
 
   // Check if it's an object
   if (isObject(value)) {
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     const result: Record<string, any> = {};
 
     for (const key in value) {

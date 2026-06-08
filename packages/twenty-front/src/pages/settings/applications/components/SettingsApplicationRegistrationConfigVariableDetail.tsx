@@ -6,7 +6,7 @@ import {
   UpdateApplicationRegistrationVariableDocument,
 } from '~/generated-metadata/graphql';
 import { useMutation, useQuery } from '@apollo/client/react';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
@@ -67,11 +67,11 @@ export const SettingsApplicationRegistrationConfigVariableDetail = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
           children: t`Applications - Developer`,
@@ -100,6 +100,6 @@ export const SettingsApplicationRegistrationConfigVariableDetail = () => {
         variable={variable}
         onUpdateVariable={onUpdateVariable}
       />
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

@@ -314,6 +314,7 @@ export const EXPECTED_MANIFEST: Manifest = {
     },
   ],
   views: [],
+  viewFields: [],
   navigationMenuItems: [],
   pageLayouts: [],
   pageLayoutTabs: [],

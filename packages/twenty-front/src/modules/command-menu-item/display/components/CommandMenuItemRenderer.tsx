@@ -1,3 +1,5 @@
+import { AppMenuItem } from '@/applications/components/AppMenuItem';
+import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandListItemLoader } from '@/command-menu-item/display/components/CommandListItemLoader';
 import { interpolateCommandMenuItemFields } from '@/command-menu-item/display/utils/interpolateCommandMenuItemFields';
@@ -101,12 +103,28 @@ const CommandMenuItemSelectableRenderer = ({
     selectableListInstanceId,
   );
 
+  const isThirdPartyApp = useIsThirdPartyApplication(item.applicationId);
+
   const onItemClick = () => {
     if (disabled) {
       return;
     }
     handleClick();
   };
+
+  if (isThirdPartyApp) {
+    return (
+      <SelectableListItem itemId={item.id} onEnter={onItemClick}>
+        <AppMenuItem
+          applicationId={item.applicationId}
+          text={getCommandMenuItemLabel(label)}
+          onClick={disabled ? undefined : handleClick}
+          focused={!disabled && isSelectedItemId}
+          disabled={disabled}
+        />
+      </SelectableListItem>
+    );
+  }
 
   if (displayType === 'listItem') {
     const loaderComponent =

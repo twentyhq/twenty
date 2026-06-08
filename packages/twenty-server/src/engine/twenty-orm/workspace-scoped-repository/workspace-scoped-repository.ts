@@ -104,8 +104,8 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
   ): Promise<number | null> {
     this.assertWorkspaceId(workspaceId);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this.repository.maximum(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       columnName as any,
       where
         ? this.mergeWorkspaceIdIntoCriteria(workspaceId, where)

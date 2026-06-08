@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useDebounce } from 'use-debounce';
 
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
-import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
+import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
@@ -27,7 +27,7 @@ type SearchRecordBase = {
 
 export const SidePanelNewSidebarItemRecordSubPage = () => {
   const { t } = useLingui();
-  const { currentDraft } = useDraftNavigationMenuItems();
+  const { currentItems } = useNavigationMenuItemEditController();
   const [recordSearchInput, setRecordSearchInput] = useState('');
   const [deferredRecordSearchInput] = useDebounce(recordSearchInput, 300);
   const coreClient = useApolloCoreClient();
@@ -65,8 +65,8 @@ export const SidePanelNewSidebarItemRecordSubPage = () => {
     },
   );
 
-  const workspaceRecordIds = new Set(
-    currentDraft.flatMap((item) =>
+  const recordIdsAlreadyAdded = new Set(
+    currentItems.flatMap((item) =>
       isDefined(item.targetRecordId) ? [item.targetRecordId] : [],
     ),
   );
@@ -74,7 +74,7 @@ export const SidePanelNewSidebarItemRecordSubPage = () => {
   const searchRecords =
     searchData?.search?.edges?.map((edge) => edge.node) ?? [];
   const availableSearchRecords = searchRecords.filter(
-    (record) => !workspaceRecordIds.has(record.recordId),
+    (record) => !recordIdsAlreadyAdded.has(record.recordId),
   ) as SearchRecordBase[];
 
   const isEmpty = availableSearchRecords.length === 0 && !recordSearchLoading;

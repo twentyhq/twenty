@@ -26,11 +26,10 @@ import {
   IconDoorEnter,
   IconHelpCircle,
   IconHierarchy2,
-  IconKey,
+  IconLayout,
   IconMail,
   IconMessage,
   IconPlug,
-  IconRocket,
   IconServer,
   IconSettings,
   IconSparkles,
@@ -120,23 +119,21 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
       items: [
         {
           label: t`General`,
-          path: SettingsPath.Workspace,
+          path: SettingsPath.General,
           Icon: IconSettings,
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
-        },
-        {
-          label: t`Email`,
-          path: SettingsPath.WorkspaceEmail,
-          Icon: IconMail,
-          isHidden:
-            !isEmailGroupFeatureEnabled ||
-            !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
           label: t`Data model`,
           path: SettingsPath.Objects,
           Icon: IconHierarchy2,
           isHidden: !permissionMap[PermissionFlagType.DATA_MODEL],
+        },
+        {
+          label: t`Layout`,
+          path: SettingsPath.Layout,
+          Icon: IconLayout,
+          isHidden: !permissionMap[PermissionFlagType.LAYOUTS],
         },
         {
           label: t`Members`,
@@ -169,21 +166,20 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.Applications,
           Icon: IconPlug,
           isHidden: !permissionMap[PermissionFlagType.APPLICATIONS],
-          modifier: 'new',
         },
         {
           label: t`AI`,
           path: SettingsPath.AI,
           Icon: IconSparkles,
-          isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
-          modifier: 'new',
+          isHidden: !permissionMap[PermissionFlagType.AI_SETTINGS],
         },
         {
-          label: t`Security`,
-          path: SettingsPath.Security,
-          Icon: IconKey,
-          isAdvanced: true,
-          isHidden: !permissionMap[PermissionFlagType.SECURITY],
+          label: t`Email`,
+          path: SettingsPath.WorkspaceEmail,
+          Icon: IconMail,
+          isHidden:
+            !isEmailGroupFeatureEnabled ||
+            !permissionMap[PermissionFlagType.WORKSPACE],
         },
       ],
     },
@@ -197,9 +193,9 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !isAdminEnabled,
         },
         {
-          label: t`Updates`,
-          path: SettingsPath.Updates,
-          Icon: IconRocket,
+          label: t`Community`,
+          path: SettingsPath.Community,
+          Icon: IconUsers,
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {

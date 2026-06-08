@@ -74,8 +74,6 @@ export const DOCUMENTATION_PATHS = {
   DEVELOPERS_EXTEND_OAUTH: '/developers/extend/oauth',
   DEVELOPERS_EXTEND_WEBHOOKS: '/developers/extend/webhooks',
   DEVELOPERS_INTRODUCTION: '/developers/introduction',
-  DEVELOPERS_SELF_HOST_CAPABILITIES_CLOUD_PROVIDERS:
-    '/developers/self-host/capabilities/cloud-providers',
   DEVELOPERS_SELF_HOST_CAPABILITIES_DOCKER_COMPOSE:
     '/developers/self-host/capabilities/docker-compose',
   DEVELOPERS_SELF_HOST_CAPABILITIES_SETUP:

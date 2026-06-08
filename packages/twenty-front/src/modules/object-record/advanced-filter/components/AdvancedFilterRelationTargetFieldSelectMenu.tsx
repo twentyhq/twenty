@@ -62,16 +62,8 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
       ? sourceFieldMetadataItem.relation.targetObjectMetadata.id
       : null;
 
-  const { filterableFieldMetadataItems: allTargetFields } =
+  const { filterableFieldMetadataItems: relationTargetFields } =
     useFilterableFieldMetadataItems(targetObjectMetadataId ?? '');
-
-  // The backend supports a single hop only. Exclude many-to-one relations
-  // from the target list so the user can't compose multi-hop traversals
-  // (e.g. Person → Company → ParentCompany) that the dispatcher would
-  // collapse back to a filter-by-id on the intermediate relation.
-  const relationTargetFields = allTargetFields.filter(
-    (field) => !isManyToOneRelationField(field),
-  );
 
   if (
     !isDefined(sourceFieldMetadataItem) ||

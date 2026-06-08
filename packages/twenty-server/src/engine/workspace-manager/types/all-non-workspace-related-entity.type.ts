@@ -1,8 +1,12 @@
+import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { type ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { type ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { type BillingMeterEntity } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
 import { type BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { type BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { type BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { type SigningKeyEntity } from 'src/engine/core-modules/jwt/entities/signing-key.entity';
+import { type KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { type TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -31,11 +35,15 @@ export type AllNonWorkspaceRelatedEntity =
   | AgentTurnEntity
   | AgentTurnEvaluationEntity
   | IndexFieldMetadataEntity
+  | ApplicationRegistrationEntity
+  | ApplicationRegistrationVariableEntity
   | ApplicationVariableEntity
   | BillingMeterEntity
   | BillingPriceEntity
   | BillingProductEntity
   | BillingSubscriptionItemEntity
+  | KeyValuePairEntity
+  | SigningKeyEntity
   | TwoFactorAuthenticationMethodEntity
   | UserEntity
   | WorkspaceEntity;

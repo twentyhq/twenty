@@ -1,0 +1,18 @@
+{
+  "_comment": "Copy this file to .agents/plugins/marketplace.json at the repo root or at ~/.agents/plugins/marketplace.json to install the Twenty Codex plugin locally. Adjust source.path if your checkout lives elsewhere.",
+  "plugins": [
+    {
+      "name": "twenty",
+      "version": "0.1.0",
+      "category": "Coding",
+      "source": {
+        "type": "local",
+        "path": "./packages/twenty-codex-plugin"
+      },
+      "policy": {
+        "installation": "manual",
+        "authentication": "user-local"
+      }
+    }
+  ]
+}

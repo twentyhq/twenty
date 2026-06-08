@@ -18,4 +18,5 @@ export type {
 } from './Layout';
 export { MarkdownProse } from './MarkdownProse';
 export { Modal } from './Modal';
+export { ResponsiveLineBreak } from './ResponsiveLineBreak';
 export { StepperProgressRail } from './StepperProgressRail';

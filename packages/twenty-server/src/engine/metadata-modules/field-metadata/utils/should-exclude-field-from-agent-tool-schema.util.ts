@@ -4,13 +4,13 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 export const shouldExcludeFieldFromAgentToolSchema = (
   field: FieldMetadataEntity | FlatFieldMetadata,
   excludeId = true,
+  additionalExcludedFieldNames: string[] = [],
 ): boolean => {
   const excludedFieldNames = [
-    'createdAt',
-    'updatedAt',
     'deletedAt',
     'searchVector',
     'createdBy',
+    ...additionalExcludedFieldNames,
   ];
 
   if (excludeId) {

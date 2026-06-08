@@ -3,10 +3,9 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
 
 import { PartnerApplicationModal } from '@/sections/PartnerApplication/PartnerApplicationModal';
-import type { PartnerProgramId } from '@/sections/PartnerApplication/partner-application-modal-data';
 
 type PartnerApplicationModalContextValue = {
-  openPartnerApplicationModal: (programId?: PartnerProgramId) => void;
+  openPartnerApplicationModal: () => void;
 };
 
 const PartnerApplicationModalContext =
@@ -28,26 +27,12 @@ export function PartnerApplicationModalRoot({
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
-  const [initialProgramId, setInitialProgramId] =
-    useState<PartnerProgramId>('technology');
-
   return (
     <PartnerApplicationModalContext.Provider
-      value={{
-        openPartnerApplicationModal: (programId?: PartnerProgramId) => {
-          if (programId !== undefined) {
-            setInitialProgramId(programId);
-          }
-          setOpen(true);
-        },
-      }}
+      value={{ openPartnerApplicationModal: () => setOpen(true) }}
     >
       {children}
-      <PartnerApplicationModal
-        initialProgramId={initialProgramId}
-        onClose={() => setOpen(false)}
-        open={open}
-      />
+      <PartnerApplicationModal open={open} onClose={() => setOpen(false)} />
     </PartnerApplicationModalContext.Provider>
   );
 }

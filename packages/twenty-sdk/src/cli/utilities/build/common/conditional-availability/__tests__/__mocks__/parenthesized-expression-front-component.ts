@@ -1,9 +1,9 @@
-import { defineCommandMenuItem } from '@/sdk/define';
 import {
+  defineCommandMenuItem,
   favoriteRecordIds,
   objectMetadataItem,
   pageType,
-} from '@/sdk/front-component';
+} from '@/sdk/define';
 
 export default defineCommandMenuItem({
   universalIdentifier: 'parenthesized-expression-cmd',

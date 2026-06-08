@@ -9,11 +9,10 @@ export const generateFindToolInputSchema = (
   objectMetadata: ObjectMetadataForToolSchema,
   restrictedFields?: RestrictedFieldsPermissions,
 ) => {
-  const { filterShape, filterSchema } = generateRecordFilterSchema(
+  const { filterShape, filterSchema } = generateRecordFilterSchema({
     objectMetadata,
     restrictedFields,
-  );
-
+  });
   return z.object({
     limit: z
       .number()
@@ -31,8 +30,20 @@ export const generateFindToolInputSchema = (
       .default(0)
       .describe('Number of records to skip (default: 0)'),
     orderBy: ObjectRecordOrderBySchema.describe(
-      'Sort records by field(s). CRITICAL for "top N", "largest", "smallest" queries. Each item is an object with exactly ONE property: field name as key, sort direction as value. Example: [{"employees": "DescNullsLast"}] sorts employees descending. Use "DescNullsLast" for top/largest, "AscNullsFirst" for bottom/smallest.',
+      'Sort by field(s). ' +
+        'Scalar fields: [{fieldName: "DescNullsLast"}]. ' +
+        'Composite fields (name, address, currency, …): [{fieldName: {subFieldName: "AscNullsFirst"}}] — e.g. [{"name": {"firstName": "AscNullsFirst"}}]. ' +
+        'Never use dot-notation keys like "name.firstName". ' +
+        'Use DescNullsLast for top/largest, AscNullsFirst for bottom/smallest.',
     ),
+    select: z
+      .array(z.string())
+      .nonempty()
+      .describe(
+        `Fields to include in the response. Required. ` +
+          `Use '*' to return all fields, or list specific field names. ` +
+          `MANY_TO_ONE relations are referenced by their FK column (e.g. 'companyId'). `,
+      ),
     ...filterShape,
     or: z
       .array(filterSchema)

@@ -308,6 +308,26 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  stepLogs: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'stepLogs',
+      type: FieldMetadataType.RAW_JSON,
+      label: i18nLabel(msg`Step logs`),
+      description: i18nLabel(
+        msg`Per-step observability payload (token usage, tool calls, log entries)`,
+      ),
+      icon: 'IconTerminal2',
+      isSystem: true,
+      isNullable: true,
+      isUIReadOnly: true,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   position: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,

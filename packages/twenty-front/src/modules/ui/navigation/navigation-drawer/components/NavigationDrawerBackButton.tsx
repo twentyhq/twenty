@@ -42,7 +42,6 @@ const StyledContainer = styled.div`
   flex-direction: row;
   height: ${themeCssVariables.spacing[8]};
   justify-content: space-between;
-  padding-left: ${themeCssVariables.spacing[5]};
 `;
 
 export const NavigationDrawerBackButton = ({

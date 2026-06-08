@@ -7,9 +7,9 @@ import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids
 const TEST_WORKSPACE_SCHEMA = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
 
 const TOOL_NAMES = {
-  createCompany: 'create_company',
-  createNote: 'create_note',
-  createNoteTarget: 'create_note_target',
+  createCompany: 'create_one_company',
+  createNote: 'create_one_note',
+  createNoteTarget: 'create_one_note_target',
   groupByNoteTargets: 'group_by_note_targets',
 } as const;
 
@@ -135,15 +135,32 @@ describe('MCP tool execution (integration)', () => {
     it('should expose the morph-relation join columns as `${name}Id` UUID parameters', async () => {
       const inputSchema = await learnToolSchema(TOOL_NAMES.createNoteTarget);
 
-      const properties = (
-        inputSchema as {
-          properties?: Record<string, { type?: string; format?: string }>;
-        }
-      ).properties;
+      const schema = inputSchema as {
+        properties?: Record<
+          string,
+          { type?: string; format?: string; $ref?: string }
+        >;
+        $defs?: Record<string, { type?: string; format?: string }>;
+      };
+
+      const properties = schema.properties;
 
       expect(properties).toBeDefined();
 
-      expect(properties?.noteId).toMatchObject({
+      const resolveProperty = (
+        prop: { type?: string; format?: string; $ref?: string } | undefined,
+      ) => {
+        if (!prop) return undefined;
+        if (prop.$ref && schema.$defs) {
+          const defKey = prop.$ref.replace('#/$defs/', '');
+
+          return schema.$defs[defKey];
+        }
+
+        return prop;
+      };
+
+      expect(resolveProperty(properties?.noteId)).toMatchObject({
         type: 'string',
         format: 'uuid',
       });
@@ -151,15 +168,15 @@ describe('MCP tool execution (integration)', () => {
       // Morph relations must be exposed as `${name}Id` UUIDs (the join column),
       // not as the relation name typed as string — the data-arg-processor only
       // accepts the join-column form for write operations.
-      expect(properties?.targetCompanyId).toMatchObject({
+      expect(resolveProperty(properties?.targetCompanyId)).toMatchObject({
         type: 'string',
         format: 'uuid',
       });
-      expect(properties?.targetPersonId).toMatchObject({
+      expect(resolveProperty(properties?.targetPersonId)).toMatchObject({
         type: 'string',
         format: 'uuid',
       });
-      expect(properties?.targetOpportunityId).toMatchObject({
+      expect(resolveProperty(properties?.targetOpportunityId)).toMatchObject({
         type: 'string',
         format: 'uuid',
       });

@@ -9,7 +9,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 
 describe('WorkspaceAgnosticToken', () => {
   let service: WorkspaceAgnosticTokenService;

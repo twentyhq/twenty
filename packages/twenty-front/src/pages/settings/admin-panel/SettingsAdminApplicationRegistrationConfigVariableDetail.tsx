@@ -8,7 +8,7 @@ import {
 } from '~/generated-admin/graphql';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { APPLICATION_REGISTRATION_ADMIN_PATH } from '@/settings/admin-panel/apps/constants/ApplicationRegistrationAdminPath';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
@@ -73,7 +73,7 @@ export const SettingsAdminApplicationRegistrationConfigVariableDetail = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       links={[
         {
           children: t`Other`,
@@ -101,6 +101,6 @@ export const SettingsAdminApplicationRegistrationConfigVariableDetail = () => {
         variable={variable}
         onUpdateVariable={onUpdateVariable}
       />
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

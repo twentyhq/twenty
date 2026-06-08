@@ -1,6 +1,6 @@
 import type { MessageDescriptor } from '@lingui/core';
 
-import { getMessageDescriptorSource } from '@/lib/i18n/utils/get-message-descriptor-source';
+import { getMessageDescriptorSource } from '@/lib/i18n';
 import { useTimeoutRegistry } from '@/lib/react';
 import { useEffect, useState } from 'react';
 

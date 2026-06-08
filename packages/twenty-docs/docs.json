@@ -449,7 +449,6 @@
                   "developers/self-host/capabilities/docker-compose",
                   "developers/self-host/capabilities/setup",
                   "developers/self-host/capabilities/upgrade-guide",
-                  "developers/self-host/capabilities/cloud-providers",
                   "developers/self-host/capabilities/troubleshooting"
                 ]
               },
@@ -882,7 +881,6 @@
                   "l/fr/developers/self-host/capabilities/docker-compose",
                   "l/fr/developers/self-host/capabilities/setup",
                   "l/fr/developers/self-host/capabilities/upgrade-guide",
-                  "l/fr/developers/self-host/capabilities/cloud-providers",
                   "l/fr/developers/self-host/capabilities/troubleshooting"
                 ]
               },
@@ -1315,7 +1313,6 @@
                   "l/ar/developers/self-host/capabilities/docker-compose",
                   "l/ar/developers/self-host/capabilities/setup",
                   "l/ar/developers/self-host/capabilities/upgrade-guide",
-                  "l/ar/developers/self-host/capabilities/cloud-providers",
                   "l/ar/developers/self-host/capabilities/troubleshooting"
                 ]
               },
@@ -1748,7 +1745,6 @@
                   "l/cs/developers/self-host/capabilities/docker-compose",
                   "l/cs/developers/self-host/capabilities/setup",
                   "l/cs/developers/self-host/capabilities/upgrade-guide",
-                  "l/cs/developers/self-host/capabilities/cloud-providers",
                   "l/cs/developers/self-host/capabilities/troubleshooting"
                 ]
               },
@@ -2181,7 +2177,6 @@
                   "l/de/developers/self-host/capabilities/docker-compose",
                   "l/de/developers/self-host/capabilities/setup",
                   "l/de/developers/self-host/capabilities/upgrade-guide",
-                  "l/de/developers/self-host/capabilities/cloud-providers",
                   "l/de/developers/self-host/capabilities/troubleshooting"
                 ]
               },
@@ -2614,7 +2609,6 @@
                   "l/es/developers/self-host/capabilities/docker-compose",
                   "l/es/developers/self-host/capabilities/setup",
                   "l/es/developers/self-host/capabilities/upgrade-guide",
-                  "l/es/developers/self-host/capabilities/cloud-providers",
                   "l/es/developers/self-host/capabilities/troubleshooting"
                 ]
               },
@@ -3047,7 +3041,6 @@
                   "l/it/developers/self-host/capabilities/docker-compose",
                   "l/it/developers/self-host/capabilities/setup",
                   "l/it/developers/self-host/capabilities/upgrade-guide",
-                  "l/it/developers/self-host/capabilities/cloud-providers",
                   "l/it/developers/self-host/capabilities/troubleshooting"
                 ]
               },
@@ -3480,7 +3473,6 @@
                   "l/ja/developers/self-host/capabilities/docker-compose",
                   "l/ja/developers/self-host/capabilities/setup",
                   "l/ja/developers/self-host/capabilities/upgrade-guide",
-                  "l/ja/developers/self-host/capabilities/cloud-providers",
                   "l/ja/developers/self-host/capabilities/troubleshooting"
                 ]
               },
@@ -3913,7 +3905,6 @@
                   "l/ko/developers/self-host/capabilities/docker-compose",
                   "l/ko/developers/self-host/capabilities/setup",
                   "l/ko/developers/self-host/capabilities/upgrade-guide",
-                  "l/ko/developers/self-host/capabilities/cloud-providers",
                   "l/ko/developers/self-host/capabilities/troubleshooting"
                 ]
               },
@@ -4346,7 +4337,6 @@
                   "l/pt/developers/self-host/capabilities/docker-compose",
                   "l/pt/developers/self-host/capabilities/setup",
                   "l/pt/developers/self-host/capabilities/upgrade-guide",
-                  "l/pt/developers/self-host/capabilities/cloud-providers",
                   "l/pt/developers/self-host/capabilities/troubleshooting"
                 ]
               },
@@ -4779,7 +4769,6 @@
                   "l/ro/developers/self-host/capabilities/docker-compose",
                   "l/ro/developers/self-host/capabilities/setup",
                   "l/ro/developers/self-host/capabilities/upgrade-guide",
-                  "l/ro/developers/self-host/capabilities/cloud-providers",
                   "l/ro/developers/self-host/capabilities/troubleshooting"
                 ]
               },
@@ -5212,7 +5201,6 @@
                   "l/ru/developers/self-host/capabilities/docker-compose",
                   "l/ru/developers/self-host/capabilities/setup",
                   "l/ru/developers/self-host/capabilities/upgrade-guide",
-                  "l/ru/developers/self-host/capabilities/cloud-providers",
                   "l/ru/developers/self-host/capabilities/troubleshooting"
                 ]
               },
@@ -5645,7 +5633,6 @@
                   "l/tr/developers/self-host/capabilities/docker-compose",
                   "l/tr/developers/self-host/capabilities/setup",
                   "l/tr/developers/self-host/capabilities/upgrade-guide",
-                  "l/tr/developers/self-host/capabilities/cloud-providers",
                   "l/tr/developers/self-host/capabilities/troubleshooting"
                 ]
               },
@@ -6078,7 +6065,6 @@
                   "l/zh/developers/self-host/capabilities/docker-compose",
                   "l/zh/developers/self-host/capabilities/setup",
                   "l/zh/developers/self-host/capabilities/upgrade-guide",
-                  "l/zh/developers/self-host/capabilities/cloud-providers",
                   "l/zh/developers/self-host/capabilities/troubleshooting"
                 ]
               },
@@ -6195,10 +6181,6 @@
     {
       "source": "/developers/self-hosting/upgrade-guide",
       "destination": "/developers/self-host/capabilities/upgrade-guide"
-    },
-    {
-      "source": "/developers/self-hosting/cloud-providers",
-      "destination": "/developers/self-host/capabilities/cloud-providers"
     },
     {
       "source": "/developers/self-hosting/troubleshooting",

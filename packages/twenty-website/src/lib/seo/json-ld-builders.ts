@@ -2,7 +2,7 @@ import type { MessageDescriptor } from '@lingui/core';
 import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
 
 import type { Article } from '@/lib/articles';
-import { localeToUrlSegment } from '@/lib/i18n/utils/website-locale-segments';
+import { localeToUrlSegment } from '@/lib/i18n';
 import type { LocalReleaseNote } from '@/lib/releases/types';
 
 import type { JsonLdValue } from './JsonLd';

@@ -2,11 +2,11 @@ import type { Metadata } from 'next';
 import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
 
 import {
-  PUBLIC_APP_LOCALE_LIST,
-  isPublicAppLocale,
-} from '@/lib/i18n/utils/app-locale-set';
-import { createI18nInstance } from '@/lib/i18n/utils/create-i18n-instance';
-import { localeToUrlSegment } from '@/lib/i18n/utils/website-locale-segments';
+  WEBSITE_LOCALE_LIST,
+  isWebsiteLocale,
+  localeToUrlSegment,
+} from '@/lib/i18n';
+import { createI18nInstance } from '@/lib/i18n/server';
 import type { MessageDescriptor } from '@lingui/core';
 
 import { getSiteUrl } from './site-url';
@@ -30,7 +30,7 @@ const normalizePath = (path: string): string =>
   path.startsWith('/') ? path : `/${path}`;
 
 const localizePath = (locale: AppLocale, normalizedPath: string): string => {
-  if (locale === SOURCE_LOCALE || !isPublicAppLocale(locale)) {
+  if (locale === SOURCE_LOCALE || !isWebsiteLocale(locale)) {
     return normalizedPath;
   }
   const segment = localeToUrlSegment(locale);
@@ -56,14 +56,14 @@ export function buildPageMetadata({
   path,
   title,
   description,
-  locales = PUBLIC_APP_LOCALE_LIST,
+  locales = WEBSITE_LOCALE_LIST,
   ogImage,
   type = 'website',
   extend,
 }: BuildPageMetadataInput): Metadata {
   const siteUrl = getSiteUrl();
   const normalizedPath = normalizePath(path);
-  const metadataLocale = isPublicAppLocale(locale) ? locale : SOURCE_LOCALE;
+  const metadataLocale = isWebsiteLocale(locale) ? locale : SOURCE_LOCALE;
   const canonical = localizePath(metadataLocale, normalizedPath);
   const i18n = createI18nInstance(metadataLocale);
   const resolvedTitle = i18n._(title);
