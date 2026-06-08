@@ -8,6 +8,7 @@ import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useContext, useMemo } from 'react';
 import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 const StyledCommandMenuItemContainer = styled(motion.div)`
   align-items: center;
@@ -80,7 +81,13 @@ export const PinnedCommandMenuItemButtons = () => {
                     ease: 'easeInOut',
                   }}
                 >
-                  <CommandMenuItemRenderer item={item} />
+                  <CommandMenuItemRenderer
+                    item={item}
+                    isPrimaryAction={
+                      item.engineComponentKey ===
+                      EngineComponentKey.CREATE_NEW_RECORD
+                    }
+                  />
                 </StyledCommandMenuItemContainer>
               ))}
             </StyledItemsContainer>
