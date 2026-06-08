@@ -91,7 +91,6 @@
     "uuid": "^13.0.0"
   },
   "devDependencies": {
-    "@genql/cli": "^3.0.3",
     "@prettier/sync": "^0.5.2",
     "@types/inquirer": "^9.0.0",
     "@types/node": "^24.0.0",
