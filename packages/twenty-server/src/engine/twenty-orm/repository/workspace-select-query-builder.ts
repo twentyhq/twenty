@@ -71,7 +71,7 @@ export class WorkspaceSelectQueryBuilder<
     return workspaceSelectQueryBuilder;
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   override async execute(): Promise<any> {
     try {
       this.validatePermissions();
@@ -132,7 +132,7 @@ export class WorkspaceSelectQueryBuilder<
     }
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   override async getRawOne<U = any>(): Promise<U | undefined> {
     try {
       this.validatePermissions();
@@ -143,7 +143,7 @@ export class WorkspaceSelectQueryBuilder<
     }
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   override async getRawMany<U = any>(): Promise<U[]> {
     try {
       this.validatePermissions();

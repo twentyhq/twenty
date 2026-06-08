@@ -75,6 +75,7 @@ export type { ToolTriggerSettings } from './toolTriggerSettingsType';
 export type {
   ViewManifestFilterValue,
   ViewFieldManifest,
+  StandaloneViewFieldManifest,
   ViewFilterManifest,
   ViewFilterGroupManifest,
   ViewGroupManifest,

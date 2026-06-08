@@ -11,6 +11,7 @@ on:
 
 permissions:
   actions: read
+  contents: read
   pull-requests: read
 
 jobs:
@@ -83,6 +84,33 @@ jobs:
             core.setOutput('has_pr', 'true');
             core.info(`PR #${prNumber}`);
 
+      - name: Compute merge-base for Argos reference
+        if: steps.check-artifact.outputs.exists == 'true' && steps.pr-info.outputs.has_pr == 'true'
+        id: merge-base
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        with:
+          script: |
+            const headSha = context.payload.workflow_run.head_sha;
+
+            try {
+              const { data: comparison } = await github.rest.repos.compareCommitsWithBasehead({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                basehead: `main...${headSha}`,
+              });
+
+              if (comparison.merge_base_commit?.sha) {
+                core.setOutput('sha', comparison.merge_base_commit.sha);
+                core.info(`Merge base: ${comparison.merge_base_commit.sha}`);
+              } else {
+                core.info('Could not determine merge base — will skip reference_commit');
+                core.setOutput('sha', '');
+              }
+            } catch (error) {
+              core.warning(`Failed to compute merge base: ${error instanceof Error ? error.message : String(error)}`);
+              core.setOutput('sha', '');
+            }
+
       - name: Dispatch to ci-privileged
         if: steps.check-artifact.outputs.exists == 'true' && steps.pr-info.outputs.has_pr == 'true'
         env:
@@ -92,15 +120,23 @@ jobs:
           REPOSITORY: ${{ github.repository }}
           BRANCH: ${{ github.event.workflow_run.head_branch }}
           COMMIT: ${{ github.event.workflow_run.head_sha }}
+          REFERENCE_COMMIT: ${{ steps.merge-base.outputs.sha }}
         run: |
-          gh api repos/twentyhq/ci-privileged/dispatches \
-            --method POST \
-            -f event_type=visual-regression \
-            -f "client_payload[pr_number]=$PR_NUMBER" \
-            -f "client_payload[run_id]=$WORKFLOW_RUN_ID" \
-            -f "client_payload[repo]=$REPOSITORY" \
-            -f "client_payload[branch]=$BRANCH" \
+          ARGS=(
+            --method POST
+            -f event_type=visual-regression
+            -f "client_payload[pr_number]=$PR_NUMBER"
+            -f "client_payload[run_id]=$WORKFLOW_RUN_ID"
+            -f "client_payload[repo]=$REPOSITORY"
+            -f "client_payload[branch]=$BRANCH"
             -f "client_payload[commit]=$COMMIT"
+          )
+
+          if [ -n "$REFERENCE_COMMIT" ]; then
+            ARGS+=(-f "client_payload[reference_commit]=$REFERENCE_COMMIT")
+          fi
+
+          gh api repos/twentyhq/ci-privileged/dispatches "${ARGS[@]}"
 
   dispatch-main:
     if: >-

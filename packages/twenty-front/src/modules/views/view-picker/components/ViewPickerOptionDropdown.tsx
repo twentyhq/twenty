@@ -60,7 +60,7 @@ export const ViewPickerOptionDropdown = ({
   const hasViewsPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
 
   const { createManyNavigationMenuItems } = useCreateManyNavigationMenuItems();
-  const { navigationMenuItems, currentWorkspaceMemberId } =
+  const { navigationMenuItems, currentUserWorkspaceId } =
     useNavigationMenuItemsData();
 
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
@@ -73,7 +73,7 @@ export const ViewPickerOptionDropdown = ({
   const currentNavigationMenuItem = navigationMenuItems.find(
     (item) =>
       item.viewId === view.id &&
-      item.userWorkspaceId === currentWorkspaceMemberId,
+      item.userWorkspaceId === currentUserWorkspaceId,
   );
   const isFavorite = isDefined(currentNavigationMenuItem);
 
@@ -99,7 +99,7 @@ export const ViewPickerOptionDropdown = ({
           id: uuidv4(),
           type: NavigationMenuItemType.VIEW,
           viewId: view.id,
-          userWorkspaceId: currentWorkspaceMemberId,
+          userWorkspaceId: currentUserWorkspaceId,
           position: maxPosition + 1,
         },
       ]);

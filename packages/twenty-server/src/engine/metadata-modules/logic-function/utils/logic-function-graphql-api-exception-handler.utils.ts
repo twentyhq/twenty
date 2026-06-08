@@ -12,7 +12,7 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 
-// oxlint-disable-next-line @typescripttypescript/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export const logicFunctionGraphQLApiExceptionHandler = (error: any) => {
   if (error instanceof LogicFunctionException) {
     switch (error.code) {
