@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { AvatarOrIcon } from 'twenty-ui/components';
-import { IconX } from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { AvatarOrIcon } from 'twenty-ui-deprecated/components';
+import { IconX } from 'twenty-ui-deprecated/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { useFileCategoryColors } from '@/file/hooks/useFileCategoryColors';

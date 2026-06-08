@@ -6,8 +6,8 @@ import { PropertyBox } from '@/object-record/record-inline-cell/property-box/com
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui-deprecated/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledInlineCellBaseContainer = styled.div`
   align-items: center;

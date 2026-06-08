@@ -4,8 +4,8 @@ import { useCommandMenuHotKeys } from '@/command-menu/hooks/useCommandMenuHotKey
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { useIsMobile } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui-deprecated/utilities';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 type MainContainerLayoutWithSidePanelProps = {
   children: ReactNode;

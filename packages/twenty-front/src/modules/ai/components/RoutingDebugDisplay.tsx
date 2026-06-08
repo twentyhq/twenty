@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 
-import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
-import { JsonTree } from 'twenty-ui/json-visualizer';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconChevronDown, IconChevronUp } from 'twenty-ui-deprecated/display';
+import { JsonTree } from 'twenty-ui-deprecated/json-visualizer';
+import { AnimatedExpandableContainer } from 'twenty-ui-deprecated/layout';
+import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 import { useLingui } from '@lingui/react/macro';
 import { type DataMessagePart } from 'twenty-shared/ai';

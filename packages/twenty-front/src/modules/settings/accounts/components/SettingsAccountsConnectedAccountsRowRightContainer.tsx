@@ -4,8 +4,8 @@ import { SyncStatus } from '@/settings/accounts/constants/SyncStatus';
 import { computeSyncStatus } from '@/settings/accounts/utils/computeSyncStatus';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Status } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Status } from 'twenty-ui-deprecated/display';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledRowRightContainer = styled.div`
   align-items: center;

@@ -1,8 +1,8 @@
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
-import { IconCopy, IconExclamationCircle } from 'twenty-ui/display';
+import { IconCopy, IconExclamationCircle } from 'twenty-ui-deprecated/display';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 export const useCopyToClipboard = () => {
   const { theme } = useContext(ThemeContext);
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();

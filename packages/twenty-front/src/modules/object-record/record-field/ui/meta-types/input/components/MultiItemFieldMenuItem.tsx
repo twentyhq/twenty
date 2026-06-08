@@ -12,8 +12,8 @@ import {
   IconCopy,
   IconPencil,
   IconTrash,
-} from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
+} from 'twenty-ui-deprecated/display';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
 
 type MultiItemFieldMenuItemProps<T> = {
   dropdownId: string;

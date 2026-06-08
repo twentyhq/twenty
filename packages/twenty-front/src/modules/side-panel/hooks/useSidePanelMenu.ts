@@ -17,7 +17,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconColumnInsertRight, IconDotsVertical } from 'twenty-ui/display';
+import { IconColumnInsertRight, IconDotsVertical } from 'twenty-ui-deprecated/display';
 
 export const useSidePanelMenu = () => {
   const store = useStore();

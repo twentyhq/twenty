@@ -8,8 +8,8 @@ import {
   IconClock,
   IconMail,
   IconPaperclip,
-} from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 import {
   formatBytes,

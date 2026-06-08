@@ -8,8 +8,8 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { Card } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Card } from 'twenty-ui-deprecated/layout';
+import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const COVER_HEIGHT = 150;

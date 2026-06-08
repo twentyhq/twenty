@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useContext, type ReactNode } from 'react';
-import { type IconComponent, IconX } from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { type IconComponent, IconX } from 'twenty-ui-deprecated/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledChip = styled.div<{ variant: SortOrFilterChipVariant }>`

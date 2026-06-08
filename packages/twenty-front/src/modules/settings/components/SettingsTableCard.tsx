@@ -6,9 +6,9 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   OverflowingTextWithTooltip,
   type IconComponent,
-} from 'twenty-ui/display';
-import { Card } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { Card } from 'twenty-ui-deprecated/layout';
+import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 export type TableItem = {
   Icon?: IconComponent;

@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { IconReload, IconX } from 'twenty-ui/display';
-import { Checkbox } from 'twenty-ui/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedRotate } from 'twenty-ui/utilities';
+import { IconReload, IconX } from 'twenty-ui-deprecated/display';
+import { Checkbox } from 'twenty-ui-deprecated/input';
+import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { AnimatedRotate } from 'twenty-ui-deprecated/utilities';
 
 export type OverridableCheckboxType = 'default' | 'override' | 'no_cta';
 

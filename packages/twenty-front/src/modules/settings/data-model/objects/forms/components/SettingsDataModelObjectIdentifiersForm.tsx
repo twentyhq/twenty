@@ -16,9 +16,9 @@ import {
   isLabelIdentifierFieldMetadataTypes,
   isSearchableFieldType,
 } from 'twenty-shared/utils';
-import { IconCircleOff, IconPlus, useIcons } from 'twenty-ui/display';
-import { type SelectOption } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconCircleOff, IconPlus, useIcons } from 'twenty-ui-deprecated/display';
+import { type SelectOption } from 'twenty-ui-deprecated/input';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { type z } from 'zod';
 
 export const settingsDataModelObjectIdentifiersFormSchema =

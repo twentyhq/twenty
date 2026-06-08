@@ -16,16 +16,16 @@ import {
   IconGripVertical,
   IconTrash,
   IconX,
-} from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
+} from 'twenty-ui-deprecated/display';
+import { LightIconButton } from 'twenty-ui-deprecated/input';
 import {
   type ColorLabels,
   MenuItem,
   MenuItemSelectColor,
-} from 'twenty-ui/navigation';
+} from 'twenty-ui-deprecated/navigation';
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
+import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { MAIN_COLOR_NAMES } from 'twenty-ui-deprecated/theme';
 
 const useColorLabels = (): ColorLabels => ({
   gray: t`Gray`,

@@ -7,7 +7,7 @@ import { viewableRecordIdComponentState } from '@/side-panel/pages/record-page/s
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconCalendarEvent } from 'twenty-ui/display';
+import { IconCalendarEvent } from 'twenty-ui-deprecated/display';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 

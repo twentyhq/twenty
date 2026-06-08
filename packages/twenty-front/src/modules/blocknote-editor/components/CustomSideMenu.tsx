@@ -11,8 +11,8 @@ import {
 } from '@blocknote/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { IconColorSwatch, IconPlus, IconTrash } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconColorSwatch, IconPlus, IconTrash } from 'twenty-ui-deprecated/display';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 type CustomSideMenuProps = {
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor;

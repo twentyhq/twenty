@@ -4,7 +4,7 @@ import { type MockedResponse } from '@apollo/client/testing';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 import { expect, within } from 'storybook/test';
-import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
+import { CatalogDecorator, type CatalogStory } from 'twenty-ui-deprecated/testing';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';

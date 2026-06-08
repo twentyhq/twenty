@@ -9,10 +9,10 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { IconPencil } from 'twenty-ui/display';
-import { CodeEditor, FloatingIconButton } from 'twenty-ui/input';
-import { JsonTree, isTwoFirstDepths } from 'twenty-ui/json-visualizer';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconPencil } from 'twenty-ui-deprecated/display';
+import { CodeEditor, FloatingIconButton } from 'twenty-ui-deprecated/input';
+import { JsonTree, isTwoFirstDepths } from 'twenty-ui-deprecated/json-visualizer';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useJsonField } from '@/object-record/record-field/ui/meta-types/hooks/useJsonField';
 

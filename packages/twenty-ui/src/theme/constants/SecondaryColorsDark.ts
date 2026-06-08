@@ -1,5 +1,5 @@
 import * as RadixColors from '@radix-ui/colors';
-import { GRAY_SCALE_DARK } from '@ui/theme/constants/GrayScaleDark';
+import { GRAY_SCALE_DARK } from '@new-ui/theme/constants/GrayScaleDark';
 
 export const SECONDARY_COLORS_DARK = {
   yellow1: RadixColors.yellowDarkP3.yellow1,

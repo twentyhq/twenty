@@ -8,7 +8,7 @@ import {
   getUrlHostnameOrThrow,
   isDefined,
 } from 'twenty-shared/utils';
-import { LinkType, RoundedLink, SocialLink } from 'twenty-ui/navigation';
+import { LinkType, RoundedLink, SocialLink } from 'twenty-ui-deprecated/navigation';
 import { checkUrlType } from '~/utils/checkUrlType';
 
 type LinksDisplayProps = {

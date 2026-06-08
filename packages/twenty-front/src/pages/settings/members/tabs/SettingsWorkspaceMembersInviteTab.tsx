@@ -28,10 +28,10 @@ import {
   IconTrash,
   Status,
   TooltipDelay,
-} from 'twenty-ui/display';
-import { IconButton } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { IconButton } from 'twenty-ui-deprecated/input';
+import { Section } from 'twenty-ui-deprecated/layout';
+import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { GetWorkspaceInvitationsDocument } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 

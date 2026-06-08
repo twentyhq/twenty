@@ -106,7 +106,7 @@
     "tsc-alias": "^1.8.16",
     "tsx": "^4.7.0",
     "twenty-shared": "workspace:*",
-    "twenty-ui": "workspace:*",
+    "twenty-ui-deprecated": "workspace:*",
     "vite": "^7.0.0",
     "vite-plugin-dts": "^4.5.4",
     "vite-tsconfig-paths": "^4.2.1",

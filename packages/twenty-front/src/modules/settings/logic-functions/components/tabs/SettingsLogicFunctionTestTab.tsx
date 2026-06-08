@@ -19,10 +19,10 @@ import {
   IconTool,
   IconWebhook,
   type IconComponent,
-} from 'twenty-ui/display';
-import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui-deprecated/input';
+import { Section } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 type TriggerButton = {
   kind: TriggerKind;

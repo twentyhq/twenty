@@ -16,9 +16,9 @@ import {
   findByProperty,
   sumByProperty,
 } from 'twenty-shared/utils';
-import { type IconComponent } from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { useIsMobile } from 'twenty-ui/utilities';
+import { type IconComponent } from 'twenty-ui-deprecated/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { useIsMobile } from 'twenty-ui-deprecated/utilities';
 
 const StyledFieldPlaceholderCell = styled.div<{ widthOfFields: number }>`
   height: ${RECORD_TABLE_ROW_HEIGHT}px;

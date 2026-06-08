@@ -11,15 +11,15 @@ import {
   IconChevronRight,
   type IconComponent,
   IconDotsVertical,
-} from 'twenty-ui/display';
-import { LightIconButton, type LightIconButtonProps } from 'twenty-ui/input';
+} from 'twenty-ui-deprecated/display';
+import { LightIconButton, type LightIconButtonProps } from 'twenty-ui-deprecated/input';
 import {
   type MenuItemAccent,
   MenuItemLeftContent,
   StyledHoverableMenuItemBase,
   StyledMenuItemLeftContent,
-} from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/navigation';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 
 export type MenuItemIconButton = {
   Wrapper?: FunctionComponent<{ iconButton: ReactElement }>;

@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { read, type WorkBook } from 'xlsx-ugnis';
@@ -11,7 +11,7 @@ import { useDownloadFakeRecords } from '@/spreadsheet-import/steps/components/Up
 import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { MainButton } from 'twenty-ui/input';
+import { MainButton } from 'twenty-ui-deprecated/input';
 
 const StyledContainer = styled.div`
   align-items: center;

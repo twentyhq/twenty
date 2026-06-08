@@ -17,9 +17,9 @@ import { useContext, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, IconSearch } from 'twenty-ui/display';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title, IconSearch } from 'twenty-ui-deprecated/display';
+import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
+import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldTypeFormValues } from '~/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect';
 

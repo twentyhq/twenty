@@ -10,7 +10,7 @@ import { RecordTitleCell } from '@/object-record/record-title-cell/components/Re
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { styled } from '@linaria/react';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledEditableTitleContainer = styled.div`
   align-items: center;

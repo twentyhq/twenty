@@ -14,8 +14,8 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isFieldMetadataDateKind } from 'twenty-shared/utils';
-import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui-deprecated/display';
+import { MenuItem, MenuItemSelect } from 'twenty-ui-deprecated/navigation';
 
 export const ObjectOptionsDropdownCalendarFieldsContent = () => {
   const { t } = useLingui();

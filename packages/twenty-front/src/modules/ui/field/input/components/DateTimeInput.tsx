@@ -12,7 +12,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useStore } from 'jotai';
 import { type Temporal } from 'temporal-polyfill';
-import { type Nullable } from 'twenty-ui/utilities';
+import { type Nullable } from 'twenty-ui-deprecated/utilities';
 
 export type DateTimeInputProps = {
   instanceId: string;

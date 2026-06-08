@@ -2,7 +2,7 @@ import { ONBOARDING_SYNC_EMAILS_OPTIONS } from '@/onboarding/constants/Onboardin
 import { SettingsAccountsRadioSettingsCard } from '@/settings/accounts/components/SettingsAccountsRadioSettingsCard';
 import { SettingsAccountsVisibilityIcon } from '@/settings/accounts/components/SettingsAccountsVisibilityIcon';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { MessageChannelVisibility } from '~/generated/graphql';
 
 type OnboardingSyncEmailsSettingsCardProps = {

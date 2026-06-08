@@ -5,10 +5,10 @@ import {
   IconLoader,
   IconSquareRoundedCheck,
   IconSquareRoundedX,
-} from 'twenty-ui/display';
-import { CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
-import { AnimatedCircleLoading } from 'twenty-ui/utilities';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { CodeEditor, CoreEditorHeader } from 'twenty-ui-deprecated/input';
+import { AnimatedCircleLoading } from 'twenty-ui-deprecated/utilities';
+import { themeCssVariables, ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 import { useContext } from 'react';
 const StyledContainer = styled.div`
   display: flex;

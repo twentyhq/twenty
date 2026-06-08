@@ -21,7 +21,7 @@ import { useStore } from 'jotai';
 import { useCallback, useContext, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui-deprecated/display';
 
 export const WorkflowRunVisualizerEffect = ({
   workflowRunId,

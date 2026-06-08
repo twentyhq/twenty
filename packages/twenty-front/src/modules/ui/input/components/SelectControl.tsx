@@ -6,9 +6,9 @@ import {
   IconChevronDown,
   OverflowingTextWithTooltip,
   TintedIconTile,
-} from 'twenty-ui/display';
-import { type SelectOption } from 'twenty-ui/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { type SelectOption } from 'twenty-ui-deprecated/input';
+import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 export type SelectControlTextAccent = 'default' | 'placeholder';
 

@@ -4,7 +4,7 @@ import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { styled } from '@linaria/react';
-import { TabButton } from 'twenty-ui/input';
+import { TabButton } from 'twenty-ui-deprecated/input';
 
 type SettingsTabBarProps = {
   tabs: SingleTabProps[];

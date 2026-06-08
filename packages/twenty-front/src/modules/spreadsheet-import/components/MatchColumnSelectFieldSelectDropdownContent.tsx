@@ -17,9 +17,9 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { IconForbid, IconX, useIcons } from 'twenty-ui/display';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { IconForbid, IconX, useIcons } from 'twenty-ui-deprecated/display';
+import { type SelectOption } from 'twenty-ui-deprecated/input';
+import { MenuItemSelect } from 'twenty-ui-deprecated/navigation';
 import { type ReadonlyDeep } from 'type-fest';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 

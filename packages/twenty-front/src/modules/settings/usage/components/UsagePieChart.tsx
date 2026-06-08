@@ -4,7 +4,7 @@ import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueForm
 import { styled } from '@linaria/react';
 import { ResponsivePie } from '@nivo/pie';
 import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 type UsagePieChartDatum = {
   id: string;
