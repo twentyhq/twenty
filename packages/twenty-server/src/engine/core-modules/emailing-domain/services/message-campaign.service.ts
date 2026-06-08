@@ -571,6 +571,7 @@ export class MessageCampaignService {
     const output = await findRecordsService.execute({
       objectName: PERSON_OBJECT_NAME,
       filter: viewParams.filter,
+      shouldBuildEffectiveSelectFields: false,
       authContext: buildSystemAuthContext(workspaceId),
     });
 
