@@ -9,7 +9,6 @@ export type NavigationInterpolationObjectMetadata = {
   labelSingular: string;
   description?: string | null;
   icon?: string | null;
-  isCustom: boolean;
   standardOverrides?: ObjectStandardOverridesDTO | null;
 };
 
@@ -27,7 +26,6 @@ export const buildNavigationInterpolationContext = ({
     labelSingular: objectMetadata.labelSingular,
     description: objectMetadata.description ?? undefined,
     icon: objectMetadata.icon ?? undefined,
-    isCustom: objectMetadata.isCustom,
     standardOverrides: objectMetadata.standardOverrides ?? undefined,
   };
 

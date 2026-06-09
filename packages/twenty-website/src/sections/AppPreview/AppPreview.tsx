@@ -4,16 +4,16 @@ import { scheduleVisualMount } from '@/lib/visual-runtime';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { useEffect } from 'react';
-import type { AppPreviewConfig } from './types';
-import { AppWindow } from './AppWindow/AppWindow';
-import { Terminal } from './Terminal/Terminal';
-import { COLORS } from './Shared/utils/app-preview-theme';
-import { AppPreviewNavbar } from './Shell/AppPreviewNavbar';
-import { AppPreviewSidebar } from './Shell/AppPreviewSidebar';
-import { AppPreviewViewbar } from './Shell/AppPreviewViewbar';
-import { renderPageDefinition } from './Shell/PageRenderers';
+import {
+  AppPreviewFrame,
+  type AppPreviewFrameMode,
+} from './AppWindow/AppPreviewFrame';
+import { AppPreviewLayout } from './Shell/AppPreviewLayout';
+import { type DesktopSidebarMode } from './Shell/AppPreviewSidebar';
 import { preloadDeferredPages } from './Shell/preload-deferred-pages';
-import { useAppPreviewState } from './Shell/use-app-preview-state';
+import { useAppPreviewExperience } from './Shell/use-app-preview-experience';
+import { Terminal } from './Terminal/Terminal';
+import type { AppPreviewConfig } from './types';
 import { WindowOrderProvider } from './WindowOrder/WindowOrderProvider';
 
 const StyledAppPreview = styled.div`
@@ -28,83 +28,47 @@ const StyledAppPreview = styled.div`
   }
 `;
 
+const WINDOW_WIDTH = 1040;
+const WINDOW_HEIGHT = 676;
+
 const ShellScene = styled.div`
-  aspect-ratio: 1 / 1;
-  margin: 0 auto;
-  max-height: 740px;
+  height: ${WINDOW_HEIGHT}px;
+  margin: 0 auto ${theme.spacing(16)};
   position: relative;
-  width: 100%;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    aspect-ratio: 1280 / 832;
-  }
-`;
-
-const AppLayout = styled.div`
-  display: flex;
-  flex: 1 1 auto;
-  height: 100%;
-  min-width: 0;
-  overflow: hidden;
-  min-height: 0;
-  position: relative;
-  width: 100%;
-  z-index: 1;
-`;
-
-const RightPane = styled.div`
-  display: flex;
-  flex: 1 1 0;
-  flex-direction: column;
-  gap: 12px;
-  min-height: 0;
-  min-width: 0;
-  padding: 12px 8px 12px 0;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    padding-right: 12px;
-  }
-`;
-
-const IndexSurface = styled.div`
-  background: ${COLORS.background};
-  border: 1px solid ${COLORS.border};
-  border-radius: 8px;
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  min-height: 0;
-  min-width: 0;
-  overflow: hidden;
+  width: ${WINDOW_WIDTH}px;
 `;
 
 type AppPreviewProps = {
+  desktopSidebarMode?: DesktopSidebarMode;
+  frameMode?: AppPreviewFrameMode;
   showTerminal?: boolean;
   visual: AppPreviewConfig;
 };
 
-export function AppPreview({ showTerminal = true, visual }: AppPreviewProps) {
+export function AppPreview({
+  desktopSidebarMode = 'expanded',
+  frameMode,
+  showTerminal = true,
+  visual,
+}: AppPreviewProps) {
   const {
     activeItem,
-    activeLabel,
+    activeItemId,
+    activeItemLabel,
     activePage,
+    favorites,
     handleChatReset,
     handleJumpToConversationEnd,
     handleObjectCreated,
-    handleSelectLabel,
-    handleToggleFolder,
+    selectPageItem,
+    toggleFolder,
     highlightedItemId,
     openFolderIds,
     revealedObjectIds,
-    workspaceNav,
-  } = useAppPreviewState(visual);
-  const activeHeader = activePage?.header;
-  const showViewBar =
-    activePage !== null &&
-    activePage !== undefined &&
-    activePage.type !== 'dashboard' &&
-    activePage.type !== 'record' &&
-    activePage.type !== 'workflow';
+    workspaceEntries,
+  } = useAppPreviewExperience(visual);
+  const resolvedFrameMode = frameMode ?? (showTerminal ? 'windowed' : 'static');
+  const needsWindowOrder = showTerminal || resolvedFrameMode === 'windowed';
 
   useEffect(
     () =>
@@ -117,61 +81,46 @@ export function AppPreview({ showTerminal = true, visual }: AppPreviewProps) {
     [],
   );
 
+  const previewFrame = (
+    <AppPreviewFrame mode={resolvedFrameMode}>
+      <AppPreviewLayout
+        activeItem={activeItem}
+        activeItemId={activeItemId}
+        activeItemLabel={activeItemLabel}
+        desktopSidebarMode={desktopSidebarMode}
+        favorites={favorites}
+        highlightedItemId={highlightedItemId ?? undefined}
+        onSelectPageItem={selectPageItem}
+        onToggleFolder={toggleFolder}
+        openFolderIds={openFolderIds}
+        page={activePage}
+        revealedObjectIds={revealedObjectIds}
+        workspaceEntries={workspaceEntries}
+      />
+    </AppPreviewFrame>
+  );
+
+  const previewContent = (
+    <>
+      {previewFrame}
+      {showTerminal ? (
+        <Terminal
+          onObjectCreated={handleObjectCreated}
+          onChatReset={handleChatReset}
+          onJumpToConversationEnd={handleJumpToConversationEnd}
+        />
+      ) : null}
+    </>
+  );
+
   return (
     <StyledAppPreview>
       <ShellScene>
-        <WindowOrderProvider>
-          <AppWindow>
-            <AppLayout>
-              <AppPreviewSidebar
-                favoritesNav={visual.favoritesNav}
-                highlightedItemId={highlightedItemId ?? undefined}
-                onSelectLabel={handleSelectLabel}
-                onToggleFolder={handleToggleFolder}
-                openFolderIds={openFolderIds}
-                selectedLabel={activeLabel}
-                workspaceName={visual.workspace.name}
-                workspaceNav={workspaceNav}
-              />
-
-              <RightPane>
-                <AppPreviewNavbar
-                  activeItem={activeItem}
-                  activeLabel={activeLabel}
-                  navbarActions={activeHeader?.navbarActions}
-                  revealedObjectIds={revealedObjectIds}
-                />
-
-                <IndexSurface>
-                  {showViewBar ? (
-                    <AppPreviewViewbar
-                      actions={activeHeader?.actions ?? []}
-                      count={activeHeader?.count}
-                      pageType={activePage.type}
-                      showListIcon={activeHeader?.showListIcon ?? false}
-                      title={activeHeader?.title ?? activeLabel}
-                    />
-                  ) : null}
-
-                  {activePage
-                    ? renderPageDefinition(
-                        activePage,
-                        handleSelectLabel,
-                        activeItem?.id ?? activeLabel,
-                      )
-                    : null}
-                </IndexSurface>
-              </RightPane>
-            </AppLayout>
-          </AppWindow>
-          {showTerminal ? (
-            <Terminal
-              onObjectCreated={handleObjectCreated}
-              onChatReset={handleChatReset}
-              onJumpToConversationEnd={handleJumpToConversationEnd}
-            />
-          ) : null}
-        </WindowOrderProvider>
+        {needsWindowOrder ? (
+          <WindowOrderProvider>{previewContent}</WindowOrderProvider>
+        ) : (
+          previewContent
+        )}
       </ShellScene>
     </StyledAppPreview>
   );

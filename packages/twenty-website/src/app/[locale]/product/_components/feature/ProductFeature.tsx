@@ -4,6 +4,7 @@ import {
   Heading,
   HeadingPart,
 } from '@/design-system/components';
+import { type InformativeIconKey } from '@/icons';
 import { type Page, Pages } from '@/lib/pages';
 import { theme, type Scheme } from '@/theme';
 import { Trans } from '@lingui/react/macro';
@@ -17,7 +18,7 @@ import { TileContent } from './TileContent';
 import { TileVisual } from './TileVisual';
 
 export type FeatureBullet = {
-  icon: string;
+  icon: InformativeIconKey;
   text: MessageDescriptor;
 };
 

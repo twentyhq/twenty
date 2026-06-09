@@ -7,10 +7,10 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
-import { IconTrash } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
+import { IconTrash } from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
 import { v4 } from 'uuid';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;

@@ -5,7 +5,7 @@ import {
   TextInput,
   type TextInputComponentProps,
 } from '@/ui/input/components/TextInput';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 
 type RenderProps = TextInputComponentProps;
 

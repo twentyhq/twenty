@@ -3,7 +3,10 @@ import { useContext } from 'react';
 // @ts-expect-error  // Todo: remove usage of react-data-grid
 import DataGrid, { type DataGridProps } from 'react-data-grid';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledDataGridContainer = styled.div<{ headerRowHeight?: number }>`
   --rdg-background-color: ${themeCssVariables.background.primary};
@@ -24,6 +27,8 @@ const StyledDataGridContainer = styled.div<{ headerRowHeight?: number }>`
   --rdg-warning-cell-background-color: ${themeCssVariables.color.orange};
   --row-selected-hover-background-color: ${themeCssVariables.background
     .secondary};
+  flex: 1;
+  min-height: 0;
 
   > * {
     border: none;

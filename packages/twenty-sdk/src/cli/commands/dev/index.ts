@@ -1,4 +1,5 @@
 import { formatPath } from '@/cli/utilities/file/file-path';
+import chalk from 'chalk';
 import type { Command } from 'commander';
 import { SyncableEntity } from 'twenty-shared/application';
 import { EntityAddCommand } from './add';
@@ -25,6 +26,14 @@ export const registerDevCommands = (program: Command): void => {
       dryRun?: boolean;
     },
   ) => {
+    if (options.dryRun && !options.once) {
+      console.warn(
+        chalk.yellow(
+          '--dry-run only applies with --once. Ignoring it; run `yarn twenty dev --once --dry-run` to preview changes.',
+        ),
+      );
+    }
+
     const commonOptions = {
       appPath: formatPath(appPath),
       verbose: options.verbose || options.debug,
@@ -46,8 +55,8 @@ export const registerDevCommands = (program: Command): void => {
   };
 
   program
-    .command('dev [appPath]', { isDefault: true })
-    .description('Build and sync local changes (default command)')
+    .command('dev [appPath]')
+    .description('Build and sync local changes')
     .option(
       '-o, --once',
       'Build and sync once, then exit (useful for CI, scripts, and pre-commit hooks)',
@@ -56,7 +65,7 @@ export const registerDevCommands = (program: Command): void => {
       '--dry-run',
       'Preview the metadata changes without applying them (requires --once)',
     )
-    .option('--debounceMs <ms>', 'Debounce in ms (default: 2 000)')
+    .option('--debounceMs <ms>', 'Debounce in ms (default: 1 000)')
     .option('-v, --verbose', 'Show detailed logs')
     .option('-d, --debug', 'Show detailed logs (alias for --verbose)')
     .action(devAction);

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test suite Failure cases should fail when morphRelationsCreationPayload has different relation types 1`] = `
 {
@@ -124,7 +124,6 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "fieldPermissionUniversalIdentifiers": [],
         "icon": "IconRelationOneToMany",
         "isActive": true,
-        "isCustom": true,
         "isLabelSyncedWithName": false,
         "isNullable": true,
         "isSystem": false,
@@ -159,7 +158,6 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "fieldPermissionUniversalIdentifiers": [],
         "icon": "IconPet",
         "isActive": true,
-        "isCustom": true,
         "isLabelSyncedWithName": false,
         "isNullable": true,
         "isSystem": false,
@@ -196,7 +194,6 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "fieldPermissionUniversalIdentifiers": [],
         "icon": "IconRelationOneToMany",
         "isActive": true,
-        "isCustom": true,
         "isLabelSyncedWithName": false,
         "isNullable": true,
         "isSystem": false,
@@ -231,7 +228,6 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "fieldPermissionUniversalIdentifiers": [],
         "icon": "IconBuilding",
         "isActive": true,
-        "isCustom": true,
         "isLabelSyncedWithName": false,
         "isNullable": true,
         "isSystem": false,

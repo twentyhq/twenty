@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import React from 'react';
-import { Label } from 'twenty-ui/display';
+import { Label } from 'twenty-ui-deprecated/display';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledGroupHeadingContainer = styled.div`
   align-items: center;

@@ -1,7 +1,7 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useChipFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useChipFieldDisplay';
 import { isDefined } from 'twenty-shared/utils';
-import { ChipSize } from 'twenty-ui/components';
+import { ChipSize } from 'twenty-ui-deprecated/components';
 
 export const ChipFieldDisplay = () => {
   const {

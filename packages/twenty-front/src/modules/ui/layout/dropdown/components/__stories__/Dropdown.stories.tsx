@@ -27,10 +27,10 @@ import {
   // TEMP_DISABLED_TEST: Commented out unused import
   // Avatar,
   IconChevronLeft,
-} from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
-import { ComponentDecorator } from 'twenty-ui/testing';
+} from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 
 const meta: Meta<typeof Dropdown> = {
   title: 'UI/Layout/Dropdown/Dropdown',

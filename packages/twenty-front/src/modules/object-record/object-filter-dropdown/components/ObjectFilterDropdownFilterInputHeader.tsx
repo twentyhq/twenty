@@ -7,7 +7,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { ViewBarFilterDropdownFilterInputMenuHeader } from '@/views/components/ViewBarFilterDropdownFilterInputMenuHeader';
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { useContext } from 'react';
-import { IconX } from 'twenty-ui/display';
+import { IconX } from 'twenty-ui-deprecated/display';
 
 // TODO: we shouldn't guess in which parent we are, this should be splitted in two components, one for each case
 export const ObjectFilterDropdownFilterInputHeader = () => {

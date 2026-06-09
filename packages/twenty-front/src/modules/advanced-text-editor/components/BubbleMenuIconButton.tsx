@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import React from 'react';
-import type { IconComponent } from 'twenty-ui/display';
-import { FloatingIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import type { IconComponent } from 'twenty-ui-deprecated/display';
+import { FloatingIconButton } from 'twenty-ui-deprecated/input';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 type BubbleMenuIconButtonProps = {
   className?: string;

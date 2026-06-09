@@ -9,7 +9,7 @@ import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconEye, IconSettings } from 'twenty-ui/display';
+import { IconEye, IconSettings } from 'twenty-ui-deprecated/display';
 import { FindOneApplicationDocument } from '~/generated-metadata/graphql';
 import { SettingsApplicationFrontComponentPreviewTab } from '~/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab';
 import { SettingsApplicationFrontComponentSettingsTab } from '~/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab';
