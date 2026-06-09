@@ -3,6 +3,7 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
+import { SENTRY_REPLAY_IGNORE_MUTATIONS_PROPS } from '@/error-handler/constants/SentryReplayIgnoreMutationsProps';
 import { RecordBoardCardDraggableContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardDraggableContainer';
 
 import { RecordBoardColumnNewRecordButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton';
@@ -43,7 +44,12 @@ export const RecordBoardColumnCardsContainer = ({
   );
 
   return (
-    <StyledColumnCardsContainer>
+    <StyledColumnCardsContainer
+      // Cards are not virtualized: card batches on fetch-more / drag-and-drop
+      // / view switch are expensive for rrweb
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...SENTRY_REPLAY_IGNORE_MUTATIONS_PROPS}
+    >
       {recordIndexRecordIdsByGroup.map((recordId, index) => (
         <RecordBoardCardDraggableContainer
           key={recordId}
