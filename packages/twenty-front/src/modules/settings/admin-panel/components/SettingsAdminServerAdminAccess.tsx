@@ -14,8 +14,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { OTPInput } from 'input-otp';
 import { useState } from 'react';
-import { Chip } from 'twenty-ui-deprecated/components';
-import { IconDotsVertical } from 'twenty-ui-deprecated/display';
+import { IconDotsVertical, Status } from 'twenty-ui-deprecated/display';
 import { LightIconButton } from 'twenty-ui-deprecated/input';
 import { MenuItem } from 'twenty-ui-deprecated/navigation';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
@@ -48,7 +47,7 @@ const StyledChips = styled.div`
   align-items: center;
   display: flex;
   flex: 1;
-  gap: ${themeCssVariables.spacing[1]};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledNoAccess = styled.span`
@@ -147,8 +146,12 @@ export const SettingsAdminServerAdminAccess = ({
       <StyledValue>
         {hasAnyAccess ? (
           <StyledChips>
-            {canAccessFullAdminPanel && <Chip label={t`Admin panel`} />}
-            {canImpersonate && <Chip label={t`Impersonation`} />}
+            {canAccessFullAdminPanel && (
+              <Status color="green" text={t`Admin panel`} weight="medium" />
+            )}
+            {canImpersonate && (
+              <Status color="blue" text={t`Impersonation`} weight="medium" />
+            )}
           </StyledChips>
         ) : (
           <StyledNoAccess>{t`No access`}</StyledNoAccess>

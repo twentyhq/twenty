@@ -116,6 +116,9 @@ export class AdminPanelServerAdminService {
         if (otherFullAdmins.length === 0) {
           throw new UserInputError(
             'You cannot revoke admin panel access from the last server administrator.',
+            {
+              userFriendlyMessage: msg`You cannot revoke admin panel access from the last server administrator.`,
+            },
           );
         }
       }
@@ -160,6 +163,9 @@ export class AdminPanelServerAdminService {
     if (!isNonEmptyString(otp)) {
       throw new UserInputError(
         'A two-factor authentication code is required to change server administrator access.',
+        {
+          userFriendlyMessage: msg`Enter your two-factor authentication code to manage server administrators.`,
+        },
       );
     }
 
@@ -183,6 +189,9 @@ export class AdminPanelServerAdminService {
     if (!hasVerifiedTwoFactor) {
       throw new UserInputError(
         'Enable two-factor authentication in your current workspace to manage server administrators.',
+        {
+          userFriendlyMessage: msg`Enable two-factor authentication in your current workspace to manage server administrators.`,
+        },
       );
     }
 
