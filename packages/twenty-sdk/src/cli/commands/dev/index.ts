@@ -55,7 +55,7 @@ export const registerDevCommands = (program: Command): void => {
   };
 
   program
-    .command('dev [appPath]', { isDefault: true })
+    .command('dev [appPath]')
     .description('Build and sync local changes (default command)')
     .option(
       '-o, --once',
