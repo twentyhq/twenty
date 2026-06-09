@@ -359,12 +359,14 @@ export class WorkspaceMigrationRunnerService {
       await this.logBlockingDbActivity();
 
       if (queryRunner.isTransactionActive && !queryRunner.isReleased) {
-        await queryRunner.rollbackTransaction().catch((rollbackError) =>
-          this.logger.error(
-            `[install-perf] rollback failed: ${rollbackError.message}`,
-            'Runner',
-          ),
-        );
+        await queryRunner
+          .rollbackTransaction()
+          .catch((rollbackError) =>
+            this.logger.error(
+              `[install-perf] rollback failed: ${rollbackError.message}`,
+              'Runner',
+            ),
+          );
       } else {
         this.logger.error(
           `[install-perf] skipping rollback (txnActive=${queryRunner.isTransactionActive} released=${queryRunner.isReleased})`,
