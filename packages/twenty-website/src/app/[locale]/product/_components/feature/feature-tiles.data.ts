@@ -93,11 +93,11 @@ export const FEATURE_TILES: FeatureTileType[] = [
   },
   {
     category: msg`Data import`,
-    heading: msg`From CSV to CRM in minutes.`,
+    heading: msg`From spreadsheet to CRM in minutes.`,
     description: msg`Import your data with field mapping, including relations. Export anytime — your data is always yours.`,
     visual: ImportVisual,
     bullets: [
-      { icon: 'check', text: msg`CSV import flow` },
+      { icon: 'check', text: msg`CSV, XLSX & XLS import flow` },
       {
         icon: 'code',
         text: msg`Column-to-field mapping (including relations)`,
