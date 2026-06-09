@@ -1075,6 +1075,9 @@ export const STANDARD_OBJECTS = {
       unsubscribedAt: {
         universalIdentifier: '3614f2ff-c3d7-4c9a-a611-d2d15389f777',
       },
+      confirmedAt: {
+        universalIdentifier: '2a0f0513-416b-40e0-98fd-e846db682fd2',
+      },
       source: { universalIdentifier: '40919ec6-e6e4-49ac-930a-22f42d2100d4' },
       topic: { universalIdentifier: '12f0282b-a9ea-4d49-833b-0f111e7299ca' },
       person: { universalIdentifier: '1de4167f-afc7-4153-a0e9-cae0758faaeb' },

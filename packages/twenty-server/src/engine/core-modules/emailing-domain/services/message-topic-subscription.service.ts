@@ -100,8 +100,6 @@ export class MessageTopicSubscriptionService {
       personId,
     );
 
-    await this.deleteSubscription({ workspaceId, personId, topicId });
-
     if (isDefined(emailAddress)) {
       await this.messageSuppressionService.suppress({
         workspaceId,
@@ -111,6 +109,8 @@ export class MessageTopicSubscriptionService {
         topicId,
       });
     }
+
+    await this.deleteSubscription({ workspaceId, personId, topicId });
   }
 
   async unsubscribeByEmail({

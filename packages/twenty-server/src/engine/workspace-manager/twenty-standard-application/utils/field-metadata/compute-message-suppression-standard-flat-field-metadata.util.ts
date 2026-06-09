@@ -340,7 +340,7 @@ export const buildMessageSuppressionStandardFlatFieldMetadatas = ({
       targetFieldName: 'suppressions',
       settings: {
         relationType: RelationType.MANY_TO_ONE,
-        onDelete: RelationOnDeleteAction.SET_NULL,
+        onDelete: RelationOnDeleteAction.CASCADE,
         joinColumnName: 'topicId',
       },
     },
