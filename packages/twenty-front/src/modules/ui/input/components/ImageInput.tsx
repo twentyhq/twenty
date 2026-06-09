@@ -11,11 +11,11 @@ import {
   IconX,
 } from 'twenty-ui-deprecated/display';
 import { Button } from 'twenty-ui-deprecated/input';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   ThemeContext,
   themeCssVariables,
 } from 'twenty-ui-deprecated/theme-constants';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -29,6 +29,7 @@ const StyledPicture = styled.button<{ withPicture: boolean }>`
       : themeCssVariables.background.transparent.light};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: content-box;
   color: ${themeCssVariables.font.color.light};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
