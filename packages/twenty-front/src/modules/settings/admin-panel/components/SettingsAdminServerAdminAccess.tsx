@@ -8,6 +8,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -129,9 +130,11 @@ export const SettingsAdminServerAdminAccess = ({
       enqueueSuccessSnackBar({
         message: t`Server administrator access updated.`,
       });
-    } catch {
+    } catch (error) {
       enqueueErrorSnackBar({
-        message: t`Failed to update server administrator access.`,
+        ...(CombinedGraphQLErrors.is(error)
+          ? { apolloError: error }
+          : { message: t`Failed to update server administrator access.` }),
       });
     } finally {
       setOtp('');
