@@ -43,7 +43,6 @@ export const SentryInitEffect = () => {
             integrations: [
               browserTracingIntegration({}),
               replayIntegration({
-                networkCaptureBodies: false,
                 _experiments: {
                   ignoreMutations: ['[id^="row-virtual-index-"]'],
                 },
