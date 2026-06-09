@@ -167,10 +167,7 @@ export class WorkspaceMigrationRunnerService {
     );
   }
 
-  // TODO(install-perf): temporary — best-effort snapshot of concurrent DB
-  // sessions to identify what was blocking a slow/locked migration action.
-  // Runs on a fresh pooled connection (the migration's own connection may be
-  // dead). Remove with the rest of the app-install 504 instrumentation.
+  // TODO(install-perf): temporary, remove. Snapshots blocking DB sessions on a fresh connection.
   private async logBlockingDbActivity(): Promise<void> {
     try {
       const rows = await this.coreDataSource.query(
@@ -285,17 +282,12 @@ export class WorkspaceMigrationRunnerService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    // TODO(install-perf): temporary instrumentation for the app-install 504.
-    // Fail fast (8s) on lock waits — below the 10s node-pg query_timeout — so a
-    // blocked migration action surfaces as a clear "canceling statement due to
-    // lock timeout" instead of the opaque connection kill + "Query runner
-    // already released". Remove with the rest of the [install-perf] logging.
+    // TODO(install-perf): temporary, remove. Fail fast on lock waits (< 10s query_timeout) for a clear error.
     await queryRunner.query(`SET LOCAL lock_timeout = '8s'`);
 
     const allMetadataEvents: MetadataEvent[] = [];
 
-    // TODO(install-perf): temporary per-action timing — remove with the rest of
-    // the [install-perf] install-504 instrumentation.
+    // TODO(install-perf): temporary, remove.
     const transactionStart = performance.now();
     let slowestActionMs = 0;
     let slowestActionLabel = 'n/a';
@@ -356,10 +348,7 @@ export class WorkspaceMigrationRunnerService {
 
       this.logger.timeEnd('Runner', 'Transaction execution');
     } catch (error) {
-      // TODO(install-perf): temporary instrumentation for the app-install 504.
-      // Log the real failure + a snapshot of blocking DB activity, and guard the
-      // rollback so a released/dead connection doesn't mask the cause with
-      // "Query runner already released". Remove once the bottleneck is fixed.
+      // TODO(install-perf): temporary, remove. Logs the real cause + blockers and guards the rollback.
       this.logger.error(
         `[install-perf] migration failed after ${actionCount} action(s): ${
           error instanceof Error ? error.message : String(error)

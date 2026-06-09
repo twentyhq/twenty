@@ -80,11 +80,7 @@ const timeSync = async (
   return ms;
 };
 
-// TODO(install-perf): manual perf harness for the app-install 504 investigation.
-// Skipped in CI (it runs many syncs and only logs timings, no assertions). Run
-// locally with: npx nx test:integration:with-db-reset -- --testPathPattern
-// "logic-function-install-performance". Remove with the rest of the
-// [install-perf] instrumentation.
+// TODO(install-perf): temporary manual perf harness, remove. Skipped in CI.
 describe.skip('Logic function install performance', () => {
   it.each(FN_COUNTS)(
     'create + update sync with %i logic functions',

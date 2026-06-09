@@ -369,8 +369,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     const { idByUniversalIdentifierByMetadataName, dryRun, ...buildArgs } =
       args;
 
-    // TODO(install-perf): temporary timing for the app-install 504 — remove
-    // with the rest of the [install-perf] instrumentation.
+    // TODO(install-perf): temporary, remove.
     const buildStart = performance.now();
     const validateAndBuildResult =
       await this.workspaceMigrationBuildOrchestratorService

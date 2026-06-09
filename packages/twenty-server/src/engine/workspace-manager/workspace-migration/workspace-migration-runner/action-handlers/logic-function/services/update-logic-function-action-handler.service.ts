@@ -106,8 +106,7 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     });
 
     if (builtPathChanged) {
-      // TODO(install-perf): temporary timing for the app-install 504 — remove
-      // with the rest of the [install-perf] instrumentation.
+      // TODO(install-perf): temporary, remove.
       const deleteFileStart = performance.now();
 
       await this.fileStorageService.deleteFile({
