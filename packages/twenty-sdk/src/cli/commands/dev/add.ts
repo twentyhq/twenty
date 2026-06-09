@@ -3,7 +3,12 @@ import inquirer from 'inquirer';
 import { writeFile } from 'node:fs/promises';
 import { join, relative } from 'path';
 import { SyncableEntity } from 'twenty-shared/application';
-import { FieldMetadataType, ViewType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+  ViewType,
+} from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -559,12 +564,20 @@ export class EntityAddCommand {
   }
 
   private async getFieldData() {
+    const isRelationFieldType = (type: FieldMetadataType | undefined) =>
+      type === FieldMetadataType.RELATION ||
+      type === FieldMetadataType.MORPH_RELATION;
+
     return inquirer.prompt<{
       name: string;
       label: string;
       type: FieldMetadataType;
       objectUniversalIdentifier: string;
       description: string;
+      relationTargetObjectMetadataUniversalIdentifier?: string;
+      relationTargetFieldMetadataUniversalIdentifier?: string;
+      relationType?: RelationType;
+      onDelete?: RelationOnDeleteAction;
     }>([
       {
         type: 'input',
@@ -617,6 +630,50 @@ export class EntityAddCommand {
         name: 'description',
         message: 'Enter a description for your field (optional):',
         default: '',
+      },
+      {
+        type: 'input',
+        name: 'relationTargetObjectMetadataUniversalIdentifier',
+        message:
+          'Enter the universalIdentifier of the target object of the relation:',
+        default: 'fill-later',
+        when: (answers) => isRelationFieldType(answers.type),
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'input',
+        name: 'relationTargetFieldMetadataUniversalIdentifier',
+        message:
+          'Enter the universalIdentifier of the target field on the related object:',
+        default: 'fill-later',
+        when: (answers) => isRelationFieldType(answers.type),
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'select',
+        name: 'relationType',
+        message: 'Select the relation type:',
+        choices: Object.values(RelationType),
+        default: RelationType.ONE_TO_MANY,
+        when: (answers) => isRelationFieldType(answers.type),
+      },
+      {
+        type: 'select',
+        name: 'onDelete',
+        message: 'Select the onDelete behavior:',
+        choices: Object.values(RelationOnDeleteAction),
+        default: RelationOnDeleteAction.CASCADE,
+        when: (answers) => isRelationFieldType(answers.type),
       },
     ]);
   }

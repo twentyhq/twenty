@@ -89,7 +89,7 @@ describe('syncApplication', () => {
     // Verify database state after first sync
     const { objects: objectsAfterSync } = await findManyObjectMetadata({
       input: {
-        filter: { isCustom: { is: true } },
+        filter: {},
         paging: { first: 100 },
       },
       gqlFields:

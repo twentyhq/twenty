@@ -1664,6 +1664,7 @@ export type Field = {
   icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   isActive?: Maybe<Scalars['Boolean']>;
+  /** @deprecated isCustom is derived from the owning application and will be removed; a field is custom when it does not belong to the twenty-standard application. */
   isCustom?: Maybe<Scalars['Boolean']>;
   isLabelSyncedWithName?: Maybe<Scalars['Boolean']>;
   isNullable?: Maybe<Scalars['Boolean']>;
@@ -1722,7 +1723,6 @@ export type FieldFilter = {
   and?: InputMaybe<Array<FieldFilter>>;
   id?: InputMaybe<UuidFilterComparison>;
   isActive?: InputMaybe<BooleanFieldComparison>;
-  isCustom?: InputMaybe<BooleanFieldComparison>;
   isSystem?: InputMaybe<BooleanFieldComparison>;
   isUIReadOnly?: InputMaybe<BooleanFieldComparison>;
   objectMetadataId?: InputMaybe<UuidFilterComparison>;
@@ -3711,6 +3711,7 @@ export type Object = {
   indexMetadataList: Array<Index>;
   indexMetadatas: ObjectIndexMetadatasConnection;
   isActive: Scalars['Boolean'];
+  /** @deprecated isCustom is derived from the owning application and will be removed; an object is custom when it does not belong to the twenty-standard application. */
   isCustom: Scalars['Boolean'];
   isLabelSyncedWithName: Scalars['Boolean'];
   isRemote: Scalars['Boolean'];
@@ -3768,7 +3769,6 @@ export type ObjectFilter = {
   and?: InputMaybe<Array<ObjectFilter>>;
   id?: InputMaybe<UuidFilterComparison>;
   isActive?: InputMaybe<BooleanFieldComparison>;
-  isCustom?: InputMaybe<BooleanFieldComparison>;
   isRemote?: InputMaybe<BooleanFieldComparison>;
   isSearchable?: InputMaybe<BooleanFieldComparison>;
   isSystem?: InputMaybe<BooleanFieldComparison>;
