@@ -2,7 +2,7 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { type ReactNode } from 'react';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { AnimatedExpandableContainer } from 'twenty-ui-deprecated/layout';
 
 type CollapsibleNavigationDrawerSectionProps = {
   // Namespaced id (e.g. 'settings/User') used to persist open/closed state.

@@ -7,7 +7,7 @@ import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { getSafeUrl, isDefined } from 'twenty-shared/utils';
-import { IconExternalLink } from 'twenty-ui/display';
+import { IconExternalLink } from 'twenty-ui-deprecated/display';
 
 const formatMaintenanceDateTime = (
   isoString: string,

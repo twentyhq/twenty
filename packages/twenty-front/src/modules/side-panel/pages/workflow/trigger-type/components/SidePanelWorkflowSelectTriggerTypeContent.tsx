@@ -17,10 +17,10 @@ import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/g
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui-deprecated/display';
 import { useContext } from 'react';
-import { MenuItem } from 'twenty-ui/navigation';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 
 export const SidePanelWorkflowSelectTriggerTypeContent = () => {
   const { theme } = useContext(ThemeContext);

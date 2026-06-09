@@ -5,7 +5,6 @@ import {
   EmailingDomainDriverExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
 import { EmailingDomainDriverFactory } from 'src/engine/core-modules/emailing-domain/drivers/emailing-domain-driver.factory';
-import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
 import {
@@ -28,7 +27,6 @@ export class EmailingDomainService {
 
   async createEmailingDomain(
     domain: string,
-    driverType: EmailingDomainDriver,
     workspace: WorkspaceEntity,
   ): Promise<EmailingDomainEntity> {
     const existingEmailingDomain = await this.emailingDomainRepository.findOne(
@@ -65,7 +63,6 @@ export class EmailingDomainService {
 
     return this.emailingDomainRepository.save(workspace.id, {
       domain,
-      driver: driverType,
       status: verificationResult.status,
       verificationRecords: verificationResult.verificationRecords,
       verifiedAt: isVerifiedOnCreation ? new Date() : null,

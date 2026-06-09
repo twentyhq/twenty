@@ -1,5 +1,5 @@
-import { COLOR_DARK } from '@ui/theme/constants/ColorsDark';
-import { GRAY_SCALE_DARK } from '@ui/theme/constants/GrayScaleDark';
+import { COLOR_DARK } from '@new-ui/theme/constants/ColorsDark';
+import { GRAY_SCALE_DARK } from '@new-ui/theme/constants/GrayScaleDark';
 
 export const ILLUSTRATION_ICON_DARK = {
   color: {

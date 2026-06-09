@@ -15,9 +15,9 @@ import {
   IconRocket,
   IconTag,
   IconTarget,
-} from 'twenty-ui/display';
-import { type SelectOption } from 'twenty-ui/input';
-import { ComponentDecorator } from 'twenty-ui/testing';
+} from 'twenty-ui-deprecated/display';
+import { type SelectOption } from 'twenty-ui-deprecated/input';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 
 type RenderProps = {
   values: FieldMultiSelectValue;

@@ -22,9 +22,9 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { IconBox, type IconComponent } from 'twenty-ui/display';
-import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconBox, type IconComponent } from 'twenty-ui-deprecated/display';
+import { MenuItem, MenuItemMultiSelect } from 'twenty-ui-deprecated/navigation';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 export type SelectSizeVariant = 'small' | 'default';
 

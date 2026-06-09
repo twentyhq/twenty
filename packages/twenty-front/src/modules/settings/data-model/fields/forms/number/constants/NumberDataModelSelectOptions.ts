@@ -8,7 +8,7 @@ import {
   IconPercentage,
   type IconComponent,
   type IconComponentProps,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 
 type NumberDataModelSelectOptions = {
   Icon: ForwardRefExoticComponent<

@@ -12,7 +12,7 @@ import {
   IconStatusChange,
   IconX,
   Status,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 

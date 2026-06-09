@@ -2,7 +2,7 @@ import { CHART_CONFIGURATION_SETTING_LABELS } from '@/side-panel/pages/page-layo
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
 import { type ChartSettingsItem } from '@/side-panel/pages/page-layout/types/ChartSettingsGroup';
 import { msg } from '@lingui/core/macro';
-import { IconMathMin } from 'twenty-ui/display';
+import { IconMathMin } from 'twenty-ui-deprecated/display';
 
 export const RANGE_MIN_SETTING: ChartSettingsItem = {
   isBoolean: false,

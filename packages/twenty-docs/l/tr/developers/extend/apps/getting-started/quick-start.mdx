@@ -123,18 +123,20 @@ Tek bir derleme + eşitleme çalıştırıp çıkmak için `--once` parametresin
 yarn twenty dev --once
 ```
 
-| Komut                    | Davranış                                                                | Ne zaman kullanılmalı                                           |
-| ------------------------ | ----------------------------------------------------------------------- | --------------------------------------------------------------- |
-| `yarn twenty dev`        | Her değişiklikte izler ve yeniden eşitler. Siz durdurana kadar çalışır. | Etkileşimli yerel geliştirme.                                   |
-| `yarn twenty dev --once` | Tek derleme + eşitleme; başarıda `0`, başarısızlıkta `1` ile çıkar.     | CI, pre-commit kancaları, AI ajanları, betiklenmiş iş akışları. |
+| Komut                              | Davranış                                                                | Ne zaman kullanılmalı                                                       |
+| ---------------------------------- | ----------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `yarn twenty dev`                  | Her değişiklikte izler ve yeniden eşitler. Siz durdurana kadar çalışır. | Etkileşimli yerel geliştirme.                                               |
+| `yarn twenty dev --once`           | Tek derleme + eşitleme; başarıda `0`, başarısızlıkta `1` ile çıkar.     | CI, pre-commit kancaları, AI ajanları, betiklenmiş iş akışları.             |
+| `yarn twenty dev --once --dry-run` | Meta veri değişikliklerini **uygulamadan oluşturur ve yazdırır**.       | Bir senkronizasyonun, ona başlamadan önce neleri değiştireceğini incelemek. |
 
-Her iki kipin de kimliği doğrulanmış bir uzak sunucuya ihtiyaç duyar.
+Her iki kipin de kimliği doğrulanmış bir uzak sunucuya ihtiyaç duyar. `--dry-run` hakkında daha fazla bilgi için [Senkronizasyon ve kurtarma](/l/tr/developers/extend/apps/operations/sync-and-recovery#previewing-changes-dry-run) bölümüne bakın.
 
 ### Geliştirme kipi seçenekleri
 
 | Bayrak                                | Açıklama                                                                                   |
 | ------------------------------------- | ------------------------------------------------------------------------------------------ |
 | `--once`                              | Bir kez derleyip eşitleyin, ardından çıkın.                                                |
+| `--dry-run`                           | `--once` ile meta veri değişikliklerini uygulamadan önizleyin. Hiçbir şey yazmaz.          |
 | `--debounceMs \<ms>` | Dosya değişikliği geciktirme süresini milisaniye cinsinden ayarlayın (varsayılan: `2000`). |
 | `--verbose` / `--debug`               | Ayrıntılı derleme günlüklerini, eşitleme isteklerini ve hata izlerini gösterin.            |
 

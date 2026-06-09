@@ -4,7 +4,7 @@ import { detectCalendarStartDay } from '@/localization/utils/detection/detectCal
 import { Select } from '@/ui/input/components/Select';
 import { t } from '@lingui/core/macro';
 import { CalendarStartDay } from 'twenty-shared/constants';
-import { type SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui-deprecated/input';
 
 type DateTimeSettingsCalendarStartDaySelectProps = {
   value: CalendarStartDay;
