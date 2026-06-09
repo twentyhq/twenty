@@ -384,7 +384,6 @@ exports[`syncApplication should delete old field and create equivalent one when 
           "icon": "IconFileDescription",
           "id": Any<String>,
           "isActive": true,
-          "isCustom": true,
           "isLabelSyncedWithName": false,
           "isNullable": true,
           "isSystem": false,
