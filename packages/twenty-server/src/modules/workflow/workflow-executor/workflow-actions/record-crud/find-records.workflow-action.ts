@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import {
   computeRecordGqlOperationFilter,
+  convertViewFilterOperandToCoreOperand,
   isDefined,
   isRecordFilterValueValid,
   resolveInput,
@@ -64,8 +65,28 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
         workspaceId,
       );
 
-    if (workflowActionInput.filter?.recordFilters) {
-      for (const filter of workflowActionInput.filter.recordFilters) {
+    const normalizedRecordFilters = workflowActionInput.filter?.recordFilters
+      ?.map((filter) => {
+        const normalizedOperand = convertViewFilterOperandToCoreOperand(
+          filter.operand,
+        );
+
+        if (!isDefined(normalizedOperand)) {
+          throw new WorkflowStepExecutorException(
+            `Filter condition has an invalid operand. Filter field: ${filter.fieldMetadataId}, operand: ${filter.operand}`,
+            WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+          );
+        }
+
+        return {
+          ...filter,
+          operand: normalizedOperand,
+        };
+      })
+      .filter(isDefined);
+
+    if (isDefined(normalizedRecordFilters)) {
+      for (const filter of normalizedRecordFilters) {
         if (!isRecordFilterValueValid(filter)) {
           throw new WorkflowStepExecutorException(
             `Filter condition has an empty value after variable resolution. This likely means a workflow variable could not be resolved. Filter field: ${filter.fieldMetadataId}, operand: ${filter.operand}`,
@@ -76,13 +97,13 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
     }
 
     const gqlOperationFilter =
-      workflowActionInput.filter?.recordFilters &&
+      isDefined(normalizedRecordFilters) &&
       workflowActionInput.filter?.recordFilterGroups
         ? computeRecordGqlOperationFilter({
             fieldMetadataItems: Object.values(
               flatFieldMetadataMaps.byUniversalIdentifier,
             ).filter(isDefined),
-            recordFilters: workflowActionInput.filter.recordFilters,
+            recordFilters: normalizedRecordFilters,
             recordFilterGroups: workflowActionInput.filter.recordFilterGroups,
             filterValueDependencies: {
               timeZone: 'UTC',

@@ -44,6 +44,7 @@ import { workflowShouldKeepRunning } from 'src/modules/workflow/workflow-executo
 import { isWorkflowIfElseAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/guards/is-workflow-if-else-action.guard';
 import { type WorkflowIfElseResult } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/types/workflow-if-else-result.type';
 import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/guards/is-workflow-iterator-action.guard';
+import { isWorkflowFindRecordsAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-find-records-action.guard';
 import { WorkflowIteratorResult } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-result.type';
 import { findEnclosingIteratorWithContinueOnFailure } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/find-enclosing-iterator-with-continue-on-failure.util';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -139,6 +140,7 @@ export class WorkflowExecutorWorkspaceService {
         steps,
         stepInfos,
         workflowRunId,
+        workflowId: workflowRun.workflowId,
         workspaceId,
       });
 
@@ -471,12 +473,14 @@ export class WorkflowExecutorWorkspaceService {
     steps,
     stepInfos,
     workflowRunId,
+    workflowId,
     workspaceId,
   }: {
     step: WorkflowAction;
     steps: WorkflowAction[];
     stepInfos: WorkflowRunStepInfos;
     workflowRunId: string;
+    workflowId: string;
     workspaceId: string;
   }) {
     // Credit-cap enforcement lives at the AI entry points (chat resolver,
@@ -517,6 +521,13 @@ export class WorkflowExecutorWorkspaceService {
       if (!isUserError) {
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: { id: workspaceId },
+          additionalData: {
+            workflowRunId,
+            workflowId,
+            stepId,
+            stepType: step.type,
+            ...this.getWorkflowStepMonitoringContext(step),
+          },
         });
 
         await this.metricsService.incrementCounterForEvent({
@@ -530,6 +541,22 @@ export class WorkflowExecutorWorkspaceService {
         error: error.message ?? 'Execution result error, no data or error',
       };
     }
+  }
+
+  private getWorkflowStepMonitoringContext(step: WorkflowAction) {
+    if (!isWorkflowFindRecordsAction(step)) {
+      return {};
+    }
+
+    const relationFilterOperand = step.settings.input.filter?.recordFilters?.find(
+      (recordFilter) => recordFilter.type === 'RELATION',
+    )?.operand;
+
+    return {
+      objectName: step.settings.input.objectName,
+      filterType: isDefined(relationFilterOperand) ? 'RELATION' : undefined,
+      operand: relationFilterOperand,
+    };
   }
 
   async skipAndFailSafelyStepsThenContinue({
