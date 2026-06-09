@@ -42,7 +42,12 @@ export const SentryInitEffect = () => {
             dsn: sentryConfig?.dsn,
             integrations: [
               browserTracingIntegration({}),
-              replayIntegration(),
+              replayIntegration({
+                networkCaptureBodies: false,
+                _experiments: {
+                  ignoreMutations: ['[id^="row-virtual-index-"]'],
+                },
+              }),
               globalHandlersIntegration({
                 onunhandledrejection: false, // handled in PromiseRejectionEffect
               }),
