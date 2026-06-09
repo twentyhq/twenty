@@ -72,7 +72,7 @@ export class ObjectMetadataEntity
 
   @WasRemovedInUpgrade({
     upgradeCommandName:
-      '2.11.0_DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand_1780579070012',
+      '2.12.0_DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand_1780579070012',
   })
   @Column({ type: 'boolean', default: false })
   isCustom: WasRemovedInUpgrade<boolean>;

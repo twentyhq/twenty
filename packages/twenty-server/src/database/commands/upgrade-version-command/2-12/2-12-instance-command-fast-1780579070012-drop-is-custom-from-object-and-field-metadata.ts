@@ -6,7 +6,7 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 const TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER =
   '20202020-64aa-4b6f-b003-9c74b97cee20';
 
-@RegisteredInstanceCommand('2.11.0', 1780579070012)
+@RegisteredInstanceCommand('2.12.0', 1780579070012)
 export class DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand
   implements FastInstanceCommand
 {
