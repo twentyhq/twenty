@@ -4,7 +4,18 @@ import {
   SHARED_COMPANY_LOGO_URLS,
   SHARED_PEOPLE_AVATAR_URLS,
 } from '@/content/site/asset-paths';
+import { RatingStarIcon } from '@/icons';
 import { styled } from '@linaria/react';
+import {
+  IconBuildingSkyscraper,
+  IconCalendarEvent,
+  IconCheck,
+  IconCurrencyDollar,
+  IconId,
+  IconStar,
+  IconUser,
+  IconUserCircle,
+} from '@tabler/icons-react';
 import {
   type PointerEvent as ReactPointerEvent,
   useEffect,
@@ -14,23 +25,15 @@ import {
 } from 'react';
 
 import {
+  BG_DARK,
+  CARD_ACCENT,
   CARD_BG,
   CARD_BORDER,
   CARD_FONT,
   CARD_TEXT,
+  CARD_TEXT_SECONDARY,
   CARD_TEXT_TERTIARY,
 } from './visual-tokens';
-
-const TONE_MAP: Record<string, { bg: string; color: string }> = {
-  gray: { bg: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)' },
-  purple: { bg: 'rgba(168,85,247,0.12)', color: '#c084fc' },
-  blue: { bg: 'rgba(59,130,246,0.12)', color: '#93c5fd' },
-  pink: { bg: 'rgba(236,72,153,0.12)', color: '#f472b6' },
-  amber: { bg: 'rgba(245,158,11,0.12)', color: '#fbbf24' },
-  red: { bg: 'rgba(239,68,68,0.12)', color: '#fca5a5' },
-  teal: { bg: 'rgba(20,184,166,0.12)', color: '#5eead4' },
-  yellow: { bg: 'rgba(234,179,8,0.12)', color: '#fde047' },
-};
 
 const LANE_STYLES: Record<string, { bg: string; pill: string; text: string }> =
   {
@@ -44,14 +47,19 @@ const LANE_STYLES: Record<string, { bg: string; pill: string; text: string }> =
       pill: 'rgba(168,85,247,0.12)',
       text: '#c084fc',
     },
+    blue: {
+      bg: 'rgba(59,130,246,0.06)',
+      pill: 'rgba(59,130,246,0.12)',
+      text: '#93c5fd',
+    },
   };
 
 const CARD_DROP_MS = 300;
 const CARD_DROP_EASING = 'cubic-bezier(0.22, 1, 0.36, 1)';
 
 type CardId = 'airbnb' | 'figma' | 'github' | 'notion';
-type LaneIndex = 0 | 1;
-type LaneCards = [CardId[], CardId[]];
+type LaneIndex = number;
+type LaneCards = CardId[][];
 
 type PersonData = {
   avatarUrl?: string;
@@ -70,22 +78,17 @@ type DealData = {
   company: CompanyData;
   contact: PersonData;
   date: string;
-  header: CompanyData;
   id: CardId;
   owner: PersonData;
   rating: number;
   recordId: string;
+  title: string;
 };
 
 const CARDS: Record<CardId, DealData> = {
   github: {
     id: 'github',
-    header: {
-      initials: 'G',
-      logoSrc: SHARED_COMPANY_LOGO_URLS.github,
-      name: 'Github',
-      tone: 'gray',
-    },
+    title: 'Platform Expansion',
     amount: '$6,562.04',
     company: {
       initials: 'G',
@@ -111,13 +114,8 @@ const CARDS: Record<CardId, DealData> = {
   },
   figma: {
     id: 'figma',
-    header: {
-      initials: 'F',
-      logoSrc: SHARED_COMPANY_LOGO_URLS.figma,
-      name: 'Figma',
-      tone: 'purple',
-    },
-    amount: '$6,562.04',
+    title: 'Design Tooling',
+    amount: '$8,250.00',
     company: {
       initials: 'F',
       logoSrc: SHARED_COMPANY_LOGO_URLS.figma,
@@ -142,12 +140,7 @@ const CARDS: Record<CardId, DealData> = {
   },
   airbnb: {
     id: 'airbnb',
-    header: {
-      initials: 'A',
-      logoSrc: SHARED_COMPANY_LOGO_URLS.airbnb,
-      name: 'Airbnb',
-      tone: 'pink',
-    },
+    title: 'Travel Partnership',
     amount: '$2,433.89',
     company: {
       initials: 'A',
@@ -163,17 +156,17 @@ const CARDS: Record<CardId, DealData> = {
     },
     rating: 3,
     date: 'Jun 6, 2023',
-    contact: { initials: 'I', name: 'Ivan Zhao', tone: 'gray' },
+    contact: {
+      avatarUrl: SHARED_PEOPLE_AVATAR_URLS.brianChesky,
+      initials: 'B',
+      name: 'Brian Chesky',
+      tone: 'gray',
+    },
     recordId: 'OPP-8',
   },
   notion: {
     id: 'notion',
-    header: {
-      initials: 'N',
-      logoSrc: SHARED_COMPANY_LOGO_URLS.notion,
-      name: 'Notion',
-      tone: 'gray',
-    },
+    title: 'Workspace Rollout',
     amount: '$2,650',
     company: {
       initials: 'N',
@@ -181,25 +174,33 @@ const CARDS: Record<CardId, DealData> = {
       name: 'Notion',
       tone: 'gray',
     },
-    owner: { initials: 'A', name: 'Airbnb', tone: 'yellow' },
+    owner: {
+      avatarUrl: SHARED_PEOPLE_AVATAR_URLS.craigFederighi,
+      initials: 'C',
+      name: 'Craig Federighi',
+      tone: 'yellow',
+    },
     rating: 2,
     date: 'Jun 6, 2023',
-    contact: { initials: 'I', name: 'Ivan Zhao', tone: 'gray' },
+    contact: {
+      avatarUrl: SHARED_PEOPLE_AVATAR_URLS.ivanZhao,
+      initials: 'I',
+      name: 'Ivan Zhao',
+      tone: 'gray',
+    },
     recordId: 'OPP-6',
   },
 };
 
-const INITIAL_LANES: LaneCards = [
-  ['github', 'figma'],
-  ['airbnb', 'notion'],
-];
+const INITIAL_LANES: LaneCards = [['github', 'figma'], ['airbnb'], ['notion']];
 const LANES_META = [
   { key: 'pink', label: 'Identified' },
   { key: 'purple', label: 'Qualified' },
+  { key: 'blue', label: 'Proposal' },
 ];
 
 const Root = styled.div`
-  background: ${CARD_BG};
+  background: ${BG_DARK};
   display: flex;
   flex-direction: column;
   font-family: ${CARD_FONT};
@@ -232,7 +233,7 @@ const BoardCount = styled.span`
 const ColumnsHeaderGrid = styled.div`
   border-bottom: 1px solid ${CARD_BORDER};
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
 `;
 
 const LaneHeaderEl = styled.div`
@@ -262,7 +263,7 @@ const LaneCount = styled.span`
 const ColumnsGrid = styled.div`
   display: grid;
   flex: 1;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   min-height: 0;
   overflow: hidden;
 `;
@@ -281,10 +282,12 @@ const LaneBody = styled.div`
   }
 `;
 
-const CardEl = styled.div<{ $dragging?: boolean }>`
-  background: #26262f;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
+const CardEl = styled.div<{ $dragging?: boolean; $selected?: boolean }>`
+  background: ${({ $selected }) =>
+    $selected ? 'rgba(62, 99, 221, 0.12)' : CARD_BG};
+  border: 1px solid
+    ${({ $selected }) => ($selected ? CARD_ACCENT : CARD_BORDER)};
+  border-radius: 4px;
   cursor: grab;
   display: flex;
   flex-direction: column;
@@ -296,24 +299,73 @@ const CardEl = styled.div<{ $dragging?: boolean }>`
   &:active {
     cursor: grabbing;
   }
+
+  &:hover .card-checkbox {
+    max-width: 14px;
+    opacity: 1;
+  }
 `;
 
 const CardHeader = styled.div`
   align-items: center;
   display: flex;
+  gap: 8px;
+  justify-content: space-between;
   padding: 8px 8px 4px;
+`;
+
+const CardTitle = styled.span`
+  color: ${CARD_TEXT};
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const CardCheckbox = styled.span`
+  align-items: center;
+  border: 1px solid ${CARD_TEXT_TERTIARY};
+  border-radius: 3px;
+  box-sizing: border-box;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  flex-shrink: 0;
+  height: 14px;
+  justify-content: center;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all ease-in-out 160ms;
+  width: 14px;
+
+  svg {
+    height: 10px;
+    width: 10px;
+  }
+
+  &[data-checked='true'] {
+    background: ${CARD_ACCENT};
+    border-color: ${CARD_ACCENT};
+    max-width: 14px;
+    opacity: 1;
+  }
 `;
 
 const CardFields = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0 8px 8px;
+  gap: 2px;
+  padding: 0 8px 4px 10px;
 `;
 
 const FieldRow = styled.div`
   align-items: center;
   display: flex;
-  gap: 6px;
+  gap: 4px;
   min-height: 22px;
 `;
 
@@ -325,6 +377,11 @@ const FieldIcon = styled.div`
   height: 14px;
   justify-content: center;
   width: 14px;
+
+  svg {
+    height: 14px;
+    width: 14px;
+  }
 `;
 
 const FieldValue = styled.div`
@@ -391,21 +448,6 @@ const TokenLabel = styled.span`
   white-space: nowrap;
 `;
 
-const HeaderTokenChip = styled.span`
-  align-items: center;
-  border-radius: 4px;
-  display: inline-flex;
-  gap: 4px;
-  height: 22px;
-  max-width: 100%;
-  overflow: hidden;
-  padding: 4px;
-`;
-
-const HeaderTokenLabel = styled(TokenLabel)`
-  font-weight: 500;
-`;
-
 const RatingRow = styled.div`
   display: inline-flex;
   gap: 1px;
@@ -435,7 +477,7 @@ const FloatingCardShell = styled.div<{ $dragging: boolean }>`
   top: 0;
   transform-origin: center center;
   transition: box-shadow 0.15s ease;
-  width: calc(50% - 20px);
+  width: calc(33.333% - 16px);
   z-index: 100;
 `;
 
@@ -449,7 +491,7 @@ function moveCard(
   targetLane: LaneIndex,
   targetIndex: number,
 ): LaneCards {
-  const next = lanes.map((l) => l.filter((c) => c !== cardId)) as LaneCards;
+  const next = lanes.map((l) => l.filter((c) => c !== cardId));
   const bounded = clamp(targetIndex, 0, next[targetLane].length);
   next[targetLane] = [
     ...next[targetLane].slice(0, bounded),
@@ -461,17 +503,16 @@ function moveCard(
 
 function CompanyMark({ data }: { data: CompanyData }) {
   const [failed, setFailed] = useState(false);
-  const tone = TONE_MAP[data.tone] ?? TONE_MAP.gray;
 
   if (data.logoSrc && !failed) {
     return (
-      <TokenMark $bg={tone.bg} $color={tone.color}>
+      <TokenMark $bg="rgba(255, 255, 255, 0.08)" $color={CARD_TEXT_SECONDARY}>
         <TokenImg alt="" src={data.logoSrc} onError={() => setFailed(true)} />
       </TokenMark>
     );
   }
   return (
-    <TokenMark $bg={tone.bg} $color={tone.color}>
+    <TokenMark $bg="rgba(255, 255, 255, 0.08)" $color={CARD_TEXT_SECONDARY}>
       {data.initials}
     </TokenMark>
   );
@@ -479,60 +520,64 @@ function CompanyMark({ data }: { data: CompanyData }) {
 
 function PersonMark({ data }: { data: PersonData }) {
   const [failed, setFailed] = useState(false);
-  const tone = TONE_MAP[data.tone] ?? TONE_MAP.gray;
 
   if (data.avatarUrl && !failed) {
     return (
-      <TokenMark $bg={tone.bg} $color={tone.color} $round>
+      <TokenMark
+        $bg="rgba(255, 255, 255, 0.08)"
+        $color={CARD_TEXT_SECONDARY}
+        $round
+      >
         <TokenImg alt="" src={data.avatarUrl} onError={() => setFailed(true)} />
       </TokenMark>
     );
   }
   return (
-    <TokenMark $bg={tone.bg} $color={tone.color} $round>
+    <TokenMark
+      $bg="rgba(255, 255, 255, 0.08)"
+      $color={CARD_TEXT_SECONDARY}
+      $round
+    >
       {data.initials}
     </TokenMark>
   );
 }
 
-function StarIcon({ filled }: { filled: boolean }) {
-  return (
-    <svg
-      fill={filled ? '#d4d4d4' : 'none'}
-      height="11"
-      stroke={filled ? '#d4d4d4' : 'rgba(255,255,255,0.2)'}
-      strokeWidth="1.5"
-      viewBox="0 0 24 24"
-      width="11"
-    >
-      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z" />
-    </svg>
-  );
-}
-
-function OpportunityCard({ data }: { data: DealData }) {
+function OpportunityCard({
+  data,
+  checked,
+  onToggle,
+}: {
+  data: DealData;
+  checked: boolean;
+  onToggle?: () => void;
+}) {
   return (
     <>
       <CardHeader>
-        <HeaderTokenChip>
-          <CompanyMark data={data.header} />
-          <HeaderTokenLabel>{data.header.name}</HeaderTokenLabel>
-        </HeaderTokenChip>
+        <CardTitle>{data.title}</CardTitle>
+        <CardCheckbox
+          className="card-checkbox"
+          data-checked={checked}
+          onClick={
+            onToggle
+              ? (event) => {
+                  event.stopPropagation();
+                  onToggle();
+                }
+              : undefined
+          }
+          onPointerDown={
+            onToggle ? (event) => event.stopPropagation() : undefined
+          }
+        >
+          {checked ? <IconCheck /> : null}
+        </CardCheckbox>
       </CardHeader>
       <CardFields>
         <FieldRow>
           <FieldIcon>
-            <svg
-              fill="none"
-              height="14"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeWidth="1.6"
-              viewBox="0 0 24 24"
-              width="14"
-            >
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-            </svg>
+            <IconCurrencyDollar />
           </FieldIcon>
           <FieldValue>
             <ValueText>{data.amount}</ValueText>
@@ -540,17 +585,7 @@ function OpportunityCard({ data }: { data: DealData }) {
         </FieldRow>
         <FieldRow>
           <FieldIcon>
-            <svg
-              fill="none"
-              height="14"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeWidth="1.6"
-              viewBox="0 0 24 24"
-              width="14"
-            >
-              <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6" />
-            </svg>
+            <IconBuildingSkyscraper />
           </FieldIcon>
           <FieldValue>
             <TokenChip $soft>
@@ -561,22 +596,10 @@ function OpportunityCard({ data }: { data: DealData }) {
         </FieldRow>
         <FieldRow>
           <FieldIcon>
-            <svg
-              fill="none"
-              height="14"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeWidth="1.6"
-              viewBox="0 0 24 24"
-              width="14"
-            >
-              <circle cx="12" cy="12" r="9" />
-              <circle cx="12" cy="10" r="3" />
-              <path d="M6.168 18.849A4 4 0 0 1 10 16h4a4 4 0 0 1 3.834 2.855" />
-            </svg>
+            <IconUserCircle />
           </FieldIcon>
           <FieldValue>
-            <TokenChip>
+            <TokenChip $soft>
               <PersonMark data={data.owner} />
               <TokenLabel>{data.owner.name}</TokenLabel>
             </TokenChip>
@@ -584,40 +607,27 @@ function OpportunityCard({ data }: { data: DealData }) {
         </FieldRow>
         <FieldRow>
           <FieldIcon>
-            <svg
-              fill="none"
-              height="14"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeWidth="1.6"
-              viewBox="0 0 24 24"
-              width="14"
-            >
-              <path d="M3 12h2l2-4 3 8 2-4h2" />
-            </svg>
+            <IconStar />
           </FieldIcon>
           <FieldValue>
             <RatingRow>
               {Array.from({ length: 5 }, (_, i) => (
-                <StarIcon key={i} filled={i < data.rating} />
+                <RatingStarIcon
+                  key={i}
+                  fillColor={
+                    i < data.rating
+                      ? CARD_TEXT_SECONDARY
+                      : 'rgba(255, 255, 255, 0.2)'
+                  }
+                  size={11}
+                />
               ))}
             </RatingRow>
           </FieldValue>
         </FieldRow>
         <FieldRow>
           <FieldIcon>
-            <svg
-              fill="none"
-              height="14"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeWidth="1.6"
-              viewBox="0 0 24 24"
-              width="14"
-            >
-              <rect height="16" rx="2" width="18" x="3" y="5" />
-              <path d="M16 3v4M8 3v4M3 9h18" />
-            </svg>
+            <IconCalendarEvent />
           </FieldIcon>
           <FieldValue>
             <ValueText>{data.date}</ValueText>
@@ -625,17 +635,7 @@ function OpportunityCard({ data }: { data: DealData }) {
         </FieldRow>
         <FieldRow>
           <FieldIcon>
-            <svg
-              fill="none"
-              height="14"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeWidth="1.6"
-              viewBox="0 0 24 24"
-              width="14"
-            >
-              <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0-8 0M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
-            </svg>
+            <IconUser />
           </FieldIcon>
           <FieldValue>
             <TokenChip $soft>
@@ -646,18 +646,7 @@ function OpportunityCard({ data }: { data: DealData }) {
         </FieldRow>
         <FieldRow>
           <FieldIcon>
-            <svg
-              fill="none"
-              height="14"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeWidth="1.6"
-              viewBox="0 0 24 24"
-              width="14"
-            >
-              <rect height="14" rx="3" width="18" x="3" y="5" />
-              <path d="M7 9h10M7 13h6" />
-            </svg>
+            <IconId />
           </FieldIcon>
           <FieldValue>
             <ValueText>{data.recordId}</ValueText>
@@ -673,6 +662,9 @@ type PipelineVisualProps = { active: boolean };
 export function PipelineVisual({ active: _active }: PipelineVisualProps) {
   const [lanes, setLanes] = useState<LaneCards>(INITIAL_LANES);
   const [draggedCardId, setDraggedCardId] = useState<CardId | null>(null);
+  const [checkedCards, setCheckedCards] = useState<
+    Partial<Record<CardId, boolean>>
+  >({});
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
 
@@ -748,8 +740,8 @@ export function PipelineVisual({ active: _active }: PipelineVisualProps) {
         clientY <= rect.bottom
       );
     });
-    if (matchedLane !== 0 && matchedLane !== 1) return null;
-    const laneIndex = matchedLane as LaneIndex;
+    if (matchedLane === -1) return null;
+    const laneIndex = matchedLane;
     const laneCardIds = lanes[laneIndex].filter((c) => c !== cardId);
     let cardIndex = laneCardIds.length;
     for (const [i, cid] of laneCardIds.entries()) {
@@ -914,12 +906,22 @@ export function PipelineVisual({ active: _active }: PipelineVisualProps) {
               <CardEl
                 key={cardId}
                 $dragging={draggedCardId === cardId}
+                $selected={Boolean(checkedCards[cardId])}
                 ref={(el) => {
                   cardRefs.current[cardId] = el;
                 }}
                 onPointerDown={(e) => handlePointerDown(e, cardId)}
               >
-                <OpportunityCard data={CARDS[cardId]} />
+                <OpportunityCard
+                  checked={Boolean(checkedCards[cardId])}
+                  data={CARDS[cardId]}
+                  onToggle={() =>
+                    setCheckedCards((prev) => ({
+                      ...prev,
+                      [cardId]: !prev[cardId],
+                    }))
+                  }
+                />
               </CardEl>
             ))}
             <AddCardRow>
@@ -955,8 +957,11 @@ export function PipelineVisual({ active: _active }: PipelineVisualProps) {
               transform: `translate3d(${dragOffset.x}px, ${dragOffset.y}px, 0)`,
             }}
           >
-            <CardEl>
-              <OpportunityCard data={CARDS[draggedCardId]} />
+            <CardEl $selected={Boolean(checkedCards[draggedCardId])}>
+              <OpportunityCard
+                checked={Boolean(checkedCards[draggedCardId])}
+                data={CARDS[draggedCardId]}
+              />
             </CardEl>
           </FloatingCardShell>
         )}
