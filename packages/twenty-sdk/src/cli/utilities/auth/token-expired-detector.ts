@@ -1,4 +1,5 @@
-const TOKEN_EXPIRED_PATTERN = /token has expired|unauthori[sz]ed|unauthenticated|invalid api key/i;
+const TOKEN_EXPIRED_PATTERN =
+  /token has expired|unauthori[sz]ed|unauthenticated|invalid api key/i;
 
 export const isTokenExpiredMessage = (
   message: string | undefined | null,

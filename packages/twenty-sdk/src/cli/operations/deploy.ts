@@ -2,7 +2,10 @@ import fs from 'fs';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
-import { isTokenExpiredMessage, promptForReauthentication } from '@/cli/utilities/auth/reauth-helper';
+import {
+  isTokenExpiredMessage,
+  promptForReauthentication,
+} from '@/cli/utilities/auth/reauth-helper';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
 
