@@ -29,9 +29,9 @@ import {
   IconMinus,
   IconPlus,
   IconX,
-} from 'twenty-ui/display';
-import { Button, IconButtonGroup } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { Button, IconButtonGroup } from 'twenty-ui-deprecated/input';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const nodeTypes: NodeTypes = {
   object: SettingsDataModelOverviewObject,

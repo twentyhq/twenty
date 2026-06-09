@@ -1,4 +1,4 @@
-import { type ThemeColor } from 'twenty-ui/theme';
+import { type ThemeColor } from 'twenty-ui-deprecated/theme';
 export const enum RecordGroupDefinitionType {
   Value = 'value',
   NoValue = 'no-value',

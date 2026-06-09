@@ -27,7 +27,7 @@ import { styled } from '@linaria/react';
 import { useMemo } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useIsMobile } from 'twenty-ui/utilities';
+import { useIsMobile } from 'twenty-ui-deprecated/utilities';
 
 const StyledContainer = styled.div<{ hasPinnedTab: boolean }>`
   display: grid;

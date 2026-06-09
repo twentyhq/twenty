@@ -336,7 +336,8 @@ export const isRecordMatchingFilter = ({
         });
       }
       case FieldMetadataType.NUMBER:
-      case FieldMetadataType.NUMERIC: {
+      case FieldMetadataType.NUMERIC:
+      case FieldMetadataType.POSITION: {
         return isMatchingFloatFilter({
           floatFilter: filterValue as FloatFilter,
           value: record[filterKey],

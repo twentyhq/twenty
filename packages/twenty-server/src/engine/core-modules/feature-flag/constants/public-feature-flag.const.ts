@@ -28,14 +28,6 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
         'Show the per-page hero illustration + video walkthrough modal on settings pages',
     },
   },
-  {
-    key: FeatureFlagKey.IS_WORKFLOW_RUN_STEP_LOGS_ENABLED,
-    metadata: {
-      label: 'Workflow Run Step Logs',
-      description:
-        'Persist and display per-step observability logs (token usage, tool calls, HTTP bodies, serverless function output) on workflow runs',
-    },
-  },
   ...(process.env.CLOUDFLARE_API_KEY
     ? [
         // {

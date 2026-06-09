@@ -5,7 +5,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 
 const meta: Meta<typeof Table> = {
   title: 'UI/Layout/Table/Table',

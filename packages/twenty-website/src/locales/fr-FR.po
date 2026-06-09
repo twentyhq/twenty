@@ -124,6 +124,11 @@ msgstr ""
 "+$75/utilisateur par mois\n"
 "Passez à Enterprise !"
 
+#. js-lingui-id: Uqm/0u
+#: src/app/[locale]/product/_components/ProductHero.tsx
+msgid "<0>...with AI that actually</0><1/><2>helps you</2><3>work faster</3>"
+msgstr ""
+
 #. js-lingui-id: ZKcQvG
 #: src/app/[locale]/product/_components/ProductHero.tsx
 msgid "<0>A CRM for teams</0><1/><2>that</2><3>move fast</3>"
@@ -142,11 +147,6 @@ msgstr ""
 #. js-lingui-id: h5K9X+
 #: src/app/[locale]/product/_components/ProductThreeCards.tsx
 msgid "<0>A modern CRM with</0><1>an intuitive interface</1>"
-msgstr ""
-
-#. js-lingui-id: rxBk/x
-#: src/app/[locale]/product/_components/ProductHero.tsx
-msgid "<0>AI that actually</0><1/><2>helps you</2><3>work faster</3>"
 msgstr ""
 
 #. js-lingui-id: YXQqRD
@@ -809,10 +809,10 @@ msgstr ""
 msgid "around it"
 msgstr "autour de cela"
 
-#. js-lingui-id: 4YKyFV
+#. js-lingui-id: S+Q+1d
 #: src/app/[locale]/product/_components/ProductHero.tsx
-msgid "Ask questions, automate tasks, and get insights. All powered by AI that understands your data."
-msgstr "Posez des questions, automatisez des tâches et obtenez des informations. Le tout alimenté par une IA qui comprend vos données."
+msgid "Ask questions, automate tasks, and get insights with AI that understands your data and helps you move faster every day, end to end across teams."
+msgstr ""
 
 #. js-lingui-id: v7zTZl
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -1014,6 +1014,16 @@ msgstr ""
 msgid "Brunei 🇧🇳"
 msgstr ""
 
+#. js-lingui-id: sbr0X/
+#: src/app/[locale]/product/ai-hero-tabs.data.ts
+msgid "Build a dashboard of pipeline by stage"
+msgstr ""
+
+#. js-lingui-id: uetyzD
+#: src/app/[locale]/product/ai-hero-tabs.data.ts
+msgid "Build a pipeline board grouped by stage"
+msgstr ""
+
 #. js-lingui-id: Utc5RF
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
 msgid "Build custom dashboards from live CRM data. Aggregate anything — deals, accounts, activity — into charts your team actually reads."
@@ -1146,11 +1156,6 @@ msgstr "Le classique ne meurt jamais. Il est simplement étendu une fois de plus
 #: src/app/[locale]/partners/list/components/FilterBar.tsx
 #: src/app/[locale]/partners/list/components/EmptyState.tsx
 msgid "Clear filters"
-msgstr ""
-
-#. js-lingui-id: yz7wBu
-#: src/sections/PartnerApplication/partner-application-modal-data.ts
-msgid "Close"
 msgstr ""
 
 #. js-lingui-id: L/LPQZ
@@ -1352,11 +1357,6 @@ msgstr ""
 msgid "Create a workflow"
 msgstr "Créer un workflow"
 
-#. js-lingui-id: Pg0blE
-#: src/app/[locale]/product/ai-hero-tabs.data.ts
-msgid "Create a workflow that sends an email sequence"
-msgstr "Créez un flux de travail qui envoie une séquence d’e-mails."
-
 #. js-lingui-id: B9nLrl
 #: src/sections/Menu/data.ts
 msgid "Create apps on Twenty"
@@ -1368,11 +1368,6 @@ msgstr "Créer des applications sur Twenty"
 #: src/sections/Plans/data.ts
 msgid "Create custom apps"
 msgstr "Créer des applications personnalisées"
-
-#. js-lingui-id: mmx00G
-#: src/app/[locale]/product/ai-hero-tabs.data.ts
-msgid "Create follow-up tasks for my top 10 accounts"
-msgstr "Créer des tâches de suivi pour mes 10 meilleurs comptes"
 
 #. js-lingui-id: oS1RiS
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -1645,6 +1640,11 @@ msgstr "Ne vous laissez pas enfermer dans l’écosystème de quelqu’un d’au
 #. js-lingui-id: HDR0en
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "DR Congo 🇨🇩"
+msgstr ""
+
+#. js-lingui-id: mzedFr
+#: src/app/[locale]/product/ai-hero-tabs.data.ts
+msgid "Draft a workflow for an email sequence"
 msgstr ""
 
 #. js-lingui-id: fPma12
@@ -2094,6 +2094,11 @@ msgstr ""
 msgid "Gambia 🇬🇲"
 msgstr ""
 
+#. js-lingui-id: S84RWl
+#: src/app/[locale]/product/ai-hero-tabs.data.ts
+msgid "Generate tasks for my top 10 accounts"
+msgstr ""
+
 #. js-lingui-id: GOmD9p
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Georgia 🇬🇪"
@@ -2132,6 +2137,11 @@ msgstr ""
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "Good choice!"
 msgstr "Bon choix !"
+
+#. js-lingui-id: Zh0acB
+#: src/sections/PartnerApplication/partner-application-modal-data.ts
+msgid "Grab 30 minutes so we can get to know your team."
+msgstr ""
 
 #. js-lingui-id: +tDN2S
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
@@ -2313,6 +2323,11 @@ msgstr "Comment W3villa Technologies a livré W3Grads, une plateforme d’entret
 #. js-lingui-id: htrFcw
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Hungary 🇭🇺"
+msgstr ""
+
+#. js-lingui-id: T6wyby
+#: src/sections/PartnerApplication/partner-application-modal-data.ts
+msgid "I'll book later →"
 msgstr ""
 
 #. js-lingui-id: RYDa0v
@@ -3079,6 +3094,11 @@ msgstr ""
 msgid "Now a developer can describe what they want to Claude Code and have a working app in an afternoon. A custom object, a scoring workflow, a new view, an integration. The bottleneck isn't building anymore. It's whether your platform lets you."
 msgstr "Aujourd’hui, un développeur peut décrire ce qu’il veut à Claude Code et avoir une application fonctionnelle dans l’après-midi. Un objet personnalisé, un workflow de scoring, une nouvelle vue, une intégration. Le goulot d’étranglement n’est plus la construction. C’est de savoir si votre plateforme vous le permet."
 
+#. js-lingui-id: WFvpMn
+#: src/sections/PartnerApplication/partner-application-modal-data.ts
+msgid "Now book your intro call."
+msgstr ""
+
 #. js-lingui-id: CzeIij
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "Number of dashboards"
@@ -3802,11 +3822,6 @@ msgstr "Lancez un produit sur Twenty"
 msgid "Show less"
 msgstr "Afficher moins"
 
-#. js-lingui-id: qv84H6
-#: src/app/[locale]/product/ai-hero-tabs.data.ts
-msgid "Show me all deals closing this month"
-msgstr "Montre-moi toutes les affaires qui se concluent ce mois-ci"
-
 #. js-lingui-id: RhU4bB
 #: src/app/[locale]/partners/list/components/FilterBar.tsx
 msgid "Showing {visibleCount} of {totalCount} partners"
@@ -3997,11 +4012,6 @@ msgstr "Envoi…"
 msgid "Sudan 🇸🇩"
 msgstr ""
 
-#. js-lingui-id: KY4KBn
-#: src/app/[locale]/product/ai-hero-tabs.data.ts
-msgid "Summarize this customer's history"
-msgstr "Résumer l’historique de ce client"
-
 #. js-lingui-id: XYLcNv
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "Support"
@@ -4066,6 +4076,7 @@ msgstr ""
 #. js-lingui-id: JAKtcG
 #: src/sections/Footer/data.ts
 #: src/sections/Faq/Faq.tsx
+#: src/app/[locale]/product/_components/ProductHero.tsx
 #: src/app/[locale]/customers/_components/CustomersCatalogSignoff.tsx
 #: src/app/[locale]/customers/_components/CustomersCaseStudySignoff.tsx
 #: src/app/[locale]/(home)/_components/HomeHero.tsx
@@ -4132,9 +4143,9 @@ msgstr ""
 msgid "Thailand 🇹🇭"
 msgstr ""
 
-#. js-lingui-id: pYwj0k
+#. js-lingui-id: eRjhUK
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
-msgid "Thanks,"
+msgid "Thanks, you're in."
 msgstr ""
 
 #. js-lingui-id: FjkPYg
@@ -4354,10 +4365,10 @@ msgstr "Suivez le montant et la date de conclusion"
 msgid "Track every release with changelogs, highlights and demos of the newest features."
 msgstr "Suivez chaque version avec des journaux de changements, des points forts et des démos des nouvelles fonctionnalités."
 
-#. js-lingui-id: yiYtW0
+#. js-lingui-id: 6vHPh9
 #: src/app/[locale]/product/_components/ProductHero.tsx
-msgid "Track relationships, manage pipelines, and take action quickly with a CRM that feels intuitive from day one."
-msgstr "Suivez les relations, gérez les pipelines et agissez rapidement avec un CRM qui semble intuitif dès le premier jour."
+msgid "Track relationships, manage pipelines, and take action quickly with an intuitive CRM that helps your team move faster from day one with confidence."
+msgstr ""
 
 #. js-lingui-id: xwWQ9Q
 #: src/app/[locale]/partners/list/components/chip-labels.ts
@@ -4372,6 +4383,11 @@ msgstr ""
 #. js-lingui-id: /ga9kq
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Trinidad & Tobago 🇹🇹"
+msgstr ""
+
+#. js-lingui-id: tdZpCd
+#: src/sections/Footer/data.ts
+msgid "Trust Center"
 msgstr ""
 
 #. js-lingui-id: KtyN0b
@@ -4768,11 +4784,6 @@ msgstr "Nous n'avons pas pu soumettre votre candidature. Veuillez réessayer dan
 #: src/app/[locale]/(home)/testimonials.data.ts
 msgid "We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
 msgstr "Nous ne voulions pas simplement masquer le problème. Nous voulions construire quelque chose sur lequel les établissements pourraient s'appuyer à grande échelle, ce qui signifiait partir d'une base suffisamment solide pour supporter toute la complexité de ce que nous avions en tête."
-
-#. js-lingui-id: u7hKUm
-#: src/sections/PartnerApplication/partner-application-modal-data.ts
-msgid "we'll be in touch!"
-msgstr ""
 
 #. js-lingui-id: d5CWI6
 #: src/app/[locale]/partners/components/PartnerHero.tsx

@@ -137,6 +137,7 @@ export default defineConfig(({ mode }) => {
         '../../node_modules/.vite',
         '../../node_modules/.cache',
         '../../node_modules/twenty-ui',
+        '../../node_modules/twenty-ui-deprecated',
       ],
     },
 

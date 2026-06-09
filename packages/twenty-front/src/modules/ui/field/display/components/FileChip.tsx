@@ -4,7 +4,7 @@ import { t } from '@lingui/core/macro';
 import { FileIcon } from '@/file/components/FileIcon';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getFileCategoryFromExtension } from '@/object-record/record-field/ui/utils/getFileCategoryFromExtension';
-import { Chip, ChipVariant } from 'twenty-ui/components';
+import { Chip, ChipVariant } from 'twenty-ui-deprecated/components';
 
 const MAX_WIDTH = 120;
 

@@ -957,7 +957,6 @@ type Workspace {
   installedApplications: [Application!]!
   currentBillingSubscription: BillingSubscription
   billingEntitlements: [BillingEntitlement!]!
-  hasValidEnterpriseKey: Boolean!
   hasValidSignedEnterpriseKey: Boolean!
   hasValidEnterpriseValidityToken: Boolean!
   workspaceUrls: WorkspaceUrls!
@@ -1446,14 +1445,9 @@ type EmailingDomain {
   createdAt: DateTime!
   updatedAt: DateTime!
   domain: String!
-  driver: EmailingDomainDriver!
   status: EmailingDomainStatus!
   verificationRecords: [VerificationRecord!]
   verifiedAt: DateTime
-}
-
-enum EmailingDomainDriver {
-  AWS_SES
 }
 
 enum EmailingDomainStatus {
@@ -1783,7 +1777,6 @@ enum FeatureFlagKey {
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
   IS_SETTINGS_DISCOVERY_HERO_ENABLED
   IS_CALL_RECORDING_ENABLED
-  IS_WORKFLOW_RUN_STEP_LOGS_ENABLED
 }
 
 type WorkspaceUrls {
@@ -3226,7 +3219,7 @@ type Mutation {
   resetPageLayoutToDefault(id: String!): PageLayout!
   resetPageLayoutWidgetToDefault(id: String!): PageLayoutWidget!
   resetPageLayoutTabToDefault(id: String!): PageLayoutTab!
-  createEmailingDomain(domain: String!, driver: EmailingDomainDriver!): EmailingDomain!
+  createEmailingDomain(domain: String!): EmailingDomain!
   deleteEmailingDomain(id: String!): Boolean!
   verifyEmailingDomain(id: String!): EmailingDomain!
   sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!

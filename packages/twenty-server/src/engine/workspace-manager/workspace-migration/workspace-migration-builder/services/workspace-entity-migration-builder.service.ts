@@ -18,6 +18,7 @@ import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-e
 import { WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-builder-additional-cache-data-maps.type';
 import { AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
+import { UniversalFlatEntityDiff } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-diff.type';
 import { UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { deleteUniversalFlatEntityForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/delete-universal-flat-entity-foreign-key-aggregators.util';
@@ -164,7 +165,11 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       actionsResult.delete.push(
         ...(Array.isArray(validationResult.action)
           ? validationResult.action
-          : [validationResult.action]),
+          : [validationResult.action]
+        ).map((action) => ({
+          ...action,
+          flatEntity: universalFlatEntityToDelete,
+        })),
       );
     }
 
@@ -221,6 +226,17 @@ export abstract class WorkspaceEntityMigrationBuilderService<
         ...flatEntityUpdate.update,
       };
 
+      const diff = Object.fromEntries(
+        Object.entries(flatEntityUpdate.update).map(([key, after]) => [
+          key,
+          {
+            before:
+              existingFlatEntity[key as keyof MetadataUniversalFlatEntity<T>],
+            after,
+          },
+        ]),
+      ) as UniversalFlatEntityDiff<T>;
+
       replaceUniversalFlatEntityInUniversalFlatEntityMapsThroughMutationOrThrow(
         {
           universalFlatEntity: updatedFlatEntity,
@@ -232,7 +248,12 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       actionsResult.update.push(
         ...(Array.isArray(validationResult.action)
           ? validationResult.action
-          : [validationResult.action]),
+          : [validationResult.action]
+        ).map((action) => ({
+          ...action,
+          flatEntity: updatedFlatEntity,
+          diff,
+        })),
       );
     }
 

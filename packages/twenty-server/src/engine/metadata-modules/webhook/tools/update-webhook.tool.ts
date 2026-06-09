@@ -6,7 +6,7 @@ import { type WebhookToolDependencies } from 'src/engine/metadata-modules/webhoo
 import { compileWebhookOperations } from 'src/engine/metadata-modules/webhook/tools/utils/compile-webhook-operations.util';
 
 const updateWebhookSchema = z.object({
-  id: z.string().uuid().describe('The id of the webhook to update'),
+  id: z.uuid().describe('The id of the webhook to update'),
   targetUrl: z
     .string()
     .url()

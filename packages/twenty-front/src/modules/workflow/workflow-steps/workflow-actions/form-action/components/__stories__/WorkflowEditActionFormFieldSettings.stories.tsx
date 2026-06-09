@@ -3,7 +3,7 @@ import { WorkflowEditActionFormFieldSettings } from '@/workflow/workflow-steps/w
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 

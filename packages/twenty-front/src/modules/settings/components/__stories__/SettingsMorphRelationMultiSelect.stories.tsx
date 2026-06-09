@@ -2,7 +2,7 @@ import { SettingsMorphRelationMultiSelect } from '@/settings/components/Settings
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 
 const meta: Meta<typeof SettingsMorphRelationMultiSelect> = {

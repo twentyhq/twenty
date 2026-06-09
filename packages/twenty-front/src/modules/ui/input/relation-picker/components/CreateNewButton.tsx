@@ -1,7 +1,7 @@
 import { css } from '@linaria/core';
 import React from 'react';
-import { MenuItem } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const hoveredStyle = css`
   background: ${themeCssVariables.background.transparent.light};
