@@ -109,6 +109,12 @@ export const useTriggerRecordBoardFetchMore = () => {
       recordGroupValues: recordGroupValuesThatShouldBeFetched,
     });
 
+    // Catch fetch errors so a rejection neither escapes unhandled nor skips the
+    // cleanup below — otherwise `recordBoardIsFetchingMore` stays true and the
+    // guard above blocks every further page, stalling pagination permanently.
+    // Resolving to null routes into the existing guard; the offset advances only
+    // on a defined result, so the failed page is retried on the next in-view
+    // signal rather than skipped.
     const recordIndexGroupsRecordsGroupByLazyQueryResult =
       await executeRecordIndexGroupsRecordsLazyGroupBy({
         variables: {
@@ -118,15 +124,15 @@ export const useTriggerRecordBoardFetchMore = () => {
             ...recordGroupOptionsFilter,
           },
         },
-      });
-
-    store.set(recordBoardCurrentGroupByQueryOffsetCallbackState, newOffset);
+      }).catch(() => null);
 
     if (!isDefined(recordIndexGroupsRecordsGroupByLazyQueryResult)) {
       cleanStateBeforeExit();
 
       return false;
     }
+
+    store.set(recordBoardCurrentGroupByQueryOffsetCallbackState, newOffset);
 
     const queryFieldName =
       getGroupByQueryResultGqlFieldName(objectMetadataItem);
