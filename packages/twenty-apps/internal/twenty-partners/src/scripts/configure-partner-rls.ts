@@ -1,7 +1,7 @@
 // Does two things on each run:
 //
 // 1. UPSERTS the row-level-permission predicates on the Partner role: one per target
-//    object (partner, person, company, opportunity) = "partnerUser CONTAINS the current
+//    object (partner, person, company, opportunity) = "partnerUser IS the current
 //    workspace member", PLUS one on workspaceMember = "id IS the current member" so the
 //    role's read on workspaceMember is scoped to the partner's own record (member-typed
 //    relations resolve for themselves; the internal team roster stays hidden). These are
@@ -11,7 +11,10 @@
 //    Field choice: the metadata API exposes the relation field `partnerUser`
 //    (type RELATION) rather than a separate `partnerUserId` join-column field. The
 //    upsertRowLevelPermissionPredicates mutation accepts the RELATION field id directly.
-//    Operand: CONTAINS — confirmed working against this server version.
+//    Operand: IS (value null + workspaceMemberFieldMetadataId injects the current member).
+//    NOT CONTAINS — the query engine's RELATION filter only accepts IS / IS_NOT and throws
+//    "Unknown operand CONTAINS for RELATION filter" at enforcement time, even though the
+//    upsert mutation silently accepts CONTAINS.
 //
 // 2. VERIFIES the Opportunity field permissions declared in `partner.role.ts` and
 //    deployed via `yarn twenty dev --once`. The script does NOT set these permissions:
@@ -329,10 +332,13 @@ async function main() {
 
   // ── 4. Upsert one predicate per object ───────────────────────────────────────
   //
-  // Predicate semantics: "the record's partnerUser relation CONTAINS the current
-  // workspace member" — i.e. the partnerUser FK equals the session user.
-  // Operand CONTAINS is the correct choice for relation/current-member matching
-  // (confirmed against this server version by manual introspection).
+  // Predicate semantics: "the record's partnerUser relation IS the current workspace
+  // member" — i.e. the partnerUser FK equals the session user.
+  // Operand IS (not CONTAINS): the query engine's RELATION filter only accepts IS / IS_NOT.
+  // The upsert mutation accepts CONTAINS, but enforcement throws "Unknown operand CONTAINS
+  // for RELATION filter" at query time. value stays null; workspaceMemberFieldMetadataId
+  // injects the current member at query time. Mirrors the Roles-UI conversion for a
+  // relation current-member RLS predicate (operand IS, value null, workspaceMemberFieldMetadataId).
 
   const MUTATION = `
     mutation UpsertRLSPredicates($input: UpsertRowLevelPermissionPredicatesInput!) {
@@ -365,7 +371,7 @@ async function main() {
         predicates: [
           {
             fieldMetadataId: info.partnerUserFieldMetadataId,
-            operand: 'CONTAINS',
+            operand: 'IS',
             // workspaceMemberFieldMetadataId scopes the predicate to the
             // current session's workspace member (the "id" field).
             workspaceMemberFieldMetadataId: workspaceMemberIdFieldId,
