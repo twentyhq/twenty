@@ -52,7 +52,7 @@
     "esbuild": "^0.28.0",
     "graphql": "^16.8.1",
     "lodash": "^4.17.21",
-    "prettier": "^2.8.8"
+    "prettier": "^3.8.3"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.15",
