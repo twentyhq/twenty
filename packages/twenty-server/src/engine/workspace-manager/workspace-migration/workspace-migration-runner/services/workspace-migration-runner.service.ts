@@ -170,9 +170,10 @@ export class WorkspaceMigrationRunnerService {
   // TODO(install-perf): temporary, remove. Snapshots blocking DB sessions on a fresh connection.
   private async logBlockingDbActivity(): Promise<void> {
     try {
+      // Metadata only (no query text) to avoid logging literals from other sessions.
       const rows = await this.coreDataSource.query(
         `SELECT pid, state, wait_event_type, wait_event,
-                now() - query_start AS running_for, left(query, 200) AS query
+                now() - query_start AS running_for, pg_blocking_pids(pid) AS blocked_by
          FROM pg_stat_activity
          WHERE datname = current_database()
            AND state <> 'idle'
@@ -282,9 +283,6 @@ export class WorkspaceMigrationRunnerService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    // TODO(install-perf): temporary, remove. Fail fast on lock waits (< 10s query_timeout) for a clear error.
-    await queryRunner.query(`SET LOCAL lock_timeout = '8s'`);
-
     const allMetadataEvents: MetadataEvent[] = [];
 
     // TODO(install-perf): temporary, remove.
@@ -294,6 +292,9 @@ export class WorkspaceMigrationRunnerService {
     let actionCount = 0;
 
     try {
+      // TODO(install-perf): temporary, remove. Fail fast on lock waits (< 10s query_timeout) for a clear error.
+      await queryRunner.query(`SET LOCAL lock_timeout = '8s'`);
+
       for (const action of actions) {
         const actionStart = performance.now();
         const { partialOptimisticCache, metadataEvents } =
