@@ -150,7 +150,7 @@
   "devDependencies": {
     "@babel/core": "^7.14.5",
     "@babel/preset-typescript": "^7.24.6",
-    "@graphql-codegen/cli": "^3.3.1",
+    "@graphql-codegen/cli": "^5.0.7",
     "@graphql-codegen/typed-document-node": "^5.0.9",
     "@graphql-codegen/typescript": "^3.0.4",
     "@graphql-codegen/typescript-operations": "^3.0.4",
