@@ -2,7 +2,7 @@ import {
   type Shortcut,
   ShortcutType,
 } from '@/keyboard-shortcut-menu/types/Shortcut';
-import { getOsControlSymbol } from 'twenty-ui/utilities';
+import { getOsControlSymbol } from 'twenty-ui-deprecated/utilities';
 
 export const KEYBOARD_SHORTCUTS_GENERAL: Shortcut[] = [
   {

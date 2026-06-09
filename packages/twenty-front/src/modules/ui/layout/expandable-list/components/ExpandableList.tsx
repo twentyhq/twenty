@@ -10,10 +10,10 @@ import {
 import { ExpandedListDropdown } from '@/ui/layout/expandable-list/components/ExpandedListDropdown';
 import { isFirstOverflowingChildElement } from '@/ui/layout/expandable-list/utils/isFirstOverflowingChildElement';
 import { isDefined } from 'twenty-shared/utils';
-import { ChipSize } from 'twenty-ui/components';
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { AnimatedContainer } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ChipSize } from 'twenty-ui-deprecated/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui-deprecated/display';
+import { AnimatedContainer } from 'twenty-ui-deprecated/utilities';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;

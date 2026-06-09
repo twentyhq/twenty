@@ -8,7 +8,7 @@ import {
   motion,
   type TargetAndTransition,
 } from 'framer-motion';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 const StyledAnimationGroupContainerBase = styled.div``;
 
 const StyledAnimationGroupContainer = motion.create(

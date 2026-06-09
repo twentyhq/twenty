@@ -6,9 +6,9 @@ import {
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/components';
-import { IconEye, IconEyeOff } from 'twenty-ui/display';
-import { MenuItemDraggable } from 'twenty-ui/navigation';
+import { Tag } from 'twenty-ui-deprecated/components';
+import { IconEye, IconEyeOff } from 'twenty-ui-deprecated/display';
+import { MenuItemDraggable } from 'twenty-ui-deprecated/navigation';
 
 type RecordGroupMenuItemDraggableProps = {
   recordGroupId: string;

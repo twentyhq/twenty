@@ -8,9 +8,9 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { H2Title, IconPlayerPlay } from 'twenty-ui/display';
-import { Button, CoreEditorHeader } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { H2Title, IconPlayerPlay } from 'twenty-ui-deprecated/display';
+import { Button, CoreEditorHeader } from 'twenty-ui-deprecated/input';
+import { Section } from 'twenty-ui-deprecated/layout';
 
 const StyledTabListContainer = styled.div`
   > * {

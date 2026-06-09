@@ -1,5 +1,5 @@
-import { type IconComponent, useIcons } from 'twenty-ui/display';
-import { type ThemeColor } from 'twenty-ui/theme';
+import { type IconComponent, useIcons } from 'twenty-ui-deprecated/display';
+import { type ThemeColor } from 'twenty-ui-deprecated/theme';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';

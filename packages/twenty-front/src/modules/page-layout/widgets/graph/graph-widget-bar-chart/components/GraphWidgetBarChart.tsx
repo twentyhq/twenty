@@ -29,7 +29,7 @@ import { styled } from '@linaria/react';
 import { isNumber } from '@sniptt/guards';
 import { useContext, useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import { BarChartLayout } from '~/generated-metadata/graphql';
 

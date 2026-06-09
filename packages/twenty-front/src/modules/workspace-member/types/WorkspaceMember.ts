@@ -21,6 +21,7 @@ export type WorkspaceMember = {
   updatedAt: string;
   userEmail: string;
   userId: string;
+  userWorkspaceId?: string | null;
   timeZone?: string | null;
   dateFormat?: WorkspaceMemberDateFormatEnum | null;
   timeFormat?: WorkspaceMemberTimeFormatEnum | null;
