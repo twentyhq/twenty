@@ -4,7 +4,7 @@ import { RecordTableEmptyStateDisplay } from '@/object-record/record-table/empty
 import { getEmptyStateSubTitle } from '@/object-record/record-table/empty-state/utils/getEmptyStateSubTitle';
 import { getEmptyStateTitle } from '@/object-record/record-table/empty-state/utils/getEmptyStateTitle';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
-import { IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui-deprecated/display';
 
 export const RecordTableEmptyStateNoGroupNoRecordAtAll = () => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();

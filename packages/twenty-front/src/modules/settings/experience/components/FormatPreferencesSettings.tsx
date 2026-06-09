@@ -18,7 +18,7 @@ import {
   WorkspaceMemberTimeFormatEnum,
 } from '~/generated-metadata/graphql';
 import { DateTimeSettingsCalendarStartDaySelect } from '~/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;

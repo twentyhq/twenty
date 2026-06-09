@@ -1,4 +1,4 @@
-import { ModalContent } from 'twenty-ui/layout';
+import { ModalContent } from 'twenty-ui-deprecated/layout';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { ChooseYourPlanContent } from '~/pages/onboarding/internal/ChooseYourPlanContent';

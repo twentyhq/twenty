@@ -24,9 +24,10 @@ const jestConfig = {
   testEnvironmentOptions: {},
 
   transformIgnorePatterns: [
-    '/node_modules/(?!(twenty-ui|apollo-upload-client|extract-files|is-plain-obj)/.*)',
-    '../../node_modules/(?!(twenty-ui|apollo-upload-client|extract-files|is-plain-obj)/.*)',
+    '/node_modules/(?!(twenty-ui|twenty-ui-deprecated|apollo-upload-client|extract-files|is-plain-obj)/.*)',
+    '../../node_modules/(?!(twenty-ui|twenty-ui-deprecated|apollo-upload-client|extract-files|is-plain-obj)/.*)',
     '../../twenty-ui/',
+    '../../twenty-ui-deprecated/',
   ],
   transform: {
     '^.+\\.(ts|js|tsx|jsx|mjs)$': [

@@ -15,7 +15,7 @@ import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPa
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { ViewKey } from '@/views/types/ViewKey';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui-deprecated/display';
 
 export const SidePanelNewSidebarItemObjectSubPage = () => {
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();

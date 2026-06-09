@@ -12,8 +12,8 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconTrash } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
+import { IconTrash } from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
 import {
   DeleteEmailingDomainDocument,
   type GetEmailingDomainsQuery,

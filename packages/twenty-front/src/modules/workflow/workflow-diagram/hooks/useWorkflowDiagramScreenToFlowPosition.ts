@@ -1,7 +1,7 @@
 import { useReactFlow } from '@xyflow/react';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 export const useWorkflowDiagramScreenToFlowPosition = () => {
   const { theme } = useContext(ThemeContext);
   const { screenToFlowPosition } = useReactFlow();

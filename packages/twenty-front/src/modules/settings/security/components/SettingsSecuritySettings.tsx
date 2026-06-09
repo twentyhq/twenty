@@ -25,7 +25,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
-import { Tag } from 'twenty-ui/components';
+import { Tag } from 'twenty-ui-deprecated/components';
 import {
   H2Title,
   IconClockHour8,
@@ -33,9 +33,9 @@ import {
   IconLock,
   IconMail,
   IconTrash,
-} from 'twenty-ui/display';
-import { Card, Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { Card, Section } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`

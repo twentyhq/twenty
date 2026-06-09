@@ -4,7 +4,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import {
   ComponentDecorator,
   ComponentWithRouterDecorator,
-} from 'twenty-ui/testing';
+} from 'twenty-ui-deprecated/testing';
 
 const meta: Meta<typeof FullScreenContainer> = {
   title: 'UI/Layout/FullScreenContainer',

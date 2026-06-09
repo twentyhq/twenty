@@ -1,6 +1,6 @@
-import { BACKGROUND_DARK } from '@ui/theme/constants/BackgroundDark';
-import { FONT_DARK } from '@ui/theme/constants/FontDark';
-import { MAIN_COLORS_DARK } from '@ui/theme/constants/MainColorsDark';
+import { BACKGROUND_DARK } from '@new-ui/theme/constants/BackgroundDark';
+import { FONT_DARK } from '@new-ui/theme/constants/FontDark';
+import { MAIN_COLORS_DARK } from '@new-ui/theme/constants/MainColorsDark';
 
 export const SNACK_BAR_DARK = {
   success: {

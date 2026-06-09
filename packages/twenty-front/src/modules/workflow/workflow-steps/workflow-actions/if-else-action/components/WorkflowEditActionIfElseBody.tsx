@@ -27,9 +27,9 @@ import { t } from '@lingui/core/macro';
 import { Fragment } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type StepIfElseBranch } from 'twenty-shared/workflow';
-import { HorizontalSeparator, IconPlus } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { HorizontalSeparator, IconPlus } from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: start;

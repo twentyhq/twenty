@@ -7,9 +7,13 @@ import {
   MessageChannelType,
   type MessageFolderImportPolicy,
 } from 'twenty-shared/types';
-import { H2Title, IconBriefcase, IconUsers } from 'twenty-ui/display';
-import { Card, Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  H2Title,
+  IconBriefcase,
+  IconUsers,
+} from 'twenty-ui-deprecated/display';
+import { Card, Section } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/components/SettingsAccountsMessageAutoCreationCard';

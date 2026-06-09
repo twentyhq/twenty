@@ -1,5 +1,5 @@
 import * as RadixColors from '@radix-ui/colors';
-import { COLOR_DARK } from '@ui/theme/constants/ColorsDark';
+import { COLOR_DARK } from '@new-ui/theme/constants/ColorsDark';
 
 export const ACCENT_DARK = {
   primary: COLOR_DARK.blue5,

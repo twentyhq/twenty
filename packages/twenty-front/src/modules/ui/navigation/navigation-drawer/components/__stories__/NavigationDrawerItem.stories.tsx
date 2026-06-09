@@ -2,9 +2,12 @@ import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { IconSearch } from 'twenty-ui/display';
-import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
-import { getOsControlSymbol } from 'twenty-ui/utilities';
+import { IconSearch } from 'twenty-ui-deprecated/display';
+import {
+  CatalogDecorator,
+  type CatalogStory,
+} from 'twenty-ui-deprecated/testing';
+import { getOsControlSymbol } from 'twenty-ui-deprecated/utilities';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 

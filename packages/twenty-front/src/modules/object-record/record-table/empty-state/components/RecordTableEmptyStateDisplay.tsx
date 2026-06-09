@@ -8,8 +8,8 @@ import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScro
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { type IconComponent } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
+import { type IconComponent } from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -17,7 +17,7 @@ import {
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
   type AnimatedPlaceholderType,
-} from 'twenty-ui/layout';
+} from 'twenty-ui-deprecated/layout';
 
 const StyledEmptyPlaceholderOuterContainer = styled.div`
   height: 100%;

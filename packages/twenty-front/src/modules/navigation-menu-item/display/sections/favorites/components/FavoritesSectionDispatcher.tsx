@@ -3,7 +3,7 @@ import { NavigationSections } from '@/navigation-menu-item/common/constants/Navi
 import { NavigationMenuItemDndKitProvider } from '@/navigation-menu-item/display/dnd/providers/NavigationMenuItemDndKitProvider';
 import { FavoritesSection } from '@/navigation-menu-item/display/sections/favorites/components/FavoritesSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { AnimatedEaseInOut } from 'twenty-ui/utilities';
+import { AnimatedEaseInOut } from 'twenty-ui-deprecated/utilities';
 
 export const FavoritesSectionDispatcher = () => {
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
