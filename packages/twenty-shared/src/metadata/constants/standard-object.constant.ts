@@ -1002,12 +1002,6 @@ export const STANDARD_OBJECTS = {
       },
       replyTo: { universalIdentifier: '75e468b3-4da6-47d2-9f4a-92c9f5407950' },
       status: { universalIdentifier: 'c7117256-3de6-48e1-87df-c99c32bad610' },
-      recipientSource: {
-        universalIdentifier: 'eb1f1a36-970d-4bbe-9eaf-798b4617492b',
-      },
-      recipientViewId: {
-        universalIdentifier: 'bdf3434e-b9da-41fc-a4a2-e31c705bd0a3',
-      },
       scheduledAt: {
         universalIdentifier: '0f704579-abf5-4f3d-bf08-a117bc87d5a3',
       },
@@ -1074,9 +1068,6 @@ export const STANDARD_OBJECTS = {
       },
       unsubscribedAt: {
         universalIdentifier: '3614f2ff-c3d7-4c9a-a611-d2d15389f777',
-      },
-      confirmedAt: {
-        universalIdentifier: '2a0f0513-416b-40e0-98fd-e846db682fd2',
       },
       source: { universalIdentifier: '40919ec6-e6e4-49ac-930a-22f42d2100d4' },
       topic: { universalIdentifier: '12f0282b-a9ea-4d49-833b-0f111e7299ca' },

@@ -15,15 +15,8 @@ export class SendMessageCampaignInput {
   @IsUUID('4')
   messageTopicId: string;
 
-  // Optional Person view whose filters resolve the recipients (dynamic audience).
-  // When omitted, recipients are the people subscribed to the topic.
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsUUID('4')
-  recipientViewId?: string;
-
   // Optional list whose hand-picked members are the recipients (static audience).
-  // Takes precedence over recipientViewId and topic subscribers when set.
+  // When omitted, recipients are the people subscribed to the topic.
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsUUID('4')

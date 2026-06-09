@@ -109,7 +109,6 @@ export class EmailingDomainResolver {
       workspaceId: currentWorkspace.id,
       userWorkspaceId,
       messageTopicId: input.messageTopicId,
-      recipientViewId: input.recipientViewId,
       listId: input.listId,
       subject: input.subject,
       html: input.body,

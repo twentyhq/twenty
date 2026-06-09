@@ -277,49 +277,6 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         ],
       },
     }),
-    recipientSource: createStandardFieldFlatMetadata({
-      ...base,
-      context: {
-        fieldName: 'recipientSource',
-        type: FieldMetadataType.SELECT,
-        label: i18nLabel(msg`Recipient source`),
-        description: i18nLabel(msg`How recipients are resolved`),
-        icon: 'IconUsers',
-        isNullable: false,
-        isUIReadOnly: true,
-        defaultValue: "'LIST'",
-        options: [
-          {
-            id: '89f0301d-b168-4da3-b435-4bd5e969b604',
-            value: 'LIST',
-            label: i18nLabel(msg`Topic`),
-            position: 0,
-            color: 'blue',
-          },
-          {
-            id: '45268433-887f-4a4e-a873-d9f0498615a9',
-            value: 'FILTER',
-            label: i18nLabel(msg`Filter`),
-            position: 1,
-            color: 'purple',
-          },
-        ],
-      },
-    }),
-    recipientViewId: createStandardFieldFlatMetadata({
-      ...base,
-      context: {
-        fieldName: 'recipientViewId',
-        type: FieldMetadataType.UUID,
-        label: i18nLabel(msg`Recipient view`),
-        description: i18nLabel(
-          msg`The Person view whose filters resolve the recipients`,
-        ),
-        icon: 'IconFilter',
-        isNullable: true,
-        isUIReadOnly: true,
-      },
-    }),
     scheduledAt: createStandardFieldFlatMetadata({
       ...base,
       context: {

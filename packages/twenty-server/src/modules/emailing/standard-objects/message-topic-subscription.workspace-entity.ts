@@ -10,7 +10,6 @@ export class MessageTopicSubscriptionWorkspaceEntity extends BaseWorkspaceEntity
   status: string;
   subscribedAt: Date | null;
   unsubscribedAt: Date | null;
-  confirmedAt: Date | null;
   source: string;
   topic: EntityRelation<MessageTopicWorkspaceEntity>;
   topicId: string;

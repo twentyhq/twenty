@@ -23,8 +23,6 @@ export class MessageCampaignWorkspaceEntity extends BaseWorkspaceEntity {
   fromAddress: string | null;
   replyTo: string | null;
   status: string;
-  recipientSource: string;
-  recipientViewId: string | null;
   scheduledAt: Date | null;
   sentAt: Date | null;
   sentCount: number;

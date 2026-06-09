@@ -22,12 +22,10 @@ import {
   normalizeCampaignRecipients,
   type RawCampaignRecipient,
 } from 'src/engine/core-modules/emailing-domain/utils/normalize-campaign-recipients.util';
-import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
-import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -53,11 +51,8 @@ type SendCampaignArgs = {
   subject: string;
   html: string;
   fromAddress: string;
-  // When set, recipients come from this Person view's filters (dynamic audience).
-  // Otherwise recipients are the people subscribed to the topic.
-  recipientViewId?: string;
   // When set, recipients are the list's hand-picked members (static audience).
-  // Takes precedence over recipientViewId and topic subscribers.
+  // Otherwise recipients are the people subscribed to the topic.
   listId?: string;
 };
 
@@ -68,7 +63,6 @@ type SendCampaignResult = {
 };
 
 const SUBSCRIBED_STATUS = 'SUBSCRIBED';
-const PERSON_OBJECT_NAME = 'person';
 
 const toRawRecipient = (person: {
   id: string;
@@ -116,7 +110,6 @@ export class MessageCampaignService {
     subject,
     html,
     fromAddress,
-    recipientViewId,
     listId,
   }: SendCampaignArgs): Promise<SendCampaignResult> {
     const fromDomain = getDomainFromEmail(fromAddress)?.toLowerCase();
@@ -148,17 +141,9 @@ export class MessageCampaignService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const usesFilter =
-          isNonEmptyString(listId) || isNonEmptyString(recipientViewId);
-
         const rawRecipients = isNonEmptyString(listId)
           ? await this.resolveRecipientsFromList(workspaceId, listId)
-          : isNonEmptyString(recipientViewId)
-            ? await this.resolveRecipientsFromView(workspaceId, recipientViewId)
-            : await this.resolveSubscribedRecipients(
-                workspaceId,
-                messageTopicId,
-              );
+          : await this.resolveSubscribedRecipients(workspaceId, messageTopicId);
 
         const { recipients, skipped } = normalizeCampaignRecipients(
           rawRecipients,
@@ -176,8 +161,6 @@ export class MessageCampaignService {
           bodyTemplate: html,
           fromAddress,
           status: CAMPAIGN_STATUS.SENDING,
-          recipientSource: usesFilter ? 'FILTER' : 'LIST',
-          recipientViewId: recipientViewId ?? null,
           topicId: messageTopicId,
           listId: listId ?? null,
         });
@@ -544,49 +527,6 @@ export class MessageCampaignService {
     ]);
 
     return { sentCount, failedCount, bouncedCount };
-  }
-
-  // Resolves the recipients of a campaign from a saved Person view (list):
-  // the view's filters are run server-side to produce the list of people.
-  private async resolveRecipientsFromView(
-    workspaceId: string,
-    recipientViewId: string,
-  ): Promise<RawCampaignRecipient[]> {
-    const viewQueryParamsService = this.moduleRef.get(ViewQueryParamsService, {
-      strict: false,
-    });
-    const findRecordsService = this.moduleRef.get(FindRecordsService, {
-      strict: false,
-    });
-
-    const viewParams = await viewQueryParamsService.resolveViewToQueryParams(
-      recipientViewId,
-      workspaceId,
-    );
-
-    if (viewParams.objectNameSingular !== PERSON_OBJECT_NAME) {
-      throw new Error(
-        `Recipient view must target ${PERSON_OBJECT_NAME} records, got ${viewParams.objectNameSingular}`,
-      );
-    }
-
-    const output = await findRecordsService.execute({
-      objectName: PERSON_OBJECT_NAME,
-      filter: viewParams.filter,
-      shouldBuildEffectiveSelectFields: false,
-      authContext: buildSystemAuthContext(workspaceId),
-    });
-
-    if (!output.success || !output.result) {
-      return [];
-    }
-
-    const records = output.result.records as Array<{
-      id: string;
-      emails?: { primaryEmail?: string | null };
-    }>;
-
-    return records.map(toRawRecipient);
   }
 
   // Resolves the recipients of a campaign from a list's hand-picked members.
