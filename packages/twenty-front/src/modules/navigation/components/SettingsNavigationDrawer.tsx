@@ -18,10 +18,8 @@ import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const StyledAdvancedToggleWrapper = styled.div<{ isMobile: boolean }>`
-  padding-left: ${({ isMobile }) =>
-    isMobile ? '0' : themeCssVariables.spacing[5]};
   padding-right: ${({ isMobile }) =>
-    isMobile ? '0' : themeCssVariables.spacing[8]};
+    isMobile ? '0' : themeCssVariables.spacing[1]};
 `;
 
 export const SettingsNavigationDrawer = ({
@@ -65,7 +63,7 @@ export const SettingsNavigationDrawer = ({
             <AdvancedSettingsToggle
               isAdvancedModeEnabled={isAdvancedModeEnabled}
               setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
-              label={t`Advanced:`}
+              label={t`Advanced`}
             />
           </StyledAdvancedToggleWrapper>
         </NavigationDrawerFixedContent>

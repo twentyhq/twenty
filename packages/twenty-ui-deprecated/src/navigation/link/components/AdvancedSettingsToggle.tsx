@@ -1,37 +1,23 @@
 import { styled } from '@linaria/react';
-import { IconPoint } from '@ui/display';
 import { Toggle } from '@ui/input';
 import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 import { useContext, useId } from 'react';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.label`
   align-items: center;
+  box-sizing: border-box;
+  cursor: pointer;
   display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  position: relative;
   height: ${themeCssVariables.spacing[5]};
+  justify-content: space-between;
   padding: ${themeCssVariables.spacing[1]};
+  width: 100%;
 `;
 
 const StyledText = styled.div`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
-`;
-
-const StyledIconContainer = styled.div`
-  align-items: center;
-  display: flex;
-  left: calc(-1 * ${themeCssVariables.spacing[5]});
-  position: absolute;
-`;
-
-const StyledToggleContainer = styled.label`
-  align-items: center;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
 `;
 
 type AdvancedSettingsToggleProps = {
@@ -43,7 +29,7 @@ type AdvancedSettingsToggleProps = {
 export const AdvancedSettingsToggle = ({
   isAdvancedModeEnabled,
   setIsAdvancedModeEnabled,
-  label = 'Advanced:',
+  label = 'Advanced',
 }: AdvancedSettingsToggleProps) => {
   const { theme } = useContext(ThemeContext);
 
@@ -52,23 +38,15 @@ export const AdvancedSettingsToggle = ({
   };
   const instanceId = useId();
 
-  const yellowColor = theme.color.yellow;
-
   return (
-    <StyledContainer>
-      <StyledIconContainer>
-        <IconPoint size={12} color={yellowColor} fill={yellowColor} />
-      </StyledIconContainer>
-      <StyledToggleContainer htmlFor={instanceId}>
-        <StyledText>{label}</StyledText>
-
-        <Toggle
-          id={instanceId}
-          onChange={onChange}
-          color={yellowColor}
-          value={isAdvancedModeEnabled}
-        />
-      </StyledToggleContainer>
+    <StyledContainer htmlFor={instanceId}>
+      <StyledText>{label}</StyledText>
+      <Toggle
+        id={instanceId}
+        onChange={onChange}
+        color={theme.color.yellow}
+        value={isAdvancedModeEnabled}
+      />
     </StyledContainer>
   );
 };
