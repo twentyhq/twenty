@@ -4,6 +4,8 @@ import { t } from '@lingui/core/macro';
 import { type FallbackProps } from 'react-error-boundary';
 import { AppTooltip, Status } from 'twenty-ui-deprecated/display';
 
+type PageLayoutWidgetInvalidConfigDisplayProps = FallbackProps;
+
 const StyledInvalidConfigContainer = styled.div`
   align-items: center;
   display: flex;
@@ -12,7 +14,7 @@ const StyledInvalidConfigContainer = styled.div`
 
 export const PageLayoutWidgetInvalidConfigDisplay = ({
   error,
-}: FallbackProps) => {
+}: PageLayoutWidgetInvalidConfigDisplayProps) => {
   const widget = useCurrentWidget();
   const tooltipId = `widget-invalid-config-tooltip-${widget.id}`;
 
