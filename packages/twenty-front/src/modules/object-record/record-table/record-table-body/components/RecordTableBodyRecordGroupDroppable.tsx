@@ -1,4 +1,3 @@
-import { SENTRY_REPLAY_IGNORE_MUTATIONS_PROPS } from '@/error-handler/constants/SentryReplayIgnoreMutationsProps';
 import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
 import { RecordTableBodyDroppableContextProvider } from '@/object-record/record-table/record-table-body/contexts/RecordTableBodyDroppableContext';
 import { Droppable } from '@hello-pangea/dnd';
@@ -26,10 +25,7 @@ export const RecordTableBodyRecordGroupDroppable = ({
           ref={provided.innerRef}
           // oxlint-disable-next-line react/jsx-props-no-spreading
           {...provided.droppableProps}
-          // Grouped rows are real DOM (no virtualization cap): row batches on
-          // group toggle / load-more / navigation are expensive for rrweb
-          // oxlint-disable-next-line react/jsx-props-no-spreading
-          {...SENTRY_REPLAY_IGNORE_MUTATIONS_PROPS}
+          data-replay-ignore-mutations="true"
         >
           <RecordTableBodyDroppableContextProvider
             value={{ droppablePlaceholder: provided.placeholder }}

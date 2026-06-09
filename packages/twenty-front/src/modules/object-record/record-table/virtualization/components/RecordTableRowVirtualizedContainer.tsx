@@ -1,4 +1,3 @@
-import { SENTRY_REPLAY_IGNORE_MUTATIONS_PROPS } from '@/error-handler/constants/SentryReplayIgnoreMutationsProps';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { RecordTableRowVirtualizedDebugRowHelper } from '@/object-record/record-table/virtualization/components/RecordTableRowVirtualizedDebugRowHelper';
 import { RecordTableRowVirtualizedRouterLevel1 } from '@/object-record/record-table/virtualization/components/RecordTableRowVirtualizedRouterLevel1';
@@ -52,8 +51,7 @@ export const RecordTableRowVirtualizedContainer = ({
     <StyledVirtualizedRowContainer
       id={`row-virtual-index-${virtualIndex}`}
       pixelsFromTop={pixelsFromTop}
-      // oxlint-disable-next-line react/jsx-props-no-spreading
-      {...SENTRY_REPLAY_IGNORE_MUTATIONS_PROPS}
+      data-replay-ignore-mutations="true"
     >
       {TABLE_VIRTUALIZATION_DEBUG_ACTIVATED && (
         <RecordTableRowVirtualizedDebugRowHelper virtualIndex={virtualIndex} />
