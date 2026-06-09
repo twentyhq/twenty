@@ -35,10 +35,11 @@ in abandoned and vulnerable transitive packages (`undici`, `native-fetch`,
   generated client still defaults its url/fetch to `undefined` (Twenty's wrapper
   supplies them) and the output is unchanged.
 
-The generated output is byte-for-byte identical to what `@genql/cli@3.0.5`
-produced; `prettier@^2.8` is retained for that reason. The runtime query path is
-covered by `__tests__/generated-client-query.test.ts`, which drives a real
-generated client against a mock transport.
+The renderers are vendored verbatim from `@genql/cli@3.0.5`. Formatting now runs
+on `prettier@^3` (the version the monorepo resolves): it needs the explicit
+`prettier/plugins/estree` printer and an awaited, async `format()`. The runtime
+query path is covered by `__tests__/generated-client-query.test.ts`, which drives
+a real generated client against a mock transport.
 
 ## License
 
