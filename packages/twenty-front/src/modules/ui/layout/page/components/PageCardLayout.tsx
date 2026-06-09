@@ -16,7 +16,6 @@ const StyledRoot = styled.div`
   flex-direction: row;
   min-height: 0;
   min-width: 0;
-  padding: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledMainCardWrapper = styled.div`
@@ -28,8 +27,9 @@ const StyledMainCardWrapper = styled.div`
 
 const StyledCard = styled.div`
   background: ${themeCssVariables.background.primary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: 12px;
+  border-left: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: 12px 0 0 12px;
+  border-right: 1px solid ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
   display: flex;
   flex: 1;
