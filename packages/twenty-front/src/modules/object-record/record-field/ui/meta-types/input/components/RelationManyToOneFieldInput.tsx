@@ -18,7 +18,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { CustomError, isDefined } from 'twenty-shared/utils';
-import { IconForbid } from 'twenty-ui/display';
+import { IconForbid } from 'twenty-ui-deprecated/display';
 
 export const RelationManyToOneFieldInput = () => {
   const { t } = useLingui();

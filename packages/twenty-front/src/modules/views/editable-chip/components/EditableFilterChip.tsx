@@ -7,7 +7,7 @@ import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { useGetRecordFilterChipLabelValue } from '@/views/hooks/useGetRecordFilterChipLabelValue';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui-deprecated/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type EditableFilterChipProps = {

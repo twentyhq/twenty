@@ -3,10 +3,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { differenceInDays } from 'date-fns';
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import {
   BillingException,
   BillingExceptionCode,
@@ -49,6 +51,7 @@ export class BillingUsageService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly clickHouseService: ClickHouseService,
     private readonly billingUsageCapService: BillingUsageCapService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   async canFeatureBeUsed(workspaceId: string): Promise<boolean> {
@@ -346,6 +349,18 @@ export class BillingUsageService {
   async hasAvailableCredits(workspaceId: string): Promise<boolean> {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return true;
+    }
+
+    const workspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      workspaceId,
+    );
+
+    if (
+      isDefined(workspace) &&
+      workspace.activationStatus === WorkspaceActivationStatus.SUSPENDED
+    ) {
+      return false;
     }
 
     const { billingSubscription: subscription } =

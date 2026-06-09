@@ -270,12 +270,12 @@ export class DevSeederPermissionsService {
       },
     });
 
-    const personCityFieldMetadata = personObjectMetadata.fields.find(
-      (field) => field.name === 'city',
+    const personJobTitleFieldMetadata = personObjectMetadata.fields.find(
+      (field) => field.name === 'jobTitle',
     );
 
-    if (!personCityFieldMetadata) {
-      throw new Error('Person city field metadata not found');
+    if (!personJobTitleFieldMetadata) {
+      throw new Error('Person jobTitle field metadata not found');
     }
 
     const companyLinkedinLinkFieldMetadata = companyObjectMetadata.fields.find(
@@ -286,9 +286,9 @@ export class DevSeederPermissionsService {
       throw new Error('Company linkedin link field metadata not found');
     }
 
-    const readOnlyOnPersonCityFieldPermission = {
+    const readOnlyOnPersonJobTitleFieldPermission = {
       objectMetadataId: personObjectMetadata.id,
-      fieldMetadataId: personCityFieldMetadata.id,
+      fieldMetadataId: personJobTitleFieldMetadata.id,
       canReadFieldValue: null,
       canUpdateFieldValue: false,
     };
@@ -305,7 +305,7 @@ export class DevSeederPermissionsService {
       input: {
         roleId: customRole.id,
         fieldPermissions: [
-          readOnlyOnPersonCityFieldPermission,
+          readOnlyOnPersonJobTitleFieldPermission,
           noReadOnCompanyLinkedinLinkFieldPermission,
         ],
       },

@@ -9,8 +9,8 @@ Um **papel** é um conjunto de permissões: quais objetos um app pode ler ou gra
 ```ts src/roles/restricted-company-role.ts
 import {
   defineRole,
-  PermissionFlag,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  SystemPermissionFlag,
 } from 'twenty-sdk/define';
 
 export default defineRole({
@@ -46,7 +46,7 @@ export default defineRole({
       canUpdateFieldValue: false,
     },
   ],
-  permissionFlags: [PermissionFlag.APPLICATIONS],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
 });
 ```
 
@@ -55,7 +55,7 @@ export default defineRole({
 Ao criar um novo app com o scaffold, a CLI cria um arquivo de papel padrão declarado com `defineApplicationRole()`:
 
 ```ts src/roles/default-role.ts
-import { defineApplicationRole, PermissionFlag } from 'twenty-sdk/define';
+import { defineApplicationRole } from 'twenty-sdk/define';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
@@ -74,7 +74,7 @@ export default defineApplicationRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [],
   fieldPermissions: [],
-  permissionFlags: [],
+  permissionFlagUniversalIdentifiers: [],
 });
 ```
 
@@ -90,5 +90,5 @@ Notas:
 
 * Comece a partir do papel gerado pelo scaffold e, em seguida, restrinja-o progressivamente — o padrão concede amplo acesso de leitura, o que raramente é o que você quer em produção.
 * Substitua `objectPermissions` e `fieldPermissions` pelos objetos e campos de que suas funções realmente precisam.
-* `permissionFlags` controlam o acesso a recursos em nível de plataforma. Mantenha-os no mínimo necessário.
+* `permissionFlagUniversalIdentifiers` controlam o acesso a recursos em nível de plataforma. Mantenha-os no mínimo necessário.
 * Veja um exemplo funcional: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).

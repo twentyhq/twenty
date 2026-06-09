@@ -10,9 +10,9 @@ import {
   IconEye,
   IconPencil,
   IconTrash,
-} from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+} from 'twenty-ui-deprecated/display';
+import { LightIconButton } from 'twenty-ui-deprecated/input';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
 import { type FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsObjectFieldInactiveActionDropdownProps = {

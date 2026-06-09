@@ -41,32 +41,61 @@ export class ApplicationSyncService {
     workspaceId,
     manifest,
     applicationRegistrationId,
+    dryRun = false,
   }: {
     workspaceId: string;
     manifest: Manifest;
     applicationRegistrationId?: string;
+    dryRun?: boolean;
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
   }> {
-    const application = await this.syncApplication({
-      workspaceId,
-      manifest,
-      applicationRegistrationId,
-    });
-
-    const ownerFlatApplication: FlatApplication = application;
+    const ownerFlatApplication: FlatApplication = dryRun
+      ? await this.findInstalledApplicationOrThrow({ workspaceId, manifest })
+      : await this.syncApplication({
+          workspaceId,
+          manifest,
+          applicationRegistrationId,
+        });
 
     const syncResult =
       await this.applicationManifestMigrationService.syncMetadataFromManifest({
         manifest,
         workspaceId,
         ownerFlatApplication,
+        dryRun,
       });
 
-    this.logger.log('Application sync from manifest completed');
+    this.logger.log(
+      `Application sync from manifest ${dryRun ? 'plan computed (dry run)' : 'completed'}`,
+    );
 
     return syncResult;
+  }
+
+  private async findInstalledApplicationOrThrow({
+    workspaceId,
+    manifest,
+  }: {
+    workspaceId: string;
+    manifest: Manifest;
+  }): Promise<ApplicationEntity> {
+    const application = await this.applicationService.findByUniversalIdentifier(
+      {
+        universalIdentifier: manifest.application.universalIdentifier,
+        workspaceId,
+      },
+    );
+
+    if (!application) {
+      throw new ApplicationException(
+        `Application "${manifest.application.universalIdentifier}" is not installed in workspace "${workspaceId}". Install it first.`,
+        ApplicationExceptionCode.APP_NOT_INSTALLED,
+      );
+    }
+
+    return application;
   }
 
   // Registers the application + only the pre-install logic function in
@@ -129,19 +158,12 @@ export class ApplicationSyncService {
       ).toString('utf-8'),
     ) as PackageJson;
 
-    const application = await this.applicationService.findByUniversalIdentifier(
+    const application = await this.applicationService.findOneApplicationOrThrow(
       {
         universalIdentifier: manifest.application.universalIdentifier,
         workspaceId,
       },
     );
-
-    if (!application) {
-      throw new ApplicationException(
-        `Application "${manifest.application.universalIdentifier}" is not installed in workspace "${workspaceId}". Install it first.`,
-        ApplicationExceptionCode.APP_NOT_INSTALLED,
-      );
-    }
 
     const resolvedRegistrationId =
       applicationRegistrationId ?? application.applicationRegistrationId;
@@ -165,16 +187,9 @@ export class ApplicationSyncService {
     workspaceId: string;
     applicationUniversalIdentifier: string;
   }): Promise<WorkspaceMigration> {
-    const application = await this.applicationService.findByUniversalIdentifier(
+    const application = await this.applicationService.findOneApplicationOrThrow(
       { universalIdentifier: applicationUniversalIdentifier, workspaceId },
     );
-
-    if (!isDefined(application)) {
-      throw new ApplicationException(
-        `Application with universalIdentifier ${applicationUniversalIdentifier} not found`,
-        ApplicationExceptionCode.ENTITY_NOT_FOUND,
-      );
-    }
 
     if (!application.canBeUninstalled) {
       throw new ApplicationException(

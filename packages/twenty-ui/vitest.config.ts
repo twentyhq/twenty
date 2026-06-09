@@ -20,14 +20,18 @@ export default defineConfig({
         plugins: [
           storybookTest({
             configDir: path.join(dirname, '.storybook'),
-            storybookScript: 'yarn storybook --no-open --port 6007',
+            ...(process.env.STORYBOOK_URL
+              ? { storybookUrl: process.env.STORYBOOK_URL }
+              : { storybookScript: 'yarn storybook --no-open --port 6008' }),
           }),
           argosVitestPlugin({
             uploadToArgos: !!process.env.ARGOS_TOKEN,
             token: process.env.ARGOS_TOKEN,
             apiBaseUrl: process.env.ARGOS_API_BASE_URL,
+            buildName: process.env.ARGOS_BUILD_NAME || undefined,
             branch: process.env.ARGOS_BRANCH || undefined,
             commit: process.env.ARGOS_COMMIT || undefined,
+            referenceCommit: process.env.ARGOS_REFERENCE_COMMIT || undefined,
           }),
         ],
         test: {

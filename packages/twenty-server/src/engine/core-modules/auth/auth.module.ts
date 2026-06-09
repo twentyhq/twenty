@@ -10,7 +10,7 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { ConnectionProviderModule } from 'src/engine/core-modules/application/connection-provider/connection-provider.module';
 import { ConnectionProviderOAuthController } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth.controller';
 import { ApplicationConnectionsModule } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.module';
-import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
+import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
 import { GoogleAPIsAuthController } from 'src/engine/core-modules/auth/controllers/google-apis-auth.controller';
 import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/google-auth.controller';
 import { MicrosoftAPIsAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-apis-auth.controller';
@@ -113,7 +113,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     PermissionsModule,
     TwoFactorAuthenticationModule,
     ApiKeyModule,
-    AuditModule,
+    EventLogEmitterModule,
     SubdomainManagerModule,
     DomainServerConfigModule,
     ApplicationRegistrationModule,

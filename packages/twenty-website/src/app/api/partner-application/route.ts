@@ -149,19 +149,46 @@ export async function POST(request: Request) {
     );
   }
 
+  let upstreamBody: string;
+  try {
+    upstreamBody = await upstream.response.text();
+  } catch {
+    upstreamBody = '';
+  }
+
   if (!upstream.response.ok) {
-    let upstreamBody = '';
-    try {
-      upstreamBody = await upstream.response.text();
-    } catch {
-      upstreamBody = '(could not read upstream body)';
-    }
     console.error(
       '[partner-application] upstream returned non-2xx',
       JSON.stringify({
         url: webhookUrl,
         status: upstream.response.status,
         statusText: upstream.response.statusText,
+        body: upstreamBody.slice(0, 2000),
+        payloadKeys: Object.keys(payload),
+      }),
+    );
+    return NextResponse.json(
+      { error: 'Partner application could not be submitted.' },
+      { status: 502 },
+    );
+  }
+
+  let logicResult: unknown;
+  try {
+    logicResult = JSON.parse(upstreamBody);
+  } catch {
+    logicResult = null;
+  }
+
+  if (
+    typeof logicResult !== 'object' ||
+    logicResult === null ||
+    (logicResult as Record<string, unknown>)['ok'] !== true
+  ) {
+    console.error(
+      '[partner-application] logic function returned non-ok result',
+      JSON.stringify({
+        url: webhookUrl,
         body: upstreamBody.slice(0, 2000),
         payloadKeys: Object.keys(payload),
       }),

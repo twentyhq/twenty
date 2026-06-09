@@ -1,14 +1,10 @@
 import { gql } from '@apollo/client';
 
 export const CREATE_EMAILING_DOMAIN = gql`
-  mutation CreateEmailingDomain(
-    $domain: String!
-    $driver: EmailingDomainDriver!
-  ) {
-    createEmailingDomain(domain: $domain, driver: $driver) {
+  mutation CreateEmailingDomain($domain: String!) {
+    createEmailingDomain(domain: $domain) {
       id
       domain
-      driver
       status
       verifiedAt
       verificationRecords {

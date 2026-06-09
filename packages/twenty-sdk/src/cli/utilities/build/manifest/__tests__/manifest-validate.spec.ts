@@ -37,6 +37,7 @@ const validManifest: Manifest = {
   agents: [],
   publicAssets: [],
   views: [],
+  viewFields: [],
   navigationMenuItems: [],
   pageLayouts: [],
   pageLayoutTabs: [],
@@ -148,9 +149,6 @@ describe('manifestValidate', () => {
       expect(result.errors).toContain(
         'Duplicate universal identifiers: 550e8400-e29b-41d4-a716-446655440001',
       );
-      expect(result.warnings).toContain('No object defined');
-      expect(result.warnings).toContain('No logic function defined');
-      expect(result.warnings).toContain('No front component defined');
     });
 
     it('should fail when extension field ID conflicts with object field ID', () => {
@@ -191,9 +189,6 @@ describe('manifestValidate', () => {
       expect(result.errors).toContain(
         'Duplicate universal identifiers: 550e8400-e29b-41d4-a716-446655440001',
       );
-      expect(result.warnings).not.toContain('No object defined');
-      expect(result.warnings).toContain('No logic function defined');
-      expect(result.warnings).toContain('No front component defined');
     });
   });
 

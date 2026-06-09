@@ -8,7 +8,7 @@ import {
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui-deprecated/input';
 
 // Predicate values for select fields can be:
 // - an actual array: ["BIRD", "DOG"]

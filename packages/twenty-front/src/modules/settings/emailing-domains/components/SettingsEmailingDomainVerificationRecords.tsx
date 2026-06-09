@@ -3,10 +3,10 @@ import { SettingsDnsRecordsTable } from '@/settings/components/SettingsDnsRecord
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
-import { H2Title, IconRefresh } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
+import { H2Title, IconRefresh } from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
 
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui-deprecated/layout';
 import { useMutation } from '@apollo/client/react';
 import {
   type EmailingDomain,

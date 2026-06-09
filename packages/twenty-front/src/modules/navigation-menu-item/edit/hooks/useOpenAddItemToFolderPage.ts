@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconColumnInsertRight } from 'twenty-ui/display';
+import { IconColumnInsertRight } from 'twenty-ui-deprecated/display';
 
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';

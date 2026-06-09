@@ -40,8 +40,8 @@ import {
   CustomError,
   isDefined,
 } from 'twenty-shared/utils';
-import { IconPlus } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
+import { IconPlus } from 'twenty-ui-deprecated/display';
+import { LightIconButton } from 'twenty-ui-deprecated/input';
 
 type RecordDetailRelationSectionDropdownToManyProps = {
   dropdownTriggerClickableComponent?: ReactNode;

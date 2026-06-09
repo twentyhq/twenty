@@ -145,6 +145,33 @@ const handler = async (event: RoutePayload) => {
 请求头名称会被规范化为小写。 请使用小写键访问它们（例如，`event.headers['content-type']`）。
 </Note>
 
+#### 自定义 HTTP 响应
+
+默认情况下，从处理程序返回一个普通值会以 `200` 响应返回该值（对象为 JSON，字符串为 `text/plain`）。 要控制状态码和响应头，请从 `twenty-sdk/logic-function` 返回一个 `Response`：
+
+```ts
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  return new Response('<h1>Hello</h1>', {
+    status: 201,
+    headers: { 'content-type': 'text/html' },
+  });
+};
+```
+
+出于安全原因，响应头被限制在一个允许列表中。 任何不在该列表中的响应头（例如 `Set-Cookie`、CORS 响应头（如 `Access-Control-Allow-Origin`），或自定义的 `X-*` 响应头）都会在发送响应之前被静默丢弃。 允许的响应头包括：
+
+* `content-type`
+* `content-language`
+* `content-disposition`
+* `cache-control`
+* `retry-after`
+
+<Note>
+状态码必须是有效的 HTTP 状态码（介于 100 和 599 之间）。 响应头名称的匹配不区分大小写。
+</Note>
+
 #### 数据库事件触发器有效负载
 
 当数据库事件触发器调用你的逻辑函数时，每条被更改的记录都会对应一个 `DatabaseEventPayload`。 该负载将关于源工作区和对象的元数据与记录级事件组合在一起。

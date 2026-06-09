@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 export const StyledMarkdownContainer = styled.div`
   border-radius: ${themeCssVariables.border.radius.sm};

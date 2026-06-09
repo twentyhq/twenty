@@ -1045,12 +1045,11 @@
         "name": "mistral-medium-latest",
         "label": "Mistral Medium (latest)",
         "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 1.5,
-        "outputCostPerMillionTokens": 7.5,
+        "inputCostPerMillionTokens": 0.4,
+        "outputCostPerMillionTokens": 2,
         "contextWindowTokens": 262144,
         "maxOutputTokens": 262144,
-        "modalities": ["image"],
-        "supportsReasoning": true
+        "modalities": ["image"]
       },
       {
         "name": "devstral-medium-latest",
@@ -1347,7 +1346,7 @@
           "thresholdTokens": 200000,
           "cachedInputCostPerMillionTokens": 0.4
         },
-        "contextWindowTokens": 2000000,
+        "contextWindowTokens": 1000000,
         "maxOutputTokens": 30000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true
@@ -1383,7 +1382,7 @@
           "thresholdTokens": 200000,
           "cachedInputCostPerMillionTokens": 0.4
         },
-        "contextWindowTokens": 2000000,
+        "contextWindowTokens": 1000000,
         "maxOutputTokens": 30000,
         "modalities": ["image", "pdf"]
       }

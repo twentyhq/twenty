@@ -17,8 +17,8 @@ import {
   IconCheck,
   IconChevronLeft,
   useIcons,
-} from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
+} from 'twenty-ui-deprecated/display';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
 
 export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
   const {

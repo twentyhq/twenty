@@ -11,19 +11,20 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 import {
   type EventLogRecord,
-  EventLogTable,
+  type EventLogTable,
 } from '~/generated-metadata/graphql';
 
 import {
   type ColumnConfig,
   getColumnsForEventLogTable,
 } from '@/settings/event-logs/utils/getColumnsForEventLogTable';
-import { EventLogJsonCell } from '@/settings/event-logs/components/EventLogJsonCell';
 
 type EventLogResultsTableProps = {
   records: EventLogRecord[];
@@ -106,9 +107,6 @@ export const EventLogResultsTable = ({
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
 
-  const showObjectEventColumns = selectedTable === EventLogTable.OBJECT_EVENT;
-  const showApplicationLogColumns =
-    selectedTable === EventLogTable.APPLICATION_LOG;
   const baseColumns = getColumnsForEventLogTable(selectedTable);
 
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>(() =>
@@ -117,7 +115,6 @@ export const EventLogResultsTable = ({
 
   const [resizingColumn, setResizingColumn] = useState<string | null>(null);
 
-  // Reset column widths when switching tables to avoid undefined widths for new columns
   useEffect(() => {
     setColumnWidths(
       Object.fromEntries(baseColumns.map((col) => [col.id, col.defaultWidth])),
@@ -242,85 +239,21 @@ export const EventLogResultsTable = ({
                 </StyledResizableHeaderContainer>
               ))}
             </TableRow>
-            {records.map((record, index) => (
+            {records.map((record) => (
               <TableRow
-                key={`${record.timestamp}-${record.event}-${index}`}
+                key={`${record.timestamp}-${record.event}`}
                 gridTemplateColumns={gridTemplateColumns}
               >
-                <TableCell
-                  overflow="hidden"
-                  textOverflow="ellipsis"
-                  whiteSpace="nowrap"
-                >
-                  {record.event}
-                </TableCell>
-                <TableCell
-                  overflow="hidden"
-                  textOverflow="ellipsis"
-                  whiteSpace="nowrap"
-                >
-                  {beautifyPastDateRelativeToNow(record.timestamp)}
-                </TableCell>
-                {showApplicationLogColumns ? (
-                  <>
-                    <TableCell
-                      overflow="hidden"
-                      textOverflow="ellipsis"
-                      whiteSpace="nowrap"
-                    >
-                      {record.properties?.level ?? '-'}
-                    </TableCell>
-                    <TableCell
-                      overflow="hidden"
-                      textOverflow="ellipsis"
-                      whiteSpace="nowrap"
-                    >
-                      {record.properties?.message ?? '-'}
-                    </TableCell>
-                    <TableCell
-                      overflow="hidden"
-                      textOverflow="ellipsis"
-                      whiteSpace="nowrap"
-                    >
-                      {record.properties?.executionId ?? '-'}
-                    </TableCell>
-                  </>
-                ) : (
-                  <>
-                    <TableCell
-                      overflow="hidden"
-                      textOverflow="ellipsis"
-                      whiteSpace="nowrap"
-                    >
-                      {record.userId ?? '-'}
-                    </TableCell>
-                    {showObjectEventColumns && (
-                      <>
-                        <TableCell
-                          overflow="hidden"
-                          textOverflow="ellipsis"
-                          whiteSpace="nowrap"
-                        >
-                          {record.recordId ?? '-'}
-                        </TableCell>
-                        <TableCell
-                          overflow="hidden"
-                          textOverflow="ellipsis"
-                          whiteSpace="nowrap"
-                        >
-                          {record.objectMetadataId ?? '-'}
-                        </TableCell>
-                      </>
-                    )}
-                    <TableCell
-                      overflow="hidden"
-                      textOverflow="ellipsis"
-                      whiteSpace="nowrap"
-                    >
-                      <EventLogJsonCell value={record.properties} />
-                    </TableCell>
-                  </>
-                )}
+                {baseColumns.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    overflow="hidden"
+                    textOverflow="ellipsis"
+                    whiteSpace="nowrap"
+                  >
+                    {column.renderCell(record)}
+                  </TableCell>
+                ))}
               </TableRow>
             ))}
           </Table>

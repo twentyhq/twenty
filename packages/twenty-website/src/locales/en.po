@@ -119,6 +119,11 @@ msgstr ""
 "+$75/user per month\n"
 "Switch to enterprise!"
 
+#. js-lingui-id: Uqm/0u
+#: src/app/[locale]/product/_components/ProductHero.tsx
+msgid "<0>...with AI that actually</0><1/><2>helps you</2><3>work faster</3>"
+msgstr "<0>...with AI that actually</0><1/><2>helps you</2><3>work faster</3>"
+
 #. js-lingui-id: ZKcQvG
 #: src/app/[locale]/product/_components/ProductHero.tsx
 msgid "<0>A CRM for teams</0><1/><2>that</2><3>move fast</3>"
@@ -138,11 +143,6 @@ msgstr "<0>A demo worth a</0><1/><2>thousand words</2>"
 #: src/app/[locale]/product/_components/ProductThreeCards.tsx
 msgid "<0>A modern CRM with</0><1>an intuitive interface</1>"
 msgstr "<0>A modern CRM with</0><1>an intuitive interface</1>"
-
-#. js-lingui-id: rxBk/x
-#: src/app/[locale]/product/_components/ProductHero.tsx
-msgid "<0>AI that actually</0><1/><2>helps you</2><3>work faster</3>"
-msgstr "<0>AI that actually</0><1/><2>helps you</2><3>work faster</3>"
 
 #. js-lingui-id: YXQqRD
 #: src/app/[locale]/(home)/_components/HomeIllustrationThreeCards.tsx
@@ -772,6 +772,11 @@ msgstr "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CR
 msgid "Apply to build"
 msgstr "Apply to build"
 
+#. js-lingui-id: zX3HUD
+#: src/lib/website-routing/static-website-routes.ts
+msgid "Apply to join the Twenty certified partner ecosystem."
+msgstr "Apply to join the Twenty certified partner ecosystem."
+
 #. js-lingui-id: 8HV3WN
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 #: src/app/[locale]/partners/list/components/chip-labels.ts
@@ -799,10 +804,10 @@ msgstr "Armenia 🇦🇲"
 msgid "around it"
 msgstr "around it"
 
-#. js-lingui-id: 4YKyFV
+#. js-lingui-id: S+Q+1d
 #: src/app/[locale]/product/_components/ProductHero.tsx
-msgid "Ask questions, automate tasks, and get insights. All powered by AI that understands your data."
-msgstr "Ask questions, automate tasks, and get insights. All powered by AI that understands your data."
+msgid "Ask questions, automate tasks, and get insights with AI that understands your data and helps you move faster every day, end to end across teams."
+msgstr "Ask questions, automate tasks, and get insights with AI that understands your data and helps you move faster every day, end to end across teams."
 
 #. js-lingui-id: v7zTZl
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -909,6 +914,11 @@ msgstr "become a genius!"
 msgid "Become a partner"
 msgstr "Become a partner"
 
+#. js-lingui-id: 7ysT6Z
+#: src/lib/website-routing/static-website-routes.ts
+msgid "Become a Twenty Partner — Application"
+msgstr "Become a Twenty Partner — Application"
+
 #. js-lingui-id: 0TCnEf
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Belarus 🇧🇾"
@@ -998,6 +1008,16 @@ msgstr "Browse Twenty's certified partner network: regional coverage, languages,
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Brunei 🇧🇳"
 msgstr "Brunei 🇧🇳"
+
+#. js-lingui-id: sbr0X/
+#: src/app/[locale]/product/ai-hero-tabs.data.ts
+msgid "Build a dashboard of pipeline by stage"
+msgstr "Build a dashboard of pipeline by stage"
+
+#. js-lingui-id: uetyzD
+#: src/app/[locale]/product/ai-hero-tabs.data.ts
+msgid "Build a pipeline board grouped by stage"
+msgstr "Build a pipeline board grouped by stage"
 
 #. js-lingui-id: Utc5RF
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -1337,11 +1357,6 @@ msgstr "Country *"
 msgid "Create a workflow"
 msgstr "Create a workflow"
 
-#. js-lingui-id: Pg0blE
-#: src/app/[locale]/product/ai-hero-tabs.data.ts
-msgid "Create a workflow that sends an email sequence"
-msgstr "Create a workflow that sends an email sequence"
-
 #. js-lingui-id: B9nLrl
 #: src/sections/Menu/data.ts
 msgid "Create apps on Twenty"
@@ -1353,11 +1368,6 @@ msgstr "Create apps on Twenty"
 #: src/sections/Plans/data.ts
 msgid "Create custom apps"
 msgstr "Create custom apps"
-
-#. js-lingui-id: mmx00G
-#: src/app/[locale]/product/ai-hero-tabs.data.ts
-msgid "Create follow-up tasks for my top 10 accounts"
-msgstr "Create follow-up tasks for my top 10 accounts"
 
 #. js-lingui-id: oS1RiS
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -1631,6 +1641,11 @@ msgstr "Don't get locked into someone else's ecosystem. Twenty's developer exper
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "DR Congo 🇨🇩"
 msgstr "DR Congo 🇨🇩"
+
+#. js-lingui-id: mzedFr
+#: src/app/[locale]/product/ai-hero-tabs.data.ts
+msgid "Draft a workflow for an email sequence"
+msgstr "Draft a workflow for an email sequence"
 
 #. js-lingui-id: fPma12
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -2078,6 +2093,11 @@ msgstr "Gabon 🇬🇦"
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Gambia 🇬🇲"
 msgstr "Gambia 🇬🇲"
+
+#. js-lingui-id: S84RWl
+#: src/app/[locale]/product/ai-hero-tabs.data.ts
+msgid "Generate tasks for my top 10 accounts"
+msgstr "Generate tasks for my top 10 accounts"
 
 #. js-lingui-id: GOmD9p
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
@@ -3787,11 +3807,6 @@ msgstr "Ship a product on Twenty"
 msgid "Show less"
 msgstr "Show less"
 
-#. js-lingui-id: qv84H6
-#: src/app/[locale]/product/ai-hero-tabs.data.ts
-msgid "Show me all deals closing this month"
-msgstr "Show me all deals closing this month"
-
 #. js-lingui-id: RhU4bB
 #: src/app/[locale]/partners/list/components/FilterBar.tsx
 msgid "Showing {visibleCount} of {totalCount} partners"
@@ -3982,11 +3997,6 @@ msgstr "Submitting…"
 msgid "Sudan 🇸🇩"
 msgstr "Sudan 🇸🇩"
 
-#. js-lingui-id: KY4KBn
-#: src/app/[locale]/product/ai-hero-tabs.data.ts
-msgid "Summarize this customer's history"
-msgstr "Summarize this customer's history"
-
 #. js-lingui-id: XYLcNv
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "Support"
@@ -4051,6 +4061,7 @@ msgstr "Tajikistan 🇹🇯"
 #. js-lingui-id: JAKtcG
 #: src/sections/Footer/data.ts
 #: src/sections/Faq/Faq.tsx
+#: src/app/[locale]/product/_components/ProductHero.tsx
 #: src/app/[locale]/customers/_components/CustomersCatalogSignoff.tsx
 #: src/app/[locale]/customers/_components/CustomersCaseStudySignoff.tsx
 #: src/app/[locale]/(home)/_components/HomeHero.tsx
@@ -4339,10 +4350,10 @@ msgstr "Track amount and close date"
 msgid "Track every release with changelogs, highlights and demos of the newest features."
 msgstr "Track every release with changelogs, highlights and demos of the newest features."
 
-#. js-lingui-id: yiYtW0
+#. js-lingui-id: 6vHPh9
 #: src/app/[locale]/product/_components/ProductHero.tsx
-msgid "Track relationships, manage pipelines, and take action quickly with a CRM that feels intuitive from day one."
-msgstr "Track relationships, manage pipelines, and take action quickly with a CRM that feels intuitive from day one."
+msgid "Track relationships, manage pipelines, and take action quickly with an intuitive CRM that helps your team move faster from day one with confidence."
+msgstr "Track relationships, manage pipelines, and take action quickly with an intuitive CRM that helps your team move faster from day one with confidence."
 
 #. js-lingui-id: xwWQ9Q
 #: src/app/[locale]/partners/list/components/chip-labels.ts
@@ -4358,6 +4369,11 @@ msgstr "Training, Adoption & Support"
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Trinidad & Tobago 🇹🇹"
 msgstr "Trinidad & Tobago 🇹🇹"
+
+#. js-lingui-id: tdZpCd
+#: src/sections/Footer/data.ts
+msgid "Trust Center"
+msgstr "Trust Center"
 
 #. js-lingui-id: KtyN0b
 #: src/sections/TrustedBy/TrustedBy.tsx

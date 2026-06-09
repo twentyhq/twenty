@@ -35,7 +35,7 @@ import {
   IconSparkles,
   IconUserCircle,
   IconUsers,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export type SettingsNavigationSection = {
@@ -171,7 +171,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`AI`,
           path: SettingsPath.AI,
           Icon: IconSparkles,
-          isHidden: !permissionMap[PermissionFlagType.AI],
+          isHidden: !permissionMap[PermissionFlagType.AI_SETTINGS],
         },
         {
           label: t`Email`,

@@ -1,7 +1,7 @@
 import { PermissionIcon } from '@/settings/roles/role-permissions/objects-permissions/components/PermissionIcon';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
-import { IconTrash } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
+import { IconTrash } from 'twenty-ui-deprecated/display';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
 
 type WorkflowAiAgentPermissionsPermissionRowProps = {
   permission: {
