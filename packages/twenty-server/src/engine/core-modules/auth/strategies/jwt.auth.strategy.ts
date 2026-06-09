@@ -145,6 +145,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     const userContext = await this.resolveUserContext({
       userId,
       userWorkspaceId: payload.userWorkspaceId,
+      expectedWorkspaceId: workspace.id,
     });
 
     assertIsDefinedOrThrow(
