@@ -36,9 +36,13 @@ export const AgentChatRuntimeEffects = () => {
     <>
       <AgentChatMessagesFetchEffect />
       <AgentChatStreamSubscriptionEffect />
-      <AgentChatStreamingPartsDiffSyncEffect />
       <AgentChatSessionStartTimeEffect />
-      <AgentChatStreamingAutoScrollEffect />
+      {isAgentChatOpen && (
+        <>
+          <AgentChatStreamingPartsDiffSyncEffect />
+          <AgentChatStreamingAutoScrollEffect />
+        </>
+      )}
     </>
   );
 };
