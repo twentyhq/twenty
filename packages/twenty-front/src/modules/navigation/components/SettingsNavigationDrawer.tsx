@@ -1,5 +1,5 @@
-import { NavigationDrawerAiChatContent } from '@/ai/components/NavigationDrawerAiChatContent';
 import { MainNavigationDrawerTabsRow } from '@/navigation/components/MainNavigationDrawerTabsRow';
+import { NavigationDrawerTabbedContent } from '@/navigation/components/NavigationDrawerTabbedContent';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
@@ -50,11 +50,10 @@ export const SettingsNavigationDrawer = ({
       )}
 
       <NavigationDrawerScrollableContent>
-        {showAiChatContent ? (
-          <NavigationDrawerAiChatContent />
-        ) : (
-          <SettingsNavigationDrawerItems />
-        )}
+        <NavigationDrawerTabbedContent
+          showAiChatContent={showAiChatContent}
+          navigationContent={<SettingsNavigationDrawerItems />}
+        />
       </NavigationDrawerScrollableContent>
 
       {!showAiChatContent && (
