@@ -1,0 +1,110 @@
+packages/twenty-server/src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+  s_b8aa3ee71a096f::t_d38137cb01596a 29-30
+  s_b8aa3ee71a096f::t_4f24f3c87da180 7
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+  s_b8aa3ee71a096f::t_64c017eebcf6dd 343
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant.ts
+  s_b8aa3ee71a096f::t_9c05e44cb0a852 8
+  s_b8aa3ee71a096f::t_ae7bee09603ebe 14
+  s_b8aa3ee71a096f::t_3febee70f82711 43
+  s_b8aa3ee71a096f::t_2830dc3e7bfb6f 35
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/index.ts
+  s_b8aa3ee71a096f::t_2647d831cb2cc7 13
+  s_b8aa3ee71a096f::t_b1770944bb6bbc 7
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-suppression-standard-flat-index-metadata.util.ts
+  s_b8aa3ee71a096f::t_e5646a49ceff70 27
+packages/twenty-server/src/modules/messaging/message-import-manager/types/message.ts
+  s_b8aa3ee71a096f::t_3db1cde30f388e 49-50
+packages/twenty-shared/src/metadata/constants/standard-object.constant.ts
+  s_b8aa3ee71a096f::t_4f53d8d053c985 1025,1038-1039
+  s_b8aa3ee71a096f::t_146d95dbc2ec7b 1123-1125
+  s_b8aa3ee71a096f::t_e39c52f112f024 1030-1032
+  s_b8aa3ee71a096f::t_7fbdb9511a4e4a 1407-1409
+  s_b8aa3ee71a096f::t_858be8d2760021 1433-1435
+packages/twenty-server/src/modules/emailing/standard-objects/message-campaign.workspace-entity.ts
+  s_b8aa3ee71a096f::t_120bae28b5b7ee 8
+  s_b8aa3ee71a096f::t_800afd00b017c6 35-36
+  s_b8aa3ee71a096f::t_c04fc8b7def684 6
+  s_b8aa3ee71a096f::t_3330f46e9e503e 38
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
+  s_b8aa3ee71a096f::t_e24e1f024aefd0 359-385
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-participant-standard-flat-index-metadata.util.ts
+  s_b8aa3ee71a096f::t_51de7d60d3e527 55-66
+packages/twenty-server/src/database/commands/upgrade-version-command/2-9/2-9-workspace-command-1799000031000-backfill-message-standard-objects.command.ts
+  s_b8aa3ee71a096f::t_b454e6d472a8e7 428-450
+  s_b8aa3ee71a096f::t_883417cea66858 329
+  s_b8aa3ee71a096f::t_cef71b16c1e04c 312
+  s_b8aa3ee71a096f::t_d77b114aeb532d 301
+  s_b8aa3ee71a096f::t_7456b127cb4ba8 78-79
+  s_b8aa3ee71a096f::t_ffcb29b01b1694 18
+  s_b8aa3ee71a096f::t_55913d40a2b66f 156,164
+  s_b8aa3ee71a096f::t_17653bc6e2b5b0 82-85
+  s_b8aa3ee71a096f::t_b032be42f4d7af 15
+  s_b8aa3ee71a096f::t_07cf202ee6ccec 243-261
+  s_b8aa3ee71a096f::t_a8fc2fb294098e 57
+  s_b8aa3ee71a096f::t_0f6801c2d0c69b 88,90-95,98-110
+  s_b8aa3ee71a096f::t_945fdc3de960d3 89
+  s_b8aa3ee71a096f::t_566ebc1b30098f 144
+  s_b8aa3ee71a096f::t_a982c26a1cde07 122
+packages/twenty-server/src/modules/emailing/standard-objects/message-list.workspace-entity.ts
+  s_b8aa3ee71a096f::t_ed34a42496edc9 6
+  s_b8aa3ee71a096f::t_99782c25999d42 18
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-message-topic-page-layout.config.ts
+  s_b8aa3ee71a096f::t_ffd5f50ab44a92 22-23,41-42
+  s_b8aa3ee71a096f::t_a6d461e6460b28 1-21,24-40,43-99
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/message-campaign.service.ts
+  s_b8aa3ee71a096f::t_82abcc0bafe123 182
+  s_b8aa3ee71a096f::t_29b520844002b4 461
+packages/twenty-shared/src/metadata/constants/standard-page-layout-universal-identifiers.constant.ts
+  s_b8aa3ee71a096f::t_c3f2dc60995e8f 651-662,672-699
+  s_b8aa3ee71a096f::t_4e87b043739ce3 663-665
+  s_b8aa3ee71a096f::t_4049ecd0961f3b 611-650
+  s_b8aa3ee71a096f::t_a1e58ddeee53f6 666-671
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-campaign-standard-flat-index-metadata.util.ts
+  s_b8aa3ee71a096f::t_df61031a349cea 32-43
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
+  s_b8aa3ee71a096f::t_2c4d89047f049f 216-238
+packages/twenty-server/src/modules/messaging/common/query-hooks/message/apply-messages-visibility-restrictions.service.ts
+  s_b8aa3ee71a096f::t_327c03eb20cca9 92-93
+packages/twenty-server/src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util.ts
+  s_b8aa3ee71a096f::t_c6a6bc0dfc91af 26-31
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-message-campaign-page-layout.config.ts
+  s_b8aa3ee71a096f::t_ec170c9e403847 1-31,66-72,74-133
+  s_b8aa3ee71a096f::t_5f07176572a98b 32-53,61,73
+  s_b8aa3ee71a096f::t_1edb1aed18e395 54-60,62-65
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
+  s_b8aa3ee71a096f::t_2327fcf03b00eb 332
+  s_b8aa3ee71a096f::t_eb0095977863d8 289
+  s_b8aa3ee71a096f::t_f3e3c44f4e10c9 384
+  s_b8aa3ee71a096f::t_9c875233f709d9 408-417,419-427
+  s_b8aa3ee71a096f::t_f91e606b24a6db 227
+  s_b8aa3ee71a096f::t_0379d66ffffa53 358
+  s_b8aa3ee71a096f::t_0e807560268f9d 345
+  s_b8aa3ee71a096f::t_abb9da8654aa43 455
+  s_b8aa3ee71a096f::t_8ca1ef46c181b8 463-472,474-480
+  s_b8aa3ee71a096f::t_e152cf269973e6 239
+  s_b8aa3ee71a096f::t_89421dab16792c 371
+  s_b8aa3ee71a096f::t_cabad34cd2d350 320
+  s_b8aa3ee71a096f::t_c5e5864c52122b 215
+  s_b8aa3ee71a096f::t_e2338e819a8d57 191
+  s_b8aa3ee71a096f::t_bd42cf879ef76d 398
+  s_b8aa3ee71a096f::t_b82d1785333561 473
+  s_b8aa3ee71a096f::t_460c873525f418 203
+  s_b8aa3ee71a096f::t_9776b42652d182 418
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "9d0c8238643a4063c11b6c16ba7df97f904b306d",
+  "prompts": {},
+  "sessions": {
+    "s_b8aa3ee71a096f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "729455bc-eec3-4b99-bbf8-066fb4359921",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
