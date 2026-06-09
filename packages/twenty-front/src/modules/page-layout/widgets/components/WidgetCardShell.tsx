@@ -125,24 +125,6 @@ export const WidgetCardShell = ({
                 widget.configuration,
                 widget.objectMetadataId,
               ]}
-              onError={async (error) => {
-                const extra = {
-                  widgetId: widget.id,
-                  widgetType: widget.type,
-                  configurationType: widget.configuration?.configurationType,
-                };
-                // oxlint-disable-next-line no-console
-                console.error('[PageLayoutWidget] render failed', {
-                  ...extra,
-                  error,
-                });
-                try {
-                  const { captureException } = await import('@sentry/react');
-                  captureException(error, { extra });
-                } catch {
-                  // Sentry not available; console.error above is the fallback.
-                }
-              }}
             >
               <WidgetContentRenderer widget={widget} />
             </ErrorBoundary>
