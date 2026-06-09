@@ -80,7 +80,8 @@ describe('GraphqlQueryOrderGroupByParser - object alias in order-by clauses', ()
   const objectAlias = getObjectAlias(flatObjectMetadata);
   const physicalTableName = computeTableName(
     flatObjectMetadata.nameSingular,
-    flatObjectMetadata.isCustom,
+    // isCustom is upgrade-aware and optional on FlatObjectMetadata; coerce to boolean
+    !!flatObjectMetadata.isCustom,
   );
 
   const buildParser = () =>
