@@ -1,6 +1,7 @@
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { RecordTableRowVirtualizedDebugRowHelper } from '@/object-record/record-table/virtualization/components/RecordTableRowVirtualizedDebugRowHelper';
 import { RecordTableRowVirtualizedRouterLevel1 } from '@/object-record/record-table/virtualization/components/RecordTableRowVirtualizedRouterLevel1';
+import { RECORD_TABLE_ROW_VIRTUAL_INDEX_ID_PREFIX } from '@/object-record/record-table/virtualization/constants/RecordTableRowVirtualIndexIdPrefix';
 import { TABLE_VIRTUALIZATION_DEBUG_ACTIVATED } from '@/object-record/record-table/virtualization/constants/TableVirtualizationDebugActivated';
 
 import { realIndexByVirtualIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/realIndexByVirtualIndexComponentFamilyState';
@@ -49,7 +50,7 @@ export const RecordTableRowVirtualizedContainer = ({
 
   return (
     <StyledVirtualizedRowContainer
-      id={`row-virtual-index-${virtualIndex}`}
+      id={`${RECORD_TABLE_ROW_VIRTUAL_INDEX_ID_PREFIX}${virtualIndex}`}
       pixelsFromTop={pixelsFromTop}
     >
       {TABLE_VIRTUALIZATION_DEBUG_ACTIVATED && (

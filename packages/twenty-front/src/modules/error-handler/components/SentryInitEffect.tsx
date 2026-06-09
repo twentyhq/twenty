@@ -2,6 +2,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
+import { RECORD_TABLE_ROW_VIRTUAL_INDEX_ID_PREFIX } from '@/object-record/record-table/virtualization/constants/RecordTableRowVirtualIndexIdPrefix';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect, useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -44,7 +45,9 @@ export const SentryInitEffect = () => {
               browserTracingIntegration({}),
               replayIntegration({
                 _experiments: {
-                  ignoreMutations: ['[id^="row-virtual-index-"]'],
+                  ignoreMutations: [
+                    `[id^="${RECORD_TABLE_ROW_VIRTUAL_INDEX_ID_PREFIX}"]`,
+                  ],
                 },
               }),
               globalHandlersIntegration({
