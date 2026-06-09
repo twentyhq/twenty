@@ -1,7 +1,7 @@
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { AppTooltip, Status } from 'twenty-ui/display';
+import { AppTooltip, Status } from 'twenty-ui-deprecated/display';
 import { WidgetType } from '~/generated-metadata/graphql';
 
 const StyledNoDataContainer = styled.div`

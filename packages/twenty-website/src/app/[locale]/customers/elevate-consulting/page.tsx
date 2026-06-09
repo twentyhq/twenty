@@ -1,12 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import { CASE_STUDY_HERO_IMAGES, type CaseStudyData } from '@/lib/customers';
-import {
-  getRouteI18n,
-  type LocaleRouteParams,
-} from '@/lib/i18n/utils/get-route-i18n';
+import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { buildLocalizedMetadata } from '@/lib/seo';
 import { Heading, HeadingPart } from '@/design-system/components';
-import { CaseStudyPageLayout } from '@/app/[locale]/customers/_components/CaseStudyPageLayout';
+import { CustomersCaseStudyPageLayout } from '@/app/[locale]/customers/_components/CustomersCaseStudyPageLayout';
 
 const HERO_IMAGE = CASE_STUDY_HERO_IMAGES.elevateConsulting;
 
@@ -43,7 +40,7 @@ export default async function ElevateConsultingCaseStudyPage({
           <br />
           <HeadingPart fontFamily="sans">
             {i18n._(msg`API backbone`)}
-          </HeadingPart>{' '}
+          </HeadingPart>
           <HeadingPart fontFamily="serif">
             {i18n._(msg`of a go-to-market stack`)}
           </HeadingPart>
@@ -73,7 +70,7 @@ export default async function ElevateConsultingCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`From documents to`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`open APIs`)}
             </HeadingPart>
@@ -92,8 +89,8 @@ export default async function ElevateConsultingCaseStudyPage({
         eyebrow: msg`Integration`,
         heading: (
           <Heading size="md" weight="light">
-            <HeadingPart fontFamily="serif">{i18n._(msg`One`)}</HeadingPart>{' '}
-            <HeadingPart fontFamily="sans">{i18n._(msg`API`)}</HeadingPart>{' '}
+            <HeadingPart fontFamily="serif">{i18n._(msg`One`)}</HeadingPart>
+            <HeadingPart fontFamily="sans">{i18n._(msg`API`)}</HeadingPart>
             <HeadingPart fontFamily="serif">
               {i18n._(msg`to rule them all`)}
             </HeadingPart>
@@ -114,7 +111,7 @@ export default async function ElevateConsultingCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`Workflows that`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`actually get used`)}
             </HeadingPart>
@@ -131,7 +128,7 @@ export default async function ElevateConsultingCaseStudyPage({
         eyebrow: msg`What is next`,
         heading: (
           <Heading size="md" weight="light">
-            <HeadingPart fontFamily="serif">{i18n._(msg`Beyond`)}</HeadingPart>{' '}
+            <HeadingPart fontFamily="serif">{i18n._(msg`Beyond`)}</HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`internal rollout`)}
             </HeadingPart>
@@ -156,7 +153,7 @@ export default async function ElevateConsultingCaseStudyPage({
   };
 
   return (
-    <CaseStudyPageLayout
+    <CustomersCaseStudyPageLayout
       caseStudy={caseStudy}
       path="/customers/elevate-consulting"
     />

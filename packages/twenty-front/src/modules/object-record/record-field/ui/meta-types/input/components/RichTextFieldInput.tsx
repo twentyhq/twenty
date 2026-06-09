@@ -12,9 +12,12 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { styled } from '@linaria/react';
 import { Suspense, lazy, useContext, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { IconLayoutSidebarLeftCollapse } from 'twenty-ui/display';
-import { FloatingIconButton } from 'twenty-ui/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconLayoutSidebarLeftCollapse } from 'twenty-ui-deprecated/display';
+import { FloatingIconButton } from 'twenty-ui-deprecated/input';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const ActivityRichTextEditor = lazy(() =>
   import('@/activities/components/ActivityRichTextEditor').then((module) => ({
@@ -31,14 +34,24 @@ const RichTextFieldEditor = lazy(() =>
 );
 
 const StyledContainer = styled.div`
+  align-items: flex-start;
   background-color: ${themeCssVariables.background.primary};
   box-sizing: border-box;
   display: flex;
   margin: 0 0 0 calc(-1 * ${themeCssVariables.spacing[5]});
+  max-height: min(60vh, 500px);
+  overflow: hidden;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]}
     ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[12]};
   position: relative;
   width: 480px;
+`;
+
+const StyledEditorScroll = styled.div`
+  align-self: stretch;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 `;
 
 const StyledCollapseButton = styled.div`
@@ -104,20 +117,22 @@ export const RichTextFieldInput = () => {
 
   return (
     <StyledContainer ref={containerRef}>
-      <Suspense fallback={<LoadingSkeleton />}>
-        {isActivityObject(objectNameSingular) ? (
-          <ActivityRichTextEditor
-            activityId={recordId}
-            activityObjectNameSingular={objectNameSingular}
-          />
-        ) : (
-          <RichTextFieldEditor
-            recordId={recordId}
-            objectNameSingular={objectNameSingular}
-            fieldName={fieldName}
-          />
-        )}
-      </Suspense>
+      <StyledEditorScroll>
+        <Suspense fallback={<LoadingSkeleton />}>
+          {isActivityObject(objectNameSingular) ? (
+            <ActivityRichTextEditor
+              activityId={recordId}
+              activityObjectNameSingular={objectNameSingular}
+            />
+          ) : (
+            <RichTextFieldEditor
+              recordId={recordId}
+              objectNameSingular={objectNameSingular}
+              fieldName={fieldName}
+            />
+          )}
+        </Suspense>
+      </StyledEditorScroll>
       <StyledCollapseButton>
         <FloatingIconButton
           Icon={IconLayoutSidebarLeftCollapse}

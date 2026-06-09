@@ -2,19 +2,16 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui-deprecated/display';
+import { Section } from 'twenty-ui-deprecated/layout';
 import { useMutation } from '@apollo/client/react';
-import {
-  EmailingDomainDriver,
-  CreateEmailingDomainDocument,
-} from '~/generated-metadata/graphql';
+import { CreateEmailingDomainDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import {
   settingsEmailingDomainFormSchema,
@@ -31,7 +28,6 @@ export const SettingsNewEmailingDomain = () => {
 
   const [formValues, setFormValues] =
     useState<SettingsEmailingDomainFormValues>({
-      driver: EmailingDomainDriver.AWS_SES,
       domain: '',
     });
 
@@ -54,7 +50,7 @@ export const SettingsNewEmailingDomain = () => {
 
   const handleFieldChange = (
     field: keyof SettingsEmailingDomainFormValues,
-    value: string | EmailingDomainDriver,
+    value: string,
   ) => {
     setFormValues((prev) => ({
       ...prev,
@@ -82,7 +78,6 @@ export const SettingsNewEmailingDomain = () => {
       await createEmailingDomain({
         variables: {
           domain: formValues.domain,
-          driver: formValues.driver,
         },
         onCompleted: (data) => {
           enqueueSuccessSnackBar({
@@ -110,7 +105,7 @@ export const SettingsNewEmailingDomain = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`New Emailing Domain`}
       actionButton={
         <SaveAndCancelButtons
@@ -122,7 +117,7 @@ export const SettingsNewEmailingDomain = () => {
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
           children: <Trans>Email</Trans>,
@@ -149,6 +144,6 @@ export const SettingsNewEmailingDomain = () => {
           />
         </Section>
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

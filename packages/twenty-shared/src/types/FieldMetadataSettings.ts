@@ -20,10 +20,17 @@ export enum DateDisplayFormat {
 
 export type FieldNumberVariant = 'number' | 'percentage';
 
+export type FieldCurrencyFormat = 'short' | 'full';
+
 type FieldMetadataNumberSettings = {
   dataType?: NumberDataType;
   decimals?: number;
   type?: FieldNumberVariant;
+};
+
+type FieldMetadataCurrencySettings = {
+  format?: FieldCurrencyFormat;
+  decimals?: number;
 };
 
 type FieldMetadataTextSettings = {
@@ -62,6 +69,7 @@ type FieldMetadataTsVectorSettings = {
 
 export type FieldMetadataSettingsMapping = {
   [FieldMetadataType.NUMBER]: FieldMetadataNumberSettings | null;
+  [FieldMetadataType.CURRENCY]: FieldMetadataCurrencySettings | null;
   [FieldMetadataType.DATE]: FieldMetadataDateSettings | null;
   [FieldMetadataType.DATE_TIME]: FieldMetadataDateTimeSettings | null;
   [FieldMetadataType.TEXT]: FieldMetadataTextSettings | null;

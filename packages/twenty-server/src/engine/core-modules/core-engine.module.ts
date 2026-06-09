@@ -75,9 +75,8 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
 import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/channel-sync.module';
 import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
 import { SendEmailModule } from 'src/modules/messaging/message-outbound-manager/send-email.module';
-import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
-import { EventLogsModule } from './event-logs/event-logs.module';
+import { EventLogsViewerModule } from './event-logs/event-logs-viewer.module';
 import { FileModule } from './file/file.module';
 import { WorkspaceBrandingModule } from './workspace-branding/workspace-branding.module';
 
@@ -86,7 +85,6 @@ import { WorkspaceBrandingModule } from './workspace-branding/workspace-branding
     EnvironmentModule,
     TwentyConfigModule.forRoot(),
     HealthModule,
-    AuditModule,
     AuthModule,
     BillingModule,
     BillingWebhookModule,
@@ -144,10 +142,6 @@ import { WorkspaceBrandingModule } from './workspace-branding/workspace-branding
       useFactory: exceptionHandlerModuleFactory,
       inject: [TwentyConfigService, HttpAdapterHost],
     }),
-    ApplicationLogsModule.forRootAsync({
-      useFactory: applicationLogsModuleFactory,
-      inject: [TwentyConfigService],
-    }),
     EmailModule.forRoot(),
     CaptchaModule.forRoot(),
     EventEmitterModule.forRoot({
@@ -164,7 +158,7 @@ import { WorkspaceBrandingModule } from './workspace-branding/workspace-branding
     ImpersonationModule,
     TrashCleanupModule,
     DashboardModule,
-    EventLogsModule,
+    EventLogsViewerModule,
     PreInstalledAppsModule,
     AppBillingModule,
     WorkspaceBrandingModule,
@@ -176,7 +170,7 @@ import { WorkspaceBrandingModule } from './workspace-branding/workspace-branding
     },
   ],
   exports: [
-    AuditModule,
+    EventLogsViewerModule,
     AuthModule,
     FeatureFlagModule,
     TimelineMessagingModule,

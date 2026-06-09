@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   enqueueSnackbar,
-  objectMetadataItem,
   unmountFrontComponent,
   updateProgress,
 } from 'twenty-sdk/front-component';
@@ -98,12 +97,4 @@ export default defineFrontComponent({
   description: 'Fetches issues from GitHub repos',
   isHeadless: true,
   component: FetchIssues,
-  command: {
-    universalIdentifier: 'c34f56aa-ff65-43a4-9db2-774945dbcc53',
-    label: 'Fetch Issues',
-    icon: 'IconBug',
-    isPinned: false,
-    conditionalAvailabilityExpression:
-      objectMetadataItem.nameSingular === 'issue',
-  },
 });

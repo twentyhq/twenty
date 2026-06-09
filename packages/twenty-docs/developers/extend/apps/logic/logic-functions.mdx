@@ -53,6 +53,10 @@ export default defineLogicFunction({
 Available trigger types:
 - **httpRoute**: Exposes your function on an HTTP path and method **under the `/s/` endpoint**:
 > e.g. `path: '/post-card/create'` is callable at `https://your-twenty-server.com/s/post-card/create`
+
+<Note>
+To invoke a route-triggered logic function from a (headless) front component, see [Calling a logic function](/developers/extend/apps/layout/front-components#calling-a-logic-function).
+</Note>
 - **cron**: Runs your function on a schedule using a CRON expression.
 - **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
 > e.g. `person.updated`, `*.created`, `company.*`
@@ -139,6 +143,33 @@ const handler = async (event: RoutePayload) => {
 
 <Note>
 Header names are normalized to lowercase. Access them using lowercase keys (e.g., `event.headers['content-type']`).
+</Note>
+
+#### Custom HTTP response
+
+By default, returning a plain value from your handler sends it back as a `200` response (JSON for objects, `text/plain` for strings). To control the status code and response headers, return a `Response` from `twenty-sdk/logic-function`:
+
+```ts
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  return new Response('<h1>Hello</h1>', {
+    status: 201,
+    headers: { 'content-type': 'text/html' },
+  });
+};
+```
+
+For security reasons, response headers are restricted to an allow-list. Any header that is not on the list (e.g. `Set-Cookie`, CORS headers such as `Access-Control-Allow-Origin`, or custom `X-*` headers) is silently dropped before the response is sent. The allowed response headers are:
+
+- `content-type`
+- `content-language`
+- `content-disposition`
+- `cache-control`
+- `retry-after`
+
+<Note>
+The status code must be a valid HTTP status code (between 100 and 599). Response header names are matched case-insensitively.
 </Note>
 
 #### Database event trigger payload

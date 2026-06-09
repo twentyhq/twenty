@@ -42,37 +42,48 @@ describe('getConnection', () => {
     fetchSpy.mockRestore();
   });
 
-  it('POSTs the id to /apps/connections/get and returns the response', async () => {
+  it('queries appConnection by id over GraphQL and returns the response', async () => {
     const connection = buildConnection({ id: 'persisted' });
 
     fetchSpy.mockResolvedValue(
-      new Response(JSON.stringify(connection), { status: 200 }),
+      new Response(JSON.stringify({ data: { appConnection: connection } }), {
+        status: 200,
+      }),
     );
 
     const result = await getConnection('persisted');
 
     expect(result).toEqual(connection);
-    expect(fetchSpy).toHaveBeenCalledWith(
-      'https://api.test/apps/connections/get',
+
+    const [url, requestInit] = fetchSpy.mock.calls[0];
+
+    expect(url).toBe('https://api.test/metadata');
+    expect(requestInit).toEqual(
       expect.objectContaining({
         method: 'POST',
-        body: JSON.stringify({ id: 'persisted' }),
         headers: expect.objectContaining({
           Authorization: 'Bearer app-token',
         }),
       }),
     );
+
+    const sentBody = JSON.parse(requestInit?.body as string);
+
+    expect(sentBody.query).toContain('appConnection(id: $id)');
+    expect(sentBody.variables).toEqual({ id: 'persisted' });
   });
 
   it('throws AppConnectionAuthFailedError when the connection needs reconnect', async () => {
     fetchSpy.mockResolvedValue(
       new Response(
-        JSON.stringify(
-          buildConnection({
-            id: 'broken',
-            authFailedAt: '2024-01-02T00:00:00.000Z',
-          }),
-        ),
+        JSON.stringify({
+          data: {
+            appConnection: buildConnection({
+              id: 'broken',
+              authFailedAt: '2024-01-02T00:00:00.000Z',
+            }),
+          },
+        }),
         { status: 200 },
       ),
     );

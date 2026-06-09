@@ -17,8 +17,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "twenty-client-sdk": "TO-BE-GENERATED",
-    "twenty-sdk": "TO-BE-GENERATED"
+    "twenty-client-sdk": "TO-BE-GENERATED"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
@@ -26,6 +25,7 @@
     "oxlint": "^0.16.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "twenty-sdk": "TO-BE-GENERATED",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^3.1.1"

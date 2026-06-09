@@ -30,6 +30,7 @@ export const createDefaultFieldsWidget = ({
       __typename: 'FieldsConfiguration',
       configurationType: WidgetConfigurationType.FIELDS,
       viewId,
+      newFieldDefaultVisibility: true,
     },
     gridPosition: {
       __typename: 'GridPosition',

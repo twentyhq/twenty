@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`createOne FieldMetadataService name/label sync should return an error when name and label are not synced but isLabelSyncedWithName is true 1`] = `
 {
@@ -25,13 +25,33 @@ exports[`createOne FieldMetadataService name/label sync should return an error w
           "type": "create",
         },
       ],
+      "viewField": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_DATA",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+            "viewUniversalIdentifier": Any<String>,
+          },
+          "metadataName": "viewField",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
     },
-    "message": "Validation failed for 1 fieldMetadata",
+    "message": "Validation failed for 1 fieldMetadata, 1 viewField",
     "summary": {
       "fieldMetadata": 1,
-      "totalErrors": 1,
+      "totalErrors": 2,
+      "viewField": 1,
     },
-    "userFriendlyMessage": "Field name is not synced with field label",
+    "userFriendlyMessage": "Many validation errors",
   },
   "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",

@@ -16,8 +16,8 @@ import {
   type ChipSize,
   ChipVariant,
   LinkChip,
-} from 'twenty-ui/components';
-import { type TriggerEventType } from 'twenty-ui/utilities';
+} from 'twenty-ui-deprecated/components';
+import { type TriggerEventType } from 'twenty-ui-deprecated/utilities';
 
 export type RecordChipProps = {
   objectNameSingular: string;

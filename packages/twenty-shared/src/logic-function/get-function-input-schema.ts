@@ -4,6 +4,7 @@ import {
   createSourceFile,
   type FunctionDeclaration,
   type FunctionLikeDeclaration,
+  type Identifier,
   type LiteralTypeNode,
   type Node,
   type PropertySignature,
@@ -11,6 +12,7 @@ import {
   type StringLiteral,
   SyntaxKind,
   type TypeNode,
+  type TypeReferenceNode,
   type UnionTypeNode,
   type VariableStatement,
 } from 'typescript';
@@ -31,6 +33,24 @@ const getTypeString = (typeNode: TypeNode): InputJsonSchema => {
         type: 'array',
         items: getTypeString((typeNode as ArrayTypeNode).elementType),
       };
+    case SyntaxKind.TypeReference: {
+      const typeReferenceNode = typeNode as TypeReferenceNode;
+      const typeName =
+        typeReferenceNode.typeName.kind === SyntaxKind.Identifier
+          ? (typeReferenceNode.typeName as Identifier).text
+          : undefined;
+
+      if (typeName === 'Array' || typeName === 'ReadonlyArray') {
+        const elementType = typeReferenceNode.typeArguments?.[0];
+
+        return {
+          type: 'array',
+          items: isDefined(elementType) ? getTypeString(elementType) : {},
+        };
+      }
+
+      return {};
+    }
     case SyntaxKind.ObjectKeyword:
       return { type: 'object' };
     case SyntaxKind.TypeLiteral: {

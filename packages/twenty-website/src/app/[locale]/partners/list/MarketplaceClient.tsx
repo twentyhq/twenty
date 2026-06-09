@@ -34,14 +34,18 @@ const FilterBarInner = styled(Container)`
 
 type MarketplaceClientProps = {
   partners: readonly MarketplacePartner[];
+  locale: string;
 };
 
-export function MarketplaceClient({ partners }: MarketplaceClientProps) {
+export function MarketplaceClient({
+  partners,
+  locale,
+}: MarketplaceClientProps) {
   const {
     criteria,
     toggleRegion,
     toggleLanguage,
-    toggleDeployment,
+    toggleCategory,
     clearAll,
     hasAnyFilter,
   } = useFilterState();
@@ -62,7 +66,7 @@ export function MarketplaceClient({ partners }: MarketplaceClientProps) {
             hasAnyFilter={hasAnyFilter}
             onToggleRegion={toggleRegion}
             onToggleLanguage={toggleLanguage}
-            onToggleDeployment={toggleDeployment}
+            onToggleCategory={toggleCategory}
             onClearAll={clearAll}
           />
         </FilterBarInner>
@@ -70,7 +74,7 @@ export function MarketplaceClient({ partners }: MarketplaceClientProps) {
       {filteredPartners.length === 0 ? (
         <EmptyState onClearFilters={clearAll} />
       ) : (
-        <MarketplaceGrid partners={filteredPartners} />
+        <MarketplaceGrid partners={filteredPartners} locale={locale} />
       )}
     </>
   );

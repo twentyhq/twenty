@@ -41,6 +41,7 @@ describe('website route registry', () => {
 
   it('derives robots disallow paths from routes marked private', () => {
     expect(getRobotsDisallowedRoutePaths()).toEqual([
+      '/partners/apply',
       '/halftone',
       '/enterprise/activate',
     ]);

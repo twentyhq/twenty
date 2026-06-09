@@ -1,1 +1,0 @@
-export { Editorial } from './components';

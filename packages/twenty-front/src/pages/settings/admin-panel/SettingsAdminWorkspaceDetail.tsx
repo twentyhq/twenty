@@ -21,7 +21,7 @@ import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpe
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -41,10 +41,11 @@ import {
   OverflowingTextWithTooltip,
   IconSettings2,
   IconUsers,
-} from 'twenty-ui/display';
-import { Button, Toggle } from 'twenty-ui/input';
-import { Card, Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { Toggle } from 'twenty-ui/input';
+import { Card, Section } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import {
   type FeatureFlagKey,
   type GetAdminWorkspaceChatThreadsQuery,
@@ -201,7 +202,7 @@ export const SettingsAdminWorkspaceDetail = () => {
   }
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       links={[
         {
           children: t`Other`,
@@ -285,20 +286,22 @@ export const SettingsAdminWorkspaceDetail = () => {
                       </TableCell>
                       <TableCell>{user.email}</TableCell>
                       <TableCell align="right">
-                        {workspace.allowImpersonation && (
-                          <Button
-                            Icon={IconEyeShare}
-                            variant="secondary"
-                            size="small"
-                            title={t`Impersonate`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              handleImpersonate(userId, workspaceId!);
-                            }}
-                            disabled={impersonatingUserId === userId}
-                          />
-                        )}
+                        {workspace.allowImpersonation &&
+                          isDefined(currentUser?.id) &&
+                          userId !== currentUser.id && (
+                            <Button
+                              Icon={IconEyeShare}
+                              variant="secondary"
+                              size="small"
+                              title={t`Impersonate`}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleImpersonate(userId, workspaceId!);
+                              }}
+                              disabled={impersonatingUserId === userId}
+                            />
+                          )}
                       </TableCell>
                     </TableRow>
                   );
@@ -411,6 +414,6 @@ export const SettingsAdminWorkspaceDetail = () => {
           </Section>
         )}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

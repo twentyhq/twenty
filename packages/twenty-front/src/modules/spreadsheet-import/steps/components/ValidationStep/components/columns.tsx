@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 // @ts-expect-error // Todo: remove usage of react-data-grid
 import { type Column, useRowSelection } from 'react-data-grid';
 import { createPortal } from 'react-dom';
@@ -13,8 +13,9 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
 import camelCase from 'lodash.camelcase';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/display';
-import { Checkbox, CheckboxVariant, Toggle } from 'twenty-ui/input';
+import { AppTooltip, TooltipDelay } from 'twenty-ui-deprecated/display';
+import { Checkbox, CheckboxVariant } from 'twenty-ui-deprecated/input';
+import { Toggle } from 'twenty-ui/input';
 import { type ImportedStructuredRowMetadata } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 
 const StyledHeaderContainer = styled.div`
@@ -184,6 +185,7 @@ export const generateColumns = (
                 }}
               >
                 <Toggle
+                  centered
                   value={row[columnKey] as boolean}
                   onChange={() => {
                     onRowChange({

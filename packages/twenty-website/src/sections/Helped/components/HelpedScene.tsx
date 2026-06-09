@@ -9,8 +9,7 @@ import {
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
+import { Trans } from '@lingui/react/macro';
 import { useEffect, useRef } from 'react';
 import { HelpedCard } from './HelpedCard';
 import { HelpedSceneScrollLayoutEffect } from '../effect-components/HelpedSceneScrollLayoutEffect';
@@ -99,7 +98,6 @@ type SceneProps = {
 };
 
 export function Scene({ cards }: SceneProps) {
-  const { i18n } = useLingui();
   const sectionRef = useRef<HTMLElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -130,7 +128,7 @@ export function Scene({ cards }: SceneProps) {
           <EyebrowExitTarget data-helped-exit-target>
             <Eyebrow colorScheme="primary">
               <HeadingPart fontFamily="sans">
-                {i18n._(msg`In production.`)}
+                <Trans>In production.</Trans>
               </HeadingPart>
             </Eyebrow>
           </EyebrowExitTarget>
@@ -140,15 +138,15 @@ export function Scene({ cards }: SceneProps) {
             size="xl"
             weight="light"
           >
-            <HeadingPart fontFamily="serif">
-              {i18n._(msg`Dev teams power`)}
+            <Trans>
+              <HeadingPart fontFamily="serif">
+                Dev teams power
+                <br />
+                company-wide
+              </HeadingPart>
               <br />
-              {i18n._(msg`company-wide`)}
-            </HeadingPart>
-            <br />
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`change with Twenty`)}
-            </HeadingPart>
+              <HeadingPart fontFamily="sans">change with Twenty</HeadingPart>
+            </Trans>
           </Heading>
         </HeadlineBlock>
         <CardsLayer>

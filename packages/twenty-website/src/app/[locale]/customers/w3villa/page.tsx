@@ -1,12 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import { CASE_STUDY_HERO_IMAGES, type CaseStudyData } from '@/lib/customers';
-import {
-  getRouteI18n,
-  type LocaleRouteParams,
-} from '@/lib/i18n/utils/get-route-i18n';
+import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { buildLocalizedMetadata } from '@/lib/seo';
 import { Heading, HeadingPart } from '@/design-system/components';
-import { CaseStudyPageLayout } from '@/app/[locale]/customers/_components/CaseStudyPageLayout';
+import { CustomersCaseStudyPageLayout } from '@/app/[locale]/customers/_components/CustomersCaseStudyPageLayout';
 
 const HERO_IMAGE = CASE_STUDY_HERO_IMAGES.w3villa;
 
@@ -62,7 +59,7 @@ export default async function W3villaCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`Scale without`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`breaking operations`)}
             </HeadingPart>
@@ -82,7 +79,7 @@ export default async function W3villaCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`Focus on the use case, not the`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">{i18n._(msg`plumbing`)}</HeadingPart>
           </Heading>
         ),
@@ -99,7 +96,7 @@ export default async function W3villaCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`A platform ready to`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">{i18n._(msg`grow`)}</HeadingPart>
           </Heading>
         ),
@@ -116,7 +113,7 @@ export default async function W3villaCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="sans">
               {i18n._(msg`Zero manual work`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="serif">
               {i18n._(msg`at the core`)}
             </HeadingPart>
@@ -141,6 +138,9 @@ export default async function W3villaCaseStudyPage({
   };
 
   return (
-    <CaseStudyPageLayout caseStudy={caseStudy} path="/customers/w3villa" />
+    <CustomersCaseStudyPageLayout
+      caseStudy={caseStudy}
+      path="/customers/w3villa"
+    />
   );
 }

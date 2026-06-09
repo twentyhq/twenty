@@ -9,6 +9,10 @@ import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-perm
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import {
+  WorkflowVersionStepException,
+  WorkflowVersionStepExceptionCode,
+} from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   type WorkflowToolContext,
@@ -116,6 +120,16 @@ This is the most efficient way for AI to create workflows as it handles all the 
     activate?: boolean;
   }) => {
     try {
+      const codeSteps = parameters.steps.filter(
+        (step) => step.type === ('CODE' as string),
+      );
+
+      if (codeSteps.length > 0) {
+        throw new WorkflowVersionStepException(
+          'CODE steps cannot be created via create_complete_workflow because it does not create the underlying logic function. Use create_workflow_version_step instead.',
+          WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+        );
+      }
       const workflowId = await createWorkflow({
         deps,
         context,

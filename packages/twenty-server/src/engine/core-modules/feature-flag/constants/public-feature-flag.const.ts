@@ -20,6 +20,14 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
         'Enable many-to-many relations through junction tables configuration',
     },
   },
+  {
+    key: FeatureFlagKey.IS_SETTINGS_DISCOVERY_HERO_ENABLED,
+    metadata: {
+      label: 'Settings Discovery Hero',
+      description:
+        'Show the per-page hero illustration + video walkthrough modal on settings pages',
+    },
+  },
   ...(process.env.CLOUDFLARE_API_KEY
     ? [
         // {

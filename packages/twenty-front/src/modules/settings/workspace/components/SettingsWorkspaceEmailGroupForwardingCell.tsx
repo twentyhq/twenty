@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledForwardingCell = styled.div`
   color: ${themeCssVariables.font.color.tertiary};

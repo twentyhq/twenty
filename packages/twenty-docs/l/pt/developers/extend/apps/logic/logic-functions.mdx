@@ -53,6 +53,10 @@ export default defineLogicFunction({
 Tipos de gatilho disponíveis:
 * **httpRoute**: Expõe sua função em um caminho e método HTTP **no endpoint `/s/`**:
 > por exemplo, `path: '/post-card/create'` é acessível em `https://your-twenty-server.com/s/post-card/create`
+
+<Note>
+Para invocar uma função de lógica acionada por rota a partir de um componente de front-end (headless), consulte [Chamando uma função de lógica](/l/pt/developers/extend/apps/layout/front-components#calling-a-logic-function).
+</Note>
 * **cron**: Executa sua função em um agendamento usando uma expressão CRON.
 * **databaseEvent**: Executa em eventos do ciclo de vida de objetos do espaço de trabalho. Quando a operação do evento é `updated`, campos específicos a serem observados podem ser especificados no array `updatedFields`. Se deixar indefinido ou vazio, qualquer atualização acionará a função.
 > por exemplo, `person.updated`, `*.created`, `company.*`
@@ -138,6 +142,33 @@ const handler = async (event: RoutePayload) => {
 
 <Note>
 Os nomes dos cabeçalhos são normalizados para minúsculas. Acesse-os usando chaves em minúsculas (por exemplo, `event.headers['content-type']`).
+</Note>
+
+#### Resposta HTTP personalizada
+
+Por padrão, retornar um valor simples do seu handler o envia de volta como uma resposta `200` (JSON para objetos, `text/plain` para strings). Para controlar o código de status e os cabeçalhos da resposta, retorne um `Response` de `twenty-sdk/logic-function`:
+
+```ts
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  return new Response('<h1>Hello</h1>', {
+    status: 201,
+    headers: { 'content-type': 'text/html' },
+  });
+};
+```
+
+Por motivos de segurança, os cabeçalhos de resposta são restringidos a uma lista de permissões. Qualquer cabeçalho que não esteja na lista (por exemplo, `Set-Cookie`, cabeçalhos CORS como `Access-Control-Allow-Origin` ou cabeçalhos personalizados `X-*`) é silenciosamente descartado antes de a resposta ser enviada. Os cabeçalhos de resposta permitidos são:
+
+* `content-type`
+* `content-language`
+* `content-disposition`
+* `cache-control`
+* `retry-after`
+
+<Note>
+O código de status deve ser um código de status HTTP válido (entre 100 e 599). Os nomes dos cabeçalhos de resposta são comparados sem distinção entre maiúsculas e minúsculas.
 </Note>
 
 #### Payload do gatilho de evento do banco de dados

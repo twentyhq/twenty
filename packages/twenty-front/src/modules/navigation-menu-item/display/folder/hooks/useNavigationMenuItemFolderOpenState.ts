@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useIsMobile } from 'twenty-ui/utilities';
+import { useIsMobile } from 'twenty-ui-deprecated/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
@@ -46,9 +46,10 @@ export const useNavigationMenuItemFolderOpenState = ({
   const [isManuallyClosed, setIsManuallyClosed] = useState(false);
 
   const isExplicitlyOpen = openNavigationMenuItemFolderIds.includes(folderId);
-  const hasActiveChild = folderChildrenNavigationMenuItems.some((item) =>
+  const activeChildIndex = folderChildrenNavigationMenuItems.findIndex((item) =>
     activeNavigationMenuItemIds.includes(item.id),
   );
+  const hasActiveChild = activeChildIndex !== -1;
   const isOpen = isExplicitlyOpen || (hasActiveChild && !isManuallyClosed);
 
   const handleToggle = () => {
@@ -99,5 +100,6 @@ export const useNavigationMenuItemFolderOpenState = ({
     isOpen,
     handleToggle,
     hasActiveChild,
+    activeChildIndex,
   };
 };

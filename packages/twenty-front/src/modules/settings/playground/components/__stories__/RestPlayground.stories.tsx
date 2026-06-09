@@ -6,13 +6,16 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, http } from 'msw';
 import { useEffect } from 'react';
 import { action } from 'storybook/actions';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 
 const PlaygroundApiKeySetterEffect = () => {
   const setPlaygroundApiKey = useSetAtomState(playgroundApiKeyState);
 
   useEffect(() => {
-    setPlaygroundApiKey('test-api-key-123');
+    setPlaygroundApiKey({
+      token: 'test-api-key-123',
+      expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+    });
   }, [setPlaygroundApiKey]);
 
   return null;

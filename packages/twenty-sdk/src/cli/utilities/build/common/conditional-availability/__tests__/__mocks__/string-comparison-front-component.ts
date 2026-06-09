@@ -1,5 +1,9 @@
-import { defineCommandMenuItem } from '@/sdk/define';
-import { everyEquals, pageType, selectedRecords } from '@/sdk/front-component';
+import {
+  defineCommandMenuItem,
+  everyEquals,
+  pageType,
+  selectedRecords,
+} from '@/sdk/define';
 
 export default defineCommandMenuItem({
   universalIdentifier: 'string-comparison-cmd',

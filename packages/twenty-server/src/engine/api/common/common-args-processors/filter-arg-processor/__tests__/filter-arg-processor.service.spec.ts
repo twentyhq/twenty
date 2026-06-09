@@ -319,7 +319,7 @@ describe('FilterArgProcessorService', () => {
           },
           'target-currency-uid': {
             id: targetCurrencyFieldId,
-            name: 'annualRecurringRevenue',
+            name: 'annualRevenue',
             type: FieldMetadataType.CURRENCY,
             isNullable: true,
             objectMetadataId: targetObjectId,
@@ -405,7 +405,7 @@ describe('FilterArgProcessorService', () => {
 
       const filter = {
         target: {
-          annualRecurringRevenue: { amountMicros: { gte: 1_000_000 } },
+          annualRevenue: { amountMicros: { gte: 1_000_000 } },
         },
       };
 
@@ -418,7 +418,7 @@ describe('FilterArgProcessorService', () => {
 
       expect(result).toEqual({
         target: {
-          annualRecurringRevenue: { amountMicros: { gte: 1_000_000 } },
+          annualRevenue: { amountMicros: { gte: 1_000_000 } },
         },
       });
     });

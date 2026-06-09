@@ -1,19 +1,10 @@
 import { msg } from '@lingui/core/macro';
 import { EnterpriseActivateClient } from '@/app/[locale]/enterprise/activate/EnterpriseActivateClient';
-import {
-  Body,
-  Container,
-  Eyebrow,
-  HeadingPart,
-} from '@/design-system/components';
+import { Body, Container } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
-import {
-  getRouteI18n,
-  type LocaleRouteParams,
-} from '@/lib/i18n/utils/get-route-i18n';
-import { Pages } from '@/lib/pages';
+import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { Hero } from '@/sections/Hero';
+import { EnterpriseActivateHero } from '@/app/[locale]/enterprise/activate/_components/EnterpriseActivateHero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { theme } from '@/theme';
 import { buildRouteMetadata } from '@/lib/seo';
@@ -66,36 +57,9 @@ export default async function EnterpriseActivatePage({
 
   return (
     <>
-      <Menu.Root
-        backgroundColor="#F3F3F3"
-        scheme="primary"
-        navItems={MENU_DATA.navItems}
-        socialLinks={menuSocialLinks}
-      >
-        <Menu.Logo scheme="primary" />
-        <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
-        <Menu.Social scheme="primary" socialLinks={menuSocialLinks} />
-        <Menu.Cta scheme="primary" />
-      </Menu.Root>
+      <Menu backgroundColor="#F3F3F3" socialLinks={menuSocialLinks} />
 
-      <Hero.Root scheme="muted">
-        <Eyebrow>
-          <HeadingPart fontFamily="sans">
-            {i18n._(msg`Self-hosting`)}
-          </HeadingPart>
-        </Eyebrow>
-        <Hero.Heading page={Pages.Pricing}>
-          <HeadingPart fontFamily="serif">
-            {i18n._(msg`Enterprise`)}
-          </HeadingPart>{' '}
-          <HeadingPart fontFamily="sans">{i18n._(msg`activation`)}</HeadingPart>
-        </Hero.Heading>
-        <Hero.Body page={Pages.Pricing}>
-          {i18n._(
-            msg`Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance.`,
-          )}
-        </Hero.Body>
-      </Hero.Root>
+      <EnterpriseActivateHero />
 
       <ActivatePageContent>
         <Container>

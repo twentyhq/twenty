@@ -5,6 +5,11 @@ import { Field } from '@base-ui/react/field';
 import { styled } from '@linaria/react';
 import { type ComponentPropsWithoutRef, type ReactNode } from 'react';
 
+import { FormCurrency } from './Currency';
+import { FormMultiSelect } from './MultiSelect';
+import { FormSelect } from './Select';
+import { FormTagInput } from './TagInput';
+
 const FieldRootBase = styled(Field.Root)`
   display: flex;
   flex-direction: column;
@@ -152,4 +157,8 @@ export const Form = {
   Label: FieldLabel,
   Hint: FieldHint,
   Error: FieldError,
+  Select: FormSelect,
+  MultiSelect: FormMultiSelect,
+  Currency: FormCurrency,
+  TagInput: FormTagInput,
 };

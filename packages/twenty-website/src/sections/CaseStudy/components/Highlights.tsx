@@ -1,5 +1,5 @@
 import { Container } from '@/design-system/components';
-import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
+import { getServerI18n } from '@/lib/i18n/server';
 import { theme } from '@/theme';
 import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';

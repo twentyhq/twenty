@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   enqueueSnackbar,
-  objectMetadataItem,
   unmountFrontComponent,
   updateProgress,
 } from 'twenty-sdk/front-component';
@@ -95,12 +94,4 @@ export default defineFrontComponent({
     'Fetches contributors from every configured GitHub repo (GITHUB_REPOS) and upserts them as Contributor records.',
   isHeadless: true,
   component: FetchContributors,
-  command: {
-    universalIdentifier: '4640992f-c2c9-4bba-b5df-9c8f05dc9e80',
-    label: 'Fetch Contributors',
-    icon: 'IconUsers',
-    isPinned: false,
-    conditionalAvailabilityExpression:
-      objectMetadataItem.nameSingular === 'contributor',
-  },
 });

@@ -10,17 +10,32 @@ import { MCP_EXECUTE_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-e
 import { MCP_OPEN_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-open-world-read-only-tool-annotations.const';
 import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.const';
 import { MCP_SERVER_INFO } from 'src/engine/api/mcp/constants/mcp-server-info.const';
-import { MCP_SERVER_INSTRUCTIONS } from 'src/engine/api/mcp/constants/mcp-server-instructions.const';
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
+import { McpInstructionBuilderService } from 'src/engine/api/mcp/services/mcp-instruction-builder.service';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
+import {
+  createListObjectMetadataNamesTool,
+  LIST_OBJECT_METADATA_NAMES_TOOL_NAME,
+  listObjectMetadataNamesInputSchema,
+} from 'src/engine/api/mcp/tools/list-object-metadata-names.tool';
+import {
+  createListSkillsTool,
+  LIST_SKILLS_TOOL_NAME,
+  listSkillsInputSchema,
+} from 'src/engine/api/mcp/tools/list-skills.tool';
 import { type McpToolAnnotations } from 'src/engine/api/mcp/types/mcp-tool-annotations.type';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
-import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import {
+  createLearnToolsTool,
+  LEARN_TOOLS_TOOL_NAME,
+  learnToolsInputSchema,
+} from 'src/engine/core-modules/tool-provider/tools';
 import {
   createExecuteToolTool,
   EXECUTE_TOOL_TOOL_NAME,
@@ -32,16 +47,12 @@ import {
   getToolCatalogInputSchema,
 } from 'src/engine/core-modules/tool-provider/tools/get-tool-catalog.tool';
 import {
-  createLearnToolsTool,
-  LEARN_TOOLS_TOOL_NAME,
-  learnToolsInputSchema,
-} from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
-import {
   createLoadSkillTool,
   LOAD_SKILL_TOOL_NAME,
   loadSkillInputSchema,
 } from 'src/engine/core-modules/tool-provider/tools/load-skill.tool';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
@@ -80,9 +91,14 @@ export class McpProtocolService {
     private readonly mcpToolExecutorService: McpToolExecutorService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
     private readonly skillService: SkillService,
+    private readonly mcpInstructionBuilderService: McpInstructionBuilderService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
-  handleInitialize(requestId: string | number) {
+  async handleInitialize(requestId: string | number, workspaceId: string) {
+    const instructions =
+      await this.mcpInstructionBuilderService.buildInstructions(workspaceId);
+
     return wrapJsonRpcResponse(requestId, {
       result: {
         protocolVersion: MCP_PROTOCOL_VERSION,
@@ -92,7 +108,7 @@ export class McpProtocolService {
           prompts: { listChanged: false },
         },
         serverInfo: MCP_SERVER_INFO,
-        instructions: MCP_SERVER_INSTRUCTIONS,
+        instructions,
       },
     });
   }
@@ -162,15 +178,6 @@ export class McpProtocolService {
         inputSchema: zodSchema(getToolCatalogInputSchema),
         annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
       } as McpAnnotatedTool,
-      [LEARN_TOOLS_TOOL_NAME]: {
-        ...createLearnToolsTool(
-          this.toolRegistry,
-          toolContext,
-          MCP_EXCLUDED_TOOL_NAMES,
-        ),
-        inputSchema: zodSchema(learnToolsInputSchema),
-        annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
-      } as McpAnnotatedTool,
       [EXECUTE_TOOL_TOOL_NAME]: {
         ...createExecuteToolTool(this.toolRegistry, toolContext, {
           excludeTools: MCP_EXCLUDED_TOOL_NAMES,
@@ -191,6 +198,28 @@ export class McpProtocolService {
           },
         ),
         inputSchema: zodSchema(loadSkillInputSchema),
+        annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
+      } as McpAnnotatedTool,
+      [LIST_OBJECT_METADATA_NAMES_TOOL_NAME]: {
+        ...createListObjectMetadataNamesTool(
+          this.flatEntityMapsCacheService,
+          workspace.id,
+        ),
+        inputSchema: zodSchema(listObjectMetadataNamesInputSchema),
+        annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
+      } as McpAnnotatedTool,
+      [LIST_SKILLS_TOOL_NAME]: {
+        ...createListSkillsTool(this.skillService, workspace.id),
+        inputSchema: zodSchema(listSkillsInputSchema),
+        annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
+      } as McpAnnotatedTool,
+      [LEARN_TOOLS_TOOL_NAME]: {
+        ...createLearnToolsTool(
+          this.toolRegistry,
+          toolContext,
+          MCP_EXCLUDED_TOOL_NAMES,
+        ),
+        inputSchema: zodSchema(learnToolsInputSchema),
         annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
       } as McpAnnotatedTool,
     };
@@ -219,7 +248,7 @@ export class McpProtocolService {
       }
 
       if (method === 'initialize') {
-        return this.handleInitialize(id);
+        return this.handleInitialize(id, workspace.id);
       }
 
       if (method === 'ping') {

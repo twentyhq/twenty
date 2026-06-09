@@ -196,6 +196,113 @@ export default defineFrontComponent({
 });
 ```
 
+## Chamando uma função lógica
+
+Os componentes de front são executados no navegador em um Web Worker isolado, enquanto as [funções lógicas](/l/pt/developers/extend/apps/logic/logic-functions) são executadas no servidor. Não há chamada direta no mesmo processo entre os dois — em vez disso, um componente de front acessa uma função lógica via HTTP.
+
+Uma função lógica declarada com `httpRouteTriggerSettings` é exposta sob o endpoint `/s/` em `${TWENTY_API_URL}/s\<path>`. Seu componente de front chama essa rota com o `RestApiClient` de `twenty-client-sdk/rest`, que autentica com o `TWENTY_APP_ACCESS_TOKEN` que a Twenty injeta no worker.
+
+O `RestApiClient` foi criado exatamente para isso. Ele lê `TWENTY_API_URL` e `TWENTY_APP_ACCESS_TOKEN` do ambiente do worker, adiciona o cabeçalho `Authorization: Bearer`, serializa e analisa JSON e lança um `RestApiClientError` quando o token ou a URL estão ausentes ou a resposta não é 2xx — para que você não precise reimplementar esse boilerplate em todos os componentes.
+
+Um componente de front headless pode executar a chamada ao montar via o componente `Command` e, em seguida, desmontar automaticamente:
+
+```tsx src/front-components/sync-prs.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+import { RestApiClient } from 'twenty-client-sdk/rest';
+
+const SyncPrs = () => {
+  const execute = async () => {
+    const client = new RestApiClient();
+
+    await client.post('/s/github/fetch-prs', {
+      owner: 'twentyhq',
+      repo: 'twenty',
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-prs',
+  description: 'Triggers the fetch-prs logic function',
+  isHeadless: true,
+  component: SyncPrs,
+});
+```
+
+O caminho passado para o cliente é o caminho público da rota — o `httpRouteTriggerSettings.path` da função de lógica, prefixado com `/s`. Mantenha `isAuthRequired: true`; o cliente fornece o token de acesso do app que o Twenty emite para o seu componente:
+
+```ts src/logic-functions/fetch-prs.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  const { owner, repo } = (event.body ?? {}) as { owner: string; repo: string };
+  // ...fetch from GitHub and persist records...
+  return { ok: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: '...',
+  name: 'fetch-prs',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/github/fetch-prs',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+<Note>
+`TWENTY_API_URL` e `TWENTY_APP_ACCESS_TOKEN` são injetados automaticamente — consulte [Variáveis de aplicação](#application-variables). Como as variáveis de aplicação secretas nunca são expostas aos componentes de front, mantenha as chaves de API e outra lógica sensível na função lógica, não no componente de front.
+</Note>
+
+### Referência do `RestApiClient`
+
+Importe `RestApiClient` de `twenty-client-sdk/rest`. Ele pertence à mesma família de clientes que `CoreApiClient` e `MetadataApiClient`, mas tem como alvo as rotas HTTP do seu app em vez da API GraphQL.
+
+| Método                            | Descrição                                    |
+| --------------------------------- | -------------------------------------------- |
+| `get(path, options?)`             | Envia uma requisição `GET`                   |
+| `post(path, body?, options?)`     | Envia uma requisição `POST`                  |
+| `put(path, body?, options?)`      | Envia uma requisição `PUT`                   |
+| `patch(path, body?, options?)`    | Envia uma requisição `PATCH`                 |
+| `delete(path, options?)`          | Envia uma requisição `DELETE`                |
+| `request(method, path, options?)` | Requisição genérica com qualquer método HTTP |
+
+`options` aceita `headers`, `query` (um registro de parâmetros de query string; valores nulos ou indefinidos são ignorados) e um `AbortSignal` via `signal`. Um objeto `body` que não seja `FormData` é serializado em JSON automaticamente. Em um `401`, o cliente atualiza o access token uma vez por meio do host e tenta a requisição novamente.
+
+A URL base e o token são resolvidos do ambiente por padrão. Passe substituições (overrides) para o construtor quando necessário — por exemplo, em testes:
+
+```ts
+const client = new RestApiClient({
+  baseUrl: 'https://api.example.com',
+  token: 'my-token',
+});
+```
+
+Requisições com falha geram um erro `RestApiClientError` que expõe `status`, `statusText`, `url` e o `body` analisado:
+
+```tsx
+import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
+
+const client = new RestApiClient();
+
+try {
+  const prs = await client.get('/s/github/fetch-prs', {
+    query: { state: 'open' },
+  });
+} catch (error) {
+  if (error instanceof RestApiClientError) {
+    console.error(error.status, error.body);
+  }
+}
+```
+
 ## Acessando o contexto de execução
 
 Dentro do seu componente, use hooks do SDK para acessar o usuário atual, o registro e a instância do componente:
@@ -335,8 +442,8 @@ export default defineFrontComponent({
 Use `useSelectedRecordIds()` para lidar com vários registros selecionados. Isso é útil para operações em lote:
 
 ```tsx src/front-components/bulk-export.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { defineFrontComponent, numberOfSelectedRecords } from 'twenty-sdk/define';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 

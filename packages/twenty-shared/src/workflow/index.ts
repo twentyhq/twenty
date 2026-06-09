@@ -65,6 +65,10 @@ export { workflowRunStateSchema } from './schemas/workflow-run-state-schema';
 export { workflowRunStateStepInfoSchema } from './schemas/workflow-run-state-step-info-schema';
 export { workflowRunStateStepInfosSchema } from './schemas/workflow-run-state-step-infos-schema';
 export { workflowRunStatusSchema } from './schemas/workflow-run-status-schema';
+export {
+  workflowRunStepLogSchema,
+  workflowRunStepLogsSchema,
+} from './schemas/workflow-run-step-log-schema';
 export { workflowRunStepStatusSchema } from './schemas/workflow-run-step-status-schema';
 export { workflowTriggerSchema } from './schemas/workflow-trigger-schema';
 export type { EmailRecipients } from './types/EmailRecipients';
@@ -82,6 +86,12 @@ export type {
   WorkflowRunStepInfos,
 } from './types/WorkflowRunStateStepInfos';
 export { StepStatus } from './types/WorkflowRunStateStepInfos';
+export type {
+  WorkflowRunStepLog,
+  WorkflowRunStepLogs,
+  AiAgentStepLogDetails,
+  AiToolCallLog,
+} from './types/WorkflowRunStepLog';
 export { canObjectBeManagedByAutomation } from './utils/canObjectBeManagedByAutomation';
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
 export { getFunctionInputFromInputSchema } from './utils/getFunctionInputFromInputSchema';

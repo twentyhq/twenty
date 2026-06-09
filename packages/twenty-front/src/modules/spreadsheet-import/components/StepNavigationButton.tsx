@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 import { t } from '@lingui/core/macro';
-import { CircularProgressBar } from 'twenty-ui/feedback';
-import { MainButton } from 'twenty-ui/input';
-import { ModalFooter } from 'twenty-ui/layout';
+import { CircularProgressBar } from 'twenty-ui-deprecated/feedback';
+import { MainButton } from 'twenty-ui-deprecated/input';
+import { ModalFooter } from 'twenty-ui-deprecated/layout';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const StyledFooterContainer = styled.div`

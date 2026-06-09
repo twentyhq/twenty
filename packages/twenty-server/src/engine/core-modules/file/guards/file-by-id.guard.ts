@@ -4,7 +4,7 @@ import { FileFolder } from 'twenty-shared/types';
 
 import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { FileTokenJwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { FileTokenJwtPayload } from 'src/engine/core-modules/auth/types/file-token-jwt-payload.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
 export const SUPPORTED_FILE_FOLDERS = [

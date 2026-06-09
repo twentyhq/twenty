@@ -1,1 +1,1 @@
-export { LegalDocument } from './components';
+export { LegalDocumentPage } from './components/LegalDocumentPage';

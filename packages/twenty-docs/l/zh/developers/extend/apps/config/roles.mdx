@@ -9,8 +9,8 @@ icon: shield-halved
 ```ts src/roles/restricted-company-role.ts
 import {
   defineRole,
-  PermissionFlag,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  SystemPermissionFlag,
 } from 'twenty-sdk/define';
 
 export default defineRole({
@@ -46,7 +46,7 @@ export default defineRole({
       canUpdateFieldValue: false,
     },
   ],
-  permissionFlags: [PermissionFlag.APPLICATIONS],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
 });
 ```
 
@@ -55,7 +55,7 @@ export default defineRole({
 当你使用脚手架创建新应用时，CLI 会创建一个使用 `defineApplicationRole()` 声明的默认角色文件：
 
 ```ts src/roles/default-role.ts
-import { defineApplicationRole, PermissionFlag } from 'twenty-sdk/define';
+import { defineApplicationRole } from 'twenty-sdk/define';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
@@ -74,7 +74,7 @@ export default defineApplicationRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [],
   fieldPermissions: [],
-  permissionFlags: [],
+  permissionFlagUniversalIdentifiers: [],
 });
 ```
 
@@ -90,5 +90,5 @@ export default defineApplicationRole({
 
 * 从脚手架生成的角色开始，然后逐步收紧它的权限——默认角色授予广泛的读取访问权限，而这在生产环境中很少是你想要的。
 * 将 `objectPermissions` 和 `fieldPermissions` 替换为你的函数实际需要的精确对象和字段。
-* `permissionFlags` 控制对平台级能力的访问。 尽量保持最小化。
+* `permissionFlagUniversalIdentifiers` 控制对平台级能力的访问。 尽量保持最小化。
 * 查看一个可运行示例：[`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts)。

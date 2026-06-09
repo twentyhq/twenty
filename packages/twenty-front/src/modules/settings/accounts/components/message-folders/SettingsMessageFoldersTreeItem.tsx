@@ -8,9 +8,9 @@ import { isFolderTreePartiallySelected } from '@/settings/accounts/components/me
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
-import { Checkbox, CheckboxSize } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconChevronDown, IconChevronUp } from 'twenty-ui-deprecated/display';
+import { Checkbox, CheckboxSize } from 'twenty-ui-deprecated/input';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 type SettingsMessageFoldersTreeItemProps = {
   depth?: number;

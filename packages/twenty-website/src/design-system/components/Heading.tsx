@@ -72,6 +72,10 @@ const headingRootClassName = css`
 `;
 
 const StyledSpan = styled.span`
+  &::after {
+    content: ' ';
+  }
+
   &[data-family='sans'] {
     font-family: ${theme.font.family.sans};
     letter-spacing: -0.04em;

@@ -1,12 +1,11 @@
-import LightNoise from '@assets/themes/light-noise.png';
 import * as RadixColors from '@radix-ui/colors';
 
-import { COLOR_LIGHT } from '@ui/theme/constants/ColorsLight';
+import { COLOR_LIGHT } from '@new-ui/theme/constants/ColorsLight';
 import { GRAY_SCALE_LIGHT } from './GrayScaleLight';
 import { TRANSPARENT_COLORS_LIGHT } from './TransparentColorsLight';
 
 export const BACKGROUND_LIGHT = {
-  noisy: `url(${LightNoise.toString()})`,
+  noisy: 'var(--t-background-noisy)',
   primary: GRAY_SCALE_LIGHT.gray1,
   secondary: GRAY_SCALE_LIGHT.gray2,
   tertiary: GRAY_SCALE_LIGHT.gray4,

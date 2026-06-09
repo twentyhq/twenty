@@ -9,8 +9,8 @@ icon: shield-halved
 ```ts src/roles/restricted-company-role.ts
 import {
   defineRole,
-  PermissionFlag,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  SystemPermissionFlag,
 } from 'twenty-sdk/define';
 
 export default defineRole({
@@ -46,7 +46,7 @@ export default defineRole({
       canUpdateFieldValue: false,
     },
   ],
-  permissionFlags: [PermissionFlag.APPLICATIONS],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
 });
 ```
 
@@ -55,7 +55,7 @@ export default defineRole({
 Когда вы создаёте новое приложение с помощью шаблона, CLI создаёт файл роли по умолчанию, объявленный с помощью `defineApplicationRole()`:
 
 ```ts src/roles/default-role.ts
-import { defineApplicationRole, PermissionFlag } from 'twenty-sdk/define';
+import { defineApplicationRole } from 'twenty-sdk/define';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
@@ -74,7 +74,7 @@ export default defineApplicationRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [],
   fieldPermissions: [],
-  permissionFlags: [],
+  permissionFlagUniversalIdentifiers: [],
 });
 ```
 
@@ -90,5 +90,5 @@ export default defineApplicationRole({
 
 * Начните с сгенерированной роли и постепенно ограничивайте её — роль по умолчанию предоставляет широкий доступ на чтение, что редко подходит для продакшена.
 * Замените `objectPermissions` и `fieldPermissions` на точные объекты и поля, которые действительно нужны вашим функциям.
-* `permissionFlags` управляют доступом к возможностям на уровне платформы. Сведите их к минимуму.
+* `permissionFlagUniversalIdentifiers` управляют доступом к возможностям на уровне платформы. Сведите их к минимуму.
 * См. рабочий пример: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).

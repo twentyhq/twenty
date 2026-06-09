@@ -40,6 +40,7 @@ const jestConfig = {
     ],
   },
   moduleNameMapper: {
+    '^server-only$': '<rootDir>/jest/server-only-stub.ts',
     ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths, {
       prefix: '<rootDir>/',
     }),

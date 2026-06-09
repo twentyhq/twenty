@@ -1,11 +1,48 @@
-import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
-import { fastDeepEqual } from 'twenty-shared/utils';
+import {
+  FieldMetadataType,
+  RelationType,
+  type ObjectRecord,
+} from 'twenty-shared/types';
+import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
 
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+
+export type RelationFieldChangeValue = {
+  id: string | null;
+};
+
+const buildRelationFieldChangeValue = (
+  relationId: string | null | undefined,
+): RelationFieldChangeValue => ({
+  id: isDefined(relationId) ? relationId : null,
+});
+
+const isManyToOneRelationField = (
+  field: FlatFieldMetadata,
+): field is FlatFieldMetadata<FieldMetadataType.RELATION> => {
+  return (
+    isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION) &&
+    field.settings?.relationType === RelationType.MANY_TO_ONE
+  );
+};
+
+const getJoinColumnNameForRelationField = (
+  field: FlatFieldMetadata<FieldMetadataType.RELATION>,
+) => {
+  return (
+    field.settings?.joinColumnName ??
+    computeMorphOrRelationFieldJoinColumnName({
+      name: field.name,
+    })
+  );
+};
 
 export const objectRecordChangedValues = (
   oldRecord: Partial<ObjectRecord>,
@@ -13,20 +50,28 @@ export const objectRecordChangedValues = (
   objectMetadataItem: FlatObjectMetadata,
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
 ) => {
-  const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-    flatFieldMetadataMaps,
-    objectMetadataItem,
-  );
+  const { fieldIdByName, fieldIdByJoinColumnName } =
+    buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      objectMetadataItem,
+    );
 
-  return Object.keys(newRecord).reduce(
-    (acc, key) => {
-      const fieldId = fieldIdByName[key];
-      const field = fieldId
-        ? findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: fieldId,
-            flatEntityMaps: flatFieldMetadataMaps,
-          })
-        : undefined;
+  const findFieldForKey = (key: string) => {
+    const fieldId = fieldIdByName[key] ?? fieldIdByJoinColumnName[key];
+
+    if (!isDefined(fieldId)) {
+      return undefined;
+    }
+
+    return findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: fieldId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+  };
+
+  const accumulator = Object.keys(newRecord).reduce(
+    (diffAccumulator, key) => {
+      const field = findFieldForKey(key);
 
       const oldRecordValue = oldRecord[key];
       const newRecordValue = newRecord[key];
@@ -34,22 +79,57 @@ export const objectRecordChangedValues = (
       if (
         key === 'updatedAt' ||
         key === 'searchVector' ||
+        field?.type === FieldMetadataType.POSITION ||
+        (isDefined(field) && isManyToOneRelationField(field)) ||
         field?.type === FieldMetadataType.RELATION ||
-        field?.type === FieldMetadataType.POSITION
+        field?.type === FieldMetadataType.MORPH_RELATION
       ) {
-        return acc;
+        return diffAccumulator;
       }
 
       if (fastDeepEqual(oldRecordValue, newRecordValue)) {
-        return acc;
+        return diffAccumulator;
       }
 
-      acc[key] = { before: oldRecordValue, after: newRecordValue };
+      diffAccumulator[key] = { before: oldRecordValue, after: newRecordValue };
 
-      return acc;
+      return diffAccumulator;
     },
 
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     {} as Record<string, { before: any; after: any }>,
   );
+
+  const objectFields = getFlatFieldsFromFlatObjectMetadata(
+    objectMetadataItem,
+    flatFieldMetadataMaps,
+  );
+
+  for (const field of objectFields) {
+    if (
+      !isManyToOneRelationField(field) ||
+      isDefined(accumulator[field.name])
+    ) {
+      continue;
+    }
+
+    const joinColumnName = getJoinColumnNameForRelationField(field);
+    const oldJoinColumnValue = oldRecord[joinColumnName];
+    const newJoinColumnValue = newRecord[joinColumnName];
+
+    if (fastDeepEqual(oldJoinColumnValue, newJoinColumnValue)) {
+      continue;
+    }
+
+    accumulator[field.name] = {
+      before: buildRelationFieldChangeValue(
+        oldJoinColumnValue as string | null | undefined,
+      ),
+      after: buildRelationFieldChangeValue(
+        newJoinColumnValue as string | null | undefined,
+      ),
+    };
+  }
+
+  return accumulator;
 };

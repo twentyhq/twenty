@@ -10,10 +10,10 @@ import { getWorkflowCodeFieldsEnumSelectOptions } from '@/workflow/workflow-step
 import { getWorkflowCodeFieldsLeafKind } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWorkflowCodeFieldsLeafKind';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyArray, isNonEmptyString, isObject } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { type FunctionInput, type InputSchema } from 'twenty-shared/workflow';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
   display: flex;
@@ -59,7 +59,7 @@ export const WorkflowEditActionCodeFields = ({
           ? schemaProperty.label
           : inputKey;
 
-        if (inputValue !== null && isObject(inputValue)) {
+        if (isPlainObject(inputValue)) {
           return (
             <div key={pathKey}>
               <InputLabel>{displayLabel}</InputLabel>

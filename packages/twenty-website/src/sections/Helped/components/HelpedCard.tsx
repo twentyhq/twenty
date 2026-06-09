@@ -1,6 +1,6 @@
 import { Body, Heading, HeadingPart } from '@/design-system/components';
 import { CLIENT_ICONS } from '@/icons';
-import { LocalizedLinkButton } from '@/lib/i18n/components/LocalizedLinkButton';
+import { LocalizedLinkButton } from '@/lib/i18n';
 import { WebGlMount } from '@/lib/visual-runtime';
 import { theme } from '@/theme';
 import { msg } from '@lingui/core/macro';
@@ -134,9 +134,7 @@ export function HelpedCard({ card }: CardProps) {
         strokeColor={theme.colors.secondary.border[40]}
       />
       <LogoRow>
-        {IconComponent ? (
-          <IconComponent fillColor={LOGO_FILL} size={logoWidth} />
-        ) : null}
+        <IconComponent fillColor={LOGO_FILL} size={logoWidth} />
       </LogoRow>
       <Rule aria-hidden="true" />
       <VisualShell>

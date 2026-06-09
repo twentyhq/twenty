@@ -1,4 +1,5 @@
-export { ThreeCards } from './components';
+export { IllustrationCards } from './components/IllustrationCards';
+export { FeatureCards } from './components/FeatureCards';
 export type {
   ThreeCardsFeatureCardType,
   ThreeCardsIllustrationCardAttributionType,

@@ -52,6 +52,36 @@ const RULES = [
       'element visibility, cleanup, and render failures are handled consistently.',
     ].join('\n      '),
   },
+  {
+    id: 'design-system-no-upward-import',
+    description:
+      'design-system is the lowest UI layer — it must not import from @/sections, @/templates, or @/app.',
+    pattern: /from\s+['"]@\/(sections|templates|app)(\/|['"])/,
+    appliesTo: (rel) =>
+      rel.startsWith('src/design-system/') && /\.(ts|tsx)$/.test(rel),
+    exempt: (rel) => rel.includes('__tests__') || rel.endsWith('.d.ts'),
+    help: [
+      'design-system holds atomic, domain-agnostic primitives. It may depend on',
+      '@/theme, @/icons and @/lib, but never on the higher layers (sections,',
+      'templates, app). If a primitive needs section/page data, lift that data up',
+      'to the consumer and pass it in as a prop.',
+    ].join('\n      '),
+  },
+  {
+    id: 'templates-no-upward-import',
+    description:
+      'templates (section layout shells) must not import from @/sections or @/app — only @/design-system and @/theme.',
+    pattern: /from\s+['"]@\/(sections|app)(\/|['"])/,
+    appliesTo: (rel) =>
+      rel.startsWith('src/templates/') && /\.(ts|tsx)$/.test(rel),
+    exempt: (rel) => rel.includes('__tests__') || rel.endsWith('.d.ts'),
+    help: [
+      'templates are reusable section layout shells composed from design-system',
+      'primitives. They must not reach into sections (visuals) or app (pages).',
+      'Page-local blocks compose a template with its section visual — inject the',
+      'visual as children/a prop rather than importing it into the template.',
+    ].join('\n      '),
+  },
 ];
 
 const SKIP_DIRS = new Set([

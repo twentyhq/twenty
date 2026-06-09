@@ -124,7 +124,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         isForwardPagination,
       );
 
-      appliedFilters = (args.filter
+      appliedFilters = (args.filter && Object.keys(args.filter).length > 0
         ? {
             and: [args.filter, { or: cursorArgFilter }],
           }
@@ -185,6 +185,8 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       orderByWithIdCondition,
       limit,
       isForwardPagination,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
     );
 
     if (!isForwardPagination) {
