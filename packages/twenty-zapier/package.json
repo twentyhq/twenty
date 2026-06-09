@@ -29,6 +29,6 @@
     "vite": "^7.0.0",
     "vite-plugin-dts": "^4.5.4",
     "vite-tsconfig-paths": "^4.2.1",
-    "zapier-platform-cli": "^15.4.1"
+    "zapier-platform-cli": "^19.0.0"
   }
 }
