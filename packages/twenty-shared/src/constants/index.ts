@@ -29,6 +29,7 @@ export type { DocumentationPath } from './DocumentationPaths';
 export { DOCUMENTATION_PATHS } from './DocumentationPaths';
 export type { DocumentationSupportedLanguage } from './DocumentationSupportedLanguages';
 export { DOCUMENTATION_SUPPORTED_LANGUAGES } from './DocumentationSupportedLanguages';
+export { EXCLUDED_FIELD_NAMES_FROM_AGENT_TOOL_SCHEMA } from './ExcludedFieldNamesFromAgentToolSchema';
 export { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from './FieldForTotalCountAggregateOperation';
 export { MAX_OPTIONS_TO_DISPLAY } from './FieldMetadataMaxOptionsToDisplay';
 export { FIELD_METADATA_TYPES_NOT_SUPPORTED_IN_GROUP_BY } from './FieldMetadataTypesNotSupportedInGroupBy';

@@ -1,3 +1,5 @@
+import { EXCLUDED_FIELD_NAMES_FROM_AGENT_TOOL_SCHEMA } from '@/constants';
+
 export const shouldExcludeFieldFromAgentToolSchema = ({
   fieldName,
   isSystem,
@@ -10,9 +12,7 @@ export const shouldExcludeFieldFromAgentToolSchema = ({
   additionalExcludedFieldNames?: string[];
 }): boolean => {
   const excludedFieldNames = [
-    'deletedAt',
-    'searchVector',
-    'createdBy',
+    ...EXCLUDED_FIELD_NAMES_FROM_AGENT_TOOL_SCHEMA,
     ...additionalExcludedFieldNames,
   ];
 
