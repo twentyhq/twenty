@@ -4,6 +4,7 @@ import {
   PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
   VALIDATED_PARTNERS_VIEW_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/fields/partner-user-on-partner.field';
 
 // Validated partners — serves both partner intros and the public website list.
 export default defineView({
@@ -20,6 +21,8 @@ export default defineView({
     { universalIdentifier: 'd6df98ac-9c6c-46c2-8784-d4e1d6521f75', fieldMetadataUniversalIdentifier: '560503de-6330-4c1d-af97-a8dee125f2ad', position: 3, isVisible: true },
     { universalIdentifier: '375cc871-fdda-42d0-8308-e60174b6d467', fieldMetadataUniversalIdentifier: 'a0000004-0000-4000-8000-000000000004', position: 4, isVisible: true },
     { universalIdentifier: '6a7d6b14-9216-42af-bbd9-89bd185fd492', fieldMetadataUniversalIdentifier: 'a0000007-0000-4000-8000-000000000007', position: 5, isVisible: true },
+    // partnerUser: the login member this partner signs in as (set inline here, like setting an owner).
+    { universalIdentifier: '9e06eeaa-649d-412a-aacd-0f8bf7ee69c3', fieldMetadataUniversalIdentifier: PARTNER_USER_ON_PARTNER_FIELD_ID, position: 6, isVisible: true },
   ],
   filters: [
     {
