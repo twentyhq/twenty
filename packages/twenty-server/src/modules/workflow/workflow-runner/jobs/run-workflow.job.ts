@@ -9,6 +9,10 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import {
+  WorkflowVersionStepException,
+  WorkflowVersionStepExceptionCode,
+} from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
@@ -61,13 +65,25 @@ export class RunWorkflowJob {
           });
         }
       } catch (error) {
+        const isInvalidWorkflowVersionStepError =
+          error instanceof WorkflowVersionStepException &&
+          error.code === WorkflowVersionStepExceptionCode.INVALID_REQUEST;
+
         await this.workflowRunWorkspaceService.endWorkflowRun({
           workspaceId,
           workflowRunId,
           status: WorkflowRunStatus.FAILED,
           error: error.message,
-          isSystemError: true,
+          isSystemError: !isInvalidWorkflowVersionStepError,
         });
+
+        if (isInvalidWorkflowVersionStepError) {
+          this.logger.warn(
+            `Workflow run ${workflowRunId} failed because its workflow version is invalid in workspace ${workspaceId}: ${error.message}`,
+          );
+
+          return;
+        }
 
         throw error;
       }

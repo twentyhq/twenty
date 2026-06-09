@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { SEED_WORKFLOW_ACTION_TRIGGER_SETTINGS } from 'twenty-shared/logic-function';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -64,7 +64,7 @@ export class CodeStepBuildService {
         settings: { input: { logicFunctionId: string } };
       } =>
         step.type === WorkflowActionType.CODE &&
-        isDefined(
+        isNonEmptyString(
           (step.settings?.input as { logicFunctionId?: string })
             ?.logicFunctionId,
         ),
