@@ -20,8 +20,8 @@
   },
   "dependencies": {
     "resend": "^6.12.0",
-    "twenty-client-sdk": "npm:twenty-client-sdk@1.23.0-canary.1",
-    "twenty-sdk": "npm:twenty-sdk@2.0.0"
+    "twenty-client-sdk": "npm:twenty-client-sdk@2.10.1",
+    "twenty-sdk": "npm:twenty-sdk@2.10.1"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
