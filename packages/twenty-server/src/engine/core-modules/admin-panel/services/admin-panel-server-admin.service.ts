@@ -57,7 +57,6 @@ export class AdminPanelServerAdminService {
   async updateServerAdminAccess({
     actor,
     actorWorkspaceId,
-    actorUserWorkspaceId,
     targetUserId,
     canAccessFullAdminPanel,
     canImpersonate,
@@ -65,7 +64,6 @@ export class AdminPanelServerAdminService {
   }: {
     actor: AuthContextUser;
     actorWorkspaceId: string;
-    actorUserWorkspaceId: string;
     targetUserId: string;
     canAccessFullAdminPanel?: boolean;
     canImpersonate?: boolean;
@@ -85,8 +83,6 @@ export class AdminPanelServerAdminService {
 
     await this.assertFreshStepUpAuthentication({
       actorUserId: actor.id,
-      actorWorkspaceId,
-      actorUserWorkspaceId,
       otp,
     });
 
@@ -150,13 +146,9 @@ export class AdminPanelServerAdminService {
 
   private async assertFreshStepUpAuthentication({
     actorUserId,
-    actorWorkspaceId,
-    actorUserWorkspaceId,
     otp,
   }: {
     actorUserId: string;
-    actorWorkspaceId: string;
-    actorUserWorkspaceId: string;
     otp?: string;
   }): Promise<void> {
     const isDevelopment =
@@ -172,41 +164,59 @@ export class AdminPanelServerAdminService {
       );
     }
 
-    const actorUserWorkspace = await this.userWorkspaceRepository.findOne({
-      where: { id: actorUserWorkspaceId },
+    // 2FA methods are scoped to a userWorkspace, but server-admin access is
+    // global — the actor may have enrolled 2FA in any of their workspaces, not
+    // the one currently open. Accept a code from any workspace where they have
+    // a verified method.
+    const actorUserWorkspaces = await this.userWorkspaceRepository.find({
+      where: { userId: actorUserId },
       relations: ['twoFactorAuthenticationMethods'],
     });
 
-    const hasVerifiedTwoFactor =
-      isDefined(actorUserWorkspace) &&
-      twoFactorAuthenticationMethodsValidator.areDefined(
-        actorUserWorkspace.twoFactorAuthenticationMethods,
-      ) &&
-      twoFactorAuthenticationMethodsValidator.areVerified(
-        actorUserWorkspace.twoFactorAuthenticationMethods,
-      );
+    const workspaceIdsWithVerifiedTwoFactor = actorUserWorkspaces
+      .filter(
+        (userWorkspace) =>
+          twoFactorAuthenticationMethodsValidator.areDefined(
+            userWorkspace.twoFactorAuthenticationMethods,
+          ) &&
+          twoFactorAuthenticationMethodsValidator.areVerified(
+            userWorkspace.twoFactorAuthenticationMethods,
+          ),
+      )
+      .map((userWorkspace) => userWorkspace.workspaceId);
 
-    if (!hasVerifiedTwoFactor) {
+    if (workspaceIdsWithVerifiedTwoFactor.length === 0) {
       throw new UserInputError(
         'Enable two-factor authentication before managing server administrators.',
       );
     }
 
-    try {
-      await this.twoFactorAuthenticationService.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
-        actorUserId,
-        otp,
-        actorWorkspaceId,
-      );
-    } catch (error) {
-      if (
-        error instanceof TwoFactorAuthenticationException &&
-        error.code === TwoFactorAuthenticationExceptionCode.INVALID_OTP
-      ) {
-        throw new UserInputError('Invalid two-factor authentication code.');
-      }
+    for (const [
+      index,
+      workspaceId,
+    ] of workspaceIdsWithVerifiedTwoFactor.entries()) {
+      try {
+        await this.twoFactorAuthenticationService.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
+          actorUserId,
+          otp,
+          workspaceId,
+        );
 
-      throw error;
+        return;
+      } catch (error) {
+        const isInvalidOtp =
+          error instanceof TwoFactorAuthenticationException &&
+          error.code === TwoFactorAuthenticationExceptionCode.INVALID_OTP;
+        const isLastWorkspace =
+          index === workspaceIdsWithVerifiedTwoFactor.length - 1;
+
+        // Try the next workspace on a wrong code; surface the error otherwise
+        // (the resolver's TwoFactorAuthenticationExceptionFilter maps it to a
+        // user-friendly message).
+        if (!isInvalidOtp || isLastWorkspace) {
+          throw error;
+        }
+      }
     }
   }
 

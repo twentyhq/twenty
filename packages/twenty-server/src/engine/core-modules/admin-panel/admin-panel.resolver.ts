@@ -68,7 +68,6 @@ import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/
 import { UsageBreakdownItemDTO } from 'src/engine/core-modules/usage/dtos/usage-breakdown-item.dto';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
@@ -183,12 +182,10 @@ export class AdminPanelResolver {
     @Args() input: UpdateServerAdminAccessInput,
     @AuthUser() actor: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() actorUserWorkspaceId: string,
   ): Promise<ServerAdminDTO> {
     return this.adminServerAdminService.updateServerAdminAccess({
       actor,
       actorWorkspaceId: workspace.id,
-      actorUserWorkspaceId,
       targetUserId: input.userId,
       canAccessFullAdminPanel: input.canAccessFullAdminPanel,
       canImpersonate: input.canImpersonate,
