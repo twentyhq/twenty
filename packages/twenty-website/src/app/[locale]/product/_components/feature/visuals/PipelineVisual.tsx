@@ -181,7 +181,7 @@ const CARDS: Record<CardId, DealData> = {
       tone: 'yellow',
     },
     rating: 2,
-    date: 'Jun 6, 2023',
+    date: 'Jun 28, 2023',
     contact: {
       avatarUrl: SHARED_PEOPLE_AVATAR_URLS.ivanZhao,
       initials: 'I',
