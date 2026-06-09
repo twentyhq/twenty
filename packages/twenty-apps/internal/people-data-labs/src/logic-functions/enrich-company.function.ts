@@ -13,7 +13,7 @@ export default defineLogicFunction({
   timeoutSeconds: 300,
   handler,
   workflowActionTriggerSettings: {
-    label: 'Enrich with People Data Labs',
+    label: 'Enrich Companies',
     icon: 'IconSparkles',
     inputSchema: [
       {

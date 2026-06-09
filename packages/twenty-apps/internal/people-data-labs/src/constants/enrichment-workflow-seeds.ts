@@ -9,7 +9,7 @@ export const ENRICHMENT_WORKFLOW_SEEDS: EnrichmentWorkflowSeed[] = [
     workflowName: 'Enrich companies with People Data Labs',
     triggerName: 'When companies are selected',
     icon: ENRICHMENT_ICON,
-    stepName: 'Enrich with People Data Labs',
+    stepName: 'Enrich Companies',
     logicFunctionUniversalIdentifier:
       PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichCompany,
     logicFunctionInput: { records: '{{trigger.companies}}' },
@@ -19,7 +19,7 @@ export const ENRICHMENT_WORKFLOW_SEEDS: EnrichmentWorkflowSeed[] = [
     workflowName: 'Enrich people with People Data Labs',
     triggerName: 'When people are selected',
     icon: ENRICHMENT_ICON,
-    stepName: 'Enrich with People Data Labs',
+    stepName: 'Enrich People',
     logicFunctionUniversalIdentifier:
       PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichPerson,
     logicFunctionInput: { records: '{{trigger.people}}' },
