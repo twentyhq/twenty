@@ -3,25 +3,68 @@ import { describe, expect, it } from 'vitest';
 import { COMPANY_NODE_MOCK } from 'src/logic-functions/__mocks__/company-node.mock';
 import { extractCompanyMatchParams } from 'src/logic-functions/utils/extract-company-match-params';
 
+const INPUT = { records: [] };
+
 describe('extractCompanyMatchParams', () => {
-  it('prefers an existing pdlId', () => {
+  it('prefers an existing pdlId with the strong-identifier likelihood', () => {
     expect(
-      extractCompanyMatchParams({ ...COMPANY_NODE_MOCK, pdlId: 'pdl-c' }),
-    ).toEqual({ pdlId: 'pdl-c' });
+      extractCompanyMatchParams({
+        node: { ...COMPANY_NODE_MOCK, pdlId: 'pdl-c' },
+        input: INPUT,
+      }),
+    ).toEqual({ pdlId: 'pdl-c', minLikelihood: 2 });
   });
 
-  it('uses the domain and name when there is no pdlId', () => {
+  it('uses the domain and name with the strong-identifier likelihood', () => {
     expect(
-      extractCompanyMatchParams({ ...COMPANY_NODE_MOCK, name: 'Acme' }),
-    ).toEqual({ website: 'acme.com', name: 'Acme' });
+      extractCompanyMatchParams({
+        node: { ...COMPANY_NODE_MOCK, name: 'Acme' },
+        input: INPUT,
+      }),
+    ).toEqual({ website: 'acme.com', name: 'Acme', minLikelihood: 2 });
+  });
+
+  it('uses the linkedin profile as a strong identifier', () => {
+    expect(
+      extractCompanyMatchParams({
+        node: {
+          ...COMPANY_NODE_MOCK,
+          domainName: null,
+          linkedinLink: { primaryLinkUrl: 'https://linkedin.com/company/acme' },
+          name: 'Acme',
+        },
+        input: INPUT,
+      }),
+    ).toEqual({
+      profile: 'https://linkedin.com/company/acme',
+      name: 'Acme',
+      minLikelihood: 2,
+    });
+  });
+
+  it('raises the likelihood when only a name is available', () => {
+    expect(
+      extractCompanyMatchParams({
+        node: { ...COMPANY_NODE_MOCK, domainName: null, name: 'Acme' },
+        input: INPUT,
+      }),
+    ).toEqual({ name: 'Acme', minLikelihood: 6 });
+  });
+
+  it('honors an explicit minLikelihood from the input', () => {
+    expect(
+      extractCompanyMatchParams({
+        node: { ...COMPANY_NODE_MOCK, name: 'Acme' },
+        input: { records: [], minLikelihood: 9 },
+      }),
+    ).toMatchObject({ minLikelihood: 9 });
   });
 
   it('returns undefined when there is no usable identifier', () => {
     expect(
       extractCompanyMatchParams({
-        ...COMPANY_NODE_MOCK,
-        domainName: null,
-        name: '',
+        node: { ...COMPANY_NODE_MOCK, domainName: null, name: '' },
+        input: INPUT,
       }),
     ).toBeUndefined();
   });

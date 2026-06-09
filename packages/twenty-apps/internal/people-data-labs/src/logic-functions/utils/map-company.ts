@@ -13,6 +13,8 @@ import { toText } from 'src/logic-functions/utils/to-text';
 import { buildAddress } from 'src/logic-functions/utils/build-address';
 import { buildCurrencyFromUsd } from 'src/logic-functions/utils/build-currency-from-usd';
 import { buildLinks } from 'src/logic-functions/utils/build-links';
+import { normalizeDomain } from 'src/logic-functions/utils/normalize-domain';
+import { normalizeLinkedinUrl } from 'src/logic-functions/utils/normalize-linkedin-url';
 import { parsePartialDate } from 'src/logic-functions/utils/parse-partial-date';
 import { buildAllowedValues } from 'src/logic-functions/utils/build-allowed-values';
 import { pickMultiSelect } from 'src/logic-functions/utils/pick-multi-select';
@@ -35,8 +37,8 @@ export const mapCompany = (data: PdlCompanyData): MappedRecord => {
 
   const standard = pruneUndefined({
     name: toText(data.display_name) ?? toText(data.name),
-    domainName: buildLinks({ url: data.website }),
-    linkedinLink: buildLinks({ url: data.linkedin_url }),
+    domainName: buildLinks({ url: normalizeDomain(data.website) }),
+    linkedinLink: buildLinks({ url: normalizeLinkedinUrl(data.linkedin_url) }),
     address: buildAddress({
       street1: location.street_address,
       street2: location.address_line_2,
@@ -52,7 +54,7 @@ export const mapCompany = (data: PdlCompanyData): MappedRecord => {
     pdlId: toText(data.id),
 
     pdlIndustry: pickSelect({ raw: data.industry, allowedValues: INDUSTRY_VALUES }),
-    pdlIndustryDetail: toText(data.industry_v2) ?? toText(data.industry),
+    pdlIndustryDetail: toText(data.industry_v2),
     pdlCompanyType: pickSelect({
       raw: data.type,
       allowedValues: COMPANY_TYPE_VALUES,

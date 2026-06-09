@@ -108,6 +108,7 @@ describe('enrichCompaniesCore', () => {
     expect(result.results[0].error).toBe('boom');
     expect(captured.updateCompanies?.data).toEqual({
       pdlEnrichmentStatus: 'ERROR',
+      pdlLastEnrichedAt: expect.any(String),
     });
   });
 

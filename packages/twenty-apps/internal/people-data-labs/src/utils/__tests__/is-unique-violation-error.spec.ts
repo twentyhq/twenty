@@ -24,4 +24,48 @@ describe('isUniqueViolationError', () => {
     expect(isUniqueViolationError(undefined)).toBe(false);
     expect(isUniqueViolationError(42)).toBe(false);
   });
+
+  it("detects Twenty's user-friendly duplicate phrasing in graphQLErrors", () => {
+    expect(
+      isUniqueViolationError({
+        message: 'Response not successful',
+        graphQLErrors: [
+          {
+            message: 'A duplicate entry was detected',
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              userFriendlyMessage:
+                'This domain name value is already in use. Please check your data.',
+            },
+          },
+        ],
+      }),
+    ).toBe(true);
+  });
+
+  it('detects the structured DUPLICATE_ENTRY_DETECTED extensions code', () => {
+    expect(
+      isUniqueViolationError({
+        message: 'whatever',
+        extensions: { code: 'DUPLICATE_ENTRY_DETECTED' },
+      }),
+    ).toBe(true);
+  });
+
+  it('does not throw on a circular error object', () => {
+    const circular: Record<string, unknown> = { message: 'boom' };
+    circular.self = circular;
+
+    expect(() => isUniqueViolationError(circular)).not.toThrow();
+    expect(isUniqueViolationError(circular)).toBe(false);
+  });
+
+  it('finds the duplicate signal even on a circular error object', () => {
+    const circular: Record<string, unknown> = {
+      message: 'duplicate key value',
+    };
+    circular.self = circular;
+
+    expect(isUniqueViolationError(circular)).toBe(true);
+  });
 });

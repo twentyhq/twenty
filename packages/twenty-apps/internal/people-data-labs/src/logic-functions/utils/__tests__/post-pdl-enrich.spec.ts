@@ -78,7 +78,7 @@ describe('postPdlBulkEnrich', () => {
     ]);
   });
 
-  it('falls back to the whole item as data when there is no data envelope', async () => {
+  it('treats a 200 item without a data envelope as not_found', async () => {
     stubFetch(buildResponse(200, [{ status: 200, name: 'Acme' }]));
 
     const results = await postPdlBulkEnrich({
@@ -86,12 +86,7 @@ describe('postPdlBulkEnrich', () => {
       requests: [{ name: 'Acme' }],
     });
 
-    expect(results[0]).toEqual({
-      outcome: 'matched',
-      httpStatus: 200,
-      likelihood: undefined,
-      data: { status: 200, name: 'Acme' },
-    });
+    expect(results[0]).toEqual({ outcome: 'not_found', httpStatus: 200 });
   });
 
   it('reads the responses envelope when the body is not a bare array', async () => {
@@ -107,7 +102,7 @@ describe('postPdlBulkEnrich', () => {
     expect(results[0]).toMatchObject({ outcome: 'matched', data: { id: 'a' } });
   });
 
-  it('marks missing response items as errors', async () => {
+  it('fails the whole batch when the result count does not match the request count', async () => {
     stubFetch(buildResponse(200, [{ status: 200, data: { id: 'a' } }]));
 
     const results = await postPdlBulkEnrich({
@@ -115,12 +110,20 @@ describe('postPdlBulkEnrich', () => {
       requests: [{ email: 'a@b.com' }, { email: 'b@b.com' }],
     });
 
-    expect(results[0].outcome).toBe('matched');
-    expect(results[1]).toEqual({
-      outcome: 'error',
-      httpStatus: 0,
-      message: 'People Data Labs returned a malformed response item.',
-    });
+    expect(results).toEqual([
+      {
+        outcome: 'error',
+        httpStatus: 200,
+        message:
+          'People Data Labs returned 1 results for 2 requests (HTTP 200).',
+      },
+      {
+        outcome: 'error',
+        httpStatus: 200,
+        message:
+          'People Data Labs returned 1 results for 2 requests (HTTP 200).',
+      },
+    ]);
   });
 
   it('fails every record when the whole call is a non-2xx response', async () => {

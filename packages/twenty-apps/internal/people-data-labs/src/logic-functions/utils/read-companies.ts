@@ -1,3 +1,4 @@
+import { isNonEmptyString, isObject } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type CompanyNode } from 'src/types/company-node';
@@ -37,5 +38,15 @@ export const readCompanies = async ({
     },
   })) as { companies?: { edges?: { node: CompanyNode }[] } };
 
-  return result.companies?.edges?.map((edge) => edge.node) ?? [];
+  const edges = result.companies?.edges;
+  if (!Array.isArray(edges)) {
+    return [];
+  }
+
+  return edges
+    .map((edge) => edge?.node)
+    .filter(
+      (node): node is CompanyNode =>
+        isObject(node) && isNonEmptyString((node as { id?: unknown }).id),
+    );
 };

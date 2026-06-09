@@ -1,5 +1,3 @@
-import { isNonEmptyArray } from '@sniptt/guards';
-
 import { toText } from 'src/logic-functions/utils/to-text';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -10,9 +8,12 @@ export const buildPersonNameParam = ({
   firstName: unknown;
   lastName: unknown;
 }): string | undefined => {
-  const parts = [firstName, lastName]
-    .map((part) => toText(part))
-    .filter(isDefined);
+  const first = toText(firstName);
+  const last = toText(lastName);
 
-  return isNonEmptyArray(parts) ? parts.join(' ') : undefined;
+  if (!isDefined(first) || !isDefined(last)) {
+    return undefined;
+  }
+
+  return `${first} ${last}`;
 };

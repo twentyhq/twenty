@@ -1,6 +1,7 @@
 export type PdlCompanyEnrichParams = {
   pdlId?: string;
   website?: string;
+  profile?: string;
   name?: string;
-  ticker?: string;
+  minLikelihood?: number;
 };

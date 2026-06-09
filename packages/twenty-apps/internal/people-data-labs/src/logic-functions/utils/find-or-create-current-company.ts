@@ -19,16 +19,26 @@ export const findOrCreateCurrentCompany = async ({
 }): Promise<string | undefined> => {
   const matchKeys = buildCompanyMatchKeys(data);
 
-  if (
-    !isNonEmptyString(matchKeys.name) &&
-    !isNonEmptyString(matchKeys.website)
-  ) {
+  const hasAnyMatchKey =
+    isNonEmptyString(matchKeys.pdlId) ||
+    isNonEmptyString(matchKeys.website) ||
+    isNonEmptyString(matchKeys.linkedinUrl) ||
+    isNonEmptyString(matchKeys.name);
+
+  if (!hasAnyMatchKey) {
     return undefined;
   }
 
   const existingId = await findCompanyId({ client, matchKeys });
   if (isDefined(existingId)) {
     return existingId;
+  }
+
+  const canCreateNewCompany =
+    isNonEmptyString(matchKeys.name) || isNonEmptyString(matchKeys.website);
+
+  if (!canCreateNewCompany) {
+    return undefined;
   }
 
   try {

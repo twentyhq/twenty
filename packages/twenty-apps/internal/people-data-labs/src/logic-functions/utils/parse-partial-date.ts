@@ -15,7 +15,19 @@ export const parsePartialDate = (raw: unknown): string | undefined => {
     return undefined;
   }
 
-  const [, year, month, day] = match;
+  const [, year, month = '01', day = '01'] = match;
+  const monthNumber = Number(month);
+  const dayNumber = Number(day);
 
-  return `${year}-${month ?? '01'}-${day ?? '01'}`;
+  const candidateDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+  const isRealCalendarDate =
+    !Number.isNaN(candidateDate.getTime()) &&
+    candidateDate.getUTCMonth() + 1 === monthNumber &&
+    candidateDate.getUTCDate() === dayNumber;
+
+  if (!isRealCalendarDate) {
+    return undefined;
+  }
+
+  return `${year}-${month}-${day}`;
 };

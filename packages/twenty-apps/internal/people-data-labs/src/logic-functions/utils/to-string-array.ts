@@ -9,12 +9,17 @@ export const toStringArray = (value: unknown): string[] | undefined => {
   }
 
   const items: string[] = [];
-  const seen = new Set<string>();
+  const seenLowercaseValues = new Set<string>();
 
   for (const entry of value) {
     const text = toText(entry);
-    if (isDefined(text) && !seen.has(text)) {
-      seen.add(text);
+    if (!isDefined(text)) {
+      continue;
+    }
+
+    const lowercaseValue = text.toLowerCase();
+    if (!seenLowercaseValues.has(lowercaseValue)) {
+      seenLowercaseValues.add(lowercaseValue);
       items.push(text);
     }
   }

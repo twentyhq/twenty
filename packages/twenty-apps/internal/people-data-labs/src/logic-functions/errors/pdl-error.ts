@@ -5,6 +5,7 @@ export abstract class PdlError extends Error {
 
   constructor({ message, code }: { message: string; code: PdlErrorCode }) {
     super(message);
+    Object.setPrototypeOf(this, new.target.prototype);
     this.name = new.target.name;
     this.code = code;
   }

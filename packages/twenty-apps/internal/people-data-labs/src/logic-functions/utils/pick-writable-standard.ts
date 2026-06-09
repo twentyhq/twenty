@@ -12,8 +12,8 @@ export const pickWritableStandard = ({
   const writable: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(standard)) {
-    const isEmpty = emptyChecks[key];
-    if (!isDefined(isEmpty) || isEmpty(current[key])) {
+    const isEmptyCheck = emptyChecks[key];
+    if (isDefined(isEmptyCheck) && isEmptyCheck(current[key])) {
       writable[key] = value;
     }
   }

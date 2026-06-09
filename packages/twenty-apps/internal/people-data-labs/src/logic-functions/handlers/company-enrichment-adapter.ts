@@ -16,11 +16,11 @@ export const companyEnrichmentAdapter: BatchEnrichmentAdapter<
 > = {
   objectNameSingular: 'Company',
   noIdentifierMessage:
-    'No usable identifier (domain or name) to match against PDL.',
+    'No usable identifier (domain, LinkedIn, or name) to match against PDL.',
   readRecords: readCompanies,
   getNodeId: (node) => node.id,
   getLastEnrichedAt: (node) => node.pdlLastEnrichedAt,
-  extractParams: ({ node }) => extractCompanyMatchParams(node),
+  extractParams: extractCompanyMatchParams,
   enrichBatch: enrichCompanies,
   buildMatchedData: ({ node, outcome, enrichedAt }) =>
     buildCompanyMatchedData({ node, outcome, enrichedAt }),

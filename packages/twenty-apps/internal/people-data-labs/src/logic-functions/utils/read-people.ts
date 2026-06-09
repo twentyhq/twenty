@@ -1,3 +1,4 @@
+import { isNonEmptyString, isObject } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type PersonNode } from 'src/types/person-node';
@@ -24,7 +25,7 @@ export const readPeople = async ({
           phones: { primaryPhoneNumber: true },
           jobTitle: true,
           linkedinLink: { primaryLinkUrl: true },
-          company: { id: true },
+          company: { id: true, name: true },
           pdlId: true,
           pdlLastEnrichedAt: true,
         },
@@ -32,5 +33,15 @@ export const readPeople = async ({
     },
   })) as { people?: { edges?: { node: PersonNode }[] } };
 
-  return result.people?.edges?.map((edge) => edge.node) ?? [];
+  const edges = result.people?.edges;
+  if (!Array.isArray(edges)) {
+    return [];
+  }
+
+  return edges
+    .map((edge) => edge?.node)
+    .filter(
+      (node): node is PersonNode =>
+        isObject(node) && isNonEmptyString((node as { id?: unknown }).id),
+    );
 };

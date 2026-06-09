@@ -13,8 +13,9 @@ export const enrichCompanies = (
       pruneUndefined({
         pdl_id: entry.pdlId,
         website: entry.website,
+        profile: entry.profile,
         name: entry.name,
-        ticker: entry.ticker,
+        min_likelihood: entry.minLikelihood,
       }),
     ),
   });

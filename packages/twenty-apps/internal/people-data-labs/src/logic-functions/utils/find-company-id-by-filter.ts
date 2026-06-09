@@ -5,16 +5,24 @@ type CompaniesConnection = { edges?: { node: { id: string } }[] };
 export const findCompanyIdByFilter = async ({
   client,
   filter,
+  requireUnique = false,
 }: {
   client: CoreApiClient;
   filter: Record<string, unknown>;
+  requireUnique?: boolean;
 }): Promise<string | undefined> => {
   const result = (await client.query({
     companies: {
-      __args: { filter, first: 1 },
+      __args: { filter, first: requireUnique ? 2 : 1 },
       edges: { node: { id: true } },
     },
   })) as { companies?: CompaniesConnection };
 
-  return result.companies?.edges?.[0]?.node?.id;
+  const edges = result.companies?.edges ?? [];
+
+  if (requireUnique && edges.length !== 1) {
+    return undefined;
+  }
+
+  return edges[0]?.node?.id;
 };

@@ -17,20 +17,49 @@ const createDataOf = (request: unknown) =>
   (request as CreateCompanyRequest).createCompany.__args.data;
 
 describe('findOrCreateCurrentCompany', () => {
-  it('returns undefined and issues no calls when PDL gives no name or website', async () => {
+  it('returns undefined and issues no calls when PDL gives no identifiers', async () => {
     const query = vi.fn();
     const mutation = vi.fn();
     const client = { query, mutation } as unknown as CoreApiClient;
 
     const result = await findOrCreateCurrentCompany({
       client,
-      data: {
-        job_company_id: 'pdl-co-1',
-      } as PdlPersonData,
+      data: {} as PdlPersonData,
     });
 
     expect(result).toBeUndefined();
     expect(query).not.toHaveBeenCalled();
+    expect(mutation).not.toHaveBeenCalled();
+  });
+
+  it('links an existing company matched by pdlId alone', async () => {
+    const query = vi.fn(() =>
+      Promise.resolve({ companies: { edges: [{ node: { id: 'co-existing' } }] } }),
+    );
+    const mutation = vi.fn();
+    const client = { query, mutation } as unknown as CoreApiClient;
+
+    const result = await findOrCreateCurrentCompany({
+      client,
+      data: { job_company_id: 'pdl-co-1' } as PdlPersonData,
+    });
+
+    expect(result).toBe('co-existing');
+    expect(mutation).not.toHaveBeenCalled();
+  });
+
+  it('attempts a pdlId match but does not create without a name or website', async () => {
+    const query = vi.fn(() => Promise.resolve({ companies: { edges: [] } }));
+    const mutation = vi.fn();
+    const client = { query, mutation } as unknown as CoreApiClient;
+
+    const result = await findOrCreateCurrentCompany({
+      client,
+      data: { job_company_id: 'pdl-co-1' } as PdlPersonData,
+    });
+
+    expect(result).toBeUndefined();
+    expect(query).toHaveBeenCalled();
     expect(mutation).not.toHaveBeenCalled();
   });
 

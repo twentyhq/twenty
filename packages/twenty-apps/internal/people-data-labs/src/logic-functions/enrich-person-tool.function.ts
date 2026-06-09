@@ -2,13 +2,19 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers';
 import { enrichPeopleCore } from 'src/logic-functions/handlers/enrich-people';
+import { buildEmptyToolResult } from 'src/logic-functions/utils/build-empty-tool-result';
 import { buildToolRecordIds } from 'src/logic-functions/utils/build-tool-record-ids';
 import { type EnrichToolInput } from 'src/types/enrich-tool-input';
 
-const handler = (input: EnrichToolInput) =>
-  enrichPeopleCore({
-    input: { records: buildToolRecordIds(input), force: input.force },
-  });
+const handler = (input: EnrichToolInput) => {
+  const records = buildToolRecordIds(input);
+
+  if (records.length === 0) {
+    return Promise.resolve(buildEmptyToolResult());
+  }
+
+  return enrichPeopleCore({ input: { records, force: input.force } });
+};
 
 export default defineLogicFunction({
   universalIdentifier: PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichPersonTool,

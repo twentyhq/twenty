@@ -89,4 +89,30 @@ describe('findCompanyId', () => {
     expect(await findCompanyId({ client, matchKeys: {} })).toBeUndefined();
     expect(query).not.toHaveBeenCalled();
   });
+
+  it('does not link a name match when it is ambiguous', async () => {
+    const query = vi.fn(() =>
+      Promise.resolve({
+        companies: {
+          edges: [{ node: { id: 'co-1' } }, { node: { id: 'co-2' } }],
+        },
+      }),
+    );
+    const client = { query } as unknown as CoreApiClient;
+
+    expect(
+      await findCompanyId({ client, matchKeys: { name: 'Acme' } }),
+    ).toBeUndefined();
+  });
+
+  it('links a unique name match', async () => {
+    const query = vi.fn(() =>
+      Promise.resolve({ companies: { edges: [{ node: { id: 'co-1' } }] } }),
+    );
+    const client = { query } as unknown as CoreApiClient;
+
+    expect(await findCompanyId({ client, matchKeys: { name: 'Acme' } })).toBe(
+      'co-1',
+    );
+  });
 });

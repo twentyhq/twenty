@@ -16,7 +16,7 @@ export const personEnrichmentAdapter: BatchEnrichmentAdapter<
 > = {
   objectNameSingular: 'Person',
   noIdentifierMessage:
-    'No usable identifier (email, LinkedIn, or name) to match against PDL.',
+    'No usable identifier (email, LinkedIn, PDL id, or name paired with a company) to match against PDL.',
   readRecords: readPeople,
   getNodeId: (node) => node.id,
   getLastEnrichedAt: (node) => node.pdlLastEnrichedAt,

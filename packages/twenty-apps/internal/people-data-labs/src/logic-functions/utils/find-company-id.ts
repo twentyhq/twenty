@@ -48,6 +48,7 @@ export const findCompanyId = async ({
     const matchByName = await findCompanyIdByFilter({
       client,
       filter: { name: { eq: name } },
+      requireUnique: true,
     });
     if (isDefined(matchByName)) {
       return matchByName;

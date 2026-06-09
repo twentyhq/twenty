@@ -15,7 +15,7 @@ describe('buildCompanyMatchKeys', () => {
     expect(keys).toEqual({
       pdlId: 'pdl-co-1',
       website: 'acme.com',
-      linkedinUrl: 'https://linkedin.com/company/acme',
+      linkedinUrl: 'linkedin.com/company/acme',
       name: 'Acme',
     });
   });

@@ -4,6 +4,7 @@ import { buildErrorResult } from 'src/logic-functions/utils/build-error-result';
 import { buildMatchedResult } from 'src/logic-functions/utils/build-matched-result';
 import { buildNotFoundResult } from 'src/logic-functions/utils/build-not-found-result';
 import { buildSkippedResult } from 'src/logic-functions/utils/build-skipped-result';
+import { INTERNAL_BOOKKEEPING_FIELDS } from 'src/logic-functions/utils/internal-field-names';
 import { isWithinTtl } from 'src/logic-functions/utils/is-within-ttl';
 import { nowIso } from 'src/logic-functions/utils/now-iso';
 import { type BatchEnrichmentAdapter } from 'src/types/batch-enrichment-adapter';
@@ -12,6 +13,30 @@ import { type EnrichResult } from 'src/types/enrich-result';
 import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
 import { isDefined } from 'src/utils/is-defined';
 import { toErrorMessage } from 'src/utils/to-error-message';
+
+const writeErrorStatusWithBackoff = async <TNode, TData, TParams>({
+  adapter,
+  client,
+  recordIds,
+  enrichedAt,
+}: {
+  adapter: BatchEnrichmentAdapter<TNode, TData, TParams>;
+  client: CoreApiClient;
+  recordIds: string[];
+  enrichedAt: string;
+}): Promise<void> => {
+  if (recordIds.length === 0) {
+    return;
+  }
+
+  await adapter
+    .updateManyStatus({
+      client,
+      recordIds,
+      data: { pdlEnrichmentStatus: 'ERROR', pdlLastEnrichedAt: enrichedAt },
+    })
+    .catch(() => undefined);
+};
 
 export const enrichChunk = async <TNode, TData, TParams>({
   client,
@@ -87,6 +112,9 @@ export const enrichChunk = async <TNode, TData, TParams>({
     return;
   }
 
+  const enrichedAt = nowIso();
+  const recordIdsToMarkAsError: string[] = [];
+
   let outcomes: PdlEnrichResult<TData>[];
   try {
     outcomes = await adapter.enrichBatch(toEnrich.map((entry) => entry.params));
@@ -98,21 +126,17 @@ export const enrichChunk = async <TNode, TData, TParams>({
         buildErrorResult({ recordId: entry.recordId, error: message }),
       );
     }
-    await adapter
-      .updateManyStatus({
-        client,
-        recordIds: toEnrich.map((entry) => entry.recordId),
-        data: { pdlEnrichmentStatus: 'ERROR' },
-      })
-      .catch(() => undefined);
+    await writeErrorStatusWithBackoff({
+      adapter,
+      client,
+      recordIds: toEnrich.map((entry) => entry.recordId),
+      enrichedAt,
+    });
 
     return;
   }
 
-  const enrichedAt = nowIso();
-
   const notFoundIds: string[] = [];
-  const pdlErrorIds: string[] = [];
   const matched: { recordId: string; data: Record<string, unknown> }[] = [];
 
   for (let index = 0; index < toEnrich.length; index++) {
@@ -124,7 +148,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
         ? outcome.message
         : 'People Data Labs returned no response for this record.';
       resultById.set(recordId, buildErrorResult({ recordId, error: message }));
-      pdlErrorIds.push(recordId);
+      recordIdsToMarkAsError.push(recordId);
       continue;
     }
 
@@ -146,37 +170,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
         recordId,
         buildErrorResult({ recordId, error: toErrorMessage(error) }),
       );
-    }
-  }
-
-  if (pdlErrorIds.length > 0) {
-    await adapter
-      .updateManyStatus({
-        client,
-        recordIds: pdlErrorIds,
-        data: { pdlEnrichmentStatus: 'ERROR' },
-      })
-      .catch(() => undefined);
-  }
-
-  if (notFoundIds.length > 0) {
-    try {
-      await adapter.updateManyStatus({
-        client,
-        recordIds: notFoundIds,
-        data: {
-          pdlEnrichmentStatus: 'NOT_FOUND',
-          pdlLastEnrichedAt: enrichedAt,
-        },
-      });
-      for (const recordId of notFoundIds) {
-        resultById.set(recordId, buildNotFoundResult(recordId));
-      }
-    } catch (error) {
-      const message = toErrorMessage(error);
-      for (const recordId of notFoundIds) {
-        resultById.set(recordId, buildErrorResult({ recordId, error: message }));
-      }
+      recordIdsToMarkAsError.push(recordId);
     }
   }
 
@@ -198,7 +192,9 @@ export const enrichChunk = async <TNode, TData, TParams>({
           entry.recordId,
           buildMatchedResult({
             recordId: entry.recordId,
-            updatedFields: Object.keys(entry.data),
+            updatedFields: Object.keys(entry.data).filter(
+              (key) => !INTERNAL_BOOKKEEPING_FIELDS.has(key),
+            ),
           }),
         );
       } else {
@@ -209,7 +205,37 @@ export const enrichChunk = async <TNode, TData, TParams>({
             error: toErrorMessage(outcome.reason),
           }),
         );
+        recordIdsToMarkAsError.push(entry.recordId);
       }
     });
   }
+
+  if (notFoundIds.length > 0) {
+    try {
+      await adapter.updateManyStatus({
+        client,
+        recordIds: notFoundIds,
+        data: {
+          pdlEnrichmentStatus: 'NOT_FOUND',
+          pdlLastEnrichedAt: enrichedAt,
+        },
+      });
+      for (const recordId of notFoundIds) {
+        resultById.set(recordId, buildNotFoundResult(recordId));
+      }
+    } catch (error) {
+      const message = toErrorMessage(error);
+      for (const recordId of notFoundIds) {
+        resultById.set(recordId, buildErrorResult({ recordId, error: message }));
+        recordIdsToMarkAsError.push(recordId);
+      }
+    }
+  }
+
+  await writeErrorStatusWithBackoff({
+    adapter,
+    client,
+    recordIds: recordIdsToMarkAsError,
+    enrichedAt,
+  });
 };

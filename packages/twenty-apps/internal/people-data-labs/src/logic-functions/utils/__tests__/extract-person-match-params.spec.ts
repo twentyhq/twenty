@@ -25,7 +25,21 @@ describe('extractPersonMatchParams', () => {
     });
   });
 
-  it('uses the weak-identifier likelihood when only a name is available', () => {
+  it('pairs a name with the person company and uses the weak-identifier likelihood', () => {
+    expect(
+      extractPersonMatchParams({
+        node: {
+          ...PERSON_NODE_MOCK,
+          linkedinLink: null,
+          name: { firstName: 'Jane', lastName: 'Doe' },
+          company: { id: 'co-1', name: 'Acme' },
+        },
+        input: { records: [] },
+      }),
+    ).toEqual({ name: 'Jane Doe', company: 'Acme', minLikelihood: 6 });
+  });
+
+  it('returns undefined for a name with no anchoring identifier or company', () => {
     expect(
       extractPersonMatchParams({
         node: {
@@ -35,7 +49,7 @@ describe('extractPersonMatchParams', () => {
         },
         input: { records: [] },
       }),
-    ).toEqual({ name: 'Jane Doe', minLikelihood: 6 });
+    ).toBeUndefined();
   });
 
   it('honors an explicit minLikelihood from the input', () => {

@@ -5,7 +5,7 @@ export type PersonNode = {
   phones?: { primaryPhoneNumber?: string | null } | null;
   jobTitle?: string | null;
   linkedinLink?: { primaryLinkUrl?: string | null } | null;
-  company?: { id?: string | null } | null;
+  company?: { id?: string | null; name?: string | null } | null;
   pdlId?: string | null;
   pdlLastEnrichedAt?: string | null;
 };

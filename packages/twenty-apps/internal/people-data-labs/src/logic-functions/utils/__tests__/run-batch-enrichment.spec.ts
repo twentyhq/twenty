@@ -147,7 +147,10 @@ describe('runBatchEnrichment', () => {
     expect(harness.updateManyStatus).toHaveBeenCalledWith({
       client: CLIENT,
       recordIds: ['c'],
-      data: { pdlEnrichmentStatus: 'ERROR' },
+      data: {
+        pdlEnrichmentStatus: 'ERROR',
+        pdlLastEnrichedAt: expect.any(String),
+      },
     });
     expect(harness.updateManyStatus).toHaveBeenCalledWith({
       client: CLIENT,
@@ -227,6 +230,14 @@ describe('runBatchEnrichment', () => {
       status: 'ERROR',
       error: 'update failed',
     });
+    expect(harness.updateManyStatus).toHaveBeenCalledWith({
+      client: CLIENT,
+      recordIds: ['b'],
+      data: {
+        pdlEnrichmentStatus: 'ERROR',
+        pdlLastEnrichedAt: expect.any(String),
+      },
+    });
   });
 
   it('marks all attempted records as ERROR and writes the status when the batch PDL call rejects', async () => {
@@ -245,7 +256,10 @@ describe('runBatchEnrichment', () => {
     expect(harness.updateManyStatus).toHaveBeenCalledWith({
       client: CLIENT,
       recordIds: ['a', 'b'],
-      data: { pdlEnrichmentStatus: 'ERROR' },
+      data: {
+        pdlEnrichmentStatus: 'ERROR',
+        pdlLastEnrichedAt: expect.any(String),
+      },
     });
   });
 
@@ -266,6 +280,14 @@ describe('runBatchEnrichment', () => {
       error: 'build failed',
     });
     expect(harness.updateOne).toHaveBeenCalledTimes(1);
+    expect(harness.updateManyStatus).toHaveBeenCalledWith({
+      client: CLIENT,
+      recordIds: ['b'],
+      data: {
+        pdlEnrichmentStatus: 'ERROR',
+        pdlLastEnrichedAt: expect.any(String),
+      },
+    });
   });
 
   it('produces exactly one result per record with counts summing to the total', async () => {

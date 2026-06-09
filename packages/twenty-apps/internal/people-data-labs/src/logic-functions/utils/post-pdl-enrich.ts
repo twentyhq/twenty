@@ -1,4 +1,4 @@
-import { isObject } from '@sniptt/guards';
+import { isNumber, isObject } from '@sniptt/guards';
 
 import { extractPdlErrorMessage } from 'src/logic-functions/utils/extract-pdl-error-message';
 import { getPdlApiKey } from 'src/logic-functions/utils/get-pdl-api-key';
@@ -72,5 +72,19 @@ export const postPdlBulkEnrich = async <TData>({
       ? ((json as Record<string, unknown>).responses as unknown[])
       : [];
 
-  return requests.map((_params, index) => parsePdlItem<TData>(items[index]));
+  if (items.length !== requests.length) {
+    return failAll({
+      message: `People Data Labs returned ${items.length} results for ${requests.length} requests (HTTP ${response.status}).`,
+      httpStatus: response.status,
+    });
+  }
+
+  return requests.map((params, index) =>
+    parsePdlItem<TData>({
+      item: items[index],
+      minLikelihood: isNumber(params.min_likelihood)
+        ? params.min_likelihood
+        : undefined,
+    }),
+  );
 };

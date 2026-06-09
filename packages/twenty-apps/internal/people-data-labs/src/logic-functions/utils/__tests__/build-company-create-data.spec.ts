@@ -22,7 +22,7 @@ describe('buildCompanyCreateData', () => {
     });
     expect(data.domainName).toMatchObject({ primaryLinkUrl: 'acme.com' });
     expect(data.linkedinLink).toMatchObject({
-      primaryLinkUrl: 'https://linkedin.com/company/acme',
+      primaryLinkUrl: 'linkedin.com/company/acme',
     });
   });
 

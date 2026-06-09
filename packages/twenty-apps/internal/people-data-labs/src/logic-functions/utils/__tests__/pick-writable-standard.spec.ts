@@ -14,13 +14,13 @@ describe('pickWritableStandard', () => {
     expect(writable).toEqual({ name: 'Acme' });
   });
 
-  it('always keeps fields without a registered check', () => {
+  it('skips fields without a registered check rather than overwriting them', () => {
     const writable = pickWritableStandard({
       standard: { extra: 'value' },
       current: { extra: 'already here' },
       emptyChecks: {},
     });
 
-    expect(writable).toEqual({ extra: 'value' });
+    expect(writable).toEqual({});
   });
 });

@@ -208,7 +208,10 @@ describe('enrichPeopleCore', () => {
     expect(result.errored).toBe(1);
     expect(result.success).toBe(false);
     expect(result.results[0].error).toBe('boom');
-    expect(captured.updatePeople?.data).toEqual({ pdlEnrichmentStatus: 'ERROR' });
+    expect(captured.updatePeople?.data).toEqual({
+      pdlEnrichmentStatus: 'ERROR',
+      pdlLastEnrichedAt: expect.any(String),
+    });
   });
 
   it('skips a recently enriched record without calling PDL', async () => {

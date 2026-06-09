@@ -7,6 +7,12 @@ export const toJsonObject = (
     return undefined;
   }
 
+  const prototype = Object.getPrototypeOf(value);
+  const isPlainObject = prototype === Object.prototype || prototype === null;
+  if (!isPlainObject) {
+    return undefined;
+  }
+
   if (Object.keys(value).length === 0) {
     return undefined;
   }

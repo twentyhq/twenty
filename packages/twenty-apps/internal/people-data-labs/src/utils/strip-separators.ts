@@ -1,4 +1,4 @@
-const SEPARATOR_REGEX = /[\s,]/g;
+const WHITESPACE_AND_COMMA_REGEX = /[\s,]/g;
 
 export const stripSeparators = (raw: string): string =>
-  raw.replace(SEPARATOR_REGEX, '');
+  raw.replace(WHITESPACE_AND_COMMA_REGEX, '');

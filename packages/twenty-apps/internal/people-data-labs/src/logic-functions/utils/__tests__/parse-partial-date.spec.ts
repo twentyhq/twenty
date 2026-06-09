@@ -19,4 +19,11 @@ describe('parsePartialDate', () => {
     expect(parsePartialDate('not-a-date')).toBeUndefined();
     expect(parsePartialDate(undefined)).toBeUndefined();
   });
+
+  it('rejects out-of-range or non-existent calendar dates', () => {
+    expect(parsePartialDate('2020-13')).toBeUndefined();
+    expect(parsePartialDate('2020-00-01')).toBeUndefined();
+    expect(parsePartialDate('1990-02-31')).toBeUndefined();
+    expect(parsePartialDate('2020-04-31')).toBeUndefined();
+  });
 });
