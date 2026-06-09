@@ -1,4 +1,4 @@
-import { isTokenExpiredMessage } from '../reauth-helper';
+import { isTokenExpiredMessage } from '../token-expired-detector';
 
 describe('isTokenExpiredMessage', () => {
   it.each([

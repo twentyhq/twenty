@@ -2,18 +2,11 @@ import inquirer from 'inquirer';
 import chalk from 'chalk';
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
+import { isTokenExpiredMessage } from './token-expired-detector';
 
-const TOKEN_EXPIRED_PATTERN = /token has expired|unauthori[sz]ed|invalid api key/i;
+export { isTokenExpiredMessage } from './token-expired-detector';
 
 export type ReauthOutcome = 'reauthenticated' | 'declined' | 'non-interactive';
-
-export const isTokenExpiredMessage = (message: string | undefined | null): boolean => {
-  if (typeof message !== 'string' || message.length === 0) {
-    return false;
-  }
-
-  return TOKEN_EXPIRED_PATTERN.test(message);
-};
 
 const isInteractive = (): boolean => process.stdin.isTTY === true;
 
