@@ -4,13 +4,14 @@ import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryP
 import { useIncrementalDestroyManyRecords } from '@/object-record/hooks/useIncrementalDestroyManyRecords';
 import { useRemoveSelectedRecordsFromRecordBoard } from '@/object-record/record-board/hooks/useRemoveSelectedRecordsFromRecordBoard';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { t } from '@lingui/core/macro';
 import { AppPath, type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const DestroyRecordsCommand = () => {
-  const { recordIndexId, objectMetadataItem, selectedRecords, graphqlFilter } =
+  const { recordIndexId, objectMetadataItem, selectedRecords, graphqlFilter, isInSidePanel, } =
     useHeadlessCommandContextApi();
 
   if (!isDefined(recordIndexId) || !isDefined(objectMetadataItem)) {
@@ -22,6 +23,7 @@ export const DestroyRecordsCommand = () => {
   const isSingleRecord = selectedRecords.length === 1;
 
   const navigateApp = useNavigateApp();
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
   const { removeSelectedRecordsFromRecordBoard } =
@@ -56,9 +58,13 @@ export const DestroyRecordsCommand = () => {
     await incrementalDestroyManyRecords();
 
     if (isSingleRecord) {
-      navigateApp(AppPath.RecordIndexPage, {
-        objectNamePlural: objectMetadataItem.namePlural,
-      });
+      if (isInSidePanel) {
+        closeSidePanelMenu();
+      } else {
+        navigateApp(AppPath.RecordIndexPage, {
+          objectNamePlural: objectMetadataItem.namePlural,
+        });
+      }
     }
   };
 
