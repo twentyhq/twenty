@@ -269,16 +269,27 @@ export class ApplicationApi {
     >
   > {
     try {
-      const mutation = `
+      const isDryRun = options?.dryRun ?? false;
+
+      const mutation = isDryRun
+        ? `
         mutation SyncApplication($manifest: JSON!, $dryRun: Boolean) {
           syncApplication(manifest: $manifest, dryRun: $dryRun) {
             applicationUniversalIdentifier
             actions
           }
         }
+      `
+        : `
+        mutation SyncApplication($manifest: JSON!) {
+          syncApplication(manifest: $manifest) {
+            applicationUniversalIdentifier
+            actions
+          }
+        }
       `;
 
-      const variables = { manifest, dryRun: options?.dryRun ?? false };
+      const variables = isDryRun ? { manifest, dryRun: true } : { manifest };
 
       const response = await this.client.post(
         '/metadata',
