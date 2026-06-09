@@ -260,5 +260,17 @@ export default defineRole({
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     },
+    {
+      // Read-only on workspace members so the partner UI can resolve member-typed
+      // relations (their own partnerUser link; owner/createdBy on their records).
+      // Scoped to the partner's OWN member record by an RLS predicate
+      // (see scripts/configure-partner-rls.ts) so the internal team roster stays hidden.
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: false,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
   ],
 });

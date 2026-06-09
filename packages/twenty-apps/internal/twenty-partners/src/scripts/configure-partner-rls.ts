@@ -1,10 +1,12 @@
 // Does two things on each run:
 //
-// 1. UPSERTS the 4 row-level-permission predicates on the Partner role — one for each
-//    target object (partner, person, company, opportunity): "partnerUser CONTAINS the
-//    current workspace member". These are configured out-of-band because the app
-//    manifest cannot ship RLS predicates. Re-run after every install or reinstall.
-//    The mutation is fully idempotent (upsert semantics).
+// 1. UPSERTS the row-level-permission predicates on the Partner role: one per target
+//    object (partner, person, company, opportunity) = "partnerUser CONTAINS the current
+//    workspace member", PLUS one on workspaceMember = "id IS the current member" so the
+//    role's read on workspaceMember is scoped to the partner's own record (member-typed
+//    relations resolve for themselves; the internal team roster stays hidden). These are
+//    configured out-of-band because the app manifest cannot ship RLS predicates. Re-run
+//    after every install or reinstall. The mutation is fully idempotent (upsert semantics).
 //
 //    Field choice: the metadata API exposes the relation field `partnerUser`
 //    (type RELATION) rather than a separate `partnerUserId` join-column field. The
@@ -389,8 +391,49 @@ async function main() {
     );
   }
 
+  // workspaceMember predicate: scope the Partner role to its OWN member record only.
+  // The role has read on workspaceMember so the partner UI can resolve member-typed
+  // relations (their partnerUser link; owner/createdBy on their opportunities). Without
+  // this scope, that read would expose the whole internal team roster. Semantics:
+  // "this workspaceMember's id IS the current session member" → a partner sees only
+  // themselves; other members (e.g. an opportunity's internal owner) resolve to null.
+  {
+    const wmData = await metadataFetch<{
+      upsertRowLevelPermissionPredicates: { predicates: PredicateResult[] };
+    }>(metadataUrl, apiKey, MUTATION, {
+      input: {
+        roleId: partnerRole.id,
+        objectMetadataId: workspaceMemberId,
+        predicates: [
+          {
+            fieldMetadataId: workspaceMemberIdFieldId,
+            operand: 'IS',
+            workspaceMemberFieldMetadataId: workspaceMemberIdFieldId,
+          },
+        ],
+        predicateGroups: [],
+      },
+    });
+
+    const wmPredicate =
+      wmData.upsertRowLevelPermissionPredicates.predicates[0];
+
+    if (!wmPredicate) {
+      throw new Error(
+        'upsertRowLevelPermissionPredicates returned no predicate for workspaceMember',
+      );
+    }
+
+    results.push(wmPredicate);
+    console.log(
+      `[rls:configure] ✓ workspaceMember: predicate id=${wmPredicate.id} ` +
+        `(fieldMetadataId=${wmPredicate.fieldMetadataId}, operand=${wmPredicate.operand})`,
+    );
+  }
+
   console.log(
-    `\n[rls:configure] Done — ${results.length}/${TARGET_OBJECTS.length} predicates upserted on Partner role`,
+    `\n[rls:configure] Done — ${results.length} predicates upserted on Partner role ` +
+      `(${TARGET_OBJECTS.length} objects + workspaceMember self-scope)`,
   );
 
   // ── 5. Verify Opportunity field permissions: read-all / update-stage-only ─────
