@@ -1,0 +1,25 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider.ts
+  s_ff3d5b0bd294f3::t_f204e9a86a75c1 53,57-58
+  s_ff3d5b0bd294f3::t_0089f8d3c7f9c9 52
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/services/__tests__/imap-smtp-caldav-connection.service.spec.ts
+  s_ff3d5b0bd294f3::t_02d6090aaf6fda 120,123,128,132,135-136,140,144,147-148,152,156-160,163
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+  s_ff3d5b0bd294f3::t_b29a6814aabfbe 114
+  s_ff3d5b0bd294f3::t_21bceb59687617 115,119-120
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "d252fc2868a90f6375d8fdf886fe2c4f786733a5",
+  "prompts": {},
+  "sessions": {
+    "s_ff3d5b0bd294f3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc6a7753-6313-4145-9c09-a0d3d40ac9aa",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
