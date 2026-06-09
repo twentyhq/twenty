@@ -18,7 +18,6 @@ describe('isValidReturnToPath', () => {
   });
 
   it('should return false for backslash-tricked paths', () => {
-    // Browsers normalize "\" to "/", so these resolve like "//evil.com".
     expect(isValidReturnToPath('/\\evil.com')).toBe(false);
     expect(isValidReturnToPath('/\\/evil.com')).toBe(false);
     expect(isValidReturnToPath('/objects\\..\\evil')).toBe(false);

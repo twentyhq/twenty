@@ -16,15 +16,7 @@ export const isValidReturnToPath = (path: string): boolean => {
     return false;
   }
 
-  if (!path.startsWith('/') || path.startsWith('//')) {
-    return false;
-  }
-
-  // Browsers normalize "\" to "/", so "/\evil.com" resolves like the
-  // protocol-relative "//evil.com" (an external URL) even though it passes the
-  // "//" check above. Reject backslashes so a returnTo can only ever be a
-  // same-site absolute path.
-  if (path.includes('\\')) {
+  if (!path.startsWith('/') || path.startsWith('//') || path.includes('\\')) {
     return false;
   }
 
