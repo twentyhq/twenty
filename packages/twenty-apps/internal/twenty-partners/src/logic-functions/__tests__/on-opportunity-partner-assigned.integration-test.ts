@@ -209,16 +209,34 @@ describe('on-opportunity-partner-assigned', () => {
   });
 
   // -------------------------------------------------------------------------
-  // No-op guard: updatedFields includes partnerId but after.partnerId is null
+  // Unassign: partnerId cleared → the opportunity's partnerUser is cleared so it
+  // leaves the partner's row-level view.
   // -------------------------------------------------------------------------
-  it('returns {} when partnerId is set to null (unassignment)', async () => {
+  it('clears the opportunity partnerUser when the partner is removed (unassignment)', async () => {
     if (!handler) throw new Error('Handler not found — implementation file missing');
 
+    const memberId = await getWorkspaceMemberId(client);
+    const partnerId = await createPartner(client, memberId);
+    createdPartnerIds.push(partnerId);
+    const companyId = await createCompany(client, `[test-rls] company ${Date.now()}`);
+    createdCompanyIds.push(companyId);
+    const oppId = await createOpportunity(client, `[test-rls] opp ${Date.now()}`, companyId);
+    createdOpportunityIds.push(oppId);
+
+    // Assign first so the opportunity has partnerUser stamped.
+    await handler({
+      properties: { updatedFields: ['partnerId'], after: { id: oppId, partnerId, companyId } },
+    } as never);
+    expect((await getOpportunity(client, oppId)).partnerUserId).toBe(memberId);
+
+    // Now unassign: partnerId set to null.
     const result = await handler({
-      properties: { updatedFields: ['partnerId'], after: { id: 'fake-id', partnerId: null } },
+      properties: { updatedFields: ['partnerId'], after: { id: oppId, partnerId: null, companyId } },
     } as never);
 
-    expect(result).toEqual({});
+    expect((result as any).cascaded).toBe(true);
+    expect((result as any).cleared).toBe(true);
+    expect((await getOpportunity(client, oppId)).partnerUserId).toBeNull();
   });
 
   // -------------------------------------------------------------------------

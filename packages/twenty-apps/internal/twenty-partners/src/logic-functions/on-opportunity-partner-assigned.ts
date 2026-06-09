@@ -5,10 +5,13 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 // touching that file's local-only APPLICATION_UNIVERSAL_IDENTIFIER rewrite in the bundle.
 const ON_OPP_PARTNER_ASSIGNED_FN_UNIVERSAL_IDENTIFIER = 'd7e4a4e6-9142-4597-adcf-6fb83c0f042d';
 
-// Fires on opportunity.updated when partnerId changes to a non-null value.
-// Resolves the assigned Partner's partnerUser (workspace member) and stamps it onto the
-// Opportunity and its linked Company + People, so the whole deal becomes visible to the
-// partner under row-level permissions.
+// Fires on opportunity.updated when partnerId changes.
+// - Assign / reassign (partnerId set): resolve the assigned Partner's partnerUser
+//   (workspace member) and stamp it onto the Opportunity + linked Company + People, so the
+//   whole deal becomes visible to the partner under row-level permissions.
+// - Unassign (partnerId cleared): clear the Opportunity's partnerUser so it leaves the
+//   partner's row-level view. (Linked Company/People keep their partnerUser as deal
+//   context — clearing those safely requires checking the partner's other deals; deferred.)
 const handler = async (payload: DatabaseEventPayload) => {
   const props = payload.properties as {
     after?: { id: string; partnerId?: string | null; companyId?: string | null };
@@ -16,11 +19,23 @@ const handler = async (payload: DatabaseEventPayload) => {
   };
 
   if (!props.updatedFields?.includes('partnerId')) return {};
-  const partnerId = props.after?.partnerId;
   const opportunityId = props.after?.id;
-  if (!partnerId || !opportunityId) return {};
+  if (!opportunityId) return {};
 
   const client = new CoreApiClient();
+  const partnerId = props.after?.partnerId;
+
+  // Unassign: the partner was removed from the opportunity. Clear the opportunity's
+  // partnerUser so it disappears from that partner's row-level view.
+  if (!partnerId) {
+    await client.mutation({
+      updateOpportunity: {
+        __args: { id: opportunityId, data: { partnerUserId: null } },
+        id: true,
+      },
+    } as any);
+    return { cascaded: true, cleared: true };
+  }
 
   const partnerResult = await client.query({
     partner: { __args: { filter: { id: { eq: partnerId } } }, id: true, partnerUserId: true },
