@@ -206,7 +206,10 @@ const LoadingSkeleton = () => {
 
 export const LazyMarkdownRenderer = ({ text }: { text: string }) => {
   return (
-    <StyledMarkdownContainer className="markdown-section">
+    <StyledMarkdownContainer
+      className="markdown-section"
+      data-replay-ignore-mutations="true"
+    >
       <Suspense fallback={<LoadingSkeleton />}>
         <MarkdownRenderer
           TableScrollContainer={StyledTableScrollContainer}
