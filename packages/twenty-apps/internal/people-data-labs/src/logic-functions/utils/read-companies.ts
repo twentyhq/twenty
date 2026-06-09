@@ -2,13 +2,17 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type CompanyNode } from 'src/types/company-node';
 
-export const readCompany = async (
+export const readCompanies = async (
   client: CoreApiClient,
-  recordId: string,
-): Promise<CompanyNode | undefined> => {
+  recordIds: string[],
+): Promise<CompanyNode[]> => {
+  if (recordIds.length === 0) {
+    return [];
+  }
+
   const result = (await client.query({
     companies: {
-      __args: { filter: { id: { eq: recordId } }, first: 1 },
+      __args: { filter: { id: { in: recordIds } }, first: recordIds.length },
       edges: {
         node: {
           id: true,
@@ -30,5 +34,5 @@ export const readCompany = async (
     },
   })) as { companies?: { edges?: { node: CompanyNode }[] } };
 
-  return result.companies?.edges?.[0]?.node;
+  return result.companies?.edges?.map((edge) => edge.node) ?? [];
 };

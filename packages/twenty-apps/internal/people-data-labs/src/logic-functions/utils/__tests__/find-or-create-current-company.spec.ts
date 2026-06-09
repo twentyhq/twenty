@@ -66,6 +66,18 @@ describe('findOrCreateCurrentCompany', () => {
     expect(createdData).toMatchObject({ name: 'Acme', pdlId: 'pdl-co-2' });
   });
 
+  it('throws when the create mutation returns no company id', async () => {
+    const query = vi.fn(() => Promise.resolve({ companies: { edges: [] } }));
+    const mutation = vi.fn(() => Promise.resolve({ createCompany: null }));
+    const client = { query, mutation } as unknown as CoreApiClient;
+
+    await expect(
+      findOrCreateCurrentCompany(client, {
+        job_company_name: 'Acme',
+      } as PdlPersonData),
+    ).rejects.toThrow('Failed to create company: no id returned.');
+  });
+
   it('re-finds the winner when a concurrent create hits a unique violation', async () => {
     let created = false;
     const query = vi.fn((request: unknown) =>

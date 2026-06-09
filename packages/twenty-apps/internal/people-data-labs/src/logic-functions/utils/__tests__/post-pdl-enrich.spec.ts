@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { postPdlEnrich } from 'src/logic-functions/utils/post-pdl-enrich';
+import { postPdlBulkEnrich } from 'src/logic-functions/utils/post-pdl-enrich';
 
 type FetchResponse = {
   status: number;
@@ -19,7 +19,18 @@ const buildResponse = (
     jsonThrows ? Promise.reject(new Error('invalid json')) : Promise.resolve(json),
 });
 
-describe('postPdlEnrich', () => {
+const stubFetch = (response: FetchResponse | Error) => {
+  const fetchMock = vi.fn(() =>
+    response instanceof Error
+      ? Promise.reject(response)
+      : Promise.resolve(response),
+  );
+  vi.stubGlobal('fetch', fetchMock);
+
+  return fetchMock;
+};
+
+describe('postPdlBulkEnrich', () => {
   beforeEach(() => {
     process.env.PDL_API_KEY = 'secret-key';
   });
@@ -29,91 +40,128 @@ describe('postPdlEnrich', () => {
     delete process.env.PDL_API_KEY;
   });
 
-  it('returns a matched outcome with data and likelihood on 200', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(() =>
-        Promise.resolve(buildResponse(200, { likelihood: 8, data: { id: 'x' } })),
-      ),
-    );
+  it('sends one request wrapping every record under requests[].params', async () => {
+    const fetchMock = stubFetch(buildResponse(200, [{ status: 200, data: {} }]));
 
-    const result = await postPdlEnrich('/person/enrich', { email: 'a@b.com' });
+    await postPdlBulkEnrich('/person/bulk', [{ email: 'a@b.com' }]);
 
-    expect(result).toEqual({
-      outcome: 'matched',
-      httpStatus: 200,
-      likelihood: 8,
-      data: { id: 'x' },
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe('https://api.peopledatalabs.com/v5/person/bulk');
+    expect(JSON.parse(init.body as string)).toEqual({
+      requests: [{ params: { email: 'a@b.com' } }],
     });
   });
 
-  it('uses the whole body as data when there is no data envelope', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(() => Promise.resolve(buildResponse(200, { id: 'company-1' }))),
+  it('maps each response item to its aligned outcome', async () => {
+    stubFetch(
+      buildResponse(200, [
+        { status: 200, likelihood: 8, data: { id: 'a' } },
+        { status: 404 },
+        { status: 500, error: { message: 'boom' } },
+      ]),
     );
 
-    const result = await postPdlEnrich('/company/enrich', { name: 'Acme' });
+    const results = await postPdlBulkEnrich('/person/bulk', [
+      { email: 'a@b.com' },
+      { email: 'b@b.com' },
+      { email: 'c@b.com' },
+    ]);
 
-    expect(result).toEqual({
+    expect(results).toEqual([
+      { outcome: 'matched', httpStatus: 200, likelihood: 8, data: { id: 'a' } },
+      { outcome: 'not_found', httpStatus: 404 },
+      { outcome: 'error', httpStatus: 500, message: 'boom' },
+    ]);
+  });
+
+  it('falls back to the whole item as data when there is no data envelope', async () => {
+    stubFetch(buildResponse(200, [{ status: 200, name: 'Acme' }]));
+
+    const results = await postPdlBulkEnrich('/company/enrich/bulk', [
+      { name: 'Acme' },
+    ]);
+
+    expect(results[0]).toEqual({
       outcome: 'matched',
       httpStatus: 200,
       likelihood: undefined,
-      data: { id: 'company-1' },
+      data: { status: 200, name: 'Acme' },
     });
   });
 
-  it('returns a not_found outcome on 404', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(() => Promise.resolve(buildResponse(404, {}))),
+  it('reads the responses envelope when the body is not a bare array', async () => {
+    stubFetch(
+      buildResponse(200, { responses: [{ status: 200, data: { id: 'a' } }] }),
     );
 
-    const result = await postPdlEnrich('/person/enrich', {});
+    const results = await postPdlBulkEnrich('/person/bulk', [{ email: 'a@b.com' }]);
 
-    expect(result).toEqual({ outcome: 'not_found', httpStatus: 404 });
+    expect(results[0]).toMatchObject({ outcome: 'matched', data: { id: 'a' } });
   });
 
-  it('returns an error outcome with the PDL error message on a non-2xx', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(() =>
-        Promise.resolve(buildResponse(500, { error: { message: 'boom' } })),
-      ),
-    );
+  it('marks missing response items as errors', async () => {
+    stubFetch(buildResponse(200, [{ status: 200, data: { id: 'a' } }]));
 
-    const result = await postPdlEnrich('/person/enrich', {});
+    const results = await postPdlBulkEnrich('/person/bulk', [
+      { email: 'a@b.com' },
+      { email: 'b@b.com' },
+    ]);
 
-    expect(result).toEqual({ outcome: 'error', httpStatus: 500, message: 'boom' });
-  });
-
-  it('returns an error outcome when fetch throws', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(() => Promise.reject(new Error('network down'))),
-    );
-
-    const result = await postPdlEnrich('/person/enrich', {});
-
-    expect(result).toEqual({
+    expect(results[0].outcome).toBe('matched');
+    expect(results[1]).toEqual({
       outcome: 'error',
       httpStatus: 0,
-      message: 'PDL request failed: network down',
+      message: 'People Data Labs returned a malformed response item.',
     });
   });
 
-  it('returns an error outcome on a non-JSON response', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(() => Promise.resolve(buildResponse(200, null, true))),
-    );
+  it('fails every record when the whole call is a non-2xx response', async () => {
+    stubFetch(buildResponse(401, { error: { message: 'unauthorized' } }));
 
-    const result = await postPdlEnrich('/person/enrich', {});
+    const results = await postPdlBulkEnrich('/person/bulk', [
+      { email: 'a@b.com' },
+      { email: 'b@b.com' },
+    ]);
 
-    expect(result).toEqual({
-      outcome: 'error',
-      httpStatus: 200,
-      message: 'PDL returned a non-JSON response (HTTP 200).',
-    });
+    expect(results).toEqual([
+      { outcome: 'error', httpStatus: 401, message: 'unauthorized' },
+      { outcome: 'error', httpStatus: 401, message: 'unauthorized' },
+    ]);
+  });
+
+  it('fails every record when fetch throws', async () => {
+    stubFetch(new Error('network down'));
+
+    const results = await postPdlBulkEnrich('/person/bulk', [{ email: 'a@b.com' }]);
+
+    expect(results).toEqual([
+      {
+        outcome: 'error',
+        httpStatus: 0,
+        message: 'PDL request failed: network down',
+      },
+    ]);
+  });
+
+  it('fails every record on a non-JSON response', async () => {
+    stubFetch(buildResponse(200, null, true));
+
+    const results = await postPdlBulkEnrich('/person/bulk', [{ email: 'a@b.com' }]);
+
+    expect(results).toEqual([
+      {
+        outcome: 'error',
+        httpStatus: 200,
+        message: 'PDL returned a non-JSON response (HTTP 200).',
+      },
+    ]);
+  });
+
+  it('returns an empty array without calling fetch for no records', async () => {
+    const fetchMock = stubFetch(buildResponse(200, []));
+
+    expect(await postPdlBulkEnrich('/person/bulk', [])).toEqual([]);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

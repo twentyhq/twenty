@@ -2,13 +2,17 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type PersonNode } from 'src/types/person-node';
 
-export const readPerson = async (
+export const readPeople = async (
   client: CoreApiClient,
-  recordId: string,
-): Promise<PersonNode | undefined> => {
+  recordIds: string[],
+): Promise<PersonNode[]> => {
+  if (recordIds.length === 0) {
+    return [];
+  }
+
   const result = (await client.query({
     people: {
-      __args: { filter: { id: { eq: recordId } }, first: 1 },
+      __args: { filter: { id: { in: recordIds } }, first: recordIds.length },
       edges: {
         node: {
           id: true,
@@ -25,5 +29,5 @@ export const readPerson = async (
     },
   })) as { people?: { edges?: { node: PersonNode }[] } };
 
-  return result.people?.edges?.[0]?.node;
+  return result.people?.edges?.map((edge) => edge.node) ?? [];
 };

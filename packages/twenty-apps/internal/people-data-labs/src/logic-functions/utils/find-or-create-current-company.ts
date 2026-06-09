@@ -8,7 +8,7 @@ import { type PdlPersonData } from 'src/types/pdl-person-data';
 import { isDefined } from 'src/utils/is-defined';
 import { isUniqueViolationError } from 'src/utils/is-unique-violation-error';
 
-type CreateCompanyResult = { createCompany?: { id: string } };
+type CreateCompanyResult = { createCompany?: { id?: string } };
 
 export const findOrCreateCurrentCompany = async (
   client: CoreApiClient,
@@ -36,7 +36,13 @@ export const findOrCreateCurrentCompany = async (
       },
     })) as CreateCompanyResult;
 
-    return result.createCompany?.id;
+    const companyId = result.createCompany?.id;
+
+    if (!isDefined(companyId)) {
+      throw new Error('Failed to create company: no id returned.');
+    }
+
+    return companyId;
   } catch (createError) {
     if (!isUniqueViolationError(createError)) {
       throw createError;
