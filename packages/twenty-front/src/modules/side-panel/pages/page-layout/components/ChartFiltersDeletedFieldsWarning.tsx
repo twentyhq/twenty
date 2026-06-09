@@ -1,8 +1,7 @@
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
-import { SidePanelInformationBanner } from 'twenty-ui/display';
-
+import { SidePanelInformationBanner } from 'twenty-ui-deprecated/display';
 type ChartFiltersDeletedFieldsWarningProps = {
   validFieldMetadataIds: Set<string>;
 };

@@ -14,8 +14,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, useIcons } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
+import { IconChevronLeft, useIcons } from 'twenty-ui-deprecated/display';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
 import { RelationType } from '~/generated-metadata/graphql';
 
 type MorphRelationTarget = {
@@ -27,6 +27,7 @@ type MorphRelationTarget = {
 
 type ChartGroupByFieldSelectionMorphRelationFieldViewProps = {
   morphField: FieldMetadataItem;
+  currentFieldMetadataId: string | undefined;
   currentSubFieldName: string | undefined;
   onBack: () => void;
   onSelectTargetSubField: (params: {
@@ -37,6 +38,7 @@ type ChartGroupByFieldSelectionMorphRelationFieldViewProps = {
 
 export const ChartGroupByFieldSelectionMorphRelationFieldView = ({
   morphField,
+  currentFieldMetadataId,
   currentSubFieldName,
   onBack,
   onSelectTargetSubField,
@@ -85,7 +87,11 @@ export const ChartGroupByFieldSelectionMorphRelationFieldView = ({
       <ChartGroupByFieldSelectionTargetObjectFieldsView
         targetObjectNameSingular={selectedTarget.targetObjectNameSingular}
         headerLabel={`${morphField.label} · ${selectedTarget.label}`}
-        currentSubFieldName={currentSubFieldName}
+        currentSubFieldName={
+          selectedTarget.perTargetFieldId === currentFieldMetadataId
+            ? currentSubFieldName
+            : undefined
+        }
         onBack={() => setSelectedTarget(null)}
         onSelectSubField={(subFieldName) =>
           onSelectTargetSubField({

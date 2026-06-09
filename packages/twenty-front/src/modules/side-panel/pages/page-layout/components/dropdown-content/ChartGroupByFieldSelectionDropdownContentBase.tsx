@@ -28,8 +28,8 @@ import {
   isDefined,
   isFieldMetadataSupportedInGroupBy,
 } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { useIcons } from 'twenty-ui-deprecated/display';
+import { MenuItemSelect } from 'twenty-ui-deprecated/navigation';
 import { RelationType } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
@@ -246,6 +246,7 @@ export const ChartGroupByFieldSelectionDropdownContentBase = <
     return (
       <ChartGroupByFieldSelectionMorphRelationFieldView
         morphField={selectedMorphField}
+        currentFieldMetadataId={currentGroupByFieldMetadataId}
         currentSubFieldName={currentSubFieldName}
         onBack={handleBackFromMorph}
         onSelectTargetSubField={handleSelectMorphTargetSubField}
