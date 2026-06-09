@@ -4,6 +4,7 @@ import {
   Breadcrumb,
   type BreadcrumbProps,
 } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
@@ -88,7 +89,11 @@ export const PageCardHeader = ({
             </StyledTitle>
           )}
       </StyledLeft>
-      <StyledRight>{actionButton}</StyledRight>
+      <StyledRight
+        data-click-outside-id={PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID}
+      >
+        {actionButton}
+      </StyledRight>
     </StyledHeader>
   );
 };

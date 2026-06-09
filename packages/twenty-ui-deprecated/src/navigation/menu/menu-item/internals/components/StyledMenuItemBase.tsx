@@ -16,6 +16,8 @@ export type MenuItemBaseProps = {
 export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
   --horizontal-padding: ${themeCssVariables.spacing[1]};
   --vertical-padding: ${themeCssVariables.spacing[2]};
+  /* Height and width below are sized against the content box. */
+  box-sizing: content-box;
   align-items: center;
 
   border-radius: ${themeCssVariables.border.radius.sm};
@@ -148,6 +150,8 @@ type HoverableMenuItemBaseProps = {
 export const StyledHoverableMenuItemBase = styled.div<HoverableMenuItemBaseProps>`
   --horizontal-padding: ${themeCssVariables.spacing[1]};
   --vertical-padding: ${themeCssVariables.spacing[2]};
+  /* Height and width below are sized against the content box. */
+  box-sizing: content-box;
   align-items: center;
   border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;

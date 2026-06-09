@@ -35,7 +35,10 @@ export const writeClientFiles = async (
 
   const schemaGqlCtx = new RenderContext(schema, config);
   renderSchema(schema, schemaGqlCtx);
-  await writeFileToPath([output, schemaGqlFile], schemaGqlCtx.toCode('graphql'));
+  await writeFileToPath(
+    [output, schemaGqlFile],
+    await schemaGqlCtx.toCode('graphql'),
+  );
 
   await ensurePath([output, 'runtime']);
   for (const { name, content } of RUNTIME_TEMPLATE_FILES) {
@@ -49,21 +52,21 @@ export const writeClientFiles = async (
   renderEnumsMaps(schema, schemaTypesCtx);
   await writeFileToPath(
     [output, schemaTypesFile],
-    '// @ts-nocheck\n' + schemaTypesCtx.toCode('typescript'),
+    '// @ts-nocheck\n' + (await schemaTypesCtx.toCode('typescript')),
   );
 
   const typeMapCtx = new RenderContext(schema, config);
   renderTypeMap(schema, typeMapCtx);
   await writeFileToPath(
     [output, typeMapFileEsm],
-    `export default ${typeMapCtx.toCode()}`,
+    `export default ${await typeMapCtx.toCode()}`,
   );
 
   const clientCtx = new RenderContext(schema, config);
   renderClientEsm(schema, clientCtx);
   await writeFileToPath(
     [output, clientFileEsm],
-    '// @ts-nocheck\n' + clientCtx.toCode('typescript', true),
+    '// @ts-nocheck\n' + (await clientCtx.toCode('typescript', true)),
   );
 };
 

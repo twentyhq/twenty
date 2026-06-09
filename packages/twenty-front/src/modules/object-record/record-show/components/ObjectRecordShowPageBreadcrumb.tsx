@@ -93,7 +93,7 @@ export const ObjectRecordShowPageBreadcrumb = ({
   }
 
   return (
-    <StyledEditableTitleContainer>
+    <StyledEditableTitleContainer data-testid="top-bar-title">
       <StyledEditableTitlePrefix
         onClick={() => {
           navigateToIndexView();

@@ -37,6 +37,7 @@ import { processOneDimensionalResults } from 'src/modules/dashboard/chart-data/u
 import { processTwoDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-two-dimensional-results.util';
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data-if-needed.util';
 import { sortSecondaryAxisData } from 'src/modules/dashboard/chart-data/utils/sort-secondary-axis-data.util';
+import { wrapChartDataQueryError } from 'src/modules/dashboard/chart-data/utils/wrap-chart-data-query-error.util';
 
 type GetBarChartDataParams = {
   workspaceId: string;
@@ -188,17 +189,7 @@ export class BarChartDataService {
         firstDayOfTheWeek,
       });
     } catch (error) {
-      if (error instanceof ChartDataException) {
-        throw error;
-      }
-
-      throw new ChartDataException(
-        generateChartDataExceptionMessage(
-          ChartDataExceptionCode.QUERY_EXECUTION_FAILED,
-          `Bar chart data retrieval failed: ${error instanceof Error ? error.message : String(error)}`,
-        ),
-        ChartDataExceptionCode.QUERY_EXECUTION_FAILED,
-      );
+      throw wrapChartDataQueryError(error, 'Bar chart data retrieval failed');
     }
   }
 

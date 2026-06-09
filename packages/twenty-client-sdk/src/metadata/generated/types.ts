@@ -1896,9 +1896,6 @@ export default {
             "billingEntitlements": [
                 230
             ],
-            "hasValidEnterpriseKey": [
-                6
-            ],
             "hasValidSignedEnterpriseKey": [
                 6
             ],
