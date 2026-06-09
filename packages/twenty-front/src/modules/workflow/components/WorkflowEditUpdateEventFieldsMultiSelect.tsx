@@ -5,7 +5,7 @@ import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/type
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui-deprecated/display';
 import { RelationType } from '~/generated-metadata/graphql';
 
 export const WorkflowFieldsMultiSelect = ({

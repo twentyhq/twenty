@@ -23,9 +23,12 @@ import {
   H2Title,
   IconChevronRight,
   OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { Section } from 'twenty-ui-deprecated/layout';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import {
   AdminPanelRecentUsersDocument,
   AdminPanelTopWorkspacesDocument,

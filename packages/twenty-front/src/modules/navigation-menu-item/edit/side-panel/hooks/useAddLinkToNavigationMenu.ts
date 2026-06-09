@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { normalizeUrl } from 'twenty-shared/utils';
-import { IconLink } from 'twenty-ui/display';
+import { IconLink } from 'twenty-ui-deprecated/display';
 
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';

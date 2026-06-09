@@ -13,8 +13,8 @@ import {
   IconListNumbers,
   IconStrikethrough,
   IconUnderline,
-} from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 export const StyledBubbleMenuContainer = styled.div`
   backdrop-filter: blur(20px);

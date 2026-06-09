@@ -5,7 +5,7 @@ import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorato
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const StyledContainer = styled.div`

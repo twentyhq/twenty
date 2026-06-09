@@ -49,7 +49,7 @@
     "tsx": "^4.7.0",
     "twenty-sdk": "workspace:*",
     "twenty-shared": "workspace:*",
-    "twenty-ui": "workspace:*",
+    "twenty-ui-deprecated": "workspace:*",
     "vite-plugin-dts": "^4.5.4",
     "vite-tsconfig-paths": "^4.2.1"
   },

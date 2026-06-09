@@ -140,6 +140,7 @@
     "twenty-front-component-renderer": "workspace:*",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*",
+    "twenty-ui-deprecated": "workspace:*",
     "type-fest": "4.10.1",
     "use-debounce": "^10.0.0",
     "uuid": "^11.1.1",

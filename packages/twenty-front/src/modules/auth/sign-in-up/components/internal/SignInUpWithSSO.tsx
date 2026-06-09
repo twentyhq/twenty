@@ -12,12 +12,12 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { HorizontalSeparator, IconLock } from 'twenty-ui/display';
-import { MainButton } from 'twenty-ui/input';
+import { HorizontalSeparator, IconLock } from 'twenty-ui-deprecated/display';
+import { MainButton } from 'twenty-ui-deprecated/input';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSSOButtonContainer } from './SignInUpSSOButtonStyles';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 
 export const SignInUpWithSSO = () => {
   const { theme } = useContext(ThemeContext);

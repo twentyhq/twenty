@@ -4,7 +4,7 @@ import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/Fie
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { RoundedLink } from 'twenty-ui/navigation';
+import { RoundedLink } from 'twenty-ui-deprecated/navigation';
 
 type EmailsDisplayProps = {
   value?: FieldEmailsValue;

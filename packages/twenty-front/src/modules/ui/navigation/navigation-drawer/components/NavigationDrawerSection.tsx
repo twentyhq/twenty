@@ -2,8 +2,8 @@ import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useIsMobile } from 'twenty-ui/utilities';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { useIsMobile } from 'twenty-ui-deprecated/utilities';
 
 const StyledSection = styled.div`
   width: 100%;

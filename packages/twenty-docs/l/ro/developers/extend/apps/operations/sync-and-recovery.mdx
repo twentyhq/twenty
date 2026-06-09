@@ -1,0 +1,111 @@
+---
+title: Sincronizare și recuperare
+description: Ce comandă să folosești și când, cum să citești rezultatul sincronizării și un plan în trepte de recuperare pentru situațiile în care metadatele locale deviază — înainte de a ajunge la o resetare completă.
+icon: busolă
+---
+
+Dezvoltarea locală de aplicații se învârte în jurul **sincronizării**: CLI-ul reconstruiește manifestul și serverul aplică doar diferența dintre acesta și metadatele deja existente în spațiul tău de lucru. Această pagină explică ce comandă să folosești, cum să citești ce a modificat o sincronizare și ce să faci — în ordine — atunci când starea locală pare inconsistentă.
+
+## Ce comandă și când
+
+<Note>
+Pentru iterațiile locale de zi cu zi vei dori aproape întotdeauna `yarn twenty dev`. Publicarea și deploy-ul sunt pentru lansarea de versiuni, **nu** pentru bucla locală.
+</Note>
+
+| Vrei să…                                                       | Comandă                             | Notițe                                                                                                                    |
+| -------------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Iterează local cu sincronizare în timp real                    | `yarn twenty dev`                   | Monitorizează fișierele și sincronizează la fiecare modificare.                                                           |
+| Sincronizează o singură dată și iese (CI, scripturi, hook-uri) | `yarn twenty dev --once`            | O singură compilare + sincronizare, apoi iese.                                                                            |
+| Previzualizează modificările **fără a le aplica**              | `yarn twenty dev --once --dry-run`  | Calculează și afișează diff-ul; nu scrie nimic.                                                                           |
+| Elimină aplicația din spațiul de lucru                         | `yarn twenty app:uninstall`         | Adaugă `--yes` pentru a sări peste prompt.                                                                                |
+| Trimite un tarball către un server                             | `yarn twenty app:publish --private` | Necesită o versiune `package.json` **strict mai mare** — vezi [Publicare](/l/ro/developers/extend/apps/operations/publishing). |
+| Publică în marketplace (npm)                                   | `yarn twenty app:publish`           | —                                                                                                                         |
+| Instalează / actualizează o versiune deja implementată         | `yarn twenty app:install`           | Instalează versiunea implementată în prezent.                                                                             |
+| Șterge serverul local și pornește de la zero                   | `yarn twenty docker:reset`          | Șterge **toate** datele locale — ultimă soluție.                                                                          |
+
+### Sincronizarea locală nu are nevoie de incrementarea versiunii
+
+Regula de `version` strict crescătoare (`VERSION_ALREADY_EXISTS` la deploy, `APP_ALREADY_INSTALLED` / `CANNOT_DOWNGRADE_APPLICATION` la instalare) se aplică pentru **`app:publish` / `app:install`** — calea de release. `yarn twenty dev` sincronizează manifestul pe loc și nu necesită niciodată schimbarea versiunii, astfel încât nu trebuie să atingi `package.json` pentru a itera. Dacă ajungi să crești versiunea ca să testezi o modificare locală, folosești calea de release atunci când ai nevoie de bucla de dezvoltare.
+
+## Citirea rezultatului sincronizării
+
+Fiecare sincronizare afișează modificările de metadate pe care le-a aplicat (sau le-ar aplica, cu `--dry-run`):
+
+```text filename="Terminal"
+Metadata changes: 2 created, 1 updated, 1 deleted
+  created objectMetadata rocket
+  created fieldMetadata timelineActivities
+  updated fieldMetadata launchedAt
+  deleted pageLayout legacyTab
+✓ Synced
+```
+
+Acesta este primul tău instrument de diagnostic: îți spune exact ce obiecte, câmpuri și layout-uri s-au schimbat, astfel încât să poți confirma că o sincronizare a făcut ce te așteptai înainte să verifici interfața.
+
+Când o sincronizare eșuează pe o singură entitate, eroarea numește entitatea problematică și `universalIdentifier`-ul acesteia, de exemplu:
+
+```text
+Migration action 'create' for 'fieldMetadata' (universalIdentifier: 2020...4337) failed
+```
+
+Folosește acel identificator pentru a găsi entitatea în manifest (și, dacă este nevoie, în spațiul de lucru) în loc să ghicești care intră în conflict.
+
+## Previzualizarea modificărilor (dry run)
+
+`yarn twenty dev --once --dry-run` construiește manifestul, cere serverului planul de migrare și îl afișează — **fără a aplica nimic**. Este modalitatea sigură de a răspunde la întrebarea „ce ar schimba această sincronizare?” înainte de a te angaja la ea.
+
+```bash filename="Terminal"
+yarn twenty dev --once --dry-run
+```
+
+```text filename="Terminal"
+Building manifest...
+Computing metadata diff (dry run, nothing will be applied)...
+Metadata changes: 1 created, 1 updated
+  created fieldMetadata timelineActivities
+  updated objectMetadata rocket
+✓ Dry run complete for My App — no changes were applied
+```
+
+Un dry run:
+
+* **Nu scrie nimic** — fără migrare de metadate, fără actualizare a înregistrării aplicației, fără modificări ale rolului sau filei implicite și fără generare de client API.
+* Returnează **același diff** pe care l-ar aplica o sincronizare reală, astfel încât poți revizui dinainte entitățile create/actualizate/șterse.
+* Este util înaintea unei modificări riscante, când revizuiești o modificare generată de AI sau într-un script care ar trebui să eșueze dacă o modificare neașteptată este pe cale să fie aplicată.
+
+<Note>
+Un dry run previzualizează doar modificările de **metadate** și necesită ca aplicația să fi fost sincronizată cel puțin o dată (astfel încât spațiul de lucru să știe de ea). Dacă îl rulezi pentru o aplicație care nu a fost niciodată sincronizată, serverul va raporta că aplicația nu este instalată — rulează mai întâi o dată `yarn twenty dev`.
+</Note>
+
+## Plan de recuperare în trepte
+
+Când metadatele locale par greșite, escaladează în această ordine și oprește-te de îndată ce ești deblocat. Fiecare pas este mai disruptiv decât precedentul.
+
+1. **Resincronizează.** Rulează din nou `yarn twenty dev --once`. Sincronizările sunt idempotente — rularea din nou a unui manifest curat este sigură și rezolvă adesea o problemă temporară.
+2. **Previzualizează planul.** Rulează `yarn twenty dev --once --dry-run` pentru a vedea exact ce intenționează să schimbe următoarea sincronizare, fără a o aplica.
+3. **Citește eroarea nominalizată.** Dacă o sincronizare eșuează, notează tipul de metadate și `universalIdentifier`-ul din mesaj (vezi mai sus) și localizează acea entitate în manifest. Un conflict indică de obicei un identificator duplicat sau reutilizat.
+4. **Dezinstalează și reinstalează.** `yarn twenty app:uninstall`, apoi sincronizează din nou (`yarn twenty dev`). Acest lucru reconstruiește metadatele aplicației de la zero, păstrând în același timp restul spațiului de lucru intact.
+5. **Resetare completă (ultimă soluție).** `yarn twenty docker:reset`, apoi reinițializează datele și resincronizează.
+
+<Warning>
+`yarn twenty docker:reset` șterge **toate** datele din instanța ta locală — fiecare spațiu de lucru, înregistrare și aplicație. Folosește această comandă doar după ce pașii anteriori au eșuat.
+</Warning>
+
+<Note>
+Ai întâlnit o eroare de metadate? Te rugăm să [deschizi un issue](https://github.com/twentyhq/twenty/issues/new/choose) și să incluzi mesajul de migrare eșuată (cu tipul de metadate și `universalIdentifier`-ul), rezultatul `Metadata changes` din sincronizare și comenzile pe care le-ai rulat.
+</Note>
+
+## Evită sincronizările concurente pe același spațiu de lucru
+
+Sincronizarea aplică migrațiile de metadate. Rularea mai multor operațiuni de sincronizare, deploy sau instalare împotriva aceluiași spațiu de lucru în același timp — de exemplu, mai multe terminale sau agenți AI care iterează în paralel — poate intercala acele migrații și poate lăsa metadatele într-o stare aplicată parțial.
+
+Serverul serializează sincronizările per spațiu de lucru pentru a preveni acest lucru, dar ar trebui totuși să treci operațiunile sensibile de metadate printr-un proces **unic**, în loc să le declanșezi concurent. Dacă orchestrezi dezvoltarea cu mai mulți agenți, rutează apelurile lor de sync/deploy/install printr-o singură coadă, astfel încât să ruleze doar unul la un moment dat.
+
+## Deosebirea tipurilor de erori
+
+Când ceva nu merge bine, diff-ul de metadate și erorile nominalizate îți permit să localizezi eșecul:
+
+* **Eroare de construire a manifestului** — CLI-ul eșuează înainte de sincronizare (`MANIFEST_BUILD_FAILED`, `TYPECHECK_FAILED`); repară sursa aplicației.
+* **Eroare de sincronizare / migrare** — build-ul reușește, dar aplicarea diff-ului eșuează, menționând entitatea și `universalIdentifier`-ul; repară metadatele care intră în conflict.
+* **Eroare de execuție în codul aplicației** — sincronizarea reușește, dar funcțiile sau componentele tale logice se comportă incorect la execuție; verifică [jurnalele funcțiilor](/l/ro/developers/extend/apps/operations/cli).
+* **Stare locală a instanței** — niciuna dintre cele de mai sus și spațiul de lucru tot arată greșit; coboară pe scara de recuperare.

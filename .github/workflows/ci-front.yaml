@@ -27,6 +27,7 @@ jobs:
         packages/twenty-front/**
         packages/twenty-front-component-renderer/**
         packages/twenty-ui/**
+        packages/twenty-ui-deprecated/**
         packages/twenty-shared/**
         packages/twenty-sdk/**
         !packages/twenty-sdk/package.json
@@ -90,6 +91,7 @@ jobs:
         run: |
           npx nx build twenty-shared
           npx nx build twenty-ui
+          npx nx build twenty-ui-deprecated
           npx nx build twenty-front-component-renderer
       - name: Download storybook build
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0

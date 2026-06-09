@@ -1,7 +1,7 @@
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 const meta: Meta<typeof Breadcrumb> = {

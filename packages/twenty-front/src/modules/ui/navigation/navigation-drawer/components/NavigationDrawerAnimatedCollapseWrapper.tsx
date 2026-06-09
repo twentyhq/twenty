@@ -8,7 +8,7 @@ import {
   type TargetAndTransition,
 } from 'framer-motion';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 const StyledAnimatedContainerBase = styled.span`
   display: block;
 `;

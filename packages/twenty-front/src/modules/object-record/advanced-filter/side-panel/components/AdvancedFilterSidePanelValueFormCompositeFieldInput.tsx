@@ -11,7 +11,7 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext } from 'react';
-import { type SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui-deprecated/input';
 import { type JsonValue } from 'type-fest';
 
 const ACTOR_SOURCE_OPTIONS: SelectOption[] = Object.values(
