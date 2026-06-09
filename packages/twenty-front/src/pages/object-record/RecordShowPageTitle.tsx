@@ -30,8 +30,10 @@ export const RecordShowPageTitle = ({
       )
     : '';
 
-  const pageTitle = pageName.trim()
-    ? `${pageName} - ${objectMetadataItem.labelSingular}`
+  const pageNameOrEmpty = pageName ?? '';
+
+  const pageTitle = pageNameOrEmpty.trim()
+    ? `${pageNameOrEmpty} - ${objectMetadataItem.labelSingular}`
     : objectMetadataItem.labelSingular;
 
   return <PageTitle title={pageTitle} />;
