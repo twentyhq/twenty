@@ -71,15 +71,10 @@ const StyledLoadingMore = styled.div`
   text-align: center;
 `;
 
-const StyledSkeletonContainer = styled.div`
-  padding: ${themeCssVariables.spacing[2]};
-`;
-
 const StyledIntersectionObserver = styled.div`
   height: 1px;
 `;
 
-const SKELETON_ROW_COUNT = 8;
 const EVENT_LOG_SCROLL_WRAPPER_INSTANCE_ID = 'event-log-results-table';
 
 const buildGridTemplateColumns = (
@@ -192,19 +187,23 @@ export const EventLogResultsTable = ({
                   <TableHeader key={column.id}>{t(column.label)}</TableHeader>
                 ))}
               </TableRow>
+              <TableRow gridTemplateColumns={gridTemplateColumns}>
+                {baseColumns.map((column, index) => (
+                  <TableCell key={column.id}>
+                    {index === 0 && (
+                      <SkeletonTheme
+                        baseColor={theme.background.tertiary}
+                        highlightColor={theme.background.transparent.lighter}
+                        borderRadius={4}
+                      >
+                        <Skeleton width={120} height={16} />
+                      </SkeletonTheme>
+                    )}
+                  </TableCell>
+                ))}
+              </TableRow>
             </Table>
           </StyledTableContainer>
-          <SkeletonTheme
-            baseColor={theme.background.tertiary}
-            highlightColor={theme.background.transparent.lighter}
-            borderRadius={4}
-          >
-            <StyledSkeletonContainer>
-              {Array.from({ length: SKELETON_ROW_COUNT }).map((_, index) => (
-                <Skeleton height={40} key={index} style={{ marginBottom: 4 }} />
-              ))}
-            </StyledSkeletonContainer>
-          </SkeletonTheme>
         </ScrollWrapper>
       </StyledScrollWrapperContainer>
     );
