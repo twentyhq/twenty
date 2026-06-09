@@ -371,7 +371,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
 
     // TODO(install-perf): temporary timing for the app-install 504 — remove
     // with the rest of the [install-perf] instrumentation.
-    const buildStartNs = process.hrtime.bigint();
+    const buildStart = performance.now();
     const validateAndBuildResult =
       await this.workspaceMigrationBuildOrchestratorService
         .buildWorkspaceMigration(buildArgs)
@@ -382,10 +382,9 @@ export class WorkspaceMigrationValidateBuildAndRunService {
             WorkspaceMigrationV2ExceptionCode.BUILDER_INTERNAL_SERVER_ERROR,
           );
         });
-    const buildMs = Number(process.hrtime.bigint() - buildStartNs) / 1e6;
+    const buildMs = performance.now() - buildStart;
 
-    // oxlint-disable-next-line no-console
-    console.log(
+    this.logger.log(
       `[install-perf] buildWorkspaceMigration took ${buildMs.toFixed(1)}ms (status=${validateAndBuildResult.status})`,
     );
 
@@ -420,21 +419,19 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         (actionCountsByTypeAndMetadataName[key] ?? 0) + 1;
     }
 
-    // oxlint-disable-next-line no-console
-    console.log(
+    this.logger.log(
       `[install-perf] validateBuildAndRunWorkspaceMigrationFromTo running ${workspaceMigration.actions.length} actions: ${JSON.stringify(actionCountsByTypeAndMetadataName)}`,
     );
 
-    const runStartNs = process.hrtime.bigint();
+    const runStart = performance.now();
     const { hasSchemaMetadataChanged, metadataEvents } =
       await this.workspaceMigrationRunnerService.run({
         workspaceId: args.workspaceId,
         workspaceMigration,
       });
-    const runMs = Number(process.hrtime.bigint() - runStartNs) / 1e6;
+    const runMs = performance.now() - runStart;
 
-    // oxlint-disable-next-line no-console
-    console.log(
+    this.logger.log(
       `[install-perf] workspaceMigrationRunnerService.run took ${runMs.toFixed(1)}ms for ${workspaceMigration.actions.length} actions`,
     );
 

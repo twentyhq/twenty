@@ -183,18 +183,18 @@ export class WorkspaceMigrationRunnerService {
          ORDER BY query_start ASC`,
       );
 
-      // oxlint-disable-next-line no-console
-      console.error(
+      this.logger.error(
         `[install-perf] active DB sessions at failure: ${JSON.stringify(rows)}`,
+        'Runner',
       );
     } catch (snapshotError) {
-      // oxlint-disable-next-line no-console
-      console.error(
+      this.logger.error(
         `[install-perf] could not snapshot pg_stat_activity: ${
           snapshotError instanceof Error
             ? snapshotError.message
             : String(snapshotError)
         }`,
+        'Runner',
       );
     }
   }
@@ -221,7 +221,7 @@ export class WorkspaceMigrationRunnerService {
     this.logger.time('Runner', 'Total execution');
     this.logger.time('Runner', 'Initial cache retrieval');
 
-    const initialCacheRetrievalStartNs = process.hrtime.bigint();
+    const initialCacheRetrievalStart = performance.now();
 
     const queryRunner = this.coreDataSource.createQueryRunner();
 
@@ -253,11 +253,11 @@ export class WorkspaceMigrationRunnerService {
     this.logger.timeEnd('Runner', 'Initial cache retrieval');
 
     const initialCacheRetrievalMs =
-      Number(process.hrtime.bigint() - initialCacheRetrievalStartNs) / 1e6;
+      performance.now() - initialCacheRetrievalStart;
 
-    // oxlint-disable-next-line no-console
-    console.log(
+    this.logger.log(
       `[install-perf] Runner initial cache retrieval (getOrRecomputeManyOrAllFlatEntityMaps) took ${initialCacheRetrievalMs.toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
+      'Runner',
     );
 
     const { flatApplicationMaps } =
@@ -296,14 +296,14 @@ export class WorkspaceMigrationRunnerService {
 
     // TODO(install-perf): temporary per-action timing — remove with the rest of
     // the [install-perf] install-504 instrumentation.
-    const transactionStartNs = process.hrtime.bigint();
+    const transactionStart = performance.now();
     let slowestActionMs = 0;
     let slowestActionLabel = 'n/a';
     let actionCount = 0;
 
     try {
       for (const action of actions) {
-        const actionStartNs = process.hrtime.bigint();
+        const actionStart = performance.now();
         const { partialOptimisticCache, metadataEvents } =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
             {
@@ -318,7 +318,7 @@ export class WorkspaceMigrationRunnerService {
             },
           );
 
-        const actionMs = Number(process.hrtime.bigint() - actionStartNs) / 1e6;
+        const actionMs = performance.now() - actionStart;
 
         actionCount += 1;
 
@@ -328,9 +328,9 @@ export class WorkspaceMigrationRunnerService {
         }
 
         if (actionMs > 50) {
-          // oxlint-disable-next-line no-console
-          console.log(
+          this.logger.log(
             `[install-perf] slow action ${action.type}:${action.metadataName} took ${actionMs.toFixed(1)}ms`,
+            'Runner',
           );
         }
 
@@ -342,17 +342,16 @@ export class WorkspaceMigrationRunnerService {
         allMetadataEvents.push(...metadataEvents);
       }
 
-      const commitStartNs = process.hrtime.bigint();
+      const commitStart = performance.now();
 
       await queryRunner.commitTransaction();
 
-      const commitMs = Number(process.hrtime.bigint() - commitStartNs) / 1e6;
-      const transactionMs =
-        Number(process.hrtime.bigint() - transactionStartNs) / 1e6;
+      const commitMs = performance.now() - commitStart;
+      const transactionMs = performance.now() - transactionStart;
 
-      // oxlint-disable-next-line no-console
-      console.log(
+      this.logger.log(
         `[install-perf] Runner transaction summary: ${actionCount} actions, total transaction ${transactionMs.toFixed(1)}ms (commit ${commitMs.toFixed(1)}ms), slowest action ${slowestActionLabel} ${slowestActionMs.toFixed(1)}ms`,
+        'Runner',
       );
 
       this.logger.timeEnd('Runner', 'Transaction execution');
@@ -361,25 +360,25 @@ export class WorkspaceMigrationRunnerService {
       // Log the real failure + a snapshot of blocking DB activity, and guard the
       // rollback so a released/dead connection doesn't mask the cause with
       // "Query runner already released". Remove once the bottleneck is fixed.
-      // oxlint-disable-next-line no-console
-      console.error(
+      this.logger.error(
         `[install-perf] migration failed after ${actionCount} action(s): ${
           error instanceof Error ? error.message : String(error)
         }`,
+        'Runner',
       );
       await this.logBlockingDbActivity();
 
       if (queryRunner.isTransactionActive && !queryRunner.isReleased) {
         await queryRunner.rollbackTransaction().catch((rollbackError) =>
-          // oxlint-disable-next-line no-console
-          console.error(
+          this.logger.error(
             `[install-perf] rollback failed: ${rollbackError.message}`,
+            'Runner',
           ),
         );
       } else {
-        // oxlint-disable-next-line no-console
-        console.error(
+        this.logger.error(
           `[install-perf] skipping rollback (txnActive=${queryRunner.isTransactionActive} released=${queryRunner.isReleased})`,
+          'Runner',
         );
       }
 
@@ -423,7 +422,7 @@ export class WorkspaceMigrationRunnerService {
       await queryRunner.release();
     }
 
-    const postCommitInvalidateStartNs = process.hrtime.bigint();
+    const postCommitInvalidateStart = performance.now();
 
     try {
       await this.invalidateCache({
@@ -438,11 +437,11 @@ export class WorkspaceMigrationRunnerService {
     }
 
     const postCommitInvalidateMs =
-      Number(process.hrtime.bigint() - postCommitInvalidateStartNs) / 1e6;
+      performance.now() - postCommitInvalidateStart;
 
-    // oxlint-disable-next-line no-console
-    console.log(
+    this.logger.log(
       `[install-perf] Runner post-commit invalidateCache took ${postCommitInvalidateMs.toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
+      'Runner',
     );
 
     const hasSchemaMetadataChanged =

@@ -181,7 +181,7 @@ export class ApplicationManifestMigrationService {
 
     // TODO(install-perf): temporary timing for the app-install 504 — remove
     // with the rest of the [install-perf] instrumentation.
-    const recomputeStartNs = process.hrtime.bigint();
+    const recomputeStart = performance.now();
     const cacheResult = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
       [
@@ -189,11 +189,9 @@ export class ApplicationManifestMigrationService {
         'featureFlagsMap',
       ],
     );
-    const recomputeMs =
-      Number(process.hrtime.bigint() - recomputeStartNs) / 1e6;
+    const recomputeMs = performance.now() - recomputeStart;
 
-    // oxlint-disable-next-line no-console
-    console.log(
+    this.logger.log(
       `[install-perf] syncMetadataFromManifest ALL_METADATA_NAME getOrRecompute flat-maps took ${recomputeMs.toFixed(1)}ms (logicFunctions=${manifest.logicFunctions.length})`,
     );
 
@@ -221,7 +219,7 @@ export class ApplicationManifestMigrationService {
       fromAllFlatEntityMaps: existingAllFlatEntityMaps,
     });
 
-    const validateBuildRunStartNs = process.hrtime.bigint();
+    const validateBuildRunStart = performance.now();
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
         {
@@ -241,11 +239,9 @@ export class ApplicationManifestMigrationService {
           dryRun,
         },
       );
-    const validateBuildRunMs =
-      Number(process.hrtime.bigint() - validateBuildRunStartNs) / 1e6;
+    const validateBuildRunMs = performance.now() - validateBuildRunStart;
 
-    // oxlint-disable-next-line no-console
-    console.log(
+    this.logger.log(
       `[install-perf] syncMetadataFromManifest validateBuildAndRunWorkspaceMigrationFromTo took ${validateBuildRunMs.toFixed(1)}ms (dryRun=${dryRun}, actions=${validateAndBuildResult.status === 'success' ? validateAndBuildResult.workspaceMigration.actions.length : 'n/a-failed'})`,
     );
 

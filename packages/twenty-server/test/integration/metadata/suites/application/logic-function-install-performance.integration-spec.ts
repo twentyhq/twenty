@@ -15,10 +15,9 @@ import { v4 as uuidv4 } from 'uuid';
  * produces "Migration action 'update' for 'logicFunction' failed" + 504).
  *
  * IMPORTANT: the integration harness boots the NestJS app in-process with
- * `fakeTimers.enableGlobally: true`, so `Date.now()` / `setTimeout` are FAKE in
- * the server code. All server-side timing instrumentation uses
- * `process.hrtime.bigint()` (NOT faked). Here in the test we call
- * `jest.useRealTimers()` so cache-lock retry delays etc. do not hang.
+ * `fakeTimers.enableGlobally: true`. We call `jest.useRealTimers()` for the whole
+ * suite so timing (`performance.now()`) is real and cache-lock retry delays etc.
+ * do not hang.
  */
 
 // Real timers for the whole suite — see note above.
@@ -69,11 +68,11 @@ const timeSync = async (
   label: string,
   manifest: Manifest,
 ): Promise<number> => {
-  const startNs = process.hrtime.bigint();
+  const start = performance.now();
 
   await syncApplication({ manifest, expectToFail: false });
 
-  const ms = Number(process.hrtime.bigint() - startNs) / 1e6;
+  const ms = performance.now() - start;
 
   // oxlint-disable-next-line no-console
   console.log(`[install-perf][test] ${label} took ${ms.toFixed(1)}ms`);
