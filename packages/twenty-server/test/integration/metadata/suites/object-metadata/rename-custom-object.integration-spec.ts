@@ -36,9 +36,7 @@ describe('Custom object renaming', () => {
     nameSingular
   `,
     input: {
-      filter: {
-        isCustom: { isNot: true },
-      },
+      filter: {},
       paging: { first: 1000 },
     },
   });
