@@ -188,6 +188,7 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         description: i18nLabel(msg`Email subject line`),
         icon: 'IconMail',
         isNullable: true,
+        isUIReadOnly: true,
       },
     }),
     bodyTemplate: createStandardFieldFlatMetadata({
@@ -199,6 +200,7 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         description: i18nLabel(msg`Email body sent to recipients`),
         icon: 'IconFileText',
         isNullable: true,
+        isUIReadOnly: true,
       },
     }),
     fromAddress: createStandardFieldFlatMetadata({
@@ -210,6 +212,7 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         description: i18nLabel(msg`Sender address for the campaign`),
         icon: 'IconAt',
         isNullable: true,
+        isUIReadOnly: true,
       },
     }),
     replyTo: createStandardFieldFlatMetadata({
@@ -221,6 +224,7 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         description: i18nLabel(msg`Reply-to address`),
         icon: 'IconCornerUpLeft',
         isNullable: true,
+        isUIReadOnly: true,
       },
     }),
     status: createStandardFieldFlatMetadata({
@@ -232,6 +236,7 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         description: i18nLabel(msg`Campaign lifecycle status`),
         icon: 'IconProgress',
         isNullable: false,
+        isUIReadOnly: true,
         defaultValue: "'DRAFT'",
         options: [
           {
@@ -281,6 +286,7 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         description: i18nLabel(msg`How recipients are resolved`),
         icon: 'IconUsers',
         isNullable: false,
+        isUIReadOnly: true,
         defaultValue: "'LIST'",
         options: [
           {
@@ -311,6 +317,7 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         ),
         icon: 'IconFilter',
         isNullable: true,
+        isUIReadOnly: true,
       },
     }),
     scheduledAt: createStandardFieldFlatMetadata({
@@ -322,6 +329,7 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         description: i18nLabel(msg`When the campaign is scheduled to send`),
         icon: 'IconCalendarPlus',
         isNullable: true,
+        isUIReadOnly: true,
         settings: { displayFormat: DateDisplayFormat.RELATIVE },
       },
     }),
@@ -334,6 +342,7 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         description: i18nLabel(msg`When the campaign finished sending`),
         icon: 'IconSend',
         isNullable: true,
+        isUIReadOnly: true,
         settings: { displayFormat: DateDisplayFormat.RELATIVE },
       },
     }),
@@ -346,6 +355,7 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         description: i18nLabel(msg`Number of emails sent`),
         icon: 'IconMailFast',
         isNullable: false,
+        isUIReadOnly: true,
         defaultValue: 0,
       },
     }),
@@ -358,6 +368,7 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         description: i18nLabel(msg`Number of emails that bounced`),
         icon: 'IconMailX',
         isNullable: false,
+        isUIReadOnly: true,
         defaultValue: 0,
       },
     }),
@@ -370,6 +381,7 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         description: i18nLabel(msg`Number of emails that failed to send`),
         icon: 'IconAlertTriangle',
         isNullable: false,
+        isUIReadOnly: true,
         defaultValue: 0,
       },
     }),
@@ -383,12 +395,33 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         description: i18nLabel(msg`The audience this campaign was sent to`),
         icon: 'IconMailbox',
         isNullable: true,
+        isUIReadOnly: true,
         targetObjectName: 'messageTopic',
         targetFieldName: 'campaigns',
         settings: {
           relationType: RelationType.MANY_TO_ONE,
           onDelete: RelationOnDeleteAction.SET_NULL,
           joinColumnName: 'topicId',
+        },
+      },
+    }),
+    list: createStandardRelationFieldFlatMetadata({
+      ...base,
+      context: {
+        type: FieldMetadataType.RELATION,
+        morphId: null,
+        fieldName: 'list',
+        label: i18nLabel(msg`List`),
+        description: i18nLabel(msg`The list this campaign was sent to`),
+        icon: 'IconUsersGroup',
+        isNullable: true,
+        isUIReadOnly: true,
+        targetObjectName: 'messageList',
+        targetFieldName: 'campaigns',
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.SET_NULL,
+          joinColumnName: 'listId',
         },
       },
     }),
@@ -419,7 +452,26 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         description: i18nLabel(msg`Messages sent as part of this campaign`),
         icon: 'IconMessage',
         isNullable: true,
+        isUIReadOnly: true,
         targetObjectName: 'message',
+        targetFieldName: 'messageCampaign',
+        settings: {
+          relationType: RelationType.ONE_TO_MANY,
+        },
+      },
+    }),
+    recipients: createStandardRelationFieldFlatMetadata({
+      ...base,
+      context: {
+        type: FieldMetadataType.RELATION,
+        morphId: null,
+        fieldName: 'recipients',
+        label: i18nLabel(msg`Recipients`),
+        description: i18nLabel(msg`The people this campaign was sent to`),
+        icon: 'IconUsers',
+        isNullable: true,
+        isUIReadOnly: true,
+        targetObjectName: 'messageParticipant',
         targetFieldName: 'messageCampaign',
         settings: {
           relationType: RelationType.ONE_TO_MANY,

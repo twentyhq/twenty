@@ -29,6 +29,18 @@ export const buildMessageCampaignStandardFlatIndexMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  listIdIndex: createStandardIndexFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      indexName: 'listIdIndex',
+      relatedFieldNames: ['list'],
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   searchVectorGinIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,

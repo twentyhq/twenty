@@ -46,6 +46,8 @@ export type MessageParticipant = Omit<
   | 'workspaceMember'
   | 'message'
   | 'messageId'
+  | 'messageCampaign'
+  | 'messageCampaignId'
 >;
 
 export type MessageWithParticipants = Message & {

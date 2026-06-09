@@ -1022,14 +1022,21 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: 'd373fcd7-b1ce-4c77-8031-a5785c475028',
       },
       topic: { universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c' },
+      list: { universalIdentifier: 'cb24dcdf-f0e8-4c71-8cff-70b714e86530' },
       timelineActivities: {
         universalIdentifier: 'd4e5f607-1829-4da3-8eb4-25f607182930',
       },
       messages: { universalIdentifier: 'e5a177a7-512b-4778-928e-69777a528f7c' },
+      recipients: {
+        universalIdentifier: '05a3271c-5b91-493c-8f30-2d27b31d019e',
+      },
     },
     indexes: {
       topicIdIndex: {
         universalIdentifier: 'efe8c20e-d12b-4475-969e-e86e0bbfe444',
+      },
+      listIdIndex: {
+        universalIdentifier: '17bffd6a-714a-458d-a547-f9e2183d9520',
       },
       searchVectorGinIndex: {
         universalIdentifier: '975823ad-9b97-4f39-b2c7-fbd7d77f4bd1',
@@ -1112,6 +1119,9 @@ export const STANDARD_OBJECTS = {
       name: { universalIdentifier: '69b9ed8b-7b26-4108-894f-05700ef7e8ee' },
       members: {
         universalIdentifier: '92df3493-91cf-4665-8587-1b08917d299b',
+      },
+      campaigns: {
+        universalIdentifier: 'e098d838-31ab-4812-91a8-f055f45a6832',
       },
       timelineActivities: {
         universalIdentifier: 'e0a5b2c3-4d6f-4e81-9a02-1b3c4d5e6f70',
@@ -1394,6 +1404,9 @@ export const STANDARD_OBJECTS = {
       workspaceMember: {
         universalIdentifier: '20202020-77a7-4845-99ed-1bcbb478be6f',
       },
+      messageCampaign: {
+        universalIdentifier: '5bc768db-919f-41da-8c43-df08084d526f',
+      },
       createdBy: {
         universalIdentifier: 'e0e6aa04-6ad5-4d12-8799-6febf00452c1',
       },
@@ -1416,6 +1429,9 @@ export const STANDARD_OBJECTS = {
       },
       workspaceMemberIdIndex: {
         universalIdentifier: 'ce1e3a9e-afe9-439d-abb7-6cc98a6fa405',
+      },
+      messageCampaignIdIndex: {
+        universalIdentifier: 'e9bcdd77-cc8b-4532-833c-124dfdc8e5ff',
       },
     },
     views: {

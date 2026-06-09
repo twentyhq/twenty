@@ -24,6 +24,7 @@ export const buildMessageSuppressionStandardFlatIndexMetadatas = ({
       indexName: 'emailAddressTopicUniqueIndex',
       relatedFieldNames: ['emailAddress', 'topic'],
       isUnique: true,
+      indexWhereClause: '"deletedAt" IS NULL',
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

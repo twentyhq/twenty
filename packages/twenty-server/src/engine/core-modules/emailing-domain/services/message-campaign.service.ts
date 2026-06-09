@@ -179,6 +179,7 @@ export class MessageCampaignService {
           recipientSource: usesFilter ? 'FILTER' : 'LIST',
           recipientViewId: recipientViewId ?? null,
           topicId: messageTopicId,
+          listId: listId ?? null,
         });
         const campaignId = identifiers[0].id;
 
@@ -457,6 +458,7 @@ export class MessageCampaignService {
               handle: row.recipient.email,
               displayName: row.recipient.email,
               personId: row.recipient.personId,
+              messageCampaignId: campaignId,
             },
           ]),
           transactionManager,

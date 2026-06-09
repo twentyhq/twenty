@@ -8,9 +8,14 @@ import { isDefined } from 'twenty-shared/utils';
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
+import { buildNavigationCommandMenuItemOperationsOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/build-navigation-command-menu-item-operations-or-throw.util';
+import {
+  getExistingOrStandardFlatEntityOrThrow,
+  getStandardFlatEntitiesToCreateOrThrow,
+} from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -49,6 +54,7 @@ const NEW_FIELDS_ON_EXISTING_OBJECTS_UNIVERSAL_IDENTIFIERS = [
     .universalIdentifier,
   STANDARD_OBJECTS.message.fields.messageCampaign.universalIdentifier,
   STANDARD_OBJECTS.message.fields.deliveryStatus.universalIdentifier,
+  STANDARD_OBJECTS.messageParticipant.fields.messageCampaign.universalIdentifier,
 ];
 
 const MESSAGE_FIELD_UNIVERSAL_IDENTIFIERS = [
@@ -69,20 +75,39 @@ const MESSAGE_INDEX_UNIVERSAL_IDENTIFIERS = [
   ...getUniversalIdentifiers(STANDARD_OBJECTS.messageTopicSubscription.indexes),
   ...getUniversalIdentifiers(STANDARD_OBJECTS.messageSuppression.indexes),
   STANDARD_OBJECTS.message.indexes.messageCampaignIdIndex.universalIdentifier,
-];
-
-const MESSAGE_LIST_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage
+  STANDARD_OBJECTS.messageParticipant.indexes.messageCampaignIdIndex
     .universalIdentifier,
 ];
 
-const MESSAGE_LIST_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIERS = getUniversalIdentifiers(
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage.tabs,
+const MESSAGE_NAVIGABLE_OBJECT_UNIVERSAL_IDENTIFIERS = [
+  STANDARD_OBJECTS.messageCampaign.universalIdentifier,
+  STANDARD_OBJECTS.messageList.universalIdentifier,
+  STANDARD_OBJECTS.messageTopic.universalIdentifier,
+];
+
+const MESSAGE_RECORD_PAGE_KEYS = [
+  'messageCampaignRecordPage',
+  'messageListRecordPage',
+  'messageTopicRecordPage',
+] as const;
+
+const MESSAGE_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = MESSAGE_RECORD_PAGE_KEYS.map(
+  (key) => STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS[key].universalIdentifier,
 );
 
-const MESSAGE_LIST_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS = Object.values(
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage.tabs,
-).flatMap((tab) => getUniversalIdentifiers(tab.widgets));
+const MESSAGE_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIERS =
+  MESSAGE_RECORD_PAGE_KEYS.flatMap((key) =>
+    getUniversalIdentifiers(
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS[key].tabs,
+    ),
+  );
+
+const MESSAGE_RECORD_PAGE_WIDGET_UNIVERSAL_IDENTIFIERS =
+  MESSAGE_RECORD_PAGE_KEYS.flatMap((key) =>
+    Object.values(STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS[key].tabs).flatMap(
+      (tab) => getUniversalIdentifiers(tab.widgets),
+    ),
+  );
 
 // Widgets the feature adds to the pre-existing person record page (the
 // Topics/Lists junction pickers shown on the person detail page).
@@ -94,7 +119,7 @@ const PERSON_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS = [
 ];
 
 const MESSAGE_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS = [
-  ...MESSAGE_LIST_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS,
+  ...MESSAGE_RECORD_PAGE_WIDGET_UNIVERSAL_IDENTIFIERS,
   ...PERSON_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS,
 ];
 
@@ -116,6 +141,7 @@ export class BackfillMessageStandardObjectsCommand extends ActiveOrSuspendedWork
 
   override async runOnWorkspace({
     workspaceId,
+    dataSource,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
@@ -127,6 +153,7 @@ export class BackfillMessageStandardObjectsCommand extends ActiveOrSuspendedWork
       flatPageLayoutMaps,
       flatPageLayoutTabMaps,
       flatPageLayoutWidgetMaps,
+      flatCommandMenuItemMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
@@ -134,6 +161,7 @@ export class BackfillMessageStandardObjectsCommand extends ActiveOrSuspendedWork
       'flatPageLayoutMaps',
       'flatPageLayoutTabMaps',
       'flatPageLayoutWidgetMaps',
+      'flatCommandMenuItemMaps',
     ]);
 
     // The message objects' relations target person, message and timelineActivity.
@@ -212,6 +240,25 @@ export class BackfillMessageStandardObjectsCommand extends ActiveOrSuspendedWork
         },
       );
 
+    const navigationCommandMenuItemOperations =
+      buildNavigationCommandMenuItemOperationsOrThrow({
+        existingFlatCommandMenuItemMaps: flatCommandMenuItemMaps,
+        objectMetadatasForNavigation:
+          MESSAGE_NAVIGABLE_OBJECT_UNIVERSAL_IDENTIFIERS.map(
+            (universalIdentifier) =>
+              getExistingOrStandardFlatEntityOrThrow<FlatObjectMetadata>({
+                standardFlatEntityMaps:
+                  standardAllFlatEntityMaps.flatObjectMetadataMaps,
+                existingFlatEntityMaps: flatObjectMetadataMaps,
+                universalIdentifier,
+              }),
+          ),
+        applicationId: twentyStandardFlatApplication.id,
+        workspaceId,
+        now,
+        renamedCollisionObjectMetadatas: [],
+      });
+
     const allFlatEntityOperationByMetadataName = {
       objectMetadata: {
         flatEntityToCreate:
@@ -248,9 +295,10 @@ export class BackfillMessageStandardObjectsCommand extends ActiveOrSuspendedWork
       pageLayout: {
         flatEntityToCreate:
           getStandardFlatEntitiesToCreateOrThrow<FlatPageLayout>({
-            standardFlatEntityMaps: standardAllFlatEntityMaps.flatPageLayoutMaps,
+            standardFlatEntityMaps:
+              standardAllFlatEntityMaps.flatPageLayoutMaps,
             existingFlatEntityMaps: flatPageLayoutMaps,
-            universalIdentifiers: MESSAGE_LIST_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
+            universalIdentifiers: MESSAGE_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
           }),
         flatEntityToDelete: [],
         flatEntityToUpdate: [],
@@ -261,8 +309,7 @@ export class BackfillMessageStandardObjectsCommand extends ActiveOrSuspendedWork
             standardFlatEntityMaps:
               standardAllFlatEntityMaps.flatPageLayoutTabMaps,
             existingFlatEntityMaps: flatPageLayoutTabMaps,
-            universalIdentifiers:
-              MESSAGE_LIST_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIERS,
+            universalIdentifiers: MESSAGE_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIERS,
           }),
         flatEntityToDelete: [],
         flatEntityToUpdate: [],
@@ -279,6 +326,7 @@ export class BackfillMessageStandardObjectsCommand extends ActiveOrSuspendedWork
         flatEntityToDelete: [],
         flatEntityToUpdate: [],
       },
+      commandMenuItem: navigationCommandMenuItemOperations,
     };
 
     const totalOperationCount =
@@ -376,6 +424,29 @@ export class BackfillMessageStandardObjectsCommand extends ActiveOrSuspendedWork
 
     this.logger.log(
       `Applied ${totalOperationCount} message standard metadata operations for workspace ${workspaceId}`,
+    );
+
+    if (!isDefined(dataSource)) {
+      return;
+    }
+
+    const schemaName = getWorkspaceSchemaName(workspaceId);
+
+    const recipientBackfillResult = await dataSource.query(
+      `UPDATE "${schemaName}"."messageParticipant" mp
+       SET "messageCampaignId" = m."messageCampaignId"
+       FROM "${schemaName}"."message" m
+       WHERE mp."messageId" = m.id
+         AND m."messageCampaignId" IS NOT NULL
+         AND mp."role" = 'TO'
+         AND mp."messageCampaignId" IS NULL`,
+      undefined,
+      undefined,
+      { shouldBypassPermissionChecks: true },
+    );
+
+    this.logger.log(
+      `Backfilled messageCampaignId for ${recipientBackfillResult?.[1] ?? 0} recipient participants in workspace ${workspaceId}`,
     );
   }
 }
