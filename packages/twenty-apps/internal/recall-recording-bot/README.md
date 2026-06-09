@@ -17,12 +17,30 @@ calendar event.
   synced calendar rows by real meeting key.
 - Database-event logic functions that reconcile scheduled `CallRecording`
   requests when calendar events or participants change.
+- Recall API calls to create, reschedule, and cancel scheduled meeting bots.
+- A `/s/webhook/recall` route that verifies Recall webhook signatures and updates
+  matching `CallRecording` records.
 - A configurable cron backstop that scans upcoming calendar events every minute
   and only runs reconciliation on the configured interval.
 
+## Recall Prerequisites
+
+- `RECALL_REGION` - Recall region for API calls. Asia Pacific Tokyo is
+  `ap-northeast-1`.
+- `RECALL_API_KEY` - API key for the selected Recall region.
+- `RECALL_WEBHOOK_SECRET` - signing secret from the Recall webhook endpoint.
+- `RECALL_BOT_NAME` - optional display name for scheduled bots.
+
+Configure the Recall webhook URL as
+`https://<public-twenty-backend>/s/webhook/recall`. For local QA, expose the
+backend on port 3000 with a tunnel such as ngrok and use the tunnel URL plus
+`/s/webhook/recall`.
+
 ## Getting Started
 
-This app was scaffolded with a local Twenty server running at [http://localhost:2020](http://localhost:2020).
+For local QA in this repo, keep the Twenty backend running on
+[http://localhost:3000](http://localhost:3000) and the frontend running on
+[http://localhost:3001](http://localhost:3001).
 
 Login with the default development credentials: `tim@apple.dev` / `tim@apple.dev`.
 
@@ -31,16 +49,13 @@ Run `yarn twenty help` to list all available commands.
 ## Useful Commands
 
 - `yarn twenty dev` - Start the development server and sync your app
-- `yarn twenty docker:status` - Check the local Twenty server status
-- `yarn twenty docker:start` - Start the local Twenty server
 - `yarn test` - Run integration tests
+- `yarn test:unit` - Run focused app-side unit tests
 
 ## Scope
 
-This PR scaffolds the app, moves the preference/policy boundary into it, and
-reconciles app-managed scheduled `CallRecording` rows. The Recall provider job
-and request/cancel API calls are intentionally left for the provider integration
-layer.
+This app owns Recall bot policy, Recall bot scheduling calls, and Recall webhook
+status updates. Core `CallRecording` remains the shared recording artifact.
 
 ## Learn More
 

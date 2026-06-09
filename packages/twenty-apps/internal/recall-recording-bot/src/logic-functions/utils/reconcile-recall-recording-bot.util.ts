@@ -1,56 +1,35 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-import { type RecallRecordingBotPolicyCalendarEventInput } from 'src/logic-functions/types/recall-recording-bot-policy-calendar-event-input.type';
+import { CALL_RECORDING_REQUEST_STATUS } from 'src/logic-functions/constants/call-recording-request-status';
+import { CALL_RECORDING_STATUS } from 'src/logic-functions/constants/call-recording-status';
+import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
+import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { type RecallRecordingBotPolicyResultForMeeting } from 'src/logic-functions/types/recall-recording-bot-policy-result-for-meeting.type';
 import { type RecallRecordingBotReconciliationResult } from 'src/logic-functions/types/recall-recording-bot-reconciliation-result.type';
 import { type RemovedRecallRecordingBotOccurrence } from 'src/logic-functions/types/removed-recall-recording-bot-occurrence.type';
 import { aggregateRecallRecordingBotPolicyResultsByMeeting } from 'src/logic-functions/utils/aggregate-recall-recording-bot-policy-results-by-meeting.util';
 import { buildRecallRecordingBotPolicyResult } from 'src/logic-functions/utils/build-recall-recording-bot-policy-result.util';
+import { cancelCallRecordingRequest } from 'src/logic-functions/utils/cancel-call-recording-request.util';
+import {
+  createCallRecording,
+  type ScheduledCallRecordingFields,
+} from 'src/logic-functions/utils/create-call-recording.util';
+import {
+  fetchCalendarEventsByIds,
+  fetchCalendarEventsByStartsAtValues,
+} from 'src/logic-functions/utils/fetch-calendar-events.util';
+import { findCallRecordingsByCalendarEventIds } from 'src/logic-functions/utils/find-call-recordings-by-calendar-event-ids.util';
 import { getRecallRecordingBotEnabled } from 'src/logic-functions/utils/get-recall-recording-bot-enabled.util';
-
-const TWENTY_PAGE_SIZE = 100;
-
-const CALL_RECORDING_STATUS = {
-  SCHEDULED: 'SCHEDULED',
-  COMPLETED: 'COMPLETED',
-} as const;
-
-const CALL_RECORDING_REQUEST_STATUS = {
-  REQUESTED: 'REQUESTED',
-  CANCELED: 'CANCELED',
-} as const;
-
-type CallRecordingRequestStatus =
-  (typeof CALL_RECORDING_REQUEST_STATUS)[keyof typeof CALL_RECORDING_REQUEST_STATUS];
-
-type CalendarEventRecord = RecallRecordingBotPolicyCalendarEventInput & {
-  title: string | null;
-};
-
-type CalendarEventParticipantRecord = {
-  id: string;
-  calendarEventId?: string | null;
-  workspaceMemberId?: string | null;
-};
-
-type CallRecordingRecord = {
-  id: string;
-  title?: string | null;
-  status?: string | null;
-  recordingRequestStatus?: CallRecordingRequestStatus | null;
-  startedAt?: string | null;
-  endedAt?: string | null;
-  calendarEventId?: string | null;
-};
-
-type ScheduledCallRecordingFields = {
-  title: string | null;
-  status: typeof CALL_RECORDING_STATUS.SCHEDULED;
-  recordingRequestStatus: CallRecordingRequestStatus;
-  startedAt: string | null;
-  endedAt: string | null;
-  calendarEventId: string;
-};
+import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
+import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import {
+  rescheduleRecallRecordingBot,
+  scheduleRecallRecordingBot,
+} from 'src/logic-functions/utils/recall-bot-api.util';
+import {
+  updateCallRecording,
+  type CallRecordingUpdateFields,
+} from 'src/logic-functions/utils/update-call-recording.util';
 
 export const reconcileRecallRecordingBotForCalendarEventIds = async ({
   client,
@@ -264,25 +243,39 @@ const reconcileActiveMeeting = async ({
     return buildSkippedResult(meetingPolicyResult.realMeetingKey);
   }
 
-  const existingCallRecordings =
-    await findCallRecordingsByCalendarEventIds(client, calendarEventIds);
-  const existingPolicyManagedCallRecording = getFirstPolicyManagedCallRecording(
-    existingCallRecordings,
+  const existingCallRecordings = await findCallRecordingsByCalendarEventIds(
+    client,
+    calendarEventIds,
   );
-  const callRecordingFields = buildScheduledCallRecordingFields(
-    representativeCalendarEvent,
-  );
+  const [primaryCallRecording, ...duplicateCallRecordings] =
+    getPolicyManagedCallRecordingsByPriority(existingCallRecordings);
 
-  if (existingPolicyManagedCallRecording !== undefined) {
+  await cancelDuplicateCallRecordingRequests({
+    client,
+    realMeetingKey: meetingPolicyResult.realMeetingKey,
+    duplicateCallRecordings,
+  });
+
+  if (primaryCallRecording !== undefined) {
     await updateCallRecording(client, {
-      id: existingPolicyManagedCallRecording.id,
-      data: callRecordingFields,
+      id: primaryCallRecording.id,
+      data: buildPolicyManagedCallRecordingUpdateFields({
+        existingCallRecording: primaryCallRecording,
+        calendarEvent: representativeCalendarEvent,
+      }),
+    });
+    await syncScheduledRecallBot({
+      client,
+      callRecordingId: primaryCallRecording.id,
+      existingCallRecording: primaryCallRecording,
+      representativeCalendarEvent,
+      realMeetingKey: meetingPolicyResult.realMeetingKey,
     });
 
     return {
       action: 'UPDATED',
       realMeetingKey: meetingPolicyResult.realMeetingKey,
-      callRecordingId: existingPolicyManagedCallRecording.id,
+      callRecordingId: primaryCallRecording.id,
     };
   }
 
@@ -299,8 +292,18 @@ const reconcileActiveMeeting = async ({
 
   const createdCallRecordingId = await createCallRecording(
     client,
-    callRecordingFields,
+    buildScheduledCallRecordingFields(representativeCalendarEvent),
   );
+
+  if (createdCallRecordingId !== null) {
+    await syncScheduledRecallBot({
+      client,
+      callRecordingId: createdCallRecordingId,
+      existingCallRecording: null,
+      representativeCalendarEvent,
+      realMeetingKey: meetingPolicyResult.realMeetingKey,
+    });
+  }
 
   return {
     action: 'CREATED',
@@ -335,337 +338,163 @@ const reconcileCanceledMeeting = async ({
     return buildSkippedResult(meetingPolicyResult.realMeetingKey);
   }
 
+  const canceledCallRecordingIds: string[] = [];
+
   for (const callRecording of cancellableCallRecordings) {
-    await updateCallRecording(client, {
-      id: callRecording.id,
-      data: {
-        recordingRequestStatus: CALL_RECORDING_REQUEST_STATUS.CANCELED,
-      },
+    const { canceled } = await cancelCallRecordingRequest({
+      client,
+      callRecording,
     });
+
+    if (canceled) {
+      canceledCallRecordingIds.push(callRecording.id);
+    }
+  }
+
+  if (canceledCallRecordingIds.length === 0) {
+    return buildSkippedResult(meetingPolicyResult.realMeetingKey);
   }
 
   return {
     action: 'CANCELED',
     realMeetingKey: meetingPolicyResult.realMeetingKey,
-    callRecordingId: cancellableCallRecordings[0]?.id ?? null,
+    callRecordingId: canceledCallRecordingIds[0],
   };
 };
 
-const fetchCalendarEventsByIds = async (
-  client: CoreApiClient,
-  calendarEventIds: string[],
-): Promise<CalendarEventRecord[]> => {
-  const uniqueCalendarEventIds = getUniqueSortedIds(calendarEventIds);
-
-  if (uniqueCalendarEventIds.length === 0) {
-    return [];
-  }
-
-  return fetchCalendarEventsByFilter(client, {
-    id: { in: uniqueCalendarEventIds },
-  });
-};
-
-const fetchCalendarEventsByStartsAtValues = async (
-  client: CoreApiClient,
-  startsAtValues: string[],
-): Promise<CalendarEventRecord[]> => {
-  const uniqueStartsAtValues = [...new Set(startsAtValues)].sort();
-
-  if (uniqueStartsAtValues.length === 0) {
-    return [];
-  }
-
-  return fetchCalendarEventsByFilter(client, {
-    startsAt: { in: uniqueStartsAtValues },
-  });
-};
-
-const fetchCalendarEventsByFilter = async (
-  client: CoreApiClient,
-  filter: Record<string, unknown>,
-): Promise<CalendarEventRecord[]> => {
-  const calendarEvents: CalendarEventRecord[] = [];
-  let hasNextPage = true;
-  let afterCursor: string | undefined;
-
-  while (hasNextPage) {
-    const queryArgs: Record<string, unknown> = {
-      filter,
-      first: TWENTY_PAGE_SIZE,
-    };
-
-    if (afterCursor !== undefined) {
-      queryArgs.after = afterCursor;
-    }
-
-    const queryResult = await client.query({
-      calendarEvents: {
-        __args: queryArgs,
-        pageInfo: {
-          hasNextPage: true,
-          endCursor: true,
-        },
-        edges: {
-          node: {
-            id: true,
-            title: true,
-            isCanceled: true,
-            startsAt: true,
-            endsAt: true,
-            iCalUid: true,
-            conferenceLink: {
-              primaryLinkUrl: true,
-            },
-            recallRecordingBotPreference: true,
-          },
-        },
-      },
-    });
-    const connection = queryResult.calendarEvents;
-
-    for (const edge of connection?.edges ?? []) {
-      const calendarEvent = edge.node;
-
-      calendarEvents.push({
-        id: calendarEvent.id,
-        title: calendarEvent.title ?? null,
-        isCanceled: calendarEvent.isCanceled ?? false,
-        startsAt: calendarEvent.startsAt ?? null,
-        endsAt: calendarEvent.endsAt ?? null,
-        iCalUid: calendarEvent.iCalUid ?? null,
-        conferenceLink: calendarEvent.conferenceLink ?? null,
-        recallRecordingBotPreference:
-          typeof calendarEvent.recallRecordingBotPreference === 'string'
-            ? calendarEvent.recallRecordingBotPreference
-            : null,
-      });
-    }
-
-    hasNextPage = connection?.pageInfo?.hasNextPage ?? false;
-    afterCursor = connection?.pageInfo?.endCursor ?? undefined;
-
-    if (afterCursor === undefined) {
-      hasNextPage = false;
-    }
-  }
-
-  return attachParticipantsToCalendarEvents(client, calendarEvents);
-};
-
-const attachParticipantsToCalendarEvents = async (
-  client: CoreApiClient,
-  calendarEvents: CalendarEventRecord[],
-): Promise<CalendarEventRecord[]> => {
-  const calendarEventIds = getUniqueSortedIds(
-    calendarEvents.map((calendarEvent) => calendarEvent.id),
+const cancelDuplicateCallRecordingRequests = async ({
+  client,
+  realMeetingKey,
+  duplicateCallRecordings,
+}: {
+  client: CoreApiClient;
+  realMeetingKey: string;
+  duplicateCallRecordings: CallRecordingRecord[];
+}): Promise<void> => {
+  const duplicatesToCancel = duplicateCallRecordings.filter(
+    (callRecording) =>
+      callRecording.recordingRequestStatus ===
+        CALL_RECORDING_REQUEST_STATUS.REQUESTED ||
+      isNonEmptyString(callRecording.externalBotId),
   );
-  const participants = await fetchCalendarEventParticipantsByCalendarEventIds(
-    client,
-    calendarEventIds,
+
+  if (duplicatesToCancel.length === 0) {
+    return;
+  }
+
+  console.warn(
+    `[recall-recording-bot] found ${duplicatesToCancel.length} duplicate policy-managed call recording(s) for meeting ${realMeetingKey}, canceling extras`,
   );
-  const participantsByCalendarEventId = new Map<
-    string,
-    CalendarEventParticipantRecord[]
-  >();
 
-  for (const participant of participants) {
-    const calendarEventId = participant.calendarEventId;
-
-    if (calendarEventId === undefined || calendarEventId === null) {
-      continue;
-    }
-
-    participantsByCalendarEventId.set(calendarEventId, [
-      ...(participantsByCalendarEventId.get(calendarEventId) ?? []),
-      participant,
-    ]);
+  for (const callRecording of duplicatesToCancel) {
+    await cancelCallRecordingRequest({ client, callRecording });
   }
-
-  return calendarEvents.map((calendarEvent) => ({
-    ...calendarEvent,
-    calendarEventParticipants:
-      participantsByCalendarEventId.get(calendarEvent.id) ?? [],
-  }));
 };
 
-const fetchCalendarEventParticipantsByCalendarEventIds = async (
-  client: CoreApiClient,
-  calendarEventIds: string[],
-): Promise<CalendarEventParticipantRecord[]> => {
-  if (calendarEventIds.length === 0) {
-    return [];
-  }
-
-  const participants: CalendarEventParticipantRecord[] = [];
-  let hasNextPage = true;
-  let afterCursor: string | undefined;
-
-  while (hasNextPage) {
-    const queryArgs: Record<string, unknown> = {
-      filter: {
-        calendarEventId: { in: calendarEventIds },
-      },
-      first: TWENTY_PAGE_SIZE,
-    };
-
-    if (afterCursor !== undefined) {
-      queryArgs.after = afterCursor;
-    }
-
-    const queryResult = await client.query({
-      calendarEventParticipants: {
-        __args: queryArgs,
-        pageInfo: {
-          hasNextPage: true,
-          endCursor: true,
-        },
-        edges: {
-          node: {
-            id: true,
-            calendarEventId: true,
-            workspaceMemberId: true,
-          },
-        },
-      },
-    });
-    const connection = queryResult.calendarEventParticipants;
-
-    for (const edge of connection?.edges ?? []) {
-      participants.push(edge.node);
-    }
-
-    hasNextPage = connection?.pageInfo?.hasNextPage ?? false;
-    afterCursor = connection?.pageInfo?.endCursor ?? undefined;
-
-    if (afterCursor === undefined) {
-      hasNextPage = false;
-    }
-  }
-
-  return participants;
-};
-
-const findCallRecordingsByCalendarEventIds = async (
-  client: CoreApiClient,
-  calendarEventIds: string[],
-): Promise<CallRecordingRecord[]> => {
-  if (calendarEventIds.length === 0) {
-    return [];
-  }
-
-  const callRecordings: CallRecordingRecord[] = [];
-  let hasNextPage = true;
-  let afterCursor: string | undefined;
-
-  while (hasNextPage) {
-    const queryArgs: Record<string, unknown> = {
-      filter: {
-        calendarEventId: { in: calendarEventIds },
-      },
-      first: TWENTY_PAGE_SIZE,
-    };
-
-    if (afterCursor !== undefined) {
-      queryArgs.after = afterCursor;
-    }
-
-    const queryResult = await client.query({
-      callRecordings: {
-        __args: queryArgs,
-        pageInfo: {
-          hasNextPage: true,
-          endCursor: true,
-        },
-        edges: {
-          node: {
-            id: true,
-            title: true,
-            status: true,
-            recordingRequestStatus: true,
-            startedAt: true,
-            endedAt: true,
-            calendarEventId: true,
-          },
-        },
-      },
-    });
-    const connection = queryResult.callRecordings;
-
-    for (const edge of connection?.edges ?? []) {
-      const callRecording = edge.node;
-
-      callRecordings.push({
-        id: callRecording.id,
-        title: callRecording.title ?? null,
-        status: callRecording.status ?? null,
-        recordingRequestStatus: normalizeCallRecordingRequestStatus(
-          callRecording.recordingRequestStatus,
-        ),
-        startedAt: callRecording.startedAt ?? null,
-        endedAt: callRecording.endedAt ?? null,
-        calendarEventId: callRecording.calendarEventId ?? null,
-      });
-    }
-
-    hasNextPage = connection?.pageInfo?.hasNextPage ?? false;
-    afterCursor = connection?.pageInfo?.endCursor ?? undefined;
-
-    if (afterCursor === undefined) {
-      hasNextPage = false;
-    }
-  }
-
-  return callRecordings;
-};
-
-const createCallRecording = async (
-  client: CoreApiClient,
-  data: ScheduledCallRecordingFields,
-): Promise<string | null> => {
-  const mutationResult = await client.mutation({
-    createCallRecording: {
-      __args: {
-        data,
-      },
-      id: true,
-    },
-  });
-
-  return mutationResult.createCallRecording?.id ?? null;
-};
-
-const updateCallRecording = async (
-  client: CoreApiClient,
-  {
-    id,
-    data,
-  }: {
-    id: string;
-    data: Partial<ScheduledCallRecordingFields>;
-  },
-): Promise<void> => {
-  await client.mutation({
-    updateCallRecording: {
-      __args: {
-        id,
-        data,
-      },
-      id: true,
-    },
-  });
-};
-
-const buildScheduledCallRecordingFields = (
+const buildCalendarDrivenCallRecordingFields = (
   calendarEvent: CalendarEventRecord,
-): ScheduledCallRecordingFields => ({
+) => ({
   title: calendarEvent.title,
-  status: CALL_RECORDING_STATUS.SCHEDULED,
   recordingRequestStatus: CALL_RECORDING_REQUEST_STATUS.REQUESTED,
   startedAt: calendarEvent.startsAt,
   endedAt: calendarEvent.endsAt,
   calendarEventId: calendarEvent.id,
 });
+
+const buildScheduledCallRecordingFields = (
+  calendarEvent: CalendarEventRecord,
+): ScheduledCallRecordingFields => ({
+  ...buildCalendarDrivenCallRecordingFields(calendarEvent),
+  status: CALL_RECORDING_STATUS.SCHEDULED,
+});
+
+// A live or finished bot lifecycle must never be reset to SCHEDULED by a
+// calendar-driven update; only idle or failed requests are (re)scheduled.
+const buildPolicyManagedCallRecordingUpdateFields = ({
+  existingCallRecording,
+  calendarEvent,
+}: {
+  existingCallRecording: CallRecordingRecord;
+  calendarEvent: CalendarEventRecord;
+}): CallRecordingUpdateFields =>
+  canResetCallRecordingStatusToScheduled(existingCallRecording.status)
+    ? buildScheduledCallRecordingFields(calendarEvent)
+    : buildCalendarDrivenCallRecordingFields(calendarEvent);
+
+const canResetCallRecordingStatusToScheduled = (
+  status: string | null | undefined,
+): boolean =>
+  status === CALL_RECORDING_STATUS.SCHEDULED ||
+  status === CALL_RECORDING_STATUS.FAILED_UNKNOWN;
+
+const syncScheduledRecallBot = async ({
+  client,
+  callRecordingId,
+  existingCallRecording,
+  representativeCalendarEvent,
+  realMeetingKey,
+}: {
+  client: CoreApiClient;
+  callRecordingId: string;
+  existingCallRecording: CallRecordingRecord | null;
+  representativeCalendarEvent: CalendarEventRecord;
+  realMeetingKey: string;
+}): Promise<void> => {
+  const meetingUrl =
+    representativeCalendarEvent.conferenceLink?.primaryLinkUrl ?? null;
+  const joinAt = representativeCalendarEvent.startsAt;
+
+  if (meetingUrl === null || joinAt === null) {
+    return;
+  }
+
+  const metadata = {
+    twentyCallRecordingId: callRecordingId,
+    twentyCalendarEventId: representativeCalendarEvent.id,
+    twentyRealMeetingKey: realMeetingKey,
+  };
+  const externalBotId = existingCallRecording?.externalBotId ?? null;
+
+  if (externalBotId !== null) {
+    const rescheduleResult = await rescheduleRecallRecordingBot({
+      externalBotId,
+      meetingUrl,
+      joinAt,
+      metadata,
+    });
+
+    if (!rescheduleResult.ok) {
+      console.warn(
+        `[recall-recording-bot] failed to update Recall bot for callRecording ${callRecordingId}: ${rescheduleResult.errorMessage}`,
+      );
+    }
+
+    return;
+  }
+
+  const scheduleResult = await scheduleRecallRecordingBot({
+    meetingUrl,
+    joinAt,
+    metadata,
+  });
+
+  if (!scheduleResult.ok) {
+    console.warn(
+      `[recall-recording-bot] failed to schedule Recall bot for callRecording ${callRecordingId}: ${scheduleResult.errorMessage}`,
+    );
+
+    return;
+  }
+
+  if (scheduleResult.externalBotId !== null) {
+    await updateCallRecording(client, {
+      id: callRecordingId,
+      data: {
+        externalBotId: scheduleResult.externalBotId,
+      },
+    });
+  }
+};
 
 const buildRemovedCalendarEventIdsByMeetingKey = (
   removedOccurrences: RemovedRecallRecordingBotOccurrence[],
@@ -683,54 +512,55 @@ const buildRemovedCalendarEventIdsByMeetingKey = (
   return calendarEventIdsByMeetingKey;
 };
 
-const getFirstPolicyManagedCallRecording = (
+// The recording carrying the live bot stays primary so reconciliation never
+// trades a scheduled bot for a fresh one; id ordering keeps the choice stable
+// across runs.
+const getPolicyManagedCallRecordingsByPriority = (
   callRecordings: CallRecordingRecord[],
-): CallRecordingRecord | undefined =>
-  getSortedCallRecordings(callRecordings).find(isPolicyManagedCallRecording);
+): CallRecordingRecord[] =>
+  callRecordings
+    .filter(isPolicyManagedCallRecording)
+    .sort((firstCallRecording, secondCallRecording) => {
+      const firstHasBot = isNonEmptyString(firstCallRecording.externalBotId);
+      const secondHasBot = isNonEmptyString(secondCallRecording.externalBotId);
+
+      if (firstHasBot !== secondHasBot) {
+        return firstHasBot ? -1 : 1;
+      }
+
+      return firstCallRecording.id.localeCompare(secondCallRecording.id);
+    });
 
 const getFirstNonPolicyManagedOpenCallRecording = (
   callRecordings: CallRecordingRecord[],
 ): CallRecordingRecord | undefined =>
-  getSortedCallRecordings(callRecordings).find(
-    (callRecording) =>
-      callRecording.status !== CALL_RECORDING_STATUS.COMPLETED &&
-      !isPolicyManagedCallRecording(callRecording),
-  );
+  [...callRecordings]
+    .sort((firstCallRecording, secondCallRecording) =>
+      firstCallRecording.id.localeCompare(secondCallRecording.id),
+    )
+    .find(
+      (callRecording) =>
+        callRecording.status !== CALL_RECORDING_STATUS.COMPLETED &&
+        !isPolicyManagedCallRecording(callRecording),
+    );
 
 const isPolicyManagedCallRecording = (
   callRecording: CallRecordingRecord,
 ): boolean =>
-  callRecording.status === CALL_RECORDING_STATUS.SCHEDULED &&
+  isOpenRecallRecordingBotStatus(callRecording.status) &&
   (callRecording.recordingRequestStatus ===
     CALL_RECORDING_REQUEST_STATUS.REQUESTED ||
     callRecording.recordingRequestStatus ===
       CALL_RECORDING_REQUEST_STATUS.CANCELED);
 
-const normalizeCallRecordingRequestStatus = (
-  recordingRequestStatus: unknown,
-): CallRecordingRequestStatus | null => {
-  if (recordingRequestStatus === CALL_RECORDING_REQUEST_STATUS.REQUESTED) {
-    return recordingRequestStatus;
-  }
-
-  if (recordingRequestStatus === CALL_RECORDING_REQUEST_STATUS.CANCELED) {
-    return recordingRequestStatus;
-  }
-
-  return null;
-};
-
-const getSortedCallRecordings = (
-  callRecordings: CallRecordingRecord[],
-): CallRecordingRecord[] =>
-  [...callRecordings].sort((firstCallRecording, secondCallRecording) =>
-    firstCallRecording.id.localeCompare(secondCallRecording.id),
-  );
-
-const getUniqueSortedIds = (ids: string[]): string[] =>
-  [...new Set(ids)].sort((firstId, secondId) =>
-    firstId.localeCompare(secondId),
-  );
+const isOpenRecallRecordingBotStatus = (
+  status: string | null | undefined,
+): boolean =>
+  status === CALL_RECORDING_STATUS.SCHEDULED ||
+  status === CALL_RECORDING_STATUS.JOINING ||
+  status === CALL_RECORDING_STATUS.RECORDING ||
+  status === CALL_RECORDING_STATUS.PROCESSING ||
+  status === CALL_RECORDING_STATUS.FAILED_UNKNOWN;
 
 const buildSkippedResult = (
   realMeetingKey: string,

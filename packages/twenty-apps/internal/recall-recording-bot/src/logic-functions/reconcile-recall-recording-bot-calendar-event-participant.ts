@@ -6,6 +6,7 @@ import {
 } from 'twenty-sdk/define';
 
 import { CALENDAR_EVENT_PARTICIPANT_RECONCILIATION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/calendar-event-participant-reconciliation-logic-function-universal-identifier';
+import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { reconcileRecallRecordingBotForCalendarEventIds } from 'src/logic-functions/utils/reconcile-recall-recording-bot.util';
 
 const CALENDAR_EVENT_PARTICIPANT_OBJECT_NAME = 'calendarEventParticipant';
@@ -92,13 +93,6 @@ const buildCalendarEventIdsForParticipantChange = ({
 const hasRelevantParticipantFieldChange = (updatedFields: string[]): boolean =>
   updatedFields.some((updatedField) =>
     RECALL_RECORDING_BOT_RELEVANT_PARTICIPANT_FIELDS.includes(updatedField),
-  );
-
-const getUniqueSortedIds = (
-  ids: Array<string | null | undefined>,
-): string[] =>
-  [...new Set(ids.filter((id): id is string => typeof id === 'string'))].sort(
-    (firstId, secondId) => firstId.localeCompare(secondId),
   );
 
 export default defineLogicFunction({

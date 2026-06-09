@@ -8,6 +8,7 @@ import {
 import { CALENDAR_EVENT_RECONCILIATION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/calendar-event-reconciliation-logic-function-universal-identifier';
 import { type RemovedRecallRecordingBotOccurrence } from 'src/logic-functions/types/removed-recall-recording-bot-occurrence.type';
 import { computeRealMeetingKey } from 'src/logic-functions/utils/compute-real-meeting-key.util';
+import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { reconcileRecallRecordingBotForCalendarEventIds } from 'src/logic-functions/utils/reconcile-recall-recording-bot.util';
 
 const CALENDAR_EVENT_OBJECT_NAME = 'calendarEvent';
@@ -160,13 +161,6 @@ const buildRemovedOccurrence = (
     startsAt: calendarEvent.startsAt ?? null,
   };
 };
-
-const getUniqueSortedIds = (
-  ids: Array<string | null | undefined>,
-): string[] =>
-  [...new Set(ids.filter((id): id is string => typeof id === 'string'))].sort(
-    (firstId, secondId) => firstId.localeCompare(secondId),
-  );
 
 export default defineLogicFunction({
   universalIdentifier:

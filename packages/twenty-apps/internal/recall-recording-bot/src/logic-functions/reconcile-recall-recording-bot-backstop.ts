@@ -4,17 +4,18 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 import { BACKSTOP_RECONCILIATION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/backstop-reconciliation-logic-function-universal-identifier';
 import { RECALL_RECORDING_BOT_BACKSTOP_CRON_PATTERN } from 'src/logic-functions/constants/recall-recording-bot-backstop-cron-pattern';
 import { shouldRunRecallRecordingBotBackstopAt } from 'src/logic-functions/constants/should-run-recall-recording-bot-backstop-at';
+import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
+import { fetchAllNodes } from 'src/logic-functions/utils/fetch-all-nodes.util';
 import { getRecallRecordingBotBackstopIntervalMinutes } from 'src/logic-functions/utils/get-recall-recording-bot-backstop-interval-minutes.util';
+import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { reconcileRecallRecordingBotForCalendarEventIds } from 'src/logic-functions/utils/reconcile-recall-recording-bot.util';
 
-const TWENTY_PAGE_SIZE = 100;
 const BACKSTOP_LOOKBACK_HOURS = 4;
 const BACKSTOP_LOOKAHEAD_HOURS = 24;
 
 const handler = async (): Promise<object> => {
   const now = new Date();
-  const intervalMinutes =
-    await getRecallRecordingBotBackstopIntervalMinutes();
+  const intervalMinutes = await getRecallRecordingBotBackstopIntervalMinutes();
 
   if (
     !shouldRunRecallRecordingBotBackstopAt({
@@ -56,28 +57,21 @@ const fetchUpcomingCalendarEventIds = async (
   const upperBound = new Date(
     now.getTime() + BACKSTOP_LOOKAHEAD_HOURS * 60 * 60 * 1000,
   ).toISOString();
-  const calendarEventIds: string[] = [];
-  let hasNextPage = true;
-  let afterCursor: string | undefined;
 
-  while (hasNextPage) {
-    const queryArgs: Record<string, unknown> = {
-      filter: {
-        startsAt: {
-          gte: lowerBound,
-          lte: upperBound,
-        },
-      },
-      first: TWENTY_PAGE_SIZE,
-    };
-
-    if (afterCursor !== undefined) {
-      queryArgs.after = afterCursor;
-    }
-
+  const filter: Record<string, unknown> = {
+    startsAt: {
+      gte: lowerBound,
+      lte: upperBound,
+    },
+  };
+  const calendarEventNodes = await fetchAllNodes(async (afterCursor) => {
     const queryResult = await client.query({
       calendarEvents: {
-        __args: queryArgs,
+        __args: {
+          filter,
+          first: TWENTY_PAGE_SIZE,
+          ...(afterCursor === undefined ? {} : { after: afterCursor }),
+        },
         pageInfo: {
           hasNextPage: true,
           endCursor: true,
@@ -89,27 +83,18 @@ const fetchUpcomingCalendarEventIds = async (
         },
       },
     });
-    const connection = queryResult.calendarEvents;
 
-    for (const edge of connection?.edges ?? []) {
-      calendarEventIds.push(edge.node.id);
-    }
+    return queryResult.calendarEvents;
+  });
 
-    hasNextPage = connection?.pageInfo?.hasNextPage ?? false;
-    afterCursor = connection?.pageInfo?.endCursor ?? undefined;
-
-    if (afterCursor === undefined) {
-      hasNextPage = false;
-    }
-  }
-
-  return [...new Set(calendarEventIds)].sort((firstId, secondId) =>
-    firstId.localeCompare(secondId),
+  return getUniqueSortedIds(
+    calendarEventNodes.map((calendarEvent) => calendarEvent.id),
   );
 };
 
 export default defineLogicFunction({
-  universalIdentifier: BACKSTOP_RECONCILIATION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  universalIdentifier:
+    BACKSTOP_RECONCILIATION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'reconcile-recall-recording-bot-backstop',
   description:
     'Periodically reconciles upcoming calendar events as a backstop for missed event triggers.',

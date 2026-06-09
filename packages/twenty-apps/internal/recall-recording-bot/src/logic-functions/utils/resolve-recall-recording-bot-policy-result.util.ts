@@ -40,6 +40,8 @@ export const resolveRecallRecordingBotPolicyResult = ({
     return botRequired('PREFERENCE_ON');
   }
 
+  // AUTO stays narrow for now: only upcoming meetings with a conference link
+  // and at least one external participant should request a Recall bot.
   if (
     input.conferenceLinkUrl === null ||
     input.conferenceLinkUrl.trim() === ''

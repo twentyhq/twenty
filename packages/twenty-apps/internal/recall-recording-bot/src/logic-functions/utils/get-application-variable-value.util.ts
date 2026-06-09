@@ -5,6 +5,12 @@ import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/application-univ
 export const getApplicationVariableValue = async (
   key: string,
 ): Promise<string | undefined> => {
+  const envValue = process.env[key];
+
+  if (typeof envValue === 'string') {
+    return envValue;
+  }
+
   try {
     const metadataClient = new MetadataApiClient();
     const result = await metadataClient.query({
@@ -25,15 +31,13 @@ export const getApplicationVariableValue = async (
     }
   } catch (error) {
     console.warn(
-      `[recall-recording-bot] failed to read ${key} from ApplicationVariable; falling back to env var: ${
+      `[recall-recording-bot] failed to read ${key} application variable: ${
         error instanceof Error ? error.message : String(error)
       }`,
     );
   }
 
-  const envValue = process.env[key];
-
-  return typeof envValue === 'string' ? envValue : undefined;
+  return undefined;
 };
 
 const getApplicationQueryArgs = ():
