@@ -10,8 +10,9 @@ const ON_OPP_PARTNER_ASSIGNED_FN_UNIVERSAL_IDENTIFIER = 'd7e4a4e6-9142-4597-adcf
 //   (workspace member) and stamp it onto the Opportunity + linked Company + People, so the
 //   whole deal becomes visible to the partner under row-level permissions.
 // - Unassign (partnerId cleared): clear the Opportunity's partnerUser so it leaves the
-//   partner's row-level view. (Linked Company/People keep their partnerUser as deal
-//   context — clearing those safely requires checking the partner's other deals; deferred.)
+//   partner's row-level view, and cascade the clear to the linked Company + People — but
+//   only when that member has no OTHER opportunity still using the same Company (otherwise
+//   the Company is still part of an active deal and must stay visible).
 const handler = async (payload: DatabaseEventPayload) => {
   const props = payload.properties as {
     after?: { id: string; partnerId?: string | null; companyId?: string | null };
@@ -25,16 +26,98 @@ const handler = async (payload: DatabaseEventPayload) => {
   const client = new CoreApiClient();
   const partnerId = props.after?.partnerId;
 
-  // Unassign: the partner was removed from the opportunity. Clear the opportunity's
-  // partnerUser so it disappears from that partner's row-level view.
+  // Unassign: the partner was removed from the opportunity.
   if (!partnerId) {
+    // The opportunity still carries the previously-stamped member (only partnerId changed),
+    // so read it to know whose visibility to revoke and which company is linked.
+    const oppResult = await client.query({
+      opportunity: {
+        __args: { filter: { id: { eq: opportunityId } } },
+        id: true,
+        partnerUserId: true,
+        companyId: true,
+      },
+    } as any);
+    const removedMemberId = (oppResult as any).opportunity?.partnerUserId as
+      | string
+      | null
+      | undefined;
+    const companyId = (oppResult as any).opportunity?.companyId as string | null | undefined;
+
+    // Clear the opportunity itself.
     await client.mutation({
       updateOpportunity: {
         __args: { id: opportunityId, data: { partnerUserId: null } },
         id: true,
       },
     } as any);
-    return { cascaded: true, cleared: true };
+
+    if (!removedMemberId || !companyId) {
+      return { cascaded: true, cleared: true };
+    }
+
+    // Keep the Company (and its People) if the same member still has another opportunity on
+    // it — the opportunity we just cleared no longer matches this filter.
+    const otherOpps = await client.query({
+      opportunities: {
+        __args: {
+          filter: {
+            companyId: { eq: companyId },
+            partnerUserId: { eq: removedMemberId },
+          },
+          first: 1,
+        },
+        edges: { node: { id: true } },
+      },
+    } as any);
+    const companyStillInUse =
+      (((otherOpps as any).opportunities?.edges ?? []) as unknown[]).length > 0;
+    if (companyStillInUse) {
+      return { cascaded: true, cleared: true, companyKept: true };
+    }
+
+    // Clear the Company (only if it belongs to this member) and the People stamped for them.
+    const companyResult = await client.query({
+      company: {
+        __args: { filter: { id: { eq: companyId } } },
+        id: true,
+        partnerUserId: true,
+      },
+    } as any);
+    if ((companyResult as any).company?.partnerUserId === removedMemberId) {
+      await client.mutation({
+        updateCompany: {
+          __args: { id: companyId, data: { partnerUserId: null } },
+          id: true,
+        },
+      } as any);
+    }
+    const peopleResult = await client.query({
+      people: {
+        __args: {
+          filter: {
+            companyId: { eq: companyId },
+            partnerUserId: { eq: removedMemberId },
+          },
+          first: 200,
+        },
+        edges: { node: { id: true } },
+      },
+    } as any);
+    const peopleToClear = ((peopleResult as any).people?.edges ?? []) as {
+      node: { id: string };
+    }[];
+    await Promise.all(
+      peopleToClear.map(({ node }) =>
+        client.mutation({
+          updatePerson: {
+            __args: { id: node.id, data: { partnerUserId: null } },
+            id: true,
+          },
+        } as any),
+      ),
+    );
+    return { cascaded: true, cleared: true, companyCleared: true };
   }
 
   const partnerResult = await client.query({

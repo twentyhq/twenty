@@ -212,7 +212,7 @@ describe('on-opportunity-partner-assigned', () => {
   // Unassign: partnerId cleared → the opportunity's partnerUser is cleared so it
   // leaves the partner's row-level view.
   // -------------------------------------------------------------------------
-  it('clears the opportunity partnerUser when the partner is removed (unassignment)', async () => {
+  it('clears partnerUser on the opportunity, company, and people when the partner is removed (unassignment)', async () => {
     if (!handler) throw new Error('Handler not found — implementation file missing');
 
     const memberId = await getWorkspaceMemberId(client);
@@ -220,16 +220,21 @@ describe('on-opportunity-partner-assigned', () => {
     createdPartnerIds.push(partnerId);
     const companyId = await createCompany(client, `[test-rls] company ${Date.now()}`);
     createdCompanyIds.push(companyId);
+    const personId = await createPerson(client, companyId);
+    createdPersonIds.push(personId);
     const oppId = await createOpportunity(client, `[test-rls] opp ${Date.now()}`, companyId);
     createdOpportunityIds.push(oppId);
 
-    // Assign first so the opportunity has partnerUser stamped.
+    // Assign first so the opportunity + company + person have partnerUser stamped.
     await handler({
       properties: { updatedFields: ['partnerId'], after: { id: oppId, partnerId, companyId } },
     } as never);
     expect((await getOpportunity(client, oppId)).partnerUserId).toBe(memberId);
+    expect((await getCompany(client, companyId)).partnerUserId).toBe(memberId);
+    expect((await getPerson(client, personId)).partnerUserId).toBe(memberId);
 
-    // Now unassign: partnerId set to null.
+    // Now unassign: partnerId set to null. No other opportunity uses this company for the
+    // member, so the company + person should be cleared too.
     const result = await handler({
       properties: { updatedFields: ['partnerId'], after: { id: oppId, partnerId: null, companyId } },
     } as never);
@@ -237,6 +242,8 @@ describe('on-opportunity-partner-assigned', () => {
     expect((result as any).cascaded).toBe(true);
     expect((result as any).cleared).toBe(true);
     expect((await getOpportunity(client, oppId)).partnerUserId).toBeNull();
+    expect((await getCompany(client, companyId)).partnerUserId).toBeNull();
+    expect((await getPerson(client, personId)).partnerUserId).toBeNull();
   });
 
   // -------------------------------------------------------------------------
