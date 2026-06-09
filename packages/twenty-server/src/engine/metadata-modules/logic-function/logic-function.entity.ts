@@ -31,6 +31,13 @@ export enum LogicFunctionExecutionMode {
   PREBUILT = 'PREBUILT',
 }
 
+export enum LogicFunctionBuildStatus {
+  NOT_BUILT = 'NOT_BUILT', // source not compiled to a built artifact yet
+  CODE_BUILT = 'CODE_BUILT', // built from source; not yet deployed to the executor (reserved for PR2)
+  READY = 'READY', // ready to run in its execution mode (LIVE: built; PREBUILT: deployed w/ matching checksum)
+  DEPLOY_FAILED = 'DEPLOY_FAILED', // deploying the built artifact to the executor failed (reserved for PR2)
+}
+
 @Entity('logicFunction')
 @Index('IDX_LOGIC_FUNCTION_ID_DELETED_AT', ['id', 'deletedAt'])
 export class LogicFunctionEntity
@@ -65,8 +72,17 @@ export class LogicFunctionEntity
   @Column({ nullable: true, type: 'text' })
   checksum: string | null;
 
+  /** @deprecated use buildStatus. Kept in sync for one release. */
   @Column({ nullable: false, type: 'boolean', default: true })
   isBuildUpToDate: boolean;
+
+  @Column({
+    type: 'enum',
+    enum: LogicFunctionBuildStatus,
+    default: LogicFunctionBuildStatus.READY,
+    nullable: false,
+  })
+  buildStatus: LogicFunctionBuildStatus;
 
   @Column({
     type: 'enum',

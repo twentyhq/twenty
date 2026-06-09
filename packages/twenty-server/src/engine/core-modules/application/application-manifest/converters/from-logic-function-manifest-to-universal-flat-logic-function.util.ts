@@ -3,6 +3,7 @@ import { parse } from 'path';
 import { type LogicFunctionManifest } from 'twenty-shared/application';
 
 import {
+  LogicFunctionBuildStatus,
   LogicFunctionExecutionMode,
   LogicFunctionRuntime,
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -40,6 +41,7 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     workflowActionTriggerSettings:
       logicFunctionManifest.workflowActionTriggerSettings ?? null,
     isBuildUpToDate: true,
+    buildStatus: LogicFunctionBuildStatus.READY,
     executionMode: LogicFunctionExecutionMode.LIVE,
     createdAt: now,
     updatedAt: now,

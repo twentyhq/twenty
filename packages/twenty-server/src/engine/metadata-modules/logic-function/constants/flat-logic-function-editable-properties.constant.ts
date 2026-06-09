@@ -13,4 +13,5 @@ export const FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES = [
   'toolTriggerSettings',
   'workflowActionTriggerSettings',
   'isBuildUpToDate',
+  'buildStatus',
 ] as const satisfies MetadataEntityPropertyName<'logicFunction'>[];

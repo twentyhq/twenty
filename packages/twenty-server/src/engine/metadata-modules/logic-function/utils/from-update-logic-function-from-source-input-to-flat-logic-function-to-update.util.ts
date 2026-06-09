@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { LogicFunctionBuildStatus } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/logic-function/constants/flat-logic-function-editable-properties.constant';
 import { type UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-from-source.input';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
@@ -22,7 +23,12 @@ export const fromUpdateLogicFunctionFromSourceInputToFlatLogicFunctionToUpdate =
         properties: [...FLAT_LOGIC_FUNCTION_EDITABLE_PROPERTIES],
         update: {
           ...metadataUpdates,
-          ...(isDefined(sourceHandlerCode) ? { isBuildUpToDate: false } : {}),
+          ...(isDefined(sourceHandlerCode)
+            ? {
+                isBuildUpToDate: false,
+                buildStatus: LogicFunctionBuildStatus.NOT_BUILT,
+              }
+            : {}),
         },
       }),
       updatedAt: new Date().toISOString(),

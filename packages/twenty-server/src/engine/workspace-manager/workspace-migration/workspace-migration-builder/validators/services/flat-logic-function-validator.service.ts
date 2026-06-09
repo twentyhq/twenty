@@ -85,9 +85,8 @@ export class FlatLogicFunctionValidatorService {
       executionMode:
         flatEntityUpdate.executionMode ??
         existingFlatLogicFunction.executionMode,
-      isBuildUpToDate:
-        flatEntityUpdate.isBuildUpToDate ??
-        existingFlatLogicFunction.isBuildUpToDate,
+      buildStatus:
+        flatEntityUpdate.buildStatus ?? existingFlatLogicFunction.buildStatus,
       checksum:
         flatEntityUpdate.checksum !== undefined
           ? flatEntityUpdate.checksum

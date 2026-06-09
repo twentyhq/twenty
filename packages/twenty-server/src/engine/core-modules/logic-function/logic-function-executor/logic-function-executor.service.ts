@@ -45,6 +45,7 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { resolveEffectiveLogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/utils/resolve-effective-logic-function-execution-mode.util';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
@@ -122,11 +123,24 @@ export class LogicFunctionExecutorService {
 
     const driver = this.logicFunctionDriverFactory.getCurrentDriver();
 
-    const effectiveExecutionMode = await this.resolveEffectiveExecutionMode({
+    const requestedExecutionMode = await this.resolveEffectiveExecutionMode({
       workspaceId,
       flatLogicFunction,
       callerOverride: executionMode,
     });
+
+    const { effectiveExecutionMode, canExecute } =
+      resolveEffectiveLogicFunctionExecutionMode({
+        requestedExecutionMode,
+        flatLogicFunction,
+      });
+
+    if (!canExecute) {
+      throw new LogicFunctionException(
+        `Cannot run logic function '${flatLogicFunction.id}' in PREBUILT mode: bundle is not installed`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
+      );
+    }
 
     if (effectiveExecutionMode === LogicFunctionExecutionMode.PREBUILT) {
       await this.assertPrebuiltBundleInstalled({

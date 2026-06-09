@@ -2,6 +2,7 @@ import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'tw
 import { v4 } from 'uuid';
 
 import {
+  LogicFunctionBuildStatus,
   LogicFunctionExecutionMode,
   LogicFunctionRuntime,
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -46,6 +47,9 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
       timeoutSeconds: createLogicFunctionFromSourceInput.timeoutSeconds ?? 300,
       checksum,
       isBuildUpToDate,
+      buildStatus: isBuildUpToDate
+        ? LogicFunctionBuildStatus.READY
+        : LogicFunctionBuildStatus.NOT_BUILT,
       executionMode: LogicFunctionExecutionMode.LIVE,
       handlerName,
       sourceHandlerPath,

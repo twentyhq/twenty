@@ -27,7 +27,7 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { isLogicFunctionReadyForPrebuiltInstall } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util';
+import { resolveEffectiveLogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/utils/resolve-effective-logic-function-execution-mode.util';
 
 export { type LocalDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/types/local-driver.type';
 
@@ -111,17 +111,23 @@ export class LocalDriver implements LogicFunctionDriver {
     timeoutMs = 900_000,
     forceExecutionMode,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
-    const executionMode = forceExecutionMode ?? flatLogicFunction.executionMode;
+    const requestedExecutionMode =
+      forceExecutionMode ?? flatLogicFunction.executionMode;
 
-    if (
-      executionMode === LogicFunctionExecutionMode.PREBUILT &&
-      !isLogicFunctionReadyForPrebuiltInstall(flatLogicFunction)
-    ) {
+    const { effectiveExecutionMode, canExecute } =
+      resolveEffectiveLogicFunctionExecutionMode({
+        requestedExecutionMode,
+        flatLogicFunction,
+      });
+
+    if (!canExecute) {
       throw new LogicFunctionException(
         `Cannot run logic function '${flatLogicFunction.id}' in PREBUILT mode: bundle is not installed`,
         LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
       );
     }
+
+    const executionMode = effectiveExecutionMode;
 
     await this.layerManager.ensureDepsLayer({
       flatApplication,

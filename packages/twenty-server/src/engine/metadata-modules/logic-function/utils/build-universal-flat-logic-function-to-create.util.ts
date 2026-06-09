@@ -1,6 +1,7 @@
 import { v4 } from 'uuid';
 
 import {
+  LogicFunctionBuildStatus,
   LogicFunctionExecutionMode,
   LogicFunctionRuntime,
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -43,6 +44,11 @@ export const buildUniversalFlatLogicFunctionToCreate = (
     timeoutSeconds: input.timeoutSeconds ?? 300,
     checksum: input.checksum ?? null,
     isBuildUpToDate: input.isBuildUpToDate,
+    buildStatus:
+      input.buildStatus ??
+      (input.isBuildUpToDate
+        ? LogicFunctionBuildStatus.READY
+        : LogicFunctionBuildStatus.NOT_BUILT),
     executionMode: input.executionMode ?? LogicFunctionExecutionMode.LIVE,
     handlerName: input.handlerName,
     sourceHandlerPath: input.sourceHandlerPath,

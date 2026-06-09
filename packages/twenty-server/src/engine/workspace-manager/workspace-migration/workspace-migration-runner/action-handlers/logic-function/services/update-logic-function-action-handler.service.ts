@@ -12,6 +12,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import type { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import {
+  LogicFunctionBuildStatus,
   LogicFunctionEntity,
   LogicFunctionExecutionMode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -133,6 +134,7 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
         update.executionMode ?? existingLogicFunction.executionMode,
       isBuildUpToDate:
         update.isBuildUpToDate ?? existingLogicFunction.isBuildUpToDate,
+      buildStatus: update.buildStatus ?? existingLogicFunction.buildStatus,
       checksum: update.checksum ?? existingLogicFunction.checksum,
     };
 
@@ -159,6 +161,7 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
           ...newLogicFunction,
           executionMode: LogicFunctionExecutionMode.PREBUILT,
           isBuildUpToDate: true,
+          buildStatus: LogicFunctionBuildStatus.READY,
         },
         flatApplication: context.flatApplication,
         applicationUniversalIdentifier,
