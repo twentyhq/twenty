@@ -48890,7 +48890,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:2.8.8, prettier@npm:^2.0.0, prettier@npm:^2.8.8":
+"prettier@npm:2.8.8, prettier@npm:^2.0.0":
   version: 2.8.8
   resolution: "prettier@npm:2.8.8"
   bin:
@@ -48899,7 +48899,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.1.1, prettier@npm:^3.2.5, prettier@npm:^3.4.2, prettier@npm:^3.5.3":
+"prettier@npm:^3.1.1, prettier@npm:^3.2.5, prettier@npm:^3.4.2, prettier@npm:^3.5.3, prettier@npm:^3.8.3":
   version: 3.8.3
   resolution: "prettier@npm:3.8.3"
   bin:
@@ -56174,7 +56174,7 @@ __metadata:
     esbuild: "npm:^0.28.0"
     graphql: "npm:^16.8.1"
     lodash: "npm:^4.17.21"
-    prettier: "npm:^2.8.8"
+    prettier: "npm:^3.8.3"
     tsc-alias: "npm:^1.8.16"
     twenty-shared: "workspace:*"
     typescript: "npm:^5.9.3"

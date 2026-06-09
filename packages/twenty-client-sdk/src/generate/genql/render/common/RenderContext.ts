@@ -89,7 +89,7 @@ export class RenderContext {
         else return
     }
 
-    toCode(parser?: BuiltInParserName, pretty = false) {
+    async toCode(parser?: BuiltInParserName, pretty = false) {
         const blocks = [...this.codeBlocks]
 
         if (parser && (parser === 'typescript' || parser === 'babel')) {
