@@ -1,0 +1,33 @@
+packages/twenty-server/src/engine/core-modules/emailing-domain/types/message-topic-subscription-status.type.ts
+  s_b8aa3ee71a096f::t_daecccf0087cfa 2
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-topic-subscription-standard-flat-field-metadata.util.ts
+  s_b8aa3ee71a096f::t_32799236b43b06 208-213,218,225
+  s_b8aa3ee71a096f::t_2dc2d3725b5559 271-290
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/message-topic-subscription.service.ts
+  s_b8aa3ee71a096f::t_1b3297cab24ab1 112-113
+packages/twenty-shared/src/metadata/constants/standard-object.constant.ts
+  s_b8aa3ee71a096f::t_b1770f88dc32b1 1078-1080
+packages/twenty-server/src/modules/emailing/standard-objects/message-topic-subscription.workspace-entity.ts
+  s_b8aa3ee71a096f::t_fe48ff9c7ea590 13
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+  s_b8aa3ee71a096f::t_f748b754817b1c 343
+packages/twenty-server/src/modules/emailing/standard-objects/message-topic.workspace-entity.ts
+  s_b8aa3ee71a096f::t_c669a65bcf7eb5 7
+  s_b8aa3ee71a096f::t_1930545c0d05d0 22-23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "d8e9ef145b141fa7c8d47747fd3d0ca99982d9cd",
+  "prompts": {},
+  "sessions": {
+    "s_b8aa3ee71a096f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "729455bc-eec3-4b99-bbf8-066fb4359921",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
