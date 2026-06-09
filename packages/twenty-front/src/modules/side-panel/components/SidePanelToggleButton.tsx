@@ -15,10 +15,7 @@ import {
   TooltipPosition,
 } from 'twenty-ui-deprecated/display';
 import { AnimatedButton } from 'twenty-ui-deprecated/input';
-import {
-  getOsControlSymbol,
-  useIsMobile,
-} from 'twenty-ui-deprecated/utilities';
+import { useIsMobile } from 'twenty-ui-deprecated/utilities';
 import {
   ThemeContext,
   themeCssVariables,
@@ -157,7 +154,6 @@ export const SidePanelToggleButton = () => {
           size={isMobile ? 'medium' : 'small'}
           variant="secondary"
           accent="default"
-          hotkeys={[getOsControlSymbol(), 'K']}
           ariaLabel={ariaLabel}
           onClick={toggleSidePanelMenu}
           animate={{
