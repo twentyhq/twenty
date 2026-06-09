@@ -2,7 +2,6 @@ import { validate as uuidValidate, version as uuidVersion } from 'uuid';
 
 import { type FieldManifest, type Manifest } from 'twenty-shared/application';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 const MIN_UUID_VERSION = 4;
 
@@ -152,12 +151,6 @@ export const manifestValidate = (manifest: Manifest) => {
     errors.push(
       `Invalid universal identifiers: ${invalidUniversalIdentifiers.join(', ')}`,
     );
-  }
-
-  for (const agent of manifest.agents) {
-    if (!isDefined(agent.responseFormat)) {
-      warnings.push(`Agent "${agent.name}" has no responseFormat defined`);
-    }
   }
 
   const allFields: Pick<
