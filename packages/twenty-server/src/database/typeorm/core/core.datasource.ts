@@ -41,6 +41,10 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
   url: process.env.PG_DATABASE_URL,
   type: 'postgres',
   logging: getLoggingConfig(),
+  // TODO(install-perf): added to surface slow queries during the app-install
+  // 504 investigation. Generally useful — keep or remove with the rest of the
+  // [install-perf] instrumentation.
+  maxQueryExecutionTime: Number(process.env.PG_SLOW_QUERY_MS ?? 1000),
   schema: 'core',
   entities:
     process.env.IS_BILLING_ENABLED === 'true'

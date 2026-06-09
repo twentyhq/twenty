@@ -167,6 +167,38 @@ export class WorkspaceMigrationRunnerService {
     );
   }
 
+  // TODO(install-perf): temporary — best-effort snapshot of concurrent DB
+  // sessions to identify what was blocking a slow/locked migration action.
+  // Runs on a fresh pooled connection (the migration's own connection may be
+  // dead). Remove with the rest of the app-install 504 instrumentation.
+  private async logBlockingDbActivity(): Promise<void> {
+    try {
+      const rows = await this.coreDataSource.query(
+        `SELECT pid, state, wait_event_type, wait_event,
+                now() - query_start AS running_for, left(query, 200) AS query
+         FROM pg_stat_activity
+         WHERE datname = current_database()
+           AND state <> 'idle'
+           AND pid <> pg_backend_pid()
+         ORDER BY query_start ASC`,
+      );
+
+      // oxlint-disable-next-line no-console
+      console.error(
+        `[install-perf] active DB sessions at failure: ${JSON.stringify(rows)}`,
+      );
+    } catch (snapshotError) {
+      // oxlint-disable-next-line no-console
+      console.error(
+        `[install-perf] could not snapshot pg_stat_activity: ${
+          snapshotError instanceof Error
+            ? snapshotError.message
+            : String(snapshotError)
+        }`,
+      );
+    }
+  }
+
   run = async ({
     workspaceMigration: { actions, applicationUniversalIdentifier },
     workspaceId,
@@ -188,6 +220,8 @@ export class WorkspaceMigrationRunnerService {
 
     this.logger.time('Runner', 'Total execution');
     this.logger.time('Runner', 'Initial cache retrieval');
+
+    const initialCacheRetrievalStartNs = process.hrtime.bigint();
 
     const queryRunner = this.coreDataSource.createQueryRunner();
 
@@ -218,6 +252,14 @@ export class WorkspaceMigrationRunnerService {
 
     this.logger.timeEnd('Runner', 'Initial cache retrieval');
 
+    const initialCacheRetrievalMs =
+      Number(process.hrtime.bigint() - initialCacheRetrievalStartNs) / 1e6;
+
+    // oxlint-disable-next-line no-console
+    console.log(
+      `[install-perf] Runner initial cache retrieval (getOrRecomputeManyOrAllFlatEntityMaps) took ${initialCacheRetrievalMs.toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
+    );
+
     const { flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatApplicationMaps',
@@ -243,10 +285,25 @@ export class WorkspaceMigrationRunnerService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
+    // TODO(install-perf): temporary instrumentation for the app-install 504.
+    // Fail fast (8s) on lock waits — below the 10s node-pg query_timeout — so a
+    // blocked migration action surfaces as a clear "canceling statement due to
+    // lock timeout" instead of the opaque connection kill + "Query runner
+    // already released". Remove with the rest of the [install-perf] logging.
+    await queryRunner.query(`SET LOCAL lock_timeout = '8s'`);
+
     const allMetadataEvents: MetadataEvent[] = [];
+
+    // TODO(install-perf): temporary per-action timing — remove with the rest of
+    // the [install-perf] install-504 instrumentation.
+    const transactionStartNs = process.hrtime.bigint();
+    let slowestActionMs = 0;
+    let slowestActionLabel = 'n/a';
+    let actionCount = 0;
 
     try {
       for (const action of actions) {
+        const actionStartNs = process.hrtime.bigint();
         const { partialOptimisticCache, metadataEvents } =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
             {
@@ -261,6 +318,22 @@ export class WorkspaceMigrationRunnerService {
             },
           );
 
+        const actionMs = Number(process.hrtime.bigint() - actionStartNs) / 1e6;
+
+        actionCount += 1;
+
+        if (actionMs > slowestActionMs) {
+          slowestActionMs = actionMs;
+          slowestActionLabel = `${action.type}:${action.metadataName}`;
+        }
+
+        if (actionMs > 50) {
+          // oxlint-disable-next-line no-console
+          console.log(
+            `[install-perf] slow action ${action.type}:${action.metadataName} took ${actionMs.toFixed(1)}ms`,
+          );
+        }
+
         allFlatEntityMaps = {
           ...allFlatEntityMaps,
           ...partialOptimisticCache,
@@ -269,16 +342,46 @@ export class WorkspaceMigrationRunnerService {
         allMetadataEvents.push(...metadataEvents);
       }
 
+      const commitStartNs = process.hrtime.bigint();
+
       await queryRunner.commitTransaction();
+
+      const commitMs = Number(process.hrtime.bigint() - commitStartNs) / 1e6;
+      const transactionMs =
+        Number(process.hrtime.bigint() - transactionStartNs) / 1e6;
+
+      // oxlint-disable-next-line no-console
+      console.log(
+        `[install-perf] Runner transaction summary: ${actionCount} actions, total transaction ${transactionMs.toFixed(1)}ms (commit ${commitMs.toFixed(1)}ms), slowest action ${slowestActionLabel} ${slowestActionMs.toFixed(1)}ms`,
+      );
 
       this.logger.timeEnd('Runner', 'Transaction execution');
     } catch (error) {
-      await queryRunner.rollbackTransaction().catch((rollbackError) =>
-        // oxlint-disable-next-line no-console
-        console.trace(
-          `Failed to rollback transaction: ${rollbackError.message}`,
-        ),
+      // TODO(install-perf): temporary instrumentation for the app-install 504.
+      // Log the real failure + a snapshot of blocking DB activity, and guard the
+      // rollback so a released/dead connection doesn't mask the cause with
+      // "Query runner already released". Remove once the bottleneck is fixed.
+      // oxlint-disable-next-line no-console
+      console.error(
+        `[install-perf] migration failed after ${actionCount} action(s): ${
+          error instanceof Error ? error.message : String(error)
+        }`,
       );
+      await this.logBlockingDbActivity();
+
+      if (queryRunner.isTransactionActive && !queryRunner.isReleased) {
+        await queryRunner.rollbackTransaction().catch((rollbackError) =>
+          // oxlint-disable-next-line no-console
+          console.error(
+            `[install-perf] rollback failed: ${rollbackError.message}`,
+          ),
+        );
+      } else {
+        // oxlint-disable-next-line no-console
+        console.error(
+          `[install-perf] skipping rollback (txnActive=${queryRunner.isTransactionActive} released=${queryRunner.isReleased})`,
+        );
+      }
 
       const invertedActions = [...actions].reverse();
 
@@ -320,6 +423,8 @@ export class WorkspaceMigrationRunnerService {
       await queryRunner.release();
     }
 
+    const postCommitInvalidateStartNs = process.hrtime.bigint();
+
     try {
       await this.invalidateCache({
         allFlatEntityMapsKeys,
@@ -331,6 +436,14 @@ export class WorkspaceMigrationRunnerService {
         'Runner',
       );
     }
+
+    const postCommitInvalidateMs =
+      Number(process.hrtime.bigint() - postCommitInvalidateStartNs) / 1e6;
+
+    // oxlint-disable-next-line no-console
+    console.log(
+      `[install-perf] Runner post-commit invalidateCache took ${postCommitInvalidateMs.toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
+    );
 
     const hasSchemaMetadataChanged =
       allFlatEntityMapsKeys.includes('flatObjectMetadataMaps') ||

@@ -106,12 +106,24 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     });
 
     if (builtPathChanged) {
+      // TODO(install-perf): temporary timing for the app-install 504 — remove
+      // with the rest of the [install-perf] instrumentation.
+      const deleteFileStartNs = process.hrtime.bigint();
+
       await this.fileStorageService.deleteFile({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.BuiltLogicFunction,
         resourcePath: existingLogicFunction.builtHandlerPath,
       });
+
+      const deleteFileMs =
+        Number(process.hrtime.bigint() - deleteFileStartNs) / 1e6;
+
+      // oxlint-disable-next-line no-console
+      console.log(
+        `[install-perf] update logicFunction fileStorageService.deleteFile took ${deleteFileMs.toFixed(1)}ms (fnId=${entityId})`,
+      );
     }
   }
 

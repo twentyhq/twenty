@@ -369,6 +369,9 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     const { idByUniversalIdentifierByMetadataName, dryRun, ...buildArgs } =
       args;
 
+    // TODO(install-perf): temporary timing for the app-install 504 — remove
+    // with the rest of the [install-perf] instrumentation.
+    const buildStartNs = process.hrtime.bigint();
     const validateAndBuildResult =
       await this.workspaceMigrationBuildOrchestratorService
         .buildWorkspaceMigration(buildArgs)
@@ -379,6 +382,12 @@ export class WorkspaceMigrationValidateBuildAndRunService {
             WorkspaceMigrationV2ExceptionCode.BUILDER_INTERNAL_SERVER_ERROR,
           );
         });
+    const buildMs = Number(process.hrtime.bigint() - buildStartNs) / 1e6;
+
+    // oxlint-disable-next-line no-console
+    console.log(
+      `[install-perf] buildWorkspaceMigration took ${buildMs.toFixed(1)}ms (status=${validateAndBuildResult.status})`,
+    );
 
     if (validateAndBuildResult.status === 'fail') {
       if (this.isDebugEnabled) {
@@ -402,11 +411,32 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       };
     }
 
+    const actionCountsByTypeAndMetadataName: Record<string, number> = {};
+
+    for (const action of workspaceMigration.actions) {
+      const key = `${action.type}:${action.metadataName}`;
+
+      actionCountsByTypeAndMetadataName[key] =
+        (actionCountsByTypeAndMetadataName[key] ?? 0) + 1;
+    }
+
+    // oxlint-disable-next-line no-console
+    console.log(
+      `[install-perf] validateBuildAndRunWorkspaceMigrationFromTo running ${workspaceMigration.actions.length} actions: ${JSON.stringify(actionCountsByTypeAndMetadataName)}`,
+    );
+
+    const runStartNs = process.hrtime.bigint();
     const { hasSchemaMetadataChanged, metadataEvents } =
       await this.workspaceMigrationRunnerService.run({
         workspaceId: args.workspaceId,
         workspaceMigration,
       });
+    const runMs = Number(process.hrtime.bigint() - runStartNs) / 1e6;
+
+    // oxlint-disable-next-line no-console
+    console.log(
+      `[install-perf] workspaceMigrationRunnerService.run took ${runMs.toFixed(1)}ms for ${workspaceMigration.actions.length} actions`,
+    );
 
     this.metadataEventEmitter.emitMetadataEvents({
       metadataEvents: metadataEvents,
