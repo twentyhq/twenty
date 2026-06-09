@@ -5,7 +5,7 @@ import {
   PartnerApplicationWizard,
   partnerWizardPanelClass,
 } from '@/sections/PartnerApplication/wizard/PartnerApplicationWizard';
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 
 type PartnerApplicationModalProps = {
   open: boolean;
@@ -19,7 +19,9 @@ export function PartnerApplicationModal({
   const [resetSignal, setResetSignal] = useState(0);
   const [submitted, setSubmitted] = useState(false);
 
-  useEffect(() => {
+  // Reset before paint (not useEffect) so a stale submitted=true from a prior
+  // session can't flash the wide booking panel for a frame on reopen.
+  useLayoutEffect(() => {
     if (open) {
       setResetSignal((n) => n + 1);
       setSubmitted(false);
