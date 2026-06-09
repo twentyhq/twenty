@@ -19,10 +19,6 @@ import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-er
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import {
-  TwoFactorAuthenticationException,
-  TwoFactorAuthenticationExceptionCode,
-} from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
 import { twoFactorAuthenticationMethodsValidator } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.validation';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -83,6 +79,7 @@ export class AdminPanelServerAdminService {
 
     await this.assertFreshStepUpAuthentication({
       actorUserId: actor.id,
+      actorWorkspaceId,
       otp,
     });
 
@@ -146,9 +143,11 @@ export class AdminPanelServerAdminService {
 
   private async assertFreshStepUpAuthentication({
     actorUserId,
+    actorWorkspaceId,
     otp,
   }: {
     actorUserId: string;
+    actorWorkspaceId: string;
     otp?: string;
   }): Promise<void> {
     const isDevelopment =
@@ -164,60 +163,36 @@ export class AdminPanelServerAdminService {
       );
     }
 
-    // 2FA methods are scoped to a userWorkspace, but server-admin access is
-    // global — the actor may have enrolled 2FA in any of their workspaces, not
-    // the one currently open. Accept a code from any workspace where they have
-    // a verified method.
-    const actorUserWorkspaces = await this.userWorkspaceRepository.find({
-      where: { userId: actorUserId },
+    // Verify against the actor's current workspace only — checking the same code
+    // against every workspace they belong to would allow one OTP guess per
+    // workspace, weakening brute-force resistance.
+    const actorUserWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { userId: actorUserId, workspaceId: actorWorkspaceId },
       relations: ['twoFactorAuthenticationMethods'],
     });
 
-    const workspaceIdsWithVerifiedTwoFactor = actorUserWorkspaces
-      .filter(
-        (userWorkspace) =>
-          twoFactorAuthenticationMethodsValidator.areDefined(
-            userWorkspace.twoFactorAuthenticationMethods,
-          ) &&
-          twoFactorAuthenticationMethodsValidator.areVerified(
-            userWorkspace.twoFactorAuthenticationMethods,
-          ),
-      )
-      .map((userWorkspace) => userWorkspace.workspaceId);
+    const hasVerifiedTwoFactor =
+      isDefined(actorUserWorkspace) &&
+      twoFactorAuthenticationMethodsValidator.areDefined(
+        actorUserWorkspace.twoFactorAuthenticationMethods,
+      ) &&
+      twoFactorAuthenticationMethodsValidator.areVerified(
+        actorUserWorkspace.twoFactorAuthenticationMethods,
+      );
 
-    if (workspaceIdsWithVerifiedTwoFactor.length === 0) {
+    if (!hasVerifiedTwoFactor) {
       throw new UserInputError(
-        'Enable two-factor authentication before managing server administrators.',
+        'Enable two-factor authentication in your current workspace to manage server administrators.',
       );
     }
 
-    for (const [
-      index,
-      workspaceId,
-    ] of workspaceIdsWithVerifiedTwoFactor.entries()) {
-      try {
-        await this.twoFactorAuthenticationService.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
-          actorUserId,
-          otp,
-          workspaceId,
-        );
-
-        return;
-      } catch (error) {
-        const isInvalidOtp =
-          error instanceof TwoFactorAuthenticationException &&
-          error.code === TwoFactorAuthenticationExceptionCode.INVALID_OTP;
-        const isLastWorkspace =
-          index === workspaceIdsWithVerifiedTwoFactor.length - 1;
-
-        // Try the next workspace on a wrong code; surface the error otherwise
-        // (the resolver's TwoFactorAuthenticationExceptionFilter maps it to a
-        // user-friendly message).
-        if (!isInvalidOtp || isLastWorkspace) {
-          throw error;
-        }
-      }
-    }
+    // A wrong code throws INVALID_OTP, which the resolver's
+    // TwoFactorAuthenticationExceptionFilter maps to a user-friendly message.
+    await this.twoFactorAuthenticationService.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
+      actorUserId,
+      otp,
+      actorWorkspaceId,
+    );
   }
 
   private async notifyAdministrators({
