@@ -1,5 +1,7 @@
+export type RecordInput = string | { id?: string | null };
+
 export type BulkEnrichInput = {
-  records: Array<string | { id?: string | null }>;
+  records: RecordInput | RecordInput[];
   force?: boolean;
   minLikelihood?: number;
 };

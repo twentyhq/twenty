@@ -1,14 +1,14 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers';
-import { enrichPersonBulkCore } from 'src/logic-functions/handlers/enrich-person-bulk';
+import { enrichPeopleCore } from 'src/logic-functions/handlers/enrich-people';
 import { type BulkEnrichInput } from 'src/types/bulk-enrich-input';
 
-const handler = (input: BulkEnrichInput) => enrichPersonBulkCore({ input });
+const handler = (input: BulkEnrichInput) => enrichPeopleCore({ input });
 
 export default defineLogicFunction({
-  universalIdentifier: PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichPerson,
-  name: 'enrich-person',
+  universalIdentifier: PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichPeople,
+  name: 'enrich-people',
   description: 'Enrich one or more Person records with People Data Labs data',
   timeoutSeconds: 300,
   handler,

@@ -1,13 +1,18 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-export const extractRecordIds = (
-  records: Array<string | { id?: string | null }>,
-): string[] => {
-  if (!Array.isArray(records)) {
-    return [];
-  }
+import { type RecordInput } from 'src/types/bulk-enrich-input';
 
-  return records
+export const extractRecordIds = (
+  records: RecordInput | RecordInput[],
+): string[] => {
+  const list =
+    records === null || records === undefined
+      ? []
+      : Array.isArray(records)
+        ? records
+        : [records];
+
+  return list
     .map((record) => (typeof record === 'string' ? record : record?.id))
     .filter((id): id is string => isNonEmptyString(id));
 };

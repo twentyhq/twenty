@@ -1,11 +1,11 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-import { enrichPersonCore } from 'src/logic-functions/handlers/enrich-person';
+import { enrichCompanyCore } from 'src/logic-functions/handlers/enrich-company';
 import { runBulkEnrichment } from 'src/logic-functions/utils/run-bulk-enrichment';
 import { type BulkEnrichInput } from 'src/types/bulk-enrich-input';
 import { type BulkEnrichResult } from 'src/types/bulk-enrich-result';
 
-export const enrichPersonBulkCore = ({
+export const enrichCompaniesCore = ({
   input,
   client = new CoreApiClient(),
 }: {
@@ -15,8 +15,5 @@ export const enrichPersonBulkCore = ({
   runBulkEnrichment({
     input,
     enrichRecord: (recordId) =>
-      enrichPersonCore(
-        { recordId, force: input.force, minLikelihood: input.minLikelihood },
-        client,
-      ),
+      enrichCompanyCore({ recordId, force: input.force }, client),
   });

@@ -44,12 +44,12 @@ describe('postInstallCore', () => {
       {
         id: 'company-fn',
         universalIdentifier:
-          PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichCompany,
+          PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichCompanies,
       },
       {
         id: 'person-fn',
         universalIdentifier:
-          PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichPerson,
+          PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichPeople,
       },
     ]);
 
@@ -74,7 +74,7 @@ describe('postInstallCore', () => {
       {
         id: 'company-fn',
         universalIdentifier:
-          PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichCompany,
+          PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichCompanies,
       },
     ]);
 
@@ -97,12 +97,12 @@ describe('postInstallCore', () => {
       {
         id: 'company-fn',
         universalIdentifier:
-          PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichCompany,
+          PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichCompanies,
       },
       {
         id: 'person-fn',
         universalIdentifier:
-          PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichPerson,
+          PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichPeople,
       },
     ]);
 

@@ -17,7 +17,16 @@ describe('extractRecordIds', () => {
     ).toEqual(['a', 'c']);
   });
 
-  it('returns an empty array for non-array input', () => {
+  it('accepts a single record object (not wrapped in an array)', () => {
+    expect(extractRecordIds({ id: 'a' })).toEqual(['a']);
+  });
+
+  it('accepts a single id string (not wrapped in an array)', () => {
+    expect(extractRecordIds('a')).toEqual(['a']);
+  });
+
+  it('returns an empty array for nullish input', () => {
     expect(extractRecordIds(undefined as unknown as [])).toEqual([]);
+    expect(extractRecordIds(null as unknown as [])).toEqual([]);
   });
 });

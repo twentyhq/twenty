@@ -11,7 +11,7 @@ export const ENRICHMENT_WORKFLOW_SEEDS: EnrichmentWorkflowSeed[] = [
     icon: ENRICHMENT_ICON,
     stepName: 'Enrich Companies',
     logicFunctionUniversalIdentifier:
-      PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichCompany,
+      PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichCompanies,
     logicFunctionInput: { records: '{{trigger.companies}}' },
   },
   {
@@ -21,7 +21,7 @@ export const ENRICHMENT_WORKFLOW_SEEDS: EnrichmentWorkflowSeed[] = [
     icon: ENRICHMENT_ICON,
     stepName: 'Enrich People',
     logicFunctionUniversalIdentifier:
-      PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichPerson,
+      PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichPeople,
     logicFunctionInput: { records: '{{trigger.people}}' },
   },
 ];
