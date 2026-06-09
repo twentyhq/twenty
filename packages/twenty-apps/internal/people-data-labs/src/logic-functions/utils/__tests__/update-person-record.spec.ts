@@ -12,7 +12,11 @@ describe('updatePersonRecord', () => {
       },
     });
 
-    await updatePersonRecord(client, 'p1', { jobTitle: 'CEO' });
+    await updatePersonRecord({
+      client,
+      recordId: 'p1',
+      data: { jobTitle: 'CEO' },
+    });
 
     expect(request).toMatchObject({
       updatePerson: { __args: { id: 'p1', data: { jobTitle: 'CEO' } } },

@@ -4,7 +4,7 @@ import { buildLinks } from 'src/logic-functions/utils/build-links';
 
 describe('buildLinks', () => {
   it('builds a links value with a blank label by default', () => {
-    expect(buildLinks('https://acme.com')).toEqual({
+    expect(buildLinks({ url: 'https://acme.com' })).toEqual({
       primaryLinkUrl: 'https://acme.com',
       primaryLinkLabel: '',
       secondaryLinks: null,
@@ -12,7 +12,7 @@ describe('buildLinks', () => {
   });
 
   it('uses the provided label', () => {
-    expect(buildLinks('https://acme.com', 'Acme')).toEqual({
+    expect(buildLinks({ url: 'https://acme.com', label: 'Acme' })).toEqual({
       primaryLinkUrl: 'https://acme.com',
       primaryLinkLabel: 'Acme',
       secondaryLinks: null,
@@ -20,6 +20,6 @@ describe('buildLinks', () => {
   });
 
   it('returns undefined when the url is empty', () => {
-    expect(buildLinks('')).toBeUndefined();
+    expect(buildLinks({ url: '' })).toBeUndefined();
   });
 });

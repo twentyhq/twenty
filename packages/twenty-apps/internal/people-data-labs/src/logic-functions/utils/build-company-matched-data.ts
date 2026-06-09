@@ -14,17 +14,21 @@ const COMPANY_EMPTY_CHECKS = {
   address: isEmptyAddress,
 };
 
-export const buildCompanyMatchedData = async (
-  node: CompanyNode,
-  outcome: { data: PdlCompanyData },
-  enrichedAt: string,
-): Promise<Record<string, unknown>> => {
+export const buildCompanyMatchedData = async ({
+  node,
+  outcome,
+  enrichedAt,
+}: {
+  node: CompanyNode;
+  outcome: { data: PdlCompanyData };
+  enrichedAt: string;
+}): Promise<Record<string, unknown>> => {
   const mapped = mapCompany(outcome.data);
-  const writableStandard = pickWritableStandard(
-    mapped.standard,
-    node as unknown as Record<string, unknown>,
-    COMPANY_EMPTY_CHECKS,
-  );
+  const writableStandard = pickWritableStandard({
+    standard: mapped.standard,
+    current: node as unknown as Record<string, unknown>,
+    emptyChecks: COMPANY_EMPTY_CHECKS,
+  });
 
   return pruneUndefined({
     ...writableStandard,

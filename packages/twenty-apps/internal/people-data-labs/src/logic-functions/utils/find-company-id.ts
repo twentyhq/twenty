@@ -5,13 +5,19 @@ import { findCompanyIdByFilter } from 'src/logic-functions/utils/find-company-id
 import { type CompanyMatchKeys } from 'src/types/company-match-keys';
 import { isDefined } from 'src/utils/is-defined';
 
-export const findCompanyId = async (
-  client: CoreApiClient,
-  { pdlId, website, linkedinUrl, name }: CompanyMatchKeys,
-): Promise<string | undefined> => {
+export const findCompanyId = async ({
+  client,
+  matchKeys,
+}: {
+  client: CoreApiClient;
+  matchKeys: CompanyMatchKeys;
+}): Promise<string | undefined> => {
+  const { pdlId, website, linkedinUrl, name } = matchKeys;
+
   if (isNonEmptyString(pdlId)) {
-    const matchById = await findCompanyIdByFilter(client, {
-      pdlId: { eq: pdlId },
+    const matchById = await findCompanyIdByFilter({
+      client,
+      filter: { pdlId: { eq: pdlId } },
     });
     if (isDefined(matchById)) {
       return matchById;
@@ -19,8 +25,9 @@ export const findCompanyId = async (
   }
 
   if (isNonEmptyString(website)) {
-    const matchByDomain = await findCompanyIdByFilter(client, {
-      domainName: { primaryLinkUrl: { eq: website } },
+    const matchByDomain = await findCompanyIdByFilter({
+      client,
+      filter: { domainName: { primaryLinkUrl: { eq: website } } },
     });
     if (isDefined(matchByDomain)) {
       return matchByDomain;
@@ -28,8 +35,9 @@ export const findCompanyId = async (
   }
 
   if (isNonEmptyString(linkedinUrl)) {
-    const matchByLinkedin = await findCompanyIdByFilter(client, {
-      linkedinLink: { primaryLinkUrl: { eq: linkedinUrl } },
+    const matchByLinkedin = await findCompanyIdByFilter({
+      client,
+      filter: { linkedinLink: { primaryLinkUrl: { eq: linkedinUrl } } },
     });
     if (isDefined(matchByLinkedin)) {
       return matchByLinkedin;
@@ -37,8 +45,9 @@ export const findCompanyId = async (
   }
 
   if (isNonEmptyString(name)) {
-    const matchByName = await findCompanyIdByFilter(client, {
-      name: { eq: name },
+    const matchByName = await findCompanyIdByFilter({
+      client,
+      filter: { name: { eq: name } },
     });
     if (isDefined(matchByName)) {
       return matchByName;

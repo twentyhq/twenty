@@ -43,7 +43,7 @@ describe('postPdlBulkEnrich', () => {
   it('sends one request wrapping every record under requests[].params', async () => {
     const fetchMock = stubFetch(buildResponse(200, [{ status: 200, data: {} }]));
 
-    await postPdlBulkEnrich('/person/bulk', [{ email: 'a@b.com' }]);
+    await postPdlBulkEnrich({ path: '/person/bulk', requests: [{ email: 'a@b.com' }] });
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
@@ -62,11 +62,14 @@ describe('postPdlBulkEnrich', () => {
       ]),
     );
 
-    const results = await postPdlBulkEnrich('/person/bulk', [
-      { email: 'a@b.com' },
-      { email: 'b@b.com' },
-      { email: 'c@b.com' },
-    ]);
+    const results = await postPdlBulkEnrich({
+      path: '/person/bulk',
+      requests: [
+        { email: 'a@b.com' },
+        { email: 'b@b.com' },
+        { email: 'c@b.com' },
+      ],
+    });
 
     expect(results).toEqual([
       { outcome: 'matched', httpStatus: 200, likelihood: 8, data: { id: 'a' } },
@@ -78,9 +81,10 @@ describe('postPdlBulkEnrich', () => {
   it('falls back to the whole item as data when there is no data envelope', async () => {
     stubFetch(buildResponse(200, [{ status: 200, name: 'Acme' }]));
 
-    const results = await postPdlBulkEnrich('/company/enrich/bulk', [
-      { name: 'Acme' },
-    ]);
+    const results = await postPdlBulkEnrich({
+      path: '/company/enrich/bulk',
+      requests: [{ name: 'Acme' }],
+    });
 
     expect(results[0]).toEqual({
       outcome: 'matched',
@@ -95,7 +99,10 @@ describe('postPdlBulkEnrich', () => {
       buildResponse(200, { responses: [{ status: 200, data: { id: 'a' } }] }),
     );
 
-    const results = await postPdlBulkEnrich('/person/bulk', [{ email: 'a@b.com' }]);
+    const results = await postPdlBulkEnrich({
+      path: '/person/bulk',
+      requests: [{ email: 'a@b.com' }],
+    });
 
     expect(results[0]).toMatchObject({ outcome: 'matched', data: { id: 'a' } });
   });
@@ -103,10 +110,10 @@ describe('postPdlBulkEnrich', () => {
   it('marks missing response items as errors', async () => {
     stubFetch(buildResponse(200, [{ status: 200, data: { id: 'a' } }]));
 
-    const results = await postPdlBulkEnrich('/person/bulk', [
-      { email: 'a@b.com' },
-      { email: 'b@b.com' },
-    ]);
+    const results = await postPdlBulkEnrich({
+      path: '/person/bulk',
+      requests: [{ email: 'a@b.com' }, { email: 'b@b.com' }],
+    });
 
     expect(results[0].outcome).toBe('matched');
     expect(results[1]).toEqual({
@@ -119,10 +126,10 @@ describe('postPdlBulkEnrich', () => {
   it('fails every record when the whole call is a non-2xx response', async () => {
     stubFetch(buildResponse(401, { error: { message: 'unauthorized' } }));
 
-    const results = await postPdlBulkEnrich('/person/bulk', [
-      { email: 'a@b.com' },
-      { email: 'b@b.com' },
-    ]);
+    const results = await postPdlBulkEnrich({
+      path: '/person/bulk',
+      requests: [{ email: 'a@b.com' }, { email: 'b@b.com' }],
+    });
 
     expect(results).toEqual([
       { outcome: 'error', httpStatus: 401, message: 'unauthorized' },
@@ -133,7 +140,10 @@ describe('postPdlBulkEnrich', () => {
   it('fails every record when fetch throws', async () => {
     stubFetch(new Error('network down'));
 
-    const results = await postPdlBulkEnrich('/person/bulk', [{ email: 'a@b.com' }]);
+    const results = await postPdlBulkEnrich({
+      path: '/person/bulk',
+      requests: [{ email: 'a@b.com' }],
+    });
 
     expect(results).toEqual([
       {
@@ -147,7 +157,10 @@ describe('postPdlBulkEnrich', () => {
   it('fails every record on a non-JSON response', async () => {
     stubFetch(buildResponse(200, null, true));
 
-    const results = await postPdlBulkEnrich('/person/bulk', [{ email: 'a@b.com' }]);
+    const results = await postPdlBulkEnrich({
+      path: '/person/bulk',
+      requests: [{ email: 'a@b.com' }],
+    });
 
     expect(results).toEqual([
       {
@@ -161,7 +174,9 @@ describe('postPdlBulkEnrich', () => {
   it('returns an empty array without calling fetch for no records', async () => {
     const fetchMock = stubFetch(buildResponse(200, []));
 
-    expect(await postPdlBulkEnrich('/person/bulk', [])).toEqual([]);
+    expect(await postPdlBulkEnrich({ path: '/person/bulk', requests: [] })).toEqual(
+      [],
+    );
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });

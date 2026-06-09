@@ -1,9 +1,12 @@
 import { isObject } from '@sniptt/guards';
 
-export const extractPdlErrorMessage = (
-  json: Record<string, unknown>,
-  httpStatus: number,
-): string => {
+export const extractPdlErrorMessage = ({
+  json,
+  httpStatus,
+}: {
+  json: Record<string, unknown>;
+  httpStatus: number;
+}): string => {
   const errorField = json.error;
 
   if (isObject(errorField) && 'message' in errorField) {

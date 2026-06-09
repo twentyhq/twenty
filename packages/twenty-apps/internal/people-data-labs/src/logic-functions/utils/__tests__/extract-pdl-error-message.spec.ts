@@ -4,10 +4,14 @@ import { extractPdlErrorMessage } from 'src/logic-functions/utils/extract-pdl-er
 
 describe('extractPdlErrorMessage', () => {
   it('reads the nested PDL error message', () => {
-    expect(extractPdlErrorMessage({ error: { message: 'boom' } }, 500)).toBe('boom');
+    expect(
+      extractPdlErrorMessage({ json: { error: { message: 'boom' } }, httpStatus: 500 }),
+    ).toBe('boom');
   });
 
   it('falls back to a generic message when none is present', () => {
-    expect(extractPdlErrorMessage({}, 503)).toBe('PDL request failed (HTTP 503).');
+    expect(extractPdlErrorMessage({ json: {}, httpStatus: 503 })).toBe(
+      'PDL request failed (HTTP 503).',
+    );
   });
 });

@@ -35,8 +35,8 @@ export const mapCompany = (data: PdlCompanyData): MappedRecord => {
 
   const standard = pruneUndefined({
     name: toText(data.display_name) ?? toText(data.name),
-    domainName: buildLinks(data.website),
-    linkedinLink: buildLinks(data.linkedin_url),
+    domainName: buildLinks({ url: data.website }),
+    linkedinLink: buildLinks({ url: data.linkedin_url }),
     address: buildAddress({
       street1: location.street_address,
       street2: location.address_line_2,
@@ -51,16 +51,29 @@ export const mapCompany = (data: PdlCompanyData): MappedRecord => {
   const pdl = pruneUndefined({
     pdlId: toText(data.id),
 
-    pdlIndustry: pickSelect(data.industry, INDUSTRY_VALUES),
+    pdlIndustry: pickSelect({ raw: data.industry, allowedValues: INDUSTRY_VALUES }),
     pdlIndustryDetail: toText(data.industry_v2) ?? toText(data.industry),
-    pdlCompanyType: pickSelect(data.type, COMPANY_TYPE_VALUES),
-    pdlSizeRange: pickSelect(data.size, SIZE_VALUES, sizeTransform),
-    pdlLocationMetro: pickSelect(location.metro, METRO_VALUES),
-    pdlLocationContinent: pickSelect(
-      location.continent,
-      LOCATION_CONTINENT_VALUES,
-    ),
-    pdlMicExchange: pickSelect(data.mic_exchange, MIC_EXCHANGE_VALUES),
+    pdlCompanyType: pickSelect({
+      raw: data.type,
+      allowedValues: COMPANY_TYPE_VALUES,
+    }),
+    pdlSizeRange: pickSelect({
+      raw: data.size,
+      allowedValues: SIZE_VALUES,
+      transform: sizeTransform,
+    }),
+    pdlLocationMetro: pickSelect({
+      raw: location.metro,
+      allowedValues: METRO_VALUES,
+    }),
+    pdlLocationContinent: pickSelect({
+      raw: location.continent,
+      allowedValues: LOCATION_CONTINENT_VALUES,
+    }),
+    pdlMicExchange: pickSelect({
+      raw: data.mic_exchange,
+      allowedValues: MIC_EXCHANGE_VALUES,
+    }),
 
     pdlHeadline: toText(data.headline),
     pdlSummary: toText(data.summary),
@@ -72,15 +85,18 @@ export const mapCompany = (data: PdlCompanyData): MappedRecord => {
     pdlNumberFundingRounds: toNumber(data.number_funding_rounds),
 
     pdlTotalFunding: buildCurrencyFromUsd(data.total_funding_raised),
-    pdlLatestFundingStage: pickSelect(
-      data.latest_funding_stage,
-      FUNDING_STAGE_VALUES,
-    ),
-    pdlFundingStages: pickMultiSelect(data.funding_stages, FUNDING_STAGE_VALUES),
+    pdlLatestFundingStage: pickSelect({
+      raw: data.latest_funding_stage,
+      allowedValues: FUNDING_STAGE_VALUES,
+    }),
+    pdlFundingStages: pickMultiSelect({
+      raws: data.funding_stages,
+      allowedValues: FUNDING_STAGE_VALUES,
+    }),
     pdlLastFundingDate: parsePartialDate(data.last_funding_date),
 
-    pdlTwitterUrl: buildLinks(data.twitter_url),
-    pdlFacebookUrl: buildLinks(data.facebook_url),
+    pdlTwitterUrl: buildLinks({ url: data.twitter_url }),
+    pdlFacebookUrl: buildLinks({ url: data.facebook_url }),
 
     pdlTags: toStringArray(data.tags),
     pdlAlternativeNames: toStringArray(data.alternative_names),

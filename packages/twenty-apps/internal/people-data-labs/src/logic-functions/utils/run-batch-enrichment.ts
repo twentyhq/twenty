@@ -15,22 +15,32 @@ import { type EnrichResult } from 'src/types/enrich-result';
 
 const PDL_BATCH_SIZE = 100;
 
-export const runBatchEnrichment = async <TNode, TData, TParams>(
-  client: CoreApiClient,
-  input: BulkEnrichInput,
-  adapter: BatchEnrichmentAdapter<TNode, TData, TParams>,
-): Promise<BulkEnrichResult> => {
+export const runBatchEnrichment = async <TNode, TData, TParams>({
+  client,
+  input,
+  adapter,
+}: {
+  client: CoreApiClient;
+  input: BulkEnrichInput;
+  adapter: BatchEnrichmentAdapter<TNode, TData, TParams>;
+}): Promise<BulkEnrichResult> => {
   const recordIds = Array.from(new Set(extractRecordIds(input.records)));
   const resultById = new Map<string, EnrichResult>();
 
-  for (const recordIdsChunk of chunk(recordIds, PDL_BATCH_SIZE)) {
-    await enrichChunk(client, recordIdsChunk, input, adapter, resultById);
+  for (const recordIdsChunk of chunk({ items: recordIds, size: PDL_BATCH_SIZE })) {
+    await enrichChunk({
+      client,
+      recordIds: recordIdsChunk,
+      input,
+      adapter,
+      resultById,
+    });
   }
 
   const results = recordIds.map(
     (recordId) =>
       resultById.get(recordId) ??
-      buildErrorResult(recordId, ENRICHMENT_FAILED_MESSAGE),
+      buildErrorResult({ recordId, error: ENRICHMENT_FAILED_MESSAGE }),
   );
 
   return aggregateBulkEnrichResult(results);

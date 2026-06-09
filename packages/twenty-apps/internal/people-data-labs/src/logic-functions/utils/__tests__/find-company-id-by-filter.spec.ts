@@ -11,7 +11,7 @@ describe('findCompanyIdByFilter', () => {
     const client = { query } as unknown as CoreApiClient;
     const filter = { pdlId: { eq: 'pdl-co-1' } };
 
-    const result = await findCompanyIdByFilter(client, filter);
+    const result = await findCompanyIdByFilter({ client, filter });
 
     expect(result).toBe('co-1');
     expect(query).toHaveBeenCalledWith({
@@ -27,7 +27,7 @@ describe('findCompanyIdByFilter', () => {
     const client = { query } as unknown as CoreApiClient;
 
     expect(
-      await findCompanyIdByFilter(client, { name: { eq: 'Acme' } }),
+      await findCompanyIdByFilter({ client, filter: { name: { eq: 'Acme' } } }),
     ).toBeUndefined();
   });
 
@@ -36,7 +36,7 @@ describe('findCompanyIdByFilter', () => {
     const client = { query } as unknown as CoreApiClient;
 
     expect(
-      await findCompanyIdByFilter(client, { name: { eq: 'Acme' } }),
+      await findCompanyIdByFilter({ client, filter: { name: { eq: 'Acme' } } }),
     ).toBeUndefined();
   });
 });

@@ -21,9 +21,12 @@ describe('enrichPeople', () => {
     ]);
 
     expect(postPdlBulkEnrichMock).toHaveBeenCalledTimes(1);
-    expect(postPdlBulkEnrichMock).toHaveBeenCalledWith('/person/bulk', [
-      { email: 'jane@acme.com', min_likelihood: 6 },
-      { pdl_id: 'abc' },
-    ]);
+    expect(postPdlBulkEnrichMock).toHaveBeenCalledWith({
+      path: '/person/bulk',
+      requests: [
+        { email: 'jane@acme.com', min_likelihood: 6 },
+        { pdl_id: 'abc' },
+      ],
+    });
   });
 });

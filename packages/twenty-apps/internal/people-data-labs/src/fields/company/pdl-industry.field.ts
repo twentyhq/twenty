@@ -21,8 +21,8 @@ export default defineField({
   description: 'People Data Labs canonical industry.',
   icon: 'IconBuildingFactory2',
   isNullable: true,
-  options: buildSelectOptions(
-    INDUSTRY_OPTIONS,
-    PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.companyIndustry,
-  ),
+  options: buildSelectOptions({
+    meta: INDUSTRY_OPTIONS,
+    ids: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.companyIndustry,
+  }),
 });

@@ -19,7 +19,7 @@ describe('readPeople', () => {
       },
     });
 
-    const result = await readPeople(client, ['p1', 'p2']);
+    const result = await readPeople({ client, recordIds: ['p1', 'p2'] });
 
     expect(result).toEqual(nodes);
     expect((capturedRequest as QueryRequest).people.__args.filter).toEqual({
@@ -35,6 +35,6 @@ describe('readPeople', () => {
       },
     });
 
-    expect(await readPeople(client, [])).toEqual([]);
+    expect(await readPeople({ client, recordIds: [] })).toEqual([]);
   });
 });

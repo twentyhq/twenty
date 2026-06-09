@@ -21,8 +21,8 @@ export default defineField({
   description: 'People Data Labs canonical job title role.',
   icon: 'IconBriefcase',
   isNullable: true,
-  options: buildSelectOptions(
-    JOB_ROLE_OPTIONS,
-    PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.jobRole,
-  ),
+  options: buildSelectOptions({
+    meta: JOB_ROLE_OPTIONS,
+    ids: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.jobRole,
+  }),
 });

@@ -13,20 +13,26 @@ import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
 import { isDefined } from 'src/utils/is-defined';
 import { toErrorMessage } from 'src/utils/to-error-message';
 
-export const enrichChunk = async <TNode, TData, TParams>(
-  client: CoreApiClient,
-  recordIds: string[],
-  input: BulkEnrichInput,
-  adapter: BatchEnrichmentAdapter<TNode, TData, TParams>,
-  resultById: Map<string, EnrichResult>,
-): Promise<void> => {
+export const enrichChunk = async <TNode, TData, TParams>({
+  client,
+  recordIds,
+  input,
+  adapter,
+  resultById,
+}: {
+  client: CoreApiClient;
+  recordIds: string[];
+  input: BulkEnrichInput;
+  adapter: BatchEnrichmentAdapter<TNode, TData, TParams>;
+  resultById: Map<string, EnrichResult>;
+}): Promise<void> => {
   let nodes: TNode[];
   try {
-    nodes = await adapter.readRecords(client, recordIds);
+    nodes = await adapter.readRecords({ client, recordIds });
   } catch (error) {
     const message = toErrorMessage(error);
     for (const recordId of recordIds) {
-      resultById.set(recordId, buildErrorResult(recordId, message));
+      resultById.set(recordId, buildErrorResult({ recordId, error: message }));
     }
 
     return;
@@ -40,30 +46,36 @@ export const enrichChunk = async <TNode, TData, TParams>(
     if (!isDefined(node)) {
       resultById.set(
         recordId,
-        buildErrorResult(
+        buildErrorResult({
           recordId,
-          `${adapter.objectNameSingular} ${recordId} not found`,
-        ),
+          error: `${adapter.objectNameSingular} ${recordId} not found`,
+        }),
       );
       continue;
     }
 
-    if (input.force !== true && isWithinTtl(adapter.getLastEnrichedAt(node))) {
+    if (
+      input.force !== true &&
+      isWithinTtl({ lastEnrichedAt: adapter.getLastEnrichedAt(node) })
+    ) {
       resultById.set(
         recordId,
-        buildSkippedResult(
+        buildSkippedResult({
           recordId,
-          'Recently enriched; skipped (use force to re-run).',
-        ),
+          message: 'Recently enriched; skipped (use force to re-run).',
+        }),
       );
       continue;
     }
 
-    const params = adapter.extractParams(node, input);
+    const params = adapter.extractParams({ node, input });
     if (!isDefined(params)) {
       resultById.set(
         recordId,
-        buildSkippedResult(recordId, adapter.noIdentifierMessage),
+        buildSkippedResult({
+          recordId,
+          message: adapter.noIdentifierMessage,
+        }),
       );
       continue;
     }
@@ -81,14 +93,17 @@ export const enrichChunk = async <TNode, TData, TParams>(
   } catch (error) {
     const message = toErrorMessage(error);
     for (const entry of toEnrich) {
-      resultById.set(entry.recordId, buildErrorResult(entry.recordId, message));
+      resultById.set(
+        entry.recordId,
+        buildErrorResult({ recordId: entry.recordId, error: message }),
+      );
     }
     await adapter
-      .updateManyStatus(
+      .updateManyStatus({
         client,
-        toEnrich.map((entry) => entry.recordId),
-        { pdlEnrichmentStatus: 'ERROR' },
-      )
+        recordIds: toEnrich.map((entry) => entry.recordId),
+        data: { pdlEnrichmentStatus: 'ERROR' },
+      })
       .catch(() => undefined);
 
     return;
@@ -108,7 +123,7 @@ export const enrichChunk = async <TNode, TData, TParams>(
       const message = isDefined(outcome)
         ? outcome.message
         : 'People Data Labs returned no response for this record.';
-      resultById.set(recordId, buildErrorResult(recordId, message));
+      resultById.set(recordId, buildErrorResult({ recordId, error: message }));
       pdlErrorIds.push(recordId);
       continue;
     }
@@ -119,29 +134,40 @@ export const enrichChunk = async <TNode, TData, TParams>(
     }
 
     try {
-      const data = await adapter.buildMatchedData(
+      const data = await adapter.buildMatchedData({
         client,
         node,
         outcome,
         enrichedAt,
-      );
+      });
       matched.push({ recordId, data });
     } catch (error) {
-      resultById.set(recordId, buildErrorResult(recordId, toErrorMessage(error)));
+      resultById.set(
+        recordId,
+        buildErrorResult({ recordId, error: toErrorMessage(error) }),
+      );
     }
   }
 
   if (pdlErrorIds.length > 0) {
     await adapter
-      .updateManyStatus(client, pdlErrorIds, { pdlEnrichmentStatus: 'ERROR' })
+      .updateManyStatus({
+        client,
+        recordIds: pdlErrorIds,
+        data: { pdlEnrichmentStatus: 'ERROR' },
+      })
       .catch(() => undefined);
   }
 
   if (notFoundIds.length > 0) {
     try {
-      await adapter.updateManyStatus(client, notFoundIds, {
-        pdlEnrichmentStatus: 'NOT_FOUND',
-        pdlLastEnrichedAt: enrichedAt,
+      await adapter.updateManyStatus({
+        client,
+        recordIds: notFoundIds,
+        data: {
+          pdlEnrichmentStatus: 'NOT_FOUND',
+          pdlLastEnrichedAt: enrichedAt,
+        },
       });
       for (const recordId of notFoundIds) {
         resultById.set(recordId, buildNotFoundResult(recordId));
@@ -149,7 +175,7 @@ export const enrichChunk = async <TNode, TData, TParams>(
     } catch (error) {
       const message = toErrorMessage(error);
       for (const recordId of notFoundIds) {
-        resultById.set(recordId, buildErrorResult(recordId, message));
+        resultById.set(recordId, buildErrorResult({ recordId, error: message }));
       }
     }
   }
@@ -157,7 +183,11 @@ export const enrichChunk = async <TNode, TData, TParams>(
   if (matched.length > 0) {
     const settled = await Promise.allSettled(
       matched.map((entry) =>
-        adapter.updateOne(client, entry.recordId, entry.data),
+        adapter.updateOne({
+          client,
+          recordId: entry.recordId,
+          data: entry.data,
+        }),
       ),
     );
 
@@ -166,12 +196,18 @@ export const enrichChunk = async <TNode, TData, TParams>(
       if (outcome.status === 'fulfilled') {
         resultById.set(
           entry.recordId,
-          buildMatchedResult(entry.recordId, Object.keys(entry.data)),
+          buildMatchedResult({
+            recordId: entry.recordId,
+            updatedFields: Object.keys(entry.data),
+          }),
         );
       } else {
         resultById.set(
           entry.recordId,
-          buildErrorResult(entry.recordId, toErrorMessage(outcome.reason)),
+          buildErrorResult({
+            recordId: entry.recordId,
+            error: toErrorMessage(outcome.reason),
+          }),
         );
       }
     });

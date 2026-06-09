@@ -4,11 +4,15 @@ import { pickSelect } from 'src/logic-functions/utils/pick-select';
 import { isDefined } from 'src/utils/is-defined';
 import { normalizeEnumValue } from 'src/utils/normalize-enum-value';
 
-export const pickMultiSelect = (
-  raws: unknown,
-  allowedValues: Set<string>,
-  transform: (value: string) => string | undefined = normalizeEnumValue,
-): string[] | undefined => {
+export const pickMultiSelect = ({
+  raws,
+  allowedValues,
+  transform = normalizeEnumValue,
+}: {
+  raws: unknown;
+  allowedValues: Set<string>;
+  transform?: (value: string) => string | undefined;
+}): string[] | undefined => {
   if (!isArray(raws)) {
     return undefined;
   }
@@ -17,7 +21,7 @@ export const pickMultiSelect = (
   const seen = new Set<string>();
 
   for (const raw of raws) {
-    const value = pickSelect(raw, allowedValues, transform);
+    const value = pickSelect({ raw, allowedValues, transform });
     if (isDefined(value) && !seen.has(value)) {
       seen.add(value);
       values.push(value);

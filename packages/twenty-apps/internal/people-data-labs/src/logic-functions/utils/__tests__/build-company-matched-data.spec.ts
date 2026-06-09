@@ -8,11 +8,11 @@ const ENRICHED_AT = '2026-01-01T00:00:00.000Z';
 
 describe('buildCompanyMatchedData', () => {
   it('fills empty standard fields and always writes pdl metadata', async () => {
-    const data = await buildCompanyMatchedData(
-      COMPANY_NODE_MOCK,
-      { data: PDL_COMPANY_DATA_MOCK },
-      ENRICHED_AT,
-    );
+    const data = await buildCompanyMatchedData({
+      node: COMPANY_NODE_MOCK,
+      outcome: { data: PDL_COMPANY_DATA_MOCK },
+      enrichedAt: ENRICHED_AT,
+    });
 
     expect(data.name).toBe('Acme Corp');
     expect(data.pdlIndustry).toBe('ACCOUNTING');

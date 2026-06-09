@@ -28,7 +28,7 @@ describe('findCompanyId', () => {
     );
     const client = { query } as unknown as CoreApiClient;
 
-    const result = await findCompanyId(client, ALL_KEYS);
+    const result = await findCompanyId({ client, matchKeys: ALL_KEYS });
 
     expect(result).toBe('co-pdl');
     expect(query).toHaveBeenCalledTimes(1);
@@ -48,7 +48,7 @@ describe('findCompanyId', () => {
     });
     const client = { query } as unknown as CoreApiClient;
 
-    const result = await findCompanyId(client, ALL_KEYS);
+    const result = await findCompanyId({ client, matchKeys: ALL_KEYS });
 
     expect(result).toBe('co-name');
     expect(queriedKeys).toEqual([
@@ -68,7 +68,7 @@ describe('findCompanyId', () => {
     });
     const client = { query } as unknown as CoreApiClient;
 
-    await findCompanyId(client, { name: 'Acme' });
+    await findCompanyId({ client, matchKeys: { name: 'Acme' } });
 
     expect(queriedKeys).toEqual(['name']);
   });
@@ -77,14 +77,16 @@ describe('findCompanyId', () => {
     const query = vi.fn(() => Promise.resolve({ companies: { edges: [] } }));
     const client = { query } as unknown as CoreApiClient;
 
-    expect(await findCompanyId(client, ALL_KEYS)).toBeUndefined();
+    expect(
+      await findCompanyId({ client, matchKeys: ALL_KEYS }),
+    ).toBeUndefined();
   });
 
   it('returns undefined and issues no query when no keys are provided', async () => {
     const query = vi.fn();
     const client = { query } as unknown as CoreApiClient;
 
-    expect(await findCompanyId(client, {})).toBeUndefined();
+    expect(await findCompanyId({ client, matchKeys: {} })).toBeUndefined();
     expect(query).not.toHaveBeenCalled();
   });
 });

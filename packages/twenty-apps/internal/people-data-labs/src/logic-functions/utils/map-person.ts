@@ -41,7 +41,11 @@ export const mapPerson = (data: PdlPersonData): MappedRecord => {
   );
 
   const standard = pruneUndefined({
-    name: buildFullName(data.first_name, data.last_name, data.full_name),
+    name: buildFullName({
+      firstName: data.first_name,
+      lastName: data.last_name,
+      fullName: data.full_name,
+    }),
     emails: buildEmails([
       data.work_email,
       data.recommended_personal_email,
@@ -50,27 +54,42 @@ export const mapPerson = (data: PdlPersonData): MappedRecord => {
     ]),
     phones: buildPhones([data.mobile_phone, ...(data.phone_numbers ?? [])]),
     jobTitle: toText(data.job_title),
-    linkedinLink: buildLinks(data.linkedin_url),
+    linkedinLink: buildLinks({ url: data.linkedin_url }),
   });
 
   const pdl = pruneUndefined({
     pdlId: toText(data.id),
 
-    pdlSeniority: pickMultiSelect(data.job_title_levels, SENIORITY_VALUES),
-    pdlJobRole: pickSelect(data.job_title_role, JOB_ROLE_VALUES),
-    pdlJobTitleClass: pickSelect(data.job_title_class, JOB_TITLE_CLASS_VALUES),
-    pdlJobTitleSubRole: pickSelect(
-      data.job_title_sub_role,
-      JOB_TITLE_SUB_ROLE_VALUES,
-    ),
-    pdlIndustry: pickSelect(data.industry, INDUSTRY_VALUES),
-    pdlInferredSalary: pickSelect(
-      data.inferred_salary,
-      INFERRED_SALARY_VALUES,
-      salaryTransform,
-    ),
-    pdlSex: pickSelect(data.sex, SEX_VALUES),
-    pdlLocationMetro: pickSelect(data.location_metro, METRO_VALUES),
+    pdlSeniority: pickMultiSelect({
+      raws: data.job_title_levels,
+      allowedValues: SENIORITY_VALUES,
+    }),
+    pdlJobRole: pickSelect({
+      raw: data.job_title_role,
+      allowedValues: JOB_ROLE_VALUES,
+    }),
+    pdlJobTitleClass: pickSelect({
+      raw: data.job_title_class,
+      allowedValues: JOB_TITLE_CLASS_VALUES,
+    }),
+    pdlJobTitleSubRole: pickSelect({
+      raw: data.job_title_sub_role,
+      allowedValues: JOB_TITLE_SUB_ROLE_VALUES,
+    }),
+    pdlIndustry: pickSelect({
+      raw: data.industry,
+      allowedValues: INDUSTRY_VALUES,
+    }),
+    pdlInferredSalary: pickSelect({
+      raw: data.inferred_salary,
+      allowedValues: INFERRED_SALARY_VALUES,
+      transform: salaryTransform,
+    }),
+    pdlSex: pickSelect({ raw: data.sex, allowedValues: SEX_VALUES }),
+    pdlLocationMetro: pickSelect({
+      raw: data.location_metro,
+      allowedValues: METRO_VALUES,
+    }),
 
     pdlHeadline: toText(data.headline),
     pdlSummary: toText(data.summary),
@@ -85,9 +104,9 @@ export const mapPerson = (data: PdlPersonData): MappedRecord => {
     pdlBirthDate: parsePartialDate(data.birth_date),
     pdlJobStartDate: parsePartialDate(data.job_start_date),
 
-    pdlGithubUrl: buildLinks(data.github_url),
-    pdlTwitterUrl: buildLinks(data.twitter_url),
-    pdlFacebookUrl: buildLinks(data.facebook_url),
+    pdlGithubUrl: buildLinks({ url: data.github_url }),
+    pdlTwitterUrl: buildLinks({ url: data.twitter_url }),
+    pdlFacebookUrl: buildLinks({ url: data.facebook_url }),
 
     pdlSkills: toStringArray(data.skills),
     pdlInterests: toStringArray(data.interests),

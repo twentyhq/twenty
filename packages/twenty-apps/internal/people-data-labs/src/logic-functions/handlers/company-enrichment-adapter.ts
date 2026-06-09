@@ -20,10 +20,10 @@ export const companyEnrichmentAdapter: BatchEnrichmentAdapter<
   readRecords: readCompanies,
   getNodeId: (node) => node.id,
   getLastEnrichedAt: (node) => node.pdlLastEnrichedAt,
-  extractParams: extractCompanyMatchParams,
+  extractParams: ({ node }) => extractCompanyMatchParams(node),
   enrichBatch: enrichCompanies,
-  buildMatchedData: (_client, node, outcome, enrichedAt) =>
-    buildCompanyMatchedData(node, outcome, enrichedAt),
+  buildMatchedData: ({ node, outcome, enrichedAt }) =>
+    buildCompanyMatchedData({ node, outcome, enrichedAt }),
   updateOne: updateCompanyRecord,
   updateManyStatus: updateCompaniesStatus,
 };

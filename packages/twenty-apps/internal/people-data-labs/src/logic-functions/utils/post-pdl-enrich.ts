@@ -7,20 +7,26 @@ import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
 
 const PDL_BASE_URL = 'https://api.peopledatalabs.com/v5';
 
-export const postPdlBulkEnrich = async <TData>(
-  path: string,
-  requests: Record<string, unknown>[],
-): Promise<PdlEnrichResult<TData>[]> => {
+export const postPdlBulkEnrich = async <TData>({
+  path,
+  requests,
+}: {
+  path: string;
+  requests: Record<string, unknown>[];
+}): Promise<PdlEnrichResult<TData>[]> => {
   if (requests.length === 0) {
     return [];
   }
 
   const apiKey = getPdlApiKey();
 
-  const failAll = (
-    message: string,
-    httpStatus: number,
-  ): PdlEnrichResult<TData>[] =>
+  const failAll = ({
+    message,
+    httpStatus,
+  }: {
+    message: string;
+    httpStatus: number;
+  }): PdlEnrichResult<TData>[] =>
     requests.map(() => ({ outcome: 'error', httpStatus, message }));
 
   let response: Response;
@@ -36,25 +42,28 @@ export const postPdlBulkEnrich = async <TData>(
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
 
-    return failAll(`PDL request failed: ${message}`, 0);
+    return failAll({ message: `PDL request failed: ${message}`, httpStatus: 0 });
   }
 
   let json: unknown;
   try {
     json = await response.json();
   } catch {
-    return failAll(
-      `PDL returned a non-JSON response (HTTP ${response.status}).`,
-      response.status,
-    );
+    return failAll({
+      message: `PDL returned a non-JSON response (HTTP ${response.status}).`,
+      httpStatus: response.status,
+    });
   }
 
   if (!response.ok) {
     const message = isObject(json)
-      ? extractPdlErrorMessage(json as Record<string, unknown>, response.status)
+      ? extractPdlErrorMessage({
+          json: json as Record<string, unknown>,
+          httpStatus: response.status,
+        })
       : `PDL request failed (HTTP ${response.status}).`;
 
-    return failAll(message, response.status);
+    return failAll({ message, httpStatus: response.status });
   }
 
   const items = Array.isArray(json)

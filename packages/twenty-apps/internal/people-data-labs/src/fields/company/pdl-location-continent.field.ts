@@ -22,8 +22,8 @@ export default defineField({
   description: 'People Data Labs canonical continent.',
   icon: 'IconGlobe',
   isNullable: true,
-  options: buildSelectOptions(
-    LOCATION_CONTINENT_OPTIONS,
-    PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.companyLocationContinent,
-  ),
+  options: buildSelectOptions({
+    meta: LOCATION_CONTINENT_OPTIONS,
+    ids: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.companyLocationContinent,
+  }),
 });

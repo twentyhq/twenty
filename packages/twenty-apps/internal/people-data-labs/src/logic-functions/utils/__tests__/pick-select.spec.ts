@@ -8,19 +8,31 @@ const SIZES = new Set(['ONE_TO_TEN', 'ELEVEN_TO_FIFTY']);
 
 describe('pickSelect', () => {
   it('normalizes and returns an allowed value', () => {
-    expect(pickSelect('engineering', ROLES)).toBe('ENGINEERING');
+    expect(pickSelect({ raw: 'engineering', allowedValues: ROLES })).toBe(
+      'ENGINEERING',
+    );
   });
 
   it('returns undefined for a value outside the option set', () => {
-    expect(pickSelect('marketing', ROLES)).toBeUndefined();
+    expect(
+      pickSelect({ raw: 'marketing', allowedValues: ROLES }),
+    ).toBeUndefined();
   });
 
   it('returns undefined for empty or non-string input', () => {
-    expect(pickSelect('', ROLES)).toBeUndefined();
-    expect(pickSelect(undefined, ROLES)).toBeUndefined();
+    expect(pickSelect({ raw: '', allowedValues: ROLES })).toBeUndefined();
+    expect(
+      pickSelect({ raw: undefined, allowedValues: ROLES }),
+    ).toBeUndefined();
   });
 
   it('applies a custom transform before checking the option set', () => {
-    expect(pickSelect('1-10', SIZES, sizeTransform)).toBe('ONE_TO_TEN');
+    expect(
+      pickSelect({
+        raw: '1-10',
+        allowedValues: SIZES,
+        transform: sizeTransform,
+      }),
+    ).toBe('ONE_TO_TEN');
   });
 });

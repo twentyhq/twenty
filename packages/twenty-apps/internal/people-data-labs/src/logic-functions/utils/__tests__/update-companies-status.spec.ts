@@ -12,8 +12,12 @@ describe('updateCompaniesStatus', () => {
       },
     });
 
-    await updateCompaniesStatus(client, ['c1', 'c2'], {
-      pdlEnrichmentStatus: 'ERROR',
+    await updateCompaniesStatus({
+      client,
+      recordIds: ['c1', 'c2'],
+      data: {
+        pdlEnrichmentStatus: 'ERROR',
+      },
     });
 
     expect(request).toMatchObject({

@@ -21,8 +21,8 @@ export default defineField({
   description: 'People Data Labs canonical market identifier code.',
   icon: 'IconBuildingBank',
   isNullable: true,
-  options: buildSelectOptions(
-    MIC_EXCHANGE_OPTIONS,
-    PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.companyMicExchange,
-  ),
+  options: buildSelectOptions({
+    meta: MIC_EXCHANGE_OPTIONS,
+    ids: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.companyMicExchange,
+  }),
 });

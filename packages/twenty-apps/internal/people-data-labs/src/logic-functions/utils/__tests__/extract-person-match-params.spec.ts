@@ -6,15 +6,20 @@ import { extractPersonMatchParams } from 'src/logic-functions/utils/extract-pers
 describe('extractPersonMatchParams', () => {
   it('prefers an existing pdlId and uses the strong-identifier likelihood', () => {
     expect(
-      extractPersonMatchParams(
-        { ...PERSON_NODE_MOCK, pdlId: 'pdl-1' },
-        { records: [] },
-      ),
+      extractPersonMatchParams({
+        node: { ...PERSON_NODE_MOCK, pdlId: 'pdl-1' },
+        input: { records: [] },
+      }),
     ).toEqual({ pdlId: 'pdl-1', minLikelihood: 2 });
   });
 
   it('uses the linkedin profile with the strong-identifier likelihood', () => {
-    expect(extractPersonMatchParams(PERSON_NODE_MOCK, { records: [] })).toEqual({
+    expect(
+      extractPersonMatchParams({
+        node: PERSON_NODE_MOCK,
+        input: { records: [] },
+      }),
+    ).toEqual({
       profile: 'https://linkedin.com/in/existing',
       minLikelihood: 2,
     });
@@ -22,32 +27,35 @@ describe('extractPersonMatchParams', () => {
 
   it('uses the weak-identifier likelihood when only a name is available', () => {
     expect(
-      extractPersonMatchParams(
-        {
+      extractPersonMatchParams({
+        node: {
           ...PERSON_NODE_MOCK,
           linkedinLink: null,
           name: { firstName: 'Jane', lastName: 'Doe' },
         },
-        { records: [] },
-      ),
+        input: { records: [] },
+      }),
     ).toEqual({ name: 'Jane Doe', minLikelihood: 6 });
   });
 
   it('honors an explicit minLikelihood from the input', () => {
     expect(
-      extractPersonMatchParams(PERSON_NODE_MOCK, {
-        records: [],
-        minLikelihood: 9,
+      extractPersonMatchParams({
+        node: PERSON_NODE_MOCK,
+        input: {
+          records: [],
+          minLikelihood: 9,
+        },
       }),
     ).toMatchObject({ minLikelihood: 9 });
   });
 
   it('returns undefined when there is no usable identifier', () => {
     expect(
-      extractPersonMatchParams(
-        { ...PERSON_NODE_MOCK, linkedinLink: null },
-        { records: [] },
-      ),
+      extractPersonMatchParams({
+        node: { ...PERSON_NODE_MOCK, linkedinLink: null },
+        input: { records: [] },
+      }),
     ).toBeUndefined();
   });
 });

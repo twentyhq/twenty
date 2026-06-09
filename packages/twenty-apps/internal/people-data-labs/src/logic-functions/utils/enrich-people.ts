@@ -7,9 +7,9 @@ import { pruneUndefined } from 'src/utils/prune-undefined';
 export const enrichPeople = (
   params: PdlPersonEnrichParams[],
 ): Promise<PdlEnrichResult<PdlPersonData>[]> =>
-  postPdlBulkEnrich<PdlPersonData>(
-    '/person/bulk',
-    params.map((entry) =>
+  postPdlBulkEnrich<PdlPersonData>({
+    path: '/person/bulk',
+    requests: params.map((entry) =>
       pruneUndefined({
         pdl_id: entry.pdlId,
         profile: entry.profile,
@@ -20,4 +20,4 @@ export const enrichPeople = (
         required: entry.required,
       }),
     ),
-  );
+  });

@@ -10,10 +10,13 @@ import { isUniqueViolationError } from 'src/utils/is-unique-violation-error';
 
 type CreateCompanyResult = { createCompany?: { id?: string } };
 
-export const findOrCreateCurrentCompany = async (
-  client: CoreApiClient,
-  data: PdlPersonData,
-): Promise<string | undefined> => {
+export const findOrCreateCurrentCompany = async ({
+  client,
+  data,
+}: {
+  client: CoreApiClient;
+  data: PdlPersonData;
+}): Promise<string | undefined> => {
   const matchKeys = buildCompanyMatchKeys(data);
 
   if (
@@ -23,7 +26,7 @@ export const findOrCreateCurrentCompany = async (
     return undefined;
   }
 
-  const existingId = await findCompanyId(client, matchKeys);
+  const existingId = await findCompanyId({ client, matchKeys });
   if (isDefined(existingId)) {
     return existingId;
   }
@@ -48,7 +51,7 @@ export const findOrCreateCurrentCompany = async (
       throw createError;
     }
 
-    const raceWinnerId = await findCompanyId(client, matchKeys);
+    const raceWinnerId = await findCompanyId({ client, matchKeys });
     if (isDefined(raceWinnerId)) {
       return raceWinnerId;
     }

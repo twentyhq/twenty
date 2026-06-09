@@ -21,8 +21,8 @@ export default defineField({
   description: 'People Data Labs canonical metro area.',
   icon: 'IconMap2',
   isNullable: true,
-  options: buildSelectOptions(
-    METRO_OPTIONS,
-    PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.companyLocationMetro,
-  ),
+  options: buildSelectOptions({
+    meta: METRO_OPTIONS,
+    ids: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.companyLocationMetro,
+  }),
 });

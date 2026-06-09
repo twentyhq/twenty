@@ -16,9 +16,16 @@ export const buildCompanyCreateData = (
 ): Record<string, unknown> =>
   pruneUndefined<unknown>({
     name: toText(data.job_company_name),
-    domainName: buildLinks(data.job_company_website),
-    linkedinLink: buildLinks(data.job_company_linkedin_url),
+    domainName: buildLinks({ url: data.job_company_website }),
+    linkedinLink: buildLinks({ url: data.job_company_linkedin_url }),
     pdlId: toText(data.job_company_id),
-    pdlIndustry: pickSelect(data.job_company_industry, INDUSTRY_VALUES),
-    pdlSizeRange: pickSelect(data.job_company_size, SIZE_VALUES, sizeTransform),
+    pdlIndustry: pickSelect({
+      raw: data.job_company_industry,
+      allowedValues: INDUSTRY_VALUES,
+    }),
+    pdlSizeRange: pickSelect({
+      raw: data.job_company_size,
+      allowedValues: SIZE_VALUES,
+      transform: sizeTransform,
+    }),
   });

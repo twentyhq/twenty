@@ -23,7 +23,7 @@ export const parsePdlItem = <TData>(item: unknown): PdlEnrichResult<TData> => {
     return {
       outcome: 'error',
       httpStatus: status,
-      message: extractPdlErrorMessage(record, status),
+      message: extractPdlErrorMessage({ json: record, httpStatus: status }),
     };
   }
 

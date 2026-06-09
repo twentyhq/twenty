@@ -3,11 +3,15 @@ import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined } from 'src/utils/is-defined';
 import { normalizeEnumValue } from 'src/utils/normalize-enum-value';
 
-export const pickSelect = (
-  raw: unknown,
-  allowedValues: Set<string>,
-  transform: (value: string) => string | undefined = normalizeEnumValue,
-): string | undefined => {
+export const pickSelect = ({
+  raw,
+  allowedValues,
+  transform = normalizeEnumValue,
+}: {
+  raw: unknown;
+  allowedValues: Set<string>;
+  transform?: (value: string) => string | undefined;
+}): string | undefined => {
   if (!isString(raw)) {
     return undefined;
   }

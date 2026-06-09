@@ -21,8 +21,8 @@ export default defineField({
   description: 'Sex returned by People Data Labs.',
   icon: 'IconGenderBigender',
   isNullable: true,
-  options: buildSelectOptions(
-    SEX_OPTIONS,
-    PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.sex,
-  ),
+  options: buildSelectOptions({
+    meta: SEX_OPTIONS,
+    ids: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.sex,
+  }),
 });

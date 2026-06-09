@@ -10,10 +10,10 @@ describe('buildPersonMatchedData', () => {
   it('fills empty fields, writes pdl metadata, and skips company lookup when there is none', async () => {
     const client = createCoreApiClientMock();
 
-    const data = await buildPersonMatchedData(
+    const data = await buildPersonMatchedData({
       client,
-      PERSON_NODE_MOCK,
-      {
+      node: PERSON_NODE_MOCK,
+      outcome: {
         likelihood: 8,
         data: {
           id: 'pdl1',
@@ -23,8 +23,8 @@ describe('buildPersonMatchedData', () => {
           job_title: 'CEO',
         },
       },
-      ENRICHED_AT,
-    );
+      enrichedAt: ENRICHED_AT,
+    });
 
     expect(data.name).toEqual({ firstName: 'Jane', lastName: 'Doe' });
     expect(data.jobTitle).toBe('CEO');
@@ -40,10 +40,10 @@ describe('buildPersonMatchedData', () => {
       mutationResult: { createCompany: { id: 'co-new' } },
     });
 
-    const data = await buildPersonMatchedData(
+    const data = await buildPersonMatchedData({
       client,
-      PERSON_NODE_MOCK,
-      {
+      node: PERSON_NODE_MOCK,
+      outcome: {
         likelihood: 8,
         data: {
           id: 'pdl1',
@@ -52,8 +52,8 @@ describe('buildPersonMatchedData', () => {
           job_company_website: 'acme.com',
         },
       },
-      ENRICHED_AT,
-    );
+      enrichedAt: ENRICHED_AT,
+    });
 
     expect(data.companyId).toBe('co-new');
   });

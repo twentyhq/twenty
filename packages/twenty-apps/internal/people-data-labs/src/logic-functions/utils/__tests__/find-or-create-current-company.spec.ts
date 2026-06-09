@@ -22,9 +22,12 @@ describe('findOrCreateCurrentCompany', () => {
     const mutation = vi.fn();
     const client = { query, mutation } as unknown as CoreApiClient;
 
-    const result = await findOrCreateCurrentCompany(client, {
-      job_company_id: 'pdl-co-1',
-    } as PdlPersonData);
+    const result = await findOrCreateCurrentCompany({
+      client,
+      data: {
+        job_company_id: 'pdl-co-1',
+      } as PdlPersonData,
+    });
 
     expect(result).toBeUndefined();
     expect(query).not.toHaveBeenCalled();
@@ -38,9 +41,12 @@ describe('findOrCreateCurrentCompany', () => {
     const mutation = vi.fn();
     const client = { query, mutation } as unknown as CoreApiClient;
 
-    const result = await findOrCreateCurrentCompany(client, {
-      job_company_name: 'Acme',
-    } as PdlPersonData);
+    const result = await findOrCreateCurrentCompany({
+      client,
+      data: {
+        job_company_name: 'Acme',
+      } as PdlPersonData,
+    });
 
     expect(result).toBe('co-existing');
     expect(mutation).not.toHaveBeenCalled();
@@ -56,11 +62,14 @@ describe('findOrCreateCurrentCompany', () => {
     });
     const client = { query, mutation } as unknown as CoreApiClient;
 
-    const result = await findOrCreateCurrentCompany(client, {
-      job_company_id: 'pdl-co-2',
-      job_company_name: 'Acme',
-      job_company_website: 'acme.com',
-    } as PdlPersonData);
+    const result = await findOrCreateCurrentCompany({
+      client,
+      data: {
+        job_company_id: 'pdl-co-2',
+        job_company_name: 'Acme',
+        job_company_website: 'acme.com',
+      } as PdlPersonData,
+    });
 
     expect(result).toBe('co-new');
     expect(createdData).toMatchObject({ name: 'Acme', pdlId: 'pdl-co-2' });
@@ -72,9 +81,12 @@ describe('findOrCreateCurrentCompany', () => {
     const client = { query, mutation } as unknown as CoreApiClient;
 
     await expect(
-      findOrCreateCurrentCompany(client, {
-        job_company_name: 'Acme',
-      } as PdlPersonData),
+      findOrCreateCurrentCompany({
+        client,
+        data: {
+          job_company_name: 'Acme',
+        } as PdlPersonData,
+      }),
     ).rejects.toThrow('Failed to create company: no id returned.');
   });
 
@@ -96,10 +108,13 @@ describe('findOrCreateCurrentCompany', () => {
     });
     const client = { query, mutation } as unknown as CoreApiClient;
 
-    const result = await findOrCreateCurrentCompany(client, {
-      job_company_id: 'pdl-co-3',
-      job_company_name: 'Acme',
-    } as PdlPersonData);
+    const result = await findOrCreateCurrentCompany({
+      client,
+      data: {
+        job_company_id: 'pdl-co-3',
+        job_company_name: 'Acme',
+      } as PdlPersonData,
+    });
 
     expect(result).toBe('co-race');
   });
@@ -110,9 +125,12 @@ describe('findOrCreateCurrentCompany', () => {
     const client = { query, mutation } as unknown as CoreApiClient;
 
     await expect(
-      findOrCreateCurrentCompany(client, {
-        job_company_name: 'Acme',
-      } as PdlPersonData),
+      findOrCreateCurrentCompany({
+        client,
+        data: {
+          job_company_name: 'Acme',
+        } as PdlPersonData,
+      }),
     ).rejects.toThrow('network down');
   });
 });

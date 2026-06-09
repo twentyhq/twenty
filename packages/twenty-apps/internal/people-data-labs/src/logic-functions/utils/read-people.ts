@@ -2,10 +2,13 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type PersonNode } from 'src/types/person-node';
 
-export const readPeople = async (
-  client: CoreApiClient,
-  recordIds: string[],
-): Promise<PersonNode[]> => {
+export const readPeople = async ({
+  client,
+  recordIds,
+}: {
+  client: CoreApiClient;
+  recordIds: string[];
+}): Promise<PersonNode[]> => {
   if (recordIds.length === 0) {
     return [];
   }

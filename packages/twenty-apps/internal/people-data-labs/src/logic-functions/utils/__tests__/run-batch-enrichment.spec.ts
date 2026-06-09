@@ -29,8 +29,13 @@ const buildHarness = (configs: RecordConfig[]) => {
   const byId = new Map(configs.map((config) => [config.id, config]));
 
   const readRecords = vi.fn(
-    async (_client: CoreApiClient, ids: string[]): Promise<FakeNode[]> =>
-      ids
+    async ({
+      recordIds,
+    }: {
+      client: CoreApiClient;
+      recordIds: string[];
+    }): Promise<FakeNode[]> =>
+      recordIds
         .map((id) => byId.get(id))
         .filter(
           (config): config is RecordConfig =>
@@ -55,11 +60,19 @@ const buildHarness = (configs: RecordConfig[]) => {
       ),
   );
 
-  const updateOne = vi.fn(async (_client: CoreApiClient, recordId: string) => {
-    if (byId.get(recordId)?.updateFails === true) {
-      throw new Error('update failed');
-    }
-  });
+  const updateOne = vi.fn(
+    async ({
+      recordId,
+    }: {
+      client: CoreApiClient;
+      recordId: string;
+      data: Record<string, unknown>;
+    }) => {
+      if (byId.get(recordId)?.updateFails === true) {
+        throw new Error('update failed');
+      }
+    },
+  );
 
   const updateManyStatus = vi.fn(async () => undefined);
 
@@ -69,10 +82,10 @@ const buildHarness = (configs: RecordConfig[]) => {
     readRecords,
     getNodeId: (node) => node.id,
     getLastEnrichedAt: (node) => node.lastEnrichedAt,
-    extractParams: (node) =>
+    extractParams: ({ node }) =>
       node.hasIdentifier ? { id: node.id } : undefined,
     enrichBatch,
-    buildMatchedData: async (_client, node) => {
+    buildMatchedData: async ({ node }) => {
       if (byId.get(node.id)?.buildFails === true) {
         throw new Error('build failed');
       }
@@ -95,14 +108,17 @@ describe('runBatchEnrichment', () => {
   it('reads every id in one call and enriches the set in one batch', async () => {
     const harness = buildHarness([{ id: 'a' }, { id: 'b' }]);
 
-    const result = await runBatchEnrichment(
-      CLIENT,
-      { records: records('a', 'b') },
-      harness.adapter,
-    );
+    const result = await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: records('a', 'b') },
+      adapter: harness.adapter,
+    });
 
     expect(harness.readRecords).toHaveBeenCalledTimes(1);
-    expect(harness.readRecords).toHaveBeenCalledWith(CLIENT, ['a', 'b']);
+    expect(harness.readRecords).toHaveBeenCalledWith({
+      client: CLIENT,
+      recordIds: ['a', 'b'],
+    });
     expect(harness.enrichBatch).toHaveBeenCalledTimes(1);
     expect(harness.enrichBatch).toHaveBeenCalledWith([{ id: 'a' }, { id: 'b' }]);
     expect(harness.updateOne).toHaveBeenCalledTimes(2);
@@ -121,19 +137,25 @@ describe('runBatchEnrichment', () => {
       { id: 'c', outcome: { outcome: 'error', httpStatus: 500, message: 'boom' } },
     ]);
 
-    const result = await runBatchEnrichment(
-      CLIENT,
-      { records: records('a', 'b', 'c') },
-      harness.adapter,
-    );
+    const result = await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: records('a', 'b', 'c') },
+      adapter: harness.adapter,
+    });
 
     expect(harness.updateOne).not.toHaveBeenCalled();
-    expect(harness.updateManyStatus).toHaveBeenCalledWith(CLIENT, ['c'], {
-      pdlEnrichmentStatus: 'ERROR',
+    expect(harness.updateManyStatus).toHaveBeenCalledWith({
+      client: CLIENT,
+      recordIds: ['c'],
+      data: { pdlEnrichmentStatus: 'ERROR' },
     });
-    expect(harness.updateManyStatus).toHaveBeenCalledWith(CLIENT, ['a', 'b'], {
-      pdlEnrichmentStatus: 'NOT_FOUND',
-      pdlLastEnrichedAt: expect.any(String),
+    expect(harness.updateManyStatus).toHaveBeenCalledWith({
+      client: CLIENT,
+      recordIds: ['a', 'b'],
+      data: {
+        pdlEnrichmentStatus: 'NOT_FOUND',
+        pdlLastEnrichedAt: expect.any(String),
+      },
     });
     expect(result).toMatchObject({ notFound: 2, errored: 1, matched: 0 });
     expect(result.results.find((entry) => entry.recordId === 'c')?.error).toBe(
@@ -148,11 +170,11 @@ describe('runBatchEnrichment', () => {
       { id: 'c' },
     ]);
 
-    const result = await runBatchEnrichment(
-      CLIENT,
-      { records: records('a', 'b', 'c') },
-      harness.adapter,
-    );
+    const result = await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: records('a', 'b', 'c') },
+      adapter: harness.adapter,
+    });
 
     expect(harness.enrichBatch).toHaveBeenCalledWith([{ id: 'c' }]);
     expect(result).toMatchObject({ skipped: 2, matched: 1 });
@@ -163,11 +185,11 @@ describe('runBatchEnrichment', () => {
       { id: 'a', lastEnrichedAt: new Date().toISOString() },
     ]);
 
-    await runBatchEnrichment(
-      CLIENT,
-      { records: records('a'), force: true },
-      harness.adapter,
-    );
+    await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: records('a'), force: true },
+      adapter: harness.adapter,
+    });
 
     expect(harness.enrichBatch).toHaveBeenCalledWith([{ id: 'a' }]);
   });
@@ -175,11 +197,11 @@ describe('runBatchEnrichment', () => {
   it('marks missing records as ERROR without enriching them', async () => {
     const harness = buildHarness([{ id: 'a' }, { id: 'b', exists: false }]);
 
-    const result = await runBatchEnrichment(
-      CLIENT,
-      { records: records('a', 'b') },
-      harness.adapter,
-    );
+    const result = await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: records('a', 'b') },
+      adapter: harness.adapter,
+    });
 
     expect(harness.enrichBatch).toHaveBeenCalledWith([{ id: 'a' }]);
     expect(result.results.find((entry) => entry.recordId === 'b')).toMatchObject({
@@ -192,11 +214,11 @@ describe('runBatchEnrichment', () => {
   it('isolates a per-record matched update failure', async () => {
     const harness = buildHarness([{ id: 'a' }, { id: 'b', updateFails: true }]);
 
-    const result = await runBatchEnrichment(
-      CLIENT,
-      { records: records('a', 'b') },
-      harness.adapter,
-    );
+    const result = await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: records('a', 'b') },
+      adapter: harness.adapter,
+    });
 
     expect(
       result.results.find((entry) => entry.recordId === 'a')?.status,
@@ -211,28 +233,30 @@ describe('runBatchEnrichment', () => {
     const harness = buildHarness([{ id: 'a' }, { id: 'b' }]);
     harness.enrichBatch.mockRejectedValueOnce(new Error('pdl down'));
 
-    const result = await runBatchEnrichment(
-      CLIENT,
-      { records: records('a', 'b') },
-      harness.adapter,
-    );
+    const result = await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: records('a', 'b') },
+      adapter: harness.adapter,
+    });
 
     expect(result).toMatchObject({ errored: 2, matched: 0 });
     expect(result.results[0].error).toBe('pdl down');
     expect(harness.updateOne).not.toHaveBeenCalled();
-    expect(harness.updateManyStatus).toHaveBeenCalledWith(CLIENT, ['a', 'b'], {
-      pdlEnrichmentStatus: 'ERROR',
+    expect(harness.updateManyStatus).toHaveBeenCalledWith({
+      client: CLIENT,
+      recordIds: ['a', 'b'],
+      data: { pdlEnrichmentStatus: 'ERROR' },
     });
   });
 
   it('isolates a record whose matched-data build throws', async () => {
     const harness = buildHarness([{ id: 'a' }, { id: 'b', buildFails: true }]);
 
-    const result = await runBatchEnrichment(
-      CLIENT,
-      { records: records('a', 'b') },
-      harness.adapter,
-    );
+    const result = await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: records('a', 'b') },
+      adapter: harness.adapter,
+    });
 
     expect(
       result.results.find((entry) => entry.recordId === 'a')?.status,
@@ -253,11 +277,13 @@ describe('runBatchEnrichment', () => {
       { id: 'missing', exists: false },
     ]);
 
-    const result = await runBatchEnrichment(
-      CLIENT,
-      { records: records('matched', 'notfound', 'errored', 'skipped', 'missing') },
-      harness.adapter,
-    );
+    const result = await runBatchEnrichment({
+      client: CLIENT,
+      input: {
+        records: records('matched', 'notfound', 'errored', 'skipped', 'missing'),
+      },
+      adapter: harness.adapter,
+    });
 
     const recordIds = result.results.map((entry) => entry.recordId);
     expect(new Set(recordIds).size).toBe(recordIds.length);
@@ -278,11 +304,11 @@ describe('runBatchEnrichment', () => {
   it('deduplicates record ids', async () => {
     const harness = buildHarness([{ id: 'a' }]);
 
-    const result = await runBatchEnrichment(
-      CLIENT,
-      { records: records('a', 'a') },
-      harness.adapter,
-    );
+    const result = await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: records('a', 'a') },
+      adapter: harness.adapter,
+    });
 
     expect(harness.enrichBatch).toHaveBeenCalledWith([{ id: 'a' }]);
     expect(result.total).toBe(1);
@@ -292,11 +318,11 @@ describe('runBatchEnrichment', () => {
     const ids = Array.from({ length: 150 }, (_unused, index) => `r${index}`);
     const harness = buildHarness(ids.map((id) => ({ id })));
 
-    const result = await runBatchEnrichment(
-      CLIENT,
-      { records: ids.map((id) => ({ id })) },
-      harness.adapter,
-    );
+    const result = await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: ids.map((id) => ({ id })) },
+      adapter: harness.adapter,
+    });
 
     expect(harness.readRecords).toHaveBeenCalledTimes(2);
     expect(harness.enrichBatch).toHaveBeenCalledTimes(2);
@@ -306,11 +332,11 @@ describe('runBatchEnrichment', () => {
   it('returns an empty summary when there are no records', async () => {
     const harness = buildHarness([]);
 
-    const result = await runBatchEnrichment(
-      CLIENT,
-      { records: [] },
-      harness.adapter,
-    );
+    const result = await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: [] },
+      adapter: harness.adapter,
+    });
 
     expect(harness.readRecords).not.toHaveBeenCalled();
     expect(result).toEqual({

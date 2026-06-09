@@ -18,9 +18,9 @@ describe('enrichCompanies', () => {
     await enrichCompanies([{ website: 'acme.com' }, { pdlId: 'abc' }]);
 
     expect(postPdlBulkEnrichMock).toHaveBeenCalledTimes(1);
-    expect(postPdlBulkEnrichMock).toHaveBeenCalledWith('/company/enrich/bulk', [
-      { website: 'acme.com' },
-      { pdl_id: 'abc' },
-    ]);
+    expect(postPdlBulkEnrichMock).toHaveBeenCalledWith({
+      path: '/company/enrich/bulk',
+      requests: [{ website: 'acme.com' }, { pdl_id: 'abc' }],
+    });
   });
 });

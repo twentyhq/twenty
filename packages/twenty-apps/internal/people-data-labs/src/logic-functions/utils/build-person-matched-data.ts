@@ -21,22 +21,27 @@ const PERSON_EMPTY_CHECKS = {
   linkedinLink: isEmptyLinks,
 };
 
-export const buildPersonMatchedData = async (
-  client: CoreApiClient,
-  node: PersonNode,
-  outcome: { likelihood?: number; data: PdlPersonData },
-  enrichedAt: string,
-): Promise<Record<string, unknown>> => {
+export const buildPersonMatchedData = async ({
+  client,
+  node,
+  outcome,
+  enrichedAt,
+}: {
+  client: CoreApiClient;
+  node: PersonNode;
+  outcome: { likelihood?: number; data: PdlPersonData };
+  enrichedAt: string;
+}): Promise<Record<string, unknown>> => {
   const mapped = mapPerson(outcome.data);
-  const writableStandard = pickWritableStandard(
-    mapped.standard,
-    node as unknown as Record<string, unknown>,
-    PERSON_EMPTY_CHECKS,
-  );
+  const writableStandard = pickWritableStandard({
+    standard: mapped.standard,
+    current: node as unknown as Record<string, unknown>,
+    emptyChecks: PERSON_EMPTY_CHECKS,
+  });
 
   const currentCompanyId = isDefined(node.company?.id)
     ? undefined
-    : await findOrCreateCurrentCompany(client, outcome.data);
+    : await findOrCreateCurrentCompany({ client, data: outcome.data });
 
   return pruneUndefined({
     ...writableStandard,

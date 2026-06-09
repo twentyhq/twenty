@@ -19,7 +19,7 @@ describe('readCompanies', () => {
       },
     });
 
-    const result = await readCompanies(client, ['c1', 'c2']);
+    const result = await readCompanies({ client, recordIds: ['c1', 'c2'] });
 
     expect(result).toEqual(nodes);
     expect((capturedRequest as QueryRequest).companies.__args.filter).toEqual({
@@ -34,6 +34,6 @@ describe('readCompanies', () => {
       },
     });
 
-    expect(await readCompanies(client, [])).toEqual([]);
+    expect(await readCompanies({ client, recordIds: [] })).toEqual([]);
   });
 });

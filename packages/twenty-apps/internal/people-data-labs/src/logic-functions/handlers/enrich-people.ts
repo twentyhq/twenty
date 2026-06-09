@@ -12,4 +12,4 @@ export const enrichPeopleCore = ({
   input: BulkEnrichInput;
   client?: CoreApiClient;
 }): Promise<BulkEnrichResult> =>
-  runBatchEnrichment(client, input, personEnrichmentAdapter);
+  runBatchEnrichment({ client, input, adapter: personEnrichmentAdapter });

@@ -21,8 +21,8 @@ export default defineField({
   description: 'People Data Labs canonical funding stages.',
   icon: 'IconChartArrowsVertical',
   isNullable: true,
-  options: buildSelectOptions(
-    FUNDING_STAGE_OPTIONS,
-    PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.fundingStage,
-  ),
+  options: buildSelectOptions({
+    meta: FUNDING_STAGE_OPTIONS,
+    ids: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.fundingStage,
+  }),
 });

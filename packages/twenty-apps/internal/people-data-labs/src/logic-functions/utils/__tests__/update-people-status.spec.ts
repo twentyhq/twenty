@@ -12,8 +12,12 @@ describe('updatePeopleStatus', () => {
       },
     });
 
-    await updatePeopleStatus(client, ['p1', 'p2'], {
-      pdlEnrichmentStatus: 'NOT_FOUND',
+    await updatePeopleStatus({
+      client,
+      recordIds: ['p1', 'p2'],
+      data: {
+        pdlEnrichmentStatus: 'NOT_FOUND',
+      },
     });
 
     expect(request).toMatchObject({

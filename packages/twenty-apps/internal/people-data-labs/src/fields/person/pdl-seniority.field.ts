@@ -21,8 +21,8 @@ export default defineField({
   description: 'People Data Labs canonical job title levels.',
   icon: 'IconStairsUp',
   isNullable: true,
-  options: buildSelectOptions(
-    SENIORITY_OPTIONS,
-    PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.seniority,
-  ),
+  options: buildSelectOptions({
+    meta: SENIORITY_OPTIONS,
+    ids: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.seniority,
+  }),
 });

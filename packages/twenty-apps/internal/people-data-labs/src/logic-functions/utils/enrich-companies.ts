@@ -7,9 +7,9 @@ import { pruneUndefined } from 'src/utils/prune-undefined';
 export const enrichCompanies = (
   params: PdlCompanyEnrichParams[],
 ): Promise<PdlEnrichResult<PdlCompanyData>[]> =>
-  postPdlBulkEnrich<PdlCompanyData>(
-    '/company/enrich/bulk',
-    params.map((entry) =>
+  postPdlBulkEnrich<PdlCompanyData>({
+    path: '/company/enrich/bulk',
+    requests: params.map((entry) =>
       pruneUndefined({
         pdl_id: entry.pdlId,
         website: entry.website,
@@ -17,4 +17,4 @@ export const enrichCompanies = (
         ticker: entry.ticker,
       }),
     ),
-  );
+  });

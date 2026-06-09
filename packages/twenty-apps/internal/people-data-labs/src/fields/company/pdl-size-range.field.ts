@@ -21,8 +21,8 @@ export default defineField({
   description: 'People Data Labs canonical self-reported employee range.',
   icon: 'IconChartBar',
   isNullable: true,
-  options: buildSelectOptions(
-    SIZE_OPTIONS,
-    PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.sizeRange,
-  ),
+  options: buildSelectOptions({
+    meta: SIZE_OPTIONS,
+    ids: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.sizeRange,
+  }),
 });

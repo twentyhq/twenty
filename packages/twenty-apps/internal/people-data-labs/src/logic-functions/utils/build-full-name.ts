@@ -4,11 +4,15 @@ import { isDefined } from 'src/utils/is-defined';
 
 const WHITESPACE_REGEX = /\s+/;
 
-export const buildFullName = (
-  firstName: unknown,
-  lastName: unknown,
-  fullName: unknown,
-): FullNameValue | undefined => {
+export const buildFullName = ({
+  firstName,
+  lastName,
+  fullName,
+}: {
+  firstName: unknown;
+  lastName: unknown;
+  fullName: unknown;
+}): FullNameValue | undefined => {
   const first = toText(firstName);
   const last = toText(lastName);
 

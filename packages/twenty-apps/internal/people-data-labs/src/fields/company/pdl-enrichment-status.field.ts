@@ -22,8 +22,8 @@ export default defineField({
   description: 'Outcome of the latest People Data Labs enrichment attempt.',
   icon: 'IconProgressCheck',
   isNullable: true,
-  options: buildSelectOptions(
-    ENRICHMENT_STATUS_OPTIONS,
-    PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.companyEnrichmentStatus,
-  ),
+  options: buildSelectOptions({
+    meta: ENRICHMENT_STATUS_OPTIONS,
+    ids: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.companyEnrichmentStatus,
+  }),
 });

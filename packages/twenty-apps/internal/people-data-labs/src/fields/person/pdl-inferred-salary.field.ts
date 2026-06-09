@@ -21,8 +21,8 @@ export default defineField({
   description: 'People Data Labs canonical inferred salary range.',
   icon: 'IconCurrencyDollar',
   isNullable: true,
-  options: buildSelectOptions(
-    INFERRED_SALARY_OPTIONS,
-    PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.personInferredSalary,
-  ),
+  options: buildSelectOptions({
+    meta: INFERRED_SALARY_OPTIONS,
+    ids: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.personInferredSalary,
+  }),
 });

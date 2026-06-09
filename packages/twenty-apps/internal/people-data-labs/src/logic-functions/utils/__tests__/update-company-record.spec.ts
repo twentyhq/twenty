@@ -12,7 +12,11 @@ describe('updateCompanyRecord', () => {
       },
     });
 
-    await updateCompanyRecord(client, 'c1', { name: 'Acme Corp' });
+    await updateCompanyRecord({
+      client,
+      recordId: 'c1',
+      data: { name: 'Acme Corp' },
+    });
 
     expect(request).toMatchObject({
       updateCompany: { __args: { id: 'c1', data: { name: 'Acme Corp' } } },

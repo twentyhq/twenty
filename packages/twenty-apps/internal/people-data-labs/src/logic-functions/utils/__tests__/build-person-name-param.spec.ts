@@ -4,11 +4,11 @@ import { buildPersonNameParam } from 'src/logic-functions/utils/build-person-nam
 
 describe('buildPersonNameParam', () => {
   it('joins the present name parts', () => {
-    expect(buildPersonNameParam('Jane', 'Doe')).toBe('Jane Doe');
-    expect(buildPersonNameParam('Jane', '')).toBe('Jane');
+    expect(buildPersonNameParam({ firstName: 'Jane', lastName: 'Doe' })).toBe('Jane Doe');
+    expect(buildPersonNameParam({ firstName: 'Jane', lastName: '' })).toBe('Jane');
   });
 
   it('returns undefined when no name part is present', () => {
-    expect(buildPersonNameParam('', null)).toBeUndefined();
+    expect(buildPersonNameParam({ firstName: '', lastName: null })).toBeUndefined();
   });
 });

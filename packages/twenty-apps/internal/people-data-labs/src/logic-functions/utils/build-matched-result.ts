@@ -1,9 +1,12 @@
 import { type EnrichResult } from 'src/types/enrich-result';
 
-export const buildMatchedResult = (
-  recordId: string,
-  updatedFields: string[],
-): EnrichResult => ({
+export const buildMatchedResult = ({
+  recordId,
+  updatedFields,
+}: {
+  recordId: string;
+  updatedFields: string[];
+}): EnrichResult => ({
   success: true,
   recordId,
   status: 'MATCHED',
