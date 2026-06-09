@@ -12,7 +12,7 @@ import { LeftPanelSkeletonLoader } from '~/loading/components/LeftPanelSkeletonL
 import { PageContentSkeletonLoader } from '~/loading/components/PageContentSkeletonLoader';
 
 const StyledContainer = styled.div`
-  background: ${themeCssVariables.background.noisy};
+  background: ${themeCssVariables.background.tertiary};
   box-sizing: border-box;
   display: flex;
   flex-direction: row;

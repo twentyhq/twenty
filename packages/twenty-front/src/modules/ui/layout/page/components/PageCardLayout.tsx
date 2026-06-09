@@ -16,6 +16,7 @@ const StyledRoot = styled.div`
   flex-direction: row;
   min-height: 0;
   min-width: 0;
+  padding: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledMainCardWrapper = styled.div`
@@ -27,8 +28,8 @@ const StyledMainCardWrapper = styled.div`
 
 const StyledCard = styled.div`
   background: ${themeCssVariables.background.primary};
-  border-left: 1px solid ${themeCssVariables.border.color.medium};
-  border-right: 1px solid ${themeCssVariables.border.color.medium};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: 12px;
   box-sizing: border-box;
   display: flex;
   flex: 1;

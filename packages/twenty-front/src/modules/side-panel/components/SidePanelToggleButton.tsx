@@ -152,6 +152,7 @@ export const SidePanelToggleButton = () => {
           dataClickOutsideId={PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID}
           dataTestId="page-header-side-panel-button"
           size={isMobile ? 'medium' : 'small'}
+          square
           variant="secondary"
           accent="default"
           ariaLabel={ariaLabel}
