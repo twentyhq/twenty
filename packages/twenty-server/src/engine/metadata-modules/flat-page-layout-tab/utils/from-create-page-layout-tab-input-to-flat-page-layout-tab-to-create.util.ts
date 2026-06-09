@@ -54,6 +54,7 @@ export const fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate = ({
     universalIdentifier: pageLayoutTabId,
     applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
+    isSystemSideEffect: false,
     widgetIds: [],
     widgetUniversalIdentifiers: [],
     icon: null,

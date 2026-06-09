@@ -110,10 +110,7 @@ export class PageLayoutResetService {
         { workspaceId },
       );
 
-    if (
-      widget.applicationUniversalIdentifier ===
-      workspaceCustomFlatApplication.universalIdentifier
-    ) {
+    if (!widget.isSystemSideEffect) {
       throw new PageLayoutWidgetException(
         `Custom widget "${id}" cannot be reset to default`,
         PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
@@ -141,8 +138,6 @@ export class PageLayoutResetService {
           viewId,
           flatViewFieldGroupMaps,
           flatViewFieldMaps,
-          workspaceCustomApplicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
           now,
         })
       : {
@@ -253,10 +248,7 @@ export class PageLayoutResetService {
         { workspaceId },
       );
 
-    if (
-      tab.applicationUniversalIdentifier ===
-      workspaceCustomFlatApplication.universalIdentifier
-    ) {
+    if (!tab.isSystemSideEffect) {
       throw new PageLayoutTabException(
         `Custom tab "${id}" cannot be reset to default`,
         PageLayoutTabExceptionCode.INVALID_PAGE_LAYOUT_TAB_DATA,
@@ -284,8 +276,6 @@ export class PageLayoutResetService {
       flatPageLayoutWidgetMaps,
       flatViewFieldGroupMaps,
       flatViewFieldMaps,
-      workspaceCustomApplicationUniversalIdentifier:
-        workspaceCustomFlatApplication.universalIdentifier,
       now,
     });
 
@@ -402,10 +392,7 @@ export class PageLayoutResetService {
         { workspaceId },
       );
 
-    if (
-      layout.applicationUniversalIdentifier ===
-      workspaceCustomFlatApplication.universalIdentifier
-    ) {
+    if (!layout.isSystemSideEffect) {
       throw new PageLayoutException(
         `Custom page layout "${id}" cannot be reset to default`,
         PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA,
@@ -423,8 +410,6 @@ export class PageLayoutResetService {
     const { toHardDelete: tabsToDelete, toReset: tabsToReset } =
       splitEntitiesByResetStrategy({
         entities: existingTabs,
-        workspaceCustomApplicationUniversalIdentifier:
-          workspaceCustomFlatApplication.universalIdentifier,
         now,
       });
 
@@ -450,8 +435,6 @@ export class PageLayoutResetService {
         flatPageLayoutWidgetMaps,
         flatViewFieldGroupMaps,
         flatViewFieldMaps,
-        workspaceCustomApplicationUniversalIdentifier:
-          workspaceCustomFlatApplication.universalIdentifier,
         now,
       });
 
@@ -556,7 +539,6 @@ export class PageLayoutResetService {
     flatPageLayoutWidgetMaps,
     flatViewFieldGroupMaps,
     flatViewFieldMaps,
-    workspaceCustomApplicationUniversalIdentifier,
     now,
   }: {
     tabId: string;
@@ -569,7 +551,6 @@ export class PageLayoutResetService {
     flatViewFieldMaps: {
       byUniversalIdentifier: Record<string, FlatViewField | undefined>;
     };
-    workspaceCustomApplicationUniversalIdentifier: string;
     now: string;
   }): {
     widgetsToUpdate: FlatPageLayoutWidget[];
@@ -592,7 +573,6 @@ export class PageLayoutResetService {
     const { toHardDelete: widgetsToDelete, toReset: widgetsToReset } =
       splitEntitiesByResetStrategy({
         entities: existingWidgets,
-        workspaceCustomApplicationUniversalIdentifier,
         now,
       });
 
@@ -626,7 +606,6 @@ export class PageLayoutResetService {
         viewId,
         flatViewFieldGroupMaps,
         flatViewFieldMaps,
-        workspaceCustomApplicationUniversalIdentifier,
         now,
       });
 
@@ -705,7 +684,6 @@ export class PageLayoutResetService {
     viewId,
     flatViewFieldGroupMaps,
     flatViewFieldMaps,
-    workspaceCustomApplicationUniversalIdentifier,
     now,
   }: {
     viewId: string;
@@ -715,7 +693,6 @@ export class PageLayoutResetService {
     flatViewFieldMaps: {
       byUniversalIdentifier: Record<string, FlatViewField | undefined>;
     };
-    workspaceCustomApplicationUniversalIdentifier: string;
     now: string;
   }): {
     viewFieldGroupsToUpdate: FlatViewFieldGroup[];
@@ -742,14 +719,12 @@ export class PageLayoutResetService {
     const { toHardDelete: groupsToDelete, toReset: groupsToReset } =
       splitEntitiesByResetStrategy({
         entities: existingGroups,
-        workspaceCustomApplicationUniversalIdentifier,
         now,
       });
 
     const { toHardDelete: fieldsToDelete, toReset: fieldsToReset } =
       splitEntitiesByResetStrategy({
         entities: existingFields,
-        workspaceCustomApplicationUniversalIdentifier,
         now,
       });
 

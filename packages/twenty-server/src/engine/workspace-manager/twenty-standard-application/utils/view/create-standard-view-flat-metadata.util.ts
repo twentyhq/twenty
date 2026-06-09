@@ -123,6 +123,7 @@ export const createStandardViewFlatMetadata = <
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:
       TWENTY_STANDARD_APPLICATION.universalIdentifier,
+    isSystemSideEffect: true,
     workspaceId,
     objectMetadataId,
     name,

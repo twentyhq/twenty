@@ -1,18 +1,16 @@
-type EntityWithApplicationIdentifierAndOverrides = {
-  applicationUniversalIdentifier: string;
+type EntityWithSystemSideEffectAndOverrides = {
+  isSystemSideEffect: boolean;
   isActive: boolean;
   overrides: unknown;
 };
 
 export const splitEntitiesByResetStrategy = <
-  T extends EntityWithApplicationIdentifierAndOverrides,
+  T extends EntityWithSystemSideEffectAndOverrides,
 >({
   entities,
-  workspaceCustomApplicationUniversalIdentifier,
   now,
 }: {
   entities: T[];
-  workspaceCustomApplicationUniversalIdentifier: string;
   now: string;
 }): {
   toHardDelete: T[];
@@ -26,12 +24,7 @@ export const splitEntitiesByResetStrategy = <
   })[] = [];
 
   for (const entity of entities) {
-    if (
-      entity.applicationUniversalIdentifier ===
-      workspaceCustomApplicationUniversalIdentifier
-    ) {
-      toHardDelete.push(entity);
-    } else {
+    if (entity.isSystemSideEffect) {
       toReset.push({
         ...entity,
         isActive: true as const,
@@ -39,6 +32,8 @@ export const splitEntitiesByResetStrategy = <
         ...('universalOverrides' in entity ? { universalOverrides: null } : {}),
         updatedAt: now,
       });
+    } else {
+      toHardDelete.push(entity);
     }
   }
 

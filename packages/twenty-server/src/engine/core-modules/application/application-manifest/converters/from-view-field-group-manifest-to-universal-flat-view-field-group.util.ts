@@ -16,6 +16,7 @@ export const fromViewFieldGroupManifestToUniversalFlatViewFieldGroup = ({
   return {
     universalIdentifier: viewFieldGroupManifest.universalIdentifier,
     applicationUniversalIdentifier,
+    isSystemSideEffect: false,
     viewUniversalIdentifier,
     name: viewFieldGroupManifest.name ?? '',
     position: viewFieldGroupManifest.position,

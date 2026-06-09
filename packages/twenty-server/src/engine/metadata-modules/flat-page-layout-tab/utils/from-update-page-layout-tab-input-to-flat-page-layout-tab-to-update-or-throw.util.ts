@@ -57,8 +57,8 @@ export const fromUpdatePageLayoutTabInputToFlatPageLayoutTabToUpdateOrThrow = ({
 
   const shouldOverride = isCallerOverridingEntity({
     callerApplicationUniversalIdentifier,
-    entityApplicationUniversalIdentifier:
-      existingFlatPageLayoutTabToUpdate.applicationUniversalIdentifier,
+    entityIsSystemSideEffect:
+      existingFlatPageLayoutTabToUpdate.isSystemSideEffect,
     workspaceCustomApplicationUniversalIdentifier,
   });
 

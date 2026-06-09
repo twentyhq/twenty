@@ -15,6 +15,7 @@ export const fromPageLayoutManifestToUniversalFlatPageLayout = ({
   return {
     universalIdentifier: pageLayoutManifest.universalIdentifier,
     applicationUniversalIdentifier,
+    isSystemSideEffect: false,
     name: pageLayoutManifest.name,
     type:
       (pageLayoutManifest.type as PageLayoutType) ?? PageLayoutType.RECORD_PAGE,

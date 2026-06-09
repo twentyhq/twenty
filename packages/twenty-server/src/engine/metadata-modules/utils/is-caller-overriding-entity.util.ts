@@ -1,16 +1,14 @@
 export const isCallerOverridingEntity = ({
   callerApplicationUniversalIdentifier,
-  entityApplicationUniversalIdentifier,
   workspaceCustomApplicationUniversalIdentifier,
+  entityIsSystemSideEffect,
 }: {
   callerApplicationUniversalIdentifier: string;
-  entityApplicationUniversalIdentifier: string;
   workspaceCustomApplicationUniversalIdentifier: string;
+  entityIsSystemSideEffect: boolean;
 }): boolean => {
   return (
     callerApplicationUniversalIdentifier ===
-      workspaceCustomApplicationUniversalIdentifier &&
-    entityApplicationUniversalIdentifier !==
-      workspaceCustomApplicationUniversalIdentifier
+      workspaceCustomApplicationUniversalIdentifier && entityIsSystemSideEffect
   );
 };

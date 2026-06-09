@@ -1,14 +1,16 @@
-type EntityWithSystemSideEffect = {
-  isSystemSideEffect: boolean;
+type EntityWithApplicationIdentifier = {
+  applicationUniversalIdentifier: string;
 };
 
-export const splitEntitiesByRemovalStrategy = <
-  T extends EntityWithSystemSideEffect,
+export const splitEntitiesByApplicationOwnership = <
+  T extends EntityWithApplicationIdentifier,
 >({
   entitiesToRemove,
+  workspaceCustomApplicationUniversalIdentifier,
   now,
 }: {
   entitiesToRemove: T[];
+  workspaceCustomApplicationUniversalIdentifier: string;
   now: string;
 }): {
   toHardDelete: T[];
@@ -18,14 +20,17 @@ export const splitEntitiesByRemovalStrategy = <
   const toDeactivate: (T & { isActive: false; updatedAt: string })[] = [];
 
   for (const entity of entitiesToRemove) {
-    if (entity.isSystemSideEffect) {
+    if (
+      entity.applicationUniversalIdentifier ===
+      workspaceCustomApplicationUniversalIdentifier
+    ) {
+      toHardDelete.push(entity);
+    } else {
       toDeactivate.push({
         ...entity,
         isActive: false as const,
         updatedAt: now,
       });
-    } else {
-      toHardDelete.push(entity);
     }
   }
 

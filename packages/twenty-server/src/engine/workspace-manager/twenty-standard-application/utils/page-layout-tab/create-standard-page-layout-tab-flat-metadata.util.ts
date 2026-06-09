@@ -61,6 +61,7 @@ export const createStandardPageLayoutTabFlatMetadata = ({
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:
       TWENTY_STANDARD_APPLICATION.universalIdentifier,
+    isSystemSideEffect: true,
     workspaceId,
     title,
     position,

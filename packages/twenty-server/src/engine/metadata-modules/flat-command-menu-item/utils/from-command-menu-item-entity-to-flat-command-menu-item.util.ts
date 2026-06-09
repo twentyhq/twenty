@@ -76,6 +76,7 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = ({
 
   return {
     id: commandMenuItemEntity.id,
+    isSystemSideEffect: commandMenuItemEntity.isSystemSideEffect,
     workflowVersionId: commandMenuItemEntity.workflowVersionId,
     frontComponentId: commandMenuItemEntity.frontComponentId,
     engineComponentKey: commandMenuItemEntity.engineComponentKey,

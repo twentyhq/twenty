@@ -6,7 +6,6 @@ import { v5 } from 'uuid';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 export const NAVIGATION_COMMAND_UUID_NAMESPACE =
   'b31830da-2ae0-48eb-a915-12fa4ab96dd3';
@@ -47,6 +46,7 @@ export const buildNavigationFlatCommandMenuItem = ({
   objectMetadata,
   commandMenuItemId,
   applicationId,
+  applicationUniversalIdentifier,
   workspaceId,
   position,
   now,
@@ -59,6 +59,7 @@ export const buildNavigationFlatCommandMenuItem = ({
   };
   commandMenuItemId: string;
   applicationId: string;
+  applicationUniversalIdentifier: string;
   workspaceId: string;
   position: number;
   now: string;
@@ -78,8 +79,8 @@ export const buildNavigationFlatCommandMenuItem = ({
     id: commandMenuItemId,
     universalIdentifier,
     applicationId,
-    applicationUniversalIdentifier:
-      TWENTY_STANDARD_APPLICATION.universalIdentifier,
+    applicationUniversalIdentifier,
+    isSystemSideEffect: true,
     workspaceId,
     label: NAVIGATION_INTERPOLATED_LABEL,
     shortLabel: NAVIGATION_INTERPOLATED_SHORT_LABEL,

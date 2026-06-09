@@ -16,7 +16,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { SystemSideEffectEntity } from 'src/engine/workspace-manager/types/system-side-effect-entity';
 
 @Entity({ name: 'navigationMenuItem', schema: 'core' })
 @Index('IDX_NAVIGATION_MENU_ITEM_USER_WORKSPACE_ID_WORKSPACE_ID', [
@@ -50,7 +50,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   OR ("type" = 'PAGE_LAYOUT' AND "pageLayoutId" IS NOT NULL)`,
 )
 export class NavigationMenuItemEntity
-  extends SyncableEntity
+  extends SystemSideEffectEntity
   implements Required<NavigationMenuItemEntity>
 {
   @PrimaryGeneratedColumn('uuid')

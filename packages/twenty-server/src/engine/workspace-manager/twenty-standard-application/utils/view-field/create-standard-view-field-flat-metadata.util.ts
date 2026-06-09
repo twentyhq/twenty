@@ -107,6 +107,7 @@ export const createStandardViewFieldFlatMetadata = <
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:
       TWENTY_STANDARD_APPLICATION.universalIdentifier,
+    isSystemSideEffect: true,
     workspaceId,
     viewId:
       standardObjectMetadataRelatedEntityIds[objectName].views[viewName].id,

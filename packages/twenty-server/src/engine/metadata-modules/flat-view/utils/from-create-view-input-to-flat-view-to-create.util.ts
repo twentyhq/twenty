@@ -70,6 +70,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     updatedAt: createdAt,
     deletedAt: null,
     isCustom: true,
+    isSystemSideEffect: false,
     anyFieldFilterValue: createViewInput.anyFieldFilterValue ?? null,
     calendarFieldMetadataUniversalIdentifier,
     calendarLayout: createViewInput.calendarLayout ?? null,

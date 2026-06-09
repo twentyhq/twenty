@@ -25,6 +25,7 @@ export const getPageLayoutTabFlatEntitySeeds = ({
     universalIdentifier: generateSeedId(workspaceId, tabSeed),
     applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
+    isSystemSideEffect: true,
     workspaceId,
     title,
     position,

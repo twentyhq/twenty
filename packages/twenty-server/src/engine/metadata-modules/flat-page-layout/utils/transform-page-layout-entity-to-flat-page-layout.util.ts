@@ -67,6 +67,7 @@ export const transformPageLayoutEntityToFlatPageLayout = ({
     workspaceId: pageLayoutEntity.workspaceId,
     universalIdentifier: pageLayoutEntity.universalIdentifier,
     applicationId: pageLayoutEntity.applicationId,
+    isSystemSideEffect: pageLayoutEntity.isSystemSideEffect,
     tabIds: pageLayoutEntity.tabs.map((tab) => tab.id),
     defaultTabToFocusOnMobileAndSidePanelId:
       pageLayoutEntity.defaultTabToFocusOnMobileAndSidePanelId,

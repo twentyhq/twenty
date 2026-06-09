@@ -26,6 +26,7 @@ export const getNavigationMenuItemFlatEntitySeeds = ({
       ),
       applicationId: flatApplication.id,
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
+      isSystemSideEffect: true,
       workspaceId,
       type: NavigationMenuItemType.PAGE_LAYOUT,
       name: 'Star History',

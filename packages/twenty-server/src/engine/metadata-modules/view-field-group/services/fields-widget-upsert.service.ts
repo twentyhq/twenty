@@ -246,8 +246,7 @@ export class FieldsWidgetUpsertService {
       } else if (this.hasGroupChanged(existingGroup, inputGroup)) {
         const shouldOverride = isCallerOverridingEntity({
           callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
-          entityApplicationUniversalIdentifier:
-            existingGroup.applicationUniversalIdentifier,
+          entityIsSystemSideEffect: existingGroup.isSystemSideEffect,
           workspaceCustomApplicationUniversalIdentifier:
             applicationUniversalIdentifier,
         });
@@ -345,8 +344,7 @@ export class FieldsWidgetUpsertService {
 
       const shouldOverride = isCallerOverridingEntity({
         callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
-        entityApplicationUniversalIdentifier:
-          existingField.applicationUniversalIdentifier,
+        entityIsSystemSideEffect: existingField.isSystemSideEffect,
         workspaceCustomApplicationUniversalIdentifier:
           applicationUniversalIdentifier,
       });
@@ -431,8 +429,7 @@ export class FieldsWidgetUpsertService {
           const shouldOverride = isCallerOverridingEntity({
             callerApplicationUniversalIdentifier:
               applicationUniversalIdentifier,
-            entityApplicationUniversalIdentifier:
-              existingField.applicationUniversalIdentifier,
+            entityIsSystemSideEffect: existingField.isSystemSideEffect,
             workspaceCustomApplicationUniversalIdentifier:
               applicationUniversalIdentifier,
           });
@@ -530,6 +527,7 @@ export class FieldsWidgetUpsertService {
           overrides: null,
           universalOverrides: null,
           isActive: true,
+          isSystemSideEffect: false,
           createdAt: now,
           updatedAt: now,
           deletedAt: null,
@@ -542,8 +540,6 @@ export class FieldsWidgetUpsertService {
       toDeactivate: deactivatedGroupUpdates,
     } = splitEntitiesByRemovalStrategy({
       entitiesToRemove: groupsToDeactivate,
-      workspaceCustomApplicationUniversalIdentifier:
-        applicationUniversalIdentifier,
       now,
     });
 
@@ -637,8 +633,7 @@ export class FieldsWidgetUpsertService {
 
       const shouldOverride = isCallerOverridingEntity({
         callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
-        entityApplicationUniversalIdentifier:
-          existingField.applicationUniversalIdentifier,
+        entityIsSystemSideEffect: existingField.isSystemSideEffect,
         workspaceCustomApplicationUniversalIdentifier:
           applicationUniversalIdentifier,
       });
@@ -696,8 +691,7 @@ export class FieldsWidgetUpsertService {
       if (isDefined(existingField)) {
         const shouldOverride = isCallerOverridingEntity({
           callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
-          entityApplicationUniversalIdentifier:
-            existingField.applicationUniversalIdentifier,
+          entityIsSystemSideEffect: existingField.isSystemSideEffect,
           workspaceCustomApplicationUniversalIdentifier:
             applicationUniversalIdentifier,
         });
@@ -788,6 +782,7 @@ export class FieldsWidgetUpsertService {
         overrides: null,
         universalOverrides: null,
         isActive: true,
+        isSystemSideEffect: false,
         createdAt: now,
         updatedAt: now,
         deletedAt: null,
@@ -799,8 +794,6 @@ export class FieldsWidgetUpsertService {
       toDeactivate: deactivatedGroupUpdates,
     } = splitEntitiesByRemovalStrategy({
       entitiesToRemove: groupsToDeactivate,
-      workspaceCustomApplicationUniversalIdentifier:
-        applicationUniversalIdentifier,
       now,
     });
 
@@ -869,6 +862,7 @@ export class FieldsWidgetUpsertService {
       viewId,
       viewUniversalIdentifier,
       isActive: true,
+      isSystemSideEffect: false,
       overrides: null,
       createdAt: now,
       updatedAt: now,

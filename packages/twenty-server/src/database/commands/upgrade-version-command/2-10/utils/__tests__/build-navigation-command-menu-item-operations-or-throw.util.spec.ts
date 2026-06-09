@@ -51,6 +51,7 @@ const buildExistingNavigationItem = ({
     },
     commandMenuItemId: `command-menu-item-${objectUniversalIdentifier}`,
     applicationId: APPLICATION_ID,
+    applicationUniversalIdentifier: APPLICATION_ID,
     workspaceId: WORKSPACE_ID,
     position,
     now: NOW,

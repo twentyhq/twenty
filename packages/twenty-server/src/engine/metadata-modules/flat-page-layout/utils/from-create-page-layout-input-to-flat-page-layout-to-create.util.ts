@@ -51,6 +51,7 @@ export const fromCreatePageLayoutInputToFlatPageLayoutToCreate = ({
     universalIdentifier: pageLayoutId,
     applicationId: flatApplication.id,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
+    isSystemSideEffect: false,
     tabIds: [],
     tabUniversalIdentifiers: [],
     defaultTabToFocusOnMobileAndSidePanelId: null,

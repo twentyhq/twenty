@@ -95,6 +95,7 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:
       TWENTY_STANDARD_APPLICATION.universalIdentifier,
+    isSystemSideEffect: true,
     workspaceId,
     pageLayoutTabId: tabIds.id,
     pageLayoutTabUniversalIdentifier: tabDefinition.universalIdentifier,

@@ -63,6 +63,7 @@ export const createStandardViewFieldGroupFlatMetadata = <
     isActive: true,
     applicationUniversalIdentifier:
       TWENTY_STANDARD_APPLICATION.universalIdentifier,
+    isSystemSideEffect: true,
     workspaceId,
     viewId:
       standardObjectMetadataRelatedEntityIds[objectName].views[viewName].id,

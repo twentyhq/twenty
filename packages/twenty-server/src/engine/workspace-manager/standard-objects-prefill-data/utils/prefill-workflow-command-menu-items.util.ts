@@ -52,6 +52,7 @@ export const prefillWorkflowCommandMenuItems = async ({
     applicationId: workspaceCustomFlatApplication.id,
     applicationUniversalIdentifier:
       workspaceCustomFlatApplication.universalIdentifier,
+    isSystemSideEffect: false,
     workspaceId,
     workflowVersionId: QUICK_LEAD_WORKFLOW_VERSION_ID,
     frontComponentId: null,

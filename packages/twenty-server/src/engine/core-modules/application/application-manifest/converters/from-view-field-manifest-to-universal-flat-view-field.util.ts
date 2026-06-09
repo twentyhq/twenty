@@ -16,6 +16,7 @@ export const fromViewFieldManifestToUniversalFlatViewField = ({
   return {
     universalIdentifier: viewFieldManifest.universalIdentifier,
     applicationUniversalIdentifier,
+    isSystemSideEffect: false,
     fieldMetadataUniversalIdentifier:
       viewFieldManifest.fieldMetadataUniversalIdentifier,
     viewUniversalIdentifier,

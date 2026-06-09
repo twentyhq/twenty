@@ -61,8 +61,7 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
 
   const shouldOverride = isCallerOverridingEntity({
     callerApplicationUniversalIdentifier,
-    entityApplicationUniversalIdentifier:
-      existingFlatViewFieldToUpdate.applicationUniversalIdentifier,
+    entityIsSystemSideEffect: existingFlatViewFieldToUpdate.isSystemSideEffect,
     workspaceCustomApplicationUniversalIdentifier,
   });
 

@@ -18,6 +18,7 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
   return {
     universalIdentifier: pageLayoutWidgetManifest.universalIdentifier,
     applicationUniversalIdentifier,
+    isSystemSideEffect: false,
     pageLayoutTabUniversalIdentifier,
     title: pageLayoutWidgetManifest.title,
     isActive: true,

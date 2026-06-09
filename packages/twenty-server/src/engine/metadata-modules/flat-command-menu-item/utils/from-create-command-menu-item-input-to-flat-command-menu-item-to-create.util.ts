@@ -48,6 +48,7 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
   return {
     id,
     universalIdentifier: id,
+    isSystemSideEffect: false,
     workflowVersionId: createCommandMenuItemInput.workflowVersionId ?? null,
     frontComponentId: createCommandMenuItemInput.frontComponentId ?? null,
     frontComponentUniversalIdentifier,

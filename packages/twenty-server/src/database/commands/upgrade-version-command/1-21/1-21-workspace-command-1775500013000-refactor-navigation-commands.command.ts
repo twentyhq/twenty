@@ -197,6 +197,8 @@ export class RefactorNavigationCommandsCommand extends ActiveOrSuspendedWorkspac
           objectMetadata,
           commandMenuItemId: v4(),
           applicationId: twentyStandardFlatApplication.id,
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
           workspaceId,
           position: nextPosition++,
           now,
@@ -221,6 +223,7 @@ export class RefactorNavigationCommandsCommand extends ActiveOrSuspendedWorkspac
         applicationId: twentyStandardFlatApplication.id,
         applicationUniversalIdentifier:
           TWENTY_STANDARD_APPLICATION.universalIdentifier,
+        isSystemSideEffect: true,
         workspaceId,
         label: commandMenuItem.label,
         shortLabel: commandMenuItem.shortLabel,

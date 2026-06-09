@@ -10,6 +10,7 @@ import {
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatEntityToCreateDeleteUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 export const buildNavigationCommandMenuItemOperationsOrThrow = ({
   existingFlatCommandMenuItemMaps,
@@ -63,6 +64,8 @@ export const buildNavigationCommandMenuItemOperationsOrThrow = ({
         objectMetadata,
         commandMenuItemId: v4(),
         applicationId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION.universalIdentifier,
         workspaceId,
         position: nextPosition++,
         now,

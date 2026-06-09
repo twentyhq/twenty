@@ -16,7 +16,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
-import { splitEntitiesByRemovalStrategy } from 'src/engine/metadata-modules/flat-entity/utils/split-entities-by-removal-strategy.util';
+import { splitEntitiesByApplicationOwnership } from 'src/engine/metadata-modules/flat-entity/utils/split-entities-by-application-ownership.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatPageLayoutWidgetConfigurationOfType } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/is-flat-page-layout-widget-configuration-of-type.util';
 import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
@@ -285,7 +285,7 @@ export class ViewWidgetUpsertService {
     const {
       toHardDelete: filterGroupsToDelete,
       toDeactivate: filterGroupsToDeactivate,
-    } = splitEntitiesByRemovalStrategy({
+    } = splitEntitiesByApplicationOwnership({
       entitiesToRemove: viewFilterGroupOperations.filterGroupsToRemove,
       workspaceCustomApplicationUniversalIdentifier:
         upsertContext.applicationUniversalIdentifier,
@@ -293,7 +293,7 @@ export class ViewWidgetUpsertService {
     });
 
     const { toHardDelete: filtersToDelete, toDeactivate: filtersToDeactivate } =
-      splitEntitiesByRemovalStrategy({
+      splitEntitiesByApplicationOwnership({
         entitiesToRemove: viewFilterOperations.filtersToRemove,
         workspaceCustomApplicationUniversalIdentifier:
           upsertContext.applicationUniversalIdentifier,
@@ -301,7 +301,7 @@ export class ViewWidgetUpsertService {
       });
 
     const { toHardDelete: sortsToDelete, toDeactivate: sortsToDeactivate } =
-      splitEntitiesByRemovalStrategy({
+      splitEntitiesByApplicationOwnership({
         entitiesToRemove: viewSortOperations.sortsToRemove,
         workspaceCustomApplicationUniversalIdentifier:
           upsertContext.applicationUniversalIdentifier,
@@ -439,8 +439,7 @@ export class ViewWidgetUpsertService {
 
         const shouldOverride = isCallerOverridingEntity({
           callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
-          entityApplicationUniversalIdentifier:
-            existingField.applicationUniversalIdentifier,
+          entityIsSystemSideEffect: existingField.isSystemSideEffect,
           workspaceCustomApplicationUniversalIdentifier:
             applicationUniversalIdentifier,
         });
@@ -510,6 +509,7 @@ export class ViewWidgetUpsertService {
         applicationId,
         universalIdentifier: v4(),
         applicationUniversalIdentifier,
+        isSystemSideEffect: false,
         fieldMetadataId: inputField.fieldMetadataId,
         fieldMetadataUniversalIdentifier,
         viewId,

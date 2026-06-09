@@ -53,6 +53,7 @@ export const createStandardCommandMenuItemFlatMetadata = ({
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:
       TWENTY_STANDARD_APPLICATION.universalIdentifier,
+    isSystemSideEffect: true,
     workspaceId,
     label: definition.label,
     shortLabel: definition.shortLabel,

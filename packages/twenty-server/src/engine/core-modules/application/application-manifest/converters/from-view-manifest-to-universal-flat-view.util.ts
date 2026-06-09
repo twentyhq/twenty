@@ -19,6 +19,7 @@ export const fromViewManifestToUniversalFlatView = ({
   return {
     universalIdentifier: viewManifest.universalIdentifier,
     applicationUniversalIdentifier,
+    isSystemSideEffect: false,
     name: viewManifest.name,
     objectMetadataUniversalIdentifier: viewManifest.objectUniversalIdentifier,
     type: viewManifest.type ?? ViewType.TABLE,

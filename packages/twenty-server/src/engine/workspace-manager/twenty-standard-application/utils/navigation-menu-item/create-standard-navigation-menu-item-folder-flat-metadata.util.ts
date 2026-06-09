@@ -30,6 +30,7 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
   applicationId: twentyStandardApplicationId,
   applicationUniversalIdentifier:
     TWENTY_STANDARD_APPLICATION.universalIdentifier,
+  isSystemSideEffect: true,
   workspaceId,
   userWorkspaceId: null,
   targetRecordId: null,
@@ -93,6 +94,7 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:
       TWENTY_STANDARD_APPLICATION.universalIdentifier,
+    isSystemSideEffect: true,
     workspaceId,
     userWorkspaceId: null,
     targetRecordId: null,

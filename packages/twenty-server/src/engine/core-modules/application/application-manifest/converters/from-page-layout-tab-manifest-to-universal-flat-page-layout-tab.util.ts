@@ -17,6 +17,7 @@ export const fromPageLayoutTabManifestToUniversalFlatPageLayoutTab = ({
   return {
     universalIdentifier: pageLayoutTabManifest.universalIdentifier,
     applicationUniversalIdentifier,
+    isSystemSideEffect: false,
     title: pageLayoutTabManifest.title,
     position: pageLayoutTabManifest.position,
     pageLayoutUniversalIdentifier,

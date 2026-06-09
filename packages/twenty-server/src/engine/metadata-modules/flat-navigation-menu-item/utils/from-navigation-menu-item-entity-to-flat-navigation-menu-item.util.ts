@@ -107,6 +107,7 @@ export const fromNavigationMenuItemEntityToFlatNavigationMenuItem = ({
     workspaceId: navigationMenuItemEntity.workspaceId,
     universalIdentifier: navigationMenuItemEntity.universalIdentifier,
     applicationId: navigationMenuItemEntity.applicationId,
+    isSystemSideEffect: navigationMenuItemEntity.isSystemSideEffect,
     createdAt: navigationMenuItemEntity.createdAt.toISOString(),
     updatedAt: navigationMenuItemEntity.updatedAt.toISOString(),
     applicationUniversalIdentifier,

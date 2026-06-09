@@ -200,6 +200,7 @@ export const computeFlatViewFieldsFromFieldsWidgets = ({
           position,
           aggregateOperation: null,
           isActive: true,
+          isSystemSideEffect: true,
           universalOverrides: null,
           createdAt: now,
           updatedAt: now,

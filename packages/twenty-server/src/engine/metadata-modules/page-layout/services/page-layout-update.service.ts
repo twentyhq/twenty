@@ -328,6 +328,7 @@ export class PageLayoutUpdateService {
           layoutMode: tabInput.layoutMode ?? PageLayoutTabLayoutMode.GRID,
           overrides: null,
           isActive: true,
+          isSystemSideEffect: false,
         };
       },
     );
@@ -342,8 +343,7 @@ export class PageLayoutUpdateService {
         const shouldOverride = isCallerOverridingEntity({
           callerApplicationUniversalIdentifier:
             workspaceCustomApplicationUniversalIdentifier,
-          entityApplicationUniversalIdentifier:
-            existingTab.applicationUniversalIdentifier,
+          entityIsSystemSideEffect: existingTab.isSystemSideEffect,
           workspaceCustomApplicationUniversalIdentifier,
         });
 
@@ -381,8 +381,7 @@ export class PageLayoutUpdateService {
         const shouldOverride = isCallerOverridingEntity({
           callerApplicationUniversalIdentifier:
             workspaceCustomApplicationUniversalIdentifier,
-          entityApplicationUniversalIdentifier:
-            existingTab.applicationUniversalIdentifier,
+          entityIsSystemSideEffect: existingTab.isSystemSideEffect,
           workspaceCustomApplicationUniversalIdentifier,
         });
 
@@ -421,7 +420,6 @@ export class PageLayoutUpdateService {
 
     const { toHardDelete, toDeactivate } = splitEntitiesByRemovalStrategy({
       entitiesToRemove: tabsToRemove,
-      workspaceCustomApplicationUniversalIdentifier,
       now: now.toISOString(),
     });
 
@@ -605,6 +603,7 @@ export class PageLayoutUpdateService {
           overrides: null,
           universalOverrides: null,
           isActive: true,
+          isSystemSideEffect: false,
           universalConfiguration:
             fromPageLayoutWidgetConfigurationToUniversalConfiguration({
               configuration: widgetInput.configuration,
@@ -670,7 +669,6 @@ export class PageLayoutUpdateService {
 
     const { toHardDelete, toDeactivate } = splitEntitiesByRemovalStrategy({
       entitiesToRemove: widgetsToRemove,
-      workspaceCustomApplicationUniversalIdentifier,
       now: now.toISOString(),
     });
 
@@ -718,8 +716,7 @@ export class PageLayoutUpdateService {
     const shouldOverride = isCallerOverridingEntity({
       callerApplicationUniversalIdentifier:
         workspaceCustomApplicationUniversalIdentifier,
-      entityApplicationUniversalIdentifier:
-        existingWidget.applicationUniversalIdentifier,
+      entityIsSystemSideEffect: existingWidget.isSystemSideEffect,
       workspaceCustomApplicationUniversalIdentifier,
     });
 
