@@ -4,7 +4,7 @@ import {
   IconMail,
   IconTool,
   IconWorld,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 
 const TOOL_ICON_MAPPINGS = [
   {

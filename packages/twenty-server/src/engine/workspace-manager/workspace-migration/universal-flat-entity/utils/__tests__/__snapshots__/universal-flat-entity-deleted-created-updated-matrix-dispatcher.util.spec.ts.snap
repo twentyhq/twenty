@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a created entity 1`] = `
 {
@@ -17,7 +17,6 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a crea
         "icon": "icon",
         "id": "field-id-1",
         "isActive": true,
-        "isCustom": true,
         "isLabelSyncedWithName": false,
         "isNullable": true,
         "isSystem": false,
@@ -82,7 +81,6 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a dele
         "icon": "icon",
         "id": "field-id-1",
         "isActive": true,
-        "isCustom": true,
         "isLabelSyncedWithName": false,
         "isNullable": true,
         "isSystem": false,
@@ -161,7 +159,6 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
         "icon": "icon",
         "id": "field-id-3",
         "isActive": true,
-        "isCustom": true,
         "isLabelSyncedWithName": false,
         "isNullable": true,
         "isSystem": false,
@@ -212,7 +209,6 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
         "icon": "icon",
         "id": "field-id-2",
         "isActive": true,
-        "isCustom": true,
         "isLabelSyncedWithName": false,
         "isNullable": true,
         "isSystem": false,

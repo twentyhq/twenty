@@ -101,7 +101,6 @@ describe('WorkspaceEntityManager', () => {
       workspaceId: 'test-workspace-id',
       icon: 'test-icon',
       color: null,
-      isCustom: false,
       isRemote: false,
       isAuditLogged: false,
       isSearchable: false,
@@ -154,7 +153,6 @@ describe('WorkspaceEntityManager', () => {
       description: null,
       icon: null,
       isActive: true,
-      isCustom: false,
       isSystem: false,
       isUIReadOnly: false,
       isUnique: false,
@@ -240,7 +238,6 @@ describe('WorkspaceEntityManager', () => {
         IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED: false,
         IS_SETTINGS_DISCOVERY_HERO_ENABLED: false,
         IS_CALL_RECORDING_ENABLED: false,
-        IS_WORKFLOW_RUN_STEP_LOGS_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
       eventEmitterService: {

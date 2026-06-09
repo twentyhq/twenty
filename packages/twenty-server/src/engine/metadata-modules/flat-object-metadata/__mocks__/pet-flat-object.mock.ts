@@ -10,7 +10,6 @@ export const PET_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   icon: 'IconCat',
   standardOverrides: null,
   targetTableName: 'DEPRECATED',
-  isCustom: true,
   isRemote: false,
   isActive: true,
   isSystem: false,

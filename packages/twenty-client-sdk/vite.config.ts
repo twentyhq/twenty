@@ -6,6 +6,7 @@ import packageJson from './package.json';
 const entries = [
   'src/core/index.ts',
   'src/metadata/index.ts',
+  'src/rest/index.ts',
   'src/generate/index.ts',
 ];
 
@@ -57,6 +58,8 @@ export default defineConfig(() => {
           'node:fs/promises',
           'node:fs',
           'node:path',
+          'node:os',
+          'node:url',
         ],
         output: [
           {

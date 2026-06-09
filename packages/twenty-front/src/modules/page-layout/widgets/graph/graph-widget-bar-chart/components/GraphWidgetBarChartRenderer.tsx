@@ -1,4 +1,5 @@
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { GraphWidgetChartHasTooManyGroupsEffect } from '@/page-layout/widgets/graph/components/GraphWidgetChartHasTooManyGroupsEffect';
 import { useGraphBarChartWidgetData } from '@/page-layout/widgets/graph/graph-widget-bar-chart/hooks/useGraphBarChartWidgetData';
@@ -15,7 +16,7 @@ import { indexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/
 import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
-import { getAppPath } from 'twenty-shared/utils';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { AxisNameDisplay } from '~/generated-metadata/graphql';
 
 const GraphWidgetBarChart = lazy(() =>
@@ -46,6 +47,7 @@ export const GraphWidgetBarChartRenderer = () => {
     layout,
     groupMode,
     loading,
+    error,
     hasTooManyGroups,
     formattedToRawLookup,
     colorMode,
@@ -116,6 +118,10 @@ export const GraphWidgetBarChartRenderer = () => {
 
   if (loading) {
     return <WidgetSkeletonLoader />;
+  }
+
+  if (isDefined(error)) {
+    return <PageLayoutWidgetErrorDisplay widgetId={widget.id} error={error} />;
   }
 
   return (

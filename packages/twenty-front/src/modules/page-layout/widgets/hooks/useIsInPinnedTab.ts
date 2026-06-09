@@ -5,7 +5,7 @@ import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { isDefined } from 'twenty-shared/utils';
-import { useIsMobile } from 'twenty-ui/utilities';
+import { useIsMobile } from 'twenty-ui-deprecated/utilities';
 
 export const useIsInPinnedTab = () => {
   const isMobile = useIsMobile();

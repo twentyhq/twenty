@@ -23,9 +23,9 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 const StyledLayout = styled.div`
-  background: ${themeCssVariables.background.noisy};
+  background: ${themeCssVariables.background.tertiary};
   display: flex;
   flex-direction: column;
   height: 100dvh;

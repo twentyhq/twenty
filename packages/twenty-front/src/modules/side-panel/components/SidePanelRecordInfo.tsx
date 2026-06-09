@@ -19,8 +19,8 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/display';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+import { Avatar } from 'twenty-ui-deprecated/display';
+import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 

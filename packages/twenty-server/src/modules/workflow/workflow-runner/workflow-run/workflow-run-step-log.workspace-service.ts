@@ -1,9 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -24,7 +22,6 @@ export class WorkflowRunStepLogWorkspaceService {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
   async setStepLog({
     workflowRunId,
@@ -37,15 +34,6 @@ export class WorkflowRunStepLogWorkspaceService {
     stepId: string;
     stepLog: WorkflowRunStepLog;
   }): Promise<void> {
-    const isStepLogsEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_WORKFLOW_RUN_STEP_LOGS_ENABLED,
-      workspaceId,
-    );
-
-    if (!isStepLogsEnabled) {
-      return;
-    }
-
     const sizeBytes = computeSizeBytes(stepLog);
 
     if (sizeBytes > MAX_STEP_LOG_BYTES) {

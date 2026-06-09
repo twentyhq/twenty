@@ -30,7 +30,7 @@
     "@vitejs/plugin-react-swc": "4.2.3",
     "react-email": "5.1.0",
     "tsc-alias": "^1.8.16",
-    "vite-plugin-dts": "3.8.1"
+    "vite-plugin-dts": "^4.5.4"
   },
   "exports": {
     ".": {

@@ -45,10 +45,6 @@ export const useUpdateDroppedRecordOnBoard = () => {
         recordStoreFamilyState.atomFamily(recordId),
       ) as Record<string, unknown> | null | undefined;
 
-      if (!isDefined(newPosition)) {
-        return;
-      }
-
       if (!isDefined(initialRecord)) {
         return;
       }
@@ -94,7 +90,10 @@ export const useUpdateDroppedRecordOnBoard = () => {
 
       const isSamePosition = initialRecord.position === newPosition;
 
-      if (movingInsideSameRecordGroup && isSamePosition) {
+      if (
+        movingInsideSameRecordGroup &&
+        (!isDefined(newPosition) || isSamePosition)
+      ) {
         return;
       }
 
@@ -126,25 +125,32 @@ export const useUpdateDroppedRecordOnBoard = () => {
         );
       }
 
-      const targetGroupRecordsWithIds = extractRecordPositions(
-        currentRecordIdsInTargetRecordGroup,
-        store,
-      );
+      if (isDefined(newPosition)) {
+        const targetGroupRecordsWithIds = extractRecordPositions(
+          currentRecordIdsInTargetRecordGroup,
+          store,
+        );
 
-      const newTargetRecordGroupWithIds = [
-        ...targetGroupRecordsWithIds,
-        {
-          id: recordId,
-          position: newPosition,
-        },
-      ];
+        const newTargetRecordGroupWithIds = [
+          ...targetGroupRecordsWithIds,
+          {
+            id: recordId,
+            position: newPosition,
+          },
+        ];
 
-      newTargetRecordGroupWithIds.sort(sortByProperty('position', 'asc'));
+        newTargetRecordGroupWithIds.sort(sortByProperty('position', 'asc'));
 
-      store.set(
-        recordIndexRecordIdsByGroupCallbackFamilyState(targetRecordGroupId),
-        newTargetRecordGroupWithIds.map((record) => record.id),
-      );
+        store.set(
+          recordIndexRecordIdsByGroupCallbackFamilyState(targetRecordGroupId),
+          newTargetRecordGroupWithIds.map((record) => record.id),
+        );
+      } else {
+        store.set(
+          recordIndexRecordIdsByGroupCallbackFamilyState(targetRecordGroupId),
+          [...currentRecordIdsInTargetRecordGroup, recordId],
+        );
+      }
 
       upsertRecordsInStore({
         partialRecords: [
@@ -155,7 +161,7 @@ export const useUpdateDroppedRecordOnBoard = () => {
               (initialRecord as { __typename?: string })?.__typename ??
               'Record',
             [selectFieldMetadataItem.name]: targetRecordGroupValue,
-            position: newPosition,
+            ...(isDefined(newPosition) && { position: newPosition }),
           } as ObjectRecord,
         ],
       });
@@ -164,7 +170,7 @@ export const useUpdateDroppedRecordOnBoard = () => {
         idToUpdate: recordId,
         updateOneRecordInput: {
           [selectFieldMetadataItem.name]: targetRecordGroupValue,
-          position: newPosition,
+          ...(isDefined(newPosition) && { position: newPosition }),
         },
       });
     },

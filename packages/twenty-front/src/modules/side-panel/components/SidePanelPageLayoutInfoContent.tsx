@@ -19,8 +19,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useState } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useIcons } from 'twenty-ui-deprecated/display';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 import { SidePanelPageInfoLayout } from './SidePanelPageInfoLayout';
 
 const StyledClickableIconWrapper = styled.div`

@@ -1,4 +1,4 @@
-import { LinkType } from 'twenty-ui/navigation';
+import { LinkType } from 'twenty-ui-deprecated/navigation';
 export const checkUrlType = (url: string) => {
   if (/^(https?:\/\/)?(www\.)?linkedin\.com\/.+$/.test(url)) {
     return LinkType.LinkedIn;

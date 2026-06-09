@@ -20,7 +20,7 @@ import { prepareIfElseStepWithNewBranch } from '@/workflow/workflow-steps/workfl
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui-deprecated/display';
 
 export const SidePanelWorkflowCreateStepContent = () => {
   const { getIcon } = useIcons();

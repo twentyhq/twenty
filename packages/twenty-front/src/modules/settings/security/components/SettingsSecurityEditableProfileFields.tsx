@@ -16,10 +16,10 @@ import {
   IconUser,
   IconUserCircle,
   type IconComponent,
-} from 'twenty-ui/display';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItemMultiSelect } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { type SelectOption } from 'twenty-ui-deprecated/input';
+import { MenuItemMultiSelect } from 'twenty-ui-deprecated/navigation';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { useMutation } from '@apollo/client/react';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 

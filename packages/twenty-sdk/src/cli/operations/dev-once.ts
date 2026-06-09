@@ -1,5 +1,6 @@
 import path from 'path';
 import { OUTPUT_DIR, type Manifest } from 'twenty-shared/application';
+import { type SyncAction } from 'twenty-shared/metadata';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
 import {
@@ -13,15 +14,19 @@ import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
+import { formatSyncActionsSummary } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
+import { getSyncErrorRecoveryHint } from '@/cli/utilities/error/get-sync-error-recovery-hint';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
+import chalk from 'chalk';
 
 export type AppDevOnceOptions = {
   appPath: string;
   verbose?: boolean;
+  dryRun?: boolean;
   onProgress?: (message: string) => void;
 };
 
@@ -32,10 +37,28 @@ export type AppDevOnceResult = {
   applicationUniversalIdentifier: string;
 };
 
+const reportMetadataChanges = (
+  data: { actions: SyncAction[] },
+  onProgress?: (message: string) => void,
+): void => {
+  for (const event of formatSyncActionsSummary(data.actions)) {
+    onProgress?.(event.message);
+  }
+};
+
+const appendRecoveryHint = (
+  message: string,
+  errorMessage: string | undefined,
+): string => {
+  const hint = getSyncErrorRecoveryHint(errorMessage);
+
+  return hint ? `${message}\n\n${hint}` : message;
+};
+
 const innerAppDevOnce = async (
   options: AppDevOnceOptions,
 ): Promise<CommandResult<AppDevOnceResult>> => {
-  const { appPath, onProgress, verbose } = options;
+  const { appPath, onProgress, verbose, dryRun } = options;
 
   onProgress?.('Checking server...');
 
@@ -83,7 +106,7 @@ const innerAppDevOnce = async (
   }
 
   for (const warning of manifestResult.warnings) {
-    onProgress?.(`⚠ ${warning}`);
+    onProgress?.(chalk.yellow(`⚠ ${warning}`));
   }
 
   onProgress?.('Building application files...');
@@ -119,6 +142,47 @@ const innerAppDevOnce = async (
   });
 
   await writeManifestToOutput(appPath, manifest);
+
+  if (dryRun) {
+    onProgress?.(
+      'Computing metadata diff (dry run, nothing will be applied)...',
+    );
+
+    const dryRunResult = await apiService.syncApplication(manifest, {
+      dryRun: true,
+    });
+
+    if (!dryRunResult.success) {
+      const errorEvents = verbose
+        ? null
+        : formatManifestValidationErrors(dryRunResult.error);
+
+      const message = errorEvents
+        ? errorEvents.map((event) => event.message).join('\n')
+        : `Dry run failed with error: ${dryRunResult.message ?? 'Unknown error'}`;
+
+      return {
+        success: false,
+        error: {
+          code: APP_ERROR_CODES.SYNC_FAILED,
+          message: appendRecoveryHint(message, dryRunResult.message),
+        },
+      };
+    }
+
+    reportMetadataChanges(dryRunResult.data, onProgress);
+
+    return {
+      success: true,
+      data: {
+        outputDir: path.join(appPath, OUTPUT_DIR),
+        fileCount: buildResult.builtFileInfos.size,
+        applicationDisplayName: manifest.application.displayName,
+        applicationUniversalIdentifier:
+          manifest.application.universalIdentifier,
+      },
+    };
+  }
 
   onProgress?.('Registering application...');
 
@@ -201,16 +265,18 @@ const innerAppDevOnce = async (
 
     const message = errorEvents
       ? errorEvents.map((event) => event.message).join('\n')
-      : `Sync failed with error: ${serializeError(syncResult.error)}`;
+      : `Sync failed with error: ${syncResult.message ?? 'Unknown error'}`;
 
     return {
       success: false,
       error: {
         code: APP_ERROR_CODES.SYNC_FAILED,
-        message,
+        message: appendRecoveryHint(message, syncResult.message),
       },
     };
   }
+
+  reportMetadataChanges(syncResult.data, onProgress);
 
   onProgress?.('Generating API client...');
 

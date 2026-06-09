@@ -26,7 +26,7 @@ const CreateViewFilterInputSchema = z.object({
     .string()
     .uuid()
     .describe(
-      'ID of the field to filter on. Use list_object_metadata_items to find field IDs.',
+      'ID of the field to filter on. Use get_field_metadata to find field IDs.',
     ),
   operand: z
     .enum(VIEW_FILTER_OPERAND_OPTIONS)
@@ -122,7 +122,7 @@ export class ViewFilterToolsFactory {
     return {
       create_view_filter: {
         description:
-          'Add a filter to a view. Use list_object_metadata_items to get fieldMetadataId values.',
+          'Add a filter to a view. Use get_field_metadata to get fieldMetadataId values.',
         inputSchema: CreateViewFilterInputSchema,
         execute: async (parameters: {
           viewId: string;
@@ -161,7 +161,7 @@ export class ViewFilterToolsFactory {
       },
       create_many_view_filters: {
         description:
-          'Add multiple filters to a view in one call. Use list_object_metadata_items to get fieldMetadataId values.',
+          'Add multiple filters to a view in one call. Use get_field_metadata to get fieldMetadataId values.',
         inputSchema: CreateManyViewFiltersInputSchema,
         execute: async (parameters: {
           filters: Array<{
