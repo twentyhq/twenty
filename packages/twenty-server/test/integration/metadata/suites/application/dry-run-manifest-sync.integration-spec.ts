@@ -16,7 +16,7 @@ const buildManifest = (
 
 const findObjectNames = async (): Promise<string[]> => {
   const { objects } = await findManyObjectMetadata({
-    input: { paging: { first: 100 } },
+    input: { filter: {}, paging: { first: 100 } },
     gqlFields: 'id nameSingular',
     expectToFail: false,
   });
