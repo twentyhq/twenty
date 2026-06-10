@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type Repository } from 'typeorm';
+import { Not, type Repository } from 'typeorm';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -58,9 +58,13 @@ export class DeleteWorkspaceMemberConnectedAccountsCleanupJob {
         return;
       }
 
+      // Only the member's personal mailboxes. Shared/group accounts
+      // (visibility 'workspace') are workspace resources — e.g. the email-group
+      // sender behind campaign history — and must survive a member offboarding.
       await this.connectedAccountRepository.delete({
         userWorkspaceId: userWorkspace.id,
         workspaceId,
+        visibility: Not('workspace'),
       });
     }, authContext);
   }

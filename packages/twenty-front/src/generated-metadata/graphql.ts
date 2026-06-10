@@ -4,157 +4,155 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
-export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string; output: string; }
-  String: { input: string; output: string; }
-  Boolean: { input: boolean; output: boolean; }
-  Int: { input: number; output: number; }
-  Float: { input: number; output: number; }
-  ConnectionCursor: { input: any; output: any; }
-  DateTime: { input: string; output: string; }
-  JSON: { input: any; output: any; }
-  JSONObject: { input: any; output: any; }
-  UUID: { input: string; output: string; }
-  Upload: { input: any; output: any; }
+  ID: string;
+  String: string;
+  Boolean: boolean;
+  Int: number;
+  Float: number;
+  ConnectionCursor: any;
+  DateTime: string;
+  JSON: any;
+  JSONObject: any;
+  UUID: string;
+  Upload: any;
 };
 
 export type ActivateWorkspaceInput = {
-  displayName?: InputMaybe<Scalars['String']['input']>;
+  displayName?: InputMaybe<Scalars['String']>;
 };
 
 export type AddQuerySubscriptionInput = {
-  eventStreamId: Scalars['String']['input'];
-  operationSignature: Scalars['JSON']['input'];
-  queryId: Scalars['String']['input'];
+  eventStreamId: Scalars['String'];
+  operationSignature: Scalars['JSON'];
+  queryId: Scalars['String'];
 };
 
 export type Agent = {
   __typename?: 'Agent';
-  applicationId?: Maybe<Scalars['UUID']['output']>;
-  createdAt: Scalars['DateTime']['output'];
-  description?: Maybe<Scalars['String']['output']>;
-  evaluationInputs: Array<Scalars['String']['output']>;
-  icon?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  isCustom: Scalars['Boolean']['output'];
-  label: Scalars['String']['output'];
-  modelConfiguration?: Maybe<Scalars['JSON']['output']>;
-  modelId: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-  prompt: Scalars['String']['output'];
-  responseFormat?: Maybe<Scalars['JSON']['output']>;
-  roleId?: Maybe<Scalars['UUID']['output']>;
-  updatedAt: Scalars['DateTime']['output'];
+  applicationId?: Maybe<Scalars['UUID']>;
+  createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
+  evaluationInputs: Array<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isCustom: Scalars['Boolean'];
+  label: Scalars['String'];
+  modelConfiguration?: Maybe<Scalars['JSON']>;
+  modelId: Scalars['String'];
+  name: Scalars['String'];
+  prompt: Scalars['String'];
+  responseFormat?: Maybe<Scalars['JSON']>;
+  roleId?: Maybe<Scalars['UUID']>;
+  updatedAt: Scalars['DateTime'];
 };
 
 export type AgentChatEvent = {
   __typename?: 'AgentChatEvent';
-  event: Scalars['JSON']['output'];
-  threadId: Scalars['String']['output'];
+  event: Scalars['JSON'];
+  threadId: Scalars['String'];
 };
 
 export type AgentChatThread = {
   __typename?: 'AgentChatThread';
-  contextWindowTokens?: Maybe<Scalars['Int']['output']>;
-  conversationSize: Scalars['Int']['output'];
-  createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
-  id: Scalars['ID']['output'];
-  lastMessageAt?: Maybe<Scalars['DateTime']['output']>;
-  title?: Maybe<Scalars['String']['output']>;
-  totalInputCredits: Scalars['Float']['output'];
-  totalInputTokens: Scalars['Int']['output'];
-  totalOutputCredits: Scalars['Float']['output'];
-  totalOutputTokens: Scalars['Int']['output'];
-  updatedAt: Scalars['DateTime']['output'];
+  contextWindowTokens?: Maybe<Scalars['Int']>;
+  conversationSize: Scalars['Int'];
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['ID'];
+  lastMessageAt?: Maybe<Scalars['DateTime']>;
+  title?: Maybe<Scalars['String']>;
+  totalInputCredits: Scalars['Float'];
+  totalInputTokens: Scalars['Int'];
+  totalOutputCredits: Scalars['Float'];
+  totalOutputTokens: Scalars['Int'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type AgentIdInput = {
   /** The id of the agent. */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 export type AgentMessage = {
   __typename?: 'AgentMessage';
-  agentId?: Maybe<Scalars['UUID']['output']>;
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['UUID']['output'];
+  agentId?: Maybe<Scalars['UUID']>;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
   parts: Array<AgentMessagePart>;
-  processedAt?: Maybe<Scalars['DateTime']['output']>;
-  role: Scalars['String']['output'];
-  status: Scalars['String']['output'];
-  threadId: Scalars['UUID']['output'];
-  turnId?: Maybe<Scalars['UUID']['output']>;
+  processedAt?: Maybe<Scalars['DateTime']>;
+  role: Scalars['String'];
+  status: Scalars['String'];
+  threadId: Scalars['UUID'];
+  turnId?: Maybe<Scalars['UUID']>;
 };
 
 export type AgentMessagePart = {
   __typename?: 'AgentMessagePart';
-  createdAt: Scalars['DateTime']['output'];
-  errorDetails?: Maybe<Scalars['JSON']['output']>;
-  errorMessage?: Maybe<Scalars['String']['output']>;
-  fileFilename?: Maybe<Scalars['String']['output']>;
-  fileId?: Maybe<Scalars['UUID']['output']>;
-  fileMediaType?: Maybe<Scalars['String']['output']>;
-  fileUrl?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  messageId: Scalars['UUID']['output'];
-  orderIndex: Scalars['Int']['output'];
-  providerExecuted?: Maybe<Scalars['Boolean']['output']>;
-  providerMetadata?: Maybe<Scalars['JSON']['output']>;
-  reasoningContent?: Maybe<Scalars['String']['output']>;
-  sourceDocumentFilename?: Maybe<Scalars['String']['output']>;
-  sourceDocumentMediaType?: Maybe<Scalars['String']['output']>;
-  sourceDocumentSourceId?: Maybe<Scalars['String']['output']>;
-  sourceDocumentTitle?: Maybe<Scalars['String']['output']>;
-  sourceUrlSourceId?: Maybe<Scalars['String']['output']>;
-  sourceUrlTitle?: Maybe<Scalars['String']['output']>;
-  sourceUrlUrl?: Maybe<Scalars['String']['output']>;
-  state?: Maybe<Scalars['String']['output']>;
-  textContent?: Maybe<Scalars['String']['output']>;
-  toolCallId?: Maybe<Scalars['String']['output']>;
-  toolInput?: Maybe<Scalars['JSON']['output']>;
-  toolName?: Maybe<Scalars['String']['output']>;
-  toolOutput?: Maybe<Scalars['JSON']['output']>;
-  type: Scalars['String']['output'];
+  createdAt: Scalars['DateTime'];
+  errorDetails?: Maybe<Scalars['JSON']>;
+  errorMessage?: Maybe<Scalars['String']>;
+  fileFilename?: Maybe<Scalars['String']>;
+  fileId?: Maybe<Scalars['UUID']>;
+  fileMediaType?: Maybe<Scalars['String']>;
+  fileUrl?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  messageId: Scalars['UUID'];
+  orderIndex: Scalars['Int'];
+  providerExecuted?: Maybe<Scalars['Boolean']>;
+  providerMetadata?: Maybe<Scalars['JSON']>;
+  reasoningContent?: Maybe<Scalars['String']>;
+  sourceDocumentFilename?: Maybe<Scalars['String']>;
+  sourceDocumentMediaType?: Maybe<Scalars['String']>;
+  sourceDocumentSourceId?: Maybe<Scalars['String']>;
+  sourceDocumentTitle?: Maybe<Scalars['String']>;
+  sourceUrlSourceId?: Maybe<Scalars['String']>;
+  sourceUrlTitle?: Maybe<Scalars['String']>;
+  sourceUrlUrl?: Maybe<Scalars['String']>;
+  state?: Maybe<Scalars['String']>;
+  textContent?: Maybe<Scalars['String']>;
+  toolCallId?: Maybe<Scalars['String']>;
+  toolInput?: Maybe<Scalars['JSON']>;
+  toolName?: Maybe<Scalars['String']>;
+  toolOutput?: Maybe<Scalars['JSON']>;
+  type: Scalars['String'];
 };
 
 export type AgentTurn = {
   __typename?: 'AgentTurn';
-  agentId?: Maybe<Scalars['UUID']['output']>;
-  createdAt: Scalars['DateTime']['output'];
+  agentId?: Maybe<Scalars['UUID']>;
+  createdAt: Scalars['DateTime'];
   evaluations: Array<AgentTurnEvaluation>;
-  id: Scalars['UUID']['output'];
+  id: Scalars['UUID'];
   messages: Array<AgentMessage>;
-  threadId: Scalars['UUID']['output'];
+  threadId: Scalars['UUID'];
 };
 
 export type AgentTurnEvaluation = {
   __typename?: 'AgentTurnEvaluation';
-  comment?: Maybe<Scalars['String']['output']>;
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['UUID']['output'];
-  score: Scalars['Int']['output'];
-  turnId: Scalars['UUID']['output'];
+  comment?: Maybe<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  score: Scalars['Int'];
+  turnId: Scalars['UUID'];
 };
 
 export type AggregateChartConfiguration = {
   __typename?: 'AggregateChartConfiguration';
-  aggregateFieldMetadataId: Scalars['UUID']['output'];
+  aggregateFieldMetadataId: Scalars['UUID'];
   aggregateOperation: AggregateOperations;
   configurationType: WidgetConfigurationType;
-  description?: Maybe<Scalars['String']['output']>;
-  displayDataLabel?: Maybe<Scalars['Boolean']['output']>;
-  filter?: Maybe<Scalars['JSON']['output']>;
-  firstDayOfTheWeek?: Maybe<Scalars['Int']['output']>;
-  format?: Maybe<Scalars['String']['output']>;
-  label?: Maybe<Scalars['String']['output']>;
-  prefix?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']>;
+  displayDataLabel?: Maybe<Scalars['Boolean']>;
+  filter?: Maybe<Scalars['JSON']>;
+  firstDayOfTheWeek?: Maybe<Scalars['Int']>;
+  format?: Maybe<Scalars['String']>;
+  label?: Maybe<Scalars['String']>;
+  prefix?: Maybe<Scalars['String']>;
   ratioAggregateConfig?: Maybe<RatioAggregateConfig>;
-  suffix?: Maybe<Scalars['String']['output']>;
-  timezone?: Maybe<Scalars['String']['output']>;
+  suffix?: Maybe<Scalars['String']>;
+  timezone?: Maybe<Scalars['String']>;
 };
 
 export enum AggregateOperations {
@@ -174,15 +172,15 @@ export enum AggregateOperations {
 
 export type AiSystemPromptPreview = {
   __typename?: 'AiSystemPromptPreview';
-  estimatedTokenCount: Scalars['Int']['output'];
+  estimatedTokenCount: Scalars['Int'];
   sections: Array<AiSystemPromptSection>;
 };
 
 export type AiSystemPromptSection = {
   __typename?: 'AiSystemPromptSection';
-  content: Scalars['String']['output'];
-  estimatedTokenCount: Scalars['Int']['output'];
-  title: Scalars['String']['output'];
+  content: Scalars['String'];
+  estimatedTokenCount: Scalars['Int'];
+  title: Scalars['String'];
 };
 
 export enum AllMetadataName {
@@ -221,7 +219,7 @@ export enum AllMetadataName {
 export type Analytics = {
   __typename?: 'Analytics';
   /** Boolean that confirms query was dispatched */
-  success: Scalars['Boolean']['output'];
+  success: Scalars['Boolean'];
 };
 
 export enum AnalyticsType {
@@ -231,117 +229,117 @@ export enum AnalyticsType {
 
 export type ApiConfig = {
   __typename?: 'ApiConfig';
-  mutationMaximumAffectedRecords: Scalars['Float']['output'];
+  mutationMaximumAffectedRecords: Scalars['Float'];
 };
 
 export type ApiKey = {
   __typename?: 'ApiKey';
-  createdAt: Scalars['DateTime']['output'];
-  expiresAt: Scalars['DateTime']['output'];
-  id: Scalars['UUID']['output'];
-  name: Scalars['String']['output'];
-  revokedAt?: Maybe<Scalars['DateTime']['output']>;
+  createdAt: Scalars['DateTime'];
+  expiresAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  revokedAt?: Maybe<Scalars['DateTime']>;
   role: Role;
-  updatedAt: Scalars['DateTime']['output'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type ApiKeyForRole = {
   __typename?: 'ApiKeyForRole';
-  expiresAt: Scalars['DateTime']['output'];
-  id: Scalars['UUID']['output'];
-  name: Scalars['String']['output'];
-  revokedAt?: Maybe<Scalars['DateTime']['output']>;
+  expiresAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  revokedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type ApiKeyToken = {
   __typename?: 'ApiKeyToken';
-  token: Scalars['String']['output'];
+  token: Scalars['String'];
 };
 
 export type AppConnection = {
   __typename?: 'AppConnection';
-  accessToken: Scalars['String']['output'];
-  authFailedAt?: Maybe<Scalars['String']['output']>;
-  handle: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  name: Scalars['String']['output'];
-  providerName: Scalars['String']['output'];
-  scopes: Array<Scalars['String']['output']>;
-  userWorkspaceId: Scalars['String']['output'];
-  visibility: Scalars['String']['output'];
+  accessToken: Scalars['String'];
+  authFailedAt?: Maybe<Scalars['String']>;
+  handle: Scalars['String'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  providerName: Scalars['String'];
+  scopes: Array<Scalars['String']>;
+  userWorkspaceId: Scalars['String'];
+  visibility: Scalars['String'];
 };
 
 export type AppToken = {
   __typename?: 'AppToken';
-  createdAt: Scalars['DateTime']['output'];
-  expiresAt: Scalars['DateTime']['output'];
-  id: Scalars['UUID']['output'];
-  type: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
+  createdAt: Scalars['DateTime'];
+  expiresAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  type: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type Application = {
   __typename?: 'Application';
   agents: Array<Agent>;
   applicationRegistration?: Maybe<ApplicationRegistrationSummary>;
-  applicationRegistrationId?: Maybe<Scalars['UUID']['output']>;
+  applicationRegistrationId?: Maybe<Scalars['UUID']>;
   applicationVariables: Array<ApplicationVariable>;
-  availablePackages: Scalars['JSON']['output'];
-  canBeUninstalled: Scalars['Boolean']['output'];
+  availablePackages: Scalars['JSON'];
+  canBeUninstalled: Scalars['Boolean'];
   commandMenuItems: Array<CommandMenuItem>;
   defaultLogicFunctionRole?: Maybe<Role>;
-  defaultRoleId?: Maybe<Scalars['String']['output']>;
-  description?: Maybe<Scalars['String']['output']>;
+  defaultRoleId?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
   frontComponents: Array<FrontComponent>;
-  id: Scalars['UUID']['output'];
+  id: Scalars['UUID'];
   logicFunctions: Array<LogicFunction>;
-  logo?: Maybe<Scalars['String']['output']>;
-  name: Scalars['String']['output'];
+  logo?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
   objects: Array<Object>;
-  packageJsonChecksum?: Maybe<Scalars['String']['output']>;
-  packageJsonFileId?: Maybe<Scalars['UUID']['output']>;
-  settingsCustomTabFrontComponentId?: Maybe<Scalars['UUID']['output']>;
-  universalIdentifier: Scalars['String']['output'];
-  version?: Maybe<Scalars['String']['output']>;
-  yarnLockChecksum?: Maybe<Scalars['String']['output']>;
-  yarnLockFileId?: Maybe<Scalars['UUID']['output']>;
+  packageJsonChecksum?: Maybe<Scalars['String']>;
+  packageJsonFileId?: Maybe<Scalars['UUID']>;
+  settingsCustomTabFrontComponentId?: Maybe<Scalars['UUID']>;
+  universalIdentifier: Scalars['String'];
+  version?: Maybe<Scalars['String']>;
+  yarnLockChecksum?: Maybe<Scalars['String']>;
+  yarnLockFileId?: Maybe<Scalars['UUID']>;
 };
 
 export type ApplicationConnectionProvider = {
   __typename?: 'ApplicationConnectionProvider';
-  applicationId: Scalars['String']['output'];
-  displayName: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  name: Scalars['String']['output'];
+  applicationId: Scalars['String'];
+  displayName: Scalars['String'];
+  id: Scalars['UUID'];
+  name: Scalars['String'];
   oauth?: Maybe<ApplicationConnectionProviderOAuthConfig>;
-  type: Scalars['String']['output'];
+  type: Scalars['String'];
 };
 
 export type ApplicationConnectionProviderOAuthConfig = {
   __typename?: 'ApplicationConnectionProviderOAuthConfig';
-  isClientCredentialsConfigured: Scalars['Boolean']['output'];
-  scopes: Array<Scalars['String']['output']>;
+  isClientCredentialsConfigured: Scalars['Boolean'];
+  scopes: Array<Scalars['String']>;
 };
 
 export type ApplicationRegistration = {
   __typename?: 'ApplicationRegistration';
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['UUID']['output'];
-  isConfigured: Scalars['Boolean']['output'];
-  isFeatured: Scalars['Boolean']['output'];
-  isListed: Scalars['Boolean']['output'];
-  isPreInstalled: Scalars['Boolean']['output'];
-  latestAvailableVersion?: Maybe<Scalars['String']['output']>;
-  logoUrl?: Maybe<Scalars['String']['output']>;
-  name: Scalars['String']['output'];
-  oAuthClientId: Scalars['String']['output'];
-  oAuthRedirectUris: Array<Scalars['String']['output']>;
-  oAuthScopes: Array<Scalars['String']['output']>;
-  ownerWorkspaceId?: Maybe<Scalars['UUID']['output']>;
-  sourcePackage?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  isConfigured: Scalars['Boolean'];
+  isFeatured: Scalars['Boolean'];
+  isListed: Scalars['Boolean'];
+  isPreInstalled: Scalars['Boolean'];
+  latestAvailableVersion?: Maybe<Scalars['String']>;
+  logoUrl?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  oAuthClientId: Scalars['String'];
+  oAuthRedirectUris: Array<Scalars['String']>;
+  oAuthScopes: Array<Scalars['String']>;
+  ownerWorkspaceId?: Maybe<Scalars['UUID']>;
+  sourcePackage?: Maybe<Scalars['String']>;
   sourceType: ApplicationRegistrationSourceType;
-  universalIdentifier: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
+  universalIdentifier: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export enum ApplicationRegistrationSourceType {
@@ -353,42 +351,42 @@ export enum ApplicationRegistrationSourceType {
 
 export type ApplicationRegistrationStats = {
   __typename?: 'ApplicationRegistrationStats';
-  activeInstalls: Scalars['Int']['output'];
-  mostInstalledVersion?: Maybe<Scalars['String']['output']>;
+  activeInstalls: Scalars['Int'];
+  mostInstalledVersion?: Maybe<Scalars['String']>;
   versionDistribution: Array<VersionDistributionEntry>;
 };
 
 export type ApplicationRegistrationSummary = {
   __typename?: 'ApplicationRegistrationSummary';
-  id: Scalars['UUID']['output'];
-  latestAvailableVersion?: Maybe<Scalars['String']['output']>;
-  logoUrl?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID'];
+  latestAvailableVersion?: Maybe<Scalars['String']>;
+  logoUrl?: Maybe<Scalars['String']>;
   sourceType: ApplicationRegistrationSourceType;
 };
 
 export type ApplicationRegistrationVariable = {
   __typename?: 'ApplicationRegistrationVariable';
-  createdAt: Scalars['DateTime']['output'];
-  description: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  isFilled: Scalars['Boolean']['output'];
-  isRequired: Scalars['Boolean']['output'];
-  isSecret: Scalars['Boolean']['output'];
-  key: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
+  createdAt: Scalars['DateTime'];
+  description: Scalars['String'];
+  id: Scalars['UUID'];
+  isFilled: Scalars['Boolean'];
+  isRequired: Scalars['Boolean'];
+  isSecret: Scalars['Boolean'];
+  key: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type ApplicationRegistrationVariableDto = {
   __typename?: 'ApplicationRegistrationVariableDTO';
-  createdAt: Scalars['DateTime']['output'];
-  description: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  isFilled: Scalars['Boolean']['output'];
-  isRequired: Scalars['Boolean']['output'];
-  isSecret: Scalars['Boolean']['output'];
-  key: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-  value?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime'];
+  description: Scalars['String'];
+  id: Scalars['UUID'];
+  isFilled: Scalars['Boolean'];
+  isRequired: Scalars['Boolean'];
+  isSecret: Scalars['Boolean'];
+  key: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  value?: Maybe<Scalars['String']>;
 };
 
 export type ApplicationTokenPair = {
@@ -399,41 +397,41 @@ export type ApplicationTokenPair = {
 
 export type ApplicationVariable = {
   __typename?: 'ApplicationVariable';
-  description: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  isSecret: Scalars['Boolean']['output'];
-  key: Scalars['String']['output'];
-  value: Scalars['String']['output'];
+  description: Scalars['String'];
+  id: Scalars['UUID'];
+  isSecret: Scalars['Boolean'];
+  key: Scalars['String'];
+  value: Scalars['String'];
 };
 
 export type ApprovedAccessDomain = {
   __typename?: 'ApprovedAccessDomain';
-  createdAt: Scalars['DateTime']['output'];
-  domain: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  isValidated: Scalars['Boolean']['output'];
+  createdAt: Scalars['DateTime'];
+  domain: Scalars['String'];
+  id: Scalars['UUID'];
+  isValidated: Scalars['Boolean'];
 };
 
 export type AuthBypassProviders = {
   __typename?: 'AuthBypassProviders';
-  google: Scalars['Boolean']['output'];
-  microsoft: Scalars['Boolean']['output'];
-  password: Scalars['Boolean']['output'];
+  google: Scalars['Boolean'];
+  microsoft: Scalars['Boolean'];
+  password: Scalars['Boolean'];
 };
 
 export type AuthProviders = {
   __typename?: 'AuthProviders';
-  google: Scalars['Boolean']['output'];
-  magicLink: Scalars['Boolean']['output'];
-  microsoft: Scalars['Boolean']['output'];
-  password: Scalars['Boolean']['output'];
+  google: Scalars['Boolean'];
+  magicLink: Scalars['Boolean'];
+  microsoft: Scalars['Boolean'];
+  password: Scalars['Boolean'];
   sso: Array<SsoIdentityProvider>;
 };
 
 export type AuthToken = {
   __typename?: 'AuthToken';
-  expiresAt: Scalars['DateTime']['output'];
-  token: Scalars['String']['output'];
+  expiresAt: Scalars['DateTime'];
+  token: Scalars['String'];
 };
 
 export type AuthTokenPair = {
@@ -449,23 +447,23 @@ export type AuthTokens = {
 
 export type AuthorizeApp = {
   __typename?: 'AuthorizeApp';
-  redirectUrl: Scalars['String']['output'];
+  redirectUrl: Scalars['String'];
 };
 
 export type AutocompleteResult = {
   __typename?: 'AutocompleteResult';
-  placeId: Scalars['String']['output'];
-  text: Scalars['String']['output'];
+  placeId: Scalars['String'];
+  text: Scalars['String'];
 };
 
 export type AvailableWorkspace = {
   __typename?: 'AvailableWorkspace';
-  displayName?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  inviteHash?: Maybe<Scalars['String']['output']>;
-  loginToken?: Maybe<Scalars['String']['output']>;
-  logo?: Maybe<Scalars['String']['output']>;
-  personalInviteToken?: Maybe<Scalars['String']['output']>;
+  displayName?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  inviteHash?: Maybe<Scalars['String']>;
+  loginToken?: Maybe<Scalars['String']>;
+  logo?: Maybe<Scalars['String']>;
+  personalInviteToken?: Maybe<Scalars['String']>;
   sso: Array<SsoConnection>;
   workspaceUrls: WorkspaceUrls;
 };
@@ -492,55 +490,55 @@ export enum AxisNameDisplay {
 
 export type BarChartConfiguration = {
   __typename?: 'BarChartConfiguration';
-  aggregateFieldMetadataId: Scalars['UUID']['output'];
+  aggregateFieldMetadataId: Scalars['UUID'];
   aggregateOperation: AggregateOperations;
   axisNameDisplay?: Maybe<AxisNameDisplay>;
-  color?: Maybe<Scalars['String']['output']>;
+  color?: Maybe<Scalars['String']>;
   configurationType: WidgetConfigurationType;
-  description?: Maybe<Scalars['String']['output']>;
-  displayDataLabel?: Maybe<Scalars['Boolean']['output']>;
-  displayLegend?: Maybe<Scalars['Boolean']['output']>;
-  filter?: Maybe<Scalars['JSON']['output']>;
-  firstDayOfTheWeek?: Maybe<Scalars['Int']['output']>;
+  description?: Maybe<Scalars['String']>;
+  displayDataLabel?: Maybe<Scalars['Boolean']>;
+  displayLegend?: Maybe<Scalars['Boolean']>;
+  filter?: Maybe<Scalars['JSON']>;
+  firstDayOfTheWeek?: Maybe<Scalars['Int']>;
   groupMode?: Maybe<BarChartGroupMode>;
-  isCumulative?: Maybe<Scalars['Boolean']['output']>;
+  isCumulative?: Maybe<Scalars['Boolean']>;
   layout: BarChartLayout;
-  omitNullValues?: Maybe<Scalars['Boolean']['output']>;
+  omitNullValues?: Maybe<Scalars['Boolean']>;
   primaryAxisDateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
-  primaryAxisGroupByFieldMetadataId: Scalars['UUID']['output'];
-  primaryAxisGroupBySubFieldName?: Maybe<Scalars['String']['output']>;
-  primaryAxisManualSortOrder?: Maybe<Array<Scalars['String']['output']>>;
+  primaryAxisGroupByFieldMetadataId: Scalars['UUID'];
+  primaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
+  primaryAxisManualSortOrder?: Maybe<Array<Scalars['String']>>;
   primaryAxisOrderBy?: Maybe<GraphOrderBy>;
-  rangeMax?: Maybe<Scalars['Float']['output']>;
-  rangeMin?: Maybe<Scalars['Float']['output']>;
+  rangeMax?: Maybe<Scalars['Float']>;
+  rangeMin?: Maybe<Scalars['Float']>;
   secondaryAxisGroupByDateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
-  secondaryAxisGroupByFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
-  secondaryAxisGroupBySubFieldName?: Maybe<Scalars['String']['output']>;
-  secondaryAxisManualSortOrder?: Maybe<Array<Scalars['String']['output']>>;
+  secondaryAxisGroupByFieldMetadataId?: Maybe<Scalars['UUID']>;
+  secondaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
+  secondaryAxisManualSortOrder?: Maybe<Array<Scalars['String']>>;
   secondaryAxisOrderBy?: Maybe<GraphOrderBy>;
-  splitMultiValueFields?: Maybe<Scalars['Boolean']['output']>;
-  timezone?: Maybe<Scalars['String']['output']>;
+  splitMultiValueFields?: Maybe<Scalars['Boolean']>;
+  timezone?: Maybe<Scalars['String']>;
 };
 
 export type BarChartData = {
   __typename?: 'BarChartData';
-  data: Array<Scalars['JSON']['output']>;
-  formattedToRawLookup: Scalars['JSON']['output'];
+  data: Array<Scalars['JSON']>;
+  formattedToRawLookup: Scalars['JSON'];
   groupMode: BarChartGroupMode;
-  hasTooManyGroups: Scalars['Boolean']['output'];
-  indexBy: Scalars['String']['output'];
-  keys: Array<Scalars['String']['output']>;
+  hasTooManyGroups: Scalars['Boolean'];
+  indexBy: Scalars['String'];
+  keys: Array<Scalars['String']>;
   layout: BarChartLayout;
   series: Array<BarChartSeries>;
-  showDataLabels: Scalars['Boolean']['output'];
-  showLegend: Scalars['Boolean']['output'];
-  xAxisLabel: Scalars['String']['output'];
-  yAxisLabel: Scalars['String']['output'];
+  showDataLabels: Scalars['Boolean'];
+  showLegend: Scalars['Boolean'];
+  xAxisLabel: Scalars['String'];
+  yAxisLabel: Scalars['String'];
 };
 
 export type BarChartDataInput = {
-  configuration: Scalars['JSON']['input'];
-  objectMetadataId: Scalars['UUID']['input'];
+  configuration: Scalars['JSON'];
+  objectMetadataId: Scalars['UUID'];
 };
 
 /** Display mode for bar charts with secondary grouping */
@@ -557,23 +555,23 @@ export enum BarChartLayout {
 
 export type BarChartSeries = {
   __typename?: 'BarChartSeries';
-  key: Scalars['String']['output'];
-  label: Scalars['String']['output'];
+  key: Scalars['String'];
+  label: Scalars['String'];
 };
 
 export type Billing = {
   __typename?: 'Billing';
-  billingUrl?: Maybe<Scalars['String']['output']>;
-  isBillingEnabled: Scalars['Boolean']['output'];
+  billingUrl?: Maybe<Scalars['String']>;
+  isBillingEnabled: Scalars['Boolean'];
   trialPeriods: Array<BillingTrialPeriod>;
 };
 
 export type BillingEndTrialPeriod = {
   __typename?: 'BillingEndTrialPeriod';
   /** Billing portal URL for payment method update (returned when no payment method exists) */
-  billingPortalUrl?: Maybe<Scalars['String']['output']>;
+  billingPortalUrl?: Maybe<Scalars['String']>;
   /** Boolean that confirms if a payment method was found */
-  hasPaymentMethod: Scalars['Boolean']['output'];
+  hasPaymentMethod: Scalars['Boolean'];
   /** Updated subscription status */
   status?: Maybe<SubscriptionStatus>;
 };
@@ -581,7 +579,7 @@ export type BillingEndTrialPeriod = {
 export type BillingEntitlement = {
   __typename?: 'BillingEntitlement';
   key: BillingEntitlementKey;
-  value: Scalars['Boolean']['output'];
+  value: Scalars['Boolean'];
 };
 
 export enum BillingEntitlementKey {
@@ -593,19 +591,19 @@ export enum BillingEntitlementKey {
 
 export type BillingLicensedProduct = BillingProductDto & {
   __typename?: 'BillingLicensedProduct';
-  description: Scalars['String']['output'];
-  images?: Maybe<Array<Scalars['String']['output']>>;
+  description: Scalars['String'];
+  images?: Maybe<Array<Scalars['String']>>;
   metadata: BillingProductMetadata;
-  name: Scalars['String']['output'];
+  name: Scalars['String'];
   prices?: Maybe<Array<BillingPriceLicensed>>;
 };
 
 export type BillingMeteredProduct = BillingProductDto & {
   __typename?: 'BillingMeteredProduct';
-  description: Scalars['String']['output'];
-  images?: Maybe<Array<Scalars['String']['output']>>;
+  description: Scalars['String'];
+  images?: Maybe<Array<Scalars['String']>>;
   metadata: BillingProductMetadata;
-  name: Scalars['String']['output'];
+  name: Scalars['String'];
   prices?: Maybe<Array<BillingPriceMetered>>;
 };
 
@@ -625,41 +623,41 @@ export enum BillingPlanKey {
 
 export type BillingPriceLicensed = {
   __typename?: 'BillingPriceLicensed';
-  creditAmount?: Maybe<Scalars['Float']['output']>;
+  creditAmount?: Maybe<Scalars['Float']>;
   priceUsageType: BillingUsageType;
   recurringInterval: SubscriptionInterval;
-  stripePriceId: Scalars['String']['output'];
-  unitAmount: Scalars['Float']['output'];
+  stripePriceId: Scalars['String'];
+  unitAmount: Scalars['Float'];
 };
 
 export type BillingPriceMetered = {
   __typename?: 'BillingPriceMetered';
   priceUsageType: BillingUsageType;
   recurringInterval: SubscriptionInterval;
-  stripePriceId: Scalars['String']['output'];
+  stripePriceId: Scalars['String'];
   tiers: Array<BillingPriceTier>;
 };
 
 export type BillingPriceTier = {
   __typename?: 'BillingPriceTier';
-  flatAmount?: Maybe<Scalars['Float']['output']>;
-  unitAmount?: Maybe<Scalars['Float']['output']>;
-  upTo?: Maybe<Scalars['Float']['output']>;
+  flatAmount?: Maybe<Scalars['Float']>;
+  unitAmount?: Maybe<Scalars['Float']>;
+  upTo?: Maybe<Scalars['Float']>;
 };
 
 export type BillingProduct = {
   __typename?: 'BillingProduct';
-  description: Scalars['String']['output'];
-  images?: Maybe<Array<Scalars['String']['output']>>;
+  description: Scalars['String'];
+  images?: Maybe<Array<Scalars['String']>>;
   metadata: BillingProductMetadata;
-  name: Scalars['String']['output'];
+  name: Scalars['String'];
 };
 
 export type BillingProductDto = {
-  description: Scalars['String']['output'];
-  images?: Maybe<Array<Scalars['String']['output']>>;
+  description: Scalars['String'];
+  images?: Maybe<Array<Scalars['String']>>;
   metadata: BillingProductMetadata;
-  name: Scalars['String']['output'];
+  name: Scalars['String'];
 };
 
 /** The different billing products available */
@@ -677,28 +675,28 @@ export type BillingProductMetadata = {
 
 export type BillingResourceCreditUsage = {
   __typename?: 'BillingResourceCreditUsage';
-  grantedCredits: Scalars['Float']['output'];
-  periodEnd: Scalars['DateTime']['output'];
-  periodStart: Scalars['DateTime']['output'];
+  grantedCredits: Scalars['Float'];
+  periodEnd: Scalars['DateTime'];
+  periodStart: Scalars['DateTime'];
   productKey: BillingProductKey;
-  rolloverCredits: Scalars['Float']['output'];
-  totalGrantedCredits: Scalars['Float']['output'];
-  unitPriceCents: Scalars['Float']['output'];
-  usedCredits: Scalars['Float']['output'];
+  rolloverCredits: Scalars['Float'];
+  totalGrantedCredits: Scalars['Float'];
+  unitPriceCents: Scalars['Float'];
+  usedCredits: Scalars['Float'];
 };
 
 export type BillingSession = {
   __typename?: 'BillingSession';
-  url?: Maybe<Scalars['String']['output']>;
+  url?: Maybe<Scalars['String']>;
 };
 
 export type BillingSubscription = {
   __typename?: 'BillingSubscription';
   billingSubscriptionItems?: Maybe<Array<BillingSubscriptionItem>>;
-  currentPeriodEnd?: Maybe<Scalars['DateTime']['output']>;
-  id: Scalars['UUID']['output'];
+  currentPeriodEnd?: Maybe<Scalars['DateTime']>;
+  id: Scalars['UUID'];
   interval?: Maybe<SubscriptionInterval>;
-  metadata: Scalars['JSON']['output'];
+  metadata: Scalars['JSON'];
   phases: Array<BillingSubscriptionSchedulePhase>;
   status: SubscriptionStatus;
 };
@@ -706,29 +704,29 @@ export type BillingSubscription = {
 export type BillingSubscriptionItem = {
   __typename?: 'BillingSubscriptionItem';
   billingProduct: BillingProductDto;
-  hasReachedCurrentPeriodCap: Scalars['Boolean']['output'];
-  id: Scalars['UUID']['output'];
-  quantity?: Maybe<Scalars['Float']['output']>;
-  stripePriceId: Scalars['String']['output'];
+  hasReachedCurrentPeriodCap: Scalars['Boolean'];
+  id: Scalars['UUID'];
+  quantity?: Maybe<Scalars['Float']>;
+  stripePriceId: Scalars['String'];
 };
 
 export type BillingSubscriptionSchedulePhase = {
   __typename?: 'BillingSubscriptionSchedulePhase';
-  end_date: Scalars['Float']['output'];
+  end_date: Scalars['Float'];
   items: Array<BillingSubscriptionSchedulePhaseItem>;
-  start_date: Scalars['Float']['output'];
+  start_date: Scalars['Float'];
 };
 
 export type BillingSubscriptionSchedulePhaseItem = {
   __typename?: 'BillingSubscriptionSchedulePhaseItem';
-  price: Scalars['String']['output'];
-  quantity?: Maybe<Scalars['Float']['output']>;
+  price: Scalars['String'];
+  quantity?: Maybe<Scalars['Float']>;
 };
 
 export type BillingTrialPeriod = {
   __typename?: 'BillingTrialPeriod';
-  duration: Scalars['Float']['output'];
-  isCreditCardRequired: Scalars['Boolean']['output'];
+  duration: Scalars['Float'];
+  isCreditCardRequired: Scalars['Boolean'];
 };
 
 export type BillingUpdate = {
@@ -745,25 +743,25 @@ export enum BillingUsageType {
 }
 
 export type BooleanFieldComparison = {
-  is?: InputMaybe<Scalars['Boolean']['input']>;
-  isNot?: InputMaybe<Scalars['Boolean']['input']>;
+  is?: InputMaybe<Scalars['Boolean']>;
+  isNot?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type CalendarChannel = {
   __typename?: 'CalendarChannel';
-  connectedAccountId: Scalars['UUID']['output'];
+  connectedAccountId: Scalars['UUID'];
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy;
-  createdAt: Scalars['DateTime']['output'];
-  handle: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  isContactAutoCreationEnabled: Scalars['Boolean']['output'];
-  isSyncEnabled: Scalars['Boolean']['output'];
+  createdAt: Scalars['DateTime'];
+  handle: Scalars['String'];
+  id: Scalars['UUID'];
+  isContactAutoCreationEnabled: Scalars['Boolean'];
+  isSyncEnabled: Scalars['Boolean'];
   syncStage: CalendarChannelSyncStage;
-  syncStageStartedAt?: Maybe<Scalars['DateTime']['output']>;
+  syncStageStartedAt?: Maybe<Scalars['DateTime']>;
   syncStatus: CalendarChannelSyncStatus;
-  syncedAt?: Maybe<Scalars['DateTime']['output']>;
-  throttleFailureCount: Scalars['Float']['output'];
-  updatedAt: Scalars['DateTime']['output'];
+  syncedAt?: Maybe<Scalars['DateTime']>;
+  throttleFailureCount: Scalars['Float'];
+  updatedAt: Scalars['DateTime'];
   visibility: CalendarChannelVisibility;
 };
 
@@ -806,7 +804,7 @@ export type CalendarConfiguration = {
 export type Captcha = {
   __typename?: 'Captcha';
   provider?: Maybe<CaptchaDriverType>;
-  siteKey?: Maybe<Scalars['String']['output']>;
+  siteKey?: Maybe<Scalars['String']>;
 };
 
 export enum CaptchaDriverType {
@@ -816,110 +814,110 @@ export enum CaptchaDriverType {
 
 export type ChannelSyncSuccess = {
   __typename?: 'ChannelSyncSuccess';
-  success: Scalars['Boolean']['output'];
+  success: Scalars['Boolean'];
 };
 
 export type ChatStreamCatchupChunks = {
   __typename?: 'ChatStreamCatchupChunks';
-  chunks: Array<Scalars['JSON']['output']>;
-  maxSeq: Scalars['Int']['output'];
+  chunks: Array<Scalars['JSON']>;
+  maxSeq: Scalars['Int'];
 };
 
 export type CheckUserExist = {
   __typename?: 'CheckUserExist';
-  availableWorkspacesCount: Scalars['Float']['output'];
-  exists: Scalars['Boolean']['output'];
-  isEmailVerified: Scalars['Boolean']['output'];
+  availableWorkspacesCount: Scalars['Float'];
+  exists: Scalars['Boolean'];
+  isEmailVerified: Scalars['Boolean'];
 };
 
 export type ClientAiModelConfig = {
   __typename?: 'ClientAiModelConfig';
-  contextWindowTokens?: Maybe<Scalars['Float']['output']>;
-  dataResidency?: Maybe<Scalars['String']['output']>;
-  inputCostPerMillionTokens?: Maybe<Scalars['Float']['output']>;
-  isDeprecated?: Maybe<Scalars['Boolean']['output']>;
-  isRecommended?: Maybe<Scalars['Boolean']['output']>;
-  label: Scalars['String']['output'];
-  maxOutputTokens?: Maybe<Scalars['Float']['output']>;
+  contextWindowTokens?: Maybe<Scalars['Float']>;
+  dataResidency?: Maybe<Scalars['String']>;
+  inputCostPerMillionTokens?: Maybe<Scalars['Float']>;
+  isDeprecated?: Maybe<Scalars['Boolean']>;
+  isRecommended?: Maybe<Scalars['Boolean']>;
+  label: Scalars['String'];
+  maxOutputTokens?: Maybe<Scalars['Float']>;
   modelFamily?: Maybe<ModelFamily>;
-  modelFamilyLabel?: Maybe<Scalars['String']['output']>;
-  modelId: Scalars['String']['output'];
+  modelFamilyLabel?: Maybe<Scalars['String']>;
+  modelId: Scalars['String'];
   nativeCapabilities?: Maybe<NativeModelCapabilities>;
-  outputCostPerMillionTokens?: Maybe<Scalars['Float']['output']>;
-  providerLabel?: Maybe<Scalars['String']['output']>;
-  providerName?: Maybe<Scalars['String']['output']>;
-  sdkPackage?: Maybe<Scalars['String']['output']>;
+  outputCostPerMillionTokens?: Maybe<Scalars['Float']>;
+  providerLabel?: Maybe<Scalars['String']>;
+  providerName?: Maybe<Scalars['String']>;
+  sdkPackage?: Maybe<Scalars['String']>;
 };
 
 export type ClientConfig = {
   __typename?: 'ClientConfig';
   aiModels: Array<ClientAiModelConfig>;
-  allowRequestsToTwentyIcons: Scalars['Boolean']['output'];
-  analyticsEnabled: Scalars['Boolean']['output'];
+  allowRequestsToTwentyIcons: Scalars['Boolean'];
+  analyticsEnabled: Scalars['Boolean'];
   api: ApiConfig;
-  appVersion?: Maybe<Scalars['String']['output']>;
+  appVersion?: Maybe<Scalars['String']>;
   authProviders: AuthProviders;
   billing: Billing;
-  calendarBookingPageId?: Maybe<Scalars['String']['output']>;
-  canManageFeatureFlags: Scalars['Boolean']['output'];
+  calendarBookingPageId?: Maybe<Scalars['String']>;
+  canManageFeatureFlags: Scalars['Boolean'];
   captcha: Captcha;
-  defaultSubdomain?: Maybe<Scalars['String']['output']>;
-  frontDomain: Scalars['String']['output'];
-  isAttachmentPreviewEnabled: Scalars['Boolean']['output'];
-  isClickHouseConfigured: Scalars['Boolean']['output'];
-  isCloudflareIntegrationEnabled: Scalars['Boolean']['output'];
-  isConfigVariablesInDbEnabled: Scalars['Boolean']['output'];
-  isEmailGroupEnabled: Scalars['Boolean']['output'];
-  isEmailVerificationRequired: Scalars['Boolean']['output'];
-  isGoogleCalendarEnabled: Scalars['Boolean']['output'];
-  isGoogleMessagingEnabled: Scalars['Boolean']['output'];
-  isImapSmtpCaldavEnabled: Scalars['Boolean']['output'];
-  isMicrosoftCalendarEnabled: Scalars['Boolean']['output'];
-  isMicrosoftMessagingEnabled: Scalars['Boolean']['output'];
-  isMultiWorkspaceEnabled: Scalars['Boolean']['output'];
-  isWorkspaceSchemaDDLLocked: Scalars['Boolean']['output'];
+  defaultSubdomain?: Maybe<Scalars['String']>;
+  frontDomain: Scalars['String'];
+  isAttachmentPreviewEnabled: Scalars['Boolean'];
+  isClickHouseConfigured: Scalars['Boolean'];
+  isCloudflareIntegrationEnabled: Scalars['Boolean'];
+  isConfigVariablesInDbEnabled: Scalars['Boolean'];
+  isEmailGroupEnabled: Scalars['Boolean'];
+  isEmailVerificationRequired: Scalars['Boolean'];
+  isGoogleCalendarEnabled: Scalars['Boolean'];
+  isGoogleMessagingEnabled: Scalars['Boolean'];
+  isImapSmtpCaldavEnabled: Scalars['Boolean'];
+  isMicrosoftCalendarEnabled: Scalars['Boolean'];
+  isMicrosoftMessagingEnabled: Scalars['Boolean'];
+  isMultiWorkspaceEnabled: Scalars['Boolean'];
+  isWorkspaceSchemaDDLLocked: Scalars['Boolean'];
   maintenance?: Maybe<ClientConfigMaintenanceMode>;
   publicFeatureFlags: Array<PublicFeatureFlag>;
   sentry: Sentry;
-  signInPrefilled: Scalars['Boolean']['output'];
+  signInPrefilled: Scalars['Boolean'];
   support: Support;
 };
 
 export type ClientConfigMaintenanceMode = {
   __typename?: 'ClientConfigMaintenanceMode';
-  endAt: Scalars['DateTime']['output'];
-  link?: Maybe<Scalars['String']['output']>;
-  startAt: Scalars['DateTime']['output'];
+  endAt: Scalars['DateTime'];
+  link?: Maybe<Scalars['String']>;
+  startAt: Scalars['DateTime'];
 };
 
 export type CollectionHash = {
   __typename?: 'CollectionHash';
   collectionName: AllMetadataName;
-  hash: Scalars['String']['output'];
+  hash: Scalars['String'];
 };
 
 export type CommandMenuItem = {
   __typename?: 'CommandMenuItem';
-  applicationId?: Maybe<Scalars['UUID']['output']>;
-  availabilityObjectMetadataId?: Maybe<Scalars['UUID']['output']>;
+  applicationId?: Maybe<Scalars['UUID']>;
+  availabilityObjectMetadataId?: Maybe<Scalars['UUID']>;
   availabilityType: CommandMenuItemAvailabilityType;
-  conditionalAvailabilityExpression?: Maybe<Scalars['String']['output']>;
-  createdAt: Scalars['DateTime']['output'];
+  conditionalAvailabilityExpression?: Maybe<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
   engineComponentKey: EngineComponentKey;
   frontComponent?: Maybe<FrontComponent>;
-  frontComponentId?: Maybe<Scalars['UUID']['output']>;
-  hotKeys?: Maybe<Array<Scalars['String']['output']>>;
-  icon?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  isPinned: Scalars['Boolean']['output'];
-  label: Scalars['String']['output'];
-  pageLayoutId?: Maybe<Scalars['UUID']['output']>;
+  frontComponentId?: Maybe<Scalars['UUID']>;
+  hotKeys?: Maybe<Array<Scalars['String']>>;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isPinned: Scalars['Boolean'];
+  label: Scalars['String'];
+  pageLayoutId?: Maybe<Scalars['UUID']>;
   payload?: Maybe<CommandMenuItemPayload>;
-  position: Scalars['Float']['output'];
-  shortLabel?: Maybe<Scalars['String']['output']>;
-  universalIdentifier?: Maybe<Scalars['UUID']['output']>;
-  updatedAt: Scalars['DateTime']['output'];
-  workflowVersionId?: Maybe<Scalars['UUID']['output']>;
+  position: Scalars['Float'];
+  shortLabel?: Maybe<Scalars['String']>;
+  universalIdentifier?: Maybe<Scalars['UUID']>;
+  updatedAt: Scalars['DateTime'];
+  workflowVersionId?: Maybe<Scalars['UUID']>;
 };
 
 export enum CommandMenuItemAvailabilityType {
@@ -933,205 +931,205 @@ export type CommandMenuItemPayload = ObjectMetadataCommandMenuItemPayload | Path
 
 export type ConnectedAccountPublicDto = {
   __typename?: 'ConnectedAccountPublicDTO';
-  applicationId?: Maybe<Scalars['UUID']['output']>;
-  authFailedAt?: Maybe<Scalars['DateTime']['output']>;
+  applicationId?: Maybe<Scalars['UUID']>;
+  authFailedAt?: Maybe<Scalars['DateTime']>;
   connectionParameters?: Maybe<PublicImapSmtpCaldavConnectionParameters>;
-  connectionProviderId?: Maybe<Scalars['UUID']['output']>;
-  createdAt: Scalars['DateTime']['output'];
-  handle: Scalars['String']['output'];
-  handleAliases?: Maybe<Array<Scalars['String']['output']>>;
-  id: Scalars['UUID']['output'];
-  lastCredentialsRefreshedAt?: Maybe<Scalars['DateTime']['output']>;
-  lastSignedInAt?: Maybe<Scalars['DateTime']['output']>;
-  name?: Maybe<Scalars['String']['output']>;
-  provider: Scalars['String']['output'];
-  scopes?: Maybe<Array<Scalars['String']['output']>>;
-  updatedAt: Scalars['DateTime']['output'];
-  userWorkspaceId: Scalars['UUID']['output'];
-  visibility: Scalars['String']['output'];
+  connectionProviderId?: Maybe<Scalars['UUID']>;
+  createdAt: Scalars['DateTime'];
+  handle: Scalars['String'];
+  handleAliases?: Maybe<Array<Scalars['String']>>;
+  id: Scalars['UUID'];
+  lastCredentialsRefreshedAt?: Maybe<Scalars['DateTime']>;
+  lastSignedInAt?: Maybe<Scalars['DateTime']>;
+  name?: Maybe<Scalars['String']>;
+  provider: Scalars['String'];
+  scopes?: Maybe<Array<Scalars['String']>>;
+  updatedAt: Scalars['DateTime'];
+  userWorkspaceId: Scalars['UUID'];
+  visibility: Scalars['String'];
 };
 
 export type ConnectedImapSmtpCaldavAccount = {
   __typename?: 'ConnectedImapSmtpCaldavAccount';
   connectionParameters?: Maybe<ImapSmtpCaldavPublicConnectionParameters>;
-  handle: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  provider: Scalars['String']['output'];
-  userWorkspaceId: Scalars['UUID']['output'];
+  handle: Scalars['String'];
+  id: Scalars['UUID'];
+  provider: Scalars['String'];
+  userWorkspaceId: Scalars['UUID'];
 };
 
 export type ConnectionParametersInput = {
-  host: Scalars['String']['input'];
-  password?: InputMaybe<Scalars['String']['input']>;
-  port: Scalars['Float']['input'];
-  secure?: InputMaybe<Scalars['Boolean']['input']>;
-  username?: InputMaybe<Scalars['String']['input']>;
+  host: Scalars['String'];
+  password?: InputMaybe<Scalars['String']>;
+  port: Scalars['Float'];
+  secure?: InputMaybe<Scalars['Boolean']>;
+  username?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateAgentInput = {
-  description?: InputMaybe<Scalars['String']['input']>;
-  evaluationInputs?: InputMaybe<Array<Scalars['String']['input']>>;
-  icon?: InputMaybe<Scalars['String']['input']>;
-  label: Scalars['String']['input'];
-  modelConfiguration?: InputMaybe<Scalars['JSON']['input']>;
-  modelId: Scalars['String']['input'];
-  name?: InputMaybe<Scalars['String']['input']>;
-  prompt: Scalars['String']['input'];
-  responseFormat?: InputMaybe<Scalars['JSON']['input']>;
-  roleId?: InputMaybe<Scalars['UUID']['input']>;
+  description?: InputMaybe<Scalars['String']>;
+  evaluationInputs?: InputMaybe<Array<Scalars['String']>>;
+  icon?: InputMaybe<Scalars['String']>;
+  label: Scalars['String'];
+  modelConfiguration?: InputMaybe<Scalars['JSON']>;
+  modelId: Scalars['String'];
+  name?: InputMaybe<Scalars['String']>;
+  prompt: Scalars['String'];
+  responseFormat?: InputMaybe<Scalars['JSON']>;
+  roleId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type CreateApiKeyInput = {
-  expiresAt: Scalars['String']['input'];
-  name: Scalars['String']['input'];
-  revokedAt?: InputMaybe<Scalars['String']['input']>;
-  roleId: Scalars['UUID']['input'];
+  expiresAt: Scalars['String'];
+  name: Scalars['String'];
+  revokedAt?: InputMaybe<Scalars['String']>;
+  roleId: Scalars['UUID'];
 };
 
 export type CreateAppTokenInput = {
-  expiresAt: Scalars['DateTime']['input'];
+  expiresAt: Scalars['DateTime'];
 };
 
 export type CreateApplicationRegistration = {
   __typename?: 'CreateApplicationRegistration';
   applicationRegistration: ApplicationRegistration;
-  clientSecret: Scalars['String']['output'];
+  clientSecret: Scalars['String'];
 };
 
 export type CreateApplicationRegistrationInput = {
-  name: Scalars['String']['input'];
-  oAuthRedirectUris?: InputMaybe<Array<Scalars['String']['input']>>;
-  oAuthScopes?: InputMaybe<Array<Scalars['String']['input']>>;
-  universalIdentifier?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String'];
+  oAuthRedirectUris?: InputMaybe<Array<Scalars['String']>>;
+  oAuthScopes?: InputMaybe<Array<Scalars['String']>>;
+  universalIdentifier?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateApplicationRegistrationVariableInput = {
-  applicationRegistrationId: Scalars['String']['input'];
-  description?: InputMaybe<Scalars['String']['input']>;
-  isSecret?: InputMaybe<Scalars['Boolean']['input']>;
-  key: Scalars['String']['input'];
-  value: Scalars['String']['input'];
+  applicationRegistrationId: Scalars['String'];
+  description?: InputMaybe<Scalars['String']>;
+  isSecret?: InputMaybe<Scalars['Boolean']>;
+  key: Scalars['String'];
+  value: Scalars['String'];
 };
 
 export type CreateApprovedAccessDomainInput = {
-  domain: Scalars['String']['input'];
-  email: Scalars['String']['input'];
+  domain: Scalars['String'];
+  email: Scalars['String'];
 };
 
 export type CreateCommandMenuItemInput = {
-  availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
-  conditionalAvailabilityExpression?: InputMaybe<Scalars['String']['input']>;
+  conditionalAvailabilityExpression?: InputMaybe<Scalars['String']>;
   engineComponentKey: EngineComponentKey;
-  frontComponentId?: InputMaybe<Scalars['UUID']['input']>;
-  hotKeys?: InputMaybe<Array<Scalars['String']['input']>>;
-  icon?: InputMaybe<Scalars['String']['input']>;
-  isPinned?: InputMaybe<Scalars['Boolean']['input']>;
-  label: Scalars['String']['input'];
-  pageLayoutId?: InputMaybe<Scalars['UUID']['input']>;
-  payload?: InputMaybe<Scalars['JSON']['input']>;
-  position?: InputMaybe<Scalars['Float']['input']>;
-  shortLabel?: InputMaybe<Scalars['String']['input']>;
-  workflowVersionId?: InputMaybe<Scalars['UUID']['input']>;
+  frontComponentId?: InputMaybe<Scalars['UUID']>;
+  hotKeys?: InputMaybe<Array<Scalars['String']>>;
+  icon?: InputMaybe<Scalars['String']>;
+  isPinned?: InputMaybe<Scalars['Boolean']>;
+  label: Scalars['String'];
+  pageLayoutId?: InputMaybe<Scalars['UUID']>;
+  payload?: InputMaybe<Scalars['JSON']>;
+  position?: InputMaybe<Scalars['Float']>;
+  shortLabel?: InputMaybe<Scalars['String']>;
+  workflowVersionId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type CreateEmailGroupChannelInput = {
-  handle: Scalars['String']['input'];
+  handle: Scalars['String'];
 };
 
 export type CreateEmailGroupChannelOutput = {
   __typename?: 'CreateEmailGroupChannelOutput';
-  forwardingAddress: Scalars['String']['output'];
+  forwardingAddress: Scalars['String'];
   messageChannel: MessageChannel;
 };
 
 export type CreateFieldInput = {
-  defaultValue?: InputMaybe<Scalars['JSON']['input']>;
-  description?: InputMaybe<Scalars['String']['input']>;
-  icon?: InputMaybe<Scalars['String']['input']>;
-  isActive?: InputMaybe<Scalars['Boolean']['input']>;
-  isCustom?: InputMaybe<Scalars['Boolean']['input']>;
-  isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']['input']>;
-  isNullable?: InputMaybe<Scalars['Boolean']['input']>;
-  isRemoteCreation?: InputMaybe<Scalars['Boolean']['input']>;
-  isSystem?: InputMaybe<Scalars['Boolean']['input']>;
-  isUIReadOnly?: InputMaybe<Scalars['Boolean']['input']>;
-  isUnique?: InputMaybe<Scalars['Boolean']['input']>;
-  label: Scalars['String']['input'];
-  morphRelationsCreationPayload?: InputMaybe<Array<Scalars['JSON']['input']>>;
-  name: Scalars['String']['input'];
-  objectMetadataId: Scalars['UUID']['input'];
-  options?: InputMaybe<Scalars['JSON']['input']>;
-  relationCreationPayload?: InputMaybe<Scalars['JSON']['input']>;
-  settings?: InputMaybe<Scalars['JSON']['input']>;
+  defaultValue?: InputMaybe<Scalars['JSON']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  isActive?: InputMaybe<Scalars['Boolean']>;
+  isCustom?: InputMaybe<Scalars['Boolean']>;
+  isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
+  isNullable?: InputMaybe<Scalars['Boolean']>;
+  isRemoteCreation?: InputMaybe<Scalars['Boolean']>;
+  isSystem?: InputMaybe<Scalars['Boolean']>;
+  isUIReadOnly?: InputMaybe<Scalars['Boolean']>;
+  isUnique?: InputMaybe<Scalars['Boolean']>;
+  label: Scalars['String'];
+  morphRelationsCreationPayload?: InputMaybe<Array<Scalars['JSON']>>;
+  name: Scalars['String'];
+  objectMetadataId: Scalars['UUID'];
+  options?: InputMaybe<Scalars['JSON']>;
+  relationCreationPayload?: InputMaybe<Scalars['JSON']>;
+  settings?: InputMaybe<Scalars['JSON']>;
   type: FieldMetadataType;
 };
 
 export type CreateFrontComponentInput = {
-  builtComponentChecksum: Scalars['String']['input'];
-  builtComponentPath: Scalars['String']['input'];
-  componentName: Scalars['String']['input'];
-  description?: InputMaybe<Scalars['String']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  name: Scalars['String']['input'];
-  sourceComponentPath: Scalars['String']['input'];
+  builtComponentChecksum: Scalars['String'];
+  builtComponentPath: Scalars['String'];
+  componentName: Scalars['String'];
+  description?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  name: Scalars['String'];
+  sourceComponentPath: Scalars['String'];
 };
 
 export type CreateIndexFieldInput = {
-  fieldMetadataId: Scalars['UUID']['input'];
-  subFieldName?: InputMaybe<Scalars['String']['input']>;
+  fieldMetadataId: Scalars['UUID'];
+  subFieldName?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateIndexInput = {
   fields: Array<CreateIndexFieldInput>;
   indexType?: IndexType;
-  objectMetadataId: Scalars['UUID']['input'];
+  objectMetadataId: Scalars['UUID'];
 };
 
 export type CreateLogicFunctionFromSourceInput = {
-  cronTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
-  databaseEventTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
-  description?: InputMaybe<Scalars['String']['input']>;
-  httpRouteTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  name: Scalars['String']['input'];
-  source?: InputMaybe<Scalars['JSON']['input']>;
-  timeoutSeconds?: InputMaybe<Scalars['Float']['input']>;
-  toolTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
-  universalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
-  workflowActionTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
+  cronTriggerSettings?: InputMaybe<Scalars['JSON']>;
+  databaseEventTriggerSettings?: InputMaybe<Scalars['JSON']>;
+  description?: InputMaybe<Scalars['String']>;
+  httpRouteTriggerSettings?: InputMaybe<Scalars['JSON']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  name: Scalars['String'];
+  source?: InputMaybe<Scalars['JSON']>;
+  timeoutSeconds?: InputMaybe<Scalars['Float']>;
+  toolTriggerSettings?: InputMaybe<Scalars['JSON']>;
+  universalIdentifier?: InputMaybe<Scalars['UUID']>;
+  workflowActionTriggerSettings?: InputMaybe<Scalars['JSON']>;
 };
 
 export type CreateNavigationMenuItemInput = {
-  color?: InputMaybe<Scalars['String']['input']>;
-  folderId?: InputMaybe<Scalars['UUID']['input']>;
-  icon?: InputMaybe<Scalars['String']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  link?: InputMaybe<Scalars['String']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  pageLayoutId?: InputMaybe<Scalars['UUID']['input']>;
-  position?: InputMaybe<Scalars['Float']['input']>;
-  targetObjectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  targetRecordId?: InputMaybe<Scalars['UUID']['input']>;
+  color?: InputMaybe<Scalars['String']>;
+  folderId?: InputMaybe<Scalars['UUID']>;
+  icon?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  link?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  pageLayoutId?: InputMaybe<Scalars['UUID']>;
+  position?: InputMaybe<Scalars['Float']>;
+  targetObjectMetadataId?: InputMaybe<Scalars['UUID']>;
+  targetRecordId?: InputMaybe<Scalars['UUID']>;
   type: NavigationMenuItemType;
-  userWorkspaceId?: InputMaybe<Scalars['UUID']['input']>;
-  viewId?: InputMaybe<Scalars['UUID']['input']>;
+  userWorkspaceId?: InputMaybe<Scalars['UUID']>;
+  viewId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type CreateObjectInput = {
-  color?: InputMaybe<Scalars['String']['input']>;
-  description?: InputMaybe<Scalars['String']['input']>;
-  icon?: InputMaybe<Scalars['String']['input']>;
-  isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']['input']>;
-  isRemote?: InputMaybe<Scalars['Boolean']['input']>;
-  labelPlural: Scalars['String']['input'];
-  labelSingular: Scalars['String']['input'];
-  namePlural: Scalars['String']['input'];
-  nameSingular: Scalars['String']['input'];
-  primaryKeyColumnType?: InputMaybe<Scalars['String']['input']>;
-  primaryKeyFieldMetadataSettings?: InputMaybe<Scalars['JSON']['input']>;
-  shortcut?: InputMaybe<Scalars['String']['input']>;
-  skipNameField?: InputMaybe<Scalars['Boolean']['input']>;
+  color?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
+  isRemote?: InputMaybe<Scalars['Boolean']>;
+  labelPlural: Scalars['String'];
+  labelSingular: Scalars['String'];
+  namePlural: Scalars['String'];
+  nameSingular: Scalars['String'];
+  primaryKeyColumnType?: InputMaybe<Scalars['String']>;
+  primaryKeyFieldMetadataSettings?: InputMaybe<Scalars['JSON']>;
+  shortcut?: InputMaybe<Scalars['String']>;
+  skipNameField?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type CreateOneAppTokenInput = {
@@ -1155,145 +1153,145 @@ export type CreateOneObjectInput = {
 };
 
 export type CreatePageLayoutInput = {
-  name: Scalars['String']['input'];
-  objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  name: Scalars['String'];
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
   type?: InputMaybe<PageLayoutType>;
 };
 
 export type CreatePageLayoutTabInput = {
   layoutMode?: InputMaybe<PageLayoutTabLayoutMode>;
-  pageLayoutId: Scalars['UUID']['input'];
-  position?: InputMaybe<Scalars['Float']['input']>;
-  title: Scalars['String']['input'];
+  pageLayoutId: Scalars['UUID'];
+  position?: InputMaybe<Scalars['Float']>;
+  title: Scalars['String'];
 };
 
 export type CreatePageLayoutWidgetInput = {
-  configuration: Scalars['JSON']['input'];
+  configuration: Scalars['JSON'];
   gridPosition: GridPositionInput;
-  objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  pageLayoutTabId: Scalars['UUID']['input'];
-  position?: InputMaybe<Scalars['JSON']['input']>;
-  title: Scalars['String']['input'];
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
+  pageLayoutTabId: Scalars['UUID'];
+  position?: InputMaybe<Scalars['JSON']>;
+  title: Scalars['String'];
   type: WidgetType;
 };
 
 export type CreateRoleInput = {
-  canAccessAllTools?: InputMaybe<Scalars['Boolean']['input']>;
-  canBeAssignedToAgents?: InputMaybe<Scalars['Boolean']['input']>;
-  canBeAssignedToApiKeys?: InputMaybe<Scalars['Boolean']['input']>;
-  canBeAssignedToUsers?: InputMaybe<Scalars['Boolean']['input']>;
-  canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canUpdateAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canUpdateAllSettings?: InputMaybe<Scalars['Boolean']['input']>;
-  description?: InputMaybe<Scalars['String']['input']>;
-  icon?: InputMaybe<Scalars['String']['input']>;
-  id?: InputMaybe<Scalars['String']['input']>;
-  label: Scalars['String']['input'];
+  canAccessAllTools?: InputMaybe<Scalars['Boolean']>;
+  canBeAssignedToAgents?: InputMaybe<Scalars['Boolean']>;
+  canBeAssignedToApiKeys?: InputMaybe<Scalars['Boolean']>;
+  canBeAssignedToUsers?: InputMaybe<Scalars['Boolean']>;
+  canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canUpdateAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canUpdateAllSettings?: InputMaybe<Scalars['Boolean']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
+  label: Scalars['String'];
 };
 
 export type CreateSkillInput = {
-  content: Scalars['String']['input'];
-  description?: InputMaybe<Scalars['String']['input']>;
-  icon?: InputMaybe<Scalars['String']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  label: Scalars['String']['input'];
-  name: Scalars['String']['input'];
+  content: Scalars['String'];
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  label: Scalars['String'];
+  name: Scalars['String'];
 };
 
 export type CreateViewFieldGroupInput = {
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  isVisible?: InputMaybe<Scalars['Boolean']['input']>;
-  name: Scalars['String']['input'];
-  position?: InputMaybe<Scalars['Float']['input']>;
-  viewId: Scalars['UUID']['input'];
+  id?: InputMaybe<Scalars['UUID']>;
+  isVisible?: InputMaybe<Scalars['Boolean']>;
+  name: Scalars['String'];
+  position?: InputMaybe<Scalars['Float']>;
+  viewId: Scalars['UUID'];
 };
 
 export type CreateViewFieldInput = {
   aggregateOperation?: InputMaybe<AggregateOperations>;
-  fieldMetadataId: Scalars['UUID']['input'];
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  isVisible?: InputMaybe<Scalars['Boolean']['input']>;
-  position?: InputMaybe<Scalars['Float']['input']>;
-  size?: InputMaybe<Scalars['Float']['input']>;
-  viewFieldGroupId?: InputMaybe<Scalars['UUID']['input']>;
-  viewId: Scalars['UUID']['input'];
+  fieldMetadataId: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
+  isVisible?: InputMaybe<Scalars['Boolean']>;
+  position?: InputMaybe<Scalars['Float']>;
+  size?: InputMaybe<Scalars['Float']>;
+  viewFieldGroupId?: InputMaybe<Scalars['UUID']>;
+  viewId: Scalars['UUID'];
 };
 
 export type CreateViewFilterGroupInput = {
-  id?: InputMaybe<Scalars['UUID']['input']>;
+  id?: InputMaybe<Scalars['UUID']>;
   logicalOperator?: InputMaybe<ViewFilterGroupLogicalOperator>;
-  parentViewFilterGroupId?: InputMaybe<Scalars['UUID']['input']>;
-  positionInViewFilterGroup?: InputMaybe<Scalars['Float']['input']>;
-  viewId: Scalars['UUID']['input'];
+  parentViewFilterGroupId?: InputMaybe<Scalars['UUID']>;
+  positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
+  viewId: Scalars['UUID'];
 };
 
 export type CreateViewFilterInput = {
-  fieldMetadataId: Scalars['UUID']['input'];
-  id?: InputMaybe<Scalars['UUID']['input']>;
+  fieldMetadataId: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
   operand?: InputMaybe<ViewFilterOperand>;
-  positionInViewFilterGroup?: InputMaybe<Scalars['Float']['input']>;
-  relationTargetFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  subFieldName?: InputMaybe<Scalars['String']['input']>;
-  value: Scalars['JSON']['input'];
-  viewFilterGroupId?: InputMaybe<Scalars['UUID']['input']>;
-  viewId: Scalars['UUID']['input'];
+  positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
+  relationTargetFieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  subFieldName?: InputMaybe<Scalars['String']>;
+  value: Scalars['JSON'];
+  viewFilterGroupId?: InputMaybe<Scalars['UUID']>;
+  viewId: Scalars['UUID'];
 };
 
 export type CreateViewGroupInput = {
-  fieldValue: Scalars['String']['input'];
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  isVisible?: InputMaybe<Scalars['Boolean']['input']>;
-  position?: InputMaybe<Scalars['Float']['input']>;
-  viewId: Scalars['UUID']['input'];
+  fieldValue: Scalars['String'];
+  id?: InputMaybe<Scalars['UUID']>;
+  isVisible?: InputMaybe<Scalars['Boolean']>;
+  position?: InputMaybe<Scalars['Float']>;
+  viewId: Scalars['UUID'];
 };
 
 export type CreateViewInput = {
-  anyFieldFilterValue?: InputMaybe<Scalars['String']['input']>;
-  calendarFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  anyFieldFilterValue?: InputMaybe<Scalars['String']>;
+  calendarFieldMetadataId?: InputMaybe<Scalars['UUID']>;
   calendarLayout?: InputMaybe<ViewCalendarLayout>;
-  icon: Scalars['String']['input'];
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  isCompact?: InputMaybe<Scalars['Boolean']['input']>;
+  icon: Scalars['String'];
+  id?: InputMaybe<Scalars['UUID']>;
+  isCompact?: InputMaybe<Scalars['Boolean']>;
   kanbanAggregateOperation?: InputMaybe<AggregateOperations>;
-  kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']>;
   key?: InputMaybe<ViewKey>;
-  mainGroupByFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  name: Scalars['String']['input'];
-  objectMetadataId: Scalars['UUID']['input'];
+  mainGroupByFieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  name: Scalars['String'];
+  objectMetadataId: Scalars['UUID'];
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
-  position?: InputMaybe<Scalars['Float']['input']>;
-  shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
+  position?: InputMaybe<Scalars['Float']>;
+  shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']>;
   type?: InputMaybe<ViewType>;
   visibility?: InputMaybe<ViewVisibility>;
 };
 
 export type CreateViewSortInput = {
   direction?: InputMaybe<ViewSortDirection>;
-  fieldMetadataId: Scalars['UUID']['input'];
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  subFieldName?: InputMaybe<Scalars['String']['input']>;
-  viewId: Scalars['UUID']['input'];
+  fieldMetadataId: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
+  subFieldName?: InputMaybe<Scalars['String']>;
+  viewId: Scalars['UUID'];
 };
 
 export type CreateWebhookInput = {
-  description?: InputMaybe<Scalars['String']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  operations: Array<Scalars['String']['input']>;
-  secret?: InputMaybe<Scalars['String']['input']>;
-  targetUrl: Scalars['String']['input'];
+  description?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  operations: Array<Scalars['String']>;
+  secret?: InputMaybe<Scalars['String']>;
+  targetUrl: Scalars['String'];
 };
 
 export type CursorPaging = {
   /** Paginate after opaque cursor */
-  after?: InputMaybe<Scalars['ConnectionCursor']['input']>;
+  after?: InputMaybe<Scalars['ConnectionCursor']>;
   /** Paginate before opaque cursor */
-  before?: InputMaybe<Scalars['ConnectionCursor']['input']>;
+  before?: InputMaybe<Scalars['ConnectionCursor']>;
   /** Paginate first */
-  first?: InputMaybe<Scalars['Int']['input']>;
+  first?: InputMaybe<Scalars['Int']>;
   /** Paginate last */
-  last?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 /** Database Event Action */
@@ -1307,141 +1305,141 @@ export enum DatabaseEventAction {
 }
 
 export type DeleteApprovedAccessDomainInput = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 export type DeleteOneFieldInput = {
   /** The id of the field to delete. */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 export type DeleteOneIndexInput = {
   /** The id of the custom index to delete. */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 export type DeleteOneObjectInput = {
   /** The id of the record to delete. */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 export type DeleteSso = {
   __typename?: 'DeleteSso';
-  identityProviderId: Scalars['UUID']['output'];
+  identityProviderId: Scalars['UUID'];
 };
 
 export type DeleteSsoInput = {
-  identityProviderId: Scalars['UUID']['input'];
+  identityProviderId: Scalars['UUID'];
 };
 
 export type DeleteTwoFactorAuthenticationMethod = {
   __typename?: 'DeleteTwoFactorAuthenticationMethod';
   /** Boolean that confirms query was dispatched */
-  success: Scalars['Boolean']['output'];
+  success: Scalars['Boolean'];
 };
 
 export type DeleteViewFieldGroupInput = {
   /** The id of the view field group to delete. */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 export type DeleteViewFieldInput = {
   /** The id of the view field to delete. */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 export type DeleteViewFilterInput = {
   /** The id of the view filter to delete. */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 export type DeleteViewGroupInput = {
   /** The id of the view group to delete. */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 export type DeleteViewSortInput = {
   /** The id of the view sort to delete. */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 export type DeletedWorkspaceMember = {
   __typename?: 'DeletedWorkspaceMember';
-  avatarUrl?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
+  avatarUrl?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
   name: FullName;
-  userEmail: Scalars['String']['output'];
-  userWorkspaceId?: Maybe<Scalars['UUID']['output']>;
+  userEmail: Scalars['String'];
+  userWorkspaceId?: Maybe<Scalars['UUID']>;
 };
 
 export type DestroyViewFieldGroupInput = {
   /** The id of the view field group to destroy. */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 export type DestroyViewFieldInput = {
   /** The id of the view field to destroy. */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 export type DestroyViewFilterInput = {
   /** The id of the view filter to destroy. */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 export type DestroyViewGroupInput = {
   /** The id of the view group to destroy. */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 export type DestroyViewSortInput = {
   /** The id of the view sort to destroy. */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 export type DevelopmentApplication = {
   __typename?: 'DevelopmentApplication';
-  id: Scalars['String']['output'];
-  universalIdentifier: Scalars['String']['output'];
+  id: Scalars['String'];
+  universalIdentifier: Scalars['String'];
 };
 
 export type DomainRecord = {
   __typename?: 'DomainRecord';
-  key: Scalars['String']['output'];
-  status: Scalars['String']['output'];
-  type: Scalars['String']['output'];
-  validationType: Scalars['String']['output'];
-  value: Scalars['String']['output'];
+  key: Scalars['String'];
+  status: Scalars['String'];
+  type: Scalars['String'];
+  validationType: Scalars['String'];
+  value: Scalars['String'];
 };
 
 export type DomainValidRecords = {
   __typename?: 'DomainValidRecords';
-  domain: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
+  domain: Scalars['String'];
+  id: Scalars['UUID'];
   records: Array<DomainRecord>;
 };
 
 export type DuplicatedDashboard = {
   __typename?: 'DuplicatedDashboard';
-  createdAt: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  pageLayoutId?: Maybe<Scalars['UUID']['output']>;
-  position: Scalars['Float']['output'];
-  title?: Maybe<Scalars['String']['output']>;
-  updatedAt: Scalars['String']['output'];
+  createdAt: Scalars['String'];
+  id: Scalars['UUID'];
+  pageLayoutId?: Maybe<Scalars['UUID']>;
+  position: Scalars['Float'];
+  title?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['String'];
 };
 
 export type EditSso = {
   __typename?: 'EditSso';
-  id: Scalars['UUID']['output'];
-  issuer: Scalars['String']['output'];
-  name: Scalars['String']['output'];
+  id: Scalars['UUID'];
+  issuer: Scalars['String'];
+  name: Scalars['String'];
   status: SsoIdentityProviderStatus;
   type: IdentityProviderType;
 };
 
 export type EditSsoInput = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
   status: SsoIdentityProviderStatus;
 };
 
@@ -1454,7 +1452,7 @@ export type EmailAccountConnectionParameters = {
 export type EmailPasswordResetLink = {
   __typename?: 'EmailPasswordResetLink';
   /** Boolean that confirms query was dispatched */
-  success: Scalars['Boolean']['output'];
+  success: Scalars['Boolean'];
 };
 
 export type EmailThreadConfiguration = {
@@ -1464,13 +1462,13 @@ export type EmailThreadConfiguration = {
 
 export type EmailingDomain = {
   __typename?: 'EmailingDomain';
-  createdAt: Scalars['DateTime']['output'];
-  domain: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
+  createdAt: Scalars['DateTime'];
+  domain: Scalars['String'];
+  id: Scalars['UUID'];
   status: EmailingDomainStatus;
-  updatedAt: Scalars['DateTime']['output'];
+  updatedAt: Scalars['DateTime'];
   verificationRecords?: Maybe<Array<VerificationRecord>>;
-  verifiedAt?: Maybe<Scalars['DateTime']['output']>;
+  verifiedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export enum EmailingDomainStatus {
@@ -1556,45 +1554,45 @@ export enum EngineComponentKey {
 
 export type EnterpriseLicenseInfoDto = {
   __typename?: 'EnterpriseLicenseInfoDTO';
-  expiresAt?: Maybe<Scalars['DateTime']['output']>;
-  isValid: Scalars['Boolean']['output'];
-  licensee?: Maybe<Scalars['String']['output']>;
-  subscriptionId?: Maybe<Scalars['String']['output']>;
+  expiresAt?: Maybe<Scalars['DateTime']>;
+  isValid: Scalars['Boolean'];
+  licensee?: Maybe<Scalars['String']>;
+  subscriptionId?: Maybe<Scalars['String']>;
 };
 
 export type EnterpriseSubscriptionStatusDto = {
   __typename?: 'EnterpriseSubscriptionStatusDTO';
-  cancelAt?: Maybe<Scalars['DateTime']['output']>;
-  currentPeriodEnd?: Maybe<Scalars['DateTime']['output']>;
-  expiresAt?: Maybe<Scalars['DateTime']['output']>;
-  isCancellationScheduled: Scalars['Boolean']['output'];
-  licensee?: Maybe<Scalars['String']['output']>;
-  status: Scalars['String']['output'];
+  cancelAt?: Maybe<Scalars['DateTime']>;
+  currentPeriodEnd?: Maybe<Scalars['DateTime']>;
+  expiresAt?: Maybe<Scalars['DateTime']>;
+  isCancellationScheduled: Scalars['Boolean'];
+  licensee?: Maybe<Scalars['String']>;
+  status: Scalars['String'];
 };
 
 export type EventLogDateRangeInput = {
-  end?: InputMaybe<Scalars['DateTime']['input']>;
-  start?: InputMaybe<Scalars['DateTime']['input']>;
+  end?: InputMaybe<Scalars['DateTime']>;
+  start?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type EventLogFiltersInput = {
   dateRange?: InputMaybe<EventLogDateRangeInput>;
-  eventType?: InputMaybe<Scalars['String']['input']>;
-  objectMetadataId?: InputMaybe<Scalars['String']['input']>;
-  recordId?: InputMaybe<Scalars['String']['input']>;
-  userWorkspaceId?: InputMaybe<Scalars['String']['input']>;
+  eventType?: InputMaybe<Scalars['String']>;
+  objectMetadataId?: InputMaybe<Scalars['String']>;
+  recordId?: InputMaybe<Scalars['String']>;
+  userWorkspaceId?: InputMaybe<Scalars['String']>;
 };
 
 export type EventLogPageInfo = {
   __typename?: 'EventLogPageInfo';
-  endCursor?: Maybe<Scalars['String']['output']>;
-  hasNextPage: Scalars['Boolean']['output'];
+  endCursor?: Maybe<Scalars['String']>;
+  hasNextPage: Scalars['Boolean'];
 };
 
 export type EventLogQueryInput = {
-  after?: InputMaybe<Scalars['String']['input']>;
+  after?: InputMaybe<Scalars['String']>;
   filters?: InputMaybe<EventLogFiltersInput>;
-  first?: InputMaybe<Scalars['Int']['input']>;
+  first?: InputMaybe<Scalars['Int']>;
   table: EventLogTable;
 };
 
@@ -1602,18 +1600,18 @@ export type EventLogQueryResult = {
   __typename?: 'EventLogQueryResult';
   pageInfo: EventLogPageInfo;
   records: Array<EventLogRecord>;
-  totalCount: Scalars['Int']['output'];
+  totalCount: Scalars['Int'];
 };
 
 export type EventLogRecord = {
   __typename?: 'EventLogRecord';
-  event: Scalars['String']['output'];
-  isCustom?: Maybe<Scalars['Boolean']['output']>;
-  objectMetadataId?: Maybe<Scalars['String']['output']>;
-  properties?: Maybe<Scalars['JSON']['output']>;
-  recordId?: Maybe<Scalars['String']['output']>;
-  timestamp: Scalars['DateTime']['output'];
-  userId?: Maybe<Scalars['String']['output']>;
+  event: Scalars['String'];
+  isCustom?: Maybe<Scalars['Boolean']>;
+  objectMetadataId?: Maybe<Scalars['String']>;
+  properties?: Maybe<Scalars['JSON']>;
+  recordId?: Maybe<Scalars['String']>;
+  timestamp: Scalars['DateTime'];
+  userId?: Maybe<Scalars['String']>;
 };
 
 export enum EventLogTable {
@@ -1626,22 +1624,22 @@ export enum EventLogTable {
 
 export type EventSubscription = {
   __typename?: 'EventSubscription';
-  eventStreamId: Scalars['String']['output'];
+  eventStreamId: Scalars['String'];
   metadataEvents: Array<MetadataEvent>;
   objectRecordEventsWithQueryIds: Array<ObjectRecordEventWithQueryIds>;
 };
 
 export type ExecuteOneLogicFunctionInput = {
   /** Id of the logic function to execute */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
   /** Payload in JSON format */
-  payload: Scalars['JSON']['input'];
+  payload: Scalars['JSON'];
 };
 
 export type FeatureFlag = {
   __typename?: 'FeatureFlag';
   key: FeatureFlagKey;
-  value: Scalars['Boolean']['output'];
+  value: Scalars['Boolean'];
 };
 
 export enum FeatureFlagKey {
@@ -1659,41 +1657,41 @@ export enum FeatureFlagKey {
 
 export type Field = {
   __typename?: 'Field';
-  applicationId: Scalars['UUID']['output'];
-  createdAt: Scalars['DateTime']['output'];
-  defaultValue?: Maybe<Scalars['JSON']['output']>;
-  description?: Maybe<Scalars['String']['output']>;
-  icon?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  isActive?: Maybe<Scalars['Boolean']['output']>;
+  applicationId: Scalars['UUID'];
+  createdAt: Scalars['DateTime'];
+  defaultValue?: Maybe<Scalars['JSON']>;
+  description?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isActive?: Maybe<Scalars['Boolean']>;
   /** @deprecated isCustom is derived from the owning application and will be removed; a field is custom when it does not belong to the twenty-standard application. */
-  isCustom?: Maybe<Scalars['Boolean']['output']>;
-  isLabelSyncedWithName?: Maybe<Scalars['Boolean']['output']>;
-  isNullable?: Maybe<Scalars['Boolean']['output']>;
-  isSystem?: Maybe<Scalars['Boolean']['output']>;
-  isUIReadOnly?: Maybe<Scalars['Boolean']['output']>;
-  isUnique?: Maybe<Scalars['Boolean']['output']>;
-  label: Scalars['String']['output'];
-  morphId?: Maybe<Scalars['UUID']['output']>;
+  isCustom?: Maybe<Scalars['Boolean']>;
+  isLabelSyncedWithName?: Maybe<Scalars['Boolean']>;
+  isNullable?: Maybe<Scalars['Boolean']>;
+  isSystem?: Maybe<Scalars['Boolean']>;
+  isUIReadOnly?: Maybe<Scalars['Boolean']>;
+  isUnique?: Maybe<Scalars['Boolean']>;
+  label: Scalars['String'];
+  morphId?: Maybe<Scalars['UUID']>;
   morphRelations?: Maybe<Array<Relation>>;
-  name: Scalars['String']['output'];
+  name: Scalars['String'];
   object?: Maybe<Object>;
-  objectMetadataId: Scalars['UUID']['output'];
-  options?: Maybe<Scalars['JSON']['output']>;
+  objectMetadataId: Scalars['UUID'];
+  options?: Maybe<Scalars['JSON']>;
   relation?: Maybe<Relation>;
-  settings?: Maybe<Scalars['JSON']['output']>;
+  settings?: Maybe<Scalars['JSON']>;
   standardOverrides?: Maybe<StandardOverrides>;
   type: FieldMetadataType;
-  universalIdentifier: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
+  universalIdentifier: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type FieldConfiguration = {
   __typename?: 'FieldConfiguration';
   configurationType: WidgetConfigurationType;
   fieldDisplayMode: FieldDisplayMode;
-  fieldMetadataId: Scalars['String']['output'];
-  viewId?: Maybe<Scalars['String']['output']>;
+  fieldMetadataId: Scalars['String'];
+  viewId?: Maybe<Scalars['String']>;
 };
 
 export type FieldConnection = {
@@ -1716,7 +1714,7 @@ export enum FieldDisplayMode {
 export type FieldEdge = {
   __typename?: 'FieldEdge';
   /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor']['output'];
+  cursor: Scalars['ConnectionCursor'];
   /** The node containing the Field */
   node: Field;
 };
@@ -1762,19 +1760,19 @@ export enum FieldMetadataType {
 
 export type FieldPermission = {
   __typename?: 'FieldPermission';
-  canReadFieldValue?: Maybe<Scalars['Boolean']['output']>;
-  canUpdateFieldValue?: Maybe<Scalars['Boolean']['output']>;
-  fieldMetadataId: Scalars['UUID']['output'];
-  id: Scalars['UUID']['output'];
-  objectMetadataId: Scalars['UUID']['output'];
-  roleId: Scalars['UUID']['output'];
+  canReadFieldValue?: Maybe<Scalars['Boolean']>;
+  canUpdateFieldValue?: Maybe<Scalars['Boolean']>;
+  fieldMetadataId: Scalars['UUID'];
+  id: Scalars['UUID'];
+  objectMetadataId: Scalars['UUID'];
+  roleId: Scalars['UUID'];
 };
 
 export type FieldPermissionInput = {
-  canReadFieldValue?: InputMaybe<Scalars['Boolean']['input']>;
-  canUpdateFieldValue?: InputMaybe<Scalars['Boolean']['input']>;
-  fieldMetadataId: Scalars['UUID']['input'];
-  objectMetadataId: Scalars['UUID']['input'];
+  canReadFieldValue?: InputMaybe<Scalars['Boolean']>;
+  canUpdateFieldValue?: InputMaybe<Scalars['Boolean']>;
+  fieldMetadataId: Scalars['UUID'];
+  objectMetadataId: Scalars['UUID'];
 };
 
 export type FieldRichTextConfiguration = {
@@ -1785,22 +1783,22 @@ export type FieldRichTextConfiguration = {
 export type FieldsConfiguration = {
   __typename?: 'FieldsConfiguration';
   configurationType: WidgetConfigurationType;
-  newFieldDefaultVisibility?: Maybe<Scalars['Boolean']['output']>;
-  shouldAllowUserToSeeHiddenFields?: Maybe<Scalars['Boolean']['output']>;
-  viewId?: Maybe<Scalars['String']['output']>;
+  newFieldDefaultVisibility?: Maybe<Scalars['Boolean']>;
+  shouldAllowUserToSeeHiddenFields?: Maybe<Scalars['Boolean']>;
+  viewId?: Maybe<Scalars['String']>;
 };
 
 export type File = {
   __typename?: 'File';
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['UUID']['output'];
-  path: Scalars['String']['output'];
-  size: Scalars['Float']['output'];
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  path: Scalars['String'];
+  size: Scalars['Float'];
 };
 
 export type FileAttachmentInput = {
-  filename: Scalars['String']['input'];
-  id: Scalars['UUID']['input'];
+  filename: Scalars['String'];
+  id: Scalars['UUID'];
 };
 
 export enum FileFolder {
@@ -1825,11 +1823,11 @@ export enum FileFolder {
 
 export type FileWithSignedUrl = {
   __typename?: 'FileWithSignedUrl';
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['UUID']['output'];
-  path: Scalars['String']['output'];
-  size: Scalars['Float']['output'];
-  url: Scalars['String']['output'];
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  path: Scalars['String'];
+  size: Scalars['Float'];
+  url: Scalars['String'];
 };
 
 export type FilesConfiguration = {
@@ -1839,9 +1837,9 @@ export type FilesConfiguration = {
 
 export type FindAvailableSsoidp = {
   __typename?: 'FindAvailableSSOIDP';
-  id: Scalars['UUID']['output'];
-  issuer: Scalars['String']['output'];
-  name: Scalars['String']['output'];
+  id: Scalars['UUID'];
+  issuer: Scalars['String'];
+  name: Scalars['String'];
   status: SsoIdentityProviderStatus;
   type: IdentityProviderType;
   workspace: WorkspaceNameAndId;
@@ -1849,49 +1847,49 @@ export type FindAvailableSsoidp = {
 
 export type FrontComponent = {
   __typename?: 'FrontComponent';
-  applicationId: Scalars['UUID']['output'];
+  applicationId: Scalars['UUID'];
   applicationTokenPair?: Maybe<ApplicationTokenPair>;
-  applicationVariables?: Maybe<Scalars['JSON']['output']>;
-  builtComponentChecksum: Scalars['String']['output'];
-  builtComponentPath: Scalars['String']['output'];
-  componentName: Scalars['String']['output'];
-  createdAt: Scalars['DateTime']['output'];
-  description?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  isHeadless: Scalars['Boolean']['output'];
-  name: Scalars['String']['output'];
-  sourceComponentPath: Scalars['String']['output'];
-  universalIdentifier?: Maybe<Scalars['UUID']['output']>;
-  updatedAt: Scalars['DateTime']['output'];
-  usesSdkClient: Scalars['Boolean']['output'];
+  applicationVariables?: Maybe<Scalars['JSON']>;
+  builtComponentChecksum: Scalars['String'];
+  builtComponentPath: Scalars['String'];
+  componentName: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isHeadless: Scalars['Boolean'];
+  name: Scalars['String'];
+  sourceComponentPath: Scalars['String'];
+  universalIdentifier?: Maybe<Scalars['UUID']>;
+  updatedAt: Scalars['DateTime'];
+  usesSdkClient: Scalars['Boolean'];
 };
 
 export type FrontComponentConfiguration = {
   __typename?: 'FrontComponentConfiguration';
   configurationType: WidgetConfigurationType;
-  frontComponentId: Scalars['UUID']['output'];
+  frontComponentId: Scalars['UUID'];
 };
 
 export type FullName = {
   __typename?: 'FullName';
-  firstName: Scalars['String']['output'];
-  lastName: Scalars['String']['output'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
 };
 
 export type GetApiKeyInput = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 export type GetAuthorizationUrlForSso = {
   __typename?: 'GetAuthorizationUrlForSSO';
-  authorizationURL: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  type: Scalars['String']['output'];
+  authorizationURL: Scalars['String'];
+  id: Scalars['UUID'];
+  type: Scalars['String'];
 };
 
 export type GetAuthorizationUrlForSsoInput = {
-  identityProviderId: Scalars['UUID']['input'];
-  workspaceInviteHash?: InputMaybe<Scalars['String']['input']>;
+  identityProviderId: Scalars['UUID'];
+  workspaceInviteHash?: InputMaybe<Scalars['String']>;
 };
 
 /** Order by options for graph widgets */
@@ -1907,17 +1905,17 @@ export enum GraphOrderBy {
 
 export type GridPosition = {
   __typename?: 'GridPosition';
-  column: Scalars['Float']['output'];
-  columnSpan: Scalars['Float']['output'];
-  row: Scalars['Float']['output'];
-  rowSpan: Scalars['Float']['output'];
+  column: Scalars['Float'];
+  columnSpan: Scalars['Float'];
+  row: Scalars['Float'];
+  rowSpan: Scalars['Float'];
 };
 
 export type GridPositionInput = {
-  column: Scalars['Float']['input'];
-  columnSpan: Scalars['Float']['input'];
-  row: Scalars['Float']['input'];
-  rowSpan: Scalars['Float']['input'];
+  column: Scalars['Float'];
+  columnSpan: Scalars['Float'];
+  row: Scalars['Float'];
+  rowSpan: Scalars['Float'];
 };
 
 export enum IdentityProviderType {
@@ -1928,13 +1926,13 @@ export enum IdentityProviderType {
 export type IframeConfiguration = {
   __typename?: 'IframeConfiguration';
   configurationType: WidgetConfigurationType;
-  url?: Maybe<Scalars['String']['output']>;
+  url?: Maybe<Scalars['String']>;
 };
 
 export type ImapSmtpCaldavConnectionSuccess = {
   __typename?: 'ImapSmtpCaldavConnectionSuccess';
-  connectedAccountId: Scalars['String']['output'];
-  success: Scalars['Boolean']['output'];
+  connectedAccountId: Scalars['String'];
+  success: Scalars['Boolean'];
 };
 
 export type ImapSmtpCaldavPublicConnectionParameters = {
@@ -1946,10 +1944,10 @@ export type ImapSmtpCaldavPublicConnectionParameters = {
 
 export type ImapSmtpCaldavPublicConnectionParams = {
   __typename?: 'ImapSmtpCaldavPublicConnectionParams';
-  host: Scalars['String']['output'];
-  port: Scalars['Float']['output'];
-  secure?: Maybe<Scalars['Boolean']['output']>;
-  username?: Maybe<Scalars['String']['output']>;
+  host: Scalars['String'];
+  port: Scalars['Float'];
+  secure?: Maybe<Scalars['Boolean']>;
+  username?: Maybe<Scalars['String']>;
 };
 
 export type Impersonate = {
@@ -1960,17 +1958,17 @@ export type Impersonate = {
 
 export type Index = {
   __typename?: 'Index';
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['UUID']['output'];
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
   indexFieldMetadataList: Array<IndexField>;
   indexFieldMetadatas: IndexIndexFieldMetadatasConnection;
   indexType: IndexType;
-  indexWhereClause?: Maybe<Scalars['String']['output']>;
-  isCustom?: Maybe<Scalars['Boolean']['output']>;
-  isUnique: Scalars['Boolean']['output'];
-  name: Scalars['String']['output'];
+  indexWhereClause?: Maybe<Scalars['String']>;
+  isCustom?: Maybe<Scalars['Boolean']>;
+  isUnique: Scalars['Boolean'];
+  name: Scalars['String'];
   objectMetadata: IndexObjectMetadataConnection;
-  updatedAt: Scalars['DateTime']['output'];
+  updatedAt: Scalars['DateTime'];
 };
 
 
@@ -1996,25 +1994,25 @@ export type IndexConnection = {
 export type IndexEdge = {
   __typename?: 'IndexEdge';
   /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor']['output'];
+  cursor: Scalars['ConnectionCursor'];
   /** The node containing the Index */
   node: Index;
 };
 
 export type IndexField = {
   __typename?: 'IndexField';
-  createdAt: Scalars['DateTime']['output'];
-  fieldMetadataId: Scalars['UUID']['output'];
-  id: Scalars['UUID']['output'];
-  order: Scalars['Float']['output'];
-  subFieldName?: Maybe<Scalars['String']['output']>;
-  updatedAt: Scalars['DateTime']['output'];
+  createdAt: Scalars['DateTime'];
+  fieldMetadataId: Scalars['UUID'];
+  id: Scalars['UUID'];
+  order: Scalars['Float'];
+  subFieldName?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
 };
 
 export type IndexFieldEdge = {
   __typename?: 'IndexFieldEdge';
   /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor']['output'];
+  cursor: Scalars['ConnectionCursor'];
   /** The node containing the IndexField */
   node: IndexField;
 };
@@ -2057,106 +2055,106 @@ export enum IndexType {
 
 export type InitiateTwoFactorAuthenticationProvisioning = {
   __typename?: 'InitiateTwoFactorAuthenticationProvisioning';
-  uri: Scalars['String']['output'];
+  uri: Scalars['String'];
 };
 
 export type InvalidatePassword = {
   __typename?: 'InvalidatePassword';
   /** Boolean that confirms query was dispatched */
-  success: Scalars['Boolean']['output'];
+  success: Scalars['Boolean'];
 };
 
 export type LineChartConfiguration = {
   __typename?: 'LineChartConfiguration';
-  aggregateFieldMetadataId: Scalars['UUID']['output'];
+  aggregateFieldMetadataId: Scalars['UUID'];
   aggregateOperation: AggregateOperations;
   axisNameDisplay?: Maybe<AxisNameDisplay>;
-  color?: Maybe<Scalars['String']['output']>;
+  color?: Maybe<Scalars['String']>;
   configurationType: WidgetConfigurationType;
-  description?: Maybe<Scalars['String']['output']>;
-  displayDataLabel?: Maybe<Scalars['Boolean']['output']>;
-  displayLegend?: Maybe<Scalars['Boolean']['output']>;
-  filter?: Maybe<Scalars['JSON']['output']>;
-  firstDayOfTheWeek?: Maybe<Scalars['Int']['output']>;
-  isCumulative?: Maybe<Scalars['Boolean']['output']>;
-  isStacked?: Maybe<Scalars['Boolean']['output']>;
-  omitNullValues?: Maybe<Scalars['Boolean']['output']>;
+  description?: Maybe<Scalars['String']>;
+  displayDataLabel?: Maybe<Scalars['Boolean']>;
+  displayLegend?: Maybe<Scalars['Boolean']>;
+  filter?: Maybe<Scalars['JSON']>;
+  firstDayOfTheWeek?: Maybe<Scalars['Int']>;
+  isCumulative?: Maybe<Scalars['Boolean']>;
+  isStacked?: Maybe<Scalars['Boolean']>;
+  omitNullValues?: Maybe<Scalars['Boolean']>;
   primaryAxisDateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
-  primaryAxisGroupByFieldMetadataId: Scalars['UUID']['output'];
-  primaryAxisGroupBySubFieldName?: Maybe<Scalars['String']['output']>;
-  primaryAxisManualSortOrder?: Maybe<Array<Scalars['String']['output']>>;
+  primaryAxisGroupByFieldMetadataId: Scalars['UUID'];
+  primaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
+  primaryAxisManualSortOrder?: Maybe<Array<Scalars['String']>>;
   primaryAxisOrderBy?: Maybe<GraphOrderBy>;
-  rangeMax?: Maybe<Scalars['Float']['output']>;
-  rangeMin?: Maybe<Scalars['Float']['output']>;
+  rangeMax?: Maybe<Scalars['Float']>;
+  rangeMin?: Maybe<Scalars['Float']>;
   secondaryAxisGroupByDateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
-  secondaryAxisGroupByFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
-  secondaryAxisGroupBySubFieldName?: Maybe<Scalars['String']['output']>;
-  secondaryAxisManualSortOrder?: Maybe<Array<Scalars['String']['output']>>;
+  secondaryAxisGroupByFieldMetadataId?: Maybe<Scalars['UUID']>;
+  secondaryAxisGroupBySubFieldName?: Maybe<Scalars['String']>;
+  secondaryAxisManualSortOrder?: Maybe<Array<Scalars['String']>>;
   secondaryAxisOrderBy?: Maybe<GraphOrderBy>;
-  splitMultiValueFields?: Maybe<Scalars['Boolean']['output']>;
-  timezone?: Maybe<Scalars['String']['output']>;
+  splitMultiValueFields?: Maybe<Scalars['Boolean']>;
+  timezone?: Maybe<Scalars['String']>;
 };
 
 export type LineChartData = {
   __typename?: 'LineChartData';
-  formattedToRawLookup: Scalars['JSON']['output'];
-  hasTooManyGroups: Scalars['Boolean']['output'];
+  formattedToRawLookup: Scalars['JSON'];
+  hasTooManyGroups: Scalars['Boolean'];
   series: Array<LineChartSeries>;
-  showDataLabels: Scalars['Boolean']['output'];
-  showLegend: Scalars['Boolean']['output'];
-  xAxisLabel: Scalars['String']['output'];
-  yAxisLabel: Scalars['String']['output'];
+  showDataLabels: Scalars['Boolean'];
+  showLegend: Scalars['Boolean'];
+  xAxisLabel: Scalars['String'];
+  yAxisLabel: Scalars['String'];
 };
 
 export type LineChartDataInput = {
-  configuration: Scalars['JSON']['input'];
-  objectMetadataId: Scalars['UUID']['input'];
+  configuration: Scalars['JSON'];
+  objectMetadataId: Scalars['UUID'];
 };
 
 export type LineChartDataPoint = {
   __typename?: 'LineChartDataPoint';
-  x: Scalars['String']['output'];
-  y: Scalars['Float']['output'];
+  x: Scalars['String'];
+  y: Scalars['Float'];
 };
 
 export type LineChartSeries = {
   __typename?: 'LineChartSeries';
   data: Array<LineChartDataPoint>;
-  id: Scalars['String']['output'];
-  label: Scalars['String']['output'];
+  id: Scalars['String'];
+  label: Scalars['String'];
 };
 
 export type ListAppConnectionsInput = {
-  providerName?: InputMaybe<Scalars['String']['input']>;
-  userWorkspaceId?: InputMaybe<Scalars['String']['input']>;
-  visibility?: InputMaybe<Scalars['String']['input']>;
+  providerName?: InputMaybe<Scalars['String']>;
+  userWorkspaceId?: InputMaybe<Scalars['String']>;
+  visibility?: InputMaybe<Scalars['String']>;
 };
 
 export type Location = {
   __typename?: 'Location';
-  lat?: Maybe<Scalars['Float']['output']>;
-  lng?: Maybe<Scalars['Float']['output']>;
+  lat?: Maybe<Scalars['Float']>;
+  lng?: Maybe<Scalars['Float']>;
 };
 
 export type LogicFunction = {
   __typename?: 'LogicFunction';
-  applicationId?: Maybe<Scalars['UUID']['output']>;
-  createdAt: Scalars['DateTime']['output'];
-  cronTriggerSettings?: Maybe<Scalars['JSON']['output']>;
-  databaseEventTriggerSettings?: Maybe<Scalars['JSON']['output']>;
-  description?: Maybe<Scalars['String']['output']>;
+  applicationId?: Maybe<Scalars['UUID']>;
+  createdAt: Scalars['DateTime'];
+  cronTriggerSettings?: Maybe<Scalars['JSON']>;
+  databaseEventTriggerSettings?: Maybe<Scalars['JSON']>;
+  description?: Maybe<Scalars['String']>;
   executionMode: LogicFunctionExecutionMode;
-  handlerName: Scalars['String']['output'];
-  httpRouteTriggerSettings?: Maybe<Scalars['JSON']['output']>;
-  id: Scalars['UUID']['output'];
-  name: Scalars['String']['output'];
-  runtime: Scalars['String']['output'];
-  sourceHandlerPath: Scalars['String']['output'];
-  timeoutSeconds: Scalars['Float']['output'];
-  toolTriggerSettings?: Maybe<Scalars['JSON']['output']>;
-  universalIdentifier?: Maybe<Scalars['UUID']['output']>;
-  updatedAt: Scalars['DateTime']['output'];
-  workflowActionTriggerSettings?: Maybe<Scalars['JSON']['output']>;
+  handlerName: Scalars['String'];
+  httpRouteTriggerSettings?: Maybe<Scalars['JSON']>;
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  runtime: Scalars['String'];
+  sourceHandlerPath: Scalars['String'];
+  timeoutSeconds: Scalars['Float'];
+  toolTriggerSettings?: Maybe<Scalars['JSON']>;
+  universalIdentifier?: Maybe<Scalars['UUID']>;
+  updatedAt: Scalars['DateTime'];
+  workflowActionTriggerSettings?: Maybe<Scalars['JSON']>;
 };
 
 export enum LogicFunctionExecutionMode {
@@ -2167,13 +2165,13 @@ export enum LogicFunctionExecutionMode {
 export type LogicFunctionExecutionResult = {
   __typename?: 'LogicFunctionExecutionResult';
   /** Execution result in JSON format */
-  data?: Maybe<Scalars['JSON']['output']>;
+  data?: Maybe<Scalars['JSON']>;
   /** Execution duration in milliseconds */
-  duration: Scalars['Float']['output'];
+  duration: Scalars['Float'];
   /** Execution error in JSON format */
-  error?: Maybe<Scalars['JSON']['output']>;
+  error?: Maybe<Scalars['JSON']>;
   /** Execution Logs */
-  logs: Scalars['String']['output'];
+  logs: Scalars['String'];
   /** Execution status */
   status: LogicFunctionExecutionStatus;
 };
@@ -2187,21 +2185,21 @@ export enum LogicFunctionExecutionStatus {
 
 export type LogicFunctionIdInput = {
   /** The id of the function. */
-  id: Scalars['ID']['input'];
+  id: Scalars['ID'];
 };
 
 export type LogicFunctionLogs = {
   __typename?: 'LogicFunctionLogs';
   /** Execution Logs */
-  logs: Scalars['String']['output'];
+  logs: Scalars['String'];
 };
 
 export type LogicFunctionLogsInput = {
-  applicationId?: InputMaybe<Scalars['UUID']['input']>;
-  applicationUniversalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  universalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
+  applicationId?: InputMaybe<Scalars['UUID']>;
+  applicationUniversalIdentifier?: InputMaybe<Scalars['UUID']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  name?: InputMaybe<Scalars['String']>;
+  universalIdentifier?: InputMaybe<Scalars['UUID']>;
 };
 
 export type LoginToken = {
@@ -2211,51 +2209,51 @@ export type LoginToken = {
 
 export type MarketplaceApp = {
   __typename?: 'MarketplaceApp';
-  author: Scalars['String']['output'];
-  category: Scalars['String']['output'];
-  description: Scalars['String']['output'];
-  id: Scalars['String']['output'];
-  isFeatured: Scalars['Boolean']['output'];
-  logo?: Maybe<Scalars['String']['output']>;
-  name: Scalars['String']['output'];
-  sourcePackage?: Maybe<Scalars['String']['output']>;
+  author: Scalars['String'];
+  category: Scalars['String'];
+  description: Scalars['String'];
+  id: Scalars['String'];
+  isFeatured: Scalars['Boolean'];
+  logo?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  sourcePackage?: Maybe<Scalars['String']>;
 };
 
 export type MarketplaceAppDetail = {
   __typename?: 'MarketplaceAppDetail';
-  id: Scalars['String']['output'];
-  isFeatured: Scalars['Boolean']['output'];
-  isListed: Scalars['Boolean']['output'];
-  latestAvailableVersion?: Maybe<Scalars['String']['output']>;
-  manifest?: Maybe<Scalars['JSON']['output']>;
-  name: Scalars['String']['output'];
-  sourcePackage?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String'];
+  isFeatured: Scalars['Boolean'];
+  isListed: Scalars['Boolean'];
+  latestAvailableVersion?: Maybe<Scalars['String']>;
+  manifest?: Maybe<Scalars['JSON']>;
+  name: Scalars['String'];
+  sourcePackage?: Maybe<Scalars['String']>;
   sourceType: ApplicationRegistrationSourceType;
-  universalIdentifier: Scalars['String']['output'];
+  universalIdentifier: Scalars['String'];
 };
 
 export type MessageChannel = {
   __typename?: 'MessageChannel';
   connectedAccount?: Maybe<ConnectedAccountPublicDto>;
-  connectedAccountId: Scalars['UUID']['output'];
+  connectedAccountId: Scalars['UUID'];
   contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy;
-  createdAt: Scalars['DateTime']['output'];
-  excludeGroupEmails: Scalars['Boolean']['output'];
-  excludeNonProfessionalEmails: Scalars['Boolean']['output'];
-  handle: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  isContactAutoCreationEnabled: Scalars['Boolean']['output'];
-  isSyncEnabled: Scalars['Boolean']['output'];
+  createdAt: Scalars['DateTime'];
+  excludeGroupEmails: Scalars['Boolean'];
+  excludeNonProfessionalEmails: Scalars['Boolean'];
+  handle: Scalars['String'];
+  id: Scalars['UUID'];
+  isContactAutoCreationEnabled: Scalars['Boolean'];
+  isSyncEnabled: Scalars['Boolean'];
   messageFolderImportPolicy: MessageFolderImportPolicy;
   pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction;
   syncStage: MessageChannelSyncStage;
-  syncStageStartedAt?: Maybe<Scalars['DateTime']['output']>;
+  syncStageStartedAt?: Maybe<Scalars['DateTime']>;
   syncStatus: MessageChannelSyncStatus;
-  syncedAt?: Maybe<Scalars['DateTime']['output']>;
-  throttleFailureCount: Scalars['Float']['output'];
-  throttleRetryAfter?: Maybe<Scalars['DateTime']['output']>;
+  syncedAt?: Maybe<Scalars['DateTime']>;
+  throttleFailureCount: Scalars['Float'];
+  throttleRetryAfter?: Maybe<Scalars['DateTime']>;
   type: MessageChannelType;
-  updatedAt: Scalars['DateTime']['output'];
+  updatedAt: Scalars['DateTime'];
   visibility: MessageChannelVisibility;
 };
 
@@ -2304,16 +2302,16 @@ export enum MessageChannelVisibility {
 
 export type MessageFolder = {
   __typename?: 'MessageFolder';
-  createdAt: Scalars['DateTime']['output'];
-  externalId?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  isSentFolder: Scalars['Boolean']['output'];
-  isSynced: Scalars['Boolean']['output'];
-  messageChannelId: Scalars['UUID']['output'];
-  name?: Maybe<Scalars['String']['output']>;
-  parentFolderId?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime'];
+  externalId?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isSentFolder: Scalars['Boolean'];
+  isSynced: Scalars['Boolean'];
+  messageChannelId: Scalars['UUID'];
+  name?: Maybe<Scalars['String']>;
+  parentFolderId?: Maybe<Scalars['String']>;
   pendingSyncAction: MessageFolderPendingSyncAction;
-  updatedAt: Scalars['DateTime']['output'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export enum MessageFolderImportPolicy {
@@ -2328,11 +2326,11 @@ export enum MessageFolderPendingSyncAction {
 
 export type MetadataEvent = {
   __typename?: 'MetadataEvent';
-  metadataName: Scalars['String']['output'];
+  metadataName: Scalars['String'];
   properties: ObjectRecordEventProperties;
-  recordId: Scalars['String']['output'];
+  recordId: Scalars['String'];
   type: MetadataEventAction;
-  updatedCollectionHash?: Maybe<Scalars['String']['output']>;
+  updatedCollectionHash?: Maybe<Scalars['String']>;
 };
 
 /** Metadata Event Action */
@@ -2351,24 +2349,24 @@ export type MinimalMetadata = {
 
 export type MinimalObjectMetadata = {
   __typename?: 'MinimalObjectMetadata';
-  color?: Maybe<Scalars['String']['output']>;
-  icon?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  isActive: Scalars['Boolean']['output'];
-  isCustom: Scalars['Boolean']['output'];
-  isRemote: Scalars['Boolean']['output'];
-  isSystem: Scalars['Boolean']['output'];
-  labelPlural: Scalars['String']['output'];
-  labelSingular: Scalars['String']['output'];
-  namePlural: Scalars['String']['output'];
-  nameSingular: Scalars['String']['output'];
+  color?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isActive: Scalars['Boolean'];
+  isCustom: Scalars['Boolean'];
+  isRemote: Scalars['Boolean'];
+  isSystem: Scalars['Boolean'];
+  labelPlural: Scalars['String'];
+  labelSingular: Scalars['String'];
+  namePlural: Scalars['String'];
+  nameSingular: Scalars['String'];
 };
 
 export type MinimalView = {
   __typename?: 'MinimalView';
-  id: Scalars['UUID']['output'];
+  id: Scalars['UUID'];
   key?: Maybe<ViewKey>;
-  objectMetadataId: Scalars['UUID']['output'];
+  objectMetadataId: Scalars['UUID'];
   type: ViewType;
 };
 
@@ -2384,10 +2382,10 @@ export type Mutation = {
   __typename?: 'Mutation';
   activateSkill: Skill;
   activateWorkspace: Workspace;
-  addQueryToEventStream: Scalars['Boolean']['output'];
+  addQueryToEventStream: Scalars['Boolean'];
   archiveChatThread: AgentChatThread;
-  assignRoleToAgent: Scalars['Boolean']['output'];
-  assignRoleToApiKey: Scalars['Boolean']['output'];
+  assignRoleToAgent: Scalars['Boolean'];
+  assignRoleToApiKey: Scalars['Boolean'];
   authorizeApp: AuthorizeApp;
   cancelSwitchBillingInterval: BillingUpdate;
   cancelSwitchBillingPlan: BillingUpdate;
@@ -2434,15 +2432,15 @@ export type Mutation = {
   createViewSort: ViewSort;
   createWebhook: Webhook;
   deactivateSkill: Skill;
-  deleteApplicationRegistration: Scalars['Boolean']['output'];
-  deleteApplicationRegistrationVariable: Scalars['Boolean']['output'];
-  deleteApprovedAccessDomain: Scalars['Boolean']['output'];
-  deleteChatThread: Scalars['Boolean']['output'];
+  deleteApplicationRegistration: Scalars['Boolean'];
+  deleteApplicationRegistrationVariable: Scalars['Boolean'];
+  deleteApprovedAccessDomain: Scalars['Boolean'];
+  deleteChatThread: Scalars['Boolean'];
   deleteCommandMenuItem: CommandMenuItem;
   deleteConnectedAccount: ConnectedAccountPublicDto;
   deleteCurrentWorkspace: Workspace;
   deleteEmailGroupChannel: MessageChannel;
-  deleteEmailingDomain: Scalars['Boolean']['output'];
+  deleteEmailingDomain: Scalars['Boolean'];
   deleteFrontComponent: FrontComponent;
   deleteManyNavigationMenuItems: Array<NavigationMenuItem>;
   deleteNavigationMenuItem: NavigationMenuItem;
@@ -2451,33 +2449,33 @@ export type Mutation = {
   deleteOneIndex: Index;
   deleteOneLogicFunction: LogicFunction;
   deleteOneObject: Object;
-  deleteOneRole: Scalars['String']['output'];
-  deletePublicDomain: Scalars['Boolean']['output'];
-  deleteQueuedChatMessage: Scalars['Boolean']['output'];
+  deleteOneRole: Scalars['String'];
+  deletePublicDomain: Scalars['Boolean'];
+  deleteQueuedChatMessage: Scalars['Boolean'];
   deleteSSOIdentityProvider: DeleteSso;
   deleteSkill: Skill;
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethod;
   deleteUser: User;
   deleteUserFromWorkspace: UserWorkspace;
-  deleteView: Scalars['Boolean']['output'];
+  deleteView: Scalars['Boolean'];
   deleteViewField: ViewField;
   deleteViewFieldGroup: ViewFieldGroup;
   deleteViewFilter: ViewFilter;
-  deleteViewFilterGroup: Scalars['Boolean']['output'];
+  deleteViewFilterGroup: Scalars['Boolean'];
   deleteViewGroup: ViewGroup;
-  deleteViewSort: Scalars['Boolean']['output'];
+  deleteViewSort: Scalars['Boolean'];
   deleteWebhook: Webhook;
-  deleteWorkspaceInvitation: Scalars['String']['output'];
-  destroyPageLayout: Scalars['Boolean']['output'];
-  destroyPageLayoutTab: Scalars['Boolean']['output'];
-  destroyPageLayoutWidget: Scalars['Boolean']['output'];
-  destroyView: Scalars['Boolean']['output'];
+  deleteWorkspaceInvitation: Scalars['String'];
+  destroyPageLayout: Scalars['Boolean'];
+  destroyPageLayoutTab: Scalars['Boolean'];
+  destroyPageLayoutWidget: Scalars['Boolean'];
+  destroyView: Scalars['Boolean'];
   destroyViewField: ViewField;
   destroyViewFieldGroup: ViewFieldGroup;
   destroyViewFilter: ViewFilter;
-  destroyViewFilterGroup: Scalars['Boolean']['output'];
+  destroyViewFilterGroup: Scalars['Boolean'];
   destroyViewGroup: ViewGroup;
-  destroyViewSort: Scalars['Boolean']['output'];
+  destroyViewSort: Scalars['Boolean'];
   duplicateDashboard: DuplicatedDashboard;
   editSSOIdentityProvider: EditSso;
   emailPasswordResetLink: EmailPasswordResetLink;
@@ -2497,10 +2495,10 @@ export type Mutation = {
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning;
   installApplication: Application;
   /** @deprecated Use installApplication instead */
-  installMarketplaceApp: Scalars['Boolean']['output'];
-  refreshEnterpriseValidityToken: Scalars['Boolean']['output'];
-  removeQueryFromEventStream: Scalars['Boolean']['output'];
-  removeRoleFromAgent: Scalars['Boolean']['output'];
+  installMarketplaceApp: Scalars['Boolean'];
+  refreshEnterpriseValidityToken: Scalars['Boolean'];
+  removeQueryFromEventStream: Scalars['Boolean'];
+  removeRoleFromAgent: Scalars['Boolean'];
   renameChatThread: AgentChatThread;
   renewApplicationToken: ApplicationTokenPair;
   renewToken: AuthTokens;
@@ -2513,7 +2511,7 @@ export type Mutation = {
   rotateApplicationRegistrationClientSecret: RotateClientSecret;
   runAgent: RunAgentResult;
   runEvaluationInput: AgentTurn;
-  runWorkspaceMigration: Scalars['Boolean']['output'];
+  runWorkspaceMigration: Scalars['Boolean'];
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   sendChatMessage: SendChatMessageResult;
   sendEmail: SendEmailOutput;
@@ -2528,15 +2526,15 @@ export type Mutation = {
   skipBookOnboardingStep: OnboardingStepSuccess;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   startChannelSync: ChannelSyncSuccess;
-  stopAgentChatStream: Scalars['Boolean']['output'];
+  stopAgentChatStream: Scalars['Boolean'];
   switchBillingPlan: BillingUpdate;
   switchSubscriptionInterval: BillingUpdate;
   syncApplication: WorkspaceMigration;
-  syncMarketplaceCatalog: Scalars['Boolean']['output'];
+  syncMarketplaceCatalog: Scalars['Boolean'];
   trackAnalytics: Analytics;
   transferApplicationRegistrationOwnership: ApplicationRegistration;
   unarchiveChatThread: AgentChatThread;
-  uninstallApplication: Scalars['Boolean']['output'];
+  uninstallApplication: Scalars['Boolean'];
   updateApiKey?: Maybe<ApiKey>;
   updateApplicationRegistration: ApplicationRegistration;
   updateApplicationRegistrationVariable: ApplicationRegistrationVariable;
@@ -2551,9 +2549,9 @@ export type Mutation = {
   updateMessageFolders: Array<MessageFolder>;
   updateNavigationMenuItem: NavigationMenuItem;
   updateOneAgent: Agent;
-  updateOneApplicationVariable: Scalars['Boolean']['output'];
+  updateOneApplicationVariable: Scalars['Boolean'];
   updateOneField: Field;
-  updateOneLogicFunction: Scalars['Boolean']['output'];
+  updateOneLogicFunction: Scalars['Boolean'];
   updateOneObject: Object;
   updateOneRole: Role;
   updatePageLayout: PageLayout;
@@ -2563,7 +2561,7 @@ export type Mutation = {
   updatePasswordViaResetToken: InvalidatePassword;
   updatePublicDomain: PublicDomain;
   updateSkill: Skill;
-  updateUserEmail: Scalars['Boolean']['output'];
+  updateUserEmail: Scalars['Boolean'];
   updateView: View;
   updateViewField: ViewField;
   updateViewFieldGroup: ViewFieldGroup;
@@ -2574,8 +2572,8 @@ export type Mutation = {
   updateWebhook: Webhook;
   updateWorkspace: Workspace;
   updateWorkspaceMemberRole: WorkspaceMember;
-  updateWorkspaceMemberSettings: Scalars['Boolean']['output'];
-  upgradeApplication: Scalars['Boolean']['output'];
+  updateWorkspaceMemberSettings: Scalars['Boolean'];
+  upgradeApplication: Scalars['Boolean'];
   uploadAiChatFile: FileWithSignedUrl;
   uploadAppTarball: ApplicationRegistration;
   uploadApplicationFile: File;
@@ -2600,7 +2598,7 @@ export type Mutation = {
 
 
 export type MutationActivateSkillArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
@@ -2615,41 +2613,41 @@ export type MutationAddQueryToEventStreamArgs = {
 
 
 export type MutationArchiveChatThreadArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
 export type MutationAssignRoleToAgentArgs = {
-  agentId: Scalars['UUID']['input'];
-  roleId: Scalars['UUID']['input'];
+  agentId: Scalars['UUID'];
+  roleId: Scalars['UUID'];
 };
 
 
 export type MutationAssignRoleToApiKeyArgs = {
-  apiKeyId: Scalars['UUID']['input'];
-  roleId: Scalars['UUID']['input'];
+  apiKeyId: Scalars['UUID'];
+  roleId: Scalars['UUID'];
 };
 
 
 export type MutationAuthorizeAppArgs = {
-  clientId: Scalars['String']['input'];
-  codeChallenge?: InputMaybe<Scalars['String']['input']>;
-  redirectUrl: Scalars['String']['input'];
-  scope?: InputMaybe<Scalars['String']['input']>;
-  state?: InputMaybe<Scalars['String']['input']>;
+  clientId: Scalars['String'];
+  codeChallenge?: InputMaybe<Scalars['String']>;
+  redirectUrl: Scalars['String'];
+  scope?: InputMaybe<Scalars['String']>;
+  state?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationCheckPublicDomainValidRecordsArgs = {
-  domain: Scalars['String']['input'];
+  domain: Scalars['String'];
 };
 
 
 export type MutationCheckoutSessionArgs = {
   plan?: BillingPlanKey;
   recurringInterval: SubscriptionInterval;
-  requirePaymentMethod?: Scalars['Boolean']['input'];
-  successUrlPath?: InputMaybe<Scalars['String']['input']>;
+  requirePaymentMethod?: Scalars['Boolean'];
+  successUrlPath?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -2679,8 +2677,8 @@ export type MutationCreateCommandMenuItemArgs = {
 
 
 export type MutationCreateDevelopmentApplicationArgs = {
-  name: Scalars['String']['input'];
-  universalIdentifier: Scalars['String']['input'];
+  name: Scalars['String'];
+  universalIdentifier: Scalars['String'];
 };
 
 
@@ -2690,7 +2688,7 @@ export type MutationCreateEmailGroupChannelArgs = {
 
 
 export type MutationCreateEmailingDomainArgs = {
-  domain: Scalars['String']['input'];
+  domain: Scalars['String'];
 };
 
 
@@ -2730,10 +2728,10 @@ export type MutationCreateOidcIdentityProviderArgs = {
 
 
 export type MutationCreateObjectEventArgs = {
-  event: Scalars['String']['input'];
-  objectMetadataId: Scalars['UUID']['input'];
-  properties?: InputMaybe<Scalars['JSON']['input']>;
-  recordId: Scalars['UUID']['input'];
+  event: Scalars['String'];
+  objectMetadataId: Scalars['UUID'];
+  properties?: InputMaybe<Scalars['JSON']>;
+  recordId: Scalars['UUID'];
 };
 
 
@@ -2788,8 +2786,8 @@ export type MutationCreatePageLayoutWidgetArgs = {
 
 
 export type MutationCreatePublicDomainArgs = {
-  applicationId?: InputMaybe<Scalars['String']['input']>;
-  domain: Scalars['String']['input'];
+  applicationId?: InputMaybe<Scalars['String']>;
+  domain: Scalars['String'];
 };
 
 
@@ -2844,17 +2842,17 @@ export type MutationCreateWebhookArgs = {
 
 
 export type MutationDeactivateSkillArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
 export type MutationDeleteApplicationRegistrationArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
 export type MutationDeleteApplicationRegistrationVariableArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
@@ -2864,42 +2862,42 @@ export type MutationDeleteApprovedAccessDomainArgs = {
 
 
 export type MutationDeleteChatThreadArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
 export type MutationDeleteCommandMenuItemArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
 export type MutationDeleteConnectedAccountArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
 export type MutationDeleteEmailGroupChannelArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
 export type MutationDeleteEmailingDomainArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
 export type MutationDeleteFrontComponentArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
 export type MutationDeleteManyNavigationMenuItemsArgs = {
-  ids: Array<Scalars['UUID']['input']>;
+  ids: Array<Scalars['UUID']>;
 };
 
 
 export type MutationDeleteNavigationMenuItemArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
@@ -2929,17 +2927,17 @@ export type MutationDeleteOneObjectArgs = {
 
 
 export type MutationDeleteOneRoleArgs = {
-  roleId: Scalars['UUID']['input'];
+  roleId: Scalars['UUID'];
 };
 
 
 export type MutationDeletePublicDomainArgs = {
-  domain: Scalars['String']['input'];
+  domain: Scalars['String'];
 };
 
 
 export type MutationDeleteQueuedChatMessageArgs = {
-  messageId: Scalars['UUID']['input'];
+  messageId: Scalars['UUID'];
 };
 
 
@@ -2949,22 +2947,22 @@ export type MutationDeleteSsoIdentityProviderArgs = {
 
 
 export type MutationDeleteSkillArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
 export type MutationDeleteTwoFactorAuthenticationMethodArgs = {
-  twoFactorAuthenticationMethodId: Scalars['UUID']['input'];
+  twoFactorAuthenticationMethodId: Scalars['UUID'];
 };
 
 
 export type MutationDeleteUserFromWorkspaceArgs = {
-  workspaceMemberIdToDelete: Scalars['String']['input'];
+  workspaceMemberIdToDelete: Scalars['String'];
 };
 
 
 export type MutationDeleteViewArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
@@ -2984,7 +2982,7 @@ export type MutationDeleteViewFilterArgs = {
 
 
 export type MutationDeleteViewFilterGroupArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
@@ -2999,32 +2997,32 @@ export type MutationDeleteViewSortArgs = {
 
 
 export type MutationDeleteWebhookArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
 export type MutationDeleteWorkspaceInvitationArgs = {
-  appTokenId: Scalars['String']['input'];
+  appTokenId: Scalars['String'];
 };
 
 
 export type MutationDestroyPageLayoutArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
 export type MutationDestroyPageLayoutTabArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
 export type MutationDestroyPageLayoutWidgetArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
 export type MutationDestroyViewArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
@@ -3044,7 +3042,7 @@ export type MutationDestroyViewFilterArgs = {
 
 
 export type MutationDestroyViewFilterGroupArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
@@ -3059,7 +3057,7 @@ export type MutationDestroyViewSortArgs = {
 
 
 export type MutationDuplicateDashboardArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
@@ -3069,13 +3067,13 @@ export type MutationEditSsoIdentityProviderArgs = {
 
 
 export type MutationEmailPasswordResetLinkArgs = {
-  email: Scalars['String']['input'];
-  workspaceId?: InputMaybe<Scalars['UUID']['input']>;
+  email: Scalars['String'];
+  workspaceId?: InputMaybe<Scalars['UUID']>;
 };
 
 
 export type MutationEvaluateAgentTurnArgs = {
-  turnId: Scalars['UUID']['input'];
+  turnId: Scalars['UUID'];
 };
 
 
@@ -3085,27 +3083,27 @@ export type MutationExecuteOneLogicFunctionArgs = {
 
 
 export type MutationGenerateApiKeyTokenArgs = {
-  apiKeyId: Scalars['UUID']['input'];
-  expiresAt: Scalars['String']['input'];
+  apiKeyId: Scalars['UUID'];
+  expiresAt: Scalars['String'];
 };
 
 
 export type MutationGenerateApplicationTokenArgs = {
-  applicationId: Scalars['UUID']['input'];
+  applicationId: Scalars['UUID'];
 };
 
 
 export type MutationGetAuthTokensFromLoginTokenArgs = {
-  loginToken: Scalars['String']['input'];
-  origin: Scalars['String']['input'];
+  loginToken: Scalars['String'];
+  origin: Scalars['String'];
 };
 
 
 export type MutationGetAuthTokensFromOtpArgs = {
-  captchaToken?: InputMaybe<Scalars['String']['input']>;
-  loginToken: Scalars['String']['input'];
-  origin: Scalars['String']['input'];
-  otp: Scalars['String']['input'];
+  captchaToken?: InputMaybe<Scalars['String']>;
+  loginToken: Scalars['String'];
+  origin: Scalars['String'];
+  otp: Scalars['String'];
 };
 
 
@@ -3115,36 +3113,36 @@ export type MutationGetAuthorizationUrlForSsoArgs = {
 
 
 export type MutationGetLoginTokenFromCredentialsArgs = {
-  captchaToken?: InputMaybe<Scalars['String']['input']>;
-  email: Scalars['String']['input'];
-  locale?: InputMaybe<Scalars['String']['input']>;
-  origin: Scalars['String']['input'];
-  password: Scalars['String']['input'];
-  verifyEmailRedirectPath?: InputMaybe<Scalars['String']['input']>;
+  captchaToken?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  locale?: InputMaybe<Scalars['String']>;
+  origin: Scalars['String'];
+  password: Scalars['String'];
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationImpersonateArgs = {
-  userId: Scalars['UUID']['input'];
-  workspaceId: Scalars['UUID']['input'];
+  userId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
 };
 
 
 export type MutationInitiateOtpProvisioningArgs = {
-  loginToken: Scalars['String']['input'];
-  origin: Scalars['String']['input'];
+  loginToken: Scalars['String'];
+  origin: Scalars['String'];
 };
 
 
 export type MutationInstallApplicationArgs = {
-  universalIdentifier: Scalars['String']['input'];
-  version?: InputMaybe<Scalars['String']['input']>;
+  universalIdentifier: Scalars['String'];
+  version?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationInstallMarketplaceAppArgs = {
-  universalIdentifier: Scalars['String']['input'];
-  version?: InputMaybe<Scalars['String']['input']>;
+  universalIdentifier: Scalars['String'];
+  version?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -3154,49 +3152,49 @@ export type MutationRemoveQueryFromEventStreamArgs = {
 
 
 export type MutationRemoveRoleFromAgentArgs = {
-  agentId: Scalars['UUID']['input'];
+  agentId: Scalars['UUID'];
 };
 
 
 export type MutationRenameChatThreadArgs = {
-  id: Scalars['UUID']['input'];
-  title: Scalars['String']['input'];
+  id: Scalars['UUID'];
+  title: Scalars['String'];
 };
 
 
 export type MutationRenewApplicationTokenArgs = {
-  applicationRefreshToken: Scalars['String']['input'];
+  applicationRefreshToken: Scalars['String'];
 };
 
 
 export type MutationRenewTokenArgs = {
-  appToken: Scalars['String']['input'];
+  appToken: Scalars['String'];
 };
 
 
 export type MutationResendEmailVerificationTokenArgs = {
-  email: Scalars['String']['input'];
-  origin: Scalars['String']['input'];
+  email: Scalars['String'];
+  origin: Scalars['String'];
 };
 
 
 export type MutationResendWorkspaceInvitationArgs = {
-  appTokenId: Scalars['String']['input'];
+  appTokenId: Scalars['String'];
 };
 
 
 export type MutationResetPageLayoutTabToDefaultArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
 export type MutationResetPageLayoutToDefaultArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
 export type MutationResetPageLayoutWidgetToDefaultArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
@@ -3206,7 +3204,7 @@ export type MutationRevokeApiKeyArgs = {
 
 
 export type MutationRotateApplicationRegistrationClientSecretArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
@@ -3216,8 +3214,8 @@ export type MutationRunAgentArgs = {
 
 
 export type MutationRunEvaluationInputArgs = {
-  agentId: Scalars['UUID']['input'];
-  input: Scalars['String']['input'];
+  agentId: Scalars['UUID'];
+  input: Scalars['String'];
 };
 
 
@@ -3228,18 +3226,18 @@ export type MutationRunWorkspaceMigrationArgs = {
 
 export type MutationSaveImapSmtpCaldavAccountArgs = {
   connectionParameters: EmailAccountConnectionParameters;
-  handle: Scalars['String']['input'];
-  id?: InputMaybe<Scalars['UUID']['input']>;
+  handle: Scalars['String'];
+  id?: InputMaybe<Scalars['UUID']>;
 };
 
 
 export type MutationSendChatMessageArgs = {
-  browsingContext?: InputMaybe<Scalars['JSON']['input']>;
+  browsingContext?: InputMaybe<Scalars['JSON']>;
   fileAttachments?: InputMaybe<Array<FileAttachmentInput>>;
-  messageId: Scalars['UUID']['input'];
-  modelId?: InputMaybe<Scalars['String']['input']>;
-  text: Scalars['String']['input'];
-  threadId: Scalars['UUID']['input'];
+  messageId: Scalars['UUID'];
+  modelId?: InputMaybe<Scalars['String']>;
+  text: Scalars['String'];
+  threadId: Scalars['UUID'];
 };
 
 
@@ -3254,88 +3252,88 @@ export type MutationSendEmailViaEmailingDomainArgs = {
 
 
 export type MutationSendInvitationsArgs = {
-  emails: Array<Scalars['String']['input']>;
-  roleId?: InputMaybe<Scalars['UUID']['input']>;
+  emails: Array<Scalars['String']>;
+  roleId?: InputMaybe<Scalars['UUID']>;
 };
 
 
 export type MutationSetEnterpriseKeyArgs = {
-  enterpriseKey: Scalars['String']['input'];
+  enterpriseKey: Scalars['String'];
 };
 
 
 export type MutationSetResourceCreditSubscriptionPriceArgs = {
-  priceId: Scalars['String']['input'];
+  priceId: Scalars['String'];
 };
 
 
 export type MutationSignInArgs = {
-  captchaToken?: InputMaybe<Scalars['String']['input']>;
-  email: Scalars['String']['input'];
-  locale?: InputMaybe<Scalars['String']['input']>;
-  password: Scalars['String']['input'];
-  verifyEmailRedirectPath?: InputMaybe<Scalars['String']['input']>;
+  captchaToken?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  locale?: InputMaybe<Scalars['String']>;
+  password: Scalars['String'];
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationSignUpArgs = {
-  captchaToken?: InputMaybe<Scalars['String']['input']>;
-  email: Scalars['String']['input'];
-  locale?: InputMaybe<Scalars['String']['input']>;
-  password: Scalars['String']['input'];
-  verifyEmailRedirectPath?: InputMaybe<Scalars['String']['input']>;
+  captchaToken?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  locale?: InputMaybe<Scalars['String']>;
+  password: Scalars['String'];
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationSignUpInWorkspaceArgs = {
-  captchaToken?: InputMaybe<Scalars['String']['input']>;
-  email: Scalars['String']['input'];
-  locale?: InputMaybe<Scalars['String']['input']>;
-  password: Scalars['String']['input'];
-  verifyEmailRedirectPath?: InputMaybe<Scalars['String']['input']>;
-  workspaceId?: InputMaybe<Scalars['UUID']['input']>;
-  workspaceInviteHash?: InputMaybe<Scalars['String']['input']>;
-  workspacePersonalInviteToken?: InputMaybe<Scalars['String']['input']>;
+  captchaToken?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  locale?: InputMaybe<Scalars['String']>;
+  password: Scalars['String'];
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
+  workspaceId?: InputMaybe<Scalars['UUID']>;
+  workspaceInviteHash?: InputMaybe<Scalars['String']>;
+  workspacePersonalInviteToken?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationStartChannelSyncArgs = {
-  connectedAccountId: Scalars['UUID']['input'];
+  connectedAccountId: Scalars['UUID'];
 };
 
 
 export type MutationStopAgentChatStreamArgs = {
-  threadId: Scalars['UUID']['input'];
+  threadId: Scalars['UUID'];
 };
 
 
 export type MutationSyncApplicationArgs = {
-  dryRun?: InputMaybe<Scalars['Boolean']['input']>;
-  manifest: Scalars['JSON']['input'];
+  dryRun?: InputMaybe<Scalars['Boolean']>;
+  manifest: Scalars['JSON'];
 };
 
 
 export type MutationTrackAnalyticsArgs = {
-  event?: InputMaybe<Scalars['String']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  properties?: InputMaybe<Scalars['JSON']['input']>;
+  event?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  properties?: InputMaybe<Scalars['JSON']>;
   type: AnalyticsType;
 };
 
 
 export type MutationTransferApplicationRegistrationOwnershipArgs = {
-  applicationRegistrationId: Scalars['String']['input'];
-  targetWorkspaceSubdomain: Scalars['String']['input'];
+  applicationRegistrationId: Scalars['String'];
+  targetWorkspaceSubdomain: Scalars['String'];
 };
 
 
 export type MutationUnarchiveChatThreadArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
 export type MutationUninstallApplicationArgs = {
-  universalIdentifier: Scalars['String']['input'];
+  universalIdentifier: Scalars['String'];
 };
 
 
@@ -3410,9 +3408,9 @@ export type MutationUpdateOneAgentArgs = {
 
 
 export type MutationUpdateOneApplicationVariableArgs = {
-  applicationId: Scalars['UUID']['input'];
-  key: Scalars['String']['input'];
-  value: Scalars['String']['input'];
+  applicationId: Scalars['UUID'];
+  key: Scalars['String'];
+  value: Scalars['String'];
 };
 
 
@@ -3437,38 +3435,38 @@ export type MutationUpdateOneRoleArgs = {
 
 
 export type MutationUpdatePageLayoutArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
   input: UpdatePageLayoutInput;
 };
 
 
 export type MutationUpdatePageLayoutTabArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
   input: UpdatePageLayoutTabInput;
 };
 
 
 export type MutationUpdatePageLayoutWidgetArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
   input: UpdatePageLayoutWidgetInput;
 };
 
 
 export type MutationUpdatePageLayoutWithTabsAndWidgetsArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
   input: UpdatePageLayoutWithTabsInput;
 };
 
 
 export type MutationUpdatePasswordViaResetTokenArgs = {
-  newPassword: Scalars['String']['input'];
-  passwordResetToken: Scalars['String']['input'];
+  newPassword: Scalars['String'];
+  passwordResetToken: Scalars['String'];
 };
 
 
 export type MutationUpdatePublicDomainArgs = {
-  applicationId?: InputMaybe<Scalars['String']['input']>;
-  domain: Scalars['String']['input'];
+  applicationId?: InputMaybe<Scalars['String']>;
+  domain: Scalars['String'];
 };
 
 
@@ -3478,13 +3476,13 @@ export type MutationUpdateSkillArgs = {
 
 
 export type MutationUpdateUserEmailArgs = {
-  newEmail: Scalars['String']['input'];
-  verifyEmailRedirectPath?: InputMaybe<Scalars['String']['input']>;
+  newEmail: Scalars['String'];
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationUpdateViewArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
   input: UpdateViewInput;
 };
 
@@ -3505,7 +3503,7 @@ export type MutationUpdateViewFilterArgs = {
 
 
 export type MutationUpdateViewFilterGroupArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
   input: UpdateViewFilterGroupInput;
 };
 
@@ -3531,8 +3529,8 @@ export type MutationUpdateWorkspaceArgs = {
 
 
 export type MutationUpdateWorkspaceMemberRoleArgs = {
-  roleId: Scalars['UUID']['input'];
-  workspaceMemberId: Scalars['UUID']['input'];
+  roleId: Scalars['UUID'];
+  workspaceMemberId: Scalars['UUID'];
 };
 
 
@@ -3542,59 +3540,59 @@ export type MutationUpdateWorkspaceMemberSettingsArgs = {
 
 
 export type MutationUpgradeApplicationArgs = {
-  appRegistrationId: Scalars['String']['input'];
-  targetVersion: Scalars['String']['input'];
+  appRegistrationId: Scalars['String'];
+  targetVersion: Scalars['String'];
 };
 
 
 export type MutationUploadAiChatFileArgs = {
-  file: Scalars['Upload']['input'];
+  file: Scalars['Upload'];
 };
 
 
 export type MutationUploadAppTarballArgs = {
-  file: Scalars['Upload']['input'];
-  universalIdentifier?: InputMaybe<Scalars['String']['input']>;
+  file: Scalars['Upload'];
+  universalIdentifier?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationUploadApplicationFileArgs = {
-  applicationUniversalIdentifier: Scalars['String']['input'];
-  file: Scalars['Upload']['input'];
+  applicationUniversalIdentifier: Scalars['String'];
+  file: Scalars['Upload'];
   fileFolder: FileFolder;
-  filePath: Scalars['String']['input'];
+  filePath: Scalars['String'];
 };
 
 
 export type MutationUploadEmailAttachmentFileArgs = {
-  file: Scalars['Upload']['input'];
+  file: Scalars['Upload'];
 };
 
 
 export type MutationUploadFilesFieldFileArgs = {
-  fieldMetadataId: Scalars['String']['input'];
-  file: Scalars['Upload']['input'];
+  fieldMetadataId: Scalars['String'];
+  file: Scalars['Upload'];
 };
 
 
 export type MutationUploadFilesFieldFileByUniversalIdentifierArgs = {
-  fieldMetadataUniversalIdentifier: Scalars['String']['input'];
-  file: Scalars['Upload']['input'];
+  fieldMetadataUniversalIdentifier: Scalars['String'];
+  file: Scalars['Upload'];
 };
 
 
 export type MutationUploadWorkflowFileArgs = {
-  file: Scalars['Upload']['input'];
+  file: Scalars['Upload'];
 };
 
 
 export type MutationUploadWorkspaceLogoArgs = {
-  file: Scalars['Upload']['input'];
+  file: Scalars['Upload'];
 };
 
 
 export type MutationUploadWorkspaceMemberProfilePictureArgs = {
-  file: Scalars['Upload']['input'];
+  file: Scalars['Upload'];
 };
 
 
@@ -3634,54 +3632,54 @@ export type MutationValidateApprovedAccessDomainArgs = {
 
 
 export type MutationVerifyEmailAndGetLoginTokenArgs = {
-  captchaToken?: InputMaybe<Scalars['String']['input']>;
-  email: Scalars['String']['input'];
-  emailVerificationToken: Scalars['String']['input'];
-  origin: Scalars['String']['input'];
+  captchaToken?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  emailVerificationToken: Scalars['String'];
+  origin: Scalars['String'];
 };
 
 
 export type MutationVerifyEmailAndGetWorkspaceAgnosticTokenArgs = {
-  captchaToken?: InputMaybe<Scalars['String']['input']>;
-  email: Scalars['String']['input'];
-  emailVerificationToken: Scalars['String']['input'];
+  captchaToken?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  emailVerificationToken: Scalars['String'];
 };
 
 
 export type MutationVerifyEmailingDomainArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
 export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs = {
-  otp: Scalars['String']['input'];
+  otp: Scalars['String'];
 };
 
 export type NativeModelCapabilities = {
   __typename?: 'NativeModelCapabilities';
-  twitterSearch?: Maybe<Scalars['Boolean']['output']>;
-  webSearch?: Maybe<Scalars['Boolean']['output']>;
+  twitterSearch?: Maybe<Scalars['Boolean']>;
+  webSearch?: Maybe<Scalars['Boolean']>;
 };
 
 export type NavigationMenuItem = {
   __typename?: 'NavigationMenuItem';
-  applicationId?: Maybe<Scalars['UUID']['output']>;
-  color?: Maybe<Scalars['String']['output']>;
-  createdAt: Scalars['DateTime']['output'];
-  folderId?: Maybe<Scalars['UUID']['output']>;
-  icon?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  link?: Maybe<Scalars['String']['output']>;
-  name?: Maybe<Scalars['String']['output']>;
-  pageLayoutId?: Maybe<Scalars['UUID']['output']>;
-  position: Scalars['Float']['output'];
-  targetObjectMetadataId?: Maybe<Scalars['UUID']['output']>;
-  targetRecordId?: Maybe<Scalars['UUID']['output']>;
+  applicationId?: Maybe<Scalars['UUID']>;
+  color?: Maybe<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
+  folderId?: Maybe<Scalars['UUID']>;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  link?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  pageLayoutId?: Maybe<Scalars['UUID']>;
+  position: Scalars['Float'];
+  targetObjectMetadataId?: Maybe<Scalars['UUID']>;
+  targetRecordId?: Maybe<Scalars['UUID']>;
   targetRecordIdentifier?: Maybe<RecordIdentifier>;
   type: NavigationMenuItemType;
-  updatedAt: Scalars['DateTime']['output'];
-  userWorkspaceId?: Maybe<Scalars['UUID']['output']>;
-  viewId?: Maybe<Scalars['UUID']['output']>;
+  updatedAt: Scalars['DateTime'];
+  userWorkspaceId?: Maybe<Scalars['UUID']>;
+  viewId?: Maybe<Scalars['UUID']>;
 };
 
 export enum NavigationMenuItemType {
@@ -3700,35 +3698,35 @@ export type NotesConfiguration = {
 
 export type Object = {
   __typename?: 'Object';
-  applicationId: Scalars['UUID']['output'];
-  color?: Maybe<Scalars['String']['output']>;
-  createdAt: Scalars['DateTime']['output'];
-  description?: Maybe<Scalars['String']['output']>;
-  duplicateCriteria?: Maybe<Array<Array<Scalars['String']['output']>>>;
+  applicationId: Scalars['UUID'];
+  color?: Maybe<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
+  duplicateCriteria?: Maybe<Array<Array<Scalars['String']>>>;
   fields: ObjectFieldsConnection;
   fieldsList: Array<Field>;
-  icon?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  imageIdentifierFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  imageIdentifierFieldMetadataId?: Maybe<Scalars['UUID']>;
   indexMetadataList: Array<Index>;
   indexMetadatas: ObjectIndexMetadatasConnection;
-  isActive: Scalars['Boolean']['output'];
+  isActive: Scalars['Boolean'];
   /** @deprecated isCustom is derived from the owning application and will be removed; an object is custom when it does not belong to the twenty-standard application. */
-  isCustom: Scalars['Boolean']['output'];
-  isLabelSyncedWithName: Scalars['Boolean']['output'];
-  isRemote: Scalars['Boolean']['output'];
-  isSearchable: Scalars['Boolean']['output'];
-  isSystem: Scalars['Boolean']['output'];
-  isUIReadOnly: Scalars['Boolean']['output'];
-  labelIdentifierFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
-  labelPlural: Scalars['String']['output'];
-  labelSingular: Scalars['String']['output'];
-  namePlural: Scalars['String']['output'];
-  nameSingular: Scalars['String']['output'];
-  shortcut?: Maybe<Scalars['String']['output']>;
+  isCustom: Scalars['Boolean'];
+  isLabelSyncedWithName: Scalars['Boolean'];
+  isRemote: Scalars['Boolean'];
+  isSearchable: Scalars['Boolean'];
+  isSystem: Scalars['Boolean'];
+  isUIReadOnly: Scalars['Boolean'];
+  labelIdentifierFieldMetadataId?: Maybe<Scalars['UUID']>;
+  labelPlural: Scalars['String'];
+  labelSingular: Scalars['String'];
+  namePlural: Scalars['String'];
+  nameSingular: Scalars['String'];
+  shortcut?: Maybe<Scalars['String']>;
   standardOverrides?: Maybe<ObjectStandardOverrides>;
-  universalIdentifier: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
+  universalIdentifier: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
 };
 
 
@@ -3754,7 +3752,7 @@ export type ObjectConnection = {
 export type ObjectEdge = {
   __typename?: 'ObjectEdge';
   /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor']['output'];
+  cursor: Scalars['ConnectionCursor'];
   /** The node containing the Object */
   node: Object;
 };
@@ -3788,57 +3786,57 @@ export type ObjectIndexMetadatasConnection = {
 
 export type ObjectMetadataCommandMenuItemPayload = {
   __typename?: 'ObjectMetadataCommandMenuItemPayload';
-  objectMetadataItemId: Scalars['UUID']['output'];
+  objectMetadataItemId: Scalars['UUID'];
 };
 
 export type ObjectPermission = {
   __typename?: 'ObjectPermission';
-  canDestroyObjectRecords?: Maybe<Scalars['Boolean']['output']>;
-  canReadObjectRecords?: Maybe<Scalars['Boolean']['output']>;
-  canSoftDeleteObjectRecords?: Maybe<Scalars['Boolean']['output']>;
-  canUpdateObjectRecords?: Maybe<Scalars['Boolean']['output']>;
-  objectMetadataId: Scalars['UUID']['output'];
-  restrictedFields?: Maybe<Scalars['JSON']['output']>;
+  canDestroyObjectRecords?: Maybe<Scalars['Boolean']>;
+  canReadObjectRecords?: Maybe<Scalars['Boolean']>;
+  canSoftDeleteObjectRecords?: Maybe<Scalars['Boolean']>;
+  canUpdateObjectRecords?: Maybe<Scalars['Boolean']>;
+  objectMetadataId: Scalars['UUID'];
+  restrictedFields?: Maybe<Scalars['JSON']>;
   rowLevelPermissionPredicateGroups?: Maybe<Array<RowLevelPermissionPredicateGroup>>;
   rowLevelPermissionPredicates?: Maybe<Array<RowLevelPermissionPredicate>>;
 };
 
 export type ObjectPermissionInput = {
-  canDestroyObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canReadObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canSoftDeleteObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canUpdateObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  objectMetadataId: Scalars['UUID']['input'];
+  canDestroyObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canReadObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canSoftDeleteObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canUpdateObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  objectMetadataId: Scalars['UUID'];
 };
 
 export type ObjectRecordCount = {
   __typename?: 'ObjectRecordCount';
-  objectNamePlural: Scalars['String']['output'];
-  totalCount: Scalars['Int']['output'];
+  objectNamePlural: Scalars['String'];
+  totalCount: Scalars['Int'];
 };
 
 export type ObjectRecordEvent = {
   __typename?: 'ObjectRecordEvent';
   action: DatabaseEventAction;
-  objectNameSingular: Scalars['String']['output'];
+  objectNameSingular: Scalars['String'];
   properties: ObjectRecordEventProperties;
-  recordId: Scalars['String']['output'];
-  userId?: Maybe<Scalars['String']['output']>;
-  workspaceMemberId?: Maybe<Scalars['String']['output']>;
+  recordId: Scalars['String'];
+  userId?: Maybe<Scalars['String']>;
+  workspaceMemberId?: Maybe<Scalars['String']>;
 };
 
 export type ObjectRecordEventProperties = {
   __typename?: 'ObjectRecordEventProperties';
-  after?: Maybe<Scalars['JSON']['output']>;
-  before?: Maybe<Scalars['JSON']['output']>;
-  diff?: Maybe<Scalars['JSON']['output']>;
-  updatedFields?: Maybe<Array<Scalars['String']['output']>>;
+  after?: Maybe<Scalars['JSON']>;
+  before?: Maybe<Scalars['JSON']>;
+  diff?: Maybe<Scalars['JSON']>;
+  updatedFields?: Maybe<Array<Scalars['String']>>;
 };
 
 export type ObjectRecordEventWithQueryIds = {
   __typename?: 'ObjectRecordEventWithQueryIds';
   objectRecordEvent: ObjectRecordEvent;
-  queryIds: Array<Scalars['String']['output']>;
+  queryIds: Array<Scalars['String']>;
 };
 
 /** Date granularity options (e.g. DAY, MONTH, QUARTER, YEAR, WEEK, DAY_OF_THE_WEEK, MONTH_OF_THE_YEAR, QUARTER_OF_THE_YEAR) */
@@ -3856,12 +3854,12 @@ export enum ObjectRecordGroupByDateGranularity {
 
 export type ObjectStandardOverrides = {
   __typename?: 'ObjectStandardOverrides';
-  color?: Maybe<Scalars['String']['output']>;
-  description?: Maybe<Scalars['String']['output']>;
-  icon?: Maybe<Scalars['String']['output']>;
-  labelPlural?: Maybe<Scalars['String']['output']>;
-  labelSingular?: Maybe<Scalars['String']['output']>;
-  translations?: Maybe<Scalars['JSON']['output']>;
+  color?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  labelPlural?: Maybe<Scalars['String']>;
+  labelSingular?: Maybe<Scalars['String']>;
+  translations?: Maybe<Scalars['JSON']>;
 };
 
 /** Onboarding status */
@@ -3878,50 +3876,50 @@ export enum OnboardingStatus {
 export type OnboardingStepSuccess = {
   __typename?: 'OnboardingStepSuccess';
   /** Boolean that confirms query was dispatched */
-  success: Scalars['Boolean']['output'];
+  success: Scalars['Boolean'];
 };
 
 export type PageInfo = {
   __typename?: 'PageInfo';
   /** The cursor of the last returned record. */
-  endCursor?: Maybe<Scalars['ConnectionCursor']['output']>;
+  endCursor?: Maybe<Scalars['ConnectionCursor']>;
   /** true if paging forward and there are more records. */
-  hasNextPage?: Maybe<Scalars['Boolean']['output']>;
+  hasNextPage?: Maybe<Scalars['Boolean']>;
   /** true if paging backwards and there are more records. */
-  hasPreviousPage?: Maybe<Scalars['Boolean']['output']>;
+  hasPreviousPage?: Maybe<Scalars['Boolean']>;
   /** The cursor of the first returned record. */
-  startCursor?: Maybe<Scalars['ConnectionCursor']['output']>;
+  startCursor?: Maybe<Scalars['ConnectionCursor']>;
 };
 
 export type PageLayout = {
   __typename?: 'PageLayout';
-  createdAt: Scalars['DateTime']['output'];
-  defaultTabToFocusOnMobileAndSidePanelId?: Maybe<Scalars['UUID']['output']>;
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
-  id: Scalars['UUID']['output'];
-  name: Scalars['String']['output'];
-  objectMetadataId?: Maybe<Scalars['UUID']['output']>;
+  createdAt: Scalars['DateTime'];
+  defaultTabToFocusOnMobileAndSidePanelId?: Maybe<Scalars['UUID']>;
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  objectMetadataId?: Maybe<Scalars['UUID']>;
   tabs?: Maybe<Array<PageLayoutTab>>;
   type: PageLayoutType;
-  universalIdentifier: Scalars['UUID']['output'];
-  updatedAt: Scalars['DateTime']['output'];
+  universalIdentifier: Scalars['UUID'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type PageLayoutTab = {
   __typename?: 'PageLayoutTab';
-  applicationId: Scalars['UUID']['output'];
-  createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
-  icon?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  isActive: Scalars['Boolean']['output'];
+  applicationId: Scalars['UUID'];
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isActive: Scalars['Boolean'];
   /** @deprecated isOverridden is deprecated */
-  isOverridden?: Maybe<Scalars['Boolean']['output']>;
+  isOverridden?: Maybe<Scalars['Boolean']>;
   layoutMode?: Maybe<PageLayoutTabLayoutMode>;
-  pageLayoutId: Scalars['UUID']['output'];
-  position: Scalars['Float']['output'];
-  title: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
+  pageLayoutId: Scalars['UUID'];
+  position: Scalars['Float'];
+  title: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
   widgets?: Maybe<Array<PageLayoutWidget>>;
 };
 
@@ -3940,24 +3938,24 @@ export enum PageLayoutType {
 
 export type PageLayoutWidget = {
   __typename?: 'PageLayoutWidget';
-  applicationId: Scalars['UUID']['output'];
-  conditionalAvailabilityExpression?: Maybe<Scalars['String']['output']>;
-  conditionalDisplay?: Maybe<Scalars['JSON']['output']>;
+  applicationId: Scalars['UUID'];
+  conditionalAvailabilityExpression?: Maybe<Scalars['String']>;
+  conditionalDisplay?: Maybe<Scalars['JSON']>;
   configuration: WidgetConfiguration;
-  createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
   /** @deprecated Use `position` instead. Will be removed in a future release. */
   gridPosition: GridPosition;
-  id: Scalars['UUID']['output'];
-  isActive: Scalars['Boolean']['output'];
+  id: Scalars['UUID'];
+  isActive: Scalars['Boolean'];
   /** @deprecated isOverridden is deprecated */
-  isOverridden?: Maybe<Scalars['Boolean']['output']>;
-  objectMetadataId?: Maybe<Scalars['UUID']['output']>;
-  pageLayoutTabId: Scalars['UUID']['output'];
+  isOverridden?: Maybe<Scalars['Boolean']>;
+  objectMetadataId?: Maybe<Scalars['UUID']>;
+  pageLayoutTabId: Scalars['UUID'];
   position?: Maybe<PageLayoutWidgetPosition>;
-  title: Scalars['String']['output'];
+  title: Scalars['String'];
   type: WidgetType;
-  updatedAt: Scalars['DateTime']['output'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type PageLayoutWidgetCanvasPosition = {
@@ -3967,24 +3965,24 @@ export type PageLayoutWidgetCanvasPosition = {
 
 export type PageLayoutWidgetGridPosition = {
   __typename?: 'PageLayoutWidgetGridPosition';
-  column: Scalars['Int']['output'];
-  columnSpan: Scalars['Int']['output'];
+  column: Scalars['Int'];
+  columnSpan: Scalars['Int'];
   layoutMode: PageLayoutTabLayoutMode;
-  row: Scalars['Int']['output'];
-  rowSpan: Scalars['Int']['output'];
+  row: Scalars['Int'];
+  rowSpan: Scalars['Int'];
 };
 
 export type PageLayoutWidgetPosition = PageLayoutWidgetCanvasPosition | PageLayoutWidgetGridPosition | PageLayoutWidgetVerticalListPosition;
 
 export type PageLayoutWidgetVerticalListPosition = {
   __typename?: 'PageLayoutWidgetVerticalListPosition';
-  index: Scalars['Int']['output'];
+  index: Scalars['Int'];
   layoutMode: PageLayoutTabLayoutMode;
 };
 
 export type PathCommandMenuItemPayload = {
   __typename?: 'PathCommandMenuItemPayload';
-  path: Scalars['String']['output'];
+  path: Scalars['String'];
 };
 
 export enum PermissionFlagType {
@@ -4017,81 +4015,81 @@ export enum PermissionFlagType {
 
 export type PieChartConfiguration = {
   __typename?: 'PieChartConfiguration';
-  aggregateFieldMetadataId: Scalars['UUID']['output'];
+  aggregateFieldMetadataId: Scalars['UUID'];
   aggregateOperation: AggregateOperations;
-  color?: Maybe<Scalars['String']['output']>;
+  color?: Maybe<Scalars['String']>;
   configurationType: WidgetConfigurationType;
   dateGranularity?: Maybe<ObjectRecordGroupByDateGranularity>;
-  description?: Maybe<Scalars['String']['output']>;
-  displayDataLabel?: Maybe<Scalars['Boolean']['output']>;
-  displayLegend?: Maybe<Scalars['Boolean']['output']>;
-  filter?: Maybe<Scalars['JSON']['output']>;
-  firstDayOfTheWeek?: Maybe<Scalars['Int']['output']>;
-  groupByFieldMetadataId: Scalars['UUID']['output'];
-  groupBySubFieldName?: Maybe<Scalars['String']['output']>;
-  hideEmptyCategory?: Maybe<Scalars['Boolean']['output']>;
-  manualSortOrder?: Maybe<Array<Scalars['String']['output']>>;
+  description?: Maybe<Scalars['String']>;
+  displayDataLabel?: Maybe<Scalars['Boolean']>;
+  displayLegend?: Maybe<Scalars['Boolean']>;
+  filter?: Maybe<Scalars['JSON']>;
+  firstDayOfTheWeek?: Maybe<Scalars['Int']>;
+  groupByFieldMetadataId: Scalars['UUID'];
+  groupBySubFieldName?: Maybe<Scalars['String']>;
+  hideEmptyCategory?: Maybe<Scalars['Boolean']>;
+  manualSortOrder?: Maybe<Array<Scalars['String']>>;
   orderBy?: Maybe<GraphOrderBy>;
-  showCenterMetric?: Maybe<Scalars['Boolean']['output']>;
-  splitMultiValueFields?: Maybe<Scalars['Boolean']['output']>;
-  timezone?: Maybe<Scalars['String']['output']>;
+  showCenterMetric?: Maybe<Scalars['Boolean']>;
+  splitMultiValueFields?: Maybe<Scalars['Boolean']>;
+  timezone?: Maybe<Scalars['String']>;
 };
 
 export type PieChartData = {
   __typename?: 'PieChartData';
   data: Array<PieChartDataItem>;
-  formattedToRawLookup: Scalars['JSON']['output'];
-  hasTooManyGroups: Scalars['Boolean']['output'];
-  showCenterMetric: Scalars['Boolean']['output'];
-  showDataLabels: Scalars['Boolean']['output'];
-  showLegend: Scalars['Boolean']['output'];
+  formattedToRawLookup: Scalars['JSON'];
+  hasTooManyGroups: Scalars['Boolean'];
+  showCenterMetric: Scalars['Boolean'];
+  showDataLabels: Scalars['Boolean'];
+  showLegend: Scalars['Boolean'];
 };
 
 export type PieChartDataInput = {
-  configuration: Scalars['JSON']['input'];
-  objectMetadataId: Scalars['UUID']['input'];
+  configuration: Scalars['JSON'];
+  objectMetadataId: Scalars['UUID'];
 };
 
 export type PieChartDataItem = {
   __typename?: 'PieChartDataItem';
-  id: Scalars['String']['output'];
-  value: Scalars['Float']['output'];
+  id: Scalars['String'];
+  value: Scalars['Float'];
 };
 
 export type PlaceDetailsResult = {
   __typename?: 'PlaceDetailsResult';
-  city?: Maybe<Scalars['String']['output']>;
-  country?: Maybe<Scalars['String']['output']>;
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
   location?: Maybe<Location>;
-  postcode?: Maybe<Scalars['String']['output']>;
-  state?: Maybe<Scalars['String']['output']>;
-  street?: Maybe<Scalars['String']['output']>;
+  postcode?: Maybe<Scalars['String']>;
+  state?: Maybe<Scalars['String']>;
+  street?: Maybe<Scalars['String']>;
 };
 
 export type PublicApplicationRegistration = {
   __typename?: 'PublicApplicationRegistration';
-  id: Scalars['UUID']['output'];
-  logoUrl?: Maybe<Scalars['String']['output']>;
-  name: Scalars['String']['output'];
-  oAuthScopes: Array<Scalars['String']['output']>;
-  websiteUrl?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID'];
+  logoUrl?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  oAuthScopes: Array<Scalars['String']>;
+  websiteUrl?: Maybe<Scalars['String']>;
 };
 
 export type PublicConnectionParametersOutput = {
   __typename?: 'PublicConnectionParametersOutput';
-  host: Scalars['String']['output'];
-  port: Scalars['Float']['output'];
-  secure?: Maybe<Scalars['Boolean']['output']>;
-  username?: Maybe<Scalars['String']['output']>;
+  host: Scalars['String'];
+  port: Scalars['Float'];
+  secure?: Maybe<Scalars['Boolean']>;
+  username?: Maybe<Scalars['String']>;
 };
 
 export type PublicDomain = {
   __typename?: 'PublicDomain';
-  applicationId?: Maybe<Scalars['UUID']['output']>;
-  createdAt: Scalars['DateTime']['output'];
-  domain: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  isValidated: Scalars['Boolean']['output'];
+  applicationId?: Maybe<Scalars['UUID']>;
+  createdAt: Scalars['DateTime'];
+  domain: Scalars['String'];
+  id: Scalars['UUID'];
+  isValidated: Scalars['Boolean'];
 };
 
 export type PublicFeatureFlag = {
@@ -4102,9 +4100,9 @@ export type PublicFeatureFlag = {
 
 export type PublicFeatureFlagMetadata = {
   __typename?: 'PublicFeatureFlagMetadata';
-  description: Scalars['String']['output'];
-  imagePath?: Maybe<Scalars['String']['output']>;
-  label: Scalars['String']['output'];
+  description: Scalars['String'];
+  imagePath?: Maybe<Scalars['String']>;
+  label: Scalars['String'];
 };
 
 export type PublicImapSmtpCaldavConnectionParameters = {
@@ -4118,17 +4116,17 @@ export type PublicWorkspaceData = {
   __typename?: 'PublicWorkspaceData';
   authBypassProviders?: Maybe<AuthBypassProviders>;
   authProviders: AuthProviders;
-  displayName?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  logo?: Maybe<Scalars['String']['output']>;
+  displayName?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  logo?: Maybe<Scalars['String']>;
   workspaceUrls: WorkspaceUrls;
 };
 
 export type PublicWorkspaceDataSummary = {
   __typename?: 'PublicWorkspaceDataSummary';
-  displayName?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  logo?: Maybe<Scalars['String']['output']>;
+  displayName?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  logo?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
@@ -4139,7 +4137,7 @@ export type Query = {
   appConnection: AppConnection;
   appConnections: Array<AppConnection>;
   applicationConnectionProviders: Array<ApplicationConnectionProvider>;
-  applicationRegistrationTarballUrl?: Maybe<Scalars['String']['output']>;
+  applicationRegistrationTarballUrl?: Maybe<Scalars['String']>;
   barChartData: BarChartData;
   billingPortalSession: BillingSession;
   chatMessages: Array<AgentMessage>;
@@ -4152,8 +4150,8 @@ export type Query = {
   commandMenuItems: Array<CommandMenuItem>;
   currentUser: User;
   currentWorkspace: Workspace;
-  enterpriseCheckoutSession?: Maybe<Scalars['String']['output']>;
-  enterprisePortalSession?: Maybe<Scalars['String']['output']>;
+  enterpriseCheckoutSession?: Maybe<Scalars['String']>;
+  enterprisePortalSession?: Maybe<Scalars['String']>;
   enterpriseSubscriptionStatus?: Maybe<EnterpriseSubscriptionStatusDto>;
   eventLogs: EventLogQueryResult;
   field: Field;
@@ -4182,10 +4180,10 @@ export type Query = {
   getAiSystemPromptPreview: AiSystemPromptPreview;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
   getAutoCompleteAddress: Array<AutocompleteResult>;
-  getAvailablePackages: Scalars['JSON']['output'];
+  getAvailablePackages: Scalars['JSON'];
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
   getEmailingDomains: Array<EmailingDomain>;
-  getLogicFunctionSourceCode?: Maybe<Scalars['String']['output']>;
+  getLogicFunctionSourceCode?: Maybe<Scalars['String']>;
   getPageLayout?: Maybe<PageLayout>;
   getPageLayoutTab: PageLayoutTab;
   getPageLayoutTabs: Array<PageLayoutTab>;
@@ -4198,7 +4196,7 @@ export type Query = {
   getRoles: Array<Role>;
   getSSOIdentityProviders: Array<FindAvailableSsoidp>;
   getToolIndex: Array<ToolIndexEntry>;
-  getToolInputSchema?: Maybe<Scalars['JSON']['output']>;
+  getToolInputSchema?: Maybe<Scalars['JSON']>;
   getUsageAnalytics: UsageAnalytics;
   getView?: Maybe<View>;
   getViewField?: Maybe<ViewField>;
@@ -4238,7 +4236,7 @@ export type Query = {
 
 
 export type QueryAgentTurnsArgs = {
-  agentId: Scalars['UUID']['input'];
+  agentId: Scalars['UUID'];
 };
 
 
@@ -4248,7 +4246,7 @@ export type QueryApiKeyArgs = {
 
 
 export type QueryAppConnectionArgs = {
-  id: Scalars['ID']['input'];
+  id: Scalars['ID'];
 };
 
 
@@ -4258,12 +4256,12 @@ export type QueryAppConnectionsArgs = {
 
 
 export type QueryApplicationConnectionProvidersArgs = {
-  applicationId: Scalars['UUID']['input'];
+  applicationId: Scalars['UUID'];
 };
 
 
 export type QueryApplicationRegistrationTarballUrlArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
@@ -4273,48 +4271,48 @@ export type QueryBarChartDataArgs = {
 
 
 export type QueryBillingPortalSessionArgs = {
-  returnUrlPath?: InputMaybe<Scalars['String']['input']>;
+  returnUrlPath?: InputMaybe<Scalars['String']>;
 };
 
 
 export type QueryChatMessagesArgs = {
-  threadId: Scalars['UUID']['input'];
+  threadId: Scalars['UUID'];
 };
 
 
 export type QueryChatStreamCatchupChunksArgs = {
-  threadId: Scalars['UUID']['input'];
+  threadId: Scalars['UUID'];
 };
 
 
 export type QueryChatThreadArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
 export type QueryCheckUserExistsArgs = {
-  captchaToken?: InputMaybe<Scalars['String']['input']>;
-  email: Scalars['String']['input'];
+  captchaToken?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
 };
 
 
 export type QueryCheckWorkspaceInviteHashIsValidArgs = {
-  inviteHash: Scalars['String']['input'];
+  inviteHash: Scalars['String'];
 };
 
 
 export type QueryCommandMenuItemArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
 export type QueryEnterpriseCheckoutSessionArgs = {
-  billingInterval?: InputMaybe<Scalars['String']['input']>;
+  billingInterval?: InputMaybe<Scalars['String']>;
 };
 
 
 export type QueryEnterprisePortalSessionArgs = {
-  returnUrlPath?: InputMaybe<Scalars['String']['input']>;
+  returnUrlPath?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -4324,7 +4322,7 @@ export type QueryEventLogsArgs = {
 
 
 export type QueryFieldArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
@@ -4335,27 +4333,27 @@ export type QueryFieldsArgs = {
 
 
 export type QueryFindApplicationRegistrationByClientIdArgs = {
-  clientId: Scalars['String']['input'];
+  clientId: Scalars['String'];
 };
 
 
 export type QueryFindApplicationRegistrationByUniversalIdentifierArgs = {
-  universalIdentifier: Scalars['String']['input'];
+  universalIdentifier: Scalars['String'];
 };
 
 
 export type QueryFindApplicationRegistrationStatsArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
 export type QueryFindApplicationRegistrationVariablesArgs = {
-  applicationRegistrationId: Scalars['String']['input'];
+  applicationRegistrationId: Scalars['String'];
 };
 
 
 export type QueryFindMarketplaceAppDetailArgs = {
-  universalIdentifier: Scalars['String']['input'];
+  universalIdentifier: Scalars['String'];
 };
 
 
@@ -4365,13 +4363,13 @@ export type QueryFindOneAgentArgs = {
 
 
 export type QueryFindOneApplicationArgs = {
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  universalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  universalIdentifier?: InputMaybe<Scalars['UUID']>;
 };
 
 
 export type QueryFindOneApplicationRegistrationArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
@@ -4381,26 +4379,26 @@ export type QueryFindOneLogicFunctionArgs = {
 
 
 export type QueryFindWorkspaceFromInviteHashArgs = {
-  inviteHash: Scalars['String']['input'];
+  inviteHash: Scalars['String'];
 };
 
 
 export type QueryFrontComponentArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
 export type QueryGetAddressDetailsArgs = {
-  placeId: Scalars['String']['input'];
-  token: Scalars['String']['input'];
+  placeId: Scalars['String'];
+  token: Scalars['String'];
 };
 
 
 export type QueryGetAutoCompleteAddressArgs = {
-  address: Scalars['String']['input'];
-  country?: InputMaybe<Scalars['String']['input']>;
-  isFieldCity?: InputMaybe<Scalars['Boolean']['input']>;
-  token: Scalars['String']['input'];
+  address: Scalars['String'];
+  country?: InputMaybe<Scalars['String']>;
+  isFieldCity?: InputMaybe<Scalars['Boolean']>;
+  token: Scalars['String'];
 };
 
 
@@ -4410,7 +4408,7 @@ export type QueryGetAvailablePackagesArgs = {
 
 
 export type QueryGetConnectedImapSmtpCaldavAccountArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
@@ -4420,48 +4418,48 @@ export type QueryGetLogicFunctionSourceCodeArgs = {
 
 
 export type QueryGetPageLayoutArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
 export type QueryGetPageLayoutTabArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
 export type QueryGetPageLayoutTabsArgs = {
-  pageLayoutId: Scalars['String']['input'];
+  pageLayoutId: Scalars['String'];
 };
 
 
 export type QueryGetPageLayoutWidgetArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
 export type QueryGetPageLayoutWidgetsArgs = {
-  pageLayoutTabId: Scalars['String']['input'];
+  pageLayoutTabId: Scalars['String'];
 };
 
 
 export type QueryGetPageLayoutsArgs = {
-  objectMetadataId?: InputMaybe<Scalars['String']['input']>;
+  objectMetadataId?: InputMaybe<Scalars['String']>;
   pageLayoutType?: InputMaybe<PageLayoutType>;
 };
 
 
 export type QueryGetPublicWorkspaceDataByDomainArgs = {
-  origin?: InputMaybe<Scalars['String']['input']>;
+  origin?: InputMaybe<Scalars['String']>;
 };
 
 
 export type QueryGetPublicWorkspaceDataByIdArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
 export type QueryGetToolInputSchemaArgs = {
-  toolName: Scalars['String']['input'];
+  toolName: Scalars['String'];
 };
 
 
@@ -4471,78 +4469,78 @@ export type QueryGetUsageAnalyticsArgs = {
 
 
 export type QueryGetViewArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
 export type QueryGetViewFieldArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
 export type QueryGetViewFieldGroupArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
 export type QueryGetViewFieldGroupsArgs = {
-  viewId: Scalars['String']['input'];
+  viewId: Scalars['String'];
 };
 
 
 export type QueryGetViewFieldsArgs = {
-  viewId: Scalars['String']['input'];
+  viewId: Scalars['String'];
 };
 
 
 export type QueryGetViewFilterArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
 export type QueryGetViewFilterGroupArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
 export type QueryGetViewFilterGroupsArgs = {
-  viewId?: InputMaybe<Scalars['String']['input']>;
+  viewId?: InputMaybe<Scalars['String']>;
 };
 
 
 export type QueryGetViewFiltersArgs = {
-  viewId?: InputMaybe<Scalars['String']['input']>;
+  viewId?: InputMaybe<Scalars['String']>;
 };
 
 
 export type QueryGetViewGroupArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
 export type QueryGetViewGroupsArgs = {
-  viewId?: InputMaybe<Scalars['String']['input']>;
+  viewId?: InputMaybe<Scalars['String']>;
 };
 
 
 export type QueryGetViewSortArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 };
 
 
 export type QueryGetViewSortsArgs = {
-  viewId?: InputMaybe<Scalars['String']['input']>;
+  viewId?: InputMaybe<Scalars['String']>;
 };
 
 
 export type QueryGetViewsArgs = {
-  objectMetadataId?: InputMaybe<Scalars['String']['input']>;
+  objectMetadataId?: InputMaybe<Scalars['String']>;
   viewTypes?: InputMaybe<Array<ViewType>>;
 };
 
 
 export type QueryIndexArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
@@ -4558,27 +4556,27 @@ export type QueryLineChartDataArgs = {
 
 
 export type QueryMyCalendarChannelsArgs = {
-  connectedAccountId?: InputMaybe<Scalars['UUID']['input']>;
+  connectedAccountId?: InputMaybe<Scalars['UUID']>;
 };
 
 
 export type QueryMyMessageChannelsArgs = {
-  connectedAccountId?: InputMaybe<Scalars['UUID']['input']>;
+  connectedAccountId?: InputMaybe<Scalars['UUID']>;
 };
 
 
 export type QueryMyMessageFoldersArgs = {
-  messageChannelId?: InputMaybe<Scalars['UUID']['input']>;
+  messageChannelId?: InputMaybe<Scalars['UUID']>;
 };
 
 
 export type QueryNavigationMenuItemArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
 export type QueryObjectArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
@@ -4594,36 +4592,36 @@ export type QueryPieChartDataArgs = {
 
 
 export type QuerySkillArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 
 export type QueryValidatePasswordResetTokenArgs = {
-  passwordResetToken: Scalars['String']['input'];
+  passwordResetToken: Scalars['String'];
 };
 
 
 export type QueryWebhookArgs = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 export type RatioAggregateConfig = {
   __typename?: 'RatioAggregateConfig';
-  fieldMetadataId: Scalars['UUID']['output'];
-  optionValue: Scalars['String']['output'];
+  fieldMetadataId: Scalars['UUID'];
+  optionValue: Scalars['String'];
 };
 
 export type RecordIdentifier = {
   __typename?: 'RecordIdentifier';
-  id: Scalars['UUID']['output'];
-  imageIdentifier?: Maybe<Scalars['String']['output']>;
-  labelIdentifier: Scalars['String']['output'];
+  id: Scalars['UUID'];
+  imageIdentifier?: Maybe<Scalars['String']>;
+  labelIdentifier: Scalars['String'];
 };
 
 export type RecordTableConfiguration = {
   __typename?: 'RecordTableConfiguration';
   configurationType: WidgetConfigurationType;
-  viewId?: Maybe<Scalars['String']['output']>;
+  viewId?: Maybe<Scalars['String']>;
 };
 
 export type Relation = {
@@ -4642,95 +4640,95 @@ export enum RelationType {
 }
 
 export type RemoveQueryFromEventStreamInput = {
-  eventStreamId: Scalars['String']['input'];
-  queryId: Scalars['String']['input'];
+  eventStreamId: Scalars['String'];
+  queryId: Scalars['String'];
 };
 
 export type ResendEmailVerificationToken = {
   __typename?: 'ResendEmailVerificationToken';
-  success: Scalars['Boolean']['output'];
+  success: Scalars['Boolean'];
 };
 
 export type RevokeApiKeyInput = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 };
 
 export type RichTextBody = {
   __typename?: 'RichTextBody';
-  blocknote?: Maybe<Scalars['String']['output']>;
-  markdown?: Maybe<Scalars['String']['output']>;
+  blocknote?: Maybe<Scalars['String']>;
+  markdown?: Maybe<Scalars['String']>;
 };
 
 export type Role = {
   __typename?: 'Role';
   agents: Array<Agent>;
   apiKeys: Array<ApiKeyForRole>;
-  canAccessAllTools: Scalars['Boolean']['output'];
-  canBeAssignedToAgents: Scalars['Boolean']['output'];
-  canBeAssignedToApiKeys: Scalars['Boolean']['output'];
-  canBeAssignedToUsers: Scalars['Boolean']['output'];
-  canDestroyAllObjectRecords: Scalars['Boolean']['output'];
-  canReadAllObjectRecords: Scalars['Boolean']['output'];
-  canSoftDeleteAllObjectRecords: Scalars['Boolean']['output'];
-  canUpdateAllObjectRecords: Scalars['Boolean']['output'];
-  canUpdateAllSettings: Scalars['Boolean']['output'];
-  description?: Maybe<Scalars['String']['output']>;
+  canAccessAllTools: Scalars['Boolean'];
+  canBeAssignedToAgents: Scalars['Boolean'];
+  canBeAssignedToApiKeys: Scalars['Boolean'];
+  canBeAssignedToUsers: Scalars['Boolean'];
+  canDestroyAllObjectRecords: Scalars['Boolean'];
+  canReadAllObjectRecords: Scalars['Boolean'];
+  canSoftDeleteAllObjectRecords: Scalars['Boolean'];
+  canUpdateAllObjectRecords: Scalars['Boolean'];
+  canUpdateAllSettings: Scalars['Boolean'];
+  description?: Maybe<Scalars['String']>;
   fieldPermissions?: Maybe<Array<FieldPermission>>;
-  icon?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  isEditable: Scalars['Boolean']['output'];
-  label: Scalars['String']['output'];
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isEditable: Scalars['Boolean'];
+  label: Scalars['String'];
   objectPermissions?: Maybe<Array<ObjectPermission>>;
   permissionFlags?: Maybe<Array<RolePermissionFlag>>;
   rowLevelPermissionPredicateGroups?: Maybe<Array<RowLevelPermissionPredicateGroup>>;
   rowLevelPermissionPredicates?: Maybe<Array<RowLevelPermissionPredicate>>;
-  universalIdentifier?: Maybe<Scalars['UUID']['output']>;
+  universalIdentifier?: Maybe<Scalars['UUID']>;
   workspaceMembers: Array<WorkspaceMember>;
 };
 
 export type RolePermissionFlag = {
   __typename?: 'RolePermissionFlag';
-  flag: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  roleId: Scalars['UUID']['output'];
+  flag: Scalars['String'];
+  id: Scalars['UUID'];
+  roleId: Scalars['UUID'];
 };
 
 export type RotateClientSecret = {
   __typename?: 'RotateClientSecret';
-  clientSecret: Scalars['String']['output'];
+  clientSecret: Scalars['String'];
 };
 
 export type RowLevelPermissionPredicate = {
   __typename?: 'RowLevelPermissionPredicate';
-  fieldMetadataId: Scalars['String']['output'];
-  id: Scalars['String']['output'];
-  objectMetadataId: Scalars['String']['output'];
+  fieldMetadataId: Scalars['String'];
+  id: Scalars['String'];
+  objectMetadataId: Scalars['String'];
   operand: RowLevelPermissionPredicateOperand;
-  positionInRowLevelPermissionPredicateGroup?: Maybe<Scalars['Float']['output']>;
-  roleId: Scalars['String']['output'];
-  rowLevelPermissionPredicateGroupId?: Maybe<Scalars['String']['output']>;
-  subFieldName?: Maybe<Scalars['String']['output']>;
-  value?: Maybe<Scalars['JSON']['output']>;
-  workspaceMemberFieldMetadataId?: Maybe<Scalars['String']['output']>;
-  workspaceMemberSubFieldName?: Maybe<Scalars['String']['output']>;
+  positionInRowLevelPermissionPredicateGroup?: Maybe<Scalars['Float']>;
+  roleId: Scalars['String'];
+  rowLevelPermissionPredicateGroupId?: Maybe<Scalars['String']>;
+  subFieldName?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['JSON']>;
+  workspaceMemberFieldMetadataId?: Maybe<Scalars['String']>;
+  workspaceMemberSubFieldName?: Maybe<Scalars['String']>;
 };
 
 export type RowLevelPermissionPredicateGroup = {
   __typename?: 'RowLevelPermissionPredicateGroup';
-  id: Scalars['String']['output'];
+  id: Scalars['String'];
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
-  objectMetadataId: Scalars['String']['output'];
-  parentRowLevelPermissionPredicateGroupId?: Maybe<Scalars['String']['output']>;
-  positionInRowLevelPermissionPredicateGroup?: Maybe<Scalars['Float']['output']>;
-  roleId: Scalars['String']['output'];
+  objectMetadataId: Scalars['String'];
+  parentRowLevelPermissionPredicateGroupId?: Maybe<Scalars['String']>;
+  positionInRowLevelPermissionPredicateGroup?: Maybe<Scalars['Float']>;
+  roleId: Scalars['String'];
 };
 
 export type RowLevelPermissionPredicateGroupInput = {
-  id?: InputMaybe<Scalars['UUID']['input']>;
+  id?: InputMaybe<Scalars['UUID']>;
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
-  objectMetadataId: Scalars['UUID']['input'];
-  parentRowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['UUID']['input']>;
-  positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']['input']>;
+  objectMetadataId: Scalars['UUID'];
+  parentRowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['UUID']>;
+  positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
 };
 
 export enum RowLevelPermissionPredicateGroupLogicalOperator {
@@ -4739,15 +4737,15 @@ export enum RowLevelPermissionPredicateGroupLogicalOperator {
 }
 
 export type RowLevelPermissionPredicateInput = {
-  fieldMetadataId: Scalars['UUID']['input'];
-  id?: InputMaybe<Scalars['UUID']['input']>;
+  fieldMetadataId: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
   operand: RowLevelPermissionPredicateOperand;
-  positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']['input']>;
-  rowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['UUID']['input']>;
-  subFieldName?: InputMaybe<Scalars['String']['input']>;
-  value?: InputMaybe<Scalars['JSON']['input']>;
-  workspaceMemberFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
-  workspaceMemberSubFieldName?: InputMaybe<Scalars['String']['input']>;
+  positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']>;
+  rowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['UUID']>;
+  subFieldName?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['JSON']>;
+  workspaceMemberFieldMetadataId?: InputMaybe<Scalars['String']>;
+  workspaceMemberSubFieldName?: InputMaybe<Scalars['String']>;
 };
 
 export enum RowLevelPermissionPredicateOperand {
@@ -4770,31 +4768,31 @@ export enum RowLevelPermissionPredicateOperand {
 }
 
 export type RunAgentInput = {
-  agentUniversalIdentifier: Scalars['String']['input'];
-  prompt: Scalars['String']['input'];
+  agentUniversalIdentifier: Scalars['String'];
+  prompt: Scalars['String'];
 };
 
 export type RunAgentResult = {
   __typename?: 'RunAgentResult';
-  error?: Maybe<Scalars['String']['output']>;
-  result?: Maybe<Scalars['JSON']['output']>;
-  success: Scalars['Boolean']['output'];
+  error?: Maybe<Scalars['String']>;
+  result?: Maybe<Scalars['JSON']>;
+  success: Scalars['Boolean'];
 };
 
 export type SsoConnection = {
   __typename?: 'SSOConnection';
-  id: Scalars['UUID']['output'];
-  issuer: Scalars['String']['output'];
-  name: Scalars['String']['output'];
+  id: Scalars['UUID'];
+  issuer: Scalars['String'];
+  name: Scalars['String'];
   status: SsoIdentityProviderStatus;
   type: IdentityProviderType;
 };
 
 export type SsoIdentityProvider = {
   __typename?: 'SSOIdentityProvider';
-  id: Scalars['UUID']['output'];
-  issuer: Scalars['String']['output'];
-  name: Scalars['String']['output'];
+  id: Scalars['UUID'];
+  issuer: Scalars['String'];
+  name: Scalars['String'];
   status: SsoIdentityProviderStatus;
   type: IdentityProviderType;
 };
@@ -4807,86 +4805,86 @@ export enum SsoIdentityProviderStatus {
 
 export type SendChatMessageResult = {
   __typename?: 'SendChatMessageResult';
-  messageId: Scalars['String']['output'];
-  queued: Scalars['Boolean']['output'];
-  streamId?: Maybe<Scalars['String']['output']>;
+  messageId: Scalars['String'];
+  queued: Scalars['Boolean'];
+  streamId?: Maybe<Scalars['String']>;
 };
 
 export type SendEmailAttachmentInput = {
-  id: Scalars['String']['input'];
-  name: Scalars['String']['input'];
+  id: Scalars['String'];
+  name: Scalars['String'];
 };
 
 export type SendEmailInput = {
-  bcc?: InputMaybe<Scalars['String']['input']>;
-  body: Scalars['String']['input'];
-  cc?: InputMaybe<Scalars['String']['input']>;
-  connectedAccountId: Scalars['String']['input'];
+  bcc?: InputMaybe<Scalars['String']>;
+  body: Scalars['String'];
+  cc?: InputMaybe<Scalars['String']>;
+  connectedAccountId: Scalars['String'];
   files?: InputMaybe<Array<SendEmailAttachmentInput>>;
-  inReplyTo?: InputMaybe<Scalars['String']['input']>;
-  subject: Scalars['String']['input'];
-  to: Scalars['String']['input'];
+  inReplyTo?: InputMaybe<Scalars['String']>;
+  subject: Scalars['String'];
+  to: Scalars['String'];
 };
 
 export type SendEmailOutput = {
   __typename?: 'SendEmailOutput';
-  error?: Maybe<Scalars['String']['output']>;
-  success: Scalars['Boolean']['output'];
+  error?: Maybe<Scalars['String']>;
+  success: Scalars['Boolean'];
 };
 
 export type SendEmailViaDomainInput = {
-  bcc?: InputMaybe<Array<Scalars['String']['input']>>;
-  cc?: InputMaybe<Array<Scalars['String']['input']>>;
-  emailingDomainId: Scalars['String']['input'];
-  from: Scalars['String']['input'];
-  html?: InputMaybe<Scalars['String']['input']>;
-  replyTo?: InputMaybe<Array<Scalars['String']['input']>>;
-  subject: Scalars['String']['input'];
-  text: Scalars['String']['input'];
-  to: Array<Scalars['String']['input']>;
+  bcc?: InputMaybe<Array<Scalars['String']>>;
+  cc?: InputMaybe<Array<Scalars['String']>>;
+  emailingDomainId: Scalars['String'];
+  from: Scalars['String'];
+  html?: InputMaybe<Scalars['String']>;
+  replyTo?: InputMaybe<Array<Scalars['String']>>;
+  subject: Scalars['String'];
+  text: Scalars['String'];
+  to: Array<Scalars['String']>;
 };
 
 export type SendEmailViaDomainOutput = {
   __typename?: 'SendEmailViaDomainOutput';
-  messageId: Scalars['String']['output'];
+  messageId: Scalars['String'];
 };
 
 export type SendInvitations = {
   __typename?: 'SendInvitations';
-  errors: Array<Scalars['String']['output']>;
+  errors: Array<Scalars['String']>;
   result: Array<WorkspaceInvitation>;
   /** Boolean that confirms query was dispatched */
-  success: Scalars['Boolean']['output'];
+  success: Scalars['Boolean'];
 };
 
 export type Sentry = {
   __typename?: 'Sentry';
-  dsn?: Maybe<Scalars['String']['output']>;
-  environment?: Maybe<Scalars['String']['output']>;
-  release?: Maybe<Scalars['String']['output']>;
+  dsn?: Maybe<Scalars['String']>;
+  environment?: Maybe<Scalars['String']>;
+  release?: Maybe<Scalars['String']>;
 };
 
 export type SetupOidcSsoInput = {
-  clientID: Scalars['String']['input'];
-  clientSecret: Scalars['String']['input'];
-  issuer: Scalars['String']['input'];
-  name: Scalars['String']['input'];
+  clientID: Scalars['String'];
+  clientSecret: Scalars['String'];
+  issuer: Scalars['String'];
+  name: Scalars['String'];
 };
 
 export type SetupSamlSsoInput = {
-  certificate: Scalars['String']['input'];
-  fingerprint?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['UUID']['input'];
-  issuer: Scalars['String']['input'];
-  name: Scalars['String']['input'];
-  ssoURL: Scalars['String']['input'];
+  certificate: Scalars['String'];
+  fingerprint?: InputMaybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  issuer: Scalars['String'];
+  name: Scalars['String'];
+  ssoURL: Scalars['String'];
 };
 
 export type SetupSso = {
   __typename?: 'SetupSso';
-  id: Scalars['UUID']['output'];
-  issuer: Scalars['String']['output'];
-  name: Scalars['String']['output'];
+  id: Scalars['UUID'];
+  issuer: Scalars['String'];
+  name: Scalars['String'];
   status: SsoIdentityProviderStatus;
   type: IdentityProviderType;
 };
@@ -4899,17 +4897,17 @@ export type SignUp = {
 
 export type Skill = {
   __typename?: 'Skill';
-  applicationId?: Maybe<Scalars['UUID']['output']>;
-  content: Scalars['String']['output'];
-  createdAt: Scalars['DateTime']['output'];
-  description?: Maybe<Scalars['String']['output']>;
-  icon?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  isActive: Scalars['Boolean']['output'];
-  isCustom: Scalars['Boolean']['output'];
-  label: Scalars['String']['output'];
-  name: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
+  applicationId?: Maybe<Scalars['UUID']>;
+  content: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isActive: Scalars['Boolean'];
+  isCustom: Scalars['Boolean'];
+  label: Scalars['String'];
+  name: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type StandaloneRichTextConfiguration = {
@@ -4920,10 +4918,10 @@ export type StandaloneRichTextConfiguration = {
 
 export type StandardOverrides = {
   __typename?: 'StandardOverrides';
-  description?: Maybe<Scalars['String']['output']>;
-  icon?: Maybe<Scalars['String']['output']>;
-  label?: Maybe<Scalars['String']['output']>;
-  translations?: Maybe<Scalars['JSON']['output']>;
+  description?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
+  label?: Maybe<Scalars['String']>;
+  translations?: Maybe<Scalars['JSON']>;
 };
 
 export type Subscription = {
@@ -4946,12 +4944,12 @@ export type SubscriptionLogicFunctionLogsArgs = {
 
 
 export type SubscriptionOnAgentChatEventArgs = {
-  threadId: Scalars['UUID']['input'];
+  threadId: Scalars['UUID'];
 };
 
 
 export type SubscriptionOnEventSubscriptionArgs = {
-  eventStreamId: Scalars['String']['input'];
+  eventStreamId: Scalars['String'];
 };
 
 export enum SubscriptionInterval {
@@ -4973,7 +4971,7 @@ export enum SubscriptionStatus {
 export type Support = {
   __typename?: 'Support';
   supportDriver: SupportDriver;
-  supportFrontChatId?: Maybe<Scalars['String']['output']>;
+  supportFrontChatId?: Maybe<Scalars['String']>;
 };
 
 export enum SupportDriver {
@@ -4993,12 +4991,12 @@ export type TimelineConfiguration = {
 
 export type ToolIndexEntry = {
   __typename?: 'ToolIndexEntry';
-  category: Scalars['String']['output'];
-  description: Scalars['String']['output'];
-  icon?: Maybe<Scalars['String']['output']>;
-  inputSchema?: Maybe<Scalars['JSON']['output']>;
-  name: Scalars['String']['output'];
-  objectName?: Maybe<Scalars['String']['output']>;
+  category: Scalars['String'];
+  description: Scalars['String'];
+  icon?: Maybe<Scalars['String']>;
+  inputSchema?: Maybe<Scalars['JSON']>;
+  name: Scalars['String'];
+  objectName?: Maybe<Scalars['String']>;
 };
 
 export type TransientToken = {
@@ -5008,479 +5006,479 @@ export type TransientToken = {
 
 export type TwoFactorAuthenticationMethodSummary = {
   __typename?: 'TwoFactorAuthenticationMethodSummary';
-  status: Scalars['String']['output'];
-  strategy: Scalars['String']['output'];
-  twoFactorAuthenticationMethodId: Scalars['UUID']['output'];
+  status: Scalars['String'];
+  strategy: Scalars['String'];
+  twoFactorAuthenticationMethodId: Scalars['UUID'];
 };
 
 export type UuidFilterComparison = {
-  eq?: InputMaybe<Scalars['UUID']['input']>;
-  gt?: InputMaybe<Scalars['UUID']['input']>;
-  gte?: InputMaybe<Scalars['UUID']['input']>;
-  iLike?: InputMaybe<Scalars['UUID']['input']>;
-  in?: InputMaybe<Array<Scalars['UUID']['input']>>;
-  is?: InputMaybe<Scalars['Boolean']['input']>;
-  isNot?: InputMaybe<Scalars['Boolean']['input']>;
-  like?: InputMaybe<Scalars['UUID']['input']>;
-  lt?: InputMaybe<Scalars['UUID']['input']>;
-  lte?: InputMaybe<Scalars['UUID']['input']>;
-  neq?: InputMaybe<Scalars['UUID']['input']>;
-  notILike?: InputMaybe<Scalars['UUID']['input']>;
-  notIn?: InputMaybe<Array<Scalars['UUID']['input']>>;
-  notLike?: InputMaybe<Scalars['UUID']['input']>;
+  eq?: InputMaybe<Scalars['UUID']>;
+  gt?: InputMaybe<Scalars['UUID']>;
+  gte?: InputMaybe<Scalars['UUID']>;
+  iLike?: InputMaybe<Scalars['UUID']>;
+  in?: InputMaybe<Array<Scalars['UUID']>>;
+  is?: InputMaybe<Scalars['Boolean']>;
+  isNot?: InputMaybe<Scalars['Boolean']>;
+  like?: InputMaybe<Scalars['UUID']>;
+  lt?: InputMaybe<Scalars['UUID']>;
+  lte?: InputMaybe<Scalars['UUID']>;
+  neq?: InputMaybe<Scalars['UUID']>;
+  notILike?: InputMaybe<Scalars['UUID']>;
+  notIn?: InputMaybe<Array<Scalars['UUID']>>;
+  notLike?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpdateAgentInput = {
-  description?: InputMaybe<Scalars['String']['input']>;
-  evaluationInputs?: InputMaybe<Array<Scalars['String']['input']>>;
-  icon?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['UUID']['input'];
-  label?: InputMaybe<Scalars['String']['input']>;
-  modelConfiguration?: InputMaybe<Scalars['JSON']['input']>;
-  modelId?: InputMaybe<Scalars['String']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  prompt?: InputMaybe<Scalars['String']['input']>;
-  responseFormat?: InputMaybe<Scalars['JSON']['input']>;
-  roleId?: InputMaybe<Scalars['UUID']['input']>;
+  description?: InputMaybe<Scalars['String']>;
+  evaluationInputs?: InputMaybe<Array<Scalars['String']>>;
+  icon?: InputMaybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  label?: InputMaybe<Scalars['String']>;
+  modelConfiguration?: InputMaybe<Scalars['JSON']>;
+  modelId?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  prompt?: InputMaybe<Scalars['String']>;
+  responseFormat?: InputMaybe<Scalars['JSON']>;
+  roleId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpdateApiKeyInput = {
-  expiresAt?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['UUID']['input'];
-  name?: InputMaybe<Scalars['String']['input']>;
-  revokedAt?: InputMaybe<Scalars['String']['input']>;
+  expiresAt?: InputMaybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  name?: InputMaybe<Scalars['String']>;
+  revokedAt?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateApplicationRegistrationInput = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
   update: UpdateApplicationRegistrationPayload;
 };
 
 export type UpdateApplicationRegistrationPayload = {
-  isListed?: InputMaybe<Scalars['Boolean']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  oAuthRedirectUris?: InputMaybe<Array<Scalars['String']['input']>>;
-  oAuthScopes?: InputMaybe<Array<Scalars['String']['input']>>;
+  isListed?: InputMaybe<Scalars['Boolean']>;
+  name?: InputMaybe<Scalars['String']>;
+  oAuthRedirectUris?: InputMaybe<Array<Scalars['String']>>;
+  oAuthScopes?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type UpdateApplicationRegistrationVariableInput = {
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
   update: UpdateApplicationRegistrationVariablePayload;
 };
 
 export type UpdateApplicationRegistrationVariablePayload = {
-  description?: InputMaybe<Scalars['String']['input']>;
-  resetValue?: InputMaybe<Scalars['Boolean']['input']>;
-  value?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']>;
+  resetValue?: InputMaybe<Scalars['Boolean']>;
+  value?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateCalendarChannelInput = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
   update: UpdateCalendarChannelInputUpdates;
 };
 
 export type UpdateCalendarChannelInputUpdates = {
   contactAutoCreationPolicy?: InputMaybe<CalendarChannelContactAutoCreationPolicy>;
-  isContactAutoCreationEnabled?: InputMaybe<Scalars['Boolean']['input']>;
-  isSyncEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  isContactAutoCreationEnabled?: InputMaybe<Scalars['Boolean']>;
+  isSyncEnabled?: InputMaybe<Scalars['Boolean']>;
   visibility?: InputMaybe<CalendarChannelVisibility>;
 };
 
 export type UpdateCommandMenuItemInput = {
-  availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  availabilityObjectMetadataId?: InputMaybe<Scalars['UUID']>;
   availabilityType?: InputMaybe<CommandMenuItemAvailabilityType>;
   engineComponentKey?: InputMaybe<EngineComponentKey>;
-  hotKeys?: InputMaybe<Array<Scalars['String']['input']>>;
-  icon?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['UUID']['input'];
-  isPinned?: InputMaybe<Scalars['Boolean']['input']>;
-  label?: InputMaybe<Scalars['String']['input']>;
-  pageLayoutId?: InputMaybe<Scalars['UUID']['input']>;
-  position?: InputMaybe<Scalars['Float']['input']>;
-  shortLabel?: InputMaybe<Scalars['String']['input']>;
+  hotKeys?: InputMaybe<Array<Scalars['String']>>;
+  icon?: InputMaybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isPinned?: InputMaybe<Scalars['Boolean']>;
+  label?: InputMaybe<Scalars['String']>;
+  pageLayoutId?: InputMaybe<Scalars['UUID']>;
+  position?: InputMaybe<Scalars['Float']>;
+  shortLabel?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateFieldInput = {
-  defaultValue?: InputMaybe<Scalars['JSON']['input']>;
-  description?: InputMaybe<Scalars['String']['input']>;
-  icon?: InputMaybe<Scalars['String']['input']>;
-  isActive?: InputMaybe<Scalars['Boolean']['input']>;
-  isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']['input']>;
-  isNullable?: InputMaybe<Scalars['Boolean']['input']>;
-  isSystem?: InputMaybe<Scalars['Boolean']['input']>;
-  isUIReadOnly?: InputMaybe<Scalars['Boolean']['input']>;
-  isUnique?: InputMaybe<Scalars['Boolean']['input']>;
-  label?: InputMaybe<Scalars['String']['input']>;
-  morphRelationsUpdatePayload?: InputMaybe<Array<Scalars['JSON']['input']>>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  options?: InputMaybe<Scalars['JSON']['input']>;
-  settings?: InputMaybe<Scalars['JSON']['input']>;
-  universalIdentifier?: InputMaybe<Scalars['String']['input']>;
+  defaultValue?: InputMaybe<Scalars['JSON']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  isActive?: InputMaybe<Scalars['Boolean']>;
+  isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
+  isNullable?: InputMaybe<Scalars['Boolean']>;
+  isSystem?: InputMaybe<Scalars['Boolean']>;
+  isUIReadOnly?: InputMaybe<Scalars['Boolean']>;
+  isUnique?: InputMaybe<Scalars['Boolean']>;
+  label?: InputMaybe<Scalars['String']>;
+  morphRelationsUpdatePayload?: InputMaybe<Array<Scalars['JSON']>>;
+  name?: InputMaybe<Scalars['String']>;
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
+  options?: InputMaybe<Scalars['JSON']>;
+  settings?: InputMaybe<Scalars['JSON']>;
+  universalIdentifier?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateFrontComponentInput = {
   /** The id of the front component to update */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
   /** The front component fields to update */
   update: UpdateFrontComponentInputUpdates;
 };
 
 export type UpdateFrontComponentInputUpdates = {
-  description?: InputMaybe<Scalars['String']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateLabPublicFeatureFlagInput = {
-  publicFeatureFlag: Scalars['String']['input'];
-  value: Scalars['Boolean']['input'];
+  publicFeatureFlag: Scalars['String'];
+  value: Scalars['Boolean'];
 };
 
 export type UpdateLogicFunctionFromSourceInput = {
   /** Id of the logic function to update */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
   /** The logic function updates */
   update: UpdateLogicFunctionFromSourceInputUpdates;
 };
 
 export type UpdateLogicFunctionFromSourceInputUpdates = {
-  cronTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
-  databaseEventTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
-  description?: InputMaybe<Scalars['String']['input']>;
-  handlerName?: InputMaybe<Scalars['String']['input']>;
-  httpRouteTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  sourceHandlerCode?: InputMaybe<Scalars['String']['input']>;
-  sourceHandlerPath?: InputMaybe<Scalars['String']['input']>;
-  timeoutSeconds?: InputMaybe<Scalars['Float']['input']>;
-  toolTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
-  workflowActionTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
+  cronTriggerSettings?: InputMaybe<Scalars['JSON']>;
+  databaseEventTriggerSettings?: InputMaybe<Scalars['JSON']>;
+  description?: InputMaybe<Scalars['String']>;
+  handlerName?: InputMaybe<Scalars['String']>;
+  httpRouteTriggerSettings?: InputMaybe<Scalars['JSON']>;
+  name?: InputMaybe<Scalars['String']>;
+  sourceHandlerCode?: InputMaybe<Scalars['String']>;
+  sourceHandlerPath?: InputMaybe<Scalars['String']>;
+  timeoutSeconds?: InputMaybe<Scalars['Float']>;
+  toolTriggerSettings?: InputMaybe<Scalars['JSON']>;
+  workflowActionTriggerSettings?: InputMaybe<Scalars['JSON']>;
 };
 
 export type UpdateMessageChannelInput = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
   update: UpdateMessageChannelInputUpdates;
 };
 
 export type UpdateMessageChannelInputUpdates = {
   contactAutoCreationPolicy?: InputMaybe<MessageChannelContactAutoCreationPolicy>;
-  excludeGroupEmails?: InputMaybe<Scalars['Boolean']['input']>;
-  excludeNonProfessionalEmails?: InputMaybe<Scalars['Boolean']['input']>;
-  isContactAutoCreationEnabled?: InputMaybe<Scalars['Boolean']['input']>;
-  isSyncEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  excludeGroupEmails?: InputMaybe<Scalars['Boolean']>;
+  excludeNonProfessionalEmails?: InputMaybe<Scalars['Boolean']>;
+  isContactAutoCreationEnabled?: InputMaybe<Scalars['Boolean']>;
+  isSyncEnabled?: InputMaybe<Scalars['Boolean']>;
   messageFolderImportPolicy?: InputMaybe<MessageFolderImportPolicy>;
   visibility?: InputMaybe<MessageChannelVisibility>;
 };
 
 export type UpdateMessageFolderInput = {
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
   update: UpdateMessageFolderInputUpdates;
 };
 
 export type UpdateMessageFolderInputUpdates = {
-  isSynced?: InputMaybe<Scalars['Boolean']['input']>;
+  isSynced?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type UpdateMessageFoldersInput = {
-  ids: Array<Scalars['UUID']['input']>;
+  ids: Array<Scalars['UUID']>;
   update: UpdateMessageFolderInputUpdates;
 };
 
 export type UpdateNavigationMenuItemInput = {
-  color?: InputMaybe<Scalars['String']['input']>;
-  folderId?: InputMaybe<Scalars['UUID']['input']>;
-  icon?: InputMaybe<Scalars['String']['input']>;
-  link?: InputMaybe<Scalars['String']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  pageLayoutId?: InputMaybe<Scalars['UUID']['input']>;
-  position?: InputMaybe<Scalars['Float']['input']>;
+  color?: InputMaybe<Scalars['String']>;
+  folderId?: InputMaybe<Scalars['UUID']>;
+  icon?: InputMaybe<Scalars['String']>;
+  link?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  pageLayoutId?: InputMaybe<Scalars['UUID']>;
+  position?: InputMaybe<Scalars['Float']>;
 };
 
 export type UpdateObjectPayload = {
-  color?: InputMaybe<Scalars['String']['input']>;
-  description?: InputMaybe<Scalars['String']['input']>;
-  icon?: InputMaybe<Scalars['String']['input']>;
-  imageIdentifierFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  isActive?: InputMaybe<Scalars['Boolean']['input']>;
-  isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']['input']>;
-  isSearchable?: InputMaybe<Scalars['Boolean']['input']>;
-  labelIdentifierFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  labelPlural?: InputMaybe<Scalars['String']['input']>;
-  labelSingular?: InputMaybe<Scalars['String']['input']>;
-  namePlural?: InputMaybe<Scalars['String']['input']>;
-  nameSingular?: InputMaybe<Scalars['String']['input']>;
-  shortcut?: InputMaybe<Scalars['String']['input']>;
+  color?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  imageIdentifierFieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  isActive?: InputMaybe<Scalars['Boolean']>;
+  isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
+  isSearchable?: InputMaybe<Scalars['Boolean']>;
+  labelIdentifierFieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  labelPlural?: InputMaybe<Scalars['String']>;
+  labelSingular?: InputMaybe<Scalars['String']>;
+  namePlural?: InputMaybe<Scalars['String']>;
+  nameSingular?: InputMaybe<Scalars['String']>;
+  shortcut?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateOneFieldMetadataInput = {
   /** The id of the record to update */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
   /** The record to update */
   update: UpdateFieldInput;
 };
 
 export type UpdateOneNavigationMenuItemInput = {
   /** The id of the record to update */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
   /** The record to update */
   update: UpdateNavigationMenuItemInput;
 };
 
 export type UpdateOneObjectInput = {
   /** The id of the object to update */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
   update: UpdateObjectPayload;
 };
 
 export type UpdatePageLayoutInput = {
-  name?: InputMaybe<Scalars['String']['input']>;
-  objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  name?: InputMaybe<Scalars['String']>;
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
   type?: InputMaybe<PageLayoutType>;
 };
 
 export type UpdatePageLayoutTabInput = {
-  icon?: InputMaybe<Scalars['String']['input']>;
+  icon?: InputMaybe<Scalars['String']>;
   layoutMode?: InputMaybe<PageLayoutTabLayoutMode>;
-  position?: InputMaybe<Scalars['Float']['input']>;
-  title?: InputMaybe<Scalars['String']['input']>;
+  position?: InputMaybe<Scalars['Float']>;
+  title?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdatePageLayoutTabWithWidgetsInput = {
-  icon?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['UUID']['input'];
+  icon?: InputMaybe<Scalars['String']>;
+  id: Scalars['UUID'];
   layoutMode?: InputMaybe<PageLayoutTabLayoutMode>;
-  position: Scalars['Float']['input'];
-  title: Scalars['String']['input'];
+  position: Scalars['Float'];
+  title: Scalars['String'];
   widgets: Array<UpdatePageLayoutWidgetWithIdInput>;
 };
 
 export type UpdatePageLayoutWidgetInput = {
-  conditionalAvailabilityExpression?: InputMaybe<Scalars['String']['input']>;
-  conditionalDisplay?: InputMaybe<Scalars['JSON']['input']>;
-  configuration?: InputMaybe<Scalars['JSON']['input']>;
+  conditionalAvailabilityExpression?: InputMaybe<Scalars['String']>;
+  conditionalDisplay?: InputMaybe<Scalars['JSON']>;
+  configuration?: InputMaybe<Scalars['JSON']>;
   gridPosition?: InputMaybe<GridPositionInput>;
-  objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  pageLayoutTabId?: InputMaybe<Scalars['UUID']['input']>;
-  position?: InputMaybe<Scalars['JSON']['input']>;
-  title?: InputMaybe<Scalars['String']['input']>;
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
+  pageLayoutTabId?: InputMaybe<Scalars['UUID']>;
+  position?: InputMaybe<Scalars['JSON']>;
+  title?: InputMaybe<Scalars['String']>;
   type?: InputMaybe<WidgetType>;
 };
 
 export type UpdatePageLayoutWidgetWithIdInput = {
-  conditionalAvailabilityExpression?: InputMaybe<Scalars['String']['input']>;
-  conditionalDisplay?: InputMaybe<Scalars['JSON']['input']>;
-  configuration?: InputMaybe<Scalars['JSON']['input']>;
+  conditionalAvailabilityExpression?: InputMaybe<Scalars['String']>;
+  conditionalDisplay?: InputMaybe<Scalars['JSON']>;
+  configuration?: InputMaybe<Scalars['JSON']>;
   gridPosition: GridPositionInput;
-  id: Scalars['UUID']['input'];
-  objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  pageLayoutTabId: Scalars['UUID']['input'];
-  position?: InputMaybe<Scalars['JSON']['input']>;
-  title: Scalars['String']['input'];
+  id: Scalars['UUID'];
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
+  pageLayoutTabId: Scalars['UUID'];
+  position?: InputMaybe<Scalars['JSON']>;
+  title: Scalars['String'];
   type: WidgetType;
 };
 
 export type UpdatePageLayoutWithTabsInput = {
-  name: Scalars['String']['input'];
-  objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  name: Scalars['String'];
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
   tabs: Array<UpdatePageLayoutTabWithWidgetsInput>;
   type: PageLayoutType;
 };
 
 export type UpdateRoleInput = {
   /** The id of the role to update */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
   update: UpdateRolePayload;
 };
 
 export type UpdateRolePayload = {
-  canAccessAllTools?: InputMaybe<Scalars['Boolean']['input']>;
-  canBeAssignedToAgents?: InputMaybe<Scalars['Boolean']['input']>;
-  canBeAssignedToApiKeys?: InputMaybe<Scalars['Boolean']['input']>;
-  canBeAssignedToUsers?: InputMaybe<Scalars['Boolean']['input']>;
-  canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canUpdateAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canUpdateAllSettings?: InputMaybe<Scalars['Boolean']['input']>;
-  description?: InputMaybe<Scalars['String']['input']>;
-  icon?: InputMaybe<Scalars['String']['input']>;
-  label?: InputMaybe<Scalars['String']['input']>;
+  canAccessAllTools?: InputMaybe<Scalars['Boolean']>;
+  canBeAssignedToAgents?: InputMaybe<Scalars['Boolean']>;
+  canBeAssignedToApiKeys?: InputMaybe<Scalars['Boolean']>;
+  canBeAssignedToUsers?: InputMaybe<Scalars['Boolean']>;
+  canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canUpdateAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
+  canUpdateAllSettings?: InputMaybe<Scalars['Boolean']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  label?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateSkillInput = {
-  content?: InputMaybe<Scalars['String']['input']>;
-  description?: InputMaybe<Scalars['String']['input']>;
-  icon?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['UUID']['input'];
-  isActive?: InputMaybe<Scalars['Boolean']['input']>;
-  label?: InputMaybe<Scalars['String']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
+  content?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  isActive?: InputMaybe<Scalars['Boolean']>;
+  label?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateViewFieldGroupInput = {
   /** The id of the view field group to update */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
   /** The view field group to update */
   update: UpdateViewFieldGroupInputUpdates;
 };
 
 export type UpdateViewFieldGroupInputUpdates = {
-  deletedAt?: InputMaybe<Scalars['String']['input']>;
-  isVisible?: InputMaybe<Scalars['Boolean']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  position?: InputMaybe<Scalars['Float']['input']>;
+  deletedAt?: InputMaybe<Scalars['String']>;
+  isVisible?: InputMaybe<Scalars['Boolean']>;
+  name?: InputMaybe<Scalars['String']>;
+  position?: InputMaybe<Scalars['Float']>;
 };
 
 export type UpdateViewFieldInput = {
   /** The id of the view field to update */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
   /** The view field to update */
   update: UpdateViewFieldInputUpdates;
 };
 
 export type UpdateViewFieldInputUpdates = {
   aggregateOperation?: InputMaybe<AggregateOperations>;
-  isVisible?: InputMaybe<Scalars['Boolean']['input']>;
-  position?: InputMaybe<Scalars['Float']['input']>;
-  size?: InputMaybe<Scalars['Float']['input']>;
-  viewFieldGroupId?: InputMaybe<Scalars['UUID']['input']>;
+  isVisible?: InputMaybe<Scalars['Boolean']>;
+  position?: InputMaybe<Scalars['Float']>;
+  size?: InputMaybe<Scalars['Float']>;
+  viewFieldGroupId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpdateViewFilterGroupInput = {
-  id?: InputMaybe<Scalars['UUID']['input']>;
+  id?: InputMaybe<Scalars['UUID']>;
   logicalOperator?: InputMaybe<ViewFilterGroupLogicalOperator>;
-  parentViewFilterGroupId?: InputMaybe<Scalars['UUID']['input']>;
-  positionInViewFilterGroup?: InputMaybe<Scalars['Float']['input']>;
-  viewId?: InputMaybe<Scalars['UUID']['input']>;
+  parentViewFilterGroupId?: InputMaybe<Scalars['UUID']>;
+  positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
+  viewId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpdateViewFilterInput = {
   /** The id of the view filter to update */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
   /** The view filter to update */
   update: UpdateViewFilterInputUpdates;
 };
 
 export type UpdateViewFilterInputUpdates = {
-  fieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  fieldMetadataId?: InputMaybe<Scalars['UUID']>;
   operand?: InputMaybe<ViewFilterOperand>;
-  positionInViewFilterGroup?: InputMaybe<Scalars['Float']['input']>;
-  relationTargetFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  subFieldName?: InputMaybe<Scalars['String']['input']>;
-  value?: InputMaybe<Scalars['JSON']['input']>;
-  viewFilterGroupId?: InputMaybe<Scalars['UUID']['input']>;
+  positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
+  relationTargetFieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  subFieldName?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['JSON']>;
+  viewFilterGroupId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpdateViewGroupInput = {
   /** The id of the view group to update */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
   /** The view group to update */
   update: UpdateViewGroupInputUpdates;
 };
 
 export type UpdateViewGroupInputUpdates = {
-  fieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  fieldValue?: InputMaybe<Scalars['String']['input']>;
-  isVisible?: InputMaybe<Scalars['Boolean']['input']>;
-  position?: InputMaybe<Scalars['Float']['input']>;
+  fieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  fieldValue?: InputMaybe<Scalars['String']>;
+  isVisible?: InputMaybe<Scalars['Boolean']>;
+  position?: InputMaybe<Scalars['Float']>;
 };
 
 export type UpdateViewInput = {
-  anyFieldFilterValue?: InputMaybe<Scalars['String']['input']>;
-  calendarFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  anyFieldFilterValue?: InputMaybe<Scalars['String']>;
+  calendarFieldMetadataId?: InputMaybe<Scalars['UUID']>;
   calendarLayout?: InputMaybe<ViewCalendarLayout>;
-  icon?: InputMaybe<Scalars['String']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  isCompact?: InputMaybe<Scalars['Boolean']['input']>;
+  icon?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['UUID']>;
+  isCompact?: InputMaybe<Scalars['Boolean']>;
   kanbanAggregateOperation?: InputMaybe<AggregateOperations>;
-  kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  mainGroupByFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
+  kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  mainGroupByFieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  name?: InputMaybe<Scalars['String']>;
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
-  position?: InputMaybe<Scalars['Float']['input']>;
-  shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
+  position?: InputMaybe<Scalars['Float']>;
+  shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']>;
   type?: InputMaybe<ViewType>;
   visibility?: InputMaybe<ViewVisibility>;
 };
 
 export type UpdateViewSortInput = {
   /** The id of the view sort to update */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
   /** The view sort to update */
   update: UpdateViewSortInputUpdates;
 };
 
 export type UpdateViewSortInputUpdates = {
   direction?: InputMaybe<ViewSortDirection>;
-  subFieldName?: InputMaybe<Scalars['String']['input']>;
+  subFieldName?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateWebhookInput = {
   /** The id of the webhook to update */
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
   /** The webhook fields to update */
   update: UpdateWebhookInputUpdates;
 };
 
 export type UpdateWebhookInputUpdates = {
-  description?: InputMaybe<Scalars['String']['input']>;
-  operations?: InputMaybe<Array<Scalars['String']['input']>>;
-  secret?: InputMaybe<Scalars['String']['input']>;
-  targetUrl?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']>;
+  operations?: InputMaybe<Array<Scalars['String']>>;
+  secret?: InputMaybe<Scalars['String']>;
+  targetUrl?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateWorkspaceInput = {
-  aiAdditionalInstructions?: InputMaybe<Scalars['String']['input']>;
-  allowImpersonation?: InputMaybe<Scalars['Boolean']['input']>;
-  customDomain?: InputMaybe<Scalars['String']['input']>;
-  defaultRoleId?: InputMaybe<Scalars['UUID']['input']>;
-  displayName?: InputMaybe<Scalars['String']['input']>;
-  editableProfileFields?: InputMaybe<Array<Scalars['String']['input']>>;
-  enabledAiModelIds?: InputMaybe<Array<Scalars['String']['input']>>;
-  eventLogRetentionDays?: InputMaybe<Scalars['Float']['input']>;
-  fastModel?: InputMaybe<Scalars['String']['input']>;
-  inviteHash?: InputMaybe<Scalars['String']['input']>;
-  isGoogleAuthBypassEnabled?: InputMaybe<Scalars['Boolean']['input']>;
-  isGoogleAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;
-  isInternalMessagesImportEnabled?: InputMaybe<Scalars['Boolean']['input']>;
-  isMicrosoftAuthBypassEnabled?: InputMaybe<Scalars['Boolean']['input']>;
-  isMicrosoftAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;
-  isPasswordAuthBypassEnabled?: InputMaybe<Scalars['Boolean']['input']>;
-  isPasswordAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;
-  isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']['input']>;
-  isTwoFactorAuthenticationEnforced?: InputMaybe<Scalars['Boolean']['input']>;
-  logo?: InputMaybe<Scalars['String']['input']>;
-  smartModel?: InputMaybe<Scalars['String']['input']>;
-  subdomain?: InputMaybe<Scalars['String']['input']>;
-  trashRetentionDays?: InputMaybe<Scalars['Float']['input']>;
-  useRecommendedModels?: InputMaybe<Scalars['Boolean']['input']>;
+  aiAdditionalInstructions?: InputMaybe<Scalars['String']>;
+  allowImpersonation?: InputMaybe<Scalars['Boolean']>;
+  customDomain?: InputMaybe<Scalars['String']>;
+  defaultRoleId?: InputMaybe<Scalars['UUID']>;
+  displayName?: InputMaybe<Scalars['String']>;
+  editableProfileFields?: InputMaybe<Array<Scalars['String']>>;
+  enabledAiModelIds?: InputMaybe<Array<Scalars['String']>>;
+  eventLogRetentionDays?: InputMaybe<Scalars['Float']>;
+  fastModel?: InputMaybe<Scalars['String']>;
+  inviteHash?: InputMaybe<Scalars['String']>;
+  isGoogleAuthBypassEnabled?: InputMaybe<Scalars['Boolean']>;
+  isGoogleAuthEnabled?: InputMaybe<Scalars['Boolean']>;
+  isInternalMessagesImportEnabled?: InputMaybe<Scalars['Boolean']>;
+  isMicrosoftAuthBypassEnabled?: InputMaybe<Scalars['Boolean']>;
+  isMicrosoftAuthEnabled?: InputMaybe<Scalars['Boolean']>;
+  isPasswordAuthBypassEnabled?: InputMaybe<Scalars['Boolean']>;
+  isPasswordAuthEnabled?: InputMaybe<Scalars['Boolean']>;
+  isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']>;
+  isTwoFactorAuthenticationEnforced?: InputMaybe<Scalars['Boolean']>;
+  logo?: InputMaybe<Scalars['String']>;
+  smartModel?: InputMaybe<Scalars['String']>;
+  subdomain?: InputMaybe<Scalars['String']>;
+  trashRetentionDays?: InputMaybe<Scalars['Float']>;
+  useRecommendedModels?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type UpdateWorkspaceMemberSettingsInput = {
-  update: Scalars['JSON']['input'];
-  workspaceMemberId: Scalars['UUID']['input'];
+  update: Scalars['JSON'];
+  workspaceMemberId: Scalars['UUID'];
 };
 
 export type UpsertFieldPermissionsInput = {
   fieldPermissions: Array<FieldPermissionInput>;
-  roleId: Scalars['UUID']['input'];
+  roleId: Scalars['UUID'];
 };
 
 export type UpsertFieldsWidgetFieldInput = {
   /** The id of the field metadata. Used to create a new view field when viewFieldId is not provided. */
-  fieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  isVisible: Scalars['Boolean']['input'];
-  position: Scalars['Float']['input'];
+  fieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  isVisible: Scalars['Boolean'];
+  position: Scalars['Float'];
   /** The id of the view field. Required if fieldMetadataId is not provided. */
-  viewFieldId?: InputMaybe<Scalars['UUID']['input']>;
+  viewFieldId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpsertFieldsWidgetGroupInput = {
   fields: Array<UpsertFieldsWidgetFieldInput>;
-  id: Scalars['UUID']['input'];
-  isVisible: Scalars['Boolean']['input'];
-  name: Scalars['String']['input'];
-  position: Scalars['Float']['input'];
+  id: Scalars['UUID'];
+  isVisible: Scalars['Boolean'];
+  name: Scalars['String'];
+  position: Scalars['Float'];
 };
 
 export type UpsertFieldsWidgetInput = {
@@ -5489,24 +5487,24 @@ export type UpsertFieldsWidgetInput = {
   /** The groups (with nested fields) to upsert. Mutually exclusive with "fields". */
   groups?: InputMaybe<Array<UpsertFieldsWidgetGroupInput>>;
   /** The id of the fields widget whose groups and fields to upsert */
-  widgetId: Scalars['UUID']['input'];
+  widgetId: Scalars['UUID'];
 };
 
 export type UpsertObjectPermissionsInput = {
   objectPermissions: Array<ObjectPermissionInput>;
-  roleId: Scalars['UUID']['input'];
+  roleId: Scalars['UUID'];
 };
 
 export type UpsertPermissionFlagsInput = {
-  permissionFlagKeys: Array<Scalars['String']['input']>;
-  roleId: Scalars['UUID']['input'];
+  permissionFlagKeys: Array<Scalars['String']>;
+  roleId: Scalars['UUID'];
 };
 
 export type UpsertRowLevelPermissionPredicatesInput = {
-  objectMetadataId: Scalars['UUID']['input'];
+  objectMetadataId: Scalars['UUID'];
   predicateGroups: Array<RowLevelPermissionPredicateGroupInput>;
   predicates: Array<RowLevelPermissionPredicateInput>;
-  roleId: Scalars['UUID']['input'];
+  roleId: Scalars['UUID'];
 };
 
 export type UpsertRowLevelPermissionPredicatesResult = {
@@ -5525,47 +5523,47 @@ export type UpsertViewWidgetInput = {
   /** The view sorts to upsert. */
   viewSorts?: InputMaybe<Array<UpsertViewWidgetViewSortInput>>;
   /** The id of the view widget (page layout widget). */
-  widgetId: Scalars['UUID']['input'];
+  widgetId: Scalars['UUID'];
 };
 
 export type UpsertViewWidgetViewFieldInput = {
   /** The field metadata id. Used to create a new view field when viewFieldId is not provided. */
-  fieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  isVisible: Scalars['Boolean']['input'];
-  position: Scalars['Float']['input'];
-  size?: InputMaybe<Scalars['Float']['input']>;
+  fieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  isVisible: Scalars['Boolean'];
+  position: Scalars['Float'];
+  size?: InputMaybe<Scalars['Float']>;
   /** The id of an existing view field to update. */
-  viewFieldId?: InputMaybe<Scalars['UUID']['input']>;
+  viewFieldId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpsertViewWidgetViewFilterGroupInput = {
-  id?: InputMaybe<Scalars['UUID']['input']>;
+  id?: InputMaybe<Scalars['UUID']>;
   logicalOperator?: InputMaybe<ViewFilterGroupLogicalOperator>;
-  parentViewFilterGroupId?: InputMaybe<Scalars['UUID']['input']>;
-  positionInViewFilterGroup?: InputMaybe<Scalars['Float']['input']>;
+  parentViewFilterGroupId?: InputMaybe<Scalars['UUID']>;
+  positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
 };
 
 export type UpsertViewWidgetViewFilterInput = {
-  fieldMetadataId: Scalars['UUID']['input'];
-  id?: InputMaybe<Scalars['UUID']['input']>;
+  fieldMetadataId: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
   operand?: InputMaybe<ViewFilterOperand>;
-  positionInViewFilterGroup?: InputMaybe<Scalars['Float']['input']>;
-  relationTargetFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
-  subFieldName?: InputMaybe<Scalars['String']['input']>;
-  value: Scalars['JSON']['input'];
-  viewFilterGroupId?: InputMaybe<Scalars['UUID']['input']>;
+  positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
+  relationTargetFieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  subFieldName?: InputMaybe<Scalars['String']>;
+  value: Scalars['JSON'];
+  viewFilterGroupId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpsertViewWidgetViewSortInput = {
   direction?: InputMaybe<ViewSortDirection>;
-  fieldMetadataId: Scalars['UUID']['input'];
-  id?: InputMaybe<Scalars['UUID']['input']>;
+  fieldMetadataId: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UsageAnalytics = {
   __typename?: 'UsageAnalytics';
-  periodEnd: Scalars['DateTime']['output'];
-  periodStart: Scalars['DateTime']['output'];
+  periodEnd: Scalars['DateTime'];
+  periodStart: Scalars['DateTime'];
   timeSeries: Array<UsageTimeSeries>;
   usageByModel: Array<UsageBreakdownItem>;
   usageByOperationType: Array<UsageBreakdownItem>;
@@ -5575,16 +5573,16 @@ export type UsageAnalytics = {
 
 export type UsageAnalyticsInput = {
   operationTypes?: InputMaybe<Array<UsageOperationType>>;
-  periodEnd?: InputMaybe<Scalars['DateTime']['input']>;
-  periodStart?: InputMaybe<Scalars['DateTime']['input']>;
-  userWorkspaceId?: InputMaybe<Scalars['String']['input']>;
+  periodEnd?: InputMaybe<Scalars['DateTime']>;
+  periodStart?: InputMaybe<Scalars['DateTime']>;
+  userWorkspaceId?: InputMaybe<Scalars['String']>;
 };
 
 export type UsageBreakdownItem = {
   __typename?: 'UsageBreakdownItem';
-  creditsUsed: Scalars['Float']['output'];
-  key: Scalars['String']['output'];
-  label?: Maybe<Scalars['String']['output']>;
+  creditsUsed: Scalars['Float'];
+  key: Scalars['String'];
+  label?: Maybe<Scalars['String']>;
 };
 
 export enum UsageOperationType {
@@ -5597,38 +5595,38 @@ export enum UsageOperationType {
 
 export type UsageTimeSeries = {
   __typename?: 'UsageTimeSeries';
-  creditsUsed: Scalars['Float']['output'];
-  date: Scalars['String']['output'];
+  creditsUsed: Scalars['Float'];
+  date: Scalars['String'];
 };
 
 export type UsageUserDaily = {
   __typename?: 'UsageUserDaily';
   dailyUsage: Array<UsageTimeSeries>;
-  userWorkspaceId: Scalars['String']['output'];
+  userWorkspaceId: Scalars['String'];
 };
 
 export type User = {
   __typename?: 'User';
   availableWorkspaces: AvailableWorkspaces;
-  canAccessFullAdminPanel: Scalars['Boolean']['output'];
-  canImpersonate: Scalars['Boolean']['output'];
-  createdAt: Scalars['DateTime']['output'];
+  canAccessFullAdminPanel: Scalars['Boolean'];
+  canImpersonate: Scalars['Boolean'];
+  createdAt: Scalars['DateTime'];
   currentUserWorkspace?: Maybe<UserWorkspace>;
   currentWorkspace?: Maybe<Workspace>;
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  deletedAt?: Maybe<Scalars['DateTime']>;
   deletedWorkspaceMembers?: Maybe<Array<DeletedWorkspaceMember>>;
-  disabled?: Maybe<Scalars['Boolean']['output']>;
-  email: Scalars['String']['output'];
-  firstName: Scalars['String']['output'];
-  hasPassword: Scalars['Boolean']['output'];
-  id: Scalars['UUID']['output'];
-  isEmailVerified: Scalars['Boolean']['output'];
-  lastName: Scalars['String']['output'];
-  locale: Scalars['String']['output'];
+  disabled?: Maybe<Scalars['Boolean']>;
+  email: Scalars['String'];
+  firstName: Scalars['String'];
+  hasPassword: Scalars['Boolean'];
+  id: Scalars['UUID'];
+  isEmailVerified: Scalars['Boolean'];
+  lastName: Scalars['String'];
+  locale: Scalars['String'];
   onboardingStatus?: Maybe<OnboardingStatus>;
-  supportUserHash?: Maybe<Scalars['String']['output']>;
-  updatedAt: Scalars['DateTime']['output'];
-  userVars?: Maybe<Scalars['JSONObject']['output']>;
+  supportUserHash?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
+  userVars?: Maybe<Scalars['JSONObject']>;
   userWorkspaces: Array<UserWorkspace>;
   workspaceMember?: Maybe<WorkspaceMember>;
   workspaceMembers?: Maybe<Array<WorkspaceMember>>;
@@ -5637,37 +5635,37 @@ export type User = {
 
 export type UserWorkspace = {
   __typename?: 'UserWorkspace';
-  createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
-  id: Scalars['UUID']['output'];
-  locale: Scalars['String']['output'];
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['UUID'];
+  locale: Scalars['String'];
   objectPermissions?: Maybe<Array<ObjectPermission>>;
   objectsPermissions?: Maybe<Array<ObjectPermission>>;
   permissionFlags?: Maybe<Array<PermissionFlagType>>;
   twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticationMethodSummary>>;
-  updatedAt: Scalars['DateTime']['output'];
+  updatedAt: Scalars['DateTime'];
   user: User;
-  userId: Scalars['UUID']['output'];
+  userId: Scalars['UUID'];
 };
 
 export type ValidateApprovedAccessDomainInput = {
-  approvedAccessDomainId: Scalars['UUID']['input'];
-  validationToken: Scalars['String']['input'];
+  approvedAccessDomainId: Scalars['UUID'];
+  validationToken: Scalars['String'];
 };
 
 export type ValidatePasswordResetToken = {
   __typename?: 'ValidatePasswordResetToken';
-  email: Scalars['String']['output'];
-  hasPassword: Scalars['Boolean']['output'];
-  id: Scalars['UUID']['output'];
+  email: Scalars['String'];
+  hasPassword: Scalars['Boolean'];
+  id: Scalars['UUID'];
 };
 
 export type VerificationRecord = {
   __typename?: 'VerificationRecord';
-  key: Scalars['String']['output'];
-  priority?: Maybe<Scalars['Float']['output']>;
-  type: Scalars['String']['output'];
-  value: Scalars['String']['output'];
+  key: Scalars['String'];
+  priority?: Maybe<Scalars['Float']>;
+  type: Scalars['String'];
+  value: Scalars['String'];
 };
 
 export type VerifyEmailAndGetLoginToken = {
@@ -5678,38 +5676,38 @@ export type VerifyEmailAndGetLoginToken = {
 
 export type VerifyTwoFactorAuthenticationMethod = {
   __typename?: 'VerifyTwoFactorAuthenticationMethod';
-  success: Scalars['Boolean']['output'];
+  success: Scalars['Boolean'];
 };
 
 export type VersionDistributionEntry = {
   __typename?: 'VersionDistributionEntry';
-  count: Scalars['Int']['output'];
-  version: Scalars['String']['output'];
+  count: Scalars['Int'];
+  version: Scalars['String'];
 };
 
 export type View = {
   __typename?: 'View';
-  anyFieldFilterValue?: Maybe<Scalars['String']['output']>;
-  calendarFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
+  anyFieldFilterValue?: Maybe<Scalars['String']>;
+  calendarFieldMetadataId?: Maybe<Scalars['UUID']>;
   calendarLayout?: Maybe<ViewCalendarLayout>;
-  createdAt: Scalars['DateTime']['output'];
-  createdByUserWorkspaceId?: Maybe<Scalars['UUID']['output']>;
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
-  icon: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  isCompact: Scalars['Boolean']['output'];
-  isCustom: Scalars['Boolean']['output'];
+  createdAt: Scalars['DateTime'];
+  createdByUserWorkspaceId?: Maybe<Scalars['UUID']>;
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  icon: Scalars['String'];
+  id: Scalars['UUID'];
+  isCompact: Scalars['Boolean'];
+  isCustom: Scalars['Boolean'];
   kanbanAggregateOperation?: Maybe<AggregateOperations>;
-  kanbanAggregateOperationFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
+  kanbanAggregateOperationFieldMetadataId?: Maybe<Scalars['UUID']>;
   key?: Maybe<ViewKey>;
-  mainGroupByFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
-  name: Scalars['String']['output'];
-  objectMetadataId: Scalars['UUID']['output'];
+  mainGroupByFieldMetadataId?: Maybe<Scalars['UUID']>;
+  name: Scalars['String'];
+  objectMetadataId: Scalars['UUID'];
   openRecordIn: ViewOpenRecordIn;
-  position: Scalars['Float']['output'];
-  shouldHideEmptyGroups: Scalars['Boolean']['output'];
+  position: Scalars['Float'];
+  shouldHideEmptyGroups: Scalars['Boolean'];
   type: ViewType;
-  updatedAt: Scalars['DateTime']['output'];
+  updatedAt: Scalars['DateTime'];
   viewFieldGroups: Array<ViewFieldGroup>;
   viewFields: Array<ViewField>;
   viewFilterGroups: Array<ViewFilterGroup>;
@@ -5717,7 +5715,7 @@ export type View = {
   viewGroups: Array<ViewGroup>;
   viewSorts: Array<ViewSort>;
   visibility: ViewVisibility;
-  workspaceId: Scalars['UUID']['output'];
+  workspaceId: Scalars['UUID'];
 };
 
 export enum ViewCalendarLayout {
@@ -5734,67 +5732,67 @@ export type ViewConfiguration = {
 export type ViewField = {
   __typename?: 'ViewField';
   aggregateOperation?: Maybe<AggregateOperations>;
-  createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
-  fieldMetadataId: Scalars['UUID']['output'];
-  id: Scalars['UUID']['output'];
-  isActive: Scalars['Boolean']['output'];
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  fieldMetadataId: Scalars['UUID'];
+  id: Scalars['UUID'];
+  isActive: Scalars['Boolean'];
   /** @deprecated isOverridden is deprecated */
-  isOverridden?: Maybe<Scalars['Boolean']['output']>;
-  isVisible: Scalars['Boolean']['output'];
-  position: Scalars['Float']['output'];
-  size: Scalars['Float']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-  viewFieldGroupId?: Maybe<Scalars['UUID']['output']>;
-  viewId: Scalars['UUID']['output'];
-  workspaceId: Scalars['UUID']['output'];
+  isOverridden?: Maybe<Scalars['Boolean']>;
+  isVisible: Scalars['Boolean'];
+  position: Scalars['Float'];
+  size: Scalars['Float'];
+  updatedAt: Scalars['DateTime'];
+  viewFieldGroupId?: Maybe<Scalars['UUID']>;
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
 };
 
 export type ViewFieldGroup = {
   __typename?: 'ViewFieldGroup';
-  createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
-  id: Scalars['UUID']['output'];
-  isActive: Scalars['Boolean']['output'];
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['UUID'];
+  isActive: Scalars['Boolean'];
   /** @deprecated isOverridden is deprecated */
-  isOverridden: Scalars['Boolean']['output'];
-  isVisible: Scalars['Boolean']['output'];
-  name: Scalars['String']['output'];
-  position: Scalars['Float']['output'];
-  updatedAt: Scalars['DateTime']['output'];
+  isOverridden: Scalars['Boolean'];
+  isVisible: Scalars['Boolean'];
+  name: Scalars['String'];
+  position: Scalars['Float'];
+  updatedAt: Scalars['DateTime'];
   viewFields: Array<ViewField>;
-  viewId: Scalars['UUID']['output'];
-  workspaceId: Scalars['UUID']['output'];
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
 };
 
 export type ViewFilter = {
   __typename?: 'ViewFilter';
-  createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
-  fieldMetadataId: Scalars['UUID']['output'];
-  id: Scalars['UUID']['output'];
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  fieldMetadataId: Scalars['UUID'];
+  id: Scalars['UUID'];
   operand: ViewFilterOperand;
-  positionInViewFilterGroup?: Maybe<Scalars['Float']['output']>;
-  relationTargetFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
-  subFieldName?: Maybe<Scalars['String']['output']>;
-  updatedAt: Scalars['DateTime']['output'];
-  value: Scalars['JSON']['output'];
-  viewFilterGroupId?: Maybe<Scalars['UUID']['output']>;
-  viewId: Scalars['UUID']['output'];
-  workspaceId: Scalars['UUID']['output'];
+  positionInViewFilterGroup?: Maybe<Scalars['Float']>;
+  relationTargetFieldMetadataId?: Maybe<Scalars['UUID']>;
+  subFieldName?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
+  value: Scalars['JSON'];
+  viewFilterGroupId?: Maybe<Scalars['UUID']>;
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
 };
 
 export type ViewFilterGroup = {
   __typename?: 'ViewFilterGroup';
-  createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
-  id: Scalars['UUID']['output'];
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['UUID'];
   logicalOperator: ViewFilterGroupLogicalOperator;
-  parentViewFilterGroupId?: Maybe<Scalars['UUID']['output']>;
-  positionInViewFilterGroup?: Maybe<Scalars['Float']['output']>;
-  updatedAt: Scalars['DateTime']['output'];
-  viewId: Scalars['UUID']['output'];
-  workspaceId: Scalars['UUID']['output'];
+  parentViewFilterGroupId?: Maybe<Scalars['UUID']>;
+  positionInViewFilterGroup?: Maybe<Scalars['Float']>;
+  updatedAt: Scalars['DateTime'];
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
 };
 
 export enum ViewFilterGroupLogicalOperator {
@@ -5824,15 +5822,15 @@ export enum ViewFilterOperand {
 
 export type ViewGroup = {
   __typename?: 'ViewGroup';
-  createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
-  fieldValue: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  isVisible: Scalars['Boolean']['output'];
-  position: Scalars['Float']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-  viewId: Scalars['UUID']['output'];
-  workspaceId: Scalars['UUID']['output'];
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  fieldValue: Scalars['String'];
+  id: Scalars['UUID'];
+  isVisible: Scalars['Boolean'];
+  position: Scalars['Float'];
+  updatedAt: Scalars['DateTime'];
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
 };
 
 export enum ViewKey {
@@ -5846,15 +5844,15 @@ export enum ViewOpenRecordIn {
 
 export type ViewSort = {
   __typename?: 'ViewSort';
-  createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
   direction: ViewSortDirection;
-  fieldMetadataId: Scalars['UUID']['output'];
-  id: Scalars['UUID']['output'];
-  subFieldName?: Maybe<Scalars['String']['output']>;
-  updatedAt: Scalars['DateTime']['output'];
-  viewId: Scalars['UUID']['output'];
-  workspaceId: Scalars['UUID']['output'];
+  fieldMetadataId: Scalars['UUID'];
+  id: Scalars['UUID'];
+  subFieldName?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
 };
 
 export enum ViewSortDirection {
@@ -5877,15 +5875,15 @@ export enum ViewVisibility {
 
 export type Webhook = {
   __typename?: 'Webhook';
-  applicationId: Scalars['UUID']['output'];
-  createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
-  description?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  operations: Array<Scalars['String']['output']>;
-  secret: Scalars['String']['output'];
-  targetUrl: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
+  applicationId: Scalars['UUID'];
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  operations: Array<Scalars['String']>;
+  secret: Scalars['String'];
+  targetUrl: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | CalendarConfiguration | EmailThreadConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | FrontComponentConfiguration | IframeConfiguration | LineChartConfiguration | NotesConfiguration | PieChartConfiguration | RecordTableConfiguration | StandaloneRichTextConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration;
@@ -5955,46 +5953,46 @@ export type WorkflowVersionConfiguration = {
 export type Workspace = {
   __typename?: 'Workspace';
   activationStatus: WorkspaceActivationStatus;
-  aiAdditionalInstructions?: Maybe<Scalars['String']['output']>;
-  allowImpersonation: Scalars['Boolean']['output'];
+  aiAdditionalInstructions?: Maybe<Scalars['String']>;
+  allowImpersonation: Scalars['Boolean'];
   billingEntitlements: Array<BillingEntitlement>;
   billingSubscriptions: Array<BillingSubscription>;
-  createdAt: Scalars['DateTime']['output'];
+  createdAt: Scalars['DateTime'];
   currentBillingSubscription?: Maybe<BillingSubscription>;
-  customDomain?: Maybe<Scalars['String']['output']>;
-  databaseSchema?: Maybe<Scalars['String']['output']>;
+  customDomain?: Maybe<Scalars['String']>;
+  databaseSchema?: Maybe<Scalars['String']>;
   defaultRole?: Maybe<Role>;
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
-  displayName?: Maybe<Scalars['String']['output']>;
-  editableProfileFields?: Maybe<Array<Scalars['String']['output']>>;
-  enabledAiModelIds?: Maybe<Array<Scalars['String']['output']>>;
-  eventLogRetentionDays: Scalars['Float']['output'];
-  fastModel: Scalars['String']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  displayName?: Maybe<Scalars['String']>;
+  editableProfileFields?: Maybe<Array<Scalars['String']>>;
+  enabledAiModelIds?: Maybe<Array<Scalars['String']>>;
+  eventLogRetentionDays: Scalars['Float'];
+  fastModel: Scalars['String'];
   featureFlags?: Maybe<Array<FeatureFlag>>;
-  hasValidEnterpriseValidityToken: Scalars['Boolean']['output'];
-  hasValidSignedEnterpriseKey: Scalars['Boolean']['output'];
-  id: Scalars['UUID']['output'];
+  hasValidEnterpriseValidityToken: Scalars['Boolean'];
+  hasValidSignedEnterpriseKey: Scalars['Boolean'];
+  id: Scalars['UUID'];
   installedApplications: Array<Application>;
-  inviteHash?: Maybe<Scalars['String']['output']>;
-  isCustomDomainEnabled: Scalars['Boolean']['output'];
-  isGoogleAuthBypassEnabled: Scalars['Boolean']['output'];
-  isGoogleAuthEnabled: Scalars['Boolean']['output'];
-  isInternalMessagesImportEnabled: Scalars['Boolean']['output'];
-  isMicrosoftAuthBypassEnabled: Scalars['Boolean']['output'];
-  isMicrosoftAuthEnabled: Scalars['Boolean']['output'];
-  isPasswordAuthBypassEnabled: Scalars['Boolean']['output'];
-  isPasswordAuthEnabled: Scalars['Boolean']['output'];
-  isPublicInviteLinkEnabled: Scalars['Boolean']['output'];
-  isTwoFactorAuthenticationEnforced: Scalars['Boolean']['output'];
-  logo?: Maybe<Scalars['String']['output']>;
-  logoFileId?: Maybe<Scalars['UUID']['output']>;
-  metadataVersion: Scalars['Float']['output'];
-  routerModel: Scalars['String']['output'];
-  smartModel: Scalars['String']['output'];
-  subdomain: Scalars['String']['output'];
-  trashRetentionDays: Scalars['Float']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-  useRecommendedModels: Scalars['Boolean']['output'];
+  inviteHash?: Maybe<Scalars['String']>;
+  isCustomDomainEnabled: Scalars['Boolean'];
+  isGoogleAuthBypassEnabled: Scalars['Boolean'];
+  isGoogleAuthEnabled: Scalars['Boolean'];
+  isInternalMessagesImportEnabled: Scalars['Boolean'];
+  isMicrosoftAuthBypassEnabled: Scalars['Boolean'];
+  isMicrosoftAuthEnabled: Scalars['Boolean'];
+  isPasswordAuthBypassEnabled: Scalars['Boolean'];
+  isPasswordAuthEnabled: Scalars['Boolean'];
+  isPublicInviteLinkEnabled: Scalars['Boolean'];
+  isTwoFactorAuthenticationEnforced: Scalars['Boolean'];
+  logo?: Maybe<Scalars['String']>;
+  logoFileId?: Maybe<Scalars['UUID']>;
+  metadataVersion: Scalars['Float'];
+  routerModel: Scalars['String'];
+  smartModel: Scalars['String'];
+  subdomain: Scalars['String'];
+  trashRetentionDays: Scalars['Float'];
+  updatedAt: Scalars['DateTime'];
+  useRecommendedModels: Scalars['Boolean'];
   viewFields?: Maybe<Array<ViewField>>;
   viewFilterGroups?: Maybe<Array<ViewFilterGroup>>;
   viewFilters?: Maybe<Array<ViewFilter>>;
@@ -6002,8 +6000,8 @@ export type Workspace = {
   viewSorts?: Maybe<Array<ViewSort>>;
   views?: Maybe<Array<View>>;
   workspaceCustomApplication?: Maybe<Application>;
-  workspaceCustomApplicationId: Scalars['String']['output'];
-  workspaceMembersCount?: Maybe<Scalars['Float']['output']>;
+  workspaceCustomApplicationId: Scalars['String'];
+  workspaceMembersCount?: Maybe<Scalars['Float']>;
   workspaceUrls: WorkspaceUrls;
 };
 
@@ -6017,39 +6015,39 @@ export enum WorkspaceActivationStatus {
 
 export type WorkspaceAiStats = {
   __typename?: 'WorkspaceAiStats';
-  conversationsCount: Scalars['Int']['output'];
-  skillsCount: Scalars['Int']['output'];
-  toolsCount: Scalars['Int']['output'];
+  conversationsCount: Scalars['Int'];
+  skillsCount: Scalars['Int'];
+  toolsCount: Scalars['Int'];
 };
 
 export type WorkspaceInvitation = {
   __typename?: 'WorkspaceInvitation';
-  email: Scalars['String']['output'];
-  expiresAt: Scalars['DateTime']['output'];
-  id: Scalars['UUID']['output'];
-  roleId?: Maybe<Scalars['UUID']['output']>;
+  email: Scalars['String'];
+  expiresAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  roleId?: Maybe<Scalars['UUID']>;
 };
 
 export type WorkspaceInviteHashValid = {
   __typename?: 'WorkspaceInviteHashValid';
-  isValid: Scalars['Boolean']['output'];
+  isValid: Scalars['Boolean'];
 };
 
 export type WorkspaceMember = {
   __typename?: 'WorkspaceMember';
-  avatarUrl?: Maybe<Scalars['String']['output']>;
-  calendarStartDay?: Maybe<Scalars['Int']['output']>;
-  colorScheme: Scalars['String']['output'];
+  avatarUrl?: Maybe<Scalars['String']>;
+  calendarStartDay?: Maybe<Scalars['Int']>;
+  colorScheme: Scalars['String'];
   dateFormat?: Maybe<WorkspaceMemberDateFormatEnum>;
-  id: Scalars['UUID']['output'];
-  locale?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID'];
+  locale?: Maybe<Scalars['String']>;
   name: FullName;
   numberFormat?: Maybe<WorkspaceMemberNumberFormatEnum>;
   roles?: Maybe<Array<Role>>;
   timeFormat?: Maybe<WorkspaceMemberTimeFormatEnum>;
-  timeZone?: Maybe<Scalars['String']['output']>;
-  userEmail: Scalars['String']['output'];
-  userWorkspaceId?: Maybe<Scalars['UUID']['output']>;
+  timeZone?: Maybe<Scalars['String']>;
+  userEmail: Scalars['String'];
+  userWorkspaceId?: Maybe<Scalars['UUID']>;
 };
 
 /** Date format as Month first, Day first, Year first or system as default */
@@ -6078,8 +6076,8 @@ export enum WorkspaceMemberTimeFormatEnum {
 
 export type WorkspaceMigration = {
   __typename?: 'WorkspaceMigration';
-  actions: Scalars['JSON']['output'];
-  applicationUniversalIdentifier: Scalars['String']['output'];
+  actions: Scalars['JSON'];
+  applicationUniversalIdentifier: Scalars['String'];
 };
 
 export enum WorkspaceMigrationActionType {
@@ -6091,7 +6089,7 @@ export enum WorkspaceMigrationActionType {
 export type WorkspaceMigrationDeleteActionInput = {
   metadataName: AllMetadataName;
   type: WorkspaceMigrationActionType;
-  universalIdentifier: Scalars['String']['input'];
+  universalIdentifier: Scalars['String'];
 };
 
 export type WorkspaceMigrationInput = {
@@ -6100,19 +6098,19 @@ export type WorkspaceMigrationInput = {
 
 export type WorkspaceNameAndId = {
   __typename?: 'WorkspaceNameAndId';
-  displayName?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
+  displayName?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
 };
 
 export type WorkspaceUrls = {
   __typename?: 'WorkspaceUrls';
-  customUrl?: Maybe<Scalars['String']['output']>;
-  subdomainUrl: Scalars['String']['output'];
+  customUrl?: Maybe<Scalars['String']>;
+  subdomainUrl: Scalars['String'];
 };
 
 export type WorkspaceUrlsAndId = {
   __typename?: 'WorkspaceUrlsAndId';
-  id: Scalars['UUID']['output'];
+  id: Scalars['UUID'];
   workspaceUrls: WorkspaceUrls;
 };
 
@@ -6128,22 +6126,22 @@ export type AgentFieldsFragment = { __typename?: 'Agent', id: string, name: stri
 export type SkillFieldsFragment = { __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, isActive: boolean, createdAt: string, updatedAt: string };
 
 export type ActivateSkillMutationVariables = Exact<{
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 }>;
 
 
 export type ActivateSkillMutation = { __typename?: 'Mutation', activateSkill: { __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, isActive: boolean, createdAt: string, updatedAt: string } };
 
 export type ArchiveChatThreadMutationVariables = Exact<{
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 }>;
 
 
 export type ArchiveChatThreadMutation = { __typename?: 'Mutation', archiveChatThread: { __typename?: 'AgentChatThread', id: string, deletedAt?: string | null, updatedAt: string } };
 
 export type AssignRoleToAgentMutationVariables = Exact<{
-  agentId: Scalars['UUID']['input'];
-  roleId: Scalars['UUID']['input'];
+  agentId: Scalars['UUID'];
+  roleId: Scalars['UUID'];
 }>;
 
 
@@ -6169,14 +6167,14 @@ export type CreateSkillMutationVariables = Exact<{
 export type CreateSkillMutation = { __typename?: 'Mutation', createSkill: { __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, isActive: boolean, createdAt: string, updatedAt: string } };
 
 export type DeactivateSkillMutationVariables = Exact<{
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 }>;
 
 
 export type DeactivateSkillMutation = { __typename?: 'Mutation', deactivateSkill: { __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, isActive: boolean, createdAt: string, updatedAt: string } };
 
 export type DeleteChatThreadMutationVariables = Exact<{
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 }>;
 
 
@@ -6190,55 +6188,55 @@ export type DeleteOneAgentMutationVariables = Exact<{
 export type DeleteOneAgentMutation = { __typename?: 'Mutation', deleteOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type DeleteQueuedChatMessageMutationVariables = Exact<{
-  messageId: Scalars['UUID']['input'];
+  messageId: Scalars['UUID'];
 }>;
 
 
 export type DeleteQueuedChatMessageMutation = { __typename?: 'Mutation', deleteQueuedChatMessage: boolean };
 
 export type DeleteSkillMutationVariables = Exact<{
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 }>;
 
 
 export type DeleteSkillMutation = { __typename?: 'Mutation', deleteSkill: { __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, isActive: boolean, createdAt: string, updatedAt: string } };
 
 export type EvaluateAgentTurnMutationVariables = Exact<{
-  turnId: Scalars['UUID']['input'];
+  turnId: Scalars['UUID'];
 }>;
 
 
 export type EvaluateAgentTurnMutation = { __typename?: 'Mutation', evaluateAgentTurn: { __typename?: 'AgentTurnEvaluation', id: string, turnId: string, score: number, comment?: string | null, createdAt: string } };
 
 export type RemoveRoleFromAgentMutationVariables = Exact<{
-  agentId: Scalars['UUID']['input'];
+  agentId: Scalars['UUID'];
 }>;
 
 
 export type RemoveRoleFromAgentMutation = { __typename?: 'Mutation', removeRoleFromAgent: boolean };
 
 export type RenameChatThreadMutationVariables = Exact<{
-  id: Scalars['UUID']['input'];
-  title: Scalars['String']['input'];
+  id: Scalars['UUID'];
+  title: Scalars['String'];
 }>;
 
 
 export type RenameChatThreadMutation = { __typename?: 'Mutation', renameChatThread: { __typename?: 'AgentChatThread', id: string, title?: string | null, updatedAt: string } };
 
 export type RunEvaluationInputMutationVariables = Exact<{
-  agentId: Scalars['UUID']['input'];
-  input: Scalars['String']['input'];
+  agentId: Scalars['UUID'];
+  input: Scalars['String'];
 }>;
 
 
 export type RunEvaluationInputMutation = { __typename?: 'Mutation', runEvaluationInput: { __typename?: 'AgentTurn', id: string, threadId: string, agentId?: string | null, createdAt: string, evaluations: Array<{ __typename?: 'AgentTurnEvaluation', id: string, score: number, comment?: string | null, createdAt: string }> } };
 
 export type SendChatMessageMutationVariables = Exact<{
-  threadId: Scalars['UUID']['input'];
-  text: Scalars['String']['input'];
-  messageId: Scalars['UUID']['input'];
-  browsingContext?: InputMaybe<Scalars['JSON']['input']>;
-  modelId?: InputMaybe<Scalars['String']['input']>;
+  threadId: Scalars['UUID'];
+  text: Scalars['String'];
+  messageId: Scalars['UUID'];
+  browsingContext?: InputMaybe<Scalars['JSON']>;
+  modelId?: InputMaybe<Scalars['String']>;
   fileAttachments?: InputMaybe<Array<FileAttachmentInput> | FileAttachmentInput>;
 }>;
 
@@ -6246,14 +6244,14 @@ export type SendChatMessageMutationVariables = Exact<{
 export type SendChatMessageMutation = { __typename?: 'Mutation', sendChatMessage: { __typename?: 'SendChatMessageResult', messageId: string, queued: boolean, streamId?: string | null } };
 
 export type StopAgentChatStreamMutationVariables = Exact<{
-  threadId: Scalars['UUID']['input'];
+  threadId: Scalars['UUID'];
 }>;
 
 
 export type StopAgentChatStreamMutation = { __typename?: 'Mutation', stopAgentChatStream: boolean };
 
 export type UnarchiveChatThreadMutationVariables = Exact<{
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 }>;
 
 
@@ -6274,7 +6272,7 @@ export type UpdateSkillMutationVariables = Exact<{
 export type UpdateSkillMutation = { __typename?: 'Mutation', updateSkill: { __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, isActive: boolean, createdAt: string, updatedAt: string } };
 
 export type UploadAiChatFileMutationVariables = Exact<{
-  file: Scalars['Upload']['input'];
+  file: Scalars['Upload'];
 }>;
 
 
@@ -6291,14 +6289,14 @@ export type FindManySkillsQueryVariables = Exact<{ [key: string]: never; }>;
 export type FindManySkillsQuery = { __typename?: 'Query', skills: Array<{ __typename?: 'Skill', id: string, name: string, label: string, description?: string | null, icon?: string | null, content: string, isCustom: boolean, isActive: boolean, createdAt: string, updatedAt: string }> };
 
 export type FindOneAgentQueryVariables = Exact<{
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 }>;
 
 
 export type FindOneAgentQuery = { __typename?: 'Query', findOneAgent: { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string } };
 
 export type FindOneSkillQueryVariables = Exact<{
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 }>;
 
 
@@ -6310,14 +6308,14 @@ export type FindWorkspaceAiStatsQueryVariables = Exact<{ [key: string]: never; }
 export type FindWorkspaceAiStatsQuery = { __typename?: 'Query', findWorkspaceAiStats: { __typename?: 'WorkspaceAiStats', conversationsCount: number, skillsCount: number, toolsCount: number } };
 
 export type GetAgentTurnsQueryVariables = Exact<{
-  agentId: Scalars['UUID']['input'];
+  agentId: Scalars['UUID'];
 }>;
 
 
 export type GetAgentTurnsQuery = { __typename?: 'Query', agentTurns: Array<{ __typename?: 'AgentTurn', id: string, threadId: string, agentId?: string | null, createdAt: string, evaluations: Array<{ __typename?: 'AgentTurnEvaluation', id: string, score: number, comment?: string | null, createdAt: string }>, messages: Array<{ __typename?: 'AgentMessage', id: string, role: string, createdAt: string, parts: Array<{ __typename?: 'AgentMessagePart', id: string, type: string, textContent?: string | null, reasoningContent?: string | null, toolName?: string | null, toolCallId?: string | null, toolInput?: any | null, toolOutput?: any | null, errorMessage?: string | null, state?: string | null, providerExecuted?: boolean | null, errorDetails?: any | null, sourceUrlSourceId?: string | null, sourceUrlUrl?: string | null, sourceUrlTitle?: string | null, sourceDocumentSourceId?: string | null, sourceDocumentMediaType?: string | null, sourceDocumentTitle?: string | null, sourceDocumentFilename?: string | null, fileMediaType?: string | null, fileFilename?: string | null, fileUrl?: string | null, providerMetadata?: any | null }> }> }> };
 
 export type GetChatMessagesQueryVariables = Exact<{
-  threadId: Scalars['UUID']['input'];
+  threadId: Scalars['UUID'];
 }>;
 
 
@@ -6334,14 +6332,14 @@ export type GetToolIndexQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetToolIndexQuery = { __typename?: 'Query', getToolIndex: Array<{ __typename?: 'ToolIndexEntry', name: string, description: string, category: string, objectName?: string | null, icon?: string | null }> };
 
 export type GetToolInputSchemaQueryVariables = Exact<{
-  toolName: Scalars['String']['input'];
+  toolName: Scalars['String'];
 }>;
 
 
 export type GetToolInputSchemaQuery = { __typename?: 'Query', getToolInputSchema?: any | null };
 
 export type OnAgentChatEventSubscriptionVariables = Exact<{
-  threadId: Scalars['UUID']['input'];
+  threadId: Scalars['UUID'];
 }>;
 
 
@@ -6349,9 +6347,9 @@ export type OnAgentChatEventSubscription = { __typename?: 'Subscription', onAgen
 
 export type TrackAnalyticsMutationVariables = Exact<{
   type: AnalyticsType;
-  event?: InputMaybe<Scalars['String']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  properties?: InputMaybe<Scalars['JSON']['input']>;
+  event?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  properties?: InputMaybe<Scalars['JSON']>;
 }>;
 
 
@@ -6365,21 +6363,21 @@ export type FindManyApplicationsQueryVariables = Exact<{ [key: string]: never; }
 export type FindManyApplicationsQuery = { __typename?: 'Query', findManyApplications: Array<{ __typename?: 'Application', id: string, name: string, description?: string | null, logo?: string | null, version?: string | null, universalIdentifier: string, applicationRegistrationId?: string | null, applicationRegistration?: { __typename?: 'ApplicationRegistrationSummary', id: string, latestAvailableVersion?: string | null, sourceType: ApplicationRegistrationSourceType } | null }> };
 
 export type FindOneApplicationQueryVariables = Exact<{
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 }>;
 
 
 export type FindOneApplicationQuery = { __typename?: 'Query', findOneApplication: { __typename?: 'Application', id: string, name: string, description?: string | null, logo?: string | null, version?: string | null, universalIdentifier: string, applicationRegistrationId?: string | null, canBeUninstalled: boolean, defaultRoleId?: string | null, settingsCustomTabFrontComponentId?: string | null, availablePackages: any, applicationRegistration?: { __typename?: 'ApplicationRegistrationSummary', id: string, latestAvailableVersion?: string | null, sourceType: ApplicationRegistrationSourceType, logoUrl?: string | null } | null, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, frontComponents: Array<{ __typename?: 'FrontComponent', id: string, name: string, description?: string | null, applicationId: string, componentName: string, builtComponentChecksum: string, universalIdentifier?: string | null, isHeadless: boolean, usesSdkClient: boolean, createdAt: string, updatedAt: string }>, commandMenuItems: Array<{ __typename?: 'CommandMenuItem', id: string, label: string, shortLabel?: string | null, icon?: string | null, isPinned: boolean, availabilityType: CommandMenuItemAvailabilityType, conditionalAvailabilityExpression?: string | null, frontComponentId?: string | null, universalIdentifier?: string | null, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, universalIdentifier: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, color?: string | null, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, subFieldName?: string | null, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, universalIdentifier: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, logicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, executionMode: LogicFunctionExecutionMode, sourceHandlerPath: string, handlerName: string, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, toolTriggerSettings?: any | null, workflowActionTriggerSettings?: any | null, applicationId?: string | null, universalIdentifier?: string | null, createdAt: string, updatedAt: string }> } };
 
 export type FindOneApplicationByUniversalIdentifierQueryVariables = Exact<{
-  universalIdentifier: Scalars['UUID']['input'];
+  universalIdentifier: Scalars['UUID'];
 }>;
 
 
 export type FindOneApplicationByUniversalIdentifierQuery = { __typename?: 'Query', findOneApplication: { __typename?: 'Application', id: string, name: string, description?: string | null, logo?: string | null, version?: string | null, universalIdentifier: string, applicationRegistrationId?: string | null, canBeUninstalled: boolean, defaultRoleId?: string | null, settingsCustomTabFrontComponentId?: string | null, availablePackages: any, applicationRegistration?: { __typename?: 'ApplicationRegistrationSummary', id: string, latestAvailableVersion?: string | null, sourceType: ApplicationRegistrationSourceType, logoUrl?: string | null } | null, applicationVariables: Array<{ __typename?: 'ApplicationVariable', id: string, key: string, value: string, description: string, isSecret: boolean }>, agents: Array<{ __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string }>, frontComponents: Array<{ __typename?: 'FrontComponent', id: string, name: string, description?: string | null, applicationId: string, componentName: string, builtComponentChecksum: string, universalIdentifier?: string | null, isHeadless: boolean, usesSdkClient: boolean, createdAt: string, updatedAt: string }>, commandMenuItems: Array<{ __typename?: 'CommandMenuItem', id: string, label: string, shortLabel?: string | null, icon?: string | null, isPinned: boolean, availabilityType: CommandMenuItemAvailabilityType, conditionalAvailabilityExpression?: string | null, frontComponentId?: string | null, universalIdentifier?: string | null, applicationId?: string | null, createdAt: string, updatedAt: string }>, objects: Array<{ __typename?: 'Object', id: string, universalIdentifier: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, color?: string | null, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, applicationId: string, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, subFieldName?: string | null, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, universalIdentifier: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, morphId?: string | null, applicationId: string, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> }>, logicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, executionMode: LogicFunctionExecutionMode, sourceHandlerPath: string, handlerName: string, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, toolTriggerSettings?: any | null, workflowActionTriggerSettings?: any | null, applicationId?: string | null, universalIdentifier?: string | null, createdAt: string, updatedAt: string }> } };
 
 export type FindOneApplicationSummaryQueryVariables = Exact<{
-  universalIdentifier: Scalars['UUID']['input'];
+  universalIdentifier: Scalars['UUID'];
 }>;
 
 
@@ -6396,26 +6394,26 @@ export type AvailableWorkspacesFragmentFragment = { __typename?: 'AvailableWorks
 export type AvailableSsoIdentityProvidersFragmentFragment = { __typename?: 'FindAvailableSSOIDP', id: string, issuer: string, name: string, status: SsoIdentityProviderStatus, workspace: { __typename?: 'WorkspaceNameAndId', id: string, displayName?: string | null } };
 
 export type AuthorizeAppMutationVariables = Exact<{
-  clientId: Scalars['String']['input'];
-  codeChallenge?: InputMaybe<Scalars['String']['input']>;
-  redirectUrl: Scalars['String']['input'];
-  state?: InputMaybe<Scalars['String']['input']>;
+  clientId: Scalars['String'];
+  codeChallenge?: InputMaybe<Scalars['String']>;
+  redirectUrl: Scalars['String'];
+  state?: InputMaybe<Scalars['String']>;
 }>;
 
 
 export type AuthorizeAppMutation = { __typename?: 'Mutation', authorizeApp: { __typename?: 'AuthorizeApp', redirectUrl: string } };
 
 export type EmailPasswordResetLinkMutationVariables = Exact<{
-  email: Scalars['String']['input'];
-  workspaceId?: InputMaybe<Scalars['UUID']['input']>;
+  email: Scalars['String'];
+  workspaceId?: InputMaybe<Scalars['UUID']>;
 }>;
 
 
 export type EmailPasswordResetLinkMutation = { __typename?: 'Mutation', emailPasswordResetLink: { __typename?: 'EmailPasswordResetLink', success: boolean } };
 
 export type GenerateApiKeyTokenMutationVariables = Exact<{
-  apiKeyId: Scalars['UUID']['input'];
-  expiresAt: Scalars['String']['input'];
+  apiKeyId: Scalars['UUID'];
+  expiresAt: Scalars['String'];
 }>;
 
 
@@ -6432,18 +6430,18 @@ export type GenerateTransientTokenMutationVariables = Exact<{ [key: string]: nev
 export type GenerateTransientTokenMutation = { __typename?: 'Mutation', generateTransientToken: { __typename?: 'TransientToken', transientToken: { __typename?: 'AuthToken', token: string } } };
 
 export type GetAuthTokensFromLoginTokenMutationVariables = Exact<{
-  loginToken: Scalars['String']['input'];
-  origin: Scalars['String']['input'];
+  loginToken: Scalars['String'];
+  origin: Scalars['String'];
 }>;
 
 
 export type GetAuthTokensFromLoginTokenMutation = { __typename?: 'Mutation', getAuthTokensFromLoginToken: { __typename?: 'AuthTokens', tokens: { __typename?: 'AuthTokenPair', accessOrWorkspaceAgnosticToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type GetAuthTokensFromOtpMutationVariables = Exact<{
-  loginToken: Scalars['String']['input'];
-  otp: Scalars['String']['input'];
-  captchaToken?: InputMaybe<Scalars['String']['input']>;
-  origin: Scalars['String']['input'];
+  loginToken: Scalars['String'];
+  otp: Scalars['String'];
+  captchaToken?: InputMaybe<Scalars['String']>;
+  origin: Scalars['String'];
 }>;
 
 
@@ -6457,26 +6455,26 @@ export type GetAuthorizationUrlForSsoMutationVariables = Exact<{
 export type GetAuthorizationUrlForSsoMutation = { __typename?: 'Mutation', getAuthorizationUrlForSSO: { __typename?: 'GetAuthorizationUrlForSSO', id: string, type: string, authorizationURL: string } };
 
 export type GetLoginTokenFromCredentialsMutationVariables = Exact<{
-  email: Scalars['String']['input'];
-  password: Scalars['String']['input'];
-  captchaToken?: InputMaybe<Scalars['String']['input']>;
-  origin: Scalars['String']['input'];
+  email: Scalars['String'];
+  password: Scalars['String'];
+  captchaToken?: InputMaybe<Scalars['String']>;
+  origin: Scalars['String'];
 }>;
 
 
 export type GetLoginTokenFromCredentialsMutation = { __typename?: 'Mutation', getLoginTokenFromCredentials: { __typename?: 'LoginToken', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
 
 export type ImpersonateMutationVariables = Exact<{
-  userId: Scalars['UUID']['input'];
-  workspaceId: Scalars['UUID']['input'];
+  userId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
 }>;
 
 
 export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Impersonate', workspace: { __typename?: 'WorkspaceUrlsAndId', id: string, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } }, loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
 
 export type InitiateOtpProvisioningMutationVariables = Exact<{
-  loginToken: Scalars['String']['input'];
-  origin: Scalars['String']['input'];
+  loginToken: Scalars['String'];
+  origin: Scalars['String'];
 }>;
 
 
@@ -6488,42 +6486,42 @@ export type InitiateOtpProvisioningForAuthenticatedUserMutationVariables = Exact
 export type InitiateOtpProvisioningForAuthenticatedUserMutation = { __typename?: 'Mutation', initiateOTPProvisioningForAuthenticatedUser: { __typename?: 'InitiateTwoFactorAuthenticationProvisioning', uri: string } };
 
 export type RenewTokenMutationVariables = Exact<{
-  appToken: Scalars['String']['input'];
+  appToken: Scalars['String'];
 }>;
 
 
 export type RenewTokenMutation = { __typename?: 'Mutation', renewToken: { __typename?: 'AuthTokens', tokens: { __typename?: 'AuthTokenPair', accessOrWorkspaceAgnosticToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type ResendEmailVerificationTokenMutationVariables = Exact<{
-  email: Scalars['String']['input'];
-  origin: Scalars['String']['input'];
+  email: Scalars['String'];
+  origin: Scalars['String'];
 }>;
 
 
 export type ResendEmailVerificationTokenMutation = { __typename?: 'Mutation', resendEmailVerificationToken: { __typename?: 'ResendEmailVerificationToken', success: boolean } };
 
 export type DeleteTwoFactorAuthenticationMethodMutationVariables = Exact<{
-  twoFactorAuthenticationMethodId: Scalars['UUID']['input'];
+  twoFactorAuthenticationMethodId: Scalars['UUID'];
 }>;
 
 
 export type DeleteTwoFactorAuthenticationMethodMutation = { __typename?: 'Mutation', deleteTwoFactorAuthenticationMethod: { __typename?: 'DeleteTwoFactorAuthenticationMethod', success: boolean } };
 
 export type SignInMutationVariables = Exact<{
-  email: Scalars['String']['input'];
-  password: Scalars['String']['input'];
-  captchaToken?: InputMaybe<Scalars['String']['input']>;
+  email: Scalars['String'];
+  password: Scalars['String'];
+  captchaToken?: InputMaybe<Scalars['String']>;
 }>;
 
 
 export type SignInMutation = { __typename?: 'Mutation', signIn: { __typename?: 'AvailableWorkspacesAndAccessTokens', availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> }, tokens: { __typename?: 'AuthTokenPair', accessOrWorkspaceAgnosticToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type SignUpMutationVariables = Exact<{
-  email: Scalars['String']['input'];
-  password: Scalars['String']['input'];
-  captchaToken?: InputMaybe<Scalars['String']['input']>;
-  locale?: InputMaybe<Scalars['String']['input']>;
-  verifyEmailRedirectPath?: InputMaybe<Scalars['String']['input']>;
+  email: Scalars['String'];
+  password: Scalars['String'];
+  captchaToken?: InputMaybe<Scalars['String']>;
+  locale?: InputMaybe<Scalars['String']>;
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -6535,70 +6533,70 @@ export type SignUpInNewWorkspaceMutationVariables = Exact<{ [key: string]: never
 export type SignUpInNewWorkspaceMutation = { __typename?: 'Mutation', signUpInNewWorkspace: { __typename?: 'SignUp', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, workspace: { __typename?: 'WorkspaceUrlsAndId', id: string, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } } } };
 
 export type SignUpInWorkspaceMutationVariables = Exact<{
-  email: Scalars['String']['input'];
-  password: Scalars['String']['input'];
-  workspaceInviteHash?: InputMaybe<Scalars['String']['input']>;
-  workspacePersonalInviteToken?: InputMaybe<Scalars['String']['input']>;
-  captchaToken?: InputMaybe<Scalars['String']['input']>;
-  workspaceId?: InputMaybe<Scalars['UUID']['input']>;
-  locale?: InputMaybe<Scalars['String']['input']>;
-  verifyEmailRedirectPath?: InputMaybe<Scalars['String']['input']>;
+  email: Scalars['String'];
+  password: Scalars['String'];
+  workspaceInviteHash?: InputMaybe<Scalars['String']>;
+  workspacePersonalInviteToken?: InputMaybe<Scalars['String']>;
+  captchaToken?: InputMaybe<Scalars['String']>;
+  workspaceId?: InputMaybe<Scalars['UUID']>;
+  locale?: InputMaybe<Scalars['String']>;
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
 }>;
 
 
 export type SignUpInWorkspaceMutation = { __typename?: 'Mutation', signUpInWorkspace: { __typename?: 'SignUp', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, workspace: { __typename?: 'WorkspaceUrlsAndId', id: string, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } } } };
 
 export type UpdatePasswordViaResetTokenMutationVariables = Exact<{
-  token: Scalars['String']['input'];
-  newPassword: Scalars['String']['input'];
+  token: Scalars['String'];
+  newPassword: Scalars['String'];
 }>;
 
 
 export type UpdatePasswordViaResetTokenMutation = { __typename?: 'Mutation', updatePasswordViaResetToken: { __typename?: 'InvalidatePassword', success: boolean } };
 
 export type VerifyEmailAndGetLoginTokenMutationVariables = Exact<{
-  emailVerificationToken: Scalars['String']['input'];
-  email: Scalars['String']['input'];
-  captchaToken?: InputMaybe<Scalars['String']['input']>;
-  origin: Scalars['String']['input'];
+  emailVerificationToken: Scalars['String'];
+  email: Scalars['String'];
+  captchaToken?: InputMaybe<Scalars['String']>;
+  origin: Scalars['String'];
 }>;
 
 
 export type VerifyEmailAndGetLoginTokenMutation = { __typename?: 'Mutation', verifyEmailAndGetLoginToken: { __typename?: 'VerifyEmailAndGetLoginToken', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null } } };
 
 export type VerifyEmailAndGetWorkspaceAgnosticTokenMutationVariables = Exact<{
-  emailVerificationToken: Scalars['String']['input'];
-  email: Scalars['String']['input'];
-  captchaToken?: InputMaybe<Scalars['String']['input']>;
+  emailVerificationToken: Scalars['String'];
+  email: Scalars['String'];
+  captchaToken?: InputMaybe<Scalars['String']>;
 }>;
 
 
 export type VerifyEmailAndGetWorkspaceAgnosticTokenMutation = { __typename?: 'Mutation', verifyEmailAndGetWorkspaceAgnosticToken: { __typename?: 'AvailableWorkspacesAndAccessTokens', availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> }, tokens: { __typename?: 'AuthTokenPair', accessOrWorkspaceAgnosticToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type CheckUserExistsQueryVariables = Exact<{
-  email: Scalars['String']['input'];
-  captchaToken?: InputMaybe<Scalars['String']['input']>;
+  email: Scalars['String'];
+  captchaToken?: InputMaybe<Scalars['String']>;
 }>;
 
 
 export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename?: 'CheckUserExist', exists: boolean, availableWorkspacesCount: number, isEmailVerified: boolean } };
 
 export type FindApplicationRegistrationByClientIdQueryVariables = Exact<{
-  clientId: Scalars['String']['input'];
+  clientId: Scalars['String'];
 }>;
 
 
 export type FindApplicationRegistrationByClientIdQuery = { __typename?: 'Query', findApplicationRegistrationByClientId?: { __typename?: 'PublicApplicationRegistration', id: string, logoUrl?: string | null, name: string, oAuthScopes: Array<string>, websiteUrl?: string | null } | null };
 
 export type GetPublicWorkspaceDataByDomainQueryVariables = Exact<{
-  origin: Scalars['String']['input'];
+  origin: Scalars['String'];
 }>;
 
 
 export type GetPublicWorkspaceDataByDomainQuery = { __typename?: 'Query', getPublicWorkspaceDataByDomain: { __typename?: 'PublicWorkspaceData', id: string, logo?: string | null, displayName?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, authProviders: { __typename?: 'AuthProviders', google: boolean, magicLink: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> }, authBypassProviders?: { __typename?: 'AuthBypassProviders', google: boolean, password: boolean, microsoft: boolean } | null } };
 
 export type ValidatePasswordResetTokenQueryVariables = Exact<{
-  token: Scalars['String']['input'];
+  token: Scalars['String'];
 }>;
 
 
@@ -6623,50 +6621,50 @@ export type PageLayoutFragmentFragment = { __typename?: 'PageLayout', id: string
 export type PageLayoutTabFragmentFragment = { __typename?: 'PageLayoutTab', id: string, applicationId: string, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: string, isActive: boolean, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: string, applicationId: string, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?: { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode } | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number } | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number } | null, configuration: { __typename?: 'AggregateChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, label?: string | null, displayDataLabel?: boolean | null, format?: string | null, description?: string | null, filter?: any | null, prefix?: string | null, suffix?: string | null, timezone?: string | null, firstDayOfTheWeek?: number | null, ratioAggregateConfig?: { __typename?: 'RatioAggregateConfig', fieldMetadataId: string, optionValue: string } | null } | { __typename?: 'BarChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: string, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: string | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null, layout: BarChartLayout, isCumulative?: boolean | null, splitMultiValueFields?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'CalendarConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'EmailThreadConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'EmailsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldConfiguration', configurationType: WidgetConfigurationType, fieldDisplayMode: FieldDisplayMode, fieldMetadataId: string, viewId?: string | null } | { __typename?: 'FieldRichTextConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldsConfiguration', configurationType: WidgetConfigurationType, viewId?: string | null, newFieldDefaultVisibility?: boolean | null, shouldAllowUserToSeeHiddenFields?: boolean | null } | { __typename?: 'FilesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FrontComponentConfiguration', configurationType: WidgetConfigurationType, frontComponentId: string } | { __typename?: 'IframeConfiguration', configurationType: WidgetConfigurationType, url?: string | null } | { __typename?: 'LineChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: string, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: string | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, isStacked?: boolean | null, isCumulative?: boolean | null, splitMultiValueFields?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'NotesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'PieChartConfiguration', configurationType: WidgetConfigurationType, groupByFieldMetadataId: string, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, groupBySubFieldName?: string | null, dateGranularity?: ObjectRecordGroupByDateGranularity | null, orderBy?: GraphOrderBy | null, manualSortOrder?: Array<string> | null, displayDataLabel?: boolean | null, showCenterMetric?: boolean | null, displayLegend?: boolean | null, hideEmptyCategory?: boolean | null, splitMultiValueFields?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'RecordTableConfiguration', configurationType: WidgetConfigurationType, viewId?: string | null } | { __typename?: 'StandaloneRichTextConfiguration', configurationType: WidgetConfigurationType, body: { __typename?: 'RichTextBody', blocknote?: string | null, markdown?: string | null } } | { __typename?: 'TasksConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'TimelineConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'ViewConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowRunConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowVersionConfiguration', configurationType: WidgetConfigurationType } }> | null };
 
 export type DuplicateDashboardMutationVariables = Exact<{
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 }>;
 
 
 export type DuplicateDashboardMutation = { __typename?: 'Mutation', duplicateDashboard: { __typename?: 'DuplicatedDashboard', id: string, title?: string | null, pageLayoutId?: string | null, position: number, createdAt: string, updatedAt: string } };
 
 export type FindOnePageLayoutQueryVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 }>;
 
 
 export type FindOnePageLayoutQuery = { __typename?: 'Query', getPageLayout?: { __typename?: 'PageLayout', id: string, name: string, objectMetadataId?: string | null, type: PageLayoutType, universalIdentifier: string, defaultTabToFocusOnMobileAndSidePanelId?: string | null, createdAt: string, updatedAt: string, tabs?: Array<{ __typename?: 'PageLayoutTab', id: string, applicationId: string, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: string, isActive: boolean, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: string, applicationId: string, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?: { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode } | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number } | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number } | null, configuration: { __typename?: 'AggregateChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, label?: string | null, displayDataLabel?: boolean | null, format?: string | null, description?: string | null, filter?: any | null, prefix?: string | null, suffix?: string | null, timezone?: string | null, firstDayOfTheWeek?: number | null, ratioAggregateConfig?: { __typename?: 'RatioAggregateConfig', fieldMetadataId: string, optionValue: string } | null } | { __typename?: 'BarChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: string, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: string | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null, layout: BarChartLayout, isCumulative?: boolean | null, splitMultiValueFields?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'CalendarConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'EmailThreadConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'EmailsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldConfiguration', configurationType: WidgetConfigurationType, fieldDisplayMode: FieldDisplayMode, fieldMetadataId: string, viewId?: string | null } | { __typename?: 'FieldRichTextConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldsConfiguration', configurationType: WidgetConfigurationType, viewId?: string | null, newFieldDefaultVisibility?: boolean | null, shouldAllowUserToSeeHiddenFields?: boolean | null } | { __typename?: 'FilesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FrontComponentConfiguration', configurationType: WidgetConfigurationType, frontComponentId: string } | { __typename?: 'IframeConfiguration', configurationType: WidgetConfigurationType, url?: string | null } | { __typename?: 'LineChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: string, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: string | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, isStacked?: boolean | null, isCumulative?: boolean | null, splitMultiValueFields?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'NotesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'PieChartConfiguration', configurationType: WidgetConfigurationType, groupByFieldMetadataId: string, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, groupBySubFieldName?: string | null, dateGranularity?: ObjectRecordGroupByDateGranularity | null, orderBy?: GraphOrderBy | null, manualSortOrder?: Array<string> | null, displayDataLabel?: boolean | null, showCenterMetric?: boolean | null, displayLegend?: boolean | null, hideEmptyCategory?: boolean | null, splitMultiValueFields?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'RecordTableConfiguration', configurationType: WidgetConfigurationType, viewId?: string | null } | { __typename?: 'StandaloneRichTextConfiguration', configurationType: WidgetConfigurationType, body: { __typename?: 'RichTextBody', blocknote?: string | null, markdown?: string | null } } | { __typename?: 'TasksConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'TimelineConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'ViewConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowRunConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowVersionConfiguration', configurationType: WidgetConfigurationType } }> | null }> | null } | null };
 
 export type FindOnePageLayoutTypeQueryVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 }>;
 
 
 export type FindOnePageLayoutTypeQuery = { __typename?: 'Query', getPageLayout?: { __typename?: 'PageLayout', id: string, type: PageLayoutType } | null };
 
 export type UploadEmailAttachmentFileMutationVariables = Exact<{
-  file: Scalars['Upload']['input'];
+  file: Scalars['Upload'];
 }>;
 
 
 export type UploadEmailAttachmentFileMutation = { __typename?: 'Mutation', uploadEmailAttachmentFile: { __typename?: 'FileWithSignedUrl', id: string, path: string, size: number, createdAt: string, url: string } };
 
 export type UploadFilesFieldFileMutationVariables = Exact<{
-  file: Scalars['Upload']['input'];
-  fieldMetadataId: Scalars['String']['input'];
+  file: Scalars['Upload'];
+  fieldMetadataId: Scalars['String'];
 }>;
 
 
 export type UploadFilesFieldFileMutation = { __typename?: 'Mutation', uploadFilesFieldFile: { __typename?: 'FileWithSignedUrl', id: string, path: string, size: number, createdAt: string, url: string } };
 
 export type UploadWorkflowFileMutationVariables = Exact<{
-  file: Scalars['Upload']['input'];
+  file: Scalars['Upload'];
 }>;
 
 
 export type UploadWorkflowFileMutation = { __typename?: 'Mutation', uploadWorkflowFile: { __typename?: 'FileWithSignedUrl', id: string, path: string, size: number, createdAt: string, url: string } };
 
 export type RenewApplicationTokenMutationVariables = Exact<{
-  applicationRefreshToken: Scalars['String']['input'];
+  applicationRefreshToken: Scalars['String'];
 }>;
 
 
@@ -6678,7 +6676,7 @@ export type FindManyFrontComponentsQueryVariables = Exact<{ [key: string]: never
 export type FindManyFrontComponentsQuery = { __typename?: 'Query', frontComponents: Array<{ __typename?: 'FrontComponent', id: string, name: string, applicationId: string, builtComponentChecksum: string, builtComponentPath: string, componentName: string, createdAt: string, description?: string | null, isHeadless: boolean, sourceComponentPath: string, universalIdentifier?: string | null, updatedAt: string, usesSdkClient: boolean }> };
 
 export type FindOneFrontComponentQueryVariables = Exact<{
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 }>;
 
 
@@ -6745,15 +6743,15 @@ export type MarketplaceAppDetailFieldsFragment = { __typename?: 'MarketplaceAppD
 export type MarketplaceAppFieldsFragment = { __typename?: 'MarketplaceApp', id: string, name: string, description: string, author: string, category: string, logo?: string | null, sourcePackage?: string | null, isFeatured: boolean };
 
 export type InstallApplicationMutationVariables = Exact<{
-  universalIdentifier: Scalars['String']['input'];
+  universalIdentifier: Scalars['String'];
 }>;
 
 
 export type InstallApplicationMutation = { __typename?: 'Mutation', installApplication: { __typename?: 'Application', id: string } };
 
 export type UpgradeApplicationMutationVariables = Exact<{
-  appRegistrationId: Scalars['String']['input'];
-  targetVersion: Scalars['String']['input'];
+  appRegistrationId: Scalars['String'];
+  targetVersion: Scalars['String'];
 }>;
 
 
@@ -6765,7 +6763,7 @@ export type FindManyMarketplaceAppsQueryVariables = Exact<{ [key: string]: never
 export type FindManyMarketplaceAppsQuery = { __typename?: 'Query', findManyMarketplaceApps: Array<{ __typename?: 'MarketplaceApp', id: string, name: string, description: string, author: string, category: string, logo?: string | null, sourcePackage?: string | null, isFeatured: boolean }> };
 
 export type FindMarketplaceAppDetailQueryVariables = Exact<{
-  universalIdentifier: Scalars['String']['input'];
+  universalIdentifier: Scalars['String'];
 }>;
 
 
@@ -6783,7 +6781,7 @@ export type CreateManyNavigationMenuItemsMutationVariables = Exact<{
 export type CreateManyNavigationMenuItemsMutation = { __typename?: 'Mutation', createManyNavigationMenuItems: Array<{ __typename?: 'NavigationMenuItem', id: string, type: NavigationMenuItemType, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, icon?: string | null, color?: string | null, pageLayoutId?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string, targetRecordIdentifier?: { __typename?: 'RecordIdentifier', id: string, labelIdentifier: string, imageIdentifier?: string | null } | null }> };
 
 export type DeleteManyNavigationMenuItemsMutationVariables = Exact<{
-  ids: Array<Scalars['UUID']['input']> | Scalars['UUID']['input'];
+  ids: Array<Scalars['UUID']> | Scalars['UUID'];
 }>;
 
 
@@ -6802,7 +6800,7 @@ export type FindManyNavigationMenuItemsQueryVariables = Exact<{ [key: string]: n
 export type FindManyNavigationMenuItemsQuery = { __typename?: 'Query', navigationMenuItems: Array<{ __typename?: 'NavigationMenuItem', id: string, type: NavigationMenuItemType, userWorkspaceId?: string | null, targetRecordId?: string | null, targetObjectMetadataId?: string | null, viewId?: string | null, folderId?: string | null, name?: string | null, link?: string | null, icon?: string | null, color?: string | null, pageLayoutId?: string | null, position: number, applicationId?: string | null, createdAt: string, updatedAt: string, targetRecordIdentifier?: { __typename?: 'RecordIdentifier', id: string, labelIdentifier: string, imageIdentifier?: string | null } | null }> };
 
 export type FindOneNavigationMenuItemQueryVariables = Exact<{
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 }>;
 
 
@@ -6825,7 +6823,7 @@ export type CreateOneFieldMetadataItemMutationVariables = Exact<{
 export type CreateOneFieldMetadataItemMutation = { __typename?: 'Mutation', createOneField: { __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isUnique?: boolean | null, isNullable?: boolean | null, createdAt: string, updatedAt: string, settings?: any | null, defaultValue?: any | null, options?: any | null, isLabelSyncedWithName?: boolean | null, applicationId: string, object?: { __typename?: 'Object', id: string } | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null } };
 
 export type UpdateOneFieldMetadataItemMutationVariables = Exact<{
-  idToUpdate: Scalars['UUID']['input'];
+  idToUpdate: Scalars['UUID'];
   updatePayload: UpdateFieldInput;
 }>;
 
@@ -6833,7 +6831,7 @@ export type UpdateOneFieldMetadataItemMutationVariables = Exact<{
 export type UpdateOneFieldMetadataItemMutation = { __typename?: 'Mutation', updateOneField: { __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isUnique?: boolean | null, isNullable?: boolean | null, createdAt: string, updatedAt: string, settings?: any | null, isLabelSyncedWithName?: boolean | null, applicationId: string, object?: { __typename?: 'Object', id: string } | null } };
 
 export type UpdateOneObjectMetadataItemMutationVariables = Exact<{
-  idToUpdate: Scalars['UUID']['input'];
+  idToUpdate: Scalars['UUID'];
   updatePayload: UpdateObjectPayload;
 }>;
 
@@ -6841,14 +6839,14 @@ export type UpdateOneObjectMetadataItemMutationVariables = Exact<{
 export type UpdateOneObjectMetadataItemMutation = { __typename?: 'Mutation', updateOneObject: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, color?: string | null, isCustom: boolean, isActive: boolean, isSearchable: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, isLabelSyncedWithName: boolean, applicationId: string } };
 
 export type DeleteOneObjectMetadataItemMutationVariables = Exact<{
-  idToDelete: Scalars['UUID']['input'];
+  idToDelete: Scalars['UUID'];
 }>;
 
 
 export type DeleteOneObjectMetadataItemMutation = { __typename?: 'Mutation', deleteOneObject: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, color?: string | null, isCustom: boolean, isActive: boolean, isSearchable: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, isLabelSyncedWithName: boolean, applicationId: string } };
 
 export type DeleteOneFieldMetadataItemMutationVariables = Exact<{
-  idToDelete: Scalars['UUID']['input'];
+  idToDelete: Scalars['UUID'];
 }>;
 
 
@@ -6862,7 +6860,7 @@ export type CreateOneIndexMetadataItemMutationVariables = Exact<{
 export type CreateOneIndexMetadataItemMutation = { __typename?: 'Mutation', createOneIndex: { __typename?: 'Index', id: string, name: string, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexWhereClause?: string | null, createdAt: string, updatedAt: string, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, subFieldName?: string | null, createdAt: string, updatedAt: string, order: number }> } };
 
 export type DeleteOneIndexMetadataItemMutationVariables = Exact<{
-  idToDelete: Scalars['UUID']['input'];
+  idToDelete: Scalars['UUID'];
 }>;
 
 
@@ -6891,28 +6889,28 @@ export type SkipSyncEmailOnboardingStepMutation = { __typename?: 'Mutation', ski
 export type PageLayoutWidgetFragmentFragment = { __typename?: 'PageLayoutWidget', id: string, applicationId: string, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?: { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode } | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number } | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number } | null, configuration: { __typename?: 'AggregateChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, label?: string | null, displayDataLabel?: boolean | null, format?: string | null, description?: string | null, filter?: any | null, prefix?: string | null, suffix?: string | null, timezone?: string | null, firstDayOfTheWeek?: number | null, ratioAggregateConfig?: { __typename?: 'RatioAggregateConfig', fieldMetadataId: string, optionValue: string } | null } | { __typename?: 'BarChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: string, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: string | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null, layout: BarChartLayout, isCumulative?: boolean | null, splitMultiValueFields?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'CalendarConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'EmailThreadConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'EmailsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldConfiguration', configurationType: WidgetConfigurationType, fieldDisplayMode: FieldDisplayMode, fieldMetadataId: string, viewId?: string | null } | { __typename?: 'FieldRichTextConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldsConfiguration', configurationType: WidgetConfigurationType, viewId?: string | null, newFieldDefaultVisibility?: boolean | null, shouldAllowUserToSeeHiddenFields?: boolean | null } | { __typename?: 'FilesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FrontComponentConfiguration', configurationType: WidgetConfigurationType, frontComponentId: string } | { __typename?: 'IframeConfiguration', configurationType: WidgetConfigurationType, url?: string | null } | { __typename?: 'LineChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: string, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: string | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, isStacked?: boolean | null, isCumulative?: boolean | null, splitMultiValueFields?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'NotesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'PieChartConfiguration', configurationType: WidgetConfigurationType, groupByFieldMetadataId: string, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, groupBySubFieldName?: string | null, dateGranularity?: ObjectRecordGroupByDateGranularity | null, orderBy?: GraphOrderBy | null, manualSortOrder?: Array<string> | null, displayDataLabel?: boolean | null, showCenterMetric?: boolean | null, displayLegend?: boolean | null, hideEmptyCategory?: boolean | null, splitMultiValueFields?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'RecordTableConfiguration', configurationType: WidgetConfigurationType, viewId?: string | null } | { __typename?: 'StandaloneRichTextConfiguration', configurationType: WidgetConfigurationType, body: { __typename?: 'RichTextBody', blocknote?: string | null, markdown?: string | null } } | { __typename?: 'TasksConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'TimelineConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'ViewConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowRunConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowVersionConfiguration', configurationType: WidgetConfigurationType } };
 
 export type ResetPageLayoutTabToDefaultMutationVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 }>;
 
 
 export type ResetPageLayoutTabToDefaultMutation = { __typename?: 'Mutation', resetPageLayoutTabToDefault: { __typename?: 'PageLayoutTab', id: string, applicationId: string, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: string, isActive: boolean, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: string, applicationId: string, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?: { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode } | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number } | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number } | null, configuration: { __typename?: 'AggregateChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, label?: string | null, displayDataLabel?: boolean | null, format?: string | null, description?: string | null, filter?: any | null, prefix?: string | null, suffix?: string | null, timezone?: string | null, firstDayOfTheWeek?: number | null, ratioAggregateConfig?: { __typename?: 'RatioAggregateConfig', fieldMetadataId: string, optionValue: string } | null } | { __typename?: 'BarChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: string, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: string | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null, layout: BarChartLayout, isCumulative?: boolean | null, splitMultiValueFields?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'CalendarConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'EmailThreadConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'EmailsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldConfiguration', configurationType: WidgetConfigurationType, fieldDisplayMode: FieldDisplayMode, fieldMetadataId: string, viewId?: string | null } | { __typename?: 'FieldRichTextConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldsConfiguration', configurationType: WidgetConfigurationType, viewId?: string | null, newFieldDefaultVisibility?: boolean | null, shouldAllowUserToSeeHiddenFields?: boolean | null } | { __typename?: 'FilesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FrontComponentConfiguration', configurationType: WidgetConfigurationType, frontComponentId: string } | { __typename?: 'IframeConfiguration', configurationType: WidgetConfigurationType, url?: string | null } | { __typename?: 'LineChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: string, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: string | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, isStacked?: boolean | null, isCumulative?: boolean | null, splitMultiValueFields?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'NotesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'PieChartConfiguration', configurationType: WidgetConfigurationType, groupByFieldMetadataId: string, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, groupBySubFieldName?: string | null, dateGranularity?: ObjectRecordGroupByDateGranularity | null, orderBy?: GraphOrderBy | null, manualSortOrder?: Array<string> | null, displayDataLabel?: boolean | null, showCenterMetric?: boolean | null, displayLegend?: boolean | null, hideEmptyCategory?: boolean | null, splitMultiValueFields?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'RecordTableConfiguration', configurationType: WidgetConfigurationType, viewId?: string | null } | { __typename?: 'StandaloneRichTextConfiguration', configurationType: WidgetConfigurationType, body: { __typename?: 'RichTextBody', blocknote?: string | null, markdown?: string | null } } | { __typename?: 'TasksConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'TimelineConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'ViewConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowRunConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowVersionConfiguration', configurationType: WidgetConfigurationType } }> | null } };
 
 export type ResetPageLayoutToDefaultMutationVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 }>;
 
 
 export type ResetPageLayoutToDefaultMutation = { __typename?: 'Mutation', resetPageLayoutToDefault: { __typename?: 'PageLayout', id: string, name: string, objectMetadataId?: string | null, type: PageLayoutType, universalIdentifier: string, defaultTabToFocusOnMobileAndSidePanelId?: string | null, createdAt: string, updatedAt: string, tabs?: Array<{ __typename?: 'PageLayoutTab', id: string, applicationId: string, title: string, icon?: string | null, position: number, layoutMode?: PageLayoutTabLayoutMode | null, pageLayoutId: string, isActive: boolean, createdAt: string, updatedAt: string, widgets?: Array<{ __typename?: 'PageLayoutWidget', id: string, applicationId: string, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?: { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode } | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number } | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number } | null, configuration: { __typename?: 'AggregateChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, label?: string | null, displayDataLabel?: boolean | null, format?: string | null, description?: string | null, filter?: any | null, prefix?: string | null, suffix?: string | null, timezone?: string | null, firstDayOfTheWeek?: number | null, ratioAggregateConfig?: { __typename?: 'RatioAggregateConfig', fieldMetadataId: string, optionValue: string } | null } | { __typename?: 'BarChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: string, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: string | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null, layout: BarChartLayout, isCumulative?: boolean | null, splitMultiValueFields?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'CalendarConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'EmailThreadConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'EmailsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldConfiguration', configurationType: WidgetConfigurationType, fieldDisplayMode: FieldDisplayMode, fieldMetadataId: string, viewId?: string | null } | { __typename?: 'FieldRichTextConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldsConfiguration', configurationType: WidgetConfigurationType, viewId?: string | null, newFieldDefaultVisibility?: boolean | null, shouldAllowUserToSeeHiddenFields?: boolean | null } | { __typename?: 'FilesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FrontComponentConfiguration', configurationType: WidgetConfigurationType, frontComponentId: string } | { __typename?: 'IframeConfiguration', configurationType: WidgetConfigurationType, url?: string | null } | { __typename?: 'LineChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: string, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: string | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, isStacked?: boolean | null, isCumulative?: boolean | null, splitMultiValueFields?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'NotesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'PieChartConfiguration', configurationType: WidgetConfigurationType, groupByFieldMetadataId: string, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, groupBySubFieldName?: string | null, dateGranularity?: ObjectRecordGroupByDateGranularity | null, orderBy?: GraphOrderBy | null, manualSortOrder?: Array<string> | null, displayDataLabel?: boolean | null, showCenterMetric?: boolean | null, displayLegend?: boolean | null, hideEmptyCategory?: boolean | null, splitMultiValueFields?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'RecordTableConfiguration', configurationType: WidgetConfigurationType, viewId?: string | null } | { __typename?: 'StandaloneRichTextConfiguration', configurationType: WidgetConfigurationType, body: { __typename?: 'RichTextBody', blocknote?: string | null, markdown?: string | null } } | { __typename?: 'TasksConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'TimelineConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'ViewConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowRunConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowVersionConfiguration', configurationType: WidgetConfigurationType } }> | null }> | null } };
 
 export type ResetPageLayoutWidgetToDefaultMutationVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 }>;
 
 
 export type ResetPageLayoutWidgetToDefaultMutation = { __typename?: 'Mutation', resetPageLayoutWidgetToDefault: { __typename?: 'PageLayoutWidget', id: string, applicationId: string, title: string, type: WidgetType, objectMetadataId?: string | null, createdAt: string, updatedAt: string, isActive: boolean, deletedAt?: string | null, conditionalDisplay?: any | null, conditionalAvailabilityExpression?: string | null, pageLayoutTabId: string, gridPosition: { __typename?: 'GridPosition', column: number, columnSpan: number, row: number, rowSpan: number }, position?: { __typename?: 'PageLayoutWidgetCanvasPosition', layoutMode: PageLayoutTabLayoutMode } | { __typename?: 'PageLayoutWidgetGridPosition', layoutMode: PageLayoutTabLayoutMode, row: number, column: number, rowSpan: number, columnSpan: number } | { __typename?: 'PageLayoutWidgetVerticalListPosition', layoutMode: PageLayoutTabLayoutMode, index: number } | null, configuration: { __typename?: 'AggregateChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, label?: string | null, displayDataLabel?: boolean | null, format?: string | null, description?: string | null, filter?: any | null, prefix?: string | null, suffix?: string | null, timezone?: string | null, firstDayOfTheWeek?: number | null, ratioAggregateConfig?: { __typename?: 'RatioAggregateConfig', fieldMetadataId: string, optionValue: string } | null } | { __typename?: 'BarChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: string, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: string | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, groupMode?: BarChartGroupMode | null, layout: BarChartLayout, isCumulative?: boolean | null, splitMultiValueFields?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'CalendarConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'EmailThreadConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'EmailsConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldConfiguration', configurationType: WidgetConfigurationType, fieldDisplayMode: FieldDisplayMode, fieldMetadataId: string, viewId?: string | null } | { __typename?: 'FieldRichTextConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FieldsConfiguration', configurationType: WidgetConfigurationType, viewId?: string | null, newFieldDefaultVisibility?: boolean | null, shouldAllowUserToSeeHiddenFields?: boolean | null } | { __typename?: 'FilesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'FrontComponentConfiguration', configurationType: WidgetConfigurationType, frontComponentId: string } | { __typename?: 'IframeConfiguration', configurationType: WidgetConfigurationType, url?: string | null } | { __typename?: 'LineChartConfiguration', configurationType: WidgetConfigurationType, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, primaryAxisGroupByFieldMetadataId: string, primaryAxisGroupBySubFieldName?: string | null, primaryAxisDateGranularity?: ObjectRecordGroupByDateGranularity | null, primaryAxisOrderBy?: GraphOrderBy | null, primaryAxisManualSortOrder?: Array<string> | null, secondaryAxisGroupByFieldMetadataId?: string | null, secondaryAxisGroupBySubFieldName?: string | null, secondaryAxisGroupByDateGranularity?: ObjectRecordGroupByDateGranularity | null, secondaryAxisOrderBy?: GraphOrderBy | null, secondaryAxisManualSortOrder?: Array<string> | null, omitNullValues?: boolean | null, axisNameDisplay?: AxisNameDisplay | null, displayDataLabel?: boolean | null, displayLegend?: boolean | null, rangeMin?: number | null, rangeMax?: number | null, color?: string | null, description?: string | null, filter?: any | null, isStacked?: boolean | null, isCumulative?: boolean | null, splitMultiValueFields?: boolean | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'NotesConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'PieChartConfiguration', configurationType: WidgetConfigurationType, groupByFieldMetadataId: string, aggregateFieldMetadataId: string, aggregateOperation: AggregateOperations, groupBySubFieldName?: string | null, dateGranularity?: ObjectRecordGroupByDateGranularity | null, orderBy?: GraphOrderBy | null, manualSortOrder?: Array<string> | null, displayDataLabel?: boolean | null, showCenterMetric?: boolean | null, displayLegend?: boolean | null, hideEmptyCategory?: boolean | null, splitMultiValueFields?: boolean | null, color?: string | null, description?: string | null, filter?: any | null, timezone?: string | null, firstDayOfTheWeek?: number | null } | { __typename?: 'RecordTableConfiguration', configurationType: WidgetConfigurationType, viewId?: string | null } | { __typename?: 'StandaloneRichTextConfiguration', configurationType: WidgetConfigurationType, body: { __typename?: 'RichTextBody', blocknote?: string | null, markdown?: string | null } } | { __typename?: 'TasksConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'TimelineConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'ViewConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowRunConfiguration', configurationType: WidgetConfigurationType } | { __typename?: 'WorkflowVersionConfiguration', configurationType: WidgetConfigurationType } } };
 
 export type UpdatePageLayoutWithTabsAndWidgetsMutationVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
   input: UpdatePageLayoutWithTabsInput;
 }>;
 
@@ -6972,30 +6970,30 @@ export type CreateEmailGroupChannelMutationVariables = Exact<{
 export type CreateEmailGroupChannelMutation = { __typename?: 'Mutation', createEmailGroupChannel: { __typename?: 'CreateEmailGroupChannelOutput', forwardingAddress: string, messageChannel: { __typename?: 'MessageChannel', id: string, handle: string, visibility: MessageChannelVisibility, type: MessageChannelType, isSyncEnabled: boolean, excludeGroupEmails: boolean, contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy } } };
 
 export type DeleteConnectedAccountMutationVariables = Exact<{
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 }>;
 
 
 export type DeleteConnectedAccountMutation = { __typename?: 'Mutation', deleteConnectedAccount: { __typename?: 'ConnectedAccountPublicDTO', id: string } };
 
 export type DeleteEmailGroupChannelMutationVariables = Exact<{
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 }>;
 
 
 export type DeleteEmailGroupChannelMutation = { __typename?: 'Mutation', deleteEmailGroupChannel: { __typename?: 'MessageChannel', id: string } };
 
 export type SaveImapSmtpCaldavAccountMutationVariables = Exact<{
-  handle: Scalars['String']['input'];
+  handle: Scalars['String'];
   connectionParameters: EmailAccountConnectionParameters;
-  id?: InputMaybe<Scalars['UUID']['input']>;
+  id?: InputMaybe<Scalars['UUID']>;
 }>;
 
 
 export type SaveImapSmtpCaldavAccountMutation = { __typename?: 'Mutation', saveImapSmtpCaldavAccount: { __typename?: 'ImapSmtpCaldavConnectionSuccess', success: boolean, connectedAccountId: string } };
 
 export type StartChannelSyncMutationVariables = Exact<{
-  connectedAccountId: Scalars['UUID']['input'];
+  connectedAccountId: Scalars['UUID'];
 }>;
 
 
@@ -7030,14 +7028,14 @@ export type UpdateMessageFoldersMutationVariables = Exact<{
 export type UpdateMessageFoldersMutation = { __typename?: 'Mutation', updateMessageFolders: Array<{ __typename?: 'MessageFolder', id: string, isSynced: boolean }> };
 
 export type GetConnectedImapSmtpCaldavAccountQueryVariables = Exact<{
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 }>;
 
 
 export type GetConnectedImapSmtpCaldavAccountQuery = { __typename?: 'Query', getConnectedImapSmtpCaldavAccount: { __typename?: 'ConnectedImapSmtpCaldavAccount', id: string, handle: string, provider: string, userWorkspaceId: string, connectionParameters?: { __typename?: 'ImapSmtpCaldavPublicConnectionParameters', IMAP?: { __typename?: 'ImapSmtpCaldavPublicConnectionParams', host: string, port: number, secure?: boolean | null, username?: string | null } | null, SMTP?: { __typename?: 'ImapSmtpCaldavPublicConnectionParams', host: string, username?: string | null, port: number, secure?: boolean | null } | null, CALDAV?: { __typename?: 'ImapSmtpCaldavPublicConnectionParams', host: string, port: number, secure?: boolean | null, username?: string | null } | null } | null } };
 
 export type MyCalendarChannelsQueryVariables = Exact<{
-  connectedAccountId?: InputMaybe<Scalars['UUID']['input']>;
+  connectedAccountId?: InputMaybe<Scalars['UUID']>;
 }>;
 
 
@@ -7049,14 +7047,14 @@ export type MyConnectedAccountsQueryVariables = Exact<{ [key: string]: never; }>
 export type MyConnectedAccountsQuery = { __typename?: 'Query', myConnectedAccounts: Array<{ __typename?: 'ConnectedAccountPublicDTO', id: string, handle: string, provider: string, authFailedAt?: string | null, scopes?: Array<string> | null, handleAliases?: Array<string> | null, lastSignedInAt?: string | null, userWorkspaceId: string, connectionProviderId?: string | null, name?: string | null, visibility: string, lastCredentialsRefreshedAt?: string | null, createdAt: string, updatedAt: string, connectionParameters?: { __typename?: 'PublicImapSmtpCaldavConnectionParameters', IMAP?: { __typename?: 'PublicConnectionParametersOutput', host: string, port: number, secure?: boolean | null, username?: string | null } | null, SMTP?: { __typename?: 'PublicConnectionParametersOutput', host: string, port: number, secure?: boolean | null, username?: string | null } | null, CALDAV?: { __typename?: 'PublicConnectionParametersOutput', host: string, username?: string | null } | null } | null }> };
 
 export type MyMessageChannelsQueryVariables = Exact<{
-  connectedAccountId?: InputMaybe<Scalars['UUID']['input']>;
+  connectedAccountId?: InputMaybe<Scalars['UUID']>;
 }>;
 
 
 export type MyMessageChannelsQuery = { __typename?: 'Query', myMessageChannels: Array<{ __typename?: 'MessageChannel', id: string, handle: string, visibility: MessageChannelVisibility, type: MessageChannelType, isContactAutoCreationEnabled: boolean, contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy, messageFolderImportPolicy: MessageFolderImportPolicy, excludeNonProfessionalEmails: boolean, excludeGroupEmails: boolean, isSyncEnabled: boolean, syncStatus: MessageChannelSyncStatus, syncStage: MessageChannelSyncStage, syncStageStartedAt?: string | null, connectedAccountId: string, createdAt: string, updatedAt: string, connectedAccount?: { __typename?: 'ConnectedAccountPublicDTO', id: string, handle: string } | null }> };
 
 export type MyMessageFoldersQueryVariables = Exact<{
-  messageChannelId?: InputMaybe<Scalars['UUID']['input']>;
+  messageChannelId?: InputMaybe<Scalars['UUID']>;
 }>;
 
 
@@ -7065,22 +7063,22 @@ export type MyMessageFoldersQuery = { __typename?: 'Query', myMessageFolders: Ar
 export type ApplicationRegistrationFragmentFragment = { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, logoUrl?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, isListed: boolean, isFeatured: boolean, isPreInstalled: boolean, isConfigured: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string };
 
 export type DeleteApplicationRegistrationMutationVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 }>;
 
 
 export type DeleteApplicationRegistrationMutation = { __typename?: 'Mutation', deleteApplicationRegistration: boolean };
 
 export type RotateApplicationRegistrationClientSecretMutationVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 }>;
 
 
 export type RotateApplicationRegistrationClientSecretMutation = { __typename?: 'Mutation', rotateApplicationRegistrationClientSecret: { __typename?: 'RotateClientSecret', clientSecret: string } };
 
 export type TransferApplicationRegistrationOwnershipMutationVariables = Exact<{
-  applicationRegistrationId: Scalars['String']['input'];
-  targetWorkspaceSubdomain: Scalars['String']['input'];
+  applicationRegistrationId: Scalars['String'];
+  targetWorkspaceSubdomain: Scalars['String'];
 }>;
 
 
@@ -7101,21 +7099,21 @@ export type UpdateApplicationRegistrationVariableMutationVariables = Exact<{
 export type UpdateApplicationRegistrationVariableMutation = { __typename?: 'Mutation', updateApplicationRegistrationVariable: { __typename?: 'ApplicationRegistrationVariable', id: string, key: string, description: string, isSecret: boolean, isRequired: boolean, isFilled: boolean, createdAt: string, updatedAt: string } };
 
 export type ApplicationRegistrationTarballUrlQueryVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 }>;
 
 
 export type ApplicationRegistrationTarballUrlQuery = { __typename?: 'Query', applicationRegistrationTarballUrl?: string | null };
 
 export type FindApplicationRegistrationStatsQueryVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 }>;
 
 
 export type FindApplicationRegistrationStatsQuery = { __typename?: 'Query', findApplicationRegistrationStats: { __typename?: 'ApplicationRegistrationStats', activeInstalls: number, mostInstalledVersion?: string | null, versionDistribution: Array<{ __typename?: 'VersionDistributionEntry', version: string, count: number }> } };
 
 export type FindApplicationRegistrationVariablesQueryVariables = Exact<{
-  applicationRegistrationId: Scalars['String']['input'];
+  applicationRegistrationId: Scalars['String'];
 }>;
 
 
@@ -7127,30 +7125,30 @@ export type FindManyApplicationRegistrationsQueryVariables = Exact<{ [key: strin
 export type FindManyApplicationRegistrationsQuery = { __typename?: 'Query', findManyApplicationRegistrations: Array<{ __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, logoUrl?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, isListed: boolean, isFeatured: boolean, isPreInstalled: boolean, isConfigured: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string }> };
 
 export type FindOneApplicationRegistrationQueryVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 }>;
 
 
 export type FindOneApplicationRegistrationQuery = { __typename?: 'Query', findOneApplicationRegistration: { __typename?: 'ApplicationRegistration', id: string, universalIdentifier: string, name: string, logoUrl?: string | null, oAuthClientId: string, oAuthRedirectUris: Array<string>, oAuthScopes: Array<string>, sourceType: ApplicationRegistrationSourceType, sourcePackage?: string | null, latestAvailableVersion?: string | null, isListed: boolean, isFeatured: boolean, isPreInstalled: boolean, isConfigured: boolean, ownerWorkspaceId?: string | null, createdAt: string, updatedAt: string } };
 
 export type UninstallApplicationMutationVariables = Exact<{
-  universalIdentifier: Scalars['String']['input'];
+  universalIdentifier: Scalars['String'];
 }>;
 
 
 export type UninstallApplicationMutation = { __typename?: 'Mutation', uninstallApplication: boolean };
 
 export type UpdateOneApplicationVariableMutationVariables = Exact<{
-  key: Scalars['String']['input'];
-  value: Scalars['String']['input'];
-  applicationId: Scalars['UUID']['input'];
+  key: Scalars['String'];
+  value: Scalars['String'];
+  applicationId: Scalars['UUID'];
 }>;
 
 
 export type UpdateOneApplicationVariableMutation = { __typename?: 'Mutation', updateOneApplicationVariable: boolean };
 
 export type ApplicationConnectionProvidersQueryVariables = Exact<{
-  applicationId: Scalars['UUID']['input'];
+  applicationId: Scalars['UUID'];
 }>;
 
 
@@ -7181,9 +7179,9 @@ export type CancelSwitchResourceCreditPriceMutation = { __typename?: 'Mutation',
 
 export type CheckoutSessionMutationVariables = Exact<{
   recurringInterval: SubscriptionInterval;
-  successUrlPath?: InputMaybe<Scalars['String']['input']>;
+  successUrlPath?: InputMaybe<Scalars['String']>;
   plan: BillingPlanKey;
-  requirePaymentMethod: Scalars['Boolean']['input'];
+  requirePaymentMethod: Scalars['Boolean'];
 }>;
 
 
@@ -7195,7 +7193,7 @@ export type EndSubscriptionTrialPeriodMutationVariables = Exact<{ [key: string]:
 export type EndSubscriptionTrialPeriodMutation = { __typename?: 'Mutation', endSubscriptionTrialPeriod: { __typename?: 'BillingEndTrialPeriod', status?: SubscriptionStatus | null, hasPaymentMethod: boolean, billingPortalUrl?: string | null } };
 
 export type SetResourceCreditSubscriptionPriceMutationVariables = Exact<{
-  priceId: Scalars['String']['input'];
+  priceId: Scalars['String'];
 }>;
 
 
@@ -7212,7 +7210,7 @@ export type SwitchSubscriptionIntervalMutationVariables = Exact<{ [key: string]:
 export type SwitchSubscriptionIntervalMutation = { __typename?: 'Mutation', switchSubscriptionInterval: { __typename?: 'BillingUpdate', currentBillingSubscription: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null }, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', start_date: number, end_date: number, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }> } };
 
 export type BillingPortalSessionQueryVariables = Exact<{
-  returnUrlPath?: InputMaybe<Scalars['String']['input']>;
+  returnUrlPath?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -7233,8 +7231,8 @@ export type ApiKeyFragmentFragment = { __typename?: 'ApiKey', id: string, name: 
 export type WebhookFragmentFragment = { __typename?: 'Webhook', id: string, targetUrl: string, operations: Array<string>, description?: string | null, secret: string };
 
 export type AssignRoleToApiKeyMutationVariables = Exact<{
-  apiKeyId: Scalars['UUID']['input'];
-  roleId: Scalars['UUID']['input'];
+  apiKeyId: Scalars['UUID'];
+  roleId: Scalars['UUID'];
 }>;
 
 
@@ -7255,7 +7253,7 @@ export type CreateWebhookMutationVariables = Exact<{
 export type CreateWebhookMutation = { __typename?: 'Mutation', createWebhook: { __typename?: 'Webhook', id: string, targetUrl: string, operations: Array<string>, description?: string | null, secret: string } };
 
 export type DeleteWebhookMutationVariables = Exact<{
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 }>;
 
 
@@ -7295,7 +7293,7 @@ export type GetApiKeysQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetApiKeysQuery = { __typename?: 'Query', apiKeys: Array<{ __typename?: 'ApiKey', id: string, name: string, expiresAt: string, revokedAt?: string | null, role: { __typename?: 'Role', id: string, label: string, icon?: string | null } }> };
 
 export type GetWebhookQueryVariables = Exact<{
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 }>;
 
 
@@ -7307,30 +7305,30 @@ export type GetWebhooksQueryVariables = Exact<{ [key: string]: never; }>;
 export type GetWebhooksQuery = { __typename?: 'Query', webhooks: Array<{ __typename?: 'Webhook', id: string, targetUrl: string, operations: Array<string>, description?: string | null, secret: string }> };
 
 export type CheckPublicDomainValidRecordsMutationVariables = Exact<{
-  domain: Scalars['String']['input'];
+  domain: Scalars['String'];
 }>;
 
 
 export type CheckPublicDomainValidRecordsMutation = { __typename?: 'Mutation', checkPublicDomainValidRecords?: { __typename?: 'DomainValidRecords', id: string, domain: string, records: Array<{ __typename?: 'DomainRecord', type: string, key: string, value: string, validationType: string, status: string }> } | null };
 
 export type CreatePublicDomainMutationVariables = Exact<{
-  domain: Scalars['String']['input'];
-  applicationId?: InputMaybe<Scalars['String']['input']>;
+  domain: Scalars['String'];
+  applicationId?: InputMaybe<Scalars['String']>;
 }>;
 
 
 export type CreatePublicDomainMutation = { __typename?: 'Mutation', createPublicDomain: { __typename?: 'PublicDomain', id: string, domain: string, isValidated: boolean, applicationId?: string | null, createdAt: string } };
 
 export type DeletePublicDomainMutationVariables = Exact<{
-  domain: Scalars['String']['input'];
+  domain: Scalars['String'];
 }>;
 
 
 export type DeletePublicDomainMutation = { __typename?: 'Mutation', deletePublicDomain: boolean };
 
 export type UpdatePublicDomainMutationVariables = Exact<{
-  domain: Scalars['String']['input'];
-  applicationId?: InputMaybe<Scalars['String']['input']>;
+  domain: Scalars['String'];
+  applicationId?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -7342,21 +7340,21 @@ export type FindManyPublicDomainsQueryVariables = Exact<{ [key: string]: never; 
 export type FindManyPublicDomainsQuery = { __typename?: 'Query', findManyPublicDomains: Array<{ __typename?: 'PublicDomain', id: string, domain: string, isValidated: boolean, applicationId?: string | null, createdAt: string }> };
 
 export type CreateEmailingDomainMutationVariables = Exact<{
-  domain: Scalars['String']['input'];
+  domain: Scalars['String'];
 }>;
 
 
 export type CreateEmailingDomainMutation = { __typename?: 'Mutation', createEmailingDomain: { __typename?: 'EmailingDomain', id: string, domain: string, status: EmailingDomainStatus, verifiedAt?: string | null, createdAt: string, updatedAt: string, verificationRecords?: Array<{ __typename?: 'VerificationRecord', type: string, key: string, value: string, priority?: number | null }> | null } };
 
 export type DeleteEmailingDomainMutationVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 }>;
 
 
 export type DeleteEmailingDomainMutation = { __typename?: 'Mutation', deleteEmailingDomain: boolean };
 
 export type VerifyEmailingDomainMutationVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 }>;
 
 
@@ -7373,21 +7371,21 @@ export type RefreshEnterpriseValidityTokenMutationVariables = Exact<{ [key: stri
 export type RefreshEnterpriseValidityTokenMutation = { __typename?: 'Mutation', refreshEnterpriseValidityToken: boolean };
 
 export type SetEnterpriseKeyMutationVariables = Exact<{
-  enterpriseKey: Scalars['String']['input'];
+  enterpriseKey: Scalars['String'];
 }>;
 
 
 export type SetEnterpriseKeyMutation = { __typename?: 'Mutation', setEnterpriseKey: { __typename?: 'EnterpriseLicenseInfoDTO', isValid: boolean, licensee?: string | null, expiresAt?: string | null, subscriptionId?: string | null } };
 
 export type EnterpriseCheckoutSessionQueryVariables = Exact<{
-  billingInterval?: InputMaybe<Scalars['String']['input']>;
+  billingInterval?: InputMaybe<Scalars['String']>;
 }>;
 
 
 export type EnterpriseCheckoutSessionQuery = { __typename?: 'Query', enterpriseCheckoutSession?: string | null };
 
 export type EnterprisePortalSessionQueryVariables = Exact<{
-  returnUrlPath?: InputMaybe<Scalars['String']['input']>;
+  returnUrlPath?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -7420,15 +7418,15 @@ export type UpdateLabPublicFeatureFlagMutationVariables = Exact<{
 export type UpdateLabPublicFeatureFlagMutation = { __typename?: 'Mutation', updateLabPublicFeatureFlag: { __typename?: 'FeatureFlag', key: FeatureFlagKey, value: boolean } };
 
 export type UploadWorkspaceMemberProfilePictureMutationVariables = Exact<{
-  file: Scalars['Upload']['input'];
+  file: Scalars['Upload'];
 }>;
 
 
 export type UploadWorkspaceMemberProfilePictureMutation = { __typename?: 'Mutation', uploadWorkspaceMemberProfilePicture: { __typename?: 'FileWithSignedUrl', id: string, url: string } };
 
 export type UpdateUserEmailMutationVariables = Exact<{
-  newEmail: Scalars['String']['input'];
-  verifyEmailRedirectPath?: InputMaybe<Scalars['String']['input']>;
+  newEmail: Scalars['String'];
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -7463,7 +7461,7 @@ export type CreateOneRoleMutationVariables = Exact<{
 export type CreateOneRoleMutation = { __typename?: 'Mutation', createOneRole: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } };
 
 export type DeleteOneRoleMutationVariables = Exact<{
-  roleId: Scalars['UUID']['input'];
+  roleId: Scalars['UUID'];
 }>;
 
 
@@ -7477,8 +7475,8 @@ export type UpdateOneRoleMutationVariables = Exact<{
 export type UpdateOneRoleMutation = { __typename?: 'Mutation', updateOneRole: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } };
 
 export type UpdateWorkspaceMemberRoleMutationVariables = Exact<{
-  workspaceMemberId: Scalars['UUID']['input'];
-  roleId: Scalars['UUID']['input'];
+  workspaceMemberId: Scalars['UUID'];
+  roleId: Scalars['UUID'];
 }>;
 
 
@@ -7577,7 +7575,7 @@ export type GetSsoIdentityProvidersQueryVariables = Exact<{ [key: string]: never
 export type GetSsoIdentityProvidersQuery = { __typename?: 'Query', getSSOIdentityProviders: Array<{ __typename?: 'FindAvailableSSOIDP', type: IdentityProviderType, id: string, name: string, issuer: string, status: SsoIdentityProviderStatus }> };
 
 export type VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutationVariables = Exact<{
-  otp: Scalars['String']['input'];
+  otp: Scalars['String'];
 }>;
 
 
@@ -7604,7 +7602,7 @@ export type DeleteUserAccountMutationVariables = Exact<{ [key: string]: never; }
 export type DeleteUserAccountMutation = { __typename?: 'Mutation', deleteUser: { __typename?: 'User', id: string } };
 
 export type DeleteUserWorkspaceMutationVariables = Exact<{
-  workspaceMemberIdToDelete: Scalars['String']['input'];
+  workspaceMemberIdToDelete: Scalars['String'];
 }>;
 
 
@@ -7700,7 +7698,7 @@ export type CreateViewSortMutationVariables = Exact<{
 export type CreateViewSortMutation = { __typename?: 'Mutation', createViewSort: { __typename?: 'ViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, subFieldName?: string | null, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string } };
 
 export type DeleteViewMutationVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 }>;
 
 
@@ -7728,7 +7726,7 @@ export type DeleteViewFilterMutationVariables = Exact<{
 export type DeleteViewFilterMutation = { __typename?: 'Mutation', deleteViewFilter: { __typename?: 'ViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, relationTargetFieldMetadataId?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null } };
 
 export type DeleteViewFilterGroupMutationVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 }>;
 
 
@@ -7749,7 +7747,7 @@ export type DeleteViewSortMutationVariables = Exact<{
 export type DeleteViewSortMutation = { __typename?: 'Mutation', deleteViewSort: boolean };
 
 export type DestroyViewMutationVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 }>;
 
 
@@ -7770,7 +7768,7 @@ export type DestroyViewFilterMutationVariables = Exact<{
 export type DestroyViewFilterMutation = { __typename?: 'Mutation', destroyViewFilter: { __typename?: 'ViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, relationTargetFieldMetadataId?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null } };
 
 export type DestroyViewFilterGroupMutationVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 }>;
 
 
@@ -7798,7 +7796,7 @@ export type UpdateManyViewGroupsMutationVariables = Exact<{
 export type UpdateManyViewGroupsMutation = { __typename?: 'Mutation', updateManyViewGroups: Array<{ __typename?: 'ViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
 
 export type UpdateViewMutationVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
   input: UpdateViewInput;
 }>;
 
@@ -7827,7 +7825,7 @@ export type UpdateViewFilterMutationVariables = Exact<{
 export type UpdateViewFilterMutation = { __typename?: 'Mutation', updateViewFilter: { __typename?: 'ViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, relationTargetFieldMetadataId?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null } };
 
 export type UpdateViewFilterGroupMutationVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
   input: UpdateViewFilterGroupInput;
 }>;
 
@@ -7863,42 +7861,42 @@ export type FindFieldsWidgetViewsQueryVariables = Exact<{
 export type FindFieldsWidgetViewsQuery = { __typename?: 'Query', getViews: Array<{ __typename?: 'View', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, mainGroupByFieldMetadataId?: string | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'ViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, viewFieldGroupId?: string | null, isActive: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFieldGroups: Array<{ __typename?: 'ViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, isActive: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'ViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, viewFieldGroupId?: string | null, isActive: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null }> }>, viewFilters: Array<{ __typename?: 'ViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, relationTargetFieldMetadataId?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'ViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'ViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, subFieldName?: string | null, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string }>, viewGroups: Array<{ __typename?: 'ViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> }> };
 
 export type FindManyViewFieldsQueryVariables = Exact<{
-  viewId: Scalars['String']['input'];
+  viewId: Scalars['String'];
 }>;
 
 
 export type FindManyViewFieldsQuery = { __typename?: 'Query', getViewFields: Array<{ __typename?: 'ViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, viewFieldGroupId?: string | null, isActive: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
 
 export type FindManyViewFilterGroupsQueryVariables = Exact<{
-  viewId?: InputMaybe<Scalars['String']['input']>;
+  viewId?: InputMaybe<Scalars['String']>;
 }>;
 
 
 export type FindManyViewFilterGroupsQuery = { __typename?: 'Query', getViewFilterGroups: Array<{ __typename?: 'ViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }> };
 
 export type FindManyViewFiltersQueryVariables = Exact<{
-  viewId?: InputMaybe<Scalars['String']['input']>;
+  viewId?: InputMaybe<Scalars['String']>;
 }>;
 
 
 export type FindManyViewFiltersQuery = { __typename?: 'Query', getViewFilters: Array<{ __typename?: 'ViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, relationTargetFieldMetadataId?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
 
 export type FindManyViewGroupsQueryVariables = Exact<{
-  viewId?: InputMaybe<Scalars['String']['input']>;
+  viewId?: InputMaybe<Scalars['String']>;
 }>;
 
 
 export type FindManyViewGroupsQuery = { __typename?: 'Query', getViewGroups: Array<{ __typename?: 'ViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> };
 
 export type FindManyViewSortsQueryVariables = Exact<{
-  viewId?: InputMaybe<Scalars['String']['input']>;
+  viewId?: InputMaybe<Scalars['String']>;
 }>;
 
 
 export type FindManyViewSortsQuery = { __typename?: 'Query', getViewSorts: Array<{ __typename?: 'ViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, subFieldName?: string | null, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string }> };
 
 export type FindManyViewsQueryVariables = Exact<{
-  objectMetadataId?: InputMaybe<Scalars['String']['input']>;
+  objectMetadataId?: InputMaybe<Scalars['String']>;
   viewTypes?: InputMaybe<Array<ViewType> | ViewType>;
 }>;
 
@@ -7906,42 +7904,42 @@ export type FindManyViewsQueryVariables = Exact<{
 export type FindManyViewsQuery = { __typename?: 'Query', getViews: Array<{ __typename?: 'View', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, mainGroupByFieldMetadataId?: string | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'ViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, viewFieldGroupId?: string | null, isActive: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFieldGroups: Array<{ __typename?: 'ViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, isActive: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'ViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, viewFieldGroupId?: string | null, isActive: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null }> }>, viewFilters: Array<{ __typename?: 'ViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, relationTargetFieldMetadataId?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'ViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'ViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, subFieldName?: string | null, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string }>, viewGroups: Array<{ __typename?: 'ViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> }> };
 
 export type FindOneViewQueryVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 }>;
 
 
 export type FindOneViewQuery = { __typename?: 'Query', getView?: { __typename?: 'View', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, mainGroupByFieldMetadataId?: string | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'ViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, viewFieldGroupId?: string | null, isActive: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFieldGroups: Array<{ __typename?: 'ViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, isActive: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'ViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, viewFieldGroupId?: string | null, isActive: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null }> }>, viewFilters: Array<{ __typename?: 'ViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, relationTargetFieldMetadataId?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'ViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'ViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, subFieldName?: string | null, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string }>, viewGroups: Array<{ __typename?: 'ViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> } | null };
 
 export type FindOneViewFieldQueryVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 }>;
 
 
 export type FindOneViewFieldQuery = { __typename?: 'Query', getViewField?: { __typename?: 'ViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, viewFieldGroupId?: string | null, isActive: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null } | null };
 
 export type FindOneViewFilterQueryVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 }>;
 
 
 export type FindOneViewFilterQuery = { __typename?: 'Query', getViewFilter?: { __typename?: 'ViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, relationTargetFieldMetadataId?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null } | null };
 
 export type FindOneViewFilterGroupQueryVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 }>;
 
 
 export type FindOneViewFilterGroupQuery = { __typename?: 'Query', getViewFilterGroup?: { __typename?: 'ViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string } | null };
 
 export type FindOneViewGroupQueryVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 }>;
 
 
 export type FindOneViewGroupQuery = { __typename?: 'Query', getViewGroup?: { __typename?: 'ViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null } | null };
 
 export type FindOneViewSortQueryVariables = Exact<{
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
 }>;
 
 
@@ -7955,22 +7953,22 @@ export type FindTableWidgetViewsQueryVariables = Exact<{
 export type FindTableWidgetViewsQuery = { __typename?: 'Query', getViews: Array<{ __typename?: 'View', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, mainGroupByFieldMetadataId?: string | null, shouldHideEmptyGroups: boolean, anyFieldFilterValue?: string | null, calendarFieldMetadataId?: string | null, calendarLayout?: ViewCalendarLayout | null, visibility: ViewVisibility, createdByUserWorkspaceId?: string | null, viewFields: Array<{ __typename?: 'ViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, viewFieldGroupId?: string | null, isActive: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFieldGroups: Array<{ __typename?: 'ViewFieldGroup', id: string, name: string, position: number, isVisible: boolean, viewId: string, isActive: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null, viewFields: Array<{ __typename?: 'ViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null, viewFieldGroupId?: string | null, isActive: boolean, createdAt: string, updatedAt: string, deletedAt?: string | null }> }>, viewFilters: Array<{ __typename?: 'ViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, relationTargetFieldMetadataId?: string | null, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }>, viewFilterGroups: Array<{ __typename?: 'ViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'ViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, subFieldName?: string | null, viewId: string, createdAt: string, deletedAt?: string | null, updatedAt: string }>, viewGroups: Array<{ __typename?: 'ViewGroup', id: string, isVisible: boolean, fieldValue: string, position: number, viewId: string, createdAt: string, updatedAt: string, deletedAt?: string | null }> }> };
 
 export type DeleteWorkspaceInvitationMutationVariables = Exact<{
-  appTokenId: Scalars['String']['input'];
+  appTokenId: Scalars['String'];
 }>;
 
 
 export type DeleteWorkspaceInvitationMutation = { __typename?: 'Mutation', deleteWorkspaceInvitation: string };
 
 export type ResendWorkspaceInvitationMutationVariables = Exact<{
-  appTokenId: Scalars['String']['input'];
+  appTokenId: Scalars['String'];
 }>;
 
 
 export type ResendWorkspaceInvitationMutation = { __typename?: 'Mutation', resendWorkspaceInvitation: { __typename?: 'SendInvitations', success: boolean, errors: Array<string>, result: Array<{ __typename?: 'WorkspaceInvitation', id: string, email: string, roleId?: string | null, expiresAt: string }> } };
 
 export type SendInvitationsMutationVariables = Exact<{
-  emails: Array<Scalars['String']['input']> | Scalars['String']['input'];
-  roleId?: InputMaybe<Scalars['UUID']['input']>;
+  emails: Array<Scalars['String']> | Scalars['String'];
+  roleId?: InputMaybe<Scalars['UUID']>;
 }>;
 
 
@@ -8007,7 +8005,7 @@ export type UpdateWorkspaceMutationVariables = Exact<{
 export type UpdateWorkspaceMutation = { __typename?: 'Mutation', updateWorkspace: { __typename?: 'Workspace', id: string, customDomain?: string | null, subdomain: string, displayName?: string | null, logo?: string | null, allowImpersonation: boolean, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, isTwoFactorAuthenticationEnforced: boolean, isInternalMessagesImportEnabled: boolean, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean, canBeAssignedToUsers: boolean, canBeAssignedToAgents: boolean, canBeAssignedToApiKeys: boolean } | null } };
 
 export type UploadWorkspaceLogoMutationVariables = Exact<{
-  file: Scalars['Upload']['input'];
+  file: Scalars['Upload'];
 }>;
 
 
@@ -8024,14 +8022,14 @@ export type GetAiSystemPromptPreviewQueryVariables = Exact<{ [key: string]: neve
 export type GetAiSystemPromptPreviewQuery = { __typename?: 'Query', getAiSystemPromptPreview: { __typename?: 'AiSystemPromptPreview', estimatedTokenCount: number, sections: Array<{ __typename?: 'AiSystemPromptSection', title: string, content: string, estimatedTokenCount: number }> } };
 
 export type GetPublicWorkspaceDataByIdQueryVariables = Exact<{
-  id: Scalars['UUID']['input'];
+  id: Scalars['UUID'];
 }>;
 
 
 export type GetPublicWorkspaceDataByIdQuery = { __typename?: 'Query', getPublicWorkspaceDataById: { __typename?: 'PublicWorkspaceDataSummary', id: string, displayName?: string | null, logo?: string | null } };
 
 export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
-  inviteHash: Scalars['String']['input'];
+  inviteHash: Scalars['String'];
 }>;
 
 

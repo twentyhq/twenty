@@ -1,4 +1,6 @@
 import { msg } from '@lingui/core/macro';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import {
   DateDisplayFormat,
@@ -484,6 +486,57 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  messageTopicSubscriptions: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'messageTopicSubscriptions',
+      label: i18nLabel(msg`Topics`),
+      description: i18nLabel(msg`Topics the contact is subscribed to`),
+      icon: 'IconMailShare',
+      isUIReadOnly: false,
+      isNullable: true,
+      targetObjectName: 'messageTopicSubscription',
+      targetFieldName: 'person',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+      junctionTargetFieldUniversalIdentifier:
+        STANDARD_OBJECTS.messageTopicSubscription.fields.topic
+          .universalIdentifier,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  listMemberships: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'listMemberships',
+      label: i18nLabel(msg`Lists`),
+      description: i18nLabel(msg`Lists the contact belongs to`),
+      icon: 'IconUsersGroup',
+      isUIReadOnly: false,
+      isNullable: true,
+      targetObjectName: 'messageListMember',
+      targetFieldName: 'person',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+      junctionTargetFieldUniversalIdentifier:
+        STANDARD_OBJECTS.messageListMember.fields.list.universalIdentifier,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

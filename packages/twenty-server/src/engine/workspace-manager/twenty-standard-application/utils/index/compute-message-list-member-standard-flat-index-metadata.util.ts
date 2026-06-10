@@ -5,35 +5,37 @@ import {
   createStandardIndexFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/create-standard-index-flat-metadata.util';
 
-export const buildMessageStandardFlatIndexMetadatas = ({
+export const buildMessageListMemberStandardFlatIndexMetadatas = ({
   now,
   objectName,
   workspaceId,
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardIndexArgs<'message'>, 'context'>): Record<
-  AllStandardObjectIndexName<'message'>,
+}: Omit<CreateStandardIndexArgs<'messageListMember'>, 'context'>): Record<
+  AllStandardObjectIndexName<'messageListMember'>,
   FlatIndexMetadata
 > => ({
-  messageThreadIdIndex: createStandardIndexFlatMetadata({
+  listIdIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      indexName: 'messageThreadIdIndex',
-      relatedFieldNames: ['messageThread'],
+      indexName: 'listIdIndex',
+      relatedFieldNames: ['list'],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
   }),
-  messageCampaignIdIndex: createStandardIndexFlatMetadata({
+  personListUniqueIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      indexName: 'messageCampaignIdIndex',
-      relatedFieldNames: ['messageCampaign'],
+      indexName: 'personListUniqueIndex',
+      relatedFieldNames: ['person', 'list'],
+      isUnique: true,
+      indexWhereClause: '"deletedAt" IS NULL',
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
