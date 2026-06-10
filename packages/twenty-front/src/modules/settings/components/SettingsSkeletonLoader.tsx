@@ -1,6 +1,4 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useContext } from 'react';
@@ -39,9 +37,7 @@ export const SettingsSkeletonLoader = () => {
         }
         showInformationBanner={false}
       >
-        <SettingsPageContainer>
-          <SettingsSectionSkeletonLoader />
-        </SettingsPageContainer>
+        {null}
       </PageCardLayout>
     </SkeletonTheme>
   );

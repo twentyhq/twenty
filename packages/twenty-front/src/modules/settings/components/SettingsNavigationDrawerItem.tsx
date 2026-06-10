@@ -39,7 +39,6 @@ export const SettingsNavigationDrawerItem = ({
           label={item.label}
           to={href}
           Icon={item.Icon}
-          withIconBackground
           active={isActive}
           modifier={item.modifier}
           onClick={item.onClick}
@@ -55,7 +54,6 @@ export const SettingsNavigationDrawerItem = ({
       label={item.label}
       to={href || undefined}
       Icon={item.Icon}
-      withIconBackground
       active={isActive}
       modifier={item.modifier}
       onClick={item.onClick}
