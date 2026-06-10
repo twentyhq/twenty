@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 
-import { gql } from 'apollo-server-core';
+import { gql } from 'graphql-tag';
 import { default as request } from 'supertest';
 import { COMPANY_GQL_FIELDS } from 'test/integration/constants/company-gql-fields.constants';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
