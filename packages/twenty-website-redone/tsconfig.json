@@ -16,6 +16,12 @@
     "plugins": [
       {
         "name": "next"
+      },
+      {
+        "name": "typescript-styled-plugin",
+        "lint": {
+          "validProperties": ["text-wrap"]
+        }
       }
     ],
     "paths": {
