@@ -1,0 +1,117 @@
+packages/twenty-server/src/utils/is-work-email.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1-2,4,7-9
+packages/twenty-client-sdk/src/metadata/generated/types.ts
+  s_00feb31f113c96::t_2f224f916a05f4 19-26,31-32,34-37,39-40,42-43,48-55,57-65,69,75,77-82,96,99,102,337,889,904,952,955,958,1005,1014,1017,1020,1024,1030,1033,1037,1049,1052,1067,1070,1073,1076,1079,1082,1085,1088,1091,1157,1160,1163,1166,1221,1269,1272,1275,1278,1282,1288,1291,1295,1306,1309,1312,1315,1318,1321,1324,1327,1335,1338,1341,1344,1412,1441,1480,1513,1590,1647,1667,1670,1685,1688,1709,1721,1724,1727,1730,1733,1736,1739,1794,1797,1800,1803,1806,1809,1812,1878,1881,1884,1887,1890,1893,1905,1979,1982,1988,1994,2006,2067,2073,2076,2079,2109,2112,2115,2123,2144,2155,2163,2166,2169,2172,2175,2178,2181,2184,2187,2190,2193,2196,2199,2202,2205,2208,2211,2214,2217,2220,2223,2226,2234,2240,2270,2279,2282,2290,2296,2305,2308,2351,2357,2366,2369,2381,2384,2396,2438,2449,2455,2464,2467,2479,2482,2494,2518,2521,2540,2548,2559,2567,2575,2581,2593,2601,2618,2626,2634,2642,2650,2658,2669,2677,2685,2708,2714,2743,2749,2799,2845-2852,2901-2914,2979,2987,2990,2993,3004,3013,3039,3042,3048,3065,3082,3085,3102,3105,3136,3139,3142,3151,3160,3174,3203,3206,3209,3212,3228,3231,3270,3307,3340,3366,3375,3387,3402,3414,3425,3428,3445,3457,3529,3532,3545,3582,3585,3594,3633,3648,3684,3692,3718,3752,3755,3780,3783,3786,3807,3813,3816,3819,3825,3864,3903,3950,3953,3956,3959,3962,3971,3974,3988,3991,3999,4002,4010,4013,4021,4024,4032,4035,4043,4046,4065,4068,4076,4079,4087,4090,4098,4101,4109,4112,4139,4148,4167,4179,4182,4193,4202,4210,4222,4245,4251,4259,4262,4290,4328,4398,4401,4439,4453,4486,4502,4543,4565,4573,4576,4579,4582,4591,4756,4781,4784,4787,4840,4865,4868,4871,4891,5079,5094,5097,5128,5136,5173,5267,5273,5337,5351,5390,5407,5483,5486,5517,5520,5523,5529,5565,5571,5577,5580,5589,5598,5601,5622,5637,5666,5684,5737,5740,5751,5754,5757,5765,5768,5793,5796,5804,5813,5821,5830,5836,5842,5851,5859,5868,5877,5886,5895,5910,5916,5924,5927,5930,5933,5936,5945,5954,5960,5965,5977,5986,5995,6007,6019,6028,6058,6061,6070,6073,6077,6083,6092,6095,6099,6111,6120,6132,6135,6144,6153,6156,6160,6166,6174,6183,6191,6199,6202,6210,6213,6216,6219,6228,6237,6246,6249,6252,6261,6270,6282,6291,6300,6309,6339,6348,6366,6369,6372,6380,6389,6392,6403,6406,6409,6415,6418,6424,6427,6433,6436,6442,6451,6470,6483,6486,6491,6494,6497,6519,6535,6538,6559,6626,6638,6647,6653,6656,6662,6665,6671,6674,6680,6683,6689,6698,6707,6710,6719,6728,6731,6737,6740,6746,6749,6755,6758,6764,6767,6777,6780,6790,6793,6799,6806,6830,6833,6839,6842,6848,6851,6857,6860,6866,6869,6875,6882,6906,6909,6915,6918,6924,6927,6936,6945,6951,6954,6960,6963,6969,6972,6978,6981,6987,6990,6996,6999,7005,7008,7014,7017,7023,7026,7032,7035,7041,7044,7053,7062,7071,7089-7126,7128,7131,7134,7137,7141,7154,7157,7160,7163,7166,7175,7178,7190,7199,7211,7214,7223,7229,7232,7238,7241,7247,7254,7269,7272,7278,7285,7300,7307,7313,7322,7331,7371,7374,7379-7387,7406,7409,7415,7422,7440,7449,7455,7458,7467,7476,7485,7503,7512,7527,7530,7536,7539,7545,7548,7554,7557,7563,7566,7575,7584,7593,7615,7624,7642,7651,7660,7666,7669,7697,7700,7706,7709,7715,7724,7727,7733,7736,7742,7745,7751,7754,7760,7763,7769,7772,7778,7781,7787,7790,7796,7799,7805,7808,7814,7817,7823,7826,7832,7835,7841,7850,7859,7862,7868,7871,7892,7907,7920,7929,7956,7959,7965,7968,7974,7983,7992,8001,8010,8023,8026,8032,8058,8080,8100,8116,8136,8158,8189,8192,8195,8208,8230,8239,8255,8267,8280,8283,8292,8307,8319,8328,8346,8368,8381,8384,8393,8402,8417,8435,8448,8451,8457,8460,8466,8469,8475,8490,8493,8499,8502,8508,8511,8517,8520,8526,8535,8548,8551,8557,8566,8573,8582,8585,8591,8603,8624,8633,8636,8654,8669,8691,8700,8703,8711,8788,8820,8861,8881,8901,8930,8941,8989,8992,9007,9010,9019,9028,9042,9054,9057,9066,9072,9089,9092,9095,9098,9132,9161,9178,9192,9209,9217,9247,9264,9293,9323,9387,9390,9410,9475,9517,9534,9545,9559,9573,9579,9599,9602,9619,9625,9692-9714,9723,9729,9749,9755,9827,9987,10006,10066,10121,10132,10135,10279,10334,10376,10407,10410,10493,10518,10526,10591,10683,10727,10746,10757,10765,10771,10774,10802,10810,10816,10918,10966,11084,11092,11095,11158,11187,11206,11209,11212,11251,11268,11277,11280,11286
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/get-standard-object-metadata-related-entity-ids.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 38
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-standard-flat-index-metadata.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 31-42
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-member-standard-flat-field-metadata.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1-248
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 2-3,495-539
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-list-member-standard-flat-index-metadata.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1-45
+packages/twenty-server/src/modules/emailing/standard-objects/message-topic.workspace-entity.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1-25
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1497,2527,3269-3273,4874-4896,6162-6168,8131
+packages/twenty-server/src/modules/emailing/standard-objects/message-list.workspace-entity.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1-20
+packages/twenty-server/src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+  s_00feb31f113c96::t_2f224f916a05f4 6,28-30
+packages/twenty-server/src/utils/get-domain-from-email.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1-13
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-topic-standard-flat-index-metadata.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1-33
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 42,73,139-144
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-topic-standard-flat-field-metadata.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1-396
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-participant-standard-flat-index-metadata.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 55-66
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-topic-subscription-standard-flat-index-metadata.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1-48
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1-352
+packages/twenty-server/src/engine/core-modules/auth/services/auth.service.ts
+  s_00feb31f113c96::t_2f224f916a05f4 74,900-901
+packages/twenty-server/src/engine/metadata-modules/message-channel/message-channel-metadata.service.ts
+  s_00feb31f113c96::t_2f224f916a05f4 265-297
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-campaign-standard-flat-index-metadata.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1-57
+packages/twenty-server/src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 4,7
+packages/twenty-server/src/modules/emailing/standard-objects/message-suppression.workspace-entity.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1-21
+packages/twenty-server/src/modules/emailing/standard-objects/message-topic-subscription.workspace-entity.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1-19
+packages/twenty-server/src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+  s_00feb31f113c96::t_2f224f916a05f4 7,29-30
+packages/twenty-server/src/modules/person/standard-objects/person.workspace-entity.ts
+  s_00feb31f113c96::t_2f224f916a05f4 17-18,62-65
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 242-425
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 359-385
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 539-613
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/build-standard-flat-index-metadata-maps.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 13-18,51-57
+packages/twenty-server/src/utils/get-domain-name-by-email.ts
+  s_00feb31f113c96::t_2f224f916a05f4 5,7-8,19,28,30
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1-439
+packages/twenty-server/src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
+  s_00feb31f113c96::t_2f224f916a05f4 365-370
+packages/twenty-server/src/modules/connected-account/jobs/delete-workspace-member-connected-accounts.job.ts
+  s_00feb31f113c96::t_2f224f916a05f4 3,61-63,67
+packages/twenty-shared/src/metadata/constants/standard-object.constant.ts
+  s_00feb31f113c96::t_2f224f916a05f4 872-1168,1401-1403,1427-1429,1580-1585,1603-1605,2054-2059,2506-2513
+packages/twenty-server/src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
+  s_00feb31f113c96::t_2f224f916a05f4 30,69
+packages/twenty-client-sdk/src/metadata/generated/schema.graphql
+  s_00feb31f113c96::t_2f224f916a05f4 401,1467-1472,3240,3815-3821
+packages/twenty-client-sdk/src/metadata/generated/schema.ts
+  s_00feb31f113c96::t_2f224f916a05f4 307,1118-1124,2764,4083-4090,5861,6165-6166,7043-7050,8499
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-topic-subscription-standard-flat-field-metadata.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1-383
+packages/twenty-server/src/utils/__test__/get-domain-name-by-email.spec.ts
+  s_00feb31f113c96::t_2f224f916a05f4 45-47,103,107
+packages/twenty-server/src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+  s_00feb31f113c96::t_2f224f916a05f4 9-11,54-59
+packages/twenty-server/src/modules/emailing/standard-objects/message-campaign.workspace-entity.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1-38
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-flat-field-metadata-maps.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 16-21,56-62
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1-284
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 337-419
+packages/twenty-server/src/modules/blocklist/utils/is-email-blocklisted.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1-2,12-13,16,18-20
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-suppression-standard-flat-index-metadata.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1-47
+packages/twenty-server/src/utils/__test__/get-domain-from-email.spec.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1-29
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-list-standard-flat-index-metadata.util.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1-33
+packages/twenty-server/src/modules/emailing/standard-objects/message-list-member.workspace-entity.ts
+  s_00feb31f113c96::t_2f224f916a05f4 1-14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "fb7eccb10913648a1ed89fca05e5a82d30963c29",
+  "prompts": {},
+  "sessions": {
+    "s_00feb31f113c96": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8eaa9ec8-3e18-4d6e-8565-e27bf80f62fc",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
