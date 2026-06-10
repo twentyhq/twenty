@@ -28,7 +28,7 @@ export const getRecallApiConfig = ():
     return {
       success: false,
       error:
-        'RECALL_API_KEY application variable is not set. Set it in the Recall Recording Bot app settings before scheduling bots.',
+        'RECALL_API_KEY server variable is not set. A server admin must set it on the Recall Recording Bot application registration before scheduling bots.',
     };
   }
 

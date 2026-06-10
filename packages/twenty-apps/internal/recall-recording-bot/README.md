@@ -25,10 +25,19 @@ calendar event.
 
 ## Recall Prerequisites
 
-- `RECALL_REGION` - Recall region for API calls. Asia Pacific Tokyo is
-  `ap-northeast-1`.
+Server variables, set by the server admin on the application registration
+(admin panel) and hidden from workspaces:
+
 - `RECALL_API_KEY` - API key for the selected Recall region.
 - `RECALL_WEBHOOK_SECRET` - signing secret from the Recall webhook endpoint.
+- `RECALL_REGION` - Recall region for API calls. Asia Pacific Tokyo is
+  `ap-northeast-1`.
+- `RECALL_RECORDING_BOT_CRON_INTERVAL_MINUTES` - backstop reconciliation
+  interval.
+
+Application variables, set per workspace in the app settings:
+
+- `RECALL_RECORDING_BOT_ENABLED` - workspace opt-in toggle, `false` by default.
 - `RECALL_BOT_NAME` - optional display name for scheduled bots.
 
 Configure the Recall webhook URL as

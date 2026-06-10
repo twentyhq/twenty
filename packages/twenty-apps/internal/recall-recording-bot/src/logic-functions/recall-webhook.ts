@@ -33,7 +33,7 @@ export const recallWebhookRouteHandler = async (
   if (webhookSecret === undefined || webhookSecret.trim() === '') {
     return rejectWebhook(
       500,
-      'RECALL_WEBHOOK_SECRET application variable is not set. Copy it from the Recall webhook endpoint settings and set value in application config tab.',
+      'RECALL_WEBHOOK_SECRET server variable is not set. A server admin must copy it from the Recall webhook endpoint settings and set it on the Recall Recording Bot application registration.',
     );
   }
 

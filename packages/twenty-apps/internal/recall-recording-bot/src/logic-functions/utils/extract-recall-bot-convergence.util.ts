@@ -1,0 +1,97 @@
+import { type CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { mapRecallStatusCodeToCallRecordingStatus } from 'src/logic-functions/utils/map-recall-status-code-to-call-recording-status.util';
+import { normalizeRecallTimestamp } from 'src/logic-functions/utils/normalize-recall-timestamp.util';
+
+export type RecallBotConvergence = {
+  status: CallRecordingStatus | undefined;
+  startedAt: string | undefined;
+  endedAt: string | undefined;
+  externalRecordingId: string | undefined;
+};
+
+type RecallBotStatusChange = {
+  code: string;
+  createdAt: string | undefined;
+};
+
+// Derives the record state a complete webhook history would have produced
+// from a GET /bot/{id} response, so the pull path converges to the same
+// values as the push path.
+export const extractRecallBotConvergence = (
+  bot: Record<string, unknown>,
+): RecallBotConvergence => {
+  const statusChanges = extractStatusChanges(bot);
+  const latestStatusChange = statusChanges[statusChanges.length - 1];
+  const recording = extractFirstRecording(bot);
+
+  return {
+    status: mapRecallStatusCodeToCallRecordingStatus(latestStatusChange?.code),
+    startedAt: normalizeRecallTimestamp(
+      recording?.startedAt ??
+        findStatusChangeTimestamp(statusChanges, 'in_call_recording'),
+    ),
+    endedAt: normalizeRecallTimestamp(
+      recording?.completedAt ??
+        findStatusChangeTimestamp(statusChanges, 'call_ended'),
+    ),
+    externalRecordingId: recording?.id,
+  };
+};
+
+const extractStatusChanges = (
+  bot: Record<string, unknown>,
+): RecallBotStatusChange[] => {
+  if (!Array.isArray(bot.status_changes)) {
+    return [];
+  }
+
+  return bot.status_changes.flatMap((statusChange: unknown) => {
+    const code = getString(asRecord(statusChange)?.code);
+
+    if (code === undefined) {
+      return [];
+    }
+
+    return [{ code, createdAt: getString(asRecord(statusChange)?.created_at) }];
+  });
+};
+
+const extractFirstRecording = (
+  bot: Record<string, unknown>,
+):
+  | {
+      id: string | undefined;
+      startedAt: string | undefined;
+      completedAt: string | undefined;
+    }
+  | undefined => {
+  if (!Array.isArray(bot.recordings)) {
+    return undefined;
+  }
+
+  const recording = asRecord(bot.recordings[0]);
+
+  if (recording === undefined) {
+    return undefined;
+  }
+
+  return {
+    id: getString(recording.id),
+    startedAt: getString(recording.started_at),
+    completedAt: getString(recording.completed_at),
+  };
+};
+
+const findStatusChangeTimestamp = (
+  statusChanges: RecallBotStatusChange[],
+  code: string,
+): string | undefined =>
+  statusChanges.find((statusChange) => statusChange.code === code)?.createdAt;
+
+const asRecord = (value: unknown): Record<string, unknown> | undefined =>
+  typeof value === 'object' && value !== null && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : undefined;
+
+const getString = (value: unknown): string | undefined =>
+  typeof value === 'string' && value.trim() !== '' ? value : undefined;

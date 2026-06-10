@@ -14,13 +14,33 @@ export const findCallRecordingsByCalendarEventIds = async (
     return [];
   }
 
+  return findCallRecordingsByFilter(client, {
+    calendarEventId: { in: calendarEventIds },
+  });
+};
+
+export const findCallRecordingsByIds = async (
+  client: CoreApiClient,
+  callRecordingIds: string[],
+): Promise<CallRecordingRecord[]> => {
+  if (callRecordingIds.length === 0) {
+    return [];
+  }
+
+  return findCallRecordingsByFilter(client, {
+    id: { in: callRecordingIds },
+  });
+};
+
+const findCallRecordingsByFilter = async (
+  client: CoreApiClient,
+  filter: Record<string, unknown>,
+): Promise<CallRecordingRecord[]> => {
   const callRecordingNodes = await fetchAllNodes(async (afterCursor) => {
     const queryResult = await client.query({
       callRecordings: {
         __args: {
-          filter: {
-            calendarEventId: { in: calendarEventIds },
-          },
+          filter,
           first: TWENTY_PAGE_SIZE,
           ...(afterCursor === undefined ? {} : { after: afterCursor }),
         },

@@ -1,5 +1,6 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
+import { APPLICATION_ID_ENV_VAR_NAME } from 'src/logic-functions/constants/application-id-env-var-name';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
@@ -14,15 +15,21 @@ import {
   createCallRecording,
   type ScheduledCallRecordingFields,
 } from 'src/logic-functions/utils/create-call-recording.util';
+import { deleteCallRecording } from 'src/logic-functions/utils/delete-call-recording.util';
 import {
   fetchCalendarEventsByIds,
   fetchCalendarEventsByStartsAtValues,
 } from 'src/logic-functions/utils/fetch-calendar-events.util';
-import { findCallRecordingsByCalendarEventIds } from 'src/logic-functions/utils/find-call-recordings-by-calendar-event-ids.util';
+import {
+  findCallRecordingsByCalendarEventIds,
+  findCallRecordingsByIds,
+} from 'src/logic-functions/utils/find-call-recordings.util';
+import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
 import { getRecallRecordingBotEnabled } from 'src/logic-functions/utils/get-recall-recording-bot-enabled.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import {
+  cancelRecallRecordingBot,
   rescheduleRecallRecordingBot,
   scheduleRecallRecordingBot,
 } from 'src/logic-functions/utils/recall-bot-api.util';
@@ -281,7 +288,6 @@ const reconcileActiveMeeting = async ({
     await syncScheduledRecallBot({
       client,
       callRecordingId: primaryCallRecording.id,
-      existingCallRecording: primaryCallRecording,
       representativeCalendarEvent,
       realMeetingKey: meetingPolicyResult.realMeetingKey,
     });
@@ -309,10 +315,41 @@ const reconcileActiveMeeting = async ({
     buildScheduledCallRecordingFields(representativeCalendarEvent),
   );
 
+  // Concurrent reconciliations can all pass the read above before any of them
+  // writes; re-read and let only the canonical recording schedule a bot.
+  const callRecordingsAfterCreate = await findCallRecordingsByCalendarEventIds(
+    client,
+    calendarEventIds,
+  );
+  const [canonicalCallRecording] = getPolicyManagedCallRecordingsByPriority(
+    callRecordingsAfterCreate,
+  );
+
+  if (
+    canonicalCallRecording !== undefined &&
+    canonicalCallRecording.id !== createdCallRecordingId
+  ) {
+    const createdCallRecording = callRecordingsAfterCreate.find(
+      (callRecording) => callRecording.id === createdCallRecordingId,
+    );
+
+    if (createdCallRecording !== undefined) {
+      await cancelCallRecordingRequest({
+        client,
+        callRecording: createdCallRecording,
+      });
+    }
+
+    return {
+      action: 'SKIPPED',
+      realMeetingKey: meetingPolicyResult.realMeetingKey,
+      callRecordingId: canonicalCallRecording.id,
+    };
+  }
+
   await syncScheduledRecallBot({
     client,
     callRecordingId: createdCallRecordingId,
-    existingCallRecording: null,
     representativeCalendarEvent,
     realMeetingKey: meetingPolicyResult.realMeetingKey,
   });
@@ -383,33 +420,42 @@ const cancelDuplicateCallRecordingRequests = async ({
   realMeetingKey: string;
   duplicateCallRecordings: CallRecordingRecord[];
 }): Promise<void> => {
-  const duplicatesToCancel = duplicateCallRecordings.filter(
+  // Bot-less REQUESTED duplicates are concurrent-creation artifacts with no
+  // external state or history; delete them instead of surfacing CANCELED rows.
+  const duplicatesToDelete = duplicateCallRecordings.filter(
     (callRecording) =>
       callRecording.recordingRequestStatus ===
-        CallRecordingRequestStatus.REQUESTED ||
-      isNonEmptyString(callRecording.externalBotId),
+        CallRecordingRequestStatus.REQUESTED &&
+      !isNonEmptyString(callRecording.externalBotId),
+  );
+  const duplicatesToCancel = duplicateCallRecordings.filter((callRecording) =>
+    isNonEmptyString(callRecording.externalBotId),
   );
 
-  if (duplicatesToCancel.length === 0) {
+  if (duplicatesToDelete.length === 0 && duplicatesToCancel.length === 0) {
     return;
   }
 
   console.warn(
-    `[recall-recording-bot] found ${duplicatesToCancel.length} duplicate policy-managed call recording(s) for meeting ${realMeetingKey}, canceling extras`,
+    `[recall-recording-bot] found ${duplicatesToDelete.length + duplicatesToCancel.length} duplicate policy-managed call recording(s) for meeting ${realMeetingKey}, deleting ${duplicatesToDelete.length} and canceling ${duplicatesToCancel.length}`,
   );
+
+  for (const callRecording of duplicatesToDelete) {
+    await deleteCallRecording(client, callRecording.id);
+  }
 
   for (const callRecording of duplicatesToCancel) {
     await cancelCallRecordingRequest({ client, callRecording });
   }
 };
 
+// startedAt/endedAt hold ACTUAL recording times written by the webhook;
+// calendar-driven writes must never touch them.
 const buildCalendarDrivenCallRecordingFields = (
   calendarEvent: CalendarEventRecord,
-) => ({
+): Omit<ScheduledCallRecordingFields, 'status'> => ({
   title: calendarEvent.title,
   recordingRequestStatus: CallRecordingRequestStatus.REQUESTED,
-  startedAt: calendarEvent.startsAt,
-  endedAt: calendarEvent.endsAt,
   calendarEventId: calendarEvent.id,
 });
 
@@ -441,13 +487,11 @@ const canResetCallRecordingStatusToScheduled = (
 const syncScheduledRecallBot = async ({
   client,
   callRecordingId,
-  existingCallRecording,
   representativeCalendarEvent,
   realMeetingKey,
 }: {
   client: CoreApiClient;
   callRecordingId: string;
-  existingCallRecording: CallRecordingRecord | null;
   representativeCalendarEvent: CalendarEventRecord;
   realMeetingKey: string;
 }): Promise<void> => {
@@ -459,12 +503,32 @@ const syncScheduledRecallBot = async ({
     return;
   }
 
+  // Re-read instead of trusting the caller's snapshot: a concurrent
+  // reconciliation may have canceled this recording or attached a bot since.
+  const callRecording = (
+    await findCallRecordingsByIds(client, [callRecordingId])
+  )[0];
+
+  if (
+    callRecording === undefined ||
+    callRecording.recordingRequestStatus !==
+      CallRecordingRequestStatus.REQUESTED
+  ) {
+    return;
+  }
+
+  const applicationId = getApplicationVariableValue(
+    APPLICATION_ID_ENV_VAR_NAME,
+  );
   const metadata = {
     twentyCallRecordingId: callRecordingId,
     twentyCalendarEventId: representativeCalendarEvent.id,
     twentyRealMeetingKey: realMeetingKey,
+    ...(applicationId === undefined
+      ? {}
+      : { twentyApplicationId: applicationId }),
   };
-  const externalBotId = existingCallRecording?.externalBotId ?? null;
+  const externalBotId = callRecording.externalBotId ?? null;
 
   if (externalBotId !== null) {
     const rescheduleResult = await rescheduleRecallRecordingBot({
@@ -512,6 +576,23 @@ const syncScheduledRecallBot = async ({
         externalBotId: scheduleResult.externalBotId,
       },
     });
+
+    // If a concurrent schedule overwrote the id, this bot is unreferenced and
+    // would join the meeting as an extra attendee; cancel it.
+    const callRecordingAfterWrite = (
+      await findCallRecordingsByIds(client, [callRecordingId])
+    )[0];
+
+    if (
+      callRecordingAfterWrite?.externalBotId !== scheduleResult.externalBotId
+    ) {
+      console.warn(
+        `[recall-recording-bot] bot ${scheduleResult.externalBotId} for callRecording ${callRecordingId} was superseded by a concurrent schedule, canceling it`,
+      );
+      await cancelRecallRecordingBot({
+        externalBotId: scheduleResult.externalBotId,
+      });
+    }
   }
 };
 

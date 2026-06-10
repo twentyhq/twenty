@@ -7,8 +7,6 @@ export type ScheduledCallRecordingFields = {
   title: string | null;
   status: CallRecordingStatus.SCHEDULED;
   recordingRequestStatus: CallRecordingRequestStatus.REQUESTED;
-  startedAt: string | null;
-  endedAt: string | null;
   calendarEventId: string;
 };
 

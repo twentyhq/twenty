@@ -71,6 +71,10 @@ jobs:
         working-directory: packages/twenty-apps/internal/recall-recording-bot
         run: yarn install --immutable
 
+      - name: Typecheck
+        working-directory: packages/twenty-apps/internal/recall-recording-bot
+        run: npx tsc --build tsconfig.json --force
+
       - name: Run unit tests
         working-directory: packages/twenty-apps/internal/recall-recording-bot
         run: npx vitest run --config vitest.unit.config.ts

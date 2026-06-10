@@ -51,7 +51,9 @@ export default defineApplicationRole({
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.callRecording.universalIdentifier,
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
-      canSoftDeleteObjectRecords: false,
+      // Soft delete is only used to remove bot-less duplicate recordings
+      // created by concurrent reconciliations.
+      canSoftDeleteObjectRecords: true,
       canDestroyObjectRecords: false,
     },
   ],

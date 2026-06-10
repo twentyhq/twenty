@@ -12,6 +12,9 @@ export type CallRecordingUpdateFields = Partial<{
   calendarEventId: string;
   externalBotId: string | null;
   externalRecordingId: string | null;
+  // RAW_JSON accepts any JSON value; the generated input type under-models
+  // array payloads like downloaded transcripts, which callers cast.
+  transcript: Record<string, unknown> | null;
 }>;
 
 export const updateCallRecording = async (
