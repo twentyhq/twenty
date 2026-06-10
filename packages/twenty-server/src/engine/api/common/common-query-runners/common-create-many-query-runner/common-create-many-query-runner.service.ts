@@ -329,7 +329,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       partialRecordInputs: recordsToInsert,
       workspaceId,
       objectMetadata: {
-        isCustom: flatObjectMetadata.isCustom,
+        isCustom: flatObjectMetadata.isCustom ?? false,
         nameSingular: flatObjectMetadata.nameSingular,
         fieldIdByName,
       },
