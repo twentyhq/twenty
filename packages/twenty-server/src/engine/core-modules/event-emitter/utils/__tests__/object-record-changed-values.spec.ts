@@ -273,5 +273,38 @@ describe('objectRecordChangedValues', () => {
 
       expect(updatedFields).toEqual(['company', 'companyId', 'name']);
     });
+
+    it('uses the canonical computed join column name even when settings diverge', () => {
+      const flatFieldMetadataMapsWithDivergentJoinColumn: FlatEntityMaps<FlatFieldMetadata> =
+        {
+          ...flatFieldMetadataMapsWithRelation,
+          byUniversalIdentifier: {
+            [relationUniversalId]: {
+              ...flatFieldMetadataMapsWithRelation.byUniversalIdentifier[
+                relationUniversalId
+              ],
+              settings: {
+                relationType: RelationType.MANY_TO_ONE,
+                joinColumnName: 'legacyCompanyId',
+              },
+            } as FlatFieldMetadata,
+          },
+        };
+
+      const diff = {
+        company: {
+          before: { id: 'old-company-id' },
+          after: { id: 'new-company-id' },
+        },
+      };
+
+      const updatedFields = computeUpdatedFieldsFromDiff(
+        diff,
+        objectMetadataWithRelation,
+        flatFieldMetadataMapsWithDivergentJoinColumn,
+      );
+
+      expect(updatedFields).toEqual(['company', 'companyId']);
+    });
   });
 });

@@ -67,7 +67,10 @@ export const computeUpdatedFieldsFromDiff = (
     });
 
     if (isDefined(field) && isManyToOneRelationField(field)) {
-      return [diffKey, getJoinColumnNameForRelationField(field)];
+      return [
+        diffKey,
+        computeMorphOrRelationFieldJoinColumnName({ name: field.name }),
+      ];
     }
 
     return [diffKey];
