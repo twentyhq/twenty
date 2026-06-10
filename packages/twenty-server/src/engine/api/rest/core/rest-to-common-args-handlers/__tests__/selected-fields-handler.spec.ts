@@ -56,7 +56,6 @@ describe('RestToCommonSelectedFieldsHandler', () => {
       namePlural: `${overrides.nameSingular}s`,
       labelSingular: overrides.nameSingular,
       labelPlural: `${overrides.nameSingular}s`,
-      isCustom: false,
       isRemote: false,
       isActive: true,
       isSystem: false,

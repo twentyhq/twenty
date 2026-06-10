@@ -217,7 +217,6 @@ describe('computeRelationConnectQueryConfigs', () => {
       icon: 'Icon',
       targetTableName: partial.nameSingular,
       workspaceId: 'workspace-id',
-      isCustom: false,
       isRemote: false,
       isActive: true,
       isSystem: false,

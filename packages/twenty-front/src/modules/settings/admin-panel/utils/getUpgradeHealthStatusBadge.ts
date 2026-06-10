@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { type ThemeColor } from 'twenty-ui/theme';
+import { type ThemeColor } from 'twenty-ui-deprecated/theme';
 import { UpgradeHealth } from '~/generated-admin/graphql';
 
 type UpgradeHealthStatusBadge = {

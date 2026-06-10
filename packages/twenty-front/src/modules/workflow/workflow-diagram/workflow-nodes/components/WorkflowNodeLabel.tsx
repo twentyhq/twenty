@@ -1,7 +1,7 @@
 import type { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
 import { styled } from '@linaria/react';
-import { Label } from 'twenty-ui/display';
+import { Label } from 'twenty-ui-deprecated/display';
 
 type WorkflowNodeLabelProps = {
   runStatus?: WorkflowRunStepStatus;

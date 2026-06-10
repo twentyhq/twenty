@@ -1,8 +1,8 @@
 import { type MouseEvent } from 'react';
 
 import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
-import { Avatar } from 'twenty-ui/display';
-import { MenuItemSuggestion } from 'twenty-ui/navigation';
+import { Avatar } from 'twenty-ui-deprecated/display';
+import { MenuItemSuggestion } from 'twenty-ui-deprecated/navigation';
 
 type MentionMenuListItemProps = {
   recordId: string;

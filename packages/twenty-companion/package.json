@@ -33,7 +33,7 @@
     "@electron/fuses": "^1.8.0",
     "@vercel/webpack-asset-relocator-loader": "^1.7.3",
     "css-loader": "^6.11.0",
-    "electron": "36.0.1",
+    "electron": "^39.8.5",
     "node-loader": "^2.1.0",
     "style-loader": "^3.3.4"
   },
@@ -46,7 +46,7 @@
     "@timfish/forge-externals-plugin": "^0.2.1",
     "axios": "^1.16.0",
     "codemirror": "^6.0.1",
-    "concurrently": "^9.2.1",
+    "concurrently": "^10.0.0",
     "dotenv": "^16.5.0",
     "easymde": "^2.20.0",
     "electron-squirrel-startup": "^1.0.1",

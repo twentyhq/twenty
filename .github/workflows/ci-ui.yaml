@@ -21,7 +21,7 @@ jobs:
       files: |
         package.json
         yarn.lock
-        packages/twenty-ui/**
+        packages/twenty-ui-deprecated/**
         packages/twenty-shared/**
   ui-task:
     needs: changed-files-check
@@ -39,7 +39,7 @@ jobs:
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Run ${{ matrix.task }}
-        run: npx nx ${{ matrix.task }} twenty-ui
+        run: npx nx ${{ matrix.task }} twenty-ui-deprecated
   ui-sb-build:
     needs: changed-files-check
     if: >-
@@ -56,12 +56,12 @@ jobs:
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Build storybook
-        run: npx nx storybook:build twenty-ui
+        run: npx nx storybook:build twenty-ui-deprecated
       - name: Upload storybook build
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: storybook-twenty-ui
-          path: packages/twenty-ui/storybook-static
+          path: packages/twenty-ui-deprecated/storybook-static
           retention-days: 1
   ui-sb-test:
     timeout-minutes: 30
@@ -81,19 +81,19 @@ jobs:
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: storybook-twenty-ui
-          path: packages/twenty-ui/storybook-static
+          path: packages/twenty-ui-deprecated/storybook-static
       - name: Install Playwright
         run: |
-          cd packages/twenty-ui
+          cd packages/twenty-ui-deprecated
           npx playwright install
       - name: Run storybook tests
-        run: npx nx storybook:test twenty-ui
+        run: npx nx storybook:test twenty-ui-deprecated
       - name: Upload screenshots for visual regression
         if: always() && !cancelled()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: argos-screenshots-twenty-ui
-          path: packages/twenty-ui/screenshots
+          path: packages/twenty-ui-deprecated/screenshots
           retention-days: 1
   ci-ui-status-check:
     if: always() && !cancelled()

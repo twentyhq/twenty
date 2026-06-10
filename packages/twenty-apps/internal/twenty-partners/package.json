@@ -1,6 +1,6 @@
 {
   "name": "twenty-partners",
-  "version": "0.3.4",
+  "version": "0.4.2",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
@@ -28,8 +28,8 @@
     "migrate:partner-scope:prod": "ENV_FILE=.env.prod tsx src/scripts/migrate-partner-scope.ts"
   },
   "dependencies": {
-    "twenty-client-sdk": "2.4.0",
-    "twenty-sdk": "2.4.0",
+    "twenty-client-sdk": "2.10.1",
+    "twenty-sdk": "2.10.1",
     "zod": "^4.1.11"
   },
   "devDependencies": {
@@ -42,6 +42,6 @@
     "tsx": "^4.0.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
-    "vitest": "^3.1.1"
+    "vitest": "^3.2.6"
   }
 }

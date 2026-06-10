@@ -16,8 +16,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { ViewType } from '@/views/types/ViewType';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconEyeOff, useIcons } from 'twenty-ui/display';
-import { MenuItemDraggable } from 'twenty-ui/navigation';
+import { IconEyeOff, useIcons } from 'twenty-ui-deprecated/display';
+import { MenuItemDraggable } from 'twenty-ui-deprecated/navigation';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 export const ViewFieldsVisibleDropdownSection = () => {

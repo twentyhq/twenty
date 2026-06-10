@@ -9,10 +9,17 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { motion } from 'framer-motion';
 import { useContext } from 'react';
-import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/display';
-import { AnimatedButton } from 'twenty-ui/input';
-import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  AppTooltip,
+  TooltipDelay,
+  TooltipPosition,
+} from 'twenty-ui-deprecated/display';
+import { AnimatedButton } from 'twenty-ui-deprecated/input';
+import { useIsMobile } from 'twenty-ui-deprecated/utilities';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledButtonWrapper = styled.div<{ alignToTop: boolean }>`
   align-items: ${({ alignToTop }) => (alignToTop ? 'center' : 'initial')};
@@ -145,9 +152,9 @@ export const SidePanelToggleButton = () => {
           dataClickOutsideId={PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID}
           dataTestId="page-header-side-panel-button"
           size={isMobile ? 'medium' : 'small'}
+          square
           variant="secondary"
           accent="default"
-          hotkeys={[getOsControlSymbol(), 'K']}
           ariaLabel={ariaLabel}
           onClick={toggleSidePanelMenu}
           animate={{

@@ -1,13 +1,17 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { type IconComponent } from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { type IconComponent } from 'twenty-ui-deprecated/display';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledCheckContainer = styled.div<{ color: string }>`
   align-items: center;
   border: 2px solid ${({ color }) => color};
   border-radius: ${themeCssVariables.border.radius.rounded};
   box-shadow: ${({ color }) => color && `-4px 4px 0 -2px ${color}`};
+  box-sizing: content-box;
   display: flex;
   height: 36px;
   justify-content: center;

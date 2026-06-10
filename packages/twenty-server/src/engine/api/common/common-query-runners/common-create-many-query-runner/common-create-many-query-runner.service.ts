@@ -542,7 +542,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       );
     }
 
-    if ('createdBy' in record && createdByFieldMetadata.isCustom === false) {
+    if ('createdBy' in record && createdByFieldMetadata.isSystem === true) {
       const { createdBy: _createdBy, ...recordWithoutCreatedBy } = record;
 
       recordWithoutCreatedByUpdate = recordWithoutCreatedBy;

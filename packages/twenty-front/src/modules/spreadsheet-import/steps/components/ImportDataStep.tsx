@@ -3,11 +3,11 @@ import { StepNavigationButton } from '@/spreadsheet-import/components/StepNaviga
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { ModalContent } from 'twenty-ui/layout';
+import { ModalContent } from 'twenty-ui-deprecated/layout';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { t } from '@lingui/core/macro';
-import { Loader } from 'twenty-ui/feedback';
+import { Loader } from 'twenty-ui-deprecated/feedback';
 
 const StyledHeader = styled.span`
   color: ${themeCssVariables.font.color.primary};

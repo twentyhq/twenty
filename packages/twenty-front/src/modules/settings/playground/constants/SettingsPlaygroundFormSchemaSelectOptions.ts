@@ -1,6 +1,9 @@
 import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
 import { msg } from '@lingui/core/macro';
-import { IconBracketsAngle, IconFolderRoot } from 'twenty-ui/display';
+import {
+  IconBracketsAngle,
+  IconFolderRoot,
+} from 'twenty-ui-deprecated/display';
 export const SETTINGS_PLAYGROUND_FORM_SCHEMA_SELECT_OPTIONS = [
   {
     value: PlaygroundSchemas.CORE,

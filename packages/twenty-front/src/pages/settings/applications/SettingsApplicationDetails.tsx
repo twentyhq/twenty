@@ -31,7 +31,7 @@ import {
   IconListDetails,
   IconLock,
   IconSettings,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 import {
   ApplicationRegistrationSourceType,
   FindMarketplaceAppDetailDocument,
