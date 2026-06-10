@@ -6,7 +6,6 @@ import {
   CreateTenantCommand,
   CreateTenantResourceAssociationCommand,
   DeleteConfigurationSetCommand,
-  DeleteContactListCommand,
   DeleteEmailIdentityCommand,
   DeleteTenantCommand,
   DeleteTenantResourceAssociationCommand,
@@ -120,7 +119,6 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       {
         tenantName,
         configurationSetName: this.buildConfigurationSetName(workspaceId),
-        contactListName: this.buildContactListName(workspaceId),
       },
       this.config,
     );
@@ -136,7 +134,6 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     return this.awsSesSendEmailService.sendEmail(input, {
       tenantName: this.buildTenantName(input.workspaceId),
       configurationSetName: this.buildConfigurationSetName(input.workspaceId),
-      contactListName: this.buildContactListName(input.workspaceId),
     });
   }
 
@@ -167,7 +164,6 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     const sesClient = this.awsSesClientProvider.getSESClient();
     const tenantName = this.buildTenantName(workspaceId);
     const configurationSetName = this.buildConfigurationSetName(workspaceId);
-    const contactListName = this.buildContactListName(workspaceId);
     const configurationSetArn = `arn:aws:ses:${this.config.region}:${this.config.accountId}:configuration-set/${configurationSetName}`;
 
     await sesClient
@@ -192,12 +188,6 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       });
 
     await sesClient
-      .send(new DeleteContactListCommand({ ContactListName: contactListName }))
-      .catch((error) => {
-        if (!(error instanceof NotFoundException)) throw error;
-      });
-
-    await sesClient
       .send(new DeleteTenantCommand({ TenantName: tenantName }))
       .catch((error) => {
         if (!(error instanceof NotFoundException)) throw error;
@@ -209,10 +199,6 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
   }
 
   private buildConfigurationSetName(workspaceId: string): string {
-    return `${AWS_SES_RESOURCE_NAME_PREFIX}-${workspaceId}`;
-  }
-
-  private buildContactListName(workspaceId: string): string {
     return `${AWS_SES_RESOURCE_NAME_PREFIX}-${workspaceId}`;
   }
 

@@ -8,7 +8,6 @@ import {
   type EmailingDomainSendEmailResult,
 } from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
 
-import { AWS_SES_MARKETING_TOPIC_NAME } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-marketing-topic-name.constant';
 import { AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
 import { AwsSesHandleErrorService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-handle-error.service';
 import {
@@ -19,7 +18,6 @@ import {
 type SendEmailContext = {
   tenantName: string;
   configurationSetName: string;
-  contactListName: string;
 };
 
 @Injectable()
@@ -56,6 +54,12 @@ export class AwsSesSendEmailService {
           ReplyToAddresses: input.replyTo,
           Content: {
             Simple: {
+              Headers: isNonEmptyArray(input.headers)
+                ? input.headers.map((header) => ({
+                    Name: header.name,
+                    Value: header.value,
+                  }))
+                : undefined,
               Subject: { Data: input.subject, Charset: 'UTF-8' },
               Body: {
                 Text: { Data: input.text, Charset: 'UTF-8' },
@@ -75,10 +79,6 @@ export class AwsSesSendEmailService {
           },
           ConfigurationSetName: context.configurationSetName,
           TenantName: context.tenantName,
-          ListManagementOptions: {
-            ContactListName: context.contactListName,
-            TopicName: AWS_SES_MARKETING_TOPIC_NAME,
-          },
           EmailTags: [
             { Name: 'workspace', Value: input.workspaceId },
             { Name: 'domain', Value: input.domain },
@@ -97,7 +97,14 @@ export class AwsSesSendEmailService {
         `Sent email ${response.MessageId} from ${input.from} (tenant ${context.tenantName})`,
       );
 
-      return { messageId: response.MessageId };
+      return {
+        messageId: response.MessageId,
+        deliveredRecipients: {
+          to: input.to,
+          cc: input.cc ?? [],
+          bcc: input.bcc ?? [],
+        },
+      };
     } catch (error) {
       if (error instanceof EmailingDomainDriverException) {
         throw error;

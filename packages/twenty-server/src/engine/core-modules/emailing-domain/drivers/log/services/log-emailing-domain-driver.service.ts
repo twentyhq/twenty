@@ -66,6 +66,13 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
       `[log-driver] sendEmail from=${input.from} to=${input.to.join(',')} subject="${input.subject}" → fake messageId=${messageId}`,
     );
 
-    return { messageId };
+    return {
+      messageId,
+      deliveredRecipients: {
+        to: input.to,
+        cc: input.cc ?? [],
+        bcc: input.bcc ?? [],
+      },
+    };
   }
 }

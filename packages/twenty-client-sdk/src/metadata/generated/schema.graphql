@@ -1456,6 +1456,12 @@ enum EmailingDomainStatus {
   TEMPORARY_FAILURE
 }
 
+type SendMessageCampaignOutputDTO {
+  campaignId: String!
+  sentCount: Int!
+  failedCount: Int!
+}
+
 type SendEmailViaDomainOutput {
   messageId: String!
 }
@@ -3222,6 +3228,7 @@ type Mutation {
   deleteEmailingDomain(id: String!): Boolean!
   verifyEmailingDomain(id: String!): EmailingDomain!
   sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!
+  sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
   updatePageLayoutWidget(id: String!, input: UpdatePageLayoutWidgetInput!): PageLayoutWidget!
@@ -3794,6 +3801,15 @@ input SendEmailViaDomainInput {
   html: String
   from: String!
   replyTo: [String!]
+}
+
+input SendMessageCampaignInput {
+  messageTopicId: String!
+  recipientViewId: String
+  listId: String
+  subject: String!
+  body: String!
+  fromAddress: String!
 }
 
 input CreatePageLayoutWidgetInput {

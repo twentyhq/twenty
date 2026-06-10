@@ -5,7 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
-import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
+import { EmailingDomainSenderService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-sender.service';
+import { EmailGroupMessageCategory } from 'src/engine/core-modules/emailing-domain/types/email-group-message-category.type';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
   MessageChannelException,
@@ -16,13 +17,14 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { type MessageOutboundDriver } from 'src/modules/messaging/message-outbound-manager/interfaces/message-outbound-driver.interface';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
+import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 
 @Injectable()
 export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
   constructor(
     @InjectWorkspaceScopedRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
-    private readonly emailingDomainService: EmailingDomainService,
+    private readonly emailingDomainSenderService: EmailingDomainSenderService,
   ) {}
 
   async sendMessage(
@@ -38,7 +40,7 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
       );
     }
 
-    const result = await this.emailingDomainService.sendEmail(
+    const result = await this.emailingDomainSenderService.sendEmail(
       connectedAccount.workspaceId,
       emailingDomain.id,
       {
@@ -53,12 +55,14 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
         from: connectedAccount.handle,
         replyTo: [connectedAccount.handle],
         attachments: sendMessageInput.attachments,
+        messageCategory: EmailGroupMessageCategory.CAMPAIGN,
       },
     );
 
     return {
       headerMessageId: result.messageId,
       messageExternalId: result.messageId,
+      deliveredRecipients: result.deliveredRecipients,
     };
   }
 
@@ -72,7 +76,7 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
   private async resolveEmailingDomain(
     connectedAccount: ConnectedAccountEntity,
   ): Promise<EmailingDomainEntity> {
-    const handleDomain = connectedAccount.handle.split('@')[1];
+    const handleDomain = getDomainFromEmail(connectedAccount.handle);
 
     if (!isNonEmptyString(handleDomain)) {
       throw new MessageChannelException(
