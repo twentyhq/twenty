@@ -2,10 +2,7 @@ import fs from 'fs';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
-import {
-  isTokenExpiredMessage,
-  promptForReauthentication,
-} from '@/cli/utilities/auth/reauth-helper';
+import { promptForReauthentication } from '@/cli/utilities/auth/reauth-helper';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
 
@@ -21,18 +18,6 @@ export type AppDeployResult = {
   id: string;
   name: string;
   universalIdentifier: string;
-};
-
-const formatAuthError = (apiUrl: string, remoteName: string): string => {
-  return [
-    `Your API key for remote "${remoteName}" is no longer valid`,
-    '(the workspace may have been reset, or the key was revoked).',
-    '',
-    'Re-authenticate with:',
-    `  twenty remote:add --as ${remoteName} --api-key <NEW_KEY>`,
-    '',
-    `Generate a new key at: ${apiUrl}/settings/developers`,
-  ].join('\n');
 };
 
 const innerAppDeploy = async (
@@ -56,15 +41,10 @@ const innerAppDeploy = async (
   const uploadResult = await apiService.uploadAppTarball({ tarballBuffer });
 
   if (!uploadResult.success) {
-    const errorMessage =
-      typeof uploadResult.error === 'string' ? uploadResult.error : '';
-
-    if (uploadResult.isAuthError || isTokenExpiredMessage(errorMessage)) {
+    if (uploadResult.isAuthError) {
       const remoteName = ConfigService.getActiveRemote();
-      const configService = new ConfigService();
-      const config = await configService.getConfigForRemote(remoteName);
 
-      console.error(formatAuthError(config.apiUrl, remoteName));
+      console.error(`Authentication failed on remote "${remoteName}"`);
       const outcome = await promptForReauthentication(remoteName);
 
       if (outcome === 'reauthenticated') {
