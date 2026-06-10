@@ -6,6 +6,7 @@ import { isDefined, parseJson } from 'twenty-shared/utils';
 import { MessagingWebhookExceptionCode } from 'src/engine/core-modules/messaging-webhooks/messaging-webhook-exception-code.enum';
 import { MessagingWebhookException } from 'src/engine/core-modules/messaging-webhooks/messaging-webhook.exception';
 import { SesOutboundSendingStateHandlerService } from 'src/engine/core-modules/messaging-webhooks/services/ses-outbound-sending-state-handler.service';
+import { SesOutboundSuppressionHandlerService } from 'src/engine/core-modules/messaging-webhooks/services/ses-outbound-suppression-handler.service';
 import { SnsSignatureVerifierService } from 'src/engine/core-modules/messaging-webhooks/services/sns-signature-verifier.service';
 import { SnsSubscriptionConfirmerService } from 'src/engine/core-modules/messaging-webhooks/services/sns-subscription-confirmer.service';
 import { type SesEventBridgeNotification } from 'src/engine/core-modules/messaging-webhooks/types/ses-event-bridge-notification.type';
@@ -18,6 +19,7 @@ export class SesOutboundWebhookRouterService {
     private readonly snsSignatureVerifierService: SnsSignatureVerifierService,
     private readonly snsSubscriptionConfirmerService: SnsSubscriptionConfirmerService,
     private readonly sesOutboundSendingStateHandlerService: SesOutboundSendingStateHandlerService,
+    private readonly sesOutboundSuppressionHandlerService: SesOutboundSuppressionHandlerService,
   ) {}
 
   async route(rawBody: Buffer): Promise<void> {
@@ -52,6 +54,15 @@ export class SesOutboundWebhookRouterService {
         'Invalid SNS notification message',
         MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_INVALID_PAYLOAD,
       );
+    }
+
+    if (
+      event['detail-type'] === 'Email Bounced' ||
+      event['detail-type'] === 'Email Complaint Received'
+    ) {
+      await this.sesOutboundSuppressionHandlerService.handle(event);
+
+      return;
     }
 
     await this.sesOutboundSendingStateHandlerService.handle(event);
