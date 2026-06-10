@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { PdlOperationError } from 'src/logic-functions/errors/pdl-operation-error';
 import { buildCompanyCreateData } from 'src/logic-functions/utils/build-company-create-data';
 import { buildCompanyMatchKeys } from 'src/logic-functions/utils/build-company-match-keys';
 import { findCompanyId } from 'src/logic-functions/utils/find-company-id';
@@ -48,7 +49,7 @@ const findOrCreateUncachedCompany = async ({
     const createdCompanyId = createCompanyResult.createCompany?.id;
 
     if (!isDefined(createdCompanyId)) {
-      throw new Error('Failed to create company: no id returned.');
+      throw new PdlOperationError('Failed to create company: no id returned.');
     }
 
     return createdCompanyId;

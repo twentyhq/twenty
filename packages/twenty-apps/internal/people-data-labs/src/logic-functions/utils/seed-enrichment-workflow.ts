@@ -1,5 +1,6 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { PdlOperationError } from 'src/logic-functions/errors/pdl-operation-error';
 import { buildBulkRecordsTrigger } from 'src/logic-functions/utils/build-bulk-records-trigger';
 import { buildLogicFunctionStep } from 'src/logic-functions/utils/build-logic-function-step';
 import { findExistingWorkflowId } from 'src/logic-functions/utils/find-existing-workflow-id';
@@ -42,7 +43,7 @@ export const seedEnrichmentWorkflow = async ({
   const workflowId = createResult.createWorkflow?.id;
 
   if (!isDefined(workflowId)) {
-    throw new Error(
+    throw new PdlOperationError(
       `Failed to create workflow "${seed.workflowName}": no id returned.`,
     );
   }
@@ -61,7 +62,7 @@ export const seedEnrichmentWorkflow = async ({
   )?.node?.id;
 
   if (!isDefined(draftVersionId)) {
-    throw new Error(
+    throw new PdlOperationError(
       `No draft version found for workflow "${seed.workflowName}".`,
     );
   }
