@@ -17,7 +17,10 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, IconLayoutSidebarRight } from 'twenty-ui/display';
+import {
+  IconChevronDown,
+  IconLayoutSidebarRight,
+} from 'twenty-ui-deprecated/display';
 import { type FieldsConfiguration } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`

@@ -9,6 +9,7 @@ import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
 import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
+import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/manifest/utils/validate-conditional-availability-usage';
 import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils/validate-view-filter-operands';
 import { type ApplicationConfig, type LogicFunctionConfig } from '@/sdk/define';
 import { type CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
@@ -45,6 +46,7 @@ import {
   type PreInstallLogicFunctionApplicationManifest,
   type RoleManifest,
   type SkillManifest,
+  type StandaloneViewFieldManifest,
   type ViewManifest,
 } from 'twenty-shared/application';
 import {
@@ -95,6 +97,7 @@ export const buildManifest = async (
   const frontComponents: FrontComponentManifest[] = [];
   const publicAssets: AssetManifest[] = [];
   const views: ViewManifest[] = [];
+  const viewFields: StandaloneViewFieldManifest[] = [];
   const navigationMenuItems: NavigationMenuItemManifest[] = [];
   const pageLayouts: PageLayoutManifest[] = [];
   const pageLayoutTabs: PageLayoutTabManifest[] = [];
@@ -117,6 +120,7 @@ export const buildManifest = async (
   const frontComponentsFilePaths: string[] = [];
   const publicAssetsFilePaths: string[] = [];
   const viewsFilePaths: string[] = [];
+  const viewFieldsFilePaths: string[] = [];
   const navigationMenuItemsFilePaths: string[] = [];
   const pageLayoutsFilePaths: string[] = [];
   const pageLayoutTabsFilePaths: string[] = [];
@@ -125,6 +129,10 @@ export const buildManifest = async (
   for (const filePath of filePaths) {
     const fileContent = await readFile(filePath, 'utf-8');
     const relativePath = relative(appPath, filePath);
+
+    errors.push(
+      ...validateConditionalAvailabilityUsage(fileContent, relativePath),
+    );
 
     const targetFunctionName = extractDefineEntity(fileContent);
 
@@ -392,6 +400,19 @@ export const buildManifest = async (
         viewsFilePaths.push(relativePath);
         break;
       }
+      case ManifestEntityKey.ViewFields: {
+        const extract =
+          await extractManifestFromFile<StandaloneViewFieldManifest>({
+            appPath,
+            filePath,
+          });
+
+        viewFields.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        viewFieldsFilePaths.push(relativePath);
+        break;
+      }
       case ManifestEntityKey.NavigationMenuItems: {
         const extract =
           await extractManifestFromFile<NavigationMenuItemManifest>({
@@ -570,6 +591,7 @@ export const buildManifest = async (
         frontComponents: frontComponents.sort(byId),
         publicAssets: publicAssets.sort(byPath),
         views: views.sort(byId),
+        viewFields: viewFields.sort(byId),
         navigationMenuItems: navigationMenuItems.sort(byId),
         pageLayouts: pageLayouts.sort(byId),
         pageLayoutTabs: pageLayoutTabs.sort(byId),
@@ -590,6 +612,7 @@ export const buildManifest = async (
     frontComponents: frontComponentsFilePaths,
     publicAssets: publicAssetsFilePaths,
     views: viewsFilePaths,
+    viewFields: viewFieldsFilePaths,
     navigationMenuItems: navigationMenuItemsFilePaths,
     pageLayouts: pageLayoutsFilePaths,
     pageLayoutTabs: pageLayoutTabsFilePaths,

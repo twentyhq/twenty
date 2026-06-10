@@ -20,7 +20,6 @@ const makeFieldMetadata = (
     name: overrides.name,
     label: overrides.label ?? overrides.name,
     type: overrides.type,
-    isCustom: overrides.isCustom ?? false,
     isActive: true,
     isSystem: false,
     isUIReadOnly: false,

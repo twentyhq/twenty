@@ -4,19 +4,19 @@ import type { TabType } from '@/sections/Tabs';
 
 export const AI_HERO_TABS: TabType[] = [
   {
-    body: msg`Show me all deals closing this month`,
-    icon: 'search',
+    body: msg`Build a pipeline board grouped by stage`,
+    icon: 'kanban',
   },
   {
-    body: msg`Create follow-up tasks for my top 10 accounts`,
-    icon: 'check',
+    body: msg`Generate tasks for my top 10 accounts`,
+    icon: 'checklist',
   },
   {
-    body: msg`Summarize this customer's history`,
-    icon: 'edit',
+    body: msg`Build a dashboard of pipeline by stage`,
+    icon: 'chart',
   },
   {
-    body: msg`Create a workflow that sends an email sequence`,
-    icon: 'code',
+    body: msg`Draft a workflow for an email sequence`,
+    icon: 'workflow',
   },
 ];

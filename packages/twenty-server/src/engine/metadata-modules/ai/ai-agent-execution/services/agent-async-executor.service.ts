@@ -7,6 +7,7 @@ import {
   type LanguageModelUsage,
   Output,
   stepCountIs,
+  type StepResult,
   type ToolSet,
 } from 'ai';
 import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
@@ -27,6 +28,7 @@ import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/
 import { WORKFLOW_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-system-prompts.const';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
+import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
@@ -120,6 +122,7 @@ export class AgentAsyncExecutorService {
     let accumulatedUsage: LanguageModelUsage = EMPTY_USAGE;
     let cacheCreationTokens = 0;
     let nativeWebSearchCallCount = 0;
+    let executionSteps: StepResult<ToolSet>[] = [];
 
     try {
       if (agent) {
@@ -257,69 +260,83 @@ export class AgentAsyncExecutorService {
       nativeWebSearchCallCount = countNativeWebSearchCallsFromSteps(
         textResponse.steps,
       );
+      executionSteps = textResponse.steps;
 
       const agentSchema =
         agent?.responseFormat?.type === 'json'
           ? agent.responseFormat.schema
           : undefined;
 
-      if (!agentSchema) {
-        return {
-          result: { response: textResponse.text },
-          usage: textResponse.usage,
-          cacheCreationTokens,
-          nativeWebSearchCallCount,
-          hasNoMoreAvailableCredits,
-        };
-      }
+      let result: object = { response: textResponse.text };
 
-      const structuredResult = await generateText({
-        system: WORKFLOW_SYSTEM_PROMPTS.OUTPUT_GENERATOR,
-        model: registeredModel.model,
-        prompt: `Based on the following execution results, generate the structured output according to the schema:
+      if (agentSchema) {
+        const structuredResult = await generateText({
+          system: WORKFLOW_SYSTEM_PROMPTS.OUTPUT_GENERATOR,
+          model: registeredModel.model,
+          prompt: `Based on the following execution results, generate the structured output according to the schema:
 
                  Execution Results: ${textResponse.text}
 
                  Please generate the structured output based on the execution results and context above.`,
-        output: Output.object({ schema: jsonSchema(agentSchema) }),
-        experimental_telemetry: AI_TELEMETRY_CONFIG,
-        onStepFinish: async (step) => {
-          const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-            await this.aiBillingService.decrementAndCheckAvailableCredits(
-              registeredModel.modelId,
-              {
-                usage: step.usage,
-                cacheCreationTokens: extractCacheCreationTokens(
-                  step.providerMetadata,
-                ),
-              },
-              workspaceId,
-            );
+          output: Output.object({ schema: jsonSchema(agentSchema) }),
+          experimental_telemetry: AI_TELEMETRY_CONFIG,
+          onStepFinish: async (step) => {
+            const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
+              await this.aiBillingService.decrementAndCheckAvailableCredits(
+                registeredModel.modelId,
+                {
+                  usage: step.usage,
+                  cacheCreationTokens: extractCacheCreationTokens(
+                    step.providerMetadata,
+                  ),
+                },
+                workspaceId,
+              );
 
-          if (stepHasNoMoreAvailableCredits) {
-            hasNoMoreAvailableCredits = true;
-          }
-        },
-      });
+            if (stepHasNoMoreAvailableCredits) {
+              hasNoMoreAvailableCredits = true;
+            }
+          },
+        });
 
-      accumulatedUsage = mergeLanguageModelUsage(
-        textResponse.usage,
-        structuredResult.usage,
-      );
-
-      if (structuredResult.output == null) {
-        throw new AiException(
-          'Failed to generate structured output from execution results',
-          AiExceptionCode.AGENT_EXECUTION_FAILED,
+        accumulatedUsage = mergeLanguageModelUsage(
+          textResponse.usage,
+          structuredResult.usage,
         );
+        executionSteps = [...textResponse.steps, ...structuredResult.steps];
+
+        if (structuredResult.output == null) {
+          throw new AiException(
+            'Failed to generate structured output from execution results',
+            AiExceptionCode.AGENT_EXECUTION_FAILED,
+          );
+        }
+
+        result = structuredResult.output as object;
       }
 
+      const resolvedModelId = registeredModel.modelId;
+      const tokenCostInDollars = this.aiBillingService.calculateCost(
+        resolvedModelId,
+        { usage: accumulatedUsage, cacheCreationTokens },
+      );
+      const totalCostInDollars =
+        tokenCostInDollars +
+        nativeWebSearchCallCount * NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS;
+      const creditsUsedMicro = Math.round(
+        convertDollarsToBillingCredits(totalCostInDollars),
+      );
+
       return {
-        result: structuredResult.output as object,
+        result,
         usage: accumulatedUsage,
         cacheCreationTokens,
         nativeWebSearchCallCount,
         hasNoMoreAvailableCredits,
+        steps: executionSteps,
+        modelId: resolvedModelId,
+        totalCostInDollars,
+        creditsUsedMicro,
       };
     } catch (error) {
       if (error instanceof AiException) {

@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Logger,
   Param,
   Res,
   UseFilters,
@@ -15,6 +16,7 @@ import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-file-response-headers.utils';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -39,6 +41,8 @@ import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/works
   WorkspaceMigrationRunnerRestApiExceptionFilter,
 )
 export class FrontComponentController {
+  private readonly logger = new Logger(FrontComponentController.name);
+
   constructor(private readonly frontComponentService: FrontComponentService) {}
 
   @Get(':frontComponentId')
@@ -48,40 +52,58 @@ export class FrontComponentController {
     @Param('frontComponentId') frontComponentId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    try {
-      const fileStream =
-        await this.frontComponentService.getBuiltComponentStream({
-          frontComponentId,
-          workspaceId: workspace.id,
-        });
+    const fileResponse = await this.frontComponentService
+      .getBuiltComponentPresignedUrlOrStream({
+        frontComponentId,
+        workspaceId: workspace.id,
+      })
+      .catch((error) => {
+        if (error instanceof FrontComponentException) {
+          throw error;
+        }
 
-      res.setHeader('Content-Type', 'application/javascript');
+        if (
+          error instanceof FileStorageException &&
+          error.code === FileStorageExceptionCode.FILE_NOT_FOUND
+        ) {
+          throw new FrontComponentException(
+            'Front component built file not found',
+            FrontComponentExceptionCode.FRONT_COMPONENT_NOT_FOUND,
+          );
+        }
 
-      await pipeline(fileStream, res);
-    } catch (error) {
-      // Mid-stream error: client already received partial data, nothing to do
-      if (res.headersSent) {
-        return;
-      }
+        this.logger.error(
+          'getBuiltComponentPresignedUrlOrStream failed unexpectedly',
+          { error },
+        );
 
-      if (
-        error instanceof FileStorageException &&
-        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
-      ) {
         throw new FrontComponentException(
-          'Front component built file not found',
-          FrontComponentExceptionCode.FRONT_COMPONENT_NOT_FOUND,
+          'Error retrieving front component built file',
+          FrontComponentExceptionCode.FRONT_COMPONENT_NOT_READY,
+        );
+      });
+
+    if (fileResponse.type === 'redirect') {
+      return res.redirect(fileResponse.presignedUrl);
+    }
+
+    setFileResponseHeaders(res, fileResponse.mimeType);
+
+    try {
+      await pipeline(fileResponse.stream, res);
+    } catch (error) {
+      this.logger.error('Front component stream failed mid-transfer', {
+        error,
+      });
+
+      if (!res.headersSent) {
+        throw new FrontComponentException(
+          'Error streaming front component built file',
+          FrontComponentExceptionCode.FRONT_COMPONENT_NOT_READY,
         );
       }
 
-      if (error instanceof FrontComponentException) {
-        throw error;
-      }
-
-      throw new FrontComponentException(
-        `Error retrieving front component built file: ${error.message}`,
-        FrontComponentExceptionCode.FRONT_COMPONENT_NOT_READY,
-      );
+      res.destroy();
     }
   }
 }

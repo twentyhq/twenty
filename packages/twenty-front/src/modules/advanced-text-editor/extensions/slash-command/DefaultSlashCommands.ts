@@ -9,7 +9,7 @@ import {
   IconList,
   IconListNumbers,
   IconPilcrow,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 
 export type SlashCommandConfig = {
   id: string;

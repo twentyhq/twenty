@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
 import { useStore } from 'jotai';
+import { useCallback } from 'react';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { tokenPairState } from '@/auth/states/tokenPairState';
@@ -40,7 +40,13 @@ export const useImpersonationSession = () => {
         );
       }
 
-      await getAuthTokensFromLoginToken(loginToken);
+      try {
+        await getAuthTokensFromLoginToken(loginToken);
+      } catch (error) {
+        sessionStorage.removeItem(IMPERSONATION_SESSION_KEY);
+        throw error;
+      }
+
       reloadWithSession(targetPath);
     },
     [store, getAuthTokensFromLoginToken],

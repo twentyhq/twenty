@@ -9,11 +9,11 @@ import { SettingsEmailingDomainVerificationRecords } from '@/settings/emailing-d
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconTrash } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
+import { IconTrash } from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
 import {
   DeleteEmailingDomainDocument,
   type GetEmailingDomainsQuery,
@@ -75,12 +75,12 @@ export const SettingsEmailingDomainDetail = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={emailingDomain.domain}
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
           children: <Trans>Email</Trans>,
@@ -117,6 +117,6 @@ export const SettingsEmailingDomainDetail = () => {
         confirmButtonAccent="danger"
         loading={deleting}
       />
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

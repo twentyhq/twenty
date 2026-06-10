@@ -14,15 +14,17 @@ import {
   IconTrash,
   useIcons,
   type IconComponent,
-} from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 type ApplicationInfo = {
   name: string;
 };
 
 type MarketplaceAppInfo = {
-  icon: string;
   logo?: string | null;
 };
 
@@ -107,11 +109,6 @@ export const SettingsToolIcon = ({
         size="xs"
       />
     );
-  }
-
-  if (isDefined(marketplaceApp)) {
-    const MarketplaceIcon = getIcon(marketplaceApp.icon);
-    return <MarketplaceIcon size={16} />;
   }
 
   if (isDefined(application)) {

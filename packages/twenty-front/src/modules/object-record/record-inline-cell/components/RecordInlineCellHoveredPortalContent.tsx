@@ -1,6 +1,6 @@
 import { RecordInlineCellHoveredPortal } from '@/object-record/record-inline-cell/components/RecordInlineCellHoveredPortal';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledRecordTableCellHoveredPortalContent = styled.div<{
   readonly?: boolean;
@@ -21,7 +21,7 @@ const StyledInlineCellBaseContainer = styled.div<{ readonly: boolean }>`
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   height: fit-content;
-  user-select: none;
+  user-select: text;
   width: 100%;
 `;
 

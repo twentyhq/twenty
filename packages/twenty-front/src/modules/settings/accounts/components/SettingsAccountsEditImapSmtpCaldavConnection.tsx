@@ -5,10 +5,10 @@ import { useParams } from 'react-router-dom';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsPath } from 'twenty-shared/types';
 
-import { Loader } from 'twenty-ui/feedback';
+import { Loader } from 'twenty-ui-deprecated/feedback';
 
 import { getSettingsPath } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -64,7 +64,7 @@ export const SettingsAccountsEditImapSmtpCaldavConnection = () => {
   const renderForm = () => (
     // oxlint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formMethods}>
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={t`Edit Account`}
         links={[
           {
@@ -94,7 +94,7 @@ export const SettingsAccountsEditImapSmtpCaldavConnection = () => {
             existingProtocols={existingProtocols}
           />
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     </FormProvider>
   );
 

@@ -604,7 +604,8 @@
         "cacheCreationCostPerMillionTokens": 18.75,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 4096,
-        "modalities": ["image", "pdf"]
+        "modalities": ["image", "pdf"],
+        "isDeprecated": true
       },
       {
         "name": "claude-3-5-haiku-latest",
@@ -641,7 +642,8 @@
         "cacheCreationCostPerMillionTokens": 1,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 8192,
-        "modalities": ["image", "pdf"]
+        "modalities": ["image", "pdf"],
+        "isDeprecated": true
       },
       {
         "name": "claude-opus-4-1-20250805",
@@ -667,7 +669,8 @@
         "contextWindowTokens": 200000,
         "maxOutputTokens": 64000,
         "modalities": ["image", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "isDeprecated": true
       },
       {
         "name": "claude-3-5-sonnet-20240620",
@@ -679,7 +682,8 @@
         "cacheCreationCostPerMillionTokens": 3.75,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 8192,
-        "modalities": ["image", "pdf"]
+        "modalities": ["image", "pdf"],
+        "isDeprecated": true
       },
       {
         "name": "claude-3-5-sonnet-20241022",
@@ -691,7 +695,8 @@
         "cacheCreationCostPerMillionTokens": 3.75,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 8192,
-        "modalities": ["image", "pdf"]
+        "modalities": ["image", "pdf"],
+        "isDeprecated": true
       },
       {
         "name": "claude-opus-4-5-20251101",
@@ -729,7 +734,8 @@
         "cacheCreationCostPerMillionTokens": 0.3,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 4096,
-        "modalities": ["image", "pdf"]
+        "modalities": ["image", "pdf"],
+        "isDeprecated": true
       },
       {
         "name": "claude-sonnet-4-20250514",
@@ -793,7 +799,8 @@
         "cacheCreationCostPerMillionTokens": 0.3,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 4096,
-        "modalities": ["image", "pdf"]
+        "modalities": ["image", "pdf"],
+        "isDeprecated": true
       },
       {
         "name": "claude-opus-4-0",
@@ -825,7 +832,8 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "isDeprecated": true
       },
       {
         "name": "gemini-2.0-flash-lite",
@@ -835,7 +843,8 @@
         "outputCostPerMillionTokens": 0.3,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 8192,
-        "modalities": ["image", "audio", "video", "pdf"]
+        "modalities": ["image", "audio", "video", "pdf"],
+        "isDeprecated": true
       },
       {
         "name": "gemini-flash-lite-latest",
@@ -972,7 +981,8 @@
         "cachedInputCostPerMillionTokens": 0.025,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 8192,
-        "modalities": ["image", "audio", "video", "pdf"]
+        "modalities": ["image", "audio", "video", "pdf"],
+        "isDeprecated": true
       },
       {
         "name": "gemini-3.5-flash",
@@ -1002,7 +1012,8 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true
+        "supportsReasoning": true,
+        "isDeprecated": true
       }
     ]
   },
@@ -1031,13 +1042,24 @@
         "modalities": ["image"]
       },
       {
+        "name": "mistral-medium-latest",
+        "label": "Mistral Medium (latest)",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 0.4,
+        "outputCostPerMillionTokens": 2,
+        "contextWindowTokens": 262144,
+        "maxOutputTokens": 262144,
+        "modalities": ["image"]
+      },
+      {
         "name": "devstral-medium-latest",
         "label": "Devstral 2 (latest)",
         "modelFamily": "MISTRAL",
         "inputCostPerMillionTokens": 0.4,
         "outputCostPerMillionTokens": 2,
         "contextWindowTokens": 262144,
-        "maxOutputTokens": 262144
+        "maxOutputTokens": 262144,
+        "isDeprecated": true
       },
       {
         "name": "mistral-small-2603",
@@ -1106,7 +1128,8 @@
         "outputCostPerMillionTokens": 0,
         "contextWindowTokens": 256000,
         "maxOutputTokens": 256000,
-        "modalities": ["image"]
+        "modalities": ["image"],
+        "isDeprecated": true
       },
       {
         "name": "mistral-large-latest",
@@ -1137,6 +1160,16 @@
         "contextWindowTokens": 128000,
         "maxOutputTokens": 128000,
         "supportsReasoning": true
+      },
+      {
+        "name": "devstral-latest",
+        "label": "Devstral 2",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 0.4,
+        "outputCostPerMillionTokens": 2,
+        "contextWindowTokens": 262144,
+        "maxOutputTokens": 262144,
+        "isDeprecated": true
       },
       {
         "name": "open-mixtral-8x22b",
@@ -1174,7 +1207,8 @@
         "inputCostPerMillionTokens": 0.1,
         "outputCostPerMillionTokens": 0.3,
         "contextWindowTokens": 128000,
-        "maxOutputTokens": 128000
+        "maxOutputTokens": 128000,
+        "isDeprecated": true
       },
       {
         "name": "devstral-2512",
@@ -1183,7 +1217,8 @@
         "inputCostPerMillionTokens": 0.4,
         "outputCostPerMillionTokens": 2,
         "contextWindowTokens": 262144,
-        "maxOutputTokens": 262144
+        "maxOutputTokens": 262144,
+        "isDeprecated": true
       },
       {
         "name": "codestral-latest",
@@ -1205,6 +1240,16 @@
         "modalities": ["image"]
       },
       {
+        "name": "open-mistral-nemo",
+        "label": "Open Mistral Nemo",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 0.15,
+        "outputCostPerMillionTokens": 0.15,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 128000,
+        "isDeprecated": true
+      },
+      {
         "name": "ministral-3b-latest",
         "label": "Ministral 3B (latest)",
         "modelFamily": "MISTRAL",
@@ -1220,7 +1265,8 @@
         "inputCostPerMillionTokens": 0.1,
         "outputCostPerMillionTokens": 0.3,
         "contextWindowTokens": 128000,
-        "maxOutputTokens": 128000
+        "maxOutputTokens": 128000,
+        "isDeprecated": true
       },
       {
         "name": "open-mixtral-8x7b",
@@ -1259,18 +1305,8 @@
         "inputCostPerMillionTokens": 0.4,
         "outputCostPerMillionTokens": 2,
         "contextWindowTokens": 128000,
-        "maxOutputTokens": 128000
-      },
-      {
-        "name": "mistral-medium-latest",
-        "label": "Mistral Medium (latest)",
-        "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 1.5,
-        "outputCostPerMillionTokens": 7.5,
-        "contextWindowTokens": 262144,
-        "maxOutputTokens": 262144,
-        "modalities": ["image"],
-        "supportsReasoning": true
+        "maxOutputTokens": 128000,
+        "isDeprecated": true
       }
     ]
   },
@@ -1310,7 +1346,7 @@
           "thresholdTokens": 200000,
           "cachedInputCostPerMillionTokens": 0.4
         },
-        "contextWindowTokens": 2000000,
+        "contextWindowTokens": 1000000,
         "maxOutputTokens": 30000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true
@@ -1346,7 +1382,7 @@
           "thresholdTokens": 200000,
           "cachedInputCostPerMillionTokens": 0.4
         },
-        "contextWindowTokens": 2000000,
+        "contextWindowTokens": 1000000,
         "maxOutputTokens": 30000,
         "modalities": ["image", "pdf"]
       }

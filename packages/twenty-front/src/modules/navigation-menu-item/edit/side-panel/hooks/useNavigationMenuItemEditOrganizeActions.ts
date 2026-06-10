@@ -3,15 +3,14 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useNavigate } from 'react-router-dom';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconDotsVertical } from 'twenty-ui/display';
+import { IconDotsVertical } from 'twenty-ui-deprecated/display';
 
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { type PendingInsertionNavigationMenuItem } from '@/navigation-menu-item/common/types/PendingInsertionNavigationMenuItem';
-import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
+import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
-import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemsDraftState';
 import { type OrganizeActionsProps } from '@/navigation-menu-item/edit/side-panel/components/SidePanelEditOrganizeActions';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
@@ -25,16 +24,12 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 const computeInsertionPosition = (
   selectedItem: { id: string; folderId?: string | null },
-  workspaceNavigationMenuItems: NavigationMenuItem[],
+  sectionItems: NavigationMenuItem[],
   offset: 0 | 1,
 ): PendingInsertionNavigationMenuItem | null => {
   const folderId = selectedItem.folderId ?? null;
-  const itemsInFolderSorted = workspaceNavigationMenuItems
-    .filter(
-      (item) =>
-        (item.folderId ?? null) === folderId &&
-        !isDefined(item.userWorkspaceId),
-    )
+  const itemsInFolderSorted = sectionItems
+    .filter((item) => (item.folderId ?? null) === folderId)
     .sort((a, b) => a.position - b.position);
   const selectedIndexSorted = itemsInFolderSorted.findIndex(
     (item) => item.id === selectedItem.id,
@@ -66,8 +61,7 @@ export const useNavigationMenuItemEditOrganizeActions =
     const setPendingInsertionNavigationMenuItem = useSetAtomState(
       pendingInsertionNavigationMenuItemState,
     );
-    const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
-    const items = useNavigationMenuItemSectionItems();
+    const items = useNavigationMenuItemEditSectionItems();
     const { moveUp, moveDown, remove } = useNavigationMenuItemMoveRemove();
     const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
     const views = useAtomStateValue(viewsSelector);
@@ -99,13 +93,13 @@ export const useNavigationMenuItemEditOrganizeActions =
 
     const handleMoveUp = () => {
       if (canMoveUp && isDefined(selectedNavigationMenuItemIdInEditMode)) {
-        moveUp(selectedNavigationMenuItemIdInEditMode);
+        void moveUp(selectedNavigationMenuItemIdInEditMode);
       }
     };
 
     const handleMoveDown = () => {
       if (canMoveDown && isDefined(selectedNavigationMenuItemIdInEditMode)) {
-        moveDown(selectedNavigationMenuItemIdInEditMode);
+        void moveDown(selectedNavigationMenuItemIdInEditMode);
       }
     };
 
@@ -118,7 +112,7 @@ export const useNavigationMenuItemEditOrganizeActions =
         siblings[selectedIndexInSiblings + 1] ??
         siblings[selectedIndexInSiblings - 1];
 
-      remove(selectedNavigationMenuItemIdInEditMode);
+      void remove(selectedNavigationMenuItemIdInEditMode);
 
       if (isDefined(nextItem)) {
         setSelectedNavigationMenuItemIdInEditMode(nextItem.id);
@@ -144,11 +138,7 @@ export const useNavigationMenuItemEditOrganizeActions =
 
     const handleAddAtOffset = (offset: 0 | 1) => {
       if (!isDefined(selectedItem)) return;
-      const insertion = computeInsertionPosition(
-        selectedItem,
-        workspaceNavigationMenuItems,
-        offset,
-      );
+      const insertion = computeInsertionPosition(selectedItem, items, offset);
       if (!insertion) return;
 
       const title =

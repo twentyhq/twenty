@@ -1,5 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
-import { type Nullable } from 'twenty-ui/utilities';
+import { type Nullable } from 'twenty-ui-deprecated/utilities';
 
 // TODO: we should create a custom oxlint rule that enforces the use of this function
 // instead of using the `===` operator where a and b are | undefined | null

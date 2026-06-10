@@ -28,8 +28,11 @@ import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-functi
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
 import { logicFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/logic-function/utils/logic-function-graphql-api-exception-handler.utils';
+import { APPLICATION_KEEPALIVE_INTERVAL_MS } from 'src/engine/subscriptions/constants/application-keepalive-interval-ms.constant';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
+import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
+import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
 
 @UseGuards(WorkspaceAuthGuard, FeatureFlagGuard, NoPermissionGuard)
 @MetadataResolver()
@@ -40,6 +43,7 @@ export class LogicFunctionResolver {
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly subscriptionService: SubscriptionService,
+    private readonly eventLogLiveService: EventLogLiveService,
   ) {}
 
   @Query(() => LogicFunctionDTO)
@@ -252,13 +256,31 @@ export class LogicFunctionResolver {
     },
   })
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
-  logicFunctionLogs(
+  async logicFunctionLogs(
     @Args('input') _: LogicFunctionLogsInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    return this.subscriptionService.subscribe({
+    // Register CLI presence (refreshed by the heartbeat) so the executor only publishes when watched.
+    await this.eventLogLiveService.markWatched(
+      workspace.id,
+      SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,
+    );
+
+    const iterator = await this.subscriptionService.subscribe({
       channel: SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,
       workspaceId: workspace.id,
+    });
+
+    return wrapAsyncIteratorWithLifecycle(iterator, {
+      onHeartbeat: async () => {
+        await this.eventLogLiveService.markWatched(
+          workspace.id,
+          SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,
+        );
+
+        return true;
+      },
+      heartbeatIntervalMs: APPLICATION_KEEPALIVE_INTERVAL_MS,
     });
   }
 }

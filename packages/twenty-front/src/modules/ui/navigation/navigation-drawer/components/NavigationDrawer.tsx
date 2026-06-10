@@ -19,7 +19,10 @@ import {
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
 
@@ -52,7 +55,6 @@ const StyledAnimatedContainer = styled.div<{
 `;
 
 const StyledContainer = styled.div<{
-  isSettings?: boolean;
   isExpanded?: boolean;
 }>`
   box-sizing: border-box;
@@ -60,10 +62,8 @@ const StyledContainer = styled.div<{
   flex-direction: column;
   gap: ${themeCssVariables.spacing[3]};
   height: 100%;
-  padding: ${({ isSettings }) =>
-    isSettings
-      ? `${themeCssVariables.spacing[3]} 0 ${themeCssVariables.spacing[4]} 0`
-      : `${themeCssVariables.spacing[3]} 0 ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[2]}`};
+  padding: ${themeCssVariables.spacing[3]} 0 ${themeCssVariables.spacing[4]}
+    ${themeCssVariables.spacing[2]};
   width: ${({ isExpanded }) =>
     isExpanded ? `var(${NAVIGATION_DRAWER_WIDTH_VAR})` : '100%'};
   @media (max-width: ${MOBILE_VIEWPORT}px) {
@@ -123,7 +123,7 @@ export const NavigationDrawer = ({
         isExpanded={isExpanded}
         isResizing={isResizing}
       >
-        <StyledContainer isSettings={isSettingsDrawer} isExpanded={isExpanded}>
+        <StyledContainer isExpanded={isExpanded}>
           {!isMobile && isSettingsDrawer && title ? (
             <NavigationDrawerBackButton title={title} />
           ) : (

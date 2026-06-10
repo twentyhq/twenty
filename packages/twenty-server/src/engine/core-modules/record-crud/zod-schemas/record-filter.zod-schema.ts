@@ -3,26 +3,37 @@ import {
   RelationType,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
+import { shouldExcludeFieldFromAgentToolSchema } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
 import { generateFieldFilterZodSchema } from 'src/engine/core-modules/record-crud/zod-schemas/field-filters.zod-schema';
-import { shouldExcludeFieldFromAgentToolSchema } from 'src/engine/metadata-modules/field-metadata/utils/should-exclude-field-from-agent-tool-schema.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 // Builds the per-field filter shape and full recursive filter schema
-// for a given object metadata, reusable across find and updateMany tools
-export const generateRecordFilterSchema = (
-  objectMetadata: ObjectMetadataForToolSchema,
-  restrictedFields?: RestrictedFieldsPermissions,
-): {
+// for a given object metadata, reusable across find, delete, and updateMany tools
+export const generateRecordFilterSchema = ({
+  objectMetadata,
+  restrictedFields,
+  additionalExcludedFieldNames = [],
+}: {
+  objectMetadata: ObjectMetadataForToolSchema;
+  restrictedFields?: RestrictedFieldsPermissions;
+  additionalExcludedFieldNames?: string[];
+}): {
   filterShape: Record<string, z.ZodTypeAny>;
   filterSchema: z.ZodTypeAny;
 } => {
   const filterShape: Record<string, z.ZodTypeAny> = {};
 
   objectMetadata.fields.forEach((field) => {
-    if (shouldExcludeFieldFromAgentToolSchema(field)) {
+    if (
+      shouldExcludeFieldFromAgentToolSchema({
+        fieldName: field.name,
+        isSystem: field.isSystem,
+        additionalExcludedFieldNames,
+      })
+    ) {
       return;
     }
 

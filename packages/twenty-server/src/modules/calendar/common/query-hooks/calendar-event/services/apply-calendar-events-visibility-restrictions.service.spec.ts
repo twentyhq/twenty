@@ -37,6 +37,7 @@ const createMockCalendarEvent = (
   updatedAt: '2024-03-20T09:00:00Z',
   iCalUid: '',
   conferenceSolution: '',
+  recordingPreference: 'AUTO',
   calendarChannelEventAssociations: [],
   calendarEventParticipants: [],
 });

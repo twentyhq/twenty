@@ -4,37 +4,23 @@ import {
   getClientIpKey,
   readJsonBody,
 } from '@/lib/api';
-import { splitFullName } from '@/sections/PartnerApplication';
+import {
+  buildLogicFunctionPayload,
+  partnerApplicationRequestSchema,
+} from '@/app/api/partner-application/partner-application-schema';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
-const PARTNER_PROGRAM_IDS = ['technology', 'content', 'solutions'] as const;
-
-const partnerApplicationRequestSchema = z.strictObject({
-  email: z
-    .string()
-    .trim()
-    .min(1, { error: 'Email is required.' })
-    .pipe(z.email({ error: 'Invalid email address.' })),
-  name: z.string().trim().min(1, { error: 'Name is required.' }),
-  company: z.string().trim().min(1, { error: 'Company is required.' }),
-  website: z
-    .string()
-    .trim()
-    .min(1, { error: 'Website is required.' })
-    .pipe(z.httpUrl({ error: 'Invalid website URL.' })),
-  message: z.string().trim().min(1, { error: 'Message is required.' }),
-  programId: z.enum(PARTNER_PROGRAM_IDS).optional(),
-  opportunities: z.string().trim().optional(),
-});
-
+// Use z.url() (not z.httpUrl) so localhost destinations are accepted in dev.
+// z.httpUrl enforces a TLD-shaped hostname and would reject http://localhost:2020/...
 const webhookUrlSchema = z
   .string()
   .trim()
-  .pipe(z.httpUrl({ error: 'Invalid webhook URL.' }));
+  .pipe(z.url({ error: 'Invalid webhook URL.' }));
+
+const applicationSecretSchema = z.string().trim().min(1);
 
 const MAX_BODY_BYTES = 16 * 1024;
-
 const WEBHOOK_TIMEOUT_MS = 8_000;
 
 const checkRateLimit = createRateLimiter({
@@ -46,15 +32,45 @@ export async function POST(request: Request) {
   const webhookUrlResult = webhookUrlSchema.safeParse(
     process.env.PARTNER_APPLICATION_WEBHOOK_URL,
   );
+  const secretResult = applicationSecretSchema.safeParse(
+    process.env.PARTNER_APPLICATION_SECRET,
+  );
 
-  if (!webhookUrlResult.success) {
+  if (!webhookUrlResult.success || !secretResult.success) {
+    const rawWebhookUrl = process.env.PARTNER_APPLICATION_WEBHOOK_URL;
+    const rawSecret = process.env.PARTNER_APPLICATION_SECRET;
+    console.error(
+      '[partner-application] 503 — endpoint env vars failed validation',
+      JSON.stringify({
+        PARTNER_APPLICATION_WEBHOOK_URL: {
+          present: rawWebhookUrl !== undefined,
+          isEmptyAfterTrim: (rawWebhookUrl ?? '').trim() === '',
+          length: (rawWebhookUrl ?? '').length,
+          value: rawWebhookUrl,
+          parseError: webhookUrlResult.success
+            ? null
+            : (webhookUrlResult.error.issues[0]?.message ?? 'unknown'),
+        },
+        PARTNER_APPLICATION_SECRET: {
+          present: rawSecret !== undefined,
+          isEmptyAfterTrim: (rawSecret ?? '').trim() === '',
+          length: (rawSecret ?? '').length,
+          parseError: secretResult.success
+            ? null
+            : (secretResult.error.issues[0]?.message ?? 'unknown'),
+        },
+        envFileHint:
+          'Next dev reads .env.local (not .env.prod). After editing env vars you must restart `yarn nx dev twenty-website` — Next does not hot-reload env vars.',
+      }),
+    );
     return NextResponse.json(
-      { error: 'Partner application webhook is not configured.' },
+      { error: 'Partner application endpoint is not configured.' },
       { status: 503 },
     );
   }
 
   const webhookUrl = webhookUrlResult.data;
+  const applicationSecret = secretResult.data;
 
   const rateLimit = checkRateLimit(getClientIpKey(request));
   if (!rateLimit.allowed) {
@@ -102,25 +118,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: message }, { status: 400 });
   }
 
-  const { name, email, company, website, message, programId, opportunities } =
-    parsed.data;
-  const { firstName, lastName } = splitFullName(name);
+  const payload = buildLogicFunctionPayload(parsed.data);
 
   const upstream = await fetchWithTimeout(
     webhookUrl,
     {
-      body: JSON.stringify({
-        Email: email,
-        FirstName: firstName,
-        LastName: lastName,
-        Company: company,
-        Website: website,
-        Message: message,
-        ...(programId !== undefined && { ProgramId: programId }),
-        ...(opportunities !== undefined &&
-          opportunities !== '' && { Opportunities: opportunities }),
-      }),
-      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Application-Secret': applicationSecret,
+      },
       method: 'POST',
     },
     { timeoutMs: WEBHOOK_TIMEOUT_MS },
@@ -128,13 +135,64 @@ export async function POST(request: Request) {
 
   if (!upstream.ok) {
     const status = upstream.error === 'timeout' ? 504 : 502;
+    console.error(
+      '[partner-application] upstream fetch failed',
+      JSON.stringify({
+        url: webhookUrl,
+        error: upstream.error,
+        payloadKeys: Object.keys(payload),
+      }),
+    );
     return NextResponse.json(
       { error: 'Partner application could not be submitted.' },
       { status },
     );
   }
 
+  let upstreamBody: string;
+  try {
+    upstreamBody = await upstream.response.text();
+  } catch {
+    upstreamBody = '';
+  }
+
   if (!upstream.response.ok) {
+    console.error(
+      '[partner-application] upstream returned non-2xx',
+      JSON.stringify({
+        url: webhookUrl,
+        status: upstream.response.status,
+        statusText: upstream.response.statusText,
+        body: upstreamBody.slice(0, 2000),
+        payloadKeys: Object.keys(payload),
+      }),
+    );
+    return NextResponse.json(
+      { error: 'Partner application could not be submitted.' },
+      { status: 502 },
+    );
+  }
+
+  let logicResult: unknown;
+  try {
+    logicResult = JSON.parse(upstreamBody);
+  } catch {
+    logicResult = null;
+  }
+
+  if (
+    typeof logicResult !== 'object' ||
+    logicResult === null ||
+    (logicResult as Record<string, unknown>)['ok'] !== true
+  ) {
+    console.error(
+      '[partner-application] logic function returned non-ok result',
+      JSON.stringify({
+        url: webhookUrl,
+        body: upstreamBody.slice(0, 2000),
+        payloadKeys: Object.keys(payload),
+      }),
+    );
     return NextResponse.json(
       { error: 'Partner application could not be submitted.' },
       { status: 502 },

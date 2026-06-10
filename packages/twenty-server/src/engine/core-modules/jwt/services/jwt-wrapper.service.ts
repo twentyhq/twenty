@@ -12,10 +12,8 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import {
-  type JwtPayload,
-  JwtTokenTypeEnum,
-} from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type JwtPayload } from 'src/engine/core-modules/auth/types/jwt-payload.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import {
   JWT_ASYMMETRIC_ALGORITHM,
   JWT_LEGACY_ALGORITHM,
@@ -72,7 +70,7 @@ export class JwtWrapperService {
     return jwt.sign(payload as object, signingKey.privateKeyPem, signOptions);
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   verify<T extends object = any>(
     token: string,
     options?: { secret: string },
@@ -80,7 +78,7 @@ export class JwtWrapperService {
     return this.jwtService.verify(token, options);
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   decode<T = any>(payload: string, options?: jwt.DecodeOptions): T {
     return this.jwtService.decode(payload, options);
   }
@@ -131,7 +129,7 @@ export class JwtWrapperService {
   async verifyJwtToken(
     token: string,
     options?: JwtVerifyOptions,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
   ): Promise<any> {
     const header = decodeJwtHeader(token);
     const payload = this.decode<JwtPayload>(token, { json: true });

@@ -144,6 +144,33 @@ const handler = async (event: RoutePayload) => {
 Header-Namen werden in Kleinbuchstaben normalisiert. Greifen Sie mit Schlüsseln in Kleinbuchstaben darauf zu (z. B. `event.headers['content-type']`).
 </Note>
 
+#### Benutzerdefinierte HTTP-Antwort
+
+Standardmäßig sendet das Zurückgeben eines einfachen Werts aus Ihrem Handler diesen als `200`-Antwort zurück (JSON für Objekte, `text/plain` für Zeichenketten). Um den Statuscode und die Antwort-Header zu steuern, geben Sie eine `Response` aus `twenty-sdk/logic-function` zurück:
+
+```ts
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  return new Response('<h1>Hello</h1>', {
+    status: 201,
+    headers: { 'content-type': 'text/html' },
+  });
+};
+```
+
+Aus Sicherheitsgründen sind Antwort-Header auf eine Allowlist beschränkt. Jeder Header, der nicht auf der Liste steht (z. B. `Set-Cookie`, CORS-Header wie `Access-Control-Allow-Origin` oder benutzerdefinierte `X-*`-Header), wird stillschweigend verworfen, bevor die Antwort gesendet wird. Die erlaubten Antwort-Header sind:
+
+* `content-type`
+* `content-language`
+* `content-disposition`
+* `cache-control`
+* `retry-after`
+
+<Note>
+Der Statuscode muss ein gültiger HTTP-Statuscode sein (zwischen 100 und 599). Antwort-Header-Namen werden ohne Beachtung der Groß-/Kleinschreibung verglichen.
+</Note>
+
 #### Datenbank-Event-Trigger-Payload
 
 Wenn ein Datenbank-Event-Trigger Ihre Logic Function aufruft, erhält sie eine `DatabaseEventPayload` pro geändertem Datensatz. Die Payload kombiniert Metadaten über den Quell-Workspace und das Objekt mit dem Ereignis auf Datensatzebene.

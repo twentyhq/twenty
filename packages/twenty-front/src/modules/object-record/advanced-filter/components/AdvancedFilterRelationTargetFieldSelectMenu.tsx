@@ -18,8 +18,8 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, useIcons } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
+import { IconChevronLeft, useIcons } from 'twenty-ui-deprecated/display';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
 
 type AdvancedFilterRelationTargetFieldSelectMenuProps = {
   recordFilterId: string;
@@ -62,16 +62,8 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
       ? sourceFieldMetadataItem.relation.targetObjectMetadata.id
       : null;
 
-  const { filterableFieldMetadataItems: allTargetFields } =
+  const { filterableFieldMetadataItems: relationTargetFields } =
     useFilterableFieldMetadataItems(targetObjectMetadataId ?? '');
-
-  // The backend supports a single hop only. Exclude many-to-one relations
-  // from the target list so the user can't compose multi-hop traversals
-  // (e.g. Person → Company → ParentCompany) that the dispatcher would
-  // collapse back to a filter-by-id on the intermediate relation.
-  const relationTargetFields = allTargetFields.filter(
-    (field) => !isManyToOneRelationField(field),
-  );
 
   if (
     !isDefined(sourceFieldMetadataItem) ||

@@ -1,5 +1,8 @@
 import { RestPlaygroundSchemaFetchEffect } from '@/settings/playground/components/RestPlaygroundSchemaFetchEffect';
-import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
+import {
+  isPlaygroundApiKeyFresh,
+  playgroundApiKeyState,
+} from '@/settings/playground/states/playgroundApiKeyState';
 import { type PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useState, lazy, Suspense } from 'react';
@@ -8,7 +11,10 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledContainer = styled.div`
   border: 1px solid ${themeCssVariables.border.color.medium};
@@ -38,7 +44,7 @@ const StyledContainer = styled.div`
 
 const ApiReferenceReact = lazy(() =>
   import('@scalar/api-reference-react').then((module) => {
-    import('@scalar/api-reference-react/style.css?inline');
+    import('@scalar/api-reference-react/style.css');
     return {
       default: module.ApiReferenceReact,
     };
@@ -55,7 +61,7 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
   const playgroundApiKey = useAtomStateValue(playgroundApiKeyState);
   const [specContent, setSpecContent] = useState<object | null>(null);
 
-  if (!playgroundApiKey) {
+  if (!isPlaygroundApiKeyFresh(playgroundApiKey)) {
     onError();
     return null;
   }
@@ -74,7 +80,7 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
     <StyledContainer>
       <RestPlaygroundSchemaFetchEffect
         schema={schema}
-        apiKey={playgroundApiKey}
+        apiKey={playgroundApiKey.token}
         onSchemaLoaded={setSpecContent}
         onError={onError}
       />
@@ -84,12 +90,11 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
         <Suspense fallback={fallback}>
           <ApiReferenceReact
             configuration={{
-              spec: {
-                content: specContent,
-              },
+              content: specContent,
               authentication: {
-                http: {
-                  bearer: { token: playgroundApiKey },
+                preferredSecurityScheme: 'bearerAuth',
+                securitySchemes: {
+                  bearerAuth: { token: playgroundApiKey.token },
                 },
               },
               baseServerURL: REACT_APP_SERVER_BASE_URL + '/' + schema,

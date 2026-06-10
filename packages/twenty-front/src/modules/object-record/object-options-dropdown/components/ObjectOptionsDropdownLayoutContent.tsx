@@ -34,8 +34,12 @@ import {
   IconLayoutSidebarRight,
   IconTable,
   OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
-import { MenuItem, MenuItemSelect, MenuItemToggle } from 'twenty-ui/navigation';
+} from 'twenty-ui-deprecated/display';
+import {
+  MenuItem,
+  MenuItemSelect,
+  MenuItemToggle,
+} from 'twenty-ui-deprecated/navigation';
 import {
   ViewCalendarLayout,
   ViewOpenRecordIn,

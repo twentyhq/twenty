@@ -81,7 +81,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
   flatFieldMetadataMaps,
   shouldIgnoreSoftDeleteDefaultFilter,
 }: {
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   record: any;
   filter: RecordGqlOperationFilter;
   flatObjectMetadata: FlatObjectMetadata;
@@ -208,7 +208,8 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       objectFields.find((field) => field.name === filterKey) ??
       objectFields.find(
         (field) =>
-          field.type === FieldMetadataType.RELATION &&
+          (field.type === FieldMetadataType.RELATION ||
+            field.type === FieldMetadataType.MORPH_RELATION) &&
           computeMorphOrRelationFieldJoinColumnName({ name: field.name }) ===
             filterKey,
       );
@@ -411,7 +412,8 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
           });
         });
       }
-      case FieldMetadataType.RELATION: {
+      case FieldMetadataType.RELATION:
+      case FieldMetadataType.MORPH_RELATION: {
         const isJoinColumn =
           computeMorphOrRelationFieldJoinColumnName({
             name: objectMetadataField.name,

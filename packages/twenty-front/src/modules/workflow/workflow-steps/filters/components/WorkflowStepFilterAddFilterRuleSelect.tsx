@@ -14,8 +14,8 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { t } from '@lingui/core/macro';
-import { IconLibraryPlus, IconPlus } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
+import { IconLibraryPlus, IconPlus } from 'twenty-ui-deprecated/display';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
 import { v4 } from 'uuid';
 
 type WorkflowStepFilterAddFilterRuleSelectProps = {

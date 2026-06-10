@@ -13,13 +13,14 @@ import {
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { SettingsAdminServerAdminAccess } from '@/settings/admin-panel/components/SettingsAdminServerAdminAccess';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
 import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
 import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpersonate';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
@@ -30,12 +31,13 @@ import {
   IconCalendar,
   IconEyeShare,
   IconId,
+  IconLock,
   IconMail,
   IconUser,
-} from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { Section } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   type UserLookupAdminPanelQuery,
@@ -91,6 +93,8 @@ export const SettingsAdminUserDetail = () => {
         }) ?? '',
     })) ?? [];
 
+  const displayName = userFullName || userId || '';
+
   const userInfoItems = [
     {
       Icon: IconUser,
@@ -114,16 +118,28 @@ export const SettingsAdminUserDetail = () => {
         ? new Date(user.createdAt).toLocaleDateString()
         : '',
     },
+    ...(currentUser?.canAccessFullAdminPanel && isDefined(userId)
+      ? [
+          {
+            Icon: IconLock,
+            label: t`Server access`,
+            value: (
+              <SettingsAdminServerAdminAccess
+                userId={userId}
+                userLabel={displayName}
+              />
+            ),
+          },
+        ]
+      : []),
   ];
-
-  const displayName = userFullName || userId || '';
 
   if (isLoading) {
     return <SettingsSkeletonLoader />;
   }
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       links={[
         {
           children: t`Other`,
@@ -166,7 +182,8 @@ export const SettingsAdminUserDetail = () => {
               />
               {currentUser?.canImpersonate &&
                 activeWorkspace &&
-                isDefined(user) && (
+                isDefined(user) &&
+                user.id !== currentUser.id && (
                   <StyledButtonContainer>
                     <Button
                       Icon={IconEyeShare}
@@ -191,6 +208,6 @@ export const SettingsAdminUserDetail = () => {
           </>
         )}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

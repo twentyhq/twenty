@@ -84,7 +84,7 @@ export default defineObject({
       universalIdentifier: '500021ad-ca42-4fd3-8727-392dd26b722a',
       type: FieldType.MULTI_SELECT,
       name: 'partnerScope',
-      label: 'Partner Scope',
+      label: 'Categories',
       icon: 'IconListCheck',
       isNullable: true,
       options: [
@@ -93,6 +93,11 @@ export default defineObject({
         { id: 'c88bf189-8be4-4431-aa03-85928f8b2a52', value: 'DATA_MIGRATION', label: 'Data migration', position: 2, color: 'turquoise' },
         { id: 'a7fd9429-c26f-49ab-bf52-4d591f5ca7a0', value: 'HOSTING_ENVIRONMENT', label: 'Hosting environment', position: 3, color: 'purple' },
         { id: '9e416a39-05c6-4c80-9f36-99b5b60c26ec', value: 'WORKFLOWS', label: 'Workflows', position: 4, color: 'orange' },
+        { id: 'b1000001-0000-4000-8000-0000000000a1', value: 'ADVISORY', label: 'Advisory & Discovery', position: 5, color: 'blue' },
+        { id: 'b1000002-0000-4000-8000-0000000000a2', value: 'SOLUTIONING', label: 'Solutioning', position: 6, color: 'green' },
+        { id: 'b1000003-0000-4000-8000-0000000000a3', value: 'DEVELOPMENT', label: 'Custom Development', position: 7, color: 'turquoise' },
+        { id: 'b1000004-0000-4000-8000-0000000000a4', value: 'HOSTING', label: 'Hosting & Infrastructure', position: 8, color: 'purple' },
+        { id: 'b1000005-0000-4000-8000-0000000000a5', value: 'SUPPORT', label: 'Training & Adoption', position: 9, color: 'pink' },
       ],
     },
     {
@@ -424,14 +429,6 @@ export default defineObject({
       isNullable: true,
     },
     {
-      universalIdentifier: 'ced87a97-cb2a-43cb-a6fc-4a1eff2892ba',
-      type: FieldType.CURRENCY,
-      name: 'projectBudgetTypical',
-      label: 'Project Budget Typical',
-      icon: 'IconCoins',
-      isNullable: true,
-    },
-    {
       universalIdentifier: '6a095709-7620-495f-b6e0-790743e412d5',
       type: FieldType.CURRENCY,
       name: 'hourlyRate',
@@ -469,6 +466,14 @@ export default defineObject({
       name: 'introduction',
       label: 'Introduction',
       icon: 'IconFileText',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'a0000011-0000-4000-8000-000000000011',
+      type: FieldType.TEXT,
+      name: 'applicationNotes',
+      label: 'Application Notes',
+      icon: 'IconClipboardText',
       isNullable: true,
     },
     {

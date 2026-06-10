@@ -109,15 +109,15 @@ describe('DatabaseToolProvider', () => {
 
     expect(descriptorNames).toEqual(
       expect.arrayContaining([
-        'create_note_target',
+        'create_one_note_target',
         'create_many_note_targets',
-        'update_note_target',
+        'update_one_note_target',
         'update_many_note_targets',
-        'delete_note_target',
-        'create_task_target',
-        'create_attachment',
-        'create_timeline_activity',
-        'create_person',
+        'delete_one_note_target',
+        'create_one_task_target',
+        'create_one_attachment',
+        'create_one_timeline_activity',
+        'create_one_person',
       ]),
     );
   });
@@ -147,27 +147,27 @@ describe('DatabaseToolProvider', () => {
 
     expect(descriptorNames).toEqual(
       expect.arrayContaining([
-        'find_workspace_members',
-        'find_messages',
-        'find_calendar_events',
-        'find_dashboards',
+        'find_many_workspace_members',
+        'find_many_messages',
+        'find_many_calendar_events',
+        'find_many_dashboards',
       ]),
     );
 
     expect(descriptorNames).toEqual(
       expect.not.arrayContaining([
-        'create_workspace_member',
-        'update_workspace_member',
-        'delete_workspace_member',
-        'create_message',
-        'update_message',
-        'delete_message',
-        'create_calendar_event',
-        'update_calendar_event',
-        'delete_calendar_event',
-        'create_dashboard',
-        'update_dashboard',
-        'delete_dashboard',
+        'create_one_workspace_member',
+        'update_one_workspace_member',
+        'delete_one_workspace_member',
+        'create_one_message',
+        'update_one_message',
+        'delete_one_message',
+        'create_one_calendar_event',
+        'update_one_calendar_event',
+        'delete_one_calendar_event',
+        'create_one_dashboard',
+        'update_one_dashboard',
+        'delete_one_dashboard',
       ]),
     );
   });

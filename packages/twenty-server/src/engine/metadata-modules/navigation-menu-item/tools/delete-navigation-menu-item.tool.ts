@@ -4,7 +4,7 @@ import { type NavigationMenuItemToolContext } from 'src/engine/metadata-modules/
 import { type NavigationMenuItemToolDependencies } from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-dependencies.type';
 
 const deleteNavigationMenuItemSchema = z.object({
-  id: z.string().uuid().describe('Id of the navigation menu item to delete'),
+  id: z.uuid().describe('Id of the navigation menu item to delete'),
 });
 
 type DeleteNavigationMenuItemParams = z.infer<

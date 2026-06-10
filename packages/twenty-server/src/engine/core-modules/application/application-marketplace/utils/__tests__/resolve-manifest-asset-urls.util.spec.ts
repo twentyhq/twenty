@@ -24,6 +24,7 @@ const buildMinimalManifest = (
   agents: [],
   publicAssets: [],
   views: [],
+  viewFields: [],
   navigationMenuItems: [],
   pageLayouts: [],
   pageLayoutTabs: [],

@@ -10,7 +10,7 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui-deprecated/display';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 export const useCommandMenuItemClick = ({

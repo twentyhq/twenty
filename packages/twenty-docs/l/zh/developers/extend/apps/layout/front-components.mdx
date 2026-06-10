@@ -200,45 +200,22 @@ export default defineFrontComponent({
 
 前端组件在沙盒 Web Worker 中于浏览器端运行，而[逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions)在服务器端运行。 二者之间没有直接的进程内调用——前端组件通过 HTTP 访问逻辑函数。
 
-使用 `httpRouteTriggerSettings` 声明的逻辑函数会通过 `/s/` 端点暴露在 `${TWENTY_API_URL}/s\<path>` 下。 你的前端组件使用 `fetch` 调用该路由，并使用 Twenty 注入到 worker 中的 `TWENTY_APP_ACCESS_TOKEN` 进行身份验证。
+使用 `httpRouteTriggerSettings` 声明的逻辑函数会通过 `/s/` 端点暴露在 `${TWENTY_API_URL}/s\<path>` 下。 你的前端组件使用来自 `twenty-client-sdk/rest` 的 `RestApiClient` 调用该路由，该客户端会使用 Twenty 注入到 worker 中的 `TWENTY_APP_ACCESS_TOKEN` 进行身份验证。
 
-一个小型可复用的辅助函数可以让调用端保持简洁：
-
-```ts src/shared/call-app-route.ts
-export async function callAppRoute(
-  path: string,
-  body: Record<string, unknown>,
-): Promise<unknown> {
-  const apiUrl = process.env.TWENTY_API_URL ?? '';
-  const token = process.env.TWENTY_APP_ACCESS_TOKEN;
-
-  const res = await fetch(`${apiUrl}/s${path}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    body: JSON.stringify(body),
-  });
-
-  if (!res.ok) {
-    throw new Error(`Logic function failed (${res.status})`);
-  }
-
-  return res.json();
-}
-```
+`RestApiClient` 正是为这种场景而构建的。 它会从 worker 环境中读取 `TWENTY_API_URL` 和 `TWENTY_APP_ACCESS_TOKEN`，附加 `Authorization: Bearer` 请求头，对 JSON 进行序列化和解析，并在 token 或 URL 缺失或响应为非 2xx 时抛出 `RestApiClientError`——这样你就不必在每个组件中重复实现这些样板逻辑。
 
 无头前端组件可以通过 `Command` 组件在挂载时执行调用，然后自动卸载：
 
 ```tsx src/front-components/sync-prs.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/command';
-import { callAppRoute } from 'src/shared/call-app-route';
+import { RestApiClient } from 'twenty-client-sdk/rest';
 
 const SyncPrs = () => {
   const execute = async () => {
-    await callAppRoute('/github/fetch-prs', {
+    const client = new RestApiClient();
+
+    await client.post('/s/github/fetch-prs', {
       owner: 'twentyhq',
       repo: 'twenty',
     });
@@ -256,7 +233,7 @@ export default defineFrontComponent({
 });
 ```
 
-传递给 `callAppRoute` 的 `path` 必须与逻辑函数的 `httpRouteTriggerSettings.path` 匹配（`/s` 前缀由辅助函数添加）：
+传递给客户端的路径是该路由的公共路径——逻辑函数的 `httpRouteTriggerSettings.path`，并以 `/s` 作为前缀。 保持 `isAuthRequired: true`；客户端会为你的组件提供由 Twenty 签发的应用访问令牌：
 
 ```ts src/logic-functions/fetch-prs.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -283,6 +260,48 @@ export default defineLogicFunction({
 <Note>
 `TWENTY_API_URL` 和 `TWENTY_APP_ACCESS_TOKEN` 会被自动注入——参见 [应用变量](#application-variables)。 由于机密应用变量永远不会暴露给前端组件，请将 API 密钥和其他敏感逻辑保留在逻辑函数中，而不是前端组件中。
 </Note>
+
+### RestApiClient 参考
+
+从 `twenty-client-sdk/rest` 中导入 `RestApiClient`。 它与 `CoreApiClient` 和 `MetadataApiClient` 属于同一客户端家族，但目标是你应用的 HTTP 路由，而不是 GraphQL API。
+
+| 方法                                | 描述                |
+| --------------------------------- | ----------------- |
+| `get(path, options?)`             | 发送一个 `GET` 请求     |
+| `post(path, body?, options?)`     | 发送一个 `POST` 请求    |
+| `put(path, body?, options?)`      | 发送一个 `PUT` 请求     |
+| `patch(path, body?, options?)`    | 发送一个 `PATCH` 请求   |
+| `delete(path, options?)`          | 发送一个 `DELETE` 请求  |
+| `request(method, path, options?)` | 使用任意 HTTP 方法的通用请求 |
+
+`options` 接受 `headers`、`query`（查询字符串参数记录；空值会被跳过），以及通过 `signal` 传入的 `AbortSignal`。 非 `FormData` 类型的对象 `body` 会被自动进行 JSON 序列化。 在收到 `401` 时，客户端会通过宿主刷新一次访问令牌，然后重试该请求。
+
+基础 URL 和令牌默认会从环境中解析得到。 在需要时将覆盖项传递给构造函数——例如在测试中：
+
+```ts
+const client = new RestApiClient({
+  baseUrl: 'https://api.example.com',
+  token: 'my-token',
+});
+```
+
+失败的请求会抛出 `RestApiClientError`，其中包含 `status`、`statusText`、`url` 和已解析的 `body`：
+
+```tsx
+import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
+
+const client = new RestApiClient();
+
+try {
+  const prs = await client.get('/s/github/fetch-prs', {
+    query: { state: 'open' },
+  });
+} catch (error) {
+  if (error instanceof RestApiClientError) {
+    console.error(error.status, error.body);
+  }
+}
+```
 
 ## 访问运行时上下文
 
@@ -423,8 +442,8 @@ export default defineFrontComponent({
 使用 `useSelectedRecordIds()` 来处理多个已选记录。 这对于批量操作很有用：
 
 ```tsx src/front-components/bulk-export.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { defineFrontComponent, numberOfSelectedRecords } from 'twenty-sdk/define';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 

@@ -75,7 +75,6 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       icon: createObjectInput.icon ?? null,
       isActive: true,
       isAuditLogged: true,
-      isCustom: true,
       isLabelSyncedWithName: createObjectInput.isLabelSyncedWithName ?? false,
       isRemote: createObjectInput.isRemote ?? false,
       isSearchable: true,

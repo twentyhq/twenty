@@ -220,25 +220,6 @@
         }
       }
     },
-    "chromatic": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "commands": [
-          {
-            "command": "nx storybook:build {projectName}",
-            "forwardAllArgs": false
-          },
-          "chromatic --storybook-build-dir=storybook-static {args.ci}"
-        ],
-        "parallel": false
-      },
-      "configurations": {
-        "ci": {
-          "ci": "--exit-zero-on-changes"
-        }
-      }
-    },
     "@nx/jest:jest": {
       "cache": true,
       "inputs": [

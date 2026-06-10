@@ -22,6 +22,7 @@
     },
     "typecheck": {},
     "lint": {},
+    "test": {},
     "generate-remote-dom-elements": {
       "executor": "nx:run-commands",
       "cache": true,
@@ -29,8 +30,8 @@
       "inputs": [
         "{projectRoot}/scripts/remote-dom/**/*",
         "{projectRoot}/src/constants/**/*",
-        "{workspaceRoot}/packages/twenty-ui/src/**/index.ts",
-        "{workspaceRoot}/packages/twenty-ui/src/**/*.tsx"
+        "{workspaceRoot}/packages/twenty-ui-deprecated/src/**/index.ts",
+        "{workspaceRoot}/packages/twenty-ui-deprecated/src/**/*.tsx"
       ],
       "outputs": [
         "{projectRoot}/src/host/generated/*",
@@ -57,7 +58,7 @@
         },
         {
           "target": "build:individual",
-          "projects": "twenty-ui"
+          "projects": "twenty-ui-deprecated"
         },
         {
           "target": "build:individual",
