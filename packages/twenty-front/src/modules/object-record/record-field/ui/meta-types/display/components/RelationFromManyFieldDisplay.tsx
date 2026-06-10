@@ -76,7 +76,7 @@ export const RelationFromManyFieldDisplay = () => {
       return;
     }
 
-    if (locallyDeletedIds.length == 0) {
+    if (locallyDeletedIds.length === 0) {
       setDisplayedFieldValue(fieldValue);
       return;
     }
@@ -135,10 +135,10 @@ export const RelationFromManyFieldDisplay = () => {
     ) => {
       if (detail.operation.type === 'destroy-many') {
         const destroyedIds = detail.operation.destroyedRecordIds;
-        setLocallyDeletedIds((prevIds) => [...prevIds, ...destroyedIds]);
+        setLocallyDeletedIds((prevIds) => Array.from(new Set([...prevIds, ...destroyedIds])));
       } else if (detail.operation.type === 'destroy-one') {
         const destroyedId = detail.operation.destroyedRecordId;
-        setLocallyDeletedIds((prevIds) => [...prevIds, destroyedId]);
+        setLocallyDeletedIds((prevIds) => Array.from(new Set([...prevIds, destroyedId])));
       }
     },
     objectMetadataItemId: listenObjectMetadataId,
