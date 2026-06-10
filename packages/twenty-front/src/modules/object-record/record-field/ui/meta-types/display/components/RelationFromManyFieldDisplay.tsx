@@ -35,7 +35,9 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-export const locallyDeletedRecordIdsAtomFamily = atomFamily((_key: string) => atom<string[]>([]));
+export const locallyDeletedRecordIdsAtomFamily = atomFamily((_key: string) =>
+  atom<string[]>([]),
+);
 
 export const RelationFromManyFieldDisplay = () => {
   const { fieldValue, fieldDefinition, generateRecordChipData } =
@@ -140,10 +142,14 @@ export const RelationFromManyFieldDisplay = () => {
     ) => {
       if (detail.operation.type === 'destroy-many') {
         const destroyedIds = detail.operation.destroyedRecordIds;
-        setLocallyDeletedIds((prevIds) => Array.from(new Set([...prevIds, ...destroyedIds])));
+        setLocallyDeletedIds((prevIds) =>
+          Array.from(new Set([...prevIds, ...destroyedIds])),
+        );
       } else if (detail.operation.type === 'destroy-one') {
         const destroyedId = detail.operation.destroyedRecordId;
-        setLocallyDeletedIds((prevIds) => Array.from(new Set([...prevIds, destroyedId])));
+        setLocallyDeletedIds((prevIds) =>
+          Array.from(new Set([...prevIds, destroyedId])),
+        );
       }
     },
     objectMetadataItemId: listenObjectMetadataId,

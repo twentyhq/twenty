@@ -143,8 +143,11 @@ export const useIncrementalDestroyManyRecords = <T>({
           throw error;
         });
 
-      const destroyedRecordsForThisBatch = response.data?.[mutationResponseField] ?? [];
-      actualDestroyedRecordIds.push(...destroyedRecordsForThisBatch.map(r => r.id));
+      const destroyedRecordsForThisBatch =
+        response.data?.[mutationResponseField] ?? [];
+      actualDestroyedRecordIds.push(
+        ...destroyedRecordsForThisBatch.map((r) => r.id),
+      );
 
       if (delayInMsBetweenMutations > 0) {
         await sleep(delayInMsBetweenMutations);
@@ -159,7 +162,10 @@ export const useIncrementalDestroyManyRecords = <T>({
 
     await incrementalFetchAndMutate(
       async ({ recordIds, totalCount, abortSignal }) => {
-        const actualDestroyedRecordIds = await destroyManyRecordsBatch(recordIds, abortSignal);
+        const actualDestroyedRecordIds = await destroyManyRecordsBatch(
+          recordIds,
+          abortSignal,
+        );
 
         totalDestroyedCount += actualDestroyedRecordIds.length;
 
