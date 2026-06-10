@@ -22,7 +22,7 @@ type BannerProps = {
   variant?: BannerVariant;
   className?: string;
   children: React.ReactNode;
-} & React.HTMLAttributes<HTMLDivElement>;
+};
 
 export const Banner = ({
   color = 'blue',

@@ -1,3 +1,4 @@
+import { clsx } from 'clsx';
 import { useContext } from 'react';
 import { ThemeContext } from '@ui/theme-constants';
 import { Button } from '@ui/input/button/components/Button/Button';
@@ -16,18 +17,24 @@ type InlineBannerProps = {
     hidden?: boolean;
   };
   LeftIcon?: IconComponent;
-} & React.HTMLAttributes<HTMLDivElement>;
+  className?: string;
+};
 
 export const InlineBanner = ({
   color,
   message,
   button,
   LeftIcon = IconInfoCircle,
+  className,
 }: InlineBannerProps) => {
   const { theme } = useContext(ThemeContext);
 
   return (
-    <Banner className={styles.banner} color={color} variant={'secondary'}>
+    <Banner
+      className={clsx(styles.banner, className)}
+      color={color}
+      variant={'secondary'}
+    >
       <div className={styles.bannerContent}>
         <LeftIcon size={theme.icon.size.md} />
         <span className={styles.bannerText}>{message}</span>

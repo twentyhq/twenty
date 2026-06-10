@@ -32,6 +32,7 @@ export type AvatarProps = {
 
 export const Avatar = ({
   avatarUrl,
+  className,
   size = 'md',
   placeholder,
   placeholderColorSeed = placeholder,
@@ -119,7 +120,7 @@ export const Avatar = ({
 
   return (
     <div
-      className={clsx(styles.root, styles[size])}
+      className={clsx(styles.root, styles[size], className)}
       data-type={type ?? undefined}
       data-clickable={!isUndefined(onClick) ? true : undefined}
       onClick={onClick}

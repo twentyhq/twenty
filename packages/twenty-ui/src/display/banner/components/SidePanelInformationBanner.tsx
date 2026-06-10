@@ -1,4 +1,5 @@
 import { clsx } from 'clsx';
+import { useId } from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import {
@@ -22,7 +23,7 @@ export const SidePanelInformationBanner = ({
   variant = 'default',
   tooltipMessage,
 }: SidePanelInformationBannerProps) => {
-  const tooltipId = 'side-panel-information-banner-tooltip';
+  const tooltipId = useId();
 
   return (
     <div
