@@ -246,6 +246,11 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       );
     }
 
+    await this.roleValidationService.validateRoleAssignableToUsersOrThrow(
+      defaultRoleId,
+      workspace.id,
+    );
+
     return defaultRoleId;
   }
 

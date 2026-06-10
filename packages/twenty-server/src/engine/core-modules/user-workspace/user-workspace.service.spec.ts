@@ -21,7 +21,11 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -36,6 +40,7 @@ describe('UserWorkspaceService', () => {
   let approvedAccessDomainService: ApprovedAccessDomainService;
   let globalWorkspaceOrmManager: GlobalWorkspaceOrmManager;
   let userRoleService: UserRoleService;
+  let roleValidationService: RoleValidationService;
   let onboardingService: OnboardingService;
 
   beforeEach(async () => {
@@ -174,6 +179,9 @@ describe('UserWorkspaceService', () => {
     } as unknown as WorkspaceRepository<UserWorkspaceEntity>);
 
     userRoleService = module.get<UserRoleService>(UserRoleService);
+    roleValidationService = module.get<RoleValidationService>(
+      RoleValidationService,
+    );
     onboardingService = module.get<OnboardingService>(OnboardingService);
   });
 
@@ -348,6 +356,9 @@ describe('UserWorkspaceService', () => {
         expect.objectContaining({ id: user.id, email: user.email }),
       );
       expect(
+        roleValidationService.validateRoleAssignableToUsersOrThrow,
+      ).toHaveBeenCalledWith(workspace.defaultRoleId, workspace.id);
+      expect(
         userRoleService.assignRoleToManyUserWorkspace,
       ).toHaveBeenCalledWith({
         workspaceId: workspace.id,
@@ -423,6 +434,44 @@ describe('UserWorkspaceService', () => {
       await expect(
         service.addUserToWorkspaceIfUserNotInWorkspace(user, workspace),
       ).rejects.toThrow(PermissionsException);
+    });
+
+    it('should throw if workspace default role is not assignable to users', async () => {
+      const user = {
+        id: 'user-id',
+        email: 'test@example.com',
+        createdAt: new Date('2024-01-01'),
+        updatedAt: new Date('2024-01-01'),
+        deletedAt: null,
+      } as unknown as UserEntity;
+      const workspace = {
+        id: 'workspace-id',
+        defaultRoleId: 'default-role-id',
+      } as WorkspaceEntity;
+
+      jest.spyOn(service, 'checkUserWorkspaceExists').mockResolvedValue(null);
+      jest
+        .spyOn(service, 'create')
+        .mockResolvedValue({} as UserWorkspaceEntity);
+      jest.spyOn(service, 'createWorkspaceMember').mockResolvedValue(undefined);
+      jest
+        .spyOn(
+          roleValidationService,
+          'validateRoleAssignableToUsersOrThrow',
+        )
+        .mockRejectedValue(
+          new PermissionsException(
+            PermissionsExceptionMessage.ROLE_CANNOT_BE_ASSIGNED_TO_USERS,
+            PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS,
+          ),
+        );
+
+      await expect(
+        service.addUserToWorkspaceIfUserNotInWorkspace(user, workspace),
+      ).rejects.toThrow(PermissionsException);
+      expect(service.create).not.toHaveBeenCalled();
+      expect(service.createWorkspaceMember).not.toHaveBeenCalled();
+      expect(userRoleService.assignRoleToManyUserWorkspace).not.toHaveBeenCalled();
     });
   });
 

@@ -9,6 +9,7 @@ import { type ExceptionHandlerOptions } from 'src/engine/core-modules/exception-
 
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import { type ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { MessageImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -100,6 +101,43 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
         if (exception instanceof MessageImportDriverException) {
           scope.setTag('messageImportDriverCode', exception.code);
           scope.setFingerprint([exception.code]);
+        }
+
+        if (exception instanceof WorkspaceMigrationBuilderException) {
+          const failedMetadataNames = Object.entries(
+            exception.failedWorkspaceMigrationBuildResult.report,
+          )
+            .filter(([, failedValidations]) => failedValidations.length > 0)
+            .map(([metadataName]) => metadataName)
+            .sort();
+
+          if (failedMetadataNames.length > 0) {
+            scope.setTag(
+              'workspaceMigrationFailedMetadataNames',
+              failedMetadataNames.join(','),
+            );
+          }
+
+          if (
+            failedMetadataNames.length === 1 &&
+            failedMetadataNames[0] === 'roleTarget'
+          ) {
+            const fingerprint = [
+              'workspaceMigrationValidationFailure',
+              'roleTarget',
+            ];
+
+            const genericOperationName = getGenericOperationName(
+              options?.operation?.name,
+            );
+
+            if (isDefined(genericOperationName)) {
+              fingerprint.push(genericOperationName);
+            }
+
+            scope.setFingerprint(fingerprint);
+            scope.setLevel('warning');
+          }
         }
 
         const eventId = Sentry.captureException(exception, {
