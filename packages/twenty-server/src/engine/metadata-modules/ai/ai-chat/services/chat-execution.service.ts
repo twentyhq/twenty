@@ -488,10 +488,34 @@ export class ChatExecutionService {
         await emitTurnUsageEvent(steps);
       })
       .catch((error) => {
-        if (error?.name === 'AbortError') {
+        if (this.isAbortError(error)) {
           return;
         }
-        this.exceptionHandlerService.captureExceptions([error]);
+
+        const providerError = this.getProviderApiErrorDetails(error);
+
+        if (providerError && providerError.statusCode >= 400) {
+          const errorMessage =
+            `AI provider stream usage failed (${registeredModel.sdkPackage}/${registeredModel.modelId}) with status ${providerError.statusCode}` +
+            `${providerError.code ? `, code ${providerError.code}` : ''}` +
+            `${providerError.param ? `, param ${providerError.param}` : ''}`;
+
+          if (providerError.statusCode >= 500) {
+            this.logger.error(errorMessage);
+          } else {
+            this.logger.warn(errorMessage);
+          }
+        }
+
+        this.exceptionHandlerService.captureExceptions([error], {
+          additionalData: {
+            sdkPackage: registeredModel.sdkPackage,
+            modelId: registeredModel.modelId,
+            statusCode: providerError?.statusCode,
+            code: providerError?.code,
+            param: providerError?.param,
+          },
+        });
       });
 
     return {
@@ -499,6 +523,55 @@ export class ChatExecutionService {
       modelConfig,
       hasNoMoreAvailableCredits: () => hasNoMoreAvailableCredits,
     };
+  }
+
+  private isAbortError(error: unknown): boolean {
+    return error instanceof Error && error.name === 'AbortError';
+  }
+
+  private getProviderApiErrorDetails(error: unknown): {
+    statusCode: number;
+    code?: string;
+    param?: string;
+  } | null {
+    if (typeof error !== 'object' || error === null) {
+      return null;
+    }
+
+    const statusCode =
+      'statusCode' in error && typeof error.statusCode === 'number'
+        ? error.statusCode
+        : null;
+
+    if (!isDefined(statusCode)) {
+      return null;
+    }
+
+    const errorPayload =
+      'responseBody' in error &&
+      typeof error.responseBody === 'object' &&
+      error.responseBody !== null &&
+      'error' in error.responseBody &&
+      typeof error.responseBody.error === 'object' &&
+      error.responseBody.error !== null
+        ? error.responseBody.error
+        : null;
+
+    const code =
+      errorPayload &&
+      'code' in errorPayload &&
+      typeof errorPayload.code === 'string'
+        ? errorPayload.code
+        : undefined;
+
+    const param =
+      errorPayload &&
+      'param' in errorPayload &&
+      typeof errorPayload.param === 'string'
+        ? errorPayload.param
+        : undefined;
+
+    return { statusCode, code, param };
   }
 
   private injectBrowsingContextIntoLastUserMessage(

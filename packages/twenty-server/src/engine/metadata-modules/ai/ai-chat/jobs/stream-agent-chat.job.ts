@@ -25,6 +25,7 @@ import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-cha
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
+import { AI_SDK_AZURE } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 import type { AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 
 import { STREAM_AGENT_CHAT_JOB_NAME } from './stream-agent-chat-job-name.constant';
@@ -250,6 +251,10 @@ export class StreamAgentChatJob {
             }
           });
 
+          const sendReasoning =
+            modelConfig.supportsReasoning === true &&
+            modelConfig.sdkPackage !== AI_SDK_AZURE;
+
           writer.merge(
             stream.toUIMessageStream({
               onError: (error) => {
@@ -294,7 +299,7 @@ export class StreamAgentChatJob {
                   reject(error);
                 }
               },
-              sendReasoning: true,
+              sendReasoning,
             }),
           );
         },
