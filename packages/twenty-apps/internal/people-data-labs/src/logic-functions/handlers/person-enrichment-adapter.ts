@@ -19,7 +19,6 @@ export const personEnrichmentAdapter: BatchEnrichmentAdapter<
     'No usable identifier (email, LinkedIn, PDL id, or name paired with a company) to match against PDL.',
   readRecords: readPeople,
   getNodeId: (node) => node.id,
-  getLastEnrichedAt: (node) => node.pdlLastEnrichedAt,
   extractParams: extractPersonMatchParams,
   enrichBatch: enrichPeople,
   buildMatchedData: buildPersonMatchedData,

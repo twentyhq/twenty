@@ -23,4 +23,15 @@ describe('pickWritableStandard', () => {
 
     expect(writable).toEqual({});
   });
+
+  it('overwrites a non-empty value when overrideExistingValues is set, still skipping unregistered fields', () => {
+    const writable = pickWritableStandard({
+      standard: { name: 'Acme', extra: 'value' },
+      current: { name: 'Existing', extra: 'already here' },
+      emptyChecks: { name: isEmptyText },
+      overrideExistingValues: true,
+    });
+
+    expect(writable).toEqual({ name: 'Acme' });
+  });
 });

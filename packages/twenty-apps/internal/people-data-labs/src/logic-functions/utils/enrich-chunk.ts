@@ -5,7 +5,6 @@ import { buildMatchedResult } from 'src/logic-functions/utils/build-matched-resu
 import { buildNotFoundResult } from 'src/logic-functions/utils/build-not-found-result';
 import { buildSkippedResult } from 'src/logic-functions/utils/build-skipped-result';
 import { INTERNAL_BOOKKEEPING_FIELDS } from 'src/logic-functions/utils/internal-field-names';
-import { isWithinTtl } from 'src/logic-functions/utils/is-within-ttl';
 import { nowIso } from 'src/logic-functions/utils/now-iso';
 import { type BatchEnrichmentAdapter } from 'src/types/batch-enrichment-adapter';
 import { type BulkEnrichInput } from 'src/types/bulk-enrich-input';
@@ -83,20 +82,6 @@ export const enrichChunk = async <TNode, TData, TParams>({
         buildErrorResult({
           recordId,
           error: `${adapter.objectNameSingular} ${recordId} not found`,
-        }),
-      );
-      continue;
-    }
-
-    if (
-      input.force !== true &&
-      isWithinTtl({ lastEnrichedAt: adapter.getLastEnrichedAt(recordNode) })
-    ) {
-      resultById.set(
-        recordId,
-        buildSkippedResult({
-          recordId,
-          message: 'Recently enriched; skipped (use force to re-run).',
         }),
       );
       continue;
@@ -184,6 +169,7 @@ export const enrichChunk = async <TNode, TData, TParams>({
         outcome: enrichmentOutcome,
         enrichedAt,
         companyIdByMatchKeyCache,
+        overrideExistingValues: input.overrideExistingValues === true,
       });
       matchedRecordsToPersist.push({ recordId, data: matchedRecordData });
     } catch (buildMatchedDataError) {

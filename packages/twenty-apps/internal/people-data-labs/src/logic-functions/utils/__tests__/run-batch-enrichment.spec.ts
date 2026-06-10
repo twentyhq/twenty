@@ -7,16 +7,18 @@ import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
 
 type FakeNode = {
   id: string;
-  lastEnrichedAt: string | null;
   hasIdentifier: boolean;
 };
 type FakeData = { id: string };
 type FakeParams = { id: string };
 
+type BuildMatchedDataArgs = Parameters<
+  BatchEnrichmentAdapter<FakeNode, FakeData, FakeParams>['buildMatchedData']
+>[0];
+
 type RecordConfig = {
   id: string;
   exists?: boolean;
-  lastEnrichedAt?: string | null;
   hasIdentifier?: boolean;
   outcome?: PdlEnrichResult<FakeData>;
   updateFails?: boolean;
@@ -43,7 +45,6 @@ const buildHarness = (configs: RecordConfig[]) => {
         )
         .map((config) => ({
           id: config.id,
-          lastEnrichedAt: config.lastEnrichedAt ?? null,
           hasIdentifier: config.hasIdentifier !== false,
         })),
   );
@@ -76,27 +77,37 @@ const buildHarness = (configs: RecordConfig[]) => {
 
   const updateManyStatus = vi.fn(async () => undefined);
 
-  const adapter: BatchEnrichmentAdapter<FakeNode, FakeData, FakeParams> = {
-    objectNameSingular: 'Test',
-    noIdentifierMessage: 'no identifier',
-    readRecords,
-    getNodeId: (node) => node.id,
-    getLastEnrichedAt: (node) => node.lastEnrichedAt,
-    extractParams: ({ node }) =>
-      node.hasIdentifier ? { id: node.id } : undefined,
-    enrichBatch,
-    buildMatchedData: async ({ node }) => {
+  const buildMatchedData = vi.fn(
+    async ({ node }: BuildMatchedDataArgs): Promise<Record<string, unknown>> => {
       if (byId.get(node.id)?.buildFails === true) {
         throw new Error('build failed');
       }
 
       return { value: node.id };
     },
+  );
+
+  const adapter: BatchEnrichmentAdapter<FakeNode, FakeData, FakeParams> = {
+    objectNameSingular: 'Test',
+    noIdentifierMessage: 'no identifier',
+    readRecords,
+    getNodeId: (node) => node.id,
+    extractParams: ({ node }) =>
+      node.hasIdentifier ? { id: node.id } : undefined,
+    enrichBatch,
+    buildMatchedData,
     updateOne,
     updateManyStatus,
   };
 
-  return { adapter, readRecords, enrichBatch, updateOne, updateManyStatus };
+  return {
+    adapter,
+    readRecords,
+    enrichBatch,
+    updateOne,
+    updateManyStatus,
+    buildMatchedData,
+  };
 };
 
 const isPresent = <TValue>(value: TValue | undefined): value is TValue =>
@@ -166,35 +177,45 @@ describe('runBatchEnrichment', () => {
     );
   });
 
-  it('skips recently-enriched and no-identifier records before the PDL call', async () => {
-    const harness = buildHarness([
-      { id: 'a', lastEnrichedAt: new Date().toISOString() },
-      { id: 'b', hasIdentifier: false },
-      { id: 'c' },
-    ]);
+  it('skips no-identifier records before the PDL call', async () => {
+    const harness = buildHarness([{ id: 'a', hasIdentifier: false }, { id: 'b' }]);
 
     const result = await runBatchEnrichment({
       client: CLIENT,
-      input: { records: records('a', 'b', 'c') },
+      input: { records: records('a', 'b') },
       adapter: harness.adapter,
     });
 
-    expect(harness.enrichBatch).toHaveBeenCalledWith([{ id: 'c' }]);
-    expect(result).toMatchObject({ skipped: 2, matched: 1 });
+    expect(harness.enrichBatch).toHaveBeenCalledWith([{ id: 'b' }]);
+    expect(result).toMatchObject({ skipped: 1, matched: 1 });
   });
 
-  it('re-enriches recently-enriched records when force is set', async () => {
-    const harness = buildHarness([
-      { id: 'a', lastEnrichedAt: new Date().toISOString() },
-    ]);
+  it('passes overrideExistingValues through to buildMatchedData', async () => {
+    const harness = buildHarness([{ id: 'a' }]);
 
     await runBatchEnrichment({
       client: CLIENT,
-      input: { records: records('a'), force: true },
+      input: { records: records('a'), overrideExistingValues: true },
       adapter: harness.adapter,
     });
 
-    expect(harness.enrichBatch).toHaveBeenCalledWith([{ id: 'a' }]);
+    expect(harness.buildMatchedData).toHaveBeenCalledWith(
+      expect.objectContaining({ overrideExistingValues: true }),
+    );
+  });
+
+  it('defaults overrideExistingValues to false when omitted', async () => {
+    const harness = buildHarness([{ id: 'a' }]);
+
+    await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: records('a') },
+      adapter: harness.adapter,
+    });
+
+    expect(harness.buildMatchedData).toHaveBeenCalledWith(
+      expect.objectContaining({ overrideExistingValues: false }),
+    );
   });
 
   it('marks missing records as ERROR without enriching them', async () => {

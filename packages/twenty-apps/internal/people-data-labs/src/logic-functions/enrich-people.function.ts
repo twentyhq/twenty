@@ -19,8 +19,15 @@ export default defineLogicFunction({
       {
         type: 'object',
         properties: {
-          records: { type: 'array', items: { type: 'object' } },
-          force: { type: 'boolean' },
+          records: {
+            type: 'array',
+            items: { type: 'object' },
+            label: 'Records',
+          },
+          overrideExistingValues: {
+            type: 'boolean',
+            label: 'Override Existing Values',
+          },
         },
       },
     ],
@@ -28,12 +35,12 @@ export default defineLogicFunction({
       {
         type: 'object',
         properties: {
-          success: { type: 'boolean' },
-          total: { type: 'number' },
-          matched: { type: 'number' },
-          notFound: { type: 'number' },
-          skipped: { type: 'number' },
-          errored: { type: 'number' },
+          success: { type: 'boolean', label: 'Success' },
+          total: { type: 'number', label: 'Total' },
+          matched: { type: 'number', label: 'Matched' },
+          notFound: { type: 'number', label: 'Not Found' },
+          skipped: { type: 'number', label: 'Skipped' },
+          errored: { type: 'number', label: 'Errored' },
         },
       },
     ],

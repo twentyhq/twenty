@@ -18,16 +18,19 @@ export const buildCompanyMatchedData = async ({
   node,
   outcome,
   enrichedAt,
+  overrideExistingValues,
 }: {
   node: CompanyNode;
   outcome: { data: PdlCompanyData };
   enrichedAt: string;
+  overrideExistingValues: boolean;
 }): Promise<Record<string, unknown>> => {
   const mapped = mapCompany(outcome.data);
   const writableStandard = pickWritableStandard({
     standard: mapped.standard,
     current: node as unknown as Record<string, unknown>,
     emptyChecks: COMPANY_EMPTY_CHECKS,
+    overrideExistingValues,
   });
 
   return pruneUndefined({

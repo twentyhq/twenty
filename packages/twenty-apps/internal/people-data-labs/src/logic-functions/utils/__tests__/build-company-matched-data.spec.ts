@@ -12,6 +12,7 @@ describe('buildCompanyMatchedData', () => {
       node: COMPANY_NODE_MOCK,
       outcome: { data: PDL_COMPANY_DATA_MOCK },
       enrichedAt: ENRICHED_AT,
+      overrideExistingValues: false,
     });
 
     expect(data.name).toBe('Acme Corp');
@@ -19,5 +20,16 @@ describe('buildCompanyMatchedData', () => {
     expect(data.pdlEnrichmentStatus).toBe('MATCHED');
     expect(data.pdlLastEnrichedAt).toBe(ENRICHED_AT);
     expect('domainName' in data).toBe(false);
+  });
+
+  it('overwrites a populated standard field when overrideExistingValues is set', async () => {
+    const data = await buildCompanyMatchedData({
+      node: COMPANY_NODE_MOCK,
+      outcome: { data: PDL_COMPANY_DATA_MOCK },
+      enrichedAt: ENRICHED_AT,
+      overrideExistingValues: true,
+    });
+
+    expect('domainName' in data).toBe(true);
   });
 });

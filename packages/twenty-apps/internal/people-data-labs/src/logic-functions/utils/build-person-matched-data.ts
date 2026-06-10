@@ -28,18 +28,21 @@ export const buildPersonMatchedData = async ({
   outcome,
   enrichedAt,
   companyIdByMatchKeyCache,
+  overrideExistingValues,
 }: {
   client: CoreApiClient;
   node: PersonNode;
   outcome: { likelihood?: number; data: PdlPersonData };
   enrichedAt: string;
   companyIdByMatchKeyCache: CompanyIdByMatchKeyCache;
+  overrideExistingValues: boolean;
 }): Promise<Record<string, unknown>> => {
   const mapped = mapPerson(outcome.data);
   const writableStandard = pickWritableStandard({
     standard: mapped.standard,
     current: node as unknown as Record<string, unknown>,
     emptyChecks: PERSON_EMPTY_CHECKS,
+    overrideExistingValues,
   });
 
   const currentCompanyId = isDefined(node.company?.id)

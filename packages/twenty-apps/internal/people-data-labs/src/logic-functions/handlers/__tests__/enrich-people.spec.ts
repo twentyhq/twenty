@@ -214,17 +214,27 @@ describe('enrichPeopleCore', () => {
     });
   });
 
-  it('skips a recently enriched record without calling PDL', async () => {
+  it('overwrites a populated standard field when overrideExistingValues is set', async () => {
+    enrichPeopleMock.mockResolvedValue([
+      {
+        outcome: 'matched',
+        httpStatus: 200,
+        likelihood: 5,
+        data: { id: 'pdl1', job_title: 'CEO' },
+      },
+    ]);
     const captured: Captured = {};
     const client = buildClient({
-      people: [{ ...PERSON_NODE_MOCK, pdlLastEnrichedAt: new Date().toISOString() }],
+      people: [{ ...PERSON_NODE_MOCK, jobTitle: 'Existing Title' }],
       captured,
     });
 
-    const result = await runOne(client);
+    await enrichPeopleCore({
+      input: { records: [{ id: 'p1' }], overrideExistingValues: true },
+      client,
+    });
 
-    expect(result.skipped).toBe(1);
-    expect(enrichPeopleMock).not.toHaveBeenCalled();
+    expect(captured.updatePerson?.jobTitle).toBe('CEO');
   });
 
   it('skips when there is no usable identifier', async () => {

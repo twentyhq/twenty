@@ -12,7 +12,6 @@ export type BatchEnrichmentAdapter<TNode, TData, TParams> = {
     recordIds: string[];
   }) => Promise<TNode[]>;
   getNodeId: (node: TNode) => string;
-  getLastEnrichedAt: (node: TNode) => string | null | undefined;
   extractParams: (args: {
     node: TNode;
     input: BulkEnrichInput;
@@ -24,6 +23,7 @@ export type BatchEnrichmentAdapter<TNode, TData, TParams> = {
     outcome: { likelihood?: number; data: TData };
     enrichedAt: string;
     companyIdByMatchKeyCache: CompanyIdByMatchKeyCache;
+    overrideExistingValues: boolean;
   }) => Promise<Record<string, unknown>>;
   updateOne: (args: {
     client: CoreApiClient;

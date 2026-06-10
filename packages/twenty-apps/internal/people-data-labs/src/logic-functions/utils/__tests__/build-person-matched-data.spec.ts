@@ -25,6 +25,7 @@ describe('buildPersonMatchedData', () => {
       },
       enrichedAt: ENRICHED_AT,
       companyIdByMatchKeyCache: new Map(),
+      overrideExistingValues: false,
     });
 
     expect(data.name).toEqual({ firstName: 'Jane', lastName: 'Doe' });
@@ -33,6 +34,21 @@ describe('buildPersonMatchedData', () => {
     expect(data.pdlEnrichmentStatus).toBe('MATCHED');
     expect(data.pdlLastEnrichedAt).toBe(ENRICHED_AT);
     expect('companyId' in data).toBe(false);
+  });
+
+  it('overwrites a populated standard field when overrideExistingValues is set', async () => {
+    const client = createCoreApiClientMock();
+
+    const data = await buildPersonMatchedData({
+      client,
+      node: { ...PERSON_NODE_MOCK, jobTitle: 'Existing Title' },
+      outcome: { likelihood: 8, data: { id: 'pdl1', job_title: 'CEO' } },
+      enrichedAt: ENRICHED_AT,
+      companyIdByMatchKeyCache: new Map(),
+      overrideExistingValues: true,
+    });
+
+    expect(data.jobTitle).toBe('CEO');
   });
 
   it('links a found-or-created company when the person has none', async () => {
@@ -55,6 +71,7 @@ describe('buildPersonMatchedData', () => {
       },
       enrichedAt: ENRICHED_AT,
       companyIdByMatchKeyCache: new Map(),
+      overrideExistingValues: false,
     });
 
     expect(data.companyId).toBe('co-new');

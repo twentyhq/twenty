@@ -13,7 +13,9 @@ const handler = (input: EnrichToolInput) => {
     return Promise.resolve(buildEmptyToolResult());
   }
 
-  return enrichCompaniesCore({ input: { records, force: input.force } });
+  return enrichCompaniesCore({
+    input: { records, overrideExistingValues: input.overrideExistingValues },
+  });
 };
 
 export default defineLogicFunction({
@@ -38,10 +40,10 @@ export default defineLogicFunction({
           description:
             'The ids of multiple Company records to enrich in one call.',
         },
-        force: {
+        overrideExistingValues: {
           type: 'boolean',
           description:
-            'Re-enrich even if the record was enriched recently (bypasses the freshness guard).',
+            'Overwrite existing field values with the enriched data instead of only filling empty fields.',
         },
       },
       anyOf: [{ required: ['recordId'] }, { required: ['recordIds'] }],
