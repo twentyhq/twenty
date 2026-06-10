@@ -57,7 +57,7 @@ export class ApiClient {
     this.client.interceptors.response.use(
       (response) => response,
       async (error) => {
-        if (error.response?.status === 401) {
+        if (error.response?.status === 401 && error.config) {
           // Prevent recursion: only attempt reauth once per request
           if (error.config._reauthAttempted) {
             throw error;
