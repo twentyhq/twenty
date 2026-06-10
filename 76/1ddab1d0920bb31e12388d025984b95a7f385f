@@ -1,0 +1,103 @@
+packages/twenty-server/src/modules/blocklist/utils/is-email-blocklisted.util.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-2,12-13,16,18-20
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-unsubscribe-result-page.util.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-13
+packages/twenty-server/src/engine/core-modules/emailing-domain/types/message-suppression-source.type.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-6
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/unsubscribe-token.service.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-81
+packages/twenty-server/src/engine/core-modules/auth/services/auth.service.ts
+  s_00feb31f113c96::t_caf110d120c18a 74,900-901
+packages/twenty-server/src/engine/core-modules/emailing-domain/constants/unsubscribe-hostname-prefix.constant.ts
+  s_00feb31f113c96::t_caf110d120c18a 1
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-unsubscribe-text-footer.util.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-2
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/message-suppression.service.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-208
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-unsubscribe-html-footer.util.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-2
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-unsubscribe-urls.util.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-17
+packages/twenty-server/src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
+  s_00feb31f113c96::t_caf110d120c18a 30,69
+packages/twenty-server/src/engine/core-modules/emailing-domain/controllers/unsubscribe.controller.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-163
+packages/twenty-server/src/engine/core-modules/messaging-webhooks/services/ses-inbound-unsubscribe-handler.service.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-47
+packages/twenty-server/src/engine/core-modules/messaging-webhooks/types/ses-event-bridge-notification.type.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-10,13,24-36
+packages/twenty-server/src/engine/core-modules/messaging-webhooks/types/ses-inbound-mail-intent.type.ts
+  s_00feb31f113c96::t_caf110d120c18a 1
+packages/twenty-server/src/engine/core-modules/messaging-webhooks/utils/resolve-workspace-id-from-aws-ses-resources.util.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-21
+packages/twenty-server/src/engine/core-modules/emailing-domain/constants/empty-unsubscribe-content.constant.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-7
+packages/twenty-server/src/engine/core-modules/messaging-webhooks/services/ses-inbound-mail-handler.service.ts
+  s_00feb31f113c96::t_caf110d120c18a 6,8,21,27-40
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/message-topic-subscription.service.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-368
+packages/twenty-server/src/utils/__test__/get-domain-from-email.spec.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-29
+packages/twenty-server/src/engine/core-modules/emailing-domain/types/unsubscribe-urls.type.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-4
+packages/twenty-server/src/utils/__test__/get-domain-name-by-email.spec.ts
+  s_00feb31f113c96::t_caf110d120c18a 45-47,103,107
+packages/twenty-server/src/engine/core-modules/messaging-webhooks/services/ses-outbound-webhook-router.service.ts
+  s_00feb31f113c96::t_caf110d120c18a 9,22,59-65
+packages/twenty-server/src/utils/get-domain-from-email.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-13
+packages/twenty-server/src/utils/get-domain-name-by-email.ts
+  s_00feb31f113c96::t_caf110d120c18a 5,7-8,19,28,30
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-unsubscribe-preferences-page.util.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-38
+packages/twenty-server/src/engine/core-modules/emailing-domain/constants/blocking-reasons-by-message-category.constant.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-19
+packages/twenty-server/src/engine/core-modules/emailing-domain/types/subscribed-topic.type.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-4
+packages/twenty-server/src/engine/core-modules/messaging-webhooks/services/ses-outbound-sending-state-handler.service.ts
+  s_00feb31f113c96::t_caf110d120c18a 6-7,25
+packages/twenty-server/src/engine/core-modules/emailing-domain/types/message-topic-subscription-source.type.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-6
+packages/twenty-server/src/engine/core-modules/emailing-domain/constants/unsubscribe-mailbox.constant.ts
+  s_00feb31f113c96::t_caf110d120c18a 1
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-5
+packages/twenty-server/src/engine/core-modules/emailing-domain/types/message-suppression-reason.type.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-5
+packages/twenty-server/src/engine/core-modules/emailing-domain/types/unsubscribe-content.type.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-7
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/escape-html.util.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-10
+packages/twenty-server/src/engine/core-modules/messaging-webhooks/services/ses-outbound-suppression-handler.service.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-131
+packages/twenty-server/src/engine/core-modules/messaging-webhooks/messaging-webhooks.module.ts
+  s_00feb31f113c96::t_caf110d120c18a 6,9,22,24
+packages/twenty-server/src/engine/core-modules/messaging-webhooks/utils/resolve-inbound-mail-intent.util.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-16
+packages/twenty-server/src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util.ts
+  s_00feb31f113c96::t_caf110d120c18a 4,7
+packages/twenty-server/src/utils/is-work-email.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-2,4,7-9
+packages/twenty-server/src/engine/core-modules/emailing-domain/types/message-topic-subscription-status.type.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-4
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-unsubscribe-headers.util.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-10
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/unsubscribe-hostname.service.ts
+  s_00feb31f113c96::t_caf110d120c18a 1-181
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "761ddab1d0920bb31e12388d025984b95a7f385f",
+  "prompts": {},
+  "sessions": {
+    "s_00feb31f113c96": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8eaa9ec8-3e18-4d6e-8565-e27bf80f62fc",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
