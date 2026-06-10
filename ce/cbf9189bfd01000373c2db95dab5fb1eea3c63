@@ -1,0 +1,87 @@
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 539-613
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-topic-standard-flat-field-metadata.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 1-396
+packages/twenty-server/src/modules/emailing/standard-objects/message-campaign.workspace-entity.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 1-38
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/build-standard-flat-index-metadata-maps.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 13-18,51-57
+packages/twenty-shared/src/metadata/constants/standard-object.constant.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 872-1168,1401-1403,1427-1429,1580-1585,1603-1605,2054-2059,2506-2513
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-standard-flat-index-metadata.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 31-42
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-topic-standard-flat-index-metadata.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 1-33
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 359-385
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-participant-standard-flat-index-metadata.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 55-66
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-list-standard-flat-index-metadata.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 1-33
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 337-419
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-campaign-standard-flat-index-metadata.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 1-57
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 2-3,495-539
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 1-284
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 242-425
+packages/twenty-server/src/modules/person/standard-objects/person.workspace-entity.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 17-18,62-65
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-flat-field-metadata-maps.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 16-21,56-62
+packages/twenty-server/src/modules/connected-account/jobs/delete-workspace-member-connected-accounts.job.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 3,61-63,67
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-list-member-standard-flat-index-metadata.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 1-45
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 1-439
+packages/twenty-server/src/modules/emailing/standard-objects/message-list-member.workspace-entity.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 1-14
+packages/twenty-server/src/modules/emailing/standard-objects/message-topic.workspace-entity.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 1-25
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-suppression-standard-flat-index-metadata.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 1-47
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 1-352
+packages/twenty-server/src/modules/messaging/common/standard-objects/message.workspace-entity.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 6,28-30
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-member-standard-flat-field-metadata.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 1-248
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-topic-subscription-standard-flat-field-metadata.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 1-383
+packages/twenty-server/src/modules/emailing/standard-objects/message-suppression.workspace-entity.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 1-21
+packages/twenty-server/src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 9-11,54-59
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 43,74,140-145
+packages/twenty-server/src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 7,29-30
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/get-standard-object-metadata-related-entity-ids.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 38
+packages/twenty-server/src/modules/emailing/standard-objects/message-topic-subscription.workspace-entity.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 1-19
+packages/twenty-server/src/modules/emailing/standard-objects/message-list.workspace-entity.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 1-20
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-topic-subscription-standard-flat-index-metadata.util.ts
+  s_00feb31f113c96::t_9676bd7e66a1f6 1-48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "cecbf9189bfd01000373c2db95dab5fb1eea3c63",
+  "prompts": {},
+  "sessions": {
+    "s_00feb31f113c96": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8eaa9ec8-3e18-4d6e-8565-e27bf80f62fc",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
