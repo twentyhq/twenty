@@ -1,5 +1,5 @@
-import { NavigationDrawerAiChatContent } from '@/ai/components/NavigationDrawerAiChatContent';
 import { MainNavigationDrawerTabsRow } from '@/navigation/components/MainNavigationDrawerTabsRow';
+import { NavigationDrawerTabbedContent } from '@/navigation/components/NavigationDrawerTabbedContent';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
@@ -18,10 +18,8 @@ import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const StyledAdvancedToggleWrapper = styled.div<{ isMobile: boolean }>`
-  padding-left: ${({ isMobile }) =>
-    isMobile ? '0' : themeCssVariables.spacing[5]};
   padding-right: ${({ isMobile }) =>
-    isMobile ? '0' : themeCssVariables.spacing[8]};
+    isMobile ? '0' : themeCssVariables.spacing[1]};
 `;
 
 export const SettingsNavigationDrawer = ({
@@ -52,11 +50,10 @@ export const SettingsNavigationDrawer = ({
       )}
 
       <NavigationDrawerScrollableContent>
-        {showAiChatContent ? (
-          <NavigationDrawerAiChatContent />
-        ) : (
-          <SettingsNavigationDrawerItems />
-        )}
+        <NavigationDrawerTabbedContent
+          showAiChatContent={showAiChatContent}
+          navigationContent={<SettingsNavigationDrawerItems />}
+        />
       </NavigationDrawerScrollableContent>
 
       {!showAiChatContent && (
@@ -65,7 +62,7 @@ export const SettingsNavigationDrawer = ({
             <AdvancedSettingsToggle
               isAdvancedModeEnabled={isAdvancedModeEnabled}
               setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
-              label={t`Advanced:`}
+              label={t`Advanced`}
             />
           </StyledAdvancedToggleWrapper>
         </NavigationDrawerFixedContent>
