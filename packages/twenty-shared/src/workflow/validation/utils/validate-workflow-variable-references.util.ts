@@ -1,4 +1,4 @@
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isNonEmptyArray, isObject } from '@sniptt/guards';
 
 import { isDefined } from '@/utils';
 import { TRIGGER_STEP_ID } from '@/workflow/constants/TriggerStepId';

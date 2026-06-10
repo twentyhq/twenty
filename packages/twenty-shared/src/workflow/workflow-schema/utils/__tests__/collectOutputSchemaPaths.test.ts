@@ -35,4 +35,23 @@ describe('collectOutputSchemaPaths', () => {
   it('should return an empty array for an empty schema', () => {
     expect(collectOutputSchemaPaths({})).toEqual([]);
   });
+
+  it('should not throw when a non-leaf node has a null value', () => {
+    const schemaWithNullNode = {
+      data: {
+        isLeaf: false,
+        type: 'object',
+        label: 'Data',
+        value: null,
+      },
+      id: {
+        isLeaf: true,
+        type: 'string',
+        label: 'id',
+        value: '1',
+      },
+    } as unknown as BaseOutputSchemaV2;
+
+    expect(collectOutputSchemaPaths(schemaWithNullNode)).toEqual(['data', 'id']);
+  });
 });

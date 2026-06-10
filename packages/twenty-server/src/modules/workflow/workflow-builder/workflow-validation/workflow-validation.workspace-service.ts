@@ -12,8 +12,8 @@ import {
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import {
-  type WorkflowAction,
   WorkflowActionType,
+  type WorkflowAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
@@ -140,29 +140,24 @@ export class WorkflowValidationWorkspaceService {
     workspaceId: string;
     workflowVersionId?: string;
   }): Promise<TStep> {
-    const existing = step.settings?.outputSchema;
-    const hasSchema =
-      isDefined(existing) && Object.keys(existing).length > 0;
-
-    if (hasSchema) {
-      return step;
-    }
-
     try {
-      const outputSchema =
+      const computedSchema =
         await this.workflowSchemaWorkspaceService.computeStepOutputSchema({
           step,
           workspaceId,
           workflowVersionId,
         });
 
-      if (!isDefined(outputSchema) || Object.keys(outputSchema).length === 0) {
+      if (
+        !isDefined(computedSchema) ||
+        Object.keys(computedSchema).length === 0
+      ) {
         return step;
       }
 
       return {
         ...step,
-        settings: { ...step.settings, outputSchema },
+        settings: { ...step.settings, outputSchema: computedSchema },
       };
     } catch {
       return step;
@@ -187,9 +182,7 @@ export class WorkflowValidationWorkspaceService {
     return issues;
   }
 
-  private validateAiAgentStep(
-    step: WorkflowAction,
-  ): WorkflowValidationIssue[] {
+  private validateAiAgentStep(step: WorkflowAction): WorkflowValidationIssue[] {
     const issues: WorkflowValidationIssue[] = [];
     const input = step.settings?.input as
       | { agentId?: string; prompt?: string }

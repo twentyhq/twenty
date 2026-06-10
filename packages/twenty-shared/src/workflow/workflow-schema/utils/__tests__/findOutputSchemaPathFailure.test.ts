@@ -77,4 +77,26 @@ describe('findOutputSchemaPathFailure', () => {
       availableKeys: [],
     });
   });
+
+  it('should not throw when descending into a non-leaf node with a null value', () => {
+    const schemaWithNullNode = {
+      data: {
+        isLeaf: false,
+        type: 'object',
+        label: 'Data',
+        value: null,
+      },
+    } as unknown as BaseOutputSchemaV2;
+
+    expect(
+      findOutputSchemaPathFailure({
+        schema: schemaWithNullNode,
+        propertyPath: ['data', 'missingChild'],
+      }),
+    ).toEqual({
+      validPrefix: ['data'],
+      failedSegment: 'missingChild',
+      availableKeys: [],
+    });
+  });
 });
