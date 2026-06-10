@@ -153,6 +153,7 @@ export const useDestroyManyRecords = ({
       objectMetadataItem,
       operation: {
         type: 'destroy-many',
+        destroyedRecordIds: recordIdsToDestroy,
       },
     });
 

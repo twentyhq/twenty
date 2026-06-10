@@ -64,40 +64,42 @@ export const RelationFromManyFieldDisplay = () => {
   });
 
   const [displayedFieldValue, setDisplayedFieldValue] = useState(fieldValue);
-  const [locallyDeletedIds, setLocallyDeletedIds] = useAtom(locallyDeletedRecordIdsAtom);
+  const [locallyDeletedIds, setLocallyDeletedIds] = useAtom(
+    locallyDeletedRecordIdsAtom,
+  );
 
   useEffect(() => {
-    if(!fieldValue || !isArray(fieldValue)) {
+    if (!fieldValue || !isArray(fieldValue)) {
       setDisplayedFieldValue(fieldValue);
       return;
     }
 
-    if(locallyDeletedIds.length == 0) {
+    if (locallyDeletedIds.length == 0) {
       setDisplayedFieldValue(fieldValue);
       return;
     }
 
     const filteredValues = fieldValue.filter((record) => {
-      if(locallyDeletedIds.includes(record.id)) return false;
+      if (locallyDeletedIds.includes(record.id)) return false;
 
-      const hasMatchingForeignKey = Object.values(record).some((val) =>
-        typeof val === 'string' && locallyDeletedIds.includes(val)
-      )
-      if(hasMatchingForeignKey) return false;
+      const hasMatchingForeignKey = Object.values(record).some(
+        (val) => typeof val === 'string' && locallyDeletedIds.includes(val),
+      );
+      if (hasMatchingForeignKey) return false;
 
       const hasDestroyedNestedRecord = Object.values(record).some(
-        val =>
+        (val) =>
           isDefined(val) &&
-        typeof val === 'object' &&
-        'id' in val &&
-        typeof val.id === 'string' &&
-        locallyDeletedIds.includes(val.id)
-      )
-      if(hasDestroyedNestedRecord) return false;
+          typeof val === 'object' &&
+          'id' in val &&
+          typeof val.id === 'string' &&
+          locallyDeletedIds.includes(val.id),
+      );
+      if (hasDestroyedNestedRecord) return false;
 
       return true;
-    })
-    setDisplayedFieldValue(filteredValues)
+    });
+    setDisplayedFieldValue(filteredValues);
   }, [fieldValue, locallyDeletedIds]);
 
   const isRelationFromManyActivities =
@@ -107,30 +109,38 @@ export const RelationFromManyFieldDisplay = () => {
       objectMetadataNameSingular !== CoreObjectNameSingular.Task);
 
   const listenObjectMetadataId = useMemo(() => {
-    if( isRelationFromManyActivities) {
+    if (isRelationFromManyActivities) {
       const targetName =
         fieldName === 'noteTargets'
           ? CoreObjectNameSingular.Note
           : CoreObjectNameSingular.Task;
-      return objectMetadataItems.find((item) => item.nameSingular === targetName)?.id;
+      return objectMetadataItems.find(
+        (item) => item.nameSingular === targetName,
+      )?.id;
     }
 
     return fieldDefinition.metadata.relationObjectMetadataId;
-  }, [isRelationFromManyActivities, fieldName, objectMetadataItems, fieldDefinition.metadata.relationObjectMetadataId])
+  }, [
+    isRelationFromManyActivities,
+    fieldName,
+    objectMetadataItems,
+    fieldDefinition.metadata.relationObjectMetadataId,
+  ]);
 
   useListenToObjectRecordOperationBrowserEvent({
-    onObjectRecordOperationBrowserEvent: (detail: ObjectRecordOperationBrowserEventDetail) => {
-      if(detail.operation.type === 'destroy-many') {
+    onObjectRecordOperationBrowserEvent: (
+      detail: ObjectRecordOperationBrowserEventDetail,
+    ) => {
+      if (detail.operation.type === 'destroy-many') {
         const destroyedIds = detail.operation.destroyedRecordIds;
         setLocallyDeletedIds((prevIds) => [...prevIds, ...destroyedIds]);
-      }
-      else if(detail.operation.type === 'destroy-one') {
+      } else if (detail.operation.type === 'destroy-one') {
         const destroyedId = detail.operation.destroyedRecordId;
         setLocallyDeletedIds((prevIds) => [...prevIds, destroyedId]);
       }
     },
     objectMetadataItemId: listenObjectMetadataId ?? '',
-  })
+  });
 
   const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
     '',
@@ -214,7 +224,10 @@ export const RelationFromManyFieldDisplay = () => {
       })
       .filter(isDefined);
 
-    if (displayedFieldValue.some(isDefined) && targetRecordsWithMetadata.length === 0) {
+    if (
+      displayedFieldValue.some(isDefined) &&
+      targetRecordsWithMetadata.length === 0
+    ) {
       return null;
     }
 
