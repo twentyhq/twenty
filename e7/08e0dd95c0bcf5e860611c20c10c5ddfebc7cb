@@ -1,0 +1,47 @@
+packages/twenty-client-sdk/src/metadata/generated/schema.ts
+  s_00feb31f113c96::t_20364efa2c49c5 307,8472
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant.ts
+  s_00feb31f113c96::t_20364efa2c49c5 8,12,14,35,41,43
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-person-page-layout.config.ts
+  s_00feb31f113c96::t_20364efa2c49c5 55-77
+packages/twenty-shared/src/metadata/constants/standard-page-layout-universal-identifiers.constant.ts
+  s_00feb31f113c96::t_20364efa2c49c5 121-126,571-694
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+  s_00feb31f113c96::t_20364efa2c49c5 88-91
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-message-list-page-layout.config.ts
+  s_00feb31f113c96::t_20364efa2c49c5 1-98
+packages/twenty-client-sdk/src/metadata/generated/schema.graphql
+  s_00feb31f113c96::t_20364efa2c49c5 401
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-message-topic-page-layout.config.ts
+  s_00feb31f113c96::t_20364efa2c49c5 1-99
+packages/twenty-shared/src/types/SidePanelPages.ts
+  s_00feb31f113c96::t_20364efa2c49c5 31
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_00feb31f113c96::t_20364efa2c49c5 1497
+packages/twenty-server/src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util.ts
+  s_00feb31f113c96::t_20364efa2c49c5 26-31
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/index.ts
+  s_00feb31f113c96::t_20364efa2c49c5 7,11,13
+packages/twenty-server/src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum.ts
+  s_00feb31f113c96::t_20364efa2c49c5 52
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+  s_00feb31f113c96::t_20364efa2c49c5 696-709
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-message-campaign-page-layout.config.ts
+  s_00feb31f113c96::t_20364efa2c49c5 1-133
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "e708e0dd95c0bcf5e860611c20c10c5ddfebc7cb",
+  "prompts": {},
+  "sessions": {
+    "s_00feb31f113c96": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8eaa9ec8-3e18-4d6e-8565-e27bf80f62fc",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
