@@ -2,11 +2,11 @@ import { css } from '@linaria/core';
 import { type ReactNode } from 'react';
 
 import {
-  color,
   fluidFontSize,
   FONT_WEIGHT,
   fontFamily,
   type FontWeightToken,
+  semanticColor,
 } from '@/tokens';
 
 const bodyClassName = css`
@@ -41,7 +41,7 @@ const bodyClassName = css`
   }
 
   &[data-muted] {
-    color: ${color('black-60')};
+    color: ${semanticColor.inkMuted};
   }
 `;
 

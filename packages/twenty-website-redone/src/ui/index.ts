@@ -7,6 +7,7 @@ export {
 } from './button';
 export { ButtonShape, type ButtonShapeProps } from './button-shape';
 export { Container } from './container';
+export { CornerMarkers } from './corner-markers';
 export { Eyebrow, type EyebrowProps } from './eyebrow';
 export {
   Heading,
@@ -16,3 +17,4 @@ export {
   type HeadingSize,
 } from './heading';
 export { parseHeadingNotation, type HeadingSegment } from './heading-notation';
+export { SectionShell, type SectionShellProps } from './section-shell';

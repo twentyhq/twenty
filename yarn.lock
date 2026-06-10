@@ -55797,6 +55797,7 @@ __metadata:
   dependencies:
     "@linaria/core": "npm:^7.0.0"
     "@linaria/react": "npm:^7.0.1"
+    "@tabler/icons-react": "npm:^3.41.1"
     "@types/node": "npm:^20"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"

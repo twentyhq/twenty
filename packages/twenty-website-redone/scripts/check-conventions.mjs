@@ -56,6 +56,17 @@ function walk(directory) {
 
     const content = fs.readFileSync(fullPath, 'utf8');
     const relativePath = path.relative(sourceRoot, fullPath);
+
+    // SectionShell is the only owner of <section>: it is where vertical
+    // rhythm and surface schemes live, so no other file may create one.
+    if (
+      relativePath !== path.join('ui', 'section-shell.tsx') &&
+      /<section[\s>]|styled\.section/.test(content)
+    ) {
+      failures.push(
+        `src/${relativePath}: <section> may only be rendered by ui/section-shell.tsx.`,
+      );
+    }
     const isNextContractFile =
       relativePath.startsWith('app' + path.sep) &&
       NEXT_CONTRACT_FILES.has(entry.name);

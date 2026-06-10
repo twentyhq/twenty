@@ -1,4 +1,5 @@
 import { ALPHA_SCALE, type AlphaStep } from './alpha-scale';
+import { buildSchemeDeclarations } from './build-scheme-declarations';
 import { cssVariableName } from './css-variable-name';
 import { PALETTE, type PaletteToken } from './palette';
 import { UNITS } from './units';
@@ -24,6 +25,7 @@ export function buildCssVariableDeclarations(): string {
   );
   declarations.push(`${cssVariableName.fontBase}: ${UNITS.fontBaseRem}rem;`);
   declarations.push(`${cssVariableName.radiusBase}: ${UNITS.radiusBasePx}px;`);
+  declarations.push(buildSchemeDeclarations('light'));
 
   return declarations.join('\n');
 }
