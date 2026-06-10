@@ -37,10 +37,18 @@ const HeadingGroup = styled.div`
   width: 100%;
 `;
 
-// Fluid measure: grows with the container, single cap — no breakpoint step.
+// The measure is a property of the type: em-based, it scales with the
+// heading's step (11.2em = 672px at the 60px step, 448px at 40px), keeping
+// the two-line composition at every size without authored breaks.
 const HeadingMeasure = styled.div`
-  max-width: 672px;
+  font-size: inherit;
+  max-width: 100%;
   width: 100%;
+
+  h1 {
+    margin-inline: auto;
+    max-width: 11.2em;
+  }
 `;
 
 const BodyMeasure = styled.div`
