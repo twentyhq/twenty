@@ -33,13 +33,8 @@ const ContentStack = styled.div`
   row-gap: ${spacing(10)};
 
   ${mediaUp('md')} {
-    align-self: center;
-    padding: ${spacing(8)};
-    row-gap: ${spacing(20)};
-  }
-
-  ${mediaUp('lg')} {
     padding: ${spacing(15)};
+    row-gap: ${spacing(20)};
   }
 `;
 
