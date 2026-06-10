@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-05-19 13:08\n"
+"PO-Revision-Date: 2026-06-10 00:15\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -16,39 +16,39 @@ msgstr ""
 "X-Crowdin-Project-ID: 4\n"
 "X-Crowdin-Language: fr\n"
 "X-Crowdin-File: /packages/twenty-website/src/locales/en.po\n"
-"X-Crowdin-File-ID: 2116\n"
+"X-Crowdin-File-ID: 2196\n"
 
 #. js-lingui-id: BUIzFF
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "-33% off"
-msgstr "-33 % de réduction},{"
+msgstr "-33 % de réduction"
 
 #. js-lingui-id: q0ur5+
 #. placeholder {0}: entry.hero.author
 #: src/lib/website-routing/customer-story-routes.ts
 msgid "{0} | Twenty Customer Story"
-msgstr "{0} | Étude de cas client de Twenty},{"
+msgstr "{0} | Étude de cas client de Twenty"
 
 #. js-lingui-id: NSO/FI
 #: src/app/[locale]/partners/list/components/PartnerMoneyRow.tsx
 msgid "{hourly}/hr"
-msgstr ""
+msgstr "{hourly}/h"
 
 #. js-lingui-id: 2Ha6K9
 #. placeholder {0}: selected.size
 #: src/app/[locale]/partners/list/components/FilterDropdown.tsx
 msgid "{labelText} filter, {0} selected, click to open"
-msgstr ""
+msgstr "Filtre {labelText}, {0} sélectionné(s), cliquer pour ouvrir"
 
 #. js-lingui-id: 0Xh9/0
 #: src/app/[locale]/partners/list/components/FilterDropdown.tsx
 msgid "{labelText} filter, click to open"
-msgstr ""
+msgstr "Filtre {labelText}, cliquer pour ouvrir"
 
 #. js-lingui-id: icND7o
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "/ seat / month - billed yearly"
-msgstr "/ utilisateur / mois - facturé annuellement},{"
+msgstr "/ utilisateur / mois - facturé annuellement"
 
 #. js-lingui-id: XUqxHW
 #: src/sections/Plans/data.ts
@@ -60,37 +60,37 @@ msgstr "/ utilisateur / mois - facturé annuellement},{"
 #: src/sections/Plans/data.ts
 #: src/sections/Plans/data.ts
 msgid "/user/month"
-msgstr "/utilisateur/mois},{"
+msgstr "/utilisateur/mois"
 
 #. js-lingui-id: ojimXJ
 #: src/sections/Footer/data.ts
 msgid "© 2026 – Twenty"
-msgstr "© 2026 – Twenty},{"
+msgstr "© 2026 – Twenty"
 
 #. js-lingui-id: 2ygf/L
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "← Back"
-msgstr ""
+msgstr "← Retour"
 
 #. js-lingui-id: 9j/bUt
 #: src/app/[locale]/partners/profile/[slug]/components/BackToMarketplaceLink.tsx
 msgid "← Twenty partners"
-msgstr ""
+msgstr "← Partenaires Twenty"
 
 #. js-lingui-id: foGG8A
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "+$105/user per month"
-msgstr "+$105/utilisateur par mois},{"
+msgstr "+$105/utilisateur par mois"
 
 #. js-lingui-id: Bsq9GJ
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "+$35/user per month"
-msgstr "+$35/utilisateur par mois},{"
+msgstr "+$35/utilisateur par mois"
 
 #. js-lingui-id: mWSpW5
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "+$5/user per month"
-msgstr "+$5/utilisateur par mois},{"
+msgstr "+$5/utilisateur par mois"
 
 #. js-lingui-id: JIwDAd
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -101,11 +101,9 @@ msgstr "+$7000/organisation par mois"
 #: src/app/[locale]/pricing/salesforce.data.ts
 #: src/app/[locale]/pricing/salesforce.data.ts
 #: src/app/[locale]/pricing/salesforce.data.ts
-msgid ""
-"+$75/user per month\n"
+msgid "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr ""
-"+$75/utilisateur par mois\n"
+msgstr "+$75/utilisateur par mois\n"
 "Passez à Enterprise !"
 
 #. js-lingui-id: iK+ikF
@@ -115,164 +113,162 @@ msgstr "+10k autres"
 
 #. js-lingui-id: nRtVCK
 #: src/app/[locale]/pricing/salesforce.data.ts
-msgid ""
-"+20% of net spend\n"
+msgid "+20% of net spend\n"
 "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr ""
-"+20% des dépenses nettes\n"
+msgstr "+20% des dépenses nettes\n"
 "+$75/utilisateur par mois\n"
 "Passez à Enterprise !"
 
 #. js-lingui-id: Uqm/0u
 #: src/app/[locale]/product/_components/ProductHero.tsx
 msgid "<0>...with AI that actually</0><1/><2>helps you</2><3>work faster</3>"
-msgstr ""
+msgstr "<0>...avec une IA qui</0><1/><2>vous aide vraiment</2><3>à travailler plus vite</3>"
 
 #. js-lingui-id: ZKcQvG
 #: src/app/[locale]/product/_components/ProductHero.tsx
 msgid "<0>A CRM for teams</0><1/><2>that</2><3>move fast</3>"
-msgstr ""
+msgstr "<0>Un CRM pour les équipes</0><1/><2>qui</2><3>avancent vite</3>"
 
 #. js-lingui-id: 2Avwos
 #: src/app/[locale]/(home)/_components/HomeProblem.tsx
 msgid "<0>A custom CRM gives your org an edge,</0><1>but building one</1><2>comes with</2><3>tradeoffs</3>"
-msgstr ""
+msgstr "<0>Un CRM personnalisé donne un avantage à votre organisation,</0><1>mais en créer un</1><2>s’accompagne de</2><3>compromis</3>"
 
 #. js-lingui-id: GIqRh7
 #: src/app/[locale]/product/_components/ProductDemo.tsx
 msgid "<0>A demo worth a</0><1/><2>thousand words</2>"
-msgstr ""
+msgstr "<0>Une démo qui vaut</0><1/><2>mille mots</2>"
 
 #. js-lingui-id: h5K9X+
 #: src/app/[locale]/product/_components/ProductThreeCards.tsx
 msgid "<0>A modern CRM with</0><1>an intuitive interface</1>"
-msgstr ""
+msgstr "<0>Un CRM moderne avec</0><1>une interface intuitive</1>"
 
 #. js-lingui-id: YXQqRD
 #: src/app/[locale]/(home)/_components/HomeIllustrationThreeCards.tsx
 msgid "<0>Assemble, iterate and adapt a robust CRM,</0><1>that's quick to flex</1>"
-msgstr ""
+msgstr "<0>Assemblez, itérez et adaptez un CRM robuste,</0><1>qui s’ajuste rapidement</1>"
 
 #. js-lingui-id: XnXDNI
 #: src/app/[locale]/partners/components/PartnerHero.tsx
 msgid "<0>Become</0><1/><2>our partner</2>"
-msgstr ""
+msgstr "<0>Devenez</0><1/><2>notre partenaire</2>"
 
 #. js-lingui-id: Tp01iS
 #: src/app/[locale]/(home)/_components/HomeStepperSection.tsx
 msgid "<0>Begin with production-grade</0><1>building blocks</1>"
-msgstr ""
+msgstr "<0>Commencez avec des composants</0><1>de niveau production</1>"
 
 #. js-lingui-id: LCx6+8
 #: src/app/[locale]/why-twenty/_components/WhyTwentySignoff.tsx
 msgid "<0>Build a CRM your competitors</0><1>can't buy.</1>"
-msgstr ""
+msgstr "<0>Créez un CRM que vos concurrents</0><1>ne peuvent pas acheter.</1>"
 
 #. js-lingui-id: lt0XAM
 #: src/app/[locale]/why-twenty/_components/WhyTwentyOpportunityEditorial.tsx
 msgid "<0>Build it in an afternoon.</0><1>AI made the gap that small.</1>"
-msgstr ""
+msgstr "<0>Créez-le en une après-midi.</0><1>L’IA a réduit l’écart à ce point.</1>"
 
 #. js-lingui-id: y8AZXw
 #: src/app/[locale]/(home)/_components/HomeHero.tsx
 msgid "<0>Build your Enterprise CRM</0><1>at AI Speed</1>"
-msgstr ""
+msgstr "<0>Créez votre CRM d’entreprise</0><1>à la vitesse de l’IA</1>"
 
 #. js-lingui-id: OGcRSu
 #: src/app/[locale]/(home)/_components/HomeStepperSection.tsx
 msgid "<0>Continue iteration</0><1>without friction</1>"
-msgstr ""
+msgstr "<0>Itérez en continu</0><1>sans friction</1>"
 
 #. js-lingui-id: 2fzdgb
 #: src/app/[locale]/why-twenty/_components/WhyTwentyShiftEditorial.tsx
 msgid "<0>CRM was a ledger.</0><1>AI turned it into an operating system.</1>"
-msgstr ""
+msgstr "<0>Le CRM était un grand livre comptable.</0><1>L’IA l’a transformé en système d’exploitation.</1>"
 
 #. js-lingui-id: gx6Utt
 #: src/sections/Helped/components/HelpedScene.tsx
 msgid "<0>Dev teams power<1/>company-wide</0><2/><3>change with Twenty</3>"
-msgstr ""
+msgstr "<0>Les équipes de dev alimentent<1/>le changement à l’échelle de l’entreprise</0><2/><3>avec Twenty</3>"
 
 #. js-lingui-id: FyjPh/
 #: src/app/[locale]/why-twenty/_components/WhyTwentyMeaningEditorial.tsx
 msgid "<0>Differentiation now</0><1>lives in the code you own.</1>"
-msgstr ""
+msgstr "<0>La différenciation se trouve désormais</0><1>dans le code que vous possédez.</1>"
 
 #. js-lingui-id: FymD+X
 #: src/app/[locale]/enterprise/activate/_components/EnterpriseActivateHero.tsx
 msgid "<0>Enterprise</0><1>activation</1>"
-msgstr ""
+msgstr "<0>Activation</0><1>Entreprise</1>"
 
 #. js-lingui-id: V7uulz
 #: src/app/[locale]/product/_components/feature/ProductFeature.tsx
 msgid "<0>Everything you need,</0><1>out of the box</1>"
-msgstr ""
+msgstr "<0>Tout ce dont vous avez besoin,</0><1>prêt à l’emploi</1>"
 
 #. js-lingui-id: IvtaRX
 #: src/app/[locale]/partners/list/components/MarketplaceHeader.tsx
 msgid "<0>Find your</0><1>Twenty partner</1>"
-msgstr ""
+msgstr "<0>Trouvez votre</0><1>partenaire Twenty</1>"
 
 #. js-lingui-id: f36X9W
 #: src/app/[locale]/product/_components/product-stepper/ProductStepperSection.tsx
 msgid "<0>Go the extra mile</0><1>with no-code</1>"
-msgstr ""
+msgstr "<0>Allez plus loin</0><1>avec le no-code</1>"
 
 #. js-lingui-id: NUko9S
 #: src/sections/CaseStudyCatalog/components/Promo.tsx
 msgid "<0>How teams</0><1/><2>built with Twenty</2>"
-msgstr ""
+msgstr "<0>Comment les équipes</0><1/><2>construisent avec Twenty</2>"
 
 #. js-lingui-id: WCsM/Q
 #: src/app/[locale]/releases/_components/ReleasesHero.tsx
 msgid "<0>Latest</0><1/><2>Releases</2>"
-msgstr ""
+msgstr "<0>Dernières</0><1/><2>versions</2>"
 
 #. js-lingui-id: 1LHR8V
 #: src/app/[locale]/(home)/_components/HomeFeatureThreeCards.tsx
 msgid "<0>Make your GTM team happy</0><1/><2>with</2><3>a CRM they'll love</3>"
-msgstr ""
+msgstr "<0>Rendez votre équipe GTM heureuse</0><1/><2>avec</2><3>un CRM qu’elle va adorer</3>"
 
 #. js-lingui-id: K6xBTA
 #: src/app/[locale]/customers/_components/CustomersCatalogSignoff.tsx
 msgid "<0>Ready to build</0><1/><2>your own story?</2>"
-msgstr ""
+msgstr "<0>Prêt à créer</0><1/><2>votre propre histoire ?</2>"
 
 #. js-lingui-id: pddHmc
 #: src/app/[locale]/partners/components/PartnerSignoff.tsx
 msgid "<0>Ready to grow</0><1/><2>with Twenty?</2>"
-msgstr ""
+msgstr "<0>Prêt à grandir</0><1/><2>avec Twenty ?</2>"
 
 #. js-lingui-id: mzlPTg
 #: src/app/[locale]/customers/_components/CustomersCatalogHero.tsx
 msgid "<0>See how teams</0><1/><2>build</2><3>on Twenty</3>"
-msgstr ""
+msgstr "<0>Découvrez comment les équipes</0><1/><2>créent</2><3>sur Twenty</3>"
 
 #. js-lingui-id: 7D+4tN
 #: src/app/[locale]/pricing/_components/PricingHero.tsx
 msgid "<0>Simple</0><1/><2>Pricing</2>"
-msgstr ""
+msgstr "<0>Tarification</0><1/><2>simple</2>"
 
 #. js-lingui-id: pj2iec
 #: src/app/[locale]/(home)/_components/HomeStepperSection.tsx
 msgid "<0>Stay in control with our</0><1>open-source software</1>"
-msgstr ""
+msgstr "<0>Gardez le contrôle grâce à notre</0><1>logiciel open source</1>"
 
 #. js-lingui-id: Oc/cFZ
 #: src/sections/Faq/Faq.tsx
 msgid "<0>Stop fighting custom.</0><1/><2>Start building, with Twenty</2>"
-msgstr ""
+msgstr "<0>Arrêtez de lutter contre le sur-mesure.</0><1/><2>Commencez à construire avec Twenty</2>"
 
 #. js-lingui-id: zykz1r
 #: src/app/[locale]/why-twenty/_components/WhyTwentyHero.tsx
 msgid "<0>The future of CRM is built,</0><1>not bought.</1>"
-msgstr ""
+msgstr "<0>L’avenir du CRM se construit,</0><1>il ne s’achète pas.</1>"
 
 #. js-lingui-id: 6LusuM
 #: src/app/[locale]/pricing/_components/PricingSalesforce.tsx
 msgid "<0>Trust the n°1 CRM,</0><1>or not!</1>"
-msgstr ""
+msgstr "<0>Faites confiance au CRM n°1,</0><1>ou pas !</1>"
 
 #. js-lingui-id: be30i9
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -281,12 +277,10 @@ msgstr "$0"
 
 #. js-lingui-id: 6inRXo
 #: src/app/[locale]/pricing/salesforce.data.ts
-msgid ""
-"$1/orchestration run/org\n"
+msgid "$1/orchestration run/org\n"
 "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr ""
-"$1/exécution d’orchestration/organisation\n"
+msgstr "$1/exécution d’orchestration/organisation\n"
 "+$75/utilisateur par mois\n"
 "Passez à Enterprise !"
 
@@ -319,17 +313,15 @@ msgstr "100 par minute"
 
 #. js-lingui-id: uuKUqZ
 #: src/app/[locale]/pricing/salesforce.data.ts
-msgid ""
-"11 permissions\n"
+msgid "11 permissions\n"
 "groups"
-msgstr ""
-"11 groupes\n"
+msgstr "11 groupes\n"
 "d’autorisations"
 
 #. js-lingui-id: 2szX5S
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "150"
-msgstr ""
+msgstr "150"
 
 #. js-lingui-id: SaSafJ
 #: src/app/[locale]/customers/9dots/page.tsx
@@ -351,7 +343,7 @@ msgstr "Contrat de 2 ans"
 #: src/lib/customers/case-study-catalog.ts
 #: src/app/[locale]/customers/9dots/page.tsx
 msgid "2,000+"
-msgstr "2,000+"
+msgstr "2 000+"
 
 #. js-lingui-id: FKcV/y
 #: src/lib/customers/case-study-catalog.ts
@@ -372,11 +364,9 @@ msgstr "3"
 
 #. js-lingui-id: BL47wE
 #: src/app/[locale]/pricing/salesforce.data.ts
-msgid ""
-"3 2 years contract\n"
+msgid "3 2 years contract\n"
 "-33% off"
-msgstr ""
-"3 contrat de 2 ans\n"
+msgstr "3 contrat de 2 ans\n"
 "-33% de réduction"
 
 #. js-lingui-id: /jgC+9
@@ -405,7 +395,7 @@ msgstr "5 crédits de workflow/mois inclus"
 #. js-lingui-id: hIKxCy
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "5,000"
-msgstr ""
+msgstr "5,000"
 
 #. js-lingui-id: Z2TH0F
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -425,13 +415,13 @@ msgstr "6 workflows"
 #. js-lingui-id: AQPMc4
 #: src/app/[locale]/customers/act-education/page.tsx
 msgid "90%"
-msgstr "90%"
+msgstr "90 %"
 
 #. js-lingui-id: fHxYPM
 #: src/lib/customers/case-study-catalog.ts
 #: src/app/[locale]/customers/act-education/page.tsx
 msgid "90%+"
-msgstr "90%+"
+msgstr "90 %+"
 
 #. js-lingui-id: 1GAcp6
 #: src/app/[locale]/customers/netzero/page.tsx
@@ -496,7 +486,7 @@ msgstr "Qu’un thème rétro soit un module complémentaire payant est, d’une
 #. js-lingui-id: r9Msiv
 #: src/app/[locale]/why-twenty/_components/WhyTwentyOpportunityEditorial.tsx
 msgid "A year ago, customizing your CRM meant hiring a Salesforce consultant, learning Apex, waiting months. The gap between \"I want this\" and \"it's live\" was measured in quarters and invoices. So people settled. They bent their process to fit the tool and called it adoption."
-msgstr "Il y a un an, personnaliser votre CRM signifiait embaucher un consultant Salesforce, apprendre Apex, attendre des mois. L’écart entre « je veux ça » et « c’est en ligne » se mesurait en trimestres et en factures. Alors les gens ont fait des compromis. Ils ont plié leur processus pour s’adapter à l’outil et ont appelé cela de l’adoption."
+msgstr "Il y a un an, personnaliser votre CRM signifiait embaucher un consultant Salesforce, apprendre Apex, attendre des mois. L’écart entre \"je veux ça\" et \"c’est en ligne\" se mesurait en trimestres et en factures. Alors les gens ont fait des compromis. Ils ont plié leur processus pour s’adapter à l’outil et ont appelé cela de l’adoption."
 
 #. js-lingui-id: c0RR2h
 #: src/app/[locale]/customers/9dots/page.tsx
@@ -538,7 +528,7 @@ msgstr "Activation de votre licence Enterprise…"
 #. js-lingui-id: Yyn/dP
 #: src/app/[locale]/partners/list/components/ActiveFilterPills.tsx
 msgid "Active filters"
-msgstr ""
+msgstr "Filtres actifs"
 
 #. js-lingui-id: TDMykO
 #: src/app/[locale]/customers/elevate-consulting/page.tsx
@@ -574,27 +564,27 @@ msgstr "avancé"
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Advisory & Discovery"
-msgstr ""
+msgstr "Conseil et découverte"
 
 #. js-lingui-id: QjSFuI
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Afghanistan 🇦🇫"
-msgstr ""
+msgstr "Afghanistan 🇦🇫"
 
 #. js-lingui-id: StqEz0
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Africa"
-msgstr ""
+msgstr "Afrique"
 
 #. js-lingui-id: NmHsVh
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Agency"
-msgstr ""
+msgstr "Agence"
 
 #. js-lingui-id: vZKKhf
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
 msgid "Aggregate, bar, line, and pie widgets"
-msgstr ""
+msgstr "Widgets agrégat, barres, lignes et secteurs"
 
 #. js-lingui-id: rp2omj
 #: src/lib/customers/case-study-catalog.ts
@@ -657,12 +647,12 @@ msgstr "Assisté par IA"
 #. js-lingui-id: 7xlBwk
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Albania 🇦🇱"
-msgstr ""
+msgstr "Albanie 🇦🇱"
 
 #. js-lingui-id: EszGq4
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Algeria 🇩🇿"
-msgstr ""
+msgstr "Algérie 🇩🇿"
 
 #. js-lingui-id: LIGwFL
 #: src/app/[locale]/customers/alternative-partners/page.tsx
@@ -694,17 +684,17 @@ msgstr "Amrendra Pratap Singh"
 #. js-lingui-id: Sbiivs
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Andorra 🇦🇩"
-msgstr ""
+msgstr "Andorre 🇦🇩"
 
 #. js-lingui-id: Uv5eaJ
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Angola 🇦🇴"
-msgstr ""
+msgstr "Angola 🇦🇴"
 
 #. js-lingui-id: qKANz3
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Antigua & Barbuda 🇦🇬"
-msgstr ""
+msgstr "Antigua-et-Barbuda 🇦🇬"
 
 #. js-lingui-id: aGCcXe
 #: src/sections/Faq/Faq.tsx
@@ -714,22 +704,22 @@ msgstr "Des questions ?"
 #. js-lingui-id: lgSvgF
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Anything else we should know?"
-msgstr ""
+msgstr "Autre chose que nous devrions savoir ?"
 
 #. js-lingui-id: pkMjbA
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Anything that needs a developer."
-msgstr ""
+msgstr "Tout ce qui nécessite un développeur."
 
 #. js-lingui-id: dYZUP3
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Anything that needs devops skills."
-msgstr ""
+msgstr "Tout ce qui nécessite des compétences DevOps."
 
 #. js-lingui-id: AfiWqP
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "APAC"
-msgstr ""
+msgstr "APAC"
 
 #. js-lingui-id: /AMVjF
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -780,13 +770,13 @@ msgstr "Postuler pour développer"
 #. js-lingui-id: zX3HUD
 #: src/lib/website-routing/static-website-routes.ts
 msgid "Apply to join the Twenty certified partner ecosystem."
-msgstr ""
+msgstr "Postulez pour rejoindre l’écosystème de partenaires certifiés Twenty."
 
 #. js-lingui-id: 8HV3WN
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Arabic"
-msgstr ""
+msgstr "Arabe"
 
 #. js-lingui-id: uicv6Z
 #: src/app/[locale]/customers/w3villa/page.tsx
@@ -797,12 +787,12 @@ msgstr "Architecture"
 #. js-lingui-id: fT9xVz
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Argentina 🇦🇷"
-msgstr ""
+msgstr "Argentine 🇦🇷"
 
 #. js-lingui-id: 3KxGep
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Armenia 🇦🇲"
-msgstr ""
+msgstr "Arménie 🇦🇲"
 
 #. js-lingui-id: Sfa0xD
 #: src/app/[locale]/customers/9dots/page.tsx
@@ -812,7 +802,7 @@ msgstr "autour de cela"
 #. js-lingui-id: S+Q+1d
 #: src/app/[locale]/product/_components/ProductHero.tsx
 msgid "Ask questions, automate tasks, and get insights with AI that understands your data and helps you move faster every day, end to end across teams."
-msgstr ""
+msgstr "Posez des questions, automatisez des tâches et obtenez des informations grâce à une IA qui comprend vos données et vous aide à avancer plus vite au quotidien, de bout en bout et entre les équipes."
 
 #. js-lingui-id: v7zTZl
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -837,12 +827,12 @@ msgstr "Journaux d’audit"
 #. js-lingui-id: tw0/s1
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Australia 🇦🇺"
-msgstr ""
+msgstr "Australie 🇦🇺"
 
 #. js-lingui-id: 4cf5s+
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Austria 🇦🇹"
-msgstr ""
+msgstr "Autriche 🇦🇹"
 
 #. js-lingui-id: FFv0Vh
 #: src/app/[locale]/product/_components/product-stepper/ProductStepperSection.tsx
@@ -857,7 +847,7 @@ msgstr "Disponible sur YouTube !"
 #. js-lingui-id: 8d+jRc
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Azerbaijan 🇦🇿"
-msgstr ""
+msgstr "Azerbaïdjan 🇦🇿"
 
 #. js-lingui-id: iH8pgl
 #: src/sections/CaseStudy/components/Hero.tsx
@@ -867,27 +857,27 @@ msgstr "Retour"
 #. js-lingui-id: wIoAQo
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Bahamas 🇧🇸"
-msgstr ""
+msgstr "Bahamas 🇧🇸"
 
 #. js-lingui-id: Rhju1T
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Bahrain 🇧🇭"
-msgstr ""
+msgstr "Bahreïn 🇧🇭"
 
 #. js-lingui-id: LxzgmZ
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Bangladesh 🇧🇩"
-msgstr ""
+msgstr "Bangladesh 🇧🇩"
 
 #. js-lingui-id: rtcPS0
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Barbados 🇧🇧"
-msgstr ""
+msgstr "Barbade 🇧🇧"
 
 #. js-lingui-id: RownlY
 #: src/app/[locale]/partners/profile/[slug]/components/PartnerFactsList.tsx
 msgid "Based in"
-msgstr ""
+msgstr "Basé à"
 
 #. js-lingui-id: jQLfIW
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -922,32 +912,32 @@ msgstr "Devenir partenaire"
 #. js-lingui-id: 7ysT6Z
 #: src/lib/website-routing/static-website-routes.ts
 msgid "Become a Twenty Partner — Application"
-msgstr ""
+msgstr "Devenez partenaire Twenty — Candidature"
 
 #. js-lingui-id: 0TCnEf
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Belarus 🇧🇾"
-msgstr ""
+msgstr "Biélorussie 🇧🇾"
 
 #. js-lingui-id: qblg4t
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Belgium 🇧🇪"
-msgstr ""
+msgstr "Belgique 🇧🇪"
 
 #. js-lingui-id: pSF7xM
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Belize 🇧🇿"
-msgstr ""
+msgstr "Belize 🇧🇿"
 
 #. js-lingui-id: Hds3Bq
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Bengali"
-msgstr ""
+msgstr "Bengali"
 
 #. js-lingui-id: cTWkw3
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Benin 🇧🇯"
-msgstr ""
+msgstr "Bénin 🇧🇯"
 
 #. js-lingui-id: SYfuGP
 #: src/app/[locale]/partners/testimonials.data.ts
@@ -972,32 +962,32 @@ msgstr "Au-delà"
 #. js-lingui-id: OPnz/X
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Bhutan 🇧🇹"
-msgstr ""
+msgstr "Bhoutan 🇧🇹"
 
 #. js-lingui-id: TVJDFA
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Bolivia 🇧🇴"
-msgstr ""
+msgstr "Bolivie 🇧🇴"
 
 #. js-lingui-id: MkvsWx
 #: src/app/[locale]/partners/profile/[slug]/components/PartnerProfileCtas.tsx
 msgid "Book a call"
-msgstr ""
+msgstr "Réserver un appel"
 
 #. js-lingui-id: Wzdd8u
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Bosnia & Herzegovina 🇧🇦"
-msgstr ""
+msgstr "Bosnie-Herzégovine 🇧🇦"
 
 #. js-lingui-id: wtNsrt
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Botswana 🇧🇼"
-msgstr ""
+msgstr "Botswana 🇧🇼"
 
 #. js-lingui-id: yCaNfF
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Brazil 🇧🇷"
-msgstr ""
+msgstr "Brésil 🇧🇷"
 
 #. js-lingui-id: bxWnM1
 #: src/app/[locale]/customers/w3villa/page.tsx
@@ -1007,22 +997,22 @@ msgstr "perturber les opérations"
 #. js-lingui-id: fYFNV7
 #: src/lib/website-routing/static-website-routes.ts
 msgid "Browse Twenty's certified partner network: regional coverage, languages, deployment expertise, and direct booking links."
-msgstr ""
+msgstr "Parcourez le réseau de partenaires certifiés de Twenty : couverture régionale, langues, expertise de déploiement et liens de réservation directe."
 
 #. js-lingui-id: VX4eI/
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Brunei 🇧🇳"
-msgstr ""
+msgstr "Brunei 🇧🇳"
 
 #. js-lingui-id: sbr0X/
 #: src/app/[locale]/product/ai-hero-tabs.data.ts
 msgid "Build a dashboard of pipeline by stage"
-msgstr ""
+msgstr "Créez un tableau de bord du pipeline par étape"
 
 #. js-lingui-id: uetyzD
 #: src/app/[locale]/product/ai-hero-tabs.data.ts
 msgid "Build a pipeline board grouped by stage"
-msgstr ""
+msgstr "Créez un tableau de pipeline regroupé par étape"
 
 #. js-lingui-id: Utc5RF
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -1047,12 +1037,12 @@ msgstr "Conçu pour la vitesse"
 #. js-lingui-id: sdItv6
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Bulgaria 🇧🇬"
-msgstr ""
+msgstr "Bulgarie 🇧🇬"
 
 #. js-lingui-id: dNnRlc
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Burkina Faso 🇧🇫"
-msgstr ""
+msgstr "Burkina Faso 🇧🇫"
 
 #. js-lingui-id: j8RGrG
 #: src/app/[locale]/customers/act-education/page.tsx
@@ -1062,22 +1052,22 @@ msgstr "Échaudée par le verrouillage fournisseur, AC&T a construit un CRM qu�
 #. js-lingui-id: jtdtLa
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Burundi 🇧🇮"
-msgstr ""
+msgstr "Burundi 🇧🇮"
 
 #. js-lingui-id: L40Ae7
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Calendar / booking link"
-msgstr ""
+msgstr "Lien de calendrier / réservation"
 
 #. js-lingui-id: 4yFkf9
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Cambodia 🇰🇭"
-msgstr ""
+msgstr "Cambodge 🇰🇭"
 
 #. js-lingui-id: AvRzYu
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Cameroon 🇨🇲"
-msgstr ""
+msgstr "Cameroun 🇨🇲"
 
 #. js-lingui-id: wCALve
 #: src/sections/Faq/faq.data.ts
@@ -1092,34 +1082,34 @@ msgstr "Puis-je migrer depuis Salesforce ou HubSpot ?"
 #. js-lingui-id: nEOTNi
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Canada 🇨🇦"
-msgstr ""
+msgstr "Canada 🇨🇦"
 
 #. js-lingui-id: hRO6uK
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Cape Verde 🇨🇻"
-msgstr ""
+msgstr "Cap-Vert 🇨🇻"
 
 #. js-lingui-id: M1RLfx
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Catalan"
-msgstr ""
+msgstr "Catalan"
 
 #. js-lingui-id: NUrY9o
 #: src/app/[locale]/partners/profile/[slug]/components/PartnerFactsList.tsx
 #: src/app/[locale]/partners/list/components/PartnerCard.tsx
 #: src/app/[locale]/partners/list/components/FilterBar.tsx
 msgid "Categories"
-msgstr ""
+msgstr "Catégories"
 
 #. js-lingui-id: dBApoS
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Central African Republic 🇨🇫"
-msgstr ""
+msgstr "République centrafricaine 🇨🇫"
 
 #. js-lingui-id: iI3Dq9
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Chad 🇹🇩"
-msgstr ""
+msgstr "Tchad 🇹🇩"
 
 #. js-lingui-id: 2D9CbR
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -1129,23 +1119,23 @@ msgstr "Voir plus de modules complémentaires"
 #. js-lingui-id: 2BY3So
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Chile 🇨🇱"
-msgstr ""
+msgstr "Chili 🇨🇱"
 
 #. js-lingui-id: zG6t8U
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "China 🇨🇳"
-msgstr ""
+msgstr "Chine 🇨🇳"
 
 #. js-lingui-id: h1IXFK
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Chinese"
-msgstr ""
+msgstr "Chinois"
 
 #. js-lingui-id: 3wV73y
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "City"
-msgstr ""
+msgstr "Ville"
 
 #. js-lingui-id: ZbCD7v
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -1156,7 +1146,12 @@ msgstr "Le classique ne meurt jamais. Il est simplement étendu une fois de plus
 #: src/app/[locale]/partners/list/components/FilterBar.tsx
 #: src/app/[locale]/partners/list/components/EmptyState.tsx
 msgid "Clear filters"
-msgstr ""
+msgstr "Effacer les filtres"
+
+#. js-lingui-id: yz7wBu
+#: src/sections/PartnerApplication/partner-application-modal-data.ts
+msgid "Close"
+msgstr "Fermer"
 
 #. js-lingui-id: L/LPQZ
 #: src/sections/Faq/faq.data.ts
@@ -1182,7 +1177,7 @@ msgstr "Cofondateur, NetZero"
 #. js-lingui-id: dcLsG5
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Colombia 🇨🇴"
-msgstr ""
+msgstr "Colombie 🇨🇴"
 
 #. js-lingui-id: b5bnuN
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -1203,7 +1198,7 @@ msgstr "Licence commerciale (aucune obligation AGPL)"
 #. js-lingui-id: OnPROL
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Commercials"
-msgstr ""
+msgstr "Aspects commerciaux"
 
 #. js-lingui-id: chL5IG
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -1218,7 +1213,7 @@ msgstr "Support communautaire"
 #. js-lingui-id: RxpseA
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Comoros 🇰🇲"
-msgstr ""
+msgstr "Comores 🇰🇲"
 
 #. js-lingui-id: SHjhDC
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
@@ -1243,7 +1238,7 @@ msgstr "Composez votre CRM et vos applications internes avec une seule boîte à
 #. js-lingui-id: 2DQw7/
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Congo 🇨🇬"
-msgstr ""
+msgstr "Congo 🇨🇬"
 
 #. js-lingui-id: iSLIjg
 #: src/sections/Footer/data.ts
@@ -1275,7 +1270,7 @@ msgstr "Conseil"
 #. js-lingui-id: GsUBlG
 #: src/app/[locale]/partners/profile/[slug]/components/PartnerProfileCtas.tsx
 msgid "Contact {partnerName}"
-msgstr ""
+msgstr "Contacter {partnerName}"
 
 #. js-lingui-id: Oii3vg
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -1340,7 +1335,7 @@ msgstr "Fonctionnalités principales"
 #. js-lingui-id: Al/blj
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Costa Rica 🇨🇷"
-msgstr ""
+msgstr "Costa Rica 🇨🇷"
 
 #. js-lingui-id: JRK+HF
 #: src/app/[locale]/customers/act-education/page.tsx
@@ -1350,7 +1345,7 @@ msgstr "Coûts réduits de plus de"
 #. js-lingui-id: cRA2/z
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Country *"
-msgstr ""
+msgstr "Pays *"
 
 #. js-lingui-id: Xn2Nlq
 #: src/app/[locale]/product/_components/product-stepper/ProductStepperSection.tsx
@@ -1387,7 +1382,7 @@ msgstr "CRM"
 #. js-lingui-id: NLgmM4
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "CRM audit · Requirements · Process mapping · ROI · RevOps · Vendor selection"
-msgstr ""
+msgstr "Audit CRM · Exigences · Cartographie des processus · ROI · RevOps · Sélection de fournisseurs"
 
 #. js-lingui-id: Y44Xsf
 #: src/app/[locale]/customers/act-education/page.tsx
@@ -1413,7 +1408,7 @@ msgstr "Le CRM était une base de données que vous remplissiez le vendredi. L�
 #. js-lingui-id: OACAVp
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Croatia 🇭🇷"
-msgstr ""
+msgstr "Croatie 🇭🇷"
 
 #. js-lingui-id: I6FFSA
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -1433,7 +1428,7 @@ msgstr "Flux d’import CSV"
 #. js-lingui-id: O2UtEV
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Cuba 🇨🇺"
-msgstr ""
+msgstr "Cuba 🇨🇺"
 
 #. js-lingui-id: lh6aPn
 #: src/sections/Plans/data.ts
@@ -1449,7 +1444,7 @@ msgstr "Applications personnalisées"
 #. js-lingui-id: TcUCTv
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Custom Apps · Scripts · AI/agent integrations"
-msgstr ""
+msgstr "Applications personnalisées · Scripts · Intégrations IA/agents"
 
 #. js-lingui-id: yBSEtR
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -1465,7 +1460,7 @@ msgstr "Étapes d’affaires personnalisées, tableaux en glisser-déposer et su
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Custom Development"
-msgstr ""
+msgstr "Développement personnalisé"
 
 #. js-lingui-id: GAD3Dx
 #: src/sections/Plans/data.ts
@@ -1533,17 +1528,17 @@ msgstr "Personnalisations"
 #. js-lingui-id: Pj5fGG
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Cyprus 🇨🇾"
-msgstr ""
+msgstr "Chypre 🇨🇾"
 
 #. js-lingui-id: w9VTXG
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Czech"
-msgstr ""
+msgstr "Tchèque"
 
 #. js-lingui-id: xkuHM6
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Czech Republic 🇨🇿"
-msgstr ""
+msgstr "République tchèque 🇨🇿"
 
 #. js-lingui-id: 4RLD4p
 #: src/lib/customers/case-study-catalog.ts
@@ -1554,7 +1549,7 @@ msgstr "Messages quotidiens"
 #. js-lingui-id: Fo2vDn
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Danish"
-msgstr ""
+msgstr "Danois"
 
 #. js-lingui-id: V0kvgB
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -1569,7 +1564,7 @@ msgstr "Modèle de données"
 #. js-lingui-id: iq2WTm
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Data modeling · Migrations · No-code workflows · Dashboards · SSO/SCIM · Integrations"
-msgstr ""
+msgstr "Modélisation des données · Migrations · Workflows no-code · Tableaux de bord · SSO/SCIM · Intégrations"
 
 #. js-lingui-id: /TlpVf
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -1579,7 +1574,7 @@ msgstr "Des affaires qui avancent toutes seules."
 #. js-lingui-id: H1UtjM
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Denmark 🇩🇰"
-msgstr ""
+msgstr "Danemark 🇩🇰"
 
 #. js-lingui-id: n+SX4g
 #: src/sections/Menu/data.ts
@@ -1600,7 +1595,7 @@ msgstr "Directeur du numérique et de l’information, Elevate Consulting"
 #. js-lingui-id: e7R9Zi
 #: src/app/[locale]/releases/_components/ReleasesHero.tsx
 msgid "Discover the newest features and improvements in Twenty,<0/>the #1 Open Source CRM."
-msgstr ""
+msgstr "Découvrez les dernières fonctionnalités et améliorations de Twenty,<0/>le CRM Open Source n°1."
 
 #. js-lingui-id: W+b/DF
 #: src/sections/Menu/data.ts
@@ -1610,7 +1605,7 @@ msgstr "Découvrir les nouveautés"
 #. js-lingui-id: rHLwDO
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Djibouti 🇩🇯"
-msgstr ""
+msgstr "Djibouti 🇩🇯"
 
 #. js-lingui-id: Zjjbne
 #: src/sections/Faq/faq.data.ts
@@ -1625,12 +1620,12 @@ msgstr "Twenty fonctionne-t-il avec Claude, ChatGPT et Cursor ?"
 #. js-lingui-id: bMDnQR
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Dominica 🇩🇲"
-msgstr ""
+msgstr "Dominique 🇩🇲"
 
 #. js-lingui-id: ufcRA6
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Dominican Republic 🇩🇴"
-msgstr ""
+msgstr "République dominicaine 🇩🇴"
 
 #. js-lingui-id: pOLPPB
 #: src/app/[locale]/(home)/_components/HomeStepperSection.tsx
@@ -1640,12 +1635,12 @@ msgstr "Ne vous laissez pas enfermer dans l’écosystème de quelqu’un d’au
 #. js-lingui-id: HDR0en
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "DR Congo 🇨🇩"
-msgstr ""
+msgstr "RD Congo 🇨🇩"
 
 #. js-lingui-id: mzedFr
 #: src/app/[locale]/product/ai-hero-tabs.data.ts
 msgid "Draft a workflow for an email sequence"
-msgstr ""
+msgstr "Rédigez un flux de travail pour une séquence d’e-mails"
 
 #. js-lingui-id: fPma12
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -1656,17 +1651,17 @@ msgstr "Glissez-déposez les opportunités entre les étapes"
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Dutch"
-msgstr ""
+msgstr "Néerlandais"
 
 #. js-lingui-id: 6r6pDf
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "e.g. React, Postgres, n8n…"
-msgstr ""
+msgstr "p. ex. React, Postgres, n8n…"
 
 #. js-lingui-id: hEtClO
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Ecuador 🇪🇨"
-msgstr ""
+msgstr "Équateur 🇪🇨"
 
 #. js-lingui-id: 4CJ4xV
 #: src/lib/customers/case-study-catalog.ts
@@ -1683,12 +1678,12 @@ msgstr "Éducation"
 #. js-lingui-id: OAdXUT
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Egypt 🇪🇬"
-msgstr ""
+msgstr "Égypte 🇪🇬"
 
 #. js-lingui-id: 2xK+An
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "El Salvador 🇸🇻"
-msgstr ""
+msgstr "El Salvador 🇸🇻"
 
 #. js-lingui-id: 1wTjWx
 #: src/app/[locale]/customers/elevate-consulting/page.tsx
@@ -1750,7 +1745,7 @@ msgstr "Rotation de clé de chiffrement"
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "English"
-msgstr ""
+msgstr "Anglais"
 
 #. js-lingui-id: Ijh+h+
 #: src/app/[locale]/(home)/_components/HomeStepperSection.tsx
@@ -1765,7 +1760,7 @@ msgstr "Saisissez une adresse e-mail valide."
 #. js-lingui-id: /OVUD6
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Enter a valid URL (starting with http:// or https://)."
-msgstr ""
+msgstr "Saisissez une URL valide (commençant par http:// ou https://)."
 
 #. js-lingui-id: NTskGY
 #: src/lib/website-routing/static-website-routes.ts
@@ -1780,32 +1775,32 @@ msgstr "Environnements"
 #. js-lingui-id: c0nqfC
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Equatorial Guinea 🇬🇶"
-msgstr ""
+msgstr "Guinée équatoriale 🇬🇶"
 
 #. js-lingui-id: 4DIpFY
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Eritrea 🇪🇷"
-msgstr ""
+msgstr "Érythrée 🇪🇷"
 
 #. js-lingui-id: JIhNLR
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Estonia 🇪🇪"
-msgstr ""
+msgstr "Estonie 🇪🇪"
 
 #. js-lingui-id: 8yXuJ9
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Eswatini 🇸🇿"
-msgstr ""
+msgstr "Eswatini 🇸🇿"
 
 #. js-lingui-id: rktGGp
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Ethiopia 🇪🇹"
-msgstr ""
+msgstr "Éthiopie 🇪🇹"
 
 #. js-lingui-id: rQqP1P
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Europe"
-msgstr ""
+msgstr "Europe"
 
 #. js-lingui-id: IhKZhp
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -1837,12 +1832,12 @@ msgstr "Tout se met à jour en temps réel, avec un chat IA toujours prêt à vo
 #. js-lingui-id: 57gG1f
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "Experience enterprise-grade granularity, starting with an 11th permission."
-msgstr "Découvrez une granularité de niveau entreprise, en commençant par un onzième droit."
+msgstr "Découvrez une granularité de niveau entreprise, en commençant par un 11ᵉ droit."
 
 #. js-lingui-id: uZRQi+
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Expertise & experience"
-msgstr ""
+msgstr "Expertise et expérience"
 
 #. js-lingui-id: JTM5zS
 #: src/sections/CaseStudyCatalog/components/Promo.tsx
@@ -1862,7 +1857,7 @@ msgstr "Interface familière et moderne"
 #. js-lingui-id: gKNP7S
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Farsi"
-msgstr ""
+msgstr "Farsi"
 
 #. js-lingui-id: abO45l
 #: src/app/[locale]/(home)/three-cards-feature.data.ts
@@ -1877,7 +1872,7 @@ msgstr "Autorisations au niveau des champs"
 #. js-lingui-id: z+q1Th
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Fiji 🇫🇯"
-msgstr ""
+msgstr "Fidji 🇫🇯"
 
 #. js-lingui-id: sER+bs
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -1887,7 +1882,7 @@ msgstr "Fichiers"
 #. js-lingui-id: bOidm7
 #: src/app/[locale]/partners/list/components/FilterBar.tsx
 msgid "Filter partners"
-msgstr ""
+msgstr "Filtrer les partenaires"
 
 #. js-lingui-id: iabLgo
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -1914,7 +1909,7 @@ msgstr "Trouver un partenaire Twenty"
 #. js-lingui-id: YeWg37
 #: src/lib/website-routing/static-website-routes.ts
 msgid "Find a Twenty Partner — Certified Open Source CRM Implementers"
-msgstr ""
+msgstr "Trouver un partenaire Twenty — intégrateurs CRM open source certifiés"
 
 #. js-lingui-id: wHyJkT
 #: src/app/[locale]/pricing/_components/PricingEngagementBand.tsx
@@ -1924,12 +1919,12 @@ msgstr "Trouvez le bon partenaire pour implémenter, personnaliser et adapter Tw
 #. js-lingui-id: 9V48qi
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Finland 🇫🇮"
-msgstr ""
+msgstr "Finlande 🇫🇮"
 
 #. js-lingui-id: USZ2N6
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Finnish"
-msgstr ""
+msgstr "Finnois"
 
 #. js-lingui-id: PHM5wp
 #: src/app/[locale]/customers/netzero/page.tsx
@@ -1938,11 +1933,9 @@ msgstr "Flexibilité"
 
 #. js-lingui-id: HBJ0P5
 #: src/app/[locale]/pricing/salesforce.data.ts
-msgid ""
-"Flow\n"
+msgid "Flow\n"
 "orchestration"
-msgstr ""
-"Orchestration\n"
+msgstr "Orchestration\n"
 "des flux"
 
 #. js-lingui-id: obrJBN
@@ -2002,7 +1995,7 @@ msgstr "Fondateur, Wintactix"
 #. js-lingui-id: 671GY5
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "France 🇫🇷"
-msgstr ""
+msgstr "France 🇫🇷"
 
 #. js-lingui-id: tUgSXd
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -2013,12 +2006,12 @@ msgstr "Gratuit pour vous !"
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "French"
-msgstr ""
+msgstr "Français"
 
 #. js-lingui-id: weRlb1
 #: src/app/[locale]/partners/list/components/PartnerMoneyRow.tsx
 msgid "from {minBudget}"
-msgstr ""
+msgstr "à partir de {minBudget}"
 
 #. js-lingui-id: Iuxc00
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -2087,33 +2080,33 @@ msgstr "Entièrement personnalisable"
 #. js-lingui-id: //hrfs
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Gabon 🇬🇦"
-msgstr ""
+msgstr "Gabon 🇬🇦"
 
 #. js-lingui-id: yau9J6
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Gambia 🇬🇲"
-msgstr ""
+msgstr "Gambie 🇬🇲"
 
 #. js-lingui-id: S84RWl
 #: src/app/[locale]/product/ai-hero-tabs.data.ts
 msgid "Generate tasks for my top 10 accounts"
-msgstr ""
+msgstr "Générer des tâches pour mes 10 meilleurs comptes"
 
 #. js-lingui-id: GOmD9p
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Georgia 🇬🇪"
-msgstr ""
+msgstr "Géorgie 🇬🇪"
 
 #. js-lingui-id: DDcvSo
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "German"
-msgstr ""
+msgstr "Allemand"
 
 #. js-lingui-id: XcPIuI
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Germany 🇩🇪"
-msgstr ""
+msgstr "Allemagne 🇩🇪"
 
 #. js-lingui-id: ZDIydz
 #: src/sections/Menu/components/Root.tsx
@@ -2131,32 +2124,27 @@ msgstr "Commencer"
 #. js-lingui-id: xyKSqi
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Ghana 🇬🇭"
-msgstr ""
+msgstr "Ghana 🇬🇭"
 
 #. js-lingui-id: Ay/vbT
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "Good choice!"
 msgstr "Bon choix !"
 
-#. js-lingui-id: Zh0acB
-#: src/sections/PartnerApplication/partner-application-modal-data.ts
-msgid "Grab 30 minutes so we can get to know your team."
-msgstr ""
-
 #. js-lingui-id: +tDN2S
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Greece 🇬🇷"
-msgstr ""
+msgstr "Grèce 🇬🇷"
 
 #. js-lingui-id: CZXzs4
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Greek"
-msgstr ""
+msgstr "Grec"
 
 #. js-lingui-id: DDgHcm
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Grenada 🇬🇩"
-msgstr ""
+msgstr "Grenade 🇬🇩"
 
 #. js-lingui-id: IsZ6P7
 #: src/app/[locale]/customers/w3villa/page.tsx
@@ -2176,27 +2164,27 @@ msgstr "évolue"
 #. js-lingui-id: M/8CC1
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Guatemala 🇬🇹"
-msgstr ""
+msgstr "Guatemala 🇬🇹"
 
 #. js-lingui-id: UZbq7J
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Guinea 🇬🇳"
-msgstr ""
+msgstr "Guinée 🇬🇳"
 
 #. js-lingui-id: vtpxPx
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Guinea-Bissau 🇬🇼"
-msgstr ""
+msgstr "Guinée-Bissau 🇬🇼"
 
 #. js-lingui-id: GT8Ua2
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Guyana 🇬🇾"
-msgstr ""
+msgstr "Guyana 🇬🇾"
 
 #. js-lingui-id: 5BLiJj
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Haiti 🇭🇹"
-msgstr ""
+msgstr "Haïti 🇭🇹"
 
 #. js-lingui-id: Xf5EJg
 #: src/sections/Footer/data.ts
@@ -2221,13 +2209,13 @@ msgstr "Centre d’aide"
 #. js-lingui-id: LiWOgh
 #: src/app/[locale]/partners/profile/[slug]/components/PartnerProfileCtas.tsx
 msgid "Hey, I'm interested in meeting. Here's my project:"
-msgstr ""
+msgstr "Salut, je souhaite organiser une rencontre. Voici mon projet :"
 
 #. js-lingui-id: tGjibo
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Hindi"
-msgstr ""
+msgstr "Hindi"
 
 #. js-lingui-id: qfSbUb
 #: src/app/[locale]/customers/alternative-partners/page.tsx
@@ -2262,23 +2250,23 @@ msgstr "Homeseller, WhatsApp, et un CRM construit autour de l’entreprise | Nin
 #. js-lingui-id: zbfmqm
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Honduras 🇭🇳"
-msgstr ""
+msgstr "Honduras 🇭🇳"
 
 #. js-lingui-id: mqX9AX
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Hosting & Infrastructure"
-msgstr ""
+msgstr "Hébergement et infrastructure"
 
 #. js-lingui-id: SHZNBm
 #: src/app/[locale]/partners/profile/[slug]/components/PartnerRatesPanel.tsx
 msgid "Hourly"
-msgstr ""
+msgstr "À l’heure"
 
 #. js-lingui-id: Ivq5+7
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Hourly rate"
-msgstr ""
+msgstr "Taux horaire"
 
 #. js-lingui-id: XnFo3G
 #: src/app/[locale]/customers/act-education/page.tsx
@@ -2308,7 +2296,7 @@ msgstr "Comment NetZero utilise Twenty sur les crédits carbone, les produits ag
 #. js-lingui-id: NZYA4S
 #: src/app/[locale]/customers/9dots/page.tsx
 msgid "How Nine Dots Ventures rebuilt a Singapore real estate agency on Twenty with APIs, n8n, Grafana, and AI on top of 2,000+ WhatsApp messages a day."
-msgstr "Comment Nine Dots Ventures a reconstruit une agence immobilière de Singapour sur Twenty avec des API, n8n, Grafana et de l’IA au-dessus de plus de 2,000+ messages WhatsApp par jour."
+msgstr "Comment Nine Dots Ventures a reconstruit une agence immobilière de Singapour sur Twenty avec des API, n8n, Grafana et de l’IA, au-dessus de plus de 2,000+ messages WhatsApp par jour."
 
 #. js-lingui-id: bcln75
 #: src/lib/website-routing/static-website-routes.ts
@@ -2323,17 +2311,12 @@ msgstr "Comment W3villa Technologies a livré W3Grads, une plateforme d’entret
 #. js-lingui-id: htrFcw
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Hungary 🇭🇺"
-msgstr ""
-
-#. js-lingui-id: T6wyby
-#: src/sections/PartnerApplication/partner-application-modal-data.ts
-msgid "I'll book later →"
-msgstr ""
+msgstr "Hongrie 🇭🇺"
 
 #. js-lingui-id: RYDa0v
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Iceland 🇮🇸"
-msgstr ""
+msgstr "Islande 🇮🇸"
 
 #. js-lingui-id: xalbpT
 #: src/lib/website-routing/static-website-routes.ts
@@ -2343,7 +2326,7 @@ msgstr "Idées de l’équipe qui développe Twenty sur le CRM open source, les 
 #. js-lingui-id: ePYQjq
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Identity"
-msgstr ""
+msgstr "Identité"
 
 #. js-lingui-id: l0JGUk
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -2390,17 +2373,17 @@ msgstr "Inclus !"
 #. js-lingui-id: /c4yUr
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "India 🇮🇳"
-msgstr ""
+msgstr "Inde 🇮🇳"
 
 #. js-lingui-id: iEJqDi
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Indonesia 🇮🇩"
-msgstr ""
+msgstr "Indonésie 🇮🇩"
 
 #. js-lingui-id: BQukYF
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Indonesian"
-msgstr ""
+msgstr "Indonésien"
 
 #. js-lingui-id: S8gy7K
 #: src/sections/CaseStudy/components/Highlights.tsx
@@ -2435,7 +2418,7 @@ msgstr "Générateur de trames interactif exporté depuis Twenty."
 #. js-lingui-id: +83cJG
 #: src/app/[locale]/partners/profile/[slug]/components/PartnerProfileCtas.tsx
 msgid "Interested in meeting {partnerName}"
-msgstr ""
+msgstr "Intéressé par une rencontre avec {partnerName}"
 
 #. js-lingui-id: mdsMtj
 #: src/app/[locale]/customers/elevate-consulting/page.tsx
@@ -2450,17 +2433,17 @@ msgstr "Comptes Internet par utilisateur"
 #. js-lingui-id: FtgjCv
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Iran 🇮🇷"
-msgstr ""
+msgstr "Iran 🇮🇷"
 
 #. js-lingui-id: 8yynyz
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Iraq 🇮🇶"
-msgstr ""
+msgstr "Irak 🇮🇶"
 
 #. js-lingui-id: s7XmoY
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Ireland 🇮🇪"
-msgstr ""
+msgstr "Irlande 🇮🇪"
 
 #. js-lingui-id: /yQIKP
 #: src/sections/Faq/faq.data.ts
@@ -2470,7 +2453,7 @@ msgstr "Twenty est-il vraiment open source ?"
 #. js-lingui-id: SdtpDP
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Israel 🇮🇱"
-msgstr ""
+msgstr "Israël 🇮🇱"
 
 #. js-lingui-id: QjEULz
 #: src/lib/customers/case-study-catalog.ts
@@ -2497,33 +2480,33 @@ msgstr "C’est fragile. La V1 sort vite, mais la maintenance et les évolutions
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Italian"
-msgstr ""
+msgstr "Italien"
 
 #. js-lingui-id: OSTD8d
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Italy 🇮🇹"
-msgstr ""
+msgstr "Italie 🇮🇹"
 
 #. js-lingui-id: 0BTIQi
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Ivory Coast 🇨🇮"
-msgstr ""
+msgstr "Côte d’Ivoire 🇨🇮"
 
 #. js-lingui-id: W6o2Pv
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Jamaica 🇯🇲"
-msgstr ""
+msgstr "Jamaïque 🇯🇲"
 
 #. js-lingui-id: kpk6mj
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Japan 🇯🇵"
-msgstr ""
+msgstr "Japon 🇯🇵"
 
 #. js-lingui-id: dFtidv
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Japanese"
-msgstr ""
+msgstr "Japonais"
 
 #. js-lingui-id: kX2mij
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
@@ -2538,30 +2521,30 @@ msgstr "Rejoignez notre écosystème de partenaires en pleine croissance"
 #. js-lingui-id: APYcnh
 #: src/app/[locale]/partners/components/PartnerSignoff.tsx
 msgid "Join our partner ecosystem and help businesses<0/>take control of their CRM."
-msgstr ""
+msgstr "Rejoignez notre écosystème de partenaires et aidez les entreprises<0/>à prendre le contrôle de leur CRM."
 
 #. js-lingui-id: 5emzGz
 #: src/app/[locale]/customers/_components/CustomersCatalogSignoff.tsx
 #: src/app/[locale]/customers/_components/CustomersCaseStudySignoff.tsx
 msgid "Join the teams that chose to own their CRM.<0/>Start building with Twenty today."
-msgstr ""
+msgstr "Rejoignez les équipes qui ont choisi de posséder leur CRM.<0/>Commencez à créer avec Twenty dès aujourd’hui."
 
 #. js-lingui-id: QbxNys
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Jordan 🇯🇴"
-msgstr ""
+msgstr "Jordanie 🇯🇴"
 
 #. js-lingui-id: pB76mP
 #: src/lib/customers/case-study-catalog.ts
 #: src/app/[locale]/customers/9dots/page.tsx
 msgid "Jul 2025"
-msgstr "juil. 2025"
+msgstr "Juil. 2025"
 
 #. js-lingui-id: hvwlu3
 #: src/lib/customers/case-study-catalog.ts
 #: src/app/[locale]/customers/elevate-consulting/page.tsx
 msgid "Jun 2025"
-msgstr "juin 2025"
+msgstr "Juin 2025"
 
 #. js-lingui-id: qrYDGE
 #: src/app/[locale]/(home)/testimonials.data.ts
@@ -2581,37 +2564,37 @@ msgstr "La mission plus large de Justin chez Elevate a été de faire passer l�
 #. js-lingui-id: r1cFAW
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Kazakhstan 🇰🇿"
-msgstr ""
+msgstr "Kazakhstan 🇰🇿"
 
 #. js-lingui-id: kEahsE
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Kenya 🇰🇪"
-msgstr ""
+msgstr "Kenya 🇰🇪"
 
 #. js-lingui-id: IxBSi8
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Kiribati 🇰🇮"
-msgstr ""
+msgstr "Kiribati 🇰🇮"
 
 #. js-lingui-id: h6S9Yz
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Korean"
-msgstr ""
+msgstr "Coréen"
 
 #. js-lingui-id: PqhUrP
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Kosovo 🇽🇰"
-msgstr ""
+msgstr "Kosovo 🇽🇰"
 
 #. js-lingui-id: 3+TwF3
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Kuwait 🇰🇼"
-msgstr ""
+msgstr "Koweït 🇰🇼"
 
 #. js-lingui-id: e9zZkH
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Kyrgyzstan 🇰🇬"
-msgstr ""
+msgstr "Kirghizistan 🇰🇬"
 
 #. js-lingui-id: GAmD3h
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -2624,22 +2607,22 @@ msgstr "Langues"
 #. js-lingui-id: u6jooT
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Languages spoken"
-msgstr ""
+msgstr "Langues parlées"
 
 #. js-lingui-id: YHacTY
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Laos 🇱🇦"
-msgstr ""
+msgstr "Laos 🇱🇦"
 
 #. js-lingui-id: 2lrGbG
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "LATAM"
-msgstr ""
+msgstr "LATAM"
 
 #. js-lingui-id: 7OHfcc
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Latvia 🇱🇻"
-msgstr ""
+msgstr "Lettonie 🇱🇻"
 
 #. js-lingui-id: rdU729
 #: src/app/[locale]/product/_components/product-stepper/ProductStepperSection.tsx
@@ -2654,7 +2637,7 @@ msgstr "Apprenez à utiliser Twenty"
 #. js-lingui-id: wB0DGn
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Lebanon 🇱🇧"
-msgstr ""
+msgstr "Liban 🇱🇧"
 
 #. js-lingui-id: vifyyw
 #: src/sections/Footer/data.ts
@@ -2664,17 +2647,17 @@ msgstr "Mentions légales"
 #. js-lingui-id: UqdHpG
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Lesotho 🇱🇸"
-msgstr ""
+msgstr "Lesotho 🇱🇸"
 
 #. js-lingui-id: rJargy
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Liberia 🇱🇷"
-msgstr ""
+msgstr "Libéria 🇱🇷"
 
 #. js-lingui-id: Lzw0kM
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Libya 🇱🇾"
-msgstr ""
+msgstr "Libye 🇱🇾"
 
 #. js-lingui-id: tHFTlp
 #: src/app/[locale]/enterprise/activate/EnterpriseActivateClient.tsx
@@ -2684,7 +2667,7 @@ msgstr "Titulaire de la licence :"
 #. js-lingui-id: K41WYc
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Liechtenstein 🇱🇮"
-msgstr ""
+msgstr "Liechtenstein 🇱🇮"
 
 #. js-lingui-id: gggTBm
 #: src/sections/Footer/data.ts
@@ -2694,12 +2677,12 @@ msgstr "LinkedIn"
 #. js-lingui-id: Gg69LR
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "LinkedIn URL"
-msgstr ""
+msgstr "URL LinkedIn"
 
 #. js-lingui-id: 2WIZYd
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Lithuania 🇱🇹"
-msgstr ""
+msgstr "Lituanie 🇱🇹"
 
 #. js-lingui-id: AHVzME
 #: src/app/[locale]/(home)/three-cards-feature.data.ts
@@ -2747,42 +2730,42 @@ msgstr "Réduire le coût du CRM"
 #. js-lingui-id: J13skq
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Luxembourg 🇱🇺"
-msgstr ""
+msgstr "Luxembourg 🇱🇺"
 
 #. js-lingui-id: nRYQC8
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Madagascar 🇲🇬"
-msgstr ""
+msgstr "Madagascar 🇲🇬"
 
 #. js-lingui-id: qHvKxh
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Malawi 🇲🇼"
-msgstr ""
+msgstr "Malawi 🇲🇼"
 
 #. js-lingui-id: tF97tn
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Malay"
-msgstr ""
+msgstr "Malais"
 
 #. js-lingui-id: DIOh5g
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Malaysia 🇲🇾"
-msgstr ""
+msgstr "Malaisie 🇲🇾"
 
 #. js-lingui-id: 62/ScF
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Maldives 🇲🇻"
-msgstr ""
+msgstr "Maldives 🇲🇻"
 
 #. js-lingui-id: wc5E/3
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Mali 🇲🇱"
-msgstr ""
+msgstr "Mali 🇲🇱"
 
 #. js-lingui-id: 04fjhR
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Malta 🇲🇹"
-msgstr ""
+msgstr "Malte 🇲🇹"
 
 #. js-lingui-id: Si4WyF
 #: src/lib/customers/case-study-catalog.ts
@@ -2804,12 +2787,12 @@ msgstr "Vue carte"
 #. js-lingui-id: Zt5PUS
 #: src/app/[locale]/partners/list/components/MarketplaceHeader.tsx
 msgid "Marketplace"
-msgstr ""
+msgstr "Place de marché"
 
 #. js-lingui-id: 2jVbnO
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Marshall Islands 🇲🇭"
-msgstr ""
+msgstr "Îles Marshall 🇲🇭"
 
 #. js-lingui-id: bJNKJ1
 #: src/sections/Menu/data.ts
@@ -2819,12 +2802,12 @@ msgstr "Maîtrisez chaque recoin de Twenty"
 #. js-lingui-id: HG/EUg
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Mauritania 🇲🇷"
-msgstr ""
+msgstr "Mauritanie 🇲🇷"
 
 #. js-lingui-id: YDiaY/
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Mauritius 🇲🇺"
-msgstr ""
+msgstr "Maurice 🇲🇺"
 
 #. js-lingui-id: Zw+Zv+
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -2849,7 +2832,7 @@ msgstr "Découvrez les équipes qui ont façonné Twenty en leur propre CRM grâ
 #. js-lingui-id: CQ9M36
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "MENA"
-msgstr ""
+msgstr "MENA"
 
 #. js-lingui-id: briyJf
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -2859,12 +2842,12 @@ msgstr "Des indicateurs auxquels vous pouvez réellement faire confiance."
 #. js-lingui-id: YBLFQZ
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Mexico 🇲🇽"
-msgstr ""
+msgstr "Mexique 🇲🇽"
 
 #. js-lingui-id: KBirDR
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Micronesia 🇫🇲"
-msgstr ""
+msgstr "Micronésie 🇫🇲"
 
 #. js-lingui-id: ZdvtU2
 #: src/app/[locale]/customers/alternative-partners/page.tsx
@@ -2884,27 +2867,27 @@ msgstr "Mike Babiy"
 #. js-lingui-id: FFFENV
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Minimum project budget"
-msgstr ""
+msgstr "Budget minimum du projet"
 
 #. js-lingui-id: 6m8rMT
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Moldova 🇲🇩"
-msgstr ""
+msgstr "Moldavie 🇲🇩"
 
 #. js-lingui-id: qRRmSe
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Monaco 🇲🇨"
-msgstr ""
+msgstr "Monaco 🇲🇨"
 
 #. js-lingui-id: G+EV+A
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Mongolia 🇲🇳"
-msgstr ""
+msgstr "Mongolie 🇲🇳"
 
 #. js-lingui-id: 9VDoNp
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Montenegro 🇲🇪"
-msgstr ""
+msgstr "Monténégro 🇲🇪"
 
 #. js-lingui-id: +8Nek/
 #: src/sections/Plans/components/BillingToggle.tsx
@@ -2919,12 +2902,12 @@ msgstr "Plus d’options disponibles !"
 #. js-lingui-id: LAFO4Y
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Morocco 🇲🇦"
-msgstr ""
+msgstr "Maroc 🇲🇦"
 
 #. js-lingui-id: EwJDrS
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Mozambique 🇲🇿"
-msgstr ""
+msgstr "Mozambique 🇲🇿"
 
 #. js-lingui-id: dlKkNL
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -2934,7 +2917,7 @@ msgstr "Téléversement multi-fichiers sur les enregistrements"
 #. js-lingui-id: QGWbbv
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Myanmar 🇲🇲"
-msgstr ""
+msgstr "Myanmar 🇲🇲"
 
 #. js-lingui-id: 6YtxFj
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -2944,12 +2927,12 @@ msgstr "Nom"
 #. js-lingui-id: yYmxee
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Namibia 🇳🇦"
-msgstr ""
+msgstr "Namibie 🇳🇦"
 
 #. js-lingui-id: zVOV14
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Nauru 🇳🇷"
-msgstr ""
+msgstr "Nauru 🇳🇷"
 
 #. js-lingui-id: LfNsfa
 #: src/app/[locale]/product/_components/product-stepper/ProductStepperSection.tsx
@@ -2964,12 +2947,12 @@ msgstr "Besoin d’aide pour la personnalisation ?"
 #. js-lingui-id: LNVNNE
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Nepal 🇳🇵"
-msgstr ""
+msgstr "Népal 🇳🇵"
 
 #. js-lingui-id: g60EgR
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Netherlands 🇳🇱"
-msgstr ""
+msgstr "Pays-Bas 🇳🇱"
 
 #. js-lingui-id: 8Cp4Of
 #: src/app/[locale]/customers/netzero/page.tsx
@@ -2995,12 +2978,12 @@ msgstr "NetZero travaille avec l’agro-industrie, au service de clients allant 
 #. js-lingui-id: /DTtCF
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "New Zealand 🇳🇿"
-msgstr ""
+msgstr "Nouvelle-Zélande 🇳🇿"
 
 #. js-lingui-id: GY6uSc
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Next →"
-msgstr ""
+msgstr "Suivant →"
 
 #. js-lingui-id: KqojOL
 #: src/app/[locale]/enterprise/activate/EnterpriseActivateClient.tsx
@@ -3010,17 +2993,17 @@ msgstr "Prochaines étapes"
 #. js-lingui-id: iBOZv7
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Nicaragua 🇳🇮"
-msgstr ""
+msgstr "Nicaragua 🇳🇮"
 
 #. js-lingui-id: 61NU7V
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Niger 🇳🇪"
-msgstr ""
+msgstr "Niger 🇳🇪"
 
 #. js-lingui-id: +2NLII
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Nigeria 🇳🇬"
-msgstr ""
+msgstr "Nigéria 🇳🇬"
 
 #. js-lingui-id: qZ+egR
 #: src/lib/customers/case-study-catalog.ts
@@ -3031,7 +3014,7 @@ msgstr "Nine Dots a placé Twenty au centre de la stack de Homeseller avec des A
 #. js-lingui-id: sGuHDu
 #: src/app/[locale]/customers/9dots/page.tsx
 msgid "Nine Dots rebuilt Homeseller's operations on Twenty, with a custom data model shaped around their sales flow. Because Twenty is open and everything is accessible via API, they connected it to what the business actually needed: n8n for automated workflows (in-app workflows were not available at that time), Grafana for live dashboards fed from Twenty, and a custom AI layer to parse and extract structured insights from more than 2,000 WhatsApp messages a day."
-msgstr "Nine Dots a reconstruit les opérations de Homeseller sur Twenty, avec un modèle de données personnalisé façonné autour de leur flux de vente. Parce que Twenty est ouvert et que tout est accessible via API, ils l’ont connecté à ce dont l’entreprise avait réellement besoin : n8n pour les workflows automatisés (les workflows intégrés à l’application n’étaient pas disponibles à ce moment-là), Grafana pour des tableaux de bord en direct alimentés depuis Twenty, et une couche d’IA personnalisée pour analyser et extraire des informations structurées à partir de plus de 2 000 messages WhatsApp par jour."
+msgstr "Nine Dots a reconstruit les opérations de Homeseller sur Twenty, avec un modèle de données personnalisé façonné autour de leur flux de vente. Parce que Twenty est ouvert et que tout est accessible via API, ils l’ont connecté à ce dont l’entreprise avait réellement besoin : n8n pour les workflows automatisés (les workflows intégrés à l’application n’étaient pas disponibles à ce moment-là), Grafana pour des tableaux de bord en direct alimentés depuis Twenty, et une couche d’IA personnalisée pour analyser et extraire des informations structurées à partir de plus de 2,000 messages WhatsApp par jour."
 
 #. js-lingui-id: 1UzENP
 #: src/sections/PlanTable/components/Content.tsx
@@ -3041,7 +3024,7 @@ msgstr "Non"
 #. js-lingui-id: 6tRXQ4
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "No matching country."
-msgstr ""
+msgstr "Aucun pays correspondant."
 
 #. js-lingui-id: o+/Ad5
 #: src/app/[locale]/customers/act-education/page.tsx
@@ -3056,7 +3039,7 @@ msgstr "Ne plus louer la structure de quelqu’un d’autre"
 #. js-lingui-id: UxK4so
 #: src/app/[locale]/partners/list/components/EmptyState.tsx
 msgid "No partners match your filters"
-msgstr ""
+msgstr "Aucun partenaire ne correspond à vos filtres"
 
 #. js-lingui-id: q9f4Tp
 #: src/lib/customers/case-study-catalog.ts
@@ -3072,32 +3055,27 @@ msgstr "Non. Créez des objets, champs, vues et workflows no-code directement de
 #. js-lingui-id: 096JXI
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "North Korea 🇰🇵"
-msgstr ""
+msgstr "Corée du Nord 🇰🇵"
 
 #. js-lingui-id: IwF7aJ
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "North Macedonia 🇲🇰"
-msgstr ""
+msgstr "Macédoine du Nord 🇲🇰"
 
 #. js-lingui-id: sZwk4U
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Norway 🇳🇴"
-msgstr ""
+msgstr "Norvège 🇳🇴"
 
 #. js-lingui-id: 1IipHp
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Norwegian"
-msgstr ""
+msgstr "Norvégien"
 
 #. js-lingui-id: k3T2mM
 #: src/app/[locale]/why-twenty/_components/WhyTwentyOpportunityEditorial.tsx
 msgid "Now a developer can describe what they want to Claude Code and have a working app in an afternoon. A custom object, a scoring workflow, a new view, an integration. The bottleneck isn't building anymore. It's whether your platform lets you."
 msgstr "Aujourd’hui, un développeur peut décrire ce qu’il veut à Claude Code et avoir une application fonctionnelle dans l’après-midi. Un objet personnalisé, un workflow de scoring, une nouvelle vue, une intégration. Le goulot d’étranglement n’est plus la construction. C’est de savoir si votre plateforme vous le permet."
-
-#. js-lingui-id: WFvpMn
-#: src/sections/PartnerApplication/partner-application-modal-data.ts
-msgid "Now book your intro call."
-msgstr ""
 
 #. js-lingui-id: CzeIij
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -3122,7 +3100,7 @@ msgstr "Olivier Reinaud"
 #. js-lingui-id: BdShAR
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Oman 🇴🇲"
-msgstr ""
+msgstr "Oman 🇴🇲"
 
 #. js-lingui-id: D2b+1q
 #: src/lib/customers/case-study-catalog.ts
@@ -3138,7 +3116,7 @@ msgstr "Sur cette page"
 #. js-lingui-id: jxC7HY
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Onboarding · Documentation · Change management · L1/L2 support · Managed services"
-msgstr ""
+msgstr "Onboarding · Documentation · Gestion du changement · Support L1/L2 · Services managés"
 
 #. js-lingui-id: pbmZ7R
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -3225,32 +3203,32 @@ msgstr "La pagination forge le caractère."
 #. js-lingui-id: sW3DaS
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Pakistan 🇵🇰"
-msgstr ""
+msgstr "Pakistan 🇵🇰"
 
 #. js-lingui-id: cvRU36
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Palau 🇵🇼"
-msgstr ""
+msgstr "Palaos 🇵🇼"
 
 #. js-lingui-id: u2htNd
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Palestine 🇵🇸"
-msgstr ""
+msgstr "Palestine 🇵🇸"
 
 #. js-lingui-id: pWLp16
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Panama 🇵🇦"
-msgstr ""
+msgstr "Panama 🇵🇦"
 
 #. js-lingui-id: xOR4tu
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Papua New Guinea 🇵🇬"
-msgstr ""
+msgstr "Papouasie-Nouvelle-Guinée 🇵🇬"
 
 #. js-lingui-id: kb3PhK
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Paraguay 🇵🇾"
-msgstr ""
+msgstr "Paraguay 🇵🇾"
 
 #. js-lingui-id: mPkInZ
 #: src/sections/Menu/data.ts
@@ -3271,17 +3249,17 @@ msgstr "porte ses fruits"
 #. js-lingui-id: OzAIDr
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Peru 🇵🇪"
-msgstr ""
+msgstr "Pérou 🇵🇪"
 
 #. js-lingui-id: LqRs8D
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Philippines 🇵🇭"
-msgstr ""
+msgstr "Philippines 🇵🇭"
 
 #. js-lingui-id: we6gj5
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Pick every category that applies."
-msgstr ""
+msgstr "Sélectionnez toutes les catégories qui s’appliquent."
 
 #. js-lingui-id: FFkjaT
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -3296,7 +3274,7 @@ msgstr "Pipelines, objets personnalisés, assistants IA et une API native au-des
 #. js-lingui-id: z7gnI9
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Please complete all required fields before continuing."
-msgstr ""
+msgstr "Veuillez remplir tous les champs obligatoires avant de continuer."
 
 #. js-lingui-id: iCh6/3
 #: src/app/[locale]/customers/w3villa/page.tsx
@@ -3306,28 +3284,28 @@ msgstr "tuyauterie"
 #. js-lingui-id: AFr2a5
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Poland 🇵🇱"
-msgstr ""
+msgstr "Pologne 🇵🇱"
 
 #. js-lingui-id: trnWaw
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Polish"
-msgstr ""
+msgstr "Polonais"
 
 #. js-lingui-id: 8BrmUs
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Portugal 🇵🇹"
-msgstr ""
+msgstr "Portugal 🇵🇹"
 
 #. js-lingui-id: MOERNx
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Portuguese"
-msgstr ""
+msgstr "Portugais"
 
 #. js-lingui-id: z87IFG
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Press Enter or comma to add a skill."
-msgstr ""
+msgstr "Appuyez sur Entrée ou sur la virgule pour ajouter une compétence."
 
 #. js-lingui-id: a7u1N9
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -3384,7 +3362,7 @@ msgstr "Qualité niveau production"
 #. js-lingui-id: vERlcd
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Profile"
-msgstr ""
+msgstr "Profil"
 
 #. js-lingui-id: CcK9cq
 #: src/app/[locale]/customers/w3villa/page.tsx
@@ -3394,7 +3372,7 @@ msgstr "Des programmes qui nécessitaient auparavant une lourde coordination man
 #. js-lingui-id: PaHxQd
 #: src/app/[locale]/partners/profile/[slug]/components/PartnerRatesPanel.tsx
 msgid "Project minimum"
-msgstr ""
+msgstr "Montant minimum du projet"
 
 #. js-lingui-id: 9NAqO4
 #: src/lib/customers/case-study-catalog.ts
@@ -3405,7 +3383,7 @@ msgstr "Automatisation des propositions"
 #. js-lingui-id: a24q7E
 #: src/app/[locale]/(home)/_components/HomeProblem.tsx
 msgid "Proprietary languages, slow deployment cycles, and \"black box\" logic."
-msgstr "Langages propriétaires, cycles de déploiement lents et logique « boîte noire »."
+msgstr "Langages propriétaires, cycles de déploiement lents et logique \"boîte noire\"."
 
 #. js-lingui-id: kS6G/9
 #: src/app/[locale]/customers/act-education/page.tsx
@@ -3415,7 +3393,7 @@ msgstr "a tiré la prise"
 #. js-lingui-id: u9RZ7+
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Punjabi"
-msgstr ""
+msgstr "Pendjabi"
 
 #. js-lingui-id: frfCYp
 #: src/lib/customers/case-study-catalog.ts
@@ -3426,18 +3404,18 @@ msgstr "T1 2026"
 #. js-lingui-id: tFx+ES
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Qatar 🇶🇦"
-msgstr ""
+msgstr "Qatar 🇶🇦"
 
 #. js-lingui-id: 3XOwjg
 #: src/app/[locale]/partners/profile/[slug]/components/PartnerRatesPanel.tsx
 #: src/app/[locale]/partners/profile/[slug]/components/PartnerRatesPanel.tsx
 msgid "Rates"
-msgstr ""
+msgstr "Tarifs"
 
 #. js-lingui-id: DnWJal
 #: src/app/[locale]/partners/profile/[slug]/components/PartnerProfileCtas.tsx
 msgid "Reach out"
-msgstr ""
+msgstr "Prendre contact"
 
 #. js-lingui-id: gSQVmr
 #: src/sections/Helped/components/HelpedCard.tsx
@@ -3452,7 +3430,7 @@ msgstr "Autorisations de lecture/modification/suppression"
 #. js-lingui-id: Gr9RIC
 #: src/app/[locale]/customers/_components/CustomersCaseStudySignoff.tsx
 msgid "Ready to grow<0/>with Twenty?"
-msgstr ""
+msgstr "Prêt à grandir<0/>avec Twenty ?"
 
 #. js-lingui-id: zTY2by
 #: src/lib/website-routing/static-website-routes.ts
@@ -3501,7 +3479,7 @@ msgstr "Enregistrements"
 #: src/app/[locale]/partners/list/components/PartnerCard.tsx
 #: src/app/[locale]/partners/list/components/FilterBar.tsx
 msgid "Regions"
-msgstr ""
+msgstr "Régions"
 
 #. js-lingui-id: rwWjWg
 #: src/sections/Footer/data.ts
@@ -3517,7 +3495,7 @@ msgstr "Versions"
 #. placeholder {0}: pill.text
 #: src/app/[locale]/partners/list/components/ActiveFilterPills.tsx
 msgid "Remove {0} filter"
-msgstr ""
+msgstr "Supprimer le filtre {0}"
 
 #. js-lingui-id: a/aGHe
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -3567,12 +3545,12 @@ msgstr "Feuille de route"
 #. js-lingui-id: mLp5AP
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Romania 🇷🇴"
-msgstr ""
+msgstr "Roumanie 🇷🇴"
 
 #. js-lingui-id: uJc01W
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Romanian"
-msgstr ""
+msgstr "Roumain"
 
 #. js-lingui-id: Wdh41P
 #: src/sections/Plans/data.ts
@@ -3590,33 +3568,33 @@ msgstr "Faire fonctionner des programmes de faux entretiens pour des centaines d
 #. js-lingui-id: T1ut28
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Russia 🇷🇺"
-msgstr ""
+msgstr "Russie 🇷🇺"
 
 #. js-lingui-id: nji0/X
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Russian"
-msgstr ""
+msgstr "Russe"
 
 #. js-lingui-id: dw8D3T
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Rwanda 🇷🇼"
-msgstr ""
+msgstr "Rwanda 🇷🇼"
 
 #. js-lingui-id: niLOap
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Saint Kitts & Nevis 🇰🇳"
-msgstr ""
+msgstr "Saint-Christophe-et-Niévès 🇰🇳"
 
 #. js-lingui-id: zCHzF/
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Saint Lucia 🇱🇨"
-msgstr ""
+msgstr "Sainte-Lucie 🇱🇨"
 
 #. js-lingui-id: Md/8iQ
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Saint Vincent 🇻🇨"
-msgstr ""
+msgstr "Saint-Vincent 🇻🇨"
 
 #. js-lingui-id: Burn4/
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -3664,22 +3642,22 @@ msgstr "SSO SAML/OIDC"
 #. js-lingui-id: R38ZPo
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Samoa 🇼🇸"
-msgstr ""
+msgstr "Samoa 🇼🇸"
 
 #. js-lingui-id: fK288K
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "San Marino 🇸🇲"
-msgstr ""
+msgstr "Saint-Marin 🇸🇲"
 
 #. js-lingui-id: KDcBQd
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "São Tomé & Príncipe 🇸🇹"
-msgstr ""
+msgstr "Sao Tomé-et-Principe 🇸🇹"
 
 #. js-lingui-id: /BK0Nl
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Saudi Arabia 🇸🇦"
-msgstr ""
+msgstr "Arabie saoudite 🇸🇦"
 
 #. js-lingui-id: elz5ka
 #: src/lib/customers/case-study-catalog.ts
@@ -3710,7 +3688,7 @@ msgstr "Passer à l’échelle sans casser les opérations"
 #. js-lingui-id: vk6sVR
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Search a country…"
-msgstr ""
+msgstr "Rechercher un pays…"
 
 #. js-lingui-id: HVOGoW
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -3751,7 +3729,7 @@ msgstr "Tout sélectionner"
 #. js-lingui-id: 6p/m5q
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Select your country"
-msgstr ""
+msgstr "Sélectionnez votre pays"
 
 #. js-lingui-id: 6JhL+3
 #: src/lib/customers/case-study-catalog.ts
@@ -3763,7 +3741,7 @@ msgstr "Auto-hébergé"
 #. js-lingui-id: QFK/45
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Self-hosted (Docker/K8s) · Cloud architecture · Scaling · Security · Monitoring"
-msgstr ""
+msgstr "Auto-hébergé (Docker/K8s) · Architecture cloud · Passage à l’échelle · Sécurité · Supervision"
 
 #. js-lingui-id: 5CWy3T
 #: src/app/[locale]/customers/act-education/page.tsx
@@ -3800,17 +3778,17 @@ msgstr "Auto-hébergement"
 #. js-lingui-id: D50Vyu
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Senegal 🇸🇳"
-msgstr ""
+msgstr "Sénégal 🇸🇳"
 
 #. js-lingui-id: eEJlq0
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Serbia 🇷🇸"
-msgstr ""
+msgstr "Serbie 🇷🇸"
 
 #. js-lingui-id: 62gxWx
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Seychelles 🇸🇨"
-msgstr ""
+msgstr "Seychelles 🇸🇨"
 
 #. js-lingui-id: 3VFzsh
 #: src/app/[locale]/(home)/helped.data.ts
@@ -3825,17 +3803,17 @@ msgstr "Afficher moins"
 #. js-lingui-id: RhU4bB
 #: src/app/[locale]/partners/list/components/FilterBar.tsx
 msgid "Showing {visibleCount} of {totalCount} partners"
-msgstr ""
+msgstr "Affichage de {visibleCount} sur {totalCount} partenaires"
 
 #. js-lingui-id: I89wN/
 #: src/app/[locale]/partners/list/components/FilterBar.tsx
 msgid "Showing all {totalCount} partners"
-msgstr ""
+msgstr "Affichage de tous les {totalCount} partenaires"
 
 #. js-lingui-id: yhyNch
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Sierra Leone 🇸🇱"
-msgstr ""
+msgstr "Sierra Leone 🇸🇱"
 
 #. js-lingui-id: mA6cL1
 #: src/sections/Faq/faq.data.ts
@@ -3845,7 +3823,7 @@ msgstr "Inscrivez-vous à Cloud en moins d’une minute et démarrez votre essai
 #. js-lingui-id: 0eG5g+
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Singapore 🇸🇬"
-msgstr ""
+msgstr "Singapour 🇸🇬"
 
 #. js-lingui-id: V9dFwD
 #: src/sections/Footer/data.ts
@@ -3860,12 +3838,12 @@ msgstr "Évitez l’UX lourde qui accompagne toujours le sur-mesure."
 #. js-lingui-id: U7keXg
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Slovakia 🇸🇰"
-msgstr ""
+msgstr "Slovaquie 🇸🇰"
 
 #. js-lingui-id: o1VTTF
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Slovenia 🇸🇮"
-msgstr ""
+msgstr "Slovénie 🇸🇮"
 
 #. js-lingui-id: bUmSwL
 #: src/app/[locale]/(home)/three-cards-feature.data.ts
@@ -3875,28 +3853,28 @@ msgstr "Des modèles intelligents, des raccourcis et des mises en page rendent l
 #. js-lingui-id: 6sKjjx
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Solo"
-msgstr ""
+msgstr "Indépendant"
 
 #. js-lingui-id: FX2oa1
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Solo or agency?"
-msgstr ""
+msgstr "Indépendant ou agence ?"
 
 #. js-lingui-id: TcZtfs
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Solomon Islands 🇸🇧"
-msgstr ""
+msgstr "Îles Salomon 🇸🇧"
 
 #. js-lingui-id: TvdMI3
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Solutioning"
-msgstr ""
+msgstr "Conception de solutions"
 
 #. js-lingui-id: t1E06j
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Somalia 🇸🇴"
-msgstr ""
+msgstr "Somalie 🇸🇴"
 
 #. js-lingui-id: AVfp38
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -3911,33 +3889,33 @@ msgstr "Accès au code source"
 #. js-lingui-id: zHJB/O
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "South Africa 🇿🇦"
-msgstr ""
+msgstr "Afrique du Sud 🇿🇦"
 
 #. js-lingui-id: 7MdTKh
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "South Korea 🇰🇷"
-msgstr ""
+msgstr "Corée du Sud 🇰🇷"
 
 #. js-lingui-id: a4jo+V
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "South Sudan 🇸🇸"
-msgstr ""
+msgstr "Soudan du Sud 🇸🇸"
 
 #. js-lingui-id: Kv3C8d
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Spain 🇪🇸"
-msgstr ""
+msgstr "Espagne 🇪🇸"
 
 #. js-lingui-id: 65A04M
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Spanish"
-msgstr ""
+msgstr "Espagnol"
 
 #. js-lingui-id: 00jcbn
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Sri Lanka 🇱🇰"
-msgstr ""
+msgstr "Sri Lanka 🇱🇰"
 
 #. js-lingui-id: vnS6Rf
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -3964,7 +3942,7 @@ msgstr "Commencer gratuitement"
 #. js-lingui-id: +6VDIA
 #: src/app/[locale]/pricing/_components/PricingHero.tsx
 msgid "Start your free trial today<0/>without credit card."
-msgstr ""
+msgstr "Commencez votre essai gratuit dès aujourd’hui<0/>sans carte bancaire."
 
 #. js-lingui-id: j9c8rb
 #: src/app/[locale]/product/three-cards.data.ts
@@ -3974,7 +3952,7 @@ msgstr "Restez dans le flux"
 #. js-lingui-id: GdGiNi
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Step {current} of {total}"
-msgstr ""
+msgstr "Étape {current} sur {total}"
 
 #. js-lingui-id: bxgoJR
 #: src/sections/Menu/data.ts
@@ -4010,7 +3988,7 @@ msgstr "Envoi…"
 #. js-lingui-id: 8Z1557
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Sudan 🇸🇩"
-msgstr ""
+msgstr "Soudan 🇸🇩"
 
 #. js-lingui-id: XYLcNv
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -4020,32 +3998,32 @@ msgstr "Support"
 #. js-lingui-id: Aq66kg
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Suriname 🇸🇷"
-msgstr ""
+msgstr "Suriname 🇸🇷"
 
 #. js-lingui-id: Yz+oFV
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Swahili"
-msgstr ""
+msgstr "Swahili"
 
 #. js-lingui-id: b2//Ip
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Sweden 🇸🇪"
-msgstr ""
+msgstr "Suède 🇸🇪"
 
 #. js-lingui-id: UaISq3
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Swedish"
-msgstr ""
+msgstr "Suédois"
 
 #. js-lingui-id: IImT5c
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Switzerland 🇨🇭"
-msgstr ""
+msgstr "Suisse 🇨🇭"
 
 #. js-lingui-id: sjuSub
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Syria 🇸🇾"
-msgstr ""
+msgstr "Syrie 🇸🇾"
 
 #. js-lingui-id: 3w+Aox
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -4056,7 +4034,7 @@ msgstr "Table, Kanban, Calendrier"
 #. js-lingui-id: ISVD3+
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Tagalog"
-msgstr ""
+msgstr "Tagalog"
 
 #. js-lingui-id: 9M02G5
 #: src/app/[locale]/product/_components/product-stepper/ProductStepperSection.tsx
@@ -4066,12 +4044,12 @@ msgstr "Personnalisez les pages d’enregistrement, les menus et les vues"
 #. js-lingui-id: boABlR
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Taiwan 🇹🇼"
-msgstr ""
+msgstr "Taïwan 🇹🇼"
 
 #. js-lingui-id: XJspRJ
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Tajikistan 🇹🇯"
-msgstr ""
+msgstr "Tadjikistan 🇹🇯"
 
 #. js-lingui-id: JAKtcG
 #: src/sections/Footer/data.ts
@@ -4086,12 +4064,12 @@ msgstr "Parlez-nous"
 #. js-lingui-id: fb427h
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Tamil"
-msgstr ""
+msgstr "Tamoul"
 
 #. js-lingui-id: ri1l89
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Tanzania 🇹🇿"
-msgstr ""
+msgstr "Tanzanie 🇹🇿"
 
 #. js-lingui-id: GWMpL3
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -4111,7 +4089,7 @@ msgstr "Notes techniques"
 #. js-lingui-id: y+bLyB
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Technical skills"
-msgstr ""
+msgstr "Compétences techniques"
 
 #. js-lingui-id: 1ZwmkP
 #: src/app/[locale]/customers/netzero/page.tsx
@@ -4136,17 +4114,17 @@ msgstr "Conditions d’utilisation de Twenty.com PBC, y compris l’utilisation 
 #. js-lingui-id: SUr44j
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Thai"
-msgstr ""
+msgstr "Thaï"
 
 #. js-lingui-id: 6t7gpr
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Thailand 🇹🇭"
-msgstr ""
+msgstr "Thaïlande 🇹🇭"
 
-#. js-lingui-id: eRjhUK
+#. js-lingui-id: pYwj0k
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
-msgid "Thanks, you're in."
-msgstr ""
+msgid "Thanks,"
+msgstr "Merci,"
 
 #. js-lingui-id: FjkPYg
 #: src/app/[locale]/customers/elevate-consulting/page.tsx
@@ -4326,7 +4304,7 @@ msgstr "Ils ont évalué Salesforce, Zoho, Pipedrive et SuiteCRM. Chacun venait 
 #. js-lingui-id: 6f8QUY
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Timor-Leste 🇹🇱"
-msgstr ""
+msgstr "Timor oriental 🇹🇱"
 
 #. js-lingui-id: 2y6W+f
 #: src/app/[locale]/customers/elevate-consulting/page.tsx
@@ -4336,12 +4314,12 @@ msgstr "pour les gouverner toutes"
 #. js-lingui-id: DeTupk
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Togo 🇹🇬"
-msgstr ""
+msgstr "Togo 🇹🇬"
 
 #. js-lingui-id: CocxTO
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Tonga 🇹🇴"
-msgstr ""
+msgstr "Tonga 🇹🇴"
 
 #. js-lingui-id: 5eFktS
 #: src/lib/customers/case-study-catalog.ts
@@ -4368,27 +4346,27 @@ msgstr "Suivez chaque version avec des journaux de changements, des points forts
 #. js-lingui-id: 6vHPh9
 #: src/app/[locale]/product/_components/ProductHero.tsx
 msgid "Track relationships, manage pipelines, and take action quickly with an intuitive CRM that helps your team move faster from day one with confidence."
-msgstr ""
+msgstr "Suivez les relations, gérez les pipelines et agissez rapidement avec un CRM intuitif qui aide votre équipe à aller plus vite dès le premier jour, en toute confiance."
 
 #. js-lingui-id: xwWQ9Q
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Training & Adoption"
-msgstr ""
+msgstr "Formation et adoption"
 
 #. js-lingui-id: MtCqjl
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Training, Adoption & Support"
-msgstr ""
+msgstr "Formation, adoption et support"
 
 #. js-lingui-id: /ga9kq
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Trinidad & Tobago 🇹🇹"
-msgstr ""
+msgstr "Trinité-et-Tobago 🇹🇹"
 
 #. js-lingui-id: tdZpCd
 #: src/sections/Footer/data.ts
 msgid "Trust Center"
-msgstr ""
+msgstr "Centre de confiance"
 
 #. js-lingui-id: KtyN0b
 #: src/sections/TrustedBy/TrustedBy.tsx
@@ -4403,7 +4381,7 @@ msgstr "Essayer en direct"
 #. js-lingui-id: qhmtws
 #: src/app/[locale]/partners/list/components/EmptyState.tsx
 msgid "Try removing some filters or browse all partners."
-msgstr ""
+msgstr "Essayez de supprimer certains filtres ou parcourez tous les partenaires."
 
 #. js-lingui-id: E/hGy3
 #: src/app/[locale]/product/_components/ProductDemo.tsx
@@ -4418,27 +4396,27 @@ msgstr "Mardi, votre équipe apprend que les affaires avec un sponsor technique 
 #. js-lingui-id: y4UxlS
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Tunisia 🇹🇳"
-msgstr ""
+msgstr "Tunisie 🇹🇳"
 
 #. js-lingui-id: UIDKnJ
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Turkey 🇹🇷"
-msgstr ""
+msgstr "Turquie 🇹🇷"
 
 #. js-lingui-id: Kz91g/
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Turkish"
-msgstr ""
+msgstr "Turc"
 
 #. js-lingui-id: kdJl4v
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Turkmenistan 🇹🇲"
-msgstr ""
+msgstr "Turkménistan 🇹🇲"
 
 #. js-lingui-id: tSc/a3
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Tuvalu 🇹🇻"
-msgstr ""
+msgstr "Tuvalu 🇹🇻"
 
 #. js-lingui-id: O5dAmW
 #: src/lib/website-routing/static-website-routes.ts
@@ -4509,7 +4487,7 @@ msgstr "Twenty nous permet de construire un CRM autour de l’entreprise et non 
 #. js-lingui-id: AxT+g4
 #: src/app/[locale]/(home)/three-cards-feature.data.ts
 msgid "Twenty makes it simple. It's clean, intuitive, and built to feel like Notion."
-msgstr "Twenty simplifie tout. C'est épuré, intuitif et conçu pour rappeler Notion."
+msgstr "Twenty simplifie tout. C’est épuré, intuitif et conçu pour rappeler Notion."
 
 #. js-lingui-id: 4SJucz
 #: src/lib/website-routing/static-website-routes.ts
@@ -4524,12 +4502,12 @@ msgstr "Twenty Releases — Nouveautés du CRM Open Source"
 #. js-lingui-id: V1lV7B
 #: src/sections/Plans/data.ts
 msgid "Twenty team support"
-msgstr "Assistance de l'équipe Twenty"
+msgstr "Assistance de l’équipe Twenty"
 
 #. js-lingui-id: KsFvUt
 #: src/app/[locale]/partners/list/components/MarketplaceHeader.tsx
 msgid "Twenty's certified partners help teams migrate, customise, and operate the open source CRM across regions, languages, and deployment models. Browse profiles and book a call."
-msgstr ""
+msgstr "Les partenaires certifiés de Twenty aident les équipes à migrer, à personnaliser et à exploiter le CRM open source dans différentes régions, langues et configurations de déploiement. Parcourez les profils et réservez un appel."
 
 #. js-lingui-id: EIU345
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -4539,42 +4517,42 @@ msgstr "Authentification à deux facteurs"
 #. js-lingui-id: O+vc/1
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Type of team *"
-msgstr ""
+msgstr "Type d’équipe *"
 
 #. js-lingui-id: P+R1Lc
 #: src/app/[locale]/partners/profile/[slug]/components/PartnerRatesPanel.tsx
 msgid "Typical project"
-msgstr ""
+msgstr "Projet type"
 
 #. js-lingui-id: HqFilh
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "UAE 🇦🇪"
-msgstr ""
+msgstr "Émirats arabes unis 🇦🇪"
 
 #. js-lingui-id: +WNTxL
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Uganda 🇺🇬"
-msgstr ""
+msgstr "Ouganda 🇺🇬"
 
 #. js-lingui-id: uxuy4l
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "UI theme"
-msgstr "Thème de l'interface utilisateur"
+msgstr "Thème de l’interface utilisateur"
 
 #. js-lingui-id: tNfmmF
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "UK 🇬🇧"
-msgstr ""
+msgstr "Royaume-Uni 🇬🇧"
 
 #. js-lingui-id: z7UkhA
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Ukraine 🇺🇦"
-msgstr ""
+msgstr "Ukraine 🇺🇦"
 
 #. js-lingui-id: V9+2pH
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Ukrainian"
-msgstr ""
+msgstr "Ukrainien"
 
 #. js-lingui-id: jqzUyM
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -4624,7 +4602,7 @@ msgstr "Jusqu’à 5 espaces de travail"
 #. js-lingui-id: SPdRRU
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Upfront consulting, scoping, strategy."
-msgstr ""
+msgstr "Conseil en amont, cadrage, stratégie."
 
 #. js-lingui-id: 2vanwz
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -4634,22 +4612,22 @@ msgstr "Chargez, renommez, prévisualisez et gérez les fichiers directement sur
 #. js-lingui-id: tmwuH9
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Urdu"
-msgstr ""
+msgstr "Ourdou"
 
 #. js-lingui-id: huOaG8
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Uruguay 🇺🇾"
-msgstr ""
+msgstr "Uruguay 🇺🇾"
 
 #. js-lingui-id: RCOibx
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "US"
-msgstr ""
+msgstr "États-Unis"
 
 #. js-lingui-id: LXHEIS
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "USA 🇺🇸"
-msgstr ""
+msgstr "États-Unis 🇺🇸"
 
 #. js-lingui-id: Roaswv
 #: src/sections/Menu/data.ts
@@ -4665,53 +4643,53 @@ msgstr "Rôles utilisateur"
 #. js-lingui-id: UCUX2+
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "User-side rollout & ongoing support."
-msgstr ""
+msgstr "Déploiement côté utilisateurs et support continu."
 
 #. js-lingui-id: FOOEtP
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Uzbekistan 🇺🇿"
-msgstr ""
+msgstr "Ouzbékistan 🇺🇿"
 
 #. js-lingui-id: CRXL2j
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Vanuatu 🇻🇺"
-msgstr ""
+msgstr "Vanuatu 🇻🇺"
 
 #. js-lingui-id: NNeEYO
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Vatican 🇻🇦"
-msgstr ""
+msgstr "Vatican 🇻🇦"
 
 #. js-lingui-id: BWzac4
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Venezuela 🇻🇪"
-msgstr ""
+msgstr "Venezuela 🇻🇪"
 
 #. js-lingui-id: FlQ1vR
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Vietnam 🇻🇳"
-msgstr ""
+msgstr "Viêt Nam 🇻🇳"
 
 #. js-lingui-id: fROFIL
 #: src/app/[locale]/partners/list/components/chip-labels.ts
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamien"
 
 #. js-lingui-id: BRBSny
 #. placeholder {0}: partner.name
 #: src/app/[locale]/partners/list/components/PartnerCard.tsx
 msgid "View {0} on LinkedIn"
-msgstr ""
+msgstr "Voir {0} sur LinkedIn"
 
 #. js-lingui-id: ITdNGt
 #: src/app/[locale]/partners/profile/[slug]/components/PartnerProfileCtas.tsx
 msgid "View on LinkedIn"
-msgstr ""
+msgstr "Voir sur LinkedIn"
 
 #. js-lingui-id: 73lp8c
 #: src/app/[locale]/partners/list/components/PartnerCard.tsx
 msgid "View profile"
-msgstr ""
+msgstr "Voir le profil"
 
 #. js-lingui-id: BAzC1v
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -4747,7 +4725,7 @@ msgstr "W3Grads"
 #. js-lingui-id: R8BueT
 #: src/app/[locale]/customers/w3villa/page.tsx
 msgid "W3villa built W3Grads (w3grads.com), an AI-powered mock interview platform for universities and training institutes, using Twenty as its operational backbone."
-msgstr "W3villa a développé W3Grads (w3grads.com), une plateforme d'entretiens simulés alimentée par l'IA pour les universités et les instituts de formation, en utilisant Twenty comme socle opérationnel."
+msgstr "W3villa a développé W3Grads (w3grads.com), une plateforme d’entretiens simulés alimentée par l’IA pour les universités et les instituts de formation, en utilisant Twenty comme socle opérationnel."
 
 #. js-lingui-id: 7hHsoV
 #: src/app/[locale]/(home)/helped.data.ts
@@ -4758,7 +4736,7 @@ msgstr "W3villa a conçu W3Grads pour des entretiens simulés par IA à grande �
 #: src/lib/customers/case-study-catalog.ts
 #: src/app/[locale]/customers/w3villa/page.tsx
 msgid "W3villa shipped W3Grads on Twenty for AI interviews, scoring, and institution-scale workflows without rebuilding CRM plumbing."
-msgstr "W3villa a livré W3Grads sur Twenty pour des entretiens IA, la notation et des workflows à l'échelle des institutions, sans reconstruire toute la plomberie du CRM."
+msgstr "W3villa a livré W3Grads sur Twenty pour des entretiens IA, la notation et des workflows à l’échelle des institutions, sans reconstruire toute la plomberie du CRM."
 
 #. js-lingui-id: 7q5Vjn
 #: src/app/[locale]/(home)/three-cards-illustration.data.ts
@@ -4773,17 +4751,22 @@ msgstr "W3villa Technologies a entrepris de le résoudre correctement, non pas a
 #. js-lingui-id: 3v2ipf
 #: src/app/[locale]/(home)/three-cards-illustration.data.ts
 msgid "W3villa used Twenty as a production-grade framework for the data model, permissions, authentication, and workflow engine they would otherwise have rebuilt themselves."
-msgstr "W3villa a utilisé Twenty comme framework de niveau production pour le modèle de données, les autorisations, l'authentification et le moteur de workflows qu'ils auraient autrement dû reconstruire eux-mêmes."
+msgstr "W3villa a utilisé Twenty comme framework de niveau production pour le modèle de données, les autorisations, l’authentification et le moteur de workflows qu’ils auraient autrement dû reconstruire eux-mêmes."
 
 #. js-lingui-id: 8CHatv
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "We could not submit your application. Please try again in a moment."
-msgstr "Nous n'avons pas pu soumettre votre candidature. Veuillez réessayer dans un instant."
+msgstr "Nous n’avons pas pu soumettre votre candidature. Veuillez réessayer dans un instant."
 
 #. js-lingui-id: MjWeUE
 #: src/app/[locale]/(home)/testimonials.data.ts
 msgid "We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
-msgstr "Nous ne voulions pas simplement masquer le problème. Nous voulions construire quelque chose sur lequel les établissements pourraient s'appuyer à grande échelle, ce qui signifiait partir d'une base suffisamment solide pour supporter toute la complexité de ce que nous avions en tête."
+msgstr "Nous ne voulions pas simplement masquer le problème. Nous voulions construire quelque chose sur lequel les établissements pourraient s’appuyer à grande échelle, ce qui signifiait partir d’une base suffisamment solide pour supporter toute la complexité de ce que nous avions en tête."
+
+#. js-lingui-id: u7hKUm
+#: src/sections/PartnerApplication/partner-application-modal-data.ts
+msgid "we'll be in touch!"
+msgstr "nous reviendrons vers vous !"
 
 #. js-lingui-id: d5CWI6
 #: src/app/[locale]/partners/components/PartnerHero.tsx
@@ -4803,17 +4786,17 @@ msgstr "Webhooks (capture de données modifiées)"
 #. js-lingui-id: hgDePr
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Website or GitHub"
-msgstr ""
+msgstr "Site web ou GitHub"
 
 #. js-lingui-id: Lx0cVD
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "What an admin can do without writing code."
-msgstr ""
+msgstr "Ce qu’un administrateur peut faire sans écrire de code."
 
 #. js-lingui-id: Z34FQq
 #: src/app/[locale]/customers/netzero/page.tsx
 msgid "What convinced Olivier was the flexibility of the platform and where it was headed. Even when initial needs were basic record-keeping, he still needed a custom data model with granular permissions to manage the wide range of NetZero activities. He also needed a system that could adapt quickly to a fast-iteration company."
-msgstr "Ce qui a convaincu Olivier, c'est la flexibilité de la plateforme et la direction qu'elle prenait. Même lorsque les besoins initiaux n'étaient que de la tenue de registres de base, il lui fallait tout de même un modèle de données personnalisé avec des autorisations granulaires pour gérer la large palette d'activités de NetZero. Il lui fallait aussi un système capable de s'adapter rapidement à une entreprise à itérations rapides."
+msgstr "Ce qui a convaincu Olivier, c’est la flexibilité de la plateforme et la direction qu’elle prenait. Même lorsque les besoins initiaux n’étaient que de la tenue de registres de base, il lui fallait tout de même un modèle de données personnalisé avec des autorisations granulaires pour gérer la large palette d’activités de NetZero. Il lui fallait aussi un système capable de s’adapter rapidement à une entreprise à itérations rapides."
 
 #. js-lingui-id: phiBjc
 #: src/sections/Faq/faq.data.ts
@@ -4823,7 +4806,7 @@ msgstr "Combien coûte Twenty ?"
 #. js-lingui-id: WVQaGB
 #: src/app/[locale]/customers/netzero/page.tsx
 msgid "What is coming in April 2026 is what he has been waiting for: AI-assisted workflow creation, describing what he needs and iterating from there instead of building complex logic from scratch. For a founder who runs the CRM himself, that changes what is realistically possible."
-msgstr "Ce qui arrive en avril 2026 est ce qu'il attendait : la création de workflows assistée par l'IA, décrire ce dont il a besoin et itérer à partir de là au lieu de construire une logique complexe depuis zéro. Pour un fondateur qui gère lui-même le CRM, cela change ce qui est réellement possible."
+msgstr "Ce qui arrive en avril 2026 est ce qu’il attendait : la création de workflows assistée par l’IA, décrire ce dont il a besoin et itérer à partir de là au lieu de construire une logique complexe depuis zéro. Pour un fondateur qui gère lui-même le CRM, cela change ce qui est réellement possible."
 
 #. js-lingui-id: iOAq7n
 #: src/app/[locale]/customers/elevate-consulting/page.tsx
@@ -4834,7 +4817,7 @@ msgstr "La suite"
 #. js-lingui-id: tWd6MT
 #: src/app/[locale]/customers/netzero/page.tsx
 msgid "What is planned is significant. NetZero has a data lake, online forms, and multiple internal systems that he wants to connect to Twenty. The pipes are there; the next step is automations that tie them together."
-msgstr "Ce qui est prévu est important. NetZero dispose d'un data lake, de formulaires en ligne et de multiples systèmes internes qu'il souhaite connecter à Twenty. Les tuyaux sont là ; la prochaine étape consiste à mettre en place des automatisations qui les relient."
+msgstr "Ce qui est prévu est important. NetZero dispose d’un data lake, de formulaires en ligne et de multiples systèmes internes qu’il souhaite connecter à Twenty. Les tuyaux sont là ; la prochaine étape consiste à mettre en place des automatisations qui les relient."
 
 #. js-lingui-id: aYRqmz
 #: src/app/[locale]/why-twenty/_components/WhyTwentyMeaningEditorial.tsx
@@ -4844,17 +4827,17 @@ msgstr "Ce que cela signifie"
 #. js-lingui-id: QCHIzm
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "What you cover *"
-msgstr ""
+msgstr "Ce que vous couvrez *"
 
 #. js-lingui-id: 1kfjxX
 #: src/app/[locale]/customers/act-education/page.tsx
 msgid "Whatever came next had to be something they could own."
-msgstr "Quelle que soit la suite, il fallait que ce soit quelque chose qu'ils puissent posséder."
+msgstr "Quelle que soit la suite, il fallait que ce soit quelque chose qu’ils puissent posséder."
 
 #. js-lingui-id: cs6VpJ
 #: src/app/[locale]/customers/w3villa/page.tsx
 msgid "When a student registers via QR at a campus event, the system assigns a plan, generates an interview session, and sends a link. The AI conducts the interview, scores the candidate, and classifies the result. Faculty see where each student stands without manually reviewing every session. Building and iterating on these workflows was faster with AI in the loop."
-msgstr "Quand un étudiant s'inscrit via un QR code lors d'un événement sur le campus, le système attribue un plan, génère une session d'entretien et envoie un lien. L'IA conduit l'entretien, note le candidat et classe le résultat. Le corps enseignant voit où en est chaque étudiant sans revoir manuellement chaque session. Concevoir et itérer sur ces workflows a été plus rapide avec l'IA dans la boucle."
+msgstr "Quand un étudiant s’inscrit via un QR code lors d’un événement sur le campus, le système attribue un plan, génère une session d’entretien et envoie un lien. L’IA conduit l’entretien, note le candidat et classe le résultat. Le corps enseignant voit où en est chaque étudiant sans revoir manuellement chaque session. Concevoir et itérer sur ces workflows a été plus rapide avec l’IA dans la boucle."
 
 #. js-lingui-id: I/oPrY
 #: src/app/[locale]/customers/9dots/page.tsx
@@ -4864,7 +4847,7 @@ msgstr "Quand le canal est"
 #. js-lingui-id: JglRo/
 #: src/app/[locale]/customers/9dots/page.tsx
 msgid "When the channel is the business"
-msgstr "Quand le canal est l'entreprise"
+msgstr "Quand le canal est l’entreprise"
 
 #. js-lingui-id: ee4xKk
 #: src/app/[locale]/customers/act-education/page.tsx
@@ -4894,7 +4877,7 @@ msgstr "Quand votre CRM est le produit : W3Grads sur Twenty | W3villa Technologi
 #. js-lingui-id: bGN8u+
 #: src/app/[locale]/customers/netzero/page.tsx
 msgid "While NetZero still runs a second CRM in parallel for WhatsApp-heavy operations with farmers in Brazil, they expect to migrate all of it to Twenty as features and the ecosystem grow. Already, their structured, multinational pipeline is powered by Twenty."
-msgstr "Bien que NetZero exécute encore un second CRM en parallèle pour les opérations très axées sur WhatsApp avec des agriculteurs au Brésil, ils prévoient de tout migrer vers Twenty à mesure que les fonctionnalités et l'écosystème grandissent. Leur pipeline structuré et multinational est déjà propulsé par Twenty."
+msgstr "Bien que NetZero exécute encore un second CRM en parallèle pour les opérations très axées sur WhatsApp avec des agriculteurs au Brésil, ils prévoient de tout migrer vers Twenty à mesure que les fonctionnalités et l’écosystème grandissent. Leur pipeline structuré et multinational est déjà propulsé par Twenty."
 
 #. js-lingui-id: DJlSwA
 #: src/sections/Menu/data.ts
@@ -4914,7 +4897,7 @@ msgstr "Pourquoi Twenty — Le CRM Open Source conçu pour être personnalisé"
 #. js-lingui-id: OKVlnc
 #: src/app/[locale]/customers/netzero/page.tsx
 msgid "With Twenty, when a new need appears, he can address it himself: no developer required, no support ticket."
-msgstr "Avec Twenty, lorsqu'un nouveau besoin apparaît, il peut y répondre lui-même : pas de développeur requis, pas de ticket de support."
+msgstr "Avec Twenty, lorsqu’un nouveau besoin apparaît, il peut y répondre lui-même : pas de développeur requis, pas de ticket de support."
 
 #. js-lingui-id: KAB1uP
 #: src/app/[locale]/customers/netzero/page.tsx
@@ -4949,7 +4932,7 @@ msgstr "Espace de travail"
 #. js-lingui-id: bwECg/
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
 msgid "Workspace URL, customer references, relevant links…"
-msgstr ""
+msgstr "URL de l’espace de travail, références clients, liens pertinents…"
 
 #. js-lingui-id: zkWmBh
 #: src/sections/Plans/components/BillingToggle.tsx
@@ -4959,7 +4942,7 @@ msgstr "Annuel"
 #. js-lingui-id: S6izIJ
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Yemen 🇾🇪"
-msgstr ""
+msgstr "Yémen 🇾🇪"
 
 #. js-lingui-id: l75CjT
 #: src/sections/PlanTable/components/Content.tsx
@@ -5010,7 +4993,7 @@ msgstr "Oui"
 #. js-lingui-id: bo6pUs
 #: src/sections/Faq/faq.data.ts
 msgid "Yes, with our Apps framework. Scaffold an extension with `npx create-twenty-app` and ship custom objects, server-side logic functions, React components that render inside Twenty’s UI, AI skills and agents, views, and navigation, all in TypeScript, deployable to any workspace."
-msgstr "Oui, avec notre framework Apps. Générez une extension avec `npx create-twenty-app` et livrez des objets personnalisés, des fonctions de logique côté serveur, des composants React qui s'affichent dans l'UI de Twenty, des compétences et des agents IA, des vues et la navigation, le tout en TypeScript, déployable sur n'importe quel espace de travail."
+msgstr "Oui, avec notre framework Apps. Générez une extension avec `npx create-twenty-app` et livrez des objets personnalisés, des fonctions de logique côté serveur, des composants React qui s’affichent dans l’UI de Twenty, des compétences et des agents IA, des vues et la navigation, le tout en TypeScript, déployable sur n’importe quel espace de travail."
 
 #. js-lingui-id: yIcBW6
 #: src/sections/Faq/faq.data.ts
@@ -5020,17 +5003,17 @@ msgstr "Oui. Chaque espace de travail Cloud est fourni avec un serveur MCP natif
 #. js-lingui-id: 8xYMYQ
 #: src/sections/Faq/faq.data.ts
 msgid "Yes. Import your data via CSV, or use our API for 50,000+ records. Our partners can handle the full migration for you."
-msgstr "Oui. Importez vos données via CSV, ou utilisez notre API pour plus de 50 000 enregistrements. Nos partenaires peuvent prendre en charge l'intégralité de la migration pour vous."
+msgstr "Oui. Importez vos données via CSV, ou utilisez notre API pour 50,000+ enregistrements. Nos partenaires peuvent prendre en charge l’intégralité de la migration pour vous."
 
 #. js-lingui-id: 8m0eN9
 #: src/sections/Faq/faq.data.ts
 msgid "Yes. Twenty is the #1 Open Source CRM on GitHub. You can self-host to fully own your infrastructure, or run it on our managed cloud for a zero-ops setup."
-msgstr "Oui. Twenty est le CRM Open Source n°1 sur GitHub. Vous pouvez l'auto-héberger pour posséder entièrement votre infrastructure, ou l'exécuter sur notre cloud managé pour une configuration zéro ops."
+msgstr "Oui. Twenty est le CRM Open Source n°1 sur GitHub. Vous pouvez l’auto-héberger pour posséder entièrement votre infrastructure, ou l’exécuter sur notre cloud managé pour une configuration zéro ops."
 
 #. js-lingui-id: LJ3sTb
 #: src/app/[locale]/why-twenty/_components/WhyTwentyMeaningEditorial.tsx
 msgid "You don't buy your deployment pipeline off the shelf. You don't rent your data warehouse from a vendor who decides the schema. You build it, you own it, you iterate on it every week. CRM is going the same way. The teams that treat it as infrastructure they own will compound an advantage every quarter."
-msgstr "Vous n'achetez pas votre pipeline de déploiement sur étagère. Vous ne louez pas votre entrepôt de données à un fournisseur qui décide du schéma. Vous le construisez, vous le possédez, vous itérez dessus chaque semaine. Le CRM prend la même direction. Les équipes qui le considèrent comme une infrastructure qu'elles possèdent accumuleront un avantage à chaque trimestre."
+msgstr "Vous n’achetez pas votre pipeline de déploiement sur étagère. Vous ne louez pas votre entrepôt de données à un fournisseur qui décide du schéma. Vous le construisez, vous le possédez, vous itérez dessus chaque semaine. Le CRM prend la même direction. Les équipes qui le considèrent comme une infrastructure qu’elles possèdent accumuleront un avantage à chaque trimestre."
 
 #. js-lingui-id: SfJVcK
 #: src/app/[locale]/enterprise/activate/_components/EnterpriseActivateHero.tsx
@@ -5040,7 +5023,7 @@ msgstr "Votre achat est terminé. Suivez les étapes ci-dessous pour copier votr
 #. js-lingui-id: krHgj1
 #: src/app/[locale]/enterprise/activate/EnterpriseActivateClient.tsx
 msgid "Your enterprise key"
-msgstr "Votre clé d'entreprise"
+msgstr "Votre clé d’entreprise"
 
 #. js-lingui-id: +dxjCu
 #: src/app/[locale]/enterprise/activate/EnterpriseActivateClient.tsx
@@ -5060,7 +5043,7 @@ msgstr "Votre réseau, entièrement cartographié."
 #. js-lingui-id: CgGN5T
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Zambia 🇿🇲"
-msgstr ""
+msgstr "Zambie 🇿🇲"
 
 #. js-lingui-id: wHjFOw
 #: src/lib/customers/case-study-catalog.ts
@@ -5081,4 +5064,5 @@ msgstr "Zéro travail manuel au cœur. Automatisation totale. Construit sur Twen
 #. js-lingui-id: TT3YXb
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Zimbabwe 🇿🇼"
-msgstr ""
+msgstr "Zimbabwe 🇿🇼"
+
