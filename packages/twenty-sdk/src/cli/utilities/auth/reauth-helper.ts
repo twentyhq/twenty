@@ -1,7 +1,6 @@
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 import { ApiService } from '@/cli/utilities/api/api-service';
-import { ConfigService } from '@/cli/utilities/config/config-service';
 
 export type ReauthOutcome = 'reauthenticated' | 'declined' | 'non-interactive';
 
@@ -27,7 +26,9 @@ export const promptForReauthentication = async (
     return 'declined';
   }
 
-  const apiService = new ApiService();
+  // Disable interceptors to prevent recursion: validateAuth() hitting 401
+  // would otherwise trigger the same interceptor that called this function.
+  const apiService = new ApiService({ disableInterceptors: true });
   const { authValid } = await apiService.validateAuth();
 
   if (authValid) {
@@ -36,14 +37,8 @@ export const promptForReauthentication = async (
     return 'reauthenticated';
   }
 
-  const configService = new ConfigService();
-  const config = await configService.getConfigForRemote(remoteName);
-
   console.log(
-    chalk.yellow(`Run \`twenty remote:add\` to re-authenticate.`),
-  );
-  console.log(
-    chalk.gray(`Generate a new key at: ${config.apiUrl}/settings/developers`),
+    chalk.yellow(`Run \`yarn twenty remote:add\` to re-authenticate.`),
   );
 
   return 'declined';
