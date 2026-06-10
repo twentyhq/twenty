@@ -149,14 +149,20 @@ export const useIncrementalDestroyManyRecords = <T>({
 
   const incrementalDestroyManyRecords = async () => {
     let totalDestroyedCount = 0;
-    const destroyedIdsOverall: string[] = [];
 
     await incrementalFetchAndMutate(
       async ({ recordIds, totalCount, abortSignal }) => {
         await destroyManyRecordsBatch(recordIds, abortSignal);
 
         totalDestroyedCount += recordIds.length;
-        destroyedIdsOverall.push(...recordIds);
+
+        dispatchObjectRecordOperationBrowserEvent({
+          objectMetadataItem,
+          operation: {
+            type: 'destroy-many',
+            destroyedRecordIds: recordIds,
+          },
+        });
 
         updateProgress(totalDestroyedCount, totalCount);
       },
@@ -164,14 +170,6 @@ export const useIncrementalDestroyManyRecords = <T>({
 
     await refetchAggregateQueries({
       objectMetadataNamePlural: objectMetadataItem.namePlural,
-    });
-
-    dispatchObjectRecordOperationBrowserEvent({
-      objectMetadataItem,
-      operation: {
-        type: 'destroy-many',
-        destroyedRecordIds: destroyedIdsOverall,
-      },
     });
 
     return totalDestroyedCount;
