@@ -11,6 +11,7 @@ import { type FileFolder } from 'twenty-shared/types';
 export type OrchestratorStateStepEvent = {
   message: string;
   status: 'info' | 'success' | 'error' | 'warning';
+  spacingBefore?: boolean;
 };
 
 export type OrchestratorStateEvent = OrchestratorStateStepEvent & {
