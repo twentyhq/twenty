@@ -23,8 +23,21 @@ describe('parsePdlItem', () => {
     });
   });
 
-  it('treats a 200 item without a data envelope as not_found', () => {
-    expect(parsePdlItem({ item: { status: 200, name: 'Acme' } })).toEqual({
+  it('matches a 200 item whose record fields are at the top level (company bulk shape)', () => {
+    expect(
+      parsePdlItem({
+        item: { status: 200, likelihood: 6, id: 'x', name: 'Acme' },
+      }),
+    ).toEqual({
+      outcome: 'matched',
+      httpStatus: 200,
+      likelihood: 6,
+      data: { id: 'x', name: 'Acme' },
+    });
+  });
+
+  it('treats a 200 item carrying only the envelope as not_found', () => {
+    expect(parsePdlItem({ item: { status: 200, likelihood: 6 } })).toEqual({
       outcome: 'not_found',
       httpStatus: 200,
     });

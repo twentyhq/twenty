@@ -1,3 +1,5 @@
+import { normalizeDomain } from 'src/logic-functions/utils/normalize-domain';
+import { normalizeLinkedinUrl } from 'src/logic-functions/utils/normalize-linkedin-url';
 import { resolveMinLikelihood } from 'src/logic-functions/utils/resolve-min-likelihood';
 import { toText } from 'src/logic-functions/utils/to-text';
 import { type BulkEnrichInput } from 'src/types/bulk-enrich-input';
@@ -24,8 +26,8 @@ export const extractCompanyMatchParams = ({
     };
   }
 
-  const websiteDomain = toText(node.domainName?.primaryLinkUrl);
-  const linkedinProfileUrl = toText(node.linkedinLink?.primaryLinkUrl);
+  const websiteDomain = normalizeDomain(node.domainName?.primaryLinkUrl);
+  const linkedinProfileUrl = normalizeLinkedinUrl(node.linkedinLink?.primaryLinkUrl);
   const companyName = toText(node.name);
   const hasStrongIdentifier =
     isDefined(websiteDomain) || isDefined(linkedinProfileUrl);

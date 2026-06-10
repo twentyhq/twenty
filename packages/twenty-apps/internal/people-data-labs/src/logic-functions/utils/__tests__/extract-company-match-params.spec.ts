@@ -24,22 +24,37 @@ describe('extractCompanyMatchParams', () => {
     ).toEqual({ website: 'acme.com', name: 'Acme', minLikelihood: 2 });
   });
 
-  it('uses the linkedin profile as a strong identifier', () => {
+  it('uses the linkedin profile as a strong identifier, stripped to the PDL path format', () => {
     expect(
       extractCompanyMatchParams({
         node: {
           ...COMPANY_NODE_MOCK,
           domainName: null,
-          linkedinLink: { primaryLinkUrl: 'https://linkedin.com/company/acme' },
+          linkedinLink: {
+            primaryLinkUrl: 'https://www.linkedin.com/company/acme/',
+          },
           name: 'Acme',
         },
         input: INPUT,
       }),
     ).toEqual({
-      profile: 'https://linkedin.com/company/acme',
+      profile: 'linkedin.com/company/acme',
       name: 'Acme',
       minLikelihood: 2,
     });
+  });
+
+  it('strips the scheme and www from the website before matching', () => {
+    expect(
+      extractCompanyMatchParams({
+        node: {
+          ...COMPANY_NODE_MOCK,
+          domainName: { primaryLinkUrl: 'https://www.acme.com/' },
+          name: 'Acme',
+        },
+        input: INPUT,
+      }),
+    ).toEqual({ website: 'acme.com', name: 'Acme', minLikelihood: 2 });
   });
 
   it('raises the likelihood when only a name is available', () => {

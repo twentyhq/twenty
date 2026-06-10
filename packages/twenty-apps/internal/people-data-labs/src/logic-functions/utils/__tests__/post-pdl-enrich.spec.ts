@@ -78,15 +78,22 @@ describe('postPdlBulkEnrich', () => {
     ]);
   });
 
-  it('treats a 200 item without a data envelope as not_found', async () => {
-    stubFetch(buildResponse(200, [{ status: 200, name: 'Acme' }]));
+  it('matches a 200 company item whose fields are at the top level (no data envelope)', async () => {
+    stubFetch(
+      buildResponse(200, [{ status: 200, likelihood: 6, id: 'c1', name: 'Acme' }]),
+    );
 
     const results = await postPdlBulkEnrich({
       path: '/company/enrich/bulk',
       requests: [{ name: 'Acme' }],
     });
 
-    expect(results[0]).toEqual({ outcome: 'not_found', httpStatus: 200 });
+    expect(results[0]).toEqual({
+      outcome: 'matched',
+      httpStatus: 200,
+      likelihood: 6,
+      data: { id: 'c1', name: 'Acme' },
+    });
   });
 
   it('reads the responses envelope when the body is not a bare array', async () => {

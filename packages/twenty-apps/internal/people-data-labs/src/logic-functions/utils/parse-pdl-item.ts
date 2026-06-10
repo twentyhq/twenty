@@ -6,6 +6,22 @@ import { isDefined } from 'src/utils/is-defined';
 
 const ASSUMED_SUCCESS_STATUS_WHEN_MISSING = 200;
 
+const ENVELOPE_FIELD_NAMES = new Set(['status', 'likelihood']);
+
+const extractMatchedData = (
+  responseItem: Record<string, unknown>,
+): Record<string, unknown> => {
+  if (isObject(responseItem.data)) {
+    return responseItem.data as Record<string, unknown>;
+  }
+
+  return Object.fromEntries(
+    Object.entries(responseItem).filter(
+      ([fieldName]) => !ENVELOPE_FIELD_NAMES.has(fieldName),
+    ),
+  );
+};
+
 export const parsePdlItem = <TData>({
   item,
   requestedMinLikelihood,
@@ -38,7 +54,9 @@ export const parsePdlItem = <TData>({
     };
   }
 
-  if (!isObject(responseItem.data)) {
+  const matchedData = extractMatchedData(responseItem);
+
+  if (Object.keys(matchedData).length === 0) {
     return { outcome: 'not_found', httpStatus };
   }
 
@@ -59,6 +77,6 @@ export const parsePdlItem = <TData>({
     outcome: 'matched',
     httpStatus,
     likelihood: matchLikelihood,
-    data: responseItem.data as TData,
+    data: matchedData as TData,
   };
 };
