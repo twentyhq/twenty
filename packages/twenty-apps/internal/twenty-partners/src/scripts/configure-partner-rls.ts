@@ -1,28 +1,15 @@
-// Does two things on each run:
+// Idempotent. Re-run after every install/reinstall — the app manifest can't ship RLS
+// predicates. Does two things:
 //
-// 1. UPSERTS the row-level-permission predicates on the Partner role: one per target
-//    object (partner, person, company, opportunity) = "partnerUser IS the current
-//    workspace member", PLUS one on workspaceMember = "id IS the current member" so the
-//    role's read on workspaceMember is scoped to the partner's own record (member-typed
-//    relations resolve for themselves; the internal team roster stays hidden). These are
-//    configured out-of-band because the app manifest cannot ship RLS predicates. Re-run
-//    after every install or reinstall. The mutation is fully idempotent (upsert semantics).
+// 1. Upserts row-level-permission predicates on the Partner role: "partnerUser IS the
+//    current member" on each of partner/person/company/opportunity, plus "id IS the
+//    current member" on workspaceMember so the partner sees only its own member record
+//    (member-typed relations still resolve; the internal roster stays hidden).
 //
-//    Field choice: the metadata API exposes the relation field `partnerUser`
-//    (type RELATION) rather than a separate `partnerUserId` join-column field. The
-//    upsertRowLevelPermissionPredicates mutation accepts the RELATION field id directly.
-//    Operand: IS (value null + workspaceMemberFieldMetadataId injects the current member).
-//    NOT CONTAINS — the query engine's RELATION filter only accepts IS / IS_NOT and throws
-//    "Unknown operand CONTAINS for RELATION filter" at enforcement time, even though the
-//    upsert mutation silently accepts CONTAINS.
-//
-// 2. VERIFIES the Opportunity field permissions declared in `partner.role.ts` and
-//    deployed via `yarn twenty dev --once`. The script does NOT set these permissions:
-//    upsertFieldPermissions enforces an application-ownership check that rejects
-//    out-of-band changes to app-owned roles (ROLE_BELONGS_TO_ANOTHER_APPLICATION).
-//    The manifest is the correct and only supported mechanism for app-owned roles.
-//    If any expected field locks are missing, the script exits non-zero and instructs
-//    the operator to run `yarn twenty dev --once` to deploy the manifest.
+// 2. Verifies (does NOT set) the Opportunity field permissions from `partner.role.ts`.
+//    upsertFieldPermissions rejects out-of-band changes to app-owned roles
+//    (ROLE_BELONGS_TO_ANOTHER_APPLICATION), so those must come from the manifest; if any
+//    expected lock is missing, the script exits non-zero and tells you to re-sync.
 //
 // Usage:
 //   yarn rls:configure          # against .env.local
@@ -32,6 +19,7 @@ import { config } from 'dotenv';
 config({ path: process.env.ENV_FILE ?? '.env.local' });
 
 import { PARTNER_ROLE_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { PARTNER_ROLE_LABEL } from 'src/roles/partner.role';
 
 const requireEnv = (name: string): string => {
   const value = process.env[name];
@@ -39,21 +27,12 @@ const requireEnv = (name: string): string => {
   return value;
 };
 
-// The four object names we need to configure RLS on.
 const TARGET_OBJECTS = ['partner', 'person', 'company', 'opportunity'] as const;
 type TargetObject = (typeof TARGET_OBJECTS)[number];
 
-// Opportunity fields that must NOT be in the field-permission lock list. Three groups:
-//   - system/immutable columns: id, createdAt, updatedAt, deletedAt
-//   - server-managed columns written on a normal update (locking them breaks the update):
-//       `updatedBy`  — injected into EVERY update by the *.updateOne pre-query hook, so
-//                      locking it rejects all opportunity updates (stage + amount) with
-//                      PERMISSION_DENIED. The server overwrites it with the real actor, so
-//                      there is nothing to protect by locking it.
-//       `position`   — co-written with `stage` when the stage is changed via kanban drag,
-//                      so locking it breaks kanban stage-changes.
-//   - the intentionally-editable business fields: `stage`, `amount`.
-// Everything else is locked (canUpdateFieldValue: false). See src/roles/partner.role.ts.
+// Opportunity fields that must NOT be locked: system columns, the editable business
+// fields (stage, amount), and updatedBy/position (server-managed — locking them breaks
+// every update; see src/roles/partner.role.ts). Everything else is expected to be locked.
 const OPPORTUNITY_FIELD_LOCK_SKIP = new Set([
   'id',
   'createdAt',
@@ -245,7 +224,6 @@ async function main() {
 
   // ── 1. Resolve all object metadata IDs and their partnerUser field IDs ──────
 
-  // First get all objects in one request to map nameSingular → id.
   const objectsData = await metadataFetch<{
     objects: { edges: { node: { id: string; nameSingular: string } }[] };
   }>(
@@ -267,14 +245,12 @@ async function main() {
     }
   }
 
-  // Also need workspaceMember.
   if (!objectIdByName.has('workspaceMember')) {
     throw new Error('workspaceMember object not found in workspace metadata.');
   }
 
   const workspaceMemberId = objectIdByName.get('workspaceMember') as string;
 
-  // Resolve partnerUser field id for each target object (with pagination).
   const objectInfoByName = new Map<TargetObject, ObjectInfo>();
 
   for (const name of TARGET_OBJECTS) {
@@ -305,9 +281,8 @@ async function main() {
   // ── 3. Resolve Partner role id and fetch field permissions in one request ──────
   //
   // getRoles returns a flat array (not a connection) and does NOT expose
-  // universalIdentifier, so we match on the role label. This is the only available
-  // discriminator: if the Partner role's label is renamed in partner.role.ts,
-  // update the literal below to match.
+  // universalIdentifier, so we match on the role label via the shared PARTNER_ROLE_LABEL
+  // constant (exported from partner.role.ts) — a rename there can't desync this script.
   // Fetching fieldPermissions here avoids a second getRoles call later in step 5.
   const rolesData = await metadataFetch<{
     getRoles: {
@@ -322,11 +297,7 @@ async function main() {
   );
 
   const roles = rolesData.getRoles;
-
-  // Match by label "Partner" (the label we set in the manifest).
-  // Note: universalIdentifier is PARTNER_ROLE_UNIVERSAL_IDENTIFIER but is not
-  // returned by getRoles. Label is the safest available discriminator.
-  const partnerRole = roles.find((r) => r.label === 'Partner');
+  const partnerRole = roles.find((r) => r.label === PARTNER_ROLE_LABEL);
 
   if (!partnerRole) {
     const labels = roles.map((r) => r.label).join(', ');
@@ -343,13 +314,10 @@ async function main() {
 
   // ── 4. Upsert one predicate per object ───────────────────────────────────────
   //
-  // Predicate semantics: "the record's partnerUser relation IS the current workspace
-  // member" — i.e. the partnerUser FK equals the session user.
-  // Operand IS (not CONTAINS): the query engine's RELATION filter only accepts IS / IS_NOT.
-  // The upsert mutation accepts CONTAINS, but enforcement throws "Unknown operand CONTAINS
-  // for RELATION filter" at query time. value stays null; workspaceMemberFieldMetadataId
-  // injects the current member at query time. Mirrors the Roles-UI conversion for a
-  // relation current-member RLS predicate (operand IS, value null, workspaceMemberFieldMetadataId).
+  // "the record's partnerUser relation IS the current workspace member". Operand must be IS,
+  // not CONTAINS: the upsert accepts CONTAINS but the RELATION query filter only allows
+  // IS / IS_NOT and throws "Unknown operand CONTAINS for RELATION filter" at query time.
+  // value stays null; workspaceMemberFieldMetadataId injects the current member at query time.
 
   const MUTATION = `
     mutation UpsertRLSPredicates($input: UpsertRowLevelPermissionPredicatesInput!) {
@@ -383,8 +351,6 @@ async function main() {
           {
             fieldMetadataId: info.partnerUserFieldMetadataId,
             operand: 'IS',
-            // workspaceMemberFieldMetadataId scopes the predicate to the
-            // current session's workspace member (the "id" field).
             workspaceMemberFieldMetadataId: workspaceMemberIdFieldId,
           },
         ],
@@ -408,12 +374,8 @@ async function main() {
     );
   }
 
-  // workspaceMember predicate: scope the Partner role to its OWN member record only.
-  // The role has read on workspaceMember so the partner UI can resolve member-typed
-  // relations (their partnerUser link; owner/createdBy on their opportunities). Without
-  // this scope, that read would expose the whole internal team roster. Semantics:
-  // "this workspaceMember's id IS the current session member" → a partner sees only
-  // themselves; other members (e.g. an opportunity's internal owner) resolve to null.
+  // workspaceMember predicate: "id IS the current member", scoping the role's read to the
+  // partner's own record. Other members (e.g. an opportunity's internal owner) resolve to null.
   {
     const wmData = await metadataFetch<{
       upsertRowLevelPermissionPredicates: { predicates: PredicateResult[] };
@@ -453,20 +415,8 @@ async function main() {
       `(${TARGET_OBJECTS.length} objects + workspaceMember self-scope)`,
   );
 
-  // ── 5. Verify Opportunity field permissions: read-all / update stage + amount only ─
-  //
-  // Opportunity field permissions for the Partner role are declared in
-  // src/roles/partner.role.ts and deployed by `yarn twenty dev --once` (manifest
-  // sync). They cannot be set here via upsertFieldPermissions because the server
-  // enforces an application-ownership check: the mutation always runs in the
-  // workspace Custom-app context, which does not match the Partner role's owning
-  // application (the partners app). Attempting to set them would return
-  // ROLE_BELONGS_TO_ANOTHER_APPLICATION. The manifest route is the correct
-  // and only supported mechanism for app-owned roles.
-  //
-  // This step queries the Partner role's existing fieldPermissions and prints the
-  // verification summary so a single run of `yarn rls:configure` confirms the
-  // full permission state (predicates + field locks) after a sync.
+  // ── 5. Verify Opportunity field permissions (set via manifest, not here — see header) ─
+  // Read back the role's existing fieldPermissions so one run confirms the full state.
 
   const oppInfo = objectInfoByName.get('opportunity') as ObjectInfo;
   const oppObjectId = oppInfo.objectMetadataId;

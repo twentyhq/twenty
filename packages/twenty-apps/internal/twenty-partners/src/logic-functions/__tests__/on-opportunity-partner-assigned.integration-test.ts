@@ -1,25 +1,15 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-// Lazily import the handler under test so the "module not found" failure is
-// clear when the implementation file doesn't exist yet (TDD red phase).
-type HandlerFn = (payload: { properties: unknown }) => Promise<unknown>;
-let handler: HandlerFn | undefined;
-try {
-  // Dynamic import so the test file can be parsed even when the impl is absent.
-  // defineLogicFunction returns ValidationResult<LogicFunctionConfig> which has
-  // a `config` property containing the original handler.
-  const mod = await import('../on-opportunity-partner-assigned');
-  // mod.default is ValidationResult<LogicFunctionConfig>; config.handler is the fn.
-  handler = (mod.default as any)?.config?.handler as HandlerFn | undefined;
-} catch {
-  // Implementation not yet written — tests will fail with a clear message.
-  handler = undefined;
-}
+import onOpportunityPartnerAssigned from '../on-opportunity-partner-assigned';
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
+// defineLogicFunction wraps the handler in a ValidationResult; the fn is on config.handler.
+const handler = onOpportunityPartnerAssigned.config.handler;
+
+function requireId(id: string | null | undefined, what: string): string {
+  if (!id) throw new Error(`${what} returned no id`);
+  return id;
+}
 
 async function getWorkspaceMemberId(client: CoreApiClient): Promise<string> {
   const r = await client.query({
@@ -27,10 +17,10 @@ async function getWorkspaceMemberId(client: CoreApiClient): Promise<string> {
       __args: { first: 1 },
       edges: { node: { id: true } },
     },
-  } as any);
-  const edges = ((r as any).workspaceMembers?.edges ?? []) as { node: { id: string } }[];
-  if (edges.length === 0) throw new Error('No workspace members found — cannot run test');
-  return edges[0].node.id;
+  });
+  const memberId = r.workspaceMembers?.edges?.[0]?.node?.id;
+  if (!memberId) throw new Error('No workspace members found — cannot run test');
+  return memberId;
 }
 
 async function createPartner(client: CoreApiClient, memberId: string): Promise<string> {
@@ -45,30 +35,23 @@ async function createPartner(client: CoreApiClient, memberId: string): Promise<s
       },
       id: true,
     },
-  } as any);
-  return (r as any).createPartner.id as string;
+  });
+  return requireId(r.createPartner?.id, 'createPartner');
 }
 
 async function destroyPartner(client: CoreApiClient, id: string) {
-  await client
-    .mutation({ destroyPartner: { __args: { id }, id: true } } as any)
-    .catch(() => {});
+  await client.mutation({ destroyPartner: { __args: { id }, id: true } }).catch(() => {});
 }
 
 async function createCompany(client: CoreApiClient, name: string): Promise<string> {
   const r = await client.mutation({
-    createCompany: {
-      __args: { data: { name } },
-      id: true,
-    },
-  } as any);
-  return (r as any).createCompany.id as string;
+    createCompany: { __args: { data: { name } }, id: true },
+  });
+  return requireId(r.createCompany?.id, 'createCompany');
 }
 
 async function destroyCompany(client: CoreApiClient, id: string) {
-  await client
-    .mutation({ destroyCompany: { __args: { id }, id: true } } as any)
-    .catch(() => {});
+  await client.mutation({ destroyCompany: { __args: { id }, id: true } }).catch(() => {});
 }
 
 async function createPerson(client: CoreApiClient, companyId: string): Promise<string> {
@@ -77,14 +60,12 @@ async function createPerson(client: CoreApiClient, companyId: string): Promise<s
       __args: { data: { name: { firstName: 'Test', lastName: `RLS-${Date.now()}` }, companyId } },
       id: true,
     },
-  } as any);
-  return (r as any).createPerson.id as string;
+  });
+  return requireId(r.createPerson?.id, 'createPerson');
 }
 
 async function destroyPerson(client: CoreApiClient, id: string) {
-  await client
-    .mutation({ destroyPerson: { __args: { id }, id: true } } as any)
-    .catch(() => {});
+  await client.mutation({ destroyPerson: { __args: { id }, id: true } }).catch(() => {});
 }
 
 async function createOpportunity(
@@ -93,80 +74,60 @@ async function createOpportunity(
   companyId: string,
 ): Promise<string> {
   const r = await client.mutation({
-    createOpportunity: {
-      __args: { data: { name, companyId } },
-      id: true,
-    },
-  } as any);
-  return (r as any).createOpportunity.id as string;
+    createOpportunity: { __args: { data: { name, companyId } }, id: true },
+  });
+  return requireId(r.createOpportunity?.id, 'createOpportunity');
 }
 
 async function destroyOpportunity(client: CoreApiClient, id: string) {
-  await client
-    .mutation({ destroyOpportunity: { __args: { id }, id: true } } as any)
-    .catch(() => {});
+  await client.mutation({ destroyOpportunity: { __args: { id }, id: true } }).catch(() => {});
 }
 
-async function getOpportunity(
+async function getOpportunityPartnerUserId(
   client: CoreApiClient,
   id: string,
-): Promise<{ id: string; partnerUserId: string | null }> {
+): Promise<string | null> {
   const r = await client.query({
     opportunity: {
       __args: { filter: { id: { eq: id } } },
       id: true,
       partnerUserId: true,
     },
-  } as any);
-  return (r as any).opportunity as { id: string; partnerUserId: string | null };
+  });
+  return r.opportunity?.partnerUserId ?? null;
 }
 
-async function getCompany(
+async function getCompanyPartnerUserId(
   client: CoreApiClient,
   id: string,
-): Promise<{ id: string; partnerUserId: string | null }> {
+): Promise<string | null> {
   const r = await client.query({
     company: {
       __args: { filter: { id: { eq: id } } },
       id: true,
       partnerUserId: true,
     },
-  } as any);
-  return (r as any).company as { id: string; partnerUserId: string | null };
+  });
+  return r.company?.partnerUserId ?? null;
 }
 
-async function getPerson(
+async function getPersonPartnerUserId(
   client: CoreApiClient,
   id: string,
-): Promise<{ id: string; partnerUserId: string | null }> {
+): Promise<string | null> {
   const r = await client.query({
     person: {
       __args: { filter: { id: { eq: id } } },
       id: true,
       partnerUserId: true,
     },
-  } as any);
-  return (r as any).person as { id: string; partnerUserId: string | null };
+  });
+  return r.person?.partnerUserId ?? null;
 }
 
-// ---------------------------------------------------------------------------
-// Tests
-// ---------------------------------------------------------------------------
-
-// ---------------------------------------------------------------------------
-// Test strategy
-// ---------------------------------------------------------------------------
-// These tests invoke the handler directly (in-process) to verify its cascade
-// logic deterministically against a live workspace. Direct invocation lets us
-// assert exact return values and DB state without depending on the event bus.
-//
-// The end-to-end trigger wiring (opportunity.updated → function fires) is
-// verified separately: the app sync step registers the function with the
-// correct databaseEventTriggerSettings, and Task 5's manual E2E confirms the
-// cascade fires when a partner is assigned via the UI. That deliberate split
-// keeps these unit-style integration tests fast and reproducible.
-// ---------------------------------------------------------------------------
-
+// Invoke the handler directly against a live workspace to assert its cascade logic and
+// resulting DB state deterministically, without depending on the event bus. The trigger
+// wiring (opportunity.updated → fires) is covered separately by app sync + manual E2E.
 describe('on-opportunity-partner-assigned', () => {
   let client: CoreApiClient;
 
@@ -195,26 +156,15 @@ describe('on-opportunity-partner-assigned', () => {
     createdPartnerIds.length = 0;
   });
 
-  // -------------------------------------------------------------------------
-  // No-op guard: when partnerId is not in updatedFields, handler returns {}
-  // -------------------------------------------------------------------------
   it('returns {} without any mutations when partnerId is not in updatedFields', async () => {
-    if (!handler) throw new Error('Handler not found — implementation file missing');
-
     const result = await handler({
       properties: { updatedFields: ['name'], after: { id: 'fake-id' } },
-    } as never);
+    });
 
     expect(result).toEqual({});
   });
 
-  // -------------------------------------------------------------------------
-  // Unassign: partnerId cleared → the opportunity's partnerUser is cleared so it
-  // leaves the partner's row-level view.
-  // -------------------------------------------------------------------------
   it('clears partnerUser on the opportunity, company, and people when the partner is removed (unassignment)', async () => {
-    if (!handler) throw new Error('Handler not found — implementation file missing');
-
     const memberId = await getWorkspaceMemberId(client);
     const partnerId = await createPartner(client, memberId);
     createdPartnerIds.push(partnerId);
@@ -228,122 +178,76 @@ describe('on-opportunity-partner-assigned', () => {
     // Assign first so the opportunity + company + person have partnerUser stamped.
     await handler({
       properties: { updatedFields: ['partnerId'], after: { id: oppId, partnerId, companyId } },
-    } as never);
-    expect((await getOpportunity(client, oppId)).partnerUserId).toBe(memberId);
-    expect((await getCompany(client, companyId)).partnerUserId).toBe(memberId);
-    expect((await getPerson(client, personId)).partnerUserId).toBe(memberId);
+    });
+    expect(await getOpportunityPartnerUserId(client, oppId)).toBe(memberId);
+    expect(await getCompanyPartnerUserId(client, companyId)).toBe(memberId);
+    expect(await getPersonPartnerUserId(client, personId)).toBe(memberId);
 
     // Now unassign: partnerId set to null. No other opportunity uses this company for the
-    // member, so the company + person should be cleared too.
-    const result = await handler({
-      properties: { updatedFields: ['partnerId'], after: { id: oppId, partnerId: null, companyId } },
-    } as never);
-
-    expect((result as any).cascaded).toBe(true);
-    expect((result as any).cleared).toBe(true);
-    expect((await getOpportunity(client, oppId)).partnerUserId).toBeNull();
-    expect((await getCompany(client, companyId)).partnerUserId).toBeNull();
-    expect((await getPerson(client, personId)).partnerUserId).toBeNull();
-  });
-
-  // -------------------------------------------------------------------------
-  // Happy path: cascades partnerUser to opportunity, company, and people
-  // -------------------------------------------------------------------------
-  it('stamps partnerUserId on opportunity, company, and people when partner is assigned', async () => {
-    if (!handler) throw new Error('Handler not found — implementation file missing');
-
-    // 1. Resolve an existing workspace member to use as the partner's user.
-    const memberId = await getWorkspaceMemberId(client);
-
-    // 2. Create a Partner with partnerUserId pointing to that member.
-    const partnerId = await createPartner(client, memberId);
-    createdPartnerIds.push(partnerId);
-
-    // 3. Create a Company (partnerUser unset).
-    const companyId = await createCompany(client, `[test-rls] company ${Date.now()}`);
-    createdCompanyIds.push(companyId);
-
-    // 4. Create a Person on that Company (partnerUser unset).
-    const personId = await createPerson(client, companyId);
-    createdPersonIds.push(personId);
-
-    // 5. Create an Opportunity linked to the Company, with no partner yet.
-    const oppId = await createOpportunity(
-      client,
-      `[test-rls] opp ${Date.now()}`,
-      companyId,
-    );
-    createdOpportunityIds.push(oppId);
-
-    // 6. Invoke handler directly, simulating opportunity.updated with partnerId change.
+    // member, so the company + person should be cleared too. `before` carries the removed
+    // partnerId so the handler can decide on the source of truth.
     const result = await handler({
       properties: {
         updatedFields: ['partnerId'],
-        after: { id: oppId, partnerId, companyId },
+        before: { id: oppId, partnerId, partnerUserId: memberId, companyId },
+        after: { id: oppId, partnerId: null, companyId },
       },
-    } as never);
+    });
 
-    // 7. Assert handler reports cascaded: true and the correct memberId.
-    expect((result as any).cascaded).toBe(true);
-    expect((result as any).partnerUserId).toBe(memberId);
-
-    // 8. Re-query all three records and verify partnerUserId was stamped.
-    const opp = await getOpportunity(client, oppId);
-    expect(opp.partnerUserId).toBe(memberId);
-
-    const company = await getCompany(client, companyId);
-    expect(company.partnerUserId).toBe(memberId);
-
-    const person = await getPerson(client, personId);
-    expect(person.partnerUserId).toBe(memberId);
+    expect(result.cascaded).toBe(true);
+    expect(result.cleared).toBe(true);
+    expect(await getOpportunityPartnerUserId(client, oppId)).toBeNull();
+    expect(await getCompanyPartnerUserId(client, companyId)).toBeNull();
+    expect(await getPersonPartnerUserId(client, personId)).toBeNull();
   });
 
-  // -------------------------------------------------------------------------
-  // No linked company — only opportunity is stamped; no company/people cascade
-  // -------------------------------------------------------------------------
-  it('stamps partnerUserId on opportunity and returns cascaded: true when no companyId is present', async () => {
-    if (!handler) throw new Error('Handler not found — implementation file missing');
-
-    // 1. Resolve an existing workspace member to use as the partner's user.
+  it('stamps partnerUserId on opportunity, company, and people when partner is assigned', async () => {
     const memberId = await getWorkspaceMemberId(client);
+    const partnerId = await createPartner(client, memberId);
+    createdPartnerIds.push(partnerId);
+    const companyId = await createCompany(client, `[test-rls] company ${Date.now()}`);
+    createdCompanyIds.push(companyId);
+    const personId = await createPerson(client, companyId);
+    createdPersonIds.push(personId);
+    const oppId = await createOpportunity(client, `[test-rls] opp ${Date.now()}`, companyId);
+    createdOpportunityIds.push(oppId);
 
-    // 2. Create a Partner with partnerUserId.
+    const result = await handler({
+      properties: { updatedFields: ['partnerId'], after: { id: oppId, partnerId, companyId } },
+    });
+
+    expect(result.cascaded).toBe(true);
+    expect(result.partnerUserId).toBe(memberId);
+    expect(await getOpportunityPartnerUserId(client, oppId)).toBe(memberId);
+    expect(await getCompanyPartnerUserId(client, companyId)).toBe(memberId);
+    expect(await getPersonPartnerUserId(client, personId)).toBe(memberId);
+  });
+
+  it('stamps partnerUserId on opportunity and returns cascaded: true when no companyId is present', async () => {
+    const memberId = await getWorkspaceMemberId(client);
     const partnerId = await createPartner(client, memberId);
     createdPartnerIds.push(partnerId);
 
-    // 3. Create an Opportunity with NO linked company (companyId omitted from payload).
+    // Opportunity with no linked company, so there is no company/people cascade.
     const r = await client.mutation({
       createOpportunity: {
         __args: { data: { name: `[test-rls] no-company opp ${Date.now()}` } },
         id: true,
       },
-    } as any);
-    const oppId = (r as any).createOpportunity.id as string;
+    });
+    const oppId = requireId(r.createOpportunity?.id, 'createOpportunity');
     createdOpportunityIds.push(oppId);
 
-    // 4. Invoke handler with no companyId in the after payload.
     const result = await handler({
-      properties: {
-        updatedFields: ['partnerId'],
-        after: { id: oppId, partnerId },
-      },
-    } as never);
+      properties: { updatedFields: ['partnerId'], after: { id: oppId, partnerId } },
+    });
 
-    // 5. Handler should still report cascaded: true with the correct memberId.
-    expect((result as any).cascaded).toBe(true);
-    expect((result as any).partnerUserId).toBe(memberId);
-
-    // 6. Opportunity should have partnerUserId stamped.
-    const opp = await getOpportunity(client, oppId);
-    expect(opp.partnerUserId).toBe(memberId);
+    expect(result.cascaded).toBe(true);
+    expect(result.partnerUserId).toBe(memberId);
+    expect(await getOpportunityPartnerUserId(client, oppId)).toBe(memberId);
   });
 
-  // -------------------------------------------------------------------------
-  // Partner has no partnerUserId — cascade is skipped gracefully
-  // -------------------------------------------------------------------------
   it('returns { cascaded: false, reason: "partner_has_no_user" } when partner.partnerUserId is null', async () => {
-    if (!handler) throw new Error('Handler not found — implementation file missing');
-
     // Create a partner WITHOUT a partnerUserId.
     const r = await client.mutation({
       createPartner: {
@@ -355,18 +259,15 @@ describe('on-opportunity-partner-assigned', () => {
         },
         id: true,
       },
-    } as any);
-    const noUserPartnerId = (r as any).createPartner.id as string;
+    });
+    const noUserPartnerId = requireId(r.createPartner?.id, 'createPartner');
     createdPartnerIds.push(noUserPartnerId);
 
     const result = await handler({
-      properties: {
-        updatedFields: ['partnerId'],
-        after: { id: 'fake-opp-id', partnerId: noUserPartnerId },
-      },
-    } as never);
+      properties: { updatedFields: ['partnerId'], after: { id: 'fake-opp-id', partnerId: noUserPartnerId } },
+    });
 
-    expect((result as any).cascaded).toBe(false);
-    expect((result as any).reason).toBe('partner_has_no_user');
+    expect(result.cascaded).toBe(false);
+    expect(result.reason).toBe('partner_has_no_user');
   });
 });

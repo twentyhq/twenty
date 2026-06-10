@@ -1,155 +1,202 @@
-import { DatabaseEventPayload, defineLogicFunction } from 'twenty-sdk/define';
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { CoreApiClient, type CoreSchema } from 'twenty-client-sdk/core';
+import {
+  type DatabaseEventPayload,
+  defineLogicFunction,
+  type ObjectRecordUpdateEvent,
+} from 'twenty-sdk/define';
 
-// Inline universalIdentifier — defined here (not in universal-identifiers.ts) to avoid
-// touching that file's local-only APPLICATION_UNIVERSAL_IDENTIFIER rewrite in the bundle.
+// Defined here (not in universal-identifiers.ts) to avoid touching that file's local-only id.
 const ON_OPP_PARTNER_ASSIGNED_FN_UNIVERSAL_IDENTIFIER = 'd7e4a4e6-9142-4597-adcf-6fb83c0f042d';
 
-// Fires on opportunity.updated when partnerId changes.
-// - Assign / reassign (partnerId set): resolve the assigned Partner's partnerUser
-//   (workspace member) and stamp it onto the Opportunity + linked Company + People, so the
-//   whole deal becomes visible to the partner under row-level permissions.
-// - Unassign (partnerId cleared): clear the Opportunity's partnerUser so it leaves the
-//   partner's row-level view, and cascade the clear to the linked Company + People — but
-//   only when that member has no OTHER opportunity still using the same Company (otherwise
-//   the Company is still part of an active deal and must stay visible).
-const handler = async (payload: DatabaseEventPayload) => {
-  const props = payload.properties as {
-    after?: { id: string; partnerId?: string | null; companyId?: string | null };
-    updatedFields?: string[];
-  };
+const PEOPLE_PAGE_SIZE = 200;
 
-  if (!props.updatedFields?.includes('partnerId')) return {};
-  const opportunityId = props.after?.id;
+// Every Person id matching the filter, paginated fully — a company can have more than one
+// page of contacts and a single capped page would leave RLS stamps stale on the rest.
+async function collectPeopleIds(
+  client: CoreApiClient,
+  filter: CoreSchema.PersonFilterInput,
+): Promise<string[]> {
+  const ids: string[] = [];
+  let after: string | undefined;
+
+  for (;;) {
+    const page = await client.query({
+      people: {
+        __args: { filter, first: PEOPLE_PAGE_SIZE, ...(after ? { after } : {}) },
+        edges: { node: { id: true } },
+        pageInfo: { hasNextPage: true, endCursor: true },
+      },
+    });
+    for (const edge of page.people?.edges ?? []) {
+      if (edge?.node?.id) ids.push(edge.node.id);
+    }
+    if (!page.people?.pageInfo?.hasNextPage) break;
+    after = page.people.pageInfo.endCursor ?? undefined;
+  }
+
+  return ids;
+}
+
+// Set (or clear, with null) partnerUser on each Person, attempting all of them even if some
+// fail. Returns the failure count so the caller can force a retry rather than silently
+// leaving a partial stamp.
+async function setPeoplePartnerUser(
+  client: CoreApiClient,
+  personIds: string[],
+  partnerUserId: string | null,
+): Promise<number> {
+  const results = await Promise.allSettled(
+    personIds.map((id) =>
+      client.mutation({
+        updatePerson: { __args: { id, data: { partnerUserId } }, id: true },
+      }),
+    ),
+  );
+  return results.filter((result) => result.status === 'rejected').length;
+}
+
+// On opportunity.updated when partnerId changes, propagate partnerUser (the assigned
+// Partner's workspace member) across the deal so RLS visibility tracks the assignment:
+// assign stamps it onto the Opportunity + linked Company + People; unassign clears it,
+// keeping the Company/People if the same Partner still has another opportunity on that
+// Company. Runs under the app identity, so its writes bypass partner RLS / field locks.
+const handler = async (
+  payload: DatabaseEventPayload<ObjectRecordUpdateEvent<CoreSchema.Opportunity>>,
+): Promise<Record<string, unknown>> => {
+  const { after, before, updatedFields } = payload.properties;
+
+  if (!updatedFields?.includes('partnerId')) return {};
+  const opportunityId = after?.id;
   if (!opportunityId) return {};
 
   const client = new CoreApiClient();
-  const partnerId = props.after?.partnerId;
+  const partnerId = after?.partnerId;
 
-  // Unassign: the partner was removed from the opportunity.
+  // ── Unassign: the partner was removed from the opportunity ───────────────────
   if (!partnerId) {
-    // The opportunity still carries the previously-stamped member (only partnerId changed),
-    // so read it to know whose visibility to revoke and which company is linked.
-    const oppResult = await client.query({
-      opportunity: {
-        __args: { filter: { id: { eq: opportunityId } } },
-        id: true,
-        partnerUserId: true,
-        companyId: true,
-      },
-    } as any);
-    const removedMemberId = (oppResult as any).opportunity?.partnerUserId as
-      | string
-      | null
-      | undefined;
-    const companyId = (oppResult as any).opportunity?.companyId as string | null | undefined;
+    // Resolve who/what to revoke from the event's before-image so a retry (after a partial
+    // failure below) still has these values even though the opportunity's own partnerUser is
+    // cleared first. The removed partnerId is the source of truth for "is the company still
+    // in use". Fall back to reading the not-yet-cleared opportunity if before is incomplete.
+    let removedMemberId = before?.partnerUserId ?? null;
+    let companyId = before?.companyId ?? null;
+    const removedPartnerId = before?.partnerId;
 
-    // Clear the opportunity itself.
+    if (!removedMemberId || !companyId) {
+      const oppResult = await client.query({
+        opportunity: {
+          __args: { filter: { id: { eq: opportunityId } } },
+          id: true,
+          partnerUserId: true,
+          companyId: true,
+        },
+      });
+      removedMemberId = removedMemberId ?? oppResult.opportunity?.partnerUserId ?? null;
+      companyId = companyId ?? oppResult.opportunity?.companyId ?? null;
+    }
+
     await client.mutation({
       updateOpportunity: {
         __args: { id: opportunityId, data: { partnerUserId: null } },
         id: true,
       },
-    } as any);
+    });
 
     if (!removedMemberId || !companyId) {
       return { cascaded: true, cleared: true };
     }
 
-    // Keep the Company (and its People) if the same member still has another opportunity on
-    // it — the opportunity we just cleared no longer matches this filter.
-    const otherOpps = await client.query({
+    // Keep the company (and its people) if the same Partner still has another opportunity on
+    // it. Decided on partnerId, not the derived partnerUser stamp (which a prior partial
+    // cascade may have left unset); fall back to the stamp only if the old partnerId is
+    // unavailable. The just-cleared opportunity no longer matches either filter.
+    const stillInUse = await client.query({
       opportunities: {
         __args: {
           filter: {
             companyId: { eq: companyId },
-            partnerUserId: { eq: removedMemberId },
+            ...(removedPartnerId
+              ? { partnerId: { eq: removedPartnerId } }
+              : { partnerUserId: { eq: removedMemberId } }),
           },
           first: 1,
         },
         edges: { node: { id: true } },
       },
-    } as any);
-    const companyStillInUse =
-      (((otherOpps as any).opportunities?.edges ?? []) as unknown[]).length > 0;
-    if (companyStillInUse) {
+    });
+    if ((stillInUse.opportunities?.edges?.length ?? 0) > 0) {
       return { cascaded: true, cleared: true, companyKept: true };
     }
 
-    // Clear the Company (only if it belongs to this member) and the People stamped for them.
+    // Clear the company (only if it belongs to this member) and every person stamped for them.
     const companyResult = await client.query({
       company: {
         __args: { filter: { id: { eq: companyId } } },
         id: true,
         partnerUserId: true,
       },
-    } as any);
-    if ((companyResult as any).company?.partnerUserId === removedMemberId) {
+    });
+    if (companyResult.company?.partnerUserId === removedMemberId) {
       await client.mutation({
         updateCompany: {
           __args: { id: companyId, data: { partnerUserId: null } },
           id: true,
         },
-      } as any);
+      });
     }
-    const peopleResult = await client.query({
-      people: {
-        __args: {
-          filter: {
-            companyId: { eq: companyId },
-            partnerUserId: { eq: removedMemberId },
-          },
-          first: 200,
-        },
-        edges: { node: { id: true } },
-      },
-    } as any);
-    const peopleToClear = ((peopleResult as any).people?.edges ?? []) as {
-      node: { id: string };
-    }[];
-    await Promise.all(
-      peopleToClear.map(({ node }) =>
-        client.mutation({
-          updatePerson: {
-            __args: { id: node.id, data: { partnerUserId: null } },
-            id: true,
-          },
-        } as any),
-      ),
-    );
+
+    const peopleIds = await collectPeopleIds(client, {
+      companyId: { eq: companyId },
+      partnerUserId: { eq: removedMemberId },
+    });
+    const failed = await setPeoplePartnerUser(client, peopleIds, null);
+    if (failed > 0) {
+      throw new Error(
+        `on-opportunity-partner-assigned: ${failed} person clear(s) failed — retrying`,
+      );
+    }
     return { cascaded: true, cleared: true, companyCleared: true };
   }
 
+  // ── Assign / reassign ────────────────────────────────────────────────────────
   const partnerResult = await client.query({
     partner: { __args: { filter: { id: { eq: partnerId } } }, id: true, partnerUserId: true },
-  } as any);
-  const partnerUserId = (partnerResult as any).partner?.partnerUserId as string | null | undefined;
+  });
+  const partnerUserId = partnerResult.partner?.partnerUserId;
   if (!partnerUserId) return { cascaded: false, reason: 'partner_has_no_user' };
 
   await client.mutation({
     updateOpportunity: { __args: { id: opportunityId, data: { partnerUserId } }, id: true },
-  } as any);
+  });
 
-  const companyId = props.after?.companyId;
-  if (companyId) {
-    await client.mutation({
-      updateCompany: { __args: { id: companyId, data: { partnerUserId } }, id: true },
-    } as any);
-    const peopleResult = await client.query({
-      people: {
-        __args: { filter: { companyId: { eq: companyId } }, first: 200 },
-        edges: { node: { id: true } },
-      },
-    } as any);
-    // A company's contacts are bounded in practice; cap at 200 and update in parallel
-    // (distinct records, safe to run concurrently) to stay within the function timeout.
-    const people = ((peopleResult as any).people?.edges ?? []) as { node: { id: string } }[];
-    await Promise.all(
-      people.map(({ node }) =>
-        client.mutation({
-          updatePerson: { __args: { id: node.id, data: { partnerUserId } }, id: true },
-        } as any),
-      ),
+  const companyId = after?.companyId;
+  if (!companyId) return { cascaded: true, partnerUserId };
+
+  // Don't clobber a company already owned by a DIFFERENT partner member. The single
+  // partnerUser column on Company/Person models one owner per company, so reassigning it
+  // here would steal the company (and its contacts) from the other partner and expose their
+  // data. Stamp only the opportunity in that case and leave the company/people alone.
+  const companyResult = await client.query({
+    company: {
+      __args: { filter: { id: { eq: companyId } } },
+      id: true,
+      partnerUserId: true,
+    },
+  });
+  const companyOwner = companyResult.company?.partnerUserId;
+  if (companyOwner && companyOwner !== partnerUserId) {
+    return { cascaded: true, partnerUserId, companyShared: true };
+  }
+
+  await client.mutation({
+    updateCompany: { __args: { id: companyId, data: { partnerUserId } }, id: true },
+  });
+
+  const peopleIds = await collectPeopleIds(client, { companyId: { eq: companyId } });
+  const failed = await setPeoplePartnerUser(client, peopleIds, partnerUserId);
+  if (failed > 0) {
+    throw new Error(
+      `on-opportunity-partner-assigned: ${failed} person stamp(s) failed — retrying`,
     );
   }
 

@@ -6,37 +6,34 @@ import {
   PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
   PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { OPPORTUNITY_DESIGN_DOC_STATUS_FIELD_ID } from 'src/fields/opportunity-design-doc-status.field';
+import { OPPORTUNITY_DESIGN_DOC_URL_FIELD_ID } from 'src/fields/opportunity-design-doc-url.field';
+import { OPPORTUNITY_HOSTING_TYPE_FIELD_ID } from 'src/fields/opportunity-hosting-type.field';
+import { OPPORTUNITY_LOST_REASON_FIELD_ID } from 'src/fields/opportunity-lost-reason.field';
+import { OPPORTUNITY_NUMBER_OF_SEATS_FIELD_ID } from 'src/fields/opportunity-number-of-seats.field';
+import { OPPORTUNITY_SUBSCRIPTION_FREQUENCY_FIELD_ID } from 'src/fields/opportunity-subscription-frequency.field';
+import { OPPORTUNITY_SUBSCRIPTION_TYPE_FIELD_ID } from 'src/fields/opportunity-subscription-type.field';
+import { OPPORTUNITY_TFT_ID_FIELD_ID } from 'src/fields/opportunity-tft-id.field';
+import { OPPORTUNITY_USE_CASE_FIELD_ID } from 'src/fields/opportunity-use-case.field';
 import { PARTNER_ON_OPPORTUNITY_FIELD_ID } from 'src/fields/partner-on-opportunity.field';
 import { PARTNER_USER_ON_OPPORTUNITY_FIELD_ID } from 'src/fields/partner-user-on-opportunity.field';
 
-// External partner self-service role. Scoped to the records owned by the assigned
-// workspace member via row-level predicates configured out-of-band (the app manifest
-// cannot ship RLS predicates). Run `yarn rls:configure` after install/reinstall.
+// Shared with configure-partner-rls.ts, which locates the role by this label.
+export const PARTNER_ROLE_LABEL = 'Partner';
+
+// External partner self-service role: a partner sees only its own records, can edit its
+// own Partner profile and an Opportunity's stage + amount; Company/Person are read-only.
+// Row-level predicates can't ship in the manifest, so run `yarn rls:configure` after install.
 //
-// Partner edit scope:
-//   - Partner (own profile): full update.
-//   - Opportunity: read-all, but UPDATE only `stage` and `amount` (every other
-//     user-facing field is locked via canUpdateFieldValue: false below).
-//   - Company / Person: READ-ONLY (no object-level update — see objectPermissions).
-// Field permissions are deployed via manifest sync (yarn twenty dev --once) — the
-// upsertFieldPermissions metadata mutation enforces an application-ownership check that
-// prevents setting them post-deploy via workspace API key. `yarn rls:configure` verifies them.
-//
-// Do NOT lock server-managed fields that get written on a normal update:
-//   - `updatedBy` (ACTOR) is injected into EVERY update by the `*.updateOne` pre-query hook
-//     (ActorFromAuthContextService.injectUpdatedBy). Locking it makes the permission check
-//     reject every opportunity update — stage and amount included — with PERMISSION_DENIED.
-//     The server overwrites it with the real actor regardless, so locking it is both
-//     pointless (no spoofing possible) and breaking. Left editable.
-//   - `position` (POSITION) is co-written with `stage` when the stage is changed by dragging
-//     a card on the kanban board. Locking it would make kanban stage-changes fail. Left
-//     editable (a partner reordering their own view is cosmetic only).
-// `createdBy` stays locked: it is NOT injected on update, so locking it blocks a client from
-// rewriting authorship without breaking normal edits. `searchVector` is a STORED generated
-// column (never written by the app), so its lock is an inert no-op kept for completeness.
+// `updatedBy` and `position` must stay editable even though they're not partner-facing: the
+// server injects `updatedBy` into every update (ActorFromAuthContextService) and co-writes
+// `position` with `stage` on a kanban drag, so locking either makes ALL opportunity updates
+// fail with PERMISSION_DENIED. The server overwrites both regardless, so there's nothing to
+// protect. `createdBy` stays locked (not injected on update); `searchVector` is a generated
+// column, so its lock is an inert no-op.
 export default defineRole({
   universalIdentifier: PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
-  label: 'Partner',
+  label: PARTNER_ROLE_LABEL,
   description:
     'External partner self-service role. Sees only its own Partner/Person/Company/Opportunity records (row-level). Can edit its own Partner profile and an Opportunity’s stage + amount; Company and Person are read-only. Configure predicates with `yarn rls:configure` after install.',
   icon: 'IconBuildingStore',
@@ -46,11 +43,8 @@ export default defineRole({
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
   canDestroyAllObjectRecords: false,
-  // Opportunity field permissions: read-all / update `stage` + `amount` only.
-  // Omitted from this lock list (i.e. editable): system fields (id, createdAt, updatedAt,
-  // deletedAt), the two server-managed/co-written fields (`updatedBy`, `position` — see the
-  // header comment), plus the two intentionally-editable fields (`stage`, `amount`).
-  // Everything else is canUpdateFieldValue: false.
+  // Lock every Opportunity field except stage/amount (editable) and the system/
+  // server-managed fields left out here (id, timestamps, updatedBy, position — see header).
   fieldPermissions: [
     {
       objectUniversalIdentifier:
@@ -168,55 +162,55 @@ export default defineRole({
     {
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
-      fieldUniversalIdentifier: '1bc57f52-a621-4243-ae3e-05c3f504b90c', // useCase
+      fieldUniversalIdentifier: OPPORTUNITY_USE_CASE_FIELD_ID,
       canUpdateFieldValue: false,
     },
     {
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
-      fieldUniversalIdentifier: '2e3e1d04-2719-4e0d-9a6b-ec73acf896c5', // tftOpportunityId
+      fieldUniversalIdentifier: OPPORTUNITY_TFT_ID_FIELD_ID,
       canUpdateFieldValue: false,
     },
     {
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
-      fieldUniversalIdentifier: '37e5428c-6c8c-4616-b626-f0ea1caa443d', // designDocUrl
+      fieldUniversalIdentifier: OPPORTUNITY_DESIGN_DOC_URL_FIELD_ID,
       canUpdateFieldValue: false,
     },
     {
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
-      fieldUniversalIdentifier: '59d5de53-202f-4913-a417-8a08970d87cc', // subscriptionFrequency
+      fieldUniversalIdentifier: OPPORTUNITY_SUBSCRIPTION_FREQUENCY_FIELD_ID,
       canUpdateFieldValue: false,
     },
     {
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
-      fieldUniversalIdentifier: '7ac7517f-bbca-4b4c-8996-6f864f71219b', // hostingType
+      fieldUniversalIdentifier: OPPORTUNITY_HOSTING_TYPE_FIELD_ID,
       canUpdateFieldValue: false,
     },
     {
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
-      fieldUniversalIdentifier: '834e233d-b171-409e-825f-77ac49b0f19d', // lostReason
+      fieldUniversalIdentifier: OPPORTUNITY_LOST_REASON_FIELD_ID,
       canUpdateFieldValue: false,
     },
     {
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
-      fieldUniversalIdentifier: '90c683ec-2365-4533-a187-7b9ae162b753', // numberOfSeats
+      fieldUniversalIdentifier: OPPORTUNITY_NUMBER_OF_SEATS_FIELD_ID,
       canUpdateFieldValue: false,
     },
     {
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
-      fieldUniversalIdentifier: 'a58214e9-38f9-4faf-8927-09b3980fd8c3', // subscriptionType
+      fieldUniversalIdentifier: OPPORTUNITY_SUBSCRIPTION_TYPE_FIELD_ID,
       canUpdateFieldValue: false,
     },
     {
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
-      fieldUniversalIdentifier: 'cc6b8a59-f860-493f-8b9a-f138c078fbf1', // designDocStatus
+      fieldUniversalIdentifier: OPPORTUNITY_DESIGN_DOC_STATUS_FIELD_ID,
       canUpdateFieldValue: false,
     },
   ],
@@ -237,7 +231,6 @@ export default defineRole({
       canDestroyObjectRecords: false,
     },
     {
-      // Person: read-only for partners (they see their deal's contacts but can't edit them).
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
       canReadObjectRecords: true,
@@ -246,7 +239,6 @@ export default defineRole({
       canDestroyObjectRecords: false,
     },
     {
-      // Company: read-only for partners (they see their deal's company but can't edit it).
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
       canReadObjectRecords: true,
@@ -255,10 +247,9 @@ export default defineRole({
       canDestroyObjectRecords: false,
     },
     {
-      // Read-only on workspace members so the partner UI can resolve member-typed
-      // relations (their own partnerUser link; owner/createdBy on their records).
-      // Scoped to the partner's OWN member record by an RLS predicate
-      // (see scripts/configure-partner-rls.ts) so the internal team roster stays hidden.
+      // Read-only so the UI can resolve member-typed relations (own partnerUser link,
+      // owner/createdBy). An RLS predicate scopes this to the partner's own member record
+      // (see scripts/configure-partner-rls.ts) so the internal roster stays hidden.
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.universalIdentifier,
       canReadObjectRecords: true,
