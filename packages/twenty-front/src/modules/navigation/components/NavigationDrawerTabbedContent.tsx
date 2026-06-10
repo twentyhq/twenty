@@ -7,12 +7,8 @@ type NavigationDrawerTabbedContentProps = {
   navigationContent: ReactNode;
 };
 
-const StyledTabContent = styled.div`
-  display: contents;
-
-  &[data-hidden='true'] {
-    display: none;
-  }
+const StyledTabContent = styled.div<{ isHidden: boolean }>`
+  display: ${({ isHidden }) => (isHidden ? 'none' : 'contents')};
 `;
 
 export const NavigationDrawerTabbedContent = ({
@@ -27,11 +23,11 @@ export const NavigationDrawerTabbedContent = ({
 
   return (
     <>
-      <StyledTabContent data-hidden={showAiChatContent}>
+      <StyledTabContent isHidden={showAiChatContent}>
         {navigationContent}
       </StyledTabContent>
       {hasOpenedAiChat && (
-        <StyledTabContent data-hidden={!showAiChatContent}>
+        <StyledTabContent isHidden={!showAiChatContent}>
           <NavigationDrawerAiChatContent />
         </StyledTabContent>
       )}
