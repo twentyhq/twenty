@@ -10,8 +10,8 @@ import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme-constants';
 import { stringToThemeColorP3String } from '@ui/utilities';
 import { REACT_APP_SERVER_BASE_URL } from '@ui/utilities/config';
-import { type Nullable } from 'twenty-shared/types';
-import { getImageAbsoluteURI } from 'twenty-shared/utils';
+import { type Nullable } from '@ui/utilities/types/Nullable';
+import { getImageAbsoluteURI } from '@ui/utilities/utils/getImageAbsoluteURI';
 
 import styles from './Avatar.module.scss';
 

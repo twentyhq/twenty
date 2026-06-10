@@ -4,7 +4,7 @@ import { type ThemeColor } from '@ui/theme';
 import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 import { clsx } from 'clsx';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Tag.module.scss';
 

@@ -1,6 +1,6 @@
 import { clsx } from 'clsx';
 import React, { type ReactNode } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type ButtonPosition, type ButtonProps } from './Button/Button';
 

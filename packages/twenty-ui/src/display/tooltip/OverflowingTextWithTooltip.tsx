@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 import { isNonEmptyString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { LinkifiedText } from '@ui/display/components/LinkifiedText';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 import { AppTooltip, TooltipDelay } from './AppTooltip';
 
 import styles from './OverflowingTextWithTooltip.module.scss';

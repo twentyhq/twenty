@@ -7,7 +7,7 @@ import { useResizeHandle } from '@ui/layout/resize-handle/hooks/useResizeHandle'
 import { ThemeContext } from '@ui/theme-constants';
 import { type editor } from 'monaco-editor';
 import { type KeyboardEvent, useContext, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './CodeEditor.module.scss';
 

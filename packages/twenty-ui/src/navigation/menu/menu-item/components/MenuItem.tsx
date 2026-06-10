@@ -13,7 +13,7 @@ import { MenuItemHotKeys } from '@ui/navigation/menu/menu-item/components/MenuIt
 import { type ThemeColor } from '@ui/theme';
 import { ThemeContext } from '@ui/theme-constants';
 import { clsx } from 'clsx';
-import { type Nullable } from 'twenty-shared/types';
+import { type Nullable } from '@ui/utilities/types/Nullable';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
   StyledHoverableMenuItemBase,

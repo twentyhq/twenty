@@ -2,7 +2,7 @@ import { Tooltip } from '@base-ui/react/tooltip';
 import { isNonEmptyString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { useEffect, useRef, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './AppTooltip.module.scss';
 

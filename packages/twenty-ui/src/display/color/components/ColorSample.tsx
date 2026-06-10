@@ -2,7 +2,7 @@ import { clsx } from 'clsx';
 
 import { type ThemeColor } from '@ui/theme';
 import { themeCssVariables } from '@ui/theme-constants';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './ColorSample.module.scss';
 

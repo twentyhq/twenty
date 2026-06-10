@@ -7,7 +7,7 @@ import { type ThemeColor } from '@ui/theme';
 import { ThemeContext } from '@ui/theme-constants';
 import { clsx } from 'clsx';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';
 
 import styles from './MenuItemIconWithGripSwap.module.scss';

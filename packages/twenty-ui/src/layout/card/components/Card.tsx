@@ -1,6 +1,6 @@
 import { clsx } from 'clsx';
 import { type ComponentPropsWithoutRef, type CSSProperties } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Card.module.scss';
 

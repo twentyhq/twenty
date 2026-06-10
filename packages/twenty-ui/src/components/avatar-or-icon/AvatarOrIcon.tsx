@@ -4,7 +4,7 @@ import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme-constants';
 import { type Nullable } from '@ui/utilities';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './AvatarOrIcon.module.scss';
 

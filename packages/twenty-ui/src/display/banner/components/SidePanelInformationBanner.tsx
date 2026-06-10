@@ -1,5 +1,5 @@
 import { clsx } from 'clsx';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import {
   IconAlertTriangle,

@@ -1,7 +1,7 @@
 import { Dialog } from '@base-ui/react/dialog';
 import { clsx } from 'clsx';
 import { useRef } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type ModalOverlay } from '../types/ModalOverlay';
 import { type ModalPadding } from '../types/ModalPadding';

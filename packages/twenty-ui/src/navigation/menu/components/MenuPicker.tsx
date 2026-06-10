@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import {
   AppTooltip,

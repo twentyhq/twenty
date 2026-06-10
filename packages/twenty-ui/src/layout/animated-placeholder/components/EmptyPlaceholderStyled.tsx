@@ -1,7 +1,7 @@
 import { clsx } from 'clsx';
 import { type HTMLMotionProps, motion } from 'framer-motion';
 import { type ComponentPropsWithoutRef, type ReactNode } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './EmptyPlaceholderStyled.module.scss';
 

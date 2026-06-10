@@ -1,6 +1,6 @@
 import { clsx } from 'clsx';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { IconHelp, IconX } from '@ui/display/icon/components/TablerIcons';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
