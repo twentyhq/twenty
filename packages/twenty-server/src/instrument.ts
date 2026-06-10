@@ -68,6 +68,18 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
 
       return span;
     },
+    beforeBreadcrumb: (breadcrumb) => {
+      const isLinguiUncompiledMessageWarning =
+        breadcrumb.category === 'console' &&
+        breadcrumb.level === 'warning' &&
+        breadcrumb.message?.startsWith('Uncompiled message detected! Message:');
+
+      if (isLinguiUncompiledMessageWarning) {
+        return null;
+      }
+
+      return breadcrumb;
+    },
   });
 }
 

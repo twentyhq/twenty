@@ -4,6 +4,7 @@ import {
   type I18n,
   type MessageOptions,
   type Messages,
+  i18n,
   setupI18n,
 } from '@lingui/core';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -89,7 +90,11 @@ export class I18nService implements OnModuleInit {
       localeI18n.activate(locale);
 
       this.i18nInstancesMap[locale] = localeI18n;
+
+      i18n.load(locale, messages);
     });
+
+    i18n.activate(SOURCE_LOCALE);
   }
 
   getI18nInstance(locale: keyof typeof APP_LOCALES) {
