@@ -55201,7 +55201,6 @@ __metadata:
     storybook-addon-pseudo-states: "npm:^10.3.3"
     ts-jest: "npm:^29.1.1"
     tsx: "npm:^4.19.3"
-    twenty-shared: "workspace:*"
     vite-plugin-checker: "npm:^0.10.2"
     vite-plugin-dts: "npm:^4.5.4"
     vite-plugin-sass-dts: "npm:^1.3.31"
