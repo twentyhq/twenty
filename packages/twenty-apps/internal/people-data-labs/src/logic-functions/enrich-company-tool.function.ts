@@ -46,7 +46,6 @@ export default defineLogicFunction({
             'Overwrite existing field values with the enriched data instead of only filling empty fields.',
         },
       },
-      anyOf: [{ required: ['recordId'] }, { required: ['recordIds'] }],
       additionalProperties: false,
     },
   },

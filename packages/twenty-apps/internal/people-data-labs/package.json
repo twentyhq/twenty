@@ -16,6 +16,7 @@
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",
     "lint:fix": "oxlint --fix -c .oxlintrc.json .",
+    "typecheck": "tsc --noEmit -p tsconfig.spec.json",
     "test": "vitest run --config vitest.unit.config.ts --passWithNoTests",
     "test:watch": "vitest --config vitest.unit.config.ts",
     "test:integration": "vitest run --passWithNoTests"

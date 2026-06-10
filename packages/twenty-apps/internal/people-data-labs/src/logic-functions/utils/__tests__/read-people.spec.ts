@@ -12,7 +12,7 @@ describe('readPeople', () => {
     const nodes = [{ id: 'p1' }, { id: 'p2' }];
     let capturedRequest: unknown;
     const client = createCoreApiClientMock({
-      queryResult: (request) => {
+      queryResult: (request: unknown) => {
         capturedRequest = request;
 
         return { people: { edges: nodes.map((node) => ({ node })) } };

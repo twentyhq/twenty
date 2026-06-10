@@ -48,7 +48,7 @@ const buildClient = (options: {
   createCompanyId?: string;
 }): CoreApiClient =>
   createCoreApiClientMock({
-    queryResult: (request) => {
+    queryResult: (request: unknown) => {
       if ('companies' in (request as object)) {
         options.captured.companiesQueried = true;
 
@@ -57,7 +57,7 @@ const buildClient = (options: {
 
       return { people: { edges: options.people.map((node) => ({ node })) } };
     },
-    mutationResult: (request) =>
+    mutationResult: (request: unknown) =>
       'createCompany' in (request as object) &&
       options.createCompanyId !== undefined
         ? { createCompany: { id: options.createCompanyId } }

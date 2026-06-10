@@ -20,7 +20,7 @@ const buildResponse = (
 });
 
 const stubFetch = (response: FetchResponse | Error) => {
-  const fetchMock = vi.fn(() =>
+  const fetchMock = vi.fn((_url: string, _init?: RequestInit) =>
     response instanceof Error
       ? Promise.reject(response)
       : Promise.resolve(response),

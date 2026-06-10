@@ -12,7 +12,7 @@ describe('readCompanies', () => {
     const nodes = [{ id: 'c1' }, { id: 'c2' }];
     let capturedRequest: unknown;
     const client = createCoreApiClientMock({
-      queryResult: (request) => {
+      queryResult: (request: unknown) => {
         capturedRequest = request;
 
         return { companies: { edges: nodes.map((node) => ({ node })) } };
