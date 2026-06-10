@@ -1,0 +1,131 @@
+packages/twenty-server/test/integration/messaging/utils/query-messaging.util.ts
+  s_64c2aecabecc1e::t_9d42c12e16fd74 11-14,16-26
+  s_64c2aecabecc1e::t_f7d4fbc4bd7e08 222-224
+  s_64c2aecabecc1e::t_8114ea5af8f74c 216-221,225-240
+  s_64c2aecabecc1e::t_72eb866ed018ee 152-153
+  s_64c2aecabecc1e::t_7d3973159ff985 15
+  s_64c2aecabecc1e::t_f3599e7db5003a 2,35,44-49,56-65,69,94,96-98,100-102,105,107,109,113-118,140,142,145-151,161-179,183,186-187,190-192,194,196,198,200-207,209-211,214-215,258-260,262-270
+  s_64c2aecabecc1e::t_d95fa628b9905e 50-55
+  s_64c2aecabecc1e::t_505e0f1f6452c8 241-257
+  s_64c2aecabecc1e::t_0a471f3bb28cea 199
+  s_64c2aecabecc1e::t_5e85bda6ca39ab 91,110-112,137,160,180-182,197,212-213,261,271-272
+  s_64c2aecabecc1e::t_b25d9aa4f5c57b 6-9
+  s_64c2aecabecc1e::t_190306463f480e 193,195,208
+packages/twenty-server/test/integration/messaging/utils/connect-messaging-account.util.ts
+  s_64c2aecabecc1e::t_2ad5cc7da5f67e 3-7,13,17-19,21-22,25,27,36-37,54-55,60-62,64-70,72-74,83,88-98,104,106
+  s_64c2aecabecc1e::t_ed4b25b78d0248 20
+  s_64c2aecabecc1e::t_744e113465184c 49-53
+  s_64c2aecabecc1e::t_bbc56eae61e753 12
+  s_64c2aecabecc1e::t_e5e70e50bab92e 56-59
+  s_64c2aecabecc1e::t_bda423bdd968b9 63,75
+packages/twenty-server/test/integration/messaging/suites/gmail-folder-discovery.integration-spec.ts
+  s_64c2aecabecc1e::t_de5ff3ef773937 2,8-9,11-13,16-17,20,30,33-44,47-49,52,65-66,70,74-75,78-82,85-87,89-90,93-94
+  s_64c2aecabecc1e::t_da0ee8eab97a28 50,63
+  s_64c2aecabecc1e::t_67d59dc8f8d6e4 14
+  s_64c2aecabecc1e::t_bbf79e872c14d3 15
+  s_64c2aecabecc1e::t_b90da9609d3fcf 53
+  s_64c2aecabecc1e::t_7475f4705d1729 62,71-73,77,95-97
+packages/twenty-server/test/integration/utils/setup-test.ts
+  s_64c2aecabecc1e::t_3938391c324f9d 10
+packages/twenty-server/src/engine/core-modules/message-queue/drivers/bullmq.driver.ts
+  s_64c2aecabecc1e::t_47fb804524190a 95,97,113,127,220,225
+packages/twenty-server/test/integration/utils/http-mock.ts
+  s_64c2aecabecc1e::t_92a8d6ee08ec56 27,29,41-44
+  s_64c2aecabecc1e::t_de13dfd80c1e82 4-5
+  s_64c2aecabecc1e::t_0cecedc015d316 6,28
+  s_64c2aecabecc1e::t_a912c4839b2cf1 14-15
+  s_64c2aecabecc1e::t_58d423bdecce98 34-39
+packages/twenty-server/.env.test
+  s_64c2aecabecc1e::t_d6a93488350765 38,41-42
+packages/twenty-server/src/engine/core-modules/message-queue/message-queue.explorer.ts
+  s_64c2aecabecc1e::t_d7800869401397 142,150,164,189,195,207,211
+packages/twenty-server/test/integration/messaging/utils/microsoft-mock.util.ts
+  s_64c2aecabecc1e::t_fae1770bfd9566 28-30,65,69,79-89,116,120,127,129
+  s_64c2aecabecc1e::t_c040e2a58d5aed 123
+  s_64c2aecabecc1e::t_fa677038b32267 128
+  s_64c2aecabecc1e::t_0a471f3bb28cea 9,71-78
+packages/twenty-server/test/integration/messaging/suites/messaging-incremental-sync.integration-spec.ts
+  s_64c2aecabecc1e::t_4bef7fd8814e6f 1,3,8-16,18,21,23-31,34-42,44-52,54,56-58,63-70,73-112,114
+  s_64c2aecabecc1e::t_b850f97cc6c6ea 60-61
+packages/twenty-server/src/engine/core-modules/message-queue/drivers/sync.driver.ts
+  s_64c2aecabecc1e::t_47fb804524190a 15,20,24-25,51,53,56,59,62,66-70
+packages/twenty-server/test/integration/messaging/utils/gmail-mock.util.ts
+  s_64c2aecabecc1e::t_fdb1f3f3496732 140-141,149
+  s_64c2aecabecc1e::t_43cfa4ba920038 108
+  s_64c2aecabecc1e::t_4b3c1ac6a67783 211-224
+  s_64c2aecabecc1e::t_5613991f56a47a 160-161
+  s_64c2aecabecc1e::t_0a471f3bb28cea 6,226-228,233-234
+  s_64c2aecabecc1e::t_069cd2c2c3258b 109-130,133-138
+  s_64c2aecabecc1e::t_31da81e402caf8 132
+  s_64c2aecabecc1e::t_6ead5733a07d89 150-159
+  s_64c2aecabecc1e::t_4bc01c28166859 205-207
+  s_64c2aecabecc1e::t_5976e1fc0b0b3e 225,229-232
+  s_64c2aecabecc1e::t_73674be671c845 248
+  s_64c2aecabecc1e::t_8da680cb6e504b 8
+packages/twenty-server/test/integration/calendar/suites/google-calendar-events-import.integration-spec.ts
+  s_64c2aecabecc1e::t_aef4a2dad85405 1-3,8-14,16-53,61-94,138
+  s_64c2aecabecc1e::t_beb7d5c07d411b 15
+  s_64c2aecabecc1e::t_b46136b3f42a83 54-60
+  s_64c2aecabecc1e::t_5679c1bdec9a4f 4-7
+  s_64c2aecabecc1e::t_fdcf9c17c6a0f7 95-137
+packages/twenty-server/test/integration/messaging/suites/gmail-message-list-fetch.integration-spec.ts
+  s_64c2aecabecc1e::t_59aebbda2af2e8 3,7,14,17-18,35,38,43-46,54
+packages/twenty-server/test/integration/utils/drain-message-queues.util.ts
+  s_64c2aecabecc1e::t_8ca59e659cebee 1-32
+packages/twenty-server/test/integration/calendar/suites/calendar-sync-failure-lifecycle.integration-spec.ts
+  s_64c2aecabecc1e::t_65bdcf0973c447 1-212
+packages/twenty-server/test/integration/messaging/suites/messaging-stale-sync.integration-spec.ts
+  s_64c2aecabecc1e::t_c75e2b977f7a31 11
+  s_64c2aecabecc1e::t_424ab0d05dd386 1-4,7-10,12-13,15-16,19-20,25-36,38,40-46,51-53,69-88,90,92-95,97-104
+  s_64c2aecabecc1e::t_af7f9bb6dc72a3 49
+  s_64c2aecabecc1e::t_5e53e8481e86e9 55-57,60-61,67-68
+packages/twenty-server/test/integration/messaging/suites/messaging-token-refresh.integration-spec.ts
+  s_64c2aecabecc1e::t_93dffa4d839a93 8-9,18,20,22,24,28,30,32-35,37,39-41,43,51-56,58-62,64-69,71-74
+  s_64c2aecabecc1e::t_0080d5c63b88e1 2
+  s_64c2aecabecc1e::t_911d17a81da0c1 14-17
+  s_64c2aecabecc1e::t_0a1f38310ac8be 44-49
+packages/twenty-server/src/engine/core-modules/message-queue/services/message-queue.service.ts
+  s_64c2aecabecc1e::t_d7800869401397 30,34-35,72-73,76
+packages/twenty-server/test/integration/utils/enqueue-job.util.ts
+  s_64c2aecabecc1e::t_aca65536204565 2,6,10,16
+packages/twenty-server/test/integration/messaging/suites/messaging-sync-failure-lifecycle.integration-spec.ts
+  s_64c2aecabecc1e::t_41ee729224ae00 90-99,104
+  s_64c2aecabecc1e::t_5e212b4f6367a0 182
+  s_64c2aecabecc1e::t_f1d95f7b61dd4d 23
+  s_64c2aecabecc1e::t_8b30efbe4a1d5b 32
+  s_64c2aecabecc1e::t_41f9e36aa19b9f 10
+  s_64c2aecabecc1e::t_a64b5ab72a24e3 3,9,12-15,18-22,24-26,29-31,35-36,56-82,84-88,106-108,111-112,114,116-119,121-125,129,131,133-139,154-160,163-170,175-181,183-226
+  s_64c2aecabecc1e::t_301bd615b1f1f8 147,153
+  s_64c2aecabecc1e::t_0a471f3bb28cea 144-146
+  s_64c2aecabecc1e::t_1605681d02793e 16-17
+  s_64c2aecabecc1e::t_42c70c5b353f5b 89,101-103
+  s_64c2aecabecc1e::t_56c5f7109eb248 141-143,148-151
+  s_64c2aecabecc1e::t_334535bbd8c17e 171-174
+  s_64c2aecabecc1e::t_c059af3215d5a0 83
+packages/twenty-server/test/integration/messaging/suites/microsoft-folder-discovery.integration-spec.ts
+  s_64c2aecabecc1e::t_0a8ce5ee7b0335 4-5,8,11,14,16,18-19,28,30,39-43,46
+packages/twenty-server/src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface.ts
+  s_64c2aecabecc1e::t_d7800869401397 11,16-17,19
+packages/twenty-server/test/integration/calendar/suites/microsoft-calendar-events-import.integration-spec.ts
+  s_64c2aecabecc1e::t_35a334e498b0c2 55-61
+  s_64c2aecabecc1e::t_2b5e4f318e4053 107-160
+  s_64c2aecabecc1e::t_14726af7cc5788 1-54,62-106,161
+packages/twenty-server/test/integration/calendar/suites/calendar-stale-sync.integration-spec.ts
+  s_64c2aecabecc1e::t_26db23b648517c 2-9,11,14-16,19-20,22-23,25-35,37-38,40-41,43-46,49,51-53,55-60,62-95
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "2b0eea2935623b480c0ef9874dc9430c42ce64cf",
+  "prompts": {},
+  "sessions": {
+    "s_64c2aecabecc1e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "befcee8f-f902-4d17-8b17-17461180efe9",
+        "model": "claude-fable-5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
