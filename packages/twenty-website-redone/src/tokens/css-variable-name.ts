@@ -5,9 +5,11 @@ import { type ColorToken } from './color-token';
 export const cssVariableName: {
   color: (token: ColorToken) => string;
   fontBase: string;
+  radiusBase: string;
   spacingBase: string;
 } = {
   color: (token) => `--color-${token}`,
   fontBase: '--font-base',
+  radiusBase: '--radius-base',
   spacingBase: '--spacing-base',
 };

@@ -23,6 +23,7 @@ export function buildCssVariableDeclarations(): string {
     `${cssVariableName.spacingBase}: ${UNITS.spacingBasePx}px;`,
   );
   declarations.push(`${cssVariableName.fontBase}: ${UNITS.fontBaseRem}rem;`);
+  declarations.push(`${cssVariableName.radiusBase}: ${UNITS.radiusBasePx}px;`);
 
   return declarations.join('\n');
 }

@@ -15,6 +15,7 @@ export { GUTTER } from './gutter';
 export { MAX_CONTENT_WIDTH_PX } from './max-content-width';
 export { mediaUp } from './media-up';
 export { PALETTE, type PaletteToken } from './palette';
+export { radius } from './radius';
 export { RHYTHM, type RhythmStep } from './rhythm';
 export { spacing } from './spacing';
 export { UNITS } from './units';

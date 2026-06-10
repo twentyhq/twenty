@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { color, spacing } from '@/tokens';
-import { Body, Container, Heading } from '@/ui';
+import { Body, Button, Container, Eyebrow, Heading } from '@/ui';
 
 const ProofMain = styled.main`
   background-color: ${color('neutral')};
@@ -16,11 +16,19 @@ const ProofStack = styled.div`
   justify-items: start;
 `;
 
+const ProofButtonRow = styled.div`
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${spacing(3)};
+`;
+
 export default function ProofPage() {
   return (
     <ProofMain>
       <Container>
         <ProofStack>
+          <Eyebrow>In production.</Eyebrow>
           <Heading as="h1" size="xl" weight="light">
             {'See how teams\nbuild *on Twenty*'}
           </Heading>
@@ -33,6 +41,16 @@ export default function ProofPage() {
           <Heading size="xs" family="sans">
             {'Accent inverts per family: *serif inside sans*'}
           </Heading>
+          <ProofButtonRow>
+            <Button href="/" label="Get started" />
+            <Button
+              href="https://github.com/twentyhq/twenty"
+              label="Star us"
+              variant="outlined"
+            />
+            <Button label="Small filled" size="small" />
+            <Button label="Small outlined" size="small" variant="outlined" />
+          </ProofButtonRow>
         </ProofStack>
       </Container>
     </ProofMain>
