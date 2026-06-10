@@ -88,9 +88,17 @@ RUN if [ -d /app/packages/twenty-front/build ]; then \
 
 FROM node:24.16.0-alpine3.23@sha256:2bdb65ed1dab192432bc31c95f94155ca5ad7fc1392fb7eb7526ab682fa5bf14 AS twenty-server
 
+# Upgrade the Alpine system OpenSSL libs (libcrypto3/libssl3) to the patched
+# build. These are NOT used by the app at runtime (Node bundles and links its
+# own OpenSSL), but they ship in the base filesystem as deps of apk-tools and
+# ssl_client, so the scanner flags them by version. Pinning a patched floor
+# forces apk to upgrade them at build time, same technique as curl/nghttp2.
+# (Node's bundled OpenSSL is upgraded separately via the Node base bump above.)
 RUN apk add --no-cache \
     'curl>=8.19.0-r0' \
     'nghttp2-libs>=1.69.0-r0' \
+    'libcrypto3>=3.5.7-r0' \
+    'libssl3>=3.5.7-r0' \
     'postgresql18-client>=18.4-r0' \
     jq
 
@@ -213,9 +221,13 @@ RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz \
  && tar -C / -Jxpf /tmp/s6-overlay-arch.tar.xz \
  && rm /tmp/s6-overlay-*.tar.xz
 
+# See the twenty-server stage above: upgrade the Alpine system OpenSSL libs to
+# the patched build (not used by Node at runtime, but flagged by the scanner).
 RUN apk add --no-cache \
     postgresql18 postgresql18-contrib \
     redis \
+    'libcrypto3>=3.5.7-r0' \
+    'libssl3>=3.5.7-r0' \
     curl jq su-exec
 
 # Workspace root config
