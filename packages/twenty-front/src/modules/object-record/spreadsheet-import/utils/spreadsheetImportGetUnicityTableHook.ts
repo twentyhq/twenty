@@ -21,9 +21,60 @@ type Column = {
   fieldType: FieldMetadataType;
 };
 
+const reportedMalformedUniqueIndexObjectMetadataIds = new Set<string>();
+
+const reportMalformedUniqueIndexes = async ({
+  objectMetadataItem,
+  malformedUniqueIndexesCount,
+}: {
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  malformedUniqueIndexesCount: number;
+}) => {
+  if (reportedMalformedUniqueIndexObjectMetadataIds.has(objectMetadataItem.id)) {
+    return;
+  }
+
+  reportedMalformedUniqueIndexObjectMetadataIds.add(objectMetadataItem.id);
+
+  try {
+    const { captureMessage, withScope } = await import('@sentry/react');
+
+    withScope((scope) => {
+      scope.setLevel('warning');
+      scope.setFingerprint(['spreadsheet-import-malformed-unique-index']);
+      scope.setTag('module', 'spreadsheet-import');
+      scope.setTag('objectMetadataId', objectMetadataItem.id);
+      scope.setTag('objectNameSingular', objectMetadataItem.nameSingular);
+      scope.setExtra('malformedUniqueIndexesCount', malformedUniqueIndexesCount);
+
+      captureMessage(
+        'Spreadsheet import ignored malformed unique indexes with missing indexFieldMetadatas',
+      );
+    });
+  } catch {
+    reportedMalformedUniqueIndexObjectMetadataIds.delete(objectMetadataItem.id);
+  }
+};
+
 export const spreadsheetImportGetUnicityTableHook = (
   objectMetadataItem: EnrichedObjectMetadataItem,
 ) => {
+  const malformedUniqueIndexesCount = objectMetadataItem.indexMetadatas.filter(
+    (indexMetadataItem) =>
+      indexMetadataItem.isUnique &&
+      !Array.isArray(
+        (indexMetadataItem as { indexFieldMetadatas?: unknown })
+          .indexFieldMetadatas,
+      ),
+  ).length;
+
+  if (malformedUniqueIndexesCount > 0) {
+    void reportMalformedUniqueIndexes({
+      objectMetadataItem,
+      malformedUniqueIndexesCount,
+    });
+  }
+
   const uniqueConstraintsFields = getUniqueConstraintsFields<
     FieldMetadataItem,
     EnrichedObjectMetadataItem

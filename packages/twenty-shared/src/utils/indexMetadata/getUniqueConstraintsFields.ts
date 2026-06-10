@@ -10,7 +10,7 @@ export const getUniqueConstraintsFields = <
     indexMetadatas: {
       id: string;
       isUnique: boolean;
-      indexFieldMetadatas: { fieldMetadataId: string }[];
+      indexFieldMetadatas?: { fieldMetadataId: string }[];
     }[];
     fields: K[];
   },
@@ -36,7 +36,7 @@ export const getUniqueConstraintsFields = <
   }
 
   const otherUniqueConstraintsFields = uniqueIndexes.map((index) =>
-    index.indexFieldMetadatas.map((field) => {
+    (index.indexFieldMetadatas ?? []).map((field) => {
       const indexField = fieldsMapById.get(field.fieldMetadataId);
 
       if (!isDefined(indexField)) {
