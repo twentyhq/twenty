@@ -3,10 +3,10 @@ import { styled } from '@linaria/react';
 import {
   color,
   FONT_WEIGHT,
-  semanticColor,
   fontFamily,
+  fontSize,
+  semanticColor,
   spacing,
-  typeRampDeclarations,
 } from '@/tokens';
 
 const EyebrowRow = styled.p`
@@ -14,8 +14,10 @@ const EyebrowRow = styled.p`
   color: ${semanticColor.inkMuted};
   display: flex;
   font-family: ${fontFamily('sans')};
-  ${typeRampDeclarations('headingXs')}
+  font-size: ${fontSize(4.5)};
   font-weight: ${FONT_WEIGHT.medium};
+  letter-spacing: -0.04em;
+  line-height: ${fontSize(6)};
   gap: ${spacing(2)};
   margin: 0;
 `;

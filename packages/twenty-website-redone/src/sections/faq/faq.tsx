@@ -5,7 +5,7 @@ import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { buildFaqPageJsonLd } from '@/platform/seo/build-faq-page-json-ld';
 import { JsonLd } from '@/platform/seo/json-ld';
 import { mediaUp, spacing } from '@/tokens';
-import { Button, Eyebrow, Heading, SectionShell } from '@/ui';
+import { Button, Eyebrow, Heading, SectionIntro, SectionShell } from '@/ui';
 
 import { FAQ_QUESTIONS } from './faq.data';
 import { FaqItems } from './faq-items';
@@ -16,13 +16,11 @@ const CAL_FORM_URL =
 const FaqStack = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  row-gap: ${spacing(20)};
-`;
+  row-gap: ${spacing(10)};
 
-const IntroStack = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  row-gap: ${spacing(6)};
+  ${mediaUp('md')} {
+    row-gap: ${spacing(20)};
+  }
 `;
 
 const HeadingMeasure = styled.div`
@@ -46,7 +44,7 @@ export function Faq() {
     <SectionShell rhythm="spacious" scheme="dark">
       <JsonLd data={buildFaqPageJsonLd(i18n, FAQ_QUESTIONS)} />
       <FaqStack>
-        <IntroStack>
+        <SectionIntro>
           <Eyebrow>{i18n._(msg`Any Questions?`)}</Eyebrow>
           <HeadingMeasure>
             <Heading as="h2" size="lg" weight="light">
@@ -64,7 +62,7 @@ export function Faq() {
               variant="outlined"
             />
           </CtaRow>
-        </IntroStack>
+        </SectionIntro>
         <FaqItems questions={FAQ_QUESTIONS} />
       </FaqStack>
     </SectionShell>

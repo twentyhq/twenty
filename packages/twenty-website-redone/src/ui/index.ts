@@ -18,4 +18,5 @@ export {
   type HeadingSize,
 } from './heading';
 export { parseHeadingNotation, type HeadingSegment } from './heading-notation';
+export { SectionIntro } from './section-intro';
 export { SectionShell, type SectionShellProps } from './section-shell';

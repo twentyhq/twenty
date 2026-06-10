@@ -11,7 +11,7 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
-import { Body, Eyebrow, Heading, SectionShell } from '@/ui';
+import { Body, Eyebrow, Heading, SectionIntro, SectionShell } from '@/ui';
 
 import { PROBLEM_POINTS } from './problem.data';
 import { ProblemVisual } from './problem-visual';
@@ -34,12 +34,8 @@ const ContentStack = styled.div`
 
   ${mediaUp('md')} {
     padding: ${spacing(15)};
+    row-gap: ${spacing(20)};
   }
-`;
-
-const IntroStack = styled.div`
-  display: grid;
-  row-gap: ${spacing(2)};
 `;
 
 const PointList = styled.div`
@@ -85,14 +81,14 @@ export function Problem() {
       <SplitLayout>
         <ProblemVisual />
         <ContentStack>
-          <IntroStack>
+          <SectionIntro>
             <Eyebrow>{i18n._(msg`The Problem.`)}</Eyebrow>
             <Heading as="h2" size="md" weight="light">
               {i18n._(
                 msg`A custom CRM gives your org an edge, *but building one* comes with *tradeoffs*`,
               )}
             </Heading>
-          </IntroStack>
+          </SectionIntro>
           <PointList>
             {PROBLEM_POINTS.map((point) => (
               <Fragment key={point.heading.id}>
