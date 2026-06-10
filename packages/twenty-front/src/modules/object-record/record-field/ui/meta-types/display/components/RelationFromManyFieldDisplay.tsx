@@ -1,4 +1,5 @@
 import { atom, useAtom } from 'jotai';
+import { atomFamily } from 'jotai/utils';
 import { useContext, useEffect, useMemo, useState } from 'react';
 
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
@@ -34,13 +35,13 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-export const locallyDeletedRecordIdsAtom = atom<string[]>([]);
+export const locallyDeletedRecordIdsAtomFamily = atomFamily((_key: string) => atom<string[]>([]));
 
 export const RelationFromManyFieldDisplay = () => {
   const { fieldValue, fieldDefinition, generateRecordChipData } =
     useRelationFromManyFieldDisplay();
   const { isFocused } = useFieldFocus();
-  const { disableChipClick, triggerEvent } = useContext(FieldContext);
+  const { disableChipClick, triggerEvent, recordId } = useContext(FieldContext);
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const { fieldName, objectMetadataNameSingular } = fieldDefinition.metadata;
@@ -64,8 +65,9 @@ export const RelationFromManyFieldDisplay = () => {
   });
 
   const [displayedFieldValue, setDisplayedFieldValue] = useState(fieldValue);
+  const cellKey = `${recordId}-${fieldName}`;
   const [locallyDeletedIds, setLocallyDeletedIds] = useAtom(
-    locallyDeletedRecordIdsAtom,
+    locallyDeletedRecordIdsAtomFamily(cellKey),
   );
 
   useEffect(() => {
