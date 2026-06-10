@@ -64,10 +64,10 @@ const buttonClassName = css`
   }
 
   [data-scheme='dark'] &[data-variant='outlined'] {
-    /* Opaque composite of white-10 over black: translucent fills double up
-       on the shape's anti-seam segment overlaps and read as hairlines. */
+    /* Mirrors light outlined's 5% wash (the pricing-table toggle is the
+       reference): white-5 over black, pre-composited to stay opaque. */
     --button-stroke: ${color('white')};
-    --button-hover-fill: ${color('black-hover')};
+    --button-hover-fill: ${color('black-sheen')};
     --button-label: ${color('white')};
     --button-label-hover: ${color('white')};
   }
