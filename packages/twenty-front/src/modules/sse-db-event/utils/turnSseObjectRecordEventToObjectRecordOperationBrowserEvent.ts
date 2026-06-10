@@ -62,7 +62,8 @@ export const turnSseObjectRecordEventsToObjectRecordOperationBrowserEvents = ({
             objectMetadataItem,
             operation: {
               type: 'destroy-one',
-              destroyedRecordId: objectRecordEventsForThisEventType[0].properties.before.id,
+              destroyedRecordId:
+                objectRecordEventsForThisEventType[0].properties.before.id,
             },
           });
         } else {
