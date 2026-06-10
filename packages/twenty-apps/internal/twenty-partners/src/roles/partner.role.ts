@@ -13,17 +13,19 @@ import { PARTNER_USER_ON_OPPORTUNITY_FIELD_ID } from 'src/fields/partner-user-on
 // workspace member via row-level predicates configured out-of-band (the app manifest
 // cannot ship RLS predicates). Run `yarn rls:configure` after install/reinstall.
 //
-// Opportunity field-level restrictions: the Partner role may READ all Opportunity
-// fields but may only UPDATE the `stage` field. Every other non-system field is
-// declared with canUpdateFieldValue: false below. These are deployed via manifest
-// sync (yarn twenty dev --once) — the upsertFieldPermissions metadata mutation
-// enforces an application-ownership check that prevents setting them post-deploy
-// via workspace API key. `yarn rls:configure` queries and verifies these instead.
+// Partner edit scope:
+//   - Partner (own profile): full update.
+//   - Opportunity: read-all, but UPDATE only `stage` and `amount` (every other non-system
+//     field is locked via canUpdateFieldValue: false below).
+//   - Company / Person: READ-ONLY (no object-level update — see objectPermissions).
+// Field permissions are deployed via manifest sync (yarn twenty dev --once) — the
+// upsertFieldPermissions metadata mutation enforces an application-ownership check that
+// prevents setting them post-deploy via workspace API key. `yarn rls:configure` verifies them.
 export default defineRole({
   universalIdentifier: PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Partner',
   description:
-    'External partner self-service role. Sees and edits only its own Partner/Person/Company/Opportunity records via row-level permissions. Configure predicates with `yarn rls:configure` after install.',
+    'External partner self-service role. Sees only its own Partner/Person/Company/Opportunity records (row-level). Can edit its own Partner profile and an Opportunity’s stage + amount; Company and Person are read-only. Configure predicates with `yarn rls:configure` after install.',
   icon: 'IconBuildingStore',
   canBeAssignedToUsers: true,
   canUpdateAllSettings: false,
@@ -31,24 +33,15 @@ export default defineRole({
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
   canDestroyAllObjectRecords: false,
-  // Opportunity field permissions: read-all / update-stage-only.
-  // System fields (id, createdAt, updatedAt, deletedAt) are intentionally
-  // omitted — they cannot be restricted here. All other non-stage fields are
-  // locked to canUpdateFieldValue: false.
+  // Opportunity field permissions: read-all / update `stage` + `amount` only.
+  // System fields (id, createdAt, updatedAt, deletedAt) plus `stage` and `amount` are
+  // intentionally omitted from this lock list — everything else is canUpdateFieldValue: false.
   fieldPermissions: [
     {
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
       fieldUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.fields.name
-          .universalIdentifier,
-      canUpdateFieldValue: false,
-    },
-    {
-      objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
-      fieldUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.fields.amount
           .universalIdentifier,
       canUpdateFieldValue: false,
     },
@@ -245,18 +238,20 @@ export default defineRole({
       canDestroyObjectRecords: false,
     },
     {
+      // Person: read-only for partners (they see their deal's contacts but can't edit them).
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
       canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
+      canUpdateObjectRecords: false,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     },
     {
+      // Company: read-only for partners (they see their deal's company but can't edit it).
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
       canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
+      canUpdateObjectRecords: false,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
     },

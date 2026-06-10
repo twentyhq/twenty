@@ -43,15 +43,16 @@ const requireEnv = (name: string): string => {
 const TARGET_OBJECTS = ['partner', 'person', 'company', 'opportunity'] as const;
 type TargetObject = (typeof TARGET_OBJECTS)[number];
 
-// System / immutable Opportunity fields that must NOT be included in the
-// field-permission lock list. `stage` is also excluded because it is the one
-// field the Partner role should be allowed to update.
+// System / immutable Opportunity fields that must NOT be in the field-permission lock
+// list, PLUS the fields the Partner role is allowed to update (`stage`, `amount`).
+// Everything else is locked (canUpdateFieldValue: false).
 const OPPORTUNITY_FIELD_LOCK_SKIP = new Set([
   'id',
   'createdAt',
   'updatedAt',
   'deletedAt',
   'stage',
+  'amount',
 ]);
 
 type ObjectInfo = {
@@ -442,7 +443,7 @@ async function main() {
       `(${TARGET_OBJECTS.length} objects + workspaceMember self-scope)`,
   );
 
-  // ── 5. Verify Opportunity field permissions: read-all / update-stage-only ─────
+  // ── 5. Verify Opportunity field permissions: read-all / update stage + amount only ─
   //
   // Opportunity field permissions for the Partner role are declared in
   // src/roles/partner.role.ts and deployed by `yarn twenty dev --once` (manifest
@@ -513,7 +514,7 @@ async function main() {
   }
 
   console.log(
-    `[rls:configure] ✓ ${oppLockedFps.length} Opportunity fields locked (stage editable only) — field permissions verified`,
+    `[rls:configure] ✓ ${oppLockedFps.length} Opportunity fields locked (stage + amount editable) — field permissions verified`,
   );
 }
 
