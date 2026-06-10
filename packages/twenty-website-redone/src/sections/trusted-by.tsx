@@ -1,9 +1,9 @@
 import { IconUsers } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
+import { type CSSProperties } from 'react';
 
 import {
-  BREAKPOINT_PX,
   color,
   FONT_WEIGHT,
   fontFamily,
@@ -86,54 +86,53 @@ const MonoLabel = styled.span`
 
 const LogoStrip = styled.div`
   align-items: center;
-  display: grid;
-  gap: ${spacing(4)};
-  grid-template-columns: repeat(3, minmax(0, max-content));
+  column-gap: ${spacing(6)};
+  display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  justify-items: center;
+  row-gap: ${spacing(5)};
 
-  & > :last-child:nth-child(3n + 1) {
-    grid-column: 2;
-  }
+  ${mediaUp('lg')} {
+    --logo-scale: 0.92;
 
-  ${mediaUp('md')} {
-    display: flex;
-    flex-wrap: wrap;
-    gap: ${spacing(8)};
-    justify-content: center;
+    column-gap: ${spacing(4)};
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    width: 100%;
   }
 `;
 
 const LogoFrame = styled.span`
   flex-shrink: 0;
-  height: 28px;
-  overflow: clip;
+  height: calc(var(--logo-h) * var(--logo-scale, 1) * 1px);
   position: relative;
-  width: 56px;
-
-  ${mediaUp('md')} {
-    height: 32px;
-    width: 64px;
-  }
 `;
 
 function Logo({
-  fit = 'contain',
+  aspectRatio,
   grayBrightness = 1,
   grayOpacity = 0.72,
+  heightPx,
   src,
 }: TrustedByLogo) {
   return (
-    <LogoFrame aria-hidden>
+    <LogoFrame
+      aria-hidden
+      style={
+        {
+          aspectRatio: String(aspectRatio),
+          '--logo-h': heightPx,
+        } as CSSProperties
+      }
+    >
       <NextImage
         alt=""
         fill
-        sizes={`(min-width: ${BREAKPOINT_PX.md}px) 80px, 64px`}
+        sizes={`${Math.ceil(heightPx * aspectRatio)}px`}
         src={src}
         style={{
           filter: `grayscale(1) brightness(${grayBrightness})`,
-          objectFit: fit,
-          objectPosition: 'center',
+          objectFit: 'contain',
           opacity: grayOpacity,
         }}
         unoptimized
