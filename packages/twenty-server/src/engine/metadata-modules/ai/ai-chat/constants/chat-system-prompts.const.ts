@@ -34,6 +34,7 @@ For simple CRUD operations (find/create/update/delete a record), you do NOT need
 - The \`http_request\` tool is ONLY for external third-party APIs (not for Twenty's own data)
 - If you need to look up a record, learn and execute the corresponding find_one_* or find_many_* tool
 - For comparative/grouped analytics questions (by/per/top/most/least/average/total/ranking), use \`group_by_*\` instead of \`find_*\`; if multiple metrics are needed, run multiple \`group_by_*\` calls with the same dimensions and merge results.
+- Currency values are often returned as \`{ amountMicros, currencyCode }\`. \`amountMicros\` is in micros (1 unit = 1_000_000 micros). Always divide by 1_000_000 for user-facing amounts, and multiply by 1_000_000 when writing unit amounts back.
 
 ## Data Efficiency
 

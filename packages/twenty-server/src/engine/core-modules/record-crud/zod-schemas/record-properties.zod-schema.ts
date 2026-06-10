@@ -173,7 +173,12 @@ export const generateRecordPropertiesZodSchema = (
 
       case FieldMetadataType.CURRENCY:
         fieldSchema = z.object({
-          amountMicros: z.number().optional(),
+          amountMicros: z
+            .number()
+            .optional()
+            .describe(
+              'Stored in micros. 1 currency unit = 1_000_000 micros. For user-facing amounts, divide by 1_000_000.',
+            ),
           currencyCode: z.string().optional(),
         });
         break;
