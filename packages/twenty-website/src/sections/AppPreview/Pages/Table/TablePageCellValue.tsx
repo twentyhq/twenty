@@ -3,9 +3,12 @@ import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
 import type {
+  CellCurrency,
   CellEntity,
+  CellLink,
   CellPerson,
   CellRelation,
+  CellSelect,
   CellText,
   CellValue,
 } from '../../types';
@@ -19,6 +22,8 @@ import { VISUAL_TOKENS } from '../../Shared/utils/app-preview-tokens';
 import { IconCheck, IconCopy, IconPencil, IconX } from '@tabler/icons-react';
 import { MiniIcon } from '../../Shared/components/MiniIcon';
 import { TablePageCheckbox } from './TablePageCheckbox';
+import { PreviewRoundedLink } from '../../Shared/components/PreviewRoundedLink';
+import { PreviewTag } from '../../Shared/components/PreviewTag';
 import {
   TABLE_PAGE_CELL_HORIZONTAL_PADDING,
   TABLE_PAGE_COLORS,
@@ -31,7 +36,7 @@ const ROW_HOVER_ACTION_DISABLED_COLUMNS = new Set([
   'accountOwner',
 ]);
 
-const EntityCellLayout = styled.div`
+const FirstColumnCellLayout = styled.div`
   align-items: center;
   display: flex;
   gap: 4px;
@@ -115,25 +120,6 @@ const MiniAction = styled.div`
   width: 16px;
 `;
 
-const TagChip = styled.div`
-  align-items: center;
-  background: ${VISUAL_TOKENS.background.transparent.light};
-  border-radius: 4px;
-  color: ${TABLE_PAGE_COLORS.textSecondary};
-  display: inline-flex;
-  font-family: ${TABLE_PAGE_FONT};
-  font-size: 13px;
-  font-weight: ${theme.font.weight.regular};
-  height: 20px;
-  line-height: 1.4;
-  max-width: 100%;
-  min-width: 0;
-  overflow: hidden;
-  padding: 0 8px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
 const MultiChipStack = styled.div`
   align-items: center;
   display: flex;
@@ -144,21 +130,49 @@ const MultiChipStack = styled.div`
 `;
 
 function PersonTokenCell({
+  isFirstColumn = false,
   token,
   hovered = false,
+  variant = ChipVariant.Highlighted,
   withCopyAction = true,
 }: {
   hovered?: boolean;
+  isFirstColumn?: boolean;
   token: CellPerson;
+  variant?: ChipVariant;
   withCopyAction?: boolean;
 }) {
+  const content = (
+    <CellChip
+      clickable={false}
+      label={token.name}
+      leftComponent={<PersonAvatar person={token} />}
+      variant={variant}
+    />
+  );
+
+  if (isFirstColumn) {
+    return (
+      <FirstColumnCellLayout>
+        <TablePageCheckbox />
+        {content}
+        <HoverActions $visible={hovered}>
+          {withCopyAction ? (
+            <MiniAction aria-hidden="true">
+              <MiniIcon
+                icon={IconCopy}
+                color={TABLE_PAGE_COLORS.textSecondary}
+              />
+            </MiniAction>
+          ) : null}
+        </HoverActions>
+      </FirstColumnCellLayout>
+    );
+  }
+
   return (
     <CellHoverAnchor>
-      <CellChip
-        clickable={false}
-        label={token.name}
-        leftComponent={<PersonAvatar person={token} />}
-      />
+      {content}
       <HoverActions $visible={hovered}>
         {withCopyAction ? (
           <MiniAction aria-hidden="true">
@@ -181,7 +195,7 @@ function EntityCellComponent({
 }) {
   if (isFirstColumn) {
     return (
-      <EntityCellLayout>
+      <FirstColumnCellLayout>
         <TablePageCheckbox />
         <CellChip
           clickable={false}
@@ -197,7 +211,7 @@ function EntityCellComponent({
             />
           </MiniAction>
         </HoverActions>
-      </EntityCellLayout>
+      </FirstColumnCellLayout>
     );
   }
 
@@ -206,6 +220,7 @@ function EntityCellComponent({
       clickable={false}
       label={cell.name}
       leftComponent={<FaviconLogo domain={cell.domain} label={cell.name} />}
+      variant={ChipVariant.Highlighted}
     />
   );
 }
@@ -230,6 +245,7 @@ function RelationCellComponent({
                 {item.shortLabel ?? getInitials(item.name)}
               </PreviewAvatar>
             }
+            variant={ChipVariant.Highlighted}
           />
         ))}
       </MultiChipStack>
@@ -245,23 +261,23 @@ function RelationCellComponent({
 function TextCellComponent({
   cell,
   isFirstColumn,
-  onNavigateToLabel,
+  onNavigateToPageItemId,
 }: {
   cell: CellText;
   isFirstColumn: boolean;
-  onNavigateToLabel?: (label: string) => void;
+  onNavigateToPageItemId?: (itemId: string) => void;
 }) {
-  const targetLabel = cell.targetLabel;
+  const targetPageItemId = cell.targetPageItemId;
   const handleNavigate =
-    targetLabel && onNavigateToLabel
-      ? () => onNavigateToLabel(targetLabel)
+    targetPageItemId && onNavigateToPageItemId
+      ? () => onNavigateToPageItemId(targetPageItemId)
       : undefined;
 
-  if (!isFirstColumn || !cell.shortLabel) {
+  if (!isFirstColumn) {
     return <InlineText>{cell.value}</InlineText>;
   }
 
-  return (
+  const content = cell.shortLabel ? (
     <CellChip
       clickable={handleNavigate !== undefined}
       label={cell.value}
@@ -269,8 +285,44 @@ function TextCellComponent({
         <PreviewAvatar tone={cell.tone}>{cell.shortLabel}</PreviewAvatar>
       }
       onClick={handleNavigate}
+      variant={ChipVariant.Highlighted}
+    />
+  ) : (
+    <CellChip
+      clickable={false}
+      label={cell.value}
+      variant={ChipVariant.Highlighted}
     />
   );
+
+  return (
+    <FirstColumnCellLayout>
+      <TablePageCheckbox />
+      {content}
+    </FirstColumnCellLayout>
+  );
+}
+
+function LinkCellComponent({ cell }: { cell: CellLink }) {
+  const label =
+    cell.label ??
+    (cell.kind === 'social' && cell.value.startsWith('@')
+      ? cell.value
+      : cell.value);
+
+  return (
+    <CellHoverAnchor>
+      <PreviewRoundedLink label={label} />
+    </CellHoverAnchor>
+  );
+}
+
+function CurrencyCellComponent({ cell }: { cell: CellCurrency }) {
+  return <RightAlignedText>{cell.value}</RightAlignedText>;
+}
+
+function SelectCellComponent({ cell }: { cell: CellSelect }) {
+  return <PreviewTag color={cell.color} label={cell.value} />;
 }
 
 export function renderTableCellValue({
@@ -278,15 +330,19 @@ export function renderTableCellValue({
   columnId,
   hovered,
   isFirstColumn,
-  onNavigateToLabel,
+  onNavigateToPageItemId,
 }: {
   cell: CellValue;
   columnId: string;
   hovered: boolean;
   isFirstColumn: boolean;
-  onNavigateToLabel?: (label: string) => void;
+  onNavigateToPageItemId?: (itemId: string) => void;
 }): ReactNode {
   const showHoverAction = !ROW_HOVER_ACTION_DISABLED_COLUMNS.has(columnId);
+  const personChipVariant =
+    columnId === 'createdBy'
+      ? ChipVariant.Transparent
+      : ChipVariant.Highlighted;
 
   switch (cell.type) {
     case 'text':
@@ -294,21 +350,15 @@ export function renderTableCellValue({
         <TextCellComponent
           cell={cell}
           isFirstColumn={isFirstColumn}
-          onNavigateToLabel={onNavigateToLabel}
+          onNavigateToPageItemId={onNavigateToPageItemId}
         />
       );
     case 'number':
       return <RightAlignedText>{cell.value}</RightAlignedText>;
+    case 'currency':
+      return <CurrencyCellComponent cell={cell} />;
     case 'link':
-      return (
-        <div style={{ minWidth: 0, position: 'relative', width: '100%' }}>
-          <CellChip
-            clickable={false}
-            label={cell.value}
-            variant={ChipVariant.Static}
-          />
-        </div>
-      );
+      return <LinkCellComponent cell={cell} />;
     case 'boolean':
       return (
         <BooleanRow>
@@ -324,11 +374,16 @@ export function renderTableCellValue({
           <InlineText>{cell.value ? 'True' : 'False'}</InlineText>
         </BooleanRow>
       );
-    case 'tag':
-      return <TagChip>{cell.value}</TagChip>;
+    case 'select':
+      return <SelectCellComponent cell={cell} />;
     case 'person':
       return (
-        <PersonTokenCell hovered={hovered && showHoverAction} token={cell} />
+        <PersonTokenCell
+          hovered={hovered && showHoverAction}
+          isFirstColumn={isFirstColumn}
+          token={cell}
+          variant={personChipVariant}
+        />
       );
     case 'entity':
       return (

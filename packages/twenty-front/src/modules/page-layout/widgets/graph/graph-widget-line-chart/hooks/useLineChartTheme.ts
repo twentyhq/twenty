@@ -1,6 +1,6 @@
 import { parseFontSizeToPx } from '@/page-layout/widgets/graph/utils/parseFontSizeToPx';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 
 export const useLineChartTheme = () => {
   const { theme } = useContext(ThemeContext);

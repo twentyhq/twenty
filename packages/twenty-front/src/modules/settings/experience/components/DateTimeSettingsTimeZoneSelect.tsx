@@ -3,7 +3,7 @@ import { findAvailableTimeZoneOption } from '@/localization/utils/findAvailableT
 import { AVAILABLE_TIMEZONE_OPTIONS } from '@/settings/experience/constants/AvailableTimezoneOptions';
 import { Select } from '@/ui/input/components/Select';
 import { t } from '@lingui/core/macro';
-import { type SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui-deprecated/input';
 
 type DateTimeSettingsTimeZoneSelectProps = {
   value?: string;

@@ -136,7 +136,9 @@ const generateModuleIndexFiles = (exportByBarrel: ExportByBarrel[]) => {
         .join('\n');
 
       return {
-        content,
+        // A placeholder barrel for an empty module must still be a valid module
+        // so `export * from './x'` re-exports (e.g. in individual-entry.ts) resolve.
+        content: content === '' ? 'export {};' : content,
         path: moduleDirectory,
         filename: INDEX_FILENAME,
       };

@@ -31,6 +31,10 @@ import {
   type ImpersonationTrackEvent,
 } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/impersonation/impersonation';
 import {
+  type SERVER_ADMIN_ACCESS_CHANGED_EVENT,
+  type ServerAdminAccessChangedTrackEvent,
+} from 'src/engine/core-modules/event-logs/emit/events/workspace-event/server-admin/server-admin-access-changed';
+import {
   type USER_SIGNUP_EVENT,
   type UserSignupTrackEvent,
 } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/user/user-signup';
@@ -59,7 +63,8 @@ export type TrackEventName =
   | typeof OBJECT_RECORD_UPSERTED_EVENT
   | typeof USER_SIGNUP_EVENT
   | typeof WORKSPACE_CREATED_EVENT
-  | typeof PAYMENT_RECEIVED_EVENT;
+  | typeof PAYMENT_RECEIVED_EVENT
+  | typeof SERVER_ADMIN_ACCESS_CHANGED_EVENT;
 
 export interface TrackEvents {
   [CUSTOM_DOMAIN_ACTIVATED_EVENT]: CustomDomainActivatedTrackEvent;
@@ -74,6 +79,7 @@ export interface TrackEvents {
   [OBJECT_RECORD_UPSERTED_EVENT]: ObjectRecordUpsertedTrackEvent;
   [WORKSPACE_CREATED_EVENT]: WorkspaceCreatedTrackEvent;
   [PAYMENT_RECEIVED_EVENT]: PaymentReceivedTrackEvent;
+  [SERVER_ADMIN_ACCESS_CHANGED_EVENT]: ServerAdminAccessChangedTrackEvent;
 }
 
 export type TrackEventProperties<T extends TrackEventName> =

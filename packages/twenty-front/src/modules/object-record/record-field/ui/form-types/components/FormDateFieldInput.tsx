@@ -30,8 +30,8 @@ import { useId, useRef, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { type Nullable } from 'twenty-ui/utilities';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { type Nullable } from 'twenty-ui-deprecated/utilities';
 
 const FORM_DATE_FIELD_PICKER_CLICK_OUTSIDE_ID =
   'form-date-field-picker-floating';

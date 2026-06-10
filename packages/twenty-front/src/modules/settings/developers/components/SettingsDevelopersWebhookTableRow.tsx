@@ -7,9 +7,12 @@ import { getUrlHostnameOrThrow, isValidUrl } from 'twenty-shared/utils';
 import {
   IconChevronRight,
   OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { type Webhook } from '~/generated-metadata/graphql';
 
 const StyledIconChevronRightContainer = styled.span`

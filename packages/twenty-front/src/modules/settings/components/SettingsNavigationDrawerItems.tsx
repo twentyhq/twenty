@@ -10,7 +10,7 @@ import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/com
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { styled } from '@linaria/react';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 const StyledSectionsContainer = styled.div`

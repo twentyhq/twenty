@@ -20,14 +20,14 @@ const OBJECT_GQL_FIELDS =
 const findCustomObjects = async () => {
   const { objects } = await findManyObjectMetadata({
     input: {
-      filter: { isCustom: { is: true } },
+      filter: {},
       paging: { first: 100 },
     },
     gqlFields: OBJECT_GQL_FIELDS,
     expectToFail: false,
   });
 
-  return objects;
+  return objects.filter((object) => object.isCustom);
 };
 
 describe('Manifest update - objects', () => {

@@ -1,5 +1,5 @@
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
-import { type ThemeType } from 'twenty-ui/theme-constants';
+import { type ThemeType } from 'twenty-ui-deprecated/theme-constants';
 
 export const createGraphColorRegistry = (
   colorSource: ThemeType['color'],

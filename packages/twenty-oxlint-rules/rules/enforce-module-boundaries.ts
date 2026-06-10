@@ -5,6 +5,7 @@ export const RULE_NAME = 'enforce-module-boundaries';
 const PACKAGE_TAG_MAP: Record<string, string[]> = {
   'twenty-front': ['scope:frontend'],
   'twenty-server': ['scope:backend'],
+  'twenty-ui-deprecated': ['scope:shared'],
   'twenty-ui': ['scope:shared'],
   'twenty-shared': ['scope:shared'],
   'twenty-emails': ['scope:backend'],

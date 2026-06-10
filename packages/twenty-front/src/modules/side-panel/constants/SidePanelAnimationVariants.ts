@@ -1,4 +1,4 @@
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 export const SIDE_PANEL_ANIMATION_VARIANTS = {
   fullScreen: {

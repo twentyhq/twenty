@@ -35,8 +35,8 @@ import {
   IconChevronLeft,
   OverflowingTextWithTooltip,
   useIcons,
-} from 'twenty-ui/display';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+} from 'twenty-ui-deprecated/display';
+import { MenuItemSelect } from 'twenty-ui-deprecated/navigation';
 
 type WorkflowDropdownStepOutputItemsProps = {
   stepFilter: StepFilter;

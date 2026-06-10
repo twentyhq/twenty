@@ -13,10 +13,10 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, IconReload, IconTrash } from 'twenty-ui/display';
-import { Button, ButtonGroup } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title, IconReload, IconTrash } from 'twenty-ui-deprecated/display';
+import { Button, ButtonGroup } from 'twenty-ui-deprecated/input';
+import { Section } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { useCheckCustomDomainValidRecords } from '@/settings/domains/hooks/useCheckCustomDomainValidRecords';
 

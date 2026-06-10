@@ -11,7 +11,10 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledContainer = styled.div`
   border: 1px solid ${themeCssVariables.border.color.medium};
@@ -41,7 +44,7 @@ const StyledContainer = styled.div`
 
 const ApiReferenceReact = lazy(() =>
   import('@scalar/api-reference-react').then((module) => {
-    import('@scalar/api-reference-react/style.css?inline');
+    import('@scalar/api-reference-react/style.css');
     return {
       default: module.ApiReferenceReact,
     };
@@ -87,12 +90,11 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
         <Suspense fallback={fallback}>
           <ApiReferenceReact
             configuration={{
-              spec: {
-                content: specContent,
-              },
+              content: specContent,
               authentication: {
-                http: {
-                  bearer: { token: playgroundApiKey.token },
+                preferredSecurityScheme: 'bearerAuth',
+                securitySchemes: {
+                  bearerAuth: { token: playgroundApiKey.token },
                 },
               },
               baseServerURL: REACT_APP_SERVER_BASE_URL + '/' + schema,

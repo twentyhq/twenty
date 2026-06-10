@@ -28,7 +28,7 @@ import { type MouseEvent, type ReactNode, useCallback } from 'react';
 import { flushSync } from 'react-dom';
 import { type Keys } from 'react-hotkeys-hook';
 import { isDefined } from 'twenty-shared/utils';
-import { useIsMobile } from 'twenty-ui/utilities';
+import { useIsMobile } from 'twenty-ui-deprecated/utilities';
 
 type Width = `${string}px` | `${number}%` | 'auto' | number;
 const StyledDropdownFallbackAnchor = styled.div`

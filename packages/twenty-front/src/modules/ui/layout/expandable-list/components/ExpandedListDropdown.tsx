@@ -5,7 +5,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { styled } from '@linaria/react';
 import { FloatingPortal, offset, shift, useFloating } from '@floating-ui/react';
 import { type ReactNode } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 type ExpandedListDropdownProps = {
   anchorElement?: HTMLElement;

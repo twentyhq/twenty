@@ -6,13 +6,13 @@ import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
-import { H2Title, IconArchive } from 'twenty-ui/display';
-import { SearchInput } from 'twenty-ui/input';
-import { MenuItemToggle } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title, IconArchive } from 'twenty-ui-deprecated/display';
+import { SearchInput } from 'twenty-ui-deprecated/input';
+import { MenuItemToggle } from 'twenty-ui-deprecated/navigation';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 import { useMutation, useQuery } from '@apollo/client/react';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui-deprecated/layout';
 import {
   ActivateSkillDocument,
   DeleteSkillDocument,

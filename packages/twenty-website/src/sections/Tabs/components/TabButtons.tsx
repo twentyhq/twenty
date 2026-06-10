@@ -1,5 +1,7 @@
 'use client';
 
+import type { HTMLAttributes, Ref } from 'react';
+
 import type { TabType } from '@/sections/Tabs/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -24,19 +26,30 @@ const TabButtonsGrid = styled.div`
 
 type TabButtonsProps = {
   activeIndex: number;
+  className?: HTMLAttributes<HTMLDivElement>['className'];
+  containerRef?: Ref<HTMLDivElement>;
   idPrefix: string;
   onSelect: (index: number) => void;
+  style?: HTMLAttributes<HTMLDivElement>['style'];
   tabs: TabType[];
 };
 
 export function TabButtons({
   activeIndex,
+  className,
+  containerRef,
   idPrefix,
   onSelect,
+  style,
   tabs,
 }: TabButtonsProps) {
   return (
-    <TabButtonsGrid role="tablist">
+    <TabButtonsGrid
+      className={className}
+      ref={containerRef}
+      role="tablist"
+      style={style}
+    >
       {tabs.map((tab, index) => (
         <TabButton
           controls={`${idPrefix}-panel`}

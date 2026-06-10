@@ -19,13 +19,13 @@ import {
   IconList,
   OverflowingTextWithTooltip,
   useIcons,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 import { useContext } from 'react';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledIconContainer = styled.span`
   display: flex;

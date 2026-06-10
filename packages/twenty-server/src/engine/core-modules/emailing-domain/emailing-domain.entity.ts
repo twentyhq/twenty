@@ -9,7 +9,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
 import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
@@ -31,13 +30,6 @@ export class EmailingDomainEntity extends WorkspaceRelatedEntity {
 
   @Column({ type: 'varchar', nullable: false })
   domain: string;
-
-  @Column({
-    type: 'enum',
-    enum: Object.values(EmailingDomainDriver),
-    nullable: false,
-  })
-  driver: EmailingDomainDriver;
 
   @Column({
     type: 'enum',
