@@ -84,9 +84,10 @@ export const PageCardHeader = ({
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
 
-  const hasTitleContent = isDefined(icon) || isDefined(title) || isDefined(tag);
+  const hasTitleContent =
+    !isMobile && (isDefined(icon) || isDefined(title) || isDefined(tag));
 
-  const titleContent = !isMobile && hasTitleContent && (
+  const titleContent = (
     <>
       {icon}
       {isDefined(title) && title}
@@ -103,11 +104,11 @@ export const PageCardHeader = ({
         {isDefined(breadcrumb)
           ? breadcrumb
           : isDefined(links) && <Breadcrumb links={links} />}
-        {!centerTitle && titleContent && (
+        {!centerTitle && hasTitleContent && (
           <StyledTitle>{titleContent}</StyledTitle>
         )}
       </StyledLeft>
-      {centerTitle && titleContent && (
+      {centerTitle && hasTitleContent && (
         <StyledCenteredTitle>{titleContent}</StyledCenteredTitle>
       )}
       <StyledRight
