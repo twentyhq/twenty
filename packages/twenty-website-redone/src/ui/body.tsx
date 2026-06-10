@@ -2,11 +2,11 @@ import { css } from '@linaria/core';
 import { type ReactNode } from 'react';
 
 import {
-  fluidFontSize,
   FONT_WEIGHT,
   fontFamily,
   type FontWeightToken,
   semanticColor,
+  typeRampDeclarations,
 } from '@/tokens';
 
 const bodyClassName = css`
@@ -26,18 +26,15 @@ const bodyClassName = css`
   }
 
   &[data-size='md'] {
-    font-size: ${fluidFontSize(4, 4.5)};
-    line-height: 1.55;
+    ${typeRampDeclarations('bodyMd')}
   }
 
   &[data-size='sm'] {
-    font-size: ${fluidFontSize(4, 4)};
-    line-height: 1.55;
+    ${typeRampDeclarations('bodySm')}
   }
 
   &[data-size='xs'] {
-    font-size: ${fluidFontSize(3, 3)};
-    line-height: 1.55;
+    ${typeRampDeclarations('bodyXs')}
   }
 
   &[data-muted] {

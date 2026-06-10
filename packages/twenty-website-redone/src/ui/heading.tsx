@@ -2,10 +2,10 @@ import { css } from '@linaria/core';
 import { Fragment } from 'react';
 
 import {
-  fluidFontSize,
   FONT_WEIGHT,
   fontFamily,
   type FontWeightToken,
+  typeRampDeclarations,
 } from '@/tokens';
 
 import { parseHeadingNotation } from './heading-notation';
@@ -37,28 +37,23 @@ const headingClassName = css`
   }
 
   &[data-size='xl'] {
-    font-size: ${fluidFontSize(15, 20)};
-    line-height: 1.075;
+    ${typeRampDeclarations('headingXl')}
   }
 
   &[data-size='lg'] {
-    font-size: ${fluidFontSize(10, 15)};
-    line-height: 1.1;
+    ${typeRampDeclarations('headingLg')}
   }
 
   &[data-size='md'] {
-    font-size: ${fluidFontSize(10, 12)};
-    line-height: 1.165;
+    ${typeRampDeclarations('headingMd')}
   }
 
   &[data-size='sm'] {
-    font-size: ${fluidFontSize(8, 8)};
-    line-height: 1.25;
+    ${typeRampDeclarations('headingSm')}
   }
 
   &[data-size='xs'] {
-    font-size: ${fluidFontSize(4.5, 5.5)};
-    line-height: 1.275;
+    ${typeRampDeclarations('headingXs')}
   }
 
   [data-accent] {

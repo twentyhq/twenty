@@ -2,10 +2,10 @@ import { styled } from '@linaria/react';
 
 import {
   color,
-  fluidFontSize,
   FONT_WEIGHT,
   fontFamily,
   spacing,
+  typeRampDeclarations,
 } from '@/tokens';
 
 const EyebrowRow = styled.p`
@@ -13,10 +13,9 @@ const EyebrowRow = styled.p`
   color: ${color('black-60')};
   display: flex;
   font-family: ${fontFamily('sans')};
-  font-size: ${fluidFontSize(4.5, 5.5)};
+  ${typeRampDeclarations('headingXs')}
   font-weight: ${FONT_WEIGHT.medium};
   gap: ${spacing(2)};
-  line-height: 1.33;
   margin: 0;
 `;
 
