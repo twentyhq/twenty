@@ -34,6 +34,21 @@ describe('isFieldAddressValue', () => {
     ).toBe(true);
   });
 
+  it('should return true when coordinates are numeric strings', () => {
+    expect(
+      isFieldAddressValue({
+        addressStreet1: '123 Main St',
+        addressStreet2: null,
+        addressCity: 'Paris',
+        addressState: null,
+        addressPostcode: '75001',
+        addressCountry: 'France',
+        addressLat: '48.8566',
+        addressLng: '2.3522',
+      }),
+    ).toBe(true);
+  });
+
   it('should return false for incomplete address', () => {
     expect(isFieldAddressValue({ addressStreet1: '123 Main St' })).toBe(false);
   });
