@@ -1,0 +1,41 @@
+{
+  "name": "twenty-website-redone",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/twenty-website-redone/src",
+  "projectType": "application",
+  "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx next dev --port 3004"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx next build"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx tsc -p tsconfig.json --noEmit"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node scripts/check-conventions.mjs && npx oxlint -c .oxlintrc.json . && npx oxfmt --check ."
+      },
+      "configurations": {
+        "fix": {
+          "command": "npx oxfmt ."
+        }
+      }
+    }
+  }
+}

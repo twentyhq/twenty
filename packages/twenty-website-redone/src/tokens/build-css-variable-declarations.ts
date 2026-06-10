@@ -1,0 +1,28 @@
+import { ALPHA_SCALE, type AlphaStep } from './alpha-scale';
+import { cssVariableName } from './css-variable-name';
+import { PALETTE, type PaletteToken } from './palette';
+import { UNITS } from './units';
+
+export function buildCssVariableDeclarations(): string {
+  const declarations: string[] = [];
+
+  for (const token of Object.keys(PALETTE) as PaletteToken[]) {
+    declarations.push(`${cssVariableName.color(token)}: ${PALETTE[token]};`);
+  }
+
+  for (const base of ALPHA_SCALE.colors) {
+    for (const [step, hex] of Object.entries(ALPHA_SCALE.stepHex)) {
+      const token = `${base}-${Number(step) as AlphaStep}` as const;
+      declarations.push(
+        `${cssVariableName.color(token)}: ${PALETTE[base]}${hex};`,
+      );
+    }
+  }
+
+  declarations.push(
+    `${cssVariableName.spacingBase}: ${UNITS.spacingBasePx}px;`,
+  );
+  declarations.push(`${cssVariableName.fontBase}: ${UNITS.fontBaseRem}rem;`);
+
+  return declarations.join('\n');
+}
