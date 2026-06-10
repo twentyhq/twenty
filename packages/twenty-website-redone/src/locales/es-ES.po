@@ -13,6 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#. js-lingui-id: UEDohT
+#: src/sections/footer/footer-bottom.tsx
+msgid "© {year} – Twenty"
+msgstr ""
+
 #. js-lingui-id: iK+ikF
 #: src/sections/trusted-by/trusted-by.tsx
 msgid "+10k others"
@@ -28,6 +33,11 @@ msgstr ""
 msgid "Build on an open platform"
 msgstr ""
 
+#. js-lingui-id: iSLIjg
+#: src/sections/footer/footer.data.ts
+msgid "Connect"
+msgstr ""
+
 #. js-lingui-id: B9nLrl
 #: src/sections/menu/menu.data.ts
 msgid "Create apps on Twenty"
@@ -35,11 +45,13 @@ msgstr ""
 
 #. js-lingui-id: NihQNk
 #: src/sections/menu/menu.data.ts
+#: src/sections/footer/footer.data.ts
 msgid "Customers"
 msgstr ""
 
 #. js-lingui-id: n+SX4g
 #: src/sections/menu/menu.data.ts
+#: src/sections/footer/footer.data.ts
 msgid "Developers"
 msgstr ""
 
@@ -61,8 +73,24 @@ msgstr ""
 #. js-lingui-id: ZDIydz
 #: src/sections/menu/menu.tsx
 #: src/sections/menu/menu.tsx
+#: src/sections/footer/footer.data.ts
 #: src/app/[locale]/page.tsx
 msgid "Get started"
+msgstr ""
+
+#. js-lingui-id: Xf5EJg
+#: src/sections/footer/footer.data.ts
+msgid "Halftone generator"
+msgstr ""
+
+#. js-lingui-id: c3XJ18
+#: src/sections/footer/footer.data.ts
+msgid "Help"
+msgstr ""
+
+#. js-lingui-id: i0qMbr
+#: src/sections/footer/footer.data.ts
+msgid "Home"
 msgstr ""
 
 #. js-lingui-id: d1Aru8
@@ -73,6 +101,16 @@ msgstr ""
 #. js-lingui-id: +Ss/og
 #: src/sections/menu/menu.data.ts
 msgid "Learn how to use Twenty"
+msgstr ""
+
+#. js-lingui-id: vifyyw
+#: src/sections/footer/footer.data.ts
+msgid "Legal"
+msgstr ""
+
+#. js-lingui-id: gggTBm
+#: src/sections/footer/footer.data.ts
+msgid "LinkedIn"
 msgstr ""
 
 #. js-lingui-id: sQia9P
@@ -93,17 +131,30 @@ msgstr ""
 
 #. js-lingui-id: mPkInZ
 #: src/sections/menu/menu.data.ts
+#: src/sections/footer/footer.data.ts
 msgid "Partners"
 msgstr ""
 
 #. js-lingui-id: aHCEmh
 #: src/sections/menu/menu.data.ts
+#: src/sections/footer/footer.data.ts
 msgid "Pricing"
+msgstr ""
+
+#. js-lingui-id: LcET2C
+#: src/sections/footer/footer.data.ts
+msgid "Privacy Policy"
 msgstr ""
 
 #. js-lingui-id: K47k8R
 #: src/sections/menu/menu.data.ts
+#: src/sections/footer/footer.data.ts
 msgid "Product"
+msgstr ""
+
+#. js-lingui-id: rwWjWg
+#: src/sections/footer/footer.data.ts
+msgid "Release Notes"
 msgstr ""
 
 #. js-lingui-id: 5icoS1
@@ -126,6 +177,11 @@ msgstr ""
 msgid "See the latest release"
 msgstr ""
 
+#. js-lingui-id: V9dFwD
+#: src/sections/footer/footer.data.ts
+msgid "Sitemap"
+msgstr ""
+
 #. js-lingui-id: BnuYjY
 #: src/app/[locale]/page.tsx
 msgid "Star us"
@@ -136,9 +192,19 @@ msgstr ""
 msgid "Step-by-step guides and playbooks to help your team get the most out of their workspace."
 msgstr ""
 
+#. js-lingui-id: JAKtcG
+#: src/sections/footer/footer.data.ts
+msgid "Talk to us"
+msgstr ""
+
 #. js-lingui-id: Ye3KKA
 #: src/sections/menu/menu.data.ts
 msgid "Team up with a Twenty expert"
+msgstr ""
+
+#. js-lingui-id: mvP/25
+#: src/sections/footer/footer.data.ts
+msgid "Terms and Conditions"
 msgstr ""
 
 #. js-lingui-id: zXlFuT
@@ -161,6 +227,11 @@ msgstr ""
 msgid "Track every release with changelogs, highlights and demos of the newest features."
 msgstr ""
 
+#. js-lingui-id: tdZpCd
+#: src/sections/footer/footer.data.ts
+msgid "Trust Center"
+msgstr ""
+
 #. js-lingui-id: KtyN0b
 #: src/sections/trusted-by/trusted-by.tsx
 msgid "trusted by"
@@ -173,6 +244,7 @@ msgstr ""
 
 #. js-lingui-id: Roaswv
 #: src/sections/menu/menu.data.ts
+#: src/sections/footer/footer.data.ts
 msgid "User Guide"
 msgstr ""
 
@@ -184,4 +256,9 @@ msgstr ""
 #. js-lingui-id: mrxgOV
 #: src/sections/menu/menu.data.ts
 msgid "Why teams choose Twenty"
+msgstr ""
+
+#. js-lingui-id: 4sOVu+
+#: src/sections/footer/footer.data.ts
+msgid "Why Twenty"
 msgstr ""
