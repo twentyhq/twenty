@@ -53,7 +53,6 @@ const StyledTitle = styled.div`
   min-width: 0;
 `;
 
-// Title is centered against the full header width while the breadcrumb stays left-aligned.
 const StyledCenteredTitle = styled(StyledTitle)`
   bottom: 0;
   justify-content: center;
