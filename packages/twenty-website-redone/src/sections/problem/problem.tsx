@@ -71,6 +71,7 @@ const PointStack = styled.div`
 const PointHeading = styled.h3`
   font-family: ${fontFamily('sans')};
   font-size: ${fontSize(4)};
+  letter-spacing: -0.04em;
   font-weight: ${FONT_WEIGHT.regular};
   line-height: 1.35;
   margin: 0;
@@ -98,7 +99,9 @@ export function Problem() {
                 <PointDivider aria-hidden />
                 <PointStack>
                   <PointHeading>{i18n._(point.heading)}</PointHeading>
-                  <Body size="sm">{i18n._(point.body)}</Body>
+                  <Body muted size="sm">
+                    {i18n._(point.body)}
+                  </Body>
                 </PointStack>
               </Fragment>
             ))}
