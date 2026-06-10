@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -40,6 +41,7 @@ export class EventStreamResolver {
   constructor(
     private readonly subscriptionService: SubscriptionService,
     private readonly eventStreamService: EventStreamService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @Subscription(() => EventSubscriptionDTO, {
@@ -151,6 +153,11 @@ export class EventStreamResolver {
         this.eventStreamService.destroyEventStream({
           workspaceId: workspace.id,
           eventStreamChannelId,
+        }),
+      onCleanupError: (error) =>
+        this.exceptionHandlerService.captureExceptions([error], {
+          workspace: { id: workspace.id },
+          additionalData: { eventStreamChannelId },
         }),
     });
   }

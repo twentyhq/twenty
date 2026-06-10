@@ -304,14 +304,7 @@ export const useGraphQLErrorHandlerHook = <
           return;
         }
 
-        const frontEndMajor = semver.parse(frontEndAppVersion)?.major;
-        const backendMajor = semver.parse(backendAppVersion)?.major;
-
-        if (
-          isDefined(frontEndMajor) &&
-          isDefined(backendMajor) &&
-          frontEndMajor < backendMajor
-        ) {
+        if (semver.lt(frontEndAppVersion, backendAppVersion)) {
           void options.metricsService.incrementCounterForEvent({
             key: MetricsKeys.AppVersionMismatch,
           });
