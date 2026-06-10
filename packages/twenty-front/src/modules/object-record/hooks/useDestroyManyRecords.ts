@@ -147,13 +147,17 @@ export const useDestroyManyRecords = ({
       objectMetadataNamePlural: objectMetadataItem.namePlural,
     });
 
-    removeNavigationMenuItemsByTargetRecordIds(recordIdsToDestroy);
+    const actualDestroyedRecordIds = destroyedRecords.map(
+      (record) => record.id,
+    );
+
+    removeNavigationMenuItemsByTargetRecordIds(actualDestroyedRecordIds);
 
     dispatchObjectRecordOperationBrowserEvent({
       objectMetadataItem,
       operation: {
         type: 'destroy-many',
-        destroyedRecordIds: recordIdsToDestroy,
+        destroyedRecordIds: actualDestroyedRecordIds,
       },
     });
 
