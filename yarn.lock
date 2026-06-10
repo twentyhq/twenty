@@ -4520,17 +4520,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.27.6, @babel/runtime@npm:^7.29.2":
+  version: 7.29.7
+  resolution: "@babel/runtime@npm:7.29.7"
+  checksum: 10c0/ca11572f7146b21e0bde6a9ed4bb6a89eafbee5f0944c7eb54d0d8a2dac962c33638a1d611e14faa71dfbb92b4b5f9236232208568a6b7d5c6f3f39ddb91771e
+  languageName: node
+  linkType: hard
+
 "@babel/runtime@npm:^7.28.6, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.8.7":
   version: 7.28.6
   resolution: "@babel/runtime@npm:7.28.6"
   checksum: 10c0/358cf2429992ac1c466df1a21c1601d595c46930a13c1d4662fde908d44ee78ec3c183aaff513ecb01ef8c55c3624afe0309eeeb34715672dbfadb7feedb2c0d
-  languageName: node
-  linkType: hard
-
-"@babel/runtime@npm:^7.29.2":
-  version: 7.29.7
-  resolution: "@babel/runtime@npm:7.29.7"
-  checksum: 10c0/ca11572f7146b21e0bde6a9ed4bb6a89eafbee5f0944c7eb54d0d8a2dac962c33638a1d611e14faa71dfbb92b4b5f9236232208568a6b7d5c6f3f39ddb91771e
   languageName: node
   linkType: hard
 
@@ -26040,7 +26040,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wyw-in-js/transform@npm:0.8.1":
+"@wyw-in-js/transform@npm:0.8.1, @wyw-in-js/transform@npm:^0.8.1":
   version: 0.8.1
   resolution: "@wyw-in-js/transform@npm:0.8.1"
   dependencies:
@@ -51888,6 +51888,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"server-only@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "server-only@npm:0.0.1"
+  checksum: 10c0/4704f0ef85da0be981af6d4ed8e739d39bcfd265b9c246a684060acda5642d0fdc6daffc2308e71e2682c5f508090978802eae0a77623c9b90a49f9ae68048d6
+  languageName: node
+  linkType: hard
+
 "set-blocking@npm:^2.0.0":
   version: 2.0.0
   resolution: "set-blocking@npm:2.0.0"
@@ -55795,17 +55802,27 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-website-redone@workspace:packages/twenty-website-redone"
   dependencies:
+    "@babel/runtime": "npm:^7.27.6"
     "@linaria/core": "npm:^7.0.0"
     "@linaria/react": "npm:^7.0.1"
+    "@lingui/cli": "npm:^5.1.2"
+    "@lingui/conf": "npm:5.1.2"
+    "@lingui/core": "npm:^5.1.2"
+    "@lingui/format-po": "npm:5.1.2"
+    "@lingui/react": "npm:^5.1.2"
+    "@lingui/swc-plugin": "npm:^5.11.0"
     "@tabler/icons-react": "npm:^3.41.1"
     "@types/node": "npm:^20"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
     "@wyw-in-js/babel-preset": "npm:^0.8.1"
+    "@wyw-in-js/transform": "npm:^0.8.1"
     next: "npm:^16.2.6"
     next-with-linaria: "npm:^1.3.0"
     react: "npm:19.2.3"
     react-dom: "npm:19.2.3"
+    server-only: "npm:^0.0.1"
+    twenty-shared: "workspace:*"
   languageName: unknown
   linkType: soft
 

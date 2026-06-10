@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import { IconUsers } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
@@ -152,7 +153,9 @@ export function TrustedBy() {
     <Card>
       <CornerMarkers />
       <LabelCell>
-        <MonoLabel>trusted by</MonoLabel>
+        <MonoLabel>
+          <Trans>trusted by</Trans>
+        </MonoLabel>
       </LabelCell>
       <LogosCell>
         <LogoStrip>
@@ -163,7 +166,9 @@ export function TrustedBy() {
       </LogosCell>
       <CountCell>
         <IconUsers size={14} stroke={1.6} />
-        <MonoLabel>+10k others</MonoLabel>
+        <MonoLabel>
+          <Trans>+10k others</Trans>
+        </MonoLabel>
       </CountCell>
     </Card>
   );

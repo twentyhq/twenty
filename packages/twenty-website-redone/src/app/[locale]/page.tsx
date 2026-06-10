@@ -1,8 +1,16 @@
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
+import {
+  getRouteI18n,
+  type LocaleRouteParams,
+} from '@/platform/i18n/get-route-i18n';
+import { buildRouteMetadata } from '@/platform/seo';
+import { TrustedBy } from '@/sections/trusted-by';
 import { spacing } from '@/tokens';
 import { Body, Button, Eyebrow, Heading, SectionShell } from '@/ui';
-import { TrustedBy } from '@/sections/trusted-by';
+
+export const generateMetadata = buildRouteMetadata('home');
 
 const ProofStack = styled.div`
   display: grid;
@@ -17,25 +25,31 @@ const ProofButtonRow = styled.div`
   gap: ${spacing(3)};
 `;
 
-export default function ProofPage() {
+export default async function HomePage({
+  params,
+}: {
+  params: Promise<LocaleRouteParams>;
+}) {
+  const i18n = await getRouteI18n(params);
+
   return (
     <main>
       <SectionShell scheme="muted">
         <ProofStack>
-          <Eyebrow>In production.</Eyebrow>
+          <Eyebrow>{i18n._(msg`In production.`)}</Eyebrow>
           <Heading as="h1" size="xl" weight="light">
-            {'See how teams\nbuild *on Twenty*'}
+            {i18n._(msg`See how teams\nbuild *on Twenty*`)}
           </Heading>
           <Body muted>
-            Every section sits in the same shell: identical vertical rhythm from
-            tokens, semantic colors resolved by the surface scheme, and the only
-            horizontal gutter on the site.
+            {i18n._(
+              msg`Every section sits in the same shell: identical vertical rhythm from tokens, semantic colors resolved by the surface scheme, and the only horizontal gutter on the site.`,
+            )}
           </Body>
           <ProofButtonRow>
-            <Button href="/" label="Get started" />
+            <Button href="/" label={i18n._(msg`Get started`)} />
             <Button
               href="https://github.com/twentyhq/twenty"
-              label="Star us"
+              label={i18n._(msg`Star us`)}
               variant="outlined"
             />
           </ProofButtonRow>
@@ -43,17 +57,6 @@ export default function ProofPage() {
       </SectionShell>
       <SectionShell ariaLabel="Trusted by leading organizations">
         <TrustedBy />
-      </SectionShell>
-      <SectionShell scheme="dark">
-        <ProofStack>
-          <Heading size="lg" weight="light">
-            {'Dark surfaces invert *semantically*'}
-          </Heading>
-          <Body muted>
-            Same Body component, same muted prop — the ink variables flipped
-            because the scheme owns color, not the call site.
-          </Body>
-        </ProofStack>
       </SectionShell>
     </main>
   );

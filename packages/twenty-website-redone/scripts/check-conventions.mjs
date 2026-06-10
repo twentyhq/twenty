@@ -43,9 +43,9 @@ function walk(directory) {
     if (entry.isDirectory()) {
       // oxfmt silently ignores directories named "lib" (build-output
       // convention), so a lib/ directory would dodge formatting forever.
-      if (entry.name === 'lib') {
+      if (entry.name === 'lib' || entry.name === 'generated') {
         failures.push(
-          `${fullPath}: directories named "lib" are forbidden (oxfmt ignores them).`,
+          `${fullPath}: directories named "lib" or "generated" are forbidden (oxfmt ignores them).`,
         );
       }
       walk(fullPath);

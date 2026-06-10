@@ -43,6 +43,20 @@
           "command": "npx oxfmt ."
         }
       }
+    },
+    "lingui:extract": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "lingui extract --overwrite --clean"
+      }
+    },
+    "lingui:compile": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "lingui compile --typescript && npx oxfmt src/locales/compiled"
+      }
     }
   }
 }
