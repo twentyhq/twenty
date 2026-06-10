@@ -50,7 +50,7 @@
     "@nestjs/axios": "3.1.2",
     "@nestjs/cache-manager": "^2.3.0",
     "@nestjs/common": "11.1.24",
-    "@nestjs/config": "3.3.0",
+    "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.1.24",
     "@nestjs/event-emitter": "2.1.0",
     "@nestjs/graphql": "patch:@nestjs/graphql@12.1.1#./patches/@nestjs+graphql+12.1.1.patch",
