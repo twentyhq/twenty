@@ -52,6 +52,29 @@ const PERSON_PAGE_TABS = {
           STANDARD_OBJECTS.person.fields.pointOfContactForOpportunities
             .universalIdentifier,
       },
+      messageTopicSubscriptions: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.personRecordPage.tabs.home
+            .widgets.messageTopicSubscriptions.universalIdentifier,
+        title: 'Topics',
+        type: WidgetType.FIELD,
+        gridPosition: GRID_POSITIONS.FULL_WIDTH,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.FOURTH,
+        fieldUniversalIdentifier:
+          STANDARD_OBJECTS.person.fields.messageTopicSubscriptions
+            .universalIdentifier,
+      },
+      listMemberships: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.personRecordPage.tabs.home
+            .widgets.listMemberships.universalIdentifier,
+        title: 'Lists',
+        type: WidgetType.FIELD,
+        gridPosition: GRID_POSITIONS.FULL_WIDTH,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.FIFTH,
+        fieldUniversalIdentifier:
+          STANDARD_OBJECTS.person.fields.listMemberships.universalIdentifier,
+      },
     },
   },
   timeline: {

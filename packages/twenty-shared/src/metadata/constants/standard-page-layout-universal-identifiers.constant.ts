@@ -118,6 +118,12 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
           pointOfContactForOpportunities: {
             universalIdentifier: '20202020-ac02-4002-8002-ae0a1ea11213',
           },
+          messageTopicSubscriptions: {
+            universalIdentifier: 'd168d7fd-e52a-4b60-b54a-29a7308979cd',
+          },
+          listMemberships: {
+            universalIdentifier: 'f344eb7d-23c1-457a-a29b-32fd548b6aba',
+          },
         },
       },
       timeline: {
@@ -557,6 +563,135 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
         widgets: {
           emailThread: {
             universalIdentifier: '20202020-d57e-44cb-b220-69a881feb9c3',
+          },
+        },
+      },
+    },
+  },
+  messageListRecordPage: {
+    universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f60',
+    tabs: {
+      home: {
+        universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f61',
+        widgets: {
+          fields: {
+            universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f62',
+          },
+          members: {
+            universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f63',
+          },
+        },
+      },
+      tasks: {
+        universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f64',
+        widgets: {
+          tasks: {
+            universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f65',
+          },
+        },
+      },
+      notes: {
+        universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f66',
+        widgets: {
+          notes: {
+            universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f67',
+          },
+        },
+      },
+      files: {
+        universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f68',
+        widgets: {
+          files: {
+            universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f69',
+          },
+        },
+      },
+    },
+  },
+  messageTopicRecordPage: {
+    universalIdentifier: '2f64395f-0217-4256-b731-2652cf1d3dd9',
+    tabs: {
+      home: {
+        universalIdentifier: '414da238-afd3-430c-8615-620f35991dd7',
+        widgets: {
+          fields: {
+            universalIdentifier: '8e47f920-94d8-4d85-9f56-975421ad56ce',
+          },
+          subscriptions: {
+            universalIdentifier: 'b10f34cc-bc47-45a5-b8a0-92e6d97e12a9',
+          },
+        },
+      },
+      tasks: {
+        universalIdentifier: 'fc0b0a35-33e0-47f1-bde5-6c311b78ed62',
+        widgets: {
+          tasks: {
+            universalIdentifier: 'b23ca279-334d-401e-94a1-80daab1f8c6c',
+          },
+        },
+      },
+      notes: {
+        universalIdentifier: '6ec1783e-c31c-469a-8d98-ec224a7cbc9b',
+        widgets: {
+          notes: {
+            universalIdentifier: '0e06799f-a8df-4b84-a239-6283c64c316a',
+          },
+        },
+      },
+      files: {
+        universalIdentifier: '2d40764f-62ed-4086-9904-9e796170f5e9',
+        widgets: {
+          files: {
+            universalIdentifier: 'aad56fb3-7aa7-4b83-bc93-b26efa9036ae',
+          },
+        },
+      },
+    },
+  },
+  messageCampaignRecordPage: {
+    universalIdentifier: '8704b091-94bd-4f8f-82b1-e2f3eab92217',
+    tabs: {
+      home: {
+        universalIdentifier: 'f16785cd-a5b7-4ec1-8f20-ff8b80fb94b9',
+        widgets: {
+          fields: {
+            universalIdentifier: '886296e0-a5b6-4054-b450-ad624180c2ef',
+          },
+          messages: {
+            universalIdentifier: 'a33b43f4-72a1-476d-9372-30e82f450377',
+          },
+          recipients: {
+            universalIdentifier: 'b667f20a-1d38-453e-b888-3ecab00a1044',
+          },
+          topic: {
+            universalIdentifier: '63ad0b98-4c5e-4fbd-bb4c-950eadc7e2a4',
+          },
+          list: {
+            universalIdentifier: 'b04fb8a5-f471-49a7-b82c-8434ea8276c5',
+          },
+        },
+      },
+      tasks: {
+        universalIdentifier: '0589e233-7d82-4c1f-b942-08044e6035e2',
+        widgets: {
+          tasks: {
+            universalIdentifier: '8c5c4224-6354-466c-a508-0a130fb23ea9',
+          },
+        },
+      },
+      notes: {
+        universalIdentifier: 'edd9f6cd-0763-44f9-baf3-676a9d3cf9a4',
+        widgets: {
+          notes: {
+            universalIdentifier: '1206e1d4-f827-4709-80e0-d91aace78046',
+          },
+        },
+      },
+      files: {
+        universalIdentifier: 'b80bad48-8093-497c-9598-e21c2974aa33',
+        widgets: {
+          files: {
+            universalIdentifier: '11475819-0f65-4db1-9429-eb43af41e6a8',
           },
         },
       },
