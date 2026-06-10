@@ -101,6 +101,11 @@ msgstr "Partners"
 msgid "Pricing"
 msgstr "Pricing"
 
+#. js-lingui-id: K47k8R
+#: src/sections/menu/menu.data.ts
+msgid "Product"
+msgstr "Product"
+
 #. js-lingui-id: 5icoS1
 #: src/sections/menu/menu.data.ts
 msgid "Releases"
@@ -141,6 +146,16 @@ msgstr "Team up with a Twenty expert"
 msgid "The #1 Open Source CRM for modern teams. Modular, scalable, and built to fit your business."
 msgstr "The #1 Open Source CRM for modern teams. Modular, scalable, and built to fit your business."
 
+#. js-lingui-id: 80f4ed
+#: src/sections/menu/menu.data.ts
+msgid "The principles and product philosophy behind the open source CRM."
+msgstr "The principles and product philosophy behind the open source CRM."
+
+#. js-lingui-id: gXGp3Q
+#: src/sections/menu/menu.data.ts
+msgid "The story behind Twenty"
+msgstr "The story behind Twenty"
+
 #. js-lingui-id: POzmFl
 #: src/sections/menu/menu.data.ts
 msgid "Track every release with changelogs, highlights and demos of the newest features."
@@ -165,3 +180,8 @@ msgstr "User Guide"
 #: src/sections/menu/menu.data.ts
 msgid "Why"
 msgstr "Why"
+
+#. js-lingui-id: mrxgOV
+#: src/sections/menu/menu.data.ts
+msgid "Why teams choose Twenty"
+msgstr "Why teams choose Twenty"
