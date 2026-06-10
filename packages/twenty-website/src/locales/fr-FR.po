@@ -101,9 +101,11 @@ msgstr "+$7000/organisation par mois"
 #: src/app/[locale]/pricing/salesforce.data.ts
 #: src/app/[locale]/pricing/salesforce.data.ts
 #: src/app/[locale]/pricing/salesforce.data.ts
-msgid "+$75/user per month\n"
+msgid ""
+"+$75/user per month\n"
 "Switch to enterprise!"
-msgstr "+$75/utilisateur par mois\n"
+msgstr ""
+"+$75/utilisateur par mois\n"
 "Passez à Enterprise !"
 
 #. js-lingui-id: iK+ikF
@@ -113,10 +115,12 @@ msgstr "+10k autres"
 
 #. js-lingui-id: nRtVCK
 #: src/app/[locale]/pricing/salesforce.data.ts
-msgid "+20% of net spend\n"
+msgid ""
+"+20% of net spend\n"
 "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr "+20% des dépenses nettes\n"
+msgstr ""
+"+20% des dépenses nettes\n"
 "+$75/utilisateur par mois\n"
 "Passez à Enterprise !"
 
@@ -277,10 +281,12 @@ msgstr "$0"
 
 #. js-lingui-id: 6inRXo
 #: src/app/[locale]/pricing/salesforce.data.ts
-msgid "$1/orchestration run/org\n"
+msgid ""
+"$1/orchestration run/org\n"
 "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr "$1/exécution d’orchestration/organisation\n"
+msgstr ""
+"$1/exécution d’orchestration/organisation\n"
 "+$75/utilisateur par mois\n"
 "Passez à Enterprise !"
 
@@ -313,9 +319,11 @@ msgstr "100 par minute"
 
 #. js-lingui-id: uuKUqZ
 #: src/app/[locale]/pricing/salesforce.data.ts
-msgid "11 permissions\n"
+msgid ""
+"11 permissions\n"
 "groups"
-msgstr "11 groupes\n"
+msgstr ""
+"11 groupes\n"
 "d’autorisations"
 
 #. js-lingui-id: 2szX5S
@@ -364,9 +372,11 @@ msgstr "3"
 
 #. js-lingui-id: BL47wE
 #: src/app/[locale]/pricing/salesforce.data.ts
-msgid "3 2 years contract\n"
+msgid ""
+"3 2 years contract\n"
 "-33% off"
-msgstr "3 contrat de 2 ans\n"
+msgstr ""
+"3 contrat de 2 ans\n"
 "-33% de réduction"
 
 #. js-lingui-id: /jgC+9
@@ -1148,11 +1158,6 @@ msgstr "Le classique ne meurt jamais. Il est simplement étendu une fois de plus
 msgid "Clear filters"
 msgstr "Effacer les filtres"
 
-#. js-lingui-id: yz7wBu
-#: src/sections/PartnerApplication/partner-application-modal-data.ts
-msgid "Close"
-msgstr "Fermer"
-
 #. js-lingui-id: L/LPQZ
 #: src/sections/Faq/faq.data.ts
 msgid "Cloud Pro is $9/user/month (yearly). Organization is $19/user/month and unlocks SSO and row-level permissions for teams that need finer access control."
@@ -1933,9 +1938,11 @@ msgstr "Flexibilité"
 
 #. js-lingui-id: HBJ0P5
 #: src/app/[locale]/pricing/salesforce.data.ts
-msgid "Flow\n"
+msgid ""
+"Flow\n"
 "orchestration"
-msgstr "Orchestration\n"
+msgstr ""
+"Orchestration\n"
 "des flux"
 
 #. js-lingui-id: obrJBN
@@ -2131,6 +2138,11 @@ msgstr "Ghana 🇬🇭"
 msgid "Good choice!"
 msgstr "Bon choix !"
 
+#. js-lingui-id: Zh0acB
+#: src/sections/PartnerApplication/partner-application-modal-data.ts
+msgid "Grab 30 minutes so we can get to know your team."
+msgstr ""
+
 #. js-lingui-id: +tDN2S
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Greece 🇬🇷"
@@ -2312,6 +2324,11 @@ msgstr "Comment W3villa Technologies a livré W3Grads, une plateforme d’entret
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Hungary 🇭🇺"
 msgstr "Hongrie 🇭🇺"
+
+#. js-lingui-id: T6wyby
+#: src/sections/PartnerApplication/partner-application-modal-data.ts
+msgid "I'll book later →"
+msgstr ""
 
 #. js-lingui-id: RYDa0v
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
@@ -3076,6 +3093,11 @@ msgstr "Norvégien"
 #: src/app/[locale]/why-twenty/_components/WhyTwentyOpportunityEditorial.tsx
 msgid "Now a developer can describe what they want to Claude Code and have a working app in an afternoon. A custom object, a scoring workflow, a new view, an integration. The bottleneck isn't building anymore. It's whether your platform lets you."
 msgstr "Aujourd’hui, un développeur peut décrire ce qu’il veut à Claude Code et avoir une application fonctionnelle dans l’après-midi. Un objet personnalisé, un workflow de scoring, une nouvelle vue, une intégration. Le goulot d’étranglement n’est plus la construction. C’est de savoir si votre plateforme vous le permet."
+
+#. js-lingui-id: WFvpMn
+#: src/sections/PartnerApplication/partner-application-modal-data.ts
+msgid "Now book your intro call."
+msgstr ""
 
 #. js-lingui-id: CzeIij
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -4121,10 +4143,10 @@ msgstr "Thaï"
 msgid "Thailand 🇹🇭"
 msgstr "Thaïlande 🇹🇭"
 
-#. js-lingui-id: pYwj0k
+#. js-lingui-id: eRjhUK
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
-msgid "Thanks,"
-msgstr "Merci,"
+msgid "Thanks, you're in."
+msgstr ""
 
 #. js-lingui-id: FjkPYg
 #: src/app/[locale]/customers/elevate-consulting/page.tsx
@@ -4763,11 +4785,6 @@ msgstr "Nous n’avons pas pu soumettre votre candidature. Veuillez réessayer d
 msgid "We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
 msgstr "Nous ne voulions pas simplement masquer le problème. Nous voulions construire quelque chose sur lequel les établissements pourraient s’appuyer à grande échelle, ce qui signifiait partir d’une base suffisamment solide pour supporter toute la complexité de ce que nous avions en tête."
 
-#. js-lingui-id: u7hKUm
-#: src/sections/PartnerApplication/partner-application-modal-data.ts
-msgid "we'll be in touch!"
-msgstr "nous reviendrons vers vous !"
-
 #. js-lingui-id: d5CWI6
 #: src/app/[locale]/partners/components/PartnerHero.tsx
 msgid "We're building the #1 Open Source CRM, but we can't do it alone. Join our partner ecosystem and grow with us."
@@ -5065,4 +5082,3 @@ msgstr "Zéro travail manuel au cœur. Automatisation totale. Construit sur Twen
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Zimbabwe 🇿🇼"
 msgstr "Zimbabwe 🇿🇼"
-
