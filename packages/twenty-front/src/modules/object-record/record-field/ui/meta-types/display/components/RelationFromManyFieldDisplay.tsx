@@ -1,10 +1,13 @@
-import { useContext } from 'react';
+import { atom, useAtom } from 'jotai';
+import { useContext, useEffect, useMemo, useState } from 'react';
+
+import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
+import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
 
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { isActivityTargetField } from '@/object-record/record-field-list/utils/categorizeRelationFields';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -13,6 +16,7 @@ import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/ui
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { styled } from '@linaria/react';
@@ -29,6 +33,8 @@ const StyledContainer = styled.div`
   overflow: hidden;
   width: 100%;
 `;
+
+export const locallyDeletedRecordIdsAtom = atom<string[]>([]);
 
 export const RelationFromManyFieldDisplay = () => {
   const { fieldValue, fieldDefinition, generateRecordChipData } =
@@ -57,16 +63,85 @@ export const RelationFromManyFieldDisplay = () => {
     objectMetadataItems,
   });
 
+  const [displayedFieldValue, setDisplayedFieldValue] = useState(fieldValue);
+  const [locallyDeletedIds, setLocallyDeletedIds] = useAtom(locallyDeletedRecordIdsAtom);
+
+  useEffect(() => {
+    if(!fieldValue || !isArray(fieldValue)) {
+      setDisplayedFieldValue(fieldValue);
+      return;
+    }
+
+    if(locallyDeletedIds.length == 0) {
+      setDisplayedFieldValue(fieldValue);
+      return;
+    }
+
+    const filteredValues = fieldValue.filter((record) => {
+      if(locallyDeletedIds.includes(record.id)) return false;
+
+      const hasMatchingForeignKey = Object.values(record).some((val) =>
+        typeof val === 'string' && locallyDeletedIds.includes(val)
+      )
+      if(hasMatchingForeignKey) return false;
+
+      const hasDestroyedNestedRecord = Object.values(record).some(
+        val =>
+          isDefined(val) &&
+        typeof val === 'object' &&
+        'id' in val &&
+        typeof val.id === 'string' &&
+        locallyDeletedIds.includes(val.id)
+      )
+      if(hasDestroyedNestedRecord) return false;
+
+      return true;
+    })
+    setDisplayedFieldValue(filteredValues)
+  }, [fieldValue, locallyDeletedIds]);
+
+  const isRelationFromManyActivities =
+    (fieldName === 'noteTargets' &&
+      objectMetadataNameSingular !== CoreObjectNameSingular.Note) ||
+    (fieldName === 'taskTargets' &&
+      objectMetadataNameSingular !== CoreObjectNameSingular.Task);
+
+  const listenObjectMetadataId = useMemo(() => {
+    if( isRelationFromManyActivities) {
+      const targetName =
+        fieldName === 'noteTargets'
+          ? CoreObjectNameSingular.Note
+          : CoreObjectNameSingular.Task;
+      return objectMetadataItems.find((item) => item.nameSingular === targetName)?.id;
+    }
+
+    return fieldDefinition.metadata.relationObjectMetadataId;
+  }, [isRelationFromManyActivities, fieldName, objectMetadataItems, fieldDefinition.metadata.relationObjectMetadataId])
+
+  useListenToObjectRecordOperationBrowserEvent({
+    onObjectRecordOperationBrowserEvent: (detail: ObjectRecordOperationBrowserEventDetail) => {
+      if(detail.operation.type === 'destroy-many') {
+        const destroyedIds = detail.operation.destroyedRecordIds;
+        setLocallyDeletedIds((prevIds) => [...prevIds, ...destroyedIds]);
+      }
+      else if(detail.operation.type === 'destroy-one') {
+        const destroyedId = detail.operation.destroyedRecordId;
+        setLocallyDeletedIds((prevIds) => [...prevIds, destroyedId]);
+      }
+    },
+    objectMetadataItemId: listenObjectMetadataId ?? '',
+  })
+
   const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
     '',
-    fieldValue as NoteTarget[] | TaskTarget[],
+    displayedFieldValue as NoteTarget[] | TaskTarget[],
   );
 
-  if (!isDefined(fieldValue)) {
+  if (!isDefined(displayedFieldValue)) {
     return null;
   }
 
-  if (!isArray(fieldValue)) {
+  if (!isArray(displayedFieldValue)) {
     return null;
   }
 
@@ -79,12 +154,6 @@ export const RelationFromManyFieldDisplay = () => {
     objectMetadataNameSingular ?? '',
   );
 
-  const isRelationFromManyActivities =
-    (fieldName === 'noteTargets' &&
-      objectMetadataNameSingular !== CoreObjectNameSingular.Note) ||
-    (fieldName === 'taskTargets' &&
-      objectMetadataNameSingular !== CoreObjectNameSingular.Task);
-
   if (isRelationFromManyActivities) {
     const objectNameSingular =
       fieldName === 'noteTargets'
@@ -92,7 +161,7 @@ export const RelationFromManyFieldDisplay = () => {
         : CoreObjectNameSingular.Task;
     const relationFieldName = fieldName === 'noteTargets' ? 'note' : 'task';
 
-    const chips = fieldValue
+    const chips = displayedFieldValue
       .map((record) => {
         if (!isDefined(record) || !isDefined(record[relationFieldName])) {
           return undefined;
@@ -127,7 +196,7 @@ export const RelationFromManyFieldDisplay = () => {
     }
 
     const extractedRecords = extractTargetRecordsFromJunction({
-      junctionRecords: fieldValue,
+      junctionRecords: displayedFieldValue,
       targetFields,
       objectMetadataItems,
       includeRecord: true,
@@ -145,7 +214,7 @@ export const RelationFromManyFieldDisplay = () => {
       })
       .filter(isDefined);
 
-    if (fieldValue.some(isDefined) && targetRecordsWithMetadata.length === 0) {
+    if (displayedFieldValue.some(isDefined) && targetRecordsWithMetadata.length === 0) {
       return null;
     }
 
@@ -181,7 +250,7 @@ export const RelationFromManyFieldDisplay = () => {
 
   return (
     <ExpandableList isChipCountDisplayed={isFocused}>
-      {fieldValue.filter(isDefined).map((record) => {
+      {displayedFieldValue.filter(isDefined).map((record) => {
         const recordChipData = generateRecordChipData(record);
         return (
           <RecordChip

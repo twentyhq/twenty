@@ -35,5 +35,13 @@ export type ObjectRecordOperation =
       restoredRecords: ObjectRecord[];
     }
   | {
-      type: 'create-many' | 'merge-records' | 'destroy-one' | 'destroy-many';
+      type: 'destroy-one';
+      destroyedRecordId: string;
+    }
+  | {
+      type: 'destroy-many';
+      destroyedRecordIds: string[];
+    }
+  | {
+      type: 'create-many' | 'merge-records';
     };

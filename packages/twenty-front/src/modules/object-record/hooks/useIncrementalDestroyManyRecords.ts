@@ -1,5 +1,6 @@
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
+import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -12,7 +13,6 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { getDestroyManyRecordsMutationResponseField } from '@/object-record/utils/getDestroyManyRecordsMutationResponseField';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
@@ -149,12 +149,14 @@ export const useIncrementalDestroyManyRecords = <T>({
 
   const incrementalDestroyManyRecords = async () => {
     let totalDestroyedCount = 0;
+    const destroyedIdsOverall: string[] = [];
 
     await incrementalFetchAndMutate(
       async ({ recordIds, totalCount, abortSignal }) => {
         await destroyManyRecordsBatch(recordIds, abortSignal);
 
         totalDestroyedCount += recordIds.length;
+        destroyedIdsOverall.push(...recordIds);
 
         updateProgress(totalDestroyedCount, totalCount);
       },
@@ -168,6 +170,7 @@ export const useIncrementalDestroyManyRecords = <T>({
       objectMetadataItem,
       operation: {
         type: 'destroy-many',
+        destroyedRecordIds: destroyedIdsOverall,
       },
     });
 
