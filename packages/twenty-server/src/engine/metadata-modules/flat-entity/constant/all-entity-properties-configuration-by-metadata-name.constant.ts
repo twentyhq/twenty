@@ -103,11 +103,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    isCustom: {
-      toCompare: false,
-      toStringify: false,
-      universalProperty: undefined,
-    },
     isSystem: {
       toCompare: false,
       toStringify: false,
@@ -205,11 +200,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     standardOverrides: {
       toCompare: true,
       toStringify: true,
-      universalProperty: undefined,
-    },
-    isCustom: {
-      toCompare: false,
-      toStringify: false,
       universalProperty: undefined,
     },
     isRemote: {

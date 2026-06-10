@@ -15,11 +15,11 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { computeTableName } from 'src/engine/utils/compute-table-name.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
 // The query builder aliases the FROM table with `getObjectAlias` (= nameSingular),
 // NOT the physical table name (which is `_`-prefixed for custom objects via
-// `computeTableName`). These tests pin order-by clauses to that alias so the
+// `computeObjectTargetTable`). These tests pin order-by clauses to that alias so the
 // parser stays in sync if the alias convention ever changes.
 describe('GraphqlQueryOrderGroupByParser - object alias in order-by clauses', () => {
   const OBJECT_ID = 'rocket-object-id';
@@ -78,10 +78,7 @@ describe('GraphqlQueryOrderGroupByParser - object alias in order-by clauses', ()
   } as unknown as FlatEntityMaps<FlatObjectMetadata>;
 
   const objectAlias = getObjectAlias(flatObjectMetadata);
-  const physicalTableName = computeTableName(
-    flatObjectMetadata.nameSingular,
-    flatObjectMetadata.isCustom,
-  );
+  const physicalTableName = computeObjectTargetTable(flatObjectMetadata);
 
   const buildParser = () =>
     new GraphqlQueryOrderGroupByParser(

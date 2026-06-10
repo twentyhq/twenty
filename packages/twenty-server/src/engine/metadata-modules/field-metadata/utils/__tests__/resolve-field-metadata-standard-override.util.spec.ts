@@ -26,7 +26,6 @@ describe('resolveFieldMetadataStandardOverride', () => {
         label: 'Custom Label',
         description: 'Custom Description',
         icon: 'custom-icon',
-        isCustom: true,
         standardOverrides: undefined,
       };
 
@@ -45,7 +44,6 @@ describe('resolveFieldMetadataStandardOverride', () => {
         label: 'Custom Label',
         description: 'Custom Description',
         icon: 'custom-icon',
-        isCustom: true,
         standardOverrides: undefined,
       };
 
@@ -64,7 +62,6 @@ describe('resolveFieldMetadataStandardOverride', () => {
         label: 'Custom Label',
         description: 'Custom Description',
         icon: 'custom-icon',
-        isCustom: true,
         standardOverrides: undefined,
       };
 
@@ -85,7 +82,6 @@ describe('resolveFieldMetadataStandardOverride', () => {
         label: 'Standard Label',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {
           icon: 'override-icon',
         },
@@ -108,7 +104,6 @@ describe('resolveFieldMetadataStandardOverride', () => {
         label: 'Standard Label',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {
           translations: {
             'fr-FR': {
@@ -142,7 +137,6 @@ describe('resolveFieldMetadataStandardOverride', () => {
         label: 'Standard Label',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {
           translations: {
             'es-ES': {
@@ -170,7 +164,6 @@ describe('resolveFieldMetadataStandardOverride', () => {
         label: 'Standard Label',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {
           translations: {
             'fr-FR': {
@@ -198,7 +191,6 @@ describe('resolveFieldMetadataStandardOverride', () => {
         label: 'Standard Label',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {
           translations: {
             'fr-FR': {
@@ -228,7 +220,6 @@ describe('resolveFieldMetadataStandardOverride', () => {
         label: 'Standard Label',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {
           label: 'Overridden Label',
           description: 'Overridden Description',
@@ -267,7 +258,6 @@ describe('resolveFieldMetadataStandardOverride', () => {
         label: 'Standard Label',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {
           label: 'Overridden Label',
         },
@@ -293,7 +283,6 @@ describe('resolveFieldMetadataStandardOverride', () => {
         label: 'Standard Label',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {
           label: '',
         },
@@ -317,7 +306,6 @@ describe('resolveFieldMetadataStandardOverride', () => {
         label: 'Standard Label',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {
           label: undefined,
         },
@@ -343,7 +331,6 @@ describe('resolveFieldMetadataStandardOverride', () => {
         label: 'Standard Label',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: undefined,
       };
 
@@ -367,7 +354,6 @@ describe('resolveFieldMetadataStandardOverride', () => {
         label: 'Standard Label',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: undefined,
       };
 
@@ -393,7 +379,6 @@ describe('resolveFieldMetadataStandardOverride', () => {
         label: 'Standard Label',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {
           label: 'Source Override',
           translations: {
@@ -421,7 +406,6 @@ describe('resolveFieldMetadataStandardOverride', () => {
         label: 'Standard Label',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {
           label: 'Source Override',
         },
@@ -444,7 +428,6 @@ describe('resolveFieldMetadataStandardOverride', () => {
         label: 'Standard Label',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {},
       };
 

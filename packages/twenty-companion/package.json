@@ -46,7 +46,7 @@
     "@timfish/forge-externals-plugin": "^0.2.1",
     "axios": "^1.16.0",
     "codemirror": "^6.0.1",
-    "concurrently": "^9.2.1",
+    "concurrently": "^10.0.0",
     "dotenv": "^16.5.0",
     "easymde": "^2.20.0",
     "electron-squirrel-startup": "^1.0.1",

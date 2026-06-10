@@ -20,7 +20,6 @@ const mockObjectMetadata = {
   labelSingular: 'Person',
   description: 'A person',
   icon: 'IconUser',
-  isCustom: false,
   standardOverrides: undefined,
 } as unknown as ObjectMetadataDTO;
 
@@ -127,7 +126,6 @@ describe('interpolateNavigationCommandMenuItemField', () => {
   it('should resolve label for custom object metadata', () => {
     const customObjectMetadata = {
       ...mockObjectMetadata,
-      isCustom: true,
       labelPlural: 'Custom Objects',
       icon: 'IconCustom',
     } as unknown as ObjectMetadataDTO;
@@ -146,7 +144,6 @@ describe('interpolateNavigationCommandMenuItemField', () => {
   it('should resolve icon for custom object metadata', () => {
     const customObjectMetadata = {
       ...mockObjectMetadata,
-      isCustom: true,
       icon: 'IconCustom',
     } as unknown as ObjectMetadataDTO;
 

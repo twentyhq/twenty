@@ -9,6 +9,7 @@ import {
   escapeLiteral,
 } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import {
   type CreateEnumOperationSpec,
   EnumOperation,
@@ -28,7 +29,8 @@ export const generateWorkspaceSchemaDdl = (
 
     const tableName = computeTableName(
       objectMetadata.nameSingular,
-      objectMetadata.isCustom,
+      objectMetadata.application?.universalIdentifier !==
+        TWENTY_STANDARD_APPLICATION.universalIdentifier,
     );
     const fieldMetadatas = fieldsByObjectId.get(objectMetadata.id) ?? [];
 

@@ -1076,9 +1076,6 @@ export default {
             "id": [
                 52
             ],
-            "isCustom": [
-                53
-            ],
             "isRemote": [
                 53
             ],
@@ -1314,9 +1311,6 @@ export default {
             ],
             "id": [
                 52
-            ],
-            "isCustom": [
-                53
             ],
             "isActive": [
                 53
