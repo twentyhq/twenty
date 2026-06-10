@@ -34,6 +34,28 @@ describe('buildFullName', () => {
     });
   });
 
+  it('capitalizes lowercase names returned by PDL', () => {
+    expect(
+      buildFullName({ firstName: 'sean', lastName: 'thorne', fullName: undefined }),
+    ).toEqual({
+      firstName: 'Sean',
+      lastName: 'Thorne',
+    });
+  });
+
+  it('capitalizes a lowercase full name when split', () => {
+    expect(
+      buildFullName({
+        firstName: undefined,
+        lastName: undefined,
+        fullName: 'sean fong thorne',
+      }),
+    ).toEqual({
+      firstName: 'Sean',
+      lastName: 'Fong Thorne',
+    });
+  });
+
   it('returns undefined when there is no name', () => {
     expect(
       buildFullName({ firstName: undefined, lastName: undefined, fullName: undefined }),

@@ -1,3 +1,4 @@
+import { capitalizeName } from 'src/logic-functions/utils/capitalize-name';
 import { toText } from 'src/logic-functions/utils/to-text';
 import { type FullNameValue } from 'src/types/full-name-value';
 import { isDefined } from 'src/utils/is-defined';
@@ -17,7 +18,10 @@ export const buildFullName = ({
   const last = toText(lastName);
 
   if (isDefined(first) || isDefined(last)) {
-    return { firstName: first ?? '', lastName: last ?? '' };
+    return {
+      firstName: isDefined(first) ? capitalizeName(first) : '',
+      lastName: isDefined(last) ? capitalizeName(last) : '',
+    };
   }
 
   const full = toText(fullName);
@@ -27,5 +31,8 @@ export const buildFullName = ({
 
   const [firstNameToken, ...remainingNameTokens] = full.split(WHITESPACE_REGEX);
 
-  return { firstName: firstNameToken, lastName: remainingNameTokens.join(' ') };
+  return {
+    firstName: capitalizeName(firstNameToken),
+    lastName: capitalizeName(remainingNameTokens.join(' ')),
+  };
 };

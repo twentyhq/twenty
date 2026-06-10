@@ -1,4 +1,4 @@
-import { isString } from '@sniptt/guards';
+import { isArray, isString } from '@sniptt/guards';
 
 import { INDUSTRY_OPTIONS } from 'src/constants/industry-options';
 import { INFERRED_SALARY_OPTIONS } from 'src/constants/inferred-salary-options';
@@ -36,8 +36,8 @@ const SEX_VALUES = buildAllowedValues(SEX_OPTIONS);
 const METRO_VALUES = buildAllowedValues(METRO_OPTIONS);
 
 export const mapPerson = (personData: PdlPersonData): MappedRecord => {
-  const emailEntries = (personData.emails ?? []).map((rawEmail) =>
-    isString(rawEmail) ? rawEmail : rawEmail.address,
+  const emailEntries = (isArray(personData.emails) ? personData.emails : []).map(
+    (rawEmail) => (isString(rawEmail) ? rawEmail : rawEmail.address),
   );
 
   const standard = pruneUndefined({
@@ -49,10 +49,13 @@ export const mapPerson = (personData: PdlPersonData): MappedRecord => {
     emails: buildEmails([
       personData.work_email,
       personData.recommended_personal_email,
-      ...(personData.personal_emails ?? []),
+      ...(isArray(personData.personal_emails) ? personData.personal_emails : []),
       ...emailEntries,
     ]),
-    phones: buildPhones([personData.mobile_phone, ...(personData.phone_numbers ?? [])]),
+    phones: buildPhones([
+      personData.mobile_phone,
+      ...(isArray(personData.phone_numbers) ? personData.phone_numbers : []),
+    ]),
     jobTitle: toText(personData.job_title),
     linkedinLink: buildLinks({ url: personData.linkedin_url }),
   });

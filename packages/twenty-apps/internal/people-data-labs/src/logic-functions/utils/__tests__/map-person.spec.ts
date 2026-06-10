@@ -64,4 +64,18 @@ describe('mapPerson', () => {
 
     expect('pdlSex' in pdl).toBe(false);
   });
+
+  it('tolerates PDL returning presence-flag booleans for email and phone fields', () => {
+    const { standard } = mapPerson({
+      ...PDL_PERSON_DATA_MOCK,
+      emails: true as never,
+      personal_emails: true as never,
+      phone_numbers: true as never,
+    });
+
+    expect(standard.emails).toEqual({
+      primaryEmail: 'jane.doe@acme.com',
+      additionalEmails: null,
+    });
+  });
 });
