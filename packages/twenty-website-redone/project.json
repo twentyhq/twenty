@@ -25,6 +25,13 @@
         "command": "npx tsc -p tsconfig.json --noEmit"
       }
     },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx jest --config=jest.config.mjs"
+      }
+    },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
