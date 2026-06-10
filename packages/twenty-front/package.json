@@ -56,7 +56,7 @@
     "@nivo/radial-bar": "^0.99.0",
     "@react-email/components": "^0.5.3",
     "@react-pdf/renderer": "^4.1.6",
-    "@scalar/api-reference-react": "^0.4.36",
+    "@scalar/api-reference-react": "^0.9.42",
     "@sentry/react": "^10.51.0",
     "@sniptt/guards": "^0.2.0",
     "@tiptap/core": "3.4.2",
