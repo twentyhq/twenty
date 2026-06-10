@@ -177,7 +177,7 @@
     "@nestjs/cli": "^11.0.16",
     "@nestjs/schematics": "^11.0.9",
     "@nestjs/testing": "11.1.24",
-    "@swc/cli": "^0.7.10",
+    "@swc/cli": "^0.8.1",
     "@swc/core": "^1.15.11",
     "@swc/jest": "^0.2.39",
     "@types/addressparser": "^1.0.3",
