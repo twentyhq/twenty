@@ -18,34 +18,39 @@ import { CornerMarkers } from '@/ui';
 import { TRUSTED_BY_LOGOS, type TrustedByLogo } from './trusted-by.data';
 
 const Card = styled.div`
-  align-items: center;
+  align-items: stretch;
   background-color: ${color('white')};
   border: 1px solid ${semanticColor.line};
   border-radius: ${radius(2)};
   display: flex;
   flex-direction: column;
-  gap: ${spacing(5)};
-  padding: ${spacing(5)} ${spacing(6)};
+  padding: 0 ${spacing(5)};
   position: relative;
 
   ${mediaUp('md')} {
-    align-items: stretch;
     flex-direction: row;
-    gap: 0;
     padding: 0 ${spacing(8)};
   }
 `;
 
+// The same tripartite cell structure on both axes: stacked with horizontal
+// hairlines below md, a row with vertical hairlines above it.
 const Cell = styled.div`
   align-items: center;
   display: flex;
   justify-content: center;
+  padding-block: ${spacing(4)};
+
+  & + & {
+    border-top: 1px solid ${semanticColor.line};
+  }
 
   ${mediaUp('md')} {
     padding-block: ${spacing(5)};
 
     & + & {
       border-left: 1px solid ${semanticColor.line};
+      border-top: none;
     }
   }
 `;
@@ -58,6 +63,7 @@ const LabelCell = styled(Cell)`
 
 const LogosCell = styled(Cell)`
   flex: 1 1 auto;
+  padding-block: ${spacing(5)};
 
   ${mediaUp('md')} {
     padding-inline: ${spacing(6)};
