@@ -55,12 +55,14 @@ const buttonClassName = css`
     --button-label-hover: ${color('white')};
   }
 
-  /* Dark surfaces invert via context, never via props. */
+  /* Dark surfaces restyle via context, never via props. Filled hovers
+     shift 10% toward the opposite pole (black->#333, white->#e8e8e8);
+     the old site's full invert melted the button into the section. */
   [data-scheme='dark'] &[data-variant='filled'] {
     --button-fill: ${color('white')};
-    --button-hover-fill: ${color('black')};
+    --button-hover-fill: ${color('white-hover')};
     --button-label: ${color('black')};
-    --button-label-hover: ${color('white')};
+    --button-label-hover: ${color('black')};
   }
 
   [data-scheme='dark'] &[data-variant='outlined'] {

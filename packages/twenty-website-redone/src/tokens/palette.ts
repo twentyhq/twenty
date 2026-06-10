@@ -3,6 +3,7 @@ export type PaletteToken =
   | 'black'
   | 'black-hover'
   | 'black-sheen'
+  | 'white-hover'
   | 'neutral'
   | 'blue'
   | 'blue-muted'
@@ -20,6 +21,8 @@ export const PALETTE: Record<PaletteToken, string> = {
   // white at 5% composited over black: opaque, so the button shape's
   // anti-seam segment overlaps cannot double a translucent fill.
   'black-sheen': '#272727',
+  // mirror of black-hover: white shifted 10% toward black.
+  'white-hover': '#e8e8e8',
   neutral: '#f4f4f4',
   blue: '#4a38f5',
   'blue-muted': '#8174f8',
