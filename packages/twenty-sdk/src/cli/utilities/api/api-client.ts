@@ -3,6 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import axios, { type AxiosInstance } from 'axios';
 import chalk from 'chalk';
 import { isDefined } from 'twenty-shared/utils';
+import { promptForReauthentication } from '@/cli/utilities/auth/reauth-helper';
 
 export class ApiClient {
   readonly client: AxiosInstance;
@@ -51,11 +52,18 @@ export class ApiClient {
       (response) => response,
       async (error) => {
         if (error.response?.status === 401) {
-          console.error(
-            chalk.red(
-              'Authentication failed. Run `yarn twenty remote:add` to authenticate.',
-            ),
-          );
+          const remoteName = ConfigService.getActiveRemote();
+          console.error(`Authentication failed on remote "${remoteName}"`);
+          const outcome = await promptForReauthentication(remoteName);
+
+          if (outcome === 'reauthenticated') {
+            const authToken = await this.resolveAuthToken();
+
+            if (authToken) {
+              error.config.headers.Authorization = `Bearer ${authToken}`;
+              return this.client.request(error.config);
+            }
+          }
         } else if (error.response?.status === 403) {
           console.error(
             chalk.red(

@@ -2,9 +2,6 @@ import inquirer from 'inquirer';
 import chalk from 'chalk';
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
-import { isTokenExpiredMessage } from './token-expired-detector';
-
-export { isTokenExpiredMessage } from './token-expired-detector';
 
 export type ReauthOutcome = 'reauthenticated' | 'declined' | 'non-interactive';
 
@@ -30,21 +27,20 @@ export const promptForReauthentication = async (
     return 'declined';
   }
 
-  const configService = new ConfigService();
-  const config = await configService.getConfigForRemote(remoteName);
   const apiService = new ApiService();
   const { authValid } = await apiService.validateAuth();
 
   if (authValid) {
-    console.log(chalk.green(`✓ Remote "${remoteName}" is still valid.`));
+    console.log(chalk.green(`✓ Authenticated to "${remoteName}".`));
 
     return 'reauthenticated';
   }
 
+  const configService = new ConfigService();
+  const config = await configService.getConfigForRemote(remoteName);
+
   console.log(
-    chalk.yellow(
-      `Re-run: twenty remote:add --as ${remoteName} --api-key <NEW_KEY>`,
-    ),
+    chalk.yellow(`Run \`twenty remote:add\` to re-authenticate.`),
   );
   console.log(
     chalk.gray(`Generate a new key at: ${config.apiUrl}/settings/developers`),
