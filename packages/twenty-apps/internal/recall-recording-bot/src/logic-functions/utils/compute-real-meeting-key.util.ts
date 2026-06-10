@@ -5,7 +5,6 @@ type ComputeRealMeetingKeyInput = {
   startsAt: string | null;
 };
 
-// Dedupe duplicate synced calendar rows without making the calendar event id the primary key.
 export const computeRealMeetingKey = ({
   calendarEventId,
   conferenceLinkUrl,
@@ -25,9 +24,7 @@ export const computeRealMeetingKey = ({
   return `event:${calendarEventId}`;
 };
 
-const normalizeConferenceLink = (
-  conferenceLinkUrl: unknown,
-): string | null => {
+const normalizeConferenceLink = (conferenceLinkUrl: unknown): string | null => {
   if (typeof conferenceLinkUrl !== 'string') {
     return null;
   }

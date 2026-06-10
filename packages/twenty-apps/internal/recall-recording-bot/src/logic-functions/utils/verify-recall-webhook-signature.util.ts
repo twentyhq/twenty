@@ -1,15 +1,18 @@
 import { createHmac, timingSafeEqual } from 'crypto';
 
 const RECALL_WEBHOOK_SECRET_PREFIX = 'whsec_';
+const RECALL_WEBHOOK_TIMESTAMP_TOLERANCE_SECONDS = 5 * 60;
 
 export const verifyRecallWebhookSignature = ({
   rawBody,
   headers,
   secret,
+  now = new Date(),
 }: {
   rawBody: string;
   headers: Record<string, string | undefined>;
   secret: string;
+  now?: Date;
 }): { valid: true } | { valid: false; error: string } => {
   if (!secret.startsWith(RECALL_WEBHOOK_SECRET_PREFIX)) {
     return {
@@ -35,6 +38,27 @@ export const verifyRecallWebhookSignature = ({
     };
   }
 
+  const webhookTimestampSeconds = Number(webhookTimestamp);
+
+  if (!Number.isInteger(webhookTimestampSeconds)) {
+    return {
+      valid: false,
+      error: 'Invalid webhook timestamp',
+    };
+  }
+
+  const nowSeconds = Math.floor(now.getTime() / 1000);
+
+  if (
+    Math.abs(nowSeconds - webhookTimestampSeconds) >
+    RECALL_WEBHOOK_TIMESTAMP_TOLERANCE_SECONDS
+  ) {
+    return {
+      valid: false,
+      error: 'Webhook timestamp is outside of the allowed tolerance',
+    };
+  }
+
   const secretBytes = Buffer.from(
     secret.slice(RECALL_WEBHOOK_SECRET_PREFIX.length),
     'base64',
@@ -47,10 +71,7 @@ export const verifyRecallWebhookSignature = ({
     .map((signaturePart) => signaturePart.trim())
     .filter((signaturePart) => signaturePart !== '')
     .flatMap((signaturePart) => {
-      if (
-        signaturePart.startsWith('v1,') ||
-        signaturePart.startsWith('v1=')
-      ) {
+      if (signaturePart.startsWith('v1,') || signaturePart.startsWith('v1=')) {
         return [signaturePart.slice(3).trim()];
       }
 

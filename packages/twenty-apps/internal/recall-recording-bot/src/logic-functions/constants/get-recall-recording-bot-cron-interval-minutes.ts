@@ -3,8 +3,9 @@ import { RECALL_RECORDING_BOT_CRON_INTERVAL_MINUTES_ENV_VAR_NAME } from 'src/log
 import { SUPPORTED_CRON_INTERVAL_MINUTES } from 'src/logic-functions/constants/supported-cron-interval-minutes';
 
 export const getRecallRecordingBotCronIntervalMinutes = (
-  rawIntervalMinutes =
-    process.env[RECALL_RECORDING_BOT_CRON_INTERVAL_MINUTES_ENV_VAR_NAME],
+  rawIntervalMinutes = process.env[
+    RECALL_RECORDING_BOT_CRON_INTERVAL_MINUTES_ENV_VAR_NAME
+  ],
 ): number => {
   if (rawIntervalMinutes === undefined || rawIntervalMinutes.trim() === '') {
     return DEFAULT_CRON_INTERVAL_MINUTES;
@@ -23,6 +24,5 @@ const isSupportedCronIntervalMinutes = (
   intervalMinutes: number,
 ): intervalMinutes is (typeof SUPPORTED_CRON_INTERVAL_MINUTES)[number] =>
   SUPPORTED_CRON_INTERVAL_MINUTES.some(
-    (supportedIntervalMinutes) =>
-      supportedIntervalMinutes === intervalMinutes,
+    (supportedIntervalMinutes) => supportedIntervalMinutes === intervalMinutes,
   );

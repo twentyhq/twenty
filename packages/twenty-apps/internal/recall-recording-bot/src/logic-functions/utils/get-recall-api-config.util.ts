@@ -11,7 +11,7 @@ export type RecallApiConfig = {
   botName: string;
 };
 
-export const getRecallApiConfig = async (): Promise<
+export const getRecallApiConfig = ():
   | {
       success: true;
       config: RecallApiConfig;
@@ -19,14 +19,10 @@ export const getRecallApiConfig = async (): Promise<
   | {
       success: false;
       error: string;
-    }
-> => {
-  const [apiKeyValue, regionValue, botNameValue] = await Promise.all([
+    } => {
+  const apiKey = normalizeOptionalString(
     getApplicationVariableValue(RECALL_API_KEY_ENV_VAR_NAME),
-    getApplicationVariableValue(RECALL_REGION_ENV_VAR_NAME),
-    getApplicationVariableValue(RECALL_BOT_NAME_ENV_VAR_NAME),
-  ]);
-  const apiKey = normalizeOptionalString(apiKeyValue);
+  );
 
   if (apiKey === undefined) {
     return {
@@ -36,9 +32,14 @@ export const getRecallApiConfig = async (): Promise<
     };
   }
 
-  const region = normalizeOptionalString(regionValue) ?? DEFAULT_RECALL_REGION;
+  const region =
+    normalizeOptionalString(
+      getApplicationVariableValue(RECALL_REGION_ENV_VAR_NAME),
+    ) ?? DEFAULT_RECALL_REGION;
   const botName =
-    normalizeOptionalString(botNameValue) ?? DEFAULT_RECALL_BOT_NAME;
+    normalizeOptionalString(
+      getApplicationVariableValue(RECALL_BOT_NAME_ENV_VAR_NAME),
+    ) ?? DEFAULT_RECALL_BOT_NAME;
 
   return {
     success: true,

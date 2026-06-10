@@ -18,16 +18,24 @@ export const fetchAllNodes = async <TNode>(
   while (hasNextPage) {
     const connection = await fetchPage(afterCursor);
 
-    for (const edge of connection?.edges ?? []) {
+    if (connection === undefined) {
+      throw new Error('Pagination query returned no connection');
+    }
+
+    for (const edge of connection.edges ?? []) {
       nodes.push(edge.node);
     }
 
-    hasNextPage = connection?.pageInfo?.hasNextPage ?? false;
-    afterCursor = connection?.pageInfo?.endCursor ?? undefined;
+    hasNextPage = connection.pageInfo?.hasNextPage === true;
+    const endCursor = connection.pageInfo?.endCursor;
 
-    if (afterCursor === undefined) {
-      hasNextPage = false;
+    if (hasNextPage && typeof endCursor !== 'string') {
+      throw new Error(
+        'Inconsistent pagination state: hasNextPage is true without an endCursor',
+      );
     }
+
+    afterCursor = typeof endCursor === 'string' ? endCursor : undefined;
   }
 
   return nodes;

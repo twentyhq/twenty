@@ -1,8 +1,11 @@
-import { CALL_RECORDING_STATUS } from 'src/logic-functions/constants/call-recording-status';
+import {
+  CALL_RECORDING_STATUS,
+  type CallRecordingStatus,
+} from 'src/logic-functions/constants/call-recording-status';
 
 // Recall webhook deliveries are not ordered; a late status event must never
 // move a recording backwards in its lifecycle.
-const CALL_RECORDING_STATUS_PROGRESSION: Record<string, number> = {
+const CALL_RECORDING_STATUS_PROGRESSION: Record<CallRecordingStatus, number> = {
   [CALL_RECORDING_STATUS.SCHEDULED]: 0,
   [CALL_RECORDING_STATUS.JOINING]: 1,
   [CALL_RECORDING_STATUS.RECORDING]: 2,
@@ -10,6 +13,11 @@ const CALL_RECORDING_STATUS_PROGRESSION: Record<string, number> = {
   [CALL_RECORDING_STATUS.FAILED_UNKNOWN]: 4,
   [CALL_RECORDING_STATUS.COMPLETED]: 5,
 };
+
+const getCallRecordingStatusRank = (status: string): number | undefined =>
+  status in CALL_RECORDING_STATUS_PROGRESSION
+    ? CALL_RECORDING_STATUS_PROGRESSION[status as CallRecordingStatus]
+    : undefined;
 
 export const isCallRecordingStatusDowngrade = ({
   fromStatus,
@@ -21,8 +29,8 @@ export const isCallRecordingStatusDowngrade = ({
   const fromRank =
     fromStatus === null || fromStatus === undefined
       ? undefined
-      : CALL_RECORDING_STATUS_PROGRESSION[fromStatus];
-  const toRank = CALL_RECORDING_STATUS_PROGRESSION[toStatus];
+      : getCallRecordingStatusRank(fromStatus);
+  const toRank = getCallRecordingStatusRank(toStatus);
 
   if (fromRank === undefined || toRank === undefined) {
     return false;

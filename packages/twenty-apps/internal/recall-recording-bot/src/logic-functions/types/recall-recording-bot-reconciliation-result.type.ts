@@ -1,7 +1,16 @@
-import { type RecallRecordingBotReconciliationAction } from 'src/logic-functions/types/recall-recording-bot-reconciliation-action.type';
-
-export type RecallRecordingBotReconciliationResult = {
-  action: RecallRecordingBotReconciliationAction;
-  realMeetingKey: string;
-  callRecordingId: string | null;
-};
+export type RecallRecordingBotReconciliationResult =
+  | {
+      action: 'CREATED' | 'UPDATED' | 'CANCELED';
+      realMeetingKey: string;
+      callRecordingId: string;
+    }
+  | {
+      action: 'SKIPPED';
+      realMeetingKey: string;
+      callRecordingId: string | null;
+    }
+  | {
+      action: 'FAILED';
+      realMeetingKey: string;
+      errorMessage: string;
+    };

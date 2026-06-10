@@ -15,7 +15,7 @@ const BACKSTOP_LOOKAHEAD_HOURS = 24;
 
 const handler = async (): Promise<object> => {
   const now = new Date();
-  const intervalMinutes = await getRecallRecordingBotBackstopIntervalMinutes();
+  const intervalMinutes = getRecallRecordingBotBackstopIntervalMinutes();
 
   if (
     !shouldRunRecallRecordingBotBackstopAt({

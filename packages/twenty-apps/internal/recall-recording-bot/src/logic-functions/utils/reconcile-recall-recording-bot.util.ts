@@ -69,7 +69,7 @@ const resolveRecallRecordingBotMeetingPolicyResults = async ({
   now?: Date;
 }): Promise<RecallRecordingBotPolicyResultForMeeting[]> => {
   const isRecallRecordingBotEnabledForWorkspace =
-    await getRecallRecordingBotEnabled();
+    getRecallRecordingBotEnabled();
   const changedCalendarEvents = await fetchCalendarEventsByIds(
     client,
     getUniqueSortedIds(calendarEventIds),
@@ -195,19 +195,33 @@ const reconcileRecallRecordingBotMeetingOccurrences = async ({
         meetingPolicyResult.realMeetingKey,
       ) ?? [];
 
-    reconciliationResults.push(
-      meetingPolicyResult.shouldRequestBot
-        ? await reconcileActiveMeeting({
-            client,
-            meetingPolicyResult,
-            removedCalendarEventIds,
-          })
-        : await reconcileCanceledMeeting({
-            client,
-            meetingPolicyResult,
-            removedCalendarEventIds,
-          }),
-    );
+    try {
+      reconciliationResults.push(
+        meetingPolicyResult.shouldRequestBot
+          ? await reconcileActiveMeeting({
+              client,
+              meetingPolicyResult,
+              removedCalendarEventIds,
+            })
+          : await reconcileCanceledMeeting({
+              client,
+              meetingPolicyResult,
+              removedCalendarEventIds,
+            }),
+      );
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      console.error(
+        `[recall-recording-bot] reconciliation failed for meeting ${meetingPolicyResult.realMeetingKey}: ${errorMessage}`,
+      );
+      reconciliationResults.push({
+        action: 'FAILED',
+        realMeetingKey: meetingPolicyResult.realMeetingKey,
+        errorMessage,
+      });
+    }
   }
 
   return reconciliationResults;
@@ -295,15 +309,13 @@ const reconcileActiveMeeting = async ({
     buildScheduledCallRecordingFields(representativeCalendarEvent),
   );
 
-  if (createdCallRecordingId !== null) {
-    await syncScheduledRecallBot({
-      client,
-      callRecordingId: createdCallRecordingId,
-      existingCallRecording: null,
-      representativeCalendarEvent,
-      realMeetingKey: meetingPolicyResult.realMeetingKey,
-    });
-  }
+  await syncScheduledRecallBot({
+    client,
+    callRecordingId: createdCallRecordingId,
+    existingCallRecording: null,
+    representativeCalendarEvent,
+    realMeetingKey: meetingPolicyResult.realMeetingKey,
+  });
 
   return {
     action: 'CREATED',
@@ -408,8 +420,7 @@ const buildScheduledCallRecordingFields = (
   status: CALL_RECORDING_STATUS.SCHEDULED,
 });
 
-// A live or finished bot lifecycle must never be reset to SCHEDULED by a
-// calendar-driven update; only idle or failed requests are (re)scheduled.
+// A live or finished bot lifecycle must never be reset to SCHEDULED by a calendar-driven update.
 const buildPolicyManagedCallRecordingUpdateFields = ({
   existingCallRecording,
   calendarEvent,
@@ -463,13 +474,21 @@ const syncScheduledRecallBot = async ({
       metadata,
     });
 
-    if (!rescheduleResult.ok) {
+    if (rescheduleResult.ok) {
+      return;
+    }
+
+    if (rescheduleResult.status !== 404) {
       console.warn(
         `[recall-recording-bot] failed to update Recall bot for callRecording ${callRecordingId}: ${rescheduleResult.errorMessage}`,
       );
+
+      return;
     }
 
-    return;
+    console.warn(
+      `[recall-recording-bot] Recall bot ${externalBotId} for callRecording ${callRecordingId} no longer exists, scheduling a replacement`,
+    );
   }
 
   const scheduleResult = await scheduleRecallRecordingBot({
@@ -512,9 +531,7 @@ const buildRemovedCalendarEventIdsByMeetingKey = (
   return calendarEventIdsByMeetingKey;
 };
 
-// The recording carrying the live bot stays primary so reconciliation never
-// trades a scheduled bot for a fresh one; id ordering keeps the choice stable
-// across runs.
+// The bot-carrying recording stays primary so dedupe never trades a live bot for a fresh one.
 const getPolicyManagedCallRecordingsByPriority = (
   callRecordings: CallRecordingRecord[],
 ): CallRecordingRecord[] =>

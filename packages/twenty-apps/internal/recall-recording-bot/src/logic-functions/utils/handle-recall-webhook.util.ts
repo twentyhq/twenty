@@ -229,10 +229,10 @@ const getCallRecordingIdFromMetadata = (
   body: RecallWebhookBody,
 ): string | null => {
   const data = asRecord(body.data);
-  const bot = asRecord(body.bot) ?? asRecord(data?.bot);
   const recording = asRecord(data?.recording);
   const metadata =
-    asRecord(bot?.metadata) ??
+    asRecord(asRecord(body.bot)?.metadata) ??
+    asRecord(asRecord(data?.bot)?.metadata) ??
     asRecord(recording?.metadata) ??
     asRecord(data?.metadata);
   const callRecordingId = getString(metadata?.twentyCallRecordingId);

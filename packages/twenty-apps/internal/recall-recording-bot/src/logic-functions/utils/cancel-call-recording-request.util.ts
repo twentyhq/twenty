@@ -6,9 +6,6 @@ import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.
 import { cancelRecallRecordingBot } from 'src/logic-functions/utils/recall-bot-api.util';
 import { updateCallRecording } from 'src/logic-functions/utils/update-call-recording.util';
 
-// Only flips the request to CANCELED once the Recall bot is confirmed gone;
-// on a failed Recall cancel the request stays REQUESTED so reconciliation
-// retries instead of leaving a live bot behind.
 export const cancelCallRecordingRequest = async ({
   client,
   callRecording,

@@ -41,6 +41,9 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
+      - name: Run unit tests
+        run: yarn test:unit
+
       - name: Run integration tests
         run: yarn test
         env:

@@ -15,7 +15,7 @@ export type ScheduledCallRecordingFields = {
 export const createCallRecording = async (
   client: CoreApiClient,
   data: ScheduledCallRecordingFields,
-): Promise<string | null> => {
+): Promise<string> => {
   const mutationResult = await client.mutation({
     createCallRecording: {
       __args: {
@@ -24,6 +24,13 @@ export const createCallRecording = async (
       id: true,
     },
   });
+  const createdCallRecordingId = mutationResult.createCallRecording?.id;
 
-  return mutationResult.createCallRecording?.id ?? null;
+  if (createdCallRecordingId === undefined) {
+    throw new Error(
+      'createCallRecording mutation did not return a call recording id',
+    );
+  }
+
+  return createdCallRecordingId;
 };

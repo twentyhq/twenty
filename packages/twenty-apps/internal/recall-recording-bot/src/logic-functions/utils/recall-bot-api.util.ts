@@ -7,6 +7,7 @@ type RecallBotOperationSuccess = {
 
 type RecallBotOperationFailure = {
   ok: false;
+  status: number | null;
   errorMessage: string;
 };
 
@@ -40,10 +41,10 @@ export const scheduleRecallRecordingBot = async ({
   joinAt,
   metadata,
 }: ScheduleRecallRecordingBotArgs): Promise<RecallBotOperationResult> => {
-  const configResult = await getRecallApiConfig();
+  const configResult = getRecallApiConfig();
 
   if (!configResult.success) {
-    return { ok: false, errorMessage: configResult.error };
+    return { ok: false, status: null, errorMessage: configResult.error };
   }
 
   const result = await recallBotApiRequest<RecallBotResponse>({
@@ -63,9 +64,20 @@ export const scheduleRecallRecordingBot = async ({
     return result;
   }
 
+  const externalBotId = extractRecallBotId(result.data);
+
+  if (externalBotId === null) {
+    return {
+      ok: false,
+      status: null,
+      errorMessage:
+        'Recall API created a bot but the response did not include a bot id',
+    };
+  }
+
   return {
     ok: true,
-    externalBotId: extractRecallBotId(result.data),
+    externalBotId,
   };
 };
 
@@ -75,10 +87,10 @@ export const rescheduleRecallRecordingBot = async ({
   joinAt,
   metadata,
 }: RescheduleRecallRecordingBotArgs): Promise<RecallBotOperationResult> => {
-  const configResult = await getRecallApiConfig();
+  const configResult = getRecallApiConfig();
 
   if (!configResult.success) {
-    return { ok: false, errorMessage: configResult.error };
+    return { ok: false, status: null, errorMessage: configResult.error };
   }
 
   const result = await recallBotApiRequest<RecallBotResponse>({
@@ -109,10 +121,10 @@ export const cancelRecallRecordingBot = async ({
 }: {
   externalBotId: string;
 }): Promise<RecallBotOperationResult> => {
-  const configResult = await getRecallApiConfig();
+  const configResult = getRecallApiConfig();
 
   if (!configResult.success) {
-    return { ok: false, errorMessage: configResult.error };
+    return { ok: false, status: null, errorMessage: configResult.error };
   }
 
   const result = await recallBotApiRequest<undefined>({
@@ -155,6 +167,7 @@ const recallBotApiRequest = async <TData>({
     }
   | {
       ok: false;
+      status: number | null;
       errorMessage: string;
     }
 > => {
@@ -172,6 +185,7 @@ const recallBotApiRequest = async <TData>({
   } catch (error) {
     return {
       ok: false,
+      status: null,
       errorMessage: `Recall API request failed: ${
         error instanceof Error ? error.message : String(error)
       }`,
@@ -197,6 +211,7 @@ const recallBotApiRequest = async <TData>({
   if (!response.ok) {
     return {
       ok: false,
+      status: response.status,
       errorMessage: await extractRecallApiErrorMessage(response),
     };
   }
@@ -210,6 +225,7 @@ const recallBotApiRequest = async <TData>({
   } catch (error) {
     return {
       ok: false,
+      status: response.status,
       errorMessage: `Recall API returned a non-JSON response: ${
         error instanceof Error ? error.message : String(error)
       }`,

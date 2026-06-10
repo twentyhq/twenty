@@ -1,5 +1,6 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
 
 import { RECALL_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/recall-webhook-logic-function-universal-identifier';
 import { RECALL_WEBHOOK_SECRET_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-webhook-secret-env-var-name';
@@ -14,27 +15,35 @@ type RecallWebhookPayload = {
   bot?: unknown;
 };
 
-const recallWebhookRouteHandler = async (
+// Non-2xx responses make Svix retry the delivery; a returned plain object
+// would be sent as HTTP 200 and permanently mark the event as delivered.
+const rejectWebhook = (status: number, error: string): Response => {
+  console.error(`[recall-recording-bot] webhook rejected: ${error}`);
+
+  return new Response({ error }, { status });
+};
+
+export const recallWebhookRouteHandler = async (
   routePayload: RoutePayload<RecallWebhookPayload>,
 ): Promise<object> => {
-  const webhookSecret = await getApplicationVariableValue(
+  const webhookSecret = getApplicationVariableValue(
     RECALL_WEBHOOK_SECRET_ENV_VAR_NAME,
   );
 
   if (webhookSecret === undefined || webhookSecret.trim() === '') {
-    return {
-      error:
-        'RECALL_WEBHOOK_SECRET application variable is not set. Copy it from the Recall webhook endpoint settings.',
-    };
+    return rejectWebhook(
+      500,
+      'RECALL_WEBHOOK_SECRET application variable is not set. Copy it from the Recall webhook endpoint settings.',
+    );
   }
 
   const { rawBody } = routePayload;
 
   if (rawBody === undefined) {
-    return {
-      error:
-        'Invalid webhook signature: raw request body was not forwarded by the server',
-    };
+    return rejectWebhook(
+      500,
+      'Raw request body was not forwarded by the server; cannot verify the webhook signature',
+    );
   }
 
   const signatureCheck = verifyRecallWebhookSignature({
@@ -44,15 +53,14 @@ const recallWebhookRouteHandler = async (
   });
 
   if (!signatureCheck.valid) {
-    return {
-      error: `Invalid webhook signature: ${signatureCheck.error}`,
-    };
+    return rejectWebhook(
+      401,
+      `Invalid webhook signature: ${signatureCheck.error}`,
+    );
   }
 
   if (routePayload.body === undefined || routePayload.body === null) {
-    return {
-      error: 'Webhook payload was empty',
-    };
+    return rejectWebhook(400, 'Webhook payload was empty');
   }
 
   return handleRecallWebhook({

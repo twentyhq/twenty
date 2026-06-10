@@ -27,6 +27,10 @@ export const resolveRecallRecordingBotPolicyResult = ({
   }
 
   if (input.recallRecordingBotPreference === 'ON') {
+    if (!hasConferenceLink(input.conferenceLinkUrl)) {
+      return botNotRequired('PREFERENCE_ON_MISSING_CONFERENCE_LINK');
+    }
+
     if (
       !isCalendarEventInFuture({
         startsAt: input.startsAt,
@@ -40,12 +44,7 @@ export const resolveRecallRecordingBotPolicyResult = ({
     return botRequired('PREFERENCE_ON');
   }
 
-  // AUTO stays narrow for now: only upcoming meetings with a conference link
-  // and at least one external participant should request a Recall bot.
-  if (
-    input.conferenceLinkUrl === null ||
-    input.conferenceLinkUrl.trim() === ''
-  ) {
+  if (!hasConferenceLink(input.conferenceLinkUrl)) {
     return botNotRequired('AUTO_MISSING_CONFERENCE_LINK');
   }
 
@@ -65,6 +64,9 @@ export const resolveRecallRecordingBotPolicyResult = ({
 
   return botRequired('AUTO_POLICY_MATCHED');
 };
+
+const hasConferenceLink = (conferenceLinkUrl: string | null): boolean =>
+  conferenceLinkUrl !== null && conferenceLinkUrl.trim() !== '';
 
 const isCalendarEventInFuture = ({
   startsAt,

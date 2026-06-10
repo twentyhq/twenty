@@ -15,7 +15,7 @@ describe('resolveRecallRecordingBotPolicyResult', () => {
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
-          conferenceLinkUrl: null,
+          conferenceLinkUrl: 'https://meet.example.com/team-sync',
           hasExternalParticipant: false,
         },
         now: NOW,
@@ -24,6 +24,26 @@ describe('resolveRecallRecordingBotPolicyResult', () => {
     ).toEqual({
       shouldRequestBot: true,
       reason: 'PREFERENCE_ON',
+    });
+  });
+
+  it('does not request a bot for ON when the meeting has no conference link', () => {
+    expect(
+      resolveRecallRecordingBotPolicyResult({
+        input: {
+          recallRecordingBotPreference: 'ON',
+          isCanceled: false,
+          startsAt: FUTURE_STARTS_AT,
+          endsAt: FUTURE_ENDS_AT,
+          conferenceLinkUrl: null,
+          hasExternalParticipant: true,
+        },
+        now: NOW,
+        isRecallRecordingBotEnabledForWorkspace: true,
+      }),
+    ).toEqual({
+      shouldRequestBot: false,
+      reason: 'PREFERENCE_ON_MISSING_CONFERENCE_LINK',
     });
   });
 

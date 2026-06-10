@@ -108,7 +108,7 @@ const attachParticipantsToCalendarEvents = async (
   for (const participant of participants) {
     const calendarEventId = participant.calendarEventId;
 
-    if (calendarEventId === undefined || calendarEventId === null) {
+    if (calendarEventId === null) {
       continue;
     }
 
@@ -133,7 +133,7 @@ const fetchCalendarEventParticipantsByCalendarEventIds = async (
     return [];
   }
 
-  return fetchAllNodes(async (afterCursor) => {
+  const participantNodes = await fetchAllNodes(async (afterCursor) => {
     const queryResult = await client.query({
       calendarEventParticipants: {
         __args: {
@@ -159,4 +159,10 @@ const fetchCalendarEventParticipantsByCalendarEventIds = async (
 
     return queryResult.calendarEventParticipants;
   });
+
+  return participantNodes.map((participant) => ({
+    id: participant.id,
+    calendarEventId: participant.calendarEventId ?? null,
+    workspaceMemberId: participant.workspaceMemberId ?? null,
+  }));
 };

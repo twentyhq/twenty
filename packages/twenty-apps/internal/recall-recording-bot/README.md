@@ -20,8 +20,8 @@ calendar event.
 - Recall API calls to create, reschedule, and cancel scheduled meeting bots.
 - A `/s/webhook/recall` route that verifies Recall webhook signatures and updates
   matching `CallRecording` records.
-- A configurable cron backstop that scans upcoming calendar events every minute
-  and only runs reconciliation on the configured interval.
+- A configurable cron backstop that wakes every minute and, on the configured
+  interval, reconciles calendar events in a recent-and-upcoming window.
 
 ## Recall Prerequisites
 
@@ -49,7 +49,8 @@ Run `yarn twenty help` to list all available commands.
 ## Useful Commands
 
 - `yarn twenty dev` - Start the development server and sync your app
-- `yarn test` - Run integration tests
+- `TWENTY_API_URL=http://localhost:3000 yarn test` - Run integration tests
+  against the local backend (defaults to `http://localhost:2020` otherwise)
 - `yarn test:unit` - Run focused app-side unit tests
 
 ## Scope

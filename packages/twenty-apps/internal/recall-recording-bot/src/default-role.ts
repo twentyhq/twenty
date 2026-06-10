@@ -10,7 +10,7 @@ export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: `${APP_DISPLAY_NAME} default function role`,
   description:
-    'Reads calendar events and participants to decide whether the Recall bot should attend a meeting, updates the app-owned Recall bot preference field, and reconciles resulting CallRecording records.',
+    'Reads calendar events and participants to decide whether the Recall bot should attend a meeting and reconciles resulting CallRecording records.',
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,

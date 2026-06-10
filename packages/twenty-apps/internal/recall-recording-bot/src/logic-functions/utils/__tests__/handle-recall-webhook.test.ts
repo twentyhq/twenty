@@ -114,6 +114,137 @@ describe('handleRecallWebhook', () => {
     ]);
   });
 
+  it('reads bot metadata nested under data when a top-level bot has none', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'JOINING',
+        externalBotId: 'recall-bot-1',
+      },
+    ]);
+
+    const result = await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'bot.status_change',
+        bot: {
+          id: 'recall-bot-1',
+        },
+        data: {
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyCallRecordingId: 'call-recording-1',
+            },
+          },
+          status: {
+            code: 'in_call_recording',
+          },
+        },
+      },
+    });
+
+    expect(result).toEqual({
+      status: 'updated',
+      event: 'bot.status_change',
+      callRecordingId: 'call-recording-1',
+      callRecordingStatus: 'RECORDING',
+    });
+  });
+
+  it('matches by metadata id when the recording carries no external bot id', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'SCHEDULED',
+        externalBotId: null,
+      },
+    ]);
+
+    const result = await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'bot.status_change',
+        data: {
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyCallRecordingId: 'call-recording-1',
+            },
+          },
+          status: {
+            code: 'in_call_recording',
+          },
+        },
+      },
+    });
+
+    expect(result).toEqual({
+      status: 'updated',
+      event: 'bot.status_change',
+      callRecordingId: 'call-recording-1',
+      callRecordingStatus: 'RECORDING',
+    });
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: {
+          status: 'RECORDING',
+          externalBotId: 'recall-bot-1',
+        },
+      },
+    ]);
+  });
+
+  it('prefers the metadata id over a different recording carrying the bot id', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-stale',
+        status: 'SCHEDULED',
+        externalBotId: 'recall-bot-1',
+      },
+      {
+        id: 'call-recording-current',
+        status: 'SCHEDULED',
+        externalBotId: null,
+      },
+    ]);
+
+    const result = await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'bot.status_change',
+        data: {
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyCallRecordingId: 'call-recording-current',
+            },
+          },
+          status: {
+            code: 'in_call_recording',
+          },
+        },
+      },
+    });
+
+    expect(result).toEqual({
+      status: 'updated',
+      event: 'bot.status_change',
+      callRecordingId: 'call-recording-current',
+      callRecordingStatus: 'RECORDING',
+    });
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-current',
+        data: {
+          status: 'RECORDING',
+          externalBotId: 'recall-bot-1',
+        },
+      },
+    ]);
+  });
+
   it('falls back to external bot id matching when metadata is absent', async () => {
     const client = new FakeCoreApiClient([
       {

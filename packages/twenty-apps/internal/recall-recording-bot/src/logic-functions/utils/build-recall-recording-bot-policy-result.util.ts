@@ -1,5 +1,5 @@
+import { RECALL_RECORDING_BOT_PREFERENCES } from 'src/logic-functions/constants/recall-recording-bot-preferences';
 import { type RecallRecordingBotPreference } from 'src/logic-functions/types/recall-recording-bot-preference.type';
-import { RECALL_RECORDING_BOT_PREFERENCES } from 'src/logic-functions/types/recall-recording-bot-preferences';
 import { type RecallRecordingBotPolicyCalendarEventInput } from 'src/logic-functions/types/recall-recording-bot-policy-calendar-event-input.type';
 import { type RecallRecordingBotPolicyResultForCalendarEvent } from 'src/logic-functions/types/recall-recording-bot-policy-result-for-calendar-event.type';
 import { computeRealMeetingKey } from 'src/logic-functions/utils/compute-real-meeting-key.util';
@@ -17,7 +17,8 @@ export const buildRecallRecordingBotPolicyResult = (
     now,
   }: BuildRecallRecordingBotPolicyResultContext,
 ): RecallRecordingBotPolicyResultForCalendarEvent => {
-  const conferenceLinkUrl = calendarEvent.conferenceLink?.primaryLinkUrl ?? null;
+  const conferenceLinkUrl =
+    calendarEvent.conferenceLink?.primaryLinkUrl ?? null;
 
   const realMeetingKey = computeRealMeetingKey({
     calendarEventId: calendarEvent.id,
@@ -33,10 +34,9 @@ export const buildRecallRecordingBotPolicyResult = (
       participant.workspaceMemberId === null ||
       participant.workspaceMemberId === undefined,
   );
-  const recallRecordingBotPreference =
-    normalizeRecallRecordingBotPreference(
-      calendarEvent.recallRecordingBotPreference,
-    );
+  const recallRecordingBotPreference = normalizeRecallRecordingBotPreference(
+    calendarEvent.recallRecordingBotPreference,
+  );
 
   const policyResult = resolveRecallRecordingBotPolicyResult({
     input: {
