@@ -44,6 +44,40 @@ const getJoinColumnNameForRelationField = (
   );
 };
 
+// The diff is keyed by relation field name (e.g. company) for the timeline,
+// but workflow database-event triggers and webhooks were historically
+// configured with join column names (e.g. companyId). Expose both in
+// updatedFields so existing configurations keep matching.
+export const computeUpdatedFieldsFromDiff = (
+  diff: Record<string, unknown>,
+  objectMetadataItem: FlatObjectMetadata,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+): string[] => {
+  const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+    flatFieldMetadataMaps,
+    objectMetadataItem,
+  );
+
+  return Object.keys(diff).flatMap((diffKey) => {
+    const fieldId = fieldIdByName[diffKey];
+
+    if (!isDefined(fieldId)) {
+      return [diffKey];
+    }
+
+    const field = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: fieldId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+
+    if (isDefined(field) && isManyToOneRelationField(field)) {
+      return [diffKey, getJoinColumnNameForRelationField(field)];
+    }
+
+    return [diffKey];
+  });
+};
+
 export const objectRecordChangedValues = (
   oldRecord: Partial<ObjectRecord>,
   newRecord: Partial<ObjectRecord>,
