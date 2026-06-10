@@ -141,7 +141,7 @@ export const RelationFromManyFieldDisplay = () => {
         setLocallyDeletedIds((prevIds) => [...prevIds, destroyedId]);
       }
     },
-    objectMetadataItemId: listenObjectMetadataId ?? '',
+    objectMetadataItemId: listenObjectMetadataId,
   });
 
   const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
