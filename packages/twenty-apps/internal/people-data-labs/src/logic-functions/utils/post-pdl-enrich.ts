@@ -66,24 +66,24 @@ export const postPdlBulkEnrich = async <TData>({
     return failAll({ message, httpStatus: response.status });
   }
 
-  const items = Array.isArray(json)
+  const responseItems = Array.isArray(json)
     ? json
     : isObject(json) && Array.isArray((json as Record<string, unknown>).responses)
       ? ((json as Record<string, unknown>).responses as unknown[])
       : [];
 
-  if (items.length !== requests.length) {
+  if (responseItems.length !== requests.length) {
     return failAll({
-      message: `People Data Labs returned ${items.length} results for ${requests.length} requests (HTTP ${response.status}).`,
+      message: `People Data Labs returned ${responseItems.length} results for ${requests.length} requests (HTTP ${response.status}).`,
       httpStatus: response.status,
     });
   }
 
-  return requests.map((params, index) =>
+  return requests.map((requestParams, index) =>
     parsePdlItem<TData>({
-      item: items[index],
-      minLikelihood: isNumber(params.min_likelihood)
-        ? params.min_likelihood
+      item: responseItems[index],
+      requestedMinLikelihood: isNumber(requestParams.min_likelihood)
+        ? requestParams.min_likelihood
         : undefined,
     }),
   );

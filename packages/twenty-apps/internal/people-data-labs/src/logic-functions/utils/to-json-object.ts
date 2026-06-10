@@ -7,8 +7,9 @@ export const toJsonObject = (
     return undefined;
   }
 
-  const prototype = Object.getPrototypeOf(value);
-  const isPlainObject = prototype === Object.prototype || prototype === null;
+  const valuePrototype = Object.getPrototypeOf(value);
+  const isPlainObject =
+    valuePrototype === Object.prototype || valuePrototype === null;
   if (!isPlainObject) {
     return undefined;
   }

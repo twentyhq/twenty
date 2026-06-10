@@ -33,21 +33,21 @@ const collectErrorText = (error: unknown, depth = 0): string => {
     return String(error);
   }
 
-  const record = error as Record<string, unknown>;
+  const errorObject = error as Record<string, unknown>;
   const textFragments: string[] = [];
 
-  if (typeof record.message === 'string') {
-    textFragments.push(record.message);
+  if (typeof errorObject.message === 'string') {
+    textFragments.push(errorObject.message);
   }
 
-  if (Array.isArray(record.graphQLErrors)) {
-    for (const graphQLError of record.graphQLErrors) {
+  if (Array.isArray(errorObject.graphQLErrors)) {
+    for (const graphQLError of errorObject.graphQLErrors) {
       textFragments.push(collectErrorText(graphQLError, depth + 1));
     }
   }
 
-  if (isObject(record.extensions)) {
-    const extensions = record.extensions as Record<string, unknown>;
+  if (isObject(errorObject.extensions)) {
+    const extensions = errorObject.extensions as Record<string, unknown>;
     if (typeof extensions.code === 'string') {
       textFragments.push(extensions.code);
     }
@@ -56,8 +56,8 @@ const collectErrorText = (error: unknown, depth = 0): string => {
     }
   }
 
-  if (isDefined(record.cause)) {
-    textFragments.push(collectErrorText(record.cause, depth + 1));
+  if (isDefined(errorObject.cause)) {
+    textFragments.push(collectErrorText(errorObject.cause, depth + 1));
   }
 
   textFragments.push(stringifyWithoutThrowingOnCycles(error));
@@ -66,9 +66,9 @@ const collectErrorText = (error: unknown, depth = 0): string => {
 };
 
 export const isUniqueViolationError = (error: unknown): boolean => {
-  const lowerCaseText = collectErrorText(error).toLowerCase();
+  const lowerCaseErrorText = collectErrorText(error).toLowerCase();
 
   return DUPLICATE_VIOLATION_PHRASES.some((phrase) =>
-    lowerCaseText.includes(phrase),
+    lowerCaseErrorText.includes(phrase),
   );
 };

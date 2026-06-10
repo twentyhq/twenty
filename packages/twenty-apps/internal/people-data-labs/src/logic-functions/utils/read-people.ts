@@ -41,7 +41,8 @@ export const readPeople = async ({
   return edges
     .map((edge) => edge?.node)
     .filter(
-      (node): node is PersonNode =>
-        isObject(node) && isNonEmptyString((node as { id?: unknown }).id),
+      (personNode): personNode is PersonNode =>
+        isObject(personNode) &&
+        isNonEmptyString((personNode as { id?: unknown }).id),
     );
 };

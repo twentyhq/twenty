@@ -1,6 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type BulkEnrichInput } from 'src/types/bulk-enrich-input';
+import { type CompanyIdByMatchKeyCache } from 'src/types/company-id-by-match-key-cache';
 import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
 
 export type BatchEnrichmentAdapter<TNode, TData, TParams> = {
@@ -22,6 +23,7 @@ export type BatchEnrichmentAdapter<TNode, TData, TParams> = {
     node: TNode;
     outcome: { likelihood?: number; data: TData };
     enrichedAt: string;
+    companyIdByMatchKeyCache: CompanyIdByMatchKeyCache;
   }) => Promise<Record<string, unknown>>;
   updateOne: (args: {
     client: CoreApiClient;

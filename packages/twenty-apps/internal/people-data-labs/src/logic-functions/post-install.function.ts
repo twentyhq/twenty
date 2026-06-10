@@ -10,7 +10,7 @@ export default definePostInstallLogicFunction({
   universalIdentifier: PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.postInstall,
   name: 'post-install',
   description:
-    'Seeds the default People Data Labs enrichment workflows on install.',
+    'Post-install hook for the People Data Labs app (workflow seeding is not currently wired up).',
   timeoutSeconds: 30,
   handler,
   shouldRunSynchronously: true,

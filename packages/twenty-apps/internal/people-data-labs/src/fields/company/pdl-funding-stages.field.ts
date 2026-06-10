@@ -23,6 +23,6 @@ export default defineField({
   isNullable: true,
   options: buildSelectOptions({
     meta: FUNDING_STAGE_OPTIONS,
-    ids: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.fundingStage,
+    ids: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.companyFundingStages,
   }),
 });

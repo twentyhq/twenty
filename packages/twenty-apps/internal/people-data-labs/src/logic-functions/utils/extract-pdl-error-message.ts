@@ -2,15 +2,17 @@ import { isNonEmptyString, isObject, isString } from '@sniptt/guards';
 
 import { isDefined } from 'src/utils/is-defined';
 
-const messageFromValue = (value: unknown): string | undefined => {
-  if (isNonEmptyString(value)) {
-    return value;
+const extractMessageFromValue = (
+  messageValue: unknown,
+): string | undefined => {
+  if (isNonEmptyString(messageValue)) {
+    return messageValue;
   }
 
-  if (Array.isArray(value)) {
-    const joined = value.filter(isString).join('; ');
+  if (Array.isArray(messageValue)) {
+    const joinedMessages = messageValue.filter(isString).join('; ');
 
-    return isNonEmptyString(joined) ? joined : undefined;
+    return isNonEmptyString(joinedMessages) ? joinedMessages : undefined;
   }
 
   return undefined;
@@ -26,18 +28,19 @@ export const extractPdlErrorMessage = ({
   const errorField = json.error;
 
   if (isObject(errorField)) {
-    const fromErrorObject = messageFromValue(
+    const messageFromErrorObject = extractMessageFromValue(
       (errorField as Record<string, unknown>).message,
     );
-    if (isDefined(fromErrorObject)) {
-      return fromErrorObject;
+    if (isDefined(messageFromErrorObject)) {
+      return messageFromErrorObject;
     }
   }
 
-  const fromTopLevel =
-    messageFromValue(errorField) ?? messageFromValue(json.message);
-  if (isDefined(fromTopLevel)) {
-    return fromTopLevel;
+  const messageFromTopLevelField =
+    extractMessageFromValue(errorField) ??
+    extractMessageFromValue(json.message);
+  if (isDefined(messageFromTopLevelField)) {
+    return messageFromTopLevelField;
   }
 
   return `PDL request failed (HTTP ${httpStatus}).`;

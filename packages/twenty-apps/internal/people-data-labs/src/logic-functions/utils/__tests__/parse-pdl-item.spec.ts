@@ -34,7 +34,7 @@ describe('parsePdlItem', () => {
     expect(
       parsePdlItem({
         item: { status: 200, likelihood: 3, data: { id: 'x' } },
-        minLikelihood: 6,
+        requestedMinLikelihood: 6,
       }),
     ).toEqual({ outcome: 'not_found', httpStatus: 200 });
   });
@@ -43,7 +43,7 @@ describe('parsePdlItem', () => {
     expect(
       parsePdlItem({
         item: { status: 200, likelihood: 6, data: { id: 'x' } },
-        minLikelihood: 6,
+        requestedMinLikelihood: 6,
       }),
     ).toMatchObject({ outcome: 'matched', likelihood: 6 });
   });

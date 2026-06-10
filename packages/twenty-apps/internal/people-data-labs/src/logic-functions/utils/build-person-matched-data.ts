@@ -8,6 +8,7 @@ import { isEmptyPhones } from 'src/logic-functions/utils/is-empty-phones';
 import { isEmptyText } from 'src/logic-functions/utils/is-empty-text';
 import { mapPerson } from 'src/logic-functions/utils/map-person';
 import { pickWritableStandard } from 'src/logic-functions/utils/pick-writable-standard';
+import { type CompanyIdByMatchKeyCache } from 'src/types/company-id-by-match-key-cache';
 import { type PdlPersonData } from 'src/types/pdl-person-data';
 import { type PersonNode } from 'src/types/person-node';
 import { isDefined } from 'src/utils/is-defined';
@@ -26,11 +27,13 @@ export const buildPersonMatchedData = async ({
   node,
   outcome,
   enrichedAt,
+  companyIdByMatchKeyCache,
 }: {
   client: CoreApiClient;
   node: PersonNode;
   outcome: { likelihood?: number; data: PdlPersonData };
   enrichedAt: string;
+  companyIdByMatchKeyCache: CompanyIdByMatchKeyCache;
 }): Promise<Record<string, unknown>> => {
   const mapped = mapPerson(outcome.data);
   const writableStandard = pickWritableStandard({
@@ -41,7 +44,11 @@ export const buildPersonMatchedData = async ({
 
   const currentCompanyId = isDefined(node.company?.id)
     ? undefined
-    : await findOrCreateCurrentCompany({ client, data: outcome.data });
+    : await findOrCreateCurrentCompany({
+        client,
+        personData: outcome.data,
+        companyIdByMatchKeyCache,
+      });
 
   return pruneUndefined({
     ...writableStandard,

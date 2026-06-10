@@ -8,10 +8,10 @@ const ASSUMED_SUCCESS_STATUS_WHEN_MISSING = 200;
 
 export const parsePdlItem = <TData>({
   item,
-  minLikelihood,
+  requestedMinLikelihood,
 }: {
   item: unknown;
-  minLikelihood?: number;
+  requestedMinLikelihood?: number;
 }): PdlEnrichResult<TData> => {
   if (!isObject(item)) {
     return {
@@ -21,42 +21,44 @@ export const parsePdlItem = <TData>({
     };
   }
 
-  const record = item as Record<string, unknown>;
-  const status = isNumber(record.status)
-    ? record.status
+  const responseItem = item as Record<string, unknown>;
+  const httpStatus = isNumber(responseItem.status)
+    ? responseItem.status
     : ASSUMED_SUCCESS_STATUS_WHEN_MISSING;
 
-  if (status === 404) {
+  if (httpStatus === 404) {
     return { outcome: 'not_found', httpStatus: 404 };
   }
 
-  if (status < 200 || status >= 300) {
+  if (httpStatus < 200 || httpStatus >= 300) {
     return {
       outcome: 'error',
-      httpStatus: status,
-      message: extractPdlErrorMessage({ json: record, httpStatus: status }),
+      httpStatus,
+      message: extractPdlErrorMessage({ json: responseItem, httpStatus }),
     };
   }
 
-  if (!isObject(record.data)) {
-    return { outcome: 'not_found', httpStatus: status };
+  if (!isObject(responseItem.data)) {
+    return { outcome: 'not_found', httpStatus };
   }
 
-  const likelihood = isNumber(record.likelihood) ? record.likelihood : undefined;
+  const matchLikelihood = isNumber(responseItem.likelihood)
+    ? responseItem.likelihood
+    : undefined;
 
-  const isBelowRequestedThreshold =
-    isDefined(minLikelihood) &&
-    isDefined(likelihood) &&
-    likelihood < minLikelihood;
+  const isMatchBelowRequestedThreshold =
+    isDefined(requestedMinLikelihood) &&
+    isDefined(matchLikelihood) &&
+    matchLikelihood < requestedMinLikelihood;
 
-  if (isBelowRequestedThreshold) {
-    return { outcome: 'not_found', httpStatus: status };
+  if (isMatchBelowRequestedThreshold) {
+    return { outcome: 'not_found', httpStatus };
   }
 
   return {
     outcome: 'matched',
-    httpStatus: status,
-    likelihood,
-    data: record.data as TData,
+    httpStatus,
+    likelihood: matchLikelihood,
+    data: responseItem.data as TData,
   };
 };

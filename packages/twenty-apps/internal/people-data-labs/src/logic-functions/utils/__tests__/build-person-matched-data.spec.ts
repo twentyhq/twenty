@@ -24,6 +24,7 @@ describe('buildPersonMatchedData', () => {
         },
       },
       enrichedAt: ENRICHED_AT,
+      companyIdByMatchKeyCache: new Map(),
     });
 
     expect(data.name).toEqual({ firstName: 'Jane', lastName: 'Doe' });
@@ -53,6 +54,7 @@ describe('buildPersonMatchedData', () => {
         },
       },
       enrichedAt: ENRICHED_AT,
+      companyIdByMatchKeyCache: new Map(),
     });
 
     expect(data.companyId).toBe('co-new');

@@ -6,26 +6,28 @@ const NULL_COORDINATES = { lat: null, lng: null } as const;
 export const parseGeo = (
   geo: unknown,
 ): { lat: number | null; lng: number | null } => {
-  const value = toText(geo);
+  const geoText = toText(geo);
 
-  if (!isDefined(value)) {
+  if (!isDefined(geoText)) {
     return { ...NULL_COORDINATES };
   }
 
-  const parts = value.split(',');
-  if (parts.length !== 2) {
+  const latitudeAndLongitudeParts = geoText.split(',');
+  if (latitudeAndLongitudeParts.length !== 2) {
     return { ...NULL_COORDINATES };
   }
 
-  const lat = Number.parseFloat(parts[0]);
-  const lng = Number.parseFloat(parts[1]);
+  const latitude = Number.parseFloat(latitudeAndLongitudeParts[0]);
+  const longitude = Number.parseFloat(latitudeAndLongitudeParts[1]);
 
-  const isLatInRange = Number.isFinite(lat) && lat >= -90 && lat <= 90;
-  const isLngInRange = Number.isFinite(lng) && lng >= -180 && lng <= 180;
+  const isLatitudeInRange =
+    Number.isFinite(latitude) && latitude >= -90 && latitude <= 90;
+  const isLongitudeInRange =
+    Number.isFinite(longitude) && longitude >= -180 && longitude <= 180;
 
-  if (!isLatInRange || !isLngInRange) {
+  if (!isLatitudeInRange || !isLongitudeInRange) {
     return { ...NULL_COORDINATES };
   }
 
-  return { lat, lng };
+  return { lat: latitude, lng: longitude };
 };

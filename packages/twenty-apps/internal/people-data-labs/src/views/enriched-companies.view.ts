@@ -63,6 +63,7 @@ export default defineView({
     { universalIdentifier: 'a7d07429-0c5b-4b04-a752-a243db5fe92d', fieldMetadataUniversalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.company.pdlNaics, position: 43, isVisible: true },
     { universalIdentifier: 'fe01f70a-e281-4d2e-8674-580db30f6c96', fieldMetadataUniversalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.company.pdlSic, position: 44, isVisible: true },
     { universalIdentifier: '7a69eeb6-c74b-40a8-b692-28f0fc289f42', fieldMetadataUniversalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.company.pdlEmployeeCountByCountry, position: 45, isVisible: true },
-    { universalIdentifier: 'd647bf86-f3e6-44ae-8bb3-68d444ca7608', fieldMetadataUniversalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.company.pdlRawPayload, position: 46, isVisible: true },
+    { universalIdentifier: 'aa9ac27c-8281-4a8e-ae32-33ccad4e5207', fieldMetadataUniversalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.company.pdlLegalName, position: 46, isVisible: true },
+    { universalIdentifier: 'd647bf86-f3e6-44ae-8bb3-68d444ca7608', fieldMetadataUniversalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.company.pdlRawPayload, position: 47, isVisible: true },
   ],
 });

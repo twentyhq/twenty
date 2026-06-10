@@ -16,6 +16,8 @@ const filterOf = (request: unknown) =>
 const createDataOf = (request: unknown) =>
   (request as CreateCompanyRequest).createCompany.__args.data;
 
+const newCache = () => new Map<string, string | undefined>();
+
 describe('findOrCreateCurrentCompany', () => {
   it('returns undefined and issues no calls when PDL gives no identifiers', async () => {
     const query = vi.fn();
@@ -24,7 +26,8 @@ describe('findOrCreateCurrentCompany', () => {
 
     const result = await findOrCreateCurrentCompany({
       client,
-      data: {} as PdlPersonData,
+      personData: {} as PdlPersonData,
+      companyIdByMatchKeyCache: newCache(),
     });
 
     expect(result).toBeUndefined();
@@ -41,7 +44,8 @@ describe('findOrCreateCurrentCompany', () => {
 
     const result = await findOrCreateCurrentCompany({
       client,
-      data: { job_company_id: 'pdl-co-1' } as PdlPersonData,
+      personData: { job_company_id: 'pdl-co-1' } as PdlPersonData,
+      companyIdByMatchKeyCache: newCache(),
     });
 
     expect(result).toBe('co-existing');
@@ -55,7 +59,8 @@ describe('findOrCreateCurrentCompany', () => {
 
     const result = await findOrCreateCurrentCompany({
       client,
-      data: { job_company_id: 'pdl-co-1' } as PdlPersonData,
+      personData: { job_company_id: 'pdl-co-1' } as PdlPersonData,
+      companyIdByMatchKeyCache: newCache(),
     });
 
     expect(result).toBeUndefined();
@@ -72,9 +77,10 @@ describe('findOrCreateCurrentCompany', () => {
 
     const result = await findOrCreateCurrentCompany({
       client,
-      data: {
+      personData: {
         job_company_name: 'Acme',
       } as PdlPersonData,
+      companyIdByMatchKeyCache: newCache(),
     });
 
     expect(result).toBe('co-existing');
@@ -93,11 +99,12 @@ describe('findOrCreateCurrentCompany', () => {
 
     const result = await findOrCreateCurrentCompany({
       client,
-      data: {
+      personData: {
         job_company_id: 'pdl-co-2',
         job_company_name: 'Acme',
         job_company_website: 'acme.com',
       } as PdlPersonData,
+      companyIdByMatchKeyCache: newCache(),
     });
 
     expect(result).toBe('co-new');
@@ -112,9 +119,10 @@ describe('findOrCreateCurrentCompany', () => {
     await expect(
       findOrCreateCurrentCompany({
         client,
-        data: {
+        personData: {
           job_company_name: 'Acme',
         } as PdlPersonData,
+        companyIdByMatchKeyCache: newCache(),
       }),
     ).rejects.toThrow('Failed to create company: no id returned.');
   });
@@ -139,10 +147,11 @@ describe('findOrCreateCurrentCompany', () => {
 
     const result = await findOrCreateCurrentCompany({
       client,
-      data: {
+      personData: {
         job_company_id: 'pdl-co-3',
         job_company_name: 'Acme',
       } as PdlPersonData,
+      companyIdByMatchKeyCache: newCache(),
     });
 
     expect(result).toBe('co-race');
@@ -156,10 +165,39 @@ describe('findOrCreateCurrentCompany', () => {
     await expect(
       findOrCreateCurrentCompany({
         client,
-        data: {
+        personData: {
           job_company_name: 'Acme',
         } as PdlPersonData,
+        companyIdByMatchKeyCache: newCache(),
       }),
     ).rejects.toThrow('network down');
+  });
+
+  it('reuses a cached company id for an identical company without re-querying', async () => {
+    const query = vi.fn(() =>
+      Promise.resolve({ companies: { edges: [{ node: { id: 'co-existing' } }] } }),
+    );
+    const mutation = vi.fn();
+    const client = { query, mutation } as unknown as CoreApiClient;
+    const companyIdByMatchKeyCache = newCache();
+    const personData = {
+      job_company_name: 'Acme',
+      job_company_website: 'acme.com',
+    } as PdlPersonData;
+
+    const first = await findOrCreateCurrentCompany({
+      client,
+      personData,
+      companyIdByMatchKeyCache,
+    });
+    const second = await findOrCreateCurrentCompany({
+      client,
+      personData,
+      companyIdByMatchKeyCache,
+    });
+
+    expect(first).toBe('co-existing');
+    expect(second).toBe('co-existing');
+    expect(query).toHaveBeenCalledTimes(1);
   });
 });

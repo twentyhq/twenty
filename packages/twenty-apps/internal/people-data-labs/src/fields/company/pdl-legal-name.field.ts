@@ -7,14 +7,13 @@ import {
 import { PDL_FIELD_UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers';
 
 export default defineField({
-  universalIdentifier:
-    PDL_FIELD_UNIVERSAL_IDENTIFIERS.company.pdlAffiliatedProfiles,
+  universalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.company.pdlLegalName,
   objectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
-  type: FieldType.ARRAY,
-  name: 'pdlAffiliatedProfiles',
-  label: 'Profiles',
-  description: 'Web and social profile URLs returned by People Data Labs.',
-  icon: 'IconWorldWww',
+  type: FieldType.TEXT,
+  name: 'pdlLegalName',
+  label: 'Legal Name',
+  description: 'Registered legal entity name returned by People Data Labs.',
+  icon: 'IconBuildingBank',
   isNullable: true,
 });

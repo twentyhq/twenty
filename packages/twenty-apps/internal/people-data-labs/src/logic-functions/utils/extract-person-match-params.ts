@@ -25,31 +25,32 @@ export const extractPersonMatchParams = ({
     };
   }
 
-  const profile = toText(node.linkedinLink?.primaryLinkUrl);
-  const email = toText(node.emails?.primaryEmail);
-  const name = buildPersonNameParam({
+  const linkedinProfileUrl = toText(node.linkedinLink?.primaryLinkUrl);
+  const primaryEmail = toText(node.emails?.primaryEmail);
+  const fullName = buildPersonNameParam({
     firstName: node.name?.firstName,
     lastName: node.name?.lastName,
   });
-  const company = toText(node.company?.name);
-  const hasStrongIdentifier = isDefined(profile) || isDefined(email);
+  const companyName = toText(node.company?.name);
+  const hasStrongIdentifier =
+    isDefined(linkedinProfileUrl) || isDefined(primaryEmail);
 
   const nameIsUsableAsMatchSignal =
-    isDefined(name) && (hasStrongIdentifier || isDefined(company));
+    isDefined(fullName) && (hasStrongIdentifier || isDefined(companyName));
 
-  const matchParams = pruneUndefined({
-    profile,
-    email,
-    name: nameIsUsableAsMatchSignal ? name : undefined,
-    company: nameIsUsableAsMatchSignal ? company : undefined,
+  const personMatchParams = pruneUndefined({
+    profile: linkedinProfileUrl,
+    email: primaryEmail,
+    name: nameIsUsableAsMatchSignal ? fullName : undefined,
+    company: nameIsUsableAsMatchSignal ? companyName : undefined,
   });
 
-  if (Object.keys(matchParams).length === 0) {
+  if (Object.keys(personMatchParams).length === 0) {
     return undefined;
   }
 
   return {
-    ...matchParams,
+    ...personMatchParams,
     minLikelihood: resolveMinLikelihood({
       inputMinLikelihood: input.minLikelihood,
       hasStrongIdentifier,

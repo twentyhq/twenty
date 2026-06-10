@@ -4,68 +4,104 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { buildCompanyCreateData } from 'src/logic-functions/utils/build-company-create-data';
 import { buildCompanyMatchKeys } from 'src/logic-functions/utils/build-company-match-keys';
 import { findCompanyId } from 'src/logic-functions/utils/find-company-id';
+import { type CompanyIdByMatchKeyCache } from 'src/types/company-id-by-match-key-cache';
+import { type CompanyMatchKeys } from 'src/types/company-match-keys';
 import { type PdlPersonData } from 'src/types/pdl-person-data';
 import { isDefined } from 'src/utils/is-defined';
 import { isUniqueViolationError } from 'src/utils/is-unique-violation-error';
 
 type CreateCompanyResult = { createCompany?: { id?: string } };
 
-export const findOrCreateCurrentCompany = async ({
+const findOrCreateUncachedCompany = async ({
   client,
-  data,
+  personData,
+  companyMatchKeys,
 }: {
   client: CoreApiClient;
-  data: PdlPersonData;
+  personData: PdlPersonData;
+  companyMatchKeys: CompanyMatchKeys;
 }): Promise<string | undefined> => {
-  const matchKeys = buildCompanyMatchKeys(data);
-
-  const hasAnyMatchKey =
-    isNonEmptyString(matchKeys.pdlId) ||
-    isNonEmptyString(matchKeys.website) ||
-    isNonEmptyString(matchKeys.linkedinUrl) ||
-    isNonEmptyString(matchKeys.name);
-
-  if (!hasAnyMatchKey) {
-    return undefined;
-  }
-
-  const existingId = await findCompanyId({ client, matchKeys });
-  if (isDefined(existingId)) {
-    return existingId;
+  const existingCompanyId = await findCompanyId({
+    client,
+    matchKeys: companyMatchKeys,
+  });
+  if (isDefined(existingCompanyId)) {
+    return existingCompanyId;
   }
 
   const canCreateNewCompany =
-    isNonEmptyString(matchKeys.name) || isNonEmptyString(matchKeys.website);
+    isNonEmptyString(companyMatchKeys.name) ||
+    isNonEmptyString(companyMatchKeys.website);
 
   if (!canCreateNewCompany) {
     return undefined;
   }
 
   try {
-    const result = (await client.mutation({
+    const createCompanyResult = (await client.mutation({
       createCompany: {
-        __args: { data: buildCompanyCreateData(data) },
+        __args: { data: buildCompanyCreateData(personData) },
         id: true,
       },
     })) as CreateCompanyResult;
 
-    const companyId = result.createCompany?.id;
+    const createdCompanyId = createCompanyResult.createCompany?.id;
 
-    if (!isDefined(companyId)) {
+    if (!isDefined(createdCompanyId)) {
       throw new Error('Failed to create company: no id returned.');
     }
 
-    return companyId;
-  } catch (createError) {
-    if (!isUniqueViolationError(createError)) {
-      throw createError;
+    return createdCompanyId;
+  } catch (createCompanyError) {
+    if (!isUniqueViolationError(createCompanyError)) {
+      throw createCompanyError;
     }
 
-    const raceWinnerId = await findCompanyId({ client, matchKeys });
-    if (isDefined(raceWinnerId)) {
-      return raceWinnerId;
+    const raceWinnerCompanyId = await findCompanyId({
+      client,
+      matchKeys: companyMatchKeys,
+    });
+    if (isDefined(raceWinnerCompanyId)) {
+      return raceWinnerCompanyId;
     }
 
-    throw createError;
+    throw createCompanyError;
   }
+};
+
+export const findOrCreateCurrentCompany = async ({
+  client,
+  personData,
+  companyIdByMatchKeyCache,
+}: {
+  client: CoreApiClient;
+  personData: PdlPersonData;
+  companyIdByMatchKeyCache: CompanyIdByMatchKeyCache;
+}): Promise<string | undefined> => {
+  const companyMatchKeys = buildCompanyMatchKeys(personData);
+
+  const hasAnyCompanyMatchKey =
+    isNonEmptyString(companyMatchKeys.pdlId) ||
+    isNonEmptyString(companyMatchKeys.website) ||
+    isNonEmptyString(companyMatchKeys.linkedinUrl) ||
+    isNonEmptyString(companyMatchKeys.name);
+
+  if (!hasAnyCompanyMatchKey) {
+    return undefined;
+  }
+
+  const companyMatchKeyCacheKey = JSON.stringify(companyMatchKeys);
+  if (companyIdByMatchKeyCache.has(companyMatchKeyCacheKey)) {
+    return companyIdByMatchKeyCache.get(companyMatchKeyCacheKey);
+  }
+
+  const resolvedCompanyId = await findOrCreateUncachedCompany({
+    client,
+    personData,
+    companyMatchKeys,
+  });
+
+  companyIdByMatchKeyCache.set(companyMatchKeyCacheKey, resolvedCompanyId);
+
+  return resolvedCompanyId;
 };

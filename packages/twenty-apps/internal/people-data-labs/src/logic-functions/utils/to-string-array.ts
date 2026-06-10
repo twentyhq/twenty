@@ -8,21 +8,21 @@ export const toStringArray = (value: unknown): string[] | undefined => {
     return undefined;
   }
 
-  const items: string[] = [];
+  const uniqueStrings: string[] = [];
   const seenLowercaseValues = new Set<string>();
 
   for (const entry of value) {
-    const text = toText(entry);
-    if (!isDefined(text)) {
+    const stringValue = toText(entry);
+    if (!isDefined(stringValue)) {
       continue;
     }
 
-    const lowercaseValue = text.toLowerCase();
+    const lowercaseValue = stringValue.toLowerCase();
     if (!seenLowercaseValues.has(lowercaseValue)) {
       seenLowercaseValues.add(lowercaseValue);
-      items.push(text);
+      uniqueStrings.push(stringValue);
     }
   }
 
-  return isNonEmptyArray(items) ? items : undefined;
+  return isNonEmptyArray(uniqueStrings) ? uniqueStrings : undefined;
 };

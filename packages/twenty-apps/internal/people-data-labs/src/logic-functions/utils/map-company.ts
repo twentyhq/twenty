@@ -77,6 +77,7 @@ export const mapCompany = (data: PdlCompanyData): MappedRecord => {
       allowedValues: MIC_EXCHANGE_VALUES,
     }),
 
+    pdlLegalName: toText(data.legal_name),
     pdlHeadline: toText(data.headline),
     pdlSummary: toText(data.summary),
     pdlTicker: toText(data.ticker),

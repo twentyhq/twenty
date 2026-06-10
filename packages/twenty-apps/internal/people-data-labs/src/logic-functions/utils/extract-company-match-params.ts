@@ -24,19 +24,24 @@ export const extractCompanyMatchParams = ({
     };
   }
 
-  const website = toText(node.domainName?.primaryLinkUrl);
-  const profile = toText(node.linkedinLink?.primaryLinkUrl);
-  const name = toText(node.name);
-  const hasStrongIdentifier = isDefined(website) || isDefined(profile);
+  const websiteDomain = toText(node.domainName?.primaryLinkUrl);
+  const linkedinProfileUrl = toText(node.linkedinLink?.primaryLinkUrl);
+  const companyName = toText(node.name);
+  const hasStrongIdentifier =
+    isDefined(websiteDomain) || isDefined(linkedinProfileUrl);
 
-  const matchParams = pruneUndefined({ website, profile, name });
+  const companyMatchParams = pruneUndefined({
+    website: websiteDomain,
+    profile: linkedinProfileUrl,
+    name: companyName,
+  });
 
-  if (Object.keys(matchParams).length === 0) {
+  if (Object.keys(companyMatchParams).length === 0) {
     return undefined;
   }
 
   return {
-    ...matchParams,
+    ...companyMatchParams,
     minLikelihood: resolveMinLikelihood({
       inputMinLikelihood: input.minLikelihood,
       hasStrongIdentifier,

@@ -5,22 +5,22 @@ import { type PhonesValue } from 'src/types/phones-value';
 import { isDefined } from 'src/utils/is-defined';
 
 export const buildPhones = (
-  candidates: (string | null | undefined)[],
+  phoneCandidates: (string | null | undefined)[],
 ): PhonesValue | undefined => {
-  const numbers: string[] = [];
-  const seen = new Set<string>();
+  const uniquePhoneNumbers: string[] = [];
+  const seenPhoneNumbers = new Set<string>();
 
-  for (const candidate of candidates) {
-    const phone = toText(candidate);
-    if (!isDefined(phone) || seen.has(phone)) {
+  for (const candidate of phoneCandidates) {
+    const phoneNumber = toText(candidate);
+    if (!isDefined(phoneNumber) || seenPhoneNumbers.has(phoneNumber)) {
       continue;
     }
 
-    seen.add(phone);
-    numbers.push(phone);
+    seenPhoneNumbers.add(phoneNumber);
+    uniquePhoneNumbers.push(phoneNumber);
   }
 
-  const [primaryPhoneNumber, ...additional] = numbers;
+  const [primaryPhoneNumber, ...additionalPhoneNumbers] = uniquePhoneNumbers;
   if (!isDefined(primaryPhoneNumber)) {
     return undefined;
   }
@@ -29,9 +29,9 @@ export const buildPhones = (
     primaryPhoneNumber,
     primaryPhoneCountryCode: '',
     primaryPhoneCallingCode: '',
-    additionalPhones: isNonEmptyArray(additional)
-      ? additional.map((number) => ({
-          number,
+    additionalPhones: isNonEmptyArray(additionalPhoneNumbers)
+      ? additionalPhoneNumbers.map((phoneNumber) => ({
+          number: phoneNumber,
           countryCode: '',
           callingCode: '',
         }))

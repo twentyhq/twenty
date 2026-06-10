@@ -11,6 +11,7 @@ import { extractRecordIds } from 'src/logic-functions/utils/extract-record-ids';
 import { type BatchEnrichmentAdapter } from 'src/types/batch-enrichment-adapter';
 import { type BulkEnrichInput } from 'src/types/bulk-enrich-input';
 import { type BulkEnrichResult } from 'src/types/bulk-enrich-result';
+import { type CompanyIdByMatchKeyCache } from 'src/types/company-id-by-match-key-cache';
 import { type EnrichResult } from 'src/types/enrich-result';
 
 const PDL_BATCH_SIZE = 100;
@@ -26,6 +27,7 @@ export const runBatchEnrichment = async <TNode, TData, TParams>({
 }): Promise<BulkEnrichResult> => {
   const recordIds = Array.from(new Set(extractRecordIds(input.records)));
   const resultById = new Map<string, EnrichResult>();
+  const companyIdByMatchKeyCache: CompanyIdByMatchKeyCache = new Map();
 
   for (const recordIdsChunk of chunk({ items: recordIds, size: PDL_BATCH_SIZE })) {
     await enrichChunk({
@@ -34,6 +36,7 @@ export const runBatchEnrichment = async <TNode, TData, TParams>({
       input,
       adapter,
       resultById,
+      companyIdByMatchKeyCache,
     });
   }
 

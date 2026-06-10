@@ -9,14 +9,14 @@ export const pickWritableStandard = ({
   current: Record<string, unknown>;
   emptyChecks: Record<string, (current: unknown) => boolean>;
 }): Record<string, unknown> => {
-  const writable: Record<string, unknown> = {};
+  const writableFields: Record<string, unknown> = {};
 
-  for (const [key, value] of Object.entries(standard)) {
-    const isEmptyCheck = emptyChecks[key];
-    if (isDefined(isEmptyCheck) && isEmptyCheck(current[key])) {
-      writable[key] = value;
+  for (const [fieldName, fieldValue] of Object.entries(standard)) {
+    const isEmptyCheck = emptyChecks[fieldName];
+    if (isDefined(isEmptyCheck) && isEmptyCheck(current[fieldName])) {
+      writableFields[fieldName] = fieldValue;
     }
   }
 
-  return writable;
+  return writableFields;
 };
