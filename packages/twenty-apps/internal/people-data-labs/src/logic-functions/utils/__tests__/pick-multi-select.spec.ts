@@ -7,22 +7,22 @@ const LEVELS = new Set(['CXO', 'VP', 'DIRECTOR']);
 describe('pickMultiSelect', () => {
   it('keeps allowed values and drops unknown ones', () => {
     expect(
-      pickMultiSelect({ raws: ['cxo', 'vp', 'unknown'], allowedValues: LEVELS }),
+      pickMultiSelect({ rawValues: ['cxo', 'vp', 'unknown'], allowedValues: LEVELS }),
     ).toEqual(['CXO', 'VP']);
   });
 
   it('dedupes repeated values', () => {
     expect(
-      pickMultiSelect({ raws: ['cxo', 'cxo'], allowedValues: LEVELS }),
+      pickMultiSelect({ rawValues: ['cxo', 'cxo'], allowedValues: LEVELS }),
     ).toEqual(['CXO']);
   });
 
   it('returns undefined for a non-array or when nothing is valid', () => {
     expect(
-      pickMultiSelect({ raws: 'cxo', allowedValues: LEVELS }),
+      pickMultiSelect({ rawValues: 'cxo', allowedValues: LEVELS }),
     ).toBeUndefined();
     expect(
-      pickMultiSelect({ raws: ['unknown'], allowedValues: LEVELS }),
+      pickMultiSelect({ rawValues: ['unknown'], allowedValues: LEVELS }),
     ).toBeUndefined();
   });
 });

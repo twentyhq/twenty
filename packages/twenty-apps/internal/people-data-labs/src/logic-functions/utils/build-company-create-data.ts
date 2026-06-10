@@ -14,21 +14,21 @@ const INDUSTRY_VALUES = buildAllowedValues(INDUSTRY_OPTIONS);
 const SIZE_VALUES = buildAllowedValues(SIZE_OPTIONS);
 
 export const buildCompanyCreateData = (
-  data: PdlPersonData,
+  personData: PdlPersonData,
 ): Record<string, unknown> =>
   pruneUndefined<unknown>({
-    name: toText(data.job_company_name),
-    domainName: buildLinks({ url: normalizeDomain(data.job_company_website) }),
+    name: toText(personData.job_company_name),
+    domainName: buildLinks({ url: normalizeDomain(personData.job_company_website) }),
     linkedinLink: buildLinks({
-      url: normalizeLinkedinUrl(data.job_company_linkedin_url),
+      url: normalizeLinkedinUrl(personData.job_company_linkedin_url),
     }),
-    pdlId: toText(data.job_company_id),
+    pdlId: toText(personData.job_company_id),
     pdlIndustry: pickSelect({
-      raw: data.job_company_industry,
+      raw: personData.job_company_industry,
       allowedValues: INDUSTRY_VALUES,
     }),
     pdlSizeRange: pickSelect({
-      raw: data.job_company_size,
+      raw: personData.job_company_size,
       allowedValues: SIZE_VALUES,
       transform: sizeTransform,
     }),

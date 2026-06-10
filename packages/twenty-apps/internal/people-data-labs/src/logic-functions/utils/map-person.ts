@@ -35,97 +35,97 @@ const INFERRED_SALARY_VALUES = buildAllowedValues(INFERRED_SALARY_OPTIONS);
 const SEX_VALUES = buildAllowedValues(SEX_OPTIONS);
 const METRO_VALUES = buildAllowedValues(METRO_OPTIONS);
 
-export const mapPerson = (data: PdlPersonData): MappedRecord => {
-  const emailEntries = (data.emails ?? []).map((entry) =>
-    isString(entry) ? entry : entry.address,
+export const mapPerson = (personData: PdlPersonData): MappedRecord => {
+  const emailEntries = (personData.emails ?? []).map((rawEmail) =>
+    isString(rawEmail) ? rawEmail : rawEmail.address,
   );
 
   const standard = pruneUndefined({
     name: buildFullName({
-      firstName: data.first_name,
-      lastName: data.last_name,
-      fullName: data.full_name,
+      firstName: personData.first_name,
+      lastName: personData.last_name,
+      fullName: personData.full_name,
     }),
     emails: buildEmails([
-      data.work_email,
-      data.recommended_personal_email,
-      ...(data.personal_emails ?? []),
+      personData.work_email,
+      personData.recommended_personal_email,
+      ...(personData.personal_emails ?? []),
       ...emailEntries,
     ]),
-    phones: buildPhones([data.mobile_phone, ...(data.phone_numbers ?? [])]),
-    jobTitle: toText(data.job_title),
-    linkedinLink: buildLinks({ url: data.linkedin_url }),
+    phones: buildPhones([personData.mobile_phone, ...(personData.phone_numbers ?? [])]),
+    jobTitle: toText(personData.job_title),
+    linkedinLink: buildLinks({ url: personData.linkedin_url }),
   });
 
   const pdl = pruneUndefined({
-    pdlId: toText(data.id),
+    pdlId: toText(personData.id),
 
     pdlSeniority: pickMultiSelect({
-      raws: data.job_title_levels,
+      rawValues: personData.job_title_levels,
       allowedValues: SENIORITY_VALUES,
     }),
     pdlJobRole: pickSelect({
-      raw: data.job_title_role,
+      raw: personData.job_title_role,
       allowedValues: JOB_ROLE_VALUES,
     }),
     pdlJobTitleClass: pickSelect({
-      raw: data.job_title_class,
+      raw: personData.job_title_class,
       allowedValues: JOB_TITLE_CLASS_VALUES,
     }),
     pdlJobTitleSubRole: pickSelect({
-      raw: data.job_title_sub_role,
+      raw: personData.job_title_sub_role,
       allowedValues: JOB_TITLE_SUB_ROLE_VALUES,
     }),
     pdlIndustry: pickSelect({
-      raw: data.industry,
+      raw: personData.industry,
       allowedValues: INDUSTRY_VALUES,
     }),
     pdlInferredSalary: pickSelect({
-      raw: data.inferred_salary,
+      raw: personData.inferred_salary,
       allowedValues: INFERRED_SALARY_VALUES,
       transform: salaryTransform,
     }),
-    pdlSex: pickSelect({ raw: data.sex, allowedValues: SEX_VALUES }),
+    pdlSex: pickSelect({ raw: personData.sex, allowedValues: SEX_VALUES }),
     pdlLocationMetro: pickSelect({
-      raw: data.location_metro,
+      raw: personData.location_metro,
       allowedValues: METRO_VALUES,
     }),
 
-    pdlHeadline: toText(data.headline),
-    pdlSummary: toText(data.summary),
-    pdlJobSummary: toText(data.job_summary),
-    pdlJobOnetCode: toText(data.job_onet_code),
-    pdlLinkedinUsername: toText(data.linkedin_username),
+    pdlHeadline: toText(personData.headline),
+    pdlSummary: toText(personData.summary),
+    pdlJobSummary: toText(personData.job_summary),
+    pdlJobOnetCode: toText(personData.job_onet_code),
+    pdlLinkedinUsername: toText(personData.linkedin_username),
 
-    pdlYearsExperience: toNumber(data.inferred_years_experience),
-    pdlLinkedinConnections: toNumber(data.linkedin_connections),
-    pdlBirthYear: toNumber(data.birth_year),
+    pdlYearsExperience: toNumber(personData.inferred_years_experience),
+    pdlLinkedinConnections: toNumber(personData.linkedin_connections),
+    pdlBirthYear: toNumber(personData.birth_year),
 
-    pdlBirthDate: parsePartialDate(data.birth_date),
-    pdlJobStartDate: parsePartialDate(data.job_start_date),
+    pdlBirthDate: parsePartialDate(personData.birth_date),
+    pdlJobStartDate: parsePartialDate(personData.job_start_date),
 
-    pdlGithubUrl: buildLinks({ url: data.github_url }),
-    pdlTwitterUrl: buildLinks({ url: data.twitter_url }),
-    pdlFacebookUrl: buildLinks({ url: data.facebook_url }),
+    pdlGithubUrl: buildLinks({ url: personData.github_url }),
+    pdlTwitterUrl: buildLinks({ url: personData.twitter_url }),
+    pdlFacebookUrl: buildLinks({ url: personData.facebook_url }),
 
-    pdlSkills: toStringArray(data.skills),
-    pdlInterests: toStringArray(data.interests),
-    pdlNameAliases: toStringArray(data.name_aliases),
+    pdlSkills: toStringArray(personData.skills),
+    pdlInterests: toStringArray(personData.interests),
+    pdlNameAliases: toStringArray(personData.name_aliases),
 
-    pdlExperience: toJsonArray(data.experience),
-    pdlEducation: toJsonArray(data.education),
-    pdlCertifications: toJsonArray(data.certifications),
-    pdlProfiles: toJsonArray(data.profiles),
-    pdlLanguages: toJsonArray(data.languages),
+    pdlExperience: toJsonArray(personData.experience),
+    pdlEducation: toJsonArray(personData.education),
+    pdlCertifications: toJsonArray(personData.certifications),
+    pdlProfiles: toJsonArray(personData.profiles),
+    pdlLanguages: toJsonArray(personData.languages),
 
     pdlLocation: buildAddress({
-      street1: data.location_street_address,
-      street2: data.location_address_line_2,
-      city: data.location_locality,
-      postcode: data.location_postal_code,
-      state: data.location_region,
-      country: data.location_country,
-      geo: data.location_geo,
+      street1: personData.location_street_address,
+      street2: personData.location_address_line_2,
+      city: personData.location_locality,
+      postcode: personData.location_postal_code,
+      state: personData.location_region,
+      country: personData.location_country,
+      geo: personData.location_geo,
     }),
   });
 

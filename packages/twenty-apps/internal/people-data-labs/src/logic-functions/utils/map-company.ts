@@ -32,13 +32,13 @@ const LOCATION_CONTINENT_VALUES = buildAllowedValues(LOCATION_CONTINENT_OPTIONS)
 const MIC_EXCHANGE_VALUES = buildAllowedValues(MIC_EXCHANGE_OPTIONS);
 const FUNDING_STAGE_VALUES = buildAllowedValues(FUNDING_STAGE_OPTIONS);
 
-export const mapCompany = (data: PdlCompanyData): MappedRecord => {
-  const location = data.location ?? {};
+export const mapCompany = (companyData: PdlCompanyData): MappedRecord => {
+  const location = companyData.location ?? {};
 
   const standard = pruneUndefined({
-    name: toText(data.display_name) ?? toText(data.name),
-    domainName: buildLinks({ url: normalizeDomain(data.website) }),
-    linkedinLink: buildLinks({ url: normalizeLinkedinUrl(data.linkedin_url) }),
+    name: toText(companyData.display_name) ?? toText(companyData.name),
+    domainName: buildLinks({ url: normalizeDomain(companyData.website) }),
+    linkedinLink: buildLinks({ url: normalizeLinkedinUrl(companyData.linkedin_url) }),
     address: buildAddress({
       street1: location.street_address,
       street2: location.address_line_2,
@@ -51,16 +51,16 @@ export const mapCompany = (data: PdlCompanyData): MappedRecord => {
   });
 
   const pdl = pruneUndefined({
-    pdlId: toText(data.id),
+    pdlId: toText(companyData.id),
 
-    pdlIndustry: pickSelect({ raw: data.industry, allowedValues: INDUSTRY_VALUES }),
-    pdlIndustryDetail: toText(data.industry_v2),
+    pdlIndustry: pickSelect({ raw: companyData.industry, allowedValues: INDUSTRY_VALUES }),
+    pdlIndustryDetail: toText(companyData.industry_v2),
     pdlCompanyType: pickSelect({
-      raw: data.type,
+      raw: companyData.type,
       allowedValues: COMPANY_TYPE_VALUES,
     }),
     pdlSizeRange: pickSelect({
-      raw: data.size,
+      raw: companyData.size,
       allowedValues: SIZE_VALUES,
       transform: sizeTransform,
     }),
@@ -73,42 +73,42 @@ export const mapCompany = (data: PdlCompanyData): MappedRecord => {
       allowedValues: LOCATION_CONTINENT_VALUES,
     }),
     pdlMicExchange: pickSelect({
-      raw: data.mic_exchange,
+      raw: companyData.mic_exchange,
       allowedValues: MIC_EXCHANGE_VALUES,
     }),
 
-    pdlLegalName: toText(data.legal_name),
-    pdlHeadline: toText(data.headline),
-    pdlSummary: toText(data.summary),
-    pdlTicker: toText(data.ticker),
-    pdlLinkedinId: toText(data.linkedin_id),
+    pdlLegalName: toText(companyData.legal_name),
+    pdlHeadline: toText(companyData.headline),
+    pdlSummary: toText(companyData.summary),
+    pdlTicker: toText(companyData.ticker),
+    pdlLinkedinId: toText(companyData.linkedin_id),
 
-    pdlEmployeeCount: toNumber(data.employee_count),
-    pdlFoundedYear: toNumber(data.founded),
-    pdlNumberFundingRounds: toNumber(data.number_funding_rounds),
+    pdlEmployeeCount: toNumber(companyData.employee_count),
+    pdlFoundedYear: toNumber(companyData.founded),
+    pdlNumberFundingRounds: toNumber(companyData.number_funding_rounds),
 
-    pdlTotalFunding: buildCurrencyFromUsd(data.total_funding_raised),
+    pdlTotalFunding: buildCurrencyFromUsd(companyData.total_funding_raised),
     pdlLatestFundingStage: pickSelect({
-      raw: data.latest_funding_stage,
+      raw: companyData.latest_funding_stage,
       allowedValues: FUNDING_STAGE_VALUES,
     }),
     pdlFundingStages: pickMultiSelect({
-      raws: data.funding_stages,
+      rawValues: companyData.funding_stages,
       allowedValues: FUNDING_STAGE_VALUES,
     }),
-    pdlLastFundingDate: parsePartialDate(data.last_funding_date),
+    pdlLastFundingDate: parsePartialDate(companyData.last_funding_date),
 
-    pdlTwitterUrl: buildLinks({ url: data.twitter_url }),
-    pdlFacebookUrl: buildLinks({ url: data.facebook_url }),
+    pdlTwitterUrl: buildLinks({ url: companyData.twitter_url }),
+    pdlFacebookUrl: buildLinks({ url: companyData.facebook_url }),
 
-    pdlTags: toStringArray(data.tags),
-    pdlAlternativeNames: toStringArray(data.alternative_names),
-    pdlAlternativeDomains: toStringArray(data.alternative_domains),
-    pdlAffiliatedProfiles: toStringArray(data.profiles),
+    pdlTags: toStringArray(companyData.tags),
+    pdlAlternativeNames: toStringArray(companyData.alternative_names),
+    pdlAlternativeDomains: toStringArray(companyData.alternative_domains),
+    pdlAffiliatedProfiles: toStringArray(companyData.profiles),
 
-    pdlNaics: toJsonArray(data.naics),
-    pdlSic: toJsonArray(data.sic),
-    pdlEmployeeCountByCountry: toJsonObject(data.employee_count_by_country),
+    pdlNaics: toJsonArray(companyData.naics),
+    pdlSic: toJsonArray(companyData.sic),
+    pdlEmployeeCountByCountry: toJsonObject(companyData.employee_count_by_country),
   });
 
   return { standard, pdl };

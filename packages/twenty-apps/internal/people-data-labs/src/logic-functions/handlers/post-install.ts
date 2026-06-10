@@ -48,10 +48,11 @@ export const postInstallCore = async ({
 
       seededWorkflows.push(result);
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
 
       console.warn(
-        `[people-data-labs] Failed to seed "${seed.workflowName}": ${message}`,
+        `[people-data-labs] Failed to seed "${seed.workflowName}": ${errorMessage}`,
         error,
       );
 
@@ -59,7 +60,7 @@ export const postInstallCore = async ({
         objectNameSingular: seed.objectNameSingular,
         workflowName: seed.workflowName,
         status: 'failed',
-        error: message,
+        error: errorMessage,
       });
     }
   }

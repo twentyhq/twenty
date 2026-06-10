@@ -25,7 +25,7 @@ export const buildFullName = ({
     return undefined;
   }
 
-  const [head, ...rest] = full.split(WHITESPACE_REGEX);
+  const [firstNameToken, ...remainingNameTokens] = full.split(WHITESPACE_REGEX);
 
-  return { firstName: head, lastName: rest.join(' ') };
+  return { firstName: firstNameToken, lastName: remainingNameTokens.join(' ') };
 };

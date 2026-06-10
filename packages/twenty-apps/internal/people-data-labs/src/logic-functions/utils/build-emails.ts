@@ -8,7 +8,7 @@ export const buildEmails = (
   candidates: (string | null | undefined)[],
 ): EmailsValue | undefined => {
   const emails: string[] = [];
-  const seen = new Set<string>();
+  const seenEmailKeys = new Set<string>();
 
   for (const candidate of candidates) {
     const email = toText(candidate);
@@ -16,9 +16,9 @@ export const buildEmails = (
       continue;
     }
 
-    const key = email.toLowerCase();
-    if (!seen.has(key)) {
-      seen.add(key);
+    const emailKey = email.toLowerCase();
+    if (!seenEmailKeys.has(emailKey)) {
+      seenEmailKeys.add(emailKey);
       emails.push(email);
     }
   }

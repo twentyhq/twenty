@@ -5,25 +5,25 @@ import { isDefined } from 'src/utils/is-defined';
 import { normalizeEnumValue } from 'src/utils/normalize-enum-value';
 
 export const pickMultiSelect = ({
-  raws,
+  rawValues,
   allowedValues,
   transform = normalizeEnumValue,
 }: {
-  raws: unknown;
+  rawValues: unknown;
   allowedValues: Set<string>;
   transform?: (value: string) => string | undefined;
 }): string[] | undefined => {
-  if (!isArray(raws)) {
+  if (!isArray(rawValues)) {
     return undefined;
   }
 
   const values: string[] = [];
-  const seen = new Set<string>();
+  const seenValues = new Set<string>();
 
-  for (const raw of raws) {
+  for (const raw of rawValues) {
     const value = pickSelect({ raw, allowedValues, transform });
-    if (isDefined(value) && !seen.has(value)) {
-      seen.add(value);
+    if (isDefined(value) && !seenValues.has(value)) {
+      seenValues.add(value);
       values.push(value);
     }
   }
