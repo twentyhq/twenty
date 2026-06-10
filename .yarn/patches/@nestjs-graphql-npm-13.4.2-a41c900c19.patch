@@ -1,8 +1,8 @@
 diff --git a/dist/interfaces/gql-module-options.interface.d.ts b/dist/interfaces/gql-module-options.interface.d.ts
-index 72bab49dcc2b411408c75adf64c3f250cdeaa195..068dc04966e3f7ac7c7093f9ed8f29f24337cebc 100644
+index 8029a048f728026d1e9a01fcc7f02dc96e829638..cfb8e008a8433df0b532186c19d8adb1896e448e 100644
 --- a/dist/interfaces/gql-module-options.interface.d.ts
 +++ b/dist/interfaces/gql-module-options.interface.d.ts
-@@ -97,6 +97,10 @@ export interface GqlModuleOptions<TDriver extends GraphQLDriver = any> {
+@@ -104,6 +104,10 @@ export interface GqlModuleOptions<TDriver extends GraphQLDriver = any> {
       * Extra static metadata to be loaded into the specification
       */
      metadata?: () => Promise<Record<string, any>>;
@@ -10,11 +10,11 @@ index 72bab49dcc2b411408c75adf64c3f250cdeaa195..068dc04966e3f7ac7c7093f9ed8f29f2
 +     * When set, only resolvers decorated with a matching scope will be included in this schema.
 +     */
 +    resolverSchemaScope?: 'core' | 'metadata' | 'admin';
- }
- export interface GqlOptionsFactory<T extends Record<string, any> = GqlModuleOptions> {
-     createGqlOptions(): Promise<Omit<T, 'driver'>> | Omit<T, 'driver'>;
+     /**
+      * If `true`, enables development mode helpers and logs messages of all severity levels
+      * If `false`, only warn- and error-level messages are logged.
 diff --git a/dist/schema-builder/graphql-schema.factory.js b/dist/schema-builder/graphql-schema.factory.js
-index f349a6e8ea629f8784143b2596e9e95b3255d348..790b062233936dcb336bc615887870d5e7a24de8 100644
+index 01ad7865af785d02e00bb63f2b2ccffc7757ab7c..3f7ffa3111fb1c04ba2b247e21e270e54f598fae 100644
 --- a/dist/schema-builder/graphql-schema.factory.js
 +++ b/dist/schema-builder/graphql-schema.factory.js
 @@ -16,6 +16,7 @@ const subscription_type_factory_1 = require("./factories/subscription-type.facto
@@ -25,7 +25,7 @@ index f349a6e8ea629f8784143b2596e9e95b3255d348..790b062233936dcb336bc615887870d5
  let GraphQLSchemaFactory = GraphQLSchemaFactory_1 = class GraphQLSchemaFactory {
      constructor(queryTypeFactory, mutationTypeFactory, subscriptionTypeFactory, orphanedTypesFactory, typeDefinitionsGenerator) {
          this.queryTypeFactory = queryTypeFactory;
-@@ -32,9 +33,14 @@ let GraphQLSchemaFactory = GraphQLSchemaFactory_1 = class GraphQLSchemaFactory {
+@@ -32,11 +33,16 @@ let GraphQLSchemaFactory = GraphQLSchemaFactory_1 = class GraphQLSchemaFactory {
          else {
              options = scalarsOrOptions;
          }
@@ -33,15 +33,17 @@ index f349a6e8ea629f8784143b2596e9e95b3255d348..790b062233936dcb336bc615887870d5
 +        this.orphanedTypesFactory.orphanedReferenceRegistry.clear();
          lazy_metadata_storage_1.LazyMetadataStorage.load(resolvers);
          type_metadata_storage_1.TypeMetadataStorage.compile(options.orphanedTypes);
--        this.typeDefinitionsGenerator.generate(options);
+         // includeModules is passed internally from GraphQLSchemaBuilder
+         const internalOptions = options;
+-        this.typeDefinitionsGenerator.generate(options, internalOptions.includeModules);
 +        const reachableTypes = Array.isArray(resolvers)
 +            ? this.computeReachableTypes(resolvers, options.orphanedTypes)
 +            : undefined;
-+        this.typeDefinitionsGenerator.generate(options, reachableTypes);
++        this.typeDefinitionsGenerator.generate(options, internalOptions.includeModules, reachableTypes);
          const schema = new graphql_1.GraphQLSchema({
              mutation: this.mutationTypeFactory.create(resolvers, options),
              query: this.queryTypeFactory.create(resolvers, options),
-@@ -68,6 +74,116 @@ let GraphQLSchemaFactory = GraphQLSchemaFactory_1 = class GraphQLSchemaFactory {
+@@ -70,6 +76,114 @@ let GraphQLSchemaFactory = GraphQLSchemaFactory_1 = class GraphQLSchemaFactory {
              .forEach((classRef) => this.addScalarTypeByClassRef(classRef, scalarsMap));
          options.scalarsMap = scalarsMap;
      }
@@ -130,7 +132,6 @@ index f349a6e8ea629f8784143b2596e9e95b3255d348..790b062233936dcb336bc615887870d5
 +        // Pass 1: follow field references from resolver return types and arguments
 +        visitAllPendingTypes();
 +        // Pass 2: include types that implement a reachable interface
-+        // (interfaces don't have back-pointers to their implementors)
 +        for (const objectTypeMetadata of type_metadata_storage_1.TypeMetadataStorage.getObjectTypesMetadata()) {
 +            if ((0, get_interfaces_array_util_1.getInterfacesArray)(objectTypeMetadata.interfaces)
 +                .some((interfaceType) => reachableTypes.has(interfaceType))) {
@@ -139,7 +140,6 @@ index f349a6e8ea629f8784143b2596e9e95b3255d348..790b062233936dcb336bc615887870d5
 +        }
 +        visitAllPendingTypes();
 +        // Pass 3: include entire unions when any member is reachable
-+        // (union membership is stored on the union, not on the member types)
 +        for (const unionMetadata of type_metadata_storage_1.TypeMetadataStorage.getUnionsMetadata()) {
 +            if (reachableTypes.has(unionMetadata.id)) {
 +                continue;
@@ -173,88 +173,43 @@ index f63bf917164e05b6a363d40e871303863800c4f3..101c67ee876a8c9758a3ed35fdb8b656
  exports.OrphanedReferenceRegistry = OrphanedReferenceRegistry;
  exports.OrphanedReferenceRegistry = OrphanedReferenceRegistry = tslib_1.__decorate([
 diff --git a/dist/schema-builder/storages/type-definitions.storage.js b/dist/schema-builder/storages/type-definitions.storage.js
-index a19dee7a15b355a83124479f7e5e6cb91795070d..d28bdc8f03b4e77db93396ff28fb47d8176f0c21 100644
+index 069d16e10a5d680aab0ae9b9e25fb684e314dd37..9163c5f092a2648cc3c973308640c16a759f294a 100644
 --- a/dist/schema-builder/storages/type-definitions.storage.js
 +++ b/dist/schema-builder/storages/type-definitions.storage.js
-@@ -81,6 +81,15 @@ let TypeDefinitionsStorage = class TypeDefinitionsStorage {
-         }
-         return;
-     }
-+    clear() {
+@@ -103,13 +103,9 @@ let TypeDefinitionsStorage = class TypeDefinitionsStorage {
+      * Used when generating multiple schemas with different module configurations.
+      */
+     clear() {
+-        this.interfaceTypeDefinitions.clear();
+-        this.enumTypeDefinitions.clear();
+-        this.unionTypeDefinitions.clear();
+-        this.objectTypeDefinitions.clear();
+-        this.inputTypeDefinitions.clear();
+-        this.inputTypeDefinitionsLinks = undefined;
+-        this.outputTypeDefinitionsLinks = undefined;
 +        // Only invalidate the lazy link caches, NOT the type Maps.
-+        // The Maps accumulate types from all schema builds. This is
-+        // needed because resolveType closures from earlier schemas
-+        // look up types in objectTypeDefinitions at query time.
-+        // The add* methods use Map.set() so duplicates are overwritten.
 +        this.inputTypeDefinitionsLinks = null;
 +        this.outputTypeDefinitionsLinks = null;
-+    }
+     }
  };
  exports.TypeDefinitionsStorage = TypeDefinitionsStorage;
- exports.TypeDefinitionsStorage = TypeDefinitionsStorage = tslib_1.__decorate([
 diff --git a/dist/schema-builder/type-definitions.generator.js b/dist/schema-builder/type-definitions.generator.js
-index d5423f1603ea2dbe32f70778cb715de648960cf3..47c80de38dc9045b1ee043dd6f74bb22a66d3b4a 100644
+index 7fb2438d75794a0bb258fbfd99325f0646499723..db768e86d7bfb2b4427d0d5f50dca368031281ae 100644
 --- a/dist/schema-builder/type-definitions.generator.js
 +++ b/dist/schema-builder/type-definitions.generator.js
-@@ -19,25 +19,37 @@ let TypeDefinitionsGenerator = class TypeDefinitionsGenerator {
+@@ -19,10 +19,31 @@ let TypeDefinitionsGenerator = class TypeDefinitionsGenerator {
          this.interfaceDefinitionFactory = interfaceDefinitionFactory;
          this.unionDefinitionFactory = unionDefinitionFactory;
      }
--    generate(options) {
--        this.generateUnionDefs();
-+    generate(options, reachableTypes) {
-+        this.generateUnionDefs(reachableTypes);
-         this.generateEnumDefs();
--        this.generateInterfaceDefs(options);
--        this.generateObjectTypeDefs(options);
--        this.generateInputTypeDefs(options);
-+        this.generateInterfaceDefs(options, reachableTypes);
-+        this.generateObjectTypeDefs(options, reachableTypes);
-+        this.generateInputTypeDefs(options, reachableTypes);
-     }
--    generateInputTypeDefs(options) {
--        const metadata = type_metadata_storage_1.TypeMetadataStorage.getInputTypesMetadata();
-+    clearTypeDefinitionStorage() {
-+        this.typeDefinitionsStorage.clear();
-+    }
-+    generateInputTypeDefs(options, reachableTypes) {
-+        let metadata = type_metadata_storage_1.TypeMetadataStorage.getInputTypesMetadata();
+-    generate(options, includeModules) {
++    generate(options, includeModules, reachableTypes) {
+         // Clear previous type definitions to support multiple schema generation
+         this.typeDefinitionsStorage.clear();
+-        if (includeModules?.length) {
 +        if (reachableTypes) {
-+            metadata = metadata.filter((inputMetadata) => reachableTypes.has(inputMetadata.target));
-+        }
-         const inputTypeDefs = metadata.map((metadata) => this.inputTypeDefinitionFactory.create(metadata, options));
-         this.typeDefinitionsStorage.addInputTypes(inputTypeDefs);
-     }
--    generateObjectTypeDefs(options) {
--        const metadata = type_metadata_storage_1.TypeMetadataStorage.getObjectTypesMetadata();
-+    generateObjectTypeDefs(options, reachableTypes) {
-+        let metadata = type_metadata_storage_1.TypeMetadataStorage.getObjectTypesMetadata();
-+        if (reachableTypes) {
-+            metadata = metadata.filter((objectMetadata) => reachableTypes.has(objectMetadata.target));
-+        }
-         const objectTypeDefs = metadata.map((metadata) => this.objectTypeDefinitionFactory.create(metadata, options));
-         this.typeDefinitionsStorage.addObjectTypes(objectTypeDefs);
-     }
--    generateInterfaceDefs(options) {
--        const metadata = type_metadata_storage_1.TypeMetadataStorage.getInterfacesMetadata();
-+    generateInterfaceDefs(options, reachableTypes) {
-+        let metadata = type_metadata_storage_1.TypeMetadataStorage.getInterfacesMetadata();
-+        if (reachableTypes) {
-+            metadata = metadata.filter((interfaceMetadata) => reachableTypes.has(interfaceMetadata.target));
-+        }
-         const interfaceDefs = metadata.map((metadata) => this.interfaceDefinitionFactory.create(metadata, options));
-         this.typeDefinitionsStorage.addInterfaces(interfaceDefs);
-     }
-@@ -46,8 +58,22 @@ let TypeDefinitionsGenerator = class TypeDefinitionsGenerator {
-         const enumDefs = metadata.map((metadata) => this.enumDefinitionFactory.create(metadata));
-         this.typeDefinitionsStorage.addEnums(enumDefs);
-     }
--    generateUnionDefs() {
--        const metadata = type_metadata_storage_1.TypeMetadataStorage.getUnionsMetadata();
-+    generateUnionDefs(reachableTypes) {
-+        let metadata = type_metadata_storage_1.TypeMetadataStorage.getUnionsMetadata();
-+        if (reachableTypes) {
-+            metadata = metadata.filter((unionMetadata) => {
++            // Twenty: scope the schema to types reachable from the scoped resolvers
++            const TMS = type_metadata_storage_1.TypeMetadataStorage;
++            const unionMetadata = TMS.getUnionsMetadata().filter((unionMetadata) => {
 +                if (reachableTypes.has(unionMetadata.id)) {
 +                    return true;
 +                }
@@ -266,30 +221,45 @@ index d5423f1603ea2dbe32f70778cb715de648960cf3..47c80de38dc9045b1ee043dd6f74bb22
 +                    return true;
 +                }
 +            });
++            this.generateUnionDefs(unionMetadata);
++            this.generateEnumDefs();
++            this.generateInterfaceDefs(options, TMS.getInterfacesMetadata().filter((m) => reachableTypes.has(m.target)));
++            this.generateObjectTypeDefs(options, TMS.getObjectTypesMetadata().filter((m) => reachableTypes.has(m.target)));
++            this.generateInputTypeDefs(options, TMS.getInputTypesMetadata().filter((m) => reachableTypes.has(m.target)));
 +        }
-         const unionDefs = metadata.map((metadata) => this.unionDefinitionFactory.create(metadata));
-         this.typeDefinitionsStorage.addUnions(unionDefs);
++        else if (includeModules?.length) {
+             // Filter metadata by modules
+             this.generateUnionDefs(type_metadata_storage_1.TypeMetadataStorage.getUnionsMetadataByModules(includeModules));
+             this.generateEnumDefs(type_metadata_storage_1.TypeMetadataStorage.getEnumsMetadataByModules(includeModules));
+@@ -39,6 +60,9 @@ let TypeDefinitionsGenerator = class TypeDefinitionsGenerator {
+             this.generateInputTypeDefs(options);
+         }
      }
++    clearTypeDefinitionStorage() {
++        this.typeDefinitionsStorage.clear();
++    }
+     generateInputTypeDefs(options, metadata) {
+         const inputTypeMetadata = metadata ?? type_metadata_storage_1.TypeMetadataStorage.getInputTypesMetadata();
+         const inputTypeDefs = inputTypeMetadata.map((item) => this.inputTypeDefinitionFactory.create(item, options));
 diff --git a/dist/services/resolvers-explorer.service.js b/dist/services/resolvers-explorer.service.js
-index 1cc43269cd0c4fbe446789b38970118f0c1856c7..3eeb77fcd3c78a134896faa3424209abc47b971a 100644
+index f07850b78739e2ea14a297e1b44650de39a2de66..b881ca6ca231eb2031b92270125a832f34393b3a 100644
 --- a/dist/services/resolvers-explorer.service.js
 +++ b/dist/services/resolvers-explorer.service.js
-@@ -21,6 +21,7 @@ const graphql_constants_1 = require("../graphql.constants");
- const decorate_field_resolver_util_1 = require("../utils/decorate-field-resolver.util");
- const extract_metadata_util_1 = require("../utils/extract-metadata.util");
- const base_explorer_service_1 = require("./base-explorer.service");
+@@ -26,6 +26,7 @@ const ROOT_RESOLVER_TYPES = new Set([
+     resolver_enum_1.Resolver.QUERY,
+     resolver_enum_1.Resolver.SUBSCRIPTION,
+ ]);
 +const RESOLVER_SCHEMA_SCOPE_KEY = 'RESOLVER_SCHEMA_SCOPE';
  let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplorerService extends base_explorer_service_1.BaseExplorerService {
      constructor(modulesContainer, metadataScanner, externalContextCreator, gqlOptions, moduleRef, serializedGraph) {
          super();
-@@ -45,6 +46,15 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
+@@ -52,6 +53,14 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
          if (!instance) {
              return undefined;
          }
 +        const resolverSchemaScope = this.gqlOptions.resolverSchemaScope;
 +        if (resolverSchemaScope && wrapper.metatype) {
 +            // Default to 'metadata' for unscoped resolvers (e.g. nestjs-query auto-generated CRUD)
-+            // TODO: remove this fallback once nestjs-query is deprecated
 +            const resolverScope = Reflect.getMetadata(RESOLVER_SCHEMA_SCOPE_KEY, wrapper.metatype) || 'metadata';
 +            if (resolverScope !== resolverSchemaScope) {
 +                return undefined;
@@ -298,7 +268,7 @@ index 1cc43269cd0c4fbe446789b38970118f0c1856c7..3eeb77fcd3c78a134896faa3424209ab
          const prototype = Object.getPrototypeOf(instance);
          const predicate = (resolverType, isReferenceResolver, isPropertyResolver) => (0, shared_utils_1.isUndefined)(resolverType) ||
              (!isReferenceResolver &&
-@@ -147,6 +157,15 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
+@@ -160,6 +169,14 @@ let ResolversExplorerService = ResolversExplorerService_1 = class ResolversExplo
      getAllCtors() {
          const modules = this.getModules(this.modulesContainer, this.gqlOptions.include || []);
          const resolvers = this.flatMap(modules, this.mapToCtor).filter(Boolean);
@@ -306,7 +276,6 @@ index 1cc43269cd0c4fbe446789b38970118f0c1856c7..3eeb77fcd3c78a134896faa3424209ab
 +        if (resolverSchemaScope) {
 +            return resolvers.filter((resolverConstructor) => {
 +                // Default to 'metadata' for unscoped resolvers (e.g. nestjs-query auto-generated CRUD)
-+                // TODO: remove this fallback once nestjs-query is deprecated
 +                const resolverScope = Reflect.getMetadata(RESOLVER_SCHEMA_SCOPE_KEY, resolverConstructor) || 'metadata';
 +                return resolverScope === resolverSchemaScope;
 +            });
