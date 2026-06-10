@@ -6,6 +6,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: es-ES\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
 
 #. js-lingui-id: iK+ikF
 #: src/sections/trusted-by.tsx
@@ -27,11 +33,9 @@ msgstr ""
 msgid "In production."
 msgstr ""
 
-#. js-lingui-id: nmVU/t
+#. js-lingui-id: pi7oqI
 #: src/app/[locale]/page.tsx
-msgid ""
-"See how teams\n"
-"build *on Twenty*"
+msgid "See how teams build *on Twenty*"
 msgstr ""
 
 #. js-lingui-id: BnuYjY

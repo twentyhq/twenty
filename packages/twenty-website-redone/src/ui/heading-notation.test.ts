@@ -14,28 +14,22 @@ describe('parseHeadingNotation', () => {
     ]);
   });
 
-  it('turns newlines into break segments', () => {
+  it('normalizes newlines and repeated whitespace to single spaces', () => {
     expect(parseHeadingNotation('See how teams\nbuild *on Twenty*')).toEqual([
-      { kind: 'text', text: 'See how teams' },
-      { kind: 'break' },
-      { kind: 'text', text: 'build ' },
+      { kind: 'text', text: 'See how teams build ' },
       { kind: 'accent', text: 'on Twenty' },
     ]);
   });
 
-  it('supports accents around line breaks and multiple accents', () => {
-    expect(parseHeadingNotation('*A CRM* for teams\nthat *move fast*')).toEqual(
-      [
-        { kind: 'accent', text: 'A CRM' },
-        { kind: 'text', text: ' for teams' },
-        { kind: 'break' },
-        { kind: 'text', text: 'that ' },
-        { kind: 'accent', text: 'move fast' },
-      ],
-    );
+  it('supports multiple accents', () => {
+    expect(parseHeadingNotation('*A CRM* for teams that *move fast*')).toEqual([
+      { kind: 'accent', text: 'A CRM' },
+      { kind: 'text', text: ' for teams that ' },
+      { kind: 'accent', text: 'move fast' },
+    ]);
   });
 
-  it('treats an unbalanced trailing asterisk as opening an accent to end of line', () => {
+  it('treats an unbalanced trailing asterisk as opening an accent to the end', () => {
     expect(parseHeadingNotation('plain *rest')).toEqual([
       { kind: 'text', text: 'plain ' },
       { kind: 'accent', text: 'rest' },

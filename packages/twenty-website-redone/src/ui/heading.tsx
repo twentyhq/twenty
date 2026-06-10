@@ -12,6 +12,7 @@ import { parseHeadingNotation } from './heading-notation';
 
 const headingClassName = css`
   margin: 0;
+  text-wrap: balance;
 
   &[data-family='serif'] {
     font-family: ${fontFamily('serif')};
@@ -101,9 +102,7 @@ export function Heading({
       data-weight={weight}
     >
       {parseHeadingNotation(children).map((segment, index) =>
-        segment.kind === 'break' ? (
-          <br key={index} />
-        ) : segment.kind === 'accent' ? (
+        segment.kind === 'accent' ? (
           <span data-accent key={index}>
             {segment.text}
           </span>

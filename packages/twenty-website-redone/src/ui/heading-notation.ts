@@ -1,20 +1,19 @@
 export type HeadingSegment =
   | { kind: 'text'; text: string }
-  | { kind: 'accent'; text: string }
-  | { kind: 'break' };
+  | { kind: 'accent'; text: string };
 
 // Headings are authored as one translatable string: *span* switches to the
-// accent family, \n breaks the line. Translators and machine translation see
-// near-natural text instead of placeholder tags.
+// accent family. There is deliberately no line-break notation — wrapping is
+// emergent (text-wrap: balance + the layout's measure), never authored, so
+// no breakpoint can inherit a break that only made sense at another width.
+// Whitespace, including newlines, normalizes to single spaces.
 export function parseHeadingNotation(input: string): HeadingSegment[] {
   const segments: HeadingSegment[] = [];
 
-  input.split('\n').forEach((line, lineIndex) => {
-    if (lineIndex > 0) {
-      segments.push({ kind: 'break' });
-    }
-
-    line.split('*').forEach((part, partIndex) => {
+  input
+    .replace(/\s+/g, ' ')
+    .split('*')
+    .forEach((part, partIndex) => {
       if (part === '') {
         return;
       }
@@ -23,7 +22,6 @@ export function parseHeadingNotation(input: string): HeadingSegment[] {
         text: part,
       });
     });
-  });
 
   return segments;
 }

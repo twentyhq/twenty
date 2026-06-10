@@ -12,10 +12,13 @@ import { Body, Button, Eyebrow, Heading, SectionShell } from '@/ui';
 
 export const generateMetadata = buildRouteMetadata('home');
 
+// Measure is a layout concern: the stack bounds line length and the heading
+// balances its own wrapping within it.
 const ProofStack = styled.div`
   display: grid;
   gap: ${spacing(6)};
   justify-items: start;
+  max-width: 760px;
 `;
 
 const ProofButtonRow = styled.div`
@@ -38,7 +41,7 @@ export default async function HomePage({
         <ProofStack>
           <Eyebrow>{i18n._(msg`In production.`)}</Eyebrow>
           <Heading as="h1" size="xl" weight="light">
-            {i18n._(msg`See how teams\nbuild *on Twenty*`)}
+            {i18n._(msg`See how teams build *on Twenty*`)}
           </Heading>
           <Body muted>
             {i18n._(
