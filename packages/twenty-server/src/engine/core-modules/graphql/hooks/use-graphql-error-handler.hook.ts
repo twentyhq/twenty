@@ -304,7 +304,6 @@ export const useGraphQLErrorHandlerHook = <
           return;
         }
 
-        // Detect any strictly-older client version, not just major bumps.
         if (semver.lt(frontEndAppVersion, backendAppVersion)) {
           void options.metricsService.incrementCounterForEvent({
             key: MetricsKeys.AppVersionMismatch,
