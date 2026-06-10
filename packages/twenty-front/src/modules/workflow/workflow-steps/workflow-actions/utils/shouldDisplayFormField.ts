@@ -22,6 +22,7 @@ const SUPPORTED_FORM_FIELD_TYPES = [
   FieldMetadataType.UUID,
   FieldMetadataType.ARRAY,
   FieldMetadataType.RELATION,
+  FieldMetadataType.MORPH_RELATION,
   FieldMetadataType.RICH_TEXT,
 ];
 
@@ -37,8 +38,10 @@ export const shouldDisplayFormField = ({
   }
 
   const isIdField = fieldMetadataItem.name === 'id';
+
   const isNotSupportedRelation =
-    fieldMetadataItem.type === FieldMetadataType.RELATION &&
+    (fieldMetadataItem.type === FieldMetadataType.RELATION ||
+      fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION) &&
     fieldMetadataItem.settings?.['relationType'] !== 'MANY_TO_ONE';
 
   switch (actionType) {

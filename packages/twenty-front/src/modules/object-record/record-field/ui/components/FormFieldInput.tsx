@@ -8,6 +8,10 @@ import { FormEmailsFieldInput } from '@/object-record/record-field/ui/form-types
 import { FormFilesFieldInput } from '@/object-record/record-field/ui/form-types/components/FormFilesFieldInput';
 import { FormFullNameFieldInput } from '@/object-record/record-field/ui/form-types/components/FormFullNameFieldInput';
 import { FormLinksFieldInput } from '@/object-record/record-field/ui/form-types/components/FormLinksFieldInput';
+import {
+  FormMorphRelationToOneFieldInput,
+  type FormMorphRelationToOneValue,
+} from '@/object-record/record-field/ui/form-types/components/FormMorphRelationToOneFieldInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
 import { FormPhoneFieldInput } from '@/object-record/record-field/ui/form-types/components/FormPhoneFieldInput';
@@ -43,6 +47,7 @@ import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFi
 import { isFieldFiles } from '@/object-record/record-field/ui/types/guards/isFieldFiles';
 import { isFieldFullName } from '@/object-record/record-field/ui/types/guards/isFieldFullName';
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
+import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
 import { isFieldMultiSelect } from '@/object-record/record-field/ui/types/guards/isFieldMultiSelect';
 import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFieldNumber';
 import { isFieldPhones } from '@/object-record/record-field/ui/types/guards/isFieldPhones';
@@ -239,6 +244,15 @@ export const FormFieldInput = ({
       onClear={onClear}
       onChange={onChange}
       VariablePicker={VariablePicker}
+      readonly={readonly}
+    />
+  ) : isFieldMorphRelationManyToOne(field) ? (
+    <FormMorphRelationToOneFieldInput
+      label={field.label}
+      morphRelations={field.metadata.morphRelations}
+      defaultValue={defaultValue as FormMorphRelationToOneValue}
+      onClear={onClear}
+      onChange={onChange}
       readonly={readonly}
     />
   ) : isFieldArray(field) ? (
