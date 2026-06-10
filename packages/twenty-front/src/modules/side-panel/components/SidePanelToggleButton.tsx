@@ -139,8 +139,6 @@ export const SidePanelToggleButton = () => {
 
   const isMobile = useIsMobile();
 
-  // The command menu has its own close control, so the toggle stays as the
-  // dots glyph (it does not morph into a second X) while the menu is open.
   const isCommandMenuOpened =
     isSidePanelOpened &&
     [
