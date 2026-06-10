@@ -79,6 +79,12 @@ const buttonClassName = css`
     --button-hover-fill: ${color('black-5')};
   }
 
+  /* The stroke stays visible through the hover fill: the base shape is
+     raised above the sliding layer (menu LOG IN, FAQ TALK TO US). */
+  &[data-variant='outlined'] > span[aria-hidden]:first-child {
+    z-index: 1;
+  }
+
   &:focus-visible {
     outline: 1px solid ${color('blue')};
     outline-offset: 1px;
