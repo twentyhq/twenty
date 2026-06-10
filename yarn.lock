@@ -55629,6 +55629,7 @@ __metadata:
     "@prettier/sync": "npm:^0.5.2"
     "@radix-ui/colors": "npm:^3.0.0"
     "@size-limit/preset-small-lib": "npm:^11.1.6"
+    "@sniptt/guards": "npm:^0.2.0"
     "@storybook-community/storybook-addon-cookie": "npm:^5.0.0"
     "@storybook/addon-a11y": "npm:^10.3.3"
     "@storybook/addon-coverage": "npm:^3.0.0"

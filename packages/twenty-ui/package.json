@@ -50,6 +50,7 @@
     "@base-ui/react": "^1.5.0",
     "@monaco-editor/react": "^4.7.0",
     "@radix-ui/colors": "^3.0.0",
+    "@sniptt/guards": "^0.2.0",
     "@tabler/icons-react": "^3.31.0",
     "clsx": "^2.1.1",
     "date-fns": "^2.30.0",
