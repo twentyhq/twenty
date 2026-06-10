@@ -22,3 +22,4 @@ export { type Scheme, SCHEMES } from './scheme';
 export { semanticColor } from './semantic-color';
 export { spacing } from './spacing';
 export { UNITS } from './units';
+export { Z_INDEX, type ZIndexToken } from './z-index';

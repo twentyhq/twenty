@@ -9,6 +9,7 @@ export { ButtonShape, type ButtonShapeProps } from './button-shape';
 export { Container } from './container';
 export { CornerMarkers } from './corner-markers';
 export { Eyebrow, type EyebrowProps } from './eyebrow';
+export { IconButton, type IconButtonProps } from './icon-button';
 export {
   Heading,
   type HeadingFamily,

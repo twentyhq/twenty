@@ -55803,6 +55803,7 @@ __metadata:
   resolution: "twenty-website-redone@workspace:packages/twenty-website-redone"
   dependencies:
     "@babel/runtime": "npm:^7.27.6"
+    "@base-ui/react": "npm:^1.3.0"
     "@linaria/core": "npm:^7.0.0"
     "@linaria/react": "npm:^7.0.1"
     "@lingui/cli": "npm:^5.1.2"
