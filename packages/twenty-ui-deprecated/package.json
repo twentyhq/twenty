@@ -29,8 +29,8 @@
     "@types/react": "^18.2.39",
     "@types/react-dom": "^18.2.15",
     "@vitejs/plugin-react-swc": "4.2.3",
-    "@wyw-in-js/babel-preset": "^0.6.0",
-    "@wyw-in-js/vite": "^0.7.0",
+    "@wyw-in-js/babel-preset": "^1.1.0",
+    "@wyw-in-js/vite": "^1.1.0",
     "babel-plugin-inline-import": "^3.0.0",
     "babel-plugin-inline-react-svg": "^2.0.2",
     "babel-plugin-module-resolver": "^5.0.2",
@@ -42,7 +42,7 @@
     "ts-jest": "^29.1.1",
     "tsx": "^4.19.3",
     "vite-plugin-checker": "^0.10.2",
-    "vite-plugin-dts": "3.8.1",
+    "vite-plugin-dts": "^4.5.4",
     "vite-plugin-svgr": "^4.3.0"
   },
   "dependencies": {

@@ -29,7 +29,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         description: 'Custom Description',
         icon: 'custom-icon',
         color: 'blue',
-        isCustom: true,
         standardOverrides: undefined,
       } satisfies Pick<
         ObjectMetadataDTO,
@@ -38,7 +37,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         | 'labelSingular'
         | 'description'
         | 'icon'
-        | 'isCustom'
         | 'standardOverrides'
       >;
 
@@ -59,7 +57,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         description: 'Custom Description',
         icon: 'custom-icon',
         color: 'blue',
-        isCustom: true,
         standardOverrides: undefined,
       } satisfies Pick<
         ObjectMetadataDTO,
@@ -68,7 +65,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         | 'labelSingular'
         | 'description'
         | 'icon'
-        | 'isCustom'
         | 'standardOverrides'
       >;
 
@@ -89,7 +85,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         description: 'Custom Description',
         icon: 'custom-icon',
         color: 'blue',
-        isCustom: true,
         standardOverrides: undefined,
       } satisfies Pick<
         ObjectMetadataDTO,
@@ -98,7 +93,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         | 'labelSingular'
         | 'description'
         | 'icon'
-        | 'isCustom'
         | 'standardOverrides'
       >;
 
@@ -119,7 +113,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         description: 'Custom Description',
         icon: 'custom-icon',
         color: 'green',
-        isCustom: true,
         standardOverrides: undefined,
       } satisfies Pick<
         ObjectMetadataDTO,
@@ -128,7 +121,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         | 'labelSingular'
         | 'description'
         | 'icon'
-        | 'isCustom'
         | 'standardOverrides'
       >;
 
@@ -150,7 +142,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         labelPlural: 'My Customs',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {
           icon: 'override-icon',
         },
@@ -175,7 +166,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         description: 'Standard Description',
         icon: 'default-icon',
         color: 'blue',
-        isCustom: false,
         standardOverrides: {
           color: 'red',
         },
@@ -198,7 +188,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         description: 'Standard Description',
         icon: 'default-icon',
         color: 'blue',
-        isCustom: false,
         standardOverrides: undefined,
       };
 
@@ -223,7 +212,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         labelPlural: 'Standard Labels',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {
           translations: {
             'fr-FR': {
@@ -267,7 +255,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         labelPlural: 'Standard Labels',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {
           translations: {
             'es-ES': {
@@ -298,7 +285,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         labelPlural: 'Standard Labels',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {
           translations: {
             'fr-FR': {
@@ -328,7 +314,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         labelPlural: 'Standard Labels',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {
           translations: {
             'fr-FR': {
@@ -361,7 +346,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         labelPlural: 'Standard Labels',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {
           labelSingular: 'Overridden Label',
           labelPlural: 'Overridden Labels',
@@ -410,7 +394,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         labelPlural: 'Standard Labels',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {
           labelSingular: 'Overridden Label',
           labelPlural: 'Overridden Labels',
@@ -433,7 +416,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         labelPlural: 'Standard Labels',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {
           labelSingular: undefined,
         },
@@ -460,7 +442,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         labelPlural: 'Standard Labels',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: undefined,
       };
 
@@ -485,7 +466,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         labelPlural: 'Standard Labels',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: undefined,
       };
 
@@ -512,7 +492,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         labelPlural: 'Standard Labels',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {
           labelSingular: 'Source Override',
           labelPlural: 'Source Overrides',
@@ -543,7 +522,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         labelPlural: 'Standard Labels',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {
           labelSingular: 'Source Override',
           labelPlural: 'Source Overrides',
@@ -568,7 +546,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         labelPlural: 'Standard Labels',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {},
       };
 
@@ -595,7 +572,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         labelPlural: 'Standard Labels',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: {
           labelSingular: 'Source Override',
         },
@@ -622,7 +598,6 @@ describe('resolveObjectMetadataStandardOverride', () => {
         labelPlural: 'Standard Labels',
         description: 'Standard Description',
         icon: 'default-icon',
-        isCustom: false,
         standardOverrides: undefined,
       };
 

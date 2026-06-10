@@ -14,7 +14,6 @@ export const resolveObjectMetadataStandardOverride = (
     | 'labelSingular'
     | 'description'
     | 'icon'
-    | 'isCustom'
     | 'standardOverrides'
   >,
   labelKey: 'color' | 'labelPlural' | 'labelSingular' | 'description' | 'icon',
@@ -22,10 +21,6 @@ export const resolveObjectMetadataStandardOverride = (
   i18nInstance: I18n,
 ): string => {
   const safeLocale = locale ?? SOURCE_LOCALE;
-
-  if (objectMetadata.isCustom) {
-    return objectMetadata[labelKey] ?? '';
-  }
 
   if (
     (labelKey === 'icon' || labelKey === 'color') &&

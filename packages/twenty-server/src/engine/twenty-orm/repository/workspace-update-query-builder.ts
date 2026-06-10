@@ -39,7 +39,7 @@ import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
-import { computeTableName } from 'src/engine/utils/compute-table-name.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
 export class WorkspaceUpdateQueryBuilder<
   T extends ObjectLiteral,
@@ -131,10 +131,7 @@ export class WorkspaceUpdateQueryBuilder<
         objectRecordsPermissions: this.objectRecordsPermissions,
       });
 
-      const tableName = computeTableName(
-        objectMetadata.nameSingular,
-        objectMetadata.isCustom,
-      );
+      const tableName = computeObjectTargetTable(objectMetadata);
 
       const before = await eventSelectQueryBuilder.getMany({
         noFormatting: true,

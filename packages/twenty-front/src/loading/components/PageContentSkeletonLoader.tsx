@@ -1,20 +1,9 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
-import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
-
-const StyledBody = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[3]};
-`;
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 
 type PageContentSkeletonLoaderProps = {
   secondaryBar?: ReactNode;
@@ -41,17 +30,18 @@ export const PageContentSkeletonLoader = ({
                 height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
               />
             }
+            actionButton={
+              <Skeleton
+                width={80}
+                height={SKELETON_LOADER_HEIGHT_SIZES.standard.s}
+              />
+            }
           />
         }
         secondaryBar={secondaryBar}
         showInformationBanner={false}
       >
-        <StyledBody>
-          <Skeleton
-            count={8}
-            height={SKELETON_LOADER_HEIGHT_SIZES.standard.l}
-          />
-        </StyledBody>
+        {null}
       </PageCardLayout>
     </SkeletonTheme>
   );

@@ -29,6 +29,7 @@ export const SettingsPageLayout = ({
         title={title}
         tag={tag}
         actionButton={actionButton}
+        centerTitle
       />
     }
     secondaryBar={

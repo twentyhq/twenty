@@ -7,6 +7,7 @@ import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-meta
 // contexts that don't care about uniqueness can omit it.
 export const fromFieldMetadataEntityToFieldMetadataDto = (
   entity: FieldMetadataEntity,
+  standardApplicationId: string,
   uniqueFieldMetadataIds?: ReadonlySet<string>,
 ): FieldMetadataDTO => ({
   id: entity.id,
@@ -18,7 +19,7 @@ export const fromFieldMetadataEntityToFieldMetadataDto = (
   description: entity.description ?? undefined,
   icon: entity.icon ?? undefined,
   standardOverrides: entity.standardOverrides ?? undefined,
-  isCustom: entity.isCustom,
+  isCustom: entity.applicationId !== standardApplicationId,
   isActive: entity.isActive,
   isSystem: entity.isSystem,
   isUIReadOnly: entity.isUIReadOnly,

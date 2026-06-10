@@ -1153,11 +1153,6 @@ msgstr "Classic never dies. It just gets extended one more time."
 msgid "Clear filters"
 msgstr "Clear filters"
 
-#. js-lingui-id: yz7wBu
-#: src/sections/PartnerApplication/partner-application-modal-data.ts
-msgid "Close"
-msgstr "Close"
-
 #. js-lingui-id: L/LPQZ
 #: src/sections/Faq/faq.data.ts
 msgid "Cloud Pro is $9/user/month (yearly). Organization is $19/user/month and unlocks SSO and row-level permissions for teams that need finer access control."
@@ -2138,6 +2133,11 @@ msgstr "Ghana 🇬🇭"
 msgid "Good choice!"
 msgstr "Good choice!"
 
+#. js-lingui-id: Zh0acB
+#: src/sections/PartnerApplication/partner-application-modal-data.ts
+msgid "Grab 30 minutes so we can get to know your team."
+msgstr "Grab 30 minutes so we can get to know your team."
+
 #. js-lingui-id: +tDN2S
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Greece 🇬🇷"
@@ -2319,6 +2319,11 @@ msgstr "How W3villa Technologies shipped W3Grads, an AI mock interview platform 
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Hungary 🇭🇺"
 msgstr "Hungary 🇭🇺"
+
+#. js-lingui-id: T6wyby
+#: src/sections/PartnerApplication/partner-application-modal-data.ts
+msgid "I'll book later →"
+msgstr "I'll book later →"
 
 #. js-lingui-id: RYDa0v
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
@@ -3083,6 +3088,11 @@ msgstr "Norwegian"
 #: src/app/[locale]/why-twenty/_components/WhyTwentyOpportunityEditorial.tsx
 msgid "Now a developer can describe what they want to Claude Code and have a working app in an afternoon. A custom object, a scoring workflow, a new view, an integration. The bottleneck isn't building anymore. It's whether your platform lets you."
 msgstr "Now a developer can describe what they want to Claude Code and have a working app in an afternoon. A custom object, a scoring workflow, a new view, an integration. The bottleneck isn't building anymore. It's whether your platform lets you."
+
+#. js-lingui-id: WFvpMn
+#: src/sections/PartnerApplication/partner-application-modal-data.ts
+msgid "Now book your intro call."
+msgstr "Now book your intro call."
 
 #. js-lingui-id: CzeIij
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -4128,10 +4138,10 @@ msgstr "Thai"
 msgid "Thailand 🇹🇭"
 msgstr "Thailand 🇹🇭"
 
-#. js-lingui-id: pYwj0k
+#. js-lingui-id: eRjhUK
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
-msgid "Thanks,"
-msgstr "Thanks,"
+msgid "Thanks, you're in."
+msgstr "Thanks, you're in."
 
 #. js-lingui-id: FjkPYg
 #: src/app/[locale]/customers/elevate-consulting/page.tsx
@@ -4769,11 +4779,6 @@ msgstr "We could not submit your application. Please try again in a moment."
 #: src/app/[locale]/(home)/testimonials.data.ts
 msgid "We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
 msgstr "We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
-
-#. js-lingui-id: u7hKUm
-#: src/sections/PartnerApplication/partner-application-modal-data.ts
-msgid "we'll be in touch!"
-msgstr "we'll be in touch!"
 
 #. js-lingui-id: d5CWI6
 #: src/app/[locale]/partners/components/PartnerHero.tsx
