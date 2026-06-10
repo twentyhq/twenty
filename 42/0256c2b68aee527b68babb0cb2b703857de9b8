@@ -1,0 +1,89 @@
+packages/twenty-server/src/engine/core-modules/message-queue/jobs.module.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 16,90
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-send-email.service.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 57-62,100-107
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/message-campaign.service.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 1-590
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/__tests__/normalize-campaign-recipients.util.spec.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 1-51
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/services/__tests__/aws-ses-send-email.service.spec.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 44,62
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/emailing-domain.service.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 11,15,24,64-89,101,137-148,182-187,190-194
+packages/twenty-server/src/engine/core-modules/emailing-domain/types/send-campaign-email-job-data.type.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 1-12
+packages/twenty-server/src/modules/messaging/message-outbound-manager/types/send-message-result.type.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 5
+packages/twenty-front/src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
+  s_00feb31f113c96::t_7758aa323ffd5f 5,252
+packages/twenty-server/src/modules/messaging/common/query-hooks/message/apply-messages-visibility-restrictions.service.spec.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 29-31
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.entity.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 15,63-75
+packages/twenty-server/src/engine/core-modules/emailing-domain/jobs/send-campaign-email.job.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 1-18
+packages/twenty-front/src/modules/command-menu-item/engine-command/global/components/ComposeCampaignCommand.tsx
+  s_00feb31f113c96::t_7758aa323ffd5f 1-13
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/send-message-campaign-output.dto.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 1-26
+packages/twenty-server/src/modules/messaging/common/query-hooks/message/apply-messages-visibility-restrictions.service.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 92-93
+packages/twenty-front/src/modules/activities/emails/hooks/useCampaignComposerState.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 1-73
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/types/send-email.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 1-2,9-13,24-28,38
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.resolver.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 10-11,14-15,19,36-40,92,101-116
+packages/twenty-front/src/modules/side-panel/constants/SidePanelPagesConfig.tsx
+  s_00feb31f113c96::t_7758aa323ffd5f 8,92
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-register-domain.service.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 42
+packages/twenty-front/src/modules/activities/emails/hooks/useSendMessageCampaign.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 1-58
+packages/twenty-front/src/modules/side-panel/hooks/useOpenCampaignComposerInSidePanel.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 1-23
+packages/twenty-server/src/engine/core-modules/emailing-domain/types/email-group-message-category.type.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 1-4
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/normalize-campaign-recipients.util.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 1-57
+packages/twenty-server/src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 8-9,20,27,43,58,65,79
+packages/twenty-server/src/engine/core-modules/emailing-domain/constants/campaign.constant.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 1-26
+packages/twenty-front/src/modules/activities/emails/components/CampaignComposerFields.tsx
+  s_00feb31f113c96::t_7758aa323ffd5f 1-77
+packages/twenty-front/src/modules/activities/emails/graphql/mutations/sendMessageCampaign.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 1-10
+packages/twenty-server/src/modules/messaging/message-import-manager/types/message.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 16-18,49-50
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.module.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 2,7-8,17-20,23-24,26,35-46,50,52-56
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/emailing-domain-sender.service.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 1-13,16-79,82-200,202-208,210,212-244,246-257,259-273,275-288
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 14-15,31-34
+packages/twenty-front/src/modules/side-panel/pages/compose-campaign/components/SidePanelCampaignComposerPage.tsx
+  s_00feb31f113c96::t_7758aa323ffd5f 1-77
+packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/send-message-campaign.input.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 1-38
+packages/twenty-server/src/engine/core-modules/emailing-domain/types/deliverable-recipients.type.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 1-5
+packages/twenty-server/src/modules/messaging/message-outbound-manager/services/send-email.service.ts
+  s_00feb31f113c96::t_7758aa323ffd5f 45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "420256c2b68aee527b68babb0cb2b703857de9b8",
+  "prompts": {},
+  "sessions": {
+    "s_00feb31f113c96": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8eaa9ec8-3e18-4d6e-8565-e27bf80f62fc",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
