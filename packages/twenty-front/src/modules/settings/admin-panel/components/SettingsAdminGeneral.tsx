@@ -1,6 +1,7 @@
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
+import { SettingsAdminServerAdmins } from '@/settings/admin-panel/components/SettingsAdminServerAdmins';
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -61,7 +62,7 @@ export const SettingsAdminGeneral = () => {
     {
       client: apolloAdminClient,
       variables: { searchTerm: debouncedUserSearchTerm },
-      skip: !canImpersonate,
+      skip: !canImpersonate && !canAccessFullAdminPanel,
     },
   );
 
@@ -80,184 +81,185 @@ export const SettingsAdminGeneral = () => {
   return (
     <>
       {canAccessFullAdminPanel && (
+        <>
+          <Section>
+            <H2Title
+              title={t`About`}
+              description={t`Version of the application`}
+            />
+            <SettingsAdminVersionContainer />
+          </Section>
+          <SettingsAdminServerAdmins />
+        </>
+      )}
+
+      {(canImpersonate || canAccessFullAdminPanel) && (
         <Section>
           <H2Title
-            title={t`About`}
-            description={t`Version of the application`}
+            title={t`Recent Users`}
+            description={
+              canManageFeatureFlags
+                ? t`Last 10 users created. Click to manage feature flags or impersonate.`
+                : t`Last 10 users created. Click to impersonate.`
+            }
           />
-          <SettingsAdminVersionContainer />
+          <SettingsTextInput
+            instanceId="admin-panel-user-search"
+            value={userSearchTerm}
+            onChange={setUserSearchTerm}
+            placeholder={t`Search by name, email, or user ID...`}
+            fullWidth
+          />
+          {isLoadingUsers ? (
+            <SettingsSectionSkeletonLoader />
+          ) : recentUsers.length === 0 ? (
+            <StyledEmptyState>
+              {t`No users found matching your search criteria.`}
+            </StyledEmptyState>
+          ) : (
+            <Table>
+              <TableBody>
+                <TableRow
+                  gridTemplateColumns={RECENT_USERS_GRID_TEMPLATE_COLUMNS}
+                >
+                  <TableHeader>{t`Name`}</TableHeader>
+                  <TableHeader>{t`Email`}</TableHeader>
+                  <TableHeader>{t`Workspace`}</TableHeader>
+                  <TableHeader />
+                </TableRow>
+                {recentUsers.map((user) => (
+                  <TableRow
+                    key={user.id}
+                    gridTemplateColumns={RECENT_USERS_GRID_TEMPLATE_COLUMNS}
+                    to={getSettingsPath(SettingsPath.AdminPanelUserDetail, {
+                      userId: user.id,
+                    })}
+                  >
+                    <TableCell
+                      color={themeCssVariables.font.color.primary}
+                      gap={themeCssVariables.spacing[2]}
+                      overflow="hidden"
+                    >
+                      <Avatar
+                        avatarUrl={user.avatarUrl}
+                        placeholder={
+                          `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+                          user.email
+                        }
+                        placeholderColorSeed={user.id}
+                        size="md"
+                        type="rounded"
+                      />
+                      <OverflowingTextWithTooltip
+                        text={
+                          `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+                          '\u2014'
+                        }
+                      />
+                    </TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell
+                      gap={themeCssVariables.spacing[2]}
+                      overflow="hidden"
+                    >
+                      {user.workspaceId ? (
+                        <>
+                          <Avatar
+                            avatarUrl={user.workspaceLogo}
+                            placeholder={user.workspaceName || ''}
+                            placeholderColorSeed={user.workspaceId}
+                            size="sm"
+                          />
+                          <OverflowingTextWithTooltip
+                            text={user.workspaceName || '\u2014'}
+                          />
+                        </>
+                      ) : (
+                        '\u2014'
+                      )}
+                    </TableCell>
+                    <TableCell align="center">
+                      <IconChevronRight
+                        size={theme.icon.size.md}
+                        stroke={theme.icon.stroke.sm}
+                        color={theme.font.color.tertiary}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </Section>
       )}
 
       {canImpersonate && (
-        <>
-          <Section>
-            <H2Title
-              title={t`Recent Users`}
-              description={
-                canManageFeatureFlags
-                  ? t`Last 10 users created. Click to manage feature flags or impersonate.`
-                  : t`Last 10 users created. Click to impersonate.`
-              }
-            />
-            <SettingsTextInput
-              instanceId="admin-panel-user-search"
-              value={userSearchTerm}
-              onChange={setUserSearchTerm}
-              placeholder={t`Search by name, email, or user ID...`}
-              fullWidth
-            />
-            {isLoadingUsers ? (
-              <SettingsSectionSkeletonLoader />
-            ) : recentUsers.length === 0 ? (
-              <StyledEmptyState>
-                {t`No users found matching your search criteria.`}
-              </StyledEmptyState>
-            ) : (
-              <Table>
-                <TableBody>
+        <Section>
+          <H2Title
+            title={t`Top Workspaces`}
+            description={t`Top 10 workspaces by number of users`}
+          />
+          <SettingsTextInput
+            instanceId="admin-panel-workspace-search"
+            value={workspaceSearchTerm}
+            onChange={setWorkspaceSearchTerm}
+            placeholder={t`Search by workspace name, subdomain, or ID...`}
+            fullWidth
+          />
+          {isLoadingWorkspaces ? (
+            <SettingsSectionSkeletonLoader />
+          ) : topWorkspaces.length === 0 ? (
+            <StyledEmptyState>
+              {t`No workspaces found matching your search criteria.`}
+            </StyledEmptyState>
+          ) : (
+            <Table>
+              <TableBody>
+                <TableRow
+                  gridTemplateColumns={TOP_WORKSPACES_GRID_TEMPLATE_COLUMNS}
+                >
+                  <TableHeader>{t`Workspace`}</TableHeader>
+                  <TableHeader align="right">{t`Users`}</TableHeader>
+                  <TableHeader />
+                </TableRow>
+                {topWorkspaces.map((workspace) => (
                   <TableRow
-                    gridTemplateColumns={RECENT_USERS_GRID_TEMPLATE_COLUMNS}
-                  >
-                    <TableHeader>{t`Name`}</TableHeader>
-                    <TableHeader>{t`Email`}</TableHeader>
-                    <TableHeader>{t`Workspace`}</TableHeader>
-                    <TableHeader />
-                  </TableRow>
-                  {recentUsers.map((user) => (
-                    <TableRow
-                      key={user.id}
-                      gridTemplateColumns={RECENT_USERS_GRID_TEMPLATE_COLUMNS}
-                      to={getSettingsPath(SettingsPath.AdminPanelUserDetail, {
-                        userId: user.id,
-                      })}
-                    >
-                      <TableCell
-                        color={themeCssVariables.font.color.primary}
-                        gap={themeCssVariables.spacing[2]}
-                        overflow="hidden"
-                      >
-                        <Avatar
-                          avatarUrl={user.avatarUrl}
-                          placeholder={
-                            `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
-                            user.email
-                          }
-                          placeholderColorSeed={user.id}
-                          size="md"
-                          type="rounded"
-                        />
-                        <OverflowingTextWithTooltip
-                          text={
-                            `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
-                            '\u2014'
-                          }
-                        />
-                      </TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell
-                        gap={themeCssVariables.spacing[2]}
-                        overflow="hidden"
-                      >
-                        {user.workspaceId ? (
-                          <>
-                            <Avatar
-                              avatarUrl={user.workspaceLogo}
-                              placeholder={user.workspaceName || ''}
-                              placeholderColorSeed={user.workspaceId}
-                              size="sm"
-                            />
-                            <OverflowingTextWithTooltip
-                              text={user.workspaceName || '\u2014'}
-                            />
-                          </>
-                        ) : (
-                          '\u2014'
-                        )}
-                      </TableCell>
-                      <TableCell align="center">
-                        <IconChevronRight
-                          size={theme.icon.size.md}
-                          stroke={theme.icon.stroke.sm}
-                          color={theme.font.color.tertiary}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </Section>
-
-          <Section>
-            <H2Title
-              title={t`Top Workspaces`}
-              description={t`Top 10 workspaces by number of users`}
-            />
-            <SettingsTextInput
-              instanceId="admin-panel-workspace-search"
-              value={workspaceSearchTerm}
-              onChange={setWorkspaceSearchTerm}
-              placeholder={t`Search by workspace name, subdomain, or ID...`}
-              fullWidth
-            />
-            {isLoadingWorkspaces ? (
-              <SettingsSectionSkeletonLoader />
-            ) : topWorkspaces.length === 0 ? (
-              <StyledEmptyState>
-                {t`No workspaces found matching your search criteria.`}
-              </StyledEmptyState>
-            ) : (
-              <Table>
-                <TableBody>
-                  <TableRow
+                    key={workspace.id}
                     gridTemplateColumns={TOP_WORKSPACES_GRID_TEMPLATE_COLUMNS}
+                    to={getSettingsPath(
+                      SettingsPath.AdminPanelWorkspaceDetail,
+                      { workspaceId: workspace.id },
+                    )}
                   >
-                    <TableHeader>{t`Workspace`}</TableHeader>
-                    <TableHeader align="right">{t`Users`}</TableHeader>
-                    <TableHeader />
-                  </TableRow>
-                  {topWorkspaces.map((workspace) => (
-                    <TableRow
-                      key={workspace.id}
-                      gridTemplateColumns={TOP_WORKSPACES_GRID_TEMPLATE_COLUMNS}
-                      to={getSettingsPath(
-                        SettingsPath.AdminPanelWorkspaceDetail,
-                        { workspaceId: workspace.id },
-                      )}
+                    <TableCell
+                      color={themeCssVariables.font.color.primary}
+                      gap={themeCssVariables.spacing[2]}
+                      overflow="hidden"
                     >
-                      <TableCell
-                        color={themeCssVariables.font.color.primary}
-                        gap={themeCssVariables.spacing[2]}
-                        overflow="hidden"
-                      >
-                        <Avatar
-                          avatarUrl={workspace.logoUrl}
-                          placeholder={workspace.name || ''}
-                          placeholderColorSeed={workspace.id}
-                          size="md"
-                        />
-                        <OverflowingTextWithTooltip
-                          text={workspace.name || '\u2014'}
-                        />
-                      </TableCell>
-                      <TableCell align="right">
-                        {workspace.totalUsers}
-                      </TableCell>
-                      <TableCell align="center">
-                        <IconChevronRight
-                          size={theme.icon.size.md}
-                          stroke={theme.icon.stroke.sm}
-                          color={theme.font.color.tertiary}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </Section>
-        </>
+                      <Avatar
+                        avatarUrl={workspace.logoUrl}
+                        placeholder={workspace.name || ''}
+                        placeholderColorSeed={workspace.id}
+                        size="md"
+                      />
+                      <OverflowingTextWithTooltip
+                        text={workspace.name || '\u2014'}
+                      />
+                    </TableCell>
+                    <TableCell align="right">{workspace.totalUsers}</TableCell>
+                    <TableCell align="center">
+                      <IconChevronRight
+                        size={theme.icon.size.md}
+                        stroke={theme.icon.stroke.sm}
+                        color={theme.font.color.tertiary}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </Section>
       )}
     </>
   );
