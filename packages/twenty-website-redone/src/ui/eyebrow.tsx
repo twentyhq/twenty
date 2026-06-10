@@ -3,6 +3,7 @@ import { styled } from '@linaria/react';
 import {
   color,
   FONT_WEIGHT,
+  semanticColor,
   fontFamily,
   spacing,
   typeRampDeclarations,
@@ -10,7 +11,7 @@ import {
 
 const EyebrowRow = styled.p`
   align-items: center;
-  color: ${color('black-60')};
+  color: ${semanticColor.inkMuted};
   display: flex;
   font-family: ${fontFamily('sans')};
   ${typeRampDeclarations('headingXs')}

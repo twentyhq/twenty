@@ -23,6 +23,16 @@ msgstr "© {year} – Twenty"
 msgid "+10k others"
 msgstr "+10k autres"
 
+#. js-lingui-id: HSyZ9R
+#: src/sections/problem/problem.tsx
+msgid "A custom CRM gives your org an edge, *but building one* comes with *tradeoffs*"
+msgstr "Un CRM sur mesure donne un avantage à votre organisation, *mais en construire un* implique des *compromis*"
+
+#. js-lingui-id: aGCcXe
+#: src/sections/faq/faq.tsx
+msgid "Any Questions?"
+msgstr "Des questions ?"
+
 #. js-lingui-id: MqJvvH
 #: src/sections/menu/menu.data.ts
 msgid "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data."
@@ -37,6 +47,21 @@ msgstr ""
 #: src/sections/home-hero/home-hero.tsx
 msgid "Build your Enterprise CRM *at AI Speed*"
 msgstr "Construisez votre CRM d'entreprise *à la vitesse de l'IA*"
+
+#. js-lingui-id: wCALve
+#: src/sections/faq/faq.data.ts
+msgid "Can developers extend Twenty with code?"
+msgstr ""
+
+#. js-lingui-id: 6mytgb
+#: src/sections/faq/faq.data.ts
+msgid "Can I migrate from Salesforce or HubSpot?"
+msgstr ""
+
+#. js-lingui-id: L/LPQZ
+#: src/sections/faq/faq.data.ts
+msgid "Cloud Pro is $9/user/month (yearly). Organization is $19/user/month and unlocks SSO and row-level permissions for teams that need finer access control."
+msgstr ""
 
 #. js-lingui-id: iSLIjg
 #: src/sections/footer/footer.data.ts
@@ -65,6 +90,16 @@ msgstr "Développeurs"
 msgid "Discover what's new"
 msgstr ""
 
+#. js-lingui-id: Zjjbne
+#: src/sections/faq/faq.data.ts
+msgid "Do I need a developer to customize Twenty?"
+msgstr ""
+
+#. js-lingui-id: Zx22Ih
+#: src/sections/faq/faq.data.ts
+msgid "Does Twenty work with Claude, ChatGPT, and Cursor?"
+msgstr ""
+
 #. js-lingui-id: MD032e
 #: src/sections/menu/menu.data.ts
 msgid "Find a Twenty partner"
@@ -75,6 +110,7 @@ msgstr ""
 #: src/sections/menu/menu.tsx
 #: src/sections/home-hero/home-hero.tsx
 #: src/sections/footer/footer.data.ts
+#: src/sections/faq/faq.tsx
 msgid "Get started"
 msgstr "Commencer"
 
@@ -92,6 +128,21 @@ msgstr "Aide"
 #: src/sections/footer/footer.data.ts
 msgid "Home"
 msgstr "Accueil"
+
+#. js-lingui-id: OIwpKt
+#: src/sections/faq/faq.data.ts
+msgid "How long does it take to get started?"
+msgstr ""
+
+#. js-lingui-id: /yQIKP
+#: src/sections/faq/faq.data.ts
+msgid "Is Twenty really open-source?"
+msgstr "Twenty est-il vraiment open source ?"
+
+#. js-lingui-id: ltNDOB
+#: src/sections/problem/problem.data.ts
+msgid "It's fragile. V1 ships quickly, but maintaining and making changes is a long term burden."
+msgstr ""
 
 #. js-lingui-id: +Ss/og
 #: src/sections/menu/menu.data.ts
@@ -124,6 +175,11 @@ msgstr ""
 msgid "Meet the certified agencies and consultants implementing Twenty for teams worldwide."
 msgstr ""
 
+#. js-lingui-id: SiZ/7E
+#: src/sections/faq/faq.data.ts
+msgid "No. Build custom objects, fields, views, and no-code workflows straight from Settings. Unlimited, no extra charge."
+msgstr ""
+
 #. js-lingui-id: mPkInZ
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
@@ -147,6 +203,11 @@ msgstr "Politique de confidentialité"
 msgid "Product"
 msgstr "Produit"
 
+#. js-lingui-id: a24q7E
+#: src/sections/problem/problem.data.ts
+msgid "Proprietary languages, slow deployment cycles, and \"black box\" logic."
+msgstr ""
+
 #. js-lingui-id: rwWjWg
 #: src/sections/footer/footer.data.ts
 msgid "Release Notes"
@@ -167,6 +228,11 @@ msgstr "Ressources"
 msgid "See the latest release"
 msgstr ""
 
+#. js-lingui-id: mA6cL1
+#: src/sections/faq/faq.data.ts
+msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our 4-hour Onboarding Packs or certified partners get you live in 1–2 weeks."
+msgstr ""
+
 #. js-lingui-id: V9dFwD
 #: src/sections/footer/footer.data.ts
 msgid "Sitemap"
@@ -177,9 +243,15 @@ msgstr "Plan du site"
 msgid "Step-by-step guides and playbooks to help your team get the most out of their workspace."
 msgstr ""
 
+#. js-lingui-id: jKt86V
+#: src/sections/faq/faq.tsx
+msgid "Stop fighting custom. *Start building, with Twenty*"
+msgstr "Cessez de lutter contre le sur-mesure. *Commencez à construire, avec Twenty*"
+
 #. js-lingui-id: JAKtcG
 #: src/sections/home-hero/home-hero.tsx
 #: src/sections/footer/footer.data.ts
+#: src/sections/faq/faq.tsx
 msgid "Talk to us"
 msgstr "Parlez-nous"
 
@@ -198,10 +270,25 @@ msgstr "Conditions générales"
 msgid "The #1 Open Source CRM for modern teams. Modular, scalable, and built to fit your business."
 msgstr ""
 
+#. js-lingui-id: sm10Rg
+#: src/sections/problem/problem.data.ts
+msgid "The Giant Monolith"
+msgstr "Le monolithe géant"
+
+#. js-lingui-id: nFB8I1
+#: src/sections/problem/problem.data.ts
+msgid "The In-house Burden"
+msgstr "Le fardeau du fait-maison"
+
 #. js-lingui-id: 80f4ed
 #: src/sections/menu/menu.data.ts
 msgid "The principles and product philosophy behind the open source CRM."
 msgstr ""
+
+#. js-lingui-id: 2NJdyz
+#: src/sections/problem/problem.tsx
+msgid "The Problem."
+msgstr "Le problème."
 
 #. js-lingui-id: gXGp3Q
 #: src/sections/menu/menu.data.ts
@@ -239,6 +326,11 @@ msgstr "Twenty donne aux équipes techniques les briques pour construire un CRM 
 msgid "User Guide"
 msgstr "Guide d'utilisation"
 
+#. js-lingui-id: phiBjc
+#: src/sections/faq/faq.data.ts
+msgid "What does Twenty cost?"
+msgstr ""
+
 #. js-lingui-id: DJlSwA
 #: src/sections/menu/menu.data.ts
 msgid "Why"
@@ -253,3 +345,23 @@ msgstr ""
 #: src/sections/footer/footer.data.ts
 msgid "Why Twenty"
 msgstr "Pourquoi Twenty"
+
+#. js-lingui-id: Q+G6dT
+#: src/sections/faq/faq.data.ts
+msgid "Yes, with our Apps framework. Scaffold an extension with `npx create-twenty-app` and ship custom objects, server-side logic functions, React components that render inside Twenty's UI, AI skills and agents, views, and navigation, all in TypeScript, deployable to any workspace."
+msgstr ""
+
+#. js-lingui-id: yIcBW6
+#: src/sections/faq/faq.data.ts
+msgid "Yes. Every Cloud workspace ships with a native MCP server. Connect your AI assistant via OAuth and it can read and write your CRM data in natural language."
+msgstr ""
+
+#. js-lingui-id: 8xYMYQ
+#: src/sections/faq/faq.data.ts
+msgid "Yes. Import your data via CSV, or use our API for 50,000+ records. Our partners can handle the full migration for you."
+msgstr ""
+
+#. js-lingui-id: 8m0eN9
+#: src/sections/faq/faq.data.ts
+msgid "Yes. Twenty is the #1 Open Source CRM on GitHub. You can self-host to fully own your infrastructure, or run it on our managed cloud for a zero-ops setup."
+msgstr ""

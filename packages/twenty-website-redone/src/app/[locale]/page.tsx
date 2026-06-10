@@ -4,8 +4,10 @@ import {
   type LocaleRouteParams,
 } from '@/platform/i18n/get-route-i18n';
 import { buildRouteMetadata } from '@/platform/seo';
+import { Faq } from '@/sections/faq';
 import { HomeHero } from '@/sections/home-hero';
 import { Menu } from '@/sections/menu';
+import { Problem } from '@/sections/problem';
 import { TrustedBy } from '@/sections/trusted-by';
 import { SectionShell } from '@/ui';
 
@@ -29,6 +31,8 @@ export default async function HomePage({
         <SectionShell ariaLabel="Trusted by leading organizations">
           <TrustedBy />
         </SectionShell>
+        <Problem />
+        <Faq />
       </main>
     </>
   );

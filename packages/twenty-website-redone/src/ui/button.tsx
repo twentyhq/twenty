@@ -18,6 +18,7 @@ const buttonClassName = css`
   --button-stroke: transparent;
   --button-hover-fill: transparent;
   --button-label: ${color('black')};
+  --button-label-hover: ${color('black')};
 
   align-items: center;
   background: none;
@@ -44,6 +45,22 @@ const buttonClassName = css`
     --button-fill: ${color('black')};
     --button-hover-fill: ${color('black-hover')};
     --button-label: ${color('white')};
+    --button-label-hover: ${color('white')};
+  }
+
+  /* Dark surfaces invert via context, never via props. */
+  [data-scheme='dark'] &[data-variant='filled'] {
+    --button-fill: ${color('white')};
+    --button-hover-fill: ${color('black')};
+    --button-label: ${color('black')};
+    --button-label-hover: ${color('white')};
+  }
+
+  [data-scheme='dark'] &[data-variant='outlined'] {
+    --button-stroke: ${color('white')};
+    --button-hover-fill: ${color('white-10')};
+    --button-label: ${color('white')};
+    --button-label-hover: ${color('white')};
   }
 
   &[data-variant='outlined'] {
@@ -83,6 +100,10 @@ const buttonClassName = css`
     [data-slot='hover-layer'] > span {
       transition: none;
     }
+  }
+
+  &:is(:hover, :focus-visible) [data-slot='content'] {
+    color: var(--button-label-hover);
   }
 
   [data-slot='content'] {

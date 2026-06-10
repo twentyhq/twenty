@@ -4,3 +4,4 @@ export {
 } from './build-page-metadata';
 export { buildRouteMetadata } from './build-route-metadata';
 export { getSiteUrl } from './get-site-url';
+export { JsonLd, type JsonLdProps } from './json-ld';
