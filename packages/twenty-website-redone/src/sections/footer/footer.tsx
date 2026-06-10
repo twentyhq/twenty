@@ -21,10 +21,14 @@ const StageContainer = styled(Container)`
   flex-direction: column;
   min-height: 880px;
   padding-bottom: ${spacing(4)};
+  /* The stage may never collapse: the notch needs its dark backdrop even
+     when the card outgrows the min-height (stacked groups on tablets). */
+  padding-top: ${spacing(30)};
   position: relative;
 
   ${mediaUp('md')} {
     min-height: 920px;
+    padding-top: ${spacing(40)};
   }
 
   ${mediaUp('lg')} {

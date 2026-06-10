@@ -9,8 +9,8 @@ import { color } from '@/tokens';
 // in the original 344 : 518 : 343 proportions.
 const CAP_HEIGHT_PX = 20;
 
-const LEFT_SLOPE_WIDTH_PX = 74.222;
-const RIGHT_SLOPE_WIDTH_PX = 73.048;
+const LEFT_SLOPE_WIDTH_PX = 74;
+const RIGHT_SLOPE_WIDTH_PX = 73;
 
 const LEFT_SLOPE_PATH =
   'M0 0 C4.197 0 8.369 0.66 12.361 1.958 L61.861 18.042 A40 40 0 0 0 74.222 20 L0 20 Z';
@@ -28,6 +28,8 @@ const ShapeRow = styled.div`
   svg {
     display: block;
     flex-shrink: 0;
+    margin-inline: -1px;
+    position: relative;
   }
 `;
 
@@ -80,7 +82,8 @@ export function FooterShape() {
         <svg
           fill="none"
           height={CAP_HEIGHT_PX}
-          viewBox={`0 0 ${LEFT_SLOPE_WIDTH_PX} ${CAP_HEIGHT_PX}`}
+          preserveAspectRatio="none"
+          viewBox={`0 0 74.222 ${CAP_HEIGHT_PX}`}
           width={LEFT_SLOPE_WIDTH_PX}
           xmlns="http://www.w3.org/2000/svg"
         >
@@ -90,7 +93,8 @@ export function FooterShape() {
         <svg
           fill="none"
           height={CAP_HEIGHT_PX}
-          viewBox={`0 0 ${RIGHT_SLOPE_WIDTH_PX} ${CAP_HEIGHT_PX}`}
+          preserveAspectRatio="none"
+          viewBox={`0 0 73.048 ${CAP_HEIGHT_PX}`}
           width={RIGHT_SLOPE_WIDTH_PX}
           xmlns="http://www.w3.org/2000/svg"
         >
