@@ -6,6 +6,7 @@ import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-ty
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormSingleRecordFieldChip } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordFieldChip';
+import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
@@ -83,6 +84,14 @@ export const FormMorphRelationToOneFieldInput = ({
 
   const recordId = isDefined(defaultValue) ? defaultValue.id : null;
 
+  const selectedTargetIsReadable =
+    !isDefined(defaultValue) ||
+    objectPermissionsByObjectMetadataId[defaultValue.targetObjectMetadataId]
+      ?.canReadObjectRecords === true;
+
+  const hasForbiddenSelectedRecord =
+    isDefined(recordId) && !selectedTargetIsReadable;
+
   const selectedObjectMetadataItem = isDefined(defaultValue)
     ? objectMetadataItems.find(
         (objectMetadataItem) =>
@@ -101,7 +110,8 @@ export const FormMorphRelationToOneFieldInput = ({
     skip:
       !isDefined(recordId) ||
       !isValidUuid(recordId) ||
-      !isDefined(selectedObjectNameSingular),
+      !isDefined(selectedObjectNameSingular) ||
+      hasForbiddenSelectedRecord,
   });
 
   const componentId = useId();
@@ -168,6 +178,18 @@ export const FormMorphRelationToOneFieldInput = ({
 
   const isReadonly = readonly || readableObjectNameSingulars.length === 0;
 
+  const fieldChip = hasForbiddenSelectedRecord ? (
+    <ForbiddenFieldDisplay />
+  ) : (
+    <FormSingleRecordFieldChip
+      draftValue={draftValue}
+      selectedRecord={selectedRecord}
+      objectNameSingular={selectedObjectNameSingular ?? ''}
+      onRemove={handleUnlinkRecord}
+      disabled={isReadonly}
+    />
+  );
+
   return (
     <FormFieldInputContainer data-testid={testId}>
       {label ? <InputLabel>{label}</InputLabel> : null}
@@ -178,13 +200,7 @@ export const FormMorphRelationToOneFieldInput = ({
               formFieldInputInstanceId={componentId}
               hasRightElement={false}
             >
-              <FormSingleRecordFieldChip
-                draftValue={draftValue}
-                selectedRecord={selectedRecord}
-                objectNameSingular={selectedObjectNameSingular ?? ''}
-                onRemove={handleUnlinkRecord}
-                disabled={isReadonly}
-              />
+              {fieldChip}
             </FormFieldInputInnerContainer>
           </StyledFormSelectContainerWrapper>
         ) : (
@@ -205,13 +221,7 @@ export const FormMorphRelationToOneFieldInput = ({
                   hoverable
                   preventFocusStackUpdate={true}
                 >
-                  <FormSingleRecordFieldChip
-                    draftValue={draftValue}
-                    selectedRecord={selectedRecord}
-                    objectNameSingular={selectedObjectNameSingular ?? ''}
-                    onRemove={handleUnlinkRecord}
-                    disabled={isReadonly}
-                  />
+                  {fieldChip}
                   <StyledIconButton>
                     <IconChevronDown
                       size={theme.icon.size.md}
