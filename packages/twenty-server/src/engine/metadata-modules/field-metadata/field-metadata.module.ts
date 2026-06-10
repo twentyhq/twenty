@@ -41,6 +41,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
 
 @Module({
   imports: [
+    ApplicationModule,
     TokenModule,
     WorkspaceCacheStorageModule,
     FeatureFlagModule,

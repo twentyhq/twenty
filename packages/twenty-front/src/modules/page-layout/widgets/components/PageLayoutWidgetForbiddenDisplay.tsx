@@ -2,7 +2,7 @@ import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-type
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { plural, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip } from 'twenty-ui/display';
+import { AppTooltip } from 'twenty-ui-deprecated/display';
 
 type PageLayoutWidgetForbiddenDisplayProps = {
   widgetId: string;

@@ -1,8 +1,8 @@
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useIcons } from 'twenty-ui-deprecated/display';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 import { useContext } from 'react';
 
 export const WorkflowDiagramStepNodeIcon = ({

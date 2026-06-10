@@ -26,10 +26,13 @@ import {
   IconRefresh,
   IconTrash,
   TooltipDelay,
-} from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { Card, Section } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { Card, Section } from 'twenty-ui-deprecated/layout';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { useMutation, useQuery } from '@apollo/client/react';
 import {
   ActivateSkillDocument,

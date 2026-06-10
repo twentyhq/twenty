@@ -1,4 +1,4 @@
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
 
 import { useLingui } from '@lingui/react/macro';
 

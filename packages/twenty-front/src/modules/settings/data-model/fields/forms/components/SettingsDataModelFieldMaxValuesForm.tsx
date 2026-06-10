@@ -12,7 +12,7 @@ import {
   FieldMetadataType,
   type FieldMetadataMultiItemSettings,
 } from 'twenty-shared/types';
-import { IconNumber } from 'twenty-ui/display';
+import { IconNumber } from 'twenty-ui-deprecated/display';
 
 type SettingsDataModelFieldMaxValuesFormProps = {
   disabled?: boolean;

@@ -1,5 +1,5 @@
-import { COLOR_LIGHT } from '@ui/theme/constants/ColorsLight';
-import { GRAY_SCALE_LIGHT } from '@ui/theme/constants/GrayScaleLight';
+import { COLOR_LIGHT } from '@new-ui/theme/constants/ColorsLight';
+import { GRAY_SCALE_LIGHT } from '@new-ui/theme/constants/GrayScaleLight';
 
 export const ILLUSTRATION_ICON_LIGHT = {
   color: {

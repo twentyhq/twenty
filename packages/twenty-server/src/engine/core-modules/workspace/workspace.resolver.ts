@@ -310,11 +310,6 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => Boolean)
-  hasValidEnterpriseKey(): boolean {
-    return this.enterprisePlanService.hasValidSignedEnterpriseKey();
-  }
-
-  @ResolveField(() => Boolean)
   hasValidSignedEnterpriseKey(): boolean {
     return this.enterprisePlanService.hasValidSignedEnterpriseKey();
   }

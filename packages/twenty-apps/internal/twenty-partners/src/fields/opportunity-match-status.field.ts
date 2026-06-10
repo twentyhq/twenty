@@ -7,6 +7,7 @@ export default defineField({
   type: FieldType.SELECT,
   name: 'matchStatus',
   label: 'Match Status',
+  icon: 'IconProgressCheck',
   isNullable: false,
   defaultValue: "'TO_BE_MATCHED'",
   options: [

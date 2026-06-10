@@ -45,6 +45,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     TokenModule,
     WorkspaceCacheStorageModule,
     FeatureFlagModule,
+    ApplicationModule,
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         TypeORMModule,

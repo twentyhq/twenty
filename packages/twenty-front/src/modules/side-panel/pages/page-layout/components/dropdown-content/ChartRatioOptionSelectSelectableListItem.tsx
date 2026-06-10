@@ -8,8 +8,8 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { MenuItemSelectTag } from 'twenty-ui/navigation';
-import { type ThemeColor } from 'twenty-ui/theme';
+import { MenuItemSelectTag } from 'twenty-ui-deprecated/navigation';
+import { type ThemeColor } from 'twenty-ui-deprecated/theme';
 import { AggregateOperations } from '~/generated-metadata/graphql';
 
 export const ChartRatioOptionSelectSelectableListItem = ({

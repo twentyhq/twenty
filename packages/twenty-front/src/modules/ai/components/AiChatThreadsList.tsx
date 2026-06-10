@@ -17,9 +17,9 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
-import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { getOsControlSymbol } from 'twenty-ui/utilities';
+import { Button } from 'twenty-ui-deprecated/input';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { getOsControlSymbol } from 'twenty-ui-deprecated/utilities';
 
 const StyledContainer = styled.div`
   background: ${themeCssVariables.background.secondary};

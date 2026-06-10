@@ -9,7 +9,7 @@ import {
 } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import { formatSyncActionsSummary } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
-import { serializeError } from '@/cli/utilities/error/serialize-error';
+import { getSyncErrorRecoveryHint } from '@/cli/utilities/error/get-sync-error-recovery-hint';
 import { type Manifest } from 'twenty-shared/application';
 
 export type SyncApplicationOrchestratorStepOutput = {
@@ -95,9 +95,15 @@ export class SyncApplicationOrchestratorStep {
       });
     } else {
       events.push({
-        message: `Sync failed with error: ${serializeError(syncResult.error)}`,
+        message: `Sync failed with error: ${syncResult.message ?? 'Sync failed'}`,
         status: 'error',
       });
+    }
+
+    const recoveryHint = getSyncErrorRecoveryHint(syncResult.message);
+
+    if (recoveryHint) {
+      events.push({ message: recoveryHint, status: 'info' });
     }
 
     const summaryMessage = errorEvents ? errorEvents[0].message : 'Sync failed';

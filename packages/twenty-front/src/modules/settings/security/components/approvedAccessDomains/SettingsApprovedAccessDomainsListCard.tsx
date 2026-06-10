@@ -14,7 +14,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconAt, IconMailCog, Status } from 'twenty-ui/display';
+import { IconAt, IconMailCog, Status } from 'twenty-ui-deprecated/display';
 import { useQuery } from '@apollo/client/react';
 import { GetApprovedAccessDomainsDocument } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
