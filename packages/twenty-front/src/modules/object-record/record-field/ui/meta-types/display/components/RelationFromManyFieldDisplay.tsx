@@ -82,6 +82,8 @@ export const RelationFromManyFieldDisplay = () => {
     }
 
     const filteredValues = fieldValue.filter((record) => {
+      if (!isDefined(record)) return true;
+
       if (locallyDeletedIds.includes(record.id)) return false;
 
       const hasMatchingForeignKey = Object.entries(record).some(
