@@ -1,0 +1,27 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-9/2-9-upgrade-version-command.module.ts
+  s_00feb31f113c96::t_416558b8d91ee8 5-6,9,27-28
+packages/twenty-server/src/database/commands/upgrade-version-command/2-9/2-9-instance-command-fast-1780088214774-add-emailing-domain-unsubscribe-host.ts
+  s_00feb31f113c96::t_416558b8d91ee8 1-21
+packages/twenty-server/src/database/commands/upgrade-version-command/2-9/2-9-workspace-command-1799000031000-backfill-message-standard-objects.command.ts
+  s_00feb31f113c96::t_416558b8d91ee8 1-452
+packages/twenty-server/src/database/commands/upgrade-version-command/2-9/2-9-workspace-command-1799000040000-add-compose-campaign-command-menu-item.command.ts
+  s_00feb31f113c96::t_416558b8d91ee8 1-124
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_00feb31f113c96::t_416558b8d91ee8 62,126
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "eef26ef10b96fa5fe9e509ffb35465740e5b5914",
+  "prompts": {},
+  "sessions": {
+    "s_00feb31f113c96": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8eaa9ec8-3e18-4d6e-8565-e27bf80f62fc",
+        "model": "unknown"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
