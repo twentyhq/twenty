@@ -43,14 +43,24 @@ const requireEnv = (name: string): string => {
 const TARGET_OBJECTS = ['partner', 'person', 'company', 'opportunity'] as const;
 type TargetObject = (typeof TARGET_OBJECTS)[number];
 
-// System / immutable Opportunity fields that must NOT be in the field-permission lock
-// list, PLUS the fields the Partner role is allowed to update (`stage`, `amount`).
-// Everything else is locked (canUpdateFieldValue: false).
+// Opportunity fields that must NOT be in the field-permission lock list. Three groups:
+//   - system/immutable columns: id, createdAt, updatedAt, deletedAt
+//   - server-managed columns written on a normal update (locking them breaks the update):
+//       `updatedBy`  — injected into EVERY update by the *.updateOne pre-query hook, so
+//                      locking it rejects all opportunity updates (stage + amount) with
+//                      PERMISSION_DENIED. The server overwrites it with the real actor, so
+//                      there is nothing to protect by locking it.
+//       `position`   — co-written with `stage` when the stage is changed via kanban drag,
+//                      so locking it breaks kanban stage-changes.
+//   - the intentionally-editable business fields: `stage`, `amount`.
+// Everything else is locked (canUpdateFieldValue: false). See src/roles/partner.role.ts.
 const OPPORTUNITY_FIELD_LOCK_SKIP = new Set([
   'id',
   'createdAt',
   'updatedAt',
   'deletedAt',
+  'updatedBy',
+  'position',
   'stage',
   'amount',
 ]);

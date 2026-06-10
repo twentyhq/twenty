@@ -15,12 +15,25 @@ import { PARTNER_USER_ON_OPPORTUNITY_FIELD_ID } from 'src/fields/partner-user-on
 //
 // Partner edit scope:
 //   - Partner (own profile): full update.
-//   - Opportunity: read-all, but UPDATE only `stage` and `amount` (every other non-system
-//     field is locked via canUpdateFieldValue: false below).
+//   - Opportunity: read-all, but UPDATE only `stage` and `amount` (every other
+//     user-facing field is locked via canUpdateFieldValue: false below).
 //   - Company / Person: READ-ONLY (no object-level update — see objectPermissions).
 // Field permissions are deployed via manifest sync (yarn twenty dev --once) — the
 // upsertFieldPermissions metadata mutation enforces an application-ownership check that
 // prevents setting them post-deploy via workspace API key. `yarn rls:configure` verifies them.
+//
+// Do NOT lock server-managed fields that get written on a normal update:
+//   - `updatedBy` (ACTOR) is injected into EVERY update by the `*.updateOne` pre-query hook
+//     (ActorFromAuthContextService.injectUpdatedBy). Locking it makes the permission check
+//     reject every opportunity update — stage and amount included — with PERMISSION_DENIED.
+//     The server overwrites it with the real actor regardless, so locking it is both
+//     pointless (no spoofing possible) and breaking. Left editable.
+//   - `position` (POSITION) is co-written with `stage` when the stage is changed by dragging
+//     a card on the kanban board. Locking it would make kanban stage-changes fail. Left
+//     editable (a partner reordering their own view is cosmetic only).
+// `createdBy` stays locked: it is NOT injected on update, so locking it blocks a client from
+// rewriting authorship without breaking normal edits. `searchVector` is a STORED generated
+// column (never written by the app), so its lock is an inert no-op kept for completeness.
 export default defineRole({
   universalIdentifier: PARTNER_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Partner',
@@ -34,8 +47,10 @@ export default defineRole({
   canSoftDeleteAllObjectRecords: false,
   canDestroyAllObjectRecords: false,
   // Opportunity field permissions: read-all / update `stage` + `amount` only.
-  // System fields (id, createdAt, updatedAt, deletedAt) plus `stage` and `amount` are
-  // intentionally omitted from this lock list — everything else is canUpdateFieldValue: false.
+  // Omitted from this lock list (i.e. editable): system fields (id, createdAt, updatedAt,
+  // deletedAt), the two server-managed/co-written fields (`updatedBy`, `position` — see the
+  // header comment), plus the two intentionally-editable fields (`stage`, `amount`).
+  // Everything else is canUpdateFieldValue: false.
   fieldPermissions: [
     {
       objectUniversalIdentifier:
@@ -57,23 +72,7 @@ export default defineRole({
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
       fieldUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.fields.position
-          .universalIdentifier,
-      canUpdateFieldValue: false,
-    },
-    {
-      objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
-      fieldUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.fields.createdBy
-          .universalIdentifier,
-      canUpdateFieldValue: false,
-    },
-    {
-      objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
-      fieldUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.fields.updatedBy
           .universalIdentifier,
       canUpdateFieldValue: false,
     },
