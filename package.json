@@ -41,7 +41,8 @@
     "make-fetch-happen": "^15.0.0",
     "@electron/rebuild/tar": "npm:^7.5.16",
     "@electron/node-gyp/tar": "npm:^7.5.16",
-    "pacote/tar": "npm:^7.5.16"
+    "pacote/tar": "npm:^7.5.16",
+    "@angular-devkit/core": "19.2.24"
   },
   "version": "0.2.1",
   "nx": {},
