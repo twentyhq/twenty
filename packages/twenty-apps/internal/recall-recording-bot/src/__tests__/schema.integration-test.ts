@@ -3,8 +3,8 @@ import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { describe, expect, it } from 'vitest';
 
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/application-universal-identifier';
-import { CALL_RECORDING_REQUEST_STATUS } from 'src/logic-functions/constants/call-recording-request-status';
-import { CALL_RECORDING_STATUS } from 'src/logic-functions/constants/call-recording-status';
+import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
+import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 
 describe('App installation', () => {
   it('should find the installed app in the applications list', async () => {
@@ -36,8 +36,8 @@ describe('CallRecording status contract', () => {
         __args: {
           data: {
             title: 'Integration test recording',
-            status: CALL_RECORDING_STATUS.SCHEDULED,
-            recordingRequestStatus: CALL_RECORDING_REQUEST_STATUS.REQUESTED,
+            status: CallRecordingStatus.SCHEDULED,
+            recordingRequestStatus: CallRecordingRequestStatus.REQUESTED,
           },
         },
         id: true,
@@ -52,7 +52,7 @@ describe('CallRecording status contract', () => {
       throw new Error('Expected call recording creation to return an id');
     }
 
-    for (const status of Object.values(CALL_RECORDING_STATUS)) {
+    for (const status of Object.values(CallRecordingStatus)) {
       const updated = await client.mutation({
         updateCallRecording: {
           __args: { id: callRecordingId, data: { status } },
@@ -64,7 +64,7 @@ describe('CallRecording status contract', () => {
     }
 
     for (const recordingRequestStatus of Object.values(
-      CALL_RECORDING_REQUEST_STATUS,
+      CallRecordingRequestStatus,
     )) {
       const updated = await client.mutation({
         updateCallRecording: {

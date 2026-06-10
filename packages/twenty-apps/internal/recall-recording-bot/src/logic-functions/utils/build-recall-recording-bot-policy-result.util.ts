@@ -1,5 +1,4 @@
-import { RECALL_RECORDING_BOT_PREFERENCES } from 'src/logic-functions/constants/recall-recording-bot-preferences';
-import { type RecallRecordingBotPreference } from 'src/logic-functions/types/recall-recording-bot-preference.type';
+import { RecallRecordingBotPreference } from 'src/logic-functions/constants/recall-recording-bot-preference';
 import { type RecallRecordingBotPolicyCalendarEventInput } from 'src/logic-functions/types/recall-recording-bot-policy-calendar-event-input.type';
 import { type RecallRecordingBotPolicyResultForCalendarEvent } from 'src/logic-functions/types/recall-recording-bot-policy-result-for-calendar-event.type';
 import { computeRealMeetingKey } from 'src/logic-functions/utils/compute-real-meeting-key.util';
@@ -64,11 +63,11 @@ const normalizeRecallRecordingBotPreference = (
 ): RecallRecordingBotPreference =>
   isRecallRecordingBotPreference(recallRecordingBotPreference)
     ? recallRecordingBotPreference
-    : 'AUTO';
+    : RecallRecordingBotPreference.AUTO;
 
 const isRecallRecordingBotPreference = (
   recallRecordingBotPreference: string | null | undefined,
 ): recallRecordingBotPreference is RecallRecordingBotPreference =>
-  RECALL_RECORDING_BOT_PREFERENCES.some(
+  Object.values(RecallRecordingBotPreference).some(
     (preference) => preference === recallRecordingBotPreference,
   );

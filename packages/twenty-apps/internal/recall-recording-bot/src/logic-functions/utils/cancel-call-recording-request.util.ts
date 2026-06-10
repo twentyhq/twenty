@@ -1,6 +1,6 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-import { CALL_RECORDING_REQUEST_STATUS } from 'src/logic-functions/constants/call-recording-request-status';
+import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import { cancelRecallRecordingBot } from 'src/logic-functions/utils/recall-bot-api.util';
@@ -30,7 +30,7 @@ export const cancelCallRecordingRequest = async ({
   await updateCallRecording(client, {
     id: callRecording.id,
     data: {
-      recordingRequestStatus: CALL_RECORDING_REQUEST_STATUS.CANCELED,
+      recordingRequestStatus: CallRecordingRequestStatus.CANCELED,
       externalBotId: null,
     },
   });

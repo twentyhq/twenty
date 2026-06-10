@@ -8,7 +8,7 @@ import { RECALL_RECORDING_BOT_PREFERENCE_AUTO_OPTION_ID } from 'src/constants/re
 import { RECALL_RECORDING_BOT_PREFERENCE_OFF_OPTION_ID } from 'src/constants/recall-recording-bot-preference-off-option-id';
 import { RECALL_RECORDING_BOT_PREFERENCE_ON_CALENDAR_EVENT_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/recall-recording-bot-preference-on-calendar-event-field-universal-identifier';
 import { RECALL_RECORDING_BOT_PREFERENCE_ON_OPTION_ID } from 'src/constants/recall-recording-bot-preference-on-option-id';
-import { type RecallRecordingBotPreference } from 'src/logic-functions/types/recall-recording-bot-preference.type';
+import { RecallRecordingBotPreference } from 'src/logic-functions/constants/recall-recording-bot-preference';
 
 export default defineField({
   universalIdentifier:
@@ -26,21 +26,21 @@ export default defineField({
   options: [
     {
       id: RECALL_RECORDING_BOT_PREFERENCE_AUTO_OPTION_ID,
-      value: 'AUTO' satisfies RecallRecordingBotPreference,
+      value: RecallRecordingBotPreference.AUTO,
       label: 'Auto',
       position: 0,
       color: 'blue',
     },
     {
       id: RECALL_RECORDING_BOT_PREFERENCE_ON_OPTION_ID,
-      value: 'ON' satisfies RecallRecordingBotPreference,
+      value: RecallRecordingBotPreference.ON,
       label: 'On',
       position: 1,
       color: 'green',
     },
     {
       id: RECALL_RECORDING_BOT_PREFERENCE_OFF_OPTION_ID,
-      value: 'OFF' satisfies RecallRecordingBotPreference,
+      value: RecallRecordingBotPreference.OFF,
       label: 'Off',
       position: 2,
       color: 'gray',

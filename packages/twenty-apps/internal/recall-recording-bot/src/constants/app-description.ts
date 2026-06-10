@@ -1,2 +1,2 @@
 export const APP_DESCRIPTION =
-  'Schedules Recall recording bots for eligible calendar events and stores resulting recordings on Twenty CallRecording records.';
+  'Capture every customer conversation automatically. Recall bots join eligible meetings and record calls for you.';

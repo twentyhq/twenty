@@ -5,6 +5,7 @@ import { type CalendarEventParticipantRecord } from 'src/logic-functions/types/c
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { fetchAllNodes } from 'src/logic-functions/utils/fetch-all-nodes.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
+import { stripRestrictedFieldValue } from 'src/logic-functions/utils/strip-restricted-field-value.util';
 
 export const fetchCalendarEventsByIds = async (
   client: CoreApiClient,
@@ -74,7 +75,7 @@ const fetchCalendarEventsByFilter = async (
 
   const calendarEvents = calendarEventNodes.map((calendarEvent) => ({
     id: calendarEvent.id,
-    title: calendarEvent.title ?? null,
+    title: stripRestrictedFieldValue(calendarEvent.title ?? null),
     isCanceled: calendarEvent.isCanceled ?? false,
     startsAt: calendarEvent.startsAt ?? null,
     endsAt: calendarEvent.endsAt ?? null,

@@ -1,4 +1,4 @@
-import { type RecallRecordingBotPreference } from 'src/logic-functions/types/recall-recording-bot-preference.type';
+import { type RecallRecordingBotPreference } from 'src/logic-functions/constants/recall-recording-bot-preference';
 
 export type RecallRecordingBotPolicyInput = {
   recallRecordingBotPreference: RecallRecordingBotPreference;

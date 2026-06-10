@@ -1,3 +1,4 @@
+import { RecallRecordingBotPreference } from 'src/logic-functions/constants/recall-recording-bot-preference';
 import { type RecallRecordingBotPolicyInput } from 'src/logic-functions/types/recall-recording-bot-policy-input.type';
 import { type RecallRecordingBotPolicyNotRequiredReason } from 'src/logic-functions/types/recall-recording-bot-policy-not-required-reason.type';
 import { type RecallRecordingBotPolicyRequiredReason } from 'src/logic-functions/types/recall-recording-bot-policy-required-reason.type';
@@ -22,11 +23,11 @@ export const resolveRecallRecordingBotPolicyResult = ({
     return botNotRequired('EVENT_CANCELED');
   }
 
-  if (input.recallRecordingBotPreference === 'OFF') {
+  if (input.recallRecordingBotPreference === RecallRecordingBotPreference.OFF) {
     return botNotRequired('PREFERENCE_OFF');
   }
 
-  if (input.recallRecordingBotPreference === 'ON') {
+  if (input.recallRecordingBotPreference === RecallRecordingBotPreference.ON) {
     if (!hasConferenceLink(input.conferenceLinkUrl)) {
       return botNotRequired('PREFERENCE_ON_MISSING_CONFERENCE_LINK');
     }

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { RecallRecordingBotPreference } from 'src/logic-functions/constants/recall-recording-bot-preference';
 import { resolveRecallRecordingBotPolicyResult } from 'src/logic-functions/utils/resolve-recall-recording-bot-policy-result.util';
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
@@ -11,7 +12,7 @@ describe('resolveRecallRecordingBotPolicyResult', () => {
     expect(
       resolveRecallRecordingBotPolicyResult({
         input: {
-          recallRecordingBotPreference: 'ON',
+          recallRecordingBotPreference: RecallRecordingBotPreference.ON,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
@@ -31,7 +32,7 @@ describe('resolveRecallRecordingBotPolicyResult', () => {
     expect(
       resolveRecallRecordingBotPolicyResult({
         input: {
-          recallRecordingBotPreference: 'ON',
+          recallRecordingBotPreference: RecallRecordingBotPreference.ON,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
@@ -51,7 +52,7 @@ describe('resolveRecallRecordingBotPolicyResult', () => {
     expect(
       resolveRecallRecordingBotPolicyResult({
         input: {
-          recallRecordingBotPreference: 'AUTO',
+          recallRecordingBotPreference: RecallRecordingBotPreference.AUTO,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
@@ -71,7 +72,7 @@ describe('resolveRecallRecordingBotPolicyResult', () => {
     expect(
       resolveRecallRecordingBotPolicyResult({
         input: {
-          recallRecordingBotPreference: 'AUTO',
+          recallRecordingBotPreference: RecallRecordingBotPreference.AUTO,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
@@ -91,7 +92,7 @@ describe('resolveRecallRecordingBotPolicyResult', () => {
     expect(
       resolveRecallRecordingBotPolicyResult({
         input: {
-          recallRecordingBotPreference: 'ON',
+          recallRecordingBotPreference: RecallRecordingBotPreference.ON,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,

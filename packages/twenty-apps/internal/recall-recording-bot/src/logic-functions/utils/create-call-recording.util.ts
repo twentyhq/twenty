@@ -1,12 +1,12 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-import { CALL_RECORDING_REQUEST_STATUS } from 'src/logic-functions/constants/call-recording-request-status';
-import { CALL_RECORDING_STATUS } from 'src/logic-functions/constants/call-recording-status';
+import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
+import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 
 export type ScheduledCallRecordingFields = {
   title: string | null;
-  status: typeof CALL_RECORDING_STATUS.SCHEDULED;
-  recordingRequestStatus: typeof CALL_RECORDING_REQUEST_STATUS.REQUESTED;
+  status: CallRecordingStatus.SCHEDULED;
+  recordingRequestStatus: CallRecordingRequestStatus.REQUESTED;
   startedAt: string | null;
   endedAt: string | null;
   calendarEventId: string;

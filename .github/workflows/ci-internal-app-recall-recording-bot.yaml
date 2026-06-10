@@ -64,6 +64,13 @@ jobs:
       - name: Build SDK packages
         run: npx nx build twenty-sdk
 
+      # The integration tests import the CoreApiClient that `appDevOnce`
+      # generates into the app's own node_modules/twenty-client-sdk; without
+      # this install the import falls back to the workspace stub and throws.
+      - name: Install app dependencies
+        working-directory: packages/twenty-apps/internal/recall-recording-bot
+        run: yarn install --immutable
+
       - name: Run unit tests
         working-directory: packages/twenty-apps/internal/recall-recording-bot
         run: npx vitest run --config vitest.unit.config.ts

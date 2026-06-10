@@ -1,9 +1,6 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-import {
-  CALL_RECORDING_STATUS,
-  type CallRecordingStatus,
-} from 'src/logic-functions/constants/call-recording-status';
+import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/utils/is-call-recording-status-downgrade.util';
 import {
   updateCallRecording,
@@ -196,30 +193,30 @@ const mapRecallStatusCodeToCallRecordingStatus = ({
   statusCode: string | undefined;
 }): CallRecordingStatus | undefined => {
   if (event === 'recording.done') {
-    return CALL_RECORDING_STATUS.COMPLETED;
+    return CallRecordingStatus.COMPLETED;
   }
 
   if (event === 'recording.failed') {
-    return CALL_RECORDING_STATUS.FAILED_UNKNOWN;
+    return CallRecordingStatus.FAILED_UNKNOWN;
   }
 
   switch (statusCode) {
     case 'joining_call':
     case 'in_waiting_room':
-      return CALL_RECORDING_STATUS.JOINING;
+      return CallRecordingStatus.JOINING;
     case 'in_call_not_recording':
     case 'recording_permission_allowed':
     case 'in_call_recording':
-      return CALL_RECORDING_STATUS.RECORDING;
+      return CallRecordingStatus.RECORDING;
     case 'call_ended':
     case 'analysis_done':
-      return CALL_RECORDING_STATUS.PROCESSING;
+      return CallRecordingStatus.PROCESSING;
     case 'done':
-      return CALL_RECORDING_STATUS.COMPLETED;
+      return CallRecordingStatus.COMPLETED;
     case 'fatal':
     case 'analysis_failed':
     case 'recording_permission_denied':
-      return CALL_RECORDING_STATUS.FAILED_UNKNOWN;
+      return CallRecordingStatus.FAILED_UNKNOWN;
     default:
       return undefined;
   }

@@ -1,9 +1,6 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-import {
-  CALL_RECORDING_REQUEST_STATUS,
-  type CallRecordingRequestStatus,
-} from 'src/logic-functions/constants/call-recording-request-status';
+import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { fetchAllNodes } from 'src/logic-functions/utils/fetch-all-nodes.util';
@@ -74,11 +71,11 @@ const normalizeOptionalString = (
 const normalizeCallRecordingRequestStatus = (
   recordingRequestStatus: unknown,
 ): CallRecordingRequestStatus | null => {
-  if (recordingRequestStatus === CALL_RECORDING_REQUEST_STATUS.REQUESTED) {
+  if (recordingRequestStatus === CallRecordingRequestStatus.REQUESTED) {
     return recordingRequestStatus;
   }
 
-  if (recordingRequestStatus === CALL_RECORDING_REQUEST_STATUS.CANCELED) {
+  if (recordingRequestStatus === CallRecordingRequestStatus.CANCELED) {
     return recordingRequestStatus;
   }
 

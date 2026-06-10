@@ -1,7 +1,7 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-import { CALL_RECORDING_REQUEST_STATUS } from 'src/logic-functions/constants/call-recording-request-status';
-import { CALL_RECORDING_STATUS } from 'src/logic-functions/constants/call-recording-status';
+import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
+import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { type RecallRecordingBotPolicyResultForMeeting } from 'src/logic-functions/types/recall-recording-bot-policy-result-for-meeting.type';
@@ -341,9 +341,9 @@ const reconcileCanceledMeeting = async ({
     await findCallRecordingsByCalendarEventIds(client, calendarEventIds)
   ).filter(
     (callRecording) =>
-      callRecording.status === CALL_RECORDING_STATUS.SCHEDULED &&
+      callRecording.status === CallRecordingStatus.SCHEDULED &&
       callRecording.recordingRequestStatus ===
-        CALL_RECORDING_REQUEST_STATUS.REQUESTED,
+        CallRecordingRequestStatus.REQUESTED,
   );
 
   if (cancellableCallRecordings.length === 0) {
@@ -386,7 +386,7 @@ const cancelDuplicateCallRecordingRequests = async ({
   const duplicatesToCancel = duplicateCallRecordings.filter(
     (callRecording) =>
       callRecording.recordingRequestStatus ===
-        CALL_RECORDING_REQUEST_STATUS.REQUESTED ||
+        CallRecordingRequestStatus.REQUESTED ||
       isNonEmptyString(callRecording.externalBotId),
   );
 
@@ -407,7 +407,7 @@ const buildCalendarDrivenCallRecordingFields = (
   calendarEvent: CalendarEventRecord,
 ) => ({
   title: calendarEvent.title,
-  recordingRequestStatus: CALL_RECORDING_REQUEST_STATUS.REQUESTED,
+  recordingRequestStatus: CallRecordingRequestStatus.REQUESTED,
   startedAt: calendarEvent.startsAt,
   endedAt: calendarEvent.endsAt,
   calendarEventId: calendarEvent.id,
@@ -417,7 +417,7 @@ const buildScheduledCallRecordingFields = (
   calendarEvent: CalendarEventRecord,
 ): ScheduledCallRecordingFields => ({
   ...buildCalendarDrivenCallRecordingFields(calendarEvent),
-  status: CALL_RECORDING_STATUS.SCHEDULED,
+  status: CallRecordingStatus.SCHEDULED,
 });
 
 // A live or finished bot lifecycle must never be reset to SCHEDULED by a calendar-driven update.
@@ -435,8 +435,8 @@ const buildPolicyManagedCallRecordingUpdateFields = ({
 const canResetCallRecordingStatusToScheduled = (
   status: string | null | undefined,
 ): boolean =>
-  status === CALL_RECORDING_STATUS.SCHEDULED ||
-  status === CALL_RECORDING_STATUS.FAILED_UNKNOWN;
+  status === CallRecordingStatus.SCHEDULED ||
+  status === CallRecordingStatus.FAILED_UNKNOWN;
 
 const syncScheduledRecallBot = async ({
   client,
@@ -557,7 +557,7 @@ const getFirstNonPolicyManagedOpenCallRecording = (
     )
     .find(
       (callRecording) =>
-        callRecording.status !== CALL_RECORDING_STATUS.COMPLETED &&
+        callRecording.status !== CallRecordingStatus.COMPLETED &&
         !isPolicyManagedCallRecording(callRecording),
     );
 
@@ -566,18 +566,18 @@ const isPolicyManagedCallRecording = (
 ): boolean =>
   isOpenRecallRecordingBotStatus(callRecording.status) &&
   (callRecording.recordingRequestStatus ===
-    CALL_RECORDING_REQUEST_STATUS.REQUESTED ||
+    CallRecordingRequestStatus.REQUESTED ||
     callRecording.recordingRequestStatus ===
-      CALL_RECORDING_REQUEST_STATUS.CANCELED);
+      CallRecordingRequestStatus.CANCELED);
 
 const isOpenRecallRecordingBotStatus = (
   status: string | null | undefined,
 ): boolean =>
-  status === CALL_RECORDING_STATUS.SCHEDULED ||
-  status === CALL_RECORDING_STATUS.JOINING ||
-  status === CALL_RECORDING_STATUS.RECORDING ||
-  status === CALL_RECORDING_STATUS.PROCESSING ||
-  status === CALL_RECORDING_STATUS.FAILED_UNKNOWN;
+  status === CallRecordingStatus.SCHEDULED ||
+  status === CallRecordingStatus.JOINING ||
+  status === CallRecordingStatus.RECORDING ||
+  status === CallRecordingStatus.PROCESSING ||
+  status === CallRecordingStatus.FAILED_UNKNOWN;
 
 const buildSkippedResult = (
   realMeetingKey: string,

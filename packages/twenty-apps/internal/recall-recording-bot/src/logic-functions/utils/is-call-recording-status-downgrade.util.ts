@@ -1,17 +1,14 @@
-import {
-  CALL_RECORDING_STATUS,
-  type CallRecordingStatus,
-} from 'src/logic-functions/constants/call-recording-status';
+import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 
 // Recall webhook deliveries are not ordered; a late status event must never
 // move a recording backwards in its lifecycle.
 const CALL_RECORDING_STATUS_PROGRESSION: Record<CallRecordingStatus, number> = {
-  [CALL_RECORDING_STATUS.SCHEDULED]: 0,
-  [CALL_RECORDING_STATUS.JOINING]: 1,
-  [CALL_RECORDING_STATUS.RECORDING]: 2,
-  [CALL_RECORDING_STATUS.PROCESSING]: 3,
-  [CALL_RECORDING_STATUS.FAILED_UNKNOWN]: 4,
-  [CALL_RECORDING_STATUS.COMPLETED]: 5,
+  [CallRecordingStatus.SCHEDULED]: 0,
+  [CallRecordingStatus.JOINING]: 1,
+  [CallRecordingStatus.RECORDING]: 2,
+  [CallRecordingStatus.PROCESSING]: 3,
+  [CallRecordingStatus.FAILED_UNKNOWN]: 4,
+  [CallRecordingStatus.COMPLETED]: 5,
 };
 
 const getCallRecordingStatusRank = (status: string): number | undefined =>
