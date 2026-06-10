@@ -10,5 +10,6 @@ export function buildSchemeDeclarations(scheme: Scheme): string {
     `${cssVariableName.ink}: ${color(tokens.ink)};`,
     `${cssVariableName.inkMuted}: ${color(tokens.inkMuted)};`,
     `${cssVariableName.line}: ${color(tokens.line)};`,
+    `${cssVariableName.lineStrong}: ${color(tokens.lineStrong)};`,
   ].join('\n');
 }

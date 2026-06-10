@@ -1,10 +1,13 @@
 'use client';
 
 import { Drawer } from '@base-ui/react/drawer';
+import { IconArrowUpRight } from '@tabler/icons-react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
+import { Fragment } from 'react';
 
+import { formatCompactCount, type CommunityStats } from '@/platform/community';
 import { LocalizedLink } from '@/platform/i18n/localized-link';
 import {
   color,
@@ -47,7 +50,7 @@ const DrawerNav = styled.nav`
 `;
 
 const DrawerNavLink = styled(LocalizedLink)`
-  border-bottom: 1px solid ${semanticColor.line};
+  border-bottom: 1px dotted ${semanticColor.lineStrong};
   color: ${semanticColor.ink};
   font-family: ${fontFamily('mono')};
   font-size: ${fontSize(4)};
@@ -64,18 +67,29 @@ const DrawerNavLink = styled(LocalizedLink)`
 
 const DrawerFooter = styled.div`
   display: grid;
-  gap: ${spacing(4)};
+  gap: ${spacing(10)};
+  justify-items: start;
   margin-top: auto;
 `;
 
 const SocialRow = styled.div`
+  align-items: center;
+  column-gap: ${spacing(4)};
   display: flex;
-  gap: ${spacing(5)};
   justify-content: center;
+  justify-self: center;
 `;
 
 const SocialAnchor = styled.a`
+  align-items: center;
   color: ${semanticColor.ink};
+  column-gap: ${spacing(2)};
+  display: inline-flex;
+  font-family: ${fontFamily('sans')};
+  font-size: ${fontSize(3)};
+  font-weight: ${FONT_WEIGHT.medium};
+  text-decoration: none;
+  white-space: nowrap;
 
   &:focus-visible {
     outline: 1px solid ${color('blue')};
@@ -83,12 +97,23 @@ const SocialAnchor = styled.a`
   }
 `;
 
+const Divider = styled.span`
+  background-color: ${semanticColor.lineStrong};
+  height: 10px;
+  width: 1px;
+`;
+
+const Arrow = styled(IconArrowUpRight)`
+  color: ${color('blue')};
+`;
+
 export type MenuDrawerProps = {
   navItems: readonly MenuNavItem[];
   socialLinks: readonly MenuSocialLink[];
+  stats: CommunityStats;
 };
 
-export function MenuDrawer({ navItems, socialLinks }: MenuDrawerProps) {
+export function MenuDrawer({ navItems, socialLinks, stats }: MenuDrawerProps) {
   const { i18n } = useLingui();
 
   return (
@@ -106,23 +131,36 @@ export function MenuDrawer({ navItems, socialLinks }: MenuDrawerProps) {
           ))}
         </DrawerNav>
         <DrawerFooter>
+          <Button
+            href={MENU.appUrl}
+            label={i18n._(msg`Log in`)}
+            size="small"
+            variant="outlined"
+          />
           <SocialRow>
-            {socialLinks.map((link) => {
+            {socialLinks.map((link, index) => {
               const IconComponent = link.icon;
               return (
-                <SocialAnchor
-                  aria-label={link.ariaLabel}
-                  href={link.href}
-                  key={link.href}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  <IconComponent aria-hidden size={20} stroke={1.6} />
-                </SocialAnchor>
+                <Fragment key={link.href}>
+                  {index > 0 && <Divider aria-hidden />}
+                  <SocialAnchor
+                    aria-label={link.ariaLabel}
+                    href={link.href}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    <IconComponent aria-hidden size={16} stroke={1.6} />
+                    {link.statKey
+                      ? formatCompactCount(stats[link.statKey])
+                      : null}
+                    {link.statKey ? (
+                      <Arrow aria-hidden size={10} stroke={2} />
+                    ) : null}
+                  </SocialAnchor>
+                </Fragment>
               );
             })}
           </SocialRow>
-          <Button href={MENU.appUrl} label={i18n._(msg`Get started`)} />
         </DrawerFooter>
       </DrawerPanel>
     </Drawer.Portal>

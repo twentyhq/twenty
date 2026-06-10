@@ -18,6 +18,7 @@ export type MenuSocialLink = {
   href: string;
   icon: Icon;
   showInDesktop: boolean;
+  statKey?: 'githubStars' | 'discordMembers';
 };
 
 // The Resources dropdown (user guide, developers, partners, releases with
@@ -39,12 +40,14 @@ export const MENU: {
       href: 'https://github.com/twentyhq/twenty',
       icon: IconBrandGithub,
       showInDesktop: true,
+      statKey: 'githubStars',
     },
     {
       ariaLabel: 'Discord (opens in new tab)',
       href: 'https://discord.gg/cx5n4Jzs57',
       icon: IconBrandDiscord,
       showInDesktop: true,
+      statKey: 'discordMembers',
     },
     {
       ariaLabel: 'LinkedIn (opens in new tab)',

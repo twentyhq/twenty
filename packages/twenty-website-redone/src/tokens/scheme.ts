@@ -11,6 +11,7 @@ export const SCHEMES: Record<
     ink: ColorToken;
     inkMuted: ColorToken;
     line: ColorToken;
+    lineStrong: ColorToken;
   }
 > = {
   light: {
@@ -18,17 +19,20 @@ export const SCHEMES: Record<
     ink: 'black',
     inkMuted: 'black-60',
     line: 'black-10',
+    lineStrong: 'black-20',
   },
   muted: {
     surface: 'neutral',
     ink: 'black',
     inkMuted: 'black-60',
     line: 'black-10',
+    lineStrong: 'black-20',
   },
   dark: {
     surface: 'black',
     ink: 'white',
     inkMuted: 'white-60',
     line: 'white-10',
+    lineStrong: 'white-20',
   },
 };

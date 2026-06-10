@@ -5,6 +5,7 @@ import {
   getRouteI18n,
   type LocaleRouteParams,
 } from '@/platform/i18n/get-route-i18n';
+import { getCommunityStats } from '@/platform/community';
 import { buildRouteMetadata } from '@/platform/seo';
 import { Menu } from '@/sections/menu';
 import { TrustedBy } from '@/sections/trusted-by';
@@ -34,11 +35,14 @@ export default async function HomePage({
 }: {
   params: Promise<LocaleRouteParams>;
 }) {
-  const i18n = await getRouteI18n(params);
+  const [i18n, communityStats] = await Promise.all([
+    getRouteI18n(params),
+    getCommunityStats(),
+  ]);
 
   return (
     <>
-      <Menu scheme="muted" />
+      <Menu communityStats={communityStats} scheme="muted" />
       <main>
         <SectionShell scheme="muted">
           <ProofStack>

@@ -6,7 +6,7 @@ import { color, radius, semanticColor } from '@/tokens';
 const iconButtonClassName = css`
   align-items: center;
   background: none;
-  border: 1px solid ${semanticColor.line};
+  border: 1px solid ${semanticColor.lineStrong};
   border-radius: ${radius(2)};
   color: ${semanticColor.ink};
   cursor: pointer;

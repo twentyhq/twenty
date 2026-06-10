@@ -9,6 +9,7 @@ import { styled } from '@linaria/react';
 import { useCallback, useState } from 'react';
 
 import { TwentyLogo } from '@/icons';
+import { type CommunityStats } from '@/platform/community';
 import { LocalizedLink } from '@/platform/i18n/localized-link';
 import {
   buildSchemeDeclarations,
@@ -96,10 +97,11 @@ const MobileActions = styled.div`
 `;
 
 export type MenuProps = {
+  communityStats: CommunityStats;
   scheme?: Scheme;
 };
 
-export function Menu({ scheme = 'light' }: MenuProps) {
+export function Menu({ communityStats, scheme = 'light' }: MenuProps) {
   const { i18n } = useLingui();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isElevated, setIsElevated] = useState(false);
@@ -131,7 +133,7 @@ export function Menu({ scheme = 'light' }: MenuProps) {
               <TwentyLogo sizePx={40} />
             </Drawer.Close>
             <MenuNav items={MENU.navItems} />
-            <MenuSocial links={MENU.socialLinks} />
+            <MenuSocial links={MENU.socialLinks} stats={communityStats} />
             <DesktopActions>
               <Button
                 href={MENU.appUrl}
@@ -146,11 +148,7 @@ export function Menu({ scheme = 'light' }: MenuProps) {
               />
             </DesktopActions>
             <MobileActions>
-              <Button
-                href={MENU.appUrl}
-                label={i18n._(msg`Get started`)}
-                size="small"
-              />
+              <Button href={MENU.appUrl} label={i18n._(msg`Get started`)} />
               <IconButton
                 ariaLabel={isDrawerOpen ? 'Close menu' : 'Open menu'}
                 onClick={() => setIsDrawerOpen((previous) => !previous)}
@@ -165,7 +163,11 @@ export function Menu({ scheme = 'light' }: MenuProps) {
           </MenuRow>
         </Container>
       </header>
-      <MenuDrawer navItems={MENU.navItems} socialLinks={MENU.socialLinks} />
+      <MenuDrawer
+        navItems={MENU.navItems}
+        socialLinks={MENU.socialLinks}
+        stats={communityStats}
+      />
     </Drawer.Root>
   );
 }
