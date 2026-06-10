@@ -1,0 +1,41 @@
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-message-topic-page-layout.config.ts
+  s_00feb31f113c96::t_e51a3215e8e84a 1-99
+packages/twenty-shared/src/types/SidePanelPages.ts
+  s_00feb31f113c96::t_e51a3215e8e84a 31
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant.ts
+  s_00feb31f113c96::t_e51a3215e8e84a 8,12,14,35,41,43
+packages/twenty-server/src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util.ts
+  s_00feb31f113c96::t_e51a3215e8e84a 26-31
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/index.ts
+  s_00feb31f113c96::t_e51a3215e8e84a 7,11,13
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-message-campaign-page-layout.config.ts
+  s_00feb31f113c96::t_e51a3215e8e84a 1-133
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-message-list-page-layout.config.ts
+  s_00feb31f113c96::t_e51a3215e8e84a 1-98
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-person-page-layout.config.ts
+  s_00feb31f113c96::t_e51a3215e8e84a 55-77
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+  s_00feb31f113c96::t_e51a3215e8e84a 88-91
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+  s_00feb31f113c96::t_e51a3215e8e84a 696-709
+packages/twenty-shared/src/metadata/constants/standard-page-layout-universal-identifiers.constant.ts
+  s_00feb31f113c96::t_e51a3215e8e84a 121-126,571-694
+packages/twenty-server/src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum.ts
+  s_00feb31f113c96::t_e51a3215e8e84a 52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "1c72a81c93577cfb76c70f9b9d1bd1d24b5e347c",
+  "prompts": {},
+  "sessions": {
+    "s_00feb31f113c96": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8eaa9ec8-3e18-4d6e-8565-e27bf80f62fc",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
