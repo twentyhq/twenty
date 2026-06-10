@@ -18,20 +18,49 @@ msgstr ""
 msgid "+10k others"
 msgstr "+10k autres"
 
+#. js-lingui-id: MqJvvH
+#: src/sections/menu/menu.data.ts
+msgid "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data."
+msgstr ""
+
+#. js-lingui-id: e1u+Zh
+#: src/sections/menu/menu.data.ts
+msgid "Build on an open platform"
+msgstr ""
+
+#. js-lingui-id: B9nLrl
+#: src/sections/menu/menu.data.ts
+msgid "Create apps on Twenty"
+msgstr ""
+
 #. js-lingui-id: NihQNk
 #: src/sections/menu/menu.data.ts
 msgid "Customers"
 msgstr "Clients"
+
+#. js-lingui-id: n+SX4g
+#: src/sections/menu/menu.data.ts
+msgid "Developers"
+msgstr "Développeurs"
+
+#. js-lingui-id: W+b/DF
+#: src/sections/menu/menu.data.ts
+msgid "Discover what's new"
+msgstr ""
 
 #. js-lingui-id: AfwFMk
 #: src/app/[locale]/page.tsx
 msgid "Every section sits in the same shell: identical vertical rhythm from tokens, semantic colors resolved by the surface scheme, and the only horizontal gutter on the site."
 msgstr ""
 
+#. js-lingui-id: MD032e
+#: src/sections/menu/menu.data.ts
+msgid "Find a Twenty partner"
+msgstr ""
+
 #. js-lingui-id: ZDIydz
 #: src/sections/menu/menu.tsx
 #: src/sections/menu/menu.tsx
-#: src/sections/menu/menu-drawer.tsx
 #: src/app/[locale]/page.tsx
 msgid "Get started"
 msgstr "Commencer"
@@ -41,29 +70,80 @@ msgstr "Commencer"
 msgid "In production."
 msgstr "En production."
 
+#. js-lingui-id: +Ss/og
+#: src/sections/menu/menu.data.ts
+msgid "Learn how to use Twenty"
+msgstr ""
+
 #. js-lingui-id: sQia9P
 #: src/sections/menu/menu.tsx
+#: src/sections/menu/menu-drawer.tsx
 msgid "Log in"
 msgstr "Connexion"
+
+#. js-lingui-id: bJNKJ1
+#: src/sections/menu/menu.data.ts
+msgid "Master every corner of Twenty"
+msgstr ""
+
+#. js-lingui-id: bwCiCi
+#: src/sections/menu/menu.data.ts
+msgid "Meet the certified agencies and consultants implementing Twenty for teams worldwide."
+msgstr ""
+
+#. js-lingui-id: mPkInZ
+#: src/sections/menu/menu.data.ts
+msgid "Partners"
+msgstr "Partenaires"
 
 #. js-lingui-id: aHCEmh
 #: src/sections/menu/menu.data.ts
 msgid "Pricing"
 msgstr "Tarifs"
 
+#. js-lingui-id: 5icoS1
+#: src/sections/menu/menu.data.ts
+msgid "Releases"
+msgstr "Versions"
+
+#. js-lingui-id: s+MGs7
+#: src/sections/menu/menu.data.ts
+msgid "Resources"
+msgstr "Ressources"
+
 #. js-lingui-id: pi7oqI
 #: src/app/[locale]/page.tsx
 msgid "See how teams build *on Twenty*"
 msgstr "Découvrez comment les équipes créent *sur Twenty*"
+
+#. js-lingui-id: FY4ykg
+#: src/sections/menu/menu.data.ts
+msgid "See the latest release"
+msgstr ""
 
 #. js-lingui-id: BnuYjY
 #: src/app/[locale]/page.tsx
 msgid "Star us"
 msgstr "Étoilez-nous"
 
+#. js-lingui-id: bxgoJR
+#: src/sections/menu/menu.data.ts
+msgid "Step-by-step guides and playbooks to help your team get the most out of their workspace."
+msgstr ""
+
+#. js-lingui-id: Ye3KKA
+#: src/sections/menu/menu.data.ts
+msgid "Team up with a Twenty expert"
+msgstr ""
+
 #. js-lingui-id: zXlFuT
 #: src/platform/routing/static-website-routes.ts
 msgid "The #1 Open Source CRM for modern teams. Modular, scalable, and built to fit your business."
+msgstr ""
+
+#. js-lingui-id: POzmFl
+#: src/sections/menu/menu.data.ts
+msgid "Track every release with changelogs, highlights and demos of the newest features."
 msgstr ""
 
 #. js-lingui-id: KtyN0b
@@ -75,6 +155,11 @@ msgstr "ils nous font confiance"
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty | #1 Open Source CRM"
 msgstr ""
+
+#. js-lingui-id: Roaswv
+#: src/sections/menu/menu.data.ts
+msgid "User Guide"
+msgstr "Guide d'utilisation"
 
 #. js-lingui-id: DJlSwA
 #: src/sections/menu/menu.data.ts

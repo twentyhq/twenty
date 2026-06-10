@@ -1,7 +1,7 @@
-import { IconArrowUpRight } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
 import { Fragment } from 'react';
 
+import { ArrowUpRight } from '@/icons';
 import { formatCompactCount, type CommunityStats } from '@/platform/community';
 import {
   color,
@@ -20,8 +20,9 @@ const SocialRow = styled.nav`
 
   ${mediaUp('md')} {
     align-items: center;
-    column-gap: ${spacing(4)};
-    display: flex;
+    column-gap: ${spacing(5)};
+    display: grid;
+    grid-auto-flow: column;
     justify-content: end;
   }
 `;
@@ -30,7 +31,7 @@ const SocialRow = styled.nav`
 // original behavior.
 const SocialItem = styled.span`
   align-items: center;
-  column-gap: ${spacing(4)};
+  column-gap: ${spacing(5)};
   display: flex;
 
   &[data-wide-only] {
@@ -46,10 +47,11 @@ const SocialAnchor = styled.a`
   align-items: center;
   color: ${semanticColor.ink};
   column-gap: ${spacing(2)};
-  display: inline-flex;
+  display: grid;
   font-family: ${fontFamily('sans')};
   font-size: ${fontSize(3)};
   font-weight: ${FONT_WEIGHT.medium};
+  grid-auto-flow: column;
   text-decoration: none;
   white-space: nowrap;
 
@@ -64,13 +66,14 @@ const SocialAnchor = styled.a`
 `;
 
 const Divider = styled.span`
-  background-color: ${semanticColor.lineStrong};
+  background-color: ${semanticColor.divider};
   height: 10px;
   width: 1px;
 `;
 
-const Arrow = styled(IconArrowUpRight)`
+const Arrow = styled.span`
   color: ${color('blue')};
+  display: inline-flex;
 `;
 
 export type MenuSocialProps = {
@@ -98,9 +101,11 @@ export function MenuSocial({ links, stats }: MenuSocialProps) {
               rel="noopener noreferrer"
               target="_blank"
             >
-              <IconComponent aria-hidden size={16} stroke={1.6} />
+              <IconComponent aria-hidden size={14} />
               {link.statKey ? formatCompactCount(stats[link.statKey]) : null}
-              <Arrow aria-hidden size={10} stroke={2} />
+              <Arrow aria-hidden>
+                <ArrowUpRight sizePx={8} />
+              </Arrow>
             </SocialAnchor>
           </SocialItem>
         );

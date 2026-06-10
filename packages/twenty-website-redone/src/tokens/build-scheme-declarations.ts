@@ -11,5 +11,6 @@ export function buildSchemeDeclarations(scheme: Scheme): string {
     `${cssVariableName.inkMuted}: ${color(tokens.inkMuted)};`,
     `${cssVariableName.line}: ${color(tokens.line)};`,
     `${cssVariableName.lineStrong}: ${color(tokens.lineStrong)};`,
+    `${cssVariableName.divider}: ${color(tokens.divider)};`,
   ].join('\n');
 }

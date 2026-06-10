@@ -1,12 +1,13 @@
 'use client';
 
 import { Drawer } from '@base-ui/react/drawer';
-import { IconArrowUpRight } from '@tabler/icons-react';
+import { IconChevronDown } from '@tabler/icons-react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 
+import { ArrowUpRight } from '@/icons';
 import { formatCompactCount, type CommunityStats } from '@/platform/community';
 import { LocalizedLink } from '@/platform/i18n/localized-link';
 import {
@@ -24,17 +25,20 @@ import { MENU, type MenuNavItem, type MenuSocialLink } from './menu.data';
 
 const DrawerPanel = styled(Drawer.Popup)`
   background-color: ${semanticColor.surface};
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: 1fr auto auto;
   height: 100vh;
   height: 100dvh;
-  inset: 0;
+  left: 0;
   opacity: 1;
-  padding: ${spacing(22)} ${spacing(4)} ${spacing(4)};
+  overflow-y: auto;
+  padding: ${spacing(22)} ${spacing(7)} ${spacing(4)};
   position: fixed;
+  top: 0;
   transition:
     opacity 200ms ease,
     transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  width: 100vw;
   z-index: ${Z_INDEX.drawer};
 
   &[data-starting-style],
@@ -44,18 +48,73 @@ const DrawerPanel = styled(Drawer.Popup)`
   }
 `;
 
+// The nav block centers as a group in the remaining height, with dotted
+// hairlines between items only — both ported from the original.
 const DrawerNav = styled.nav`
-  display: flex;
-  flex-direction: column;
+  align-content: center;
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: ${spacing(8)};
+  width: 100%;
+`;
+
+const drawerItemStyles = `
+  background: none;
+  border: none;
+  color: ${semanticColor.ink};
+  cursor: pointer;
+  display: block;
+  font-family: ${fontFamily('mono')};
+  font-size: ${fontSize(8)};
+  font-weight: ${FONT_WEIGHT.light};
+  letter-spacing: 0;
+  line-height: 38px;
+  padding: 0;
+  text-align: start;
+  text-decoration: none;
+  text-transform: uppercase;
+  width: 100%;
+
+  &:focus-visible {
+    outline: 1px solid ${color('blue')};
+    outline-offset: 1px;
+  }
 `;
 
 const DrawerNavLink = styled(LocalizedLink)`
-  border-bottom: 1px dotted ${semanticColor.lineStrong};
-  color: ${semanticColor.ink};
+  ${drawerItemStyles}
+`;
+
+const DrawerGroupToggle = styled.button`
+  ${drawerItemStyles}
+  align-items: center;
+  display: flex;
+  gap: ${spacing(2)};
+  justify-content: space-between;
+
+  svg {
+    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  &[data-expanded] svg {
+    transform: rotate(180deg);
+  }
+`;
+
+const DrawerGroupChildren = styled.div`
+  display: grid;
+  row-gap: ${spacing(5)};
+  padding-top: ${spacing(5)};
+`;
+
+const drawerChildStyles = `
+  align-items: center;
+  color: ${semanticColor.inkMuted};
+  display: flex;
   font-family: ${fontFamily('mono')};
   font-size: ${fontSize(4)};
   font-weight: ${FONT_WEIGHT.medium};
-  padding-block: ${spacing(4)};
+  gap: ${spacing(2)};
   text-decoration: none;
   text-transform: uppercase;
 
@@ -65,29 +124,48 @@ const DrawerNavLink = styled(LocalizedLink)`
   }
 `;
 
-const DrawerFooter = styled.div`
-  display: grid;
-  gap: ${spacing(10)};
-  justify-items: start;
-  margin-top: auto;
+const DrawerChildLink = styled(LocalizedLink)`
+  ${drawerChildStyles}
+`;
+
+const DrawerChildAnchor = styled.a`
+  ${drawerChildStyles}
+`;
+
+const DottedSeparator = styled.span`
+  background: repeating-linear-gradient(
+    90deg,
+    ${semanticColor.inkMuted} 0,
+    ${semanticColor.inkMuted} 1px,
+    transparent 2px,
+    transparent 4px
+  );
+  height: 1px;
+  width: 100%;
+`;
+
+const CtaRow = styled.div`
+  margin-bottom: ${spacing(10)};
 `;
 
 const SocialRow = styled.div`
   align-items: center;
-  column-gap: ${spacing(4)};
-  display: flex;
+  column-gap: ${spacing(6)};
+  display: grid;
+  grid-auto-flow: column;
   justify-content: center;
-  justify-self: center;
 `;
 
 const SocialAnchor = styled.a`
   align-items: center;
   color: ${semanticColor.ink};
-  column-gap: ${spacing(2)};
-  display: inline-flex;
+  column-gap: ${spacing(3)};
+  display: grid;
   font-family: ${fontFamily('sans')};
   font-size: ${fontSize(3)};
   font-weight: ${FONT_WEIGHT.medium};
+  grid-auto-flow: column;
+  line-height: 14px;
   text-decoration: none;
   white-space: nowrap;
 
@@ -97,14 +175,15 @@ const SocialAnchor = styled.a`
   }
 `;
 
-const Divider = styled.span`
-  background-color: ${semanticColor.lineStrong};
-  height: 10px;
-  width: 1px;
+const SocialArrow = styled.span`
+  color: ${color('blue')};
+  display: inline-flex;
 `;
 
-const Arrow = styled(IconArrowUpRight)`
-  color: ${color('blue')};
+const Divider = styled.span`
+  background-color: ${semanticColor.divider};
+  height: 10px;
+  width: 1px;
 `;
 
 export type MenuDrawerProps = {
@@ -115,53 +194,98 @@ export type MenuDrawerProps = {
 
 export function MenuDrawer({ navItems, socialLinks, stats }: MenuDrawerProps) {
   const { i18n } = useLingui();
+  const [isGroupExpanded, setIsGroupExpanded] = useState(false);
 
   return (
     <Drawer.Portal>
       <DrawerPanel aria-label="Navigation menu">
         <DrawerNav aria-label="Primary">
-          {navItems.map((item) => (
-            <Drawer.Close
-              key={item.href}
-              nativeButton={false}
-              render={<DrawerNavLink href={item.href} />}
-            >
-              {i18n._(item.label)}
-            </Drawer.Close>
+          {navItems.map((item, index) => (
+            <Fragment key={i18n._(item.label)}>
+              {index > 0 && <DottedSeparator aria-hidden />}
+              {item.children === undefined ? (
+                <Drawer.Close
+                  nativeButton={false}
+                  render={<DrawerNavLink href={item.href ?? '/'} />}
+                >
+                  {i18n._(item.label)}
+                </Drawer.Close>
+              ) : (
+                <div>
+                  <DrawerGroupToggle
+                    data-expanded={isGroupExpanded ? '' : undefined}
+                    onClick={() => setIsGroupExpanded((previous) => !previous)}
+                    type="button"
+                  >
+                    {i18n._(item.label)}
+                    <IconChevronDown size={20} stroke={1.6} />
+                  </DrawerGroupToggle>
+                  {isGroupExpanded && (
+                    <DrawerGroupChildren>
+                      {item.children.map((child) =>
+                        child.external === true ? (
+                          <DrawerChildAnchor
+                            href={child.href}
+                            key={child.href}
+                            rel="noopener noreferrer"
+                            target="_blank"
+                          >
+                            {i18n._(child.label)}
+                            <SocialArrow aria-hidden>
+                              <ArrowUpRight sizePx={8} />
+                            </SocialArrow>
+                          </DrawerChildAnchor>
+                        ) : (
+                          <Drawer.Close
+                            key={child.href}
+                            nativeButton={false}
+                            render={<DrawerChildLink href={child.href} />}
+                          >
+                            {i18n._(child.label)}
+                          </Drawer.Close>
+                        ),
+                      )}
+                    </DrawerGroupChildren>
+                  )}
+                </div>
+              )}
+            </Fragment>
           ))}
         </DrawerNav>
-        <DrawerFooter>
+        <CtaRow>
           <Button
             href={MENU.appUrl}
             label={i18n._(msg`Log in`)}
             size="small"
             variant="outlined"
           />
-          <SocialRow>
-            {socialLinks.map((link, index) => {
-              const IconComponent = link.icon;
-              return (
-                <Fragment key={link.href}>
-                  {index > 0 && <Divider aria-hidden />}
-                  <SocialAnchor
-                    aria-label={link.ariaLabel}
-                    href={link.href}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    <IconComponent aria-hidden size={16} stroke={1.6} />
-                    {link.statKey
-                      ? formatCompactCount(stats[link.statKey])
-                      : null}
-                    {link.statKey ? (
-                      <Arrow aria-hidden size={10} stroke={2} />
-                    ) : null}
-                  </SocialAnchor>
-                </Fragment>
-              );
-            })}
-          </SocialRow>
-        </DrawerFooter>
+        </CtaRow>
+        <SocialRow>
+          {socialLinks.map((link, index) => {
+            const IconComponent = link.icon;
+            return (
+              <Fragment key={link.href}>
+                {index > 0 && <Divider aria-hidden />}
+                <SocialAnchor
+                  aria-label={link.ariaLabel}
+                  href={link.href}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  <IconComponent aria-hidden size={16} />
+                  {link.statKey
+                    ? formatCompactCount(stats[link.statKey])
+                    : null}
+                  {link.statKey ? (
+                    <SocialArrow aria-hidden>
+                      <ArrowUpRight sizePx={8} />
+                    </SocialArrow>
+                  ) : null}
+                </SocialAnchor>
+              </Fragment>
+            );
+          })}
+        </SocialRow>
       </DrawerPanel>
     </Drawer.Portal>
   );
