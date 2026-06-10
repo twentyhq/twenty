@@ -2,7 +2,14 @@ import { css } from '@linaria/core';
 import Link from 'next/link';
 import { type ReactNode } from 'react';
 
-import { color, FONT_WEIGHT, fontFamily, fontSize, spacing } from '@/tokens';
+import {
+  color,
+  FONT_WEIGHT,
+  fontFamily,
+  fontSize,
+  radius,
+  spacing,
+} from '@/tokens';
 
 import { ButtonShape } from './button-shape';
 
@@ -57,8 +64,10 @@ const buttonClassName = css`
   }
 
   [data-scheme='dark'] &[data-variant='outlined'] {
+    /* Opaque composite of white-10 over black: translucent fills double up
+       on the shape's anti-seam segment overlaps and read as hairlines. */
     --button-stroke: ${color('white')};
-    --button-hover-fill: ${color('white-10')};
+    --button-hover-fill: ${color('black-hover')};
     --button-label: ${color('white')};
     --button-label-hover: ${color('white')};
   }
@@ -77,6 +86,9 @@ const buttonClassName = css`
     --button-fill: var(--button-hover-fill);
     --button-stroke: transparent;
 
+    /* Clip the sliding fill to the button's corner radius so trailing
+       corners stay rounded mid-transition. */
+    border-radius: ${radius(1)};
     inset: 0;
     overflow: hidden;
     pointer-events: none;

@@ -7,6 +7,7 @@ import { styled } from '@linaria/react';
 
 import {
   color,
+  FONT_WEIGHT,
   fontFamily,
   fontSize,
   mediaUp,
@@ -28,6 +29,7 @@ const AccordionList = styled.div`
 const QuestionText = styled.span`
   color: ${color('white-40')};
   font-size: ${fontSize(8)};
+  font-weight: ${FONT_WEIGHT.regular};
   grid-column: 3;
   line-height: 1.25;
   min-width: 0;
@@ -43,7 +45,8 @@ const MarkerLayer = styled.span`
   height: 7px;
   left: 0;
   position: absolute;
-  top: 7px;
+  top: 50%;
+  transform: translateY(-50%);
   transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   width: 14px;
 
@@ -58,9 +61,10 @@ const MarkerLayer = styled.span`
   }
 `;
 
+// Centered on the question's first line box (32px text at 1.25 = 40px).
 const MarkerContainer = styled.span`
   grid-column: 1;
-  height: 14px;
+  height: ${fontSize(10)};
   position: relative;
   width: 14px;
 `;
