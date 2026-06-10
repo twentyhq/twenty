@@ -13,9 +13,9 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const CALENDAR_EVENT_RECORDING_PREFERENCE_FIELD_UNIVERSAL_IDENTIFIER =
   '1d231e7e-9bbe-410b-8007-ea7678a83e58';
 
-@RegisteredWorkspaceCommand('2.11.0', 1799000061000)
+@RegisteredWorkspaceCommand('2.12.0', 1799000061000)
 @Command({
-  name: 'upgrade:2-11:drop-calendar-event-recording-preference',
+  name: 'upgrade:2-12:drop-calendar-event-recording-preference',
   description:
     'Drop the deprecated CalendarEvent recordingPreference field metadata',
 })

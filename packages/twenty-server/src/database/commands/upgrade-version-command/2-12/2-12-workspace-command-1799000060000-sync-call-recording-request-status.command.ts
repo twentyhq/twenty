@@ -29,9 +29,9 @@ const CALL_RECORDING_REQUEST_STATUS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
 ];
 const CALL_RECORDING_REQUEST_STATUS_FIELD_NAME = 'recordingRequestStatus';
 
-@RegisteredWorkspaceCommand('2.11.0', 1799000060000)
+@RegisteredWorkspaceCommand('2.12.0', 1799000060000)
 @Command({
-  name: 'upgrade:2-11:sync-call-recording-request-status',
+  name: 'upgrade:2-12:sync-call-recording-request-status',
   description:
     'Create the CallRecording recordingRequestStatus metadata in existing workspaces',
 })
