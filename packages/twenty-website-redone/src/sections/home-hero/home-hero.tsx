@@ -37,21 +37,14 @@ const HeadingGroup = styled.div`
   width: 100%;
 `;
 
+// Fluid measure: grows with the container, single cap — no breakpoint step.
 const HeadingMeasure = styled.div`
-  max-width: 360px;
+  max-width: 672px;
   width: 100%;
-
-  ${mediaUp('md')} {
-    max-width: 672px;
-  }
 `;
 
 const BodyMeasure = styled.div`
-  max-width: 360px;
-
-  ${mediaUp('md')} {
-    max-width: 591px;
-  }
+  max-width: 591px;
 `;
 
 const CtaRow = styled.div`

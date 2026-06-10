@@ -31,7 +31,7 @@ const bodyClassName = css`
   }
 
   &[data-size='sm'] {
-    font-size: ${fluidFontSize(3.5, 4)};
+    font-size: ${fluidFontSize(4, 4)};
     line-height: 1.55;
   }
 

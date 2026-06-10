@@ -38,17 +38,17 @@ const headingClassName = css`
 
   &[data-size='xl'] {
     font-size: ${fluidFontSize(15, 20)};
-    line-height: 1.1;
+    line-height: 1.075;
   }
 
   &[data-size='lg'] {
     font-size: ${fluidFontSize(10, 15)};
-    line-height: 1.15;
+    line-height: 1.1;
   }
 
   &[data-size='md'] {
     font-size: ${fluidFontSize(10, 12)};
-    line-height: 1.17;
+    line-height: 1.165;
   }
 
   &[data-size='sm'] {
@@ -58,7 +58,7 @@ const headingClassName = css`
 
   &[data-size='xs'] {
     font-size: ${fluidFontSize(4.5, 5.5)};
-    line-height: 1.33;
+    line-height: 1.275;
   }
 
   [data-accent] {
