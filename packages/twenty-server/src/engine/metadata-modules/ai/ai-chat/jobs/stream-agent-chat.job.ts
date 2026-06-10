@@ -274,10 +274,13 @@ export class StreamAgentChatJob {
                   },
                 });
               },
-              onFinish: async ({ responseMessage }) => {
+              onFinish: async ({ responseMessage, isAborted }) => {
                 try {
                   await this.handleStreamFinish({
                     responseMessage,
+                    isAborted,
+                    streamError,
+                    outOfCredits: checkHasNoMoreAvailableCredits(),
                     threadId: data.threadId,
                     workspaceId: data.workspaceId,
                     userWorkspaceId: data.userWorkspaceId,
@@ -432,6 +435,9 @@ export class StreamAgentChatJob {
 
   private async handleStreamFinish({
     responseMessage,
+    isAborted,
+    streamError,
+    outOfCredits,
     threadId,
     workspaceId,
     userWorkspaceId,
@@ -442,6 +448,9 @@ export class StreamAgentChatJob {
     userMessagePromise,
   }: {
     responseMessage: Omit<ExtendedUIMessage, 'id'>;
+    isAborted: boolean;
+    streamError: unknown;
+    outOfCredits: boolean;
     threadId: string;
     workspaceId: string;
     userWorkspaceId: string;
@@ -457,6 +466,23 @@ export class StreamAgentChatJob {
     modelConfig: AiModelConfig;
     userMessagePromise: Promise<{ turnId: string | null }>;
   }): Promise<void> {
+    const hasText = responseMessage.parts.some(
+      (part) => part.type === 'text' && isNonEmptyString(part.text),
+    );
+
+    if (isAborted || !hasText) {
+      this.logAssistantTurnWithoutText({
+        responseMessage,
+        isAborted,
+        streamError,
+        outOfCredits,
+        hasText,
+        threadId,
+        workspaceId,
+        streamUsage,
+      });
+    }
+
     if (responseMessage.parts.length === 0) {
       return;
     }
@@ -505,5 +531,60 @@ export class StreamAgentChatJob {
       userWorkspaceId,
       workspaceId,
     });
+  }
+
+  private logAssistantTurnWithoutText({
+    responseMessage,
+    isAborted,
+    streamError,
+    outOfCredits,
+    hasText,
+    threadId,
+    workspaceId,
+    streamUsage,
+  }: {
+    responseMessage: Omit<ExtendedUIMessage, 'id'>;
+    isAborted: boolean;
+    streamError: unknown;
+    outOfCredits: boolean;
+    hasText: boolean;
+    threadId: string;
+    workspaceId: string;
+    streamUsage: {
+      inputTokens: number;
+      outputTokens: number;
+    };
+  }): void {
+
+    const reason = isAborted
+      ? 'user-cancelled'
+      : streamError
+        ? 'stream-error'
+        : outOfCredits
+          ? 'credits-exhausted'
+          : 'empty-completion';
+
+    const errorDetail =
+      streamError instanceof Error
+        ? `${streamError.name}: ${streamError.message}`
+        : isDefined(streamError)
+          ? String(streamError)
+          : 'none';
+
+    this.logger.warn(
+      `[AI_CHAT_NO_TEXT] Assistant turn ended without a text reply — ` +
+        `reason=${reason}, threadId=${threadId}, workspaceId=${workspaceId}, ` +
+        `isAborted=${isAborted}, outOfCredits=${outOfCredits}, hasText=${hasText}, ` +
+        `streamError=${errorDetail}, ` +
+        `inputTokens=${streamUsage.inputTokens},` +  
+        `responseMessage.parts=${JSON.stringify(responseMessage.parts)}`
+    );
+
+
+    if (streamError instanceof Error && isDefined(streamError.stack)) {
+      this.logger.warn(
+        `[AI_CHAT_NO_TEXT] streamError stack — threadId=${threadId}: ${streamError.stack}`,
+      );
+    }
   }
 }
