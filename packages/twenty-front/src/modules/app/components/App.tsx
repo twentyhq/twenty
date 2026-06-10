@@ -1,5 +1,6 @@
 import { AppRouter } from '@/app/components/AppRouter';
 import { ApolloDevLogEffect } from '@/debug/components/ApolloDevLogEffect';
+import { DialerDock } from '@/dialer-dock/components/DialerDock';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppRootErrorFallback } from '@/error-handler/components/AppRootErrorFallback';
 import { ExceptionHandlerProvider } from '@/error-handler/components/ExceptionHandlerProvider';
@@ -34,6 +35,7 @@ export const App = () => {
                     value={{ excludedClickOutsideId: undefined }}
                   >
                     <AppRouter />
+                    <DialerDock />
                   </ClickOutsideListenerContext.Provider>
                 </HelmetProvider>
               </ExceptionHandlerProvider>
