@@ -41,14 +41,18 @@ const innerAppDeploy = async (
   const uploadResult = await apiService.uploadAppTarball({ tarballBuffer });
 
   if (!uploadResult.success) {
-    if (uploadResult.isAuthError) {
+    const { authValid } = await apiService.validateAuth();
+
+    if (uploadResult.isAuthError || !authValid) {
       const remoteName = ConfigService.getActiveRemote();
 
       console.error(`Authentication failed on remote "${remoteName}"`);
       const outcome = await promptForReauthentication(remoteName);
 
       if (outcome === 'reauthenticated') {
-        const retryResult = await apiService.uploadAppTarball({ tarballBuffer });
+        const retryResult = await apiService.uploadAppTarball({
+          tarballBuffer,
+        });
 
         if (retryResult.success) {
           return { success: true, data: retryResult.data };

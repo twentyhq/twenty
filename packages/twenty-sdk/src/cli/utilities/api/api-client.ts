@@ -5,6 +5,12 @@ import chalk from 'chalk';
 import { isDefined } from 'twenty-shared/utils';
 import { promptForReauthentication } from '@/cli/utilities/auth/reauth-helper';
 
+declare module 'axios' {
+  interface InternalAxiosRequestConfig {
+    _reauthAttempted?: boolean;
+  }
+}
+
 export class ApiClient {
   readonly client: AxiosInstance;
   readonly configService: ConfigService;
@@ -52,6 +58,12 @@ export class ApiClient {
       (response) => response,
       async (error) => {
         if (error.response?.status === 401) {
+          // Prevent recursion: only attempt reauth once per request
+          if (error.config._reauthAttempted) {
+            throw error;
+          }
+          error.config._reauthAttempted = true;
+
           const remoteName = ConfigService.getActiveRemote();
           console.error(`Authentication failed on remote "${remoteName}"`);
           const outcome = await promptForReauthentication(remoteName);
