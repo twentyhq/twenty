@@ -52,6 +52,10 @@ describe('UserService', () => {
             save: jest.fn(),
             softDelete: jest.fn(),
             update: jest.fn(),
+            manager: {
+              connection: { driver: { options: { type: 'postgres' } } },
+            },
+            metadata: { columns: [] },
           },
         },
         {
