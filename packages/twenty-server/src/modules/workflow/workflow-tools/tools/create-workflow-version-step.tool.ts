@@ -85,7 +85,7 @@ const enrichResultWithNextStep = ({
       return {
         ...result,
         nextStep:
-          'This CODE step was created with a default placeholder function. You MUST now call update_logic_function_source with the logicFunctionId from this step to define the actual code.',
+          'This CODE step was created with a default placeholder function. You MUST now call update_logic_function_source with the logicFunctionId from this step to define the actual code. IMPORTANT: Also provide outputSchema (an example return value, e.g. { datePlus7: "2026-06-16" }) so downstream steps can reference this step\'s output variables via {{stepId.fieldName}}.',
       };
     default:
       return result;

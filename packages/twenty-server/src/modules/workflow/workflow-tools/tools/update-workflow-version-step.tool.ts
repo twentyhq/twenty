@@ -18,7 +18,10 @@ const updateWorkflowVersionStepSchema = z.object({
 });
 
 export const createUpdateWorkflowVersionStepTool = (
-  deps: Pick<WorkflowToolDependencies, 'workflowVersionStepService'>,
+  deps: Pick<
+    WorkflowToolDependencies,
+    'workflowVersionStepService' | 'workflowValidationService'
+  >,
   context: WorkflowToolContext,
 ) => ({
   name: 'update_workflow_version_step' as const,
@@ -27,11 +30,23 @@ export const createUpdateWorkflowVersionStepTool = (
   inputSchema: updateWorkflowVersionStepSchema,
   execute: async (parameters: UpdateWorkflowVersionStepInput) => {
     try {
-      return await deps.workflowVersionStepService.updateWorkflowVersionStep({
-        workspaceId: context.workspaceId,
-        workflowVersionId: parameters.workflowVersionId,
-        step: parameters.step,
-      });
+      const result =
+        await deps.workflowVersionStepService.updateWorkflowVersionStep({
+          workspaceId: context.workspaceId,
+          workflowVersionId: parameters.workflowVersionId,
+          step: parameters.step,
+        });
+
+      const validation =
+        await deps.workflowValidationService.validateWorkflowVersion({
+          workspaceId: context.workspaceId,
+          workflowVersionId: parameters.workflowVersionId,
+        });
+
+      return {
+        ...result,
+        validation,
+      };
     } catch (error) {
       return {
         success: false,

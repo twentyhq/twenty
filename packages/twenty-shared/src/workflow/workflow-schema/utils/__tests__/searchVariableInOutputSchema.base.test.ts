@@ -1,7 +1,25 @@
-import { searchVariableThroughBaseOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughBaseOutputSchema';
-import type { BaseOutputSchemaV2 } from 'twenty-shared/workflow';
+import { type BaseOutputSchemaV2 } from '../../types/base-output-schema.type';
+import { searchVariableInOutputSchema } from '../searchVariableInOutputSchema';
 
-describe('searchVariableThroughBaseOutputSchema', () => {
+// Pins the dispatcher to a non-record step type so it resolves through the base schema branch
+const searchVariableThroughBaseOutputSchema = ({
+  stepName,
+  baseOutputSchema,
+  rawVariableName,
+}: {
+  stepName: string;
+  baseOutputSchema: BaseOutputSchemaV2;
+  rawVariableName: string;
+}) =>
+  searchVariableInOutputSchema({
+    schema: baseOutputSchema,
+    stepType: 'CODE',
+    stepName,
+    rawVariableName,
+    isFullRecord: false,
+  });
+
+describe('searchVariableInOutputSchema - base output schema', () => {
   const mockBaseSchema: BaseOutputSchemaV2 = {
     message: {
       isLeaf: true,

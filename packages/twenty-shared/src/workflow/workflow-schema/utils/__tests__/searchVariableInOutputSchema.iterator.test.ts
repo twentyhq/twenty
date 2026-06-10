@@ -1,9 +1,30 @@
-import { type IteratorOutputSchema } from '@/workflow/workflow-variables/types/IteratorOutputSchema';
-import { type RecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
-import { searchVariableThroughIteratorOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughIteratorOutputSchema';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataType } from '@/types/FieldMetadataType';
+import {
+  type IteratorOutputSchema,
+  type RecordOutputSchemaV2,
+} from '../../types/output-schema.type';
+import { searchVariableInOutputSchema } from '../searchVariableInOutputSchema';
 
-describe('searchVariableThroughIteratorOutputSchema', () => {
+const searchVariableThroughIteratorOutputSchema = ({
+  stepName,
+  iteratorOutputSchema,
+  rawVariableName,
+  isFullRecord,
+}: {
+  stepName: string;
+  iteratorOutputSchema: IteratorOutputSchema;
+  rawVariableName: string;
+  isFullRecord: boolean;
+}) =>
+  searchVariableInOutputSchema({
+    schema: iteratorOutputSchema,
+    stepType: 'ITERATOR',
+    stepName,
+    rawVariableName,
+    isFullRecord,
+  });
+
+describe('searchVariableInOutputSchema - iterator output schema', () => {
   const mockRecordSchema: RecordOutputSchemaV2 = {
     object: {
       objectMetadataId: 'company-metadata-id',

@@ -78,6 +78,7 @@ export type {
   InputSchemaProperty,
   InputSchema,
 } from './types/InputSchema';
+export type { RecordCrudActionInput } from './types/RecordCrudActionInput';
 export type { StepIfElseBranch } from './types/StepIfElseBranch';
 export type { WorkflowAttachment } from './types/WorkflowAttachment';
 export type { BodyType } from './types/workflowHttpRequestStep';
@@ -104,6 +105,36 @@ export {
   joinVariablePath,
   parseVariablePath,
 } from './utils/variable-path.util';
+export {
+  CODE_STEP_TYPE,
+  IF_ELSE_STEP_TYPE,
+  ITERATOR_STEP_TYPE,
+} from './validation/constants/workflow-validation-step-types';
+export type {
+  IfElseStepInput,
+  IteratorStepInput,
+  WorkflowValidationSeverity,
+  WorkflowValidationIssueCode,
+  WorkflowValidationIssue,
+  WorkflowValidationResult,
+  ValidatableWorkflowStep,
+  ValidatableWorkflowTrigger,
+  ValidatableWorkflow,
+} from './validation/types/workflow-validation.type';
+export type { WorkflowGraph } from './validation/utils/build-workflow-graph.util';
+export { buildWorkflowGraph } from './validation/utils/build-workflow-graph.util';
+export { extractVariablesFromInput } from './validation/utils/extract-variables-from-input.util';
+export { getEditDistance } from './validation/utils/get-edit-distance.util';
+export {
+  getStepInput,
+  getStepOutgoingStepIds,
+} from './validation/utils/get-step-outgoing-step-ids.util';
+export { getVariablePathSuggestions } from './validation/utils/get-variable-path-suggestions.util';
+export { validateWorkflowGraph } from './validation/utils/validate-workflow-graph.util';
+export { validateWorkflowStepParams } from './validation/utils/validate-workflow-step-params.util';
+export { validateWorkflowVariableReferences } from './validation/utils/validate-workflow-variable-references.util';
+export { validateWorkflowStructure } from './validation/validate-workflow-structure.util';
+export { isBaseOutputSchemaV2 } from './workflow-schema/guards/isBaseOutputSchemaV2';
 export type {
   LeafType,
   NodeType,
@@ -111,7 +142,38 @@ export type {
   Node,
   BaseOutputSchemaV2,
 } from './workflow-schema/types/base-output-schema.type';
+export type {
+  RecordFieldLeaf,
+  RecordFieldNode,
+  RecordFieldNodeValue,
+  FieldOutputSchemaV2,
+  RecordOutputSchemaV2,
+  RecordNode,
+  FindRecordsOutputSchema,
+  IteratorOutputSchema,
+  FormFieldLeaf,
+  FormFieldNode,
+  FormOutputSchema,
+  LinkOutputSchema,
+  CodeOutputSchema,
+  ManualTriggerOutputSchema,
+  OutputSchemaV2,
+  VariableSearchResult,
+} from './workflow-schema/types/output-schema.type';
+export { collectOutputSchemaPaths } from './workflow-schema/utils/collectOutputSchemaPaths';
+export type { OutputSchemaPathFailure } from './workflow-schema/utils/findOutputSchemaPathFailure';
+export { findOutputSchemaPathFailure } from './workflow-schema/utils/findOutputSchemaPathFailure';
 export { navigateOutputSchemaProperty } from './workflow-schema/utils/navigateOutputSchemaProperty';
+export type { ResolvedVariable } from './workflow-schema/utils/resolveVariablePathInOutputSchema';
+export {
+  resolveInSchema,
+  resolveVariablePathInOutputSchema,
+  collectOutputSchemaVariablePaths,
+} from './workflow-schema/utils/resolveVariablePathInOutputSchema';
+export {
+  searchRecordOutputSchema,
+  searchVariableInOutputSchema,
+} from './workflow-schema/utils/searchVariableInOutputSchema';
 export type {
   GlobalAvailability,
   SingleRecordAvailability,

@@ -1,8 +1,27 @@
-import { type RecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
-import { searchVariableThroughRecordEventOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughRecordEventOutputSchema';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataType } from '@/types/FieldMetadataType';
+import { type RecordOutputSchemaV2 } from '../../types/output-schema.type';
+import { searchVariableInOutputSchema } from '../searchVariableInOutputSchema';
 
-describe('searchVariableThroughRecordEventOutputSchema', () => {
+const searchVariableThroughRecordEventOutputSchema = ({
+  stepName,
+  recordOutputSchema,
+  rawVariableName,
+  isFullRecord,
+}: {
+  stepName: string;
+  recordOutputSchema: RecordOutputSchemaV2;
+  rawVariableName: string;
+  isFullRecord: boolean;
+}) =>
+  searchVariableInOutputSchema({
+    schema: recordOutputSchema,
+    stepType: 'DATABASE_EVENT',
+    stepName,
+    rawVariableName,
+    isFullRecord,
+  });
+
+describe('searchVariableInOutputSchema - record event output schema', () => {
   const mockRecordSchema: RecordOutputSchemaV2 = {
     object: {
       objectMetadataId: 'company-metadata-id',
@@ -466,7 +485,6 @@ describe('searchVariableThroughRecordEventOutputSchema', () => {
         isFullRecord: false,
       });
 
-      // This should still work as the parser extracts what it can
       expect(result).toEqual({
         variableLabel: undefined,
         variablePathLabel: undefined,
