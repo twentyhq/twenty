@@ -33,6 +33,11 @@ msgstr ""
 msgid "Build on an open platform"
 msgstr ""
 
+#. js-lingui-id: 2FDUkV
+#: src/sections/home-hero/home-hero.tsx
+msgid "Build your Enterprise CRM *at AI Speed*"
+msgstr "Construisez votre CRM d'entreprise *à la vitesse de l'IA*"
+
 #. js-lingui-id: iSLIjg
 #: src/sections/footer/footer.data.ts
 msgid "Connect"
@@ -60,11 +65,6 @@ msgstr "Développeurs"
 msgid "Discover what's new"
 msgstr ""
 
-#. js-lingui-id: AfwFMk
-#: src/app/[locale]/page.tsx
-msgid "Every section sits in the same shell: identical vertical rhythm from tokens, semantic colors resolved by the surface scheme, and the only horizontal gutter on the site."
-msgstr ""
-
 #. js-lingui-id: MD032e
 #: src/sections/menu/menu.data.ts
 msgid "Find a Twenty partner"
@@ -73,8 +73,8 @@ msgstr ""
 #. js-lingui-id: ZDIydz
 #: src/sections/menu/menu.tsx
 #: src/sections/menu/menu.tsx
+#: src/sections/home-hero/home-hero.tsx
 #: src/sections/footer/footer.data.ts
-#: src/app/[locale]/page.tsx
 msgid "Get started"
 msgstr "Commencer"
 
@@ -92,11 +92,6 @@ msgstr "Aide"
 #: src/sections/footer/footer.data.ts
 msgid "Home"
 msgstr "Accueil"
-
-#. js-lingui-id: d1Aru8
-#: src/app/[locale]/page.tsx
-msgid "In production."
-msgstr "En production."
 
 #. js-lingui-id: +Ss/og
 #: src/sections/menu/menu.data.ts
@@ -167,11 +162,6 @@ msgstr "Versions"
 msgid "Resources"
 msgstr "Ressources"
 
-#. js-lingui-id: pi7oqI
-#: src/app/[locale]/page.tsx
-msgid "See how teams build *on Twenty*"
-msgstr "Découvrez comment les équipes créent *sur Twenty*"
-
 #. js-lingui-id: FY4ykg
 #: src/sections/menu/menu.data.ts
 msgid "See the latest release"
@@ -182,17 +172,13 @@ msgstr ""
 msgid "Sitemap"
 msgstr "Plan du site"
 
-#. js-lingui-id: BnuYjY
-#: src/app/[locale]/page.tsx
-msgid "Star us"
-msgstr "Étoilez-nous"
-
 #. js-lingui-id: bxgoJR
 #: src/sections/menu/menu.data.ts
 msgid "Step-by-step guides and playbooks to help your team get the most out of their workspace."
 msgstr ""
 
 #. js-lingui-id: JAKtcG
+#: src/sections/home-hero/home-hero.tsx
 #: src/sections/footer/footer.data.ts
 msgid "Talk to us"
 msgstr "Parlez-nous"
@@ -241,6 +227,11 @@ msgstr "ils nous font confiance"
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty | #1 Open Source CRM"
 msgstr ""
+
+#. js-lingui-id: 0qyMhk
+#: src/sections/home-hero/home-hero.tsx
+msgid "Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves."
+msgstr "Twenty donne aux équipes techniques les briques pour construire un CRM sur mesure, qui répond aux besoins métier complexes et évolue avec l'entreprise."
 
 #. js-lingui-id: Roaswv
 #: src/sections/menu/menu.data.ts

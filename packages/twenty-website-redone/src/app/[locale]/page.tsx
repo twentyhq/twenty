@@ -1,41 +1,22 @@
-import { msg } from '@lingui/core/macro';
-import { styled } from '@linaria/react';
-
+import { getCommunityStats } from '@/platform/community';
 import {
   getRouteI18n,
   type LocaleRouteParams,
 } from '@/platform/i18n/get-route-i18n';
-import { getCommunityStats } from '@/platform/community';
 import { buildRouteMetadata } from '@/platform/seo';
+import { HomeHero } from '@/sections/home-hero';
 import { Menu } from '@/sections/menu';
 import { TrustedBy } from '@/sections/trusted-by';
-import { spacing } from '@/tokens';
-import { Body, Button, Eyebrow, Heading, SectionShell } from '@/ui';
+import { SectionShell } from '@/ui';
 
 export const generateMetadata = buildRouteMetadata('home');
-
-// Measure is a layout concern: the stack bounds line length and the heading
-// balances its own wrapping within it.
-const ProofStack = styled.div`
-  display: grid;
-  gap: ${spacing(6)};
-  justify-items: start;
-  max-width: 760px;
-`;
-
-const ProofButtonRow = styled.div`
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${spacing(3)};
-`;
 
 export default async function HomePage({
   params,
 }: {
   params: Promise<LocaleRouteParams>;
 }) {
-  const [i18n, communityStats] = await Promise.all([
+  const [, communityStats] = await Promise.all([
     getRouteI18n(params),
     getCommunityStats(),
   ]);
@@ -44,27 +25,7 @@ export default async function HomePage({
     <>
       <Menu communityStats={communityStats} scheme="muted" />
       <main>
-        <SectionShell scheme="muted">
-          <ProofStack>
-            <Eyebrow>{i18n._(msg`In production.`)}</Eyebrow>
-            <Heading as="h1" size="xl" weight="light">
-              {i18n._(msg`See how teams build *on Twenty*`)}
-            </Heading>
-            <Body muted>
-              {i18n._(
-                msg`Every section sits in the same shell: identical vertical rhythm from tokens, semantic colors resolved by the surface scheme, and the only horizontal gutter on the site.`,
-              )}
-            </Body>
-            <ProofButtonRow>
-              <Button href="/" label={i18n._(msg`Get started`)} />
-              <Button
-                href="https://github.com/twentyhq/twenty"
-                label={i18n._(msg`Star us`)}
-                variant="outlined"
-              />
-            </ProofButtonRow>
-          </ProofStack>
-        </SectionShell>
+        <HomeHero />
         <SectionShell ariaLabel="Trusted by leading organizations">
           <TrustedBy />
         </SectionShell>

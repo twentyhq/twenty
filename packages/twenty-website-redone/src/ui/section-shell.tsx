@@ -12,17 +12,35 @@ import {
 
 import { Container } from './container';
 
-// The only place a <section> exists. Every section gets identical vertical
-// rhythm from tokens and resolves its semantic colors from its scheme — no
-// per-section padding, no compact variants, no background props.
+// The only place a <section> exists. Every section gets its vertical rhythm
+// from a named token class and resolves its semantic colors from its scheme —
+// no per-section padding, no background props.
 const sectionShellClassName = css`
   background-color: ${semanticColor.surface};
   color: ${semanticColor.ink};
-  padding-block: ${spacing(RHYTHM.section.base)};
+  min-width: 0;
+  overflow: clip;
+  position: relative;
   width: 100%;
 
-  ${mediaUp('md')} {
-    padding-block: ${spacing(RHYTHM.section.md)};
+  &[data-rhythm='section'] {
+    padding-block: ${spacing(RHYTHM.section.top.base)}
+      ${spacing(RHYTHM.section.bottom.base)};
+
+    ${mediaUp('md')} {
+      padding-block: ${spacing(RHYTHM.section.top.md)}
+        ${spacing(RHYTHM.section.bottom.md)};
+    }
+  }
+
+  &[data-rhythm='hero'] {
+    padding-block: ${spacing(RHYTHM.hero.top.base)}
+      ${spacing(RHYTHM.hero.bottom.base)};
+
+    ${mediaUp('md')} {
+      padding-block: ${spacing(RHYTHM.hero.top.md)}
+        ${spacing(RHYTHM.hero.bottom.md)};
+    }
   }
 
   &[data-scheme='light'] {
@@ -38,24 +56,48 @@ const sectionShellClassName = css`
   }
 `;
 
+const backgroundLayerClassName = css`
+  inset: 0;
+  overflow: clip;
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+`;
+
+const contentLayerClassName = css`
+  position: relative;
+  z-index: 1;
+`;
+
 export type SectionShellProps = {
   ariaLabel?: string;
+  // Decorative full-bleed layer behind the content (gradients, visuals).
+  background?: ReactNode;
   children: ReactNode;
+  rhythm?: 'section' | 'hero';
   scheme?: Scheme;
 };
 
 export function SectionShell({
   ariaLabel,
+  background,
   children,
+  rhythm = 'section',
   scheme = 'light',
 }: SectionShellProps) {
   return (
     <section
       aria-label={ariaLabel}
       className={sectionShellClassName}
+      data-rhythm={rhythm}
       data-scheme={scheme}
     >
-      <Container>{children}</Container>
+      {background !== undefined && (
+        <div aria-hidden className={backgroundLayerClassName}>
+          {background}
+        </div>
+      )}
+      <Container className={contentLayerClassName}>{children}</Container>
     </section>
   );
 }

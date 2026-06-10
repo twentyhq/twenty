@@ -17,7 +17,7 @@ export { mediaUp } from './media-up';
 export { buildSchemeDeclarations } from './build-scheme-declarations';
 export { PALETTE, type PaletteToken } from './palette';
 export { radius } from './radius';
-export { RHYTHM, type RhythmStep } from './rhythm';
+export { RHYTHM, type RhythmClass, type RhythmStep } from './rhythm';
 export { type Scheme, SCHEMES } from './scheme';
 export { semanticColor } from './semantic-color';
 export { spacing } from './spacing';
