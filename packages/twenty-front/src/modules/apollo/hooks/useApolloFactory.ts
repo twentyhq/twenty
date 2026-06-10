@@ -18,9 +18,6 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-
-const RELOAD_GUARD_KEY = 'app-version-mismatch-reloaded-at';
-const RELOAD_GUARD_WINDOW_MS = 10_000;
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
@@ -95,16 +92,6 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
             dedupeKey: 'app-version-mismatch',
           },
         });
-
-        // Auto-reload once; guard with a time window to prevent refresh loops.
-        const lastReloadAt = Number(
-          window.sessionStorage.getItem(RELOAD_GUARD_KEY) ?? 0,
-        );
-
-        if (Date.now() - lastReloadAt > RELOAD_GUARD_WINDOW_MS) {
-          window.sessionStorage.setItem(RELOAD_GUARD_KEY, String(Date.now()));
-          window.location.reload();
-        }
       },
       onPayloadTooLarge: (message) => {
         enqueueErrorSnackBar({
