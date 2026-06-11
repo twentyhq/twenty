@@ -70,4 +70,114 @@ describe('getVariablePathSuggestions', () => {
       }),
     ).toEqual([]);
   });
+
+  it('should suggest record field names (not internal keys) for FIND_RECORDS schemas', () => {
+    const findRecordsSchema = {
+      first: {
+        isLeaf: false,
+        label: 'First',
+        value: {
+          object: {
+            objectMetadataId: 'company-metadata-id',
+            label: 'Company',
+          },
+          fields: {
+            name: {
+              isLeaf: true,
+              type: 'TEXT',
+              label: 'Company Name',
+              value: 'Acme Corp',
+              fieldMetadataId: 'company-name-metadata-id',
+              isCompositeSubField: false,
+            },
+            revenue: {
+              isLeaf: true,
+              type: 'NUMBER',
+              label: 'Revenue',
+              value: 1000000,
+              fieldMetadataId: 'company-revenue-metadata-id',
+              isCompositeSubField: false,
+            },
+          },
+          _outputSchemaType: 'RECORD',
+        },
+      },
+      all: {
+        isLeaf: true,
+        label: 'All',
+        value: 'Returns an array of records',
+        type: 'array',
+      },
+      totalCount: {
+        isLeaf: true,
+        label: 'Total Count',
+        value: 42,
+        type: 'number',
+      },
+    };
+
+    const suggestions = getVariablePathSuggestions({
+      schema: findRecordsSchema,
+      propertyPath: ['first', 'naem'],
+      referencedStepId: 'step-1',
+    });
+
+    expect(suggestions).toContain('step-1.first.name');
+    expect(
+      suggestions.some(
+        (suggestion) =>
+          suggestion.includes('object') ||
+          suggestion.includes('fields') ||
+          suggestion.includes('_outputSchemaType'),
+      ),
+    ).toBe(false);
+  });
+
+  it('should suggest record field names (not internal keys) for FORM schemas', () => {
+    const formSchema = {
+      companyName: {
+        isLeaf: true,
+        type: 'TEXT',
+        label: 'Company Name',
+        value: 'Acme Corp',
+      },
+      person: {
+        isLeaf: false,
+        label: 'Person',
+        value: {
+          object: {
+            objectMetadataId: 'person-metadata-id',
+            label: 'Person',
+          },
+          fields: {
+            firstName: {
+              isLeaf: true,
+              type: 'TEXT',
+              label: 'First Name',
+              value: 'John',
+              fieldMetadataId: 'person-firstName-metadata-id',
+              isCompositeSubField: false,
+            },
+          },
+          _outputSchemaType: 'RECORD',
+        },
+      },
+    };
+
+    const suggestions = getVariablePathSuggestions({
+      schema: formSchema,
+      propertyPath: ['person', 'firstNaem'],
+      referencedStepId: 'step-1',
+    });
+
+    expect(suggestions).toContain('step-1.person.firstName');
+    expect(
+      suggestions.some(
+        (suggestion) =>
+          suggestion.includes('object') ||
+          suggestion.includes('fields') ||
+          suggestion.includes('_outputSchemaType'),
+      ),
+    ).toBe(false);
+  });
 });
