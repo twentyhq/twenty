@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { type CSSProperties } from 'react';
 
-import { color, mediaUp } from '@/tokens';
+import { color, mediaUp, semanticColor } from '@/tokens';
 
 // Decorative guide lines crossing at a point, with a gap and a blue plus at
 // the intersection — desktop only. Position arrives via CSS variables.
@@ -48,6 +48,19 @@ const CrosshairRoot = styled.div`
     width: 1px;
   }
 
+  /* When a scene draws its own full-height guide behind this crosshair,
+     the eraser re-creates the designed gap around the plus — and tracks it
+     through sticky scrolling, which a static gap in the line cannot. */
+  [data-slot='v-eraser'] {
+    background: ${semanticColor.surface};
+    height: calc(var(--cross-gap) * 2);
+    left: var(--cross-x);
+    position: absolute;
+    top: var(--cross-y);
+    transform: translate(-50%, -50%);
+    width: 3px;
+  }
+
   [data-slot='plus'] {
     color: ${color('blue')};
     font-size: 12px;
@@ -86,6 +99,7 @@ export function GuideCrosshair({
       <span data-line data-slot="h-right" />
       {verticalLines && <span data-line data-slot="v-top" />}
       {verticalLines && <span data-line data-slot="v-bottom" />}
+      {!verticalLines && <span data-slot="v-eraser" />}
       <span data-slot="plus">+</span>
     </CrosshairRoot>
   );
