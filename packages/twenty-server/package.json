@@ -69,7 +69,7 @@
     "@opentelemetry/sdk-metrics": "^2.0.0",
     "@ptc-org/nestjs-query-core": "^9.4.0",
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@npm%3A9.4.0#~/.yarn/patches/@ptc-org-nestjs-query-graphql-npm-9.4.0-8e6f7894e1.patch",
-    "@ptc-org/nestjs-query-typeorm": "^9.4.0",
+    "@ptc-org/nestjs-query-typeorm": "patch:@ptc-org/nestjs-query-typeorm@npm%3A9.4.0#~/.yarn/patches/@ptc-org-nestjs-query-typeorm-npm-9.4.0-ca3414967e.patch",
     "@react-email/render": "^1.2.3",
     "@sentry/nestjs": "^10.51.0",
     "@sentry/node": "^10.51.0",
