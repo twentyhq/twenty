@@ -128,6 +128,43 @@ describe('validateWorkflowVariableReferences', () => {
     expect(getCodes(workflow)).toEqual([]);
   });
 
+  it('should flag an invalid path in the trigger output schema', () => {
+    const workflow: ValidatableWorkflow = {
+      trigger: {
+        type: 'MANUAL',
+        nextStepIds: ['s1'],
+        settings: { outputSchema: OUTPUT_SCHEMA },
+      },
+      steps: [
+        {
+          id: 's1',
+          type: 'CODE',
+          settings: { input: { value: '{{trigger.unknownField}}' } },
+        },
+      ],
+    };
+
+    expect(getCodes(workflow)).toContain('VARIABLE_PATH_NOT_FOUND');
+  });
+
+  it('should not flag a self-reference as not-upstream', () => {
+    const workflow: ValidatableWorkflow = {
+      trigger: { type: 'MANUAL', nextStepIds: ['s1'] },
+      steps: [
+        {
+          id: 's1',
+          type: 'CODE',
+          settings: {
+            input: { value: '{{s1.name}}' },
+            outputSchema: OUTPUT_SCHEMA,
+          },
+        },
+      ],
+    };
+
+    expect(getCodes(workflow)).not.toContain('VARIABLE_NOT_UPSTREAM');
+  });
+
   // Regression: a trigger reference must never be flagged as not-upstream, even
   // when the trigger has no outgoing connections (so it is not in any ancestor set).
   it('should not flag a trigger reference as not-upstream when the trigger is disconnected', () => {

@@ -40,7 +40,9 @@ const buildAiAgentStep = (input: {
   valid: true,
   settings: {
     input,
-    outputSchema: { result: {} },
+    outputSchema: {
+      result: { isLeaf: true, type: 'string', label: 'result', value: '' },
+    },
     errorHandlingOptions: ERROR_HANDLING_OPTIONS,
   },
 });
