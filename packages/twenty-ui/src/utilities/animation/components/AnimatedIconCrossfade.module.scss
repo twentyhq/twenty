@@ -1,0 +1,14 @@
+.container {
+  height: var(--animated-icon-crossfade-size);
+  overflow: hidden;
+  position: relative;
+  width: var(--animated-icon-crossfade-size);
+}
+
+.layer {
+  align-items: center;
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  position: absolute;
+}

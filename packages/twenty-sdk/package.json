@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "2.11.0",
+  "version": "2.12.0",
   "sideEffects": false,
   "bin": {
     "twenty": "dist/cli.cjs"
@@ -71,9 +71,8 @@
   },
   "license": "AGPL-3.0",
   "dependencies": {
-    "@genql/runtime": "^2.10.0",
     "@sniptt/guards": "^0.2.0",
-    "axios": "^1.13.5",
+    "axios": "^1.16.0",
     "chalk": "^5.3.0",
     "chokidar": "^4.0.0",
     "commander": "^12.0.0",
@@ -81,7 +80,7 @@
     "graphql": "^16.8.1",
     "graphql-sse": "^2.5.4",
     "ink": "^6.8.0",
-    "inquirer": "^10.0.0",
+    "inquirer": "^14.0.0",
     "jsonc-parser": "^3.2.0",
     "preact": "^10.28.3",
     "react": "^19.0.0",
@@ -89,12 +88,10 @@
     "tinyglobby": "^0.2.15",
     "twenty-client-sdk": "workspace:*",
     "typescript": "^5.9.3",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.2"
   },
   "devDependencies": {
-    "@genql/cli": "^3.0.3",
     "@prettier/sync": "^0.5.2",
-    "@types/inquirer": "^9.0.0",
     "@types/node": "^24.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
@@ -106,11 +103,11 @@
     "tsc-alias": "^1.8.16",
     "tsx": "^4.7.0",
     "twenty-shared": "workspace:*",
-    "twenty-ui": "workspace:*",
+    "twenty-ui-deprecated": "workspace:*",
     "vite": "^7.0.0",
     "vite-plugin-dts": "^4.5.4",
     "vite-tsconfig-paths": "^4.2.1",
-    "wait-on": "^7.2.0"
+    "wait-on": "^9.0.10"
   },
   "engines": {
     "node": "^24.5.0",

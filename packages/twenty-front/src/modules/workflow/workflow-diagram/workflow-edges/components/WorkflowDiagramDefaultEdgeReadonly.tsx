@@ -5,7 +5,7 @@ import { getEdgePath } from '@/workflow/workflow-diagram/workflow-edges/utils/ge
 import { i18n } from '@lingui/core';
 import { BaseEdge, EdgeLabelRenderer } from '@xyflow/react';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 import { useContext } from 'react';
 
 type WorkflowDiagramDefaultEdgeReadonlyProps =

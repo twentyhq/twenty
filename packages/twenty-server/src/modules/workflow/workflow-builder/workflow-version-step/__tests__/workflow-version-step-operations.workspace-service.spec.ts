@@ -91,7 +91,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
     } as unknown as jest.Mocked<CodeStepBuildService>;
 
     logicFunctionFromSourceService = {
-      deleteOneWithSource: jest.fn(),
+      deleteOneWithSource: jest.fn().mockResolvedValue(undefined),
     } as unknown as jest.Mocked<LogicFunctionFromSourceService>;
 
     agentService = {

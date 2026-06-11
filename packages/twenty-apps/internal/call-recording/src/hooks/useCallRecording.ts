@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRecordId } from 'twenty-sdk/front-component';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-shared/utils';
 
 type CallRecording = {
@@ -74,13 +74,13 @@ export const useCallRecording = () => {
           name: callRecording?.name ?? '',
           createdAt: callRecording?.createdAt ?? '',
           endedAt: callRecording?.endedAt ?? null,
-          recordingFile: callRecording?.recordingFile?.map((file) => ({
+          recordingFile: callRecording?.recordingFile?.map((file: CallRecording['recordingFile'][number]) => ({
             fileId: file.fileId,
             label: file.label,
             url: file.url ?? null,
             extension: file.extension ?? null,
           })) ?? [],
-          transcriptFile: callRecording?.transcriptFile?.map((file) => ({
+          transcriptFile: callRecording?.transcriptFile?.map((file: CallRecording['transcriptFile'][number]) => ({
             fileId: file.fileId,
             label: file.label,
             url: file.url ?? null,

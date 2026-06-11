@@ -21,8 +21,8 @@ import {
   IconArrowUpRight,
   TooltipDelay,
   TooltipPosition,
-} from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
+} from 'twenty-ui-deprecated/display';
+import { LightIconButton } from 'twenty-ui-deprecated/input';
 import { RelationType } from '~/generated-metadata/graphql';
 
 const StyledLinkContainer = styled.div`

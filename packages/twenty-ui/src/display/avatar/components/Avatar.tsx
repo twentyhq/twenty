@@ -1,68 +1,19 @@
-import { styled } from '@linaria/react';
 import { isNonEmptyString, isNull, isUndefined } from '@sniptt/guards';
+import { clsx } from 'clsx';
 import { useAtom } from 'jotai';
 import { useContext } from 'react';
 
 import { invalidAvatarUrlsAtomV2 } from '@ui/display/avatar/components/states/invalidAvatarUrlsAtomV2';
-import { AVATAR_PROPERTIES_BY_SIZE } from '@ui/display/avatar/constants/AvatarPropertiesBySize';
 import { type AvatarSize } from '@ui/display/avatar/types/AvatarSize';
 import { type AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme-constants';
 import { stringToThemeColorP3String } from '@ui/utilities';
 import { REACT_APP_SERVER_BASE_URL } from '@ui/utilities/config';
-import { type Nullable } from 'twenty-shared/types';
-import { getImageAbsoluteURI } from 'twenty-shared/utils';
+import { type Nullable } from '@ui/utilities/types/Nullable';
+import { getImageAbsoluteURI } from '@ui/utilities/utils/getImageAbsoluteURI';
 
-const StyledAvatar = styled.div<{
-  size: AvatarSize;
-  rounded?: boolean;
-  clickable?: boolean;
-  color: string;
-  backgroundColor: string;
-  borderColor?: string;
-  backgroundTransparentLight: string;
-  type?: Nullable<AvatarType>;
-}>`
-  align-items: center;
-  flex-shrink: 0;
-  overflow: hidden;
-  user-select: none;
-
-  border-radius: ${({ rounded, type }) => {
-    if (rounded) return '50%';
-    if (type === 'icon') return '4px';
-    return '2px';
-  }};
-  border: ${({ type, borderColor }) =>
-    type === 'app' && borderColor ? `1px solid ${borderColor}` : 'none'};
-  box-sizing: border-box;
-  display: flex;
-  font-size: ${({ size }) => AVATAR_PROPERTIES_BY_SIZE[size].fontSize};
-  height: ${({ size }) => AVATAR_PROPERTIES_BY_SIZE[size].width};
-  justify-content: center;
-
-  width: ${({ size }) => AVATAR_PROPERTIES_BY_SIZE[size].width};
-
-  color: ${({ color }) => color};
-  background: ${({ backgroundColor }) => backgroundColor};
-
-  &:hover {
-    box-shadow: ${({ clickable, backgroundTransparentLight }) =>
-      clickable ? `0 0 0 4px ${backgroundTransparentLight}` : 'none'};
-  }
-`;
-const StyledImage = styled.img`
-  height: 100%;
-  object-fit: cover;
-  width: 100%;
-`;
-
-const StyledPlaceholderChar = styled.span<{
-  fontWeight: number;
-}>`
-  font-weight: ${({ fontWeight }) => fontWeight};
-`;
+import styles from './Avatar.module.scss';
 
 export type AvatarProps = {
   avatarUrl?: string | null;
@@ -81,6 +32,7 @@ export type AvatarProps = {
 
 export const Avatar = ({
   avatarUrl,
+  className,
   size = 'md',
   placeholder,
   placeholderColorSeed = placeholder,
@@ -152,19 +104,27 @@ export const Avatar = ({
 
   const showBorderColor = showPlaceholder;
 
+  const appliedBorderColor = showBorderColor ? fixedBorderColor : undefined;
+
+  const avatarStyle = {
+    '--avatar-color': fixedColor,
+    '--avatar-background': Icon
+      ? 'inherit'
+      : showBackgroundColor
+        ? fixedBackgroundColor
+        : 'none',
+    ...(type === 'app' && appliedBorderColor
+      ? { '--avatar-border': `1px solid ${appliedBorderColor}` }
+      : {}),
+  } as React.CSSProperties;
+
   return (
-    <StyledAvatar
-      size={size}
-      backgroundColor={
-        Icon ? 'inherit' : showBackgroundColor ? fixedBackgroundColor : 'none'
-      }
-      borderColor={showBorderColor ? fixedBorderColor : undefined}
-      color={fixedColor}
-      clickable={!isUndefined(onClick)}
-      rounded={type === 'rounded'}
-      type={type}
+    <div
+      className={clsx(styles.root, styles[size], className)}
+      data-type={type ?? undefined}
+      data-clickable={!isUndefined(onClick) ? true : undefined}
       onClick={onClick}
-      backgroundTransparentLight={theme.background.transparent.light}
+      style={avatarStyle}
     >
       {Icon ? (
         <Icon
@@ -172,12 +132,15 @@ export const Avatar = ({
           size={theme.icon.size.xl}
         />
       ) : showPlaceholder ? (
-        <StyledPlaceholderChar fontWeight={500}>
-          {placeholderChar}
-        </StyledPlaceholderChar>
+        <span className={styles.placeholderChar}>{placeholderChar}</span>
       ) : (
-        <StyledImage src={avatarImageURI} onError={handleImageError} alt="" />
+        <img
+          className={styles.image}
+          src={avatarImageURI}
+          onError={handleImageError}
+          alt=""
+        />
       )}
-    </StyledAvatar>
+    </div>
   );
 };

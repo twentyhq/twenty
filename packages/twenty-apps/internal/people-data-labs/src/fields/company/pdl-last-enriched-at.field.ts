@@ -15,5 +15,6 @@ export default defineField({
   name: 'pdlLastEnrichedAt',
   label: 'Last Enriched At',
   description: 'Timestamp of the latest People Data Labs enrichment.',
+  icon: 'IconClock',
   isNullable: true,
 });

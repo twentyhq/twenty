@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { Section } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { Section } from 'twenty-ui-deprecated/layout';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 
 export const UsageSectionSkeleton = () => {
   const { theme } = useContext(ThemeContext);

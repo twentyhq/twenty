@@ -4,104 +4,93 @@ import { type ToolSet } from 'ai';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { z } from 'zod';
 
+import { compactMetadataOutput } from 'src/engine/core-modules/tool-provider/utils/compact-metadata-output.util';
 import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
-import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+
+const EXCLUDED_FIELD_NAMES = new Set(['searchVector', 'position', 'updatedBy']);
+
+const FIELD_STRIP_WHEN_NULLISH = [
+  'options',
+  'settings',
+  'defaultValue',
+  'description',
+  'icon',
+  'deletedAt',
+];
+
+const FIELD_STRIP_WHEN_FALSE = ['isLabelSyncedWithName', 'isUIReadOnly'];
 
 const GetFieldMetadataInputSchema = z.object({
   id: z
     .string()
     .uuid()
     .optional()
-    .describe(
-      'Unique identifier for the field metadata. If provided, returns a single field.',
-    ),
+    .describe('Field ID. Returns one field if set.'),
   objectMetadataId: z
     .string()
     .uuid()
     .optional()
-    .describe('Filter fields by object metadata ID.'),
+    .describe('Filter by object ID.'),
+  includeFullSystemFields: z
+    .boolean()
+    .default(false)
+    .describe(
+      "Keep false (default) for listing or inspecting fields — system fields then return as compact {id, name, type}, which is enough to know which fields exist and their types. Only set true when you specifically need a system field's full configuration (settings, defaultValue, relation targets).",
+    ),
   limit: z
     .number()
     .int()
     .min(1)
     .max(100)
     .default(100)
-    .describe('Maximum number of fields to return.'),
+    .describe('Max fields to return.'),
 });
 
 const CreateFieldMetadataInputSchema = z.object({
-  objectMetadataId: z
-    .string()
-    .uuid()
-    .describe('ID of the object to add the field to'),
-  type: z
-    .nativeEnum(FieldMetadataType)
-    .describe(
-      'Field type (e.g., TEXT, NUMBER, BOOLEAN, DATE_TIME, RELATION, etc.)',
-    ),
-  name: z.string().describe('Internal name of the field (camelCase)'),
-  label: z.string().describe('Display label of the field'),
-  description: z.string().optional().describe('Description of the field'),
-  icon: z.string().optional().describe('Icon identifier for the field'),
-  isNullable: z.boolean().optional().describe('Whether the field can be null'),
-  isUnique: z
-    .boolean()
-    .optional()
-    .describe('Whether the field value must be unique'),
-  defaultValue: z.unknown().optional().describe('Default value for the field'),
-  options: z
-    .unknown()
-    .optional()
-    .describe('Options for SELECT/MULTI_SELECT fields'),
-  settings: z
-    .unknown()
-    .optional()
-    .describe('Additional settings for the field'),
+  objectMetadataId: z.string().uuid().describe('Target object ID'),
+  type: z.nativeEnum(FieldMetadataType).describe('Field type'),
+  name: z.string().describe('Field name (camelCase)'),
+  label: z.string().describe('Display label'),
+  description: z.string().optional().describe('Description'),
+  icon: z.string().optional().describe('Icon name'),
+  isNullable: z.boolean().optional().describe('Nullable'),
+  isUnique: z.boolean().optional().describe('Unique constraint'),
+  defaultValue: z.unknown().optional().describe('Default value'),
+  options: z.unknown().optional().describe('SELECT/MULTI_SELECT options'),
+  settings: z.unknown().optional().describe('Field settings'),
   isLabelSyncedWithName: z
     .boolean()
     .optional()
-    .describe('Whether label should sync with name changes'),
-  isRemoteCreation: z
-    .boolean()
-    .optional()
-    .describe('Whether this is a remote field creation'),
+    .describe('Sync label with name'),
+  isRemoteCreation: z.boolean().optional().describe('Remote field creation'),
   relationCreationPayload: z
     .unknown()
     .optional()
-    .describe('Payload for creating relation fields'),
+    .describe('Relation creation payload'),
 });
 
 const UpdateFieldMetadataInputSchema = z.object({
-  id: z.string().uuid().describe('ID of the field to update'),
-  name: z.string().optional().describe('Internal name of the field'),
-  label: z.string().optional().describe('Display label of the field'),
-  description: z.string().optional().describe('Description of the field'),
-  icon: z.string().optional().describe('Icon identifier for the field'),
-  isActive: z.boolean().optional().describe('Whether the field is active'),
-  isNullable: z.boolean().optional().describe('Whether the field can be null'),
-  isUnique: z
-    .boolean()
-    .optional()
-    .describe('Whether the field value must be unique'),
-  defaultValue: z.unknown().optional().describe('Default value for the field'),
-  options: z
-    .unknown()
-    .optional()
-    .describe('Options for SELECT/MULTI_SELECT fields'),
-  settings: z
-    .unknown()
-    .optional()
-    .describe('Additional settings for the field'),
+  id: z.string().uuid().describe('Field ID'),
+  name: z.string().optional().describe('Field name'),
+  label: z.string().optional().describe('Display label'),
+  description: z.string().optional().describe('Description'),
+  icon: z.string().optional().describe('Icon name'),
+  isActive: z.boolean().optional().describe('Active state'),
+  isNullable: z.boolean().optional().describe('Nullable'),
+  isUnique: z.boolean().optional().describe('Unique constraint'),
+  defaultValue: z.unknown().optional().describe('Default value'),
+  options: z.unknown().optional().describe('SELECT/MULTI_SELECT options'),
+  settings: z.unknown().optional().describe('Field settings'),
   isLabelSyncedWithName: z
     .boolean()
     .optional()
-    .describe('Whether label should sync with name changes'),
+    .describe('Sync label with name'),
 });
 
 const DeleteFieldMetadataInputSchema = z.object({
-  id: z.string().uuid().describe('ID of the field to delete'),
+  id: z.string().uuid().describe('Field ID'),
 });
 
 const CreateManyFieldMetadataInputSchema = z.object({
@@ -109,7 +98,7 @@ const CreateManyFieldMetadataInputSchema = z.object({
     .array(CreateFieldMetadataInputSchema)
     .min(1)
     .max(20)
-    .describe('Array of field metadata to create (1-20 items).'),
+    .describe('Fields to create (max 20).'),
 });
 
 const UpdateManyFieldMetadataInputSchema = z.object({
@@ -117,49 +106,27 @@ const UpdateManyFieldMetadataInputSchema = z.object({
     .array(UpdateFieldMetadataInputSchema)
     .min(1)
     .max(20)
-    .describe('Array of field metadata updates to apply (1-20 items).'),
+    .describe('Fields to update (max 20).'),
 });
 
 const CreateManyRelationFieldsInputSchema = z.object({
   relations: z
     .array(
       z.object({
-        objectMetadataId: z
-          .string()
-          .uuid()
-          .describe('ID of the source object to add the relation field to'),
-        name: z
-          .string()
-          .describe('Internal name of the relation field (camelCase)'),
-        label: z.string().describe('Display label of the relation field'),
-        description: z
-          .string()
-          .optional()
-          .describe('Description of the relation field'),
-        icon: z
-          .string()
-          .optional()
-          .describe('Icon identifier for the relation field'),
-        type: z
-          .nativeEnum(RelationType)
-          .describe('Relation type: MANY_TO_ONE or ONE_TO_MANY'),
-        targetObjectMetadataId: z
-          .string()
-          .uuid()
-          .describe('ID of the target object this relation points to'),
-        targetFieldLabel: z
-          .string()
-          .describe(
-            'Display label for the inverse relation field on the target object',
-          ),
-        targetFieldIcon: z
-          .string()
-          .describe('Icon for the inverse relation field (e.g. IconSomething)'),
+        objectMetadataId: z.string().uuid().describe('Source object ID'),
+        name: z.string().describe('Field name (camelCase)'),
+        label: z.string().describe('Display label'),
+        description: z.string().optional().describe('Description'),
+        icon: z.string().optional().describe('Icon name'),
+        type: z.nativeEnum(RelationType).describe('MANY_TO_ONE or ONE_TO_MANY'),
+        targetObjectMetadataId: z.string().uuid().describe('Target object ID'),
+        targetFieldLabel: z.string().describe('Inverse field label'),
+        targetFieldIcon: z.string().describe('Inverse field icon'),
       }),
     )
     .min(1)
     .max(20)
-    .describe('Array of relation fields to create (1-20 items).'),
+    .describe('Relations to create (max 20).'),
 });
 
 @Injectable()
@@ -170,14 +137,15 @@ export class FieldMetadataToolsFactory {
     return {
       get_field_metadata: {
         description:
-          'Find fields metadata. Retrieve information about the fields of objects in the workspace data model.',
+          "Returns an array of fields. System fields are returned as compact {id, name, type} — enough to know which fields exist and their types. Keep includeFullSystemFields at its default (false); only set it true when you specifically need a system field's full configuration (settings, defaultValue, relation targets). Internal fields (searchVector, position, updatedBy) are excluded.",
         inputSchema: GetFieldMetadataInputSchema,
         execute: async (parameters: {
           id?: string;
           objectMetadataId?: string;
+          includeFullSystemFields?: boolean;
           limit?: number;
         }) => {
-          return this.fieldMetadataService.query({
+          const rawResults = await this.fieldMetadataService.query({
             filter: {
               workspaceId: { eq: workspaceId },
               ...(parameters.id ? { id: { eq: parameters.id } } : {}),
@@ -189,11 +157,34 @@ export class FieldMetadataToolsFactory {
             },
             paging: { limit: parameters.limit ?? 100 },
           });
+
+          const compactedFields = (
+            rawResults as unknown as Record<string, unknown>[]
+          )
+            .filter((field) => !EXCLUDED_FIELD_NAMES.has(field.name as string))
+            .map((field) => {
+              if (field.isSystem && !parameters.includeFullSystemFields) {
+                return {
+                  id: field.id,
+                  name: field.name,
+                  type: field.type,
+                };
+              }
+
+              return compactMetadataOutput(
+                { ...field },
+                {
+                  stripWhenNullish: FIELD_STRIP_WHEN_NULLISH,
+                  stripWhenFalse: FIELD_STRIP_WHEN_FALSE,
+                },
+              );
+            });
+
+          return compactedFields;
         },
       },
       create_field_metadata: {
-        description:
-          'Create a new field metadata on an object. Specify the objectMetadataId and field properties.',
+        description: 'Create a new field on an object.',
         inputSchema: CreateFieldMetadataInputSchema,
         execute: async (parameters: {
           objectMetadataId: string;
@@ -220,7 +211,13 @@ export class FieldMetadataToolsFactory {
                 workspaceId,
               });
 
-            return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
+            return {
+              id: flatFieldMetadata.id,
+              name: flatFieldMetadata.name,
+              label: flatFieldMetadata.label,
+              type: flatFieldMetadata.type,
+              objectMetadataId: flatFieldMetadata.objectMetadataId,
+            };
           } catch (error) {
             if (error instanceof WorkspaceMigrationBuilderException) {
               throw new Error(formatValidationErrors(error));
@@ -231,7 +228,7 @@ export class FieldMetadataToolsFactory {
       },
       update_field_metadata: {
         description:
-          'Update an existing field metadata. Provide the field ID and the properties to update.',
+          'Update a field. Provide field ID and properties to change.',
         inputSchema: UpdateFieldMetadataInputSchema,
         execute: async (parameters: {
           id: string;
@@ -258,7 +255,12 @@ export class FieldMetadataToolsFactory {
                 workspaceId,
               });
 
-            return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
+            return {
+              id: flatFieldMetadata.id,
+              name: flatFieldMetadata.name,
+              label: flatFieldMetadata.label,
+              type: flatFieldMetadata.type,
+            };
           } catch (error) {
             if (error instanceof WorkspaceMigrationBuilderException) {
               throw new Error(formatValidationErrors(error));
@@ -268,7 +270,7 @@ export class FieldMetadataToolsFactory {
         },
       },
       delete_field_metadata: {
-        description: 'Delete a field metadata by its ID.',
+        description: 'Delete a field by ID.',
         inputSchema: DeleteFieldMetadataInputSchema,
         execute: async (parameters: { id: string }) => {
           try {
@@ -278,7 +280,7 @@ export class FieldMetadataToolsFactory {
                 workspaceId,
               });
 
-            return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
+            return { id: flatFieldMetadata.id, success: true };
           } catch (error) {
             if (error instanceof WorkspaceMigrationBuilderException) {
               throw new Error(formatValidationErrors(error));
@@ -368,8 +370,7 @@ export class FieldMetadataToolsFactory {
         },
       },
       create_many_relation_fields: {
-        description:
-          'Create multiple relation fields between objects at once. This is the recommended way to add relations after creating objects and non-relation fields. Each item specifies the source object, target object, relation type, and labels for both sides of the relation.',
+        description: 'Create multiple relation fields between objects at once.',
         inputSchema: CreateManyRelationFieldsInputSchema,
         execute: async (parameters: {
           relations: Array<{

@@ -1,6 +1,8 @@
-import { styled } from '@linaria/react';
+import { clsx } from 'clsx';
+
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
-import { themeCssVariables } from '@ui/theme-constants';
+
+import styles from './H2Title.module.scss';
 
 type H2TitleProps = {
   title: string;
@@ -9,33 +11,6 @@ type H2TitleProps = {
   className?: string;
 };
 
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: ${themeCssVariables.spacing[4]};
-`;
-
-const StyledTitleContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-`;
-
-const StyledTitle = styled.h2`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  margin: 0;
-`;
-
-const StyledDescription = styled.h3`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  margin: 0;
-  margin-top: ${themeCssVariables.spacing[2]};
-`;
-
 export const H2Title = ({
   title,
   description,
@@ -43,20 +18,20 @@ export const H2Title = ({
   className,
 }: H2TitleProps) => {
   return (
-    <StyledContainer className={className}>
-      <StyledTitleContainer>
-        <StyledTitle>{title}</StyledTitle>
+    <div className={clsx(styles.container, className)}>
+      <div className={styles.titleContainer}>
+        <h2 className={styles.title}>{title}</h2>
         {adornment}
-      </StyledTitleContainer>
+      </div>
       {description && (
-        <StyledDescription>
+        <h3 className={styles.description}>
           <OverflowingTextWithTooltip
             text={description}
             displayedMaxRows={5}
             isTooltipMultiline={true}
           />
-        </StyledDescription>
+        </h3>
       )}
-    </StyledContainer>
+    </div>
   );
 };

@@ -1,12 +1,7 @@
-import { css } from '@linaria/core';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-// Linaria's styled(anonymousFunction) pattern strips the function body during
-// build, so we use the css tag and apply it directly on the Link component.
-const undecoratedLinkClass = css`
-  text-decoration: none;
-`;
+import styles from './UndecoratedLink.module.scss';
 
 type UndecoratedLinkProps = {
   to: string | number;
@@ -28,7 +23,7 @@ export const UndecoratedLink = ({
       to={to as string}
       replace={replace}
       onClick={onClick}
-      className={undecoratedLinkClass}
+      className={styles.undecoratedLink}
       style={fullWidth ? { width: '100%' } : undefined}
     >
       {children}

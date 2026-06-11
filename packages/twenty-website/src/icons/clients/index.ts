@@ -15,11 +15,13 @@ export { NineDotsIcon } from './NineDots';
 export { W3villaIcon } from './W3Villa';
 export type { ClientIconProps } from './client-icon-props';
 
-export const CLIENT_ICONS: Record<string, ComponentType<ClientIconProps>> = {
+export const CLIENT_ICONS = {
   'act-education': ActEducationIcon,
   'alternative-partners': AlternativePartnersIcon,
   'elevate-consulting': ElevateConsultingIcon,
   netzero: NetZeroIcon,
   'nine-dots': NineDotsIcon,
   w3villa: W3villaIcon,
-};
+} satisfies Record<string, ComponentType<ClientIconProps>>;
+
+export type ClientIconKey = keyof typeof CLIENT_ICONS;

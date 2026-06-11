@@ -1,43 +1,48 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from '@ui/theme-constants';
+import { clsx } from 'clsx';
+import { type ComponentPropsWithoutRef } from 'react';
 
-// oxlint-disable-next-line twenty/styled-components-prefixed-with-styled
-export const AnimatedPlaceholderErrorContainer = styled.div`
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[8]};
-  justify-content: center;
-  text-align: center;
-`;
+import styles from './ErrorPlaceholderStyled.module.scss';
 
-// oxlint-disable-next-line twenty/styled-components-prefixed-with-styled
-export const AnimatedPlaceholderErrorTextContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[4]};
-  justify-content: center;
-  text-align: center;
-  width: 100%;
-`;
+export const AnimatedPlaceholderErrorContainer = ({
+  className,
+  ...rest
+}: ComponentPropsWithoutRef<'div'>) => (
+  <div
+    className={clsx(styles.errorContainer, className)}
+    // oxlint-disable-next-line react/jsx-props-no-spreading
+    {...rest}
+  />
+);
 
-// oxlint-disable-next-line twenty/styled-components-prefixed-with-styled
-export const AnimatedPlaceholderErrorTitle = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.xl};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  line-height: ${themeCssVariables.text.lineHeight.lg};
-`;
+export const AnimatedPlaceholderErrorTextContainer = ({
+  className,
+  ...rest
+}: ComponentPropsWithoutRef<'div'>) => (
+  <div
+    className={clsx(styles.errorTextContainer, className)}
+    // oxlint-disable-next-line react/jsx-props-no-spreading
+    {...rest}
+  />
+);
 
-// oxlint-disable-next-line twenty/styled-components-prefixed-with-styled
-export const AnimatedPlaceholderErrorSubTitle = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  line-height: ${themeCssVariables.text.lineHeight.md};
-  max-height: 2.4em;
-  overflow: hidden;
-`;
+export const AnimatedPlaceholderErrorTitle = ({
+  className,
+  ...rest
+}: ComponentPropsWithoutRef<'div'>) => (
+  <div
+    className={clsx(styles.errorTitle, className)}
+    // oxlint-disable-next-line react/jsx-props-no-spreading
+    {...rest}
+  />
+);
+
+export const AnimatedPlaceholderErrorSubTitle = ({
+  className,
+  ...rest
+}: ComponentPropsWithoutRef<'div'>) => (
+  <div
+    className={clsx(styles.errorSubTitle, className)}
+    // oxlint-disable-next-line react/jsx-props-no-spreading
+    {...rest}
+  />
+);

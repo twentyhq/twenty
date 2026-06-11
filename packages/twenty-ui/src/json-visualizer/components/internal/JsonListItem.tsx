@@ -1,10 +1,11 @@
-import { styled } from '@linaria/react';
+import { clsx } from 'clsx';
 
-const StyledListItem = styled.li`
-  align-items: center;
-  display: flex;
-  list-style-type: none;
-  white-space: nowrap;
-`;
+import styles from './JsonListItem.module.scss';
 
-export { StyledListItem as JsonListItem };
+export const JsonListItem = ({
+  className,
+  children,
+}: {
+  className?: string;
+  children?: React.ReactNode;
+}) => <li className={clsx(styles.listItem, className)}>{children}</li>;

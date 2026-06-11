@@ -3,7 +3,7 @@ import {
   IconCheckbox,
   type IconComponent,
   IconSquare,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 
 export const MANUAL_TRIGGER_AVAILABILITY_OPTIONS: Array<{
   label: string;

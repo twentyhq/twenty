@@ -37,7 +37,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "commands": ["zapier validate"]
+        "commands": ["zapier-platform validate"]
       },
       "dependsOn": ["build"]
     },
@@ -45,7 +45,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "commands": ["zapier versions"]
+        "commands": ["zapier-platform versions"]
       },
       "dependsOn": ["build"]
     },
@@ -68,7 +68,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "commands": ["zapier push --disable-dependency-detection"]
+        "commands": ["zapier-platform push --disable-dependency-detection"]
       },
       "dependsOn": ["build"]
     },
@@ -76,7 +76,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "commands": ["zapier promote"]
+        "commands": ["zapier-platform promote"]
       },
       "dependsOn": ["build"]
     }

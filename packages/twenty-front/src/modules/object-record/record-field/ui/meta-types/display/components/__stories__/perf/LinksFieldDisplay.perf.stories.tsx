@@ -4,7 +4,7 @@ import { useContext, useEffect } from 'react';
 import { FieldFocusContext } from '@/object-record/record-field/ui/contexts/FieldFocusContext';
 import { FieldFocusContextProvider } from '@/object-record/record-field/ui/contexts/FieldFocusContextProvider';
 import { LinksFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/LinksFieldDisplay';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';

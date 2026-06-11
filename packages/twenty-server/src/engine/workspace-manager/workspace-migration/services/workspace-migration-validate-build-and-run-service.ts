@@ -369,6 +369,8 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     const { idByUniversalIdentifierByMetadataName, dryRun, ...buildArgs } =
       args;
 
+    // TODO(install-perf): temporary, remove.
+    const buildStart = performance.now();
     const validateAndBuildResult =
       await this.workspaceMigrationBuildOrchestratorService
         .buildWorkspaceMigration(buildArgs)
@@ -379,6 +381,11 @@ export class WorkspaceMigrationValidateBuildAndRunService {
             WorkspaceMigrationV2ExceptionCode.BUILDER_INTERNAL_SERVER_ERROR,
           );
         });
+    const buildMs = performance.now() - buildStart;
+
+    this.logger.log(
+      `[install-perf] buildWorkspaceMigration took ${buildMs.toFixed(1)}ms (status=${validateAndBuildResult.status})`,
+    );
 
     if (validateAndBuildResult.status === 'fail') {
       if (this.isDebugEnabled) {
@@ -402,11 +409,30 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       };
     }
 
+    const actionCountsByTypeAndMetadataName: Record<string, number> = {};
+
+    for (const action of workspaceMigration.actions) {
+      const key = `${action.type}:${action.metadataName}`;
+
+      actionCountsByTypeAndMetadataName[key] =
+        (actionCountsByTypeAndMetadataName[key] ?? 0) + 1;
+    }
+
+    this.logger.log(
+      `[install-perf] validateBuildAndRunWorkspaceMigrationFromTo running ${workspaceMigration.actions.length} actions: ${JSON.stringify(actionCountsByTypeAndMetadataName)}`,
+    );
+
+    const runStart = performance.now();
     const { hasSchemaMetadataChanged, metadataEvents } =
       await this.workspaceMigrationRunnerService.run({
         workspaceId: args.workspaceId,
         workspaceMigration,
       });
+    const runMs = performance.now() - runStart;
+
+    this.logger.log(
+      `[install-perf] workspaceMigrationRunnerService.run took ${runMs.toFixed(1)}ms for ${workspaceMigration.actions.length} actions`,
+    );
 
     this.metadataEventEmitter.emitMetadataEvents({
       metadataEvents: metadataEvents,

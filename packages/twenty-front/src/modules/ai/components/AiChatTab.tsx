@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useState } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 import { DropZone } from '@/activities/files/components/DropZone';
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';

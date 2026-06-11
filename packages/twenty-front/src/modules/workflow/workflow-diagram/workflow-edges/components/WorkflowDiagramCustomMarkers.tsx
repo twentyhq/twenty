@@ -1,5 +1,5 @@
 import { EDGE_BRANCH_ARROW_MARKER } from '@/workflow/workflow-diagram/workflow-edges/constants/EdgeBranchArrowMarker';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 import { useContext } from 'react';
 
 export const WorkflowDiagramCustomMarkers = () => {

@@ -735,6 +735,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       universalIdentifier: v4(),
       visibility: ViewVisibility.WORKSPACE,
       createdByUserWorkspaceId: null,
+      isActive: true,
+      universalOverrides: null,
       viewFieldUniversalIdentifiers: [],
       viewFieldGroupUniversalIdentifiers: [],
       viewFilterUniversalIdentifiers: [],

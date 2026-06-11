@@ -2,8 +2,8 @@ import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { useIsMobile } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui-deprecated/utilities';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledItemsContainer = styled.div`
   display: flex;

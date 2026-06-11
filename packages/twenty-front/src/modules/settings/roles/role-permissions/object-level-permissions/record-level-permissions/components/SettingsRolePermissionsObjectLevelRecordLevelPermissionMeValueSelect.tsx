@@ -9,9 +9,9 @@ import {
   CoreObjectNameSingular,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconUserCircle, IconX, useIcons } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconUserCircle, IconX, useIcons } from 'twenty-ui-deprecated/display';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';

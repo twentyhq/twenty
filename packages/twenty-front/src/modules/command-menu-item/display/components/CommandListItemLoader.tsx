@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
-import { Loader } from 'twenty-ui/feedback';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Loader } from 'twenty-ui-deprecated/feedback';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;
