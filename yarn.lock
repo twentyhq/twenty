@@ -55812,6 +55812,7 @@ __metadata:
     "@lingui/format-po": "npm:5.1.2"
     "@lingui/react": "npm:^5.1.2"
     "@lingui/swc-plugin": "npm:^5.11.0"
+    "@lottiefiles/dotlottie-react": "npm:^0.18.10"
     "@tabler/icons-react": "npm:^3.41.1"
     "@types/node": "npm:^20"
     "@types/react": "npm:^19"

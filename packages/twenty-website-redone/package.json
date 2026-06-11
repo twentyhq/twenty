@@ -13,6 +13,7 @@
     "@linaria/react": "^7.0.1",
     "@lingui/core": "^5.1.2",
     "@lingui/react": "^5.1.2",
+    "@lottiefiles/dotlottie-react": "^0.18.10",
     "@tabler/icons-react": "^3.41.1",
     "@wyw-in-js/babel-preset": "^0.8.1",
     "@wyw-in-js/transform": "^0.8.1",
