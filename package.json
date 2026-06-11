@@ -43,7 +43,8 @@
     "@electron/node-gyp/tar": "npm:^7.5.16",
     "pacote/tar": "npm:^7.5.16",
     "@angular-devkit/core": "19.2.24",
-    "yeoman-environment": "6.0.1"
+    "yeoman-environment": "6.0.1",
+    "@electron-forge/plugin-webpack/webpack-dev-server": "5.2.4"
   },
   "version": "0.2.1",
   "nx": {},
