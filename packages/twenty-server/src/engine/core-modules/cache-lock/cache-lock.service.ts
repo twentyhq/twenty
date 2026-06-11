@@ -10,6 +10,13 @@ export type CacheLockOptions = {
   ttl?: number;
 };
 
+export class CacheLockAcquisitionError extends Error {
+  constructor(key: string) {
+    super(`Failed to acquire lock for key: ${key}`);
+    this.name = 'CacheLockAcquisitionError';
+  }
+}
+
 @Injectable()
 export class CacheLockService {
   private readonly logger = new Logger(CacheLockService.name);
@@ -50,6 +57,6 @@ export class CacheLockService {
       await this.delay(ms);
     }
 
-    throw new Error(`Failed to acquire lock for key: ${key}`);
+    throw new CacheLockAcquisitionError(key);
   }
 }

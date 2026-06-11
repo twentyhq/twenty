@@ -86,6 +86,7 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
         return new LambdaDriver({
           logicFunctionResourceService: this.logicFunctionResourceService,
           cacheLockService: this.cacheLockService,
+          workspaceCacheService: this.workspaceCacheService,
           credentials: accessKeyId
             ? { accessKeyId, secretAccessKey }
             : fromNodeProviderChain({ clientConfig: { region } }),
