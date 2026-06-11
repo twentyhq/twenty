@@ -17,10 +17,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import {
-  CacheLockAcquisitionError,
-  type CacheLockService,
-} from 'src/engine/core-modules/cache-lock/cache-lock.service';
+  CacheLockException,
+  CacheLockExceptionCode,
+} from 'src/engine/core-modules/cache-lock/exceptions/cache-lock.exception';
 import {
   EXECUTOR_LAMBDA_MEMORY_MB,
   EXECUTOR_LAMBDA_TIMEOUT_SECONDS,
@@ -133,7 +134,11 @@ export class LambdaExecutorManagerService {
         },
       );
     } catch (error) {
-      if (!(error instanceof CacheLockAcquisitionError)) {
+      const isLockAcquisitionTimeout =
+        error instanceof CacheLockException &&
+        error.code === CacheLockExceptionCode.LOCK_ACQUISITION_TIMEOUT;
+
+      if (!isLockAcquisitionTimeout) {
         throw error;
       }
 
