@@ -1,3 +1,4 @@
+export { GuideCrosshair, type GuideCrosshairProps } from './guide-crosshair';
 export { HeadingPair } from './heading-pair';
 export { Body, type BodyElement, type BodyProps, type BodySize } from './body';
 export {

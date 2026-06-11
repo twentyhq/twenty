@@ -38,6 +38,11 @@ msgstr ""
 msgid "AC&T moved to a self-hosted Twenty instance with no vendor risk, no forced migration, and CRM costs reduced by more than 90%."
 msgstr ""
 
+#. js-lingui-id: J+A83M
+#: src/sections/helped/helped.data.ts
+msgid "AC&T replaced a shuttered vendor CRM with self-hosted Twenty and cut CRM costs by more than 90%."
+msgstr ""
+
 #. js-lingui-id: R+bwFB
 #: src/sections/three-cards/three-cards.data.ts
 msgid "AI for rapid iterations"
@@ -139,6 +144,11 @@ msgstr ""
 msgid "Customers"
 msgstr ""
 
+#. js-lingui-id: X5B6sd
+#: src/sections/helped/helped-scene.tsx
+msgid "Dev teams power company-wide *change with Twenty*"
+msgstr ""
+
 #. js-lingui-id: n+SX4g
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
@@ -199,6 +209,11 @@ msgstr ""
 msgid "Get started"
 msgstr ""
 
+#. js-lingui-id: MCLWq4
+#: src/sections/helped/helped.data.ts
+msgid "Grow with a flexible foundation"
+msgstr ""
+
 #. js-lingui-id: Xf5EJg
 #: src/sections/footer/footer.data.ts
 msgid "Halftone generator"
@@ -217,6 +232,11 @@ msgstr ""
 #. js-lingui-id: OIwpKt
 #: src/sections/faq/faq.data.ts
 msgid "How long does it take to get started?"
+msgstr ""
+
+#. js-lingui-id: d1Aru8
+#: src/sections/helped/helped-scene.tsx
+msgid "In production."
 msgstr ""
 
 #. js-lingui-id: /yQIKP
@@ -270,9 +290,19 @@ msgstr ""
 msgid "Meet the certified agencies and consultants implementing Twenty for teams worldwide."
 msgstr ""
 
+#. js-lingui-id: J8ZssL
+#: src/sections/helped/helped.data.ts
+msgid "NetZero runs a modular Twenty setup across carbon credits, ag products, and industrial systems."
+msgstr ""
+
 #. js-lingui-id: SiZ/7E
 #: src/sections/faq/faq.data.ts
 msgid "No. Build custom objects, fields, views, and no-code workflows straight from Settings. Unlimited, no extra charge."
+msgstr ""
+
+#. js-lingui-id: Bwsi7B
+#: src/sections/helped/helped.data.ts
+msgid "Own your CRM end to end"
 msgstr ""
 
 #. js-lingui-id: mPkInZ
@@ -313,6 +343,11 @@ msgstr ""
 msgid "Proprietary languages, slow deployment cycles, and \"black box\" logic."
 msgstr ""
 
+#. js-lingui-id: gSQVmr
+#: src/sections/helped/helped-card.tsx
+msgid "Read the case"
+msgstr ""
+
 #. js-lingui-id: rwWjWg
 #: src/sections/footer/footer.data.ts
 msgid "Release Notes"
@@ -331,6 +366,11 @@ msgstr ""
 #. js-lingui-id: FY4ykg
 #: src/sections/menu/menu.data.ts
 msgid "See the latest release"
+msgstr ""
+
+#. js-lingui-id: 3VFzsh
+#: src/sections/helped/helped.data.ts
+msgid "Ship a product on Twenty"
 msgstr ""
 
 #. js-lingui-id: mA6cL1
@@ -459,6 +499,11 @@ msgstr ""
 #. js-lingui-id: CsHuOr
 #: src/sections/three-cards/three-cards.data.ts
 msgid "VP of Engineering"
+msgstr ""
+
+#. js-lingui-id: 7hHsoV
+#: src/sections/helped/helped.data.ts
+msgid "W3villa built W3Grads for AI mock interviews at scale, with Twenty as the operational backbone."
 msgstr ""
 
 #. js-lingui-id: 7q5Vjn

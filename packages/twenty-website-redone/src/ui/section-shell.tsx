@@ -33,6 +33,10 @@ const sectionShellClassName = css`
     }
   }
 
+  &[data-rhythm='flush'] {
+    padding-block: 0;
+  }
+
   &[data-rhythm='spacious'] {
     padding-block: ${spacing(RHYTHM.spacious.top.base)}
       ${spacing(RHYTHM.spacious.bottom.base)};
@@ -84,7 +88,7 @@ export type SectionShellProps = {
   // Decorative full-bleed layer behind the content (gradients, visuals).
   background?: ReactNode;
   children: ReactNode;
-  rhythm?: 'section' | 'hero' | 'spacious';
+  rhythm?: 'section' | 'hero' | 'spacious' | 'flush';
   scheme?: Scheme;
 };
 

@@ -6,6 +6,7 @@ import {
 import { buildRouteMetadata } from '@/platform/seo';
 import { Faq } from '@/sections/faq';
 import { FeatureCards } from '@/sections/feature-cards';
+import { Helped } from '@/sections/helped';
 import { HomeHero } from '@/sections/home-hero';
 import { Menu } from '@/sections/menu';
 import { Problem } from '@/sections/problem';
@@ -35,6 +36,7 @@ export default async function HomePage({
         <ThreeCards />
         <Stepper />
         <FeatureCards />
+        <Helped />
         <Faq />
       </main>
     </>

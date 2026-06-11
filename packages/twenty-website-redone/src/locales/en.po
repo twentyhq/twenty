@@ -38,6 +38,11 @@ msgstr "AC&T Education Migration"
 msgid "AC&T moved to a self-hosted Twenty instance with no vendor risk, no forced migration, and CRM costs reduced by more than 90%."
 msgstr "AC&T moved to a self-hosted Twenty instance with no vendor risk, no forced migration, and CRM costs reduced by more than 90%."
 
+#. js-lingui-id: J+A83M
+#: src/sections/helped/helped.data.ts
+msgid "AC&T replaced a shuttered vendor CRM with self-hosted Twenty and cut CRM costs by more than 90%."
+msgstr "AC&T replaced a shuttered vendor CRM with self-hosted Twenty and cut CRM costs by more than 90%."
+
 #. js-lingui-id: R+bwFB
 #: src/sections/three-cards/three-cards.data.ts
 msgid "AI for rapid iterations"
@@ -139,6 +144,11 @@ msgstr "CRM Engineer"
 msgid "Customers"
 msgstr "Customers"
 
+#. js-lingui-id: X5B6sd
+#: src/sections/helped/helped-scene.tsx
+msgid "Dev teams power company-wide *change with Twenty*"
+msgstr "Dev teams power company-wide *change with Twenty*"
+
 #. js-lingui-id: n+SX4g
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
@@ -199,6 +209,11 @@ msgstr "Find a Twenty partner"
 msgid "Get started"
 msgstr "Get started"
 
+#. js-lingui-id: MCLWq4
+#: src/sections/helped/helped.data.ts
+msgid "Grow with a flexible foundation"
+msgstr "Grow with a flexible foundation"
+
 #. js-lingui-id: Xf5EJg
 #: src/sections/footer/footer.data.ts
 msgid "Halftone generator"
@@ -218,6 +233,11 @@ msgstr "Home"
 #: src/sections/faq/faq.data.ts
 msgid "How long does it take to get started?"
 msgstr "How long does it take to get started?"
+
+#. js-lingui-id: d1Aru8
+#: src/sections/helped/helped-scene.tsx
+msgid "In production."
+msgstr "In production."
 
 #. js-lingui-id: /yQIKP
 #: src/sections/faq/faq.data.ts
@@ -270,10 +290,20 @@ msgstr "Master every corner of Twenty"
 msgid "Meet the certified agencies and consultants implementing Twenty for teams worldwide."
 msgstr "Meet the certified agencies and consultants implementing Twenty for teams worldwide."
 
+#. js-lingui-id: J8ZssL
+#: src/sections/helped/helped.data.ts
+msgid "NetZero runs a modular Twenty setup across carbon credits, ag products, and industrial systems."
+msgstr "NetZero runs a modular Twenty setup across carbon credits, ag products, and industrial systems."
+
 #. js-lingui-id: SiZ/7E
 #: src/sections/faq/faq.data.ts
 msgid "No. Build custom objects, fields, views, and no-code workflows straight from Settings. Unlimited, no extra charge."
 msgstr "No. Build custom objects, fields, views, and no-code workflows straight from Settings. Unlimited, no extra charge."
+
+#. js-lingui-id: Bwsi7B
+#: src/sections/helped/helped.data.ts
+msgid "Own your CRM end to end"
+msgstr "Own your CRM end to end"
 
 #. js-lingui-id: mPkInZ
 #: src/sections/menu/menu.data.ts
@@ -313,6 +343,11 @@ msgstr "Production grade quality"
 msgid "Proprietary languages, slow deployment cycles, and \"black box\" logic."
 msgstr "Proprietary languages, slow deployment cycles, and \"black box\" logic."
 
+#. js-lingui-id: gSQVmr
+#: src/sections/helped/helped-card.tsx
+msgid "Read the case"
+msgstr "Read the case"
+
 #. js-lingui-id: rwWjWg
 #: src/sections/footer/footer.data.ts
 msgid "Release Notes"
@@ -332,6 +367,11 @@ msgstr "Resources"
 #: src/sections/menu/menu.data.ts
 msgid "See the latest release"
 msgstr "See the latest release"
+
+#. js-lingui-id: 3VFzsh
+#: src/sections/helped/helped.data.ts
+msgid "Ship a product on Twenty"
+msgstr "Ship a product on Twenty"
 
 #. js-lingui-id: mA6cL1
 #: src/sections/faq/faq.data.ts
@@ -460,6 +500,11 @@ msgstr "User Guide"
 #: src/sections/three-cards/three-cards.data.ts
 msgid "VP of Engineering"
 msgstr "VP of Engineering"
+
+#. js-lingui-id: 7hHsoV
+#: src/sections/helped/helped.data.ts
+msgid "W3villa built W3Grads for AI mock interviews at scale, with Twenty as the operational backbone."
+msgstr "W3villa built W3Grads for AI mock interviews at scale, with Twenty as the operational backbone."
 
 #. js-lingui-id: 7q5Vjn
 #: src/sections/three-cards/three-cards.data.ts

@@ -4,6 +4,8 @@ export {
   ScrollProgressEffect,
   type ScrollProgressEffectProps,
 } from './scroll-progress-effect';
+export { getReducedMotionSnapshot } from './reduced-motion-snapshot';
 export { useMediaQuery } from './use-media-query';
+export { useScheduledOnScroll } from './use-scheduled-on-scroll';
 export { usePrefersReducedMotion } from './use-prefers-reduced-motion';
 export { useScrollProgress } from './use-scroll-progress';
