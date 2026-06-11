@@ -16,5 +16,6 @@ export default defineField({
   label: 'Years of Experience',
   description:
     'Inferred years of professional experience from People Data Labs.',
+  icon: 'IconHourglass',
   isNullable: true,
 });
