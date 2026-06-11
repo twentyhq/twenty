@@ -8,7 +8,7 @@ import { useCallRecordingTranscript } from 'src/front-components/hooks/use-call-
 import { type TranscriptEntry } from 'src/front-components/types/transcript-entry.type';
 import { formatTranscriptTimestamp } from 'src/front-components/utils/format-transcript-timestamp.util';
 import { parseTranscriptEntries } from 'src/front-components/utils/parse-transcript-entries.util';
-import { parseRecallTranscriptMarker } from 'src/logic-functions/utils/parse-recall-transcript-marker.util';
+import { parseRecallTranscriptMarker } from 'src/logic-functions/domain/parse-recall-transcript-marker.util';
 
 // Theme values are interpolated lazily: the manifest build proxy-mocks twenty-sdk/ui, so module-scope nested access throws.
 const StyledStateContainer = styled.div`

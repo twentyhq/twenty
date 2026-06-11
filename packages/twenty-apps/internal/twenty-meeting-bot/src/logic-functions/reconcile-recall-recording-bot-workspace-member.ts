@@ -7,9 +7,9 @@ import {
 } from 'twenty-sdk/define';
 
 import { WORKSPACE_MEMBER_RECONCILIATION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/workspace-member-reconciliation-logic-function-universal-identifier';
-import { findUpcomingCalendarEventIdsForWorkspaceMember } from 'src/logic-functions/utils/find-upcoming-calendar-event-ids-for-workspace-member.util';
+import { findUpcomingCalendarEventIdsForWorkspaceMember } from 'src/logic-functions/data/find-upcoming-calendar-event-ids-for-workspace-member.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
-import { reconcileRecallRecordingBotForCalendarEventIds } from 'src/logic-functions/utils/reconcile-recall-recording-bot.util';
+import { reconcileRecallRecordingBotForCalendarEventIds } from 'src/logic-functions/flows/reconcile-recall-recording-bot.util';
 
 const WORKSPACE_MEMBER_OBJECT_NAME = 'workspaceMember';
 

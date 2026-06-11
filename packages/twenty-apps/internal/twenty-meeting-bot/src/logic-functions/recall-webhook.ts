@@ -6,10 +6,10 @@ import { Response } from 'twenty-sdk/logic-function';
 import { RECALL_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/recall-webhook-logic-function-universal-identifier';
 import { RECALL_WEBHOOK_SECRET_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-webhook-secret-env-var-name';
 import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
-import { handleRecallWebhook } from 'src/logic-functions/utils/handle-recall-webhook.util';
+import { handleRecallWebhook } from 'src/logic-functions/flows/handle-recall-webhook.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
-import { type RecallWebhookBody } from 'src/logic-functions/utils/parse-recall-webhook-event.util';
-import { verifyRecallWebhookSignature } from 'src/logic-functions/utils/verify-recall-webhook-signature.util';
+import { type RecallWebhookBody } from 'src/logic-functions/recall-api/parse-recall-webhook-event.util';
+import { verifyRecallWebhookSignature } from 'src/logic-functions/recall-api/verify-recall-webhook-signature.util';
 
 // Non-2xx makes Svix retry; a returned plain object would 200-ack permanently.
 const rejectWebhook = (status: number, error: string): Response => {

@@ -1,0 +1,23 @@
+import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
+import { isCallRecordingIngestionComplete } from 'src/logic-functions/domain/is-call-recording-ingestion-complete.util';
+import { type CallRecordingUpdateFields } from 'src/logic-functions/data/update-call-recording.util';
+
+export const shouldCompleteCallRecordingIngestion = ({
+  current,
+  updateData,
+}: {
+  current: {
+    status?: string;
+    transcript?: unknown;
+    audio?: FilesFieldValue;
+    video?: FilesFieldValue;
+  };
+  updateData: CallRecordingUpdateFields;
+}): boolean =>
+  current.status !== CallRecordingStatus.COMPLETED &&
+  isCallRecordingIngestionComplete({
+    transcript: updateData.transcript ?? current.transcript,
+    audio: updateData.audio ?? current.audio,
+    video: updateData.video ?? current.video,
+  });

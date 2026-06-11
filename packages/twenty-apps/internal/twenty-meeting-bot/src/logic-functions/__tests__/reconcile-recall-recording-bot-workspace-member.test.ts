@@ -14,7 +14,7 @@ vi.mock('twenty-client-sdk/core', () => ({
 }));
 
 vi.mock(
-  'src/logic-functions/utils/find-upcoming-calendar-event-ids-for-workspace-member.util',
+  'src/logic-functions/data/find-upcoming-calendar-event-ids-for-workspace-member.util',
   () => ({
     findUpcomingCalendarEventIdsForWorkspaceMember:
       findUpcomingCalendarEventIdsForWorkspaceMemberMock,
@@ -22,7 +22,7 @@ vi.mock(
 );
 
 vi.mock(
-  'src/logic-functions/utils/reconcile-recall-recording-bot.util',
+  'src/logic-functions/flows/reconcile-recall-recording-bot.util',
   () => ({
     reconcileRecallRecordingBotForCalendarEventIds:
       reconcileRecallRecordingBotForCalendarEventIdsMock,

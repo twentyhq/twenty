@@ -7,7 +7,7 @@ import {
 
 import { CALENDAR_EVENT_PARTICIPANT_RECONCILIATION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/calendar-event-participant-reconciliation-logic-function-universal-identifier';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
-import { reconcileRecallRecordingBotForCalendarEventIds } from 'src/logic-functions/utils/reconcile-recall-recording-bot.util';
+import { reconcileRecallRecordingBotForCalendarEventIds } from 'src/logic-functions/flows/reconcile-recall-recording-bot.util';
 
 const CALENDAR_EVENT_PARTICIPANT_OBJECT_NAME = 'calendarEventParticipant';
 
