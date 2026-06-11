@@ -32,3 +32,4 @@ export {
 export { webGlContextBudget } from './engine/webgl-context-budget';
 export { WEBGL_CONTEXT_LOST_EVENT } from './engine/webgl-context-lost-event';
 export { isWebGlSupported } from './engine/webgl-policy';
+export { HalftoneModel, type HalftoneModelProps } from './rigs/halftone-model';

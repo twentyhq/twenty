@@ -16,6 +16,7 @@ export { MAX_CONTENT_WIDTH_PX } from './max-content-width';
 export { mediaUp } from './media-up';
 export { buildSchemeDeclarations } from './build-scheme-declarations';
 export { PALETTE, type PaletteToken } from './palette';
+export { paletteColorNumber } from './palette-number';
 export { radius } from './radius';
 export { RHYTHM, type RhythmClass, type RhythmStep } from './rhythm';
 export { type Scheme, SCHEMES } from './scheme';

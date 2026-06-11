@@ -19,11 +19,14 @@ const EAGER_ROOT_MARGIN = '600% 0px 600% 0px';
 const OUT_OF_VIEW_DISPOSE_MS = 4000;
 const PRIORITY_OUT_OF_VIEW_DISPOSE_MS = 1500;
 
+// display: contents would have no box, and a box is exactly what the
+// viewport observer and the scene container need — fill the slot.
 const MountRoot = styled.div`
-  display: contents;
+  display: block;
+  height: 100%;
+  width: 100%;
 
   &[data-detached] {
-    display: block;
     inset: 0;
     pointer-events: none;
     position: absolute;

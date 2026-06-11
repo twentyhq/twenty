@@ -6,7 +6,14 @@
 // Every public/ asset directory must be listed: beforeFiles rewrites run
 // BEFORE the filesystem, so an unlisted prefix gets rewritten to /en/* and
 // 404s (the old site ships this bug; its CDN masks it in production).
-const RESERVED_PREFIXES = ['api', '_next', 'images', 'fonts', 'lottie'];
+const RESERVED_PREFIXES = [
+  'api',
+  '_next',
+  'images',
+  'fonts',
+  'lottie',
+  'models',
+];
 
 export const buildLocaleRewrites = (
   localeSegments: readonly string[],

@@ -16,7 +16,10 @@ import {
   spacing,
   typeRampDeclarations,
 } from '@/tokens';
+import { HalftoneModel } from '@/platform/visuals/rigs/halftone-model';
 import { Body, Eyebrow, Heading, IconButton, MarkedDivider } from '@/ui';
+
+import { HOURGLASS_VISUAL } from './hourglass-config';
 
 import { type TestimonialRecord } from './testimonials.data';
 
@@ -56,20 +59,20 @@ const CounterSlot = styled.div`
   }
 `;
 
-// The hourglass halftone renders here with the visual-runtime wave; the
-// slot reserves the authored canvas box now so the load cannot shift
-// layout (198x279 stacked, 336x476 from md).
+// The authored canvas box, exact (as the old site sizes it): the scene's
+// percent-height chain needs a definite height, and the fixed box keeps
+// the visual's load from ever shifting layout.
 const VisualSlot = styled.div`
   align-self: start;
+  height: 279px;
   justify-self: start;
-  min-height: 279px;
-  min-width: 198px;
   order: 2;
+  width: 198px;
 
   ${mediaUp('md')} {
-    min-height: 476px;
-    min-width: 336px;
+    height: 476px;
     order: 1;
+    width: 336px;
   }
 `;
 
@@ -196,7 +199,13 @@ export function TestimonialsCarousel({
             {index + 1}/{total}
           </CounterText>
         </CounterSlot>
-        <VisualSlot data-illustration="hourglass" />
+        <VisualSlot data-illustration="hourglass">
+          <HalftoneModel
+            initialPose={HOURGLASS_VISUAL.initialPose}
+            modelUrl={HOURGLASS_VISUAL.modelUrl}
+            settings={HOURGLASS_VISUAL.settings}
+          />
+        </VisualSlot>
       </LeftColumn>
       <SeparatorSlot>
         <MarkedDivider />

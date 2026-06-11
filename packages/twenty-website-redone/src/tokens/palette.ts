@@ -6,11 +6,15 @@ export type PaletteToken =
   | 'graphite'
   | 'silver'
   | 'neutral'
-  | 'blue';
+  | 'blue'
+  | 'pink'
+  | 'green'
+  | 'yellow'
+  | 'ash'
+  | 'fog';
 
-// Only colors with live consumers. The illustration accents (pink, yellow,
-// green and their muted variants) return with the asset-constitution
-// ratification — restore from git history when that lands.
+// The illustration accents and artwork grays are the RATIFIED authored
+// halftone palette (2026-06-11): dash colors of the WebGL artwork.
 export const PALETTE: Record<PaletteToken, string> = {
   white: '#ffffff',
   black: '#1c1c1c',
@@ -22,4 +26,10 @@ export const PALETTE: Record<PaletteToken, string> = {
   silver: '#dbdbdb',
   neutral: '#f4f4f4',
   blue: '#4a38f5',
+  pink: '#ed87fc',
+  green: '#89fc9a',
+  yellow: '#feffb7',
+  // artwork grays: monolith dash / stepper stage dash
+  ash: '#bababa',
+  fog: '#dddddd',
 };

@@ -52,6 +52,7 @@ describe('locale rewrites', () => {
     expect(resolve('/lottie/stepper/stepper.lottie')).toBe(
       '/lottie/stepper/stepper.lottie',
     );
+    expect(resolve('/models/hourglass.glb')).toBe('/models/hourglass.glb');
   });
 
   it('should leave reserved prefixes untouched', () => {
