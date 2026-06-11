@@ -1,7 +1,10 @@
 import { FieldType, RelationType, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS, defineField } from 'twenty-sdk/define';
 
-import { BRIEF_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/brief.object';
-import { BRIEF_OPPORTUNITY_FIELD_ID, BRIEFS_ON_OPPORTUNITY_FIELD_ID } from './brief-opportunity.field';
+import {
+  BRIEF_OBJECT_UNIVERSAL_IDENTIFIER,
+  BRIEF_OPPORTUNITY_FIELD_ID,
+  BRIEFS_ON_OPPORTUNITY_FIELD_ID,
+} from 'src/objects/brief.object';
 
 export default defineField({
   universalIdentifier: BRIEFS_ON_OPPORTUNITY_FIELD_ID,
@@ -10,6 +13,7 @@ export default defineField({
   type: FieldType.RELATION,
   name: 'briefs',
   label: 'Briefs',
+  icon: 'IconFileText',
   isNullable: true,
   relationTargetObjectMetadataUniversalIdentifier: BRIEF_OBJECT_UNIVERSAL_IDENTIFIER,
   relationTargetFieldMetadataUniversalIdentifier: BRIEF_OPPORTUNITY_FIELD_ID,

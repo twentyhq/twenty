@@ -1,8 +1,11 @@
 import { FieldType, RelationType, defineField } from 'twenty-sdk/define';
 
-import { APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/application.object';
+import {
+  APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
+  APPLICATION_PARTNER_FIELD_ID,
+  APPLICATIONS_ON_PARTNER_FIELD_ID,
+} from 'src/objects/application.object';
 import { PARTNER_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { APPLICATION_PARTNER_FIELD_ID, APPLICATIONS_ON_PARTNER_FIELD_ID } from './application-partner.field';
 
 export default defineField({
   universalIdentifier: APPLICATIONS_ON_PARTNER_FIELD_ID,

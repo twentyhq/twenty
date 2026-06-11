@@ -1,6 +1,20 @@
-import { FieldType, defineObject } from 'twenty-sdk/define';
+import {
+  FieldType,
+  OnDeleteAction,
+  RelationType,
+  defineObject,
+} from 'twenty-sdk/define';
+
+import { PARTNER_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { BRIEF_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/brief.object';
 
 export const APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER = 'c0a8b102-0000-4000-8000-000000000001';
+
+// Relation field IDs — exported for reverse-field files.
+export const APPLICATION_BRIEF_FIELD_ID = 'c0a8b1a2-0000-4000-8000-000000000001';
+export const APPLICATIONS_ON_BRIEF_FIELD_ID = 'c0a8b1a2-0000-4000-8000-000000000002';
+export const APPLICATION_PARTNER_FIELD_ID = 'c0a8b1a3-0000-4000-8000-000000000001';
+export const APPLICATIONS_ON_PARTNER_FIELD_ID = 'c0a8b1a3-0000-4000-8000-000000000002';
 
 export default defineObject({
   universalIdentifier: APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
@@ -20,6 +34,36 @@ export default defineObject({
       label: 'Name',
       icon: 'IconTag',
       defaultValue: "''",
+    },
+    {
+      universalIdentifier: APPLICATION_BRIEF_FIELD_ID,
+      type: FieldType.RELATION,
+      name: 'brief',
+      label: 'Brief',
+      icon: 'IconFileText',
+      isNullable: true,
+      relationTargetObjectMetadataUniversalIdentifier: BRIEF_OBJECT_UNIVERSAL_IDENTIFIER,
+      relationTargetFieldMetadataUniversalIdentifier: APPLICATIONS_ON_BRIEF_FIELD_ID,
+      universalSettings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: OnDeleteAction.SET_NULL,
+        joinColumnName: 'briefId',
+      },
+    },
+    {
+      universalIdentifier: APPLICATION_PARTNER_FIELD_ID,
+      type: FieldType.RELATION,
+      name: 'partner',
+      label: 'Partner',
+      icon: 'IconBuildingStore',
+      isNullable: true,
+      relationTargetObjectMetadataUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
+      relationTargetFieldMetadataUniversalIdentifier: APPLICATIONS_ON_PARTNER_FIELD_ID,
+      universalSettings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: OnDeleteAction.SET_NULL,
+        joinColumnName: 'partnerId',
+      },
     },
     {
       universalIdentifier: 'c0a8b102-0000-4000-8000-000000000003',
@@ -59,19 +103,42 @@ export default defineObject({
       isNullable: true,
     },
     {
-      universalIdentifier: 'c0a8b102-0000-4000-8000-000000000006',
-      type: FieldType.TEXT,
-      name: 'availabilityNote',
-      label: 'Availability Note',
-      icon: 'IconCalendar',
+      universalIdentifier: 'c0a8b102-0000-4000-8000-000000000007',
+      type: FieldType.DATE_TIME,
+      name: 'lastActivityAt',
+      label: 'Last Activity At',
+      icon: 'IconClock',
       isNullable: true,
     },
     {
-      universalIdentifier: 'c0a8b102-0000-4000-8000-000000000007',
+      universalIdentifier: 'c0a8b102-0000-4000-8000-000000000008',
+      type: FieldType.SELECT,
+      name: 'outcome',
+      label: 'Outcome',
+      icon: 'IconFlag',
+      isNullable: false,
+      defaultValue: "'PENDING'",
+      options: [
+        { id: 'c0a8b102-0000-4000-8000-000000000081', value: 'PENDING', label: 'Pending', position: 0, color: 'gray' },
+        { id: 'c0a8b102-0000-4000-8000-000000000082', value: 'MET', label: 'Met', position: 1, color: 'blue' },
+        { id: 'c0a8b102-0000-4000-8000-000000000083', value: 'WON', label: 'Won', position: 2, color: 'green' },
+        { id: 'c0a8b102-0000-4000-8000-000000000084', value: 'LOST', label: 'Lost', position: 3, color: 'red' },
+      ],
+    },
+    {
+      universalIdentifier: 'c0a8b102-0000-4000-8000-000000000009',
       type: FieldType.DATE_TIME,
-      name: 'lastStatusAt',
-      label: 'Last Status At',
-      icon: 'IconClock',
+      name: 'selectedAt',
+      label: 'Selected At',
+      icon: 'IconCalendarCheck',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'c0a8b102-0000-4000-8000-000000000010',
+      type: FieldType.DATE_TIME,
+      name: 'introSentAt',
+      label: 'Intro Sent At',
+      icon: 'IconSend',
       isNullable: true,
     },
   ],

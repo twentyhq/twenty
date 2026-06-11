@@ -8,10 +8,8 @@ import {
   ALL_OPPORTUNITIES_VIEW_UNIVERSAL_IDENTIFIER,
   MATCH_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { BRIEFS_ON_OPPORTUNITY_FIELD_ID } from 'src/objects/brief.object';
 
-// Default Opportunities view replacement. Surfaces matchStatus + partner alongside
-// the standard Opportunity columns. partnerEligible column was dropped as part of
-// the match-status redesign.
 export default defineView({
   universalIdentifier: ALL_OPPORTUNITIES_VIEW_UNIVERSAL_IDENTIFIER,
   name: 'Opportunities',
@@ -27,5 +25,6 @@ export default defineView({
     { universalIdentifier: '5db9ee26-8688-4a5c-9fe8-f76b41d8e80b', fieldMetadataUniversalIdentifier: MATCH_STATUS_FIELD_UNIVERSAL_IDENTIFIER, position: 4, isVisible: true },
     { universalIdentifier: '3727d213-e3f5-43c7-ab05-b0fb2f211273', fieldMetadataUniversalIdentifier: '20202020-527e-44d6-b1ac-c4158d307b97', position: 5, isVisible: true },
     { universalIdentifier: 'c9ad9056-fd3a-448c-b4dc-e95e0c5d22e9', fieldMetadataUniversalIdentifier: '20202020-a63e-4a62-8e63-42a51828f831', position: 6, isVisible: true },
+    { universalIdentifier: 'b1e2f301-0000-4000-8000-000000000001', fieldMetadataUniversalIdentifier: BRIEFS_ON_OPPORTUNITY_FIELD_ID, position: 7, isVisible: true },
   ],
 });

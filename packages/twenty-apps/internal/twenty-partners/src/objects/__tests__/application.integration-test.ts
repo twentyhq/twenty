@@ -57,17 +57,20 @@ describe('Application object', () => {
         id: true,
         state: true,
         invitedBy: true,
+        outcome: true,
       },
     } as any);
     const app = (appRes as any).createApplication as {
       id: string;
       state: string;
       invitedBy: string;
+      outcome: string;
     };
     cleanup.push({ type: 'Application', id: app.id });
 
-    expect(app.state).toBe('INVITED'); // default
+    expect(app.state).toBe('INVITED');    // default
     expect(app.invitedBy).toBe('ADMIN'); // default
+    expect(app.outcome).toBe('PENDING'); // default — match fields merged onto Application
 
     // forward relations resolve
     const q = await client.query({
@@ -99,5 +102,49 @@ describe('Application object', () => {
     } as any);
     const pids = (pr as any).partner.applications.edges.map((e: any) => e.node.id);
     expect(pids).toContain(app.id);
+  });
+
+  it('can set outcome and selectedAt/introSentAt on an existing application', async () => {
+    const oppRes = await client.mutation({
+      createOpportunity: { __args: { data: { name: 'App match-fields opp' } }, id: true },
+    } as any);
+    const oppId = (oppRes as any).createOpportunity.id as string;
+    cleanup.push({ type: 'Opportunity', id: oppId });
+
+    const briefRes = await client.mutation({
+      createBrief: { __args: { data: { name: 'App match-fields brief', opportunityId: oppId } }, id: true },
+    } as any);
+    const briefId = (briefRes as any).createBrief.id as string;
+    cleanup.push({ type: 'Brief', id: briefId });
+
+    const partnerId = await createPartner(client);
+    cleanup.push({ type: 'Partner', id: partnerId });
+
+    const appRes = await client.mutation({
+      createApplication: {
+        __args: { data: { name: 'App match-fields test', briefId, partnerId, state: 'INTRODUCED' } },
+        id: true,
+      },
+    } as any);
+    const appId = (appRes as any).createApplication.id as string;
+    cleanup.push({ type: 'Application', id: appId });
+
+    const now = new Date().toISOString();
+    const updateRes = await client.mutation({
+      updateApplication: {
+        __args: { id: appId, data: { outcome: 'WON', selectedAt: now, introSentAt: now } },
+        outcome: true,
+        selectedAt: true,
+        introSentAt: true,
+      },
+    } as any);
+    const updated = (updateRes as any).updateApplication as {
+      outcome: string;
+      selectedAt: string;
+      introSentAt: string;
+    };
+    expect(updated.outcome).toBe('WON');
+    expect(updated.selectedAt).toBeTruthy();
+    expect(updated.introSentAt).toBeTruthy();
   });
 });
