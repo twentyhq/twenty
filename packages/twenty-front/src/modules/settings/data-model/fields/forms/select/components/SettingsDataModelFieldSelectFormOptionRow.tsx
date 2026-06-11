@@ -74,7 +74,7 @@ type SettingsDataModelFieldSelectFormOptionRowProps = {
 const StyledRow = styled.div`
   align-items: center;
   display: flex;
-  height: ${themeCssVariables.spacing[6]};
+  min-height: ${themeCssVariables.spacing[6]};
   padding: ${themeCssVariables.spacing['1.5']} 0;
 `;
 
