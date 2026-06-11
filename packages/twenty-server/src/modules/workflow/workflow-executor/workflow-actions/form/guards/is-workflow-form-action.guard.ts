@@ -1,8 +1,5 @@
-import {
-  type WorkflowAction,
-  WorkflowActionType,
-  type WorkflowFormAction,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { WorkflowActionType } from 'twenty-shared/workflow';
+import { type WorkflowAction, type WorkflowFormAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 export const isWorkflowFormAction = (
   action: WorkflowAction,

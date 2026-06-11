@@ -6,12 +6,12 @@ import {
   validateWorkflowStructure,
   type WorkflowValidationIssue,
   type WorkflowValidationResult,
+  WorkflowActionType,
 } from 'twenty-shared/workflow';
 
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import {
-  WorkflowActionType,
   type WorkflowAction,
   type WorkflowAiAgentAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';

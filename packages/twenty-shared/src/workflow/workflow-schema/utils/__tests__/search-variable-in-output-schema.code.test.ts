@@ -1,6 +1,6 @@
 import { type BaseOutputSchemaV2 } from '../../types/base-output-schema.type';
 import { type CodeOutputSchema } from '../../types/output-schema.type';
-import { searchVariableInOutputSchema } from '../searchVariableInOutputSchema';
+import { searchVariableInOutputSchema } from '../search-variable-in-output-schema';
 
 const searchVariableThroughCodeOutputSchema = ({
   stepName,

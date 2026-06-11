@@ -1,7 +1,7 @@
+import { WorkflowActionType } from 'twenty-shared/workflow';
 import { type WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import {
-  WorkflowActionType,
   type WorkflowAiAgentAction,
   type WorkflowFindRecordsAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';

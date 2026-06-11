@@ -6,17 +6,17 @@ export type {
   Node,
   NodeType,
 } from './types/base-output-schema.type';
-export { collectOutputSchemaPaths } from './utils/collectOutputSchemaPaths';
+export { collectOutputSchemaPaths } from './utils/collect-output-schema-paths';
 export {
   findOutputSchemaPathFailure,
   type OutputSchemaPathFailure,
-} from './utils/findOutputSchemaPathFailure';
-export { navigateOutputSchemaProperty } from './utils/navigateOutputSchemaProperty';
+} from './utils/find-output-schema-path-failure';
+export { navigateOutputSchemaProperty } from './utils/navigate-output-schema-property';
 export {
   collectOutputSchemaVariablePaths,
   resolveVariablePathInOutputSchema,
   type ResolvedVariable,
-} from './utils/resolveVariablePathInOutputSchema';
+} from './utils/resolve-variable-path-in-output-schema';
 export type {
   CodeOutputSchema,
   FieldOutputSchemaV2,
@@ -38,4 +38,4 @@ export type {
 export {
   searchRecordOutputSchema,
   searchVariableInOutputSchema,
-} from './utils/searchVariableInOutputSchema';
+} from './utils/search-variable-in-output-schema';

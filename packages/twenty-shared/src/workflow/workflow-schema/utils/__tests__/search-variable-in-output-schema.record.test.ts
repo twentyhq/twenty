@@ -1,6 +1,6 @@
 import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { type RecordOutputSchemaV2 } from '../../types/output-schema.type';
-import { searchVariableInOutputSchema } from '../searchVariableInOutputSchema';
+import { searchVariableInOutputSchema } from '../search-variable-in-output-schema';
 
 const searchVariableThroughRecordOutputSchema = ({
   stepName,

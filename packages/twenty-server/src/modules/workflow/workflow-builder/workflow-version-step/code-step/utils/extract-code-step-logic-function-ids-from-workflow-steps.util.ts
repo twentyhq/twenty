@@ -4,12 +4,9 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
+import { WorkflowActionType } from 'twenty-shared/workflow';
 import { type WorkflowCodeActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-input.type';
-import {
-  type WorkflowAction,
-  type WorkflowCodeAction,
-  WorkflowActionType,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowAction, type WorkflowCodeAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 export type CodeStepForLogicFunctionIdExtraction = Pick<
   WorkflowCodeAction,

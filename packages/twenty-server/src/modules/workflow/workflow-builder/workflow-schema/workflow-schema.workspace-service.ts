@@ -10,6 +10,7 @@ import {
   navigateOutputSchemaProperty,
   SingleRecordAvailability,
   TRIGGER_STEP_ID,
+  WorkflowActionType,
 } from 'twenty-shared/workflow';
 
 import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -30,10 +31,7 @@ import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/
 import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record-event';
 import { inferArrayItemSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/infer-array-item-schema';
 import { type FormFieldMetadata } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
-import {
-  type WorkflowAction,
-  WorkflowActionType,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   WorkflowTrigger,
   WorkflowTriggerType,

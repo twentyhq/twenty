@@ -1,4 +1,4 @@
-import { WORKFLOW_VALIDATION_STEP_TYPES } from '@/workflow/validation/constants/workflow-validation-step-types';
+import { WorkflowActionType } from '@/workflow/types/WorkflowActionType';
 import { type ValidatableWorkflowStep } from '@/workflow/validation/types/workflow-validation.type';
 import {
   getStepInput,
@@ -48,7 +48,7 @@ describe('getStepOutgoingStepIds', () => {
   it('should include if-else branch nextStepIds', () => {
     const step: ValidatableWorkflowStep = {
       id: 'step-1',
-      type: WORKFLOW_VALIDATION_STEP_TYPES.IF_ELSE,
+      type: WorkflowActionType.IF_ELSE,
       nextStepIds: ['x'],
       settings: {
         input: { branches: [{ nextStepIds: ['b1'] }, { nextStepIds: ['b2'] }] },
@@ -61,7 +61,7 @@ describe('getStepOutgoingStepIds', () => {
   it('should include iterator initialLoopStepIds', () => {
     const step: ValidatableWorkflowStep = {
       id: 'step-1',
-      type: WORKFLOW_VALIDATION_STEP_TYPES.ITERATOR,
+      type: WorkflowActionType.ITERATOR,
       settings: { input: { initialLoopStepIds: ['loop-1'] } },
     };
 

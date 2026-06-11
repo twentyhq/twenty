@@ -1,4 +1,4 @@
-import { WORKFLOW_VALIDATION_STEP_TYPES } from '@/workflow/validation/constants/workflow-validation-step-types';
+import { WorkflowActionType } from '@/workflow/types/WorkflowActionType';
 import {
   type ValidatableWorkflow,
   type WorkflowValidationIssueCode,
@@ -72,7 +72,7 @@ describe('validateWorkflowGraph', () => {
       steps: [
         {
           id: 'if',
-          type: WORKFLOW_VALIDATION_STEP_TYPES.IF_ELSE,
+          type: WorkflowActionType.IF_ELSE,
           settings: { input: { branches: [{ nextStepIds: ['end'] }] } },
         },
         { id: 'end', type: 'CODE' },
@@ -88,7 +88,7 @@ describe('validateWorkflowGraph', () => {
       steps: [
         {
           id: 'if',
-          type: WORKFLOW_VALIDATION_STEP_TYPES.IF_ELSE,
+          type: WorkflowActionType.IF_ELSE,
           settings: {
             input: {
               branches: [{ nextStepIds: ['end'] }, { nextStepIds: [] }],
@@ -108,7 +108,7 @@ describe('validateWorkflowGraph', () => {
       steps: [
         {
           id: 'iterator',
-          type: WORKFLOW_VALIDATION_STEP_TYPES.ITERATOR,
+          type: WorkflowActionType.ITERATOR,
           settings: {
             input: { items: '{{trigger.items}}', initialLoopStepIds: [] },
           },

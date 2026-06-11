@@ -1,5 +1,5 @@
 import { type BaseOutputSchemaV2 } from '../../types/base-output-schema.type';
-import { findOutputSchemaPathFailure } from '../findOutputSchemaPathFailure';
+import { findOutputSchemaPathFailure } from '../find-output-schema-path-failure';
 
 describe('findOutputSchemaPathFailure', () => {
   const testSchema: BaseOutputSchemaV2 = {

@@ -3,9 +3,9 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined, isPlainObject } from '@/utils';
 import { getEditDistance } from '@/workflow/validation/utils/get-edit-distance.util';
 import { isBaseOutputSchemaV2 } from '@/workflow/workflow-schema/guards/isBaseOutputSchemaV2';
-import { collectOutputSchemaPaths } from '@/workflow/workflow-schema/utils/collectOutputSchemaPaths';
-import { findOutputSchemaPathFailure } from '@/workflow/workflow-schema/utils/findOutputSchemaPathFailure';
-import { collectOutputSchemaVariablePaths } from '@/workflow/workflow-schema/utils/resolveVariablePathInOutputSchema';
+import { collectOutputSchemaPaths } from '@/workflow/workflow-schema/utils/collect-output-schema-paths';
+import { findOutputSchemaPathFailure } from '@/workflow/workflow-schema/utils/find-output-schema-path-failure';
+import { collectOutputSchemaVariablePaths } from '@/workflow/workflow-schema/utils/resolve-variable-path-in-output-schema';
 
 const MAX_SUGGESTIONS = 3;
 

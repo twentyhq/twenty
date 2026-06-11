@@ -1,5 +1,5 @@
 import { type BaseOutputSchemaV2 } from '../../types/base-output-schema.type';
-import { collectOutputSchemaPaths } from '../collectOutputSchemaPaths';
+import { collectOutputSchemaPaths } from '../collect-output-schema-paths';
 
 describe('collectOutputSchemaPaths', () => {
   const testSchema: BaseOutputSchemaV2 = {

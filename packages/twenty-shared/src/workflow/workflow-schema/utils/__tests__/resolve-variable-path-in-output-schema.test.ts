@@ -1,4 +1,4 @@
-import { resolveVariablePathInOutputSchema } from '../resolveVariablePathInOutputSchema';
+import { resolveVariablePathInOutputSchema } from '../resolve-variable-path-in-output-schema';
 
 const databaseEventTriggerSchema = {
   object: {

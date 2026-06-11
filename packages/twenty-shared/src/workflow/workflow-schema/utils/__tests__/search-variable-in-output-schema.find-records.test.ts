@@ -3,7 +3,7 @@ import {
   type FindRecordsOutputSchema,
   type RecordOutputSchemaV2,
 } from '../../types/output-schema.type';
-import { searchVariableInOutputSchema } from '../searchVariableInOutputSchema';
+import { searchVariableInOutputSchema } from '../search-variable-in-output-schema';
 
 const searchVariableThroughFindRecordsOutputSchema = ({
   stepName,

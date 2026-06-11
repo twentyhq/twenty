@@ -1,10 +1,7 @@
 import { isDefined } from '@/utils';
-import { WORKFLOW_VALIDATION_STEP_TYPES } from '@/workflow/validation/constants/workflow-validation-step-types';
-import {
-  type IfElseStepInput,
-  type IteratorStepInput,
-  type ValidatableWorkflowStep,
-} from '@/workflow/validation/types/workflow-validation.type';
+import { isIfElseStepInput } from '@/workflow/validation/guards/isIfElseStepInput';
+import { isIteratorStepInput } from '@/workflow/validation/guards/isIteratorStepInput';
+import { type ValidatableWorkflowStep } from '@/workflow/validation/types/workflow-validation.type';
 import { isObject } from '@sniptt/guards';
 
 export const getStepInput = (
@@ -30,21 +27,16 @@ export const getStepOutgoingStepIds = (
     return [...outgoingStepIds];
   }
 
-  if (step.type === WORKFLOW_VALIDATION_STEP_TYPES.IF_ELSE) {
-    const branches = (input as Partial<IfElseStepInput>).branches ?? [];
-
-    for (const branch of branches) {
+  if (isIfElseStepInput(input)) {
+    for (const branch of input.branches ?? []) {
       for (const nextStepId of branch?.nextStepIds ?? []) {
         outgoingStepIds.add(nextStepId);
       }
     }
   }
 
-  if (step.type === WORKFLOW_VALIDATION_STEP_TYPES.ITERATOR) {
-    const initialLoopStepIds =
-      (input as Partial<IteratorStepInput>).initialLoopStepIds ?? [];
-
-    for (const nextStepId of initialLoopStepIds) {
+  if (isIteratorStepInput(input)) {
+    for (const nextStepId of input.initialLoopStepIds ?? []) {
       outgoingStepIds.add(nextStepId);
     }
   }

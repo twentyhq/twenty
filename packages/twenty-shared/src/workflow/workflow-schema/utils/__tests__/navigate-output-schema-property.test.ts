@@ -1,5 +1,5 @@
 import { type BaseOutputSchemaV2 } from '../../types/base-output-schema.type';
-import { navigateOutputSchemaProperty } from '../navigateOutputSchemaProperty';
+import { navigateOutputSchemaProperty } from '../navigate-output-schema-property';
 
 describe('navigateOutputSchemaProperty', () => {
   const testSchema: BaseOutputSchemaV2 = {

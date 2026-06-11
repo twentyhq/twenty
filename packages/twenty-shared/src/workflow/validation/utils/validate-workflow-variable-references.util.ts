@@ -14,7 +14,7 @@ import { getVariablePathSuggestions } from '@/workflow/validation/utils/get-vari
 import {
   collectOutputSchemaVariablePaths,
   resolveVariablePathInOutputSchema,
-} from '@/workflow/workflow-schema/utils/resolveVariablePathInOutputSchema';
+} from '@/workflow/workflow-schema/utils/resolve-variable-path-in-output-schema';
 
 export const validateWorkflowVariableReferences = ({
   workflow,

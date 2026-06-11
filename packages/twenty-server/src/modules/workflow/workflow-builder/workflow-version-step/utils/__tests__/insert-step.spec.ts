@@ -1,11 +1,7 @@
-import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+import { TRIGGER_STEP_ID, WorkflowActionType } from 'twenty-shared/workflow';
 
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/insert-step';
-import {
-  type WorkflowAction,
-  type WorkflowIteratorAction,
-  WorkflowActionType,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowAction, type WorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   type WorkflowTrigger,
   WorkflowTriggerType,

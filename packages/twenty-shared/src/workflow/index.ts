@@ -79,6 +79,7 @@ export type {
   InputSchema,
 } from './types/InputSchema';
 export type { StepIfElseBranch } from './types/StepIfElseBranch';
+export { WorkflowActionType } from './types/WorkflowActionType';
 export type { WorkflowAttachment } from './types/WorkflowAttachment';
 export type { BodyType } from './types/workflowHttpRequestStep';
 export type {
@@ -104,7 +105,8 @@ export {
   joinVariablePath,
   parseVariablePath,
 } from './utils/variable-path.util';
-export { WORKFLOW_VALIDATION_STEP_TYPES } from './validation/constants/workflow-validation-step-types';
+export { isIfElseStepInput } from './validation/guards/isIfElseStepInput';
+export { isIteratorStepInput } from './validation/guards/isIteratorStepInput';
 export type {
   IfElseStepInput,
   IteratorStepInput,
@@ -155,20 +157,20 @@ export type {
   OutputSchemaV2,
   VariableSearchResult,
 } from './workflow-schema/types/output-schema.type';
-export { collectOutputSchemaPaths } from './workflow-schema/utils/collectOutputSchemaPaths';
-export type { OutputSchemaPathFailure } from './workflow-schema/utils/findOutputSchemaPathFailure';
-export { findOutputSchemaPathFailure } from './workflow-schema/utils/findOutputSchemaPathFailure';
-export { navigateOutputSchemaProperty } from './workflow-schema/utils/navigateOutputSchemaProperty';
-export type { ResolvedVariable } from './workflow-schema/utils/resolveVariablePathInOutputSchema';
+export { collectOutputSchemaPaths } from './workflow-schema/utils/collect-output-schema-paths';
+export type { OutputSchemaPathFailure } from './workflow-schema/utils/find-output-schema-path-failure';
+export { findOutputSchemaPathFailure } from './workflow-schema/utils/find-output-schema-path-failure';
+export { navigateOutputSchemaProperty } from './workflow-schema/utils/navigate-output-schema-property';
+export type { ResolvedVariable } from './workflow-schema/utils/resolve-variable-path-in-output-schema';
 export {
   resolveInSchema,
   resolveVariablePathInOutputSchema,
   collectOutputSchemaVariablePaths,
-} from './workflow-schema/utils/resolveVariablePathInOutputSchema';
+} from './workflow-schema/utils/resolve-variable-path-in-output-schema';
 export {
   searchRecordOutputSchema,
   searchVariableInOutputSchema,
-} from './workflow-schema/utils/searchVariableInOutputSchema';
+} from './workflow-schema/utils/search-variable-in-output-schema';
 export type {
   GlobalAvailability,
   SingleRecordAvailability,
