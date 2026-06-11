@@ -42,9 +42,9 @@
     "@graphql-yoga/nestjs": "2.1.0",
     "@jrmdayn/googleapis-batcher": "^0.10.1",
     "@lifeomic/axios-fetch": "^3.1.0",
-    "@lingui/conf": "5.1.2",
-    "@lingui/core": "^5.1.2",
-    "@lingui/format-po": "5.1.2",
+    "@lingui/conf": "5.9.5",
+    "@lingui/core": "^5.9.5",
+    "@lingui/format-po": "5.9.5",
     "@microsoft/microsoft-graph-client": "3.0.7",
     "@microsoft/microsoft-graph-types": "^2.40.0",
     "@nestjs/axios": "3.1.2",
@@ -172,7 +172,7 @@
     "zod": "^4.1.11"
   },
   "devDependencies": {
-    "@lingui/cli": "^5.1.2",
+    "@lingui/cli": "^5.9.5",
     "@nestjs/cli": "^11.0.16",
     "@nestjs/schematics": "^11.0.9",
     "@nestjs/testing": "11.1.24",
