@@ -7,4 +7,5 @@ export { LiveDataIcon, type LiveDataIconProps } from './live-data';
 export { MinusMark, type MinusMarkProps } from './minus-mark';
 export { PlusMark, type PlusMarkProps } from './plus-mark';
 export { GitHubMark, type GitHubMarkProps } from './github-mark';
+export { type IconComponent } from './icon-component';
 export { TwentyLogo, type TwentyLogoProps } from './twenty-logo';

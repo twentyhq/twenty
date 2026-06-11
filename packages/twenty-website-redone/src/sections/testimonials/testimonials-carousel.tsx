@@ -187,7 +187,7 @@ export function TestimonialsCarousel({
   return (
     <CarouselGrid
       aria-label={i18n._(msg`Testimonials`)}
-      aria-roledescription="carousel"
+      aria-roledescription={i18n._(msg`carousel`)}
       role="region"
     >
       <LeftColumn>

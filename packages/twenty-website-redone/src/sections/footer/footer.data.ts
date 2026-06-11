@@ -1,9 +1,9 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
-import { DiscordMark, GitHubMark } from '@/icons';
+import { DiscordMark, GitHubMark, type IconComponent } from '@/icons';
 import { SITE_URLS } from '@/platform/site-urls';
-import { type MenuIconComponent } from '@/sections/menu/menu.data';
+
 import { IconBrandLinkedin, IconBrandX } from '@tabler/icons-react';
 
 export type FooterNavLink = {
@@ -28,7 +28,7 @@ export type FooterNavGroup = {
 export type FooterSocialLink = {
   ariaLabel: MessageDescriptor;
   href: string;
-  icon: MenuIconComponent;
+  icon: IconComponent;
 };
 
 // Sitemap now includes Product and Customers — both pages exist in the nav

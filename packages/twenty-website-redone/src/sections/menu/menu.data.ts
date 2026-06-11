@@ -9,15 +9,8 @@ import {
   IconTag,
   IconUsers,
 } from '@tabler/icons-react';
-import { type ComponentType } from 'react';
-
-import { DiscordMark, GitHubMark } from '@/icons';
+import { DiscordMark, GitHubMark, type IconComponent } from '@/icons';
 import { SITE_URLS } from '@/platform/site-urls';
-
-export type MenuIconComponent = ComponentType<{
-  size?: number;
-  'aria-hidden'?: boolean;
-}>;
 
 export type MenuNavChildPreview = {
   image: string;
@@ -33,7 +26,7 @@ export type MenuNavChild = {
   description: MessageDescriptor;
   href: string;
   external?: boolean;
-  icon: MenuIconComponent;
+  icon: IconComponent;
   preview: MenuNavChildPreview;
 };
 
@@ -46,7 +39,7 @@ export type MenuNavItem = {
 export type MenuSocialLink = {
   ariaLabel: MessageDescriptor;
   href: string;
-  icon: MenuIconComponent;
+  icon: IconComponent;
   showInDesktop: boolean;
   statKey?: 'githubStars' | 'discordMembers';
 };

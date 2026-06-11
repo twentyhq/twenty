@@ -41,6 +41,23 @@ const failures = [];
 const LITERAL_ALLOWLIST = new Set([
   'src/sections/home-hero/home-hero.tsx', // ported radial gradient stops
 ]);
+// Glyphs we replaced with authored components: importing the tabler
+// lookalike again is the exact regression class the design review caught
+// (plus/minus/arrows smaller than authored; brand marks wrong).
+const FORBIDDEN_TABLER_GLYPHS = [
+  ['IconPlus', 'PlusMark'],
+  ['IconMinus', 'MinusMark'],
+  ['IconArrowLeft', 'ArrowLeft'],
+  ['IconArrowRight', 'ArrowRight'],
+  ['IconArrowUpRight', 'ArrowUpRight'],
+  ['IconBrandGithub', 'GitHubMark'],
+  ['IconBrandDiscord', 'DiscordMark'],
+];
+// Files allowed to set the new-tab security attributes themselves.
+const EXTERNAL_LINK_OWNERS = new Set([
+  'src/ui/external-link.tsx',
+  'src/ui/button.tsx',
+]);
 const LITERAL_PATTERNS = [
   [/#[0-9a-fA-F]{3,8}\b/, 'hex color literal'],
   [/rgba?\(/, 'rgb/rgba literal'],
@@ -85,6 +102,78 @@ function walk(directory) {
           );
         }
       }
+    }
+
+    // Breakpoints exist only through mediaUp(); a raw width query bypasses
+    // the breakpoint tokens (reduced-motion and print queries are fine).
+    if (
+      !relativePath.startsWith('tokens' + path.sep) &&
+      /@media \((?:min|max)-width/.test(content)
+    ) {
+      failures.push(
+        `src/${relativePath}: raw width @media query — use mediaUp().`,
+      );
+    }
+
+    for (const [tabler, authored] of FORBIDDEN_TABLER_GLYPHS) {
+      if (new RegExp(`\\b${tabler}`).test(content)) {
+        failures.push(
+          `src/${relativePath}: ${tabler} is a lookalike of the authored ${authored} — import it from @/icons.`,
+        );
+      }
+    }
+
+    if (
+      !EXTERNAL_LINK_OWNERS.has(`src/${relativePath}`) &&
+      /target="_blank"|noopener/.test(content)
+    ) {
+      failures.push(
+        `src/${relativePath}: new-tab attributes belong to ui/ExternalLink — compose it.`,
+      );
+    }
+
+    // Screen-reader strings are user-facing: a11y attributes must be
+    // localized, never string literals.
+    if (
+      relativePath.startsWith('sections' + path.sep) &&
+      /(?:aria-label|ariaLabel|aria-roledescription|placeholder|alt)="[A-Za-z]/.test(
+        content,
+      )
+    ) {
+      failures.push(
+        `src/${relativePath}: untranslated a11y string literal — wrap in i18n._(msg\`...\`).`,
+      );
+    }
+
+    // Sections are islands: importing another section couples compositions
+    // that must evolve independently. Shared shapes live in ui/icons/platform.
+    if (relativePath.startsWith('sections' + path.sep)) {
+      const ownSection = relativePath.split(path.sep)[1];
+      const crossImport = [...content.matchAll(/from '@\/sections\/([a-z-]+)/g)]
+        .map((m) => m[1])
+        .find((section) => section !== ownSection);
+      if (crossImport) {
+        failures.push(
+          `src/${relativePath}: imports from sections/${crossImport} — sections may not import each other.`,
+        );
+      }
+    }
+
+    // tokens and icons are pure: no client runtime.
+    if (
+      (relativePath.startsWith('tokens' + path.sep) ||
+        relativePath.startsWith('icons' + path.sep)) &&
+      content.includes("'use client'")
+    ) {
+      failures.push(`src/${relativePath}: 'use client' in a pure layer.`);
+    }
+
+    // kebab-case filenames (compiled locale catalogs are generated).
+    if (
+      !relativePath.startsWith('locales' + path.sep) &&
+      /[A-Z]/.test(entry.name)
+    ) {
+      failures.push(`src/${relativePath}: filenames are kebab-case.`);
     }
 
     // SectionShell is the only owner of <section>: it is where vertical

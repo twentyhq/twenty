@@ -114,6 +114,11 @@ msgstr "Can developers extend Twenty with code?"
 msgid "Can I migrate from Salesforce or HubSpot?"
 msgstr "Can I migrate from Salesforce or HubSpot?"
 
+#. js-lingui-id: qLBo3s
+#: src/sections/testimonials/testimonials-carousel.tsx
+msgid "carousel"
+msgstr "carousel"
+
 #. js-lingui-id: +DEogc
 #: src/sections/footer/locale-switcher.tsx
 msgid "Change language"

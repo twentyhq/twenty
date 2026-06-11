@@ -114,6 +114,11 @@ msgstr ""
 msgid "Can I migrate from Salesforce or HubSpot?"
 msgstr ""
 
+#. js-lingui-id: qLBo3s
+#: src/sections/testimonials/testimonials-carousel.tsx
+msgid "carousel"
+msgstr "carrousel"
+
 #. js-lingui-id: +DEogc
 #: src/sections/footer/locale-switcher.tsx
 msgid "Change language"
