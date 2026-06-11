@@ -10,7 +10,6 @@ import { Menu } from '@/sections/menu';
 import { Problem } from '@/sections/problem';
 import { ThreeCards } from '@/sections/three-cards';
 import { TrustedBy } from '@/sections/trusted-by';
-import { SectionShell } from '@/ui';
 
 export const generateMetadata = buildRouteMetadata('home');
 
@@ -29,9 +28,7 @@ export default async function HomePage({
       <Menu communityStats={communityStats} scheme="muted" />
       <main>
         <HomeHero />
-        <SectionShell ariaLabel="Trusted by leading organizations">
-          <TrustedBy />
-        </SectionShell>
+        <TrustedBy />
         <Problem />
         <ThreeCards />
         <Faq />

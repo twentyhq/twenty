@@ -14,7 +14,7 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
-import { CornerMarkers } from '@/ui';
+import { CornerMarkers, SectionShell } from '@/ui';
 
 import { TRUSTED_BY_LOGOS, type TrustedByLogo } from './trusted-by.data';
 
@@ -150,26 +150,28 @@ function Logo({
 
 export function TrustedBy() {
   return (
-    <Card>
-      <CornerMarkers />
-      <LabelCell>
-        <MonoLabel>
-          <Trans>trusted by</Trans>
-        </MonoLabel>
-      </LabelCell>
-      <LogosCell>
-        <LogoStrip>
-          {TRUSTED_BY_LOGOS.map((logo) => (
-            <Logo key={logo.src} {...logo} />
-          ))}
-        </LogoStrip>
-      </LogosCell>
-      <CountCell>
-        <IconUsers size={14} stroke={1.6} />
-        <MonoLabel>
-          <Trans>+10k others</Trans>
-        </MonoLabel>
-      </CountCell>
-    </Card>
+    <SectionShell ariaLabel="Trusted by leading organizations">
+      <Card>
+        <CornerMarkers />
+        <LabelCell>
+          <MonoLabel>
+            <Trans>trusted by</Trans>
+          </MonoLabel>
+        </LabelCell>
+        <LogosCell>
+          <LogoStrip>
+            {TRUSTED_BY_LOGOS.map((logo) => (
+              <Logo key={logo.src} {...logo} />
+            ))}
+          </LogoStrip>
+        </LogosCell>
+        <CountCell>
+          <IconUsers size={14} stroke={1.6} />
+          <MonoLabel>
+            <Trans>+10k others</Trans>
+          </MonoLabel>
+        </CountCell>
+      </Card>
+    </SectionShell>
   );
 }
