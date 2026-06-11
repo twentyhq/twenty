@@ -74,7 +74,13 @@ const DataRow = styled.div<{ $rowIndex: number }>`
   animation-delay: ${({ $rowIndex }) => `${120 + $rowIndex * 70}ms`};
   display: flex;
   max-height: 0;
-  overflow: hidden;
+  /* Axis-split clip: the reveal animation clips VERTICALLY only. Unlike
+     overflow:hidden, clip never creates a scroll container, so the
+     sticky first column holds at every instant — including mid-reveal.
+     The product pins this column (twenty-front's record table); the old
+     mockup ships it broken (user-ratified improvement). */
+  overflow-x: visible;
+  overflow-y: clip;
 
   @keyframes tableRowAppear {
     from {

@@ -15,8 +15,9 @@ const FrameRoot = styled.div`
   width: 100%;
 `;
 
+// The frame fills its host: the hero's stage owns the life-size window
+// geometry; product surfaces can host it in fluid boxes later.
 const Shell = styled.div`
-  aspect-ratio: ${APP_PREVIEW_STAGE.frame.aspectRatio};
   background-color: ${APP_PREVIEW_THEME.background.primary};
   background-image: url('${APP_PREVIEW_STAGE.frame.noiseImageUrl}');
   border: 1px solid ${APP_PREVIEW_THEME.border.color.medium};
@@ -24,8 +25,7 @@ const Shell = styled.div`
   box-shadow: ${APP_PREVIEW_STAGE.shadow.mobileResting};
   display: flex;
   flex-direction: column;
-  max-height: 100%;
-  max-width: ${APP_PREVIEW_STAGE.frame.maxWidthPx}px;
+  height: 100%;
   overflow: hidden;
   position: relative;
   width: 100%;

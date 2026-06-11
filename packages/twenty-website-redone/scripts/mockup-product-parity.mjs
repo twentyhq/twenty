@@ -84,6 +84,54 @@ if (measured) {
   );
 }
 
+// The product's record table pins the first column under horizontal
+// scroll (the old mockup ships this broken — ratified improvement).
+// A fresh page scrolls MID-REVEAL: the pin must hold at every instant,
+// not only after the entrance animation settles.
+const stickyPage = await browser.newPage({
+  viewport: { width: 1440, height: 950 },
+  deviceScaleFactor: 1,
+});
+await stickyPage.goto(BASE_URL, {
+  waitUntil: 'domcontentloaded',
+  timeout: 240000,
+});
+await stickyPage.waitForTimeout(650);
+const sticky = await stickyPage.evaluate(() => {
+  const rows = [...document.querySelectorAll('[data-row-id]')];
+  if (rows.length === 0) {
+    return null;
+  }
+  let scroller = rows[0].parentElement;
+  while (scroller && getComputedStyle(scroller).overflowX !== 'auto') {
+    scroller = scroller.parentElement;
+  }
+  if (scroller) {
+    scroller.scrollLeft = 300;
+  }
+  const moved = rows.filter((row) => {
+    const before = row.firstElementChild.getBoundingClientRect().left;
+    return (
+      Math.round(before) !==
+      Math.round(row.firstElementChild.getBoundingClientRect().left)
+    );
+  });
+  const lefts = rows.map((row) =>
+    Math.round(row.firstElementChild.getBoundingClientRect().left),
+  );
+  return {
+    scrolled: scroller?.scrollLeft ?? 0,
+    allPinned: new Set(lefts).size === 1,
+    rowCount: rows.length,
+    movedCount: moved.length,
+  };
+});
+await stickyPage.close();
+assert(
+  sticky !== null && sticky.scrolled > 0 && sticky.allPinned,
+  `every first-column cell pins mid-reveal (${sticky?.rowCount} rows, scroll ${sticky?.scrolled})`,
+);
+
 await browser.close();
 
 if (failures.length > 0) {

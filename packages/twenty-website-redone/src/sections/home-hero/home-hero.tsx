@@ -42,16 +42,24 @@ const BodyMeasure = styled.div`
 // Reserves the product mockup's footprint ahead of the DOM landing — CLS
 // settles in this commit, and the frame's opaque surface already hides
 // the bridge center exactly as the old window does.
+/* The app window is LIFE-SIZE at every viewport (measured on old at five
+   widths: fixed 1040x676, centered when it fits, anchored 16px left and
+   bleeding off the right edge when it does not — the Linear-class
+   presentation; the viewport crops the app, the app never shrinks).
+   max() keeps that behavior continuous, no breakpoint. The 68px top gap
+   is the old CTA-to-window measure; drag/resize arrives with commit 6. */
 const MockupStage = styled.div`
-  aspect-ratio: ${APP_PREVIEW_STAGE.frame.aspectRatio};
-  margin-inline: auto;
-  /* Measured on the old site at 1440: 68px from the CTA row to the window
-     top (24px section gap + the preview's own staging) — the real frame
-     port restores the mechanism. */
+  height: ${APP_PREVIEW_STAGE.windowScene.heightPx}px;
+  /* 0px floor = the window anchors at the page gutter when it cannot
+     center (old measures 40px in the md band, 16px below — exactly the
+     gutter), then bleeds off the right. */
+  margin-left: max(
+    0px,
+    calc((100% - ${APP_PREVIEW_STAGE.windowScene.widthPx}px) / 2)
+  );
   margin-top: 68px;
-  max-width: ${APP_PREVIEW_STAGE.frame.maxWidthPx}px;
   position: relative;
-  width: 100%;
+  width: ${APP_PREVIEW_STAGE.windowScene.widthPx}px;
 `;
 
 const CtaRow = styled.div`
