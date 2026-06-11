@@ -12,7 +12,7 @@
     "types": ["node", "jest"],
     "outDir": "../../.cache/tsc",
     "paths": {
-      "@new-ui/*": ["./src/*"],
+      "@ui/*": ["./src/*"],
       "@assets/*": ["./src/assets/*"],
       "@styles/*": ["./src/styles/*"]
     }

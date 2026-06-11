@@ -28,6 +28,12 @@ import {
   themeCssVariables,
 } from 'twenty-ui-deprecated/theme-constants';
 
+const COMMAND_MENU_SIDE_PANEL_PAGES = [
+  SidePanelPages.CommandMenuDisplay,
+  SidePanelPages.CommandMenuEdit,
+  SidePanelPages.SearchRecords,
+];
+
 const StyledInputContainer = styled.div<{ isMobile: boolean }>`
   align-items: center;
   background-color: ${themeCssVariables.background.secondary};
@@ -127,10 +133,20 @@ export const SidePanelTopBar = () => {
     });
   };
 
-  const canGoBack = sidePanelNavigationStack.length > 1;
+  const currentPage = sidePanelNavigationStack.at(-1)?.page;
+  const previousPage = sidePanelNavigationStack.at(-2)?.page;
 
-  const shouldShowCloseButton =
-    !isMobile && sidePanelNavigationStack.length === 1;
+  // A command-menu page is the root of a fresh command-menu session, so it only
+  // offers a back chevron when it was opened from another command-menu page.
+  // Every other side-panel page keeps standard "go back when there is history".
+  const canGoBack =
+    currentPage !== undefined &&
+    COMMAND_MENU_SIDE_PANEL_PAGES.includes(currentPage)
+      ? previousPage !== undefined &&
+        COMMAND_MENU_SIDE_PANEL_PAGES.includes(previousPage)
+      : sidePanelNavigationStack.length > 1;
+
+  const shouldShowCloseButton = !isMobile && !canGoBack;
 
   const shouldShowBackButton = canGoBack;
 
@@ -166,15 +182,10 @@ export const SidePanelTopBar = () => {
             </motion.div>
           )}
         </AnimatePresence>
-        {lastChip &&
-          sidePanelPage !== SidePanelPages.CommandMenuDisplay &&
-          sidePanelPage !== SidePanelPages.CommandMenuEdit &&
-          sidePanelPage !== SidePanelPages.SearchRecords && (
-            <SidePanelPageInfo pageChip={lastChip} />
-          )}
-        {(sidePanelPage === SidePanelPages.CommandMenuDisplay ||
-          sidePanelPage === SidePanelPages.CommandMenuEdit ||
-          sidePanelPage === SidePanelPages.SearchRecords) && (
+        {lastChip && !COMMAND_MENU_SIDE_PANEL_PAGES.includes(sidePanelPage) && (
+          <SidePanelPageInfo pageChip={lastChip} />
+        )}
+        {COMMAND_MENU_SIDE_PANEL_PAGES.includes(sidePanelPage) && (
           <>
             <StyledInput
               data-testid={SIDE_PANEL_FOCUS_ID}

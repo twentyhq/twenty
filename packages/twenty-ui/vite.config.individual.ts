@@ -15,7 +15,7 @@ export default defineConfig(() => {
   return {
     resolve: {
       alias: {
-        '@new-ui/': path.resolve(__dirname, 'src') + '/',
+        '@ui/': path.resolve(__dirname, 'src') + '/',
         '@assets/': path.resolve(__dirname, 'src/assets') + '/',
         '@styles/': path.resolve(__dirname, 'src/styles') + '/',
       },

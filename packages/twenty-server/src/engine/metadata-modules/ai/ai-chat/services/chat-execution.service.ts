@@ -288,6 +288,7 @@ export class ChatExecutionService {
     const streamStartedAt = performance.now();
     let stepStartedAt = streamStartedAt;
     let ttftRecorded = false;
+    let stepIndex = 0;
 
     const emitTurnUsageEvent = async (steps: StepResult<ToolSet>[]) => {
       const usage = steps.reduce<LanguageModelUsage>(
@@ -446,6 +447,18 @@ export class ChatExecutionService {
         if (stepHasNoMoreAvailableCredits) {
           hasNoMoreAvailableCredits = true;
         }
+
+        this.logger.log(
+          `[AI_CHAT_TOKENS] step #${++stepIndex} — ` +
+            `toolCallIds=[${step.toolCalls.map((toolCall) => toolCall.toolCallId).join(', ')}]: ` +
+            `outputTokens=${step.usage.outputTokens ?? 0}, ` +
+            `reasoningTokens=${step.usage.outputTokenDetails?.reasoningTokens ?? 0}, ` +
+            `inputTokens(fullContext)=${step.usage.inputTokens ?? 0}, ` +
+            `cacheReadTokens=${step.usage.inputTokenDetails?.cacheReadTokens ?? 0}, ` +
+            `cacheWriteTokens=${step.usage.inputTokenDetails?.cacheWriteTokens ?? 0}, ` +
+            `cacheCreationTokens=${extractCacheCreationTokens(step.providerMetadata)}, ` +
+            `totalTokens=${step.usage.totalTokens ?? 0}`,
+        );
 
         for (const toolResult of step.toolResults) {
           const output = toolResult.output as ToolOutput | undefined;

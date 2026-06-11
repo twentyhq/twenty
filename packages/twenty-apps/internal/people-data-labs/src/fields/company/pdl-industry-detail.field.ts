@@ -15,5 +15,6 @@ export default defineField({
   name: 'pdlIndustryDetail',
   label: 'Industry (detailed)',
   description: 'Detailed People Data Labs industry v2 value.',
+  icon: 'IconBuildingFactory',
   isNullable: true,
 });

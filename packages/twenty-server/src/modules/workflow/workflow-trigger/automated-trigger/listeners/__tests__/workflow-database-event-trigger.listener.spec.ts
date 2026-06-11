@@ -351,5 +351,103 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         { retryLimit: 3 },
       );
     });
+
+    it('should trigger workflow for position-only updates when no fields are specified', async () => {
+      const positionOnlyPayload: WorkspaceEventBatch<any> = {
+        ...mockPayload,
+        events: [
+          {
+            ...mockPayload.events[0],
+            properties: {
+              updatedFields: ['position'],
+              before: { position: 1 },
+              after: { position: 2 },
+            },
+          },
+        ],
+      };
+
+      mockRepository.find.mockResolvedValue([
+        {
+          ...mockEventListeners[0],
+          settings: {
+            eventName: databaseEventName,
+            fields: undefined,
+          },
+        },
+      ]);
+
+      await listener.handleObjectRecordUpdateEvent(positionOnlyPayload);
+
+      expect(messageQueueService.add).toHaveBeenCalledWith(
+        WorkflowTriggerJob.name,
+        {
+          workspaceId,
+          workflowId,
+          payload: positionOnlyPayload.events[0],
+        },
+        { retryLimit: 3 },
+      );
+    });
+
+    it('should trigger workflow when position changes alongside another field', async () => {
+      const positionAndFieldPayload: WorkspaceEventBatch<any> = {
+        ...mockPayload,
+        events: [
+          {
+            ...mockPayload.events[0],
+            properties: {
+              updatedFields: ['field1', 'position'],
+              before: { field1: 'old', position: 1 },
+              after: { field1: 'new', position: 2 },
+            },
+          },
+        ],
+      };
+
+      mockRepository.find.mockResolvedValue([
+        {
+          ...mockEventListeners[0],
+          settings: {
+            eventName: databaseEventName,
+            fields: undefined,
+          },
+        },
+      ]);
+
+      await listener.handleObjectRecordUpdateEvent(positionAndFieldPayload);
+
+      expect(messageQueueService.add).toHaveBeenCalled();
+    });
+
+    it('should not trigger workflow for position-only updates when fields are specified', async () => {
+      const positionOnlyPayload: WorkspaceEventBatch<any> = {
+        ...mockPayload,
+        events: [
+          {
+            ...mockPayload.events[0],
+            properties: {
+              updatedFields: ['position'],
+              before: { position: 1 },
+              after: { position: 2 },
+            },
+          },
+        ],
+      };
+
+      mockRepository.find.mockResolvedValue([
+        {
+          ...mockEventListeners[0],
+          settings: {
+            eventName: databaseEventName,
+            fields: ['field1'],
+          },
+        },
+      ]);
+
+      await listener.handleObjectRecordUpdateEvent(positionOnlyPayload);
+
+      expect(messageQueueService.add).not.toHaveBeenCalled();
+    });
   });
 });
