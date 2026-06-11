@@ -21,8 +21,10 @@ export const buildRouteMetadata = (routeId: WebsiteRouteId) => {
 
     return buildPageMetadata({
       description: route.description,
+      indexed: route.indexed,
       locale,
       locales: route.localeMode === 'source' ? [SOURCE_LOCALE] : undefined,
+      ogImagePath: route.ogImagePath,
       path: route.path,
       title: route.title,
     });

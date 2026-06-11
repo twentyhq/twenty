@@ -2,6 +2,7 @@ import path from 'path';
 import withLinaria, { type LinariaConfig } from 'next-with-linaria';
 
 import { localeToUrlSegment } from './src/platform/i18n/locale-to-url-segment';
+import { buildLocaleRewrites } from './src/platform/routing/locale-rewrite-patterns';
 import { WEBSITE_LOCALE_LIST } from './src/platform/i18n/website-locale-list';
 
 // Bundler decision: Next 16 defaults dev and build to Turbopack, and
@@ -34,20 +35,8 @@ const nextConfig: LinariaConfig = {
   // short segment. Rewrites map unprefixed paths onto the internal /[locale]
   // tree; redirects canonicalize away explicit source-locale prefixes.
   async rewrites() {
-    const localeAlternation = DEPLOYED_LOCALE_URL_SEGMENTS.join('|');
-
     return {
-      beforeFiles: [
-        { source: '/', destination: '/en' },
-        {
-          source: `/:first((?!(?:${localeAlternation}|api|_next|images|fonts)(?=/))[^/.]+)/:rest+`,
-          destination: '/en/:first/:rest+',
-        },
-        {
-          source: `/:rest((?!${DEPLOYED_LOCALE_URL_SEGMENTS.map((s) => `${s}$|${s}/`).join('|')}|api|_next/static|_next/image|favicon\\.ico|robots\\.txt|sitemap\\.xml|images|fonts|.+\\..+).+)`,
-          destination: '/en/:rest',
-        },
-      ],
+      beforeFiles: buildLocaleRewrites(DEPLOYED_LOCALE_URL_SEGMENTS),
     };
   },
   async redirects() {

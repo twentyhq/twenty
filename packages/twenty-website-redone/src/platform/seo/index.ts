@@ -1,3 +1,4 @@
+export { buildFamilyEntryMetadata } from './build-family-entry-metadata';
 export {
   buildPageMetadata,
   type BuildPageMetadataInput,

@@ -11,13 +11,20 @@ import { getSiteUrl } from './get-site-url';
 
 const SITE_NAME = 'Twenty';
 const TWITTER_HANDLE = '@twentycrm';
+const DEFAULT_OG_IMAGE_PATH = '/images/og/default.png';
+
+// Static pages pass catalog messages; dynamic family entries pass plain
+// strings from their content source.
+type MetadataText = MessageDescriptor | string;
 
 export type BuildPageMetadataInput = {
-  description: MessageDescriptor;
+  description: MetadataText;
+  indexed?: boolean;
   locale: AppLocale;
   locales?: readonly AppLocale[];
+  ogImagePath?: string;
   path: string;
-  title: MessageDescriptor;
+  title: MetadataText;
 };
 
 const localizePath = (locale: AppLocale, path: string): string => {
@@ -40,21 +47,26 @@ const buildLanguageAlternates = (
 
 export function buildPageMetadata({
   description,
+  indexed = true,
   locale,
   locales = WEBSITE_LOCALE_LIST,
+  ogImagePath = DEFAULT_OG_IMAGE_PATH,
   path,
   title,
 }: BuildPageMetadataInput): Metadata {
   const metadataLocale = isWebsiteLocale(locale) ? locale : SOURCE_LOCALE;
   const canonical = localizePath(metadataLocale, path);
   const i18n = createI18nInstance(metadataLocale);
-  const resolvedTitle = i18n._(title);
-  const resolvedDescription = i18n._(description);
+  const resolvedTitle = typeof title === 'string' ? title : i18n._(title);
+  const resolvedDescription =
+    typeof description === 'string' ? description : i18n._(description);
+  const ogImages = [{ url: ogImagePath }];
 
   return {
     metadataBase: new URL(getSiteUrl()),
     title: { absolute: resolvedTitle },
     description: resolvedDescription,
+    robots: { index: indexed, follow: true },
     alternates: {
       canonical,
       languages: buildLanguageAlternates(path, locales),
@@ -66,6 +78,7 @@ export function buildPageMetadata({
       siteName: SITE_NAME,
       locale: metadataLocale,
       type: 'website',
+      images: ogImages,
     },
     twitter: {
       card: 'summary_large_image',
@@ -73,6 +86,7 @@ export function buildPageMetadata({
       description: resolvedDescription,
       site: TWITTER_HANDLE,
       creator: TWITTER_HANDLE,
+      images: ogImages.map((image) => image.url),
     },
   };
 }
