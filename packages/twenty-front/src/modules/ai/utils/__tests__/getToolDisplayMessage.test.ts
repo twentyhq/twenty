@@ -114,7 +114,7 @@ describe('getToolDisplayMessage', () => {
       );
 
       expect(message).toContain('Learned');
-      expect(message).toContain('find_many_companies, create_one_task');
+      expect(message).toContain('Find many companies, Create one task');
     });
 
     it('should show generic message without tool names', () => {
@@ -164,7 +164,7 @@ describe('getToolDisplayMessage', () => {
       );
 
       expect(message).toContain('Ran');
-      expect(message).toContain('create complete dashboard');
+      expect(message).toContain('Create complete dashboard');
     });
 
     it('should format tool name with spaces for in-progress state', () => {
@@ -175,7 +175,7 @@ describe('getToolDisplayMessage', () => {
       );
 
       expect(message).toContain('Running');
-      expect(message).toContain('create complete dashboard');
+      expect(message).toContain('Create complete dashboard');
     });
   });
 
@@ -188,7 +188,7 @@ describe('getToolDisplayMessage', () => {
       );
 
       expect(message).toContain('Ran');
-      expect(message).toContain('find many companies');
+      expect(message).toContain('Find many companies');
     });
   });
 });

@@ -4,6 +4,7 @@ import { useContext, useState } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { formatToolDisplayName } from '@/ai/utils/formatToolDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
@@ -87,6 +88,7 @@ export const SettingsToolDetail = () => {
   const isReadOnly = !isCustomTool || isManaged;
 
   const name = isCustomTool ? logicFunction?.name : toolIdentifier;
+  const displayName = isCustomTool ? name : formatToolDisplayName(name ?? '');
   const description = isCustomTool
     ? logicFunction?.description
     : systemTool?.description;
@@ -177,7 +179,7 @@ export const SettingsToolDetail = () => {
             onChange={handleNameChange}
           />
         ) : (
-          (name ?? '')
+          displayName
         )
       }
       links={[
@@ -189,7 +191,7 @@ export const SettingsToolDetail = () => {
           children: t`AI`,
           href: getSettingsPath(SettingsPath.AI, undefined, undefined, 'tools'),
         },
-        { children: editedName ?? name ?? '' },
+        { children: editedName ?? displayName },
       ]}
     >
       <SettingsPageContainer>
