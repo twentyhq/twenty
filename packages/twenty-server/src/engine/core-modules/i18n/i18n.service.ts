@@ -48,12 +48,8 @@ export class I18nService implements OnModuleInit {
     {} as Record<keyof typeof APP_LOCALES, I18n>;
 
   async loadTranslations() {
-    // Server-side `t`…`` macro calls (e.g. exception messages) resolve against
-    // Lingui's global i18n singleton, which has no catalog loaded. Without a
-    // messages compiler, every such lookup logs "Uncompiled message detected!"
-    // (the warning is not gated by NODE_ENV), flooding production logs.
-    // Registering compileMessage silences it and enables ICU interpolation on
-    // the fallback source strings.
+    // The global i18n singleton backs server-side t`…` calls and has no
+    // compiled catalog, so it needs a runtime message compiler.
     i18n.setMessagesCompiler(compileMessage);
 
     const messagesByLocale: Record<keyof typeof APP_LOCALES, Messages> = {
