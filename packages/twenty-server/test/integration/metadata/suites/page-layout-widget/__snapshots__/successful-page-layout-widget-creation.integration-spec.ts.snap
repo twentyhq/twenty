@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Page layout widget creation should succeed should create a page layout widget with AGGREGATE_CHART full configuration 1`] = `
 {
@@ -10,8 +10,9 @@ exports[`Page layout widget creation should succeed should create a page layout 
     "displayDataLabel": true,
     "filter": null,
     "firstDayOfTheWeek": 1,
-    "format": "0,0",
+    "format": null,
     "label": "Total Records",
+    "numberFormat": "SHORT",
     "prefix": null,
     "suffix": null,
     "timezone": "UTC",
@@ -45,6 +46,7 @@ exports[`Page layout widget creation should succeed should create a page layout 
     "firstDayOfTheWeek": 1,
     "format": null,
     "label": null,
+    "numberFormat": null,
     "prefix": null,
     "suffix": null,
     "timezone": "UTC",

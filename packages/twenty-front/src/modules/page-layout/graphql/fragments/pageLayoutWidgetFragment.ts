@@ -122,6 +122,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         label
         displayDataLabel
         format
+        numberFormat
         description
         filter
         prefix

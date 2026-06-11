@@ -81,6 +81,7 @@ export const WIDGET_CONFIGURATION_GQL_FIELDS = `
     label
     displayDataLabel
     format
+    numberFormat
     description
     filter
     prefix

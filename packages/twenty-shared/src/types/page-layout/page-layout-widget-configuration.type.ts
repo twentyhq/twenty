@@ -20,6 +20,7 @@ export type AggregateChartConfiguration = BaseChartConfiguration & {
   configurationType: 'AGGREGATE_CHART';
   label?: string;
   format?: string;
+  numberFormat?: string;
   prefix?: string;
   suffix?: string;
   ratioAggregateConfig?: RatioAggregateConfig;
