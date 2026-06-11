@@ -5,9 +5,9 @@ import {
   createMockIteratorStep,
 } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { getResumeFrontierStepIds } from 'src/modules/workflow/workflow-runner/utils/get-resume-frontier-step-ids.util';
+import { getRunnableStepIds } from 'src/modules/workflow/workflow-runner/utils/get-runnable-step-ids.util';
 
-describe('getResumeFrontierStepIds', () => {
+describe('getRunnableStepIds', () => {
   it('returns NOT_STARTED steps whose parents are satisfied', () => {
     const steps: WorkflowAction[] = [
       createMockCodeStep('step-1', ['step-2']),
@@ -21,7 +21,7 @@ describe('getResumeFrontierStepIds', () => {
       'step-3': { status: StepStatus.NOT_STARTED },
     };
 
-    expect(getResumeFrontierStepIds({ steps, stepInfos })).toEqual(['step-2']);
+    expect(getRunnableStepIds({ steps, stepInfos })).toEqual(['step-2']);
   });
 
   it('includes entry steps with no parents', () => {
@@ -31,7 +31,7 @@ describe('getResumeFrontierStepIds', () => {
       entry: { status: StepStatus.NOT_STARTED },
     };
 
-    expect(getResumeFrontierStepIds({ steps, stepInfos })).toEqual(['entry']);
+    expect(getRunnableStepIds({ steps, stepInfos })).toEqual(['entry']);
   });
 
   it('excludes steps that have already started', () => {
@@ -41,7 +41,7 @@ describe('getResumeFrontierStepIds', () => {
       done: { status: StepStatus.SUCCESS },
     };
 
-    expect(getResumeFrontierStepIds({ steps, stepInfos })).toEqual([]);
+    expect(getRunnableStepIds({ steps, stepInfos })).toEqual([]);
   });
 
   it('excludes loop-interior steps and keeps the iterator itself', () => {
@@ -57,9 +57,7 @@ describe('getResumeFrontierStepIds', () => {
       post: { status: StepStatus.NOT_STARTED },
     };
 
-    expect(getResumeFrontierStepIds({ steps, stepInfos })).toEqual([
-      'iterator',
-    ]);
+    expect(getRunnableStepIds({ steps, stepInfos })).toEqual(['iterator']);
   });
 
   it('includes a parallel branch that never started while a sibling failed and was reset', () => {
@@ -75,7 +73,7 @@ describe('getResumeFrontierStepIds', () => {
       'branch-b': { status: StepStatus.NOT_STARTED },
     };
 
-    expect(getResumeFrontierStepIds({ steps, stepInfos })).toEqual([
+    expect(getRunnableStepIds({ steps, stepInfos })).toEqual([
       'branch-a',
       'branch-b',
     ]);

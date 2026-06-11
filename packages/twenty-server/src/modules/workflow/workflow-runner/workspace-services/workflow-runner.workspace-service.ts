@@ -28,7 +28,7 @@ import {
 import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRetryStepInfos } from 'src/modules/workflow/workflow-runner/utils/build-retry-step-infos.util';
-import { getResumeFrontierStepIds } from 'src/modules/workflow/workflow-runner/utils/get-resume-frontier-step-ids.util';
+import { getRunnableStepIds } from 'src/modules/workflow/workflow-runner/utils/get-runnable-step-ids.util';
 import {
   WorkflowRunEnqueueJob,
   type WorkflowRunEnqueueJobData,
@@ -312,13 +312,13 @@ export class WorkflowRunnerWorkspaceService {
       ...stepInfosToUpdate,
     };
 
-    const frontierStepIds = getResumeFrontierStepIds({
+    const runnableStepIds = getRunnableStepIds({
       steps,
       stepInfos: mergedStepInfos,
     });
 
     const stepIdsToRun = Array.from(
-      new Set([...stepIdsToRetry, ...frontierStepIds]),
+      new Set([...stepIdsToRetry, ...runnableStepIds]),
     );
 
     if (stepIdsToRun.length === 0) {

@@ -7,7 +7,7 @@ import { getAllStepIdsInLoop } from 'src/modules/workflow/workflow-executor/work
 import { getIteratorInitialLoopStepIds } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-iterator-initial-loop-step-ids.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-export const getResumeFrontierStepIds = ({
+export const getRunnableStepIds = ({
   steps,
   stepInfos,
 }: {
