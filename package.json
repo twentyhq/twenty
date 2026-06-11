@@ -45,9 +45,17 @@
     "@angular-devkit/core": "19.2.24",
     "yeoman-environment": "6.0.1",
     "@electron-forge/plugin-webpack/webpack-dev-server": "5.2.4",
-    "qs": "6.15.2"
+    "qs": "6.15.2",
+    "next/postcss": "8.5.15",
+    "sockjs/uuid": "11.1.1",
+    "@cypress/request/uuid": "11.1.1",
+    "@ptc-org/nestjs-query-typeorm/uuid": "11.1.1",
+    "typeorm/uuid": "11.1.1",
+    "node-ical/uuid": "11.1.1",
+    "googleapis-common/uuid": "11.1.1",
+    "@cyntler/react-doc-viewer/ajv": "8.20.0"
   },
-  "//resolutions": "qs is pinned to 6.15.2 (CVE) for verdaccio + @mintlify/previewing, which pin old express 4.22.x; remove when they upgrade express",
+  "//resolutions": "qs 6.15.2 -> CVE fix for verdaccio + @mintlify/previewing (pin old express 4.22.x); next/postcss 8.5.15 -> CVE fix for next, which pins old postcss 8.4.31 exact on every stable release (fix only in the 16.3.0 canary); <pkg>/uuid 11.1.1 -> CVE fix scoped to parents pinning uuid <11 that can't be cleanly bumped (sockjs+wds & @ptc-org/nestjs-query-typeorm at latest; typeorm is a patch:dep ORM core; node-ical 0.26 & googleapis 173 are large breaking migrations; @cypress/request transitive). bullmq/msal-node/blocknote were bumped instead. Preserves the intentional uuid 13.x; @cyntler/react-doc-viewer/ajv 8.20.0 -> CVE fix; react-doc-viewer pins ajv ^7 (latest still does) but never imports ajv, so forcing v8 is safe; remove each once upstream ships a patched/clean version",
   "version": "0.2.1",
   "nx": {},
   "scripts": {

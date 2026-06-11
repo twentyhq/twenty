@@ -15,5 +15,6 @@ export default defineField({
   name: 'pdlLastFundingDate',
   label: 'Last Funding Date',
   description: 'Date of the latest funding round returned by People Data Labs.',
+  icon: 'IconCalendar',
   isNullable: true,
 });
