@@ -206,7 +206,9 @@ export class MessageCampaignService {
 
   // Processes one recipient's send job: idempotent, sends via the emailing-domain
   // sender (keeps suppression + unsubscribe + reply-to), records per-message
-  // status, and finalizes the campaign once nothing remains queued.
+  // status, and finalizes the campaign once nothing remains queued. Send errors
+  // are rethrown so the queue retries the job; a successful retry flips the
+  // message back from FAILED to SENT.
   async processSendJob(data: SendCampaignEmailJobData): Promise<void> {
     const {
       workspaceId,
@@ -232,10 +234,13 @@ export class MessageCampaignService {
         where: { id: messageId },
       });
 
-      // Idempotency: BullMQ may retry. Only a still-QUEUED message is sent.
+      // QUEUED is a first attempt, FAILED a previous attempt of this same job
+      // being retried by the queue. Everything else (SENT, BOUNCED, COMPLAINED)
+      // is terminal: never send twice.
       if (
         message === null ||
-        message.deliveryStatus !== CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED
+        (message.deliveryStatus !== CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED &&
+          message.deliveryStatus !== CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED)
       ) {
         return;
       }
@@ -276,17 +281,20 @@ export class MessageCampaignService {
           },
         );
       } catch (error) {
+        // FAILED is both the retryable state between attempts and the terminal
+        // state once the queue gives up; rethrowing is what triggers the retry.
         await messageRepository.update(messageId, {
           deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
         });
         this.logger.warn(
-          `Campaign ${campaignId} failed for ${recipientEmail}: ${
+          `Campaign ${campaignId} send failed for ${recipientEmail}: ${
             error instanceof Error ? error.message : String(error)
           }`,
         );
+        throw error;
+      } finally {
+        await this.finalizeCampaignIfComplete(workspaceId, campaignId);
       }
-
-      await this.finalizeCampaignIfComplete(workspaceId, campaignId);
     }, buildSystemAuthContext(workspaceId));
   }
 
@@ -482,12 +490,16 @@ export class MessageCampaignService {
       MessageCampaignWorkspaceEntity,
     );
 
+    // Counts refresh on every call: a queue retry can flip a message from
+    // FAILED to SENT after the campaign was already finalized. The
+    // SENDING -> SENT transition itself only happens once.
+    await campaignRepository.update({ id: campaignId }, counts);
+
     await campaignRepository.update(
       { id: campaignId, status: CAMPAIGN_STATUS.SENDING },
       {
         status: CAMPAIGN_STATUS.SENT,
         sentAt: new Date(),
-        ...counts,
       },
     );
   }

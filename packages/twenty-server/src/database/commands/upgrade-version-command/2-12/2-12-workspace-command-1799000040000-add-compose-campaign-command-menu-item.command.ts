@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
@@ -14,7 +13,13 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const COMPOSE_CAMPAIGN_UNIVERSAL_IDENTIFIER =
   STANDARD_COMMAND_MENU_ITEMS.composeCampaign.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.12.0', 1799000040000)
+// Deliberately NOT registered in the upgrade sequence (no @RegisteredWorkspaceCommand):
+// the marketing-emails feature ships dark behind IS_EMAIL_GROUP_ENABLED, so existing
+// workspaces don't need the Compose Campaign menu item yet. It is run manually per
+// workspace (-w) during the progressive rollout. Re-register it under the
+// then-current version once the fleet has been migrated, so the standard upgrade
+// path covers stragglers and self-hosted instances. New workspaces get the menu
+// item from the standard application at provisioning and do not need this command.
 @Command({
   name: 'upgrade:2-12:add-compose-campaign-command-menu-item',
   description: 'Add the Compose Campaign command menu item to existing workspaces',

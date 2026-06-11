@@ -14,7 +14,6 @@ import {
   getStandardFlatEntitiesToCreateOrThrow,
 } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -123,7 +122,13 @@ const MESSAGE_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS = [
   ...PERSON_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS,
 ];
 
-@RegisteredWorkspaceCommand('2.12.0', 1799000031000)
+// Deliberately NOT registered in the upgrade sequence (no @RegisteredWorkspaceCommand):
+// the marketing-emails feature ships dark behind IS_EMAIL_GROUP_ENABLED, and this
+// command is heavy on large instances. It is run manually per workspace (-w) during
+// the progressive rollout. Re-register it under the then-current version once the
+// fleet has been migrated, so the standard upgrade path covers stragglers and
+// self-hosted instances. New workspaces get these entities from the standard
+// application at provisioning and do not need this command.
 @Command({
   name: 'upgrade:2-12:backfill-message-standard-objects',
   description:
