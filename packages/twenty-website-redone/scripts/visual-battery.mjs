@@ -312,11 +312,11 @@ const runVisual = async (browser, key, spec) => {
   // Leave toward whichever page end is farther, so slots near the top
   // actually exit the generous mount margins.
   await page.evaluate((selector) => {
-    const slot = document.querySelector(selector);
+    const slotElement = document.querySelector(selector);
     const slotCenter =
-      slot.getBoundingClientRect().top +
+      slotElement.getBoundingClientRect().top +
       window.scrollY +
-      slot.getBoundingClientRect().height / 2;
+      slotElement.getBoundingClientRect().height / 2;
     const pageHeight = document.documentElement.scrollHeight;
     window.scrollTo(0, slotCenter < pageHeight / 2 ? pageHeight : 0);
   }, spec.slotSelector);
