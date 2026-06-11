@@ -73,7 +73,6 @@ describe('WorkspaceRepository', () => {
       isNullable: false,
       isUnique: true,
       isSystem: true,
-      isCustom: false,
       isUIReadOnly: false,
       isLabelSyncedWithName: false,
       label: 'ID',

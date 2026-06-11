@@ -43,7 +43,7 @@ export const RecordBoardColumnCardsContainer = ({
   );
 
   return (
-    <StyledColumnCardsContainer>
+    <StyledColumnCardsContainer data-replay-ignore-mutations="true">
       {recordIndexRecordIdsByGroup.map((recordId, index) => (
         <RecordBoardCardDraggableContainer
           key={recordId}

@@ -17,7 +17,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.26.9",
     "@babel/preset-typescript": "^7.24.6",
-    "@lingui/core": "^5.1.2",
+    "@lingui/core": "^5.9.5",
     "@prettier/sync": "^0.5.2",
     "@swc/core": "^1.15.11",
     "@swc/jest": "^0.2.39",
@@ -39,7 +39,7 @@
     "tsx": "^4.19.3",
     "typescript": "^5.9.3",
     "vite": "^7.0.0",
-    "vite-plugin-dts": "3.8.1",
+    "vite-plugin-dts": "^4.5.4",
     "vite-tsconfig-paths": "^4.2.1"
   },
   "dependencies": {

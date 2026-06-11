@@ -66,7 +66,7 @@ export const LeftPanelSkeletonLoader = () => {
       <StyledItemsContainer>
         <StyledSkeletonTitleContainer>
           <SkeletonTheme
-            baseColor={theme.background.tertiary}
+            baseColor={theme.background.quaternary}
             highlightColor={theme.background.transparent.lighter}
             borderRadius={4}
           >

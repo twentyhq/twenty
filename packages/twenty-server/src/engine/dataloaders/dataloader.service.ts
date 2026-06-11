@@ -37,6 +37,7 @@ import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-me
 import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { getTwentyStandardApplicationIdOrThrow } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id-or-throw.util';
 
 export type RelationMetadataLoaderPayload = {
   workspaceId: string;
@@ -116,6 +117,11 @@ export type IsConfiguredLoaderPayload = {
   applicationRegistrationId: string;
 };
 
+export type IsCustomLoaderPayload = {
+  workspaceId: string;
+  applicationId: string;
+};
+
 @Injectable()
 export class DataloaderService {
   constructor(
@@ -142,6 +148,7 @@ export class DataloaderService {
     const viewFilterGroupsByViewIdLoader =
       this.createViewFilterGroupsByViewIdLoader();
     const isConfiguredLoader = this.createIsConfiguredLoader();
+    const isCustomLoader = this.createIsCustomLoader();
 
     return {
       relationLoader,
@@ -158,6 +165,7 @@ export class DataloaderService {
       viewGroupsByViewIdLoader,
       viewFilterGroupsByViewIdLoader,
       isConfiguredLoader,
+      isCustomLoader,
     };
   }
 
@@ -328,7 +336,6 @@ export class DataloaderService {
                         label: flatFieldMetadata.label,
                         description: flatFieldMetadata.description ?? undefined,
                         icon: flatFieldMetadata.icon ?? undefined,
-                        isCustom: flatFieldMetadata.isCustom,
                         standardOverrides:
                           flatFieldMetadata.standardOverrides ?? undefined,
                       },
@@ -755,6 +762,29 @@ export class DataloaderService {
 
         return params.map(
           (p) => resultMap.get(p.applicationRegistrationId) ?? true,
+        );
+      },
+    );
+  }
+
+  private createIsCustomLoader() {
+    return new DataLoader<IsCustomLoaderPayload, boolean>(
+      async (dataLoaderParams: IsCustomLoaderPayload[]) => {
+        const workspaceId = dataLoaderParams[0].workspaceId;
+
+        const { flatApplicationMaps } =
+          await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            {
+              workspaceId,
+              flatMapsKeys: ['flatApplicationMaps'],
+            },
+          );
+
+        const twentyStandardApplicationId =
+          getTwentyStandardApplicationIdOrThrow(flatApplicationMaps);
+
+        return dataLoaderParams.map(
+          ({ applicationId }) => applicationId !== twentyStandardApplicationId,
         );
       },
     );

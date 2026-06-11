@@ -35,6 +35,7 @@ describe('fromViewManifestToUniversalFlatView', () => {
     expect(result.icon).toBe('IconList');
     expect(result.position).toBe(0);
     expect(result.isCompact).toBe(false);
+    expect(result.shouldHideEmptyGroups).toBe(false);
     expect(result.isCustom).toBe(true);
     expect(result.visibility).toBe(ViewVisibility.WORKSPACE);
     expect(result.openRecordIn).toBe(ViewOpenRecordIn.SIDE_PANEL);
@@ -53,6 +54,7 @@ describe('fromViewManifestToUniversalFlatView', () => {
         icon: 'IconLayoutKanban',
         position: 3,
         isCompact: true,
+        shouldHideEmptyGroups: true,
         visibility: ViewVisibility.UNLISTED,
         openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
       },
@@ -64,6 +66,7 @@ describe('fromViewManifestToUniversalFlatView', () => {
     expect(result.icon).toBe('IconLayoutKanban');
     expect(result.position).toBe(3);
     expect(result.isCompact).toBe(true);
+    expect(result.shouldHideEmptyGroups).toBe(true);
     expect(result.visibility).toBe(ViewVisibility.UNLISTED);
     expect(result.openRecordIn).toBe(ViewOpenRecordIn.RECORD_PAGE);
   });

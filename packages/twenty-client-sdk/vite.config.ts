@@ -59,6 +59,7 @@ export default defineConfig(() => {
           'node:fs',
           'node:path',
           'node:os',
+          'node:url',
         ],
         output: [
           {

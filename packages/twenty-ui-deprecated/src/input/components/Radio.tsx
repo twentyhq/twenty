@@ -33,6 +33,7 @@ type RadioInputProps = {
 };
 
 const StyledRadioInputBase = styled.input<RadioInputProps>`
+  box-sizing: content-box;
   -webkit-appearance: none;
   appearance: none;
   background-color: transparent;

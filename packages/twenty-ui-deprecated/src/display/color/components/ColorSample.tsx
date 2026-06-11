@@ -29,6 +29,7 @@ const getBorderColor = (colorName: ThemeColor) => {
 };
 
 const StyledColorSample = styled.div<StyledColorSampleProps>`
+  box-sizing: content-box;
   background-color: ${({ colorName, color }) => getColor(colorName, color)};
   border: ${({ variant, colorName }) =>
     variant === 'pipeline' ? '0' : `1px solid ${getBorderColor(colorName)}`};

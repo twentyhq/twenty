@@ -1,0 +1,29 @@
+.container {
+  align-items: center;
+  display: flex;
+  gap: var(--t-spacing-2);
+  position: relative;
+  height: var(--t-spacing-5);
+  padding: var(--t-spacing-1);
+}
+
+.text {
+  color: var(--t-font-color-secondary);
+  font-size: var(--t-font-size-sm);
+  font-weight: var(--t-font-weight-medium);
+}
+
+.iconContainer {
+  align-items: center;
+  display: flex;
+  left: calc(-1 * var(--t-spacing-5));
+  position: absolute;
+}
+
+.toggleContainer {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}

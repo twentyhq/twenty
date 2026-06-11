@@ -1,4 +1,4 @@
-import { ACCENT_DARK } from '@new-ui/theme/constants/AccentDark';
+import { ACCENT_DARK } from '@ui/theme/constants/AccentDark';
 import { ANIMATION } from './Animation';
 import { ICON } from './Icon';
 import { MODAL } from './Modal';
