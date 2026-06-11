@@ -2,7 +2,8 @@ import { styled } from '@linaria/react';
 
 import { color } from '@/tokens';
 
-// The card's sculpted top edge. The old site stretched one 1360px-wide path
+// A white card with the sculpted notched top edge — shared by the footer
+// stage card and the testimonials card. The old site stretched one 1360px-wide path
 // with preserveAspectRatio="none", distorting the notch slopes at every
 // other width. Here the slopes keep their authored geometry (fixed-width
 // SVG caps extracted from the original path) and only the flat runs flex,
@@ -74,7 +75,7 @@ const ShapeLayer = styled.div`
   z-index: -1;
 `;
 
-export function FooterShape() {
+export function NotchedCardShape() {
   return (
     <ShapeLayer aria-hidden>
       <ShapeRow>

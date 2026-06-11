@@ -1,4 +1,3 @@
-import { IconPlus } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
 import { Fragment } from 'react';
 
@@ -12,7 +11,7 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
-import { Button, ExternalLink } from '@/ui';
+import { Button, ExternalLink, MarkedDivider } from '@/ui';
 
 import { FOOTER, type FooterNavGroup } from './footer.data';
 
@@ -25,35 +24,13 @@ const NavGrid = styled.nav`
   }
 `;
 
-// Hairline dividers tipped with the brand plus marker: horizontal between
-// stacked groups, vertical between columns.
-const GroupDivider = styled.div`
-  align-items: center;
-  color: ${color('blue')};
-  display: flex;
-  gap: ${spacing(1.5)};
+const GroupDividerSlot = styled.div`
   width: 100%;
 
   ${mediaUp('md')} {
-    flex-direction: column;
     height: 100%;
     margin-inline: ${spacing(7)};
     width: auto;
-  }
-`;
-
-const GroupDividerLine = styled.div`
-  background-color: ${semanticColor.line};
-  flex: 1 1 0%;
-  height: 1px;
-  min-height: 1px;
-  min-width: 0;
-
-  ${mediaUp('md')} {
-    height: auto;
-    min-height: 0;
-    min-width: 1px;
-    width: 1px;
   }
 `;
 
@@ -186,11 +163,9 @@ export function FooterNav() {
       {FOOTER.navGroups.map((group, index) => (
         <Fragment key={group.id}>
           {index > 0 && (
-            <GroupDivider role="separator">
-              <IconPlus aria-hidden size={12} stroke={1.5} />
-              <GroupDividerLine aria-hidden />
-              <IconPlus aria-hidden size={12} stroke={1.5} />
-            </GroupDivider>
+            <GroupDividerSlot>
+              <MarkedDivider />
+            </GroupDividerSlot>
           )}
           <GroupBlock group={group} />
         </Fragment>

@@ -6,7 +6,7 @@ import { Container } from '@/ui';
 
 import { FooterBottom } from './footer-bottom';
 import { FooterNav } from './footer-nav';
-import { FooterShape } from './footer-shape';
+import { NotchedCardShape } from '@/ui/notched-card-shape';
 
 const FooterRoot = styled.footer`
   background-color: ${color('black')};
@@ -53,7 +53,7 @@ export function Footer() {
     <FooterRoot>
       <StageContainer>
         <Card>
-          <FooterShape />
+          <NotchedCardShape />
           <TwentyLogo sizePx={40} />
           <FooterNav />
           <FooterBottom />

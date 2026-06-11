@@ -1,5 +1,5 @@
 import { css } from '@linaria/core';
-import { type ReactNode } from 'react';
+import { type CSSProperties, type ReactNode } from 'react';
 
 import { color, radius, semanticColor } from '@/tokens';
 
@@ -11,9 +11,19 @@ const iconButtonClassName = css`
   color: ${semanticColor.ink};
   cursor: pointer;
   display: inline-flex;
-  height: 40px;
+  height: var(--icon-button-size, 40px);
   justify-content: center;
-  width: 40px;
+  width: var(--icon-button-size, 40px);
+
+  &:disabled {
+    border-color: ${semanticColor.line};
+    color: ${color('black-20')};
+    cursor: default;
+  }
+
+  &:disabled:hover {
+    background-color: transparent;
+  }
 
   &:hover {
     background-color: ${color('black-5')};
@@ -28,15 +38,25 @@ const iconButtonClassName = css`
 export type IconButtonProps = {
   ariaLabel: string;
   children: ReactNode;
+  disabled?: boolean;
+  sizePx?: number;
   onClick?: () => void;
 };
 
-export function IconButton({ ariaLabel, children, onClick }: IconButtonProps) {
+export function IconButton({
+  ariaLabel,
+  children,
+  disabled = false,
+  sizePx = 40,
+  onClick,
+}: IconButtonProps) {
   return (
     <button
       aria-label={ariaLabel}
       className={iconButtonClassName}
+      disabled={disabled}
       onClick={onClick}
+      style={{ '--icon-button-size': `${sizePx}px` } as CSSProperties}
       type="button"
     >
       {children}

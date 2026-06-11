@@ -1,3 +1,5 @@
+export { MarkedDivider } from './marked-divider';
+export { NotchedCardShape } from './notched-card-shape';
 export { GuideCrosshair, type GuideCrosshairProps } from './guide-crosshair';
 export { HeadingPair } from './heading-pair';
 export { Body, type BodyElement, type BodyProps, type BodySize } from './body';

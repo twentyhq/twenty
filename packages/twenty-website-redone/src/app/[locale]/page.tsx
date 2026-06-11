@@ -9,6 +9,7 @@ import { FeatureCards } from '@/sections/feature-cards';
 import { Helped } from '@/sections/helped';
 import { HomeHero } from '@/sections/home-hero';
 import { Menu } from '@/sections/menu';
+import { Testimonials } from '@/sections/testimonials';
 import { Problem } from '@/sections/problem';
 import { Stepper } from '@/sections/stepper';
 import { ThreeCards } from '@/sections/three-cards';
@@ -37,6 +38,7 @@ export default async function HomePage({
         <Stepper />
         <FeatureCards />
         <Helped />
+        <Testimonials />
         <Faq />
       </main>
     </>

@@ -58,6 +58,11 @@ msgstr ""
 msgid "Alternative Partners used agentic AI to compress what would typically be weeks of Salesforce migration work into something a single person could oversee."
 msgstr ""
 
+#. js-lingui-id: iFLhqi
+#: src/sections/testimonials/testimonials.data.ts
+msgid "Amrendra Pratap Singh"
+msgstr ""
+
 #. js-lingui-id: aGCcXe
 #: src/sections/faq/faq.tsx
 msgid "Any Questions?"
@@ -101,6 +106,11 @@ msgstr ""
 #. js-lingui-id: L/LPQZ
 #: src/sections/faq/faq.data.ts
 msgid "Cloud Pro is $9/user/month (yearly). Organization is $19/user/month and unlocks SSO and row-level permissions for teams that need finer access control."
+msgstr ""
+
+#. js-lingui-id: 1YncLF
+#: src/sections/testimonials/testimonials.data.ts
+msgid "Co-founder at NetZero"
 msgstr ""
 
 #. js-lingui-id: Fkb+LW
@@ -153,6 +163,11 @@ msgstr ""
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
 msgid "Developers"
+msgstr ""
+
+#. js-lingui-id: Wuqvfz
+#: src/sections/testimonials/testimonials.data.ts
+msgid "Director of Digital and Information, Elevate Consulting"
 msgstr ""
 
 #. js-lingui-id: W+b/DF
@@ -244,9 +259,19 @@ msgstr ""
 msgid "Is Twenty really open-source?"
 msgstr ""
 
+#. js-lingui-id: FJ51pP
+#: src/sections/testimonials/testimonials.data.ts
+msgid "It is just such a nicer experience than dealing with a Salesforce or a HubSpot. My mission has been to get every tool API-accessible, so everything talks to each other. Twenty made that possible in a way older CRM platforms simply do not."
+msgstr ""
+
 #. js-lingui-id: ltNDOB
 #: src/sections/problem/problem.data.ts
 msgid "It's fragile. V1 ships quickly, but maintaining and making changes is a long term burden."
+msgstr ""
+
+#. js-lingui-id: qrYDGE
+#: src/sections/testimonials/testimonials.data.ts
+msgid "Justin Beadle"
 msgstr ""
 
 #. js-lingui-id: +Ss/og
@@ -298,6 +323,11 @@ msgstr ""
 #. js-lingui-id: SiZ/7E
 #: src/sections/faq/faq.data.ts
 msgid "No. Build custom objects, fields, views, and no-code workflows straight from Settings. Unlimited, no extra charge."
+msgstr ""
+
+#. js-lingui-id: l/1LQc
+#: src/sections/testimonials/testimonials.data.ts
+msgid "Olivier Reinaud"
 msgstr ""
 
 #. js-lingui-id: Bwsi7B
@@ -435,6 +465,11 @@ msgstr ""
 msgid "The #1 Open Source CRM for modern teams. Modular, scalable, and built to fit your business."
 msgstr ""
 
+#. js-lingui-id: MaHqAc
+#: src/sections/testimonials/testimonials.data.ts
+msgid "The flexibility is really what made the difference. Our needs evolve very fast. I discover a new need and in two clicks I can address it. That is a real advantage when you are moving quickly."
+msgstr ""
+
 #. js-lingui-id: sm10Rg
 #: src/sections/problem/problem.data.ts
 msgid "The Giant Monolith"
@@ -458,6 +493,11 @@ msgstr ""
 #. js-lingui-id: gXGp3Q
 #: src/sections/menu/menu.data.ts
 msgid "The story behind Twenty"
+msgstr ""
+
+#. js-lingui-id: u0uFxg
+#: src/sections/testimonials/testimonials-carousel.tsx
+msgid "They are the real sales"
 msgstr ""
 
 #. js-lingui-id: POzmFl
@@ -501,6 +541,11 @@ msgstr ""
 msgid "VP of Engineering"
 msgstr ""
 
+#. js-lingui-id: uRh799
+#: src/sections/testimonials/testimonials.data.ts
+msgid "VP of Engineering at W3villa Technologies"
+msgstr ""
+
 #. js-lingui-id: 7hHsoV
 #: src/sections/helped/helped.data.ts
 msgid "W3villa built W3Grads for AI mock interviews at scale, with Twenty as the operational backbone."
@@ -514,6 +559,11 @@ msgstr ""
 #. js-lingui-id: 3v2ipf
 #: src/sections/three-cards/three-cards.data.ts
 msgid "W3villa used Twenty as a production-grade framework for the data model, permissions, authentication, and workflow engine they would otherwise have rebuilt themselves."
+msgstr ""
+
+#. js-lingui-id: MjWeUE
+#: src/sections/testimonials/testimonials.data.ts
+msgid "We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
 msgstr ""
 
 #. js-lingui-id: phiBjc
