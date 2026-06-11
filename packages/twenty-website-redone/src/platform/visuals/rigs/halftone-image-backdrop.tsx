@@ -18,6 +18,7 @@ const HalftoneImageScene = dynamic(
 export type HalftoneImageBackdropProps = {
   imageUrl: string;
   settings: ImageSessionSettings;
+  pointerRootSelector?: string;
   poster?: ReactNode;
   priority?: boolean;
   loading?: 'lazy' | 'eager';
@@ -29,6 +30,7 @@ export type HalftoneImageBackdropProps = {
 export function HalftoneImageBackdrop({
   imageUrl,
   settings,
+  pointerRootSelector,
   poster = null,
   priority = false,
   loading = 'lazy',
@@ -43,7 +45,11 @@ export function HalftoneImageBackdrop({
       priority={priority}
       reducedMotion={reducedMotionMode}
     >
-      <HalftoneImageScene imageUrl={imageUrl} settings={settings} />
+      <HalftoneImageScene
+        imageUrl={imageUrl}
+        pointerRootSelector={pointerRootSelector}
+        settings={settings}
+      />
     </VisualMount>
   );
 }

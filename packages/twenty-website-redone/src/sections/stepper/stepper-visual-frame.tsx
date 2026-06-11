@@ -1,4 +1,7 @@
 import { styled } from '@linaria/react';
+import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/halftone-image-backdrop';
+
+import { STEPPER_BACKDROP } from './stepper-backdrop-config';
 import { type ReactNode } from 'react';
 
 import { color } from '@/tokens';
@@ -47,8 +50,15 @@ const FrameBorder = styled.svg`
 
 export function StepperVisualFrame({ children }: { children: ReactNode }) {
   return (
-    <FrameRoot>
-      <MaskedBackdrop aria-hidden />
+    <FrameRoot data-stepper-visual-pointer-root="">
+      <MaskedBackdrop aria-hidden data-illustration="stepper-backdrop">
+        <HalftoneImageBackdrop
+          imageUrl={STEPPER_BACKDROP.imageUrl}
+          pointerRootSelector="[data-stepper-visual-pointer-root]"
+          reducedMotionMode="poster"
+          settings={STEPPER_BACKDROP.settings}
+        />
+      </MaskedBackdrop>
       <SlideArea>{children}</SlideArea>
       <FrameBorder aria-hidden preserveAspectRatio="none" viewBox="0 0 672 705">
         <path

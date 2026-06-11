@@ -13,6 +13,7 @@ export const HALFTONE_PASS_SHADER = {
   uniform float s_3;
   uniform float s_4;
   uniform float applyToDarkAreas;
+  uniform float minimumTone;
   uniform vec3 dashColor;
   uniform vec3 hoverDashColor;
   uniform float time;
@@ -137,7 +138,7 @@ export const HALFTONE_PASS_SHADER = {
     // bias inside the averaged tone calculation.
     float powerBias = localPower * length(vec2(0.5)) * (1.0 / 3.0);
     float bandRadius = clamp(
-      toneValue + powerBias + lightLift,
+      max(toneValue + powerBias + lightLift, minimumTone),
       0.0,
       1.0
     ) * 1.86 * 0.5;

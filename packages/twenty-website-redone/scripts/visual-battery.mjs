@@ -19,6 +19,14 @@ const VISUALS = {
     animated: true,
     interactive: false,
   },
+  'stepper-backdrop': {
+    slotSelector: '[data-illustration="stepper-backdrop"]',
+    // fog gray: hueless; hover (pointer move) is the interactivity proof
+    hueRangeDegrees: null,
+    minCoverage: 0.02,
+    animated: false,
+    interactive: true,
+  },
   faq: {
     slotSelector: '[data-illustration="faq"]',
     // blue rows, rotate-only, no pointer

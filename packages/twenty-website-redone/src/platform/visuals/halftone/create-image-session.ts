@@ -9,6 +9,9 @@ import { BLUR_PASS_SHADERS } from './blur-pass-shaders';
 import { HALFTONE_PASS_SHADER } from './halftone-pass-shader';
 import { IMAGE_PASS_SHADER } from './image-pass-shader';
 
+// (The band composite never samples a glow buffer: image sessions run a
+// single image pass straight into the composite — no blur chain.)
+
 export type ImageSession = {
   dispose: () => void;
 };
@@ -23,6 +26,8 @@ export type ImageSessionSettings = {
     scale: number;
     power: number;
     width: number;
+    // Floors the band radius so dark regions keep a base dash presence.
+    minimumTone: number;
     dashColor: number;
     hoverDashColor: number;
   };
@@ -53,6 +58,9 @@ type CreateImageSessionOptions = {
   container: HTMLElement;
   image: HTMLImageElement;
   settings: ImageSessionSettings;
+  // Pointer interaction can track a wider ancestor (the stepper's whole
+  // visual area) so hover responds before the cursor reaches the canvas.
+  pointerRootSelector?: string;
   reducedMotion?: boolean;
   onFirstFrame?: () => void;
 };
@@ -181,6 +189,7 @@ export function createImageSession({
   container,
   image,
   settings,
+  pointerRootSelector,
   reducedMotion = false,
   onFirstFrame,
 }: CreateImageSessionOptions): ImageSession | null {
@@ -223,8 +232,6 @@ export function createImageSession({
     REFERENCE_PREVIEW_DISTANCE / Math.max(settings.previewDistance, 0.001);
 
   const sceneTarget = createRenderTarget(getVirtualWidth(), getVirtualHeight());
-  const blurTargetA = createRenderTarget(getVirtualWidth(), getVirtualHeight());
-  const blurTargetB = createRenderTarget(getVirtualWidth(), getVirtualHeight());
   const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
   const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
@@ -245,27 +252,11 @@ export function createImageSession({
     fragmentShader: IMAGE_PASS_SHADER.fragment,
   });
 
-  const createBlurMaterial = (directionX: number, directionY: number) =>
-    new THREE.ShaderMaterial({
-      uniforms: {
-        dir: { value: new THREE.Vector2(directionX, directionY) },
-        res: {
-          value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
-        },
-        tInput: { value: null },
-      },
-      vertexShader: BLUR_PASS_SHADERS.vertex,
-      fragmentShader: BLUR_PASS_SHADERS.fragment,
-    });
-
-  const blurHorizontalMaterial = createBlurMaterial(1, 0);
-  const blurVerticalMaterial = createBlurMaterial(0, 1);
-
   const halftoneMaterial = new THREE.ShaderMaterial({
     transparent: true,
     uniforms: {
       tScene: { value: sceneTarget.texture },
-      tGlow: { value: blurTargetB.texture },
+      tGlow: { value: sceneTarget.texture },
       effectResolution: {
         value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
       },
@@ -276,6 +267,7 @@ export function createImageSession({
       s_3: { value: settings.halftone.power },
       s_4: { value: settings.halftone.width },
       applyToDarkAreas: { value: 0 },
+      minimumTone: { value: settings.halftone.minimumTone },
       dashColor: { value: new THREE.Color(settings.halftone.dashColor) },
       hoverDashColor: {
         value: new THREE.Color(settings.halftone.hoverDashColor),
@@ -304,14 +296,6 @@ export function createImageSession({
 
   const imageScene = new THREE.Scene();
   imageScene.add(new THREE.Mesh(fullScreenGeometry, imageMaterial));
-  const blurHorizontalScene = new THREE.Scene();
-  blurHorizontalScene.add(
-    new THREE.Mesh(fullScreenGeometry, blurHorizontalMaterial),
-  );
-  const blurVerticalScene = new THREE.Scene();
-  blurVerticalScene.add(
-    new THREE.Mesh(fullScreenGeometry, blurVerticalMaterial),
-  );
   const postScene = new THREE.Scene();
   postScene.add(new THREE.Mesh(fullScreenGeometry, halftoneMaterial));
 
@@ -347,10 +331,6 @@ export function createImageSession({
     const virtualHeight = getVirtualHeight();
     renderer.setSize(virtualWidth, virtualHeight, false);
     sceneTarget.setSize(virtualWidth, virtualHeight);
-    blurTargetA.setSize(virtualWidth, virtualHeight);
-    blurTargetB.setSize(virtualWidth, virtualHeight);
-    blurHorizontalMaterial.uniforms.res.value.set(virtualWidth, virtualHeight);
-    blurVerticalMaterial.uniforms.res.value.set(virtualWidth, virtualHeight);
     imageMaterial.uniforms.viewportSize.value.set(virtualWidth, virtualHeight);
     halftoneMaterial.uniforms.effectResolution.value.set(
       virtualWidth,
@@ -364,32 +344,55 @@ export function createImageSession({
   };
   syncFootprint();
 
+  const pointerRoot: HTMLElement =
+    (pointerRootSelector
+      ? (container.closest(pointerRootSelector) as HTMLElement | null)
+      : null) ?? (container as HTMLElement);
+
   const handlePointerMove = (event: PointerEvent) => {
-    const rect = canvas.getBoundingClientRect();
-    const previousX = pointer.mouseX;
-    const previousY = pointer.mouseY;
-    pointer.mouseX = THREE.MathUtils.clamp(
+    const rect = pointerRoot.getBoundingClientRect();
+    const enteredJustNow = !pointer.inside;
+    const nextMouseX = THREE.MathUtils.clamp(
       (event.clientX - rect.left) / Math.max(rect.width, 1),
       0,
       1,
     );
-    pointer.mouseY = THREE.MathUtils.clamp(
+    const nextMouseY = THREE.MathUtils.clamp(
       (event.clientY - rect.top) / Math.max(rect.height, 1),
       0,
       1,
     );
-    pointer.velocityX = pointer.mouseX - previousX;
-    pointer.velocityY = pointer.mouseY - previousY;
-    pointer.inside = true;
+    const deltaX = nextMouseX - pointer.mouseX;
+    const deltaY = nextMouseY - pointer.mouseY;
+    pointer.mouseX = nextMouseX;
+    pointer.mouseY = nextMouseY;
+    pointer.inside =
+      event.clientX >= rect.left &&
+      event.clientX <= rect.right &&
+      event.clientY >= rect.top &&
+      event.clientY <= rect.bottom;
+
+    if (enteredJustNow) {
+      // Re-entry must not inherit the exit velocity (ported behavior).
+      pointer.velocityX = 0;
+      pointer.velocityY = 0;
+      pointer.smoothedX = nextMouseX;
+      pointer.smoothedY = nextMouseY;
+      return;
+    }
+    pointer.velocityX = deltaX;
+    pointer.velocityY = deltaY;
   };
 
   const handlePointerLeave = () => {
     pointer.inside = false;
+    pointer.velocityX = 0;
+    pointer.velocityY = 0;
   };
 
   if (!reducedMotion) {
-    canvas.addEventListener('pointermove', handlePointerMove);
-    canvas.addEventListener('pointerleave', handlePointerLeave);
+    pointerRoot.addEventListener('pointermove', handlePointerMove);
+    pointerRoot.addEventListener('pointerleave', handlePointerLeave);
   }
 
   let firstFrameNotified = false;
@@ -442,19 +445,6 @@ export function createImageSession({
     renderer.setRenderTarget(sceneTarget);
     renderer.render(imageScene, orthographicCamera);
 
-    blurHorizontalMaterial.uniforms.tInput.value = sceneTarget.texture;
-    renderer.setRenderTarget(blurTargetA);
-    renderer.render(blurHorizontalScene, orthographicCamera);
-    blurVerticalMaterial.uniforms.tInput.value = blurTargetA.texture;
-    renderer.setRenderTarget(blurTargetB);
-    renderer.render(blurVerticalScene, orthographicCamera);
-    blurHorizontalMaterial.uniforms.tInput.value = blurTargetB.texture;
-    renderer.setRenderTarget(blurTargetA);
-    renderer.render(blurHorizontalScene, orthographicCamera);
-    blurVerticalMaterial.uniforms.tInput.value = blurTargetA.texture;
-    renderer.setRenderTarget(blurTargetB);
-    renderer.render(blurVerticalScene, orthographicCamera);
-
     renderer.setRenderTarget(null);
     renderer.clear();
     renderer.render(postScene, orthographicCamera);
@@ -471,14 +461,10 @@ export function createImageSession({
 
   function disposeResources() {
     imageMaterial.dispose();
-    blurHorizontalMaterial.dispose();
-    blurVerticalMaterial.dispose();
     halftoneMaterial.dispose();
     fullScreenGeometry.dispose();
     imageTexture.dispose();
     sceneTarget.dispose();
-    blurTargetA.dispose();
-    blurTargetB.dispose();
     renderer?.dispose();
     if (canvas.parentNode === container) {
       container.removeChild(canvas);
@@ -515,8 +501,8 @@ export function createImageSession({
     dispose() {
       frameLoop.dispose();
       sizeObserver?.disconnect();
-      canvas.removeEventListener('pointermove', handlePointerMove);
-      canvas.removeEventListener('pointerleave', handlePointerLeave);
+      pointerRoot.removeEventListener('pointermove', handlePointerMove);
+      pointerRoot.removeEventListener('pointerleave', handlePointerLeave);
       disposeResources();
     },
   };

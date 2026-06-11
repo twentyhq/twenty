@@ -18,6 +18,8 @@ export const MONOLITH_VISUAL: Pick<
       scale: 10,
       power: 0.21,
       width: 0.65,
+      // The monolith shader has no tone floor.
+      minimumTone: 0,
       dashColor: paletteColorNumber('ash'),
       hoverDashColor: paletteColorNumber('ash'),
     },

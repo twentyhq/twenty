@@ -19,11 +19,13 @@ const SceneContainer = styled.div`
 export type HalftoneImageSceneProps = {
   imageUrl: string;
   settings: ImageSessionSettings;
+  pointerRootSelector?: string;
 };
 
 export function HalftoneImageScene({
   imageUrl,
   settings,
+  pointerRootSelector,
 }: HalftoneImageSceneProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { reducedMotion } = useVisualRuntime();
@@ -41,6 +43,7 @@ export function HalftoneImageScene({
       container,
       image,
       settings,
+      pointerRootSelector,
       reducedMotion,
     });
 
