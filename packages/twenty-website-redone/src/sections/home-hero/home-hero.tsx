@@ -6,15 +6,11 @@ import { styled } from '@linaria/react';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { SITE_URLS } from '@/platform/site-urls';
 import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
-import { color, mediaUp, semanticColor, spacing } from '@/tokens';
+import { color, GRADIENT, mediaUp, semanticColor, spacing } from '@/tokens';
 import { Body, Button, Heading, HeadingPair, SectionShell } from '@/ui';
 
 const GradientBackdrop = styled.div`
-  background: radial-gradient(
-    ellipse 80% 60% at 50% 40%,
-    rgba(245, 243, 240, 0.6) 0%,
-    transparent 70%
-  );
+  background: ${GRADIENT.heroGlow};
   inset: 0 -20%;
   position: absolute;
 `;

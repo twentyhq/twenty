@@ -12,8 +12,9 @@ function createFakeHost() {
         jobs.push(job);
         return jobs.length;
       },
-      clearTimeout: (handle: number) => {
-        const job = jobs[handle - 1];
+      // The fake produced this handle as a 1-based job index.
+      clearTimeout: (handle: unknown) => {
+        const job = jobs[(handle as number) - 1];
         if (job) {
           job.callback = () => {};
         }

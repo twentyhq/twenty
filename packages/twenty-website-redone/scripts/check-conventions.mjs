@@ -60,9 +60,7 @@ const failures = [];
 
 // Color and easing literals live only in src/tokens (comments stripped
 // before matching). Authored one-offs are allowlisted with their reason.
-const LITERAL_ALLOWLIST = new Set([
-  'src/sections/home-hero/home-hero.tsx', // ported radial gradient stops
-]);
+const LITERAL_ALLOWLIST = new Set([]);
 // Files allowed to set the new-tab security attributes themselves.
 const EXTERNAL_LINK_OWNERS = new Set([
   'src/ui/external-link.tsx',

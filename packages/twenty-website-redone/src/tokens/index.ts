@@ -29,3 +29,4 @@ export { UNITS } from './units';
 export { Z_INDEX, type ZIndexToken } from './z-index';
 export { DURATION } from './duration';
 export { REDUCED_MOTION } from './reduced-motion';
+export { GRADIENT } from './gradient';

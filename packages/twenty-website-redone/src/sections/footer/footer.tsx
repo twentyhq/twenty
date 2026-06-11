@@ -16,8 +16,7 @@ const FooterRoot = styled.footer`
 `;
 
 // min-height (the old site hardcoded height) keeps the dark stage above the
-// card without clipping if content or translations grow. The halftone
-// visual that fills the stage arrives with the visual-runtime port.
+// card without clipping if content or translations grow.
 const StageContainer = styled(Container)`
   display: flex;
   flex-direction: column;

@@ -6,9 +6,9 @@ import { type ReactNode } from 'react';
 
 import { color } from '@/tokens';
 
-// The notched frame that hosts the stepper visual: graphite stage behind,
-// content above, hairline border tracing the same path. The background
-// halftone arrives with the visual-runtime port.
+// The notched frame that hosts the stepper visual: halftone backdrop on
+// the graphite stage behind, content above, hairline border tracing the
+// same path.
 const FRAME_MASK_PATH =
   'M4 0H668a4 4 0 0 1 4 4V701a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V499L28 462V215L0 178V4a4 4 0 0 1 4-4Z';
 

@@ -20,14 +20,19 @@ export type WebGlContextBudget = {
   getMaxActive: () => number;
 };
 
+// Opaque to the budget: browsers return number, Node returns Timeout,
+// test fakes return counters — the budget never inspects it, only hands
+// it back to the same host's clearTimeout.
+type TimeoutHandle = unknown;
+
 type BudgetHost = {
   requestIdleCallback?: (
     callback: () => void,
     options?: { timeout: number },
   ) => number;
   cancelIdleCallback?: (handle: number) => void;
-  setTimeout: (callback: () => void, delayMs: number) => number;
-  clearTimeout: (handle: number) => void;
+  setTimeout: (callback: () => void, delayMs: number) => TimeoutHandle;
+  clearTimeout: (handle: TimeoutHandle) => void;
 };
 
 type CreateWebGlContextBudgetOptions = {
@@ -50,9 +55,10 @@ function getDefaultHost(): BudgetHost {
       typeof cancelIdleCallback === 'function'
         ? (handle) => cancelIdleCallback(handle)
         : undefined,
-    setTimeout: (callback, delayMs) =>
-      setTimeout(callback, delayMs) as unknown as number,
-    clearTimeout: (handle) => clearTimeout(handle as unknown as number),
+    setTimeout: (callback, delayMs) => setTimeout(callback, delayMs),
+    // The default host only ever receives handles it produced above.
+    clearTimeout: (handle) =>
+      clearTimeout(handle as ReturnType<typeof setTimeout>),
   };
 }
 
@@ -68,8 +74,10 @@ export function createWebGlContextBudget({
   const pending: SlotRecord[] = [];
   const held = new Set<SlotRecord>();
 
-  let scheduledDrain: { kind: 'idle' | 'timeout'; handle: number } | null =
-    null;
+  let scheduledDrain:
+    | { kind: 'idle'; handle: number }
+    | { kind: 'timeout'; handle: TimeoutHandle }
+    | null = null;
   let scheduledDrainPriority: SlotPriority | null = null;
 
   const nextPending = (): SlotRecord | undefined =>
