@@ -7,12 +7,6 @@ import { getAllStepIdsInLoop } from 'src/modules/workflow/workflow-executor/work
 import { getIteratorInitialLoopStepIds } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-iterator-initial-loop-step-ids.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-// Given a (post-reset) run state, returns the ids of every step that is ready to
-// execute, using the same gating the executor itself applies (shouldExecuteStep,
-// which handles iterator vs regular parent logic). This catches branches that
-// never started because the run died (e.g. a parallel branch), without which the
-// run could hang in RUNNING forever. Loop-interior steps are excluded: they are
-// only ever driven by their enclosing iterator, never executed directly.
 export const getResumeFrontierStepIds = ({
   steps,
   stepInfos,

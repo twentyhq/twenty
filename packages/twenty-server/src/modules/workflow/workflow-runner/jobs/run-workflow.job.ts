@@ -153,10 +153,6 @@ export class RunWorkflowJob {
         workspaceId,
       });
 
-    // Retriability (status === FAILED) and the flip to RUNNING happen in
-    // WorkflowRunnerWorkspaceService.retryWorkflowRun before enqueueing. This is
-    // only a race guard: the run may have been stopped or already re-failed
-    // between enqueue and pickup (mirrors resumeWorkflowExecution).
     if (workflowRun.status !== WorkflowRunStatus.RUNNING) {
       return;
     }
