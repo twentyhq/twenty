@@ -79,6 +79,14 @@ const CountCell = styled(Cell)`
   ${mediaUp('md')} {
     padding-left: ${spacing(6)};
   }
+
+  /* The authored icon is intrinsically blue (#4A38F5); the chip reads
+     muted like the logo wall, so it is neutralized the way the old site
+     does it. */
+  img {
+    filter: grayscale(1);
+    opacity: 0.72;
+  }
 `;
 
 const MonoLabel = styled.span`
