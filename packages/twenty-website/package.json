@@ -19,8 +19,8 @@
     "@calcom/embed-react": "^1.5.3",
     "@linaria/core": "^7.0.0",
     "@linaria/react": "^7.0.1",
-    "@lingui/core": "^5.1.2",
-    "@lingui/react": "^5.1.2",
+    "@lingui/core": "^5.9.5",
+    "@lingui/react": "^5.9.5",
     "@lottiefiles/dotlottie-react": "^0.18.10",
     "@radix-ui/react-popover": "^1.1.15",
     "@tabler/icons-react": "^3.41.1",
@@ -41,9 +41,9 @@
     "zod": "^4.1.11"
   },
   "devDependencies": {
-    "@lingui/cli": "^5.1.2",
-    "@lingui/conf": "5.1.2",
-    "@lingui/format-po": "5.1.2",
+    "@lingui/cli": "^5.9.5",
+    "@lingui/conf": "5.9.5",
+    "@lingui/format-po": "5.9.5",
     "@lingui/swc-plugin": "^5.11.0",
     "@opennextjs/cloudflare": "^1.0.0",
     "@swc/core": "^1.15.11",

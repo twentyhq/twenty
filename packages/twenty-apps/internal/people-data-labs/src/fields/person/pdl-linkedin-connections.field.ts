@@ -15,5 +15,6 @@ export default defineField({
   name: 'pdlLinkedinConnections',
   label: 'LinkedIn Connections',
   description: 'LinkedIn connection count returned by People Data Labs.',
+  icon: 'IconAffiliate',
   isNullable: true,
 });

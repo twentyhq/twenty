@@ -48,7 +48,8 @@ export const generateRecordFilterSchema = ({
     }
 
     const isManyToOneRelationField =
-      isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
+      (isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) ||
+        isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION)) &&
       field.settings?.relationType === RelationType.MANY_TO_ONE;
 
     filterShape[isManyToOneRelationField ? `${field.name}Id` : field.name] =

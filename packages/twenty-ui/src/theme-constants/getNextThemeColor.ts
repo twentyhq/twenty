@@ -1,4 +1,4 @@
-import { type ThemeColor } from '@new-ui/theme/constants/MainColorNames';
+import { type ThemeColor } from '@ui/theme/constants/MainColorNames';
 
 export const getNextThemeColor = (
   colorNames: ThemeColor[],

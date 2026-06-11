@@ -4,6 +4,7 @@ import {
   PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
   VALIDATED_PARTNERS_VIEW_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/fields/partner-user-on-partner.field';
 
 // Validated partners — serves both partner intros and the public website list.
 // Columns mirror the Applications view (for consistent reading) plus Partner Tier;
@@ -38,8 +39,10 @@ export default defineView({
     { universalIdentifier: '75d5dad8-259f-4911-9607-06f247410329', fieldMetadataUniversalIdentifier: 'a77d7fa6-c398-47db-af0f-036a5c719f20', position: 5, isVisible: true },
     // LinkedIn
     { universalIdentifier: '72390fd5-b148-4074-b41d-c64bc28097a6', fieldMetadataUniversalIdentifier: '640bbf33-45d7-4174-a862-dbe611ab8d1a', position: 6, isVisible: true },
-    // Type of Team (kept last)
+    // Type of Team
     { universalIdentifier: '300ea008-d311-4375-b8eb-74e8731c52cc', fieldMetadataUniversalIdentifier: 'a451e557-a488-470a-8b35-6f9b8cfb1a10', position: 7, isVisible: true },
+    // partnerUser: the login member this partner signs in as (set inline here, like setting an owner).
+    { universalIdentifier: '9e06eeaa-649d-412a-aacd-0f8bf7ee69c3', fieldMetadataUniversalIdentifier: PARTNER_USER_ON_PARTNER_FIELD_ID, position: 8, isVisible: true },
   ],
   filters: [
     {
