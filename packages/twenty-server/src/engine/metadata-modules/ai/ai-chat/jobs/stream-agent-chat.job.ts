@@ -358,7 +358,6 @@ export class StreamAgentChatJob {
       type: string;
       usage?: {
         inputTokens?: number;
-        inputTokenDetails?: { cacheReadTokens?: number };
       };
       totalUsage?: {
         inputTokens?: number;
@@ -383,13 +382,12 @@ export class StreamAgentChatJob {
   }) {
     if (part.type === 'finish-step') {
       const stepInput = part.usage?.inputTokens ?? 0;
-      const stepCached = part.usage?.inputTokenDetails?.cacheReadTokens ?? 0;
       const stepCacheCreation = extractCacheCreationTokens(
         part.providerMetadata,
       );
 
       onUpdateCacheCreationTokens(totalCacheCreationTokens + stepCacheCreation);
-      onUpdateConversationSize(stepInput + stepCached + stepCacheCreation);
+      onUpdateConversationSize(stepInput);
     }
 
     if (part.type === 'finish') {
@@ -557,7 +555,6 @@ export class StreamAgentChatJob {
       outputTokens: number;
     };
   }): void {
-
     const reason = isAborted
       ? 'user-cancelled'
       : streamError
@@ -578,10 +575,9 @@ export class StreamAgentChatJob {
         `reason=${reason}, threadId=${threadId}, workspaceId=${workspaceId}, ` +
         `isAborted=${isAborted}, outOfCredits=${outOfCredits}, hasText=${hasText}, ` +
         `streamError=${errorDetail}, ` +
-        `inputTokens=${streamUsage.inputTokens},` +  
-        `responseMessage.parts=${JSON.stringify(responseMessage.parts)}`
+        `inputTokens=${streamUsage.inputTokens},` +
+        `responseMessage.parts=${JSON.stringify(responseMessage.parts)}`,
     );
-
 
     if (streamError instanceof Error && isDefined(streamError.stack)) {
       this.logger.warn(
