@@ -18,6 +18,8 @@ const GradientBackdrop = styled.div`
   position: absolute;
 `;
 
+// Deliberately NOT SectionIntro: the centered display hero is its own
+// composition class with the authored 32px stack gap (A/B-verified).
 const IntroStack = styled.div`
   align-items: center;
   display: flex;

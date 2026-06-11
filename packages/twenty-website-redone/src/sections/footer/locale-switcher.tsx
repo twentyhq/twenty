@@ -11,6 +11,7 @@ import { useLocale } from '@/platform/i18n/use-locale';
 import { useUnlocalizedPathname } from '@/platform/i18n/use-unlocalized-pathname';
 import { WEBSITE_LOCALE_LIST } from '@/platform/i18n/website-locale-list';
 import {
+  SHADOW,
   color,
   FONT_WEIGHT,
   fontFamily,
@@ -58,7 +59,7 @@ const Popup = styled.div`
   border: 1px solid ${color('white-20')};
   border-radius: ${radius(2)};
   bottom: calc(100% + ${spacing(2)});
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  box-shadow: ${SHADOW.popupDark};
   color: ${color('white')};
   display: flex;
   flex-direction: column;

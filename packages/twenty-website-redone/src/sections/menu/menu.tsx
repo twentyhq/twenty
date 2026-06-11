@@ -12,6 +12,7 @@ import { TwentyLogo } from '@/icons';
 import { type CommunityStats } from '@/platform/community';
 import { LocalizedLink } from '@/platform/i18n/localized-link';
 import {
+  SHADOW,
   EASING,
   buildSchemeDeclarations,
   color,
@@ -55,7 +56,7 @@ const headerClassName = css`
   }
 
   &[data-elevated] {
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.06);
+    box-shadow: ${SHADOW.header};
   }
 `;
 

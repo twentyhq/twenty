@@ -10,6 +10,7 @@ import { LocalizedLink } from '@/platform/i18n/localized-link';
 import { useUnlocalizedPathname } from '@/platform/i18n/use-unlocalized-pathname';
 import { VerticalDivider } from '@/ui';
 import {
+  SHADOW,
   EASING,
   color,
   FONT_WEIGHT,
@@ -131,7 +132,7 @@ const DropdownPopup = styled(NavigationMenu.Popup)`
   background: ${semanticColor.surface};
   border: 1px solid ${semanticColor.line};
   border-radius: ${radius(3)};
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+  box-shadow: ${SHADOW.popup};
   opacity: 1;
   overflow: hidden;
   transition:

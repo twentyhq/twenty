@@ -36,6 +36,18 @@ const azeretMono = Azeret_Mono({
 });
 
 const globalStyles = css`
+  /* One root rule instead of per-component guards: motion collapses to
+     instant for users who prefer reduced motion. State still applies;
+     only the travel disappears. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
   :global(*),
   :global(*::before),
   :global(*::after) {

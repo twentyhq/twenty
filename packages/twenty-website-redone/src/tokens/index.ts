@@ -20,6 +20,7 @@ export { radius } from './radius';
 export { RHYTHM, type RhythmClass, type RhythmStep } from './rhythm';
 export { type Scheme, SCHEMES } from './scheme';
 export { semanticColor } from './semantic-color';
+export { SHADOW } from './shadow';
 export { spacing } from './spacing';
 export { typeRampDeclarations } from './type-ramp-declarations';
 export { TYPE_SCALE, type TypeRamp, type TypeStep } from './type-scale';

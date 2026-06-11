@@ -36,6 +36,17 @@ const REEXPORT_STATEMENT_PATTERN =
 
 const failures = [];
 
+// Color and easing literals live only in src/tokens (comments stripped
+// before matching). Authored one-offs are allowlisted with their reason.
+const LITERAL_ALLOWLIST = new Set([
+  'src/sections/home-hero/home-hero.tsx', // ported radial gradient stops
+]);
+const LITERAL_PATTERNS = [
+  [/#[0-9a-fA-F]{3,8}\b/, 'hex color literal'],
+  [/rgba?\(/, 'rgb/rgba literal'],
+  [/cubic-bezier\(/, 'cubic-bezier literal'],
+];
+
 function walk(directory) {
   for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
     const fullPath = path.join(directory, entry.name);
@@ -56,6 +67,25 @@ function walk(directory) {
 
     const content = fs.readFileSync(fullPath, 'utf8');
     const relativePath = path.relative(sourceRoot, fullPath);
+
+    if (
+      !relativePath.startsWith('tokens' + path.sep) &&
+      !relativePath.includes('.test.') &&
+      !LITERAL_ALLOWLIST.has(`src/${relativePath}`)
+    ) {
+      const withoutComments = content
+        .split('\n')
+        .map((line) => line.replace(/\/\/.*$/, ''))
+        .join('\n')
+        .replace(/\/\*[\s\S]*?\*\//g, '');
+      for (const [pattern, label] of LITERAL_PATTERNS) {
+        if (pattern.test(withoutComments)) {
+          failures.push(
+            `src/${relativePath}: ${label} outside src/tokens — use a token.`,
+          );
+        }
+      }
+    }
 
     // SectionShell is the only owner of <section>: it is where vertical
     // rhythm and surface schemes live, so no other file may create one.
