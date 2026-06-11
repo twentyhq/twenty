@@ -170,6 +170,21 @@ msgstr ""
 msgid "Enjoy unlimited customization using the AI coding tools you already love. Adapt your CRM to fit the way your business grows and wins."
 msgstr ""
 
+#. js-lingui-id: zoNk7e
+#: src/sections/feature-cards/feature-cards.data.ts
+msgid "Everything updates in real time, with AI chat always ready to help you move faster."
+msgstr ""
+
+#. js-lingui-id: akLvep
+#: src/sections/feature-cards/feature-cards.data.ts
+msgid "Familiar, modern interface"
+msgstr "Une interface familière et moderne"
+
+#. js-lingui-id: abO45l
+#: src/sections/feature-cards/feature-cards.data.ts
+msgid "Fast path to action"
+msgstr "Un chemin rapide vers l'action"
+
 #. js-lingui-id: MD032e
 #: src/sections/menu/menu.data.ts
 msgid "Find a Twenty partner"
@@ -229,11 +244,21 @@ msgstr "Mentions légales"
 msgid "LinkedIn"
 msgstr ""
 
+#. js-lingui-id: AHVzME
+#: src/sections/feature-cards/feature-cards.data.ts
+msgid "Live data and AI built"
+msgstr "Données en direct et IA intégrée"
+
 #. js-lingui-id: sQia9P
 #: src/sections/menu/menu.tsx
 #: src/sections/menu/menu-drawer.tsx
 msgid "Log in"
 msgstr "Connexion"
+
+#. js-lingui-id: BNd15Z
+#: src/sections/feature-cards/feature-cards.tsx
+msgid "Make your GTM team happy with *a CRM they'll love*"
+msgstr "Rendez votre équipe GTM heureuse avec *un CRM qu'elle va adorer*"
 
 #. js-lingui-id: bJNKJ1
 #: src/sections/menu/menu.data.ts
@@ -317,6 +342,16 @@ msgstr ""
 #: src/sections/footer/footer.data.ts
 msgid "Sitemap"
 msgstr "Plan du site"
+
+#. js-lingui-id: t6ComU
+#: src/sections/feature-cards/feature-cards.tsx
+msgid "Skip the clunky UX that always comes with custom."
+msgstr "Évitez l'UX laborieuse qui accompagne toujours le sur-mesure."
+
+#. js-lingui-id: bUmSwL
+#: src/sections/feature-cards/feature-cards.data.ts
+msgid "Smart patterns, shortcuts, and layouts make everyday tasks faster and easier to execute."
+msgstr ""
 
 #. js-lingui-id: ThcPyu
 #: src/sections/stepper/stepper.data.ts
@@ -409,6 +444,11 @@ msgstr ""
 #: src/sections/home-hero/home-hero.tsx
 msgid "Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves."
 msgstr "Twenty donne aux équipes techniques les briques pour construire un CRM sur mesure, qui répond aux besoins métier complexes et évolue avec l'entreprise."
+
+#. js-lingui-id: AxT+g4
+#: src/sections/feature-cards/feature-cards.data.ts
+msgid "Twenty makes it simple. It's clean, intuitive, and built to feel like Notion."
+msgstr ""
 
 #. js-lingui-id: Roaswv
 #: src/sections/menu/menu.data.ts
