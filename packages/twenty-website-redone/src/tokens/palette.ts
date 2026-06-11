@@ -4,6 +4,7 @@ export type PaletteToken =
   | 'black-hover'
   | 'black-sheen'
   | 'white-hover'
+  | 'neutral-sheen'
   | 'neutral'
   | 'blue'
   | 'blue-muted'
@@ -24,6 +25,9 @@ export const PALETTE: Record<PaletteToken, string> = {
   // mirror of black-hover: white shifted 10% toward black.
   'white-hover': '#e8e8e8',
   neutral: '#f4f4f4',
+  // black at 5% composited over the neutral surface (the white-surface
+  // equivalent is exactly #f4f4f4 = neutral itself).
+  'neutral-sheen': '#e9e9e9',
   blue: '#4a38f5',
   'blue-muted': '#8174f8',
   pink: '#ed87fc',

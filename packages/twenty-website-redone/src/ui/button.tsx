@@ -74,9 +74,15 @@ const buttonClassName = css`
     --button-label-hover: ${color('white')};
   }
 
+  /* All outlined hover washes are opaque 5% composites per surface —
+     translucent fills double on the shape's segment overlaps as seams. */
   &[data-variant='outlined'] {
     --button-stroke: ${color('black')};
-    --button-hover-fill: ${color('black-5')};
+    --button-hover-fill: ${color('neutral')};
+  }
+
+  [data-scheme='muted'] &[data-variant='outlined'] {
+    --button-hover-fill: ${color('neutral-sheen')};
   }
 
   /* The stroke stays visible through the hover fill: the base shape is
