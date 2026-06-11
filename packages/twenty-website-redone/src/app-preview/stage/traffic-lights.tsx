@@ -3,64 +3,19 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import { type MouseEvent as ReactMouseEvent } from 'react';
+import { useRef, type MouseEvent as ReactMouseEvent } from 'react';
 
 import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
 
-// The macOS window controls: colored dots whose glyphs reveal on hover.
-// The zoom dot accepts a triple-click handler (the terminal's functional
-// jump-to-end); the escape physics egg arrives with the editor commit.
-const CloseGlyph = () => (
-  <svg aria-hidden width="6" height="6" viewBox="0 0 6 6">
-    <path
-      d="M1 1 L5 5 M5 1 L1 5"
-      stroke={APP_PREVIEW_STAGE.trafficLight.glyph}
-      strokeWidth="1"
-      strokeLinecap="round"
-    />
-  </svg>
-);
+import { FlyingTrafficLights } from './flying-traffic-lights';
+import { TRAFFIC_LIGHT_DOT_DEFINITIONS } from './traffic-light-definitions';
+import { useTrafficLightsEscape } from './use-traffic-lights-escape';
 
-const MinimizeGlyph = () => (
-  <svg aria-hidden width="6" height="6" viewBox="0 0 6 6">
-    <path
-      d="M1 3 L5 3"
-      stroke={APP_PREVIEW_STAGE.trafficLight.glyph}
-      strokeWidth="1"
-      strokeLinecap="round"
-    />
-  </svg>
-);
-
-const ZoomGlyph = () => (
-  <svg aria-hidden width="6" height="6" viewBox="0 0 6 6">
-    <path
-      d="M1.5 1.5 L1.5 4.5 L4.5 4.5 Z M4.5 1.5 L1.5 4.5"
-      fill={APP_PREVIEW_STAGE.trafficLight.glyph}
-    />
-  </svg>
-);
-
-const DOT_DEFINITIONS = [
-  {
-    background: APP_PREVIEW_STAGE.trafficLight.close,
-    backgroundActive: APP_PREVIEW_STAGE.trafficLight.closeActive,
-    Glyph: CloseGlyph,
-    label: 'Close',
-  },
-  {
-    background: APP_PREVIEW_STAGE.trafficLight.minimize,
-    backgroundActive: APP_PREVIEW_STAGE.trafficLight.minimizeActive,
-    Glyph: MinimizeGlyph,
-    label: 'Minimize',
-  },
-  {
-    background: APP_PREVIEW_STAGE.trafficLight.zoom,
-    backgroundActive: APP_PREVIEW_STAGE.trafficLight.zoomActive,
-    Glyph: ZoomGlyph,
-    label: 'Zoom',
-  },
-];
+// The macOS window controls. Two deliberate behaviors when interactive:
+// zoom triple-click is the functional jump-to-end, and the close dot's
+// THIRD click launches the escape egg — you tried to close the demo
+// twice already; the window objects.
+const CLOSE_ESCAPE_CLICK_THRESHOLD = 3;
 
 const Container = styled.div`
   align-items: center;
@@ -104,15 +59,35 @@ const Dot = styled.span<{ $background: string; $backgroundActive: string }>`
       opacity: 1;
     }
   }
+
+  &[data-escaping='true'] {
+    pointer-events: none;
+    visibility: hidden;
+  }
 `;
 
 export function TrafficLights({
   onZoomTripleClick,
+  escapeEnabled = false,
 }: {
   onZoomTripleClick?: () => void;
+  escapeEnabled?: boolean;
 } = {}) {
   const { i18n } = useLingui();
-  const isInteractive = onZoomTripleClick !== undefined;
+  const closeClickCountRef = useRef(0);
+  const {
+    escape,
+    handleCatchDot,
+    handlePopAnimationEnd,
+    isEscaping,
+    portalReady,
+    returnedDots,
+    returningDots,
+    setFlyingRef,
+    setOriginalRef,
+  } = useTrafficLightsEscape();
+  const isInteractive = onZoomTripleClick !== undefined || escapeEnabled;
+
   const handleZoomClick =
     onZoomTripleClick === undefined
       ? undefined
@@ -122,27 +97,74 @@ export function TrafficLights({
           }
         };
 
+  const handleCloseClick = !escapeEnabled
+    ? undefined
+    : () => {
+        closeClickCountRef.current += 1;
+        if (closeClickCountRef.current >= CLOSE_ESCAPE_CLICK_THRESHOLD) {
+          closeClickCountRef.current = 0;
+          escape();
+        }
+      };
+
+  const dotAriaLabel = (label: string): string | undefined => {
+    if (!isInteractive) {
+      return undefined;
+    }
+    if (label === 'Zoom') {
+      return i18n._(msg`Zoom`);
+    }
+    if (label === 'Close') {
+      return i18n._(msg`Close`);
+    }
+    return undefined;
+  };
+
   return (
     <Container
       aria-hidden={isInteractive ? undefined : true}
       aria-label={isInteractive ? i18n._(msg`Window controls`) : undefined}
     >
-      {DOT_DEFINITIONS.map(({ background, backgroundActive, Glyph, label }) => {
-        const isZoom = label === 'Zoom';
+      {TRAFFIC_LIGHT_DOT_DEFINITIONS.map(
+        ({ background, backgroundActive, Glyph, label }, index) => {
+          const clickHandlers: Record<
+            string,
+            ((event: ReactMouseEvent<HTMLElement>) => void) | undefined
+          > = {
+            Zoom: handleZoomClick,
+            Close: handleCloseClick,
+          };
+          const onClick = clickHandlers[label];
 
-        return (
-          <Dot
-            $background={background}
-            $backgroundActive={backgroundActive}
-            aria-label={isZoom && isInteractive ? i18n._(msg`Zoom`) : undefined}
-            as={isZoom && handleZoomClick !== undefined ? 'button' : 'span'}
-            key={label}
-            onClick={isZoom ? handleZoomClick : undefined}
-          >
-            <Glyph />
-          </Dot>
-        );
-      })}
+          return (
+            <Dot
+              $background={background}
+              $backgroundActive={backgroundActive}
+              aria-label={dotAriaLabel(label)}
+              as={onClick === undefined ? 'span' : 'button'}
+              data-escaping={
+                isEscaping && !returnedDots[index] ? 'true' : 'false'
+              }
+              key={label}
+              onClick={onClick}
+              ref={escapeEnabled ? setOriginalRef(index) : undefined}
+            >
+              <Glyph />
+            </Dot>
+          );
+        },
+      )}
+      {escapeEnabled ? (
+        <FlyingTrafficLights
+          onCatchDot={handleCatchDot}
+          onPopAnimationEnd={handlePopAnimationEnd}
+          portalReady={portalReady}
+          returningDots={returningDots}
+          returnedDots={returnedDots}
+          setFlyingRef={setFlyingRef}
+          visible={isEscaping}
+        />
+      ) : null}
     </Container>
   );
 }

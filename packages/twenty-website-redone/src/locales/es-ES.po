@@ -129,6 +129,11 @@ msgstr ""
 msgid "Choose a language"
 msgstr ""
 
+#. js-lingui-id: yz7wBu
+#: src/app-preview/stage/traffic-lights.tsx
+msgid "Close"
+msgstr ""
+
 #. js-lingui-id: vcpc5o
 #: src/sections/menu/menu.tsx
 msgid "Close menu"
@@ -295,6 +300,11 @@ msgstr ""
 #. js-lingui-id: c3XJ18
 #: src/sections/footer/footer.data.ts
 msgid "Help"
+msgstr ""
+
+#. js-lingui-id: EhWatX
+#: src/app-preview/terminal/diff/diff-pill.tsx
+msgid "Hide changes"
 msgstr ""
 
 #. js-lingui-id: i0qMbr
@@ -489,6 +499,11 @@ msgstr ""
 msgid "Resources"
 msgstr ""
 
+#. js-lingui-id: H0dEn+
+#: src/app-preview/stage/flying-traffic-lights.tsx
+msgid "Return traffic light"
+msgstr ""
+
 #. js-lingui-id: 0kgOPB
 #. placeholder {0}: LATEST_RELEASE.release
 #: src/sections/menu/menu.data.ts
@@ -503,6 +518,11 @@ msgstr ""
 #. js-lingui-id: 3VFzsh
 #: src/sections/helped/helped.data.ts
 msgid "Ship a product on Twenty"
+msgstr ""
+
+#. js-lingui-id: Ta0ts5
+#: src/app-preview/terminal/diff/diff-pill.tsx
+msgid "Show changes"
 msgstr ""
 
 #. js-lingui-id: mA6cL1
@@ -560,6 +580,11 @@ msgstr ""
 #. js-lingui-id: Ye3KKA
 #: src/sections/menu/menu.data.ts
 msgid "Team up with a Twenty expert"
+msgstr ""
+
+#. js-lingui-id: Hevu8X
+#: src/app-preview/terminal/terminal-toggle.tsx
+msgid "Terminal mode"
 msgstr ""
 
 #. js-lingui-id: mvP/25

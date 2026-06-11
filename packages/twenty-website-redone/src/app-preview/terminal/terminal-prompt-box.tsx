@@ -1,9 +1,12 @@
+'use client';
+
 import { styled } from '@linaria/react';
 
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
 import { TerminalPromptFooter } from './terminal-prompt-footer';
 import { TerminalPromptMessage } from './terminal-prompt-message';
+import { useTerminalPromptEasterEgg } from './use-terminal-prompt-easter-egg';
 
 const terminal = APP_PREVIEW_TONES.terminal;
 
@@ -41,6 +44,29 @@ const PromptBox = styled.div`
     background: ${terminal.surface.promptBoxBackgroundHover};
     border-color: ${terminal.surface.promptBoxBorderFocus};
   }
+
+  &[data-wiggle='true'] {
+    animation: promptWiggle 0.5s ease;
+  }
+
+  @keyframes promptWiggle {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    20% {
+      transform: translateX(-3px) rotate(-0.4deg);
+    }
+    40% {
+      transform: translateX(3px) rotate(0.4deg);
+    }
+    60% {
+      transform: translateX(-2px) rotate(-0.2deg);
+    }
+    80% {
+      transform: translateX(2px) rotate(0.2deg);
+    }
+  }
 `;
 
 export function TerminalPromptBox({
@@ -58,12 +84,29 @@ export function TerminalPromptBox({
   isChatFinished?: boolean;
   onReset?: () => void;
 }) {
+  const {
+    easterEggMessage,
+    handleAnimationEnd,
+    handleClick: handleEasterEggClick,
+    isWiggling,
+  } = useTerminalPromptEasterEgg({
+    enabled: isChatFinished === true,
+  });
+  const showEasterEgg = easterEggMessage !== null;
+  const displayText = easterEggMessage ?? promptText;
+
   return (
     <PromptArea>
-      <PromptBox>
+      <PromptBox
+        data-wiggle={isWiggling ? 'true' : 'false'}
+        onAnimationEnd={handleAnimationEnd}
+      >
         <TerminalPromptMessage
+          isClickable={isChatFinished}
+          isEasterEggVisible={showEasterEgg}
           isPlaceholder={promptIsPlaceholder}
-          text={promptText}
+          onClick={handleEasterEggClick}
+          text={displayText}
         />
         <TerminalPromptFooter
           isChatFinished={isChatFinished}

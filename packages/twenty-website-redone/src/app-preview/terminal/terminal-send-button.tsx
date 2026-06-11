@@ -7,7 +7,15 @@ import { IconArrowBackUp, IconArrowUp } from '@tabler/icons-react';
 
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
+import { TerminalSendButtonFingerHint } from './terminal-send-button-finger-hint';
+import { useTerminalSendButtonHint } from './use-terminal-send-button-hint';
+
 const terminal = APP_PREVIEW_TONES.terminal;
+
+const SendButtonWrapper = styled.span`
+  display: inline-flex;
+  position: relative;
+`;
 
 const SendButtonRoot = styled.button<{ $isReset: boolean }>`
   align-items: center;
@@ -55,22 +63,39 @@ export function TerminalSendButton({
 }) {
   const { i18n } = useLingui();
   const isReset = mode === 'reset';
+  const { buttonRef, dismissHint, hintPosition, hintReady, showHint } =
+    useTerminalSendButtonHint({
+      disabled,
+      isReset,
+    });
 
   return (
-    <SendButtonRoot
-      $isReset={isReset}
-      aria-label={
-        isReset ? i18n._(msg`Reset conversation`) : i18n._(msg`Send message`)
-      }
-      disabled={disabled}
-      onClick={onClick}
-      type="button"
-    >
-      {isReset ? (
-        <IconArrowBackUp size={16} stroke={2.2} />
-      ) : (
-        <IconArrowUp size={16} stroke={2.2} />
-      )}
-    </SendButtonRoot>
+    <SendButtonWrapper>
+      <SendButtonRoot
+        $isReset={isReset}
+        aria-label={
+          isReset ? i18n._(msg`Reset conversation`) : i18n._(msg`Send message`)
+        }
+        disabled={disabled}
+        onClick={() => {
+          dismissHint();
+          onClick?.();
+        }}
+        onMouseEnter={dismissHint}
+        ref={buttonRef}
+        type="button"
+      >
+        {isReset ? (
+          <IconArrowBackUp size={16} stroke={2.2} />
+        ) : (
+          <IconArrowUp size={16} stroke={2.2} />
+        )}
+      </SendButtonRoot>
+      <TerminalSendButtonFingerHint
+        position={hintPosition}
+        ready={hintReady}
+        visible={showHint}
+      />
+    </SendButtonWrapper>
   );
 }

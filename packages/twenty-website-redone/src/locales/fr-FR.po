@@ -129,6 +129,11 @@ msgstr "Changer de langue"
 msgid "Choose a language"
 msgstr "Choisir une langue"
 
+#. js-lingui-id: yz7wBu
+#: src/app-preview/stage/traffic-lights.tsx
+msgid "Close"
+msgstr ""
+
 #. js-lingui-id: vcpc5o
 #: src/sections/menu/menu.tsx
 msgid "Close menu"
@@ -296,6 +301,11 @@ msgstr "Générateur de demi-teintes"
 #: src/sections/footer/footer.data.ts
 msgid "Help"
 msgstr "Aide"
+
+#. js-lingui-id: EhWatX
+#: src/app-preview/terminal/diff/diff-pill.tsx
+msgid "Hide changes"
+msgstr ""
 
 #. js-lingui-id: i0qMbr
 #: src/sections/menu/menu.tsx
@@ -489,6 +499,11 @@ msgstr ""
 msgid "Resources"
 msgstr "Ressources"
 
+#. js-lingui-id: H0dEn+
+#: src/app-preview/stage/flying-traffic-lights.tsx
+msgid "Return traffic light"
+msgstr ""
+
 #. js-lingui-id: 0kgOPB
 #. placeholder {0}: LATEST_RELEASE.release
 #: src/sections/menu/menu.data.ts
@@ -504,6 +519,11 @@ msgstr ""
 #: src/sections/helped/helped.data.ts
 msgid "Ship a product on Twenty"
 msgstr "Lancez un produit sur Twenty"
+
+#. js-lingui-id: Ta0ts5
+#: src/app-preview/terminal/diff/diff-pill.tsx
+msgid "Show changes"
+msgstr ""
 
 #. js-lingui-id: mA6cL1
 #: src/sections/faq/faq.data.ts
@@ -561,6 +581,11 @@ msgstr "Parlez-nous"
 #: src/sections/menu/menu.data.ts
 msgid "Team up with a Twenty expert"
 msgstr "Faites équipe avec un expert Twenty"
+
+#. js-lingui-id: Hevu8X
+#: src/app-preview/terminal/terminal-toggle.tsx
+msgid "Terminal mode"
+msgstr ""
 
 #. js-lingui-id: mvP/25
 #: src/sections/footer/footer.data.ts

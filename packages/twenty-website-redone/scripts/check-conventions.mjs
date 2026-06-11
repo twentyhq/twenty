@@ -234,7 +234,11 @@ function walk(directory) {
 
     if (isNextContractFile) continue;
 
-    if (DEFAULT_EXPORT_PATTERN.test(content)) {
+    // The module-shape rules are line-anchored and must not read inside
+    // template literals (mock source-code fiction contains export lines).
+    const withoutTemplateLiterals = content.replace(/`[\s\S]*?`/g, '``');
+
+    if (DEFAULT_EXPORT_PATTERN.test(withoutTemplateLiterals)) {
       failures.push(
         `src/${relativePath}: default export outside a Next.js route file (use named exports).`,
       );
@@ -252,7 +256,9 @@ function walk(directory) {
       continue;
     }
 
-    const valueExportCount = (content.match(VALUE_EXPORT_PATTERN) ?? []).length;
+    const valueExportCount = (
+      withoutTemplateLiterals.match(VALUE_EXPORT_PATTERN) ?? []
+    ).length;
     if (valueExportCount > 1) {
       failures.push(
         `src/${relativePath}: ${valueExportCount} value exports (limit is one per file).`,

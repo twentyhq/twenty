@@ -1,13 +1,16 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
+
+import { scheduleIdleTask } from '@/platform/motion';
 
 import { mediaUp } from '@/tokens';
 import { APP_PREVIEW_MOTION } from '@/tokens/app-preview/app-preview-motion';
 import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
+import { type TerminalView } from './conversation-core';
 import { TerminalContent } from './terminal-content';
 import { TerminalResizeHandles } from './terminal-resize-handles';
 import { TerminalTopBar } from './terminal-top-bar';
@@ -19,8 +22,12 @@ const Shell = styled.div<{
   $isResizing: boolean;
   $isReady: boolean;
   $animationsEnabled: boolean;
+  $dark: boolean;
 }>`
-  background: ${APP_PREVIEW_TONES.terminal.surface.window};
+  background: ${({ $dark }) =>
+    $dark
+      ? APP_PREVIEW_TONES.editor.surface.body
+      : APP_PREVIEW_TONES.terminal.surface.window};
   border: 1px solid ${APP_PREVIEW_TONES.terminal.surface.windowBorder};
   border-radius: 20px;
   box-shadow: ${({ $isDragging, $isResizing }) =>
@@ -83,20 +90,32 @@ export function Terminal({
   onJumpToConversationEnd?: () => void;
 }) {
   const {
+    changeView,
     finishChat,
     hasStartedConversation,
     instantComplete,
     isChatFinished,
+    isDiffOpen,
     jumpToConversationEnd,
     messages,
     resetConversation,
     sendPrompt,
+    toggleDiff,
     view,
   } = useTerminalConversationWorkflow({
     onChatFinished,
     onChatReset,
     onJumpToConversationEnd,
   });
+
+  // The editor chunk loads in idle time so the first toggle is instant.
+  useEffect(
+    () =>
+      scheduleIdleTask(() => {
+        void import('./editor/terminal-editor');
+      }),
+    [],
+  );
   const {
     activate,
     animationsEnabled,
@@ -123,6 +142,17 @@ export function Terminal({
     }
   }, [resizeToTerminalTarget, sendPrompt, view]);
 
+  const handleViewChange = useCallback(
+    (next: TerminalView) => {
+      changeView(next);
+      resizeToTerminalTarget({
+        chatStarted: hasStartedConversation,
+        view: next,
+      });
+    },
+    [changeView, hasStartedConversation, resizeToTerminalTarget],
+  );
+
   const handleResetConversation = useCallback(() => {
     resetConversation();
     resizeToTerminalTarget({
@@ -142,6 +172,7 @@ export function Terminal({
   return (
     <Shell
       $animationsEnabled={animationsEnabled}
+      $dark={view === 'editor'}
       $isDragging={isDragging}
       $isResizing={isResizing}
       $isReady={isReady}
@@ -152,19 +183,26 @@ export function Terminal({
     >
       <TerminalResizeHandles onStartResize={startResize} />
       <TerminalTopBar
+        diffOpen={isDiffOpen}
+        diffVisible={isChatFinished}
         isDragging={isDragging}
         onDragStart={handleDragStart}
+        onToggleDiff={toggleDiff}
+        onViewChange={handleViewChange}
         onZoomTripleClick={handleJumpToConversationEnd}
+        view={view}
       />
       <TerminalContent
         hasStartedConversation={hasStartedConversation}
         instantComplete={instantComplete}
         isChatFinished={isChatFinished}
+        isDiffOpen={isDiffOpen}
         messages={messages}
         onChatFinished={finishChat}
         onObjectCreated={onObjectCreated}
         onResetConversation={handleResetConversation}
         onSendPrompt={handleSendPrompt}
+        view={view}
       />
     </Shell>
   );

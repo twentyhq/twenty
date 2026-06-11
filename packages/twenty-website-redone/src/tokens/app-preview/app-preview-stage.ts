@@ -39,6 +39,20 @@ export const APP_PREVIEW_STAGE = {
   // ~1350px viewport that overhang has no room, so the window only mounts
   // visually from there up (scene threshold, not a layout breakpoint).
   terminalRoomQuery: '@media (min-width: 1350px)',
+  // The Cursor brand tile's authored artwork inks.
+  cursorLogoInk: {
+    tile: '#0b0b0b',
+    faceTop: '#5e5e5e',
+    faceLeft: '#3d3d3d',
+    faceRight: '#2a2a2a',
+    wingTop: '#ffffff',
+    wingFront: '#dcdcdc',
+  },
+  // The pointing-hand hint's authored artwork inks.
+  fingerHintInk: {
+    fill: 'white',
+    outline: '#202125',
+  },
   shadow: {
     resting: '0 10px 64px 0 rgba(0, 0, 0, 0.2)',
     elevated:

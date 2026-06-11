@@ -70,6 +70,8 @@ async function measure(browser, url) {
     const promptText = [...(terminal?.querySelectorAll('p') ?? [])].find((el) =>
       el.textContent?.startsWith('Scaffold a launch-ops CRM'),
     );
+    const toggle = terminal?.querySelector('[role="tablist"]');
+    const activeSegment = toggle?.querySelector('[aria-selected="true"]');
     const frameStyle = styleOf(frame);
     const frameRect = frame?.getBoundingClientRect();
     return {
@@ -109,6 +111,11 @@ async function measure(browser, url) {
       promptFont: styleOf(promptText)?.fontSize ?? null,
       promptColor: styleOf(promptText)?.color ?? null,
       promptLineHeight: styleOf(promptText)?.lineHeight ?? null,
+      toggleBackground: styleOf(toggle)?.backgroundColor ?? null,
+      toggleRadius: styleOf(toggle)?.borderRadius ?? null,
+      activeSegmentBackground: styleOf(activeSegment)?.backgroundColor ?? null,
+      activeSegmentShadow: styleOf(activeSegment)?.boxShadow ?? null,
+      activeSegmentFont: styleOf(activeSegment)?.fontSize ?? null,
     };
   });
   await page.close();

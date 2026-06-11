@@ -3,8 +3,9 @@ import { styled } from '@linaria/react';
 import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
-const PromptTextRow = styled.div`
+const PromptTextRow = styled.div<{ $clickable?: boolean }>`
   align-items: flex-start;
+  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
   display: flex;
   flex: 1 1 auto;
   min-width: 0;
@@ -45,15 +46,26 @@ const PromptText = styled.p<{ $isPlaceholder?: boolean }>`
 `;
 
 export function TerminalPromptMessage({
+  isClickable,
+  isEasterEggVisible = false,
   isPlaceholder,
+  onClick,
   text,
 }: {
+  isClickable?: boolean;
+  isEasterEggVisible?: boolean;
   isPlaceholder?: boolean;
+  onClick?: () => void;
   text: string;
 }) {
   return (
-    <PromptTextRow>
-      <PromptText $isPlaceholder={isPlaceholder}>{text}</PromptText>
+    <PromptTextRow $clickable={isClickable} onClick={onClick}>
+      <PromptText
+        key={isEasterEggVisible ? `egg-${text}` : 'base'}
+        $isPlaceholder={isPlaceholder}
+      >
+        {text}
+      </PromptText>
     </PromptTextRow>
   );
 }

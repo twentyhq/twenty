@@ -281,6 +281,68 @@ assert(
   afterReset.rocketsGone && Math.round(resetBox?.height ?? 0) === 220,
   `reset unwinds the sidebar and the window (${Math.round(resetBox?.height ?? 0)} == 220)`,
 );
+
+// The terminal's second face and the eggs: diff slide, editor toggle,
+// prompt egg cycle, close-dot escape.
+await scenarioPage
+  .locator('[data-terminal-shell] button[aria-label="Zoom"]')
+  .click({ clickCount: 3 });
+await scenarioPage.waitForTimeout(800);
+await scenarioPage.locator('button[aria-label="Show changes"]').click();
+await scenarioPage.waitForTimeout(600);
+const diffHeaderVisible = await scenarioPage
+  .getByText('…my-twenty-app/src/constants/schema-identifiers.ts')
+  .isVisible();
+assert(diffHeaderVisible, 'the diff pill slides the changeset panel open');
+await scenarioPage.getByRole('tab', { name: 'Editor' }).click();
+await scenarioPage.waitForTimeout(1200);
+const editorBox = await scenarioPage
+  .locator('[data-terminal-shell]')
+  .boundingBox();
+const editorState = await scenarioPage.evaluate(() => {
+  const shell = document.querySelector('[data-terminal-shell]');
+  return {
+    background: getComputedStyle(shell).backgroundColor,
+    hasGeneratedFile: [...shell.querySelectorAll('span')].some(
+      (el) => el.textContent === 'launch.object.ts',
+    ),
+  };
+});
+assert(
+  editorBox !== null &&
+    Math.round(editorBox.width) === 720 &&
+    Math.round(editorBox.height) === 480,
+  `editor toggle spring-grows to the editor size (${Math.round(editorBox?.width ?? 0)}x${Math.round(editorBox?.height ?? 0)})`,
+);
+assert(
+  editorState.background === 'rgb(17, 18, 22)' && editorState.hasGeneratedFile,
+  'the editor face is dark and lists the generated files',
+);
+await scenarioPage.getByRole('tab', { name: 'AI Chat' }).click();
+await scenarioPage.waitForTimeout(1000);
+await scenarioPage.getByText('Ask anything…').click();
+await scenarioPage.waitForTimeout(400);
+const eggVisible = await scenarioPage
+  .getByText('Ask me to do something your CRM should have done years ago')
+  .isVisible();
+assert(eggVisible, 'poking the finished prompt cycles the egg copy');
+const closeDot = scenarioPage.locator(
+  '[data-terminal-shell] button[aria-label="Close"]',
+);
+await closeDot.click();
+await closeDot.click();
+const flyingBefore = await scenarioPage
+  .locator('button[aria-label="Return traffic light"]')
+  .count();
+await closeDot.click();
+await scenarioPage.waitForTimeout(700);
+const flyingAfter = await scenarioPage
+  .locator('button[aria-label="Return traffic light"]')
+  .count();
+assert(
+  flyingBefore === 0 && flyingAfter === 3,
+  `the third close click launches the escape (${flyingBefore} -> ${flyingAfter} flying dots)`,
+);
 await scenarioPage.close();
 
 await browser.close();
