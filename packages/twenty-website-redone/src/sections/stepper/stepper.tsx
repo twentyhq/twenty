@@ -46,10 +46,15 @@ const VisualColumn = styled.div`
 `;
 
 const VisualMeasure = styled.div`
+  /* Stacked frame holds near its authored proportions instead of filling
+     tablet widths (868x911 at 900px before the cap). */
+  margin-inline: auto;
+  max-width: 480px;
   min-width: 0;
   width: 100%;
 
   ${mediaUp('md')} {
+    margin-inline: 0;
     max-width: 672px;
   }
 `;

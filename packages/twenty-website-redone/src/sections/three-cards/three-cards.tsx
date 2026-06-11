@@ -49,11 +49,17 @@ const CardsGrid = styled.div`
   display: grid;
   gap: ${spacing(4)};
   grid-template-columns: 1fr;
+  /* Stacked cards hold near their authored width (443px shape) instead of
+     stretching across tablets — same cap pattern as the problem stage. */
+  margin-inline: auto;
+  max-width: 480px;
+  width: 100%;
 
   ${mediaUp('md')} {
     grid-auto-columns: 1fr;
     grid-auto-flow: column;
     grid-template-columns: none;
+    max-width: none;
   }
 `;
 
