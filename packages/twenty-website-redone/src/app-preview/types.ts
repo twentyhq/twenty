@@ -124,16 +124,88 @@ export type KanbanPageDefinition = {
   type: 'kanban';
 };
 
-// Record/dashboard/workflow land with commits 4b-5; the union member
-// keeps sidebar data forward-compatible until then.
+export type WorkflowNodeDef = {
+  id: string;
+  x: number;
+  y: number;
+  width: number;
+  label: 'Trigger' | 'Action';
+  title: string;
+  iconName: string;
+  iconColor?: 'trigger' | 'action' | 'fallback';
+};
+export type WorkflowEdgeDef = {
+  from: string;
+  to: string;
+  type:
+    | 'branch'
+    | 'curve'
+    | 'loopBack'
+    | 'loopRight'
+    | 'smoothStep'
+    | 'vertical';
+};
+export type WorkflowBranchLabelDef = {
+  text: string;
+  x: number;
+  y: number;
+};
+export type WorkflowPageDefinition = {
+  branchLabels?: WorkflowBranchLabelDef[];
+  edges?: WorkflowEdgeDef[];
+  generating?: boolean;
+  header: PageHeader;
+  nodes?: WorkflowNodeDef[];
+  plusNode?: { x: number; y: number };
+  type: 'workflow';
+};
+
+export type DashboardTrend = { direction: 'up' | 'down'; value: string };
+export type DashboardKpi = {
+  id: string;
+  title: string;
+  value: string;
+  trend?: DashboardTrend;
+};
+export type DashboardBarChart = {
+  title: string;
+  bars: { label: string; value: number }[];
+};
+export type DashboardLineChart = {
+  title: string;
+  labels: string[];
+  values: number[];
+};
+export type DashboardDonutChart = {
+  title: string;
+  centerLabel: string;
+  centerValue: string;
+  slices: { color: string; label: string; value: number }[];
+};
+export type DashboardData = {
+  kpis: DashboardKpi[];
+  barChart?: DashboardBarChart;
+  donutChart?: DashboardDonutChart;
+  lineChart?: DashboardLineChart;
+  generating?: boolean;
+};
+export type DashboardPageDefinition = {
+  dashboard: DashboardData;
+  header: PageHeader;
+  type: 'dashboard';
+};
+
+// The record surface belongs to the product-page family (out of wave).
 export type PendingPageDefinition = {
-  type: 'record' | 'dashboard' | 'workflow';
+  type: 'record';
   header: PageHeader;
 };
 
 export type PageDefinition =
   | TablePageDefinition
   | KanbanPageDefinition
+  | WorkflowPageDefinition
+  | DashboardPageDefinition
   | PendingPageDefinition;
 export type PageType = PageDefinition['type'];
 

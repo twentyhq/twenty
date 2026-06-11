@@ -3,20 +3,14 @@
 // pending page stubs; their pages and the navigation hook land with
 // commits 4-5.
 import { COMPANIES_TABLE_PAGE } from './companies-table-page';
+import { SALES_DASHBOARD_PAGE } from './sales-dashboard-page';
 import { WORKFLOWS_FOLDER } from './workflows-folder';
 import { DASHBOARDS_TABLE_PAGE } from './dashboards-table-page';
 import { NOTES_TABLE_PAGE } from './notes-table-page';
 import { OPPORTUNITY_KANBAN_PAGE } from './opportunity-kanban-page';
 import { PEOPLE_TABLE_PAGE } from './people-table-page';
 import { TASKS_TABLE_PAGE } from './tasks-table-page';
-import { type AppPreviewConfig, type PageHeader } from '../types';
-
-function pendingPage(
-  type: 'record' | 'dashboard' | 'workflow',
-  title: string,
-): { type: typeof type; header: PageHeader } {
-  return { type, header: { title } };
-}
+import { type AppPreviewConfig } from '../types';
 
 export const APP_PREVIEW_CONFIG: AppPreviewConfig = {
   defaultViewbarActions: ['Filter', 'Sort', 'Options'],
@@ -27,7 +21,7 @@ export const APP_PREVIEW_CONFIG: AppPreviewConfig = {
         label: 'Sales Dashboard',
         icon: { kind: 'avatar', label: 'S', tone: 'amber', shape: 'circle' },
         meta: 'Dashboard',
-        page: pendingPage('dashboard', 'Sales Dashboard'),
+        page: SALES_DASHBOARD_PAGE,
       },
     ],
     initialActiveItemId: 'companies',

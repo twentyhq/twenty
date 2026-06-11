@@ -1,0 +1,191 @@
+import { styled } from '@linaria/react';
+import { IconTrendingDown, IconTrendingUp } from '@tabler/icons-react';
+
+import { EASING, mediaUp, REDUCED_MOTION } from '@/tokens';
+import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+
+import { DASHBOARD_CHARTS } from './dashboard-charts';
+import { PREVIEW_COLORS } from '../../preview-colors';
+import { type DashboardKpi, type DashboardPageDefinition } from '../../types';
+
+const theme = APP_PREVIEW_THEME;
+
+const DashboardGrid = styled.div`
+  display: grid;
+  gap: 8px;
+  grid-template-areas:
+    'kpis'
+    'line'
+    'bar'
+    'donut';
+  grid-template-columns: minmax(0, 1fr);
+  height: 100%;
+  min-height: 0;
+  padding: 8px;
+
+  ${mediaUp('md')} {
+    grid-template-areas:
+      'kpis line line'
+      'bar bar donut';
+    grid-template-columns: minmax(176px, 248px) minmax(0, 1fr) minmax(
+        176px,
+        248px
+      );
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  }
+`;
+
+const WidgetCard = styled.div`
+  animation: dashboardWidgetAppear 360ms ${EASING.standard} both;
+  background: ${PREVIEW_COLORS.backgroundSecondary};
+  border: 1px solid ${PREVIEW_COLORS.borderLight};
+  border-radius: 8px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  overflow: hidden;
+  padding: 8px;
+
+  @keyframes dashboardWidgetAppear {
+    from {
+      opacity: 0;
+      transform: translateY(6px) scale(0.99);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  ${REDUCED_MOTION} {
+    animation: none;
+  }
+`;
+
+const WidgetTitle = styled.span`
+  color: ${PREVIEW_COLORS.text};
+  flex-shrink: 0;
+  font-family: ${theme.font.family};
+  font-size: ${theme.font.sizePx.md}px;
+  font-weight: ${theme.font.weight.medium};
+  line-height: 1.4;
+  overflow: hidden;
+  padding: 0 2px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const KpiStack = styled.div`
+  display: grid;
+  gap: 8px;
+  grid-area: kpis;
+  min-width: 0;
+
+  ${mediaUp('md')} {
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+  }
+`;
+
+const KpiCard = styled(WidgetCard)`
+  gap: 6px;
+  justify-content: center;
+`;
+
+const KpiValueRow = styled.div`
+  align-items: baseline;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+`;
+
+const KpiValue = styled.span`
+  color: ${PREVIEW_COLORS.text};
+  font-family: ${theme.font.family};
+  font-size: 25px;
+  font-weight: ${theme.font.weight.semiBold};
+  line-height: 1.1;
+`;
+
+const KpiTrend = styled.span<{ $up: boolean }>`
+  align-items: center;
+  color: ${({ $up }) =>
+    $up
+      ? APP_PREVIEW_TONES.dashboardChart.trendUp
+      : APP_PREVIEW_TONES.dashboardChart.trendDown};
+  display: inline-flex;
+  flex-shrink: 0;
+  font-family: ${theme.font.family};
+  font-size: 12px;
+  font-weight: ${theme.font.weight.medium};
+  gap: 2px;
+`;
+
+const LineCard = styled(WidgetCard)`
+  grid-area: line;
+`;
+
+const BarCard = styled(WidgetCard)`
+  grid-area: bar;
+`;
+
+const DonutCard = styled(WidgetCard)`
+  grid-area: donut;
+`;
+
+function KpiWidget({ kpi }: { kpi: DashboardKpi }) {
+  const isUp = kpi.trend?.direction === 'up';
+  return (
+    <KpiCard>
+      <WidgetTitle>{kpi.title}</WidgetTitle>
+      <KpiValueRow>
+        <KpiValue>{kpi.value}</KpiValue>
+        {kpi.trend ? (
+          <KpiTrend $up={isUp}>
+            {isUp ? (
+              <IconTrendingUp size={14} stroke={theme.icon.stroke.md} />
+            ) : (
+              <IconTrendingDown size={14} stroke={theme.icon.stroke.md} />
+            )}
+            {kpi.trend.value}
+          </KpiTrend>
+        ) : null}
+      </KpiValueRow>
+    </KpiCard>
+  );
+}
+
+export function DashboardPage({ page }: { page: DashboardPageDefinition }) {
+  const { kpis, lineChart, barChart, donutChart } = page.dashboard;
+  return (
+    <DashboardGrid>
+      {kpis.length > 0 ? (
+        <KpiStack>
+          {kpis.map((kpi) => (
+            <KpiWidget key={kpi.id} kpi={kpi} />
+          ))}
+        </KpiStack>
+      ) : null}
+      {lineChart ? (
+        <LineCard>
+          <WidgetTitle>{lineChart.title}</WidgetTitle>
+          <DASHBOARD_CHARTS.Line data={lineChart} />
+        </LineCard>
+      ) : null}
+      {barChart ? (
+        <BarCard>
+          <WidgetTitle>{barChart.title}</WidgetTitle>
+          <DASHBOARD_CHARTS.Bar data={barChart} />
+        </BarCard>
+      ) : null}
+      {donutChart ? (
+        <DonutCard>
+          <WidgetTitle>{donutChart.title}</WidgetTitle>
+          <DASHBOARD_CHARTS.Donut data={donutChart} />
+        </DonutCard>
+      ) : null}
+    </DashboardGrid>
+  );
+}

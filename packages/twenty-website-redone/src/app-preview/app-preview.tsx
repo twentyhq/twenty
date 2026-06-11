@@ -1,13 +1,29 @@
 'use client';
 
 import { styled } from '@linaria/react';
+import { useEffect } from 'react';
+
+import { scheduleIdleTask } from '@/platform/motion';
 
 import { mediaUp } from '@/tokens';
 import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
 
+import dynamic from 'next/dynamic';
+
 import { APP_PREVIEW_CONFIG } from './data/sidebar-config';
 import { KanbanPage } from './pages/kanban/kanban-page';
 import { TablePage } from './pages/table/table-page';
+import { WorkflowPage } from './pages/workflow/workflow-page';
+
+// The dashboard (charts) is the heaviest page and never the landing view:
+// it stays a deferred chunk, idle-preloaded after mount.
+const DashboardPage = dynamic(
+  () =>
+    import('./pages/dashboard/dashboard-page').then(
+      (module) => module.DashboardPage,
+    ),
+  { ssr: false },
+);
 import { PREVIEW_COLORS } from './preview-colors';
 import { PreviewNavbar } from './shell/preview-navbar';
 import { PreviewSidebar } from './shell/preview-sidebar';
@@ -69,7 +85,11 @@ function renderPage(page: PageDefinition) {
       return <TablePage page={page} />;
     case 'kanban':
       return <KanbanPage page={page} />;
-    // Record/dashboard/workflow land with commits 4b-5.
+    case 'workflow':
+      return <WorkflowPage page={page} />;
+    case 'dashboard':
+      return <DashboardPage page={page} />;
+    // The record surface belongs to the product-page family (out of wave).
     default:
       return null;
   }
@@ -79,10 +99,18 @@ function renderPage(page: PageDefinition) {
 // scenario and windowed drag arrive with commits 6-8 of the wave.
 export function AppPreview() {
   const { sidebar, defaultViewbarActions } = APP_PREVIEW_CONFIG;
+
+  useEffect(
+    () =>
+      scheduleIdleTask(() => {
+        void import('./pages/dashboard/dashboard-page');
+      }),
+    [],
+  );
   const navigation = useAppPreviewNavigation(APP_PREVIEW_CONFIG);
   const { activeItem, activeItemId, activePage } = navigation;
   const showViewbar =
-    activePage.type !== 'record' && activePage.type !== 'workflow';
+    activePage.type === 'table' || activePage.type === 'kanban';
 
   return (
     <ProductFrame>

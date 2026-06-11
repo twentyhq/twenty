@@ -66,7 +66,28 @@ const KANBAN_LANE: Record<string, TonePair> = {
 // The named-workflow avatar ink (authored data color).
 const WORKFLOW_AVATAR_INK = '#451E11';
 
+// The workflow canvas inks (authored artwork colors).
+const WORKFLOW_CANVAS = {
+  activeBadgeBackground: '#dff3e6',
+  activeBadgeText: '#228b52',
+  arrowStroke: '#d8d2cb',
+  triggerIcon: '#4A67F6',
+  actionIcon: '#FF6B5F',
+};
+
+// The dashboard chart inks (authored artwork colors; the donut slice
+// palette is shared with the data module).
+const DASHBOARD_CHART = {
+  accent: '#8da4ef',
+  trendUp: '#53b9ab',
+  trendDown: '#eb8e90',
+  slicePurple: '#be93e4',
+  sliceOrange: '#ec9455',
+};
+
 export const APP_PREVIEW_TONES = {
+  dashboardChart: DASHBOARD_CHART,
+  workflowCanvas: WORKFLOW_CANVAS,
   workflowAvatarInk: WORKFLOW_AVATAR_INK,
   kanbanLane: KANBAN_LANE,
   sidebar: SIDEBAR,
