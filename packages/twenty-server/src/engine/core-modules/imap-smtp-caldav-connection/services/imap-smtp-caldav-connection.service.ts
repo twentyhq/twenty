@@ -114,6 +114,7 @@ export class ImapSmtpCaldavService {
     const transport = createTransport({
       host: validatedHost,
       port: params.port,
+      secure: params.secure ?? params.port === 465,
       auth: {
         user: params.username ?? handle,
         pass: params.password,
