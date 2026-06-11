@@ -1,4 +1,7 @@
 import { styled } from '@linaria/react';
+import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/halftone-image-backdrop';
+
+import { MONOLITH_VISUAL } from './monolith-visual-config';
 
 import { color, mediaUp } from '@/tokens';
 
@@ -38,5 +41,12 @@ const MaskedStage = styled.div`
 `;
 
 export function ProblemVisual() {
-  return <MaskedStage aria-hidden />;
+  return (
+    <MaskedStage aria-hidden data-illustration="monolith">
+      <HalftoneImageBackdrop
+        imageUrl={MONOLITH_VISUAL.imageUrl}
+        settings={MONOLITH_VISUAL.settings}
+      />
+    </MaskedStage>
+  );
 }

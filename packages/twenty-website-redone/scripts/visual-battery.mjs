@@ -19,6 +19,14 @@ const VISUALS = {
     animated: true,
     interactive: false,
   },
+  monolith: {
+    slotSelector: '[data-illustration="monolith"]',
+    // ash gray: hueless — coverage + hover-light interactivity only
+    hueRangeDegrees: null,
+    minCoverage: 0.02,
+    animated: false,
+    interactive: true,
+  },
   diamond: {
     slotSelector: '[data-illustration="diamond"]',
     // blue on the white stage
@@ -249,7 +257,9 @@ const runVisual = async (browser, key, spec) => {
     coverage >= spec.minCoverage,
     `coverage ${(coverage * 100).toFixed(1)}% ≥ ${spec.minCoverage * 100}%`,
   );
-  if (dominantHue !== null) {
+  if (spec.hueRangeDegrees === null) {
+    console.log('  - hue skipped (hueless artwork)');
+  } else if (dominantHue !== null) {
     assert(
       dominantHue >= spec.hueRangeDegrees[0] &&
         dominantHue <= spec.hueRangeDegrees[1],
@@ -299,7 +309,17 @@ const runVisual = async (browser, key, spec) => {
     activeWhileVisible >= 1,
     `context held while visible (count ${activeWhileVisible})`,
   );
-  await page.evaluate(() => window.scrollTo(0, 0));
+  // Leave toward whichever page end is farther, so slots near the top
+  // actually exit the generous mount margins.
+  await page.evaluate((selector) => {
+    const slot = document.querySelector(selector);
+    const slotCenter =
+      slot.getBoundingClientRect().top +
+      window.scrollY +
+      slot.getBoundingClientRect().height / 2;
+    const pageHeight = document.documentElement.scrollHeight;
+    window.scrollTo(0, slotCenter < pageHeight / 2 ? pageHeight : 0);
+  }, spec.slotSelector);
   await page.waitForTimeout(5500);
   const activeAfterLeave = await counts();
   assert(
