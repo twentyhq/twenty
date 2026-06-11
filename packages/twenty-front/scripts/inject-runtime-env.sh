@@ -7,10 +7,16 @@ fi
 
 echo "Injecting runtime environment variables into index.html..."
 
+DOCK_LINE=""
+if [ -n "$REACT_APP_DIALER_DOCK_URL" ]; then
+  DOCK_LINE="        REACT_APP_DIALER_DOCK_URL: \"$REACT_APP_DIALER_DOCK_URL\","
+fi
+
 CONFIG_BLOCK=$(cat << EOF
     <script id="twenty-env-config">
       window._env_ = {
-        REACT_APP_SERVER_BASE_URL: "$REACT_APP_SERVER_BASE_URL"
+        REACT_APP_SERVER_BASE_URL: "$REACT_APP_SERVER_BASE_URL",
+$DOCK_LINE
       };
     </script>
     <!-- END: Twenty Config -->
