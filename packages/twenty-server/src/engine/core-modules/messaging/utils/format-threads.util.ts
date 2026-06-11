@@ -1,10 +1,10 @@
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import { MessageChannelVisibility } from 'twenty-shared/types';
 import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
 import { extractParticipantSummary } from 'src/engine/core-modules/messaging/utils/extract-participant-summary.util';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
+import { MessageChannelVisibility } from 'twenty-shared/types';
 
 export const formatThreads = (
   threads: Omit<
@@ -25,7 +25,9 @@ export const formatThreads = (
   return threads
     .filter((thread) => isDefined(threadParticipantsByThreadId[thread.id]))
     .map((thread) => {
-      const visibility = threadVisibilityByThreadId[thread.id];
+      const visibility =
+        threadVisibilityByThreadId[thread.id] ??
+        MessageChannelVisibility.METADATA;
 
       return {
         ...thread,

@@ -225,6 +225,15 @@ export class TimelineMessagingService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
+        const threadVisibilityByThreadId: {
+          [key: string]: MessageChannelVisibility;
+        } = {};
+
+        for (const threadId of messageThreadIds) {
+          threadVisibilityByThreadId[threadId] =
+            MessageChannelVisibility.METADATA;
+        }
+
         const workspaceMemberRepository =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
             workspaceId,
@@ -238,7 +247,7 @@ export class TimelineMessagingService {
         });
 
         if (!currentMember) {
-          return {};
+          return threadVisibilityByThreadId;
         }
 
         const currentUserWorkspace = await this.userWorkspaceRepository.findOne(
@@ -249,7 +258,7 @@ export class TimelineMessagingService {
         );
 
         if (!currentUserWorkspace) {
-          return {};
+          return threadVisibilityByThreadId;
         }
 
         const currentUserWorkspaceId = currentUserWorkspace.id;
@@ -286,7 +295,7 @@ export class TimelineMessagingService {
         ];
 
         if (allMessageChannelIds.length === 0) {
-          return {};
+          return threadVisibilityByThreadId;
         }
 
         const messageChannels = await this.messageChannelRepository.find({
@@ -322,10 +331,6 @@ export class TimelineMessagingService {
         );
 
         const visibilityValues = Object.values(MessageChannelVisibility);
-
-        const threadVisibilityByThreadId: {
-          [key: string]: MessageChannelVisibility;
-        } = {};
 
         for (const { id: threadId, messageChannelId } of threadChannelRows) {
           if (!messageChannelId) continue;
