@@ -1,6 +1,6 @@
-import { isArray, isObject } from '@sniptt/guards';
-
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
+import { getRecordAtPath } from 'src/logic-functions/utils/get-record-at-path.util';
+import { getString } from 'src/logic-functions/utils/get-string.util';
 
 export type RecallMediaUrls = {
   videoUrl: string | undefined;
@@ -27,21 +27,4 @@ const extractArtifactDownloadUrl = (
   getString(getRecordAtPath(mediaShortcuts, [artifactKey, 'download_url'])) ??
   getString(
     getRecordAtPath(mediaShortcuts, [artifactKey, 'data', 'download_url']),
-  );
-
-const asRecord = (value: unknown): Record<string, unknown> | undefined =>
-  isObject(value) && !isArray(value)
-    ? (value as Record<string, unknown>)
-    : undefined;
-
-const getString = (value: unknown): string | undefined =>
-  isNonEmptyString(value) ? value : undefined;
-
-const getRecordAtPath = (
-  record: Record<string, unknown> | undefined,
-  path: string[],
-): unknown =>
-  path.reduce<unknown>(
-    (currentValue, pathPart) => asRecord(currentValue)?.[pathPart],
-    record,
   );

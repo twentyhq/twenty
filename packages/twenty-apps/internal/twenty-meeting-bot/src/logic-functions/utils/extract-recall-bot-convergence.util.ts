@@ -1,7 +1,8 @@
-import { isArray, isObject, isUndefined } from '@sniptt/guards';
+import { isArray, isUndefined } from '@sniptt/guards';
 
 import { type CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
+import { getString } from 'src/logic-functions/utils/get-string.util';
 import { mapRecallStatusCodeToCallRecordingStatus } from 'src/logic-functions/utils/map-recall-status-code-to-call-recording-status.util';
 import { normalizeRecallTimestamp } from 'src/logic-functions/utils/normalize-recall-timestamp.util';
 
@@ -92,11 +93,3 @@ const findStatusChangeTimestamp = (
   code: string,
 ): string | undefined =>
   statusChanges.find((statusChange) => statusChange.code === code)?.createdAt;
-
-const asRecord = (value: unknown): Record<string, unknown> | undefined =>
-  isObject(value) && !isArray(value)
-    ? (value as Record<string, unknown>)
-    : undefined;
-
-const getString = (value: unknown): string | undefined =>
-  isNonEmptyString(value) ? value : undefined;
