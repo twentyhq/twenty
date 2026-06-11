@@ -112,7 +112,6 @@ export const objectRecordChangedValues = (
       if (
         key === 'updatedAt' ||
         key === 'searchVector' ||
-        field?.type === FieldMetadataType.POSITION ||
         (isDefined(field) && isManyToOneRelationField(field)) ||
         field?.type === FieldMetadataType.RELATION ||
         field?.type === FieldMetadataType.MORPH_RELATION

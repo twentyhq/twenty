@@ -1,4 +1,4 @@
-import { COLOR_LIGHT } from '@new-ui/theme/constants/ColorsLight';
+import { COLOR_LIGHT } from '@ui/theme/constants/ColorsLight';
 
 export const CODE_LIGHT = {
   text: {

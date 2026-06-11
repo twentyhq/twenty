@@ -1,4 +1,4 @@
-import { COLOR_LIGHT } from '@new-ui/theme/constants/ColorsLight';
+import { COLOR_LIGHT } from '@ui/theme/constants/ColorsLight';
 import { FONT_COMMON } from './FontCommon';
 import { GRAY_SCALE_LIGHT } from './GrayScaleLight';
 

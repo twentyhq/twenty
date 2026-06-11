@@ -1,0 +1,129 @@
+// Static rules from the legacy Linaria StyledButton. The dynamic
+// variant/accent/inverted/disabled/focus colors stay computed at runtime in
+// AnimatedButton.tsx (computeAnimatedButtonDynamicStyles) and arrive through
+// the --abtn-* inline custom properties, exactly like the deprecated source.
+.button {
+  align-items: center;
+  background: var(--abtn-bg);
+  border-color: var(--abtn-border-color);
+  border-radius: var(--abtn-radius, var(--t-border-radius-sm));
+  border-style: solid;
+  border-width: var(--abtn-border-width);
+  box-shadow: var(--abtn-box-shadow);
+  color: var(--abtn-color);
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  font-family: var(--t-font-family);
+  font-size: var(--t-font-size-md);
+  font-weight: 500;
+  gap: var(--t-spacing-1);
+  justify-content: var(--abtn-justify, flex-start);
+  padding: 0 var(--t-spacing-2);
+  text-decoration: none;
+  transition: background 0.1s ease;
+  white-space: nowrap;
+  width: auto;
+
+  &:hover {
+    background: var(--abtn-hover-bg);
+  }
+
+  &:active {
+    background: var(--abtn-active-bg);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &[data-disabled] {
+    cursor: not-allowed;
+  }
+}
+
+// position only reshapes the radius; standalone uses the .button fallback.
+// These rules only assign the custom property so the border-radius
+// declaration stays on the flat .button class for overridability.
+.button[data-position='left'] {
+  --abtn-radius: var(--t-border-radius-sm) 0px 0px var(--t-border-radius-sm);
+}
+
+.button[data-position='middle'] {
+  --abtn-radius: 0px;
+}
+
+.button[data-position='right'] {
+  --abtn-radius: 0px var(--t-border-radius-sm) var(--t-border-radius-sm) 0px;
+}
+
+// --abtn-square-size keeps the square width declaration flat on .square.
+.small {
+  --abtn-square-size: 24px;
+
+  height: 24px;
+}
+
+.medium {
+  --abtn-square-size: 32px;
+
+  height: 32px;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+// Square icon-only mode. Declared after .button and .fullWidth so its
+// justify-content, padding and width win the cascade at equal specificity,
+// matching the legacy ternary precedence (square beats fullWidth).
+.square {
+  justify-content: center;
+  padding: 0;
+  width: var(--abtn-square-size);
+}
+
+.motion {
+  display: flex;
+}
+
+.separator {
+  background: var(--t-font-color-light);
+  height: var(--t-spacing-4);
+  margin: 0;
+  width: 1px;
+
+  &[data-size='small'] {
+    height: var(--t-spacing-2);
+  }
+
+  &[data-accent='blue'] {
+    background: var(--t-border-color-blue);
+  }
+
+  &[data-accent='danger'] {
+    background: var(--t-border-color-danger);
+  }
+}
+
+.shortcutLabel {
+  color: var(--t-font-color-light);
+  font-weight: var(--t-font-weight-medium);
+
+  &[data-accent='blue'] {
+    color: var(--t-border-color-blue);
+  }
+
+  &[data-accent='danger'] {
+    color: var(--t-color-red8);
+  }
+
+  &[data-accent='danger'][data-variant='primary'] {
+    color: var(--t-border-color-danger);
+  }
+}
+
+.soonPillContainer {
+  display: flex;
+  margin-left: auto;
+}

@@ -1,11 +1,13 @@
 import { Injectable, type OnModuleInit } from '@nestjs/common';
 
 import {
+  i18n,
   type I18n,
   type MessageOptions,
   type Messages,
   setupI18n,
 } from '@lingui/core';
+import { compileMessage } from '@lingui/message-utils/compileMessage';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { messages as afMessages } from 'src/engine/core-modules/i18n/locales/generated/af-ZA';
@@ -46,6 +48,10 @@ export class I18nService implements OnModuleInit {
     {} as Record<keyof typeof APP_LOCALES, I18n>;
 
   async loadTranslations() {
+    // The global i18n singleton backs server-side t`…` calls and has no
+    // compiled catalog, so it needs a runtime message compiler.
+    i18n.setMessagesCompiler(compileMessage);
+
     const messagesByLocale: Record<keyof typeof APP_LOCALES, Messages> = {
       en: enMessages,
       'pseudo-en': pseudoEnMessages,
@@ -85,6 +91,7 @@ export class I18nService implements OnModuleInit {
     ).forEach(([locale, messages]) => {
       const localeI18n = setupI18n();
 
+      localeI18n.setMessagesCompiler(compileMessage);
       localeI18n.load(locale, messages);
       localeI18n.activate(locale);
 
