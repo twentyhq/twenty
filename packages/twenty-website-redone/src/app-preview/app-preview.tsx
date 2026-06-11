@@ -1,17 +1,20 @@
+'use client';
+
 import { styled } from '@linaria/react';
 
 import { mediaUp } from '@/tokens';
 import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
 
 import { APP_PREVIEW_CONFIG } from './data/sidebar-config';
+import { KanbanPage } from './pages/kanban/kanban-page';
 import { TablePage } from './pages/table/table-page';
 import { PREVIEW_COLORS } from './preview-colors';
 import { PreviewNavbar } from './shell/preview-navbar';
 import { PreviewSidebar } from './shell/preview-sidebar';
 import { PreviewViewbar } from './shell/preview-viewbar';
+import { useAppPreviewNavigation } from './shell/use-app-preview-navigation';
 import { ProductFrame } from './stage/product-frame';
-import { isSidebarFolder } from './shell/is-sidebar-folder';
-import { type SidebarItemDef } from './types';
+import { type PageDefinition } from './types';
 
 const AppLayout = styled.div`
   display: flex;
@@ -60,26 +63,36 @@ const IndexSurface = styled.div`
   overflow: hidden;
 `;
 
-// The static product mockup: the Companies view inside the framed app
-// shell. Navigation, the remaining pages, and the AI scenario arrive with
-// commits 4-8 of the wave.
+function renderPage(page: PageDefinition) {
+  switch (page.type) {
+    case 'table':
+      return <TablePage page={page} />;
+    case 'kanban':
+      return <KanbanPage page={page} />;
+    // Record/dashboard/workflow land with commits 4b-5.
+    default:
+      return null;
+  }
+}
+
+// The product mockup: navigable sidebar + the object pages. The AI
+// scenario and windowed drag arrive with commits 6-8 of the wave.
 export function AppPreview() {
   const { sidebar, defaultViewbarActions } = APP_PREVIEW_CONFIG;
-  const activeItem = sidebar.workspace
-    .filter((entry): entry is SidebarItemDef => !isSidebarFolder(entry))
-    .find((entry) => entry.id === sidebar.initialActiveItemId);
-  const page = activeItem?.page;
-
-  if (!activeItem || page?.type !== 'table') {
-    return null;
-  }
+  const navigation = useAppPreviewNavigation(APP_PREVIEW_CONFIG);
+  const { activeItem, activeItemId, activePage } = navigation;
+  const showViewbar =
+    activePage.type !== 'record' && activePage.type !== 'workflow';
 
   return (
     <ProductFrame>
       <AppLayout>
         <PreviewSidebar
           favorites={sidebar.favorites}
-          selectedItemId={sidebar.initialActiveItemId}
+          onSelectPageItem={navigation.selectPageItem}
+          openFolderIds={navigation.openFolderIds}
+          onToggleFolder={navigation.toggleFolder}
+          selectedItemId={activeItemId}
           workspace={sidebar.workspace}
         />
         <RightPane>
@@ -89,14 +102,16 @@ export function AppPreview() {
           />
           <ContentRow>
             <IndexSurface>
-              <PreviewViewbar
-                actions={page.header.actions ?? defaultViewbarActions}
-                count={page.header.count}
-                pageType={page.type}
-                showListIcon={page.header.showListIcon ?? false}
-                title={page.header.title}
-              />
-              <TablePage page={page} />
+              {showViewbar ? (
+                <PreviewViewbar
+                  actions={activePage.header.actions ?? defaultViewbarActions}
+                  count={activePage.header.count}
+                  pageType={activePage.type}
+                  showListIcon={activePage.header.showListIcon ?? false}
+                  title={activePage.header.title}
+                />
+              ) : null}
+              {renderPage(activePage)}
             </IndexSurface>
           </ContentRow>
         </RightPane>

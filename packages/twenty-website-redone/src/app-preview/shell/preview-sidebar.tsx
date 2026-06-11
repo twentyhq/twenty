@@ -1,3 +1,5 @@
+'use client';
+
 import { styled } from '@linaria/react';
 import {
   IconChevronDown,
@@ -159,13 +161,21 @@ const RailIconSlot = styled.div`
 
 export function PreviewSidebar({
   favorites,
+  onSelectPageItem,
+  onToggleFolder,
+  openFolderIds,
   selectedItemId,
   workspace,
 }: {
   favorites: SidebarItemDef[];
+  onSelectPageItem?: (itemId: string) => void;
+  onToggleFolder?: (folderId: string) => void;
+  openFolderIds?: string[];
   selectedItemId: string;
   workspace: SidebarEntry[];
 }) {
+  void onToggleFolder;
+  void openFolderIds;
   const workspaceItems = workspace.filter(
     (entry): entry is SidebarItemDef => !isSidebarFolder(entry),
   );
@@ -212,6 +222,7 @@ export function PreviewSidebar({
                 active={item.id === selectedItemId}
                 item={item}
                 key={item.id}
+                onSelect={onSelectPageItem}
               />
             ))}
           </SectionStack>
@@ -226,6 +237,7 @@ export function PreviewSidebar({
                 active={item.id === selectedItemId}
                 item={item}
                 key={item.id}
+                onSelect={onSelectPageItem}
               />
             ))}
           </SectionStack>

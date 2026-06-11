@@ -55,7 +55,16 @@ function hexToRgbTuple(hex: string): string {
   return [(value >> 16) & 255, (value >> 8) & 255, value & 255].join(', ');
 }
 
+const KANBAN_LANE: Record<string, TonePair> = {
+  blue: { background: '#def4ff', color: '#007bb8' },
+  gray: { background: '#f3f1ef', color: '#666666' },
+  green: { background: '#dcf7ed', color: '#1a7f50' },
+  pink: { background: '#fce5f3', color: '#d6409f' },
+  purple: { background: '#ede9fe', color: '#8e4ec6' },
+};
+
 export const APP_PREVIEW_TONES = {
+  kanbanLane: KANBAN_LANE,
   sidebar: SIDEBAR,
   person: PERSON,
   tag: TAG,

@@ -1,5 +1,9 @@
 import { styled } from '@linaria/react';
-import { IconChevronDown, IconList } from '@tabler/icons-react';
+import {
+  IconChevronDown,
+  IconLayoutKanban,
+  IconList,
+} from '@tabler/icons-react';
 
 import { mediaUp } from '@/tokens';
 import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
@@ -113,7 +117,7 @@ export function PreviewViewbar({
         {showListIcon ? (
           <>
             <MiniIcon
-              icon={IconList}
+              icon={pageType === 'kanban' ? IconLayoutKanban : IconList}
               color={PREVIEW_COLORS.textSecondary}
               size={16}
             />

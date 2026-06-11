@@ -99,14 +99,42 @@ export type TablePageDefinition = {
   width?: number;
 };
 
-// Non-table pages land with commits 4-5; the union member keeps sidebar
-// data forward-compatible until then.
+export type KanbanCard = {
+  accountOwner: CellPerson;
+  amount: string;
+  checked?: boolean;
+  company: CellEntity;
+  date: string;
+  id: string;
+  mainContact: CellPerson;
+  rating: number;
+  recordId: string;
+  title: string;
+};
+export type KanbanLane = {
+  cards: KanbanCard[];
+  id: string;
+  label: string;
+  tone: string;
+};
+export type KanbanPageDefinition = {
+  generating?: boolean;
+  header: PageHeader;
+  lanes: KanbanLane[];
+  type: 'kanban';
+};
+
+// Record/dashboard/workflow land with commits 4b-5; the union member
+// keeps sidebar data forward-compatible until then.
 export type PendingPageDefinition = {
-  type: 'kanban' | 'record' | 'dashboard' | 'workflow';
+  type: 'record' | 'dashboard' | 'workflow';
   header: PageHeader;
 };
 
-export type PageDefinition = TablePageDefinition | PendingPageDefinition;
+export type PageDefinition =
+  | TablePageDefinition
+  | KanbanPageDefinition
+  | PendingPageDefinition;
 export type PageType = PageDefinition['type'];
 
 export type SidebarIcon =

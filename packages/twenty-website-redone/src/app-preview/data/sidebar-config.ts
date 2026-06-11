@@ -3,10 +3,15 @@
 // pending page stubs; their pages and the navigation hook land with
 // commits 4-5.
 import { COMPANIES_TABLE_PAGE } from './companies-table-page';
+import { DASHBOARDS_TABLE_PAGE } from './dashboards-table-page';
+import { NOTES_TABLE_PAGE } from './notes-table-page';
+import { OPPORTUNITY_KANBAN_PAGE } from './opportunity-kanban-page';
+import { PEOPLE_TABLE_PAGE } from './people-table-page';
+import { TASKS_TABLE_PAGE } from './tasks-table-page';
 import { type AppPreviewConfig, type PageHeader } from '../types';
 
 function pendingPage(
-  type: 'kanban' | 'record' | 'dashboard' | 'workflow',
+  type: 'record' | 'dashboard' | 'workflow',
   title: string,
 ): { type: typeof type; header: PageHeader } {
   return { type, header: { title } };
@@ -37,31 +42,31 @@ export const APP_PREVIEW_CONFIG: AppPreviewConfig = {
         id: 'people',
         label: 'People',
         icon: { kind: 'tabler', name: 'user', tone: 'blue' },
-        page: pendingPage('record', 'All People'),
+        page: PEOPLE_TABLE_PAGE,
       },
       {
         id: 'opportunities',
         label: 'Opportunities',
         icon: { kind: 'tabler', name: 'targetArrow', tone: 'red' },
-        page: pendingPage('kanban', 'All Opportunities'),
+        page: OPPORTUNITY_KANBAN_PAGE,
       },
       {
         id: 'tasks',
         label: 'Tasks',
         icon: { kind: 'tabler', name: 'checkbox', tone: 'teal' },
-        page: pendingPage('record', 'All Tasks'),
+        page: TASKS_TABLE_PAGE,
       },
       {
         id: 'notes',
         label: 'Notes',
         icon: { kind: 'tabler', name: 'notes', tone: 'teal' },
-        page: pendingPage('record', 'All Notes'),
+        page: NOTES_TABLE_PAGE,
       },
       {
         id: 'dashboards',
         label: 'Dashboards',
         icon: { kind: 'tabler', name: 'layoutDashboard', tone: 'gray' },
-        page: pendingPage('dashboard', 'All Dashboards'),
+        page: DASHBOARDS_TABLE_PAGE,
       },
       {
         id: 'workflows',

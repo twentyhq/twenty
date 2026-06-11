@@ -1,3 +1,5 @@
+'use client';
+
 import { styled } from '@linaria/react';
 
 import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
@@ -8,7 +10,10 @@ import { type SidebarItemDef } from '../types';
 
 const theme = APP_PREVIEW_THEME;
 
-const ItemRow = styled.div<{ $active?: boolean }>`
+const ItemRow = styled.button<{ $active?: boolean }>`
+  appearance: none;
+  border: 0;
+  text-align: left;
   align-items: center;
   background: ${({ $active }) =>
     $active ? theme.background.transparent.light : 'transparent'};
@@ -71,12 +76,19 @@ const ItemMeta = styled.span`
 export function SidebarItem({
   active = false,
   item,
+  onSelect,
 }: {
   active?: boolean;
   item: SidebarItemDef;
+  onSelect?: (itemId: string) => void;
 }) {
   return (
-    <ItemRow $active={active} data-nav-item="">
+    <ItemRow
+      $active={active}
+      data-nav-item=""
+      onClick={onSelect ? () => onSelect(item.id) : undefined}
+      type="button"
+    >
       <RowMain>
         {renderPreviewIcon(item.icon)}
         <ItemText>
