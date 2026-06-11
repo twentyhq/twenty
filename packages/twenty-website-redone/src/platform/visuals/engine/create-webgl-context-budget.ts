@@ -17,6 +17,7 @@ export type WebGlContextBudget = {
   request: (slotRequest: SlotRequest) => () => void;
   getActiveCount: () => number;
   getPendingCount: () => number;
+  getMaxActive: () => number;
 };
 
 type BudgetHost = {
@@ -173,5 +174,6 @@ export function createWebGlContextBudget({
     },
     getActiveCount: () => held.size,
     getPendingCount: () => pending.length,
+    getMaxActive: () => maxActive,
   };
 }

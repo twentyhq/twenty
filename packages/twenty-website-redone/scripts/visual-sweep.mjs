@@ -4,9 +4,9 @@ import { chromium } from 'playwright';
 // gets evidenced during a full scroll sweep, and the frame loops go idle
 // when everything is offscreen.
 const BASE_URL = process.env.VISUAL_BATTERY_URL ?? 'http://localhost:3004/';
-const CONTEXT_CAP = 6;
-// Slots staged for the AppPreview wave — no visual mounts yet, by plan.
-const PENDING_SLOTS = new Set(['familiar-interface', 'live-data', 'fast-path']);
+// The cap is read LIVE from the budget via the test instrumentation —
+// never duplicated here (a raised budget must fail loudly, not silently).
+import { PENDING_VISUAL_SLOTS as PENDING_SLOTS } from './pending-visual-slots.mjs';
 
 const failures = [];
 const assert = (condition, message) => {
@@ -51,9 +51,13 @@ for (let y = 0; y <= pageHeight; y += 600) {
   state.withCanvas.forEach((name) => evidenced.add(name));
 }
 
+const liveCap = await page.evaluate(
+  () => window.__visualRuntimeTest?.getContextCap() ?? -1,
+);
+assert(liveCap > 0, `context cap readable from instrumentation (${liveCap})`);
 assert(
-  maxCount <= CONTEXT_CAP,
-  `context count never exceeds cap (max ${maxCount} ≤ ${CONTEXT_CAP})`,
+  maxCount <= liveCap,
+  `context count never exceeds cap (max ${maxCount} ≤ ${liveCap})`,
 );
 const missing = slots.filter(
   (name) => !evidenced.has(name) && !PENDING_SLOTS.has(name),
@@ -64,6 +68,11 @@ if (pending.length > 0) {
     `  - pending (AppPreview wave, expected empty): ${pending.join(', ')}`,
   );
 }
+const pendingButLive = pending.filter((name) => evidenced.has(name));
+assert(
+  pendingButLive.length === 0,
+  `PENDING_SLOTS stays honest${pendingButLive.length ? ` (now live, remove: ${pendingButLive.join(', ')})` : ''}`,
+);
 assert(
   missing.length === 0,
   `every slot evidenced during sweep${missing.length ? ` (missing: ${missing.join(', ')})` : ''}`,
@@ -95,6 +104,44 @@ if (heroAreaCanvases === 0) {
     `  - idle check skipped: ${heroAreaCanvases} canvases legitimately in range at page top`,
   );
 }
+
+// Composition checks — both encode bug classes the user caught by eye:
+// a 40px off-center hero body (box left-aligned inside a centered grid)
+// and muted ink silently bound to black-70 instead of the old site's 60.
+await page.evaluate(() => window.scrollTo(0, 0));
+await page.waitForTimeout(600);
+const composition = await page.evaluate(() => {
+  const center = window.innerWidth / 2;
+  const measure = (element) => {
+    const rect = element.getBoundingClientRect();
+    return Math.round(rect.left + rect.width / 2 - center);
+  };
+  const h1 = document.querySelector('h1');
+  const heroBody = h1?.closest('div')?.parentElement?.querySelector('p');
+  const stage = document.querySelector('[data-mockup-stage]');
+  const styles = getComputedStyle(document.body);
+  return {
+    h1Offset: h1 ? measure(h1) : null,
+    bodyOffset: heroBody ? measure(heroBody) : null,
+    stageOffset: stage ? measure(stage) : null,
+    inkMuted: styles.getPropertyValue('--ink-muted').trim(),
+    black60: styles.getPropertyValue('--color-black-60').trim(),
+  };
+});
+for (const [label, offset] of [
+  ['h1', composition.h1Offset],
+  ['hero body', composition.bodyOffset],
+  ['mockup stage', composition.stageOffset],
+]) {
+  assert(
+    offset !== null && Math.abs(offset) <= 1,
+    `${label} centered (offset ${offset}px)`,
+  );
+}
+assert(
+  composition.inkMuted !== '' && composition.inkMuted === composition.black60,
+  `muted ink binds to black-60 (got "${composition.inkMuted}" vs "${composition.black60}")`,
+);
 
 await browser.close();
 

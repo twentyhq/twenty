@@ -36,6 +36,28 @@ const REEXPORT_STATEMENT_PATTERN =
 
 const failures = [];
 
+// Locale rewrites run BEFORE the filesystem: every top-level public/ dir
+// must be a reserved prefix or its assets 404 under /fr/* style rewrites.
+// This bug class shipped three times (models, halftone, lottie) before
+// this check existed.
+{
+  const patternsSource = fs.readFileSync(
+    'src/platform/routing/locale-rewrite-patterns.ts',
+    'utf8',
+  );
+  const publicDirectories = fs
+    .readdirSync('public', { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name);
+  for (const directory of publicDirectories) {
+    if (!new RegExp(`'${directory}'`).test(patternsSource)) {
+      failures.push(
+        `public/${directory}/ is not in RESERVED_PREFIXES (locale-rewrite-patterns.ts) — its assets 404 under locale rewrites.`,
+      );
+    }
+  }
+}
+
 // Color and easing literals live only in src/tokens (comments stripped
 // before matching). Authored one-offs are allowlisted with their reason.
 const LITERAL_ALLOWLIST = new Set([

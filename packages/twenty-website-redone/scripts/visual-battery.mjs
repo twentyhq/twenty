@@ -1,4 +1,6 @@
 import { chromium } from 'playwright';
+
+import { PENDING_VISUAL_SLOTS } from './pending-visual-slots.mjs';
 import sharp from 'sharp';
 
 // The WebGL verification battery. Dot patterns are not pixel-comparable
@@ -9,6 +11,7 @@ import sharp from 'sharp';
 // Usage: node scripts/visual-battery.mjs [visualKey ...]  (default: all)
 
 const BASE_URL = process.env.VISUAL_BATTERY_URL ?? 'http://localhost:3004/';
+const VIEWPORT = { width: 1440, height: 900 };
 
 const VISUALS = {
   hourglass: {
@@ -126,6 +129,33 @@ const MOTION_DIFF_FLOOR = 0.005;
 const LOAD_TIMEOUT_MS = 30000;
 
 const failures = [];
+
+// Every data-illustration slot on the page must carry a battery spec —
+// a new visual without coverage is a failure, not a silent gap.
+async function assertSpecCompleteness(page, specNames) {
+  const mounted = await page.evaluate(() =>
+    [...document.querySelectorAll('[data-illustration]')].map((el) =>
+      el.getAttribute('data-illustration'),
+    ),
+  );
+  const uncovered = mounted.filter(
+    (name) => !specNames.has(name) && !PENDING_VISUAL_SLOTS.has(name),
+  );
+  const pendingOnPage = mounted.filter((name) =>
+    PENDING_VISUAL_SLOTS.has(name),
+  );
+  if (pendingOnPage.length > 0) {
+    console.log(
+      `  - pending (declared, no spec yet): ${pendingOnPage.join(', ')}`,
+    );
+  }
+  if (uncovered.length > 0) {
+    console.error(`  ✗ slots without battery specs: ${uncovered.join(', ')}`);
+    failures.push(`uncovered slots: ${uncovered.join(', ')}`);
+  } else {
+    console.log(`  ✓ all ${mounted.length} mounted slots carry specs`);
+  }
+}
 const assert = (condition, message) => {
   if (condition) {
     console.log(`  ✓ ${message}`);
@@ -260,7 +290,7 @@ const settleForSpec = async (page, spec) => {
 const runVisual = async (browser, key, spec) => {
   console.log(`── ${key}`);
   const page = await browser.newPage({
-    viewport: { width: 1440, height: 900 },
+    viewport: VIEWPORT,
     deviceScaleFactor: 1,
   });
   await page.goto(BASE_URL, { waitUntil: 'networkidle', timeout: 180000 });
@@ -327,9 +357,9 @@ const runVisual = async (browser, key, spec) => {
     const visibleLeft = Math.max(canvasBox.x, 0);
     const visibleTop = Math.max(canvasBox.y, 0);
     const visibleWidth =
-      Math.min(canvasBox.x + canvasBox.width, 1440) - visibleLeft;
+      Math.min(canvasBox.x + canvasBox.width, VIEWPORT.width) - visibleLeft;
     const visibleHeight =
-      Math.min(canvasBox.y + canvasBox.height, 900) - visibleTop;
+      Math.min(canvasBox.y + canvasBox.height, VIEWPORT.height) - visibleTop;
     const [fractionX, fractionY] = spec.interactionPoint ?? [0.5, 0.5];
     const centerX = visibleLeft + visibleWidth * fractionX;
     const centerY = visibleTop + visibleHeight * fractionY;
@@ -387,7 +417,7 @@ const runVisual = async (browser, key, spec) => {
 
   // Reduced motion: designed scenes render one frozen frame.
   const reducedPage = await browser.newPage({
-    viewport: { width: 1440, height: 900 },
+    viewport: VIEWPORT,
     deviceScaleFactor: 1,
     reducedMotion: 'reduce',
   });
@@ -424,6 +454,19 @@ const keys =
     ? process.argv.slice(2)
     : Object.keys(VISUALS);
 const browser = await chromium.launch({ channel: 'chrome', headless: true });
+
+// Completeness runs only on full sweeps (a single-visual run is a dev loop).
+if (process.argv.slice(2).length === 0) {
+  const completenessPage = await browser.newPage({ viewport: VIEWPORT });
+  await completenessPage.goto(BASE_URL, {
+    waitUntil: 'networkidle',
+    timeout: 240000,
+  });
+  console.log('── spec completeness');
+  await assertSpecCompleteness(completenessPage, new Set(Object.keys(VISUALS)));
+  await completenessPage.close();
+}
+
 for (const key of keys) {
   const spec = VISUALS[key];
   if (!spec) {

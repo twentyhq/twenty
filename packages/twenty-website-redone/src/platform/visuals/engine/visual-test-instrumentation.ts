@@ -1,6 +1,7 @@
 type ContextBudgetLike = {
   getActiveCount: () => number;
   getPendingCount: () => number;
+  getMaxActive: () => number;
 };
 
 type VisualTestInstrumentation = {
@@ -16,6 +17,7 @@ declare global {
     __visualRuntimeTest?: {
       getActiveContextCount: () => number;
       getPendingContextCount: () => number;
+      getContextCap: () => number;
       getRafTicks: () => number;
     };
   }
@@ -38,6 +40,7 @@ function createVisualTestInstrumentation(): VisualTestInstrumentation {
   window.__visualRuntimeTest = {
     getActiveContextCount: () => budget?.getActiveCount() ?? 0,
     getPendingContextCount: () => budget?.getPendingCount() ?? 0,
+    getContextCap: () => budget?.getMaxActive() ?? 0,
     getRafTicks: () => rafTicks,
   };
 
