@@ -10,6 +10,7 @@ import {
   IconUsers,
 } from '@tabler/icons-react';
 import { DiscordMark, GitHubMark, type IconComponent } from '@/icons';
+import { LATEST_RELEASE } from '@/platform/releases';
 import { SITE_URLS } from '@/platform/site-urls';
 
 export type MenuNavChildPreview = {
@@ -115,10 +116,10 @@ export const MENU: {
           href: '/releases',
           icon: IconTag,
           preview: {
-            image: '/images/menu/releases.webp',
-            imageAlt: msg`Twenty latest release`,
+            image: LATEST_RELEASE.previewImage,
+            imageAlt: msg`Twenty release ${LATEST_RELEASE.release} — ${LATEST_RELEASE.title}`,
             imageScale: 1.04,
-            title: msg`See the latest release`,
+            title: msg`See what shipped in ${LATEST_RELEASE.release}`,
             description: msg`Track every release with changelogs, highlights and demos of the newest features.`,
           },
         },

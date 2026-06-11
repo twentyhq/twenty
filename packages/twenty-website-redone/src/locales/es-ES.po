@@ -484,9 +484,10 @@ msgstr ""
 msgid "Resources"
 msgstr ""
 
-#. js-lingui-id: FY4ykg
+#. js-lingui-id: 0kgOPB
+#. placeholder {0}: LATEST_RELEASE.release
 #: src/sections/menu/menu.data.ts
-msgid "See the latest release"
+msgid "See what shipped in {0}"
 msgstr ""
 
 #. js-lingui-id: 3VFzsh
@@ -631,11 +632,6 @@ msgstr ""
 msgid "Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves."
 msgstr ""
 
-#. js-lingui-id: 4ogO3x
-#: src/sections/menu/menu.data.ts
-msgid "Twenty latest release"
-msgstr ""
-
 #. js-lingui-id: AxT+g4
 #: src/sections/feature-cards/feature-cards.data.ts
 msgid "Twenty makes it simple. It's clean, intuitive, and built to feel like Notion."
@@ -644,6 +640,13 @@ msgstr ""
 #. js-lingui-id: mZ3xRm
 #: src/sections/menu/menu.data.ts
 msgid "Twenty partner ecosystem"
+msgstr ""
+
+#. js-lingui-id: vD7S1X
+#. placeholder {0}: LATEST_RELEASE.release
+#. placeholder {1}: LATEST_RELEASE.title
+#: src/sections/menu/menu.data.ts
+msgid "Twenty release {0} — {1}"
 msgstr ""
 
 #. js-lingui-id: osa7Xg
