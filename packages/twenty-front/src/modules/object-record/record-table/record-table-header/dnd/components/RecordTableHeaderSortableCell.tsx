@@ -3,6 +3,8 @@ import { useSortable } from '@dnd-kit/react/sortable';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
+import { RecordTableHeaderSortableHandleRefContext } from '@/object-record/record-table/record-table-header/dnd/context/RecordTableHeaderSortableHandleRefContext';
+
 const SORTABLE_COLLISION_PRIORITY = 3;
 
 const PLUGINS_WITHOUT_OPTIMISTIC = [SortableKeyboardPlugin];
@@ -43,13 +45,8 @@ export const RecordTableHeaderSortableCell = ({
   });
 
   return (
-    <StyledSortableRoot
-      ref={(el) => {
-        ref(el);
-        handleRef?.(el);
-      }}
-    >
-      {children}
-    </StyledSortableRoot>
+    <RecordTableHeaderSortableHandleRefContext.Provider value={handleRef}>
+      <StyledSortableRoot ref={ref}>{children}</StyledSortableRoot>
+    </RecordTableHeaderSortableHandleRefContext.Provider>
   );
 };

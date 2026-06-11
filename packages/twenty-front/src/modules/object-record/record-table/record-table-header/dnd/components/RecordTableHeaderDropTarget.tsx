@@ -19,15 +19,15 @@ const StyledDropTarget = styled.div<{
     background-color: ${themeCssVariables.background.transparent.blue};
 
     &::before {
-      content: '';
-      position: absolute;
-      height: 100%;
-      top: 0;
-      width: 2px;
       background-color: ${themeCssVariables.color.blue};
-      left: 0;
       border-radius: 0 ${themeCssVariables.border.radius.sm}
         ${themeCssVariables.border.radius.sm} 0;
+      content: '';
+      height: 100%;
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: 2px;
     }
   }
 `;
@@ -43,9 +43,16 @@ export const RecordTableHeaderDropTarget = ({
   children,
   compact = false,
 }: RecordTableHeaderDropTargetProps) => {
-  const { activeDropTargetIndex } = useContext(RecordTableHeaderDndContext);
+  const { activeDraggedSourceIndex, activeDropTargetIndex } = useContext(
+    RecordTableHeaderDndContext,
+  );
+  const isNoopDropTarget =
+    isDefined(activeDraggedSourceIndex) &&
+    (index === activeDraggedSourceIndex ||
+      index === activeDraggedSourceIndex + 1);
+
   const isDragOver = isDefined(activeDropTargetIndex)
-    ? activeDropTargetIndex === index
+    ? activeDropTargetIndex === index && !isNoopDropTarget
     : false;
 
   return (

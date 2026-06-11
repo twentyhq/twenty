@@ -43,6 +43,7 @@ type DragEndPayload = Parameters<
 export type RecordTableHeaderDndKitContextValues = {
   isDragging: boolean;
   activeDropTargetIndex: number | null;
+  activeDraggedSourceIndex: number | null;
 };
 
 export const useRecordTableHeaderDndKit = (): {
@@ -76,6 +77,9 @@ export const useRecordTableHeaderDndKit = (): {
   const [activeDropTargetIndex, setActiveDropTargetIndex] = useState<
     number | null
   >(null);
+  const [activeDraggedSourceIndex, setActiveDraggedSourceIndex] = useState<
+    number | null
+  >(null);
 
   const recordFieldsWithoutLabelIdentifier = visibleRecordFields.filter(
     filterOutByProperty(
@@ -99,13 +103,7 @@ export const useRecordTableHeaderDndKit = (): {
     (labelIdentifierRecordField?.size ?? 0);
 
   const resolveDropFromPointerX = useCallback(
-    ({
-      pointerX,
-      sourceIndex,
-    }: {
-      pointerX: number;
-      sourceIndex: number;
-    }) => {
+    ({ pointerX, sourceIndex }: { pointerX: number; sourceIndex: number }) => {
       const { scrollWrapperElement } = getScrollWrapperElement();
       if (!isDefined(scrollWrapperElement)) return null;
 
@@ -124,12 +122,16 @@ export const useRecordTableHeaderDndKit = (): {
     ],
   );
 
-  const handleDragStart = () => {
+  const handleDragStart = (event: DragStartPayload) => {
+    const { operation } = event;
+    const sourceIndex = operation.source?.data.index;
+
     setIsDragging(true);
+    setActiveDraggedSourceIndex(sourceIndex ?? null);
 
     store.set(isRecordTableHeaderDropProcessingCallbackState, true);
 
-    setActiveDropTargetIndex(0);
+    setActiveDropTargetIndex(null);
   };
 
   const handleDragMove = useCallback(
@@ -158,9 +160,11 @@ export const useRecordTableHeaderDndKit = (): {
 
     setIsDragging(false);
     setActiveDropTargetIndex(null);
+    setActiveDraggedSourceIndex(null);
     setDragSelectionStartEnabled(true);
     store.set(isRecordTableHeaderDropProcessingCallbackState, false);
 
+    if (event.canceled) return;
     if (!isDefined(source)) return;
 
     const sourceIndex = source.data.index;
@@ -180,6 +184,7 @@ export const useRecordTableHeaderDndKit = (): {
   const contextValues: RecordTableHeaderDndKitContextValues = {
     isDragging,
     activeDropTargetIndex,
+    activeDraggedSourceIndex,
   };
 
   return {

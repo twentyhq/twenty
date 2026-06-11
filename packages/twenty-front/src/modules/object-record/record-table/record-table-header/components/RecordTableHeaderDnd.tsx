@@ -48,6 +48,7 @@ export const RecordTableHeaderDnd = () => {
 
       {isDefined(firstScrollableRecordField) ? (
         <RecordTableHeaderSortableCell
+          key={firstScrollableRecordField.fieldMetadataItemId}
           id={firstScrollableRecordField.fieldMetadataItemId}
           index={0}
           group={'record-table-header-droppable'}
