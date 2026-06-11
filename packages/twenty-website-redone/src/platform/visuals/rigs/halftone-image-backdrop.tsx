@@ -19,6 +19,7 @@ export type HalftoneImageBackdropProps = {
   imageUrl: string;
   settings: ImageSessionSettings;
   pointerRootSelector?: string;
+  onFirstFrame?: () => void;
   poster?: ReactNode;
   priority?: boolean;
   loading?: 'lazy' | 'eager';
@@ -31,6 +32,7 @@ export function HalftoneImageBackdrop({
   imageUrl,
   settings,
   pointerRootSelector,
+  onFirstFrame,
   poster = null,
   priority = false,
   loading = 'lazy',
@@ -47,6 +49,7 @@ export function HalftoneImageBackdrop({
     >
       <HalftoneImageScene
         imageUrl={imageUrl}
+        onFirstFrame={onFirstFrame}
         pointerRootSelector={pointerRootSelector}
         settings={settings}
       />

@@ -19,6 +19,21 @@ const VISUALS = {
     animated: true,
     interactive: false,
   },
+  'hero-bridge': {
+    slotSelector: '[data-illustration="hero-bridge"]',
+    // blue dashes from the bridge's dark areas; hover light is the
+    // interactivity; priority mount at the very top of the page
+    hueRangeDegrees: [200, 260],
+    minCoverage: 0.01,
+    animated: false,
+    interactive: true,
+    // the hero center is the copy block, which opts out of hover via
+    // [data-halftone-exclude] — probe the artwork's left field instead
+    interactionPoint: [0.06, 0.72],
+    // the hover light brightens only the dashes inside its 158px circle:
+    // ~0.3% of canvas pixels at full effect (reduced baseline is 0.00%)
+    interactionFloor: 0.002,
+  },
   'footer-backdrop': {
     slotSelector: '[data-illustration="footer-backdrop"]',
     // charcoal on black: hueless and subtle — breathe is the liveliness
@@ -307,8 +322,17 @@ const runVisual = async (browser, key, spec) => {
   }
 
   if (spec.interactive) {
-    const centerX = canvasBox.x + canvasBox.width / 2;
-    const centerY = canvasBox.y + canvasBox.height / 2;
+    // Bleed canvases extend past the viewport: interaction fractions
+    // resolve against the VISIBLE region or the pointer hits nothing.
+    const visibleLeft = Math.max(canvasBox.x, 0);
+    const visibleTop = Math.max(canvasBox.y, 0);
+    const visibleWidth =
+      Math.min(canvasBox.x + canvasBox.width, 1440) - visibleLeft;
+    const visibleHeight =
+      Math.min(canvasBox.y + canvasBox.height, 900) - visibleTop;
+    const [fractionX, fractionY] = spec.interactionPoint ?? [0.5, 0.5];
+    const centerX = visibleLeft + visibleWidth * fractionX;
+    const centerY = visibleTop + visibleHeight * fractionY;
     const before = await readClip(page, canvasBox);
     await page.mouse.move(centerX, centerY);
     await page.mouse.down();
@@ -321,7 +345,7 @@ const runVisual = async (browser, key, spec) => {
     const after = await readClip(page, canvasBox);
     const dragDiff = diffClips(before, after);
     assert(
-      dragDiff > MOTION_DIFF_FLOOR,
+      dragDiff > (spec.interactionFloor ?? MOTION_DIFF_FLOOR),
       `drag changes pixels (diff ${(dragDiff * 100).toFixed(2)}%)`,
     );
   }

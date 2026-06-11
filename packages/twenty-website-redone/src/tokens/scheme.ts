@@ -18,7 +18,7 @@ export const SCHEMES: Record<
   light: {
     surface: 'white',
     ink: 'black',
-    inkMuted: 'black-70',
+    inkMuted: 'black-60',
     line: 'black-10',
     lineStrong: 'black-20',
     divider: 'black-40',
@@ -26,7 +26,7 @@ export const SCHEMES: Record<
   muted: {
     surface: 'neutral',
     ink: 'black',
-    inkMuted: 'black-70',
+    inkMuted: 'black-60',
     line: 'black-10',
     lineStrong: 'black-20',
     divider: 'black-40',

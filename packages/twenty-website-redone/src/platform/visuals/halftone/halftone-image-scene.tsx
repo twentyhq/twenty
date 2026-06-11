@@ -20,12 +20,14 @@ export type HalftoneImageSceneProps = {
   imageUrl: string;
   settings: ImageSessionSettings;
   pointerRootSelector?: string;
+  onFirstFrame?: () => void;
 };
 
 export function HalftoneImageScene({
   imageUrl,
   settings,
   pointerRootSelector,
+  onFirstFrame,
 }: HalftoneImageSceneProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { reducedMotion } = useVisualRuntime();
@@ -45,6 +47,7 @@ export function HalftoneImageScene({
       settings,
       pointerRootSelector,
       reducedMotion,
+      onFirstFrame,
     });
 
     return () => {

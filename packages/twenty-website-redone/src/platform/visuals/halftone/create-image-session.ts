@@ -20,7 +20,11 @@ export type ImageSessionSettings = {
   // Camera-distance metaphor kept from the model path: zoom is
   // REFERENCE / previewDistance.
   previewDistance: number;
-  imageFit: 'contain' | 'cover';
+  imageFit: 'contain' | 'cover' | 'width';
+  // 'width' fit letterboxes against this edge (0 bottom, 0.5 center, 1 top).
+  verticalAnchor?: number;
+  // Dash response inverts: dark areas grow dashes (the hero bridge).
+  applyToDarkAreas?: boolean;
   contrast: number;
   halftone: {
     scale: number;
@@ -39,9 +43,25 @@ export type ImageSessionSettings = {
     lightEnabled: boolean;
     lightIntensity: number;
     lightRadius: number;
+    // Fades the hover light toward the top/bottom canvas edges (0 = off).
+    lightVerticalFade?: number;
     fadeIn: number;
     fadeOut: number;
   };
+  // Re-evaluated every frame so the framing follows the live viewport
+  // (the hero re-tunes zoom/offsets across its authored breakpoints).
+  responsiveFrame?: () => {
+    previewDistance: number;
+    verticalAnchor: number;
+    verticalOffsetPx: number;
+    horizontalOffsetPx: number;
+  };
+  // Pointer events whose target sits inside this selector read as outside
+  // (the hero's copy block opts out of the hover light).
+  pointerExcludeSelector?: string;
+  // Backdrops behind pointer-events-none layers track the WINDOW (the old
+  // hero's binding); coordinates still resolve against the pointer root.
+  pointerScope?: 'root' | 'window';
   pointer: {
     follow: number;
     velocityDamping: number;
@@ -86,7 +106,7 @@ function getContainedImageRect({
   viewportHeight,
   zoom,
 }: {
-  imageFit: 'contain' | 'cover';
+  imageFit: 'contain' | 'cover' | 'width';
   imageWidth: number;
   imageHeight: number;
   viewportWidth: number;
@@ -109,13 +129,13 @@ function getContainedImageRect({
   let fittedHeight = viewportHeight;
 
   if (imageAspect > viewAspect) {
-    if (imageFit === 'cover') {
+    if (imageFit === 'cover' || imageFit === 'width') {
       fittedWidth = viewportHeight * imageAspect;
     } else {
       fittedHeight = viewportWidth / imageAspect;
     }
   } else {
-    if (imageFit === 'cover') {
+    if (imageFit === 'cover' || imageFit === 'width') {
       fittedHeight = viewportWidth / imageAspect;
     } else {
       fittedWidth = viewportHeight * imageAspect;
@@ -246,7 +266,17 @@ export function createImageSession({
       },
       zoom: { value: zoom },
       contrast: { value: settings.contrast },
-      imageFit: { value: settings.imageFit === 'cover' ? 1 : 0 },
+      imageFit: {
+        value:
+          settings.imageFit === 'width'
+            ? 2
+            : settings.imageFit === 'cover'
+              ? 1
+              : 0,
+      },
+      verticalAnchor: { value: settings.verticalAnchor ?? 0.5 },
+      verticalPixelOffset: { value: 0 },
+      horizontalPixelOffset: { value: 0 },
     },
     vertexShader: BLUR_PASS_SHADERS.vertex,
     fragmentShader: IMAGE_PASS_SHADER.fragment,
@@ -266,7 +296,10 @@ export function createImageSession({
       tile: { value: settings.halftone.scale },
       s_3: { value: settings.halftone.power },
       s_4: { value: settings.halftone.width },
-      applyToDarkAreas: { value: 0 },
+      applyToDarkAreas: { value: settings.applyToDarkAreas ? 1 : 0 },
+      hoverLightVerticalFade: {
+        value: settings.hover.lightVerticalFade ?? 0,
+      },
       minimumTone: { value: settings.halftone.minimumTone },
       dashColor: { value: new THREE.Color(settings.halftone.dashColor) },
       hoverDashColor: {
@@ -350,6 +383,14 @@ export function createImageSession({
       : null) ?? (container as HTMLElement);
 
   const handlePointerMove = (event: PointerEvent) => {
+    if (
+      settings.pointerExcludeSelector &&
+      event.target instanceof Element &&
+      event.target.closest(settings.pointerExcludeSelector)
+    ) {
+      pointer.inside = false;
+      return;
+    }
     const rect = pointerRoot.getBoundingClientRect();
     const enteredJustNow = !pointer.inside;
     const nextMouseX = THREE.MathUtils.clamp(
@@ -390,9 +431,11 @@ export function createImageSession({
     pointer.velocityY = 0;
   };
 
+  const pointerEventTarget: GlobalEventHandlers =
+    settings.pointerScope === 'window' ? window : pointerRoot;
   if (!reducedMotion) {
-    pointerRoot.addEventListener('pointermove', handlePointerMove);
-    pointerRoot.addEventListener('pointerleave', handlePointerLeave);
+    pointerEventTarget.addEventListener('pointermove', handlePointerMove);
+    pointerEventTarget.addEventListener('pointerleave', handlePointerLeave);
   }
 
   let firstFrameNotified = false;
@@ -441,6 +484,24 @@ export function createImageSession({
       .lightEnabled
       ? settings.hover.lightIntensity * pointer.hoverStrength
       : 0;
+
+    if (settings.responsiveFrame) {
+      const frame = settings.responsiveFrame();
+      imageMaterial.uniforms.zoom.value =
+        REFERENCE_PREVIEW_DISTANCE / Math.max(frame.previewDistance, 0.001);
+      imageMaterial.uniforms.verticalAnchor.value = frame.verticalAnchor;
+      imageMaterial.uniforms.verticalPixelOffset.value = frame.verticalOffsetPx;
+      imageMaterial.uniforms.horizontalPixelOffset.value =
+        frame.horizontalOffsetPx;
+      halftoneMaterial.uniforms.footprintScale.value = getImageFootprintScale({
+        imageFit: 'contain',
+        imageHeight: image.naturalHeight,
+        imageWidth: image.naturalWidth,
+        previewDistance: frame.previewDistance,
+        viewportHeight: getVirtualHeight(),
+        viewportWidth: getVirtualWidth(),
+      });
+    }
 
     renderer.setRenderTarget(sceneTarget);
     renderer.render(imageScene, orthographicCamera);
@@ -501,8 +562,11 @@ export function createImageSession({
     dispose() {
       frameLoop.dispose();
       sizeObserver?.disconnect();
-      pointerRoot.removeEventListener('pointermove', handlePointerMove);
-      pointerRoot.removeEventListener('pointerleave', handlePointerLeave);
+      pointerEventTarget.removeEventListener('pointermove', handlePointerMove);
+      pointerEventTarget.removeEventListener(
+        'pointerleave',
+        handlePointerLeave,
+      );
       disposeResources();
     },
   };

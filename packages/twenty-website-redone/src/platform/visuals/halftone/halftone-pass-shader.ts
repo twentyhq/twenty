@@ -29,6 +29,7 @@ export const HALFTONE_PASS_SHADER = {
   uniform float hoverHalftoneWidthShift;
   uniform float hoverLightStrength;
   uniform float hoverLightRadius;
+  uniform float hoverLightVerticalFade;
   uniform float hoverFlowStrength;
   uniform float hoverFlowRadius;
   uniform float dragFlowStrength;
@@ -80,6 +81,10 @@ export const HALFTONE_PASS_SHADER = {
     if (hoverLightStrength > 0.0) {
       float lightRadiusPx = hoverLightRadius * logicalResolution.y;
       hoverLightMask = smoothstep(lightRadiusPx, 0.0, fragDist);
+      float fadeRange = max(hoverLightVerticalFade, 0.0001);
+      hoverLightMask *=
+        smoothstep(0.0, fadeRange, vUv.y) *
+        smoothstep(0.0, fadeRange, 1.0 - vUv.y);
     }
 
     float hoverHalftoneMask = 0.0;
