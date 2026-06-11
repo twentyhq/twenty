@@ -20,7 +20,12 @@ import {
 import { type InputJsonSchema } from '@/logic-function';
 import { isDefined } from '@/utils/validation/isDefined';
 
-const getTypeString = (typeNode: TypeNode): InputJsonSchema => {
+export type KnownObjectTypes = Record<string, string>;
+
+const getTypeString = (
+  typeNode: TypeNode,
+  knownObjectTypes: KnownObjectTypes,
+): InputJsonSchema => {
   switch (typeNode.kind) {
     case SyntaxKind.NumberKeyword:
       return { type: 'number' };
@@ -31,7 +36,10 @@ const getTypeString = (typeNode: TypeNode): InputJsonSchema => {
     case SyntaxKind.ArrayType:
       return {
         type: 'array',
-        items: getTypeString((typeNode as ArrayTypeNode).elementType),
+        items: getTypeString(
+          (typeNode as ArrayTypeNode).elementType,
+          knownObjectTypes,
+        ),
       };
     case SyntaxKind.TypeReference: {
       const typeReferenceNode = typeNode as TypeReferenceNode;
@@ -45,8 +53,18 @@ const getTypeString = (typeNode: TypeNode): InputJsonSchema => {
 
         return {
           type: 'array',
-          items: isDefined(elementType) ? getTypeString(elementType) : {},
+          items: isDefined(elementType)
+            ? getTypeString(elementType, knownObjectTypes)
+            : {},
         };
+      }
+
+      const objectUniversalIdentifier = isDefined(typeName)
+        ? knownObjectTypes[typeName]
+        : undefined;
+
+      if (isDefined(objectUniversalIdentifier)) {
+        return { type: 'object', objectUniversalIdentifier };
       }
 
       return {};
@@ -60,7 +78,7 @@ const getTypeString = (typeNode: TypeNode): InputJsonSchema => {
         if (isDefined(member.name) && isDefined(member.type)) {
           const memberName = (member.name as any).text;
 
-          properties[memberName] = getTypeString(member.type);
+          properties[memberName] = getTypeString(member.type, knownObjectTypes);
         }
       });
 
@@ -100,6 +118,7 @@ const getTypeString = (typeNode: TypeNode): InputJsonSchema => {
 const computeFunctionParameters = (
   funcNode: FunctionDeclaration | FunctionLikeDeclaration | ArrowFunction,
   schema: InputJsonSchema[],
+  knownObjectTypes: KnownObjectTypes,
 ): InputJsonSchema[] => {
   const params = funcNode.parameters;
 
@@ -107,7 +126,7 @@ const computeFunctionParameters = (
     const typeNode = param.type;
 
     if (isDefined(typeNode)) {
-      return [...updatedSchema, getTypeString(typeNode)];
+      return [...updatedSchema, getTypeString(typeNode, knownObjectTypes)];
     } else {
       return [...updatedSchema, {}];
     }
@@ -136,7 +155,9 @@ const extractFunctions = (node: Node): FunctionLikeDeclaration[] => {
 
 export const getFunctionInputSchema = (
   fileContent: string,
+  options?: { knownObjectTypes?: KnownObjectTypes },
 ): InputJsonSchema[] => {
+  const knownObjectTypes = options?.knownObjectTypes ?? {};
   const sourceFile = createSourceFile(
     'temp.ts',
     fileContent,
@@ -153,7 +174,7 @@ export const getFunctionInputSchema = (
       const functions = extractFunctions(node);
 
       functions.forEach((func) => {
-        schema = computeFunctionParameters(func, schema);
+        schema = computeFunctionParameters(func, schema, knownObjectTypes);
       });
     }
   });

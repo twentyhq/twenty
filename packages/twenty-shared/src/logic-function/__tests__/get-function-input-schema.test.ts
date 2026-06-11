@@ -86,6 +86,67 @@ describe('getFunctionInputSchema', () => {
     ]);
   });
 
+  it('should resolve known object type references to record schemas', () => {
+    const fileContent = `
+        export const main = (params: {
+          company: Company;
+          companies: Company[];
+          otherCompanies: Array<Company>;
+          unknownRef: Foo;
+        }): void => {
+          return;
+        };
+      `;
+    const result = getFunctionInputSchema(fileContent, {
+      knownObjectTypes: { Company: 'company-universal-identifier' },
+    });
+
+    expect(result).toEqual([
+      {
+        type: 'object',
+        properties: {
+          company: {
+            type: 'object',
+            objectUniversalIdentifier: 'company-universal-identifier',
+          },
+          companies: {
+            type: 'array',
+            items: {
+              type: 'object',
+              objectUniversalIdentifier: 'company-universal-identifier',
+            },
+          },
+          otherCompanies: {
+            type: 'array',
+            items: {
+              type: 'object',
+              objectUniversalIdentifier: 'company-universal-identifier',
+            },
+          },
+          unknownRef: {},
+        },
+      },
+    ]);
+  });
+
+  it('should not resolve object type references without known object types', () => {
+    const fileContent = `
+        export const main = (params: { companies: Company[] }): void => {
+          return;
+        };
+      `;
+    const result = getFunctionInputSchema(fileContent);
+
+    expect(result).toEqual([
+      {
+        type: 'object',
+        properties: {
+          companies: { type: 'array', items: {} },
+        },
+      },
+    ]);
+  });
+
   it('should analyze a complex function correctly', () => {
     const fileContent = `
         function testFunction(

@@ -140,6 +140,37 @@ describe('jsonSchemaToInputSchema', () => {
     });
   });
 
+  it('preserves objectUniversalIdentifier on object properties and array items', () => {
+    const result = jsonSchemaToInputSchema({
+      type: 'object',
+      properties: {
+        company: {
+          type: 'object',
+          objectUniversalIdentifier: 'company-universal-identifier',
+        },
+        people: {
+          type: 'array',
+          items: {
+            type: 'object',
+            objectUniversalIdentifier: 'person-universal-identifier',
+          },
+        },
+      },
+    });
+
+    expect(result[0].properties?.company).toEqual({
+      type: 'object',
+      objectUniversalIdentifier: 'company-universal-identifier',
+    });
+    expect(result[0].properties?.people).toEqual({
+      type: 'array',
+      items: {
+        type: 'object',
+        objectUniversalIdentifier: 'person-universal-identifier',
+      },
+    });
+  });
+
   it('does not set label when empty or omitted', () => {
     const result = jsonSchemaToInputSchema({
       type: 'object',

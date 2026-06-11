@@ -1,10 +1,19 @@
-import { defineLogicFunction } from 'twenty-sdk/define';
+import {
+  defineLogicFunction,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
 
 import { PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers';
 import { enrichCompaniesCore } from 'src/logic-functions/handlers/enrich-companies';
 import { type BulkEnrichInput } from 'src/types/bulk-enrich-input';
 
 const handler = (input: BulkEnrichInput) => enrichCompaniesCore({ input });
+
+const companyRecordItems = {
+  type: 'object' as const,
+  objectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+};
 
 export default defineLogicFunction({
   universalIdentifier: PDL_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIERS.enrichCompanies,
@@ -21,7 +30,7 @@ export default defineLogicFunction({
         properties: {
           records: {
             type: 'array',
-            items: { type: 'object' },
+            items: companyRecordItems,
             label: 'Records',
           },
           overrideExistingValues: {

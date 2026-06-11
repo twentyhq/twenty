@@ -18,6 +18,26 @@ describe('getInputSchemaFromSourceCode', () => {
     const result = await getInputSchemaFromSourceCode(fileContent);
     expect(result).toEqual(DEFAULT_TOOL_INPUT_SCHEMA);
   });
+  it('should forward known object types to the schema inference', async () => {
+    const fileContent = `
+        function testFunction(params: { companies: Company[] }) { return }
+      `;
+    const result = await getInputSchemaFromSourceCode(fileContent, {
+      knownObjectTypes: { Company: 'company-universal-identifier' },
+    });
+    expect(result).toEqual({
+      type: 'object',
+      properties: {
+        companies: {
+          type: 'array',
+          items: {
+            type: 'object',
+            objectUniversalIdentifier: 'company-universal-identifier',
+          },
+        },
+      },
+    });
+  });
   it('should return input from source code', async () => {
     const fileContent = `
         function testFunction(
