@@ -1,9 +1,10 @@
 import { atom, type WritableAtom } from 'jotai';
-import { atomWithStorage, createJSONStorage } from 'jotai/utils';
+import { atomWithStorage } from 'jotai/utils';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type State } from '@/ui/utilities/state/jotai/types/State';
 import { createJotaiCookieStorage } from '@/ui/utilities/state/jotai/utils/createJotaiCookieStorage';
+import { createResilientJotaiStorage } from '@/ui/utilities/state/jotai/utils/createResilientJotaiStorage';
 
 type CookieStorageConfig<ValueType> = {
   cookieKey: string;
@@ -54,7 +55,9 @@ export const createAtomState = <ValueType>({
       { getOnInit: true },
     ) as StateAtom<ValueType>;
   } else if (useSessionStorage) {
-    const storage = createJSONStorage<ValueType>(() => sessionStorage);
+    const storage = createResilientJotaiStorage<ValueType>(
+      () => sessionStorage,
+    );
     baseAtom = atomWithStorage<ValueType>(key, defaultValue, storage, {
       getOnInit: true,
     }) as StateAtom<ValueType>;
@@ -62,7 +65,7 @@ export const createAtomState = <ValueType>({
     baseAtom = atomWithStorage<ValueType>(
       key,
       defaultValue,
-      undefined,
+      createResilientJotaiStorage<ValueType>(() => localStorage),
       localStorageOptions ?? undefined,
     ) as StateAtom<ValueType>;
   } else {

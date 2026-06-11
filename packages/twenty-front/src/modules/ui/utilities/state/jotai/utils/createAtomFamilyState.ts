@@ -2,6 +2,7 @@ import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
 import { type FamilyState } from '@/ui/utilities/state/jotai/types/FamilyState';
+import { createResilientJotaiStorage } from '@/ui/utilities/state/jotai/utils/createResilientJotaiStorage';
 
 export const createAtomFamilyState = <ValueType, FamilyKey>({
   key,
@@ -36,7 +37,7 @@ export const createAtomFamilyState = <ValueType, FamilyKey>({
       ? atomWithStorage<ValueType>(
           atomKey,
           defaultValue,
-          undefined,
+          createResilientJotaiStorage<ValueType>(() => localStorage),
           localStorageOptions ?? undefined,
         )
       : atom(defaultValue);
