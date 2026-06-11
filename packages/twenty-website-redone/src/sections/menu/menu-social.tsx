@@ -1,7 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import { Fragment } from 'react';
 
 import { formatCompactCount, type CommunityStats } from '@/platform/community';
 import { useLocale } from '@/platform/i18n';

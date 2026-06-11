@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { SITE_URLS } from '@/platform/site-urls';
-import { mediaUp, spacing } from '@/tokens';
+import { spacing } from '@/tokens';
 import { Body, Button, Heading, HeadingPair, SectionShell } from '@/ui';
 
 // Pure-CSS glow behind the hero; the halftone visual that renders inside it

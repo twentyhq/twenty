@@ -5,7 +5,6 @@ import { Fragment } from 'react';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import {
   color,
-  FONT_WEIGHT,
   fontFamily,
   fontSize,
   mediaUp,
