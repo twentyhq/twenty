@@ -13,6 +13,10 @@ import {
 } from 'src/logic-functions/utils/converge-diverged-call-recordings.util';
 import { getRecallRecordingBotEnabled } from 'src/logic-functions/utils/get-recall-recording-bot-enabled.util';
 import {
+  healCallRecordingsMissingRecallBot,
+  type HealCallRecordingsMissingRecallBotResult,
+} from 'src/logic-functions/utils/heal-call-recordings-missing-recall-bot.util';
+import {
   reapOrphanedRecallBots,
   type ReapOrphanedRecallBotsResult,
 } from 'src/logic-functions/utils/reap-orphaned-recall-bots.util';
@@ -33,6 +37,10 @@ const handler = async (): Promise<object> => {
 
   const disabledCancelResult =
     await cancelOpenCallRecordingRequestsIfDisabled(client);
+  const botlessHealResult = await healCallRecordingsMissingRecallBotIfEnabled(
+    client,
+    now,
+  );
   const orphanedBotReapingResult = await reapOrphanedRecallBotsInJoinAtWindow(
     client,
     now,
@@ -48,10 +56,26 @@ const handler = async (): Promise<object> => {
 
   return {
     ...(disabledCancelResult === null ? {} : { disabledCancelResult }),
+    ...(botlessHealResult === null ? {} : { botlessHealResult }),
     orphanedBotReapingResult,
     statusConvergenceResult,
     pendingTranscriptResult,
   };
+};
+
+const healCallRecordingsMissingRecallBotIfEnabled = async (
+  client: CoreApiClient,
+  now: Date,
+): Promise<HealCallRecordingsMissingRecallBotResult | StepFailure | null> => {
+  if (!getRecallRecordingBotEnabled()) {
+    return null;
+  }
+
+  try {
+    return await healCallRecordingsMissingRecallBot({ client, now });
+  } catch (error) {
+    return buildStepFailure('botless call recording healing', error);
+  }
 };
 
 const cancelOpenCallRecordingRequestsIfDisabled = async (
@@ -121,7 +145,7 @@ export default defineLogicFunction({
   universalIdentifier: STALE_RECALL_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'reconcile-stale-recall-state',
   description:
-    'Converges call recordings with Recall on a schedule: pulls stale bot statuses and overdue transcripts, finishes failed or disable-time cancellations, and reaps unclaimed bots. Never reads calendar events — discovery is event-driven.',
+    'Converges call recordings with Recall on a schedule: pulls stale bot statuses and overdue transcripts, finishes failed or disable-time cancellations, schedules bots for recordings still missing one, and reaps unclaimed bots. Reads calendar events only to heal already-decided recordings, never to discover meetings.',
   // Convergence may re-ingest missed media; transfers dominate the budget.
   timeoutSeconds: 300,
   handler,

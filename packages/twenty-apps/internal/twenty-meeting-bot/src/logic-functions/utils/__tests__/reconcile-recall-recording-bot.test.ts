@@ -971,7 +971,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
     ]);
   });
 
-  it('schedules a replacement bot when the existing Recall bot no longer exists', async () => {
+  it('clears the bot id when the existing Recall bot no longer exists, leaving re-creation to the cron', async () => {
     rescheduleRecallRecordingBotMock.mockResolvedValue({
       ok: false,
       status: 404,
@@ -1009,11 +1009,11 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
     expect(rescheduleRecallRecordingBotMock).toHaveBeenCalledWith(
       expect.objectContaining({ externalBotId: 'recall-bot-stale' }),
     );
-    expect(scheduleRecallRecordingBotMock).toHaveBeenCalledTimes(1);
+    expect(scheduleRecallRecordingBotMock).not.toHaveBeenCalled();
     expect(client.callRecordings).toEqual([
       expect.objectContaining({
         id: buildCustomerSyncCallRecordingId(),
-        externalBotId: 'recall-bot-1',
+        externalBotId: null,
       }),
     ]);
   });
@@ -1097,43 +1097,24 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
     expect(scheduleRecallRecordingBotMock).not.toHaveBeenCalled();
   });
 
-  it('cancels its own bot when a concurrent schedule overwrites the bot id', async () => {
-    class WriteBackRaceFakeCoreApiClient extends FakeCoreApiClient {
-      override async mutation(mutation: any): Promise<any> {
-        const mutationResult = await super.mutation(mutation);
-
-        if (
-          mutation.updateCallRecording?.__args.data.externalBotId ===
-          'recall-bot-1'
-        ) {
-          const callRecording = this.callRecordings.find(
-            (candidate) =>
-              candidate.id === mutation.updateCallRecording.__args.id,
-          );
-
-          if (callRecording !== undefined) {
-            callRecording.externalBotId = 'sibling-bot';
-          }
-        }
-
-        return mutationResult;
-      }
-    }
-
-    const client = new WriteBackRaceFakeCoreApiClient({
+  it('schedules exactly one bot when concurrent reconciles race for the same meeting', async () => {
+    const client = buildFakeCoreApiClient({
       calendarEvents: [buildCalendarEvent()],
     });
 
-    await reconcileRecallRecordingBotForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
-      calendarEventIds: ['calendar-event-1'],
-      now: NOW,
-    });
+    await Promise.all(
+      Array.from({ length: 4 }, () =>
+        reconcileRecallRecordingBotForCalendarEventIds({
+          client: client as unknown as CoreApiClient,
+          calendarEventIds: ['calendar-event-1'],
+          now: NOW,
+        }),
+      ),
+    );
 
+    expect(client.callRecordings).toHaveLength(1);
     expect(scheduleRecallRecordingBotMock).toHaveBeenCalledTimes(1);
-    expect(cancelRecallRecordingBotMock).toHaveBeenCalledWith({
-      externalBotId: 'recall-bot-1',
-    });
+    expect(client.callRecordings[0].externalBotId).toBe('recall-bot-1');
   });
 
   it('does not schedule a bot when the recording is canceled between decide and schedule', async () => {
