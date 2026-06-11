@@ -12,12 +12,18 @@ export type ScheduledCallRecordingFields = {
 
 export const createCallRecording = async (
   client: CoreApiClient,
-  data: ScheduledCallRecordingFields,
+  {
+    id,
+    data,
+  }: {
+    id: string;
+    data: ScheduledCallRecordingFields;
+  },
 ): Promise<string> => {
   const mutationResult = await client.mutation({
     createCallRecording: {
       __args: {
-        data,
+        data: { id, ...data },
       },
       id: true,
     },

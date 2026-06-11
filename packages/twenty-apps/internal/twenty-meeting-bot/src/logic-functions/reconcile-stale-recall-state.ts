@@ -122,7 +122,8 @@ export default defineLogicFunction({
   name: 'reconcile-stale-recall-state',
   description:
     'Converges call recordings with Recall on a schedule: pulls stale bot statuses and overdue transcripts, finishes failed or disable-time cancellations, and reaps unclaimed bots. Never reads calendar events — discovery is event-driven.',
-  timeoutSeconds: 120,
+  // Convergence may re-ingest missed media; transfers dominate the budget.
+  timeoutSeconds: 300,
   handler,
   cronTriggerSettings: {
     pattern: STALE_RECALL_STATE_CRON_PATTERN,

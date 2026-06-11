@@ -4,17 +4,30 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { reconcilePendingRecallTranscripts } from 'src/logic-functions/utils/reconcile-pending-recall-transcripts.util';
 
 const retrieveRecallTranscriptMock = vi.hoisted(() => vi.fn());
+const chargeCompletedCallRecordingMock = vi.hoisted(() => vi.fn());
 
 vi.mock('src/logic-functions/utils/retrieve-recall-transcript.util', () => ({
   retrieveRecallTranscript: retrieveRecallTranscriptMock,
 }));
+
+vi.mock(
+  'src/logic-functions/utils/charge-completed-call-recording.util',
+  () => ({
+    chargeCompletedCallRecording: chargeCompletedCallRecordingMock,
+  }),
+);
 
 const NOW = new Date('2026-06-10T12:00:00.000Z');
 const STALE_REQUESTED_AT = '2026-06-10T10:00:00.000Z';
 
 type CallRecordingNode = {
   id: string;
+  status?: string | null;
+  startedAt?: string | null;
+  endedAt?: string | null;
   transcript?: unknown;
+  audio?: unknown;
+  video?: unknown;
 };
 
 class FakeCoreApiClient {
@@ -44,6 +57,8 @@ describe('reconcilePendingRecallTranscripts', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     retrieveRecallTranscriptMock.mockReset();
+    chargeCompletedCallRecordingMock.mockReset();
+    chargeCompletedCallRecordingMock.mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -91,11 +106,66 @@ describe('reconcilePendingRecallTranscripts', () => {
     expect(client.mutations).toEqual([
       { id: 'call-recording-1', data: { transcript: transcriptContent } },
     ]);
+    expect(chargeCompletedCallRecordingMock).not.toHaveBeenCalled();
     expect(result).toEqual({
       pendingMarkerCount: 1,
       filledCallRecordingIds: ['call-recording-1'],
       failedCallRecordingIds: [],
     });
+  });
+
+  it('completes and charges when the late transcript is the last artifact', async () => {
+    const transcriptContent = [{ participant: { id: 1 }, words: [] }];
+
+    retrieveRecallTranscriptMock.mockResolvedValue({
+      ok: true,
+      transcript: {
+        downloadUrl: 'https://recall-transcripts.example.com/transcript-1',
+        statusCode: 'done',
+        statusSubCode: null,
+      },
+    });
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => transcriptContent,
+      }),
+    );
+
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'PROCESSING',
+        startedAt: '2026-06-10T09:00:00.000Z',
+        endedAt: '2026-06-10T09:45:00.000Z',
+        transcript: {
+          recallTranscriptId: 'recall-transcript-1',
+          status: 'PENDING',
+          requestedAt: STALE_REQUESTED_AT,
+        },
+        audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
+        video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
+      },
+    ]);
+
+    const result = await reconcilePendingRecallTranscripts({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(client.mutations).toEqual([
+      {
+        id: 'call-recording-1',
+        data: { transcript: transcriptContent, status: 'COMPLETED' },
+      },
+    ]);
+    expect(chargeCompletedCallRecordingMock).toHaveBeenCalledWith({
+      callRecordingId: 'call-recording-1',
+      startedAt: '2026-06-10T09:00:00.000Z',
+      endedAt: '2026-06-10T09:45:00.000Z',
+    });
+    expect(result.filledCallRecordingIds).toEqual(['call-recording-1']);
   });
 
   it('leaves recently requested pending markers alone', async () => {
@@ -133,6 +203,7 @@ describe('reconcilePendingRecallTranscripts', () => {
     const client = new FakeCoreApiClient([
       {
         id: 'call-recording-1',
+        status: 'PROCESSING',
         transcript: {
           recallTranscriptId: 'recall-transcript-1',
           status: 'PENDING',
@@ -155,6 +226,7 @@ describe('reconcilePendingRecallTranscripts', () => {
             status: 'FAILED',
             subCode: 'audio_missing',
           },
+          status: 'FAILED_UNKNOWN',
         },
       },
     ]);

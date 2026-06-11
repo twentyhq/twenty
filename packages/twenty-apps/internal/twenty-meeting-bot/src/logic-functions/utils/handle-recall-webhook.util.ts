@@ -1,15 +1,21 @@
+import { isNonEmptyArray } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import { buildFailedRecallTranscriptMarker } from 'src/logic-functions/utils/build-failed-recall-transcript-marker.util';
+import { chargeCompletedCallRecording } from 'src/logic-functions/utils/charge-completed-call-recording.util';
 import { downloadRecallTranscript } from 'src/logic-functions/utils/download-recall-transcript.util';
 import { extractRecallBotConvergence } from 'src/logic-functions/utils/extract-recall-bot-convergence.util';
 import { getRecallBot } from 'src/logic-functions/utils/get-recall-bot.util';
+import { ingestRecallMedia } from 'src/logic-functions/utils/ingest-recall-media.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/utils/is-call-recording-status-downgrade.util';
+import { isRecallRecordingDoneSignal } from 'src/logic-functions/utils/is-recall-recording-done-signal.util';
 import { mapRecallStatusCodeToCallRecordingStatus } from 'src/logic-functions/utils/map-recall-status-code-to-call-recording-status.util';
 import { normalizeRecallTimestamp } from 'src/logic-functions/utils/normalize-recall-timestamp.util';
 import { parseRecallTranscriptMarker } from 'src/logic-functions/utils/parse-recall-transcript-marker.util';
 import { requestRecallTranscript } from 'src/logic-functions/utils/request-recall-transcript.util';
+import { shouldCompleteCallRecordingIngestion } from 'src/logic-functions/utils/should-complete-call-recording-ingestion.util';
 import {
   updateCallRecording,
   type CallRecordingUpdateFields,
@@ -29,6 +35,8 @@ type MatchedCallRecording = {
   endedAt?: string | null;
   externalRecordingId?: string | null;
   transcript?: unknown;
+  audio?: FilesFieldValue | null;
+  video?: FilesFieldValue | null;
 };
 
 type RecallWebhookHandlerResult =
@@ -126,18 +134,36 @@ export const handleRecallWebhook = async ({
     }),
   };
 
-  if (
-    callRecordingStatus === CallRecordingStatus.COMPLETED &&
-    isTranscriptUnset(callRecording)
-  ) {
-    Object.assign(
-      updateData,
-      await buildTranscriptRequestUpdate({
+  if (isRecallRecordingDoneSignal({ event, statusCode })) {
+    if (isTranscriptUnset(callRecording)) {
+      const transcriptRequestUpdate = await buildTranscriptRequestUpdate({
         callRecording,
         externalBotId,
         externalRecordingIdFromEvent: updateData.externalRecordingId,
-      }),
+      });
+
+      if (Object.keys(transcriptRequestUpdate).length > 0) {
+        await updateCallRecording(client, {
+          id: callRecording.id,
+          data: transcriptRequestUpdate,
+        });
+        Object.assign(updateData, transcriptRequestUpdate);
+      }
+    }
+
+    Object.assign(
+      updateData,
+      await buildMediaIngestionUpdate({ callRecording, externalBotId }),
     );
+  }
+
+  const completesIngestion = shouldCompleteCallRecordingIngestion({
+    current: callRecording,
+    updateData,
+  });
+
+  if (completesIngestion) {
+    updateData.status = CallRecordingStatus.COMPLETED;
   }
 
   await updateCallRecording(client, {
@@ -145,11 +171,19 @@ export const handleRecallWebhook = async ({
     data: updateData,
   });
 
+  if (completesIngestion) {
+    await chargeCompletedCallRecording({
+      callRecordingId: callRecording.id,
+      startedAt: updateData.startedAt ?? callRecording.startedAt,
+      endedAt: updateData.endedAt ?? callRecording.endedAt,
+    });
+  }
+
   return {
     status: 'updated',
     event,
     callRecordingId: callRecording.id,
-    callRecordingStatus,
+    callRecordingStatus: updateData.status ?? callRecordingStatus,
   };
 };
 
@@ -197,6 +231,8 @@ const findCallRecordingByFilter = async (
           endedAt: true,
           externalRecordingId: true,
           transcript: true,
+          audio: { fileId: true },
+          video: { fileId: true },
         },
       },
     },
@@ -240,7 +276,7 @@ const mapRecallEventToCallRecordingStatus = ({
   statusCode: string | undefined;
 }): CallRecordingStatus | undefined => {
   if (event === 'recording.done') {
-    return CallRecordingStatus.COMPLETED;
+    return CallRecordingStatus.PROCESSING;
   }
 
   if (event === 'recording.failed') {
@@ -344,6 +380,46 @@ const buildExternalRecordingIdUpdate = (
 
 const isTranscriptUnset = (callRecording: MatchedCallRecording): boolean =>
   callRecording.transcript === null || callRecording.transcript === undefined;
+
+const buildMediaIngestionUpdate = async ({
+  callRecording,
+  externalBotId,
+}: {
+  callRecording: MatchedCallRecording;
+  externalBotId: string | undefined;
+}): Promise<Pick<CallRecordingUpdateFields, 'audio' | 'video'>> => {
+  const hasAudio = isNonEmptyArray(callRecording.audio);
+  const hasVideo = isNonEmptyArray(callRecording.video);
+
+  if (hasAudio && hasVideo) {
+    return {};
+  }
+
+  if (externalBotId === undefined) {
+    console.warn(
+      `[recall-recording-bot] cannot ingest media for call recording ${callRecording.id}: no Recall bot id available`,
+    );
+
+    return {};
+  }
+
+  const botResult = await getRecallBot({ externalBotId });
+
+  if (!botResult.ok) {
+    console.warn(
+      `[recall-recording-bot] failed to fetch Recall bot ${externalBotId} while ingesting media for call recording ${callRecording.id}: ${botResult.errorMessage}`,
+    );
+
+    return {};
+  }
+
+  return ingestRecallMedia({
+    callRecordingId: callRecording.id,
+    bot: botResult.bot,
+    hasAudio,
+    hasVideo,
+  });
+};
 
 const buildTranscriptRequestUpdate = async ({
   callRecording,
@@ -451,16 +527,34 @@ const handleRecallTranscriptEvent = async ({
   const downloadResult = await downloadRecallTranscript({ transcriptId });
 
   switch (downloadResult.outcome) {
-    case 'filled':
+    case 'filled': {
+      const updateData: CallRecordingUpdateFields = {
+        transcript: downloadResult.content as Record<string, unknown>,
+        ...(getString(callRecording.externalRecordingId) === undefined
+          ? buildExternalRecordingIdUpdate(body)
+          : {}),
+      };
+      const completesIngestion = shouldCompleteCallRecordingIngestion({
+        current: callRecording,
+        updateData,
+      });
+
+      if (completesIngestion) {
+        updateData.status = CallRecordingStatus.COMPLETED;
+      }
+
       await updateCallRecording(client, {
         id: callRecording.id,
-        data: {
-          transcript: downloadResult.content as Record<string, unknown>,
-          ...(getString(callRecording.externalRecordingId) === undefined
-            ? buildExternalRecordingIdUpdate(body)
-            : {}),
-        },
+        data: updateData,
       });
+
+      if (completesIngestion) {
+        await chargeCompletedCallRecording({
+          callRecordingId: callRecording.id,
+          startedAt: callRecording.startedAt,
+          endedAt: callRecording.endedAt,
+        });
+      }
 
       return {
         status: 'updated',
@@ -468,6 +562,7 @@ const handleRecallTranscriptEvent = async ({
         callRecordingId: callRecording.id,
         transcriptOutcome: 'FILLED',
       };
+    }
     case 'failed':
       return applyRecallTranscriptFailure({
         client,
@@ -532,6 +627,13 @@ const applyRecallTranscriptFailure = async ({
           transcriptId ?? existingMarker?.recallTranscriptId ?? null,
         subCode,
       }),
+      // The transcript is part of the billed deliverable; its failure fails the recording.
+      ...(isCallRecordingStatusDowngrade({
+        fromStatus: callRecording.status,
+        toStatus: CallRecordingStatus.FAILED_UNKNOWN,
+      })
+        ? {}
+        : { status: CallRecordingStatus.FAILED_UNKNOWN }),
     },
   });
 

@@ -14,7 +14,7 @@ export type RecallRecordingBotPolicyCalendarEventInput = {
   calendarEventParticipants?:
     | {
         workspaceMemberId?: string | null;
-        workspaceMemberMeetingBotAutoRecordEnabled?: boolean | null;
+        workspaceMemberMeetingBotAutoRecordEnabled?: boolean;
       }[]
     | null;
 };

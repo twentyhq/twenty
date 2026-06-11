@@ -1,5 +1,6 @@
 import {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  SystemPermissionFlag,
   defineApplicationRole,
 } from 'twenty-sdk/define';
 
@@ -67,5 +68,6 @@ export default defineApplicationRole({
     },
   ],
   fieldPermissions: [],
-  permissionFlagUniversalIdentifiers: [],
+  // UPLOAD_FILE: media ingestion uploads Recall artifacts into FILES fields.
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.UPLOAD_FILE],
 });

@@ -1,4 +1,5 @@
 import { RECALL_BOT_AUTOMATIC_LEAVE } from 'src/logic-functions/constants/recall-bot-automatic-leave';
+import { RECALL_BOT_RECORDING_CONFIG } from 'src/logic-functions/constants/recall-bot-recording-config';
 import { type RecallBotOperationResult } from 'src/logic-functions/types/recall-bot-operation-result.type';
 import {
   extractRecallBotId,
@@ -34,6 +35,7 @@ export const rescheduleRecallRecordingBot = async ({
       join_at: joinAt,
       bot_name: configResult.config.botName,
       automatic_leave: RECALL_BOT_AUTOMATIC_LEAVE,
+      recording_config: RECALL_BOT_RECORDING_CONFIG,
       metadata,
     },
   });

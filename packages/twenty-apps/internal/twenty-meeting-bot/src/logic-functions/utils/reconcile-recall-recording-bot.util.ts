@@ -3,6 +3,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { APPLICATION_ID_ENV_VAR_NAME } from 'src/logic-functions/constants/application-id-env-var-name';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { RecallRecordingBotPreference } from 'src/logic-functions/constants/recall-recording-bot-preference';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { type RecallRecordingBotPolicyResultForMeeting } from 'src/logic-functions/types/recall-recording-bot-policy-result-for-meeting.type';
@@ -12,11 +13,11 @@ import { aggregateRecallRecordingBotPolicyResultsByMeeting } from 'src/logic-fun
 import { buildRecallRecordingBotPolicyResult } from 'src/logic-functions/utils/build-recall-recording-bot-policy-result.util';
 import { cancelCallRecordingRequest } from 'src/logic-functions/utils/cancel-call-recording-request.util';
 import { cancelRecallRecordingBot } from 'src/logic-functions/utils/cancel-recall-recording-bot.util';
+import { computeCallRecordingIdForMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-meeting.util';
 import {
   createCallRecording,
   type ScheduledCallRecordingFields,
 } from 'src/logic-functions/utils/create-call-recording.util';
-import { deleteCallRecording } from 'src/logic-functions/utils/delete-call-recording.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/utils/fetch-calendar-events-by-ids.util';
 import { fetchCalendarEventsByStartsAtValues } from 'src/logic-functions/utils/fetch-calendar-events-by-starts-at-values.util';
 import { findCallRecordingsByCalendarEventIds } from 'src/logic-functions/utils/find-call-recordings-by-calendar-event-ids.util';
@@ -25,6 +26,7 @@ import { getApplicationVariableValue } from 'src/logic-functions/utils/get-appli
 import { getRecallRecordingBotEnabled } from 'src/logic-functions/utils/get-recall-recording-bot-enabled.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { isWithinRecallBotAutoRecordJoinWindow } from 'src/logic-functions/utils/is-within-recall-bot-auto-record-join-window.util';
 import { rescheduleRecallRecordingBot } from 'src/logic-functions/utils/reschedule-recall-recording-bot.util';
 import { scheduleRecallRecordingBot } from 'src/logic-functions/utils/schedule-recall-recording-bot.util';
 import {
@@ -55,6 +57,7 @@ export const reconcileRecallRecordingBotForCalendarEventIds = async ({
     client,
     meetingPolicyResults,
     removedOccurrences,
+    now,
   });
 };
 
@@ -173,10 +176,12 @@ const reconcileRecallRecordingBotMeetingOccurrences = async ({
   client,
   meetingPolicyResults,
   removedOccurrences = [],
+  now,
 }: {
   client: CoreApiClient;
   meetingPolicyResults: RecallRecordingBotPolicyResultForMeeting[];
   removedOccurrences?: RemovedRecallRecordingBotOccurrence[];
+  now: Date;
 }): Promise<RecallRecordingBotReconciliationResult[]> => {
   const removedCalendarEventIdsByMeetingKey =
     buildRemovedCalendarEventIdsByMeetingKey(removedOccurrences);
@@ -203,6 +208,7 @@ const reconcileRecallRecordingBotMeetingOccurrences = async ({
               client,
               meetingPolicyResult,
               removedCalendarEventIds,
+              now,
             })
           : await reconcileCanceledMeeting({
               client,
@@ -232,16 +238,13 @@ const reconcileActiveMeeting = async ({
   client,
   meetingPolicyResult,
   removedCalendarEventIds,
+  now,
 }: {
   client: CoreApiClient;
   meetingPolicyResult: RecallRecordingBotPolicyResultForMeeting;
   removedCalendarEventIds: string[];
+  now: Date;
 }): Promise<RecallRecordingBotReconciliationResult> => {
-  const calendarEventIds = getUniqueSortedIds([
-    ...meetingPolicyResult.calendarEventIds,
-    ...meetingPolicyResult.requestingCalendarEventIds,
-    ...removedCalendarEventIds,
-  ]);
   const representativeCalendarEventId = getUniqueSortedIds(
     meetingPolicyResult.requestingCalendarEventIds,
   )[0];
@@ -258,100 +261,163 @@ const reconcileActiveMeeting = async ({
     return buildSkippedResult(meetingPolicyResult.realMeetingKey);
   }
 
-  const existingCallRecordings = await findCallRecordingsByCalendarEventIds(
-    client,
-    calendarEventIds,
+  const callRecordingId = computeCallRecordingIdForMeeting(
+    meetingPolicyResult.realMeetingKey,
   );
-  const [primaryCallRecording, ...duplicateCallRecordings] =
-    getPolicyManagedCallRecordingsByPriority(existingCallRecordings);
+  const existingCallRecording = (
+    await findCallRecordingsByIds(client, [callRecordingId])
+  )[0];
 
-  await cancelDuplicateCallRecordingRequests({
-    client,
-    realMeetingKey: meetingPolicyResult.realMeetingKey,
-    duplicateCallRecordings,
-  });
-
-  if (primaryCallRecording !== undefined) {
-    await updateCallRecording(client, {
-      id: primaryCallRecording.id,
-      data: buildPolicyManagedCallRecordingUpdateFields({
-        existingCallRecording: primaryCallRecording,
-        calendarEvent: representativeCalendarEvent,
-      }),
-    });
-    await syncScheduledRecallBot({
+  if (existingCallRecording !== undefined) {
+    return updatePolicyManagedCallRecording({
       client,
-      callRecordingId: primaryCallRecording.id,
+      existingCallRecording,
       representativeCalendarEvent,
       realMeetingKey: meetingPolicyResult.realMeetingKey,
     });
-
-    return {
-      action: 'UPDATED',
-      realMeetingKey: meetingPolicyResult.realMeetingKey,
-      callRecordingId: primaryCallRecording.id,
-    };
   }
 
-  const existingNonPolicyManagedOpenCallRecording =
-    getFirstNonPolicyManagedOpenCallRecording(existingCallRecordings);
+  const manualOpenCallRecording = await findManualOpenCallRecording({
+    client,
+    meetingPolicyResult,
+    removedCalendarEventIds,
+  });
 
-  if (existingNonPolicyManagedOpenCallRecording !== undefined) {
+  if (manualOpenCallRecording !== undefined) {
     return {
       action: 'SKIPPED',
       realMeetingKey: meetingPolicyResult.realMeetingKey,
-      callRecordingId: existingNonPolicyManagedOpenCallRecording.id,
+      callRecordingId: manualOpenCallRecording.id,
     };
   }
-
-  const createdCallRecordingId = await createCallRecording(
-    client,
-    buildScheduledCallRecordingFields(representativeCalendarEvent),
-  );
-
-  // Concurrent runs can all pass the read above; only the canonical one schedules.
-  const callRecordingsAfterCreate = await findCallRecordingsByCalendarEventIds(
-    client,
-    calendarEventIds,
-  );
-  const [canonicalCallRecording] = getPolicyManagedCallRecordingsByPriority(
-    callRecordingsAfterCreate,
-  );
 
   if (
-    canonicalCallRecording !== undefined &&
-    canonicalCallRecording.id !== createdCallRecordingId
+    representativeCalendarEvent.meetingBotPreference !==
+      RecallRecordingBotPreference.ON &&
+    !isWithinRecallBotAutoRecordJoinWindow({
+      startsAt: representativeCalendarEvent.startsAt,
+      now,
+    })
   ) {
-    const createdCallRecording = callRecordingsAfterCreate.find(
-      (callRecording) => callRecording.id === createdCallRecordingId,
-    );
+    return buildSkippedResult(meetingPolicyResult.realMeetingKey);
+  }
 
-    if (createdCallRecording !== undefined) {
-      await cancelCallRecordingRequest({
-        client,
-        callRecording: createdCallRecording,
-      });
+  return createPolicyManagedCallRecording({
+    client,
+    callRecordingId,
+    representativeCalendarEvent,
+    realMeetingKey: meetingPolicyResult.realMeetingKey,
+  });
+};
+
+const updatePolicyManagedCallRecording = async ({
+  client,
+  existingCallRecording,
+  representativeCalendarEvent,
+  realMeetingKey,
+}: {
+  client: CoreApiClient;
+  existingCallRecording: CallRecordingRecord;
+  representativeCalendarEvent: CalendarEventRecord;
+  realMeetingKey: string;
+}): Promise<RecallRecordingBotReconciliationResult> => {
+  await updateCallRecording(client, {
+    id: existingCallRecording.id,
+    data: buildPolicyManagedCallRecordingUpdateFields({
+      existingCallRecording,
+      calendarEvent: representativeCalendarEvent,
+    }),
+  });
+  await syncScheduledRecallBot({
+    client,
+    callRecordingId: existingCallRecording.id,
+    representativeCalendarEvent,
+    realMeetingKey,
+  });
+
+  return {
+    action: 'UPDATED',
+    realMeetingKey,
+    callRecordingId: existingCallRecording.id,
+  };
+};
+
+const createPolicyManagedCallRecording = async ({
+  client,
+  callRecordingId,
+  representativeCalendarEvent,
+  realMeetingKey,
+}: {
+  client: CoreApiClient;
+  callRecordingId: string;
+  representativeCalendarEvent: CalendarEventRecord;
+  realMeetingKey: string;
+}): Promise<RecallRecordingBotReconciliationResult> => {
+  try {
+    await createCallRecording(client, {
+      id: callRecordingId,
+      data: buildScheduledCallRecordingFields(representativeCalendarEvent),
+    });
+  } catch (error) {
+    // The id is deterministic, so a conflict means a concurrent run created the row first.
+    const concurrentlyCreatedCallRecording = (
+      await findCallRecordingsByIds(client, [callRecordingId])
+    )[0];
+
+    if (concurrentlyCreatedCallRecording === undefined) {
+      throw error;
     }
 
-    return {
-      action: 'SKIPPED',
-      realMeetingKey: meetingPolicyResult.realMeetingKey,
-      callRecordingId: canonicalCallRecording.id,
-    };
+    return updatePolicyManagedCallRecording({
+      client,
+      existingCallRecording: concurrentlyCreatedCallRecording,
+      representativeCalendarEvent,
+      realMeetingKey,
+    });
   }
 
   await syncScheduledRecallBot({
     client,
-    callRecordingId: createdCallRecordingId,
+    callRecordingId,
     representativeCalendarEvent,
-    realMeetingKey: meetingPolicyResult.realMeetingKey,
+    realMeetingKey,
   });
 
   return {
     action: 'CREATED',
-    realMeetingKey: meetingPolicyResult.realMeetingKey,
-    callRecordingId: createdCallRecordingId,
+    realMeetingKey,
+    callRecordingId,
   };
+};
+
+const findManualOpenCallRecording = async ({
+  client,
+  meetingPolicyResult,
+  removedCalendarEventIds,
+}: {
+  client: CoreApiClient;
+  meetingPolicyResult: RecallRecordingBotPolicyResultForMeeting;
+  removedCalendarEventIds: string[];
+}): Promise<CallRecordingRecord | undefined> => {
+  const calendarEventIds = getUniqueSortedIds([
+    ...meetingPolicyResult.calendarEventIds,
+    ...meetingPolicyResult.requestingCalendarEventIds,
+    ...removedCalendarEventIds,
+  ]);
+  const callRecordings = await findCallRecordingsByCalendarEventIds(
+    client,
+    calendarEventIds,
+  );
+
+  return [...callRecordings]
+    .sort((firstCallRecording, secondCallRecording) =>
+      firstCallRecording.id.localeCompare(secondCallRecording.id),
+    )
+    .find(
+      (callRecording) =>
+        callRecording.status !== CallRecordingStatus.COMPLETED &&
+        !isNonEmptyString(callRecording.recordingRequestStatus),
+    );
 };
 
 const reconcileCanceledMeeting = async ({
@@ -392,43 +458,6 @@ const reconcileCanceledMeeting = async ({
     realMeetingKey: meetingPolicyResult.realMeetingKey,
     callRecordingId: cancellableCallRecordings[0].id,
   };
-};
-
-const cancelDuplicateCallRecordingRequests = async ({
-  client,
-  realMeetingKey,
-  duplicateCallRecordings,
-}: {
-  client: CoreApiClient;
-  realMeetingKey: string;
-  duplicateCallRecordings: CallRecordingRecord[];
-}): Promise<void> => {
-  // Bot-less REQUESTED duplicates have no external state; delete, don't cancel.
-  const duplicatesToDelete = duplicateCallRecordings.filter(
-    (callRecording) =>
-      callRecording.recordingRequestStatus ===
-        CallRecordingRequestStatus.REQUESTED &&
-      !isNonEmptyString(callRecording.externalBotId),
-  );
-  const duplicatesToCancel = duplicateCallRecordings.filter((callRecording) =>
-    isNonEmptyString(callRecording.externalBotId),
-  );
-
-  if (duplicatesToDelete.length === 0 && duplicatesToCancel.length === 0) {
-    return;
-  }
-
-  console.warn(
-    `[recall-recording-bot] found ${duplicatesToDelete.length + duplicatesToCancel.length} duplicate policy-managed call recording(s) for meeting ${realMeetingKey}, deleting ${duplicatesToDelete.length} and canceling ${duplicatesToCancel.length}`,
-  );
-
-  for (const callRecording of duplicatesToDelete) {
-    await deleteCallRecording(client, callRecording.id);
-  }
-
-  for (const callRecording of duplicatesToCancel) {
-    await cancelCallRecordingRequest({ client, callRecording });
-  }
 };
 
 // startedAt/endedAt come from the webhook; calendar writes never touch them.
@@ -590,54 +619,6 @@ const buildRemovedCalendarEventIdsByMeetingKey = (
 
   return calendarEventIdsByMeetingKey;
 };
-
-// The bot-carrying recording stays primary so dedupe never trades a live bot for a fresh one.
-const getPolicyManagedCallRecordingsByPriority = (
-  callRecordings: CallRecordingRecord[],
-): CallRecordingRecord[] =>
-  callRecordings
-    .filter(isPolicyManagedCallRecording)
-    .sort((firstCallRecording, secondCallRecording) => {
-      const firstHasBot = isNonEmptyString(firstCallRecording.externalBotId);
-      const secondHasBot = isNonEmptyString(secondCallRecording.externalBotId);
-
-      if (firstHasBot !== secondHasBot) {
-        return firstHasBot ? -1 : 1;
-      }
-
-      return firstCallRecording.id.localeCompare(secondCallRecording.id);
-    });
-
-const getFirstNonPolicyManagedOpenCallRecording = (
-  callRecordings: CallRecordingRecord[],
-): CallRecordingRecord | undefined =>
-  [...callRecordings]
-    .sort((firstCallRecording, secondCallRecording) =>
-      firstCallRecording.id.localeCompare(secondCallRecording.id),
-    )
-    .find(
-      (callRecording) =>
-        callRecording.status !== CallRecordingStatus.COMPLETED &&
-        !isPolicyManagedCallRecording(callRecording),
-    );
-
-const isPolicyManagedCallRecording = (
-  callRecording: CallRecordingRecord,
-): boolean =>
-  isOpenRecallRecordingBotStatus(callRecording.status) &&
-  (callRecording.recordingRequestStatus ===
-    CallRecordingRequestStatus.REQUESTED ||
-    callRecording.recordingRequestStatus ===
-      CallRecordingRequestStatus.CANCELED);
-
-const isOpenRecallRecordingBotStatus = (
-  status: string | null | undefined,
-): boolean =>
-  status === CallRecordingStatus.SCHEDULED ||
-  status === CallRecordingStatus.JOINING ||
-  status === CallRecordingStatus.RECORDING ||
-  status === CallRecordingStatus.PROCESSING ||
-  status === CallRecordingStatus.FAILED_UNKNOWN;
 
 const buildSkippedResult = (
   realMeetingKey: string,

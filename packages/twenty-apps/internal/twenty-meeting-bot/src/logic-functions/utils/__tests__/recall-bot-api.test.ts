@@ -66,6 +66,10 @@ describe('recall bot api', () => {
         waiting_room_timeout: 600,
         noone_joined_timeout: 600,
       },
+      recording_config: {
+        video_mixed_mp4: {},
+        audio_mixed_mp3: {},
+      },
       metadata: {
         twentyCallRecordingId: 'call-recording-id',
         twentyCalendarEventId: 'calendar-event-id',

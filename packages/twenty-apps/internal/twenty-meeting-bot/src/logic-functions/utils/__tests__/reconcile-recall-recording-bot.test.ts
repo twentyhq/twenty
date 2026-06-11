@@ -1,6 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { computeCallRecordingIdForMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-meeting.util';
 import { reconcileRecallRecordingBotForCalendarEventIds } from 'src/logic-functions/utils/reconcile-recall-recording-bot.util';
 
 const getRecallRecordingBotEnabledMock = vi.hoisted(() => vi.fn());
@@ -33,6 +34,13 @@ vi.mock('src/logic-functions/utils/cancel-recall-recording-bot.util', () => ({
 const NOW = new Date('2026-01-01T12:00:00.000Z');
 const FUTURE_STARTS_AT = '2026-01-01T13:00:00.000Z';
 const FUTURE_ENDS_AT = '2026-01-01T14:00:00.000Z';
+
+const buildCustomerSyncCallRecordingId = (
+  startsAt: string = FUTURE_STARTS_AT,
+): string =>
+  computeCallRecordingIdForMeeting(
+    `link:meet.example.com/customer-sync:${startsAt}`,
+  );
 
 type CalendarEventNode = {
   id: string;
@@ -156,10 +164,12 @@ class FakeCoreApiClient {
   async mutation(mutation: any): Promise<any> {
     if (mutation.createCallRecording !== undefined) {
       const data = mutation.createCallRecording.__args.data;
-      const createdCallRecording = {
-        id: `call-recording-${this.callRecordings.length + 1}`,
-        ...data,
-      };
+
+      if (this.callRecordings.some((candidate) => candidate.id === data.id)) {
+        throw new Error(`Duplicate call recording id ${data.id}`);
+      }
+
+      const createdCallRecording = { ...data };
 
       this.callRecordings.push(createdCallRecording);
       this.mutations.push({
@@ -192,24 +202,6 @@ class FakeCoreApiClient {
 
       return {
         updateCallRecording: {
-          id,
-        },
-      };
-    }
-
-    if (mutation.deleteCallRecording !== undefined) {
-      const { id } = mutation.deleteCallRecording.__args;
-
-      this.callRecordings = this.callRecordings.filter(
-        (candidate) => candidate.id !== id,
-      );
-      this.mutations.push({
-        name: 'deleteCallRecording',
-        args: { id },
-      });
-
-      return {
-        deleteCallRecording: {
           id,
         },
       };
@@ -302,12 +294,12 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
     expect(result).toEqual([
       expect.objectContaining({
         action: 'CREATED',
-        callRecordingId: 'call-recording-1',
+        callRecordingId: buildCustomerSyncCallRecordingId(),
       }),
     ]);
     expect(client.callRecordings).toEqual([
       {
-        id: 'call-recording-1',
+        id: buildCustomerSyncCallRecordingId(),
         title: 'Customer Sync',
         status: 'SCHEDULED',
         recordingRequestStatus: 'REQUESTED',
@@ -319,7 +311,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
       meetingUrl: 'https://meet.example.com/customer-sync',
       joinAt: FUTURE_STARTS_AT,
       metadata: {
-        twentyCallRecordingId: 'call-recording-1',
+        twentyCallRecordingId: buildCustomerSyncCallRecordingId(),
         twentyCalendarEventId: 'calendar-event-1',
         twentyRealMeetingKey:
           'link:meet.example.com/customer-sync:2026-01-01T13:00:00.000Z',
@@ -351,10 +343,128 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
     expect(result).toEqual([
       expect.objectContaining({
         action: 'CREATED',
-        callRecordingId: 'call-recording-1',
+        callRecordingId: buildCustomerSyncCallRecordingId(),
       }),
     ]);
     expect(scheduleRecallRecordingBotMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('skips creating an auto-record recording when the meeting started before the join grace', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [
+        buildCalendarEvent({
+          meetingBotPreference: null,
+          startsAt: '2026-01-01T11:30:00.000Z',
+          endsAt: '2026-01-01T13:00:00.000Z',
+        }),
+      ],
+      calendarEventParticipants: [
+        {
+          id: 'participant-1',
+          calendarEventId: 'calendar-event-1',
+          workspaceMemberId: 'workspace-member-1',
+        },
+      ],
+      workspaceMembers: [
+        { id: 'workspace-member-1', meetingBotAutoRecordEnabled: true },
+      ],
+    });
+
+    const result = await reconcileRecallRecordingBotForCalendarEventIds({
+      client: client as unknown as CoreApiClient,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(result).toEqual([
+      expect.objectContaining({
+        action: 'SKIPPED',
+        callRecordingId: null,
+      }),
+    ]);
+    expect(client.mutations).toEqual([]);
+    expect(scheduleRecallRecordingBotMock).not.toHaveBeenCalled();
+  });
+
+  it('creates a recording past the join grace when preference is ON', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [
+        buildCalendarEvent({
+          startsAt: '2026-01-01T11:30:00.000Z',
+          endsAt: '2026-01-01T13:00:00.000Z',
+        }),
+      ],
+    });
+
+    const result = await reconcileRecallRecordingBotForCalendarEventIds({
+      client: client as unknown as CoreApiClient,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(result).toEqual([
+      expect.objectContaining({
+        action: 'CREATED',
+        callRecordingId: buildCustomerSyncCallRecordingId(
+          '2026-01-01T11:30:00.000Z',
+        ),
+      }),
+    ]);
+    expect(scheduleRecallRecordingBotMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('updates an existing recording past the join grace instead of skipping it', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [
+        buildCalendarEvent({
+          meetingBotPreference: null,
+          title: 'Updated Customer Sync',
+          startsAt: '2026-01-01T11:30:00.000Z',
+          endsAt: '2026-01-01T13:00:00.000Z',
+        }),
+      ],
+      calendarEventParticipants: [
+        {
+          id: 'participant-1',
+          calendarEventId: 'calendar-event-1',
+          workspaceMemberId: 'workspace-member-1',
+        },
+      ],
+      workspaceMembers: [
+        { id: 'workspace-member-1', meetingBotAutoRecordEnabled: true },
+      ],
+      callRecordings: [
+        {
+          id: buildCustomerSyncCallRecordingId('2026-01-01T11:30:00.000Z'),
+          title: 'Old Customer Sync',
+          status: 'SCHEDULED',
+          recordingRequestStatus: 'REQUESTED',
+          calendarEventId: 'calendar-event-1',
+          externalBotId: 'recall-bot-1',
+        },
+      ],
+    });
+
+    const result = await reconcileRecallRecordingBotForCalendarEventIds({
+      client: client as unknown as CoreApiClient,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(result).toEqual([
+      expect.objectContaining({
+        action: 'UPDATED',
+        callRecordingId: buildCustomerSyncCallRecordingId(
+          '2026-01-01T11:30:00.000Z',
+        ),
+      }),
+    ]);
+    expect(client.callRecordings).toEqual([
+      expect.objectContaining({
+        title: 'Updated Customer Sync',
+        recordingRequestStatus: 'REQUESTED',
+      }),
+    ]);
   });
 
   it('does not schedule a bot without an override when no participating member has auto-record enabled', async () => {
@@ -397,13 +507,11 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
       calendarEvents: [
         buildCalendarEvent({
           title: 'Updated Customer Sync',
-          startsAt: '2026-01-01T15:00:00.000Z',
-          endsAt: '2026-01-01T16:00:00.000Z',
         }),
       ],
       callRecordings: [
         {
-          id: 'call-recording-1',
+          id: buildCustomerSyncCallRecordingId(),
           title: 'Old Customer Sync',
           status: 'SCHEDULED',
           recordingRequestStatus: 'REQUESTED',
@@ -424,12 +532,12 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
     expect(result).toEqual([
       expect.objectContaining({
         action: 'UPDATED',
-        callRecordingId: 'call-recording-1',
+        callRecordingId: buildCustomerSyncCallRecordingId(),
       }),
     ]);
     expect(client.callRecordings).toEqual([
       expect.objectContaining({
-        id: 'call-recording-1',
+        id: buildCustomerSyncCallRecordingId(),
         title: 'Updated Customer Sync',
         status: 'SCHEDULED',
         recordingRequestStatus: 'REQUESTED',
@@ -442,12 +550,12 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
     expect(rescheduleRecallRecordingBotMock).toHaveBeenCalledWith({
       externalBotId: 'recall-bot-1',
       meetingUrl: 'https://meet.example.com/customer-sync',
-      joinAt: '2026-01-01T15:00:00.000Z',
+      joinAt: FUTURE_STARTS_AT,
       metadata: {
-        twentyCallRecordingId: 'call-recording-1',
+        twentyCallRecordingId: buildCustomerSyncCallRecordingId(),
         twentyCalendarEventId: 'calendar-event-1',
         twentyRealMeetingKey:
-          'link:meet.example.com/customer-sync:2026-01-01T15:00:00.000Z',
+          'link:meet.example.com/customer-sync:2026-01-01T13:00:00.000Z',
       },
     });
   });
@@ -495,124 +603,6 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
     expect(cancelRecallRecordingBotMock).toHaveBeenCalledWith({
       externalBotId: 'recall-bot-1',
     });
-  });
-
-  it('deletes bot-less duplicate recordings and keeps the one carrying the bot', async () => {
-    const client = buildFakeCoreApiClient({
-      calendarEvents: [buildCalendarEvent()],
-      callRecordings: [
-        {
-          id: 'call-recording-1',
-          title: 'Customer Sync',
-          status: 'SCHEDULED',
-          recordingRequestStatus: 'REQUESTED',
-          startedAt: FUTURE_STARTS_AT,
-          endedAt: FUTURE_ENDS_AT,
-          calendarEventId: 'calendar-event-1',
-          externalBotId: null,
-        },
-        {
-          id: 'call-recording-2',
-          title: 'Customer Sync',
-          status: 'SCHEDULED',
-          recordingRequestStatus: 'REQUESTED',
-          startedAt: FUTURE_STARTS_AT,
-          endedAt: FUTURE_ENDS_AT,
-          calendarEventId: 'calendar-event-1',
-          externalBotId: 'recall-bot-2',
-        },
-      ],
-    });
-
-    const result = await reconcileRecallRecordingBotForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
-      calendarEventIds: ['calendar-event-1'],
-      now: NOW,
-    });
-
-    expect(result).toEqual([
-      expect.objectContaining({
-        action: 'UPDATED',
-        callRecordingId: 'call-recording-2',
-      }),
-    ]);
-    expect(client.callRecordings).toEqual([
-      expect.objectContaining({
-        id: 'call-recording-2',
-        recordingRequestStatus: 'REQUESTED',
-        externalBotId: 'recall-bot-2',
-      }),
-    ]);
-    expect(client.mutations).toContainEqual({
-      name: 'deleteCallRecording',
-      args: { id: 'call-recording-1' },
-    });
-    expect(cancelRecallRecordingBotMock).not.toHaveBeenCalled();
-    expect(rescheduleRecallRecordingBotMock).toHaveBeenCalledWith(
-      expect.objectContaining({ externalBotId: 'recall-bot-2' }),
-    );
-    expect(scheduleRecallRecordingBotMock).not.toHaveBeenCalled();
-  });
-
-  it('cancels a duplicate that carries its own bot instead of deleting it', async () => {
-    const client = buildFakeCoreApiClient({
-      calendarEvents: [buildCalendarEvent()],
-      callRecordings: [
-        {
-          id: 'call-recording-1',
-          title: 'Customer Sync',
-          status: 'SCHEDULED',
-          recordingRequestStatus: 'REQUESTED',
-          startedAt: FUTURE_STARTS_AT,
-          endedAt: FUTURE_ENDS_AT,
-          calendarEventId: 'calendar-event-1',
-          externalBotId: 'recall-bot-1',
-        },
-        {
-          id: 'call-recording-2',
-          title: 'Customer Sync',
-          status: 'SCHEDULED',
-          recordingRequestStatus: 'REQUESTED',
-          startedAt: FUTURE_STARTS_AT,
-          endedAt: FUTURE_ENDS_AT,
-          calendarEventId: 'calendar-event-1',
-          externalBotId: 'recall-bot-2',
-        },
-      ],
-    });
-
-    const result = await reconcileRecallRecordingBotForCalendarEventIds({
-      client: client as unknown as CoreApiClient,
-      calendarEventIds: ['calendar-event-1'],
-      now: NOW,
-    });
-
-    expect(result).toEqual([
-      expect.objectContaining({
-        action: 'UPDATED',
-        callRecordingId: 'call-recording-1',
-      }),
-    ]);
-    expect(client.callRecordings).toEqual([
-      expect.objectContaining({
-        id: 'call-recording-1',
-        recordingRequestStatus: 'REQUESTED',
-        externalBotId: 'recall-bot-1',
-      }),
-      expect.objectContaining({
-        id: 'call-recording-2',
-        recordingRequestStatus: 'CANCELED',
-        externalBotId: null,
-      }),
-    ]);
-    expect(cancelRecallRecordingBotMock).toHaveBeenCalledWith({
-      externalBotId: 'recall-bot-2',
-    });
-    expect(
-      client.mutations.filter(
-        (mutation) => mutation.name === 'deleteCallRecording',
-      ),
-    ).toEqual([]);
   });
 
   it('persists the cancel intent and leaves the bot for the stale-state cron when the Recall cancel fails', async () => {
@@ -672,7 +662,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
       ],
       callRecordings: [
         {
-          id: 'call-recording-1',
+          id: buildCustomerSyncCallRecordingId(),
           title: 'Customer Sync',
           status: 'JOINING',
           recordingRequestStatus: 'REQUESTED',
@@ -693,12 +683,12 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
     expect(result).toEqual([
       expect.objectContaining({
         action: 'UPDATED',
-        callRecordingId: 'call-recording-1',
+        callRecordingId: buildCustomerSyncCallRecordingId(),
       }),
     ]);
     expect(client.callRecordings).toEqual([
       expect.objectContaining({
-        id: 'call-recording-1',
+        id: buildCustomerSyncCallRecordingId(),
         title: 'Renamed Customer Sync',
         status: 'JOINING',
       }),
@@ -725,7 +715,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
     expect(result).toEqual([
       expect.objectContaining({
         action: 'CREATED',
-        callRecordingId: 'call-recording-1',
+        callRecordingId: buildCustomerSyncCallRecordingId(),
       }),
     ]);
     expect(client.callRecordings).toHaveLength(1);
@@ -813,7 +803,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
     });
   });
 
-  it('cancels the old bot and schedules a fresh one when the meeting moves to a new time', async () => {
+  it('cancels the old occurrence and creates a fresh recording when the meeting moves to a new time', async () => {
     const NEW_STARTS_AT = '2026-01-02T13:00:00.000Z';
     const NEW_ENDS_AT = '2026-01-02T14:00:00.000Z';
     const client = buildFakeCoreApiClient({
@@ -825,7 +815,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
       ],
       callRecordings: [
         {
-          id: 'call-recording-1',
+          id: buildCustomerSyncCallRecordingId(),
           title: 'Customer Sync',
           status: 'SCHEDULED',
           recordingRequestStatus: 'REQUESTED',
@@ -851,10 +841,13 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
     });
 
     expect(result).toEqual([
-      expect.objectContaining({ action: 'CANCELED' }),
       expect.objectContaining({
-        action: 'UPDATED',
-        callRecordingId: 'call-recording-1',
+        action: 'CANCELED',
+        callRecordingId: buildCustomerSyncCallRecordingId(),
+      }),
+      expect.objectContaining({
+        action: 'CREATED',
+        callRecordingId: buildCustomerSyncCallRecordingId(NEW_STARTS_AT),
       }),
     ]);
     expect(cancelRecallRecordingBotMock).toHaveBeenCalledExactlyOnceWith({
@@ -865,9 +858,13 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
     );
     expect(client.callRecordings).toEqual([
       expect.objectContaining({
-        id: 'call-recording-1',
+        id: buildCustomerSyncCallRecordingId(),
+        recordingRequestStatus: 'CANCELED',
+        externalBotId: null,
+      }),
+      expect.objectContaining({
+        id: buildCustomerSyncCallRecordingId(NEW_STARTS_AT),
         recordingRequestStatus: 'REQUESTED',
-        startedAt: FUTURE_STARTS_AT,
         externalBotId: 'recall-bot-1',
       }),
     ]);
@@ -985,7 +982,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
       calendarEvents: [buildCalendarEvent()],
       callRecordings: [
         {
-          id: 'call-recording-1',
+          id: buildCustomerSyncCallRecordingId(),
           title: 'Customer Sync',
           status: 'SCHEDULED',
           recordingRequestStatus: 'REQUESTED',
@@ -1006,7 +1003,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
     expect(result).toEqual([
       expect.objectContaining({
         action: 'UPDATED',
-        callRecordingId: 'call-recording-1',
+        callRecordingId: buildCustomerSyncCallRecordingId(),
       }),
     ]);
     expect(rescheduleRecallRecordingBotMock).toHaveBeenCalledWith(
@@ -1015,38 +1012,39 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
     expect(scheduleRecallRecordingBotMock).toHaveBeenCalledTimes(1);
     expect(client.callRecordings).toEqual([
       expect.objectContaining({
-        id: 'call-recording-1',
+        id: buildCustomerSyncCallRecordingId(),
         externalBotId: 'recall-bot-1',
       }),
     ]);
   });
 
-  it('cancels its own recording without scheduling when a concurrent reconciliation wins the create race', async () => {
-    class CreateRaceFakeCoreApiClient extends FakeCoreApiClient {
-      private callRecordingsByCalendarEventQueryCount = 0;
+  it('adopts the concurrently created recording when it loses the deterministic-id insert race', async () => {
+    class InsertRaceFakeCoreApiClient extends FakeCoreApiClient {
+      override async mutation(mutation: any): Promise<any> {
+        if (mutation.createCallRecording !== undefined) {
+          const concurrentlyInsertedId =
+            mutation.createCallRecording.__args.data.id;
 
-      override async query(query: any): Promise<any> {
-        if (
-          query.callRecordings !== undefined &&
-          query.callRecordings.__args.filter.calendarEventId?.in !== undefined
-        ) {
-          this.callRecordingsByCalendarEventQueryCount += 1;
-
-          if (this.callRecordingsByCalendarEventQueryCount === 2) {
-            this.callRecordings.unshift({
-              id: 'call-recording-0',
+          if (
+            !this.callRecordings.some(
+              (candidate) => candidate.id === concurrentlyInsertedId,
+            )
+          ) {
+            this.callRecordings.push({
+              id: concurrentlyInsertedId,
               status: 'SCHEDULED',
               recordingRequestStatus: 'REQUESTED',
               calendarEventId: 'calendar-event-1',
+              externalBotId: 'sibling-bot',
             });
           }
         }
 
-        return super.query(query);
+        return super.mutation(mutation);
       }
     }
 
-    const client = new CreateRaceFakeCoreApiClient({
+    const client = new InsertRaceFakeCoreApiClient({
       calendarEvents: [buildCalendarEvent()],
     });
 
@@ -1058,18 +1056,45 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
 
     expect(result).toEqual([
       expect.objectContaining({
-        action: 'SKIPPED',
-        callRecordingId: 'call-recording-0',
+        action: 'UPDATED',
+        callRecordingId: buildCustomerSyncCallRecordingId(),
+      }),
+    ]);
+    expect(client.callRecordings).toHaveLength(1);
+    expect(scheduleRecallRecordingBotMock).not.toHaveBeenCalled();
+    expect(rescheduleRecallRecordingBotMock).toHaveBeenCalledWith(
+      expect.objectContaining({ externalBotId: 'sibling-bot' }),
+    );
+  });
+
+  it('fails the meeting when the create conflicts without a readable recording', async () => {
+    class TombstoneFakeCoreApiClient extends FakeCoreApiClient {
+      override async mutation(mutation: any): Promise<any> {
+        if (mutation.createCallRecording !== undefined) {
+          throw new Error('Duplicate id on a soft-deleted record');
+        }
+
+        return super.mutation(mutation);
+      }
+    }
+
+    const client = new TombstoneFakeCoreApiClient({
+      calendarEvents: [buildCalendarEvent()],
+    });
+
+    const result = await reconcileRecallRecordingBotForCalendarEventIds({
+      client: client as unknown as CoreApiClient,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(result).toEqual([
+      expect.objectContaining({
+        action: 'FAILED',
+        errorMessage: 'Duplicate id on a soft-deleted record',
       }),
     ]);
     expect(scheduleRecallRecordingBotMock).not.toHaveBeenCalled();
-    expect(client.callRecordings).toEqual([
-      expect.objectContaining({ id: 'call-recording-0' }),
-      expect.objectContaining({
-        id: 'call-recording-1',
-        recordingRequestStatus: 'CANCELED',
-      }),
-    ]);
   });
 
   it('cancels its own bot when a concurrent schedule overwrites the bot id', async () => {

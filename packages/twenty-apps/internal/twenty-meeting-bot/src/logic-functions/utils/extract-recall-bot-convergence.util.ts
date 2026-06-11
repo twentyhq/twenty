@@ -7,6 +7,7 @@ export type RecallBotConvergence = {
   startedAt: string | undefined;
   endedAt: string | undefined;
   externalRecordingId: string | undefined;
+  isRecallRecordingDone: boolean;
 };
 
 type RecallBotStatusChange = {
@@ -33,6 +34,9 @@ export const extractRecallBotConvergence = (
         findStatusChangeTimestamp(statusChanges, 'call_ended'),
     ),
     externalRecordingId: recording?.id,
+    isRecallRecordingDone:
+      recording?.completedAt !== undefined ||
+      statusChanges.some((statusChange) => statusChange.code === 'done'),
   };
 };
 

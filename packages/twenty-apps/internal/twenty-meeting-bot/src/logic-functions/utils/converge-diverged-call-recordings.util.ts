@@ -1,14 +1,19 @@
+import { isNonEmptyArray } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
+import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
+import { chargeCompletedCallRecording } from 'src/logic-functions/utils/charge-completed-call-recording.util';
 import { extractRecallBotConvergence } from 'src/logic-functions/utils/extract-recall-bot-convergence.util';
 import { fetchAllNodes } from 'src/logic-functions/utils/fetch-all-nodes.util';
 import { getRecallBot } from 'src/logic-functions/utils/get-recall-bot.util';
+import { ingestRecallMedia } from 'src/logic-functions/utils/ingest-recall-media.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/utils/is-call-recording-status-downgrade.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import { requestRecallTranscript } from 'src/logic-functions/utils/request-recall-transcript.util';
+import { shouldCompleteCallRecordingIngestion } from 'src/logic-functions/utils/should-complete-call-recording-ingestion.util';
 import {
   updateCallRecording,
   type CallRecordingUpdateFields,
@@ -31,6 +36,8 @@ type DivergedCallRecordingCandidate = {
   externalBotId: string | null;
   externalRecordingId: string | null;
   transcript: unknown;
+  audio: FilesFieldValue | null;
+  video: FilesFieldValue | null;
   createdAt: string | null;
   calendarEventEndsAt: string | null;
 };
@@ -51,7 +58,7 @@ export const convergeDivergedCallRecordings = async ({
   now: Date;
 }): Promise<ConvergeDivergedCallRecordingsResult> => {
   const candidates = await fetchDivergedCallRecordingCandidates(client);
-  const createdAtLowerBound = new Date(
+  const convergenceLowerBound = new Date(
     now.getTime() - CONVERGENCE_LOOKBACK_DAYS * 24 * 60 * 60 * 1000,
   );
   const liveMeetingCutoff = new Date(
@@ -66,9 +73,9 @@ export const convergeDivergedCallRecordings = async ({
   };
 
   for (const candidate of candidates) {
-    if (isOutsideConvergenceBound(candidate, createdAtLowerBound)) {
+    if (isOutsideConvergenceBound(candidate, convergenceLowerBound)) {
       console.warn(
-        `[recall-recording-bot] call recording ${candidate.id} diverged but was created more than ${CONVERGENCE_LOOKBACK_DAYS} days ago; it will not converge automatically`,
+        `[recall-recording-bot] call recording ${candidate.id} diverged but its meeting ended more than ${CONVERGENCE_LOOKBACK_DAYS} days ago; it will not converge automatically`,
       );
       result.unconvergeableCallRecordingIds.push(candidate.id);
       continue;
@@ -136,6 +143,8 @@ const fetchDivergedCallRecordingCandidates = async (
             externalBotId: true,
             externalRecordingId: true,
             transcript: true,
+            audio: { fileId: true },
+            video: { fileId: true },
             createdAt: true,
             calendarEvent: {
               endsAt: true,
@@ -160,17 +169,26 @@ const fetchDivergedCallRecordingCandidates = async (
       ? node.externalRecordingId
       : null,
     transcript: node.transcript ?? null,
+    audio: node.audio ?? null,
+    video: node.video ?? null,
     createdAt: node.createdAt ?? null,
     calendarEventEndsAt: node.calendarEvent?.endsAt ?? null,
   }));
 };
 
+// Anchored to meeting end: createdAt is scheduling time and can predate the meeting by weeks.
 const isOutsideConvergenceBound = (
   candidate: DivergedCallRecordingCandidate,
-  createdAtLowerBound: Date,
-): boolean =>
-  candidate.createdAt !== null &&
-  new Date(candidate.createdAt).getTime() < createdAtLowerBound.getTime();
+  convergenceLowerBound: Date,
+): boolean => {
+  const meetingEndReference =
+    candidate.calendarEventEndsAt ?? candidate.createdAt;
+
+  return (
+    meetingEndReference !== null &&
+    new Date(meetingEndReference).getTime() < convergenceLowerBound.getTime()
+  );
+};
 
 // Inside the grace period the meeting may still be recording; webhooks own it.
 const isPossiblyStillLive = (
@@ -245,25 +263,48 @@ const convergeCallRecording = async ({
     updateData.externalRecordingId = convergence.externalRecordingId;
   }
 
-  const convergedStatus = updateData.status ?? candidate.status;
   const externalRecordingId =
     candidate.externalRecordingId ?? convergence.externalRecordingId;
 
-  if (
-    convergedStatus === CallRecordingStatus.COMPLETED &&
-    candidate.transcript === null &&
-    externalRecordingId !== undefined &&
-    externalRecordingId !== null
-  ) {
-    const transcriptMarker = await requestRecallTranscript({
-      externalRecordingId,
-      requestedAt: now.toISOString(),
-    });
+  if (convergence.isRecallRecordingDone) {
+    if (
+      candidate.transcript === null &&
+      externalRecordingId !== undefined &&
+      externalRecordingId !== null
+    ) {
+      const transcriptMarker = await requestRecallTranscript({
+        externalRecordingId,
+        requestedAt: now.toISOString(),
+      });
 
-    if (transcriptMarker !== null) {
-      updateData.transcript = transcriptMarker;
-      updateData.externalRecordingId = externalRecordingId;
+      if (transcriptMarker !== null) {
+        updateData.transcript = transcriptMarker;
+        updateData.externalRecordingId = externalRecordingId;
+        await updateCallRecording(client, {
+          id: candidate.id,
+          data: { transcript: transcriptMarker, externalRecordingId },
+        });
+      }
     }
+
+    Object.assign(
+      updateData,
+      await ingestRecallMedia({
+        callRecordingId: candidate.id,
+        bot: botResult.bot,
+        hasAudio: isNonEmptyArray(candidate.audio),
+        hasVideo: isNonEmptyArray(candidate.video),
+      }),
+    );
+  }
+
+  const completesIngestion = shouldCompleteCallRecordingIngestion({
+    current: candidate,
+    updateData,
+  });
+
+  if (completesIngestion) {
+    updateData.status = CallRecordingStatus.COMPLETED;
   }
 
   if (Object.keys(updateData).length === 0) {
@@ -274,6 +315,15 @@ const convergeCallRecording = async ({
     id: candidate.id,
     data: updateData,
   });
+
+  if (completesIngestion) {
+    await chargeCompletedCallRecording({
+      callRecordingId: candidate.id,
+      startedAt: updateData.startedAt ?? candidate.startedAt,
+      endedAt: updateData.endedAt ?? candidate.endedAt,
+    });
+  }
+
   result.updatedCallRecordingIds.push(candidate.id);
 };
 

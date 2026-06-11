@@ -73,7 +73,8 @@ export default defineLogicFunction({
   name: 'recall-recording-bot-webhook',
   description:
     'Receives Recall.ai webhook events and updates matching CallRecording records.',
-  timeoutSeconds: 60,
+  // recording.done ingests audio and video inline; transfers dominate the budget.
+  timeoutSeconds: 300,
   handler: recallWebhookRouteHandler,
   httpRouteTriggerSettings: {
     path: '/webhook/recall',

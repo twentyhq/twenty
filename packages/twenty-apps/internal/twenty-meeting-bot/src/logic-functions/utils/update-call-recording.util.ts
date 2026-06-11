@@ -14,6 +14,8 @@ export type CallRecordingUpdateFields = Partial<{
   externalRecordingId: string | null;
   // RAW_JSON accepts any JSON; the generated input under-models it, callers cast.
   transcript: Record<string, unknown> | null;
+  audio: { fileId: string; label: string }[] | null;
+  video: { fileId: string; label: string }[] | null;
 }>;
 
 export const updateCallRecording = async (

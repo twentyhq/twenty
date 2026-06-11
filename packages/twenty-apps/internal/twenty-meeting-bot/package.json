@@ -19,6 +19,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@sniptt/guards": "^0.2.0",
     "twenty-client-sdk": "2.10.0"
   },
   "devDependencies": {
@@ -27,7 +28,7 @@
     "oxlint": "^0.16.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "twenty-sdk": "2.10.0",
+    "twenty-sdk": "2.10.1",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^3.1.1"
