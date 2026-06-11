@@ -19,6 +19,17 @@ const VISUALS = {
     animated: true,
     interactive: false,
   },
+  'footer-backdrop': {
+    slotSelector: '[data-illustration="footer-backdrop"]',
+    // charcoal on black: hueless and subtle — breathe is the liveliness
+    hueRangeDegrees: null,
+    minCoverage: 0.005,
+    animated: true,
+    // charcoal-on-black breathe is subtle; its reduced-motion baseline
+    // measures 0.00%, so 0.1% is unambiguous motion.
+    motionFloor: 0.001,
+    interactive: false,
+  },
   'stepper-backdrop': {
     slotSelector: '[data-illustration="stepper-backdrop"]',
     // fog gray: hueless; hover (pointer move) is the interactivity proof
@@ -290,7 +301,7 @@ const runVisual = async (browser, key, spec) => {
     const clipB = await readClip(page, canvasBox);
     const motionDiff = diffClips(clipA, clipB);
     assert(
-      motionDiff > MOTION_DIFF_FLOOR,
+      motionDiff > (spec.motionFloor ?? MOTION_DIFF_FLOOR),
       `motion alive (diff ${(motionDiff * 100).toFixed(2)}%)`,
     );
   }

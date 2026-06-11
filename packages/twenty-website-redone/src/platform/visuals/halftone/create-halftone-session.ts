@@ -317,6 +317,14 @@ export function createHalftoneSession({
     let baseRotationX = 0;
     let baseRotationY = 0;
     let baseRotationZ = 0;
+    let meshScale = 1;
+
+    if (settings.animation.breatheEnabled) {
+      meshScale *=
+        1 +
+        Math.sin(elapsedTime * settings.animation.breatheSpeed) *
+          settings.animation.breatheAmount;
+    }
 
     if (settings.animation.autoRotateEnabled) {
       if (!interaction.dragging) {
@@ -386,6 +394,17 @@ export function createHalftoneSession({
     }
 
     if (
+      !settings.animation.autoRotateEnabled &&
+      !settings.animation.followHoverEnabled &&
+      !settings.animation.followDragEnabled &&
+      !settings.animation.rotateEnabled
+    ) {
+      // No animation mode: hold the baked target pose (the footer model).
+      targetX = interaction.targetRotationX;
+      targetY = interaction.targetRotationY;
+    }
+
+    if (
       settings.animation.autoRotateEnabled &&
       !settings.animation.followHoverEnabled &&
       !settings.animation.followDragEnabled
@@ -410,6 +429,7 @@ export function createHalftoneSession({
       interaction.rotationY,
       interaction.rotationZ,
     );
+    mesh.scale.setScalar(meshScale);
 
     if (!halftoneSettings.enabled) {
       renderer.setRenderTarget(null);

@@ -1,5 +1,7 @@
 import { styled } from '@linaria/react';
 
+import { FooterBackdrop } from './footer-backdrop';
+
 import { TwentyLogo } from '@/icons';
 import { color, mediaUp, spacing } from '@/tokens';
 import { Container } from '@/ui';
@@ -52,6 +54,7 @@ export function Footer() {
   return (
     <FooterRoot>
       <StageContainer>
+        <FooterBackdrop />
         <Card>
           <NotchedCardShape />
           <TwentyLogo sizePx={40} />

@@ -24,7 +24,10 @@ const BackdropShell = styled.div`
   right: -5%;
   top: 0;
   transform: translateY(-11%);
-  width: min(70vw, 750px);
+  /* Fluid measure (user-directed): the visual's viewport share shrinks as
+     the screen narrows — 55vw at 390 ramping to 70vw at 920 — so phones
+     aren't dominated by the artwork. Same physics as the type ramps. */
+  width: min(calc(81vw - 101px), 750px);
 
   ${mediaUp('md')} {
     right: -10%;

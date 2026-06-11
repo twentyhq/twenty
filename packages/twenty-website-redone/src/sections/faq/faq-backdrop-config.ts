@@ -33,6 +33,12 @@ export const FAQ_BACKDROP: Pick<
       maxBar: 0.24,
       cellRatio: 2.2,
       cutoff: 0.02,
+      // The old FAQ material leaves these row uniforms unset (GLSL zeros).
+      glowStrength: 0,
+      rowMerge: 0,
+      highlightOpen: 0,
+      shadowGrouping: 0,
+      shadowCrush: 0,
       dashColor: paletteColorNumber('blue'),
     },
     animation: {

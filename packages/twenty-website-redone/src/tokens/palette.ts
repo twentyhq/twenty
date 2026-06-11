@@ -11,7 +11,8 @@ export type PaletteToken =
   | 'green'
   | 'yellow'
   | 'ash'
-  | 'fog';
+  | 'fog'
+  | 'charcoal';
 
 // The illustration accents and artwork grays are the RATIFIED authored
 // halftone palette (2026-06-11): dash colors of the WebGL artwork.
@@ -29,7 +30,8 @@ export const PALETTE: Record<PaletteToken, string> = {
   pink: '#ed87fc',
   green: '#89fc9a',
   yellow: '#feffb7',
-  // artwork grays: monolith dash / stepper stage dash
+  // artwork grays: monolith dash / stepper stage dash / footer dash
   ash: '#bababa',
   fog: '#dddddd',
+  charcoal: '#2a2a2a',
 };
