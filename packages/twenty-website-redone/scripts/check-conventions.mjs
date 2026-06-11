@@ -115,7 +115,8 @@ function walk(directory) {
     // Screen-reader strings are user-facing: a11y attributes must be
     // localized, never string literals.
     if (
-      relativePath.startsWith('sections' + path.sep) &&
+      (relativePath.startsWith('sections' + path.sep) ||
+        relativePath.startsWith('app-preview' + path.sep)) &&
       /(?:aria-label|ariaLabel|aria-roledescription|placeholder|alt)="[A-Za-z]/.test(
         content,
       )
@@ -135,6 +136,33 @@ function walk(directory) {
       if (crossImport) {
         failures.push(
           `src/${relativePath}: imports from sections/${crossImport} — sections may not import each other.`,
+        );
+      }
+    }
+
+    // The app-preview layer is the shared product mockup (hero + feature
+    // cards consume it): it may reach only the pure and platform layers,
+    // never sections — and never twenty-ui at runtime; the product's theme
+    // arrives exclusively through the generated APP_PREVIEW_THEME tokens.
+    if (relativePath.startsWith('app-preview' + path.sep)) {
+      const allowedLayers = new Set([
+        'tokens',
+        'icons',
+        'ui',
+        'platform',
+        'app-preview',
+      ]);
+      const forbiddenLayer = [...content.matchAll(/from '@\/([a-z-]+)/g)]
+        .map((m) => m[1])
+        .find((layer) => !allowedLayers.has(layer));
+      if (forbiddenLayer) {
+        failures.push(
+          `src/${relativePath}: app-preview may import only tokens/icons/ui/platform, found @/${forbiddenLayer}.`,
+        );
+      }
+      if (/from 'twenty-ui/.test(content)) {
+        failures.push(
+          `src/${relativePath}: twenty-ui is dev-only (React 18) — consume APP_PREVIEW_THEME from @/tokens instead.`,
         );
       }
     }

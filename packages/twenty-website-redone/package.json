@@ -33,6 +33,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/three": "^0.184.1"
+    "@types/three": "^0.184.1",
+    "twenty-ui": "workspace:*"
   }
 }

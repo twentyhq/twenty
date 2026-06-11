@@ -55855,6 +55855,7 @@ __metadata:
     server-only: "npm:^0.0.1"
     three: "npm:^0.184.0"
     twenty-shared: "workspace:*"
+    twenty-ui: "workspace:*"
   languageName: unknown
   linkType: soft
 
