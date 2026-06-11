@@ -1,5 +1,4 @@
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnHead } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHead';
@@ -21,13 +20,18 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
-import { filterOutByProperty, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useCallback } from 'react';
 
-export const RecordTableHeaderFirstScrollableCell = () => {
-  const { objectMetadataItem, visibleRecordFields } =
-    useRecordTableContextOrThrow();
+type RecordTableHeaderFirstScrollableCellProps = {
+  firstScrollableRecordField: RecordField;
+};
+
+export const RecordTableHeaderFirstScrollableCell = ({
+  firstScrollableRecordField,
+}: RecordTableHeaderFirstScrollableCellProps) => {
+  const { objectMetadataItem } = useRecordTableContextOrThrow();
 
   const { setDragSelectionStartEnabled } = useDragSelect();
 
@@ -48,15 +52,6 @@ export const RecordTableHeaderFirstScrollableCell = () => {
     isRecordTableRowFocusedComponentFamilyState,
     0,
   );
-
-  const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
-
-  const recordField = visibleRecordFields.filter(
-    filterOutByProperty(
-      'fieldMetadataItemId',
-      labelIdentifierFieldMetadataItem?.id,
-    ),
-  )[0] as RecordField | undefined;
 
   const isRecordTableRowFocusActive = useAtomComponentStateValue(
     isRecordTableRowFocusActiveComponentState,
@@ -93,16 +88,12 @@ export const RecordTableHeaderFirstScrollableCell = () => {
     setDragSelectionStartEnabled(true);
   }, [setDragSelectionStartEnabled]);
 
-  if (!recordField) {
-    return <></>;
-  }
-
   return (
     <RecordTableHeaderCellContainer
       onPointerUp={handlePointerUp}
       onPointerDown={handlePointerDown}
       className={cx('header-cell', getRecordTableColumnFieldWidthClassName(1))}
-      key={recordField.fieldMetadataItemId}
+      key={firstScrollableRecordField.fieldMetadataItemId}
       shouldDisplayBorderBottom={shouldDisplayBorderBottom}
       zIndex={TABLE_Z_INDEX.headerColumns.headerColumnsNormal}
       isResizing={isResizingAnyColumn}
@@ -112,10 +103,10 @@ export const RecordTableHeaderFirstScrollableCell = () => {
         <RecordTableHeaderResizeHandler recordFieldIndex={1} position="left" />
       )}
       {isRecordTableColumnHeadersReadOnly ? (
-        <RecordTableColumnHead recordField={recordField} />
+        <RecordTableColumnHead recordField={firstScrollableRecordField} />
       ) : (
         <RecordTableColumnHeadWithDropdown
-          recordField={recordField}
+          recordField={firstScrollableRecordField}
           objectMetadataId={objectMetadataItem.id}
         />
       )}

@@ -1,9 +1,8 @@
+import { type RecordTableHeaderDndData } from '@/object-record/record-table/record-table-header/dnd/types/RecordTableHeaderDndData';
 import { pointerIntersection } from '@dnd-kit/collision';
 import { useDroppable } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-
-import type { DroppableData } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitDroppableData';
 
 const StyledSlotWrapper = styled.div`
   align-self: stretch;
@@ -16,7 +15,6 @@ const StyledSlotWrapper = styled.div`
 `;
 
 const SLOT_COLLISION_PRIORITY = 1;
-export const FOLDER_HEADER_SLOT_COLLISION_PRIORITY = 4;
 
 type RecordTableHeaderDroppableSlotProps = {
   droppableId: string;
@@ -34,7 +32,7 @@ export const RecordTableHeaderDroppableSlot = ({
   collisionPriority = SLOT_COLLISION_PRIORITY,
 }: RecordTableHeaderDroppableSlotProps) => {
   const id = `record-table-header-droppable::${index}`;
-  const data: DroppableData = { droppableId, index };
+  const data: RecordTableHeaderDndData = { droppableId, index };
   const { ref } = useDroppable({
     id,
     disabled,

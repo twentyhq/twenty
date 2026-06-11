@@ -4,7 +4,6 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
-import { calcGeneratorDuration } from 'framer-motion';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { filterOutByProperty } from 'twenty-shared/utils';
@@ -12,7 +11,6 @@ import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 export const useReorderColumns = (recordTableId?: string) => {
   const store = useStore();
-
   const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
 
   const visibleRecordFieldsCallbackState =
@@ -37,9 +35,7 @@ export const useReorderColumns = (recordTableId?: string) => {
         return;
       }
 
-      console.log(sourceIndex, destinationIndex);
-
-      const draggableFields = store
+      const reorderableFields = store
         .get(visibleRecordFieldsCallbackState)
         .filter(
           filterOutByProperty(
@@ -47,25 +43,22 @@ export const useReorderColumns = (recordTableId?: string) => {
             labelIdentifierFieldMetadataItem?.id,
           ),
         );
-        // console.log(draggableFields)
 
       if (
         sourceIndex < 0 ||
         destinationIndex < 0 ||
-        sourceIndex >= draggableFields.length ||
-        destinationIndex >= draggableFields.length
+        sourceIndex >= reorderableFields.length ||
+        destinationIndex >= reorderableFields.length
       ) {
         return;
       }
 
-      const reorderedFields = moveArrayItem(draggableFields, {
+      const reorderedFields = moveArrayItem(reorderableFields, {
         fromIndex: sourceIndex,
         toIndex: destinationIndex,
       });
 
-      // console.log(reorderedFields)
-
-      const orderedPositions = draggableFields.map((field) => field.position);
+      const orderedPositions = reorderableFields.map((field) => field.position);
 
       const updatedViewFields = reorderedFields
         .map((field, index) => {
@@ -87,7 +80,7 @@ export const useReorderColumns = (recordTableId?: string) => {
         return;
       }
 
-      // await saveViewFields(updatedViewFields);
+      await saveViewFields(updatedViewFields);
     },
     [
       store,

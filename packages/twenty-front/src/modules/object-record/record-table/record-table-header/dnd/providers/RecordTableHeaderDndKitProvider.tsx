@@ -6,7 +6,7 @@ import {
 } from '@dnd-kit/react';
 import type { ReactNode } from 'react';
 
-import type { DraggableData } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitDraggableData';
+import { type RecordTableHeaderDndData } from '@/object-record/record-table/record-table-header/dnd/types/RecordTableHeaderDndData';
 import { RecordTableHeaderDndContext } from '@/object-record/record-table/record-table-header/dnd/context/RecordTableHeaderDndContext';
 import { useRecordTableHeaderDndKit } from '@/object-record/record-table/record-table-header/dnd/hooks/useRecordTableHeaderDndKit';
 
@@ -30,7 +30,7 @@ export const RecordTableHeaderDndKitProvider = ({
 
   return (
     <RecordTableHeaderDndContext.Provider value={contextValues}>
-      <DragDropProvider<DraggableData>
+      <DragDropProvider<RecordTableHeaderDndData>
         sensors={RECORD_TABLE_HEADER_DND_SENSORS}
         onDragStart={handlers.onDragStart}
         onDragMove={handlers.onDragMove}
