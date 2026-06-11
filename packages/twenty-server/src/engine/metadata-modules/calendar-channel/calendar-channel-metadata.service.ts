@@ -15,6 +15,20 @@ import {
 import { CalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/calendar-channel.dto';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
+
+const haveSameMembers = (firstList: string[], secondList: string[]) => {
+  if (firstList.length !== secondList.length) {
+    return false;
+  }
+
+  const sortedFirstList = [...firstList].sort();
+  const sortedSecondList = [...secondList].sort();
+
+  return sortedFirstList.every(
+    (value, index) => value === sortedSecondList[index],
+  );
+};
 
 @Injectable()
 export class CalendarChannelMetadataService {
@@ -22,6 +36,7 @@ export class CalendarChannelMetadataService {
     @InjectRepository(CalendarChannelEntity)
     private readonly repository: Repository<CalendarChannelEntity>,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
+    private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
   ) {}
 
   async findAll(workspaceId: string): Promise<CalendarChannelDTO[]> {
@@ -162,12 +177,35 @@ export class CalendarChannelMetadataService {
     workspaceId: string;
     data: Partial<CalendarChannelEntity>;
   }): Promise<CalendarChannelDTO> {
+    const existingCalendarChannel = await this.repository.findOneOrFail({
+      where: { id, workspaceId },
+    });
+
     await this.repository.update(
       { id, workspaceId },
       data as Record<string, unknown>,
     );
 
-    return this.repository.findOneOrFail({ where: { id, workspaceId } });
+    const updatedCalendarChannel = await this.repository.findOneOrFail({
+      where: { id, workspaceId },
+    });
+
+    // A different category filter changes which existing events should stay
+    // imported, so the whole calendar needs to be re-evaluated from scratch.
+    if (
+      data.syncedCategories !== undefined &&
+      !haveSameMembers(
+        existingCalendarChannel.syncedCategories,
+        data.syncedCategories,
+      )
+    ) {
+      await this.calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending(
+        [id],
+        workspaceId,
+      );
+    }
+
+    return updatedCalendarChannel;
   }
 
   async delete({

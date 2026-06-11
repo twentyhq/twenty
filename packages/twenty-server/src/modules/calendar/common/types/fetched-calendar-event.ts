@@ -23,4 +23,7 @@ export type FetchedCalendarEvent = {
   recurringEventExternalId?: string;
   participants: FetchedCalendarEventParticipant[];
   status: string;
+  // Provider-side tags (e.g. Outlook categories); only set by drivers whose
+  // provider supports them.
+  categories?: string[];
 };

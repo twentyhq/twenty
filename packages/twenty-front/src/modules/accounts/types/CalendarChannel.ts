@@ -12,6 +12,7 @@ export type CalendarChannel = {
   isContactAutoCreationEnabled: boolean;
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy;
   isSyncEnabled: boolean;
+  syncedCategories: string[];
   syncStatus: CalendarChannelSyncStatus;
   syncStage: CalendarChannelSyncStage;
   syncStageStartedAt: string | null;

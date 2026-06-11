@@ -1,6 +1,7 @@
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
 import {
+  IsArray,
   IsBoolean,
   IsDateString,
   IsEnum,
@@ -58,6 +59,11 @@ export class CalendarChannelDTO {
   @IsBoolean()
   @Field()
   isSyncEnabled: boolean;
+
+  @IsArray()
+  @IsString({ each: true })
+  @Field(() => [String])
+  syncedCategories: string[];
 
   @HideField()
   syncCursor: string | null;

@@ -85,6 +85,17 @@ export class CalendarChannelEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'boolean', nullable: false, default: true })
   isSyncEnabled: boolean;
 
+  // Provider-side event categories (e.g. Outlook categories) acting as an
+  // allowlist: when non-empty, only events tagged with at least one of these
+  // categories are synced. Empty means every event is synced.
+  @Column({
+    type: 'varchar',
+    array: true,
+    nullable: false,
+    default: '{}',
+  })
+  syncedCategories: string[];
+
   @Column({ type: 'varchar', nullable: true })
   syncCursor: string | null;
 

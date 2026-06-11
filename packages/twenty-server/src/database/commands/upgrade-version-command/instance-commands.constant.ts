@@ -62,6 +62,7 @@ import { MigrateAiModelPreferencesSlowInstanceCommand } from 'src/database/comma
 import { DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-12/2-12-instance-command-fast-1780579070012-drop-is-custom-from-object-and-field-metadata';
 import { DropEmailingDomainDriverColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-11/2-11-instance-command-fast-1780926908000-drop-emailing-domain-driver-column';
 import { ViewOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-12/2-12-instance-command-fast-1781114009075-view-overridable-entity';
+import { AddSyncedCategoriesToCalendarChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-12/2-12-instance-command-fast-1781209671012-add-synced-categories-to-calendar-channel';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -126,4 +127,5 @@ export const INSTANCE_COMMANDS = [
   DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand,
   DropEmailingDomainDriverColumnFastInstanceCommand,
   ViewOverridableEntityFastInstanceCommand,
+  AddSyncedCategoriesToCalendarChannelFastInstanceCommand,
 ];

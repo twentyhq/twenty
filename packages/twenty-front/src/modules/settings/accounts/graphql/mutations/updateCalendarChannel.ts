@@ -7,6 +7,7 @@ export const UPDATE_CALENDAR_CHANNEL = gql`
       visibility
       isContactAutoCreationEnabled
       contactAutoCreationPolicy
+      syncedCategories
     }
   }
 `;

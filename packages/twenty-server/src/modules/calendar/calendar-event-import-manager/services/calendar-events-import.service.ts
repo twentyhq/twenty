@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Any, Repository } from 'typeorm';
 
@@ -152,11 +153,19 @@ export class CalendarEventsImportService {
             );
           }
 
+          // Only Microsoft events carry categories today; applying the
+          // filter to other providers would cancel every event.
+          const syncedCategories =
+            connectedAccount.provider === ConnectedAccountProvider.MICROSOFT
+              ? calendarChannel.syncedCategories
+              : [];
+
           const { filteredEvents, cancelledEvents } =
             filterEventsAndReturnCancelledEvents(
               [calendarChannel.handle, ...connectedAccount.handleAliases],
               calendarEvents,
               blocklist.map((blocklist) => blocklist.handle ?? ''),
+              syncedCategories,
             );
 
           const cancelledEventExternalIds = cancelledEvents.map(

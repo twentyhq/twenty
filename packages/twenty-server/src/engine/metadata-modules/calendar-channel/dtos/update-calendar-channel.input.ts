@@ -2,10 +2,12 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsOptional,
+  IsString,
   IsUUID,
   ValidateNested,
 } from 'class-validator';
@@ -37,6 +39,12 @@ export class UpdateCalendarChannelInputUpdates {
   @IsBoolean()
   @Field({ nullable: true })
   isSyncEnabled?: boolean;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @Field(() => [String], { nullable: true })
+  syncedCategories?: string[];
 }
 
 @InputType()

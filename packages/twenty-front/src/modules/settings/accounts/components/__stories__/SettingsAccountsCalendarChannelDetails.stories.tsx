@@ -21,6 +21,8 @@ const meta: Meta<typeof SettingsAccountsCalendarChannelDetails> = {
       isContactAutoCreationEnabled: true,
       isSyncEnabled: true,
       visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
+      syncedCategories: [],
+      connectedAccountId: '20202020-44b8-4325-b9e7-4ad4a2f0c648',
     },
   },
   argTypes: {

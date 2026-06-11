@@ -55,6 +55,7 @@ const formatMicrosoftCalendarEvent = (event: Event): FetchedCalendarEvent => {
         responseStatus: formatResponseStatus(attendee.status?.response),
       })) ?? [],
     status: '',
+    categories: event.categories ?? [],
   };
 
   const propertiesToSanitize: (keyof FetchedCalendarEvent)[] = [

@@ -1,11 +1,14 @@
 import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { UPDATE_CALENDAR_CHANNEL } from '@/settings/accounts/graphql/mutations/updateCalendarChannel';
 import { useMutation } from '@apollo/client/react';
+import { SettingsAccountsCalendarChannelSyncedCategories } from '@/settings/accounts/components/SettingsAccountsCalendarChannelSyncedCategories';
 import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Section } from '@react-email/components';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { H2Title, IconUserPlus } from 'twenty-ui-deprecated/display';
 import { Card } from 'twenty-ui-deprecated/layout';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
@@ -20,7 +23,12 @@ const StyledDetailsContainer = styled.div`
 type SettingsAccountsCalendarChannelDetailsProps = {
   calendarChannel: Pick<
     CalendarChannel,
-    'id' | 'visibility' | 'isContactAutoCreationEnabled' | 'isSyncEnabled'
+    | 'id'
+    | 'visibility'
+    | 'isContactAutoCreationEnabled'
+    | 'isSyncEnabled'
+    | 'syncedCategories'
+    | 'connectedAccountId'
   >;
 };
 
@@ -28,6 +36,16 @@ export const SettingsAccountsCalendarChannelDetails = ({
   calendarChannel,
 }: SettingsAccountsCalendarChannelDetailsProps) => {
   const [updateMetadataChannel] = useMutation(UPDATE_CALENDAR_CHANNEL);
+
+  const { accounts } = useMyConnectedAccounts();
+
+  const connectedAccount = accounts.find(
+    (account) => account.id === calendarChannel.connectedAccountId,
+  );
+
+  // Categories are only available on Microsoft (Outlook) calendars.
+  const supportsSyncedCategories =
+    connectedAccount?.provider === ConnectedAccountProvider.MICROSOFT;
 
   const updateChannel = (update: Record<string, unknown>) => {
     updateMetadataChannel({
@@ -41,6 +59,10 @@ export const SettingsAccountsCalendarChannelDetails = ({
 
   const handleContactAutoCreationToggle = (value: boolean) => {
     updateChannel({ isContactAutoCreationEnabled: value });
+  };
+
+  const handleSyncedCategoriesChange = (syncedCategories: string[]) => {
+    updateChannel({ syncedCategories });
   };
 
   return (
@@ -74,6 +96,18 @@ export const SettingsAccountsCalendarChannelDetails = ({
           />
         </Card>
       </Section>
+      {supportsSyncedCategories && (
+        <Section>
+          <H2Title
+            title={t`Synced categories`}
+            description={t`Only sync events tagged with at least one of these Outlook categories. Leave empty to sync all events.`}
+          />
+          <SettingsAccountsCalendarChannelSyncedCategories
+            syncedCategories={calendarChannel.syncedCategories}
+            onSyncedCategoriesChange={handleSyncedCategoriesChange}
+          />
+        </Section>
+      )}
     </StyledDetailsContainer>
   );
 };

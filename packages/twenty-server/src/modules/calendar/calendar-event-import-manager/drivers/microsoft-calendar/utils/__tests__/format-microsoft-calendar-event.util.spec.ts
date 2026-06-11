@@ -51,6 +51,7 @@ describe('formatMicrosoftCalendarEvents', () => {
     onlineMeeting: {
       joinUrl: 'https://teams.microsoft.com/l/meetup-join/abc123',
     },
+    categories: ['Client Meeting', 'Important'],
   };
 
   it('should correctly format a normal Microsoft Calendar event', () => {
@@ -72,6 +73,8 @@ describe('formatMicrosoftCalendarEvents', () => {
       'https://teams.microsoft.com/l/meetup-join/abc123',
     );
 
+    expect(formattedEvent.categories).toEqual(['Client Meeting', 'Important']);
+
     expect(formattedEvent.participants).toHaveLength(2);
     expect(formattedEvent.participants[0].handle).toBe('organizer@example.com');
     expect(formattedEvent.participants[0].isOrganizer).toBe(true);
@@ -82,6 +85,19 @@ describe('formatMicrosoftCalendarEvents', () => {
     expect(formattedEvent.participants[1].responseStatus).toBe(
       CalendarEventParticipantResponseStatus.TENTATIVE,
     );
+  });
+
+  it('should default categories to an empty list when the event has none', () => {
+    const mockMicrosoftEventWithoutCategories: Event = {
+      ...mockMicrosoftEvent,
+      categories: undefined,
+    };
+
+    const result = formatMicrosoftCalendarEvents([
+      mockMicrosoftEventWithoutCategories,
+    ]);
+
+    expect(result[0].categories).toEqual([]);
   });
 
   it('should sanitize a Microsoft Calendar event with improper exit char 0x00', () => {
