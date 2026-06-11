@@ -166,7 +166,7 @@ describe('computeCursorArgFilter', () => {
     });
   });
 
-  it('should return an empty filter when there are no order-by fields and id is provided', () => {
+  it('should fall back to the id tie-breaker when there are no order-by fields', () => {
     const orderBy = [{}] as unknown as RecordGqlOperationOrderBy;
 
     const result = computeCursorArgFilter({
