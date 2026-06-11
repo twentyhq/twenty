@@ -10,6 +10,7 @@ import {
 } from '@ui/display';
 import { TabButton } from '@ui/input/button/components/TabButton/TabButton';
 import {
+  AVATAR_URL_MOCK,
   CatalogDecorator,
   type CatalogStory,
   ComponentWithRouterDecorator,
@@ -89,7 +90,7 @@ export const Disabled: Story = {
 export const WithLogo: Story = {
   args: {
     title: 'Company',
-    logo: 'https://picsum.photos/192/192',
+    logo: AVATAR_URL_MOCK,
   },
   render: (args) => (
     <TabContainer>
@@ -215,7 +216,7 @@ export const Catalog: CatalogStory<Story, typeof TabButton> = {
                 return { LeftIcon: IconSettings };
               case 'logo':
                 return {
-                  logo: 'https://picsum.photos/192/192',
+                  logo: AVATAR_URL_MOCK,
                   LeftIcon: undefined,
                 };
               case 'pill':
