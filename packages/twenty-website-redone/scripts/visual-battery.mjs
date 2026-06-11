@@ -19,6 +19,14 @@ const VISUALS = {
     animated: true,
     interactive: false,
   },
+  faq: {
+    slotSelector: '[data-illustration="faq"]',
+    // blue rows, rotate-only, no pointer
+    hueRangeDegrees: [200, 260],
+    minCoverage: 0.005,
+    animated: true,
+    interactive: false,
+  },
   monolith: {
     slotSelector: '[data-illustration="monolith"]',
     // ash gray: hueless — coverage + hover-light interactivity only
@@ -321,10 +329,12 @@ const runVisual = async (browser, key, spec) => {
     window.scrollTo(0, slotCenter < pageHeight / 2 ? pageHeight : 0);
   }, spec.slotSelector);
   await page.waitForTimeout(5500);
-  const activeAfterLeave = await counts();
+  const canvasAfterLeave = await page
+    .locator(`${spec.slotSelector} canvas`)
+    .count();
   assert(
-    activeAfterLeave < activeWhileVisible || activeAfterLeave === 0,
-    `context released after leaving (count ${activeAfterLeave})`,
+    canvasAfterLeave === 0,
+    `scene unmounted after leaving (canvases ${canvasAfterLeave}, global count ${await counts()})`,
   );
   await settleForSpec(page, spec);
   const reacquired = await waitForLoadedCanvas(page, spec.slotSelector);

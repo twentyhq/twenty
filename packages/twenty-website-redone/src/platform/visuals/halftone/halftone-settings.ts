@@ -119,6 +119,8 @@ export type HalftoneAnimationSettings = {
 
 export type HalftoneSceneSettings = {
   previewDistance: number;
+  // Vertical model offset in world units (the FAQ model floats high).
+  modelOffsetY: number;
   lighting: HalftoneLightingSettings;
   material: HalftoneMaterialSettings;
   halftone: HalftoneEffectSettings;
@@ -127,6 +129,7 @@ export type HalftoneSceneSettings = {
 
 export type HalftoneSceneSettingsOverrides = {
   previewDistance?: number;
+  modelOffsetY?: number;
   lighting?: Partial<HalftoneLightingSettings>;
   material?: Partial<HalftoneMaterialSettings>;
   halftone?:
@@ -283,6 +286,7 @@ export function resolveHalftoneSettings(
 
   return {
     previewDistance: overrides.previewDistance ?? DEFAULT_PREVIEW_DISTANCE,
+    modelOffsetY: overrides.modelOffsetY ?? 0,
     lighting: { ...lightingDefaults, ...overrides.lighting },
     material: { ...materialDefaults, ...overrides.material, surface },
     halftone,

@@ -1,4 +1,6 @@
 import { msg } from '@lingui/core/macro';
+
+import { FaqBackdrop } from './faq-backdrop';
 import { styled } from '@linaria/react';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
@@ -36,7 +38,7 @@ export function Faq() {
   const i18n = getServerI18n();
 
   return (
-    <SectionShell rhythm="spacious" scheme="dark">
+    <SectionShell background={<FaqBackdrop />} rhythm="spacious" scheme="dark">
       <JsonLd data={buildFaqPageJsonLd(i18n, FAQ_QUESTIONS)} />
       <SectionStack>
         <SectionIntro>

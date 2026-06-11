@@ -80,6 +80,10 @@ export function createHalftoneSession({
       1,
     );
 
+  const wantsPointer =
+    settings.animation.followDragEnabled ||
+    settings.animation.autoRotateEnabled;
+
   const renderer = createVisualRenderer({ antialias: false, alpha: true });
   if (renderer === null) {
     return null;
@@ -91,7 +95,7 @@ export function createHalftoneSession({
   renderer.setSize(getVirtualWidth(), getVirtualHeight(), false);
 
   const canvas = renderer.domElement;
-  canvas.style.cursor = reducedMotion ? 'default' : 'grab';
+  canvas.style.cursor = !reducedMotion && wantsPointer ? 'grab' : 'default';
   canvas.style.display = 'block';
   canvas.style.height = '100%';
   canvas.style.touchAction = 'none';
@@ -151,7 +155,9 @@ export function createHalftoneSession({
   });
 
   const mesh = new THREE.Mesh(geometry, material);
+  mesh.position.y = settings.modelOffsetY;
   scene3d.add(mesh);
+  camera.lookAt(0, settings.modelOffsetY * 0.2, 0);
 
   const sceneTarget = createRenderTarget(getVirtualWidth(), getVirtualHeight());
   const blurTargetA = createRenderTarget(getVirtualWidth(), getVirtualHeight());
@@ -296,7 +302,7 @@ export function createHalftoneSession({
     canvas.style.cursor = 'grab';
   };
 
-  if (!reducedMotion) {
+  if (!reducedMotion && wantsPointer) {
     window.addEventListener('pointermove', handlePointerMove);
     window.addEventListener('pointerup', handlePointerUp);
     canvas.addEventListener('pointerdown', handlePointerDown);

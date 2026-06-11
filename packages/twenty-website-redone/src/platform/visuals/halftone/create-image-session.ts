@@ -329,8 +329,11 @@ export function createImageSession({
   };
 
   const syncFootprint = () => {
+    // The old pipeline computes the footprint from the CONTAIN rect even
+    // when the shader cover-crops — dash density follows the contained
+    // image, not the crop (read from the full monolith mount).
     halftoneMaterial.uniforms.footprintScale.value = getImageFootprintScale({
-      imageFit: settings.imageFit,
+      imageFit: 'contain',
       imageWidth: image.naturalWidth,
       imageHeight: image.naturalHeight,
       viewportWidth: getVirtualWidth(),
