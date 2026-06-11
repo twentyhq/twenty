@@ -6,7 +6,9 @@ import {
 import { buildWorkflowGraph } from '../build-workflow-graph.util';
 import { validateWorkflowGraph } from '../validate-workflow-graph.util';
 
-const getCodes = (workflow: ValidatableWorkflow): WorkflowValidationIssueCode[] =>
+const getCodes = (
+  workflow: ValidatableWorkflow,
+): WorkflowValidationIssueCode[] =>
   validateWorkflowGraph({
     workflow,
     graph: buildWorkflowGraph(workflow),
@@ -88,7 +90,9 @@ describe('validateWorkflowGraph', () => {
           id: 'if',
           type: WORKFLOW_VALIDATION_STEP_TYPES.IF_ELSE,
           settings: {
-            input: { branches: [{ nextStepIds: ['end'] }, { nextStepIds: [] }] },
+            input: {
+              branches: [{ nextStepIds: ['end'] }, { nextStepIds: [] }],
+            },
           },
         },
         { id: 'end', type: 'CODE' },
@@ -105,7 +109,9 @@ describe('validateWorkflowGraph', () => {
         {
           id: 'iterator',
           type: WORKFLOW_VALIDATION_STEP_TYPES.ITERATOR,
-          settings: { input: { items: '{{trigger.items}}', initialLoopStepIds: [] } },
+          settings: {
+            input: { items: '{{trigger.items}}', initialLoopStepIds: [] },
+          },
         },
       ],
     };

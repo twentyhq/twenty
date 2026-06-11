@@ -146,6 +146,16 @@ describe('resolveVariablePathInOutputSchema', () => {
       ).toBe(true);
     });
 
+    it('should resolve the terminal "first" node', () => {
+      const result = resolveVariablePathInOutputSchema({
+        schema: findRecordsSchema,
+        propertyPath: ['first'],
+      });
+
+      expect(result.found).toBe(true);
+      expect(result.label).toBe('First Task');
+    });
+
     it('should resolve totalCount', () => {
       expect(
         resolveVariablePathInOutputSchema({
@@ -162,6 +172,35 @@ describe('resolveVariablePathInOutputSchema', () => {
           propertyPath: ['first', 'missing'],
         }).found,
       ).toBe(false);
+    });
+  });
+
+  describe('code step schema that mimics find records keys', () => {
+    // A CODE step can return an arbitrary object whose keys happen to match
+    // "first" and "totalCount". Because "first.value" is not a RECORD output
+    // schema, it must be treated as a generic map, not a Find Records schema.
+    const codeStepSchema = {
+      first: { isLeaf: true, type: 'string', label: 'First', value: 'a' },
+      totalCount: { isLeaf: true, type: 'number', label: 'Count', value: 1 },
+      foo: { isLeaf: true, type: 'string', label: 'Foo', value: 'bar' },
+    };
+
+    it('should resolve the terminal "first" leaf', () => {
+      expect(
+        resolveVariablePathInOutputSchema({
+          schema: codeStepSchema,
+          propertyPath: ['first'],
+        }).found,
+      ).toBe(true);
+    });
+
+    it('should resolve other top-level fields not handled by find records logic', () => {
+      expect(
+        resolveVariablePathInOutputSchema({
+          schema: codeStepSchema,
+          propertyPath: ['foo'],
+        }).found,
+      ).toBe(true);
     });
   });
 });

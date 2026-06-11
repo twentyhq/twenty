@@ -28,11 +28,13 @@ const isRecordOutputSchema = (
 
 const isFindRecordsOutputSchema = (
   value: unknown,
-): value is { first: SchemaField; all?: unknown; totalCount: unknown } =>
+): value is { first: SchemaField; all?: unknown; totalCount: SchemaField } =>
   isPlainObject(value) &&
   !('_outputSchemaType' in value) &&
-  isPlainObject(value['first']) &&
-  isDefined(value['totalCount']);
+  isSchemaField(value['first']) &&
+  value['first'].isLeaf === false &&
+  isRecordOutputSchema(value['first'].value) &&
+  isSchemaField(value['totalCount']);
 
 const isIteratorOutputSchema = (value: unknown): boolean =>
   isPlainObject(value) &&
@@ -80,7 +82,7 @@ const resolveInFindRecords = (
 
   if (searchResultKey === 'first') {
     if (rest.length === 0) {
-      return NOT_FOUND;
+      return fieldResult(schema.first);
     }
 
     return resolveInSchema(schema.first.value, rest);

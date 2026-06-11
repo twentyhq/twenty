@@ -19,9 +19,9 @@ describe('validateWorkflowStepParams', () => {
 
     const issues = validateWorkflowStepParams(workflow);
 
-    expect(issues.some((issue) => issue.code === 'INVALID_TRIGGER_PARAMS')).toBe(
-      true,
-    );
+    expect(
+      issues.some((issue) => issue.code === 'INVALID_TRIGGER_PARAMS'),
+    ).toBe(true);
   });
 
   it('should flag an invalid step configuration with its step id', () => {

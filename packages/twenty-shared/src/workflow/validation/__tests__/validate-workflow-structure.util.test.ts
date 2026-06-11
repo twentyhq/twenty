@@ -27,9 +27,9 @@ describe('validateWorkflowStructure', () => {
   });
 
   it('should flag a workflow without steps', () => {
-    expect(
-      getCodes({ trigger: { type: 'MANUAL' }, steps: [] }),
-    ).toContain('NO_STEPS');
+    expect(getCodes({ trigger: { type: 'MANUAL' }, steps: [] })).toContain(
+      'NO_STEPS',
+    );
   });
 
   it('should aggregate graph issues such as unreachable steps', () => {
