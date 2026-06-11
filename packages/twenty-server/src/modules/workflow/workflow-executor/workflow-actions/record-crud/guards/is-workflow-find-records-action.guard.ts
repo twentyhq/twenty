@@ -1,5 +1,8 @@
 import { WorkflowActionType } from 'twenty-shared/workflow';
-import { type WorkflowAction, type WorkflowFindRecordsAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import {
+  type WorkflowAction,
+  type WorkflowFindRecordsAction,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 export const isWorkflowFindRecordsAction = (
   action: WorkflowAction,

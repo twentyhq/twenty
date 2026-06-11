@@ -1,11 +1,22 @@
 import { isObject } from '@sniptt/guards';
 
-import { type IfElseStepInput } from '@/workflow/validation/types/workflow-validation.type';
+import { WorkflowActionType } from '@/workflow/types/WorkflowActionType';
+import {
+  type IfElseStepInput,
+  type ValidatableWorkflowStep,
+} from '@/workflow/validation/types/workflow-validation.type';
 
-// Step inputs are authored in the workflow editor and may be incomplete while a
-// step is being configured, so we only assert the shape we consume here.
 export const isIfElseStepInput = (
-  input: unknown,
-): input is Partial<IfElseStepInput> =>
-  isObject(input) &&
-  Array.isArray((input as Partial<IfElseStepInput>).branches);
+  step: ValidatableWorkflowStep,
+): step is ValidatableWorkflowStep & {
+  settings: { input: Partial<IfElseStepInput> };
+} => {
+  const input = step.settings?.input;
+
+  return (
+    step.type === WorkflowActionType.IF_ELSE &&
+    isObject(input) &&
+    'branches' in input &&
+    Array.isArray(input.branches)
+  );
+};

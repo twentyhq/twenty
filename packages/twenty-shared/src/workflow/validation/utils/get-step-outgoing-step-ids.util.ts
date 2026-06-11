@@ -21,22 +21,16 @@ export const getStepOutgoingStepIds = (
 ): string[] => {
   const outgoingStepIds = new Set<string>(step.nextStepIds ?? []);
 
-  const input = getStepInput(step);
-
-  if (!isDefined(input)) {
-    return [...outgoingStepIds];
-  }
-
-  if (isIfElseStepInput(input)) {
-    for (const branch of input.branches ?? []) {
+  if (isIfElseStepInput(step)) {
+    for (const branch of step.settings.input.branches ?? []) {
       for (const nextStepId of branch?.nextStepIds ?? []) {
         outgoingStepIds.add(nextStepId);
       }
     }
   }
 
-  if (isIteratorStepInput(input)) {
-    for (const nextStepId of input.initialLoopStepIds ?? []) {
+  if (isIteratorStepInput(step)) {
+    for (const nextStepId of step.settings.input.initialLoopStepIds ?? []) {
       outgoingStepIds.add(nextStepId);
     }
   }

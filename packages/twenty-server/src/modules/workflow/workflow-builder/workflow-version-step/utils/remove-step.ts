@@ -1,10 +1,18 @@
 import { isDefined } from 'twenty-shared/utils';
-import { IF_ELSE_BRANCH_POSITION_OFFSETS, TRIGGER_STEP_ID, type StepIfElseBranch, WorkflowActionType } from 'twenty-shared/workflow';
+import {
+  IF_ELSE_BRANCH_POSITION_OFFSETS,
+  TRIGGER_STEP_ID,
+  type StepIfElseBranch,
+  WorkflowActionType,
+} from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
 
 import { isWorkflowEmptyAction } from 'src/modules/workflow/workflow-executor/workflow-actions/empty/guards/is-workflow-empty-action.guard';
 import { isWorkflowIfElseAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/guards/is-workflow-if-else-action.guard';
-import { type WorkflowAction, type WorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import {
+  type WorkflowAction,
+  type WorkflowIteratorAction,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 const computeUpdatedNextStepIds = ({

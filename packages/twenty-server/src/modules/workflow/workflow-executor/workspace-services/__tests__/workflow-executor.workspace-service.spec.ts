@@ -1,6 +1,10 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { getWorkflowRunContext, StepStatus, WorkflowActionType } from 'twenty-shared/workflow';
+import {
+  getWorkflowRunContext,
+  StepStatus,
+  WorkflowActionType,
+} from 'twenty-shared/workflow';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';

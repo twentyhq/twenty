@@ -1,9 +1,16 @@
-import { type StepIfElseBranch, WorkflowActionType } from 'twenty-shared/workflow';
+import {
+  type StepIfElseBranch,
+  WorkflowActionType,
+} from 'twenty-shared/workflow';
 
 import { type WorkflowCodeActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-settings.type';
 import { type WorkflowIfElseActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/types/workflow-if-else-action-settings.type';
 import { type WorkflowIteratorActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-action-settings.type';
-import { type WorkflowCodeAction, type WorkflowIfElseAction, type WorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import {
+  type WorkflowCodeAction,
+  type WorkflowIfElseAction,
+  type WorkflowIteratorAction,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 export const createMockCodeStep = (
   id: string,
