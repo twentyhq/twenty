@@ -17,7 +17,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.26.9",
     "@babel/preset-typescript": "^7.24.6",
-    "@lingui/core": "^5.1.2",
+    "@lingui/core": "^5.9.5",
     "@prettier/sync": "^0.5.2",
     "@swc/core": "^1.15.11",
     "@swc/jest": "^0.2.39",
