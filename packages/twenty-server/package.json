@@ -97,7 +97,7 @@
     "dompurify": "^3.4.0",
     "dotenv": "16.4.5",
     "email-reply-parser": "^2.3.5",
-    "express": "4.22.1",
+    "express": "4.22.2",
     "express-session": "^1.18.2",
     "file-type": "^21.3.2",
     "fuse.js": "^7.1.0",

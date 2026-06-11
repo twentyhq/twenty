@@ -44,8 +44,10 @@
     "pacote/tar": "npm:^7.5.16",
     "@angular-devkit/core": "19.2.24",
     "yeoman-environment": "6.0.1",
-    "@electron-forge/plugin-webpack/webpack-dev-server": "5.2.4"
+    "@electron-forge/plugin-webpack/webpack-dev-server": "5.2.4",
+    "qs": "6.15.2"
   },
+  "//resolutions": "qs is pinned to 6.15.2 (CVE) for verdaccio + @mintlify/previewing, which pin old express 4.22.x; remove when they upgrade express",
   "version": "0.2.1",
   "nx": {},
   "scripts": {
