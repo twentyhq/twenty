@@ -51,8 +51,7 @@ export default defineApplicationRole({
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember
           .universalIdentifier,
       canReadObjectRecords: true,
-      // Update is needed by the settings front component, which calls the API
-      // with the application token to persist the auto-record toggle.
+      // The settings front component needs update to persist the auto-record toggle.
       canUpdateObjectRecords: true,
       canSoftDeleteObjectRecords: false,
       canDestroyObjectRecords: false,
@@ -62,8 +61,7 @@ export default defineApplicationRole({
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.callRecording.universalIdentifier,
       canReadObjectRecords: true,
       canUpdateObjectRecords: true,
-      // Soft delete is only used to remove bot-less duplicate recordings
-      // created by concurrent reconciliations.
+      // Soft delete only removes bot-less duplicates from concurrent reconciliations.
       canSoftDeleteObjectRecords: true,
       canDestroyObjectRecords: false,
     },

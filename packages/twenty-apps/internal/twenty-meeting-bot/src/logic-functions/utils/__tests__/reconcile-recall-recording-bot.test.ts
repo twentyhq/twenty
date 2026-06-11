@@ -15,9 +15,18 @@ vi.mock(
   }),
 );
 
-vi.mock('src/logic-functions/utils/recall-bot-api.util', () => ({
+vi.mock('src/logic-functions/utils/schedule-recall-recording-bot.util', () => ({
   scheduleRecallRecordingBot: scheduleRecallRecordingBotMock,
-  rescheduleRecallRecordingBot: rescheduleRecallRecordingBotMock,
+}));
+
+vi.mock(
+  'src/logic-functions/utils/reschedule-recall-recording-bot.util',
+  () => ({
+    rescheduleRecallRecordingBot: rescheduleRecallRecordingBotMock,
+  }),
+);
+
+vi.mock('src/logic-functions/utils/cancel-recall-recording-bot.util', () => ({
   cancelRecallRecordingBot: cancelRecallRecordingBotMock,
 }));
 
@@ -320,9 +329,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
 
   it('creates a scheduled call recording when a participating member has auto-record enabled', async () => {
     const client = buildFakeCoreApiClient({
-      calendarEvents: [
-        buildCalendarEvent({ meetingBotPreference: null }),
-      ],
+      calendarEvents: [buildCalendarEvent({ meetingBotPreference: null })],
       calendarEventParticipants: [
         {
           id: 'participant-1',
@@ -352,9 +359,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
 
   it('does not schedule a bot without an override when no participating member has auto-record enabled', async () => {
     const client = buildFakeCoreApiClient({
-      calendarEvents: [
-        buildCalendarEvent({ meetingBotPreference: null }),
-      ],
+      calendarEvents: [buildCalendarEvent({ meetingBotPreference: null })],
       calendarEventParticipants: [
         {
           id: 'participant-1',
@@ -610,7 +615,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
     ).toEqual([]);
   });
 
-  it('keeps the request open for retry when the Recall cancel fails', async () => {
+  it('persists the cancel intent and leaves the bot for the stale-state cron when the Recall cancel fails', async () => {
     cancelRecallRecordingBotMock.mockResolvedValue({
       ok: false,
       status: 500,
@@ -645,14 +650,14 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
 
     expect(result).toEqual([
       expect.objectContaining({
-        action: 'SKIPPED',
-        callRecordingId: null,
+        action: 'CANCELED',
+        callRecordingId: 'call-recording-1',
       }),
     ]);
     expect(client.callRecordings).toEqual([
       expect.objectContaining({
         id: 'call-recording-1',
-        recordingRequestStatus: 'REQUESTED',
+        recordingRequestStatus: 'CANCELED',
         externalBotId: 'recall-bot-1',
       }),
     ]);
@@ -917,7 +922,8 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
     expect(client.callRecordings).toEqual([
       expect.objectContaining({
         id: 'call-recording-1',
-        recordingRequestStatus: 'REQUESTED',
+        recordingRequestStatus: 'CANCELED',
+        externalBotId: 'recall-bot-1',
       }),
       expect.objectContaining({
         calendarEventId: 'calendar-event-2',

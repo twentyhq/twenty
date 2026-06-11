@@ -1,5 +1,4 @@
-// Recall timestamps carry microsecond precision (2026-06-10T12:17:28.281597+00:00),
-// which Twenty's date-time validation rejects; truncate to millisecond ISO.
+// Twenty rejects Recall's microsecond precision; truncate to millisecond ISO.
 export const normalizeRecallTimestamp = (
   value: string | undefined,
 ): string | undefined => {

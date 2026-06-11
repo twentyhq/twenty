@@ -7,37 +7,7 @@ import { fetchAllNodes } from 'src/logic-functions/utils/fetch-all-nodes.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { stripRestrictedFieldValue } from 'src/logic-functions/utils/strip-restricted-field-value.util';
 
-export const fetchCalendarEventsByIds = async (
-  client: CoreApiClient,
-  calendarEventIds: string[],
-): Promise<CalendarEventRecord[]> => {
-  const uniqueCalendarEventIds = getUniqueSortedIds(calendarEventIds);
-
-  if (uniqueCalendarEventIds.length === 0) {
-    return [];
-  }
-
-  return fetchCalendarEventsByFilter(client, {
-    id: { in: uniqueCalendarEventIds },
-  });
-};
-
-export const fetchCalendarEventsByStartsAtValues = async (
-  client: CoreApiClient,
-  startsAtValues: string[],
-): Promise<CalendarEventRecord[]> => {
-  const uniqueStartsAtValues = [...new Set(startsAtValues)].sort();
-
-  if (uniqueStartsAtValues.length === 0) {
-    return [];
-  }
-
-  return fetchCalendarEventsByFilter(client, {
-    startsAt: { in: uniqueStartsAtValues },
-  });
-};
-
-const fetchCalendarEventsByFilter = async (
+export const fetchCalendarEventsByFilter = async (
   client: CoreApiClient,
   filter: Record<string, unknown>,
 ): Promise<CalendarEventRecord[]> => {
@@ -216,7 +186,8 @@ const fetchAutoRecordEnabledWorkspaceMemberIds = async (
   return new Set(
     workspaceMemberNodes
       .filter(
-        (workspaceMember) => workspaceMember.meetingBotAutoRecordEnabled === true,
+        (workspaceMember) =>
+          workspaceMember.meetingBotAutoRecordEnabled === true,
       )
       .map((workspaceMember) => workspaceMember.id),
   );

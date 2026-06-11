@@ -1,14 +1,12 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import {
-  createAsyncRecallTranscript,
-  ejectRecallRecordingBot,
-  getRecallBot,
-  listScheduledRecallBots,
-  rescheduleRecallRecordingBot,
-  retrieveRecallTranscript,
-  scheduleRecallRecordingBot,
-} from 'src/logic-functions/utils/recall-bot-api.util';
+import { createAsyncRecallTranscript } from 'src/logic-functions/utils/create-async-recall-transcript.util';
+import { ejectRecallRecordingBot } from 'src/logic-functions/utils/eject-recall-recording-bot.util';
+import { getRecallBot } from 'src/logic-functions/utils/get-recall-bot.util';
+import { listScheduledRecallBots } from 'src/logic-functions/utils/list-scheduled-recall-bots.util';
+import { rescheduleRecallRecordingBot } from 'src/logic-functions/utils/reschedule-recall-recording-bot.util';
+import { retrieveRecallTranscript } from 'src/logic-functions/utils/retrieve-recall-transcript.util';
+import { scheduleRecallRecordingBot } from 'src/logic-functions/utils/schedule-recall-recording-bot.util';
 
 const getRecallApiConfigMock = vi.hoisted(() => vi.fn());
 
@@ -402,6 +400,111 @@ describe('recall bot api', () => {
         statusCode: 'error',
         statusSubCode: 'audio_missing',
       },
+    });
+  });
+
+  describe('transient failure retries', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('retries a network failure and succeeds on the next attempt', async () => {
+      fetchMock.mockRejectedValueOnce(new Error('socket hang up'));
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ id: 'recall-bot-id' }),
+      });
+
+      const resultPromise = getRecallBot({ externalBotId: 'recall-bot-id' });
+
+      await vi.runAllTimersAsync();
+
+      expect(await resultPromise).toEqual({
+        ok: true,
+        bot: { id: 'recall-bot-id' },
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+
+    it('retries a 503 response and succeeds on the next attempt', async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: false,
+        status: 503,
+        json: async () => ({ detail: 'service unavailable' }),
+      });
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: async () => ({ id: 'recall-bot-id' }),
+      });
+
+      const resultPromise = getRecallBot({ externalBotId: 'recall-bot-id' });
+
+      await vi.runAllTimersAsync();
+
+      expect(await resultPromise).toEqual({
+        ok: true,
+        bot: { id: 'recall-bot-id' },
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+
+    it('gives up after the attempt budget on persistent server errors', async () => {
+      fetchMock.mockResolvedValue({
+        ok: false,
+        status: 500,
+        json: async () => ({ detail: 'server error' }),
+      });
+
+      const resultPromise = getRecallBot({ externalBotId: 'recall-bot-id' });
+
+      await vi.runAllTimersAsync();
+
+      expect(await resultPromise).toEqual({
+        ok: false,
+        status: 500,
+        errorMessage:
+          'Recall API responded with HTTP 500: {"detail":"server error"}',
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(3);
+    });
+
+    it('does not retry client errors', async () => {
+      fetchMock.mockResolvedValue({
+        ok: false,
+        status: 400,
+        json: async () => ({ detail: 'bad request' }),
+      });
+
+      const result = await getRecallBot({ externalBotId: 'recall-bot-id' });
+
+      expect(result).toEqual({
+        ok: false,
+        status: 400,
+        errorMessage:
+          'Recall API responded with HTTP 400: {"detail":"bad request"}',
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not retry an allowed 404 on cancel', async () => {
+      fetchMock.mockResolvedValue({
+        ok: false,
+        status: 404,
+        json: async () => ({ detail: 'not found' }),
+      });
+
+      const result = await ejectRecallRecordingBot({
+        externalBotId: 'recall-bot-id',
+      });
+
+      expect(result).toEqual({ ok: true, externalBotId: null });
+      expect(fetchMock).toHaveBeenCalledTimes(1);
     });
   });
 });

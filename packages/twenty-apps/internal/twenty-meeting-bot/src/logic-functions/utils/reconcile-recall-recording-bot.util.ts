@@ -11,28 +11,22 @@ import { type RemovedRecallRecordingBotOccurrence } from 'src/logic-functions/ty
 import { aggregateRecallRecordingBotPolicyResultsByMeeting } from 'src/logic-functions/utils/aggregate-recall-recording-bot-policy-results-by-meeting.util';
 import { buildRecallRecordingBotPolicyResult } from 'src/logic-functions/utils/build-recall-recording-bot-policy-result.util';
 import { cancelCallRecordingRequest } from 'src/logic-functions/utils/cancel-call-recording-request.util';
+import { cancelRecallRecordingBot } from 'src/logic-functions/utils/cancel-recall-recording-bot.util';
 import {
   createCallRecording,
   type ScheduledCallRecordingFields,
 } from 'src/logic-functions/utils/create-call-recording.util';
 import { deleteCallRecording } from 'src/logic-functions/utils/delete-call-recording.util';
-import {
-  fetchCalendarEventsByIds,
-  fetchCalendarEventsByStartsAtValues,
-} from 'src/logic-functions/utils/fetch-calendar-events.util';
-import {
-  findCallRecordingsByCalendarEventIds,
-  findCallRecordingsByIds,
-} from 'src/logic-functions/utils/find-call-recordings.util';
+import { fetchCalendarEventsByIds } from 'src/logic-functions/utils/fetch-calendar-events-by-ids.util';
+import { fetchCalendarEventsByStartsAtValues } from 'src/logic-functions/utils/fetch-calendar-events-by-starts-at-values.util';
+import { findCallRecordingsByCalendarEventIds } from 'src/logic-functions/utils/find-call-recordings-by-calendar-event-ids.util';
+import { findCallRecordingsByIds } from 'src/logic-functions/utils/find-call-recordings-by-ids.util';
 import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
 import { getRecallRecordingBotEnabled } from 'src/logic-functions/utils/get-recall-recording-bot-enabled.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
-import {
-  cancelRecallRecordingBot,
-  rescheduleRecallRecordingBot,
-  scheduleRecallRecordingBot,
-} from 'src/logic-functions/utils/recall-bot-api.util';
+import { rescheduleRecallRecordingBot } from 'src/logic-functions/utils/reschedule-recall-recording-bot.util';
+import { scheduleRecallRecordingBot } from 'src/logic-functions/utils/schedule-recall-recording-bot.util';
 import {
   updateCallRecording,
   type CallRecordingUpdateFields,
@@ -315,8 +309,7 @@ const reconcileActiveMeeting = async ({
     buildScheduledCallRecordingFields(representativeCalendarEvent),
   );
 
-  // Concurrent reconciliations can all pass the read above before any of them
-  // writes; re-read and let only the canonical recording schedule a bot.
+  // Concurrent runs can all pass the read above; only the canonical one schedules.
   const callRecordingsAfterCreate = await findCallRecordingsByCalendarEventIds(
     client,
     calendarEventIds,
@@ -387,27 +380,17 @@ const reconcileCanceledMeeting = async ({
     return buildSkippedResult(meetingPolicyResult.realMeetingKey);
   }
 
-  const canceledCallRecordingIds: string[] = [];
-
   for (const callRecording of cancellableCallRecordings) {
-    const { canceled } = await cancelCallRecordingRequest({
+    await cancelCallRecordingRequest({
       client,
       callRecording,
     });
-
-    if (canceled) {
-      canceledCallRecordingIds.push(callRecording.id);
-    }
-  }
-
-  if (canceledCallRecordingIds.length === 0) {
-    return buildSkippedResult(meetingPolicyResult.realMeetingKey);
   }
 
   return {
     action: 'CANCELED',
     realMeetingKey: meetingPolicyResult.realMeetingKey,
-    callRecordingId: canceledCallRecordingIds[0],
+    callRecordingId: cancellableCallRecordings[0].id,
   };
 };
 
@@ -420,8 +403,7 @@ const cancelDuplicateCallRecordingRequests = async ({
   realMeetingKey: string;
   duplicateCallRecordings: CallRecordingRecord[];
 }): Promise<void> => {
-  // Bot-less REQUESTED duplicates are concurrent-creation artifacts with no
-  // external state or history; delete them instead of surfacing CANCELED rows.
+  // Bot-less REQUESTED duplicates have no external state; delete, don't cancel.
   const duplicatesToDelete = duplicateCallRecordings.filter(
     (callRecording) =>
       callRecording.recordingRequestStatus ===
@@ -449,8 +431,7 @@ const cancelDuplicateCallRecordingRequests = async ({
   }
 };
 
-// startedAt/endedAt hold ACTUAL recording times written by the webhook;
-// calendar-driven writes must never touch them.
+// startedAt/endedAt come from the webhook; calendar writes never touch them.
 const buildCalendarDrivenCallRecordingFields = (
   calendarEvent: CalendarEventRecord,
 ): Omit<ScheduledCallRecordingFields, 'status'> => ({
@@ -503,8 +484,7 @@ const syncScheduledRecallBot = async ({
     return;
   }
 
-  // Re-read instead of trusting the caller's snapshot: a concurrent
-  // reconciliation may have canceled this recording or attached a bot since.
+  // Re-read: a concurrent run may have canceled this recording or attached a bot.
   const callRecording = (
     await findCallRecordingsByIds(client, [callRecordingId])
   )[0];
@@ -577,8 +557,7 @@ const syncScheduledRecallBot = async ({
       },
     });
 
-    // If a concurrent schedule overwrote the id, this bot is unreferenced and
-    // would join the meeting as an extra attendee; cancel it.
+    // A superseded bot would still join the meeting as an extra attendee; cancel it.
     const callRecordingAfterWrite = (
       await findCallRecordingsByIds(client, [callRecordingId])
     )[0];

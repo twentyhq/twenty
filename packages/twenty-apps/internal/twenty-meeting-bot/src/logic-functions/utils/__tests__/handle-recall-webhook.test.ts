@@ -7,9 +7,18 @@ const getRecallBotMock = vi.hoisted(() => vi.fn());
 const createAsyncRecallTranscriptMock = vi.hoisted(() => vi.fn());
 const retrieveRecallTranscriptMock = vi.hoisted(() => vi.fn());
 
-vi.mock('src/logic-functions/utils/recall-bot-api.util', () => ({
+vi.mock('src/logic-functions/utils/get-recall-bot.util', () => ({
   getRecallBot: getRecallBotMock,
-  createAsyncRecallTranscript: createAsyncRecallTranscriptMock,
+}));
+
+vi.mock(
+  'src/logic-functions/utils/create-async-recall-transcript.util',
+  () => ({
+    createAsyncRecallTranscript: createAsyncRecallTranscriptMock,
+  }),
+);
+
+vi.mock('src/logic-functions/utils/retrieve-recall-transcript.util', () => ({
   retrieveRecallTranscript: retrieveRecallTranscriptMock,
 }));
 

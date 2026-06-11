@@ -7,9 +7,15 @@ const listScheduledRecallBotsMock = vi.hoisted(() => vi.fn());
 const cancelRecallRecordingBotMock = vi.hoisted(() => vi.fn());
 const ejectRecallRecordingBotMock = vi.hoisted(() => vi.fn());
 
-vi.mock('src/logic-functions/utils/recall-bot-api.util', () => ({
+vi.mock('src/logic-functions/utils/list-scheduled-recall-bots.util', () => ({
   listScheduledRecallBots: listScheduledRecallBotsMock,
+}));
+
+vi.mock('src/logic-functions/utils/cancel-recall-recording-bot.util', () => ({
   cancelRecallRecordingBot: cancelRecallRecordingBotMock,
+}));
+
+vi.mock('src/logic-functions/utils/eject-recall-recording-bot.util', () => ({
   ejectRecallRecordingBot: ejectRecallRecordingBotMock,
 }));
 
@@ -89,6 +95,33 @@ describe('reapOrphanedRecallBots', () => {
       canceledExternalBotIds: [],
     });
     expect(cancelRecallRecordingBotMock).not.toHaveBeenCalled();
+  });
+
+  it('cancels bots whose call recording request was canceled locally', async () => {
+    listScheduledRecallBotsMock.mockResolvedValue({
+      ok: true,
+      bots: [buildBot('stale-cancel-bot', 'call-recording-1')],
+    });
+
+    const result = await reapOrphanedRecallBots({
+      client: buildClient([
+        {
+          id: 'call-recording-1',
+          recordingRequestStatus: 'CANCELED',
+          externalBotId: 'stale-cancel-bot',
+        },
+      ]),
+      joinAtAfter: JOIN_AT_AFTER,
+      joinAtBefore: JOIN_AT_BEFORE,
+    });
+
+    expect(result).toEqual({
+      scannedBotCount: 1,
+      canceledExternalBotIds: ['stale-cancel-bot'],
+    });
+    expect(cancelRecallRecordingBotMock).toHaveBeenCalledWith({
+      externalBotId: 'stale-cancel-bot',
+    });
   });
 
   it('cancels bots whose call recording references another bot', async () => {

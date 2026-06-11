@@ -6,33 +6,7 @@ import { type CallRecordingRecord } from 'src/logic-functions/types/call-recordi
 import { fetchAllNodes } from 'src/logic-functions/utils/fetch-all-nodes.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
-export const findCallRecordingsByCalendarEventIds = async (
-  client: CoreApiClient,
-  calendarEventIds: string[],
-): Promise<CallRecordingRecord[]> => {
-  if (calendarEventIds.length === 0) {
-    return [];
-  }
-
-  return findCallRecordingsByFilter(client, {
-    calendarEventId: { in: calendarEventIds },
-  });
-};
-
-export const findCallRecordingsByIds = async (
-  client: CoreApiClient,
-  callRecordingIds: string[],
-): Promise<CallRecordingRecord[]> => {
-  if (callRecordingIds.length === 0) {
-    return [];
-  }
-
-  return findCallRecordingsByFilter(client, {
-    id: { in: callRecordingIds },
-  });
-};
-
-const findCallRecordingsByFilter = async (
+export const findCallRecordingsByFilter = async (
   client: CoreApiClient,
   filter: Record<string, unknown>,
 ): Promise<CallRecordingRecord[]> => {

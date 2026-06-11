@@ -1,7 +1,6 @@
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 
-// Recall webhook deliveries are not ordered; a late status event must never
-// move a recording backwards in its lifecycle.
+// Deliveries are unordered; a late event must never move status backwards.
 const CALL_RECORDING_STATUS_PROGRESSION: Record<CallRecordingStatus, number> = {
   [CallRecordingStatus.SCHEDULED]: 0,
   [CallRecordingStatus.JOINING]: 1,

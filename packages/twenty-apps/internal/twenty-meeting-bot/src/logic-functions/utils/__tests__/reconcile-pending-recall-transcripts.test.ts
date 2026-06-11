@@ -5,7 +5,7 @@ import { reconcilePendingRecallTranscripts } from 'src/logic-functions/utils/rec
 
 const retrieveRecallTranscriptMock = vi.hoisted(() => vi.fn());
 
-vi.mock('src/logic-functions/utils/recall-bot-api.util', () => ({
+vi.mock('src/logic-functions/utils/retrieve-recall-transcript.util', () => ({
   retrieveRecallTranscript: retrieveRecallTranscriptMock,
 }));
 

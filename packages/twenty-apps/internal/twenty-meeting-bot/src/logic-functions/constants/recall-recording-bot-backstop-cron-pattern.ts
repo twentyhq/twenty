@@ -1,1 +1,0 @@
-export const RECALL_RECORDING_BOT_BACKSTOP_CRON_PATTERN = '* * * * *';

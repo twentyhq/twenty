@@ -2,23 +2,21 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
-import { findCallRecordingsByIds } from 'src/logic-functions/utils/find-call-recordings.util';
+import { cancelRecallRecordingBot } from 'src/logic-functions/utils/cancel-recall-recording-bot.util';
+import { ejectRecallRecordingBot } from 'src/logic-functions/utils/eject-recall-recording-bot.util';
+import { findCallRecordingsByIds } from 'src/logic-functions/utils/find-call-recordings-by-ids.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import {
-  cancelRecallRecordingBot,
-  ejectRecallRecordingBot,
   listScheduledRecallBots,
   type RecallScheduledBot,
-} from 'src/logic-functions/utils/recall-bot-api.util';
+} from 'src/logic-functions/utils/list-scheduled-recall-bots.util';
 
 export type ReapOrphanedRecallBotsResult = {
   scannedBotCount: number;
   canceledExternalBotIds: string[];
 };
 
-// A bot is orphaned when no CallRecording references it anymore: its id was
-// overwritten by a concurrent schedule, or its recording was destroyed. Such
-// bots would still join meetings, so the backstop cancels them on Recall.
+// Bots no open CallRecording request claims would still join; cancel them on Recall.
 export const reapOrphanedRecallBots = async ({
   client,
   joinAtAfter,
@@ -105,7 +103,10 @@ const isBotClaimed = ({
   bot: RecallScheduledBot;
   callRecording: CallRecordingRecord | undefined;
 }): boolean => {
-  if (callRecording === undefined) {
+  if (
+    callRecording?.recordingRequestStatus !==
+    CallRecordingRequestStatus.REQUESTED
+  ) {
     return false;
   }
 
@@ -113,13 +114,8 @@ const isBotClaimed = ({
     return true;
   }
 
-  // An id-less REQUESTED recording may have a bot-id write-back in flight;
-  // grant it a grace round instead of risking a legitimate bot.
-  return (
-    callRecording.recordingRequestStatus ===
-      CallRecordingRequestStatus.REQUESTED &&
-    callRecording.externalBotId === null
-  );
+  // An id-less REQUESTED recording may have a bot-id write-back in flight; spare its bot.
+  return callRecording.externalBotId === null;
 };
 
 const cancelOrEjectRecallBot = async (
@@ -131,8 +127,7 @@ const cancelOrEjectRecallBot = async (
     return true;
   }
 
-  // Deleting only works for not-yet-joined bots; eject the ones already in a
-  // call (like orphans sitting in a waiting room).
+  // Deleting only works for not-yet-joined bots; eject the ones already in a call.
   if (cancelResult.status !== null) {
     const ejectResult = await ejectRecallRecordingBot({ externalBotId });
 

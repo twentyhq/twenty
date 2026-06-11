@@ -1,5 +1,4 @@
-// A real meeting occurrence whose source calendar event was deleted or moved.
-// The key plus start lets reconciliation re-check surviving duplicate events.
+// An occurrence whose event was deleted/moved; key + start re-checks siblings.
 export type RemovedRecallRecordingBotOccurrence = {
   calendarEventId: string;
   realMeetingKey: string;

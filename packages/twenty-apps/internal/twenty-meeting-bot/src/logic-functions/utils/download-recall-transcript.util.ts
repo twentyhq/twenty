@@ -1,4 +1,4 @@
-import { retrieveRecallTranscript } from 'src/logic-functions/utils/recall-bot-api.util';
+import { retrieveRecallTranscript } from 'src/logic-functions/utils/retrieve-recall-transcript.util';
 
 export type DownloadRecallTranscriptResult =
   | { outcome: 'filled'; content: unknown }
@@ -6,8 +6,7 @@ export type DownloadRecallTranscriptResult =
   | { outcome: 'pending' }
   | { outcome: 'error'; errorMessage: string };
 
-// Shared by the transcript.done webhook and the backstop pending-marker
-// re-check so both fill the transcript field with identical content.
+// Shared by the webhook and the cron re-check so both fill identical content.
 export const downloadRecallTranscript = async ({
   transcriptId,
 }: {

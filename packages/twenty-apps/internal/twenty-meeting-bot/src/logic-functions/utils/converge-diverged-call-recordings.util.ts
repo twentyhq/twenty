@@ -5,9 +5,9 @@ import { CallRecordingStatus } from 'src/logic-functions/constants/call-recordin
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 import { extractRecallBotConvergence } from 'src/logic-functions/utils/extract-recall-bot-convergence.util';
 import { fetchAllNodes } from 'src/logic-functions/utils/fetch-all-nodes.util';
+import { getRecallBot } from 'src/logic-functions/utils/get-recall-bot.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/utils/is-call-recording-status-downgrade.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
-import { getRecallBot } from 'src/logic-functions/utils/recall-bot-api.util';
 import { requestRecallTranscript } from 'src/logic-functions/utils/request-recall-transcript.util';
 import {
   updateCallRecording,
@@ -42,9 +42,7 @@ export type ConvergeDivergedCallRecordingsResult = {
   unconvergeableCallRecordingIds: string[];
 };
 
-// Webhooks are the only push transport and deliveries get lost (dead tunnels,
-// Svix-disabled endpoints), leaving records stuck in non-terminal statuses;
-// this pull phase re-derives their state from the Recall API.
+// Webhook deliveries get lost; this pull pass re-derives state from Recall.
 export const convergeDivergedCallRecordings = async ({
   client,
   now,
@@ -103,8 +101,7 @@ export const convergeDivergedCallRecordings = async ({
 const fetchDivergedCallRecordingCandidates = async (
   client: CoreApiClient,
 ): Promise<DivergedCallRecordingCandidate[]> => {
-  // No createdAt bound here on purpose: candidates older than the lookback
-  // must surface in logs instead of silently never converging.
+  // No createdAt bound: older-than-lookback candidates must surface in logs.
   const filter: Record<string, unknown> = {
     or: [
       {
@@ -175,8 +172,7 @@ const isOutsideConvergenceBound = (
   candidate.createdAt !== null &&
   new Date(candidate.createdAt).getTime() < createdAtLowerBound.getTime();
 
-// A non-terminal record whose meeting ended less than the grace period ago
-// (or has not ended) may simply still be recording; leave it to webhooks.
+// Inside the grace period the meeting may still be recording; webhooks own it.
 const isPossiblyStillLive = (
   candidate: DivergedCallRecordingCandidate,
   liveMeetingCutoff: Date,

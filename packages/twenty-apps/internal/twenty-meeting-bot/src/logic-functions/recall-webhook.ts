@@ -15,8 +15,7 @@ type RecallWebhookPayload = {
   bot?: unknown;
 };
 
-// Non-2xx responses make Svix retry the delivery; a returned plain object
-// would be sent as HTTP 200 and permanently mark the event as delivered.
+// Non-2xx makes Svix retry; a returned plain object would 200-ack permanently.
 const rejectWebhook = (status: number, error: string): Response => {
   console.error(`[recall-recording-bot] webhook rejected: ${error}`);
 

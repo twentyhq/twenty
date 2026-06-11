@@ -1,0 +1,61 @@
+import { RECALL_BOT_AUTOMATIC_LEAVE } from 'src/logic-functions/constants/recall-bot-automatic-leave';
+import { type RecallBotMetadata } from 'src/logic-functions/types/recall-bot-metadata.type';
+import { type RecallBotOperationResult } from 'src/logic-functions/types/recall-bot-operation-result.type';
+import {
+  extractRecallBotId,
+  type RecallBotResponse,
+} from 'src/logic-functions/utils/extract-recall-bot-id.util';
+import { getRecallApiConfig } from 'src/logic-functions/utils/get-recall-api-config.util';
+import { recallBotApiRequest } from 'src/logic-functions/utils/recall-bot-api-request.util';
+
+export type ScheduleRecallRecordingBotArgs = {
+  meetingUrl: string;
+  joinAt: string;
+  metadata: RecallBotMetadata;
+};
+
+export const scheduleRecallRecordingBot = async ({
+  meetingUrl,
+  joinAt,
+  metadata,
+}: ScheduleRecallRecordingBotArgs): Promise<RecallBotOperationResult> => {
+  const configResult = getRecallApiConfig();
+
+  if (!configResult.success) {
+    return { ok: false, status: null, errorMessage: configResult.error };
+  }
+
+  const result = await recallBotApiRequest<RecallBotResponse>({
+    apiKey: configResult.config.apiKey,
+    baseUrl: configResult.config.baseUrl,
+    path: '/bot/',
+    method: 'POST',
+    body: {
+      meeting_url: meetingUrl,
+      join_at: joinAt,
+      bot_name: configResult.config.botName,
+      automatic_leave: RECALL_BOT_AUTOMATIC_LEAVE,
+      metadata,
+    },
+  });
+
+  if (!result.ok) {
+    return result;
+  }
+
+  const externalBotId = extractRecallBotId(result.data);
+
+  if (externalBotId === null) {
+    return {
+      ok: false,
+      status: null,
+      errorMessage:
+        'Recall API created a bot but the response did not include a bot id',
+    };
+  }
+
+  return {
+    ok: true,
+    externalBotId,
+  };
+};

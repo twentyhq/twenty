@@ -1,7 +1,6 @@
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 
-// Shared by the webhook (push) and backstop convergence (pull) paths so both
-// derive the same CallRecording status from a Recall bot status code.
+// Shared by push (webhook) and pull (cron) so both map statuses identically.
 export const mapRecallStatusCodeToCallRecordingStatus = (
   statusCode: string | undefined,
 ): CallRecordingStatus | undefined => {

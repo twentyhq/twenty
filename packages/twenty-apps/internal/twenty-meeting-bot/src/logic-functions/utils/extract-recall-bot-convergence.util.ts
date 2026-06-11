@@ -14,9 +14,7 @@ type RecallBotStatusChange = {
   createdAt: string | undefined;
 };
 
-// Derives the record state a complete webhook history would have produced
-// from a GET /bot/{id} response, so the pull path converges to the same
-// values as the push path.
+// Derives the state a full webhook history would have produced from GET /bot.
 export const extractRecallBotConvergence = (
   bot: Record<string, unknown>,
 ): RecallBotConvergence => {

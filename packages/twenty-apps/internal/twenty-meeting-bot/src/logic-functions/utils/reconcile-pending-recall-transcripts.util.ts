@@ -1,13 +1,11 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
+import { type RecallTranscriptMarker } from 'src/logic-functions/types/recall-transcript-marker.type';
+import { buildFailedRecallTranscriptMarker } from 'src/logic-functions/utils/build-failed-recall-transcript-marker.util';
 import { downloadRecallTranscript } from 'src/logic-functions/utils/download-recall-transcript.util';
 import { fetchAllNodes } from 'src/logic-functions/utils/fetch-all-nodes.util';
-import {
-  buildFailedRecallTranscriptMarker,
-  parseRecallTranscriptMarker,
-  type RecallTranscriptMarker,
-} from 'src/logic-functions/utils/recall-transcript-marker.util';
+import { parseRecallTranscriptMarker } from 'src/logic-functions/utils/parse-recall-transcript-marker.util';
 import { updateCallRecording } from 'src/logic-functions/utils/update-call-recording.util';
 
 const PENDING_TRANSCRIPT_RECHECK_MINUTES = 60;
@@ -24,8 +22,7 @@ export type ReconcilePendingRecallTranscriptsResult = {
   failedCallRecordingIds: string[];
 };
 
-// transcript.done webhooks get lost like any other delivery; this phase polls
-// Recall for PENDING markers that stayed unresolved past the re-check delay.
+// transcript.done webhooks get lost too; this polls stale PENDING markers.
 export const reconcilePendingRecallTranscripts = async ({
   client,
   now,
@@ -108,8 +105,7 @@ const fetchPendingTranscriptCallRecordings = async (
   client: CoreApiClient,
   now: Date,
 ): Promise<PendingTranscriptCallRecording[]> => {
-  // RAW_JSON content is not filterable; fetch recent non-null transcripts and
-  // detect markers in code.
+  // RAW_JSON is not filterable; detect markers in code over non-null rows.
   const filter: Record<string, unknown> = {
     transcript: { is: 'NOT_NULL' },
     createdAt: {

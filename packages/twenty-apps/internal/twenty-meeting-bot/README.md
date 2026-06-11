@@ -25,8 +25,10 @@ the meeting bot should attend a calendar event.
 - Recall API calls to create, reschedule, and cancel scheduled meeting bots.
 - A `/s/webhook/recall` route that verifies Recall webhook signatures and updates
   matching `CallRecording` records.
-- A configurable cron backstop that wakes every minute and, on the configured
-  interval, reconciles calendar events in a recent-and-upcoming window.
+- A stale-state cron that converges call recordings with Recall: it pulls
+  stale bot statuses and overdue transcripts, finishes failed or disable-time
+  cancellations, and reaps unclaimed bots. It never reads calendar events —
+  discovery is event-driven.
 
 ## Recall Prerequisites
 
@@ -37,8 +39,6 @@ Server variables, set by the server admin on the application registration
 - `RECALL_WEBHOOK_SECRET` - signing secret from the Recall webhook endpoint.
 - `RECALL_REGION` - Recall region for API calls. Asia Pacific Tokyo is
   `ap-northeast-1`.
-- `RECALL_RECORDING_BOT_CRON_INTERVAL_MINUTES` - backstop reconciliation
-  interval.
 
 Application variables, set per workspace in the app settings:
 

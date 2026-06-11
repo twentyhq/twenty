@@ -6,10 +6,16 @@ import { convergeDivergedCallRecordings } from 'src/logic-functions/utils/conver
 const getRecallBotMock = vi.hoisted(() => vi.fn());
 const createAsyncRecallTranscriptMock = vi.hoisted(() => vi.fn());
 
-vi.mock('src/logic-functions/utils/recall-bot-api.util', () => ({
+vi.mock('src/logic-functions/utils/get-recall-bot.util', () => ({
   getRecallBot: getRecallBotMock,
-  createAsyncRecallTranscript: createAsyncRecallTranscriptMock,
 }));
+
+vi.mock(
+  'src/logic-functions/utils/create-async-recall-transcript.util',
+  () => ({
+    createAsyncRecallTranscript: createAsyncRecallTranscriptMock,
+  }),
+);
 
 const NOW = new Date('2026-06-10T12:00:00.000Z');
 

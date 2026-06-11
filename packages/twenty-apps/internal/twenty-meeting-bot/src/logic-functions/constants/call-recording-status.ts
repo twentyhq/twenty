@@ -1,5 +1,4 @@
-// Mirrors the core CallRecording status select options; the app cannot import
-// twenty-server, so the values are guarded by the schema integration test.
+// Mirrors the core select options; guarded by the schema integration test.
 export enum CallRecordingStatus {
   SCHEDULED = 'SCHEDULED',
   JOINING = 'JOINING',

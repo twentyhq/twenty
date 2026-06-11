@@ -1,16 +1,14 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { buildFailedRecallTranscriptMarker } from 'src/logic-functions/utils/build-failed-recall-transcript-marker.util';
 import { downloadRecallTranscript } from 'src/logic-functions/utils/download-recall-transcript.util';
 import { extractRecallBotConvergence } from 'src/logic-functions/utils/extract-recall-bot-convergence.util';
+import { getRecallBot } from 'src/logic-functions/utils/get-recall-bot.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/utils/is-call-recording-status-downgrade.util';
 import { mapRecallStatusCodeToCallRecordingStatus } from 'src/logic-functions/utils/map-recall-status-code-to-call-recording-status.util';
 import { normalizeRecallTimestamp } from 'src/logic-functions/utils/normalize-recall-timestamp.util';
-import { getRecallBot } from 'src/logic-functions/utils/recall-bot-api.util';
-import {
-  buildFailedRecallTranscriptMarker,
-  parseRecallTranscriptMarker,
-} from 'src/logic-functions/utils/recall-transcript-marker.util';
+import { parseRecallTranscriptMarker } from 'src/logic-functions/utils/parse-recall-transcript-marker.util';
 import { requestRecallTranscript } from 'src/logic-functions/utils/request-recall-transcript.util';
 import {
   updateCallRecording,
@@ -69,8 +67,7 @@ export const handleRecallWebhook = async ({
     };
   }
 
-  // Transcript lifecycle events must never reach the bot-status mapping; they
-  // carry no status code and would otherwise trip the downgrade guard.
+  // Transcript events carry no status code and would trip the downgrade guard.
   if (event === 'transcript.done' || event === 'transcript.failed') {
     return handleRecallTranscriptEvent({ client, body, event });
   }
@@ -253,10 +250,7 @@ const mapRecallEventToCallRecordingStatus = ({
   return mapRecallStatusCodeToCallRecordingStatus(statusCode);
 };
 
-// startedAt/endedAt record ACTUAL recording times; a redelivered or stale
-// event must never overwrite a value that an earlier event already set.
-// Recording-object timestamps are preferred over status-change timestamps so
-// the webhook and the backstop pull path converge to identical values.
+// Never overwrite set actual times; recording timestamps align push and pull.
 const buildRecordingTimestampsUpdate = ({
   body,
   event,
@@ -484,8 +478,7 @@ const handleRecallTranscriptEvent = async ({
       });
     case 'pending':
     case 'error': {
-      // Webhooks are 200-acked either way, so Svix will not redeliver; the
-      // backstop pending-marker re-check is what retries this download.
+      // 200-acked either way, Svix never redelivers; the cron re-check retries this.
       const reason =
         downloadResult.outcome === 'pending'
           ? 'transcript not downloadable yet'
