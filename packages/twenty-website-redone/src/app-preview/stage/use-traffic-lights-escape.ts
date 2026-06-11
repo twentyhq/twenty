@@ -14,6 +14,7 @@ import {
   trafficLightPhysics,
   type TrafficLightPhysicsState,
 } from './traffic-light-physics';
+import { TRAFFIC_LIGHTS_ESCAPE_EVENT } from './traffic-lights-escape-event';
 
 const TRAFFIC_LIGHT_DOT_SIZE = 12;
 const TRAFFIC_LIGHT_COUNT = 3;
@@ -22,9 +23,9 @@ const FLOOR_PADDING = 0;
 const createReturnState = (): boolean[] =>
   Array.from({ length: TRAFFIC_LIGHT_COUNT }, () => false);
 
-// The escape egg: the dots pop out of the bar, bounce to the page floor
-// under gravity, get disturbed by scroll, and return when caught. The
-// trigger is the caller's (the close dot's third click).
+// The escape egg, ported as-is: the prompt egg's window event launches
+// the dots out of the bar; they bounce to the page floor under gravity,
+// get disturbed by scroll, and return when caught.
 export const useTrafficLightsEscape = () => {
   const [isEscaping, setIsEscaping] = useState(false);
   const [returningDots, setReturningDots] = useState(createReturnState);
@@ -56,6 +57,14 @@ export const useTrafficLightsEscape = () => {
     setReturnedDots(createReturnState());
     setIsEscaping(true);
   }, []);
+
+  useEffect(() => {
+    window.addEventListener(TRAFFIC_LIGHTS_ESCAPE_EVENT, escape);
+
+    return () => {
+      window.removeEventListener(TRAFFIC_LIGHTS_ESCAPE_EVENT, escape);
+    };
+  }, [escape]);
 
   useEffect(() => {
     if (!isEscaping) {

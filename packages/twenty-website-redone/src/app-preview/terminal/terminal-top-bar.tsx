@@ -69,7 +69,7 @@ export function TerminalTopBar({
       $isDragging={isDragging}
       onPointerDown={onDragStart}
     >
-      <TrafficLights escapeEnabled onZoomTripleClick={onZoomTripleClick} />
+      <TrafficLights onZoomTripleClick={onZoomTripleClick} />
       <TerminalToggle
         onChange={onViewChange}
         theme={isDark ? 'dark' : 'light'}

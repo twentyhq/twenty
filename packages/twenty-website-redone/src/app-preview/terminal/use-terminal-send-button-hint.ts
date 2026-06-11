@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 
 import { createAnimationFrameLoop } from '@/platform/motion';
 
@@ -16,28 +10,11 @@ import {
   type TerminalSendButtonHintPosition,
 } from './terminal-send-button-hint-position';
 
+// Ported as-is: the hint shows whenever send is live (fading in after the
+// ready delay) and dismisses on send hover/click or any pointer-down
+// inside the terminal.
 const HINT_READY_DELAY_MS = 400;
-// The hint earns its entrance: the terminal must be on screen and
-// untouched for this long. Anyone already interacting never sees it.
-const HINT_IDLE_DELAY_MS = 8000;
-const HINT_SHOWN_SESSION_KEY = 'twenty-terminal-finger-hint-shown';
 const TERMINAL_SHELL_SELECTOR = '[data-terminal-shell="true"]';
-
-const readHintAlreadyShown = (): boolean => {
-  try {
-    return sessionStorage.getItem(HINT_SHOWN_SESSION_KEY) === 'true';
-  } catch {
-    return true;
-  }
-};
-
-const markHintShown = () => {
-  try {
-    sessionStorage.setItem(HINT_SHOWN_SESSION_KEY, 'true');
-  } catch {
-    // Private mode: the in-memory dismissal still holds for this mount.
-  }
-};
 
 export const useTerminalSendButtonHint = ({
   disabled,
@@ -47,76 +24,14 @@ export const useTerminalSendButtonHint = ({
   isReset: boolean;
 }) => {
   const [hintDismissed, setHintDismissed] = useState(false);
-  const [hintArmed, setHintArmed] = useState(false);
   const [hintPosition, setHintPosition] =
     useState<TerminalSendButtonHintPosition | null>(null);
   const [hintReady, setHintReady] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const timeoutRegistry = useTimeoutRegistry();
   const dismissHint = useCallback(() => setHintDismissed(true), []);
-  const isEligible = !hintDismissed && !isReset && disabled !== true;
-  const showHint = isEligible && hintArmed;
+  const showHint = !hintDismissed && !isReset && disabled !== true;
 
-  // Arming: once per session, after the terminal is on screen and idle.
-  useEffect(() => {
-    if (!isEligible || hintArmed) {
-      return undefined;
-    }
-
-    if (readHintAlreadyShown()) {
-      setHintDismissed(true);
-      return undefined;
-    }
-
-    const shell = buttonRef.current?.closest(TERMINAL_SHELL_SELECTOR);
-
-    if (!shell) {
-      return undefined;
-    }
-
-    let cancelIdleTimer: (() => void) | null = null;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const isOnScreen = entries.some((entry) => entry.isIntersecting);
-
-        if (isOnScreen && cancelIdleTimer === null) {
-          cancelIdleTimer = timeoutRegistry.schedule(() => {
-            markHintShown();
-            setHintArmed(true);
-          }, HINT_IDLE_DELAY_MS);
-          return;
-        }
-        if (!isOnScreen && cancelIdleTimer !== null) {
-          cancelIdleTimer();
-          cancelIdleTimer = null;
-        }
-      },
-      { threshold: 0.5 },
-    );
-
-    observer.observe(shell);
-
-    const handleTerminalTouch = (event: PointerEvent) => {
-      if (!(event.target instanceof Node) || !shell.contains(event.target)) {
-        return;
-      }
-
-      // They found the terminal on their own — no hint, ever.
-      markHintShown();
-      setHintDismissed(true);
-    };
-
-    window.addEventListener('pointerdown', handleTerminalTouch, true);
-
-    return () => {
-      observer.disconnect();
-      cancelIdleTimer?.();
-      window.removeEventListener('pointerdown', handleTerminalTouch, true);
-    };
-  }, [hintArmed, isEligible, timeoutRegistry]);
-
-  // Positioning + dismissal while visible (ported old machinery).
   useLayoutEffect(() => {
     if (!showHint) {
       setHintPosition(null);

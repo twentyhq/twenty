@@ -390,6 +390,11 @@ msgstr "Maîtrisez Twenty dans ses moindres recoins"
 msgid "Meet the certified agencies and consultants implementing Twenty for teams worldwide."
 msgstr "Rencontrez les agences et consultants certifiés qui déploient Twenty pour des équipes du monde entier."
 
+#. js-lingui-id: 3TSz9S
+#: src/app-preview/stage/traffic-lights.tsx
+msgid "Minimize"
+msgstr ""
+
 #. js-lingui-id: TizFpt
 #: src/sections/menu/menu-drawer.tsx
 msgid "Navigation menu"

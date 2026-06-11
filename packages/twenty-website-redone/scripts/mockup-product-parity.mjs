@@ -209,6 +209,12 @@ assert(
     terminalBox.x + terminalBox.width > stageBox.x + stageBox.width + 100,
   'terminal hangs past the scene right edge (the old hero identity)',
 );
+// The finger hint shows at rest (old-site behavior: live whenever send
+// is enabled, before any interaction dismisses it).
+const hintAtRest = await scenarioPage.evaluate(
+  () => document.querySelector('#finger_shadow') !== null,
+);
+assert(hintAtRest, 'the finger hint taps over the live send button at rest');
 await scenarioPage.locator('button[aria-label="Send message"]').click();
 await scenarioPage.waitForTimeout(1000);
 const grownBox = await scenarioPage
@@ -283,7 +289,7 @@ assert(
 );
 
 // The terminal's second face and the eggs: diff slide, editor toggle,
-// prompt egg cycle, close-dot escape.
+// prompt egg cycle, fifth-click escape (old-site behavior, exact).
 await scenarioPage
   .locator('[data-terminal-shell] button[aria-label="Zoom"]')
   .click({ clickCount: 3 });
@@ -326,22 +332,43 @@ const eggVisible = await scenarioPage
   .getByText('Ask me to do something your CRM should have done years ago')
   .isVisible();
 assert(eggVisible, 'poking the finished prompt cycles the egg copy');
-const closeDot = scenarioPage.locator(
-  '[data-terminal-shell] button[aria-label="Close"]',
-);
-await closeDot.click();
-await closeDot.click();
+// Four more pokes reach the fifth click: BOTH windows' traffic lights
+// (app window + terminal) escape — six dots fly.
 const flyingBefore = await scenarioPage
   .locator('button[aria-label="Return traffic light"]')
   .count();
-await closeDot.click();
-await scenarioPage.waitForTimeout(700);
+const pokeEgg = async (eggLine) => {
+  await scenarioPage
+    .locator('[data-terminal-shell]')
+    .getByText(eggLine)
+    .click();
+  await scenarioPage.waitForTimeout(250);
+};
+await pokeEgg('Ask me to do something your CRM should have done years ago');
+await pokeEgg('Build the thing your admin said was impossible');
+await pokeEgg('Turn this CRM into something actually useful');
+await pokeEgg('Ask for a workflow. Not a miracle.');
+await scenarioPage.waitForTimeout(600);
 const flyingAfter = await scenarioPage
   .locator('button[aria-label="Return traffic light"]')
   .count();
 assert(
-  flyingBefore === 0 && flyingAfter === 3,
-  `the third close click launches the escape (${flyingBefore} -> ${flyingAfter} flying dots)`,
+  flyingBefore === 0 && flyingAfter === 6,
+  `the fifth egg click launches the escape from both windows (${flyingBefore} -> ${flyingAfter} flying dots)`,
+);
+// Caught dots pop and return to their bars.
+await scenarioPage.waitForTimeout(1800);
+const firstFlyer = scenarioPage
+  .locator('button[aria-label="Return traffic light"]')
+  .first();
+await firstFlyer.click();
+await scenarioPage.waitForTimeout(700);
+const flyingAfterCatch = await scenarioPage
+  .locator('button[aria-label="Return traffic light"]')
+  .count();
+assert(
+  flyingAfterCatch === 5,
+  `catching a resting dot returns it (${flyingAfterCatch} still flying)`,
 );
 await scenarioPage.close();
 

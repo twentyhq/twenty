@@ -6,7 +6,9 @@ describe('promptEasterEgg', () => {
       type: 'advance',
     });
 
-    expect(state).toEqual({
+    expect(state).toMatchObject({
+      escapeClickCount: 1,
+      escapeEventCount: 0,
       isWiggling: true,
       messageIndex: 0,
     });
@@ -33,16 +35,35 @@ describe('promptEasterEgg', () => {
     ).toBe(0);
   });
 
+  it('should trigger the traffic-light escape event every fifth click', () => {
+    const almostReadyState = {
+      ...promptEasterEgg.initialState,
+      escapeClickCount: 4,
+      escapeEventCount: 2,
+    };
+
+    expect(
+      promptEasterEgg.reduce(almostReadyState, { type: 'advance' }),
+    ).toMatchObject({
+      escapeClickCount: 0,
+      escapeEventCount: 3,
+      isWiggling: true,
+      messageIndex: 0,
+    });
+  });
+
   it('should stop the prompt wiggle without changing the selected message', () => {
     expect(
       promptEasterEgg.reduce(
         {
+          ...promptEasterEgg.initialState,
           isWiggling: true,
           messageIndex: 2,
         },
         { type: 'stop-wiggle' },
       ),
     ).toEqual({
+      ...promptEasterEgg.initialState,
       isWiggling: false,
       messageIndex: 2,
     });
@@ -52,6 +73,8 @@ describe('promptEasterEgg', () => {
     expect(
       promptEasterEgg.reduce(
         {
+          escapeClickCount: 3,
+          escapeEventCount: 1,
           isWiggling: true,
           messageIndex: 4,
         },

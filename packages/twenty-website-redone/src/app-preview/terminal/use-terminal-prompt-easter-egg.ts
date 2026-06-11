@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useReducer } from 'react';
 
+import { TRAFFIC_LIGHTS_ESCAPE_EVENT } from '../stage/traffic-lights-escape-event';
 import { promptEasterEgg } from './prompt-easter-egg-state';
 
 export const useTerminalPromptEasterEgg = ({
@@ -19,6 +20,14 @@ export const useTerminalPromptEasterEgg = ({
       dispatch({ type: 'reset' });
     }
   }, [enabled]);
+
+  useEffect(() => {
+    if (!enabled || state.escapeEventCount === 0) {
+      return;
+    }
+
+    window.dispatchEvent(new CustomEvent(TRAFFIC_LIGHTS_ESCAPE_EVENT));
+  }, [enabled, state.escapeEventCount]);
 
   const handleClick = useCallback(() => {
     if (!enabled) {

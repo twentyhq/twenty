@@ -1,6 +1,8 @@
-// The finished-chat prompt egg: poking the done conversation cycles the
-// authored lines IN ORDER with a wiggle (the old site coupled a random
-// escape here; the escape now belongs to the close dot).
+// The finished-chat prompt egg, ported verbatim: poking the done
+// conversation cycles the authored lines in order with a wiggle, and
+// every fifth poke launches the traffic-light escape.
+const TRAFFIC_LIGHTS_ESCAPE_THRESHOLD = 5;
+
 const MESSAGES = [
   'Ask me to do something your CRM should have done years ago',
   'Build the thing your admin said was impossible',
@@ -15,6 +17,8 @@ const MESSAGES = [
 ];
 
 export type PromptEasterEggState = {
+  escapeClickCount: number;
+  escapeEventCount: number;
   isWiggling: boolean;
   messageIndex: number | null;
 };
@@ -25,6 +29,8 @@ export type PromptEasterEggAction =
   | { type: 'stop-wiggle' };
 
 const INITIAL_STATE: PromptEasterEggState = {
+  escapeClickCount: 0,
+  escapeEventCount: 0,
   isWiggling: false,
   messageIndex: null,
 };
@@ -35,7 +41,15 @@ const reduce = (
 ): PromptEasterEggState => {
   switch (action.type) {
     case 'advance': {
+      const nextEscapeClickCount = state.escapeClickCount + 1;
+      const shouldTriggerEscape =
+        nextEscapeClickCount >= TRAFFIC_LIGHTS_ESCAPE_THRESHOLD;
+
       return {
+        escapeClickCount: shouldTriggerEscape ? 0 : nextEscapeClickCount,
+        escapeEventCount: shouldTriggerEscape
+          ? state.escapeEventCount + 1
+          : state.escapeEventCount,
         isWiggling: true,
         messageIndex:
           state.messageIndex === null
