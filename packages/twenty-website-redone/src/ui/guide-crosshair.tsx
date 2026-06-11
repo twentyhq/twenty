@@ -42,6 +42,14 @@ const CrosshairRoot = styled.div`
   }
 
   [data-slot='v-bottom'] {
+    /* Fades before the section boundary instead of colliding with the next
+       section's cap (the old site's line runs to the very edge). */
+    background: linear-gradient(
+      to bottom,
+      ${color('black-10')} 0%,
+      ${color('black-10')} calc(100% - 160px),
+      transparent 100%
+    );
     height: calc(100% - var(--cross-y) - var(--cross-gap));
     left: var(--cross-x);
     top: calc(var(--cross-y) + var(--cross-gap));

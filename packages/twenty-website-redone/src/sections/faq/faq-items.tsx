@@ -1,8 +1,9 @@
 'use client';
 
 import { Accordion } from '@base-ui/react/accordion';
-import { IconMinus, IconPlus } from '@tabler/icons-react';
 import { useLingui } from '@lingui/react';
+
+import { MinusMark, PlusMark } from '@/icons';
 import { styled } from '@linaria/react';
 
 import {
@@ -247,10 +248,10 @@ export function FaqItems({ questions }: FaqItemsProps) {
               <ToggleContainer aria-hidden>
                 <ToggleVisual data-toggle>
                   <ToggleIconLayer data-icon="plus">
-                    <IconPlus size={12} stroke={1.6} />
+                    <PlusMark sizePx={12} />
                   </ToggleIconLayer>
                   <ToggleIconLayer data-icon="minus">
-                    <IconMinus size={12} stroke={1.6} />
+                    <MinusMark sizePx={12} />
                   </ToggleIconLayer>
                 </ToggleVisual>
               </ToggleContainer>
