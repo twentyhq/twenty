@@ -2,7 +2,6 @@ import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import {
   type IconComponent,
-  IconLayoutDashboard,
   IconPlus,
   IconSettingsAutomation,
 } from 'twenty-ui-deprecated/display';
@@ -15,16 +14,6 @@ export type SuggestedPrompt = {
 };
 
 export const DEFAULT_SUGGESTED_PROMPTS: SuggestedPrompt[] = [
-  {
-    id: 'dashboard',
-    label: msg`Create a dashboard`,
-    Icon: IconLayoutDashboard,
-    prefillPrompts: [
-      msg`Create a dashboard with a chart of deal value by pipeline stage (New, Meeting, Proposal, Negotiation, Closed Won/Lost) for the current quarter, and a table of my top 10 open opportunities with amount, stage and expected close date.`,
-      msg`Build a dashboard that shows: (1) total pipeline value by stage for the last 3 months, (2) count of deals won vs lost per month, (3) average deal size. Use our standard pipeline stages.`,
-      msg`I need a dashboard for lead conversion: number of new leads by source this month, how many moved to opportunity, and conversion rate by source. Include a simple table and a bar chart.`,
-    ],
-  },
   {
     id: 'workflow',
     label: msg`Create a workflow`,

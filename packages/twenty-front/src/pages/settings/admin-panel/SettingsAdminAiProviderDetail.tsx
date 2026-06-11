@@ -424,7 +424,7 @@ export const SettingsAdminAiProviderDetail = () => {
 
       <ConfirmationModal
         modalInstanceId={REMOVE_PROVIDER_MODAL_ID}
-        title={t`Remove provider "${provider?.label ?? providerName}"`}
+        title={t`Remove provider "${provider?.label ?? providerName ?? ''}"`}
         subtitle={t`This will disconnect all models from this provider. Models will no longer be available until a new provider is configured.`}
         onConfirmClick={handleRemoveProvider}
         confirmButtonText={t`Remove`}

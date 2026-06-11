@@ -1,7 +1,9 @@
 import { FieldType, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS, defineField } from 'twenty-sdk/define';
 
+export const OPPORTUNITY_SUBSCRIPTION_TYPE_FIELD_ID = 'a58214e9-38f9-4faf-8927-09b3980fd8c3';
+
 export default defineField({
-  universalIdentifier: 'a58214e9-38f9-4faf-8927-09b3980fd8c3',
+  universalIdentifier: OPPORTUNITY_SUBSCRIPTION_TYPE_FIELD_ID,
   objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
   type: FieldType.SELECT,
   name: 'subscriptionType',
