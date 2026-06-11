@@ -69,8 +69,14 @@ const VisualSlot = styled.div`
   order: 2;
   width: 198px;
 
+  /* sm charter: tablets center media within the stacked composition. */
+  ${mediaUp('sm')} {
+    justify-self: center;
+  }
+
   ${mediaUp('md')} {
     height: 476px;
+    justify-self: start;
     order: 1;
     width: 336px;
   }
