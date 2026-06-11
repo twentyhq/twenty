@@ -1,4 +1,7 @@
+import { isString, isUndefined } from '@sniptt/guards';
+
 import { type RecallBotOperationFailure } from 'src/logic-functions/types/recall-bot-operation-result.type';
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { getRecallApiConfig } from 'src/logic-functions/utils/get-recall-api-config.util';
 import { recallBotApiRequest } from 'src/logic-functions/utils/recall-bot-api-request.util';
 
@@ -32,18 +35,17 @@ export const listScheduledRecallBots = async ({
   }
 
   const bots: RecallScheduledBot[] = [];
-  let path: string | null = `/bot/?join_at_after=${encodeURIComponent(
+  let path: string | undefined = `/bot/?join_at_after=${encodeURIComponent(
     joinAtAfter,
   )}&join_at_before=${encodeURIComponent(joinAtBefore)}`;
 
   for (
     let pageIndex = 0;
-    path !== null && pageIndex < RECALL_BOT_LIST_MAX_PAGES;
+    !isUndefined(path) && pageIndex < RECALL_BOT_LIST_MAX_PAGES;
     pageIndex++
   ) {
     const result = await recallBotApiRequest<RecallBotListResponse>({
-      apiKey: configResult.config.apiKey,
-      baseUrl: configResult.config.baseUrl,
+      config: configResult.config,
       path,
       method: 'GET',
     });
@@ -67,23 +69,16 @@ const extractRecallBots = (
   }
 
   return response.results.flatMap((candidate: unknown) => {
-    if (
-      typeof candidate !== 'object' ||
-      candidate === null ||
-      typeof (candidate as { id?: unknown }).id !== 'string'
-    ) {
+    const bot = asRecord(candidate);
+
+    if (isUndefined(bot) || !isString(bot.id)) {
       return [];
     }
 
-    const metadata = (candidate as { metadata?: unknown }).metadata;
-
     return [
       {
-        id: (candidate as { id: string }).id,
-        metadata:
-          typeof metadata === 'object' && metadata !== null
-            ? (metadata as Record<string, unknown>)
-            : {},
+        id: bot.id,
+        metadata: asRecord(bot.metadata) ?? {},
       },
     ];
   });
@@ -92,11 +87,11 @@ const extractRecallBots = (
 const extractNextPath = (
   response: RecallBotListResponse | undefined,
   baseUrl: string,
-): string | null => {
+): string | undefined => {
   const next = response?.next;
 
-  if (typeof next !== 'string' || !next.startsWith(baseUrl)) {
-    return null;
+  if (!isString(next) || !next.startsWith(baseUrl)) {
+    return undefined;
   }
 
   return next.slice(baseUrl.length);

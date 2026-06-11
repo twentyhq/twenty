@@ -1,3 +1,5 @@
+import { isString } from '@sniptt/guards';
+
 import { type RecallBotOperationFailure } from 'src/logic-functions/types/recall-bot-operation-result.type';
 import { getRecallApiConfig } from 'src/logic-functions/utils/get-recall-api-config.util';
 import { recallBotApiRequest } from 'src/logic-functions/utils/recall-bot-api-request.util';
@@ -18,8 +20,7 @@ export const createAsyncRecallTranscript = async ({
   }
 
   const result = await recallBotApiRequest<{ id?: unknown }>({
-    apiKey: configResult.config.apiKey,
-    baseUrl: configResult.config.baseUrl,
+    config: configResult.config,
     path: `/recording/${externalRecordingId}/create_transcript/`,
     method: 'POST',
     body: {
@@ -32,7 +33,7 @@ export const createAsyncRecallTranscript = async ({
     return result;
   }
 
-  if (typeof result.data?.id !== 'string') {
+  if (!isString(result.data?.id)) {
     return {
       ok: false,
       status: null,

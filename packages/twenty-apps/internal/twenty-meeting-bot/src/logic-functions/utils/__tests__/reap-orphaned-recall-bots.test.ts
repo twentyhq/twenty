@@ -61,15 +61,9 @@ describe('reapOrphanedRecallBots', () => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     listScheduledRecallBotsMock.mockReset();
     cancelRecallRecordingBotMock.mockReset();
-    cancelRecallRecordingBotMock.mockResolvedValue({
-      ok: true,
-      externalBotId: null,
-    });
+    cancelRecallRecordingBotMock.mockResolvedValue({ ok: true });
     ejectRecallRecordingBotMock.mockReset();
-    ejectRecallRecordingBotMock.mockResolvedValue({
-      ok: true,
-      externalBotId: null,
-    });
+    ejectRecallRecordingBotMock.mockResolvedValue({ ok: true });
   });
 
   it('keeps bots that their call recording still references', async () => {

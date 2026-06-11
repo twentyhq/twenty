@@ -1,34 +1,30 @@
-import { type RecallTranscriptMarker } from 'src/logic-functions/types/recall-transcript-marker.type';
+import { isString, isUndefined } from '@sniptt/guards';
 
-// Real transcript content never carries a marker status, so null means "actual transcript or empty".
+import { type RecallTranscriptMarker } from 'src/logic-functions/types/recall-transcript-marker.type';
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
+
+// Real transcript content never carries a marker status, so undefined means "actual transcript or empty".
 export const parseRecallTranscriptMarker = (
   transcript: unknown,
-): RecallTranscriptMarker | null => {
-  if (
-    typeof transcript !== 'object' ||
-    transcript === null ||
-    Array.isArray(transcript)
-  ) {
-    return null;
+): RecallTranscriptMarker | undefined => {
+  const candidate = asRecord(transcript);
+
+  if (isUndefined(candidate)) {
+    return undefined;
   }
 
-  const candidate = transcript as Record<string, unknown>;
-
   if (candidate.status !== 'PENDING' && candidate.status !== 'FAILED') {
-    return null;
+    return undefined;
   }
 
   return {
-    recallTranscriptId:
-      typeof candidate.recallTranscriptId === 'string'
-        ? candidate.recallTranscriptId
-        : null,
+    recallTranscriptId: isString(candidate.recallTranscriptId)
+      ? candidate.recallTranscriptId
+      : null,
     status: candidate.status,
-    ...(typeof candidate.requestedAt === 'string'
+    ...(isString(candidate.requestedAt)
       ? { requestedAt: candidate.requestedAt }
       : {}),
-    ...(typeof candidate.subCode === 'string'
-      ? { subCode: candidate.subCode }
-      : {}),
+    ...(isString(candidate.subCode) ? { subCode: candidate.subCode } : {}),
   };
 };

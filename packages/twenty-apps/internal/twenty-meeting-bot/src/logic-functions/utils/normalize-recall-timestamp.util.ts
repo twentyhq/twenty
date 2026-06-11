@@ -1,8 +1,10 @@
+import { isUndefined } from '@sniptt/guards';
+
 // Twenty rejects Recall's microsecond precision; truncate to millisecond ISO.
 export const normalizeRecallTimestamp = (
   value: string | undefined,
 ): string | undefined => {
-  if (value === undefined) {
+  if (isUndefined(value)) {
     return undefined;
   }
 

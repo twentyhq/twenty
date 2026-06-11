@@ -73,7 +73,7 @@ describe('reconcilePendingRecallTranscripts', () => {
       transcript: {
         downloadUrl: 'https://recall-transcripts.example.com/transcript-1',
         statusCode: 'done',
-        statusSubCode: null,
+        statusSubCode: undefined,
       },
     });
     vi.stubGlobal(
@@ -122,7 +122,7 @@ describe('reconcilePendingRecallTranscripts', () => {
       transcript: {
         downloadUrl: 'https://recall-transcripts.example.com/transcript-1',
         statusCode: 'done',
-        statusSubCode: null,
+        statusSubCode: undefined,
       },
     });
     vi.stubGlobal(
@@ -194,7 +194,7 @@ describe('reconcilePendingRecallTranscripts', () => {
     retrieveRecallTranscriptMock.mockResolvedValue({
       ok: true,
       transcript: {
-        downloadUrl: null,
+        downloadUrl: undefined,
         statusCode: 'error',
         statusSubCode: 'audio_missing',
       },
@@ -237,9 +237,9 @@ describe('reconcilePendingRecallTranscripts', () => {
     retrieveRecallTranscriptMock.mockResolvedValue({
       ok: true,
       transcript: {
-        downloadUrl: null,
+        downloadUrl: undefined,
         statusCode: 'processing',
-        statusSubCode: null,
+        statusSubCode: undefined,
       },
     });
 

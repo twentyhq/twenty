@@ -1,7 +1,9 @@
+import { isUndefined } from '@sniptt/guards';
+
 import { RECALL_BOT_AUTOMATIC_LEAVE } from 'src/logic-functions/constants/recall-bot-automatic-leave';
 import { RECALL_BOT_RECORDING_CONFIG } from 'src/logic-functions/constants/recall-bot-recording-config';
 import { type RecallBotMetadata } from 'src/logic-functions/types/recall-bot-metadata.type';
-import { type RecallBotOperationResult } from 'src/logic-functions/types/recall-bot-operation-result.type';
+import { type RecallBotScheduleResult } from 'src/logic-functions/types/recall-bot-operation-result.type';
 import {
   extractRecallBotId,
   type RecallBotResponse,
@@ -19,7 +21,7 @@ export const scheduleRecallRecordingBot = async ({
   meetingUrl,
   joinAt,
   metadata,
-}: ScheduleRecallRecordingBotArgs): Promise<RecallBotOperationResult> => {
+}: ScheduleRecallRecordingBotArgs): Promise<RecallBotScheduleResult> => {
   const configResult = getRecallApiConfig();
 
   if (!configResult.success) {
@@ -27,8 +29,7 @@ export const scheduleRecallRecordingBot = async ({
   }
 
   const result = await recallBotApiRequest<RecallBotResponse>({
-    apiKey: configResult.config.apiKey,
-    baseUrl: configResult.config.baseUrl,
+    config: configResult.config,
     path: '/bot/',
     method: 'POST',
     body: {
@@ -47,7 +48,7 @@ export const scheduleRecallRecordingBot = async ({
 
   const externalBotId = extractRecallBotId(result.data);
 
-  if (externalBotId === null) {
+  if (isUndefined(externalBotId)) {
     return {
       ok: false,
       status: null,

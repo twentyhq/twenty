@@ -1,3 +1,4 @@
+import { isNull, isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { Response } from 'twenty-sdk/logic-function';
@@ -6,14 +7,9 @@ import { RECALL_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constant
 import { RECALL_WEBHOOK_SECRET_ENV_VAR_NAME } from 'src/logic-functions/constants/recall-webhook-secret-env-var-name';
 import { getApplicationVariableValue } from 'src/logic-functions/utils/get-application-variable-value.util';
 import { handleRecallWebhook } from 'src/logic-functions/utils/handle-recall-webhook.util';
+import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+import { type RecallWebhookBody } from 'src/logic-functions/utils/parse-recall-webhook-event.util';
 import { verifyRecallWebhookSignature } from 'src/logic-functions/utils/verify-recall-webhook-signature.util';
-
-type RecallWebhookPayload = {
-  event?: unknown;
-  type?: unknown;
-  data?: unknown;
-  bot?: unknown;
-};
 
 // Non-2xx makes Svix retry; a returned plain object would 200-ack permanently.
 const rejectWebhook = (status: number, error: string): Response => {
@@ -23,13 +19,13 @@ const rejectWebhook = (status: number, error: string): Response => {
 };
 
 export const recallWebhookRouteHandler = async (
-  routePayload: RoutePayload<RecallWebhookPayload>,
+  routePayload: RoutePayload<RecallWebhookBody>,
 ): Promise<object> => {
   const webhookSecret = getApplicationVariableValue(
     RECALL_WEBHOOK_SECRET_ENV_VAR_NAME,
   );
 
-  if (webhookSecret === undefined || webhookSecret.trim() === '') {
+  if (!isNonEmptyString(webhookSecret)) {
     return rejectWebhook(
       500,
       'RECALL_WEBHOOK_SECRET server variable is not set. A server admin must copy it from the Recall webhook endpoint settings and set it on the Twenty Meeting Bot application registration.',
@@ -38,7 +34,7 @@ export const recallWebhookRouteHandler = async (
 
   const { rawBody } = routePayload;
 
-  if (rawBody === undefined) {
+  if (isUndefined(rawBody)) {
     return rejectWebhook(
       500,
       'Raw request body was not forwarded by the server; cannot verify the webhook signature',
@@ -58,7 +54,7 @@ export const recallWebhookRouteHandler = async (
     );
   }
 
-  if (routePayload.body === undefined || routePayload.body === null) {
+  if (isUndefined(routePayload.body) || isNull(routePayload.body)) {
     return rejectWebhook(400, 'Webhook payload was empty');
   }
 

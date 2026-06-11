@@ -1,6 +1,6 @@
 import { RECALL_BOT_AUTOMATIC_LEAVE } from 'src/logic-functions/constants/recall-bot-automatic-leave';
 import { RECALL_BOT_RECORDING_CONFIG } from 'src/logic-functions/constants/recall-bot-recording-config';
-import { type RecallBotOperationResult } from 'src/logic-functions/types/recall-bot-operation-result.type';
+import { type RecallBotScheduleResult } from 'src/logic-functions/types/recall-bot-operation-result.type';
 import {
   extractRecallBotId,
   type RecallBotResponse,
@@ -18,7 +18,7 @@ export const rescheduleRecallRecordingBot = async ({
   meetingUrl,
   joinAt,
   metadata,
-}: RescheduleRecallRecordingBotArgs): Promise<RecallBotOperationResult> => {
+}: RescheduleRecallRecordingBotArgs): Promise<RecallBotScheduleResult> => {
   const configResult = getRecallApiConfig();
 
   if (!configResult.success) {
@@ -26,8 +26,7 @@ export const rescheduleRecallRecordingBot = async ({
   }
 
   const result = await recallBotApiRequest<RecallBotResponse>({
-    apiKey: configResult.config.apiKey,
-    baseUrl: configResult.config.baseUrl,
+    config: configResult.config,
     path: `/bot/${externalBotId}/`,
     method: 'PATCH',
     body: {

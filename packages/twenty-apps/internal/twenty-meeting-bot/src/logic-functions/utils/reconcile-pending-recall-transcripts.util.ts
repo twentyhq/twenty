@@ -187,7 +187,7 @@ const fetchPendingTranscriptCallRecordings = async (
   return callRecordingNodes.flatMap((node) => {
     const marker = parseRecallTranscriptMarker(node.transcript);
 
-    if (isNull(marker) || marker.status !== 'PENDING') {
+    if (isUndefined(marker) || marker.status !== 'PENDING') {
       return [];
     }
 

@@ -264,7 +264,7 @@ describe('recall bot api', () => {
       externalBotId: 'recall-bot-id',
     });
 
-    expect(result).toEqual({ ok: true, externalBotId: null });
+    expect(result).toEqual({ ok: true });
     expect(fetchMock).toHaveBeenCalledWith(
       'https://ap-northeast-1.recall.ai/api/v1/bot/recall-bot-id/leave_call/',
       expect.objectContaining({ method: 'POST' }),
@@ -373,7 +373,7 @@ describe('recall bot api', () => {
       transcript: {
         downloadUrl: 'https://recall-transcripts.example.com/transcript',
         statusCode: 'done',
-        statusSubCode: null,
+        statusSubCode: undefined,
       },
     });
     expect(fetchMock).toHaveBeenCalledWith(
@@ -400,7 +400,7 @@ describe('recall bot api', () => {
     expect(result).toEqual({
       ok: true,
       transcript: {
-        downloadUrl: null,
+        downloadUrl: undefined,
         statusCode: 'error',
         statusSubCode: 'audio_missing',
       },
@@ -507,7 +507,7 @@ describe('recall bot api', () => {
         externalBotId: 'recall-bot-id',
       });
 
-      expect(result).toEqual({ ok: true, externalBotId: null });
+      expect(result).toEqual({ ok: true });
       expect(fetchMock).toHaveBeenCalledTimes(1);
     });
   });

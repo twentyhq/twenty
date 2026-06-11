@@ -1,7 +1,10 @@
+import { isUndefined } from '@sniptt/guards';
+
 import { retrieveRecallTranscript } from 'src/logic-functions/utils/retrieve-recall-transcript.util';
 
 export type DownloadRecallTranscriptResult =
   | { outcome: 'filled'; content: unknown }
+  // subCode null matches the persisted failed-marker shape.
   | { outcome: 'failed'; subCode: string | null }
   | { outcome: 'pending' }
   | { outcome: 'error'; errorMessage: string };
@@ -20,12 +23,12 @@ export const downloadRecallTranscript = async ({
 
   const { downloadUrl, statusCode, statusSubCode } = retrieveResult.transcript;
 
-  if (downloadUrl !== null) {
+  if (!isUndefined(downloadUrl)) {
     return downloadRecallTranscriptContent(downloadUrl);
   }
 
   if (statusCode === 'error' || statusCode === 'failed') {
-    return { outcome: 'failed', subCode: statusSubCode };
+    return { outcome: 'failed', subCode: statusSubCode ?? null };
   }
 
   return { outcome: 'pending' };

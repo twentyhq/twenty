@@ -1,5 +1,7 @@
 import { createHmac, timingSafeEqual } from 'crypto';
 
+import { isUndefined } from '@sniptt/guards';
+
 const RECALL_WEBHOOK_SECRET_PREFIX = 'whsec_';
 const RECALL_WEBHOOK_TIMESTAMP_TOLERANCE_SECONDS = 5 * 60;
 
@@ -28,9 +30,9 @@ export const verifyRecallWebhookSignature = ({
     headers['webhook-signature'] ?? headers['svix-signature'];
 
   if (
-    webhookId === undefined ||
-    webhookTimestamp === undefined ||
-    webhookSignature === undefined
+    isUndefined(webhookId) ||
+    isUndefined(webhookTimestamp) ||
+    isUndefined(webhookSignature)
   ) {
     return {
       valid: false,

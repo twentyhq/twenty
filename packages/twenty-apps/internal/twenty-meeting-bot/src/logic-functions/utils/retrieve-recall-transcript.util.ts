@@ -1,11 +1,13 @@
 import { type RecallBotOperationFailure } from 'src/logic-functions/types/recall-bot-operation-result.type';
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { getRecallApiConfig } from 'src/logic-functions/utils/get-recall-api-config.util';
+import { getString } from 'src/logic-functions/utils/get-string.util';
 import { recallBotApiRequest } from 'src/logic-functions/utils/recall-bot-api-request.util';
 
 export type RecallTranscriptDetails = {
-  downloadUrl: string | null;
-  statusCode: string | null;
-  statusSubCode: string | null;
+  downloadUrl: string | undefined;
+  statusCode: string | undefined;
+  statusSubCode: string | undefined;
 };
 
 type RetrieveRecallTranscriptResult =
@@ -24,8 +26,7 @@ export const retrieveRecallTranscript = async ({
   }
 
   const result = await recallBotApiRequest<Record<string, unknown>>({
-    apiKey: configResult.config.apiKey,
-    baseUrl: configResult.config.baseUrl,
+    config: configResult.config,
     path: `/transcript/${transcriptId}/`,
     method: 'GET',
   });
@@ -40,20 +41,12 @@ export const retrieveRecallTranscript = async ({
 const extractRecallTranscriptDetails = (
   response: Record<string, unknown> | undefined,
 ): RecallTranscriptDetails => {
-  const data = asNestedRecord(response?.data);
-  const status = asNestedRecord(response?.status);
+  const data = asRecord(response?.data);
+  const status = asRecord(response?.status);
 
   return {
-    downloadUrl: asNestedString(data?.download_url),
-    statusCode: asNestedString(status?.code),
-    statusSubCode: asNestedString(status?.sub_code),
+    downloadUrl: getString(data?.download_url),
+    statusCode: getString(status?.code),
+    statusSubCode: getString(status?.sub_code),
   };
 };
-
-const asNestedRecord = (value: unknown): Record<string, unknown> | undefined =>
-  typeof value === 'object' && value !== null && !Array.isArray(value)
-    ? (value as Record<string, unknown>)
-    : undefined;
-
-const asNestedString = (value: unknown): string | null =>
-  typeof value === 'string' && value !== '' ? value : null;

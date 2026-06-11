@@ -531,7 +531,7 @@ const applyRecallTranscriptFailure = async ({
 }): Promise<RecallWebhookHandlerResult> => {
   const existingMarker = parseRecallTranscriptMarker(callRecording.transcript);
 
-  if (!isTranscriptUnset(callRecording) && isNull(existingMarker)) {
+  if (!isTranscriptUnset(callRecording) && isUndefined(existingMarker)) {
     return {
       status: 'skipped',
       event,

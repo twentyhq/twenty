@@ -1,9 +1,11 @@
+import { isUndefined } from '@sniptt/guards';
+
 import { RECALL_API_MAX_ATTEMPTS } from 'src/logic-functions/constants/recall-api-max-attempts';
 import { RECALL_API_RETRY_DELAY_MS } from 'src/logic-functions/constants/recall-api-retry-delay-ms';
+import { type RecallApiConfig } from 'src/logic-functions/utils/get-recall-api-config.util';
 
 type RecallBotApiRequestArgs = {
-  apiKey: string;
-  baseUrl: string;
+  config: RecallApiConfig;
   path: string;
   method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
   body?: unknown;
@@ -39,8 +41,7 @@ export const recallBotApiRequest = async <TData>(
 };
 
 const performRecallBotApiRequestAttempt = async <TData>({
-  apiKey,
-  baseUrl,
+  config,
   path,
   method,
   body,
@@ -52,13 +53,13 @@ const performRecallBotApiRequestAttempt = async <TData>({
   let response: Response;
 
   try {
-    response = await fetch(`${baseUrl}${path}`, {
+    response = await fetch(`${config.baseUrl}${path}`, {
       method,
       headers: {
-        Authorization: buildRecallApiAuthorizationHeader(apiKey),
-        ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
+        Authorization: buildRecallApiAuthorizationHeader(config.apiKey),
+        ...(isUndefined(body) ? {} : { 'Content-Type': 'application/json' }),
       },
-      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+      ...(isUndefined(body) ? {} : { body: JSON.stringify(body) }),
     });
   } catch (error) {
     return {

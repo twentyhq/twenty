@@ -15,6 +15,6 @@ export const isCallRecordingIngestionComplete = ({
   // RAW_JSON can hold a literal JSON null; both nullish forms mean "no transcript".
   !isNull(transcript) &&
   !isUndefined(transcript) &&
-  isNull(parseRecallTranscriptMarker(transcript)) &&
+  isUndefined(parseRecallTranscriptMarker(transcript)) &&
   isNonEmptyArray(audio) &&
   isNonEmptyArray(video);

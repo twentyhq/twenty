@@ -18,8 +18,7 @@ export const getRecallBot = async ({
   }
 
   const result = await recallBotApiRequest<Record<string, unknown>>({
-    apiKey: configResult.config.apiKey,
-    baseUrl: configResult.config.baseUrl,
+    config: configResult.config,
     path: `/bot/${externalBotId}/`,
     method: 'GET',
   });

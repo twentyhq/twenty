@@ -1,4 +1,4 @@
-import { isNull, isUndefined } from '@sniptt/guards';
+import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
@@ -47,10 +47,8 @@ export const ensureRecallBot = async (
     return;
   }
 
-  if (!isNull(scheduleResult.externalBotId)) {
-    await updateCallRecording(client, {
-      id: callRecording.id,
-      data: { externalBotId: scheduleResult.externalBotId },
-    });
-  }
+  await updateCallRecording(client, {
+    id: callRecording.id,
+    data: { externalBotId: scheduleResult.externalBotId },
+  });
 };

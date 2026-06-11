@@ -1,3 +1,5 @@
+import { getString } from 'src/logic-functions/utils/get-string.util';
+
 export type RecallBotResponse = {
   id?: unknown;
   bot_id?: unknown;
@@ -5,14 +7,4 @@ export type RecallBotResponse = {
 
 export const extractRecallBotId = (
   response: RecallBotResponse | undefined,
-): string | null => {
-  if (typeof response?.id === 'string') {
-    return response.id;
-  }
-
-  if (typeof response?.bot_id === 'string') {
-    return response.bot_id;
-  }
-
-  return null;
-};
+): string | undefined => getString(response?.id) ?? getString(response?.bot_id);
