@@ -43,13 +43,14 @@ const ScrollStage = styled.div`
 
 // The vertical guide spans the whole stage (the sticky panel's own line
 // would end at the pinned viewport) and overshoots into the next section's
-// 20px notch cap so it meets the white card with no gap.
+// notch cap so it meets the white card with no gap. The card's white fill
+// starts at 19px (its 1px anti-seam overlap), so 19 exactly touches it.
 const StageGuide = styled.div`
   display: none;
 
   ${mediaUp('md')} {
     background-color: ${color('black-10')};
-    bottom: -20px;
+    bottom: -19px;
     display: block;
     left: 50%;
     pointer-events: none;
