@@ -75,7 +75,7 @@ export const useTriggerRecordBoardInitialQuery = () => {
       objectMetadataItem,
     });
 
-  const runRecordBoardInitialQuery = useCallback(
+  const triggerRecordBoardInitialQuery = useCallback(
     async ({ shouldResetScroll }: { shouldResetScroll: boolean }) => {
       store.set(recordIndexRecordGroupsAreInInitialLoading, true);
 
@@ -184,17 +184,7 @@ export const useTriggerRecordBoardInitialQuery = () => {
     ],
   );
 
-  const triggerRecordBoardInitialQuery = useCallback(async () => {
-    await runRecordBoardInitialQuery({ shouldResetScroll: true });
-  }, [runRecordBoardInitialQuery]);
-
-  const triggerRecordBoardInitialQueryWithoutScrollReset =
-    useCallback(async () => {
-      await runRecordBoardInitialQuery({ shouldResetScroll: false });
-    }, [runRecordBoardInitialQuery]);
-
   return {
     triggerRecordBoardInitialQuery,
-    triggerRecordBoardInitialQueryWithoutScrollReset,
   };
 };
