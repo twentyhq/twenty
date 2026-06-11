@@ -10,6 +10,8 @@ import {
 import { mediaUp } from '@/tokens';
 import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
 
+import { SidebarControls } from './sidebar-controls';
+import { SidebarFolder } from './sidebar-folder';
 import { SidebarItem } from './sidebar-item';
 import { renderPreviewIcon } from '../primitives/preview-icon';
 import { PREVIEW_COLORS } from '../preview-colors';
@@ -174,9 +176,10 @@ export function PreviewSidebar({
   selectedItemId: string;
   workspace: SidebarEntry[];
 }) {
-  void onToggleFolder;
-  void openFolderIds;
-  const workspaceItems = workspace.filter(
+  const visibleWorkspace = workspace.filter((entry) =>
+    isSidebarFolder(entry) ? true : !entry.hidden,
+  );
+  const railItems = visibleWorkspace.filter(
     (entry): entry is SidebarItemDef => !isSidebarFolder(entry),
   );
 
@@ -204,8 +207,9 @@ export function PreviewSidebar({
           </DesktopOnly>
         </HeaderRight>
       </Header>
+      <SidebarControls />
       <RailOnly>
-        {workspaceItems.map((item) => (
+        {railItems.map((item) => (
           <RailIconSlot key={item.id}>
             {renderPreviewIcon(item.icon)}
           </RailIconSlot>
@@ -232,14 +236,27 @@ export function PreviewSidebar({
             <SectionLabel>Workspace</SectionLabel>
           </SectionLabelRow>
           <SectionStack>
-            {workspaceItems.map((item) => (
-              <SidebarItem
-                active={item.id === selectedItemId}
-                item={item}
-                key={item.id}
-                onSelect={onSelectPageItem}
-              />
-            ))}
+            {visibleWorkspace.map((entry) =>
+              isSidebarFolder(entry) ? (
+                <SidebarFolder
+                  expanded={openFolderIds?.includes(entry.id) ?? false}
+                  folder={entry}
+                  key={entry.id}
+                  onSelectItem={onSelectPageItem}
+                  onToggleExpanded={
+                    onToggleFolder ? () => onToggleFolder(entry.id) : undefined
+                  }
+                  selectedItemId={selectedItemId}
+                />
+              ) : (
+                <SidebarItem
+                  active={entry.id === selectedItemId}
+                  item={entry}
+                  key={entry.id}
+                  onSelect={onSelectPageItem}
+                />
+              ),
+            )}
           </SectionStack>
         </div>
       </DesktopContent>

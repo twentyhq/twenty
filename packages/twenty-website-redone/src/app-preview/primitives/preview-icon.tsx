@@ -23,6 +23,8 @@ import { type ReactNode } from 'react';
 import { APP_PREVIEW_MOTION } from '@/tokens/app-preview/app-preview-motion';
 import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
 
+import { TwentyLogo } from '@/icons';
+
 import { FaviconLogo } from './favicon-logo';
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 import { type SidebarIcon } from '../types';
@@ -147,12 +149,17 @@ export function renderPreviewIcon(
         $color={APP_PREVIEW_THEME.font.color.secondary}
         $pulse={pulse}
       >
-        <FaviconLogo
-          domain={icon.domain}
-          label={icon.brand}
-          size={icon.imageSrc ? 14 : 16}
-          src={icon.imageSrc}
-        />
+        {icon.brand === 'twenty' ? (
+          // The official mark is a component — never a raster copy.
+          <TwentyLogo sizePx={14} />
+        ) : (
+          <FaviconLogo
+            domain={icon.domain}
+            label={icon.brand}
+            size={icon.imageSrc ? 14 : 16}
+            src={icon.imageSrc}
+          />
+        )}
         {icon.overlay === 'link' ? <LinkOverlay /> : null}
       </SidebarIconSurface>
     );

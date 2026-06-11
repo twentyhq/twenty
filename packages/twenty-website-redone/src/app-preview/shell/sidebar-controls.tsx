@@ -1,0 +1,121 @@
+import { styled } from '@linaria/react';
+import {
+  IconHome,
+  IconMessageCircle2,
+  IconMessageCirclePlus,
+} from '@tabler/icons-react';
+
+import { mediaUp } from '@/tokens';
+import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+
+import { PREVIEW_COLORS } from '../preview-colors';
+
+const theme = APP_PREVIEW_THEME;
+
+const Root = styled.div`
+  display: flex;
+  justify-content: center;
+
+  ${mediaUp('md')} {
+    align-items: center;
+    justify-content: space-between;
+  }
+`;
+
+const SegmentedRail = styled.div`
+  display: none;
+
+  ${mediaUp('md')} {
+    display: flex;
+    align-items: center;
+    /* The old hand-mixed #fcfcfccc: the secondary surface at 80%. */
+    background-color: color-mix(
+      in srgb,
+      ${theme.background.secondary} 80%,
+      transparent
+    );
+    border: 1px solid ${PREVIEW_COLORS.border};
+    border-radius: 999px;
+    column-gap: 2px;
+    height: 26px;
+    padding: 3px;
+  }
+`;
+
+const Segment = styled.div<{ $selected?: boolean }>`
+  align-items: center;
+  background: ${({ $selected }) =>
+    $selected ? theme.background.transparent.light : 'transparent'};
+  border-radius: 999px;
+  display: flex;
+  height: 20px;
+  justify-content: center;
+  width: 32px;
+`;
+
+const NewChat = styled.div`
+  align-items: center;
+  background-color: ${theme.background.secondary};
+  border: 1px solid ${PREVIEW_COLORS.border};
+  border-radius: 999px;
+  color: ${PREVIEW_COLORS.textSecondary};
+  display: flex;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
+
+  ${mediaUp('md')} {
+    column-gap: 4px;
+    height: 26px;
+    padding: 3px;
+    width: 103px;
+  }
+`;
+
+const NewChatLabel = styled.span`
+  display: none;
+
+  ${mediaUp('md')} {
+    display: block;
+    font-family: ${theme.font.family};
+    font-size: ${theme.font.sizePx.md}px;
+    font-weight: ${theme.font.weight.medium};
+    line-height: 1.4;
+  }
+`;
+
+// The home/chat rail + "New chat" pill (chrome only; the chat behavior
+// arrives with the Terminal commits).
+export function SidebarControls() {
+  return (
+    <Root>
+      <SegmentedRail aria-hidden>
+        <Segment $selected>
+          <IconHome
+            aria-hidden
+            color={PREVIEW_COLORS.text}
+            size={16}
+            strokeWidth={theme.icon.stroke.md}
+          />
+        </Segment>
+        <Segment>
+          <IconMessageCircle2
+            aria-hidden
+            color={PREVIEW_COLORS.textTertiary}
+            size={16}
+            strokeWidth={theme.icon.stroke.md}
+          />
+        </Segment>
+      </SegmentedRail>
+      <NewChat aria-hidden>
+        <IconMessageCirclePlus
+          aria-hidden
+          color={PREVIEW_COLORS.textSecondary}
+          size={16}
+          strokeWidth={theme.icon.stroke.md}
+        />
+        <NewChatLabel>New chat</NewChatLabel>
+      </NewChat>
+    </Root>
+  );
+}

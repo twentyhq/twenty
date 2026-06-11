@@ -63,7 +63,11 @@ const KANBAN_LANE: Record<string, TonePair> = {
   purple: { background: '#ede9fe', color: '#8e4ec6' },
 };
 
+// The named-workflow avatar ink (authored data color).
+const WORKFLOW_AVATAR_INK = '#451E11';
+
 export const APP_PREVIEW_TONES = {
+  workflowAvatarInk: WORKFLOW_AVATAR_INK,
   kanbanLane: KANBAN_LANE,
   sidebar: SIDEBAR,
   person: PERSON,

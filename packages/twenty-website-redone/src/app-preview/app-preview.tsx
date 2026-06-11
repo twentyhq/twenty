@@ -99,6 +99,7 @@ export function AppPreview() {
           <PreviewNavbar
             activeItem={activeItem}
             activeItemLabel={activeItem.label}
+            navbarActions={activePage.header.navbarActions}
           />
           <ContentRow>
             <IndexSurface>

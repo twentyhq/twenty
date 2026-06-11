@@ -1,12 +1,30 @@
 import { styled } from '@linaria/react';
-import { IconDotsVertical, IconPlus } from '@tabler/icons-react';
+import {
+  IconChevronDown,
+  IconChevronUp,
+  IconDotsVertical,
+  IconHeart,
+  IconPlayerPause,
+  IconPlus,
+  IconRepeat,
+} from '@tabler/icons-react';
 
 import { mediaUp } from '@/tokens';
 import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
 
 import { renderPreviewIcon } from '../primitives/preview-icon';
 import { PREVIEW_COLORS } from '../preview-colors';
-import { type SidebarItemDef } from '../types';
+import { type NavbarAction, type SidebarItemDef } from '../types';
+
+const NAVBAR_ACTION_ICON_MAP: Record<string, typeof IconPlus> = {
+  chevronDown: IconChevronDown,
+  chevronUp: IconChevronUp,
+  dotsVertical: IconDotsVertical,
+  heart: IconHeart,
+  playerPause: IconPlayerPause,
+  plus: IconPlus,
+  repeat: IconRepeat,
+};
 
 const theme = APP_PREVIEW_THEME;
 
@@ -141,12 +159,41 @@ const ActionSeparator = styled.div`
   width: 1px;
 `;
 
+function renderProvidedAction(action: NavbarAction, index: number) {
+  const Icon = NAVBAR_ACTION_ICON_MAP[action.icon];
+  return (
+    <ActionButton
+      $iconOnly={action.variant === 'icon' || !action.label}
+      key={`${action.icon}-${index}`}
+    >
+      {Icon ? (
+        <ActionIconWrap>
+          <Icon
+            aria-hidden
+            size={theme.icon.size.sm}
+            stroke={theme.icon.stroke.md}
+          />
+        </ActionIconWrap>
+      ) : null}
+      {action.label ? <ActionLabel>{action.label}</ActionLabel> : null}
+      {action.trailingLabel ? (
+        <DesktopOnlyTrailing>
+          <ActionSeparator />
+          <ActionLabel $light>{action.trailingLabel}</ActionLabel>
+        </DesktopOnlyTrailing>
+      ) : null}
+    </ActionButton>
+  );
+}
+
 export function PreviewNavbar({
   activeItem,
   activeItemLabel,
+  navbarActions,
 }: {
   activeItem?: SidebarItemDef;
   activeItemLabel: string;
+  navbarActions?: NavbarAction[];
 }) {
   return (
     <NavbarBar>
@@ -161,32 +208,44 @@ export function PreviewNavbar({
         </BreadcrumbTag>
       </Breadcrumb>
       <NavbarActions aria-hidden>
-        <DesktopOnlyAction>
-          <ActionButton>
-            <ActionIconWrap>
-              <IconPlus
-                aria-hidden
-                size={theme.icon.size.sm}
-                stroke={theme.icon.stroke.md}
-              />
-            </ActionIconWrap>
-            <ActionLabel>New</ActionLabel>
-          </ActionButton>
-        </DesktopOnlyAction>
+        {navbarActions ? (
+          navbarActions.map(renderProvidedAction)
+        ) : (
+          <DefaultActions />
+        )}
+      </NavbarActions>
+    </NavbarBar>
+  );
+}
+
+function DefaultActions() {
+  return (
+    <>
+      <DesktopOnlyAction>
         <ActionButton>
           <ActionIconWrap>
-            <IconDotsVertical
+            <IconPlus
               aria-hidden
               size={theme.icon.size.sm}
               stroke={theme.icon.stroke.md}
             />
           </ActionIconWrap>
-          <DesktopOnlyTrailing>
-            <ActionSeparator />
-            <ActionLabel $light>⌘K</ActionLabel>
-          </DesktopOnlyTrailing>
+          <ActionLabel>New</ActionLabel>
         </ActionButton>
-      </NavbarActions>
-    </NavbarBar>
+      </DesktopOnlyAction>
+      <ActionButton>
+        <ActionIconWrap>
+          <IconDotsVertical
+            aria-hidden
+            size={theme.icon.size.sm}
+            stroke={theme.icon.stroke.md}
+          />
+        </ActionIconWrap>
+        <DesktopOnlyTrailing>
+          <ActionSeparator />
+          <ActionLabel $light>⌘K</ActionLabel>
+        </DesktopOnlyTrailing>
+      </ActionButton>
+    </>
   );
 }

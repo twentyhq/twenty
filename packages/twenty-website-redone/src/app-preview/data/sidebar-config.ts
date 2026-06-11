@@ -3,6 +3,7 @@
 // pending page stubs; their pages and the navigation hook land with
 // commits 4-5.
 import { COMPANIES_TABLE_PAGE } from './companies-table-page';
+import { WORKFLOWS_FOLDER } from './workflows-folder';
 import { DASHBOARDS_TABLE_PAGE } from './dashboards-table-page';
 import { NOTES_TABLE_PAGE } from './notes-table-page';
 import { OPPORTUNITY_KANBAN_PAGE } from './opportunity-kanban-page';
@@ -68,11 +69,12 @@ export const APP_PREVIEW_CONFIG: AppPreviewConfig = {
         icon: { kind: 'tabler', name: 'layoutDashboard', tone: 'gray' },
         page: DASHBOARDS_TABLE_PAGE,
       },
+      WORKFLOWS_FOLDER,
       {
-        id: 'workflows',
-        label: 'Workflows',
-        icon: { kind: 'tabler', name: 'settingsAutomation', tone: 'orange' },
-        page: pendingPage('workflow', 'All Workflows'),
+        id: 'book-demo',
+        label: 'Book a demo',
+        href: 'https://cal.com/forms/f7841033-0a20-4958-8c92-4e34ec128a81',
+        icon: { kind: 'brand', brand: 'twenty', overlay: 'link' },
       },
     ],
   },
