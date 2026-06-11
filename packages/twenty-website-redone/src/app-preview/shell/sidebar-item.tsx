@@ -2,7 +2,9 @@
 
 import { styled } from '@linaria/react';
 
+import { APP_PREVIEW_MOTION } from '@/tokens/app-preview/app-preview-motion';
 import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
+import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
 import { renderPreviewIcon } from '../primitives/preview-icon';
 import { PREVIEW_COLORS } from '../preview-colors';
@@ -10,11 +12,22 @@ import { type SidebarItemDef } from '../types';
 
 const theme = APP_PREVIEW_THEME;
 
-const ItemRow = styled.button<{ $active?: boolean; $depth?: number }>`
+const ItemRow = styled.button<{
+  $active?: boolean;
+  $depth?: number;
+  $highlighted?: boolean;
+  $highlightRgb?: string;
+}>`
+  --highlight-rgb: ${({ $highlightRgb }) => $highlightRgb ?? '237, 95, 0'};
+  --highlight-rest-background: ${theme.background.transparent.light};
   appearance: none;
   border: 0;
   text-align: left;
   align-items: center;
+  animation: ${({ $highlighted }) =>
+    $highlighted
+      ? `sidebarItemAppear 1800ms ${APP_PREVIEW_MOTION.revealPulseEase} both`
+      : 'none'};
   background: ${({ $active }) =>
     $active ? theme.background.transparent.light : 'transparent'};
   border-radius: 4px;
@@ -30,6 +43,10 @@ const ItemRow = styled.button<{ $active?: boolean; $depth?: number }>`
 
   &:hover {
     background: ${theme.background.transparent.light};
+  }
+
+  @keyframes sidebarItemAppear {
+    ${APP_PREVIEW_MOTION.revealPulseFrames}
   }
 `;
 
@@ -101,12 +118,14 @@ const ItemMeta = styled.span`
 export function SidebarItem({
   active = false,
   depth = 0,
+  highlighted = false,
   isLastChild = false,
   item,
   onSelect,
 }: {
   active?: boolean;
   depth?: number;
+  highlighted?: boolean;
   isLastChild?: boolean;
   item: SidebarItemDef;
   onSelect?: (itemId: string) => void;
@@ -118,17 +137,24 @@ export function SidebarItem({
     }
     onSelect?.(item.id);
   };
+  const highlightRgb =
+    item.icon.kind === 'tabler'
+      ? APP_PREVIEW_TONES.sidebarToneRgb(item.icon.tone)
+      : undefined;
+
   return (
     <ItemRow
       $active={active}
       $depth={depth}
+      $highlighted={highlighted}
+      $highlightRgb={highlighted ? highlightRgb : undefined}
       data-nav-item=""
       onClick={handleClick}
       type="button"
     >
       {depth > 0 ? <BranchCell $isLastChild={isLastChild} /> : null}
       <RowMain $withBranch={depth > 0}>
-        {renderPreviewIcon(item.icon)}
+        {renderPreviewIcon(item.icon, highlighted)}
         <ItemText>
           <ItemLabel $active={active}>{item.label}</ItemLabel>
           {item.meta ? <ItemMeta>· {item.meta}</ItemMeta> : null}

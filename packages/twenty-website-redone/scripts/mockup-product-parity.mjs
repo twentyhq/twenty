@@ -181,6 +181,108 @@ assert(
 );
 await windowPage.close();
 
+// The AI scenario: send streams the conversation, each created object
+// reveals in the sidebar with the tone pulse and jumps the page, the
+// changes card lands, zoom triple-click fast-forwards, reset unwinds.
+const scenarioPage = await browser.newPage({
+  viewport: { width: 1440, height: 950 },
+  deviceScaleFactor: 1,
+});
+await scenarioPage.goto(BASE_URL, {
+  waitUntil: 'networkidle',
+  timeout: 240000,
+});
+await scenarioPage.waitForTimeout(3000);
+const terminalBox = await scenarioPage
+  .locator('[data-terminal-shell]')
+  .boundingBox();
+const stageBox = await scenarioPage
+  .locator('[data-mockup-stage]')
+  .boundingBox();
+assert(
+  terminalBox !== null && Math.round(terminalBox.height) === 220,
+  `terminal renders at rest height (${Math.round(terminalBox?.height ?? 0)} == 220)`,
+);
+assert(
+  terminalBox !== null &&
+    stageBox !== null &&
+    terminalBox.x + terminalBox.width > stageBox.x + stageBox.width + 100,
+  'terminal hangs past the scene right edge (the old hero identity)',
+);
+await scenarioPage.locator('button[aria-label="Send message"]').click();
+await scenarioPage.waitForTimeout(1000);
+const grownBox = await scenarioPage
+  .locator('[data-terminal-shell]')
+  .boundingBox();
+assert(
+  grownBox !== null && Math.round(grownBox.height) === 480,
+  `send spring-grows the chat window (${Math.round(grownBox?.height ?? 0)} == 480)`,
+);
+// the Rocket chip reveals ~2.6s into the stream
+await scenarioPage.waitForTimeout(2500);
+const rocketReveal = await scenarioPage.evaluate(() => {
+  const aside = document.querySelector('[data-mockup-stage] aside');
+  const row = [...aside.querySelectorAll('button')].find((el) =>
+    el.textContent.includes('Rockets'),
+  );
+  const stageTexts = [
+    ...document.querySelectorAll('[data-mockup-stage] span'),
+  ].map((el) => el.textContent);
+  return {
+    pulse: row ? getComputedStyle(row).animationName : null,
+    jumped: stageTexts.includes('All Rockets'),
+  };
+});
+assert(
+  rocketReveal.pulse === 'sidebarItemAppear',
+  `created object pulses in the sidebar (${rocketReveal.pulse})`,
+);
+assert(rocketReveal.jumped, 'page jumps to the created object');
+// zoom triple-click = jump to the finished conversation
+await scenarioPage
+  .locator('[data-terminal-shell] button[aria-label="Zoom"]')
+  .click({ clickCount: 3 });
+await scenarioPage.waitForTimeout(800);
+const completed = await scenarioPage.evaluate(() => {
+  const aside = document.querySelector('[data-mockup-stage] aside');
+  const labels = new Set(
+    [...aside.querySelectorAll('button span')].map((el) => el.textContent),
+  );
+  const stageTexts = new Set(
+    [...document.querySelectorAll('[data-mockup-stage] span')].map(
+      (el) => el.textContent,
+    ),
+  );
+  return {
+    allObjects: ['Rockets', 'Launches', 'Payloads', 'Launch sites'].every(
+      (label) => labels.has(label),
+    ),
+    pinned: stageTexts.has('Book window'),
+    card: document.body.textContent.includes('files changed'),
+  };
+});
+assert(completed.allObjects, 'jump-to-end reveals all four objects');
+assert(completed.pinned, 'pinned actions land on the active object');
+assert(completed.card, 'the changes summary card renders');
+// reset unwinds the scenario
+await scenarioPage.locator('button[aria-label="Reset conversation"]').click();
+await scenarioPage.waitForTimeout(1000);
+const afterReset = await scenarioPage.evaluate(() => {
+  const aside = document.querySelector('[data-mockup-stage] aside');
+  const labels = new Set(
+    [...aside.querySelectorAll('button span')].map((el) => el.textContent),
+  );
+  return { rocketsGone: !labels.has('Rockets') };
+});
+const resetBox = await scenarioPage
+  .locator('[data-terminal-shell]')
+  .boundingBox();
+assert(
+  afterReset.rocketsGone && Math.round(resetBox?.height ?? 0) === 220,
+  `reset unwinds the sidebar and the window (${Math.round(resetBox?.height ?? 0)} == 220)`,
+);
+await scenarioPage.close();
+
 await browser.close();
 
 if (failures.length > 0) {

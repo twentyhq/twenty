@@ -163,6 +163,7 @@ const RailIconSlot = styled.div`
 
 export function PreviewSidebar({
   favorites,
+  highlightedItemId = null,
   onSelectPageItem,
   onToggleFolder,
   openFolderIds,
@@ -170,6 +171,7 @@ export function PreviewSidebar({
   workspace,
 }: {
   favorites: SidebarItemDef[];
+  highlightedItemId?: string | null;
   onSelectPageItem?: (itemId: string) => void;
   onToggleFolder?: (folderId: string) => void;
   openFolderIds?: string[];
@@ -251,6 +253,7 @@ export function PreviewSidebar({
               ) : (
                 <SidebarItem
                   active={entry.id === selectedItemId}
+                  highlighted={entry.id === highlightedItemId}
                   item={entry}
                   key={entry.id}
                   onSelect={onSelectPageItem}

@@ -479,6 +479,11 @@ msgstr "Notes de version"
 msgid "Releases"
 msgstr "Versions"
 
+#. js-lingui-id: TD9BOQ
+#: src/app-preview/terminal/terminal-send-button.tsx
+msgid "Reset conversation"
+msgstr ""
+
 #. js-lingui-id: s+MGs7
 #: src/sections/menu/menu.data.ts
 msgid "Resources"
@@ -489,6 +494,11 @@ msgstr "Ressources"
 #: src/sections/menu/menu.data.ts
 msgid "See what shipped in {0}"
 msgstr "Découvrez les nouveautés de la {0}"
+
+#. js-lingui-id: pi1oME
+#: src/app-preview/terminal/terminal-send-button.tsx
+msgid "Send message"
+msgstr ""
 
 #. js-lingui-id: 3VFzsh
 #: src/sections/helped/helped.data.ts
@@ -601,6 +611,11 @@ msgstr "L'histoire derrière Twenty"
 #: src/sections/testimonials/testimonials-carousel.tsx
 msgid "They are the real sales"
 msgstr "Eux, ce sont les vraies ventes"
+
+#. js-lingui-id: AUV+TY
+#: src/app-preview/terminal/thinking-indicator.tsx
+msgid "Thinking"
+msgstr ""
 
 #. js-lingui-id: POzmFl
 #: src/sections/menu/menu.data.ts
@@ -715,6 +730,11 @@ msgstr "Pourquoi Twenty"
 msgid "Why Twenty illustration"
 msgstr "Illustration Pourquoi Twenty"
 
+#. js-lingui-id: 7KJZ0z
+#: src/app-preview/stage/traffic-lights.tsx
+msgid "Window controls"
+msgstr ""
+
 #. js-lingui-id: p3ZD6C
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
@@ -740,3 +760,8 @@ msgstr "Oui. Importez vos données via CSV, ou utilisez notre API au-delà de 50
 #: src/sections/faq/faq.data.ts
 msgid "Yes. Twenty is the #1 Open Source CRM on GitHub. You can self-host to fully own your infrastructure, or run it on our managed cloud for a zero-ops setup."
 msgstr "Oui. Twenty est le CRM open source nº 1 sur GitHub. Auto-hébergez-le pour posséder pleinement votre infrastructure, ou utilisez notre cloud managé pour une exploitation zéro-ops."
+
+#. js-lingui-id: ACjxWW
+#: src/app-preview/stage/traffic-lights.tsx
+msgid "Zoom"
+msgstr ""

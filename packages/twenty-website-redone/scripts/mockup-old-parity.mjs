@@ -58,6 +58,18 @@ async function measure(browser, url) {
         el.textContent?.trim() === 'New' &&
         styleOf(el.parentElement)?.borderRadius === '4px',
     );
+    const terminal = document.querySelector('[data-terminal-shell]');
+    const terminalRect = terminal?.getBoundingClientRect();
+    const terminalStyle = styleOf(terminal);
+    const sendButton = terminal?.querySelector(
+      'button[aria-label="Send message"]',
+    );
+    const workspaceChip = [
+      ...(terminal?.querySelectorAll('button') ?? []),
+    ].find((el) => el.textContent?.includes('my-twenty-app'));
+    const promptText = [...(terminal?.querySelectorAll('p') ?? [])].find((el) =>
+      el.textContent?.startsWith('Scaffold a launch-ops CRM'),
+    );
     const frameStyle = styleOf(frame);
     const frameRect = frame?.getBoundingClientRect();
     return {
@@ -82,6 +94,21 @@ async function measure(browser, url) {
       navActionBorderColor: newButton
         ? styleOf(newButton.parentElement)?.borderTopColor
         : null,
+      terminalWidth: terminalRect ? round(terminalRect.width) : null,
+      terminalHeight: terminalRect ? round(terminalRect.height) : null,
+      terminalRadius: terminalStyle?.borderRadius ?? null,
+      terminalBackground: terminalStyle?.backgroundColor ?? null,
+      terminalBorderColor: terminalStyle?.borderTopColor ?? null,
+      sendBackground: styleOf(sendButton)?.backgroundColor ?? null,
+      sendRadius: styleOf(sendButton)?.borderRadius ?? null,
+      workspaceChipBackground: styleOf(workspaceChip)?.backgroundColor ?? null,
+      workspaceChipColor: styleOf(workspaceChip)?.color ?? null,
+      workspaceChipHeight: workspaceChip
+        ? round(workspaceChip.getBoundingClientRect().height)
+        : null,
+      promptFont: styleOf(promptText)?.fontSize ?? null,
+      promptColor: styleOf(promptText)?.color ?? null,
+      promptLineHeight: styleOf(promptText)?.lineHeight ?? null,
     };
   });
   await page.close();

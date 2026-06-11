@@ -38,12 +38,14 @@ type UseWindowPointerInteractionsOptions = {
 const isPrimaryPointer = (event: ReactPointerEvent<HTMLElement>): boolean =>
   event.pointerType !== 'mouse' || event.button === 0;
 
+// Element, not HTMLElement: a click on a button's svg glyph must still
+// block the drag, or the shell's pointer capture eats the button's click.
 const isBlockedDragTarget = (
   target: EventTarget | null,
   selector: string | undefined,
 ): boolean =>
   selector !== undefined &&
-  target instanceof HTMLElement &&
+  target instanceof Element &&
   target.closest(selector) !== null;
 
 export function useWindowPointerInteractions({

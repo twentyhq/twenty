@@ -31,6 +31,14 @@ export const APP_PREVIEW_STAGE = {
     glyph: 'rgba(0, 0, 0, 0.55)',
     ring: 'rgba(0, 0, 0, 0.12)',
   },
+  terminalFont: {
+    ui: "'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif",
+    mono: "'Geist Mono', 'SF Mono', ui-monospace, Menlo, Monaco, Consolas, monospace",
+  },
+  // The terminal hangs 148px past the 1040px scene's right edge; below
+  // ~1350px viewport that overhang has no room, so the window only mounts
+  // visually from there up (scene threshold, not a layout breakpoint).
+  terminalRoomQuery: '@media (min-width: 1350px)',
   shadow: {
     resting: '0 10px 64px 0 rgba(0, 0, 0, 0.2)',
     elevated:

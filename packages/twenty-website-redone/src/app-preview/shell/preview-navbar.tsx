@@ -1,29 +1,42 @@
 import { styled } from '@linaria/react';
 import {
+  IconBox,
+  IconCalendarClock,
+  IconCalendarEvent,
+  IconCalendarPlus,
   IconChevronDown,
   IconChevronUp,
   IconDotsVertical,
+  IconFlag,
   IconHeart,
   IconPlayerPause,
   IconPlus,
   IconRepeat,
+  IconRocket,
 } from '@tabler/icons-react';
 
-import { mediaUp } from '@/tokens';
+import { EASING, mediaUp } from '@/tokens';
 import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
 
+import { OBJECT_PINNED_ACTIONS } from '../data/object-pinned-actions';
 import { renderPreviewIcon } from '../primitives/preview-icon';
 import { PREVIEW_COLORS } from '../preview-colors';
 import { type NavbarAction, type SidebarItemDef } from '../types';
 
 const NAVBAR_ACTION_ICON_MAP: Record<string, typeof IconPlus> = {
+  box: IconBox,
+  calendarClock: IconCalendarClock,
+  calendarEvent: IconCalendarEvent,
+  calendarPlus: IconCalendarPlus,
   chevronDown: IconChevronDown,
   chevronUp: IconChevronUp,
   dotsVertical: IconDotsVertical,
+  flag: IconFlag,
   heart: IconHeart,
   playerPause: IconPlayerPause,
   plus: IconPlus,
   repeat: IconRepeat,
+  rocket: IconRocket,
 };
 
 const theme = APP_PREVIEW_THEME;
@@ -159,6 +172,37 @@ const ActionSeparator = styled.div`
   width: 1px;
 `;
 
+const PinnedActionButton = styled(ActionButton)<{
+  $pinnedActionIndex: number;
+}>`
+  animation: pinnedActionIn 340ms ${EASING.standard} both;
+  animation-delay: calc(
+    ${({ $pinnedActionIndex }) => $pinnedActionIndex} * 90ms
+  );
+  display: none;
+  gap: 4px;
+  padding: 0 6px;
+
+  ${mediaUp('md')} {
+    display: inline-flex;
+  }
+
+  @keyframes pinnedActionIn {
+    from {
+      opacity: 0;
+      transform: translateY(-6px) scale(0.94);
+    }
+    60% {
+      opacity: 1;
+      transform: translateY(1px) scale(1.02);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+`;
+
 function renderProvidedAction(action: NavbarAction, index: number) {
   const Icon = NAVBAR_ACTION_ICON_MAP[action.icon];
   return (
@@ -186,14 +230,42 @@ function renderProvidedAction(action: NavbarAction, index: number) {
   );
 }
 
+function renderPinnedAction(
+  action: NavbarAction,
+  index: number,
+  activeItemId: string | undefined,
+) {
+  const Icon = NAVBAR_ACTION_ICON_MAP[action.icon];
+
+  return (
+    <PinnedActionButton
+      $pinnedActionIndex={index}
+      key={`pinned-${activeItemId}-${action.label}-${index}`}
+    >
+      {Icon ? (
+        <ActionIconWrap>
+          <Icon
+            aria-hidden
+            size={theme.icon.size.sm}
+            stroke={theme.icon.stroke.md}
+          />
+        </ActionIconWrap>
+      ) : null}
+      <ActionLabel>{action.label}</ActionLabel>
+    </PinnedActionButton>
+  );
+}
+
 export function PreviewNavbar({
   activeItem,
   activeItemLabel,
   navbarActions,
+  revealedObjectIds = [],
 }: {
   activeItem?: SidebarItemDef;
   activeItemLabel: string;
   navbarActions?: NavbarAction[];
+  revealedObjectIds?: string[];
 }) {
   return (
     <NavbarBar>
@@ -211,16 +283,33 @@ export function PreviewNavbar({
         {navbarActions ? (
           navbarActions.map(renderProvidedAction)
         ) : (
-          <DefaultActions />
+          <DefaultActions
+            activeItem={activeItem}
+            revealedObjectIds={revealedObjectIds}
+          />
         )}
       </NavbarActions>
     </NavbarBar>
   );
 }
 
-function DefaultActions() {
+function DefaultActions({
+  activeItem,
+  revealedObjectIds,
+}: {
+  activeItem?: SidebarItemDef;
+  revealedObjectIds: string[];
+}) {
+  const pinnedActions =
+    activeItem && revealedObjectIds.includes(activeItem.id)
+      ? OBJECT_PINNED_ACTIONS[activeItem.id]
+      : undefined;
+
   return (
     <>
+      {pinnedActions?.map((action, index) =>
+        renderPinnedAction(action, index, activeItem?.id),
+      )}
       <DesktopOnlyAction>
         <ActionButton>
           <ActionIconWrap>

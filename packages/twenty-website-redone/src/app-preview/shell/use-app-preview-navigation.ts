@@ -62,10 +62,26 @@ export type AppPreviewNavigation = {
   activeItem: SidebarPageItemDef;
   activeItemId: string;
   activePage: PageDefinition;
+  canSelectPageItem: (itemId: string) => boolean;
   openFolderIds: string[];
+  resetNavigation: () => void;
   selectPageItem: (itemId: string) => void;
   toggleFolder: (folderId: string) => void;
 };
+
+function buildInitialOpenFolderIds(
+  visual: AppPreviewConfig,
+  navigationIndex: SidebarIndex,
+): string[] {
+  const open = new Set(visual.sidebar.initialOpenFolderIds);
+  const parent = navigationIndex.parentFolderIdsByItemId.get(
+    visual.sidebar.initialActiveItemId,
+  );
+  if (parent) {
+    open.add(parent);
+  }
+  return [...open];
+}
 
 export function useAppPreviewNavigation(
   visual: AppPreviewConfig,
@@ -82,16 +98,9 @@ export function useAppPreviewNavigation(
   const [activeItemId, setActiveItemId] = useState(
     visual.sidebar.initialActiveItemId,
   );
-  const [openFolderIds, setOpenFolderIds] = useState(() => {
-    const open = new Set(visual.sidebar.initialOpenFolderIds);
-    const parent = navigationIndex.parentFolderIdsByItemId.get(
-      visual.sidebar.initialActiveItemId,
-    );
-    if (parent) {
-      open.add(parent);
-    }
-    return [...open];
-  });
+  const [openFolderIds, setOpenFolderIds] = useState(() =>
+    buildInitialOpenFolderIds(visual, navigationIndex),
+  );
 
   const activeItem = navigationIndex.pageItemsById.get(activeItemId);
   if (!activeItem) {
@@ -137,11 +146,23 @@ export function useAppPreviewNavigation(
     );
   }, []);
 
+  const canSelectPageItem = useCallback(
+    (itemId: string) => navigationIndex.pageItemsById.has(itemId),
+    [navigationIndex],
+  );
+
+  const resetNavigation = useCallback(() => {
+    setActiveItemId(visual.sidebar.initialActiveItemId);
+    setOpenFolderIds(buildInitialOpenFolderIds(visual, navigationIndex));
+  }, [navigationIndex, visual]);
+
   return {
     activeItem,
     activeItemId,
     activePage,
+    canSelectPageItem,
     openFolderIds,
+    resetNavigation,
     selectPageItem,
     toggleFolder,
   };

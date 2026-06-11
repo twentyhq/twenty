@@ -1,9 +1,15 @@
+'use client';
+
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
+import { type MouseEvent as ReactMouseEvent } from 'react';
 
 import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
 
-// The static macOS window controls: colored dots whose glyphs reveal on
-// hover. The escape physics (the egg) arrives with the Terminal commit.
+// The macOS window controls: colored dots whose glyphs reveal on hover.
+// The zoom dot accepts a triple-click handler (the terminal's functional
+// jump-to-end); the escape physics egg arrives with the editor commit.
 const CloseGlyph = () => (
   <svg aria-hidden width="6" height="6" viewBox="0 0 6 6">
     <path
@@ -66,11 +72,13 @@ const Container = styled.div`
 const Dot = styled.span<{ $background: string; $backgroundActive: string }>`
   align-items: center;
   background: ${({ $background }) => $background};
+  border: none;
   border-radius: 999px;
   display: flex;
   flex: 0 0 auto;
   height: 12px;
   justify-content: center;
+  padding: 0;
   position: relative;
   transition: background-color 0.12s ease;
   width: 12px;
@@ -98,18 +106,43 @@ const Dot = styled.span<{ $background: string; $backgroundActive: string }>`
   }
 `;
 
-export function TrafficLights() {
+export function TrafficLights({
+  onZoomTripleClick,
+}: {
+  onZoomTripleClick?: () => void;
+} = {}) {
+  const { i18n } = useLingui();
+  const isInteractive = onZoomTripleClick !== undefined;
+  const handleZoomClick =
+    onZoomTripleClick === undefined
+      ? undefined
+      : (event: ReactMouseEvent<HTMLElement>) => {
+          if (event.detail === 3) {
+            onZoomTripleClick();
+          }
+        };
+
   return (
-    <Container aria-hidden>
-      {DOT_DEFINITIONS.map(({ background, backgroundActive, Glyph, label }) => (
-        <Dot
-          $background={background}
-          $backgroundActive={backgroundActive}
-          key={label}
-        >
-          <Glyph />
-        </Dot>
-      ))}
+    <Container
+      aria-hidden={isInteractive ? undefined : true}
+      aria-label={isInteractive ? i18n._(msg`Window controls`) : undefined}
+    >
+      {DOT_DEFINITIONS.map(({ background, backgroundActive, Glyph, label }) => {
+        const isZoom = label === 'Zoom';
+
+        return (
+          <Dot
+            $background={background}
+            $backgroundActive={backgroundActive}
+            aria-label={isZoom && isInteractive ? i18n._(msg`Zoom`) : undefined}
+            as={isZoom && handleZoomClick !== undefined ? 'button' : 'span'}
+            key={label}
+            onClick={isZoom ? handleZoomClick : undefined}
+          >
+            <Glyph />
+          </Dot>
+        );
+      })}
     </Container>
   );
 }

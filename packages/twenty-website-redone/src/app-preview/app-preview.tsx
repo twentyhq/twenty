@@ -28,10 +28,11 @@ import { PREVIEW_COLORS } from './preview-colors';
 import { PreviewNavbar } from './shell/preview-navbar';
 import { PreviewSidebar } from './shell/preview-sidebar';
 import { PreviewViewbar } from './shell/preview-viewbar';
-import { useAppPreviewNavigation } from './shell/use-app-preview-navigation';
+import { useAppPreviewExperience } from './shell/use-app-preview-experience';
 import { AppWindow } from './stage/app-window';
 import { ProductFrame } from './stage/product-frame';
 import { WindowOrderProvider } from './stage/window-order-provider';
+import { Terminal } from './terminal/terminal';
 import { type PageDefinition } from './types';
 
 const AppLayout = styled.div`
@@ -98,14 +99,15 @@ function renderPage(page: PageDefinition) {
 }
 
 // The product mockup: navigable sidebar + the object pages, presented
-// as a draggable/resizable desktop window (the old hero's identity).
-// The AI Terminal joins the desktop with commits 7-8.
+// as a draggable/resizable desktop window (the old hero's identity), with
+// the AI Terminal floating beside it. The chat's object-creation beats
+// drive the sidebar reveals and page jumps.
 export function AppPreview({
   mode = 'windowed',
 }: {
   mode?: 'static' | 'windowed';
 }) {
-  const { sidebar, defaultViewbarActions } = APP_PREVIEW_CONFIG;
+  const { defaultViewbarActions } = APP_PREVIEW_CONFIG;
 
   useEffect(
     () =>
@@ -114,26 +116,38 @@ export function AppPreview({
       }),
     [],
   );
-  const navigation = useAppPreviewNavigation(APP_PREVIEW_CONFIG);
-  const { activeItem, activeItemId, activePage } = navigation;
+  const experience = useAppPreviewExperience(APP_PREVIEW_CONFIG);
+  const {
+    activeItem,
+    activeItemId,
+    activePage,
+    handleChatReset,
+    handleJumpToConversationEnd,
+    handleObjectCreated,
+    highlightedItemId,
+    revealedObjectIds,
+    sidebarEntries,
+  } = experience;
   const showViewbar =
     activePage.type === 'table' || activePage.type === 'kanban';
 
   const appShell = (
     <AppLayout>
       <PreviewSidebar
-        favorites={sidebar.favorites}
-        onSelectPageItem={navigation.selectPageItem}
-        openFolderIds={navigation.openFolderIds}
-        onToggleFolder={navigation.toggleFolder}
+        favorites={APP_PREVIEW_CONFIG.sidebar.favorites}
+        highlightedItemId={highlightedItemId}
+        onSelectPageItem={experience.selectPageItem}
+        openFolderIds={experience.openFolderIds}
+        onToggleFolder={experience.toggleFolder}
         selectedItemId={activeItemId}
-        workspace={sidebar.workspace}
+        workspace={sidebarEntries}
       />
       <RightPane>
         <PreviewNavbar
           activeItem={activeItem}
           activeItemLabel={activeItem.label}
           navbarActions={activePage.header.navbarActions}
+          revealedObjectIds={revealedObjectIds}
         />
         <ContentRow>
           <IndexSurface>
@@ -159,6 +173,11 @@ export function AppPreview({
   return (
     <WindowOrderProvider>
       <AppWindow>{appShell}</AppWindow>
+      <Terminal
+        onChatReset={handleChatReset}
+        onJumpToConversationEnd={handleJumpToConversationEnd}
+        onObjectCreated={handleObjectCreated}
+      />
     </WindowOrderProvider>
   );
 }
