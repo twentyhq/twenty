@@ -29,7 +29,9 @@ import { PreviewNavbar } from './shell/preview-navbar';
 import { PreviewSidebar } from './shell/preview-sidebar';
 import { PreviewViewbar } from './shell/preview-viewbar';
 import { useAppPreviewNavigation } from './shell/use-app-preview-navigation';
+import { AppWindow } from './stage/app-window';
 import { ProductFrame } from './stage/product-frame';
+import { WindowOrderProvider } from './stage/window-order-provider';
 import { type PageDefinition } from './types';
 
 const AppLayout = styled.div`
@@ -95,9 +97,14 @@ function renderPage(page: PageDefinition) {
   }
 }
 
-// The product mockup: navigable sidebar + the object pages. The AI
-// scenario and windowed drag arrive with commits 6-8 of the wave.
-export function AppPreview() {
+// The product mockup: navigable sidebar + the object pages, presented
+// as a draggable/resizable desktop window (the old hero's identity).
+// The AI Terminal joins the desktop with commits 7-8.
+export function AppPreview({
+  mode = 'windowed',
+}: {
+  mode?: 'static' | 'windowed';
+}) {
   const { sidebar, defaultViewbarActions } = APP_PREVIEW_CONFIG;
 
   useEffect(
@@ -112,39 +119,46 @@ export function AppPreview() {
   const showViewbar =
     activePage.type === 'table' || activePage.type === 'kanban';
 
-  return (
-    <ProductFrame>
-      <AppLayout>
-        <PreviewSidebar
-          favorites={sidebar.favorites}
-          onSelectPageItem={navigation.selectPageItem}
-          openFolderIds={navigation.openFolderIds}
-          onToggleFolder={navigation.toggleFolder}
-          selectedItemId={activeItemId}
-          workspace={sidebar.workspace}
+  const appShell = (
+    <AppLayout>
+      <PreviewSidebar
+        favorites={sidebar.favorites}
+        onSelectPageItem={navigation.selectPageItem}
+        openFolderIds={navigation.openFolderIds}
+        onToggleFolder={navigation.toggleFolder}
+        selectedItemId={activeItemId}
+        workspace={sidebar.workspace}
+      />
+      <RightPane>
+        <PreviewNavbar
+          activeItem={activeItem}
+          activeItemLabel={activeItem.label}
+          navbarActions={activePage.header.navbarActions}
         />
-        <RightPane>
-          <PreviewNavbar
-            activeItem={activeItem}
-            activeItemLabel={activeItem.label}
-            navbarActions={activePage.header.navbarActions}
-          />
-          <ContentRow>
-            <IndexSurface>
-              {showViewbar ? (
-                <PreviewViewbar
-                  actions={activePage.header.actions ?? defaultViewbarActions}
-                  count={activePage.header.count}
-                  pageType={activePage.type}
-                  showListIcon={activePage.header.showListIcon ?? false}
-                  title={activePage.header.title}
-                />
-              ) : null}
-              {renderPage(activePage)}
-            </IndexSurface>
-          </ContentRow>
-        </RightPane>
-      </AppLayout>
-    </ProductFrame>
+        <ContentRow>
+          <IndexSurface>
+            {showViewbar ? (
+              <PreviewViewbar
+                actions={activePage.header.actions ?? defaultViewbarActions}
+                count={activePage.header.count}
+                pageType={activePage.type}
+                showListIcon={activePage.header.showListIcon ?? false}
+                title={activePage.header.title}
+              />
+            ) : null}
+            {renderPage(activePage)}
+          </IndexSurface>
+        </ContentRow>
+      </RightPane>
+    </AppLayout>
+  );
+
+  if (mode === 'static') {
+    return <ProductFrame>{appShell}</ProductFrame>;
+  }
+  return (
+    <WindowOrderProvider>
+      <AppWindow>{appShell}</AppWindow>
+    </WindowOrderProvider>
   );
 }

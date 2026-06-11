@@ -132,6 +132,55 @@ assert(
   `every first-column cell pins mid-reveal (${sticky?.rowCount} rows, scroll ${sticky?.scrolled})`,
 );
 
+// The desktop window: resize creates drag slack, drag moves and CLAMPS.
+// Imperative style mutations during interaction + committed state after.
+const windowPage = await browser.newPage({
+  viewport: { width: 1440, height: 950 },
+  deviceScaleFactor: 1,
+});
+await windowPage.goto(BASE_URL, { waitUntil: 'networkidle', timeout: 240000 });
+await windowPage.waitForTimeout(3000);
+const win = await windowPage.locator('[data-app-window]').boundingBox();
+assert(
+  win !== null && Math.round(win.width) === 1040,
+  `app window renders at scene width (${Math.round(win?.width ?? 0)})`,
+);
+// resize from the right edge: -240px
+// the hittable handle band is the inner ~2px sliver inside the shell's
+// clip (identical on the old site — verified by hit-test sweep)
+await windowPage.mouse.move(win.x + win.width - 3, win.y + win.height / 2);
+await windowPage.mouse.down();
+await windowPage.mouse.move(win.x + win.width - 243, win.y + win.height / 2, {
+  steps: 6,
+});
+await windowPage.mouse.up();
+await windowPage.waitForTimeout(250);
+const afterResize = await windowPage.locator('[data-app-window]').boundingBox();
+assert(
+  afterResize !== null && Math.round(afterResize.width) === 800,
+  `right-edge resize commits (${Math.round(afterResize?.width ?? 0)} == 800)`,
+);
+// drag by the window bar: +500px right — must CLAMP at the scene edge
+const bar = await windowPage.locator('[data-app-window]').boundingBox();
+await windowPage.mouse.move(bar.x + bar.width / 2, bar.y + 14);
+await windowPage.mouse.down();
+await windowPage.mouse.move(bar.x + bar.width / 2 + 500, bar.y + 14, {
+  steps: 8,
+});
+await windowPage.mouse.up();
+await windowPage.waitForTimeout(250);
+const afterDrag = await windowPage.locator('[data-app-window]').boundingBox();
+const stage = await windowPage.locator('[data-mockup-stage]').boundingBox();
+const movedRight = afterDrag.x > bar.x + 50;
+const clampedInside =
+  Math.round(afterDrag.x + afterDrag.width) <=
+  Math.round(stage.x + stage.width) + 1;
+assert(
+  movedRight && clampedInside,
+  `drag moves and clamps at the scene edge (moved ${Math.round(afterDrag.x - bar.x)}px, right edge ${Math.round(afterDrag.x + afterDrag.width)} <= ${Math.round(stage.x + stage.width)})`,
+);
+await windowPage.close();
+
 await browser.close();
 
 if (failures.length > 0) {
