@@ -30,6 +30,10 @@ import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-m
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import {
+  PROPEL_MANAGER_ONLY_NAV_ITEM_UIDS,
+  PropelNavFilterService,
+} from 'src/modules/propel-rls/propel-nav-filter.service';
 
 @Injectable()
 export class NavigationMenuItemService {
@@ -39,6 +43,7 @@ export class NavigationMenuItemService {
     private readonly applicationService: ApplicationService,
     private readonly navigationMenuItemAccessService: NavigationMenuItemAccessService,
     private readonly navigationMenuItemRecordIdentifierService: NavigationMenuItemRecordIdentifierService,
+    private readonly propelNavFilterService: PropelNavFilterService,
   ) {}
 
   async findAll({
@@ -88,7 +93,23 @@ export class NavigationMenuItemService {
       .filter((item) => !isDefined(type) || item.type === type)
       .sort((a, b) => a.position - b.position);
 
-    const bounded = isDefined(limit) ? filtered.slice(0, limit) : filtered;
+    // Propel: drop manager-only items for non-manager users (role-scoped nav —
+    // see propel-nav-filter.service.ts; cosmetic, fail-open, the page routes
+    // stay the boundary). Role lookup only runs when such an item is present.
+    const hasManagerOnlyItem = filtered.some((item) =>
+      PROPEL_MANAGER_ONLY_NAV_ITEM_UIDS.has(item.universalIdentifier),
+    );
+    const hiddenUids = hasManagerOnlyItem
+      ? await this.propelNavFilterService.hiddenNavItemUids({
+          workspaceId,
+          userWorkspaceId,
+        })
+      : null;
+    const visible = hiddenUids
+      ? filtered.filter((item) => !hiddenUids.has(item.universalIdentifier))
+      : filtered;
+
+    const bounded = isDefined(limit) ? visible.slice(0, limit) : visible;
 
     return bounded.map(fromFlatNavigationMenuItemToNavigationMenuItemDto);
   }

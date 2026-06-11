@@ -14,8 +14,10 @@ import { NavigationMenuItemDeletionService } from 'src/engine/metadata-modules/n
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
 import { NavigationMenuItemToolWorkspaceService } from 'src/engine/metadata-modules/navigation-menu-item/tools/services/navigation-menu-item-tool.workspace-service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
+import { PropelNavFilterService } from 'src/modules/propel-rls/propel-nav-filter.service';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     FlatNavigationMenuItemModule,
     PermissionsModule,
     FileModule,
+    // Propel: role lookup for the role-scoped nav filter (propel-nav-filter).
+    UserRoleModule,
   ],
   providers: [
     NavigationMenuItemService,
@@ -37,6 +41,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     NavigationMenuItemGraphqlApiExceptionInterceptor,
     WorkspaceMigrationGraphqlApiExceptionInterceptor,
     NavigationMenuItemToolWorkspaceService,
+    // Propel: provided here (not via PropelRlsModule) to keep the DI graph flat.
+    PropelNavFilterService,
   ],
   exports: [
     NavigationMenuItemService,
