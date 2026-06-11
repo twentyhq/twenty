@@ -213,3 +213,67 @@ export const navigateCrm = (path: string): void => {
   window.history.pushState(null, '', path);
   window.dispatchEvent(new PopStateEvent('popstate'));
 };
+
+type ConversationNode = {
+  id: string;
+  waPhoneNumber?: string | null;
+  lastMessageAt?: string | null;
+};
+
+/**
+ * In-CRM WhatsApp surface for a dialer number. Best target first:
+ *   1. the contact's whatsAppConversation record (full chat page) — matched by
+ *      waPhoneNumber digits, most recent lastMessageAt wins;
+ *   2. the Person record (its side panel carries the WhatsApp chat action);
+ *   3. a person search on the number.
+ */
+export const openWhatsAppInCrm = async (number: string): Promise<void> => {
+  const target = normDigits(number);
+  if (target.length >= 5) {
+    const data = await graphql<{
+      whatsAppConversations?: { edges?: { node: ConversationNode }[] };
+    }>(
+      `query DialerWaConversationByPhone($filter: WhatsAppConversationFilterInput) {
+         whatsAppConversations(filter: $filter, first: 10) {
+           edges { node { id waPhoneNumber lastMessageAt } }
+         }
+       }`,
+      {
+        filter: {
+          waPhoneNumber: { ilike: `%${digitsOf(number).slice(-7)}%` },
+        },
+      },
+    );
+    const matches = (data?.whatsAppConversations?.edges ?? [])
+      .map((edge) => edge.node)
+      .filter((node) => {
+        const candidate = normDigits(node.waPhoneNumber ?? '');
+        if (candidate.length === 0) {
+          return false;
+        }
+        if (candidate === target) {
+          return true;
+        }
+        const shorter = Math.min(candidate.length, target.length);
+        return (
+          shorter >= 8 &&
+          (candidate.endsWith(target) || target.endsWith(candidate))
+        );
+      })
+      .sort(
+        (a, b) =>
+          new Date(b.lastMessageAt ?? 0).getTime() -
+          new Date(a.lastMessageAt ?? 0).getTime(),
+      );
+    if (matches[0] !== undefined) {
+      navigateCrm(`/object/whatsAppConversation/${matches[0].id}`);
+      return;
+    }
+  }
+  const [person] = await lookupPeopleByNumbers([number]);
+  if (person?.personId !== undefined) {
+    navigateCrm(`/object/person/${person.personId}`);
+    return;
+  }
+  navigateCrm(`/search?s=${encodeURIComponent(number)}`);
+};

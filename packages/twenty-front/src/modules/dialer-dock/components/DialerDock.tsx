@@ -7,6 +7,7 @@ import {
   createPersonWithPhone,
   lookupPeopleByNumbers,
   navigateCrm,
+  openWhatsAppInCrm,
 } from '@/dialer-dock/utils/dialerCrmBridge';
 
 // Resolved once at module load, same dual mechanism as REACT_APP_SERVER_BASE_URL
@@ -148,7 +149,8 @@ const isDialerDockMessage = (data: unknown): data is DialerDockMessage =>
 type DialerIframeRequest =
   | { type: 'propel:lookup'; numbers: string[] }
   | { type: 'propel:add-to-crm'; number: string }
-  | { type: 'propel:open'; path: string };
+  | { type: 'propel:open'; path: string }
+  | { type: 'propel:open-whatsapp'; number: string };
 
 const parseDialerIframeRequest = (data: unknown): DialerIframeRequest | null => {
   if (typeof data !== 'object' || data === null) {
@@ -176,6 +178,13 @@ const parseDialerIframeRequest = (data: unknown): DialerIframeRequest | null => 
     !candidate.path.startsWith('//')
   ) {
     return { type: 'propel:open', path: candidate.path };
+  }
+  if (
+    candidate.type === 'propel:open-whatsapp' &&
+    typeof candidate.number === 'string' &&
+    candidate.number.length > 0
+  ) {
+    return { type: 'propel:open-whatsapp', number: candidate.number };
   }
   return null;
 };
@@ -251,6 +260,10 @@ export const DialerDock = () => {
         }
         case 'propel:open': {
           navigateCrm(request.path);
+          return;
+        }
+        case 'propel:open-whatsapp': {
+          void openWhatsAppInCrm(request.number);
           return;
         }
       }
