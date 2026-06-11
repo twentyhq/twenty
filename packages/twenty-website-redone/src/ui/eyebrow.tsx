@@ -4,9 +4,9 @@ import {
   color,
   FONT_WEIGHT,
   fontFamily,
-  fontSize,
   semanticColor,
   spacing,
+  typeRampDeclarations,
 } from '@/tokens';
 
 const EyebrowRow = styled.p`
@@ -14,10 +14,9 @@ const EyebrowRow = styled.p`
   color: ${semanticColor.inkMuted};
   display: flex;
   font-family: ${fontFamily('sans')};
-  font-size: ${fontSize(4.5)};
+  ${typeRampDeclarations('eyebrow')}
   font-weight: ${FONT_WEIGHT.medium};
   letter-spacing: -0.04em;
-  line-height: ${fontSize(6)};
   gap: ${spacing(2)};
   margin: 0;
 `;

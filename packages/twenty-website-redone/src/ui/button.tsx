@@ -24,6 +24,7 @@ const buttonClassName = css`
   --button-fill: transparent;
   --button-stroke: transparent;
   --button-hover-fill: transparent;
+  --button-hover-opacity: 1;
   --button-label: ${color('black')};
   --button-label-hover: ${color('black')};
 
@@ -66,23 +67,19 @@ const buttonClassName = css`
   }
 
   [data-scheme='dark'] &[data-variant='outlined'] {
-    /* Mirrors light outlined's 5% wash (the pricing-table toggle is the
-       reference): white-5 over black, pre-composited to stay opaque. */
     --button-stroke: ${color('white')};
-    --button-hover-fill: ${color('black-sheen')};
+    --button-hover-fill: ${color('white')};
     --button-label: ${color('white')};
     --button-label-hover: ${color('white')};
   }
 
-  /* All outlined hover washes are opaque 5% composites per surface —
-     translucent fills double on the shape's segment overlaps as seams. */
+  /* Outlined hovers are a 5% ink wash. The shape paints OPAQUE and the
+     layer carries the opacity, so the wash composites once — segment
+     overlaps can never double into seams, on any surface. */
   &[data-variant='outlined'] {
     --button-stroke: ${color('black')};
-    --button-hover-fill: ${color('neutral')};
-  }
-
-  [data-scheme='muted'] &[data-variant='outlined'] {
-    --button-hover-fill: ${color('neutral-sheen')};
+    --button-hover-fill: ${color('black')};
+    --button-hover-opacity: 0.05;
   }
 
   /* The stroke stays visible through the hover fill: the base shape is
@@ -99,6 +96,8 @@ const buttonClassName = css`
   [data-slot='hover-layer'] {
     --button-fill: var(--button-hover-fill);
     --button-stroke: transparent;
+
+    opacity: var(--button-hover-opacity);
 
     /* Clip the sliding fill to the button's corner radius so trailing
        corners stay rounded mid-transition. */

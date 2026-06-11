@@ -13,6 +13,7 @@ export const TYPE_SCALE: Record<
   | 'headingMd'
   | 'headingSm'
   | 'headingXs'
+  | 'eyebrow'
   | 'bodyMd'
   | 'bodySm'
   | 'bodyXs',
@@ -37,6 +38,11 @@ export const TYPE_SCALE: Record<
   headingXs: {
     base: { size: 4.5, lineHeight: 6 },
     md: { size: 5.5, lineHeight: 7 },
+  },
+  // flat by design: the eyebrow never scales with viewport.
+  eyebrow: {
+    base: { size: 4.5, lineHeight: 6 },
+    md: { size: 4.5, lineHeight: 6 },
   },
   bodyMd: {
     base: { size: 4, lineHeight: null },
