@@ -213,6 +213,42 @@ export default defineRole({
       fieldUniversalIdentifier: OPPORTUNITY_DESIGN_DOC_STATUS_FIELD_ID,
       canUpdateFieldValue: false,
     },
+    // Partner object — lock admin-managed fields so partners can't self-promote or alter ops data.
+    {
+      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: 'a0000002-0000-4000-8000-000000000002',
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: '2ca9856f-f54a-4326-9ff3-668fd7da0b50',
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: '5af4e57e-7fa7-4c4f-b40f-37549361459a',
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: '5412e4ca-cc96-4be8-8652-b73dace7673b',
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: 'd4fa6461-37b6-49ee-9181-dd482e74a70b',
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: 'a0000011-0000-4000-8000-000000000011',
+      canUpdateFieldValue: false,
+    },
+    {
+      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier: 'a0000010-0000-4000-8000-000000000010',
+      canUpdateFieldValue: false,
+    },
   ],
   objectPermissions: [
     {
