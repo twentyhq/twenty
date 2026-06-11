@@ -1,12 +1,14 @@
 import { msg } from '@lingui/core/macro';
 
+import { AppPreview } from '@/app-preview/app-preview';
+
 import { HeroBackdrop } from './hero-backdrop';
 import { styled } from '@linaria/react';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { SITE_URLS } from '@/platform/site-urls';
 import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
-import { color, GRADIENT, mediaUp, semanticColor, spacing } from '@/tokens';
+import { GRADIENT, spacing } from '@/tokens';
 import { Body, Button, Heading, HeadingPair, SectionShell } from '@/ui';
 
 const GradientBackdrop = styled.div`
@@ -42,11 +44,6 @@ const BodyMeasure = styled.div`
 // the bridge center exactly as the old window does.
 const MockupStage = styled.div`
   aspect-ratio: ${APP_PREVIEW_STAGE.frame.aspectRatio};
-  background-color: ${color('white')};
-  background-image: url('${APP_PREVIEW_STAGE.frame.noiseImageUrl}');
-  border: 1px solid ${semanticColor.line};
-  border-radius: ${APP_PREVIEW_STAGE.frame.borderRadiusPx}px;
-  box-shadow: ${APP_PREVIEW_STAGE.shadow.mobileResting};
   margin-inline: auto;
   /* Measured on the old site at 1440: 68px from the CTA row to the window
      top (24px section gap + the preview's own staging) — the real frame
@@ -55,10 +52,6 @@ const MockupStage = styled.div`
   max-width: ${APP_PREVIEW_STAGE.frame.maxWidthPx}px;
   position: relative;
   width: 100%;
-
-  ${mediaUp('md')} {
-    box-shadow: ${APP_PREVIEW_STAGE.shadow.resting};
-  }
 `;
 
 const CtaRow = styled.div`
@@ -108,7 +101,9 @@ export function HomeHero() {
           />
         </CtaRow>
       </IntroStack>
-      <MockupStage aria-hidden data-mockup-stage="" />
+      <MockupStage data-mockup-stage="">
+        <AppPreview />
+      </MockupStage>
     </SectionShell>
   );
 }

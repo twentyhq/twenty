@@ -12,6 +12,25 @@ export const APP_PREVIEW_STAGE = {
     widthPx: 1040,
     heightPx: 676,
   },
+  windowBar: {
+    background: '#F7F7F7',
+    border: 'rgba(0, 0, 0, 0.05)',
+    highlight: 'rgba(255, 255, 255, 0.65)',
+    titleColor: 'rgba(40, 36, 30, 0.62)',
+    verticalPaddingPx: 8,
+    horizontalPaddingPx: 12,
+    trafficLightSlotWidthPx: 52,
+  },
+  trafficLight: {
+    close: '#FF5F57',
+    closeActive: '#E0443E',
+    minimize: '#FEBC2E',
+    minimizeActive: '#DEA123',
+    zoom: '#28C840',
+    zoomActive: '#1AAB29',
+    glyph: 'rgba(0, 0, 0, 0.55)',
+    ring: 'rgba(0, 0, 0, 0.12)',
+  },
   shadow: {
     resting: '0 10px 64px 0 rgba(0, 0, 0, 0.2)',
     elevated:
