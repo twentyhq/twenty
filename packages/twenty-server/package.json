@@ -166,7 +166,7 @@
     "tsdav": "^2.2.0",
     "tslib": "2.8.1",
     "type-fest": "4.10.1",
-    "typeorm": "patch:typeorm@0.3.26#./patches/typeorm+0.3.26.patch",
+    "typeorm": "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch",
     "unzipper": "^0.12.3",
     "uuid": "^11.1.1",
     "zod": "^4.1.11"

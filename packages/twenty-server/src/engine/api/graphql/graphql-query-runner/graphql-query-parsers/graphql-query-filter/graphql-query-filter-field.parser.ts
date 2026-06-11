@@ -254,7 +254,9 @@ export class GraphqlQueryFilterFieldParser {
         throw new GraphqlQueryRunnerException(
           `Invalid filter value for field ${subFieldKey}. Expected non-empty array`,
           GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-          { userFriendlyMessage: msg`Invalid filter value: "${String(value)}"` },
+          {
+            userFriendlyMessage: msg`Invalid filter value: "${String(value)}"`,
+          },
         );
       }
 
