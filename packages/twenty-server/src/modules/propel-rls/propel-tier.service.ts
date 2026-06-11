@@ -19,19 +19,27 @@ import { type TierFilterOptions } from 'src/modules/propel-rls/build-tier-filter
 // so there is no separate Citerra role anymore.
 //
 // FAIL CLOSED: a real user context must NEVER resolve to MANAGER by accident.
-// Only Admin (matched by the stable standard-role universalIdentifier) and the
-// custom "Manager" role (matched by label) get MANAGER. Everything else — Agent,
-// Member, an unknown role, an empty userWorkspaceRoleMap, a lookup miss, or ANY
-// thrown error — buckets to AGENT (own rows only). Non-user contexts are handled
-// by the callers (they get the see-all filter / gate bypass, not a tier).
+// Only Admin (matched by the stable standard-role universalIdentifier), the
+// Propel app Manager role (matched by its universalIdentifier, label fallback)
+// get MANAGER. Everything else — Agent, Member, an unknown role, an empty
+// userWorkspaceRoleMap, a lookup miss, or ANY thrown error — buckets to AGENT
+// (own rows only). Non-user contexts are handled by the callers (they get the
+// see-all filter / gate bypass, not a tier).
 
 export type PropelTier = 'MANAGER' | 'AGENT';
 
-// The custom-role LABELS below are load-bearing: the workspace's custom roles
-// MUST be named exactly "Manager" and "Agent" for tier resolution to work.
-// Renaming a role in Twenty settings without updating this map silently demotes
-// everyone in that role to AGENT (fail-closed). Admin is matched by its stable
-// standard-role universalIdentifier instead, so it is rename-safe.
+// The Propel app roles, matched by universalIdentifier FIRST (rename-safe —
+// mirrors the app side's shared/acting-role.ts). Uids are the ROLE block of
+// propel-crm src/shared/identifiers.ts; they are universal identifiers and
+// stable across installs/workspaces by design.
+export const PROPEL_ROLE_UID_TIER_MAP: Record<string, PropelTier> = {
+  '20000000-0000-4000-8000-000000000001': 'MANAGER', // app role "Manager"
+  '20000000-0000-4000-8000-000000000002': 'AGENT', // app role "Agent"
+};
+
+// Label FALLBACK for roles the uid map doesn't know (e.g. a hand-created role).
+// With uid matching primary, renaming the app roles no longer demotes anyone;
+// an unknown uid + unknown label still fails closed to AGENT.
 export const PROPEL_ROLE_LABEL_TIER_MAP: Record<string, PropelTier> = {
   Manager: 'MANAGER',
   Agent: 'AGENT',
@@ -77,7 +85,16 @@ export class PropelTierService {
         return 'MANAGER';
       }
 
-      // Custom roles (Manager / Agent / Member): match by label.
+      // Propel app roles: match by universalIdentifier first (rename-safe) …
+      const uidTier = isDefined(role.universalIdentifier)
+        ? PROPEL_ROLE_UID_TIER_MAP[role.universalIdentifier]
+        : undefined;
+
+      if (isDefined(uidTier)) {
+        return uidTier;
+      }
+
+      // … label fallback for unknown uids (Member / hand-created roles).
       return PROPEL_ROLE_LABEL_TIER_MAP[role.label] ?? 'AGENT';
     } catch (error) {
       // ANY error → fail closed to AGENT (own rows only).

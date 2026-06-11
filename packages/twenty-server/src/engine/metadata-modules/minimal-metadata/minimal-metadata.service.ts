@@ -18,6 +18,7 @@ import { MinimalViewDTO } from 'src/engine/metadata-modules/minimal-metadata/dto
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
+import { PropelNavFilterService } from 'src/modules/propel-rls/propel-nav-filter.service';
 
 const flatMapsKeyToMetadataName = (
   flatMapsKey: string,
@@ -37,6 +38,7 @@ export class MinimalMetadataService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly i18nService: I18nService,
+    private readonly propelNavFilterService: PropelNavFilterService,
   ) {}
 
   async getMinimalMetadata(
@@ -67,6 +69,29 @@ export class MinimalMetadataService {
         return { collectionName: metadataName, hash };
       })
       .filter(isDefined);
+
+    // Propel: `navigationMenuItems` is served ROLE-FILTERED (propel-nav-filter),
+    // but these hashes are workspace-global and the frontend's metadata store is
+    // persisted (localStorage) and shared per origin — so without this, a client
+    // that cached the collection under one identity (e.g. an admin who then
+    // impersonates an agent) never refetches and renders the wrong sidebar.
+    // Salting the navigationMenuItem hash with the requester's filter outcome
+    // makes a role/impersonation switch mismatch the persisted hash → refetch.
+    const navHashEntry = collectionHashes.find(
+      (entry) => entry.collectionName === 'navigationMenuItem',
+    );
+
+    if (isDefined(navHashEntry)) {
+      const hiddenNavItemUids =
+        await this.propelNavFilterService.hiddenNavItemUids({
+          workspaceId,
+          userWorkspaceId,
+        });
+
+      if (hiddenNavItemUids.size > 0) {
+        navHashEntry.hash = `${navHashEntry.hash}:propel-nav-filtered`;
+      }
+    }
 
     const safeLocale = (locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE;
     const i18nInstance = this.i18nService.getI18nInstance(safeLocale);
