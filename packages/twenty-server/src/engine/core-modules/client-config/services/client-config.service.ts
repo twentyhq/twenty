@@ -13,6 +13,7 @@ import {
   type ClientConfig,
 } from 'src/engine/core-modules/client-config/client-config.entity';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
@@ -239,6 +240,9 @@ export class ClientConfigService {
         this.twentyConfigService.get('STORAGE_TYPE') ===
           StorageDriverType.S_3 &&
         isNonEmptyString(this.twentyConfigService.get('INBOUND_EMAIL_DOMAIN')),
+      isEmailingDomainInDemoMode:
+        this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
+        EmailingDomainDriver.LOG,
       allowRequestsToTwentyIcons: this.twentyConfigService.get(
         'ALLOW_REQUESTS_TO_TWENTY_ICONS',
       ),

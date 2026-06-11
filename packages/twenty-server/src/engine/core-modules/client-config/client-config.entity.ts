@@ -313,6 +313,9 @@ export class ClientConfig {
   isEmailGroupEnabled: boolean;
 
   @Field(() => Boolean)
+  isEmailingDomainInDemoMode: boolean;
+
+  @Field(() => Boolean)
   allowRequestsToTwentyIcons: boolean;
 
   @Field(() => String, { nullable: true })
