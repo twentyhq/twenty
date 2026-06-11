@@ -3,6 +3,11 @@ import { useEffect, useRef, useState } from 'react';
 
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
+import {
+  createPersonWithPhone,
+  lookupPeopleByNumbers,
+  navigateCrm,
+} from '@/dialer-dock/utils/dialerCrmBridge';
 
 // Resolved once at module load, same dual mechanism as REACT_APP_SERVER_BASE_URL
 // (src/config/index.ts): window._env_ for the Docker runtime injection,
@@ -124,13 +129,56 @@ const StyledPill = styled.button`
 type DialerDockMessage = {
   type: 'propel:dial';
   number: string;
+  name?: string;
+  leadId?: string;
+  source?: string;
 };
+
+const optionalString = (value: unknown): string | undefined =>
+  typeof value === 'string' && value.length > 0 ? value : undefined;
 
 const isDialerDockMessage = (data: unknown): data is DialerDockMessage =>
   typeof data === 'object' &&
   data !== null &&
   (data as { type?: unknown }).type === 'propel:dial' &&
   typeof (data as { number?: unknown }).number === 'string';
+
+// Requests the embedded dialer posts UP to the dock (it has no CRM access of
+// its own): batch person lookup, add-unknown-caller, navigate-the-CRM.
+type DialerIframeRequest =
+  | { type: 'propel:lookup'; numbers: string[] }
+  | { type: 'propel:add-to-crm'; number: string }
+  | { type: 'propel:open'; path: string };
+
+const parseDialerIframeRequest = (data: unknown): DialerIframeRequest | null => {
+  if (typeof data !== 'object' || data === null) {
+    return null;
+  }
+  const candidate = data as Record<string, unknown>;
+  if (
+    candidate.type === 'propel:lookup' &&
+    Array.isArray(candidate.numbers) &&
+    candidate.numbers.every((entry) => typeof entry === 'string')
+  ) {
+    return { type: 'propel:lookup', numbers: candidate.numbers.slice(0, 50) };
+  }
+  if (
+    candidate.type === 'propel:add-to-crm' &&
+    typeof candidate.number === 'string' &&
+    candidate.number.length > 0
+  ) {
+    return { type: 'propel:add-to-crm', number: candidate.number };
+  }
+  if (
+    candidate.type === 'propel:open' &&
+    typeof candidate.path === 'string' &&
+    candidate.path.startsWith('/') &&
+    !candidate.path.startsWith('//')
+  ) {
+    return { type: 'propel:open', path: candidate.path };
+  }
+  return null;
+};
 
 export const DialerDock = () => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -170,26 +218,80 @@ export const DialerDock = () => {
     };
     pushConfigRef.current = pushConfig;
 
+    // Reply channel back into the softphone iframe.
+    const postToDialer = (message: object) => {
+      iframeRef.current?.contentWindow?.postMessage(message, dockOrigin);
+    };
+
+    const handleDialerRequest = (request: DialerIframeRequest) => {
+      switch (request.type) {
+        case 'propel:lookup': {
+          void lookupPeopleByNumbers(request.numbers).then((results) => {
+            if (results.length > 0) {
+              postToDialer({ type: 'propel:lookup-result', results });
+            }
+          });
+          return;
+        }
+        case 'propel:add-to-crm': {
+          void createPersonWithPhone(request.number).then((personId) => {
+            if (personId === null) {
+              postToDialer({ type: 'propel:add-failed', number: request.number });
+              return;
+            }
+            postToDialer({
+              type: 'propel:lookup-result',
+              results: [{ number: request.number, personId }],
+            });
+            // Land the agent on the fresh record so they type the name —
+            // client-side route change; a reload would drop the SIP line.
+            navigateCrm(`/object/person/${personId}`);
+          });
+          return;
+        }
+        case 'propel:open': {
+          navigateCrm(request.path);
+          return;
+        }
+      }
+    };
+
     const handleMessage = (event: MessageEvent) => {
       // Click-to-call bridge from the CRM host: forward the agreed
-      // `propel:dial` envelope (unchanged) into the softphone iframe.
+      // `propel:dial` envelope into the softphone iframe, lead context and all
+      // (name/leadId ride along so the call + its log entry start identified).
       if (event.origin === window.location.origin) {
         if (isDialerDockMessage(event.data)) {
           setIsExpanded(true);
           iframeRef.current?.contentWindow?.postMessage(
-            { type: 'propel:dial', number: event.data.number },
+            {
+              type: 'propel:dial',
+              number: event.data.number,
+              name: optionalString(event.data.name),
+              leadId: optionalString(event.data.leadId),
+              source: optionalString(event.data.source),
+            },
             dockOrigin,
           );
         }
         return;
       }
-      // Readiness handshake from the dialer iframe: push the line the moment its
-      // message listener is up (avoids racing the iframe's boot).
+      // Messages from the dialer iframe — require BOTH the dialer origin and
+      // that the sender is our own iframe (not another tab on that origin).
       if (
         event.origin === dockOrigin &&
-        (event.data as { type?: unknown } | null)?.type === 'propel:ready'
+        event.source === iframeRef.current?.contentWindow
       ) {
-        pushConfig();
+        // Readiness handshake: push the line the moment the iframe's message
+        // listener is up (avoids racing its boot).
+        if ((event.data as { type?: unknown } | null)?.type === 'propel:ready') {
+          pushConfig();
+          return;
+        }
+        const request = parseDialerIframeRequest(event.data);
+        if (request !== null) {
+          handleDialerRequest(request);
+        }
       }
     };
     window.addEventListener('message', handleMessage);
