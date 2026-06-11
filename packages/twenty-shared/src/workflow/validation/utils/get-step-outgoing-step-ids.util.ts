@@ -1,8 +1,5 @@
 import { isDefined } from '@/utils';
-import {
-  IF_ELSE_STEP_TYPE,
-  ITERATOR_STEP_TYPE,
-} from '@/workflow/validation/constants/workflow-validation-step-types';
+import { WORKFLOW_VALIDATION_STEP_TYPES } from '@/workflow/validation/constants/workflow-validation-step-types';
 import {
   type IfElseStepInput,
   type IteratorStepInput,
@@ -33,7 +30,7 @@ export const getStepOutgoingStepIds = (
     return [...outgoingStepIds];
   }
 
-  if (step.type === IF_ELSE_STEP_TYPE) {
+  if (step.type === WORKFLOW_VALIDATION_STEP_TYPES.IF_ELSE) {
     const branches = (input as Partial<IfElseStepInput>).branches ?? [];
 
     for (const branch of branches) {
@@ -43,7 +40,7 @@ export const getStepOutgoingStepIds = (
     }
   }
 
-  if (step.type === ITERATOR_STEP_TYPE) {
+  if (step.type === WORKFLOW_VALIDATION_STEP_TYPES.ITERATOR) {
     const initialLoopStepIds =
       (input as Partial<IteratorStepInput>).initialLoopStepIds ?? [];
 

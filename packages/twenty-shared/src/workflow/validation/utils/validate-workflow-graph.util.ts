@@ -1,7 +1,4 @@
-import {
-  IF_ELSE_STEP_TYPE,
-  ITERATOR_STEP_TYPE,
-} from '@/workflow/validation/constants/workflow-validation-step-types';
+import { WORKFLOW_VALIDATION_STEP_TYPES } from '@/workflow/validation/constants/workflow-validation-step-types';
 import {
   type IfElseStepInput,
   type IteratorStepInput,
@@ -95,7 +92,7 @@ const validateBranchingStep = (
   const issues: WorkflowValidationIssue[] = [];
   const input = getStepInput(step);
 
-  if (step.type === IF_ELSE_STEP_TYPE) {
+  if (step.type === WORKFLOW_VALIDATION_STEP_TYPES.IF_ELSE) {
     const branchList = (input as Partial<IfElseStepInput> | undefined)
       ?.branches;
     const branches = Array.isArray(branchList) ? branchList : [];
@@ -123,7 +120,7 @@ const validateBranchingStep = (
     }
   }
 
-  if (step.type === ITERATOR_STEP_TYPE) {
+  if (step.type === WORKFLOW_VALIDATION_STEP_TYPES.ITERATOR) {
     const iteratorInput = input as Partial<IteratorStepInput> | undefined;
     const items = iteratorInput?.items;
     const hasConfiguredItems =

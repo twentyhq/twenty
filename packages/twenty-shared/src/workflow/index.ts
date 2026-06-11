@@ -105,11 +105,7 @@ export {
   joinVariablePath,
   parseVariablePath,
 } from './utils/variable-path.util';
-export {
-  CODE_STEP_TYPE,
-  IF_ELSE_STEP_TYPE,
-  ITERATOR_STEP_TYPE,
-} from './validation/constants/workflow-validation-step-types';
+export { WORKFLOW_VALIDATION_STEP_TYPES } from './validation/constants/workflow-validation-step-types';
 export type {
   IfElseStepInput,
   IteratorStepInput,

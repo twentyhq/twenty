@@ -29,29 +29,37 @@ export const createUpdateWorkflowVersionStepTool = (
     'Update an existing step in a workflow version. This modifies the step configuration.',
   inputSchema: updateWorkflowVersionStepSchema,
   execute: async (parameters: UpdateWorkflowVersionStepInput) => {
-    try {
-      const result =
-        await deps.workflowVersionStepService.updateWorkflowVersionStep({
-          workspaceId: context.workspaceId,
-          workflowVersionId: parameters.workflowVersionId,
-          step: parameters.step,
-        });
+    let result;
 
+    try {
+      result = await deps.workflowVersionStepService.updateWorkflowVersionStep({
+        workspaceId: context.workspaceId,
+        workflowVersionId: parameters.workflowVersionId,
+        step: parameters.step,
+      });
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+        message: `Failed to update workflow version step: ${error.message}`,
+      };
+    }
+
+    try {
       const validation =
         await deps.workflowValidationService.validateWorkflowVersion({
           workspaceId: context.workspaceId,
           workflowVersionId: parameters.workflowVersionId,
         });
-
       return {
         ...result,
         validation,
       };
     } catch (error) {
       return {
-        success: false,
-        error: error.message,
-        message: `Failed to update workflow version step: ${error.message}`,
+        ...result,
+        validationError: error.message,
+        message: `Step updated successfully, but validation could not be computed: ${error.message}`,
       };
     }
   },

@@ -52,6 +52,9 @@ describe('collectOutputSchemaPaths', () => {
       },
     } as unknown as BaseOutputSchemaV2;
 
-    expect(collectOutputSchemaPaths(schemaWithNullNode)).toEqual(['data', 'id']);
+    expect(collectOutputSchemaPaths(schemaWithNullNode)).toEqual([
+      'data',
+      'id',
+    ]);
   });
 });
