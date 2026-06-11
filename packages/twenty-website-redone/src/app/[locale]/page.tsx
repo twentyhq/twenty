@@ -8,6 +8,7 @@ import { Faq } from '@/sections/faq';
 import { HomeHero } from '@/sections/home-hero';
 import { Menu } from '@/sections/menu';
 import { Problem } from '@/sections/problem';
+import { ThreeCards } from '@/sections/three-cards';
 import { TrustedBy } from '@/sections/trusted-by';
 import { SectionShell } from '@/ui';
 
@@ -32,6 +33,7 @@ export default async function HomePage({
           <TrustedBy />
         </SectionShell>
         <Problem />
+        <ThreeCards />
         <Faq />
       </main>
     </>

@@ -28,6 +28,31 @@ msgstr ""
 msgid "A custom CRM gives your org an edge, *but building one* comes with *tradeoffs*"
 msgstr ""
 
+#. js-lingui-id: TuJiQF
+#: src/sections/three-cards/three-cards.data.ts
+msgid "AC&T Education Migration"
+msgstr ""
+
+#. js-lingui-id: MPzy5R
+#: src/sections/three-cards/three-cards.data.ts
+msgid "AC&T moved to a self-hosted Twenty instance with no vendor risk, no forced migration, and CRM costs reduced by more than 90%."
+msgstr ""
+
+#. js-lingui-id: R+bwFB
+#: src/sections/three-cards/three-cards.data.ts
+msgid "AI for rapid iterations"
+msgstr ""
+
+#. js-lingui-id: LIGwFL
+#: src/sections/three-cards/three-cards.data.ts
+msgid "Alternative Partners"
+msgstr ""
+
+#. js-lingui-id: UIu18Y
+#: src/sections/three-cards/three-cards.data.ts
+msgid "Alternative Partners used agentic AI to compress what would typically be weeks of Salesforce migration work into something a single person could oversee."
+msgstr ""
+
 #. js-lingui-id: aGCcXe
 #: src/sections/faq/faq.tsx
 msgid "Any Questions?"
@@ -36,6 +61,11 @@ msgstr ""
 #. js-lingui-id: MqJvvH
 #: src/sections/menu/menu.data.ts
 msgid "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data."
+msgstr ""
+
+#. js-lingui-id: 7UGCGX
+#: src/sections/three-cards/three-cards.tsx
+msgid "Assemble, iterate and adapt a robust CRM, *that's quick to flex*"
 msgstr ""
 
 #. js-lingui-id: e1u+Zh
@@ -63,14 +93,29 @@ msgstr ""
 msgid "Cloud Pro is $9/user/month (yearly). Organization is $19/user/month and unlocks SSO and row-level permissions for teams that need finer access control."
 msgstr ""
 
+#. js-lingui-id: Fkb+LW
+#: src/sections/three-cards/three-cards.tsx
+msgid "Compose your CRM and internal apps with a single extensibility toolkit."
+msgstr ""
+
 #. js-lingui-id: iSLIjg
 #: src/sections/footer/footer.data.ts
 msgid "Connect"
 msgstr ""
 
+#. js-lingui-id: wH1xmY
+#: src/sections/three-cards/three-cards.data.ts
+msgid "Control without drag"
+msgstr ""
+
 #. js-lingui-id: B9nLrl
 #: src/sections/menu/menu.data.ts
 msgid "Create apps on Twenty"
+msgstr ""
+
+#. js-lingui-id: wDasLa
+#: src/sections/three-cards/three-cards.data.ts
+msgid "CRM Engineer"
 msgstr ""
 
 #. js-lingui-id: NihQNk
@@ -192,6 +237,11 @@ msgstr ""
 msgid "Pricing"
 msgstr ""
 
+#. js-lingui-id: J2IAmT
+#: src/sections/three-cards/three-cards.data.ts
+msgid "Principal and Founder"
+msgstr ""
+
 #. js-lingui-id: LcET2C
 #: src/sections/footer/footer.data.ts
 msgid "Privacy Policy"
@@ -201,6 +251,11 @@ msgstr ""
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
 msgid "Product"
+msgstr ""
+
+#. js-lingui-id: kIGKva
+#: src/sections/three-cards/three-cards.data.ts
+msgid "Production grade quality"
 msgstr ""
 
 #. js-lingui-id: a24q7E
@@ -246,6 +301,11 @@ msgstr ""
 #. js-lingui-id: jKt86V
 #: src/sections/faq/faq.tsx
 msgid "Stop fighting custom. *Start building, with Twenty*"
+msgstr ""
+
+#. js-lingui-id: UCLArd
+#: src/sections/three-cards/three-cards.tsx
+msgid "Stop settling for trade-offs."
 msgstr ""
 
 #. js-lingui-id: JAKtcG
@@ -324,6 +384,21 @@ msgstr ""
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
 msgid "User Guide"
+msgstr ""
+
+#. js-lingui-id: CsHuOr
+#: src/sections/three-cards/three-cards.data.ts
+msgid "VP of Engineering"
+msgstr ""
+
+#. js-lingui-id: 7q5Vjn
+#: src/sections/three-cards/three-cards.data.ts
+msgid "W3villa Technologies"
+msgstr ""
+
+#. js-lingui-id: 3v2ipf
+#: src/sections/three-cards/three-cards.data.ts
+msgid "W3villa used Twenty as a production-grade framework for the data model, permissions, authentication, and workflow engine they would otherwise have rebuilt themselves."
 msgstr ""
 
 #. js-lingui-id: phiBjc
