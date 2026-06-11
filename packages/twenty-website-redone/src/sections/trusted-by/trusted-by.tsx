@@ -122,11 +122,11 @@ function Logo({
   grayBrightness = 1,
   grayOpacity = 0.72,
   heightPx,
+  name,
   src,
 }: TrustedByLogo) {
   return (
     <LogoFrame
-      aria-hidden
       style={
         {
           aspectRatio: String(aspectRatio),
@@ -135,7 +135,7 @@ function Logo({
       }
     >
       <NextImage
-        alt=""
+        alt={name}
         fill
         sizes={`${Math.ceil(heightPx * aspectRatio)}px`}
         src={src}
