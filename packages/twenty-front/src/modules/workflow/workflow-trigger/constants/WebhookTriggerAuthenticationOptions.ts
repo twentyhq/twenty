@@ -1,4 +1,8 @@
-import { type IconComponent, IconLockOpen, IconFlag } from 'twenty-ui/display';
+import {
+  type IconComponent,
+  IconLockOpen,
+  IconFlag,
+} from 'twenty-ui-deprecated/display';
 export type AuthenticationMethods = 'API_KEY' | null;
 
 export const WEBHOOK_TRIGGER_AUTHENTICATION_OPTIONS: Array<{

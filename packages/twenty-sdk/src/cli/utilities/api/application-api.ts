@@ -1,7 +1,11 @@
 import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
-import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
+import { serializeError } from '@/cli/utilities/error/serialize-error';
+import axios, { type AxiosInstance } from 'axios';
 import { type Manifest } from 'twenty-shared/application';
-import { type SyncAction } from 'twenty-shared/metadata';
+import {
+  type MetadataValidationErrorResponse,
+  type SyncAction,
+} from 'twenty-shared/metadata';
 
 export class ApplicationApi {
   constructor(private readonly client: AxiosInstance) {}
@@ -252,14 +256,31 @@ export class ApplicationApi {
     }
   }
 
-  async syncApplication(manifest: Manifest): Promise<
-    ApiResponse<{
-      applicationUniversalIdentifier: string;
-      actions: SyncAction[];
-    }>
+  async syncApplication(
+    manifest: Manifest,
+    options?: { dryRun?: boolean },
+  ): Promise<
+    ApiResponse<
+      {
+        applicationUniversalIdentifier: string;
+        actions: SyncAction[];
+      },
+      MetadataValidationErrorResponse
+    >
   > {
     try {
-      const mutation = `
+      const isDryRun = options?.dryRun ?? false;
+
+      const mutation = isDryRun
+        ? `
+        mutation SyncApplication($manifest: JSON!, $dryRun: Boolean) {
+          syncApplication(manifest: $manifest, dryRun: $dryRun) {
+            applicationUniversalIdentifier
+            actions
+          }
+        }
+      `
+        : `
         mutation SyncApplication($manifest: JSON!) {
           syncApplication(manifest: $manifest) {
             applicationUniversalIdentifier
@@ -268,9 +289,9 @@ export class ApplicationApi {
         }
       `;
 
-      const variables = { manifest };
+      const variables = isDryRun ? { manifest, dryRun: true } : { manifest };
 
-      const response: AxiosResponse = await this.client.post(
+      const response = await this.client.post(
         '/metadata',
         {
           query: mutation,
@@ -287,7 +308,8 @@ export class ApplicationApi {
       if (response.data.errors) {
         return {
           success: false,
-          error: response.data.errors[0],
+          error: response.data.errors[0]?.extensions,
+          message: response.data.errors[0]?.message,
         };
       }
 
@@ -297,27 +319,9 @@ export class ApplicationApi {
         message: `Successfully synced application: ${manifest.application.displayName}`,
       };
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        const graphqlErrors = error.response.data?.errors;
-
-        if (Array.isArray(graphqlErrors) && graphqlErrors.length > 0) {
-          return {
-            success: false,
-            error: graphqlErrors[0]?.message || error.message,
-          };
-        }
-
-        return {
-          success: false,
-          error:
-            error.response.data?.message ||
-            `HTTP ${error.response.status}: ${error.message}`,
-        };
-      }
-
       return {
         success: false,
-        error: error instanceof Error ? error.message : error,
+        message: serializeError(error),
       };
     }
   }
@@ -334,7 +338,7 @@ export class ApplicationApi {
 
       const variables = { universalIdentifier };
 
-      const response: AxiosResponse = await this.client.post(
+      const response = await this.client.post(
         '/metadata',
         {
           query: mutation,

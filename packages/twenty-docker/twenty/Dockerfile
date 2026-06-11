@@ -2,7 +2,7 @@
 # Dependency stages
 # ===========================================================================
 
-FROM node:24.15.0-alpine3.23@sha256:d1b3b4da11eefd5941e7f0b9cf17783fc99d9c6fc34884a665f40a06dbdfc94f AS front-deps
+FROM node:24.16.0-alpine3.23@sha256:2bdb65ed1dab192432bc31c95f94155ca5ad7fc1392fb7eb7526ab682fa5bf14 AS front-deps
 
 WORKDIR /app
 
@@ -11,16 +11,17 @@ COPY ./.yarn/releases /app/.yarn/releases
 COPY ./.yarn/patches /app/.yarn/patches
 
 COPY ./packages/twenty-ui/package.json /app/packages/twenty-ui/
+COPY ./packages/twenty-ui-deprecated/package.json /app/packages/twenty-ui-deprecated/
 COPY ./packages/twenty-shared/package.json /app/packages/twenty-shared/
 COPY ./packages/twenty-front/package.json /app/packages/twenty-front/
 COPY ./packages/twenty-front-component-renderer/package.json /app/packages/twenty-front-component-renderer/
 COPY ./packages/twenty-sdk/package.json /app/packages/twenty-sdk/
 COPY ./packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 
-RUN yarn workspaces focus twenty twenty-front twenty-front-component-renderer twenty-ui twenty-shared twenty-sdk twenty-client-sdk && yarn cache clean && npx nx reset
+RUN yarn workspaces focus twenty twenty-front twenty-front-component-renderer twenty-ui twenty-ui-deprecated twenty-shared twenty-sdk twenty-client-sdk && yarn cache clean && npx nx reset
 
 
-FROM node:24.15.0-alpine3.23@sha256:d1b3b4da11eefd5941e7f0b9cf17783fc99d9c6fc34884a665f40a06dbdfc94f AS server-deps
+FROM node:24.16.0-alpine3.23@sha256:2bdb65ed1dab192432bc31c95f94155ca5ad7fc1392fb7eb7526ab682fa5bf14 AS server-deps
 
 WORKDIR /app
 
@@ -64,6 +65,7 @@ FROM front-deps AS twenty-front-build
 COPY ./packages/twenty-front /app/packages/twenty-front
 COPY ./packages/twenty-front-component-renderer /app/packages/twenty-front-component-renderer
 COPY ./packages/twenty-ui /app/packages/twenty-ui
+COPY ./packages/twenty-ui-deprecated /app/packages/twenty-ui-deprecated
 COPY ./packages/twenty-shared /app/packages/twenty-shared
 COPY ./packages/twenty-sdk /app/packages/twenty-sdk
 COPY ./packages/twenty-client-sdk /app/packages/twenty-client-sdk
@@ -84,11 +86,16 @@ RUN if [ -d /app/packages/twenty-front/build ]; then \
 #   docker build --target twenty-server -f packages/twenty-docker/twenty/Dockerfile .
 # ===========================================================================
 
-FROM node:24.15.0-alpine3.23@sha256:d1b3b4da11eefd5941e7f0b9cf17783fc99d9c6fc34884a665f40a06dbdfc94f AS twenty-server
+FROM node:24.16.0-alpine3.23@sha256:2bdb65ed1dab192432bc31c95f94155ca5ad7fc1392fb7eb7526ab682fa5bf14 AS twenty-server
 
+# Force the patched Alpine OpenSSL libs (base bakes 3.5.6-r0; repo ships
+# 3.5.7-r0). Node bundles its own OpenSSL, but psql/curl link these system
+# libs, so the upgrade hardens runtime TLS and clears the scanner.
 RUN apk add --no-cache \
     'curl>=8.19.0-r0' \
     'nghttp2-libs>=1.69.0-r0' \
+    'libcrypto3>=3.5.7-r0' \
+    'libssl3>=3.5.7-r0' \
     'postgresql18-client>=18.4-r0' \
     jq
 
@@ -120,6 +127,17 @@ COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-client-sdk/dis
 
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
 LABEL org.opencontainers.image.description="Twenty server image (no frontend)."
+
+# Remove unused, unpatchable components the scanner flags (none are executed at
+# runtime, and none can be fixed by upgrading our deps or Node):
+#  - the bundled npm CLI: the app uses yarn via corepack and never invokes npm,
+#    and npm's bundled ip-address has no patched release;
+#  - example/ apps vendored inside dependencies, e.g. passport-microsoft's
+#    example/login ships a package-lock.json for an old Express demo
+#    (body-parser, ejs, express, ...) that is never installed or run.
+# (The OpenSSL CVE is fixed properly by the Node base bump above, not by deletion.)
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx && \
+    find /app/node_modules -type d -name example -prune -exec rm -rf {} +
 
 RUN mkdir -p /app/.local-storage /app/packages/twenty-server/.local-storage && \
     chown 1000:1000 /app/.local-storage /app/packages/twenty-server/.local-storage
@@ -191,7 +209,7 @@ RUN S6_ARCH=$(cat /tmp/s6arch) && \
     echo "$NOARCH_SUM  s6-overlay-noarch.tar.xz" | sha256sum -c - && \
     echo "$ARCH_SUM  s6-overlay-arch.tar.xz" | sha256sum -c -
 
-FROM node:24.15.0-alpine3.23@sha256:d1b3b4da11eefd5941e7f0b9cf17783fc99d9c6fc34884a665f40a06dbdfc94f AS twenty-app-dev
+FROM node:24.16.0-alpine3.23@sha256:2bdb65ed1dab192432bc31c95f94155ca5ad7fc1392fb7eb7526ab682fa5bf14 AS twenty-app-dev
 
 # s6-overlay
 COPY --from=s6-fetch /tmp/s6-overlay-noarch.tar.xz /tmp/
@@ -200,9 +218,13 @@ RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz \
  && tar -C / -Jxpf /tmp/s6-overlay-arch.tar.xz \
  && rm /tmp/s6-overlay-*.tar.xz
 
+# See twenty-server above: patched Alpine OpenSSL libs (psql/curl/redis link
+# these system libs; Node bundles its own).
 RUN apk add --no-cache \
     postgresql18 postgresql18-contrib \
     redis \
+    'libcrypto3>=3.5.7-r0' \
+    'libssl3>=3.5.7-r0' \
     curl jq su-exec
 
 # Workspace root config

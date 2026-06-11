@@ -7,7 +7,7 @@ import { getAxisLayerLayout } from '@/page-layout/widgets/graph/chart-core/utils
 import { type ChartMargins } from '@/page-layout/widgets/graph/types/ChartMargins';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 
 type AxisLayerProps = {
   bottomAxisTickRotation: number;

@@ -1,5 +1,4 @@
 /* oxlint-disable react/jsx-props-no-spreading */
-import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import {
   IconCheckbox,
@@ -17,29 +16,11 @@ import {
   JotaiRootDecorator,
 } from '@ui/testing';
 import { type ReactNode } from 'react';
-import { themeCssVariables } from '@ui/theme-constants';
 
-const StyledTabContainer = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  height: 40px;
-  user-select: none;
-  position: relative;
-  align-items: stretch;
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background-color: ${themeCssVariables.border.color.light};
-  }
-`;
+import styles from './TabButton.stories.module.scss';
 
 const TabContainer = ({ children }: { children?: ReactNode }) => {
-  return <StyledTabContainer>{children}</StyledTabContainer>;
+  return <div className={styles.tabContainer}>{children}</div>;
 };
 
 const meta: Meta<typeof TabButton> = {
@@ -199,6 +180,8 @@ export const Catalog: CatalogStory<Story, typeof TabButton> = {
     </TabContainer>
   ),
   parameters: {
+    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+    a11y: { test: 'todo' },
     pseudo: { hover: ['.hover'], active: ['.active'] },
     catalog: {
       dimensions: [

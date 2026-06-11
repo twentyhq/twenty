@@ -11,8 +11,8 @@ import {
   IconNotes,
   IconTable,
   IconUsers,
-} from 'twenty-ui/display';
-import { ComponentDecorator } from 'twenty-ui/testing';
+} from 'twenty-ui-deprecated/display';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 
 const StyledContainer = styled.div`
   width: 480px;

@@ -1,6 +1,6 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
-import { useResetLocationHash } from 'twenty-ui/utilities';
+import { useResetLocationHash } from 'twenty-ui-deprecated/utilities';
 
 export const EditRecordPageLayoutSingleRecordCommand = () => {
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();

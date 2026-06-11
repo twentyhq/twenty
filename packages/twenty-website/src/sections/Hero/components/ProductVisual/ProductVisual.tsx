@@ -1,24 +1,39 @@
 'use client';
 
+import { Fragment, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
+
 import { styled } from '@linaria/react';
+import {
+  IconArrowUp,
+  IconChevronDown,
+  IconEdit,
+  IconPaperclip,
+  IconX,
+} from '@tabler/icons-react';
 
 import type { AppPreviewConfig } from '@/sections/AppPreview';
-import { AppWindow } from '@/sections/AppPreview/AppWindow/AppWindow';
-import { COLORS } from '@/sections/AppPreview/Shared/utils/app-preview-theme';
+import { AppPreviewFrame } from '@/sections/AppPreview/AppWindow/AppPreviewFrame';
 import { VISUAL_TOKENS } from '@/sections/AppPreview/Shared/utils/app-preview-tokens';
-import { AppPreviewNavbar } from '@/sections/AppPreview/Shell/AppPreviewNavbar';
-import { AppPreviewSidebar } from '@/sections/AppPreview/Shell/AppPreviewSidebar';
-import { AppPreviewViewbar } from '@/sections/AppPreview/Shell/AppPreviewViewbar';
-import { renderPageDefinition } from '@/sections/AppPreview/Shell/PageRenderers';
-import { WindowOrderProvider } from '@/sections/AppPreview/WindowOrder/WindowOrderProvider';
+import { AppPreviewLayout } from '@/sections/AppPreview/Shell/AppPreviewLayout';
 import { theme } from '@/theme';
 
-import { PROMPT_OPTIONS } from './product-visual.data';
+import { HERO_CURSORS, ProductHeroCursor } from './ProductHeroCursor';
+import { ProductVisualAiSteps } from './ProductVisualAiSteps';
+import { ANTHROPIC_RECORD_PAGE } from './product-visual.data';
+import { sliceVisibleParagraphs } from './streamed-markdown';
+import { useProductHeroCursorAutoplay } from './use-product-hero-cursor-autoplay';
 import { useProductVisualAutoplay } from './use-product-visual-autoplay';
 
-const StyledRoot = styled.div`
+const MAX_VISIBLE_RESPONSE_CHIPS = 3;
+
+const StyledRoot = styled.div<{ $fill: boolean }>`
+  display: ${({ $fill }) => ($fill ? 'flex' : 'block')};
+  flex: ${({ $fill }) => ($fill ? '1' : 'none')};
+  flex-direction: column;
   isolation: isolate;
   margin-top: ${theme.spacing(5)};
+  min-height: 0;
   position: relative;
   text-align: left;
   width: 100%;
@@ -28,76 +43,47 @@ const StyledRoot = styled.div`
   }
 `;
 
-const ShellScene = styled.div`
-  aspect-ratio: 1280 / 832;
+const WINDOW_MAX_WIDTH = 1040;
+const WINDOW_HEIGHT = 676;
+// Phone (<600px) AI experience: the panel-only window is locked to a chat width.
+const PANEL_ONLY_WIDTH = 320;
+
+// bleed: fixed-width window that runs off the right edge when the viewport is
+// narrower than it. compact: same fixed height (no aspect scaling) but the width
+// fits the viewport (capped), so the board flexes while the sidebar + AI panel
+// stay legible — used by the morph so the AI panel never bleeds off-screen.
+// panelOnly: the compact window is capped to a fixed chat width.
+const ShellScene = styled.div<{
+  $bleed: boolean;
+  $compact: boolean;
+  $panelOnly: boolean;
+}>`
+  flex: 0 0 auto;
+  height: ${WINDOW_HEIGHT}px;
   margin: 0 auto;
-  max-height: 740px;
+  max-width: ${({ $compact, $panelOnly }) =>
+    $panelOnly
+      ? `${PANEL_ONLY_WIDTH}px`
+      : $compact
+        ? `${WINDOW_MAX_WIDTH}px`
+        : 'none'};
+  min-height: 0;
   position: relative;
-  width: 100%;
+  width: ${({ $bleed }) => ($bleed ? `${WINDOW_MAX_WIDTH}px` : '100%')};
 `;
 
-const AppLayout = styled.div`
-  display: flex;
-  flex: 1 1 auto;
-  height: 100%;
-  min-height: 0;
-  min-width: 0;
-  overflow: hidden;
-  position: relative;
-  width: 100%;
-  z-index: 1;
-`;
-
-const RightColumn = styled.div`
-  display: flex;
-  flex: 1 1 0;
-  flex-direction: column;
-  gap: 12px;
-  min-height: 0;
-  min-width: 0;
-  padding: 12px 12px 12px 0;
-`;
-
-const ContentRow = styled.div`
-  display: flex;
-  flex: 1 1 auto;
-  gap: 8px;
-  min-height: 0;
-`;
-
-const IndexSurface = styled.div`
-  background: ${COLORS.background};
-  border: 1px solid ${COLORS.border};
-  border-radius: 8px;
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  min-height: 0;
-  min-width: 0;
-  overflow: hidden;
-
-  [aria-label*='workflow'] > div > div {
-    left: 0;
-    transform: scale(0.65) translateX(-20%);
-    transform-origin: top left;
-  }
-`;
-
-const AiPanel = styled.aside`
+const AiPanel = styled.aside<{ $panelOnly: boolean }>`
   background: ${VISUAL_TOKENS.background.primary};
-  border: 1px solid ${VISUAL_TOKENS.border.color.medium};
-  border-radius: 8px;
+  border: ${({ $panelOnly }) =>
+    $panelOnly ? 'none' : `1px solid ${VISUAL_TOKENS.border.color.medium}`};
+  border-radius: ${({ $panelOnly }) => ($panelOnly ? '0' : '8px')};
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  width: 280px;
-
-  @media (max-width: ${theme.breakpoints.md}px) {
-    display: none;
-  }
+  width: ${({ $panelOnly }) => ($panelOnly ? '100%' : '280px')};
 `;
 
 const AiPanelHeader = styled.div`
@@ -114,11 +100,11 @@ const AiPanelHeader = styled.div`
 const AiHeaderBtn = styled.span`
   align-items: center;
   border-radius: 4px;
-  color: ${VISUAL_TOKENS.font.color.secondary};
+  color: ${VISUAL_TOKENS.font.color.tertiary};
   display: flex;
-  height: 28px;
+  height: 20px;
   justify-content: center;
-  width: 28px;
+  width: 20px;
 `;
 
 const AiPanelTitle = styled.span`
@@ -126,7 +112,7 @@ const AiPanelTitle = styled.span`
   flex: 1;
   font-size: 13px;
   font-weight: 600;
-  text-align: center;
+  text-align: left;
 `;
 
 const AiMessages = styled.div`
@@ -139,12 +125,13 @@ const AiMessages = styled.div`
 `;
 
 const UserMsg = styled.div`
-  background: ${VISUAL_TOKENS.background.transparent.medium};
-  border-radius: ${VISUAL_TOKENS.border.radius.sm};
+  align-self: flex-end;
+  background: #f1f1f1;
+  border-radius: 4px;
   color: ${VISUAL_TOKENS.font.color.secondary};
   font-size: 13px;
   font-weight: 500;
-  line-height: 1.4em;
+  line-height: 1.5;
   padding: 4px 8px;
   width: fit-content;
 `;
@@ -153,65 +140,96 @@ const AiMsg = styled.div`
   color: ${VISUAL_TOKENS.font.color.primary};
   font-size: 13px;
   font-weight: 400;
-  line-height: 1.4em;
+  line-height: 1.5;
   width: 100%;
+`;
+
+const AiMsgStrong = styled.strong`
+  color: ${VISUAL_TOKENS.font.color.primary};
+  font-weight: 500;
+`;
+
+const AiMsgParagraph = styled.div`
+  line-height: inherit;
+  margin-block: 8px;
+
+  &:first-child {
+    margin-block-start: 0;
+  }
+
+  &:last-child {
+    margin-block-end: 0;
+  }
+`;
+
+const EntityChips = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+`;
+
+const EntityChip = styled.div`
+  align-items: center;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 4px;
+  display: flex;
+  gap: 4px;
+  max-width: 100%;
+  padding: 3px 6px;
+  width: fit-content;
+`;
+
+const EntityChipIcon = styled.img`
+  border-radius: 2px;
+  height: 14px;
+  object-fit: cover;
+  width: 14px;
+`;
+
+const EntityChipName = styled.span`
+  color: ${VISUAL_TOKENS.font.color.primary};
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+  white-space: nowrap;
+`;
+
+const EntityOverflowChip = styled.div`
+  align-items: center;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 4px;
+  color: ${VISUAL_TOKENS.font.color.secondary};
+  display: flex;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  padding: 3px 6px;
 `;
 
 const ThinkingText = styled.span`
   color: ${VISUAL_TOKENS.font.color.tertiary};
-  font-size: 13px;
-`;
-
-const PromptOption = styled.button`
-  align-items: center;
-  background: none;
-  border: none;
-  border-radius: 4px;
-  color: ${VISUAL_TOKENS.font.color.primary};
-  cursor: pointer;
-  display: flex;
-  font-size: 13px;
-  gap: 8px;
-  line-height: 1.4;
-  padding: 6px 4px;
-  text-align: left;
-  width: 100%;
-
-  &:hover {
-    background: ${VISUAL_TOKENS.background.transparent.light};
-  }
-`;
-
-const PromptOptionIcon = styled.span`
-  align-items: center;
-  color: ${VISUAL_TOKENS.font.color.secondary};
-  display: flex;
-  flex-shrink: 0;
-`;
-
-const PromptOptions = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 500;
 `;
 
 const AiInputArea = styled.div`
-  align-items: flex-end;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  gap: 8px;
   padding: 12px;
 `;
 
 const AiInputBox = styled.div`
-  background-color: ${VISUAL_TOKENS.background.transparent.lighter};
+  background-color: rgba(0, 0, 0, 0.02);
   border: 1px solid ${VISUAL_TOKENS.border.color.medium};
-  border-radius: 8px;
+  border-radius: 4px;
   display: flex;
   flex-direction: column;
-  min-height: 100px;
-  padding: 12px;
+  height: 80px;
+  justify-content: space-between;
+  min-height: 32px;
+  padding: 8px;
   width: 100%;
 `;
 
@@ -219,13 +237,13 @@ const AiInputPlaceholder = styled.span`
   color: ${VISUAL_TOKENS.font.color.light};
   font-size: 13px;
   font-weight: 400;
+  padding: 4px 0;
 `;
 
 const AiInputBtnRow = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
-  margin-top: auto;
 `;
 
 const AiInputLeftBtns = styled.div`
@@ -244,12 +262,18 @@ const AiInputRightBtns = styled.div`
 const ModelChip = styled.span`
   align-items: center;
   border: 1px solid ${VISUAL_TOKENS.border.color.medium};
-  border-radius: 6px;
-  color: ${VISUAL_TOKENS.font.color.secondary};
+  border-radius: 4px;
+  color: ${VISUAL_TOKENS.font.color.primary};
   display: flex;
-  font-size: 11px;
+  font-size: 12px;
   gap: 4px;
-  padding: 3px 8px;
+  padding: 4px 8px;
+`;
+
+const ModelChipChevron = styled.span`
+  align-items: center;
+  color: ${VISUAL_TOKENS.font.color.tertiary};
+  display: flex;
 `;
 
 const SendBtn = styled.span`
@@ -258,208 +282,271 @@ const SendBtn = styled.span`
   border-radius: 50%;
   color: ${VISUAL_TOKENS.font.color.tertiary};
   display: flex;
-  height: 24px;
+  height: 20px;
   justify-content: center;
-  width: 24px;
+  width: 20px;
 `;
 
 type ProductVisualProps = {
   activeScene?: number;
+  aiPanelProgress?: number;
+  bleed?: boolean;
+  collaborative?: boolean;
+  compact?: boolean;
+  compactCursorTour?: boolean;
+  cursorActive?: boolean;
+  cursorLayer?: HTMLElement | null;
+  fill?: boolean;
+  panelOnly?: boolean;
+  playbackEnabled?: boolean;
   visual: AppPreviewConfig;
 };
 
-export function ProductVisual({ activeScene, visual }: ProductVisualProps) {
+export function ProductVisual({
+  activeScene,
+  aiPanelProgress = 1,
+  bleed = false,
+  collaborative = false,
+  compact = false,
+  compactCursorTour = false,
+  cursorActive = true,
+  cursorLayer,
+  fill = false,
+  panelOnly = false,
+  playbackEnabled = true,
+  visual,
+}: ProductVisualProps) {
   const {
     activeItem,
-    activeLabel,
+    activeItemId,
+    activeItemLabel,
+    activeStepIndex,
+    agentSteps,
+    completedStepCount,
     displayPage,
-    handleOptionSelect,
-    handleSelectLabel,
-    handleToggleFolder,
+    favorites,
     highlightedItemId,
-    isScrollDriven,
     openFolderIds,
     revealedObjectIds,
-    selectedOption,
+    selectPageItem,
+    selectedScene,
     streamComplete,
-    streamedText,
-    workspaceNav,
-  } = useProductVisualAutoplay(visual, { externalScene: activeScene });
+    streamedTextVisibleLength,
+    toggleFolder,
+    workspaceEntries,
+  } = useProductVisualAutoplay(visual, {
+    externalScene: activeScene,
+    playbackEnabled,
+  });
 
-  const activeHeader = displayPage?.header;
-  const showViewBar =
-    displayPage != null &&
-    displayPage.type !== 'dashboard' &&
-    displayPage.type !== 'record' &&
-    displayPage.type !== 'workflow';
+  const aiMessagesRef = useRef<HTMLDivElement>(null);
+
+  // Keep the latest agent step / streamed text in view, like a real chat.
+  useEffect(() => {
+    const messages = aiMessagesRef.current;
+
+    if (messages) {
+      messages.scrollTop = messages.scrollHeight;
+    }
+  }, [activeStepIndex, completedStepCount, streamedTextVisibleLength]);
+
+  const heroCursor = useProductHeroCursorAutoplay(
+    collaborative && cursorActive,
+    {
+      mobile: compactCursorTour,
+    },
+  );
+
+  useEffect(() => {
+    if (collaborative) {
+      selectPageItem(heroCursor.pageItemId);
+    }
+  }, [collaborative, heroCursor.pageItemId, selectPageItem]);
+
+  const effectivePage =
+    collaborative && heroCursor.showRecord
+      ? { ...ANTHROPIC_RECORD_PAGE, activeTabLabel: heroCursor.recordTab }
+      : displayPage;
+  const navbarLabel =
+    effectivePage.type === 'record'
+      ? effectivePage.header.title
+      : activeItemLabel;
+  const responseChips = selectedScene.responseChips;
+  const compactWorkflowPage =
+    effectivePage.type === 'workflow' && effectivePage.nodes === undefined;
+  const resolvedDesktopSidebarMode = collaborative
+    ? 'collapsed'
+    : (selectedScene.sidebarMode ?? 'collapsed');
+  const visibleResponseChips = responseChips.slice(
+    0,
+    MAX_VISIBLE_RESPONSE_CHIPS,
+  );
+  const hiddenResponseChipCount = Math.max(
+    responseChips.length - MAX_VISIBLE_RESPONSE_CHIPS,
+    0,
+  );
+
+  const previewShell = (
+    <AppPreviewFrame compact={compact} floatingShadow mode="static">
+      <AppPreviewLayout
+        activeItem={activeItem}
+        activeItemId={activeItemId}
+        activeItemLabel={activeItemLabel}
+        asideProgress={aiPanelProgress}
+        compactWorkflowPage={compactWorkflowPage}
+        desktopSidebarMode={resolvedDesktopSidebarMode}
+        favorites={favorites}
+        highlightedItemId={highlightedItemId ?? undefined}
+        navbarLabel={navbarLabel}
+        onSelectPageItem={selectPageItem}
+        onToggleFolder={toggleFolder}
+        openFolderIds={openFolderIds}
+        page={effectivePage}
+        panelOnly={panelOnly}
+        revealedObjectIds={revealedObjectIds}
+        rightAside={
+          collaborative ? undefined : (
+            <AiPanel $panelOnly={panelOnly}>
+              <AiPanelHeader>
+                <AiHeaderBtn>
+                  <IconX size={13} stroke={2} />
+                </AiHeaderBtn>
+                <AiPanelTitle>Ask AI</AiPanelTitle>
+                <AiHeaderBtn>
+                  <IconEdit size={13} stroke={2} />
+                </AiHeaderBtn>
+              </AiPanelHeader>
+              <AiMessages ref={aiMessagesRef}>
+                <UserMsg>{selectedScene.label}</UserMsg>
+                {agentSteps.length > 0 ? (
+                  <ProductVisualAiSteps
+                    activeStepIndex={activeStepIndex}
+                    answerStarted={streamedTextVisibleLength > 0}
+                    completedStepCount={completedStepCount}
+                    steps={agentSteps}
+                  />
+                ) : null}
+                {streamedTextVisibleLength > 0 ? (
+                  <>
+                    <AiMsg>
+                      {sliceVisibleParagraphs(
+                        selectedScene.responseText,
+                        streamedTextVisibleLength,
+                      ).map((segments, paragraphIndex) => (
+                        <AiMsgParagraph key={paragraphIndex}>
+                          {segments.map((segment, segmentIndex) =>
+                            segment.bold ? (
+                              <AiMsgStrong key={segmentIndex}>
+                                {segment.text}
+                              </AiMsgStrong>
+                            ) : (
+                              <Fragment key={segmentIndex}>
+                                {segment.text}
+                              </Fragment>
+                            ),
+                          )}
+                        </AiMsgParagraph>
+                      ))}
+                    </AiMsg>
+                    {streamComplete && responseChips.length > 0 ? (
+                      <EntityChips>
+                        {visibleResponseChips.map((chip) => (
+                          <EntityChip key={chip.name}>
+                            <EntityChipIcon
+                              src={chip.logoUrl}
+                              alt={chip.name}
+                            />
+                            <EntityChipName>{chip.name}</EntityChipName>
+                          </EntityChip>
+                        ))}
+                        {hiddenResponseChipCount > 0 ? (
+                          <EntityOverflowChip>
+                            +{hiddenResponseChipCount} more
+                          </EntityOverflowChip>
+                        ) : null}
+                      </EntityChips>
+                    ) : null}
+                  </>
+                ) : agentSteps.length === 0 ? (
+                  <ThinkingText>Thinking...</ThinkingText>
+                ) : null}
+              </AiMessages>
+              <AiInputArea>
+                <AiInputBox>
+                  <AiInputPlaceholder>
+                    Ask, search or make anything...
+                  </AiInputPlaceholder>
+                  <AiInputBtnRow>
+                    <AiInputLeftBtns>
+                      <IconPaperclip size={13} stroke={2} />
+                    </AiInputLeftBtns>
+                    <AiInputRightBtns>
+                      <ModelChip>
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="#D97757"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M4.709 15.955l4.72-2.647.08-.23-.08-.128H9.2l-.79-.048-2.698-.073-2.339-.097-2.266-.122-.571-.121L0 11.784l.055-.352.48-.321.686.06 1.52.103 2.278.158 1.652.097 2.449.255h.389l.055-.157-.134-.098-.103-.097-2.358-1.596-2.552-1.688-1.336-.972-.724-.491-.364-.462-.158-1.008.656-.722.881.06.225.061.893.686 1.908 1.476 2.491 1.833.365.304.145-.103.019-.073-.164-.274-1.355-2.446-1.446-2.49-.644-1.032-.17-.619a2.97 2.97 0 01-.104-.729L6.283.134 6.696 0l.996.134.42.364.62 1.414 1.002 2.229 1.555 3.03.456.898.243.832.091.255h.158V9.01l.128-1.706.237-2.095.23-2.695.08-.76.376-.91.747-.492.584.28.48.685-.067.444-.286 1.851-.559 2.903-.364 1.942h.212l.243-.242.985-1.306 1.652-2.064.73-.82.85-.904.547-.431h1.033l.76 1.129-.34 1.166-1.064 1.347-.881 1.142-1.264 1.7-.79 1.36.073.11.188-.02 2.856-.606 1.543-.28 1.841-.315.833.388.091.395-.328.807-1.969.486-2.309.462-3.439.813-.042.03.049.061 1.549.146.662.036h1.622l3.02.225.79.522.474.638-.079.485-1.215.62-1.64-.389-3.829-.91-1.312-.329h-.182v.11l1.093 1.068 2.006 1.81 2.509 2.33.127.578-.322.455-.34-.049-2.205-1.657-.851-.747-1.926-1.62h-.128v.17l.444.649 2.345 3.521.122 1.08-.17.353-.608.213-.668-.122-1.374-1.925-1.415-2.167-1.143-1.943-.14.08-.674 7.254-.316.37-.729.28-.607-.461-.322-.747.322-1.476.389-1.924.315-1.53.286-1.9.17-.632-.012-.042-.14.018-1.434 1.967-2.18 2.945-1.726 1.845-.414.164-.717-.37.067-.662.401-.589 2.388-3.036 1.44-1.882.93-1.086-.006-.158h-.055L4.132 18.56l-1.13.146-.487-.456.061-.746.231-.243 1.908-1.312-.006.006z"
+                            fillRule="nonzero"
+                          />
+                        </svg>
+                        Claude Opus 4.6
+                        <ModelChipChevron>
+                          <IconChevronDown size={13} stroke={2} />
+                        </ModelChipChevron>
+                      </ModelChip>
+                      <SendBtn>
+                        <IconArrowUp size={13} stroke={2} />
+                      </SendBtn>
+                    </AiInputRightBtns>
+                  </AiInputBtnRow>
+                </AiInputBox>
+              </AiInputArea>
+            </AiPanel>
+          )
+        }
+        workspaceEntries={workspaceEntries}
+      />
+    </AppPreviewFrame>
+  );
+
+  const cursors =
+    collaborative && cursorLayer
+      ? createPortal(
+          HERO_CURSORS.map((cursorConfig, index) => {
+            const isActive = index === heroCursor.activeCursor;
+
+            return (
+              <ProductHeroCursor
+                key={cursorConfig.name}
+                clicking={isActive && heroCursor.clicking}
+                color={cursorConfig.color}
+                glideMs={isActive ? heroCursor.glideMs : undefined}
+                hidden={isActive && heroCursor.hidden}
+                home={
+                  compactCursorTour && cursorConfig.mobileHome
+                    ? cursorConfig.mobileHome
+                    : cursorConfig.home
+                }
+                name={cursorConfig.name}
+                target={isActive ? heroCursor.target : undefined}
+              />
+            );
+          }),
+          cursorLayer,
+        )
+      : null;
 
   return (
-    <StyledRoot>
-      <ShellScene>
-        <WindowOrderProvider>
-          <AppWindow>
-            <AppLayout>
-              <AppPreviewSidebar
-                favoritesNav={visual.favoritesNav}
-                highlightedItemId={highlightedItemId ?? undefined}
-                onSelectLabel={handleSelectLabel}
-                onToggleFolder={handleToggleFolder}
-                openFolderIds={openFolderIds}
-                selectedLabel={activeLabel}
-                workspaceName={visual.workspace.name}
-                workspaceNav={workspaceNav}
-              />
-
-              <RightColumn>
-                <AppPreviewNavbar
-                  activeItem={activeItem}
-                  activeLabel={activeLabel}
-                  navbarActions={activeHeader?.navbarActions}
-                  revealedObjectIds={revealedObjectIds}
-                />
-
-                <ContentRow>
-                  <IndexSurface>
-                    {showViewBar ? (
-                      <AppPreviewViewbar
-                        actions={activeHeader?.actions ?? []}
-                        count={activeHeader?.count}
-                        pageType={displayPage.type}
-                        showListIcon={activeHeader?.showListIcon ?? false}
-                        title={activeHeader?.title ?? activeLabel}
-                      />
-                    ) : null}
-
-                    {displayPage
-                      ? renderPageDefinition(
-                          displayPage,
-                          handleSelectLabel,
-                          activeItem?.id ?? activeLabel,
-                        )
-                      : null}
-                  </IndexSurface>
-
-                  <AiPanel>
-                    <AiPanelHeader>
-                      <AiHeaderBtn>
-                        <svg
-                          width="14"
-                          height="14"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <line x1="18" y1="6" x2="6" y2="18" />
-                          <line x1="6" y1="6" x2="18" y2="18" />
-                        </svg>
-                      </AiHeaderBtn>
-                      <AiPanelTitle>Ask AI</AiPanelTitle>
-                      <AiHeaderBtn>
-                        <svg
-                          width="14"
-                          height="14"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
-                          <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
-                        </svg>
-                      </AiHeaderBtn>
-                    </AiPanelHeader>
-                    <AiMessages>
-                      <UserMsg>{PROMPT_OPTIONS[selectedOption].label}</UserMsg>
-                      {streamedText ? (
-                        <AiMsg>{streamedText}</AiMsg>
-                      ) : (
-                        <ThinkingText>Thinking...</ThinkingText>
-                      )}
-                    </AiMessages>
-                    {streamComplete && !isScrollDriven ? (
-                      <PromptOptions>
-                        {PROMPT_OPTIONS.map((option, index) =>
-                          index === selectedOption ? null : (
-                            <PromptOption
-                              key={option.label}
-                              onClick={() => handleOptionSelect(index)}
-                            >
-                              <PromptOptionIcon>{option.icon}</PromptOptionIcon>
-                              {option.label}
-                            </PromptOption>
-                          ),
-                        )}
-                      </PromptOptions>
-                    ) : null}
-                    <AiInputArea>
-                      <AiInputBox>
-                        <AiInputPlaceholder>
-                          Ask, search or make anything...
-                        </AiInputPlaceholder>
-                        <AiInputBtnRow>
-                          <AiInputLeftBtns>
-                            <svg
-                              width="12"
-                              height="12"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                            >
-                              <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" />
-                            </svg>
-                          </AiInputLeftBtns>
-                          <AiInputRightBtns>
-                            <ModelChip>
-                              <svg
-                                width="12"
-                                height="12"
-                                viewBox="0 0 24 24"
-                                fill="#D97757"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  d="M4.709 15.955l4.72-2.647.08-.23-.08-.128H9.2l-.79-.048-2.698-.073-2.339-.097-2.266-.122-.571-.121L0 11.784l.055-.352.48-.321.686.06 1.52.103 2.278.158 1.652.097 2.449.255h.389l.055-.157-.134-.098-.103-.097-2.358-1.596-2.552-1.688-1.336-.972-.724-.491-.364-.462-.158-1.008.656-.722.881.06.225.061.893.686 1.908 1.476 2.491 1.833.365.304.145-.103.019-.073-.164-.274-1.355-2.446-1.446-2.49-.644-1.032-.17-.619a2.97 2.97 0 01-.104-.729L6.283.134 6.696 0l.996.134.42.364.62 1.414 1.002 2.229 1.555 3.03.456.898.243.832.091.255h.158V9.01l.128-1.706.237-2.095.23-2.695.08-.76.376-.91.747-.492.584.28.48.685-.067.444-.286 1.851-.559 2.903-.364 1.942h.212l.243-.242.985-1.306 1.652-2.064.73-.82.85-.904.547-.431h1.033l.76 1.129-.34 1.166-1.064 1.347-.881 1.142-1.264 1.7-.79 1.36.073.11.188-.02 2.856-.606 1.543-.28 1.841-.315.833.388.091.395-.328.807-1.969.486-2.309.462-3.439.813-.042.03.049.061 1.549.146.662.036h1.622l3.02.225.79.522.474.638-.079.485-1.215.62-1.64-.389-3.829-.91-1.312-.329h-.182v.11l1.093 1.068 2.006 1.81 2.509 2.33.127.578-.322.455-.34-.049-2.205-1.657-.851-.747-1.926-1.62h-.128v.17l.444.649 2.345 3.521.122 1.08-.17.353-.608.213-.668-.122-1.374-1.925-1.415-2.167-1.143-1.943-.14.08-.674 7.254-.316.37-.729.28-.607-.461-.322-.747.322-1.476.389-1.924.315-1.53.286-1.9.17-.632-.012-.042-.14.018-1.434 1.967-2.18 2.945-1.726 1.845-.414.164-.717-.37.067-.662.401-.589 2.388-3.036 1.44-1.882.93-1.086-.006-.158h-.055L4.132 18.56l-1.13.146-.487-.456.061-.746.231-.243 1.908-1.312-.006.006z"
-                                  fillRule="nonzero"
-                                />
-                              </svg>
-                              Claude Haiku 4.5
-                              <svg
-                                width="8"
-                                height="8"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2.5"
-                              >
-                                <polyline points="6 9 12 15 18 9" />
-                              </svg>
-                            </ModelChip>
-                            <SendBtn>
-                              <svg
-                                width="12"
-                                height="12"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                              >
-                                <line x1="12" y1="19" x2="12" y2="5" />
-                                <polyline points="5 12 12 5 19 12" />
-                              </svg>
-                            </SendBtn>
-                          </AiInputRightBtns>
-                        </AiInputBtnRow>
-                      </AiInputBox>
-                    </AiInputArea>
-                  </AiPanel>
-                </ContentRow>
-              </RightColumn>
-            </AppLayout>
-          </AppWindow>
-        </WindowOrderProvider>
+    <StyledRoot $fill={fill}>
+      <ShellScene $bleed={bleed} $compact={compact} $panelOnly={panelOnly}>
+        {previewShell}
       </ShellScene>
+      {cursors}
     </StyledRoot>
   );
 }

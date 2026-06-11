@@ -187,7 +187,7 @@ For the fields you will create, make sure to create a good variety of field type
 *Here are the steps to follow closely:*
 
 STEP 0: Present a plan to the user and wait for approval.
-- Use list_object_metadata_items to see all available objects in the workspace
+- Use get_object_metadata to see all available objects in the workspace
 - Use find_many_people (limit: 5) and find_many_companies (limit: 5) and find_many_opportunities (limit: 5) to understand the existing seed data shape
 - Based on the user's business type, propose a plan that lists:
   - How People, Companies, and Opportunities map to the domain story (e.g. "People = Candidates", "Companies = Employers")
@@ -206,7 +206,7 @@ STEP 2: Wait 3 seconds, for the backend side effects to be completed
 STEP 3: Create all NON-RELATION fields for ALL objects by batch with create_many_field_metadata.
 Do a separate batch call for each object.
 This includes:
-- New custom fields for the standard objects (Person, Company, Opportunity) — use their objectMetadataId from list_object_metadata_items
+- New custom fields for the standard objects (Person, Company, Opportunity) — use their objectMetadataId from get_object_metadata
 - All non-relation fields for the new custom objects
 DO NOT include relation fields in this step. Only create TEXT, NUMBER, BOOLEAN, DATE_TIME, SELECT, MULTI_SELECT, CURRENCY, etc.
 SELECT option values must be UPPER_SNAKE_CASE
@@ -337,12 +337,12 @@ You help users create and manage dashboards with widgets.
 - list_dashboards, get_dashboard
 - create_complete_dashboard
 - add_dashboard_tab, add_dashboard_widget, update_dashboard_widget, delete_dashboard_widget
-- list_object_metadata_items (resolve object + field IDs)
+- get_object_metadata / get_field_metadata (resolve object + field IDs)
 
 ## Graph Widget Workflow
 
 1. Ask what data the user wants to visualize.
-2. Call list_object_metadata_items and resolve objectMetadataId + field IDs.
+2. Call get_object_metadata and get_field_metadata to resolve objectMetadataId + field IDs.
 3. Always call get_dashboard before modifying widgets.
 4. Build the widget configuration using the rules below.
 5. Call add_dashboard_widget or update_dashboard_widget. Use activeTabId from context if available.
@@ -363,7 +363,7 @@ You help users create and manage dashboards with widgets.
 - Relation to composite field: \`owner.name\` where "name" is FULL_NAME → subFieldName must be "name.firstName" or "name.lastName" (NOT just "name")
 - Relation + composite: \`company.address.addressCity\` → subFieldName "address.addressCity"
 - **Never omit subFieldName for relation fields** — grouping by ID is almost never useful
-- **IMPORTANT**: Check the target field's type from list_object_metadata_items. If it is composite (FULL_NAME, ADDRESS, CURRENCY, EMAILS, PHONES, LINKS), you MUST drill into a specific subfield using dot notation (e.g. "name.firstName", "address.addressCity", "emails.primaryEmail").
+- **IMPORTANT**: Check the target field's type from get_field_metadata. If it is composite (FULL_NAME, ADDRESS, CURRENCY, EMAILS, PHONES, LINKS), you MUST drill into a specific subfield using dot notation (e.g. "name.firstName", "address.addressCity", "emails.primaryEmail").
 
 ## User Language Notes
 
@@ -474,6 +474,10 @@ You help users manage their workspace data model by creating, updating, and orga
 - **Relations**: Links between objects (one-to-many, many-to-one)
 - **Labels vs Names**: Labels are for display, names are internal identifiers (camelCase)
 
+## Tool Output Format
+
+- **get_object_metadata** returns an array of objects. System objects (attachment, message, etc.) are returned as compact \`{id, nameSingular, namePlural}\`, which is enough to locate an object and read its id. Only pass \`includeFullSystemObjects: true\` when you specifically need a system object's full configuration (e.g. when creating relations to workspaceMember).
+- **get_field_metadata** returns an array of fields. System fields are returned as compact \`{id, name, type}\`, which is enough to know which fields exist and their types. Only pass \`includeFullSystemFields: true\` when you specifically need a system field's full configuration (settings, defaultValue, relation targets). Internal fields (searchVector, position, updatedBy) are always excluded. Null properties are omitted from non-system fields.
 ## Field Types Available
 
 - **TEXT**: Simple text fields
@@ -1146,7 +1150,7 @@ You help users create and configure views to organize how they see their records
 - create_many_view_fields - Add visible columns to a view
 - update_many_view_fields - Update column configuration
 - get_view_fields - List columns in a view
-- list_object_metadata_items - Discover objects and their fields
+- get_object_metadata / get_field_metadata - Discover objects and their fields
 - navigate_app - Navigate to a view after creation
 
 ## Workflow
@@ -1219,7 +1223,7 @@ You help users add filters and sorts to their views so they see the most relevan
 
 - get_views - List existing views to find the one to modify
 - get_view_query_parameters - Check existing filters and sorts on a view
-- list_object_metadata_items - Discover fields and their types to build valid filters
+- get_field_metadata - Discover fields and their types to build valid filters
 - create_view_filter / create_many_view_filters - Add filters to a view
 - create_view_sort / create_many_view_sorts - Add sorts to a view
 - navigate_app - Navigate to the view to show results
@@ -1262,7 +1266,7 @@ Filters can be grouped with logical operators:
    - "Show people from a specific company"
    - "Show recent records created in the last 30 days"
 
-3. **Inspect the view**: Use get_view_query_parameters to see existing filters/sorts and list_object_metadata_items to discover available fields.
+3. **Inspect the view**: Use get_view_query_parameters to see existing filters/sorts and get_field_metadata to discover available fields.
 
 4. **Build filters**: Based on the user's need, determine:
    - Which field(s) to filter on
@@ -1341,12 +1345,12 @@ You help users archive custom objects from their workspace, such as objects crea
 
 ## Tools
 
-- list_object_metadata_items - List all objects in the workspace to identify custom ones
+- get_object_metadata - List all objects in the workspace to identify custom ones
 - update_many_object_metadata - Archive custom objects by setting isActive to false
 
 ## Workflow
 
-1. **List all objects**: Use list_object_metadata_items to get the full list of objects in the workspace.
+1. **List all objects**: Use get_object_metadata to get the full list of objects in the workspace.
 
 2. **Identify custom objects**: Filter the results to find objects where isCustom is true. These are the objects that were created by users or by the dev seed, as opposed to standard built-in objects (Company, Person, Opportunity, Task, Note, etc.).
 

@@ -1,67 +1,12 @@
-import { styled } from '@linaria/react';
-
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
-import { isDefined } from 'twenty-shared/utils';
 import { type ThemeColor } from '@ui/theme';
 import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import { clsx } from 'clsx';
 import { useContext } from 'react';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
-const StyledTag = styled.span<{
-  color: TagColor;
-  weight: TagWeight;
-  variant: TagVariant;
-  preventShrink?: boolean;
-  preventPadding?: boolean;
-}>`
-  align-items: center;
-  background: ${({ color }) =>
-    color === 'transparent'
-      ? 'transparent'
-      : (themeCssVariables.tag.background[color] ??
-        themeCssVariables.tag.background.gray)};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${({ color }) =>
-    color === 'transparent'
-      ? themeCssVariables.font.color.secondary
-      : (themeCssVariables.tag.text[color] ??
-        themeCssVariables.font.color.secondary)};
-  display: inline-flex;
-  font-size: ${themeCssVariables.font.size.md};
-  font-style: normal;
-  font-weight: ${({ weight }) =>
-    weight === 'regular'
-      ? themeCssVariables.font.weight.regular
-      : themeCssVariables.font.weight.medium};
-  height: ${themeCssVariables.spacing[5]};
-  margin: 0;
-  overflow: hidden;
-  padding: ${({ preventPadding }) =>
-    preventPadding ? '0' : `0 ${themeCssVariables.spacing[2]}`};
-  border: ${({ variant }) =>
-    variant === 'outline' || variant === 'border'
-      ? `1px ${variant === 'border' ? 'solid' : 'dashed'} ${themeCssVariables.border.color.strong}`
-      : 'none'};
-
-  gap: ${themeCssVariables.spacing[1]};
-
-  min-width: ${({ preventShrink }) => (preventShrink ? 'fit-content' : 'none')};
-`;
-
-const StyledContent = styled.span`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledNonShrinkableText = styled.span`
-  white-space: nowrap;
-  width: fit-content;
-`;
-
-const StyledIconContainer = styled.div`
-  display: flex;
-`;
+import styles from './Tag.module.scss';
 
 type TagWeight = 'regular' | 'medium';
 type TagVariant = 'solid' | 'outline' | 'border';
@@ -92,30 +37,51 @@ export const Tag = ({
 }: TagProps) => {
   const { theme } = useContext(ThemeContext);
 
+  const tagBackground =
+    color === 'transparent'
+      ? 'transparent'
+      : (themeCssVariables.tag.background[color] ??
+        themeCssVariables.tag.background.gray);
+
+  const tagText =
+    color === 'transparent'
+      ? themeCssVariables.font.color.secondary
+      : (themeCssVariables.tag.text[color] ??
+        themeCssVariables.font.color.secondary);
+
   return (
-    <StyledTag
-      className={className}
-      color={color}
+    <span
+      className={clsx(
+        styles.tag,
+        weight === 'medium' && styles.weightMedium,
+        variant === 'outline' && styles.variantOutline,
+        variant === 'border' && styles.variantBorder,
+        preventShrink && styles.preventShrink,
+        preventPadding && styles.preventPadding,
+        className,
+      )}
       onClick={onClick}
-      weight={weight}
-      variant={variant}
-      preventShrink={preventShrink}
-      preventPadding={preventPadding}
+      style={
+        {
+          '--tag-background': tagBackground,
+          '--tag-text': tagText,
+        } as React.CSSProperties
+      }
     >
       {isDefined(Icon) ? (
-        <StyledIconContainer>
+        <div className={styles.iconContainer}>
           <Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
-        </StyledIconContainer>
+        </div>
       ) : (
         <></>
       )}
       {preventShrink ? (
-        <StyledNonShrinkableText>{text}</StyledNonShrinkableText>
+        <span className={styles.nonShrinkableText}>{text}</span>
       ) : (
-        <StyledContent>
+        <span className={styles.content}>
           <OverflowingTextWithTooltip text={text} />
-        </StyledContent>
+        </span>
       )}
-    </StyledTag>
+    </span>
   );
 };

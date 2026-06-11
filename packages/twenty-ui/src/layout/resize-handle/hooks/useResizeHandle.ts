@@ -1,5 +1,5 @@
 import { useState, type PointerEvent } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 const RESIZE_MIN_SIZE = 50;
 const RESIZE_MAX_SIZE = 500;

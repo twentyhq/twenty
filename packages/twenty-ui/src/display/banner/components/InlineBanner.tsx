@@ -1,26 +1,12 @@
-import { styled } from '@linaria/react';
+import { clsx } from 'clsx';
 import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import { ThemeContext } from '@ui/theme-constants';
 import { Button } from '@ui/input/button/components/Button/Button';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { IconInfoCircle } from '@ui/display/icon/components/TablerIcons';
 import { Banner, type BannerColor } from './Banner';
 
-const StyledBanner = styled(Banner)`
-  border-radius: ${themeCssVariables.border.radius.md};
-  margin-bottom: ${themeCssVariables.spacing[4]};
-`;
-
-const StyledBannerContent = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledBannerText = styled.span`
-  flex: 1;
-`;
+import styles from './InlineBanner.module.scss';
 
 type InlineBannerProps = {
   color?: BannerColor;
@@ -31,22 +17,28 @@ type InlineBannerProps = {
     hidden?: boolean;
   };
   LeftIcon?: IconComponent;
-} & React.HTMLAttributes<HTMLDivElement>;
+  className?: string;
+};
 
 export const InlineBanner = ({
   color,
   message,
   button,
   LeftIcon = IconInfoCircle,
+  className,
 }: InlineBannerProps) => {
   const { theme } = useContext(ThemeContext);
 
   return (
-    <StyledBanner color={color} variant={'secondary'}>
-      <StyledBannerContent>
+    <Banner
+      className={clsx(styles.banner, className)}
+      color={color}
+      variant={'secondary'}
+    >
+      <div className={styles.bannerContent}>
         <LeftIcon size={theme.icon.size.md} />
-        <StyledBannerText>{message}</StyledBannerText>
-      </StyledBannerContent>
+        <span className={styles.bannerText}>{message}</span>
+      </div>
       {button && !button.hidden && (
         <Button
           size="small"
@@ -56,6 +48,6 @@ export const InlineBanner = ({
           onClick={button?.onClick}
         />
       )}
-    </StyledBanner>
+    </Banner>
   );
 };

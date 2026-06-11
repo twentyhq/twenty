@@ -1,17 +1,8 @@
-import { styled } from '@linaria/react';
-
 import { isNonEmptyString } from '@sniptt/guards';
-import { themeCssVariables } from '@ui/theme-constants';
+
 import { linkifyText } from '@ui/utilities/utils/linkifyText';
 
-const StyledLink = styled.a`
-  color: ${themeCssVariables.color.blue};
-  text-decoration: underline;
-
-  &:hover {
-    text-decoration-color: ${themeCssVariables.color.blue};
-  }
-`;
+import styles from './LinkifiedText.module.scss';
 
 type LinkifiedTextProps = {
   text: string;
@@ -26,15 +17,16 @@ export const LinkifiedText = ({ text }: LinkifiedTextProps) => {
     <>
       {linkifyText(text).map((part, index) =>
         part.type === 'link' ? (
-          <StyledLink
+          <a
             key={index}
+            className={styles.link}
             href={part.content}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
           >
             {part.content}
-          </StyledLink>
+          </a>
         ) : (
           part.content
         ),

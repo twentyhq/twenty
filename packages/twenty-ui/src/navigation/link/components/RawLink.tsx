@@ -1,6 +1,8 @@
+import { clsx } from 'clsx';
 import * as React from 'react';
 import { Link as ReactLink } from 'react-router-dom';
-import { styled } from '@linaria/react';
+
+import styles from './RawLink.module.scss';
 
 type RawLinkProps = {
   className?: string;
@@ -9,18 +11,6 @@ type RawLinkProps = {
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
 };
 
-const StyledClickable = styled.div`
-  display: flex;
-  overflow: hidden;
-  white-space: nowrap;
-
-  a {
-    color: inherit;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-`;
-
 export const RawLink = ({
   className,
   href,
@@ -28,10 +18,10 @@ export const RawLink = ({
   onClick,
 }: RawLinkProps) => (
   <div>
-    <StyledClickable className={className}>
+    <div className={clsx(styles.clickable, className)}>
       <ReactLink target="_blank" onClick={onClick} to={href}>
         {children}
       </ReactLink>
-    </StyledClickable>
+    </div>
   </div>
 );

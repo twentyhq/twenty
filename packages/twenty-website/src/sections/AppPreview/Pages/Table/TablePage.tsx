@@ -7,6 +7,10 @@ import { useState } from 'react';
 import type { TablePageDefinition } from '../../types';
 import { IconChevronDown, IconPlus } from '@tabler/icons-react';
 import { MiniIcon } from '../../Shared/components/MiniIcon';
+import {
+  SkeletonBar,
+  SkeletonCircle,
+} from '../../Shared/components/PreviewSkeleton';
 import { TablePageCheckbox } from './TablePageCheckbox';
 import { renderTableCellValue } from './TablePageCellValue';
 import { renderTableHeaderIcon } from './render-table-header-icon';
@@ -27,19 +31,6 @@ const TableShell = styled.div`
   min-width: 0;
   overflow: hidden;
   width: 100%;
-`;
-
-const GripRail = styled.div`
-  background: ${COLORS.background};
-  display: grid;
-  flex: 0 0 12px;
-  grid-auto-rows: 32px;
-  width: 12px;
-`;
-
-const GripCell = styled.div`
-  background: ${COLORS.background};
-  border-bottom: 1px solid ${COLORS.borderLight};
 `;
 
 const TableViewport = styled.div<{ $dragging: boolean }>`
@@ -87,15 +78,17 @@ const DataRow = styled.div<{ $rowIndex: number }>`
   animation: tableRowAppear 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: ${({ $rowIndex }) => `${120 + $rowIndex * 70}ms`};
   display: flex;
+  max-height: 0;
+  overflow: hidden;
 
   @keyframes tableRowAppear {
     from {
       opacity: 0;
-      transform: translateY(6px);
+      max-height: 0;
     }
     to {
       opacity: 1;
-      transform: translateY(0);
+      max-height: 32px;
     }
   }
 `;
@@ -129,7 +122,13 @@ const TableCell = styled.div<{
     $align === 'right' ? 'flex-end' : 'flex-start'};
   left: ${({ $sticky }) => ($sticky ? '0' : 'auto')};
   min-width: ${({ $width }) => `${$width}px`};
-  padding: 0 ${TABLE_CELL_HORIZONTAL_PADDING}px;
+  padding-bottom: 0;
+  padding-right: ${TABLE_CELL_HORIZONTAL_PADDING}px;
+  padding-top: 0;
+  padding-left: ${({ $sticky }) =>
+    $sticky
+      ? `${TABLE_CELL_HORIZONTAL_PADDING - 1}px`
+      : `${TABLE_CELL_HORIZONTAL_PADDING}px`};
   position: ${({ $sticky }) => ($sticky ? 'sticky' : 'relative')};
   z-index: ${({ $header, $sticky }) => {
     if ($sticky && $header) {
@@ -210,12 +209,21 @@ const HeaderFillContent = styled.div`
   padding: 0 8px;
 `;
 
+const SKELETON_ROW_INDEXES = [0, 1, 2, 3, 4, 5, 6];
+
+const SkeletonRowLead = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 6px;
+  width: 100%;
+`;
+
 export function TablePage({
   page,
-  onNavigateToLabel,
+  onNavigateToPageItemId,
 }: {
   page: TablePageDefinition;
-  onNavigateToLabel?: (label: string) => void;
+  onNavigateToPageItemId?: (itemId: string) => void;
 }) {
   const {
     dragging,
@@ -237,14 +245,6 @@ export function TablePage({
 
   return (
     <TableShell>
-      <GripRail aria-hidden="true">
-        <GripCell />
-        {page.rows.map((row) => (
-          <GripCell key={`grip-${row.id}`} />
-        ))}
-        <GripCell />
-      </GripRail>
-
       <TableViewport
         ref={viewportRef}
         $dragging={dragging}
@@ -301,47 +301,71 @@ export function TablePage({
             </EmptyFillCell>
           </HeaderRow>
 
-          {page.rows.map((row, rowIndex) => {
-            const hovered = hoveredRowId === row.id;
-
-            return (
-              <DataRow
-                key={row.id}
-                $rowIndex={rowIndex}
-                onMouseEnter={() => setHoveredRowId(row.id)}
-                onMouseLeave={() =>
-                  setHoveredRowId((current) =>
-                    current === row.id ? null : current,
-                  )
-                }
-              >
-                {page.columns.map((column) => {
-                  const cell = row.cells[column.id];
-
-                  return (
+          {page.generating
+            ? SKELETON_ROW_INDEXES.map((rowIndex) => (
+                <DataRow key={`skeleton-${rowIndex}`} $rowIndex={rowIndex}>
+                  {page.columns.map((column) => (
                     <TableCell
-                      key={`${row.id}-${column.id}`}
+                      key={column.id}
                       $align={column.align}
-                      $hovered={hovered}
                       $sticky={column.isFirstColumn}
                       $width={column.width}
                     >
-                      {cell
-                        ? renderTableCellValue({
-                            cell,
-                            columnId: column.id,
-                            hovered,
-                            isFirstColumn: !!column.isFirstColumn,
-                            onNavigateToLabel,
-                          })
-                        : null}
+                      {column.isFirstColumn ? (
+                        <SkeletonRowLead>
+                          <SkeletonCircle $size={16} />
+                          <SkeletonBar $height={8} $width="58%" />
+                        </SkeletonRowLead>
+                      ) : (
+                        <SkeletonBar $height={8} $width="56%" />
+                      )}
                     </TableCell>
-                  );
-                })}
-                <EmptyFillCell $hovered={hovered} $width={fillerWidth} />
-              </DataRow>
-            );
-          })}
+                  ))}
+                  <EmptyFillCell $width={fillerWidth} />
+                </DataRow>
+              ))
+            : page.rows.map((row, rowIndex) => {
+                const hovered = hoveredRowId === row.id;
+
+                return (
+                  <DataRow
+                    key={row.id}
+                    $rowIndex={rowIndex}
+                    data-row-id={row.id}
+                    onMouseEnter={() => setHoveredRowId(row.id)}
+                    onMouseLeave={() =>
+                      setHoveredRowId((current) =>
+                        current === row.id ? null : current,
+                      )
+                    }
+                  >
+                    {page.columns.map((column) => {
+                      const cell = row.cells[column.id];
+
+                      return (
+                        <TableCell
+                          key={`${row.id}-${column.id}`}
+                          $align={column.align}
+                          $hovered={hovered}
+                          $sticky={column.isFirstColumn}
+                          $width={column.width}
+                        >
+                          {cell
+                            ? renderTableCellValue({
+                                cell,
+                                columnId: column.id,
+                                hovered,
+                                isFirstColumn: !!column.isFirstColumn,
+                                onNavigateToPageItemId,
+                              })
+                            : null}
+                        </TableCell>
+                      );
+                    })}
+                    <EmptyFillCell $hovered={hovered} $width={fillerWidth} />
+                  </DataRow>
+                );
+              })}
 
           <FooterRow>
             {page.columns.length > 0 ? (

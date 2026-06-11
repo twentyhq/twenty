@@ -1,22 +1,6 @@
-import { styled } from '@linaria/react';
-import React from 'react';
-import { themeCssVariables } from '@ui/theme-constants';
+import { clsx } from 'clsx';
 
-const StyledFooter = styled.div<{
-  autoHeight?: boolean;
-  centered?: boolean;
-  smallPadding?: boolean;
-}>`
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  gap: ${themeCssVariables.spacing[2]};
-  height: ${({ autoHeight }) => (autoHeight ? 'auto' : '60px')};
-  justify-content: ${({ centered }) => (centered ? 'center' : 'flex-end')};
-  overflow: hidden;
-  padding: ${({ smallPadding }) =>
-    smallPadding ? themeCssVariables.spacing[3] : themeCssVariables.spacing[5]};
-`;
+import styles from './ModalFooter.module.scss';
 
 export type ModalFooterProps = React.PropsWithChildren & {
   autoHeight?: boolean;
@@ -32,12 +16,15 @@ export const ModalFooter = ({
   smallPadding,
   className,
 }: ModalFooterProps) => (
-  <StyledFooter
-    autoHeight={autoHeight}
-    centered={centered}
-    smallPadding={smallPadding}
-    className={className}
+  <div
+    className={clsx(
+      styles.footer,
+      autoHeight && styles.autoHeight,
+      centered && styles.centered,
+      smallPadding && styles.smallPadding,
+      className,
+    )}
   >
     {children}
-  </StyledFooter>
+  </div>
 );

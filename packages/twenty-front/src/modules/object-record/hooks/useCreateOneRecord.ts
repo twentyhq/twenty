@@ -101,8 +101,7 @@ export const useCreateOneRecord = <
       objectMetadataItems,
       recordInput: {
         ...computeOptimisticCreateRecordBaseRecordInput(objectMetadataItem),
-        ...recordInput,
-        id: idForCreation,
+        ...sanitizedInput,
       },
       objectPermissionsByObjectMetadataId,
     });

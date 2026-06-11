@@ -3,7 +3,7 @@ import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMa
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { IconSparkles } from 'twenty-ui/display';
+import { IconSparkles } from 'twenty-ui-deprecated/display';
 import {
   PermissionFlagType,
   SubscriptionStatus,

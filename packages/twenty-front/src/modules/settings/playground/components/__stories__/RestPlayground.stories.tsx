@@ -6,7 +6,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, http } from 'msw';
 import { useEffect } from 'react';
 import { action } from 'storybook/actions';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 
 const PlaygroundApiKeySetterEffect = () => {
   const setPlaygroundApiKey = useSetAtomState(playgroundApiKeyState);

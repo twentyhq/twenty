@@ -1,0 +1,15 @@
+.root {
+  color: inherit;
+  overflow: hidden;
+  text-decoration: underline;
+  text-decoration-color: var(--t-border-color-strong);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+
+  max-width: var(--contact-link-max-width);
+
+  &:hover {
+    text-decoration-color: var(--t-font-color-primary);
+  }
+}

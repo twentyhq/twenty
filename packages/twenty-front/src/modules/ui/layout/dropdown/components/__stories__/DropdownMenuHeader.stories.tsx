@@ -10,9 +10,12 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconPlus,
-} from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
-import { AVATAR_URL_MOCK, ComponentDecorator } from 'twenty-ui/testing';
+} from 'twenty-ui-deprecated/display';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import {
+  AVATAR_URL_MOCK,
+  ComponentDecorator,
+} from 'twenty-ui-deprecated/testing';
 
 const meta: Meta<typeof DropdownMenuHeader> = {
   title: 'UI/Layout/Dropdown/DropdownMenuHeader',

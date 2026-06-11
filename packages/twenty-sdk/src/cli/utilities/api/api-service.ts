@@ -5,7 +5,10 @@ import { FileApi } from '@/cli/utilities/api/file-api';
 import { LogicFunctionApi } from '@/cli/utilities/api/logic-function-api';
 import { SchemaApi } from '@/cli/utilities/api/schema-api';
 import { type Manifest } from 'twenty-shared/application';
-import { type SyncAction } from 'twenty-shared/metadata';
+import {
+  type MetadataValidationErrorResponse,
+  type SyncAction,
+} from 'twenty-shared/metadata';
 
 type ApiServiceOptions = {
   disableInterceptors?: boolean;
@@ -73,13 +76,19 @@ export class ApiService {
     return this.applicationApi.createDevelopmentApplication(...args);
   }
 
-  syncApplication(manifest: Manifest): Promise<
-    ApiResponse<{
-      applicationUniversalIdentifier: string;
-      actions: SyncAction[];
-    }>
+  syncApplication(
+    manifest: Manifest,
+    options?: { dryRun?: boolean },
+  ): Promise<
+    ApiResponse<
+      {
+        applicationUniversalIdentifier: string;
+        actions: SyncAction[];
+      },
+      MetadataValidationErrorResponse
+    >
   > {
-    return this.applicationApi.syncApplication(manifest);
+    return this.applicationApi.syncApplication(manifest, options);
   }
 
   uninstallApplication(universalIdentifier: string): Promise<ApiResponse> {

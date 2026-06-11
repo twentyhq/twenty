@@ -47,7 +47,7 @@ export const useNavigationMenuItemEditController = () => {
   const {
     navigationMenuItems,
     workspaceNavigationMenuItems,
-    currentWorkspaceMemberId,
+    currentUserWorkspaceId,
   } = useNavigationMenuItemsData();
   const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftState,
@@ -62,7 +62,7 @@ export const useNavigationMenuItemEditController = () => {
     : navigationMenuItems;
   const targetUserWorkspaceId = isDraftMode
     ? undefined
-    : currentWorkspaceMemberId;
+    : currentUserWorkspaceId;
 
   const createItem = (
     input: NewNavigationMenuItemInput,

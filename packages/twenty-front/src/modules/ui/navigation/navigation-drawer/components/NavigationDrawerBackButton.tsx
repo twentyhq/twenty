@@ -9,9 +9,12 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { useContext } from 'react';
-import { IconX } from 'twenty-ui/display';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconX } from 'twenty-ui-deprecated/display';
+import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 type NavigationDrawerBackButtonProps = {
   title: string;
@@ -28,7 +31,7 @@ const StyledIconAndButtonContainer = styled.button`
   font-family: ${themeCssVariables.font.family};
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing['1.5']} ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing[1]};
   width: 100%;
   &:hover {
     background: ${themeCssVariables.background.transparent.light};

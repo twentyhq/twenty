@@ -1,6 +1,6 @@
 import type { CaseStudyData } from '@/lib/customers';
 import { Container } from '@/design-system/components';
-import { CLIENT_ICONS } from '@/icons';
+import { CLIENT_ICONS, type ClientIconKey } from '@/icons';
 import { getServerI18n } from '@/lib/i18n/server';
 import { LocalizedLink } from '@/lib/i18n';
 import { CustomerCasesCover } from '@/sections/CaseStudyCatalog/visuals/CustomerCasesCover';
@@ -9,7 +9,7 @@ import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { IconArrowLeft, IconClock } from '@tabler/icons-react';
 import Image from 'next/image';
-const CATALOG_LOGO_WIDTHS: Record<string, number> = {
+const CATALOG_LOGO_WIDTHS: Record<ClientIconKey, number> = {
   'nine-dots': 72,
   'alternative-partners': 220,
   netzero: 180,
@@ -242,8 +242,7 @@ export function Hero({ hero, dashColor, hoverDashColor }: HeroProps) {
     .join('')
     .toUpperCase();
 
-  const logoWidth =
-    (CATALOG_LOGO_WIDTHS[hero.clientIcon] ?? 140) * HERO_LOGO_SCALE;
+  const logoWidth = CATALOG_LOGO_WIDTHS[hero.clientIcon] * HERO_LOGO_SCALE;
 
   return (
     <Section id="case-study-hero">

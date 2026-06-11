@@ -9,18 +9,24 @@ import { Social } from './Social';
 
 type MenuProps = {
   backgroundColor: string;
+  disableElevation?: boolean;
+  enableBackdropBlur?: boolean;
   scheme?: MenuScheme;
   socialLinks: MenuSocialLinkType[];
 };
 
 export function Menu({
   backgroundColor,
+  disableElevation,
+  enableBackdropBlur,
   scheme = 'primary',
   socialLinks,
 }: MenuProps) {
   return (
     <Root
       backgroundColor={backgroundColor}
+      disableElevation={disableElevation}
+      enableBackdropBlur={enableBackdropBlur}
       navItems={MENU_DATA.navItems}
       scheme={scheme}
       socialLinks={socialLinks}

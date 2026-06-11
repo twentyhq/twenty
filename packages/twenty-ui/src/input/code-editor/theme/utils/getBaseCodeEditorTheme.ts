@@ -1,6 +1,6 @@
 import { type ThemeType } from '@ui/theme-constants';
 import { type editor } from 'monaco-editor';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 const convertColorToHex = (color: string): string => {
   const displayP3Match = color.match(

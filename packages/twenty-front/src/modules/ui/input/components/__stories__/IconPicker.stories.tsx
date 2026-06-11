@@ -9,7 +9,7 @@ import {
   IconPicker,
   type IconPickerProps,
 } from '@/ui/input/components/IconPicker';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 
 type IconPickerStoryProps = IconPickerProps;
 
