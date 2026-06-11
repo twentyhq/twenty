@@ -139,6 +139,20 @@ function walk(directory) {
       }
     }
 
+    // three is heavy (~150KB gz): only the visuals heavy zones may value-
+    // import it, reached exclusively via the rigs' dynamic imports — the
+    // bundle boundary as a build invariant.
+    if (
+      !/^platform\/visuals\/(three-runtime|halftone)\//.test(
+        relativePath.split(path.sep).join('/'),
+      ) &&
+      /^import (?!type )[^;]*from 'three/m.test(content)
+    ) {
+      failures.push(
+        `src/${relativePath}: value-imports three outside platform/visuals heavy zones (use "import type" for types).`,
+      );
+    }
+
     // tokens and icons are pure: no client runtime.
     if (
       (relativePath.startsWith('tokens' + path.sep) ||

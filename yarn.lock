@@ -24327,6 +24327,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/three@npm:^0.184.1":
+  version: 0.184.1
+  resolution: "@types/three@npm:0.184.1"
+  dependencies:
+    "@dimforge/rapier3d-compat": "npm:~0.12.0"
+    "@tweenjs/tween.js": "npm:~23.1.3"
+    "@types/stats.js": "npm:*"
+    "@types/webxr": "npm:>=0.5.17"
+    fflate: "npm:~0.8.2"
+    meshoptimizer: "npm:~1.1.1"
+  checksum: 10c0/de5d9d1c9c2ff9642ced8d3567293a2a0b1c4550decea9073fd766a469ab72e0502014caf499d1db98ab0036ee28060e47b19acccd0ca96438883bbe1210c37c
+  languageName: node
+  linkType: hard
+
 "@types/through@npm:*":
   version: 0.0.33
   resolution: "@types/through@npm:0.0.33"
@@ -43483,6 +43497,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"meshoptimizer@npm:~1.1.1":
+  version: 1.1.1
+  resolution: "meshoptimizer@npm:1.1.1"
+  checksum: 10c0/aacd816cbe206e49f16c88ed8b13deafec40cdb8b844080b6d614b4d945dfc7242d5dccfbc1269375a5d4dce2f354261c107d3ce6e564961bd9a220e4616dafb
+  languageName: node
+  linkType: hard
+
 "methods@npm:^1.1.2, methods@npm:~1.1.2":
   version: 1.1.2
   resolution: "methods@npm:1.1.2"
@@ -54318,6 +54339,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"three@npm:^0.184.0":
+  version: 0.184.0
+  resolution: "three@npm:0.184.0"
+  checksum: 10c0/6af4a36dd97e7082c8daca57af162a36df0ca18337a805913bdb6787dd5b2626face8b51d361a0cb2f767e18fdb1ad7e73ab945ae32647741af9278311f5369d
+  languageName: node
+  linkType: hard
+
 "through2@npm:4.0.2, through2@npm:^4.0.2":
   version: 4.0.2
   resolution: "through2@npm:4.0.2"
@@ -55817,6 +55845,7 @@ __metadata:
     "@types/node": "npm:^20"
     "@types/react": "npm:^19"
     "@types/react-dom": "npm:^19"
+    "@types/three": "npm:^0.184.1"
     "@wyw-in-js/babel-preset": "npm:^0.8.1"
     "@wyw-in-js/transform": "npm:^0.8.1"
     next: "npm:^16.2.6"
@@ -55824,6 +55853,7 @@ __metadata:
     react: "npm:19.2.3"
     react-dom: "npm:19.2.3"
     server-only: "npm:^0.0.1"
+    three: "npm:^0.184.0"
     twenty-shared: "workspace:*"
   languageName: unknown
   linkType: soft

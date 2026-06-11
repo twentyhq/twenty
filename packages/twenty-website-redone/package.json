@@ -22,6 +22,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "server-only": "^0.0.1",
+    "three": "^0.184.0",
     "twenty-shared": "workspace:*"
   },
   "devDependencies": {
@@ -31,6 +32,7 @@
     "@lingui/swc-plugin": "^5.11.0",
     "@types/node": "^20",
     "@types/react": "^19",
-    "@types/react-dom": "^19"
+    "@types/react-dom": "^19",
+    "@types/three": "^0.184.1"
   }
 }
