@@ -16,9 +16,14 @@ export function generateFrontConfig(): void {
   const useAutoUrl =
     process.env.FRONT_AUTO_BASE_URL === 'true' || !process.env.SERVER_URL;
 
-  const envForFront = useAutoUrl
+  const envForFront: Record<string, string> = useAutoUrl
     ? {}
-    : { REACT_APP_SERVER_BASE_URL: process.env.SERVER_URL };
+    : { REACT_APP_SERVER_BASE_URL: process.env.SERVER_URL! };
+
+  if (process.env.REACT_APP_DIALER_DOCK_URL) {
+    envForFront.REACT_APP_DIALER_DOCK_URL =
+      process.env.REACT_APP_DIALER_DOCK_URL;
+  }
 
   const configString = `<!-- BEGIN: Twenty Config -->
     <script id="twenty-env-config">
