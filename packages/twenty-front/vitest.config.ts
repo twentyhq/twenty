@@ -7,9 +7,6 @@ import { defineConfig } from 'vitest/config';
 
 const MINUTES_IN_MS = 60 * 1000;
 
-// Argos screenshots are only captured for the modules and pages scopes:
-// performance stories render nondeterministic profiling reports and the
-// unscoped (default) glob would include them.
 const shouldCaptureArgosScreenshots = ['modules', 'pages'].includes(
   process.env.STORYBOOK_SCOPE ?? '',
 );

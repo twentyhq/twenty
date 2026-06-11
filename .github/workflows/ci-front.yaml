@@ -3,7 +3,6 @@ name: CI Front
 on:
   pull_request:
   merge_group:
-  # Main builds provide the Argos visual regression baselines
   push:
     branches: [main]
 
@@ -11,9 +10,6 @@ permissions:
   contents: read
 
 concurrency:
-  # On main every push gets its own group: a shared group keeps at most one
-  # pending run, so rapid consecutive merges would cancel queued runs and
-  # leave Argos baseline gaps (base builds are resolved by exact commit).
   group: ${{ github.workflow }}-${{ github.ref }}${{ github.ref == 'refs/heads/main' && format('-{0}', github.sha) || '' }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
@@ -79,9 +75,6 @@ jobs:
       fail-fast: false
       matrix:
         shard: [1, 2, 3, 4]
-        # On push to main only the scopes that produce Argos baseline
-        # screenshots run: performance stories capture no screenshots and
-        # their thresholds are already enforced on every PR.
         storybook_scope: ${{ github.event_name == 'push' && fromJSON('["modules", "pages"]') || fromJSON('["modules", "pages", "performance"]') }}
     env:
       SHARD_COUNTER: 4
@@ -181,8 +174,6 @@ jobs:
   #         npx nyc merge coverage-artifacts ${{ env.PATH_TO_COVERAGE }}/coverage-storybook.json
   #     - name: Checking coverage
   #       run: npx nx storybook:coverage twenty-front --checkCoverage=true --configuration=${{ matrix.storybook_scope }}
-  # The 8 modules/pages shards each upload a partial screenshots artifact;
-  # merge them into the single artifact consumed by visual-regression-dispatch.
   front-sb-screenshots:
     timeout-minutes: 5
     runs-on: ubuntu-latest
