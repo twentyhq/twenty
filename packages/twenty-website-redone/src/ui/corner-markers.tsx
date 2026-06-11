@@ -1,6 +1,6 @@
-import { IconPlus } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
 
+import { PlusMark } from '@/icons';
 import { color } from '@/tokens';
 
 const MARKER_SIZE_PX = 14;
@@ -50,7 +50,7 @@ export function CornerMarkers() {
     <>
       {CORNERS.map((corner) => (
         <Marker aria-hidden data-corner={corner} key={corner}>
-          <IconPlus size={MARKER_SIZE_PX} stroke={1.5} />
+          <PlusMark sizePx={MARKER_SIZE_PX} />
         </Marker>
       ))}
     </>

@@ -1,6 +1,6 @@
-import { IconArrowRight } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
 
+import { ArrowRight } from '@/icons';
 import { getServerI18n } from '@/platform/i18n';
 import { LocalizedLink } from '@/platform/i18n/localized-link';
 import {
@@ -189,7 +189,7 @@ export function IllustrationCard({ card }: { card: IllustrationCardRecord }) {
                 </span>
               </span>
               <span data-slot="action-glyph">
-                <IconArrowRight size={18} stroke={1.6} />
+                <ArrowRight sizePx={18} />
               </span>
             </ActionLink>
           </TrailingAction>

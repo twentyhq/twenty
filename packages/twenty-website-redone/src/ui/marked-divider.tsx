@@ -1,6 +1,6 @@
-import { IconPlus } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
 
+import { PlusMark } from '@/icons';
 import { color, mediaUp, semanticColor, spacing } from '@/tokens';
 
 // The plus-tipped hairline that separates major blocks: horizontal when
@@ -20,7 +20,7 @@ const DividerRoot = styled.div`
 `;
 
 const DividerLine = styled.div`
-  background-color: ${semanticColor.line};
+  background-color: var(--marked-divider-line, ${semanticColor.line});
   flex: 1 1 0%;
   height: 1px;
   min-height: 1px;
@@ -37,9 +37,9 @@ const DividerLine = styled.div`
 export function MarkedDivider() {
   return (
     <DividerRoot role="separator">
-      <IconPlus aria-hidden size={12} stroke={1.5} />
+      <PlusMark sizePx={12} />
       <DividerLine aria-hidden />
-      <IconPlus aria-hidden size={12} stroke={1.5} />
+      <PlusMark sizePx={12} />
     </DividerRoot>
   );
 }

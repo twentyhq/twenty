@@ -1,7 +1,8 @@
 'use client';
 
-import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
 import { msg } from '@lingui/core/macro';
+
+import { ArrowLeft, ArrowRight } from '@/icons';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
@@ -11,6 +12,7 @@ import {
   FONT_WEIGHT,
   fontFamily,
   mediaUp,
+  semanticColor,
   spacing,
   typeRampDeclarations,
 } from '@/tokens';
@@ -54,15 +56,19 @@ const CounterSlot = styled.div`
   }
 `;
 
-// The hourglass halftone renders here with the visual-runtime wave.
+// The hourglass halftone renders here with the visual-runtime wave; the
+// slot reserves the authored canvas box now so the load cannot shift
+// layout (198x279 stacked, 336x476 from md).
 const VisualSlot = styled.div`
   align-self: start;
   justify-self: start;
   min-height: 279px;
+  min-width: 198px;
   order: 2;
 
   ${mediaUp('md')} {
     min-height: 476px;
+    min-width: 336px;
     order: 1;
   }
 `;
@@ -154,6 +160,10 @@ const AuthorBlock = styled.div`
 `;
 
 const SeparatorSlot = styled.div`
+  /* This divider reads structural: the old section draws it at the strong
+     tier (0.2), unlike the footer's 0.1. */
+  --marked-divider-line: ${semanticColor.lineStrong};
+
   width: 100%;
 
   ${mediaUp('md')} {
@@ -213,7 +223,7 @@ export function TestimonialsCarousel({
               onClick={() => hasPrevious && setIndex(index - 1)}
               sizePx={48}
             >
-              <IconArrowLeft size={14} stroke={1.6} />
+              <ArrowLeft sizePx={14} />
             </IconButton>
             <IconButton
               ariaLabel="Next testimonial"
@@ -221,7 +231,7 @@ export function TestimonialsCarousel({
               onClick={() => hasNext && setIndex(index + 1)}
               sizePx={48}
             >
-              <IconArrowRight size={14} stroke={1.6} />
+              <ArrowRight sizePx={14} />
             </IconButton>
           </NavGroup>
           <AuthorBlock>
