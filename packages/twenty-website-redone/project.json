@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/twenty-website-redone/src",
   "projectType": "application",
+  "tags": ["scope:website"],
   "targets": {
     "dev": {
       "executor": "nx:run-commands",
@@ -36,7 +37,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "node scripts/check-conventions.mjs && npx oxlint -c .oxlintrc.json . && npx oxfmt --check ."
+        "command": "node scripts/check-conventions.mjs && node scripts/check-translations.mjs && npx oxlint -c .oxlintrc.json . && npx oxfmt --check ."
       },
       "configurations": {
         "fix": {

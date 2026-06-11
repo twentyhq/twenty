@@ -29,6 +29,14 @@ const Track = styled.div`
   }
 `;
 
+const releasePointer = (event: React.PointerEvent<HTMLDivElement>): void => {
+  try {
+    event.currentTarget.releasePointerCapture(event.pointerId);
+  } catch {
+    // pointer was not captured
+  }
+};
+
 const Slide = styled.div`
   box-sizing: border-box;
   max-width: 100%;
@@ -89,14 +97,6 @@ export function StepperSwipeDeck({
     },
     [onActiveIndexChange, stepCount],
   );
-
-  const releasePointer = (event: React.PointerEvent<HTMLDivElement>): void => {
-    try {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    } catch {
-      // pointer was not captured
-    }
-  };
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (event.pointerType === 'mouse' && event.button !== 0) return;

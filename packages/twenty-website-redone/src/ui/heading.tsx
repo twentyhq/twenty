@@ -89,6 +89,15 @@ export function Heading({
   size = 'md',
   weight = 'regular',
 }: HeadingProps) {
+  // Keys are the segment's character offset in the heading: data-derived,
+  // unique even when the same word appears twice.
+  let offset = 0;
+  const keyedSegments = parseHeadingNotation(children).map((segment) => {
+    const key = `${segment.kind}-${offset}`;
+    offset += segment.text.length;
+    return { ...segment, key };
+  });
+
   return (
     <Tag
       className={headingClassName}
@@ -96,13 +105,13 @@ export function Heading({
       data-size={size}
       data-weight={weight}
     >
-      {parseHeadingNotation(children).map((segment, index) =>
+      {keyedSegments.map((segment) =>
         segment.kind === 'accent' ? (
-          <span data-accent key={index}>
+          <span data-accent key={segment.key}>
             {segment.text}
           </span>
         ) : (
-          <Fragment key={index}>{segment.text}</Fragment>
+          <Fragment key={segment.key}>{segment.text}</Fragment>
         ),
       )}
     </Tag>
