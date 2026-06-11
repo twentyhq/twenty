@@ -21051,39 +21051,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tabler/icons-react@npm:^3.31.0":
-  version: 3.31.0
-  resolution: "@tabler/icons-react@npm:3.31.0"
+"@tabler/icons-react@npm:^3.31.0, @tabler/icons-react@npm:^3.41.1":
+  version: 3.44.0
+  resolution: "@tabler/icons-react@npm:3.44.0"
   dependencies:
-    "@tabler/icons": "npm:3.31.0"
+    "@tabler/icons": "npm:3.44.0"
   peerDependencies:
     react: ">= 16"
-  checksum: 10c0/aceefe1b6c12a2e64921900f49c09c0c24bcd837dfb3d4274914065e33a5175944f1e25ce9a80d110272e5ae0fefc24062a38f1ec75a4ec79c63d40acb9d1d12
+  checksum: 10c0/9a4bb6f1121d001049be8bb5757160ce4d5f2430671479ee94763f88ef43a69ab8d89b835d6c6451de22f3071793b779fefeed43db49d7993de1ea65c50145c9
   languageName: node
   linkType: hard
 
-"@tabler/icons-react@npm:^3.41.1":
-  version: 3.41.1
-  resolution: "@tabler/icons-react@npm:3.41.1"
-  dependencies:
-    "@tabler/icons": "npm:3.41.1"
-  peerDependencies:
-    react: ">= 16"
-  checksum: 10c0/d103816d91df212ef6a4fc05e9f8d5f01deec2197d3accc4a398d325d1cfa8910e06b4daaf82cd08749f242c3908885ac60b21c4129b21094ece9fe0ecd46e4c
-  languageName: node
-  linkType: hard
-
-"@tabler/icons@npm:3.31.0":
-  version: 3.31.0
-  resolution: "@tabler/icons@npm:3.31.0"
-  checksum: 10c0/03fcfff0b705e1474030acee2ff0523bfa1fda7a29a33d031a9fd8e3b52ecc2e0380f9cf5e81bd054b30dc0acdb819b1e08ab746805be8d660934a08b2c3545e
-  languageName: node
-  linkType: hard
-
-"@tabler/icons@npm:3.41.1":
-  version: 3.41.1
-  resolution: "@tabler/icons@npm:3.41.1"
-  checksum: 10c0/b1238157fe6e57c0202f1f7153621ad937a6f73ff7c0f0af5a71fcbdace18a3281cddd6632229029c3a3df7c530ae8bcefa75c18e35db4b65e7f884282762cf1
+"@tabler/icons@npm:3.44.0":
+  version: 3.44.0
+  resolution: "@tabler/icons@npm:3.44.0"
+  checksum: 10c0/0d5c1f9d6e68aa04c4a661e96035190e0884e0bc0022d31922efad3cfba210a25b2f013c0b6c0ab6aeb3d5a402a9b85a168966bd11a30ba6087f614f8521ccf3
   languageName: node
   linkType: hard
 
