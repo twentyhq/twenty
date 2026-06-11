@@ -107,7 +107,7 @@ describe('View REST API', () => {
         name: viewName,
         icon: 'IconTable',
         type: ViewType.TABLE,
-        key: ViewKey.INDEX,
+        key: null,
         position: 0,
         isCompact: false,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
@@ -121,11 +121,31 @@ describe('View REST API', () => {
         objectMetadataId: testObjectMetadataId,
         icon: 'IconTable',
         type: ViewType.TABLE,
-        key: ViewKey.INDEX,
+        key: null,
         position: 0,
         isCompact: false,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
       });
+    });
+
+    it('should reject creating an INDEX view', async () => {
+      const response = await makeRestAPIRequest({
+        method: 'post',
+        path: '/metadata/views',
+        body: {
+          name: generateRecordName('Forged Index View'),
+          objectMetadataId: testObjectMetadataId,
+          icon: 'IconTable',
+          type: ViewType.TABLE,
+          key: ViewKey.INDEX,
+        },
+        bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
+
+      expect(response.status).toBe(400);
+      expect(response.body.messages?.[0]).toBe(
+        'Index views can only be created by the system',
+      );
     });
 
     it('should create a kanban view', async () => {
@@ -161,7 +181,7 @@ describe('View REST API', () => {
         name: viewName,
         icon: 'IconTable',
         type: ViewType.TABLE,
-        key: ViewKey.INDEX,
+        key: null,
         position: 0,
         isCompact: false,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
@@ -202,7 +222,7 @@ describe('View REST API', () => {
         name: viewName,
         icon: 'IconTable',
         type: ViewType.TABLE,
-        key: ViewKey.INDEX,
+        key: null,
         position: 0,
         isCompact: false,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
@@ -262,7 +282,7 @@ describe('View REST API', () => {
         name: viewName,
         icon: 'IconTable',
         type: ViewType.TABLE,
-        key: ViewKey.INDEX,
+        key: null,
         position: 0,
         isCompact: false,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
