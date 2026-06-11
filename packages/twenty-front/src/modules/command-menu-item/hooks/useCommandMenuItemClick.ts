@@ -81,6 +81,7 @@ export const useCommandMenuItemClick = ({
         availabilityType: item.availabilityType,
         availabilityObjectMetadataId: item.availabilityObjectMetadataId,
         payload: item.payload ?? undefined,
+        isInSidePanel: commandMenuContextApi.isInSidePanel,
       });
 
       return;
