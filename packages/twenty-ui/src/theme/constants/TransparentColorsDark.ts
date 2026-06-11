@@ -1,5 +1,5 @@
 import * as RadixColors from '@radix-ui/colors';
-import { GRAY_SCALE_DARK_ALPHA } from '@new-ui/theme/constants/GrayScaleDarkAlpha';
+import { GRAY_SCALE_DARK_ALPHA } from '@ui/theme/constants/GrayScaleDarkAlpha';
 
 export const TRANSPARENT_COLORS_DARK = {
   green1: RadixColors.greenDarkA.greenA1,

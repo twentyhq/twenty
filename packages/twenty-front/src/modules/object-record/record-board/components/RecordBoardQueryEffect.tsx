@@ -81,7 +81,7 @@ export const RecordBoardQueryEffect = () => {
       !recordIndexRecordGroupsAreInInitialLoading &&
       (queryIdentifierHasChanged || recordGroupIdsHaveChanged)
     ) {
-      triggerRecordBoardInitialQuery();
+      triggerRecordBoardInitialQuery({ shouldResetScroll: true });
       setLastRecordGroupIds(recordGroupIds);
     } else if (
       !recordIndexRecordGroupsAreInInitialLoading &&

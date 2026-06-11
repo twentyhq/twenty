@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlLocation',
   label: 'Location',
   description: 'Location returned by People Data Labs.',
+  icon: 'IconMapPin',
   isNullable: true,
 });

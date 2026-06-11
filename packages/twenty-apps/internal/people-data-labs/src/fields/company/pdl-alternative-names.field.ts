@@ -15,5 +15,6 @@ export default defineField({
   name: 'pdlAlternativeNames',
   label: 'Alternative Names',
   description: 'Alternative names returned by People Data Labs.',
+  icon: 'IconSignature',
   isNullable: true,
 });

@@ -1,5 +1,5 @@
 import * as RadixColors from '@radix-ui/colors';
-import { COLOR_LIGHT } from '@new-ui/theme/constants/ColorsLight';
+import { COLOR_LIGHT } from '@ui/theme/constants/ColorsLight';
 
 export const ACCENT_LIGHT = {
   primary: COLOR_LIGHT.blue5,

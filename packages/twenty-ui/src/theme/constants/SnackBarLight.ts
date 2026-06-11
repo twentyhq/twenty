@@ -1,6 +1,6 @@
-import { BACKGROUND_LIGHT } from '@new-ui/theme/constants/BackgroundLight';
-import { FONT_LIGHT } from '@new-ui/theme/constants/FontLight';
-import { MAIN_COLORS_LIGHT } from '@new-ui/theme/constants/MainColorsLight';
+import { BACKGROUND_LIGHT } from '@ui/theme/constants/BackgroundLight';
+import { FONT_LIGHT } from '@ui/theme/constants/FontLight';
+import { MAIN_COLORS_LIGHT } from '@ui/theme/constants/MainColorsLight';
 
 export const SNACK_BAR_LIGHT = {
   success: {

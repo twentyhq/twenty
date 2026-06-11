@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlSkills',
   label: 'Skills',
   description: 'Skills returned by People Data Labs.',
+  icon: 'IconBulb',
   isNullable: true,
 });
