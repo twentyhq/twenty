@@ -4,7 +4,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
-import { type DraggableLocation } from '@hello-pangea/dnd';
+import { calcGeneratorDuration } from 'framer-motion';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { filterOutByProperty } from 'twenty-shared/utils';
@@ -27,15 +27,17 @@ export const useReorderColumns = (recordTableId?: string) => {
 
   const reorderColumns = useCallback(
     async ({
-      source,
-      destination,
+      sourceIndex,
+      destinationIndex,
     }: {
-      source: DraggableLocation;
-      destination: DraggableLocation;
+      sourceIndex: number;
+      destinationIndex: number;
     }) => {
-      if (source.index === destination.index) {
+      if (sourceIndex === destinationIndex) {
         return;
       }
+
+      console.log(sourceIndex, destinationIndex);
 
       const draggableFields = store
         .get(visibleRecordFieldsCallbackState)
@@ -45,20 +47,23 @@ export const useReorderColumns = (recordTableId?: string) => {
             labelIdentifierFieldMetadataItem?.id,
           ),
         );
+        // console.log(draggableFields)
 
       if (
-        source.index < 0 ||
-        destination.index < 0 ||
-        source.index >= draggableFields.length ||
-        destination.index >= draggableFields.length
+        sourceIndex < 0 ||
+        destinationIndex < 0 ||
+        sourceIndex >= draggableFields.length ||
+        destinationIndex >= draggableFields.length
       ) {
         return;
       }
 
       const reorderedFields = moveArrayItem(draggableFields, {
-        fromIndex: source.index,
-        toIndex: destination.index,
+        fromIndex: sourceIndex,
+        toIndex: destinationIndex,
       });
+
+      // console.log(reorderedFields)
 
       const orderedPositions = draggableFields.map((field) => field.position);
 
@@ -82,7 +87,7 @@ export const useReorderColumns = (recordTableId?: string) => {
         return;
       }
 
-      await saveViewFields(updatedViewFields);
+      // await saveViewFields(updatedViewFields);
     },
     [
       store,
