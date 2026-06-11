@@ -16626,7 +16626,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ptc-org/nestjs-query-typeorm@npm:^9.4.0":
+"@ptc-org/nestjs-query-typeorm@npm:9.4.0":
   version: 9.4.0
   resolution: "@ptc-org/nestjs-query-typeorm@npm:9.4.0"
   dependencies:
@@ -16644,6 +16644,27 @@ __metadata:
     class-transformer: ^0.5
     typeorm: ^0.3.15
   checksum: 10c0/8732a44b1fd311be5e58dd14b99005ee27106f8ad3408e17d68b411a36b4910c40d07f9c429c9322af95bd625810c106b2473a494c096817ade38a338c8956f5
+  languageName: node
+  linkType: hard
+
+"@ptc-org/nestjs-query-typeorm@patch:@ptc-org/nestjs-query-typeorm@npm%3A9.4.0#~/.yarn/patches/@ptc-org-nestjs-query-typeorm-npm-9.4.0-ca3414967e.patch":
+  version: 9.4.0
+  resolution: "@ptc-org/nestjs-query-typeorm@patch:@ptc-org/nestjs-query-typeorm@npm%3A9.4.0#~/.yarn/patches/@ptc-org-nestjs-query-typeorm-npm-9.4.0-ca3414967e.patch::version=9.4.0&hash=c30501"
+  dependencies:
+    "@ptc-org/nestjs-query-core": "npm:9.4.0"
+    camel-case: "npm:^4.1.2"
+    lodash.filter: "npm:^4.6.0"
+    lodash.merge: "npm:^4.6.2"
+    lodash.omit: "npm:^4.5.0"
+    reflect-metadata: "npm:0.2.2"
+    tslib: "npm:^2.8.1"
+    uuid: "npm:^10.0.0"
+  peerDependencies:
+    "@nestjs/common": ^9.0.0 || ^10.0.0 || ^11.0.0
+    "@nestjs/typeorm": ^9.0.0 || ^10.0.0 || ^11.0.0
+    class-transformer: ^0.5
+    typeorm: ^0.3.15
+  checksum: 10c0/93c81d7a787992a227be643ee03d211fabda9ecd30ffb0116c4d60244cde666c096ad7330d8969e1390d24f876e51ee11545033ea6e8b41cf656defe94c28899
   languageName: node
   linkType: hard
 
@@ -55079,7 +55100,7 @@ __metadata:
     "@opentelemetry/sdk-metrics": "npm:^2.0.0"
     "@ptc-org/nestjs-query-core": "npm:^9.4.0"
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@npm%3A9.4.0#~/.yarn/patches/@ptc-org-nestjs-query-graphql-npm-9.4.0-8e6f7894e1.patch"
-    "@ptc-org/nestjs-query-typeorm": "npm:^9.4.0"
+    "@ptc-org/nestjs-query-typeorm": "patch:@ptc-org/nestjs-query-typeorm@npm%3A9.4.0#~/.yarn/patches/@ptc-org-nestjs-query-typeorm-npm-9.4.0-ca3414967e.patch"
     "@react-email/render": "npm:^1.2.3"
     "@sentry/nestjs": "npm:^10.51.0"
     "@sentry/node": "npm:^10.51.0"
