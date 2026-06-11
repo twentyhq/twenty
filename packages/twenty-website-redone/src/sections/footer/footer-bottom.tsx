@@ -2,7 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { Fragment } from 'react';
 
-import { getServerI18n } from '@/platform/i18n/get-server-i18n';
+import { getServerI18n } from '@/platform/i18n';
 import {
   color,
   FONT_WEIGHT,
@@ -12,6 +12,8 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
+
+import { ExternalLink, VerticalDivider } from '@/ui';
 
 import { FOOTER } from './footer.data';
 import { LocaleSwitcher } from './locale-switcher';
@@ -66,7 +68,7 @@ const SocialNav = styled.nav`
   }
 `;
 
-const SocialAnchor = styled.a`
+const SocialAnchor = styled(ExternalLink)`
   align-items: center;
   color: ${semanticColor.ink};
   display: flex;
@@ -80,12 +82,6 @@ const SocialAnchor = styled.a`
     outline: 1px solid ${color('blue')};
     outline-offset: 1px;
   }
-`;
-
-const Divider = styled.span`
-  background-color: ${semanticColor.divider};
-  height: 10px;
-  width: 1px;
 `;
 
 export function FooterBottom() {
@@ -103,13 +99,8 @@ export function FooterBottom() {
           const IconComponent = link.icon;
           return (
             <Fragment key={link.href}>
-              {index > 0 && <Divider aria-hidden />}
-              <SocialAnchor
-                aria-label={link.ariaLabel}
-                href={link.href}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
+              {index > 0 && <VerticalDivider aria-hidden />}
+              <SocialAnchor aria-label={link.ariaLabel} href={link.href}>
                 <IconComponent aria-hidden size={16} />
               </SocialAnchor>
             </Fragment>

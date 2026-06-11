@@ -8,6 +8,9 @@ import { TYPE_SCALE, type TypeStep } from './type-scale';
 // measure and reflows (text-wrap: balance) — heading and body share one
 // physics instead of stepping or freezing.
 const FLUID_VIEWPORT_MIN_PX = 390;
+// Used only to derive the vw slope of the interpolation. clamp() endpoints
+// are rem, so user font-size preferences scale the type; a non-16px root
+// only shifts the in-between rate, never the designed endpoints.
 const ROOT_FONT_SIZE_PX = 16;
 const RUNNING_TEXT_LINE_HEIGHT = '1.55';
 

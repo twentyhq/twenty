@@ -5,6 +5,7 @@ export {
 } from './alpha-scale';
 export { BREAKPOINT_PX, type Breakpoint } from './breakpoints';
 export { color } from './color';
+export { EASING } from './easing';
 export { type ColorToken } from './color-token';
 export { tokenCssVariables } from './css-variables';
 export { fontFamily, type FontFamilyToken } from './font-family';

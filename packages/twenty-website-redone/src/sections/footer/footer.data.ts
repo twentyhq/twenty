@@ -2,6 +2,7 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
 import { DiscordMark, GitHubMark } from '@/icons';
+import { SITE_URLS } from '@/platform/site-urls';
 import { type MenuIconComponent } from '@/sections/menu/menu.data';
 import { IconBrandLinkedin, IconBrandX } from '@tabler/icons-react';
 
@@ -56,12 +57,12 @@ export const FOOTER: {
       links: [
         {
           label: msg`Developers`,
-          href: 'https://docs.twenty.com/developers/introduction',
+          href: SITE_URLS.docsDevelopers,
           external: true,
         },
         {
           label: msg`User Guide`,
-          href: 'https://docs.twenty.com/getting-started/introduction',
+          href: SITE_URLS.docsGettingStarted,
           external: true,
         },
         { label: msg`Release Notes`, href: '/releases' },
@@ -76,7 +77,7 @@ export const FOOTER: {
         { label: msg`Terms and Conditions`, href: '/terms' },
         {
           label: msg`Trust Center`,
-          href: 'https://trust.twenty.com',
+          href: SITE_URLS.trustCenter,
           external: true,
         },
       ],
@@ -87,19 +88,19 @@ export const FOOTER: {
       links: [
         {
           label: msg`LinkedIn`,
-          href: 'https://www.linkedin.com/company/twenty',
+          href: SITE_URLS.linkedin,
           external: true,
         },
       ],
       ctas: [
         {
           label: msg`Talk to us`,
-          href: 'https://cal.com/forms/f7841033-0a20-4958-8c92-4e34ec128a81',
+          href: SITE_URLS.calBooking,
           variant: 'filled',
         },
         {
           label: msg`Get started`,
-          href: 'https://app.twenty.com/welcome',
+          href: SITE_URLS.appWelcome,
           variant: 'outlined',
         },
       ],
@@ -108,22 +109,22 @@ export const FOOTER: {
   socialLinks: [
     {
       ariaLabel: 'GitHub (opens in new tab)',
-      href: 'https://github.com/twentyhq/twenty',
+      href: SITE_URLS.github,
       icon: GitHubMark,
     },
     {
       ariaLabel: 'Discord (opens in new tab)',
-      href: 'https://discord.gg/cx5n4Jzs57',
+      href: SITE_URLS.discord,
       icon: DiscordMark,
     },
     {
       ariaLabel: 'LinkedIn (opens in new tab)',
-      href: 'https://www.linkedin.com/company/twenty',
+      href: SITE_URLS.linkedin,
       icon: IconBrandLinkedin,
     },
     {
       ariaLabel: 'X (opens in new tab)',
-      href: 'https://x.com/twentycrm',
+      href: SITE_URLS.x,
       icon: IconBrandX,
     },
   ],

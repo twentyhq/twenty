@@ -12,6 +12,7 @@ import { TwentyLogo } from '@/icons';
 import { type CommunityStats } from '@/platform/community';
 import { LocalizedLink } from '@/platform/i18n/localized-link';
 import {
+  EASING,
   buildSchemeDeclarations,
   color,
   mediaUp,
@@ -37,7 +38,7 @@ const headerClassName = css`
   color: ${semanticColor.ink};
   position: sticky;
   top: 0;
-  transition: box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: box-shadow 0.2s ${EASING.gentle};
   width: 100%;
   z-index: ${Z_INDEX.stickyHeader};
 

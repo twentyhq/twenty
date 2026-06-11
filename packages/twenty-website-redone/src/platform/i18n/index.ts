@@ -1,5 +1,6 @@
 export { createI18nInstance } from './create-i18n-instance';
 export { getLocaleMessages } from './get-locale-messages';
+export { getServerI18n } from './get-server-i18n';
 export { I18nProvider, type I18nProviderProps } from './i18n-provider';
 export { isWebsiteLocale } from './is-website-locale';
 export { localeDisplayName } from './locale-display-name';

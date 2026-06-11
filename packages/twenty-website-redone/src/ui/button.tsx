@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { type ReactNode } from 'react';
 
 import {
+  EASING,
   color,
   FONT_WEIGHT,
   fontFamily,
@@ -112,7 +113,7 @@ const buttonClassName = css`
       height: 100%;
       position: relative;
       transform: translateX(calc(-100% - ${spacing(4)}));
-      transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+      transition: transform 260ms ${EASING.standard};
       width: 100%;
     }
   }

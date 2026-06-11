@@ -8,7 +8,9 @@ import { useState } from 'react';
 
 import { ArrowUpRight } from '@/icons';
 import { LocalizedLink } from '@/platform/i18n/localized-link';
+import { ExternalLink } from '@/ui';
 import {
+  EASING,
   color,
   FONT_WEIGHT,
   fontFamily,
@@ -43,7 +45,7 @@ const DropdownLink = styled(NavigationMenu.Link)`
   grid-template-columns: auto 1fr;
   padding: ${spacing(3)};
   text-decoration: none;
-  transition: background 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: background 0.18s ${EASING.standard};
 
   &:hover {
     background: ${color('black-5')};
@@ -170,11 +172,7 @@ export function MenuDropdown({ items }: MenuDropdownProps) {
               <DropdownLink
                 render={
                   child.external === true ? (
-                    <a
-                      href={child.href}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    />
+                    <ExternalLink href={child.href} />
                   ) : (
                     <LocalizedLink href={child.href} />
                   )

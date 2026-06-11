@@ -1,12 +1,10 @@
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
-import { getServerI18n } from '@/platform/i18n/get-server-i18n';
+import { getServerI18n } from '@/platform/i18n';
+import { SITE_URLS } from '@/platform/site-urls';
 import { mediaUp, spacing } from '@/tokens';
 import { Body, Button, Heading, SectionShell } from '@/ui';
-
-const CAL_FORM_URL =
-  'https://cal.com/forms/f7841033-0a20-4958-8c92-4e34ec128a81';
 
 // Pure-CSS glow behind the hero; the halftone visual that renders inside it
 // arrives with the visual-runtime port.
@@ -80,11 +78,11 @@ export function HomeHero() {
         </HeadingGroup>
         <CtaRow>
           <Button
-            href="https://app.twenty.com/welcome"
+            href={SITE_URLS.appWelcome}
             label={i18n._(msg`Get started`)}
           />
           <Button
-            href={CAL_FORM_URL}
+            href={SITE_URLS.calBooking}
             label={i18n._(msg`Talk to us`)}
             variant="outlined"
           />

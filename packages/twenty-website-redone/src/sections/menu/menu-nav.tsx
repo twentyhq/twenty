@@ -8,7 +8,9 @@ import { Fragment } from 'react';
 
 import { LocalizedLink } from '@/platform/i18n/localized-link';
 import { useUnlocalizedPathname } from '@/platform/i18n/use-unlocalized-pathname';
+import { VerticalDivider } from '@/ui';
 import {
+  EASING,
   color,
   FONT_WEIGHT,
   fontFamily,
@@ -52,7 +54,7 @@ const navItemStyles = `
   position: relative;
   text-decoration: none;
   text-transform: uppercase;
-  transition: color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: color 0.2s ${EASING.gentle};
 
   &::before {
     bottom: ${spacing(-3)};
@@ -109,7 +111,7 @@ const NavTrigger = styled(NavigationMenu.Trigger)`
 const TriggerChevron = styled(NavigationMenu.Icon)`
   display: inline-flex;
   flex-shrink: 0;
-  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.24s ${EASING.standard};
 
   ${NavTrigger}[data-popup-open] & {
     transform: rotate(180deg);
@@ -118,12 +120,6 @@ const TriggerChevron = styled(NavigationMenu.Icon)`
   svg {
     display: block;
   }
-`;
-
-const Divider = styled.span`
-  background-color: ${semanticColor.divider};
-  height: 10px;
-  width: 1px;
 `;
 
 const DropdownPositioner = styled(NavigationMenu.Positioner)`
@@ -140,7 +136,7 @@ const DropdownPopup = styled(NavigationMenu.Popup)`
   overflow: hidden;
   transition:
     opacity 0.2s ease,
-    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+    transform 0.24s ${EASING.standard};
 
   &[data-starting-style],
   &[data-ending-style] {
@@ -162,7 +158,7 @@ export function MenuNav({ items }: MenuNavProps) {
       <NavList aria-label="Primary">
         {items.map((item, index) => (
           <Fragment key={i18n._(item.label)}>
-            {index > 0 && <Divider aria-hidden />}
+            {index > 0 && <VerticalDivider aria-hidden />}
             <NavigationMenu.Item>
               {item.children === undefined ? (
                 <NavLink

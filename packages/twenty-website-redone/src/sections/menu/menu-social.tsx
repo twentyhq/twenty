@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { Fragment } from 'react';
 
-import { ArrowUpRight } from '@/icons';
 import { formatCompactCount, type CommunityStats } from '@/platform/community';
 import {
   color,
@@ -12,6 +11,8 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
+
+import { ExternalArrow, ExternalLink, VerticalDivider } from '@/ui';
 
 import { type MenuSocialLink } from './menu.data';
 
@@ -43,7 +44,7 @@ const SocialItem = styled.span`
   }
 `;
 
-const SocialAnchor = styled.a`
+const SocialAnchor = styled(ExternalLink)`
   align-items: center;
   color: ${semanticColor.ink};
   column-gap: ${spacing(2)};
@@ -65,17 +66,6 @@ const SocialAnchor = styled.a`
   }
 `;
 
-const Divider = styled.span`
-  background-color: ${semanticColor.divider};
-  height: 10px;
-  width: 1px;
-`;
-
-const Arrow = styled.span`
-  color: ${color('blue')};
-  display: inline-flex;
-`;
-
 export type MenuSocialProps = {
   links: readonly MenuSocialLink[];
   stats: CommunityStats;
@@ -94,18 +84,11 @@ export function MenuSocial({ links, stats }: MenuSocialProps) {
             data-wide-only={isWideOnly ? '' : undefined}
             key={link.href}
           >
-            {index > 0 && <Divider aria-hidden />}
-            <SocialAnchor
-              aria-label={link.ariaLabel}
-              href={link.href}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
+            {index > 0 && <VerticalDivider aria-hidden />}
+            <SocialAnchor aria-label={link.ariaLabel} href={link.href}>
               <IconComponent aria-hidden size={14} />
               {link.statKey ? formatCompactCount(stats[link.statKey]) : null}
-              <Arrow aria-hidden>
-                <ArrowUpRight sizePx={8} />
-              </Arrow>
+              <ExternalArrow />
             </SocialAnchor>
           </SocialItem>
         );

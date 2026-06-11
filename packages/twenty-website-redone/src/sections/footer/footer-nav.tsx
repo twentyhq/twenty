@@ -2,7 +2,7 @@ import { IconPlus } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
 import { Fragment } from 'react';
 
-import { getServerI18n } from '@/platform/i18n/get-server-i18n';
+import { getServerI18n } from '@/platform/i18n';
 import { LocalizedLink } from '@/platform/i18n/localized-link';
 import {
   color,
@@ -12,7 +12,7 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
-import { Button } from '@/ui';
+import { Button, ExternalLink } from '@/ui';
 
 import { FOOTER, type FooterNavGroup } from './footer.data';
 
@@ -124,7 +124,7 @@ const InternalLink = styled(LocalizedLink)`
   ${linkStyles}
 `;
 
-const ExternalLink = styled.a`
+const ExternalNavLink = styled(ExternalLink)`
   ${linkStyles}
 `;
 
@@ -150,14 +150,10 @@ function GroupBlock({ group }: { group: FooterNavGroup }) {
         {group.links.map((link) => (
           <li key={link.href}>
             {link.external === true ? (
-              <ExternalLink
-                href={link.href}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
+              <ExternalNavLink href={link.href}>
                 <HoverMarker aria-hidden data-slot="hover-marker" />
                 {i18n._(link.label)}
-              </ExternalLink>
+              </ExternalNavLink>
             ) : (
               <InternalLink href={link.href}>
                 <HoverMarker aria-hidden data-slot="hover-marker" />

@@ -1,7 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
-import { getServerI18n } from '@/platform/i18n/get-server-i18n';
+import { getServerI18n } from '@/platform/i18n';
+import { SITE_URLS } from '@/platform/site-urls';
 import { buildFaqPageJsonLd } from '@/platform/seo/build-faq-page-json-ld';
 import { JsonLd } from '@/platform/seo/json-ld';
 import { mediaUp, spacing } from '@/tokens';
@@ -9,9 +10,6 @@ import { Button, Eyebrow, Heading, SectionIntro, SectionShell } from '@/ui';
 
 import { FAQ_QUESTIONS } from './faq.data';
 import { FaqItems } from './faq-items';
-
-const CAL_FORM_URL =
-  'https://cal.com/forms/f7841033-0a20-4958-8c92-4e34ec128a81';
 
 const FaqStack = styled.div`
   display: grid;
@@ -53,11 +51,11 @@ export function Faq() {
           </HeadingMeasure>
           <CtaRow>
             <Button
-              href="https://app.twenty.com/welcome"
+              href={SITE_URLS.appWelcome}
               label={i18n._(msg`Get started`)}
             />
             <Button
-              href={CAL_FORM_URL}
+              href={SITE_URLS.calBooking}
               label={i18n._(msg`Talk to us`)}
               variant="outlined"
             />

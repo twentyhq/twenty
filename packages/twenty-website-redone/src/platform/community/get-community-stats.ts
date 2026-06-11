@@ -5,6 +5,7 @@ export type CommunityStats = {
 
 // Live numbers when reachable, recent-real fallbacks when not — so the menu
 // never renders empty chips and never blocks on a third party.
+// Snapshot of 2026-06-10; refresh when the live numbers drift visibly.
 const FALLBACK_STATS: CommunityStats = {
   discordMembers: 6600,
   githubStars: 49600,

@@ -6,6 +6,7 @@ import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
 import {
+  EASING,
   color,
   FONT_WEIGHT,
   fontFamily,
@@ -34,7 +35,7 @@ const QuestionText = styled.span`
   line-height: 1.25;
   min-width: 0;
   overflow-wrap: break-word;
-  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: color 0.3s ${EASING.smooth};
 `;
 
 // The question marker is two stacked rectangle states (outline resting,
@@ -47,7 +48,7 @@ const MarkerLayer = styled.span`
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.3s ${EASING.smooth};
   width: 14px;
 
   &[data-layer='outline'] {
@@ -85,7 +86,7 @@ const ToggleVisual = styled.span`
   position: relative;
   transition:
     border-color 0.2s ease,
-    transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform 0.2s ${EASING.spring};
   width: 36px;
 `;
 
@@ -196,9 +197,9 @@ const AnswerWrapper = styled.div`
   grid-template-rows: 0fr;
   opacity: 0;
   transition:
-    grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    visibility 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    grid-template-rows 0.4s ${EASING.smooth},
+    opacity 0.4s ${EASING.smooth},
+    visibility 0.4s ${EASING.smooth};
   visibility: hidden;
 
   &[data-open] {

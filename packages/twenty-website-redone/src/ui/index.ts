@@ -7,6 +7,8 @@ export {
 } from './button';
 export { ButtonShape, type ButtonShapeProps } from './button-shape';
 export { Container } from './container';
+export { ExternalArrow } from './external-arrow';
+export { ExternalLink } from './external-link';
 export { CornerMarkers } from './corner-markers';
 export { Eyebrow, type EyebrowProps } from './eyebrow';
 export { IconButton, type IconButtonProps } from './icon-button';
@@ -19,4 +21,5 @@ export {
 } from './heading';
 export { parseHeadingNotation, type HeadingSegment } from './heading-notation';
 export { SectionIntro } from './section-intro';
+export { VerticalDivider } from './vertical-divider';
 export { SectionShell, type SectionShellProps } from './section-shell';

@@ -12,6 +12,7 @@ import {
 import { type ComponentType } from 'react';
 
 import { DiscordMark, GitHubMark } from '@/icons';
+import { SITE_URLS } from '@/platform/site-urls';
 
 export type MenuIconComponent = ComponentType<{
   size?: number;
@@ -55,7 +56,7 @@ export const MENU: {
   navItems: readonly MenuNavItem[];
   socialLinks: readonly MenuSocialLink[];
 } = {
-  appUrl: 'https://app.twenty.com/welcome',
+  appUrl: SITE_URLS.appWelcome,
   navItems: [
     { href: '/product', label: msg`Product` },
     {
@@ -77,7 +78,7 @@ export const MENU: {
         {
           label: msg`User Guide`,
           description: msg`Learn how to use Twenty`,
-          href: 'https://docs.twenty.com/user-guide/introduction',
+          href: SITE_URLS.docsUserGuide,
           external: true,
           icon: IconBook,
           preview: {
@@ -90,7 +91,7 @@ export const MENU: {
         {
           label: msg`Developers`,
           description: msg`Create apps on Twenty`,
-          href: 'https://docs.twenty.com/developers/introduction',
+          href: SITE_URLS.docsDevelopers,
           external: true,
           icon: IconCode,
           preview: {
@@ -136,27 +137,27 @@ export const MENU: {
   socialLinks: [
     {
       ariaLabel: 'GitHub (opens in new tab)',
-      href: 'https://github.com/twentyhq/twenty',
+      href: SITE_URLS.github,
       icon: GitHubMark,
       showInDesktop: true,
       statKey: 'githubStars',
     },
     {
       ariaLabel: 'Discord (opens in new tab)',
-      href: 'https://discord.gg/cx5n4Jzs57',
+      href: SITE_URLS.discord,
       icon: DiscordMark,
       showInDesktop: true,
       statKey: 'discordMembers',
     },
     {
       ariaLabel: 'LinkedIn (opens in new tab)',
-      href: 'https://www.linkedin.com/company/twenty',
+      href: SITE_URLS.linkedin,
       icon: IconBrandLinkedin,
       showInDesktop: false,
     },
     {
       ariaLabel: 'X (opens in new tab)',
-      href: 'https://x.com/twentycrm',
+      href: SITE_URLS.x,
       icon: IconBrandX,
       showInDesktop: false,
     },

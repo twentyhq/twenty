@@ -7,10 +7,10 @@ import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { Fragment, useState } from 'react';
 
-import { ArrowUpRight } from '@/icons';
 import { formatCompactCount, type CommunityStats } from '@/platform/community';
 import { LocalizedLink } from '@/platform/i18n/localized-link';
 import {
+  EASING,
   color,
   FONT_WEIGHT,
   fontFamily,
@@ -19,7 +19,7 @@ import {
   spacing,
   Z_INDEX,
 } from '@/tokens';
-import { Button } from '@/ui';
+import { Button, ExternalArrow, ExternalLink, VerticalDivider } from '@/ui';
 
 import { MENU, type MenuNavItem, type MenuSocialLink } from './menu.data';
 
@@ -37,7 +37,7 @@ const DrawerPanel = styled(Drawer.Popup)`
   top: 0;
   transition:
     opacity 200ms ease,
-    transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+    transform 200ms ${EASING.standard};
   width: 100vw;
   z-index: ${Z_INDEX.drawer};
 
@@ -93,7 +93,7 @@ const DrawerGroupToggle = styled.button`
   justify-content: space-between;
 
   svg {
-    transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 0.24s ${EASING.standard};
   }
 
   &[data-expanded] svg {
@@ -128,7 +128,7 @@ const DrawerChildLink = styled(LocalizedLink)`
   ${drawerChildStyles}
 `;
 
-const DrawerChildAnchor = styled.a`
+const DrawerChildAnchor = styled(ExternalLink)`
   ${drawerChildStyles}
 `;
 
@@ -156,7 +156,7 @@ const SocialRow = styled.div`
   justify-content: center;
 `;
 
-const SocialAnchor = styled.a`
+const SocialAnchor = styled(ExternalLink)`
   align-items: center;
   color: ${semanticColor.ink};
   column-gap: ${spacing(3)};
@@ -173,17 +173,6 @@ const SocialAnchor = styled.a`
     outline: 1px solid ${color('blue')};
     outline-offset: 1px;
   }
-`;
-
-const SocialArrow = styled.span`
-  color: ${color('blue')};
-  display: inline-flex;
-`;
-
-const Divider = styled.span`
-  background-color: ${semanticColor.divider};
-  height: 10px;
-  width: 1px;
 `;
 
 export type MenuDrawerProps = {
@@ -224,16 +213,9 @@ export function MenuDrawer({ navItems, socialLinks, stats }: MenuDrawerProps) {
                     <DrawerGroupChildren>
                       {item.children.map((child) =>
                         child.external === true ? (
-                          <DrawerChildAnchor
-                            href={child.href}
-                            key={child.href}
-                            rel="noopener noreferrer"
-                            target="_blank"
-                          >
+                          <DrawerChildAnchor href={child.href} key={child.href}>
                             {i18n._(child.label)}
-                            <SocialArrow aria-hidden>
-                              <ArrowUpRight sizePx={8} />
-                            </SocialArrow>
+                            <ExternalArrow />
                           </DrawerChildAnchor>
                         ) : (
                           <Drawer.Close
@@ -265,22 +247,13 @@ export function MenuDrawer({ navItems, socialLinks, stats }: MenuDrawerProps) {
             const IconComponent = link.icon;
             return (
               <Fragment key={link.href}>
-                {index > 0 && <Divider aria-hidden />}
-                <SocialAnchor
-                  aria-label={link.ariaLabel}
-                  href={link.href}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
+                {index > 0 && <VerticalDivider aria-hidden />}
+                <SocialAnchor aria-label={link.ariaLabel} href={link.href}>
                   <IconComponent aria-hidden size={16} />
                   {link.statKey
                     ? formatCompactCount(stats[link.statKey])
                     : null}
-                  {link.statKey ? (
-                    <SocialArrow aria-hidden>
-                      <ArrowUpRight sizePx={8} />
-                    </SocialArrow>
-                  ) : null}
+                  {link.statKey ? <ExternalArrow /> : null}
                 </SocialAnchor>
               </Fragment>
             );
