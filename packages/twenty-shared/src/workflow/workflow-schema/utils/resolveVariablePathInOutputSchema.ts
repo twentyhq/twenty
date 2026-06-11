@@ -36,11 +36,6 @@ const isFindRecordsOutputSchema = (
   isRecordOutputSchema(value['first'].value) &&
   isSchemaField(value['totalCount']);
 
-const isIteratorOutputSchema = (value: unknown): boolean =>
-  isPlainObject(value) &&
-  isDefined(value['currentItem']) &&
-  isDefined(value['hasProcessedAllItems']);
-
 const fieldResult = (field: SchemaField): ResolvedVariable => ({
   found: true,
   type: isString(field.type) ? field.type : undefined,
@@ -141,10 +136,6 @@ export const resolveInSchema = (
 
   if (isFindRecordsOutputSchema(schema)) {
     return resolveInFindRecords(schema, segments);
-  }
-
-  if (isIteratorOutputSchema(schema)) {
-    return resolveInGenericMap(schema, segments);
   }
 
   return resolveInGenericMap(schema, segments);
