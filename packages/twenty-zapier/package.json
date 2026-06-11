@@ -16,7 +16,7 @@
     "@sniptt/guards": "^0.2.0",
     "dotenv": "^16.4.5",
     "libphonenumber-js": "^1.10.26",
-    "zapier-platform-core": "15.5.1",
+    "zapier-platform-core": "19.0.0",
     "zod": "^4.1.11"
   },
   "devDependencies": {

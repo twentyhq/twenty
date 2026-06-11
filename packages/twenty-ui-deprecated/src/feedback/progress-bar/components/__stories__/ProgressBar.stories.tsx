@@ -42,7 +42,4 @@ export const Animated: Story = {
       return <Story args={{ value }} />;
     },
   ],
-  parameters: {
-    chromatic: { disableSnapshot: true },
-  },
 };

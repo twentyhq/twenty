@@ -10,9 +10,6 @@ const meta: Meta<typeof CircularProgressBar> = {
   args: {
     size: 50,
   },
-  parameters: {
-    chromatic: { disableSnapshot: true },
-  },
 };
 
 export default meta;

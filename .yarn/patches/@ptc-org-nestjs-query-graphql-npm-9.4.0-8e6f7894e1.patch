@@ -1,5 +1,18 @@
+diff --git a/src/common/external.utils.js b/src/common/external.utils.js
+index 1b4ee1bae8436551447e3b03c9f749f172962539..d00a94b0ce38c13cb09423c1dc72c9101b02cba1 100644
+--- a/src/common/external.utils.js
++++ b/src/common/external.utils.js
+@@ -5,7 +5,7 @@ exports.getGraphqlObjectMetadata = getGraphqlObjectMetadata;
+ exports.getGraphqlObjectName = getGraphqlObjectName;
+ exports.getGraphqlEnumMetadata = getGraphqlEnumMetadata;
+ const graphql_1 = require("@nestjs/graphql");
+-const lazy_metadata_storage_1 = require("@nestjs/graphql/dist/schema-builder/storages/lazy-metadata.storage");
++const lazy_metadata_storage_1 = require("@nestjs/graphql/dist/schema-builder/storages/lazy-metadata.storage.js");
+ const type_errors_1 = require("../types/type.errors");
+ /**
+  * @internal
 diff --git a/src/types/connection/cursor/page-info.type.js b/src/types/connection/cursor/page-info.type.js
-index 00d836d..8eef442 100644
+index 00d836d0b67fba6daae736e4e99d5af2903d1258..c73dd1304611b61f938b75c01f18dbb1edd9ecb4 100644
 --- a/src/types/connection/cursor/page-info.type.js
 +++ b/src/types/connection/cursor/page-info.type.js
 @@ -39,7 +39,6 @@ const getOrCreatePageInfoType = () => {
@@ -11,7 +24,7 @@ index 00d836d..8eef442 100644
          tslib_1.__metadata("design:paramtypes", [Boolean, Boolean, String, String])
      ], PageInfoTypeImpl);
 diff --git a/src/types/connection/offset/offset-connection.type.js b/src/types/connection/offset/offset-connection.type.js
-index b47564f..d33f391 100644
+index e89e5ab573572325aaad024827193e7d06f4e5ba..2878acae20c1367622530c4ea96a76062a84cada 100644
 --- a/src/types/connection/offset/offset-connection.type.js
 +++ b/src/types/connection/offset/offset-connection.type.js
 @@ -64,7 +64,6 @@ function getOrCreateOffsetConnectionType(TItemClass, opts) {
@@ -23,7 +36,7 @@ index b47564f..d33f391 100644
              tslib_1.__metadata("design:paramtypes", [Object, Array, Function])
          ], AbstractConnection);
 diff --git a/src/types/connection/offset/offset-page-info.type.js b/src/types/connection/offset/offset-page-info.type.js
-index 4803306..d459b16 100644
+index 480330653efc3def8423adbc95d1009d02aa9778..ea55bcf2e45a05a2ba32d0f4185a15abac59d478 100644
 --- a/src/types/connection/offset/offset-page-info.type.js
 +++ b/src/types/connection/offset/offset-page-info.type.js
 @@ -25,7 +25,6 @@ const getOrCreateOffsetPageInfoType = () => {
@@ -35,7 +48,7 @@ index 4803306..d459b16 100644
          tslib_1.__metadata("design:paramtypes", [Boolean, Boolean])
      ], PageInfoTypeImpl);
 diff --git a/src/types/delete-many-reponse.type.js b/src/types/delete-many-reponse.type.js
-index 4de72de..b42f05f 100644
+index 4de72de3822d9c23c6637bbec0f0be081cc82675..1663e6f62991153f89db08ab966cdef8e01b262f 100644
 --- a/src/types/delete-many-reponse.type.js
 +++ b/src/types/delete-many-reponse.type.js
 @@ -16,7 +16,6 @@ const DeleteManyResponseType = () => {
@@ -47,7 +60,7 @@ index 4de72de..b42f05f 100644
      ], DeleteManyResponseTypeImpl);
      deleteManyResponseType = DeleteManyResponseTypeImpl;
 diff --git a/src/types/update-many-response.type.js b/src/types/update-many-response.type.js
-index c525d14..74be84f 100644
+index c525d1419e27d3714e7a75b4852e605b83bd4b39..a067b5f60922b7e92e985487c7128efe31162b24 100644
 --- a/src/types/update-many-response.type.js
 +++ b/src/types/update-many-response.type.js
 @@ -16,7 +16,6 @@ const UpdateManyResponseType = () => {
