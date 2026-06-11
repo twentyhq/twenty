@@ -41,7 +41,7 @@ export default async function ReleasesPage({ params }: ReleasesPageProps) {
        */}
       <link
         as="image"
-        href="/illustrations/generated/milestone.jpg"
+        href="/illustrations/generated/milestone.webp"
         rel="preload"
       />
       <Menu
