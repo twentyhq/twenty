@@ -45,9 +45,10 @@
     "@angular-devkit/core": "19.2.24",
     "yeoman-environment": "6.0.1",
     "@electron-forge/plugin-webpack/webpack-dev-server": "5.2.4",
-    "qs": "6.15.2"
+    "qs": "6.15.2",
+    "next/postcss": "8.5.15"
   },
-  "//resolutions": "qs is pinned to 6.15.2 (CVE) for verdaccio + @mintlify/previewing, which pin old express 4.22.x; remove when they upgrade express",
+  "//resolutions": "qs 6.15.2 -> CVE fix for verdaccio + @mintlify/previewing (pin old express 4.22.x); next/postcss 8.5.15 -> CVE fix for next, which pins old postcss 8.4.31 exact on every stable release (fix only in the 16.3.0 canary); remove each once upstream ships a patched version",
   "version": "0.2.1",
   "nx": {},
   "scripts": {
