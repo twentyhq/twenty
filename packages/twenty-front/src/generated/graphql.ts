@@ -4,18 +4,16 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
-export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string; output: string; }
-  String: { input: string; output: string; }
-  Boolean: { input: boolean; output: boolean; }
-  Int: { input: number; output: number; }
-  Float: { input: number; output: number; }
-  DateTime: { input: string; output: string; }
-  JSON: { input: any; output: any; }
-  UUID: { input: any; output: any; }
+  ID: string;
+  String: string;
+  Boolean: boolean;
+  Int: number;
+  Float: number;
+  DateTime: string;
+  JSON: any;
+  UUID: any;
 };
 
 export enum CalendarChannelVisibility {
@@ -25,83 +23,83 @@ export enum CalendarChannelVisibility {
 
 export type ComputeStepOutputSchemaInput = {
   /** Step JSON format */
-  step: Scalars['JSON']['input'];
+  step: Scalars['JSON'];
   /** Workflow version ID */
-  workflowVersionId?: InputMaybe<Scalars['UUID']['input']>;
+  workflowVersionId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type ConnectedAccountHandleDto = {
   __typename?: 'ConnectedAccountHandleDTO';
-  handle: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  provider: Scalars['String']['output'];
+  handle: Scalars['String'];
+  id: Scalars['UUID'];
+  provider: Scalars['String'];
 };
 
 export type CreateDraftFromWorkflowVersionInput = {
   /** Workflow ID */
-  workflowId: Scalars['UUID']['input'];
+  workflowId: Scalars['UUID'];
   /** Workflow version ID */
-  workflowVersionIdToCopy: Scalars['UUID']['input'];
+  workflowVersionIdToCopy: Scalars['UUID'];
 };
 
 export type CreateWorkflowVersionEdgeInput = {
   /** Workflow version source step ID */
-  source: Scalars['String']['input'];
+  source: Scalars['String'];
   /** Workflow version source step connection options */
-  sourceConnectionOptions?: InputMaybe<Scalars['JSON']['input']>;
+  sourceConnectionOptions?: InputMaybe<Scalars['JSON']>;
   /** Workflow version target step ID */
-  target: Scalars['String']['input'];
+  target: Scalars['String'];
   /** Workflow version ID */
-  workflowVersionId: Scalars['String']['input'];
+  workflowVersionId: Scalars['String'];
 };
 
 export type CreateWorkflowVersionStepInput = {
   /** Default settings for the step */
-  defaultSettings?: InputMaybe<Scalars['JSON']['input']>;
+  defaultSettings?: InputMaybe<Scalars['JSON']>;
   /** Step ID */
-  id?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['String']>;
   /** Next step ID */
-  nextStepId?: InputMaybe<Scalars['UUID']['input']>;
+  nextStepId?: InputMaybe<Scalars['UUID']>;
   /** Parent step connection options */
-  parentStepConnectionOptions?: InputMaybe<Scalars['JSON']['input']>;
+  parentStepConnectionOptions?: InputMaybe<Scalars['JSON']>;
   /** Parent step ID */
-  parentStepId?: InputMaybe<Scalars['String']['input']>;
+  parentStepId?: InputMaybe<Scalars['String']>;
   /** Step position */
   position?: InputMaybe<WorkflowStepPositionInput>;
   /** New step type */
-  stepType: Scalars['String']['input'];
+  stepType: Scalars['String'];
   /** Workflow version ID */
-  workflowVersionId: Scalars['UUID']['input'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 export type DateTimeFilter = {
-  eq?: InputMaybe<Scalars['DateTime']['input']>;
-  gt?: InputMaybe<Scalars['DateTime']['input']>;
-  gte?: InputMaybe<Scalars['DateTime']['input']>;
-  in?: InputMaybe<Array<Scalars['DateTime']['input']>>;
+  eq?: InputMaybe<Scalars['DateTime']>;
+  gt?: InputMaybe<Scalars['DateTime']>;
+  gte?: InputMaybe<Scalars['DateTime']>;
+  in?: InputMaybe<Array<Scalars['DateTime']>>;
   is?: InputMaybe<FilterIs>;
-  lt?: InputMaybe<Scalars['DateTime']['input']>;
-  lte?: InputMaybe<Scalars['DateTime']['input']>;
-  neq?: InputMaybe<Scalars['DateTime']['input']>;
+  lt?: InputMaybe<Scalars['DateTime']>;
+  lte?: InputMaybe<Scalars['DateTime']>;
+  neq?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type DeleteWorkflowVersionStepInput = {
   /** Step to delete ID */
-  stepId: Scalars['String']['input'];
+  stepId: Scalars['String'];
   /** Workflow version ID */
-  workflowVersionId: Scalars['UUID']['input'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 export type DuplicateWorkflowInput = {
   /** Workflow ID to duplicate */
-  workflowIdToDuplicate: Scalars['UUID']['input'];
+  workflowIdToDuplicate: Scalars['UUID'];
   /** Workflow version ID to copy */
-  workflowVersionIdToCopy: Scalars['UUID']['input'];
+  workflowVersionIdToCopy: Scalars['UUID'];
 };
 
 export type DuplicateWorkflowVersionStepInput = {
-  stepId: Scalars['String']['input'];
-  workflowVersionId: Scalars['String']['input'];
+  stepId: Scalars['String'];
+  workflowVersionId: Scalars['String'];
 };
 
 export enum FilterIs {
@@ -111,14 +109,14 @@ export enum FilterIs {
 
 export type LinkMetadata = {
   __typename?: 'LinkMetadata';
-  label: Scalars['String']['output'];
-  url: Scalars['String']['output'];
+  label: Scalars['String'];
+  url: Scalars['String'];
 };
 
 export type LinksMetadata = {
   __typename?: 'LinksMetadata';
-  primaryLinkLabel: Scalars['String']['output'];
-  primaryLinkUrl: Scalars['String']['output'];
+  primaryLinkLabel: Scalars['String'];
+  primaryLinkUrl: Scalars['String'];
   secondaryLinks?: Maybe<Array<LinkMetadata>>;
 };
 
@@ -130,30 +128,30 @@ export enum MessageChannelVisibility {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  activateWorkflowVersion: Scalars['Boolean']['output'];
-  computeStepOutputSchema: Scalars['JSON']['output'];
+  activateWorkflowVersion: Scalars['Boolean'];
+  computeStepOutputSchema: Scalars['JSON'];
   createDraftFromWorkflowVersion: WorkflowVersionDto;
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
   createWorkflowVersionStep: WorkflowVersionStepChanges;
-  deactivateWorkflowVersion: Scalars['Boolean']['output'];
+  deactivateWorkflowVersion: Scalars['Boolean'];
   deleteWorkflowVersionEdge: WorkflowVersionStepChanges;
   deleteWorkflowVersionStep: WorkflowVersionStepChanges;
-  dismissMaintenanceModeBanner: Scalars['Boolean']['output'];
-  dismissReconnectAccountBanner: Scalars['Boolean']['output'];
+  dismissMaintenanceModeBanner: Scalars['Boolean'];
+  dismissReconnectAccountBanner: Scalars['Boolean'];
   duplicateWorkflow: WorkflowVersionDto;
   duplicateWorkflowVersionStep: WorkflowVersionStepChanges;
   runWorkflowVersion: RunWorkflowVersion;
   stopWorkflowRun: WorkflowRun;
-  submitFormStep: Scalars['Boolean']['output'];
+  submitFormStep: Scalars['Boolean'];
   testHttpRequest: TestHttpRequest;
   updateWorkflowRunStep: WorkflowAction;
-  updateWorkflowVersionPositions: Scalars['Boolean']['output'];
+  updateWorkflowVersionPositions: Scalars['Boolean'];
   updateWorkflowVersionStep: WorkflowAction;
 };
 
 
 export type MutationActivateWorkflowVersionArgs = {
-  workflowVersionId: Scalars['UUID']['input'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 
@@ -178,7 +176,7 @@ export type MutationCreateWorkflowVersionStepArgs = {
 
 
 export type MutationDeactivateWorkflowVersionArgs = {
-  workflowVersionId: Scalars['UUID']['input'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 
@@ -193,7 +191,7 @@ export type MutationDeleteWorkflowVersionStepArgs = {
 
 
 export type MutationDismissReconnectAccountBannerArgs = {
-  connectedAccountId: Scalars['UUID']['input'];
+  connectedAccountId: Scalars['UUID'];
 };
 
 
@@ -213,7 +211,7 @@ export type MutationRunWorkflowVersionArgs = {
 
 
 export type MutationStopWorkflowRunArgs = {
-  workflowRunId: Scalars['UUID']['input'];
+  workflowRunId: Scalars['UUID'];
 };
 
 
@@ -259,91 +257,91 @@ export type Query = {
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
   getTimelineThreadsFromOpportunityId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
-  isMaintenanceModeBannerDismissed: Scalars['Boolean']['output'];
+  isMaintenanceModeBannerDismissed: Scalars['Boolean'];
   search: SearchResultConnection;
   workflowStepConnectedAccountHandle?: Maybe<ConnectedAccountHandleDto>;
 };
 
 
 export type QueryGetTimelineCalendarEventsFromCompanyIdArgs = {
-  companyId: Scalars['UUID']['input'];
-  page: Scalars['Int']['input'];
-  pageSize: Scalars['Int']['input'];
+  companyId: Scalars['UUID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
 };
 
 
 export type QueryGetTimelineCalendarEventsFromOpportunityIdArgs = {
-  opportunityId: Scalars['UUID']['input'];
-  page: Scalars['Int']['input'];
-  pageSize: Scalars['Int']['input'];
+  opportunityId: Scalars['UUID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
 };
 
 
 export type QueryGetTimelineCalendarEventsFromPersonIdArgs = {
-  page: Scalars['Int']['input'];
-  pageSize: Scalars['Int']['input'];
-  personId: Scalars['UUID']['input'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+  personId: Scalars['UUID'];
 };
 
 
 export type QueryGetTimelineThreadsFromCompanyIdArgs = {
-  companyId: Scalars['UUID']['input'];
-  page: Scalars['Int']['input'];
-  pageSize: Scalars['Int']['input'];
+  companyId: Scalars['UUID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
 };
 
 
 export type QueryGetTimelineThreadsFromOpportunityIdArgs = {
-  opportunityId: Scalars['UUID']['input'];
-  page: Scalars['Int']['input'];
-  pageSize: Scalars['Int']['input'];
+  opportunityId: Scalars['UUID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
 };
 
 
 export type QueryGetTimelineThreadsFromPersonIdArgs = {
-  page: Scalars['Int']['input'];
-  pageSize: Scalars['Int']['input'];
-  personId: Scalars['UUID']['input'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+  personId: Scalars['UUID'];
 };
 
 
 export type QuerySearchArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
+  after?: InputMaybe<Scalars['String']>;
+  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
   filter?: InputMaybe<ObjectRecordFilterInput>;
-  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
-  limit: Scalars['Int']['input'];
-  searchInput: Scalars['String']['input'];
+  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']>>;
+  limit: Scalars['Int'];
+  searchInput: Scalars['String'];
 };
 
 
 export type QueryWorkflowStepConnectedAccountHandleArgs = {
-  connectedAccountId: Scalars['UUID']['input'];
+  connectedAccountId: Scalars['UUID'];
 };
 
 export type RunWorkflowVersion = {
   __typename?: 'RunWorkflowVersion';
-  workflowRunId: Scalars['UUID']['output'];
+  workflowRunId: Scalars['UUID'];
 };
 
 export type RunWorkflowVersionInput = {
   /** Execution result in JSON format */
-  payload?: InputMaybe<Scalars['JSON']['input']>;
+  payload?: InputMaybe<Scalars['JSON']>;
   /** Workflow run ID */
-  workflowRunId?: InputMaybe<Scalars['UUID']['input']>;
+  workflowRunId?: InputMaybe<Scalars['UUID']>;
   /** Workflow version ID */
-  workflowVersionId: Scalars['UUID']['input'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 export type SearchRecord = {
   __typename?: 'SearchRecord';
-  imageUrl?: Maybe<Scalars['String']['output']>;
-  label: Scalars['String']['output'];
-  objectLabelSingular: Scalars['String']['output'];
-  objectNameSingular: Scalars['String']['output'];
-  recordId: Scalars['UUID']['output'];
-  tsRank: Scalars['Float']['output'];
-  tsRankCD: Scalars['Float']['output'];
+  imageUrl?: Maybe<Scalars['String']>;
+  label: Scalars['String'];
+  objectLabelSingular: Scalars['String'];
+  objectNameSingular: Scalars['String'];
+  recordId: Scalars['UUID'];
+  tsRank: Scalars['Float'];
+  tsRankCD: Scalars['Float'];
 };
 
 export type SearchResultConnection = {
@@ -354,159 +352,159 @@ export type SearchResultConnection = {
 
 export type SearchResultEdge = {
   __typename?: 'SearchResultEdge';
-  cursor: Scalars['String']['output'];
+  cursor: Scalars['String'];
   node: SearchRecord;
 };
 
 export type SearchResultPageInfo = {
   __typename?: 'SearchResultPageInfo';
-  endCursor?: Maybe<Scalars['String']['output']>;
-  hasNextPage: Scalars['Boolean']['output'];
+  endCursor?: Maybe<Scalars['String']>;
+  hasNextPage: Scalars['Boolean'];
 };
 
 export type SubmitFormStepInput = {
   /** Form response in JSON format */
-  response: Scalars['JSON']['input'];
+  response: Scalars['JSON'];
   /** Workflow step ID */
-  stepId: Scalars['UUID']['input'];
+  stepId: Scalars['UUID'];
   /** Workflow run ID */
-  workflowRunId: Scalars['UUID']['input'];
+  workflowRunId: Scalars['UUID'];
 };
 
 export type TestHttpRequest = {
   __typename?: 'TestHttpRequest';
   /** Error information */
-  error?: Maybe<Scalars['JSON']['output']>;
+  error?: Maybe<Scalars['JSON']>;
   /** Response headers */
-  headers?: Maybe<Scalars['JSON']['output']>;
+  headers?: Maybe<Scalars['JSON']>;
   /** Message describing the result */
-  message: Scalars['String']['output'];
+  message: Scalars['String'];
   /** Response data */
-  result?: Maybe<Scalars['JSON']['output']>;
+  result?: Maybe<Scalars['JSON']>;
   /** HTTP status code */
-  status?: Maybe<Scalars['Float']['output']>;
+  status?: Maybe<Scalars['Float']>;
   /** HTTP status text */
-  statusText?: Maybe<Scalars['String']['output']>;
+  statusText?: Maybe<Scalars['String']>;
   /** Whether the request was successful */
-  success: Scalars['Boolean']['output'];
+  success: Scalars['Boolean'];
 };
 
 export type TestHttpRequestInput = {
   /** Request body */
-  body?: InputMaybe<Scalars['JSON']['input']>;
+  body?: InputMaybe<Scalars['JSON']>;
   /** HTTP headers */
-  headers?: InputMaybe<Scalars['JSON']['input']>;
+  headers?: InputMaybe<Scalars['JSON']>;
   /** HTTP method */
-  method: Scalars['String']['input'];
+  method: Scalars['String'];
   /** URL to make the request to */
-  url: Scalars['String']['input'];
+  url: Scalars['String'];
 };
 
 export type TimelineCalendarEvent = {
   __typename?: 'TimelineCalendarEvent';
   conferenceLink: LinksMetadata;
-  conferenceSolution: Scalars['String']['output'];
-  description: Scalars['String']['output'];
-  endsAt: Scalars['DateTime']['output'];
-  id: Scalars['UUID']['output'];
-  isCanceled: Scalars['Boolean']['output'];
-  isFullDay: Scalars['Boolean']['output'];
-  location: Scalars['String']['output'];
+  conferenceSolution: Scalars['String'];
+  description: Scalars['String'];
+  endsAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  isCanceled: Scalars['Boolean'];
+  isFullDay: Scalars['Boolean'];
+  location: Scalars['String'];
   participants: Array<TimelineCalendarEventParticipant>;
-  startsAt: Scalars['DateTime']['output'];
-  title: Scalars['String']['output'];
+  startsAt: Scalars['DateTime'];
+  title: Scalars['String'];
   visibility: CalendarChannelVisibility;
 };
 
 export type TimelineCalendarEventParticipant = {
   __typename?: 'TimelineCalendarEventParticipant';
-  avatarUrl: Scalars['String']['output'];
-  displayName: Scalars['String']['output'];
-  firstName: Scalars['String']['output'];
-  handle: Scalars['String']['output'];
-  lastName: Scalars['String']['output'];
-  personId?: Maybe<Scalars['UUID']['output']>;
-  workspaceMemberId?: Maybe<Scalars['UUID']['output']>;
+  avatarUrl: Scalars['String'];
+  displayName: Scalars['String'];
+  firstName: Scalars['String'];
+  handle: Scalars['String'];
+  lastName: Scalars['String'];
+  personId?: Maybe<Scalars['UUID']>;
+  workspaceMemberId?: Maybe<Scalars['UUID']>;
 };
 
 export type TimelineCalendarEventsWithTotal = {
   __typename?: 'TimelineCalendarEventsWithTotal';
   timelineCalendarEvents: Array<TimelineCalendarEvent>;
-  totalNumberOfCalendarEvents: Scalars['Int']['output'];
+  totalNumberOfCalendarEvents: Scalars['Int'];
 };
 
 export type TimelineThread = {
   __typename?: 'TimelineThread';
   firstParticipant: TimelineThreadParticipant;
-  id: Scalars['UUID']['output'];
-  lastMessageBody: Scalars['String']['output'];
-  lastMessageReceivedAt: Scalars['DateTime']['output'];
+  id: Scalars['UUID'];
+  lastMessageBody: Scalars['String'];
+  lastMessageReceivedAt: Scalars['DateTime'];
   lastTwoParticipants: Array<TimelineThreadParticipant>;
-  numberOfMessagesInThread: Scalars['Float']['output'];
-  participantCount: Scalars['Float']['output'];
-  read: Scalars['Boolean']['output'];
-  subject: Scalars['String']['output'];
+  numberOfMessagesInThread: Scalars['Float'];
+  participantCount: Scalars['Float'];
+  read: Scalars['Boolean'];
+  subject: Scalars['String'];
   visibility: MessageChannelVisibility;
 };
 
 export type TimelineThreadParticipant = {
   __typename?: 'TimelineThreadParticipant';
-  avatarUrl: Scalars['String']['output'];
-  displayName: Scalars['String']['output'];
-  firstName: Scalars['String']['output'];
-  handle: Scalars['String']['output'];
-  lastName: Scalars['String']['output'];
-  personId?: Maybe<Scalars['UUID']['output']>;
-  workspaceMemberId?: Maybe<Scalars['UUID']['output']>;
+  avatarUrl: Scalars['String'];
+  displayName: Scalars['String'];
+  firstName: Scalars['String'];
+  handle: Scalars['String'];
+  lastName: Scalars['String'];
+  personId?: Maybe<Scalars['UUID']>;
+  workspaceMemberId?: Maybe<Scalars['UUID']>;
 };
 
 export type TimelineThreadsWithTotal = {
   __typename?: 'TimelineThreadsWithTotal';
   timelineThreads: Array<TimelineThread>;
-  totalNumberOfThreads: Scalars['Int']['output'];
+  totalNumberOfThreads: Scalars['Int'];
 };
 
 export type UuidFilter = {
-  eq?: InputMaybe<Scalars['UUID']['input']>;
-  gt?: InputMaybe<Scalars['UUID']['input']>;
-  gte?: InputMaybe<Scalars['UUID']['input']>;
-  in?: InputMaybe<Array<Scalars['UUID']['input']>>;
+  eq?: InputMaybe<Scalars['UUID']>;
+  gt?: InputMaybe<Scalars['UUID']>;
+  gte?: InputMaybe<Scalars['UUID']>;
+  in?: InputMaybe<Array<Scalars['UUID']>>;
   is?: InputMaybe<FilterIs>;
-  lt?: InputMaybe<Scalars['UUID']['input']>;
-  lte?: InputMaybe<Scalars['UUID']['input']>;
-  neq?: InputMaybe<Scalars['UUID']['input']>;
+  lt?: InputMaybe<Scalars['UUID']>;
+  lte?: InputMaybe<Scalars['UUID']>;
+  neq?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpdateWorkflowRunStepInput = {
   /** Step to update in JSON format */
-  step: Scalars['JSON']['input'];
+  step: Scalars['JSON'];
   /** Workflow run ID */
-  workflowRunId: Scalars['UUID']['input'];
+  workflowRunId: Scalars['UUID'];
 };
 
 export type UpdateWorkflowVersionPositionsInput = {
   /** Workflow version updated positions */
   positions: Array<WorkflowStepPositionUpdateInput>;
   /** Workflow version ID */
-  workflowVersionId: Scalars['UUID']['input'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 export type UpdateWorkflowVersionStepInput = {
   /** Step to update in JSON format */
-  step: Scalars['JSON']['input'];
+  step: Scalars['JSON'];
   /** Workflow version ID */
-  workflowVersionId: Scalars['UUID']['input'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 export type WorkflowAction = {
   __typename?: 'WorkflowAction';
-  id: Scalars['UUID']['output'];
-  name: Scalars['String']['output'];
-  nextStepIds?: Maybe<Array<Scalars['UUID']['output']>>;
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  nextStepIds?: Maybe<Array<Scalars['UUID']>>;
   position?: Maybe<WorkflowStepPosition>;
-  settings: Scalars['JSON']['output'];
+  settings: Scalars['JSON'];
   type: WorkflowActionType;
-  valid: Scalars['Boolean']['output'];
+  valid: Scalars['Boolean'];
 };
 
 export enum WorkflowActionType {
@@ -531,7 +529,7 @@ export enum WorkflowActionType {
 
 export type WorkflowRun = {
   __typename?: 'WorkflowRun';
-  id: Scalars['UUID']['output'];
+  id: Scalars['UUID'];
   status: WorkflowRunStatusEnum;
 };
 
@@ -548,38 +546,38 @@ export enum WorkflowRunStatusEnum {
 
 export type WorkflowStepPosition = {
   __typename?: 'WorkflowStepPosition';
-  x: Scalars['Float']['output'];
-  y: Scalars['Float']['output'];
+  x: Scalars['Float'];
+  y: Scalars['Float'];
 };
 
 export type WorkflowStepPositionInput = {
-  x: Scalars['Float']['input'];
-  y: Scalars['Float']['input'];
+  x: Scalars['Float'];
+  y: Scalars['Float'];
 };
 
 export type WorkflowStepPositionUpdateInput = {
   /** Step or trigger ID */
-  id: Scalars['String']['input'];
+  id: Scalars['String'];
   /** Position of the step or trigger */
   position: WorkflowStepPositionInput;
 };
 
 export type WorkflowVersionDto = {
   __typename?: 'WorkflowVersionDTO';
-  createdAt: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  name: Scalars['String']['output'];
-  status: Scalars['String']['output'];
-  steps?: Maybe<Scalars['JSON']['output']>;
-  trigger?: Maybe<Scalars['JSON']['output']>;
-  updatedAt: Scalars['String']['output'];
-  workflowId: Scalars['UUID']['output'];
+  createdAt: Scalars['String'];
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  status: Scalars['String'];
+  steps?: Maybe<Scalars['JSON']>;
+  trigger?: Maybe<Scalars['JSON']>;
+  updatedAt: Scalars['String'];
+  workflowId: Scalars['UUID'];
 };
 
 export type WorkflowVersionStepChanges = {
   __typename?: 'WorkflowVersionStepChanges';
-  stepsDiff?: Maybe<Scalars['JSON']['output']>;
-  triggerDiff?: Maybe<Scalars['JSON']['output']>;
+  stepsDiff?: Maybe<Scalars['JSON']>;
+  triggerDiff?: Maybe<Scalars['JSON']>;
 };
 
 export type TimelineCalendarEventFragmentFragment = { __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
@@ -589,27 +587,27 @@ export type TimelineCalendarEventParticipantFragmentFragment = { __typename?: 'T
 export type TimelineCalendarEventsWithTotalFragmentFragment = { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
 
 export type GetTimelineCalendarEventsFromCompanyIdQueryVariables = Exact<{
-  companyId: Scalars['UUID']['input'];
-  page: Scalars['Int']['input'];
-  pageSize: Scalars['Int']['input'];
+  companyId: Scalars['UUID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
 }>;
 
 
 export type GetTimelineCalendarEventsFromCompanyIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromCompanyId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type GetTimelineCalendarEventsFromOpportunityIdQueryVariables = Exact<{
-  opportunityId: Scalars['UUID']['input'];
-  page: Scalars['Int']['input'];
-  pageSize: Scalars['Int']['input'];
+  opportunityId: Scalars['UUID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
 }>;
 
 
 export type GetTimelineCalendarEventsFromOpportunityIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromOpportunityId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type GetTimelineCalendarEventsFromPersonIdQueryVariables = Exact<{
-  personId: Scalars['UUID']['input'];
-  page: Scalars['Int']['input'];
-  pageSize: Scalars['Int']['input'];
+  personId: Scalars['UUID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
 }>;
 
 
@@ -622,38 +620,38 @@ export type TimelineThreadFragmentFragment = { __typename?: 'TimelineThread', id
 export type TimelineThreadsWithTotalFragmentFragment = { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
 
 export type GetTimelineThreadsFromCompanyIdQueryVariables = Exact<{
-  companyId: Scalars['UUID']['input'];
-  page: Scalars['Int']['input'];
-  pageSize: Scalars['Int']['input'];
+  companyId: Scalars['UUID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
 }>;
 
 
 export type GetTimelineThreadsFromCompanyIdQuery = { __typename?: 'Query', getTimelineThreadsFromCompanyId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type GetTimelineThreadsFromOpportunityIdQueryVariables = Exact<{
-  opportunityId: Scalars['UUID']['input'];
-  page: Scalars['Int']['input'];
-  pageSize: Scalars['Int']['input'];
+  opportunityId: Scalars['UUID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
 }>;
 
 
 export type GetTimelineThreadsFromOpportunityIdQuery = { __typename?: 'Query', getTimelineThreadsFromOpportunityId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
-  personId: Scalars['UUID']['input'];
-  page: Scalars['Int']['input'];
-  pageSize: Scalars['Int']['input'];
+  personId: Scalars['UUID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
 }>;
 
 
 export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type SearchQueryVariables = Exact<{
-  searchInput: Scalars['String']['input'];
-  limit: Scalars['Int']['input'];
-  after?: InputMaybe<Scalars['String']['input']>;
-  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
-  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
+  searchInput: Scalars['String'];
+  limit: Scalars['Int'];
+  after?: InputMaybe<Scalars['String']>;
+  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
   filter?: InputMaybe<ObjectRecordFilterInput>;
 }>;
 
@@ -663,7 +661,7 @@ export type SearchQuery = { __typename?: 'Query', search: { __typename?: 'Search
 export type WorkflowDiffFragmentFragment = { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null };
 
 export type ActivateWorkflowVersionMutationVariables = Exact<{
-  workflowVersionId: Scalars['UUID']['input'];
+  workflowVersionId: Scalars['UUID'];
 }>;
 
 
@@ -698,7 +696,7 @@ export type CreateWorkflowVersionStepMutationVariables = Exact<{
 export type CreateWorkflowVersionStepMutation = { __typename?: 'Mutation', createWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
 
 export type DeactivateWorkflowVersionMutationVariables = Exact<{
-  workflowVersionId: Scalars['UUID']['input'];
+  workflowVersionId: Scalars['UUID'];
 }>;
 
 
@@ -740,7 +738,7 @@ export type RunWorkflowVersionMutationVariables = Exact<{
 export type RunWorkflowVersionMutation = { __typename?: 'Mutation', runWorkflowVersion: { __typename?: 'RunWorkflowVersion', workflowRunId: any } };
 
 export type StopWorkflowRunMutationVariables = Exact<{
-  workflowRunId: Scalars['UUID']['input'];
+  workflowRunId: Scalars['UUID'];
 }>;
 
 
@@ -761,7 +759,7 @@ export type UpdateWorkflowVersionStepMutationVariables = Exact<{
 export type UpdateWorkflowVersionStepMutation = { __typename?: 'Mutation', updateWorkflowVersionStep: { __typename?: 'WorkflowAction', id: any, name: string, type: WorkflowActionType, settings: any, valid: boolean, nextStepIds?: Array<any> | null, position?: { __typename?: 'WorkflowStepPosition', x: number, y: number } | null } };
 
 export type WorkflowStepConnectedAccountHandleQueryVariables = Exact<{
-  connectedAccountId: Scalars['UUID']['input'];
+  connectedAccountId: Scalars['UUID'];
 }>;
 
 
