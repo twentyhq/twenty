@@ -5,7 +5,10 @@ import { useCallback, useEffect, useRef } from 'react';
 
 import { useAsyncResource } from '../engine/use-async-resource';
 import { useVisualRuntime } from '../engine/use-visual-runtime';
-import { loadGlbGeometry } from '../three-runtime/load-glb-geometry';
+import {
+  loadGlbGeometry,
+  type LoadGlbGeometryOptions,
+} from '../three-runtime/load-glb-geometry';
 import { createBandSession } from './create-band-session';
 import { createHalftoneSession } from './create-halftone-session';
 import { type HalftoneInitialPose } from './halftone-interaction-state';
@@ -23,21 +26,23 @@ export type HalftoneModelSceneProps = {
   modelUrl: string;
   settings: HalftoneSceneSettingsOverrides;
   initialPose?: HalftoneInitialPose & { timeElapsed?: number };
-  scaleTarget?: number;
+  geometryOptions?: LoadGlbGeometryOptions;
 };
 
 export function HalftoneModelScene({
   modelUrl,
   settings,
   initialPose,
-  scaleTarget,
+  geometryOptions,
 }: HalftoneModelSceneProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { reducedMotion } = useVisualRuntime();
 
   const loader = useCallback(
-    () => loadGlbGeometry(modelUrl, { scaleTarget }),
-    [modelUrl, scaleTarget],
+    () => loadGlbGeometry(modelUrl, geometryOptions),
+    // geometryOptions is a config record with stable identity per mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [modelUrl],
   );
   const geometry = useAsyncResource(loader);
 

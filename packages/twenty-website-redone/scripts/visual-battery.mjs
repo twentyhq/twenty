@@ -19,6 +19,28 @@ const VISUALS = {
     animated: true,
     interactive: false,
   },
+  diamond: {
+    slotSelector: '[data-illustration="diamond"]',
+    // blue on the white stage
+    hueRangeDegrees: [200, 260],
+    minCoverage: 0.01,
+    animated: true,
+    interactive: true,
+  },
+  flash: {
+    slotSelector: '[data-illustration="flash"]',
+    hueRangeDegrees: [200, 260],
+    minCoverage: 0.01,
+    animated: true,
+    interactive: true,
+  },
+  lock: {
+    slotSelector: '[data-illustration="lock"]',
+    hueRangeDegrees: [200, 260],
+    minCoverage: 0.01,
+    animated: true,
+    interactive: true,
+  },
   target: {
     slotSelector: '[data-illustration="target"]',
     // pink #ed87fc

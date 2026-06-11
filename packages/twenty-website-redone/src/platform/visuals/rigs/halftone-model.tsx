@@ -5,6 +5,7 @@ import { type ReactNode } from 'react';
 
 import { type HalftoneInitialPose } from '../halftone/halftone-interaction-state';
 import { type HalftoneSceneSettingsOverrides } from '../halftone/halftone-settings';
+import { type LoadGlbGeometryOptions } from '../three-runtime/load-glb-geometry';
 import { VisualMount } from '../engine/visual-mount';
 
 // The ONLY import() of the heavy model pipeline: three stays out of the
@@ -21,7 +22,7 @@ export type HalftoneModelProps = {
   modelUrl: string;
   settings: HalftoneSceneSettingsOverrides;
   initialPose?: HalftoneInitialPose & { timeElapsed?: number };
-  scaleTarget?: number;
+  geometryOptions?: LoadGlbGeometryOptions;
   poster?: ReactNode;
   priority?: boolean;
   loading?: 'lazy' | 'eager';
@@ -34,7 +35,7 @@ export function HalftoneModel({
   modelUrl,
   settings,
   initialPose,
-  scaleTarget,
+  geometryOptions,
   poster = null,
   priority = false,
   loading = 'lazy',
@@ -48,9 +49,9 @@ export function HalftoneModel({
       reducedMotion={reducedMotionMode}
     >
       <HalftoneModelScene
+        geometryOptions={geometryOptions}
         initialPose={initialPose}
         modelUrl={modelUrl}
-        scaleTarget={scaleTarget}
         settings={settings}
       />
     </VisualMount>

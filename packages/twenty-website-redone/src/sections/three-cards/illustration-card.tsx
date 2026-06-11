@@ -1,4 +1,7 @@
 import { styled } from '@linaria/react';
+import { HalftoneModel } from '@/platform/visuals/rigs/halftone-model';
+
+import { CARD_MODEL_CONFIGS } from './card-model-configs';
 
 import { ArrowRight } from '@/icons';
 import { msg } from '@lingui/core/macro';
@@ -169,7 +172,16 @@ export function IllustrationCard({ card }: { card: IllustrationCardRecord }) {
       <CardShape />
       <CardHeading>{i18n._(card.heading)}</CardHeading>
       <CardRule aria-hidden />
-      <CardStage data-illustration={card.illustration} />
+      <CardStage data-illustration={card.illustration}>
+        <HalftoneModel
+          geometryOptions={
+            CARD_MODEL_CONFIGS[card.illustration].geometryOptions
+          }
+          initialPose={CARD_MODEL_CONFIGS[card.illustration].initialPose}
+          modelUrl={CARD_MODEL_CONFIGS[card.illustration].modelUrl}
+          settings={CARD_MODEL_CONFIGS[card.illustration].settings}
+        />
+      </CardStage>
       <CardRule aria-hidden />
       <CardLower>
         <Body size="sm">{i18n._(card.body)}</Body>

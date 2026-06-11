@@ -7,9 +7,15 @@ export type LoadGlbGeometryOptions = {
   // Geometry is recentered and scaled so this value is its bounding-sphere
   // radius target — model scale becomes a config knob, not asset trivia.
   scaleTarget?: number;
+  // The studio-era normalization some authored models were posed against:
+  // scale by max dimension (target 2.75) and skip the thinnest-axis
+  // rotation.
+  legacyNormalization?: boolean;
+  postRotateZ?: number;
 };
 
 const DEFAULT_SCALE_TARGET = 1.6;
+const LEGACY_SCALE_TARGET = 2.75;
 const FAILURE_CACHE_SIZE = 32;
 
 // The halftone material never samples model textures; routing image URLs
@@ -116,7 +122,11 @@ function mergeGeometries(
 
 function normalizeGeometry(
   geometry: THREE.BufferGeometry,
-  scaleTarget: number,
+  {
+    scaleTarget,
+    legacyNormalization = false,
+    postRotateZ = 0,
+  }: LoadGlbGeometryOptions,
 ): THREE.BufferGeometry {
   geometry.computeBoundingBox();
 
@@ -126,25 +136,35 @@ function normalizeGeometry(
   geometry.boundingBox?.getSize(size);
   geometry.translate(-center.x, -center.y, -center.z);
 
-  // Flat models author best facing the camera: rotate the thinnest axis
-  // toward the viewer (ported behavior the model poses depend on).
-  const dimensions = [size.x, size.y, size.z];
-  const thinnestAxis = dimensions.indexOf(Math.min(...dimensions));
-  if (thinnestAxis === 0) {
-    geometry.applyMatrix4(new THREE.Matrix4().makeRotationY(Math.PI / 2));
-  } else if (thinnestAxis === 1) {
-    geometry.applyMatrix4(new THREE.Matrix4().makeRotationX(Math.PI / 2));
+  if (!legacyNormalization) {
+    // Flat models author best facing the camera: rotate the thinnest axis
+    // toward the viewer (ported behavior the model poses depend on).
+    const dimensions = [size.x, size.y, size.z];
+    const thinnestAxis = dimensions.indexOf(Math.min(...dimensions));
+    if (thinnestAxis === 0) {
+      geometry.applyMatrix4(new THREE.Matrix4().makeRotationY(Math.PI / 2));
+    } else if (thinnestAxis === 1) {
+      geometry.applyMatrix4(new THREE.Matrix4().makeRotationX(Math.PI / 2));
+    }
   }
 
+  geometry.computeBoundingBox();
   geometry.computeBoundingSphere();
   const radius = geometry.boundingSphere?.radius || 1;
-  const scale = scaleTarget / radius;
+  const scale = legacyNormalization
+    ? (scaleTarget ?? LEGACY_SCALE_TARGET) /
+      Math.max(size.x, size.y, size.z, 0.001)
+    : (scaleTarget ?? DEFAULT_SCALE_TARGET) / radius;
   geometry.scale(scale, scale, scale);
 
   geometry.computeBoundingBox();
   const recenter = new THREE.Vector3();
   geometry.boundingBox?.getCenter(recenter);
   geometry.translate(-recenter.x, -recenter.y, -recenter.z);
+
+  if (postRotateZ !== 0) {
+    geometry.rotateZ(postRotateZ);
+  }
 
   geometry.computeVertexNormals();
   geometry.computeBoundingBox();
@@ -157,9 +177,9 @@ function normalizeGeometry(
 // doesn't refetch every mount.
 export function loadGlbGeometry(
   url: string,
-  { scaleTarget = DEFAULT_SCALE_TARGET }: LoadGlbGeometryOptions = {},
+  options: LoadGlbGeometryOptions = {},
 ): Promise<THREE.BufferGeometry> {
-  const cacheKey = `${url}#${scaleTarget}`;
+  const cacheKey = `${url}#${JSON.stringify(options)}`;
 
   if (failureCache.has(cacheKey)) {
     return Promise.reject(new Error(`GLB previously failed: ${url}`));
@@ -199,7 +219,7 @@ export function loadGlbGeometry(
         throw new Error(`GLB contains no mesh geometry: ${url}`);
       }
 
-      return normalizeGeometry(mergeGeometries(geometries), scaleTarget);
+      return normalizeGeometry(mergeGeometries(geometries), options);
     })
     .catch((error: unknown) => {
       geometryCache.delete(cacheKey);
