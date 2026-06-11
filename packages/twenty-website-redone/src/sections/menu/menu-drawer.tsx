@@ -10,11 +10,13 @@ import { Fragment, useState } from 'react';
 import { formatCompactCount, type CommunityStats } from '@/platform/community';
 import { LocalizedLink } from '@/platform/i18n/localized-link';
 import {
-  EASING,
+  buildSchemeDeclarations,
   color,
+  EASING,
   FONT_WEIGHT,
   fontFamily,
   fontSize,
+  type Scheme,
   semanticColor,
   spacing,
   Z_INDEX,
@@ -23,7 +25,21 @@ import { Button, ExternalArrow, ExternalLink, VerticalDivider } from '@/ui';
 
 import { MENU, type MenuNavItem, type MenuSocialLink } from './menu.data';
 
+// Portaled out of the header, the panel re-establishes the menu's scheme
+// itself (a portal escapes the [data-scheme] context).
 const DrawerPanel = styled(Drawer.Popup)`
+  &[data-scheme='light'] {
+    ${buildSchemeDeclarations('light')}
+  }
+
+  &[data-scheme='muted'] {
+    ${buildSchemeDeclarations('muted')}
+  }
+
+  &[data-scheme='dark'] {
+    ${buildSchemeDeclarations('dark')}
+  }
+
   background-color: ${semanticColor.surface};
   display: grid;
   grid-template-rows: 1fr auto auto;
@@ -177,17 +193,23 @@ const SocialAnchor = styled(ExternalLink)`
 
 export type MenuDrawerProps = {
   navItems: readonly MenuNavItem[];
+  scheme: Scheme;
   socialLinks: readonly MenuSocialLink[];
   stats: CommunityStats;
 };
 
-export function MenuDrawer({ navItems, socialLinks, stats }: MenuDrawerProps) {
+export function MenuDrawer({
+  navItems,
+  scheme,
+  socialLinks,
+  stats,
+}: MenuDrawerProps) {
   const { i18n } = useLingui();
   const [isGroupExpanded, setIsGroupExpanded] = useState(false);
 
   return (
     <Drawer.Portal>
-      <DrawerPanel aria-label="Navigation menu">
+      <DrawerPanel aria-label="Navigation menu" data-scheme={scheme}>
         <DrawerNav aria-label="Primary">
           {navItems.map((item, index) => (
             <Fragment key={i18n._(item.label)}>

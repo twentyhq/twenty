@@ -166,6 +166,7 @@ export function Menu({ communityStats, scheme = 'light' }: MenuProps) {
         </Container>
       </header>
       <MenuDrawer
+        scheme={scheme}
         navItems={MENU.navItems}
         socialLinks={MENU.socialLinks}
         stats={communityStats}
