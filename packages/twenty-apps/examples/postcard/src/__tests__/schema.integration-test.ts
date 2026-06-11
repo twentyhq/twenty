@@ -46,6 +46,7 @@ describe('PostCard object', () => {
     const names = obj!.fields.edges.map(
       (e: { node: { name: string } }) => e.node.name,
     );
+    console.log('names', names);
     expect(names).toContain('name');
     expect(names).toContain('content');
     expect(names).toContain('status');
