@@ -16,6 +16,7 @@ import {
   MessageChannelVisibility,
 } from 'twenty-shared/types';
 
+import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
@@ -215,10 +216,17 @@ export class MessageChannelMetadataService {
       'INBOUND_EMAIL_DOMAIN',
     );
     const storageType = this.twentyConfigService.get('STORAGE_TYPE');
+    // Demo mode (LOG emailing driver): handles can be created and explored
+    // without inbound infrastructure; the forwarding address is minted on a
+    // reserved, non-routable domain since no mail can be received.
+    const isEmailingDomainInDemoMode =
+      this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
+      EmailingDomainDriver.LOG;
 
     if (
-      !isNonEmptyString(inboundEmailDomain) ||
-      storageType !== StorageDriverType.S_3
+      !isEmailingDomainInDemoMode &&
+      (!isNonEmptyString(inboundEmailDomain) ||
+        storageType !== StorageDriverType.S_3)
     ) {
       throw new MessageChannelException(
         'Email handles are not configured: INBOUND_EMAIL_DOMAIN must be set and STORAGE_TYPE must be S3',
@@ -230,7 +238,11 @@ export class MessageChannelMetadataService {
       INBOUND_EMAIL_LOCAL_PART_PREFIX +
       randomBytes(INBOUND_EMAIL_LOCAL_PART_RANDOM_BYTES).toString('hex');
 
-    const forwardingAddress = `${localPart}@${inboundEmailDomain}`;
+    const forwardingDomain = isNonEmptyString(inboundEmailDomain)
+      ? inboundEmailDomain
+      : 'demo.invalid';
+
+    const forwardingAddress = `${localPart}@${forwardingDomain}`;
 
     const connectedAccount = await this.connectedAccountMetadataService.create({
       workspaceId,
