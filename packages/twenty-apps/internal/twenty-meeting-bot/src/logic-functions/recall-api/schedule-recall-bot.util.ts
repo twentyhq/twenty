@@ -11,17 +11,17 @@ import {
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
 import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-api-request.util';
 
-export type ScheduleRecallRecordingBotArgs = {
+export type ScheduleRecallBotArgs = {
   meetingUrl: string;
   joinAt: string;
   metadata: RecallBotMetadata;
 };
 
-export const scheduleRecallRecordingBot = async ({
+export const scheduleRecallBot = async ({
   meetingUrl,
   joinAt,
   metadata,
-}: ScheduleRecallRecordingBotArgs): Promise<RecallBotScheduleResult> => {
+}: ScheduleRecallBotArgs): Promise<RecallBotScheduleResult> => {
   const configResult = getRecallApiConfig();
 
   if (!configResult.success) {

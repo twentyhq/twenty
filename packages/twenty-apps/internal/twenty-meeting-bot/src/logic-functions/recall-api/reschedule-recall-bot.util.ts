@@ -7,18 +7,18 @@ import {
 } from 'src/logic-functions/recall-api/extract-recall-bot-id.util';
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
 import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-api-request.util';
-import { type ScheduleRecallRecordingBotArgs } from 'src/logic-functions/recall-api/schedule-recall-recording-bot.util';
+import { type ScheduleRecallBotArgs } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 
-type RescheduleRecallRecordingBotArgs = ScheduleRecallRecordingBotArgs & {
+type RescheduleRecallBotArgs = ScheduleRecallBotArgs & {
   externalBotId: string;
 };
 
-export const rescheduleRecallRecordingBot = async ({
+export const rescheduleRecallBot = async ({
   externalBotId,
   meetingUrl,
   joinAt,
   metadata,
-}: RescheduleRecallRecordingBotArgs): Promise<RecallBotScheduleResult> => {
+}: RescheduleRecallBotArgs): Promise<RecallBotScheduleResult> => {
   const configResult = getRecallApiConfig();
 
   if (!configResult.success) {

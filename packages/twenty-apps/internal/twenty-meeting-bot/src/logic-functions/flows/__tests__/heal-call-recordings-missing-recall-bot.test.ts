@@ -3,14 +3,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { healCallRecordingsMissingRecallBot } from 'src/logic-functions/flows/heal-call-recordings-missing-recall-bot.util';
 
-const scheduleRecallRecordingBotMock = vi.hoisted(() => vi.fn());
+const scheduleRecallBotMock = vi.hoisted(() => vi.fn());
 
-vi.mock(
-  'src/logic-functions/recall-api/schedule-recall-recording-bot.util',
-  () => ({
-    scheduleRecallRecordingBot: scheduleRecallRecordingBotMock,
-  }),
-);
+vi.mock('src/logic-functions/recall-api/schedule-recall-bot.util', () => ({
+  scheduleRecallBot: scheduleRecallBotMock,
+}));
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
 const UPCOMING_STARTS_AT = '2026-01-01T13:00:00.000Z';
@@ -138,8 +135,8 @@ const buildCalendarEvent = (
 describe('healCallRecordingsMissingRecallBot', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
-    scheduleRecallRecordingBotMock.mockReset();
-    scheduleRecallRecordingBotMock.mockResolvedValue({
+    scheduleRecallBotMock.mockReset();
+    scheduleRecallBotMock.mockResolvedValue({
       ok: true,
       externalBotId: 'recall-bot-1',
     });
@@ -157,7 +154,7 @@ describe('healCallRecordingsMissingRecallBot', () => {
     });
 
     expect(result.scheduledCallRecordingIds).toEqual(['call-recording-1']);
-    expect(scheduleRecallRecordingBotMock).toHaveBeenCalledTimes(1);
+    expect(scheduleRecallBotMock).toHaveBeenCalledTimes(1);
     expect(client.callRecordings[0].externalBotId).toBe('recall-bot-1');
   });
 
@@ -178,7 +175,7 @@ describe('healCallRecordingsMissingRecallBot', () => {
     });
 
     expect(result.scheduledCallRecordingIds).toEqual([]);
-    expect(scheduleRecallRecordingBotMock).not.toHaveBeenCalled();
+    expect(scheduleRecallBotMock).not.toHaveBeenCalled();
   });
 
   it('does nothing when every scheduled recording already has a bot', async () => {
@@ -195,6 +192,6 @@ describe('healCallRecordingsMissingRecallBot', () => {
     });
 
     expect(result.scheduledCallRecordingIds).toEqual([]);
-    expect(scheduleRecallRecordingBotMock).not.toHaveBeenCalled();
+    expect(scheduleRecallBotMock).not.toHaveBeenCalled();
   });
 });

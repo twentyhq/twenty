@@ -3,8 +3,8 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
-import { cancelRecallRecordingBot } from 'src/logic-functions/recall-api/cancel-recall-recording-bot.util';
-import { ejectRecallRecordingBot } from 'src/logic-functions/recall-api/eject-recall-recording-bot.util';
+import { cancelRecallBot } from 'src/logic-functions/recall-api/cancel-recall-bot.util';
+import { ejectRecallBot } from 'src/logic-functions/recall-api/eject-recall-bot.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
@@ -123,7 +123,7 @@ const isBotClaimed = ({
 const cancelOrEjectRecallBot = async (
   externalBotId: string,
 ): Promise<boolean> => {
-  const cancelResult = await cancelRecallRecordingBot({ externalBotId });
+  const cancelResult = await cancelRecallBot({ externalBotId });
 
   if (cancelResult.ok) {
     return true;
@@ -131,7 +131,7 @@ const cancelOrEjectRecallBot = async (
 
   // Deleting only works for not-yet-joined bots; eject the ones already in a call.
   if (!isNull(cancelResult.status)) {
-    const ejectResult = await ejectRecallRecordingBot({ externalBotId });
+    const ejectResult = await ejectRecallBot({ externalBotId });
 
     if (ejectResult.ok) {
       return true;

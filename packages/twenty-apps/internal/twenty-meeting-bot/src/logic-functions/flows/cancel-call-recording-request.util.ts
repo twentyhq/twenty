@@ -3,7 +3,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
-import { cancelRecallRecordingBot } from 'src/logic-functions/recall-api/cancel-recall-recording-bot.util';
+import { cancelRecallBot } from 'src/logic-functions/recall-api/cancel-recall-bot.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
 // Intent-first: the stale-state cron finishes the Recall half when this call fails.
@@ -25,7 +25,7 @@ export const cancelCallRecordingRequest = async ({
     return;
   }
 
-  const cancelResult = await cancelRecallRecordingBot({
+  const cancelResult = await cancelRecallBot({
     externalBotId: callRecording.externalBotId,
   });
 

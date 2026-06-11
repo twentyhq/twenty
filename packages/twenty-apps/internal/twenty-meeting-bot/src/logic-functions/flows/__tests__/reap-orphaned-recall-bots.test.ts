@@ -4,8 +4,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { reapOrphanedRecallBots } from 'src/logic-functions/flows/reap-orphaned-recall-bots.util';
 
 const listScheduledRecallBotsMock = vi.hoisted(() => vi.fn());
-const cancelRecallRecordingBotMock = vi.hoisted(() => vi.fn());
-const ejectRecallRecordingBotMock = vi.hoisted(() => vi.fn());
+const cancelRecallBotMock = vi.hoisted(() => vi.fn());
+const ejectRecallBotMock = vi.hoisted(() => vi.fn());
 
 vi.mock(
   'src/logic-functions/recall-api/list-scheduled-recall-bots.util',
@@ -14,19 +14,13 @@ vi.mock(
   }),
 );
 
-vi.mock(
-  'src/logic-functions/recall-api/cancel-recall-recording-bot.util',
-  () => ({
-    cancelRecallRecordingBot: cancelRecallRecordingBotMock,
-  }),
-);
+vi.mock('src/logic-functions/recall-api/cancel-recall-bot.util', () => ({
+  cancelRecallBot: cancelRecallBotMock,
+}));
 
-vi.mock(
-  'src/logic-functions/recall-api/eject-recall-recording-bot.util',
-  () => ({
-    ejectRecallRecordingBot: ejectRecallRecordingBotMock,
-  }),
-);
+vi.mock('src/logic-functions/recall-api/eject-recall-bot.util', () => ({
+  ejectRecallBot: ejectRecallBotMock,
+}));
 
 const JOIN_AT_AFTER = '2026-01-01T08:00:00.000Z';
 const JOIN_AT_BEFORE = '2026-01-02T12:00:00.000Z';
@@ -69,10 +63,10 @@ describe('reapOrphanedRecallBots', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     listScheduledRecallBotsMock.mockReset();
-    cancelRecallRecordingBotMock.mockReset();
-    cancelRecallRecordingBotMock.mockResolvedValue({ ok: true });
-    ejectRecallRecordingBotMock.mockReset();
-    ejectRecallRecordingBotMock.mockResolvedValue({ ok: true });
+    cancelRecallBotMock.mockReset();
+    cancelRecallBotMock.mockResolvedValue({ ok: true });
+    ejectRecallBotMock.mockReset();
+    ejectRecallBotMock.mockResolvedValue({ ok: true });
   });
 
   it('keeps bots that their call recording still references', async () => {
@@ -97,7 +91,7 @@ describe('reapOrphanedRecallBots', () => {
       scannedBotCount: 1,
       canceledExternalBotIds: [],
     });
-    expect(cancelRecallRecordingBotMock).not.toHaveBeenCalled();
+    expect(cancelRecallBotMock).not.toHaveBeenCalled();
   });
 
   it('cancels bots whose call recording request was canceled locally', async () => {
@@ -122,7 +116,7 @@ describe('reapOrphanedRecallBots', () => {
       scannedBotCount: 1,
       canceledExternalBotIds: ['stale-cancel-bot'],
     });
-    expect(cancelRecallRecordingBotMock).toHaveBeenCalledWith({
+    expect(cancelRecallBotMock).toHaveBeenCalledWith({
       externalBotId: 'stale-cancel-bot',
     });
   });
@@ -152,8 +146,8 @@ describe('reapOrphanedRecallBots', () => {
       scannedBotCount: 2,
       canceledExternalBotIds: ['superseded-bot'],
     });
-    expect(cancelRecallRecordingBotMock).toHaveBeenCalledTimes(1);
-    expect(cancelRecallRecordingBotMock).toHaveBeenCalledWith({
+    expect(cancelRecallBotMock).toHaveBeenCalledTimes(1);
+    expect(cancelRecallBotMock).toHaveBeenCalledWith({
       externalBotId: 'superseded-bot',
     });
   });
@@ -198,7 +192,7 @@ describe('reapOrphanedRecallBots', () => {
       scannedBotCount: 1,
       canceledExternalBotIds: [],
     });
-    expect(cancelRecallRecordingBotMock).not.toHaveBeenCalled();
+    expect(cancelRecallBotMock).not.toHaveBeenCalled();
   });
 
   it('ignores bots that were not created by this app', async () => {
@@ -217,7 +211,7 @@ describe('reapOrphanedRecallBots', () => {
       scannedBotCount: 1,
       canceledExternalBotIds: [],
     });
-    expect(cancelRecallRecordingBotMock).not.toHaveBeenCalled();
+    expect(cancelRecallBotMock).not.toHaveBeenCalled();
   });
 
   it('ejects an orphaned bot that already joined when deletion is rejected', async () => {
@@ -225,7 +219,7 @@ describe('reapOrphanedRecallBots', () => {
       ok: true,
       bots: [buildBot('in-call-orphan', 'call-recording-gone')],
     });
-    cancelRecallRecordingBotMock.mockResolvedValue({
+    cancelRecallBotMock.mockResolvedValue({
       ok: false,
       status: 409,
       errorMessage: 'Recall API responded with HTTP 409',
@@ -241,7 +235,7 @@ describe('reapOrphanedRecallBots', () => {
       scannedBotCount: 1,
       canceledExternalBotIds: ['in-call-orphan'],
     });
-    expect(ejectRecallRecordingBotMock).toHaveBeenCalledWith({
+    expect(ejectRecallBotMock).toHaveBeenCalledWith({
       externalBotId: 'in-call-orphan',
     });
   });
@@ -263,6 +257,6 @@ describe('reapOrphanedRecallBots', () => {
       scannedBotCount: 0,
       canceledExternalBotIds: [],
     });
-    expect(cancelRecallRecordingBotMock).not.toHaveBeenCalled();
+    expect(cancelRecallBotMock).not.toHaveBeenCalled();
   });
 });

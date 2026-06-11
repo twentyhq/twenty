@@ -5,7 +5,7 @@ import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-r
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
 import { buildRecallBotMetadata } from 'src/logic-functions/domain/build-recall-bot-metadata.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
-import { scheduleRecallRecordingBot } from 'src/logic-functions/recall-api/schedule-recall-recording-bot.util';
+import { scheduleRecallBot } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
 // The sole place a Recall bot is created. Only the deterministic-create winner and the convergence cron call it, so one writer per meeting POSTs exactly one bot.
@@ -33,7 +33,7 @@ export const ensureRecallBot = async (
     return;
   }
 
-  const scheduleResult = await scheduleRecallRecordingBot({
+  const scheduleResult = await scheduleRecallBot({
     meetingUrl,
     joinAt,
     metadata: buildRecallBotMetadata({ callRecording, calendarEvent }),

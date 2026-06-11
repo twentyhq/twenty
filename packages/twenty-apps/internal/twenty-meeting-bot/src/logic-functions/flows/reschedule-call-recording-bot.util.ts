@@ -3,12 +3,12 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
 import { buildRecallBotMetadata } from 'src/logic-functions/domain/build-recall-bot-metadata.util';
-import { rescheduleRecallRecordingBot } from 'src/logic-functions/recall-api/reschedule-recall-recording-bot.util';
+import { rescheduleRecallBot } from 'src/logic-functions/recall-api/reschedule-recall-bot.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
 const RECALL_BOT_NOT_FOUND_STATUS = 404;
 
-export const rescheduleRecallBot = async (
+export const rescheduleCallRecordingBot = async (
   client: CoreApiClient,
   { callRecording, calendarEvent }: MeetingRecording,
 ): Promise<void> => {
@@ -25,7 +25,7 @@ export const rescheduleRecallBot = async (
     return;
   }
 
-  const rescheduleResult = await rescheduleRecallRecordingBot({
+  const rescheduleResult = await rescheduleRecallBot({
     externalBotId,
     meetingUrl,
     joinAt,

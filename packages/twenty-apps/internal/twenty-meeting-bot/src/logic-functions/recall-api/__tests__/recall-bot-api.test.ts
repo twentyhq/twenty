@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createAsyncRecallTranscript } from 'src/logic-functions/recall-api/create-async-recall-transcript.util';
-import { ejectRecallRecordingBot } from 'src/logic-functions/recall-api/eject-recall-recording-bot.util';
+import { ejectRecallBot } from 'src/logic-functions/recall-api/eject-recall-bot.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
 import { listScheduledRecallBots } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
-import { rescheduleRecallRecordingBot } from 'src/logic-functions/recall-api/reschedule-recall-recording-bot.util';
+import { rescheduleRecallBot } from 'src/logic-functions/recall-api/reschedule-recall-bot.util';
 import { retrieveRecallTranscript } from 'src/logic-functions/recall-api/retrieve-recall-transcript.util';
-import { scheduleRecallRecordingBot } from 'src/logic-functions/recall-api/schedule-recall-recording-bot.util';
+import { scheduleRecallBot } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 
 const getRecallApiConfigMock = vi.hoisted(() => vi.fn());
 
@@ -37,7 +37,7 @@ describe('recall bot api', () => {
   });
 
   it('creates Recall bot requests with the Token authorization scheme', async () => {
-    const result = await scheduleRecallRecordingBot({
+    const result = await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: {
@@ -79,7 +79,7 @@ describe('recall bot api', () => {
   });
 
   it('carries the automatic leave config when rescheduling a bot', async () => {
-    const result = await rescheduleRecallRecordingBot({
+    const result = await rescheduleRecallBot({
       externalBotId: 'recall-bot-id',
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-02T13:00:00.000Z',
@@ -112,7 +112,7 @@ describe('recall bot api', () => {
       json: async () => ({}),
     });
 
-    const result = await scheduleRecallRecordingBot({
+    const result = await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: {
@@ -137,7 +137,7 @@ describe('recall bot api', () => {
       json: async () => ({ detail: 'Not found.' }),
     });
 
-    const result = await rescheduleRecallRecordingBot({
+    const result = await rescheduleRecallBot({
       externalBotId: 'recall-bot-gone',
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
@@ -166,7 +166,7 @@ describe('recall bot api', () => {
       },
     });
 
-    await scheduleRecallRecordingBot({
+    await scheduleRecallBot({
       meetingUrl: 'https://meet.google.com/abc-defg-hij',
       joinAt: '2026-01-01T13:00:00.000Z',
       metadata: {
@@ -260,7 +260,7 @@ describe('recall bot api', () => {
       json: async () => ({ id: 'recall-bot-id' }),
     });
 
-    const result = await ejectRecallRecordingBot({
+    const result = await ejectRecallBot({
       externalBotId: 'recall-bot-id',
     });
 
@@ -503,7 +503,7 @@ describe('recall bot api', () => {
         json: async () => ({ detail: 'not found' }),
       });
 
-      const result = await ejectRecallRecordingBot({
+      const result = await ejectRecallBot({
         externalBotId: 'recall-bot-id',
       });
 

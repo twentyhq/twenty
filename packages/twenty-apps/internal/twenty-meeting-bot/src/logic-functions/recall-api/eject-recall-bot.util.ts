@@ -2,7 +2,7 @@ import { type RecallBotRemovalResult } from 'src/logic-functions/types/recall-bo
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
 import { recallBotApiRequest } from 'src/logic-functions/recall-api/recall-bot-api-request.util';
 
-export const cancelRecallRecordingBot = async ({
+export const ejectRecallBot = async ({
   externalBotId,
 }: {
   externalBotId: string;
@@ -15,8 +15,8 @@ export const cancelRecallRecordingBot = async ({
 
   const result = await recallBotApiRequest<undefined>({
     config: configResult.config,
-    path: `/bot/${externalBotId}/`,
-    method: 'DELETE',
+    path: `/bot/${externalBotId}/leave_call/`,
+    method: 'POST',
     allowNotFound: true,
   });
 

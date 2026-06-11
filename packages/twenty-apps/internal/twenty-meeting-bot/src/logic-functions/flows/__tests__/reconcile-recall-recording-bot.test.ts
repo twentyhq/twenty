@@ -5,9 +5,9 @@ import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/com
 import { reconcileRecallRecordingBotForCalendarEventIds } from 'src/logic-functions/flows/reconcile-recall-recording-bot.util';
 
 const getRecallRecordingBotEnabledMock = vi.hoisted(() => vi.fn());
-const scheduleRecallRecordingBotMock = vi.hoisted(() => vi.fn());
-const rescheduleRecallRecordingBotMock = vi.hoisted(() => vi.fn());
-const cancelRecallRecordingBotMock = vi.hoisted(() => vi.fn());
+const scheduleRecallBotMock = vi.hoisted(() => vi.fn());
+const rescheduleRecallBotMock = vi.hoisted(() => vi.fn());
+const cancelRecallBotMock = vi.hoisted(() => vi.fn());
 
 vi.mock(
   'src/logic-functions/utils/get-recall-recording-bot-enabled.util',
@@ -16,26 +16,17 @@ vi.mock(
   }),
 );
 
-vi.mock(
-  'src/logic-functions/recall-api/schedule-recall-recording-bot.util',
-  () => ({
-    scheduleRecallRecordingBot: scheduleRecallRecordingBotMock,
-  }),
-);
+vi.mock('src/logic-functions/recall-api/schedule-recall-bot.util', () => ({
+  scheduleRecallBot: scheduleRecallBotMock,
+}));
 
-vi.mock(
-  'src/logic-functions/recall-api/reschedule-recall-recording-bot.util',
-  () => ({
-    rescheduleRecallRecordingBot: rescheduleRecallRecordingBotMock,
-  }),
-);
+vi.mock('src/logic-functions/recall-api/reschedule-recall-bot.util', () => ({
+  rescheduleRecallBot: rescheduleRecallBotMock,
+}));
 
-vi.mock(
-  'src/logic-functions/recall-api/cancel-recall-recording-bot.util',
-  () => ({
-    cancelRecallRecordingBot: cancelRecallRecordingBotMock,
-  }),
-);
+vi.mock('src/logic-functions/recall-api/cancel-recall-bot.util', () => ({
+  cancelRecallBot: cancelRecallBotMock,
+}));
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
 const FUTURE_STARTS_AT = '2026-01-01T13:00:00.000Z';
@@ -269,18 +260,18 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
     getRecallRecordingBotEnabledMock.mockReset();
     getRecallRecordingBotEnabledMock.mockReturnValue(true);
-    scheduleRecallRecordingBotMock.mockReset();
-    scheduleRecallRecordingBotMock.mockResolvedValue({
+    scheduleRecallBotMock.mockReset();
+    scheduleRecallBotMock.mockResolvedValue({
       ok: true,
       externalBotId: 'recall-bot-1',
     });
-    rescheduleRecallRecordingBotMock.mockReset();
-    rescheduleRecallRecordingBotMock.mockResolvedValue({
+    rescheduleRecallBotMock.mockReset();
+    rescheduleRecallBotMock.mockResolvedValue({
       ok: true,
       externalBotId: 'recall-bot-1',
     });
-    cancelRecallRecordingBotMock.mockReset();
-    cancelRecallRecordingBotMock.mockResolvedValue({
+    cancelRecallBotMock.mockReset();
+    cancelRecallBotMock.mockResolvedValue({
       ok: true,
       externalBotId: null,
     });
@@ -313,7 +304,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
         externalBotId: 'recall-bot-1',
       },
     ]);
-    expect(scheduleRecallRecordingBotMock).toHaveBeenCalledWith({
+    expect(scheduleRecallBotMock).toHaveBeenCalledWith({
       meetingUrl: 'https://meet.example.com/customer-sync',
       joinAt: FUTURE_STARTS_AT,
       metadata: {
@@ -352,7 +343,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
         callRecordingId: buildCustomerSyncCallRecordingId(),
       }),
     ]);
-    expect(scheduleRecallRecordingBotMock).toHaveBeenCalledTimes(1);
+    expect(scheduleRecallBotMock).toHaveBeenCalledTimes(1);
   });
 
   it('skips creating an auto-record recording when the meeting started before the join grace', async () => {
@@ -389,7 +380,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
       }),
     ]);
     expect(client.mutations).toEqual([]);
-    expect(scheduleRecallRecordingBotMock).not.toHaveBeenCalled();
+    expect(scheduleRecallBotMock).not.toHaveBeenCalled();
   });
 
   it('creates a recording past the join grace when preference is ON', async () => {
@@ -416,7 +407,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
         ),
       }),
     ]);
-    expect(scheduleRecallRecordingBotMock).toHaveBeenCalledTimes(1);
+    expect(scheduleRecallBotMock).toHaveBeenCalledTimes(1);
   });
 
   it('updates an existing recording past the join grace instead of skipping it', async () => {
@@ -505,7 +496,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
       }),
     ]);
     expect(client.mutations).toEqual([]);
-    expect(scheduleRecallRecordingBotMock).not.toHaveBeenCalled();
+    expect(scheduleRecallBotMock).not.toHaveBeenCalled();
   });
 
   it('updates an existing policy-managed scheduled call recording', async () => {
@@ -553,7 +544,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
         externalBotId: 'recall-bot-1',
       }),
     ]);
-    expect(rescheduleRecallRecordingBotMock).toHaveBeenCalledWith({
+    expect(rescheduleRecallBotMock).toHaveBeenCalledWith({
       externalBotId: 'recall-bot-1',
       meetingUrl: 'https://meet.example.com/customer-sync',
       joinAt: FUTURE_STARTS_AT,
@@ -606,13 +597,13 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
         externalBotId: null,
       }),
     ]);
-    expect(cancelRecallRecordingBotMock).toHaveBeenCalledWith({
+    expect(cancelRecallBotMock).toHaveBeenCalledWith({
       externalBotId: 'recall-bot-1',
     });
   });
 
   it('persists the cancel intent and leaves the bot for the stale-state cron when the Recall cancel fails', async () => {
-    cancelRecallRecordingBotMock.mockResolvedValue({
+    cancelRecallBotMock.mockResolvedValue({
       ok: false,
       status: 500,
       errorMessage: 'Recall API responded with HTTP 500',
@@ -725,7 +716,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
       }),
     ]);
     expect(client.callRecordings).toHaveLength(1);
-    expect(scheduleRecallRecordingBotMock).toHaveBeenCalledTimes(1);
+    expect(scheduleRecallBotMock).toHaveBeenCalledTimes(1);
   });
 
   it('does not create a duplicate when a non-policy-managed open recording already exists', async () => {
@@ -758,7 +749,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
     ]);
     expect(client.callRecordings).toHaveLength(1);
     expect(client.mutations).toEqual([]);
-    expect(scheduleRecallRecordingBotMock).not.toHaveBeenCalled();
+    expect(scheduleRecallBotMock).not.toHaveBeenCalled();
   });
 
   it('cancels the scheduled request when the calendar event is deleted', async () => {
@@ -804,7 +795,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
         externalBotId: null,
       }),
     ]);
-    expect(cancelRecallRecordingBotMock).toHaveBeenCalledWith({
+    expect(cancelRecallBotMock).toHaveBeenCalledWith({
       externalBotId: 'recall-bot-1',
     });
   });
@@ -856,10 +847,10 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
         callRecordingId: buildCustomerSyncCallRecordingId(NEW_STARTS_AT),
       }),
     ]);
-    expect(cancelRecallRecordingBotMock).toHaveBeenCalledExactlyOnceWith({
+    expect(cancelRecallBotMock).toHaveBeenCalledExactlyOnceWith({
       externalBotId: 'recall-bot-old',
     });
-    expect(scheduleRecallRecordingBotMock).toHaveBeenCalledExactlyOnceWith(
+    expect(scheduleRecallBotMock).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ joinAt: NEW_STARTS_AT }),
     );
     expect(client.callRecordings).toEqual([
@@ -877,9 +868,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
   });
 
   it('reconciles the remaining meetings when one meeting fails', async () => {
-    cancelRecallRecordingBotMock.mockRejectedValue(
-      new Error('recall exploded'),
-    );
+    cancelRecallBotMock.mockRejectedValue(new Error('recall exploded'));
 
     const client = buildFakeCoreApiClient({
       calendarEvents: [
@@ -978,7 +967,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
   });
 
   it('clears the bot id when the existing Recall bot no longer exists, leaving re-creation to the cron', async () => {
-    rescheduleRecallRecordingBotMock.mockResolvedValue({
+    rescheduleRecallBotMock.mockResolvedValue({
       ok: false,
       status: 404,
       errorMessage: 'Recall API responded with HTTP 404',
@@ -1012,10 +1001,10 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
         callRecordingId: buildCustomerSyncCallRecordingId(),
       }),
     ]);
-    expect(rescheduleRecallRecordingBotMock).toHaveBeenCalledWith(
+    expect(rescheduleRecallBotMock).toHaveBeenCalledWith(
       expect.objectContaining({ externalBotId: 'recall-bot-stale' }),
     );
-    expect(scheduleRecallRecordingBotMock).not.toHaveBeenCalled();
+    expect(scheduleRecallBotMock).not.toHaveBeenCalled();
     expect(client.callRecordings).toEqual([
       expect.objectContaining({
         id: buildCustomerSyncCallRecordingId(),
@@ -1067,8 +1056,8 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
       }),
     ]);
     expect(client.callRecordings).toHaveLength(1);
-    expect(scheduleRecallRecordingBotMock).not.toHaveBeenCalled();
-    expect(rescheduleRecallRecordingBotMock).toHaveBeenCalledWith(
+    expect(scheduleRecallBotMock).not.toHaveBeenCalled();
+    expect(rescheduleRecallBotMock).toHaveBeenCalledWith(
       expect.objectContaining({ externalBotId: 'sibling-bot' }),
     );
   });
@@ -1100,7 +1089,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
         errorMessage: 'Duplicate id on a soft-deleted record',
       }),
     ]);
-    expect(scheduleRecallRecordingBotMock).not.toHaveBeenCalled();
+    expect(scheduleRecallBotMock).not.toHaveBeenCalled();
   });
 
   it('schedules exactly one bot when concurrent reconciles race for the same meeting', async () => {
@@ -1119,7 +1108,7 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
     );
 
     expect(client.callRecordings).toHaveLength(1);
-    expect(scheduleRecallRecordingBotMock).toHaveBeenCalledTimes(1);
+    expect(scheduleRecallBotMock).toHaveBeenCalledTimes(1);
     expect(client.callRecordings[0].externalBotId).toBe('recall-bot-1');
   });
 
@@ -1151,6 +1140,6 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
     });
 
     expect(result).toEqual([expect.objectContaining({ action: 'CREATED' })]);
-    expect(scheduleRecallRecordingBotMock).not.toHaveBeenCalled();
+    expect(scheduleRecallBotMock).not.toHaveBeenCalled();
   });
 });

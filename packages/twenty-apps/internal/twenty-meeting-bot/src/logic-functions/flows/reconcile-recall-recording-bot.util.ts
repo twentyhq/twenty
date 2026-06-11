@@ -25,7 +25,7 @@ import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-reco
 import { getRecallRecordingBotEnabled } from 'src/logic-functions/utils/get-recall-recording-bot-enabled.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { isWithinRecallBotAutoRecordJoinWindow } from 'src/logic-functions/domain/is-within-recall-bot-auto-record-join-window.util';
-import { rescheduleRecallBot } from 'src/logic-functions/flows/reschedule-recall-bot.util';
+import { rescheduleCallRecordingBot } from 'src/logic-functions/flows/reschedule-call-recording-bot.util';
 import {
   updateCallRecording,
   type CallRecordingUpdateFields,
@@ -325,7 +325,7 @@ const updatePolicyManagedCallRecording = async ({
       calendarEvent: representativeCalendarEvent,
     }),
   });
-  await rescheduleRecallBot(client, {
+  await rescheduleCallRecordingBot(client, {
     callRecording: existingCallRecording,
     calendarEvent: representativeCalendarEvent,
   });
