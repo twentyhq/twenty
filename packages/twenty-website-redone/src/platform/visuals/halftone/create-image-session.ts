@@ -6,6 +6,9 @@ import {
 } from '../engine/create-visual-frame-loop';
 import { createVisualRenderer } from '../three-runtime/create-visual-renderer';
 import { BLUR_PASS_SHADERS } from './blur-pass-shaders';
+import { createRenderTarget } from './create-render-target';
+import { HALFTONE_CONSTANTS } from './halftone-constants';
+import { createVirtualSize } from './virtual-size';
 import { HALFTONE_PASS_SHADER } from './halftone-pass-shader';
 import { IMAGE_PASS_SHADER } from './image-pass-shader';
 
@@ -71,7 +74,6 @@ export type ImageSessionSettings = {
     amount: number;
     speed: number;
   };
-  virtualRenderHeight: number;
 };
 
 type CreateImageSessionOptions = {
@@ -85,16 +87,8 @@ type CreateImageSessionOptions = {
   onFirstFrame?: () => void;
 };
 
-const REFERENCE_PREVIEW_DISTANCE = 4;
-const MIN_FOOTPRINT_SCALE = 0.001;
-
-function createRenderTarget(width: number, height: number) {
-  return new THREE.WebGLRenderTarget(width, height, {
-    format: THREE.RGBAFormat,
-    magFilter: THREE.LinearFilter,
-    minFilter: THREE.LinearFilter,
-  });
-}
+const REFERENCE_PREVIEW_DISTANCE = HALFTONE_CONSTANTS.referencePreviewDistance;
+const MIN_FOOTPRINT_SCALE = HALFTONE_CONSTANTS.minFootprintScale;
 
 // Image footprint: dash density holds the authored relationship to the
 // image's fitted rect at the reference zoom.
@@ -213,15 +207,7 @@ export function createImageSession({
   reducedMotion = false,
   onFirstFrame,
 }: CreateImageSessionOptions): ImageSession | null {
-  const getWidth = () => Math.max(container.clientWidth, 1);
-  const getHeight = () => Math.max(container.clientHeight, 1);
-  const getVirtualHeight = () =>
-    Math.max(settings.virtualRenderHeight, getHeight());
-  const getVirtualWidth = () =>
-    Math.max(
-      Math.round(getVirtualHeight() * (getWidth() / Math.max(getHeight(), 1))),
-      1,
-    );
+  const { getVirtualWidth, getVirtualHeight } = createVirtualSize(container);
 
   const renderer = createVisualRenderer({ antialias: false, alpha: true });
   if (renderer === null) {

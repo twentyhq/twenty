@@ -1,4 +1,5 @@
 import { paletteColorNumber } from '@/tokens';
+import { type HalftoneEffectSettingsOverrides } from '@/platform/visuals/halftone/halftone-settings';
 
 import { type HalftoneModelProps } from '@/platform/visuals/rigs/halftone-model';
 import { type IllustrationId } from './three-cards.data';
@@ -42,12 +43,12 @@ const CARD_BASE = {
   previewDistance: number;
 };
 
-const CARD_HALFTONE = {
+const CARD_HALFTONE: HalftoneEffectSettingsOverrides = {
   variant: 'band',
   scale: 14,
   power: 0.4,
   width: 0.5,
-} as const;
+};
 
 const BASE_POSE = {
   autoElapsed: 11.523399999928483,

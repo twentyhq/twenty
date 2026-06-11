@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+
+import { createEnvironmentTexture } from './create-environment-texture';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 
 import { type HalftoneMaterialSettings } from './halftone-settings';
@@ -485,16 +487,6 @@ function disposeEnvironmentScene(scene: THREE.Scene) {
   });
 }
 
-function createSolidEnvironmentTexture(renderer: THREE.WebGLRenderer) {
-  const pmremGenerator = new THREE.PMREMGenerator(renderer);
-  const environmentTexture = pmremGenerator.fromScene(
-    new RoomEnvironment(),
-    0.04,
-  ).texture;
-  pmremGenerator.dispose();
-  return environmentTexture;
-}
-
 function createStudioGlassEnvironmentScene(backdropTexture?: THREE.Texture) {
   const studioScene = new THREE.Scene();
   studioScene.background = backdropTexture ?? GLASS_TRANSMISSION_BACKGROUND;
@@ -640,7 +632,7 @@ function createFallbackGlassBackdropTexture(renderer: THREE.WebGLRenderer) {
 async function createAssets(
   renderer: THREE.WebGLRenderer,
 ): Promise<HalftoneMaterialAssets> {
-  const solidEnvironmentTexture = createSolidEnvironmentTexture(renderer);
+  const solidEnvironmentTexture = createEnvironmentTexture(renderer);
   try {
     const glassAssets = await loadGlassEnvironmentAssets(renderer);
     return {

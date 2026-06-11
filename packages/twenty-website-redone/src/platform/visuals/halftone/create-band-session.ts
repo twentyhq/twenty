@@ -5,6 +5,9 @@ import {
   type VisualFrame,
 } from '../engine/create-visual-frame-loop';
 import { createVisualRenderer } from '../three-runtime/create-visual-renderer';
+import { createRenderTarget } from './create-render-target';
+import { HALFTONE_CONSTANTS } from './halftone-constants';
+import { createVirtualSize } from './virtual-size';
 import { BLUR_PASS_SHADERS } from './blur-pass-shaders';
 import {
   halftoneInteraction,
@@ -27,17 +30,8 @@ type CreateBandSessionOptions = {
   onFirstFrame?: () => void;
 };
 
-const VIRTUAL_RENDER_HEIGHT = 768;
-const REFERENCE_PREVIEW_DISTANCE = 4;
-const MIN_FOOTPRINT_SCALE = 0.001;
-
-function createRenderTarget(width: number, height: number) {
-  return new THREE.WebGLRenderTarget(width, height, {
-    format: THREE.RGBAFormat,
-    magFilter: THREE.LinearFilter,
-    minFilter: THREE.LinearFilter,
-  });
-}
+const REFERENCE_PREVIEW_DISTANCE = HALFTONE_CONSTANTS.referencePreviewDistance;
+const MIN_FOOTPRINT_SCALE = HALFTONE_CONSTANTS.minFootprintScale;
 
 function setPrimaryLightPosition(
   light: THREE.DirectionalLight,
@@ -209,14 +203,8 @@ export async function createBandSession({
   const halftoneSettings = settings.halftone;
   const animation = settings.animation;
 
-  const getWidth = () => Math.max(container.clientWidth, 1);
-  const getHeight = () => Math.max(container.clientHeight, 1);
-  const getVirtualHeight = () => Math.max(VIRTUAL_RENDER_HEIGHT, getHeight());
-  const getVirtualWidth = () =>
-    Math.max(
-      Math.round(getVirtualHeight() * (getWidth() / Math.max(getHeight(), 1))),
-      1,
-    );
+  const { getWidth, getHeight, getVirtualWidth, getVirtualHeight } =
+    createVirtualSize(container);
 
   const renderer = createVisualRenderer({ antialias: false, alpha: true });
   if (renderer === null) {
@@ -286,32 +274,16 @@ export async function createBandSession({
     getVirtualWidth(),
     getVirtualHeight(),
   );
-  const blurTargetA = createRenderTarget(getVirtualWidth(), getVirtualHeight());
-  const blurTargetB = createRenderTarget(getVirtualWidth(), getVirtualHeight());
   const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
   const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-
-  const createBlurMaterial = (directionX: number, directionY: number) =>
-    new THREE.ShaderMaterial({
-      uniforms: {
-        dir: { value: new THREE.Vector2(directionX, directionY) },
-        res: {
-          value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
-        },
-        tInput: { value: null },
-      },
-      vertexShader: BLUR_PASS_SHADERS.vertex,
-      fragmentShader: BLUR_PASS_SHADERS.fragment,
-    });
-
-  const blurHorizontalMaterial = createBlurMaterial(1, 0);
-  const blurVerticalMaterial = createBlurMaterial(0, 1);
 
   const halftoneMaterial = new THREE.ShaderMaterial({
     transparent: true,
     uniforms: {
       tScene: { value: sceneTarget.texture },
-      tGlow: { value: blurTargetB.texture },
+      // Never sampled by the band composite — bound only so the sampler
+      // slot is valid.
+      tGlow: { value: sceneTarget.texture },
       effectResolution: {
         value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
       },
@@ -350,14 +322,6 @@ export async function createBandSession({
     fragmentShader: HALFTONE_PASS_SHADER.fragment,
   });
 
-  const blurHorizontalScene = new THREE.Scene();
-  blurHorizontalScene.add(
-    new THREE.Mesh(fullScreenGeometry, blurHorizontalMaterial),
-  );
-  const blurVerticalScene = new THREE.Scene();
-  blurVerticalScene.add(
-    new THREE.Mesh(fullScreenGeometry, blurVerticalMaterial),
-  );
   const postScene = new THREE.Scene();
   postScene.add(new THREE.Mesh(fullScreenGeometry, halftoneMaterial));
 
@@ -373,10 +337,6 @@ export async function createBandSession({
     sceneTarget.setSize(virtualWidth, virtualHeight);
     transmissionBacksideTarget.setSize(virtualWidth, virtualHeight);
     transmissionTarget.setSize(virtualWidth, virtualHeight);
-    blurTargetA.setSize(virtualWidth, virtualHeight);
-    blurTargetB.setSize(virtualWidth, virtualHeight);
-    blurHorizontalMaterial.uniforms.res.value.set(virtualWidth, virtualHeight);
-    blurVerticalMaterial.uniforms.res.value.set(virtualWidth, virtualHeight);
     halftoneMaterial.uniforms.effectResolution.value.set(
       virtualWidth,
       virtualHeight,
@@ -707,19 +667,6 @@ export async function createBandSession({
       transmissionScene: materialAssets.glassTransmissionScene,
     });
 
-    blurHorizontalMaterial.uniforms.tInput.value = sceneTarget.texture;
-    renderer.setRenderTarget(blurTargetA);
-    renderer.render(blurHorizontalScene, orthographicCamera);
-    blurVerticalMaterial.uniforms.tInput.value = blurTargetA.texture;
-    renderer.setRenderTarget(blurTargetB);
-    renderer.render(blurVerticalScene, orthographicCamera);
-    blurHorizontalMaterial.uniforms.tInput.value = blurTargetB.texture;
-    renderer.setRenderTarget(blurTargetA);
-    renderer.render(blurHorizontalScene, orthographicCamera);
-    blurVerticalMaterial.uniforms.tInput.value = blurTargetA.texture;
-    renderer.setRenderTarget(blurTargetB);
-    renderer.render(blurVerticalScene, orthographicCamera);
-
     renderer.setRenderTarget(null);
     renderer.clear();
     renderer.render(postScene, orthographicCamera);
@@ -735,16 +682,12 @@ export async function createBandSession({
   sizeObserver?.observe(container);
 
   function disposeResources() {
-    blurHorizontalMaterial.dispose();
-    blurVerticalMaterial.dispose();
     halftoneMaterial.dispose();
     fullScreenGeometry.dispose();
     material.dispose();
     sceneTarget.dispose();
     transmissionBacksideTarget.dispose();
     transmissionTarget.dispose();
-    blurTargetA.dispose();
-    blurTargetB.dispose();
     halftoneMaterials.disposeAssets(materialAssets);
     renderer?.dispose();
     if (canvas.parentNode === container) {

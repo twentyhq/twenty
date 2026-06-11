@@ -127,18 +127,16 @@ export type HalftoneSceneSettings = {
   animation: HalftoneAnimationSettings;
 };
 
+export type HalftoneEffectSettingsOverrides =
+  | ({ variant: 'band' } & Partial<Omit<HalftoneBandEffectSettings, 'variant'>>)
+  | ({ variant: 'rows' } & Partial<Omit<HalftoneRowEffectSettings, 'variant'>>);
+
 export type HalftoneSceneSettingsOverrides = {
   previewDistance?: number;
   modelOffsetY?: number;
   lighting?: Partial<HalftoneLightingSettings>;
   material?: Partial<HalftoneMaterialSettings>;
-  halftone?:
-    | ({ variant: 'band' } & Partial<
-        Omit<HalftoneBandEffectSettings, 'variant'>
-      >)
-    | ({ variant: 'rows' } & Partial<
-        Omit<HalftoneRowEffectSettings, 'variant'>
-      >);
+  halftone?: HalftoneEffectSettingsOverrides;
   animation?: Partial<HalftoneAnimationSettings>;
 };
 

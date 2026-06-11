@@ -43,6 +43,5 @@ export const MONOLITH_VISUAL: Pick<
       amount: 2,
       speed: 1,
     },
-    virtualRenderHeight: 768,
   },
 };

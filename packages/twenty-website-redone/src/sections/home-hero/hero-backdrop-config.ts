@@ -91,6 +91,5 @@ export const HERO_BACKDROP: Pick<
     responsiveFrame: resolveFrameTune,
     pointerExcludeSelector: '[data-halftone-exclude]',
     pointerScope: 'window',
-    virtualRenderHeight: 768,
   },
 };

@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 
 import {
   createVisualFrameLoop,
@@ -7,6 +6,11 @@ import {
 } from '../engine/create-visual-frame-loop';
 import { createVisualRenderer } from '../three-runtime/create-visual-renderer';
 import { BLUR_PASS_SHADERS } from './blur-pass-shaders';
+import { createBlurPipeline } from './blur-pipeline';
+import { createEnvironmentTexture } from './create-environment-texture';
+import { createRenderTarget } from './create-render-target';
+import { HALFTONE_CONSTANTS } from './halftone-constants';
+import { createVirtualSize } from './virtual-size';
 import {
   halftoneInteraction,
   type HalftoneInitialPose,
@@ -28,22 +32,10 @@ type CreateHalftoneSessionOptions = {
   onFirstFrame?: () => void;
 };
 
-// The model halftone renders at a fixed virtual height so the dash pattern
-// keeps its authored density at every container size.
-const VIRTUAL_RENDER_HEIGHT = 768;
-// The row shader's density was authored at this camera distance.
-const REFERENCE_PREVIEW_DISTANCE = 4;
-const POINTER_EASING_DEFAULT = 0.12;
-const POINTER_EASING_AUTOROTATE_DRAG = 0.08;
-const AUTOROTATE_VELOCITY_DECAY = 0.92;
-
-function createRenderTarget(width: number, height: number) {
-  return new THREE.WebGLRenderTarget(width, height, {
-    format: THREE.RGBAFormat,
-    magFilter: THREE.LinearFilter,
-    minFilter: THREE.LinearFilter,
-  });
-}
+const POINTER_EASING_DEFAULT = HALFTONE_CONSTANTS.pointerEasingDefault;
+const POINTER_EASING_AUTOROTATE_DRAG =
+  HALFTONE_CONSTANTS.pointerEasingAutorotateDrag;
+const AUTOROTATE_VELOCITY_DECAY = HALFTONE_CONSTANTS.autorotateVelocityDecay;
 
 function setPrimaryLightPosition(
   light: THREE.DirectionalLight,
@@ -71,14 +63,8 @@ export function createHalftoneSession({
   }
   const halftoneSettings = settings.halftone;
 
-  const getWidth = () => Math.max(container.clientWidth, 1);
-  const getHeight = () => Math.max(container.clientHeight, 1);
-  const getVirtualHeight = () => Math.max(VIRTUAL_RENDER_HEIGHT, getHeight());
-  const getVirtualWidth = () =>
-    Math.max(
-      Math.round(getVirtualHeight() * (getWidth() / Math.max(getHeight(), 1))),
-      1,
-    );
+  const { getWidth, getHeight, getVirtualWidth, getVirtualHeight } =
+    createVirtualSize(container);
 
   const wantsPointer =
     settings.animation.followDragEnabled ||
@@ -102,12 +88,7 @@ export function createHalftoneSession({
   canvas.style.width = '100%';
   container.appendChild(canvas);
 
-  const pmremGenerator = new THREE.PMREMGenerator(renderer);
-  const environmentTexture = pmremGenerator.fromScene(
-    new RoomEnvironment(),
-    0.04,
-  ).texture;
-  pmremGenerator.dispose();
+  const environmentTexture = createEnvironmentTexture(renderer);
 
   const scene3d = new THREE.Scene();
   scene3d.background = null;
@@ -160,26 +141,12 @@ export function createHalftoneSession({
   camera.lookAt(0, settings.modelOffsetY * 0.2, 0);
 
   const sceneTarget = createRenderTarget(getVirtualWidth(), getVirtualHeight());
-  const blurTargetA = createRenderTarget(getVirtualWidth(), getVirtualHeight());
-  const blurTargetB = createRenderTarget(getVirtualWidth(), getVirtualHeight());
+  const blurPipeline = createBlurPipeline(
+    getVirtualWidth(),
+    getVirtualHeight(),
+  );
   const fullScreenGeometry = new THREE.PlaneGeometry(2, 2);
   const orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-
-  const createBlurMaterial = (directionX: number, directionY: number) =>
-    new THREE.ShaderMaterial({
-      uniforms: {
-        dir: { value: new THREE.Vector2(directionX, directionY) },
-        res: {
-          value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
-        },
-        tInput: { value: null },
-      },
-      vertexShader: BLUR_PASS_SHADERS.vertex,
-      fragmentShader: BLUR_PASS_SHADERS.fragment,
-    });
-
-  const blurHorizontalMaterial = createBlurMaterial(1, 0);
-  const blurVerticalMaterial = createBlurMaterial(0, 1);
 
   const halftoneMaterial = new THREE.ShaderMaterial({
     transparent: true,
@@ -190,7 +157,9 @@ export function createHalftoneSession({
       cutoff: { value: halftoneSettings.cutoff },
       dashColor: { value: new THREE.Color(halftoneSettings.dashColor) },
       distanceScale: {
-        value: settings.previewDistance / REFERENCE_PREVIEW_DISTANCE,
+        value:
+          settings.previewDistance /
+          HALFTONE_CONSTANTS.referencePreviewDistance,
       },
       glowStr: { value: halftoneSettings.glowStrength },
       highlightOpen: { value: halftoneSettings.highlightOpen },
@@ -204,7 +173,7 @@ export function createHalftoneSession({
       shading: { value: halftoneSettings.shading },
       shadowCrush: { value: halftoneSettings.shadowCrush },
       shadowGrouping: { value: halftoneSettings.shadowGrouping },
-      tGlow: { value: blurTargetB.texture },
+      tGlow: { value: blurPipeline.targetB.texture },
       tScene: { value: sceneTarget.texture },
       time: { value: 0 },
       waveAmount: {
@@ -218,14 +187,6 @@ export function createHalftoneSession({
     fragmentShader: HALFTONE_ROW_SHADER.fragment,
   });
 
-  const blurHorizontalScene = new THREE.Scene();
-  blurHorizontalScene.add(
-    new THREE.Mesh(fullScreenGeometry, blurHorizontalMaterial),
-  );
-  const blurVerticalScene = new THREE.Scene();
-  blurVerticalScene.add(
-    new THREE.Mesh(fullScreenGeometry, blurVerticalMaterial),
-  );
   const postScene = new THREE.Scene();
   postScene.add(new THREE.Mesh(fullScreenGeometry, halftoneMaterial));
 
@@ -241,10 +202,7 @@ export function createHalftoneSession({
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
     sceneTarget.setSize(virtualWidth, virtualHeight);
-    blurTargetA.setSize(virtualWidth, virtualHeight);
-    blurTargetB.setSize(virtualWidth, virtualHeight);
-    blurHorizontalMaterial.uniforms.res.value.set(virtualWidth, virtualHeight);
-    blurVerticalMaterial.uniforms.res.value.set(virtualWidth, virtualHeight);
+    blurPipeline.setSize(virtualWidth, virtualHeight);
     halftoneMaterial.uniforms.resolution.value.set(virtualWidth, virtualHeight);
   };
 
@@ -443,18 +401,7 @@ export function createHalftoneSession({
 
     // Two full blur rounds: the glow buffer feeds both cell averaging and
     // the halo term, and the authored look depends on the wider spread.
-    blurHorizontalMaterial.uniforms.tInput.value = sceneTarget.texture;
-    renderer.setRenderTarget(blurTargetA);
-    renderer.render(blurHorizontalScene, orthographicCamera);
-    blurVerticalMaterial.uniforms.tInput.value = blurTargetA.texture;
-    renderer.setRenderTarget(blurTargetB);
-    renderer.render(blurVerticalScene, orthographicCamera);
-    blurHorizontalMaterial.uniforms.tInput.value = blurTargetB.texture;
-    renderer.setRenderTarget(blurTargetA);
-    renderer.render(blurHorizontalScene, orthographicCamera);
-    blurVerticalMaterial.uniforms.tInput.value = blurTargetA.texture;
-    renderer.setRenderTarget(blurTargetB);
-    renderer.render(blurVerticalScene, orthographicCamera);
+    blurPipeline.render(renderer, sceneTarget.texture, orthographicCamera);
 
     renderer.setRenderTarget(null);
     renderer.clear();
@@ -497,14 +444,11 @@ export function createHalftoneSession({
   frameLoop.start();
 
   function disposeResources() {
-    blurHorizontalMaterial.dispose();
-    blurVerticalMaterial.dispose();
+    blurPipeline.dispose();
     halftoneMaterial.dispose();
     fullScreenGeometry.dispose();
     material.dispose();
     sceneTarget.dispose();
-    blurTargetA.dispose();
-    blurTargetB.dispose();
     environmentTexture.dispose();
     renderer?.dispose();
     if (canvas.parentNode === container) {

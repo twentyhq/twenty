@@ -1,6 +1,7 @@
 import { ALPHA_SCALE, type AlphaStep } from './alpha-scale';
 import { buildSchemeDeclarations } from './build-scheme-declarations';
 import { cssVariableName } from './css-variable-name';
+import { type ColorToken } from './color-token';
 import { PALETTE, type PaletteToken } from './palette';
 import { UNITS } from './units';
 
@@ -13,7 +14,7 @@ export function buildCssVariableDeclarations(): string {
 
   for (const base of ALPHA_SCALE.colors) {
     for (const [step, hex] of Object.entries(ALPHA_SCALE.stepHex)) {
-      const token = `${base}-${Number(step) as AlphaStep}` as const;
+      const token: ColorToken = `${base}-${Number(step) as AlphaStep}`;
       declarations.push(
         `${cssVariableName.color(token)}: ${PALETTE[base]}${hex};`,
       );

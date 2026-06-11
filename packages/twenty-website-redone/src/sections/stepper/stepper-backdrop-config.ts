@@ -43,6 +43,5 @@ export const STEPPER_BACKDROP: Pick<
       amount: 2,
       speed: 1,
     },
-    virtualRenderHeight: 768,
   },
 };
