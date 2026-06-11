@@ -93,9 +93,13 @@ export function Heading({
   // unique even when the same word appears twice.
   let offset = 0;
   const keyedSegments = parseHeadingNotation(children).map((segment) => {
-    const key = `${segment.kind}-${offset}`;
+    const keyed = {
+      key: `${segment.kind}-${offset}`,
+      kind: segment.kind,
+      text: segment.text,
+    };
     offset += segment.text.length;
-    return { ...segment, key };
+    return keyed;
   });
 
   return (
