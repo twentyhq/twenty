@@ -1,4 +1,4 @@
-// Levenshtein edit distance: the minimum number of single-character
+// Levenshtein edit distance
 export const getEditDistance = (source: string, target: string): number => {
   const rowCount = source.length + 1;
   const columnCount = target.length + 1;

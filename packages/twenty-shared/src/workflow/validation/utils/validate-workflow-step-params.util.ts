@@ -1,10 +1,10 @@
 import { workflowActionSchema } from '@/workflow/schemas/workflow-action-schema';
 import { workflowTriggerSchema } from '@/workflow/schemas/workflow-trigger-schema';
+import { isDefined } from '@/utils';
 import {
   type ValidatableWorkflow,
   type WorkflowValidationIssue,
 } from '@/workflow/validation/types/workflow-validation.type';
-import { isDefined } from 'class-validator';
 import { type z } from 'zod';
 
 const formatZodPath = (path: PropertyKey[]): string =>

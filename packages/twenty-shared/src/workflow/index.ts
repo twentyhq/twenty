@@ -78,7 +78,6 @@ export type {
   InputSchemaProperty,
   InputSchema,
 } from './types/InputSchema';
-export type { RecordCrudActionInput } from './types/RecordCrudActionInput';
 export type { StepIfElseBranch } from './types/StepIfElseBranch';
 export type { WorkflowAttachment } from './types/WorkflowAttachment';
 export type { BodyType } from './types/workflowHttpRequestStep';

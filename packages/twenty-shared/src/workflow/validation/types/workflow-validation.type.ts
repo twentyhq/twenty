@@ -65,7 +65,10 @@ export type ValidatableWorkflowStep = {
 export type ValidatableWorkflowTrigger = {
   type?: string;
   name?: string;
-  settings?: unknown;
+  settings?: {
+    input?: unknown;
+    outputSchema?: unknown;
+  } | null;
   nextStepIds?: string[] | null;
 };
 

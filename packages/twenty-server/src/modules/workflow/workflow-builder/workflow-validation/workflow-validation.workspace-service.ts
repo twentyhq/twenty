@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { isString } from '@sniptt/guards';
+import { isNonEmptyString, isObject, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
   validateWorkflowStructure,
-  type RecordCrudActionInput,
   type WorkflowValidationIssue,
   type WorkflowValidationResult,
 } from 'twenty-shared/workflow';
@@ -14,6 +13,7 @@ import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-bu
 import {
   WorkflowActionType,
   type WorkflowAction,
+  type WorkflowAiAgentAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
@@ -160,6 +160,9 @@ export class WorkflowValidationWorkspaceService {
         settings: { ...step.settings, outputSchema: computedSchema },
       };
     } catch {
+      // Output schema enrichment is best-effort: if it cannot be computed,
+      // validation still runs against the step's existing settings rather
+      // than failing the whole validation.
       return step;
     }
   }
@@ -182,13 +185,12 @@ export class WorkflowValidationWorkspaceService {
     return issues;
   }
 
-  private validateAiAgentStep(step: WorkflowAction): WorkflowValidationIssue[] {
+  private validateAiAgentStep(
+    step: WorkflowAiAgentAction,
+  ): WorkflowValidationIssue[] {
     const issues: WorkflowValidationIssue[] = [];
-    const input = step.settings?.input as
-      | { agentId?: string; prompt?: string }
-      | undefined;
 
-    if (!input?.agentId) {
+    if (!isNonEmptyString(step.settings?.input?.agentId)) {
       issues.push({
         severity: 'error',
         code: 'AI_AGENT_MISSING_AGENT',
@@ -234,8 +236,9 @@ export class WorkflowValidationWorkspaceService {
     const issues: WorkflowValidationIssue[] = [];
 
     for (const step of recordSteps) {
-      const objectName = (step.settings.input as RecordCrudActionInput)
-        .objectName;
+      const input = step.settings.input;
+      const objectName =
+        isObject(input) && 'objectName' in input ? input.objectName : undefined;
 
       if (!isString(objectName)) {
         issues.push({

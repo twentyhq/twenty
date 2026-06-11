@@ -1,3 +1,4 @@
+import { isDefined } from '@/utils';
 import { WORKFLOW_VALIDATION_STEP_TYPES } from '@/workflow/validation/constants/workflow-validation-step-types';
 import {
   type IfElseStepInput,
@@ -8,7 +9,6 @@ import {
 } from '@/workflow/validation/types/workflow-validation.type';
 import { type WorkflowGraph } from '@/workflow/validation/utils/build-workflow-graph.util';
 import { getStepInput } from '@/workflow/validation/utils/get-step-outgoing-step-ids.util';
-import { isDefined } from 'class-validator';
 
 export const validateWorkflowGraph = ({
   workflow,

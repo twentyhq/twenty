@@ -62,7 +62,13 @@ export const validateWorkflowVariableReferences = ({
 
       const isSelfReference = referencedStepId === step.id;
 
-      if (!isSelfReference && !ancestors.has(referencedStepId)) {
+      // The trigger always runs before every step, so a trigger reference is
+      // upstream by definition even when it is not present in the ancestor set.
+      if (
+        !isTriggerReference &&
+        !isSelfReference &&
+        !ancestors.has(referencedStepId)
+      ) {
         const referencedStep = stepsById.get(referencedStepId);
         const referencedStepLabel = referencedStep?.name ?? referencedStepId;
 
@@ -117,9 +123,7 @@ const validateVariablePathAgainstOutputSchema = ({
   }
 
   const outputSchema = isTriggerReference
-    ? (trigger?.settings as Record<string, unknown> | undefined)?.[
-        'outputSchema'
-      ]
+    ? trigger?.settings?.outputSchema
     : stepsById.get(referencedStepId)?.settings?.outputSchema;
 
   const isEmptyOutputSchema =
