@@ -93,7 +93,7 @@ export const registerDevCommands = (program: Command): void => {
   program
     .command('dev:add [entityType]')
     .description(
-      `Scaffold a new entity (${Object.values(SyncableEntity).join('|')})`,
+      `Scaffold a new entity (${[...Object.values(SyncableEntity), 'relation'].join('|')})`,
     )
     .option('--path <path>', 'Path in which the entity should be created.')
     .action(async (entityType?: string, options?: { path?: string }) => {

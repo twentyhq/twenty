@@ -11,6 +11,8 @@ import {
 } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { buildManifest } from '@/cli/utilities/build/manifest/manifest-build';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { convertToLabel } from '@/cli/utilities/entity/entity-label';
@@ -42,9 +44,14 @@ export class EntityAddCommand {
   private lastNameFieldUniversalIdentifier: string | undefined;
   private lastObjectLabelSingular: string | undefined;
 
-  async execute(entityType?: SyncableEntity, path?: string): Promise<void> {
+  async execute(entityType?: SyncableEntity | 'relation', path?: string): Promise<void> {
     try {
       const entity = entityType ?? (await this.getEntity());
+
+      if (entity === 'relation') {
+        await this.createRelation(path);
+        return;
+      }
 
       const entityName = this.getFolderName(entity);
 
@@ -519,13 +526,13 @@ export class EntityAddCommand {
   }
 
   private async getEntity() {
-    const { entity } = await inquirer.prompt<{ entity: SyncableEntity }>([
+    const { entity } = await inquirer.prompt<{ entity: SyncableEntity | 'relation' }>([
       {
         type: 'select',
         name: 'entity',
         message: `What entity do you want to create?`,
         default: '',
-        choices: Object.values(SyncableEntity),
+        choices: [...Object.values(SyncableEntity), 'relation'],
       },
     ]);
 
@@ -789,5 +796,487 @@ export class EntityAddCommand {
         return `${kebabCase(name)}.ts`;
       }
     }
+  }
+
+  private async createRelation(customPath?: string): Promise<void> {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+    const manifestResult = await buildManifest(CURRENT_EXECUTION_DIRECTORY);
+    const appObjects = (manifestResult.manifest?.objects ?? []).map((obj) => ({
+      nameSingular: obj.nameSingular,
+      namePlural: obj.namePlural,
+      labelSingular: obj.labelSingular,
+      universalIdentifier: obj.universalIdentifier,
+    }));
+
+    const standardObjects = Object.entries(STANDARD_OBJECTS).map(([key, value]) => ({
+      nameSingular: key,
+      namePlural: this.getPluralName(key),
+      labelSingular: convertToLabel(key),
+      universalIdentifier: value.universalIdentifier,
+    }));
+
+    const { relationType } = await inquirer.prompt<{ relationType: 'one-to-many' | 'one-to-many-polymorphic' }>([
+      {
+        type: 'select',
+        name: 'relationType',
+        message: 'Select relation type:',
+        choices: [
+          { name: 'One-to-many', value: 'one-to-many' },
+          { name: 'One-to-many (polymorphic)', value: 'one-to-many-polymorphic' },
+        ],
+      },
+    ]);
+
+    const baseSourceChoices = [
+      { name: 'Built-in Twenty objects', value: 'standard' },
+    ];
+    if (appObjects.length > 0) {
+      baseSourceChoices.push({ name: "Current app's defined objects", value: 'app' });
+    }
+    baseSourceChoices.push({ name: 'Other (write UUID)', value: 'custom' });
+
+    const { baseObjectSource } = await inquirer.prompt<{ baseObjectSource: 'standard' | 'app' | 'custom' }>([
+      {
+        type: 'select',
+        name: 'baseObjectSource',
+        message: 'Select source for the base object:',
+        choices: baseSourceChoices,
+      },
+    ]);
+
+    let baseObject: {
+      nameSingular: string;
+      namePlural: string;
+      labelSingular: string;
+      universalIdentifier: string;
+    };
+
+    if (baseObjectSource === 'standard') {
+      const { baseKey } = await inquirer.prompt<{ baseKey: string }>([
+        {
+          type: 'select',
+          name: 'baseKey',
+          message: 'Choose the base object:',
+          choices: standardObjects.map((obj) => ({ name: obj.labelSingular, value: obj.nameSingular })),
+        },
+      ]);
+      baseObject = standardObjects.find((obj) => obj.nameSingular === baseKey)!;
+    } else if (baseObjectSource === 'app') {
+      const { baseKey } = await inquirer.prompt<{ baseKey: string }>([
+        {
+          type: 'select',
+          name: 'baseKey',
+          message: 'Choose the base object:',
+          choices: appObjects.map((obj) => ({ name: obj.labelSingular, value: obj.nameSingular })),
+        },
+      ]);
+      baseObject = appObjects.find((obj) => obj.nameSingular === baseKey)!;
+    } else {
+      baseObject = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'nameSingular',
+          message: 'Enter name singular for the base object (eg: company):',
+          validate: (input) => input.trim().length > 0 || 'Please enter a name',
+        },
+        {
+          type: 'input',
+          name: 'namePlural',
+          message: 'Enter name plural for the base object (eg: companies):',
+          default: (answers: any) => this.getPluralName(answers.nameSingular),
+          validate: (input) => input.trim().length > 0 || 'Please enter a name',
+        },
+        {
+          type: 'input',
+          name: 'labelSingular',
+          message: 'Enter label singular for the base object (eg: Company):',
+          default: (answers: any) => convertToLabel(answers.nameSingular),
+          validate: (input) => input.trim().length > 0 || 'Please enter a label',
+        },
+        {
+          type: 'input',
+          name: 'universalIdentifier',
+          message: 'Enter universalIdentifier (UUID) for the base object:',
+          validate: (input) => uuidRegex.test(input) || 'Please enter a valid UUID',
+        },
+      ]);
+    }
+
+    const relatedObjects: Array<{
+      nameSingular: string;
+      namePlural: string;
+      labelSingular: string;
+      universalIdentifier: string;
+    }> = [];
+
+    if (relationType === 'one-to-many') {
+      const relSourceChoices = [
+        { name: 'Built-in Twenty objects', value: 'standard' },
+      ];
+      if (appObjects.length > 0) {
+        relSourceChoices.push({ name: "Current app's defined objects", value: 'app' });
+      }
+      relSourceChoices.push({ name: 'Other (write UUID)', value: 'custom' });
+
+      const { relSource } = await inquirer.prompt<{ relSource: 'standard' | 'app' | 'custom' }>([
+        {
+          type: 'select',
+          name: 'relSource',
+          message: 'Select source for the related object:',
+          choices: relSourceChoices,
+        },
+      ]);
+
+      let relObj: {
+        nameSingular: string;
+        namePlural: string;
+        labelSingular: string;
+        universalIdentifier: string;
+      };
+      if (relSource === 'standard') {
+        const { relKey } = await inquirer.prompt<{ relKey: string }>([
+          {
+            type: 'select',
+            name: 'relKey',
+            message: 'Choose the related object:',
+            choices: standardObjects.map((obj) => ({ name: obj.labelSingular, value: obj.nameSingular })),
+          },
+        ]);
+        relObj = standardObjects.find((obj) => obj.nameSingular === relKey)!;
+      } else if (relSource === 'app') {
+        const { relKey } = await inquirer.prompt<{ relKey: string }>([
+          {
+            type: 'select',
+            name: 'relKey',
+            message: 'Choose the related object:',
+            choices: appObjects.map((obj) => ({ name: obj.labelSingular, value: obj.nameSingular })),
+          },
+        ]);
+        relObj = appObjects.find((obj) => obj.nameSingular === relKey)!;
+      } else {
+        relObj = await inquirer.prompt<{
+          nameSingular: string;
+          namePlural: string;
+          labelSingular: string;
+          universalIdentifier: string;
+        }>([
+          {
+            type: 'input',
+            name: 'nameSingular',
+            message: 'Enter name singular for the related object (eg: person):',
+            validate: (input) => input.trim().length > 0 || 'Please enter a name',
+          },
+          {
+            type: 'input',
+            name: 'namePlural',
+            message: 'Enter name plural for the related object (eg: people):',
+            default: (answers: any) => this.getPluralName(answers.nameSingular),
+            validate: (input) => input.trim().length > 0 || 'Please enter a name',
+          },
+          {
+            type: 'input',
+            name: 'labelSingular',
+            message: 'Enter label singular for the related object (eg: Person):',
+            default: (answers: any) => convertToLabel(answers.nameSingular),
+            validate: (input) => input.trim().length > 0 || 'Please enter a label',
+          },
+          {
+            type: 'input',
+            name: 'universalIdentifier',
+            message: 'Enter universalIdentifier (UUID) for the related object:',
+            validate: (input) => uuidRegex.test(input) || 'Please enter a valid UUID',
+          },
+        ]);
+      }
+      relatedObjects.push(relObj);
+    } else {
+      const checkboxChoices = [
+        ...standardObjects.map((obj) => ({ name: `[Built-in] ${obj.labelSingular}`, value: `standard:${obj.nameSingular}` })),
+        ...appObjects.map((obj) => ({ name: `[App] ${obj.labelSingular}`, value: `app:${obj.nameSingular}` })),
+        { name: '[Other (write custom UUID...)]', value: 'custom' },
+      ];
+
+      const { selectedRelated } = await inquirer.prompt<{ selectedRelated: string[] }>([
+        {
+          type: 'checkbox',
+          name: 'selectedRelated',
+          message: 'Select related objects (must select at least 2, or check custom):',
+          choices: checkboxChoices,
+          validate: (input) => {
+            if (input.includes('custom') || input.length >= 2) {
+              return true;
+            }
+            return 'You must select at least 2 related objects (or check custom to add them).';
+          },
+        },
+      ]);
+
+      for (const sel of selectedRelated) {
+        if (sel.startsWith('standard:')) {
+          const key = sel.replace('standard:', '');
+          relatedObjects.push(standardObjects.find((obj) => obj.nameSingular === key)!);
+        } else if (sel.startsWith('app:')) {
+          const key = sel.replace('app:', '');
+          relatedObjects.push(appObjects.find((obj) => obj.nameSingular === key)!);
+        }
+      }
+
+      if (selectedRelated.includes('custom')) {
+        let addMore = true;
+        while (addMore) {
+          console.log(chalk.cyan(`\n--- Enter details for Custom Related Object #${relatedObjects.length + 1} ---`));
+          const customRel = await inquirer.prompt<{
+            nameSingular: string;
+            namePlural: string;
+            labelSingular: string;
+            universalIdentifier: string;
+            done: boolean;
+          }>([
+            {
+              type: 'input',
+              name: 'nameSingular',
+              message: 'Enter name singular for this related object:',
+              validate: (input) => input.trim().length > 0 || 'Please enter a name',
+            },
+            {
+              type: 'input',
+              name: 'namePlural',
+              message: 'Enter name plural for this related object:',
+              default: (answers) => this.getPluralName(answers.nameSingular),
+              validate: (input) => input.trim().length > 0 || 'Please enter a name',
+            },
+            {
+              type: 'input',
+              name: 'labelSingular',
+              message: 'Enter label singular for this related object:',
+              default: (answers) => convertToLabel(answers.nameSingular),
+              validate: (input) => input.trim().length > 0 || 'Please enter a label',
+            },
+            {
+              type: 'input',
+              name: 'universalIdentifier',
+              message: 'Enter universalIdentifier (UUID) for this related object:',
+              validate: (input) => uuidRegex.test(input) || 'Please enter a valid UUID',
+            },
+            {
+              type: 'confirm',
+              name: 'done',
+              message: 'Finished adding custom related objects?',
+              default: true,
+            },
+          ]);
+
+          relatedObjects.push({
+            nameSingular: customRel.nameSingular,
+            namePlural: customRel.namePlural,
+            labelSingular: customRel.labelSingular,
+            universalIdentifier: customRel.universalIdentifier,
+          });
+
+          if (customRel.done) {
+            addMore = false;
+          }
+        }
+      }
+
+      if (relatedObjects.length < 2) {
+        console.log(chalk.red('Error: Single-to-polymorphic relations require at least 2 related objects.'));
+        process.exit(1);
+      }
+    }
+
+    const { onDeleteAction } = await inquirer.prompt<{ onDeleteAction: string }>([
+      {
+        type: 'select',
+        name: 'onDeleteAction',
+        message: 'Select the onDelete behavior for MANY_TO_ONE side(s):',
+        choices: Object.values(RelationOnDeleteAction),
+        default: RelationOnDeleteAction.CASCADE,
+      },
+    ]);
+
+    const fieldsDir = customPath
+      ? join(CURRENT_EXECUTION_DIRECTORY, customPath)
+      : join(CURRENT_EXECUTION_DIRECTORY, APP_FOLDER, 'fields');
+
+    await ensureDir(fieldsDir);
+
+    const writeFieldFile = async (fileName: string, content: string) => {
+      const filePath = join(fieldsDir, fileName);
+      if (await pathExists(filePath)) {
+        const { overwrite } = await this.handleFileExist();
+        if (!overwrite) {
+          console.log(chalk.yellow(`Skipped creating: ${relative(CURRENT_EXECUTION_DIRECTORY, filePath)}`));
+          return;
+        }
+      }
+      await writeFile(filePath, content);
+      console.log(
+        chalk.green(`✓ Created field file:`),
+        chalk.cyan(relative(CURRENT_EXECUTION_DIRECTORY, filePath)),
+      );
+    };
+
+    if (relationType === 'one-to-many') {
+      const relObj = relatedObjects[0];
+
+      const { baseFieldName } = await inquirer.prompt<{ baseFieldName: string }>([
+        {
+          type: 'input',
+          name: 'baseFieldName',
+          message: `Enter field name on base object [${baseObject.nameSingular}]:`,
+          default: this.camelCase(relObj.namePlural),
+          validate: (input) => /^[a-z][a-zA-Z0-9]*$/.test(input.trim()) || 'Please enter a valid camelCase name',
+        },
+      ]);
+
+      const { relatedFieldName } = await inquirer.prompt<{ relatedFieldName: string }>([
+        {
+          type: 'input',
+          name: 'relatedFieldName',
+          message: `Enter field name on related object [${relObj.nameSingular}]:`,
+          default: this.camelCase(baseObject.nameSingular),
+          validate: (input) => /^[a-z][a-zA-Z0-9]*$/.test(input.trim()) || 'Please enter a valid camelCase name',
+        },
+      ]);
+
+      const baseFieldUuid = v4();
+      const relatedFieldUuid = v4();
+
+      const baseFieldContent = `import { defineField, FieldType, RelationType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: '${baseFieldUuid}',
+  objectUniversalIdentifier: '${baseObject.universalIdentifier}',
+  type: FieldType.RELATION,
+  name: '${baseFieldName}',
+  label: '${convertToLabel(baseFieldName)}',
+  relationTargetObjectMetadataUniversalIdentifier: '${relObj.universalIdentifier}',
+  relationTargetFieldMetadataUniversalIdentifier: '${relatedFieldUuid}',
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+  },
+});
+`;
+
+      const relatedFieldContent = `import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: '${relatedFieldUuid}',
+  objectUniversalIdentifier: '${relObj.universalIdentifier}',
+  type: FieldType.RELATION,
+  name: '${relatedFieldName}',
+  label: '${convertToLabel(relatedFieldName)}',
+  relationTargetObjectMetadataUniversalIdentifier: '${baseObject.universalIdentifier}',
+  relationTargetFieldMetadataUniversalIdentifier: '${baseFieldUuid}',
+  universalSettings: {
+    relationType: RelationType.MANY_TO_ONE,
+    onDelete: OnDeleteAction.${onDeleteAction},
+    joinColumnName: '${this.camelCase(relatedFieldName)}Id',
+  },
+});
+`;
+
+      await writeFieldFile(`${kebabCase(baseFieldName)}-on-${kebabCase(baseObject.nameSingular)}.ts`, baseFieldContent);
+      await writeFieldFile(`${kebabCase(relatedFieldName)}-on-${kebabCase(relObj.nameSingular)}.ts`, relatedFieldContent);
+    } else {
+      const morphId = v4();
+
+      for (const relObj of relatedObjects) {
+        const { baseFieldName } = await inquirer.prompt<{ baseFieldName: string }>([
+          {
+            type: 'input',
+            name: 'baseFieldName',
+            message: `Enter field name on base object [${baseObject.nameSingular}] for related object [${relObj.nameSingular}]:`,
+            default: `target${this.capitalize(relObj.nameSingular)}`,
+            validate: (input) => /^[a-z][a-zA-Z0-9]*$/.test(input.trim()) || 'Please enter a valid camelCase name',
+          },
+        ]);
+
+        const { relatedFieldName } = await inquirer.prompt<{ relatedFieldName: string }>([
+          {
+            type: 'input',
+            name: 'relatedFieldName',
+            message: `Enter field name on related object [${relObj.nameSingular}]:`,
+            default: this.camelCase(baseObject.nameSingular),
+            validate: (input) => /^[a-z][a-zA-Z0-9]*$/.test(input.trim()) || 'Please enter a valid camelCase name',
+          },
+        ]);
+
+        const baseFieldUuid = v4();
+        const relatedFieldUuid = v4();
+
+        const baseFieldContent = `import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: '${baseFieldUuid}',
+  objectUniversalIdentifier: '${baseObject.universalIdentifier}',
+  type: FieldType.MORPH_RELATION,
+  name: '${baseFieldName}',
+  label: '${convertToLabel(baseFieldName)}',
+  relationTargetObjectMetadataUniversalIdentifier: '${relObj.universalIdentifier}',
+  relationTargetFieldMetadataUniversalIdentifier: '${relatedFieldUuid}',
+  morphId: '${morphId}',
+  universalSettings: {
+    relationType: RelationType.MANY_TO_ONE,
+    onDelete: OnDeleteAction.${onDeleteAction},
+    joinColumnName: '${this.camelCase(baseFieldName)}Id',
+  },
+});
+`;
+
+        const relatedFieldContent = `import { defineField, FieldType, RelationType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: '${relatedFieldUuid}',
+  objectUniversalIdentifier: '${relObj.universalIdentifier}',
+  type: FieldType.RELATION,
+  name: '${relatedFieldName}',
+  label: '${convertToLabel(relatedFieldName)}',
+  relationTargetObjectMetadataUniversalIdentifier: '${baseObject.universalIdentifier}',
+  relationTargetFieldMetadataUniversalIdentifier: '${baseFieldUuid}',
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+  },
+});
+`;
+
+        await writeFieldFile(`${kebabCase(baseFieldName)}-on-${kebabCase(baseObject.nameSingular)}.ts`, baseFieldContent);
+        await writeFieldFile(`${kebabCase(relatedFieldName)}-on-${kebabCase(relObj.nameSingular)}.ts`, relatedFieldContent);
+      }
+    }
+  }
+
+  private getPluralName(singular: string): string {
+    const lower = singular.toLowerCase();
+    if (lower === 'person') return 'people';
+    if (lower === 'company') return 'companies';
+    if (lower === 'opportunity') return 'opportunities';
+
+    if (singular.endsWith('y') && !/[aeiou]y$/i.test(singular)) {
+      return singular.slice(0, -1) + 'ies';
+    }
+    if (
+      singular.endsWith('s') ||
+      singular.endsWith('x') ||
+      singular.endsWith('z') ||
+      singular.endsWith('ch') ||
+      singular.endsWith('sh')
+    ) {
+      return singular + 'es';
+    }
+    return singular + 's';
+  }
+
+  private camelCase(str: string): string {
+    return str
+      .replace(/[^a-zA-Z0-9\s-_]/g, '')
+      .replace(/[\s-_]+(.)/g, (_, c) => c.toUpperCase())
+      .replace(/^(.)/, (c) => c.toLowerCase());
+  }
+
+  private capitalize(str: string): string {
+    return str.charAt(0).toUpperCase() + str.slice(1);
   }
 }
