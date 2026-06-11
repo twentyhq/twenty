@@ -1,0 +1,307 @@
+@use 'sass:map';
+
+// The variant × accent × disabled × focus matrix below is ported
+// token-for-token from computeIconButtonDynamicStyles in the deprecated
+// IconButton.tsx. Matrix rules only assign CSS custom properties; the actual
+// declarations live on the flat .button class so twenty-front
+// styled(IconButton) overrides keep beating them at (0,1,0) specificity,
+// exactly like the legacy single Linaria class did.
+// Cascade order inside each branch: base, then [data-focus], then
+// [data-disabled] — later rules win, which replicates the legacy switch
+// precedence (disabled > focus > base).
+
+.button {
+  align-items: center;
+  background: var(--icon-button-bg, transparent);
+  border-color: var(--icon-button-border-color, transparent);
+  border-radius: var(--icon-button-radius, var(--t-border-radius-sm));
+  border-style: solid;
+  border-width: var(--icon-button-border-width, 1px);
+  box-shadow: var(--icon-button-box-shadow, none);
+  box-sizing: border-box;
+  color: var(--icon-button-color, var(--t-font-color-secondary));
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  font-family: var(--t-font-family);
+  font-weight: 500;
+  gap: var(--t-spacing-1);
+  justify-content: center;
+  opacity: var(--icon-button-opacity, 1);
+  padding: 0;
+  transition: background 0.1s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: var(--icon-button-hover-bg, transparent);
+  }
+
+  &:active {
+    background: var(--icon-button-active-bg, transparent);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &[data-disabled] {
+    cursor: not-allowed;
+  }
+}
+
+.small {
+  height: 24px;
+  min-width: 24px;
+}
+
+.medium {
+  height: 32px;
+  min-width: 32px;
+}
+
+// position only reshapes the border radius; standalone keeps the .button
+// fallback radius.
+.button[data-position='left'] {
+  --icon-button-radius: var(--t-border-radius-sm) 0px 0px
+    var(--t-border-radius-sm);
+}
+
+.button[data-position='middle'] {
+  --icon-button-radius: 0px;
+}
+
+.button[data-position='right'] {
+  --icon-button-radius: 0px var(--t-border-radius-sm) var(--t-border-radius-sm)
+    0px;
+}
+
+// Default border widths: tertiary is borderless and middle collapses the
+// horizontal borders for primary/secondary; the .button fallback covers the
+// remaining 1px cases.
+.button[data-variant='tertiary'] {
+  --icon-button-border-width: 0;
+}
+
+.button[data-position='middle']:is(
+    [data-variant='primary'],
+    [data-variant='secondary']
+  ) {
+  --icon-button-border-width: 1px 0px;
+}
+
+// focusOverride from the legacy source: an enabled focused button always
+// shows a full 1px border, even for tertiary (borderless) and middle
+// (collapsed) buttons.
+.button[data-focus]:not([data-disabled]) {
+  --icon-button-border-width: 1px 1px;
+}
+
+// variant=primary, keyed by accent. Null entries mean the disabled state
+// keeps the base/focus value, mirroring the legacy switch.
+$primary-accents: (
+  'default': (
+    bg: var(--t-background-secondary),
+    border: var(--t-background-transparent-light),
+    border-focus: var(--t-color-blue),
+    border-disabled: null,
+    shadow-focus: var(--t-accent-tertiary),
+    color: var(--t-font-color-secondary),
+    color-disabled: var(--t-font-color-extra-light),
+    opacity-disabled: null,
+    hover: var(--t-background-tertiary),
+    active: var(--t-background-quaternary),
+    hover-disabled: var(--t-background-secondary),
+    active-disabled: var(--t-background-secondary),
+  ),
+  'blue': (
+    bg: var(--t-color-blue),
+    border: var(--t-background-transparent-light),
+    border-focus: var(--t-color-blue),
+    border-disabled: transparent,
+    shadow-focus: var(--t-accent-tertiary),
+    color: var(--t-gray-scale-gray1),
+    color-disabled: null,
+    opacity-disabled: 0.24,
+    hover: var(--t-color-blue10),
+    active: var(--t-color-blue12),
+    hover-disabled: var(--t-color-blue),
+    active-disabled: var(--t-color-blue),
+  ),
+  'danger': (
+    bg: var(--t-color-red),
+    border: var(--t-background-transparent-light),
+    border-focus: var(--t-color-red),
+    border-disabled: transparent,
+    shadow-focus: var(--t-color-red3),
+    color: var(--t-gray-scale-gray1),
+    color-disabled: null,
+    opacity-disabled: 0.24,
+    hover: var(--t-color-red10),
+    active: var(--t-color-red10),
+    hover-disabled: var(--t-color-red),
+    active-disabled: var(--t-color-red),
+  ),
+);
+
+@each $accent, $tokens in $primary-accents {
+  .button[data-variant='primary'][data-accent='#{$accent}'] {
+    --icon-button-bg: #{map.get($tokens, bg)};
+    --icon-button-border-color: #{map.get($tokens, border)};
+    --icon-button-color: #{map.get($tokens, color)};
+    --icon-button-hover-bg: #{map.get($tokens, hover)};
+    --icon-button-active-bg: #{map.get($tokens, active)};
+  }
+
+  // borderColor follows the raw focus flag in the legacy source, so
+  // disabled+focus keeps it unless the accent defines border-disabled.
+  .button[data-variant='primary'][data-accent='#{$accent}'][data-focus] {
+    --icon-button-border-color: #{map.get($tokens, border-focus)};
+    --icon-button-box-shadow: 0 0 0 3px #{map.get($tokens, shadow-focus)};
+  }
+
+  .button[data-variant='primary'][data-accent='#{$accent}'][data-disabled] {
+    --icon-button-box-shadow: none;
+    --icon-button-hover-bg: #{map.get($tokens, hover-disabled)};
+    --icon-button-active-bg: #{map.get($tokens, active-disabled)};
+
+    @if map.get($tokens, border-disabled) {
+      --icon-button-border-color: #{map.get($tokens, border-disabled)};
+    }
+
+    @if map.get($tokens, color-disabled) {
+      --icon-button-color: #{map.get($tokens, color-disabled)};
+    }
+
+    @if map.get($tokens, opacity-disabled) {
+      --icon-button-opacity: #{map.get($tokens, opacity-disabled)};
+    }
+  }
+}
+
+// variant=secondary|tertiary. The two variants share backgrounds and disabled
+// treatment; they differ in their resting border (secondary is outlined,
+// tertiary borderless) and in how that border reacts to focus, so the border
+// logic is spelled out per accent instead of mapped.
+
+// accent=default
+.button:is(
+    [data-variant='secondary'],
+    [data-variant='tertiary']
+  )[data-accent='default'] {
+  --icon-button-hover-bg: var(--t-background-transparent-light);
+  --icon-button-active-bg: var(--t-background-transparent-light);
+}
+
+.button[data-variant='secondary'][data-accent='default'] {
+  --icon-button-border-color: var(--t-background-transparent-medium);
+  --icon-button-color: var(--t-font-color-secondary);
+}
+
+.button[data-variant='tertiary'][data-accent='default'] {
+  --icon-button-color: var(--t-font-color-tertiary);
+}
+
+// background follows the raw focus flag (it stays on for disabled+focus).
+.button:is(
+    [data-variant='secondary'],
+    [data-variant='tertiary']
+  )[data-accent='default'][data-focus] {
+  --icon-button-bg: var(--t-background-transparent-primary);
+  --icon-button-border-color: var(--t-color-blue);
+  --icon-button-box-shadow: 0 0 0 3px var(--t-accent-tertiary);
+}
+
+.button:is(
+    [data-variant='secondary'],
+    [data-variant='tertiary']
+  )[data-accent='default'][data-disabled] {
+  --icon-button-box-shadow: none;
+  --icon-button-color: var(--t-font-color-extra-light);
+  --icon-button-hover-bg: transparent;
+  --icon-button-active-bg: transparent;
+}
+
+// The secondary border only turns blue on enabled focus; tertiary keeps the
+// blue border even for disabled+focus (raw focus in the legacy source).
+.button[data-variant='secondary'][data-accent='default'][data-disabled] {
+  --icon-button-border-color: var(--t-background-transparent-medium);
+}
+
+// accent=blue
+.button:is(
+    [data-variant='secondary'],
+    [data-variant='tertiary']
+  )[data-accent='blue'] {
+  --icon-button-color: var(--t-color-blue);
+  --icon-button-hover-bg: var(--t-accent-tertiary);
+  --icon-button-active-bg: var(--t-accent-secondary);
+}
+
+.button[data-variant='secondary'][data-accent='blue'] {
+  --icon-button-border-color: var(--t-color-blue);
+}
+
+.button:is(
+    [data-variant='secondary'],
+    [data-variant='tertiary']
+  )[data-accent='blue'][data-focus] {
+  --icon-button-bg: var(--t-background-transparent-primary);
+  --icon-button-box-shadow: 0 0 0 3px var(--t-accent-tertiary);
+}
+
+// Only the tertiary border reacts to focus for the blue accent; the
+// secondary border is keyed on disabled alone.
+.button[data-variant='tertiary'][data-accent='blue'][data-focus] {
+  --icon-button-border-color: var(--t-color-blue);
+}
+
+.button:is(
+    [data-variant='secondary'],
+    [data-variant='tertiary']
+  )[data-accent='blue'][data-disabled] {
+  --icon-button-box-shadow: none;
+  --icon-button-color: var(--t-accent-accent4060);
+  --icon-button-hover-bg: transparent;
+  --icon-button-active-bg: transparent;
+}
+
+.button[data-variant='secondary'][data-accent='blue'][data-disabled] {
+  --icon-button-border-color: var(--t-color-blue5);
+}
+
+// accent=danger
+.button:is(
+    [data-variant='secondary'],
+    [data-variant='tertiary']
+  )[data-accent='danger'] {
+  --icon-button-color: var(--t-font-color-danger);
+  --icon-button-hover-bg: var(--t-background-danger);
+  --icon-button-active-bg: var(--t-background-danger);
+}
+
+.button[data-variant='secondary'][data-accent='danger'] {
+  --icon-button-border-color: var(--t-border-color-danger);
+}
+
+// danger keeps a transparent background even on focus; only the shadow and
+// the tertiary border react.
+.button:is(
+    [data-variant='secondary'],
+    [data-variant='tertiary']
+  )[data-accent='danger'][data-focus] {
+  --icon-button-box-shadow: 0 0 0 3px var(--t-color-red3);
+}
+
+.button[data-variant='tertiary'][data-accent='danger'][data-focus] {
+  --icon-button-border-color: var(--t-color-red);
+}
+
+.button:is(
+    [data-variant='secondary'],
+    [data-variant='tertiary']
+  )[data-accent='danger'][data-disabled] {
+  --icon-button-box-shadow: none;
+  --icon-button-color: var(--t-color-red5);
+  --icon-button-hover-bg: transparent;
+  --icon-button-active-bg: transparent;
+}

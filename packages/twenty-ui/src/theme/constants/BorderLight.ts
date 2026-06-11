@@ -1,4 +1,4 @@
-import { COLOR_LIGHT } from '@new-ui/theme/constants/ColorsLight';
+import { COLOR_LIGHT } from '@ui/theme/constants/ColorsLight';
 import { BORDER_COMMON } from './BorderCommon';
 import { GRAY_SCALE_LIGHT } from './GrayScaleLight';
 import { TRANSPARENT_COLORS_LIGHT } from './TransparentColorsLight';

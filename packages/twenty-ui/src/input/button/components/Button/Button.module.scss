@@ -1,0 +1,322 @@
+@use 'sass:map';
+
+// GRAY_SCALE_LIGHT.gray1 from theme/constants/GrayScaleLight.ts — the legacy
+// Linaria styles read it from JS because it is theme-invariant.
+$gray-scale-light-gray1: color(display-p3 1 1 1);
+
+// The variant × accent × inverted × disabled × focus matrix below is ported
+// token-for-token from computeButtonDynamicStyles in the deprecated
+// Button.tsx. Matrix rules only assign CSS custom properties; the actual
+// declarations live on the flat .button class so twenty-front styled(Button)
+// overrides keep beating them at (0,1,0) specificity, exactly like the legacy
+// single Linaria class did.
+// Cascade order inside each branch: base, then [data-focus], then
+// [data-disabled], then [data-disabled][data-focus] — later rules win, which
+// replicates the Linaria switch precedence (disabled > focus > base).
+
+.wrapper {
+  max-width: none;
+  position: relative;
+  width: auto;
+}
+
+.wrapperLoading {
+  max-width: calc(100% - var(--t-spacing-8));
+}
+
+.button {
+  --tw-button-color: var(--btn-color, var(--t-font-color-secondary));
+
+  align-items: center;
+  background: var(--btn-bg, transparent);
+  border-color: var(--btn-border-color, transparent);
+  border-radius: var(--btn-radius, var(--t-border-radius-sm));
+  border-style: solid;
+  border-width: var(--btn-border-width, 1px 1px 1px 1px);
+  box-shadow: var(--btn-box-shadow, none);
+  box-sizing: border-box;
+  color: var(--btn-color, var(--t-font-color-secondary));
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  font-family: var(--t-font-family);
+  font-size: var(--t-font-size-md);
+  font-weight: 500;
+  gap: var(--t-spacing-1);
+  justify-content: var(--btn-justify, flex-start);
+  padding: 0 var(--t-spacing-2) 0 var(--t-spacing-2);
+  text-decoration: none;
+  transition: background 0.1s ease;
+  white-space: nowrap;
+  width: auto;
+
+  &:hover {
+    background: var(--btn-hover-bg, transparent);
+  }
+
+  &:active {
+    background: var(--btn-active-bg, transparent);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &[data-disabled] {
+    cursor: not-allowed;
+  }
+}
+
+.small {
+  height: 24px;
+}
+
+.medium {
+  height: 32px;
+}
+
+// Applied to both the wrapper and the button; declared after them so the
+// width wins the cascade at equal specificity.
+.fullWidth {
+  width: 100%;
+}
+
+// position only reshapes radius and collapses inner borders. The legacy
+// '1px 1px' override for primary/danger is omitted: it computes to the same
+// 1px on every side as the default.
+.button[data-position='left'] {
+  --btn-radius: var(--t-border-radius-sm) 0px 0px var(--t-border-radius-sm);
+  --btn-border-width: 1px 0px 1px 1px;
+}
+
+.button[data-position='middle'] {
+  --btn-radius: 0px;
+  --btn-border-width: 1px 0px 1px 0px;
+}
+
+.button[data-position='right'] {
+  --btn-radius: 0px var(--t-border-radius-sm) var(--t-border-radius-sm) 0px;
+  --btn-border-width: 1px 1px 1px 0px;
+}
+
+// variant=primary, not inverted, keyed by accent.
+// focus-needs-enabled mirrors the one asymmetry of the legacy switch: the
+// default accent only shows its focus border when enabled, while blue and
+// danger keep the focus border even when disabled.
+$primary-accents: (
+  'default': (
+    bg: var(--t-background-secondary),
+    bg-disabled: var(--t-background-secondary),
+    border: var(--t-background-transparent-light),
+    border-focus: var(--t-color-blue),
+    focus-needs-enabled: true,
+    shadow-focus: var(--t-accent-tertiary),
+    color: var(--t-font-color-secondary),
+    color-disabled: var(--t-font-color-extra-light),
+    hover: var(--t-background-tertiary),
+    active: var(--t-background-quaternary),
+  ),
+  'blue': (
+    bg: var(--t-color-blue),
+    bg-disabled: var(--t-accent-accent4060),
+    border: var(--t-background-transparent-light),
+    border-focus: var(--t-color-blue),
+    focus-needs-enabled: false,
+    shadow-focus: var(--t-accent-tertiary),
+    color: $gray-scale-light-gray1,
+    color-disabled: $gray-scale-light-gray1,
+    hover: var(--t-color-blue10),
+    active: var(--t-color-blue12),
+  ),
+  'danger': (
+    bg: var(--t-color-red),
+    bg-disabled: var(--t-color-red),
+    border: var(--t-background-transparent-light),
+    border-focus: var(--t-color-red),
+    focus-needs-enabled: false,
+    shadow-focus: var(--t-color-red3),
+    color: var(--t-background-primary),
+    color-disabled: var(--t-background-primary),
+    hover: var(--t-color-red8),
+    active: var(--t-color-red10),
+  ),
+);
+
+@each $accent, $tokens in $primary-accents {
+  .button[data-variant='primary'][data-accent='#{$accent}']:not(
+      [data-inverted]
+    ) {
+    --btn-bg: #{map.get($tokens, bg)};
+    --btn-border-color: #{map.get($tokens, border)};
+    --btn-color: #{map.get($tokens, color)};
+    --btn-hover-bg: #{map.get($tokens, hover)};
+    --btn-active-bg: #{map.get($tokens, active)};
+  }
+
+  .button[data-variant='primary'][data-accent='#{$accent}']:not(
+      [data-inverted]
+    )[data-focus] {
+    --btn-border-color: #{map.get($tokens, border-focus)};
+    --btn-box-shadow: 0 0 0 3px #{map.get($tokens, shadow-focus)};
+  }
+
+  .button[data-variant='primary'][data-accent='#{$accent}']:not(
+      [data-inverted]
+    )[data-disabled] {
+    --btn-bg: #{map.get($tokens, bg-disabled)};
+    --btn-box-shadow: none;
+    --btn-color: #{map.get($tokens, color-disabled)};
+    --btn-hover-bg: #{map.get($tokens, bg-disabled)};
+    --btn-active-bg: #{map.get($tokens, bg-disabled)};
+
+    @if map.get($tokens, focus-needs-enabled) {
+      --btn-border-color: #{map.get($tokens, border)};
+    }
+  }
+}
+
+// variant=primary, inverted: identical across accents except for the text
+// color.
+$primary-inverted-colors: (
+  'default': var(--t-font-color-secondary),
+  'blue': var(--t-color-blue),
+  'danger': var(--t-color-red),
+);
+
+.button[data-variant='primary'][data-inverted] {
+  --btn-bg: var(--t-background-primary);
+  --btn-border-color: var(--t-background-transparent-light);
+  --btn-hover-bg: var(--t-background-secondary);
+  --btn-active-bg: var(--t-background-tertiary);
+}
+
+@each $accent, $color in $primary-inverted-colors {
+  .button[data-variant='primary'][data-accent='#{$accent}'][data-inverted] {
+    --btn-color: #{$color};
+  }
+}
+
+.button[data-variant='primary'][data-inverted][data-focus] {
+  --btn-box-shadow: 0 0 0 3px var(--t-background-transparent-medium);
+}
+
+.button[data-variant='primary'][data-inverted][data-disabled] {
+  --btn-box-shadow: none;
+  --btn-hover-bg: var(--t-background-primary);
+  --btn-active-bg: var(--t-background-primary);
+}
+
+// variant=secondary|tertiary, not inverted, keyed by accent. Background stays
+// transparent (the .button fallback). The two variants only differ in their
+// resting border: secondary uses border-secondary, tertiary is borderless.
+// focus-needs-enabled-secondary mirrors the legacy gating: only
+// secondary/default hides its focus border when disabled.
+$secondary-accents: (
+  'default': (
+    border-secondary: var(--t-background-transparent-medium),
+    border-focus: var(--t-color-blue),
+    focus-needs-enabled-secondary: true,
+    shadow-focus: var(--t-accent-tertiary),
+    color: var(--t-font-color-secondary),
+    color-disabled: var(--t-font-color-extra-light),
+    hover: var(--t-background-transparent-light),
+    active: var(--t-background-transparent-light),
+  ),
+  'blue': (
+    border-secondary: var(--t-accent-primary),
+    border-focus: var(--t-color-blue),
+    focus-needs-enabled-secondary: false,
+    shadow-focus: var(--t-accent-tertiary),
+    color: var(--t-color-blue),
+    color-disabled: var(--t-accent-accent4060),
+    hover: var(--t-accent-tertiary),
+    active: var(--t-accent-secondary),
+  ),
+  'danger': (
+    border-secondary: var(--t-border-color-danger),
+    border-focus: var(--t-color-red),
+    focus-needs-enabled-secondary: false,
+    shadow-focus: var(--t-color-red3),
+    color: var(--t-font-color-danger),
+    color-disabled: var(--t-color-red5),
+    hover: var(--t-background-danger),
+    active: var(--t-background-danger),
+  ),
+);
+
+@each $accent, $tokens in $secondary-accents {
+  .button:is(
+      [data-variant='secondary'],
+      [data-variant='tertiary']
+    )[data-accent='#{$accent}']:not([data-inverted]) {
+    --btn-color: #{map.get($tokens, color)};
+    --btn-hover-bg: #{map.get($tokens, hover)};
+    --btn-active-bg: #{map.get($tokens, active)};
+  }
+
+  .button[data-variant='secondary'][data-accent='#{$accent}']:not(
+      [data-inverted]
+    ) {
+    --btn-border-color: #{map.get($tokens, border-secondary)};
+  }
+
+  .button:is(
+      [data-variant='secondary'],
+      [data-variant='tertiary']
+    )[data-accent='#{$accent}']:not([data-inverted])[data-focus] {
+    --btn-border-color: #{map.get($tokens, border-focus)};
+    --btn-box-shadow: 0 0 0 3px #{map.get($tokens, shadow-focus)};
+  }
+
+  .button:is(
+      [data-variant='secondary'],
+      [data-variant='tertiary']
+    )[data-accent='#{$accent}']:not([data-inverted])[data-disabled] {
+    --btn-box-shadow: none;
+    --btn-color: #{map.get($tokens, color-disabled)};
+    --btn-hover-bg: transparent;
+    --btn-active-bg: transparent;
+  }
+
+  @if map.get($tokens, focus-needs-enabled-secondary) {
+    .button[data-variant='secondary'][data-accent='#{$accent}']:not(
+        [data-inverted]
+      )[data-disabled] {
+      --btn-border-color: #{map.get($tokens, border-secondary)};
+    }
+  }
+}
+
+// variant=secondary|tertiary, inverted: identical across accents. Hover and
+// active stay enabled even when disabled, matching the legacy source.
+.button:is(
+    [data-variant='secondary'],
+    [data-variant='tertiary']
+  )[data-inverted] {
+  --btn-color: var(--t-font-color-inverted);
+  --btn-hover-bg: var(--t-background-transparent-light);
+  --btn-active-bg: var(--t-background-transparent-medium);
+}
+
+.button[data-variant='secondary'][data-inverted] {
+  --btn-border-color: var(--t-background-transparent-primary);
+}
+
+.button:is(
+    [data-variant='secondary'],
+    [data-variant='tertiary']
+  )[data-inverted][data-focus] {
+  --btn-border-color: #{$gray-scale-light-gray1};
+  --btn-box-shadow: 0 0 0 3px var(--t-background-transparent-medium);
+}
+
+.button:is(
+    [data-variant='secondary'],
+    [data-variant='tertiary']
+  )[data-inverted][data-disabled] {
+  --btn-box-shadow: none;
+}
+
+.button[data-variant='secondary'][data-inverted][data-disabled] {
+  --btn-border-color: #{$gray-scale-light-gray1};
+}
