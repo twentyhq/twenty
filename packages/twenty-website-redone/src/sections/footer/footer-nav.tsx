@@ -100,6 +100,7 @@ const linkStyles = `
   display: flex;
   font-size: ${fontSize(4)};
   gap: 0;
+  line-height: 1.35;
   text-decoration: none;
   transition: gap 0.3s ease-out;
 

@@ -6,20 +6,17 @@ import { SITE_URLS } from '@/platform/site-urls';
 import { buildFaqPageJsonLd } from '@/platform/seo/build-faq-page-json-ld';
 import { JsonLd } from '@/platform/seo/json-ld';
 import { mediaUp, spacing } from '@/tokens';
-import { Button, Eyebrow, Heading, SectionIntro, SectionShell } from '@/ui';
+import {
+  Button,
+  Eyebrow,
+  Heading,
+  SectionIntro,
+  SectionShell,
+  SectionStack,
+} from '@/ui';
 
 import { FAQ_QUESTIONS } from './faq.data';
 import { FaqItems } from './faq-items';
-
-const FaqStack = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  row-gap: ${spacing(10)};
-
-  ${mediaUp('md')} {
-    row-gap: ${spacing(20)};
-  }
-`;
 
 const HeadingMeasure = styled.div`
   ${mediaUp('md')} {
@@ -41,7 +38,7 @@ export function Faq() {
   return (
     <SectionShell rhythm="spacious" scheme="dark">
       <JsonLd data={buildFaqPageJsonLd(i18n, FAQ_QUESTIONS)} />
-      <FaqStack>
+      <SectionStack>
         <SectionIntro>
           <Eyebrow>{i18n._(msg`Any Questions?`)}</Eyebrow>
           <HeadingMeasure>
@@ -62,7 +59,7 @@ export function Faq() {
           </CtaRow>
         </SectionIntro>
         <FaqItems questions={FAQ_QUESTIONS} />
-      </FaqStack>
+      </SectionStack>
     </SectionShell>
   );
 }

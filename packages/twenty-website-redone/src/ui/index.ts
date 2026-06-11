@@ -1,3 +1,4 @@
+export { HeadingPair } from './heading-pair';
 export { Body, type BodyElement, type BodyProps, type BodySize } from './body';
 export {
   Button,
@@ -21,5 +22,6 @@ export {
 } from './heading';
 export { parseHeadingNotation, type HeadingSegment } from './heading-notation';
 export { SectionIntro } from './section-intro';
+export { SectionStack } from './section-stack';
 export { VerticalDivider } from './vertical-divider';
 export { SectionShell, type SectionShellProps } from './section-shell';

@@ -4,26 +4,18 @@ import { styled } from '@linaria/react';
 
 import { getServerI18n } from '@/platform/i18n';
 import { mediaUp, spacing } from '@/tokens';
-import { Body, Eyebrow, Heading, SectionIntro, SectionShell } from '@/ui';
+import {
+  Body,
+  Eyebrow,
+  Heading,
+  HeadingPair,
+  SectionIntro,
+  SectionShell,
+  SectionStack,
+} from '@/ui';
 
 import { IllustrationCard } from './illustration-card';
 import { ILLUSTRATION_CARDS } from './three-cards.data';
-
-const SectionStack = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  row-gap: ${spacing(6)};
-
-  ${mediaUp('md')} {
-    row-gap: ${spacing(20)};
-  }
-`;
-
-const HeadingGroup = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  row-gap: ${spacing(2)};
-`;
 
 // This heading tracks its sans accents lighter than the global -0.04em —
 // ported from the original.
@@ -71,7 +63,7 @@ export function ThreeCards() {
       <SectionStack>
         <SectionIntro>
           <Eyebrow>{i18n._(msg`Stop settling for trade-offs.`)}</Eyebrow>
-          <HeadingGroup>
+          <HeadingPair>
             <div className={headingMeasureClassName}>
               <Heading as="h2" size="lg" weight="light">
                 {i18n._(
@@ -86,7 +78,7 @@ export function ThreeCards() {
                 )}
               </Body>
             </BodyMeasure>
-          </HeadingGroup>
+          </HeadingPair>
         </SectionIntro>
         <CardsGrid>
           {ILLUSTRATION_CARDS.map((card) => (

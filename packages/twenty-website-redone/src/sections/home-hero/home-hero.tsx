@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { getServerI18n } from '@/platform/i18n';
 import { SITE_URLS } from '@/platform/site-urls';
 import { mediaUp, spacing } from '@/tokens';
-import { Body, Button, Heading, SectionShell } from '@/ui';
+import { Body, Button, Heading, HeadingPair, SectionShell } from '@/ui';
 
 // Pure-CSS glow behind the hero; the halftone visual that renders inside it
 // arrives with the visual-runtime port.
@@ -24,14 +24,6 @@ const IntroStack = styled.div`
   flex-direction: column;
   gap: ${spacing(8)};
   text-align: center;
-  width: 100%;
-`;
-
-const HeadingGroup = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  gap: ${spacing(3)};
   width: 100%;
 `;
 
@@ -62,7 +54,7 @@ export function HomeHero() {
       scheme="muted"
     >
       <IntroStack>
-        <HeadingGroup>
+        <HeadingPair>
           <HeadingMeasure>
             <Heading as="h1" size="lg" weight="light">
               {i18n._(msg`Build your Enterprise CRM *at AI Speed*`)}
@@ -75,7 +67,7 @@ export function HomeHero() {
               )}
             </Body>
           </BodyMeasure>
-        </HeadingGroup>
+        </HeadingPair>
         <CtaRow>
           <Button
             href={SITE_URLS.appWelcome}
