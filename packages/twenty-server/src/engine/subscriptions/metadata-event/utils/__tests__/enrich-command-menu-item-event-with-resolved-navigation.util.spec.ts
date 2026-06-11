@@ -27,7 +27,8 @@ const makeFlatObjectMetadata = (
     universalIdentifier: 'obj-uid-1',
     workspaceId: 'ws-1',
     applicationId: 'app-1',
-    applicationUniversalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+    applicationUniversalIdentifier:
+      TWENTY_STANDARD_APPLICATION.universalIdentifier,
     labelPlural: 'People',
     labelSingular: 'Person',
     icon: 'IconUser',
