@@ -2,6 +2,7 @@
 
 import { NavigationMenu } from '@base-ui/react/navigation-menu';
 import { IconChevronDown } from '@tabler/icons-react';
+import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { Fragment } from 'react';
@@ -156,7 +157,7 @@ export function MenuNav({ items }: MenuNavProps) {
 
   return (
     <NavigationMenu.Root>
-      <NavList aria-label="Primary">
+      <NavList aria-label={i18n._(msg`Primary`)}>
         {items.map((item, index) => (
           <Fragment key={i18n._(item.label)}>
             {index > 0 && <VerticalDivider aria-hidden />}

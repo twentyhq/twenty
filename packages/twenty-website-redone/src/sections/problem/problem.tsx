@@ -2,7 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { Fragment } from 'react';
 
-import { getServerI18n } from '@/platform/i18n';
+import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import {
   FONT_WEIGHT,
   fontFamily,

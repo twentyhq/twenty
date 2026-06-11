@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { IconUsers } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
@@ -14,6 +15,7 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
+import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { CornerMarkers, SectionShell } from '@/ui';
 
 import { TRUSTED_BY_LOGOS, type TrustedByLogo } from './trusted-by.data';
@@ -149,8 +151,10 @@ function Logo({
 }
 
 export function TrustedBy() {
+  const i18n = getServerI18n();
+
   return (
-    <SectionShell ariaLabel="Trusted by leading organizations">
+    <SectionShell ariaLabel={i18n._(msg`Trusted by leading organizations`)}>
       <Card>
         <CornerMarkers />
         <LabelCell>

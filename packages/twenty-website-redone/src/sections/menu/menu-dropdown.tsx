@@ -199,7 +199,7 @@ export function MenuDropdown({ items }: MenuDropdownProps) {
         <PreviewPanel>
           <PreviewFrame>
             <NextImage
-              alt={activeItem.preview.imageAlt}
+              alt={i18n._(activeItem.preview.imageAlt)}
               fill
               sizes="360px"
               src={activeItem.preview.image}

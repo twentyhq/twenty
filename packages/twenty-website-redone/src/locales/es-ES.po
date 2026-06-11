@@ -13,6 +13,12 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#. js-lingui-id: sGt3Jm
+#. placeholder {0}: i18n._(card.attribution.company)
+#: src/sections/three-cards/illustration-card.tsx
+msgid "{0} case study"
+msgstr ""
+
 #. js-lingui-id: UEDohT
 #: src/sections/footer/footer-bottom.tsx
 msgid "© {year} – Twenty"
@@ -83,6 +89,11 @@ msgstr ""
 msgid "Begin with production-grade *building blocks*"
 msgstr ""
 
+#. js-lingui-id: BpyJwa
+#: src/sections/menu/menu.data.ts
+msgid "Blue developer illustration with branching arrows"
+msgstr ""
+
 #. js-lingui-id: e1u+Zh
 #: src/sections/menu/menu.data.ts
 msgid "Build on an open platform"
@@ -103,6 +114,21 @@ msgstr ""
 msgid "Can I migrate from Salesforce or HubSpot?"
 msgstr ""
 
+#. js-lingui-id: +DEogc
+#: src/sections/footer/locale-switcher.tsx
+msgid "Change language"
+msgstr ""
+
+#. js-lingui-id: s2oWpP
+#: src/sections/footer/locale-switcher.tsx
+msgid "Choose a language"
+msgstr ""
+
+#. js-lingui-id: vcpc5o
+#: src/sections/menu/menu.tsx
+msgid "Close menu"
+msgstr ""
+
 #. js-lingui-id: L/LPQZ
 #: src/sections/faq/faq.data.ts
 msgid "Cloud Pro is $9/user/month (yearly). Organization is $19/user/month and unlocks SSO and row-level permissions for teams that need finer access control."
@@ -111,6 +137,11 @@ msgstr ""
 #. js-lingui-id: 1YncLF
 #: src/sections/testimonials/testimonials.data.ts
 msgid "Co-founder at NetZero"
+msgstr ""
+
+#. js-lingui-id: chL5IG
+#: src/sections/menu/menu-social.tsx
+msgid "Community"
 msgstr ""
 
 #. js-lingui-id: Fkb+LW
@@ -148,6 +179,11 @@ msgstr ""
 msgid "CRM Engineer"
 msgstr ""
 
+#. js-lingui-id: 5xK1jE
+#: src/sections/helped/helped-scene.tsx
+msgid "Customer stories"
+msgstr ""
+
 #. js-lingui-id: NihQNk
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
@@ -168,6 +204,12 @@ msgstr ""
 #. js-lingui-id: Wuqvfz
 #: src/sections/testimonials/testimonials.data.ts
 msgid "Director of Digital and Information, Elevate Consulting"
+msgstr ""
+
+#. js-lingui-id: 30qcNY
+#: src/sections/menu/menu.data.ts
+#: src/sections/footer/footer.data.ts
+msgid "Discord (opens in new tab)"
 msgstr ""
 
 #. js-lingui-id: W+b/DF
@@ -224,6 +266,12 @@ msgstr ""
 msgid "Get started"
 msgstr ""
 
+#. js-lingui-id: 3QRTgQ
+#: src/sections/menu/menu.data.ts
+#: src/sections/footer/footer.data.ts
+msgid "GitHub (opens in new tab)"
+msgstr ""
+
 #. js-lingui-id: MCLWq4
 #: src/sections/helped/helped.data.ts
 msgid "Grow with a flexible foundation"
@@ -240,6 +288,7 @@ msgid "Help"
 msgstr ""
 
 #. js-lingui-id: i0qMbr
+#: src/sections/menu/menu.tsx
 #: src/sections/footer/footer.data.ts
 msgid "Home"
 msgstr ""
@@ -289,6 +338,12 @@ msgstr ""
 msgid "LinkedIn"
 msgstr ""
 
+#. js-lingui-id: 3hSKC5
+#: src/sections/menu/menu.data.ts
+#: src/sections/footer/footer.data.ts
+msgid "LinkedIn (opens in new tab)"
+msgstr ""
+
 #. js-lingui-id: AHVzME
 #: src/sections/feature-cards/feature-cards.data.ts
 msgid "Live data and AI built"
@@ -315,9 +370,19 @@ msgstr ""
 msgid "Meet the certified agencies and consultants implementing Twenty for teams worldwide."
 msgstr ""
 
+#. js-lingui-id: TizFpt
+#: src/sections/menu/menu-drawer.tsx
+msgid "Navigation menu"
+msgstr ""
+
 #. js-lingui-id: J8ZssL
 #: src/sections/helped/helped.data.ts
 msgid "NetZero runs a modular Twenty setup across carbon credits, ag products, and industrial systems."
+msgstr ""
+
+#. js-lingui-id: awYrJD
+#: src/sections/testimonials/testimonials-carousel.tsx
+msgid "Next testimonial"
 msgstr ""
 
 #. js-lingui-id: SiZ/7E
@@ -328,6 +393,11 @@ msgstr ""
 #. js-lingui-id: l/1LQc
 #: src/sections/testimonials/testimonials.data.ts
 msgid "Olivier Reinaud"
+msgstr ""
+
+#. js-lingui-id: GSr0rF
+#: src/sections/menu/menu.tsx
+msgid "Open menu"
 msgstr ""
 
 #. js-lingui-id: Bwsi7B
@@ -341,10 +411,21 @@ msgstr ""
 msgid "Partners"
 msgstr ""
 
+#. js-lingui-id: LZoO8F
+#: src/sections/testimonials/testimonials-carousel.tsx
+msgid "Previous testimonial"
+msgstr ""
+
 #. js-lingui-id: aHCEmh
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
 msgid "Pricing"
+msgstr ""
+
+#. js-lingui-id: T/R+Qz
+#: src/sections/menu/menu-nav.tsx
+#: src/sections/menu/menu-drawer.tsx
+msgid "Primary"
 msgstr ""
 
 #. js-lingui-id: J2IAmT
@@ -423,6 +504,11 @@ msgstr ""
 msgid "Smart patterns, shortcuts, and layouts make everyday tasks faster and easier to execute."
 msgstr ""
 
+#. js-lingui-id: GUqjZ0
+#: src/sections/footer/footer-bottom.tsx
+msgid "Social media"
+msgstr ""
+
 #. js-lingui-id: ThcPyu
 #: src/sections/stepper/stepper.data.ts
 msgid "Stay in control with our *open-source software*"
@@ -458,6 +544,11 @@ msgstr ""
 #. js-lingui-id: mvP/25
 #: src/sections/footer/footer.data.ts
 msgid "Terms and Conditions"
+msgstr ""
+
+#. js-lingui-id: VUZDlr
+#: src/sections/testimonials/testimonials-carousel.tsx
+msgid "Testimonials"
 msgstr ""
 
 #. js-lingui-id: zXlFuT
@@ -515,6 +606,11 @@ msgstr ""
 msgid "trusted by"
 msgstr ""
 
+#. js-lingui-id: QZdPWP
+#: src/sections/trusted-by/trusted-by.tsx
+msgid "Trusted by leading organizations"
+msgstr ""
+
 #. js-lingui-id: O5dAmW
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty | #1 Open Source CRM"
@@ -525,9 +621,24 @@ msgstr ""
 msgid "Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves."
 msgstr ""
 
+#. js-lingui-id: 4ogO3x
+#: src/sections/menu/menu.data.ts
+msgid "Twenty latest release"
+msgstr ""
+
 #. js-lingui-id: AxT+g4
 #: src/sections/feature-cards/feature-cards.data.ts
 msgid "Twenty makes it simple. It's clean, intuitive, and built to feel like Notion."
+msgstr ""
+
+#. js-lingui-id: mZ3xRm
+#: src/sections/menu/menu.data.ts
+msgid "Twenty partner ecosystem"
+msgstr ""
+
+#. js-lingui-id: osa7Xg
+#: src/sections/menu/menu.data.ts
+msgid "Twenty user guide preview"
 msgstr ""
 
 #. js-lingui-id: Roaswv
@@ -584,6 +695,17 @@ msgstr ""
 #. js-lingui-id: 4sOVu+
 #: src/sections/footer/footer.data.ts
 msgid "Why Twenty"
+msgstr ""
+
+#. js-lingui-id: tetjz4
+#: src/sections/menu/menu.data.ts
+msgid "Why Twenty illustration"
+msgstr ""
+
+#. js-lingui-id: p3ZD6C
+#: src/sections/menu/menu.data.ts
+#: src/sections/footer/footer.data.ts
+msgid "X (opens in new tab)"
 msgstr ""
 
 #. js-lingui-id: Q+G6dT

@@ -26,7 +26,7 @@ export type FooterNavGroup = {
 };
 
 export type FooterSocialLink = {
-  ariaLabel: string;
+  ariaLabel: MessageDescriptor;
   href: string;
   icon: MenuIconComponent;
 };
@@ -108,22 +108,22 @@ export const FOOTER: {
   ],
   socialLinks: [
     {
-      ariaLabel: 'GitHub (opens in new tab)',
+      ariaLabel: msg`GitHub (opens in new tab)`,
       href: SITE_URLS.github,
       icon: GitHubMark,
     },
     {
-      ariaLabel: 'Discord (opens in new tab)',
+      ariaLabel: msg`Discord (opens in new tab)`,
       href: SITE_URLS.discord,
       icon: DiscordMark,
     },
     {
-      ariaLabel: 'LinkedIn (opens in new tab)',
+      ariaLabel: msg`LinkedIn (opens in new tab)`,
       href: SITE_URLS.linkedin,
       icon: IconBrandLinkedin,
     },
     {
-      ariaLabel: 'X (opens in new tab)',
+      ariaLabel: msg`X (opens in new tab)`,
       href: SITE_URLS.x,
       icon: IconBrandX,
     },

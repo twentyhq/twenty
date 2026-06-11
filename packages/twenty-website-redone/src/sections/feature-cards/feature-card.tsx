@@ -3,7 +3,7 @@ import { IconUsersGroup } from '@tabler/icons-react';
 import NextImage from 'next/image';
 
 import { FastPathIcon, LiveDataIcon } from '@/icons';
-import { getServerI18n } from '@/platform/i18n';
+import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import {
   color,
   FONT_WEIGHT,

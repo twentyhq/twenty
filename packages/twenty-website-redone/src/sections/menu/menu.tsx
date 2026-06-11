@@ -130,7 +130,7 @@ export function Menu({ communityStats, scheme = 'light' }: MenuProps) {
           <MenuRow>
             <Drawer.Close
               nativeButton={false}
-              render={<LogoLink aria-label="Home" href="/" />}
+              render={<LogoLink aria-label={i18n._(msg`Home`)} href="/" />}
             >
               <TwentyLogo sizePx={40} />
             </Drawer.Close>
@@ -152,7 +152,11 @@ export function Menu({ communityStats, scheme = 'light' }: MenuProps) {
             <MobileActions>
               <Button href={MENU.appUrl} label={i18n._(msg`Get started`)} />
               <IconButton
-                ariaLabel={isDrawerOpen ? 'Close menu' : 'Open menu'}
+                ariaLabel={
+                  isDrawerOpen
+                    ? i18n._(msg`Close menu`)
+                    : i18n._(msg`Open menu`)
+                }
                 onClick={() => setIsDrawerOpen((previous) => !previous)}
               >
                 {isDrawerOpen ? (

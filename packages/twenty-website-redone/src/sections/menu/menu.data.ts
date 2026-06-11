@@ -21,7 +21,7 @@ export type MenuIconComponent = ComponentType<{
 
 export type MenuNavChildPreview = {
   image: string;
-  imageAlt: string;
+  imageAlt: MessageDescriptor;
   imagePosition?: string;
   imageScale?: number;
   title: MessageDescriptor;
@@ -44,7 +44,7 @@ export type MenuNavItem = {
 };
 
 export type MenuSocialLink = {
-  ariaLabel: string;
+  ariaLabel: MessageDescriptor;
   href: string;
   icon: MenuIconComponent;
   showInDesktop: boolean;
@@ -69,7 +69,7 @@ export const MENU: {
           icon: IconBulb,
           preview: {
             image: '/images/menu/why.webp',
-            imageAlt: 'Why Twenty illustration',
+            imageAlt: msg`Why Twenty illustration`,
             imagePosition: 'center',
             title: msg`Why teams choose Twenty`,
             description: msg`The principles and product philosophy behind the open source CRM.`,
@@ -83,7 +83,7 @@ export const MENU: {
           icon: IconBook,
           preview: {
             image: '/images/menu/user-guide.webp',
-            imageAlt: 'Twenty user guide preview',
+            imageAlt: msg`Twenty user guide preview`,
             title: msg`Master every corner of Twenty`,
             description: msg`Step-by-step guides and playbooks to help your team get the most out of their workspace.`,
           },
@@ -96,7 +96,7 @@ export const MENU: {
           icon: IconCode,
           preview: {
             image: '/images/menu/developers.webp',
-            imageAlt: 'Blue developer illustration with branching arrows',
+            imageAlt: msg`Blue developer illustration with branching arrows`,
             imagePosition: 'center',
             imageScale: 1.6,
             title: msg`Build on an open platform`,
@@ -110,7 +110,7 @@ export const MENU: {
           icon: IconUsers,
           preview: {
             image: '/images/menu/partners.webp',
-            imageAlt: 'Twenty partner ecosystem',
+            imageAlt: msg`Twenty partner ecosystem`,
             imagePosition: 'center',
             title: msg`Team up with a Twenty expert`,
             description: msg`Meet the certified agencies and consultants implementing Twenty for teams worldwide.`,
@@ -123,7 +123,7 @@ export const MENU: {
           icon: IconTag,
           preview: {
             image: '/images/menu/releases.webp',
-            imageAlt: 'Twenty latest release',
+            imageAlt: msg`Twenty latest release`,
             imageScale: 1.04,
             title: msg`See the latest release`,
             description: msg`Track every release with changelogs, highlights and demos of the newest features.`,
@@ -136,27 +136,27 @@ export const MENU: {
   ],
   socialLinks: [
     {
-      ariaLabel: 'GitHub (opens in new tab)',
+      ariaLabel: msg`GitHub (opens in new tab)`,
       href: SITE_URLS.github,
       icon: GitHubMark,
       showInDesktop: true,
       statKey: 'githubStars',
     },
     {
-      ariaLabel: 'Discord (opens in new tab)',
+      ariaLabel: msg`Discord (opens in new tab)`,
       href: SITE_URLS.discord,
       icon: DiscordMark,
       showInDesktop: true,
       statKey: 'discordMembers',
     },
     {
-      ariaLabel: 'LinkedIn (opens in new tab)',
+      ariaLabel: msg`LinkedIn (opens in new tab)`,
       href: SITE_URLS.linkedin,
       icon: IconBrandLinkedin,
       showInDesktop: false,
     },
     {
-      ariaLabel: 'X (opens in new tab)',
+      ariaLabel: msg`X (opens in new tab)`,
       href: SITE_URLS.x,
       icon: IconBrandX,
       showInDesktop: false,

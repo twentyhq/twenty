@@ -129,7 +129,7 @@ export function HelpedScene() {
 
   return (
     <ScrollStage
-      aria-label="Customer stories"
+      aria-label={i18n._(msg`Customer stories`)}
       id="homepage-cases"
       ref={sectionRef}
       role="region"

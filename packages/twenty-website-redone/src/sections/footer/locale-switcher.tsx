@@ -1,6 +1,8 @@
 'use client';
 
 import { IconCheck, IconChevronDown, IconWorld } from '@tabler/icons-react';
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import Link from 'next/link';
 import { useRef, useState } from 'react';
@@ -107,6 +109,7 @@ const ItemSecondary = styled.span`
 `;
 
 export function LocaleSwitcher() {
+  const { i18n } = useLingui();
   const currentLocale = useLocale();
   const unlocalizedPathname = useUnlocalizedPathname();
   const [open, setOpen] = useState(false);
@@ -126,7 +129,7 @@ export function LocaleSwitcher() {
       <TriggerButton
         aria-expanded={open}
         aria-haspopup="dialog"
-        aria-label="Change language"
+        aria-label={i18n._(msg`Change language`)}
         onClick={() => setOpen((previous) => !previous)}
         ref={triggerRef}
         type="button"
@@ -136,7 +139,7 @@ export function LocaleSwitcher() {
         <IconChevronDown aria-hidden size={12} stroke={1.6} />
       </TriggerButton>
       {open && (
-        <Popup aria-label="Choose a language" role="dialog">
+        <Popup aria-label={i18n._(msg`Choose a language`)} role="dialog">
           {WEBSITE_LOCALE_LIST.map((locale) => {
             const nativeName = localeDisplayName.native(locale);
             const englishName = localeDisplayName.english(locale);

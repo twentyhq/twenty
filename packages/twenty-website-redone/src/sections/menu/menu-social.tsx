@@ -1,7 +1,10 @@
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { Fragment } from 'react';
 
 import { formatCompactCount, type CommunityStats } from '@/platform/community';
+import { useLocale } from '@/platform/i18n';
 import {
   color,
   FONT_WEIGHT,
@@ -72,10 +75,12 @@ export type MenuSocialProps = {
 };
 
 export function MenuSocial({ links, stats }: MenuSocialProps) {
+  const { i18n } = useLingui();
+  const locale = useLocale();
   const desktopLinks = links.filter((link) => link.showInDesktop);
 
   return (
-    <SocialRow aria-label="Community">
+    <SocialRow aria-label={i18n._(msg`Community`)}>
       {desktopLinks.map((link, index) => {
         const IconComponent = link.icon;
         const isWideOnly = link.statKey === 'discordMembers';
@@ -85,9 +90,11 @@ export function MenuSocial({ links, stats }: MenuSocialProps) {
             key={link.href}
           >
             {index > 0 && <VerticalDivider aria-hidden />}
-            <SocialAnchor aria-label={link.ariaLabel} href={link.href}>
+            <SocialAnchor aria-label={i18n._(link.ariaLabel)} href={link.href}>
               <IconComponent aria-hidden size={14} />
-              {link.statKey ? formatCompactCount(stats[link.statKey]) : null}
+              {link.statKey
+                ? formatCompactCount(stats[link.statKey], locale)
+                : null}
               <ExternalArrow />
             </SocialAnchor>
           </SocialItem>

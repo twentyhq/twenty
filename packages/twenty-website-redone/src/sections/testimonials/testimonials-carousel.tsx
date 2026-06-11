@@ -186,7 +186,7 @@ export function TestimonialsCarousel({
 
   return (
     <CarouselGrid
-      aria-label="Testimonials"
+      aria-label={i18n._(msg`Testimonials`)}
       aria-roledescription="carousel"
       role="region"
     >
@@ -218,7 +218,7 @@ export function TestimonialsCarousel({
         <FooterRow>
           <NavGroup>
             <IconButton
-              ariaLabel="Previous testimonial"
+              ariaLabel={i18n._(msg`Previous testimonial`)}
               disabled={!hasPrevious}
               onClick={() => hasPrevious && setIndex(index - 1)}
               sizePx={48}
@@ -226,7 +226,7 @@ export function TestimonialsCarousel({
               <ArrowLeft sizePx={14} />
             </IconButton>
             <IconButton
-              ariaLabel="Next testimonial"
+              ariaLabel={i18n._(msg`Next testimonial`)}
               disabled={!hasNext}
               onClick={() => hasNext && setIndex(index + 1)}
               sizePx={48}

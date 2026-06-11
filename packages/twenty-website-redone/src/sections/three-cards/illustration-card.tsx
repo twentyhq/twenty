@@ -1,7 +1,9 @@
 import { styled } from '@linaria/react';
 
 import { ArrowRight } from '@/icons';
-import { getServerI18n } from '@/platform/i18n';
+import { msg } from '@lingui/core/macro';
+
+import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { LocalizedLink } from '@/platform/i18n/localized-link';
 import {
   color,
@@ -179,7 +181,9 @@ export function IllustrationCard({ card }: { card: IllustrationCardRecord }) {
           <Body size="xs">{i18n._(card.attribution.company)}</Body>
           <TrailingAction>
             <ActionLink
-              aria-label={`${i18n._(card.attribution.company)} case study`}
+              aria-label={i18n._(
+                msg`${i18n._(card.attribution.company)} case study`,
+              )}
               href={`/customers/${card.caseStudySlug}`}
             >
               <ButtonShape heightPx={ACTION_SIZE_PX} outlined />

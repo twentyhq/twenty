@@ -2,7 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 
-import { getServerI18n } from '@/platform/i18n';
+import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { mediaUp, spacing } from '@/tokens';
 import {
   Body,

@@ -2,7 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { Fragment } from 'react';
 
-import { getServerI18n } from '@/platform/i18n';
+import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import {
   color,
   FONT_WEIGHT,
@@ -94,13 +94,16 @@ export function FooterBottom() {
         <Copyright>{i18n._(msg`© ${year} – Twenty`)}</Copyright>
         <LocaleSwitcher />
       </CopyrightRow>
-      <SocialNav aria-label="Social media">
+      <SocialNav aria-label={i18n._(msg`Social media`)}>
         {FOOTER.socialLinks.map((link, index) => {
           const IconComponent = link.icon;
           return (
             <Fragment key={link.href}>
               {index > 0 && <VerticalDivider aria-hidden />}
-              <SocialAnchor aria-label={link.ariaLabel} href={link.href}>
+              <SocialAnchor
+                aria-label={i18n._(link.ariaLabel)}
+                href={link.href}
+              >
                 <IconComponent aria-hidden size={16} />
               </SocialAnchor>
             </Fragment>

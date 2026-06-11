@@ -1,7 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
-import { getServerI18n } from '@/platform/i18n';
+import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { SITE_URLS } from '@/platform/site-urls';
 import { mediaUp, spacing } from '@/tokens';
 import { Body, Button, Heading, HeadingPair, SectionShell } from '@/ui';

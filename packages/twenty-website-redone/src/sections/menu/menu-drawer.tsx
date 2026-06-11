@@ -8,6 +8,7 @@ import { styled } from '@linaria/react';
 import { Fragment, useState } from 'react';
 
 import { formatCompactCount, type CommunityStats } from '@/platform/community';
+import { useLocale } from '@/platform/i18n';
 import { LocalizedLink } from '@/platform/i18n/localized-link';
 import {
   buildSchemeDeclarations,
@@ -205,12 +206,16 @@ export function MenuDrawer({
   stats,
 }: MenuDrawerProps) {
   const { i18n } = useLingui();
+  const locale = useLocale();
   const [isGroupExpanded, setIsGroupExpanded] = useState(false);
 
   return (
     <Drawer.Portal>
-      <DrawerPanel aria-label="Navigation menu" data-scheme={scheme}>
-        <DrawerNav aria-label="Primary">
+      <DrawerPanel
+        aria-label={i18n._(msg`Navigation menu`)}
+        data-scheme={scheme}
+      >
+        <DrawerNav aria-label={i18n._(msg`Primary`)}>
           {navItems.map((item, index) => (
             <Fragment key={i18n._(item.label)}>
               {index > 0 && <DottedSeparator aria-hidden />}
@@ -270,10 +275,13 @@ export function MenuDrawer({
             return (
               <Fragment key={link.href}>
                 {index > 0 && <VerticalDivider aria-hidden />}
-                <SocialAnchor aria-label={link.ariaLabel} href={link.href}>
+                <SocialAnchor
+                  aria-label={i18n._(link.ariaLabel)}
+                  href={link.href}
+                >
                   <IconComponent aria-hidden size={16} />
                   {link.statKey
-                    ? formatCompactCount(stats[link.statKey])
+                    ? formatCompactCount(stats[link.statKey], locale)
                     : null}
                   {link.statKey ? <ExternalArrow /> : null}
                 </SocialAnchor>
