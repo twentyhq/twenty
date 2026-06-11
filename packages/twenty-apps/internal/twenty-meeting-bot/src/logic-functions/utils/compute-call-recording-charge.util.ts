@@ -1,3 +1,5 @@
+import { isUndefined } from '@sniptt/guards';
+
 import { CALL_RECORDING_MICRO_CREDITS_PER_HOUR } from 'src/logic-functions/constants/call-recording-micro-credits-per-hour';
 
 const MILLISECONDS_PER_HOUR = 3_600_000;
@@ -12,23 +14,18 @@ export const computeCallRecordingCharge = ({
   startedAt,
   endedAt,
 }: {
-  startedAt: string | null | undefined;
-  endedAt: string | null | undefined;
-}): CallRecordingCharge | null => {
-  if (
-    startedAt === null ||
-    startedAt === undefined ||
-    endedAt === null ||
-    endedAt === undefined
-  ) {
-    return null;
+  startedAt: string | undefined;
+  endedAt: string | undefined;
+}): CallRecordingCharge | undefined => {
+  if (isUndefined(startedAt) || isUndefined(endedAt)) {
+    return undefined;
   }
 
   const durationMilliseconds =
     new Date(endedAt).getTime() - new Date(startedAt).getTime();
 
   if (!Number.isFinite(durationMilliseconds) || durationMilliseconds <= 0) {
-    return null;
+    return undefined;
   }
 
   return {

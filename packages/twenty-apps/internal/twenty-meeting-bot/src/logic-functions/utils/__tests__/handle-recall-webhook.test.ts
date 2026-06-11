@@ -897,7 +897,7 @@ describe('handleRecallWebhook', () => {
 
     expect(ingestRecallMediaMock).toHaveBeenCalledWith({
       callRecordingId: 'call-recording-1',
-      bot: { id: 'recall-bot-1' },
+      externalRecordingId: 'recall-recording-1',
       hasAudio: false,
       hasVideo: false,
     });

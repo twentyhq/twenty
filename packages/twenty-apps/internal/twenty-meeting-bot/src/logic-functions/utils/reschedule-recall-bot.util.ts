@@ -1,8 +1,8 @@
+import { isNull, isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
 import { buildRecallBotMetadata } from 'src/logic-functions/utils/build-recall-bot-metadata.util';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import { rescheduleRecallRecordingBot } from 'src/logic-functions/utils/reschedule-recall-recording-bot.util';
 import { updateCallRecording } from 'src/logic-functions/utils/update-call-recording.util';
 
@@ -12,16 +12,16 @@ export const rescheduleRecallBot = async (
   client: CoreApiClient,
   { callRecording, calendarEvent }: MeetingRecording,
 ): Promise<void> => {
-  const externalBotId = callRecording.externalBotId ?? null;
+  const externalBotId = callRecording.externalBotId;
 
-  if (!isNonEmptyString(externalBotId)) {
+  if (isUndefined(externalBotId)) {
     return;
   }
 
   const meetingUrl = calendarEvent.conferenceLink?.primaryLinkUrl ?? null;
   const joinAt = calendarEvent.startsAt;
 
-  if (meetingUrl === null || joinAt === null) {
+  if (isNull(meetingUrl) || isNull(joinAt)) {
     return;
   }
 

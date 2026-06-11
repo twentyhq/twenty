@@ -1,3 +1,4 @@
+import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
@@ -23,7 +24,6 @@ import { findCallRecordingsByCalendarEventIds } from 'src/logic-functions/utils/
 import { findCallRecordingsByIds } from 'src/logic-functions/utils/find-call-recordings-by-ids.util';
 import { getRecallRecordingBotEnabled } from 'src/logic-functions/utils/get-recall-recording-bot-enabled.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import { isWithinRecallBotAutoRecordJoinWindow } from 'src/logic-functions/utils/is-within-recall-bot-auto-record-join-window.util';
 import { rescheduleRecallBot } from 'src/logic-functions/utils/reschedule-recall-bot.util';
 import {
@@ -377,7 +377,11 @@ const createPolicyManagedCallRecording = async ({
 
   // Winning the deterministic-id insert elects this run as the single writer that creates the bot.
   await ensureRecallBot(client, {
-    callRecording: { id: callRecordingId, ...scheduledFields },
+    callRecording: {
+      id: callRecordingId,
+      ...scheduledFields,
+      title: scheduledFields.title ?? undefined,
+    },
     calendarEvent: representativeCalendarEvent,
   });
 
@@ -414,7 +418,7 @@ const findManualOpenCallRecording = async ({
     .find(
       (callRecording) =>
         callRecording.status !== CallRecordingStatus.COMPLETED &&
-        !isNonEmptyString(callRecording.recordingRequestStatus),
+        isUndefined(callRecording.recordingRequestStatus),
     );
 };
 
@@ -487,7 +491,7 @@ const buildPolicyManagedCallRecordingUpdateFields = ({
     : buildCalendarDrivenCallRecordingFields(calendarEvent);
 
 const canResetCallRecordingStatusToScheduled = (
-  status: string | null | undefined,
+  status: string | undefined,
 ): boolean =>
   status === CallRecordingStatus.SCHEDULED ||
   status === CallRecordingStatus.FAILED_UNKNOWN;

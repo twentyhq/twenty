@@ -1,3 +1,5 @@
-export const isNonEmptyString = (
-  value: string | null | undefined,
-): value is string => typeof value === 'string' && value.trim() !== '';
+import { isString } from '@sniptt/guards';
+
+// Trimming variant of @sniptt/guards isNonEmptyString, for normalizing at read boundaries.
+export const isNonEmptyString = (value: unknown): value is string =>
+  isString(value) && value.trim() !== '';

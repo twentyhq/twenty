@@ -1,41 +1,41 @@
+import { isArray, isObject } from '@sniptt/guards';
+
+import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+
 export type RecallMediaUrls = {
   videoUrl: string | undefined;
   audioUrl: string | undefined;
 };
 
-// Pre-signed URLs expire within hours; always re-extract from a fresh GET /bot.
+// Pre-signed URLs expire within hours; always re-extract from a fresh GET /recording.
 export const extractRecallMediaUrls = (
-  bot: Record<string, unknown>,
+  recording: Record<string, unknown>,
 ): RecallMediaUrls => {
-  const mediaShortcuts = extractFirstRecordingMediaShortcuts(bot);
+  const mediaShortcuts = asRecord(recording.media_shortcuts);
 
   return {
-    videoUrl: getString(
-      getRecordAtPath(mediaShortcuts, ['video_mixed', 'data', 'download_url']),
-    ),
-    audioUrl: getString(
-      getRecordAtPath(mediaShortcuts, ['audio_mixed', 'data', 'download_url']),
-    ),
+    videoUrl: extractArtifactDownloadUrl(mediaShortcuts, 'video_mixed'),
+    audioUrl: extractArtifactDownloadUrl(mediaShortcuts, 'audio_mixed'),
   };
 };
 
-const extractFirstRecordingMediaShortcuts = (
-  bot: Record<string, unknown>,
-): Record<string, unknown> | undefined => {
-  if (!Array.isArray(bot.recordings)) {
-    return undefined;
-  }
-
-  return asRecord(asRecord(bot.recordings[0])?.media_shortcuts);
-};
+// v1.11 exposes download_url flat on the artifact; older artifacts nest it under data.
+const extractArtifactDownloadUrl = (
+  mediaShortcuts: Record<string, unknown> | undefined,
+  artifactKey: string,
+): string | undefined =>
+  getString(getRecordAtPath(mediaShortcuts, [artifactKey, 'download_url'])) ??
+  getString(
+    getRecordAtPath(mediaShortcuts, [artifactKey, 'data', 'download_url']),
+  );
 
 const asRecord = (value: unknown): Record<string, unknown> | undefined =>
-  typeof value === 'object' && value !== null && !Array.isArray(value)
+  isObject(value) && !isArray(value)
     ? (value as Record<string, unknown>)
     : undefined;
 
 const getString = (value: unknown): string | undefined =>
-  typeof value === 'string' && value.trim() !== '' ? value : undefined;
+  isNonEmptyString(value) ? value : undefined;
 
 const getRecordAtPath = (
   record: Record<string, unknown> | undefined,

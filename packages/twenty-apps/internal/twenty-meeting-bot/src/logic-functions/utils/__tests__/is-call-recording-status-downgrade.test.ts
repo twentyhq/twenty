@@ -23,12 +23,6 @@ describe('isCallRecordingStatusDowngrade', () => {
   it('never treats transitions from unknown statuses as downgrades', () => {
     expect(
       isCallRecordingStatusDowngrade({
-        fromStatus: null,
-        toStatus: 'RECORDING',
-      }),
-    ).toBe(false);
-    expect(
-      isCallRecordingStatusDowngrade({
         fromStatus: undefined,
         toStatus: 'COMPLETED',
       }),

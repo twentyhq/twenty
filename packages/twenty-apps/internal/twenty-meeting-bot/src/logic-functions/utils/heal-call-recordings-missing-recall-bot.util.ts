@@ -1,3 +1,4 @@
+import { isNull, isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
@@ -5,7 +6,6 @@ import { ensureRecallBot } from 'src/logic-functions/utils/ensure-recall-bot.uti
 import { fetchCalendarEventsByIds } from 'src/logic-functions/utils/fetch-calendar-events-by-ids.util';
 import { findOpenScheduledCallRecordings } from 'src/logic-functions/utils/find-open-scheduled-call-recordings.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
 export type HealCallRecordingsMissingRecallBotResult = {
   scheduledCallRecordingIds: string[];
@@ -21,7 +21,7 @@ export const healCallRecordingsMissingRecallBot = async ({
 }): Promise<HealCallRecordingsMissingRecallBotResult> => {
   const botlessCallRecordings = (
     await findOpenScheduledCallRecordings(client)
-  ).filter((callRecording) => !isNonEmptyString(callRecording.externalBotId));
+  ).filter((callRecording) => isUndefined(callRecording.externalBotId));
 
   if (botlessCallRecordings.length === 0) {
     return { scheduledCallRecordingIds: [] };
@@ -42,14 +42,11 @@ export const healCallRecordingsMissingRecallBot = async ({
   const scheduledCallRecordingIds: string[] = [];
 
   for (const callRecording of botlessCallRecordings) {
-    const calendarEvent = isNonEmptyString(callRecording.calendarEventId)
-      ? calendarEventsById.get(callRecording.calendarEventId)
-      : undefined;
+    const calendarEvent = isUndefined(callRecording.calendarEventId)
+      ? undefined
+      : calendarEventsById.get(callRecording.calendarEventId);
 
-    if (
-      calendarEvent === undefined ||
-      hasMeetingEnded({ calendarEvent, now })
-    ) {
+    if (isUndefined(calendarEvent) || hasMeetingEnded({ calendarEvent, now })) {
       continue;
     }
 
@@ -69,7 +66,7 @@ const hasMeetingEnded = ({
 }): boolean => {
   const reference = calendarEvent.endsAt ?? calendarEvent.startsAt;
 
-  if (reference === null) {
+  if (isNull(reference)) {
     return false;
   }
 

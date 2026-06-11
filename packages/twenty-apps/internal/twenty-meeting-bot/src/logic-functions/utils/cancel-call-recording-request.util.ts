@@ -1,8 +1,8 @@
+import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import { cancelRecallRecordingBot } from 'src/logic-functions/utils/cancel-recall-recording-bot.util';
 import { updateCallRecording } from 'src/logic-functions/utils/update-call-recording.util';
 
@@ -21,7 +21,7 @@ export const cancelCallRecordingRequest = async ({
     },
   });
 
-  if (!isNonEmptyString(callRecording.externalBotId)) {
+  if (isUndefined(callRecording.externalBotId)) {
     return;
   }
 

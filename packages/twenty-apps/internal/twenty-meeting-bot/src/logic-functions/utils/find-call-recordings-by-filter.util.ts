@@ -1,3 +1,4 @@
+import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
@@ -16,7 +17,7 @@ export const findCallRecordingsByFilter = async (
         __args: {
           filter,
           first: TWENTY_PAGE_SIZE,
-          ...(afterCursor === undefined ? {} : { after: afterCursor }),
+          ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
         },
         pageInfo: {
           hasNextPage: true,
@@ -43,14 +44,14 @@ export const findCallRecordingsByFilter = async (
 
   return callRecordingNodes.map((callRecording) => ({
     id: callRecording.id,
-    title: callRecording.title ?? null,
-    status: callRecording.status ?? null,
+    title: callRecording.title ?? undefined,
+    status: callRecording.status ?? undefined,
     recordingRequestStatus: normalizeCallRecordingRequestStatus(
       callRecording.recordingRequestStatus,
     ),
-    startedAt: callRecording.startedAt ?? null,
-    endedAt: callRecording.endedAt ?? null,
-    calendarEventId: callRecording.calendarEventId ?? null,
+    startedAt: callRecording.startedAt ?? undefined,
+    endedAt: callRecording.endedAt ?? undefined,
+    calendarEventId: callRecording.calendarEventId ?? undefined,
     externalBotId: normalizeOptionalString(callRecording.externalBotId),
     externalRecordingId: normalizeOptionalString(
       callRecording.externalRecordingId,
@@ -60,11 +61,11 @@ export const findCallRecordingsByFilter = async (
 
 const normalizeOptionalString = (
   value: string | null | undefined,
-): string | null => (isNonEmptyString(value) ? value : null);
+): string | undefined => (isNonEmptyString(value) ? value : undefined);
 
 const normalizeCallRecordingRequestStatus = (
   recordingRequestStatus: unknown,
-): CallRecordingRequestStatus | null => {
+): CallRecordingRequestStatus | undefined => {
   if (recordingRequestStatus === CallRecordingRequestStatus.REQUESTED) {
     return recordingRequestStatus;
   }
@@ -73,5 +74,5 @@ const normalizeCallRecordingRequestStatus = (
     return recordingRequestStatus;
   }
 
-  return null;
+  return undefined;
 };

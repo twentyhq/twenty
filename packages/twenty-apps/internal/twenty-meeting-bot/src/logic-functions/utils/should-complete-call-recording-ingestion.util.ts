@@ -8,10 +8,10 @@ export const shouldCompleteCallRecordingIngestion = ({
   updateData,
 }: {
   current: {
-    status?: string | null;
+    status?: string;
     transcript?: unknown;
-    audio?: FilesFieldValue | null;
-    video?: FilesFieldValue | null;
+    audio?: FilesFieldValue;
+    video?: FilesFieldValue;
   };
   updateData: CallRecordingUpdateFields;
 }): boolean =>

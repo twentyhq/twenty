@@ -1,3 +1,5 @@
+import { isUndefined } from '@sniptt/guards';
+
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 
 // Deliveries are unordered; a late event must never move status backwards.
@@ -19,16 +21,15 @@ export const isCallRecordingStatusDowngrade = ({
   fromStatus,
   toStatus,
 }: {
-  fromStatus: string | null | undefined;
+  fromStatus: string | undefined;
   toStatus: string;
 }): boolean => {
-  const fromRank =
-    fromStatus === null || fromStatus === undefined
-      ? undefined
-      : getCallRecordingStatusRank(fromStatus);
+  const fromRank = isUndefined(fromStatus)
+    ? undefined
+    : getCallRecordingStatusRank(fromStatus);
   const toRank = getCallRecordingStatusRank(toStatus);
 
-  if (fromRank === undefined || toRank === undefined) {
+  if (isUndefined(fromRank) || isUndefined(toRank)) {
     return false;
   }
 

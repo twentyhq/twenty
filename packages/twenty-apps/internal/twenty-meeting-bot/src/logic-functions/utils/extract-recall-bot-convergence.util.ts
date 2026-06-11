@@ -1,4 +1,7 @@
+import { isArray, isObject, isUndefined } from '@sniptt/guards';
+
 import { type CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import { mapRecallStatusCodeToCallRecordingStatus } from 'src/logic-functions/utils/map-recall-status-code-to-call-recording-status.util';
 import { normalizeRecallTimestamp } from 'src/logic-functions/utils/normalize-recall-timestamp.util';
 
@@ -35,7 +38,7 @@ export const extractRecallBotConvergence = (
     ),
     externalRecordingId: recording?.id,
     isRecallRecordingDone:
-      recording?.completedAt !== undefined ||
+      !isUndefined(recording?.completedAt) ||
       statusChanges.some((statusChange) => statusChange.code === 'done'),
   };
 };
@@ -43,14 +46,14 @@ export const extractRecallBotConvergence = (
 const extractStatusChanges = (
   bot: Record<string, unknown>,
 ): RecallBotStatusChange[] => {
-  if (!Array.isArray(bot.status_changes)) {
+  if (!isArray(bot.status_changes)) {
     return [];
   }
 
   return bot.status_changes.flatMap((statusChange: unknown) => {
     const code = getString(asRecord(statusChange)?.code);
 
-    if (code === undefined) {
+    if (isUndefined(code)) {
       return [];
     }
 
@@ -67,13 +70,13 @@ const extractFirstRecording = (
       completedAt: string | undefined;
     }
   | undefined => {
-  if (!Array.isArray(bot.recordings)) {
+  if (!isArray(bot.recordings)) {
     return undefined;
   }
 
   const recording = asRecord(bot.recordings[0]);
 
-  if (recording === undefined) {
+  if (isUndefined(recording)) {
     return undefined;
   }
 
@@ -91,9 +94,9 @@ const findStatusChangeTimestamp = (
   statusChanges.find((statusChange) => statusChange.code === code)?.createdAt;
 
 const asRecord = (value: unknown): Record<string, unknown> | undefined =>
-  typeof value === 'object' && value !== null && !Array.isArray(value)
+  isObject(value) && !isArray(value)
     ? (value as Record<string, unknown>)
     : undefined;
 
 const getString = (value: unknown): string | undefined =>
-  typeof value === 'string' && value.trim() !== '' ? value : undefined;
+  isNonEmptyString(value) ? value : undefined;

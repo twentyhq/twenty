@@ -1,3 +1,4 @@
+import { isNull, isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
@@ -6,6 +7,7 @@ import { cancelRecallRecordingBot } from 'src/logic-functions/utils/cancel-recal
 import { ejectRecallRecordingBot } from 'src/logic-functions/utils/eject-recall-recording-bot.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/utils/find-call-recordings-by-ids.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
+import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import {
   listScheduledRecallBots,
   type RecallScheduledBot,
@@ -40,7 +42,7 @@ export const reapOrphanedRecallBots = async ({
   }
 
   const appManagedBots = listResult.bots.filter(
-    (bot) => getClaimedCallRecordingId(bot) !== null,
+    (bot) => !isUndefined(getClaimedCallRecordingId(bot)),
   );
 
   if (appManagedBots.length === 0) {
@@ -63,10 +65,9 @@ export const reapOrphanedRecallBots = async ({
 
   for (const bot of appManagedBots) {
     const claimedCallRecordingId = getClaimedCallRecordingId(bot);
-    const callRecording =
-      claimedCallRecordingId === null
-        ? undefined
-        : callRecordingsById.get(claimedCallRecordingId);
+    const callRecording = isUndefined(claimedCallRecordingId)
+      ? undefined
+      : callRecordingsById.get(claimedCallRecordingId);
 
     if (isBotClaimed({ bot, callRecording })) {
       continue;
@@ -87,13 +88,14 @@ export const reapOrphanedRecallBots = async ({
   };
 };
 
-const getClaimedCallRecordingId = (bot: RecallScheduledBot): string | null => {
+const getClaimedCallRecordingId = (
+  bot: RecallScheduledBot,
+): string | undefined => {
   const claimedCallRecordingId = bot.metadata.twentyCallRecordingId;
 
-  return typeof claimedCallRecordingId === 'string' &&
-    claimedCallRecordingId !== ''
+  return isNonEmptyString(claimedCallRecordingId)
     ? claimedCallRecordingId
-    : null;
+    : undefined;
 };
 
 const isBotClaimed = ({
@@ -115,7 +117,7 @@ const isBotClaimed = ({
   }
 
   // An id-less REQUESTED recording may have a bot-id write-back in flight; spare its bot.
-  return callRecording.externalBotId === null;
+  return isUndefined(callRecording.externalBotId);
 };
 
 const cancelOrEjectRecallBot = async (
@@ -128,7 +130,7 @@ const cancelOrEjectRecallBot = async (
   }
 
   // Deleting only works for not-yet-joined bots; eject the ones already in a call.
-  if (cancelResult.status !== null) {
+  if (!isNull(cancelResult.status)) {
     const ejectResult = await ejectRecallRecordingBot({ externalBotId });
 
     if (ejectResult.ok) {

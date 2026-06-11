@@ -4,18 +4,20 @@ import { type CallRecordingRequestStatus } from 'src/logic-functions/constants/c
 import { type CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 
 export type CallRecordingUpdateFields = Partial<{
+  // null clears a previously synced title when the calendar title disappears.
   title: string | null;
   status: CallRecordingStatus;
   recordingRequestStatus: CallRecordingRequestStatus;
-  startedAt: string | null;
-  endedAt: string | null;
+  startedAt: string;
+  endedAt: string;
   calendarEventId: string;
+  // null clears the field on cancel/eject; the only field we ever write null to.
   externalBotId: string | null;
-  externalRecordingId: string | null;
+  externalRecordingId: string;
   // RAW_JSON accepts any JSON; the generated input under-models it, callers cast.
-  transcript: Record<string, unknown> | null;
-  audio: { fileId: string; label: string }[] | null;
-  video: { fileId: string; label: string }[] | null;
+  transcript: Record<string, unknown>;
+  audio: { fileId: string; label: string }[];
+  video: { fileId: string; label: string }[];
 }>;
 
 export const updateCallRecording = async (

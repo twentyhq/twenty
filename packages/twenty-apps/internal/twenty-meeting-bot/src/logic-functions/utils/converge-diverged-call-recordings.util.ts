@@ -1,4 +1,4 @@
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isNonEmptyArray, isNull, isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
@@ -30,16 +30,16 @@ const NON_TERMINAL_CALL_RECORDING_STATUSES = [
 
 type DivergedCallRecordingCandidate = {
   id: string;
-  status: string | null;
-  startedAt: string | null;
-  endedAt: string | null;
-  externalBotId: string | null;
-  externalRecordingId: string | null;
+  status: string | undefined;
+  startedAt: string | undefined;
+  endedAt: string | undefined;
+  externalBotId: string | undefined;
+  externalRecordingId: string | undefined;
   transcript: unknown;
-  audio: FilesFieldValue | null;
-  video: FilesFieldValue | null;
-  createdAt: string | null;
-  calendarEventEndsAt: string | null;
+  audio: FilesFieldValue | undefined;
+  video: FilesFieldValue | undefined;
+  createdAt: string | undefined;
+  calendarEventEndsAt: string | undefined;
 };
 
 export type ConvergeDivergedCallRecordingsResult = {
@@ -81,7 +81,7 @@ export const convergeDivergedCallRecordings = async ({
       continue;
     }
 
-    if (candidate.externalBotId === null) {
+    if (isUndefined(candidate.externalBotId)) {
       console.warn(
         `[recall-recording-bot] call recording ${candidate.id} diverged but has no Recall bot id; it will not converge automatically`,
       );
@@ -128,7 +128,7 @@ const fetchDivergedCallRecordingCandidates = async (
         __args: {
           filter,
           first: TWENTY_PAGE_SIZE,
-          ...(afterCursor === undefined ? {} : { after: afterCursor }),
+          ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
         },
         pageInfo: {
           hasNextPage: true,
@@ -159,20 +159,20 @@ const fetchDivergedCallRecordingCandidates = async (
 
   return candidateNodes.map((node) => ({
     id: node.id,
-    status: node.status ?? null,
-    startedAt: node.startedAt ?? null,
-    endedAt: node.endedAt ?? null,
+    status: node.status ?? undefined,
+    startedAt: node.startedAt ?? undefined,
+    endedAt: node.endedAt ?? undefined,
     externalBotId: isNonEmptyString(node.externalBotId)
       ? node.externalBotId
-      : null,
+      : undefined,
     externalRecordingId: isNonEmptyString(node.externalRecordingId)
       ? node.externalRecordingId
-      : null,
-    transcript: node.transcript ?? null,
-    audio: node.audio ?? null,
-    video: node.video ?? null,
-    createdAt: node.createdAt ?? null,
-    calendarEventEndsAt: node.calendarEvent?.endsAt ?? null,
+      : undefined,
+    transcript: node.transcript ?? undefined,
+    audio: node.audio ?? undefined,
+    video: node.video ?? undefined,
+    createdAt: node.createdAt ?? undefined,
+    calendarEventEndsAt: node.calendarEvent?.endsAt ?? undefined,
   }));
 };
 
@@ -185,7 +185,7 @@ const isOutsideConvergenceBound = (
     candidate.calendarEventEndsAt ?? candidate.createdAt;
 
   return (
-    meetingEndReference !== null &&
+    !isUndefined(meetingEndReference) &&
     new Date(meetingEndReference).getTime() < convergenceLowerBound.getTime()
   );
 };
@@ -196,7 +196,7 @@ const isPossiblyStillLive = (
   liveMeetingCutoff: Date,
 ): boolean =>
   candidate.status !== CallRecordingStatus.COMPLETED &&
-  candidate.calendarEventEndsAt !== null &&
+  !isUndefined(candidate.calendarEventEndsAt) &&
   new Date(candidate.calendarEventEndsAt).getTime() >
     liveMeetingCutoff.getTime();
 
@@ -238,7 +238,7 @@ const convergeCallRecording = async ({
   const updateData: CallRecordingUpdateFields = {};
 
   if (
-    convergence.status !== undefined &&
+    !isUndefined(convergence.status) &&
     convergence.status !== candidate.status &&
     !isCallRecordingStatusDowngrade({
       fromStatus: candidate.status,
@@ -248,17 +248,17 @@ const convergeCallRecording = async ({
     updateData.status = convergence.status;
   }
 
-  if (candidate.startedAt === null && convergence.startedAt !== undefined) {
+  if (isUndefined(candidate.startedAt) && !isUndefined(convergence.startedAt)) {
     updateData.startedAt = convergence.startedAt;
   }
 
-  if (candidate.endedAt === null && convergence.endedAt !== undefined) {
+  if (isUndefined(candidate.endedAt) && !isUndefined(convergence.endedAt)) {
     updateData.endedAt = convergence.endedAt;
   }
 
   if (
-    candidate.externalRecordingId === null &&
-    convergence.externalRecordingId !== undefined
+    isUndefined(candidate.externalRecordingId) &&
+    !isUndefined(convergence.externalRecordingId)
   ) {
     updateData.externalRecordingId = convergence.externalRecordingId;
   }
@@ -266,20 +266,17 @@ const convergeCallRecording = async ({
   const externalRecordingId =
     candidate.externalRecordingId ?? convergence.externalRecordingId;
 
-  if (convergence.isRecallRecordingDone) {
-    if (
-      candidate.transcript === null &&
-      externalRecordingId !== undefined &&
-      externalRecordingId !== null
-    ) {
+  if (convergence.isRecallRecordingDone && !isUndefined(externalRecordingId)) {
+    if (isUndefined(candidate.transcript)) {
       const transcriptMarker = await requestRecallTranscript({
         externalRecordingId,
         requestedAt: now.toISOString(),
       });
 
-      if (transcriptMarker !== null) {
+      if (!isNull(transcriptMarker)) {
         updateData.transcript = transcriptMarker;
         updateData.externalRecordingId = externalRecordingId;
+        // Persisted before media ingestion: a crash must not re-request a paid transcript.
         await updateCallRecording(client, {
           id: candidate.id,
           data: { transcript: transcriptMarker, externalRecordingId },
@@ -291,7 +288,7 @@ const convergeCallRecording = async ({
       updateData,
       await ingestRecallMedia({
         callRecordingId: candidate.id,
-        bot: botResult.bot,
+        externalRecordingId,
         hasAudio: isNonEmptyArray(candidate.audio),
         hasVideo: isNonEmptyArray(candidate.video),
       }),

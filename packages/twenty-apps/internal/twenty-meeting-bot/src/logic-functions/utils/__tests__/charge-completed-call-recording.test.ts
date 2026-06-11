@@ -33,7 +33,7 @@ describe('chargeCompletedCallRecording', () => {
   it('skips and warns loudly when timestamps are unusable', async () => {
     await chargeCompletedCallRecording({
       callRecordingId: 'call-recording-1',
-      startedAt: null,
+      startedAt: undefined,
       endedAt: '2026-06-10T09:30:00.000Z',
     });
 

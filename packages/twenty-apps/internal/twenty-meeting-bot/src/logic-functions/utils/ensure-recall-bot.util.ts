@@ -1,10 +1,10 @@
+import { isNull, isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
 import { buildRecallBotMetadata } from 'src/logic-functions/utils/build-recall-bot-metadata.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/utils/find-call-recordings-by-ids.util';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import { scheduleRecallRecordingBot } from 'src/logic-functions/utils/schedule-recall-recording-bot.util';
 import { updateCallRecording } from 'src/logic-functions/utils/update-call-recording.util';
 
@@ -16,7 +16,7 @@ export const ensureRecallBot = async (
   const meetingUrl = calendarEvent.conferenceLink?.primaryLinkUrl ?? null;
   const joinAt = calendarEvent.startsAt;
 
-  if (meetingUrl === null || joinAt === null) {
+  if (isNull(meetingUrl) || isNull(joinAt)) {
     return;
   }
 
@@ -25,10 +25,10 @@ export const ensureRecallBot = async (
   )[0];
 
   if (
-    freshCallRecording === undefined ||
+    isUndefined(freshCallRecording) ||
     freshCallRecording.recordingRequestStatus !==
       CallRecordingRequestStatus.REQUESTED ||
-    isNonEmptyString(freshCallRecording.externalBotId)
+    !isUndefined(freshCallRecording.externalBotId)
   ) {
     return;
   }
@@ -47,7 +47,7 @@ export const ensureRecallBot = async (
     return;
   }
 
-  if (scheduleResult.externalBotId !== null) {
+  if (!isNull(scheduleResult.externalBotId)) {
     await updateCallRecording(client, {
       id: callRecording.id,
       data: { externalBotId: scheduleResult.externalBotId },

@@ -1,3 +1,4 @@
+import { isNull, isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
@@ -22,12 +23,12 @@ const PENDING_TRANSCRIPT_LOOKBACK_DAYS = 7;
 type PendingTranscriptCallRecording = {
   id: string;
   marker: RecallTranscriptMarker;
-  status: string | null;
-  startedAt: string | null;
-  endedAt: string | null;
+  status: string | undefined;
+  startedAt: string | undefined;
+  endedAt: string | undefined;
   transcript: unknown;
-  audio: FilesFieldValue | null;
-  video: FilesFieldValue | null;
+  audio: FilesFieldValue | undefined;
+  video: FilesFieldValue | undefined;
 };
 
 export type ReconcilePendingRecallTranscriptsResult = {
@@ -62,13 +63,13 @@ export const reconcilePendingRecallTranscripts = async ({
     const { id, marker } = pendingCallRecording;
 
     if (
-      marker.requestedAt !== undefined &&
+      !isUndefined(marker.requestedAt) &&
       new Date(marker.requestedAt).getTime() > recheckCutoff.getTime()
     ) {
       continue;
     }
 
-    if (marker.recallTranscriptId === null) {
+    if (isNull(marker.recallTranscriptId)) {
       console.warn(
         `[recall-recording-bot] call recording ${id} has a pending transcript marker without a transcript id; it cannot be re-checked`,
       );
@@ -108,7 +109,7 @@ export const reconcilePendingRecallTranscripts = async ({
 
     if (downloadResult.outcome === 'failed') {
       console.warn(
-        `[recall-recording-bot] transcript failed for call recording ${id}${downloadResult.subCode === null ? '' : ` (${downloadResult.subCode})`}`,
+        `[recall-recording-bot] transcript failed for call recording ${id}${isNull(downloadResult.subCode) ? '' : ` (${downloadResult.subCode})`}`,
       );
       await updateCallRecording(client, {
         id,
@@ -160,7 +161,7 @@ const fetchPendingTranscriptCallRecordings = async (
         __args: {
           filter,
           first: TWENTY_PAGE_SIZE,
-          ...(afterCursor === undefined ? {} : { after: afterCursor }),
+          ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
         },
         pageInfo: {
           hasNextPage: true,
@@ -186,7 +187,7 @@ const fetchPendingTranscriptCallRecordings = async (
   return callRecordingNodes.flatMap((node) => {
     const marker = parseRecallTranscriptMarker(node.transcript);
 
-    if (marker === null || marker.status !== 'PENDING') {
+    if (isNull(marker) || marker.status !== 'PENDING') {
       return [];
     }
 
@@ -194,12 +195,12 @@ const fetchPendingTranscriptCallRecordings = async (
       {
         id: node.id,
         marker,
-        status: node.status ?? null,
-        startedAt: node.startedAt ?? null,
-        endedAt: node.endedAt ?? null,
-        transcript: node.transcript ?? null,
-        audio: node.audio ?? null,
-        video: node.video ?? null,
+        status: node.status ?? undefined,
+        startedAt: node.startedAt ?? undefined,
+        endedAt: node.endedAt ?? undefined,
+        transcript: node.transcript ?? undefined,
+        audio: node.audio ?? undefined,
+        video: node.video ?? undefined,
       },
     ];
   });

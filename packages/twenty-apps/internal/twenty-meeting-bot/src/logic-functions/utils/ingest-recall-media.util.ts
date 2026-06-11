@@ -1,7 +1,10 @@
+import { isUndefined } from '@sniptt/guards';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
-import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 
+import { CALL_RECORDING_AUDIO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-audio-field-universal-identifier';
+import { CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recording-video-field-universal-identifier';
 import { extractRecallMediaUrls } from 'src/logic-functions/utils/extract-recall-media-urls.util';
+import { getRecallRecording } from 'src/logic-functions/utils/get-recall-recording.util';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/utils/update-call-recording.util';
 
 type CallRecordingMediaUpdateFields = Pick<
@@ -16,47 +19,59 @@ const MEDIA_DOWNLOAD_TIMEOUT_MS = 120_000;
 // Failed artifacts are omitted; the reconciler retries them with fresh URLs.
 export const ingestRecallMedia = async ({
   callRecordingId,
-  bot,
+  externalRecordingId,
   hasAudio,
   hasVideo,
 }: {
   callRecordingId: string;
-  bot: Record<string, unknown>;
+  externalRecordingId: string;
   hasAudio: boolean;
   hasVideo: boolean;
 }): Promise<CallRecordingMediaUpdateFields> => {
-  const mediaUrls = extractRecallMediaUrls(bot);
+  if (hasAudio && hasVideo) {
+    return {};
+  }
+
+  const recordingResult = await getRecallRecording({ externalRecordingId });
+
+  if (!recordingResult.ok) {
+    console.warn(
+      `[recall-recording-bot] failed to fetch Recall recording ${externalRecordingId} while ingesting media for call recording ${callRecordingId}: ${recordingResult.errorMessage}`,
+    );
+
+    return {};
+  }
+
+  const mediaUrls = extractRecallMediaUrls(recordingResult.recording);
   const metadataClient = new MetadataApiClient();
   const updateFields: CallRecordingMediaUpdateFields = {};
 
-  if (!hasVideo && mediaUrls.videoUrl !== undefined) {
+  if (!hasVideo && !isUndefined(mediaUrls.videoUrl)) {
     const video = await ingestMediaArtifact({
       callRecordingId,
       metadataClient,
       url: mediaUrls.videoUrl,
       fileName: 'video.mp4',
       fieldMetadataUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.callRecording.fields.video
-          .universalIdentifier,
+        CALL_RECORDING_VIDEO_FIELD_UNIVERSAL_IDENTIFIER,
     });
 
-    if (video !== undefined) {
+    if (!isUndefined(video)) {
       updateFields.video = video;
     }
   }
 
-  if (!hasAudio && mediaUrls.audioUrl !== undefined) {
+  if (!hasAudio && !isUndefined(mediaUrls.audioUrl)) {
     const audio = await ingestMediaArtifact({
       callRecordingId,
       metadataClient,
       url: mediaUrls.audioUrl,
       fileName: 'audio.mp3',
       fieldMetadataUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.callRecording.fields.audio
-          .universalIdentifier,
+        CALL_RECORDING_AUDIO_FIELD_UNIVERSAL_IDENTIFIER,
     });
 
-    if (audio !== undefined) {
+    if (!isUndefined(audio)) {
       updateFields.audio = audio;
     }
   }

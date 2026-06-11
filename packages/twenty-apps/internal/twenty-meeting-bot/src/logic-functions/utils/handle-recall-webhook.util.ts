@@ -1,4 +1,10 @@
-import { isNonEmptyArray } from '@sniptt/guards';
+import {
+  isArray,
+  isNonEmptyArray,
+  isNull,
+  isObject,
+  isUndefined,
+} from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
@@ -10,6 +16,7 @@ import { extractRecallBotConvergence } from 'src/logic-functions/utils/extract-r
 import { getRecallBot } from 'src/logic-functions/utils/get-recall-bot.util';
 import { ingestRecallMedia } from 'src/logic-functions/utils/ingest-recall-media.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/utils/is-call-recording-status-downgrade.util';
+import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import { isRecallRecordingDoneSignal } from 'src/logic-functions/utils/is-recall-recording-done-signal.util';
 import { mapRecallStatusCodeToCallRecordingStatus } from 'src/logic-functions/utils/map-recall-status-code-to-call-recording-status.util';
 import { normalizeRecallTimestamp } from 'src/logic-functions/utils/normalize-recall-timestamp.util';
@@ -30,13 +37,13 @@ type RecallWebhookBody = {
 
 type MatchedCallRecording = {
   id: string;
-  status?: string | null;
-  startedAt?: string | null;
-  endedAt?: string | null;
-  externalRecordingId?: string | null;
+  status?: string;
+  startedAt?: string;
+  endedAt?: string;
+  externalRecordingId?: string;
   transcript?: unknown;
-  audio?: FilesFieldValue | null;
-  video?: FilesFieldValue | null;
+  audio?: FilesFieldValue;
+  video?: FilesFieldValue;
 };
 
 type RecallWebhookHandlerResult =
@@ -67,7 +74,7 @@ export const handleRecallWebhook = async ({
 }): Promise<RecallWebhookHandlerResult> => {
   const event = getString(body.event) ?? getString(body.type);
 
-  if (event === undefined) {
+  if (isUndefined(event)) {
     return {
       status: 'skipped',
       event: null,
@@ -86,7 +93,7 @@ export const handleRecallWebhook = async ({
     statusCode,
   });
 
-  if (callRecordingStatus === undefined) {
+  if (isUndefined(callRecordingStatus)) {
     return {
       status: 'skipped',
       event,
@@ -101,7 +108,7 @@ export const handleRecallWebhook = async ({
     externalBotId,
   });
 
-  if (callRecording === null) {
+  if (isUndefined(callRecording)) {
     return {
       status: 'skipped',
       event,
@@ -124,7 +131,7 @@ export const handleRecallWebhook = async ({
 
   const updateData: CallRecordingUpdateFields = {
     status: callRecordingStatus,
-    ...(externalBotId === undefined ? {} : { externalBotId }),
+    ...(isUndefined(externalBotId) ? {} : { externalBotId }),
     ...buildExternalRecordingIdUpdate(body),
     ...buildRecordingTimestampsUpdate({
       body,
@@ -153,7 +160,11 @@ export const handleRecallWebhook = async ({
 
     Object.assign(
       updateData,
-      await buildMediaIngestionUpdate({ callRecording, externalBotId }),
+      await buildMediaIngestionUpdate({
+        callRecording,
+        externalBotId,
+        externalRecordingIdFromEvent: updateData.externalRecordingId,
+      }),
     );
   }
 
@@ -195,17 +206,17 @@ const findMatchingCallRecording = async ({
   client: CoreApiClient;
   body: RecallWebhookBody;
   externalBotId: string | undefined;
-}): Promise<MatchedCallRecording | null> => {
+}): Promise<MatchedCallRecording | undefined> => {
   const callRecordingIdFromMetadata = getCallRecordingIdFromMetadata(body);
 
-  if (callRecordingIdFromMetadata !== null) {
+  if (!isUndefined(callRecordingIdFromMetadata)) {
     return findCallRecordingByFilter(client, {
       id: { eq: callRecordingIdFromMetadata },
     });
   }
 
-  if (externalBotId === undefined) {
-    return null;
+  if (isUndefined(externalBotId)) {
+    return undefined;
   }
 
   return findCallRecordingByFilter(client, {
@@ -216,7 +227,7 @@ const findMatchingCallRecording = async ({
 const findCallRecordingByFilter = async (
   client: CoreApiClient,
   filter: Record<string, unknown>,
-): Promise<MatchedCallRecording | null> => {
+): Promise<MatchedCallRecording | undefined> => {
   const queryResult = await client.query({
     callRecordings: {
       __args: {
@@ -238,7 +249,22 @@ const findCallRecordingByFilter = async (
     },
   });
 
-  return queryResult.callRecordings?.edges?.[0]?.node ?? null;
+  const node = queryResult.callRecordings?.edges?.[0]?.node;
+
+  if (isUndefined(node) || isNull(node)) {
+    return undefined;
+  }
+
+  return {
+    id: node.id,
+    status: getString(node.status),
+    startedAt: getString(node.startedAt),
+    endedAt: getString(node.endedAt),
+    externalRecordingId: getString(node.externalRecordingId),
+    transcript: node.transcript ?? undefined,
+    audio: node.audio ?? undefined,
+    video: node.video ?? undefined,
+  };
 };
 
 const getRecallStatusCode = ({
@@ -317,11 +343,10 @@ const buildRecordingTimestampsUpdate = ({
   );
 
   return {
-    ...(startedAt !== undefined &&
-    getString(callRecording.startedAt) === undefined
+    ...(!isUndefined(startedAt) && isUndefined(callRecording.startedAt)
       ? { startedAt }
       : {}),
-    ...(endedAt !== undefined && getString(callRecording.endedAt) === undefined
+    ...(!isUndefined(endedAt) && isUndefined(callRecording.endedAt)
       ? { endedAt }
       : {}),
   };
@@ -341,7 +366,7 @@ const getRecallStatusTimestamp = (
 
 const getCallRecordingIdFromMetadata = (
   body: RecallWebhookBody,
-): string | null => {
+): string | undefined => {
   const data = asRecord(body.data);
   const recording = asRecord(data?.recording);
   const metadata =
@@ -349,9 +374,8 @@ const getCallRecordingIdFromMetadata = (
     asRecord(asRecord(data?.bot)?.metadata) ??
     asRecord(recording?.metadata) ??
     asRecord(data?.metadata);
-  const callRecordingId = getString(metadata?.twentyCallRecordingId);
 
-  return callRecordingId ?? null;
+  return getString(metadata?.twentyCallRecordingId);
 };
 
 const getExternalBotId = (body: RecallWebhookBody): string | undefined => {
@@ -375,18 +399,20 @@ const buildExternalRecordingIdUpdate = (
     getString(getRecordAtPath(data, ['recording', 'id'])) ??
     getString(data?.recording_id);
 
-  return externalRecordingId === undefined ? {} : { externalRecordingId };
+  return isUndefined(externalRecordingId) ? {} : { externalRecordingId };
 };
 
 const isTranscriptUnset = (callRecording: MatchedCallRecording): boolean =>
-  callRecording.transcript === null || callRecording.transcript === undefined;
+  isUndefined(callRecording.transcript);
 
 const buildMediaIngestionUpdate = async ({
   callRecording,
   externalBotId,
+  externalRecordingIdFromEvent,
 }: {
   callRecording: MatchedCallRecording;
   externalBotId: string | undefined;
+  externalRecordingIdFromEvent: string | undefined;
 }): Promise<Pick<CallRecordingUpdateFields, 'audio' | 'video'>> => {
   const hasAudio = isNonEmptyArray(callRecording.audio);
   const hasVideo = isNonEmptyArray(callRecording.video);
@@ -395,19 +421,16 @@ const buildMediaIngestionUpdate = async ({
     return {};
   }
 
-  if (externalBotId === undefined) {
+  const externalRecordingId =
+    externalRecordingIdFromEvent ??
+    callRecording.externalRecordingId ??
+    (isUndefined(externalBotId)
+      ? undefined
+      : await fetchExternalRecordingIdFromRecallBot(externalBotId));
+
+  if (isUndefined(externalRecordingId)) {
     console.warn(
-      `[recall-recording-bot] cannot ingest media for call recording ${callRecording.id}: no Recall bot id available`,
-    );
-
-    return {};
-  }
-
-  const botResult = await getRecallBot({ externalBotId });
-
-  if (!botResult.ok) {
-    console.warn(
-      `[recall-recording-bot] failed to fetch Recall bot ${externalBotId} while ingesting media for call recording ${callRecording.id}: ${botResult.errorMessage}`,
+      `[recall-recording-bot] cannot ingest media for call recording ${callRecording.id}: no Recall recording id available`,
     );
 
     return {};
@@ -415,7 +438,7 @@ const buildMediaIngestionUpdate = async ({
 
   return ingestRecallMedia({
     callRecordingId: callRecording.id,
-    bot: botResult.bot,
+    externalRecordingId,
     hasAudio,
     hasVideo,
   });
@@ -428,16 +451,16 @@ const buildTranscriptRequestUpdate = async ({
 }: {
   callRecording: MatchedCallRecording;
   externalBotId: string | undefined;
-  externalRecordingIdFromEvent: string | null | undefined;
+  externalRecordingIdFromEvent: string | undefined;
 }): Promise<CallRecordingUpdateFields> => {
   const externalRecordingId =
-    getString(externalRecordingIdFromEvent) ??
-    getString(callRecording.externalRecordingId) ??
-    (externalBotId === undefined
+    externalRecordingIdFromEvent ??
+    callRecording.externalRecordingId ??
+    (isUndefined(externalBotId)
       ? undefined
       : await fetchExternalRecordingIdFromRecallBot(externalBotId));
 
-  if (externalRecordingId === undefined) {
+  if (isUndefined(externalRecordingId)) {
     console.warn(
       `[recall-recording-bot] cannot request transcript for call recording ${callRecording.id}: no Recall recording id available`,
     );
@@ -450,7 +473,7 @@ const buildTranscriptRequestUpdate = async ({
     requestedAt: new Date().toISOString(),
   });
 
-  if (transcriptMarker === null) {
+  if (isNull(transcriptMarker)) {
     return {};
   }
 
@@ -491,7 +514,7 @@ const handleRecallTranscriptEvent = async ({
     externalBotId: getExternalBotId(body),
   });
 
-  if (callRecording === null) {
+  if (isUndefined(callRecording)) {
     return {
       status: 'skipped',
       event,
@@ -516,7 +539,7 @@ const handleRecallTranscriptEvent = async ({
     });
   }
 
-  if (transcriptId === undefined) {
+  if (isUndefined(transcriptId)) {
     return {
       status: 'skipped',
       event,
@@ -530,7 +553,7 @@ const handleRecallTranscriptEvent = async ({
     case 'filled': {
       const updateData: CallRecordingUpdateFields = {
         transcript: downloadResult.content as Record<string, unknown>,
-        ...(getString(callRecording.externalRecordingId) === undefined
+        ...(isUndefined(callRecording.externalRecordingId)
           ? buildExternalRecordingIdUpdate(body)
           : {}),
       };
@@ -607,7 +630,7 @@ const applyRecallTranscriptFailure = async ({
 }): Promise<RecallWebhookHandlerResult> => {
   const existingMarker = parseRecallTranscriptMarker(callRecording.transcript);
 
-  if (!isTranscriptUnset(callRecording) && existingMarker === null) {
+  if (!isTranscriptUnset(callRecording) && isNull(existingMarker)) {
     return {
       status: 'skipped',
       event,
@@ -616,7 +639,7 @@ const applyRecallTranscriptFailure = async ({
   }
 
   console.warn(
-    `[recall-recording-bot] transcript failed for call recording ${callRecording.id}${subCode === null ? '' : ` (${subCode})`}`,
+    `[recall-recording-bot] transcript failed for call recording ${callRecording.id}${isNull(subCode) ? '' : ` (${subCode})`}`,
   );
 
   await updateCallRecording(client, {
@@ -646,12 +669,12 @@ const applyRecallTranscriptFailure = async ({
 };
 
 const asRecord = (value: unknown): Record<string, unknown> | undefined =>
-  typeof value === 'object' && value !== null && !Array.isArray(value)
+  isObject(value) && !isArray(value)
     ? (value as Record<string, unknown>)
     : undefined;
 
 const getString = (value: unknown): string | undefined =>
-  typeof value === 'string' && value.trim() !== '' ? value : undefined;
+  isNonEmptyString(value) ? value : undefined;
 
 const getRecordAtPath = (
   record: Record<string, unknown> | undefined,

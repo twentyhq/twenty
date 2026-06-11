@@ -122,7 +122,7 @@ describe('convergeDivergedCallRecordings', () => {
     });
     expect(ingestRecallMediaMock).toHaveBeenCalledWith({
       callRecordingId: 'call-recording-1',
-      bot: expect.objectContaining({ recordings: expect.any(Array) }),
+      externalRecordingId: 'recall-recording-1',
       hasAudio: false,
       hasVideo: false,
     });

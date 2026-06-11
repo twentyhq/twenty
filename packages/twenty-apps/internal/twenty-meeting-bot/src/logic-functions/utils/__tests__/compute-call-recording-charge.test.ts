@@ -39,33 +39,33 @@ describe('computeCallRecordingCharge', () => {
     });
   });
 
-  it('returns null when either timestamp is missing', () => {
+  it('returns undefined when either timestamp is missing', () => {
     expect(
       computeCallRecordingCharge({
-        startedAt: null,
+        startedAt: undefined,
         endedAt: '2026-06-10T10:00:00.000Z',
       }),
-    ).toBeNull();
+    ).toBeUndefined();
     expect(
       computeCallRecordingCharge({
         startedAt: '2026-06-10T09:00:00.000Z',
         endedAt: undefined,
       }),
-    ).toBeNull();
+    ).toBeUndefined();
   });
 
-  it('returns null for non-positive or unparseable durations', () => {
+  it('returns undefined for non-positive or unparseable durations', () => {
     expect(
       computeCallRecordingCharge({
         startedAt: '2026-06-10T10:00:00.000Z',
         endedAt: '2026-06-10T09:00:00.000Z',
       }),
-    ).toBeNull();
+    ).toBeUndefined();
     expect(
       computeCallRecordingCharge({
         startedAt: 'not-a-date',
         endedAt: '2026-06-10T10:00:00.000Z',
       }),
-    ).toBeNull();
+    ).toBeUndefined();
   });
 });

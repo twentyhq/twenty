@@ -44,7 +44,7 @@ describe('isCallRecordingIngestionComplete', () => {
     expect(
       isCallRecordingIngestionComplete({
         transcript: TRANSCRIPT_CONTENT,
-        audio: null,
+        audio: undefined,
         video: VIDEO_VALUE,
       }),
     ).toBe(false);

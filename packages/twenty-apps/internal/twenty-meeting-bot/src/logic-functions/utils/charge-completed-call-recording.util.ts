@@ -1,3 +1,4 @@
+import { isUndefined } from '@sniptt/guards';
 import { chargeCredits } from 'twenty-sdk/billing';
 
 import { computeCallRecordingCharge } from 'src/logic-functions/utils/compute-call-recording-charge.util';
@@ -9,12 +10,12 @@ export const chargeCompletedCallRecording = async ({
   endedAt,
 }: {
   callRecordingId: string;
-  startedAt: string | null | undefined;
-  endedAt: string | null | undefined;
+  startedAt: string | undefined;
+  endedAt: string | undefined;
 }): Promise<void> => {
   const charge = computeCallRecordingCharge({ startedAt, endedAt });
 
-  if (charge === null) {
+  if (isUndefined(charge)) {
     console.warn(
       `[recall-recording-bot] call recording ${callRecordingId} completed without usable recording timestamps; it will not be billed`,
     );
