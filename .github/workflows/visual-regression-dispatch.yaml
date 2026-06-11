@@ -9,7 +9,7 @@ name: Visual Regression Dispatch
 
 on:
   workflow_run:
-    workflows: ['CI UI', 'CI New UI']
+    workflows: ['CI UI', 'CI New UI', 'CI Front']
     types: [completed]
 
 permissions:
@@ -36,9 +36,12 @@ jobs:
         with:
           script: |
             const name = context.payload.workflow_run.name;
-            const artifactName = name === 'CI New UI'
-              ? 'argos-screenshots-twenty-new-ui'
-              : 'argos-screenshots-twenty-ui';
+            const artifactByWorkflow = {
+              'CI UI': 'argos-screenshots-twenty-ui',
+              'CI New UI': 'argos-screenshots-twenty-new-ui',
+              'CI Front': 'argos-screenshots-twenty-front',
+            };
+            const artifactName = artifactByWorkflow[name] ?? 'argos-screenshots-twenty-ui';
             core.setOutput('workflow_name', name);
             core.setOutput('artifact_name', artifactName);
             core.info(`Workflow: ${name}, artifact: ${artifactName}`);
@@ -198,6 +201,46 @@ jobs:
             --method POST
             -f event_type=visual-regression
             -f "client_payload[project]=twenty-new-ui"
+            -f "client_payload[artifact_name]=$ARTIFACT_NAME"
+            -f "client_payload[run_id]=$WORKFLOW_RUN_ID"
+            -f "client_payload[repo]=$REPOSITORY"
+            -f "client_payload[branch]=$BRANCH"
+            -f "client_payload[commit]=$COMMIT"
+          )
+
+          if [ -n "$PR_NUMBER" ]; then
+            ARGS+=(-f "client_payload[pr_number]=$PR_NUMBER")
+          fi
+          if [ -n "$REFERENCE_COMMIT" ]; then
+            ARGS+=(-f "client_payload[reference_commit]=$REFERENCE_COMMIT")
+          fi
+
+          gh api repos/twentyhq/ci-privileged/dispatches "${ARGS[@]}"
+
+  # ── Dispatch: twenty-front pixel diff (CI Front, PRs + main) ──
+  dispatch-twenty-front:
+    needs: resolve-context
+    if: >-
+      needs.resolve-context.outputs.workflow_name == 'CI Front' &&
+      needs.resolve-context.outputs.has_artifact == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Dispatch to ci-privileged
+        env:
+          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          PR_NUMBER: ${{ needs.resolve-context.outputs.pr_number }}
+          WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id }}
+          REPOSITORY: ${{ github.repository }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+          COMMIT: ${{ github.event.workflow_run.head_sha }}
+          REFERENCE_COMMIT: ${{ needs.resolve-context.outputs.merge_base_sha }}
+          ARTIFACT_NAME: ${{ needs.resolve-context.outputs.artifact_name }}
+        run: |
+          ARGS=(
+            --method POST
+            -f event_type=visual-regression
+            -f "client_payload[project]=twenty-front"
             -f "client_payload[artifact_name]=$ARTIFACT_NAME"
             -f "client_payload[run_id]=$WORKFLOW_RUN_ID"
             -f "client_payload[repo]=$REPOSITORY"
