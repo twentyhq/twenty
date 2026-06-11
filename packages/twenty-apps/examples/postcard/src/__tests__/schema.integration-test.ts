@@ -25,12 +25,12 @@ describe('PostCard object', () => {
 
     const { objects } = await client.query({
       objects: {
-        __args: { paging: { first: 50 } },
+        __args: { paging: { first: 50 }, filter: {} },
         edges: {
           node: {
             nameSingular: true,
             fields: {
-              __args: { paging: { first: 500 } },
+              __args: { paging: { first: 500 }, filter: {} },
               edges: { node: { name: true } },
             },
           },
@@ -39,7 +39,7 @@ describe('PostCard object', () => {
     });
 
     const obj = objects.edges
-      .map((e: { node: { nameSingular: string } }) => e.node)
+      .map((e) => e.node)
       .find((n: { nameSingular: string }) => n.nameSingular === 'postCard');
     expect(obj).toBeDefined();
 
