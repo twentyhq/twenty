@@ -27,6 +27,8 @@ import {
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
 import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
+import { buildRetryStepInfos } from 'src/modules/workflow/workflow-runner/utils/build-retry-step-infos.util';
+import { getResumeFrontierStepIds } from 'src/modules/workflow/workflow-runner/utils/get-resume-frontier-step-ids.util';
 import {
   WorkflowRunEnqueueJob,
   type WorkflowRunEnqueueJobData,
@@ -208,14 +210,38 @@ export class WorkflowRunnerWorkspaceService {
       WorkflowRunStatus.RUNNING,
     ];
 
+    // Stopping is idempotent: a run that already reached a terminal status
+    // (COMPLETED / FAILED / STOPPED) or is already STOPPING is left untouched
+    // instead of throwing, so bulk stops and click/processing races no-op
+    // cleanly rather than aborting on the first non-stoppable run.
     if (!stoppableStatuses.includes(workflowRun.status)) {
-      throw new WorkflowRunException(
-        'Workflow run cannot be stopped',
-        WorkflowRunExceptionCode.INVALID_OPERATION,
-        {
-          userFriendlyMessage: msg`Workflow run cannot be stopped in its current status`,
-        },
+      return {
+        id: workflowRun.id,
+        status: workflowRun.status,
+      };
+    }
+
+    // A NOT_STARTED run still counts towards the cached not-started throttle
+    // counter; stopping it must release that slot to avoid counter drift.
+    if (workflowRun.status === WorkflowRunStatus.NOT_STARTED) {
+      await this.workflowThrottlingWorkspaceService.decreaseWorkflowRunNotStartedCount(
+        workspaceId,
       );
+    }
+
+    // A run whose version had no trigger/steps has an undefined state; there is
+    // nothing to wind down, so end it directly.
+    if (!isDefined(workflowRun.state)) {
+      await this.workflowRunWorkspaceService.endWorkflowRun({
+        workflowRunId,
+        workspaceId,
+        status: WorkflowRunStatus.STOPPED,
+      });
+
+      return {
+        id: workflowRun.id,
+        status: WorkflowRunStatus.STOPPED,
+      };
     }
 
     let newStatus: WorkflowRunStatus;
@@ -258,6 +284,88 @@ export class WorkflowRunnerWorkspaceService {
     return {
       id: workflowRun.id,
       status: newStatus,
+    };
+  }
+
+  async retryWorkflowRun(workspaceId: string, workflowRunId: string) {
+    const workflowRun =
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+        workflowRunId,
+        workspaceId,
+      });
+
+    // Retrying is idempotent and only meaningful for a failed run; any other
+    // status is returned untouched (mirrors stopWorkflowRun).
+    if (workflowRun.status !== WorkflowRunStatus.FAILED) {
+      return {
+        id: workflowRun.id,
+        status: workflowRun.status,
+      };
+    }
+
+    if (!isDefined(workflowRun.state)) {
+      throw new WorkflowRunException(
+        'Cannot retry a workflow run without state',
+        WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
+      );
+    }
+
+    const steps = workflowRun.state.flow.steps;
+
+    const { stepInfosToUpdate, stepIdsToRetry } = buildRetryStepInfos({
+      steps,
+      stepInfos: workflowRun.state.stepInfos,
+    });
+
+    const mergedStepInfos = {
+      ...workflowRun.state.stepInfos,
+      ...stepInfosToUpdate,
+    };
+
+    const frontierStepIds = getResumeFrontierStepIds({
+      steps,
+      stepInfos: mergedStepInfos,
+    });
+
+    const stepIdsToRun = Array.from(
+      new Set([...stepIdsToRetry, ...frontierStepIds]),
+    );
+
+    // Nothing runnable (e.g. the run failed before any step started): leave it
+    // failed rather than flipping it to a RUNNING state that would never end.
+    if (stepIdsToRun.length === 0) {
+      return {
+        id: workflowRun.id,
+        status: workflowRun.status,
+      };
+    }
+
+    await this.workflowRunWorkspaceService.updateWorkflowRun({
+      workflowRunId,
+      workspaceId,
+      partialUpdate: {
+        status: WorkflowRunStatus.RUNNING,
+        endedAt: null,
+        state: {
+          ...workflowRun.state,
+          stepInfos: mergedStepInfos,
+          workflowRunError: undefined,
+        },
+      },
+    });
+
+    await this.messageQueueService.add<RunWorkflowJobData>(
+      RunWorkflowJob.name,
+      {
+        workspaceId,
+        workflowRunId,
+        stepIdsToRetry: stepIdsToRun,
+      },
+    );
+
+    return {
+      id: workflowRun.id,
+      status: WorkflowRunStatus.RUNNING,
     };
   }
 

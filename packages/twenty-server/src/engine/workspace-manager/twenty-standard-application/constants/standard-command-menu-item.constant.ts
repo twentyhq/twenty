@@ -544,6 +544,22 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.STOP_WORKFLOW_RUN,
     hotKeys: null,
   },
+  retryWorkflowRun: {
+    universalIdentifier: '99b97c50-b31b-411a-a532-ec05402123c0',
+    label: 'Retry',
+    icon: 'IconRefresh',
+    isPinned: true,
+    position: 66,
+    shortLabel: 'Retry',
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'someEquals(selectedRecords, "status", "FAILED")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.workflowRun.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.RETRY_WORKFLOW_RUN,
+    hotKeys: null,
+  },
   seeRunsWorkflowVersion: {
     universalIdentifier: '44e305c7-4f0a-45ec-803f-6471b56455cb',
     label: 'See Runs',
