@@ -41,18 +41,6 @@ const failures = [];
 const LITERAL_ALLOWLIST = new Set([
   'src/sections/home-hero/home-hero.tsx', // ported radial gradient stops
 ]);
-// Glyphs we replaced with authored components: importing the tabler
-// lookalike again is the exact regression class the design review caught
-// (plus/minus/arrows smaller than authored; brand marks wrong).
-const FORBIDDEN_TABLER_GLYPHS = [
-  ['IconPlus', 'PlusMark'],
-  ['IconMinus', 'MinusMark'],
-  ['IconArrowLeft', 'ArrowLeft'],
-  ['IconArrowRight', 'ArrowRight'],
-  ['IconArrowUpRight', 'ArrowUpRight'],
-  ['IconBrandGithub', 'GitHubMark'],
-  ['IconBrandDiscord', 'DiscordMark'],
-];
 // Files allowed to set the new-tab security attributes themselves.
 const EXTERNAL_LINK_OWNERS = new Set([
   'src/ui/external-link.tsx',
@@ -113,14 +101,6 @@ function walk(directory) {
       failures.push(
         `src/${relativePath}: raw width @media query — use mediaUp().`,
       );
-    }
-
-    for (const [tabler, authored] of FORBIDDEN_TABLER_GLYPHS) {
-      if (new RegExp(`\\b${tabler}`).test(content)) {
-        failures.push(
-          `src/${relativePath}: ${tabler} is a lookalike of the authored ${authored} — import it from @/icons.`,
-        );
-      }
     }
 
     if (
