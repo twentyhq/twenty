@@ -19,6 +19,35 @@ const VISUALS = {
     animated: true,
     interactive: false,
   },
+  target: {
+    slotSelector: '[data-illustration="target"]',
+    // pink #ed87fc
+    hueRangeDegrees: [270, 330],
+    minCoverage: 0.01,
+    // breathe-only: passive motion is sub-pixel; drag is the liveliness proof
+    animated: false,
+    interactive: true,
+    settle: { stageProgress: 0.3 },
+  },
+  spaceship: {
+    slotSelector: '[data-illustration="spaceship"]',
+    // green #89fc9a
+    hueRangeDegrees: [95, 160],
+    minCoverage: 0.01,
+    animated: false,
+    interactive: true,
+    settle: { stageProgress: 0.6 },
+  },
+  money: {
+    slotSelector: '[data-illustration="money"]',
+    // yellow #feffb7 (near-white: low saturation tolerated)
+    hueRangeDegrees: [40, 80],
+    minCoverage: 0.005,
+    minSaturation: 0.12,
+    animated: false,
+    interactive: true,
+    settle: { stageProgress: 0.9 },
+  },
 };
 
 const MOTION_DIFF_FLOOR = 0.005;
@@ -61,7 +90,11 @@ const rgbToHueSaturation = (r, g, b) => {
   return { hue, saturation };
 };
 
-const analyzeClip = ({ data, info }, backgroundSample) => {
+const analyzeClip = (
+  { data, info },
+  backgroundSample,
+  minSaturation = 0.25,
+) => {
   let foreground = 0;
   let hueWeightedSum = 0;
   let hueSamples = 0;
@@ -78,7 +111,7 @@ const analyzeClip = ({ data, info }, backgroundSample) => {
     if (isBackground) continue;
     foreground += 1;
     const { hue, saturation } = rgbToHueSaturation(r, g, b);
-    if (saturation > 0.25) {
+    if (saturation > minSaturation) {
       hueWeightedSum += hue;
       hueSamples += 1;
     }
@@ -133,6 +166,25 @@ const waitForLoadedCanvas = async (page, slotSelector) => {
   return null;
 };
 
+const settleForSpec = async (page, spec) => {
+  if (spec.settle?.stageProgress !== undefined) {
+    // The helped cards travel a 280vh fan; each card is readable only in
+    // its own hold window of the stage progress.
+    await page.evaluate((progress) => {
+      const stage = document.querySelector('#homepage-cases');
+      if (stage) {
+        const rect = stage.getBoundingClientRect();
+        const top = rect.top + window.scrollY;
+        const scrollable = rect.height - window.innerHeight;
+        window.scrollTo(0, top + progress * scrollable);
+      }
+    }, spec.settle.stageProgress);
+    await page.waitForTimeout(800);
+    return;
+  }
+  await page.locator(spec.slotSelector).first().scrollIntoViewIfNeeded();
+};
+
 const runVisual = async (browser, key, spec) => {
   console.log(`── ${key}`);
   const page = await browser.newPage({
@@ -142,7 +194,7 @@ const runVisual = async (browser, key, spec) => {
   await page.goto(BASE_URL, { waitUntil: 'networkidle', timeout: 180000 });
 
   const slot = page.locator(spec.slotSelector).first();
-  await slot.scrollIntoViewIfNeeded();
+  await settleForSpec(page, spec);
   const slotBox = await slot.boundingBox();
   assert(slotBox !== null, 'slot exists');
 
@@ -166,7 +218,11 @@ const runVisual = async (browser, key, spec) => {
 
   const clipA = await readClip(page, canvasBox);
   const background = cornerSample(clipA);
-  const { coverage, dominantHue } = analyzeClip(clipA, background);
+  const { coverage, dominantHue } = analyzeClip(
+    clipA,
+    background,
+    spec.minSaturation,
+  );
   assert(
     coverage >= spec.minCoverage,
     `coverage ${(coverage * 100).toFixed(1)}% ≥ ${spec.minCoverage * 100}%`,
@@ -191,6 +247,26 @@ const runVisual = async (browser, key, spec) => {
     );
   }
 
+  if (spec.interactive) {
+    const centerX = canvasBox.x + canvasBox.width / 2;
+    const centerY = canvasBox.y + canvasBox.height / 2;
+    const before = await readClip(page, canvasBox);
+    await page.mouse.move(centerX, centerY);
+    await page.mouse.down();
+    for (let step = 1; step <= 5; step += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      await page.mouse.move(centerX + step * 14, centerY + step * 6);
+    }
+    await page.mouse.up();
+    await page.waitForTimeout(250);
+    const after = await readClip(page, canvasBox);
+    const dragDiff = diffClips(before, after);
+    assert(
+      dragDiff > MOTION_DIFF_FLOOR,
+      `drag changes pixels (diff ${(dragDiff * 100).toFixed(2)}%)`,
+    );
+  }
+
   // Lifecycle: scroll far away, wait past the dispose grace, expect release.
   const counts = () =>
     page.evaluate(
@@ -208,7 +284,7 @@ const runVisual = async (browser, key, spec) => {
     activeAfterLeave < activeWhileVisible || activeAfterLeave === 0,
     `context released after leaving (count ${activeAfterLeave})`,
   );
-  await slot.scrollIntoViewIfNeeded();
+  await settleForSpec(page, spec);
   const reacquired = await waitForLoadedCanvas(page, spec.slotSelector);
   assert(reacquired !== null, 'scene re-acquires on return');
 
@@ -224,7 +300,7 @@ const runVisual = async (browser, key, spec) => {
     waitUntil: 'networkidle',
     timeout: 180000,
   });
-  await reducedPage.locator(spec.slotSelector).first().scrollIntoViewIfNeeded();
+  await settleForSpec(reducedPage, spec);
   const reducedCanvas = await waitForLoadedCanvas(
     reducedPage,
     spec.slotSelector,

@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useAsyncResource } from '../engine/use-async-resource';
 import { useVisualRuntime } from '../engine/use-visual-runtime';
 import { loadGlbGeometry } from '../three-runtime/load-glb-geometry';
+import { createBandSession } from './create-band-session';
 import { createHalftoneSession } from './create-halftone-session';
 import { type HalftoneInitialPose } from './halftone-interaction-state';
 import {
@@ -46,15 +47,36 @@ export function HalftoneModelScene({
       return;
     }
 
-    const session = createHalftoneSession({
-      container,
-      geometry,
-      settings: resolveHalftoneSettings(settings),
-      initialPose,
-      reducedMotion,
+    const resolved = resolveHalftoneSettings(settings);
+    let cancelled = false;
+    let session: { dispose: () => void } | null = null;
+
+    void Promise.resolve(
+      resolved.halftone.variant === 'rows'
+        ? createHalftoneSession({
+            container,
+            geometry,
+            settings: resolved,
+            initialPose,
+            reducedMotion,
+          })
+        : createBandSession({
+            container,
+            geometry,
+            settings: resolved,
+            initialPose,
+            reducedMotion,
+          }),
+    ).then((createdSession) => {
+      if (cancelled) {
+        createdSession?.dispose();
+        return;
+      }
+      session = createdSession;
     });
 
     return () => {
+      cancelled = true;
       session?.dispose();
     };
     // settings/initialPose are config records owned by the section; their

@@ -18,15 +18,27 @@ import {
 import { HELPED_CARDS } from './helped.data';
 
 // Display treatment ported from the original: below md this headline runs
-// larger than the xl ramp's floor and tracks the viewport.
+// larger than the xl ramp's floor and tracks the viewport. The old site
+// fills lines naturally on a 688px measure (3 lines at desktop) — balance
+// would redistribute it into 4 narrow ones, so this headline opts out.
 const headlineMeasureClassName = css`
+  margin-inline: auto;
+
+  /* The old headline escapes its block's 16px gutter: its effective
+     measure is the full 688 — without this the last two words wrap to a
+     fourth line. */
+  ${mediaUp('md')} {
+    margin-inline: ${spacing(-4)};
+  }
+
   h2 {
     font-size: clamp(${fontSize(8)}, 9.5vw, ${fontSize(15)});
     line-height: 1.1;
+    text-wrap: wrap;
   }
 
   ${mediaUp('md')} {
-    max-width: 760px;
+    max-width: 688px;
 
     h2 {
       font-size: ${fontSize(20)};

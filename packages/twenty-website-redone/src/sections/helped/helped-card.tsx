@@ -1,6 +1,9 @@
 'use client';
 
 import { msg } from '@lingui/core/macro';
+import { HalftoneModel } from '@/platform/visuals/rigs/halftone-model';
+
+import { HELPED_MODEL_CONFIGS } from './helped-model-configs';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
@@ -133,7 +136,14 @@ export function HelpedCard({ card }: { card: HelpedCardRecord }) {
         <Wordmark>{card.wordmark}</Wordmark>
       </WordmarkRow>
       <Rule aria-hidden />
-      <VisualShell data-illustration={card.illustration} />
+      <VisualShell data-illustration={card.illustration}>
+        <HalftoneModel
+          initialPose={HELPED_MODEL_CONFIGS[card.illustration].initialPose}
+          loading="eager"
+          modelUrl={HELPED_MODEL_CONFIGS[card.illustration].modelUrl}
+          settings={HELPED_MODEL_CONFIGS[card.illustration].settings}
+        />
+      </VisualShell>
       <Rule aria-hidden />
       <CopyBlock>
         <CardHeading>{i18n._(card.heading)}</CardHeading>

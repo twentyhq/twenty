@@ -69,6 +69,20 @@ export type HalftoneEffectSettings =
 
 export type HalftoneAnimationSettings = {
   autoRotateEnabled: boolean;
+  breatheEnabled: boolean;
+  breatheAmount: number;
+  breatheSpeed: number;
+  floatEnabled: boolean;
+  floatAmplitude: number;
+  floatSpeed: number;
+  driftAmount: number;
+  cameraParallaxEnabled: boolean;
+  cameraParallaxAmount: number;
+  cameraParallaxEase: number;
+  lightSweepEnabled: boolean;
+  lightSweepRange: number;
+  lightSweepHeightRange: number;
+  lightSweepSpeed: number;
   followHoverEnabled: boolean;
   followDragEnabled: boolean;
   hoverHalftoneEnabled: boolean;
@@ -195,6 +209,20 @@ const DEFAULT_ROW_HALFTONE: HalftoneRowEffectSettings = {
 
 const DEFAULT_SOLID_ANIMATION: HalftoneAnimationSettings = {
   autoRotateEnabled: true,
+  breatheEnabled: false,
+  breatheAmount: 0.04,
+  breatheSpeed: 0.8,
+  floatEnabled: false,
+  floatAmplitude: 0.16,
+  floatSpeed: 0.8,
+  driftAmount: 8,
+  cameraParallaxEnabled: false,
+  cameraParallaxAmount: 0.3,
+  cameraParallaxEase: 0.08,
+  lightSweepEnabled: false,
+  lightSweepRange: 28,
+  lightSweepHeightRange: 0.5,
+  lightSweepSpeed: 0.7,
   followHoverEnabled: false,
   followDragEnabled: false,
   hoverHalftoneEnabled: false,
