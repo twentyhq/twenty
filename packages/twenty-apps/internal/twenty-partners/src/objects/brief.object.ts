@@ -1,0 +1,67 @@
+import { FieldType, defineObject } from 'twenty-sdk/define';
+
+export const BRIEF_OBJECT_UNIVERSAL_IDENTIFIER = 'c0a8b101-0000-4000-8000-000000000001';
+
+export default defineObject({
+  universalIdentifier: BRIEF_OBJECT_UNIVERSAL_IDENTIFIER,
+  nameSingular: 'brief',
+  namePlural: 'briefs',
+  labelSingular: 'Brief',
+  labelPlural: 'Briefs',
+  description: 'The partner-facing spec for an opportunity, generated from the discovery call',
+  icon: 'IconFileText',
+  isSearchable: false,
+  labelIdentifierFieldMetadataUniversalIdentifier: 'c0a8b101-0000-4000-8000-000000000002',
+  fields: [
+    {
+      universalIdentifier: 'c0a8b101-0000-4000-8000-000000000002',
+      type: FieldType.TEXT,
+      name: 'name',
+      label: 'Name',
+      icon: 'IconTag',
+      defaultValue: "''",
+    },
+    {
+      universalIdentifier: 'c0a8b101-0000-4000-8000-000000000003',
+      type: FieldType.TEXT,
+      name: 'need',
+      label: 'Need',
+      icon: 'IconNotes',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'c0a8b101-0000-4000-8000-000000000004',
+      type: FieldType.TEXT,
+      name: 'requirements',
+      label: 'Requirements',
+      icon: 'IconListCheck',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: 'c0a8b101-0000-4000-8000-000000000005',
+      type: FieldType.SELECT,
+      name: 'issuedBy',
+      label: 'Issued By',
+      icon: 'IconUserPlus',
+      isNullable: false,
+      defaultValue: "'ADMIN'",
+      options: [
+        { id: 'c0a8b101-0000-4000-8000-000000000051', value: 'ADMIN', label: 'Admin', position: 0, color: 'blue' },
+        { id: 'c0a8b101-0000-4000-8000-000000000052', value: 'CLIENT', label: 'Client', position: 1, color: 'green' },
+      ],
+    },
+    {
+      universalIdentifier: 'c0a8b101-0000-4000-8000-000000000006',
+      type: FieldType.SELECT,
+      name: 'status',
+      label: 'Status',
+      icon: 'IconProgressCheck',
+      isNullable: false,
+      defaultValue: "'OPEN'",
+      options: [
+        { id: 'c0a8b101-0000-4000-8000-000000000061', value: 'OPEN', label: 'Open', position: 0, color: 'green' },
+        { id: 'c0a8b101-0000-4000-8000-000000000062', value: 'CLOSED', label: 'Closed', position: 1, color: 'gray' },
+      ],
+    },
+  ],
+});
