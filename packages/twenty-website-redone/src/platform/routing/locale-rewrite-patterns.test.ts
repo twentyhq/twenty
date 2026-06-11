@@ -48,6 +48,12 @@ describe('locale rewrites', () => {
     );
   });
 
+  it('should leave asset directories untouched (rewrites run before public/)', () => {
+    expect(resolve('/lottie/stepper/stepper.lottie')).toBe(
+      '/lottie/stepper/stepper.lottie',
+    );
+  });
+
   it('should leave reserved prefixes untouched', () => {
     expect(resolve('/api/stats')).toBe('/api/stats');
     expect(resolve('/_next/static/chunk.js')).toBe('/_next/static/chunk.js');

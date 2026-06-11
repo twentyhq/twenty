@@ -68,6 +68,11 @@ msgstr ""
 msgid "Assemble, iterate and adapt a robust CRM, *that's quick to flex*"
 msgstr ""
 
+#. js-lingui-id: 83Wi6G
+#: src/sections/stepper/stepper.data.ts
+msgid "Begin with production-grade *building blocks*"
+msgstr ""
+
 #. js-lingui-id: e1u+Zh
 #: src/sections/menu/menu.data.ts
 msgid "Build on an open platform"
@@ -98,9 +103,19 @@ msgstr ""
 msgid "Compose your CRM and internal apps with a single extensibility toolkit."
 msgstr ""
 
+#. js-lingui-id: kD7ZGH
+#: src/sections/stepper/stepper.data.ts
+msgid "Compose your CRM and internal apps with a single extensibility toolkit. Data model, layout, and automation."
+msgstr ""
+
 #. js-lingui-id: iSLIjg
 #: src/sections/footer/footer.data.ts
 msgid "Connect"
+msgstr ""
+
+#. js-lingui-id: mXovG/
+#: src/sections/stepper/stepper.data.ts
+msgid "Continue iteration *without friction*"
 msgstr ""
 
 #. js-lingui-id: wH1xmY
@@ -143,6 +158,16 @@ msgstr ""
 #. js-lingui-id: Zx22Ih
 #: src/sections/faq/faq.data.ts
 msgid "Does Twenty work with Claude, ChatGPT, and Cursor?"
+msgstr ""
+
+#. js-lingui-id: pOLPPB
+#: src/sections/stepper/stepper.data.ts
+msgid "Don't get locked into someone else's ecosystem. Twenty's developer experience looks like normal software, with local setup, real data, live testing, and no proprietary tooling."
+msgstr ""
+
+#. js-lingui-id: Ijh+h+
+#: src/sections/stepper/stepper.data.ts
+msgid "Enjoy unlimited customization using the AI coding tools you already love. Adapt your CRM to fit the way your business grows and wins."
 msgstr ""
 
 #. js-lingui-id: MD032e
@@ -291,6 +316,11 @@ msgstr ""
 #. js-lingui-id: V9dFwD
 #: src/sections/footer/footer.data.ts
 msgid "Sitemap"
+msgstr ""
+
+#. js-lingui-id: ThcPyu
+#: src/sections/stepper/stepper.data.ts
+msgid "Stay in control with our *open-source software*"
 msgstr ""
 
 #. js-lingui-id: bxgoJR

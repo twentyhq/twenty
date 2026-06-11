@@ -3,6 +3,8 @@ export type PaletteToken =
   | 'black'
   | 'black-hover'
   | 'white-hover'
+  | 'graphite'
+  | 'silver'
   | 'neutral'
   | 'blue'
   | 'blue-muted'
@@ -19,6 +21,9 @@ export const PALETTE: Record<PaletteToken, string> = {
   'black-hover': '#333333',
   // mirror of black-hover: white shifted 10% toward black.
   'white-hover': '#e8e8e8',
+  // the stepper visual frame's authored stage and border colors.
+  graphite: '#424242',
+  silver: '#dbdbdb',
   neutral: '#f4f4f4',
   blue: '#4a38f5',
   'blue-muted': '#8174f8',
