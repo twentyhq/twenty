@@ -27,6 +27,7 @@ import { isDefined } from 'twenty-shared/utils';
 const StyledSortableHandle = styled.div`
   height: 100%;
   min-width: 0;
+  outline: none;
 `;
 
 type RecordTableHeaderCellProps = {

@@ -9,9 +9,17 @@ const SORTABLE_COLLISION_PRIORITY = 3;
 
 const PLUGINS_WITHOUT_OPTIMISTIC = [SortableKeyboardPlugin];
 
+const RECORD_TABLE_HEADER_SORTABLE_TRANSITION = {
+  duration: 180,
+  easing: 'cubic-bezier(0.2, 0, 0, 1)',
+  idle: true,
+};
+
 const StyledSortableRoot = styled.div`
   min-height: 0;
+  outline: none;
   position: relative;
+  will-change: transform;
 `;
 
 type RecordTableHeaderSortableCellProps = {
@@ -39,7 +47,7 @@ export const RecordTableHeaderSortableCell = ({
       index: index,
     },
     disabled,
-    transition: null,
+    transition: RECORD_TABLE_HEADER_SORTABLE_TRANSITION,
     plugins: PLUGINS_WITHOUT_OPTIMISTIC,
     feedback: 'clone',
   });

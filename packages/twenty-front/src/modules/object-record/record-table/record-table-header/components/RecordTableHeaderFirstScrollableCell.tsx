@@ -29,6 +29,7 @@ import { useDisableDragSelectOnPointerDown } from '@/object-record/record-table/
 const StyledSortableHandle = styled.div`
   height: 100%;
   min-width: 0;
+  outline: none;
 `;
 
 type RecordTableHeaderFirstScrollableCellProps = {

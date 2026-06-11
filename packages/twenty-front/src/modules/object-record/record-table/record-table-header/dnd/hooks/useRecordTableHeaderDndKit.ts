@@ -149,7 +149,13 @@ export const useRecordTableHeaderDndKit = (): {
         sourceIndex,
       });
 
-      setActiveDropTargetIndex(resolvedDrop?.dropTargetIndex ?? null);
+      setActiveDropTargetIndex((currentActiveDropTargetIndex) => {
+        const nextActiveDropTargetIndex = resolvedDrop?.dropTargetIndex ?? null;
+
+        return currentActiveDropTargetIndex === nextActiveDropTargetIndex
+          ? currentActiveDropTargetIndex
+          : nextActiveDropTargetIndex;
+      });
     },
     [resolveDropFromPointerX, setActiveDropTargetIndex],
   );

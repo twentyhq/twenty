@@ -12,23 +12,34 @@ const StyledDropTarget = styled.div<{
   min-height: ${({ $compact }) =>
     $compact ? '100%' : themeCssVariables.spacing[2]};
   position: relative;
-  transition: all 150ms ease-in-out;
+  transition: background-color 120ms ease-out;
   width: 100%;
+
+  &::before {
+    background-color: ${themeCssVariables.color.blue};
+    border-radius: 0 ${themeCssVariables.border.radius.sm}
+      ${themeCssVariables.border.radius.sm} 0;
+    content: '';
+    height: 100%;
+    left: 0;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    transform: scaleY(0.7);
+    transform-origin: center;
+    transition:
+      opacity 120ms ease-out,
+      transform 120ms ease-out;
+    width: 2px;
+  }
 
   &[data-drag-over='true'] {
     background-color: ${themeCssVariables.background.transparent.blue};
+  }
 
-    &::before {
-      background-color: ${themeCssVariables.color.blue};
-      border-radius: 0 ${themeCssVariables.border.radius.sm}
-        ${themeCssVariables.border.radius.sm} 0;
-      content: '';
-      height: 100%;
-      left: 0;
-      position: absolute;
-      top: 0;
-      width: 2px;
-    }
+  &[data-drag-over='true']::before {
+    opacity: 1;
+    transform: scaleY(1);
   }
 `;
 
