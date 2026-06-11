@@ -1,6 +1,9 @@
 import styled from '@emotion/styled';
 import { useEffect, useRef, useState } from 'react';
 
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { getTokenPair } from '@/apollo/utils/getTokenPair';
+
 // Resolved once at module load, same dual mechanism as REACT_APP_SERVER_BASE_URL
 // (src/config/index.ts): window._env_ for the Docker runtime injection,
 // import.meta.env for vite dev. Absent flag => component renders nothing.
@@ -8,6 +11,22 @@ const DIALER_DOCK_URL: string | undefined =
   window._env_?.REACT_APP_DIALER_DOCK_URL ||
   import.meta.env.REACT_APP_DIALER_DOCK_URL ||
   undefined;
+
+// The dock advertises the CRM origin to the embedded dialer via `?crm=` so the
+// dialer's postMessage origin checks + crmLinks resolve to this host (localhost
+// on staging, the real domain in prod) without a per-environment dialer build.
+const DIALER_IFRAME_SRC: string | undefined = DIALER_DOCK_URL
+  ? `${DIALER_DOCK_URL}${DIALER_DOCK_URL.includes('?') ? '&' : '?'}crm=${encodeURIComponent(
+      window.location.origin,
+    )}`
+  : undefined;
+
+// The propel logic-function route that hands back THIS agent's webphone line.
+// It derives the agent identity server-side from the access token (the dock
+// never sends an identity), mints/returns the per-agent Telnyx credential via
+// voice-service, and returns { sipUser, sipPassword, wssUrl, sipDomain,
+// businessDid }. We forward that verbatim into the dialer iframe.
+const WEBPHONE_CONFIG_URL = `${REACT_APP_SERVER_BASE_URL}/s/voice/webphone-config`;
 
 const DIALER_DOCK_EXPANDED_STORAGE_KEY = 'propel-dialer-dock-expanded';
 
@@ -115,6 +134,10 @@ const isDialerDockMessage = (data: unknown): data is DialerDockMessage =>
 
 export const DialerDock = () => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  // The agent's webphone line, fetched once from the propel route. Held in a ref
+  // (not state) because it is pushed imperatively to the iframe, never rendered.
+  const credentialRef = useRef<unknown>(null);
+  const pushConfigRef = useRef<() => void>(() => {});
   const [isExpanded, setIsExpanded] = useState(
     () => localStorage.getItem(DIALER_DOCK_EXPANDED_STORAGE_KEY) === 'true',
   );
@@ -129,28 +152,68 @@ export const DialerDock = () => {
     });
   };
 
-  // Click-to-call bridge: CRM code anywhere can
-  //   window.postMessage({ type: 'propel:dial', number: '+9715...' }, window.location.origin)
-  // and the dock forwards { type: 'dial', number } into the softphone iframe.
   useEffect(() => {
     if (!DIALER_DOCK_URL) {
       return;
     }
     const dockOrigin = new URL(DIALER_DOCK_URL, window.location.href).origin;
+
+    // Forward the agent's webphone line into the dialer iframe. Safe to call
+    // repeatedly: fires only once both the credential is fetched AND the iframe
+    // window exists; the dialer ignores a re-push of the same line.
+    const pushConfig = () => {
+      const credential = credentialRef.current;
+      const contentWindow = iframeRef.current?.contentWindow;
+      if (credential && contentWindow) {
+        contentWindow.postMessage({ type: 'propel:config', credential }, dockOrigin);
+      }
+    };
+    pushConfigRef.current = pushConfig;
+
     const handleMessage = (event: MessageEvent) => {
-      if (event.origin !== window.location.origin) {
+      // Click-to-call bridge from the CRM host: forward the agreed
+      // `propel:dial` envelope (unchanged) into the softphone iframe.
+      if (event.origin === window.location.origin) {
+        if (isDialerDockMessage(event.data)) {
+          setIsExpanded(true);
+          iframeRef.current?.contentWindow?.postMessage(
+            { type: 'propel:dial', number: event.data.number },
+            dockOrigin,
+          );
+        }
         return;
       }
-      if (!isDialerDockMessage(event.data)) {
-        return;
+      // Readiness handshake from the dialer iframe: push the line the moment its
+      // message listener is up (avoids racing the iframe's boot).
+      if (
+        event.origin === dockOrigin &&
+        (event.data as { type?: unknown } | null)?.type === 'propel:ready'
+      ) {
+        pushConfig();
       }
-      setIsExpanded(true);
-      iframeRef.current?.contentWindow?.postMessage(
-        { type: 'dial', number: event.data.number },
-        dockOrigin,
-      );
     };
     window.addEventListener('message', handleMessage);
+
+    // Fetch THIS agent's line. The route requires auth — send the CRM session's
+    // access token; identity is derived server-side from it (never sent by us).
+    const token = getTokenPair()?.accessOrWorkspaceAgnosticToken?.token;
+    if (token) {
+      void fetch(WEBPHONE_CONFIG_URL, {
+        headers: { authorization: `Bearer ${token}` },
+      })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((json) => {
+          if (json && typeof json === 'object' && !('error' in json)) {
+            credentialRef.current = json;
+            pushConfig();
+          }
+        })
+        .catch(() => {
+          // Leave the dialer in its "Connecting…" state; nothing to surface in
+          // the shell. A reload re-attempts the fetch.
+        });
+    }
+
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
@@ -173,8 +236,9 @@ export const DialerDock = () => {
         <StyledIframe
           allow="microphone; autoplay"
           ref={iframeRef}
-          src={DIALER_DOCK_URL}
+          src={DIALER_IFRAME_SRC}
           title="Dialer"
+          onLoad={() => pushConfigRef.current()}
         />
       </StyledPanel>
       {!isExpanded && (
