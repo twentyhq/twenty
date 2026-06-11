@@ -1,0 +1,27 @@
+import { defineApplication } from 'twenty-sdk/define';
+
+import {
+  APP_DESCRIPTION,
+  APP_DISPLAY_NAME,
+  APPLICATION_UNIVERSAL_IDENTIFIER,
+  CALENDAR_CRON_INTERVAL_MINUTES_VARIABLE_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
+import { ABOUT_DESCRIPTION } from 'src/constants/about-description.contant';
+
+export default defineApplication({
+  universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  logoUrl: 'public/logo.svg',
+  displayName: APP_DISPLAY_NAME,
+  description: APP_DESCRIPTION,
+  aboutDescription: ABOUT_DESCRIPTION,
+  applicationVariables: {
+    CALENDAR_CRON_INTERVAL_MINUTES: {
+      universalIdentifier:
+        CALENDAR_CRON_INTERVAL_MINUTES_VARIABLE_UNIVERSAL_IDENTIFIER,
+      description:
+        'Interval in minutes between runs of the on-calendar-event-started cron.',
+      value: '5',
+      isSecret: false,
+    },
+  },
+});
