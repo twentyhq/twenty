@@ -13,10 +13,10 @@ export const ensureRecallBot = async (
   client: CoreApiClient,
   { callRecording, calendarEvent }: MeetingRecording,
 ): Promise<void> => {
-  const meetingUrl = calendarEvent.conferenceLink?.primaryLinkUrl ?? null;
+  const meetingUrl = calendarEvent.conferenceLinkUrl;
   const joinAt = calendarEvent.startsAt;
 
-  if (isNull(meetingUrl) || isNull(joinAt)) {
+  if (isUndefined(meetingUrl) || isUndefined(joinAt)) {
     return;
   }
 

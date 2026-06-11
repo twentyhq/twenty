@@ -1,3 +1,4 @@
+import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
@@ -23,7 +24,7 @@ export const findUpcomingCalendarEventIdsForWorkspaceMember = async ({
             workspaceMemberId: { eq: workspaceMemberId },
           },
           first: TWENTY_PAGE_SIZE,
-          ...(afterCursor === undefined ? {} : { after: afterCursor }),
+          ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
         },
         pageInfo: {
           hasNextPage: true,
@@ -62,7 +63,7 @@ export const findUpcomingCalendarEventIdsForWorkspaceMember = async ({
         __args: {
           filter,
           first: TWENTY_PAGE_SIZE,
-          ...(afterCursor === undefined ? {} : { after: afterCursor }),
+          ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
         },
         pageInfo: {
           hasNextPage: true,

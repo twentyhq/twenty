@@ -1,3 +1,4 @@
+import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import {
   defineLogicFunction,
@@ -43,7 +44,7 @@ export const reconcileRecallRecordingBotWorkspaceMemberHandler = async (
     event.properties.after?.id,
   ])[0];
 
-  if (workspaceMemberId === undefined) {
+  if (isUndefined(workspaceMemberId)) {
     return { skipped: true, reason: 'missing workspace member id' };
   }
 

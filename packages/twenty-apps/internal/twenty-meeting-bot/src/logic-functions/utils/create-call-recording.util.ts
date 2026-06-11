@@ -1,3 +1,4 @@
+import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
@@ -30,7 +31,7 @@ export const createCallRecording = async (
   });
   const createdCallRecordingId = mutationResult.createCallRecording?.id;
 
-  if (createdCallRecordingId === undefined) {
+  if (isUndefined(createdCallRecordingId)) {
     throw new Error(
       'createCallRecording mutation did not return a call recording id',
     );

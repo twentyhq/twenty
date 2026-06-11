@@ -1,5 +1,6 @@
 import { RecallRecordingBotPreference } from 'src/logic-functions/constants/recall-recording-bot-preference';
 import { type RecallRecordingBotPolicyInput } from 'src/logic-functions/types/recall-recording-bot-policy-input.type';
+import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import { type RecallRecordingBotPolicyNotRequiredReason } from 'src/logic-functions/types/recall-recording-bot-policy-not-required-reason.type';
 import { type RecallRecordingBotPolicyRequiredReason } from 'src/logic-functions/types/recall-recording-bot-policy-required-reason.type';
 import { type RecallRecordingBotPolicyResult } from 'src/logic-functions/types/recall-recording-bot-policy-result.type';
@@ -27,7 +28,7 @@ export const resolveRecallRecordingBotPolicyResult = ({
     return botNotRequired('PREFERENCE_OFF');
   }
 
-  if (!hasConferenceLink(input.conferenceLinkUrl)) {
+  if (!isNonEmptyString(input.conferenceLinkUrl)) {
     return botNotRequired('MISSING_CONFERENCE_LINK');
   }
 
@@ -52,21 +53,18 @@ export const resolveRecallRecordingBotPolicyResult = ({
   return botNotRequired('NO_MEMBER_AUTO_RECORD');
 };
 
-const hasConferenceLink = (conferenceLinkUrl: string | null): boolean =>
-  conferenceLinkUrl !== null && conferenceLinkUrl.trim() !== '';
-
 const isCalendarEventInFuture = ({
   startsAt,
   endsAt,
   now,
 }: {
-  startsAt: string | null;
-  endsAt: string | null;
+  startsAt: string | undefined;
+  endsAt: string | undefined;
   now: Date;
 }): boolean => {
   const reference = endsAt ?? startsAt;
 
-  if (reference === null || reference === '') {
+  if (!isNonEmptyString(reference)) {
     return false;
   }
 

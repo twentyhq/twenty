@@ -90,7 +90,7 @@ const resolveRecallRecordingBotMeetingPolicyResults = async ({
   }
 
   for (const calendarEvent of changedCalendarEvents) {
-    if (calendarEvent.startsAt !== null) {
+    if (!isUndefined(calendarEvent.startsAt)) {
       occurrenceStartsAtAnchors.add(calendarEvent.startsAt);
     }
   }
@@ -98,7 +98,7 @@ const resolveRecallRecordingBotMeetingPolicyResults = async ({
   for (const removedOccurrence of removedOccurrences) {
     affectedMeetingKeys.add(removedOccurrence.realMeetingKey);
 
-    if (removedOccurrence.startsAt !== null) {
+    if (!isUndefined(removedOccurrence.startsAt)) {
       occurrenceStartsAtAnchors.add(removedOccurrence.startsAt);
     }
   }
@@ -246,7 +246,7 @@ const reconcileActiveMeeting = async ({
     meetingPolicyResult.requestingCalendarEventIds,
   )[0];
 
-  if (representativeCalendarEventId === undefined) {
+  if (isUndefined(representativeCalendarEventId)) {
     return buildSkippedResult(meetingPolicyResult.realMeetingKey);
   }
 
@@ -254,7 +254,7 @@ const reconcileActiveMeeting = async ({
     await fetchCalendarEventsByIds(client, [representativeCalendarEventId])
   )[0];
 
-  if (representativeCalendarEvent === undefined) {
+  if (isUndefined(representativeCalendarEvent)) {
     return buildSkippedResult(meetingPolicyResult.realMeetingKey);
   }
 
@@ -265,7 +265,7 @@ const reconcileActiveMeeting = async ({
     await findCallRecordingsByIds(client, [callRecordingId])
   )[0];
 
-  if (existingCallRecording !== undefined) {
+  if (!isUndefined(existingCallRecording)) {
     return updatePolicyManagedCallRecording({
       client,
       existingCallRecording,
@@ -280,7 +280,7 @@ const reconcileActiveMeeting = async ({
     removedCalendarEventIds,
   });
 
-  if (manualOpenCallRecording !== undefined) {
+  if (!isUndefined(manualOpenCallRecording)) {
     return {
       action: 'SKIPPED',
       realMeetingKey: meetingPolicyResult.realMeetingKey,
@@ -363,7 +363,7 @@ const createPolicyManagedCallRecording = async ({
       await findCallRecordingsByIds(client, [callRecordingId])
     )[0];
 
-    if (concurrentlyCreatedCallRecording === undefined) {
+    if (isUndefined(concurrentlyCreatedCallRecording)) {
       throw error;
     }
 
@@ -466,7 +466,8 @@ const reconcileCanceledMeeting = async ({
 const buildCalendarDrivenCallRecordingFields = (
   calendarEvent: CalendarEventRecord,
 ): Omit<ScheduledCallRecordingFields, 'status'> => ({
-  title: calendarEvent.title,
+  // Wire null clears a stale title when the calendar title is gone or restricted.
+  title: calendarEvent.title ?? null,
   recordingRequestStatus: CallRecordingRequestStatus.REQUESTED,
   calendarEventId: calendarEvent.id,
 });

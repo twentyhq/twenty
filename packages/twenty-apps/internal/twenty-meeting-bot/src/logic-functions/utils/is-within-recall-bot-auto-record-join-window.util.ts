@@ -1,13 +1,14 @@
 import { RECALL_BOT_AUTO_RECORD_JOIN_GRACE_MS } from 'src/logic-functions/constants/recall-bot-auto-record-join-grace-ms';
+import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
 export const isWithinRecallBotAutoRecordJoinWindow = ({
   startsAt,
   now,
 }: {
-  startsAt: string | null;
+  startsAt: string | undefined;
   now: Date;
 }): boolean => {
-  if (startsAt === null || startsAt === '') {
+  if (!isNonEmptyString(startsAt)) {
     return true;
   }
 

@@ -1,3 +1,4 @@
+import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
@@ -55,8 +56,8 @@ const handler = async (): Promise<object> => {
   );
 
   return {
-    ...(disabledCancelResult === null ? {} : { disabledCancelResult }),
-    ...(botlessHealResult === null ? {} : { botlessHealResult }),
+    ...(isUndefined(disabledCancelResult) ? {} : { disabledCancelResult }),
+    ...(isUndefined(botlessHealResult) ? {} : { botlessHealResult }),
     orphanedBotReapingResult,
     statusConvergenceResult,
     pendingTranscriptResult,
@@ -66,9 +67,11 @@ const handler = async (): Promise<object> => {
 const healCallRecordingsMissingRecallBotIfEnabled = async (
   client: CoreApiClient,
   now: Date,
-): Promise<HealCallRecordingsMissingRecallBotResult | StepFailure | null> => {
+): Promise<
+  HealCallRecordingsMissingRecallBotResult | StepFailure | undefined
+> => {
   if (!getRecallRecordingBotEnabled()) {
-    return null;
+    return undefined;
   }
 
   try {
@@ -80,9 +83,9 @@ const healCallRecordingsMissingRecallBotIfEnabled = async (
 
 const cancelOpenCallRecordingRequestsIfDisabled = async (
   client: CoreApiClient,
-): Promise<CancelOpenCallRecordingRequestsResult | StepFailure | null> => {
+): Promise<CancelOpenCallRecordingRequestsResult | StepFailure | undefined> => {
   if (getRecallRecordingBotEnabled()) {
-    return null;
+    return undefined;
   }
 
   try {

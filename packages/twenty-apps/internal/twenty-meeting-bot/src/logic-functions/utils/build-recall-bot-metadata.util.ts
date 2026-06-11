@@ -1,3 +1,5 @@
+import { isUndefined } from '@sniptt/guards';
+
 import { APPLICATION_ID_ENV_VAR_NAME } from 'src/logic-functions/constants/application-id-env-var-name';
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
 import { type RecallBotMetadata } from 'src/logic-functions/types/recall-bot-metadata.type';
@@ -17,11 +19,11 @@ export const buildRecallBotMetadata = ({
     twentyCalendarEventId: calendarEvent.id,
     twentyRealMeetingKey: computeRealMeetingKey({
       calendarEventId: calendarEvent.id,
-      conferenceLinkUrl: calendarEvent.conferenceLink?.primaryLinkUrl ?? null,
+      conferenceLinkUrl: calendarEvent.conferenceLinkUrl,
       iCalUid: calendarEvent.iCalUid,
       startsAt: calendarEvent.startsAt,
     }),
-    ...(applicationId === undefined
+    ...(isUndefined(applicationId)
       ? {}
       : { twentyApplicationId: applicationId }),
   };

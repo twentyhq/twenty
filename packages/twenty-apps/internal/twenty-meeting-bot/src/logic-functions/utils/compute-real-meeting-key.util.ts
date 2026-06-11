@@ -1,8 +1,12 @@
+import { isUndefined } from '@sniptt/guards';
+
+import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
+
 type ComputeRealMeetingKeyInput = {
   calendarEventId: string;
   conferenceLinkUrl: unknown;
-  iCalUid: string | null;
-  startsAt: string | null;
+  iCalUid: string | undefined;
+  startsAt: string | undefined;
 };
 
 export const computeRealMeetingKey = ({
@@ -13,29 +17,26 @@ export const computeRealMeetingKey = ({
 }: ComputeRealMeetingKeyInput): string => {
   const normalizedConferenceLink = normalizeConferenceLink(conferenceLinkUrl);
 
-  if (normalizedConferenceLink !== null) {
+  if (!isUndefined(normalizedConferenceLink)) {
     return `link:${normalizedConferenceLink}:${startsAt ?? ''}`;
   }
 
-  if (iCalUid !== null && iCalUid !== '') {
+  if (isNonEmptyString(iCalUid)) {
     return `ical:${iCalUid}:${startsAt ?? ''}`;
   }
 
   return `event:${calendarEventId}`;
 };
 
-const normalizeConferenceLink = (conferenceLinkUrl: unknown): string | null => {
-  if (typeof conferenceLinkUrl !== 'string') {
-    return null;
+const normalizeConferenceLink = (
+  conferenceLinkUrl: unknown,
+): string | undefined => {
+  if (!isNonEmptyString(conferenceLinkUrl)) {
+    return undefined;
   }
 
-  const trimmedConferenceLinkUrl = conferenceLinkUrl.trim();
-
-  if (trimmedConferenceLinkUrl === '') {
-    return null;
-  }
-
-  const withoutProtocol = trimmedConferenceLinkUrl
+  const withoutProtocol = conferenceLinkUrl
+    .trim()
     .toLowerCase()
     .replace(/^https?:\/\//, '')
     .replace(/^www\./, '');
@@ -43,5 +44,5 @@ const normalizeConferenceLink = (conferenceLinkUrl: unknown): string | null => {
   const withoutQueryAndFragment = withoutProtocol.split(/[?#]/)[0];
   const withoutTrailingSlash = withoutQueryAndFragment.replace(/\/+$/, '');
 
-  return withoutTrailingSlash === '' ? null : withoutTrailingSlash;
+  return withoutTrailingSlash === '' ? undefined : withoutTrailingSlash;
 };

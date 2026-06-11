@@ -1,3 +1,4 @@
+import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import {
   defineLogicFunction,
@@ -115,8 +116,9 @@ const buildCalendarEventReconciliationPayload = ({
         event.recordId,
         event.properties.after?.id,
       ]),
-      removedOccurrences:
-        removedOccurrence === undefined ? [] : [removedOccurrence],
+      removedOccurrences: isUndefined(removedOccurrence)
+        ? []
+        : [removedOccurrence],
     };
   }
 
@@ -125,8 +127,9 @@ const buildCalendarEventReconciliationPayload = ({
 
     return {
       calendarEventIds: [],
-      removedOccurrences:
-        removedOccurrence === undefined ? [] : [removedOccurrence],
+      removedOccurrences: isUndefined(removedOccurrence)
+        ? []
+        : [removedOccurrence],
     };
   }
 
@@ -146,7 +149,7 @@ const hasKeyFieldChange = (updatedFields: string[]): boolean =>
 const buildRemovedOccurrence = (
   calendarEvent: CalendarEventForDatabaseEvent | undefined,
 ): RemovedRecallRecordingBotOccurrence | undefined => {
-  if (calendarEvent === undefined) {
+  if (isUndefined(calendarEvent)) {
     return undefined;
   }
 
@@ -154,11 +157,11 @@ const buildRemovedOccurrence = (
     calendarEventId: calendarEvent.id,
     realMeetingKey: computeRealMeetingKey({
       calendarEventId: calendarEvent.id,
-      conferenceLinkUrl: calendarEvent.conferenceLink?.primaryLinkUrl ?? null,
-      iCalUid: calendarEvent.iCalUid ?? null,
-      startsAt: calendarEvent.startsAt ?? null,
+      conferenceLinkUrl: calendarEvent.conferenceLink?.primaryLinkUrl,
+      iCalUid: calendarEvent.iCalUid ?? undefined,
+      startsAt: calendarEvent.startsAt ?? undefined,
     }),
-    startsAt: calendarEvent.startsAt ?? null,
+    startsAt: calendarEvent.startsAt ?? undefined,
   };
 };
 

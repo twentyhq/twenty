@@ -1,4 +1,4 @@
-import { isNull, isUndefined } from '@sniptt/guards';
+import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
@@ -18,10 +18,10 @@ export const rescheduleRecallBot = async (
     return;
   }
 
-  const meetingUrl = calendarEvent.conferenceLink?.primaryLinkUrl ?? null;
+  const meetingUrl = calendarEvent.conferenceLinkUrl;
   const joinAt = calendarEvent.startsAt;
 
-  if (isNull(meetingUrl) || isNull(joinAt)) {
+  if (isUndefined(meetingUrl) || isUndefined(joinAt)) {
     return;
   }
 

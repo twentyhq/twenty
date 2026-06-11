@@ -1,3 +1,4 @@
+import { isString, isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
@@ -5,6 +6,7 @@ import { type CalendarEventParticipantRecord } from 'src/logic-functions/types/c
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { fetchAllNodes } from 'src/logic-functions/utils/fetch-all-nodes.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
+import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import { stripRestrictedFieldValue } from 'src/logic-functions/utils/strip-restricted-field-value.util';
 
 export const fetchCalendarEventsByFilter = async (
@@ -17,7 +19,7 @@ export const fetchCalendarEventsByFilter = async (
         __args: {
           filter,
           first: TWENTY_PAGE_SIZE,
-          ...(afterCursor === undefined ? {} : { after: afterCursor }),
+          ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
         },
         pageInfo: {
           hasNextPage: true,
@@ -45,16 +47,19 @@ export const fetchCalendarEventsByFilter = async (
 
   const calendarEvents = calendarEventNodes.map((calendarEvent) => ({
     id: calendarEvent.id,
-    title: stripRestrictedFieldValue(calendarEvent.title ?? null),
+    title: stripRestrictedFieldValue(calendarEvent.title ?? undefined),
     isCanceled: calendarEvent.isCanceled ?? false,
-    startsAt: calendarEvent.startsAt ?? null,
-    endsAt: calendarEvent.endsAt ?? null,
-    iCalUid: calendarEvent.iCalUid ?? null,
-    conferenceLink: calendarEvent.conferenceLink ?? null,
-    meetingBotPreference:
-      typeof calendarEvent.meetingBotPreference === 'string'
-        ? calendarEvent.meetingBotPreference
-        : null,
+    startsAt: calendarEvent.startsAt ?? undefined,
+    endsAt: calendarEvent.endsAt ?? undefined,
+    iCalUid: calendarEvent.iCalUid ?? undefined,
+    conferenceLinkUrl: isNonEmptyString(
+      calendarEvent.conferenceLink?.primaryLinkUrl,
+    )
+      ? calendarEvent.conferenceLink.primaryLinkUrl
+      : undefined,
+    meetingBotPreference: isString(calendarEvent.meetingBotPreference)
+      ? calendarEvent.meetingBotPreference
+      : undefined,
   }));
 
   return attachParticipantsToCalendarEvents(client, calendarEvents);
@@ -62,7 +67,7 @@ export const fetchCalendarEventsByFilter = async (
 
 const attachParticipantsToCalendarEvents = async (
   client: CoreApiClient,
-  calendarEvents: CalendarEventRecord[],
+  calendarEvents: Omit<CalendarEventRecord, 'calendarEventParticipants'>[],
 ): Promise<CalendarEventRecord[]> => {
   const calendarEventIds = getUniqueSortedIds(
     calendarEvents.map((calendarEvent) => calendarEvent.id),
@@ -79,7 +84,7 @@ const attachParticipantsToCalendarEvents = async (
   for (const participant of participants) {
     const calendarEventId = participant.calendarEventId;
 
-    if (calendarEventId === null) {
+    if (isUndefined(calendarEventId)) {
       continue;
     }
 
@@ -112,7 +117,7 @@ const fetchCalendarEventParticipantsByCalendarEventIds = async (
             calendarEventId: { in: calendarEventIds },
           },
           first: TWENTY_PAGE_SIZE,
-          ...(afterCursor === undefined ? {} : { after: afterCursor }),
+          ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
         },
         pageInfo: {
           hasNextPage: true,
@@ -141,10 +146,10 @@ const fetchCalendarEventParticipantsByCalendarEventIds = async (
 
   return participantNodes.map((participant) => ({
     id: participant.id,
-    calendarEventId: participant.calendarEventId ?? null,
-    workspaceMemberId: participant.workspaceMemberId ?? null,
+    calendarEventId: participant.calendarEventId ?? undefined,
+    workspaceMemberId: participant.workspaceMemberId ?? undefined,
     workspaceMemberMeetingBotAutoRecordEnabled:
-      typeof participant.workspaceMemberId === 'string' &&
+      isString(participant.workspaceMemberId) &&
       autoRecordEnabledWorkspaceMemberIds.has(participant.workspaceMemberId),
   }));
 };
@@ -165,7 +170,7 @@ const fetchAutoRecordEnabledWorkspaceMemberIds = async (
             id: { in: workspaceMemberIds },
           },
           first: TWENTY_PAGE_SIZE,
-          ...(afterCursor === undefined ? {} : { after: afterCursor }),
+          ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
         },
         pageInfo: {
           hasNextPage: true,

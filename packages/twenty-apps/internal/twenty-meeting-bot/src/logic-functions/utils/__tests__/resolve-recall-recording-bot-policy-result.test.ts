@@ -38,7 +38,7 @@ describe('resolveRecallRecordingBotPolicyResult', () => {
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
-          conferenceLinkUrl: null,
+          conferenceLinkUrl: undefined,
           hasAutoRecordParticipant: true,
         },
         now: NOW,
@@ -54,7 +54,7 @@ describe('resolveRecallRecordingBotPolicyResult', () => {
     expect(
       resolveRecallRecordingBotPolicyResult({
         input: {
-          meetingBotPreference: null,
+          meetingBotPreference: undefined,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
@@ -74,7 +74,7 @@ describe('resolveRecallRecordingBotPolicyResult', () => {
     expect(
       resolveRecallRecordingBotPolicyResult({
         input: {
-          meetingBotPreference: null,
+          meetingBotPreference: undefined,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
@@ -114,7 +114,7 @@ describe('resolveRecallRecordingBotPolicyResult', () => {
     expect(
       resolveRecallRecordingBotPolicyResult({
         input: {
-          meetingBotPreference: null,
+          meetingBotPreference: undefined,
           isCanceled: false,
           startsAt: PAST_STARTS_AT,
           endsAt: PAST_ENDS_AT,
@@ -134,7 +134,7 @@ describe('resolveRecallRecordingBotPolicyResult', () => {
     expect(
       resolveRecallRecordingBotPolicyResult({
         input: {
-          meetingBotPreference: null,
+          meetingBotPreference: undefined,
           isCanceled: true,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,

@@ -4,8 +4,10 @@ import { RESTRICTED_FIELD_PLACEHOLDER } from 'src/logic-functions/constants/rest
 import { stripRestrictedFieldValue } from 'src/logic-functions/utils/strip-restricted-field-value.util';
 
 describe('stripRestrictedFieldValue', () => {
-  it('nullifies the calendar visibility restriction placeholder', () => {
-    expect(stripRestrictedFieldValue(RESTRICTED_FIELD_PLACEHOLDER)).toBeNull();
+  it('drops the calendar visibility restriction placeholder', () => {
+    expect(
+      stripRestrictedFieldValue(RESTRICTED_FIELD_PLACEHOLDER),
+    ).toBeUndefined();
   });
 
   it('keeps regular values', () => {
@@ -14,7 +16,7 @@ describe('stripRestrictedFieldValue', () => {
     );
   });
 
-  it('keeps null', () => {
-    expect(stripRestrictedFieldValue(null)).toBeNull();
+  it('keeps undefined', () => {
+    expect(stripRestrictedFieldValue(undefined)).toBeUndefined();
   });
 });

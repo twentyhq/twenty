@@ -16,19 +16,14 @@ export const buildRecallRecordingBotPolicyResult = (
     now,
   }: BuildRecallRecordingBotPolicyResultContext,
 ): RecallRecordingBotPolicyResultForCalendarEvent => {
-  const conferenceLinkUrl =
-    calendarEvent.conferenceLink?.primaryLinkUrl ?? null;
-
   const realMeetingKey = computeRealMeetingKey({
     calendarEventId: calendarEvent.id,
-    conferenceLinkUrl,
+    conferenceLinkUrl: calendarEvent.conferenceLinkUrl,
     iCalUid: calendarEvent.iCalUid,
     startsAt: calendarEvent.startsAt,
   });
 
-  const hasAutoRecordParticipant = (
-    calendarEvent.calendarEventParticipants ?? []
-  ).some(
+  const hasAutoRecordParticipant = calendarEvent.calendarEventParticipants.some(
     (participant) =>
       participant.workspaceMemberMeetingBotAutoRecordEnabled === true,
   );
@@ -42,7 +37,7 @@ export const buildRecallRecordingBotPolicyResult = (
       isCanceled: calendarEvent.isCanceled,
       startsAt: calendarEvent.startsAt,
       endsAt: calendarEvent.endsAt,
-      conferenceLinkUrl,
+      conferenceLinkUrl: calendarEvent.conferenceLinkUrl,
       hasAutoRecordParticipant,
     },
     now,
@@ -58,14 +53,14 @@ export const buildRecallRecordingBotPolicyResult = (
 };
 
 const normalizeRecallRecordingBotPreference = (
-  meetingBotPreference: string | null | undefined,
-): RecallRecordingBotPreference | null =>
+  meetingBotPreference: string | undefined,
+): RecallRecordingBotPreference | undefined =>
   isRecallRecordingBotPreference(meetingBotPreference)
     ? meetingBotPreference
-    : null;
+    : undefined;
 
 const isRecallRecordingBotPreference = (
-  meetingBotPreference: string | null | undefined,
+  meetingBotPreference: string | undefined,
 ): meetingBotPreference is RecallRecordingBotPreference =>
   Object.values(RecallRecordingBotPreference).some(
     (preference) => preference === meetingBotPreference,

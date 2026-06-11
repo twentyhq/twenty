@@ -4,6 +4,6 @@ import { type RecallRecordingBotPolicyResult } from 'src/logic-functions/types/r
 export type RecallRecordingBotPolicyResultForCalendarEvent =
   RecallRecordingBotPolicyResult & {
     calendarEventId: string;
-    meetingBotPreference: RecallRecordingBotPreference | null;
+    meetingBotPreference: RecallRecordingBotPreference | undefined;
     realMeetingKey: string;
   };

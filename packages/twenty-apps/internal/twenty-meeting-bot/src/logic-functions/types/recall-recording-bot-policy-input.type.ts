@@ -1,10 +1,10 @@
 import { type RecallRecordingBotPreference } from 'src/logic-functions/constants/recall-recording-bot-preference';
 
 export type RecallRecordingBotPolicyInput = {
-  meetingBotPreference: RecallRecordingBotPreference | null;
+  meetingBotPreference: RecallRecordingBotPreference | undefined;
   isCanceled: boolean;
-  startsAt: string | null;
-  endsAt: string | null;
-  conferenceLinkUrl: string | null;
+  startsAt: string | undefined;
+  endsAt: string | undefined;
+  conferenceLinkUrl: string | undefined;
   hasAutoRecordParticipant: boolean;
 };

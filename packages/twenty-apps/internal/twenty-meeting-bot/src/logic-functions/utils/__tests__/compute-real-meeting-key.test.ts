@@ -75,13 +75,13 @@ describe('computeRealMeetingKey', () => {
   it('falls back to the calendar event id when link and iCal uid are missing', () => {
     expect(
       computeRealMeetingKey(
-        buildInput({ conferenceLinkUrl: null, iCalUid: '' }),
+        buildInput({ conferenceLinkUrl: undefined, iCalUid: '' }),
       ),
     ).toBe('event:calendar-event-1');
   });
 
   it('keeps link keys distinct across start times', () => {
-    expect(computeRealMeetingKey(buildInput({ startsAt: null }))).toBe(
+    expect(computeRealMeetingKey(buildInput({ startsAt: undefined }))).toBe(
       'link:meet.example.com/customer-sync:',
     );
   });

@@ -2,5 +2,5 @@
 export type RemovedRecallRecordingBotOccurrence = {
   calendarEventId: string;
   realMeetingKey: string;
-  startsAt: string | null;
+  startsAt: string | undefined;
 };

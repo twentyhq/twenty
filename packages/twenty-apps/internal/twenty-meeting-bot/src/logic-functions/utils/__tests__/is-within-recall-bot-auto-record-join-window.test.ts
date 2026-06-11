@@ -37,7 +37,7 @@ describe('isWithinRecallBotAutoRecordJoinWindow', () => {
 
   it('returns true when startsAt is missing or invalid', () => {
     expect(
-      isWithinRecallBotAutoRecordJoinWindow({ startsAt: null, now: NOW }),
+      isWithinRecallBotAutoRecordJoinWindow({ startsAt: undefined, now: NOW }),
     ).toBe(true);
     expect(
       isWithinRecallBotAutoRecordJoinWindow({ startsAt: '', now: NOW }),
