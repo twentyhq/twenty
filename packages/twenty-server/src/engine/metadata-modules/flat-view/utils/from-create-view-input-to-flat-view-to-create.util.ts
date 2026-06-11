@@ -1,9 +1,11 @@
+import { t } from '@lingui/core/macro';
 import {
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import {
+  ViewKey,
   ViewOpenRecordIn,
   ViewType,
   ViewVisibility,
@@ -14,6 +16,10 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { computeFlatViewGroupsOnViewCreate } from 'src/engine/metadata-modules/flat-view-group/utils/compute-flat-view-groups-on-view-create.util';
 import { type CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
+import {
+  ViewException,
+  ViewExceptionCode,
+} from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { type UniversalFlatViewGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-group.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 
@@ -38,6 +44,13 @@ export const fromCreateViewInputToFlatViewToCreate = ({
       rawCreateViewInput,
       ['id', 'name', 'objectMetadataId'],
     );
+
+  if (createViewInput.key === ViewKey.INDEX) {
+    throw new ViewException(
+      t`Index views can only be created by the system`,
+      ViewExceptionCode.INVALID_VIEW_DATA,
+    );
+  }
 
   const createdAt = new Date().toISOString();
   const viewId = createViewInput.id ?? v4();
@@ -86,6 +99,8 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     universalIdentifier: createViewInput.universalIdentifier ?? v4(),
     visibility: createViewInput.visibility ?? ViewVisibility.WORKSPACE,
     createdByUserWorkspaceId: createdByUserWorkspaceId ?? null,
+    isActive: true,
+    universalOverrides: null,
     viewFieldUniversalIdentifiers: [],
     viewFilterUniversalIdentifiers: [],
     viewGroupUniversalIdentifiers: [],
