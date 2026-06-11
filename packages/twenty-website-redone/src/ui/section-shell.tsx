@@ -34,6 +34,7 @@ const sectionShellClassName = css`
   }
 
   &[data-rhythm='flush'] {
+    overflow: visible;
     padding-block: 0;
   }
 

@@ -7,7 +7,7 @@ import { styled } from '@linaria/react';
 import { useCallback, useRef } from 'react';
 
 import { useScheduledOnScroll } from '@/platform/motion';
-import { fontSize, mediaUp, spacing } from '@/tokens';
+import { color, fontSize, mediaUp, spacing } from '@/tokens';
 import { Eyebrow, GuideCrosshair, Heading } from '@/ui';
 
 import { HelpedCard } from './helped-card';
@@ -39,6 +39,24 @@ const ScrollStage = styled.div`
   height: 280vh;
   position: relative;
   width: 100%;
+`;
+
+// The vertical guide spans the whole stage (the sticky panel's own line
+// would end at the pinned viewport) and overshoots into the next section's
+// 20px notch cap so it meets the white card with no gap.
+const StageGuide = styled.div`
+  display: none;
+
+  ${mediaUp('md')} {
+    background-color: ${color('black-10')};
+    bottom: -20px;
+    display: block;
+    left: 50%;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    width: 1px;
+  }
 `;
 
 const StickyInner = styled.div`
@@ -115,8 +133,9 @@ export function HelpedScene() {
       ref={sectionRef}
       role="region"
     >
+      <StageGuide aria-hidden />
       <StickyInner ref={innerRef}>
-        <GuideCrosshair crossX="50%" crossY="176px" />
+        <GuideCrosshair crossX="50%" crossY="176px" verticalLines={false} />
         <HeadlineBlock>
           <EyebrowExitTarget data-helped-exit-target>
             <Eyebrow>{i18n._(msg`In production.`)}</Eyebrow>

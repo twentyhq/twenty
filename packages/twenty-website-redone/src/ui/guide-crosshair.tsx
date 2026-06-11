@@ -42,14 +42,6 @@ const CrosshairRoot = styled.div`
   }
 
   [data-slot='v-bottom'] {
-    /* Fades before the section boundary instead of colliding with the next
-       section's cap (the old site's line runs to the very edge). */
-    background: linear-gradient(
-      to bottom,
-      ${color('black-10')} 0%,
-      ${color('black-10')} calc(100% - 160px),
-      transparent 100%
-    );
     height: calc(100% - var(--cross-y) - var(--cross-gap));
     left: var(--cross-x);
     top: calc(var(--cross-y) + var(--cross-gap));
@@ -70,9 +62,15 @@ const CrosshairRoot = styled.div`
 export type GuideCrosshairProps = {
   crossX: string;
   crossY: string;
+  // Scenes that draw their own full-height vertical guide disable these.
+  verticalLines?: boolean;
 };
 
-export function GuideCrosshair({ crossX, crossY }: GuideCrosshairProps) {
+export function GuideCrosshair({
+  crossX,
+  crossY,
+  verticalLines = true,
+}: GuideCrosshairProps) {
   return (
     <CrosshairRoot
       aria-hidden
@@ -86,8 +84,8 @@ export function GuideCrosshair({ crossX, crossY }: GuideCrosshairProps) {
     >
       <span data-line data-slot="h-left" />
       <span data-line data-slot="h-right" />
-      <span data-line data-slot="v-top" />
-      <span data-line data-slot="v-bottom" />
+      {verticalLines && <span data-line data-slot="v-top" />}
+      {verticalLines && <span data-line data-slot="v-bottom" />}
       <span data-slot="plus">+</span>
     </CrosshairRoot>
   );
