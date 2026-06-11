@@ -1,5 +1,4 @@
 import { t } from '@lingui/core/macro';
-import { ViewKey } from 'twenty-shared/types';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
@@ -35,13 +34,6 @@ export const fromDestroyViewInputToFlatViewOrThrow = ({
     throw new ViewException(
       t`View to destroy not found`,
       ViewExceptionCode.VIEW_NOT_FOUND,
-    );
-  }
-
-  if (existingFlatViewToDestroy.key === ViewKey.INDEX) {
-    throw new ViewException(
-      t`Index views cannot be destroyed`,
-      ViewExceptionCode.INVALID_VIEW_DATA,
     );
   }
 

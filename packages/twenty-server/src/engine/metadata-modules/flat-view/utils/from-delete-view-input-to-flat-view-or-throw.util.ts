@@ -1,5 +1,4 @@
 import { t } from '@lingui/core/macro';
-import { ViewKey } from 'twenty-shared/types';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
@@ -40,13 +39,6 @@ export const fromDeleteViewInputToFlatViewOrThrow = ({
     throw new ViewException(
       t`View to delete not found`,
       ViewExceptionCode.VIEW_NOT_FOUND,
-    );
-  }
-
-  if (existingFlatViewToDelete.key === ViewKey.INDEX) {
-    throw new ViewException(
-      t`Index views cannot be deleted`,
-      ViewExceptionCode.INVALID_VIEW_DATA,
     );
   }
 

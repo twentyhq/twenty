@@ -56,7 +56,7 @@ export const createTestViewWithRestApi = async (
     objectMetadataId,
     icon: 'IconTable',
     type: ViewType.TABLE,
-    key: null,
+    key: 'INDEX',
     position: 0,
     isCompact: false,
     openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
