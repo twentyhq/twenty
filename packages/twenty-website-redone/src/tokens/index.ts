@@ -27,3 +27,5 @@ export { typeRampDeclarations } from './type-ramp-declarations';
 export { TYPE_SCALE, type TypeRamp, type TypeStep } from './type-scale';
 export { UNITS } from './units';
 export { Z_INDEX, type ZIndexToken } from './z-index';
+export { DURATION } from './duration';
+export { REDUCED_MOTION } from './reduced-motion';

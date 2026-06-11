@@ -1,4 +1,5 @@
 import { type RefObject } from 'react';
+import { HELPED_CARD_WIDTH_DESKTOP_PX } from './helped-card-width';
 
 import { getReducedMotionSnapshot } from '@/platform/motion/reduced-motion-snapshot';
 import { BREAKPOINT_PX } from '@/tokens';
@@ -6,7 +7,9 @@ import { BREAKPOINT_PX } from '@/tokens';
 // Scroll-driven card fan: cards travel up through the sticky stage in a
 // staggered sequence, fading at both ends, with a parallax hand-off as the
 // section leaves. Ported math; values are the authored choreography.
-const CARD_WIDTH_DESKTOP = 443;
+// Cards layer above the stage guide (0) within the scene.
+const CARD_BASE_Z_INDEX = 10;
+const CARD_WIDTH_DESKTOP = HELPED_CARD_WIDTH_DESKTOP_PX;
 const CARD_WIDTH_MOBILE = 360;
 const FADE_FRACTION = 0.15;
 const PRE_STICKY_REVEAL_VIEWPORT_FRACTION = 0.35;
@@ -157,7 +160,7 @@ export function applyHelpedSceneLayout(
       const node = refs.cardRefs.current[index];
       if (!node) continue;
       setStyleProperty(node, 'width', `${cardWidth}px`);
-      setStyleProperty(node, 'zIndex', String(10 + index));
+      setStyleProperty(node, 'zIndex', String(CARD_BASE_Z_INDEX + index));
     }
     measurements = {
       ...next,

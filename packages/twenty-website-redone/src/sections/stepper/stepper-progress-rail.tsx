@@ -11,6 +11,8 @@ import {
   mediaUp,
   radius,
   spacing,
+  DURATION,
+  REDUCED_MOTION,
 } from '@/tokens';
 
 const RailContainer = styled.div`
@@ -49,14 +51,14 @@ const StepRow = styled.div`
   height: 16px;
   justify-content: center;
   position: relative;
-  transition: height 0.4s ease;
+  transition: height ${DURATION.lg} ease;
   width: ${spacing(1)};
 
   &[data-active] {
     height: 80px;
   }
 
-  @media (prefers-reduced-motion: reduce) {
+  ${REDUCED_MOTION} {
     transition: none;
   }
 `;
@@ -68,8 +70,8 @@ const PillTrack = styled.div`
   height: ${spacing(1)};
   overflow: hidden;
   transition:
-    height 0.4s ease,
-    border-radius 0.4s ease;
+    height ${DURATION.lg} ease,
+    border-radius ${DURATION.lg} ease;
   width: ${spacing(1)};
 
   &[data-active] {
@@ -77,7 +79,7 @@ const PillTrack = styled.div`
     height: 100%;
   }
 
-  @media (prefers-reduced-motion: reduce) {
+  ${REDUCED_MOTION} {
     transition: none;
   }
 `;
@@ -88,7 +90,7 @@ const PillFill = styled.div`
   background-color: ${color('blue')};
   border-radius: ${radius(8)};
   height: var(--rail-fill, 0%);
-  transition: height 0.15s linear;
+  transition: height ${DURATION.xxs} linear;
   width: 100%;
 `;
 

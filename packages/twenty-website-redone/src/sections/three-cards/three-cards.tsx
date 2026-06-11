@@ -3,7 +3,7 @@ import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { mediaUp, spacing } from '@/tokens';
+import { mediaUp, spacing, BREAKPOINT_PX } from '@/tokens';
 import {
   Body,
   Eyebrow,
@@ -21,7 +21,7 @@ import { ILLUSTRATION_CARDS } from './three-cards.data';
 // ported from the original.
 const headingMeasureClassName = css`
   ${mediaUp('md')} {
-    max-width: 921px;
+    max-width: ${BREAKPOINT_PX.md}px;
   }
 
   [data-accent] {

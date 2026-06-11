@@ -11,6 +11,7 @@ import {
   mediaUp,
   semanticColor,
   spacing,
+  DURATION,
 } from '@/tokens';
 import { Button, ExternalLink, MarkedDivider } from '@/ui';
 
@@ -67,8 +68,8 @@ const HoverMarker = styled.span`
   height: 7px;
   opacity: 0;
   transition:
-    width 0.3s ease-out,
-    opacity 0.3s ease-out;
+    width ${DURATION.md} ease-out,
+    opacity ${DURATION.md} ease-out;
   width: 0;
 `;
 
@@ -80,7 +81,7 @@ const linkStyles = `
   gap: 0;
   line-height: 1.35;
   text-decoration: none;
-  transition: gap 0.3s ease-out;
+  transition: gap ${DURATION.md} ease-out;
 
   &:focus-visible {
     outline: 1px solid ${color('blue')};

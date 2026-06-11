@@ -1,6 +1,7 @@
 'use client';
 
 import { styled } from '@linaria/react';
+import { DURATION } from '@/tokens';
 import { useState } from 'react';
 
 import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/halftone-image-backdrop';
@@ -16,7 +17,7 @@ const BackdropMount = styled.div<{ $isReady: boolean }>`
   opacity: ${({ $isReady }) => ($isReady ? 1 : 0)};
   pointer-events: none;
   position: absolute;
-  transition: opacity 600ms ease;
+  transition: opacity ${DURATION.xl} ease;
   width: calc(100% + 80px);
 `;
 

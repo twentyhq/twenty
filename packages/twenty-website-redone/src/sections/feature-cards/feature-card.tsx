@@ -34,16 +34,20 @@ const CardImage = styled.div`
   width: 100%;
 `;
 
-// Locked to the scene design box (411x508): the animated product mockup
+// The scene design box every feature-card visual is authored in.
+const SCENE_DESIGN_WIDTH_PX = 411;
+const SCENE_DESIGN_HEIGHT_PX = 508;
+
+// Locked to the scene design box: the animated product mockup
 // that mounts here (with the AppPreview wave) scales from exactly this
 // frame; until then its gradient bottom layer fills it.
 const CardImageFrame = styled.div`
-  aspect-ratio: 411 / 508;
+  aspect-ratio: ${SCENE_DESIGN_WIDTH_PX} / ${SCENE_DESIGN_HEIGHT_PX};
   background-color: ${color('black-10')};
   border-radius: 2px;
   isolation: isolate;
   margin: 0 auto;
-  max-width: 411px;
+  max-width: ${SCENE_DESIGN_WIDTH_PX}px;
   overflow: hidden;
   position: relative;
   width: 100%;
@@ -100,7 +104,7 @@ export function FeatureCard({ card }: { card: FeatureCardRecord }) {
           <NextImage
             alt=""
             fill
-            sizes="(max-width: 768px) 100vw, 411px"
+            sizes={`(max-width: 768px) 100vw, ${SCENE_DESIGN_WIDTH_PX}px`}
             src={card.backgroundImageSrc}
             style={{ objectFit: 'cover' }}
           />

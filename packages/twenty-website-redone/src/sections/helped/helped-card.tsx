@@ -7,6 +7,8 @@ import { HELPED_MODEL_CONFIGS } from './helped-model-configs';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
+import { HELPED_CARD_WIDTH_DESKTOP_PX } from './helped-card-width';
+
 import {
   buildSchemeDeclarations,
   color,
@@ -34,7 +36,7 @@ const CardRoot = styled.article`
   display: grid;
   grid-template-columns: 1fr;
   isolation: isolate;
-  max-width: 443px;
+  max-width: ${HELPED_CARD_WIDTH_DESKTOP_PX}px;
   min-height: 0;
   min-width: 0;
   padding: ${spacing(2.5)} ${spacing(4)} ${spacing(4)};

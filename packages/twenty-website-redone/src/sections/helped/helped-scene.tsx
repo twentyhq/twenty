@@ -34,7 +34,7 @@ const headlineMeasureClassName = css`
   h2 {
     font-size: clamp(${fontSize(8)}, 9.5vw, ${fontSize(15)});
     line-height: 1.1;
-    text-wrap: wrap;
+    text-wrap: wrap; /* balance opt-out: the display headline must fill 3 greedy lines like old */
   }
 
   ${mediaUp('md')} {

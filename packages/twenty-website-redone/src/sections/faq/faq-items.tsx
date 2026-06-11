@@ -15,6 +15,7 @@ import {
   mediaUp,
   radius,
   spacing,
+  DURATION,
 } from '@/tokens';
 
 import { type FaqQuestion } from './faq.data';
@@ -36,7 +37,7 @@ const QuestionText = styled.span`
   line-height: 1.25;
   min-width: 0;
   overflow-wrap: break-word;
-  transition: color 0.3s ${EASING.smooth};
+  transition: color ${DURATION.md} ${EASING.smooth};
 `;
 
 // The question marker is two stacked rectangle states (outline resting,
@@ -49,7 +50,7 @@ const MarkerLayer = styled.span`
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  transition: opacity 0.3s ${EASING.smooth};
+  transition: opacity ${DURATION.md} ${EASING.smooth};
   width: 14px;
 
   &[data-layer='outline'] {
@@ -86,7 +87,7 @@ const ToggleVisual = styled.span`
   justify-content: center;
   position: relative;
   transition:
-    border-color 0.2s ease,
+    border-color ${DURATION.xs} ease,
     transform 0.2s ${EASING.spring};
   width: 36px;
 `;
@@ -98,8 +99,8 @@ const ToggleIconLayer = styled.span`
   justify-content: center;
   position: absolute;
   transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
+    opacity ${DURATION.xs} ease,
+    transform ${DURATION.xs} ease;
 
   &[data-icon='minus'] {
     opacity: 0;
@@ -198,9 +199,9 @@ const AnswerWrapper = styled.div`
   grid-template-rows: 0fr;
   opacity: 0;
   transition:
-    grid-template-rows 0.4s ${EASING.smooth},
-    opacity 0.4s ${EASING.smooth},
-    visibility 0.4s ${EASING.smooth};
+    grid-template-rows ${DURATION.lg} ${EASING.smooth},
+    opacity ${DURATION.lg} ${EASING.smooth},
+    visibility ${DURATION.lg} ${EASING.smooth};
   visibility: hidden;
 
   &[data-open] {

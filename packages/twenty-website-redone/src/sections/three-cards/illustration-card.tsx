@@ -17,6 +17,7 @@ import {
   semanticColor,
   spacing,
   typeRampDeclarations,
+  REDUCED_MOTION,
 } from '@/tokens';
 import { Body } from '@/ui';
 import { ButtonShape } from '@/ui/button-shape';
@@ -150,7 +151,7 @@ const ActionLink = styled(LocalizedLink)`
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
+  ${REDUCED_MOTION} {
     [data-slot='action-hover'] > span {
       transition: none;
     }

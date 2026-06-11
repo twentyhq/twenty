@@ -10,6 +10,8 @@ import {
   fontSize,
   radius,
   spacing,
+  DURATION,
+  REDUCED_MOTION,
 } from '@/tokens';
 
 import { ButtonShape } from './button-shape';
@@ -122,7 +124,7 @@ const buttonClassName = css`
     transform: translateX(0);
   }
 
-  @media (prefers-reduced-motion: reduce) {
+  ${REDUCED_MOTION} {
     [data-slot='hover-layer'] > span {
       transition: none;
     }
@@ -138,7 +140,7 @@ const buttonClassName = css`
     display: inline-flex;
     gap: ${spacing(2)};
     position: relative;
-    transition: color 220ms ease;
+    transition: color ${DURATION.sm} ease;
   }
 `;
 
