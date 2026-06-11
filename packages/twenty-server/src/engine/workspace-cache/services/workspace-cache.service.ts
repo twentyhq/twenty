@@ -166,6 +166,11 @@ export class WorkspaceCacheService implements OnModuleInit {
   ): Promise<void> {
     await this.memoizer.clearKeys(`${workspaceId}-`);
 
+    // Bumping generations fences out in-flight recomputes whose database
+    // read may predate the write being invalidated: they detect the bump
+    // and discard their result instead of overwriting the fresh one below.
+    await this.bumpGenerations(workspaceId, cacheKeyNames);
+
     await this.flush(workspaceId, cacheKeyNames);
     await this.recomputeDataFromProvider(workspaceId, cacheKeyNames);
 
@@ -317,12 +322,18 @@ export class WorkspaceCacheService implements OnModuleInit {
   private async recomputeDataFromProvider(
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
+    isRetry = false,
   ): Promise<Partial<WorkspaceCacheDataMap>> {
     const result: Partial<WorkspaceCacheDataMap> = {};
 
     if (cacheKeyNames.length === 0) {
       return result;
     }
+
+    const generationsBefore = await this.getGenerations(
+      workspaceId,
+      cacheKeyNames,
+    );
 
     const computePromises = cacheKeyNames.map(async (keyName) => {
       const provider = this.getProviderOrThrow(keyName);
@@ -334,10 +345,25 @@ export class WorkspaceCacheService implements OnModuleInit {
 
     const computed = await Promise.all(computePromises);
 
-    const redisEntries: Array<{ key: string; value: unknown }> = [];
+    // A generation bumped by invalidateAndRecompute while we were computing
+    // means our database read may predate the invalidated write: caching it
+    // would overwrite the fresh recompute and serve stale data until the
+    // next invalidation.
+    const generationsAfter = await this.getGenerations(
+      workspaceId,
+      cacheKeyNames,
+    );
 
-    for (const { keyName, data, hash } of computed) {
+    const redisEntries: Array<{ key: string; value: unknown }> = [];
+    const staleKeyNames: WorkspaceCacheKeyName[] = [];
+
+    for (const [index, { keyName, data, hash }] of computed.entries()) {
       Object.assign(result, { [keyName]: data });
+
+      if (generationsBefore[index] !== generationsAfter[index]) {
+        staleKeyNames.push(keyName);
+        continue;
+      }
 
       const baseKey = this.buildCacheKey(workspaceId, keyName);
 
@@ -354,7 +380,42 @@ export class WorkspaceCacheService implements OnModuleInit {
       await this.cacheStorage.mset(redisEntries);
     }
 
+    if (staleKeyNames.length > 0 && !isRetry) {
+      const retriedResult = await this.recomputeDataFromProvider(
+        workspaceId,
+        staleKeyNames,
+        true,
+      );
+
+      Object.assign(result, retriedResult);
+    }
+
     return result;
+  }
+
+  private async getGenerations(
+    workspaceId: string,
+    cacheKeyNames: WorkspaceCacheKeyName[],
+  ): Promise<(number | undefined)[]> {
+    return await this.cacheStorage.mget<number>(
+      cacheKeyNames.map((keyName) =>
+        this.buildGenerationKey(workspaceId, keyName),
+      ),
+    );
+  }
+
+  private async bumpGenerations(
+    workspaceId: string,
+    cacheKeyNames: WorkspaceCacheKeyName[],
+  ): Promise<void> {
+    await Promise.all(
+      cacheKeyNames.map((keyName) =>
+        this.cacheStorage.incrBy(
+          this.buildGenerationKey(workspaceId, keyName),
+          1,
+        ),
+      ),
+    );
   }
 
   private getFromLocalCache(
@@ -517,5 +578,12 @@ export class WorkspaceCacheService implements OnModuleInit {
     keyName: WorkspaceCacheKeyName,
   ): string {
     return `${WORKSPACE_CACHE_KEYS_V2[keyName]}:${workspaceId}`;
+  }
+
+  private buildGenerationKey(
+    workspaceId: string,
+    keyName: WorkspaceCacheKeyName,
+  ): string {
+    return `${this.buildCacheKey(workspaceId, keyName)}:gen`;
   }
 }

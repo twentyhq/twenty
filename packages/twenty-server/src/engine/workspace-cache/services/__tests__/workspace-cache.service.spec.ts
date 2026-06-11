@@ -47,6 +47,7 @@ describe('WorkspaceCacheService', () => {
             mget: jest.fn(),
             mset: jest.fn(),
             mdel: jest.fn(),
+            incrBy: jest.fn(),
           },
         },
         {
@@ -227,9 +228,10 @@ describe('WorkspaceCacheService', () => {
       await service.getOrRecompute(WORKSPACE_ID, ['featureFlagsMap']);
 
       // Verify Redis was rechecked after TTL expired
-      // Each getOrRecompute triggers: 1 hash check + 1 atomic data/hash fetch = 2 mget calls
-      // Total: 4 mget calls (2 per getOrRecompute)
-      expect(cacheStorageService.mget).toHaveBeenCalledTimes(4);
+      // Each getOrRecompute triggers: 1 hash check + 1 atomic data/hash fetch,
+      // plus 2 generation reads around the recompute = 4 mget calls
+      // Total: 8 mget calls (4 per getOrRecompute)
+      expect(cacheStorageService.mget).toHaveBeenCalledTimes(8);
     });
   });
 
@@ -254,6 +256,7 @@ describe('WorkspaceCacheService', () => {
     });
 
     it('should delete from redis, mark local cache as stale, and recompute', async () => {
+      cacheStorageService.mget.mockResolvedValue([undefined]);
       cacheStorageService.mdel.mockResolvedValue(undefined);
       cacheStorageService.mset.mockResolvedValue(undefined);
 
@@ -294,6 +297,7 @@ describe('WorkspaceCacheService', () => {
 
       await service.onModuleInit();
 
+      cacheStorageService.mget.mockResolvedValue([undefined]);
       cacheStorageService.mdel.mockResolvedValue(undefined);
       cacheStorageService.mset.mockResolvedValue(undefined);
 
@@ -416,6 +420,108 @@ describe('WorkspaceCacheService', () => {
 
       // Should have made additional mget calls to check Redis
       expect(cacheStorageService.mget.mock.calls.length).toBeGreaterThan(1);
+    });
+  });
+
+  describe('recompute racing invalidation', () => {
+    beforeEach(async () => {
+      discoveryService.getProviders.mockReturnValue([
+        { instance: mockProvider },
+      ] as any);
+
+      reflector.get.mockImplementation((key, target) => {
+        if (
+          key === WORKSPACE_CACHE_KEY &&
+          target === MockFeatureFlagsCacheProvider
+        ) {
+          return 'featureFlagsMap';
+        }
+
+        return undefined;
+      });
+
+      await service.onModuleInit();
+    });
+
+    it('should not let a recompute that started before an invalidation overwrite the fresh data', async () => {
+      const redis = new Map<string, unknown>();
+
+      cacheStorageService.mget.mockImplementation(async (keys: string[]) =>
+        keys.map((key) => redis.get(key)),
+      );
+      cacheStorageService.mset.mockImplementation(
+        async (entries: Array<{ key: string; value: unknown }>) => {
+          entries.forEach(({ key, value }) => redis.set(key, value));
+        },
+      );
+      cacheStorageService.mdel.mockImplementation(async (keys: string[]) => {
+        keys.forEach((key) => redis.delete(key));
+      });
+      cacheStorageService.incrBy.mockImplementation(
+        async (key: string, increment: number) => {
+          const newValue = ((redis.get(key) as number) ?? 0) + increment;
+
+          redis.set(key, newValue);
+
+          return newValue;
+        },
+      );
+
+      let releaseStaleCompute = () => {};
+      let signalStaleComputeStarted = () => {};
+      const staleComputeStarted = new Promise<void>((resolve) => {
+        signalStaleComputeStarted = resolve;
+      });
+      const staleComputeGate = new Promise<void>((resolve) => {
+        releaseStaleCompute = resolve;
+      });
+
+      // First compute simulates a database read that started before a
+      // migration commit; subsequent computes return the fresh state.
+      jest
+        .spyOn(mockProvider, 'computeForCache')
+        .mockImplementationOnce(async () => {
+          signalStaleComputeStarted();
+          await staleComputeGate;
+
+          return { testData: 'stale-value' };
+        })
+        .mockResolvedValue({ testData: 'fresh-value' });
+
+      const readerPromise = service.getOrRecompute(WORKSPACE_ID, [
+        'featureFlagsMap',
+      ]);
+
+      await staleComputeStarted;
+
+      await service.invalidateAndRecompute(WORKSPACE_ID, ['featureFlagsMap']);
+
+      releaseStaleCompute();
+
+      // The reader detects the generation bump, discards its stale snapshot
+      // and retries, so even the in-flight caller gets the fresh data.
+      const readerResult = await readerPromise;
+
+      expect(readerResult).toEqual({
+        featureFlagsMap: { testData: 'fresh-value' },
+      });
+
+      expect(
+        redis.get(
+          'feature-flag:feature-flags-map:20202020-0000-4000-8000-000000000000:data',
+        ),
+      ).toEqual({ testData: 'fresh-value' });
+
+      // A later read (past local TTL and memoizer TTL) must serve fresh data.
+      jest.advanceTimersByTime(15_000);
+
+      const laterResult = await service.getOrRecompute(WORKSPACE_ID, [
+        'featureFlagsMap',
+      ]);
+
+      expect(laterResult).toEqual({
+        featureFlagsMap: { testData: 'fresh-value' },
+      });
     });
   });
 
