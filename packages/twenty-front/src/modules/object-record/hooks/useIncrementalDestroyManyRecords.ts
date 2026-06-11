@@ -1,6 +1,5 @@
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
-import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -13,6 +12,7 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { getDestroyManyRecordsMutationResponseField } from '@/object-record/utils/getDestroyManyRecordsMutationResponseField';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
@@ -78,8 +78,6 @@ export const useIncrementalDestroyManyRecords = <T>({
       recordIdsToDestroy.length / mutationPageSize,
     );
 
-    const actualDestroyedRecordIds: string[] = [];
-
     for (let batchIndex = 0; batchIndex < numberOfBatches; batchIndex++) {
       const batchedIdsToDestroy = recordIdsToDestroy.slice(
         batchIndex * mutationPageSize,
@@ -90,7 +88,7 @@ export const useIncrementalDestroyManyRecords = <T>({
         .map((recordId) => getRecordFromCache(recordId, apolloCoreClient.cache))
         .filter(isDefined);
 
-      const response = await apolloCoreClient
+      await apolloCoreClient
         .mutate<Record<string, ObjectRecord[]>>({
           mutation: destroyManyRecordsMutation,
           variables: {
@@ -143,18 +141,10 @@ export const useIncrementalDestroyManyRecords = <T>({
           throw error;
         });
 
-      const destroyedRecordsForThisBatch =
-        response.data?.[mutationResponseField] ?? [];
-      actualDestroyedRecordIds.push(
-        ...destroyedRecordsForThisBatch.map((r) => r.id),
-      );
-
       if (delayInMsBetweenMutations > 0) {
         await sleep(delayInMsBetweenMutations);
       }
     }
-
-    return actualDestroyedRecordIds;
   };
 
   const incrementalDestroyManyRecords = async () => {
@@ -162,20 +152,9 @@ export const useIncrementalDestroyManyRecords = <T>({
 
     await incrementalFetchAndMutate(
       async ({ recordIds, totalCount, abortSignal }) => {
-        const actualDestroyedRecordIds = await destroyManyRecordsBatch(
-          recordIds,
-          abortSignal,
-        );
+        await destroyManyRecordsBatch(recordIds, abortSignal);
 
-        totalDestroyedCount += actualDestroyedRecordIds.length;
-
-        dispatchObjectRecordOperationBrowserEvent({
-          objectMetadataItem,
-          operation: {
-            type: 'destroy-many',
-            destroyedRecordIds: actualDestroyedRecordIds,
-          },
-        });
+        totalDestroyedCount += recordIds.length;
 
         updateProgress(totalDestroyedCount, totalCount);
       },
@@ -183,6 +162,13 @@ export const useIncrementalDestroyManyRecords = <T>({
 
     await refetchAggregateQueries({
       objectMetadataNamePlural: objectMetadataItem.namePlural,
+    });
+
+    dispatchObjectRecordOperationBrowserEvent({
+      objectMetadataItem,
+      operation: {
+        type: 'destroy-many',
+      },
     });
 
     return totalDestroyedCount;

@@ -62,15 +62,18 @@ export const DestroyRecordsCommand = () => {
 
     await incrementalDestroyManyRecords();
 
-    if (isSingleRecord) {
-      if (isInSidePanel) {
-        closeSidePanelMenu();
-      } else {
-        navigateApp(AppPath.RecordIndexPage, {
-          objectNamePlural: objectMetadataItem.namePlural,
-        });
-      }
+    if (!isSingleRecord) {
+      return;
     }
+
+    if (isInSidePanel) {
+      closeSidePanelMenu();
+      return;
+    }
+
+    navigateApp(AppPath.RecordIndexPage, {
+      objectNamePlural: objectMetadataItem.namePlural,
+    });
   };
 
   const objectLabel = isSingleRecord

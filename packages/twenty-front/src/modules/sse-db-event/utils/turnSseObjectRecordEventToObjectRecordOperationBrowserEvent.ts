@@ -1,5 +1,5 @@
-import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
 import { getObjectRecordOperationUpdateInputs } from '@/sse-db-event/utils/getObjectRecordOperationUpdateInputs';
 import { groupObjectRecordSseEventsByEventType } from '@/sse-db-event/utils/groupObjectRecordSseEventsByEventType';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
@@ -62,8 +62,6 @@ export const turnSseObjectRecordEventsToObjectRecordOperationBrowserEvents = ({
             objectMetadataItem,
             operation: {
               type: 'destroy-one',
-              destroyedRecordId:
-                objectRecordEventsForThisEventType[0].properties.before.id,
             },
           });
         } else {
@@ -71,9 +69,6 @@ export const turnSseObjectRecordEventsToObjectRecordOperationBrowserEvents = ({
             objectMetadataItem,
             operation: {
               type: 'destroy-many',
-              destroyedRecordIds: objectRecordEventsForThisEventType.map(
-                (event) => event.properties.before.id,
-              ),
             },
           });
         }
