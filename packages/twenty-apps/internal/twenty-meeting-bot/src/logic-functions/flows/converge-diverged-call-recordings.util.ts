@@ -6,7 +6,10 @@ import { CallRecordingStatus } from 'src/logic-functions/constants/call-recordin
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import { chargeCompletedCallRecording } from 'src/logic-functions/flows/charge-completed-call-recording.util';
-import { extractRecallBotConvergence } from 'src/logic-functions/recall-api/extract-recall-bot-convergence.util';
+import {
+  extractRecallBotConvergence,
+  type RecallBotConvergence,
+} from 'src/logic-functions/recall-api/extract-recall-bot-convergence.util';
 import { fetchAllNodes } from 'src/logic-functions/data/fetch-all-nodes.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
 import { ingestRecallMedia } from 'src/logic-functions/flows/ingest-recall-media.util';
@@ -235,33 +238,7 @@ const convergeCallRecording = async ({
   }
 
   const convergence = extractRecallBotConvergence(botResult.bot);
-  const updateData: CallRecordingUpdateFields = {};
-
-  if (
-    !isUndefined(convergence.status) &&
-    convergence.status !== candidate.status &&
-    !isCallRecordingStatusDowngrade({
-      fromStatus: candidate.status,
-      toStatus: convergence.status,
-    })
-  ) {
-    updateData.status = convergence.status;
-  }
-
-  if (isUndefined(candidate.startedAt) && !isUndefined(convergence.startedAt)) {
-    updateData.startedAt = convergence.startedAt;
-  }
-
-  if (isUndefined(candidate.endedAt) && !isUndefined(convergence.endedAt)) {
-    updateData.endedAt = convergence.endedAt;
-  }
-
-  if (
-    isUndefined(candidate.externalRecordingId) &&
-    !isUndefined(convergence.externalRecordingId)
-  ) {
-    updateData.externalRecordingId = convergence.externalRecordingId;
-  }
+  const updateData = buildConvergenceFieldUpdates({ candidate, convergence });
 
   const externalRecordingId =
     candidate.externalRecordingId ?? convergence.externalRecordingId;
@@ -322,6 +299,45 @@ const convergeCallRecording = async ({
   }
 
   result.updatedCallRecordingIds.push(candidate.id);
+};
+
+// Pure merge: fill only unset candidate fields and never downgrade status.
+const buildConvergenceFieldUpdates = ({
+  candidate,
+  convergence,
+}: {
+  candidate: DivergedCallRecordingCandidate;
+  convergence: RecallBotConvergence;
+}): CallRecordingUpdateFields => {
+  const updateData: CallRecordingUpdateFields = {};
+
+  if (
+    !isUndefined(convergence.status) &&
+    convergence.status !== candidate.status &&
+    !isCallRecordingStatusDowngrade({
+      fromStatus: candidate.status,
+      toStatus: convergence.status,
+    })
+  ) {
+    updateData.status = convergence.status;
+  }
+
+  if (isUndefined(candidate.startedAt) && !isUndefined(convergence.startedAt)) {
+    updateData.startedAt = convergence.startedAt;
+  }
+
+  if (isUndefined(candidate.endedAt) && !isUndefined(convergence.endedAt)) {
+    updateData.endedAt = convergence.endedAt;
+  }
+
+  if (
+    isUndefined(candidate.externalRecordingId) &&
+    !isUndefined(convergence.externalRecordingId)
+  ) {
+    updateData.externalRecordingId = convergence.externalRecordingId;
+  }
+
+  return updateData;
 };
 
 const markCallRecordingFailedAfterBotLoss = async ({

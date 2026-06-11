@@ -73,13 +73,24 @@ export const handleRecallWebhook = async ({
     };
   }
 
-  const { event, statusCode } = webhookEvent;
+  const { event } = webhookEvent;
 
   // Transcript events carry no status code and would trip the downgrade guard.
   if (event === 'transcript.done' || event === 'transcript.failed') {
     return handleRecallTranscriptEvent({ client, webhookEvent, event });
   }
 
+  return handleRecallStatusEvent({ client, webhookEvent });
+};
+
+const handleRecallStatusEvent = async ({
+  client,
+  webhookEvent,
+}: {
+  client: CoreApiClient;
+  webhookEvent: RecallWebhookEvent;
+}): Promise<RecallWebhookHandlerResult> => {
+  const { event, statusCode } = webhookEvent;
   const callRecordingStatus = mapRecallEventToCallRecordingStatus({
     event,
     statusCode,
