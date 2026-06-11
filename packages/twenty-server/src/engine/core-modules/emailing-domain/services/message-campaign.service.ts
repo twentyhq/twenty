@@ -12,6 +12,7 @@ import {
   SEND_CAMPAIGN_EMAIL_JOB,
 } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
+import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailingDomainSenderService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-sender.service';
 import { EmailGroupMessageCategory } from 'src/engine/core-modules/emailing-domain/types/email-group-message-category.type';
@@ -246,23 +247,42 @@ export class MessageCampaignService {
       }
 
       try {
-        const result = await this.emailingDomainSenderService.sendEmail(
-          workspaceId,
-          emailingDomainId,
-          {
-            from: fromAddress,
-            to: [recipientEmail],
-            subject,
-            text,
-            html,
-            messageCategory: EmailGroupMessageCategory.CAMPAIGN,
-            messageTopicId,
-          },
-        );
+        let result: EmailingDomainSendEmailResult;
+
+        try {
+          result = await this.emailingDomainSenderService.sendEmail(
+            workspaceId,
+            emailingDomainId,
+            {
+              from: fromAddress,
+              to: [recipientEmail],
+              subject,
+              text,
+              html,
+              messageCategory: EmailGroupMessageCategory.CAMPAIGN,
+              messageTopicId,
+            },
+          );
+        } catch (error) {
+          // FAILED is both the retryable state between attempts and the
+          // terminal state once the queue gives up; rethrowing is what
+          // triggers the retry. Only the provider call may land here: once
+          // the email is accepted, a retried job must not send it again.
+          await messageRepository.update(messageId, {
+            deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
+          });
+          this.logger.warn(
+            `Campaign ${campaignId} send failed for ${recipientEmail}: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
+          );
+          throw error;
+        }
 
         // Adopt the SES id as the message id so a reply (whose In-Reply-To
         // references it) threads back onto this send, mirroring the existing
-        // email-group outbound model.
+        // email-group outbound model. A bookkeeping failure past this point
+        // still fails the job, but the SENT status makes the retry a no-op.
         await messageRepository.update(messageId, {
           deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENT,
           headerMessageId: result.messageId,
@@ -280,18 +300,6 @@ export class MessageCampaignService {
             messageThreadExternalId: result.messageId,
           },
         );
-      } catch (error) {
-        // FAILED is both the retryable state between attempts and the terminal
-        // state once the queue gives up; rethrowing is what triggers the retry.
-        await messageRepository.update(messageId, {
-          deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
-        });
-        this.logger.warn(
-          `Campaign ${campaignId} send failed for ${recipientEmail}: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        );
-        throw error;
       } finally {
         await this.finalizeCampaignIfComplete(workspaceId, campaignId);
       }
