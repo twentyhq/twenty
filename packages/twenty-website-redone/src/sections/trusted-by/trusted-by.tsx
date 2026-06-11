@@ -1,6 +1,5 @@
 import { msg } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import { IconUsers } from '@tabler/icons-react';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
 import { type CSSProperties } from 'react';
@@ -170,7 +169,13 @@ export function TrustedBy() {
           </LogoStrip>
         </LogosCell>
         <CountCell>
-          <IconUsers size={14} stroke={1.6} />
+          <NextImage
+            alt=""
+            height={14}
+            src="/images/logo-bar/others-icon.svg"
+            unoptimized
+            width={14}
+          />
           <MonoLabel>
             <Trans>+10k others</Trans>
           </MonoLabel>
