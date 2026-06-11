@@ -91,7 +91,7 @@ export const DeleteAccount = () => {
             title={t`Leave workspace`}
             subtitle={
               <>
-                {t`This action cannot be undone. This will permanently remove your membership from this workspace.`}
+                {t`This action cannot be undone. Your membership will be removed; synced emails and calendars stay with the workspace.`}
                 <br />
                 {t`Please type in your email to confirm.`}
               </>

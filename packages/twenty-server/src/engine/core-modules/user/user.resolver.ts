@@ -437,6 +437,7 @@ export class UserResolver {
     return this.userService.deleteUserWorkspaceAndPotentiallyDeleteUser({
       userId: workspaceMemberToDelete.userId,
       workspaceId: workspace.id,
+      actingUserWorkspaceId: userWorkspaceId,
     });
   }
 
