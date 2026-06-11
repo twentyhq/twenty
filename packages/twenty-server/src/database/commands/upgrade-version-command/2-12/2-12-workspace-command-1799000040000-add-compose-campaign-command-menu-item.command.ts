@@ -14,9 +14,9 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const COMPOSE_CAMPAIGN_UNIVERSAL_IDENTIFIER =
   STANDARD_COMMAND_MENU_ITEMS.composeCampaign.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.9.0', 1799000040000)
+@RegisteredWorkspaceCommand('2.12.0', 1799000040000)
 @Command({
-  name: 'upgrade:2-9:add-compose-campaign-command-menu-item',
+  name: 'upgrade:2-12:add-compose-campaign-command-menu-item',
   description: 'Add the Compose Campaign command menu item to existing workspaces',
 })
 export class AddComposeCampaignCommandMenuItemCommand extends ActiveOrSuspendedWorkspaceCommandRunner {

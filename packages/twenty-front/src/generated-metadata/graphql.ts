@@ -803,6 +803,13 @@ export type CalendarConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
+export type CampaignSkippedRecipientsDto = {
+  __typename?: 'CampaignSkippedRecipientsDTO';
+  deduped: Scalars['Int']['output'];
+  noEmail: Scalars['Int']['output'];
+  overCap: Scalars['Int']['output'];
+};
+
 export type Captcha = {
   __typename?: 'Captcha';
   provider?: Maybe<CaptchaDriverType>;
@@ -4867,25 +4874,17 @@ export type SendInvitations = {
 };
 
 export type SendMessageCampaignInput = {
-  body: Scalars['String'];
-  fromAddress: Scalars['String'];
-  messageTopicId: Scalars['String'];
-  recipientViewId?: InputMaybe<Scalars['String']>;
-  listId?: InputMaybe<Scalars['String']>;
-  subject: Scalars['String'];
-};
-
-export type CampaignSkippedRecipientsDto = {
-  __typename?: 'CampaignSkippedRecipientsDTO';
-  deduped: Scalars['Int'];
-  noEmail: Scalars['Int'];
-  overCap: Scalars['Int'];
+  body: Scalars['String']['input'];
+  fromAddress: Scalars['String']['input'];
+  listId?: InputMaybe<Scalars['String']['input']>;
+  messageTopicId: Scalars['String']['input'];
+  subject: Scalars['String']['input'];
 };
 
 export type SendMessageCampaignOutputDto = {
   __typename?: 'SendMessageCampaignOutputDTO';
-  campaignId: Scalars['String'];
-  queuedCount: Scalars['Int'];
+  campaignId: Scalars['String']['output'];
+  queuedCount: Scalars['Int']['output'];
   skipped: CampaignSkippedRecipientsDto;
 };
 

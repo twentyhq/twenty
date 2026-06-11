@@ -123,9 +123,9 @@ const MESSAGE_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS = [
   ...PERSON_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS,
 ];
 
-@RegisteredWorkspaceCommand('2.9.0', 1799000031000)
+@RegisteredWorkspaceCommand('2.12.0', 1799000031000)
 @Command({
-  name: 'upgrade:2-9:backfill-message-standard-objects',
+  name: 'upgrade:2-12:backfill-message-standard-objects',
   description:
     'Create the message marketing standard objects (messageCampaign, messageList, messageListMember, messageTopic, messageTopicSubscription, messageSuppression) in existing workspaces',
 })

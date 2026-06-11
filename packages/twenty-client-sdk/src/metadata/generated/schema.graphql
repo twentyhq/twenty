@@ -1456,10 +1456,16 @@ enum EmailingDomainStatus {
   TEMPORARY_FAILURE
 }
 
+type CampaignSkippedRecipientsDTO {
+  noEmail: Int!
+  deduped: Int!
+  overCap: Int!
+}
+
 type SendMessageCampaignOutputDTO {
   campaignId: String!
-  sentCount: Int!
-  failedCount: Int!
+  queuedCount: Int!
+  skipped: CampaignSkippedRecipientsDTO!
 }
 
 type SendEmailViaDomainOutput {
@@ -3805,7 +3811,6 @@ input SendEmailViaDomainInput {
 
 input SendMessageCampaignInput {
   messageTopicId: String!
-  recipientViewId: String
   listId: String
   subject: String!
   body: String!

@@ -8,9 +8,9 @@ import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFoot
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { IconSend } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { getOsControlSymbol } from 'twenty-ui/utilities';
+import { IconSend } from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { getOsControlSymbol } from 'twenty-ui-deprecated/utilities';
 
 const StyledContainer = styled.div`
   display: flex;

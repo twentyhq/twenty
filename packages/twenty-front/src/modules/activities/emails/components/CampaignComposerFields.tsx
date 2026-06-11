@@ -8,7 +8,7 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
 import { Select } from '@/ui/input/components/Select';
 import { t } from '@lingui/core/macro';
-import { type SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui-deprecated/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFieldsContainer = styled.div`
