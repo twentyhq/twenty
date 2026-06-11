@@ -190,6 +190,10 @@ const navigateBaseToTargetField = (
       return null;
     }
 
+    if (!isDefined(field.value)) {
+      return null;
+    }
+
     pathLabels.push(field.label);
     currentSchema = field.value;
   }
