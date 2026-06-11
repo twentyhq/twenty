@@ -97,7 +97,7 @@ export const registerDevCommands = (program: Command): void => {
     )
     .option('--path <path>', 'Path in which the entity should be created.')
     .action(async (entityType?: string, options?: { path?: string }) => {
-      await addCommand.execute(entityType as SyncableEntity, options?.path);
+      await addCommand.execute(entityType as any, options?.path);
     });
 
   program
