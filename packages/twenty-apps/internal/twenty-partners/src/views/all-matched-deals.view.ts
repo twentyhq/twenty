@@ -10,8 +10,7 @@ import {
   MATCH_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
-// Opportunities where a partner is engaged (MATCHED or later). Distinct from
-// Matches overview, which also includes AUTO_MATCH (in-flight, no partner yet).
+// Opportunities where a partner is engaged (INTRODUCED_TO_A_PARTNER or later).
 export default defineView({
   universalIdentifier: ALL_MATCHED_DEALS_VIEW_UNIVERSAL_IDENTIFIER,
   name: 'All matched deals',
@@ -30,7 +29,7 @@ export default defineView({
       fieldMetadataUniversalIdentifier: MATCH_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
       // See filter-syntax note in Task 8.1.
       operand: ViewFilterOperand.IS,
-      value: ['MATCHED', 'INTRODUCED_TO_A_PARTNER', 'WORKING_WITH_A_PARTNER', 'IMPLEMENTING', 'WON', 'RECONNECT_LATER', 'LOST'],
+      value: ['INTRODUCED_TO_A_PARTNER', 'WORKING_WITH_A_PARTNER', 'IMPLEMENTING', 'WON', 'RECONNECT_LATER', 'LOST'],
     },
   ],
 });

@@ -1,6 +1,6 @@
 // Single demo seed for the twenty-partners app. Idempotent UPSERT by natural key.
 // Covers: partners across ALL validationStage values, companies + people,
-// opportunities across ALL 10 matchStatus values, and partner quotes across ALL
+// opportunities across all 7 matchStatus values, and partner quotes across ALL
 // 5 statuses (each linked to a partner + opportunity).
 //
 // Run from this app directory, against a running Twenty server with the app
@@ -87,12 +87,12 @@ type Opp = {
   subscriptionFrequency?: string;
 };
 
-// One+ opportunity for every matchStatus value (all 10 covered).
+// One+ opportunity for every matchStatus value (all 7 covered).
 const OPPORTUNITIES: Opp[] = [
   { name: 'Acme RE — Q3 renewal', companyName: 'Acme Real Estate', matchStatus: 'TO_BE_MATCHED', numberOfSeats: 20, hostingType: 'CLOUD', subscriptionType: 'PRO', subscriptionFrequency: 'ANNUAL' },
-  { name: 'Helix Bio — investor reporting', companyName: 'Helix Bio', matchStatus: 'MANUAL_MATCH', numberOfSeats: 12, hostingType: 'CLOUD', subscriptionType: 'ORG', subscriptionFrequency: 'MONTHLY' },
-  { name: 'Helix Bio — pipeline review', companyName: 'Helix Bio', matchStatus: 'AUTO_MATCH', numberOfSeats: 8 },
-  { name: 'Acme RE — CRM rollout', companyName: 'Acme Real Estate', matchStatus: 'MATCHED', partnerSlug: 'elevate-consulting', numberOfSeats: 30, hostingType: 'CLOUD', subscriptionType: 'ENT', subscriptionFrequency: 'ANNUAL' },
+  { name: 'Helix Bio — investor reporting', companyName: 'Helix Bio', matchStatus: 'TO_BE_MATCHED', numberOfSeats: 12, hostingType: 'CLOUD', subscriptionType: 'ORG', subscriptionFrequency: 'MONTHLY' },
+  { name: 'Helix Bio — pipeline review', companyName: 'Helix Bio', matchStatus: 'TO_BE_MATCHED', numberOfSeats: 8 },
+  { name: 'Acme RE — CRM rollout', companyName: 'Acme Real Estate', matchStatus: 'INTRODUCED_TO_A_PARTNER', partnerSlug: 'elevate-consulting', numberOfSeats: 30, hostingType: 'CLOUD', subscriptionType: 'ENT', subscriptionFrequency: 'ANNUAL' },
   { name: 'Sunrise — APAC fleet CRM', companyName: 'Sunrise Logistics', matchStatus: 'INTRODUCED_TO_A_PARTNER', partnerSlug: 'nine-dots-ventures', numberOfSeats: 50, hostingType: 'SELF_HOSTING', subscriptionType: 'ENT', subscriptionFrequency: 'ANNUAL' },
   { name: 'Helix Bio — clinical trials CRM', companyName: 'Helix Bio', matchStatus: 'WORKING_WITH_A_PARTNER', partnerSlug: 'netzero-systems', numberOfSeats: 25, hostingType: 'CLOUD', subscriptionType: 'ORG', subscriptionFrequency: 'MONTHLY' },
   { name: 'Helix Bio — self-host evaluation', companyName: 'Helix Bio', matchStatus: 'IMPLEMENTING', partnerSlug: 'meridian-craft', numberOfSeats: 40, hostingType: 'SELF_HOSTING', subscriptionType: 'ENT', subscriptionFrequency: 'ANNUAL' },

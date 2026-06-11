@@ -2,7 +2,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 async function createPartner(client: CoreApiClient) {
-  // mirrors the helper in logic-functions/__tests__/on-opportunity-auto-match.integration-test.ts
+  // minimal partner factory (VALIDATED + AVAILABLE) for this test
   const r = await client.mutation({
     createPartner: {
       __args: {

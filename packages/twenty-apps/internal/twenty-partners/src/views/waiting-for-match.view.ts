@@ -12,8 +12,7 @@ import {
 } from 'src/constants/universal-identifiers';
 
 // Ops inbox: opportunities awaiting a human matching decision.
-// Includes TO_BE_MATCHED (default for new opps) and MANUAL_MATCH
-// (opps that auto-match couldn't resolve or that ops opted to handle manually).
+// Includes TO_BE_MATCHED (default for new opps).
 export default defineView({
   universalIdentifier: WAITING_FOR_MATCH_VIEW_UNIVERSAL_IDENTIFIER,
   name: 'Waiting for match',
@@ -35,7 +34,7 @@ export default defineView({
       universalIdentifier: '93476207-1471-49d9-898c-f8a1d52f468f',
       fieldMetadataUniversalIdentifier: MATCH_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
       operand: ViewFilterOperand.IS,
-      value: ['TO_BE_MATCHED', 'MANUAL_MATCH'],
+      value: ['TO_BE_MATCHED'],
     },
   ],
   sorts: [
