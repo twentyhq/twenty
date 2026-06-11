@@ -262,6 +262,11 @@ msgstr "Un chemin rapide vers l'action"
 msgid "Find a Twenty partner"
 msgstr "Trouvez un partenaire Twenty"
 
+#. js-lingui-id: qwJuVW
+#: src/sections/footer/footer-nav.tsx
+msgid "Footer"
+msgstr ""
+
 #. js-lingui-id: ZDIydz
 #: src/sections/menu/menu.tsx
 #: src/sections/menu/menu.tsx
@@ -713,10 +718,10 @@ msgstr "Illustration Pourquoi Twenty"
 msgid "X (opens in new tab)"
 msgstr "X (ouvre un nouvel onglet)"
 
-#. js-lingui-id: Q+G6dT
+#. js-lingui-id: bo6pUs
 #: src/sections/faq/faq.data.ts
-msgid "Yes, with our Apps framework. Scaffold an extension with `npx create-twenty-app` and ship custom objects, server-side logic functions, React components that render inside Twenty's UI, AI skills and agents, views, and navigation, all in TypeScript, deployable to any workspace."
-msgstr "Oui, avec notre framework Apps. Générez une extension avec `npx create-twenty-app` et livrez objets personnalisés, fonctions de logique côté serveur, composants React rendus dans l'interface de Twenty, compétences et agents IA, vues et navigation — le tout en TypeScript, déployable sur n'importe quel espace de travail."
+msgid "Yes, with our Apps framework. Scaffold an extension with `npx create-twenty-app` and ship custom objects, server-side logic functions, React components that render inside Twenty’s UI, AI skills and agents, views, and navigation, all in TypeScript, deployable to any workspace."
+msgstr "Oui, avec notre framework Apps. Générez une extension avec `npx create-twenty-app` et livrez objets personnalisés, fonctions de logique côté serveur, composants React rendus dans l’interface de Twenty, compétences et agents IA, vues et navigation — le tout en TypeScript, déployable sur n’importe quel espace de travail."
 
 #. js-lingui-id: yIcBW6
 #: src/sections/faq/faq.data.ts

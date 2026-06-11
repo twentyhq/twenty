@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { Fragment } from 'react';
 
@@ -158,8 +159,10 @@ function GroupBlock({ group }: { group: FooterNavGroup }) {
 }
 
 export function FooterNav() {
+  const i18n = getServerI18n();
+
   return (
-    <NavGrid>
+    <NavGrid aria-label={i18n._(msg`Footer`)}>
       {FOOTER.navGroups.map((group, index) => (
         <Fragment key={group.id}>
           {index > 0 && (

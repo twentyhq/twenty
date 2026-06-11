@@ -156,8 +156,8 @@ export function MenuNav({ items }: MenuNavProps) {
   const pathname = useUnlocalizedPathname();
 
   return (
-    <NavigationMenu.Root>
-      <NavList aria-label={i18n._(msg`Primary`)}>
+    <NavigationMenu.Root aria-label={i18n._(msg`Primary`)}>
+      <NavList>
         {items.map((item, index) => (
           <Fragment key={i18n._(item.label)}>
             {index > 0 && <VerticalDivider aria-hidden />}

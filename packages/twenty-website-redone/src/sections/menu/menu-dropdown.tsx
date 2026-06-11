@@ -101,7 +101,7 @@ const ItemLabel = styled.span`
 `;
 
 const ItemDescription = styled.span`
-  color: ${color('black-40')};
+  color: ${semanticColor.inkMuted};
   font-family: ${fontFamily('sans')};
   font-size: ${fontSize(3.5)};
   line-height: 1.3;

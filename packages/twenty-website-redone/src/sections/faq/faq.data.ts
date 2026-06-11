@@ -25,7 +25,7 @@ export const FAQ_QUESTIONS: readonly FaqQuestion[] = [
   },
   {
     question: msg`Can developers extend Twenty with code?`,
-    answer: msg`Yes, with our Apps framework. Scaffold an extension with \`npx create-twenty-app\` and ship custom objects, server-side logic functions, React components that render inside Twenty's UI, AI skills and agents, views, and navigation, all in TypeScript, deployable to any workspace.`,
+    answer: msg`Yes, with our Apps framework. Scaffold an extension with \`npx create-twenty-app\` and ship custom objects, server-side logic functions, React components that render inside Twenty’s UI, AI skills and agents, views, and navigation, all in TypeScript, deployable to any workspace.`,
   },
   {
     question: msg`Does Twenty work with Claude, ChatGPT, and Cursor?`,

@@ -262,6 +262,11 @@ msgstr ""
 msgid "Find a Twenty partner"
 msgstr ""
 
+#. js-lingui-id: qwJuVW
+#: src/sections/footer/footer-nav.tsx
+msgid "Footer"
+msgstr ""
+
 #. js-lingui-id: ZDIydz
 #: src/sections/menu/menu.tsx
 #: src/sections/menu/menu.tsx
@@ -713,9 +718,9 @@ msgstr ""
 msgid "X (opens in new tab)"
 msgstr ""
 
-#. js-lingui-id: Q+G6dT
+#. js-lingui-id: bo6pUs
 #: src/sections/faq/faq.data.ts
-msgid "Yes, with our Apps framework. Scaffold an extension with `npx create-twenty-app` and ship custom objects, server-side logic functions, React components that render inside Twenty's UI, AI skills and agents, views, and navigation, all in TypeScript, deployable to any workspace."
+msgid "Yes, with our Apps framework. Scaffold an extension with `npx create-twenty-app` and ship custom objects, server-side logic functions, React components that render inside Twenty’s UI, AI skills and agents, views, and navigation, all in TypeScript, deployable to any workspace."
 msgstr ""
 
 #. js-lingui-id: yIcBW6
