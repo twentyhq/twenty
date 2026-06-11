@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { type EmailsMetadata, FieldMetadataType } from 'twenty-shared/types';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
@@ -8,10 +8,10 @@ import { type MessageTopicWorkspaceEntity } from 'src/modules/emailing/standard-
 const EMAIL_ADDRESS_FIELD_NAME = 'emailAddress';
 
 export const SEARCH_FIELDS_FOR_MESSAGE_SUPPRESSION: FieldTypeAndNameMetadata[] =
-  [{ name: EMAIL_ADDRESS_FIELD_NAME, type: FieldMetadataType.TEXT }];
+  [{ name: EMAIL_ADDRESS_FIELD_NAME, type: FieldMetadataType.EMAILS }];
 
 export class MessageSuppressionWorkspaceEntity extends BaseWorkspaceEntity {
-  emailAddress: string;
+  emailAddress: EmailsMetadata;
   reason: string;
   source: string;
   providerEventId: string | null;

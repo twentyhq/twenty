@@ -203,12 +203,15 @@ export const buildMessageSuppressionStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       fieldName: 'emailAddress',
-      type: FieldMetadataType.TEXT,
+      type: FieldMetadataType.EMAILS,
       label: i18nLabel(msg`Email address`),
       description: i18nLabel(msg`The suppressed email address`),
       icon: 'IconMail',
-      isNullable: false,
+      isNullable: true,
       isUIReadOnly: true,
+      settings: {
+        maxNumberOfValues: 1,
+      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

@@ -4,7 +4,6 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { MessageSuppressionService } from 'src/engine/core-modules/emailing-domain/services/message-suppression.service';
-import { MessageTopicSubscriptionSource } from 'src/engine/core-modules/emailing-domain/types/message-topic-subscription-source.type';
 import { MessageTopicSubscriptionStatus } from 'src/engine/core-modules/emailing-domain/types/message-topic-subscription-status.type';
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/message-suppression-source.type';
@@ -21,7 +20,6 @@ type SubscribeArgs = {
   workspaceId: string;
   personId: string;
   topicId: string;
-  source?: MessageTopicSubscriptionSource;
 };
 
 type UnsubscribeArgs = {
@@ -52,7 +50,6 @@ type UpsertSubscriptionStatusArgs = {
   personId: string;
   topicId: string;
   status: MessageTopicSubscriptionStatus;
-  source: MessageTopicSubscriptionSource;
 };
 
 @Injectable()
@@ -66,14 +63,12 @@ export class MessageTopicSubscriptionService {
     workspaceId,
     personId,
     topicId,
-    source = MessageTopicSubscriptionSource.MANUAL,
   }: SubscribeArgs): Promise<void> {
     await this.upsertSubscriptionStatus({
       workspaceId,
       personId,
       topicId,
       status: MessageTopicSubscriptionStatus.SUBSCRIBED,
-      source,
     });
 
     const emailAddress = await this.resolvePrimaryEmailByPersonId(
@@ -178,14 +173,9 @@ export class MessageTopicSubscriptionService {
           },
         });
 
-        const topicNameById = new Map(
-          topics.map((topic) => [topic.id, topic.name]),
-        );
-
-        return subscriptions.map((subscription) => ({
-          topicId: subscription.topicId,
-          topicName:
-            topicNameById.get(subscription.topicId) ?? subscription.topicName,
+        return topics.map((topic) => ({
+          topicId: topic.id,
+          topicName: topic.name,
         }));
       },
       buildSystemAuthContext(workspaceId),
@@ -317,7 +307,6 @@ export class MessageTopicSubscriptionService {
     personId,
     topicId,
     status,
-    source,
   }: UpsertSubscriptionStatusArgs): Promise<void> {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const subscriptionRepository =
@@ -347,20 +336,10 @@ export class MessageTopicSubscriptionService {
         return;
       }
 
-      const topicRepository =
-        await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          MessageTopicWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
-      const topic = await topicRepository.findOneBy({ id: topicId });
-
       await subscriptionRepository.insert({
         personId,
         topicId,
-        topicName: topic?.name ?? null,
         status,
-        source,
         ...statusChangeTimestamp,
       });
     }, buildSystemAuthContext(workspaceId));

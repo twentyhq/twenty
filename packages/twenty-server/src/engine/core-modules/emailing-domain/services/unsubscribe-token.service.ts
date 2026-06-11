@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import crypto from 'crypto';
-
-import { isDefined } from 'twenty-shared/utils';
-
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
+import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
 export type UnsubscribeTokenPayload = {
   workspaceId: string;
@@ -12,35 +10,30 @@ export type UnsubscribeTokenPayload = {
   messageTopicId?: string;
 };
 
+// Tokens travel in mail headers and public links, so the payload is encrypted
+// (AES-256-GCM), not just signed: the recipient address and workspace id stay
+// opaque to anyone holding the link.
 @Injectable()
 export class UnsubscribeTokenService {
-  constructor(private readonly twentyConfigService: TwentyConfigService) {}
+  constructor(
+    private readonly secretEncryptionService: SecretEncryptionService,
+  ) {}
 
   sign(payload: UnsubscribeTokenPayload): string {
-    const encodedPayload = Buffer.from(JSON.stringify(payload)).toString(
-      'base64url',
-    );
-
-    return `${encodedPayload}.${this.computeSignature(encodedPayload)}`;
+    return Buffer.from(
+      this.secretEncryptionService.encryptVersioned(
+        JSON.stringify(payload) as PlaintextString,
+      ),
+    ).toString('base64url');
   }
 
   verify(token: string): UnsubscribeTokenPayload | null {
-    const [encodedPayload, signature] = token.split('.');
-
-    if (!isDefined(encodedPayload) || !isDefined(signature)) {
-      return null;
-    }
-
-    const expectedSignature = this.computeSignature(encodedPayload);
-
-    if (!this.signaturesMatch(signature, expectedSignature)) {
-      return null;
-    }
-
     try {
-      const decoded = JSON.parse(
-        Buffer.from(encodedPayload, 'base64url').toString('utf8'),
+      const decrypted = this.secretEncryptionService.decryptVersioned(
+        Buffer.from(token, 'base64url').toString('utf8') as EncryptedString,
       );
+
+      const decoded = JSON.parse(decrypted);
 
       if (
         typeof decoded?.workspaceId !== 'string' ||
@@ -59,23 +52,5 @@ export class UnsubscribeTokenService {
     } catch {
       return null;
     }
-  }
-
-  private computeSignature(encodedPayload: string): string {
-    return crypto
-      .createHmac('sha256', this.twentyConfigService.get('APP_SECRET'))
-      .update(encodedPayload)
-      .digest('base64url');
-  }
-
-  private signaturesMatch(candidate: string, expected: string): boolean {
-    const candidateBuffer = Buffer.from(candidate);
-    const expectedBuffer = Buffer.from(expected);
-
-    if (candidateBuffer.length !== expectedBuffer.length) {
-      return false;
-    }
-
-    return crypto.timingSafeEqual(candidateBuffer, expectedBuffer);
   }
 }

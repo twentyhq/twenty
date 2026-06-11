@@ -60,7 +60,7 @@ export const CampaignComposerFields = ({
       />
       <FormTextFieldInput
         label={t`Subject`}
-        defaultValue=""
+        defaultValue={campaignState.subject}
         onChange={campaignState.setSubject}
         placeholder={t`Subject`}
       />

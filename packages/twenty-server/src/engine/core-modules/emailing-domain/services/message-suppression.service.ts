@@ -5,6 +5,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, IsNull } from 'typeorm';
 
 import { BLOCKING_REASONS_BY_MESSAGE_CATEGORY } from 'src/engine/core-modules/emailing-domain/constants/blocking-reasons-by-message-category.constant';
+import { HARD_SUPPRESSION_REASONS } from 'src/engine/core-modules/emailing-domain/constants/hard-suppression-reasons.constant';
 import { EmailGroupMessageCategory } from 'src/engine/core-modules/emailing-domain/types/email-group-message-category.type';
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/message-suppression-source.type';
@@ -20,11 +21,6 @@ type SuppressArgs = {
   providerEventId?: string | null;
   topicId?: string | null;
 };
-
-const HARD_SUPPRESSION_REASONS = [
-  MessageSuppressionReason.BOUNCE,
-  MessageSuppressionReason.COMPLAINT,
-];
 
 @Injectable()
 export class MessageSuppressionService {
@@ -59,7 +55,7 @@ export class MessageSuppressionService {
 
           return suppressionRepository.find({
             where: {
-              emailAddress: In(normalizedAddresses),
+              emailAddress: { primaryEmail: In(normalizedAddresses) },
               reason: In(BLOCKING_REASONS_BY_MESSAGE_CATEGORY[messageCategory]),
               topicId: IsNull(),
             },
@@ -69,7 +65,9 @@ export class MessageSuppressionService {
       );
 
     return new Set(
-      suppressedRecipients.map((recipient) => recipient.emailAddress),
+      suppressedRecipients
+        .map((recipient) => recipient.emailAddress?.primaryEmail)
+        .filter(isNonEmptyString),
     );
   }
 
@@ -100,7 +98,7 @@ export class MessageSuppressionService {
 
           return suppressionRepository.find({
             where: {
-              emailAddress: In(normalizedAddresses),
+              emailAddress: { primaryEmail: In(normalizedAddresses) },
               reason: MessageSuppressionReason.UNSUBSCRIBE,
               topicId,
             },
@@ -110,7 +108,9 @@ export class MessageSuppressionService {
       );
 
     return new Set(
-      suppressedRecipients.map((recipient) => recipient.emailAddress),
+      suppressedRecipients
+        .map((recipient) => recipient.emailAddress?.primaryEmail)
+        .filter(isNonEmptyString),
     );
   }
 
@@ -137,13 +137,16 @@ export class MessageSuppressionService {
         );
 
       const existingSuppression = await suppressionRepository.findOneBy({
-        emailAddress: normalizedEmailAddress,
+        emailAddress: { primaryEmail: normalizedEmailAddress },
         topicId: isDefined(topicId) ? topicId : IsNull(),
       });
 
       if (!isDefined(existingSuppression)) {
         await suppressionRepository.insert({
-          emailAddress: normalizedEmailAddress,
+          emailAddress: {
+            primaryEmail: normalizedEmailAddress,
+            additionalEmails: null,
+          },
           reason,
           source,
           providerEventId,
@@ -183,7 +186,7 @@ export class MessageSuppressionService {
         );
 
       const existingSuppression = await suppressionRepository.findOneBy({
-        emailAddress: normalizedEmailAddress,
+        emailAddress: { primaryEmail: normalizedEmailAddress },
         reason: MessageSuppressionReason.UNSUBSCRIBE,
         topicId,
       });

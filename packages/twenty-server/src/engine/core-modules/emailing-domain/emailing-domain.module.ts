@@ -26,6 +26,7 @@ import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     FeatureFlagModule,
     PermissionsModule,
     DnsManagerModule,
+    SecretEncryptionModule,
     TypeOrmModule.forFeature([MessageChannelEntity]),
   ],
   controllers: [UnsubscribeController],

@@ -1,20 +1,18 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
 import { useSendMessageCampaign } from '@/activities/emails/hooks/useSendMessageCampaign';
 
 type UseCampaignComposerStateArgs = {
-  defaultSubject?: string;
   onSent?: () => void;
 };
 
 export const useCampaignComposerState = ({
-  defaultSubject = '',
   onSent,
 }: UseCampaignComposerStateArgs) => {
   const [messageTopicId, setMessageTopicId] = useState<string | null>(null);
   const [listId, setListId] = useState<string | null>(null);
   const [fromAddress, setFromAddress] = useState('');
-  const [subject, setSubject] = useState(defaultSubject);
+  const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
 
   const { sendMessageCampaign, loading } = useSendMessageCampaign();
@@ -25,12 +23,8 @@ export const useCampaignComposerState = ({
     subject.trim().length > 0 &&
     !loading;
 
-  const handleSend = useCallback(async () => {
-    if (
-      messageTopicId === null ||
-      fromAddress.trim().length === 0 ||
-      subject.trim().length === 0
-    ) {
+  const handleSend = async () => {
+    if (messageTopicId === null || !canSend) {
       return;
     }
 
@@ -45,15 +39,7 @@ export const useCampaignComposerState = ({
     if (success) {
       onSent?.();
     }
-  }, [
-    messageTopicId,
-    listId,
-    fromAddress,
-    subject,
-    body,
-    sendMessageCampaign,
-    onSent,
-  ]);
+  };
 
   return {
     messageTopicId,

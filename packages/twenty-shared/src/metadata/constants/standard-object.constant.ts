@@ -1059,9 +1059,6 @@ export const STANDARD_OBJECTS = {
       position: {
         universalIdentifier: '1527e7a0-c397-4348-aab0-e04107ef1499',
       },
-      topicName: {
-        universalIdentifier: 'aefbc961-deee-44fb-a90b-faee5dc22c16',
-      },
       status: { universalIdentifier: 'b1ab01fc-9109-4f46-bac8-baf18da939db' },
       subscribedAt: {
         universalIdentifier: '7345ff75-8931-4895-b7c5-2b09088704b7',
@@ -1069,7 +1066,6 @@ export const STANDARD_OBJECTS = {
       unsubscribedAt: {
         universalIdentifier: '3614f2ff-c3d7-4c9a-a611-d2d15389f777',
       },
-      source: { universalIdentifier: '40919ec6-e6e4-49ac-930a-22f42d2100d4' },
       topic: { universalIdentifier: '12f0282b-a9ea-4d49-833b-0f111e7299ca' },
       person: { universalIdentifier: '1de4167f-afc7-4153-a0e9-cae0758faaeb' },
       searchVector: {

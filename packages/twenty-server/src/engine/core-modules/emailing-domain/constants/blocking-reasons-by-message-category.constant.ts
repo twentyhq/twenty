@@ -1,3 +1,4 @@
+import { HARD_SUPPRESSION_REASONS } from 'src/engine/core-modules/emailing-domain/constants/hard-suppression-reasons.constant';
 import { EmailGroupMessageCategory } from 'src/engine/core-modules/emailing-domain/types/email-group-message-category.type';
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 
@@ -7,13 +8,9 @@ export const BLOCKING_REASONS_BY_MESSAGE_CATEGORY: Record<
   EmailGroupMessageCategory,
   MessageSuppressionReason[]
 > = {
-  [EmailGroupMessageCategory.TRANSACTIONAL]: [
-    MessageSuppressionReason.BOUNCE,
-    MessageSuppressionReason.COMPLAINT,
-  ],
+  [EmailGroupMessageCategory.TRANSACTIONAL]: HARD_SUPPRESSION_REASONS,
   [EmailGroupMessageCategory.CAMPAIGN]: [
-    MessageSuppressionReason.BOUNCE,
-    MessageSuppressionReason.COMPLAINT,
+    ...HARD_SUPPRESSION_REASONS,
     MessageSuppressionReason.UNSUBSCRIBE,
   ],
 };

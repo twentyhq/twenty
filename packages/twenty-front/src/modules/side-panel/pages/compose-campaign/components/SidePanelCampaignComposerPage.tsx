@@ -1,5 +1,3 @@
-import { useCallback } from 'react';
-
 import { CampaignComposerFields } from '@/activities/emails/components/CampaignComposerFields';
 import { useCampaignComposerState } from '@/activities/emails/hooks/useCampaignComposerState';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
@@ -32,17 +30,11 @@ export const SidePanelCampaignComposerPage = () => {
     onSent: goBackFromSidePanel,
   });
 
-  const handleSendHotkey = useCallback(() => {
-    if (campaignState.canSend) {
-      campaignState.handleSend();
-    }
-  }, [campaignState]);
-
   useHotkeysOnFocusedElement({
     keys: ['ctrl+Enter,meta+Enter'],
-    callback: handleSendHotkey,
+    callback: campaignState.handleSend,
     focusId: SIDE_PANEL_FOCUS_ID,
-    dependencies: [handleSendHotkey],
+    dependencies: [campaignState.handleSend],
   });
 
   return (

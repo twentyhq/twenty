@@ -4,9 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 
-// Asserting variant of getDomainFromEmail: throws a UserInputError when the
-// address is empty or has no domain, instead of returning undefined.
-export const getDomainNameByEmail = (email: string) => {
+export const getDomainFromEmailOrThrow = (email: string) => {
   if (!isNonEmptyString(email)) {
     throw new UserInputError(
       'Email is required. Please provide a valid email address.',

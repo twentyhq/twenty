@@ -25,7 +25,7 @@ import { buildUnsubscribeResultPage } from 'src/engine/core-modules/emailing-dom
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
-const UNSUBSCRIBE_TOKEN_FORMAT = /^[A-Za-z0-9_-]{1,512}\.[A-Za-z0-9_-]{1,86}$/;
+const UNSUBSCRIBE_TOKEN_FORMAT = /^[A-Za-z0-9_-]{1,1024}$/;
 
 const UPDATE_PREFERENCES_PATH = '/emailing/unsubscribe/preferences';
 const UNSUBSCRIBE_ALL_PATH = '/emailing/unsubscribe/all';
