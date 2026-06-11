@@ -311,7 +311,7 @@ describe('upsert (createMany with upsert:true)', () => {
     expect(upsertedRecord.position).toEqual(initialPosition);
   });
 
-  it('should assign a position to a record inserted via upsert', async () => {
+  it('should auto-assign a position when an upsert creates a new record', async () => {
     const upsertResponse = await makeGraphqlAPIRequest({
       query: createRecordsWithPositionQuery,
       variables: {
@@ -330,5 +330,48 @@ describe('upsert (createMany with upsert:true)', () => {
 
     expect(insertedRecord.id).toEqual(expect.any(String));
     expect(typeof insertedRecord.position).toBe('number');
+  });
+
+  it('should update the position of an existing record when upserting with a position', async () => {
+    const createResponse = await makeGraphqlAPIRequest({
+      query: createRecordsWithPositionQuery,
+      variables: {
+        data: [
+          {
+            firstUniqueTestField: 'updatePositionTestField',
+            secondUniqueTestField: 'updatePositionTestSecondField',
+            name: 'originalRecord',
+            position: 1,
+          },
+        ],
+        upsert: false,
+      },
+    });
+
+    const createdRecord = createResponse.body.data.createTestRecordObjects[0];
+
+    expect(createdRecord.position).toEqual(1);
+
+    const newPosition = 5;
+
+    const upsertResponse = await makeGraphqlAPIRequest({
+      query: createRecordsWithPositionQuery,
+      variables: {
+        data: [
+          {
+            firstUniqueTestField: 'updatePositionTestField',
+            name: 'updatedRecord',
+            position: newPosition,
+          },
+        ],
+        upsert: true,
+      },
+    });
+
+    const upsertedRecord = upsertResponse.body.data.createTestRecordObjects[0];
+
+    expect(upsertedRecord.id).toEqual(createdRecord.id);
+    expect(upsertedRecord.name).toEqual('updatedRecord');
+    expect(upsertedRecord.position).toEqual(newPosition);
   });
 });
