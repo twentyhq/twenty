@@ -61,14 +61,37 @@ const CrosshairRoot = styled.div`
     width: 3px;
   }
 
+  /* CSS-drawn full-bleed plus, as authored (a text glyph only fills ~60%
+     of its box). */
   [data-slot='plus'] {
-    color: ${color('blue')};
-    font-size: 12px;
+    height: 12px;
     left: var(--cross-x);
-    line-height: 1;
     position: absolute;
     top: var(--cross-y);
     transform: translate(-50%, -50%);
+    width: 12px;
+
+    &::before {
+      background: ${color('blue')};
+      content: '';
+      height: 100%;
+      left: 50%;
+      position: absolute;
+      top: 0;
+      transform: translateX(-50%);
+      width: 1px;
+    }
+
+    &::after {
+      background: ${color('blue')};
+      content: '';
+      height: 1px;
+      left: 0;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100%;
+    }
   }
 `;
 
@@ -100,7 +123,7 @@ export function GuideCrosshair({
       {verticalLines && <span data-line data-slot="v-top" />}
       {verticalLines && <span data-line data-slot="v-bottom" />}
       {!verticalLines && <span data-slot="v-eraser" />}
-      <span data-slot="plus">+</span>
+      <span data-slot="plus" />
     </CrosshairRoot>
   );
 }
