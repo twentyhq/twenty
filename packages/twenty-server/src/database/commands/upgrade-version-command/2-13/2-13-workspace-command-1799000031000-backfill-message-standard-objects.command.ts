@@ -130,7 +130,7 @@ const MESSAGE_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS = [
 // self-hosted instances. New workspaces get these entities from the standard
 // application at provisioning and do not need this command.
 @Command({
-  name: 'upgrade:2-12:backfill-message-standard-objects',
+  name: 'upgrade:2-13:backfill-message-standard-objects',
   description:
     'Create the message marketing standard objects (messageCampaign, messageList, messageListMember, messageTopic, messageTopicSubscription, messageSuppression) in existing workspaces',
 })

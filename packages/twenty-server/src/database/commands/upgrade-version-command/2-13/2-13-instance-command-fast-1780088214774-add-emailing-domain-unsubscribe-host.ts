@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.12.0', 1780088214774)
+@RegisteredInstanceCommand('2.13.0', 1780088214774)
 export class AddEmailingDomainUnsubscribeHostFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('ALTER TABLE "core"."emailingDomain" ADD COLUMN IF NOT EXISTS "unsubscribeHostname" character varying');

@@ -21,7 +21,7 @@ const COMPOSE_CAMPAIGN_UNIVERSAL_IDENTIFIER =
 // path covers stragglers and self-hosted instances. New workspaces get the menu
 // item from the standard application at provisioning and do not need this command.
 @Command({
-  name: 'upgrade:2-12:add-compose-campaign-command-menu-item',
+  name: 'upgrade:2-13:add-compose-campaign-command-menu-item',
   description: 'Add the Compose Campaign command menu item to existing workspaces',
 })
 export class AddComposeCampaignCommandMenuItemCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
