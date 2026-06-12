@@ -59,6 +59,11 @@ msgstr "AC&T moved to a self-hosted Twenty instance with no vendor risk, no forc
 msgid "AC&T replaced a shuttered vendor CRM with self-hosted Twenty and cut CRM costs by more than 90%."
 msgstr "AC&T replaced a shuttered vendor CRM with self-hosted Twenty and cut CRM costs by more than 90%."
 
+#. js-lingui-id: vZKKhf
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Aggregate, bar, line, and pie widgets"
+msgstr "Aggregate, bar, line, and pie widgets"
+
 #. js-lingui-id: R+bwFB
 #: src/sections/three-cards/three-cards.data.ts
 msgid "AI for rapid iterations"
@@ -99,6 +104,16 @@ msgstr "Ask questions, automate tasks, and get insights with AI that understands
 msgid "Assemble, iterate and adapt a robust CRM, *that's quick to flex*"
 msgstr "Assemble, iterate and adapt a robust CRM, *that's quick to flex*"
 
+#. js-lingui-id: v7zTZl
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Assign owners and due dates"
+msgstr "Assign owners and due dates"
+
+#. js-lingui-id: fxL/Km
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Attachments without the chaos."
+msgstr "Attachments without the chaos."
+
 #. js-lingui-id: 83Wi6G
 #: src/sections/stepper/stepper.data.ts
 msgid "Begin with production-grade *building blocks*"
@@ -118,6 +133,11 @@ msgstr "Build a dashboard of pipeline by stage"
 #: src/sections/product-hero/ai-hero-tabs.ts
 msgid "Build a pipeline board grouped by stage"
 msgstr "Build a pipeline board grouped by stage"
+
+#. js-lingui-id: Utc5RF
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Build custom dashboards from live CRM data. Aggregate anything — deals, accounts, activity — into charts your team actually reads."
+msgstr "Build custom dashboards from live CRM data. Aggregate anything — deals, accounts, activity — into charts your team actually reads."
 
 #. js-lingui-id: e1u+Zh
 #: src/sections/menu/menu.data.ts
@@ -174,6 +194,11 @@ msgstr "Cloud Pro is $9/user/month (yearly). Organization is $19/user/month and 
 msgid "Co-founder at NetZero"
 msgstr "Co-founder at NetZero"
 
+#. js-lingui-id: b5bnuN
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Column-to-field mapping (including relations)"
+msgstr "Column-to-field mapping (including relations)"
+
 #. js-lingui-id: chL5IG
 #: src/sections/menu/menu-social.tsx
 msgid "Community"
@@ -194,6 +219,26 @@ msgstr "Compose your CRM and internal apps with a single extensibility toolkit. 
 msgid "Connect"
 msgstr "Connect"
 
+#. js-lingui-id: 90KBr0
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Connect Google or Microsoft accounts"
+msgstr "Connect Google or Microsoft accounts"
+
+#. js-lingui-id: xgrBCK
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Connect Google or Microsoft accounts and see emails and events linked to CRM records automatically."
+msgstr "Connect Google or Microsoft accounts and see emails and events linked to CRM records automatically."
+
+#. js-lingui-id: Oii3vg
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Contacts & Companies"
+msgstr "Contacts & Companies"
+
+#. js-lingui-id: 24qVhV
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Context lives with the record."
+msgstr "Context lives with the record."
+
 #. js-lingui-id: mXovG/
 #: src/sections/stepper/stepper.data.ts
 msgid "Continue iteration *without friction*"
@@ -204,15 +249,60 @@ msgstr "Continue iteration *without friction*"
 msgid "Control without drag"
 msgstr "Control without drag"
 
+#. js-lingui-id: FapWIq
+#: src/sections/product-feature/product-feature.tsx
+msgid "Core Features"
+msgstr "Core Features"
+
 #. js-lingui-id: B9nLrl
 #: src/sections/menu/menu.data.ts
 msgid "Create apps on Twenty"
 msgstr "Create apps on Twenty"
 
+#. js-lingui-id: oS1RiS
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Create tasks from records"
+msgstr "Create tasks from records"
+
+#. js-lingui-id: D3S5+x
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Create tasks, assign owners, and attach rich notes directly from any record. No tab-switching, no lost context."
+msgstr "Create tasks, assign owners, and attach rich notes directly from any record. No tab-switching, no lost context."
+
 #. js-lingui-id: wDasLa
 #: src/sections/three-cards/three-cards.data.ts
 msgid "CRM Engineer"
 msgstr "CRM Engineer"
+
+#. js-lingui-id: I6FFSA
+#: src/sections/product-feature/feature-tiles.ts
+msgid "CSV export anytime"
+msgstr "CSV export anytime"
+
+#. js-lingui-id: s+QiQi
+#: src/sections/product-feature/feature-tiles.ts
+msgid "CSV import flow"
+msgstr "CSV import flow"
+
+#. js-lingui-id: yBSEtR
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Custom deal stages for your process"
+msgstr "Custom deal stages for your process"
+
+#. js-lingui-id: L+b7SB
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Custom deal stages, drag-and-drop boards, and real-time tracking so your pipeline reflects reality."
+msgstr "Custom deal stages, drag-and-drop boards, and real-time tracking so your pipeline reflects reality."
+
+#. js-lingui-id: U1RB/7
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Custom fields and relationships"
+msgstr "Custom fields and relationships"
+
+#. js-lingui-id: WGKb6T
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Custom fields, relationships, and a unified timeline for every contact and company in your workspace."
+msgstr "Custom fields, relationships, and a unified timeline for every contact and company in your workspace."
 
 #. js-lingui-id: 5xK1jE
 #: src/sections/helped/helped-scene.tsx
@@ -224,6 +314,16 @@ msgstr "Customer stories"
 #: src/sections/footer/footer.data.ts
 msgid "Customers"
 msgstr "Customers"
+
+#. js-lingui-id: V0kvgB
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Data import"
+msgstr "Data import"
+
+#. js-lingui-id: /TlpVf
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Deals that move themselves."
+msgstr "Deals that move themselves."
 
 #. js-lingui-id: X5B6sd
 #: src/sections/helped/helped-scene.tsx
@@ -272,15 +372,45 @@ msgstr "Don't get locked into someone else's ecosystem. Twenty's developer exper
 msgid "Draft a workflow for an email sequence"
 msgstr "Draft a workflow for an email sequence"
 
+#. js-lingui-id: fPma12
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Drag-and-drop deals between stages"
+msgstr "Drag-and-drop deals between stages"
+
+#. js-lingui-id: FNyrb0
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Email & Calendar"
+msgstr "Email & Calendar"
+
+#. js-lingui-id: hfqiVr
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Email/calendar activity on each record"
+msgstr "Email/calendar activity on each record"
+
+#. js-lingui-id: o4/9l1
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Emails and events linked to CRM records"
+msgstr "Emails and events linked to CRM records"
+
 #. js-lingui-id: Ijh+h+
 #: src/sections/stepper/stepper.data.ts
 msgid "Enjoy unlimited customization using the AI coding tools you already love. Adapt your CRM to fit the way your business grows and wins."
 msgstr "Enjoy unlimited customization using the AI coding tools you already love. Adapt your CRM to fit the way your business grows and wins."
 
+#. js-lingui-id: rkZTD7
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Every thread, on the right record."
+msgstr "Every thread, on the right record."
+
 #. js-lingui-id: zoNk7e
 #: src/sections/feature-cards/feature-cards.data.ts
 msgid "Everything updates in real time, with AI chat always ready to help you move faster."
 msgstr "Everything updates in real time, with AI chat always ready to help you move faster."
+
+#. js-lingui-id: /g9UKY
+#: src/sections/product-feature/product-feature.tsx
+msgid "Everything you need, *out of the box*"
+msgstr "Everything you need, *out of the box*"
 
 #. js-lingui-id: akLvep
 #: src/sections/feature-cards/feature-cards.data.ts
@@ -292,6 +422,16 @@ msgstr "Familiar, modern interface"
 msgid "Fast path to action"
 msgstr "Fast path to action"
 
+#. js-lingui-id: sER+bs
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Files"
+msgstr "Files"
+
+#. js-lingui-id: iabLgo
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Filtered metrics from any object"
+msgstr "Filtered metrics from any object"
+
 #. js-lingui-id: MD032e
 #: src/sections/menu/menu.data.ts
 msgid "Find a Twenty partner"
@@ -301,6 +441,16 @@ msgstr "Find a Twenty partner"
 #: src/sections/footer/footer-nav.tsx
 msgid "Footer"
 msgstr "Footer"
+
+#. js-lingui-id: Iuxc00
+#: src/sections/product-feature/feature-tiles.ts
+msgid "From CSV to CRM in minutes."
+msgstr "From CSV to CRM in minutes."
+
+#. js-lingui-id: m1I5TY
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Full communication history in one place"
+msgstr "Full communication history in one place"
 
 #. js-lingui-id: S84RWl
 #: src/sections/product-hero/ai-hero-tabs.ts
@@ -354,10 +504,20 @@ msgstr "Home"
 msgid "How long does it take to get started?"
 msgstr "How long does it take to get started?"
 
+#. js-lingui-id: ZAKTS6
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Import your data with field mapping, including relations. Export anytime — your data is always yours."
+msgstr "Import your data with field mapping, including relations. Export anytime — your data is always yours."
+
 #. js-lingui-id: d1Aru8
 #: src/sections/helped/helped-scene.tsx
 msgid "In production."
 msgstr "In production."
+
+#. js-lingui-id: Sqb+jp
+#: src/sections/product-feature/feature-tiles.ts
+msgid "In-app preview for supported file types (when enabled)"
+msgstr "In-app preview for supported file types (when enabled)"
 
 #. js-lingui-id: /yQIKP
 #: src/sections/faq/faq.data.ts
@@ -431,10 +591,20 @@ msgstr "Master every corner of Twenty"
 msgid "Meet the certified agencies and consultants implementing Twenty for teams worldwide."
 msgstr "Meet the certified agencies and consultants implementing Twenty for teams worldwide."
 
+#. js-lingui-id: briyJf
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Metrics you can actually trust."
+msgstr "Metrics you can actually trust."
+
 #. js-lingui-id: 3TSz9S
 #: src/app-preview/stage/traffic-lights.tsx
 msgid "Minimize"
 msgstr "Minimize"
+
+#. js-lingui-id: dlKkNL
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Multi-file upload on records"
+msgstr "Multi-file upload on records"
 
 #. js-lingui-id: TizFpt
 #: src/sections/menu/menu-drawer.tsx
@@ -476,6 +646,11 @@ msgstr "Own your CRM end to end"
 #: src/sections/footer/footer.data.ts
 msgid "Partners"
 msgstr "Partners"
+
+#. js-lingui-id: FFkjaT
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Pipeline Management"
+msgstr "Pipeline Management"
 
 #. js-lingui-id: gzkkC3
 #: src/platform/routing/static-website-routes.ts
@@ -530,6 +705,11 @@ msgstr "Proprietary languages, slow deployment cycles, and \"black box\" logic."
 msgid "Read the case"
 msgstr "Read the case"
 
+#. js-lingui-id: 4hc7hc
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Real-time data"
+msgstr "Real-time data"
+
 #. js-lingui-id: rwWjWg
 #: src/sections/footer/footer.data.ts
 msgid "Release Notes"
@@ -539,6 +719,16 @@ msgstr "Release Notes"
 #: src/sections/menu/menu.data.ts
 msgid "Releases"
 msgstr "Releases"
+
+#. js-lingui-id: a/aGHe
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Rename, download, and delete attachments"
+msgstr "Rename, download, and delete attachments"
+
+#. js-lingui-id: SY/an2
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Reports & Dashboards"
+msgstr "Reports & Dashboards"
 
 #. js-lingui-id: TD9BOQ
 #: src/app-preview/terminal/terminal-send-button.tsx
@@ -554,6 +744,11 @@ msgstr "Resources"
 #: src/app-preview/stage/flying-traffic-lights.tsx
 msgid "Return traffic light"
 msgstr "Return traffic light"
+
+#. js-lingui-id: frqduN
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Rich notes attached to records"
+msgstr "Rich notes attached to records"
 
 #. js-lingui-id: 0kgOPB
 #. placeholder {0}: LATEST_RELEASE.release
@@ -630,6 +825,11 @@ msgstr "Stop settling for trade-offs."
 msgid "Talk to us"
 msgstr "Talk to us"
 
+#. js-lingui-id: GWMpL3
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Tasks & Activities"
+msgstr "Tasks & Activities"
+
 #. js-lingui-id: Ye3KKA
 #: src/sections/menu/menu.data.ts
 msgid "Team up with a Twenty expert"
@@ -695,6 +895,11 @@ msgstr "They are the real sales"
 msgid "Thinking"
 msgstr "Thinking"
 
+#. js-lingui-id: hmu++i
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Track amount and close date"
+msgstr "Track amount and close date"
+
 #. js-lingui-id: POzmFl
 #: src/sections/menu/menu.data.ts
 msgid "Track every release with changelogs, highlights and demos of the newest features."
@@ -756,6 +961,16 @@ msgstr "Twenty release {0} — {1}"
 #: src/sections/menu/menu.data.ts
 msgid "Twenty user guide preview"
 msgstr "Twenty user guide preview"
+
+#. js-lingui-id: Hix/m6
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Unified timeline (emails, events, tasks, notes, files)"
+msgstr "Unified timeline (emails, events, tasks, notes, files)"
+
+#. js-lingui-id: 2vanwz
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Upload, rename, preview, and manage files directly on records. Everything stays where it belongs."
+msgstr "Upload, rename, preview, and manage files directly on records. Everything stays where it belongs."
 
 #. js-lingui-id: Roaswv
 #: src/sections/menu/menu.data.ts
@@ -848,6 +1063,11 @@ msgstr "Yes. Import your data via CSV, or use our API for 50,000+ records. Our p
 #: src/sections/faq/faq.data.ts
 msgid "Yes. Twenty is the #1 Open Source CRM on GitHub. You can self-host to fully own your infrastructure, or run it on our managed cloud for a zero-ops setup."
 msgstr "Yes. Twenty is the #1 Open Source CRM on GitHub. You can self-host to fully own your infrastructure, or run it on our managed cloud for a zero-ops setup."
+
+#. js-lingui-id: fQATWn
+#: src/sections/product-feature/feature-tiles.ts
+msgid "Your network, fully mapped."
+msgstr "Your network, fully mapped."
 
 #. js-lingui-id: ACjxWW
 #: src/app-preview/stage/traffic-lights.tsx

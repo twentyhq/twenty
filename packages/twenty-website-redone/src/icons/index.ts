@@ -8,6 +8,10 @@ export { FastPathIcon, type FastPathIconProps } from './fast-path';
 export { MarkerCursor, type MarkerCursorProps } from './marker-cursor';
 export { PeopleGroupMark } from './people-group-mark';
 export { GitHubMark, type GitHubMarkProps } from './github-mark';
+export {
+  INFORMATIVE_MARKS,
+  type InformativeMarkProps,
+} from './informative-marks';
 export { LiveDataIcon, type LiveDataIconProps } from './live-data';
 export { MinusMark, type MinusMarkProps } from './minus-mark';
 export { PlusMark, type PlusMarkProps } from './plus-mark';

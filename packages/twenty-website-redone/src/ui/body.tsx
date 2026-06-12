@@ -48,6 +48,7 @@ export type BodySize = 'md' | 'sm' | 'xs';
 export type BodyProps = {
   as?: BodyElement;
   children: ReactNode;
+  className?: string;
   muted?: boolean;
   size?: BodySize;
   weight?: FontWeightToken;
@@ -56,13 +57,14 @@ export type BodyProps = {
 export function Body({
   as: Tag = 'p',
   children,
+  className,
   muted = false,
   size = 'md',
   weight = 'regular',
 }: BodyProps) {
   return (
     <Tag
-      className={bodyClassName}
+      className={[bodyClassName, className].filter(Boolean).join(' ')}
       data-muted={muted ? '' : undefined}
       data-size={size}
       data-weight={weight}
