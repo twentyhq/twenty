@@ -147,7 +147,7 @@ export class BillingWebhookSubscriptionService {
 
     await this.billingUsageService.flushAvailableCreditsFromCache(workspace.id);
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
-      'billingSubscription',
+      'currentBillingSubscription',
     ]);
 
     const shouldSuspend = this.shouldSuspendWorkspace(data);
