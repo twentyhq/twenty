@@ -101,7 +101,7 @@ export const WorkflowEditActionFindRecords = ({
       action.settings.input.limit > QUERY_MAX_RECORDS
         ? QUERY_MAX_RECORDS
         : (action.settings.input.limit ?? 1),
-    offset: action.settings.input.offset ?? 0,
+    offset: Math.max(0, Math.floor(action.settings.input.offset ?? 0)),
     filter: action.settings.input.filter as FindRecordsActionFilter,
     orderBy: action.settings.input.orderBy as FindRecordsActionOrderBy,
   }));
@@ -155,7 +155,7 @@ export const WorkflowEditActionFindRecords = ({
           input: {
             objectName: updatedObjectName,
             limit: updatedLimit ?? 1,
-            offset: updatedOffset ?? 0,
+            offset: Math.max(0, Math.floor(updatedOffset ?? 0)),
             filter: updatedFilter,
             orderBy: updatedOrderBy as Record<string, any[]> | undefined,
           },
