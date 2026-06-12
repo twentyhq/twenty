@@ -45,9 +45,9 @@ export class WorkflowCommandMenuSyncWorkspaceService {
         authContext,
       );
 
-    for (const workflow of workflows) {
-      await this.syncOneWorkflow(workflow, workspaceId);
-    }
+    await Promise.all(
+      workflows.map((workflow) => this.syncOneWorkflow(workflow, workspaceId)),
+    );
   }
 
   private async syncOneWorkflow(
