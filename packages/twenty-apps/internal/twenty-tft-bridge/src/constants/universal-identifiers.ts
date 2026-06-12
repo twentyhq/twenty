@@ -44,7 +44,6 @@ export const OPP_PARTNER_SYNC_REQUEST_FIELD_UUID = 'a1c4e7f2-8b3d-4a6c-9e5f-3b7d
 export const SYNC_SHARED_SECRET_VAR_UUID = 'a8e6d4c2-1f9b-4c5e-8d7b-9e2c8d4f6a1b';
 export const PARTNERS_SYNC_ENDPOINT_VAR_UUID = 'b1f9c7d4-4a2e-4f6d-8e9a-3f5c1a8d4e7c';
 
-// Nav + views
-export const TFT_SYNC_EVENTS_NAV_UUID = 'c5a2e8f1-9b4d-4c5a-8f2e-3d8c5a2f1e9b';
+// Views
 export const TFT_SYNC_EVENTS_VIEW_UUID = 'd8f5b2a4-3c7e-4d8f-9b5a-6e1d8f5b2a4c';
 export const OPPORTUNITIES_PARTNER_SYNC_VIEW_UUID = 'e1b4d7f2-8c5a-4e1b-9d7f-2a5c8e1b4d7f';

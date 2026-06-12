@@ -83,6 +83,5 @@ export const TFT_API_KEY_VAR_UUID = 'd4b6e8d2-3c7a-4c4f-9a7e-8b4d1c5f9b3a';
 export const PARTNERS_SYNC_SELF_ENDPOINT_VAR_UUID = 'e5f8a2d1-4c7b-4e5f-8a2d-1c4e7b5f8a2d';
 export const PARTNERS_PUBLIC_URL_VAR_UUID = 'f6a9b3e4-5d8c-4f6a-9b3e-2c5d8f6a9b3e';
 
-// TFT sync nav + views
-export const PARTNERS_TFT_SYNC_EVENTS_NAV_UUID = 'e2f5c8d1-9b4a-4e2f-9c5a-3d8e2f5b1c9a';
+// TFT sync views
 export const PARTNERS_TFT_SYNC_EVENTS_VIEW_UUID = 'f5a2d8e4-3c7b-4f5a-8d2e-6b1f5a8e4d2c';
