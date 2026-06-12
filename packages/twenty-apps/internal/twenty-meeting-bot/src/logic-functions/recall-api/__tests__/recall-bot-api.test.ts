@@ -24,7 +24,7 @@ describe('recall bot api', () => {
       config: {
         apiKey: 'recall-api-key',
         baseUrl: 'https://ap-northeast-1.recall.ai/api/v1',
-        botName: 'Twenty Recall Bot',
+        botName: 'Twenty Meeting Bot',
       },
     });
     fetchMock.mockReset();
@@ -61,7 +61,7 @@ describe('recall bot api', () => {
     expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({
       meeting_url: 'https://meet.google.com/abc-defg-hij',
       join_at: '2026-01-01T13:00:00.000Z',
-      bot_name: 'Twenty Recall Bot',
+      bot_name: 'Twenty Meeting Bot',
       automatic_leave: {
         waiting_room_timeout: 1200,
         noone_joined_timeout: 1200,
@@ -162,7 +162,7 @@ describe('recall bot api', () => {
       config: {
         apiKey: 'Token recall-api-key',
         baseUrl: 'https://ap-northeast-1.recall.ai/api/v1',
-        botName: 'Twenty Recall Bot',
+        botName: 'Twenty Meeting Bot',
       },
     });
 

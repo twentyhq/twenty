@@ -17,7 +17,7 @@ export const chargeCompletedCallRecording = async ({
 
   if (isUndefined(charge)) {
     console.warn(
-      `[recall-recording-bot] call recording ${callRecordingId} completed without usable recording timestamps; it will not be billed`,
+      `[twenty-meeting-bot] call recording ${callRecordingId} completed without usable recording timestamps; it will not be billed`,
     );
 
     return;

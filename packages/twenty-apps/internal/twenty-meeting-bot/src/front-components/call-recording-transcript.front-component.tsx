@@ -9,7 +9,7 @@ import { useCallRecordingTranscript } from 'src/front-components/hooks/use-call-
 import { type TranscriptEntry } from 'src/front-components/types/transcript-entry.type';
 import { formatTranscriptTimestamp } from 'src/front-components/utils/format-transcript-timestamp.util';
 import { parseTranscriptEntries } from 'src/front-components/utils/parse-transcript-entries.util';
-import { parseRecallTranscriptMarker } from 'src/logic-functions/domain/parse-recall-transcript-marker.util';
+import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
 // Theme values are interpolated lazily: the manifest build proxy-mocks twenty-sdk/ui, so module-scope nested access throws.
@@ -143,7 +143,7 @@ const CallRecordingTranscript = () => {
     );
   }
 
-  const marker = parseRecallTranscriptMarker(transcript);
+  const marker = parseTranscriptMarker(transcript);
 
   if (marker?.status === 'PENDING') {
     return (

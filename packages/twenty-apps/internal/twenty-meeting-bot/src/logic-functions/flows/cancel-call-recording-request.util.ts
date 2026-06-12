@@ -31,7 +31,7 @@ export const cancelCallRecordingRequest = async ({
 
   if (!cancelResult.ok) {
     console.warn(
-      `[recall-recording-bot] failed to cancel Recall bot for callRecording ${callRecording.id}, leaving it for the stale-state cron: ${cancelResult.errorMessage}`,
+      `[twenty-meeting-bot] failed to cancel Recall bot for callRecording ${callRecording.id}, leaving it for the stale-state cron: ${cancelResult.errorMessage}`,
     );
 
     return;

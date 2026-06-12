@@ -12,10 +12,10 @@ import {
 } from 'src/logic-functions/recall-api/extract-recall-bot-convergence.util';
 import { fetchAllNodes } from 'src/logic-functions/data/fetch-all-nodes.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
-import { ingestRecallMedia } from 'src/logic-functions/flows/ingest-recall-media.util';
+import { ingestCallRecordingMedia } from 'src/logic-functions/flows/ingest-call-recording-media.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
-import { requestRecallTranscript } from 'src/logic-functions/flows/request-recall-transcript.util';
+import { requestTranscript } from 'src/logic-functions/flows/request-transcript.util';
 import { shouldCompleteCallRecordingIngestion } from 'src/logic-functions/domain/should-complete-call-recording-ingestion.util';
 import {
   updateCallRecording,
@@ -78,7 +78,7 @@ export const convergeDivergedCallRecordings = async ({
   for (const candidate of candidates) {
     if (isOutsideConvergenceBound(candidate, convergenceLowerBound)) {
       console.warn(
-        `[recall-recording-bot] call recording ${candidate.id} diverged but its meeting ended more than ${CONVERGENCE_LOOKBACK_DAYS} days ago; it will not converge automatically`,
+        `[twenty-meeting-bot] call recording ${candidate.id} diverged but its meeting ended more than ${CONVERGENCE_LOOKBACK_DAYS} days ago; it will not converge automatically`,
       );
       result.unconvergeableCallRecordingIds.push(candidate.id);
       continue;
@@ -86,7 +86,7 @@ export const convergeDivergedCallRecordings = async ({
 
     if (isUndefined(candidate.externalBotId)) {
       console.warn(
-        `[recall-recording-bot] call recording ${candidate.id} diverged but has no Recall bot id; it will not converge automatically`,
+        `[twenty-meeting-bot] call recording ${candidate.id} diverged but has no Recall bot id; it will not converge automatically`,
       );
       result.unconvergeableCallRecordingIds.push(candidate.id);
       continue;
@@ -231,7 +231,7 @@ const convergeCallRecording = async ({
     }
 
     console.warn(
-      `[recall-recording-bot] failed to fetch Recall bot ${externalBotId} for call recording ${candidate.id}: ${botResult.errorMessage}`,
+      `[twenty-meeting-bot] failed to fetch Recall bot ${externalBotId} for call recording ${candidate.id}: ${botResult.errorMessage}`,
     );
 
     return;
@@ -245,7 +245,7 @@ const convergeCallRecording = async ({
 
   if (convergence.isRecallRecordingDone && !isUndefined(externalRecordingId)) {
     if (isUndefined(candidate.transcript)) {
-      const transcriptMarker = await requestRecallTranscript({
+      const transcriptMarker = await requestTranscript({
         externalRecordingId,
         requestedAt: now.toISOString(),
       });
@@ -263,7 +263,7 @@ const convergeCallRecording = async ({
 
     Object.assign(
       updateData,
-      await ingestRecallMedia({
+      await ingestCallRecordingMedia({
         callRecordingId: candidate.id,
         externalRecordingId,
         hasAudio: isNonEmptyArray(candidate.audio),
@@ -353,7 +353,7 @@ const markCallRecordingFailedAfterBotLoss = async ({
 }): Promise<void> => {
   // externalBotId is kept for audit even though the bot is gone at Recall.
   console.warn(
-    `[recall-recording-bot] Recall bot ${externalBotId} for call recording ${candidate.id} no longer exists; it will not converge automatically`,
+    `[twenty-meeting-bot] Recall bot ${externalBotId} for call recording ${candidate.id} no longer exists; it will not converge automatically`,
   );
 
   if (

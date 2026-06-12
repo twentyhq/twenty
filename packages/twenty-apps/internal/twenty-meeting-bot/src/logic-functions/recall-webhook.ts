@@ -13,7 +13,7 @@ import { verifyRecallWebhookSignature } from 'src/logic-functions/recall-api/ver
 
 // Non-2xx makes Svix retry; a returned plain object would 200-ack permanently.
 const rejectWebhook = (status: number, error: string): Response => {
-  console.error(`[recall-recording-bot] webhook rejected: ${error}`);
+  console.error(`[twenty-meeting-bot] webhook rejected: ${error}`);
 
   return new Response({ error }, { status });
 };

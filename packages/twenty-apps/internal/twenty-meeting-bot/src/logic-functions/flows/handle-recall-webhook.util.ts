@@ -3,13 +3,13 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
-import { buildFailedRecallTranscriptMarker } from 'src/logic-functions/domain/build-failed-recall-transcript-marker.util';
+import { buildFailedTranscriptMarker } from 'src/logic-functions/domain/build-failed-transcript-marker.util';
 import { chargeCompletedCallRecording } from 'src/logic-functions/flows/charge-completed-call-recording.util';
-import { downloadRecallTranscript } from 'src/logic-functions/flows/download-recall-transcript.util';
+import { downloadTranscript } from 'src/logic-functions/flows/download-transcript.util';
 import { extractRecallBotConvergence } from 'src/logic-functions/recall-api/extract-recall-bot-convergence.util';
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
-import { ingestRecallMedia } from 'src/logic-functions/flows/ingest-recall-media.util';
+import { ingestCallRecordingMedia } from 'src/logic-functions/flows/ingest-call-recording-media.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isRecallRecordingDoneSignal } from 'src/logic-functions/domain/is-recall-recording-done-signal.util';
 import { mapRecallStatusCodeToCallRecordingStatus } from 'src/logic-functions/domain/map-recall-status-code-to-call-recording-status.util';
@@ -18,8 +18,8 @@ import {
   type RecallWebhookBody,
   type RecallWebhookEvent,
 } from 'src/logic-functions/recall-api/parse-recall-webhook-event.util';
-import { parseRecallTranscriptMarker } from 'src/logic-functions/domain/parse-recall-transcript-marker.util';
-import { requestRecallTranscript } from 'src/logic-functions/flows/request-recall-transcript.util';
+import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
+import { requestTranscript } from 'src/logic-functions/flows/request-transcript.util';
 import { shouldCompleteCallRecordingIngestion } from 'src/logic-functions/domain/should-complete-call-recording-ingestion.util';
 import {
   updateCallRecording,
@@ -338,13 +338,13 @@ const buildMediaIngestionUpdate = async ({
 
   if (isUndefined(externalRecordingId)) {
     console.warn(
-      `[recall-recording-bot] cannot ingest media for call recording ${callRecording.id}: no Recall recording id available`,
+      `[twenty-meeting-bot] cannot ingest media for call recording ${callRecording.id}: no Recall recording id available`,
     );
 
     return {};
   }
 
-  return ingestRecallMedia({
+  return ingestCallRecordingMedia({
     callRecordingId: callRecording.id,
     externalRecordingId,
     hasAudio,
@@ -366,13 +366,13 @@ const buildTranscriptRequestUpdate = async ({
 
   if (isUndefined(externalRecordingId)) {
     console.warn(
-      `[recall-recording-bot] cannot request transcript for call recording ${callRecording.id}: no Recall recording id available`,
+      `[twenty-meeting-bot] cannot request transcript for call recording ${callRecording.id}: no Recall recording id available`,
     );
 
     return {};
   }
 
-  const transcriptMarker = await requestRecallTranscript({
+  const transcriptMarker = await requestTranscript({
     externalRecordingId,
     requestedAt: new Date().toISOString(),
   });
@@ -408,7 +408,7 @@ const fetchExternalRecordingIdFromRecallBot = async (
 
   if (!botResult.ok) {
     console.warn(
-      `[recall-recording-bot] failed to fetch Recall bot ${externalBotId} while resolving a recording id: ${botResult.errorMessage}`,
+      `[twenty-meeting-bot] failed to fetch Recall bot ${externalBotId} while resolving a recording id: ${botResult.errorMessage}`,
     );
 
     return undefined;
@@ -442,7 +442,7 @@ const handleRecallTranscriptEvent = async ({
   const { transcriptId } = webhookEvent;
 
   if (event === 'transcript.failed') {
-    return applyRecallTranscriptFailure({
+    return applyTranscriptFailure({
       client,
       callRecording,
       event,
@@ -459,7 +459,7 @@ const handleRecallTranscriptEvent = async ({
     };
   }
 
-  const downloadResult = await downloadRecallTranscript({ transcriptId });
+  const downloadResult = await downloadTranscript({ transcriptId });
 
   switch (downloadResult.outcome) {
     case 'filled': {
@@ -499,7 +499,7 @@ const handleRecallTranscriptEvent = async ({
       };
     }
     case 'failed':
-      return applyRecallTranscriptFailure({
+      return applyTranscriptFailure({
         client,
         callRecording,
         event,
@@ -515,7 +515,7 @@ const handleRecallTranscriptEvent = async ({
           : downloadResult.errorMessage;
 
       console.warn(
-        `[recall-recording-bot] could not fill transcript for call recording ${callRecording.id}: ${reason}`,
+        `[twenty-meeting-bot] could not fill transcript for call recording ${callRecording.id}: ${reason}`,
       );
 
       return {
@@ -527,7 +527,7 @@ const handleRecallTranscriptEvent = async ({
   }
 };
 
-const applyRecallTranscriptFailure = async ({
+const applyTranscriptFailure = async ({
   client,
   callRecording,
   event,
@@ -540,7 +540,7 @@ const applyRecallTranscriptFailure = async ({
   transcriptId: string | undefined;
   subCode: string | null;
 }): Promise<RecallWebhookHandlerResult> => {
-  const existingMarker = parseRecallTranscriptMarker(callRecording.transcript);
+  const existingMarker = parseTranscriptMarker(callRecording.transcript);
 
   if (!isTranscriptUnset(callRecording) && isUndefined(existingMarker)) {
     return {
@@ -551,13 +551,13 @@ const applyRecallTranscriptFailure = async ({
   }
 
   console.warn(
-    `[recall-recording-bot] transcript failed for call recording ${callRecording.id}${isNull(subCode) ? '' : ` (${subCode})`}`,
+    `[twenty-meeting-bot] transcript failed for call recording ${callRecording.id}${isNull(subCode) ? '' : ` (${subCode})`}`,
   );
 
   await updateCallRecording(client, {
     id: callRecording.id,
     data: {
-      transcript: buildFailedRecallTranscriptMarker({
+      transcript: buildFailedTranscriptMarker({
         recallTranscriptId:
           transcriptId ?? existingMarker?.recallTranscriptId ?? null,
         subCode,

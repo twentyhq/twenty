@@ -5,7 +5,7 @@ import { convergeDivergedCallRecordings } from 'src/logic-functions/flows/conver
 
 const getRecallBotMock = vi.hoisted(() => vi.fn());
 const createAsyncRecallTranscriptMock = vi.hoisted(() => vi.fn());
-const ingestRecallMediaMock = vi.hoisted(() => vi.fn());
+const ingestCallRecordingMediaMock = vi.hoisted(() => vi.fn());
 const chargeCompletedCallRecordingMock = vi.hoisted(() => vi.fn());
 
 vi.mock('src/logic-functions/recall-api/get-recall-bot.util', () => ({
@@ -19,8 +19,8 @@ vi.mock(
   }),
 );
 
-vi.mock('src/logic-functions/flows/ingest-recall-media.util', () => ({
-  ingestRecallMedia: ingestRecallMediaMock,
+vi.mock('src/logic-functions/flows/ingest-call-recording-media.util', () => ({
+  ingestCallRecordingMedia: ingestCallRecordingMediaMock,
 }));
 
 vi.mock(
@@ -86,8 +86,8 @@ describe('convergeDivergedCallRecordings', () => {
       ok: true,
       transcriptId: 'recall-transcript-1',
     });
-    ingestRecallMediaMock.mockReset();
-    ingestRecallMediaMock.mockResolvedValue({});
+    ingestCallRecordingMediaMock.mockReset();
+    ingestCallRecordingMediaMock.mockResolvedValue({});
     chargeCompletedCallRecordingMock.mockReset();
     chargeCompletedCallRecordingMock.mockResolvedValue(undefined);
   });
@@ -120,7 +120,7 @@ describe('convergeDivergedCallRecordings', () => {
     expect(getRecallBotMock).toHaveBeenCalledWith({
       externalBotId: 'recall-bot-1',
     });
-    expect(ingestRecallMediaMock).toHaveBeenCalledWith({
+    expect(ingestCallRecordingMediaMock).toHaveBeenCalledWith({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: false,
@@ -178,7 +178,7 @@ describe('convergeDivergedCallRecordings', () => {
         ],
       },
     });
-    ingestRecallMediaMock.mockResolvedValue({
+    ingestCallRecordingMediaMock.mockResolvedValue({
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
       video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
     });

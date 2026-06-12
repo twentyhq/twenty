@@ -1,0 +1,1 @@
+export const MEETING_BOT_AUTO_RECORD_JOIN_GRACE_MS = 10 * 60 * 1000;

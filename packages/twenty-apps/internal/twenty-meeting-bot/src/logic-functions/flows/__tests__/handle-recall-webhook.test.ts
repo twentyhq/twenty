@@ -6,7 +6,7 @@ import { handleRecallWebhook } from 'src/logic-functions/flows/handle-recall-web
 const getRecallBotMock = vi.hoisted(() => vi.fn());
 const createAsyncRecallTranscriptMock = vi.hoisted(() => vi.fn());
 const retrieveRecallTranscriptMock = vi.hoisted(() => vi.fn());
-const ingestRecallMediaMock = vi.hoisted(() => vi.fn());
+const ingestCallRecordingMediaMock = vi.hoisted(() => vi.fn());
 const chargeCompletedCallRecordingMock = vi.hoisted(() => vi.fn());
 
 vi.mock('src/logic-functions/recall-api/get-recall-bot.util', () => ({
@@ -27,8 +27,8 @@ vi.mock(
   }),
 );
 
-vi.mock('src/logic-functions/flows/ingest-recall-media.util', () => ({
-  ingestRecallMedia: ingestRecallMediaMock,
+vi.mock('src/logic-functions/flows/ingest-call-recording-media.util', () => ({
+  ingestCallRecordingMedia: ingestCallRecordingMediaMock,
 }));
 
 vi.mock(
@@ -131,8 +131,8 @@ describe('handleRecallWebhook', () => {
       status: null,
       errorMessage: 'transcript retrieval disabled in test',
     });
-    ingestRecallMediaMock.mockReset();
-    ingestRecallMediaMock.mockResolvedValue({});
+    ingestCallRecordingMediaMock.mockReset();
+    ingestCallRecordingMediaMock.mockResolvedValue({});
     chargeCompletedCallRecordingMock.mockReset();
     chargeCompletedCallRecordingMock.mockResolvedValue(undefined);
   });
@@ -869,7 +869,7 @@ describe('handleRecallWebhook', () => {
       ok: true,
       bot: { id: 'recall-bot-1' },
     });
-    ingestRecallMediaMock.mockResolvedValue({
+    ingestCallRecordingMediaMock.mockResolvedValue({
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
       video: [{ fileId: 'file-video-1', label: 'video.mp4' }],
     });
@@ -898,7 +898,7 @@ describe('handleRecallWebhook', () => {
       },
     });
 
-    expect(ingestRecallMediaMock).toHaveBeenCalledWith({
+    expect(ingestCallRecordingMediaMock).toHaveBeenCalledWith({
       callRecordingId: 'call-recording-1',
       externalRecordingId: 'recall-recording-1',
       hasAudio: false,
@@ -928,7 +928,7 @@ describe('handleRecallWebhook', () => {
       ok: true,
       bot: { id: 'recall-bot-1' },
     });
-    ingestRecallMediaMock.mockResolvedValue({
+    ingestCallRecordingMediaMock.mockResolvedValue({
       audio: [{ fileId: 'file-audio-1', label: 'audio.mp3' }],
     });
     createAsyncRecallTranscriptMock.mockResolvedValue({

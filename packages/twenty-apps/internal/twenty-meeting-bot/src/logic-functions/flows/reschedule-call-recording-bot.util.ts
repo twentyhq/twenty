@@ -47,6 +47,6 @@ export const rescheduleCallRecordingBot = async (
   }
 
   console.warn(
-    `[recall-recording-bot] failed to update Recall bot for callRecording ${callRecording.id}: ${rescheduleResult.errorMessage}`,
+    `[twenty-meeting-bot] failed to update Recall bot for callRecording ${callRecording.id}: ${rescheduleResult.errorMessage}`,
   );
 };

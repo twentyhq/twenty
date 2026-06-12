@@ -1,5 +1,5 @@
-import { type RecallRecordingBotPolicyCalendarEventInput } from 'src/logic-functions/types/recall-recording-bot-policy-calendar-event-input.type';
+import { type MeetingBotPolicyCalendarEventInput } from 'src/logic-functions/types/meeting-bot-policy-calendar-event-input.type';
 
-export type CalendarEventRecord = RecallRecordingBotPolicyCalendarEventInput & {
+export type CalendarEventRecord = MeetingBotPolicyCalendarEventInput & {
   title: string | undefined;
 };

@@ -10,10 +10,10 @@ the meeting bot should attend a calendar event.
 ## What this app adds
 
 - `WorkspaceMember.meetingBotAutoRecordEnabled`, an app-owned per-user boolean that
-  auto-records the member's upcoming meetings with a conference link, plus a
-  settings front component exposing the toggle in the app settings page.
-- `CalendarEvent.meetingBotPreference`, an app-owned nullable select
-  override with `ON` and `OFF`; when empty, participating members'
+  auto-records the member's upcoming meetings with a conference link; the toggle
+  surfaces on the core calendar settings page.
+- `CalendarEvent.meetingBotPreference`, an app-owned per-event select with
+  `AUTO`, `ON`, and `OFF` (default `AUTO`); on `AUTO`, participating members'
   auto-record settings decide.
 - Focused role permissions for reading calendar events, participants, calendar
   associations, workspace members, and reconciling `CallRecording` records.
@@ -39,11 +39,8 @@ Server variables, set by the server admin on the application registration
 - `RECALL_WEBHOOK_SECRET` - signing secret from the Recall webhook endpoint.
 - `RECALL_REGION` - Recall region for API calls. Asia Pacific Tokyo is
   `ap-northeast-1`.
-
-Application variables, set per workspace in the app settings:
-
-- `RECALL_RECORDING_BOT_ENABLED` - workspace opt-in toggle, `false` by default.
-- `RECALL_BOT_NAME` - optional display name for scheduled bots.
+- `RECALL_BOT_NAME` - optional display name for scheduled bots, defaults to
+  `Twenty Meeting Bot`.
 
 Configure the Recall webhook URL as
 `https://<public-twenty-backend>/s/webhook/recall`. For local QA, expose the

@@ -1,7 +1,7 @@
 import { isNonEmptyArray, isNull, isUndefined } from '@sniptt/guards';
 
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
-import { parseRecallTranscriptMarker } from 'src/logic-functions/domain/parse-recall-transcript-marker.util';
+import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 
 export const isCallRecordingIngestionComplete = ({
   transcript,
@@ -15,6 +15,6 @@ export const isCallRecordingIngestionComplete = ({
   // RAW_JSON can hold a literal JSON null; both nullish forms mean "no transcript".
   !isNull(transcript) &&
   !isUndefined(transcript) &&
-  isUndefined(parseRecallTranscriptMarker(transcript)) &&
+  isUndefined(parseTranscriptMarker(transcript)) &&
   isNonEmptyArray(audio) &&
   isNonEmptyArray(video);

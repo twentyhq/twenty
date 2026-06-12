@@ -8,7 +8,7 @@ import { MEETING_BOT_PREFERENCE_AUTO_OPTION_ID } from 'src/constants/meeting-bot
 import { MEETING_BOT_PREFERENCE_OFF_OPTION_ID } from 'src/constants/meeting-bot-preference-off-option-id';
 import { MEETING_BOT_PREFERENCE_ON_CALENDAR_EVENT_FIELD_UNIVERSAL_IDENTIFIER } from 'src/constants/meeting-bot-preference-on-calendar-event-field-universal-identifier';
 import { MEETING_BOT_PREFERENCE_ON_OPTION_ID } from 'src/constants/meeting-bot-preference-on-option-id';
-import { RecallRecordingBotPreference } from 'src/logic-functions/constants/recall-recording-bot-preference';
+import { MeetingBotPreference } from 'src/logic-functions/constants/meeting-bot-preference';
 
 export default defineField({
   universalIdentifier:
@@ -33,14 +33,14 @@ export default defineField({
     },
     {
       id: MEETING_BOT_PREFERENCE_ON_OPTION_ID,
-      value: RecallRecordingBotPreference.ON,
+      value: MeetingBotPreference.ON,
       label: 'Recording on',
       position: 1,
       color: 'green',
     },
     {
       id: MEETING_BOT_PREFERENCE_OFF_OPTION_ID,
-      value: RecallRecordingBotPreference.OFF,
+      value: MeetingBotPreference.OFF,
       label: 'Recording off',
       position: 2,
       color: 'red',
