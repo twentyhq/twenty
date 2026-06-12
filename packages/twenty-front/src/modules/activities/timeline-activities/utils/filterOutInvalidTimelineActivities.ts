@@ -13,26 +13,33 @@ export const filterOutInvalidTimelineActivities = (
       objectMetadataItem.nameSingular === mainObjectSingularName,
   );
 
-  if (!mainObjectMetadataItem) {
+  if (!isDefined(mainObjectMetadataItem)) {
     throw new Error('Object metadata item not found');
   }
 
   return timelineActivities.filter((timelineActivity) => {
     const [objectName, action] = timelineActivity.name.split('.');
+    const diff = timelineActivity.properties?.diff;
 
     const shouldContainDiff =
       action === 'updated' && !objectName.startsWith('linked-');
 
-    if (!shouldContainDiff) {
-      return true;
+    if (!isDefined(diff)) {
+      return !shouldContainDiff;
     }
 
-    const validDiffEntries = Object.entries(
-      timelineActivity.properties?.diff ?? {},
-    ).filter(([diffKey]) =>
+    const diffObjectMetadataItem = objectName.startsWith('linked-')
+      ? objectMetadataItems.find(
+          (objectMetadataItem) =>
+            objectMetadataItem.nameSingular ===
+            objectName.replace('linked-', ''),
+        )
+      : mainObjectMetadataItem;
+
+    const validDiffEntries = Object.entries(diff).filter(([diffKey]) =>
       isDefined(
         findFieldMetadataItemByDiffKey(
-          mainObjectMetadataItem.readableFields,
+          diffObjectMetadataItem?.readableFields ?? [],
           diffKey,
         ),
       ),

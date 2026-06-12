@@ -10,9 +10,16 @@ const mainObjectMetadataItem = {
   updatableFields: [{ name: 'field1' }, { name: 'field2' }, { name: 'field3' }],
 } as EnrichedObjectMetadataItem;
 
+const noteObjectMetadataItem = {
+  nameSingular: 'note',
+  namePlural: 'notes',
+  readableFields: [{ name: 'title' }, { name: 'body' }],
+} as EnrichedObjectMetadataItem;
+
 const filter = (events: TimelineActivity[]) =>
   filterOutInvalidTimelineActivities(events, 'company', [
     mainObjectMetadataItem,
+    noteObjectMetadataItem,
   ]);
 
 describe('filterOutInvalidTimelineActivities', () => {
@@ -99,5 +106,40 @@ describe('filterOutInvalidTimelineActivities', () => {
     ] as TimelineActivity[];
 
     expect(filter(events)).toEqual(events);
+  });
+
+  it('validates linked note diffs against the note readable fields', () => {
+    const events = [
+      {
+        id: '1',
+        name: 'linked-note.updated',
+        properties: {
+          diff: {
+            title: { before: 'a', after: 'b' },
+            field1: { before: 'c', after: 'd' },
+          },
+        },
+      },
+    ] as TimelineActivity[];
+
+    expect(filter(events)).toEqual([
+      {
+        id: '1',
+        name: 'linked-note.updated',
+        properties: { diff: { title: { before: 'a', after: 'b' } } },
+      },
+    ]);
+  });
+
+  it('drops linked note updates whose diff has no readable note fields', () => {
+    const events = [
+      {
+        id: '1',
+        name: 'linked-note.updated',
+        properties: { diff: { field1: { before: 'c', after: 'd' } } },
+      },
+    ] as TimelineActivity[];
+
+    expect(filter(events)).toEqual([]);
   });
 });
