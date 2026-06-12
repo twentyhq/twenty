@@ -5,7 +5,7 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 
 // Per-channel allowlist of provider-side event categories (e.g. Outlook
 // categories); empty means every event is synced.
-@RegisteredInstanceCommand('2.12.0', 1781209671012)
+@RegisteredInstanceCommand('2.13.0', 1781209671012)
 export class AddSyncedCategoriesToCalendarChannelFastInstanceCommand
   implements FastInstanceCommand
 {
