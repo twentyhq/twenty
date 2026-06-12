@@ -1,6 +1,5 @@
 import { msg } from '@lingui/core/macro';
 import { Injectable, Logger } from '@nestjs/common';
-import { isNonEmptyString } from '@sniptt/guards';
 import { type ActorMetadata } from 'twenty-shared/types';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -40,6 +39,7 @@ import {
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { assertVersionCanBeActivated } from 'src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util';
 import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
+import { getWorkflowCommandMenuItemLabel } from 'src/modules/workflow/workflow-trigger/utils/get-workflow-command-menu-item-label.util';
 import { assertNever } from 'src/utils/assert';
 
 @Injectable()
@@ -406,9 +406,7 @@ export class WorkflowTriggerWorkspaceService {
     const { availabilityType, availabilityObjectMetadataId } =
       await this.resolveManualTriggerAvailability(trigger, workspaceId);
 
-    const label = isNonEmptyString(workflow.name)
-      ? workflow.name
-      : 'Manual Trigger';
+    const label = getWorkflowCommandMenuItemLabel(workflow);
 
     const existingCommandMenuItem =
       await this.commandMenuItemService.findByWorkflowVersionId(
