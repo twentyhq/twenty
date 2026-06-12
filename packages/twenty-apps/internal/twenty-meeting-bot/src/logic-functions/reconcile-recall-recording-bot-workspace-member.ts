@@ -103,7 +103,7 @@ export default defineLogicFunction({
     WORKSPACE_MEMBER_RECONCILIATION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'reconcile-recall-recording-bot-workspace-member',
   description:
-    'Reconciles app-managed Recall bot recording requests when a workspace member auto-record setting changes.',
+    'Reconciles app-managed Recall bot recording requests when a workspace member auto-record setting changes or the member is deleted.',
   timeoutSeconds: 60,
   handler: reconcileRecallRecordingBotWorkspaceMemberHandler,
   databaseEventTriggerSettings: {

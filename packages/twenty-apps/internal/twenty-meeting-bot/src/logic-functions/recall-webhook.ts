@@ -66,9 +66,9 @@ export const recallWebhookRouteHandler = async (
 
 export default defineLogicFunction({
   universalIdentifier: RECALL_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-  name: 'recall-recording-bot-webhook',
+  name: 'recall-webhook',
   description:
-    'Receives Recall.ai webhook events and updates matching CallRecording records.',
+    'Receives Recall.ai webhook events and converges the matching CallRecording: status changes, transcript request and fill, media ingestion, and the completion charge.',
   // recording.done ingests audio and video inline; transfers dominate the budget.
   timeoutSeconds: 300,
   handler: recallWebhookRouteHandler,
