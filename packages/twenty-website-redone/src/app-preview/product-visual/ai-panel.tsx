@@ -249,12 +249,16 @@ const SendButton = styled.span`
 // by the playback layer), the streamed answer with entity chips, and the
 // composer chrome. Mock copy is product-screenshot fiction (English).
 export function AiPanel({
+  activeStepIndex = -1,
+  completedStepCount = 0,
   panelOnly = false,
   scene,
   stepsSlot = null,
   streamComplete = false,
   streamedTextVisibleLength = 0,
 }: {
+  activeStepIndex?: number;
+  completedStepCount?: number;
   panelOnly?: boolean;
   scene: ProductVisualSceneDefinition;
   stepsSlot?: ReactNode;
@@ -292,7 +296,7 @@ export function AiPanel({
     if (messages) {
       messages.scrollTop = messages.scrollHeight;
     }
-  }, [stepsSlot, streamedTextVisibleLength]);
+  }, [activeStepIndex, completedStepCount, streamedTextVisibleLength]);
 
   return (
     <PanelShell $panelOnly={panelOnly}>
