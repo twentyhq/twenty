@@ -479,7 +479,8 @@ type Field {
   isCustom: Boolean @deprecated(reason: "isCustom is derived from the owning application and will be removed; a field is custom when it does not belong to the twenty-standard application.")
   isActive: Boolean
   isSystem: Boolean
-  isUIReadOnly: Boolean
+  isUIEditable: Boolean
+  isUIReadOnly: Boolean @deprecated(reason: "Use isUIEditable")
   isNullable: Boolean
   isUnique: Boolean
   defaultValue: JSON
@@ -590,7 +591,8 @@ input ObjectFilter {
   isRemote: BooleanFieldComparison
   isActive: BooleanFieldComparison
   isSystem: BooleanFieldComparison
-  isUIReadOnly: BooleanFieldComparison
+  isUIEditable: BooleanFieldComparison
+  isUICreatable: BooleanFieldComparison
   isSearchable: BooleanFieldComparison
 }
 
@@ -648,7 +650,9 @@ type Object {
   isRemote: Boolean!
   isActive: Boolean!
   isSystem: Boolean!
-  isUIReadOnly: Boolean!
+  isUIEditable: Boolean!
+  isUICreatable: Boolean!
+  isUIReadOnly: Boolean! @deprecated(reason: "Use isUIEditable")
   isSearchable: Boolean!
   applicationId: UUID!
   createdAt: DateTime!
@@ -681,7 +685,7 @@ input FieldFilter {
   id: UUIDFilterComparison
   isActive: BooleanFieldComparison
   isSystem: BooleanFieldComparison
-  isUIReadOnly: BooleanFieldComparison
+  isUIEditable: BooleanFieldComparison
   objectMetadataId: UUIDFilterComparison
 }
 
@@ -4150,7 +4154,7 @@ input CreateFieldInput {
   isCustom: Boolean
   isActive: Boolean
   isSystem: Boolean
-  isUIReadOnly: Boolean
+  isUIEditable: Boolean
   isNullable: Boolean
   isUnique: Boolean
   defaultValue: JSON
@@ -4179,7 +4183,7 @@ input UpdateFieldInput {
   icon: String
   isActive: Boolean
   isSystem: Boolean
-  isUIReadOnly: Boolean
+  isUIEditable: Boolean
   isNullable: Boolean
   isUnique: Boolean
   defaultValue: JSON

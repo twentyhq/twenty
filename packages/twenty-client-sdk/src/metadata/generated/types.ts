@@ -916,6 +916,9 @@ export default {
             "isSystem": [
                 6
             ],
+            "isUIEditable": [
+                6
+            ],
             "isUIReadOnly": [
                 6
             ],
@@ -1085,7 +1088,10 @@ export default {
             "isSystem": [
                 53
             ],
-            "isUIReadOnly": [
+            "isUIEditable": [
+                53
+            ],
+            "isUICreatable": [
                 53
             ],
             "isSearchable": [
@@ -1239,6 +1245,12 @@ export default {
             "isSystem": [
                 6
             ],
+            "isUIEditable": [
+                6
+            ],
+            "isUICreatable": [
+                6
+            ],
             "isUIReadOnly": [
                 6
             ],
@@ -1318,7 +1330,7 @@ export default {
             "isSystem": [
                 53
             ],
-            "isUIReadOnly": [
+            "isUIEditable": [
                 53
             ],
             "objectMetadataId": [
@@ -10589,7 +10601,7 @@ export default {
             "isSystem": [
                 6
             ],
-            "isUIReadOnly": [
+            "isUIEditable": [
                 6
             ],
             "isNullable": [
@@ -10659,7 +10671,7 @@ export default {
             "isSystem": [
                 6
             ],
-            "isUIReadOnly": [
+            "isUIEditable": [
                 6
             ],
             "isNullable": [

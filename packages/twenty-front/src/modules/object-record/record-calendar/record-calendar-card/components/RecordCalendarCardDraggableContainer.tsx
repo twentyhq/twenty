@@ -45,7 +45,7 @@ export const RecordCalendarCardDraggableContainer = ({
   );
 
   const calendarFieldMetadataItemIsUIReadOnly =
-    calendarFieldMetadataItem?.isUIReadOnly === true;
+    calendarFieldMetadataItem?.isUIEditable === false;
 
   const calendarFieldMetadataItemIsRestrictedForUpdate = isDefined(
     calendarFieldMetadataItem,
