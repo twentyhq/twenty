@@ -189,10 +189,138 @@ export type DashboardPageDefinition = {
   type: 'dashboard';
 };
 
-// The record surface belongs to the product-page family (out of wave).
-export type PendingPageDefinition = {
+export type RecordFieldValue =
+  | CellBoolean
+  | CellCurrency
+  | CellLink
+  | CellPerson
+  | CellSelect
+  | CellText;
+
+export type RecordField = {
+  icon?: string;
+  label: string;
+  value: RecordFieldValue;
+};
+
+export type RecordRelation = {
+  avatarUrl?: string;
+  domain?: string;
+  highlighted?: boolean;
+  icon?: SidebarIcon;
+  name: string;
+};
+
+export type RecordNote = {
+  id: string;
+  title: string;
+  body: string;
+  highlighted?: boolean;
+  relation?: { avatarUrl?: string; name: string };
+};
+
+export type TimelineFieldDiff = {
+  label: string;
+  value: RecordFieldValue;
+};
+
+export type TimelineEvent =
+  | {
+      kind: 'created';
+      id: string;
+      subject: string;
+      actor: string;
+      time: string;
+    }
+  | {
+      kind: 'updated';
+      id: string;
+      actor: string;
+      record: string;
+      time: string;
+      diffs: TimelineFieldDiff[];
+    }
+  | { kind: 'note'; id: string; actor: string; title: string; time: string }
+  | {
+      kind: 'calendar';
+      id: string;
+      actor: string;
+      title: string;
+      detail: string;
+      time: string;
+    };
+
+export type RecordParticipant = {
+  name: string;
+  avatarUrl?: string;
+  tone?: string;
+};
+
+export type RecordActivityTarget = RecordParticipant & { domain?: string };
+
+export type RecordTask = {
+  id: string;
+  title: string;
+  body: string;
+  due: string;
+  done?: boolean;
+  target: RecordActivityTarget;
+};
+
+export type RecordFile = {
+  id: string;
+  name: string;
+  category: 'pdf' | 'sheet' | 'doc' | 'other';
+  date: string;
+};
+
+export type RecordEmail = {
+  id: string;
+  participants: RecordParticipant[];
+  count: number;
+  subject: string;
+  body: string;
+  date: string;
+};
+
+export type RecordCalendarEvent = {
+  id: string;
+  start: string;
+  end: string;
+  title: string;
+  attending?: boolean;
+  participants: RecordParticipant[];
+};
+
+export type RecordCalendarDay = {
+  id: string;
+  weekday: string;
+  day: string;
+  events: RecordCalendarEvent[];
+};
+
+export type RecordPageDefinition = {
   type: 'record';
+  activeTabLabel?: string;
   header: PageHeader;
+  record: {
+    logoDomain?: string;
+    name: string;
+    createdAt: string;
+    fields: RecordField[];
+    moreCount?: number;
+    relations: {
+      title: string;
+      count?: number;
+      items: RecordRelation[];
+    }[];
+  };
+  notes: RecordNote[];
+  timeline?: TimelineEvent[];
+  tasks?: RecordTask[];
+  files?: RecordFile[];
+  emails?: RecordEmail[];
+  calendar?: RecordCalendarDay[];
 };
 
 export type PageDefinition =
@@ -200,7 +328,7 @@ export type PageDefinition =
   | KanbanPageDefinition
   | WorkflowPageDefinition
   | DashboardPageDefinition
-  | PendingPageDefinition;
+  | RecordPageDefinition;
 export type PageType = PageDefinition['type'];
 
 export type SidebarIcon =

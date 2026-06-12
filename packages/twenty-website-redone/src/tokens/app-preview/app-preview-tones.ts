@@ -63,6 +63,13 @@ const KANBAN_LANE: Record<string, TonePair> = {
   purple: { background: '#ede9fe', color: '#8e4ec6' },
 };
 
+// The record page's file-chip ink for spreadsheets (authored; documents
+// reuse the product accent).
+const RECORD_FILE_SHEET_INK = '#12a594';
+
+// The lift shadow under a scenario-highlighted note card (authored).
+const RECORD_NOTE_HIGHLIGHT_SHADOW = '0 4px 14px rgba(0, 0, 0, 0.06)';
+
 // The named-workflow avatar ink (authored data color).
 const WORKFLOW_AVATAR_INK = '#451E11';
 
@@ -241,6 +248,8 @@ export const APP_PREVIEW_TONES = {
   workflowCanvas: WORKFLOW_CANVAS,
   workflowAvatarInk: WORKFLOW_AVATAR_INK,
   kanbanLane: KANBAN_LANE,
+  recordFileSheetInk: RECORD_FILE_SHEET_INK,
+  recordNoteHighlightShadow: RECORD_NOTE_HIGHLIGHT_SHADOW,
   sidebar: SIDEBAR,
   person: PERSON,
   tag: TAG,

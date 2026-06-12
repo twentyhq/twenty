@@ -12,6 +12,7 @@ import dynamic from 'next/dynamic';
 
 import { APP_PREVIEW_CONFIG } from './data/sidebar-config';
 import { KanbanPage } from './pages/kanban/kanban-page';
+import { RecordPage } from './pages/record/record-page';
 import { TablePage } from './pages/table/table-page';
 import { WorkflowPage } from './pages/workflow/workflow-page';
 
@@ -92,7 +93,8 @@ function renderPage(page: PageDefinition) {
       return <WorkflowPage page={page} />;
     case 'dashboard':
       return <DashboardPage page={page} />;
-    // The record surface belongs to the product-page family (out of wave).
+    case 'record':
+      return <RecordPage page={page} />;
     default:
       return null;
   }
