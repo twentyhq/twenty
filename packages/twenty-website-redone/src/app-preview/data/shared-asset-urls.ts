@@ -29,7 +29,9 @@ const COMPANY_LOGOS_BY_DOMAIN: Record<string, string> = {
   'linear.app': '/images/shared/companies/logos/linear.svg',
   'sequoia.com': '/images/shared/companies/logos/sequoia.webp',
   'sequoiacap.com': '/images/shared/companies/logos/sequoia.webp',
-  'twenty.com': '/images/shared/companies/logos/twenty.webp',
+  // Exported from src/icons/twenty-logo.tsx (the data layer loads
+  // brand images by URL; the component stays the vector's home).
+  'twenty.com': '/images/shared/companies/logos/twenty.svg',
   'anthropic.com': '/images/shared/companies/logos/anthropic.webp',
   'figma.com': '/images/shared/companies/logos/figma.webp',
   'github.com': '/images/shared/companies/logos/github.webp',

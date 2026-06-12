@@ -66,6 +66,19 @@ const EXTERNAL_LINK_OWNERS = new Set([
   'src/ui/external-link.tsx',
   'src/ui/button.tsx',
 ]);
+
+// Owned vector glyphs are React components in src/icons — never .svg
+// files in public/. Files here are third-party brand assets the site can
+// only serve by URL (plus twenty.svg, the data layer's static export of
+// src/icons/twenty-logo.tsx for the mockup's brand-image-by-URL path).
+const PUBLIC_SVG_BRAND_FILES = new Set([
+  'public/images/logo-bar/otiima.svg',
+  'public/images/logo-bar/civicactions.svg',
+  'public/images/logo-bar/fora.svg',
+  'public/images/logo-bar/wazoku.svg',
+  'public/images/shared/companies/logos/linear.svg',
+  'public/images/shared/companies/logos/twenty.svg',
+]);
 const LITERAL_PATTERNS = [
   [/#[0-9a-fA-F]{3,8}\b/, 'hex color literal'],
   [/rgba?\(/, 'rgb/rgba literal'],
@@ -271,6 +284,25 @@ function walk(directory) {
 }
 
 walk(sourceRoot);
+
+// Public SVG audit: any .svg outside the brand-file allowlist means an
+// owned glyph leaked out of src/icons.
+const publicSvgs = [];
+const walkPublic = (dir) => {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) walkPublic(fullPath);
+    else if (entry.name.endsWith('.svg')) publicSvgs.push(fullPath);
+  }
+};
+walkPublic('public');
+for (const svgPath of publicSvgs) {
+  if (!PUBLIC_SVG_BRAND_FILES.has(svgPath)) {
+    failures.push(
+      `${svgPath}: owned vector glyphs are components in src/icons — public/ svg files are third-party brand assets only (or add to PUBLIC_SVG_BRAND_FILES with a reason).`,
+    );
+  }
+}
 
 if (failures.length > 0) {
   console.error('check-conventions: FAILED');

@@ -1,12 +1,12 @@
-import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
+import { ICON_INKS } from '@/tokens';
 
-// The Claude brand asterisk on the Ask-AI model chip (authored artwork,
-// ported verbatim from the old ProductVisual).
+// The Claude brand asterisk (authored artwork, ported verbatim from the
+// old ProductVisual; also the terminal toggle's segment icon).
 export function ClaudeMark({ sizePx = 12 }: { sizePx?: number }) {
   return (
     <svg
       aria-hidden
-      fill={APP_PREVIEW_TONES.productVisual.claudeMarkInk}
+      fill={ICON_INKS.claude}
       height={sizePx}
       viewBox="0 0 24 24"
       width={sizePx}

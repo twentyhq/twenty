@@ -69,7 +69,6 @@ const PRODUCT_VISUAL = {
   userMessageBackground: '#f1f1f1',
   entityChipBackground: 'rgba(0, 0, 0, 0.04)',
   inputBoxBackground: 'rgba(0, 0, 0, 0.02)',
-  claudeMarkInk: '#D97757',
   cursorLabelInk: '#1f1f1f',
   heroCursorInks: {
     alice: '#ffb08d',

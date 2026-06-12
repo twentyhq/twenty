@@ -1,9 +1,12 @@
+export { AppleRainbowMark } from './apple-rainbow-mark';
 export { ArrowLeft, type ArrowLeftProps } from './arrow-left';
 export { ArrowRight, type ArrowRightProps } from './arrow-right';
 export { ArrowUpRight, type ArrowUpRightProps } from './arrow-up-right';
+export { ClaudeMark } from './claude-mark';
 export { DiscordMark, type DiscordMarkProps } from './discord-mark';
 export { FastPathIcon, type FastPathIconProps } from './fast-path';
 export { MarkerCursor, type MarkerCursorProps } from './marker-cursor';
+export { PeopleGroupMark } from './people-group-mark';
 export { GitHubMark, type GitHubMarkProps } from './github-mark';
 export { LiveDataIcon, type LiveDataIconProps } from './live-data';
 export { MinusMark, type MinusMarkProps } from './minus-mark';

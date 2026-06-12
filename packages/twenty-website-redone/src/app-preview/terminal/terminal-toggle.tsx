@@ -7,7 +7,7 @@ import { styled } from '@linaria/react';
 import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
-import { ClaudeLogo } from './claude-logo';
+import { ClaudeMark } from '@/icons';
 import { type TerminalView } from './conversation-core';
 import { CursorLogo } from './cursor-logo';
 
@@ -148,7 +148,7 @@ export function TerminalToggle({
         type="button"
       >
         <SegmentIconWrap>
-          <ClaudeLogo size={14} />
+          <ClaudeMark sizePx={14} />
         </SegmentIconWrap>
         AI Chat
       </SegmentButton>

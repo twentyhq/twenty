@@ -13,7 +13,7 @@ import { Fragment, useEffect, useRef, type ReactNode } from 'react';
 import { APP_PREVIEW_THEME as theme } from '@/tokens/app-preview/app-preview-theme';
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
-import { ClaudeMark } from './claude-mark';
+import { ClaudeMark } from '@/icons';
 import { PREVIEW_COLORS } from '../preview-colors';
 import { streamedMarkdown } from './streamed-markdown';
 import { type ProductVisualSceneDefinition } from './product-visual-scenes';

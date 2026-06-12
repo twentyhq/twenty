@@ -7,6 +7,7 @@ import {
   IconSearch,
 } from '@tabler/icons-react';
 
+import { AppleRainbowMark } from '@/icons';
 import { mediaUp } from '@/tokens';
 import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
 
@@ -68,13 +69,6 @@ const HeaderLeft = styled.div`
       width: auto;
     }
   }
-`;
-
-const WorkspaceLogo = styled.img`
-  display: block;
-  height: 16px;
-  object-fit: contain;
-  width: 16px;
 `;
 
 const WorkspaceName = styled.span`
@@ -209,11 +203,7 @@ export function PreviewSidebar({
     <SidebarPanel aria-hidden data-desktop-mode={desktopMode}>
       <Header>
         <HeaderLeft>
-          <WorkspaceLogo
-            alt=""
-            aria-hidden
-            src="/images/shared/apple-rainbow-logo.svg"
-          />
+          <AppleRainbowMark sizePx={16} />
           <WorkspaceName>Apple</WorkspaceName>
           <DesktopOnly>
             <IconChevronDown color={PREVIEW_COLORS.textExtraLight} size={16} />
