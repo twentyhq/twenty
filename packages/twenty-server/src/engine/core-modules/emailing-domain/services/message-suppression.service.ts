@@ -166,37 +166,6 @@ export class MessageSuppressionService {
     }, buildSystemAuthContext(workspaceId));
   }
 
-  async removeTopicSuppression(
-    workspaceId: string,
-    emailAddress: string,
-    topicId: string,
-  ): Promise<void> {
-    const normalizedEmailAddress = emailAddress.trim().toLowerCase();
-
-    if (!isNonEmptyString(normalizedEmailAddress)) {
-      return;
-    }
-
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const suppressionRepository =
-        await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          MessageSuppressionWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
-
-      const existingSuppression = await suppressionRepository.findOneBy({
-        emailAddress: { primaryEmail: normalizedEmailAddress },
-        reason: MessageSuppressionReason.UNSUBSCRIBE,
-        topicId,
-      });
-
-      if (isDefined(existingSuppression)) {
-        await suppressionRepository.delete(existingSuppression.id);
-      }
-    }, buildSystemAuthContext(workspaceId));
-  }
-
   private shouldEscalate(
     existingReason: string,
     incomingReason: MessageSuppressionReason,

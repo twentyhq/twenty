@@ -4876,8 +4876,8 @@ export type SendInvitations = {
 export type SendMessageCampaignInput = {
   body: Scalars['String']['input'];
   fromAddress: Scalars['String']['input'];
-  listId?: InputMaybe<Scalars['String']['input']>;
-  messageTopicId: Scalars['String']['input'];
+  listId: Scalars['String']['input'];
+  messageTopicId?: InputMaybe<Scalars['String']['input']>;
   subject: Scalars['String']['input'];
 };
 
@@ -6157,7 +6157,7 @@ export type SendMessageCampaignMutationVariables = Exact<{
 }>;
 
 
-export type SendMessageCampaignMutation = { __typename?: 'Mutation', sendMessageCampaign: { __typename?: 'SendMessageCampaignOutputDTO', campaignId: string, queuedCount: number } };
+export type SendMessageCampaignMutation = { __typename?: 'Mutation', sendMessageCampaign: { __typename?: 'SendMessageCampaignOutputDTO', campaignId: string, queuedCount: number, skipped: { __typename?: 'CampaignSkippedRecipientsDTO', noEmail: number, deduped: number, overCap: number } } };
 
 export type AgentFieldsFragment = { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string };
 

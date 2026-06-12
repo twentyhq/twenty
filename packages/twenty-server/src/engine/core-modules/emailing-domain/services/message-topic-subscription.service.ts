@@ -16,12 +16,6 @@ import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participa
 import { findPersonByPrimaryOrAdditionalEmail } from 'src/modules/match-participant/utils/find-person-by-primary-or-additional-email';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
-type SubscribeArgs = {
-  workspaceId: string;
-  personId: string;
-  topicId: string;
-};
-
 type UnsubscribeArgs = {
   workspaceId: string;
   personId: string;
@@ -45,45 +39,12 @@ type SetSubscribedTopicsArgs = {
   subscribedTopicIds: string[];
 };
 
-type UpsertSubscriptionStatusArgs = {
-  workspaceId: string;
-  personId: string;
-  topicId: string;
-  status: MessageTopicSubscriptionStatus;
-};
-
 @Injectable()
 export class MessageTopicSubscriptionService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly messageSuppressionService: MessageSuppressionService,
   ) {}
-
-  async subscribe({
-    workspaceId,
-    personId,
-    topicId,
-  }: SubscribeArgs): Promise<void> {
-    await this.upsertSubscriptionStatus({
-      workspaceId,
-      personId,
-      topicId,
-      status: MessageTopicSubscriptionStatus.SUBSCRIBED,
-    });
-
-    const emailAddress = await this.resolvePrimaryEmailByPersonId(
-      workspaceId,
-      personId,
-    );
-
-    if (isDefined(emailAddress)) {
-      await this.messageSuppressionService.removeTopicSuppression(
-        workspaceId,
-        emailAddress,
-        topicId,
-      );
-    }
-  }
 
   async unsubscribe({
     workspaceId,
@@ -300,40 +261,5 @@ export class MessageTopicSubscriptionService {
       },
       buildSystemAuthContext(workspaceId),
     );
-  }
-
-  private async upsertSubscriptionStatus({
-    workspaceId,
-    personId,
-    topicId,
-    status,
-  }: UpsertSubscriptionStatusArgs): Promise<void> {
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const subscriptionRepository =
-        await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          MessageTopicSubscriptionWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-        );
-
-      const existingSubscription = await subscriptionRepository.findOneBy({
-        personId,
-        topicId,
-      });
-
-      if (isDefined(existingSubscription)) {
-        await subscriptionRepository.update(existingSubscription.id, {
-          status,
-        });
-
-        return;
-      }
-
-      await subscriptionRepository.insert({
-        personId,
-        topicId,
-        status,
-      });
-    }, buildSystemAuthContext(workspaceId));
   }
 }

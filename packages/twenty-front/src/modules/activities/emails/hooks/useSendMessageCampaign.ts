@@ -10,8 +10,8 @@ import {
 } from '~/generated-metadata/graphql';
 
 type SendMessageCampaignParams = {
-  messageTopicId: string;
-  listId?: string;
+  listId: string;
+  messageTopicId?: string;
   subject: string;
   body: string;
   fromAddress: string;
@@ -34,19 +34,37 @@ export const useSendMessageCampaign = () => {
 
         const queued = result.data?.sendMessageCampaign;
 
-        if (queued) {
-          enqueueSuccessSnackBar({
-            message: t`Campaign queued to ${queued.queuedCount} recipient(s)`,
-          });
+        if (!queued) {
+          enqueueErrorSnackBar({ message: t`Failed to send campaign` });
 
-          return true;
+          return false;
         }
 
-        enqueueErrorSnackBar({ message: t`Failed to send campaign` });
+        const { queuedCount, skipped } = queued;
+        const skippedCount =
+          skipped.noEmail + skipped.deduped + skipped.overCap;
 
-        return false;
-      } catch {
-        enqueueErrorSnackBar({ message: t`Failed to send campaign` });
+        if (queuedCount === 0) {
+          enqueueErrorSnackBar({
+            message: t`No recipients to send to (${skippedCount} skipped)`,
+          });
+
+          return false;
+        }
+
+        enqueueSuccessSnackBar({
+          message:
+            skippedCount > 0
+              ? t`Campaign queued to ${queuedCount} recipient(s), ${skippedCount} skipped`
+              : t`Campaign queued to ${queuedCount} recipient(s)`,
+        });
+
+        return true;
+      } catch (error) {
+        enqueueErrorSnackBar({
+          message:
+            error instanceof Error ? error.message : t`Failed to send campaign`,
+        });
 
         return false;
       }

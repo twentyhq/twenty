@@ -18,19 +18,19 @@ export const useCampaignComposerState = ({
   const { sendMessageCampaign, loading } = useSendMessageCampaign();
 
   const canSend =
-    messageTopicId !== null &&
+    listId !== null &&
     fromAddress.trim().length > 0 &&
     subject.trim().length > 0 &&
     !loading;
 
   const handleSend = async () => {
-    if (messageTopicId === null || !canSend) {
+    if (listId === null || !canSend) {
       return;
     }
 
     const success = await sendMessageCampaign({
-      messageTopicId,
-      listId: listId ?? undefined,
+      listId,
+      messageTopicId: messageTopicId ?? undefined,
       subject,
       body,
       fromAddress: fromAddress.trim(),

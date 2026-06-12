@@ -1,7 +1,6 @@
 import { Injectable, Logger, type Type } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { In, type ObjectLiteral } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -37,7 +36,6 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
-import { MessageTopicSubscriptionWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-topic-subscription.workspace-entity';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
@@ -51,13 +49,13 @@ import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 type SendCampaignArgs = {
   workspaceId: string;
   userWorkspaceId: string;
-  messageTopicId: string;
+  // The list's hand-picked members are the recipients (the audience).
+  listId: string;
   subject: string;
   html: string;
   fromAddress: string;
-  // When set, recipients are the list's hand-picked members (static audience).
-  // Otherwise recipients are the people subscribed to the topic.
-  listId?: string;
+  // Optional topic for unsubscribe grouping (per-topic suppression + link).
+  messageTopicId?: string;
 };
 
 type SendCampaignResult = {
@@ -65,8 +63,6 @@ type SendCampaignResult = {
   queuedCount: number;
   skipped: CampaignSkippedBreakdown;
 };
-
-const SUBSCRIBED_STATUS = 'SUBSCRIBED';
 
 const toRawRecipient = (person: {
   id: string;
@@ -145,9 +141,10 @@ export class MessageCampaignService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const rawRecipients = isNonEmptyString(listId)
-          ? await this.resolveRecipientsFromList(workspaceId, listId)
-          : await this.resolveSubscribedRecipients(workspaceId, messageTopicId);
+        const rawRecipients = await this.resolveRecipientsFromList(
+          workspaceId,
+          listId,
+        );
 
         const { recipients, skipped } = normalizeCampaignRecipients(
           rawRecipients,
@@ -384,8 +381,8 @@ export class MessageCampaignService {
     subject: string;
     html: string;
     text: string;
-    messageTopicId: string;
-    listId?: string;
+    messageTopicId?: string;
+    listId: string;
   }): Promise<{ campaignId: string; messageIds: string[] }> {
     const now = new Date();
     const rows = recipients.map((recipient) => ({
@@ -437,8 +434,8 @@ export class MessageCampaignService {
             bodyTemplate: html,
             fromAddress: { primaryEmail: fromAddress, additionalEmails: null },
             status: CAMPAIGN_STATUS.SENDING,
-            topicId: messageTopicId,
-            listId: listId ?? null,
+            topicId: messageTopicId ?? null,
+            listId,
           },
           transactionManager,
         );
@@ -558,25 +555,6 @@ export class MessageCampaignService {
     return this.loadRecipientsByPersonIds(
       workspaceId,
       members.map((member) => member.personId),
-    );
-  }
-
-  private async resolveSubscribedRecipients(
-    workspaceId: string,
-    messageTopicId: string,
-  ): Promise<RawCampaignRecipient[]> {
-    const subscriptionRepository = await this.getWorkspaceRepository(
-      workspaceId,
-      MessageTopicSubscriptionWorkspaceEntity,
-    );
-
-    const subscriptions = await subscriptionRepository.find({
-      where: { topicId: messageTopicId, status: SUBSCRIBED_STATUS },
-    });
-
-    return this.loadRecipientsByPersonIds(
-      workspaceId,
-      subscriptions.map((subscription) => subscription.personId),
     );
   }
 

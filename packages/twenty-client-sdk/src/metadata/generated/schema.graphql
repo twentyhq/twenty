@@ -3810,8 +3810,8 @@ input SendEmailViaDomainInput {
 }
 
 input SendMessageCampaignInput {
-  messageTopicId: String!
-  listId: String
+  listId: String!
+  messageTopicId: String
   subject: String!
   body: String!
   fromAddress: String!

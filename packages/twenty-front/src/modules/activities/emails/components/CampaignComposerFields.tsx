@@ -1,13 +1,14 @@
-import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 
 import { type useCampaignComposerState } from '@/activities/emails/hooks/useCampaignComposerState';
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
+import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { Select } from '@/ui/input/components/Select';
 import { t } from '@lingui/core/macro';
+import { MessageChannelType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui-deprecated/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -25,15 +26,15 @@ type CampaignComposerFieldsProps = {
 export const CampaignComposerFields = ({
   campaignState,
 }: CampaignComposerFieldsProps) => {
-  const { data: accountsData } = useQuery<{
-    myConnectedAccounts: { id: string; handle: string }[];
-  }>(GET_MY_CONNECTED_ACCOUNTS);
+  const { channels } = useMyMessageChannels();
 
-  const accountOptions: SelectOption<string>[] =
-    accountsData?.myConnectedAccounts?.map((account) => ({
-      label: account.handle,
-      value: account.handle,
-    })) ?? [];
+  // Campaigns send from the workspace's shared email handles (the verified
+  // emailing-domain senders), not personal connected accounts.
+  const senderOptions: SelectOption<string>[] = channels
+    .filter((channel) => channel.type === MessageChannelType.EMAIL_GROUP)
+    .map((channel) => channel.connectedAccount?.handle)
+    .filter(isDefined)
+    .map((handle) => ({ label: handle, value: handle }));
 
   return (
     <StyledFieldsContainer>
@@ -42,7 +43,7 @@ export const CampaignComposerFields = ({
         label={t`From`}
         fullWidth
         value={campaignState.fromAddress}
-        options={accountOptions}
+        options={senderOptions}
         emptyOption={{ label: t`Select a sender`, value: '' }}
         onChange={campaignState.setFromAddress}
       />
@@ -53,7 +54,7 @@ export const CampaignComposerFields = ({
         onChange={campaignState.setListId}
       />
       <FormSingleRecordPicker
-        label={t`Topic`}
+        label={t`Unsubscribe topic`}
         objectNameSingulars={['messageTopic']}
         defaultValue={campaignState.messageTopicId}
         onChange={campaignState.setMessageTopicId}

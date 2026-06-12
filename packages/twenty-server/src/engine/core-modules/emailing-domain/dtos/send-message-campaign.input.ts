@@ -11,16 +11,18 @@ import {
 
 @InputType()
 export class SendMessageCampaignInput {
+  // The list whose hand-picked members are the recipients (the audience).
   @Field(() => String)
   @IsUUID('4')
-  messageTopicId: string;
+  listId: string;
 
-  // Optional list whose hand-picked members are the recipients (static audience).
-  // When omitted, recipients are the people subscribed to the topic.
+  // Optional topic used to group the unsubscribe: recipients who unsubscribed
+  // from this topic are dropped, and the unsubscribe link is scoped to it.
+  // When omitted, the unsubscribe is global.
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsUUID('4')
-  listId?: string;
+  messageTopicId?: string;
 
   @Field(() => String)
   @IsString()
