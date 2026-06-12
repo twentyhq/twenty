@@ -8,6 +8,7 @@ import { useDeleteEmailGroupChannel } from '@/settings/accounts/hooks/useDeleteE
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { getEmailChannelDomain } from '@/settings/accounts/utils/getEmailChannelDomain';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsEmailingDomainVerificationRecords } from '@/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -23,7 +24,6 @@ import {
   IconTrash,
   Status,
 } from 'twenty-ui-deprecated/display';
-import { Loader } from 'twenty-ui-deprecated/feedback';
 import { Button } from 'twenty-ui-deprecated/input';
 import { Section } from 'twenty-ui-deprecated/layout';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
@@ -34,13 +34,6 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const DELETE_EMAIL_GROUP_MODAL_ID = 'delete-email-group-channel-modal';
-
-const StyledLoadingContainer = styled.div`
-  align-items: center;
-  display: flex;
-  height: 200px;
-  justify-content: center;
-`;
 
 const StyledForwardingRow = styled.div`
   display: flex;
@@ -65,11 +58,7 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
   const { data: emailingDomainsData } = useQuery(GetEmailingDomainsDocument);
 
   if (loading) {
-    return (
-      <StyledLoadingContainer>
-        <Loader />
-      </StyledLoadingContainer>
-    );
+    return <SettingsSkeletonLoader />;
   }
 
   const channel = channels.find(
