@@ -118,6 +118,23 @@ export const rateLimitedGmailMessageList = (
     ),
   );
 
+export const gmailHistoryHandler = (
+  addedMessages: gmail_v1.Schema$Message[],
+  { historyId = '987654322' }: { historyId?: string } = {},
+): RequestHandler =>
+  http.get('*/gmail/v1/users/me/history', () =>
+    HttpResponse.json<gmail_v1.Schema$ListHistoryResponse>({
+      history: [
+        {
+          messagesAdded: addedMessages.map((message) => ({
+            message: { id: message.id, threadId: message.threadId },
+          })),
+        },
+      ],
+      historyId,
+    }),
+  );
+
 const gmailMessageHandlers = ({
   inbox,
   labelStore,

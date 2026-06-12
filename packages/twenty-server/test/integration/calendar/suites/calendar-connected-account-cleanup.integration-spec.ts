@@ -1,6 +1,5 @@
 import { randomUUID } from 'node:crypto';
 
-import { http, HttpResponse } from 'msw';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -8,6 +7,10 @@ import { CalendarEventListFetchCronJob } from 'src/modules/calendar/calendar-eve
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
 import { findRecordIdsByFilter } from 'test/integration/messaging/utils/find-records-by-filter.util';
 import { setupGmailMock } from 'test/integration/messaging/utils/gmail-message-mock.util';
+import {
+  googleCalendarEvent,
+  googleCalendarEventsHandler,
+} from 'test/integration/messaging/utils/google-calendar-mock.util';
 import { deleteConnectedAccount } from 'test/integration/messaging/utils/query-messaging.util';
 import { enqueueJob } from 'test/integration/utils/enqueue-job.util';
 import { pollUntil } from 'test/integration/utils/poll-until.util';
@@ -29,29 +32,16 @@ describe('Calendar connected account cleanup (integration)', () => {
     });
 
     gmail.use(
-      http.get(
-        'https://www.googleapis.com/calendar/v3/calendars/primary/events',
-        () =>
-          HttpResponse.json({
-            items: [
-              {
-                id: eventId,
-                iCalUID: `${eventId}@google.com`,
-                summary: eventTitle,
-                status: 'confirmed',
-                start: { dateTime: '2023-11-15T10:00:00Z' },
-                end: { dateTime: '2023-11-15T11:00:00Z' },
-                created: '2023-11-01T00:00:00.000Z',
-                updated: '2023-11-01T00:00:00.000Z',
-                attendees: [
-                  { email: 'organizer@example.com', organizer: true },
-                  { email: 'attendee@example.com' },
-                ],
-              },
-            ],
-            nextSyncToken: 'mock-calendar-sync-token',
-          }),
-      ),
+      googleCalendarEventsHandler([
+        googleCalendarEvent({
+          id: eventId,
+          summary: eventTitle,
+          attendees: [
+            { email: 'organizer@example.com', organizer: true },
+            { email: 'attendee@example.com' },
+          ],
+        }),
+      ]),
     );
 
     await enqueueJob(MessageQueue.cronQueue, CalendarEventListFetchCronJob, {});

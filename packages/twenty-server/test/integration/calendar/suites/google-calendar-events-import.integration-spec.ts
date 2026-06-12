@@ -1,6 +1,5 @@
 import { randomUUID } from 'node:crypto';
 
-import { http, HttpResponse } from 'msw';
 import {
   CalendarChannelSyncStage,
   ConnectedAccountProvider,
@@ -12,6 +11,10 @@ import { findManyOperationFactory } from 'test/integration/graphql/utils/find-ma
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
 import { setupGmailMock } from 'test/integration/messaging/utils/gmail-message-mock.util';
+import {
+  googleCalendarEvent,
+  googleCalendarEventsHandler,
+} from 'test/integration/messaging/utils/google-calendar-mock.util';
 import { queryCalendarChannels } from 'test/integration/messaging/utils/query-messaging.util';
 import { enqueueJob } from 'test/integration/utils/enqueue-job.util';
 import { pollUntil } from 'test/integration/utils/poll-until.util';
@@ -61,26 +64,9 @@ describe('Google calendar events import (integration)', () => {
     const eventTitle = `Calendar event ${randomUUID()}`;
 
     gmail.use(
-      http.get(
-        'https://www.googleapis.com/calendar/v3/calendars/primary/events',
-        () =>
-          HttpResponse.json({
-            items: [
-              {
-                id: 'google-calendar-event-1',
-                iCalUID: 'google-calendar-event-1@google.com',
-                summary: eventTitle,
-                status: 'confirmed',
-                start: { dateTime: '2023-11-15T10:00:00Z' },
-                end: { dateTime: '2023-11-15T11:00:00Z' },
-                created: '2023-11-01T00:00:00.000Z',
-                updated: '2023-11-01T00:00:00.000Z',
-                attendees: [],
-              },
-            ],
-            nextSyncToken: 'mock-calendar-sync-token',
-          }),
-      ),
+      googleCalendarEventsHandler([
+        googleCalendarEvent({ summary: eventTitle }),
+      ]),
     );
 
     await enqueueJob(MessageQueue.cronQueue, CalendarEventListFetchCronJob, {});
@@ -104,25 +90,9 @@ describe('Google calendar events import (integration)', () => {
     const newEventTitle = `Calendar event ${randomUUID()}`;
 
     gmail.use(
-      http.get(
-        'https://www.googleapis.com/calendar/v3/calendars/primary/events',
-        () =>
-          HttpResponse.json({
-            items: [
-              {
-                id: 'google-calendar-event-2',
-                iCalUID: 'google-calendar-event-2@google.com',
-                summary: newEventTitle,
-                status: 'confirmed',
-                start: { dateTime: '2023-11-16T10:00:00Z' },
-                end: { dateTime: '2023-11-16T11:00:00Z' },
-                created: '2023-11-02T00:00:00.000Z',
-                updated: '2023-11-02T00:00:00.000Z',
-                attendees: [],
-              },
-            ],
-            nextSyncToken: 'mock-calendar-sync-token-2',
-          }),
+      googleCalendarEventsHandler(
+        [googleCalendarEvent({ summary: newEventTitle })],
+        { nextSyncToken: 'mock-calendar-sync-token-2' },
       ),
     );
 

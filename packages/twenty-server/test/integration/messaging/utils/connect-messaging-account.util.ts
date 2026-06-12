@@ -53,10 +53,6 @@ const generateTransientToken = async (): Promise<string> => {
   return data.generateTransientToken.transientToken.token;
 };
 
-// With skipChannelConfiguration (the default), the channels land in the
-// list-fetch-pending stage, ready for the next cron tick. Pass false to land
-// them in PENDING_CONFIGURATION instead, configure them, then start syncing
-// through the startChannelSync mutation, as the product does.
 export const connectMessagingAccount = async ({
   provider,
   handle,

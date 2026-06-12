@@ -1,6 +1,5 @@
 import { randomUUID } from 'node:crypto';
 
-import { http, HttpResponse } from 'msw';
 import {
   CalendarChannelSyncStage,
   ConnectedAccountProvider,
@@ -12,6 +11,10 @@ import { CalendarEventsImportCronJob } from 'src/modules/calendar/calendar-event
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
+import {
+  microsoftCalendarEvent,
+  microsoftCalendarEventsHandlers,
+} from 'test/integration/messaging/utils/microsoft-calendar-mock.util';
 import { setupMicrosoftMock } from 'test/integration/messaging/utils/microsoft-message-mock.util';
 import { queryCalendarChannels } from 'test/integration/messaging/utils/query-messaging.util';
 import { enqueueJob } from 'test/integration/utils/enqueue-job.util';
@@ -63,27 +66,9 @@ describe('Microsoft calendar events import (integration)', () => {
     const eventTitle = `Calendar event ${randomUUID()}`;
 
     microsoft.use(
-      http.get('*/me/calendar/events/delta', () =>
-        HttpResponse.json({
-          value: [{ id: eventId }],
-          '@odata.deltaLink':
-            'https://graph.microsoft.com/beta/me/calendar/events/delta?$deltatoken=mock-calendar-delta-token',
-        }),
-      ),
-      http.get(`*/me/calendar/events/${eventId}`, () =>
-        HttpResponse.json({
-          id: eventId,
-          iCalUId: `${eventId}@microsoft.com`,
-          subject: eventTitle,
-          isCancelled: false,
-          isAllDay: false,
-          start: { dateTime: '2023-11-15T10:00:00.000Z', timeZone: 'UTC' },
-          end: { dateTime: '2023-11-15T11:00:00.000Z', timeZone: 'UTC' },
-          createdDateTime: '2023-11-01T00:00:00.000Z',
-          lastModifiedDateTime: '2023-11-01T00:00:00.000Z',
-          attendees: [],
-        }),
-      ),
+      ...microsoftCalendarEventsHandlers([
+        microsoftCalendarEvent({ id: eventId, subject: eventTitle }),
+      ]),
     );
 
     await enqueueJob(MessageQueue.cronQueue, CalendarEventListFetchCronJob, {});
@@ -117,26 +102,9 @@ describe('Microsoft calendar events import (integration)', () => {
     const newEventTitle = `Calendar event ${randomUUID()}`;
 
     microsoft.use(
-      http.get('*/me/calendar/events/delta', () =>
-        HttpResponse.json({
-          value: [{ id: newEventId }],
-          '@odata.deltaLink':
-            'https://graph.microsoft.com/beta/me/calendar/events/delta?$deltatoken=mock-calendar-delta-token-2',
-        }),
-      ),
-      http.get(`*/me/calendar/events/${newEventId}`, () =>
-        HttpResponse.json({
-          id: newEventId,
-          iCalUId: `${newEventId}@microsoft.com`,
-          subject: newEventTitle,
-          isCancelled: false,
-          isAllDay: false,
-          start: { dateTime: '2023-11-16T10:00:00.000Z', timeZone: 'UTC' },
-          end: { dateTime: '2023-11-16T11:00:00.000Z', timeZone: 'UTC' },
-          createdDateTime: '2023-11-02T00:00:00.000Z',
-          lastModifiedDateTime: '2023-11-02T00:00:00.000Z',
-          attendees: [],
-        }),
+      ...microsoftCalendarEventsHandlers(
+        [microsoftCalendarEvent({ id: newEventId, subject: newEventTitle })],
+        { deltaToken: 'mock-calendar-delta-token-2' },
       ),
     );
 

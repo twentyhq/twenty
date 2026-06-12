@@ -1,4 +1,3 @@
-import { http, HttpResponse } from 'msw';
 import {
   CalendarChannelSyncStage,
   CalendarChannelSyncStatus,
@@ -17,6 +16,7 @@ import {
   googleAccountIdentityHandlers,
 } from 'test/integration/messaging/utils/google-auth-mock.util';
 import { setupGmailMock } from 'test/integration/messaging/utils/gmail-message-mock.util';
+import { rateLimitedGoogleCalendarEventList } from 'test/integration/messaging/utils/google-calendar-mock.util';
 import {
   queryCalendarChannels,
   queryConnectedAccount,
@@ -30,24 +30,6 @@ const THROTTLED_HANDLE = 'calendar-throttled@apple.dev';
 const REVOKED_HANDLE = 'calendar-revoked@apple.dev';
 
 const EXPIRED_CREDENTIALS_AT = new Date(Date.now() - 56 * 60 * 1000);
-
-const rateLimitedEventList = () =>
-  http.get(
-    'https://www.googleapis.com/calendar/v3/calendars/primary/events',
-    () =>
-      HttpResponse.json(
-        {
-          error: {
-            code: 429,
-            message: 'Rate Limit Exceeded',
-            errors: [
-              { reason: 'rateLimitExceeded', message: 'Rate Limit Exceeded' },
-            ],
-          },
-        },
-        { status: 429 },
-      ),
-  );
 
 describe('Calendar sync failure lifecycle (integration)', () => {
   const gmail = setupGmailMock({ inbox: [], handle: THROTTLED_HANDLE });
@@ -98,7 +80,7 @@ describe('Calendar sync failure lifecycle (integration)', () => {
   });
 
   it('counts a throttle failure on a 429 and keeps the channel alive', async () => {
-    gmail.use(rateLimitedEventList());
+    gmail.use(rateLimitedGoogleCalendarEventList());
 
     await runSyncCycle();
 
@@ -114,7 +96,7 @@ describe('Calendar sync failure lifecycle (integration)', () => {
   }, 60000);
 
   it('fails the channel as unknown once the throttle attempts are exhausted', async () => {
-    gmail.use(rateLimitedEventList());
+    gmail.use(rateLimitedGoogleCalendarEventList());
 
     let channelState = await getThrottledChannel();
 

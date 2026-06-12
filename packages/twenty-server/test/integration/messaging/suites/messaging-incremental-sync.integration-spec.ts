@@ -1,4 +1,3 @@
-import { http, HttpResponse } from 'msw';
 import {
   ConnectedAccountProvider,
   MessageChannelSyncStage,
@@ -11,6 +10,7 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
 import {
   getGmailMessageSubject,
+  gmailHistoryHandler,
   gmailMessage,
   setupGmailMock,
 } from 'test/integration/messaging/utils/gmail-message-mock.util';
@@ -82,25 +82,7 @@ describe('Messaging incremental sync (integration)', () => {
 
     inbox.push(newMessage);
 
-    gmail.use(
-      http.get('*/gmail/v1/users/me/history', () =>
-        HttpResponse.json({
-          history: [
-            {
-              messagesAdded: [
-                {
-                  message: {
-                    id: newMessage.id,
-                    threadId: newMessage.threadId,
-                  },
-                },
-              ],
-            },
-          ],
-          historyId: '987654322',
-        }),
-      ),
-    );
+    gmail.use(gmailHistoryHandler([newMessage]));
 
     await runSyncCycle();
 
