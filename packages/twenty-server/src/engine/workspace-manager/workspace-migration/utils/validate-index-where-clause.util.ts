@@ -1,6 +1,12 @@
 // Allowlist of safe WHERE clause patterns for partial indexes.
 // Any new pattern must be reviewed for SQL injection safety before being added.
-const ALLOWED_INDEX_WHERE_CLAUSES = new Set(['"deletedAt" IS NULL']);
+const ALLOWED_INDEX_WHERE_CLAUSES = new Set([
+  '"deletedAt" IS NULL',
+  // messageSuppression: one global block (topicId NULL) and one per-topic
+  // opt-out per address — split because Postgres treats NULLs as distinct.
+  '"deletedAt" IS NULL AND "topicId" IS NULL',
+  '"deletedAt" IS NULL AND "topicId" IS NOT NULL',
+]);
 
 export const validateAndReturnIndexWhereClause = (
   clause: string | null | undefined,
