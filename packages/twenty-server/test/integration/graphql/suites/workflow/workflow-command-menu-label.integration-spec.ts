@@ -17,6 +17,7 @@ const findCommandMenuItemForWorkflowVersion = async (
   workflowVersionId: string,
 ): Promise<CommandMenuItemDTO | undefined> => {
   const { data } = await findCommandMenuItems({
+    input: undefined,
     gqlFields: COMMAND_MENU_ITEM_GQL_FIELDS,
   });
 
