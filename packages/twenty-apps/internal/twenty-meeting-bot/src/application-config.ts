@@ -3,7 +3,6 @@ import { defineApplication } from 'twenty-sdk/define';
 import { APP_DESCRIPTION } from 'src/constants/app-description';
 import { APP_DISPLAY_NAME } from 'src/constants/app-display-name';
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/application-universal-identifier';
-import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/constants/default-role-universal-identifier';
 import { ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/enabled-app-variable-universal-identifier';
 import { SETTINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/settings-front-component-universal-identifier';
 import { RECALL_BOT_NAME_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/recall-bot-name-app-variable-universal-identifier';
@@ -20,7 +19,6 @@ export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   displayName: APP_DISPLAY_NAME,
   description: APP_DESCRIPTION,
-  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   settingsCustomTabFrontComponentUniversalIdentifier:
     SETTINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   applicationVariables: {
