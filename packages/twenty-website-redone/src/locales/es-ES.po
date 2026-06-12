@@ -44,6 +44,11 @@ msgstr ""
 msgid "A custom CRM gives your org an edge, *but building one* comes with *tradeoffs*"
 msgstr ""
 
+#. js-lingui-id: Ll7vsZ
+#: src/sections/product-demo/product-demo.tsx
+msgid "A demo worth a *thousand words*"
+msgstr ""
+
 #. js-lingui-id: uNIo/j
 #: src/sections/three-cards/product-three-cards.tsx
 msgid "A modern CRM with *an intuitive interface*"
@@ -1021,6 +1026,16 @@ msgstr ""
 #. js-lingui-id: QZdPWP
 #: src/sections/trusted-by/trusted-by.tsx
 msgid "Trusted by leading organizations"
+msgstr ""
+
+#. js-lingui-id: eslLQF
+#: src/sections/product-demo/product-demo.tsx
+msgid "Try it live"
+msgstr ""
+
+#. js-lingui-id: E/hGy3
+#: src/sections/product-demo/product-demo.tsx
+msgid "Try Twenty Cloud"
 msgstr ""
 
 #. js-lingui-id: O5dAmW

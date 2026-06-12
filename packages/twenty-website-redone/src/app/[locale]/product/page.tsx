@@ -12,6 +12,7 @@ import {
 } from '@/platform/seo';
 import { Faq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
+import { ProductDemo } from '@/sections/product-demo';
 import { ProductFeature } from '@/sections/product-feature';
 import { ProductHero } from '@/sections/product-hero';
 import { ProductStepper } from '@/sections/stepper';
@@ -20,7 +21,6 @@ import { TrustedBy } from '@/sections/trusted-by';
 
 export const generateMetadata = buildRouteMetadata('product');
 
-// ProductDemo lands last in the old-site order.
 export default async function ProductPage({
   params,
 }: {
@@ -51,6 +51,7 @@ export default async function ProductPage({
           <ProductFeature />
           <ProductThreeCards />
           <ProductStepper />
+          <ProductDemo />
           <Faq />
         </main>
       </MenuStyleProvider>

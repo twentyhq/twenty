@@ -47,8 +47,7 @@ const BodyMeasure = styled.div`
    widths: fixed 1040x676, centered when it fits, anchored 16px left and
    bleeding off the right edge when it does not — the Linear-class
    presentation; the viewport crops the app, the app never shrinks).
-   max() keeps that behavior continuous, no breakpoint. The 68px top gap
-   is the old CTA-to-window measure; drag/resize arrives with commit 6. */
+   max() keeps that behavior continuous, no breakpoint. */
 const MockupStage = styled.div`
   height: ${APP_PREVIEW_STAGE.windowScene.heightPx}px;
   /* 0px floor = the window anchors at the page gutter when it cannot
@@ -58,7 +57,7 @@ const MockupStage = styled.div`
     0px,
     calc((100% - ${APP_PREVIEW_STAGE.windowScene.widthPx}px) / 2)
   );
-  margin-top: 68px;
+  margin-top: ${APP_PREVIEW_STAGE.windowScene.ctaGapPx}px;
   position: relative;
   width: ${APP_PREVIEW_STAGE.windowScene.widthPx}px;
 `;

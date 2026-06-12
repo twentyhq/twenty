@@ -10,6 +10,9 @@ export const APP_PREVIEW_STAGE = {
   windowScene: {
     widthPx: 1040,
     heightPx: 676,
+    // The old hero's CTA-to-window measure; every mockup mount under a
+    // CTA uses it (hero + product demo, user-ratified consistency).
+    ctaGapPx: 68,
   },
   windowBar: {
     background: '#F7F7F7',

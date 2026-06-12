@@ -1,0 +1,103 @@
+import { msg } from '@lingui/core/macro';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
+import NextImage from 'next/image';
+
+import { AppPreview } from '@/app-preview/app-preview';
+import { getServerI18n } from '@/platform/i18n/get-server-i18n';
+import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
+import { spacing } from '@/tokens';
+import { Button, Eyebrow, Heading, SectionIntro, SectionShell } from '@/ui';
+
+// The closer: the full product mockup in its static frame under a "try
+// it live" intro, with the dash pattern fading in behind the lower half
+// of the section (the shell's background slot, as on the home hero).
+const PatternLayer = styled.div`
+  bottom: 0;
+  height: 60%;
+  left: 50%;
+  opacity: 0.6;
+  pointer-events: none;
+  position: absolute;
+  transform: translateX(-50%);
+  width: 100%;
+`;
+
+const patternImageClassName = css`
+  object-fit: cover;
+  object-position: center top;
+`;
+
+const IntroMeasure = styled.div`
+  display: grid;
+  justify-items: center;
+  margin-inline: auto;
+  row-gap: ${spacing(6)};
+  text-align: center;
+`;
+
+// The old site hard-breaks the heading after "a"; the measure makes the
+// same two-line break emerge (hero precedent — no <br>).
+const HeadingMeasure = styled.div`
+  max-width: 560px;
+`;
+
+// The mockup hangs at the hero's CTA-to-window measure, not the stack
+// rhythm (user-ratified: the two CTA-over-mockup moments read the same).
+const PreviewRoot = styled.div`
+  margin-top: ${APP_PREVIEW_STAGE.windowScene.ctaGapPx}px;
+  width: 100%;
+`;
+
+// The frame fills its host; this scene box owns the geometry (the stage
+// token is the single source — the hero pins the same scene in px).
+const SceneBox = styled.div`
+  aspect-ratio: ${APP_PREVIEW_STAGE.windowScene.widthPx} /
+    ${APP_PREVIEW_STAGE.windowScene.heightPx};
+  margin-inline: auto;
+  max-width: ${APP_PREVIEW_STAGE.windowScene.widthPx}px;
+  width: 100%;
+`;
+
+export function ProductDemo() {
+  const i18n = getServerI18n();
+
+  return (
+    <SectionShell
+      background={
+        <PatternLayer aria-hidden>
+          <NextImage
+            alt=""
+            className={patternImageClassName}
+            fill
+            sizes="(min-width: 921px) 100vw"
+            src="/images/product/demo/background.webp"
+          />
+        </PatternLayer>
+      }
+      scheme="light"
+    >
+      <div>
+        <SectionIntro>
+          <IntroMeasure>
+            <Eyebrow>{i18n._(msg`Try it live`)}</Eyebrow>
+            <HeadingMeasure>
+              <Heading as="h2" size="lg" weight="light">
+                {i18n._(msg`A demo worth a *thousand words*`)}
+              </Heading>
+            </HeadingMeasure>
+            <Button
+              href="https://app.twenty.com/welcome"
+              label={i18n._(msg`Try Twenty Cloud`)}
+            />
+          </IntroMeasure>
+        </SectionIntro>
+        <PreviewRoot>
+          <SceneBox>
+            <AppPreview mode="static" />
+          </SceneBox>
+        </PreviewRoot>
+      </div>
+    </SectionShell>
+  );
+}
