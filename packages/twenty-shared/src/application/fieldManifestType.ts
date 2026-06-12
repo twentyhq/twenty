@@ -18,6 +18,15 @@ export type RegularFieldManifest<
   label: string;
   description?: string;
   icon?: string;
+  /**
+   * Default value in the canonical metadata format.
+   *
+   * Literal string defaults must be wrapped in single quotes inside the
+   * string (e.g. `"'Draft'"`), including string sub-fields of composite
+   * defaults (e.g. `{ source: "'MANUAL'" }`) and SELECT/MULTI_SELECT values.
+   * Unquoted strings are reserved for computed defaults such as `'uuid'`
+   * and `'now'`; any other unquoted string raises a validation warning.
+   */
   defaultValue?: FieldMetadataDefaultValue<T>;
   options?: FieldMetadataOptions<T>;
   universalSettings?: FieldMetadataUniversalSettings<T>;
