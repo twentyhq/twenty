@@ -3140,6 +3140,7 @@ enum UsageOperationType {
   WORKFLOW_EXECUTION
   CODE_EXECUTION
   WEB_SEARCH
+  CALL_RECORDING
 }
 
 type Mutation {
