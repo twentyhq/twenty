@@ -1,9 +1,30 @@
-import { type FindRecordsOutputSchema } from '@/workflow/workflow-variables/types/FindRecordsOutputSchema';
-import { type RecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
-import { searchVariableThroughFindRecordsOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughFindRecordsOutputSchema';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataType } from '@/types/FieldMetadataType';
+import {
+  type FindRecordsOutputSchema,
+  type RecordOutputSchemaV2,
+} from '../../types/output-schema.type';
+import { searchVariableInOutputSchema } from '../search-variable-in-output-schema';
 
-describe('searchVariableThroughFindRecordsOutputSchema', () => {
+const searchVariableThroughFindRecordsOutputSchema = ({
+  stepName,
+  searchRecordOutputSchema,
+  rawVariableName,
+  isFullRecord,
+}: {
+  stepName: string;
+  searchRecordOutputSchema: FindRecordsOutputSchema;
+  rawVariableName: string;
+  isFullRecord: boolean;
+}) =>
+  searchVariableInOutputSchema({
+    schema: searchRecordOutputSchema,
+    stepType: 'FIND_RECORDS',
+    stepName,
+    rawVariableName,
+    isFullRecord,
+  });
+
+describe('searchVariableInOutputSchema - find records output schema', () => {
   const mockRecordSchema: RecordOutputSchemaV2 = {
     object: {
       objectMetadataId: 'company-metadata-id',

@@ -1,9 +1,30 @@
-import { type FormOutputSchema } from '@/workflow/workflow-variables/types/FormOutputSchema';
-import { type RecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
-import { searchVariableThroughFormOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughFormOutputSchema';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataType } from '@/types/FieldMetadataType';
+import {
+  type FormOutputSchema,
+  type RecordOutputSchemaV2,
+} from '../../types/output-schema.type';
+import { searchVariableInOutputSchema } from '../search-variable-in-output-schema';
 
-describe('searchVariableThroughFormOutputSchema', () => {
+const searchVariableThroughFormOutputSchema = ({
+  stepName,
+  formOutputSchema,
+  rawVariableName,
+  isFullRecord,
+}: {
+  stepName: string;
+  formOutputSchema: FormOutputSchema;
+  rawVariableName: string;
+  isFullRecord: boolean;
+}) =>
+  searchVariableInOutputSchema({
+    schema: formOutputSchema,
+    stepType: 'FORM',
+    stepName,
+    rawVariableName,
+    isFullRecord,
+  });
+
+describe('searchVariableInOutputSchema - form output schema', () => {
   const mockRecordSchema: RecordOutputSchemaV2 = {
     object: {
       objectMetadataId: 'person-metadata-id',
@@ -233,7 +254,6 @@ describe('searchVariableThroughFormOutputSchema', () => {
   });
 
   it('should handle complex nested path correctly', () => {
-    // Test with a deeper path in case we have complex nested records
     const result = searchVariableThroughFormOutputSchema({
       stepName: 'Company Form',
       formOutputSchema: mockFormSchema,

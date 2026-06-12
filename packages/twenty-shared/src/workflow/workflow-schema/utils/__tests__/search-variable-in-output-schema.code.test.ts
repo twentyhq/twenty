@@ -1,8 +1,25 @@
-import type { CodeOutputSchema } from '@/workflow/workflow-variables/types/CodeOutputSchema';
-import { searchVariableThroughCodeOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughCodeOutputSchema';
-import type { BaseOutputSchemaV2 } from 'twenty-shared/workflow';
+import { type BaseOutputSchemaV2 } from '../../types/base-output-schema.type';
+import { type CodeOutputSchema } from '../../types/output-schema.type';
+import { searchVariableInOutputSchema } from '../search-variable-in-output-schema';
 
-describe('searchVariableThroughCodeOutputSchema', () => {
+const searchVariableThroughCodeOutputSchema = ({
+  stepName,
+  codeOutputSchema,
+  rawVariableName,
+}: {
+  stepName: string;
+  codeOutputSchema: CodeOutputSchema;
+  rawVariableName: string;
+}) =>
+  searchVariableInOutputSchema({
+    schema: codeOutputSchema,
+    stepType: 'CODE',
+    stepName,
+    rawVariableName,
+    isFullRecord: false,
+  });
+
+describe('searchVariableInOutputSchema - code output schema', () => {
   describe('LinkOutputSchema tests', () => {
     const mockLinkSchema: CodeOutputSchema = {
       link: {
