@@ -26,7 +26,9 @@ import { WorkflowRunDeleteManyPreQueryHook } from 'src/modules/workflow/common/q
 import { WorkflowRunDeleteOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-delete-one.pre-query.hook';
 import { WorkflowRunUpdateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-update-many.pre-query.hook';
 import { WorkflowRunUpdateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-run-update-one.pre-query.hook';
+import { WorkflowUpdateManyPostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-update-many.post-query.hook';
 import { WorkflowUpdateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-update-many.pre-query.hook';
+import { WorkflowUpdateOnePostQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-update-one.post-query.hook';
 import { WorkflowUpdateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-update-one.pre-query.hook';
 import { WorkflowVersionCreateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-create-many.pre-query.hook';
 import { WorkflowVersionCreateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-create-one.pre-query.hook';
@@ -34,6 +36,7 @@ import { WorkflowVersionDeleteManyPreQueryHook } from 'src/modules/workflow/comm
 import { WorkflowVersionDeleteOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-delete-one.pre-query.hook';
 import { WorkflowVersionUpdateManyPreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-update-many.pre-query.hook';
 import { WorkflowVersionUpdateOnePreQueryHook } from 'src/modules/workflow/common/query-hooks/workflow-version-update-one.pre-query.hook';
+import { WorkflowCommandMenuSyncWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-command-menu-sync.workspace-service';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service';
 
@@ -53,6 +56,9 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
     WorkflowCreateManyPreQueryHook,
     WorkflowUpdateOnePreQueryHook,
     WorkflowUpdateManyPreQueryHook,
+    WorkflowUpdateOnePostQueryHook,
+    WorkflowUpdateManyPostQueryHook,
+    WorkflowCommandMenuSyncWorkspaceService,
     WorkflowRunCreateOnePreQueryHook,
     WorkflowRunCreateManyPreQueryHook,
     WorkflowRunUpdateOnePreQueryHook,
