@@ -270,9 +270,21 @@ if (!anatomies.old || !anatomies.new) {
     `old=${Boolean(anatomies.old)} new=${Boolean(anatomies.new)}`,
   );
 } else {
-  compare('tile counters match', anatomies.old.counters, anatomies.new.counters);
-  compare('grid lattice border', anatomies.old.gridBorder, anatomies.new.gridBorder);
-  compare('cell edge lattice', anatomies.old.cellEdges, anatomies.new.cellEdges);
+  compare(
+    'tile counters match',
+    anatomies.old.counters,
+    anatomies.new.counters,
+  );
+  compare(
+    'grid lattice border',
+    anatomies.old.gridBorder,
+    anatomies.new.gridBorder,
+  );
+  compare(
+    'cell edge lattice',
+    anatomies.old.cellEdges,
+    anatomies.new.cellEdges,
+  );
   compare(
     'entrance fade transition',
     anatomies.old.entranceTransition,
@@ -283,9 +295,21 @@ if (!anatomies.old || !anatomies.new) {
     anatomies.old.entranceOpacity,
     anatomies.new.entranceOpacity,
   );
-  compare('category label style', anatomies.old.categoryStyle, anatomies.new.categoryStyle);
-  compare('counter style', anatomies.old.counterStyle, anatomies.new.counterStyle);
-  compare('tile heading style', anatomies.old.headingStyle, anatomies.new.headingStyle);
+  compare(
+    'category label style',
+    anatomies.old.categoryStyle,
+    anatomies.new.categoryStyle,
+  );
+  compare(
+    'counter style',
+    anatomies.old.counterStyle,
+    anatomies.new.counterStyle,
+  );
+  compare(
+    'tile heading style',
+    anatomies.old.headingStyle,
+    anatomies.new.headingStyle,
+  );
 }
 
 // --- Donut sweep (spotlight active state) ------------------------------
@@ -302,7 +326,11 @@ if (!donuts.old || !donuts.new) {
     `old=${Boolean(donuts.old)} new=${Boolean(donuts.new)}`,
   );
 } else {
-  compare('donut sweep transition', donuts.old.transition, donuts.new.transition);
+  compare(
+    'donut sweep transition',
+    donuts.old.transition,
+    donuts.new.transition,
+  );
   if (Math.abs(donuts.old.dashoffset - donuts.new.dashoffset) <= 1) {
     ok(
       'donut sweep settles at the same arc',

@@ -3,7 +3,7 @@ import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { mediaUp, spacing, BREAKPOINT_PX } from '@/tokens';
+import { mediaUp, BREAKPOINT_PX } from '@/tokens';
 import {
   Body,
   Eyebrow,
@@ -14,6 +14,7 @@ import {
   SectionStack,
 } from '@/ui';
 
+import { CardsGrid } from './cards-grid';
 import { IllustrationCard } from './illustration-card';
 import { ILLUSTRATION_CARDS } from './three-cards.data';
 
@@ -32,26 +33,6 @@ const headingMeasureClassName = css`
 const BodyMeasure = styled.div`
   ${mediaUp('md')} {
     max-width: 571px;
-  }
-`;
-
-// The scroll-entrance choreography of the old site (staggered card reveal)
-// arrives with the motion/visual wave; the layout ships first.
-const CardsGrid = styled.div`
-  display: grid;
-  gap: ${spacing(4)};
-  grid-template-columns: 1fr;
-  /* Stacked cards hold near their authored width (443px shape) instead of
-     stretching across tablets — same cap pattern as the problem stage. */
-  margin-inline: auto;
-  max-width: 480px;
-  width: 100%;
-
-  ${mediaUp('md')} {
-    grid-auto-columns: 1fr;
-    grid-auto-flow: column;
-    grid-template-columns: none;
-    max-width: none;
   }
 `;
 
@@ -82,7 +63,7 @@ export function ThreeCards() {
         </SectionIntro>
         <CardsGrid>
           {ILLUSTRATION_CARDS.map((card) => (
-            <IllustrationCard card={card} key={card.caseStudySlug} />
+            <IllustrationCard card={card} key={card.illustration} />
           ))}
         </CardsGrid>
       </SectionStack>

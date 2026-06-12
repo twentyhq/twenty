@@ -14,12 +14,13 @@ import { Faq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
 import { ProductFeature } from '@/sections/product-feature';
 import { ProductHero } from '@/sections/product-hero';
+import { ProductThreeCards } from '@/sections/three-cards';
 import { TrustedBy } from '@/sections/trusted-by';
 
 export const generateMetadata = buildRouteMetadata('product');
 
 // Sections land in old-site order as their ports arrive:
-// ProductThreeCards, ProductStepper, ProductDemo.
+// ProductStepper, ProductDemo.
 export default async function ProductPage({
   params,
 }: {
@@ -48,6 +49,7 @@ export default async function ProductPage({
           <ProductHero />
           <TrustedBy />
           <ProductFeature />
+          <ProductThreeCards />
           <Faq />
         </main>
       </MenuStyleProvider>

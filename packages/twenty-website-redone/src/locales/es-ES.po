@@ -44,6 +44,11 @@ msgstr ""
 msgid "A custom CRM gives your org an edge, *but building one* comes with *tradeoffs*"
 msgstr ""
 
+#. js-lingui-id: uNIo/j
+#: src/sections/three-cards/product-three-cards.tsx
+msgid "A modern CRM with *an intuitive interface*"
+msgstr ""
+
 #. js-lingui-id: TuJiQF
 #: src/sections/three-cards/three-cards.data.ts
 msgid "AC&T Education Migration"
@@ -62,6 +67,11 @@ msgstr ""
 #. js-lingui-id: vZKKhf
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Aggregate, bar, line, and pie widgets"
+msgstr ""
+
+#. js-lingui-id: TfV/y9
+#: src/sections/three-cards/product-three-cards-data.ts
+msgid "AI chat, settings, and records in a side panels for fast, single-screen access."
 msgstr ""
 
 #. js-lingui-id: R+bwFB
@@ -152,6 +162,11 @@ msgstr ""
 #. js-lingui-id: 2FDUkV
 #: src/sections/home-hero/home-hero.tsx
 msgid "Build your Enterprise CRM *at AI Speed*"
+msgstr ""
+
+#. js-lingui-id: SoAKmY
+#: src/sections/three-cards/product-three-cards-data.ts
+msgid "Built for speed"
 msgstr ""
 
 #. js-lingui-id: wCALve
@@ -442,6 +457,11 @@ msgstr ""
 msgid "Find a Twenty partner"
 msgstr ""
 
+#. js-lingui-id: obrJBN
+#: src/sections/three-cards/product-three-cards-data.ts
+msgid "Fly through your workspace with shortcuts and short load times."
+msgstr ""
+
 #. js-lingui-id: qwJuVW
 #: src/sections/footer/footer-nav.tsx
 msgid "Footer"
@@ -721,6 +741,7 @@ msgid "Read the case"
 msgstr ""
 
 #. js-lingui-id: 4hc7hc
+#: src/sections/three-cards/product-three-cards-data.ts
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Real-time data"
 msgstr ""
@@ -763,6 +784,11 @@ msgstr ""
 #. js-lingui-id: frqduN
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Rich notes attached to records"
+msgstr ""
+
+#. js-lingui-id: JDp1bg
+#: src/sections/three-cards/product-three-cards-data.ts
+msgid "See updates as they happen. Work with your team and agents seamlessly."
 msgstr ""
 
 #. js-lingui-id: 0kgOPB
@@ -822,6 +848,11 @@ msgstr ""
 msgid "Stay in control with our *open-source software*"
 msgstr ""
 
+#. js-lingui-id: j9c8rb
+#: src/sections/three-cards/product-three-cards-data.ts
+msgid "Stay in Flow"
+msgstr ""
+
 #. js-lingui-id: bxgoJR
 #: src/sections/menu/menu.data.ts
 msgid "Step-by-step guides and playbooks to help your team get the most out of their workspace."
@@ -834,6 +865,7 @@ msgstr ""
 
 #. js-lingui-id: UCLArd
 #: src/sections/three-cards/three-cards.tsx
+#: src/sections/three-cards/product-three-cards.tsx
 msgid "Stop settling for trade-offs."
 msgstr ""
 

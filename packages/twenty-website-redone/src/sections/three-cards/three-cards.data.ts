@@ -1,14 +1,21 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
-// Identifies which halftone visual fills the card's stage when the
-// visual-runtime port lands.
-export type IllustrationId = 'diamond' | 'flash' | 'lock';
+// Identifies which halftone model fills the card's stage.
+export type IllustrationId =
+  | 'diamond'
+  | 'eye'
+  | 'flash'
+  | 'lock'
+  | 'singleScreen'
+  | 'speed';
 
+// Attribution and its case-study link only render when present — the
+// product cards carry neither.
 export type IllustrationCardRecord = {
-  attribution: { role: MessageDescriptor; company: MessageDescriptor };
+  attribution?: { role: MessageDescriptor; company: MessageDescriptor };
   body: MessageDescriptor;
-  caseStudySlug: string;
+  caseStudySlug?: string;
   heading: MessageDescriptor;
   illustration: IllustrationId;
 };

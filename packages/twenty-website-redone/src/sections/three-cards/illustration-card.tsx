@@ -186,31 +186,35 @@ export function IllustrationCard({ card }: { card: IllustrationCardRecord }) {
       <CardRule aria-hidden />
       <CardLower>
         <Body size="sm">{i18n._(card.body)}</Body>
-        <CardFooter>
-          <Body size="xs" weight="medium">
-            {i18n._(card.attribution.role)}
-          </Body>
-          <AttributionPipe aria-hidden />
-          <Body size="xs">{i18n._(card.attribution.company)}</Body>
-          <TrailingAction>
-            <ActionLink
-              aria-label={i18n._(
-                msg`${i18n._(card.attribution.company)} case study`,
-              )}
-              href={`/customers/${card.caseStudySlug}`}
-            >
-              <ButtonShape heightPx={ACTION_SIZE_PX} outlined />
-              <span data-slot="action-hover">
-                <span>
-                  <ButtonShape heightPx={ACTION_SIZE_PX} />
-                </span>
-              </span>
-              <span data-slot="action-glyph">
-                <ArrowRight sizePx={18} />
-              </span>
-            </ActionLink>
-          </TrailingAction>
-        </CardFooter>
+        {card.attribution ? (
+          <CardFooter>
+            <Body size="xs" weight="medium">
+              {i18n._(card.attribution.role)}
+            </Body>
+            <AttributionPipe aria-hidden />
+            <Body size="xs">{i18n._(card.attribution.company)}</Body>
+            {card.caseStudySlug !== undefined ? (
+              <TrailingAction>
+                <ActionLink
+                  aria-label={i18n._(
+                    msg`${i18n._(card.attribution.company)} case study`,
+                  )}
+                  href={`/customers/${card.caseStudySlug}`}
+                >
+                  <ButtonShape heightPx={ACTION_SIZE_PX} outlined />
+                  <span data-slot="action-hover">
+                    <span>
+                      <ButtonShape heightPx={ACTION_SIZE_PX} />
+                    </span>
+                  </span>
+                  <span data-slot="action-glyph">
+                    <ArrowRight sizePx={18} />
+                  </span>
+                </ActionLink>
+              </TrailingAction>
+            ) : null}
+          </CardFooter>
+        ) : null}
       </CardLower>
     </CardContainer>
   );

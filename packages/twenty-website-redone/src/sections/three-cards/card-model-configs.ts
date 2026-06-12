@@ -76,6 +76,18 @@ export const CARD_MODEL_CONFIGS: Record<
     geometryOptions: { legacyNormalization: true, postRotateZ: 1 },
     initialPose: { autoElapsed: 0, timeElapsed: 0 },
   },
+  eye: {
+    modelUrl: '/models/eye.glb',
+    settings: {
+      ...CARD_BASE,
+      halftone: {
+        ...CARD_HALFTONE,
+        dashColor: paletteColorNumber('blue'),
+        hoverDashColor: paletteColorNumber('blue'),
+      },
+    },
+    initialPose: BASE_POSE,
+  },
   flash: {
     modelUrl: '/models/flash.glb',
     settings: {
@@ -98,6 +110,34 @@ export const CARD_MODEL_CONFIGS: Record<
         hoverDashColor: paletteColorNumber('blue'),
       },
     },
+    initialPose: BASE_POSE,
+  },
+  singleScreen: {
+    modelUrl: '/models/single-screen.glb',
+    settings: {
+      ...CARD_BASE,
+      halftone: {
+        ...CARD_HALFTONE,
+        dashColor: paletteColorNumber('blue'),
+        hoverDashColor: paletteColorNumber('blue'),
+      },
+    },
+    initialPose: BASE_POSE,
+  },
+  speed: {
+    modelUrl: '/models/speed.glb',
+    settings: {
+      ...CARD_BASE,
+      halftone: {
+        ...CARD_HALFTONE,
+        dashColor: paletteColorNumber('blue'),
+        hoverDashColor: paletteColorNumber('blue'),
+      },
+    },
+    // The loader's default bounding-sphere radius (1.6) shrunk by the
+    // authored speed multiplier — the old site scaled the normalized
+    // geometry by 0.731 after normalization.
+    geometryOptions: { scaleTarget: 1.6 * 0.731 },
     initialPose: BASE_POSE,
   },
 };

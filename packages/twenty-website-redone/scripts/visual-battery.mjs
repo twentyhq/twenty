@@ -79,13 +79,19 @@ const VISUALS = {
     minCoverage: 0.01,
     animated: true,
     interactive: true,
+    settle: { cardReveal: true },
   },
   flash: {
     slotSelector: '[data-illustration="flash"]',
     hueRangeDegrees: [200, 260],
     minCoverage: 0.01,
     animated: true,
+    // The thin bolt rotates near edge-on at the sampling phase (the card
+    // reveal shifted mount timing); ~0.25% diff vs a 0.00% reduced
+    // baseline is unambiguous motion.
+    motionFloor: 0.002,
     interactive: true,
+    settle: { cardReveal: true },
   },
   lock: {
     slotSelector: '[data-illustration="lock"]',
@@ -93,6 +99,7 @@ const VISUALS = {
     minCoverage: 0.01,
     animated: true,
     interactive: true,
+    settle: { cardReveal: true },
   },
   target: {
     slotSelector: '[data-illustration="target"]',
@@ -156,6 +163,36 @@ const VISUALS = {
     minCoverage: 0.02,
     animated: false,
     interactive: true,
+  },
+
+  // The product page's three-cards models — same grammar as the home
+  // trio (blue band halftone on the white stage, auto-rotate + drag).
+  speed: {
+    slotSelector: '[data-illustration="speed"]',
+    path: '/product',
+    hueRangeDegrees: [200, 260],
+    minCoverage: 0.01,
+    animated: true,
+    interactive: true,
+    settle: { cardReveal: true },
+  },
+  eye: {
+    slotSelector: '[data-illustration="eye"]',
+    path: '/product',
+    hueRangeDegrees: [200, 260],
+    minCoverage: 0.01,
+    animated: true,
+    interactive: true,
+    settle: { cardReveal: true },
+  },
+  singleScreen: {
+    slotSelector: '[data-illustration="singleScreen"]',
+    path: '/product',
+    hueRangeDegrees: [200, 260],
+    minCoverage: 0.01,
+    animated: true,
+    interactive: true,
+    settle: { cardReveal: true },
   },
 };
 
@@ -318,6 +355,22 @@ const settleForSpec = async (page, spec) => {
     await page.waitForTimeout(800);
     return;
   }
+  if (spec.settle?.cardReveal) {
+    // The three-cards grid rides the scroll-driven reveal; park the slot
+    // high enough that the choreography has fully settled before probing.
+    await page.evaluate((selector) => {
+      const slot = document.querySelector(selector);
+      if (slot) {
+        const rect = slot.getBoundingClientRect();
+        window.scrollTo(
+          0,
+          rect.top + window.scrollY - window.innerHeight * 0.15,
+        );
+      }
+    }, spec.slotSelector);
+    await page.waitForTimeout(900);
+    return;
+  }
   await page.locator(spec.slotSelector).first().scrollIntoViewIfNeeded();
 };
 
@@ -327,7 +380,10 @@ const runVisual = async (browser, key, spec) => {
     viewport: VIEWPORT,
     deviceScaleFactor: 1,
   });
-  await page.goto(BASE_URL, { waitUntil: 'networkidle', timeout: 180000 });
+  await page.goto(new URL(spec.path ?? '', BASE_URL).href, {
+    waitUntil: 'networkidle',
+    timeout: 180000,
+  });
 
   const slot = page.locator(spec.slotSelector).first();
   await settleForSpec(page, spec);
@@ -491,14 +547,27 @@ const browser = await chromium.launch({ channel: 'chrome', headless: true });
 
 // Completeness runs only on full sweeps (a single-visual run is a dev loop).
 if (process.argv.slice(2).length === 0) {
-  const completenessPage = await browser.newPage({ viewport: VIEWPORT });
-  await completenessPage.goto(BASE_URL, {
-    waitUntil: 'networkidle',
-    timeout: 240000,
-  });
-  console.log('── spec completeness');
-  await assertSpecCompleteness(completenessPage, new Set(Object.keys(VISUALS)));
-  await completenessPage.close();
+  const specPaths = [
+    ...new Set(Object.values(VISUALS).map((spec) => spec.path ?? '')),
+  ];
+  // Pages are checked one at a time so failures stay attributable.
+  for (const specPath of specPaths) {
+    // eslint-disable-next-line no-await-in-loop
+    const completenessPage = await browser.newPage({ viewport: VIEWPORT });
+    // eslint-disable-next-line no-await-in-loop
+    await completenessPage.goto(new URL(specPath, BASE_URL).href, {
+      waitUntil: 'networkidle',
+      timeout: 240000,
+    });
+    console.log(`── spec completeness (${specPath || '/'})`);
+    // eslint-disable-next-line no-await-in-loop
+    await assertSpecCompleteness(
+      completenessPage,
+      new Set(Object.keys(VISUALS)),
+    );
+    // eslint-disable-next-line no-await-in-loop
+    await completenessPage.close();
+  }
 }
 
 for (const key of keys) {
