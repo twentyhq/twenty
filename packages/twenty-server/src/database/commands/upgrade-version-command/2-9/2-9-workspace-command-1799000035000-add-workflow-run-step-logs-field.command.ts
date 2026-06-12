@@ -86,7 +86,7 @@ export class AddWorkflowRunStepLogsFieldCommand extends ActiveOrSuspendedWorkspa
         'Per-step observability payload (token usage, tool calls, log entries)',
       icon: 'IconTerminal2',
       isNullable: true,
-      isUIEditable: false,
+      isUIReadOnly: true,
       isCustom: false,
       isSystem: true,
       isActive: true,

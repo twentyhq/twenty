@@ -19,7 +19,6 @@ export class CreateFieldInput extends OmitType(
     'applicationId',
     'morphId',
     'universalIdentifier',
-    'isUIReadOnly',
   ] as const,
   InputType,
 ) {

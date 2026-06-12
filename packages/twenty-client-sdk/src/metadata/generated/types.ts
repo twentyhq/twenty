@@ -1094,6 +1094,9 @@ export default {
             "isUICreatable": [
                 53
             ],
+            "isUIReadOnly": [
+                53
+            ],
             "isSearchable": [
                 53
             ],
@@ -1331,6 +1334,9 @@ export default {
                 53
             ],
             "isUIEditable": [
+                53
+            ],
+            "isUIReadOnly": [
                 53
             ],
             "objectMetadataId": [
@@ -10604,6 +10610,9 @@ export default {
             "isUIEditable": [
                 6
             ],
+            "isUIReadOnly": [
+                6
+            ],
             "isNullable": [
                 6
             ],
@@ -10672,6 +10681,9 @@ export default {
                 6
             ],
             "isUIEditable": [
+                6
+            ],
+            "isUIReadOnly": [
                 6
             ],
             "isNullable": [

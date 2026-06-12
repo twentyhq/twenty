@@ -593,6 +593,7 @@ input ObjectFilter {
   isSystem: BooleanFieldComparison
   isUIEditable: BooleanFieldComparison
   isUICreatable: BooleanFieldComparison
+  isUIReadOnly: BooleanFieldComparison
   isSearchable: BooleanFieldComparison
 }
 
@@ -686,6 +687,7 @@ input FieldFilter {
   isActive: BooleanFieldComparison
   isSystem: BooleanFieldComparison
   isUIEditable: BooleanFieldComparison
+  isUIReadOnly: BooleanFieldComparison
   objectMetadataId: UUIDFilterComparison
 }
 
@@ -4155,6 +4157,7 @@ input CreateFieldInput {
   isActive: Boolean
   isSystem: Boolean
   isUIEditable: Boolean
+  isUIReadOnly: Boolean
   isNullable: Boolean
   isUnique: Boolean
   defaultValue: JSON
@@ -4184,6 +4187,7 @@ input UpdateFieldInput {
   isActive: Boolean
   isSystem: Boolean
   isUIEditable: Boolean
+  isUIReadOnly: Boolean
   isNullable: Boolean
   isUnique: Boolean
   defaultValue: JSON

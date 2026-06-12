@@ -1056,6 +1056,7 @@ export type CreateFieldInput = {
   isRemoteCreation?: InputMaybe<Scalars['Boolean']['input']>;
   isSystem?: InputMaybe<Scalars['Boolean']['input']>;
   isUIEditable?: InputMaybe<Scalars['Boolean']['input']>;
+  isUIReadOnly?: InputMaybe<Scalars['Boolean']['input']>;
   isUnique?: InputMaybe<Scalars['Boolean']['input']>;
   label: Scalars['String']['input'];
   morphRelationsCreationPayload?: InputMaybe<Array<Scalars['JSON']['input']>>;
@@ -1729,6 +1730,7 @@ export type FieldFilter = {
   isActive?: InputMaybe<BooleanFieldComparison>;
   isSystem?: InputMaybe<BooleanFieldComparison>;
   isUIEditable?: InputMaybe<BooleanFieldComparison>;
+  isUIReadOnly?: InputMaybe<BooleanFieldComparison>;
   objectMetadataId?: InputMaybe<UuidFilterComparison>;
   or?: InputMaybe<Array<FieldFilter>>;
 };
@@ -3781,6 +3783,7 @@ export type ObjectFilter = {
   isSystem?: InputMaybe<BooleanFieldComparison>;
   isUICreatable?: InputMaybe<BooleanFieldComparison>;
   isUIEditable?: InputMaybe<BooleanFieldComparison>;
+  isUIReadOnly?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<ObjectFilter>>;
 };
 
@@ -5115,6 +5118,7 @@ export type UpdateFieldInput = {
   isNullable?: InputMaybe<Scalars['Boolean']['input']>;
   isSystem?: InputMaybe<Scalars['Boolean']['input']>;
   isUIEditable?: InputMaybe<Scalars['Boolean']['input']>;
+  isUIReadOnly?: InputMaybe<Scalars['Boolean']['input']>;
   isUnique?: InputMaybe<Scalars['Boolean']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
   morphRelationsUpdatePayload?: InputMaybe<Array<Scalars['JSON']['input']>>;

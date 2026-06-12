@@ -1,4 +1,7 @@
-import { extractAndSanitizeObjectStringFields } from 'twenty-shared/utils';
+import {
+  extractAndSanitizeObjectStringFields,
+  isDefined,
+} from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -53,7 +56,13 @@ export const getDefaultFlatFieldMetadata = ({
       : resolvedDefaultValue,
     createdAt,
     updatedAt: createdAt,
-    isUIEditable: createFieldInput.isUIEditable ?? true,
+    // isUIReadOnly is the deprecated alias of isUIEditable (inverted
+    // polarity), kept for one release; isUIEditable wins when both are set.
+    isUIEditable:
+      createFieldInput.isUIEditable ??
+      (isDefined(createFieldInput.isUIReadOnly)
+        ? !createFieldInput.isUIReadOnly
+        : true),
     morphId: null,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
     objectMetadataUniversalIdentifier,

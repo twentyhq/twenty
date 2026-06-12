@@ -31,7 +31,6 @@ export class UpdateFieldInput extends OmitType(
     'standardOverrides',
     'applicationId',
     'morphId',
-    'isUIReadOnly',
   ] as const,
 ) {
   @HideField()

@@ -217,7 +217,7 @@ export class BackfillMessageThreadSubjectCommand extends ActiveOrSuspendedWorksp
           description: 'Subject',
           icon: 'IconMessage',
           isNullable: true,
-          isUIEditable: false,
+          isUIReadOnly: true,
           universalIdentifier:
             STANDARD_OBJECTS.messageThread.fields.subject.universalIdentifier,
         },
