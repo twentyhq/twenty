@@ -38,30 +38,25 @@ export class TimelineActivityRepository {
         payloads,
       });
 
-      const payloadsWithDiff = payloads
-        .filter(({ name, properties }) => {
+      const payloadsToUpsert = payloads.flatMap(
+        ({ name, properties, ...rest }) => {
           const [objectName, action] = name.split('.');
-
-          // Only main-object update events carry a field diff. Created, deleted
-          // and restored events, and linked note/task rows, have none.
           const isMainObjectUpdate =
             action === 'updated' && !objectName.startsWith('linked-');
 
           if (!isMainObjectUpdate) {
-            return true;
+            return [{ ...rest, name, properties: {} }];
           }
 
-          return (
-            isDefined(properties.diff) &&
-            Object.keys(properties.diff).length > 0
-          );
-        })
-        .map(({ properties, ...rest }) => ({
-          ...rest,
-          properties: isDefined(properties.diff)
-            ? { diff: properties.diff }
-            : {},
-        }));
+          const { diff } = properties;
+
+          if (!isDefined(diff) || Object.keys(diff).length === 0) {
+            return [];
+          }
+
+          return [{ ...rest, name, properties: { diff } }];
+        },
+      );
 
       const payloadsToInsert: TimelineActivityPayloadWorkspaceIdAndObjectSingularName['payloads'] =
         [];
@@ -69,7 +64,7 @@ export class TimelineActivityRepository {
       const timelineActivityPropertyName =
         await this.getTimelineActivityPropertyName(objectSingularName);
 
-      for (const payload of payloadsWithDiff) {
+      for (const payload of payloadsToUpsert) {
         const recentTimelineActivity = recentTimelineActivities.find(
           (timelineActivity) =>
             timelineActivity[timelineActivityPropertyName] ===

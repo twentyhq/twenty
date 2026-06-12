@@ -75,9 +75,6 @@ describe('filterOutInvalidTimelineActivities', () => {
     expect(filter(events)).toEqual([]);
   });
 
-  // Regression: a *.updated event with no diff would otherwise reach
-  // EventRowMainObjectUpdated and crash the whole timeline ("Invalid
-  // configuration").
   it('drops update events that have no diff', () => {
     const events = [
       { id: '1', name: 'company.updated', properties: {} },

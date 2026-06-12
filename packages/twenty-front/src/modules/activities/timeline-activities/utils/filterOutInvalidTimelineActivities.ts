@@ -20,8 +20,6 @@ export const filterOutInvalidTimelineActivities = (
   return timelineActivities.filter((timelineActivity) => {
     const [objectName, action] = timelineActivity.name.split('.');
 
-    // Only main-object update events render a field diff. Created, deleted and
-    // restored events, and linked note/task rows, render without one.
     const isMainObjectUpdate =
       action === 'updated' && !objectName.startsWith('linked-');
 
