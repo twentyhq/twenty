@@ -6,12 +6,20 @@ export const updatePersonLastContactAtFromCalendar = async (
   client: CoreApiClient,
   personId: string,
 ): Promise<void> => {
+  const now = new Date().toISOString();
+
   const { calendarEventParticipants } = await client.query({
     calendarEventParticipants: {
       __args: {
-        filter: { personId: { eq: personId } },
+        filter: {
+          personId: { eq: personId },
+          calendarEvent: {
+            startsAt: { lte: now },
+            isCanceled: { eq: false },
+          },
+        },
         orderBy: [{ calendarEvent: { startsAt: 'DescNullsLast' } }],
-        first: 10,
+        first: 1,
       },
       edges: {
         node: {
@@ -19,24 +27,14 @@ export const updatePersonLastContactAtFromCalendar = async (
           calendarEvent: {
             id: true,
             startsAt: true,
-            isCanceled: true,
           },
         },
       },
     },
   });
 
-  const now = new Date().toISOString();
-
   const lastContactAt =
-    calendarEventParticipants?.edges
-      .map((edge) => edge.node.calendarEvent)
-      .find(
-        (calendarEvent) =>
-          !calendarEvent?.isCanceled &&
-          calendarEvent?.startsAt &&
-          calendarEvent.startsAt <= now,
-      )?.startsAt ?? null;
+    calendarEventParticipants?.edges[0]?.node?.calendarEvent?.startsAt ?? null;
 
   if (!lastContactAt) {
     return;

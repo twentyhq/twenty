@@ -11,6 +11,8 @@ const CRON_INTERVAL_MINUTES = Math.min(
 
 const SECURITY_OVERLAP_MINUTES = 5;
 
+const QUERY_MAX_RECORDS = 200;
+
 const handler = async (): Promise<void> => {
   const client = new CoreApiClient();
 
@@ -20,56 +22,87 @@ const handler = async (): Promise<void> => {
       (CRON_INTERVAL_MINUTES + SECURITY_OVERLAP_MINUTES) * 60 * 1000,
   );
 
-  const { calendarEvents } = await client.query({
-    calendarEvents: {
-      __args: {
-        filter: {
-          and: [
-            { startsAt: { gt: windowStart.toISOString() } },
-            { startsAt: { lte: now.toISOString() } },
-            { isCanceled: { eq: false } },
-          ],
-        },
-      },
-      edges: {
-        node: {
-          id: true,
-        },
-      },
-    },
-  });
+  const calendarEventIds: string[] = [];
+  let calendarEventsCursor: string | undefined;
+  let calendarEventsHasNextPage = true;
 
-  const calendarEventIds =
-    calendarEvents?.edges.map((edge) => edge.node.id) ?? [];
+  while (calendarEventsHasNextPage) {
+    const { calendarEvents } = await client.query({
+      calendarEvents: {
+        __args: {
+          filter: {
+            and: [
+              { startsAt: { gt: windowStart.toISOString() } },
+              { startsAt: { lte: now.toISOString() } },
+              { isCanceled: { eq: false } },
+            ],
+          },
+          first: QUERY_MAX_RECORDS,
+          after: calendarEventsCursor,
+        },
+        edges: {
+          node: {
+            id: true,
+          },
+        },
+        pageInfo: {
+          hasNextPage: true,
+          endCursor: true,
+        },
+      },
+    });
+
+    calendarEventIds.push(
+      ...(calendarEvents?.edges.map((edge) => edge.node.id) ?? []),
+    );
+    calendarEventsHasNextPage = calendarEvents?.pageInfo.hasNextPage ?? false;
+    calendarEventsCursor = calendarEvents?.pageInfo.endCursor ?? undefined;
+  }
 
   if (calendarEventIds.length === 0) {
     return;
   }
 
-  const { calendarEventParticipants } = await client.query({
-    calendarEventParticipants: {
-      __args: {
-        filter: { calendarEventId: { in: calendarEventIds } },
-      },
-      edges: {
-        node: {
-          id: true,
-          personId: true,
+  const personIds = new Set<string>();
+  let participantsCursor: string | undefined;
+  let participantsHasNextPage = true;
+
+  while (participantsHasNextPage) {
+    const { calendarEventParticipants } = await client.query({
+      calendarEventParticipants: {
+        __args: {
+          filter: { calendarEventId: { in: calendarEventIds } },
+          first: QUERY_MAX_RECORDS,
+          after: participantsCursor,
+        },
+        edges: {
+          node: {
+            id: true,
+            personId: true,
+          },
+        },
+        pageInfo: {
+          hasNextPage: true,
+          endCursor: true,
         },
       },
-    },
-  });
+    });
 
-  const personIds = [
-    ...new Set(
-      (calendarEventParticipants?.edges ?? [])
-        .map((edge) => edge.node.personId)
-        .filter((e) => e !== null && e !== undefined),
-    ),
-  ];
+    for (const edge of calendarEventParticipants?.edges ?? []) {
+      const personId = edge.node.personId;
+
+      if (personId !== null && personId !== undefined) {
+        personIds.add(personId);
+      }
+    }
+    participantsHasNextPage =
+      calendarEventParticipants?.pageInfo.hasNextPage ?? false;
+    participantsCursor =
+      calendarEventParticipants?.pageInfo.endCursor ?? undefined;
+  }
 
   await Promise.all(
-    personIds.map((personId) =>
+    [...personIds].map((personId) =>
       updatePersonLastContactAtFromCalendar(client, personId),
     ),
   );

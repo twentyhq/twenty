@@ -6,47 +6,27 @@ import { EMAIL_INTERACTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/const
 import { updatePersonLastContactAtIfNewer } from 'src/utils/update-person-last-contact-at';
 
 const handler = async (event: DatabaseEventPayload<ObjectRecordUpdateEvent<CoreSchema.MessageParticipant>>): Promise<void> => {
-  const client = new CoreApiClient();
+  const personId = event.properties.after.personId;
+  const messageId = event.properties.after.messageId;
 
-  const { messageParticipant } = await client.query({
-    messageParticipant: {
-      __args: { filter: { id: { eq: event.recordId } } },
-      id: true,
-      personId: true,
-    },
-  });
-
-  const personId = messageParticipant?.personId
-
-  if(!personId) {
-   return
+  if (!personId || !messageId) {
+    return;
   }
 
-  const { messageParticipants } = await client.query({
-    messageParticipants: {
-      __args: {
-        filter: { personId: { eq: personId } },
-        orderBy: [{ message: { receivedAt: 'DescNullsLast' } }],
-        first: 1,
-      },
-      edges: {
-        node: {
-          id: true,
-          message: {
-            id: true,
-            receivedAt: true,
-            subject: true,
-          },
-        },
-      },
+  const client = new CoreApiClient();
+
+  const { message } = await client.query({
+    message: {
+      __args: { filter: { id: { eq: messageId } } },
+      id: true,
+      receivedAt: true,
     },
   });
 
-  const lastContactAt =
-    messageParticipants?.edges[0]?.node?.message?.receivedAt ?? null;
+  const lastContactAt = message?.receivedAt ?? null;
 
-  if(!lastContactAt) {
-    return
+  if (!lastContactAt) {
+    return;
   }
 
   await updatePersonLastContactAtIfNewer(client, personId, lastContactAt);

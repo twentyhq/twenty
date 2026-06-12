@@ -11,6 +11,6 @@ export default defineApplicationRole({
   description: `${APP_DISPLAY_NAME} default function role`,
   canReadAllObjectRecords: true,
   canUpdateAllObjectRecords: true,
-  canSoftDeleteAllObjectRecords: true,
+  canSoftDeleteAllObjectRecords: false,
   canDestroyAllObjectRecords: false,
 });

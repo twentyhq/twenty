@@ -8,21 +8,13 @@ import { updatePersonLastContactAtFromCalendar } from 'src/utils/update-person-l
 const handler = async (event: DatabaseEventPayload<
   ObjectRecordUpdateEvent<CoreSchema.CalendarEventParticipant>
 >): Promise<void> => {
-  const client = new CoreApiClient();
-
-  const { calendarEventParticipant } = await client.query({
-    calendarEventParticipant: {
-      __args: { filter: { id: { eq: event.recordId } } },
-      id: true,
-      personId: true,
-    },
-  });
-
-  const personId = calendarEventParticipant?.personId;
+  const personId = event.properties.after.personId;
 
   if (!personId) {
     return;
   }
+
+  const client = new CoreApiClient();
 
   await updatePersonLastContactAtFromCalendar(client, personId);
 };
@@ -35,6 +27,7 @@ export default defineLogicFunction({
   timeoutSeconds: 60,
   databaseEventTriggerSettings: {
     eventName: 'calendarEventParticipant.updated',
+    updatedFields: ['personId'],
   },
   handler,
 });
