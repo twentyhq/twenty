@@ -324,8 +324,8 @@ const StackedTabCard = styled.div`
     )
     scale(
       calc(
-        var(--card-base-scale, 1) +
-          (1 - var(--card-base-scale, 1)) * var(--hero-stack-align, 0)
+        var(--card-base-scale, 1) + (1 - var(--card-base-scale, 1)) *
+          var(--hero-stack-align, 0)
       )
     );
   transform-origin: center top;
@@ -338,7 +338,8 @@ const StackedTabCard = styled.div`
           var(--hero-stack-base-width, 0) +
             (var(--card-target-width, 0) - var(--hero-stack-base-width, 0)) *
             var(--hero-stack-spread-eased, 0)
-        ) * 1px
+        ) *
+        1px
     );
   }
 `;
@@ -362,8 +363,7 @@ const MobileSection = styled.div<{ $secondary?: boolean }>`
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding-top: ${({ $secondary }) =>
-    $secondary ? spacing(12) : spacing(7.5)};
+  padding-top: ${({ $secondary }) => ($secondary ? spacing(12) : spacing(7.5))};
   position: relative;
   row-gap: ${spacing(6)};
   width: 100%;
@@ -718,9 +718,7 @@ export function HeroVisualScroll({
 
           <FullLayer
             data-face="dark"
-            data-interactive={
-              discrete.aiPointerEventsEnabled ? '' : undefined
-            }
+            data-interactive={discrete.aiPointerEventsEnabled ? '' : undefined}
           >
             <IntroContainer>
               {headingPair('dark')}
@@ -738,7 +736,9 @@ export function HeroVisualScroll({
                     tabs={tabs}
                   />
                   <StackedTabDeck
-                    aria-hidden={discrete.selectorRevealReady ? undefined : 'true'}
+                    aria-hidden={
+                      discrete.selectorRevealReady ? undefined : 'true'
+                    }
                     data-interactive={
                       discrete.selectorRevealReady ? '' : undefined
                     }
@@ -754,9 +754,7 @@ export function HeroVisualScroll({
                           STACK_BASE_SCALES[tabNumber],
                         ),
                         '--card-offset': String(targetMetric?.offset ?? 0),
-                        '--card-target-width': String(
-                          targetMetric?.width ?? 0,
-                        ),
+                        '--card-target-width': String(targetMetric?.width ?? 0),
                         zIndex: 4 - tabNumber,
                       } as CSSProperties;
 

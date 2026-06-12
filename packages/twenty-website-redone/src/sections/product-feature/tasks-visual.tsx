@@ -438,9 +438,7 @@ export function TasksVisual({ active: _active }: { active: boolean }) {
                       </svg>
                     ) : null}
                   </TaskCircle>
-                  <TaskName
-                    data-strikethrough={isCompleted ? '' : undefined}
-                  >
+                  <TaskName data-strikethrough={isCompleted ? '' : undefined}>
                     {activity.task}
                   </TaskName>
                 </TaskChip>

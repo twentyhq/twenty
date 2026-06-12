@@ -1,10 +1,7 @@
 import { displayPage } from './display-page';
 import { PRODUCT_VISUAL_SCENES } from './product-visual-scenes';
 import { NEW_TASK_ROWS } from './new-task-rows';
-import {
-  type KanbanPageDefinition,
-  type TablePageDefinition,
-} from '../types';
+import { type KanbanPageDefinition, type TablePageDefinition } from '../types';
 
 const { buildFocusedOpportunitiesPage, getStreamProgress, resolveDisplayPage } =
   displayPage;

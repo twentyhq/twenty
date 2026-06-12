@@ -4,7 +4,12 @@ import { type RecordPageDefinition } from '../../types';
 const basePage: RecordPageDefinition = {
   type: 'record',
   header: { title: 'Anthropic' },
-  record: { name: 'Anthropic', createdAt: 'Added 3 months ago', fields: [], relations: [] },
+  record: {
+    name: 'Anthropic',
+    createdAt: 'Added 3 months ago',
+    fields: [],
+    relations: [],
+  },
   notes: [],
 };
 

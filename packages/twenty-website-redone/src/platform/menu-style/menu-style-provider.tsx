@@ -3,10 +3,7 @@
 import { useCallback, useMemo, useState, type ReactNode } from 'react';
 
 import { MENU_STYLE_BACKGROUND_VAR } from './menu-style-background';
-import {
-  MenuStyleContext,
-  type MenuStyleOverride,
-} from './menu-style-context';
+import { MenuStyleContext, type MenuStyleOverride } from './menu-style-context';
 
 export function MenuStyleProvider({ children }: { children: ReactNode }) {
   const [override, setOverride] = useState<MenuStyleOverride>({});

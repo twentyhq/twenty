@@ -4,8 +4,6 @@ import { useEffect } from 'react';
 
 import { scheduleIdleTask } from '@/platform/motion';
 
-
-
 import { APP_PREVIEW_CONFIG } from './data/sidebar-config';
 import { PreviewAppLayout } from './shell/preview-app-layout';
 import { useAppPreviewExperience } from './shell/use-app-preview-experience';

@@ -165,9 +165,7 @@ export function KanbanLane({
           ? Array.from({ length: skeletonCardCount }, (_, cardIndex) => (
               <SkeletonCard index={cardIndex} key={cardIndex} />
             ))
-          : lane.cards.map((card) => (
-              <KanbanCard card={card} key={card.id} />
-            ))}
+          : lane.cards.map((card) => <KanbanCard card={card} key={card.id} />)}
         <AddCardButton aria-hidden>
           <MiniIcon
             icon={IconPlus}

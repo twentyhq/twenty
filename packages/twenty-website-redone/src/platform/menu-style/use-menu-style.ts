@@ -2,10 +2,7 @@
 
 import { useContext } from 'react';
 
-import {
-  MenuStyleContext,
-  type MenuStyleOverride,
-} from './menu-style-context';
+import { MenuStyleContext, type MenuStyleOverride } from './menu-style-context';
 
 const NO_OVERRIDE: MenuStyleOverride = {};
 

@@ -3,13 +3,7 @@ import { styled } from '@linaria/react';
 
 import { INFORMATIVE_MARKS } from '@/icons';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import {
-  color,
-  fontFamily,
-  fontSize,
-  mediaUp,
-  spacing,
-} from '@/tokens';
+import { color, fontFamily, fontSize, mediaUp, spacing } from '@/tokens';
 import { Body, Heading } from '@/ui';
 
 import { type FeatureTile } from './feature-tiles';

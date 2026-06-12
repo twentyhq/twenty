@@ -172,7 +172,9 @@ export function PreviewAppLayout({
             ) : null}
             {renderPage(page)}
           </IndexSurface>
-          {rightAside !== undefined ? <AsideSlot>{rightAside}</AsideSlot> : null}
+          {rightAside !== undefined ? (
+            <AsideSlot>{rightAside}</AsideSlot>
+          ) : null}
         </ContentRow>
       </RightPane>
     </AppLayout>

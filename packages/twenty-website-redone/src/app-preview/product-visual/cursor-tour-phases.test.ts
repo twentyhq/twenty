@@ -42,9 +42,9 @@ describe('cursorTour phase tables', () => {
   });
 
   it('should alternate the three cursors on mobile', () => {
-    expect(
-      cursorTour.MOBILE_PHASES.map((phase) => phase.activeCursor),
-    ).toEqual([0, 0, 0, 1, 1, 1, 2, 2, 2]);
+    expect(cursorTour.MOBILE_PHASES.map((phase) => phase.activeCursor)).toEqual(
+      [0, 0, 0, 1, 1, 1, 2, 2, 2],
+    );
   });
 });
 

@@ -10,7 +10,8 @@ const NEW_URL =
 const VIEWPORT = { width: 1440, height: 900 };
 
 const failures = [];
-const ok = (label, detail) => console.log(`  ✓ ${label}${detail ? ` (${detail})` : ''}`);
+const ok = (label, detail) =>
+  console.log(`  ✓ ${label}${detail ? ` (${detail})` : ''}`);
 const fail = (label, detail) => {
   failures.push(`${label}: ${detail}`);
   console.log(`  ✗ ${label}: ${detail}`);
@@ -45,10 +46,9 @@ async function trackGeometry(page) {
 
 async function scrollToProgress(page, geometry, progress) {
   const scrollable = geometry.height - VIEWPORT.height;
-  await page.evaluate(
-    ({ top }) => window.scrollTo(0, top),
-    { top: geometry.top + progress * scrollable },
-  );
+  await page.evaluate(({ top }) => window.scrollTo(0, top), {
+    top: geometry.top + progress * scrollable,
+  });
   await page.waitForTimeout(450);
 }
 
@@ -79,7 +79,8 @@ async function readHeroState(page) {
     const headerStyle = header ? getComputedStyle(header) : null;
     const cursorNames = ['Alice', 'Ben', 'Cara'].filter((name) =>
       [...document.querySelectorAll('span')].some(
-        (el) => el.textContent === name.toUpperCase() || el.textContent === name,
+        (el) =>
+          el.textContent === name.toUpperCase() || el.textContent === name,
       ),
     );
     const darkStyle = dark ? getComputedStyle(dark) : null;
@@ -89,8 +90,7 @@ async function readHeroState(page) {
       darkPointerEvents: darkStyle?.pointerEvents ?? null,
       menuBackground: headerStyle?.backgroundColor ?? null,
       cursorNames,
-      hasStackCards:
-        [...document.querySelectorAll('[role="tab"]')].length >= 4,
+      hasStackCards: [...document.querySelectorAll('[role="tab"]')].length >= 4,
     };
   });
 }
@@ -125,7 +125,10 @@ const oldGeometry = await trackGeometry(oldPage);
 const newGeometry = await trackGeometry(newPage);
 
 if (!oldGeometry || !newGeometry) {
-  fail('scroll track present on both sites', `old=${Boolean(oldGeometry)} new=${Boolean(newGeometry)}`);
+  fail(
+    'scroll track present on both sites',
+    `old=${Boolean(oldGeometry)} new=${Boolean(newGeometry)}`,
+  );
 } else {
   ok('scroll track present on both sites');
 
@@ -194,10 +197,7 @@ if (!oldGeometry || !newGeometry) {
   const oldRest = await readHeroState(oldPage);
   const newRest = await readHeroState(newPage);
 
-  if (
-    oldRest.cursorNames.length === 3 &&
-    newRest.cursorNames.length === 3
-  ) {
+  if (oldRest.cursorNames.length === 3 && newRest.cursorNames.length === 3) {
     ok('three collaborator cursors at rest on both sites');
   } else {
     fail(

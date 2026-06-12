@@ -30,9 +30,7 @@ describe('streamedMarkdown.sliceVisibleParagraphs', () => {
 
   it('should stop mid-bold and omit later paragraphs', () => {
     expect(sliceVisibleParagraphs(['ab **cd**', 'ef'], 3)).toEqual([
-      [
-        { bold: false, text: 'ab ' },
-      ],
+      [{ bold: false, text: 'ab ' }],
     ]);
   });
 

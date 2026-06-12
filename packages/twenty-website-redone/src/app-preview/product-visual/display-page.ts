@@ -1,9 +1,6 @@
 import { clampProgress } from '@/platform/motion';
 
-import {
-  type KanbanPageDefinition,
-  type PageDefinition,
-} from '../types';
+import { type KanbanPageDefinition, type PageDefinition } from '../types';
 import { NEW_TASK_ROWS } from './new-task-rows';
 import { type ProductVisualSceneDefinition } from './product-visual-scenes';
 

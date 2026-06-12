@@ -107,8 +107,15 @@ const CalTitle = styled.div`
   white-space: nowrap;
 `;
 
-const { ListCard, TabAddButton, TabHeader, TabHeaderCount, TabHeaderLabel, TabHeaderTitle, TabSection } =
-  RECORD_PANEL_CHROME;
+const {
+  ListCard,
+  TabAddButton,
+  TabHeader,
+  TabHeaderCount,
+  TabHeaderLabel,
+  TabHeaderTitle,
+  TabSection,
+} = RECORD_PANEL_CHROME;
 
 export function RecordCalendar({
   calendar,

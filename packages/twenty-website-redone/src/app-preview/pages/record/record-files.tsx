@@ -69,8 +69,16 @@ const FileDots = styled.span`
   flex-shrink: 0;
 `;
 
-const { ActivityRowBox, ListCard, TabAddButton, TabHeader, TabHeaderCount, TabHeaderLabel, TabHeaderTitle, TabSection } =
-  RECORD_PANEL_CHROME;
+const {
+  ActivityRowBox,
+  ListCard,
+  TabAddButton,
+  TabHeader,
+  TabHeaderCount,
+  TabHeaderLabel,
+  TabHeaderTitle,
+  TabSection,
+} = RECORD_PANEL_CHROME;
 
 export function RecordFiles({ files }: { files: RecordFile[] }) {
   return (

@@ -3,7 +3,13 @@ import { styled } from '@linaria/react';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { color, mediaUp, radius, spacing } from '@/tokens';
-import { Eyebrow, Heading, SectionIntro, SectionShell, SectionStack } from '@/ui';
+import {
+  Eyebrow,
+  Heading,
+  SectionIntro,
+  SectionShell,
+  SectionStack,
+} from '@/ui';
 
 import { FEATURE_TILES, type FeatureTile } from './feature-tiles';
 import { ScrollEntrance } from './scroll-entrance';

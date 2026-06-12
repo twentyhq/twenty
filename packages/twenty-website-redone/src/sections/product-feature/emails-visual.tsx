@@ -531,7 +531,10 @@ export function EmailsVisual({ active: _active }: { active: boolean }) {
           </EmailList>
         </>
       ) : (
-        <EmailDetail emailNumber={openEmail} onBack={() => setOpenEmail(null)} />
+        <EmailDetail
+          emailNumber={openEmail}
+          onBack={() => setOpenEmail(null)}
+        />
       )}
     </Root>
   );

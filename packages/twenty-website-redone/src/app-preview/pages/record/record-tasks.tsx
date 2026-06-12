@@ -18,8 +18,7 @@ const TaskLeft = styled.div`
 
 const TaskCheckbox = styled.span<{ $done?: boolean }>`
   align-items: center;
-  background: ${({ $done }) =>
-    $done ? PREVIEW_COLORS.accent : 'transparent'};
+  background: ${({ $done }) => ($done ? PREVIEW_COLORS.accent : 'transparent')};
   border: 1px solid
     ${({ $done }) => ($done ? PREVIEW_COLORS.accent : PREVIEW_COLORS.text)};
   border-radius: 50%;
@@ -91,8 +90,16 @@ const TargetChipName = styled.span`
   white-space: nowrap;
 `;
 
-const { ActivityRowBox, ListCard, TabAddButton, TabHeader, TabHeaderCount, TabHeaderLabel, TabHeaderTitle, TabSection } =
-  RECORD_PANEL_CHROME;
+const {
+  ActivityRowBox,
+  ListCard,
+  TabAddButton,
+  TabHeader,
+  TabHeaderCount,
+  TabHeaderLabel,
+  TabHeaderTitle,
+  TabSection,
+} = RECORD_PANEL_CHROME;
 
 export function RecordTasks({ tasks }: { tasks: RecordTask[] }) {
   return (

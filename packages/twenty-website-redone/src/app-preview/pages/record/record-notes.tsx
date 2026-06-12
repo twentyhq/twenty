@@ -52,7 +52,9 @@ const NoteCard = styled.div<{
   animation: noteCardAppear 360ms ${EASING.standard} both;
   animation-delay: ${({ $index }) => `${120 + $index * 70}ms`};
   background: ${({ $highlighted }) =>
-    $highlighted ? PREVIEW_COLORS.background : PREVIEW_COLORS.backgroundSecondary};
+    $highlighted
+      ? PREVIEW_COLORS.background
+      : PREVIEW_COLORS.backgroundSecondary};
   border: 1px solid
     ${({ $highlighted }) =>
       $highlighted ? PREVIEW_COLORS.border : PREVIEW_COLORS.borderLight};

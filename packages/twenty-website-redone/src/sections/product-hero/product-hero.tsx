@@ -15,9 +15,7 @@ export function ProductHero() {
       aiBody={i18n._(
         msg`Ask questions, automate tasks, and get insights with AI that understands your data and helps you move faster every day, end to end across teams.`,
       )}
-      aiHeading={i18n._(
-        msg`...with AI that actually helps you *work faster*`,
-      )}
+      aiHeading={i18n._(msg`...with AI that actually helps you *work faster*`)}
       ctaHref={SITE_URLS.appWelcome}
       ctaLabel={i18n._(msg`Get started`)}
       introBody={i18n._(

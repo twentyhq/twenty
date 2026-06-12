@@ -11,10 +11,7 @@ import { useCallback, useState } from 'react';
 import { TwentyLogo } from '@/icons';
 import { type CommunityStats } from '@/platform/community';
 import { LocalizedLink } from '@/platform/i18n/localized-link';
-import {
-  MENU_STYLE_BACKGROUND_VAR,
-  useMenuStyle,
-} from '@/platform/menu-style';
+import { MENU_STYLE_BACKGROUND_VAR, useMenuStyle } from '@/platform/menu-style';
 import {
   SHADOW,
   EASING,
