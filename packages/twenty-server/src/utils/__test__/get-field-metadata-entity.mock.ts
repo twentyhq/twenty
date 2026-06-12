@@ -33,7 +33,7 @@ export const getMockFieldMetadataEntity = <
     indexFieldMetadatas: [],
     isLabelSyncedWithName: false,
     isNullable: null,
-    isUIReadOnly: false,
+    isUIEditable: true,
     isSystem: false,
     isUnique: null,
     object: {} as ObjectMetadataEntity,

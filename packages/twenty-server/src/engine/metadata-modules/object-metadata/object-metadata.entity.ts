@@ -86,8 +86,11 @@ export class ObjectMetadataEntity
   @Column({ default: false })
   isSystem: boolean;
 
-  @Column({ default: false })
-  isUIReadOnly: boolean;
+  @Column({ default: true })
+  isUIEditable: boolean;
+
+  @Column({ default: true })
+  isUICreatable: boolean;
 
   @Column({ default: true })
   isAuditLogged: boolean;

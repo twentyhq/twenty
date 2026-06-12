@@ -185,7 +185,7 @@ export class RestoreChannelAssociationScalarFieldMetadataCommand extends ActiveO
         isActive: true,
         isSystem: false,
         isNullable: fieldToRestore.isNullable,
-        isUIReadOnly: true,
+        isUIEditable: false,
         isLabelSyncedWithName: false,
       });
     }

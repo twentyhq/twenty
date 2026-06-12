@@ -78,6 +78,14 @@ export class ObjectMetadataDTO {
   isSystem: boolean;
 
   @FilterableField()
+  isUIEditable: boolean;
+
+  @FilterableField()
+  isUICreatable: boolean;
+
+  @Field({
+    deprecationReason: 'Use isUIEditable',
+  })
   isUIReadOnly: boolean;
 
   @FilterableField()

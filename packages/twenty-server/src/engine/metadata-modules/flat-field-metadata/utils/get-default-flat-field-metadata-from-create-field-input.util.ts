@@ -53,7 +53,7 @@ export const getDefaultFlatFieldMetadata = ({
       : resolvedDefaultValue,
     createdAt,
     updatedAt: createdAt,
-    isUIReadOnly: createFieldInput.isUIReadOnly ?? false,
+    isUIEditable: createFieldInput.isUIEditable ?? true,
     morphId: null,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
     objectMetadataUniversalIdentifier,
