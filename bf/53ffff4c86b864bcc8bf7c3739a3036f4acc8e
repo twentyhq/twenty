@@ -1,0 +1,20 @@
+packages/twenty-server/test/integration/messaging/suites/messaging-sync-failure-lifecycle.integration-spec.ts
+  s_949694f973e683::t_e8e2f7d830d206 65-67,107-108,113-114
+  s_949694f973e683::t_aab06709422878 35,38-41,63-64,69-70,75-76,78-87,103-106,109-112,115-116,124,150-151,153,155,158-159,167,182
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "bf53ffff4c86b864bcc8bf7c3739a3036f4acc8e",
+  "prompts": {},
+  "sessions": {
+    "s_949694f973e683": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ebc28-3091-7c12-a042-cd6ace827905",
+        "model": "gpt-5.5"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
