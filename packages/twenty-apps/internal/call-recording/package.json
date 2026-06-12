@@ -27,5 +27,8 @@
     "oxlint": "^0.16.0",
     "react": "^18.2.0",
     "typescript": "^5.9.3"
+  },
+  "resolutions": {
+    "esbuild": "0.28.1"
   }
 }

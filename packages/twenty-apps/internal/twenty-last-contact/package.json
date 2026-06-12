@@ -30,5 +30,8 @@
   },
   "dependencies": {
     "twenty-client-sdk": "^2.10.1"
+  },
+  "resolutions": {
+    "esbuild": "0.28.1"
   }
 }

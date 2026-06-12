@@ -31,5 +31,8 @@
     "react-dom": "^18.2.0",
     "typescript": "^5.9.3",
     "vitest": "^3.2.6"
+  },
+  "resolutions": {
+    "esbuild": "0.28.1"
   }
 }

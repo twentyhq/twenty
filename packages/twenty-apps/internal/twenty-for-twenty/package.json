@@ -32,5 +32,8 @@
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^3.2.6"
+  },
+  "resolutions": {
+    "esbuild": "0.28.1"
   }
 }
