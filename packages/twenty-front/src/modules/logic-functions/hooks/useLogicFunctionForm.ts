@@ -10,7 +10,7 @@ import {
   jsonSchemaToInputSchema,
   type InputJsonSchema,
 } from 'twenty-shared/logic-function';
-import { capitalize } from 'twenty-shared/utils';
+import { capitalize, isEmptyObject } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
 export const useLogicFunctionForm = ({
@@ -55,6 +55,12 @@ export const useLogicFunctionForm = ({
           { knownObjectTypes },
         );
 
+        // Inference yields an empty schema for handlers typed with imported
+        // aliases; keep the stored schemas instead of wiping authored ones.
+        const hasInferredProperties = !isEmptyObject(
+          inferredJsonSchema.properties ?? {},
+        );
+
         setFormValues((prevState: LogicFunctionFormValues) => ({
           ...prevState,
           sourceHandlerCode: value as string,
@@ -63,13 +69,17 @@ export const useLogicFunctionForm = ({
           toolTriggerSettings: prevState.toolTriggerSettings
             ? {
                 ...prevState.toolTriggerSettings,
-                inputSchema: inferredJsonSchema,
+                inputSchema: hasInferredProperties
+                  ? inferredJsonSchema
+                  : prevState.toolTriggerSettings.inputSchema,
               }
             : null,
           workflowActionTriggerSettings: prevState.workflowActionTriggerSettings
             ? {
                 ...prevState.workflowActionTriggerSettings,
-                inputSchema: jsonSchemaToInputSchema(inferredJsonSchema),
+                inputSchema: hasInferredProperties
+                  ? jsonSchemaToInputSchema(inferredJsonSchema)
+                  : prevState.workflowActionTriggerSettings.inputSchema,
               }
             : null,
         }));

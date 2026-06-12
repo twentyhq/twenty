@@ -62,6 +62,7 @@ export const WorkflowEditActionCodeFieldLeaf = ({
             objectNameSingulars={[recordObjectMetadataItem.nameSingular]}
             disabled={readonly}
             VariablePicker={VariablePicker}
+            shouldDisplayRecordFieldsInVariablePicker={true}
           />
         );
       }

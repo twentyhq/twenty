@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { DEFAULT_TOOL_INPUT_SCHEMA } from 'twenty-shared/logic-function';
+import {
+  DEFAULT_TOOL_INPUT_SCHEMA,
+  stripCustomInputJsonSchemaKeywords,
+} from 'twenty-shared/logic-function';
 
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
@@ -83,9 +86,11 @@ export class LogicFunctionToolProvider implements ToolProvider {
       if (includeSchemas) {
         descriptors.push({
           ...base,
-          inputSchema:
-            (logicFunction.toolTriggerSettings?.inputSchema as object) ??
-            DEFAULT_TOOL_INPUT_SCHEMA,
+          inputSchema: isDefined(logicFunction.toolTriggerSettings?.inputSchema)
+            ? (stripCustomInputJsonSchemaKeywords(
+                logicFunction.toolTriggerSettings.inputSchema,
+              ) as object)
+            : DEFAULT_TOOL_INPUT_SCHEMA,
         });
       } else {
         descriptors.push(base);
