@@ -64,7 +64,6 @@ export const EventRowMainObjectUpdated = ({
   const [isOpen, setIsOpen] = useState(true);
 
   const diffEntries = Object.entries(diff);
-
   if (diffEntries.length === 0) {
     return null;
   }
