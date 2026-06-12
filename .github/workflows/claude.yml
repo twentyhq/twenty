@@ -14,10 +14,6 @@ on:
 
 permissions: {}
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.issue.number || github.event.pull_request.number || github.event.client_payload.issue_number }}
-  cancel-in-progress: false
-
 jobs:
   claude:
     if: |
@@ -45,6 +41,11 @@ jobs:
         (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')) &&
         contains(fromJson('["OWNER","MEMBER","COLLABORATOR"]'), github.event.issue.author_association)
       )
+    # Job-level (not workflow-level) concurrency: skipped jobs never enter the
+    # group, so PR chatter without @claude can't evict a queued Claude run.
+    concurrency:
+      group: claude-code-${{ github.event.issue.number || github.event.pull_request.number }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 60
     permissions:
@@ -118,6 +119,9 @@ jobs:
 
   claude-cross-repo:
     if: github.event_name == 'repository_dispatch'
+    concurrency:
+      group: claude-cross-repo-${{ github.event.client_payload.repo_full_name }}-${{ github.event.client_payload.issue_number }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 60
     permissions:
