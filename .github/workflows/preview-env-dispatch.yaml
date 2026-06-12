@@ -33,14 +33,14 @@ jobs:
     timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
-      - name: Dispatch preview-env to ci-privileged
+      - name: Dispatch preview-env to ci-public
         env:
-          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          GH_TOKEN: ${{ secrets.CI_PUBLIC_DISPATCH_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           REPOSITORY: ${{ github.repository }}
         run: |
-          gh api repos/twentyhq/ci-privileged/dispatches \
+          gh api repos/twentyhq/ci-public/dispatches \
             -f event_type=preview-environment \
             -f "client_payload[pr_number]=$PR_NUMBER" \
             -f "client_payload[pr_head_sha]=$PR_HEAD_SHA" \
