@@ -5,7 +5,17 @@ import { pushOpportunity } from 'src/logic-functions/shared/push-opportunity';
 
 // Fields that round-trip between TFT and partners. A human edit to any of these on an
 // already-shared (SYNCED) opportunity auto-propagates to the partners workspace.
-const SHARED_FIELDS = ['name', 'amount', 'closeDate', 'company', 'pointOfContact'];
+// Both the relation name and the FK column are listed: depending on how the edit was made,
+// updatedFields may report `company`/`pointOfContact` or `companyId`/`pointOfContactId`.
+const SHARED_FIELDS = [
+  'name',
+  'amount',
+  'closeDate',
+  'company',
+  'companyId',
+  'pointOfContact',
+  'pointOfContactId',
+];
 
 const handler = async (
   payload: DatabaseEventPayload,

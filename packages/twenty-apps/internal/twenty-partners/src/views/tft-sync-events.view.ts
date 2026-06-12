@@ -47,6 +47,8 @@ export default defineView({
       isVisible: true,
     },
     {
+      // Standard createdAt field — referenced by its generated universalIdentifier since
+      // standard fields have no app-defined constant. "When" the sync happened.
       universalIdentifier: '22223333-4444-4555-8666-777788889995',
       fieldMetadataUniversalIdentifier: 'b1d67b49-3e8b-5d73-888d-eeef2c4e9e6d',
       position: 5,

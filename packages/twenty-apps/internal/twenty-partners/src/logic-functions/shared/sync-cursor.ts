@@ -1,100 +1,168 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-export type SyncCursor = { id: string; lastCursorAt: string | null };
+export type CursorName = 'primary' | 'reverse';
+
+export type SyncCursor = {
+  id: string;
+  lastCursorAt: string | null;
+  lastCursorId: string | null;
+};
+
+const findCursor = async (
+  client: CoreApiClient,
+  name: CursorName,
+): Promise<SyncCursor | undefined> => {
+  const existing = await client.query({
+    tftSyncCursors: {
+      __args: { filter: { name: { eq: name } }, first: 1 },
+      edges: { node: { id: true, lastCursorAt: true, lastCursorId: true } },
+    },
+  } as any);
+  return (existing as any).tftSyncCursors?.edges?.[0]?.node as SyncCursor | undefined;
+};
 
 // The tftSyncCursor object holds one row per reconciliation direction, keyed by `name`:
 //   'primary' → forward backstop (TFT → Partners, reconcile-opportunities)
 //   'reverse' → echo backstop   (Partners → TFT, reconcile-echoes)
-// Scoping by name keeps the two crons from advancing each other's watermark.
-export type CursorName = 'primary' | 'reverse';
-
+// `name` is unique, so a concurrent create loses with a unique-violation rather than
+// forking a second row; we then re-read the race winner (repo's get-or-create pattern).
 export async function getOrCreateCursor(
   client: CoreApiClient,
   name: CursorName,
 ): Promise<SyncCursor> {
-  const existing = await client.query({
-    tftSyncCursors: {
-      __args: { filter: { name: { eq: name } }, first: 1 },
-      edges: { node: { id: true, lastCursorAt: true } },
-    },
-  } as any);
+  const found = await findCursor(client, name);
+  if (found) return found;
 
-  const row = (existing as any).tftSyncCursors?.edges?.[0]?.node as SyncCursor | undefined;
-  if (row) return row;
-
-  const created = await client.mutation({
-    createTftSyncCursor: {
-      __args: { data: { name, status: 'IDLE' } },
-      id: true,
-    },
-  } as any);
-  return {
-    id: (created as any).createTftSyncCursor?.id as string,
-    lastCursorAt: null,
-  };
+  try {
+    const created = await client.mutation({
+      createTftSyncCursor: {
+        __args: { data: { name, status: 'IDLE' } },
+        id: true,
+      },
+    } as any);
+    return {
+      id: (created as any).createTftSyncCursor?.id as string,
+      lastCursorAt: null,
+      lastCursorId: null,
+    };
+  } catch (createError) {
+    if (!isUniqueViolationError(createError)) throw createError;
+    const raceWinner = await findCursor(client, name);
+    if (raceWinner) return raceWinner;
+    throw createError;
+  }
 }
+
+const isUniqueViolationError = (error: unknown): boolean => {
+  const text =
+    error instanceof Error
+      ? error.message
+      : typeof error === 'object' && error !== null
+        ? JSON.stringify(error)
+        : typeof error === 'string'
+          ? error
+          : '';
+  const lower = text.toLowerCase();
+  return (
+    lower.includes('duplicate') ||
+    lower.includes('unique constraint') ||
+    lower.includes('uniqueness') ||
+    lower.includes('already exists') ||
+    lower.includes('violates unique')
+  );
+};
 
 export type RowOutcome = 'ok' | 'skip' | 'error';
 
-// Cursor-driven reconciliation driver shared by both backstop crons. It owns the tricky
-// watermark math so it lives in exactly one place:
+// Cursor-driven reconciliation driver shared by both backstop crons. Keyset pagination on
+// (updatedAt, id) so rows that share a millisecond are never skipped and processed rows are
+// never re-scanned:
 //   - Drains the whole backlog (pages of `pageSize` until a short page), bounded by
-//     `maxPages` for the cron timeout — a backlog > pageSize is fully processed in one run.
-//   - Advances the watermark just PAST a fully-processed page (+1ms) so the boundary row
-//     isn't re-scanned forever.
-//   - On the first failed row, clamps the watermark to just BEFORE it so the next run
-//     retries from there — a failed sync is never silently skipped (the whole point of a
-//     backstop). Re-scanning earlier successes is a harmless no-op downstream.
-// Rows must be fetched ordered by updatedAt ascending. `updatedAtOf` reads the sort key.
+//     `maxPages` for the cron timeout.
+//   - Advances the watermark to the (updatedAt, id) of the last successfully processed (or
+//     intentionally skipped) row.
+//   - Stops at the first failed row WITHOUT advancing past it, so the next run retries from
+//     there — a failed sync is never silently skipped.
+// `fetchPage(sinceAt, sinceId)` must return up to `pageSize` rows strictly after the cursor,
+// ordered by (updatedAt asc, id asc). On the first run `sinceId` is null → order by updatedAt
+// from the epoch.
 export async function drainByCursor<TRow>(params: {
-  since: string;
-  runStartedAt: string;
+  sinceAt: string;
+  sinceId: string | null;
   pageSize?: number;
   maxPages?: number;
-  fetchPage: (since: string) => Promise<TRow[]>;
+  fetchPage: (sinceAt: string, sinceId: string | null) => Promise<TRow[]>;
   updatedAtOf: (row: TRow) => string;
+  idOf: (row: TRow) => string;
   processRow: (row: TRow) => Promise<RowOutcome>;
-}): Promise<{ reconciled: number; errors: number; newCursorAt: string }> {
+}): Promise<{
+  reconciled: number;
+  errors: number;
+  newCursorAt: string;
+  newCursorId: string | null;
+}> {
   const pageSize = params.pageSize ?? 100;
   const maxPages = params.maxPages ?? 20;
 
-  let cursorAt = params.since;
+  let cursorAt = params.sinceAt;
+  let cursorId = params.sinceId;
   let reconciled = 0;
   let errors = 0;
 
   for (let page = 0; page < maxPages; page++) {
-    const rows = await params.fetchPage(cursorAt);
-    if (rows.length === 0) {
-      cursorAt = params.runStartedAt;
-      break;
-    }
+    const rows = await params.fetchPage(cursorAt, cursorId);
+    if (rows.length === 0) break; // caught up — cursor holds the last processed position
 
-    let earliestFailureAt: string | null = null;
-    let lastRowAt = cursorAt;
+    let failed = false;
     for (const row of rows) {
-      lastRowAt = params.updatedAtOf(row);
       const outcome = await params.processRow(row);
-      if (outcome === 'ok') {
-        reconciled++;
-      } else if (outcome === 'error') {
+      if (outcome === 'error') {
         errors++;
-        if (earliestFailureAt === null) earliestFailureAt = params.updatedAtOf(row);
+        failed = true;
+        break; // don't advance past a failure; retry from here next run
       }
+      if (outcome === 'ok') reconciled++;
+      // 'ok' or 'skip' → safe to advance the keyset watermark past this row.
+      cursorAt = params.updatedAtOf(row);
+      cursorId = params.idOf(row);
     }
 
-    if (earliestFailureAt !== null) {
-      // Retry from the earliest failure next run (−1ms so `gte` re-includes it and any
-      // same-timestamp siblings). Stop draining; don't skip past unprocessed failures.
-      cursorAt = new Date(Date.parse(earliestFailureAt) - 1).toISOString();
-      break;
-    }
-    if (rows.length < pageSize) {
-      cursorAt = params.runStartedAt; // fully drained, caught up to now
-      break;
-    }
-    // Full page, all clear → step just past the last row and drain the next page.
-    cursorAt = new Date(Date.parse(lastRowAt) + 1).toISOString();
+    if (failed) break;
+    if (rows.length < pageSize) break; // fully drained
   }
 
-  return { reconciled, errors, newCursorAt: cursorAt };
+  return { reconciled, errors, newCursorAt: cursorAt, newCursorId: cursorId };
+}
+
+// Build the keyset filter for "rows strictly after (sinceAt, sinceId)" merged with a caller
+// filter. On the first run (sinceId null) it degrades to `updatedAt >= sinceAt`.
+export function keysetFilter(
+  sinceAt: string,
+  sinceId: string | null,
+  extra?: Record<string, unknown>,
+): Record<string, unknown> {
+  let cursor: Record<string, unknown>;
+  if (!sinceId) {
+    // Falsy id (null, undefined, or the '' a freshly-added column may hold) = no keyset key
+    // yet → fall back to a plain timestamp watermark instead of `id > ''` (an invalid UUID).
+    cursor = { updatedAt: { gte: sinceAt } };
+  } else {
+    // sinceAt is millisecond-truncated (GraphQL precision) but stored updatedAt has sub-ms
+    // precision, so a plain `> sinceAt` would re-match the boundary row forever. Treat the
+    // millisecond as the unit: rows in a strictly-later ms, OR the same ms with a larger id.
+    const nextMs = new Date(Date.parse(sinceAt) + 1).toISOString();
+    cursor = {
+      or: [
+        { updatedAt: { gte: nextMs } },
+        {
+          and: [
+            { updatedAt: { gte: sinceAt } },
+            { updatedAt: { lt: nextMs } },
+            { id: { gt: sinceId } },
+          ],
+        },
+      ],
+    };
+  }
+  return extra ? { and: [extra, cursor] } : cursor;
 }

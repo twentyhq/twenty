@@ -33,7 +33,6 @@ export async function pushOpportunity(
         node: {
           id: true,
           name: true,
-          tftOpportunityId: true,
           matchStatus: true,
           numberOfSeats: true,
           useCase: true,
@@ -58,8 +57,9 @@ export async function pushOpportunity(
     return { ok: false, reason: `opportunity ${input.opportunityId} not found` };
   }
 
-  const tftOpportunityId: string =
-    (opp.tftOpportunityId as string | null | undefined) ?? (opp.id as string);
+  // On TFT the opportunity's own id IS the cross-workspace key — there is no separate
+  // tftOpportunityId field here (that lives on the partners side), so don't query it.
+  const tftOpportunityId: string = opp.id as string;
 
   // Point of contact: forward the Person's name + primary email so the partners
   // side can find-or-create and link the same contact.

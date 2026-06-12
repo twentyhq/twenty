@@ -49,7 +49,9 @@ const handler = async (event: HttpEvent): Promise<SyncResult> => {
   if (!secret) return { ok: false, reason: 'server_misconfigured' };
 
   const signature = headers[SYNC_SIGNATURE_HEADER] ?? '';
-  const bodyString = JSON.stringify(rawBody);
+  // `?? null` so an empty/undefined body stringifies to "null" (a mismatch → unauthorized)
+  // rather than `undefined`, which would throw inside the HMAC update.
+  const bodyString = JSON.stringify(rawBody ?? null);
 
   if (!verifySignature(bodyString, secret, signature)) {
     return { ok: false, reason: 'unauthorized' };
@@ -115,13 +117,15 @@ const handler = async (event: HttpEvent): Promise<SyncResult> => {
         pointOfContactId = (personLookup as any).people?.edges?.[0]?.node?.id as string | undefined;
       }
 
-      if (!pointOfContactId && (firstName || lastName || email)) {
+      // Only create when we have an email — it's the dedup key. A name-only contact has no
+      // stable key, so creating it on every sync would spawn duplicate Person records.
+      if (!pointOfContactId && email) {
         const created = await client.mutation({
           createPerson: {
             __args: {
               data: {
                 name: { firstName: firstName ?? '', lastName: lastName ?? '' },
-                ...(email && { emails: { primaryEmail: email } }),
+                emails: { primaryEmail: email },
                 ...(companyId && { companyId }),
               },
             },
@@ -142,6 +146,13 @@ const handler = async (event: HttpEvent): Promise<SyncResult> => {
           node: {
             id: true,
             name: true,
+            matchStatus: true,
+            numberOfSeats: true,
+            useCase: true,
+            hostingType: true,
+            subscriptionType: true,
+            subscriptionFrequency: true,
+            lostReason: true,
             amount: { amountMicros: true, currencyCode: true },
             closeDate: true,
             company: { id: true },
@@ -154,6 +165,13 @@ const handler = async (event: HttpEvent): Promise<SyncResult> => {
       | {
           id: string;
           name?: string;
+          matchStatus?: string | null;
+          numberOfSeats?: number | null;
+          useCase?: string | null;
+          hostingType?: string | null;
+          subscriptionType?: string | null;
+          subscriptionFrequency?: string | null;
+          lostReason?: string | null;
           amount?: { amountMicros: number; currencyCode: string } | null;
           closeDate?: string | null;
           company?: { id: string } | null;
@@ -162,17 +180,20 @@ const handler = async (event: HttpEvent): Promise<SyncResult> => {
       | undefined;
     const existingId = current?.id;
 
+    // Compare-before-write for every synced field so a re-push of unchanged data is a true
+    // no-op (the update is skipped entirely) — without this the always-present commercial
+    // fields would defeat the no-op guard and write on every reconcile pass.
     const oppData: Record<string, unknown> = {
       tftOpportunityId: payload.tftOpportunityId,
     };
     if (payload.name != null && payload.name !== current?.name) oppData.name = payload.name;
-    if (payload.matchStatus) oppData.matchStatus = payload.matchStatus;
-    if (payload.numberOfSeats !== undefined) oppData.numberOfSeats = payload.numberOfSeats;
-    if (payload.useCase) oppData.useCase = payload.useCase;
-    if (payload.hostingType) oppData.hostingType = payload.hostingType;
-    if (payload.subscriptionType) oppData.subscriptionType = payload.subscriptionType;
-    if (payload.subscriptionFrequency) oppData.subscriptionFrequency = payload.subscriptionFrequency;
-    if (payload.lostReason) oppData.lostReason = payload.lostReason;
+    if (payload.matchStatus && payload.matchStatus !== current?.matchStatus) oppData.matchStatus = payload.matchStatus;
+    if (payload.numberOfSeats !== undefined && payload.numberOfSeats !== current?.numberOfSeats) oppData.numberOfSeats = payload.numberOfSeats;
+    if (payload.useCase && payload.useCase !== current?.useCase) oppData.useCase = payload.useCase;
+    if (payload.hostingType && payload.hostingType !== current?.hostingType) oppData.hostingType = payload.hostingType;
+    if (payload.subscriptionType && payload.subscriptionType !== current?.subscriptionType) oppData.subscriptionType = payload.subscriptionType;
+    if (payload.subscriptionFrequency && payload.subscriptionFrequency !== current?.subscriptionFrequency) oppData.subscriptionFrequency = payload.subscriptionFrequency;
+    if (payload.lostReason && payload.lostReason !== current?.lostReason) oppData.lostReason = payload.lostReason;
     if (
       payload.amount &&
       (payload.amount.amountMicros !== current?.amount?.amountMicros ||

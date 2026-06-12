@@ -1,6 +1,7 @@
 import { FieldType, defineObject } from 'twenty-sdk/define';
 import {
   PARTNERS_TFT_SYNC_CURSOR_LAST_CURSOR_AT_FIELD_UUID,
+  PARTNERS_TFT_SYNC_CURSOR_LAST_CURSOR_ID_FIELD_UUID,
   PARTNERS_TFT_SYNC_CURSOR_LAST_ERROR_FIELD_UUID,
   PARTNERS_TFT_SYNC_CURSOR_LAST_RUN_AT_FIELD_UUID,
   PARTNERS_TFT_SYNC_CURSOR_NAME_FIELD_UUID,
@@ -25,14 +26,27 @@ export default defineObject({
       label: 'Name',
       description: 'Direction key: "primary" (forward TFT→Partners) or "reverse" (Partners→TFT echo)',
       icon: 'IconAbc',
-      defaultValue: "'primary'",
+      // Unique so the cursor is a true per-direction singleton: a concurrent
+      // get-or-create loses the create with a unique-violation instead of forking a row.
+      // No defaultValue — a unique field can't carry one, and getOrCreateCursor always
+      // sets the name explicitly anyway.
+      isUnique: true,
     },
     {
       universalIdentifier: PARTNERS_TFT_SYNC_CURSOR_LAST_CURSOR_AT_FIELD_UUID,
       type: FieldType.DATE_TIME,
       name: 'lastCursorAt',
       label: 'Last cursor at',
-      description: 'Watermark: pull TFT opportunities modified after this timestamp',
+      description: 'Watermark (timestamp half): pull rows ordered after (lastCursorAt, lastCursorId)',
+      icon: 'IconArrowBigRight',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: PARTNERS_TFT_SYNC_CURSOR_LAST_CURSOR_ID_FIELD_UUID,
+      type: FieldType.TEXT,
+      name: 'lastCursorId',
+      label: 'Last cursor id',
+      description: 'Watermark (id tiebreaker): keyset pagination key so rows sharing a timestamp are never skipped',
       icon: 'IconArrowBigRight',
       isNullable: true,
     },

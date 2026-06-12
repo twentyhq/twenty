@@ -2,7 +2,12 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { RECONCILE_OPPORTUNITIES_LF_UUID } from 'src/constants/universal-identifiers';
-import { drainByCursor, getOrCreateCursor, RowOutcome } from 'src/logic-functions/shared/sync-cursor';
+import {
+  drainByCursor,
+  getOrCreateCursor,
+  keysetFilter,
+  RowOutcome,
+} from 'src/logic-functions/shared/sync-cursor';
 import { SYNC_SIGNATURE_HEADER, signPayload } from 'src/utils/hmac';
 
 type TftOpportunity = {
@@ -64,7 +69,8 @@ const handler = async (): Promise<{ reconciled: number; errors: number }> => {
 
   const client = new CoreApiClient();
   const cursor = await getOrCreateCursor(client, 'primary');
-  const since = cursor.lastCursorAt ?? new Date(0).toISOString();
+  const sinceAt = cursor.lastCursorAt ?? new Date(0).toISOString();
+  const sinceId = cursor.lastCursorId;
   const runStartedAt = new Date().toISOString();
 
   await client.mutation({
@@ -81,13 +87,17 @@ const handler = async (): Promise<{ reconciled: number; errors: number }> => {
     opportunities: { edges: { node: TftOpportunity }[] };
   };
 
-  // Pull a page of TFT opportunities modified since the watermark, ordered ascending.
-  const fetchPage = async (fromCursor: string): Promise<TftOpportunity[]> => {
+  // Pull a keyset page of TFT opportunities after the (updatedAt, id) watermark. The filter
+  // is passed as a variable so the same composite keyset shape works server-side.
+  const fetchPage = async (
+    atCursor: string,
+    idCursor: string | null,
+  ): Promise<TftOpportunity[]> => {
     const tftData = await queryTft<TftOppsResult>(
       tftApiUrl,
       tftApiKey,
-      `query ReconcileOpps($since: DateTime!) {
-        opportunities(filter: { updatedAt: { gte: $since } }, orderBy: { updatedAt: AscNullsFirst }, first: 100) {
+      `query ReconcileOpps($filter: OpportunityFilterInput) {
+        opportunities(filter: $filter, orderBy: [{ updatedAt: AscNullsFirst }, { id: AscNullsFirst }], first: 100) {
           edges {
             node {
               id
@@ -112,7 +122,7 @@ const handler = async (): Promise<{ reconciled: number; errors: number }> => {
           }
         }
       }`,
-      { since: fromCursor },
+      { filter: keysetFilter(atCursor, idCursor) },
     );
     return tftData.opportunities.edges.map((e) => e.node);
   };
@@ -173,11 +183,12 @@ const handler = async (): Promise<{ reconciled: number; errors: number }> => {
   };
 
   try {
-    const { reconciled, errors, newCursorAt } = await drainByCursor<TftOpportunity>({
-      since,
-      runStartedAt,
+    const { reconciled, errors, newCursorAt, newCursorId } = await drainByCursor<TftOpportunity>({
+      sinceAt,
+      sinceId,
       fetchPage,
       updatedAtOf: (opp) => opp.updatedAt,
+      idOf: (opp) => opp.id,
       processRow: pushOne,
     });
 
@@ -188,6 +199,7 @@ const handler = async (): Promise<{ reconciled: number; errors: number }> => {
           data: {
             status: 'IDLE',
             lastCursorAt: newCursorAt,
+            lastCursorId: newCursorId,
             lastRunAt: runStartedAt,
           },
         },

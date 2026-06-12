@@ -55,7 +55,9 @@ const handler = async (event: HttpEvent): Promise<EchoResult> => {
   if (!secret) return { ok: false, reason: 'server_misconfigured' };
 
   const signature = headers[SYNC_SIGNATURE_HEADER] ?? '';
-  if (!verifySignature(JSON.stringify(rawBody), secret, signature)) {
+  // `?? null` so an empty/undefined body stringifies to "null" (a mismatch → unauthorized)
+  // rather than `undefined`, which would throw inside the HMAC update.
+  if (!verifySignature(JSON.stringify(rawBody ?? null), secret, signature)) {
     return { ok: false, reason: 'unauthorized' };
   }
 
@@ -193,13 +195,15 @@ const handler = async (event: HttpEvent): Promise<EchoResult> => {
         } as any);
         pointOfContactId = (personLookup as any).people?.edges?.[0]?.node?.id as string | undefined;
       }
-      if (!pointOfContactId) {
+      // Only create when we have an email — it's the dedup key. A name-only contact has no
+      // stable key, so creating it on every echo would spawn duplicate Person records.
+      if (!pointOfContactId && email) {
         const created = await client.mutation({
           createPerson: {
             __args: {
               data: {
                 name: { firstName: firstName ?? '', lastName: lastName ?? '' },
-                ...(email && { emails: { primaryEmail: email } }),
+                emails: { primaryEmail: email },
               },
             },
             id: true,

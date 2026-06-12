@@ -3,7 +3,12 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { RECONCILE_ECHOES_LF_UUID } from 'src/constants/universal-identifiers';
 import { buildEchoPayload, EchoOpportunity } from 'src/logic-functions/shared/echo-payload';
-import { drainByCursor, getOrCreateCursor, RowOutcome } from 'src/logic-functions/shared/sync-cursor';
+import {
+  drainByCursor,
+  getOrCreateCursor,
+  keysetFilter,
+  RowOutcome,
+} from 'src/logic-functions/shared/sync-cursor';
 import { SYNC_SIGNATURE_HEADER, signPayload } from 'src/utils/hmac';
 
 type PartnerOpportunity = EchoOpportunity & {
@@ -25,7 +30,8 @@ const handler = async (): Promise<{ reconciled: number; errors: number }> => {
 
   const client = new CoreApiClient();
   const cursor = await getOrCreateCursor(client, 'reverse');
-  const since = cursor.lastCursorAt ?? new Date(0).toISOString();
+  const sinceAt = cursor.lastCursorAt ?? new Date(0).toISOString();
+  const sinceId = cursor.lastCursorId;
   const runStartedAt = new Date().toISOString();
 
   await client.mutation({
@@ -36,13 +42,16 @@ const handler = async (): Promise<{ reconciled: number; errors: number }> => {
   } as any);
 
   // tftOpportunityId can't be filtered NOT_NULL through the client cleanly, so we fetch the
-  // page ordered by updatedAt and skip partners-internal opps (no tftOpportunityId) in code.
-  const fetchPage = async (fromCursor: string): Promise<PartnerOpportunity[]> => {
+  // keyset page and skip partners-internal opps (no tftOpportunityId) in code.
+  const fetchPage = async (
+    atCursor: string,
+    idCursor: string | null,
+  ): Promise<PartnerOpportunity[]> => {
     const result = await client.query({
       opportunities: {
         __args: {
-          filter: { updatedAt: { gte: fromCursor } },
-          orderBy: [{ updatedAt: 'AscNullsFirst' }],
+          filter: keysetFilter(atCursor, idCursor),
+          orderBy: [{ updatedAt: 'AscNullsFirst' }, { id: 'AscNullsFirst' }],
           first: 100,
         },
         edges: {
@@ -92,11 +101,12 @@ const handler = async (): Promise<{ reconciled: number; errors: number }> => {
   };
 
   try {
-    const { reconciled, errors, newCursorAt } = await drainByCursor<PartnerOpportunity>({
-      since,
-      runStartedAt,
+    const { reconciled, errors, newCursorAt, newCursorId } = await drainByCursor<PartnerOpportunity>({
+      sinceAt,
+      sinceId,
       fetchPage,
       updatedAtOf: (opp) => opp.updatedAt,
+      idOf: (opp) => opp.id,
       processRow: echoOne,
     });
 
@@ -104,7 +114,12 @@ const handler = async (): Promise<{ reconciled: number; errors: number }> => {
       updateTftSyncCursor: {
         __args: {
           id: cursor.id,
-          data: { status: 'IDLE', lastCursorAt: newCursorAt, lastRunAt: runStartedAt },
+          data: {
+            status: 'IDLE',
+            lastCursorAt: newCursorAt,
+            lastCursorId: newCursorId,
+            lastRunAt: runStartedAt,
+          },
         },
         id: true,
       },

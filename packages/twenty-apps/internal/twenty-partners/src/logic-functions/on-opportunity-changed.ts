@@ -2,12 +2,21 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { DatabaseEventPayload, defineLogicFunction } from 'twenty-sdk/define';
 
 import { ON_OPPORTUNITY_CHANGED_LF_UUID } from 'src/constants/universal-identifiers';
-import { buildEchoPayload } from 'src/logic-functions/shared/echo-payload';
+import { buildEchoPayload, ECHO_SCOPE } from 'src/logic-functions/shared/echo-payload';
 import { SYNC_SIGNATURE_HEADER, signPayload } from 'src/utils/hmac';
 
 // Fields that round-trip between TFT and partners (both Opportunity objects have them).
-// A human edit to any of these on the partners side is echoed back to TFT.
-const SHARED_FIELDS = ['name', 'amount', 'closeDate', 'company', 'pointOfContact'];
+// A human edit to any of these on the partners side is echoed back to TFT. Both the
+// relation name and the FK column are listed since updatedFields may report either.
+const SHARED_FIELDS = [
+  'name',
+  'amount',
+  'closeDate',
+  'company',
+  'companyId',
+  'pointOfContact',
+  'pointOfContactId',
+];
 
 const handler = async (
   payload: DatabaseEventPayload,
@@ -16,6 +25,7 @@ const handler = async (
     after?: {
       id: string;
       tftOpportunityId?: string | null;
+      matchStatus?: string | null;
       updatedBy?: { source?: string };
     };
     updatedFields?: string[];
@@ -36,8 +46,13 @@ const handler = async (
 
   const changed = props.updatedFields ?? [];
   const sharedChanged = changed.some((f) => SHARED_FIELDS.includes(f));
-  const matchStatusChanged = changed.includes('matchStatus');
-  if (!sharedChanged && !matchStatusChanged) {
+  // Only an in-scope matchStatus is worth echoing; out-of-scope (vestige) values aren't
+  // mirrored, so a change to one shouldn't fire a no-op echo + audit event.
+  const matchStatusInScope =
+    changed.includes('matchStatus') &&
+    props.after?.matchStatus != null &&
+    ECHO_SCOPE.has(props.after.matchStatus);
+  if (!sharedChanged && !matchStatusInScope) {
     return { echoed: false, reason: 'no synced field changed' };
   }
 
