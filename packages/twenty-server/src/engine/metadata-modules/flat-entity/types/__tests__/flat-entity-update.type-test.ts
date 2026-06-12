@@ -22,6 +22,7 @@ type Assertions = [
       | 'settings'
       | 'isUnique'
       | 'isLabelSyncedWithName'
+      | 'isUIReadOnly'
       | 'universalSettings'
     >
   >,
@@ -52,6 +53,7 @@ type Assertions = [
       | 'imageIdentifierFieldMetadataId'
       | 'imageIdentifierFieldMetadataUniversalIdentifier'
       | 'isSearchable'
+      | 'isUIReadOnly'
     >
   >,
 

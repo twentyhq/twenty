@@ -71,6 +71,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "options",
       "standardOverrides",
       "universalSettings",
+      "isUIReadOnly",
     ],
     "propertiesToStringify": [
       "defaultValue",
@@ -165,6 +166,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "nameSingular",
       "labelIdentifierFieldMetadataUniversalIdentifier",
       "standardOverrides",
+      "isUIReadOnly",
       "isSearchable",
       "imageIdentifierFieldMetadataUniversalIdentifier",
     ],

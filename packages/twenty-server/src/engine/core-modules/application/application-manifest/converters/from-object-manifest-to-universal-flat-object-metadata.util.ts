@@ -26,7 +26,7 @@ export const fromObjectManifestToUniversalFlatObjectMetadata = ({
     isRemote: false,
     isActive: true,
     isSystem: false,
-    isUIReadOnly: false,
+    isUIReadOnly: objectManifest.isUIReadOnly ?? false,
     isAuditLogged: true,
     isSearchable: objectManifest.isSearchable ?? true,
     duplicateCriteria: null,

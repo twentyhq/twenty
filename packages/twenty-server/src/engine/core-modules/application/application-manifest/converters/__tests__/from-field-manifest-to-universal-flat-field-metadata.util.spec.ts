@@ -105,4 +105,26 @@ describe('fromFieldManifestToUniversalFlatFieldMetadata', () => {
       expect(result.defaultValue).toBe("'todo'");
     });
   });
+
+  describe('isUIReadOnly', () => {
+    it('defaults to false when omitted from the manifest', () => {
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({}),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.isUIReadOnly).toBe(false);
+    });
+
+    it('uses the manifest value when set', () => {
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({ isUIReadOnly: true }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.isUIReadOnly).toBe(true);
+    });
+  });
 });

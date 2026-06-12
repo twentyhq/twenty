@@ -22,6 +22,7 @@ export type RegularFieldManifest<
   options?: FieldMetadataOptions<T>;
   universalSettings?: FieldMetadataUniversalSettings<T>;
   isNullable?: boolean;
+  isUIReadOnly?: boolean;
   /**
    * @deprecated Use defineIndex({ isUnique: true, fields: [...] }) instead.
    * Indexes are the SDK primitive for uniqueness — they support both single-

@@ -9,6 +9,7 @@ export type ObjectManifest = SyncableEntityOptions & {
   description?: string;
   icon?: string;
   isSearchable?: boolean;
+  isUIReadOnly?: boolean;
   fields: ObjectFieldManifest[];
   labelIdentifierFieldMetadataUniversalIdentifier: string;
 };
