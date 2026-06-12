@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   EmailingDomainDriverException,
   EmailingDomainDriverExceptionCode,
@@ -25,10 +27,10 @@ export class EmailingDomainService {
 
   async createEmailingDomain(
     domain: string,
-    workspace: WorkspaceEntity,
+    workspaceId: string,
   ): Promise<EmailingDomainEntity> {
     const existingEmailingDomain = await this.emailingDomainRepository.findOne(
-      workspace.id,
+      workspaceId,
       {
         where: { domain },
       },
@@ -44,23 +46,23 @@ export class EmailingDomainService {
     const emailingDomainDriver =
       this.emailingDomainDriverFactory.getCurrentDriver();
 
-    await emailingDomainDriver.provisionWorkspace(workspace.id);
+    await emailingDomainDriver.provisionWorkspace(workspaceId);
 
     const verificationResult = await emailingDomainDriver.verifyDomain({
       domain,
-      workspaceId: workspace.id,
+      workspaceId,
     });
 
     await emailingDomainDriver.registerDomain({
       domain,
-      workspaceId: workspace.id,
+      workspaceId,
     });
 
     const isVerifiedOnCreation =
       verificationResult.status === EmailingDomainStatus.VERIFIED;
 
     const emailingDomain = await this.emailingDomainRepository.save(
-      workspace.id,
+      workspaceId,
       {
         domain,
         status: verificationResult.status,
@@ -71,7 +73,7 @@ export class EmailingDomainService {
 
     if (isVerifiedOnCreation) {
       await this.unsubscribeHostnameService.sync(
-        workspace.id,
+        workspaceId,
         emailingDomain.id,
         {
           provision: true,
@@ -80,10 +82,50 @@ export class EmailingDomainService {
     }
 
     return this.unsubscribeHostnameService.withDnsRecords(
-      await this.emailingDomainRepository.findOneOrFail(workspace.id, {
+      await this.emailingDomainRepository.findOneOrFail(workspaceId, {
         where: { id: emailingDomain.id },
       }),
     );
+  }
+
+  // Creates the emailing domain for a workspace only if it doesn't exist yet.
+  // Used when adding an email channel auto-provisions its domain.
+  async ensureEmailingDomain(
+    domain: string,
+    workspaceId: string,
+  ): Promise<void> {
+    const existingEmailingDomain = await this.emailingDomainRepository.findOne(
+      workspaceId,
+      { where: { domain } },
+    );
+
+    if (isDefined(existingEmailingDomain)) {
+      return;
+    }
+
+    await this.createEmailingDomain(domain, workspaceId);
+  }
+
+  // Deletes the emailing domain for a workspace by its domain name, if present.
+  // Used to clean up a domain once its last email channel is removed.
+  async deleteEmailingDomainByDomainIfExists(
+    workspaceId: string,
+    domain: string,
+  ): Promise<void> {
+    const emailingDomain = await this.emailingDomainRepository.findOne(
+      workspaceId,
+      { where: { domain } },
+    );
+
+    if (!isDefined(emailingDomain)) {
+      return;
+    }
+
+    await this.unsubscribeHostnameService.deprovision(emailingDomain);
+    await this.deleteRemoteEmailingDomain(emailingDomain);
+    await this.emailingDomainRepository.delete(workspaceId, {
+      id: emailingDomain.id,
+    });
   }
 
   async deleteEmailingDomain(

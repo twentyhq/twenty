@@ -1,9 +1,11 @@
 import { randomBytes } from 'crypto';
 
 import { Injectable } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import {
@@ -17,6 +19,7 @@ import {
 } from 'twenty-shared/types';
 
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
+import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
@@ -29,6 +32,7 @@ import {
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { INBOUND_EMAIL_LOCAL_PART_PREFIX } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/constants/inbound-email-local-part-prefix.constant';
 import { INBOUND_EMAIL_LOCAL_PART_RANDOM_BYTES } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/constants/inbound-email-local-part-random-bytes.constant';
+import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 
 @Injectable()
 export class MessageChannelMetadataService {
@@ -37,6 +41,9 @@ export class MessageChannelMetadataService {
     private readonly repository: Repository<MessageChannelEntity>,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly twentyConfigService: TwentyConfigService,
+    // Resolved lazily to avoid a module-load cycle with the emailing-domain
+    // core module (its campaign service already reaches back into this service).
+    private readonly moduleRef: ModuleRef,
   ) {}
 
   async findAll(workspaceId: string): Promise<MessageChannelDTO[]> {
@@ -234,6 +241,16 @@ export class MessageChannelMetadataService {
       );
     }
 
+    // The emailing domain is a child of the channel: adding a channel
+    // provisions its domain (verification + SES) if it doesn't exist yet.
+    const sendDomain = getDomainFromEmail(handle)?.toLowerCase();
+
+    if (isNonEmptyString(sendDomain)) {
+      await this.moduleRef
+        .get(EmailingDomainService, { strict: false })
+        .ensureEmailingDomain(sendDomain, workspaceId);
+    }
+
     const localPart =
       INBOUND_EMAIL_LOCAL_PART_PREFIX +
       randomBytes(INBOUND_EMAIL_LOCAL_PART_RANDOM_BYTES).toString('hex');
@@ -321,5 +338,72 @@ export class MessageChannelMetadataService {
     await this.repository.delete({ id, workspaceId });
 
     return messageChannel;
+  }
+
+  // Deletes an email-group channel (its connected account) and, once no channel
+  // sends from its domain anymore, the now-orphaned emailing domain.
+  async deleteEmailGroupChannel({
+    id,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    id: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<MessageChannelDTO> {
+    const messageChannel = await this.verifyOwnership({
+      id,
+      userWorkspaceId,
+      workspaceId,
+    });
+
+    if (messageChannel.type !== MessageChannelType.EMAIL_GROUP) {
+      throw new MessageChannelException(
+        `Message channel ${id} is not an email group`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
+    const connectedAccount =
+      await this.connectedAccountMetadataService.findById({
+        id: messageChannel.connectedAccountId,
+        workspaceId,
+      });
+    const sendDomain = getDomainFromEmail(
+      connectedAccount?.handle ?? '',
+    )?.toLowerCase();
+
+    await this.connectedAccountMetadataService.delete({
+      id: messageChannel.connectedAccountId,
+      workspaceId,
+    });
+
+    if (
+      isNonEmptyString(sendDomain) &&
+      !(await this.hasEmailGroupChannelForDomain(workspaceId, sendDomain))
+    ) {
+      await this.moduleRef
+        .get(EmailingDomainService, { strict: false })
+        .deleteEmailingDomainByDomainIfExists(workspaceId, sendDomain);
+    }
+
+    return messageChannel;
+  }
+
+  private async hasEmailGroupChannelForDomain(
+    workspaceId: string,
+    domain: string,
+  ): Promise<boolean> {
+    const emailGroupChannels = await this.repository.find({
+      where: { workspaceId, type: MessageChannelType.EMAIL_GROUP },
+      relations: { connectedAccount: true },
+    });
+
+    return emailGroupChannels.some(
+      (channel) =>
+        isDefined(channel.connectedAccount) &&
+        getDomainFromEmail(channel.connectedAccount.handle)?.toLowerCase() ===
+          domain,
+    );
   }
 }

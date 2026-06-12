@@ -47,7 +47,7 @@ export class EmailingDomainResolver {
     const emailingDomain =
       await this.emailingDomainService.createEmailingDomain(
         domain,
-        currentWorkspace,
+        currentWorkspace.id,
       );
 
     return emailingDomain;

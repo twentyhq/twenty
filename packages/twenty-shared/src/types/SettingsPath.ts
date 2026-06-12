@@ -32,8 +32,6 @@ export enum SettingsPath {
   NewEmailGroupChannel = 'email/new-email-group',
   PublicDomain = 'applications/public-domain',
   NewApprovedAccessDomain = 'security/approved-access-domain/new',
-  NewEmailingDomain = 'email/emailing-domain/new',
-  EmailingDomainDetail = 'email/emailing-domain/:domainId',
   Community = 'community',
   AI = 'ai',
   AiUsageUserDetail = 'ai/usage/user/:userWorkspaceId',

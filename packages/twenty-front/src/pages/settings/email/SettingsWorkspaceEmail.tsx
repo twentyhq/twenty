@@ -6,7 +6,6 @@ import { isEmailingDomainInDemoModeState } from '@/client-config/states/isEmaili
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSection';
-import { SettingsWorkspaceEmailingDomainsSection } from '@/settings/workspace/components/SettingsWorkspaceEmailingDomainsSection';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -79,7 +78,6 @@ export const SettingsWorkspaceEmail = () => {
           </Card>
         )}
         {showEmailGroupSection && <SettingsWorkspaceEmailGroupSection />}
-        <SettingsWorkspaceEmailingDomainsSection />
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

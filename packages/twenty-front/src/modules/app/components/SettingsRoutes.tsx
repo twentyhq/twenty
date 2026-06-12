@@ -435,22 +435,6 @@ const SettingsSecurityApprovedAccessDomain = lazy(() =>
   ),
 );
 
-const SettingsNewEmailingDomain = lazy(() =>
-  import('~/pages/settings/emailing-domains/SettingsNewEmailingDomain').then(
-    (module) => ({
-      default: module.SettingsNewEmailingDomain,
-    }),
-  ),
-);
-
-const SettingsEmailingDomainDetail = lazy(() =>
-  import('~/pages/settings/emailing-domains/SettingsEmailingDomainDetail').then(
-    (module) => ({
-      default: module.SettingsEmailingDomainDetail,
-    }),
-  ),
-);
-
 const SettingsAdmin = lazy(() =>
   import('~/pages/settings/admin-panel/SettingsAdmin').then((module) => ({
     default: module.SettingsAdmin,
@@ -669,14 +653,6 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.CustomDomain}
           element={<SettingsCustomDomainPage />}
-        />
-        <Route
-          path={SettingsPath.NewEmailingDomain}
-          element={<SettingsNewEmailingDomain />}
-        />
-        <Route
-          path={SettingsPath.EmailingDomainDetail}
-          element={<SettingsEmailingDomainDetail />}
         />
         <Route
           path={SettingsPath.PublicDomain}

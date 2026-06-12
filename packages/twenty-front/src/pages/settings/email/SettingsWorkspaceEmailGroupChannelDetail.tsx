@@ -1,3 +1,4 @@
+import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
@@ -5,7 +6,9 @@ import { useParams } from 'react-router-dom';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { useDeleteEmailGroupChannel } from '@/settings/accounts/hooks/useDeleteEmailGroupChannel';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
+import { getEmailChannelDomain } from '@/settings/accounts/utils/getEmailChannelDomain';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsEmailingDomainVerificationRecords } from '@/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -13,12 +16,20 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title, IconCopy, IconTrash } from 'twenty-ui-deprecated/display';
+import { GetEmailingDomainsDocument } from '~/generated-metadata/graphql';
+import {
+  H2Title,
+  IconCopy,
+  IconTrash,
+  Status,
+} from 'twenty-ui-deprecated/display';
 import { Loader } from 'twenty-ui-deprecated/feedback';
 import { Button } from 'twenty-ui-deprecated/input';
 import { Section } from 'twenty-ui-deprecated/layout';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { NotFound } from '~/pages/not-found/NotFound';
+import { getColorByEmailingDomainStatus } from '~/pages/settings/emailing-domains/utils/getEmailingDomainStatusColor';
+import { getTextByEmailingDomainStatus } from '~/pages/settings/emailing-domains/utils/getEmailingDomainStatusText';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -51,6 +62,7 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const { deleteEmailGroupChannel, loading: deleting } =
     useDeleteEmailGroupChannel();
+  const { data: emailingDomainsData } = useQuery(GetEmailingDomainsDocument);
 
   if (loading) {
     return (
@@ -73,13 +85,18 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
   const sourceHandle = channel.connectedAccount.handle;
   const forwardingAddress = channel.handle;
 
+  const channelDomain = getEmailChannelDomain(sourceHandle);
+  const emailingDomain = emailingDomainsData?.getEmailingDomains?.find(
+    (domain) => domain.domain.toLowerCase() === channelDomain,
+  );
+
   const handleDelete = async () => {
     try {
       await deleteEmailGroupChannel(channel.id);
       navigateSettings(SettingsPath.WorkspaceEmail);
     } catch {
       enqueueErrorSnackBar({
-        message: t`Failed to delete email handle.`,
+        message: t`Failed to delete email channel.`,
       });
     }
   };
@@ -111,6 +128,21 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
       }
     >
       <SettingsPageContainer>
+        {isDefined(emailingDomain) && (
+          <Section>
+            <H2Title
+              title={t`Sending domain`}
+              description={t`Outbound mail from this channel is sent through this domain. It must be verified before email can be delivered.`}
+            />
+            <Status
+              color={getColorByEmailingDomainStatus(emailingDomain.status)}
+              text={getTextByEmailingDomainStatus(emailingDomain.status)}
+            />
+            <SettingsEmailingDomainVerificationRecords
+              domain={emailingDomain}
+            />
+          </Section>
+        )}
         <Section>
           <H2Title
             title={t`Source address`}
@@ -153,7 +185,7 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
       </SettingsPageContainer>
       <ConfirmationModal
         modalInstanceId={DELETE_EMAIL_GROUP_MODAL_ID}
-        title={t`Delete email handle`}
+        title={t`Delete email channel`}
         subtitle={t`Are you sure you want to delete ${sourceHandle}? Inbound mail forwarded to this address and outbound replies from it will stop working.`}
         onConfirmClick={handleDelete}
         confirmButtonText={t`Delete`}

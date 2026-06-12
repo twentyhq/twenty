@@ -28,7 +28,7 @@ export const CampaignComposerFields = ({
 }: CampaignComposerFieldsProps) => {
   const { channels } = useMyMessageChannels();
 
-  // Campaigns send from the workspace's shared email handles (the verified
+  // Campaigns send from the workspace's shared email channels (the verified
   // emailing-domain senders), not personal connected accounts.
   const senderOptions: SelectOption<string>[] = channels
     .filter((channel) => channel.type === MessageChannelType.EMAIL_GROUP)
