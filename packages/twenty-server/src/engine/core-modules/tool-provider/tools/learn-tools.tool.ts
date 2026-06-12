@@ -2,7 +2,6 @@ import { z } from 'zod';
 
 import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
-import { extractSharedDefs } from 'src/engine/core-modules/tool-provider/utils/extract-shared-defs.util';
 
 export const LEARN_TOOLS_TOOL_NAME = 'learn_tools';
 
@@ -35,7 +34,6 @@ export type LearnToolsResultEntry = {
 
 export type LearnToolsResult = {
   tools: LearnToolsResultEntry[];
-  sharedDefs?: Record<string, unknown>;
   notFound: string[];
   message: string;
 };
@@ -61,30 +59,21 @@ export const createLearnToolsTool = (
       aspects,
     );
 
-    const { tools, sharedDefs } = extractSharedDefs(toolInfos);
-
-    const hasSharedDefs = Object.keys(sharedDefs).length > 0;
-    const sharedDefsMessage = hasSharedDefs
-      ? ` Definitions referenced as "#/$defs/<name>" but missing from a tool's own $defs are provided once in sharedDefs.`
-      : '';
-
     const foundNames = new Set(toolInfos.map((t) => t.name));
     const notFound = toolNames.filter((name) => !foundNames.has(name));
 
     if (notFound.length > 0) {
       return {
-        tools,
-        ...(hasSharedDefs && { sharedDefs }),
+        tools: toolInfos,
         notFound,
-        message: `Learned ${tools.length} tool(s). Could not find: ${notFound.join(', ')}.${sharedDefsMessage}`,
+        message: `Learned ${toolInfos.length} tool(s). Could not find: ${notFound.join(', ')}.`,
       };
     }
 
     return {
-      tools,
-      ...(hasSharedDefs && { sharedDefs }),
+      tools: toolInfos,
       notFound: [],
-      message: `Learned ${tools.length} tool(s): ${tools.map((t) => t.name).join(', ')}.${sharedDefsMessage}`,
+      message: `Learned ${toolInfos.length} tool(s): ${toolInfos.map((t) => t.name).join(', ')}.`,
     };
   },
 });

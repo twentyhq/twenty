@@ -17,24 +17,22 @@ import { workflowUpdateRecordActionSchema } from './update-record-action-schema'
 import { workflowUpsertRecordActionSchema } from './upsert-record-action-schema';
 import { workflowDelayActionSchema } from './workflow-delay-action-schema';
 
-export const workflowActionSchema = z
-  .discriminatedUnion('type', [
-    workflowCodeActionSchema,
-    workflowLogicFunctionActionSchema,
-    workflowSendEmailActionSchema,
-    workflowDraftEmailActionSchema,
-    workflowCreateRecordActionSchema,
-    workflowUpdateRecordActionSchema,
-    workflowDeleteRecordActionSchema,
-    workflowUpsertRecordActionSchema,
-    workflowFindRecordsActionSchema,
-    workflowFormActionSchema,
-    workflowHttpRequestActionSchema,
-    workflowAiAgentActionSchema,
-    workflowFilterActionSchema,
-    workflowIfElseActionSchema,
-    workflowIteratorActionSchema,
-    workflowDelayActionSchema,
-    workflowEmptyActionSchema,
-  ])
-  .meta({ id: 'WorkflowAction' });
+export const workflowActionSchema = z.discriminatedUnion('type', [
+  workflowCodeActionSchema,
+  workflowLogicFunctionActionSchema,
+  workflowSendEmailActionSchema,
+  workflowDraftEmailActionSchema,
+  workflowCreateRecordActionSchema,
+  workflowUpdateRecordActionSchema,
+  workflowDeleteRecordActionSchema,
+  workflowUpsertRecordActionSchema,
+  workflowFindRecordsActionSchema,
+  workflowFormActionSchema,
+  workflowHttpRequestActionSchema,
+  workflowAiAgentActionSchema,
+  workflowFilterActionSchema,
+  workflowIfElseActionSchema,
+  workflowIteratorActionSchema,
+  workflowDelayActionSchema,
+  workflowEmptyActionSchema,
+]);

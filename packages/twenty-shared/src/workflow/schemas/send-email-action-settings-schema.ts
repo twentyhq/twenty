@@ -3,19 +3,17 @@ import { baseWorkflowActionSettingsSchema } from './base-workflow-action-setting
 import { workflowFileSchema } from './workflow-file-action-schema';
 
 export const workflowSendEmailActionSettingsSchema =
-  baseWorkflowActionSettingsSchema
-    .extend({
-      input: z.object({
-        connectedAccountId: z.string(),
-        recipients: z.object({
-          to: z.string().optional().default(''),
-          cc: z.string().optional().default(''),
-          bcc: z.string().optional().default(''),
-        }),
-        subject: z.string().optional(),
-        body: z.string().optional(),
-        files: z.array(workflowFileSchema).optional().default([]),
-        inReplyTo: z.string().trim().optional(),
+  baseWorkflowActionSettingsSchema.extend({
+    input: z.object({
+      connectedAccountId: z.string(),
+      recipients: z.object({
+        to: z.string().optional().default(''),
+        cc: z.string().optional().default(''),
+        bcc: z.string().optional().default(''),
       }),
-    })
-    .meta({ id: 'WorkflowSendEmailSettings' });
+      subject: z.string().optional(),
+      body: z.string().optional(),
+      files: z.array(workflowFileSchema).optional().default([]),
+      inReplyTo: z.string().trim().optional(),
+    }),
+  });

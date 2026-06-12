@@ -7,5 +7,4 @@ export const objectRecordSchema = z
       '- Person: {"name": {"firstName": "John", "lastName": "Doe"}, "emails": {"primaryEmail": "john@example.com"}, "company": {"id": "{{trigger.object.id}}"}}\n' +
       '- Company: {"name": "Acme Corp", "domainName": {"primaryLinkUrl": "https://acme.com"}}\n' +
       '- Task: {"title": "Follow up", "status": "TODO", "assignee": {"id": "{{user.id}}"}}',
-  )
-  .meta({ id: 'WorkflowObjectRecord' });
+  );
