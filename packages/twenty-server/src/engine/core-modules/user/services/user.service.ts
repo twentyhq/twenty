@@ -7,7 +7,10 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
+import {
+  isWorkspaceActiveOrSuspended,
+  WorkspaceActivationStatus,
+} from 'twenty-shared/workspace';
 import { type QueryRunner, In, IsNull, Not, Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -66,11 +69,32 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     super(userRepository);
   }
 
+  async refreshWorkspaceIfPendingOrOngoingCreation<
+    TWorkspace extends Pick<WorkspaceEntity, 'id' | 'activationStatus'>,
+  >(workspace: TWorkspace): Promise<TWorkspace | WorkspaceEntity> {
+    const isPendingOrOngoingCreation =
+      workspace.activationStatus ===
+        WorkspaceActivationStatus.PENDING_CREATION ||
+      workspace.activationStatus === WorkspaceActivationStatus.ONGOING_CREATION;
+
+    if (!isPendingOrOngoingCreation) {
+      return workspace;
+    }
+
+    const freshWorkspace = await this.workspaceService.findById(workspace.id);
+
+    return freshWorkspace ?? workspace;
+  }
+
   async loadWorkspaceMember(
     user: Pick<AuthContextUser, 'id'>,
     workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>,
   ) {
-    if (!isWorkspaceActiveOrSuspended(workspace)) {
+    // The given workspace can be a stale cache snapshot right after activateWorkspace ran on another instance (#20322)
+    const refreshedWorkspace =
+      await this.refreshWorkspaceIfPendingOrOngoingCreation(workspace);
+
+    if (!isWorkspaceActiveOrSuspended(refreshedWorkspace)) {
       return null;
     }
 
@@ -99,7 +123,11 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>,
     withDeleted = false,
   ) {
-    if (!isWorkspaceActiveOrSuspended(workspace)) {
+    // The given workspace can be a stale cache snapshot right after activateWorkspace ran on another instance (#20322)
+    const refreshedWorkspace =
+      await this.refreshWorkspaceIfPendingOrOngoingCreation(workspace);
+
+    if (!isWorkspaceActiveOrSuspended(refreshedWorkspace)) {
       return [];
     }
 
