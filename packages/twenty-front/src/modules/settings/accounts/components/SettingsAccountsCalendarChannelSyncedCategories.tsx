@@ -83,6 +83,9 @@ export const SettingsAccountsCalendarChannelSyncedCategories = ({
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === Key.Enter) {
+      // Without this the browser's implicit form submission fires
+      // onSubmit as well, submitting twice.
+      event.preventDefault();
       submit();
     }
   };
