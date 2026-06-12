@@ -137,7 +137,7 @@ export class CommandMenuItemEntity
 }
 
 const COMMAND_MENU_ITEM_OVERRIDABLE_COLUMNS_UPGRADE_COMMAND_NAME =
-  '2.12.0_CommandMenuItemOverridableEntityFastInstanceCommand_1781253016028';
+  '2.13.0_CommandMenuItemOverridableEntityFastInstanceCommand_1781253016028';
 
 WasIntroducedInUpgrade({
   upgradeCommandName:
