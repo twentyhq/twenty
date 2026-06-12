@@ -1,3 +1,4 @@
+import { COMPANY_MATCH_COST_DOLLARS } from 'src/constants/company-match-cost-dollars';
 import { buildCompanyMatchedData } from 'src/logic-functions/utils/build-company-matched-data';
 import { enrichCompanies } from 'src/logic-functions/utils/enrich-companies';
 import { extractCompanyMatchParams } from 'src/logic-functions/utils/extract-company-match-params';
@@ -17,6 +18,7 @@ export const companyEnrichmentAdapter: BatchEnrichmentAdapter<
   objectNameSingular: 'Company',
   noIdentifierMessage:
     'No usable identifier (domain, LinkedIn, or name) to match against PDL.',
+  costPerMatchDollars: COMPANY_MATCH_COST_DOLLARS,
   readRecords: readCompanies,
   getNodeId: (node) => node.id,
   extractParams: extractCompanyMatchParams,
