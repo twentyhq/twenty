@@ -120,7 +120,12 @@ export class RunWorkflowJob {
     if (!hasStarted) {
       // A concurrent RunWorkflowJob already started this run. Bail out so we
       // don't execute its steps twice (and so we don't end a run that another
-      // job is actively executing).
+      // job is actively executing). Logged so duplicate enqueue / lock
+      // contention stays observable in production.
+      this.logger.warn(
+        `Skipping workflow run ${workflowRunId} in workspace ${workspaceId}: already started by another job.`,
+      );
+
       return;
     }
 

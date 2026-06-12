@@ -29,12 +29,10 @@ describe('RunWorkflowJob', () => {
 
   beforeEach(async () => {
     workflowRunWorkspaceService = {
-      getWorkflowRunOrFail: jest
-        .fn()
-        .mockResolvedValue({
-          status: WorkflowRunStatus.ENQUEUED,
-          workflowVersionId,
-        }),
+      getWorkflowRunOrFail: jest.fn().mockResolvedValue({
+        status: WorkflowRunStatus.ENQUEUED,
+        workflowVersionId,
+      }),
       startWorkflowRun: jest.fn(),
       endWorkflowRun: jest.fn(),
     } as any;
