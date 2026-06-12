@@ -1,4 +1,5 @@
 import { FormMultiRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormMultiRecordPicker';
+import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
@@ -33,6 +34,10 @@ export default meta;
 
 type Story = StoryObj<typeof FormMultiRecordPicker>;
 
+const StyledNarrowContainer = styled.div`
+  width: 480px;
+`;
+
 export const Default: Story = {
   args: {
     label: 'Companies',
@@ -50,6 +55,41 @@ export const Default: Story = {
     expect(dropdown).toBeVisible();
 
     await userEvent.click(dropdown);
+  },
+};
+
+export const WithManyRecords: Story = {
+  args: {
+    label: 'Companies',
+    defaultValue: [
+      '20202020-1553-45c6-a028-5a9064cce07f',
+      '20202020-a000-4485-94de-70c2a98daef2',
+      '20202020-0001-4001-8001-000000000001',
+      '20202020-0002-4002-8002-000000000002',
+      '20202020-0003-4003-8003-000000000003',
+      '20202020-0004-4004-8004-000000000004',
+    ],
+    objectNameSingular: 'company',
+    onChange: fn(),
+    VariablePicker: () => <div>VariablePicker</div>,
+  },
+  decorators: [
+    (Story) => (
+      <StyledNarrowContainer>
+        <Story />
+      </StyledNarrowContainer>
+    ),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Companies');
+
+    const hiddenChipCount = await canvas.findByText(/^\+\d+$/);
+    expect(hiddenChipCount).toBeVisible();
+
+    const variablePicker = await canvas.findByText('VariablePicker');
+    expect(variablePicker).toBeVisible();
   },
 };
 

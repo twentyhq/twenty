@@ -3,6 +3,7 @@ import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type FormMultiRecordPickerDraftValue } from '@/object-record/record-field/ui/form-types/utils/getFormMultiRecordPickerDraftValue';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -59,25 +60,27 @@ export const FormMultiRecordFieldChips = ({
     );
   }
 
+  const chips = [
+    ...selectedRecords.map((record) => (
+      <RecordChip
+        key={record.id}
+        record={record}
+        objectNameSingular={objectNameSingular}
+      />
+    )),
+    ...staticVariables.map((variable) => (
+      <VariableChipStandalone
+        key={variable}
+        rawVariableName={variable}
+        onRemove={readonly ? undefined : () => onRemoveStaticVariable(variable)}
+        isFullRecord
+      />
+    )),
+  ];
+
   return (
     <StyledChipsContainer>
-      {selectedRecords.map((record) => (
-        <RecordChip
-          key={record.id}
-          record={record}
-          objectNameSingular={objectNameSingular}
-        />
-      ))}
-      {staticVariables.map((variable) => (
-        <VariableChipStandalone
-          key={variable}
-          rawVariableName={variable}
-          onRemove={
-            readonly ? undefined : () => onRemoveStaticVariable(variable)
-          }
-          isFullRecord
-        />
-      ))}
+      <ExpandableList isChipCountDisplayed={true}>{chips}</ExpandableList>
     </StyledChipsContainer>
   );
 };
