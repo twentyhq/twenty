@@ -47,6 +47,10 @@ export const generateNodesAndEdgesForDefaultNode = ({
       nodeType: 'action',
       actionType: step.type,
       name: step.name,
+      logicFunctionId:
+        step.type === 'LOGIC_FUNCTION'
+          ? step.settings.input.logicFunctionId
+          : undefined,
       hasNextStepIds:
         isDefined(step.nextStepIds) && step.nextStepIds.length > 0,
       stepId: step.id,
