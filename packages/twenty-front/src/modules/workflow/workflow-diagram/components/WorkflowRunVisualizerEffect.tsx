@@ -123,12 +123,43 @@ export const WorkflowRunVisualizerEffect = ({
         steps: workflowRunState.flow.steps,
       });
 
-      const { diagram: baseWorkflowRunDiagram, stepToOpenByDefault } =
+      const { diagram: generatedWorkflowRunDiagram, stepToOpenByDefault } =
         generateWorkflowRunDiagram({
           trigger: workflowRunState.flow.trigger,
           steps: workflowRunState.flow.steps,
           stepInfos: workflowRunState.stepInfos,
         });
+
+      // Regenerating the diagram on each run state change produces fresh nodes
+      // without the dimensions Reactflow measured previously. Reactflow hides
+      // unmeasured nodes until it re-measures them, which makes the diagram
+      // flicker (and disappear if the last regeneration before going idle
+      // leaves nodes unmeasured). Carry over the measured dimensions so the
+      // nodes stay rendered across regenerations.
+      const previousNodesById = new Map(
+        (store.get(workflowDiagram)?.nodes ?? []).map((node) => [
+          node.id,
+          node,
+        ]),
+      );
+
+      const baseWorkflowRunDiagram = {
+        ...generatedWorkflowRunDiagram,
+        nodes: generatedWorkflowRunDiagram.nodes.map((node) => {
+          const previousNode = previousNodesById.get(node.id);
+
+          if (!isDefined(previousNode?.measured)) {
+            return node;
+          }
+
+          return {
+            ...node,
+            measured: previousNode.measured,
+            width: previousNode.width,
+            height: previousNode.height,
+          };
+        }),
+      };
 
       if (workflowDiagramStatus !== 'done') {
         store.set(workflowDiagramStatusState, 'computing-dimensions');
