@@ -39,9 +39,6 @@ export class TimelineActivityRepository {
       });
 
       const payloadsWithDiff = payloads
-        // Drop events whose diff is present but empty (nothing to show); keep
-        // events with real changes and diff-less events such as
-        // created/deleted/restored and linked note/task.
         .filter(
           ({ properties }) =>
             !isDefined(properties.diff) ||

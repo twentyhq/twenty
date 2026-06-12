@@ -65,11 +65,6 @@ export const EventRowMainObjectUpdated = ({
 
   const diffEntries = Object.entries(diff);
 
-  // An update event with no diff passes filterOutInvalidTimelineActivities
-  // (which only validates events that already carry a diff) and reaches here.
-  // There is nothing to show, so render nothing rather than throwing, which
-  // would crash the whole timeline widget into its error boundary ("Invalid
-  // configuration").
   if (diffEntries.length === 0) {
     return null;
   }
