@@ -91,22 +91,24 @@ export class MessageCampaignService {
     private readonly messageChannelMetadataService: MessageChannelMetadataService,
   ) {}
 
-  // Workspace-data repository for a workspace entity. The user-triggered send
-  // path runs under the caller's permissions (shouldBypassPermissionChecks
-  // omitted); background jobs and webhook callbacks have no acting user and run
-  // as a system actor.
-  private getWorkspaceRepository<T extends ObjectLiteral>(
+  // Repository bound to the request's acting user: the user-triggered send path
+  // reads the audience and creates the campaign under that user's permissions.
+  private getUserRepository<T extends ObjectLiteral>(
     workspaceId: string,
     entity: Type<T>,
-    shouldBypassPermissionChecks: boolean,
   ) {
-    return this.globalWorkspaceOrmManager.getRepository(
-      workspaceId,
-      entity,
-      shouldBypassPermissionChecks
-        ? { shouldBypassPermissionChecks: true }
-        : undefined,
-    );
+    return this.globalWorkspaceOrmManager.getRepository(workspaceId, entity);
+  }
+
+  // Permission-bypassing repository for background jobs and webhook callbacks,
+  // which have no acting user and run as a system actor.
+  private getSystemRepository<T extends ObjectLiteral>(
+    workspaceId: string,
+    entity: Type<T>,
+  ) {
+    return this.globalWorkspaceOrmManager.getRepository(workspaceId, entity, {
+      shouldBypassPermissionChecks: true,
+    });
   }
 
   // Resolves the audience under the caller's permissions, creates the campaign
@@ -203,10 +205,9 @@ export class MessageCampaignService {
     } = data;
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const campaignRepository = await this.getWorkspaceRepository(
+      const campaignRepository = await this.getSystemRepository(
         workspaceId,
         MessageCampaignWorkspaceEntity,
-        true,
       );
 
       const campaign = await campaignRepository.findOne({
@@ -234,14 +235,14 @@ export class MessageCampaignService {
 
       const allRecipients = [...recipientsByMessageId.values()];
 
-      const messageRepository = await this.getWorkspaceRepository(
+      const messageRepository = await this.getSystemRepository(
         workspaceId,
         MessageWorkspaceEntity,
-        true,
       );
 
       const existingMessages = await messageRepository.find({
         where: { messageCampaignId: campaignId },
+        select: { id: true },
       });
       const existingMessageIds = new Set(
         existingMessages.map((message) => message.id),
@@ -280,7 +281,7 @@ export class MessageCampaignService {
 
       // Finalizes the campaign immediately when nothing was queued
       // (zero-recipient case); otherwise the last send job finalizes it.
-      await this.finalizeCampaignIfComplete(workspaceId, campaignId, true);
+      await this.finalizeCampaignIfComplete(workspaceId, campaignId);
     }, buildSystemAuthContext(workspaceId));
   }
 
@@ -300,10 +301,9 @@ export class MessageCampaignService {
     } = data;
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageRepository = await this.getWorkspaceRepository(
+      const messageRepository = await this.getSystemRepository(
         workspaceId,
         MessageWorkspaceEntity,
-        true,
       );
 
       const message = await messageRepository.findOne({
@@ -321,10 +321,9 @@ export class MessageCampaignService {
         return;
       }
 
-      const campaignRepository = await this.getWorkspaceRepository(
+      const campaignRepository = await this.getSystemRepository(
         workspaceId,
         MessageCampaignWorkspaceEntity,
-        true,
       );
 
       const campaign = await campaignRepository.findOne({
@@ -335,10 +334,9 @@ export class MessageCampaignService {
         return;
       }
 
-      const personRepository = await this.getWorkspaceRepository(
+      const personRepository = await this.getSystemRepository(
         workspaceId,
         PersonWorkspaceEntity,
-        true,
       );
 
       const person = await personRepository.findOne({
@@ -432,10 +430,9 @@ export class MessageCampaignService {
           text,
         });
 
-        const associationRepository = await this.getWorkspaceRepository(
+        const associationRepository = await this.getSystemRepository(
           workspaceId,
           MessageChannelMessageAssociationWorkspaceEntity,
-          true,
         );
 
         await associationRepository.update(
@@ -446,7 +443,7 @@ export class MessageCampaignService {
           },
         );
       } finally {
-        await this.finalizeCampaignIfComplete(workspaceId, campaignId, true);
+        await this.finalizeCampaignIfComplete(workspaceId, campaignId);
       }
     }, buildSystemAuthContext(workspaceId));
   }
@@ -464,10 +461,9 @@ export class MessageCampaignService {
     deliveryStatus: string;
   }): Promise<void> {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageRepository = await this.getWorkspaceRepository(
+      const messageRepository = await this.getSystemRepository(
         workspaceId,
         MessageWorkspaceEntity,
-        true,
       );
 
       const message = await messageRepository.findOne({
@@ -508,10 +504,9 @@ export class MessageCampaignService {
     messageTopicId?: string;
     listId: string;
   }): Promise<string> {
-    const campaignRepository = await this.getWorkspaceRepository(
+    const campaignRepository = await this.getUserRepository(
       workspaceId,
       MessageCampaignWorkspaceEntity,
-      false,
     );
 
     const { identifiers } = await campaignRepository.insert({
@@ -561,25 +556,21 @@ export class MessageCampaignService {
       temporaryExternalId: v4(),
     }));
 
-    const messageThreadRepository = await this.getWorkspaceRepository(
+    const messageThreadRepository = await this.getSystemRepository(
       workspaceId,
       MessageThreadWorkspaceEntity,
-      true,
     );
-    const messageRepository = await this.getWorkspaceRepository(
+    const messageRepository = await this.getSystemRepository(
       workspaceId,
       MessageWorkspaceEntity,
-      true,
     );
-    const associationRepository = await this.getWorkspaceRepository(
+    const associationRepository = await this.getSystemRepository(
       workspaceId,
       MessageChannelMessageAssociationWorkspaceEntity,
-      true,
     );
-    const participantRepository = await this.getWorkspaceRepository(
+    const participantRepository = await this.getSystemRepository(
       workspaceId,
       MessageParticipantWorkspaceEntity,
-      true,
     );
 
     const workspaceDataSource =
@@ -653,12 +644,10 @@ export class MessageCampaignService {
   private async finalizeCampaignIfComplete(
     workspaceId: string,
     campaignId: string,
-    shouldBypassPermissionChecks: boolean,
   ): Promise<void> {
-    const messageRepository = await this.getWorkspaceRepository(
+    const messageRepository = await this.getSystemRepository(
       workspaceId,
       MessageWorkspaceEntity,
-      shouldBypassPermissionChecks,
     );
 
     const queuedCount = await messageRepository.count({
@@ -679,10 +668,9 @@ export class MessageCampaignService {
       },
     });
 
-    const campaignRepository = await this.getWorkspaceRepository(
+    const campaignRepository = await this.getSystemRepository(
       workspaceId,
       MessageCampaignWorkspaceEntity,
-      shouldBypassPermissionChecks,
     );
 
     await campaignRepository.update(
@@ -702,10 +690,9 @@ export class MessageCampaignService {
     workspaceId: string,
     listId: string,
   ): Promise<RawCampaignRecipient[]> {
-    const listMemberRepository = await this.getWorkspaceRepository(
+    const listMemberRepository = await this.getUserRepository(
       workspaceId,
       MessageListMemberWorkspaceEntity,
-      false,
     );
 
     const members = await listMemberRepository.find({
@@ -726,10 +713,9 @@ export class MessageCampaignService {
       return [];
     }
 
-    const personRepository = await this.getWorkspaceRepository(
+    const personRepository = await this.getUserRepository(
       workspaceId,
       PersonWorkspaceEntity,
-      false,
     );
 
     const people = await personRepository.find({
