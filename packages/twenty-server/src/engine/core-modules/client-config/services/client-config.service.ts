@@ -47,6 +47,13 @@ export class ClientConfigService {
       'CALENDAR_BOOKING_PAGE_ID',
     );
 
+    const isEmailingDomainInDemoMode =
+      this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
+      EmailingDomainDriver.LOG;
+    const isInboundEmailConfigured =
+      this.twentyConfigService.get('STORAGE_TYPE') === StorageDriverType.S_3 &&
+      isNonEmptyString(this.twentyConfigService.get('INBOUND_EMAIL_DOMAIN'));
+
     const availableModels =
       this.aiModelRegistryService.getAdminFilteredModels();
     const recommendedModelIds =
@@ -236,13 +243,12 @@ export class ClientConfigService {
       isImapSmtpCaldavEnabled: this.twentyConfigService.get(
         'IS_IMAP_SMTP_CALDAV_ENABLED',
       ),
+      // Demo mode unlocks the email-group UI without inbound infrastructure:
+      // handles are created on a non-routable forwarding domain and outbound
+      // mail is logged by the LOG emailing-domain driver.
       isEmailGroupEnabled:
-        this.twentyConfigService.get('STORAGE_TYPE') ===
-          StorageDriverType.S_3 &&
-        isNonEmptyString(this.twentyConfigService.get('INBOUND_EMAIL_DOMAIN')),
-      isEmailingDomainInDemoMode:
-        this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
-        EmailingDomainDriver.LOG,
+        isInboundEmailConfigured || isEmailingDomainInDemoMode,
+      isEmailingDomainInDemoMode,
       allowRequestsToTwentyIcons: this.twentyConfigService.get(
         'ALLOW_REQUESTS_TO_TWENTY_ICONS',
       ),

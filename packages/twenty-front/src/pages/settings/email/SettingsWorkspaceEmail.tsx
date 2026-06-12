@@ -36,8 +36,7 @@ export const SettingsWorkspaceEmail = () => {
     return null;
   }
 
-  const showEmailGroupSection =
-    isEmailGroupEnabled || isEmailingDomainInDemoMode;
+  const showEmailGroupSection = isEmailGroupEnabled;
 
   return (
     <SettingsPageLayout
