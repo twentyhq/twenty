@@ -63,6 +63,15 @@ const KANBAN_LANE: Record<string, TonePair> = {
   purple: { background: '#ede9fe', color: '#8e4ec6' },
 };
 
+// The product hero's Ask-AI panel inks (authored chrome washes + the
+// Claude brand mark).
+const PRODUCT_VISUAL = {
+  userMessageBackground: '#f1f1f1',
+  entityChipBackground: 'rgba(0, 0, 0, 0.04)',
+  inputBoxBackground: 'rgba(0, 0, 0, 0.02)',
+  claudeMarkInk: '#D97757',
+};
+
 // The record page's file-chip ink for spreadsheets (authored; documents
 // reuse the product accent).
 const RECORD_FILE_SHEET_INK = '#12a594';
@@ -248,6 +257,7 @@ export const APP_PREVIEW_TONES = {
   workflowCanvas: WORKFLOW_CANVAS,
   workflowAvatarInk: WORKFLOW_AVATAR_INK,
   kanbanLane: KANBAN_LANE,
+  productVisual: PRODUCT_VISUAL,
   recordFileSheetInk: RECORD_FILE_SHEET_INK,
   recordNoteHighlightShadow: RECORD_NOTE_HIGHLIGHT_SHADOW,
   sidebar: SIDEBAR,

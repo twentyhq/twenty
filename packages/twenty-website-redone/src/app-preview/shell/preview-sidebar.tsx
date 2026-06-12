@@ -31,9 +31,11 @@ const SidebarPanel = styled.aside`
   width: 48px;
 
   ${mediaUp('md')} {
-    padding: 12px 8px;
-    row-gap: 12px;
-    width: ${theme.chrome.navigationDrawerWidthPx}px;
+    &[data-desktop-mode='expanded'] {
+      padding: 12px 8px;
+      row-gap: 12px;
+      width: ${theme.chrome.navigationDrawerWidthPx}px;
+    }
   }
 `;
 
@@ -45,9 +47,11 @@ const Header = styled.div`
   padding: 8px 4px;
 
   ${mediaUp('md')} {
-    flex-direction: row;
-    justify-content: space-between;
-    row-gap: 0;
+    [data-desktop-mode='expanded'] & {
+      flex-direction: row;
+      justify-content: space-between;
+      row-gap: 0;
+    }
   }
 `;
 
@@ -58,9 +62,11 @@ const HeaderLeft = styled.div`
   width: 100%;
 
   ${mediaUp('md')} {
-    column-gap: 8px;
-    justify-content: flex-start;
-    width: auto;
+    [data-desktop-mode='expanded'] & {
+      column-gap: 8px;
+      justify-content: flex-start;
+      width: auto;
+    }
   }
 `;
 
@@ -75,12 +81,14 @@ const WorkspaceName = styled.span`
   display: none;
 
   ${mediaUp('md')} {
-    display: block;
-    color: ${PREVIEW_COLORS.text};
-    font-family: ${theme.font.family};
-    font-size: ${theme.font.sizePx.md}px;
-    font-weight: ${theme.font.weight.medium};
-    line-height: 1.4;
+    [data-desktop-mode='expanded'] & {
+      display: block;
+      color: ${PREVIEW_COLORS.text};
+      font-family: ${theme.font.family};
+      font-size: ${theme.font.sizePx.md}px;
+      font-weight: ${theme.font.weight.medium};
+      line-height: 1.4;
+    }
   }
 `;
 
@@ -88,7 +96,9 @@ const DesktopOnly = styled.span`
   display: none;
 
   ${mediaUp('md')} {
-    display: flex;
+    [data-desktop-mode='expanded'] & {
+      display: flex;
+    }
   }
 `;
 
@@ -99,8 +109,10 @@ const HeaderRight = styled.div`
   row-gap: 16px;
 
   ${mediaUp('md')} {
-    column-gap: 8px;
-    flex-direction: row;
+    [data-desktop-mode='expanded'] & {
+      column-gap: 8px;
+      flex-direction: row;
+    }
   }
 `;
 
@@ -137,7 +149,9 @@ const RailOnly = styled.div`
   row-gap: 8px;
 
   ${mediaUp('md')} {
-    display: none;
+    [data-desktop-mode='expanded'] & {
+      display: none;
+    }
   }
 `;
 
@@ -145,11 +159,13 @@ const DesktopContent = styled.div`
   display: none;
 
   ${mediaUp('md')} {
-    display: flex;
-    flex: 1 1 auto;
-    flex-direction: column;
-    min-height: 0;
-    row-gap: 12px;
+    [data-desktop-mode='expanded'] & {
+      display: flex;
+      flex: 1 1 auto;
+      flex-direction: column;
+      min-height: 0;
+      row-gap: 12px;
+    }
   }
 `;
 
@@ -161,7 +177,10 @@ const RailIconSlot = styled.div`
   width: 100%;
 `;
 
+export type DesktopSidebarMode = 'expanded' | 'collapsed';
+
 export function PreviewSidebar({
+  desktopMode = 'expanded',
   favorites,
   highlightedItemId = null,
   onSelectPageItem,
@@ -170,6 +189,7 @@ export function PreviewSidebar({
   selectedItemId,
   workspace,
 }: {
+  desktopMode?: DesktopSidebarMode;
   favorites: SidebarItemDef[];
   highlightedItemId?: string | null;
   onSelectPageItem?: (itemId: string) => void;
@@ -186,7 +206,7 @@ export function PreviewSidebar({
   );
 
   return (
-    <SidebarPanel aria-hidden>
+    <SidebarPanel aria-hidden data-desktop-mode={desktopMode}>
       <Header>
         <HeaderLeft>
           <WorkspaceLogo
