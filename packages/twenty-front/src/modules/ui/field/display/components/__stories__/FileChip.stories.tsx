@@ -3,7 +3,6 @@ import { expect, fireEvent, fn, waitFor, within } from 'storybook/test';
 import { FILE_CATEGORIES } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { FileChip } from '@/ui/field/display/components/FileChip';
 
 const IMAGE_DATA_URI =
@@ -70,14 +69,15 @@ export const NonImageFileIcon: Story = {
   },
 };
 
-export const LegacyMissingLabel: Story = {
+export const EmptyLabelFallback: Story = {
   args: {
     file: {
-      fileId: 'legacy-file-id',
+      fileId: 'empty-label-file-id',
+      label: '',
       extension: 'pdf',
       fileCategory: FILE_CATEGORIES.TEXT_DOCUMENT,
       url: 'https://example.com/legacy-file.pdf',
-    } as FieldFilesValue,
+    },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
