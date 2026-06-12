@@ -43,18 +43,19 @@ describe('createResilientJotaiStorage', () => {
     expect(consoleErrorSpy).not.toHaveBeenCalled();
   });
 
-  it('should not throw and should evict the key when a write fails', () => {
-    const removeItem = jest.fn();
-    const fakeStorage = buildFakeStorage({
-      setItem: () => {
-        throw new DOMException('The quota has been exceeded.');
-      },
-      removeItem,
-    });
+  it('should not throw and should clear the stored value when a write fails', () => {
+    const fakeStorage = buildFakeStorage();
     const storage = createResilientJotaiStorage<string>(() => fakeStorage);
 
-    expect(() => storage.setItem('my-key', 'value')).not.toThrow();
-    expect(removeItem).toHaveBeenCalledWith('my-key');
+    storage.setItem('my-key', 'old-value');
+    expect(storage.getItem('my-key', 'fallback')).toBe('old-value');
+
+    fakeStorage.setItem = () => {
+      throw new DOMException('The quota has been exceeded.');
+    };
+
+    expect(() => storage.setItem('my-key', 'new-value')).not.toThrow();
+    expect(storage.getItem('my-key', 'fallback')).toBe('fallback');
     expect(consoleErrorSpy).toHaveBeenCalled();
   });
 
