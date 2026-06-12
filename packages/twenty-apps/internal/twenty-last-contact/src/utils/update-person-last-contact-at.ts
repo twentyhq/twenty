@@ -5,29 +5,20 @@ export const updatePersonLastContactAtIfNewer = async (
   personId: string,
   lastContactAt: string,
 ): Promise<void> => {
-  const { person } = await client.query({
-    person: {
-      __args: { filter: { id: { eq: personId } } },
-      id: true,
-      lastContactAt: true,
-    },
-  });
-
-  const currentLastContactAt = person?.lastContactAt;
-
-  if (
-    currentLastContactAt &&
-    new Date(currentLastContactAt) >= new Date(lastContactAt)
-  ) {
-    return;
-  }
-
   await client.mutation({
-    updatePerson: {
+    updatePeople: {
       __args: {
-        id: personId,
-        data: {
-          lastContactAt,
+        data: { lastContactAt },
+        filter: {
+          and: [
+            { id: { eq: personId } },
+            {
+              or: [
+                { lastContactAt: { is: 'NULL' } },
+                { lastContactAt: { lt: lastContactAt } },
+              ],
+            },
+          ],
         },
       },
       id: true,

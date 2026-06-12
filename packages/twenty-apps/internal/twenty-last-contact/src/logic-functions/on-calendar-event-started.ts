@@ -4,8 +4,9 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { CALENDAR_EVENT_STARTED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { updatePersonLastContactAtFromCalendar } from 'src/utils/update-person-last-contact-at-from-calendar';
 
-const CRON_INTERVAL_MINUTES = Number(
-  process.env.CALENDAR_CRON_INTERVAL_MINUTES ?? 5,
+const CRON_INTERVAL_MINUTES = Math.min(
+  Math.max(Number(process.env.CALENDAR_CRON_INTERVAL_MINUTES ?? 5), 1),
+  60 * 24,
 );
 
 const SECURITY_OVERLAP_MINUTES = 5;
@@ -15,7 +16,8 @@ const handler = async (): Promise<void> => {
 
   const now = new Date();
   const windowStart = new Date(
-    now.getTime() - (CRON_INTERVAL_MINUTES + SECURITY_OVERLAP_MINUTES) * 60 * 1000,
+    now.getTime() -
+      (CRON_INTERVAL_MINUTES + SECURITY_OVERLAP_MINUTES) * 60 * 1000,
   );
 
   const { calendarEvents } = await client.query({
@@ -66,13 +68,16 @@ const handler = async (): Promise<void> => {
     ),
   ];
 
-  for (const personId of personIds) {
-    await updatePersonLastContactAtFromCalendar(client, personId);
-  }
+  await Promise.all(
+    personIds.map((personId) =>
+      updatePersonLastContactAtFromCalendar(client, personId),
+    ),
+  );
 };
 
 export default defineLogicFunction({
-  universalIdentifier: CALENDAR_EVENT_STARTED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  universalIdentifier:
+    CALENDAR_EVENT_STARTED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'on-calendar-event-started',
   description:
     'Updates last-contacted fields for participants of calendar events whose start time just passed.',
