@@ -40,19 +40,19 @@ export class TimelineActivityRepository {
 
       const payloadsToUpsert = payloads.flatMap(
         ({ name, properties, ...rest }) => {
+          const [objectName, action] = name.split('.');
           const { diff } = properties;
+          const hasDiff = isDefined(diff) && Object.keys(diff).length > 0;
 
-          if (isDefined(diff)) {
-            return Object.keys(diff).length > 0
-              ? [{ ...rest, name, properties: { diff } }]
-              : [];
+          if (objectName.startsWith('linked-')) {
+            return [{ ...rest, name, properties: hasDiff ? { diff } : {} }];
           }
 
-          const [objectName, action] = name.split('.');
-          const isMainObjectUpdate =
-            action === 'updated' && !objectName.startsWith('linked-');
+          if (action === 'updated') {
+            return hasDiff ? [{ ...rest, name, properties: { diff } }] : [];
+          }
 
-          return isMainObjectUpdate ? [] : [{ ...rest, name, properties: {} }];
+          return [{ ...rest, name, properties: {} }];
         },
       );
 
