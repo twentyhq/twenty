@@ -5,7 +5,7 @@
 
 import { MENU_WIPE } from '@/tokens';
 
-export type HeroScrollInput = {
+type HeroScrollInput = {
   // getBoundingClientRect().top of the 200vh track.
   trackTop: number;
   // The track's full height (offsetHeight).

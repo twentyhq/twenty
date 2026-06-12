@@ -37,7 +37,7 @@ import { ProductBackdrop } from './product-backdrop';
 import { TabButton } from './tab-button';
 import { TabButtons } from './tab-buttons';
 
-export type HeroVisualScrollProps = {
+type HeroVisualScrollProps = {
   aiBody: string;
   aiHeading: string;
   ctaHref: string;
@@ -58,6 +58,10 @@ type StackTargetMetric = {
 const NAV_HEIGHT_PX = 64;
 
 const DESKTOP_QUERY = `(min-width: ${BREAKPOINT_PX.md}px)`;
+
+// The deck's authored resting fan: vertical offsets and scales per card.
+const STACK_BASE_OFFSETS = [0, 4, 8, 12];
+const STACK_BASE_SCALES = [1, 0.99, 0.98, 0.97];
 
 // The discrete scroll states (everything continuous travels as CSS
 // custom properties on the track).
@@ -540,27 +544,45 @@ export function HeroVisualScroll({
   const stackSpreadMetrics =
     stackTargetMetrics.length === tabs.length ? stackTargetMetrics : null;
   const stackWidth = stackSpreadMetrics?.[0]?.width ?? null;
-  const stackBaseOffsets = [0, 4, 8, 12];
-  const stackBaseScales = [1, 0.99, 0.98, 0.97];
   const stackCards = tabs.map((tab, tabNumber) => ({ tab, tabNumber }));
 
+  // Each face renders both copies so the slot reserves the taller
+  // measure; the inactive copy is invisible AND hidden from assistive
+  // tech (it exists only as a measuring stick). The page's one h1 lives
+  // on the light face.
   const headingPair = (face: 'light' | 'dark') => (
     <HeadingGroup>
       <HeadingSlot>
-        <ContentLayer data-active={face === 'light'}>
-          <Heading as="h1" size="lg" weight="light">
+        <ContentLayer
+          aria-hidden={face === 'light' ? undefined : 'true'}
+          data-active={face === 'light'}
+        >
+          <Heading as={face === 'light' ? 'h1' : 'h2'} size="lg" weight="light">
             {introHeading}
           </Heading>
         </ContentLayer>
-        <ContentLayer data-active={face === 'dark'}>
+        <ContentLayer
+          aria-hidden={face === 'dark' ? undefined : 'true'}
+          data-active={face === 'dark'}
+        >
           <Heading as="h2" size="lg" weight="light">
             {aiHeading}
           </Heading>
         </ContentLayer>
       </HeadingSlot>
       <BodyText data-face={face}>
-        <ContentLayer data-active={face === 'light'}>{introBody}</ContentLayer>
-        <ContentLayer data-active={face === 'dark'}>{aiBody}</ContentLayer>
+        <ContentLayer
+          aria-hidden={face === 'light' ? undefined : 'true'}
+          data-active={face === 'light'}
+        >
+          {introBody}
+        </ContentLayer>
+        <ContentLayer
+          aria-hidden={face === 'dark' ? undefined : 'true'}
+          data-active={face === 'dark'}
+        >
+          {aiBody}
+        </ContentLayer>
       </BodyText>
     </HeadingGroup>
   );
@@ -630,12 +652,13 @@ export function HeroVisualScroll({
                 activeIndex={activeTab}
                 idPrefix="product-hero-mobile"
                 onSelect={setActiveTab}
+                panelId="product-hero-mobile-panel"
                 tabs={tabs}
               />
             </CtaLayer>
           </ActionSlot>
         </IntroContainer>
-        <MobileVisualWrapper>
+        <MobileVisualWrapper id="product-hero-mobile-panel" role="tabpanel">
           <PatternOverlay>
             {!isDesktop ? <ProductBackdrop dash="white" /> : null}
           </PatternOverlay>
@@ -665,11 +688,12 @@ export function HeroVisualScroll({
               {headingPair('light')}
               <ActionSlot>
                 <CtaLayer data-active>{introCtas}</CtaLayer>
-                <CtaLayer data-active={false}>
+                <CtaLayer aria-hidden="true" data-active={false}>
                   <MeasureTabButtons
                     activeIndex={activeTab}
                     idPrefix="product-hero-intro"
                     onSelect={setActiveTab}
+                    panelId="product-hero-ai-panel"
                     tabs={tabs}
                   />
                 </CtaLayer>
@@ -700,7 +724,7 @@ export function HeroVisualScroll({
             <IntroContainer>
               {headingPair('dark')}
               <ActionSlot>
-                <CtaLayer data-active={false}>
+                <CtaLayer aria-hidden="true" data-active={false}>
                   <Button href={ctaHref} label={ctaLabel} />
                 </CtaLayer>
                 <CtaLayer data-active>
@@ -709,6 +733,7 @@ export function HeroVisualScroll({
                     containerRef={rowButtonsRef}
                     idPrefix="product-hero-ai-measure"
                     onSelect={setActiveTab}
+                    panelId="product-hero-ai-panel"
                     tabs={tabs}
                   />
                   <StackedTabDeck
@@ -722,10 +747,10 @@ export function HeroVisualScroll({
                       const targetMetric = stackSpreadMetrics?.[tabNumber];
                       const cardStyle = {
                         '--card-base-offset': String(
-                          stackBaseOffsets[tabNumber],
+                          STACK_BASE_OFFSETS[tabNumber],
                         ),
                         '--card-base-scale': String(
-                          stackBaseScales[tabNumber],
+                          STACK_BASE_SCALES[tabNumber],
                         ),
                         '--card-offset': String(targetMetric?.offset ?? 0),
                         '--card-target-width': String(
@@ -741,7 +766,7 @@ export function HeroVisualScroll({
                           style={cardStyle}
                         >
                           <TabButton
-                            controls={`product-hero-ai-stack-panel-${tabNumber}`}
+                            controls="product-hero-ai-panel"
                             id={`product-hero-ai-stack-tab-${tabNumber}`}
                             isActive={
                               discrete.selectorRevealReady &&
@@ -757,7 +782,7 @@ export function HeroVisualScroll({
                 </CtaLayer>
               </ActionSlot>
             </IntroContainer>
-            <VisualWrapper>
+            <VisualWrapper id="product-hero-ai-panel" role="tabpanel">
               <PatternOverlay>
                 {isDesktop ? <ProductBackdrop dash="white" /> : null}
               </PatternOverlay>

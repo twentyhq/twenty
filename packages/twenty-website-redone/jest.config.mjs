@@ -16,6 +16,7 @@ const jestConfig = {
   },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^@lingui/core/macro$': '<rootDir>/test/lingui-macro-mock.ts',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: './coverage',

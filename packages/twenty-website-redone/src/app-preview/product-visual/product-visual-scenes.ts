@@ -6,7 +6,7 @@ export type ResponseChip = {
   name: string;
 };
 
-export type ProductVisualSceneKind =
+type ProductVisualSceneKind =
   | 'leadCreation'
   | 'opportunityReview'
   | 'taskCreation'
@@ -39,7 +39,6 @@ export type ProductVisualSceneDefinition = {
   responseChips: ResponseChip[];
   responseText: string[];
   sidebarMode?: 'collapsed' | 'expanded';
-  followUpPageItemId?: string;
   steps?: AgentStep[];
 };
 

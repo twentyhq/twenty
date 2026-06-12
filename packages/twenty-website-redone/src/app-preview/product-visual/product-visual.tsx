@@ -21,7 +21,7 @@ import { ProductFrame } from '../stage/product-frame';
 // How the window sits in its scene: a bleed mount keeps the full window
 // width and runs off narrow viewports; a fluid mount reflows the board
 // under the scene cap; a panel mount is the phone-width AI chat.
-export type ProductVisualPresentation = 'bleed' | 'fluid' | 'panel';
+type ProductVisualPresentation = 'bleed' | 'fluid' | 'panel';
 
 const PANEL_ONLY_WIDTH_PX = 320;
 

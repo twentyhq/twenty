@@ -8,7 +8,7 @@ import {
   type TourPhase,
 } from './cursor-tour-phases';
 
-export type ProductHeroTourState = {
+type ProductHeroTourState = {
   activeCursor: number;
   clicking: boolean;
   glideMs?: number;

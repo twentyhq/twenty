@@ -67,20 +67,10 @@ export function useProductVisualAutoplay(
       }
 
       let index = 0;
-      let followUpPageSelected = false;
 
       const tick = () => {
         index = Math.min(index + 1, fullTextVisibleLength);
         setStreamedLength(index);
-
-        if (
-          !followUpPageSelected &&
-          selectedScene.followUpPageItemId !== undefined &&
-          displayPage.getStreamProgress(index, fullTextVisibleLength) >= 0.6
-        ) {
-          followUpPageSelected = true;
-          selectPageItem(selectedScene.followUpPageItemId);
-        }
 
         if (index < fullTextVisibleLength) {
           timeouts.schedule(tick, STREAM_TICK_MS);

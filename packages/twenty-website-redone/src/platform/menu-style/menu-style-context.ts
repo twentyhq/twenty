@@ -14,7 +14,7 @@ export type MenuStyleOverride = {
   suppressElevation?: boolean;
 };
 
-export type MenuStyleContextValue = {
+type MenuStyleContextValue = {
   override: MenuStyleOverride;
   setBackground: (value: string | null) => void;
   setOverride: (override: MenuStyleOverride) => void;

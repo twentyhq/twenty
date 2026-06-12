@@ -3,7 +3,7 @@
 // are shown) both depend on one definition of a "visible character" —
 // anything except the `**` markers — so the two can never drift.
 
-export type MarkdownSegment = {
+type MarkdownSegment = {
   bold: boolean;
   text: string;
 };

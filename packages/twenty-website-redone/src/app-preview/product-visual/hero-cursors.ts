@@ -2,7 +2,7 @@ import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
 export type HeroCursorCoordinate = { left: number; top: number };
 
-export type HeroCursorConfig = {
+type HeroCursorConfig = {
   color: string;
   home: HeroCursorCoordinate;
   // Resting position on the phone bleed layout, where the window runs

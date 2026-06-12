@@ -30,6 +30,7 @@ export function TabButtons({
   containerRef,
   idPrefix,
   onSelect,
+  panelId,
   style,
   tabs,
 }: {
@@ -38,6 +39,8 @@ export function TabButtons({
   containerRef?: Ref<HTMLDivElement>;
   idPrefix: string;
   onSelect: (index: number) => void;
+  // The tabpanel every tab controls (the AI visual the tabs swap).
+  panelId: string;
   style?: CSSProperties;
   tabs: AiHeroTab[];
 }) {
@@ -53,7 +56,7 @@ export function TabButtons({
     >
       {numberedTabs.map(({ tab, tabNumber }) => (
         <TabButton
-          controls={`${idPrefix}-panel`}
+          controls={panelId}
           id={`${idPrefix}-tab-${tabNumber}`}
           isActive={tabNumber === activeIndex}
           key={tabNumber}
