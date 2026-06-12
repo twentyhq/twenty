@@ -1,5 +1,6 @@
 import { Injectable, Logger, type Type } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { In, type ObjectLiteral } from 'typeorm';
 import { v4, v5 } from 'uuid';
 
@@ -34,6 +35,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
+import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 import { renderCampaignTemplate } from 'src/modules/emailing/utils/render-campaign-template.util';
@@ -65,6 +67,17 @@ type SendCampaignResult = {
   skipped: CampaignSkippedBreakdown;
 };
 
+// Disjoint pre-send audience breakdown (global opt-out takes precedence over a
+// topic opt-out, which takes precedence over sendable).
+type CampaignAudiencePreview = {
+  totalMembers: number;
+  withoutEmail: number;
+  duplicateEmails: number;
+  globallyUnsubscribed: number;
+  topicUnsubscribed: number;
+  sendable: number;
+};
+
 // A recipient paired with the deterministic message id materialized for it.
 type CampaignMessageRecipient = CampaignRecipient & { messageId: string };
 
@@ -89,6 +102,7 @@ export class MessageCampaignService {
     @InjectMessageQueue(MessageQueue.emailQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly messageChannelMetadataService: MessageChannelMetadataService,
+    private readonly messageSuppressionService: MessageSuppressionService,
   ) {}
 
   // Repository bound to the request's acting user: the user-triggered send path
@@ -681,6 +695,75 @@ export class MessageCampaignService {
             ? CAMPAIGN_STATUS.SENT_WITH_ERRORS
             : CAMPAIGN_STATUS.SENT,
         sentAt: new Date(),
+      },
+    );
+  }
+
+  // Pre-send audience breakdown for the campaign composer. Reuses the send
+  // path's audience read + normalize + suppression lookups (no new data path),
+  // under the caller's permissions. Categories are disjoint: a global opt-out
+  // outranks a topic opt-out outranks sendable.
+  async previewAudience({
+    workspaceId,
+    listId,
+    messageTopicId,
+  }: {
+    workspaceId: string;
+    listId: string;
+    messageTopicId?: string;
+  }): Promise<CampaignAudiencePreview> {
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const rawRecipients = await this.resolveRecipientsFromList(
+          workspaceId,
+          listId,
+        );
+        const totalMembers = rawRecipients.length;
+
+        const { recipients, skipped } = normalizeCampaignRecipients(
+          rawRecipients,
+          MAX_CAMPAIGN_RECIPIENTS,
+        );
+
+        const emails = recipients.map((recipient) => recipient.email);
+
+        const globallySuppressed =
+          await this.messageSuppressionService.getSuppressedAddresses(
+            workspaceId,
+            emails,
+          );
+        const topicSuppressed = isNonEmptyString(messageTopicId)
+          ? await this.messageSuppressionService.getTopicSuppressedAddresses(
+              workspaceId,
+              emails,
+              messageTopicId,
+            )
+          : new Set<string>();
+
+        let globallyUnsubscribed = 0;
+        let topicUnsubscribed = 0;
+        let sendable = 0;
+
+        for (const recipient of recipients) {
+          const normalizedEmail = recipient.email.trim().toLowerCase();
+
+          if (globallySuppressed.has(normalizedEmail)) {
+            globallyUnsubscribed += 1;
+          } else if (topicSuppressed.has(normalizedEmail)) {
+            topicUnsubscribed += 1;
+          } else {
+            sendable += 1;
+          }
+        }
+
+        return {
+          totalMembers,
+          withoutEmail: skipped.noEmail,
+          duplicateEmails: skipped.deduped,
+          globallyUnsubscribed,
+          topicUnsubscribed,
+          sendable,
+        };
       },
     );
   }
