@@ -590,9 +590,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
           fields: {
             universalIdentifier: '8e47f920-94d8-4d85-9f56-975421ad56ce',
           },
-          subscriptions: {
-            universalIdentifier: 'b10f34cc-bc47-45a5-b8a0-92e6d97e12a9',
-          },
         },
       },
     },
