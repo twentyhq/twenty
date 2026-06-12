@@ -582,30 +582,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
           },
         },
       },
-      tasks: {
-        universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f64',
-        widgets: {
-          tasks: {
-            universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f65',
-          },
-        },
-      },
-      notes: {
-        universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f66',
-        widgets: {
-          notes: {
-            universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f67',
-          },
-        },
-      },
-      files: {
-        universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f68',
-        widgets: {
-          files: {
-            universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f69',
-          },
-        },
-      },
     },
   },
   messageTopicRecordPage: {
@@ -619,30 +595,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
           },
           subscriptions: {
             universalIdentifier: 'b10f34cc-bc47-45a5-b8a0-92e6d97e12a9',
-          },
-        },
-      },
-      tasks: {
-        universalIdentifier: 'fc0b0a35-33e0-47f1-bde5-6c311b78ed62',
-        widgets: {
-          tasks: {
-            universalIdentifier: 'b23ca279-334d-401e-94a1-80daab1f8c6c',
-          },
-        },
-      },
-      notes: {
-        universalIdentifier: '6ec1783e-c31c-469a-8d98-ec224a7cbc9b',
-        widgets: {
-          notes: {
-            universalIdentifier: '0e06799f-a8df-4b84-a239-6283c64c316a',
-          },
-        },
-      },
-      files: {
-        universalIdentifier: '2d40764f-62ed-4086-9904-9e796170f5e9',
-        widgets: {
-          files: {
-            universalIdentifier: 'aad56fb3-7aa7-4b83-bc93-b26efa9036ae',
           },
         },
       },
@@ -668,30 +620,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
           },
           list: {
             universalIdentifier: 'b04fb8a5-f471-49a7-b82c-8434ea8276c5',
-          },
-        },
-      },
-      tasks: {
-        universalIdentifier: '0589e233-7d82-4c1f-b942-08044e6035e2',
-        widgets: {
-          tasks: {
-            universalIdentifier: '8c5c4224-6354-466c-a508-0a130fb23ea9',
-          },
-        },
-      },
-      notes: {
-        universalIdentifier: 'edd9f6cd-0763-44f9-baf3-676a9d3cf9a4',
-        widgets: {
-          notes: {
-            universalIdentifier: '1206e1d4-f827-4709-80e0-d91aace78046',
-          },
-        },
-      },
-      files: {
-        universalIdentifier: 'b80bad48-8093-497c-9598-e21c2974aa33',
-        widgets: {
-          files: {
-            universalIdentifier: '11475819-0f65-4db1-9429-eb43af41e6a8',
           },
         },
       },

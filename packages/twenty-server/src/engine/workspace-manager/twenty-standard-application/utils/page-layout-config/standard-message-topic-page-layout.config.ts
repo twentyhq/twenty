@@ -43,48 +43,6 @@ const MESSAGE_TOPIC_PAGE_TABS = {
       },
     },
   },
-  tasks: {
-    universalIdentifier:
-      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageTopicRecordPage.tabs
-        .tasks.universalIdentifier,
-    ...TAB_PROPS.tasks,
-    widgets: {
-      tasks: {
-        universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageTopicRecordPage.tabs
-            .tasks.widgets.tasks.universalIdentifier,
-        ...WIDGET_PROPS.tasks,
-      },
-    },
-  },
-  notes: {
-    universalIdentifier:
-      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageTopicRecordPage.tabs
-        .notes.universalIdentifier,
-    ...TAB_PROPS.notes,
-    widgets: {
-      notes: {
-        universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageTopicRecordPage.tabs
-            .notes.widgets.notes.universalIdentifier,
-        ...WIDGET_PROPS.notes,
-      },
-    },
-  },
-  files: {
-    universalIdentifier:
-      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageTopicRecordPage.tabs
-        .files.universalIdentifier,
-    ...TAB_PROPS.files,
-    widgets: {
-      files: {
-        universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageTopicRecordPage.tabs
-            .files.widgets.files.universalIdentifier,
-        ...WIDGET_PROPS.files,
-      },
-    },
-  },
 } as const satisfies Record<string, StandardPageLayoutTabConfig>;
 
 export const STANDARD_MESSAGE_TOPIC_PAGE_LAYOUT_CONFIG = {

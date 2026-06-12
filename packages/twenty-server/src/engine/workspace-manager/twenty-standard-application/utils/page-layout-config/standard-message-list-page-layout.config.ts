@@ -42,48 +42,6 @@ const MESSAGE_LIST_PAGE_TABS = {
       },
     },
   },
-  tasks: {
-    universalIdentifier:
-      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage.tabs
-        .tasks.universalIdentifier,
-    ...TAB_PROPS.tasks,
-    widgets: {
-      tasks: {
-        universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage.tabs
-            .tasks.widgets.tasks.universalIdentifier,
-        ...WIDGET_PROPS.tasks,
-      },
-    },
-  },
-  notes: {
-    universalIdentifier:
-      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage.tabs
-        .notes.universalIdentifier,
-    ...TAB_PROPS.notes,
-    widgets: {
-      notes: {
-        universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage.tabs
-            .notes.widgets.notes.universalIdentifier,
-        ...WIDGET_PROPS.notes,
-      },
-    },
-  },
-  files: {
-    universalIdentifier:
-      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage.tabs
-        .files.universalIdentifier,
-    ...TAB_PROPS.files,
-    widgets: {
-      files: {
-        universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageListRecordPage.tabs
-            .files.widgets.files.universalIdentifier,
-        ...WIDGET_PROPS.files,
-      },
-    },
-  },
 } as const satisfies Record<string, StandardPageLayoutTabConfig>;
 
 export const STANDARD_MESSAGE_LIST_PAGE_LAYOUT_CONFIG = {
