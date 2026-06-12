@@ -1,5 +1,7 @@
 import { msg } from '@lingui/core/macro';
 
+import { TalkToUsButton } from '@/contact-cal';
+
 import { FaqBackdrop } from './faq-backdrop';
 import { styled } from '@linaria/react';
 
@@ -53,11 +55,7 @@ export function Faq() {
               href={SITE_URLS.appWelcome}
               label={i18n._(msg`Get started`)}
             />
-            <Button
-              href={SITE_URLS.calBooking}
-              label={i18n._(msg`Talk to us`)}
-              variant="outlined"
-            />
+            <TalkToUsButton label={msg`Talk to us`} variant="outlined" />
           </CtaRow>
         </SectionIntro>
         <FaqItems questions={FAQ_QUESTIONS} />

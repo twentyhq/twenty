@@ -7,6 +7,7 @@ import {
   getRouteI18n,
   type LocaleRouteParams,
 } from '@/platform/i18n/get-route-i18n';
+import { ContactCalModalRoot } from '@/contact-cal';
 import { I18nProvider } from '@/platform/i18n/i18n-provider';
 import { localeToUrlSegment } from '@/platform/i18n/locale-to-url-segment';
 import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
@@ -89,8 +90,10 @@ const LocaleLayout = async ({
         className={`${tokenCssVariables} ${globalStyles} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable}`}
       >
         <I18nProvider locale={locale} messages={getLocaleMessages(locale)}>
-          {children}
-          <Footer />
+          <ContactCalModalRoot>
+            {children}
+            <Footer />
+          </ContactCalModalRoot>
         </I18nProvider>
       </body>
     </html>

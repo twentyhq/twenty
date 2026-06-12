@@ -369,6 +369,11 @@ msgstr ""
 msgid "Live data and AI built"
 msgstr ""
 
+#. js-lingui-id: Oyf4mg
+#: src/contact-cal/contact-cal-modal.tsx
+msgid "Loading form…"
+msgstr ""
+
 #. js-lingui-id: sQia9P
 #: src/sections/menu/menu.tsx
 #: src/sections/menu/menu-drawer.tsx
@@ -579,6 +584,7 @@ msgstr ""
 #: src/sections/home-hero/home-hero.tsx
 #: src/sections/footer/footer.data.ts
 #: src/sections/faq/faq.tsx
+#: src/contact-cal/contact-cal-modal.tsx
 msgid "Talk to us"
 msgstr ""
 

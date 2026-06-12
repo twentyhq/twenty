@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { Fragment } from 'react';
 
+import { TalkToUsButton } from '@/contact-cal';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { LocalizedLink } from '@/platform/i18n/localized-link';
 import {
@@ -145,14 +146,22 @@ function GroupBlock({ group }: { group: FooterNavGroup }) {
       </LinkList>
       {group.ctas !== undefined && (
         <CtaColumn>
-          {group.ctas.map((cta) => (
-            <Button
-              href={cta.href}
-              key={cta.href}
-              label={i18n._(cta.label)}
-              variant={cta.variant}
-            />
-          ))}
+          {group.ctas.map((cta) =>
+            cta.kind === 'contact-modal' ? (
+              <TalkToUsButton
+                key={cta.kind}
+                label={cta.label}
+                variant={cta.variant}
+              />
+            ) : (
+              <Button
+                href={cta.href}
+                key={cta.href}
+                label={i18n._(cta.label)}
+                variant={cta.variant}
+              />
+            ),
+          )}
         </CtaColumn>
       )}
     </Group>

@@ -369,6 +369,11 @@ msgstr "LinkedIn (ouvre un nouvel onglet)"
 msgid "Live data and AI built"
 msgstr "Données en direct et IA intégrée"
 
+#. js-lingui-id: Oyf4mg
+#: src/contact-cal/contact-cal-modal.tsx
+msgid "Loading form…"
+msgstr ""
+
 #. js-lingui-id: sQia9P
 #: src/sections/menu/menu.tsx
 #: src/sections/menu/menu-drawer.tsx
@@ -579,6 +584,7 @@ msgstr "Cessez de vous contenter de compromis."
 #: src/sections/home-hero/home-hero.tsx
 #: src/sections/footer/footer.data.ts
 #: src/sections/faq/faq.tsx
+#: src/contact-cal/contact-cal-modal.tsx
 msgid "Talk to us"
 msgstr "Parlez-nous"
 

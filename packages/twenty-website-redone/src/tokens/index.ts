@@ -14,6 +14,7 @@ export { FONT_WEIGHT, type FontWeightToken } from './font-weight';
 export { GUTTER } from './gutter';
 export { MAX_CONTENT_WIDTH_PX } from './max-content-width';
 export { mediaUp } from './media-up';
+export { MODAL_SURFACE } from './modal-surface';
 export { buildSchemeDeclarations } from './build-scheme-declarations';
 export { PALETTE, type PaletteToken } from './palette';
 export { paletteColorNumber } from './palette-number';

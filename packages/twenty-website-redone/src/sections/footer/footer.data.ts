@@ -12,11 +12,18 @@ export type FooterNavLink = {
   external?: boolean;
 };
 
-export type FooterCta = {
-  label: MessageDescriptor;
-  href: string;
-  variant: 'filled' | 'outlined';
-};
+export type FooterCta =
+  | {
+      kind: 'contact-modal';
+      label: MessageDescriptor;
+      variant: 'filled' | 'outlined';
+    }
+  | {
+      kind: 'link';
+      label: MessageDescriptor;
+      href: string;
+      variant: 'filled' | 'outlined';
+    };
 
 export type FooterNavGroup = {
   id: string;
@@ -32,8 +39,7 @@ export type FooterSocialLink = {
 };
 
 // Sitemap now includes Product and Customers — both pages exist in the nav
-// but were missing from the old footer. "Talk to us" links straight to the
-// Cal.com form until the contact modal is ported.
+// but were missing from the old footer.
 export const FOOTER: {
   navGroups: readonly FooterNavGroup[];
   socialLinks: readonly FooterSocialLink[];
@@ -94,11 +100,12 @@ export const FOOTER: {
       ],
       ctas: [
         {
+          kind: 'contact-modal',
           label: msg`Talk to us`,
-          href: SITE_URLS.calBooking,
           variant: 'filled',
         },
         {
+          kind: 'link',
           label: msg`Get started`,
           href: SITE_URLS.appWelcome,
           variant: 'outlined',

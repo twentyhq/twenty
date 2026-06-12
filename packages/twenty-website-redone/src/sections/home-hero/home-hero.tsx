@@ -1,6 +1,7 @@
 import { msg } from '@lingui/core/macro';
 
 import { AppPreview } from '@/app-preview/app-preview';
+import { TalkToUsButton } from '@/contact-cal';
 
 import { HeroBackdrop } from './hero-backdrop';
 import { styled } from '@linaria/react';
@@ -102,11 +103,7 @@ export function HomeHero() {
             href={SITE_URLS.appWelcome}
             label={i18n._(msg`Get started`)}
           />
-          <Button
-            href={SITE_URLS.calBooking}
-            label={i18n._(msg`Talk to us`)}
-            variant="outlined"
-          />
+          <TalkToUsButton label={msg`Talk to us`} variant="outlined" />
         </CtaRow>
       </IntroStack>
       <MockupStage data-mockup-stage="">

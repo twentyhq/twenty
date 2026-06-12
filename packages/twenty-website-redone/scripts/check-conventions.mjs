@@ -136,7 +136,8 @@ function walk(directory) {
     // localized, never string literals.
     if (
       (relativePath.startsWith('sections' + path.sep) ||
-        relativePath.startsWith('app-preview' + path.sep)) &&
+        relativePath.startsWith('app-preview' + path.sep) ||
+        relativePath.startsWith('contact-cal' + path.sep)) &&
       /(?:aria-label|ariaLabel|aria-roledescription|placeholder|alt)="[A-Za-z]/.test(
         content,
       )
@@ -160,24 +161,26 @@ function walk(directory) {
       }
     }
 
-    // The app-preview layer is the shared product mockup (hero + feature
-    // cards consume it): it may reach only the pure and platform layers,
-    // never sections — and never twenty-ui at runtime; the product's theme
-    // arrives exclusively through the generated APP_PREVIEW_THEME tokens.
-    if (relativePath.startsWith('app-preview' + path.sep)) {
+    // Shared composite layers (the product mockup, the contact modal) sit
+    // between sections and primitives: multiple sections consume them, so
+    // they may reach only the pure and platform layers, never sections.
+    const sharedLayer = ['app-preview', 'contact-cal'].find((layer) =>
+      relativePath.startsWith(layer + path.sep),
+    );
+    if (sharedLayer) {
       const allowedLayers = new Set([
         'tokens',
         'icons',
         'ui',
         'platform',
-        'app-preview',
+        sharedLayer,
       ]);
       const forbiddenLayer = [...content.matchAll(/from '@\/([a-z-]+)/g)]
         .map((m) => m[1])
         .find((layer) => !allowedLayers.has(layer));
       if (forbiddenLayer) {
         failures.push(
-          `src/${relativePath}: app-preview may import only tokens/icons/ui/platform, found @/${forbiddenLayer}.`,
+          `src/${relativePath}: ${sharedLayer} may import only tokens/icons/ui/platform, found @/${forbiddenLayer}.`,
         );
       }
       if (/from 'twenty-ui/.test(content)) {
