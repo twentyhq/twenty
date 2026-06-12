@@ -15,16 +15,16 @@ const buildCalendarEventInput = (
   iCalUid: 'ical-uid-1',
   conferenceLinkUrl: 'https://meet.example.com/customer-sync',
   meetingBotPreference: undefined,
-  calendarEventParticipants: [],
+  calendarChannelOwners: [],
   ...overrides,
 });
 
 describe('buildMeetingBotPolicyResult', () => {
-  it('treats the AUTO wire value as no override and follows participant auto-record settings', () => {
+  it('treats the AUTO wire value as no override and follows channel owner auto-record settings', () => {
     const policyResult = buildMeetingBotPolicyResult(
       buildCalendarEventInput({
         meetingBotPreference: 'AUTO',
-        calendarEventParticipants: [
+        calendarChannelOwners: [
           {
             workspaceMemberId: 'workspace-member-1',
             workspaceMemberMeetingBotAutoRecordEnabled: true,
@@ -39,11 +39,11 @@ describe('buildMeetingBotPolicyResult', () => {
     expect(policyResult.reason).toBe('MEMBER_AUTO_RECORD');
   });
 
-  it('does not request a bot for AUTO when no participating member has auto-record enabled', () => {
+  it('does not request a bot for AUTO when no syncing member has auto-record enabled', () => {
     const policyResult = buildMeetingBotPolicyResult(
       buildCalendarEventInput({
         meetingBotPreference: 'AUTO',
-        calendarEventParticipants: [
+        calendarChannelOwners: [
           {
             workspaceMemberId: 'workspace-member-1',
             workspaceMemberMeetingBotAutoRecordEnabled: false,

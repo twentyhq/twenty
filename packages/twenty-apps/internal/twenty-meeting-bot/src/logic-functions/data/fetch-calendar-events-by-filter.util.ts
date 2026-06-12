@@ -2,9 +2,10 @@ import { isString, isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
-import { type CalendarEventParticipantRecord } from 'src/logic-functions/types/calendar-event-participant-record.type';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { fetchAllNodes } from 'src/logic-functions/data/fetch-all-nodes.util';
+import { fetchCalendarChannelOwners } from 'src/logic-functions/data/fetch-calendar-channel-owners.util';
+import { fetchCalendarChannelEventAssociations } from 'src/logic-functions/data/fetch-calendar-channel-event-associations.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import { stripRestrictedFieldValue } from 'src/logic-functions/data/strip-restricted-field-value.util';
@@ -62,95 +63,70 @@ export const fetchCalendarEventsByFilter = async (
       : undefined,
   }));
 
-  return attachParticipantsToCalendarEvents(client, calendarEvents);
+  return attachChannelOwnersToCalendarEvents(client, calendarEvents);
 };
 
-const attachParticipantsToCalendarEvents = async (
+const attachChannelOwnersToCalendarEvents = async (
   client: CoreApiClient,
-  calendarEvents: Omit<CalendarEventRecord, 'calendarEventParticipants'>[],
+  calendarEvents: Omit<CalendarEventRecord, 'calendarChannelOwners'>[],
 ): Promise<CalendarEventRecord[]> => {
   const calendarEventIds = getUniqueSortedIds(
     calendarEvents.map((calendarEvent) => calendarEvent.id),
   );
-  const participants = await fetchCalendarEventParticipantsByCalendarEventIds(
-    client,
-    calendarEventIds,
+
+  if (calendarEventIds.length === 0) {
+    return [];
+  }
+
+  const associations = await fetchCalendarChannelEventAssociations(client, {
+    calendarEventId: { in: calendarEventIds },
+  });
+  const channelOwners = await fetchCalendarChannelOwners(
+    getUniqueSortedIds(
+      associations.map((association) => association.calendarChannelId),
+    ),
   );
-  const participantsByCalendarEventId = new Map<
+  const autoRecordEnabledWorkspaceMemberIds =
+    await fetchAutoRecordEnabledWorkspaceMemberIds(
+      client,
+      getUniqueSortedIds(
+        channelOwners.map((channelOwner) => channelOwner.workspaceMemberId),
+      ),
+    );
+  const ownerByCalendarChannelId = new Map(
+    channelOwners.map((channelOwner) => [
+      channelOwner.calendarChannelId,
+      channelOwner,
+    ]),
+  );
+  const ownersByCalendarEventId = new Map<
     string,
-    CalendarEventParticipantRecord[]
+    CalendarEventRecord['calendarChannelOwners']
   >();
 
-  for (const participant of participants) {
-    const calendarEventId = participant.calendarEventId;
+  for (const association of associations) {
+    const owner = isString(association.calendarChannelId)
+      ? ownerByCalendarChannelId.get(association.calendarChannelId)
+      : undefined;
 
-    if (isUndefined(calendarEventId)) {
+    if (isUndefined(association.calendarEventId) || isUndefined(owner)) {
       continue;
     }
 
-    participantsByCalendarEventId.set(calendarEventId, [
-      ...(participantsByCalendarEventId.get(calendarEventId) ?? []),
-      participant,
+    ownersByCalendarEventId.set(association.calendarEventId, [
+      ...(ownersByCalendarEventId.get(association.calendarEventId) ?? []),
+      {
+        workspaceMemberId: owner.workspaceMemberId,
+        workspaceMemberMeetingBotAutoRecordEnabled:
+          isString(owner.workspaceMemberId) &&
+          autoRecordEnabledWorkspaceMemberIds.has(owner.workspaceMemberId),
+      },
     ]);
   }
 
   return calendarEvents.map((calendarEvent) => ({
     ...calendarEvent,
-    calendarEventParticipants:
-      participantsByCalendarEventId.get(calendarEvent.id) ?? [],
-  }));
-};
-
-const fetchCalendarEventParticipantsByCalendarEventIds = async (
-  client: CoreApiClient,
-  calendarEventIds: string[],
-): Promise<CalendarEventParticipantRecord[]> => {
-  if (calendarEventIds.length === 0) {
-    return [];
-  }
-
-  const participantNodes = await fetchAllNodes(async (afterCursor) => {
-    const queryResult = await client.query({
-      calendarEventParticipants: {
-        __args: {
-          filter: {
-            calendarEventId: { in: calendarEventIds },
-          },
-          first: TWENTY_PAGE_SIZE,
-          ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
-        },
-        pageInfo: {
-          hasNextPage: true,
-          endCursor: true,
-        },
-        edges: {
-          node: {
-            id: true,
-            calendarEventId: true,
-            workspaceMemberId: true,
-          },
-        },
-      },
-    });
-
-    return queryResult.calendarEventParticipants;
-  });
-
-  const autoRecordEnabledWorkspaceMemberIds =
-    await fetchAutoRecordEnabledWorkspaceMemberIds(
-      client,
-      getUniqueSortedIds(
-        participantNodes.map((participant) => participant.workspaceMemberId),
-      ),
-    );
-
-  return participantNodes.map((participant) => ({
-    id: participant.id,
-    calendarEventId: participant.calendarEventId ?? undefined,
-    workspaceMemberId: participant.workspaceMemberId ?? undefined,
-    workspaceMemberMeetingBotAutoRecordEnabled:
-      isString(participant.workspaceMemberId) &&
-      autoRecordEnabledWorkspaceMemberIds.has(participant.workspaceMemberId),
+    calendarChannelOwners: ownersByCalendarEventId.get(calendarEvent.id) ?? [],
   }));
 };
 

@@ -15,9 +15,9 @@ export const buildMeetingBotPolicyResult = (
     startsAt: calendarEvent.startsAt,
   });
 
-  const hasAutoRecordParticipant = calendarEvent.calendarEventParticipants.some(
-    (participant) =>
-      participant.workspaceMemberMeetingBotAutoRecordEnabled === true,
+  const hasAutoRecordChannelOwner = calendarEvent.calendarChannelOwners.some(
+    (channelOwner) =>
+      channelOwner.workspaceMemberMeetingBotAutoRecordEnabled === true,
   );
   const meetingBotPreference = normalizeMeetingBotPreference(
     calendarEvent.meetingBotPreference,
@@ -30,7 +30,7 @@ export const buildMeetingBotPolicyResult = (
       startsAt: calendarEvent.startsAt,
       endsAt: calendarEvent.endsAt,
       conferenceLinkUrl: calendarEvent.conferenceLinkUrl,
-      hasAutoRecordParticipant,
+      hasAutoRecordChannelOwner,
     },
     now,
   });

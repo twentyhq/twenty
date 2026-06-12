@@ -6,5 +6,5 @@ export type MeetingBotPolicyInput = {
   startsAt: string | undefined;
   endsAt: string | undefined;
   conferenceLinkUrl: string | undefined;
-  hasAutoRecordParticipant: boolean;
+  hasAutoRecordChannelOwner: boolean;
 };

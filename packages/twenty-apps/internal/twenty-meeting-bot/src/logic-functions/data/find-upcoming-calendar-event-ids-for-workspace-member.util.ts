@@ -3,6 +3,8 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 import { fetchAllNodes } from 'src/logic-functions/data/fetch-all-nodes.util';
+import { fetchCalendarChannelEventAssociations } from 'src/logic-functions/data/fetch-calendar-channel-event-associations.util';
+import { fetchCalendarChannelOwners } from 'src/logic-functions/data/fetch-calendar-channel-owners.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 
 const UPCOMING_CALENDAR_EVENT_LOOKBACK_HOURS = 4;
@@ -16,34 +18,27 @@ export const findUpcomingCalendarEventIdsForWorkspaceMember = async ({
   workspaceMemberId: string;
   now: Date;
 }): Promise<string[]> => {
-  const participantNodes = await fetchAllNodes(async (afterCursor) => {
-    const queryResult = await client.query({
-      calendarEventParticipants: {
-        __args: {
-          filter: {
-            workspaceMemberId: { eq: workspaceMemberId },
-          },
-          first: TWENTY_PAGE_SIZE,
-          ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
-        },
-        pageInfo: {
-          hasNextPage: true,
-          endCursor: true,
-        },
-        edges: {
-          node: {
-            id: true,
-            calendarEventId: true,
-          },
-        },
-      },
-    });
+  const channelOwners = await fetchCalendarChannelOwners();
+  // Ownerless channels are included so a deleted member's events still reconcile.
+  const memberCalendarChannelIds = getUniqueSortedIds(
+    channelOwners
+      .filter(
+        (channelOwner) =>
+          channelOwner.workspaceMemberId === workspaceMemberId ||
+          isUndefined(channelOwner.workspaceMemberId),
+      )
+      .map((channelOwner) => channelOwner.calendarChannelId),
+  );
 
-    return queryResult.calendarEventParticipants;
+  if (memberCalendarChannelIds.length === 0) {
+    return [];
+  }
+
+  const associations = await fetchCalendarChannelEventAssociations(client, {
+    calendarChannelId: { in: memberCalendarChannelIds },
   });
-
   const calendarEventIds = getUniqueSortedIds(
-    participantNodes.map((participant) => participant.calendarEventId),
+    associations.map((association) => association.calendarEventId),
   );
 
   if (calendarEventIds.length === 0) {

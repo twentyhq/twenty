@@ -20,6 +20,12 @@ vi.mock('src/logic-functions/recall-api/cancel-recall-bot.util', () => ({
   cancelRecallBot: cancelRecallBotMock,
 }));
 
+const fetchCalendarChannelOwnersMock = vi.hoisted(() => vi.fn());
+
+vi.mock('src/logic-functions/data/fetch-calendar-channel-owners.util', () => ({
+  fetchCalendarChannelOwners: fetchCalendarChannelOwnersMock,
+}));
+
 const NOW = new Date('2026-01-01T12:00:00.000Z');
 const FUTURE_STARTS_AT = '2026-01-01T13:00:00.000Z';
 const FUTURE_ENDS_AT = '2026-01-01T14:00:00.000Z';
@@ -42,10 +48,15 @@ type CalendarEventNode = {
   meetingBotPreference?: string | null;
 };
 
-type CalendarEventParticipantNode = {
+type CalendarChannelEventAssociationNode = {
   id: string;
   calendarEventId?: string | null;
-  workspaceMemberId?: string | null;
+  calendarChannelId?: string | null;
+};
+
+type CalendarChannelOwnerNode = {
+  calendarChannelId: string;
+  workspaceMemberId: string | undefined;
 };
 
 type WorkspaceMemberNode = {
@@ -67,26 +78,27 @@ type CallRecordingNode = {
 
 type FakeCoreApiClientFixture = {
   calendarEvents: CalendarEventNode[];
-  calendarEventParticipants?: CalendarEventParticipantNode[];
+  calendarChannelEventAssociations?: CalendarChannelEventAssociationNode[];
+  calendarChannelOwners?: CalendarChannelOwnerNode[];
   workspaceMembers?: WorkspaceMemberNode[];
   callRecordings?: CallRecordingNode[];
 };
 
 class FakeCoreApiClient {
   calendarEvents: CalendarEventNode[];
-  calendarEventParticipants: CalendarEventParticipantNode[];
+  calendarChannelEventAssociations: CalendarChannelEventAssociationNode[];
   workspaceMembers: WorkspaceMemberNode[];
   callRecordings: CallRecordingNode[];
   mutations: Array<{ name: string; args: unknown }> = [];
 
   constructor({
     calendarEvents,
-    calendarEventParticipants = [],
+    calendarChannelEventAssociations = [],
     workspaceMembers = [],
     callRecordings = [],
   }: FakeCoreApiClientFixture) {
     this.calendarEvents = calendarEvents;
-    this.calendarEventParticipants = calendarEventParticipants;
+    this.calendarChannelEventAssociations = calendarChannelEventAssociations;
     this.workspaceMembers = workspaceMembers;
     this.callRecordings = callRecordings;
   }
@@ -100,14 +112,14 @@ class FakeCoreApiClient {
       };
     }
 
-    if (query.calendarEventParticipants !== undefined) {
+    if (query.calendarChannelEventAssociations !== undefined) {
       const calendarEventIds =
-        query.calendarEventParticipants.__args.filter.calendarEventId.in;
+        query.calendarChannelEventAssociations.__args.filter.calendarEventId.in;
 
       return {
-        calendarEventParticipants: buildConnection(
-          this.calendarEventParticipants.filter((participant) =>
-            calendarEventIds.includes(participant.calendarEventId),
+        calendarChannelEventAssociations: buildConnection(
+          this.calendarChannelEventAssociations.filter((association) =>
+            calendarEventIds.includes(association.calendarEventId),
           ),
         ),
       };
@@ -244,7 +256,20 @@ const buildCalendarEvent = (
 
 const buildFakeCoreApiClient = (
   fixture: FakeCoreApiClientFixture,
-): FakeCoreApiClient => new FakeCoreApiClient(fixture);
+): FakeCoreApiClient => {
+  const calendarChannelOwners = fixture.calendarChannelOwners ?? [];
+
+  fetchCalendarChannelOwnersMock.mockImplementation(
+    async (calendarChannelIds?: string[]) =>
+      calendarChannelOwners.filter(
+        (channelOwner) =>
+          calendarChannelIds === undefined ||
+          calendarChannelIds.includes(channelOwner.calendarChannelId),
+      ),
+  );
+
+  return new FakeCoreApiClient(fixture);
+};
 
 describe('reconcileMeetingBotForCalendarEventIds', () => {
   beforeEach(() => {
@@ -265,6 +290,8 @@ describe('reconcileMeetingBotForCalendarEventIds', () => {
       ok: true,
       externalBotId: null,
     });
+    fetchCalendarChannelOwnersMock.mockReset();
+    fetchCalendarChannelOwnersMock.mockResolvedValue([]);
   });
 
   it('creates a scheduled call recording when the policy requests a bot', async () => {
@@ -306,13 +333,19 @@ describe('reconcileMeetingBotForCalendarEventIds', () => {
     });
   });
 
-  it('creates a scheduled call recording when a participating member has auto-record enabled', async () => {
+  it('creates a scheduled call recording when a syncing member has auto-record enabled', async () => {
     const client = buildFakeCoreApiClient({
       calendarEvents: [buildCalendarEvent({ meetingBotPreference: null })],
-      calendarEventParticipants: [
+      calendarChannelEventAssociations: [
         {
-          id: 'participant-1',
+          id: 'association-1',
           calendarEventId: 'calendar-event-1',
+          calendarChannelId: 'channel-1',
+        },
+      ],
+      calendarChannelOwners: [
+        {
+          calendarChannelId: 'channel-1',
           workspaceMemberId: 'workspace-member-1',
         },
       ],
@@ -345,10 +378,16 @@ describe('reconcileMeetingBotForCalendarEventIds', () => {
           endsAt: '2026-01-01T13:00:00.000Z',
         }),
       ],
-      calendarEventParticipants: [
+      calendarChannelEventAssociations: [
         {
-          id: 'participant-1',
+          id: 'association-1',
           calendarEventId: 'calendar-event-1',
+          calendarChannelId: 'channel-1',
+        },
+      ],
+      calendarChannelOwners: [
+        {
+          calendarChannelId: 'channel-1',
           workspaceMemberId: 'workspace-member-1',
         },
       ],
@@ -410,10 +449,16 @@ describe('reconcileMeetingBotForCalendarEventIds', () => {
           endsAt: '2026-01-01T13:00:00.000Z',
         }),
       ],
-      calendarEventParticipants: [
+      calendarChannelEventAssociations: [
         {
-          id: 'participant-1',
+          id: 'association-1',
           calendarEventId: 'calendar-event-1',
+          calendarChannelId: 'channel-1',
+        },
+      ],
+      calendarChannelOwners: [
+        {
+          calendarChannelId: 'channel-1',
           workspaceMemberId: 'workspace-member-1',
         },
       ],
@@ -454,19 +499,29 @@ describe('reconcileMeetingBotForCalendarEventIds', () => {
     ]);
   });
 
-  it('does not schedule a bot without an override when no participating member has auto-record enabled', async () => {
+  it('does not schedule a bot without an override when no syncing member has auto-record enabled', async () => {
     const client = buildFakeCoreApiClient({
       calendarEvents: [buildCalendarEvent({ meetingBotPreference: null })],
-      calendarEventParticipants: [
+      calendarChannelEventAssociations: [
         {
-          id: 'participant-1',
+          id: 'association-1',
           calendarEventId: 'calendar-event-1',
+          calendarChannelId: 'channel-1',
+        },
+        {
+          id: 'association-2',
+          calendarEventId: 'calendar-event-1',
+          calendarChannelId: 'channel-ownerless',
+        },
+      ],
+      calendarChannelOwners: [
+        {
+          calendarChannelId: 'channel-1',
           workspaceMemberId: 'workspace-member-1',
         },
         {
-          id: 'participant-2',
-          calendarEventId: 'calendar-event-1',
-          workspaceMemberId: null,
+          calendarChannelId: 'channel-ownerless',
+          workspaceMemberId: undefined,
         },
       ],
       workspaceMembers: [

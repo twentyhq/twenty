@@ -40,7 +40,7 @@ export const resolveMeetingBotPolicyResult = ({
     return botRequired('PREFERENCE_ON');
   }
 
-  if (input.hasAutoRecordParticipant) {
+  if (input.hasAutoRecordChannelOwner) {
     return botRequired('MEMBER_AUTO_RECORD');
   }
 

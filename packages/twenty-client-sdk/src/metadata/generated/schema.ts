@@ -2465,6 +2465,12 @@ export type CalendarChannelVisibility = 'METADATA' | 'SHARE_EVERYTHING'
 
 export type CalendarChannelContactAutoCreationPolicy = 'AS_PARTICIPANT_AND_ORGANIZER' | 'AS_PARTICIPANT' | 'AS_ORGANIZER' | 'NONE'
 
+export interface CalendarChannelOwner {
+    calendarChannelId: Scalars['UUID']
+    workspaceMemberId?: Scalars['UUID']
+    __typename: 'CalendarChannelOwner'
+}
+
 export interface MessageChannel {
     id: Scalars['UUID']
     visibility: MessageChannelVisibility
@@ -2625,6 +2631,7 @@ export interface Query {
     myMessageChannels: MessageChannel[]
     myConnectedAccounts: ConnectedAccountPublicDTO[]
     myCalendarChannels: CalendarChannel[]
+    calendarChannelOwners: CalendarChannelOwner[]
     minimalMetadata: MinimalMetadata
     appConnections: AppConnection[]
     appConnection: AppConnection
@@ -5524,6 +5531,13 @@ export interface CalendarChannelGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface CalendarChannelOwnerGenqlSelection{
+    calendarChannelId?: boolean | number
+    workspaceMemberId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface MessageChannelGenqlSelection{
     id?: boolean | number
     visibility?: boolean | number
@@ -5691,6 +5705,7 @@ export interface QueryGenqlSelection{
     myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
+    calendarChannelOwners?: (CalendarChannelOwnerGenqlSelection & { __args?: {calendarChannelIds?: (Scalars['UUID'][] | null)} })
     minimalMetadata?: MinimalMetadataGenqlSelection
     appConnections?: (AppConnectionGenqlSelection & { __args?: {filter?: (ListAppConnectionsInput | null)} })
     appConnection?: (AppConnectionGenqlSelection & { __args: {id: Scalars['ID']} })
@@ -8257,6 +8272,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isCalendarChannel = (obj?: { __typename?: any } | null): obj is CalendarChannel => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isCalendarChannel"')
       return CalendarChannel_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CalendarChannelOwner_possibleTypes: string[] = ['CalendarChannelOwner']
+    export const isCalendarChannelOwner = (obj?: { __typename?: any } | null): obj is CalendarChannelOwner => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCalendarChannelOwner"')
+      return CalendarChannelOwner_possibleTypes.includes(obj.__typename)
     }
     
 

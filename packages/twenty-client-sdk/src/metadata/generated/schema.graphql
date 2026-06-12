@@ -2773,6 +2773,11 @@ enum CalendarChannelContactAutoCreationPolicy {
   NONE
 }
 
+type CalendarChannelOwner {
+  calendarChannelId: UUID!
+  workspaceMemberId: UUID
+}
+
 type MessageChannel {
   id: UUID!
   visibility: MessageChannelVisibility!
@@ -3021,6 +3026,7 @@ type Query {
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
+  calendarChannelOwners(calendarChannelIds: [UUID!]): [CalendarChannelOwner!]!
   minimalMetadata: MinimalMetadata!
   appConnections(filter: ListAppConnectionsInput): [AppConnection!]!
   appConnection(id: ID!): AppConnection!

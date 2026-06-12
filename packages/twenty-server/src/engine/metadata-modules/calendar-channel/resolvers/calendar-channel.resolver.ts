@@ -1,15 +1,19 @@
 import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
+import { PermissionFlagType } from 'twenty-shared/constants';
+
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CalendarChannelMetadataService } from 'src/engine/metadata-modules/calendar-channel/calendar-channel-metadata.service';
 import { CalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/calendar-channel.dto';
+import { CalendarChannelOwnerDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/calendar-channel-owner.dto';
 import { UpdateCalendarChannelInput } from 'src/engine/metadata-modules/calendar-channel/dtos/update-calendar-channel.input';
 import { CalendarChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/calendar-channel/interceptors/calendar-channel-graphql-api-exception.interceptor';
 
@@ -45,6 +49,22 @@ export class CalendarChannelResolver {
     return this.calendarChannelMetadataService.findByUserWorkspaceId({
       userWorkspaceId,
       workspaceId: workspace.id,
+    });
+  }
+
+  @Query(() => [CalendarChannelOwnerDTO])
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.CONNECTED_ACCOUNTS))
+  async calendarChannelOwners(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('calendarChannelIds', {
+      type: () => [UUIDScalarType],
+      nullable: true,
+    })
+    calendarChannelIds?: string[],
+  ): Promise<CalendarChannelOwnerDTO[]> {
+    return this.calendarChannelMetadataService.findChannelOwners({
+      workspaceId: workspace.id,
+      calendarChannelIds,
     });
   }
 

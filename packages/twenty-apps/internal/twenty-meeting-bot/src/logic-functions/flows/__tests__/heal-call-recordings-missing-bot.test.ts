@@ -76,8 +76,8 @@ class FakeCoreApiClient {
       };
     }
 
-    if (query.calendarEventParticipants !== undefined) {
-      return { calendarEventParticipants: buildConnection([]) };
+    if (query.calendarChannelEventAssociations !== undefined) {
+      return { calendarChannelEventAssociations: buildConnection([]) };
     }
 
     if (query.workspaceMembers !== undefined) {

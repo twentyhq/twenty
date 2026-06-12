@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { CalendarChannelMetadataService } from 'src/engine/metadata-modules/calendar-channel/calendar-channel-metadata.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { CalendarChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/calendar-channel/interceptors/calendar-channel-graphql-api-exception.interceptor';
@@ -11,7 +12,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([CalendarChannelEntity]),
+    TypeOrmModule.forFeature([CalendarChannelEntity, UserWorkspaceEntity]),
     PermissionsModule,
     FeatureFlagModule,
     ConnectedAccountMetadataModule,
