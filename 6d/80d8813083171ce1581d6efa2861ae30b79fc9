@@ -1,0 +1,35 @@
+packages/twenty-server/test/integration/messaging/utils/google-auth-mock.util.ts
+  s_3226b097c1ff8f::t_583cb9a4911394 15,37
+  s_3226b097c1ff8f::t_16cfdbf1093402 1-3
+packages/twenty-server/test/integration/messaging/utils/google-calendar-mock.util.ts
+  s_3226b097c1ff8f::t_2d4071789738f0 4-6
+  s_3226b097c1ff8f::t_f29c01114d4724 35,43,59
+packages/twenty-server/test/integration/messaging/utils/microsoft-auth-mock.util.ts
+  s_3226b097c1ff8f::t_980ae8fac5fe9d 1,3
+packages/twenty-server/test/integration/messaging/utils/microsoft-calendar-mock.util.ts
+  s_3226b097c1ff8f::t_15252ff39065fd 4-6
+packages/twenty-server/test/integration/messaging/utils/microsoft-message-mock.util.ts
+  s_3226b097c1ff8f::t_b403d0bba20195 7,10-14
+packages/twenty-server/test/integration/utils/http-mock.ts
+  s_3226b097c1ff8f::t_a27cf3e2feaf89 13-14,16,19
+  s_3226b097c1ff8f::t_be948f4a56a1b1 44
+  s_3226b097c1ff8f::t_ee9f08e57246e1 22
+packages/twenty-server/test/integration/messaging/utils/gmail-message-mock.util.ts
+  s_3226b097c1ff8f::t_3c8152de6afc40 4,8-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "6d80d8813083171ce1581d6efa2861ae30b79fc9",
+  "prompts": {},
+  "sessions": {
+    "s_3226b097c1ff8f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "37fe379b-1108-44f6-ae35-d2db6ea5c15c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
