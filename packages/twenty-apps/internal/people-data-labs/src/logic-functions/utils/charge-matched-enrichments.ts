@@ -16,7 +16,7 @@ export const chargeMatchedEnrichments = async ({
     return;
   }
 
-  const creditsPerMatchMicro = Math.round(
+  const creditsPerMatchMicro = Math.floor(
     costPerMatchDollars * BILLING_MARGIN_MULTIPLIER * MICRO_CREDITS_PER_DOLLAR,
   );
 
