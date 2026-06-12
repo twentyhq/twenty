@@ -1,5 +1,3 @@
-import { EmailGroupMessageCategory } from 'src/engine/core-modules/emailing-domain/types/email-group-message-category.type';
-
 export type EmailingDomainAttachment = {
   filename: string;
   content: Buffer;
@@ -22,9 +20,9 @@ export type EmailingDomainEmailContent = {
   replyTo?: string[];
   attachments?: EmailingDomainAttachment[];
   headers?: EmailingDomainHeader[];
-  messageCategory?: EmailGroupMessageCategory;
-  // When a marketing email targets a specific list, recipients who unsubscribed
-  // from that list are dropped in addition to the globally suppressed ones.
+  // When an email is sent under a topic, recipients who unsubscribed from that
+  // topic are dropped in addition to the globally suppressed ones, and the
+  // unsubscribe link is scoped to the topic.
   messageTopicId?: string;
 };
 

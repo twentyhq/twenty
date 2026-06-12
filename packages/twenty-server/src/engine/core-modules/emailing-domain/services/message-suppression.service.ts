@@ -4,9 +4,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, IsNull } from 'typeorm';
 
-import { BLOCKING_REASONS_BY_MESSAGE_CATEGORY } from 'src/engine/core-modules/emailing-domain/constants/blocking-reasons-by-message-category.constant';
-import { HARD_SUPPRESSION_REASONS } from 'src/engine/core-modules/emailing-domain/constants/hard-suppression-reasons.constant';
-import { EmailGroupMessageCategory } from 'src/engine/core-modules/emailing-domain/types/email-group-message-category.type';
+import {
+  GLOBAL_BLOCKING_SUPPRESSION_REASONS,
+  HARD_SUPPRESSION_REASONS,
+} from 'src/engine/core-modules/emailing-domain/constants/hard-suppression-reasons.constant';
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/message-suppression-source.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -31,7 +32,6 @@ export class MessageSuppressionService {
   async getSuppressedAddresses(
     workspaceId: string,
     emailAddresses: string[],
-    messageCategory: EmailGroupMessageCategory,
   ): Promise<Set<string>> {
     const normalizedAddresses = [
       ...new Set(
@@ -56,7 +56,7 @@ export class MessageSuppressionService {
           return suppressionRepository.find({
             where: {
               emailAddress: { primaryEmail: In(normalizedAddresses) },
-              reason: In(BLOCKING_REASONS_BY_MESSAGE_CATEGORY[messageCategory]),
+              reason: In(GLOBAL_BLOCKING_SUPPRESSION_REASONS),
               topicId: IsNull(),
             },
           });

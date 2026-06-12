@@ -11,11 +11,14 @@ import {
   MAX_CAMPAIGN_RECIPIENTS,
   SEND_CAMPAIGN_EMAIL_JOB,
 } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import {
+  EmailingDomainDriverException,
+  EmailingDomainDriverExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailingDomainSenderService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-sender.service';
-import { EmailGroupMessageCategory } from 'src/engine/core-modules/emailing-domain/types/email-group-message-category.type';
 import { type SendCampaignEmailJobData } from 'src/engine/core-modules/emailing-domain/types/send-campaign-email-job-data.type';
 import {
   type CampaignRecipient,
@@ -151,30 +154,18 @@ export class MessageCampaignService {
           MAX_CAMPAIGN_RECIPIENTS,
         );
 
-        const campaignRepository = await this.getWorkspaceRepository(
-          workspaceId,
-          MessageCampaignWorkspaceEntity,
-        );
-
-        const { identifiers } = await campaignRepository.insert({
-          subject,
-          bodyTemplate: html,
-          fromAddress: { primaryEmail: fromAddress, additionalEmails: null },
-          status: CAMPAIGN_STATUS.SENDING,
-          topicId: messageTopicId,
-          listId: listId ?? null,
-        });
-        const campaignId = identifiers[0].id;
-
-        const messageIds = await this.materializeCampaignMessages({
-          workspaceId,
-          campaignId,
-          messageChannelId: messageChannel.id,
-          fromAddress,
-          recipients,
-          subject,
-          text,
-        });
+        const { campaignId, messageIds } =
+          await this.createCampaignWithMessages({
+            workspaceId,
+            messageChannelId: messageChannel.id,
+            fromAddress,
+            recipients,
+            subject,
+            html,
+            text,
+            messageTopicId,
+            listId,
+          });
 
         for (let index = 0; index < recipients.length; index += 1) {
           await this.messageQueueService.add<SendCampaignEmailJobData>(
@@ -258,15 +249,25 @@ export class MessageCampaignService {
               subject,
               text,
               html,
-              messageCategory: EmailGroupMessageCategory.CAMPAIGN,
               messageTopicId,
             },
           );
         } catch (error) {
-          // FAILED is both the retryable state between attempts and the
-          // terminal state once the queue gives up; rethrowing is what
-          // triggers the retry. Only the provider call may land here: once
-          // the email is accepted, a retried job must not send it again.
+          const code =
+            error instanceof EmailingDomainDriverException ? error.code : null;
+
+          // The recipient is suppressed (bounced/complained/unsubscribed): an
+          // intended skip, not a delivery failure, and never retryable.
+          if (
+            code === EmailingDomainDriverExceptionCode.ALL_RECIPIENTS_SUPPRESSED
+          ) {
+            await messageRepository.update(messageId, {
+              deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SKIPPED,
+            });
+
+            return;
+          }
+
           await messageRepository.update(messageId, {
             deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
           });
@@ -275,7 +276,22 @@ export class MessageCampaignService {
               error instanceof Error ? error.message : String(error)
             }`,
           );
-          throw error;
+
+          // Only transient failures are worth retrying. Deterministic ones
+          // (misconfiguration, suspended sending, unsubscribe domain not ready)
+          // fail identically on every attempt, so they stay terminally FAILED
+          // instead of burning the retry budget. Rethrowing triggers the retry;
+          // the persisted FAILED status makes a successful retry resume safely.
+          const isRetryable =
+            code === null ||
+            code === EmailingDomainDriverExceptionCode.TEMPORARY_ERROR ||
+            code === EmailingDomainDriverExceptionCode.UNKNOWN;
+
+          if (isRetryable) {
+            throw error;
+          }
+
+          return;
         }
 
         // Adopt the SES id as the message id so a reply (whose In-Reply-To
@@ -331,33 +347,46 @@ export class MessageCampaignService {
         return;
       }
 
+      // BOUNCED/COMPLAINED are terminal; don't let a later event downgrade or
+      // flip an already-recorded failure (e.g. a complaint after a bounce).
+      if (
+        message.deliveryStatus === CAMPAIGN_MESSAGE_DELIVERY_STATUS.BOUNCED ||
+        message.deliveryStatus === CAMPAIGN_MESSAGE_DELIVERY_STATUS.COMPLAINED
+      ) {
+        return;
+      }
+
       await messageRepository.update(message.id, { deliveryStatus });
     }, buildSystemAuthContext(workspaceId));
   }
 
-  // Materializes the campaign's outbound messages (QUEUED) + their threads,
-  // channel associations and from/to participants, with each recipient's
-  // personId set directly (no participant matching, no contact auto-creation).
-  // Written as four bulk inserts in one transaction. Returns the message ids,
-  // aligned with the recipients order. Must run inside an active workspace
-  // context.
-  private async materializeCampaignMessages({
+  // Creates the campaign row and its outbound messages (QUEUED) + threads,
+  // channel associations and from/to participants in ONE transaction, so a
+  // failure can never leave an orphan SENDING campaign with no messages. Each
+  // recipient's personId is set directly (no participant matching, no contact
+  // auto-creation). Returns the campaign id and the message ids aligned with
+  // the recipients order. Must run inside an active workspace context.
+  private async createCampaignWithMessages({
     workspaceId,
-    campaignId,
     messageChannelId,
     fromAddress,
     recipients,
     subject,
+    html,
     text,
+    messageTopicId,
+    listId,
   }: {
     workspaceId: string;
-    campaignId: string;
     messageChannelId: string;
     fromAddress: string;
     recipients: CampaignRecipient[];
     subject: string;
+    html: string;
     text: string;
-  }): Promise<string[]> {
+    messageTopicId: string;
+    listId?: string;
+  }): Promise<{ campaignId: string; messageIds: string[] }> {
     const now = new Date();
     const rows = recipients.map((recipient) => ({
       recipient,
@@ -368,10 +397,10 @@ export class MessageCampaignService {
       temporaryExternalId: v4(),
     }));
 
-    if (rows.length === 0) {
-      return [];
-    }
-
+    const campaignRepository = await this.getWorkspaceRepository(
+      workspaceId,
+      MessageCampaignWorkspaceEntity,
+    );
     const messageThreadRepository = await this.getWorkspaceRepository(
       workspaceId,
       MessageThreadWorkspaceEntity,
@@ -398,8 +427,28 @@ export class MessageCampaignService {
       );
     }
 
+    let campaignId = '';
+
     await workspaceDataSource.transaction(
       async (transactionManager: WorkspaceEntityManager) => {
+        const { identifiers } = await campaignRepository.insert(
+          {
+            subject,
+            bodyTemplate: html,
+            fromAddress: { primaryEmail: fromAddress, additionalEmails: null },
+            status: CAMPAIGN_STATUS.SENDING,
+            topicId: messageTopicId,
+            listId: listId ?? null,
+          },
+          transactionManager,
+        );
+
+        campaignId = identifiers[0].id;
+
+        if (rows.length === 0) {
+          return;
+        }
+
         await messageThreadRepository.insert(
           rows.map((row) => ({ id: row.threadId })),
           transactionManager,
@@ -452,7 +501,7 @@ export class MessageCampaignService {
       },
     );
 
-    return rows.map((row) => row.messageId);
+    return { campaignId, messageIds: rows.map((row) => row.messageId) };
   }
 
   // Finalizes the campaign once nothing remains QUEUED. The status='SENDING'

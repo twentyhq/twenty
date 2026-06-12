@@ -410,6 +410,13 @@ export const buildMessageStandardFlatFieldMetadatas = ({
           position: 4,
           color: 'purple',
         },
+        {
+          id: 'c0d3f2a1-7e64-4b9a-8f21-1d5e6a7b8c90',
+          value: 'SKIPPED',
+          label: i18nLabel(msg`Skipped`),
+          position: 5,
+          color: 'gray',
+        },
       ],
     },
     standardObjectMetadataRelatedEntityIds,

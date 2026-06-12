@@ -1,13 +1,16 @@
 import { EmailingDomainDriverExceptionCode } from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
 import { type EmailingDomainDriverFactory } from 'src/engine/core-modules/emailing-domain/drivers/emailing-domain-driver.factory';
+import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
+import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
 import { type EmailingDomainEmailContent } from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
 import { type EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailingDomainSenderService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-sender.service';
 import { type MessageSuppressionService } from 'src/engine/core-modules/emailing-domain/services/message-suppression.service';
 import { type MessageTopicSubscriptionService } from 'src/engine/core-modules/emailing-domain/services/message-topic-subscription.service';
 import { type UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type Repository } from 'typeorm';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -22,6 +25,8 @@ describe('EmailingDomainSenderService.sendEmail', () => {
       domain: 'mail.example.com',
       status: EmailingDomainStatus.VERIFIED,
       tenantStatus: EmailingDomainTenantStatus.ACTIVE,
+      unsubscribeHostname: 'unsub.mail.example.com',
+      unsubscribeHostnameStatus: UnsubscribeHostnameStatus.ACTIVE,
       ...overrides,
     }) as EmailingDomainEntity;
 
@@ -66,6 +71,9 @@ describe('EmailingDomainSenderService.sendEmail', () => {
     const unsubscribeTokenService = {
       sign: jest.fn().mockReturnValue('signed-token'),
     } as unknown as UnsubscribeTokenService;
+    const twentyConfigService = {
+      get: jest.fn().mockReturnValue(EmailingDomainDriver.AWS_SES),
+    } as unknown as TwentyConfigService;
     const messageChannelRepository = {
       findOne: jest.fn().mockResolvedValue(null),
     } as unknown as Repository<MessageChannelEntity>;
@@ -75,6 +83,7 @@ describe('EmailingDomainSenderService.sendEmail', () => {
       suppressionService,
       subscriptionService,
       unsubscribeTokenService,
+      twentyConfigService,
       messageChannelRepository,
     );
 

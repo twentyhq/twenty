@@ -6,6 +6,9 @@ export const CAMPAIGN_MESSAGE_DELIVERY_STATUS = {
   FAILED: 'FAILED',
   BOUNCED: 'BOUNCED',
   COMPLAINED: 'COMPLAINED',
+  // Recipient was suppressed (bounced/complained/unsubscribed) at send time —
+  // intentionally not delivered, distinct from a delivery FAILED.
+  SKIPPED: 'SKIPPED',
 } as const;
 
 // Campaign-level lifecycle status stored on `messageCampaign.status`.

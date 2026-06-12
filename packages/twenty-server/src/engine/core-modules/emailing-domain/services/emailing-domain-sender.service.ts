@@ -19,12 +19,13 @@ import {
   type EmailingDomainSendEmailResult,
 } from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
 import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
+import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { MessageSuppressionService } from 'src/engine/core-modules/emailing-domain/services/message-suppression.service';
 import { MessageTopicSubscriptionService } from 'src/engine/core-modules/emailing-domain/services/message-topic-subscription.service';
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { EmailGroupMessageCategory } from 'src/engine/core-modules/emailing-domain/types/email-group-message-category.type';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type DeliverableRecipients } from 'src/engine/core-modules/emailing-domain/types/deliverable-recipients.type';
 import { type UnsubscribeContent } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-content.type';
 import { buildUnsubscribeHeaders } from 'src/engine/core-modules/emailing-domain/utils/build-unsubscribe-headers.util';
@@ -45,6 +46,7 @@ export class EmailingDomainSenderService {
     private readonly messageSuppressionService: MessageSuppressionService,
     private readonly messageTopicSubscriptionService: MessageTopicSubscriptionService,
     private readonly unsubscribeTokenService: UnsubscribeTokenService,
+    private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
   ) {}
@@ -61,20 +63,15 @@ export class EmailingDomainSenderService {
 
     this.assertDomainCanSend(emailingDomain, emailContent.from);
 
-    const messageCategory =
-      emailContent.messageCategory ?? EmailGroupMessageCategory.TRANSACTIONAL;
-
     const recipients = await this.selectDeliverableRecipients(
       workspaceId,
       emailingDomain,
       emailContent,
-      messageCategory,
     );
 
     const unsubscribe = this.buildUnsubscribeContent(
       workspaceId,
       emailingDomain,
-      messageCategory,
       recipients.to[0],
       emailContent.messageTopicId,
     );
@@ -178,7 +175,6 @@ export class EmailingDomainSenderService {
     workspaceId: string,
     emailingDomain: EmailingDomainEntity,
     emailContent: EmailingDomainEmailContent,
-    messageCategory: EmailGroupMessageCategory,
   ): Promise<DeliverableRecipients> {
     const allRecipients = [
       ...emailContent.to,
@@ -190,13 +186,11 @@ export class EmailingDomainSenderService {
       await this.messageSuppressionService.getSuppressedAddresses(
         workspaceId,
         allRecipients,
-        messageCategory,
       );
 
     const listUnsubscribedAddresses = await this.getListUnsubscribedAddresses(
       workspaceId,
       allRecipients,
-      messageCategory,
       emailContent.messageTopicId,
     );
 
@@ -228,13 +222,9 @@ export class EmailingDomainSenderService {
   private async getListUnsubscribedAddresses(
     workspaceId: string,
     recipients: string[],
-    messageCategory: EmailGroupMessageCategory,
     messageTopicId: string | undefined,
   ): Promise<Set<string>> {
-    if (
-      messageCategory !== EmailGroupMessageCategory.CAMPAIGN ||
-      !isNonEmptyString(messageTopicId)
-    ) {
+    if (!isNonEmptyString(messageTopicId)) {
       return new Set();
     }
 
@@ -248,11 +238,16 @@ export class EmailingDomainSenderService {
   private buildUnsubscribeContent(
     workspaceId: string,
     emailingDomain: EmailingDomainEntity,
-    messageCategory: EmailGroupMessageCategory,
     primaryRecipient: string,
     messageTopicId: string | undefined,
   ): UnsubscribeContent {
-    if (messageCategory !== EmailGroupMessageCategory.CAMPAIGN) {
+    // The LOG driver fakes delivery and provisions no unsubscribe hostname, so
+    // demo sends carry no unsubscribe content (and aren't gated on it).
+    const isDemoMode =
+      this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
+      EmailingDomainDriver.LOG;
+
+    if (isDemoMode) {
       return EMPTY_UNSUBSCRIBE_CONTENT;
     }
 
@@ -262,7 +257,7 @@ export class EmailingDomainSenderService {
       !isNonEmptyString(emailingDomain.unsubscribeHostname)
     ) {
       throw new EmailingDomainDriverException(
-        `Cannot send marketing email for ${emailingDomain.domain}: unsubscribe domain is not active (status: ${emailingDomain.unsubscribeHostnameStatus})`,
+        `Cannot send email for ${emailingDomain.domain}: unsubscribe domain is not active (status: ${emailingDomain.unsubscribeHostnameStatus})`,
         EmailingDomainDriverExceptionCode.UNSUBSCRIBE_NOT_READY,
       );
     }
