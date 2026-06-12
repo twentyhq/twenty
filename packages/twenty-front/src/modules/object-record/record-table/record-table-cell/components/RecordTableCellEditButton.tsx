@@ -7,7 +7,7 @@ import { useGetSecondaryRecordTableCellButton } from '@/object-record/record-tab
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconArrowUpRight, IconPencil } from 'twenty-ui/display';
+import { IconArrowUpRight, IconPencil } from 'twenty-ui-deprecated/display';
 
 export const RecordTableCellEditButton = () => {
   const { cellPosition } = useContext(RecordTableCellContext);

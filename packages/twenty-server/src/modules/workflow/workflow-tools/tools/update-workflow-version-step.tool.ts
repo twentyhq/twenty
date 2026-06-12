@@ -18,7 +18,10 @@ const updateWorkflowVersionStepSchema = z.object({
 });
 
 export const createUpdateWorkflowVersionStepTool = (
-  deps: Pick<WorkflowToolDependencies, 'workflowVersionStepService'>,
+  deps: Pick<
+    WorkflowToolDependencies,
+    'workflowVersionStepService' | 'workflowValidationService'
+  >,
   context: WorkflowToolContext,
 ) => ({
   name: 'update_workflow_version_step' as const,
@@ -26,8 +29,10 @@ export const createUpdateWorkflowVersionStepTool = (
     'Update an existing step in a workflow version. This modifies the step configuration.',
   inputSchema: updateWorkflowVersionStepSchema,
   execute: async (parameters: UpdateWorkflowVersionStepInput) => {
+    let result;
+
     try {
-      return await deps.workflowVersionStepService.updateWorkflowVersionStep({
+      result = await deps.workflowVersionStepService.updateWorkflowVersionStep({
         workspaceId: context.workspaceId,
         workflowVersionId: parameters.workflowVersionId,
         step: parameters.step,
@@ -37,6 +42,24 @@ export const createUpdateWorkflowVersionStepTool = (
         success: false,
         error: error.message,
         message: `Failed to update workflow version step: ${error.message}`,
+      };
+    }
+
+    try {
+      const validation =
+        await deps.workflowValidationService.validateWorkflowVersion({
+          workspaceId: context.workspaceId,
+          workflowVersionId: parameters.workflowVersionId,
+        });
+      return {
+        ...result,
+        validation,
+      };
+    } catch (error) {
+      return {
+        ...result,
+        validationError: error.message,
+        message: `Step updated successfully, but validation could not be computed: ${error.message}`,
       };
     }
   },

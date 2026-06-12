@@ -9,7 +9,7 @@ import {
   IconSquareNumber7,
   IconSquareNumber8,
   IconSquareNumber9,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 import { type FixedLengthArray } from '@/object-record/record-merge/types/FixedLengthArray';
 
 export const getPositionNumberIcon = (index: number) => {

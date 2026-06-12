@@ -1,25 +1,6 @@
-import { styled } from '@linaria/react';
+import { clsx } from 'clsx';
 
-import { themeCssVariables } from '@ui/theme-constants';
-
-const StyledNotificationCounter = styled.div<{
-  variant: 'primary' | 'secondary';
-}>`
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: ${themeCssVariables.font.size.xxs};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  background: ${({ variant }) =>
-    variant === 'primary'
-      ? themeCssVariables.color.blue
-      : themeCssVariables.background.transparent.light};
-  color: ${({ variant }) =>
-    variant === 'primary' ? 'white' : themeCssVariables.font.color.secondary};
-`;
+import styles from './NotificationCounter.module.scss';
 
 type NotificationCounterProps = {
   count: number;
@@ -33,8 +14,10 @@ export const NotificationCounter = ({
   className,
 }: NotificationCounterProps) => {
   return (
-    <StyledNotificationCounter variant={variant} className={className}>
+    <div
+      className={clsx(styles.notificationCounter, styles[variant], className)}
+    >
       {count}
-    </StyledNotificationCounter>
+    </div>
   );
 };

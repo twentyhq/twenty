@@ -1,7 +1,9 @@
 import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
+import { serializeError } from '@/cli/utilities/error/serialize-error';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import * as fs from 'fs';
 import * as path from 'path';
+import { type MetadataValidationErrorResponse } from 'twenty-shared/metadata';
 import { type FileFolder } from 'twenty-shared/types';
 import { pascalCase } from 'twenty-shared/utils';
 
@@ -136,7 +138,7 @@ export class FileApi {
     universalIdentifier,
   }: {
     universalIdentifier: string;
-  }): Promise<ApiResponse<boolean>> {
+  }): Promise<ApiResponse<boolean, MetadataValidationErrorResponse>> {
     try {
       const mutation = `
         mutation InstallApplication($universalIdentifier: String!) {
@@ -163,7 +165,9 @@ export class FileApi {
       if (response.data.errors) {
         return {
           success: false,
-          error: response.data.errors[0] || 'Failed to install application',
+          error: response.data.errors[0]?.extensions,
+          message:
+            response.data.errors[0]?.message || 'Failed to install application',
         };
       }
 
@@ -172,16 +176,9 @@ export class FileApi {
         data: response.data.data.installApplication,
       };
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        return {
-          success: false,
-          error: error.response.data?.errors?.[0]?.message || error.message,
-        };
-      }
-
       return {
         success: false,
-        error,
+        message: serializeError(error),
       };
     }
   }

@@ -1,177 +1,273 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 
 import type { AppPreviewConfig } from '@/sections/AppPreview';
-import { useAppPreviewState } from '@/sections/AppPreview/Shell/use-app-preview-state';
+import { useAppPreviewExperience } from '@/sections/AppPreview/Shell/use-app-preview-experience';
+import type {
+  KanbanPageDefinition,
+  PageDefinition,
+} from '@/sections/AppPreview/types/app-preview-data';
 
 import {
-  NEW_COMPANY_ROW,
-  NEW_PERSON_ROW,
   NEW_TASK_ROWS,
-  PROMPT_OPTIONS,
-  QONTO_RECORD_PAGE,
+  PRODUCT_VISUAL_SCENES,
+  TASKS_PAGE_ITEM_ID,
+  type ProductVisualSceneDefinition,
 } from './product-visual.data';
+import { getVisibleLength } from './streamed-markdown';
 
 type AutoplayOptions = {
   externalScene?: number;
+  playbackEnabled?: boolean;
 };
+
+function getStreamProgress(streamedLength: number, fullTextLength: number) {
+  if (fullTextLength === 0) {
+    return 1;
+  }
+
+  return Math.min(streamedLength / fullTextLength, 1);
+}
+
+function clamp(value: number) {
+  return Math.max(0, Math.min(1, value));
+}
+
+function buildFocusedOpportunitiesPage(
+  page: KanbanPageDefinition,
+  streamProgress: number,
+): KanbanPageDefinition {
+  const filteredLanes = page.lanes.filter((lane) => lane.cards.length > 0);
+  const revealProgress = clamp((streamProgress - 0.18) / 0.62);
+  const totalCardCount = filteredLanes.reduce(
+    (total, lane) => total + lane.cards.length,
+    0,
+  );
+  const visibleCardCount =
+    revealProgress <= 0
+      ? 0
+      : Math.min(totalCardCount, Math.ceil(revealProgress * totalCardCount));
+  let remainingVisibleCards = visibleCardCount;
+
+  const lanes = filteredLanes.map((lane) => {
+    const laneVisibleCount = Math.max(
+      0,
+      Math.min(lane.cards.length, remainingVisibleCards),
+    );
+
+    remainingVisibleCards -= laneVisibleCount;
+
+    return {
+      ...lane,
+      cards: lane.cards.slice(0, laneVisibleCount),
+    };
+  });
+
+  return {
+    ...page,
+    header: {
+      ...page.header,
+      count: visibleCardCount,
+      title: 'Pipeline by stage',
+    },
+    lanes,
+  };
+}
+
+function resolveDisplayPage(
+  activePage: PageDefinition,
+  activeItemId: string,
+  scene: ProductVisualSceneDefinition,
+  streamProgress: number,
+): PageDefinition {
+  if (scene.kind === 'opportunityReview' && activePage.type === 'kanban') {
+    const generating = streamProgress === 0;
+    const focusedPage = buildFocusedOpportunitiesPage(activePage, 1);
+
+    return {
+      ...focusedPage,
+      generating,
+      header: {
+        ...focusedPage.header,
+        count: generating ? undefined : focusedPage.header.count,
+      },
+    };
+  }
+
+  if (scene.kind === 'dashboardCreation' && activePage.type === 'dashboard') {
+    return {
+      ...activePage,
+      dashboard: {
+        ...activePage.dashboard,
+        generating: streamProgress === 0,
+      },
+    };
+  }
+
+  if (
+    scene.kind === 'taskCreation' &&
+    activeItemId === TASKS_PAGE_ITEM_ID &&
+    activePage.type === 'table'
+  ) {
+    const generating = streamProgress === 0;
+
+    return {
+      ...activePage,
+      generating,
+      header: {
+        ...activePage.header,
+        count: generating ? undefined : NEW_TASK_ROWS.length,
+      },
+      rows: NEW_TASK_ROWS,
+    };
+  }
+
+  if (scene.kind === 'workflowCreation' && activePage.type === 'workflow') {
+    return {
+      ...activePage,
+      generating: streamProgress === 0,
+    };
+  }
+
+  return activePage;
+}
 
 export function useProductVisualAutoplay(
   visual: AppPreviewConfig,
   options: AutoplayOptions = {},
 ) {
-  const { externalScene } = options;
-  const [selectedOption, setSelectedOption] = useState<number>(0);
-  const [streamedText, setStreamedText] = useState('');
-  const [streamComplete, setStreamComplete] = useState(false);
-  const [companyAdded, setCompanyAdded] = useState(false);
-  const [personAdded, setPersonAdded] = useState(false);
-  const [tasksAdded, setTasksAdded] = useState(false);
-  const [recordReady, setRecordReady] = useState(false);
-
-  useEffect(() => {
-    if (externalScene !== undefined) {
-      const clamped = Math.max(
-        0,
-        Math.min(externalScene, PROMPT_OPTIONS.length - 1),
-      );
-      setSelectedOption(clamped);
-    }
-  }, [externalScene]);
+  const { externalScene, playbackEnabled = true } = options;
+  const [streamedLength, setStreamedLength] = useState(0);
+  const [completedStepCount, setCompletedStepCount] = useState(0);
+  const selectedOption =
+    externalScene !== undefined
+      ? Math.max(0, Math.min(externalScene, PRODUCT_VISUAL_SCENES.length - 1))
+      : 0;
 
   const {
     activeItem,
-    activeLabel,
+    activeItemId,
+    activeItemLabel,
     activePage,
-    handleSelectLabel,
-    handleToggleFolder,
+    favorites,
     highlightedItemId,
     openFolderIds,
     revealedObjectIds,
-    workspaceNav,
-  } = useAppPreviewState(visual);
+    selectPageItem,
+    toggleFolder,
+    workspaceEntries,
+  } = useAppPreviewExperience(visual);
 
-  let displayPage = activePage;
-  if (selectedOption === 3 && recordReady) {
-    displayPage = QONTO_RECORD_PAGE;
-  } else if (activePage != null && activePage.type === 'table') {
-    const title = activePage.header?.title;
-    if (companyAdded && title === 'All Companies') {
-      displayPage = {
-        ...activePage,
-        header: {
-          ...activePage.header,
-          count: (activePage.header.count ?? 0) + 1,
-        },
-        rows: [NEW_COMPANY_ROW, ...activePage.rows],
-      };
-    } else if (personAdded && title === 'All People') {
-      displayPage = {
-        ...activePage,
-        header: {
-          ...activePage.header,
-          count: (activePage.header.count ?? 0) + 1,
-        },
-        rows: [NEW_PERSON_ROW, ...activePage.rows],
-      };
-    } else if (tasksAdded && title === 'All Tasks') {
-      displayPage = {
-        ...activePage,
-        header: {
-          ...activePage.header,
-          count: (activePage.header.count ?? 0) + NEW_TASK_ROWS.length,
-        },
-        rows: [...NEW_TASK_ROWS, ...activePage.rows],
-      };
-    }
-  }
-
-  const isScrollDriven = externalScene !== undefined;
+  const selectedScene = PRODUCT_VISUAL_SCENES[selectedOption];
+  const fullText = selectedScene.responseText;
+  const fullTextVisibleLength = getVisibleLength(fullText);
+  const streamComplete = streamedLength >= fullTextVisibleLength;
+  const streamProgress = getStreamProgress(
+    streamedLength,
+    fullTextVisibleLength,
+  );
+  const displayPage = resolveDisplayPage(
+    activePage,
+    activeItemId,
+    selectedScene,
+    streamProgress,
+  );
 
   useEffect(() => {
-    const option = PROMPT_OPTIONS[selectedOption];
-    const fullText = option.response;
+    setStreamedLength(0);
+    setCompletedStepCount(0);
+    selectPageItem(selectedScene.initialPageItemId);
 
-    if (isScrollDriven) {
-      if (selectedOption === 3) {
-        setRecordReady(true);
-      } else {
-        const firstStep = option.navSteps[0];
-        if (firstStep) {
-          handleSelectLabel(firstStep.target);
-        }
-      }
-      if (selectedOption === 0) {
-        setCompanyAdded(true);
-      }
-      if (selectedOption === 2) {
-        setTasksAdded(true);
-      }
+    if (!playbackEnabled) {
+      return undefined;
     }
 
-    let index = 0;
-    const completedSteps = new Set<number>();
-    let companyInjected = false;
-    let personInjected = false;
-    let tasksInjected = false;
-    let recordShown = false;
-    setStreamedText('');
-    setStreamComplete(false);
-    if (!isScrollDriven) {
-      setCompanyAdded(false);
-      setPersonAdded(false);
-      setTasksAdded(false);
-      setRecordReady(false);
-    }
-    const interval = setInterval(() => {
-      index += 1;
-      setStreamedText(fullText.slice(0, index));
-      const progress = index / fullText.length;
-      option.navSteps.forEach((step, stepIndex) => {
-        if (!completedSteps.has(stepIndex) && progress >= step.at) {
-          completedSteps.add(stepIndex);
-          handleSelectLabel(step.target);
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    let streamInterval: ReturnType<typeof setInterval> | undefined;
+    let cancelled = false;
+
+    const startStreaming = () => {
+      if (cancelled || fullTextVisibleLength === 0) {
+        return;
+      }
+
+      let index = 0;
+      let followUpPageSelected = false;
+
+      streamInterval = setInterval(() => {
+        index = Math.min(index + 1, fullTextVisibleLength);
+        setStreamedLength(index);
+
+        if (
+          !followUpPageSelected &&
+          selectedScene.followUpPageItemId &&
+          getStreamProgress(index, fullTextVisibleLength) >= 0.6
+        ) {
+          followUpPageSelected = true;
+          selectPageItem(selectedScene.followUpPageItemId);
         }
-      });
-      if (selectedOption === 0) {
-        if (!companyInjected && progress >= 0.2) {
-          companyInjected = true;
-          setCompanyAdded(true);
+
+        if (index >= fullTextVisibleLength && streamInterval) {
+          clearInterval(streamInterval);
         }
-        if (!personInjected && progress >= 0.6) {
-          personInjected = true;
-          setPersonAdded(true);
-        }
+      }, 20);
+    };
+
+    // Agentic preamble: play thinking + tool steps in sequence, then stream the answer.
+    const steps = selectedScene.steps ?? [];
+
+    const playStep = (stepIndex: number) => {
+      if (cancelled) {
+        return;
       }
-      if (selectedOption === 2 && !tasksInjected && progress >= 0.3) {
-        tasksInjected = true;
-        setTasksAdded(true);
+
+      if (stepIndex >= steps.length) {
+        startStreaming();
+        return;
       }
-      if (selectedOption === 3 && !recordShown && progress >= 0.5) {
-        recordShown = true;
-        setRecordReady(true);
+
+      const timer = setTimeout(() => {
+        setCompletedStepCount(stepIndex + 1);
+        playStep(stepIndex + 1);
+      }, steps[stepIndex].durationMs);
+
+      timers.push(timer);
+    };
+
+    playStep(0);
+
+    return () => {
+      cancelled = true;
+      timers.forEach(clearTimeout);
+
+      if (streamInterval) {
+        clearInterval(streamInterval);
       }
-      if (index >= fullText.length) {
-        clearInterval(interval);
-        setStreamComplete(true);
-      }
-    }, 20);
-    return () => clearInterval(interval);
-  }, [selectedOption, handleSelectLabel, isScrollDriven]);
+    };
+  }, [fullTextVisibleLength, playbackEnabled, selectPageItem, selectedScene]);
+
+  const agentSteps = selectedScene.steps ?? [];
+  const preambleComplete = completedStepCount >= agentSteps.length;
+  const activeStepIndex = preambleComplete ? -1 : completedStepCount;
 
   return {
     activeItem,
-    activeLabel,
+    activeItemId,
+    activeItemLabel,
+    activeStepIndex,
+    agentSteps,
+    completedStepCount,
     displayPage,
-    handleOptionSelect: setSelectedOption,
-    handleSelectLabel,
-    handleToggleFolder,
+    favorites,
     highlightedItemId,
-    isScrollDriven,
     openFolderIds,
     revealedObjectIds,
-    selectedOption,
+    selectPageItem,
+    selectedScene,
     streamComplete,
-    streamedText,
-    workspaceNav,
+    streamedTextVisibleLength: streamedLength,
+    toggleFolder,
+    workspaceEntries,
   };
 }

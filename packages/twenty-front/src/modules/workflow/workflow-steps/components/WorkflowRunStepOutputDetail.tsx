@@ -10,7 +10,7 @@ import {
   type GetJsonNodeHighlighting,
   isTwoFirstDepths,
   JsonTree,
-} from 'twenty-ui/json-visualizer';
+} from 'twenty-ui-deprecated/json-visualizer';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {

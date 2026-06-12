@@ -33,7 +33,6 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ToolCategory } from 'twenty-shared/ai';
-import z from 'zod';
 
 @Injectable()
 export class DatabaseToolProvider implements ToolProvider {
@@ -133,7 +132,7 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Search for ${objectMetadata.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. Filter fields are top-level arguments — pass each field as its own key (e.g. { id: { eq: "record-id" } }, or { name: { firstName: { ilike: "%ada%" } } }); do NOT wrap them in a "filter" object and do NOT place a bare operator like "ilike"/"eq" at the top level. Combine conditions with and/or/not. Returns an array of matching records with their full data.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`find_many_${snakePlural}`) && {
-            inputSchema: z.toJSONSchema(
+            inputSchema: toToolJsonSchema(
               generateFindToolInputSchema(objectMetadata, restrictedFields),
             ),
           }),
@@ -152,7 +151,7 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Retrieve a single ${objectMetadata.labelSingular} by ID.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`find_one_${snakeSingular}`) && {
-            inputSchema: z.toJSONSchema(FindOneToolInputSchema),
+            inputSchema: toToolJsonSchema(FindOneToolInputSchema),
           }),
           executionRef: {
             kind: 'database_crud',
@@ -202,7 +201,7 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`create_one_${snakeSingular}`) && {
-            inputSchema: z.toJSONSchema(
+            inputSchema: toToolJsonSchema(
               generateCreateRecordInputSchema(objectMetadata, restrictedFields),
             ),
           }),
@@ -221,7 +220,7 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Create multiple ${objectMetadata.labelPlural} records in a single call. Provide an array of records, each containing the required fields. Maximum 20 records per call. Returns the created records.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`create_many_${snakePlural}`) && {
-            inputSchema: z.toJSONSchema(
+            inputSchema: toToolJsonSchema(
               generateCreateManyRecordInputSchema(
                 objectMetadata,
                 restrictedFields,
@@ -243,7 +242,7 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Update an existing ${objectMetadata.labelSingular} record. Provide the record ID and only the fields you want to change. Unspecified fields will remain unchanged. Returns the updated record with all current data.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`update_one_${snakeSingular}`) && {
-            inputSchema: z.toJSONSchema(
+            inputSchema: toToolJsonSchema(
               generateUpdateRecordInputSchema(objectMetadata, restrictedFields),
             ),
           }),
@@ -262,7 +261,7 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Apply the SAME field values to all ${objectMetadata.labelPlural} records matching a filter. Use when every matched record gets identical changes (e.g. bulk status change). For records that each have different data to update, use upsert_many_${snakePlural} instead. WARNING: Use specific filters to avoid unintended mass updates. Always verify the filter scope with a find query first.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`update_many_${snakePlural}`) && {
-            inputSchema: z.toJSONSchema(
+            inputSchema: toToolJsonSchema(
               generateUpdateManyRecordInputSchema(
                 objectMetadata,
                 restrictedFields,
@@ -284,7 +283,7 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Insert or update multiple ${objectMetadata.labelPlural} records in a single call, where each record has its own individual data. Use this instead of update_many_${snakePlural} when records need different field values. Existing records are matched by unique fields and updated; records with no match are created. Maximum 20 records per call. Returns the upserted records.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`upsert_many_${snakePlural}`) && {
-            inputSchema: z.toJSONSchema(
+            inputSchema: toToolJsonSchema(
               generateCreateManyRecordInputSchema(
                 objectMetadata,
                 restrictedFields,

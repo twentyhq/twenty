@@ -10,8 +10,8 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { Trans } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { IconChevronLeft, IconSettings } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
+import { IconChevronLeft, IconSettings } from 'twenty-ui-deprecated/display';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
 
 type WorkflowObjectDropdownContentProps = {
   onOptionClick: (value: string) => void;

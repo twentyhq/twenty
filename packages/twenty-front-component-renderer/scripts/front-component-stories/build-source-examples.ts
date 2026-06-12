@@ -22,7 +22,7 @@ const rootNodeModules = path.resolve(dirname, '../../../../node_modules');
 
 const twentyUiIndividualIndex = path.resolve(
   dirname,
-  '../../../twenty-ui/dist/individual/individual-entry.js',
+  '../../../twenty-ui-deprecated/dist/individual/individual-entry.js',
 );
 
 const sdkDefineIndex = path.resolve(

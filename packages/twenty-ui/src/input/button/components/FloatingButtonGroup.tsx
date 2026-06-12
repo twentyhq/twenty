@@ -1,21 +1,13 @@
-import { styled } from '@linaria/react';
+import { clsx } from 'clsx';
 import React from 'react';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import {
   type FloatingButtonPosition,
   type FloatingButtonProps,
 } from './FloatingButton';
-import { themeCssVariables } from '@ui/theme-constants';
-import { isDefined } from 'twenty-shared/utils';
 
-const StyledFloatingButtonGroupContainer = styled.div`
-  backdrop-filter: blur(20px);
-  border-radius: ${themeCssVariables.border.radius.md};
-  box-shadow:
-    0px 2px 4px 0px ${themeCssVariables.background.transparent.light},
-    0px 0px 4px 0px ${themeCssVariables.background.transparent.medium};
-  display: inline-flex;
-`;
+import styles from './FloatingButtonGroup.module.scss';
 
 export type FloatingButtonGroupProps = Pick<FloatingButtonProps, 'size'> & {
   children: React.ReactElement[];
@@ -28,7 +20,7 @@ export const FloatingButtonGroup = ({
   className,
 }: FloatingButtonGroupProps) => {
   return (
-    <StyledFloatingButtonGroupContainer className={className}>
+    <div className={clsx(styles.container, className)}>
       {React.Children.map(children, (child, index) => {
         let position: FloatingButtonPosition;
 
@@ -40,6 +32,7 @@ export const FloatingButtonGroup = ({
           position = 'middle';
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const additionalProps: any = {
           position,
           size,
@@ -53,6 +46,6 @@ export const FloatingButtonGroup = ({
 
         return React.cloneElement(child, additionalProps);
       })}
-    </StyledFloatingButtonGroupContainer>
+    </div>
   );
 };

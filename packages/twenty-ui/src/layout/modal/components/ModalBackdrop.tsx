@@ -1,28 +1,44 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from '@ui/theme-constants';
+import { clsx } from 'clsx';
+import { forwardRef } from 'react';
 
 import { type ModalOverlay } from '../types/ModalOverlay';
 
-const StyledModalBackdrop = styled.div<{
+import styles from './ModalBackdrop.module.scss';
+
+// The deprecated Linaria styled.div forwarded refs and accepted all native
+// div props (including the data-* attributes Modal relies on), so the port
+// preserves that contract.
+type ModalBackdropProps = React.ComponentPropsWithoutRef<'div'> & {
   overlay: ModalOverlay;
   backdropZIndex: number;
   isInContainer?: boolean;
-}>`
-  align-items: center;
-  background: ${({ overlay, isInContainer }) =>
-    isInContainer || overlay === 'light'
-      ? themeCssVariables.background.overlayTertiary
-      : themeCssVariables.background.overlayPrimary};
-  display: flex;
-  height: 100%;
-  justify-content: center;
-  left: 0;
-  pointer-events: auto;
-  position: ${({ isInContainer }) => (isInContainer ? 'absolute' : 'fixed')};
-  top: 0;
-  width: 100%;
-  z-index: ${({ backdropZIndex }) => backdropZIndex};
-  user-select: none;
-`;
+  'data-testid'?: string;
+  'data-click-outside-id'?: string;
+};
 
-export const ModalBackdrop = StyledModalBackdrop;
+export const ModalBackdrop = forwardRef<HTMLDivElement, ModalBackdropProps>(
+  (
+    { overlay, backdropZIndex, isInContainer, className, style, ...divProps },
+    ref,
+  ) => (
+    <div
+      ref={ref}
+      className={clsx(
+        styles.backdrop,
+        overlay === 'light' && styles.overlayLight,
+        isInContainer && styles.inContainer,
+        className,
+      )}
+      style={
+        {
+          '--modal-backdrop-z-index': backdropZIndex,
+          ...style,
+        } as React.CSSProperties
+      }
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...divProps}
+    />
+  ),
+);
+
+ModalBackdrop.displayName = 'ModalBackdrop';

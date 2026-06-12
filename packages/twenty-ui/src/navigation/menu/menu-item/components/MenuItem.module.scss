@@ -1,0 +1,13 @@
+// Replaces the deprecated framer-motion rotate animation on the sub-menu
+// chevron with an equivalent CSS transform transition.
+.subMenuIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(0deg);
+  transition: transform duration(normal) ease-in-out;
+}
+
+.subMenuIconOpened {
+  transform: rotate(90deg);
+}

@@ -8,7 +8,7 @@ import {
 
 export type MilestoneSettingsOverrides = HalftoneStudioSettingsOverrides;
 
-export const MILESTONE_IMAGE_URL = '/illustrations/generated/milestone.jpg';
+export const MILESTONE_IMAGE_URL = '/illustrations/generated/milestone.webp';
 export const MILESTONE_IMAGE_FIT: HalftoneImageFit = 'cover';
 export const MILESTONE_PREVIEW_DISTANCE = 4;
 

@@ -9,7 +9,7 @@ import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import camelCase from 'lodash.camelcase';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 type WorkflowFormFieldSettingsSelectProps = {
   field: WorkflowFormActionField;

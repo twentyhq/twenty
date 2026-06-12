@@ -1,23 +1,10 @@
-import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
-import { useContext } from 'react';
-import { type IconComponent } from '@ui/display';
+import React, { useContext } from 'react';
+
+import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme-constants';
 
-const StyledContainer = styled.div<{ size: number }>`
-  height: ${({ size }) => size}px;
-  overflow: hidden;
-  position: relative;
-  width: ${({ size }) => size}px;
-`;
-
-const StyledLayer = styled(motion.div)`
-  align-items: center;
-  display: flex;
-  inset: 0;
-  justify-content: center;
-  position: absolute;
-`;
+import styles from './AnimatedIconCrossfade.module.scss';
 
 type AnimatedIconCrossfadeProps = {
   isActive: boolean;
@@ -37,8 +24,16 @@ export const AnimatedIconCrossfade = ({
   const iconSize = size ?? theme.icon.size.sm;
 
   return (
-    <StyledContainer size={iconSize}>
-      <StyledLayer
+    <div
+      className={styles.container}
+      style={
+        {
+          '--animated-icon-crossfade-size': `${iconSize}px`,
+        } as React.CSSProperties
+      }
+    >
+      <motion.div
+        className={styles.layer}
         initial={false}
         animate={{
           opacity: isActive ? 0 : 1,
@@ -50,8 +45,9 @@ export const AnimatedIconCrossfade = ({
         }}
       >
         <InactiveIcon size={iconSize} />
-      </StyledLayer>
-      <StyledLayer
+      </motion.div>
+      <motion.div
+        className={styles.layer}
         initial={false}
         animate={{
           opacity: isActive ? 1 : 0,
@@ -63,7 +59,7 @@ export const AnimatedIconCrossfade = ({
         }}
       >
         <ActiveIcon size={iconSize} />
-      </StyledLayer>
-    </StyledContainer>
+      </motion.div>
+    </div>
   );
 };

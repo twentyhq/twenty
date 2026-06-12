@@ -123,18 +123,20 @@ Adăugați `--once` pentru a rula un singur build + sync și a ieși — acelaș
 yarn twenty dev --once
 ```
 
-| Comandă                  | Comportament                                                                         | Când se folosește                                               |
-| ------------------------ | ------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
-| `yarn twenty dev`        | Monitorizează și resincronizează la fiecare modificare. Rulează până când îl opriți. | Dezvoltare locală interactivă.                                  |
-| `yarn twenty dev --once` | Un singur build + sync, iese cu `0` la succes, `1` la eșec.                          | CI, hook-uri pre-commit, agenți AI, fluxuri de lucru scriptate. |
+| Comandă                            | Comportament                                                                         | Când se folosește                                                                     |
+| ---------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------- |
+| `yarn twenty dev`                  | Monitorizează și resincronizează la fiecare modificare. Rulează până când îl opriți. | Dezvoltare locală interactivă.                                                        |
+| `yarn twenty dev --once`           | Un singur build + sync, iese cu `0` la succes, `1` la eșec.                          | CI, hook-uri pre-commit, agenți AI, fluxuri de lucru scriptate.                       |
+| `yarn twenty dev --once --dry-run` | Construiește și afișează modificările de metadate **fără a le aplica**.              | Inspectarea modificărilor pe care le-ar face o sincronizare înainte de a le confirma. |
 
-Ambele moduri necesită o conexiune la distanță autentificată.
+Ambele moduri necesită o conexiune la distanță autentificată. Vezi [Sincronizare și recuperare](/l/ro/developers/extend/apps/operations/sync-and-recovery#previewing-changes-dry-run) pentru mai multe detalii despre `--dry-run`.
 
 ### Opțiuni pentru modul de dezvoltare
 
 | Opțiune                               | Descriere                                                                                        |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------ |
 | `--once`                              | Construiește și sincronizează o singură dată, apoi iese.                                         |
+| `--dry-run`                           | Cu `--once`, poți previzualiza modificările de metadate fără a le aplica. Nu scrie nimic.        |
 | `--debounceMs \<ms>` | Setează întârzierea de debounce pentru modificarea fișierului în milisecunde (implicit: `2000`). |
 | `--verbose` / `--debug`               | Afișează jurnale detaliate de construire, cereri de sincronizare și urme ale erorilor.           |
 

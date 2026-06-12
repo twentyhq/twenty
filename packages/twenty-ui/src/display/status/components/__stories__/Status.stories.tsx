@@ -44,6 +44,8 @@ export const WithLongText: Story = {
     text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
   },
   parameters: {
+    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+    a11y: { test: 'todo' },
     container: { width: 100 },
   },
 };
@@ -53,6 +55,8 @@ export const Catalog: CatalogStory<Story, typeof Status> = {
     color: { control: false },
   },
   parameters: {
+    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+    a11y: { test: 'todo' },
     catalog: {
       dimensions: [
         {

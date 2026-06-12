@@ -12,7 +12,6 @@ describe('fromIndexManifestToUniversalFlatIndex', () => {
   const flatObjectMetadata = {
     universalIdentifier: 'obj-uuid-1',
     nameSingular: 'company',
-    isCustom: false,
   } as UniversalFlatObjectMetadata;
 
   const scalarField = {

@@ -10,7 +10,7 @@ import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOpti
 import {
   type IconComponent,
   OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 
 type SettingsOptionCardContentCounterProps = {
   Icon?: IconComponent;

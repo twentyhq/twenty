@@ -7,10 +7,11 @@ import {
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
 
-import { styled } from '@linaria/react';
 import { OverflowingTextWithTooltip } from '@ui/display';
-import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import { ThemeContext } from '@ui/theme-constants';
 import { StyledMenuItemSelect } from './MenuItemSelect';
+
+import styles from './MenuItemSelectAvatar.module.scss';
 
 type MenuItemSelectAvatarProps = {
   avatar?: ReactNode;
@@ -23,16 +24,6 @@ type MenuItemSelectAvatarProps = {
   focused?: boolean;
   testId?: string;
 };
-
-const StyledTextContainer = styled.div`
-  display: flex;
-  align-items: center;
-  flex: 1 0 0;
-  gap: ${themeCssVariables.spacing[1]};
-  max-width: 100%;
-  text-overflow: ellipsis;
-  overflow: hidden;
-`;
 
 export const MenuItemSelectAvatar = ({
   avatar,
@@ -60,7 +51,7 @@ export const MenuItemSelectAvatar = ({
     >
       <StyledMenuItemLeftContent>
         {avatar}
-        <StyledTextContainer>
+        <div className={styles.textContainer}>
           <StyledMenuItemLabel>
             <OverflowingTextWithTooltip text={text} />
           </StyledMenuItemLabel>
@@ -72,7 +63,7 @@ export const MenuItemSelectAvatar = ({
               </StyledMenuItemLabelLight>
             </>
           )}
-        </StyledTextContainer>
+        </div>
       </StyledMenuItemLeftContent>
       {selected && <StyledMenuItemIconCheck size={theme.icon.size.md} />}
     </StyledMenuItemSelect>

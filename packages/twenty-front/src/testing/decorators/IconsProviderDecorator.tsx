@@ -1,5 +1,5 @@
 import { type Decorator } from '@storybook/react-vite';
-import { IconsProvider } from 'twenty-ui/display';
+import { IconsProvider } from 'twenty-ui-deprecated/display';
 
 export const IconsProviderDecorator: Decorator = (Story) => {
   return (

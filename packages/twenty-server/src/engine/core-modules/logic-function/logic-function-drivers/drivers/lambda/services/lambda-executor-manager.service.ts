@@ -19,6 +19,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import {
+  CacheLockException,
+  CacheLockExceptionCode,
+} from 'src/engine/core-modules/cache-lock/exceptions/cache-lock.exception';
+import {
   EXECUTOR_LAMBDA_MEMORY_MB,
   EXECUTOR_LAMBDA_TIMEOUT_SECONDS,
   LAMBDA_EPHEMERAL_STORAGE_MB,
@@ -40,6 +44,7 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type ExecutorBuildContext = {
   flatLogicFunction: FlatLogicFunction;
@@ -56,6 +61,7 @@ export class LambdaExecutorManagerService {
     private readonly layerManager: LambdaLayerManagerService,
     private readonly cacheLockService: CacheLockService,
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async getLambdaExecutor(
@@ -100,26 +106,74 @@ export class LambdaExecutorManagerService {
     const buildLockTtlMs = 120_000;
     const buildLockRetryMs = 500;
     const buildLockMaxRetries = 240;
+    const lockKey = `lambda-build:${context.flatLogicFunction.id}`;
 
-    await this.cacheLockService.withLock(
-      async () => {
-        // Need to check again inside the lock in case lock was not acquired immediately.
-        const { canSkip: canSkipAfterLock, lambdaExecutor } =
-          await this.checkBuildStatus(context);
+    try {
+      await this.cacheLockService.withLock(
+        async () => {
+          // Refresh the application before re-checking: another process may
+          // have rebuilt the SDK layer (and cleared isSdkLayerStale) while we
+          // were waiting for the lock, and our request-time snapshot cannot
+          // see it. Without this, every queued waiter rebuilds again.
+          const refreshedContext = await this.refreshBuildContext(context);
 
-        if (canSkipAfterLock) {
-          return;
-        }
+          const { canSkip: canSkipAfterLock, lambdaExecutor } =
+            await this.checkBuildStatus(refreshedContext);
 
-        await this.ensureExecutor({ ...context, lambdaExecutor });
-      },
-      `lambda-build:${context.flatLogicFunction.id}`,
-      {
-        ttl: buildLockTtlMs,
-        ms: buildLockRetryMs,
-        maxRetries: buildLockMaxRetries,
-      },
-    );
+          if (canSkipAfterLock) {
+            return;
+          }
+
+          await this.ensureExecutor({ ...refreshedContext, lambdaExecutor });
+        },
+        lockKey,
+        {
+          ttl: buildLockTtlMs,
+          ms: buildLockRetryMs,
+          maxRetries: buildLockMaxRetries,
+        },
+      );
+    } catch (error) {
+      const isLockAcquisitionTimeout =
+        error instanceof CacheLockException &&
+        error.code === CacheLockExceptionCode.LOCK_ACQUISITION_TIMEOUT;
+
+      if (!isLockAcquisitionTimeout) {
+        throw error;
+      }
+
+      // Lock wait budget exhausted. If concurrent builds left the executor in
+      // a usable state, proceed with the invocation instead of failing it.
+      const { canSkip: isExecutorUsable } = await this.checkBuildStatus(
+        await this.refreshBuildContext(context),
+      );
+
+      if (!isExecutorUsable) {
+        throw error;
+      }
+
+      this.logger.warn(
+        `Lock acquisition timed out for ${lockKey} but executor is up to date, proceeding`,
+      );
+    }
+  }
+
+  private async refreshBuildContext(
+    context: ExecutorBuildContext,
+  ): Promise<ExecutorBuildContext> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(
+        context.flatLogicFunction.workspaceId,
+        ['flatApplicationMaps'],
+      );
+
+    const refreshedFlatApplication =
+      flatApplicationMaps.byId[context.flatApplication.id];
+
+    return {
+      ...context,
+      flatApplication: refreshedFlatApplication ?? context.flatApplication,
+    };
   }
 
   async installPrebuiltBundle(context: ExecutorBuildContext): Promise<void> {

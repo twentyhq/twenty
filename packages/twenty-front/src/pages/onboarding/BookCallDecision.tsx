@@ -1,13 +1,13 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { ModalContent } from 'twenty-ui/layout';
+import { ModalContent } from 'twenty-ui-deprecated/layout';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Link } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
-import { LightButton, MainButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { LightButton, MainButton } from 'twenty-ui-deprecated/input';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { useMutation } from '@apollo/client/react';
 import { SkipBookOnboardingStepDocument } from '~/generated-metadata/graphql';
 

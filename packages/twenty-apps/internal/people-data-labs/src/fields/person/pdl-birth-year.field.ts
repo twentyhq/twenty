@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlBirthYear',
   label: 'Birth Year',
   description: 'Birth year returned by People Data Labs.',
+  icon: 'IconCalendar',
   isNullable: true,
 });

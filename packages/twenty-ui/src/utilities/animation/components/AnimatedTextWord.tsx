@@ -1,15 +1,7 @@
-import React, { useMemo } from 'react';
-import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
+import React, { useMemo } from 'react';
 
-const StyledContainer = styled(motion.div)`
-  display: flex;
-  overflow: hidden;
-`;
-
-const StyledWord = styled(motion.span)`
-  white-space: pre;
-`;
+import styles from './AnimatedTextWord.module.scss';
 
 type AnimatedTextWordProps = Omit<
   React.ComponentProps<typeof motion.div>,
@@ -57,16 +49,21 @@ export const AnimatedTextWord = ({ text = '' }: AnimatedTextWordProps) => {
   }, [text]);
 
   return (
-    <StyledContainer
+    <motion.div
+      className={styles.container}
       variants={containerAnimation}
       initial="hidden"
       animate="visible"
     >
       {words.map((word, index) => (
-        <StyledWord variants={childAnimation} key={index}>
+        <motion.span
+          className={styles.word}
+          variants={childAnimation}
+          key={index}
+        >
           {word}
-        </StyledWord>
+        </motion.span>
       ))}
-    </StyledContainer>
+    </motion.div>
   );
 };

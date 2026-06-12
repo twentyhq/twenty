@@ -7,12 +7,12 @@ import { z } from 'zod';
 
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
+import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   type WorkflowToolContext,
@@ -70,6 +70,7 @@ type CreateCompleteWorkflowToolDeps = Pick<
   | 'workflowTriggerService'
   | 'globalWorkspaceOrmManager'
   | 'recordPositionService'
+  | 'workflowValidationService'
 >;
 
 type CreateCompleteWorkflowToolContext = WorkflowToolContext & {
@@ -182,6 +183,13 @@ This is the most efficient way for AI to create workflows as it handles all the 
         });
       }
 
+      const validation =
+        await deps.workflowValidationService.validateWorkflowDefinition({
+          workspaceId: context.workspaceId,
+          trigger: parameters.trigger,
+          steps: parameters.steps,
+        });
+
       return {
         success: true,
         message: `Workflow "${parameters.name}" created successfully with ${parameters.steps.length} steps`,
@@ -191,6 +199,7 @@ This is the most efficient way for AI to create workflows as it handles all the 
           name: parameters.name,
           trigger: parameters.trigger,
           steps: parameters.steps,
+          validation,
         },
         recordReferences: [
           {
