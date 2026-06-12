@@ -163,13 +163,30 @@ assert(
   `muted ink binds to black-60 (got "${composition.inkMuted}" vs "${composition.black60}")`,
 );
 
+// The product page joins the 404 net (its slots/composition have their
+// own battery; the sweep guards asset integrity site-wide).
+await page.goto(`${BASE_URL.replace(/\/$/, '')}/product`, {
+  waitUntil: 'networkidle',
+  timeout: 240000,
+});
+const productPageHeight = await page.evaluate(
+  () => document.documentElement.scrollHeight,
+);
+for (let y = 0; y <= productPageHeight; y += 600) {
+  // eslint-disable-next-line no-await-in-loop
+  await page.evaluate((scrollY) => window.scrollTo(0, scrollY), y);
+  // eslint-disable-next-line no-await-in-loop
+  await page.waitForTimeout(350);
+}
+
 assert(
   sameOriginNotFound.length === 0,
   `no same-origin 404s during the sweep${sameOriginNotFound.length > 0 ? ` (${sameOriginNotFound.join(', ')})` : ''}`,
 );
 // Budget calibrated against the swept page (all scenes + shared assets
 // measured ~1.1MB); headroom covers compression variance, not new art.
-const IMAGE_BYTES_BUDGET = 1_500_000;
+// + the product page's backdrop art (sweept since the product wave).
+const IMAGE_BYTES_BUDGET = 1_800_000;
 assert(
   totalImageBytes > 0 && totalImageBytes <= IMAGE_BYTES_BUDGET,
   `total same-origin image bytes within budget (${Math.round(totalImageBytes / 1024)}KB ≤ ${Math.round(IMAGE_BYTES_BUDGET / 1024)}KB)`,

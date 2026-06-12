@@ -4,6 +4,7 @@ import {
   type LocaleRouteParams,
 } from '@/platform/i18n/get-route-i18n';
 import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
+import { MenuStyleProvider } from '@/platform/menu-style';
 import {
   buildBreadcrumbListJsonLd,
   buildRouteMetadata,
@@ -11,12 +12,13 @@ import {
 } from '@/platform/seo';
 import { Faq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
+import { ProductHero } from '@/sections/product-hero';
 import { TrustedBy } from '@/sections/trusted-by';
 
 export const generateMetadata = buildRouteMetadata('product');
 
-// Sections land in old-site order as their ports arrive: ProductHero (with
-// menu sync), ProductFeature, ProductThreeCards, ProductStepper, ProductDemo.
+// Sections land in old-site order as their ports arrive: ProductFeature,
+// ProductThreeCards, ProductStepper, ProductDemo.
 export default async function ProductPage({
   params,
 }: {
@@ -39,11 +41,14 @@ export default async function ProductPage({
           locale,
         )}
       />
-      <Menu communityStats={communityStats} />
-      <main>
-        <TrustedBy />
-        <Faq />
-      </main>
+      <MenuStyleProvider>
+        <Menu communityStats={communityStats} />
+        <main>
+          <ProductHero />
+          <TrustedBy />
+          <Faq />
+        </main>
+      </MenuStyleProvider>
     </>
   );
 }

@@ -13,6 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#. js-lingui-id: AGZHx4
+#: src/sections/product-hero/product-hero.tsx
+msgid "...with AI that actually helps you *work faster*"
+msgstr ""
+
 #. js-lingui-id: sGt3Jm
 #. placeholder {0}: i18n._(card.attribution.company)
 #: src/sections/three-cards/illustration-card.tsx
@@ -27,6 +32,11 @@ msgstr ""
 #. js-lingui-id: iK+ikF
 #: src/sections/trusted-by/trusted-by.tsx
 msgid "+10k others"
+msgstr ""
+
+#. js-lingui-id: SR9TmK
+#: src/sections/product-hero/product-hero.tsx
+msgid "A CRM for teams that *move fast*"
 msgstr ""
 
 #. js-lingui-id: HSyZ9R
@@ -79,6 +89,11 @@ msgstr ""
 msgid "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data."
 msgstr ""
 
+#. js-lingui-id: S+Q+1d
+#: src/sections/product-hero/product-hero.tsx
+msgid "Ask questions, automate tasks, and get insights with AI that understands your data and helps you move faster every day, end to end across teams."
+msgstr ""
+
 #. js-lingui-id: 7UGCGX
 #: src/sections/three-cards/three-cards.tsx
 msgid "Assemble, iterate and adapt a robust CRM, *that's quick to flex*"
@@ -92,6 +107,16 @@ msgstr ""
 #. js-lingui-id: BpyJwa
 #: src/sections/menu/menu.data.ts
 msgid "Blue developer illustration with branching arrows"
+msgstr ""
+
+#. js-lingui-id: sbr0X/
+#: src/sections/product-hero/ai-hero-tabs.ts
+msgid "Build a dashboard of pipeline by stage"
+msgstr ""
+
+#. js-lingui-id: uetyzD
+#: src/sections/product-hero/ai-hero-tabs.ts
+msgid "Build a pipeline board grouped by stage"
 msgstr ""
 
 #. js-lingui-id: e1u+Zh
@@ -242,6 +267,11 @@ msgstr ""
 msgid "Don't get locked into someone else's ecosystem. Twenty's developer experience looks like normal software, with local setup, real data, live testing, and no proprietary tooling."
 msgstr ""
 
+#. js-lingui-id: mzedFr
+#: src/sections/product-hero/ai-hero-tabs.ts
+msgid "Draft a workflow for an email sequence"
+msgstr ""
+
 #. js-lingui-id: Ijh+h+
 #: src/sections/stepper/stepper.data.ts
 msgid "Enjoy unlimited customization using the AI coding tools you already love. Adapt your CRM to fit the way your business grows and wins."
@@ -272,7 +302,13 @@ msgstr ""
 msgid "Footer"
 msgstr ""
 
+#. js-lingui-id: S84RWl
+#: src/sections/product-hero/ai-hero-tabs.ts
+msgid "Generate tasks for my top 10 accounts"
+msgstr ""
+
 #. js-lingui-id: ZDIydz
+#: src/sections/product-hero/product-hero.tsx
 #: src/sections/menu/menu.tsx
 #: src/sections/menu/menu.tsx
 #: src/sections/home-hero/home-hero.tsx
@@ -586,6 +622,7 @@ msgid "Stop settling for trade-offs."
 msgstr ""
 
 #. js-lingui-id: JAKtcG
+#: src/sections/product-hero/product-hero.tsx
 #: src/sections/home-hero/home-hero.tsx
 #: src/sections/footer/footer.data.ts
 #: src/sections/faq/faq.tsx
@@ -661,6 +698,11 @@ msgstr ""
 #. js-lingui-id: POzmFl
 #: src/sections/menu/menu.data.ts
 msgid "Track every release with changelogs, highlights and demos of the newest features."
+msgstr ""
+
+#. js-lingui-id: 6vHPh9
+#: src/sections/product-hero/product-hero.tsx
+msgid "Track relationships, manage pipelines, and take action quickly with an intuitive CRM that helps your team move faster from day one with confidence."
 msgstr ""
 
 #. js-lingui-id: tdZpCd
