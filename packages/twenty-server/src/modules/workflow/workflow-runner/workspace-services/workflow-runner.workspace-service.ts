@@ -217,11 +217,9 @@ export class WorkflowRunnerWorkspaceService {
       };
     }
 
-    if (workflowRun.status === WorkflowRunStatus.NOT_STARTED) {
-      await this.workflowThrottlingWorkspaceService.decreaseWorkflowRunNotStartedCount(
-        workspaceId,
-      );
-    }
+    const wasNotStarted = workflowRun.status === WorkflowRunStatus.NOT_STARTED;
+
+    let newStatus: WorkflowRunStatus;
 
     if (!isDefined(workflowRun.state)) {
       await this.workflowRunWorkspaceService.endWorkflowRun({
@@ -229,48 +227,50 @@ export class WorkflowRunnerWorkspaceService {
         workspaceId,
         status: WorkflowRunStatus.STOPPED,
       });
+      newStatus = WorkflowRunStatus.STOPPED;
+    } else {
+      const stepInfos = workflowRun.state.stepInfos;
+      const steps = workflowRun.state.flow.steps;
 
-      return {
-        id: workflowRun.id,
-        status: WorkflowRunStatus.STOPPED,
-      };
+      if (workflowHasRunningSteps({ stepInfos, steps })) {
+        const stoppedIteratorStepInfos = setAllIteratorsStepInfosAsStopped({
+          stepInfos,
+          steps,
+        });
+
+        const mergedStepInfos = {
+          ...stepInfos,
+          ...stoppedIteratorStepInfos,
+        };
+
+        await this.workflowRunWorkspaceService.updateWorkflowRun({
+          workflowRunId,
+          workspaceId,
+          partialUpdate: {
+            status: WorkflowRunStatus.STOPPING,
+            state: {
+              ...workflowRun.state,
+              stepInfos: mergedStepInfos,
+            },
+          },
+        });
+        newStatus = WorkflowRunStatus.STOPPING;
+      } else {
+        await this.workflowRunWorkspaceService.endWorkflowRun({
+          workflowRunId,
+          workspaceId,
+          status: WorkflowRunStatus.STOPPED,
+        });
+        newStatus = WorkflowRunStatus.STOPPED;
+      }
     }
 
-    let newStatus: WorkflowRunStatus;
-
-    const stepInfos = workflowRun.state.stepInfos;
-    const steps = workflowRun.state.flow.steps;
-
-    if (workflowHasRunningSteps({ stepInfos, steps })) {
-      const stoppedIteratorStepInfos = setAllIteratorsStepInfosAsStopped({
-        stepInfos,
-        steps,
-      });
-
-      const mergedStepInfos = {
-        ...stepInfos,
-        ...stoppedIteratorStepInfos,
-      };
-
-      await this.workflowRunWorkspaceService.updateWorkflowRun({
-        workflowRunId,
+    // Release the cached not-started slot only after the stop has been
+    // persisted, so a persistence failure can't desync the throttle counter.
+    if (wasNotStarted) {
+      await this.workflowThrottlingWorkspaceService.decreaseWorkflowRunNotStartedCount(
         workspaceId,
-        partialUpdate: {
-          status: WorkflowRunStatus.STOPPING,
-          state: {
-            ...workflowRun.state,
-            stepInfos: mergedStepInfos,
-          },
-        },
-      });
-      newStatus = WorkflowRunStatus.STOPPING;
-    } else {
-      await this.workflowRunWorkspaceService.endWorkflowRun({
-        workflowRunId,
-        workspaceId,
-        status: WorkflowRunStatus.STOPPED,
-      });
-      newStatus = WorkflowRunStatus.STOPPED;
+      );
     }
 
     return {
@@ -342,14 +342,30 @@ export class WorkflowRunnerWorkspaceService {
       },
     });
 
-    await this.messageQueueService.add<RunWorkflowJobData>(
-      RunWorkflowJob.name,
-      {
-        workspaceId,
+    try {
+      await this.messageQueueService.add<RunWorkflowJobData>(
+        RunWorkflowJob.name,
+        {
+          workspaceId,
+          workflowRunId,
+          stepIdsToRetry: stepIdsToRun,
+        },
+      );
+    } catch (error) {
+      // The job couldn't be enqueued: revert to the previous failed state so
+      // the run isn't left stuck as RUNNING without a worker job.
+      await this.workflowRunWorkspaceService.updateWorkflowRun({
         workflowRunId,
-        stepIdsToRetry: stepIdsToRun,
-      },
-    );
+        workspaceId,
+        partialUpdate: {
+          status: WorkflowRunStatus.FAILED,
+          endedAt: workflowRun.endedAt,
+          state: workflowRun.state,
+        },
+      });
+
+      throw error;
+    }
 
     return {
       id: workflowRun.id,

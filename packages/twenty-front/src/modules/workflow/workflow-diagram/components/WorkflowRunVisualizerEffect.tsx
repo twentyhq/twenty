@@ -130,12 +130,6 @@ export const WorkflowRunVisualizerEffect = ({
           stepInfos: workflowRunState.stepInfos,
         });
 
-      // Regenerating the diagram on each run state change produces fresh nodes
-      // without the dimensions Reactflow measured previously. Reactflow hides
-      // unmeasured nodes until it re-measures them, which makes the diagram
-      // flicker (and disappear if the last regeneration before going idle
-      // leaves nodes unmeasured). Carry over the measured dimensions so the
-      // nodes stay rendered across regenerations.
       const previousNodesById = new Map(
         (store.get(workflowDiagram)?.nodes ?? []).map((node) => [
           node.id,

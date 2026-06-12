@@ -8,7 +8,17 @@ export const getIteratorInitialLoopStepIds = (
   const initialLoopStepIds = step.settings.input.initialLoopStepIds;
 
   if (isString(initialLoopStepIds)) {
-    return JSON.parse(initialLoopStepIds);
+    try {
+      const parsed: unknown = JSON.parse(initialLoopStepIds);
+
+      if (Array.isArray(parsed) && parsed.every(isString)) {
+        return parsed;
+      }
+    } catch {
+      return [];
+    }
+
+    return [];
   }
 
   return initialLoopStepIds ?? [];

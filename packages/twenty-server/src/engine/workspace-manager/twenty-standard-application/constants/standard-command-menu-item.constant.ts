@@ -549,7 +549,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     label: 'Retry',
     icon: 'IconRefresh',
     isPinned: true,
-    position: 66,
+    position: 35.5,
     shortLabel: 'Retry',
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
