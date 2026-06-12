@@ -63,8 +63,8 @@ describe('recall bot api', () => {
       join_at: '2026-01-01T13:00:00.000Z',
       bot_name: 'Twenty Recall Bot',
       automatic_leave: {
-        waiting_room_timeout: 600,
-        noone_joined_timeout: 600,
+        waiting_room_timeout: 1200,
+        noone_joined_timeout: 1200,
       },
       recording_config: {
         video_mixed_mp4: {},
@@ -98,8 +98,8 @@ describe('recall bot api', () => {
     expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual(
       expect.objectContaining({
         automatic_leave: {
-          waiting_room_timeout: 600,
-          noone_joined_timeout: 600,
+          waiting_room_timeout: 1200,
+          noone_joined_timeout: 1200,
         },
       }),
     );
