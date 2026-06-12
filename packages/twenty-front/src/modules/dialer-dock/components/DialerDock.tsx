@@ -1,5 +1,10 @@
 import styled from '@emotion/styled';
-import { useEffect, useRef, useState } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+} from 'react';
 
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
@@ -35,6 +40,47 @@ const DIALER_IFRAME_SRC: string | undefined = DIALER_DOCK_URL
 const WEBPHONE_CONFIG_URL = `${REACT_APP_SERVER_BASE_URL}/s/voice/webphone-config`;
 
 const DIALER_DOCK_EXPANDED_STORAGE_KEY = 'propel-dialer-dock-expanded';
+const DIALER_DOCK_POSITION_STORAGE_KEY = 'propel-dialer-dock-position';
+
+// Default offsets: right-aligned but ABOVE the record side-panel footer (the
+// "Options ⌘O / Open" strip occupies the bottom ~56px), so the collapsed pill
+// never covers those buttons. The dock is draggable; this is only the fallback.
+const DEFAULT_DOCK_POSITION = { right: 14, bottom: 72 };
+const DOCK_EDGE_MARGIN_PX = 8;
+const DOCK_DRAG_THRESHOLD_PX = 4;
+
+type DockPosition = { right: number; bottom: number };
+
+const clampDockPosition = (position: DockPosition): DockPosition => ({
+  right: Math.min(
+    Math.max(position.right, DOCK_EDGE_MARGIN_PX),
+    Math.max(DOCK_EDGE_MARGIN_PX, window.innerWidth - 120),
+  ),
+  bottom: Math.min(
+    Math.max(position.bottom, DOCK_EDGE_MARGIN_PX),
+    Math.max(DOCK_EDGE_MARGIN_PX, window.innerHeight - 56),
+  ),
+});
+
+const readStoredDockPosition = (): DockPosition => {
+  try {
+    const raw = localStorage.getItem(DIALER_DOCK_POSITION_STORAGE_KEY);
+    if (raw !== null) {
+      const parsed = JSON.parse(raw) as Partial<DockPosition>;
+      if (
+        typeof parsed.right === 'number' &&
+        typeof parsed.bottom === 'number'
+      ) {
+        // Clamp on read: a position saved on a larger window must not strand
+        // the dock off-screen on a smaller one.
+        return clampDockPosition({ right: parsed.right, bottom: parsed.bottom });
+      }
+    }
+  } catch {
+    // Malformed JSON — fall through to the default.
+  }
+  return { ...DEFAULT_DOCK_POSITION };
+};
 
 // Inside RootStackingContextZIndices terms: above SidePanel (21), below
 // RootModalBackDrop (39) so modals and dialogs still cover the dock.
@@ -43,12 +89,12 @@ const DIALER_DOCK_Z_INDEX = 30;
 // The dock lives OUTSIDE the router AND outside BaseThemeProvider (which is
 // mounted inside the router tree), so it must not read the emotion theme.
 // Styling is intentionally self-contained and theme-neutral.
+// right/bottom offsets come from the drag position (inline style) — the dock is
+// user-movable and the position persists per browser.
 const StyledDockContainer = styled.div`
-  bottom: 12px;
   display: flex;
   flex-direction: column;
   position: fixed;
-  right: 12px;
   z-index: ${DIALER_DOCK_Z_INDEX};
 `;
 
@@ -66,11 +112,13 @@ const StyledPanel = styled.div<{ isExpanded: boolean }>`
   width: ${({ isExpanded }) => (isExpanded ? '360px' : '0')};
 `;
 
+// The header doubles as the drag handle while the panel is expanded.
 const StyledPanelHeader = styled.div`
   align-items: center;
   background: #101014;
   border-bottom: 1px solid #2a2a31;
   color: #9a9aa2;
+  cursor: grab;
   display: flex;
   flex-shrink: 0;
   font:
@@ -81,6 +129,8 @@ const StyledPanelHeader = styled.div`
   letter-spacing: 0.06em;
   padding: 8px 10px;
   text-transform: uppercase;
+  touch-action: none;
+  user-select: none;
 `;
 
 const StyledCollapseButton = styled.button`
@@ -121,6 +171,7 @@ const StyledPill = styled.button`
     sans-serif;
   gap: 6px;
   padding: 10px 16px;
+  touch-action: none;
 
   &:hover {
     background: #3a6cbb;
@@ -198,6 +249,19 @@ export const DialerDock = () => {
   const [isExpanded, setIsExpanded] = useState(
     () => localStorage.getItem(DIALER_DOCK_EXPANDED_STORAGE_KEY) === 'true',
   );
+  const [position, setPosition] = useState<DockPosition>(readStoredDockPosition);
+  // Live drag bookkeeping. A drag and a click share the same pointer gesture on
+  // the pill — `moved` past the threshold turns the gesture into a drag, and
+  // suppressClickRef swallows the click event the browser fires after pointerup.
+  const dragStateRef = useRef<{
+    pointerId: number;
+    startX: number;
+    startY: number;
+    startRight: number;
+    startBottom: number;
+    moved: boolean;
+  } | null>(null);
+  const suppressClickRef = useRef(false);
 
   const toggleExpanded = () => {
     setIsExpanded((previousIsExpanded) => {
@@ -207,6 +271,71 @@ export const DialerDock = () => {
       );
       return !previousIsExpanded;
     });
+  };
+
+  const handleDragPointerDown = (event: ReactPointerEvent<HTMLElement>) => {
+    if (event.button !== 0) {
+      return;
+    }
+    dragStateRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      startRight: position.right,
+      startBottom: position.bottom,
+      moved: false,
+    };
+    // Pointer capture keeps move events flowing to the handle even when the
+    // pointer crosses the dialer iframe (which would otherwise eat them).
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handleDragPointerMove = (event: ReactPointerEvent<HTMLElement>) => {
+    const drag = dragStateRef.current;
+    if (drag === null || drag.pointerId !== event.pointerId) {
+      return;
+    }
+    const deltaX = event.clientX - drag.startX;
+    const deltaY = event.clientY - drag.startY;
+    if (
+      !drag.moved &&
+      Math.abs(deltaX) < DOCK_DRAG_THRESHOLD_PX &&
+      Math.abs(deltaY) < DOCK_DRAG_THRESHOLD_PX
+    ) {
+      return;
+    }
+    drag.moved = true;
+    setPosition(
+      clampDockPosition({
+        right: drag.startRight - deltaX,
+        bottom: drag.startBottom - deltaY,
+      }),
+    );
+  };
+
+  const handleDragPointerEnd = (event: ReactPointerEvent<HTMLElement>) => {
+    const drag = dragStateRef.current;
+    if (drag === null || drag.pointerId !== event.pointerId) {
+      return;
+    }
+    dragStateRef.current = null;
+    if (drag.moved) {
+      suppressClickRef.current = true;
+      setPosition((current) => {
+        localStorage.setItem(
+          DIALER_DOCK_POSITION_STORAGE_KEY,
+          JSON.stringify(current),
+        );
+        return current;
+      });
+    }
+  };
+
+  const dragHandleProps = {
+    onPointerDown: handleDragPointerDown,
+    onPointerMove: handleDragPointerMove,
+    onPointerUp: handleDragPointerEnd,
+    onPointerCancel: handleDragPointerEnd,
   };
 
   useEffect(() => {
@@ -337,13 +466,26 @@ export const DialerDock = () => {
   }
 
   return (
-    <StyledDockContainer data-testid="dialer-dock">
-      <StyledPanel isExpanded={isExpanded}>
-        <StyledPanelHeader>
+    <StyledDockContainer
+      data-testid="dialer-dock"
+      style={{ right: position.right, bottom: position.bottom }}
+    >
+      <StyledPanel
+        isExpanded={isExpanded}
+        style={
+          // Never let the panel poke past the top of the viewport when the dock
+          // has been dragged high — the iframe (flex: 1) absorbs the shrink.
+          isExpanded
+            ? { maxHeight: `calc(100vh - ${position.bottom + 24}px)` }
+            : undefined
+        }
+      >
+        <StyledPanelHeader {...dragHandleProps}>
           Dialer
           <StyledCollapseButton
             aria-label="Collapse dialer"
             onClick={toggleExpanded}
+            onPointerDown={(event) => event.stopPropagation()}
           >
             —
           </StyledCollapseButton>
@@ -357,7 +499,17 @@ export const DialerDock = () => {
         />
       </StyledPanel>
       {!isExpanded && (
-        <StyledPill aria-label="Expand dialer" onClick={toggleExpanded}>
+        <StyledPill
+          aria-label="Expand dialer"
+          {...dragHandleProps}
+          onClick={() => {
+            if (suppressClickRef.current) {
+              suppressClickRef.current = false;
+              return;
+            }
+            toggleExpanded();
+          }}
+        >
           ☎ Dialer
         </StyledPill>
       )}
