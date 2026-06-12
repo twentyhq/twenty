@@ -1,11 +1,11 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useExecuteWorkflowRunBulkCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/hooks/useExecuteWorkflowRunBulkCommand';
-import { useStopWorkflowRun } from '@/workflow/hooks/useStopWorkflowRun';
+import { useRetryWorkflowRun } from '@/workflow/hooks/useRetryWorkflowRun';
 
-export const StopWorkflowRunSingleRecordCommand = () => {
-  const { stopWorkflowRun } = useStopWorkflowRun();
+export const RetryWorkflowRunSingleRecordCommand = () => {
+  const { retryWorkflowRun } = useRetryWorkflowRun();
 
-  const { execute } = useExecuteWorkflowRunBulkCommand(stopWorkflowRun);
+  const { execute } = useExecuteWorkflowRunBulkCommand(retryWorkflowRun);
 
   return <HeadlessEngineCommandWrapperEffect execute={execute} />;
 };

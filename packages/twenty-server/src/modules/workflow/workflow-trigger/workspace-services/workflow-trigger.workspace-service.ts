@@ -189,6 +189,13 @@ export class WorkflowTriggerWorkspaceService {
     );
   }
 
+  async retryWorkflowRun(workflowRunId: string, workspaceId: string) {
+    return this.workflowRunnerWorkspaceService.retryWorkflowRun(
+      workspaceId,
+      workflowRunId,
+    );
+  }
+
   private async performActivationSteps(
     workflow: WorkflowWorkspaceEntity,
     workflowVersion: WorkflowVersionWorkspaceEntity,
