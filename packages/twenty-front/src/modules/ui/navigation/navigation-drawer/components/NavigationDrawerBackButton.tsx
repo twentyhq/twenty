@@ -31,7 +31,7 @@ const StyledIconAndButtonContainer = styled.button`
   font-family: ${themeCssVariables.font.family};
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing['1.5']} ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing[1]};
   width: 100%;
   &:hover {
     background: ${themeCssVariables.background.transparent.light};

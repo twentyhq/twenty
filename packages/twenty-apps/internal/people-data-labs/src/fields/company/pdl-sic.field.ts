@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlSic',
   label: 'SIC Codes',
   description: 'SIC classification codes returned by People Data Labs.',
+  icon: 'IconHash',
   isNullable: true,
 });

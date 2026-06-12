@@ -74,6 +74,11 @@ Always rely on tool schema definitions:
 - Follow schema definitions exactly for field names, types, and structures
 - Schema includes validation rules and common patterns
 
+## Validation
+
+The \`create_complete_workflow\` and \`update_workflow_version_step\` tools automatically run validation after their operation and include the results in the response. Review any reported errors and fix them before activating the workflow.
+
+
 ## Approach
 
 - Ask clarifying questions to understand user needs
@@ -276,38 +281,6 @@ Also create additional views for the standard objects (People, Companies, Opport
 Navigate to each view after creating it. Wait 3 seconds.
 
 Loop STEP 8 for all the custom objects
-
-STEP 9: Create a multi-tab dashboard that tells the full story of the business.
-
-Use create_complete_dashboard to create the first tab, then add_dashboard_tab + add_dashboard_widget for subsequent tabs.
-
-**Structure: 3 tabs**
-
-Tab 1 — "Overview": high-level KPIs and charts across the whole workspace
-- Row 0: 3–4 AGGREGATE_CHART widgets (KPIs) — one per key metric (e.g. total revenue from Opportunities, count of active People, count of open deals). columnSpan 3–4, rowSpan 3.
-- Row 3: 1–2 BAR_CHART or LINE_CHART widgets showing trends over time (group by a DATE_TIME field with MONTH granularity). columnSpan 6, rowSpan 7.
-- Row 3: 1 PIE_CHART showing distribution by a SELECT field (e.g. status, type). columnSpan 6, rowSpan 7.
-- Row 10: 1 STANDALONE_RICH_TEXT widget summarising the dashboard story. columnSpan 12, rowSpan 3.
-
-Tab 2 — "[Domain object] pipeline" (e.g. "Deals", "Applications", "Repairs"): focus on Opportunities enriched with domain data
-- Before adding the RECORD_TABLE widget, run this 3-step sequence:
-  1. create_view (type TABLE, name e.g. "Active Deals") → get the new viewId
-  2. create_many_view_fields on the new viewId — add 4–6 key fields (name, the new stage/status SELECT, a CURRENCY/NUMERIC field, a DATE field, linked Person or Company). Use positions 0, 1, 2… and isVisible: true.
-  3. create_many_view_filters + create_view_sort — e.g. filter out CLOSED/LOST records (SELECT IS_NOT "CLOSED"), sort by value DESC
-- Row 0: 1 RECORD_TABLE widget. Set objectMetadataId to Opportunity, configuration.viewId to the dedicated view. columnSpan 12, rowSpan 8.
-- Row 8: 1 BAR_CHART grouped by the stage SELECT field. columnSpan 6, rowSpan 7.
-- Row 8: 1 PIE_CHART or AGGREGATE_CHART on the CURRENCY field. columnSpan 6, rowSpan 7.
-
-Tab 3 — "[Domain people role] list" (e.g. "Clients", "Candidates", "Contacts"): focus on People enriched with domain data
-- Before adding the RECORD_TABLE widget, run this 3-step sequence:
-  1. create_view (type TABLE, name e.g. "All Clients") → get the new viewId
-  2. create_many_view_fields — add 4–5 key fields (name, email, the new SELECT/status field, a DATE field, linked Company)
-  3. create_view_sort — sort by createdAt DESC or by name ASC
-- Row 0: 1 RECORD_TABLE widget with the dedicated view. columnSpan 12, rowSpan 8.
-- Row 8: 2–3 AGGREGATE_CHART KPIs (count, totals). columnSpan 4, rowSpan 3.
-- Row 11: 1 BAR_CHART or LINE_CHART. columnSpan 12, rowSpan 7.
-
-After creating the dashboard, navigate to the dashboard page.
 `,
         isCustom: false,
       },
@@ -437,6 +410,10 @@ After creating a tab, use its returned tabId as pageLayoutTabId when calling add
 - When modifying a chart, confirm whether the user wants to change settings or change chart type
 - Use RECORD_TABLE widgets to give users direct access to filtered record lists without leaving the dashboard`,
         isCustom: false,
+        // Dashboard tools are temporarily disabled in AI chat / MCP because the
+        // generated dashboards are not reliable yet. Keeping the skill defined
+        // (inactive) so it can be re-enabled once the tooling is trustworthy.
+        isActive: false,
       },
     }),
 

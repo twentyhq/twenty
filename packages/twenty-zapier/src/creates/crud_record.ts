@@ -89,7 +89,7 @@ const getOperationFromDatabaseEventAction = (
   }
 };
 
-const perform = async (z: ZObject, bundle: Bundle) => {
+const perform = async (z: ZObject, bundle: Bundle<InputData>) => {
   const data = bundle.inputData;
   const operation = data.crudZapierOperation;
   const queryOperation = getOperationFromDatabaseEventAction(z, operation);

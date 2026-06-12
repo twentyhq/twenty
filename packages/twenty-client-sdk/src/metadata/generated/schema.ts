@@ -615,6 +615,7 @@ export interface View {
     viewFieldGroups: ViewFieldGroup[]
     visibility: ViewVisibility
     createdByUserWorkspaceId?: Scalars['UUID']
+    isActive: Scalars['Boolean']
     __typename: 'View'
 }
 
@@ -3552,6 +3553,7 @@ export interface ViewGenqlSelection{
     viewFieldGroups?: ViewFieldGroupGenqlSelection
     visibility?: boolean | number
     createdByUserWorkspaceId?: boolean | number
+    isActive?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

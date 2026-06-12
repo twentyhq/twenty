@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlFacebookUrl',
   label: 'Facebook',
   description: 'Facebook page returned by People Data Labs.',
+  icon: 'IconBrandFacebook',
   isNullable: true,
 });

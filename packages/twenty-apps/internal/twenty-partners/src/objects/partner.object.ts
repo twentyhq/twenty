@@ -445,6 +445,14 @@ export default defineObject({
       isNullable: true,
     },
     {
+      universalIdentifier: '111eb60a-6e5b-4d0f-ac0d-31e7e0ddff97',
+      type: FieldType.LINKS,
+      name: 'website',
+      label: 'Website',
+      icon: 'IconWorldWww',
+      isNullable: true,
+    },
+    {
       universalIdentifier: '40d730e3-2785-45c8-aa5f-cc724b1b08e0',
       type: FieldType.LINKS,
       name: 'profilePicture',

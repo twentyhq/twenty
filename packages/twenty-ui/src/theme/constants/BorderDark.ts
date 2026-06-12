@@ -1,4 +1,4 @@
-import { COLOR_DARK } from '@new-ui/theme/constants/ColorsDark';
+import { COLOR_DARK } from '@ui/theme/constants/ColorsDark';
 import { BORDER_COMMON } from './BorderCommon';
 import { GRAY_SCALE_DARK } from './GrayScaleDark';
 import { TRANSPARENT_COLORS_DARK } from './TransparentColorsDark';

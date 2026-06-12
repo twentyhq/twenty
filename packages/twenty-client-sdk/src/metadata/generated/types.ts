@@ -1739,6 +1739,9 @@ export default {
             "createdByUserWorkspaceId": [
                 3
             ],
+            "isActive": [
+                6
+            ],
             "__typename": [
                 1
             ]

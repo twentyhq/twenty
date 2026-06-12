@@ -877,6 +877,7 @@ type View {
   viewFieldGroups: [ViewFieldGroup!]!
   visibility: ViewVisibility!
   createdByUserWorkspaceId: UUID
+  isActive: Boolean!
 }
 
 enum ViewType {

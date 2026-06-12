@@ -1,5 +1,5 @@
-import { BLUR_DARK } from '@new-ui/theme/constants/BlurDark';
-import { ILLUSTRATION_ICON_DARK } from '@new-ui/theme/constants/IllustrationIconDark';
+import { BLUR_DARK } from '@ui/theme/constants/BlurDark';
+import { ILLUSTRATION_ICON_DARK } from '@ui/theme/constants/IllustrationIconDark';
 import { COLOR_DARK } from './ColorsDark';
 import { GRAY_SCALE_DARK } from './GrayScaleDark';
 import { SNACK_BAR_DARK } from './SnackBarDark';

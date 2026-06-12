@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlEmployeeCount',
   label: 'Employees',
   description: 'Exact employee count returned by People Data Labs.',
+  icon: 'IconUsersGroup',
   isNullable: true,
 });

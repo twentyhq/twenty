@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlInterests',
   label: 'Interests',
   description: 'Interests returned by People Data Labs.',
+  icon: 'IconHeart',
   isNullable: true,
 });
