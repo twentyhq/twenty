@@ -13,6 +13,9 @@ const EyebrowRow = styled.p`
   align-items: center;
   color: ${semanticColor.inkMuted};
   display: flex;
+  /* Centered intros must not center the wrapped label: the text stays
+     flush against the marker (old-site contract). */
+  text-align: start;
   font-family: ${fontFamily('sans')};
   ${typeRampDeclarations('eyebrow')}
   font-weight: ${FONT_WEIGHT.medium};
