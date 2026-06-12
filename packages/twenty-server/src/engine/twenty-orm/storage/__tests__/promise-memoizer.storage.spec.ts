@@ -90,8 +90,6 @@ describe('PromiseMemoizer', () => {
 
       await memoizer.memoizePromiseAndExecute('test-key-1', mockFactory);
 
-      // Read at half-TTL intervals: the expiry is absolute, so reads must not
-      // extend the entry's lifetime past startTime + TTL_MS.
       for (const elapsedTime of [
         TTL_MS / 2,
         TTL_MS,
@@ -105,7 +103,6 @@ describe('PromiseMemoizer', () => {
         await memoizer.memoizePromiseAndExecute('test-key-1', mockFactory);
       }
 
-      // Initial write + recompute at the TTL and 2*TTL boundaries
       expect(mockFactory).toHaveBeenCalledTimes(3);
     });
 

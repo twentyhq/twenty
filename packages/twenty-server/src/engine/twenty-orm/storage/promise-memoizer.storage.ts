@@ -16,9 +16,6 @@ export class PromiseMemoizer<T> {
     this.ttlMs = ttlMs;
   }
 
-  // Expiry is absolute (set at write time), never refreshed on read: the cache
-  // services rely on re-entering the factory to revalidate against Redis, so a
-  // sliding TTL would let hot keys serve cross-instance-stale data indefinitely.
   async memoizePromiseAndExecute(
     cacheKey: CacheKey,
     factory: AsyncFactoryCallback<T>,
