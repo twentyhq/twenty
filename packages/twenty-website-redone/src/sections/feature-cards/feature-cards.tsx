@@ -15,13 +15,14 @@ import {
 import { FeatureCard } from './feature-card';
 import { FEATURE_CARDS } from './feature-cards.data';
 
+// Mobile reads the intro left-aligned; the centered composition only
+// engages from md up (user-directed; the old site centered everywhere).
 const centeredIntroClassName = css`
-  justify-items: center;
-  margin-inline: auto;
-  text-align: center;
-
   ${mediaUp('md')} {
+    justify-items: center;
+    margin-inline: auto;
     max-width: 900px;
+    text-align: center;
   }
 `;
 
