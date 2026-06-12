@@ -1,6 +1,8 @@
-import { http, HttpResponse, type RequestHandler } from 'msw';
+import { http, HttpResponse } from 'msw';
 
-export const microsoftAuthHandlers = (handle: string): RequestHandler[] => [
+import { type MswHandler } from 'test/integration/utils/http-mock';
+
+export const microsoftAuthHandlers = (handle: string): MswHandler[] => [
   http.post('https://login.microsoftonline.com/common/oauth2/v2.0/token', () =>
     HttpResponse.json({
       token_type: 'Bearer',

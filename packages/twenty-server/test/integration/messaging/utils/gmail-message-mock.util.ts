@@ -1,11 +1,15 @@
 import { randomUUID } from 'node:crypto';
 
 import { type gmail_v1 } from 'googleapis';
-import { http, HttpResponse, type RequestHandler } from 'msw';
+import { http, HttpResponse } from 'msw';
 
 import { googleAuthHandlers } from 'test/integration/messaging/utils/google-auth-mock.util';
 import { googleCalendarHandlers } from 'test/integration/messaging/utils/google-calendar-mock.util';
-import { type HttpMock, setupHttpMock } from 'test/integration/utils/http-mock';
+import {
+  type HttpMock,
+  type MswHandler,
+  setupHttpMock,
+} from 'test/integration/utils/http-mock';
 
 export const gmailMessage = (
   overrides: Partial<gmail_v1.Schema$Message> = {},
@@ -99,7 +103,7 @@ const buildBatchMultipartResponse = (
 
 export const rateLimitedGmailMessageList = (
   retryAfterIso: string,
-): RequestHandler =>
+): MswHandler =>
   http.get('*/gmail/v1/users/me/messages', () =>
     HttpResponse.json(
       {
@@ -121,7 +125,7 @@ export const rateLimitedGmailMessageList = (
 export const gmailHistoryHandler = (
   addedMessages: gmail_v1.Schema$Message[],
   { historyId = '987654322' }: { historyId?: string } = {},
-): RequestHandler =>
+): MswHandler =>
   http.get('*/gmail/v1/users/me/history', () =>
     HttpResponse.json<gmail_v1.Schema$ListHistoryResponse>({
       history: [
@@ -141,7 +145,7 @@ const gmailMessageHandlers = ({
 }: {
   inbox: gmail_v1.Schema$Message[];
   labelStore: GmailLabelStore;
-}): RequestHandler[] => [
+}): MswHandler[] => [
   http.get('*/gmail/v1/users/me/labels', () =>
     HttpResponse.json<gmail_v1.Schema$ListLabelsResponse>({
       labels: labelStore.list(),

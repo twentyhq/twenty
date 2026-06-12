@@ -4,10 +4,14 @@ import {
   type MailFolder,
   type Message,
 } from '@microsoft/microsoft-graph-types';
-import { http, HttpResponse, type RequestHandler } from 'msw';
+import { http, HttpResponse } from 'msw';
 
 import { microsoftAuthHandlers } from 'test/integration/messaging/utils/microsoft-auth-mock.util';
-import { type HttpMock, setupHttpMock } from 'test/integration/utils/http-mock';
+import {
+  type HttpMock,
+  type MswHandler,
+  setupHttpMock,
+} from 'test/integration/utils/http-mock';
 
 export const microsoftMessage = (overrides: Partial<Message> = {}): Message => {
   const id = overrides.id ?? `ms-msg-${randomUUID()}`;
@@ -66,7 +70,7 @@ const microsoftMessageHandlers = ({
 }: {
   inbox: Message[];
   folderStore: MicrosoftFolderStore;
-}): RequestHandler[] => [
+}): MswHandler[] => [
   http.get('*/me/mailFolders', () =>
     HttpResponse.json<{ value: MailFolder[] }>({ value: folderStore.list() }),
   ),

@@ -1,7 +1,9 @@
 import { randomUUID } from 'node:crypto';
 
 import { type calendar_v3 } from 'googleapis';
-import { http, HttpResponse, type RequestHandler } from 'msw';
+import { http, HttpResponse } from 'msw';
+
+import { type MswHandler } from 'test/integration/utils/http-mock';
 
 const GOOGLE_CALENDAR_EVENTS_URL =
   'https://www.googleapis.com/calendar/v3/calendars/primary/events';
@@ -30,7 +32,7 @@ export const googleCalendarEventsHandler = (
   {
     nextSyncToken = 'mock-calendar-sync-token',
   }: { nextSyncToken?: string } = {},
-): RequestHandler =>
+): MswHandler =>
   http.get(GOOGLE_CALENDAR_EVENTS_URL, () =>
     HttpResponse.json<calendar_v3.Schema$Events>({
       items: events,
@@ -38,7 +40,7 @@ export const googleCalendarEventsHandler = (
     }),
   );
 
-export const rateLimitedGoogleCalendarEventList = (): RequestHandler =>
+export const rateLimitedGoogleCalendarEventList = (): MswHandler =>
   http.get(GOOGLE_CALENDAR_EVENTS_URL, () =>
     HttpResponse.json(
       {
@@ -54,7 +56,7 @@ export const rateLimitedGoogleCalendarEventList = (): RequestHandler =>
     ),
   );
 
-export const googleCalendarHandlers = (): RequestHandler[] => [
+export const googleCalendarHandlers = (): MswHandler[] => [
   http.get(GOOGLE_CALENDAR_EVENTS_URL, () =>
     HttpResponse.json<calendar_v3.Schema$Events>({ items: [] }),
   ),

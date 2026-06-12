@@ -1,7 +1,9 @@
 import { randomUUID } from 'node:crypto';
 
 import { type Event } from '@microsoft/microsoft-graph-types';
-import { http, HttpResponse, type RequestHandler } from 'msw';
+import { http, HttpResponse } from 'msw';
+
+import { type MswHandler } from 'test/integration/utils/http-mock';
 
 export const microsoftCalendarEvent = (
   overrides: Partial<Event> = {},
@@ -26,7 +28,7 @@ export const microsoftCalendarEvent = (
 export const microsoftCalendarEventsHandlers = (
   events: Event[],
   { deltaToken = 'mock-calendar-delta-token' }: { deltaToken?: string } = {},
-): RequestHandler[] => [
+): MswHandler[] => [
   http.get('*/me/calendar/events/delta', () =>
     HttpResponse.json({
       value: events.map((event) => ({ id: event.id })),
