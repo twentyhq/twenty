@@ -22,7 +22,6 @@ describe('resolveRecallRecordingBotPolicyResult', () => {
           hasAutoRecordParticipant: false,
         },
         now: NOW,
-        isRecallRecordingBotEnabledForWorkspace: true,
       }),
     ).toEqual({
       shouldRequestBot: true,
@@ -42,7 +41,6 @@ describe('resolveRecallRecordingBotPolicyResult', () => {
           hasAutoRecordParticipant: true,
         },
         now: NOW,
-        isRecallRecordingBotEnabledForWorkspace: true,
       }),
     ).toEqual({
       shouldRequestBot: false,
@@ -62,7 +60,6 @@ describe('resolveRecallRecordingBotPolicyResult', () => {
           hasAutoRecordParticipant: true,
         },
         now: NOW,
-        isRecallRecordingBotEnabledForWorkspace: true,
       }),
     ).toEqual({
       shouldRequestBot: true,
@@ -82,7 +79,6 @@ describe('resolveRecallRecordingBotPolicyResult', () => {
           hasAutoRecordParticipant: false,
         },
         now: NOW,
-        isRecallRecordingBotEnabledForWorkspace: true,
       }),
     ).toEqual({
       shouldRequestBot: false,
@@ -102,7 +98,6 @@ describe('resolveRecallRecordingBotPolicyResult', () => {
           hasAutoRecordParticipant: true,
         },
         now: NOW,
-        isRecallRecordingBotEnabledForWorkspace: true,
       }),
     ).toEqual({
       shouldRequestBot: false,
@@ -122,7 +117,6 @@ describe('resolveRecallRecordingBotPolicyResult', () => {
           hasAutoRecordParticipant: true,
         },
         now: NOW,
-        isRecallRecordingBotEnabledForWorkspace: true,
       }),
     ).toEqual({
       shouldRequestBot: false,
@@ -142,31 +136,10 @@ describe('resolveRecallRecordingBotPolicyResult', () => {
           hasAutoRecordParticipant: true,
         },
         now: NOW,
-        isRecallRecordingBotEnabledForWorkspace: true,
       }),
     ).toEqual({
       shouldRequestBot: false,
       reason: 'EVENT_CANCELED',
-    });
-  });
-
-  it('cancels policy when the workspace bot is disabled', () => {
-    expect(
-      resolveRecallRecordingBotPolicyResult({
-        input: {
-          meetingBotPreference: RecallRecordingBotPreference.ON,
-          isCanceled: false,
-          startsAt: FUTURE_STARTS_AT,
-          endsAt: FUTURE_ENDS_AT,
-          conferenceLinkUrl: 'https://meet.example.com/team-sync',
-          hasAutoRecordParticipant: true,
-        },
-        now: NOW,
-        isRecallRecordingBotEnabledForWorkspace: false,
-      }),
-    ).toEqual({
-      shouldRequestBot: false,
-      reason: 'WORKSPACE_BOT_DISABLED',
     });
   });
 });

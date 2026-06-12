@@ -1,18 +1,12 @@
-import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { STALE_RECALL_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/stale-recall-state-logic-function-universal-identifier';
 import { STALE_RECALL_STATE_CRON_PATTERN } from 'src/logic-functions/constants/stale-recall-state-cron-pattern';
 import {
-  cancelOpenCallRecordingRequests,
-  type CancelOpenCallRecordingRequestsResult,
-} from 'src/logic-functions/flows/cancel-open-call-recording-requests.util';
-import {
   convergeDivergedCallRecordings,
   type ConvergeDivergedCallRecordingsResult,
 } from 'src/logic-functions/flows/converge-diverged-call-recordings.util';
-import { getRecallRecordingBotEnabled } from 'src/logic-functions/utils/get-recall-recording-bot-enabled.util';
 import {
   healCallRecordingsMissingRecallBot,
   type HealCallRecordingsMissingRecallBotResult,
@@ -36,9 +30,7 @@ const handler = async (): Promise<object> => {
   const now = new Date();
   const client = new CoreApiClient();
 
-  const disabledCancelResult =
-    await cancelOpenCallRecordingRequestsIfDisabled(client);
-  const botlessHealResult = await healCallRecordingsMissingRecallBotIfEnabled(
+  const botlessHealResult = await healCallRecordingsMissingRecallBotSafely(
     client,
     now,
   );
@@ -56,42 +48,21 @@ const handler = async (): Promise<object> => {
   );
 
   return {
-    ...(isUndefined(disabledCancelResult) ? {} : { disabledCancelResult }),
-    ...(isUndefined(botlessHealResult) ? {} : { botlessHealResult }),
+    botlessHealResult,
     orphanedBotReapingResult,
     statusConvergenceResult,
     pendingTranscriptResult,
   };
 };
 
-const healCallRecordingsMissingRecallBotIfEnabled = async (
+const healCallRecordingsMissingRecallBotSafely = async (
   client: CoreApiClient,
   now: Date,
-): Promise<
-  HealCallRecordingsMissingRecallBotResult | StepFailure | undefined
-> => {
-  if (!getRecallRecordingBotEnabled()) {
-    return undefined;
-  }
-
+): Promise<HealCallRecordingsMissingRecallBotResult | StepFailure> => {
   try {
     return await healCallRecordingsMissingRecallBot({ client, now });
   } catch (error) {
     return buildStepFailure('botless call recording healing', error);
-  }
-};
-
-const cancelOpenCallRecordingRequestsIfDisabled = async (
-  client: CoreApiClient,
-): Promise<CancelOpenCallRecordingRequestsResult | StepFailure | undefined> => {
-  if (getRecallRecordingBotEnabled()) {
-    return undefined;
-  }
-
-  try {
-    return await cancelOpenCallRecordingRequests({ client });
-  } catch (error) {
-    return buildStepFailure('disable-time request cancellation', error);
   }
 };
 
@@ -148,7 +119,7 @@ export default defineLogicFunction({
   universalIdentifier: STALE_RECALL_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'reconcile-stale-recall-state',
   description:
-    'Converges call recordings with Recall on a schedule: pulls stale bot statuses and overdue transcripts, finishes failed or disable-time cancellations, schedules bots for recordings still missing one, and reaps unclaimed bots. Reads calendar events only to heal already-decided recordings, never to discover meetings.',
+    'Converges call recordings with Recall on a schedule: pulls stale bot statuses and overdue transcripts, finishes failed cancellations, schedules bots for recordings still missing one, and reaps unclaimed bots. Reads calendar events only to heal already-decided recordings, never to discover meetings.',
   // Convergence may re-ingest missed media; transfers dominate the budget.
   timeoutSeconds: 300,
   handler,

@@ -22,7 +22,6 @@ import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calenda
 import { fetchCalendarEventsByStartsAtValues } from 'src/logic-functions/data/fetch-calendar-events-by-starts-at-values.util';
 import { findCallRecordingsByCalendarEventIds } from 'src/logic-functions/data/find-call-recordings-by-calendar-event-ids.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
-import { getRecallRecordingBotEnabled } from 'src/logic-functions/utils/get-recall-recording-bot-enabled.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { isWithinRecallBotAutoRecordJoinWindow } from 'src/logic-functions/domain/is-within-recall-bot-auto-record-join-window.util';
 import { rescheduleCallRecordingBot } from 'src/logic-functions/flows/reschedule-call-recording-bot.util';
@@ -69,8 +68,6 @@ const resolveRecallRecordingBotMeetingPolicyResults = async ({
   removedOccurrences?: RemovedRecallRecordingBotOccurrence[];
   now?: Date;
 }): Promise<RecallRecordingBotPolicyResultForMeeting[]> => {
-  const isRecallRecordingBotEnabledForWorkspace =
-    getRecallRecordingBotEnabled();
   const changedCalendarEvents = await fetchCalendarEventsByIds(
     client,
     getUniqueSortedIds(calendarEventIds),
@@ -78,11 +75,7 @@ const resolveRecallRecordingBotMeetingPolicyResults = async ({
   const affectedMeetingKeys = new Set<string>();
   const occurrenceStartsAtAnchors = new Set<string>();
   const changedCalendarEventPolicyResults = changedCalendarEvents.map(
-    (calendarEvent) =>
-      buildRecallRecordingBotPolicyResult(calendarEvent, {
-        isRecallRecordingBotEnabledForWorkspace,
-        now,
-      }),
+    (calendarEvent) => buildRecallRecordingBotPolicyResult(calendarEvent, now),
   );
 
   for (const policyResult of changedCalendarEventPolicyResults) {
@@ -125,10 +118,7 @@ const resolveRecallRecordingBotMeetingPolicyResults = async ({
 
     policyResultsByCalendarEventId.set(
       calendarEvent.id,
-      buildRecallRecordingBotPolicyResult(calendarEvent, {
-        isRecallRecordingBotEnabledForWorkspace,
-        now,
-      }),
+      buildRecallRecordingBotPolicyResult(calendarEvent, now),
     );
   }
 

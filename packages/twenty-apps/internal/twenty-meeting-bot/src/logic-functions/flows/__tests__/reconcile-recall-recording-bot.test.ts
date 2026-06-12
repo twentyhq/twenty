@@ -4,17 +4,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/compute-call-recording-id-for-meeting.util';
 import { reconcileRecallRecordingBotForCalendarEventIds } from 'src/logic-functions/flows/reconcile-recall-recording-bot.util';
 
-const getRecallRecordingBotEnabledMock = vi.hoisted(() => vi.fn());
 const scheduleRecallBotMock = vi.hoisted(() => vi.fn());
 const rescheduleRecallBotMock = vi.hoisted(() => vi.fn());
 const cancelRecallBotMock = vi.hoisted(() => vi.fn());
-
-vi.mock(
-  'src/logic-functions/utils/get-recall-recording-bot-enabled.util',
-  () => ({
-    getRecallRecordingBotEnabled: getRecallRecordingBotEnabledMock,
-  }),
-);
 
 vi.mock('src/logic-functions/recall-api/schedule-recall-bot.util', () => ({
   scheduleRecallBot: scheduleRecallBotMock,
@@ -258,8 +250,6 @@ describe('reconcileRecallRecordingBotForCalendarEventIds', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     vi.spyOn(console, 'error').mockImplementation(() => {});
-    getRecallRecordingBotEnabledMock.mockReset();
-    getRecallRecordingBotEnabledMock.mockReturnValue(true);
     scheduleRecallBotMock.mockReset();
     scheduleRecallBotMock.mockResolvedValue({
       ok: true,

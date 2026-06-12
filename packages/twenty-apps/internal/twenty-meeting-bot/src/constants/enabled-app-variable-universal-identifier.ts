@@ -1,2 +1,0 @@
-export const ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER =
-  '2104dce8-0dcb-4671-bb7b-612b2af09dca';

@@ -1,4 +1,5 @@
 import { SettingsAccountsCalendarChannelsContainer } from '@/settings/accounts/components/SettingsAccountsCalendarChannelsContainer';
+import { SettingsAccountsMeetingBotAutoRecordSection } from '@/settings/accounts/components/SettingsAccountsMeetingBotAutoRecordSection';
 import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
 import { SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID } from '@/settings/accounts/constants/SettingsAccountCalendarChannelsTabListComponentId';
 import { useMyCalendarChannels } from '@/settings/accounts/hooks/useMyCalendarChannels';
@@ -41,11 +42,14 @@ export const SettingsAccountsCalendars = () => {
     }
 
     return (
-      <Section>
-        <SettingsAccountsCalendarChannelsContainer
-          calendarChannels={calendarChannels}
-        />
-      </Section>
+      <>
+        <Section>
+          <SettingsAccountsCalendarChannelsContainer
+            calendarChannels={calendarChannels}
+          />
+        </Section>
+        <SettingsAccountsMeetingBotAutoRecordSection />
+      </>
     );
   };
 

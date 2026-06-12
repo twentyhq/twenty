@@ -8,18 +8,12 @@ import { type RecallRecordingBotPolicyResult } from 'src/logic-functions/types/r
 type ResolveRecallRecordingBotPolicyResultArgs = {
   input: RecallRecordingBotPolicyInput;
   now: Date;
-  isRecallRecordingBotEnabledForWorkspace: boolean;
 };
 
 export const resolveRecallRecordingBotPolicyResult = ({
   input,
   now,
-  isRecallRecordingBotEnabledForWorkspace,
 }: ResolveRecallRecordingBotPolicyResultArgs): RecallRecordingBotPolicyResult => {
-  if (!isRecallRecordingBotEnabledForWorkspace) {
-    return botNotRequired('WORKSPACE_BOT_DISABLED');
-  }
-
   if (input.isCanceled) {
     return botNotRequired('EVENT_CANCELED');
   }

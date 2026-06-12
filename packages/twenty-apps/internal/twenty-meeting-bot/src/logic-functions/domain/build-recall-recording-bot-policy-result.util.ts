@@ -4,17 +4,9 @@ import { type RecallRecordingBotPolicyResultForCalendarEvent } from 'src/logic-f
 import { computeRealMeetingKey } from 'src/logic-functions/domain/compute-real-meeting-key.util';
 import { resolveRecallRecordingBotPolicyResult } from 'src/logic-functions/domain/resolve-recall-recording-bot-policy-result.util';
 
-type BuildRecallRecordingBotPolicyResultContext = {
-  isRecallRecordingBotEnabledForWorkspace: boolean;
-  now: Date;
-};
-
 export const buildRecallRecordingBotPolicyResult = (
   calendarEvent: RecallRecordingBotPolicyCalendarEventInput,
-  {
-    isRecallRecordingBotEnabledForWorkspace,
-    now,
-  }: BuildRecallRecordingBotPolicyResultContext,
+  now: Date,
 ): RecallRecordingBotPolicyResultForCalendarEvent => {
   const realMeetingKey = computeRealMeetingKey({
     calendarEventId: calendarEvent.id,
@@ -41,7 +33,6 @@ export const buildRecallRecordingBotPolicyResult = (
       hasAutoRecordParticipant,
     },
     now,
-    isRecallRecordingBotEnabledForWorkspace,
   });
 
   return {

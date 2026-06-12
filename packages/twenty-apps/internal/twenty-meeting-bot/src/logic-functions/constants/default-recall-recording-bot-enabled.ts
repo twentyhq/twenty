@@ -1,1 +1,0 @@
-export const DEFAULT_RECALL_RECORDING_BOT_ENABLED = false;
