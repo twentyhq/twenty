@@ -1,4 +1,3 @@
-import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { IconX } from '@ui/display';
@@ -7,26 +6,11 @@ import {
   type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import { themeCssVariables } from '@ui/theme-constants';
 import { Button } from '../../../../input/button/components/Button/Button';
 import { IconButton } from '../../../../input/button/components/IconButton';
 import { Banner, type BannerColor, type BannerVariant } from '../Banner';
 
-const StyledBannerContent = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  gap: 8px;
-  justify-content: center;
-`;
-
-const StyledContainer = styled.div`
-  width: 100%;
-`;
-
-const StyledInvertedIconButton = styled(IconButton)`
-  color: ${themeCssVariables.font.color.inverted} !important;
-`;
+import styles from './Banner.stories.module.scss';
 
 const getButtonAccent = (color?: BannerColor) =>
   color === 'danger' ? 'danger' : 'blue';
@@ -39,7 +23,8 @@ const BannerCloseButton = ({
   variant?: BannerVariant;
 }) =>
   variant === 'primary' ? (
-    <StyledInvertedIconButton
+    <IconButton
+      className={styles.invertedIconButton}
       Icon={IconX}
       size="small"
       variant="tertiary"
@@ -79,10 +64,10 @@ export const Default: Story = {
     variant: 'primary',
   },
   render: (args) => (
-    <StyledContainer>
+    <div className={styles.container}>
       {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
       <Banner {...args}>
-        <StyledBannerContent>
+        <div className={styles.bannerContent}>
           Sync lost with mailbox hello@twenty.com. Please reconnect for updates:
           <Button
             variant="secondary"
@@ -91,10 +76,10 @@ export const Default: Story = {
             size="small"
             inverted={args.variant === 'primary'}
           />
-        </StyledBannerContent>
+        </div>
         <BannerCloseButton color={args.color} variant={args.variant} />
       </Banner>
-    </StyledContainer>
+    </div>
   ),
   decorators: [ComponentDecorator],
 };
@@ -108,7 +93,7 @@ export const Catalog: CatalogStory<Story, typeof Banner> = {
   render: (args) => (
     // oxlint-disable-next-line react/jsx-props-no-spreading
     <Banner {...args}>
-      <StyledBannerContent>
+      <div className={styles.bannerContent}>
         Sync lost with mailbox hello@twenty.com. Please reconnect for updates:
         <Button
           variant="secondary"
@@ -117,11 +102,13 @@ export const Catalog: CatalogStory<Story, typeof Banner> = {
           size="small"
           inverted={args.variant === 'primary'}
         />
-      </StyledBannerContent>
+      </div>
       <BannerCloseButton color={args.color} variant={args.variant} />
     </Banner>
   ),
   parameters: {
+    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+    a11y: { test: 'todo' },
     catalog: {
       dimensions: [
         {

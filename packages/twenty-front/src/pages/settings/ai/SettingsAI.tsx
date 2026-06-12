@@ -14,10 +14,10 @@ import {
   IconPlus,
   IconSparkles,
   IconTool,
-} from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+} from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { Section } from 'twenty-ui-deprecated/layout';
+import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
 import { SettingsAgentSkillsTab } from '~/pages/settings/ai/components/SettingsAgentSkillsTab';
 import { SettingsAgentToolsTab } from '~/pages/settings/ai/components/SettingsAgentToolsTab';
 import { SettingsAiModelsTab } from '~/pages/settings/ai/components/SettingsAiModelsTab';

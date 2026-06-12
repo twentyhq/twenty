@@ -8,9 +8,13 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconArchive, IconDotsVertical, IconTrash } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import {
+  IconArchive,
+  IconDotsVertical,
+  IconTrash,
+} from 'twenty-ui-deprecated/display';
+import { LightIconButton } from 'twenty-ui-deprecated/input';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
 import { SsoIdentityProviderStatus } from '~/generated-metadata/graphql';
 
 type SettingsSecuritySSORowDropdownMenuProps = {

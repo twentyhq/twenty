@@ -57,3 +57,4 @@ TRANSLATION_QA_REPORT.md
 .playwright-cli/
 output/playwright/
 screenshots/
+!**/screenshots/

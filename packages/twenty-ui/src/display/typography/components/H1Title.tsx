@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from '@ui/theme-constants';
+import { clsx } from 'clsx';
+
+import styles from './H1Title.module.scss';
 
 type H1TitleProps = {
   title: ReactNode;
@@ -14,16 +15,11 @@ export enum H1TitleFontColor {
   Tertiary = 'tertiary',
 }
 
-const StyledTitle = styled.h2<{
-  fontColor: H1TitleFontColor;
-}>`
-  color: ${({ fontColor }) => themeCssVariables.font.color[fontColor]};
-  font-size: ${themeCssVariables.font.size.lg};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  line-height: ${themeCssVariables.text.lineHeight.md};
-  margin: 0;
-  margin-bottom: ${themeCssVariables.spacing[4]};
-`;
+const fontColorClassNames: Record<H1TitleFontColor, string> = {
+  [H1TitleFontColor.Primary]: styles.primary,
+  [H1TitleFontColor.Secondary]: styles.secondary,
+  [H1TitleFontColor.Tertiary]: styles.tertiary,
+};
 
 export const H1Title = ({
   title,
@@ -31,8 +27,10 @@ export const H1Title = ({
   className,
 }: H1TitleProps) => {
   return (
-    <StyledTitle fontColor={fontColor} className={className}>
+    <h2
+      className={clsx(styles.title, fontColorClassNames[fontColor], className)}
+    >
       {title}
-    </StyledTitle>
+    </h2>
   );
 };

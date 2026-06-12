@@ -1,17 +1,15 @@
-import { styled } from '@linaria/react';
-import { type IconComponent } from '@ui/display';
 import {
   type FunctionComponent,
   type MouseEvent,
   type ReactElement,
 } from 'react';
 
+import { type IconComponent } from '@ui/display';
+
+import { clsx } from 'clsx';
 import { LightIconButton, type LightIconButtonProps } from './LightIconButton';
 
-const StyledLightIconButtonGroupContainer = styled.div`
-  display: inline-flex;
-  gap: 2px;
-`;
+import styles from './LightIconButtonGroup.module.scss';
 
 export type LightIconButtonGroupProps = Pick<
   LightIconButtonProps,
@@ -21,6 +19,7 @@ export type LightIconButtonGroupProps = Pick<
     Wrapper?: FunctionComponent<{ iconButton: ReactElement }>;
     Icon: IconComponent;
     accent?: LightIconButtonProps['accent'];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onClick?: (event: MouseEvent<any>) => void;
     disabled?: boolean;
     ariaLabel?: string;
@@ -33,7 +32,7 @@ export const LightIconButtonGroup = ({
   size,
   className,
 }: LightIconButtonGroupProps) => (
-  <StyledLightIconButtonGroupContainer className={className}>
+  <div className={clsx(styles.container, className)}>
     {iconButtons.map(
       ({ Wrapper, Icon, accent, onClick, ariaLabel, dataTestId }, index) => {
         const iconButton = (
@@ -59,5 +58,5 @@ export const LightIconButtonGroup = ({
         );
       },
     )}
-  </StyledLightIconButtonGroupContainer>
+  </div>
 );

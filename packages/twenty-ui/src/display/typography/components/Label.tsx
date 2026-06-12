@@ -1,20 +1,8 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from '@ui/theme-constants';
+import { clsx } from 'clsx';
+
+import styles from './Label.module.scss';
 
 export type LabelVariant = 'default' | 'small';
-
-const StyledLabel = styled.div<{ variant?: LabelVariant }>`
-  color: ${themeCssVariables.font.color.light};
-  font-size: ${({ variant = 'default' }) => {
-    switch (variant) {
-      case 'default':
-        return '11px';
-      case 'small':
-        return '9px';
-    }
-  }};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-`;
 
 type LabelProps = {
   variant?: LabelVariant;
@@ -22,10 +10,14 @@ type LabelProps = {
   className?: string;
 };
 
-export const Label = ({ variant, children, className }: LabelProps) => {
+export const Label = ({
+  variant = 'default',
+  children,
+  className,
+}: LabelProps) => {
   return (
-    <StyledLabel variant={variant} className={className}>
+    <div className={clsx(styles.label, styles[variant], className)}>
       {children}
-    </StyledLabel>
+    </div>
   );
 };

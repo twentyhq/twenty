@@ -15,7 +15,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconForbid } from 'twenty-ui/display';
+import { IconForbid } from 'twenty-ui-deprecated/display';
 
 export const MorphRelationManyToOneFieldInput = () => {
   const { fieldDefinition, recordId } = useContext(FieldContext);

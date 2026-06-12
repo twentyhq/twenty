@@ -6,8 +6,8 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { styled } from '@linaria/react';
 import { useMemo, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItemSelectTag } from 'twenty-ui/navigation';
+import { type SelectOption } from 'twenty-ui-deprecated/input';
+import { MenuItemSelectTag } from 'twenty-ui-deprecated/navigation';
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
   margin-bottom: 0px !important;
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};

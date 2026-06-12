@@ -13,8 +13,11 @@ import {
   IconLock,
   TooltipDelay,
   useIcons,
-} from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 

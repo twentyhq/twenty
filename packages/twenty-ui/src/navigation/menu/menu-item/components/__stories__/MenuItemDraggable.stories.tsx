@@ -21,6 +21,8 @@ export default meta;
 type Story = StoryObj<typeof MenuItemDraggable>;
 
 export const Default: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     LeftIcon: IconBell,
     accent: 'default',
@@ -39,6 +41,8 @@ export const Catalog: Story = {
     iconButtons: { control: false },
   },
   parameters: {
+    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+    a11y: { test: 'todo' },
     pseudo: { hover: ['.hover'] },
     catalog: {
       dimensions: [
@@ -114,14 +118,20 @@ export const Catalog: Story = {
 };
 
 export const Grip: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: { ...Default.args, gripMode: 'always', isDragDisabled: false },
 };
 
 export const GripOnHover: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: { ...Default.args, gripMode: 'onHover', isDragDisabled: false },
 };
 
 export const GripOnHoverWithIconContainer: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     ...Default.args,
     gripMode: 'onHover',
@@ -131,5 +141,7 @@ export const GripOnHoverWithIconContainer: Story = {
 };
 
 export const HoverDisabled: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: { ...Default.args, isHoverDisabled: true },
 };

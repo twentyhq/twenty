@@ -7,7 +7,10 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
+import {
+  isWorkspaceActiveOrSuspended,
+  WorkspaceActivationStatus,
+} from 'twenty-shared/workspace';
 import { type QueryRunner, In, IsNull, Not, Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -19,6 +22,7 @@ import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-co
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailVerificationTrigger } from 'src/engine/core-modules/email-verification/email-verification.constants';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -60,15 +64,37 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     private readonly workspaceQueueService: MessageQueueService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {
     super(userRepository);
+  }
+
+  async refreshWorkspaceIfPendingOrOngoingCreation<
+    TWorkspace extends Pick<WorkspaceEntity, 'id' | 'activationStatus'>,
+  >(workspace: TWorkspace): Promise<TWorkspace | WorkspaceEntity> {
+    const isPendingOrOngoingCreation =
+      workspace.activationStatus ===
+        WorkspaceActivationStatus.PENDING_CREATION ||
+      workspace.activationStatus === WorkspaceActivationStatus.ONGOING_CREATION;
+
+    if (!isPendingOrOngoingCreation) {
+      return workspace;
+    }
+
+    const freshWorkspace = await this.workspaceService.findById(workspace.id);
+
+    return freshWorkspace ?? workspace;
   }
 
   async loadWorkspaceMember(
     user: Pick<AuthContextUser, 'id'>,
     workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>,
   ) {
-    if (!isWorkspaceActiveOrSuspended(workspace)) {
+    // The given workspace can be a stale cache snapshot right after activateWorkspace ran on another instance (#20322)
+    const refreshedWorkspace =
+      await this.refreshWorkspaceIfPendingOrOngoingCreation(workspace);
+
+    if (!isWorkspaceActiveOrSuspended(refreshedWorkspace)) {
       return null;
     }
 
@@ -97,7 +123,11 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>,
     withDeleted = false,
   ) {
-    if (!isWorkspaceActiveOrSuspended(workspace)) {
+    // The given workspace can be a stale cache snapshot right after activateWorkspace ran on another instance (#20322)
+    const refreshedWorkspace =
+      await this.refreshWorkspaceIfPendingOrOngoingCreation(workspace);
+
+    if (!isWorkspaceActiveOrSuspended(refreshedWorkspace)) {
       return [];
     }
 
@@ -444,9 +474,15 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
 
     user.isEmailVerified = true;
 
-    return queryRunner
+    const savedUser = queryRunner
       ? await queryRunner.manager.save(UserEntity, user)
       : await this.userRepository.save(user);
+
+    if (!queryRunner) {
+      await this.coreEntityCacheService.invalidate('user', userId);
+    }
+
+    return savedUser;
   }
 
   async updateEmailFromVerificationToken(userId: string, email: string) {
@@ -455,6 +491,8 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     user.email = email;
 
     const updatedUser = await this.userRepository.save(user);
+
+    await this.coreEntityCacheService.invalidate('user', user.id);
 
     await this.enqueueWorkspaceMemberEmailUpdate({
       userId: user.id,
@@ -510,6 +548,12 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
         subCode: UserExceptionCode.EMAIL_ALREADY_IN_USE,
         userFriendlyMessage: msg`Email already in use`,
       });
+    }
+
+    if (!this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
+      await this.updateEmailFromVerificationToken(user.id, normalizedEmail);
+
+      return;
     }
 
     const workspaceDomainConfig =

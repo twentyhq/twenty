@@ -5,7 +5,7 @@
   "categories": {
     "correctness": "off"
   },
-  "ignorePatterns": ["node_modules", "generated"],
+  "ignorePatterns": ["node_modules", "generated", "**/*.module.scss.d.ts"],
   "rules": {
     "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
     "no-console": [

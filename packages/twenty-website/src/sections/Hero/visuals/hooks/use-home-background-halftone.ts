@@ -13,7 +13,7 @@ import { useEffect, useState, type RefObject } from 'react';
 import * as THREE from 'three';
 
 const HOME_BACKGROUND_IMAGE_URL =
-  '/illustrations/generated/home-background-bridge.png';
+  '/illustrations/generated/home-background-bridge.webp';
 
 const REFERENCE_PREVIEW_DISTANCE = 4;
 

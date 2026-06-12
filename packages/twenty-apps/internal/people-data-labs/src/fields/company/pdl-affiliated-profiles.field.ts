@@ -13,7 +13,8 @@ export default defineField({
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
   type: FieldType.ARRAY,
   name: 'pdlAffiliatedProfiles',
-  label: 'Affiliated Profiles',
-  description: 'Affiliated company profiles returned by People Data Labs.',
+  label: 'Profiles',
+  description: 'Web and social profile URLs returned by People Data Labs.',
+  icon: 'IconWorldWww',
   isNullable: true,
 });

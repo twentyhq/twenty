@@ -6,18 +6,43 @@ permissions:
 on:
   push:
     tags:
-      - 'v*'
+      - 'twenty/v*'
+      - 'sdk/v*'
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -euo pipefail {0}
 
 jobs:
-  deploy-tag:
+  dispatch-tag:
     timeout-minutes: 3
     runs-on: ubuntu-latest
     steps:
+      - name: Resolve dispatch event from tag family
+        id: target
+        env:
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          case "$REF_NAME" in
+            twenty/v*)
+              event_type=auto-deploy-twenty
+              ;;
+            sdk/v*)
+              event_type=auto-publish-npm
+              ;;
+            *)
+              echo "Unsupported tag '$REF_NAME', expected 'twenty/v*' or 'sdk/v*'." >&2
+              exit 1
+              ;;
+          esac
+          printf 'event_type=%s\n' "$event_type" >> "$GITHUB_OUTPUT"
+
       - name: Repository Dispatch
         env:
           GH_TOKEN: ${{ secrets.TWENTY_INFRA_TOKEN }}
+          EVENT_TYPE: ${{ steps.target.outputs.event_type }}
           REF_NAME: ${{ github.ref_name }}
         run: |
           gh api repos/twentyhq/twenty-infra/dispatches \
-            -f event_type=auto-deploy-tag \
+            -f "event_type=$EVENT_TYPE" \
             -f "client_payload[github][ref_name]=$REF_NAME"

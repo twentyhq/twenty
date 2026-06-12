@@ -1,15 +1,10 @@
 import { useContext } from 'react';
 
-import { styled } from '@linaria/react';
-
 import { IconChartBar } from '@ui/display/icon/components/TablerIcons';
 import { type IconComponentProps } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme-constants';
 
-const StyledRotatedIconWrapper = styled.div`
-  display: inline-flex;
-  transform: rotate(90deg);
-`;
+import styles from './IconChartBarHorizontal.module.scss';
 
 type IconChartBarHorizontalProps = Pick<
   IconComponentProps,
@@ -22,8 +17,8 @@ export const IconChartBarHorizontal = (props: IconChartBarHorizontalProps) => {
   const stroke = props.stroke ?? theme.icon.stroke.sm;
 
   return (
-    <StyledRotatedIconWrapper>
+    <div className={styles.rotatedIconWrapper}>
       <IconChartBar size={size} stroke={stroke} color={props.color} />
-    </StyledRotatedIconWrapper>
+    </div>
   );
 };

@@ -1,14 +1,9 @@
-import React, { useContext } from 'react';
 import { motion } from 'framer-motion';
-import { styled } from '@linaria/react';
+import React, { useContext } from 'react';
 
 import { ThemeContext } from '@ui/theme-constants';
 
-const StyledAnimatedContainer = styled(motion.div)`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-`;
+import styles from './AnimatedCircleLoading.module.scss';
 
 export const AnimatedCircleLoading = ({
   children,
@@ -18,7 +13,8 @@ export const AnimatedCircleLoading = ({
   const { theme } = useContext(ThemeContext);
 
   return (
-    <StyledAnimatedContainer
+    <motion.div
+      className={styles.container}
       initial={{ rotate: 0 }}
       animate={{
         rotate: 360,
@@ -30,6 +26,6 @@ export const AnimatedCircleLoading = ({
       }}
     >
       {children}
-    </StyledAnimatedContainer>
+    </motion.div>
   );
 };

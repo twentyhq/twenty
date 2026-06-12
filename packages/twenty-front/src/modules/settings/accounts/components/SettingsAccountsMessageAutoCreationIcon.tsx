@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 type SettingsAccountsMessageAutoCreationIconProps = {
   className?: string;

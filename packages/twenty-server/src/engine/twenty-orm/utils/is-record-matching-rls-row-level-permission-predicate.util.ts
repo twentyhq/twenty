@@ -81,7 +81,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
   flatFieldMetadataMaps,
   shouldIgnoreSoftDeleteDefaultFilter,
 }: {
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   record: any;
   filter: RecordGqlOperationFilter;
   flatObjectMetadata: FlatObjectMetadata;
@@ -426,9 +426,10 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
           });
         }
 
-        throw new Error(
-          `Not implemented yet, use UUID filter instead on the corresponding "${filterKey}Id" field`,
-        );
+        return isMatchingUUIDFilter({
+          uuidFilter: filterValue as UUIDFilter,
+          value: recordFieldValue?.id ?? null,
+        });
       }
       case FieldMetadataType.TS_VECTOR: {
         return isMatchingTSVectorFilter({

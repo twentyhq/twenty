@@ -8,8 +8,11 @@ import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton';
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { IMaskInput } from 'react-imask';
-import { type IconComponent } from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { type IconComponent } from 'twenty-ui-deprecated/display';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { getSeparatorsForNumberFormat } from '~/utils/format/getSeparatorsForNumberFormat';
 
 export const StyledIMaskInput = styled.div`

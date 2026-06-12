@@ -468,6 +468,20 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       }
     }
 
+    for (const standaloneViewFieldManifest of manifest.viewFields ?? []) {
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity: fromViewFieldManifestToUniversalFlatViewField({
+          viewFieldManifest: standaloneViewFieldManifest,
+          viewUniversalIdentifier:
+            standaloneViewFieldManifest.viewUniversalIdentifier,
+          applicationUniversalIdentifier,
+          now,
+        }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatViewFieldMaps,
+      });
+    }
+
     for (const navigationMenuItemManifest of manifest.navigationMenuItems ??
       []) {
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({

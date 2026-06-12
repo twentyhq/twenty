@@ -7,7 +7,7 @@ import {
   HeadingPart,
   StepperProgressRail,
 } from '@/design-system/components';
-import { INFORMATIVE_ICONS } from '@/icons';
+import { INFORMATIVE_ICONS, type InformativeIconKey } from '@/icons';
 import { StepperSwipeDeck } from '@/sections/Stepper';
 import { theme } from '@/theme';
 import type { MessageDescriptor } from '@lingui/core';
@@ -18,7 +18,7 @@ import type { ReactNode } from 'react';
 type ProductStepperContentStepType = {
   body: MessageDescriptor;
   heading: ReactNode;
-  icon: string;
+  icon: InformativeIconKey;
 };
 
 type ProductStepperLayoutMode = 'scroll' | 'swipe';
@@ -151,14 +151,10 @@ function renderProductStepBlock(
     <>
       <StepRowHeader>
         <StepIconBox data-active={String(isActive)}>
-          {Icon ? (
-            <Icon
-              color={
-                isActive ? theme.colors.primary.background[100] : iconColor
-              }
-              size={14}
-            />
-          ) : null}
+          <Icon
+            color={isActive ? theme.colors.primary.background[100] : iconColor}
+            size={14}
+          />
         </StepIconBox>
         {step.heading}
       </StepRowHeader>

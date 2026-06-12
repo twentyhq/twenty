@@ -16,7 +16,7 @@ import { ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-m
 
 @ObjectType('Object')
 @Authorize({
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   authorize: (context: any) => ({
     workspaceId: { eq: context?.req?.workspace?.id },
   }),
@@ -62,7 +62,10 @@ export class ObjectMetadataDTO {
   @Field({ nullable: true })
   color?: string;
 
-  @FilterableField()
+  @Field({
+    deprecationReason:
+      'isCustom is derived from the owning application and will be removed; an object is custom when it does not belong to the twenty-standard application.',
+  })
   isCustom: boolean;
 
   @FilterableField()

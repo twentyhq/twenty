@@ -23,7 +23,7 @@ import { DeleteRecordWorkflowAction } from 'src/modules/workflow/workflow-execut
 import { FindRecordsWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/find-records.workflow-action';
 import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/update-record.workflow-action';
 import { UpsertRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/upsert-record.workflow-action';
-import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { WorkflowActionType } from 'twenty-shared/workflow';
 
 @Injectable()
 export class WorkflowActionFactory {

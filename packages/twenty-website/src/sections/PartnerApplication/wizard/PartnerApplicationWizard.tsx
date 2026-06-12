@@ -16,6 +16,7 @@ import { IdentityStep } from '@/sections/PartnerApplication/wizard/steps/Identit
 import { ProfileStep } from '@/sections/PartnerApplication/wizard/steps/ProfileStep';
 import { ExpertiseStep } from '@/sections/PartnerApplication/wizard/steps/ExpertiseStep';
 import { CommercialsStep } from '@/sections/PartnerApplication/wizard/steps/CommercialsStep';
+import { PartnerApplicationSuccess } from '@/sections/PartnerApplication/wizard/PartnerApplicationSuccess';
 import {
   buildPartnerApplicationRequestBody,
   getCurrentStepId,
@@ -124,14 +125,6 @@ const FieldErrorBanner = styled.p`
   margin: 0;
 `;
 
-const SuccessView = styled.div`
-  align-items: stretch;
-  display: flex;
-  flex-direction: column;
-  gap: clamp(16px, 4vh, 32px);
-  margin-top: clamp(16px, 4vh, 32px);
-`;
-
 function StepRenderer({
   controller,
 }: {
@@ -160,12 +153,14 @@ type WizardSlots = {
 type WizardProps = {
   resetSignal: number;
   onSuccess: () => void;
+  onSubmitted?: () => void;
   slots?: WizardSlots;
 };
 
 export function PartnerApplicationWizard({
   resetSignal,
   onSuccess,
+  onSubmitted,
   slots,
 }: WizardProps) {
   const { i18n } = useLingui();
@@ -237,6 +232,7 @@ export function PartnerApplicationWizard({
           return;
         }
         setSubmitted();
+        onSubmitted?.();
       } catch {
         setSubmitError(
           i18n._(PARTNER_APPLICATION_MODAL_COPY.validation.submitFailed),
@@ -252,45 +248,25 @@ export function PartnerApplicationWizard({
       setSubmitError,
       setSubmitting,
       setSubmitted,
+      onSubmitted,
       i18n,
     ],
   );
 
   if (state.isSubmitted) {
     return (
-      <>
-        <TitleBlock>
-          <Title
-            render={
-              <TitleHeadingWrapper>
-                <Heading as="h2" size="lg" weight="light">
-                  <HeadingPart fontFamily="serif" fontWeight="light">
-                    {i18n._(PARTNER_APPLICATION_MODAL_COPY.successTitleSerif)}
-                  </HeadingPart>
-                  <br />
-                  <HeadingPart fontFamily="sans" fontWeight="light">
-                    {i18n._(PARTNER_APPLICATION_MODAL_COPY.successTitleSans)}
-                  </HeadingPart>
-                </Heading>
-              </TitleHeadingWrapper>
-            }
-          />
-        </TitleBlock>
-        <SuccessView>
-          <Modal.Footer>
-            <PrimaryButton type="button" onClick={onSuccess}>
-              <ButtonShape
-                fillColor={theme.colors.primary.background[100]}
-                height={BUTTON_HEIGHTS_PX.regular}
-                strokeColor="none"
-              />
-              <PrimaryLabel>
-                {i18n._(PARTNER_APPLICATION_MODAL_COPY.successClose)}
-              </PrimaryLabel>
-            </PrimaryButton>
-          </Modal.Footer>
-        </SuccessView>
-      </>
+      <PartnerApplicationSuccess
+        Title={Title}
+        Description={Description}
+        titleSerif={i18n._(PARTNER_APPLICATION_MODAL_COPY.successTitleSerif)}
+        titleSans={i18n._(PARTNER_APPLICATION_MODAL_COPY.successTitleSans)}
+        subtitle={i18n._(PARTNER_APPLICATION_MODAL_COPY.bookIntroSubtitle)}
+        bookLaterLabel={i18n._(PARTNER_APPLICATION_MODAL_COPY.bookLater)}
+        name={state.name}
+        email={state.email}
+        company={state.company}
+        onDismiss={onSuccess}
+      />
     );
   }
 

@@ -7,7 +7,7 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { SettingsAccountsBlocklistTableRow } from '@/settings/accounts/components/SettingsAccountsBlocklistTableRow';
 import { mockedBlocklist } from '@/settings/accounts/components/__stories__/mockedBlocklist';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 
 const onRemoveJestFn = fn();

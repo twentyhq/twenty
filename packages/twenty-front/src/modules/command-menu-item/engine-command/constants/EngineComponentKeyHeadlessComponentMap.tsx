@@ -28,6 +28,7 @@ import { ReplyToEmailThreadCommand } from '@/command-menu-item/engine-command/re
 import { EditRecordPageLayoutSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/record-page-layout/components/EditRecordPageLayoutSingleRecordCommand';
 import { SeeVersionWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/SeeVersionWorkflowRunSingleRecordCommand';
 import { SeeWorkflowWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/SeeWorkflowWorkflowRunSingleRecordCommand';
+import { RetryWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/RetryWorkflowRunSingleRecordCommand';
 import { StopWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/StopWorkflowRunSingleRecordCommand';
 import { SeeRunsWorkflowVersionSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-versions/components/SeeRunsWorkflowVersionSingleRecordCommand';
 import { SeeVersionsWorkflowVersionSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-versions/components/SeeVersionsWorkflowVersionSingleRecordCommand';
@@ -46,7 +47,11 @@ import { TidyUpWorkflowSingleRecordCommand } from '@/command-menu-item/engine-co
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { msg } from '@lingui/core/macro';
 import { AppPath, SettingsPath, SidePanelPages } from 'twenty-shared/types';
-import { IconHistory, IconSearch, IconSparkles } from 'twenty-ui/display';
+import {
+  IconHistory,
+  IconSearch,
+  IconSparkles,
+} from 'twenty-ui-deprecated/display';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
@@ -82,6 +87,9 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.TEST_WORKFLOW]: <TestWorkflowSingleRecordCommand />,
   [EngineComponentKey.STOP_WORKFLOW_RUN]: (
     <StopWorkflowRunSingleRecordCommand />
+  ),
+  [EngineComponentKey.RETRY_WORKFLOW_RUN]: (
+    <RetryWorkflowRunSingleRecordCommand />
   ),
   [EngineComponentKey.USE_AS_DRAFT_WORKFLOW_VERSION]: (
     <UseAsDraftWorkflowVersionSingleRecordCommand />

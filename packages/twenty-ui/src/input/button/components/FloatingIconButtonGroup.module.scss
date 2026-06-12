@@ -1,0 +1,11 @@
+.container {
+  backdrop-filter: blur(20px);
+  background-color: var(--t-background-primary);
+  border-radius: var(--t-border-radius-sm);
+  box-shadow:
+    0px 2px 4px 0px var(--t-background-transparent-light),
+    0px 0px 4px 0px var(--t-background-transparent-medium);
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+}

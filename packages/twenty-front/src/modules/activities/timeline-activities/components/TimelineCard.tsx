@@ -14,8 +14,11 @@ import {
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-} from 'twenty-ui/layout';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/layout';
+import {
+  MOBILE_VIEWPORT,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledMainContainer = styled.div`
   align-items: flex-start;

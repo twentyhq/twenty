@@ -1,9 +1,7 @@
-import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { OverflowingTextWithTooltip } from '@ui/display';
 import { Checkbox } from '@ui/input/components/Checkbox';
-import { themeCssVariables } from '@ui/theme-constants';
 import {
   StyledMenuItemBase,
   StyledMenuItemLabel,
@@ -11,23 +9,7 @@ import {
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
 
-const StyledLeftContentWithCheckboxContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  gap: ${themeCssVariables.spacing[2]};
-  width: 100%;
-`;
-
-const StyledTextContainer = styled.div`
-  display: flex;
-  align-items: center;
-  flex: 1 0 0;
-  gap: ${themeCssVariables.spacing[1]};
-  max-width: 100%;
-  text-overflow: ellipsis;
-  overflow: hidden;
-`;
+import styles from './MenuItemMultiSelectAvatar.module.scss';
 
 type MenuItemMultiSelectAvatarProps = {
   avatar?: ReactNode;
@@ -58,11 +40,11 @@ export const MenuItemMultiSelectAvatar = ({
       onClick={handleOnClick}
       isKeySelected={isKeySelected}
     >
-      <StyledLeftContentWithCheckboxContainer>
+      <div className={styles.leftContentWithCheckboxContainer}>
         <Checkbox checked={selected} />
         <StyledMenuItemLeftContent>
           {avatar}
-          <StyledTextContainer>
+          <div className={styles.textContainer}>
             <StyledMenuItemLabel>
               <OverflowingTextWithTooltip text={text} />
             </StyledMenuItemLabel>
@@ -74,9 +56,9 @@ export const MenuItemMultiSelectAvatar = ({
                 </StyledMenuItemLabelLight>
               </>
             )}
-          </StyledTextContainer>
+          </div>
         </StyledMenuItemLeftContent>
-      </StyledLeftContentWithCheckboxContainer>
+      </div>
     </StyledMenuItemBase>
   );
 };

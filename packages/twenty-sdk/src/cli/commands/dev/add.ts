@@ -3,7 +3,12 @@ import inquirer from 'inquirer';
 import { writeFile } from 'node:fs/promises';
 import { join, relative } from 'path';
 import { SyncableEntity } from 'twenty-shared/application';
-import { FieldMetadataType, ViewType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+  ViewType,
+} from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -24,6 +29,7 @@ import { getAgentBaseFile } from '@/cli/utilities/entity/entity-agent-template';
 import { getConnectionProviderBaseFile } from '@/cli/utilities/entity/entity-connection-provider-template';
 import { getSkillBaseFile } from '@/cli/utilities/entity/entity-skill-template';
 import { getViewBaseFile } from '@/cli/utilities/entity/entity-view-template';
+import { getViewFieldBaseFile } from '@/cli/utilities/entity/entity-view-field-template';
 import { ensureDir, pathExists } from '@/cli/utilities/file/fs-utils';
 import { kebabCase } from '@/cli/utilities/string/kebab-case';
 
@@ -186,6 +192,14 @@ export class EntityAddCommand {
         const file = getViewBaseFile({
           name,
         });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.ViewField: {
+        const name = await this.getEntityName(entity);
+
+        const file = getViewFieldBaseFile({});
 
         return { name, file };
       }
@@ -550,12 +564,20 @@ export class EntityAddCommand {
   }
 
   private async getFieldData() {
+    const isRelationFieldType = (type: FieldMetadataType | undefined) =>
+      type === FieldMetadataType.RELATION ||
+      type === FieldMetadataType.MORPH_RELATION;
+
     return inquirer.prompt<{
       name: string;
       label: string;
       type: FieldMetadataType;
       objectUniversalIdentifier: string;
       description: string;
+      relationTargetObjectMetadataUniversalIdentifier?: string;
+      relationTargetFieldMetadataUniversalIdentifier?: string;
+      relationType?: RelationType;
+      onDelete?: RelationOnDeleteAction;
     }>([
       {
         type: 'input',
@@ -608,6 +630,50 @@ export class EntityAddCommand {
         name: 'description',
         message: 'Enter a description for your field (optional):',
         default: '',
+      },
+      {
+        type: 'input',
+        name: 'relationTargetObjectMetadataUniversalIdentifier',
+        message:
+          'Enter the universalIdentifier of the target object of the relation:',
+        default: 'fill-later',
+        when: (answers) => isRelationFieldType(answers.type),
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'input',
+        name: 'relationTargetFieldMetadataUniversalIdentifier',
+        message:
+          'Enter the universalIdentifier of the target field on the related object:',
+        default: 'fill-later',
+        when: (answers) => isRelationFieldType(answers.type),
+        validate: (input: string) => {
+          if (!input || input.trim().length === 0) {
+            return 'Please enter a non empty string';
+          }
+          return true;
+        },
+      },
+      {
+        type: 'select',
+        name: 'relationType',
+        message: 'Select the relation type:',
+        choices: Object.values(RelationType),
+        default: RelationType.ONE_TO_MANY,
+        when: (answers) => isRelationFieldType(answers.type),
+      },
+      {
+        type: 'select',
+        name: 'onDelete',
+        message: 'Select the onDelete behavior:',
+        choices: Object.values(RelationOnDeleteAction),
+        default: RelationOnDeleteAction.CASCADE,
+        when: (answers) => isRelationFieldType(answers.type),
       },
     ]);
   }

@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconApps } from 'twenty-ui/display';
+import { IconApps } from 'twenty-ui-deprecated/display';
 
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';

@@ -10,9 +10,9 @@ import {
   IconCopy,
   IconDownload,
   IconInfoCircle,
-} from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { FindMarketplaceAppDetailDocument } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 

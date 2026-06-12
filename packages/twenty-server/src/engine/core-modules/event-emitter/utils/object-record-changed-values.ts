@@ -44,6 +44,39 @@ const getJoinColumnNameForRelationField = (
   );
 };
 
+export const computeUpdatedFieldsFromDiff = (
+  diff: Record<string, unknown>,
+  objectMetadataItem: FlatObjectMetadata,
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+): string[] => {
+  const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+    flatFieldMetadataMaps,
+    objectMetadataItem,
+  );
+
+  return Object.keys(diff).flatMap((diffKey) => {
+    const fieldId = fieldIdByName[diffKey];
+
+    if (!isDefined(fieldId)) {
+      return [diffKey];
+    }
+
+    const field = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: fieldId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+
+    if (isDefined(field) && isManyToOneRelationField(field)) {
+      return [
+        diffKey,
+        computeMorphOrRelationFieldJoinColumnName({ name: field.name }),
+      ];
+    }
+
+    return [diffKey];
+  });
+};
+
 export const objectRecordChangedValues = (
   oldRecord: Partial<ObjectRecord>,
   newRecord: Partial<ObjectRecord>,
@@ -79,7 +112,6 @@ export const objectRecordChangedValues = (
       if (
         key === 'updatedAt' ||
         key === 'searchVector' ||
-        field?.type === FieldMetadataType.POSITION ||
         (isDefined(field) && isManyToOneRelationField(field)) ||
         field?.type === FieldMetadataType.RELATION ||
         field?.type === FieldMetadataType.MORPH_RELATION
@@ -96,7 +128,7 @@ export const objectRecordChangedValues = (
       return diffAccumulator;
     },
 
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     {} as Record<string, { before: any; after: any }>,
   );
 
