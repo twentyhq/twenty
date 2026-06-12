@@ -10,13 +10,23 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
+// Re-syncs the UI capability flags of standard objects and fields with their
+// standard-application definitions. Covers two cases the rename instance
+// command cannot reach:
+// - isUICreatable is a new column (default true) and workflowRun,
+//   workflowVersion and workspaceMember must become non-creatable; the
+//   twenty-standard application is not re-synced on existing workspaces.
+// - standard fields created by pre-2.13 workspace upgrade commands during a
+//   cross-version upgrade lose their isUIEditable: false value (the column is
+//   hidden until the rename instance command has run), so they would
+//   otherwise stay editable after the rename backfill.
 @RegisteredWorkspaceCommand('2.13.0', 1781277460000)
 @Command({
-  name: 'upgrade:2-13:sync-standard-object-is-ui-creatable',
+  name: 'upgrade:2-13:sync-standard-ui-capability-flags',
   description:
-    'Re-sync isUICreatable on standard objects in existing workspaces (workflowRun, workflowVersion and workspaceMember become non-creatable through the generic UI; the twenty-standard application is not re-synced on existing workspaces)',
+    'Re-sync isUICreatable and isUIEditable on standard objects and isUIEditable on standard fields from the standard-application definitions',
 })
-export class SyncStandardObjectIsUiCreatableCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class SyncStandardUiCapabilityFlagsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -33,7 +43,7 @@ export class SyncStandardObjectIsUiCreatableCommand extends ActiveOrSuspendedWor
     const isDryRun = options.dryRun ?? false;
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Syncing isUICreatable on standard objects for workspace ${workspaceId}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Syncing standard UI capability flags for workspace ${workspaceId}`,
     );
 
     const { twentyStandardFlatApplication } =
@@ -41,10 +51,13 @@ export class SyncStandardObjectIsUiCreatableCommand extends ActiveOrSuspendedWor
         { workspaceId },
       );
 
-    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-      ]);
+    const {
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+    ]);
 
     const { allFlatEntityMaps: standardAllFlatEntityMaps } =
       computeTwentyStandardApplicationAllFlatEntityMaps({
@@ -65,7 +78,8 @@ export class SyncStandardObjectIsUiCreatableCommand extends ActiveOrSuspendedWor
 
         if (
           !isDefined(existingObject) ||
-          existingObject.isUICreatable === standardObject.isUICreatable
+          (existingObject.isUICreatable === standardObject.isUICreatable &&
+            existingObject.isUIEditable === standardObject.isUIEditable)
         ) {
           return undefined;
         }
@@ -73,26 +87,52 @@ export class SyncStandardObjectIsUiCreatableCommand extends ActiveOrSuspendedWor
         return {
           ...existingObject,
           isUICreatable: standardObject.isUICreatable,
+          isUIEditable: standardObject.isUIEditable,
           updatedAt: new Date().toISOString(),
         };
       })
       .filter(isDefined);
 
-    if (objectsToUpdate.length === 0) {
+    const fieldsToUpdate = Object.values(
+      standardAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .map((standardField) => {
+        const existingField =
+          existingFlatFieldMetadataMaps.byUniversalIdentifier[
+            standardField.universalIdentifier
+          ];
+
+        if (
+          !isDefined(existingField) ||
+          existingField.isUIEditable === standardField.isUIEditable
+        ) {
+          return undefined;
+        }
+
+        return {
+          ...existingField,
+          isUIEditable: standardField.isUIEditable,
+          updatedAt: new Date().toISOString(),
+        };
+      })
+      .filter(isDefined);
+
+    if (objectsToUpdate.length === 0 && fieldsToUpdate.length === 0) {
       this.logger.log(
-        `Standard object isUICreatable flags already up to date for workspace ${workspaceId}`,
+        `Standard UI capability flags already up to date for workspace ${workspaceId}`,
       );
 
       return;
     }
 
     this.logger.log(
-      `Found ${objectsToUpdate.length} standard object(s) with drifted isUICreatable flags for workspace ${workspaceId}`,
+      `Found ${objectsToUpdate.length} standard object(s) and ${fieldsToUpdate.length} standard field(s) with drifted UI capability flags for workspace ${workspaceId}`,
     );
 
     if (isDryRun) {
       this.logger.log(
-        `[DRY RUN] Would sync isUICreatable on ${objectsToUpdate.length} standard object(s) for workspace ${workspaceId}`,
+        `[DRY RUN] Would sync UI capability flags on ${objectsToUpdate.length} standard object(s) and ${fieldsToUpdate.length} standard field(s) for workspace ${workspaceId}`,
       );
 
       return;
@@ -107,8 +147,16 @@ export class SyncStandardObjectIsUiCreatableCommand extends ActiveOrSuspendedWor
               flatEntityToDelete: [],
               flatEntityToUpdate: objectsToUpdate,
             },
+            fieldMetadata: {
+              flatEntityToCreate: [],
+              flatEntityToDelete: [],
+              flatEntityToUpdate: fieldsToUpdate,
+            },
           },
           workspaceId,
+          // workflowRun, workflowVersion and workspaceMember are system
+          // objects; without a system build the validator rejects the update.
+          isSystemBuild: true,
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,
         },
@@ -116,16 +164,16 @@ export class SyncStandardObjectIsUiCreatableCommand extends ActiveOrSuspendedWor
 
     if (validateAndBuildResult.status === 'fail') {
       this.logger.error(
-        `Failed to sync standard object isUICreatable flags:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
+        `Failed to sync standard UI capability flags:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
       );
 
       throw new Error(
-        `Failed to sync standard object isUICreatable flags for workspace ${workspaceId}`,
+        `Failed to sync standard UI capability flags for workspace ${workspaceId}`,
       );
     }
 
     this.logger.log(
-      `Successfully synced isUICreatable on ${objectsToUpdate.length} standard object(s) for workspace ${workspaceId}`,
+      `Successfully synced UI capability flags on ${objectsToUpdate.length} standard object(s) and ${fieldsToUpdate.length} standard field(s) for workspace ${workspaceId}`,
     );
   }
 }

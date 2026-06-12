@@ -53,6 +53,7 @@ export const getMockFieldMetadataEntity = <
     updatedAt: new Date(),
     isActive: true,
     isCustom: false,
+    isUIReadOnly: false,
     application: {} as ApplicationEntity,
     applicationId: faker.string.uuid(),
     universalIdentifier: faker.string.uuid(),

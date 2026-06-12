@@ -186,6 +186,11 @@ export class RestoreChannelAssociationScalarFieldMetadataCommand extends ActiveO
         isSystem: false,
         isNullable: fieldToRestore.isNullable,
         isUIEditable: false,
+        // Legacy dual-write: when this command runs before the 2.13 rename
+        // instance command (cross-version upgrade), isUIEditable is hidden and
+        // the old isUIReadOnly column is written instead, so the rename
+        // backfill flips it correctly.
+        isUIReadOnly: true,
         isLabelSyncedWithName: false,
       });
     }

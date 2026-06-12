@@ -12,53 +12,53 @@ export class RenameIsUiReadOnlyToIsUiEditableFastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."objectMetadata" ADD "isUIEditable" boolean NOT NULL DEFAULT true',
+      'ALTER TABLE "core"."objectMetadata" ADD COLUMN IF NOT EXISTS "isUIEditable" boolean NOT NULL DEFAULT true',
     );
     await queryRunner.query(
       `UPDATE "core"."objectMetadata" SET "isUIEditable" = false WHERE "isUIReadOnly" = true`,
     );
     await queryRunner.query(
-      'ALTER TABLE "core"."objectMetadata" DROP COLUMN "isUIReadOnly"',
+      'ALTER TABLE "core"."objectMetadata" DROP COLUMN IF EXISTS "isUIReadOnly"',
     );
 
     await queryRunner.query(
-      'ALTER TABLE "core"."objectMetadata" ADD "isUICreatable" boolean NOT NULL DEFAULT true',
+      'ALTER TABLE "core"."objectMetadata" ADD COLUMN IF NOT EXISTS "isUICreatable" boolean NOT NULL DEFAULT true',
     );
 
     await queryRunner.query(
-      'ALTER TABLE "core"."fieldMetadata" ADD "isUIEditable" boolean NOT NULL DEFAULT true',
+      'ALTER TABLE "core"."fieldMetadata" ADD COLUMN IF NOT EXISTS "isUIEditable" boolean NOT NULL DEFAULT true',
     );
     await queryRunner.query(
       `UPDATE "core"."fieldMetadata" SET "isUIEditable" = false WHERE "isUIReadOnly" = true`,
     );
     await queryRunner.query(
-      'ALTER TABLE "core"."fieldMetadata" DROP COLUMN "isUIReadOnly"',
+      'ALTER TABLE "core"."fieldMetadata" DROP COLUMN IF EXISTS "isUIReadOnly"',
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."fieldMetadata" ADD "isUIReadOnly" boolean NOT NULL DEFAULT false',
+      'ALTER TABLE "core"."fieldMetadata" ADD COLUMN IF NOT EXISTS "isUIReadOnly" boolean NOT NULL DEFAULT false',
     );
     await queryRunner.query(
       `UPDATE "core"."fieldMetadata" SET "isUIReadOnly" = true WHERE "isUIEditable" = false`,
     );
     await queryRunner.query(
-      'ALTER TABLE "core"."fieldMetadata" DROP COLUMN "isUIEditable"',
+      'ALTER TABLE "core"."fieldMetadata" DROP COLUMN IF EXISTS "isUIEditable"',
     );
 
     await queryRunner.query(
-      'ALTER TABLE "core"."objectMetadata" DROP COLUMN "isUICreatable"',
+      'ALTER TABLE "core"."objectMetadata" DROP COLUMN IF EXISTS "isUICreatable"',
     );
 
     await queryRunner.query(
-      'ALTER TABLE "core"."objectMetadata" ADD "isUIReadOnly" boolean NOT NULL DEFAULT false',
+      'ALTER TABLE "core"."objectMetadata" ADD COLUMN IF NOT EXISTS "isUIReadOnly" boolean NOT NULL DEFAULT false',
     );
     await queryRunner.query(
       `UPDATE "core"."objectMetadata" SET "isUIReadOnly" = true WHERE "isUIEditable" = false`,
     );
     await queryRunner.query(
-      'ALTER TABLE "core"."objectMetadata" DROP COLUMN "isUIEditable"',
+      'ALTER TABLE "core"."objectMetadata" DROP COLUMN IF EXISTS "isUIEditable"',
     );
   }
 }

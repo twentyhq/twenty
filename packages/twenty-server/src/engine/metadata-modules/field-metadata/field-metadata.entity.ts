@@ -20,7 +20,9 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
+import { RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME } from 'src/engine/metadata-modules/object-metadata/constants/rename-is-ui-read-only-to-is-ui-editable-upgrade-command-name.constant';
 import { type FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { AssignIfIsGivenFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-if-is-given-field-metadata-type.type';
 import { AssignTypeIfIsMorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-type-if-is-morph-or-relation-field-metadata-type.type';
@@ -120,8 +122,19 @@ export class FieldMetadataEntity<
   @Column({ default: false })
   isSystem: boolean;
 
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME,
+  })
   @Column({ default: true })
   isUIEditable: boolean;
+
+  @WasRemovedInUpgrade({
+    upgradeCommandName:
+      RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'boolean', default: false })
+  isUIReadOnly: WasRemovedInUpgrade<boolean>;
 
   // Is this really nullable ?
   @Column({ nullable: true, default: true, type: 'boolean' })

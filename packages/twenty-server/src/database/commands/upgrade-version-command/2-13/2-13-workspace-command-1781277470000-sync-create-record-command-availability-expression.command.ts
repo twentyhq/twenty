@@ -111,6 +111,9 @@ export class SyncCreateRecordCommandAvailabilityExpressionCommand extends Active
             },
           },
           workspaceId,
+          // Standard command menu items are system-owned; without a system
+          // build the validator rejects direct updates.
+          isSystemBuild: true,
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,
         },
