@@ -1,9 +1,12 @@
+'use client';
+
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { IconUsersGroup } from '@tabler/icons-react';
 import NextImage from 'next/image';
+import { useRef, useState, type ReactNode } from 'react';
 
 import { FastPathIcon, LiveDataIcon } from '@/icons';
-import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import {
   color,
   FONT_WEIGHT,
@@ -14,6 +17,7 @@ import {
 } from '@/tokens';
 import { Body } from '@/ui';
 
+import { FamiliarInterfaceVisual } from './familiar-interface/familiar-interface-visual';
 import { type FeatureCardRecord } from './feature-cards.data';
 
 const CardContainer = styled.div`
@@ -38,9 +42,9 @@ const CardImage = styled.div`
 const SCENE_DESIGN_WIDTH_PX = 411;
 const SCENE_DESIGN_HEIGHT_PX = 508;
 
-// Locked to the scene design box: the animated product mockup
-// that mounts here (with the AppPreview wave) scales from exactly this
-// frame; until then its gradient bottom layer fills it.
+// Locked to the scene design box: every scene renders a fixed 411x508
+// design box scaled by frame-width / 411, so the frame, the scaled scene,
+// and any inner content shrink together at every breakpoint.
 const CardImageFrame = styled.div`
   aspect-ratio: ${SCENE_DESIGN_WIDTH_PX} / ${SCENE_DESIGN_HEIGHT_PX};
   background-color: ${color('black-10')};
@@ -95,19 +99,48 @@ function FeatureIcon({ icon }: { icon: FeatureCardRecord['icon'] }) {
 }
 
 export function FeatureCard({ card }: { card: FeatureCardRecord }) {
-  const i18n = getServerI18n();
+  const { i18n } = useLingui();
+  const [isHovered, setIsHovered] = useState(false);
+  const imageFrameRef = useRef<HTMLDivElement>(null);
+
+  const backgroundImage = (
+    <NextImage
+      alt=""
+      fill
+      sizes={`(max-width: 768px) 100vw, ${SCENE_DESIGN_WIDTH_PX}px`}
+      src={card.backgroundImageSrc}
+      style={{ objectFit: 'cover' }}
+    />
+  );
+
+  // The live-data and fast-path scenes land with their own commits; their
+  // frames keep the gradient bottom layer until then.
+  let visual: ReactNode = backgroundImage;
+  if (card.illustration === 'familiar-interface') {
+    visual = (
+      <FamiliarInterfaceVisual
+        active={isHovered}
+        backgroundImageSrc={card.backgroundImageSrc}
+        pointerTargetRef={imageFrameRef}
+      />
+    );
+  }
 
   return (
-    <CardContainer>
+    <CardContainer
+      onPointerEnter={() => {
+        setIsHovered(true);
+      }}
+      onPointerLeave={() => {
+        setIsHovered(false);
+      }}
+    >
       <CardImage>
-        <CardImageFrame data-illustration={card.illustration}>
-          <NextImage
-            alt=""
-            fill
-            sizes={`(max-width: 768px) 100vw, ${SCENE_DESIGN_WIDTH_PX}px`}
-            src={card.backgroundImageSrc}
-            style={{ objectFit: 'cover' }}
-          />
+        <CardImageFrame
+          data-illustration={card.illustration}
+          ref={imageFrameRef}
+        >
+          {visual}
         </CardImageFrame>
       </CardImage>
       <CardContent>

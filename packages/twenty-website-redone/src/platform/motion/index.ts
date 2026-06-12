@@ -5,6 +5,8 @@ export {
   type ScrollProgressEffectProps,
 } from './scroll-progress-effect';
 export { getReducedMotionSnapshot } from './reduced-motion-snapshot';
+export { observeElementSize } from './observe-element-size';
+export { useScaleToFit } from './use-scale-to-fit';
 export { useMediaQuery } from './use-media-query';
 export { useScheduledOnScroll } from './use-scheduled-on-scroll';
 export { usePrefersReducedMotion } from './use-prefers-reduced-motion';

@@ -123,6 +123,18 @@ const VISUALS = {
     interactive: true,
     settle: { stageProgress: 0.9 },
   },
+
+  'familiar-interface': {
+    slotSelector: '[data-illustration="familiar-interface"]',
+    // the white opportunity board over the dark dash backdrop; the
+    // palette is mixed (pink/purple pills, blue active card) so hue is
+    // skipped. Idle is static; the drag probe grabs a card (and retires
+    // the hand-cursor affordance), so interaction is the liveliness.
+    hueRangeDegrees: null,
+    minCoverage: 0.02,
+    animated: false,
+    interactive: true,
+  },
 };
 
 const MOTION_DIFF_FLOOR = 0.005;
