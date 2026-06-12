@@ -31,7 +31,10 @@ const headlineMeasureClassName = css`
     margin-inline: ${spacing(-4)};
   }
 
-  h2 {
+  /* h2[data-size] outranks the Heading component's [data-size='xl']
+     ramp — a bare h2 selector silently loses that cascade (it did: the
+     mobile clamp never applied; desktop masked it by agreeing at 80px). */
+  h2[data-size] {
     font-size: clamp(${fontSize(8)}, 9.5vw, ${fontSize(15)});
     line-height: 1.1;
     text-wrap: wrap; /* balance opt-out: the display headline must fill 3 greedy lines like old */
@@ -40,7 +43,7 @@ const headlineMeasureClassName = css`
   ${mediaUp('md')} {
     max-width: 688px;
 
-    h2 {
+    h2[data-size] {
       font-size: ${fontSize(20)};
       line-height: ${fontSize(21.5)};
     }
