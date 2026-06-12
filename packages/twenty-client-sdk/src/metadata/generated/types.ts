@@ -5557,6 +5557,9 @@ export default {
             "isSyncEnabled": [
                 6
             ],
+            "syncedCategories": [
+                1
+            ],
             "syncedAt": [
                 4
             ],
@@ -10860,6 +10863,9 @@ export default {
             ],
             "isSyncEnabled": [
                 6
+            ],
+            "syncedCategories": [
+                1
             ],
             "__typename": [
                 1

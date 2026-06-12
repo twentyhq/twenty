@@ -2448,6 +2448,7 @@ export interface CalendarChannel {
     isContactAutoCreationEnabled: Scalars['Boolean']
     contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy
     isSyncEnabled: Scalars['Boolean']
+    syncedCategories: Scalars['String'][]
     syncedAt?: Scalars['DateTime']
     syncStageStartedAt?: Scalars['DateTime']
     throttleFailureCount: Scalars['Float']
@@ -5514,6 +5515,7 @@ export interface CalendarChannelGenqlSelection{
     isContactAutoCreationEnabled?: boolean | number
     contactAutoCreationPolicy?: boolean | number
     isSyncEnabled?: boolean | number
+    syncedCategories?: boolean | number
     syncedAt?: boolean | number
     syncStageStartedAt?: boolean | number
     throttleFailureCount?: boolean | number
@@ -6297,7 +6299,7 @@ export interface CreateEmailGroupChannelInput {handle: Scalars['String']}
 
 export interface UpdateCalendarChannelInput {id: Scalars['UUID'],update: UpdateCalendarChannelInputUpdates}
 
-export interface UpdateCalendarChannelInputUpdates {visibility?: (CalendarChannelVisibility | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),contactAutoCreationPolicy?: (CalendarChannelContactAutoCreationPolicy | null),isSyncEnabled?: (Scalars['Boolean'] | null)}
+export interface UpdateCalendarChannelInputUpdates {visibility?: (CalendarChannelVisibility | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),contactAutoCreationPolicy?: (CalendarChannelContactAutoCreationPolicy | null),isSyncEnabled?: (Scalars['Boolean'] | null),syncedCategories?: (Scalars['String'][] | null)}
 
 export interface FileAttachmentInput {id: Scalars['UUID'],filename: Scalars['String']}
 

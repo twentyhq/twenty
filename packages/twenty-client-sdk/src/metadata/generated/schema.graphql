@@ -2734,6 +2734,7 @@ type CalendarChannel {
   isContactAutoCreationEnabled: Boolean!
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy!
   isSyncEnabled: Boolean!
+  syncedCategories: [String!]!
   syncedAt: DateTime
   syncStageStartedAt: DateTime
   throttleFailureCount: Float!
@@ -4271,6 +4272,7 @@ input UpdateCalendarChannelInputUpdates {
   isContactAutoCreationEnabled: Boolean
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy
   isSyncEnabled: Boolean
+  syncedCategories: [String!]
 }
 
 input FileAttachmentInput {
