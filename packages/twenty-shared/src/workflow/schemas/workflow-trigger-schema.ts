@@ -4,9 +4,11 @@ import { workflowDatabaseEventTriggerSchema } from './database-event-trigger-sch
 import { workflowManualTriggerSchema } from './manual-trigger-schema';
 import { workflowWebhookTriggerSchema } from './webhook-trigger-schema';
 
-export const workflowTriggerSchema = z.discriminatedUnion('type', [
-  workflowDatabaseEventTriggerSchema,
-  workflowManualTriggerSchema,
-  workflowCronTriggerSchema,
-  workflowWebhookTriggerSchema,
-]);
+export const workflowTriggerSchema = z
+  .discriminatedUnion('type', [
+    workflowDatabaseEventTriggerSchema,
+    workflowManualTriggerSchema,
+    workflowCronTriggerSchema,
+    workflowWebhookTriggerSchema,
+  ])
+  .meta({ id: 'WorkflowTrigger' });

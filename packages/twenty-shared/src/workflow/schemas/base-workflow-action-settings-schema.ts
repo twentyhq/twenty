@@ -5,20 +5,26 @@ export const baseWorkflowActionSettingsSchema = z.object({
     .looseObject({})
     .describe(
       'Input data for the workflow action. Structure depends on the action type.',
-    ),
+    )
+    .meta({ id: 'WorkflowStepSettingsInput' }),
   outputSchema: z
     .looseObject({})
     .describe(
       'Schema defining the output data structure. This data can be referenced in subsequent steps using {{stepId.fieldName}}.',
-    ),
-  errorHandlingOptions: z.object({
-    retryOnFailure: z.object({
-      value: z.boolean().describe('Whether to retry the action if it fails.'),
-    }),
-    continueOnFailure: z.object({
-      value: z
-        .boolean()
-        .describe('Whether to continue to the next step if this action fails.'),
-    }),
-  }),
+    )
+    .meta({ id: 'WorkflowStepOutputSchema' }),
+  errorHandlingOptions: z
+    .object({
+      retryOnFailure: z.object({
+        value: z.boolean().describe('Whether to retry the action if it fails.'),
+      }),
+      continueOnFailure: z.object({
+        value: z
+          .boolean()
+          .describe(
+            'Whether to continue to the next step if this action fails.',
+          ),
+      }),
+    })
+    .meta({ id: 'WorkflowStepErrorHandlingOptions' }),
 });
