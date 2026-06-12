@@ -21,6 +21,26 @@ const page = await browser.newPage({
   viewport: { width: 1280, height: 2400 },
   deviceScaleFactor: 1,
 });
+// Wave-close gates: every same-origin request resolves, and the page's
+// total image weight stays inside the budget. External fallbacks (e.g.
+// twenty-icons.com favicons) are by-design misses and out of scope.
+const sameOriginNotFound = [];
+let totalImageBytes = 0;
+page.on('response', (response) => {
+  const url = response.url();
+  const isSameOrigin = url.startsWith(BASE_URL.replace(/\/$/, ''));
+  if (isSameOrigin && response.status() === 404) {
+    sameOriginNotFound.push(new URL(url).pathname);
+  }
+  if (isSameOrigin && /\.(webp|png|jpe?g|svg|gif|avif)(\?|$)/.test(url)) {
+    void response
+      .body()
+      .then((body) => {
+        totalImageBytes += body.length;
+      })
+      .catch(() => {});
+  }
+});
 await page.goto(BASE_URL, { waitUntil: 'networkidle', timeout: 240000 });
 
 const slots = await page.evaluate(() =>
@@ -141,6 +161,18 @@ for (const [label, offset] of [
 assert(
   composition.inkMuted !== '' && composition.inkMuted === composition.black60,
   `muted ink binds to black-60 (got "${composition.inkMuted}" vs "${composition.black60}")`,
+);
+
+assert(
+  sameOriginNotFound.length === 0,
+  `no same-origin 404s during the sweep${sameOriginNotFound.length > 0 ? ` (${sameOriginNotFound.join(', ')})` : ''}`,
+);
+// Budget calibrated against the swept page (all scenes + shared assets
+// measured ~1.1MB); headroom covers compression variance, not new art.
+const IMAGE_BYTES_BUDGET = 1_500_000;
+assert(
+  totalImageBytes > 0 && totalImageBytes <= IMAGE_BYTES_BUDGET,
+  `total same-origin image bytes within budget (${Math.round(totalImageBytes / 1024)}KB ≤ ${Math.round(IMAGE_BYTES_BUDGET / 1024)}KB)`,
 );
 
 await browser.close();

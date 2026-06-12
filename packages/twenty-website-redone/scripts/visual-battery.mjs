@@ -124,6 +124,16 @@ const VISUALS = {
     settle: { stageProgress: 0.9 },
   },
 
+  'fast-path': {
+    slotSelector: '[data-illustration="fast-path"]',
+    // the white command palette over the dark dash backdrop; mixed
+    // palette so hue is skipped. Idle is static; the drag probe's click
+    // on a command fires the confetti burst plus the hover lift.
+    hueRangeDegrees: null,
+    minCoverage: 0.02,
+    animated: false,
+    interactive: true,
+  },
   'live-data': {
     slotSelector: '[data-illustration="live-data"]',
     // the white companies panel over the dark dash backdrop with the
