@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "../../../../../../.."
+		},
+		{
+			"path": "../../../../../../../../my-app"
+		}
+	],
+	"settings": {
+		"workbench.colorTheme": "Kimbie Dark",
+		"javascript.format.enable": false,
+		"typescript.format.enable": false,
+		"files.associations": {
+			".cursorrules": "markdown"
+		},
+		"typescript.tsdk": "node_modules/typescript/lib",
+		"typescript.experimental.useTsgo": false
+	}
+}

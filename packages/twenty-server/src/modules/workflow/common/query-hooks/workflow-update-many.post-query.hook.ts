@@ -5,7 +5,7 @@ import { type WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/work
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { WorkflowCommandMenuSyncWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-command-menu-sync.workspace-service';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 @WorkspaceQueryHook({
@@ -14,7 +14,7 @@ import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standa
 })
 export class WorkflowUpdateManyPostQueryHook implements WorkspacePostQueryHookInstance {
   constructor(
-    private readonly workflowCommandMenuSyncWorkspaceService: WorkflowCommandMenuSyncWorkspaceService,
+    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
 
   async execute(
@@ -26,7 +26,7 @@ export class WorkflowUpdateManyPostQueryHook implements WorkspacePostQueryHookIn
       .map((workflow) => workflow.id)
       .filter(isDefined);
 
-    await this.workflowCommandMenuSyncWorkspaceService.syncCommandMenuItemLabelForWorkflows(
+    await this.workflowCommonWorkspaceService.syncCommandMenuItemLabelForWorkflows(
       workflowIds,
       authContext,
     );
