@@ -77,6 +77,7 @@ export type HeadingFamily = 'serif' | 'sans';
 export type HeadingProps = {
   as?: HeadingLevel;
   children: string;
+  className?: string;
   family?: HeadingFamily;
   size?: HeadingSize;
   weight?: FontWeightToken;
@@ -85,6 +86,7 @@ export type HeadingProps = {
 export function Heading({
   as: Tag = 'h2',
   children,
+  className,
   family = 'serif',
   size = 'md',
   weight = 'regular',
@@ -104,7 +106,7 @@ export function Heading({
 
   return (
     <Tag
-      className={headingClassName}
+      className={[headingClassName, className].filter(Boolean).join(' ')}
       data-family={family}
       data-size={size}
       data-weight={weight}
