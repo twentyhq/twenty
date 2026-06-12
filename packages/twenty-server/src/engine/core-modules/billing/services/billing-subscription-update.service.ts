@@ -190,142 +190,156 @@ export class BillingSubscriptionUpdateService {
       },
     );
 
-    const licensedItem = getBaseProductSubscriptionItemOrThrow(subscription);
-    const resourceCreditItem =
-      getCurrentResourceCreditSubscriptionItemOrThrow(subscription);
+    try {
+      const licensedItem = getBaseProductSubscriptionItemOrThrow(subscription);
+      const resourceCreditItem =
+        getCurrentResourceCreditSubscriptionItemOrThrow(subscription);
 
-    const toUpdateCurrentPrices = await this.computeSubscriptionPricesUpdate(
-      subscriptionUpdate,
-      {
-        licensedPriceId: licensedItem.stripePriceId,
-        resourceCreditPriceId: resourceCreditItem.stripePriceId,
-        seats: licensedItem.quantity,
-      },
-    );
+      const toUpdateCurrentPrices = await this.computeSubscriptionPricesUpdate(
+        subscriptionUpdate,
+        {
+          licensedPriceId: licensedItem.stripePriceId,
+          resourceCreditPriceId: resourceCreditItem.stripePriceId,
+          seats: licensedItem.quantity,
+        },
+      );
 
-    const { schedule, currentPhase, nextPhase } =
-      await this.stripeSubscriptionScheduleService.loadSubscriptionSchedule(
+      const { schedule, currentPhase, nextPhase } =
+        await this.stripeSubscriptionScheduleService.loadSubscriptionSchedule(
+          subscription.stripeSubscriptionId,
+        );
+
+      const shouldUpdateAtPeriodEnd =
+        await this.shouldUpdateAtSubscriptionPeriodEnd(
+          subscription,
+          subscriptionUpdate,
+        );
+
+      if (shouldUpdateAtPeriodEnd) {
+        if (!isDefined(schedule)) {
+          const { schedule, currentPhase } =
+            await this.stripeSubscriptionScheduleService.createSubscriptionSchedule(
+              subscription.stripeSubscriptionId,
+            );
+
+          await this.runSubscriptionScheduleUpdate({
+            stripeScheduleId: schedule.id,
+            toUpdateCurrentPrices: undefined,
+            toUpdateNextPrices: toUpdateCurrentPrices,
+            currentPhase:
+              this.billingSubscriptionPhaseService.toPhaseUpdateParams(
+                currentPhase,
+              ),
+            subscriptionCurrentPeriodEnd: Math.floor(
+              subscription.currentPeriodEnd.getTime() / 1000,
+            ),
+          });
+        } else {
+          assertIsDefinedOrThrow(nextPhase);
+          assertIsDefinedOrThrow(currentPhase);
+
+          const nextPhasePrices =
+            await this.getSubscriptionPricesFromSchedulePhase(nextPhase);
+
+          const toUpdateNextPrices =
+            await this.computeSubscriptionPricesUpdate(
+              subscriptionUpdate,
+              nextPhasePrices,
+            );
+
+          await this.runSubscriptionScheduleUpdate({
+            stripeScheduleId: schedule.id,
+            toUpdateNextPrices,
+            toUpdateCurrentPrices: undefined,
+            currentPhase:
+              this.billingSubscriptionPhaseService.toPhaseUpdateParams(
+                currentPhase,
+              ),
+            subscriptionCurrentPeriodEnd: Math.floor(
+              subscription.currentPeriodEnd.getTime() / 1000,
+            ),
+          });
+        }
+      } else {
+        const subscriptionOptions =
+          computeSubscriptionUpdateOptions(subscriptionUpdate);
+
+        if (
+          subscriptionUpdate.type ===
+          SubscriptionUpdateType.RESOURCE_CREDIT_PRICE
+        ) {
+          assertIsDefinedOrThrow(resourceCreditItem);
+          await this.createResourceCreditUpgradeInvoice({
+            subscription,
+            currentResourceCreditPriceId: resourceCreditItem.stripePriceId,
+            newResourceCreditPriceId:
+              subscriptionUpdate.newResourceCreditPriceId,
+          });
+        }
+
+        await this.runSubscriptionUpdate({
+          stripeSubscriptionId: subscription.stripeSubscriptionId,
+          licensedStripeItemId: licensedItem.stripeSubscriptionItemId,
+          resourceCreditStripeItemId:
+            resourceCreditItem.stripeSubscriptionItemId,
+          licensedStripePriceId: toUpdateCurrentPrices.licensedPriceId,
+          resourceCreditStripePriceId:
+            toUpdateCurrentPrices.resourceCreditPriceId,
+          seats: toUpdateCurrentPrices.seats,
+          ...subscriptionOptions,
+        });
+
+        if (subscriptionUpdate.type !== SubscriptionUpdateType.SEATS) {
+          await this.billingSubscriptionItemRepository.update(
+            { stripeSubscriptionId: subscription.stripeSubscriptionId },
+            { hasReachedCurrentPeriodCap: false },
+          );
+        }
+
+        if (isDefined(nextPhase)) {
+          assertIsDefinedOrThrow(schedule);
+          const { currentPhase: refreshedCurrentPhase } =
+            await this.stripeSubscriptionScheduleService.loadSubscriptionSchedule(
+              subscription.stripeSubscriptionId,
+            );
+
+          assertIsDefinedOrThrow(refreshedCurrentPhase);
+
+          const nextPhasePrices =
+            await this.getSubscriptionPricesFromSchedulePhase(nextPhase);
+          const toUpdateNextPrices =
+            await this.computeSubscriptionPricesUpdate(
+              subscriptionUpdate,
+              nextPhasePrices,
+            );
+
+          await this.runSubscriptionScheduleUpdate({
+            stripeScheduleId: schedule.id,
+            toUpdateNextPrices,
+            toUpdateCurrentPrices: undefined,
+            currentPhase:
+              this.billingSubscriptionPhaseService.toPhaseUpdateParams(
+                refreshedCurrentPhase,
+              ),
+            subscriptionCurrentPeriodEnd: Math.floor(
+              subscription.currentPeriodEnd.getTime() / 1000,
+            ),
+          });
+        }
+      }
+
+      await this.billingSubscriptionService.syncSubscriptionToDatabase(
+        subscription.workspaceId,
         subscription.stripeSubscriptionId,
       );
-
-    const shouldUpdateAtPeriodEnd =
-      await this.shouldUpdateAtSubscriptionPeriodEnd(
-        subscription,
-        subscriptionUpdate,
+    } catch (error) {
+      this.logger.error(
+        `Failed to update subscription ${subscription.stripeSubscriptionId} for workspace ${subscription.workspaceId} with update type ${subscriptionUpdate.type}`,
+        error instanceof Error ? error.stack : undefined,
       );
 
-    if (shouldUpdateAtPeriodEnd) {
-      if (!isDefined(schedule)) {
-        const { schedule, currentPhase } =
-          await this.stripeSubscriptionScheduleService.createSubscriptionSchedule(
-            subscription.stripeSubscriptionId,
-          );
-
-        await this.runSubscriptionScheduleUpdate({
-          stripeScheduleId: schedule.id,
-          toUpdateCurrentPrices: undefined,
-          toUpdateNextPrices: toUpdateCurrentPrices,
-          currentPhase:
-            this.billingSubscriptionPhaseService.toPhaseUpdateParams(
-              currentPhase,
-            ),
-          subscriptionCurrentPeriodEnd: Math.floor(
-            subscription.currentPeriodEnd.getTime() / 1000,
-          ),
-        });
-      } else {
-        assertIsDefinedOrThrow(nextPhase);
-        assertIsDefinedOrThrow(currentPhase);
-
-        const nextPhasePrices =
-          await this.getSubscriptionPricesFromSchedulePhase(nextPhase);
-
-        const toUpdateNextPrices = await this.computeSubscriptionPricesUpdate(
-          subscriptionUpdate,
-          nextPhasePrices,
-        );
-
-        await this.runSubscriptionScheduleUpdate({
-          stripeScheduleId: schedule.id,
-          toUpdateNextPrices,
-          toUpdateCurrentPrices: undefined,
-          currentPhase:
-            this.billingSubscriptionPhaseService.toPhaseUpdateParams(
-              currentPhase,
-            ),
-          subscriptionCurrentPeriodEnd: Math.floor(
-            subscription.currentPeriodEnd.getTime() / 1000,
-          ),
-        });
-      }
-    } else {
-      const subscriptionOptions =
-        computeSubscriptionUpdateOptions(subscriptionUpdate);
-
-      if (
-        subscriptionUpdate.type === SubscriptionUpdateType.RESOURCE_CREDIT_PRICE
-      ) {
-        assertIsDefinedOrThrow(resourceCreditItem);
-        await this.createResourceCreditUpgradeInvoice({
-          subscription,
-          currentResourceCreditPriceId: resourceCreditItem.stripePriceId,
-          newResourceCreditPriceId: subscriptionUpdate.newResourceCreditPriceId,
-        });
-      }
-
-      await this.runSubscriptionUpdate({
-        stripeSubscriptionId: subscription.stripeSubscriptionId,
-        licensedStripeItemId: licensedItem.stripeSubscriptionItemId,
-        resourceCreditStripeItemId: resourceCreditItem.stripeSubscriptionItemId,
-        licensedStripePriceId: toUpdateCurrentPrices.licensedPriceId,
-        resourceCreditStripePriceId:
-          toUpdateCurrentPrices.resourceCreditPriceId,
-        seats: toUpdateCurrentPrices.seats,
-        ...subscriptionOptions,
-      });
-
-      if (subscriptionUpdate.type !== SubscriptionUpdateType.SEATS) {
-        await this.billingSubscriptionItemRepository.update(
-          { stripeSubscriptionId: subscription.stripeSubscriptionId },
-          { hasReachedCurrentPeriodCap: false },
-        );
-      }
-
-      if (isDefined(nextPhase)) {
-        assertIsDefinedOrThrow(schedule);
-        const { currentPhase: refreshedCurrentPhase } =
-          await this.stripeSubscriptionScheduleService.loadSubscriptionSchedule(
-            subscription.stripeSubscriptionId,
-          );
-
-        assertIsDefinedOrThrow(refreshedCurrentPhase);
-
-        const nextPhasePrices =
-          await this.getSubscriptionPricesFromSchedulePhase(nextPhase);
-        const toUpdateNextPrices = await this.computeSubscriptionPricesUpdate(
-          subscriptionUpdate,
-          nextPhasePrices,
-        );
-
-        await this.runSubscriptionScheduleUpdate({
-          stripeScheduleId: schedule.id,
-          toUpdateNextPrices,
-          toUpdateCurrentPrices: undefined,
-          currentPhase:
-            this.billingSubscriptionPhaseService.toPhaseUpdateParams(
-              refreshedCurrentPhase,
-            ),
-          subscriptionCurrentPeriodEnd: Math.floor(
-            subscription.currentPeriodEnd.getTime() / 1000,
-          ),
-        });
-      }
+      throw error;
     }
-
-    await this.billingSubscriptionService.syncSubscriptionToDatabase(
-      subscription.workspaceId,
-      subscription.stripeSubscriptionId,
-    );
   }
 
   private async createResourceCreditUpgradeInvoice({

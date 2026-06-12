@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { differenceInDays } from 'date-fns';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { Not, type Repository } from 'typeorm';
+import { In, Not, type Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
@@ -322,33 +322,46 @@ export class BillingSubscriptionService {
         workspaceId,
       );
 
-    // V2 subscriptions have no quantityless metered item; skip the stale-item cleanup in that case
-    const meterBillingSubscriptionItem = billingSubscriptionItems.find(
-      (item) => !isDefined(item.quantity),
+    const billingSubscriptionItemsByStripeProductId = new Map(
+      billingSubscriptionItems.map((item) => [item.stripeProductId, item]),
     );
 
-    if (isDefined(meterBillingSubscriptionItem)) {
-      const existingBillingSubscriptionItem =
-        await this.billingSubscriptionItemRepository.findOne({
-          where: {
-            billingSubscriptionId: currentBillingSubscription.id,
-            stripeProductId: meterBillingSubscriptionItem.stripeProductId,
-          },
-        });
+    const uniqueBillingSubscriptionItems = Array.from(
+      billingSubscriptionItemsByStripeProductId.values(),
+    );
 
-      if (
-        existingBillingSubscriptionItem?.stripeSubscriptionItemId !==
-        meterBillingSubscriptionItem.stripeSubscriptionItemId
-      ) {
-        await this.billingSubscriptionItemRepository.delete({
+    const existingBillingSubscriptionItems =
+      await this.billingSubscriptionItemRepository.find({
+        where: {
           billingSubscriptionId: currentBillingSubscription.id,
-          stripeProductId: meterBillingSubscriptionItem.stripeProductId,
-        });
-      }
+          stripeProductId: In(
+            uniqueBillingSubscriptionItems.map((item) => item.stripeProductId),
+          ),
+        },
+      });
+
+    const staleBillingSubscriptionItemIds = existingBillingSubscriptionItems
+      .filter((existingItem) => {
+        const nextItem = billingSubscriptionItemsByStripeProductId.get(
+          existingItem.stripeProductId,
+        );
+
+        return (
+          isDefined(nextItem) &&
+          nextItem.stripeSubscriptionItemId !==
+            existingItem.stripeSubscriptionItemId
+        );
+      })
+      .map((item) => item.id);
+
+    if (staleBillingSubscriptionItemIds.length > 0) {
+      await this.billingSubscriptionItemRepository.delete({
+        id: In(staleBillingSubscriptionItemIds),
+      });
     }
 
     await this.billingSubscriptionItemRepository.upsert(
-      billingSubscriptionItems,
+      uniqueBillingSubscriptionItems,
       {
         conflictPaths: ['stripeSubscriptionItemId'],
         skipUpdateIfNoValuesChanged: true,
