@@ -2151,6 +2151,16 @@ export interface CreateEmailGroupChannelOutput {
     __typename: 'CreateEmailGroupChannelOutput'
 }
 
+export interface CampaignAudiencePreviewDTO {
+    totalMembers: Scalars['Int']
+    withoutEmail: Scalars['Int']
+    duplicateEmails: Scalars['Int']
+    globallyUnsubscribed: Scalars['Int']
+    topicUnsubscribed: Scalars['Int']
+    sendable: Scalars['Int']
+    __typename: 'CampaignAudiencePreviewDTO'
+}
+
 export interface SendEmailViaDomainOutput {
     messageId: Scalars['String']
     __typename: 'SendEmailViaDomainOutput'
@@ -2625,6 +2635,7 @@ export interface Query {
     indexMetadatas: IndexConnection
     findManyAgents: Agent[]
     findOneAgent: Agent
+    previewMessageCampaignAudience: CampaignAudiencePreviewDTO
     myMessageChannels: MessageChannel[]
     getEmailingDomains: EmailingDomain[]
     myConnectedAccounts: ConnectedAccountPublicDTO[]
@@ -5183,6 +5194,17 @@ export interface CreateEmailGroupChannelOutputGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface CampaignAudiencePreviewDTOGenqlSelection{
+    totalMembers?: boolean | number
+    withoutEmail?: boolean | number
+    duplicateEmails?: boolean | number
+    globallyUnsubscribed?: boolean | number
+    topicUnsubscribed?: boolean | number
+    sendable?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface SendEmailViaDomainOutputGenqlSelection{
     messageId?: boolean | number
     __typename?: boolean | number
@@ -5702,6 +5724,7 @@ export interface QueryGenqlSelection{
     filter: IndexFilter} })
     findManyAgents?: AgentGenqlSelection
     findOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
+    previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
     myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     getEmailingDomains?: EmailingDomainGenqlSelection
     myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
@@ -5776,6 +5799,8 @@ id: Scalars['ID']}
 export interface AgentIdInput {
 /** The id of the agent. */
 id: Scalars['UUID']}
+
+export interface PreviewMessageCampaignAudienceInput {listId: Scalars['String'],messageTopicId?: (Scalars['String'] | null)}
 
 export interface ListAppConnectionsInput {providerName?: (Scalars['String'] | null),userWorkspaceId?: (Scalars['String'] | null),visibility?: (Scalars['String'] | null)}
 
@@ -8003,6 +8028,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isCreateEmailGroupChannelOutput = (obj?: { __typename?: any } | null): obj is CreateEmailGroupChannelOutput => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isCreateEmailGroupChannelOutput"')
       return CreateEmailGroupChannelOutput_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CampaignAudiencePreviewDTO_possibleTypes: string[] = ['CampaignAudiencePreviewDTO']
+    export const isCampaignAudiencePreviewDTO = (obj?: { __typename?: any } | null): obj is CampaignAudiencePreviewDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCampaignAudiencePreviewDTO"')
+      return CampaignAudiencePreviewDTO_possibleTypes.includes(obj.__typename)
     }
     
 

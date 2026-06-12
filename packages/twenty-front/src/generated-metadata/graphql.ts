@@ -803,6 +803,16 @@ export type CalendarConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
+export type CampaignAudiencePreviewDto = {
+  __typename?: 'CampaignAudiencePreviewDTO';
+  duplicateEmails: Scalars['Int']['output'];
+  globallyUnsubscribed: Scalars['Int']['output'];
+  sendable: Scalars['Int']['output'];
+  topicUnsubscribed: Scalars['Int']['output'];
+  totalMembers: Scalars['Int']['output'];
+  withoutEmail: Scalars['Int']['output'];
+};
+
 export type CampaignSkippedRecipientsDto = {
   __typename?: 'CampaignSkippedRecipientsDTO';
   deduped: Scalars['Int']['output'];
@@ -4083,6 +4093,11 @@ export type PlaceDetailsResult = {
   street?: Maybe<Scalars['String']['output']>;
 };
 
+export type PreviewMessageCampaignAudienceInput = {
+  listId: Scalars['String']['input'];
+  messageTopicId?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type PublicApplicationRegistration = {
   __typename?: 'PublicApplicationRegistration';
   id: Scalars['UUID']['output'];
@@ -4244,6 +4259,7 @@ export type Query = {
   objectRecordCounts: Array<ObjectRecordCount>;
   objects: ObjectConnection;
   pieChartData: PieChartData;
+  previewMessageCampaignAudience: CampaignAudiencePreviewDto;
   skill?: Maybe<Skill>;
   skills: Array<Skill>;
   validatePasswordResetToken: ValidatePasswordResetToken;
@@ -4605,6 +4621,11 @@ export type QueryObjectsArgs = {
 
 export type QueryPieChartDataArgs = {
   input: PieChartDataInput;
+};
+
+
+export type QueryPreviewMessageCampaignAudienceArgs = {
+  input: PreviewMessageCampaignAudienceInput;
 };
 
 

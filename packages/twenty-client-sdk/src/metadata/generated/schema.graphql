@@ -2508,6 +2508,15 @@ type CreateEmailGroupChannelOutput {
   forwardingAddress: String!
 }
 
+type CampaignAudiencePreviewDTO {
+  totalMembers: Int!
+  withoutEmail: Int!
+  duplicateEmails: Int!
+  globallyUnsubscribed: Int!
+  topicUnsubscribed: Int!
+  sendable: Int!
+}
+
 type SendEmailViaDomainOutput {
   messageId: String!
 }
@@ -3012,6 +3021,7 @@ type Query {
   ): IndexConnection!
   findManyAgents: [Agent!]!
   findOneAgent(input: AgentIdInput!): Agent!
+  previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
   getEmailingDomains: [EmailingDomain!]!
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
@@ -3090,6 +3100,11 @@ input LogicFunctionIdInput {
 input AgentIdInput {
   """The id of the agent."""
   id: UUID!
+}
+
+input PreviewMessageCampaignAudienceInput {
+  listId: String!
+  messageTopicId: String
 }
 
 input ListAppConnectionsInput {
