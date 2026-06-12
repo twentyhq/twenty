@@ -1,5 +1,6 @@
 'use client';
 
+import { clampToRange } from '@/platform/motion';
 import {
   useEffect,
   useLayoutEffect,
@@ -24,10 +25,6 @@ const CARD_DROP_ANIMATION_MS = 320;
 export type LaneIndex = 0 | 1;
 type DropTarget = { cardIndex: number; laneIndex: LaneIndex };
 
-function clamp(value: number, min: number, max: number) {
-  return Math.min(Math.max(value, min), max);
-}
-
 function moveCardToLanePosition(
   lanes: FamiliarLaneCards,
   cardId: FamiliarCardId,
@@ -40,7 +37,7 @@ function moveCardToLanePosition(
     secondLane.filter((laneCardId) => laneCardId !== cardId),
   ];
 
-  const boundedTargetCardIndex = clamp(
+  const boundedTargetCardIndex = clampToRange(
     targetCardIndex,
     0,
     nextLanes[targetLaneIndex].length,
@@ -201,12 +198,12 @@ export function useOpportunityDrag({
     currentDragState.lastClientX = clientX;
     currentDragState.lastClientY = clientY;
 
-    const nextX = clamp(
+    const nextX = clampToRange(
       currentDragState.originX + clientX - currentDragState.pointerX,
       currentDragState.minX,
       currentDragState.maxX,
     );
-    const nextY = clamp(
+    const nextY = clampToRange(
       currentDragState.originY + clientY - currentDragState.pointerY,
       currentDragState.minY,
       currentDragState.maxY,

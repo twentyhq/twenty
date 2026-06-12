@@ -4,21 +4,22 @@ import { useEffect, useRef, useState, type ComponentType } from 'react';
 
 import { observeElementVisibility } from '@/platform/visuals/engine/observe-element-visibility';
 
+import { ContactsVisual } from './contacts-visual';
 import { DashboardVisual } from './dashboard-visual';
 import { EmailsVisual } from './emails-visual';
 import { type FeatureVisualKey } from './feature-tiles';
 import { FilesVisual } from './files-visual';
 import { ImportVisual } from './import-visual';
+import { PipelineVisual } from './pipeline-visual';
 import { TasksVisual } from './tasks-visual';
 
-// Visuals land with their commits; unbuilt keys render the bare frame.
-const VISUALS: Partial<
-  Record<FeatureVisualKey, ComponentType<{ active: boolean }>>
-> = {
+const VISUALS: Record<FeatureVisualKey, ComponentType<{ active: boolean }>> = {
+  contacts: ContactsVisual,
   dashboard: DashboardVisual,
   emails: EmailsVisual,
   files: FilesVisual,
   import: ImportVisual,
+  pipeline: PipelineVisual,
   tasks: TasksVisual,
 };
 
@@ -46,7 +47,7 @@ export function TileVisual({ visualKey }: { visualKey: FeatureVisualKey }) {
 
   return (
     <div ref={ref} style={{ height: '100%', width: '100%' }}>
-      {Visual ? <Visual active={active} /> : null}
+      <Visual active={active} />
     </div>
   );
 }

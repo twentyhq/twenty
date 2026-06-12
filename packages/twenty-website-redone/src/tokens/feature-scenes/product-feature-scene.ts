@@ -59,6 +59,65 @@ export const PRODUCT_FEATURE_SCENE = {
       cyan: '#06b6d4',
     },
   },
+  // The contacts mini-table's inks (its person tones are this scene's
+  // own dark-surface palette, distinct from the mockup's).
+  contacts: {
+    cellHoverBackground: '#25252f',
+    chipHighlightWash: 'rgba(255, 255, 255, 0.04)',
+    linkChipWash: 'rgba(255, 255, 255, 0.03)',
+    linkChipBorder: 'rgba(255, 255, 255, 0.12)',
+    tagWash: 'rgba(255, 255, 255, 0.05)',
+    faviconFallbackWash: 'rgba(255, 255, 255, 0.1)',
+    faviconFallbackInk: 'rgba(255, 255, 255, 0.6)',
+    checkboxBorder: 'rgba(255, 255, 255, 0.15)',
+    checkboxCheckedBorder: 'rgba(62, 99, 221, 0.5)',
+    checkboxCheckedWash: 'rgba(62, 99, 221, 0.12)',
+    personTones: {
+      gray: {
+        background: 'rgba(255, 255, 255, 0.1)',
+        color: 'rgba(255, 255, 255, 0.7)',
+      },
+      purple: { background: 'rgba(168, 85, 247, 0.15)', color: '#c084fc' },
+      teal: { background: 'rgba(20, 184, 166, 0.15)', color: '#5eead4' },
+      pink: { background: 'rgba(236, 72, 153, 0.15)', color: '#f472b6' },
+      blue: { background: 'rgba(59, 130, 246, 0.15)', color: '#93c5fd' },
+      amber: { background: 'rgba(245, 158, 11, 0.15)', color: '#fbbf24' },
+    },
+  },
+  // The pipeline board's inks.
+  pipeline: {
+    cardBackground: '#26262f',
+    cardBorder: 'rgba(255, 255, 255, 0.08)',
+    softChipWash: 'rgba(255, 255, 255, 0.04)',
+    floatingShadow: '0 12px 40px rgba(0, 0, 0, 0.5)',
+    starFilled: '#d4d4d4',
+    starEmpty: 'rgba(255, 255, 255, 0.2)',
+    laneStyles: {
+      pink: {
+        background: 'rgba(236, 72, 153, 0.06)',
+        pill: 'rgba(236, 72, 153, 0.12)',
+        text: '#f472b6',
+      },
+      purple: {
+        background: 'rgba(168, 85, 247, 0.06)',
+        pill: 'rgba(168, 85, 247, 0.12)',
+        text: '#c084fc',
+      },
+    },
+    tones: {
+      gray: {
+        background: 'rgba(255, 255, 255, 0.08)',
+        color: 'rgba(255, 255, 255, 0.6)',
+      },
+      purple: { background: 'rgba(168, 85, 247, 0.12)', color: '#c084fc' },
+      blue: { background: 'rgba(59, 130, 246, 0.12)', color: '#93c5fd' },
+      pink: { background: 'rgba(236, 72, 153, 0.12)', color: '#f472b6' },
+      amber: { background: 'rgba(245, 158, 11, 0.12)', color: '#fbbf24' },
+      red: { background: 'rgba(239, 68, 68, 0.12)', color: '#fca5a5' },
+      teal: { background: 'rgba(20, 184, 166, 0.12)', color: '#5eead4' },
+      yellow: { background: 'rgba(234, 179, 8, 0.12)', color: '#fde047' },
+    },
+  },
   // The dashboard widgets' chart inks (the accent IS the site blue).
   dashboard: {
     accent: PALETTE.blue,

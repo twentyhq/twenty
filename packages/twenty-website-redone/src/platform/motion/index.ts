@@ -1,4 +1,5 @@
 export { clampProgress } from './clamp-progress';
+export { clampToRange } from './clamp-to-range';
 export { createAnimationFrameLoop } from './animation-frame-loop';
 export { computeScrollProgress } from './compute-scroll-progress';
 export {
@@ -9,6 +10,7 @@ export { getReducedMotionSnapshot } from './reduced-motion-snapshot';
 export { observeElementSize } from './observe-element-size';
 export { useScaleToFit } from './use-scale-to-fit';
 export { useMediaQuery } from './use-media-query';
+export { useHorizontalDragScroll } from './use-horizontal-drag-scroll';
 export { useScheduledOnScroll } from './use-scheduled-on-scroll';
 export { usePrefersReducedMotion } from './use-prefers-reduced-motion';
 export { useScrollProgress } from './use-scroll-progress';

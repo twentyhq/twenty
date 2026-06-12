@@ -771,6 +771,12 @@ msgstr "Rich notes attached to records"
 msgid "See what shipped in {0}"
 msgstr "See what shipped in {0}"
 
+#. js-lingui-id: 02ePaq
+#. placeholder {0}: company.name
+#: src/sections/product-feature/contacts-visual.tsx
+msgid "Select {0}"
+msgstr "Select {0}"
+
 #. js-lingui-id: pi1oME
 #: src/app-preview/terminal/terminal-send-button.tsx
 msgid "Send message"

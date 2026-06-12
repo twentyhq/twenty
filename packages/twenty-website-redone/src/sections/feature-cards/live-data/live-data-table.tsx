@@ -12,7 +12,7 @@ import { useState } from 'react';
 
 import { sharedAssetUrls } from '@/app-preview/data/shared-asset-urls';
 import { Chip } from '@/app-preview/primitives/chip';
-import { useHorizontalDragScroll } from '@/app-preview/stage/use-horizontal-drag-scroll';
+import { useHorizontalDragScroll } from '@/platform/motion';
 import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
 import { LIVE_DATA_SCENE } from '@/tokens/feature-scenes/live-data-scene';
 
