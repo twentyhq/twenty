@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.12.0', 1781171103000)
+@RegisteredInstanceCommand('2.13.0', 1781171103000)
 export class AddArchivedAtToConnectedAccountFastInstanceCommand
   implements FastInstanceCommand
 {
