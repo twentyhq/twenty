@@ -41,10 +41,10 @@ export class TimelineActivityRepository {
       const payloadsToUpsert = payloads.flatMap(
         ({ name, properties, ...rest }) => {
           const [objectName, action] = name.split('.');
-          const isMainObjectUpdate =
+          const shouldContainDiff =
             action === 'updated' && !objectName.startsWith('linked-');
 
-          if (!isMainObjectUpdate) {
+          if (!shouldContainDiff) {
             return [{ ...rest, name, properties: {} }];
           }
 

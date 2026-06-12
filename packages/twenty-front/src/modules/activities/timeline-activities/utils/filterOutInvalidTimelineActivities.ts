@@ -20,10 +20,10 @@ export const filterOutInvalidTimelineActivities = (
   return timelineActivities.filter((timelineActivity) => {
     const [objectName, action] = timelineActivity.name.split('.');
 
-    const isMainObjectUpdate =
+    const shouldContainDiff =
       action === 'updated' && !objectName.startsWith('linked-');
 
-    if (!isMainObjectUpdate) {
+    if (!shouldContainDiff) {
       return true;
     }
 
