@@ -77,6 +77,21 @@ const StyledButton = styled.button`
     color: ${color('white')};
   }
 
+  /* Deck cards are physical: the white wash rides the active state too,
+     and the button always fills the card's animated width. */
+  &[data-presentation='deck'] {
+    max-width: none;
+    width: 100%;
+  }
+
+  &[data-presentation='deck'][data-active='true'] {
+    background-image: linear-gradient(
+      90deg,
+      ${color('white-10')} 0%,
+      ${color('white-10')} 100%
+    );
+  }
+
   &:focus-visible {
     outline: 1px solid ${color('blue')};
     outline-offset: 1px;
@@ -111,12 +126,15 @@ export function TabButton({
   id,
   isActive,
   onSelect,
+  presentation = 'row',
   tab,
 }: {
   controls: string;
   id: string;
   isActive: boolean;
   onSelect: () => void;
+  // 'deck': the stacked-card face (fills its card, keeps the white wash).
+  presentation?: 'row' | 'deck';
   tab: AiHeroTab;
 }) {
   const { i18n } = useLingui();
@@ -127,6 +145,7 @@ export function TabButton({
       aria-controls={controls}
       aria-selected={isActive}
       data-active={String(isActive)}
+      data-presentation={presentation}
       id={id}
       onClick={onSelect}
       role="tab"

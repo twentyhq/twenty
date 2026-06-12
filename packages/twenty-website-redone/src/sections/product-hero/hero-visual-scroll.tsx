@@ -314,6 +314,7 @@ const StackedTabCard = styled.div`
   opacity: var(--hero-stack-appear, 0);
   position: absolute;
   top: 0;
+
   transform: translate3d(
       calc(
         -50% + var(--card-offset, 0) * var(--hero-stack-spread-eased, 0) * 1px
@@ -768,6 +769,7 @@ export function HeroVisualScroll({
                           <TabButton
                             controls="product-hero-ai-panel"
                             id={`product-hero-ai-stack-tab-${tabNumber}`}
+                            presentation="deck"
                             isActive={
                               discrete.selectorRevealReady &&
                               tabNumber === activeTab

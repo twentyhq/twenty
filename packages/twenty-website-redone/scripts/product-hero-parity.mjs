@@ -95,6 +95,24 @@ async function readHeroState(page) {
   });
 }
 
+function readDeckButtons(page) {
+  return page.evaluate(() =>
+    [...document.querySelectorAll('[role="tab"]')]
+      .filter((el) => el.id.includes('stack'))
+      .slice(0, 2)
+      .map((button) => {
+        const style = getComputedStyle(button);
+        return [
+          style.backgroundColor,
+          style.backgroundImage,
+          style.borderColor,
+          style.maxWidth,
+          style.color,
+        ].join(' | ');
+      }),
+  );
+}
+
 function parseInsetTop(clipPath) {
   const match = /inset\(([\d.]+)%/.exec(clipPath ?? '');
   return match ? Number(match[1]) : null;
@@ -218,6 +236,21 @@ if (!oldGeometry || !newGeometry) {
     ok('stacked tab deck renders four tabs');
   } else {
     fail('stacked tab deck renders four tabs', 'fewer than 4 role=tab');
+  }
+
+  // Deck button chrome (the card override the user caught regressing):
+  // compared at full morph for the active and first inactive tab.
+  await scrollToProgress(oldPage, oldGeometry, 0.7);
+  await scrollToProgress(newPage, newGeometry, 0.7);
+  const oldDeck = await readDeckButtons(oldPage);
+  const newDeck = await readDeckButtons(newPage);
+  if (oldDeck.length === 2 && oldDeck.join('\n') === newDeck.join('\n')) {
+    ok('deck tab button chrome byte-equal (active + inactive)');
+  } else {
+    fail(
+      'deck tab button chrome byte-equal (active + inactive)',
+      `old ${JSON.stringify(oldDeck)} vs new ${JSON.stringify(newDeck)}`,
+    );
   }
 
   // RATIFIED DIVERGENCE (user, 2026-06-12): the exit crossing hands off
