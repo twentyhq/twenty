@@ -249,10 +249,10 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
           },
           {
             id: 'c309536c-ceb7-4510-8481-c2cbd88ffe96',
-            value: 'FAILED',
-            label: i18nLabel(msg`Failed`),
+            value: 'SENT_WITH_ERRORS',
+            label: i18nLabel(msg`Sent with errors`),
             position: 4,
-            color: 'red',
+            color: 'orange',
           },
         ],
       },

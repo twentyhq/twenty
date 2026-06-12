@@ -1,11 +1,13 @@
 import { Injectable, Logger, type Type } from '@nestjs/common';
 
 import { In, type ObjectLiteral } from 'typeorm';
-import { v4 } from 'uuid';
+import { v4, v5 } from 'uuid';
 
 import {
   CAMPAIGN_MESSAGE_DELIVERY_STATUS,
+  CAMPAIGN_MESSAGE_ID_NAMESPACE,
   CAMPAIGN_STATUS,
+  MATERIALIZE_CAMPAIGN_JOB,
   MAX_CAMPAIGN_RECIPIENTS,
   SEND_CAMPAIGN_EMAIL_JOB,
 } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
@@ -16,31 +18,33 @@ import {
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
-import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
-import { type SendCampaignEmailJobData } from 'src/engine/core-modules/emailing-domain/types/send-campaign-email-job-data.type';
 import { type CampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/campaign-recipient.type';
 import { type CampaignSkippedBreakdown } from 'src/engine/core-modules/emailing-domain/types/campaign-skipped-breakdown.type';
+import { type MaterializeCampaignJobData } from 'src/engine/core-modules/emailing-domain/types/materialize-campaign-job-data.type';
 import { type RawCampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/raw-campaign-recipient.type';
+import { type SendCampaignEmailJobData } from 'src/engine/core-modules/emailing-domain/types/send-campaign-email-job-data.type';
 import { normalizeCampaignRecipients } from 'src/engine/core-modules/emailing-domain/utils/normalize-campaign-recipients.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
+import { renderCampaignTemplate } from 'src/modules/emailing/utils/render-campaign-template.util';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
-import { MessageParticipantRole } from 'twenty-shared/types';
-import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { createHtmlToTextConverter } from 'src/modules/messaging/message-import-manager/utils/create-html-to-text-converter.util';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { MessageParticipantRole } from 'twenty-shared/types';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 
 type SendCampaignArgs = {
@@ -60,6 +64,9 @@ type SendCampaignResult = {
   queuedCount: number;
   skipped: CampaignSkippedBreakdown;
 };
+
+// A recipient paired with the deterministic message id materialized for it.
+type CampaignMessageRecipient = CampaignRecipient & { messageId: string };
 
 const toRawRecipient = (person: {
   id: string;
@@ -86,21 +93,26 @@ export class MessageCampaignService {
 
   // Workspace-data repository for a workspace entity. The user-triggered send
   // path runs under the caller's permissions (shouldBypassPermissionChecks
-  // false); background jobs and webhook callbacks have no acting user and run
-  // as a system actor (true).
+  // omitted); background jobs and webhook callbacks have no acting user and run
+  // as a system actor.
   private getWorkspaceRepository<T extends ObjectLiteral>(
     workspaceId: string,
     entity: Type<T>,
     shouldBypassPermissionChecks: boolean,
   ) {
-    return this.globalWorkspaceOrmManager.getRepository(workspaceId, entity, {
-      shouldBypassPermissionChecks,
-    });
+    return this.globalWorkspaceOrmManager.getRepository(
+      workspaceId,
+      entity,
+      shouldBypassPermissionChecks
+        ? { shouldBypassPermissionChecks: true }
+        : undefined,
+    );
   }
 
-  // Orchestrates a campaign send: resolves the verified domain + email-group
-  // channel, materializes one QUEUED message per recipient, and enqueues a send
-  // job each. Sending happens asynchronously in the job, not in this request.
+  // Resolves the audience under the caller's permissions, creates the campaign
+  // row, and enqueues a single fan-out job carrying only recipient refs. The
+  // request never materializes per-recipient messages nor enqueues per-recipient
+  // jobs, so it stays fast regardless of audience size.
   async send({
     workspaceId,
     userWorkspaceId,
@@ -130,82 +142,162 @@ export class MessageCampaignService {
         workspaceId,
       });
 
-    const text = this.htmlToText(html);
-
-    // No explicit auth context: the send runs under the request's acting user,
-    // so reading the audience and materializing the campaign respect that
-    // user's permissions.
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const rawRecipients = await this.resolveRecipientsFromList(
-          workspaceId,
-          listId,
-        );
-
-        const { recipients, skipped } = normalizeCampaignRecipients(
-          rawRecipients,
-          MAX_CAMPAIGN_RECIPIENTS,
-        );
-
-        const { campaignId, messageIds } =
-          await this.createCampaignWithMessages({
+    // No explicit auth context: the audience read and campaign creation run
+    // under the request's acting user, so they respect that user's permissions.
+    const { campaignId, recipients, skipped } =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          const rawRecipients = await this.resolveRecipientsFromList(
             workspaceId,
-            messageChannelId: messageChannel.id,
-            fromAddress,
-            recipients,
+            listId,
+          );
+
+          const normalized = normalizeCampaignRecipients(
+            rawRecipients,
+            MAX_CAMPAIGN_RECIPIENTS,
+          );
+
+          const newCampaignId = await this.createCampaign({
+            workspaceId,
             subject,
             html,
-            text,
+            fromAddress,
             messageTopicId,
             listId,
           });
 
-        for (let index = 0; index < recipients.length; index += 1) {
-          await this.messageQueueService.add<SendCampaignEmailJobData>(
-            SEND_CAMPAIGN_EMAIL_JOB,
-            {
-              workspaceId,
-              campaignId,
-              messageId: messageIds[index],
-              recipientEmail: recipients[index].email,
-              emailingDomainId: emailingDomain.id,
-              messageTopicId,
-              fromAddress,
-              subject,
-              html,
-            },
-            { retryLimit: 3 },
-          );
-        }
+          return {
+            campaignId: newCampaignId,
+            recipients: normalized.recipients,
+            skipped: normalized.skipped,
+          };
+        },
+      );
 
-        // Marks the campaign SENT immediately when nothing was queued
-        // (zero-recipient case); otherwise the last send job finalizes it.
-        await this.finalizeCampaignIfComplete(workspaceId, campaignId, false);
-
-        return { campaignId, queuedCount: recipients.length, skipped };
+    await this.messageQueueService.add<MaterializeCampaignJobData>(
+      MATERIALIZE_CAMPAIGN_JOB,
+      {
+        workspaceId,
+        campaignId,
+        messageChannelId: messageChannel.id,
+        emailingDomainId: emailingDomain.id,
+        recipients,
       },
+      { retryLimit: 3 },
     );
+
+    return { campaignId, queuedCount: recipients.length, skipped };
   }
 
-  // Processes one recipient's send job: idempotent, sends via the emailing-domain
-  // sender (keeps suppression + unsubscribe + reply-to), records per-message
-  // status, and finalizes the campaign once nothing remains queued. Send errors
-  // are rethrown so the queue retries the job; a successful retry flips the
-  // message back from FAILED to SENT.
+  // Fan-out: materializes one QUEUED message per recipient that doesn't have one
+  // yet (deterministic id => safe to re-run), then enqueues a per-recipient send
+  // job for every QUEUED message. Re-running reconciles messages orphaned by a
+  // crash mid-fan-out. Runs as a system actor (no acting user in a job).
+  async processMaterializeJob(data: MaterializeCampaignJobData): Promise<void> {
+    const {
+      workspaceId,
+      campaignId,
+      messageChannelId,
+      emailingDomainId,
+      recipients,
+    } = data;
+
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const campaignRepository = await this.getWorkspaceRepository(
+        workspaceId,
+        MessageCampaignWorkspaceEntity,
+        true,
+      );
+
+      const campaign = await campaignRepository.findOne({
+        where: { id: campaignId },
+      });
+
+      if (campaign === null) {
+        return;
+      }
+
+      // Dedupe by the deterministic message id so a person listed twice yields a
+      // single message (and a single send job).
+      const recipientsByMessageId = new Map<string, CampaignMessageRecipient>();
+
+      for (const recipient of recipients) {
+        const messageId = this.campaignMessageId(
+          campaignId,
+          recipient.personId,
+        );
+
+        if (!recipientsByMessageId.has(messageId)) {
+          recipientsByMessageId.set(messageId, { ...recipient, messageId });
+        }
+      }
+
+      const allRecipients = [...recipientsByMessageId.values()];
+
+      const messageRepository = await this.getWorkspaceRepository(
+        workspaceId,
+        MessageWorkspaceEntity,
+        true,
+      );
+
+      const existingMessages = await messageRepository.find({
+        where: { messageCampaignId: campaignId },
+      });
+      const existingMessageIds = new Set(
+        existingMessages.map((message) => message.id),
+      );
+
+      const recipientsToCreate = allRecipients.filter(
+        (recipient) => !existingMessageIds.has(recipient.messageId),
+      );
+
+      if (recipientsToCreate.length > 0) {
+        await this.materializeCampaignMessages({
+          workspaceId,
+          campaignId,
+          messageChannelId,
+          fromAddress: campaign.fromAddress?.primaryEmail ?? '',
+          subjectTemplate: campaign.subject ?? '',
+          bodyTemplate: campaign.bodyTemplate ?? '',
+          recipients: recipientsToCreate,
+        });
+      }
+
+      for (const recipient of allRecipients) {
+        await this.messageQueueService.add<SendCampaignEmailJobData>(
+          SEND_CAMPAIGN_EMAIL_JOB,
+          {
+            workspaceId,
+            campaignId,
+            messageId: recipient.messageId,
+            personId: recipient.personId,
+            recipientEmail: recipient.email,
+            emailingDomainId,
+          },
+          { retryLimit: 3 },
+        );
+      }
+
+      // Finalizes the campaign immediately when nothing was queued
+      // (zero-recipient case); otherwise the last send job finalizes it.
+      await this.finalizeCampaignIfComplete(workspaceId, campaignId, true);
+    }, buildSystemAuthContext(workspaceId));
+  }
+
+  // Processes one recipient's send job: idempotent, renders the campaign
+  // template against the recipient, sends via the emailing-domain sender (keeps
+  // suppression + unsubscribe + reply-to), records per-message status, and
+  // finalizes the campaign once nothing remains queued. Send errors are rethrown
+  // so the queue retries the job; a successful retry flips FAILED back to SENT.
   async processSendJob(data: SendCampaignEmailJobData): Promise<void> {
     const {
       workspaceId,
       campaignId,
       messageId,
+      personId,
       recipientEmail,
       emailingDomainId,
-      messageTopicId,
-      fromAddress,
-      subject,
-      html,
     } = data;
-
-    const text = this.htmlToText(html);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageRepository = await this.getWorkspaceRepository(
@@ -219,8 +311,8 @@ export class MessageCampaignService {
       });
 
       // QUEUED is a first attempt, FAILED a previous attempt of this same job
-      // being retried by the queue. Everything else (SENT, BOUNCED, COMPLAINED)
-      // is terminal: never send twice.
+      // being retried by the queue. Everything else (SENT, BOUNCED, COMPLAINED,
+      // SKIPPED) is terminal: never send twice.
       if (
         message === null ||
         (message.deliveryStatus !== CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED &&
@@ -228,6 +320,49 @@ export class MessageCampaignService {
       ) {
         return;
       }
+
+      const campaignRepository = await this.getWorkspaceRepository(
+        workspaceId,
+        MessageCampaignWorkspaceEntity,
+        true,
+      );
+
+      const campaign = await campaignRepository.findOne({
+        where: { id: campaignId },
+      });
+
+      if (campaign === null) {
+        return;
+      }
+
+      const personRepository = await this.getWorkspaceRepository(
+        workspaceId,
+        PersonWorkspaceEntity,
+        true,
+      );
+
+      const person = await personRepository.findOne({
+        where: { id: personId },
+      });
+
+      const variables = this.buildTemplateVariables(person);
+      const subject = renderCampaignTemplate(
+        campaign.subject ?? '',
+        variables,
+        {
+          escapeValues: false,
+        },
+      );
+      const html = renderCampaignTemplate(
+        campaign.bodyTemplate ?? '',
+        variables,
+        {
+          escapeValues: true,
+        },
+      );
+      const text = this.htmlToText(html);
+      const fromAddress = campaign.fromAddress?.primaryEmail ?? '';
+      const messageTopicId = campaign.topicId ?? undefined;
 
       try {
         let result: EmailingDomainSendEmailResult;
@@ -288,12 +423,13 @@ export class MessageCampaignService {
         }
 
         // Adopt the SES id as the message id so a reply (whose In-Reply-To
-        // references it) threads back onto this send, mirroring the existing
-        // email-group outbound model. A bookkeeping failure past this point
-        // still fails the job, but the SENT status makes the retry a no-op.
+        // references it) threads back onto this send, and persist the rendered
+        // (personalized) subject/body that the recipient actually received.
         await messageRepository.update(messageId, {
           deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENT,
           headerMessageId: result.messageId,
+          subject,
+          text,
         });
 
         const associationRepository = await this.getWorkspaceRepository(
@@ -355,67 +491,95 @@ export class MessageCampaignService {
     }, buildSystemAuthContext(workspaceId));
   }
 
-  // Creates the campaign row and its outbound messages (QUEUED) + threads,
-  // channel associations and from/to participants in ONE transaction, so a
-  // failure can never leave an orphan SENDING campaign with no messages. Each
-  // recipient's personId is set directly (no participant matching, no contact
-  // auto-creation). Returns the campaign id and the message ids aligned with
-  // the recipients order. Must run inside an active workspace context.
-  private async createCampaignWithMessages({
+  // Inserts the campaign row (no messages — the fan-out job materializes those).
+  // Must run inside an active workspace context.
+  private async createCampaign({
     workspaceId,
-    messageChannelId,
-    fromAddress,
-    recipients,
     subject,
     html,
-    text,
+    fromAddress,
     messageTopicId,
     listId,
   }: {
     workspaceId: string;
-    messageChannelId: string;
-    fromAddress: string;
-    recipients: CampaignRecipient[];
     subject: string;
     html: string;
-    text: string;
+    fromAddress: string;
     messageTopicId?: string;
     listId: string;
-  }): Promise<{ campaignId: string; messageIds: string[] }> {
-    const now = new Date();
-    const rows = recipients.map((recipient) => ({
-      recipient,
-      threadId: v4(),
-      messageId: v4(),
-      // Temporary id; the send job overwrites it with the SES id so the stored
-      // ids match what the recipient receives (reply-threading).
-      temporaryExternalId: v4(),
-    }));
-
+  }): Promise<string> {
     const campaignRepository = await this.getWorkspaceRepository(
       workspaceId,
       MessageCampaignWorkspaceEntity,
       false,
     );
+
+    const { identifiers } = await campaignRepository.insert({
+      subject,
+      bodyTemplate: html,
+      fromAddress: { primaryEmail: fromAddress, additionalEmails: null },
+      status: CAMPAIGN_STATUS.SENDING,
+      topicId: messageTopicId ?? null,
+      listId,
+    });
+
+    return identifiers[0].id;
+  }
+
+  // Creates the outbound messages (QUEUED) + threads, channel associations and
+  // from/to participants for the given recipients in ONE transaction. Each
+  // recipient's personId is set directly (no participant matching, no contact
+  // auto-creation). Message ids are deterministic (campaignId, personId), so a
+  // retry skips recipients already materialized. Runs as a system actor.
+  private async materializeCampaignMessages({
+    workspaceId,
+    campaignId,
+    messageChannelId,
+    fromAddress,
+    subjectTemplate,
+    bodyTemplate,
+    recipients,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+    messageChannelId: string;
+    fromAddress: string;
+    subjectTemplate: string;
+    bodyTemplate: string;
+    recipients: CampaignMessageRecipient[];
+  }): Promise<void> {
+    const now = new Date();
+    // Placeholder body for the timeline before send; the send job overwrites it
+    // with the personalized render.
+    const text = this.htmlToText(bodyTemplate);
+    const rows = recipients.map((recipient) => ({
+      recipient,
+      messageId: recipient.messageId,
+      threadId: v4(),
+      // Temporary id; the send job overwrites it with the SES id so the stored
+      // ids match what the recipient receives (reply-threading).
+      temporaryExternalId: v4(),
+    }));
+
     const messageThreadRepository = await this.getWorkspaceRepository(
       workspaceId,
       MessageThreadWorkspaceEntity,
-      false,
+      true,
     );
     const messageRepository = await this.getWorkspaceRepository(
       workspaceId,
       MessageWorkspaceEntity,
-      false,
+      true,
     );
     const associationRepository = await this.getWorkspaceRepository(
       workspaceId,
       MessageChannelMessageAssociationWorkspaceEntity,
-      false,
+      true,
     );
     const participantRepository = await this.getWorkspaceRepository(
       workspaceId,
       MessageParticipantWorkspaceEntity,
-      false,
+      true,
     );
 
     const workspaceDataSource =
@@ -427,28 +591,8 @@ export class MessageCampaignService {
       );
     }
 
-    let campaignId = '';
-
     await workspaceDataSource.transaction(
       async (transactionManager: WorkspaceEntityManager) => {
-        const { identifiers } = await campaignRepository.insert(
-          {
-            subject,
-            bodyTemplate: html,
-            fromAddress: { primaryEmail: fromAddress, additionalEmails: null },
-            status: CAMPAIGN_STATUS.SENDING,
-            topicId: messageTopicId ?? null,
-            listId,
-          },
-          transactionManager,
-        );
-
-        campaignId = identifiers[0].id;
-
-        if (rows.length === 0) {
-          return;
-        }
-
         await messageThreadRepository.insert(
           rows.map((row) => ({ id: row.threadId })),
           transactionManager,
@@ -457,7 +601,7 @@ export class MessageCampaignService {
           rows.map((row) => ({
             id: row.messageId,
             headerMessageId: row.temporaryExternalId,
-            subject,
+            subject: subjectTemplate,
             text,
             receivedAt: now,
             messageThreadId: row.threadId,
@@ -500,13 +644,12 @@ export class MessageCampaignService {
         );
       },
     );
-
-    return { campaignId, messageIds: rows.map((row) => row.messageId) };
   }
 
-  // Finalizes the campaign once nothing remains QUEUED. The status='SENDING'
-  // guard makes this a compare-and-swap so concurrent jobs finalize exactly
-  // once. Must run inside a workspace context.
+  // Finalizes the campaign once nothing remains QUEUED: SENT, or SENT_WITH_ERRORS
+  // when at least one recipient terminally FAILED. The status='SENDING' guard
+  // makes this a compare-and-swap so concurrent jobs finalize exactly once. Must
+  // run inside a workspace context.
   private async finalizeCampaignIfComplete(
     workspaceId: string,
     campaignId: string,
@@ -529,6 +672,13 @@ export class MessageCampaignService {
       return;
     }
 
+    const failedCount = await messageRepository.count({
+      where: {
+        messageCampaignId: campaignId,
+        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
+      },
+    });
+
     const campaignRepository = await this.getWorkspaceRepository(
       workspaceId,
       MessageCampaignWorkspaceEntity,
@@ -538,7 +688,10 @@ export class MessageCampaignService {
     await campaignRepository.update(
       { id: campaignId, status: CAMPAIGN_STATUS.SENDING },
       {
-        status: CAMPAIGN_STATUS.SENT,
+        status:
+          failedCount > 0
+            ? CAMPAIGN_STATUS.SENT_WITH_ERRORS
+            : CAMPAIGN_STATUS.SENT,
         sentAt: new Date(),
       },
     );
@@ -584,5 +737,24 @@ export class MessageCampaignService {
     });
 
     return people.map(toRawRecipient);
+  }
+
+  // Per-recipient merge fields available to {{variable}} tokens in templates.
+  private buildTemplateVariables(
+    person: PersonWorkspaceEntity | null,
+  ): Record<string, string> {
+    const firstName = person?.name?.firstName ?? '';
+    const lastName = person?.name?.lastName ?? '';
+
+    return {
+      firstName,
+      lastName,
+      fullName: [firstName, lastName].filter(Boolean).join(' '),
+      email: person?.emails?.primaryEmail ?? '',
+    };
+  }
+
+  private campaignMessageId(campaignId: string, personId: string): string {
+    return v5(`${campaignId}:${personId}`, CAMPAIGN_MESSAGE_ID_NAMESPACE);
   }
 }

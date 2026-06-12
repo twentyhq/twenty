@@ -14,10 +14,15 @@ export class UnsubscribeTokenService {
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
 
-  sign(payload: UnsubscribeTokenPayload): string {
+  sign(payload: Omit<UnsubscribeTokenPayload, 'issuedAt'>): string {
+    const stampedPayload: UnsubscribeTokenPayload = {
+      ...payload,
+      issuedAt: Date.now(),
+    };
+
     return Buffer.from(
       this.secretEncryptionService.encryptVersioned(
-        JSON.stringify(payload) as PlaintextString,
+        JSON.stringify(stampedPayload) as PlaintextString,
       ),
     ).toString('base64url');
   }
@@ -40,6 +45,9 @@ export class UnsubscribeTokenService {
       return {
         workspaceId: decoded.workspaceId,
         emailAddress: decoded.emailAddress,
+        // Default to 0 for any token minted before issuedAt existed, so it still
+        // verifies (and reads as epoch-old) rather than being rejected.
+        issuedAt: typeof decoded?.issuedAt === 'number' ? decoded.issuedAt : 0,
         ...(typeof decoded?.messageTopicId === 'string'
           ? { messageTopicId: decoded.messageTopicId }
           : {}),
