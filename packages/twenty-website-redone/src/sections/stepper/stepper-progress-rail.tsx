@@ -64,7 +64,7 @@ const StepRow = styled.div`
 `;
 
 const PillTrack = styled.div`
-  background-color: ${color('black-20')};
+  background-color: var(--rail-inactive, ${color('black-20')});
   border-radius: 50%;
   display: flex;
   height: ${spacing(1)};
@@ -115,17 +115,27 @@ const StepLabel = styled.div`
 
 export type StepperProgressRailProps = {
   activeStepIndex: number;
+  // Inactive dot ink; the product stepper runs a stronger one than the
+  // home default.
+  inactiveColor?: string;
   localProgress: number;
   stepCount: number;
 };
 
 export function StepperProgressRail({
   activeStepIndex,
+  inactiveColor,
   localProgress,
   stepCount,
 }: StepperProgressRailProps) {
   return (
-    <RailContainer>
+    <RailContainer
+      style={
+        inactiveColor
+          ? ({ '--rail-inactive': inactiveColor } as CSSProperties)
+          : undefined
+      }
+    >
       <StickyViewportCenter>
         <Rail>
           {Array.from({ length: stepCount }, (_, index) => {

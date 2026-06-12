@@ -64,6 +64,11 @@ msgstr "AC&T est passé à une instance Twenty auto-hébergée : aucun risque fo
 msgid "AC&T replaced a shuttered vendor CRM with self-hosted Twenty and cut CRM costs by more than 90%."
 msgstr "AC&T a remplacé un CRM propriétaire abandonné par Twenty auto-hébergé et réduit ses coûts CRM de plus de 90 %."
 
+#. js-lingui-id: woOp+c
+#: src/sections/stepper/product-stepper-data.ts
+msgid "Add objects and fields"
+msgstr ""
+
 #. js-lingui-id: vZKKhf
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Aggregate, bar, line, and pie widgets"
@@ -122,6 +127,11 @@ msgstr ""
 #. js-lingui-id: fxL/Km
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Attachments without the chaos."
+msgstr ""
+
+#. js-lingui-id: FFv0Vh
+#: src/sections/stepper/product-stepper-data.ts
+msgid "Automation"
 msgstr ""
 
 #. js-lingui-id: dGEega
@@ -274,6 +284,11 @@ msgstr "Le contrôle sans la lourdeur"
 msgid "Core Features"
 msgstr ""
 
+#. js-lingui-id: Xn2Nlq
+#: src/sections/stepper/product-stepper-data.ts
+msgid "Create a workflow"
+msgstr ""
+
 #. js-lingui-id: B9nLrl
 #: src/sections/menu/menu.data.ts
 msgid "Create apps on Twenty"
@@ -335,9 +350,19 @@ msgstr "Histoires de clients"
 msgid "Customers"
 msgstr "Clients"
 
+#. js-lingui-id: qqLY+j
+#: src/sections/stepper/product-stepper-content.tsx
+msgid "Customization"
+msgstr ""
+
 #. js-lingui-id: V0kvgB
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Data import"
+msgstr ""
+
+#. js-lingui-id: 5cNMFz
+#: src/sections/stepper/product-stepper-data.ts
+msgid "Data model"
 msgstr ""
 
 #. js-lingui-id: /TlpVf
@@ -498,6 +523,11 @@ msgstr "Commencer"
 msgid "GitHub (opens in new tab)"
 msgstr "GitHub (ouvre un nouvel onglet)"
 
+#. js-lingui-id: n8waaJ
+#: src/sections/stepper/product-stepper-content.tsx
+msgid "Go the extra mile *with no-code*"
+msgstr ""
+
 #. js-lingui-id: MCLWq4
 #: src/sections/helped/helped.data.ts
 msgid "Grow with a flexible foundation"
@@ -563,6 +593,11 @@ msgstr "C'est fragile. La V1 sort vite, mais la maintenance et les évolutions d
 #: src/sections/testimonials/testimonials.data.ts
 msgid "Justin Beadle"
 msgstr "Justin Beadle"
+
+#. js-lingui-id: rdU729
+#: src/sections/stepper/product-stepper-data.ts
+msgid "Layout"
+msgstr ""
 
 #. js-lingui-id: +Ss/og
 #: src/sections/menu/menu.data.ts
@@ -645,6 +680,11 @@ msgstr ""
 #: src/sections/menu/menu-drawer.tsx
 msgid "Navigation menu"
 msgstr "Menu de navigation"
+
+#. js-lingui-id: LfNsfa
+#: src/sections/stepper/product-stepper-content.tsx
+msgid "Need a quick change? Skip the engineering ticket. Customize your workspace in minutes."
+msgstr ""
 
 #. js-lingui-id: J8ZssL
 #: src/sections/helped/helped.data.ts
@@ -868,6 +908,11 @@ msgstr "Cessez de lutter contre le sur-mesure. *Commencez à construire, avec Tw
 #: src/sections/three-cards/product-three-cards.tsx
 msgid "Stop settling for trade-offs."
 msgstr "Cessez de vous contenter de compromis."
+
+#. js-lingui-id: 9M02G5
+#: src/sections/stepper/product-stepper-data.ts
+msgid "Tailor record pages, menus, and views"
+msgstr ""
 
 #. js-lingui-id: JAKtcG
 #: src/sections/product-hero/product-hero.tsx
