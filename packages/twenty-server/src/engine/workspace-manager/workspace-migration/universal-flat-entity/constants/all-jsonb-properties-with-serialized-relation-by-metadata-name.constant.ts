@@ -38,7 +38,9 @@ export const ALL_JSONB_PROPERTIES_WITH_SERIALIZED_RELATION_BY_METADATA_NAME = {
     configuration: 'configuration',
     overrides: 'overrides',
   },
-  commandMenuItem: {},
+  commandMenuItem: {
+    overrides: 'overrides',
+  },
   navigationMenuItem: {},
   rolePermissionFlag: {},
   permissionFlag: {},
