@@ -36,6 +36,7 @@ export const FilesFieldMenuItem = ({
                 getFileCategoryFromExtension(file.extension ?? '')
               }
               size="small"
+              thumbnailUrl={file.url}
             />
           }
           variant={ChipVariant.Rounded}
