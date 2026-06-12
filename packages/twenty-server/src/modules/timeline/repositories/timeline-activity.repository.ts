@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'class-validator';
 import { type ObjectRecord } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThan } from 'typeorm';
 
 import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/utils/object-record-diff-merge';
@@ -39,14 +39,14 @@ export class TimelineActivityRepository {
       });
 
       const payloadsWithDiff = payloads
-        .filter(({ properties }) => {
-          const isDiffEmpty =
-            properties.diff !== null &&
-            properties.diff &&
-            Object.keys(properties.diff).length === 0;
-
-          return !isDiffEmpty;
-        })
+        // Drop events whose diff is present but empty (nothing to show); keep
+        // events with real changes and diff-less events such as
+        // created/deleted/restored and linked note/task.
+        .filter(
+          ({ properties }) =>
+            !isDefined(properties.diff) ||
+            Object.keys(properties.diff).length > 0,
+        )
         .map(({ properties, ...rest }) => ({
           ...rest,
           properties: isDefined(properties.diff)
