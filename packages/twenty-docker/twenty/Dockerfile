@@ -135,8 +135,15 @@ LABEL org.opencontainers.image.description="Twenty server image (no frontend)."
 #  - example/ apps vendored inside dependencies, e.g. passport-microsoft's
 #    example/login ships a package-lock.json for an old Express demo
 #    (body-parser, ejs, express, ...) that is never installed or run.
-# (The OpenSSL CVE is fixed properly by the Node base bump above, not by deletion.)
-RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx && \
+#  - the Node dev headers: only node-gyp needs them and native addons are
+#    compiled in the build stages; their vendored openssl/opensslv.h is what
+#    scanners fingerprint whenever OpenSSL patches ahead of Node releases.
+# TODO(2026-06-17): the node binary statically links OpenSSL 3.5.6 (June 9
+# OpenSSL advisory fixed in 3.5.7). Bump the pinned node:24-alpine base once
+# the announced June 17, 2026 Node security release ships a 24.x linking
+# OpenSSL >= 3.5.7 — check deps/openssl/openssl/VERSION.dat on the release tag.
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx \
+      /usr/local/include/node && \
     find /app/node_modules -type d -name example -prune -exec rm -rf {} +
 
 RUN mkdir -p /app/.local-storage /app/packages/twenty-server/.local-storage && \
@@ -249,8 +256,10 @@ COPY --from=twenty-server-build /app/packages/twenty-client-sdk/dist /app/packag
 # Frontend static build
 COPY --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
 
-# Source maps are not needed in the dev image (no Sentry)
-RUN find /app/packages/twenty-server/dist -name '*.js.map' -delete
+# Source maps are not needed in the dev image (no Sentry). Node dev headers are
+# dropped for the same scanner-hygiene reasons as in twenty-server above.
+RUN find /app/packages/twenty-server/dist -name '*.js.map' -delete \
+ && rm -rf /usr/local/include/node
 
 # s6 service definitions
 COPY packages/twenty-docker/twenty-app-dev/rootfs/ /

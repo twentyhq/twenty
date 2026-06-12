@@ -1,0 +1,1 @@
+export const MICRO_CREDITS_PER_DOLLAR = 1_000_000;

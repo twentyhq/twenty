@@ -43,6 +43,7 @@ describe('mapRecordFilterGroupToViewFilterGroup', () => {
     kanbanAggregateOperationFieldMetadataId: '',
     position: 0,
     visibility: ViewVisibility.WORKSPACE,
+    isActive: true,
   };
 
   it('should correctly map single record filter group', () => {

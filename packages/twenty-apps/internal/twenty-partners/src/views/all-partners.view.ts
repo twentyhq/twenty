@@ -4,6 +4,7 @@ import {
   ALL_PARTNERS_VIEW_UNIVERSAL_IDENTIFIER,
   PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { PARTNER_USER_ON_PARTNER_FIELD_ID } from 'src/fields/partner-user-on-partner.field';
 
 // Every partner, all stages — kept last in the Partners folder. No Last Match column.
 export default defineView({
@@ -25,5 +26,7 @@ export default defineView({
     { universalIdentifier: '52408b5f-5e13-4e3c-af2d-ce50033ec126', fieldMetadataUniversalIdentifier: '560503de-6330-4c1d-af97-a8dee125f2ad', position: 4, isVisible: true },
     // Categories (partnerScope)
     { universalIdentifier: '34d58668-a689-42e2-9aff-3fee315092d6', fieldMetadataUniversalIdentifier: '500021ad-ca42-4fd3-8727-392dd26b722a', position: 5, isVisible: true, size: 260 },
+    // partnerUser: the member this partner logs in as — prerequisite for the cascade + RLS visibility.
+    { universalIdentifier: '19d1fc62-2486-4f59-8e77-b4ee177481b1', fieldMetadataUniversalIdentifier: PARTNER_USER_ON_PARTNER_FIELD_ID, position: 6, isVisible: true },
   ],
 });

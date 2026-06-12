@@ -41,6 +41,8 @@ export const fromViewManifestToUniversalFlatView = ({
     shouldHideEmptyGroups: viewManifest.shouldHideEmptyGroups ?? false,
     anyFieldFilterValue: null,
     createdByUserWorkspaceId: null,
+    isActive: true,
+    universalOverrides: null,
     viewFieldUniversalIdentifiers: [],
     viewFilterUniversalIdentifiers: [],
     viewFilterGroupUniversalIdentifiers: [],

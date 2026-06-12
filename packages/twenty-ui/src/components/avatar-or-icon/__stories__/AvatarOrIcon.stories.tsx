@@ -1,6 +1,10 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconBuildingSkyscraper, IconUser } from '@ui/display';
-import { ComponentDecorator, JotaiRootDecorator } from '@ui/testing';
+import {
+  AVATAR_URL_MOCK,
+  ComponentDecorator,
+  JotaiRootDecorator,
+} from '@ui/testing';
 import { AvatarOrIcon } from '../AvatarOrIcon';
 
 const meta: Meta<typeof AvatarOrIcon> = {
@@ -21,7 +25,7 @@ export const Default: Story = {
 
 export const WithAvatar: Story = {
   args: {
-    avatarUrl: 'https://i.pravatar.cc/300',
+    avatarUrl: AVATAR_URL_MOCK,
     placeholder: 'JD',
     placeholderColorSeed: 'John Doe',
   },
