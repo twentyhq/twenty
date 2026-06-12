@@ -43,7 +43,6 @@ type DragEndPayload = Parameters<
 export type RecordTableHeaderDndKitContextValues = {
   isDragging: boolean;
   activeDropTargetIndex: number | null;
-  activeDraggedSourceIndex: number | null;
 };
 
 export const useRecordTableHeaderDndKit = (): {
@@ -75,9 +74,6 @@ export const useRecordTableHeaderDndKit = (): {
 
   const [isDragging, setIsDragging] = useState(false);
   const [activeDropTargetIndex, setActiveDropTargetIndex] = useState<
-    number | null
-  >(null);
-  const [activeDraggedSourceIndex, setActiveDraggedSourceIndex] = useState<
     number | null
   >(null);
 
@@ -122,12 +118,8 @@ export const useRecordTableHeaderDndKit = (): {
     ],
   );
 
-  const handleDragStart = (event: DragStartPayload) => {
-    const { operation } = event;
-    const sourceIndex = operation.source?.data.index;
-
+  const handleDragStart = (_event: DragStartPayload) => {
     setIsDragging(true);
-    setActiveDraggedSourceIndex(sourceIndex ?? null);
 
     store.set(isRecordTableHeaderDropProcessingCallbackState, true);
 
@@ -166,7 +158,6 @@ export const useRecordTableHeaderDndKit = (): {
 
     setIsDragging(false);
     setActiveDropTargetIndex(null);
-    setActiveDraggedSourceIndex(null);
     setDragSelectionStartEnabled(true);
     store.set(isRecordTableHeaderDropProcessingCallbackState, false);
 
@@ -190,7 +181,6 @@ export const useRecordTableHeaderDndKit = (): {
   const contextValues: RecordTableHeaderDndKitContextValues = {
     isDragging,
     activeDropTargetIndex,
-    activeDraggedSourceIndex,
   };
 
   return {

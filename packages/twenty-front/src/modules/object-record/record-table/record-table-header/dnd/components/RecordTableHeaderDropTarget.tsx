@@ -54,16 +54,10 @@ export const RecordTableHeaderDropTarget = ({
   children,
   compact = false,
 }: RecordTableHeaderDropTargetProps) => {
-  const { activeDraggedSourceIndex, activeDropTargetIndex } = useContext(
-    RecordTableHeaderDndContext,
-  );
-  const isNoopDropTarget =
-    isDefined(activeDraggedSourceIndex) &&
-    (index === activeDraggedSourceIndex ||
-      index === activeDraggedSourceIndex + 1);
+  const { activeDropTargetIndex } = useContext(RecordTableHeaderDndContext);
 
   const isDragOver = isDefined(activeDropTargetIndex)
-    ? activeDropTargetIndex === index && !isNoopDropTarget
+    ? activeDropTargetIndex === index
     : false;
 
   return (
