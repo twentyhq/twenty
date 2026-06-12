@@ -130,16 +130,18 @@ describe('extractFileInfoOrThrow', () => {
 
   describe('when file-type parser throws', () => {
     it('should throw FileStorageException', async () => {
-      jest.spyOn(FileTypeParser.prototype, 'fromBuffer').mockRejectedValue(
-        new Error('Non-whitespace before first tag.'),
-      );
+      jest
+        .spyOn(FileTypeParser.prototype, 'fromBuffer')
+        .mockRejectedValue(new Error('Non-whitespace before first tag.'));
 
       await expect(
         extractFileInfoOrThrow({
           file: pdfBuffer,
           filename: 'test.pdf',
         }),
-      ).rejects.toThrow(/File content detection failed: Non-whitespace before first tag./);
+      ).rejects.toThrow(
+        /File content detection failed: Non-whitespace before first tag./,
+      );
     });
   });
 });
