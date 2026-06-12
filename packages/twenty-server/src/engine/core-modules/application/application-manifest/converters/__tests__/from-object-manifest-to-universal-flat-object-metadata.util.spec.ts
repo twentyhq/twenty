@@ -17,8 +17,7 @@ const buildObjectManifest = (
     labelSingular: 'Pet',
     labelPlural: 'Pets',
     fields: [],
-    labelIdentifierFieldMetadataUniversalIdentifier:
-      LABEL_IDENTIFIER_FIELD_UID,
+    labelIdentifierFieldMetadataUniversalIdentifier: LABEL_IDENTIFIER_FIELD_UID,
     ...overrides,
   }) as ObjectManifest;
 

@@ -6,11 +6,7 @@ type CanCreateRecordsForObjectMetadataItemParams = {
   objectPermissions?: ObjectPermission;
   objectMetadataItem: Pick<
     EnrichedObjectMetadataItem,
-    | 'isUICreatable'
-    | 'isUIEditable'
-    | 'isSystem'
-    | 'isRemote'
-    | 'applicationId'
+    'isUICreatable' | 'isUIEditable' | 'isSystem' | 'isRemote' | 'applicationId'
   >;
 };
 
