@@ -10,8 +10,8 @@ import { ABOUT_DESCRIPTION } from 'src/constants/about-description.constant';
 
 export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-  logoUrl: 'public/logo.svg',
-  screenshots: ['public/screenshots/last-contact-column.png'],
+  logoUrl: 'public/logo.png',
+  screenshots: ['public/gallery/cover.png'],
   displayName: APP_DISPLAY_NAME,
   description: APP_DESCRIPTION,
   aboutDescription: ABOUT_DESCRIPTION,
