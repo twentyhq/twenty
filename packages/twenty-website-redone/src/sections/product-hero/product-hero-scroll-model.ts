@@ -3,6 +3,7 @@
 // them. The component layer writes the continuous values to CSS custom
 // properties and keeps React state only for the discrete flips.
 
+import { clampProgress } from '@/platform/motion';
 import { MENU_WIPE } from '@/tokens';
 
 type HeroScrollInput = {
@@ -39,10 +40,6 @@ const NAV_HEIGHT_PX = 64;
 const MORPH_START = 0;
 const MORPH_END = 0.55;
 
-function clamp01(value: number): number {
-  return Math.max(0, Math.min(1, value));
-}
-
 function smoothstep(value: number): number {
   return value * value * (3 - 2 * value);
 }
@@ -63,7 +60,7 @@ export function computeHeroScrollModel({
 }: HeroScrollInput): HeroScrollModel {
   const scrollableDistance = trackHeight - viewportHeight;
   const progress =
-    scrollableDistance <= 0 ? 0 : clamp01(-trackTop / scrollableDistance);
+    scrollableDistance <= 0 ? 0 : clampProgress(-trackTop / scrollableDistance);
   const morphProgress = mapToMorphProgress(progress);
 
   // The wipe line descends as the dark layer reveals; the menu restyles
@@ -101,11 +98,11 @@ export function computeHeroScrollModel({
     ? MENU_WIPE.transparent
     : MENU_WIPE.backgroundAt(navProgress);
 
-  const stackSpreadProgress = clamp01((morphProgress - 0.66) / 0.27);
-  const selectorRevealProgress = clamp01((morphProgress - 0.94) / 0.06);
+  const stackSpreadProgress = clampProgress((morphProgress - 0.66) / 0.27);
+  const selectorRevealProgress = clampProgress((morphProgress - 0.94) / 0.06);
 
   return {
-    aiPanelProgress: clamp01((morphProgress - 0.45) / 0.25),
+    aiPanelProgress: clampProgress((morphProgress - 0.45) / 0.25),
     aiPlaybackEnabled: morphProgress >= 0.7,
     aiPointerEventsEnabled: morphProgress > 0.5,
     heroAtStart: morphProgress <= 0,
@@ -118,8 +115,8 @@ export function computeHeroScrollModel({
     navProgress,
     selectorRevealProgress,
     selectorRevealReady: selectorRevealProgress > 0.96,
-    stackAppearProgress: clamp01((morphProgress - 0.4) / 0.16),
-    stackAlignProgress: clamp01((morphProgress - 0.62) / 0.04),
+    stackAppearProgress: clampProgress((morphProgress - 0.4) / 0.16),
+    stackAlignProgress: clampProgress((morphProgress - 0.62) / 0.04),
     stackSpreadEasedProgress: 1 - Math.pow(1 - stackSpreadProgress, 2.6),
     stackSpreadProgress,
   };

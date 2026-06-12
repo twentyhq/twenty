@@ -1,13 +1,11 @@
+import { clampProgress } from '@/platform/motion';
+
 import {
   type KanbanPageDefinition,
   type PageDefinition,
 } from '../types';
 import { NEW_TASK_ROWS } from './new-task-rows';
 import { type ProductVisualSceneDefinition } from './product-visual-scenes';
-
-function clamp01(value: number) {
-  return Math.max(0, Math.min(1, value));
-}
 
 // An empty answer counts as fully streamed: scenes without responseText
 // (the intro) must never sit in the "generating" state.
@@ -26,7 +24,7 @@ function buildFocusedOpportunitiesPage(
   streamProgress: number,
 ): KanbanPageDefinition {
   const filteredLanes = page.lanes.filter((lane) => lane.cards.length > 0);
-  const revealProgress = clamp01((streamProgress - 0.18) / 0.62);
+  const revealProgress = clampProgress((streamProgress - 0.18) / 0.62);
   const totalCardCount = filteredLanes.reduce(
     (total, lane) => total + lane.cards.length,
     0,

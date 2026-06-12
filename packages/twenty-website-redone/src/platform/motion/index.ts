@@ -1,3 +1,4 @@
+export { clampProgress } from './clamp-progress';
 export { createAnimationFrameLoop } from './animation-frame-loop';
 export { computeScrollProgress } from './compute-scroll-progress';
 export {

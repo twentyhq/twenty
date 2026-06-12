@@ -1,3 +1,4 @@
+import { clampProgress } from '@/platform/motion';
 import { type RefObject } from 'react';
 import { HELPED_CARD_WIDTH_DESKTOP_PX } from './helped-card-width';
 
@@ -40,9 +41,8 @@ type Measurements = {
 
 export type HelpedSceneLayoutState = { measurements: Measurements | null };
 
-const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
 const easeOutQuad = (value: number) => {
-  const clamped = clamp01(value);
+  const clamped = clampProgress(value);
   return 1 - (1 - clamped) * (1 - clamped);
 };
 
@@ -93,7 +93,7 @@ const getProgressScale = (
 ) => {
   if (metrics === null) return 1;
   const lastCardStart = CARD_TRAVEL_START + (cardCount - 1) * CARD_TRAVEL_STEP;
-  const requiredTravel = clamp01(
+  const requiredTravel = clampProgress(
     (innerHeight * 1.1 + metrics.lastCardHeight - metrics.exitTargetTop) /
       (innerHeight * 1.4),
   );
@@ -179,7 +179,7 @@ export function applyHelpedSceneLayout(
     measurements;
   const scrollRange = Math.max(1, sectionHeight - viewportHeight);
   const progress =
-    clamp01(
+    clampProgress(
       (preStickyRevealOffset - sectionRect.top) /
         (scrollRange + preStickyRevealOffset),
     ) * progressScale;
@@ -201,12 +201,12 @@ export function applyHelpedSceneLayout(
     }
 
     const cardStart = CARD_TRAVEL_START + index * CARD_TRAVEL_STEP;
-    const travel = clamp01((progress - cardStart) / CARD_TRAVEL_RANGE);
+    const travel = clampProgress((progress - cardStart) / CARD_TRAVEL_RANGE);
     const x = cardLeft(index, innerWidth, cardWidth, isDesktop);
     const y = innerHeight * (1.1 - travel * 1.4) - postStickyParallaxOffset;
     const opacity = Math.min(
-      clamp01(travel / FADE_FRACTION),
-      clamp01((1 - travel) / FADE_FRACTION),
+      clampProgress(travel / FADE_FRACTION),
+      clampProgress((1 - travel) / FADE_FRACTION),
     );
     setStyleProperty(node, 'opacity', String(opacity));
     setStyleProperty(node, 'transform', `translate3d(${x}px, ${y}px, 0)`);
