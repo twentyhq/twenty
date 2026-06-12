@@ -1,0 +1,92 @@
+import { FieldType, defineObject } from 'twenty-sdk/define';
+import {
+  TFT_SYNC_EVENT_ATTEMPT_COUNT_FIELD_UUID,
+  TFT_SYNC_EVENT_DIRECTION_FIELD_UUID,
+  TFT_SYNC_EVENT_ERROR_FIELD_UUID,
+  TFT_SYNC_EVENT_OBJECT_UUID,
+  TFT_SYNC_EVENT_OPP_NAME_FIELD_UUID,
+  TFT_SYNC_EVENT_PAYLOAD_FIELD_UUID,
+  TFT_SYNC_EVENT_STATUS_FIELD_UUID,
+  TFT_SYNC_EVENT_TFT_OPP_ID_FIELD_UUID,
+} from 'src/constants/universal-identifiers';
+
+export default defineObject({
+  universalIdentifier: TFT_SYNC_EVENT_OBJECT_UUID,
+  nameSingular: 'tftSyncEvent',
+  namePlural: 'tftSyncEvents',
+  labelSingular: 'TFT Sync Event',
+  labelPlural: 'TFT Sync Events',
+  description: 'Audit log for TFT ↔ Partners opportunity sync operations',
+  icon: 'IconRefresh',
+  // Use the human-readable opportunity name as the record title so the audit log isn't just UUIDs
+  labelIdentifierFieldMetadataUniversalIdentifier: TFT_SYNC_EVENT_OPP_NAME_FIELD_UUID,
+  fields: [
+    {
+      universalIdentifier: TFT_SYNC_EVENT_OPP_NAME_FIELD_UUID,
+      type: FieldType.TEXT,
+      name: 'opportunityName',
+      label: 'Opportunity',
+      description: 'Name of the opportunity this sync event relates to',
+      icon: 'IconTargetArrow',
+    },
+    {
+      universalIdentifier: TFT_SYNC_EVENT_DIRECTION_FIELD_UUID,
+      type: FieldType.SELECT,
+      name: 'direction',
+      label: 'Direction',
+      description: 'Which way the sync payload travelled',
+      icon: 'IconArrowsLeftRight',
+      options: [
+        { id: 'd5e8f2a1-3b6c-4d9e-8f2a-1c5d8b3f6e9a', value: 'TFT_TO_PARTNERS', label: 'TFT → Partners', position: 0, color: 'blue' },
+        { id: 'e8b2c5f4-6d9a-4e2b-9c5f-4a8e1d6c3b9f', value: 'PARTNERS_TO_TFT', label: 'Partners → TFT', position: 1, color: 'green' },
+      ],
+    },
+    {
+      universalIdentifier: TFT_SYNC_EVENT_TFT_OPP_ID_FIELD_UUID,
+      type: FieldType.TEXT,
+      name: 'tftOpportunityId',
+      label: 'TFT Opportunity ID',
+      description: 'The TFT workspace opportunity ID this event relates to',
+      icon: 'IconLink',
+    },
+    {
+      universalIdentifier: TFT_SYNC_EVENT_PAYLOAD_FIELD_UUID,
+      type: FieldType.RAW_JSON,
+      name: 'payloadJson',
+      label: 'Payload',
+      description: 'Raw JSON payload sent or received',
+      icon: 'IconBraces',
+    },
+    {
+      universalIdentifier: TFT_SYNC_EVENT_STATUS_FIELD_UUID,
+      type: FieldType.SELECT,
+      name: 'status',
+      label: 'Status',
+      description: 'Outcome of this sync attempt',
+      icon: 'IconActivity',
+      options: [
+        { id: 'f2c5d8b7-9a3e-4f5c-8b8d-7e4a2c9f5d1b', value: 'PENDING', label: 'Pending', position: 0, color: 'yellow' },
+        { id: 'a5f8e2c1-3b6d-4a8f-9d2c-1e5f8b4a7c3d', value: 'OK', label: 'OK', position: 1, color: 'green' },
+        { id: 'b8a2f5d4-6c9b-4b2a-8e5f-4a1c8b7f2d9e', value: 'FAILED', label: 'Failed', position: 2, color: 'red' },
+      ],
+    },
+    {
+      universalIdentifier: TFT_SYNC_EVENT_ERROR_FIELD_UUID,
+      type: FieldType.TEXT,
+      name: 'error',
+      label: 'Error',
+      description: 'Error message if the sync attempt failed',
+      icon: 'IconAlertCircle',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: TFT_SYNC_EVENT_ATTEMPT_COUNT_FIELD_UUID,
+      type: FieldType.NUMBER,
+      name: 'attemptCount',
+      label: 'Attempt count',
+      description: 'Number of times this sync has been attempted',
+      icon: 'IconRepeat',
+      defaultValue: 0,
+    },
+  ],
+});

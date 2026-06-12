@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "./dist-spec",
+    "module": "esnext",
+    "types": ["node"],
+    "paths": { "src/*": ["./src/*"] }
+  },
+  "include": ["**/*.test.ts", "**/*.spec.ts", "**/*.integration-test.ts"]
+}
