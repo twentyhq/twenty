@@ -206,10 +206,6 @@ export class ConnectedAccountMetadataService {
     for (const connectedAccount of connectedAccounts) {
       await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
     }
-
-    this.logger.log(
-      `WorkspaceId: ${workspaceId} Transferred ${connectedAccountIds.length} connected account(s) from user workspace ${fromUserWorkspaceId} to ${toUserWorkspaceId}`,
-    );
   }
 
   async delete({
