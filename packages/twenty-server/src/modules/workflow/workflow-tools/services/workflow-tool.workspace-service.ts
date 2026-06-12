@@ -8,6 +8,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
+import { WorkflowValidationWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-validation.workspace-service';
 import { WorkflowVersionEdgeWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-edge/workflow-version-edge.workspace-service';
 import { WorkflowVersionStepHelpersWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-helpers.workspace-service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
@@ -27,6 +28,7 @@ import { createUpdateLogicFunctionSourceTool } from 'src/modules/workflow/workfl
 import { createUpdateWorkflowVersionPositionsTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-positions.tool';
 import { createUpdateWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-step.tool';
 import { createUpdateWorkflowVersionTriggerTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-trigger.tool';
+import { createValidateWorkflowTool } from 'src/modules/workflow/workflow-tools/tools/validate-workflow.tool';
 import { type WorkflowToolDependencies } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
 
@@ -41,6 +43,7 @@ export class WorkflowToolWorkspaceService {
     workflowVersionService: WorkflowVersionWorkspaceService,
     workflowTriggerService: WorkflowTriggerWorkspaceService,
     workflowSchemaService: WorkflowSchemaWorkspaceService,
+    workflowValidationService: WorkflowValidationWorkspaceService,
     globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     recordPositionService: RecordPositionService,
     logicFunctionFromSourceService: LogicFunctionFromSourceService,
@@ -53,6 +56,7 @@ export class WorkflowToolWorkspaceService {
       workflowVersionService,
       workflowTriggerService,
       workflowSchemaService,
+      workflowValidationService,
       globalWorkspaceOrmManager,
       recordPositionService,
       logicFunctionFromSourceService,
@@ -124,6 +128,7 @@ export class WorkflowToolWorkspaceService {
       this.deps,
       context,
     );
+    const validateWorkflow = createValidateWorkflowTool(this.deps, context);
 
     return {
       [createCompleteWorkflow.name]: createCompleteWorkflow,
@@ -141,6 +146,7 @@ export class WorkflowToolWorkspaceService {
       [getWorkflowCurrentVersion.name]: getWorkflowCurrentVersion,
       [updateLogicFunctionSource.name]: updateLogicFunctionSource,
       [listLogicFunctionTools.name]: listLogicFunctionTools,
+      [validateWorkflow.name]: validateWorkflow,
     };
   }
 }

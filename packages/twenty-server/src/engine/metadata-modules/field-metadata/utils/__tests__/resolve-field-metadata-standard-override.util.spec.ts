@@ -26,6 +26,7 @@ describe('resolveFieldMetadataStandardOverride', () => {
         label: 'Custom Label',
         description: 'Custom Description',
         icon: 'custom-icon',
+        isCustom: true,
         standardOverrides: undefined,
       };
 
@@ -39,11 +40,36 @@ describe('resolveFieldMetadataStandardOverride', () => {
       expect(result).toBe('Custom Label');
     });
 
+    it('should never translate a custom label even when it matches a standard catalog entry', () => {
+      const fieldMetadata = {
+        label: 'Status',
+        description: 'Custom Description',
+        icon: 'custom-icon',
+        isCustom: true,
+        standardOverrides: undefined,
+      };
+
+      mockGenerateMessageId.mockReturnValue('status.message.id');
+      mockI18n._.mockReturnValue('Statut');
+
+      const result = resolveFieldMetadataStandardOverride(
+        fieldMetadata,
+        'label',
+        'fr-FR',
+        mockI18n,
+      );
+
+      expect(result).toBe('Status');
+      expect(mockGenerateMessageId).not.toHaveBeenCalled();
+      expect(mockI18n._).not.toHaveBeenCalled();
+    });
+
     it('should return the field value for custom description field', () => {
       const fieldMetadata = {
         label: 'Custom Label',
         description: 'Custom Description',
         icon: 'custom-icon',
+        isCustom: true,
         standardOverrides: undefined,
       };
 
@@ -62,6 +88,7 @@ describe('resolveFieldMetadataStandardOverride', () => {
         label: 'Custom Label',
         description: 'Custom Description',
         icon: 'custom-icon',
+        isCustom: true,
         standardOverrides: undefined,
       };
 

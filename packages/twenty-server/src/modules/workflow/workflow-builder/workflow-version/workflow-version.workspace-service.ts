@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+import { TRIGGER_STEP_ID, WorkflowActionType } from 'twenty-shared/workflow';
 
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
@@ -25,10 +25,7 @@ import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/
 import { assertWorkflowVersionTriggerIsDefined } from 'src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
-import {
-  WorkflowActionType,
-  type WorkflowAction,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 @Injectable()
 export class WorkflowVersionWorkspaceService {
