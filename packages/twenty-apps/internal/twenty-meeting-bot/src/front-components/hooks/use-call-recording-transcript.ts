@@ -1,31 +1,40 @@
+import { isUndefined } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 type CallRecordingTranscriptState = {
   transcript: unknown;
   loading: boolean;
-  errorMessage: string | null;
+  errorMessage: string | undefined;
 };
 
 export const useCallRecordingTranscript = (
-  callRecordingId: string | null,
+  callRecordingId: string | undefined,
 ): CallRecordingTranscriptState => {
   const [state, setState] = useState<CallRecordingTranscriptState>({
-    transcript: null,
-    loading: callRecordingId !== null,
-    errorMessage: null,
+    transcript: undefined,
+    loading: !isUndefined(callRecordingId),
+    errorMessage: undefined,
   });
 
   useEffect(() => {
-    if (callRecordingId === null) {
-      setState({ transcript: null, loading: false, errorMessage: null });
+    if (isUndefined(callRecordingId)) {
+      setState({
+        transcript: undefined,
+        loading: false,
+        errorMessage: undefined,
+      });
       return;
     }
 
     let cancelled = false;
 
     const fetchTranscript = async () => {
-      setState({ transcript: null, loading: true, errorMessage: null });
+      setState({
+        transcript: undefined,
+        loading: true,
+        errorMessage: undefined,
+      });
 
       try {
         const client = new CoreApiClient();
@@ -50,9 +59,9 @@ export const useCallRecordingTranscript = (
 
         const callRecordingNode = queryResult.callRecordings?.edges?.[0]?.node;
 
-        if (callRecordingNode === undefined) {
+        if (isUndefined(callRecordingNode)) {
           setState({
-            transcript: null,
+            transcript: undefined,
             loading: false,
             errorMessage: 'Call recording not found',
           });
@@ -60,9 +69,9 @@ export const useCallRecordingTranscript = (
         }
 
         setState({
-          transcript: callRecordingNode.transcript ?? null,
+          transcript: callRecordingNode.transcript ?? undefined,
           loading: false,
-          errorMessage: null,
+          errorMessage: undefined,
         });
       } catch (fetchError) {
         if (cancelled) {
@@ -70,7 +79,7 @@ export const useCallRecordingTranscript = (
         }
 
         setState({
-          transcript: null,
+          transcript: undefined,
           loading: false,
           errorMessage:
             fetchError instanceof Error

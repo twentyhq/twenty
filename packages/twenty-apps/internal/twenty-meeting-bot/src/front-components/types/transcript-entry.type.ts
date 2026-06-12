@@ -1,5 +1,5 @@
 export type TranscriptEntry = {
   speakerName: string;
-  startSeconds: number | null;
+  startSeconds: number | undefined;
   text: string;
 };

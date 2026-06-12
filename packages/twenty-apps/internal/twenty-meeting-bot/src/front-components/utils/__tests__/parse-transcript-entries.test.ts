@@ -59,12 +59,16 @@ describe('parseTranscriptEntries', () => {
         { words: [{ text: 'Hi' }] },
       ]),
     ).toEqual([
-      { speakerName: 'Unknown speaker', startSeconds: null, text: 'Hello' },
-      { speakerName: 'Unknown speaker', startSeconds: null, text: 'Hi' },
+      {
+        speakerName: 'Unknown speaker',
+        startSeconds: undefined,
+        text: 'Hello',
+      },
+      { speakerName: 'Unknown speaker', startSeconds: undefined, text: 'Hi' },
     ]);
   });
 
-  it('returns a null start time when the first word has no relative timestamp', () => {
+  it('returns an undefined start time when the first word has no relative timestamp', () => {
     expect(
       parseTranscriptEntries([
         {
@@ -78,7 +82,7 @@ describe('parseTranscriptEntries', () => {
         },
       ]),
     ).toEqual([
-      { speakerName: 'Ada Lovelace', startSeconds: null, text: 'Hello' },
+      { speakerName: 'Ada Lovelace', startSeconds: undefined, text: 'Hello' },
     ]);
   });
 
@@ -95,7 +99,7 @@ describe('parseTranscriptEntries', () => {
         'not an entry',
       ]),
     ).toEqual([
-      { speakerName: 'Joan Clarke', startSeconds: null, text: 'Kept' },
+      { speakerName: 'Joan Clarke', startSeconds: undefined, text: 'Kept' },
     ]);
   });
 
@@ -103,15 +107,15 @@ describe('parseTranscriptEntries', () => {
     expect(parseTranscriptEntries([])).toEqual([]);
   });
 
-  it('returns null for values that are not a diarized transcript array', () => {
-    expect(parseTranscriptEntries(null)).toBeNull();
-    expect(parseTranscriptEntries(undefined)).toBeNull();
-    expect(parseTranscriptEntries('transcript text')).toBeNull();
+  it('returns undefined for values that are not a diarized transcript array', () => {
+    expect(parseTranscriptEntries(null)).toBeUndefined();
+    expect(parseTranscriptEntries(undefined)).toBeUndefined();
+    expect(parseTranscriptEntries('transcript text')).toBeUndefined();
     expect(
       parseTranscriptEntries({
         recallTranscriptId: 'recall-transcript-1',
         status: 'PENDING',
       }),
-    ).toBeNull();
+    ).toBeUndefined();
   });
 });

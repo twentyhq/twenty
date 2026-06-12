@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { isUndefined } from '@sniptt/guards';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 import { Callout, IconAlertCircle, themeCssVariables } from 'twenty-sdk/ui';
@@ -9,6 +10,7 @@ import { type TranscriptEntry } from 'src/front-components/types/transcript-entr
 import { formatTranscriptTimestamp } from 'src/front-components/utils/format-transcript-timestamp.util';
 import { parseTranscriptEntries } from 'src/front-components/utils/parse-transcript-entries.util';
 import { parseRecallTranscriptMarker } from 'src/logic-functions/domain/parse-recall-transcript-marker.util';
+import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
 // Theme values are interpolated lazily: the manifest build proxy-mocks twenty-sdk/ui, so module-scope nested access throws.
 const StyledStateContainer = styled.div`
@@ -92,7 +94,7 @@ const TranscriptEntryList = ({ entries }: TranscriptEntryListProps) => (
       <StyledEntry key={entryIndex}>
         <StyledEntryHeader>
           <StyledSpeakerName>{entry.speakerName}</StyledSpeakerName>
-          {entry.startSeconds !== null && (
+          {!isUndefined(entry.startSeconds) && (
             <StyledTimestamp>
               {formatTranscriptTimestamp(entry.startSeconds)}
             </StyledTimestamp>
@@ -107,12 +109,12 @@ const TranscriptEntryList = ({ entries }: TranscriptEntryListProps) => (
 const CallRecordingTranscript = () => {
   const selectedRecordIds = useSelectedRecordIds();
   const callRecordingId =
-    selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+    selectedRecordIds.length === 1 ? selectedRecordIds[0] : undefined;
 
   const { transcript, loading, errorMessage } =
     useCallRecordingTranscript(callRecordingId);
 
-  if (callRecordingId === null) {
+  if (isUndefined(callRecordingId)) {
     return (
       <StyledCenteredState>
         Open a call recording to see its transcript.
@@ -124,7 +126,7 @@ const CallRecordingTranscript = () => {
     return <StyledCenteredState>Loading transcript…</StyledCenteredState>;
   }
 
-  if (errorMessage !== null) {
+  if (!isUndefined(errorMessage)) {
     return (
       <TranscriptErrorCallout
         title="Failed to load the transcript"
@@ -133,7 +135,7 @@ const CallRecordingTranscript = () => {
     );
   }
 
-  if (transcript === null || transcript === undefined) {
+  if (isUndefined(transcript)) {
     return (
       <StyledCenteredState>
         No transcript for this recording yet.
@@ -156,9 +158,9 @@ const CallRecordingTranscript = () => {
       <TranscriptErrorCallout
         title="Transcription failed"
         description={
-          marker.subCode === null || marker.subCode === undefined
-            ? 'The transcription provider could not process this recording.'
-            : `The transcription provider could not process this recording (${marker.subCode}).`
+          isNonEmptyString(marker.subCode)
+            ? `The transcription provider could not process this recording (${marker.subCode}).`
+            : 'The transcription provider could not process this recording.'
         }
       />
     );
@@ -166,7 +168,7 @@ const CallRecordingTranscript = () => {
 
   const entries = parseTranscriptEntries(transcript);
 
-  if (entries === null) {
+  if (isUndefined(entries)) {
     return (
       <TranscriptErrorCallout
         title="Unrecognized transcript format"

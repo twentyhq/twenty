@@ -1,65 +1,49 @@
+import { isArray, isNumber, isUndefined } from '@sniptt/guards';
+
 import { type TranscriptEntry } from 'src/front-components/types/transcript-entry.type';
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
+import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
 type TranscriptWord = {
   text: string;
-  startSeconds: number | null;
+  startSeconds: number | undefined;
 };
 
-const readTranscriptWord = (word: unknown): TranscriptWord | null => {
-  if (typeof word !== 'object' || word === null) {
-    return null;
+const readTranscriptWord = (word: unknown): TranscriptWord | undefined => {
+  const candidate = asRecord(word);
+
+  if (isUndefined(candidate) || !isNonEmptyString(candidate.text)) {
+    return undefined;
   }
 
-  const candidate = word as Record<string, unknown>;
-
-  if (typeof candidate.text !== 'string' || candidate.text.trim() === '') {
-    return null;
-  }
-
-  const startTimestamp = candidate.start_timestamp as
-    | Record<string, unknown>
-    | null
-    | undefined;
-  const relative = startTimestamp?.relative;
+  const relative = asRecord(candidate.start_timestamp)?.relative;
 
   return {
     text: candidate.text.trim(),
     startSeconds:
-      typeof relative === 'number' && Number.isFinite(relative)
-        ? relative
-        : null,
+      isNumber(relative) && Number.isFinite(relative) ? relative : undefined,
   };
 };
 
 const readSpeakerName = (participant: unknown): string => {
-  if (typeof participant !== 'object' || participant === null) {
-    return 'Unknown speaker';
-  }
+  const name = asRecord(participant)?.name;
 
-  const name = (participant as Record<string, unknown>).name;
-
-  return typeof name === 'string' && name.trim() !== ''
-    ? name.trim()
-    : 'Unknown speaker';
+  return isNonEmptyString(name) ? name.trim() : 'Unknown speaker';
 };
 
-const readTranscriptEntry = (entry: unknown): TranscriptEntry | null => {
-  if (typeof entry !== 'object' || entry === null || Array.isArray(entry)) {
-    return null;
-  }
+const readTranscriptEntry = (entry: unknown): TranscriptEntry | undefined => {
+  const candidate = asRecord(entry);
 
-  const candidate = entry as Record<string, unknown>;
-
-  if (!Array.isArray(candidate.words)) {
-    return null;
+  if (isUndefined(candidate) || !isArray(candidate.words)) {
+    return undefined;
   }
 
   const words = candidate.words
     .map(readTranscriptWord)
-    .filter((word): word is TranscriptWord => word !== null);
+    .filter((word): word is TranscriptWord => !isUndefined(word));
 
   if (words.length === 0) {
-    return null;
+    return undefined;
   }
 
   return {
@@ -69,15 +53,15 @@ const readTranscriptEntry = (entry: unknown): TranscriptEntry | null => {
   };
 };
 
-// Null means the value is not a diarized transcript; malformed entries are skipped, not fatal.
+// Undefined means the value is not a diarized transcript; malformed entries are skipped, not fatal.
 export const parseTranscriptEntries = (
   transcript: unknown,
-): TranscriptEntry[] | null => {
-  if (!Array.isArray(transcript)) {
-    return null;
+): TranscriptEntry[] | undefined => {
+  if (!isArray(transcript)) {
+    return undefined;
   }
 
   return transcript
     .map(readTranscriptEntry)
-    .filter((entry): entry is TranscriptEntry => entry !== null);
+    .filter((entry): entry is TranscriptEntry => !isUndefined(entry));
 };

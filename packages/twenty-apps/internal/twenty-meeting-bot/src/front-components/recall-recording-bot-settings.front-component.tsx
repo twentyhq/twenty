@@ -1,3 +1,4 @@
+import { isNull, isUndefined } from '@sniptt/guards';
 import { useCallback, useEffect, useState } from 'react';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -12,21 +13,22 @@ type WorkspaceMemberSettings = {
 
 const RecallRecordingBotSettings = () => {
   const userId = useUserId();
-  const [workspaceMember, setWorkspaceMember] =
-    useState<WorkspaceMemberSettings | null>(null);
+  const [workspaceMember, setWorkspaceMember] = useState<
+    WorkspaceMemberSettings | undefined
+  >(undefined);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | undefined>(undefined);
 
   const fetchWorkspaceMember = useCallback(async () => {
-    if (userId === null) {
+    if (isNull(userId)) {
       setLoading(false);
       setError('No current user');
       return;
     }
 
     try {
-      setError(null);
+      setError(undefined);
       const client = new CoreApiClient();
       const queryResult = await client.query({
         workspaceMembers: {
@@ -46,9 +48,9 @@ const RecallRecordingBotSettings = () => {
       const workspaceMemberNode =
         queryResult.workspaceMembers?.edges?.[0]?.node;
 
-      if (workspaceMemberNode === undefined) {
+      if (isUndefined(workspaceMemberNode)) {
         setError('Workspace member not found');
-        setWorkspaceMember(null);
+        setWorkspaceMember(undefined);
       } else {
         setWorkspaceMember({
           id: workspaceMemberNode.id,
@@ -60,7 +62,7 @@ const RecallRecordingBotSettings = () => {
       setError(
         fetchError instanceof Error ? fetchError.message : String(fetchError),
       );
-      setWorkspaceMember(null);
+      setWorkspaceMember(undefined);
     }
     setLoading(false);
   }, [userId]);
@@ -70,14 +72,14 @@ const RecallRecordingBotSettings = () => {
   }, [fetchWorkspaceMember]);
 
   const handleToggle = useCallback(async () => {
-    if (workspaceMember === null || saving) {
+    if (isUndefined(workspaceMember) || saving) {
       return;
     }
 
     const nextEnabled = !workspaceMember.meetingBotAutoRecordEnabled;
 
     setSaving(true);
-    setError(null);
+    setError(undefined);
     setWorkspaceMember({
       ...workspaceMember,
       meetingBotAutoRecordEnabled: nextEnabled,
@@ -126,7 +128,7 @@ const RecallRecordingBotSettings = () => {
     );
   }
 
-  if (workspaceMember === null) {
+  if (isUndefined(workspaceMember)) {
     return (
       <div
         style={{
@@ -182,7 +184,7 @@ const RecallRecordingBotSettings = () => {
         meetings that have a conference link. Individual calendar events can
         still be overridden with their Meeting Bot Preference field.
       </p>
-      {error !== null && (
+      {!isUndefined(error) && (
         <p
           style={{ fontSize: '12px', color: '#e05252', margin: '8px 0 0 48px' }}
         >
