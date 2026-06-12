@@ -1,0 +1,49 @@
+packages/twenty-server/src/engine/metadata-modules/connected-account/connected-account-metadata.service.ts
+  s_5ce45287d0c2f0::t_8b12b0306a87ec 7-10,12-15,21-24,26
+  s_5ce45287d0c2f0::t_8f82597bbb5c2c 40
+  s_5ce45287d0c2f0::t_4a1b926439dc5f 181-182,184,186,188,193,200-225
+packages/twenty-server/src/engine/metadata-modules/connected-account/constants/connected-account-deleted.constant.ts
+  s_5ce45287d0c2f0::t_933c1b81613eef 1-6
+packages/twenty-server/src/engine/metadata-modules/message-channel/message-channel-metadata.module.ts
+  s_5ce45287d0c2f0::t_d1a7899dda1c5c 11,20
+packages/twenty-server/src/engine/metadata-modules/calendar-channel/constants/calendar-channel-deleted.constant.ts
+  s_5ce45287d0c2f0::t_a96295f0821b0a 1-5
+packages/twenty-server/src/modules/calendar/calendar-event-cleaner/listeners/calendar-event-cleaner-calendar-channel.listener.ts
+  s_5ce45287d0c2f0::t_d8639da5fde267 3,5,9-13,26-28,30-35,37,41-42
+packages/twenty-server/src/modules/messaging/message-cleaner/listeners/messaging-message-cleaner-message-channel.listener.ts
+  s_5ce45287d0c2f0::t_4a009d3298caeb 3,5,9-13,26-28,30-35,37,41-42
+packages/twenty-server/src/modules/calendar/calendar-event-cleaner/listeners/calendar-event-cleaner-connected-account.listener.ts
+  s_5ce45287d0c2f0::t_924e937a40fcd5 3,5,9-13,26-28,30-35,37,41-42
+packages/twenty-server/src/engine/metadata-modules/message-channel/message-channel-metadata.service.ts
+  s_5ce45287d0c2f0::t_dbafae75840a29 44
+  s_5ce45287d0c2f0::t_58f648f7516453 33
+  s_5ce45287d0c2f0::t_bb29ad8c60e9fc 284-289
+  s_5ce45287d0c2f0::t_6bd1815376776a 22-25
+packages/twenty-server/src/engine/metadata-modules/calendar-channel/calendar-channel-metadata.module.ts
+  s_5ce45287d0c2f0::t_6c81ca8414880d 11,19
+packages/twenty-server/src/modules/messaging/message-cleaner/listeners/messaging-message-cleaner-connected-account.listener.ts
+  s_5ce45287d0c2f0::t_eb08fb7f39266f 3,5,9-13,26-28,30-35,37,41-42
+packages/twenty-server/src/engine/metadata-modules/calendar-channel/calendar-channel-metadata.service.ts
+  s_5ce45287d0c2f0::t_0d2345a9b2ff47 192-197
+  s_5ce45287d0c2f0::t_1cbb93271113bc 15-18,22,30
+packages/twenty-server/src/modules/connected-account/listeners/connected-account.listener.ts
+  s_5ce45287d0c2f0::t_970a3090bc1b89 4,7,9-12,15,27-29,31-36,40,42,50,52
+packages/twenty-server/src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant.ts
+  s_5ce45287d0c2f0::t_7da6f7689ef6df 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "c2a4e4203567d7eed219844ad98b4ac45a03c242",
+  "prompts": {},
+  "sessions": {
+    "s_5ce45287d0c2f0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "97edc170-9fe6-4f8e-8eaa-194952a17022",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
