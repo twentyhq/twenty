@@ -1,4 +1,5 @@
 import { fontFamily } from '../font-family';
+import { CURSOR_GLYPH_SHADOW } from '../cursor-glyph';
 
 // The live-data feature scene's authored inks and motion, ported
 // verbatim from the old ThreeCards visual styles. The table itself
@@ -29,7 +30,7 @@ export const LIVE_DATA_SCENE = {
     filterPressedInset: 'inset 0 0 0 1px rgba(25, 97, 237, 0.08)',
     filterPressedWash: 'rgba(25, 97, 237, 0.08)',
     filterHoverWash: 'rgba(25, 97, 237, 0.06)',
-    cursorShadow: 'drop-shadow(0 2px 4px rgba(28, 28, 28, 0.12))',
+    cursorShadow: CURSOR_GLYPH_SHADOW,
     // The status tag's edited (purple) state inside the table.
     tagGreen: '#18794e',
     tagGreenSurface: '#ddf3e4',

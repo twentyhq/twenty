@@ -8,6 +8,7 @@ export { color } from './color';
 export { EASING } from './easing';
 export { type ColorToken } from './color-token';
 export { tokenCssVariables } from './css-variables';
+export { CURSOR_GLYPH_SHADOW } from './cursor-glyph';
 export { fontFamily, type FontFamilyToken } from './font-family';
 export { fontSize } from './font-size';
 export { FONT_WEIGHT, type FontWeightToken } from './font-weight';

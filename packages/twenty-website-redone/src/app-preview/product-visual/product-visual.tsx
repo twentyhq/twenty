@@ -1,12 +1,18 @@
 'use client';
 
 import { styled } from '@linaria/react';
+import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 import { mediaUp, spacing } from '@/tokens';
 import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
 
 import { AiPanel } from './ai-panel';
 import { AiSteps } from './ai-steps';
+import { ANTHROPIC_RECORD_PAGE } from './anthropic-record-page';
+import { HERO_CURSORS } from './hero-cursors';
+import { ProductHeroCursor } from './product-hero-cursor';
+import { useProductHeroCursorAutoplay } from './use-product-hero-cursor-autoplay';
 import { useProductVisualAutoplay } from './use-product-visual-autoplay';
 import { APP_PREVIEW_CONFIG } from '../data/sidebar-config';
 import { PreviewAppLayout } from '../shell/preview-app-layout';
@@ -55,18 +61,24 @@ const ShellScene = styled.div<{ $presentation: ProductVisualPresentation }>`
       : '100%'};
 `;
 
-// The product mockup staged for the product hero: one AI scene playing
-// inside the static frame, with the Ask-AI panel in the aside slot.
-// The collaborative cursor tour layers in with the next commit.
+// The product mockup staged for the product hero: either one AI scene
+// playing beside the Ask-AI panel, or (collaborative) three cursors
+// touring the Anthropic record with the panel hidden.
 export function ProductVisual({
   activeScene,
   collaborative = false,
+  compactCursorTour = false,
+  cursorActive = true,
+  cursorLayer,
   fill = false,
   playbackEnabled = true,
   presentation = 'fluid',
 }: {
   activeScene?: number;
   collaborative?: boolean;
+  compactCursorTour?: boolean;
+  cursorActive?: boolean;
+  cursorLayer?: HTMLElement | null;
   fill?: boolean;
   playbackEnabled?: boolean;
   presentation?: ProductVisualPresentation;
@@ -92,13 +104,29 @@ export function ProductVisual({
     playbackEnabled,
   });
 
+  const heroCursor = useProductHeroCursorAutoplay(
+    collaborative && cursorActive,
+    { mobile: compactCursorTour },
+  );
+
+  // The tour drives the page the collaborators look at.
+  useEffect(() => {
+    if (collaborative) {
+      selectPageItem(heroCursor.pageItemId);
+    }
+  }, [collaborative, heroCursor.pageItemId, selectPageItem]);
+
+  const effectivePage =
+    collaborative && heroCursor.showRecord
+      ? { ...ANTHROPIC_RECORD_PAGE, activeTabLabel: heroCursor.recordTab }
+      : displayPage;
   const panelOnly = presentation === 'panel';
   const navbarLabel =
-    displayPage.type === 'record'
-      ? displayPage.header.title
+    effectivePage.type === 'record'
+      ? effectivePage.header.title
       : activeItem.label;
   const compactWorkflowPage =
-    displayPage.type === 'workflow' && displayPage.nodes === undefined;
+    effectivePage.type === 'workflow' && effectivePage.nodes === undefined;
   const desktopSidebarMode = collaborative
     ? 'collapsed'
     : (selectedScene.sidebarMode ?? 'collapsed');
@@ -124,6 +152,33 @@ export function ProductVisual({
     />
   );
 
+  const cursors =
+    collaborative && cursorLayer
+      ? createPortal(
+          HERO_CURSORS.map((cursorConfig, index) => {
+            const isActive = index === heroCursor.activeCursor;
+
+            return (
+              <ProductHeroCursor
+                clicking={isActive && heroCursor.clicking}
+                color={cursorConfig.color}
+                glideMs={isActive ? heroCursor.glideMs : undefined}
+                hidden={isActive && heroCursor.hidden}
+                home={
+                  compactCursorTour && cursorConfig.mobileHome
+                    ? cursorConfig.mobileHome
+                    : cursorConfig.home
+                }
+                key={cursorConfig.name}
+                name={cursorConfig.name}
+                target={isActive ? heroCursor.target : undefined}
+              />
+            );
+          }),
+          cursorLayer,
+        )
+      : null;
+
   return (
     <VisualRoot $fill={fill}>
       <ShellScene $presentation={presentation}>
@@ -135,12 +190,12 @@ export function ProductVisual({
             desktopSidebarMode={desktopSidebarMode}
             favorites={APP_PREVIEW_CONFIG.sidebar.favorites}
             highlightedItemId={highlightedItemId}
-            navbarActions={displayPage.header.navbarActions}
+            navbarActions={effectivePage.header.navbarActions}
             navbarLabel={navbarLabel}
             onSelectPageItem={selectPageItem}
             onToggleFolder={toggleFolder}
             openFolderIds={openFolderIds}
-            page={displayPage}
+            page={effectivePage}
             panelOnly={panelOnly}
             revealedObjectIds={revealedObjectIds}
             rightAside={rightAside}
@@ -148,6 +203,7 @@ export function ProductVisual({
           />
         </ProductFrame>
       </ShellScene>
+      {cursors}
     </VisualRoot>
   );
 }

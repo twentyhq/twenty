@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 
-import { LIVE_DATA_SCENE } from '@/tokens/feature-scenes/live-data-scene';
+import { CURSOR_GLYPH_SHADOW } from '@/tokens';
 
 const CursorGlyph = styled.svg<{
   $height: number;
@@ -8,7 +8,7 @@ const CursorGlyph = styled.svg<{
   $width: number;
 }>`
   display: block;
-  filter: ${LIVE_DATA_SCENE.colors.cursorShadow};
+  filter: ${CURSOR_GLYPH_SHADOW};
   height: ${({ $height }) => `${$height}px`};
   transform: ${({ $rotation }) => `rotate(${$rotation}deg)`};
   transform-origin: center;
@@ -16,18 +16,21 @@ const CursorGlyph = styled.svg<{
   width: ${({ $width }) => `${$width}px`};
 `;
 
-// The collaborator cursor arrow (authored glyph, verbatim).
+export type MarkerCursorProps = {
+  color: string;
+  height?: number;
+  rotation: number;
+  width?: number;
+};
+
+// The collaborator cursor arrow (authored glyph, verbatim from the old
+// site's shared MarkerCursor).
 export function MarkerCursor({
   color,
   height = 32,
   rotation,
   width = 29,
-}: {
-  color: string;
-  height?: number;
-  rotation: number;
-  width?: number;
-}) {
+}: MarkerCursorProps) {
   return (
     <CursorGlyph
       $height={height}

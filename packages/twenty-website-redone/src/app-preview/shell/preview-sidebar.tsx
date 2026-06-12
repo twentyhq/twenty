@@ -232,7 +232,7 @@ export function PreviewSidebar({
       <SidebarControls />
       <RailOnly>
         {railItems.map((item) => (
-          <RailIconSlot key={item.id}>
+          <RailIconSlot data-rail-item-id={item.id} key={item.id}>
             {renderPreviewIcon(item.icon)}
           </RailIconSlot>
         ))}

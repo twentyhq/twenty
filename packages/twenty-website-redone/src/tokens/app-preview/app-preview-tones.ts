@@ -70,6 +70,12 @@ const PRODUCT_VISUAL = {
   entityChipBackground: 'rgba(0, 0, 0, 0.04)',
   inputBoxBackground: 'rgba(0, 0, 0, 0.02)',
   claudeMarkInk: '#D97757',
+  cursorLabelInk: '#1f1f1f',
+  heroCursorInks: {
+    alice: '#ffb08d',
+    ben: '#8db4ff',
+    cara: '#9ee7c5',
+  },
 };
 
 // The record page's file-chip ink for spreadsheets (authored; documents

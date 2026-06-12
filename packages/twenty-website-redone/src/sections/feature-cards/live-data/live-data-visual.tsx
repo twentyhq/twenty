@@ -11,7 +11,7 @@ import { LIVE_DATA_SCENE } from '@/tokens/feature-scenes/live-data-scene';
 
 import { LiveDataFilterRow } from './live-data-filter-row';
 import { LiveDataTable } from './live-data-table';
-import { MarkerCursor } from './marker-cursor';
+import { MarkerCursor } from '@/icons';
 import { TomCursor } from './tom-cursor';
 import {
   useLiveDataDemoTimeline,
