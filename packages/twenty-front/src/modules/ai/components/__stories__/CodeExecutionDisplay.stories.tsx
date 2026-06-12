@@ -3,6 +3,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
+import { ARGOS_CAPTURE_DISABLED } from '~/testing/constants/ArgosCaptureDisabled';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const samplePythonCode = `import pandas as pd
@@ -32,6 +33,7 @@ const meta: Meta<typeof CodeExecutionDisplay> = {
   component: CodeExecutionDisplay,
   decorators: [SnackBarDecorator, ComponentDecorator],
   parameters: {
+    argos: ARGOS_CAPTURE_DISABLED,
     container: { width: 600 },
   },
   args: {
