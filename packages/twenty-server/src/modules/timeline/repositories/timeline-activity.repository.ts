@@ -39,11 +39,23 @@ export class TimelineActivityRepository {
       });
 
       const payloadsWithDiff = payloads
-        .filter(
-          ({ properties }) =>
-            !isDefined(properties.diff) ||
-            Object.keys(properties.diff).length > 0,
-        )
+        .filter(({ name, properties }) => {
+          const [objectName, action] = name.split('.');
+
+          // Only main-object update events carry a field diff. Created, deleted
+          // and restored events, and linked note/task rows, have none.
+          const isMainObjectUpdate =
+            action === 'updated' && !objectName.startsWith('linked-');
+
+          if (!isMainObjectUpdate) {
+            return true;
+          }
+
+          return (
+            isDefined(properties.diff) &&
+            Object.keys(properties.diff).length > 0
+          );
+        })
         .map(({ properties, ...rest }) => ({
           ...rest,
           properties: isDefined(properties.diff)

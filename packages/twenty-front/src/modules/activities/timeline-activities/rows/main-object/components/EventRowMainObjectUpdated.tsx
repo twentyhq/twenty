@@ -59,13 +59,13 @@ export const EventRowMainObjectUpdated = ({
 }: EventRowMainObjectUpdatedProps) => {
   const { t } = useLingui();
   const diff: Record<string, { before: any; after: any }> =
-    event.properties?.diff ?? {};
+    event.properties?.diff;
 
   const [isOpen, setIsOpen] = useState(true);
 
   const diffEntries = Object.entries(diff);
   if (diffEntries.length === 0) {
-    return null;
+    throw new Error('Cannot render update description without changes');
   }
 
   const fieldCount = diffEntries.length;

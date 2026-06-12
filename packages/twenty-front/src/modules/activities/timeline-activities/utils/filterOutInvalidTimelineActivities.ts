@@ -1,7 +1,6 @@
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { findFieldMetadataItemByDiffKey } from '@/activities/timeline-activities/utils/findFieldMetadataItemByDiffKey';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const filterOutInvalidTimelineActivities = (
@@ -14,34 +13,30 @@ export const filterOutInvalidTimelineActivities = (
       objectMetadataItem.nameSingular === mainObjectSingularName,
   );
 
-  const noteObjectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItem) =>
-      objectMetadataItem.nameSingular === CoreObjectNameSingular.Note,
-  );
-
-  if (!mainObjectMetadataItem || !noteObjectMetadataItem) {
-    throw new Error('Object metadata items not found');
+  if (!mainObjectMetadataItem) {
+    throw new Error('Object metadata item not found');
   }
 
   return timelineActivities.filter((timelineActivity) => {
-    const diff = timelineActivity.properties?.diff;
-    const canSkipValidation = !diff;
+    const [objectName, action] = timelineActivity.name.split('.');
 
-    if (canSkipValidation) {
+    // Only main-object update events render a field diff. Created, deleted and
+    // restored events, and linked note/task rows, render without one.
+    const isMainObjectUpdate =
+      action === 'updated' && !objectName.startsWith('linked-');
+
+    if (!isMainObjectUpdate) {
       return true;
     }
 
-    const isNoteOrTask =
-      timelineActivity.name.startsWith('linked-note') ||
-      timelineActivity.name.startsWith('linked-task');
-
-    const fieldsToValidateAgainst = isNoteOrTask
-      ? noteObjectMetadataItem.readableFields
-      : mainObjectMetadataItem.readableFields;
-
-    const validDiffEntries = Object.entries(diff).filter(([diffKey]) =>
+    const validDiffEntries = Object.entries(
+      timelineActivity.properties?.diff ?? {},
+    ).filter(([diffKey]) =>
       isDefined(
-        findFieldMetadataItemByDiffKey(fieldsToValidateAgainst, diffKey),
+        findFieldMetadataItemByDiffKey(
+          mainObjectMetadataItem.readableFields,
+          diffKey,
+        ),
       ),
     );
 
