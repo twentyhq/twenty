@@ -55,6 +55,11 @@ export const PARTNERS_TFT_SYNC_EVENT_PAYLOAD_FIELD_UUID = 'f5c1f9e7-3d8a-4b6c-8f
 export const PARTNERS_TFT_SYNC_EVENT_STATUS_FIELD_UUID = 'a8d4b2f9-6c1a-4c9d-8b5f-4a8d6b2c9f1e';
 export const PARTNERS_TFT_SYNC_EVENT_ERROR_FIELD_UUID = 'b1a7e5d3-9f4b-4d2c-8f8a-7d1c3e9f5a4b';
 export const PARTNERS_TFT_SYNC_EVENT_ATTEMPT_COUNT_FIELD_UUID = 'c4f2a8c6-1e7b-4e5d-9c3a-1b6e4d8c2f7a';
+// The auto-added standard `createdAt` field of the TFT sync event object. Standard fields
+// have no app-defined UUID, so the SDK derives one deterministically as
+// v5(`${objectUniversalIdentifier}-createdAt`, sdkNamespace). We pin that derived value
+// here as a named constant (verified to match generateDefaultFieldUniversalIdentifier()).
+export const PARTNERS_TFT_SYNC_EVENT_CREATED_AT_FIELD_UUID = 'b1d67b49-3e8b-5d73-888d-eeef2c4e9e6d';
 
 // TFT sync cursor fields
 export const PARTNERS_TFT_SYNC_CURSOR_NAME_FIELD_UUID = 'b5e8a1f4-7d4a-4b5e-9f2a-4d7a5b8e1f4a';

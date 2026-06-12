@@ -1,5 +1,6 @@
 import { ViewType, defineView } from 'twenty-sdk/define';
 import {
+  PARTNERS_TFT_SYNC_EVENT_CREATED_AT_FIELD_UUID,
   PARTNERS_TFT_SYNC_EVENT_DIRECTION_FIELD_UUID,
   PARTNERS_TFT_SYNC_EVENT_ERROR_FIELD_UUID,
   PARTNERS_TFT_SYNC_EVENT_OBJECT_UUID,
@@ -47,10 +48,10 @@ export default defineView({
       isVisible: true,
     },
     {
-      // Standard createdAt field — referenced by its generated universalIdentifier since
-      // standard fields have no app-defined constant. "When" the sync happened.
+      // Standard createdAt field ("when" the sync happened) — its SDK-derived UUID,
+      // pinned as a named constant since standard fields carry no app-defined one.
       universalIdentifier: '22223333-4444-4555-8666-777788889995',
-      fieldMetadataUniversalIdentifier: 'b1d67b49-3e8b-5d73-888d-eeef2c4e9e6d',
+      fieldMetadataUniversalIdentifier: PARTNERS_TFT_SYNC_EVENT_CREATED_AT_FIELD_UUID,
       position: 5,
       isVisible: true,
     },
