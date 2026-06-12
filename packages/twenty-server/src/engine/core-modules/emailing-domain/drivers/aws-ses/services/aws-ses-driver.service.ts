@@ -20,10 +20,8 @@ import {
   type EmailingDomainResourceInput,
   type EmailingDomainVerificationResult,
 } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/emailing-domain-driver.interface';
-import {
-  type EmailingDomainSendEmailInput,
-  type EmailingDomainSendEmailResult,
-} from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
+import { type EmailingDomainSendEmailInput } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
+import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 
 import { AWS_SES_RESOURCE_NAME_PREFIX } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-resource-name-prefix.constant';
 import { type AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';

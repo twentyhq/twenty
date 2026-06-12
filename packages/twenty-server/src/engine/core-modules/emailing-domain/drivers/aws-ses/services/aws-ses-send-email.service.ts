@@ -3,10 +3,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { SendEmailCommand } from '@aws-sdk/client-sesv2';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import {
-  type EmailingDomainSendEmailInput,
-  type EmailingDomainSendEmailResult,
-} from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
+import { type EmailingDomainSendEmailInput } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
+import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 
 import { AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
 import { AwsSesHandleErrorService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-handle-error.service';

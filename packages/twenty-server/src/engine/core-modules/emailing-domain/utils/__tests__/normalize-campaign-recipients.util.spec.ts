@@ -1,7 +1,5 @@
-import {
-  normalizeCampaignRecipients,
-  type RawCampaignRecipient,
-} from 'src/engine/core-modules/emailing-domain/utils/normalize-campaign-recipients.util';
+import { type RawCampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/raw-campaign-recipient.type';
+import { normalizeCampaignRecipients } from 'src/engine/core-modules/emailing-domain/utils/normalize-campaign-recipients.util';
 
 describe('normalizeCampaignRecipients', () => {
   it('drops people with no email and reports them', () => {

@@ -1,20 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-export type RawCampaignRecipient = {
-  personId: string;
-  email: string | null;
-};
-
-export type CampaignRecipient = {
-  personId: string;
-  email: string;
-};
-
-export type CampaignSkippedBreakdown = {
-  noEmail: number;
-  deduped: number;
-  overCap: number;
-};
+import { type CampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/campaign-recipient.type';
+import { type CampaignSkippedBreakdown } from 'src/engine/core-modules/emailing-domain/types/campaign-skipped-breakdown.type';
+import { type RawCampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/raw-campaign-recipient.type';
 
 // Turns resolved people into a deduped, capped recipient list and reports what
 // was dropped: people with no email, duplicate emails, and anyone past the cap.

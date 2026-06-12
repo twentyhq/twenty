@@ -1,10 +1,10 @@
-export type SesEventBridgeDetailType =
+type SesEventBridgeDetailType =
   | 'Sending Status Enabled'
   | 'Sending Status Disabled'
   | 'Email Bounced'
   | 'Email Complaint Received';
 
-export type SesEventBridgeRecipient = {
+type SesEventBridgeRecipient = {
   emailAddress: string;
 };
 

@@ -3,12 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
-
-export type UnsubscribeTokenPayload = {
-  workspaceId: string;
-  emailAddress: string;
-  messageTopicId?: string;
-};
+import { type UnsubscribeTokenPayload } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-token-payload.type';
 
 // Tokens travel in mail headers and public links, so the payload is encrypted
 // (AES-256-GCM), not just signed: the recipient address and workspace id stay

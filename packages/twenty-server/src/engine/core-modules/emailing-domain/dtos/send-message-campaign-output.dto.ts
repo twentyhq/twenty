@@ -1,16 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
-@ObjectType()
-export class CampaignSkippedRecipientsDTO {
-  @Field(() => Int)
-  noEmail: number;
-
-  @Field(() => Int)
-  deduped: number;
-
-  @Field(() => Int)
-  overCap: number;
-}
+import { CampaignSkippedRecipientsDTO } from 'src/engine/core-modules/emailing-domain/dtos/campaign-skipped-recipients.dto';
 
 @ObjectType()
 export class SendMessageCampaignOutputDTO {

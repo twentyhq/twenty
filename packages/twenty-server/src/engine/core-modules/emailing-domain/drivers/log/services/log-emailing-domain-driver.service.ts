@@ -8,10 +8,8 @@ import {
   type EmailingDomainVerificationResult,
 } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/emailing-domain-driver.interface';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
-import {
-  type EmailingDomainSendEmailInput,
-  type EmailingDomainSendEmailResult,
-} from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
+import { type EmailingDomainSendEmailInput } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
+import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 
 @Injectable()
 export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {

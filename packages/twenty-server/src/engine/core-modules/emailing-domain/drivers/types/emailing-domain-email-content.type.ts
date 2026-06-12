@@ -1,13 +1,5 @@
-export type EmailingDomainAttachment = {
-  filename: string;
-  content: Buffer;
-  contentType: string;
-};
-
-export type EmailingDomainHeader = {
-  name: string;
-  value: string;
-};
+import { type EmailingDomainAttachment } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-attachment.type';
+import { type EmailingDomainHeader } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-header.type';
 
 export type EmailingDomainEmailContent = {
   from: string;
@@ -24,14 +16,4 @@ export type EmailingDomainEmailContent = {
   // topic are dropped in addition to the globally suppressed ones, and the
   // unsubscribe link is scoped to the topic.
   messageTopicId?: string;
-};
-
-export type EmailingDomainSendEmailInput = EmailingDomainEmailContent & {
-  workspaceId: string;
-  domain: string;
-};
-
-export type EmailingDomainSendEmailResult = {
-  messageId: string;
-  deliveredRecipients: { to: string[]; cc: string[]; bcc: string[] };
 };
