@@ -1,12 +1,17 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { useLabPublicFeatureFlags } from '@/settings/lab/hooks/useLabPublicFeatureFlags';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
+import {
+  IconRelationManyToMany,
+  IconSparkles,
+  type IconComponent,
+} from 'twenty-ui-deprecated/display';
 import { Card } from 'twenty-ui-deprecated/layout';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
-import { type FeatureFlagKey } from '~/generated-metadata/graphql';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledCardGrid = styled.div`
   display: grid;
@@ -21,6 +26,11 @@ const StyledImage = styled.img`
   object-fit: cover;
   width: 100%;
 `;
+
+const labFeatureFlagIcons: Partial<Record<FeatureFlagKey, IconComponent>> = {
+  [FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED]: IconRelationManyToMany,
+  [FeatureFlagKey.IS_SETTINGS_DISCOVERY_HERO_ENABLED]: IconSparkles,
+};
 
 export const SettingsLabContent = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -38,38 +48,52 @@ export const SettingsLabContent = () => {
     setHasImageLoadingError((prev) => ({ ...prev, [key]: true }));
   };
 
+  const labPublicFeatureFlagsWithImage = labPublicFeatureFlags.filter(
+    (flag) => flag.metadata.imagePath,
+  );
+  const labPublicFeatureFlagsWithoutImage = labPublicFeatureFlags.filter(
+    (flag) => !flag.metadata.imagePath,
+  );
+
   return (
     currentWorkspace?.id && (
       <StyledCardGrid>
-        {[...labPublicFeatureFlags]
-          .sort((a, b) => {
-            // Sort flags with images first
-            if (a.metadata.imagePath !== '' && b.metadata.imagePath === '')
-              return -1;
-            if (a.metadata.imagePath === '' && b.metadata.imagePath !== '')
-              return 1;
-            return 0;
-          })
-          .map((flag) => (
-            <Card key={flag.key} rounded>
-              {flag.metadata.imagePath && !hasImageLoadingError[flag.key] ? (
-                <StyledImage
-                  src={flag.metadata.imagePath}
-                  alt={flag.metadata.label}
-                  onError={() => handleImageError(flag.key)}
-                />
-              ) : (
-                <></>
-              )}
+        {labPublicFeatureFlagsWithImage.map((flag) => (
+          <Card key={flag.key} rounded>
+            {!hasImageLoadingError[flag.key] && (
+              <StyledImage
+                src={flag.metadata.imagePath ?? undefined}
+                alt={flag.metadata.label}
+                onError={() => handleImageError(flag.key)}
+              />
+            )}
+            <SettingsOptionCardContentToggle
+              Icon={labFeatureFlagIcons[flag.key]}
+              title={flag.metadata.label}
+              description={flag.metadata.description}
+              checked={flag.value}
+              onChange={(value) => handleToggle(flag.key, value)}
+              toggleCentered={false}
+            />
+          </Card>
+        ))}
+
+        {labPublicFeatureFlagsWithoutImage.length > 0 && (
+          <Card rounded>
+            {labPublicFeatureFlagsWithoutImage.map((flag, index) => (
               <SettingsOptionCardContentToggle
+                key={flag.key}
+                Icon={labFeatureFlagIcons[flag.key]}
                 title={flag.metadata.label}
                 description={flag.metadata.description}
                 checked={flag.value}
                 onChange={(value) => handleToggle(flag.key, value)}
                 toggleCentered={false}
+                divider={index < labPublicFeatureFlagsWithoutImage.length - 1}
               />
-            </Card>
-          ))}
+            ))}
+          </Card>
+        )}
       </StyledCardGrid>
     )
   );

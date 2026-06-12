@@ -230,6 +230,7 @@ export const SettingsAdminAI = () => {
               Icon={IconRobot}
               title={t`Smart Model`}
               description={t`Default model for chats and complex reasoning`}
+              divider
             >
               <Select
                 dropdownId="admin-smart-model-select"

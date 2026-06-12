@@ -42,7 +42,7 @@ export const SettingsNavigationDrawer = ({
     navigationDrawerActiveTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY;
 
   return (
-    <NavigationDrawer className={className} title={t`Exit Settings`}>
+    <NavigationDrawer className={className} title={t`Settings`}>
       {hasAiPermission && (
         <NavigationDrawerFixedContent>
           <MainNavigationDrawerTabsRow />
@@ -52,6 +52,7 @@ export const SettingsNavigationDrawer = ({
       <NavigationDrawerScrollableContent>
         <NavigationDrawerTabbedContent
           showAiChatContent={showAiChatContent}
+          shouldRenderAiChatContent={hasAiPermission}
           navigationContent={<SettingsNavigationDrawerItems />}
         />
       </NavigationDrawerScrollableContent>

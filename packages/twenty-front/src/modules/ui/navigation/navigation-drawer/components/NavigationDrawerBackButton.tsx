@@ -23,25 +23,30 @@ type NavigationDrawerBackButtonProps = {
 const StyledIconAndButtonContainer = styled.button`
   align-items: center;
   background: inherit;
-  border: none;
-  color: ${themeCssVariables.font.color.secondary};
+  border: 1px solid transparent;
+  border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
+  color: ${themeCssVariables.font.color.primary};
   cursor: pointer;
   display: flex;
   flex-direction: row;
   font-family: ${themeCssVariables.font.family};
+  font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[1]};
-  width: 100%;
+  height: ${themeCssVariables.spacing[7]};
+  line-height: 1.4;
+  padding: 2px ${themeCssVariables.spacing[1]} 2px 2px;
+  width: fit-content;
   &:hover {
     background: ${themeCssVariables.background.transparent.light};
-    border-radius: ${themeCssVariables.border.radius.sm};
   }
 `;
 
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
+  flex-shrink: 0;
   flex-direction: row;
   height: ${themeCssVariables.spacing[8]};
   justify-content: space-between;
@@ -84,8 +89,8 @@ export const NavigationDrawerBackButton = ({
         <StyledIconAndButtonContainer>
           <IconX
             size={theme.icon.size.md}
-            stroke={theme.icon.stroke.lg}
-            color={theme.font.color.tertiary}
+            stroke={theme.icon.stroke.sm}
+            color={theme.font.color.secondary}
           />
           <span>{title}</span>
         </StyledIconAndButtonContainer>

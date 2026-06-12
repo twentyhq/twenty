@@ -1,11 +1,14 @@
 import { styled } from '@linaria/react';
+import { type ComponentPropsWithoutRef } from 'react';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
-const StyledTableHeader = styled.div<{
+type TableHeaderProps = Omit<ComponentPropsWithoutRef<'div'>, 'onClick'> & {
   align?: 'left' | 'center' | 'right';
   onClick?: () => void;
   padding?: string;
-}>`
+};
+
+const StyledTableHeader = styled.div<TableHeaderProps>`
   align-items: center;
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
   color: ${themeCssVariables.font.color.tertiary};
@@ -24,4 +27,10 @@ const StyledTableHeader = styled.div<{
   text-align: ${({ align }) => align ?? 'left'};
 `;
 
-export { StyledTableHeader as TableHeader };
+export const TableHeader = (props: TableHeaderProps) => (
+  <StyledTableHeader
+    // oxlint-disable-next-line react/jsx-props-no-spreading
+    {...props}
+    data-table-header
+  />
+);

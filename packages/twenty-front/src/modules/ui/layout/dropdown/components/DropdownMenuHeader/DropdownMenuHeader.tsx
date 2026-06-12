@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledHeader = styled.li`
+  box-sizing: content-box;
   align-items: center;
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
   border-top-left-radius: ${themeCssVariables.border.radius.sm};
