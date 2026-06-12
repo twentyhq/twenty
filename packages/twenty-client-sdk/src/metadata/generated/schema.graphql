@@ -1434,46 +1434,6 @@ type EnterpriseSubscriptionStatusDTO {
   isCancellationScheduled: Boolean!
 }
 
-type VerificationRecord {
-  type: String!
-  key: String!
-  value: String!
-  priority: Float
-}
-
-type EmailingDomain {
-  id: UUID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  domain: String!
-  status: EmailingDomainStatus!
-  verificationRecords: [VerificationRecord!]
-  verifiedAt: DateTime
-}
-
-enum EmailingDomainStatus {
-  PENDING
-  VERIFIED
-  FAILED
-  TEMPORARY_FAILURE
-}
-
-type CampaignSkippedRecipientsDTO {
-  noEmail: Int!
-  deduped: Int!
-  overCap: Int!
-}
-
-type SendMessageCampaignOutputDTO {
-  campaignId: String!
-  queuedCount: Int!
-  skipped: CampaignSkippedRecipientsDTO!
-}
-
-type SendEmailViaDomainOutput {
-  messageId: String!
-}
-
 type ApprovedAccessDomain {
   id: UUID!
   domain: String!
@@ -1970,6 +1930,7 @@ type ClientConfig {
   isGoogleCalendarEnabled: Boolean!
   isConfigVariablesInDbEnabled: Boolean!
   isImapSmtpCaldavEnabled: Boolean!
+  isEmailingDomainInDemoMode: Boolean!
   allowRequestsToTwentyIcons: Boolean!
   calendarBookingPageId: String
   isCloudflareIntegrationEnabled: Boolean!
@@ -2414,23 +2375,28 @@ type PublicDomain {
   createdAt: DateTime!
 }
 
-type AutocompleteResult {
-  text: String!
-  placeId: String!
+type VerificationRecord {
+  type: String!
+  key: String!
+  value: String!
+  priority: Float
 }
 
-type Location {
-  lat: Float
-  lng: Float
+type EmailingDomain {
+  id: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  domain: String!
+  status: EmailingDomainStatus!
+  verificationRecords: [VerificationRecord!]
+  verifiedAt: DateTime
 }
 
-type PlaceDetailsResult {
-  street: String
-  state: String
-  postcode: String
-  city: String
-  country: String
-  location: Location
+enum EmailingDomainStatus {
+  PENDING
+  VERIFIED
+  FAILED
+  TEMPORARY_FAILURE
 }
 
 type PublicConnectionParametersOutput {
@@ -2463,6 +2429,118 @@ type ConnectedAccountPublicDTO {
   createdAt: DateTime!
   updatedAt: DateTime!
   connectionParameters: PublicImapSmtpCaldavConnectionParameters
+}
+
+type MessageChannel {
+  id: UUID!
+  visibility: MessageChannelVisibility!
+  handle: String!
+  type: MessageChannelType!
+  isContactAutoCreationEnabled: Boolean!
+  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy!
+  messageFolderImportPolicy: MessageFolderImportPolicy!
+  excludeNonProfessionalEmails: Boolean!
+  excludeGroupEmails: Boolean!
+  pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction!
+  isSyncEnabled: Boolean!
+  syncedAt: DateTime
+  syncStatus: MessageChannelSyncStatus!
+  syncStage: MessageChannelSyncStage!
+  syncStageStartedAt: DateTime
+  throttleFailureCount: Float!
+  throttleRetryAfter: DateTime
+  connectedAccountId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  connectedAccount: ConnectedAccountPublicDTO
+}
+
+enum MessageChannelVisibility {
+  METADATA
+  SUBJECT
+  SHARE_EVERYTHING
+}
+
+enum MessageChannelType {
+  EMAIL
+  SMS
+  EMAIL_GROUP
+}
+
+enum MessageChannelContactAutoCreationPolicy {
+  SENT_AND_RECEIVED
+  SENT
+  NONE
+}
+
+enum MessageFolderImportPolicy {
+  ALL_FOLDERS
+  SELECTED_FOLDERS
+}
+
+enum MessageChannelPendingGroupEmailsAction {
+  GROUP_EMAILS_DELETION
+  GROUP_EMAILS_IMPORT
+  NONE
+}
+
+enum MessageChannelSyncStatus {
+  NOT_SYNCED
+  ONGOING
+  ACTIVE
+  FAILED_INSUFFICIENT_PERMISSIONS
+  FAILED_UNKNOWN
+}
+
+enum MessageChannelSyncStage {
+  PENDING_CONFIGURATION
+  MESSAGE_LIST_FETCH_PENDING
+  MESSAGE_LIST_FETCH_SCHEDULED
+  MESSAGE_LIST_FETCH_ONGOING
+  MESSAGES_IMPORT_PENDING
+  MESSAGES_IMPORT_SCHEDULED
+  MESSAGES_IMPORT_ONGOING
+  FAILED
+}
+
+type CreateEmailGroupChannelOutput {
+  messageChannel: MessageChannel!
+  forwardingAddress: String!
+}
+
+type SendEmailViaDomainOutput {
+  messageId: String!
+}
+
+type CampaignSkippedRecipientsDTO {
+  noEmail: Int!
+  deduped: Int!
+  overCap: Int!
+}
+
+type SendMessageCampaignOutputDTO {
+  campaignId: String!
+  queuedCount: Int!
+  skipped: CampaignSkippedRecipientsDTO!
+}
+
+type AutocompleteResult {
+  text: String!
+  placeId: String!
+}
+
+type Location {
+  lat: Float
+  lng: Float
+}
+
+type PlaceDetailsResult {
+  street: String
+  state: String
+  postcode: String
+  city: String
+  country: String
+  location: Location
 }
 
 type ImapSmtpCaldavPublicConnectionParams {
@@ -2786,83 +2864,6 @@ enum CalendarChannelContactAutoCreationPolicy {
   NONE
 }
 
-type MessageChannel {
-  id: UUID!
-  visibility: MessageChannelVisibility!
-  handle: String!
-  type: MessageChannelType!
-  isContactAutoCreationEnabled: Boolean!
-  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy!
-  messageFolderImportPolicy: MessageFolderImportPolicy!
-  excludeNonProfessionalEmails: Boolean!
-  excludeGroupEmails: Boolean!
-  pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction!
-  isSyncEnabled: Boolean!
-  syncedAt: DateTime
-  syncStatus: MessageChannelSyncStatus!
-  syncStage: MessageChannelSyncStage!
-  syncStageStartedAt: DateTime
-  throttleFailureCount: Float!
-  throttleRetryAfter: DateTime
-  connectedAccountId: UUID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  connectedAccount: ConnectedAccountPublicDTO
-}
-
-enum MessageChannelVisibility {
-  METADATA
-  SUBJECT
-  SHARE_EVERYTHING
-}
-
-enum MessageChannelType {
-  EMAIL
-  SMS
-  EMAIL_GROUP
-}
-
-enum MessageChannelContactAutoCreationPolicy {
-  SENT_AND_RECEIVED
-  SENT
-  NONE
-}
-
-enum MessageFolderImportPolicy {
-  ALL_FOLDERS
-  SELECTED_FOLDERS
-}
-
-enum MessageChannelPendingGroupEmailsAction {
-  GROUP_EMAILS_DELETION
-  GROUP_EMAILS_IMPORT
-  NONE
-}
-
-enum MessageChannelSyncStatus {
-  NOT_SYNCED
-  ONGOING
-  ACTIVE
-  FAILED_INSUFFICIENT_PERMISSIONS
-  FAILED_UNKNOWN
-}
-
-enum MessageChannelSyncStage {
-  PENDING_CONFIGURATION
-  MESSAGE_LIST_FETCH_PENDING
-  MESSAGE_LIST_FETCH_SCHEDULED
-  MESSAGE_LIST_FETCH_ONGOING
-  MESSAGES_IMPORT_PENDING
-  MESSAGES_IMPORT_SCHEDULED
-  MESSAGES_IMPORT_ONGOING
-  FAILED
-}
-
-type CreateEmailGroupChannelOutput {
-  messageChannel: MessageChannel!
-  forwardingAddress: String!
-}
-
 type MessageFolder {
   id: UUID!
   name: String
@@ -2975,7 +2976,6 @@ type Query {
   getPageLayoutTab(id: String!): PageLayoutTab!
   getPageLayouts(objectMetadataId: String, pageLayoutType: PageLayoutType): [PageLayout!]!
   getPageLayout(id: String!): PageLayout
-  getEmailingDomains: [EmailingDomain!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   getPageLayoutWidgets(pageLayoutTabId: String!): [PageLayoutWidget!]!
   getPageLayoutWidget(id: String!): PageLayoutWidget!
@@ -3012,6 +3012,9 @@ type Query {
   ): IndexConnection!
   findManyAgents: [Agent!]!
   findOneAgent(input: AgentIdInput!): Agent!
+  myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
+  getEmailingDomains: [EmailingDomain!]!
+  myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   getRoles: [Role!]!
   getToolIndex: [ToolIndexEntry!]!
   getToolInputSchema(toolName: String!): JSON
@@ -3031,8 +3034,6 @@ type Query {
   getViewGroups(viewId: String): [ViewGroup!]!
   getViewGroup(id: String!): ViewGroup
   myMessageFolders(messageChannelId: UUID): [MessageFolder!]!
-  myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
-  myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   minimalMetadata: MinimalMetadata!
   appConnections(filter: ListAppConnectionsInput): [AppConnection!]!
@@ -3231,11 +3232,6 @@ type Mutation {
   resetPageLayoutToDefault(id: String!): PageLayout!
   resetPageLayoutWidgetToDefault(id: String!): PageLayoutWidget!
   resetPageLayoutTabToDefault(id: String!): PageLayoutTab!
-  createEmailingDomain(domain: String!): EmailingDomain!
-  deleteEmailingDomain(id: String!): Boolean!
-  verifyEmailingDomain(id: String!): EmailingDomain!
-  sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!
-  sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
   updatePageLayoutWidget(id: String!, input: UpdatePageLayoutWidgetInput!): PageLayoutWidget!
@@ -3258,6 +3254,15 @@ type Mutation {
   createOneAgent(input: CreateAgentInput!): Agent!
   updateOneAgent(input: UpdateAgentInput!): Agent!
   deleteOneAgent(input: AgentIdInput!): Agent!
+  sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!
+  sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
+  updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
+  createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
+  deleteEmailGroupChannel(id: UUID!): MessageChannel!
+  createEmailingDomain(domain: String!): EmailingDomain!
+  deleteEmailingDomain(id: String!): Boolean!
+  verifyEmailingDomain(id: String!): EmailingDomain!
+  deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   updateWorkspaceMemberRole(workspaceMemberId: UUID!, roleId: UUID!): WorkspaceMember!
   createOneRole(createRoleInput: CreateRoleInput!): Role!
   updateOneRole(updateRoleInput: UpdateRoleInput!): Role!
@@ -3283,10 +3288,6 @@ type Mutation {
   destroyViewGroup(input: DestroyViewGroupInput!): ViewGroup!
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
-  updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
-  createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
-  deleteEmailGroupChannel(id: UUID!): MessageChannel!
-  deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
@@ -3798,26 +3799,6 @@ input GridPositionInput {
   columnSpan: Float!
 }
 
-input SendEmailViaDomainInput {
-  emailingDomainId: String!
-  to: [String!]!
-  cc: [String!]
-  bcc: [String!]
-  subject: String!
-  text: String!
-  html: String
-  from: String!
-  replyTo: [String!]
-}
-
-input SendMessageCampaignInput {
-  listId: String!
-  messageTopicId: String
-  subject: String!
-  body: String!
-  fromAddress: String!
-}
-
 input CreatePageLayoutWidgetInput {
   pageLayoutTabId: UUID!
   title: String!
@@ -4033,6 +4014,45 @@ input UpdateAgentInput {
   responseFormat: JSON
   modelConfiguration: JSON
   evaluationInputs: [String!]
+}
+
+input SendEmailViaDomainInput {
+  emailingDomainId: String!
+  to: [String!]!
+  cc: [String!]
+  bcc: [String!]
+  subject: String!
+  text: String!
+  html: String
+  from: String!
+  replyTo: [String!]
+}
+
+input SendMessageCampaignInput {
+  listId: String!
+  messageTopicId: String
+  subject: String!
+  body: String!
+  fromAddress: String!
+}
+
+input UpdateMessageChannelInput {
+  id: UUID!
+  update: UpdateMessageChannelInputUpdates!
+}
+
+input UpdateMessageChannelInputUpdates {
+  visibility: MessageChannelVisibility
+  isContactAutoCreationEnabled: Boolean
+  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy
+  messageFolderImportPolicy: MessageFolderImportPolicy
+  isSyncEnabled: Boolean
+  excludeNonProfessionalEmails: Boolean
+  excludeGroupEmails: Boolean
+}
+
+input CreateEmailGroupChannelInput {
+  handle: String!
 }
 
 input CreateRoleInput {
@@ -4262,25 +4282,6 @@ input UpdateMessageFolderInputUpdates {
 input UpdateMessageFoldersInput {
   ids: [UUID!]!
   update: UpdateMessageFolderInputUpdates!
-}
-
-input UpdateMessageChannelInput {
-  id: UUID!
-  update: UpdateMessageChannelInputUpdates!
-}
-
-input UpdateMessageChannelInputUpdates {
-  visibility: MessageChannelVisibility
-  isContactAutoCreationEnabled: Boolean
-  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy
-  messageFolderImportPolicy: MessageFolderImportPolicy
-  isSyncEnabled: Boolean
-  excludeNonProfessionalEmails: Boolean
-  excludeGroupEmails: Boolean
-}
-
-input CreateEmailGroupChannelInput {
-  handle: String!
 }
 
 input UpdateCalendarChannelInput {
