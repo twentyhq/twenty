@@ -78,6 +78,9 @@ export function FaviconLogo({
       <FaviconFrame $size={size}>
         <FaviconImage
           alt={label ? `${label} logo` : ''}
+          // Opts the mockup's chrome out of React 19's SSR image preloading,
+          // which would otherwise preload third-party favicons in <head>.
+          fetchPriority="low"
           src={faviconUrl}
           onError={() => {
             failedFaviconUrls.add(faviconUrl);

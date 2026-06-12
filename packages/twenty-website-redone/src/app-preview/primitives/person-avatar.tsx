@@ -45,6 +45,9 @@ export function PersonAvatar({
       {showAvatar ? (
         <AvatarImage
           alt=""
+          // Opts the mockup's chrome out of React 19's SSR image preloading,
+          // which would otherwise push every avatar into <head> preloads.
+          fetchPriority="low"
           src={person.avatarUrl}
           onError={() => {
             if (person.avatarUrl) {
