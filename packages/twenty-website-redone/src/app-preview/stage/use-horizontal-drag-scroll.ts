@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  useEffect,
   useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
@@ -27,12 +28,72 @@ const releasePointerCapture = (element: HTMLElement, pointerId: number) => {
   element.releasePointerCapture(pointerId);
 };
 
+// Vertical wheel intent maps to horizontal panning when the viewport
+// only scrolls sideways (the live-data table); ported.
+const getHorizontalWheelScrollLeft = (
+  state: { clientWidth: number; scrollLeft: number; scrollWidth: number },
+  delta: { deltaX: number; deltaY: number },
+): number | null => {
+  if (Math.abs(delta.deltaY) <= Math.abs(delta.deltaX)) {
+    return null;
+  }
+
+  const maxScrollLeft = Math.max(state.scrollWidth - state.clientWidth, 0);
+  const nextScrollLeft = Math.min(
+    Math.max(state.scrollLeft + delta.deltaY, 0),
+    maxScrollLeft,
+  );
+
+  return Math.abs(nextScrollLeft - state.scrollLeft) < 0.5
+    ? null
+    : nextScrollLeft;
+};
+
 // Mouse-drag panning for the table viewport (ported; touch scrolls
 // natively, so only primary-button mouse drags engage).
-export function useHorizontalDragScroll<TElement extends HTMLElement>() {
+export function useHorizontalDragScroll<TElement extends HTMLElement>({
+  wheelScrollsHorizontally = false,
+}: {
+  wheelScrollsHorizontally?: boolean;
+} = {}) {
   const viewportRef = useRef<TElement>(null);
   const dragRef = useRef<DragState>(EMPTY_DRAG_STATE);
   const [dragging, setDragging] = useState(false);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+
+    if (!wheelScrollsHorizontally || !viewport) {
+      return;
+    }
+
+    const handleWheel = (event: WheelEvent) => {
+      const nextScrollLeft = getHorizontalWheelScrollLeft(
+        {
+          clientWidth: viewport.clientWidth,
+          scrollLeft: viewport.scrollLeft,
+          scrollWidth: viewport.scrollWidth,
+        },
+        {
+          deltaX: event.deltaX,
+          deltaY: event.deltaY,
+        },
+      );
+
+      if (nextScrollLeft === null) {
+        return;
+      }
+
+      viewport.scrollLeft = nextScrollLeft;
+      event.preventDefault();
+    };
+
+    viewport.addEventListener('wheel', handleWheel, { passive: false });
+
+    return () => {
+      viewport.removeEventListener('wheel', handleWheel);
+    };
+  }, [wheelScrollsHorizontally]);
 
   const endDragging = () => {
     const viewport = viewportRef.current;

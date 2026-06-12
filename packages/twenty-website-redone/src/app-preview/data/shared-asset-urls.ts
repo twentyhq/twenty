@@ -19,6 +19,10 @@ const PEOPLE_AVATARS: Record<string, string> = {
 
 const COMPANY_LOGOS_BY_DOMAIN: Record<string, string> = {
   'airbnb.com': '/images/shared/companies/logos/airbnb.webp',
+  'cursor.com': '/images/shared/companies/logos/cursor.webp',
+  'linear.app': '/images/shared/companies/logos/linear.svg',
+  'sequoiacap.com': '/images/shared/companies/logos/sequoia.webp',
+  'twenty.com': '/images/shared/companies/logos/twenty.webp',
   'anthropic.com': '/images/shared/companies/logos/anthropic.webp',
   'figma.com': '/images/shared/companies/logos/figma.webp',
   'github.com': '/images/shared/companies/logos/github.webp',

@@ -19,6 +19,7 @@ import { Body } from '@/ui';
 
 import { FamiliarInterfaceVisual } from './familiar-interface/familiar-interface-visual';
 import { type FeatureCardRecord } from './feature-cards.data';
+import { LiveDataVisual } from './live-data/live-data-visual';
 
 const CardContainer = styled.div`
   background-color: ${color('black-5')};
@@ -113,12 +114,21 @@ export function FeatureCard({ card }: { card: FeatureCardRecord }) {
     />
   );
 
-  // The live-data and fast-path scenes land with their own commits; their
-  // frames keep the gradient bottom layer until then.
+  // The fast-path scene lands with its own commit; its frame keeps the
+  // gradient bottom layer until then.
   let visual: ReactNode = backgroundImage;
   if (card.illustration === 'familiar-interface') {
     visual = (
       <FamiliarInterfaceVisual
+        active={isHovered}
+        backgroundImageSrc={card.backgroundImageSrc}
+        pointerTargetRef={imageFrameRef}
+      />
+    );
+  }
+  if (card.illustration === 'live-data') {
+    visual = (
+      <LiveDataVisual
         active={isHovered}
         backgroundImageSrc={card.backgroundImageSrc}
         pointerTargetRef={imageFrameRef}

@@ -124,6 +124,18 @@ const VISUALS = {
     settle: { stageProgress: 0.9 },
   },
 
+  'live-data': {
+    slotSelector: '[data-illustration="live-data"]',
+    // the white companies panel over the dark dash backdrop with the
+    // collaborator markers; mixed palette so hue is skipped. Idle is
+    // static; HOVERING runs the whole two-actor demo (tag rename, filter
+    // pop-away, rows arriving), so the probe's pointer presence is the
+    // liveliness.
+    hueRangeDegrees: null,
+    minCoverage: 0.02,
+    animated: false,
+    interactive: true,
+  },
   'familiar-interface': {
     slotSelector: '[data-illustration="familiar-interface"]',
     // the white opportunity board over the dark dash backdrop; the
