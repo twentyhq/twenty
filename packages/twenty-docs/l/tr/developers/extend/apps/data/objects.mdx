@@ -86,6 +86,17 @@ export default defineObject({
 **Temel alanlar otomatik olarak eklenir.** Özel bir nesne tanımladığınızda Twenty, sizin için `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` ve `deletedAt` gibi standart alanlar oluşturur. Bunları `fields` dizinizde bildirmenize gerek yok — yalnızca özel alanlarınızı ekleyin. Aynı ada sahip bir alan bildirerek varsayılan bir alanı geçersiz kılabilirsiniz, ancak bu nadiren iyi bir fikirdir.
 </Note>
 
+## Varsayılan değerler
+
+Sabit (literal) dize varsayılanları, dize **içinde** tek tırnak içine alınmış olmalıdır — `defaultValue: "'Draft'"`, `defaultValue: "Draft"` değil. Bu nedenle yukarıdaki `status` alanı `` `'${PostCardStatus.DRAFT}'` `` kullanır.
+
+Tırnak içine alınmamış dizeler, bir kayıt oluşturulduğunda değerlendirilen, hesaplanmış varsayılanlar için ayrılmıştır:
+
+* `'uuid'` — bir UUID üretir (`UUID` alanları için)
+* `'now'` — geçerli zaman damgası (`DATE_TIME` alanları için)
+
+Aynı kural, bileşik varsayılanların string alt alanları için (örneğin bir `ACTOR` alanında `{ source: "'MANUAL'" }`) ve `SELECT`/`MULTI_SELECT` değerleri için de geçerlidir. Tırnak içine alınmamış bir sabit string varsayılan, uygulamanız oluşturulurken bir uyarıya neden olur.
+
 ## Sırada ne var
 
 * **Bu nesneyi diğerlerine bağlayın** — çift yönlü ilişki modeli için [İlişkiler](/l/tr/developers/extend/apps/data/relations) bölümüne bakın.
