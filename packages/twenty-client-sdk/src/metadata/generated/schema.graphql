@@ -1970,7 +1970,6 @@ type ClientConfig {
   isGoogleCalendarEnabled: Boolean!
   isConfigVariablesInDbEnabled: Boolean!
   isImapSmtpCaldavEnabled: Boolean!
-  isEmailGroupEnabled: Boolean!
   allowRequestsToTwentyIcons: Boolean!
   calendarBookingPageId: String
   isCloudflareIntegrationEnabled: Boolean!

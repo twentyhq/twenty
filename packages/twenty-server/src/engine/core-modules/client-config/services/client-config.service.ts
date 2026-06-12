@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
@@ -50,9 +49,6 @@ export class ClientConfigService {
     const isEmailingDomainInDemoMode =
       this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
       EmailingDomainDriver.LOG;
-    const isInboundEmailConfigured =
-      this.twentyConfigService.get('STORAGE_TYPE') === StorageDriverType.S_3 &&
-      isNonEmptyString(this.twentyConfigService.get('INBOUND_EMAIL_DOMAIN'));
 
     const availableModels =
       this.aiModelRegistryService.getAdminFilteredModels();
@@ -243,11 +239,6 @@ export class ClientConfigService {
       isImapSmtpCaldavEnabled: this.twentyConfigService.get(
         'IS_IMAP_SMTP_CALDAV_ENABLED',
       ),
-      // Demo mode unlocks the email-group UI without inbound infrastructure:
-      // handles are created on a non-routable forwarding domain and outbound
-      // mail is logged by the LOG emailing-domain driver.
-      isEmailGroupEnabled:
-        isInboundEmailConfigured || isEmailingDomainInDemoMode,
       isEmailingDomainInDemoMode,
       allowRequestsToTwentyIcons: this.twentyConfigService.get(
         'ALLOW_REQUESTS_TO_TWENTY_ICONS',

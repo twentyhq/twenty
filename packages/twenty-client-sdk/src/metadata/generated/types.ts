@@ -3842,9 +3842,6 @@ export default {
             "isImapSmtpCaldavEnabled": [
                 6
             ],
-            "isEmailGroupEnabled": [
-                6
-            ],
             "allowRequestsToTwentyIcons": [
                 6
             ],

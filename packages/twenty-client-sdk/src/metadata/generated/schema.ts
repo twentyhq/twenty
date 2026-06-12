@@ -1600,7 +1600,6 @@ export interface ClientConfig {
     isGoogleCalendarEnabled: Scalars['Boolean']
     isConfigVariablesInDbEnabled: Scalars['Boolean']
     isImapSmtpCaldavEnabled: Scalars['Boolean']
-    isEmailGroupEnabled: Scalars['Boolean']
     allowRequestsToTwentyIcons: Scalars['Boolean']
     calendarBookingPageId?: Scalars['String']
     isCloudflareIntegrationEnabled: Scalars['Boolean']
@@ -4584,7 +4583,6 @@ export interface ClientConfigGenqlSelection{
     isGoogleCalendarEnabled?: boolean | number
     isConfigVariablesInDbEnabled?: boolean | number
     isImapSmtpCaldavEnabled?: boolean | number
-    isEmailGroupEnabled?: boolean | number
     allowRequestsToTwentyIcons?: boolean | number
     calendarBookingPageId?: boolean | number
     isCloudflareIntegrationEnabled?: boolean | number

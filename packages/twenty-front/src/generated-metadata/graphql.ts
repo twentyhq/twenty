@@ -876,7 +876,6 @@ export type ClientConfig = {
   isClickHouseConfigured: Scalars['Boolean']['output'];
   isCloudflareIntegrationEnabled: Scalars['Boolean']['output'];
   isConfigVariablesInDbEnabled: Scalars['Boolean']['output'];
-  isEmailGroupEnabled: Scalars['Boolean']['output'];
   isEmailVerificationRequired: Scalars['Boolean']['output'];
   isGoogleCalendarEnabled: Scalars['Boolean']['output'];
   isGoogleMessagingEnabled: Scalars['Boolean']['output'];

@@ -53,7 +53,6 @@ export const mockedClientConfig: ClientConfig = {
   isAttachmentPreviewEnabled: true,
   isConfigVariablesInDbEnabled: false,
   isImapSmtpCaldavEnabled: false,
-  isEmailGroupEnabled: false,
   isTwoFactorAuthenticationEnabled: false,
   isEmailingDomainInDemoMode: false,
   allowRequestsToTwentyIcons: true,

@@ -1,7 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 
 import { billingState } from '@/client-config/states/billingState';
-import { isEmailGroupEnabledState } from '@/client-config/states/isEmailGroupEnabledState';
 import { isEmailingDomainInDemoModeState } from '@/client-config/states/isEmailingDomainInDemoModeState';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
@@ -21,7 +20,6 @@ export const SettingsWorkspaceEmail = () => {
   const { t } = useLingui();
   const navigateSettings = useNavigateSettings();
 
-  const isEmailGroupEnabled = useAtomStateValue(isEmailGroupEnabledState);
   const isEmailingDomainInDemoMode = useAtomStateValue(
     isEmailingDomainInDemoModeState,
   );
@@ -34,8 +32,6 @@ export const SettingsWorkspaceEmail = () => {
   if (!isEmailGroupFeatureEnabled) {
     return null;
   }
-
-  const showEmailGroupSection = isEmailGroupEnabled;
 
   return (
     <SettingsPageLayout
@@ -77,7 +73,7 @@ export const SettingsWorkspaceEmail = () => {
             />
           </Card>
         )}
-        {showEmailGroupSection && <SettingsWorkspaceEmailGroupSection />}
+        <SettingsWorkspaceEmailGroupSection />
       </SettingsPageContainer>
     </SettingsPageLayout>
   );
