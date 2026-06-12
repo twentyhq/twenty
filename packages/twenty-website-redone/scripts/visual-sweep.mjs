@@ -163,6 +163,16 @@ assert(
   `muted ink binds to black-60 (got "${composition.inkMuted}" vs "${composition.black60}")`,
 );
 
+const readSectionRhythms = (target) =>
+  target.evaluate(() =>
+    [...document.querySelectorAll('section')].map((el) => ({
+      rhythm: el.getAttribute('data-rhythm'),
+      paddingTop: getComputedStyle(el).paddingTop,
+      paddingBottom: getComputedStyle(el).paddingBottom,
+    })),
+  );
+const homeSections = await readSectionRhythms(page);
+
 // The product page joins the 404 net (its slots/composition have their
 // own battery; the sweep guards asset integrity site-wide).
 await page.goto(`${BASE_URL.replace(/\/$/, '')}/product`, {
@@ -178,6 +188,30 @@ for (let y = 0; y <= productPageHeight; y += 600) {
   // eslint-disable-next-line no-await-in-loop
   await page.waitForTimeout(350);
 }
+
+// Universal section rhythm: every <section> is a SectionShell with a
+// rhythm class, and its block padding is exactly the token value
+// (md tier at this viewport — src/tokens/rhythm.ts, spacing unit 4px).
+const RHYTHM_MD_PADDING = {
+  hero: '48px',
+  section: '64px',
+  flush: '0px',
+  spacious: '120px',
+};
+const offRhythmSections = [
+  ...homeSections,
+  ...(await readSectionRhythms(page)),
+];
+const rhythmViolations = offRhythmSections.filter(
+  (section) =>
+    !(section.rhythm in RHYTHM_MD_PADDING) ||
+    section.paddingTop !== RHYTHM_MD_PADDING[section.rhythm] ||
+    section.paddingBottom !== RHYTHM_MD_PADDING[section.rhythm],
+);
+assert(
+  offRhythmSections.length > 0 && rhythmViolations.length === 0,
+  `every section carries token rhythm padding (${offRhythmSections.length} sections${rhythmViolations.length > 0 ? `; violations: ${JSON.stringify(rhythmViolations)}` : ''})`,
+);
 
 assert(
   sameOriginNotFound.length === 0,
