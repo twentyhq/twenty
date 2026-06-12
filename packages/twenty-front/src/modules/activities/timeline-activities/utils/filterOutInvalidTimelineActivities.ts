@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 const keepActivityWithReadableDiff = (
   timelineActivity: TimelineActivity,
   readableFields: FieldMetadataItem[],
-): boolean => {
+): TimelineActivity[] => {
   const validDiffEntries = Object.entries(
     timelineActivity.properties?.diff ?? {},
   ).filter(([diffKey]) =>
@@ -15,15 +15,18 @@ const keepActivityWithReadableDiff = (
   );
 
   if (validDiffEntries.length === 0) {
-    return false;
+    return [];
   }
 
-  timelineActivity.properties = {
-    ...timelineActivity.properties,
-    diff: Object.fromEntries(validDiffEntries),
-  };
-
-  return true;
+  return [
+    {
+      ...timelineActivity,
+      properties: {
+        ...timelineActivity.properties,
+        diff: Object.fromEntries(validDiffEntries),
+      },
+    },
+  ];
 };
 
 export const filterOutInvalidTimelineActivities = (
@@ -40,12 +43,12 @@ export const filterOutInvalidTimelineActivities = (
     throw new Error('Object metadata item not found');
   }
 
-  return timelineActivities.filter((timelineActivity) => {
+  return timelineActivities.flatMap((timelineActivity) => {
     const [objectName, action] = timelineActivity.name.split('.');
 
     if (objectName.startsWith('linked-')) {
       if (!isDefined(timelineActivity.properties?.diff)) {
-        return true;
+        return [timelineActivity];
       }
 
       const linkedObjectMetadataItem = objectMetadataItems.find(
@@ -66,6 +69,6 @@ export const filterOutInvalidTimelineActivities = (
       );
     }
 
-    return true;
+    return [timelineActivity];
   });
 };
