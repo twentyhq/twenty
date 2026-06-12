@@ -2,6 +2,11 @@ import { type FieldMetadataType } from 'twenty-shared/types';
 
 export type InputData = { [x: string]: any };
 
+export type NodeFieldOption = {
+  value: string;
+  label: string;
+};
+
 export type NodeField = {
   type: FieldMetadataType;
   name: string;
@@ -11,6 +16,7 @@ export type NodeField = {
   defaultValue: boolean | object | null;
   list?: boolean;
   placeholder?: string;
+  options?: NodeFieldOption[] | null;
 };
 
 export type Node = {
@@ -32,6 +38,7 @@ export type InputField = {
   required: boolean;
   list?: boolean;
   placeholder?: string;
+  choices?: { [value: string]: string };
 };
 
 export type Schema = {
