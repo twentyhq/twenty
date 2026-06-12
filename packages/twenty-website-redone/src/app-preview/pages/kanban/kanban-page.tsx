@@ -41,6 +41,7 @@ export function KanbanPage({ page }: { page: KanbanPageDefinition }) {
       <BoardCanvas $laneCount={page.lanes.length}>
         {page.lanes.map((lane, index) => (
           <KanbanLane
+            generating={page.generating}
             index={index}
             isLast={index === page.lanes.length - 1}
             key={lane.id}

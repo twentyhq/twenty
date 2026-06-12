@@ -12,6 +12,7 @@ import { renderTableCellValue } from './table-cell-value';
 import { TableCheckbox } from './table-checkbox';
 import { renderTableHeaderIcon } from './table-header-icon';
 import { MiniIcon } from '../../primitives/mini-icon';
+import { PREVIEW_SKELETON } from '../../primitives/preview-skeleton';
 import { PREVIEW_COLORS } from '../../preview-colors';
 import { useHorizontalDragScroll } from '../../stage/use-horizontal-drag-scroll';
 import { type TablePageDefinition } from '../../types';
@@ -210,6 +211,15 @@ const EdgePlus = styled.div`
   margin-left: auto;
 `;
 
+const SKELETON_ROW_INDEXES = [0, 1, 2, 3, 4, 5, 6];
+
+const SkeletonRowLead = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 6px;
+  width: 100%;
+`;
+
 export function TablePage({ page }: { page: TablePageDefinition }) {
   const {
     dragging,
@@ -285,7 +295,30 @@ export function TablePage({ page }: { page: TablePageDefinition }) {
               ) : null}
             </EmptyFillCell>
           </HeaderRow>
-          {page.rows.map((row, rowIndex) => {
+          {page.generating ? (
+            SKELETON_ROW_INDEXES.map((rowIndex) => (
+              <DataRow $rowIndex={rowIndex} key={`skeleton-${rowIndex}`}>
+                {page.columns.map((column) => (
+                  <TableCell
+                    $align={column.align}
+                    $sticky={column.isFirstColumn}
+                    $width={column.width}
+                    key={column.id}
+                  >
+                    {column.isFirstColumn ? (
+                      <SkeletonRowLead>
+                        <PREVIEW_SKELETON.Circle $size={16} />
+                        <PREVIEW_SKELETON.Bar $height={8} $width="58%" />
+                      </SkeletonRowLead>
+                    ) : (
+                      <PREVIEW_SKELETON.Bar $height={8} $width="56%" />
+                    )}
+                  </TableCell>
+                ))}
+                <EmptyFillCell $width={fillerWidth} />
+              </DataRow>
+            ))
+          ) : page.rows.map((row, rowIndex) => {
             const hovered = hoveredRowId === row.id;
             return (
               <DataRow

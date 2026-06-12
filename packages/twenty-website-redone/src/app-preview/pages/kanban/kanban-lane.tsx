@@ -7,6 +7,7 @@ import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
 import { KanbanCard } from './kanban-card';
 import { MiniIcon } from '../../primitives/mini-icon';
+import { PREVIEW_SKELETON } from '../../primitives/preview-skeleton';
 import { PREVIEW_COLORS } from '../../preview-colors';
 import { type KanbanLane as KanbanLaneData } from '../../types';
 
@@ -89,11 +90,60 @@ const AddCardButton = styled.div`
   white-space: nowrap;
 `;
 
+const SkeletonCardShell = styled.div<{ $index: number }>`
+  animation: kanbanSkeletonCardAppear 320ms ${EASING.standard} both;
+  animation-delay: ${({ $index }) => `${$index * 90}ms`};
+  background: ${PREVIEW_COLORS.backgroundSecondary};
+  border: 1px solid ${PREVIEW_COLORS.border};
+  border-radius: 4px;
+  box-shadow: ${theme.boxShadow.light};
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 8px;
+
+  @keyframes kanbanSkeletonCardAppear {
+    from {
+      opacity: 0;
+      transform: translateY(6px) scale(0.985);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+`;
+
+const SkeletonCardField = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 6px;
+  width: 100%;
+`;
+
+const SKELETON_FIELD_WIDTHS = ['70%', '54%', '62%'];
+
+function SkeletonCard({ index }: { index: number }) {
+  return (
+    <SkeletonCardShell $index={index}>
+      <PREVIEW_SKELETON.Bar $height={9} $width="64%" />
+      {SKELETON_FIELD_WIDTHS.map((width) => (
+        <SkeletonCardField key={width}>
+          <PREVIEW_SKELETON.Circle $size={16} />
+          <PREVIEW_SKELETON.Bar $height={8} $width={width} />
+        </SkeletonCardField>
+      ))}
+    </SkeletonCardShell>
+  );
+}
+
 export function KanbanLane({
   lane,
   index = 0,
   isLast,
+  generating = false,
 }: {
+  generating?: boolean;
   index?: number;
   isLast: boolean;
   lane: KanbanLaneData;
@@ -101,18 +151,23 @@ export function KanbanLane({
   const tone =
     APP_PREVIEW_TONES.kanbanLane[lane.tone] ??
     APP_PREVIEW_TONES.kanbanLane.gray;
+  const skeletonCardCount = 2 + (index % 2);
   return (
     <Lane $index={index} $last={isLast}>
       <LaneHeader>
         <LaneTag $background={tone.background} $color={tone.color}>
           {lane.label}
         </LaneTag>
-        <LaneCount>{lane.cards.length}</LaneCount>
+        {generating ? null : <LaneCount>{lane.cards.length}</LaneCount>}
       </LaneHeader>
       <LaneBody>
-        {lane.cards.map((card) => (
-          <KanbanCard card={card} key={card.id} />
-        ))}
+        {generating
+          ? Array.from({ length: skeletonCardCount }, (_, cardIndex) => (
+              <SkeletonCard index={cardIndex} key={cardIndex} />
+            ))
+          : lane.cards.map((card) => (
+              <KanbanCard card={card} key={card.id} />
+            ))}
         <AddCardButton aria-hidden>
           <MiniIcon
             icon={IconPlus}

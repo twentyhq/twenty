@@ -112,23 +112,32 @@ export function WorkflowPage({ page }: { page: WorkflowPageDefinition }) {
               $width={WORKFLOW_THEME.canvasWidthPx}
               data-workflow-canvas
             >
-              <WorkflowEdges
-                canvasHeight={WORKFLOW_THEME.canvasHeightPx}
-                canvasWidth={WORKFLOW_THEME.canvasWidthPx}
-                edges={edges}
-                nodes={nodes}
-              />
+              {page.generating ? null : (
+                <WorkflowEdges
+                  canvasHeight={WORKFLOW_THEME.canvasHeightPx}
+                  canvasWidth={WORKFLOW_THEME.canvasWidthPx}
+                  edges={edges}
+                  nodes={nodes}
+                />
+              )}
               {nodes.map((node, index) => (
-                <WorkflowNode index={index} key={node.id} node={node} />
-              ))}
-              {branchLabels.map((label) => (
-                <WorkflowBranchLabel
-                  key={`${label.text}-${label.x}`}
-                  text={label.text}
-                  x={label.x}
-                  y={label.y}
+                <WorkflowNode
+                  generating={page.generating}
+                  index={index}
+                  key={node.id}
+                  node={node}
                 />
               ))}
+              {page.generating
+                ? null
+                : branchLabels.map((label) => (
+                    <WorkflowBranchLabel
+                      key={`${label.text}-${label.x}`}
+                      text={label.text}
+                      x={label.x}
+                      y={label.y}
+                    />
+                  ))}
             </CanvasContent>
           </Canvas>
         </CanvasViewport>

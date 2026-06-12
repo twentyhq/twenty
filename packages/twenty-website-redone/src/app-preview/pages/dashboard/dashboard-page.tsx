@@ -7,6 +7,7 @@ import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
 import { DASHBOARD_CHARTS } from './dashboard-charts';
 import { PREVIEW_COLORS } from '../../preview-colors';
+import { PREVIEW_SKELETON } from '../../primitives/preview-skeleton';
 import { type DashboardKpi, type DashboardPageDefinition } from '../../types';
 
 const theme = APP_PREVIEW_THEME;
@@ -157,33 +158,73 @@ function KpiWidget({ kpi }: { kpi: DashboardKpi }) {
   );
 }
 
+function KpiSkeleton() {
+  return (
+    <KpiCard>
+      <PREVIEW_SKELETON.Bar $height={11} $width="55%" />
+      <PREVIEW_SKELETON.Bar $height={20} $width="45%" />
+    </KpiCard>
+  );
+}
+
+function ChartSkeleton() {
+  return (
+    <>
+      <PREVIEW_SKELETON.Bar $height={11} $width="48%" />
+      <PREVIEW_SKELETON.Block />
+    </>
+  );
+}
+
 export function DashboardPage({ page }: { page: DashboardPageDefinition }) {
-  const { kpis, lineChart, barChart, donutChart } = page.dashboard;
+  const { kpis, lineChart, barChart, donutChart, generating } = page.dashboard;
   return (
     <DashboardGrid>
       {kpis.length > 0 ? (
         <KpiStack>
-          {kpis.map((kpi) => (
-            <KpiWidget key={kpi.id} kpi={kpi} />
-          ))}
+          {kpis.map((kpi) =>
+            generating ? (
+              <KpiSkeleton key={kpi.id} />
+            ) : (
+              <KpiWidget key={kpi.id} kpi={kpi} />
+            ),
+          )}
         </KpiStack>
       ) : null}
       {lineChart ? (
         <LineCard>
-          <WidgetTitle>{lineChart.title}</WidgetTitle>
-          <DASHBOARD_CHARTS.Line data={lineChart} />
+          {generating ? (
+            <ChartSkeleton />
+          ) : (
+            <>
+              <WidgetTitle>{lineChart.title}</WidgetTitle>
+              <DASHBOARD_CHARTS.Line data={lineChart} />
+            </>
+          )}
         </LineCard>
       ) : null}
       {barChart ? (
         <BarCard>
-          <WidgetTitle>{barChart.title}</WidgetTitle>
-          <DASHBOARD_CHARTS.Bar data={barChart} />
+          {generating ? (
+            <ChartSkeleton />
+          ) : (
+            <>
+              <WidgetTitle>{barChart.title}</WidgetTitle>
+              <DASHBOARD_CHARTS.Bar data={barChart} />
+            </>
+          )}
         </BarCard>
       ) : null}
       {donutChart ? (
         <DonutCard>
-          <WidgetTitle>{donutChart.title}</WidgetTitle>
-          <DASHBOARD_CHARTS.Donut data={donutChart} />
+          {generating ? (
+            <ChartSkeleton />
+          ) : (
+            <>
+              <WidgetTitle>{donutChart.title}</WidgetTitle>
+              <DASHBOARD_CHARTS.Donut data={donutChart} />
+            </>
+          )}
         </DonutCard>
       ) : null}
     </DashboardGrid>

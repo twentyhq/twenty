@@ -90,6 +90,9 @@ export type PageHeader = {
 
 export type TablePageDefinition = {
   columns: ColumnDef[];
+  // AI-scene builders flip this while an answer streams in: the page
+  // shows shimmer rows until the scene's data "arrives".
+  generating?: boolean;
   header: PageHeader;
   rows: RowDef[];
   type: 'table';
@@ -115,6 +118,7 @@ export type KanbanLane = {
   tone: string;
 };
 export type KanbanPageDefinition = {
+  generating?: boolean;
   header: PageHeader;
   lanes: KanbanLane[];
   type: 'kanban';
@@ -149,6 +153,7 @@ export type WorkflowBranchLabelDef = {
 export type WorkflowPageDefinition = {
   branchLabels?: WorkflowBranchLabelDef[];
   edges?: WorkflowEdgeDef[];
+  generating?: boolean;
   header: PageHeader;
   nodes?: WorkflowNodeDef[];
   plusNode?: { x: number; y: number };
@@ -178,6 +183,7 @@ export type DashboardDonutChart = {
   slices: { color: string; label: string; value: number }[];
 };
 export type DashboardData = {
+  generating?: boolean;
   kpis: DashboardKpi[];
   barChart?: DashboardBarChart;
   donutChart?: DashboardDonutChart;

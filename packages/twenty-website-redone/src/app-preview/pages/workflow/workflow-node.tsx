@@ -15,6 +15,7 @@ import { EASING, REDUCED_MOTION } from '@/tokens';
 import { APP_PREVIEW_THEME } from '@/tokens/app-preview/app-preview-theme';
 
 import { WORKFLOW_THEME } from './workflow-theme';
+import { PREVIEW_SKELETON } from '../../primitives/preview-skeleton';
 import { type WorkflowNodeDef } from '../../types';
 
 const theme = APP_PREVIEW_THEME;
@@ -130,10 +131,19 @@ const NodeTitle = styled.div`
   white-space: nowrap;
 `;
 
+const SkeletonIcon = styled(PREVIEW_SKELETON.Block)`
+  border-radius: 4px;
+  flex: 0 0 auto;
+  height: 32px;
+  width: 32px;
+`;
+
 export function WorkflowNode({
+  generating = false,
   index = 0,
   node,
 }: {
+  generating?: boolean;
   index?: number;
   node: WorkflowNodeDef;
 }) {
@@ -144,18 +154,30 @@ export function WorkflowNode({
       $index={index}
       style={{ left: node.x, top: node.y, width: node.width }}
     >
-      <NodeIconContainer>
-        <Icon
-          aria-hidden
-          color={iconColor}
-          size={20}
-          stroke={theme.icon.stroke.sm}
-        />
-      </NodeIconContainer>
-      <NodeContent>
-        <NodeLabel>{node.label}</NodeLabel>
-        <NodeTitle>{node.title}</NodeTitle>
-      </NodeContent>
+      {generating ? (
+        <>
+          <SkeletonIcon />
+          <NodeContent>
+            <PREVIEW_SKELETON.Bar $height={8} $width="38%" />
+            <PREVIEW_SKELETON.Bar $height={9} $width="72%" />
+          </NodeContent>
+        </>
+      ) : (
+        <>
+          <NodeIconContainer>
+            <Icon
+              aria-hidden
+              color={iconColor}
+              size={20}
+              stroke={theme.icon.stroke.sm}
+            />
+          </NodeIconContainer>
+          <NodeContent>
+            <NodeLabel>{node.label}</NodeLabel>
+            <NodeTitle>{node.title}</NodeTitle>
+          </NodeContent>
+        </>
+      )}
     </Node>
   );
 }
