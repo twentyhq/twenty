@@ -492,32 +492,6 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  messageTopicSubscriptions: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'messageTopicSubscriptions',
-      label: i18nLabel(msg`Topics`),
-      description: i18nLabel(msg`Topics the contact is subscribed to`),
-      icon: 'IconMailShare',
-      isUIReadOnly: false,
-      isNullable: true,
-      targetObjectName: 'messageTopicSubscription',
-      targetFieldName: 'person',
-      settings: {
-        relationType: RelationType.ONE_TO_MANY,
-      },
-      junctionTargetFieldUniversalIdentifier:
-        STANDARD_OBJECTS.messageTopicSubscription.fields.topic
-          .universalIdentifier,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   listMemberships: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

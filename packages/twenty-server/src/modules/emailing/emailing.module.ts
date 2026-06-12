@@ -13,7 +13,6 @@ import { EmailingSendResolver } from 'src/modules/emailing/resolvers/emailing-se
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
-import { MessageTopicSubscriptionService } from 'src/modules/emailing/services/message-topic-subscription.service';
 
 @Module({
   imports: [
@@ -27,7 +26,6 @@ import { MessageTopicSubscriptionService } from 'src/modules/emailing/services/m
   providers: [
     MessageCampaignService,
     MessageSuppressionService,
-    MessageTopicSubscriptionService,
     EmailingDomainSenderService,
     EmailingSendResolver,
     provideWorkspaceScopedRepository(EmailingDomainEntity),
@@ -36,7 +34,6 @@ import { MessageTopicSubscriptionService } from 'src/modules/emailing/services/m
     EmailingDomainSenderService,
     MessageCampaignService,
     MessageSuppressionService,
-    MessageTopicSubscriptionService,
   ],
 })
 export class EmailingModule {}

@@ -5,7 +5,6 @@ import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/util
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { type MessageSuppressionWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-suppression.workspace-entity';
-import { type MessageTopicSubscriptionWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-topic-subscription.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 
@@ -16,9 +15,7 @@ export const SEARCH_FIELDS_FOR_MESSAGE_TOPIC: FieldTypeAndNameMetadata[] = [
 export class MessageTopicWorkspaceEntity extends BaseWorkspaceEntity {
   name: string | null;
   description: string | null;
-  subscriptionDefault: string;
   visibility: string;
-  subscriptions: EntityRelation<MessageTopicSubscriptionWorkspaceEntity[]>;
   suppressions: EntityRelation<MessageSuppressionWorkspaceEntity[]>;
   campaigns: EntityRelation<MessageCampaignWorkspaceEntity[]>;
   searchVector: string;

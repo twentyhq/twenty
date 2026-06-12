@@ -8,7 +8,6 @@ import { type EmailingDomainEmailContent } from 'src/engine/core-modules/emailin
 import { type EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { type MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
-import { type MessageTopicSubscriptionService } from 'src/modules/emailing/services/message-topic-subscription.service';
 import { type UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -58,16 +57,14 @@ describe('EmailingDomainSenderService.sendEmail', () => {
         .mockResolvedValue(
           new Set(suppressedAddresses.map((address) => address.toLowerCase())),
         ),
-    } as unknown as MessageSuppressionService;
-    const subscriptionService = {
-      getAddressesUnsubscribedFromList: jest
+      getTopicSuppressedAddresses: jest
         .fn()
         .mockResolvedValue(
           new Set(
             listUnsubscribedAddresses.map((address) => address.toLowerCase()),
           ),
         ),
-    } as unknown as MessageTopicSubscriptionService;
+    } as unknown as MessageSuppressionService;
     const unsubscribeTokenService = {
       sign: jest.fn().mockReturnValue('signed-token'),
     } as unknown as UnsubscribeTokenService;
@@ -81,7 +78,6 @@ describe('EmailingDomainSenderService.sendEmail', () => {
       repository,
       factory,
       suppressionService,
-      subscriptionService,
       unsubscribeTokenService,
       twentyConfigService,
       messageChannelRepository,

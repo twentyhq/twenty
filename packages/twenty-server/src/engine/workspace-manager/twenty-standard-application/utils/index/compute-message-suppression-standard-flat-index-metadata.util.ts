@@ -17,6 +17,24 @@ export const buildMessageSuppressionStandardFlatIndexMetadatas = ({
   AllStandardObjectIndexName<'messageSuppression'>,
   FlatIndexMetadata
 > => ({
+  // Two partial unique indexes instead of one on (emailAddress, topic): Postgres
+  // treats NULLs as distinct, so a single index would let duplicate global rows
+  // (topicId IS NULL) through. One enforces a single global block per address,
+  // the other a single per-topic opt-out per (address, topic).
+  emailAddressGlobalUniqueIndex: createStandardIndexFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      indexName: 'emailAddressGlobalUniqueIndex',
+      relatedFieldNames: ['emailAddress'],
+      isUnique: true,
+      indexWhereClause: '"deletedAt" IS NULL AND "topicId" IS NULL',
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   emailAddressTopicUniqueIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
@@ -24,7 +42,7 @@ export const buildMessageSuppressionStandardFlatIndexMetadatas = ({
       indexName: 'emailAddressTopicUniqueIndex',
       relatedFieldNames: ['emailAddress', 'topic'],
       isUnique: true,
-      indexWhereClause: '"deletedAt" IS NULL',
+      indexWhereClause: '"deletedAt" IS NULL AND "topicId" IS NOT NULL',
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

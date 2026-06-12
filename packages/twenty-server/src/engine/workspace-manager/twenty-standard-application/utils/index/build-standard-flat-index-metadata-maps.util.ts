@@ -13,7 +13,6 @@ import { buildDashboardStandardFlatIndexMetadatas } from 'src/engine/workspace-m
 import { buildMessageCampaignStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-campaign-standard-flat-index-metadata.util';
 import { buildMessageSuppressionStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-suppression-standard-flat-index-metadata.util';
 import { buildMessageTopicStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-topic-standard-flat-index-metadata.util';
-import { buildMessageTopicSubscriptionStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-topic-subscription-standard-flat-index-metadata.util';
 import { buildMessageListStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-list-standard-flat-index-metadata.util';
 import { buildMessageListMemberStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-list-member-standard-flat-index-metadata.util';
 import { buildMessageChannelMessageAssociationMessageFolderStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-channel-message-association-message-folder-standard-flat-index-metadata.util';
@@ -51,8 +50,6 @@ const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
   messageCampaign: buildMessageCampaignStandardFlatIndexMetadatas,
   messageSuppression: buildMessageSuppressionStandardFlatIndexMetadatas,
   messageTopic: buildMessageTopicStandardFlatIndexMetadatas,
-  messageTopicSubscription:
-    buildMessageTopicSubscriptionStandardFlatIndexMetadatas,
   messageList: buildMessageListStandardFlatIndexMetadatas,
   messageListMember: buildMessageListMemberStandardFlatIndexMetadatas,
   message: buildMessageStandardFlatIndexMetadatas,

@@ -118,9 +118,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
           pointOfContactForOpportunities: {
             universalIdentifier: '20202020-ac02-4002-8002-ae0a1ea11213',
           },
-          messageTopicSubscriptions: {
-            universalIdentifier: 'd168d7fd-e52a-4b60-b54a-29a7308979cd',
-          },
           listMemberships: {
             universalIdentifier: 'f344eb7d-23c1-457a-a29b-32fd548b6aba',
           },

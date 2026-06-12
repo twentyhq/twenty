@@ -289,10 +289,10 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         universalIdentifier: STANDARD_OBJECTS.messageTopic.universalIdentifier,
         nameSingular: 'messageTopic',
         namePlural: 'messageTopics',
-        labelSingular: i18nLabel(msg`Topic`),
-        labelPlural: i18nLabel(msg`Topics`),
+        labelSingular: i18nLabel(msg`Unsubscribe Group`),
+        labelPlural: i18nLabel(msg`Unsubscribe Groups`),
         description: i18nLabel(
-          msg`A subscription category people can opt in or out of`,
+          msg`An email category recipients can opt out of`,
         ),
         icon: 'IconMailbox',
         isSystem: true,
@@ -330,36 +330,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconSend',
         isSystem: true,
         labelIdentifierFieldMetadataName: 'subject',
-      },
-      workspaceId,
-      standardObjectMetadataRelatedEntityIds,
-      twentyStandardApplicationId,
-      now,
-    }),
-  messageTopicSubscription: ({
-    now,
-    workspaceId,
-    standardObjectMetadataRelatedEntityIds,
-    twentyStandardApplicationId,
-    dependencyFlatEntityMaps,
-  }: Omit<
-    CreateStandardObjectArgs<'messageTopicSubscription'>,
-    'context' | 'objectName'
-  >) =>
-    createStandardObjectFlatMetadata({
-      objectName: 'messageTopicSubscription',
-      dependencyFlatEntityMaps,
-      context: {
-        universalIdentifier:
-          STANDARD_OBJECTS.messageTopicSubscription.universalIdentifier,
-        nameSingular: 'messageTopicSubscription',
-        namePlural: 'messageTopicSubscriptions',
-        labelSingular: i18nLabel(msg`Topic Subscription`),
-        labelPlural: i18nLabel(msg`Topic Subscriptions`),
-        description: i18nLabel(msg`A person's subscription status for a topic`),
-        icon: 'IconMailShare',
-        isSystem: true,
-        labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
       standardObjectMetadataRelatedEntityIds,

@@ -12,8 +12,6 @@ import {
 
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
-import { MessageTopicSubscriptionService } from 'src/modules/emailing/services/message-topic-subscription.service';
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/message-suppression-source.type';
@@ -22,6 +20,7 @@ import { buildUnsubscribePreferencesPage } from 'src/engine/core-modules/emailin
 import { buildUnsubscribeResultPage } from 'src/engine/core-modules/emailing-domain/utils/build-unsubscribe-result-page.util';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 
 const UNSUBSCRIBE_TOKEN_FORMAT = /^[A-Za-z0-9_-]{1,1024}$/;
 
@@ -41,7 +40,6 @@ export class UnsubscribeController {
   constructor(
     private readonly unsubscribeTokenService: UnsubscribeTokenService,
     private readonly messageSuppressionService: MessageSuppressionService,
-    private readonly messageTopicSubscriptionService: MessageTopicSubscriptionService,
   ) {}
 
   // RFC 8058 one-click: mail clients POST here with no user interaction, so it
@@ -51,7 +49,14 @@ export class UnsubscribeController {
   async handleOneClickUnsubscribe(@Query('t') token: string): Promise<void> {
     const payload = this.verifyTokenOrThrow(token);
 
-    await this.applyTokenUnsubscribe(payload);
+    // Topic-scoped when the token carries a topic, global otherwise.
+    await this.messageSuppressionService.suppress({
+      workspaceId: payload.workspaceId,
+      emailAddress: payload.emailAddress,
+      reason: MessageSuppressionReason.UNSUBSCRIBE,
+      source: MessageSuppressionSource.SYSTEM,
+      topicId: payload.messageTopicId ?? null,
+    });
   }
 
   @Get()
@@ -59,11 +64,10 @@ export class UnsubscribeController {
   async handlePreferencesPage(@Query('t') token: string): Promise<string> {
     const payload = this.verifyTokenOrThrow(token);
 
-    const topics =
-      await this.messageTopicSubscriptionService.getSubscribedTopics({
-        workspaceId: payload.workspaceId,
-        emailAddress: payload.emailAddress,
-      });
+    const topics = await this.messageSuppressionService.getTopicOptOutState({
+      workspaceId: payload.workspaceId,
+      emailAddress: payload.emailAddress,
+    });
 
     return buildUnsubscribePreferencesPage({
       token,
@@ -80,10 +84,11 @@ export class UnsubscribeController {
   ): Promise<string> {
     const payload = this.verifyTokenOrThrow(body.t);
 
-    await this.messageTopicSubscriptionService.setSubscribedTopics({
+    // The checked boxes are the topics the recipient wants to keep receiving.
+    await this.messageSuppressionService.setTopicOptOuts({
       workspaceId: payload.workspaceId,
       emailAddress: payload.emailAddress,
-      subscribedTopicIds: this.normalizeTopicIds(body.topicId),
+      keptTopicIds: this.normalizeTopicIds(body.topicId),
     });
 
     return buildUnsubscribeResultPage(
@@ -99,7 +104,12 @@ export class UnsubscribeController {
   ): Promise<string> {
     const payload = this.verifyTokenOrThrow(body.t);
 
-    await this.suppressAll(payload);
+    await this.messageSuppressionService.suppress({
+      workspaceId: payload.workspaceId,
+      emailAddress: payload.emailAddress,
+      reason: MessageSuppressionReason.UNSUBSCRIBE,
+      source: MessageSuppressionSource.SYSTEM,
+    });
 
     return buildUnsubscribeResultPage(
       'You have been unsubscribed',
@@ -129,33 +139,5 @@ export class UnsubscribeController {
     }
 
     return payload;
-  }
-
-  private async applyTokenUnsubscribe(
-    payload: UnsubscribeTokenPayload,
-  ): Promise<void> {
-    if (isNonEmptyString(payload.messageTopicId)) {
-      const unsubscribedFromList =
-        await this.messageTopicSubscriptionService.unsubscribeByEmail({
-          workspaceId: payload.workspaceId,
-          emailAddress: payload.emailAddress,
-          topicId: payload.messageTopicId,
-        });
-
-      if (unsubscribedFromList) {
-        return;
-      }
-    }
-
-    await this.suppressAll(payload);
-  }
-
-  private async suppressAll(payload: UnsubscribeTokenPayload): Promise<void> {
-    await this.messageSuppressionService.suppress({
-      workspaceId: payload.workspaceId,
-      emailAddress: payload.emailAddress,
-      reason: MessageSuppressionReason.UNSUBSCRIBE,
-      source: MessageSuppressionSource.SYSTEM,
-    });
   }
 }

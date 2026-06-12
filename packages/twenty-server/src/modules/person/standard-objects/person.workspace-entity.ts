@@ -15,7 +15,6 @@ import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { type CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { type MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
-import { type MessageTopicSubscriptionWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-topic-subscription.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
@@ -59,9 +58,6 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     CalendarEventParticipantWorkspaceEntity[]
   >;
   timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;
-  messageTopicSubscriptions: EntityRelation<
-    MessageTopicSubscriptionWorkspaceEntity[]
-  >;
   listMemberships: EntityRelation<MessageListMemberWorkspaceEntity[]>;
   searchVector: string;
 }

@@ -20,7 +20,6 @@ import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-doma
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
-import { MessageTopicSubscriptionService } from 'src/modules/emailing/services/message-topic-subscription.service';
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -42,7 +41,6 @@ export class EmailingDomainSenderService {
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
     private readonly emailingDomainDriverFactory: EmailingDomainDriverFactory,
     private readonly messageSuppressionService: MessageSuppressionService,
-    private readonly messageTopicSubscriptionService: MessageTopicSubscriptionService,
     private readonly unsubscribeTokenService: UnsubscribeTokenService,
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(MessageChannelEntity)
@@ -226,7 +224,7 @@ export class EmailingDomainSenderService {
       return new Set();
     }
 
-    return this.messageTopicSubscriptionService.getAddressesUnsubscribedFromList(
+    return this.messageSuppressionService.getTopicSuppressedAddresses(
       workspaceId,
       recipients,
       messageTopicId,

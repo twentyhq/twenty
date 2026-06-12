@@ -905,6 +905,9 @@ export const STANDARD_OBJECTS = {
       topic: { universalIdentifier: 'b7d2e90a-1f4c-4d8e-9a6b-2c3d4e5f6071' },
     },
     indexes: {
+      emailAddressGlobalUniqueIndex: {
+        universalIdentifier: 'd3e8a1c2-4b5f-4e6a-9c7d-8e0f1a2b3c4d',
+      },
       emailAddressTopicUniqueIndex: {
         universalIdentifier: '62397bbf-470d-466b-8a33-10bedc3f3ac3',
       },
@@ -942,14 +945,8 @@ export const STANDARD_OBJECTS = {
       description: {
         universalIdentifier: '67ce362d-b50b-4cfb-87da-786bd1074ac4',
       },
-      subscriptionDefault: {
-        universalIdentifier: '6735433a-376c-4588-89ad-e493a4d6e615',
-      },
       visibility: {
         universalIdentifier: 'f654eb52-2ccc-4bc4-9f3d-6f04c45fec7b',
-      },
-      subscriptions: {
-        universalIdentifier: '1b581656-e00f-42b4-9c0e-97c2be32c215',
       },
       suppressions: {
         universalIdentifier: 'c8e3f01b-2a5d-4e9f-8b7c-3d4e5f607182',
@@ -1020,44 +1017,6 @@ export const STANDARD_OBJECTS = {
       },
       searchVectorGinIndex: {
         universalIdentifier: '975823ad-9b97-4f39-b2c7-fbd7d77f4bd1',
-      },
-    },
-  },
-  messageTopicSubscription: {
-    universalIdentifier: '71a8179f-9259-49cf-a4e6-9642b200d6aa',
-    fields: {
-      id: { universalIdentifier: '4bc69ce3-634a-482a-a9aa-73f3e3c66ed2' },
-      createdAt: {
-        universalIdentifier: '04d9edba-9ada-4c82-9f8d-d4b1aab88869',
-      },
-      updatedAt: {
-        universalIdentifier: 'a85b69c1-f9dc-4587-b57f-33bc0502d275',
-      },
-      deletedAt: {
-        universalIdentifier: 'defaa635-2b46-4f1f-9883-033167e75a02',
-      },
-      createdBy: {
-        universalIdentifier: '0157cef3-8414-4018-a40e-3bc447ae1e80',
-      },
-      updatedBy: {
-        universalIdentifier: '7523eedf-f0bc-48c5-97d5-0523bae415f2',
-      },
-      position: {
-        universalIdentifier: '1527e7a0-c397-4348-aab0-e04107ef1499',
-      },
-      status: { universalIdentifier: 'b1ab01fc-9109-4f46-bac8-baf18da939db' },
-      topic: { universalIdentifier: '12f0282b-a9ea-4d49-833b-0f111e7299ca' },
-      person: { universalIdentifier: '1de4167f-afc7-4153-a0e9-cae0758faaeb' },
-      searchVector: {
-        universalIdentifier: 'efaad9ba-6dc3-475d-9f37-44e6748c8943',
-      },
-    },
-    indexes: {
-      topicIdIndex: {
-        universalIdentifier: 'fa3d25c6-5ebb-4cd2-b7bd-7f94026595cc',
-      },
-      personTopicUniqueIndex: {
-        universalIdentifier: 'f1911297-c434-486f-98d4-df1754295f4c',
       },
     },
   },
@@ -2026,9 +1985,6 @@ export const STANDARD_OBJECTS = {
       },
       timelineActivities: {
         universalIdentifier: '20202020-a43e-4873-9c23-e522de906ce5',
-      },
-      messageTopicSubscriptions: {
-        universalIdentifier: '082d2fba-437c-4ec8-acde-6dbfda45d50c',
       },
       listMemberships: {
         universalIdentifier: '8b8d1be0-4c94-4413-a2c9-c7ede205a81d',

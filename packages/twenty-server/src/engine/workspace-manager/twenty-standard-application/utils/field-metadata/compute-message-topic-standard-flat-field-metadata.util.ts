@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import {
@@ -230,41 +229,6 @@ export const buildMessageTopicStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  subscriptionDefault: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'subscriptionDefault',
-      type: FieldMetadataType.SELECT,
-      label: i18nLabel(msg`Defaults to`),
-      description: i18nLabel(
-        msg`Whether contacts are subscribed to this topic by default`,
-      ),
-      icon: 'IconToggleRight',
-      isNullable: false,
-      defaultValue: "'OPT_IN'",
-      options: [
-        {
-          id: '9c23720f-c250-44e3-bf35-d6f5a1fd2d47',
-          value: 'OPT_IN',
-          label: i18nLabel(msg`Opt-in`),
-          position: 0,
-          color: 'green',
-        },
-        {
-          id: 'cae4baf5-b81f-4a6d-bcc3-8015ddaeed12',
-          value: 'OPT_OUT',
-          label: i18nLabel(msg`Opt-out`),
-          position: 1,
-          color: 'orange',
-        },
-      ],
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   visibility: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -294,31 +258,6 @@ export const buildMessageTopicStandardFlatFieldMetadatas = ({
           color: 'gray',
         },
       ],
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  subscriptions: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'subscriptions',
-      label: i18nLabel(msg`Subscriptions`),
-      description: i18nLabel(msg`People subscribed to this list`),
-      icon: 'IconMailShare',
-      isNullable: true,
-      targetObjectName: 'messageTopicSubscription',
-      targetFieldName: 'topic',
-      settings: {
-        relationType: RelationType.ONE_TO_MANY,
-      },
-      junctionTargetFieldUniversalIdentifier:
-        STANDARD_OBJECTS.messageTopicSubscription.fields.person
-          .universalIdentifier,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
