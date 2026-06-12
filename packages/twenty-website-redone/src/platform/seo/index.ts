@@ -1,3 +1,4 @@
+export { buildBreadcrumbListJsonLd } from './build-breadcrumb-list-json-ld';
 export { buildFamilyEntryMetadata } from './build-family-entry-metadata';
 export {
   buildPageMetadata,

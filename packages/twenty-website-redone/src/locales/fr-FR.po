@@ -441,6 +441,11 @@ msgstr "Maîtrisez votre CRM de bout en bout"
 msgid "Partners"
 msgstr "Partenaires"
 
+#. js-lingui-id: gzkkC3
+#: src/platform/routing/static-website-routes.ts
+msgid "Pipelines, custom objects, AI assistants, and a native API on top of Postgres. Twenty is the open source CRM with the modern UX teams actually want to use."
+msgstr ""
+
 #. js-lingui-id: LZoO8F
 #: src/sections/testimonials/testimonials-carousel.tsx
 msgid "Previous testimonial"
@@ -677,6 +682,11 @@ msgstr "Des organisations de premier plan nous font confiance"
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty | #1 Open Source CRM"
 msgstr "Twenty | CRM open source nº 1"
+
+#. js-lingui-id: neM1Ol
+#: src/platform/routing/static-website-routes.ts
+msgid "Twenty CRM Features — Modern Open Source CRM Platform"
+msgstr ""
 
 #. js-lingui-id: 0qyMhk
 #: src/sections/home-hero/home-hero.tsx

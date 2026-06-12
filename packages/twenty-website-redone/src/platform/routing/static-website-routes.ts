@@ -12,4 +12,13 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     priority: 1,
     title: msg`Twenty | #1 Open Source CRM`,
   },
+  {
+    changeFrequency: 'monthly',
+    description: msg`Pipelines, custom objects, AI assistants, and a native API on top of Postgres. Twenty is the open source CRM with the modern UX teams actually want to use.`,
+    id: 'product',
+    indexed: true,
+    path: '/product',
+    priority: 0.8,
+    title: msg`Twenty CRM Features — Modern Open Source CRM Platform`,
+  },
 ];
