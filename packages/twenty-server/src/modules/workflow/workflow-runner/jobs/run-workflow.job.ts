@@ -112,10 +112,17 @@ export class RunWorkflowJob {
       steps: workflowVersion.steps,
     });
 
-    await this.workflowRunWorkspaceService.startWorkflowRun({
+    const hasStarted = await this.workflowRunWorkspaceService.startWorkflowRun({
       workflowRunId,
       workspaceId,
     });
+
+    if (!hasStarted) {
+      // A concurrent RunWorkflowJob already started this run. Bail out so we
+      // don't execute its steps twice (and so we don't end a run that another
+      // job is actively executing).
+      return;
+    }
 
     await this.incrementTriggerMetrics({
       workflowRunId,

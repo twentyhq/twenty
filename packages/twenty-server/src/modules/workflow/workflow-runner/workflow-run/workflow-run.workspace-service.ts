@@ -146,7 +146,7 @@ export class WorkflowRunWorkspaceService {
   }: {
     workflowRunId: string;
     workspaceId: string;
-  }) {
+  }): Promise<boolean> {
     const workflowRunToUpdate = await this.getWorkflowRunOrFail({
       workflowRunId,
       workspaceId,
@@ -156,10 +156,14 @@ export class WorkflowRunWorkspaceService {
       workflowRunToUpdate.status !== WorkflowRunStatus.ENQUEUED &&
       workflowRunToUpdate.status !== WorkflowRunStatus.NOT_STARTED
     ) {
-      throw new WorkflowRunException(
-        'Workflow run is not enqueued or not started',
-        WorkflowRunExceptionCode.INVALID_OPERATION,
-      );
+      // Another RunWorkflowJob already started this run. This can happen when a
+      // duplicate/late job is processed for the same workflowRunId. We must not
+      // throw here: the throw used to bubble up to RunWorkflowJob.handle()'s
+      // catch block and end the whole run as FAILED, which rewrote the
+      // already-RUNNING steps (e.g. an iterator mid-loop) to
+      // "Workflow has been ended before this step was completed".
+      // Returning false lets the late job bail out without side effects.
+      return false;
     }
 
     const partialUpdate = {
@@ -179,6 +183,8 @@ export class WorkflowRunWorkspaceService {
     };
 
     await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
+
+    return true;
   }
 
   @WithLock('workflowRunId')
