@@ -1,9 +1,17 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { chargeCredits } from 'twenty-sdk/billing';
 
 import { runBatchEnrichment } from 'src/logic-functions/utils/run-batch-enrichment';
 import { type BatchEnrichmentAdapter } from 'src/types/batch-enrichment-adapter';
 import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
+
+vi.mock('twenty-sdk/billing', () => ({
+  chargeCredits: vi.fn(async () => undefined),
+}));
+
+const FAKE_COST_PER_MATCH_DOLLARS = 0.1;
+const FAKE_CREDITS_PER_MATCH_MICRO = 120_000;
 
 type FakeNode = {
   id: string;
@@ -90,6 +98,7 @@ const buildHarness = (configs: RecordConfig[]) => {
   const adapter: BatchEnrichmentAdapter<FakeNode, FakeData, FakeParams> = {
     objectNameSingular: 'Test',
     noIdentifierMessage: 'no identifier',
+    costPerMatchDollars: FAKE_COST_PER_MATCH_DOLLARS,
     readRecords,
     getNodeId: (node) => node.id,
     extractParams: ({ node }) =>
@@ -116,6 +125,10 @@ const isPresent = <TValue>(value: TValue | undefined): value is TValue =>
 const records = (...ids: string[]) => ids.map((id) => ({ id }));
 
 describe('runBatchEnrichment', () => {
+  beforeEach(() => {
+    vi.mocked(chargeCredits).mockClear();
+  });
+
   it('reads every id in one call and enriches the set in one batch', async () => {
     const harness = buildHarness([{ id: 'a' }, { id: 'b' }]);
 
@@ -370,6 +383,88 @@ describe('runBatchEnrichment', () => {
     expect(harness.readRecords).toHaveBeenCalledTimes(2);
     expect(harness.enrichBatch).toHaveBeenCalledTimes(2);
     expect(result.matched).toBe(150);
+  });
+
+  it('bills only matched outcomes after the PDL call', async () => {
+    const harness = buildHarness([
+      { id: 'a' },
+      { id: 'b' },
+      { id: 'c', outcome: { outcome: 'not_found', httpStatus: 404 } },
+      { id: 'd', outcome: { outcome: 'error', httpStatus: 500, message: 'x' } },
+      { id: 'e', hasIdentifier: false },
+    ]);
+
+    await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: records('a', 'b', 'c', 'd', 'e') },
+      adapter: harness.adapter,
+    });
+
+    expect(chargeCredits).toHaveBeenCalledExactlyOnceWith({
+      creditsUsedMicro: 2 * FAKE_CREDITS_PER_MATCH_MICRO,
+      operationType: 'CODE_EXECUTION',
+      quantity: 2,
+      resourceContext: 'pdl/test',
+    });
+  });
+
+  it('does not bill when no record matches', async () => {
+    const harness = buildHarness([
+      { id: 'a', outcome: { outcome: 'not_found', httpStatus: 404 } },
+      { id: 'b', hasIdentifier: false },
+    ]);
+
+    await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: records('a', 'b') },
+      adapter: harness.adapter,
+    });
+
+    expect(chargeCredits).not.toHaveBeenCalled();
+  });
+
+  it('still bills a match whose record write fails', async () => {
+    const harness = buildHarness([{ id: 'a', updateFails: true }]);
+
+    await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: records('a') },
+      adapter: harness.adapter,
+    });
+
+    expect(chargeCredits).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        creditsUsedMicro: FAKE_CREDITS_PER_MATCH_MICRO,
+        quantity: 1,
+      }),
+    );
+  });
+
+  it('bills each chunk separately', async () => {
+    const ids = Array.from({ length: 150 }, (_unused, index) => `r${index}`);
+    const harness = buildHarness(ids.map((id) => ({ id })));
+
+    await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: ids.map((id) => ({ id })) },
+      adapter: harness.adapter,
+    });
+
+    expect(chargeCredits).toHaveBeenCalledTimes(2);
+    expect(chargeCredits).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        creditsUsedMicro: 100 * FAKE_CREDITS_PER_MATCH_MICRO,
+        quantity: 100,
+      }),
+    );
+    expect(chargeCredits).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        creditsUsedMicro: 50 * FAKE_CREDITS_PER_MATCH_MICRO,
+        quantity: 50,
+      }),
+    );
   });
 
   it('returns an empty summary when there are no records', async () => {

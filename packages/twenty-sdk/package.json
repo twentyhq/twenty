@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "2.12.0",
+  "version": "2.13.0",
   "sideEffects": false,
   "bin": {
     "twenty": "dist/cli.cjs"
@@ -107,7 +107,7 @@
     "vite": "^7.0.0",
     "vite-plugin-dts": "^4.5.4",
     "vite-tsconfig-paths": "^4.2.1",
-    "wait-on": "^7.2.0"
+    "wait-on": "^9.0.10"
   },
   "engines": {
     "node": "^24.5.0",
