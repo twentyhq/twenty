@@ -26,8 +26,22 @@ export const extractFileInfoOrThrow = async ({
 }) => {
   const { ext: declaredExt } = buildFileInfo(filename);
 
-  const { ext: detectedExt, mime: detectedMime } =
-    (await fileTypeParser.fromBuffer(file)) ?? {};
+  let detectedExt: string | undefined;
+  let detectedMime: string | undefined;
+
+  try {
+    const result = await fileTypeParser.fromBuffer(file);
+    detectedExt = result?.ext;
+    detectedMime = result?.mime;
+  } catch (error) {
+    throw new FileStorageException(
+      `File content detection failed: ${(error as Error).message}`,
+      FileStorageExceptionCode.INVALID_EXTENSION,
+      {
+        userFriendlyMessage: msg`The file content could not be detected. The file may be corrupted or have an unsupported format.`,
+      },
+    );
+  }
 
   if (isDefined(detectedExt) && isDefined(detectedMime)) {
     return {
