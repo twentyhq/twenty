@@ -1,7 +1,6 @@
 import { randomBytes } from 'crypto';
 
 import { Injectable } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -41,9 +40,7 @@ export class MessageChannelMetadataService {
     private readonly repository: Repository<MessageChannelEntity>,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly twentyConfigService: TwentyConfigService,
-    // Resolved lazily to avoid a module-load cycle with the emailing-domain
-    // core module (its campaign service already reaches back into this service).
-    private readonly moduleRef: ModuleRef,
+    private readonly emailingDomainService: EmailingDomainService,
   ) {}
 
   async findAll(workspaceId: string): Promise<MessageChannelDTO[]> {
@@ -246,9 +243,10 @@ export class MessageChannelMetadataService {
     const sendDomain = getDomainFromEmail(handle)?.toLowerCase();
 
     if (isNonEmptyString(sendDomain)) {
-      await this.moduleRef
-        .get(EmailingDomainService, { strict: false })
-        .ensureEmailingDomain(sendDomain, workspaceId);
+      await this.emailingDomainService.ensureEmailingDomain(
+        sendDomain,
+        workspaceId,
+      );
     }
 
     const localPart =
@@ -382,9 +380,10 @@ export class MessageChannelMetadataService {
       isNonEmptyString(sendDomain) &&
       !(await this.hasEmailGroupChannelForDomain(workspaceId, sendDomain))
     ) {
-      await this.moduleRef
-        .get(EmailingDomainService, { strict: false })
-        .deleteEmailingDomainByDomainIfExists(workspaceId, sendDomain);
+      await this.emailingDomainService.deleteEmailingDomainByDomainIfExists(
+        workspaceId,
+        sendDomain,
+      );
     }
 
     return messageChannel;

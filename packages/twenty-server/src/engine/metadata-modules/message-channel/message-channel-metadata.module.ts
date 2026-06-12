@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-channel/interceptors/message-channel-graphql-api-exception.interceptor';
@@ -16,6 +17,7 @@ import { MessagingImportManagerModule } from 'src/modules/messaging/message-impo
     PermissionsModule,
     ConnectedAccountMetadataModule,
     MessagingImportManagerModule,
+    EmailingDomainModule,
   ],
   providers: [
     MessageChannelMetadataService,

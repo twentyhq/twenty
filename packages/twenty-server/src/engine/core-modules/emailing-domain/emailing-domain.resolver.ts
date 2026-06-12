@@ -6,16 +6,9 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { EmailingDomainDTO } from 'src/engine/core-modules/emailing-domain/dtos/emailing-domain.dto';
-import { SendMessageCampaignInput } from 'src/engine/core-modules/emailing-domain/dtos/send-message-campaign.input';
-import { SendMessageCampaignOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-message-campaign-output.dto';
-import { SendEmailViaDomainOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-email-via-domain-output.dto';
-import { SendEmailViaDomainInput } from 'src/engine/core-modules/emailing-domain/dtos/send-email-via-domain.input';
-import { MessageCampaignService } from 'src/engine/core-modules/emailing-domain/services/message-campaign.service';
-import { EmailingDomainSenderService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-sender.service';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import {
   FeatureFlagGuard,
@@ -32,11 +25,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver(() => EmailingDomainDTO)
 export class EmailingDomainResolver {
-  constructor(
-    private readonly emailingDomainService: EmailingDomainService,
-    private readonly emailingDomainSenderService: EmailingDomainSenderService,
-    private readonly messageCampaignService: MessageCampaignService,
-  ) {}
+  constructor(private readonly emailingDomainService: EmailingDomainService) {}
 
   @Mutation(() => EmailingDomainDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
@@ -77,40 +66,6 @@ export class EmailingDomainResolver {
       );
 
     return emailingDomain;
-  }
-
-  @Mutation(() => SendEmailViaDomainOutputDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
-  async sendEmailViaEmailingDomain(
-    @Args('input') input: SendEmailViaDomainInput,
-    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
-  ): Promise<SendEmailViaDomainOutputDTO> {
-    const { emailingDomainId, ...content } = input;
-    const result = await this.emailingDomainSenderService.sendEmail(
-      currentWorkspace.id,
-      emailingDomainId,
-      content,
-    );
-
-    return { messageId: result.messageId };
-  }
-
-  @Mutation(() => SendMessageCampaignOutputDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
-  async sendMessageCampaign(
-    @Args('input') input: SendMessageCampaignInput,
-    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
-  ): Promise<SendMessageCampaignOutputDTO> {
-    return this.messageCampaignService.send({
-      workspaceId: currentWorkspace.id,
-      userWorkspaceId,
-      messageTopicId: input.messageTopicId,
-      listId: input.listId,
-      subject: input.subject,
-      html: input.body,
-      fromAddress: input.fromAddress,
-    });
   }
 
   @Query(() => [EmailingDomainDTO])
