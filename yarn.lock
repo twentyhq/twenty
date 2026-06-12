@@ -54746,7 +54746,7 @@ __metadata:
     chalk: "npm:^5.3.0"
     chokidar: "npm:^4.0.0"
     commander: "npm:^12.0.0"
-    esbuild: "npm:^0.25.0"
+    esbuild: "npm:^0.28.1"
     graphql: "npm:^16.8.1"
     graphql-sse: "npm:^2.5.4"
     ink: "npm:^6.8.0"
