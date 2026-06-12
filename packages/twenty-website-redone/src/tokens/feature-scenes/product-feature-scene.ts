@@ -1,3 +1,5 @@
+import { PALETTE } from '../palette';
+
 // The product feature tiles' authored dark-window fiction (a distinct
 // stage from the light product mockup — its own inks, verbatim from the
 // old visual-tokens; even the traffic dots differ from the mockup's).
@@ -24,6 +26,44 @@ export const PRODUCT_FEATURE_SCENE = {
     accent: '#3e63dd',
     font: "'Inter', sans-serif",
     rowHoverWash: 'rgba(255, 255, 255, 0.02)',
+  },
+  // The tasks/emails record-activity windows share a deeper surface.
+  activity: {
+    background: '#191920',
+    tabLine: 'rgba(255, 255, 255, 0.08)',
+    activeTabWash: 'rgba(255, 255, 255, 0.06)',
+    line: 'rgba(255, 255, 255, 0.06)',
+    rowHoverWash: 'rgba(255, 255, 255, 0.03)',
+    selectedRowWash: 'rgba(255, 255, 255, 0.04)',
+    ink: 'rgba(255, 255, 255, 0.9)',
+    inkStrong: 'rgba(255, 255, 255, 0.85)',
+    inkBody: 'rgba(255, 255, 255, 0.75)',
+    inkSoft: 'rgba(255, 255, 255, 0.65)',
+    inkDetail: 'rgba(255, 255, 255, 0.5)',
+    inkMuted: 'rgba(255, 255, 255, 0.45)',
+    inkFaint: 'rgba(255, 255, 255, 0.4)',
+    inkGhost: 'rgba(255, 255, 255, 0.35)',
+    inkDim: 'rgba(255, 255, 255, 0.3)',
+    circleBorder: 'rgba(255, 255, 255, 0.3)',
+    circleBorderHover: 'rgba(255, 255, 255, 0.5)',
+    strikethrough: 'rgba(255, 255, 255, 0.4)',
+    buttonBorder: 'rgba(255, 255, 255, 0.15)',
+    buttonBorderHover: 'rgba(255, 255, 255, 0.3)',
+    inkOnFill: '#ffffff',
+    taskCircleFill: '#3b82f6',
+    taskCircleFillHover: '#2563eb',
+    avatarInks: {
+      indigo: '#6366f1',
+      amber: '#f59e0b',
+      violet: '#8b5cf6',
+      cyan: '#06b6d4',
+    },
+  },
+  // The dashboard widgets' chart inks (the accent IS the site blue).
+  dashboard: {
+    accent: PALETTE.blue,
+    accentDim: 'rgba(74, 56, 245, 0.25)',
+    accentSecondary: '#7938B2',
   },
   files: {
     dashedBorder: 'rgba(255, 255, 255, 0.12)',

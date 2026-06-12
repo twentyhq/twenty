@@ -114,6 +114,11 @@ msgstr ""
 msgid "Attachments without the chaos."
 msgstr ""
 
+#. js-lingui-id: dGEega
+#: src/sections/product-feature/emails-visual.tsx
+msgid "Back to inbox"
+msgstr ""
+
 #. js-lingui-id: 83Wi6G
 #: src/sections/stepper/stepper.data.ts
 msgid "Begin with production-grade *building blocks*"
@@ -580,6 +585,16 @@ msgstr "Connexion"
 #: src/sections/feature-cards/feature-cards.tsx
 msgid "Make your GTM team happy with *a CRM they'll love*"
 msgstr "Rendez votre équipe GTM heureuse avec *un CRM qu'elle va adorer*"
+
+#. js-lingui-id: SDF1oV
+#: src/sections/product-feature/tasks-visual.tsx
+msgid "Mark complete"
+msgstr ""
+
+#. js-lingui-id: SbuvhW
+#: src/sections/product-feature/tasks-visual.tsx
+msgid "Mark incomplete"
+msgstr ""
 
 #. js-lingui-id: bJNKJ1
 #: src/sections/menu/menu.data.ts

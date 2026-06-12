@@ -4,16 +4,22 @@ import { useEffect, useRef, useState, type ComponentType } from 'react';
 
 import { observeElementVisibility } from '@/platform/visuals/engine/observe-element-visibility';
 
+import { DashboardVisual } from './dashboard-visual';
+import { EmailsVisual } from './emails-visual';
 import { type FeatureVisualKey } from './feature-tiles';
 import { FilesVisual } from './files-visual';
 import { ImportVisual } from './import-visual';
+import { TasksVisual } from './tasks-visual';
 
 // Visuals land with their commits; unbuilt keys render the bare frame.
 const VISUALS: Partial<
   Record<FeatureVisualKey, ComponentType<{ active: boolean }>>
 > = {
+  dashboard: DashboardVisual,
+  emails: EmailsVisual,
   files: FilesVisual,
   import: ImportVisual,
+  tasks: TasksVisual,
 };
 
 // A visual is "active" while 30% of it is on screen — each visual
