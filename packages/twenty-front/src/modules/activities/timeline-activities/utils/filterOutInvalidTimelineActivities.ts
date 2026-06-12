@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 const keepActivityWithReadableDiff = (
   timelineActivity: TimelineActivity,
   readableFields: FieldMetadataItem[],
-): TimelineActivity[] => {
+): TimelineActivity | undefined => {
   const validDiffEntries = Object.entries(
     timelineActivity.properties?.diff ?? {},
   ).filter(([diffKey]) =>
@@ -15,18 +15,16 @@ const keepActivityWithReadableDiff = (
   );
 
   if (validDiffEntries.length === 0) {
-    return [];
+    return undefined;
   }
 
-  return [
-    {
-      ...timelineActivity,
-      properties: {
-        ...timelineActivity.properties,
-        diff: Object.fromEntries(validDiffEntries),
-      },
+  return {
+    ...timelineActivity,
+    properties: {
+      ...timelineActivity.properties,
+      diff: Object.fromEntries(validDiffEntries),
     },
-  ];
+  };
 };
 
 export const filterOutInvalidTimelineActivities = (
@@ -43,32 +41,35 @@ export const filterOutInvalidTimelineActivities = (
     throw new Error('Object metadata item not found');
   }
 
-  return timelineActivities.flatMap((timelineActivity) => {
-    const [objectName, action] = timelineActivity.name.split('.');
+  return timelineActivities
+    .map((timelineActivity) => {
+      const [objectName, action] = timelineActivity.name.split('.');
 
-    if (objectName.startsWith('linked-')) {
-      if (!isDefined(timelineActivity.properties?.diff)) {
-        return [timelineActivity];
+      if (objectName.startsWith('linked-')) {
+        if (!isDefined(timelineActivity.properties?.diff)) {
+          return timelineActivity;
+        }
+
+        const linkedObjectMetadataItem = objectMetadataItems.find(
+          (objectMetadataItem) =>
+            objectMetadataItem.nameSingular ===
+            objectName.replace('linked-', ''),
+        );
+
+        return keepActivityWithReadableDiff(
+          timelineActivity,
+          linkedObjectMetadataItem?.readableFields ?? [],
+        );
       }
 
-      const linkedObjectMetadataItem = objectMetadataItems.find(
-        (objectMetadataItem) =>
-          objectMetadataItem.nameSingular === objectName.replace('linked-', ''),
-      );
+      if (action === 'updated') {
+        return keepActivityWithReadableDiff(
+          timelineActivity,
+          mainObjectMetadataItem.readableFields,
+        );
+      }
 
-      return keepActivityWithReadableDiff(
-        timelineActivity,
-        linkedObjectMetadataItem?.readableFields ?? [],
-      );
-    }
-
-    if (action === 'updated') {
-      return keepActivityWithReadableDiff(
-        timelineActivity,
-        mainObjectMetadataItem.readableFields,
-      );
-    }
-
-    return [timelineActivity];
-  });
+      return timelineActivity;
+    })
+    .filter(isDefined);
 };
