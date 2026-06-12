@@ -86,9 +86,8 @@ const ActiveBadgeLabel = styled.span`
   padding: 0 8px;
 `;
 
-// The named workflows render the authored default graph. The custom-graph
-// normalization path (AI-created workflows, plus-node connector) arrives
-// with the scenario in commit 7.
+// The named workflows render the authored default graph; a page may
+// carry its own nodes/edges (the type allows it, as on the old site).
 export function WorkflowPage({ page }: { page: WorkflowPageDefinition }) {
   const nodes = page.nodes ?? WORKFLOW_GRAPH.nodes;
   const edges = page.edges ?? (page.nodes ? [] : WORKFLOW_GRAPH.edges);

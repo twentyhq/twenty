@@ -1,6 +1,5 @@
 // The escaped dots' bounce physics (verbatim port). Velocity randomness
-// is injectable for the jest suite; the trigger that LAUNCHES the escape
-// is deliberate (the close dot's third click), not random.
+// is injectable for the jest suite.
 const GRAVITY = 0.55;
 const BOUNCE_DAMPING = 0.4;
 const AIR_FRICTION = 0.915;

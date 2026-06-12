@@ -1,6 +1,4 @@
 // The mockup's data vocabulary, ported from the old AppPreview types.
-// Commit 3 renders the table page; the other page shapes land with their
-// pages (commits 4-5) but the unions are complete so data ports verbatim.
 
 export type CellText = {
   type: 'text';
@@ -92,7 +90,6 @@ export type PageHeader = {
 
 export type TablePageDefinition = {
   columns: ColumnDef[];
-  generating?: boolean;
   header: PageHeader;
   rows: RowDef[];
   type: 'table';
@@ -118,7 +115,6 @@ export type KanbanLane = {
   tone: string;
 };
 export type KanbanPageDefinition = {
-  generating?: boolean;
   header: PageHeader;
   lanes: KanbanLane[];
   type: 'kanban';
@@ -153,7 +149,6 @@ export type WorkflowBranchLabelDef = {
 export type WorkflowPageDefinition = {
   branchLabels?: WorkflowBranchLabelDef[];
   edges?: WorkflowEdgeDef[];
-  generating?: boolean;
   header: PageHeader;
   nodes?: WorkflowNodeDef[];
   plusNode?: { x: number; y: number };
@@ -187,7 +182,6 @@ export type DashboardData = {
   barChart?: DashboardBarChart;
   donutChart?: DashboardDonutChart;
   lineChart?: DashboardLineChart;
-  generating?: boolean;
 };
 export type DashboardPageDefinition = {
   dashboard: DashboardData;

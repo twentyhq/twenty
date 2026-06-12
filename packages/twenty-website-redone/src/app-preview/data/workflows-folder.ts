@@ -1,5 +1,5 @@
-// The Workflows folder — named workflows (node canvases land commit 5)
-// plus the three list tables, extracted verbatim from the old data.
+// The Workflows folder — the two named workflows and the three list
+// tables, extracted verbatim from the old data.
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 
 import { sharedAssetUrls } from './shared-asset-urls';

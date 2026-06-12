@@ -16,7 +16,10 @@ import { useTrafficLightsEscape } from './use-traffic-lights-escape';
 // terminal) is escape-capable — the prompt egg's window event sends all
 // six dots flying. Zoom triple-click is the terminal's functional
 // jump-to-end; close and minimize press but do nothing.
-const DOT_ARIA_LABELS: Record<string, MessageDescriptor> = {
+const DOT_ARIA_LABELS: Record<
+  (typeof TRAFFIC_LIGHT_DOT_DEFINITIONS)[number]['label'],
+  MessageDescriptor
+> = {
   Close: msg`Close`,
   Minimize: msg`Minimize`,
   Zoom: msg`Zoom`,

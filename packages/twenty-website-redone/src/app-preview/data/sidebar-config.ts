@@ -1,7 +1,4 @@
-// The mockup's sidebar, ported from the old app-preview data. Commit 3 is
-// the static Companies view: the other objects render in the sidebar with
-// pending page stubs; their pages and the navigation hook land with
-// commits 4-5.
+// The mockup's sidebar, ported from the old app-preview data.
 import { COMPANIES_TABLE_PAGE } from './companies-table-page';
 import { SALES_DASHBOARD_PAGE } from './sales-dashboard-page';
 import { WORKFLOWS_FOLDER } from './workflows-folder';

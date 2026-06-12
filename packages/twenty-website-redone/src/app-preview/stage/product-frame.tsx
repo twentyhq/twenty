@@ -42,7 +42,8 @@ const Content = styled.div`
   width: 100%;
 `;
 
-// The static product frame (the windowed/draggable mode lands commit 6).
+// The static product frame: the non-interactive presentation the
+// deferred product-page family will mount (the hero uses AppWindow).
 export function ProductFrame({ children }: { children: ReactNode }) {
   return (
     <FrameRoot>

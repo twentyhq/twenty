@@ -4,7 +4,6 @@
 export const APP_PREVIEW_STAGE = {
   frame: {
     maxWidthPx: 1040,
-    aspectRatio: '1280 / 832',
     borderRadiusPx: 20,
     noiseImageUrl: '/images/shared/light-noise.webp',
   },
@@ -57,9 +56,7 @@ export const APP_PREVIEW_STAGE = {
     resting: '0 10px 64px 0 rgba(0, 0, 0, 0.2)',
     elevated:
       '0 14px 80px 0 rgba(0, 0, 0, 0.26), 0 4px 12px 0 rgba(0, 0, 0, 0.08)',
-    floating: '0 36px 64px -8px rgba(0, 0, 0, 0.36)',
     mobileResting: '0 4px 16px 0 rgba(0, 0, 0, 0.08)',
     mobileElevated: '0 6px 20px 0 rgba(0, 0, 0, 0.12)',
-    mobileFloating: '0 14px 28px -4px rgba(0, 0, 0, 0.17)',
   },
 };

@@ -84,8 +84,8 @@ const NewChatLabel = styled.span`
   }
 `;
 
-// The home/chat rail + "New chat" pill (chrome only; the chat behavior
-// arrives with the Terminal commits).
+// The home/chat rail + "New chat" pill — chrome only, as on the old
+// site: the AI conversation lives in the floating Terminal.
 export function SidebarControls() {
   return (
     <Root>
