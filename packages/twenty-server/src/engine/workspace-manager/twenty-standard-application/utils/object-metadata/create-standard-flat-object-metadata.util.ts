@@ -329,7 +329,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         ),
         icon: 'IconSend',
         isSystem: true,
-        labelIdentifierFieldMetadataName: 'name',
+        labelIdentifierFieldMetadataName: 'subject',
       },
       workspaceId,
       standardObjectMetadataRelatedEntityIds,

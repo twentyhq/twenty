@@ -5,8 +5,6 @@ import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/
 
 export class MessageTopicSubscriptionWorkspaceEntity extends BaseWorkspaceEntity {
   status: string;
-  subscribedAt: Date | null;
-  unsubscribedAt: Date | null;
   topic: EntityRelation<MessageTopicWorkspaceEntity>;
   topicId: string;
   person: EntityRelation<PersonWorkspaceEntity>;

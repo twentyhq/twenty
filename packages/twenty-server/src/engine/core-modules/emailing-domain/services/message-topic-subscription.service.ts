@@ -321,16 +321,9 @@ export class MessageTopicSubscriptionService {
         topicId,
       });
 
-      const now = new Date();
-      const statusChangeTimestamp =
-        status === MessageTopicSubscriptionStatus.SUBSCRIBED
-          ? { subscribedAt: now }
-          : { unsubscribedAt: now };
-
       if (isDefined(existingSubscription)) {
         await subscriptionRepository.update(existingSubscription.id, {
           status,
-          ...statusChangeTimestamp,
         });
 
         return;
@@ -340,7 +333,6 @@ export class MessageTopicSubscriptionService {
         personId,
         topicId,
         status,
-        ...statusChangeTimestamp,
       });
     }, buildSystemAuthContext(workspaceId));
   }

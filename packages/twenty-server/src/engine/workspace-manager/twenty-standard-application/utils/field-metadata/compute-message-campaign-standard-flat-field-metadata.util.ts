@@ -168,17 +168,6 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         },
       },
     }),
-    name: createStandardFieldFlatMetadata({
-      ...base,
-      context: {
-        fieldName: 'name',
-        type: FieldMetadataType.TEXT,
-        label: i18nLabel(msg`Name`),
-        description: i18nLabel(msg`Internal campaign name`),
-        icon: 'IconSend',
-        isNullable: true,
-      },
-    }),
     subject: createStandardFieldFlatMetadata({
       ...base,
       context: {
@@ -207,24 +196,15 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
       ...base,
       context: {
         fieldName: 'fromAddress',
-        type: FieldMetadataType.TEXT,
+        type: FieldMetadataType.EMAILS,
         label: i18nLabel(msg`From address`),
         description: i18nLabel(msg`Sender address for the campaign`),
         icon: 'IconAt',
         isNullable: true,
         isUIReadOnly: true,
-      },
-    }),
-    replyTo: createStandardFieldFlatMetadata({
-      ...base,
-      context: {
-        fieldName: 'replyTo',
-        type: FieldMetadataType.TEXT,
-        label: i18nLabel(msg`Reply to`),
-        description: i18nLabel(msg`Reply-to address`),
-        icon: 'IconCornerUpLeft',
-        isNullable: true,
-        isUIReadOnly: true,
+        settings: {
+          maxNumberOfValues: 1,
+        },
       },
     }),
     status: createStandardFieldFlatMetadata({
@@ -277,19 +257,6 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         ],
       },
     }),
-    scheduledAt: createStandardFieldFlatMetadata({
-      ...base,
-      context: {
-        fieldName: 'scheduledAt',
-        type: FieldMetadataType.DATE_TIME,
-        label: i18nLabel(msg`Scheduled at`),
-        description: i18nLabel(msg`When the campaign is scheduled to send`),
-        icon: 'IconCalendarPlus',
-        isNullable: true,
-        isUIReadOnly: true,
-        settings: { displayFormat: DateDisplayFormat.RELATIVE },
-      },
-    }),
     sentAt: createStandardFieldFlatMetadata({
       ...base,
       context: {
@@ -301,45 +268,6 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         isNullable: true,
         isUIReadOnly: true,
         settings: { displayFormat: DateDisplayFormat.RELATIVE },
-      },
-    }),
-    sentCount: createStandardFieldFlatMetadata({
-      ...base,
-      context: {
-        fieldName: 'sentCount',
-        type: FieldMetadataType.NUMBER,
-        label: i18nLabel(msg`Sent count`),
-        description: i18nLabel(msg`Number of emails sent`),
-        icon: 'IconMailFast',
-        isNullable: false,
-        isUIReadOnly: true,
-        defaultValue: 0,
-      },
-    }),
-    bouncedCount: createStandardFieldFlatMetadata({
-      ...base,
-      context: {
-        fieldName: 'bouncedCount',
-        type: FieldMetadataType.NUMBER,
-        label: i18nLabel(msg`Bounced count`),
-        description: i18nLabel(msg`Number of emails that bounced`),
-        icon: 'IconMailX',
-        isNullable: false,
-        isUIReadOnly: true,
-        defaultValue: 0,
-      },
-    }),
-    failedCount: createStandardFieldFlatMetadata({
-      ...base,
-      context: {
-        fieldName: 'failedCount',
-        type: FieldMetadataType.NUMBER,
-        label: i18nLabel(msg`Failed count`),
-        description: i18nLabel(msg`Number of emails that failed to send`),
-        icon: 'IconAlertTriangle',
-        isNullable: false,
-        isUIReadOnly: true,
-        defaultValue: 0,
       },
     }),
     topic: createStandardRelationFieldFlatMetadata({

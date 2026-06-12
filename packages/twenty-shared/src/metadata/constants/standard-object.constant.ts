@@ -992,7 +992,6 @@ export const STANDARD_OBJECTS = {
       searchVector: {
         universalIdentifier: 'c51f1455-3c56-40b9-80ff-7ffcbdef9609',
       },
-      name: { universalIdentifier: '6debcc42-3c0c-4b97-b3a5-b22758aaee6f' },
       subject: { universalIdentifier: '7251544c-b07a-4f0d-9d0a-48514367f230' },
       bodyTemplate: {
         universalIdentifier: 'b3a69d08-31ca-4a8d-8359-5ca462899342',
@@ -1000,21 +999,8 @@ export const STANDARD_OBJECTS = {
       fromAddress: {
         universalIdentifier: '91e1a33c-c1ff-411a-b720-9085e13c05db',
       },
-      replyTo: { universalIdentifier: '75e468b3-4da6-47d2-9f4a-92c9f5407950' },
       status: { universalIdentifier: 'c7117256-3de6-48e1-87df-c99c32bad610' },
-      scheduledAt: {
-        universalIdentifier: '0f704579-abf5-4f3d-bf08-a117bc87d5a3',
-      },
       sentAt: { universalIdentifier: 'e2315b4f-9edf-4df2-96b9-961e76368671' },
-      sentCount: {
-        universalIdentifier: '2f333d2b-37b8-4ddc-ad0d-c07c6ce066ad',
-      },
-      bouncedCount: {
-        universalIdentifier: '20d884a9-34dd-4667-8ecb-ceec224258e2',
-      },
-      failedCount: {
-        universalIdentifier: 'd373fcd7-b1ce-4c77-8031-a5785c475028',
-      },
       topic: { universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c' },
       list: { universalIdentifier: 'cb24dcdf-f0e8-4c71-8cff-70b714e86530' },
       timelineActivities: {
@@ -1060,12 +1046,6 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '1527e7a0-c397-4348-aab0-e04107ef1499',
       },
       status: { universalIdentifier: 'b1ab01fc-9109-4f46-bac8-baf18da939db' },
-      subscribedAt: {
-        universalIdentifier: '7345ff75-8931-4895-b7c5-2b09088704b7',
-      },
-      unsubscribedAt: {
-        universalIdentifier: '3614f2ff-c3d7-4c9a-a611-d2d15389f777',
-      },
       topic: { universalIdentifier: '12f0282b-a9ea-4d49-833b-0f111e7299ca' },
       person: { universalIdentifier: '1de4167f-afc7-4153-a0e9-cae0758faaeb' },
       searchVector: {

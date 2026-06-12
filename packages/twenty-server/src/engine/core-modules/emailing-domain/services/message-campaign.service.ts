@@ -157,10 +157,9 @@ export class MessageCampaignService {
         );
 
         const { identifiers } = await campaignRepository.insert({
-          name: subject,
           subject,
           bodyTemplate: html,
-          fromAddress,
+          fromAddress: { primaryEmail: fromAddress, additionalEmails: null },
           status: CAMPAIGN_STATUS.SENDING,
           topicId: messageTopicId,
           listId: listId ?? null,
@@ -307,8 +306,8 @@ export class MessageCampaignService {
   }
 
   // Correlates an SES bounce/complaint (by the send's message id) to the
-  // campaign message and records BOUNCED/COMPLAINED, then refreshes the campaign
-  // counts. No-op when the id doesn't match a campaign send.
+  // campaign message and records BOUNCED/COMPLAINED on it. No-op when the id
+  // doesn't match a campaign send.
   async recordDeliveryFailureByProviderMessageId({
     workspaceId,
     providerMessageId,
@@ -333,18 +332,6 @@ export class MessageCampaignService {
       }
 
       await messageRepository.update(message.id, { deliveryStatus });
-
-      const counts = await this.computeCampaignCounts(
-        workspaceId,
-        message.messageCampaignId,
-      );
-
-      const campaignRepository = await this.getWorkspaceRepository(
-        workspaceId,
-        MessageCampaignWorkspaceEntity,
-      );
-
-      await campaignRepository.update(message.messageCampaignId, counts);
     }, buildSystemAuthContext(workspaceId));
   }
 
@@ -468,9 +455,9 @@ export class MessageCampaignService {
     return rows.map((row) => row.messageId);
   }
 
-  // Derives the campaign counts from its messages and finalizes it once nothing
-  // remains QUEUED. The status='SENDING' guard makes this a compare-and-swap so
-  // concurrent jobs finalize exactly once. Must run inside a workspace context.
+  // Finalizes the campaign once nothing remains QUEUED. The status='SENDING'
+  // guard makes this a compare-and-swap so concurrent jobs finalize exactly
+  // once. Must run inside a workspace context.
   private async finalizeCampaignIfComplete(
     workspaceId: string,
     campaignId: string,
@@ -491,17 +478,10 @@ export class MessageCampaignService {
       return;
     }
 
-    const counts = await this.computeCampaignCounts(workspaceId, campaignId);
-
     const campaignRepository = await this.getWorkspaceRepository(
       workspaceId,
       MessageCampaignWorkspaceEntity,
     );
-
-    // Counts refresh on every call: a queue retry can flip a message from
-    // FAILED to SENT after the campaign was already finalized. The
-    // SENDING -> SENT transition itself only happens once.
-    await campaignRepository.update({ id: campaignId }, counts);
 
     await campaignRepository.update(
       { id: campaignId, status: CAMPAIGN_STATUS.SENDING },
@@ -510,43 +490,6 @@ export class MessageCampaignService {
         sentAt: new Date(),
       },
     );
-  }
-
-  // Counts a campaign's per-recipient outcomes from its messages.
-  private async computeCampaignCounts(
-    workspaceId: string,
-    campaignId: string,
-  ): Promise<{ sentCount: number; failedCount: number; bouncedCount: number }> {
-    const messageRepository = await this.getWorkspaceRepository(
-      workspaceId,
-      MessageWorkspaceEntity,
-    );
-
-    const [sentCount, failedCount, bouncedCount] = await Promise.all([
-      messageRepository.count({
-        where: {
-          messageCampaignId: campaignId,
-          deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENT,
-        },
-      }),
-      messageRepository.count({
-        where: {
-          messageCampaignId: campaignId,
-          deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
-        },
-      }),
-      messageRepository.count({
-        where: {
-          messageCampaignId: campaignId,
-          deliveryStatus: In([
-            CAMPAIGN_MESSAGE_DELIVERY_STATUS.BOUNCED,
-            CAMPAIGN_MESSAGE_DELIVERY_STATUS.COMPLAINED,
-          ]),
-        },
-      }),
-    ]);
-
-    return { sentCount, failedCount, bouncedCount };
   }
 
   // Resolves the recipients of a campaign from a list's hand-picked members.
