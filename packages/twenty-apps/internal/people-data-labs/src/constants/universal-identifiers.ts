@@ -91,12 +91,6 @@ export const PDL_VIEW_UNIVERSAL_IDENTIFIERS = {
   enrichedPeople: '2866db8e-086a-4b2e-8b89-a583c4181936',
 } as const;
 
-export const PDL_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS = {
-  folder: '0a8fe0ea-7a97-41d7-8741-511d69ebe71b',
-  enrichedCompanies: 'b31eced0-0b68-444f-b823-594694b758f0',
-  enrichedPeople: 'ddf5b795-283a-4d5d-885c-c47f0bd11fd0',
-} as const;
-
 export const PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS = {
   personEnrichmentStatus: {
     matched: '59f2df76-5798-42e2-b647-5091b08a43f1',

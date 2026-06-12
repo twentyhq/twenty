@@ -2,9 +2,9 @@ import { z } from 'zod';
 
 export const baseWorkflowActionSchema = z.object({
   id: z
-    .string()
+    .uuid()
     .describe(
-      'Unique identifier for the workflow step. Must be unique within the workflow.',
+      'Unique UUID identifier for the workflow step. Must be a valid UUID v4, unique within the workflow.',
     ),
   name: z
     .string()
@@ -17,7 +17,7 @@ export const baseWorkflowActionSchema = z.object({
       'Whether the step configuration is valid. Set to true when all required fields are properly configured.',
     ),
   nextStepIds: z
-    .array(z.string())
+    .array(z.uuid())
     .optional()
     .nullable()
     .describe(
