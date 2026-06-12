@@ -15,12 +15,12 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 import { ViewType } from '@/views/types/ViewType';
 import { useEffect } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const instanceId = 'entity-options-instance';
@@ -34,7 +34,7 @@ const meta: Meta<typeof ObjectOptionsDropdownContent> = {
       useEffect(() => {
         setTestObjectMetadataItemsInMetadataStore(
           jotaiStore,
-          generatedMockObjectMetadataItems,
+          getTestEnrichedObjectMetadataItemsMock(),
         );
       }, []);
 
@@ -72,9 +72,10 @@ type Story = StoryObj<typeof ObjectOptionsDropdownContent>;
 const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
   decorators: [
     (Story) => {
-      const companyObjectMetadataItem = generatedMockObjectMetadataItems.find(
-        (item) => item.nameSingular === 'company',
-      )!;
+      const companyObjectMetadataItem =
+        getTestEnrichedObjectMetadataItemsMock().find(
+          (item) => item.nameSingular === 'company',
+        )!;
 
       const {
         fieldDefinitionByFieldMetadataItemId,

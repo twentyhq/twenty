@@ -5,10 +5,15 @@ import { RecordTableHeaderAddColumnButton } from '@/object-record/record-table/r
 import { RecordTableHeaderCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCell';
 import { RecordTableHeaderCheckboxColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn';
 import { RecordTableHeaderDragDropColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderDragDropColumn';
+import { RecordTableHeaderEmptyLastColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderEmptyLastColumn';
 import { RecordTableHeaderFirstCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderFirstCell';
 import { RecordTableHeaderFirstScrollableCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderFirstScrollableCell';
 import { RecordTableHeaderLastEmptyColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLastEmptyColumn';
 import { useResizeTableHeader } from '@/object-record/record-table/record-table-header/hooks/useResizeTableHeader';
+import { isRecordTableCheckboxColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableCheckboxColumnHiddenComponentState';
+import { isRecordTableColumnHeadersReadOnlyComponentState } from '@/object-record/record-table/states/isRecordTableColumnHeadersReadOnlyComponentState';
+import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { filterOutByProperty } from 'twenty-shared/utils';
 
@@ -24,6 +29,18 @@ export const RecordTableHeader = () => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
   const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
 
+  const isRecordTableColumnHeadersReadOnly = useAtomComponentStateValue(
+    isRecordTableColumnHeadersReadOnlyComponentState,
+  );
+
+  const isRecordTableDragColumnHidden = useAtomComponentStateValue(
+    isRecordTableDragColumnHiddenComponentState,
+  );
+
+  const isRecordTableCheckboxColumnHidden = useAtomComponentStateValue(
+    isRecordTableCheckboxColumnHiddenComponentState,
+  );
+
   const recordFieldsWithoutLabelIdentifierAndFirstOne = visibleRecordFields
     .filter(
       filterOutByProperty(
@@ -37,8 +54,10 @@ export const RecordTableHeader = () => {
 
   return (
     <StyledHeaderContainer>
-      <RecordTableHeaderDragDropColumn />
-      <RecordTableHeaderCheckboxColumn />
+      {!isRecordTableDragColumnHidden && <RecordTableHeaderDragDropColumn />}
+      {!isRecordTableCheckboxColumnHidden && (
+        <RecordTableHeaderCheckboxColumn />
+      )}
       <RecordTableHeaderFirstCell />
       <RecordTableHeaderFirstScrollableCell />
       {recordFieldsWithoutLabelIdentifierAndFirstOne.map(
@@ -50,7 +69,11 @@ export const RecordTableHeader = () => {
           />
         ),
       )}
-      <RecordTableHeaderAddColumnButton />
+      {isRecordTableColumnHeadersReadOnly ? (
+        <RecordTableHeaderEmptyLastColumn />
+      ) : (
+        <RecordTableHeaderAddColumnButton />
+      )}
       <RecordTableHeaderLastEmptyColumn />
     </StyledHeaderContainer>
   );

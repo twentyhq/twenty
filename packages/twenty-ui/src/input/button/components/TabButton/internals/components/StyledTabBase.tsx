@@ -1,91 +1,84 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from '@ui/theme-constants';
+import { clsx } from 'clsx';
+import { type ComponentPropsWithoutRef, forwardRef } from 'react';
+import { Link } from 'react-router-dom';
 
-export const StyledTabButton = styled.button<{
+import styles from './StyledTabBase.module.scss';
+
+// The deprecated Linaria styled components forwarded refs and arbitrary
+// native props (twenty-front spreads drag-and-drop props onto
+// StyledTabContainer), so the ports preserve that contract.
+type StyledTabButtonProps = {
   active?: boolean;
   disabled?: boolean;
   to?: string;
-}>`
-  all: unset;
-  align-items: center;
-  color: ${({ active, disabled }) =>
-    active
-      ? themeCssVariables.font.color.primary
-      : disabled
-        ? themeCssVariables.font.color.light
-        : themeCssVariables.font.color.secondary};
-  cursor: pointer;
-  background-color: transparent;
-  border: none;
-  font-family: inherit;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  justify-content: center;
-  pointer-events: ${({ disabled }) => (disabled ? 'none' : '')};
-  text-decoration: none;
-  position: relative;
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background-color: ${({ active }) =>
-      active ? themeCssVariables.border.color.inverted : 'transparent'};
-    z-index: 1;
-  }
-`;
+} & ComponentPropsWithoutRef<'button'>;
 
-export const StyledTabContainer = styled.div<{
+export const StyledTabButton = forwardRef<HTMLElement, StyledTabButtonProps>(
+  ({ active, disabled, to, className, children, ...rest }, ref) => {
+    // Replaces the legacy Linaria `as` polymorphism: react-router Link when a
+    // `to` is provided, a native button otherwise. Typed as any to forward all
+    // props untyped, exactly like the legacy `as` prop did.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const TabButtonComponent: any = to ? Link : 'button';
+
+    return (
+      <TabButtonComponent
+        ref={ref}
+        to={to}
+        disabled={to ? undefined : disabled}
+        className={clsx(styles.tabButton, className)}
+        data-active={active || undefined}
+        data-disabled={disabled || undefined}
+        // oxlint-disable-next-line react/jsx-props-no-spreading
+        {...rest}
+      >
+        {children}
+      </TabButtonComponent>
+    );
+  },
+);
+
+StyledTabButton.displayName = 'StyledTabButton';
+
+type StyledTabContainerProps = {
   active?: boolean;
   disabled?: boolean;
-}>`
-  align-items: center;
-  color: ${({ active, disabled }) =>
-    active
-      ? themeCssVariables.font.color.primary
-      : disabled
-        ? themeCssVariables.font.color.light
-        : themeCssVariables.font.color.secondary};
-  cursor: pointer;
-  background-color: transparent;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  justify-content: center;
-  text-decoration: none;
-  position: relative;
+} & ComponentPropsWithoutRef<'div'>;
 
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background-color: ${({ active }) =>
-      active ? themeCssVariables.border.color.inverted : 'transparent'};
-    z-index: 1;
-  }
-`;
+export const StyledTabContainer = forwardRef<
+  HTMLDivElement,
+  StyledTabContainerProps
+>(({ active, disabled, className, children, ...rest }, ref) => (
+  <div
+    ref={ref}
+    className={clsx(styles.tabContainer, className)}
+    data-active={active || undefined}
+    data-disabled={disabled || undefined}
+    // oxlint-disable-next-line react/jsx-props-no-spreading
+    {...rest}
+  >
+    {children}
+  </div>
+));
 
-export const StyledTabHover = styled.span<{
+StyledTabContainer.displayName = 'StyledTabContainer';
+
+type StyledTabHoverProps = {
   contentSize?: 'sm' | 'md';
-}>`
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  padding: ${({ contentSize }) =>
-    contentSize === 'sm'
-      ? `${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]}`
-      : `${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]}`};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  width: 100%;
-  white-space: nowrap;
-  border-radius: ${themeCssVariables.border.radius.sm};
-  &:hover {
-    background: ${themeCssVariables.background.tertiary};
-  }
-  &:active {
-    background: ${themeCssVariables.background.quaternary};
-  }
-`;
+} & ComponentPropsWithoutRef<'span'>;
+
+export const StyledTabHover = forwardRef<HTMLSpanElement, StyledTabHoverProps>(
+  ({ contentSize, className, children, ...rest }, ref) => (
+    <span
+      ref={ref}
+      className={clsx(styles.tabHover, className)}
+      data-content-size={contentSize}
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...rest}
+    >
+      {children}
+    </span>
+  ),
+);
+
+StyledTabHover.displayName = 'StyledTabHover';

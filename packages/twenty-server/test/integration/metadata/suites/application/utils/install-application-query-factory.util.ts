@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export type InstallApplicationFactoryInput = {
-  appRegistrationId: string;
+  universalIdentifier: string;
   version?: string;
 };
 
@@ -11,15 +11,20 @@ export const installApplicationQueryFactory = ({
   input: InstallApplicationFactoryInput;
 }) => ({
   query: gql`
-    mutation InstallApplication($appRegistrationId: String!, $version: String) {
+    mutation InstallApplication(
+      $universalIdentifier: String!
+      $version: String
+    ) {
       installApplication(
-        appRegistrationId: $appRegistrationId
+        universalIdentifier: $universalIdentifier
         version: $version
-      )
+      ) {
+        id
+      }
     }
   `,
   variables: {
-    appRegistrationId: input.appRegistrationId,
+    universalIdentifier: input.universalIdentifier,
     version: input.version,
   },
 });

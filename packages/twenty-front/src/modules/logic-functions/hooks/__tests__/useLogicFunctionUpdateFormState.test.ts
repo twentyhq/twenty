@@ -40,12 +40,12 @@ describe('useLogicFunctionUpdateFormState', () => {
       name: 'name',
       description: '',
       sourceHandlerCode: '',
-      isTool: false,
       timeoutSeconds: 300,
-      toolInputSchema: {
-        properties: {},
-        type: 'object',
-      },
+      cronTriggerSettings: null,
+      databaseEventTriggerSettings: null,
+      httpRouteTriggerSettings: null,
+      toolTriggerSettings: null,
+      workflowActionTriggerSettings: null,
     });
   });
 });

@@ -8,13 +8,13 @@ import {
   IconServer2,
   IconTool,
   IconUserCircle,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 import {
   HealthIndicatorId,
   type SystemHealthService,
-} from '~/generated-metadata/graphql';
+} from '~/generated-admin/graphql';
 
 import { SettingsAdminHealthStatusRightContainer } from './SettingsAdminHealthStatusRightContainer';
 

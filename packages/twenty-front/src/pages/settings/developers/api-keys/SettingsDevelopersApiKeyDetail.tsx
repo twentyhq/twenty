@@ -17,14 +17,14 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title, IconRepeat, IconTrash } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title, IconRepeat, IconTrash } from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { Section } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { useMutation, useQuery } from '@apollo/client/react';
 import {
   AssignRoleToApiKeyDocument,
@@ -201,12 +201,18 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const regenerateApiKey = async () => {
     setIsLoading(true);
     try {
-      if (isNonEmptyString(apiKey?.name)) {
+      if (isDefined(apiKey)) {
+        if (!isNonEmptyString(apiKeyName)) {
+          enqueueErrorSnackBar({
+            message: t`API key name cannot be empty`,
+          });
+          return;
+        }
         const newExpiresAt = computeNewExpirationDate(
-          apiKey?.expiresAt,
-          apiKey?.createdAt,
+          apiKey.expiresAt,
+          apiKey.createdAt,
         );
-        const newApiKey = await createIntegration(apiKey?.name, newExpiresAt);
+        const newApiKey = await createIntegration(apiKeyName, newExpiresAt);
         await deleteIntegration(false);
 
         if (isNonEmptyString(newApiKey?.token)) {
@@ -233,19 +239,19 @@ export const SettingsDevelopersApiKeyDetail = () => {
 
   return (
     <>
-      {apiKey?.name && (
-        <SubMenuTopBarContainer
-          title={apiKey?.name}
+      {isDefined(apiKey) && (
+        <SettingsPageLayout
+          title={apiKey.name || t`Unnamed API Key`}
           links={[
             {
               children: t`Workspace`,
-              href: getSettingsPath(SettingsPath.Workspace),
+              href: getSettingsPath(SettingsPath.General),
             },
             {
               children: t`APIs & Webhooks`,
               href: getSettingsPath(SettingsPath.ApiWebhooks),
             },
-            { children: apiKey?.name },
+            { children: apiKey.name || t`Unnamed API Key` },
           ]}
         >
           <SettingsPageContainer>
@@ -324,7 +330,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               />
             </Section>
           </SettingsPageContainer>
-        </SubMenuTopBarContainer>
+        </SettingsPageLayout>
       )}
       <ConfirmationModal
         confirmationPlaceholder={confirmationValue}

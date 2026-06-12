@@ -6,7 +6,10 @@ import {
   type LogicFunctionIdInput,
 } from '~/generated-metadata/graphql';
 
-export const useGetOneLogicFunction = ({ id }: LogicFunctionIdInput) => {
+export const useGetOneLogicFunction = ({
+  id,
+  skip,
+}: LogicFunctionIdInput & { skip?: boolean }) => {
   const { data, loading } = useQuery<
     FindOneLogicFunctionQuery,
     FindOneLogicFunctionQueryVariables
@@ -14,6 +17,7 @@ export const useGetOneLogicFunction = ({ id }: LogicFunctionIdInput) => {
     variables: {
       input: { id },
     },
+    skip,
   });
 
   return {

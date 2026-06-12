@@ -1,4 +1,5 @@
 import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { css } from '@linaria/core';
@@ -13,11 +14,18 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { type IconComponent, IconEye, IconEyeOff } from 'twenty-ui/display';
-import { AutogrowWrapper } from 'twenty-ui/utilities';
+import {
+  type IconComponent,
+  IconEye,
+  IconEyeOff,
+} from 'twenty-ui-deprecated/display';
+import { AutogrowWrapper } from 'twenty-ui-deprecated/utilities';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
   box-sizing: border-box;
   display: inline-flex;
@@ -459,7 +467,7 @@ const TextInputWithAutoGrowWrapper = forwardRef<
       {props.autoGrow ? (
         <StyledAutogrowWrapper
           sizeVariant={props.sizeVariant}
-          node={props.value ?? props.placeholder}
+          node={isNonEmptyString(props.value) ? props.value : props.placeholder}
         >
           <TextInputComponent
             // oxlint-disable-next-line react/jsx-props-no-spreading

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should match snapshot 1`] = `
 {
@@ -20,6 +20,14 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "evaluationInputs",
     ],
   },
+  "applicationVariable": {
+    "propertiesToCompare": [
+      "key",
+      "description",
+      "isSecret",
+    ],
+    "propertiesToStringify": [],
+  },
   "commandMenuItem": {
     "propertiesToCompare": [
       "label",
@@ -31,10 +39,23 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "conditionalAvailabilityExpression",
       "availabilityObjectMetadataUniversalIdentifier",
       "engineComponentKey",
+      "payload",
       "hotKeys",
     ],
     "propertiesToStringify": [
+      "payload",
       "hotKeys",
+    ],
+  },
+  "connectionProvider": {
+    "propertiesToCompare": [
+      "name",
+      "displayName",
+      "type",
+      "oauthConfig",
+    ],
+    "propertiesToStringify": [
+      "oauthConfig",
     ],
   },
   "fieldMetadata": {
@@ -58,6 +79,16 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "universalSettings",
     ],
   },
+  "fieldPermission": {
+    "propertiesToCompare": [
+      "roleUniversalIdentifier",
+      "objectMetadataUniversalIdentifier",
+      "fieldMetadataUniversalIdentifier",
+      "canReadFieldValue",
+      "canUpdateFieldValue",
+    ],
+    "propertiesToStringify": [],
+  },
   "frontComponent": {
     "propertiesToCompare": [
       "name",
@@ -67,6 +98,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "builtComponentPath",
       "componentName",
       "isHeadless",
+      "usesSdkClient",
     ],
     "propertiesToStringify": [],
   },
@@ -90,20 +122,22 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "checksum",
       "sourceHandlerPath",
       "handlerName",
-      "toolInputSchema",
-      "isTool",
       "isBuildUpToDate",
+      "executionMode",
       "deletedAt",
       "cronTriggerSettings",
       "databaseEventTriggerSettings",
       "httpRouteTriggerSettings",
+      "toolTriggerSettings",
+      "workflowActionTriggerSettings",
       "builtHandlerPath",
     ],
     "propertiesToStringify": [
-      "toolInputSchema",
       "cronTriggerSettings",
       "databaseEventTriggerSettings",
       "httpRouteTriggerSettings",
+      "toolTriggerSettings",
+      "workflowActionTriggerSettings",
     ],
   },
   "navigationMenuItem": {
@@ -131,6 +165,8 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "nameSingular",
       "labelIdentifierFieldMetadataUniversalIdentifier",
       "standardOverrides",
+      "isSearchable",
+      "imageIdentifierFieldMetadataUniversalIdentifier",
     ],
     "propertiesToStringify": [
       "standardOverrides",
@@ -163,6 +199,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "position",
       "deletedAt",
       "icon",
+      "isActive",
       "overrides",
     ],
     "propertiesToStringify": [
@@ -178,21 +215,27 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "position",
       "universalConfiguration",
       "deletedAt",
+      "pageLayoutTabUniversalIdentifier",
       "conditionalDisplay",
-      "overrides",
+      "conditionalAvailabilityExpression",
+      "isActive",
+      "universalOverrides",
     ],
     "propertiesToStringify": [
       "gridPosition",
       "position",
       "universalConfiguration",
       "conditionalDisplay",
-      "overrides",
+      "universalOverrides",
     ],
   },
   "permissionFlag": {
     "propertiesToCompare": [
-      "flag",
-      "roleUniversalIdentifier",
+      "key",
+      "label",
+      "description",
+      "icon",
+      "permissionType",
     ],
     "propertiesToStringify": [],
   },
@@ -210,6 +253,13 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "canBeAssignedToUsers",
       "canBeAssignedToAgents",
       "canBeAssignedToApiKeys",
+    ],
+    "propertiesToStringify": [],
+  },
+  "rolePermissionFlag": {
+    "propertiesToCompare": [
+      "permissionFlagUniversalIdentifier",
+      "roleUniversalIdentifier",
     ],
     "propertiesToStringify": [],
   },
@@ -277,8 +327,12 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "visibility",
       "mainGroupByFieldMetadataUniversalIdentifier",
       "shouldHideEmptyGroups",
+      "isActive",
+      "universalOverrides",
     ],
-    "propertiesToStringify": [],
+    "propertiesToStringify": [
+      "universalOverrides",
+    ],
   },
   "viewField": {
     "propertiesToCompare": [
@@ -288,6 +342,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "aggregateOperation",
       "viewFieldGroupUniversalIdentifier",
       "deletedAt",
+      "isActive",
       "universalOverrides",
     ],
     "propertiesToStringify": [
@@ -299,6 +354,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "name",
       "position",
       "isVisible",
+      "isActive",
       "deletedAt",
       "overrides",
     ],
@@ -316,6 +372,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "viewFilterGroupUniversalIdentifier",
       "positionInViewFilterGroup",
       "subFieldName",
+      "relationTargetFieldMetadataUniversalIdentifier",
     ],
     "propertiesToStringify": [
       "value",
@@ -343,6 +400,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   "viewSort": {
     "propertiesToCompare": [
       "direction",
+      "subFieldName",
       "fieldMetadataUniversalIdentifier",
       "viewUniversalIdentifier",
       "deletedAt",

@@ -2,11 +2,13 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
@@ -29,9 +31,9 @@ import { hasInitializedCurrentRecordFieldsComponentFamilyState } from '@/views/s
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
 import { hasInitializedCurrentRecordSortsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordSortsComponentFamilyState';
 import { type View } from '@/views/types/View';
-import { getFilterableFields } from '@/views/utils/getFilterableFields';
 import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
+import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { atom, useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -72,7 +74,13 @@ export const useLoadRecordIndexStates = () => {
   const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
 
   const loadRecordIndexStates = useCallback(
-    (view: View, objectMetadataItem: ObjectMetadataItem) => {
+    (
+      view: View,
+      objectMetadataItem: EnrichedObjectMetadataItem,
+      options?: { skipGlobalIndexStates?: boolean },
+    ) => {
+      const skipGlobalIndexStates = options?.skipGlobalIndexStates ?? false;
+
       const activeFieldMetadataItems = objectMetadataItem.fields.filter(
         (field) => field.isActive && !isHiddenSystemField(field),
       );
@@ -126,15 +134,21 @@ export const useLoadRecordIndexStates = () => {
         .map(mapViewFieldToRecordField)
         .filter(isDefined);
 
-      const allFilterableFields = getFilterableFields(objectMetadataItem);
+      const flattenedFieldMetadataItems = store.get(
+        flattenedFieldMetadataItemsSelector.atom,
+      );
       const recordFilters = mapViewFiltersToFilters(
         view.viewFilters,
-        allFilterableFields,
+        flattenedFieldMetadataItems,
+      );
+
+      const recordFilterGroups = mapViewFilterGroupsToRecordFilterGroups(
+        view.viewFilterGroups ?? [],
       );
 
       const contextStoreFilters = mapViewFiltersToFilters(
         view.viewFilters,
-        filterableFieldMetadataItems,
+        flattenedFieldMetadataItems,
       );
 
       let recordIndexGroupFieldMetadataItemValue = undefined;
@@ -172,6 +186,10 @@ export const useLoadRecordIndexStates = () => {
         currentRecordFiltersComponentState.atomFamily({
           instanceId: recordIndexId,
         });
+      const currentRecordFilterGroupsAtom =
+        currentRecordFilterGroupsComponentState.atomFamily({
+          instanceId: recordIndexId,
+        });
       const currentRecordSortsAtom =
         currentRecordSortsComponentState.atomFamily({
           instanceId: recordIndexId,
@@ -195,12 +213,16 @@ export const useLoadRecordIndexStates = () => {
 
       store.set(
         atom(null, (get, batchSet) => {
-          const existingFieldDefs = get(recordIndexFieldDefinitionsState.atom);
-          if (!isDeeplyEqual(existingFieldDefs, newFieldDefinitions)) {
-            batchSet(
+          if (!skipGlobalIndexStates) {
+            const existingFieldDefs = get(
               recordIndexFieldDefinitionsState.atom,
-              newFieldDefinitions,
             );
+            if (!isDeeplyEqual(existingFieldDefs, newFieldDefinitions)) {
+              batchSet(
+                recordIndexFieldDefinitionsState.atom,
+                newFieldDefinitions,
+              );
+            }
           }
 
           for (const viewField of view.viewFields) {
@@ -237,6 +259,7 @@ export const useLoadRecordIndexStates = () => {
           batchSet(hasInitializedFieldsAtom, true);
 
           batchSet(currentRecordFiltersAtom, recordFilters);
+          batchSet(currentRecordFilterGroupsAtom, recordFilterGroups);
           batchSet(hasInitializedFiltersAtom, true);
 
           batchSet(currentRecordSortsAtom, view.viewSorts);
@@ -248,13 +271,15 @@ export const useLoadRecordIndexStates = () => {
             filters: contextStoreFilters,
           });
 
-          batchSet(recordIndexViewTypeState.atom, view.type);
-          batchSet(recordIndexOpenRecordInState.atom, view.openRecordIn);
+          if (!skipGlobalIndexStates) {
+            batchSet(recordIndexViewTypeState.atom, view.type);
+            batchSet(recordIndexOpenRecordInState.atom, view.openRecordIn);
 
-          batchSet(
-            recordIndexCalendarFieldMetadataIdState.atom,
-            view.calendarFieldMetadataId ?? null,
-          );
+            batchSet(
+              recordIndexCalendarFieldMetadataIdState.atom,
+              view.calendarFieldMetadataId ?? null,
+            );
+          }
 
           batchSet(
             recordIndexShouldHideEmptyRecordGroupsAtom,

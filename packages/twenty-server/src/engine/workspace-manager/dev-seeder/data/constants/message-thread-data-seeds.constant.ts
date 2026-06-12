@@ -3,10 +3,26 @@ type MessageThreadDataSeed = {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
+  subject: string;
 };
 
 export const MESSAGE_THREAD_DATA_SEED_COLUMNS: (keyof MessageThreadDataSeed)[] =
-  ['id', 'createdAt', 'updatedAt', 'deletedAt'];
+  ['id', 'createdAt', 'updatedAt', 'deletedAt', 'subject'];
+
+const EMAIL_SUBJECTS = [
+  'Meeting Request',
+  'Project Update',
+  'Invoice for Services',
+  'Thank You for the Meeting',
+  'Proposal Submission',
+  'Follow-up on Discussion',
+  'Customer Feedback',
+  'Training Session Reminder',
+  'Contract Renewal',
+  'Quarterly Report',
+  'Partnership Opportunity',
+  'Event Invitation',
+];
 
 const GENERATE_MESSAGE_THREAD_IDS = (): Record<string, string> => {
   const THREAD_IDS: Record<string, string> = {};
@@ -41,11 +57,14 @@ const GENERATE_MESSAGE_THREAD_SEEDS = (): MessageThreadDataSeed[] => {
       CREATED_DATE.getTime() + UPDATE_OFFSET * 24 * 60 * 60 * 1000,
     );
 
+    const TEMPLATE_INDEX = ((INDEX - 1) * 2) % EMAIL_SUBJECTS.length;
+
     THREAD_SEEDS.push({
       id: MESSAGE_THREAD_DATA_SEED_IDS[`ID_${INDEX}`],
       createdAt: CREATED_DATE,
       updatedAt: UPDATED_DATE,
       deletedAt: null,
+      subject: EMAIL_SUBJECTS[TEMPLATE_INDEX],
     });
   }
 

@@ -1,0 +1,494 @@
+---
+title: نموذج البيانات
+description: عرّف الكائنات والحقول والأدوار وبيانات تعريف التطبيق باستخدام SDK الخاصة بـ Twenty.
+icon: database
+---
+
+توفر حزمة `twenty-sdk` دوالّ `defineEntity` لتعريف نموذج بيانات تطبيقك. يجب عليك استخدام `export default defineEntity({...})` لكي يكتشف SDK الكيانات الخاصة بك. تتحقق هذه الدوال من تكوينك وقت البناء وتوفّر إكمالًا تلقائيًا في بيئة التطوير وأمان الأنواع.
+
+<Note>
+  **تنظيم الملفات يعود إليك.**
+  يعتمد اكتشاف الكيانات على AST — حيث يعثر SDK على استدعاءات `export default defineEntity(...)` بغض النظر عن مكان وجود الملف. تجميع الملفات حسب النوع (مثلًا، `logic-functions/` و`roles/`) هو مجرّد عرف، وليس متطلبًا.
+</Note>
+
+<AccordionGroup>
+<Accordion title="defineRole" description="تهيئة صلاحيات الدور والوصول إلى الكائنات">
+
+تُغلّف الأدوار الصلاحيات على كائنات وإجراءات مساحة العمل لديك.
+
+```ts restricted-company-role.ts
+import {
+  defineRole,
+  PermissionFlag,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+export default defineRole({
+  universalIdentifier: '2c80f640-2083-4803-bb49-003e38279de6',
+  label: 'My new role',
+  description: 'A role that can be used in your workspace',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier,
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlags: [PermissionFlag.APPLICATIONS],
+});
+```
+
+</Accordion>
+<Accordion title="defineApplication" description="تهيئة بيانات التعريف للتطبيق (مطلوب، واحد لكل تطبيق)">
+
+يجب أن يحتوي كل تطبيق على استدعاء واحد فقط لـ `defineApplication` يصف:
+
+* **الهوية**: المعرّفات، اسم العرض، والوصف.
+* **الأذونات**: أيُّ دورٍ تستخدمه وظائفه ومكوّناته الأمامية.
+* **(اختياري) المتغيرات**: أزواج مفتاح-قيمة تُعرض لوظائفك كمتغيرات بيئة.
+* **(اختياري) دوال ما قبل التثبيت/ما بعد التثبيت**: دوال منطقية تعمل قبل التثبيت أو بعده.
+
+```ts src/application-config.ts
+import { defineApplication } from 'twenty-sdk/define';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+
+export default defineApplication({
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
+  displayName: 'My Twenty App',
+  description: 'My first Twenty app',
+  icon: 'IconWorld',
+  applicationVariables: {
+    DEFAULT_RECIPIENT_NAME: {
+      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      description: 'Default recipient name for postcards',
+      value: 'Jane Doe',
+      isSecret: false,
+    },
+  },
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+});
+```
+
+الملاحظات:
+* حقول `universalIdentifier` هي معرّفات حتمية تملكها أنت. أنشِئها مرة واحدة واحتفظ بها ثابتة عبر عمليات المزامنة.
+* `applicationVariables` تصبح متغيرات بيئة لوظائفك ومكوّناتك الأمامية (على سبيل المثال، `DEFAULT_RECIPIENT_NAME` متاح كـ `process.env.DEFAULT_RECIPIENT_NAME`).
+* `defaultRoleUniversalIdentifier` يجب أن يُشير إلى دور مُعرَّف باستخدام `defineRole()` (انظر أعلاه).
+* يتم اكتشاف دوال ما قبل التثبيت وما بعده تلقائيًا أثناء بناء البيان — لا حاجة للإشارة إليها في `defineApplication()`.
+
+#### بيانات التعريف لسوق التطبيقات
+
+إذا كنت تخطط لـ [نشر تطبيقك](/l/ar/developers/extend/apps/publishing)، فإن هذه الحقول الاختيارية تتحكّم في كيفية ظهوره في السوق:
+
+| الحقل              | الوصف                                                                                                        |
+| ------------------ | ------------------------------------------------------------------------------------------------------------ |
+| `author`           | اسم المؤلف أو الشركة                                                                                         |
+| `category`         | فئة التطبيق لتصفية سوق التطبيقات                                                                             |
+| `logoUrl`          | مسار شعار تطبيقك (مثلًا، `public/logo.png`)                                                                  |
+| `screenshots`      | مصفوفة لمسارات لقطات الشاشة (مثلًا، `public/screenshot-1.png`)                                               |
+| `aboutDescription` | وصف ماركداون أطول لعلامة التبويب "حول". إذا لم يتم تضمينه، يستخدم السوق ملف `README.md` الخاص بالحزمة من npm |
+| `websiteUrl`       | رابط إلى موقعك الإلكتروني                                                                                    |
+| `termsUrl`         | رابط إلى شروط الخدمة                                                                                         |
+| `emailSupport`     | عنوان البريد الإلكتروني للدعم                                                                                |
+| `issueReportUrl`   | رابط إلى متتبّع المشاكل                                                                                      |
+
+#### الأدوار والصلاحيات
+
+يُحدّد الحقل `defaultRoleUniversalIdentifier` في `application-config.ts` الدور الافتراضي الذي تستخدمه وظائف المنطق والمكوّنات الأمامية في تطبيقك. راجع `defineRole` أعلاه للحصول على التفاصيل.
+
+* رمز وقت التشغيل المحقون باسم `TWENTY_APP_ACCESS_TOKEN` مستمد من هذا الدور.
+* العميل مضبوط الأنواع مقيَّد بالأذونات الممنوحة لذلك الدور.
+* اتبع مبدأ أقل الامتياز: أنشئ دورًا مخصصًا يضم فقط الأذونات التي تحتاجها وظائفك.
+
+##### الدور الافتراضي للوظيفة
+
+عند توليد تطبيق جديد بالقالب، ينشئ CLI ملفّ دور افتراضي:
+
+```ts src/roles/default-role.ts
+import { defineRole, PermissionFlag } from 'twenty-sdk/define';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [],
+  fieldPermissions: [],
+  permissionFlags: [],
+});
+```
+
+يُشار إلى `universalIdentifier` لهذا الدور في `application-config.ts` باسم `defaultRoleUniversalIdentifier`:
+
+* **\*.role.ts** يحدد ما يمكن أن يفعله الدور.
+* **application-config.ts** يشير إلى ذلك الدور بحيث ترث وظائفك أذوناته.
+
+الملاحظات:
+* ابدأ من الدور المُنشأ بالقالب، ثم قيّده تدريجيًا باتباع مبدأ أقل الامتياز.
+* استبدل `objectPermissions` و`fieldPermissions` بالكائنات والحقول التي تحتاجها وظائفك فعليًا.
+* `permissionFlags` تتحكم في الوصول إلى القدرات على مستوى المنصة. اجعلها في حدّها الأدنى.
+* اطّلع على مثال عملي: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+
+</Accordion>
+<Accordion title="defineObject" description="تعريف كائنات مخصصة مع حقول">
+
+تصف الكائنات المخصصة كلًا من المخطط والسلوك للسجلات في مساحة عملك. استخدم `defineObject()` لتعريف كائنات مع تحقق مدمج:
+
+```ts postCard.object.ts
+import { defineObject, FieldType } from 'twenty-sdk/define';
+
+enum PostCardStatus {
+  DRAFT = 'DRAFT',
+  SENT = 'SENT',
+  DELIVERED = 'DELIVERED',
+  RETURNED = 'RETURNED',
+}
+
+export default defineObject({
+  universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+  nameSingular: 'postCard',
+  namePlural: 'postCards',
+  labelSingular: 'Post Card',
+  labelPlural: 'Post Cards',
+  description: 'A post card object',
+  icon: 'IconMail',
+  fields: [
+    {
+      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+      name: 'content',
+      type: FieldType.TEXT,
+      label: 'Content',
+      description: "Postcard's content",
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
+      name: 'recipientName',
+      type: FieldType.FULL_NAME,
+      label: 'Recipient name',
+      icon: 'IconUser',
+    },
+    {
+      universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
+      name: 'recipientAddress',
+      type: FieldType.ADDRESS,
+      label: 'Recipient address',
+      icon: 'IconHome',
+    },
+    {
+      universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+      name: 'status',
+      type: FieldType.SELECT,
+      label: 'Status',
+      icon: 'IconSend',
+      defaultValue: `'${PostCardStatus.DRAFT}'`,
+      options: [
+        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
+        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
+        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
+        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+      ],
+    },
+    {
+      universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
+      name: 'deliveredAt',
+      type: FieldType.DATE_TIME,
+      label: 'Delivered at',
+      icon: 'IconCheck',
+      isNullable: true,
+      defaultValue: null,
+    },
+  ],
+});
+```
+
+النقاط الرئيسية:
+
+* استخدم `defineObject()` للحصول على تحقق مدمج ودعم أفضل من IDE.
+* `universalIdentifier` يجب أن يكون فريدًا وثابتًا عبر عمليات النشر.
+* يتطلب كل حقل `name` و`type` و`label` ومعرّف `universalIdentifier` ثابتًا خاصًا به.
+* المصفوفة `fields` اختيارية — يمكنك تعريف كائنات بدون حقول مخصصة.
+* يمكنك إنشاء كائنات جديدة باستخدام `yarn twenty add`، والذي يرشدك خلال التسمية والحقول والعلاقات.
+
+<Note>
+**يتم إنشاء الحقول الأساسية تلقائيًا.** عند تعريف كائن مخصص، يضيف Twenty تلقائيًا حقولًا قياسية
+مثل `id` و`name` و`createdAt` و`updatedAt` و`createdBy` و`updatedBy` و`deletedAt`.
+لا تحتاج إلى تعريف هذه في مصفوفة `fields` — أضف فقط حقولك المخصصة.
+يمكنك تجاوز الحقول الافتراضية من خلال تعريف حقل بالاسم نفسه في مصفوفة `fields` الخاصة بك،
+لكن هذا غير مستحسن.
+</Note>
+
+</Accordion>
+<Accordion title="defineField — الحقول القياسية" description="وسّع الكائنات الموجودة بحقول إضافية">
+
+استخدم `defineField()` لإضافة حقول إلى كائنات لا تملكها — مثل كائنات Twenty القياسية (Person, Company, etc.) أو كائنات من تطبيقات أخرى. على خلاف الحقول المضمّنة في `defineObject()`، تتطلّب الحقول المستقلة `objectUniversalIdentifier` لتحديد الكائن الذي تقوم بتوسيعه:
+
+```ts src/fields/company-loyalty-tier.field.ts
+import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'f2a1b3c4-d5e6-7890-abcd-ef1234567890',
+  objectUniversalIdentifier: '701aecb9-eb1c-4d84-9d94-b954b231b64b', // Company object
+  name: 'loyaltyTier',
+  type: FieldType.SELECT,
+  label: 'Loyalty Tier',
+  icon: 'IconStar',
+  options: [
+    { value: 'BRONZE', label: 'Bronze', position: 0, color: 'orange' },
+    { value: 'SILVER', label: 'Silver', position: 1, color: 'gray' },
+    { value: 'GOLD', label: 'Gold', position: 2, color: 'yellow' },
+  ],
+});
+```
+
+النقاط الرئيسية:
+* `objectUniversalIdentifier` يحدّد الكائن الهدف. بالنسبة للكائنات القياسية، استخدم `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` المُصدَّر من `twenty-sdk`.
+* عند تعريف الحقول بشكل مضمّن في `defineObject()`، **لا** تحتاج إلى `objectUniversalIdentifier` — إذ يُورَّث من الكائن الأب.
+* `defineField()` هي الطريقة الوحيدة لإضافة حقول إلى كائنات لم تُنشئها باستخدام `defineObject()`.
+
+</Accordion>
+<Accordion title="defineField — حقول العلاقات" description="وصِل الكائنات معًا بعلاقات ثنائية الاتجاه">
+
+تربط العلاقات الكائنات معًا. في Twenty، تكون العلاقات دائمًا **ثنائية الاتجاه** — حيث تعرّف الجانبين، ويشير كل جانب إلى الآخر.
+
+هناك نوعان من العلاقات:
+
+| نوع العلاقة   | الوصف                                                  | هل لديه مفتاح خارجي؟   |
+| ------------- | ------------------------------------------------------ | ---------------------- |
+| `MANY_TO_ONE` | تشير العديد من سجلات هذا الكائن إلى سجل واحد من الهدف  | نعم (`joinColumnName`) |
+| `ONE_TO_MANY` | يحتوي سجل واحد من هذا الكائن على العديد من سجلات الهدف | لا (الجانب العكسي)     |
+
+#### كيف تعمل العلاقات
+
+تتطلّب كل علاقة **حقلين** يشيران إلى بعضهما البعض:
+
+1. جانب **MANY_TO_ONE** — يوجد على الكائن الذي يحمل المفتاح الخارجي
+2. جانب **ONE_TO_MANY** — يوجد على الكائن الذي يملك المجموعة
+
+يستخدم كلا الحقلين `FieldType.RELATION` ويُحيل كلٌ منهما إلى الآخر عبر `relationTargetFieldMetadataUniversalIdentifier`.
+
+#### مثال: البطاقة البريدية لديها العديد من المستلمين
+
+افترض أن `PostCard` يمكن إرسالها إلى العديد من سجلات `PostCardRecipient`. ينتمي كل مستلم إلى بطاقة بريدية واحدة بالضبط.
+
+**الخطوة 1: عرّف جانب ONE_TO_MANY على PostCard** (جانب "الواحد"):
+
+```ts src/fields/post-card-recipients-on-post-card.field.ts
+import { defineField, FieldType, RelationType } from 'twenty-sdk/define';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
+
+// Export so the other side can reference it
+export const POST_CARD_RECIPIENTS_FIELD_ID = 'a1111111-1111-1111-1111-111111111111';
+// Import from the other side
+import { POST_CARD_FIELD_ID } from './post-card-on-post-card-recipient.field';
+
+export default defineField({
+  universalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCardRecipients',
+  label: 'Post Card Recipients',
+  icon: 'IconUsers',
+  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+  },
+});
+```
+
+**الخطوة 2: عرّف جانب MANY_TO_ONE على PostCardRecipient** (جانب "العديد" — يحمل المفتاح الخارجي):
+
+```ts src/fields/post-card-on-post-card-recipient.field.ts
+import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk/define';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
+
+// Export so the other side can reference it
+export const POST_CARD_FIELD_ID = 'b2222222-2222-2222-2222-222222222222';
+// Import from the other side
+import { POST_CARD_RECIPIENTS_FIELD_ID } from './post-card-recipients-on-post-card.field';
+
+export default defineField({
+  universalIdentifier: POST_CARD_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCard',
+  label: 'Post Card',
+  icon: 'IconMail',
+  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.MANY_TO_ONE,
+    onDelete: OnDeleteAction.CASCADE,
+    joinColumnName: 'postCardId',
+  },
+});
+```
+
+<Note>
+**الاستيرادات الدائرية:** كلا حقلي العلاقة يُحيل كلٌ منهما إلى `universalIdentifier` الخاص بالآخر. لتجنّب مشكلات الاستيراد الدائري، صدّر معرّفات الحقول كثوابت مسمّاة من كل ملف، واستوردها في الملف الآخر. يقوم نظام البناء بحلّها في وقت التجميع.
+</Note>
+
+#### الربط مع الكائنات القياسية
+
+لإنشاء علاقة مع كائن Twenty مضمّن (Person, Company, etc.)، استخدم `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
+
+```ts src/fields/person-on-self-hosting-user.field.ts
+import {
+  defineField,
+  FieldType,
+  RelationType,
+  OnDeleteAction,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
+
+export const PERSON_FIELD_ID = 'c3333333-3333-3333-3333-333333333333';
+export const SELF_HOSTING_USER_REVERSE_FIELD_ID = 'd4444444-4444-4444-4444-444444444444';
+
+export default defineField({
+  universalIdentifier: PERSON_FIELD_ID,
+  objectUniversalIdentifier: SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'person',
+  label: 'Person',
+  description: 'Person matching with the self hosting user',
+  isNullable: true,
+  relationTargetObjectMetadataUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  relationTargetFieldMetadataUniversalIdentifier: SELF_HOSTING_USER_REVERSE_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.MANY_TO_ONE,
+    onDelete: OnDeleteAction.SET_NULL,
+    joinColumnName: 'personId',
+  },
+});
+```
+
+#### خصائص حقل العلاقة
+
+| الخاصية                                           | مطلوب           | الوصف                                                                                  |
+| ------------------------------------------------- | --------------- | -------------------------------------------------------------------------------------- |
+| `type`                                            | نعم             | يجب أن يكون `FieldType.RELATION`                                                       |
+| `relationTargetObjectMetadataUniversalIdentifier` | نعم             | قيمة `universalIdentifier` للكائن الهدف                                                |
+| `relationTargetFieldMetadataUniversalIdentifier`  | نعم             | قيمة `universalIdentifier` للحقل المطابق على الكائن الهدف                              |
+| `universalSettings.relationType`                  | نعم             | `RelationType.MANY_TO_ONE` أو `RelationType.ONE_TO_MANY`                               |
+| `universalSettings.onDelete`                      | MANY_TO_ONE فقط | ماذا يحدث عند حذف السجل المشار إليه: `CASCADE`، `SET_NULL`، `RESTRICT`، أو `NO_ACTION` |
+| `universalSettings.joinColumnName`                | MANY_TO_ONE فقط | اسم عمود قاعدة البيانات للمفتاح الخارجي (مثل `postCardId`)                             |
+
+#### حقول العلاقات المضمّنة في defineObject
+
+يمكنك أيضًا تعريف حقول العلاقات مباشرةً داخل `defineObject()`. في هذه الحالة، احذف `objectUniversalIdentifier` — إذ يُورَّث من الكائن الأب:
+
+```ts
+export default defineObject({
+  universalIdentifier: '...',
+  nameSingular: 'postCardRecipient',
+  // ...
+  fields: [
+    {
+      universalIdentifier: POST_CARD_FIELD_ID,
+      type: FieldType.RELATION,
+      name: 'postCard',
+      label: 'Post Card',
+      relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+      relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+      universalSettings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: OnDeleteAction.CASCADE,
+        joinColumnName: 'postCardId',
+      },
+    },
+    // ... other fields
+  ],
+});
+```
+</Accordion>
+</AccordionGroup>
+
+## توليد قوالب الكيانات باستخدام `yarn twenty add`
+
+بدلًا من إنشاء ملفات الكيانات يدويًا، يمكنك استخدام أداة القوالب التفاعلية:
+
+```bash filename="Terminal"
+yarn twenty add
+```
+
+ستطالبك باختيار نوع الكيان وتُرشدك خلال الحقول المطلوبة. تُولّد ملفًا جاهزًا للاستخدام مع `universalIdentifier` ثابت واستدعاء `defineEntity()` الصحيح.
+
+يمكنك أيضًا تمرير نوع الكيان مباشرة لتخطي المطالبة الأولى:
+
+```bash filename="Terminal"
+yarn twenty add object
+yarn twenty add logicFunction
+yarn twenty add frontComponent
+```
+
+### أنواع الكيانات المتاحة
+
+| نوع الكيان         | أمر                                  | الملف المُولَّد                                         |
+| ------------------ | ------------------------------------ | ------------------------------------------------------- |
+| كائن               | `yarn twenty add object`             | `src/objects/\<name>.ts`               |
+| الحقل              | `yarn twenty add field`              | `src/fields/\<name>.ts`                |
+| دالة منطقية        | `yarn twenty add logicFunction`      | `src/logic-functions/\<name>.ts`       |
+| مكوّن أمامي        | `yarn twenty add frontComponent`     | `src/front-components/\<name>.tsx`     |
+| دور                | `yarn twenty add role`               | `src/roles/\<name>.ts`                 |
+| مهارة              | `yarn twenty add skill`              | `src/skills/\<name>.ts`                |
+| وكيل               | `yarn twenty add agent`              | `src/agents/\<name>.ts`                |
+| عرض                | `yarn twenty add view`               | `src/views/\<name>.ts`                 |
+| عنصر قائمة التنقّل | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
+| تخطيط الصفحة       | `yarn twenty add pageLayout`         | `src/page-layouts/\<name>.ts`          |
+
+### ما الذي تُنشئه أداة القوالب
+
+لكل نوع كيان قالب خاص به. على سبيل المثال، يسأل `yarn twenty add object` عن:
+
+1. **الاسم (مفرد)** — مثل `invoice`
+2. **الاسم (جمع)** — مثل `invoices`
+3. **التسمية (مفرد)** — تُستمد تلقائيًا من الاسم (مثل `Invoice`)
+4. **التسمية (جمع)** — تُملأ تلقائيًا (مثل `Invoices`)
+5. **إنشاء عرض وعنصر تنقّل؟** — إذا أجبت بنعم، فستُنشئ أداة القوالب أيضًا عرضًا مطابقًا ورابط شريط جانبي للكائن الجديد.
+
+أنواع الكيانات الأخرى لها مطالبات أبسط — فمعظمها يطلب اسمًا فقط.
+
+نوع الكيان `field` أكثر تفصيلاً: يطلب اسم الحقل وتسمية الحقل ونوعه (من قائمة بكل أنواع الحقول المتاحة مثل `TEXT` و`NUMBER` و`SELECT` و`RELATION` وغيرها)، ومعرّف `universalIdentifier` للكائن الهدف.
+
+### مسار خرج مخصّص
+
+استخدم العلم `--path` لوضع الملف المُولَّد في موقع مخصّص:
+
+```bash filename="Terminal"
+yarn twenty add logicFunction --path src/custom-folder
+```

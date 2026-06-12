@@ -13,8 +13,11 @@ import {
   IconLock,
   TooltipDelay,
   useIcons,
-} from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 
@@ -83,6 +86,7 @@ export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
       <TableRow
         key={role.id}
         gridAutoColumns="332px 3fr 2fr 1fr"
+        mobileGridAutoColumns="5fr 1fr 1fr 35px"
         to={getSettingsPath(SettingsPath.RoleDetail, { roleId: role.id })}
       >
         <TableCell>

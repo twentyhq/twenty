@@ -83,16 +83,16 @@ spec:
               psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d postgres -v db="${DBNAME}" -Atc "SELECT 1 FROM pg_database WHERE datname = :'db'" | grep -q 1 || \
               psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d postgres -v db="${DBNAME}" -c 'CREATE DATABASE :"db";'
               echo "Creating app user ${APP_USER} if it doesn't exist..."
-                psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d postgres -v app_user="${APP_USER}" -v app_password="${APP_PASSWORD}" <<'EOSQL'
-  DO
-  $do$
-  BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = :'app_user') THEN
-      EXECUTE format('CREATE USER %I WITH PASSWORD %L', :'app_user', :'app_password');
-    END IF;
-  END
-  $do$;
-  EOSQL
+              psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d postgres -v app_user="${APP_USER}" -v app_password="${APP_PASSWORD}" <<'EOSQL'
+              DO
+              $do$
+              BEGIN
+              IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = :'app_user') THEN
+              EXECUTE format('CREATE USER %I WITH PASSWORD %L', :'app_user', :'app_password');
+              END IF;
+              END
+              $do$;
+              EOSQL
               echo "Creating core schema and granting permissions..."
               psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d "${DBNAME}" -v app_user="${APP_USER}" -c 'CREATE SCHEMA IF NOT EXISTS core'
               psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d "${DBNAME}" -v db="${DBNAME}" -v app_user="${APP_USER}" -c 'GRANT ALL PRIVILEGES ON DATABASE :"db" TO :"app_user";'
@@ -106,31 +106,6 @@ spec:
               psql -h {{ include "twenty.fullname" . }}-db -p 5432 -U postgres -d "${DBNAME}" -v app_user="${APP_USER}" -c 'ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO :"app_user";'
               echo "Database ${DBNAME} is ready."
         {{- end }}
-        - name: run-migrations
-          {{- $img := include "twenty.server.image" . }}
-          image: {{ include "twenty.image.repository" $img }}:{{ include "twenty.image.tag" $img }}
-          imagePullPolicy: {{ include "twenty.image.pullPolicy" $img }}
-          command:
-            - sh
-            - -c
-            - >-
-              npx -y typeorm migration:run -d dist/database/typeorm/core/core.datasource
-          env:
-            {{- if eq (include "twenty.db.useExternalSecret" .) "true" }}
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "twenty.dbPassword.secretName" . }}
-                  key: {{ include "twenty.dbPassword.secretKey" . }}
-            - name: PG_DATABASE_URL
-              value: {{ include "twenty.dbUrl.template" . | quote }}
-            {{- else }}
-            - name: PG_DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "twenty.dbUrl.secretName" . }}
-                  key: url
-            {{- end }}
       containers:
         - name: server
           {{- $img := include "twenty.server.image" . }}
@@ -154,6 +129,16 @@ spec:
                   name: {{ include "twenty.dbUrl.secretName" . }}
                   key: url
             {{- end }}
+            {{- if eq (include "twenty.redis.useExternalSecret" .) "true" }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.redis.external.secretName }}
+                  key: {{ .Values.redis.external.passwordKey }}
+            {{- else if .Values.redis.external.password }}
+            - name: REDIS_PASSWORD
+              value: {{ .Values.redis.external.password | quote }}
+            {{- end }}
             - name: REDIS_URL
               value: {{ include "twenty.redisUrl" . | quote }}
             - name: SIGN_IN_PREFILLED
@@ -171,7 +156,10 @@ spec:
                   key: accessToken
             {{- $storageEnv := (include "twenty.storageEnv" .) }}
             {{- if $storageEnv }}
-            {{ $storageEnv | nindent 12 }}
+            {{- $storageEnv | nindent 12 }}
+            {{- end }}
+            {{- with .Values.server.extraEnv }}
+            {{- toYaml . | nindent 12 }}
             {{- end }}
           ports:
             - name: http-tcp

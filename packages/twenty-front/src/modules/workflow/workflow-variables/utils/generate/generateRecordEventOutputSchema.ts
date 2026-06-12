@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type DatabaseEventTriggerOutputSchema } from '@/workflow/workflow-variables/types/DatabaseEventTriggerOutputSchema';
 import {
   type FieldOutputSchemaV2,
@@ -24,7 +24,7 @@ const camelToTitleCase = (camelCaseText: string): string =>
 const EXCLUDED_SYSTEM_FIELDS = ['searchVector', 'position'];
 
 const shouldGenerateFieldOutput = (
-  fieldMetadataItem: ObjectMetadataItem['fields'][number],
+  fieldMetadataItem: EnrichedObjectMetadataItem['fields'][number],
 ): boolean => {
   if (!fieldMetadataItem.isActive) {
     return false;
@@ -57,7 +57,7 @@ const shouldGenerateFieldOutput = (
 };
 
 const generatePrefixedRecordField = (
-  fieldMetadataItem: ObjectMetadataItem['fields'][number],
+  fieldMetadataItem: EnrichedObjectMetadataItem['fields'][number],
   prefix: string,
 ): Record<string, FieldOutputSchemaV2> => {
   const compositeType = compositeTypeDefinitions.get(fieldMetadataItem.type);
@@ -106,7 +106,7 @@ const generatePrefixedRecordField = (
 };
 
 const generatePrefixedRecordFields = (
-  objectMetadataItem: ObjectMetadataItem,
+  objectMetadataItem: EnrichedObjectMetadataItem,
   prefix: string,
 ): Record<string, FieldOutputSchemaV2> => {
   const result: Record<string, FieldOutputSchemaV2> = {};
@@ -145,7 +145,7 @@ const generatePrefixedRecordFields = (
 };
 
 const generateRecordEventWithPrefix = (
-  objectMetadataItem: ObjectMetadataItem,
+  objectMetadataItem: EnrichedObjectMetadataItem,
   prefix: string,
 ): RecordOutputSchemaV2 => {
   return {
@@ -161,7 +161,7 @@ const generateRecordEventWithPrefix = (
 };
 
 export const generateRecordEventOutputSchema = (
-  objectMetadataItem: ObjectMetadataItem,
+  objectMetadataItem: EnrichedObjectMetadataItem,
   action: DatabaseEventAction,
 ): DatabaseEventTriggerOutputSchema => {
   switch (action) {

@@ -4,7 +4,7 @@ import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { CodeEditor } from 'twenty-ui/input';
+import { CodeEditor } from 'twenty-ui-deprecated/input';
 
 export type File = {
   language: string;
@@ -16,6 +16,7 @@ type SettingsLogicFunctionCodeEditorProps = Omit<EditorProps, 'onChange'> & {
   currentFilePath: string;
   files: File[];
   onChange: (value: string) => void;
+  applicationVariableKeys?: string[];
 };
 
 export const SettingsLogicFunctionCodeEditor = ({
@@ -24,6 +25,7 @@ export const SettingsLogicFunctionCodeEditor = ({
   onChange,
   height = 450,
   options = undefined,
+  applicationVariableKeys,
 }: SettingsLogicFunctionCodeEditorProps) => {
   const { logicFunctionId = '' } = useParams();
   const { availablePackages } = useGetAvailablePackages({
@@ -63,15 +65,16 @@ export const SettingsLogicFunctionCodeEditor = ({
         target: monaco.languages.typescript.ScriptTarget.ESNext,
       });
 
-      // TODO load that with proper env variables
-      const environmentVariables = {};
+      const applicationVariables = Object.fromEntries(
+        (applicationVariableKeys ?? []).map((key) => [key, '']),
+      );
 
-      if (isDefined(environmentVariables)) {
-        const envTypeDefinitions = Object.keys(environmentVariables)
+      if (isDefined(applicationVariables)) {
+        const envTypeDefinitions = Object.keys(applicationVariables)
           // oxlint-disable-next-line lingui/no-unlocalized-strings
           .map((key) => `${key}: string;`)
           .join('\n');
-        const environmentDefinition = `
+        const applicationVariableDefinition = `
           declare namespace NodeJS {
             interface ProcessEnv {
               ${envTypeDefinitions}
@@ -85,7 +88,7 @@ export const SettingsLogicFunctionCodeEditor = ({
 
         monaco.languages.typescript.typescriptDefaults.setExtraLibs([
           {
-            content: environmentDefinition,
+            content: applicationVariableDefinition,
             filePath: 'ts:process-env.d.ts',
           },
         ]);

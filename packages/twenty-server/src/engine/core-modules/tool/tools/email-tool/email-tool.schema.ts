@@ -24,7 +24,7 @@ export const EmailToolInputZodSchema = z.object({
     'Recipients object with to, cc, and bcc fields (comma-separated)',
   ),
   subject: z.string().describe('The email subject line'),
-  body: z.string().describe('The email body content (HTML or plain text)'),
+  body: z.string().describe('The email body content in HTML format'),
   connectedAccountId: z
     .string()
     .refine((val) => isValidUuid(val))
@@ -37,4 +37,10 @@ export const EmailToolInputZodSchema = z.object({
     .describe('Array of file objects to attach to the email')
     .optional()
     .default([]),
+  inReplyTo: z
+    .string()
+    .describe(
+      'The RFC 2822 Message-ID of an existing email to reply to. When provided, the email is sent as a reply in the same thread.',
+    )
+    .optional(),
 });

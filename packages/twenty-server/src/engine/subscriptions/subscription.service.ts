@@ -88,4 +88,45 @@ export class SubscriptionService {
       payload,
     );
   }
+
+  private getAgentChatChannel({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }) {
+    return `${SubscriptionChannel.AGENT_CHAT_CHANNEL}:${workspaceId}:${threadId}`;
+  }
+
+  async subscribeToAgentChat({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }) {
+    const client = this.redisClient.getPubSubClient();
+
+    return client.asyncIterator(
+      this.getAgentChatChannel({ workspaceId, threadId }),
+    );
+  }
+
+  async publishToAgentChat<T>({
+    workspaceId,
+    threadId,
+    payload,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    payload: T;
+  }): Promise<void> {
+    const client = this.redisClient.getPubSubClient();
+
+    await client.publish(
+      this.getAgentChatChannel({ workspaceId, threadId }),
+      payload,
+    );
+  }
 }

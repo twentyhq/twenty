@@ -22,7 +22,6 @@ const PARTIAL_ID_FIELD = {
   isNullable: false,
   isUnique: true,
   isActive: true,
-  isCustom: false,
   isSystem: true,
   isUIReadOnly: true,
   isLabelSyncedWithName: false,
@@ -38,6 +37,7 @@ const PARTIAL_ID_FIELD = {
   kanbanAggregateOperationViewUniversalIdentifiers: [],
   calendarViewUniversalIdentifiers: [],
   mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+  fieldPermissionUniversalIdentifiers: [],
   viewSortUniversalIdentifiers: [],
 } as const satisfies PartialSystemFlatFieldMetadata<FieldMetadataType.UUID>;
 
@@ -50,7 +50,6 @@ const PARTIAL_CREATED_AT_FIELD = {
   isNullable: false,
   isUnique: false,
   isActive: true,
-  isCustom: false,
   isSystem: true,
   isUIReadOnly: true,
   isLabelSyncedWithName: false,
@@ -66,6 +65,7 @@ const PARTIAL_CREATED_AT_FIELD = {
   kanbanAggregateOperationViewUniversalIdentifiers: [],
   calendarViewUniversalIdentifiers: [],
   mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+  fieldPermissionUniversalIdentifiers: [],
   viewSortUniversalIdentifiers: [],
 } as const satisfies PartialSystemFlatFieldMetadata<FieldMetadataType.DATE_TIME>;
 
@@ -78,7 +78,6 @@ const PARTIAL_UPDATED_AT_FIELD = {
   isNullable: false,
   isUnique: false,
   isActive: true,
-  isCustom: false,
   isSystem: true,
   isUIReadOnly: true,
   isLabelSyncedWithName: false,
@@ -94,6 +93,7 @@ const PARTIAL_UPDATED_AT_FIELD = {
   kanbanAggregateOperationViewUniversalIdentifiers: [],
   calendarViewUniversalIdentifiers: [],
   mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+  fieldPermissionUniversalIdentifiers: [],
   viewSortUniversalIdentifiers: [],
 } as const satisfies PartialSystemFlatFieldMetadata<FieldMetadataType.DATE_TIME>;
 
@@ -106,7 +106,6 @@ const PARTIAL_DELETED_AT_FIELD = {
   isNullable: true,
   isUnique: false,
   isActive: true,
-  isCustom: false,
   isSystem: true,
   isUIReadOnly: true,
   isLabelSyncedWithName: false,
@@ -122,6 +121,7 @@ const PARTIAL_DELETED_AT_FIELD = {
   kanbanAggregateOperationViewUniversalIdentifiers: [],
   calendarViewUniversalIdentifiers: [],
   mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+  fieldPermissionUniversalIdentifiers: [],
   viewSortUniversalIdentifiers: [],
 } as const satisfies PartialSystemFlatFieldMetadata<FieldMetadataType.DATE_TIME>;
 
@@ -134,7 +134,6 @@ const PARTIAL_CREATED_BY_FIELD = {
   isNullable: false,
   isUnique: false,
   isActive: true,
-  isCustom: false,
   isSystem: true,
   isUIReadOnly: true,
   isLabelSyncedWithName: false,
@@ -150,6 +149,7 @@ const PARTIAL_CREATED_BY_FIELD = {
   kanbanAggregateOperationViewUniversalIdentifiers: [],
   calendarViewUniversalIdentifiers: [],
   mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+  fieldPermissionUniversalIdentifiers: [],
   viewSortUniversalIdentifiers: [],
 } as const satisfies PartialSystemFlatFieldMetadata<FieldMetadataType.ACTOR>;
 
@@ -162,7 +162,6 @@ const PARTIAL_UPDATED_BY_FIELD = {
   isNullable: false,
   isUnique: false,
   isActive: true,
-  isCustom: false,
   isSystem: true,
   isUIReadOnly: true,
   isLabelSyncedWithName: false,
@@ -178,6 +177,7 @@ const PARTIAL_UPDATED_BY_FIELD = {
   kanbanAggregateOperationViewUniversalIdentifiers: [],
   calendarViewUniversalIdentifiers: [],
   mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+  fieldPermissionUniversalIdentifiers: [],
   viewSortUniversalIdentifiers: [],
 } as const satisfies PartialSystemFlatFieldMetadata<FieldMetadataType.ACTOR>;
 
@@ -190,7 +190,6 @@ const PARTIAL_POSITION_FIELD = {
   isNullable: false,
   isUnique: false,
   isActive: true,
-  isCustom: false,
   isSystem: true,
   isUIReadOnly: true,
   isLabelSyncedWithName: false,
@@ -206,6 +205,7 @@ const PARTIAL_POSITION_FIELD = {
   kanbanAggregateOperationViewUniversalIdentifiers: [],
   calendarViewUniversalIdentifiers: [],
   mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+  fieldPermissionUniversalIdentifiers: [],
   viewSortUniversalIdentifiers: [],
 } as const satisfies PartialSystemFlatFieldMetadata<FieldMetadataType.POSITION>;
 
@@ -218,7 +218,6 @@ const PARTIAL_SEARCH_VECTOR_FIELD = {
   isNullable: true,
   isUnique: false,
   isActive: true,
-  isCustom: false,
   isSystem: true,
   isUIReadOnly: true,
   isLabelSyncedWithName: false,
@@ -236,6 +235,7 @@ const PARTIAL_SEARCH_VECTOR_FIELD = {
   kanbanAggregateOperationViewUniversalIdentifiers: [],
   calendarViewUniversalIdentifiers: [],
   mainGroupByFieldMetadataViewUniversalIdentifiers: [],
+  fieldPermissionUniversalIdentifiers: [],
   viewSortUniversalIdentifiers: [],
 } as const satisfies PartialSystemFlatFieldMetadata<FieldMetadataType.TS_VECTOR>;
 

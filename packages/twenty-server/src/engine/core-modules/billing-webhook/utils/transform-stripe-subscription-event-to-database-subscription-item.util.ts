@@ -8,10 +8,12 @@ export const transformStripeSubscriptionEventToDatabaseSubscriptionItem = (
     | Stripe.CustomerSubscriptionUpdatedEvent.Data
     | Stripe.CustomerSubscriptionCreatedEvent.Data
     | Stripe.CustomerSubscriptionDeletedEvent.Data,
+  workspaceId: string,
 ) => {
   return data.object.items.data.map((item) => {
     return {
       billingSubscriptionId,
+      workspaceId,
       stripeSubscriptionId: data.object.id,
       stripeProductId: String(item.price.product),
       stripePriceId: item.price.id,

@@ -1,9 +1,9 @@
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useLinkedObjectObjectMetadataItem = (id: string | null) => {
-  const objectMetadataItems: ObjectMetadataItem[] = useAtomStateValue(
+  const objectMetadataItems: EnrichedObjectMetadataItem[] = useAtomStateValue(
     objectMetadataItemsSelector,
   );
 

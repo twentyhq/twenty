@@ -1,4 +1,5 @@
 import { type PageLayoutWidgetManifest } from 'twenty-shared/application';
+import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
 
 import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
@@ -19,6 +20,7 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
     applicationUniversalIdentifier,
     pageLayoutTabUniversalIdentifier,
     title: pageLayoutWidgetManifest.title,
+    isActive: true,
     type: pageLayoutWidgetManifest.type as WidgetType,
     objectMetadataUniversalIdentifier:
       pageLayoutWidgetManifest.objectUniversalIdentifier ?? null,
@@ -26,8 +28,8 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
     gridPosition: pageLayoutWidgetManifest.gridPosition ?? {
       row: 0,
       column: 0,
-      rowSpan: 1,
-      columnSpan: 1,
+      rowSpan: DEFAULT_WIDGET_SIZE.default.h,
+      columnSpan: DEFAULT_WIDGET_SIZE.default.w,
     },
     position: null,
     universalConfiguration:
@@ -35,6 +37,7 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
     createdAt: now,
     updatedAt: now,
     deletedAt: null,
-    overrides: null,
+    conditionalAvailabilityExpression: null,
+    universalOverrides: null,
   };
 };

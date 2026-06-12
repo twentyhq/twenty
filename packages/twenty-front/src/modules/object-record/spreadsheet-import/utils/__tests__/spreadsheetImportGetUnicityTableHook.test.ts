@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { spreadsheetImportGetUnicityTableHook } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetUnicityTableHook';
 import { type ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { IndexType } from '~/generated-metadata/graphql';
@@ -23,7 +23,7 @@ describe('spreadsheetImportGetUnicityTableHook', () => {
     fieldName: 'employees',
   });
 
-  const mockObjectMetadataItem: ObjectMetadataItem = {
+  const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
     ...baseMockCompany,
     indexMetadatas: [
       {

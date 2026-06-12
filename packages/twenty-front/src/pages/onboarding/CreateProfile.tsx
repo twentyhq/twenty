@@ -1,9 +1,9 @@
-import { styled } from '@linaria/react';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { styled } from '@linaria/react';
 import { useCallback, useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { Key } from 'ts-key-enum';
 import { z } from 'zod';
 
@@ -11,23 +11,23 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
 import { WorkspaceMemberPictureUploader } from '@/settings/workspace-member/components/WorkspaceMemberPictureUploader';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { ModalContent } from 'twenty-ui/layout';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { i18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/display';
-import { MainButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title } from 'twenty-ui-deprecated/display';
+import { MainButton } from 'twenty-ui-deprecated/input';
+import { ModalContent } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -70,11 +70,12 @@ export const CreateProfile = () => {
   const { t } = useLingui();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useAtomState(
-    currentWorkspaceMemberState,
-  );
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const setCurrentUser = useSetAtomState(currentUserState);
-  const { updateOneRecord } = useUpdateOneRecord();
+  const setCurrentWorkspaceMembers = useSetAtomState(
+    currentWorkspaceMembersState,
+  );
+  const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
 
   // Form
   const {
@@ -101,10 +102,9 @@ export const CreateProfile = () => {
           throw new Error('First name or last name is missing');
         }
 
-        await updateOneRecord({
-          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-          idToUpdate: currentWorkspaceMember?.id,
-          updateOneRecordInput: {
+        await updateWorkspaceMemberSettings({
+          workspaceMemberId: currentWorkspaceMember.id,
+          update: {
             name: {
               firstName: data.firstName,
               lastName: data.lastName,
@@ -113,20 +113,20 @@ export const CreateProfile = () => {
           },
         });
 
-        setCurrentWorkspaceMember((current) => {
-          if (isDefined(current)) {
-            return {
-              ...current,
-              name: {
-                firstName: data.firstName,
-                lastName: data.lastName,
-              },
-
-              colorScheme: 'System',
-            };
-          }
-          return current;
-        });
+        setCurrentWorkspaceMembers((members) =>
+          members.map((member) =>
+            member.id === currentWorkspaceMember?.id
+              ? {
+                  ...member,
+                  name: {
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                  },
+                  colorScheme: 'System',
+                }
+              : member,
+          ),
+        );
 
         setCurrentUser((current) => {
           if (isDefined(current)) {
@@ -150,9 +150,9 @@ export const CreateProfile = () => {
       currentWorkspaceMember?.id,
       setNextOnboardingStatus,
       enqueueErrorSnackBar,
-      setCurrentWorkspaceMember,
+      setCurrentWorkspaceMembers,
       setCurrentUser,
-      updateOneRecord,
+      updateWorkspaceMemberSettings,
     ],
   );
 

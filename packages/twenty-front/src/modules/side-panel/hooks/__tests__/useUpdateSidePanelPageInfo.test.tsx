@@ -6,7 +6,7 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconArrowDown, IconDotsVertical } from 'twenty-ui/display';
+import { IconArrowDown, IconDotsVertical } from 'twenty-ui-deprecated/display';
 
 const mockedPageInfo = {
   title: 'Initial Title',
@@ -16,7 +16,7 @@ const mockedPageInfo = {
 
 const mockedNavigationStack = [
   {
-    page: SidePanelPages.Root,
+    page: SidePanelPages.CommandMenuDisplay,
     pageTitle: 'Initial Title',
     pageIcon: IconDotsVertical,
     pageId: 'test-page-id',
@@ -65,7 +65,7 @@ describe('useUpdateSidePanelPageInfo', () => {
     );
     expect(sidePanelNavigationStack).toEqual([
       {
-        page: SidePanelPages.Root,
+        page: SidePanelPages.CommandMenuDisplay,
         pageTitle: 'New Title',
         pageIcon: IconArrowDown,
         pageId: 'test-page-id',
@@ -94,7 +94,7 @@ describe('useUpdateSidePanelPageInfo', () => {
     );
     expect(sidePanelNavigationStack).toEqual([
       {
-        page: SidePanelPages.Root,
+        page: SidePanelPages.CommandMenuDisplay,
         pageTitle: 'New Title',
         pageIcon: IconDotsVertical,
         pageId: 'test-page-id',
@@ -123,7 +123,7 @@ describe('useUpdateSidePanelPageInfo', () => {
     );
     expect(sidePanelNavigationStack).toEqual([
       {
-        page: SidePanelPages.Root,
+        page: SidePanelPages.CommandMenuDisplay,
         pageTitle: 'Initial Title',
         pageIcon: IconArrowDown,
         pageId: 'test-page-id',

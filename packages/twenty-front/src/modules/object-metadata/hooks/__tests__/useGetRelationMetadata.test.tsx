@@ -6,7 +6,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
@@ -18,12 +18,12 @@ describe('useGetRelationMetadata', () => {
   beforeEach(() => {
     setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
   });
 
   it('should return correct properties', async () => {
-    const objectMetadata = generatedMockObjectMetadataItems.find(
+    const objectMetadata = getTestEnrichedObjectMetadataItemsMock().find(
       (item) => item.nameSingular === 'person',
     )!;
     const fieldMetadataItem = objectMetadata.fields.find(
@@ -42,7 +42,7 @@ describe('useGetRelationMetadata', () => {
     } = result.current({ fieldMetadataItem }) ?? {};
 
     const expectedRelationObjectMetadataItem =
-      generatedMockObjectMetadataItems.find(
+      getTestEnrichedObjectMetadataItemsMock().find(
         (item) => item.nameSingular === 'opportunity',
       );
     const expectedRelationFieldMetadataItem =

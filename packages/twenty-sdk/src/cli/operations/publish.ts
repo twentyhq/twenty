@@ -42,8 +42,7 @@ const innerAppPublish = async (
       success: false,
       error: {
         code: APP_ERROR_CODES.PUBLISH_FAILED,
-        message:
-          'npm publish failed. Make sure you are logged in (`npm login`) and the package name is available.',
+        message: `npm publish failed`,
       },
     };
   }

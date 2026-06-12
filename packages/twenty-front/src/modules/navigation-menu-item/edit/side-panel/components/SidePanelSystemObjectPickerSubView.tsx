@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -9,12 +9,14 @@ import { useSidePanelFilteredPickerItems } from '@/side-panel/hooks/useSidePanel
 import { SidePanelObjectPickerItem } from '@/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerItem';
 
 type SidePanelSystemObjectPickerSubViewProps = {
-  systemObjects: ObjectMetadataItem[];
+  systemObjects: EnrichedObjectMetadataItem[];
   searchValue: string;
   onSearchChange: (value: string) => void;
   isViewItem: boolean;
-  onSelectObjectForViewEdit?: (objectMetadataItem: ObjectMetadataItem) => void;
-  onChangeObject: (objectMetadataItem: ObjectMetadataItem) => void;
+  onSelectObjectForViewEdit?: (
+    objectMetadataItem: EnrichedObjectMetadataItem,
+  ) => void;
+  onChangeObject: (objectMetadataItem: EnrichedObjectMetadataItem) => void;
   objectMenuItemVariant?: 'add' | 'edit';
   emptyNoResultsText?: string;
   disableDrag?: boolean;
@@ -72,7 +74,6 @@ export const SidePanelSystemObjectPickerSubView = ({
         <SidePanelAddToNavigationDroppable>
           {({ innerRef, droppableProps, placeholder }) => (
             <SidePanelList
-              commandGroups={[]}
               selectableItemIds={selectableItemIds}
               noResults={isEmpty}
               noResultsText={noResultsText}
@@ -87,7 +88,6 @@ export const SidePanelSystemObjectPickerSubView = ({
         </SidePanelAddToNavigationDroppable>
       ) : (
         <SidePanelList
-          commandGroups={[]}
           selectableItemIds={selectableItemIds}
           noResults={isEmpty}
           noResultsText={noResultsText}

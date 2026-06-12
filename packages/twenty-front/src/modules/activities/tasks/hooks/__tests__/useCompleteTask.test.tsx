@@ -5,7 +5,7 @@ import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
 import { type Task } from '@/activities/types/Task';
 import { generateUpdateOneRecordMutation } from '@/object-metadata/utils/generateUpdateOneRecordMutation';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const task: Task = {
@@ -27,7 +27,7 @@ const task: Task = {
 
 const updateOneTaskMutation = generateUpdateOneRecordMutation({
   objectMetadataItem: getMockObjectMetadataItemOrThrow('task'),
-  objectMetadataItems: generatedMockObjectMetadataItems,
+  objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
   computeReferences: false,
   objectPermissionsByObjectMetadataId: {},
 });

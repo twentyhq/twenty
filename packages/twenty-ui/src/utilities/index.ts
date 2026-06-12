@@ -12,10 +12,12 @@ export { AnimatedContainer } from './animation/components/AnimatedContainer';
 export { AnimatedEaseIn } from './animation/components/AnimatedEaseIn';
 export { AnimatedEaseInOut } from './animation/components/AnimatedEaseInOut';
 export { AnimatedFadeOut } from './animation/components/AnimatedFadeOut';
+export { AnimatedIconCrossfade } from './animation/components/AnimatedIconCrossfade';
 export { AnimatedRotate } from './animation/components/AnimatedRotate';
 export { AnimatedTextWord } from './animation/components/AnimatedTextWord';
 export { AnimatedTranslation } from './animation/components/AnimatedTranslation';
 export { getMainColorNameFromPaletteColorName } from './color/utils/getMainColorNameFromPaletteColorName';
+export { parseThemeColor } from './color/utils/parseThemeColor';
 export {
   stringToThemeColor,
   stringToThemeColorP3String,
@@ -36,3 +38,7 @@ export { createState } from './state/utils/createState';
 export type { ClickOutsideAttributes } from './types/ClickOutsideAttributes';
 export type { Nullable } from './types/Nullable';
 export { getDisplayValueByUrlType } from './utils/getDisplayValueByUrlType';
+export { getImageAbsoluteURI } from './utils/getImageAbsoluteURI';
+export { isDefined } from './utils/isDefined';
+export type { LinkifyMatch } from './utils/linkifyText';
+export { linkifyText } from './utils/linkifyText';

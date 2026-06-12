@@ -366,19 +366,9 @@ export const computeMetadataSchemaComponents = (
               createdAt: { type: 'string', format: 'date-time' },
               updatedAt: { type: 'string', format: 'date-time' },
               fields: {
-                type: 'object',
-                properties: {
-                  edges: {
-                    type: 'object',
-                    properties: {
-                      node: {
-                        type: 'array',
-                        items: {
-                          $ref: '#/components/schemas/FieldForResponse',
-                        },
-                      },
-                    },
-                  },
+                type: 'array',
+                items: {
+                  $ref: '#/components/schemas/FieldForResponse',
                 },
               },
             },
@@ -1100,7 +1090,12 @@ export const computeMetadataSchemaComponents = (
               name: { type: 'string' },
               type: {
                 type: 'string',
-                enum: ['RECORD_INDEX', 'RECORD_PAGE', 'DASHBOARD'],
+                enum: [
+                  'RECORD_INDEX',
+                  'RECORD_PAGE',
+                  'DASHBOARD',
+                  'STANDALONE_PAGE',
+                ],
                 default: 'RECORD_PAGE',
               },
               objectMetadataId: { type: 'string', format: 'uuid' },
@@ -1121,7 +1116,12 @@ export const computeMetadataSchemaComponents = (
               name: { type: 'string' },
               type: {
                 type: 'string',
-                enum: ['RECORD_INDEX', 'RECORD_PAGE', 'DASHBOARD'],
+                enum: [
+                  'RECORD_INDEX',
+                  'RECORD_PAGE',
+                  'DASHBOARD',
+                  'STANDALONE_PAGE',
+                ],
               },
               objectMetadataId: { type: 'string', format: 'uuid' },
             },
@@ -1134,7 +1134,12 @@ export const computeMetadataSchemaComponents = (
               name: { type: 'string' },
               type: {
                 type: 'string',
-                enum: ['RECORD_INDEX', 'RECORD_PAGE', 'DASHBOARD'],
+                enum: [
+                  'RECORD_INDEX',
+                  'RECORD_PAGE',
+                  'DASHBOARD',
+                  'STANDALONE_PAGE',
+                ],
               },
               objectMetadataId: { type: 'string', format: 'uuid' },
               tabs: {

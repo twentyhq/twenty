@@ -1,10 +1,11 @@
-import { styled } from '@linaria/react';
+import { clsx } from 'clsx';
 import { type MouseEvent } from 'react';
 
 import { type IconComponent } from '@ui/display';
-import { themeCssVariables } from '@ui/theme-constants';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import { StyledMenuItemLeftContent } from '../internals/components/StyledMenuItemBase';
+
+import styles from './MenuItemSuggestion.module.scss';
 
 export type MenuItemSuggestionProps = {
   LeftIcon?: IconComponent | null;
@@ -16,45 +17,6 @@ export type MenuItemSuggestionProps = {
   className?: string;
   onClick?: (event: MouseEvent<HTMLLIElement>) => void;
 };
-
-const StyledSuggestionMenuItem = styled.li<{
-  selected?: boolean;
-}>`
-  --horizontal-padding: ${themeCssVariables.spacing[1]};
-  --vertical-padding: ${themeCssVariables.spacing[2]};
-
-  align-items: center;
-
-  border-radius: ${themeCssVariables.border.radius.sm};
-  cursor: pointer;
-
-  display: flex;
-
-  flex-direction: row;
-
-  font-size: ${themeCssVariables.font.size.sm};
-
-  gap: ${themeCssVariables.spacing[2]};
-
-  height: calc(32px - 2 * var(--vertical-padding));
-  justify-content: space-between;
-
-  padding: var(--vertical-padding) var(--horizontal-padding);
-
-  background: ${({ selected }) =>
-    selected ? themeCssVariables.background.transparent.medium : 'transparent'};
-  color: ${themeCssVariables.font.color.secondary};
-
-  transition: background 0.1s ease;
-  &:hover {
-    background: ${themeCssVariables.background.transparent.light};
-  }
-
-  position: relative;
-  user-select: none;
-
-  width: calc(100% - 2 * var(--horizontal-padding));
-`;
 
 export const MenuItemSuggestion = ({
   LeftIcon,
@@ -75,10 +37,10 @@ export const MenuItemSuggestion = ({
   };
 
   return (
-    <StyledSuggestionMenuItem
+    <li
+      className={clsx(styles.suggestionMenuItem, className)}
+      data-selected={selected || undefined}
       onClick={handleMenuItemClick}
-      className={className}
-      selected={selected}
     >
       <StyledMenuItemLeftContent>
         <MenuItemLeftContent
@@ -89,6 +51,6 @@ export const MenuItemSuggestion = ({
           withIconContainer={withIconContainer}
         />
       </StyledMenuItemLeftContent>
-    </StyledSuggestionMenuItem>
+    </li>
   );
 };

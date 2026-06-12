@@ -1,24 +1,45 @@
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-
-import { SettingsEmailingDomainVerificationRecords } from '@/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords';
-import { GET_ALL_EMAILING_DOMAINS } from '@/settings/emailing-domains/graphql/queries/getAllEmailingDomains';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
+import { useMutation, useQuery } from '@apollo/client/react';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
+
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsEmailingDomainVerificationRecords } from '@/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { type GetEmailingDomainsQuery } from '~/generated-metadata/graphql';
+import { IconTrash } from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import {
+  DeleteEmailingDomainDocument,
+  type GetEmailingDomainsQuery,
+  GetEmailingDomainsDocument,
+} from '~/generated-metadata/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+
+const DELETE_EMAILING_DOMAIN_MODAL_ID = 'delete-emailing-domain-modal';
 
 export const SettingsEmailingDomainDetail = () => {
+  const { t } = useLingui();
+  const navigateSettings = useNavigateSettings();
   const { domainId } = useParams<{ domainId: string }>();
 
   const { data, loading, error } = useQuery<GetEmailingDomainsQuery>(
-    GET_ALL_EMAILING_DOMAINS,
+    GetEmailingDomainsDocument,
     {
       skip: !domainId,
     },
+  );
+
+  const { openModal } = useModal();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const [deleteEmailingDomain, { loading: deleting }] = useMutation(
+    DeleteEmailingDomainDocument,
+    { refetchQueries: [GetEmailingDomainsDocument] },
   );
 
   const emailingDomain = data?.getEmailingDomains?.find(
@@ -26,27 +47,58 @@ export const SettingsEmailingDomainDetail = () => {
   );
 
   if (loading) {
-    return <div>{t`Loading...`}</div>;
+    return <SettingsEmptyPlaceholder>{t`Loading...`}</SettingsEmptyPlaceholder>;
   }
 
   if (isDefined(error) || !isDefined(emailingDomain)) {
-    return <Trans>Domain not found</Trans>;
+    return (
+      <SettingsEmptyPlaceholder>
+        <Trans>Domain not found</Trans>
+      </SettingsEmptyPlaceholder>
+    );
   }
 
+  const handleDelete = async () => {
+    try {
+      await deleteEmailingDomain({ variables: { id: emailingDomain.id } });
+      enqueueSuccessSnackBar({
+        message: t`Emailing domain deleted successfully`,
+      });
+      navigateSettings(SettingsPath.WorkspaceEmail);
+    } catch (deleteError) {
+      enqueueErrorSnackBar({
+        ...(CombinedGraphQLErrors.is(deleteError)
+          ? { apolloError: deleteError }
+          : {}),
+      });
+    }
+  };
+
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={emailingDomain.domain}
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
-          children: <Trans>Emailing Domains</Trans>,
-          href: getSettingsPath(SettingsPath.Domains),
+          children: <Trans>Email</Trans>,
+          href: getSettingsPath(SettingsPath.WorkspaceEmail),
         },
         { children: emailingDomain.domain },
       ]}
+      actionButton={
+        <Button
+          Icon={IconTrash}
+          title={t`Delete`}
+          variant="secondary"
+          accent="danger"
+          size="small"
+          disabled={deleting}
+          onClick={() => openModal(DELETE_EMAILING_DOMAIN_MODAL_ID)}
+        />
+      }
     >
       <SettingsPageContainer>
         {emailingDomain.verificationRecords &&
@@ -56,6 +108,15 @@ export const SettingsEmailingDomainDetail = () => {
             />
           )}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+      <ConfirmationModal
+        modalInstanceId={DELETE_EMAILING_DOMAIN_MODAL_ID}
+        title={t`Delete emailing domain`}
+        subtitle={t`Are you sure you want to delete ${emailingDomain.domain}? Outbound mail through this domain will stop working.`}
+        onConfirmClick={handleDelete}
+        confirmButtonText={t`Delete`}
+        confirmButtonAccent="danger"
+        loading={deleting}
+      />
+    </SettingsPageLayout>
   );
 };

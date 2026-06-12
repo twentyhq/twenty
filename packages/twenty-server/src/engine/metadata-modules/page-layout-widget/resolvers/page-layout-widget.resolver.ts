@@ -4,13 +4,21 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
-import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+} from '@nestjs/graphql';
 
-import GraphQLJSON from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -22,8 +30,8 @@ import { UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-la
 import { PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
 import { WidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/dtos/widget-configuration.interface';
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';
+import { resolvePageLayoutWidgetTitle } from 'src/engine/metadata-modules/page-layout-widget/utils/resolve-page-layout-widget-title.util';
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
-import { resolveOverridableEntityProperty } from 'src/engine/metadata-modules/utils/resolve-overridable-entity-property.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
 @MetadataResolver(() => PageLayoutWidgetDTO)
@@ -34,7 +42,31 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
 export class PageLayoutWidgetResolver {
   constructor(
     private readonly pageLayoutWidgetService: PageLayoutWidgetService,
+    private readonly i18nService: I18nService,
+    private readonly applicationService: ApplicationService,
   ) {}
+
+  @ResolveField(() => String)
+  async title(
+    @Parent() widget: PageLayoutWidgetDTO,
+    @Context() context: I18nContext,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<string> {
+    const i18n = this.i18nService.getI18nInstance(context.req.locale);
+
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspace },
+      );
+
+    return resolvePageLayoutWidgetTitle({
+      title: widget.title,
+      applicationId: widget.applicationId,
+      twentyStandardApplicationId: twentyStandardFlatApplication.id,
+      overrides: widget.overrides,
+      i18nInstance: i18n,
+    });
+  }
 
   @Query(() => [PageLayoutWidgetDTO])
   @UseGuards(NoPermissionGuard)
@@ -98,30 +130,8 @@ export class PageLayoutWidgetResolver {
     });
   }
 
-  @ResolveField(() => String)
-  title(@Parent() widget: PageLayoutWidgetDTO): string {
-    return resolveOverridableEntityProperty(widget, 'title');
-  }
-
-  @ResolveField(() => GraphQLJSON, { nullable: true })
-  position(@Parent() widget: PageLayoutWidgetDTO) {
-    return resolveOverridableEntityProperty(widget, 'position');
-  }
-
-  @ResolveField(() => GraphQLJSON, { nullable: true })
-  conditionalDisplay(@Parent() widget: PageLayoutWidgetDTO) {
-    return resolveOverridableEntityProperty(widget, 'conditionalDisplay');
-  }
-
   @ResolveField(() => WidgetConfiguration, { nullable: true })
   configuration(@Parent() widget: PageLayoutWidgetDTO) {
     return widget.configuration;
-  }
-
-  @ResolveField(() => Boolean)
-  isOverridden(@Parent() widget: PageLayoutWidgetDTO): boolean {
-    return (
-      isDefined(widget.overrides) && Object.keys(widget.overrides).length > 0
-    );
   }
 }

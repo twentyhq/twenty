@@ -96,7 +96,7 @@ export class E2BDriver implements CodeInterpreterDriver {
       const execution = await sbx.runCode(envSetup + code, {
         onStdout: (data) => callbacks?.onStdout?.(data.line),
         onStderr: (data) => callbacks?.onStderr?.(data.line),
-        onResult: (result) => {
+        onResult: async (result) => {
           if (result.png) {
             const outputFile: OutputFile = {
               filename: `chart-${chartCounter++}.png`,
@@ -105,7 +105,7 @@ export class E2BDriver implements CodeInterpreterDriver {
             };
 
             outputFiles.push(outputFile);
-            callbacks?.onResult?.(outputFile);
+            await callbacks?.onResult?.(outputFile);
           }
         },
       });
@@ -126,7 +126,7 @@ export class E2BDriver implements CodeInterpreterDriver {
             };
 
             outputFiles.push(outputFile);
-            callbacks?.onResult?.(outputFile);
+            await callbacks?.onResult?.(outputFile);
           }
         }
       } catch {

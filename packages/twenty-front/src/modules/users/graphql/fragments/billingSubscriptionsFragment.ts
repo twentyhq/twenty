@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
-import { BILLING_SUBSCRIPTION_SCHEDULE_PHASE_ITEM_FRAGMENT } from '@/billing/graphql/fragments/billingSubscriptionSchedulePhaseItemFragment';
-import { BILLING_SUBSCRIPTION_SCHEDULE_PHASE_FRAGMENT } from '@/billing/graphql/fragments/billingSubscriptionSchedulePhaseFragment';
+import { BILLING_SUBSCRIPTION_SCHEDULE_PHASE_ITEM_FRAGMENT } from '@/settings/billing/graphql/fragments/billingSubscriptionSchedulePhaseItemFragment';
+import { BILLING_SUBSCRIPTION_SCHEDULE_PHASE_FRAGMENT } from '@/settings/billing/graphql/fragments/billingSubscriptionSchedulePhaseFragment';
 
 export const BILLING_SUBSCRIPTION_FRAGMENT = gql`
   fragment BillingSubscriptionFragment on BillingSubscription {

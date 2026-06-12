@@ -1,7 +1,7 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 import { mockedPersonRecords } from '~/testing/mock-data/generated/data/people/mock-people-data';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 
 const peopleMock = [...mockedPersonRecords];
@@ -9,11 +9,14 @@ const peopleMock = [...mockedPersonRecords];
 describe('getRecordNodeFromRecord', () => {
   it('computes relation records cache references by default', () => {
     // Given
-    const objectMetadataItems: ObjectMetadataItem[] =
-      generatedMockObjectMetadataItems;
+    const objectMetadataItems: EnrichedObjectMetadataItem[] =
+      getTestEnrichedObjectMetadataItemsMock();
     const objectMetadataItem:
-      | Pick<ObjectMetadataItem, 'fields' | 'namePlural' | 'nameSingular'>
-      | undefined = generatedMockObjectMetadataItems.find(
+      | Pick<
+          EnrichedObjectMetadataItem,
+          'fields' | 'namePlural' | 'nameSingular'
+        >
+      | undefined = getTestEnrichedObjectMetadataItemsMock().find(
       (item) => item.nameSingular === 'person',
     );
 
@@ -51,11 +54,14 @@ describe('getRecordNodeFromRecord', () => {
 
   it('does not compute relation records cache references when `computeReferences` is false', () => {
     // Given
-    const objectMetadataItems: ObjectMetadataItem[] =
-      generatedMockObjectMetadataItems;
+    const objectMetadataItems: EnrichedObjectMetadataItem[] =
+      getTestEnrichedObjectMetadataItemsMock();
     const objectMetadataItem:
-      | Pick<ObjectMetadataItem, 'fields' | 'namePlural' | 'nameSingular'>
-      | undefined = generatedMockObjectMetadataItems.find(
+      | Pick<
+          EnrichedObjectMetadataItem,
+          'fields' | 'namePlural' | 'nameSingular'
+        >
+      | undefined = getTestEnrichedObjectMetadataItemsMock().find(
       (item) => item.nameSingular === 'person',
     );
 

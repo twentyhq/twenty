@@ -36,6 +36,7 @@ type Assertions = [
   Expect<
     Equal<
       FieldMetadataOneToManySyncableRelations,
+      | 'fieldPermissions'
       | 'viewFields'
       | 'viewFilters'
       | 'kanbanAggregateOperationViews'

@@ -3,24 +3,24 @@ import { type ReactNode, useContext } from 'react';
 
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
 import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { AnimatePresence } from 'framer-motion';
+import { isDefined } from 'twenty-shared/utils';
 import {
   type IconComponent,
   IconX,
   OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
-import { isDefined } from 'twenty-shared/utils';
+} from 'twenty-ui-deprecated/display';
+import { LightIconButton } from 'twenty-ui-deprecated/input';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledTopBarContainer = styled.div<{ isMobile: boolean }>`
   align-items: center;
@@ -34,7 +34,7 @@ const StyledTopBarContainer = styled.div<{ isMobile: boolean }>`
   min-height: ${PAGE_BAR_MIN_HEIGHT}px;
   padding-bottom: ${themeCssVariables.spacing[3]};
   padding-left: ${({ isMobile }) =>
-    isMobile ? themeCssVariables.spacing[3] : 0};
+    isMobile ? themeCssVariables.spacing[3] : themeCssVariables.spacing[4]};
   padding-right: ${themeCssVariables.spacing[3]};
   padding-top: ${themeCssVariables.spacing[3]};
 `;
@@ -42,10 +42,11 @@ const StyledTopBarContainer = styled.div<{ isMobile: boolean }>`
 const StyledLeftContainer = styled.div`
   align-items: center;
   display: flex;
+  flex: 0 1 auto;
   flex-direction: row;
   gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
   overflow-x: hidden;
-  width: 100%;
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     padding-left: ${themeCssVariables.spacing[1]};
   }
@@ -71,9 +72,13 @@ const StyledTopBarIconStyledTitleContainer = styled.div`
 `;
 
 const StyledPageActionContainer = styled.div`
-  display: inline-flex;
-  flex: 1 0 auto;
+  align-items: center;
+  display: flex;
+  flex: 1 1 0;
   gap: ${themeCssVariables.spacing[2]};
+
+  justify-content: flex-end;
+  min-width: 0;
 `;
 
 const StyledIconContainer = styled.div`
@@ -100,16 +105,15 @@ export const PageHeader = ({
   className,
 }: PageHeaderProps) => {
   const isMobile = useIsMobile();
+  const isSettingsPage = useIsSettingsPage();
   const { theme } = useContext(ThemeContext);
-  const isNavigationDrawerExpanded = useAtomStateValue(
-    isNavigationDrawerExpandedState,
-  );
+  const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
 
   return (
     <AnimatePresence initial={false}>
       <StyledTopBarContainer className={className} isMobile={isMobile}>
         <StyledLeftContainer>
-          {!isMobile && !isNavigationDrawerExpanded && (
+          {!isNavigationDrawerExpanded && (!isMobile || isSettingsPage) && (
             <NavigationDrawerCollapseButton direction="right" />
           )}
           {hasClosePageButton && (

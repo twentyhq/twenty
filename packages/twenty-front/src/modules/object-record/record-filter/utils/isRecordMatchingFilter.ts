@@ -29,6 +29,7 @@ import {
   type UUIDFilter,
 } from 'twenty-shared/types';
 import {
+  computeRelationGqlFieldJoinColumnName,
   isDefined,
   isEmptyObject,
   isMatchingArrayFilter,
@@ -48,7 +49,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { computePossibleMorphGqlFieldForFieldName } from '@/object-record/cache/utils/computePossibleMorphGqlFieldForFieldName';
 
 const isLeafFilter = (
@@ -100,7 +101,7 @@ export const isRecordMatchingFilter = ({
 }: {
   record: any;
   filter: RecordGqlOperationFilter;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
 }): boolean => {
   if (Object.keys(filter).length === 0 && record.deletedAt === null) {
     return true;
@@ -203,7 +204,8 @@ export const isRecordMatchingFilter = ({
         (field) =>
           (field.type === FieldMetadataType.RELATION ||
             field.type === FieldMetadataType.MORPH_RELATION) &&
-          field.settings?.joinColumnName === filterKey,
+          computeRelationGqlFieldJoinColumnName({ name: field.name }) ===
+            filterKey,
       ) ??
       objectMetadataItem.fields.find(
         (field) =>
@@ -334,7 +336,8 @@ export const isRecordMatchingFilter = ({
         });
       }
       case FieldMetadataType.NUMBER:
-      case FieldMetadataType.NUMERIC: {
+      case FieldMetadataType.NUMERIC:
+      case FieldMetadataType.POSITION: {
         return isMatchingFloatFilter({
           floatFilter: filterValue as FloatFilter,
           value: record[filterKey],
@@ -415,7 +418,9 @@ export const isRecordMatchingFilter = ({
       case FieldMetadataType.RELATION:
       case FieldMetadataType.MORPH_RELATION: {
         const isJoinColumn =
-          objectMetadataField.settings?.joinColumnName === filterKey ||
+          computeRelationGqlFieldJoinColumnName({
+            name: objectMetadataField.name,
+          }) === filterKey ||
           (objectMetadataField.type === FieldMetadataType.MORPH_RELATION &&
             isMorphRelationJoinColumnKey({
               fieldMetadataItem: objectMetadataField,
@@ -429,9 +434,10 @@ export const isRecordMatchingFilter = ({
           });
         }
 
-        throw new Error(
-          `Not implemented yet, use UUID filter instead on the corresponding "${filterKey}Id" field`,
-        );
+        return isMatchingUUIDFilter({
+          uuidFilter: filterValue as UUIDFilter,
+          value: record[filterKey]?.id ?? null,
+        });
       }
       case FieldMetadataType.TS_VECTOR: {
         return isMatchingTSVectorFilter({

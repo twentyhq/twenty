@@ -1,22 +1,133 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { ComponentDecorator } from '@ui/testing';
-import { Banner } from '../Banner';
+import { IconX } from '@ui/display';
+import {
+  CatalogDecorator,
+  type CatalogStory,
+  ComponentDecorator,
+} from '@ui/testing';
+import { Button } from '../../../../input/button/components/Button/Button';
+import { IconButton } from '../../../../input/button/components/IconButton';
+import { Banner, type BannerColor, type BannerVariant } from '../Banner';
+
+import styles from './Banner.stories.module.scss';
+
+const getButtonAccent = (color?: BannerColor) =>
+  color === 'danger' ? 'danger' : 'blue';
+
+const BannerCloseButton = ({
+  color,
+  variant,
+}: {
+  color?: BannerColor;
+  variant?: BannerVariant;
+}) =>
+  variant === 'primary' ? (
+    <IconButton
+      className={styles.invertedIconButton}
+      Icon={IconX}
+      size="small"
+      variant="tertiary"
+      ariaLabel="Close"
+    />
+  ) : (
+    <IconButton
+      Icon={IconX}
+      size="small"
+      variant="tertiary"
+      accent={getButtonAccent(color)}
+      ariaLabel="Close"
+    />
+  );
 
 const meta: Meta<typeof Banner> = {
   title: 'UI/Layout/Banner/Banner',
   component: Banner,
-  decorators: [ComponentDecorator],
-  render: (args) => (
-    // oxlint-disable-next-line react/jsx-props-no-spreading
-    <Banner {...args}>
-      Sync lost with mailbox hello@twenty.com. Please reconnect for updates:
-    </Banner>
-  ),
-  argTypes: {},
+  argTypes: {
+    color: {
+      control: 'select',
+      options: ['blue', 'danger'] satisfies BannerColor[],
+    },
+    variant: {
+      control: 'select',
+      options: ['primary', 'secondary'] satisfies BannerVariant[],
+    },
+  },
 };
 
 export default meta;
 type Story = StoryObj<typeof Banner>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: {
+    color: 'blue',
+    variant: 'primary',
+  },
+  render: (args) => (
+    <div className={styles.container}>
+      {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
+      <Banner {...args}>
+        <div className={styles.bannerContent}>
+          Sync lost with mailbox hello@twenty.com. Please reconnect for updates:
+          <Button
+            variant="secondary"
+            accent={getButtonAccent(args.color)}
+            title="Reconnect"
+            size="small"
+            inverted={args.variant === 'primary'}
+          />
+        </div>
+        <BannerCloseButton color={args.color} variant={args.variant} />
+      </Banner>
+    </div>
+  ),
+  decorators: [ComponentDecorator],
+};
+
+export const Catalog: CatalogStory<Story, typeof Banner> = {
+  args: {},
+  argTypes: {
+    color: { control: false },
+    variant: { control: false },
+  },
+  render: (args) => (
+    // oxlint-disable-next-line react/jsx-props-no-spreading
+    <Banner {...args}>
+      <div className={styles.bannerContent}>
+        Sync lost with mailbox hello@twenty.com. Please reconnect for updates:
+        <Button
+          variant="secondary"
+          accent={getButtonAccent(args.color)}
+          title="Reconnect"
+          size="small"
+          inverted={args.variant === 'primary'}
+        />
+      </div>
+      <BannerCloseButton color={args.color} variant={args.variant} />
+    </Banner>
+  ),
+  parameters: {
+    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+    a11y: { test: 'todo' },
+    catalog: {
+      dimensions: [
+        {
+          name: 'variant',
+          values: ['primary', 'secondary'] satisfies BannerVariant[],
+          props: (variant: BannerVariant) => ({ variant }),
+        },
+        {
+          name: 'color',
+          values: ['blue', 'danger'] satisfies BannerColor[],
+          props: (color: BannerColor) => ({ color }),
+        },
+      ],
+      options: {
+        elementContainer: {
+          width: 700,
+        },
+      },
+    },
+  },
+  decorators: [CatalogDecorator],
+};

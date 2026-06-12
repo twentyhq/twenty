@@ -3,11 +3,10 @@ import { createCommandMenuItem } from 'test/integration/metadata/suites/command-
 import { deleteCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/delete-command-menu-item.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/update-command-menu-item.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 
 describe('CommandMenuItem update should succeed', () => {
   let createdCommandMenuItemId: string;
@@ -15,12 +14,6 @@ describe('CommandMenuItem update should succeed', () => {
   let personObjectMetadataId: string;
 
   beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
     const { objects } = await findManyObjectMetadata({
       expectToFail: false,
       input: {
@@ -49,14 +42,6 @@ describe('CommandMenuItem update should succeed', () => {
     personObjectMetadataId = personObjectMetadata.id;
   });
 
-  afterAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
-  });
-
   beforeEach(async () => {
     const workflowVersionId = faker.string.uuid();
 
@@ -64,6 +49,7 @@ describe('CommandMenuItem update should succeed', () => {
       expectToFail: false,
       input: {
         workflowVersionId,
+        engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
         label: 'Original Label',
         icon: 'IconOriginal',
         isPinned: false,

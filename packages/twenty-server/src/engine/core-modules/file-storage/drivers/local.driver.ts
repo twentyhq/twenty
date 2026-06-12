@@ -300,6 +300,10 @@ export class LocalDriver implements StorageDriver {
     return existsSync(fullPath);
   }
 
+  async getPresignedUrl(): Promise<string | null> {
+    return null;
+  }
+
   async checkFolderExists(params: { folderPath: string }): Promise<boolean> {
     const folderFullPath = path.resolve(
       this.options.storagePath,

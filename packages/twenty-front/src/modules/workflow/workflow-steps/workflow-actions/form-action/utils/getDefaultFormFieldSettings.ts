@@ -47,6 +47,17 @@ export const getDefaultFormFieldSettings = (type: WorkflowFormFieldType) => {
           selectedFieldId: undefined,
         },
       };
+    case FieldMetadataType.MULTI_SELECT:
+      return {
+        id: v4(),
+        name: 'multiSelect',
+        label: 'Multi-Select',
+        placeholder: 'Choose values',
+        settings: {
+          selectType: 'EXISTING_FIELD',
+          selectedFieldId: undefined,
+        },
+      };
     default:
       assertUnreachable(type);
   }

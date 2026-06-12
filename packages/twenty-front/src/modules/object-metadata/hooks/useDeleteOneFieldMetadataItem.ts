@@ -3,7 +3,7 @@ import { DeleteOneFieldMetadataItemDocument } from '~/generated-metadata/graphql
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateFieldMetadataItemComponentState';
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
@@ -22,7 +22,7 @@ export const useDeleteOneFieldMetadataItem = () => {
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { removeFromDraft, applyChanges } = useMetadataStore();
+  const { removeFromDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const setRecordIndexGroupAggregateOperation = useSetAtomComponentState(
     recordIndexGroupAggregateOperationComponentState,

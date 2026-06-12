@@ -1,48 +1,39 @@
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
-import { IconLink } from 'twenty-ui/display';
+import { NavigationMenuItemType } from 'twenty-shared/types';
+import { normalizeUrl } from 'twenty-shared/utils';
+import { IconLink } from 'twenty-ui-deprecated/display';
 
-import { useAddLinkToNavigationMenuDraft } from '@/navigation-menu-item/edit/link/hooks/useAddLinkToNavigationMenuDraft';
-import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemsDraftState';
+import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
+import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
+import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
-import { addMenuItemInsertionContextState } from '@/navigation-menu-item/common/states/addMenuItemInsertionContextState';
-import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 export const useAddLinkToNavigationMenu = () => {
   const { t } = useLingui();
-  const { addLinkToDraft } = useAddLinkToNavigationMenuDraft();
-  const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
-  const navigationMenuItemsDraft = useAtomStateValue(
-    navigationMenuItemsDraftState,
-  );
+  const { createItem } = useNavigationMenuItemEditController();
   const { openNavigationMenuItemInSidePanel } =
     useOpenNavigationMenuItemInSidePanel();
-  const addMenuItemInsertionContext = useAtomStateValue(
-    addMenuItemInsertionContextState,
-  );
-  const setAddMenuItemInsertionContext = useSetAtomState(
-    addMenuItemInsertionContextState,
-  );
-
-  const currentDraft = isDefined(navigationMenuItemsDraft)
-    ? navigationMenuItemsDraft
-    : workspaceNavigationMenuItems;
+  const [
+    pendingInsertionNavigationMenuItem,
+    setPendingInsertionNavigationMenuItem,
+  ] = useAtomState(pendingInsertionNavigationMenuItemState);
 
   const handleAddLink = () => {
-    const targetFolderId = addMenuItemInsertionContext?.targetFolderId ?? null;
-    const targetIndex = addMenuItemInsertionContext?.targetIndex;
-
-    const itemId = addLinkToDraft(
-      t`Link label`,
-      'www.example.com',
-      currentDraft,
-      targetFolderId,
-      targetIndex,
+    const itemId = createItem(
+      {
+        type: NavigationMenuItemType.LINK,
+        name: t`Link label`,
+        link: normalizeUrl('www.example.com'),
+        color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK,
+      },
+      {
+        targetFolderId: pendingInsertionNavigationMenuItem?.folderId ?? null,
+        targetIndex: pendingInsertionNavigationMenuItem?.position,
+      },
     );
 
-    setAddMenuItemInsertionContext(null);
+    setPendingInsertionNavigationMenuItem(null);
     openNavigationMenuItemInSidePanel({
       itemId,
       pageTitle: t`Edit link`,

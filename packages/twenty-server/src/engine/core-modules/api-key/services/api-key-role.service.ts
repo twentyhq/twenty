@@ -1,31 +1,34 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { In, IsNull, Not, Repository } from 'typeorm';
+import { In, IsNull, Not } from 'typeorm';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
   ApiKeyException,
   ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
 import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class ApiKeyRoleService {
   constructor(
-    @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
-    @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
+    @InjectWorkspaceScopedRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
+    @InjectWorkspaceScopedRepository(RoleEntity)
+    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
 
-    @InjectRepository(ApiKeyEntity)
-    private readonly apiKeyRepository: Repository<ApiKeyEntity>,
+    @InjectWorkspaceScopedRepository(ApiKeyEntity)
+    private readonly apiKeyRepository: WorkspaceScopedRepository<ApiKeyEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly roleTargetService: RoleTargetService,
   ) {}
@@ -80,6 +83,43 @@ export class ApiKeyRoleService {
     return roleId;
   }
 
+  async getRoleDtoByApiKeyId({
+    apiKeyId,
+    workspaceId,
+  }: {
+    apiKeyId: string;
+    workspaceId: string;
+  }): Promise<RoleDTO> {
+    const { apiKeyRoleMap, flatRoleMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'apiKeyRoleMap',
+        'flatRoleMaps',
+      ]);
+
+    const roleId = apiKeyRoleMap[apiKeyId];
+
+    if (!isDefined(roleId)) {
+      throw new ApiKeyException(
+        `API key ${apiKeyId} has no role assigned`,
+        ApiKeyExceptionCode.API_KEY_NO_ROLE_ASSIGNED,
+      );
+    }
+
+    const flatRole = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: roleId,
+      flatEntityMaps: flatRoleMaps,
+    });
+
+    if (!isDefined(flatRole)) {
+      throw new ApiKeyException(
+        `Role ${roleId} not found for API key ${apiKeyId}`,
+        ApiKeyExceptionCode.API_KEY_NO_ROLE_ASSIGNED,
+      );
+    }
+
+    return fromFlatRoleToRoleDto(flatRole);
+  }
+
   private async validateAssignRoleInput({
     apiKeyId,
     workspaceId,
@@ -89,8 +129,8 @@ export class ApiKeyRoleService {
     workspaceId: string;
     roleId: string;
   }) {
-    const apiKey = await this.apiKeyRepository.findOne({
-      where: { id: apiKeyId, workspaceId },
+    const apiKey = await this.apiKeyRepository.findOne(workspaceId, {
+      where: { id: apiKeyId },
     });
 
     if (!apiKey) {
@@ -100,8 +140,8 @@ export class ApiKeyRoleService {
       );
     }
 
-    const role = await this.roleRepository.findOne({
-      where: { id: roleId, workspaceId },
+    const role = await this.roleRepository.findOne(workspaceId, {
+      where: { id: roleId },
     });
 
     if (!role) {
@@ -118,13 +158,15 @@ export class ApiKeyRoleService {
       );
     }
 
-    const existingRoleTarget = await this.roleTargetRepository.findOne({
-      where: {
-        apiKeyId,
-        roleId,
-        workspaceId,
+    const existingRoleTarget = await this.roleTargetRepository.findOne(
+      workspaceId,
+      {
+        where: {
+          apiKeyId,
+          roleId,
+        },
       },
-    });
+    );
 
     return {
       roleToAssignIsSameAsCurrentRole: Boolean(existingRoleTarget),
@@ -142,10 +184,9 @@ export class ApiKeyRoleService {
       return new Map();
     }
 
-    const roleTargets = await this.roleTargetRepository.find({
+    const roleTargets = await this.roleTargetRepository.find(workspaceId, {
       where: {
         apiKeyId: In(apiKeyIds),
-        workspaceId,
       },
       relations: ['role'],
     });
@@ -168,10 +209,9 @@ export class ApiKeyRoleService {
     roleId: string,
     workspaceId: string,
   ): Promise<ApiKeyEntity[]> {
-    const roleTargets = await this.roleTargetRepository.find({
+    const roleTargets = await this.roleTargetRepository.find(workspaceId, {
       where: {
         roleId,
-        workspaceId,
         apiKeyId: Not(IsNull()),
       },
     });
@@ -184,12 +224,8 @@ export class ApiKeyRoleService {
       return [];
     }
 
-    const apiKeys = await this.apiKeyRepository.find({
-      where: {
-        id: In(apiKeyIds),
-        workspaceId,
-        revokedAt: IsNull(),
-      },
+    const apiKeys = await this.apiKeyRepository.find(workspaceId, {
+      where: { id: In(apiKeyIds), revokedAt: IsNull() },
     });
 
     return apiKeys;

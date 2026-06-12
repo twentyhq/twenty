@@ -5,8 +5,10 @@ import { VerifyLoginTokenEffect } from '@/auth/components/VerifyLoginTokenEffect
 
 import { VerifyEmailEffect } from '@/auth/components/VerifyEmailEffect';
 import indexAppPath from '@/navigation/utils/indexAppPath';
+import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
+import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppLayoutWithSidePanel';
 import { AppPath } from 'twenty-shared/types';
 
 import { lazy } from 'react';
@@ -94,6 +96,12 @@ const BookCall = lazy(() =>
   })),
 );
 
+const StandalonePageLayoutPage = lazy(() =>
+  import('~/pages/page-layout/StandalonePageLayoutPage').then((module) => ({
+    default: module.StandalonePageLayoutPage,
+  })),
+);
+
 const NotFound = lazy(() =>
   import('~/pages/not-found/NotFound').then((module) => ({
     default: module.NotFound,
@@ -118,7 +126,7 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.SignInUp}
             element={
-              <LazyRoute>
+              <LazyRoute fallback={null}>
                 <SignInUp />
               </LazyRoute>
             }
@@ -126,7 +134,7 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.Invite}
             element={
-              <LazyRoute>
+              <LazyRoute fallback={null}>
                 <SignInUp />
               </LazyRoute>
             }
@@ -134,7 +142,7 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.ResetPassword}
             element={
-              <LazyRoute>
+              <LazyRoute fallback={null}>
                 <PasswordReset />
               </LazyRoute>
             }
@@ -142,7 +150,7 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.CreateWorkspace}
             element={
-              <LazyRoute>
+              <LazyRoute fallback={null}>
                 <CreateWorkspace />
               </LazyRoute>
             }
@@ -150,7 +158,7 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.CreateProfile}
             element={
-              <LazyRoute>
+              <LazyRoute fallback={null}>
                 <CreateProfile />
               </LazyRoute>
             }
@@ -158,7 +166,7 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.SyncEmails}
             element={
-              <LazyRoute>
+              <LazyRoute fallback={null}>
                 <SyncEmails />
               </LazyRoute>
             }
@@ -166,7 +174,7 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.InviteTeam}
             element={
-              <LazyRoute>
+              <LazyRoute fallback={null}>
                 <InviteTeam />
               </LazyRoute>
             }
@@ -174,7 +182,7 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.PlanRequired}
             element={
-              <LazyRoute>
+              <LazyRoute fallback={null}>
                 <ChooseYourPlan />
               </LazyRoute>
             }
@@ -182,7 +190,7 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.PlanRequiredSuccess}
             element={
-              <LazyRoute>
+              <LazyRoute fallback={null}>
                 <PaymentSuccess />
               </LazyRoute>
             }
@@ -190,7 +198,7 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.BookCallDecision}
             element={
-              <LazyRoute>
+              <LazyRoute fallback={null}>
                 <BookCallDecision />
               </LazyRoute>
             }
@@ -198,45 +206,55 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.BookCall}
             element={
-              <LazyRoute>
+              <LazyRoute fallback={null}>
                 <BookCall />
               </LazyRoute>
             }
           />
-          <Route path={indexAppPath.getIndexAppPath()} element={<></>} />
-          <Route
-            path={AppPath.RecordIndexPage}
-            element={
-              <LazyRoute>
-                <RecordIndexPage />
-              </LazyRoute>
-            }
-          />
-          <Route
-            path={AppPath.RecordShowPage}
-            element={
-              <LazyRoute>
-                <RecordShowPage />
-              </LazyRoute>
-            }
-          />
-          <Route
-            path={AppPath.SettingsCatchAll}
-            element={
-              <SettingsRoutes
-                isFunctionSettingsEnabled={isFunctionSettingsEnabled}
-                isAdminPageEnabled={isAdminPageEnabled}
-              />
-            }
-          />
-          <Route
-            path={AppPath.NotFoundWildcard}
-            element={
-              <LazyRoute>
-                <NotFound />
-              </LazyRoute>
-            }
-          />
+          <Route element={<MainAppLayoutWithSidePanel />}>
+            <Route path={indexAppPath.getIndexAppPath()} element={<></>} />
+            <Route
+              path={AppPath.RecordIndexPage}
+              element={
+                <LazyRoute fallback={<RecordIndexSkeletonLoader />}>
+                  <RecordIndexPage />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path={AppPath.RecordShowPage}
+              element={
+                <LazyRoute>
+                  <RecordShowPage />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path={AppPath.PageLayoutPage}
+              element={
+                <LazyRoute>
+                  <StandalonePageLayoutPage />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path={AppPath.SettingsCatchAll}
+              element={
+                <SettingsRoutes
+                  isFunctionSettingsEnabled={isFunctionSettingsEnabled}
+                  isAdminPageEnabled={isAdminPageEnabled}
+                />
+              }
+            />
+            <Route
+              path={AppPath.NotFoundWildcard}
+              element={
+                <LazyRoute>
+                  <NotFound />
+                </LazyRoute>
+              }
+            />
+          </Route>
         </Route>
         <Route element={<BlankLayout />}>
           <Route

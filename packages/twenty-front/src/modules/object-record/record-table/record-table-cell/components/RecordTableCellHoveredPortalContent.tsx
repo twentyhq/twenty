@@ -15,8 +15,8 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useIsMobile } from 'twenty-ui/utilities';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { useIsMobile } from 'twenty-ui-deprecated/utilities';
 
 const StyledRecordTableCellHoveredPortalContent = styled.div<{
   showInteractiveStyle: boolean;
@@ -59,7 +59,7 @@ export const RecordTableCellHoveredPortalContent = () => {
 
   const { isRecordFieldReadOnly: isReadOnly } = useContext(FieldContext);
 
-  const isFieldInputOnly = useIsFieldInputOnly();
+  const isFieldInputOnly = useIsFieldInputOnly() && !isReadOnly;
 
   const showButton =
     !isFieldInputOnly &&

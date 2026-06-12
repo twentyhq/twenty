@@ -2,16 +2,18 @@ import { RecordIndexCommandMenu } from '@/command-menu-item/components/RecordInd
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { RecordIndexPageHeaderIcon } from '@/object-record/record-index/components/RecordIndexPageHeaderIcon';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { PageHeaderToggleSidePanelButton } from '@/ui/layout/page-header/components/PageHeaderToggleSidePanelButton';
-import { PageHeader } from '@/ui/layout/page/components/PageHeader';
+import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
+import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledTitleWithSelectedRecords = styled.div`
   display: flex;
@@ -61,20 +63,24 @@ export const RecordIndexPageHeader = () => {
     contextStoreCurrentViewIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
 
   return (
-    <PageHeader
-      title={pageHeaderTitle}
-      Icon={() => (
+    <PageCardHeader
+      icon={
         <RecordIndexPageHeaderIcon objectMetadataItem={objectMetadataItem} />
-      )}
-    >
-      {isDefined(contextStoreCurrentViewId) && (
-        <>
-          <RecordIndexCommandMenu />
-          <PageHeaderToggleSidePanelButton />
-        </>
-      )}
-    </PageHeader>
+      }
+      title={pageHeaderTitle}
+      actionButton={
+        isDefined(contextStoreCurrentViewId) ? (
+          <>
+            <RecordIndexCommandMenu />
+            {!isLayoutCustomizationModeEnabled && <SidePanelToggleButton />}
+          </>
+        ) : undefined
+      }
+    />
   );
 };

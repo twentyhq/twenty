@@ -1,4 +1,4 @@
-import { H2Title, IconChevronRight } from 'twenty-ui/display';
+import { H2Title, IconChevronRight } from 'twenty-ui-deprecated/display';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -13,17 +13,17 @@ import {
 import { useContext, useState } from 'react';
 import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
-import { Section } from 'twenty-ui/layout';
-import { SearchInput } from 'twenty-ui/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Section } from 'twenty-ui-deprecated/layout';
+import { SearchInput } from 'twenty-ui-deprecated/input';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
 
-const StyledTableContainer = styled.div`
-  margin-top: ${themeCssVariables.spacing[3]};
-`;
-
-const StyledTableHeaderRowContainer = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[2]};
+const StyledTableRowsContainer = styled.div`
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  padding: ${themeCssVariables.spacing[2]} 0;
 `;
 
 const StyledSearchInputContainer = styled.div`
@@ -41,19 +41,32 @@ export const SettingsApplicationsTable = ({
 
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredApplications = applications.filter(
-    (application) =>
-      application.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (application.description ?? '')
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase()),
-  );
+  const filteredApplications = applications
+    .filter(
+      (application) =>
+        application.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (application.description ?? '')
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()),
+    )
+    .sort((a, b) => {
+      const aIsOAuth =
+        a.applicationRegistration?.sourceType ===
+        ApplicationRegistrationSourceType.OAUTH_ONLY;
+      const bIsOAuth =
+        b.applicationRegistration?.sourceType ===
+        ApplicationRegistrationSourceType.OAUTH_ONLY;
+
+      if (aIsOAuth === bIsOAuth) return 0;
+
+      return aIsOAuth ? 1 : -1;
+    });
 
   return (
     <Section>
       <H2Title
-        title={t`Installed applications`}
-        description={t`List installed applications. Use filter to search for a specific application`}
+        title={t`Installed apps`}
+        description={t`All the applications currently installed on this workspace`}
       />
       <StyledSearchInputContainer>
         <SearchInput
@@ -62,18 +75,17 @@ export const SettingsApplicationsTable = ({
           onChange={setSearchTerm}
         />
       </StyledSearchInputContainer>
-      <StyledTableContainer>
-        <Table>
-          <StyledTableHeaderRowContainer>
-            <TableRow
-              gridTemplateColumns={APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
-            >
-              <TableHeader> {t`Name`}</TableHeader>
-              <TableHeader> {t`Description`}</TableHeader>
-              <TableHeader> {''}</TableHeader>
-              <TableHeader />
-            </TableRow>
-          </StyledTableHeaderRowContainer>
+      <Table>
+        <TableRow
+          gridTemplateColumns={APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+        >
+          <TableHeader> {t`Name`}</TableHeader>
+          <TableHeader> {t`Type`}</TableHeader>
+          <TableHeader> {t`Description`}</TableHeader>
+          <TableHeader> {''}</TableHeader>
+          <TableHeader />
+        </TableRow>
+        <StyledTableRowsContainer>
           {filteredApplications.map((application) => {
             const isNpmApp =
               application.applicationRegistration?.sourceType ===
@@ -93,10 +105,12 @@ export const SettingsApplicationsTable = ({
                 key={application.id}
                 application={application}
                 hasUpdate={hasUpdate}
+                sourceType={application.applicationRegistration?.sourceType}
                 action={
                   <IconChevronRight
                     size={theme.icon.size.md}
                     stroke={theme.icon.stroke.sm}
+                    color={theme.font.color.light}
                   />
                 }
                 link={getSettingsPath(SettingsPath.ApplicationDetail, {
@@ -105,8 +119,8 @@ export const SettingsApplicationsTable = ({
               />
             );
           })}
-        </Table>
-      </StyledTableContainer>
+        </StyledTableRowsContainer>
+      </Table>
     </Section>
   );
 };

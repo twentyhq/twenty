@@ -1,3 +1,3 @@
-import { type CommandMenuItem } from '~/generated-metadata/graphql';
+import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
-export type FlatCommandMenuItem = Omit<CommandMenuItem, 'frontComponent'>;
+export type FlatCommandMenuItem = CommandMenuItemFieldsFragment;

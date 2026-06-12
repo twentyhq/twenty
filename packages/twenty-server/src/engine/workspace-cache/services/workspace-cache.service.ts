@@ -168,6 +168,10 @@ export class WorkspaceCacheService implements OnModuleInit {
 
     await this.flush(workspaceId, cacheKeyNames);
     await this.recomputeDataFromProvider(workspaceId, cacheKeyNames);
+
+    // Clear memoizer again after recomputation to evict any stale entries
+    // cached by concurrent getOrRecompute calls during the flush window.
+    await this.memoizer.clearKeys(`${workspaceId}-`);
   }
 
   public async getCacheHashes(

@@ -5,17 +5,34 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ConfigVariableValue } from 'twenty-shared/types';
 import { CustomError } from 'twenty-shared/utils';
-import { MenuItemMultiSelect } from 'twenty-ui/navigation';
-import { ConfigVariableType } from '~/generated-metadata/graphql';
+import { CodeEditor } from 'twenty-ui-deprecated/input';
+import { MenuItemMultiSelect } from 'twenty-ui-deprecated/navigation';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { ConfigVariableType } from '~/generated-admin/graphql';
 import { type ConfigVariableOptions } from '@/settings/admin-panel/config-variables/types/ConfigVariableOptions';
+
+const StyledJsonEditorContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+const StyledJsonEditorLabel = styled.span`
+  color: ${themeCssVariables.font.color.light};
+  display: block;
+  font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  margin-bottom: ${themeCssVariables.spacing[1]};
+`;
 
 type ConfigVariableDatabaseInputProps = {
   label: string;
   value: ConfigVariableValue;
-  onChange: (value: string | number | boolean | string[] | null) => void;
+  onChange: (value: ConfigVariableValue) => void;
   type: ConfigVariableType;
   options?: ConfigVariableOptions;
   disabled?: boolean;
@@ -139,6 +156,7 @@ export const ConfigVariableDatabaseInput = ({
             <TextArea
               textAreaId={jsonArrayTextAreaId}
               label={label}
+              maxRows={5}
               value={
                 Array.isArray(value)
                   ? JSON.stringify(value)
@@ -188,6 +206,34 @@ export const ConfigVariableDatabaseInput = ({
           placeholder={placeholder || t`Enter value`}
           fullWidth
         />
+      );
+
+    case ConfigVariableType.JSON:
+      return (
+        <StyledJsonEditorContainer>
+          <StyledJsonEditorLabel>{label}</StyledJsonEditorLabel>
+          <CodeEditor
+            value={
+              typeof value === 'string'
+                ? value
+                : value !== null && value !== undefined
+                  ? JSON.stringify(value, null, 2)
+                  : ''
+            }
+            language="json"
+            height="200px"
+            options={{
+              readOnly: disabled === true,
+            }}
+            onChange={(text) => {
+              try {
+                onChange(JSON.parse(text) as Record<string, unknown>);
+              } catch {
+                onChange(text as unknown as ConfigVariableValue);
+              }
+            }}
+          />
+        </StyledJsonEditorContainer>
       );
 
     default:

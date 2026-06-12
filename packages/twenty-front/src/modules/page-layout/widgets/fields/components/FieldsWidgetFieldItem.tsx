@@ -1,6 +1,6 @@
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { isActivityTargetField } from '@/object-record/record-field-list/utils/categorizeRelationFields';
@@ -23,8 +23,8 @@ type FieldsWidgetFieldItemProps = {
   globalIndex: number;
   recordId: string;
   targetObjectNameSingular: string;
-  objectMetadataItem: ObjectMetadataItem;
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  objectMetadataItems: EnrichedObjectMetadataItem[];
   objectPermissionsByObjectMetadataId: Record<
     string,
     ObjectPermissions & { objectMetadataId: string }
@@ -55,6 +55,14 @@ export const FieldsWidgetFieldItem = ({
     targetObjectNameSingular,
   );
 
+  const fieldDefinition = formatFieldMetadataItemAsColumnDefinition({
+    field: fieldMetadataItem,
+    position: globalIndex,
+    objectMetadataItem,
+    showLabel: true,
+    labelWidth: 90,
+  });
+
   return (
     <FieldContext.Provider
       key={recordId + fieldMetadataItem.id}
@@ -62,13 +70,7 @@ export const FieldsWidgetFieldItem = ({
         recordId,
         maxWidth: 200,
         isLabelIdentifier: false,
-        fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
-          field: fieldMetadataItem,
-          position: globalIndex,
-          objectMetadataItem,
-          showLabel: true,
-          labelWidth: 90,
-        }),
+        fieldDefinition,
         useUpdateRecord,
         isDisplayModeFixHeight: true,
         isRecordFieldReadOnly: isRecordFieldReadOnly({
@@ -83,6 +85,8 @@ export const FieldsWidgetFieldItem = ({
             isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
             isCustom: fieldMetadataItem.isCustom ?? false,
           },
+          fieldDefinition,
+          objectPermissionsByObjectMetadataId,
         }),
         onMouseEnter,
         anchorId: `${getRecordFieldInputInstanceId({

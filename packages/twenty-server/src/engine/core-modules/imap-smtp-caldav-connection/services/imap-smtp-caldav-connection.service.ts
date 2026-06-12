@@ -3,32 +3,43 @@ import { Injectable, Logger } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { ImapFlow } from 'imapflow';
 import { createTransport } from 'nodemailer';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { ACCOUNT_TYPES } from 'twenty-shared/constants';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { type EmailAccountConnectionParametersInput } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.input';
+import { ImapSmtpCaldavValidatorService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service';
 import {
   type AccountType,
   type ConnectionParameters,
+  type PlaintextImapSmtpCaldavParams,
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { CalDAVClient } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/caldav.client';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { CalDavClientService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-client.service';
+import { CalDavFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service';
 
 @Injectable()
 export class ImapSmtpCaldavService {
   private readonly logger = new Logger(ImapSmtpCaldavService.name);
 
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly secureHttpClientService: SecureHttpClientService,
+    private readonly twentyConfigService: TwentyConfigService,
+    private readonly caldavClientService: CalDavClientService,
+    private readonly caldavFetchEventsService: CalDavFetchEventsService,
+    private readonly imapSmtpCaldavValidatorService: ImapSmtpCaldavValidatorService,
   ) {}
 
   async testImapConnection(
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
+    const validatedHost = await this.secureHttpClientService.getValidatedHost(
+      params.host,
+    );
     const client = new ImapFlow({
-      host: params.host,
+      host: validatedHost,
       port: params.port,
       secure: params.secure ?? true,
       auth: {
@@ -39,6 +50,14 @@ export class ImapSmtpCaldavService {
       tls: {
         rejectUnauthorized: false,
       },
+    });
+
+    // ImapFlow is EventEmitter — missing 'error' listener crashes process on socket timeout.
+    client.on('error', (error) => {
+      this.logger.error(
+        `IMAP test connection error for ${handle}: ${error.message}`,
+        error.stack,
+      );
     });
 
     try {
@@ -89,8 +108,11 @@ export class ImapSmtpCaldavService {
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
+    const validatedHost = await this.secureHttpClientService.getValidatedHost(
+      params.host,
+    );
     const transport = createTransport({
-      host: params.host,
+      host: validatedHost,
       port: params.port,
       auth: {
         user: params.username ?? handle,
@@ -120,26 +142,30 @@ export class ImapSmtpCaldavService {
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
-    const client = new CalDAVClient({
-      serverUrl: params.host,
-      username: params.username ?? handle,
-      password: params.password,
-    });
-
     try {
-      await client.listCalendars();
-      await client.validateSyncCollectionSupport();
+      const client = await this.caldavClientService.getClient({
+        serverUrl: params.host,
+        username: params.username ?? handle,
+        password: params.password,
+      });
+
+      const calendars =
+        await this.caldavFetchEventsService.listEventCalendars(client);
+
+      if (calendars.length === 0) {
+        throw new UserInputError('No calendar with event support found', {
+          userFriendlyMessage: msg`We couldn't find any calendars on your CalDAV server. Please make sure your account has at least one calendar.`,
+        });
+      }
     } catch (error) {
+      if (error instanceof UserInputError) {
+        throw error;
+      }
+
       this.logger.error(
         `CALDAV connection failed: ${error.message}`,
         error.stack,
       );
-
-      if (error.message?.includes('CALDAV_SYNC_COLLECTION_NOT_SUPPORTED')) {
-        throw new UserInputError(`CALDAV connection failed: ${error.message}`, {
-          userFriendlyMessage: msg`Your CalDAV server does not support incremental sync (RFC 6578). Please use a compatible provider such as Nextcloud, iCloud, or Fastmail.`,
-        });
-      }
 
       if (error.code === 'FailedToOpenSocket') {
         throw new UserInputError(`CALDAV connection failed: ${error.message}`, {
@@ -155,55 +181,71 @@ export class ImapSmtpCaldavService {
     return true;
   }
 
-  async testImapSmtpCaldav(
-    handle: string,
-    params: ConnectionParameters,
-    accountType: AccountType,
-  ): Promise<boolean> {
-    if (accountType === 'IMAP') {
-      return this.testImapConnection(handle, params);
+  async testImapSmtpCaldav({
+    handle,
+    params,
+    accountType,
+  }: {
+    handle: string;
+    params: ConnectionParameters;
+    accountType: AccountType;
+  }): Promise<boolean> {
+    if (
+      !this.twentyConfigService.get(
+        'IS_IMAP_SMTP_CALDAV_CONNECTION_TEST_ENABLED',
+      )
+    ) {
+      return true;
     }
 
-    if (accountType === 'SMTP') {
-      return this.testSmtpConnection(handle, params);
+    switch (accountType) {
+      case 'IMAP':
+        return this.testImapConnection(handle, params);
+      case 'SMTP':
+        return this.testSmtpConnection(handle, params);
+      case 'CALDAV':
+        return this.testCaldavConnection(handle, params);
+      default:
+        assertUnreachable(accountType);
     }
-
-    if (accountType === 'CALDAV') {
-      return this.testCaldavConnection(handle, params);
-    }
-
-    throw new UserInputError(
-      'Invalid account type. Must be one of: IMAP, SMTP, CALDAV',
-      {
-        userFriendlyMessage: msg`Please select a valid connection type (IMAP, SMTP, or CalDAV) and try again.`,
-      },
-    );
   }
 
-  async getImapSmtpCaldav(
-    workspaceId: string,
-    connectionId: string,
-  ): Promise<ConnectedAccountWorkspaceEntity | null> {
-    const authContext = buildSystemAuthContext(workspaceId);
+  async validateAndTestConnectionParameters({
+    connectionParameters,
+    handle,
+    existingConnectionParameters,
+  }: {
+    connectionParameters: EmailAccountConnectionParametersInput;
+    handle: string;
+    existingConnectionParameters: PlaintextImapSmtpCaldavParams | null;
+  }): Promise<PlaintextImapSmtpCaldavParams> {
+    const validatedParams: PlaintextImapSmtpCaldavParams = {};
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const connectedAccountRepository =
-          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
-            workspaceId,
-            'connectedAccount',
+    for (const protocol of ACCOUNT_TYPES) {
+      const params = connectionParameters[protocol];
+
+      if (params) {
+        const existingProtocolParams =
+          existingConnectionParameters?.[protocol] ?? null;
+
+        const validatedProtocolParams =
+          await this.imapSmtpCaldavValidatorService.validateProtocolConnectionParams(
+            {
+              params,
+              existingProtocolParams,
+            },
           );
 
-        const connectedAccount = await connectedAccountRepository.findOne({
-          where: {
-            id: connectionId,
-            provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-          },
+        await this.testImapSmtpCaldav({
+          handle,
+          params: validatedProtocolParams,
+          accountType: protocol,
         });
 
-        return connectedAccount;
-      },
-      authContext,
-    );
+        validatedParams[protocol] = validatedProtocolParams;
+      }
+    }
+
+    return validatedParams;
   }
 }

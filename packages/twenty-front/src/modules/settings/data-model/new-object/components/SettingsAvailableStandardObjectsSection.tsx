@@ -1,11 +1,11 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 
 import { t } from '@lingui/core/macro';
-import { H2Title } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui-deprecated/display';
+import { Section } from 'twenty-ui-deprecated/layout';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
   AVAILABLE_STANDARD_OBJECTS_GRID_TEMPLATE_COLUMNS,
@@ -13,7 +13,7 @@ import {
 } from './SettingsAvailableStandardObjectItemTableRow';
 
 type SettingsAvailableStandardObjectsSectionProps = {
-  objectItems: ObjectMetadataItem[];
+  objectItems: EnrichedObjectMetadataItem[];
   onChange: (selectedIds: Record<string, boolean>) => void;
   selectedIds: Record<string, boolean>;
 };

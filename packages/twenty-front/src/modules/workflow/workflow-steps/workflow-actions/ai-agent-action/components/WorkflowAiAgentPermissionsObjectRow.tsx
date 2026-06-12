@@ -1,19 +1,12 @@
-import { useIcons } from 'twenty-ui/display';
-import {
-  StyledIconChevronRight,
-  StyledIconContainer,
-  StyledRow,
-  StyledRowLeftContent,
-  StyledText,
-} from './WorkflowAiAgentPermissionsStyles';
-import { ThemeContext } from 'twenty-ui/theme-constants';
-import { useContext } from 'react';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
+
 type WorkflowAiAgentPermissionsObjectRowProps = {
-  objectMetadata: {
-    id: string;
-    icon?: string | null;
-    labelPlural: string;
-  };
+  objectMetadata: Pick<
+    EnrichedObjectMetadataItem,
+    'id' | 'icon' | 'labelPlural' | 'nameSingular' | 'color' | 'isSystem'
+  >;
   onClick?: () => void;
   readonly: boolean;
 };
@@ -23,22 +16,12 @@ export const WorkflowAiAgentPermissionsObjectRow = ({
   onClick,
   readonly,
 }: WorkflowAiAgentPermissionsObjectRowProps) => {
-  const { theme } = useContext(ThemeContext);
-  const { getIcon } = useIcons();
-  const IconComponent = getIcon(objectMetadata.icon);
-
   return (
-    <StyledRow
-      key={objectMetadata.id}
+    <MenuItem
+      LeftComponent={<ObjectMetadataIcon objectMetadataItem={objectMetadata} />}
+      text={objectMetadata.labelPlural}
+      hasSubMenu={!readonly}
       onClick={!readonly ? onClick : undefined}
-    >
-      <StyledRowLeftContent>
-        <StyledIconContainer>
-          <IconComponent size={theme.icon.size.sm} />
-        </StyledIconContainer>
-        <StyledText>{objectMetadata.labelPlural}</StyledText>
-      </StyledRowLeftContent>
-      <StyledIconChevronRight size={theme.icon.size.sm} />
-    </StyledRow>
+    />
   );
 };

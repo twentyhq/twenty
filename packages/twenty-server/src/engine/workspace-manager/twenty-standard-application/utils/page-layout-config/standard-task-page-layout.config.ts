@@ -1,7 +1,12 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  STANDARD_OBJECTS,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-shared/metadata';
 
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
+  CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP,
+  CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE,
   CONDITIONAL_DISPLAY_DEVICE_DESKTOP,
   CONDITIONAL_DISPLAY_DEVICE_MOBILE,
   TAB_PROPS,
@@ -14,50 +19,72 @@ import {
 
 const TASK_PAGE_TABS = {
   home: {
-    universalIdentifier: '20202020-ab05-4005-8005-ba5ca11a5501',
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home
+        .universalIdentifier,
     ...TAB_PROPS.home,
     widgets: {
       fields: {
-        universalIdentifier: '20202020-ac05-4005-8005-ba5ca11a5511',
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home
+            .widgets.fields.universalIdentifier,
         ...WIDGET_PROPS.fields,
       },
       taskRichText: {
-        universalIdentifier: '20202020-ac05-4005-8005-ba5ca11a5512',
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home
+            .widgets.taskRichText.universalIdentifier,
         title: WIDGET_PROPS.taskRichText.title,
         type: WIDGET_PROPS.taskRichText.type,
         gridPosition: WIDGET_PROPS.taskRichText.gridPosition,
         position: { layoutMode: TAB_PROPS.home.layoutMode, index: 1 },
         conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_MOBILE,
+        conditionalAvailabilityExpression:
+          CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE,
       },
     },
   },
   note: {
-    universalIdentifier: '20202020-ab05-4005-8005-ba5ca11a5502',
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.note
+        .universalIdentifier,
     ...TAB_PROPS.note,
     widgets: {
       taskRichText: {
-        universalIdentifier: '20202020-ac05-4005-8005-ba5ca11a5521',
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.note
+            .widgets.taskRichText.universalIdentifier,
         ...WIDGET_PROPS.taskRichText,
         conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_DESKTOP,
+        conditionalAvailabilityExpression:
+          CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP,
       },
     },
   },
   timeline: {
-    universalIdentifier: '20202020-ab05-4005-8005-ba5ca11a5503',
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.timeline
+        .universalIdentifier,
     ...TAB_PROPS.timeline,
     widgets: {
       timeline: {
-        universalIdentifier: '20202020-ac05-4005-8005-ba5ca11a5531',
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs
+            .timeline.widgets.timeline.universalIdentifier,
         ...WIDGET_PROPS.timeline,
       },
     },
   },
   files: {
-    universalIdentifier: '20202020-ab05-4005-8005-ba5ca11a5504',
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.files
+        .universalIdentifier,
     ...TAB_PROPS.files,
     widgets: {
       files: {
-        universalIdentifier: '20202020-ac05-4005-8005-ba5ca11a5541',
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.files
+            .widgets.files.universalIdentifier,
         ...WIDGET_PROPS.files,
       },
     },
@@ -68,7 +95,9 @@ export const STANDARD_TASK_PAGE_LAYOUT_CONFIG = {
   name: 'Default Task Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: STANDARD_OBJECTS.task.universalIdentifier,
-  universalIdentifier: '20202020-a105-4005-8005-ba5ca11a1005',
+  universalIdentifier:
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage
+      .universalIdentifier,
   defaultTabUniversalIdentifier: null,
   tabs: TASK_PAGE_TABS,
 } as const satisfies StandardPageLayoutConfig;

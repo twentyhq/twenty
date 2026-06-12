@@ -1,6 +1,6 @@
 import { type ApolloCache, gql } from '@apollo/client';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
@@ -13,9 +13,9 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 export type GetRecordFromCacheArgs = {
   cache: ApolloCache;
   recordId: string;
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
   objectMetadataItem: Pick<
-    ObjectMetadataItem,
+    EnrichedObjectMetadataItem,
     'fields' | 'nameSingular' | 'id' | 'readableFields'
   >;
   recordGqlFields?: RecordGqlFields;

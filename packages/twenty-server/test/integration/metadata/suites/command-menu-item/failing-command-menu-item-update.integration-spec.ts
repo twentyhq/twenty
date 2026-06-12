@@ -1,6 +1,5 @@
 import { faker } from '@faker-js/faker';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { createCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/create-command-menu-item.util';
 import { deleteCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/delete-command-menu-item.util';
 import { updateCommandMenuItem } from 'test/integration/metadata/suites/command-menu-item/utils/update-command-menu-item.util';
@@ -8,8 +7,8 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type UpdateCommandMenuItemInput } from 'src/engine/metadata-modules/command-menu-item/dtos/update-command-menu-item.input';
 
 type TestContext = {
@@ -23,27 +22,12 @@ type TestSetup = {
 describe('CommandMenuItem update should fail', () => {
   let testCommandMenuItemId: string;
 
-  beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-  });
-
-  afterAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
-  });
-
   beforeEach(async () => {
     const { data } = await createCommandMenuItem({
       expectToFail: false,
       input: {
         workflowVersionId: faker.string.uuid(),
+        engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
         label: 'Test Command Menu Item To Update',
         icon: 'IconOriginal',
         isPinned: false,
@@ -106,6 +90,16 @@ describe('CommandMenuItem update should fail', () => {
           input: () => ({
             id: faker.string.uuid(),
             label: 'Updated Label',
+          }),
+        },
+      },
+      {
+        title:
+          'when changing engineComponentKey to a standard key on an item with workflowVersionId',
+        context: {
+          input: (testSetup) => ({
+            id: testSetup.testCommandMenuItemId,
+            engineComponentKey: EngineComponentKey.GO_TO_PEOPLE,
           }),
         },
       },

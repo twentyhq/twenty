@@ -1,0 +1,40 @@
+import { gql } from '@apollo/client';
+
+export const GET_MY_CONNECTED_ACCOUNTS = gql`
+  query MyConnectedAccounts {
+    myConnectedAccounts {
+      id
+      handle
+      provider
+      authFailedAt
+      scopes
+      handleAliases
+      lastSignedInAt
+      userWorkspaceId
+      connectionProviderId
+      name
+      visibility
+      lastCredentialsRefreshedAt
+      connectionParameters {
+        IMAP {
+          host
+          port
+          secure
+          username
+        }
+        SMTP {
+          host
+          port
+          secure
+          username
+        }
+        CALDAV {
+          host
+          username
+        }
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;

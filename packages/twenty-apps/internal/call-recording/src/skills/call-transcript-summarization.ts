@@ -1,4 +1,4 @@
-import { defineSkill } from 'twenty-sdk';
+import { defineSkill } from 'twenty-sdk/define';
 
 export const CALL_TRANSCRIPT_SUMMARIZATION_SKILL_UNIVERSAL_IDENTIFIER =
   '11fb51a7-4d5a-4168-91d7-9fbe5eb7d609';
@@ -43,7 +43,7 @@ A brief note on the overall tone of the conversation (collaborative, tense, expl
 - If the transcript is very short (under 200 words), provide a brief 2-3 sentence summary instead of the full structure.
 
 ## Saving the Summary
-After generating the summary, use \`update_callRecording\` to save it in the \`summary\` field with the format:
+After generating the summary, use \`update_one_call_recording\` to save it in the \`summary\` field with the format:
 \`\`\`json
 { "summary": { "blocknote": null, "markdown": "<your summary>" } }
 \`\`\`

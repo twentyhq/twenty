@@ -142,4 +142,28 @@ describe('computeBarPositions', () => {
     expect(bar2).toBeDefined();
     expect(bar1!.y).toBeGreaterThan(bar2!.y);
   });
+
+  it('clamps horizontal bars to value axis when value is above explicit max', () => {
+    const chartWidth = 300;
+
+    const result = computeBarPositions({
+      data: [{ category: 'A', value1: 15 }],
+      indexBy: 'category',
+      keys: ['value1'],
+      enrichedKeysMap: defaultEnrichedKeysMap,
+      chartWidth,
+      chartHeight: 300,
+      margins: defaultMargins,
+      layout: BarChartLayout.HORIZONTAL,
+      groupMode: 'grouped',
+      valueDomain: { min: 0, max: 10 },
+      innerPadding: 2,
+    });
+
+    expect(result).toHaveLength(1);
+    expect(result[0].x).toBe(0);
+    expect(result[0].width).toBe(
+      chartWidth - defaultMargins.left - defaultMargins.right,
+    );
+  });
 });

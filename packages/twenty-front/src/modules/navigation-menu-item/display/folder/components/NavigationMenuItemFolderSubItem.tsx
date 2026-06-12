@@ -1,51 +1,64 @@
 import { type ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { getEffectiveNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getEffectiveNavigationMenuItemColor';
+import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
+import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
-import type { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
+import { useIdentifyActiveNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useIdentifyActiveNavigationMenuItems';
+import { useIsNavigationMenuItemEditHighlighted } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuItemEditHighlighted';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
+import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { getObjectNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemSecondaryLabel';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import type { EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
-import { ViewKey } from '@/views/types/ViewKey';
 
 type NavigationMenuItemFolderSubItemProps = {
   navigationMenuItem: NavigationMenuItem;
   index: number;
   arrayLength: number;
-  selectedNavigationMenuItemIndex: number;
+  selectedIndex: number;
   isDragging: boolean;
   rightOptions?: ReactNode;
   onClick?: () => void;
   onNavigationMenuItemClick?: (params: {
     item: NavigationMenuItem;
-    objectMetadataItem?: ObjectMetadataItem;
+    objectMetadataItem?: EnrichedObjectMetadataItem;
   }) => void;
-  selectedNavigationMenuItemId?: string | null;
 };
 
 export const NavigationMenuItemFolderSubItem = ({
   navigationMenuItem,
   index,
   arrayLength,
-  selectedNavigationMenuItemIndex,
+  selectedIndex,
   isDragging,
   rightOptions,
   onClick,
   onNavigationMenuItemClick,
-  selectedNavigationMenuItemId,
 }: NavigationMenuItemFolderSubItemProps) => {
+  const isEditHighlightedInNavigationMenu =
+    useIsNavigationMenuItemEditHighlighted(navigationMenuItem);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
+  const navigate = useNavigate();
+  const setLastClickedNavigationMenuItemId = useSetAtomState(
+    lastClickedNavigationMenuItemIdState,
+  );
+
+  const { activeNavigationMenuItemIds } =
+    useIdentifyActiveNavigationMenuItems();
+
+  const isActive = activeNavigationMenuItemIds.includes(navigationMenuItem.id);
 
   const label = getNavigationMenuItemLabel(
     navigationMenuItem,
@@ -62,11 +75,6 @@ export const NavigationMenuItemFolderSubItem = ({
     objectMetadataItems,
     views,
   );
-
-  const view = isDefined(navigationMenuItem.viewId)
-    ? views.find((viewItem) => viewItem.id === navigationMenuItem.viewId)
-    : undefined;
-  const isIndexView = view?.key === ViewKey.INDEX;
 
   const objectMetadataItem =
     navigationMenuItem.type === NavigationMenuItemType.OBJECT ||
@@ -92,12 +100,15 @@ export const NavigationMenuItemFolderSubItem = ({
             item: navigationMenuItem,
             objectMetadataItem: objectMetadataItem ?? undefined,
           })
-      : undefined);
+      : () => {
+          setLastClickedNavigationMenuItemId(navigationMenuItem.id);
+          navigate(computedLink);
+        });
 
   return (
     <NavigationDrawerSubItem
       secondaryLabel={
-        isIndexView
+        navigationMenuItem.type !== NavigationMenuItemType.VIEW
           ? undefined
           : getObjectNavigationMenuItemSecondaryLabel({
               objectMetadataItems,
@@ -108,17 +119,18 @@ export const NavigationMenuItemFolderSubItem = ({
       Icon={() => (
         <NavigationMenuItemIcon navigationMenuItem={navigationMenuItem} />
       )}
-      iconColor={getEffectiveNavigationMenuItemColor(navigationMenuItem)}
-      to={isDragging || handleClick ? undefined : computedLink}
+      iconColor={getNavigationMenuItemColor(
+        navigationMenuItem,
+        objectMetadataItem ?? undefined,
+      )}
+      to={isDragging || isEditable ? undefined : computedLink}
       onClick={handleClick}
-      active={index === selectedNavigationMenuItemIndex}
-      isSelectedInEditMode={
-        selectedNavigationMenuItemId === navigationMenuItem.id
-      }
+      active={isActive}
+      isSelectedInEditMode={isEditHighlightedInNavigationMenu}
       subItemState={getNavigationSubItemLeftAdornment({
         index,
         arrayLength,
-        selectedIndex: selectedNavigationMenuItemIndex,
+        selectedIndex,
       })}
       rightOptions={rightOptions}
       isDragging={isDragging}

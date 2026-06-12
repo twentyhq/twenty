@@ -1,35 +1,32 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
+import { EntityManager } from 'typeorm';
 
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
   MessageChannelPendingGroupEmailsAction,
   MessageChannelSyncStage,
   MessageChannelSyncStatus,
   MessageChannelType,
   MessageChannelVisibility,
-  type MessageChannelWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
+} from 'twenty-shared/types';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 
 export type CreateMessageChannelInput = {
   workspaceId: string;
   connectedAccountId: string;
   handle: string;
   messageVisibility?: MessageChannelVisibility;
-  manager: WorkspaceEntityManager;
   skipMessageChannelConfiguration?: boolean;
+  transactionManager: EntityManager;
 };
 
 @Injectable()
 export class CreateMessageChannelService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly syncMessageFoldersService: SyncMessageFoldersService,
   ) {}
 
   async createMessageChannel(
@@ -40,53 +37,32 @@ export class CreateMessageChannelService {
       connectedAccountId,
       handle,
       messageVisibility,
-      manager,
       skipMessageChannelConfiguration,
+      transactionManager,
     } = input;
 
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const messageChannelRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-            workspaceId,
-            'messageChannel',
-          );
-
+        const messageChannelRepo =
+          transactionManager.getRepository(MessageChannelEntity);
         const newMessageChannelId = v4();
 
-        await messageChannelRepository.insert(
-          {
-            id: newMessageChannelId,
-            connectedAccountId,
-            type: MessageChannelType.EMAIL,
-            handle,
-            visibility:
-              messageVisibility || MessageChannelVisibility.SHARE_EVERYTHING,
-            syncStatus: skipMessageChannelConfiguration
-              ? MessageChannelSyncStatus.ONGOING
-              : MessageChannelSyncStatus.NOT_SYNCED,
-            syncStage: skipMessageChannelConfiguration
-              ? MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING
-              : MessageChannelSyncStage.PENDING_CONFIGURATION,
-            pendingGroupEmailsAction:
-              MessageChannelPendingGroupEmailsAction.NONE,
-          },
-          manager,
-        );
-
-        const createdMessageChannel = await messageChannelRepository.findOne({
-          where: { id: newMessageChannelId },
-          relations: ['connectedAccount', 'messageFolders'],
-        });
-
-        if (!isDefined(createdMessageChannel)) {
-          throw new Error('Message channel not found');
-        }
-
-        await this.syncMessageFoldersService.syncMessageFolders({
-          messageChannel: createdMessageChannel,
+        await messageChannelRepo.save({
+          id: newMessageChannelId,
+          connectedAccountId,
+          type: MessageChannelType.EMAIL,
+          handle,
+          visibility:
+            messageVisibility || MessageChannelVisibility.SHARE_EVERYTHING,
+          syncStatus: skipMessageChannelConfiguration
+            ? MessageChannelSyncStatus.ONGOING
+            : MessageChannelSyncStatus.NOT_SYNCED,
+          syncStage: skipMessageChannelConfiguration
+            ? MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING
+            : MessageChannelSyncStage.PENDING_CONFIGURATION,
+          pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
           workspaceId,
         });
 

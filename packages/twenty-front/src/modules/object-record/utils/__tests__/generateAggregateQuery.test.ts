@@ -1,9 +1,9 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
 
 describe('generateAggregateQuery', () => {
   it('should generate correct aggregate query', () => {
-    const mockObjectMetadataItem: ObjectMetadataItem = {
+    const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
       nameSingular: 'company',
       namePlural: 'companies',
       id: 'test-id',
@@ -46,7 +46,7 @@ describe('generateAggregateQuery', () => {
   });
 
   it('should handle empty record fields', () => {
-    const mockObjectMetadataItem: ObjectMetadataItem = {
+    const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
       nameSingular: 'person',
       namePlural: 'people',
       id: 'test-id',

@@ -1,147 +1,55 @@
 ---
 title: API-uri
-description: Interogați și modificați programatic datele din CRM folosind REST sau GraphQL.
+icon: plug
+description: API-urile REST și GraphQL generate din schema spațiului tău de lucru.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-Twenty a fost creat pentru a fi prietenos cu dezvoltatorii, oferind API-uri puternice care se adaptează la modelul dvs. de date personalizat. Oferim patru tipuri distincte de API-uri pentru a satisface diferite nevoi de integrare.
+## API-uri cu schemă per-tenant
 
-## Abordare orientată către dezvoltatori
+Nu există o referință API statică pentru Twenty. Fiecare spațiu de lucru are propria schemă — când adaugi un obiect personalizat (de exemplu `Invoice`), acesta primește imediat endpoint-uri REST și GraphQL identice cu cele ale obiectelor încorporate precum `Company` sau `Person`. API-ul este generat din schemă, astfel încât endpoint-urile folosesc direct denumirile obiectelor și câmpurilor tale — fără ID-uri opace.
 
-Twenty generează API-uri special pentru modelul dvs. de date:
+Documentația API specifică spațiului tău de lucru este disponibilă la **Settings → API & Webhooks** după crearea unei chei API. Include un mediu interactiv de testare în care poți executa apeluri reale asupra datelor tale.
 
-* **Nu sunt necesare ID-uri lungi**: Utilizați direct numele obiectelor și câmpurilor în punctele finale
-* **Obiectele standard și personalizate tratate în mod egal**: Obiectele dvs. personalizate primesc același tratament API ca și cele încorporate
-* **Puncte finale dedicate**: Fiecare obiect și câmp primește propriul său punct final API
-* **Documentație personalizată**: Generată special pentru modelul de date al spațiului dvs. de lucru
+## Două API-uri
 
-<Note>
-Documentația API personalizată este disponibilă la **Settings → API & Webhooks** după crearea unei chei API. Deoarece Twenty generează API-uri care se potrivesc modelului dvs. de date personalizat, documentația este unică pentru spațiul dvs. de lucru.
-</Note>
+**API de bază** — `/rest/` și `/graphql/`
 
-## Cele două tipuri de API-uri
+CRUD pe înregistrări: Persoane, Companii, Oportunități, obiectele tale personalizate. Interogare, filtrare, parcurgere a relațiilor.
 
-### API Core
+**API de metadate** — `/rest/metadata/` și `/metadata/`
 
-Accesibil prin `/rest/` sau `/graphql/`
+Administrarea schemei: creare/modificare/ștergere de obiecte, câmpuri și relații. Așa îți modifici programatic modelul de date.
 
-Lucrați cu **înregistrările** reale (datele):
+Ambele sunt disponibile ca REST și GraphQL. GraphQL adaugă upsert-uri în lot și posibilitatea de a parcurge relațiile într-o singură interogare. Aceleași date de bază, indiferent de metodă.
 
-* Creați, citiți, actualizați, ștergeți Persoane, Companii, Oportunități etc.
-* Interogați și filtrați datele
-* Gestionați relațiile dintre înregistrări
+## URL-uri de bază
 
-### API Metadata
-
-Accesibil prin `/rest/metadata/` sau `/metadata/`
-
-Gestionați-vă **spațiul de lucru și modelul de date**:
-
-* Creați, modificați sau ștergeți obiecte și câmpuri
-* Configurați setările spațiului de lucru
-* Definiți relațiile dintre obiecte
-
-## REST vs GraphQL
-
-Atât API-urile Core, cât și API-urile Metadata sunt disponibile în formatele REST și GraphQL:
-
-| Format      | Operațiuni disponibile                                                     |
-| ----------- | -------------------------------------------------------------------------- |
-| **REST**    | CRUD, operațiuni de grup, upsert-uri                                       |
-| **GraphQL** | La fel + **upsert-uri de grup**, interogări de relații într-un singur apel |
-
-Alegeți în funcție de nevoi — ambele formate accesează aceleași date.
-
-## Puncte Finale API
-
-| Mediu                | URL de bază               |
-| -------------------- | ------------------------- |
-| **Cloud**            | `https://api.twenty.com/` |
-| **Găzduire proprie** | `https://{your-domain}/`  |
+| Mediu            | URL de bază               |
+| ---------------- | ------------------------- |
+| Cloud            | `https://api.twenty.com/` |
+| Găzduire proprie | `https://{your-domain}/`  |
 
 ## Autentificare
-
-Fiecare solicitare API necesită o cheie API în antet:
 
 ```
 Authorization: Bearer YOUR_API_KEY
 ```
 
-### Creați o cheie API
-
-1. Mergeți la **Setări → API-uri & Webhook-uri**
-2. Faceți clic pe **+ Create key**
-3. Configurați:
-   * **Name**: Nume descriptiv pentru cheie
-   * **Expiration Date**: Când expiră cheia
-4. Faceți clic pe **Salvare**
-5. **Copiați imediat** — cheia este afișată o singură dată
+Creează o cheie API în **Settings → API & Webhooks → + Create key**. Copiază-o imediat — este afișată o singură dată. Cheile pot fi limitate la un rol specific în **Settings → Members → Roles → Assignment tab** pentru a restricționa la ce pot avea acces.
 
 <VimeoEmbed videoId="928786722" title="Crearea unei chei API" />
 
-<Warning>
-Cheia dvs. API oferă acces la date sensibile. Nu o partajați cu servicii care nu sunt de încredere. Dacă este compromisă, dezactivați-o imediat și generați una nouă.
-</Warning>
-
-### Atribuiți un rol unei chei API
-
-Pentru o securitate sporită, atribuiți un rol specific pentru a limita accesul:
-
-1. Accesați **Setări → Roluri**
-2. Faceți clic pe rolul pe care doriți să-l atribuiți
-3. Deschideți fila **Atribuire**
-4. În **API Keys**, faceți clic pe **+ Assign to API key**
-5. Selectați cheia API
-
-Cheia va moșteni permisiunile acelui rol. Consultați [Permisiuni](/l/ro/user-guide/permissions-access/capabilities/permissions) pentru detalii.
-
-### Gestionați cheile API
-
-**Regenerate**: Settings → APIs & Webhooks → Faceți clic pe cheie → **Regenerate**
-
-**Delete**: Settings → APIs & Webhooks → Faceți clic pe cheie → **Delete**
-
-## Platformă de testare API
-
-Testați API-urile direct în browser cu platforma noastră integrată de testare — disponibilă atât pentru **REST**, cât și pentru **GraphQL**.
-
-### Accesați platforma de testare
-
-1. Mergeți la **Setări → API-uri & Webhook-uri**
-2. Creați o cheie API (obligatoriu)
-3. Faceți clic pe **REST API** sau **GraphQL API** pentru a deschide platforma de testare
-
-### Ce obțineți
-
-* **Documentație interactivă**: Generată pentru modelul dvs. de date specific
-* **Testare live**: Executați apeluri API reale către spațiul dvs. de lucru
-* **Explorator de scheme**: Parcurgeți obiectele, câmpurile și relațiile disponibile
-* **Constructor de cereri**: Construiți interogări cu completare automată
-
-Platforma de testare reflectă obiectele și câmpurile dvs. personalizate, astfel încât documentația este întotdeauna corectă pentru spațiul dvs. de lucru.
+Pentru acces bazat pe OAuth (aplicații externe care acționează în numele utilizatorilor), vezi [OAuth](/l/ro/developers/extend/oauth).
 
 ## Operațiuni de grup
 
-Atât REST, cât și GraphQL suportă operațiuni de grup:
-
-* **Dimensiunea grupului**: Până la 60 de înregistrări pe cerere
-* **Operațiuni**: Creați, actualizați, ștergeți mai multe înregistrări
-
-**Funcții exclusive GraphQL:**
-
-* **Upsert de grup**: Creați sau actualizați într-un singur apel
-* Folosiți nume de obiecte la plural (de exemplu, `CreateCompanies` în loc de `CreateCompany`)
+Atât REST, cât și GraphQL acceptă procesarea în lot de până la 60 de înregistrări per cerere — creare, actualizare sau ștergere. GraphQL acceptă, de asemenea, upsert în lot (creare-sau-actualizare într-un singur apel) folosind nume la plural precum `CreateCompanies`.
 
 ## Limitări de rată
 
-Solicitările API sunt limitate pentru a asigura stabilitatea platformei:
-
-| Limită                  | Valoare                    |
-| ----------------------- | -------------------------- |
-| **Solicitări**          | 100 de apeluri pe minut    |
-| **Dimensiunea lotului** | 60 de înregistrări pe apel |
-
-<Tip>
-Utilizați operațiunile de grup pentru a maximiza debitul — procesați până la 60 de înregistrări într-un singur apel API în loc să faceți solicitări individuale.
-</Tip>
+| Limită              | Valoare                    |
+| ------------------- | -------------------------- |
+| Solicitări          | 100 pe minut               |
+| Dimensiunea lotului | 60 de înregistrări pe apel |

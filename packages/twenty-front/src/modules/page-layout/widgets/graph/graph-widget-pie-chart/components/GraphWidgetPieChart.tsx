@@ -28,7 +28,10 @@ import {
   useRef,
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import {
   type PieChartConfiguration,
   type PieChartDataItem,
@@ -194,6 +197,7 @@ export const GraphWidgetPieChart = ({
             enableArcLabels={false}
             tooltip={() => null}
             layers={[ArcsLayer, 'arcLinkLabels']}
+            id={(datum: PieChartDataItem) => `${id}:${String(datum.id)}`}
             arcLinkLabel={(datum: ComputedDatum<PieChartDataItem>) => {
               const formattedValue = getPieChartFormattedValue({
                 datum,
@@ -231,10 +235,9 @@ export const GraphWidgetPieChart = ({
         displayType={displayType}
         onSliceClick={onSliceClick}
       />
-      <GraphWidgetLegend
-        show={showLegend && data.length > 0}
-        items={legendItems}
-      />
+      {showLegend && data.length > 0 && (
+        <GraphWidgetLegend show items={legendItems} />
+      )}
     </StyledContainer>
   );
 };

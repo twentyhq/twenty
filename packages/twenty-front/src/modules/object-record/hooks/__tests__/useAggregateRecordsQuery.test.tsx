@@ -1,6 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useAggregateRecordsQuery } from '@/object-record/hooks/useAggregateRecordsQuery';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
@@ -36,7 +36,7 @@ const fields = [
   } as FieldMetadataItem,
 ];
 
-const mockObjectMetadataItem: ObjectMetadataItem = {
+const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
   nameSingular: 'company',
   namePlural: 'companies',
   id: 'test-id',

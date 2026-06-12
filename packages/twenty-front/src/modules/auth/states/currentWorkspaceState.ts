@@ -26,7 +26,6 @@ export type CurrentWorkspace = Pick<
   | 'isPasswordAuthEnabled'
   | 'isPasswordAuthBypassEnabled'
   | 'isCustomDomainEnabled'
-  | 'hasValidEnterpriseKey'
   | 'hasValidSignedEnterpriseKey'
   | 'hasValidEnterpriseValidityToken'
   | 'subdomain'
@@ -40,13 +39,16 @@ export type CurrentWorkspace = Pick<
   | 'smartModel'
   | 'aiAdditionalInstructions'
   | 'editableProfileFields'
-  | 'autoEnableNewAiModels'
-  | 'disabledAiModelIds'
   | 'enabledAiModelIds'
   | 'useRecommendedModels'
+  | 'isInternalMessagesImportEnabled'
 > & {
   defaultRole?: Omit<Role, 'workspaceMembers' | 'agents' | 'apiKeys'> | null;
   workspaceCustomApplication: Pick<Application, 'id'> | null;
+  installedApplications: Pick<
+    Application,
+    'id' | 'name' | 'universalIdentifier' | 'logo'
+  >[];
 };
 
 export const currentWorkspaceState = createAtomState<CurrentWorkspace | null>({

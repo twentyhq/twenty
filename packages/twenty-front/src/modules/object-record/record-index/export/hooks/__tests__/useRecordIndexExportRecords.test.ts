@@ -2,11 +2,17 @@ import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldM
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { CSV_INJECTION_PREVENTION_ZWJ } from '@/spreadsheet-import/constants/CsvInjectionPreventionZwj';
 
-import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 import {
+  csvDownloader,
   displayedExportProgress,
   generateCsv,
 } from '@/object-record/record-index/export/hooks/useRecordIndexExportRecords';
+import { saveAs } from 'file-saver';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+
+jest.mock('file-saver', () => ({
+  saveAs: jest.fn(),
+}));
 
 jest.useFakeTimers();
 
@@ -63,7 +69,7 @@ describe('generateCsv', () => {
     ];
     const csv = generateCsv({ columns, rows });
     expect(csv)
-      .toEqual(`Id,Foo,Empty,Nested link field / Link URL,Nested link field / Secondary Links,Relation
+      .toEqual(`\uFEFFId,Foo,Empty,Nested link field / Link URL,Nested link field / Secondary Links,Relation
 1,some field,,https://www.test.com,"[{""label"":""secondary link 1"",""url"":""https://www.test.com""},{""label"":""secondary link 2"",""url"":""https://www.test.com""}]",a relation`);
   });
 
@@ -433,6 +439,62 @@ describe('generateCsv', () => {
         'This is a normal description with = and + symbols in the middle',
       );
     });
+  });
+});
+
+describe('csvDownloader', () => {
+  const mockSaveAs = saveAs as jest.MockedFunction<typeof saveAs>;
+
+  beforeEach(() => {
+    mockSaveAs.mockClear();
+  });
+
+  const readBlob = async (blob: Blob): Promise<ArrayBuffer> =>
+    new Promise<ArrayBuffer>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as ArrayBuffer);
+      reader.onerror = reject;
+      reader.readAsArrayBuffer(blob);
+    });
+
+  const columns: Pick<
+    ColumnDefinition<FieldMetadata>,
+    'size' | 'label' | 'type' | 'metadata'
+  >[] = [
+    {
+      label: 'Name',
+      size: 100,
+      type: FieldMetadataType.TEXT,
+      metadata: { fieldName: 'name' },
+    },
+  ];
+
+  it('prepends UTF-8 BOM (EF BB BF) as first three bytes', async () => {
+    csvDownloader('export.csv', {
+      columns,
+      rows: [{ id: '1', name: 'test' }],
+    });
+
+    const blob = mockSaveAs.mock.calls[0][0] as Blob;
+    const bytes = new Uint8Array(await readBlob(blob));
+
+    expect(bytes[0]).toBe(0xef);
+    expect(bytes[1]).toBe(0xbb);
+    expect(bytes[2]).toBe(0xbf);
+  });
+
+  it.each([
+    ['Arabic', 'مرحبا'],
+    ['Chinese', '你好'],
+    ['Japanese', 'こんにちは'],
+    ['Korean', '안녕하세요'],
+  ])('preserves %s characters in exported content', async (_, name) => {
+    csvDownloader('export.csv', { columns, rows: [{ id: '1', name }] });
+
+    const blob = mockSaveAs.mock.calls[0][0] as Blob;
+    const text = Buffer.from(await readBlob(blob)).toString('utf-8');
+
+    expect(text).toContain(name);
   });
 });
 

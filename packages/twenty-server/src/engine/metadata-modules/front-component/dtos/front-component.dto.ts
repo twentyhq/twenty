@@ -8,6 +8,7 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
+import { GraphQLJSON } from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
@@ -68,6 +69,13 @@ export class FrontComponentDTO {
   @Field()
   isHeadless: boolean;
 
+  @IsBoolean()
+  @Field()
+  usesSdkClient: boolean;
+
   @Field(() => ApplicationTokenPairDTO, { nullable: true })
   applicationTokenPair?: ApplicationTokenPairDTO;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  applicationVariables?: Record<string, string>;
 }

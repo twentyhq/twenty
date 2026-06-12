@@ -2,14 +2,13 @@ import {
   STANDARD_OBJECTS,
   DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
 } from 'twenty-shared/metadata';
-import { FieldMetadataType, FeatureFlagKey } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
-import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
@@ -20,12 +19,12 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-migration/constant/standard-object-icons';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
 const morphIdByRelationObjectNameSingular = {
   timelineActivity:
     STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
-  favorite: null,
   attachment: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
   noteTarget: STANDARD_OBJECTS.noteTarget.morphIds.targetMorphId.morphId,
   taskTarget: STANDARD_OBJECTS.taskTarget.morphIds.targetMorphId.morphId,
@@ -34,14 +33,7 @@ const morphIdByRelationObjectNameSingular = {
   string | null
 >;
 
-// TODO: once we have finished migrating, we can delete custom code
-// once we migrate timeline activity to morph relations, we can add it.
-// another way to check if an object is migrated to morph relations is to check if the feature flag is enabled
-const DEFAULT_MORPH_RELATIONS_OBJECTS_STANDARD_IDS =
-  [] as const satisfies (keyof typeof STANDARD_OBJECTS)[];
-
 export type BuildDefaultRelationFieldsForCustomObjectArgs = {
-  existingFeatureFlagsMap: FeatureFlagMap;
   existingFlatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   sourceFlatObjectMetadata: UniversalFlatObjectMetadata;
   flatApplication: FlatApplication;
@@ -50,15 +42,16 @@ export type BuildDefaultRelationFieldsForCustomObjectArgs = {
 type SourceAndTargetFlatFieldMetadatasRecord = {
   standardSourceFlatFieldMetadatas: UniversalFlatFieldMetadata[];
   standardTargetFlatFieldMetadatas: UniversalFlatFieldMetadata[];
+  standardTargetFlatIndexMetadatas: UniversalFlatIndexMetadata[];
 };
 const EMPTY_SOURCE_AND_TARGET_FLAT_FIELD_METADATAS_RECORD: SourceAndTargetFlatFieldMetadatasRecord =
   {
     standardSourceFlatFieldMetadatas: [],
     standardTargetFlatFieldMetadatas: [],
+    standardTargetFlatIndexMetadatas: [],
   };
 
 export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
-  existingFeatureFlagsMap,
   existingFlatObjectMetadataMaps,
   sourceFlatObjectMetadata,
   flatApplication,
@@ -79,21 +72,11 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
   const result =
     DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.reduce<SourceAndTargetFlatFieldMetadatasRecord>(
       (sourceAndTargetFlatFieldMetadatasRecord, objectMetadataNameSingular) => {
-        const isObjectMigratedFromOlderReleases =
-          DEFAULT_MORPH_RELATIONS_OBJECTS_STANDARD_IDS.map(toString).includes(
-            objectMetadataNameSingular,
-          );
-        const isFeatureFlagEnabled =
-          objectMetadataNameSingular === 'timelineActivity' ||
-          (objectMetadataNameSingular === 'attachment' &&
-            existingFeatureFlagsMap[FeatureFlagKey.IS_ATTACHMENT_MIGRATED]) ||
-          (objectMetadataNameSingular === 'noteTarget' &&
-            existingFeatureFlagsMap[FeatureFlagKey.IS_NOTE_TARGET_MIGRATED]) ||
-          (objectMetadataNameSingular === 'taskTarget' &&
-            existingFeatureFlagsMap[FeatureFlagKey.IS_TASK_TARGET_MIGRATED]) ||
-          false;
         const isObjectMigratedToMorphRelations =
-          isObjectMigratedFromOlderReleases || isFeatureFlagEnabled;
+          objectMetadataNameSingular === 'timelineActivity' ||
+          objectMetadataNameSingular === 'attachment' ||
+          objectMetadataNameSingular === 'noteTarget' ||
+          objectMetadataNameSingular === 'taskTarget';
 
         const targetFlatObjectMetadataId =
           objectIdByNameSingular[objectMetadataNameSingular];
@@ -127,7 +110,7 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
         const morphId =
           morphIdByRelationObjectNameSingular[objectMetadataNameSingular];
 
-        const { flatFieldMetadatas } =
+        const { flatFieldMetadatas, indexMetadatas } =
           generateMorphOrRelationFlatFieldMetadataPair({
             sourceFlatObjectMetadata,
             targetFlatObjectMetadata,
@@ -163,6 +146,10 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
           standardTargetFlatFieldMetadatas: [
             ...sourceAndTargetFlatFieldMetadatasRecord.standardTargetFlatFieldMetadatas,
             flatFieldMetadatas[1],
+          ],
+          standardTargetFlatIndexMetadatas: [
+            ...sourceAndTargetFlatFieldMetadatasRecord.standardTargetFlatIndexMetadatas,
+            ...indexMetadatas,
           ],
         };
       },

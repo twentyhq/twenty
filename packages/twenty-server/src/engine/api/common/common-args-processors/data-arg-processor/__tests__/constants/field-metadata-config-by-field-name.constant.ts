@@ -49,8 +49,17 @@ export const fieldMetadataConfigByFieldName: Record<
       { value: 'OPTION_2' },
     ] as FieldMetadataDefaultOption[],
   },
+  manyToOneRelationField: {
+    name: 'manyToOneRelationField',
+    type: FieldMetadataType.RELATION,
+    isNullable: true,
+    settings: {
+      relationType: RelationType.MANY_TO_ONE,
+      joinColumnName: 'manyToOneRelationFieldId',
+    },
+  },
   manyToOneRelationFieldId: {
-    name: 'manyToOneRelationFieldId',
+    name: 'manyToOneRelationField',
     type: FieldMetadataType.RELATION,
     isNullable: true,
     settings: {

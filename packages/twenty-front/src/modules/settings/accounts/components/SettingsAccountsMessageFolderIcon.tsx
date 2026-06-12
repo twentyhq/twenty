@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
+import { MessageFolderImportPolicy } from 'twenty-shared/types';
 
-import { MessageFolderImportPolicy } from '@/accounts/types/MessageChannel';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 type SettingsAccountsMessageFolderIconProps = {
   className?: string;

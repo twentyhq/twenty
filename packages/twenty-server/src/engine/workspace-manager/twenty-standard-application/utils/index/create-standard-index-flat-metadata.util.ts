@@ -108,6 +108,7 @@ export const createStandardIndexFlatMetadata = <
           ) => ({
             createdAt: now,
             order: index,
+            subFieldName: null,
             updatedAt: now,
             fieldMetadataUniversalIdentifier,
             indexMetadataUniversalIdentifier:
@@ -130,7 +131,9 @@ export const createStandardIndexFlatMetadata = <
         id: v4(),
         indexMetadataId: indexId,
         order: index,
+        subFieldName: null,
         updatedAt: now,
+        workspaceId,
       }),
     ),
     workspaceId,

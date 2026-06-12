@@ -2,8 +2,11 @@ import { Transform } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
+  isDefined,
   IsEnum,
   IsNumber,
+  IsObject,
+  isString,
   IsString,
 } from 'class-validator';
 
@@ -14,6 +17,7 @@ import {
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { type ConfigVariableOptions } from 'src/engine/core-modules/twenty-config/types/config-variable-options.type';
 import { configTransformers } from 'src/engine/core-modules/twenty-config/utils/config-transformers.util';
+import { tryParseJsonArray } from 'src/utils/try-parse-json-array';
 
 export interface TypeTransformer<T> {
   toApp: (value: unknown, options?: ConfigVariableOptions) => T | undefined;
@@ -27,7 +31,7 @@ export interface TypeTransformer<T> {
 
 export const typeTransformers: Record<
   ConfigVariableType,
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   TypeTransformer<any>
 > = {
   [ConfigVariableType.BOOLEAN]: {
@@ -192,7 +196,21 @@ export const typeTransformers: Record<
 
     getValidators: (): PropertyDecorator[] => [IsArray()],
 
-    getTransformers: (): PropertyDecorator[] => [],
+    getTransformers: (): PropertyDecorator[] => [
+      Transform(({ value }) => {
+        if (Array.isArray(value)) return value;
+        if (!isString(value)) return value;
+
+        const fromJson = tryParseJsonArray(value);
+
+        if (isDefined(fromJson)) return fromJson;
+
+        return value
+          .split(',')
+          .map((item) => item.trim())
+          .filter((item) => item.length > 0);
+      }),
+    ],
   },
 
   [ConfigVariableType.ENUM]: {
@@ -240,5 +258,75 @@ export const typeTransformers: Record<
     },
 
     getTransformers: (): PropertyDecorator[] => [],
+  },
+
+  [ConfigVariableType.JSON]: {
+    toApp: (value: unknown): Record<string, unknown> | undefined => {
+      if (value === null || value === undefined) return undefined;
+
+      if (typeof value === 'object' && !Array.isArray(value)) {
+        return value as Record<string, unknown>;
+      }
+
+      if (typeof value === 'string') {
+        try {
+          const parsed = JSON.parse(value);
+
+          if (
+            parsed !== null &&
+            typeof parsed === 'object' &&
+            !Array.isArray(parsed)
+          ) {
+            return parsed;
+          }
+
+          throw new ConfigVariableException(
+            'Expected JSON object, got non-object value',
+            ConfigVariableExceptionCode.VALIDATION_FAILED,
+          );
+        } catch (error) {
+          if (error instanceof ConfigVariableException) {
+            throw error;
+          }
+
+          throw new ConfigVariableException(
+            `Failed to parse JSON string: ${error instanceof Error ? error.message : String(error)}`,
+            ConfigVariableExceptionCode.VALIDATION_FAILED,
+          );
+        }
+      }
+
+      throw new ConfigVariableException(
+        `Expected JSON object or string, got ${typeof value}`,
+        ConfigVariableExceptionCode.VALIDATION_FAILED,
+      );
+    },
+
+    toStorage: (value: Record<string, unknown>): Record<string, unknown> => {
+      if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+        throw new ConfigVariableException(
+          `Expected JSON object, got ${Array.isArray(value) ? 'array' : typeof value}`,
+          ConfigVariableExceptionCode.VALIDATION_FAILED,
+        );
+      }
+
+      return JSON.parse(JSON.stringify(value));
+    },
+
+    getValidators: (): PropertyDecorator[] => [IsObject()],
+
+    getTransformers: (): PropertyDecorator[] => [
+      Transform(({ value }) => {
+        if (typeof value === 'string') {
+          try {
+            return JSON.parse(value);
+          } catch {
+            return value;
+          }
+        }
+
+        return value;
+      }),
+    ],
   },
 };

@@ -1,4 +1,5 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -61,6 +62,14 @@ export const createStandardObjectFlatMetadata = <
       labelIdentifierFieldMetadataName
     ].universalIdentifier;
 
+  const imageIdentifierFieldMetadataUniversalIdentifier =
+    imageIdentifierFieldMetadataName
+      ? // @ts-expect-error ignore
+        STANDARD_OBJECTS[nameSingular as keyof typeof STANDARD_OBJECTS].fields[
+          imageIdentifierFieldMetadataName
+        ].universalIdentifier
+      : null;
+
   return {
     universalIdentifier,
     applicationId: twentyStandardApplicationId,
@@ -72,7 +81,6 @@ export const createStandardObjectFlatMetadata = <
     color: null,
     description,
     icon,
-    isCustom: false,
     isRemote: false,
     isActive: true,
     isSystem,
@@ -96,16 +104,19 @@ export const createStandardObjectFlatMetadata = <
     fieldIds: [],
     indexMetadataIds: [],
     objectPermissionIds: [],
+    fieldPermissionIds: [],
     viewIds: [],
     createdAt: now,
     updatedAt: now,
     id: standardObjectMetadataRelatedEntityIds[nameSingular].id,
-    applicationUniversalIdentifier: twentyStandardApplicationId,
+    applicationUniversalIdentifier:
+      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     fieldUniversalIdentifiers: [],
     objectPermissionUniversalIdentifiers: [],
+    fieldPermissionUniversalIdentifiers: [],
     viewUniversalIdentifiers: [],
     indexMetadataUniversalIdentifiers: [],
     labelIdentifierFieldMetadataUniversalIdentifier,
-    imageIdentifierFieldMetadataUniversalIdentifier: null,
+    imageIdentifierFieldMetadataUniversalIdentifier,
   };
 };

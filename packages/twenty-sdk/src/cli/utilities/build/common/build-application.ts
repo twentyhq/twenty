@@ -9,12 +9,10 @@ import {
 import { FileFolder } from 'twenty-shared/types';
 
 import { esbuildOneShotBuild } from '@/cli/utilities/build/common/esbuild-one-shot-build';
-import {
-  LOGIC_FUNCTION_EXTERNAL_MODULES,
-  createSdkClientsResolverPlugin,
-} from '@/cli/utilities/build/common/esbuild-watcher';
+import { LOGIC_FUNCTION_EXTERNAL_MODULES } from '@/cli/utilities/build/common/esbuild-watcher';
 import { getBaseFrontComponentBuildOptions } from '@/cli/utilities/build/common/front-component-build/utils/get-base-front-component-build-options';
 import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
+import { createStubTwentySdkDefinePlugin } from '@/cli/utilities/build/common/plugins/stub-twenty-sdk-define.plugin';
 import { type OnFileBuiltCallback } from '@/cli/utilities/build/common/restartable-watcher-interface';
 import { type EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import {
@@ -36,6 +34,7 @@ export type BuiltFileInfo = {
   builtPath: string;
   sourcePath: string;
   fileFolder: FileFolder;
+  usesSdkClient?: boolean;
 };
 
 export type AppBuildResult = {
@@ -58,6 +57,7 @@ export const buildApplication = async (
       builtPath: event.builtPath,
       sourcePath: event.sourcePath,
       fileFolder: event.fileFolder,
+      usesSdkClient: event.usesSdkClient,
     });
   };
 
@@ -80,7 +80,7 @@ export const buildApplication = async (
       metafile: true,
       logLevel: 'silent',
       banner: NODE_ESM_CJS_BANNER,
-      plugins: [createSdkClientsResolverPlugin(options.appPath)],
+      plugins: [createStubTwentySdkDefinePlugin()],
     },
     onFileBuilt: collectFileBuilt,
   });
@@ -93,9 +93,13 @@ export const buildApplication = async (
       ...getBaseFrontComponentBuildOptions(),
       outdir: join(options.appPath, OUTPUT_DIR),
       tsconfig: join(options.appPath, 'tsconfig.json'),
+      jsx: 'automatic',
+      sourcemap: true,
+      metafile: true,
+      logLevel: 'silent',
       plugins: [
-        createSdkClientsResolverPlugin(options.appPath),
         ...getFrontComponentBuildPlugins(),
+        createStubTwentySdkDefinePlugin(),
       ],
     },
     onFileBuilt: collectFileBuilt,

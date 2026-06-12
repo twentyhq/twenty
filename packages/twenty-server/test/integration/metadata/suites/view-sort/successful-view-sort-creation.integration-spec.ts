@@ -9,7 +9,7 @@ import { destroyOneView } from 'test/integration/metadata/suites/view/utils/dest
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { FieldMetadataType, ViewType } from 'twenty-shared/types';
 
-import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
+import { ViewSortDirection } from 'twenty-shared/types';
 
 describe('View Sort creation should succeed', () => {
   let testObjectMetadataId: string;
@@ -151,6 +151,45 @@ describe('View Sort creation should succeed', () => {
       viewId: createdViewId,
       fieldMetadataId: testFieldMetadataId,
       direction: ViewSortDirection.DESC,
+    });
+  });
+
+  it('should default subFieldName to null when not provided', async () => {
+    const { data } = await createOneViewSort({
+      expectToFail: false,
+      input: {
+        viewId: createdViewId,
+        fieldMetadataId: testFieldMetadataId,
+      },
+    });
+
+    createdViewSortId = data?.createViewSort?.id;
+
+    expect(data.createViewSort).toMatchObject({
+      id: expect.any(String),
+      viewId: createdViewId,
+      fieldMetadataId: testFieldMetadataId,
+      subFieldName: null,
+    });
+  });
+
+  it('should persist subFieldName when provided', async () => {
+    const { data } = await createOneViewSort({
+      expectToFail: false,
+      input: {
+        viewId: createdViewId,
+        fieldMetadataId: testFieldMetadataId,
+        subFieldName: 'lastName',
+      },
+    });
+
+    createdViewSortId = data?.createViewSort?.id;
+
+    expect(data.createViewSort).toMatchObject({
+      id: expect.any(String),
+      viewId: createdViewId,
+      fieldMetadataId: testFieldMetadataId,
+      subFieldName: 'lastName',
     });
   });
 });

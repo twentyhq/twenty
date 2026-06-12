@@ -1,11 +1,14 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 const OBJECTS_WITHOUT_MANUAL_RECORD_CREATION: readonly CoreObjectNameSingular[] =
   [CoreObjectNameSingular.WorkflowRun, CoreObjectNameSingular.WorkflowVersion];
 
 export const isRecordTableCreateDisabled = (
-  objectMetadataItem: Pick<ObjectMetadataItem, 'nameSingular' | 'isSystem'>,
+  objectMetadataItem: Pick<
+    EnrichedObjectMetadataItem,
+    'nameSingular' | 'isSystem'
+  >,
 ): boolean => {
   if (objectMetadataItem.isSystem) {
     return true;

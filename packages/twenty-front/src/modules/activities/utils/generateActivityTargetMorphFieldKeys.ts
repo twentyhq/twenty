@@ -1,9 +1,8 @@
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 export const generateActivityTargetMorphFieldKeys = (
-  objectMetadataItems: ObjectMetadataItem[],
-  isMorphRelation: boolean,
+  objectMetadataItems: EnrichedObjectMetadataItem[],
 ) => {
   const targetableObjectMetadataItems = objectMetadataItems.filter(
     (objectMetadataItem) =>
@@ -14,7 +13,6 @@ export const generateActivityTargetMorphFieldKeys = (
     targetableObjectMetadataItems.map((objectMetadataItem) => {
       const targetFieldIdName = getActivityTargetObjectFieldIdName({
         nameSingular: objectMetadataItem.nameSingular,
-        isMorphRelation,
       });
 
       return [targetFieldIdName.replace(/Id$/, ''), true];
@@ -25,7 +23,6 @@ export const generateActivityTargetMorphFieldKeys = (
     targetableObjectMetadataItems.map((objectMetadataItem) => {
       const targetFieldIdName = getActivityTargetObjectFieldIdName({
         nameSingular: objectMetadataItem.nameSingular,
-        isMorphRelation,
       });
 
       return [targetFieldIdName, true];

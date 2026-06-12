@@ -1,14 +1,14 @@
 import { NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG } from '@/navigation-menu-item/common/constants/NavigationMenuItemSectionDroppableConfig';
+import type { DropDestination } from '@/navigation-menu-item/common/types/navigationMenuItemDndKitDropDestination';
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
-import type { DropResult } from '@hello-pangea/dnd';
 
 export const getDropTargetIdFromDestination = ({
   navigationMenuItemSection,
   destination,
 }: {
   navigationMenuItemSection: NavigationMenuItemSection;
-  destination: DropResult['destination'];
+  destination: DropDestination | null;
 }): string | null => {
   if (
     !destination ||

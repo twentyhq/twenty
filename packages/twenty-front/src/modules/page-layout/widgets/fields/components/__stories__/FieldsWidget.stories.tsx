@@ -23,7 +23,7 @@ import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingCon
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 import {
   ViewOpenRecordIn,
   ViewType,
@@ -36,7 +36,7 @@ import {
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { FileUploadDecorator } from '~/testing/decorators/FileUploadDecorator';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
@@ -138,16 +138,17 @@ const createPageLayoutWithWidget = (
   name: 'Mock Page Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectMetadataId,
+  universalIdentifier: '20202020-0000-0000-0000-000000000001',
   tabs: [
     {
       __typename: 'PageLayoutTab' as const,
+      isActive: true,
       applicationId: '',
       id: TAB_ID_OVERVIEW,
       title: 'Overview',
       position: 0,
       pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
       widgets: [widget],
-      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -160,6 +161,8 @@ const createPageLayoutWithWidget = (
 
 const createFieldsWidget = (viewId: string | null): PageLayoutWidget => ({
   __typename: 'PageLayoutWidget',
+  applicationId: '',
+  isActive: true,
   id: 'widget-fields',
   pageLayoutTabId: TAB_ID_OVERVIEW,
   type: WidgetType.FIELDS,
@@ -177,7 +180,6 @@ const createFieldsWidget = (viewId: string | null): PageLayoutWidget => ({
     configurationType: WidgetConfigurationType.FIELDS,
     viewId,
   },
-  isOverridden: false,
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
   deletedAt: null,
@@ -202,6 +204,7 @@ const createView = (
   viewSorts: [],
   visibility: ViewVisibility.WORKSPACE,
   createdByUserWorkspaceId: null,
+  isActive: true,
   ...overrides,
 });
 
@@ -215,9 +218,9 @@ const createViewField = (
   fieldMetadataId,
   position,
   isVisible: true,
+  isActive: true,
   size: 200,
   aggregateOperation: null,
-  isOverridden: false,
   viewId: FIELDS_VIEW_ID,
   ...(viewFieldGroupId !== undefined && { viewFieldGroupId }),
 });
@@ -233,7 +236,7 @@ const createViewFieldGroup = (
   name,
   position,
   isVisible,
-  isOverridden: false,
+  isActive: true,
   viewId: FIELDS_VIEW_ID,
   viewFields,
 });
@@ -305,7 +308,7 @@ export const WithViewFieldGroups: Story = {
 
     setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     setTestViewsInMetadataStore(jotaiStore, [view]);
@@ -372,15 +375,9 @@ export const WithViewFieldGroups: Story = {
   },
 };
 
-export const WithInlineViewFields: Story = {
+export const WithDefaultGroups: Story = {
   render: () => {
-    const view = createView({
-      viewFields: [
-        createViewField('vf-name', nameField.id, 0),
-        createViewField('vf-employees', employeesField.id, 1),
-        createViewField('vf-address', addressField.id, 2),
-      ],
-    });
+    const view = createView();
 
     const widget = createFieldsWidget(FIELDS_VIEW_ID);
 
@@ -391,7 +388,7 @@ export const WithInlineViewFields: Story = {
 
     setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     setTestViewsInMetadataStore(jotaiStore, [view]);
@@ -447,14 +444,12 @@ export const WithInlineViewFields: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const companyName = await canvas.findByText('Acme Corporation');
-    expect(companyName).toBeVisible();
+    const generalHeader = await canvas.findByText('General');
+    expect(generalHeader).toBeVisible();
 
-    const contactInfoHeader = canvas.queryByText('Contact Info');
-    expect(contactInfoHeader).toBeNull();
-
-    const generalHeader = canvas.queryByText('General');
-    expect(generalHeader).toBeNull();
+    const creationDateElements = await canvas.findAllByText('Creation date');
+    expect(creationDateElements.length).toBeGreaterThan(0);
+    expect(creationDateElements[0]).toBeVisible();
   },
 };
 
@@ -475,7 +470,7 @@ export const Empty: Story = {
 
     setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
     jotaiStore.set(isMinimalMetadataReadyState.atom, true);
     setTestViewsInMetadataStore(jotaiStore, [view]);

@@ -1,6 +1,6 @@
 import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/common/utils/recordIdentifierToObjectRecordIdentifier';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 jest.mock('@/object-metadata/utils/getAvatarType', () => ({
   getAvatarType: jest.fn(() => 'rounded'),
@@ -20,9 +20,9 @@ describe('recordIdentifierToObjectRecordIdentifier', () => {
     imageIdentifier: 'https://example.com/avatar.jpg',
   };
 
-  const baseObjectMetadataItem: ObjectMetadataItem = {
+  const baseObjectMetadataItem: EnrichedObjectMetadataItem = {
     nameSingular: 'person',
-  } as ObjectMetadataItem;
+  } as EnrichedObjectMetadataItem;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -53,11 +53,13 @@ describe('recordIdentifierToObjectRecordIdentifier', () => {
   });
 
   it('should return empty linkToShowPage for targets and workspace member', () => {
-    const objectMetadataItems: ObjectMetadataItem[] = [
-      { nameSingular: CoreObjectNameSingular.NoteTarget } as ObjectMetadataItem,
+    const objectMetadataItems: EnrichedObjectMetadataItem[] = [
+      {
+        nameSingular: CoreObjectNameSingular.NoteTarget,
+      } as EnrichedObjectMetadataItem,
       {
         nameSingular: CoreObjectNameSingular.WorkspaceMember,
-      } as ObjectMetadataItem,
+      } as EnrichedObjectMetadataItem,
     ];
 
     objectMetadataItems.forEach((objectMetadataItem) => {

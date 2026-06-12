@@ -5,8 +5,8 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { SettingsDataModelRelationFieldPreview } from '@/settings/data-model/fields/preview/components/SettingsDataModelRelationFieldPreview';
 import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
 import { isDefined } from 'twenty-shared/utils';
-import { Card, CardContent } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Card, CardContent } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 export type SettingsDataModelRelationFieldPreviewSubWidgetProps = {
   fieldMetadataItem: Pick<
@@ -22,7 +22,9 @@ export type SettingsDataModelRelationFieldPreviewSubWidgetProps = {
 };
 
 const StyledCardContainer = styled.div`
-  margin: auto;
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
 
   > * {
     border-radius: ${themeCssVariables.border.radius.md};

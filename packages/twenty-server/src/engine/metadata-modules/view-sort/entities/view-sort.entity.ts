@@ -12,7 +12,7 @@ import {
 } from 'typeorm';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
+import { ViewSortDirection } from 'twenty-shared/types';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
@@ -48,6 +48,9 @@ export class ViewSortEntity extends SyncableEntity {
     default: ViewSortDirection.ASC,
   })
   direction: ViewSortDirection;
+
+  @Column({ nullable: true, type: 'varchar' })
+  subFieldName?: string | null;
 
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;

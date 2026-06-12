@@ -1,14 +1,18 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { filterSortableFieldMetadataItems } from '@/object-metadata/utils/filterSortableFieldMetadataItems';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { Select } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { IconArrowsSort, IconTrash, useIcons } from 'twenty-ui/display';
-import { Button, type SelectOption } from 'twenty-ui/input';
+import {
+  IconArrowsSort,
+  IconTrash,
+  useIcons,
+} from 'twenty-ui-deprecated/display';
+import { Button, type SelectOption } from 'twenty-ui-deprecated/input';
 import { v4 as uuidv4 } from 'uuid';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -29,7 +33,7 @@ const StyledAddButtonContainer = styled.div`
 type WorkflowFindRecordsSortsProps = {
   recordSorts: RecordSort[];
   onChange: (recordSorts: RecordSort[]) => void;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   readonly: boolean;
 };
 

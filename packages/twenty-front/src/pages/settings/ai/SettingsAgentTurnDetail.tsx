@@ -1,7 +1,7 @@
-import { AIChatAssistantMessageRenderer } from '@/ai/components/AIChatAssistantMessageRenderer';
+import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -13,9 +13,9 @@ import Skeleton from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, Status } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title, Status } from 'twenty-ui-deprecated/display';
+import { Section } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import {
   type AgentMessage,
   GetAgentTurnsDocument,
@@ -74,17 +74,17 @@ export const SettingsAgentTurnDetail = () => {
 
   if (loading) {
     return (
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={t`Turn Details`}
         links={[
           {
             children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.General),
           },
           { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
           {
             children: t`Agent`,
-            href: getSettingsPath(SettingsPath.AIAgentDetail).replace(
+            href: getSettingsPath(SettingsPath.AiAgentDetail).replace(
               ':agentId',
               agentId || '',
             ),
@@ -95,18 +95,18 @@ export const SettingsAgentTurnDetail = () => {
         <SettingsPageContainer>
           <Skeleton height={200} />
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     );
   }
 
   if (!turn) {
     return (
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={t`Turn Not Found`}
         links={[
           {
             children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.General),
           },
           { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
           { children: t`Turn` },
@@ -115,22 +115,22 @@ export const SettingsAgentTurnDetail = () => {
         <SettingsPageContainer>
           <div>{t`Turn not found`}</div>
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     );
   }
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`Turn Details`}
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
         {
           children: t`Agent`,
-          href: getSettingsPath(SettingsPath.AIAgentDetail).replace(
+          href: getSettingsPath(SettingsPath.AiAgentDetail).replace(
             ':agentId',
             agentId || '',
           ),
@@ -171,7 +171,7 @@ export const SettingsAgentTurnDetail = () => {
                   <StyledMessageBubble key={message.id}>
                     <StyledMessageRole>{roleLabel}</StyledMessageRole>
                     <StyledMessageContent>
-                      <AIChatAssistantMessageRenderer
+                      <AiChatAssistantMessageRenderer
                         messageParts={message.parts}
                         isLastMessageStreaming={false}
                       />
@@ -241,6 +241,6 @@ export const SettingsAgentTurnDetail = () => {
           )}
         </Section>
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

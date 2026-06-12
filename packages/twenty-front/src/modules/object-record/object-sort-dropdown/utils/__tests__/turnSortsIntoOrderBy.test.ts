@@ -1,5 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlOperationOrderBy } from 'twenty-shared/types';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
@@ -22,7 +22,7 @@ const fields = [
   },
 ];
 
-const objectMetadataItemWithPositionField: ObjectMetadataItem = {
+const objectMetadataItemWithPositionField: EnrichedObjectMetadataItem = {
   id: 'object1',
   universalIdentifier: 'object1',
   fields,
@@ -64,7 +64,9 @@ type TurnSortsIntoOrderTestContext = EachTestingContext<{
   fields: PartialFieldMetadaItemWithRequiredId[];
   expected: RecordGqlOperationOrderBy;
   sort: RecordSort[];
-  objectMetadataItemOverrides?: Partial<Omit<ObjectMetadataItem, 'fields'>>;
+  objectMetadataItemOverrides?: Partial<
+    Omit<EnrichedObjectMetadataItem, 'fields'>
+  >;
 }>;
 
 const turnSortsIntoOrderByTestUseCases: TurnSortsIntoOrderTestContext[] = [
@@ -171,7 +173,7 @@ describe('turnSortsIntoOrderBy', () => {
   );
 
   describe('relation field sorting', () => {
-    const companyObjectMetadataItem: ObjectMetadataItem = {
+    const companyObjectMetadataItem: EnrichedObjectMetadataItem = {
       id: 'company-object-id',
       universalIdentifier: 'company-object-id',
       fields: [
@@ -206,7 +208,7 @@ describe('turnSortsIntoOrderBy', () => {
       isLabelSyncedWithName: true,
     };
 
-    const personObjectMetadataItem: ObjectMetadataItem = {
+    const personObjectMetadataItem: EnrichedObjectMetadataItem = {
       id: 'person-object-id',
       universalIdentifier: 'person-object-id',
       fields: [

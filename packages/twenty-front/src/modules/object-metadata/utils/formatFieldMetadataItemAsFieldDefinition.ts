@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 
@@ -8,7 +8,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 
 export type FieldMetadataItemAsFieldDefinitionProps = {
   field: FieldMetadataItem;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   showLabel?: boolean;
   labelWidth?: number;
 };

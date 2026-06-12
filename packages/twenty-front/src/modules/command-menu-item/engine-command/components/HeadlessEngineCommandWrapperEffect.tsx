@@ -1,30 +1,32 @@
 import { useIsHeadlessEngineCommandEffectInitialized } from '@/command-menu-item/engine-command/hooks/useIsHeadlessEngineCommandEffectInitialized';
-import { useUnmountEngineCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
-import { EngineCommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/EngineCommandComponentInstanceContext';
+import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
+import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useEffect } from 'react';
 
 export type HeadlessEngineCommandWrapperEffectProps = {
   execute: () => void | Promise<unknown>;
+  ready?: boolean;
 };
 
 export const HeadlessEngineCommandWrapperEffect = ({
   execute,
+  ready = true,
 }: HeadlessEngineCommandWrapperEffectProps) => {
   const { isInitializedRef, setIsInitialized } =
     useIsHeadlessEngineCommandEffectInitialized();
 
-  const engineCommandId = useAvailableComponentInstanceIdOrThrow(
-    EngineCommandComponentInstanceContext,
+  const commandMenuItemId = useAvailableComponentInstanceIdOrThrow(
+    CommandComponentInstanceContext,
   );
 
-  const unmountEngineCommand = useUnmountEngineCommand();
+  const unmountCommand = useUnmountCommand();
 
   const { enqueueErrorSnackBar } = useSnackBar();
 
   useEffect(() => {
-    if (isInitializedRef.current) {
+    if (isInitializedRef.current || !ready) {
       return;
     }
 
@@ -33,16 +35,17 @@ export const HeadlessEngineCommandWrapperEffect = ({
     const run = async () => {
       await execute();
 
-      unmountEngineCommand(engineCommandId);
+      unmountCommand(commandMenuItemId);
     };
 
     run();
   }, [
     execute,
+    ready,
     isInitializedRef,
     setIsInitialized,
-    engineCommandId,
-    unmountEngineCommand,
+    commandMenuItemId,
+    unmountCommand,
     enqueueErrorSnackBar,
   ]);
 

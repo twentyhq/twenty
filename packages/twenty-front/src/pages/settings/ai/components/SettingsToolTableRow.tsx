@@ -1,20 +1,17 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
-import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { IconCode, OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-import { type LogicFunction } from '~/generated-metadata/graphql';
-
-type ToolWithApplicationId = LogicFunction & {
-  applicationId?: string | null;
-};
+import { OverflowingTextWithTooltip } from 'twenty-ui-deprecated/display';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
+import { AppChip } from '@/applications/components/AppChip';
 
 export type SettingsToolTableRowProps = {
-  tool: ToolWithApplicationId;
+  leftIcon: ReactNode;
+  name: string;
+  applicationId: string;
   action?: ReactNode;
   link?: string;
 };
@@ -28,7 +25,9 @@ const StyledIconContainer = styled.div`
 `;
 
 export const SettingsToolTableRow = ({
-  tool,
+  leftIcon,
+  name,
+  applicationId,
   action,
   link,
 }: SettingsToolTableRowProps) => {
@@ -43,16 +42,12 @@ export const SettingsToolTableRow = ({
         minWidth="0"
         overflow="hidden"
       >
-        <StyledIconContainer>
-          <IconCode size={16} />
-        </StyledIconContainer>
-        <OverflowingTextWithTooltip text={tool.name} />
+        <StyledIconContainer>{leftIcon}</StyledIconContainer>
+        <OverflowingTextWithTooltip text={name} />
       </TableCell>
-      <TableCell>
-        <SettingsItemTypeTag
-          item={{ isCustom: true, applicationId: tool.applicationId }}
-        />
-      </TableCell>
+      <StyledNameTableCell minWidth="0" overflow="hidden">
+        <AppChip applicationId={applicationId} />
+      </StyledNameTableCell>
       <TableCell
         align="right"
         padding={`0 ${themeCssVariables.spacing[2]} 0 0`}

@@ -47,10 +47,12 @@ describe('getPieChartFormattedValue', () => {
 
   const createMockDatum = (
     id: string,
+    options?: { computedId?: string },
   ): ComputedDatum<PieChartDataItemWithColor> =>
     ({
-      id,
+      id: options?.computedId ?? id,
       value: 0,
+      data: { id, value: 0 },
     }) as unknown as ComputedDatum<PieChartDataItemWithColor>;
 
   const defaultFormatOptions = {
@@ -80,6 +82,20 @@ describe('getPieChartFormattedValue', () => {
       });
 
       expect(result).toBeNull();
+    });
+
+    it('should match by datum.data.id when computed id is namespaced per widget', () => {
+      const datum = createMockDatum('slice1', {
+        computedId: 'widget-abc:slice1',
+      });
+
+      const result = getPieChartFormattedValue({
+        datum,
+        enrichedData: mockEnrichedData,
+        formatOptions: defaultFormatOptions,
+      });
+
+      expect(result).toContain('30');
     });
   });
 

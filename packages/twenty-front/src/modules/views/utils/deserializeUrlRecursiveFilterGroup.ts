@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { type UrlFilterDeserializationResult } from '@/views/types/UrlFilterDeserializationResult';
@@ -14,7 +14,7 @@ export const deserializeUrlRecursiveFilterGroup = ({
   positionInParent,
 }: {
   urlRecursiveFilterGroup: UrlRecursiveFilterGroup;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   parentGroupId?: string;
   positionInParent: number;
 }): UrlFilterDeserializationResult => {

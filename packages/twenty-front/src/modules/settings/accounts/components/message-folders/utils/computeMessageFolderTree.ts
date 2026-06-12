@@ -22,6 +22,7 @@ export const computeMessageFolderTree = (
   folders.forEach((folder) => {
     if (isDefined(folder.parentFolderId)) {
       const parent = folderByExternalIdMap.get(folder.parentFolderId);
+
       if (isDefined(parent)) {
         const siblings = childrenMap.get(parent.id) || [];
         siblings.push(folder);

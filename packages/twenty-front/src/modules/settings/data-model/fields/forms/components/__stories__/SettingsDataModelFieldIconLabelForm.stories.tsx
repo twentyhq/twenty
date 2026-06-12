@@ -5,8 +5,8 @@ import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorato
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
-import { ComponentDecorator } from 'twenty-ui/testing';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const StyledContainer = styled.div`
   flex: 1;
@@ -32,9 +32,10 @@ type Story = StoryObj<typeof SettingsDataModelFieldIconLabelForm>;
 
 export const Default: Story = {};
 
-const mockedPersonObjectMetadataItem = generatedMockObjectMetadataItems.find(
-  (item) => item.namePlural === 'person',
-);
+const mockedPersonObjectMetadataItem =
+  getTestEnrichedObjectMetadataItemsMock().find(
+    (item) => item.namePlural === 'person',
+  );
 
 export const WithFieldMetadataItem: Story = {
   args: {

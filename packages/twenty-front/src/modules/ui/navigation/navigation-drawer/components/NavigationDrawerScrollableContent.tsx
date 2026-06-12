@@ -2,22 +2,19 @@ import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { useIsMobile } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui-deprecated/utilities';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledItemsContainer = styled.div`
   display: flex;
-  flex: 1;
   flex-direction: column;
-  margin-bottom: auto;
-  overflow: hidden;
+  height: 100%;
 `;
 
-const StyledScrollableInnerContainer = styled.div<{ isMobile?: boolean }>`
+const StyledScrollableMobileInnerContainer = styled.div`
   height: 100%;
   padding-left: ${themeCssVariables.spacing[5]};
-  padding-right: ${({ isMobile }) =>
-    isMobile ? themeCssVariables.spacing[5] : themeCssVariables.spacing[8]};
+  padding-right: ${themeCssVariables.spacing[5]};
 `;
 
 export const NavigationDrawerScrollableContent = ({
@@ -36,10 +33,10 @@ export const NavigationDrawerScrollableContent = ({
       defaultEnableXScroll={false}
     >
       <StyledItemsContainer>
-        {isSettingsDrawer ? (
-          <StyledScrollableInnerContainer isMobile={isMobile}>
+        {isMobile ? (
+          <StyledScrollableMobileInnerContainer>
             {children}
-          </StyledScrollableInnerContainer>
+          </StyledScrollableMobileInnerContainer>
         ) : (
           <>{children}</>
         )}

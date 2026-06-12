@@ -23,7 +23,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 
@@ -48,7 +48,7 @@ const personCreatedAtFieldMetadataItemMock =
 const wrapper = ({ children }: { children: React.ReactNode }) => {
   setTestObjectMetadataItemsInMetadataStore(
     jotaiStore,
-    generatedMockObjectMetadataItems,
+    getTestEnrichedObjectMetadataItemsMock(),
   );
   return (
     <JotaiProvider store={jotaiStore}>

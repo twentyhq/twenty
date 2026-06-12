@@ -1,0 +1,40 @@
+---
+title: 项目结构
+description: 脚手架生成的 Twenty 应用中包含哪些内容——文件、文件夹以及它们各自的作用。
+icon: folder-tree
+---
+
+由 `npx create-twenty-app` 生成的新应用看起来是这样的：
+
+```text filename="my-twenty-app/"
+my-twenty-app/
+  package.json
+  src/
+    application-config.ts                   # Required — your app's entry point
+    default-role.ts                         # Permissions for logic functions
+    constants/
+      universal-identifiers.ts              # Auto-generated UUIDs and metadata
+    __tests__/
+      setup-test.ts
+      app-install.integration-test.ts
+  .github/workflows/ci.yml                  # GitHub Actions
+  public/                                   # Static assets
+  vitest.config.ts                          # Test runner config
+  tsconfig.json, tsconfig.spec.json
+  .nvmrc, .yarnrc.yml, .oxlintrc.json
+  README.md, LLMS.md
+```
+
+## 关键文件
+
+| 文件 / 文件夹                                 | 目的                        |
+| ---------------------------------------- | ------------------------- |
+| `src/application-config.ts`              | **必需。** 应用的主配置文件。         |
+| `src/default-role.ts`                    | 默认角色，用于控制你的逻辑函数可访问的内容。    |
+| `src/constants/universal-identifiers.ts` | 自动生成的 UUID 和元数据（显示名称、描述）。 |
+| `src/__tests__/`                         | 集成测试（设置 + 示例测试）。          |
+| `public/`                                | 随应用一起提供的静态资源（图像、字体）。      |
+
+<Note>
+**文件组织由你决定。** 上述文件夹只是约定——SDK 通过对 `export default defineEntity(...)` 调用进行 AST 分析来检测实体，而不受文件所在位置影响。
+</Note>

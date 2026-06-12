@@ -248,7 +248,6 @@ describe('ApplicationRegistrationVariable (integration)', () => {
         variables: {
           input: {
             name: 'GQL Variable Test App',
-            description: 'Created via GraphQL for variable testing',
           },
         },
       });

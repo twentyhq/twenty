@@ -6,7 +6,7 @@
   "tags": ["scope:shared"],
   "targets": {
     "build": {
-      "dependsOn": ["^build", "generateBarrels"],
+      "dependsOn": ["^build"],
       "outputs": [
         "{projectRoot}/dist",
         "{projectRoot}/accessibility/package.json",
@@ -27,6 +27,8 @@
         "{projectRoot}/layout/dist",
         "{projectRoot}/navigation/package.json",
         "{projectRoot}/navigation/dist",
+        "{projectRoot}/styles/package.json",
+        "{projectRoot}/styles/dist",
         "{projectRoot}/testing/package.json",
         "{projectRoot}/testing/dist",
         "{projectRoot}/theme/package.json",
@@ -36,16 +38,6 @@
         "{projectRoot}/utilities/package.json",
         "{projectRoot}/utilities/dist"
       ]
-    },
-    "generateThemeConstants": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["build"],
-      "cache": true,
-      "inputs": ["{projectRoot}/scripts/generateThemeConstants.ts"],
-      "outputs": ["{projectRoot}/src/theme-constants/generated"],
-      "options": {
-        "command": "tsx {projectRoot}/scripts/generateThemeConstants.ts"
-      }
     },
     "generateBarrels": {
       "executor": "nx:run-commands",
@@ -68,6 +60,14 @@
         "command": "npx vite build -c vite.config.individual.ts"
       }
     },
+    "size": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["build"],
+      "inputs": ["{projectRoot}/dist", "{projectRoot}/.size-limit.json"],
+      "options": { "cwd": "{projectRoot}", "command": "npx size-limit" },
+      "configurations": { "why": { "command": "npx size-limit --why" } }
+    },
     "clean": {
       "executor": "nx:run-commands",
       "options": { "command": "rimraf {projectRoot}/dist" }
@@ -77,13 +77,21 @@
     "test": {},
     "typecheck": {},
     "storybook:build": { "configurations": { "test": {} } },
-    "storybook:serve:dev": { "options": { "port": 6007 } },
+    "storybook:serve:dev": { "options": { "port": 6008 } },
     "storybook:serve:static": {
-      "options": { "buildTarget": "twenty-ui:storybook:build", "port": 6007 },
+      "options": { "buildTarget": "twenty-ui:storybook:build", "port": 6008 },
       "configurations": { "test": {} }
     },
     "storybook:test": {},
     "storybook:test:no-coverage": {},
+    "storybook:visual-diff": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["storybook:build"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "bash scripts/visual-diff.sh"
+      }
+    },
     "storybook:coverage": {}
   }
 }

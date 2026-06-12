@@ -1,12 +1,12 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { type FlatAuthContextUser } from 'src/engine/core-modules/auth/types/flat-auth-context-user.type';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -53,10 +53,22 @@ describe('TwoFactorAuthenticationResolver', () => {
   >;
   let repository: ReturnType<typeof createMockRepository>;
 
-  const mockUser: UserEntity = {
+  const MOCK_USER_ISO = '2024-01-01T00:00:00.000Z';
+
+  const mockUser = {
     id: 'user-123',
+    firstName: '',
+    lastName: '',
     email: 'test@example.com',
-  } as UserEntity;
+    isEmailVerified: true,
+    disabled: false,
+    canImpersonate: false,
+    canAccessFullAdminPanel: false,
+    createdAt: MOCK_USER_ISO,
+    updatedAt: MOCK_USER_ISO,
+    deletedAt: null,
+    locale: 'en',
+  } as unknown as FlatAuthContextUser;
 
   const mockWorkspace: WorkspaceEntity = {
     id: 'workspace-123',
@@ -92,7 +104,9 @@ describe('TwoFactorAuthenticationResolver', () => {
           useFactory: createMockWorkspaceDomainsService,
         },
         {
-          provide: getRepositoryToken(TwoFactorAuthenticationMethodEntity),
+          provide: getWorkspaceScopedRepositoryToken(
+            TwoFactorAuthenticationMethodEntity,
+          ),
           useFactory: createMockRepository,
         },
       ],
@@ -106,7 +120,7 @@ describe('TwoFactorAuthenticationResolver', () => {
     userService = module.get(UserService);
     workspaceDomainsService = module.get(WorkspaceDomainsService);
     repository = module.get(
-      getRepositoryToken(TwoFactorAuthenticationMethodEntity),
+      getWorkspaceScopedRepositoryToken(TwoFactorAuthenticationMethodEntity),
     );
   });
 
@@ -132,7 +146,9 @@ describe('TwoFactorAuthenticationResolver', () => {
       workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace.mockResolvedValue(
         mockWorkspace,
       );
-      userService.findUserByEmailOrThrow.mockResolvedValue(mockUser);
+      userService.findUserByEmailOrThrow.mockResolvedValue(
+        mockUser as unknown as UserEntity,
+      );
       twoFactorAuthenticationService.initiateStrategyConfiguration.mockResolvedValue(
         'otpauth://totp/Twenty:test@example.com?secret=SECRETKEY&issuer=Twenty',
       );
@@ -273,15 +289,13 @@ describe('TwoFactorAuthenticationResolver', () => {
       );
 
       expect(result).toEqual({ success: true });
-      expect(repository.findOne).toHaveBeenCalledWith({
-        where: {
-          id: mockInput.twoFactorAuthenticationMethodId,
-        },
+      expect(repository.findOne).toHaveBeenCalledWith(mockWorkspace.id, {
+        where: { id: mockInput.twoFactorAuthenticationMethodId },
         relations: ['userWorkspace'],
       });
-      expect(repository.delete).toHaveBeenCalledWith(
-        mockInput.twoFactorAuthenticationMethodId,
-      );
+      expect(repository.delete).toHaveBeenCalledWith(mockWorkspace.id, {
+        id: mockInput.twoFactorAuthenticationMethodId,
+      });
     });
 
     it('should throw INVALID_INPUT when method is not found', async () => {
@@ -311,31 +325,6 @@ describe('TwoFactorAuthenticationResolver', () => {
       };
 
       repository.findOne.mockResolvedValue(wrongUserMethod);
-
-      await expect(
-        resolver.deleteTwoFactorAuthenticationMethod(
-          mockInput,
-          mockWorkspace,
-          mockUser,
-        ),
-      ).rejects.toThrow(
-        new AuthException(
-          'You can only delete your own two-factor authentication methods',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        ),
-      );
-    });
-
-    it('should throw FORBIDDEN_EXCEPTION when workspace does not match', async () => {
-      const wrongWorkspaceMethod = {
-        ...mockTwoFactorMethod,
-        userWorkspace: {
-          userId: mockUser.id,
-          workspaceId: 'different-workspace-id',
-        },
-      };
-
-      repository.findOne.mockResolvedValue(wrongWorkspaceMethod);
 
       await expect(
         resolver.deleteTwoFactorAuthenticationMethod(

@@ -2,6 +2,7 @@ import { useGraphGroupBySortOptionLabels } from '@/side-panel/pages/page-layout/
 import { useGraphXSortOptionLabels } from '@/side-panel/pages/page-layout/hooks/useGraphXSortOptionLabels';
 import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
+import { findChartGroupByFieldMetadataItem } from '@/side-panel/pages/page-layout/utils/findChartGroupByFieldMetadataItem';
 import { getChartAxisNameDisplayOptions } from '@/side-panel/pages/page-layout/utils/getChartAxisNameDisplayOptions';
 import { getChartFilterRulesCount } from '@/side-panel/pages/page-layout/utils/getChartFilterRulesCount';
 import { getDateGranularityLabel } from '@/side-panel/pages/page-layout/utils/getDateGranularityLabel';
@@ -47,9 +48,7 @@ export const useChartSettingsValues = ({
     configuration.__typename === 'LineChartConfiguration';
 
   const hasColorProperty =
-    isBarOrLineChart ||
-    configuration.__typename === 'GaugeChartConfiguration' ||
-    configuration.__typename === 'PieChartConfiguration';
+    isBarOrLineChart || configuration.__typename === 'PieChartConfiguration';
 
   const isPieChart = configuration.__typename === 'PieChartConfiguration';
 
@@ -76,11 +75,17 @@ export const useChartSettingsValues = ({
   }
 
   const groupByFieldX = isDefined(groupByFieldXId)
-    ? objectMetadataItem?.fields.find((field) => field.id === groupByFieldXId)
+    ? findChartGroupByFieldMetadataItem({
+        fields: objectMetadataItem?.fields,
+        fieldMetadataId: groupByFieldXId,
+      })
     : undefined;
 
   const groupByFieldY = isDefined(groupByFieldYId)
-    ? objectMetadataItem?.fields.find((field) => field.id === groupByFieldYId)
+    ? findChartGroupByFieldMetadataItem({
+        fields: objectMetadataItem?.fields,
+        fieldMetadataId: groupByFieldYId,
+      })
     : undefined;
 
   const groupBySubFieldNameXLabel =
@@ -201,9 +206,10 @@ export const useChartSettingsValues = ({
       }
       case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_PIE_CHART: {
         const pieChartGroupByField = isDefined(finalGroupByFieldYId)
-          ? objectMetadataItem?.fields.find(
-              (field) => field.id === finalGroupByFieldYId,
-            )
+          ? findChartGroupByFieldMetadataItem({
+              fields: objectMetadataItem?.fields,
+              fieldMetadataId: finalGroupByFieldYId,
+            })
           : undefined;
         const pieChartGroupBySubFieldNameLabel =
           isDefined(finalGroupBySubFieldNameY) &&

@@ -7,6 +7,8 @@ import {
   KeyValuePairEntity,
   KeyValuePairType,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { isEncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/is-encrypted-string.util';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-config/conversion/config-value-converter.service';
@@ -47,31 +49,64 @@ export class ConfigStorageService implements ConfigStorageInterface {
     ];
   }
 
-  private async convertAndSecureValue<T extends keyof ConfigVariables>(
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
-    value: any,
+  private isSensitiveStringValue(
+    value: unknown,
+    key: keyof ConfigVariables,
+  ): value is string {
+    const metadata = this.getConfigMetadata(key);
+
+    return (
+      typeof value === 'string' &&
+      metadata?.isSensitive === true &&
+      metadata.type === ConfigVariableType.STRING
+    );
+  }
+
+  private async convertAndDecrypt<T extends keyof ConfigVariables>(
+    dbValue: unknown,
     key: T,
-    isDecrypt = false,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
-  ): Promise<any> {
+  ): Promise<ConfigVariables[T] | undefined> {
     try {
-      const convertedValue = isDecrypt
-        ? this.configValueConverter.convertDbValueToAppValue(value, key)
-        : this.configValueConverter.convertAppValueToDbValue(value, key);
+      const convertedValue = this.configValueConverter.convertDbValueToAppValue(
+        dbValue,
+        key,
+      );
 
-      const metadata = this.getConfigMetadata(key);
-      const isSensitiveString =
-        metadata?.isSensitive &&
-        metadata.type === ConfigVariableType.STRING &&
-        typeof convertedValue === 'string';
-
-      if (!isSensitiveString) {
-        return convertedValue;
+      if (
+        this.isSensitiveStringValue(convertedValue, key) &&
+        isEncryptedString(convertedValue)
+      ) {
+        return this.secretEncryptionService.decryptVersioned(
+          convertedValue,
+        ) as unknown as ConfigVariables[T];
       }
 
-      return isDecrypt
-        ? this.secretEncryptionService.decrypt(convertedValue)
-        : this.secretEncryptionService.encrypt(convertedValue);
+      return convertedValue;
+    } catch (error) {
+      throw new ConfigVariableException(
+        `Failed to convert value for key ${key as string}: ${error.message}`,
+        ConfigVariableExceptionCode.VALIDATION_FAILED,
+      );
+    }
+  }
+
+  private async convertAndEncrypt<T extends keyof ConfigVariables>(
+    appValue: ConfigVariables[T],
+    key: T,
+  ): Promise<KeyValuePairEntity['value']> {
+    try {
+      const convertedValue = this.configValueConverter.convertAppValueToDbValue(
+        appValue,
+        key,
+      );
+
+      if (this.isSensitiveStringValue(convertedValue, key)) {
+        return this.secretEncryptionService.encryptVersioned(
+          convertedValue as PlaintextString,
+        ) as unknown as KeyValuePairEntity['value'];
+      }
+
+      return convertedValue as KeyValuePairEntity['value'];
     } catch (error) {
       throw new ConfigVariableException(
         `Failed to convert value for key ${key as string}: ${error.message}`,
@@ -96,7 +131,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
         `Fetching config for ${key as string} in database: ${result?.value}`,
       );
 
-      return await this.convertAndSecureValue(result.value, key, true);
+      return await this.convertAndDecrypt(result.value, key);
     } catch (error) {
       if (error instanceof ConfigVariableException) {
         throw error;
@@ -114,7 +149,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
     value: ConfigVariables[T],
   ): Promise<void> {
     try {
-      const dbValue = await this.convertAndSecureValue(value, key, false);
+      const dbValue = await this.convertAndEncrypt(value, key);
 
       const existingRecord = await this.keyValuePairRepository.findOne({
         where: this.getConfigVariableWhereClause(key as string),
@@ -177,11 +212,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
           const key = configVar.key as keyof ConfigVariables;
 
           try {
-            const value = await this.convertAndSecureValue(
-              configVar.value,
-              key,
-              true,
-            );
+            const value = await this.convertAndDecrypt(configVar.value, key);
 
             if (value !== undefined) {
               result.set(key, value);

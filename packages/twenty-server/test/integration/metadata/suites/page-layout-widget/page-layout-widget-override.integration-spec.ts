@@ -1,7 +1,10 @@
+import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
+import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/destroy-one-page-layout-tab.util';
 import { findPageLayoutTabs } from 'test/integration/metadata/suites/page-layout-tab/utils/find-page-layout-tabs.util';
 import { findPageLayoutWidgets } from 'test/integration/metadata/suites/page-layout-widget/utils/find-page-layout-widgets.util';
 import { updateOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/update-one-page-layout-widget.util';
 import { findPageLayouts } from 'test/integration/metadata/suites/page-layout/utils/find-page-layouts.util';
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 
@@ -11,14 +14,16 @@ const WIDGET_OVERRIDE_GQL_FIELDS = `
   type
   pageLayoutTabId
   conditionalDisplay
-  isOverridden
   createdAt
   updatedAt
   deletedAt
 `;
 
 describe('Page layout widget override behavior', () => {
+  let seededPageLayoutId: string;
   let seededWidgetId: string;
+  let seededWidgetOriginalPageLayoutTabId: string;
+  let seededWidgetOriginalTabLayoutMode: PageLayoutTabLayoutMode;
   let seededWidgetOriginalTitle: string;
 
   beforeAll(async () => {
@@ -33,14 +38,26 @@ describe('Page layout widget override behavior', () => {
 
     expect(recordPageLayout).toBeDefined();
 
+    seededPageLayoutId = recordPageLayout!.id;
+
     const { data: tabsData } = await findPageLayoutTabs({
       expectToFail: false,
-      input: { pageLayoutId: recordPageLayout!.id },
+      input: { pageLayoutId: seededPageLayoutId },
+      gqlFields: `
+        id
+        title
+        position
+        layoutMode
+        pageLayoutId
+      `,
     });
 
     expect(tabsData.getPageLayoutTabs.length).toBeGreaterThanOrEqual(1);
 
     const firstTabId = tabsData.getPageLayoutTabs[0].id;
+
+    seededWidgetOriginalTabLayoutMode = tabsData.getPageLayoutTabs[0]
+      .layoutMode as PageLayoutTabLayoutMode;
 
     const { data: widgetsData } = await findPageLayoutWidgets({
       expectToFail: false,
@@ -53,6 +70,7 @@ describe('Page layout widget override behavior', () => {
     const firstWidget = widgetsData.getPageLayoutWidgets[0];
 
     seededWidgetId = firstWidget.id;
+    seededWidgetOriginalPageLayoutTabId = firstWidget.pageLayoutTabId;
     seededWidgetOriginalTitle = firstWidget.title;
   });
 
@@ -61,6 +79,7 @@ describe('Page layout widget override behavior', () => {
       expectToFail: false,
       input: {
         id: seededWidgetId,
+        pageLayoutTabId: seededWidgetOriginalPageLayoutTabId,
         title: seededWidgetOriginalTitle,
       },
       gqlFields: WIDGET_OVERRIDE_GQL_FIELDS,
@@ -80,7 +99,74 @@ describe('Page layout widget override behavior', () => {
     });
 
     expect(data.updatePageLayoutWidget.title).toBe(overriddenTitle);
-    expect(data.updatePageLayoutWidget.isOverridden).toBe(true);
+  });
+
+  it('should move a seeded widget to another tab through an override', async () => {
+    let destinationTabId: string | undefined;
+
+    try {
+      const { data: tabData } = await createOnePageLayoutTab({
+        expectToFail: false,
+        input: {
+          title: `Widget Move Override ${Date.now()}`,
+          pageLayoutId: seededPageLayoutId,
+          layoutMode: seededWidgetOriginalTabLayoutMode,
+        },
+      });
+
+      destinationTabId = tabData.createPageLayoutTab.id;
+
+      const { data } = await updateOnePageLayoutWidget({
+        expectToFail: false,
+        input: {
+          id: seededWidgetId,
+          pageLayoutTabId: destinationTabId,
+        },
+        gqlFields: WIDGET_OVERRIDE_GQL_FIELDS,
+      });
+
+      expect(data.updatePageLayoutWidget.pageLayoutTabId).toBe(
+        destinationTabId,
+      );
+
+      const { data: originalTabWidgetsData } = await findPageLayoutWidgets({
+        expectToFail: false,
+        input: { pageLayoutTabId: seededWidgetOriginalPageLayoutTabId },
+        gqlFields: WIDGET_OVERRIDE_GQL_FIELDS,
+      });
+
+      expect(
+        originalTabWidgetsData.getPageLayoutWidgets.map((widget) => widget.id),
+      ).not.toContain(seededWidgetId);
+
+      const { data: destinationTabWidgetsData } = await findPageLayoutWidgets({
+        expectToFail: false,
+        input: { pageLayoutTabId: destinationTabId },
+        gqlFields: WIDGET_OVERRIDE_GQL_FIELDS,
+      });
+
+      expect(
+        destinationTabWidgetsData.getPageLayoutWidgets.map(
+          (widget) => widget.id,
+        ),
+      ).toContain(seededWidgetId);
+    } finally {
+      await updateOnePageLayoutWidget({
+        expectToFail: false,
+        input: {
+          id: seededWidgetId,
+          pageLayoutTabId: seededWidgetOriginalPageLayoutTabId,
+        },
+        gqlFields: WIDGET_OVERRIDE_GQL_FIELDS,
+      });
+
+      if (destinationTabId !== undefined) {
+        await destroyOnePageLayoutTab({
+          expectToFail: false,
+          input: { id: destinationTabId },
+        });
+      }
+    }
   });
 
   it('should return the overridden title when querying the widget', async () => {
@@ -123,7 +209,6 @@ describe('Page layout widget override behavior', () => {
     });
 
     expect(data.updatePageLayoutWidget.title).toBe(seededWidgetOriginalTitle);
-    expect(data.updatePageLayoutWidget.isOverridden).toBe(false);
   });
 
   it('should override conditionalDisplay independently from title', async () => {
@@ -155,9 +240,9 @@ describe('Page layout widget override behavior', () => {
     });
 
     expect(conditionalData.updatePageLayoutWidget.title).toBe(overriddenTitle);
-    expect(
-      conditionalData.updatePageLayoutWidget.conditionalDisplay,
-    ).toEqual(overriddenConditionalDisplay);
+    expect(conditionalData.updatePageLayoutWidget.conditionalDisplay).toEqual(
+      overriddenConditionalDisplay,
+    );
 
     await updateOnePageLayoutWidget({
       expectToFail: false,

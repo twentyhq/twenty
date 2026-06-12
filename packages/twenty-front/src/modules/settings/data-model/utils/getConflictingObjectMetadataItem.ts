@@ -1,8 +1,8 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isDefined } from 'twenty-shared/utils';
 
 type GetConflictingObjectMetadataItemParams = {
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
   nameSingular?: string;
   namePlural?: string;
   excludeObjectId?: string;
@@ -13,7 +13,9 @@ export const getConflictingObjectMetadataItem = ({
   nameSingular,
   namePlural,
   excludeObjectId,
-}: GetConflictingObjectMetadataItemParams): ObjectMetadataItem | undefined => {
+}: GetConflictingObjectMetadataItemParams):
+  | EnrichedObjectMetadataItem
+  | undefined => {
   if (!isDefined(nameSingular) && !isDefined(namePlural)) {
     return undefined;
   }

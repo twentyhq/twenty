@@ -2,8 +2,8 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback, useEffect, useState } from 'react';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfoContainer';
-import { SubscriptionInfoRowContainer } from '@/billing/components/internal/SubscriptionInfoRowContainer';
+import { SubscriptionInfoContainer } from '@/settings/billing/components/SubscriptionInfoContainer';
+import { SubscriptionInfoRowContainer } from '@/settings/billing/components/internal/SubscriptionInfoRowContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   ENTERPRISE_PLAN_MODAL_ID,
@@ -16,10 +16,9 @@ import { ENTERPRISE_SUBSCRIPTION_STATUS } from '@/settings/enterprise/graphql/qu
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
-import { CombinedGraphQLErrors } from '@apollo/client';
 import { useLazyQuery, useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
@@ -32,10 +31,11 @@ import {
   IconCreditCard,
   IconKey,
   IconUser,
-} from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { Section } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 type SettingsEnterpriseProps = {
   isAdminPanelTab?: boolean;
@@ -202,11 +202,7 @@ export const SettingsEnterprise = ({
         });
       }
     } catch (error) {
-      if (
-        CombinedGraphQLErrors.is(error) &&
-        error.errors?.[0]?.extensions?.subCode ===
-          'CONFIG_VARIABLES_IN_DB_DISABLED'
-      ) {
+      if (isGraphqlErrorOfType(error, 'CONFIG_VARIABLES_IN_DB_DISABLED')) {
         enqueueErrorSnackBar({
           apolloError: error,
           options: { duration: 10000 },
@@ -311,7 +307,6 @@ export const SettingsEnterprise = ({
           <Button
             Icon={IconKey}
             title={isActivating ? t`Activating...` : t`Activate`}
-            variant="secondary"
             accent="blue"
             onClick={handleActivate}
             disabled={isActivating || !enterpriseKey.trim()}
@@ -630,7 +625,6 @@ export const SettingsEnterprise = ({
             <Button
               Icon={IconKey}
               title={t`Get Enterprise Key`}
-              variant="secondary"
               onClick={openCheckoutModal}
             />
           </Section>
@@ -674,17 +668,17 @@ export const SettingsEnterprise = ({
   }
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`Enterprise`}
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         { children: <Trans>Enterprise</Trans> },
       ]}
     >
       <SettingsPageContainer>{innerContent}</SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

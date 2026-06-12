@@ -1,22 +1,17 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import {
+  ConnectedAccountProvider,
+  MessageFolderImportPolicy,
+  MessageFolderPendingSyncAction,
+} from 'twenty-shared/types';
 
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
-import {
-  MessageFolderImportPolicy,
-  type MessageChannelWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import {
-  MessageFolderPendingSyncAction,
-  type MessageFolderWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
-import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 import { MessageImportExceptionHandlerService } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
@@ -24,17 +19,18 @@ import { MessagingMessageListFetchService } from 'src/modules/messaging/message-
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import { MessagingProcessFolderActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 describe('MessagingMessageListFetchService', () => {
   let messagingMessageListFetchService: MessagingMessageListFetchService;
   let messagingGetMessageListService: MessagingGetMessageListService;
-  let messagingAccountAuthenticationService: MessagingAccountAuthenticationService;
   let messageChannelSyncStatusService: MessageChannelSyncStatusService;
   let globalWorkspaceOrmManager: GlobalWorkspaceOrmManager;
   let messagingCursorService: MessagingCursorService;
 
-  let mockMicrosoftMessageChannel: MessageChannelWorkspaceEntity;
-  let mockGoogleMessageChannel: MessageChannelWorkspaceEntity;
+  let mockMicrosoftMessageChannel: MessageChannelEntity;
+  let mockGoogleMessageChannel: MessageChannelEntity;
 
   const workspaceId = 'workspace-id';
 
@@ -47,7 +43,7 @@ describe('MessagingMessageListFetchService', () => {
         handle: 'test@microsoft.com',
         accessToken: 'old-microsoft-access-token',
         refreshToken: 'microsoft-refresh-token',
-        handleAliases: '',
+        handleAliases: [] as string[],
       },
       messageFolders: [
         {
@@ -55,10 +51,10 @@ describe('MessagingMessageListFetchService', () => {
           name: 'inbox',
           syncCursor: 'inbox-sync-cursor',
           messageChannelId: 'microsoft-message-channel-id',
-        } as MessageFolderWorkspaceEntity,
+        },
       ],
       messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
-    } as MessageChannelWorkspaceEntity;
+    } as unknown as MessageChannelEntity;
 
     mockGoogleMessageChannel = {
       id: 'google-message-channel-id',
@@ -68,12 +64,12 @@ describe('MessagingMessageListFetchService', () => {
         handle: 'test@gmail.com',
         accessToken: 'old-google-access-token',
         refreshToken: 'google-refresh-token',
-        handleAliases: '',
+        handleAliases: [] as string[],
       },
       syncCursor: 'google-sync-cursor',
       messageFolders: [],
       messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
-    } as unknown as MessageChannelWorkspaceEntity;
+    } as unknown as MessageChannelEntity;
   });
 
   beforeEach(async () => {
@@ -161,38 +157,6 @@ describe('MessagingMessageListFetchService', () => {
           },
         },
         {
-          provide: MessagingAccountAuthenticationService,
-          useValue: {
-            validateAndRefreshConnectedAccountAuthentication: jest
-              .fn()
-              .mockImplementation(({ connectedAccount }) => {
-                if (
-                  connectedAccount.provider === ConnectedAccountProvider.GOOGLE
-                ) {
-                  return {
-                    accessToken: 'new-google-access-token',
-                    refreshToken: 'new-google-refresh-token',
-                  };
-                }
-
-                if (
-                  connectedAccount.provider ===
-                  ConnectedAccountProvider.MICROSOFT
-                ) {
-                  return {
-                    accessToken: 'new-microsoft-access-token',
-                    refreshToken: 'new-microsoft-refresh-token',
-                  };
-                }
-
-                return {
-                  accessToken: '',
-                  refreshToken: '',
-                };
-              }),
-          },
-        },
-        {
           provide: MessageChannelSyncStatusService,
           useValue: {
             markAsMessagesListFetchOngoing: jest
@@ -227,6 +191,12 @@ describe('MessagingMessageListFetchService', () => {
                 return mockMessageFolderRepository;
               }
             }),
+          },
+        },
+        {
+          provide: getRepositoryToken(MessageChannelEntity),
+          useValue: {
+            findOne: jest.fn().mockResolvedValue(undefined),
           },
         },
         {
@@ -288,11 +258,6 @@ describe('MessagingMessageListFetchService', () => {
       module.get<MessagingMessageListFetchService>(
         MessagingMessageListFetchService,
       );
-    messagingAccountAuthenticationService =
-      module.get<MessagingAccountAuthenticationService>(
-        MessagingAccountAuthenticationService,
-      );
-
     messagingGetMessageListService = module.get<MessagingGetMessageListService>(
       MessagingGetMessageListService,
     );
@@ -315,25 +280,11 @@ describe('MessagingMessageListFetchService', () => {
     );
 
     expect(
-      messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication,
-    ).toHaveBeenCalledWith({
-      connectedAccount: mockMicrosoftMessageChannel.connectedAccount,
-      workspaceId,
-      messageChannelId: mockMicrosoftMessageChannel.id,
-    });
-    expect(
       messageChannelSyncStatusService.markAsMessagesListFetchOngoing,
     ).toHaveBeenCalledWith([mockMicrosoftMessageChannel.id], workspaceId);
 
     expect(messagingGetMessageListService.getMessageLists).toHaveBeenCalledWith(
-      {
-        ...mockMicrosoftMessageChannel,
-        connectedAccount: {
-          ...mockMicrosoftMessageChannel.connectedAccount,
-          accessToken: 'new-microsoft-access-token',
-          refreshToken: 'new-microsoft-refresh-token',
-        },
-      },
+      mockMicrosoftMessageChannel,
       [
         {
           id: 'inbox-folder-id',
@@ -352,14 +303,7 @@ describe('MessagingMessageListFetchService', () => {
     );
 
     expect(messagingCursorService.updateCursor).toHaveBeenCalledWith(
-      {
-        ...mockMicrosoftMessageChannel,
-        connectedAccount: {
-          ...mockMicrosoftMessageChannel.connectedAccount,
-          accessToken: 'new-microsoft-access-token',
-          refreshToken: 'new-microsoft-refresh-token',
-        },
-      },
+      mockMicrosoftMessageChannel,
       'new-sync-cursor',
       workspaceId,
       'inbox-folder-id',
@@ -377,25 +321,11 @@ describe('MessagingMessageListFetchService', () => {
     );
 
     expect(
-      messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication,
-    ).toHaveBeenCalledWith({
-      connectedAccount: mockGoogleMessageChannel.connectedAccount,
-      workspaceId,
-      messageChannelId: mockGoogleMessageChannel.id,
-    });
-    expect(
       messageChannelSyncStatusService.markAsMessagesListFetchOngoing,
     ).toHaveBeenCalledWith([mockGoogleMessageChannel.id], workspaceId);
 
     expect(messagingGetMessageListService.getMessageLists).toHaveBeenCalledWith(
-      {
-        ...mockGoogleMessageChannel,
-        connectedAccount: {
-          ...mockGoogleMessageChannel.connectedAccount,
-          accessToken: 'new-google-access-token',
-          refreshToken: 'new-google-refresh-token',
-        },
-      },
+      mockGoogleMessageChannel,
       [
         {
           id: 'inbox-folder-id',
@@ -414,14 +344,7 @@ describe('MessagingMessageListFetchService', () => {
     );
 
     expect(messagingCursorService.updateCursor).toHaveBeenCalledWith(
-      {
-        ...mockGoogleMessageChannel,
-        connectedAccount: {
-          ...mockGoogleMessageChannel.connectedAccount,
-          accessToken: 'new-google-access-token',
-          refreshToken: 'new-google-refresh-token',
-        },
-      },
+      mockGoogleMessageChannel,
       'new-google-history-id',
       workspaceId,
       undefined,

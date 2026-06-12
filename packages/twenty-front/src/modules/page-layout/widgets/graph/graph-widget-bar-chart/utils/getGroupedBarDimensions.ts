@@ -52,9 +52,13 @@ export const getGroupedBarDimensions = ({
   const { isVertical, valueAxisLength, valueToPixel, zeroPixel } = ctx;
   const { barThickness, groupCenteringOffset, barStride } = layout;
 
-  const valuePixel = valueToPixel(value);
-  const barStart = Math.min(zeroPixel, valuePixel);
-  const barLength = Math.abs(valuePixel - zeroPixel);
+  const valuePixel = Math.max(
+    0,
+    Math.min(valueAxisLength, valueToPixel(value)),
+  );
+  const clampedZeroPixel = Math.max(0, Math.min(valueAxisLength, zeroPixel));
+  const barStart = Math.min(clampedZeroPixel, valuePixel);
+  const barLength = Math.abs(valuePixel - clampedZeroPixel);
 
   const categoryPosition =
     categoryStart + groupCenteringOffset + keyIndex * barStride;

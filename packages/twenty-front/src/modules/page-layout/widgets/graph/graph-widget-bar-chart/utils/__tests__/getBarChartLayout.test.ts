@@ -124,6 +124,23 @@ describe('getBarChartLayout', () => {
         TEXT_MARGIN_LIMITS.max.left,
       );
     });
+
+    it('keeps explicit range bounds as value domain', () => {
+      const result = getBarChartLayout({
+        ...baseParams,
+        chartWidth: 280,
+        layout: BarChartLayout.HORIZONTAL,
+        effectiveMinimumValue: 0,
+        effectiveMaximumValue: 10,
+        hasExplicitRangeBounds: true,
+      });
+
+      expect(result.valueDomain).toEqual({ min: 0, max: 10 });
+      expect(result.valueTickValues[0]).toBe(0);
+      expect(result.valueTickValues[result.valueTickValues.length - 1]).toBe(
+        10,
+      );
+    });
   });
 
   describe('edge cases', () => {

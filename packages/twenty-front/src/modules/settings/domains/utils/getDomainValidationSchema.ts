@@ -1,9 +1,7 @@
+import { t } from '@lingui/core/macro';
 import { z } from 'zod';
-import { type useLingui } from '@lingui/react/macro';
 
-export const getDomainValidationSchema = (
-  t: ReturnType<typeof useLingui>['t'],
-) =>
+export const getDomainValidationSchema = () =>
   z
     .string()
     .regex(

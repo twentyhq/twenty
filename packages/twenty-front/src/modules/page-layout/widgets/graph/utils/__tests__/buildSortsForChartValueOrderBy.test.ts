@@ -1,11 +1,11 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { buildSortsForChartValueOrderBy } from '@/page-layout/widgets/graph/utils/buildSortsForChartValueOrderBy';
 import { type NormalizedChartConfigurationFields } from '@/page-layout/widgets/graph/utils/normalizeChartConfigurationFields';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { GraphOrderBy } from '~/generated-metadata/graphql';
 
 describe('buildSortsForChartValueOrderBy', () => {
-  const mockObjectMetadataItem: ObjectMetadataItem = {
+  const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
     id: 'obj-1',
     nameSingular: 'opportunity',
     namePlural: 'opportunities',
@@ -17,7 +17,7 @@ describe('buildSortsForChartValueOrderBy', () => {
         label: 'Amount',
       },
     ],
-  } as ObjectMetadataItem;
+  } as EnrichedObjectMetadataItem;
 
   it('should return ASC sort for VALUE_ASC orderBy', () => {
     const normalizedFields: NormalizedChartConfigurationFields = {

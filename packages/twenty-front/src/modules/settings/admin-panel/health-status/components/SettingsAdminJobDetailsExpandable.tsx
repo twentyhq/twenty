@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { JsonTree } from 'twenty-ui/json-visualizer';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { type QueueJob } from '~/generated-metadata/graphql';
+import { JsonTree } from 'twenty-ui-deprecated/json-visualizer';
+import { AnimatedExpandableContainer } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { type QueueJob } from '~/generated-admin/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 type SettingsAdminJobDetailsExpandableProps = {

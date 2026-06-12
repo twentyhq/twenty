@@ -1,6 +1,8 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type FormatRecordSerializedRelationProperties } from 'twenty-shared/types';
 
+import { type MakeWasRemovedInUpgradePropertiesOptional } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
+
 import { type ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-relations.constant';
 import { type ALL_ONE_TO_MANY_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-one-to-many-metadata-relations.constant';
 import { type AddSuffixToEntityManyToOneProperties } from 'src/engine/metadata-modules/flat-entity/types/add-suffix-to-entity-many-to-one-properties.type';
@@ -21,8 +23,8 @@ export type UniversalSyncableFlatEntity = Omit<
 export type UniversalFlatEntityExtraProperties<
   TEntity extends SyncableEntity,
   // Required to be passed for narrowed type
-  TMetadataName extends
-    AllMetadataName = FromMetadataEntityToMetadataName<TEntity>,
+  TMetadataName extends AllMetadataName =
+    FromMetadataEntityToMetadataName<TEntity>,
 > = AddSuffixToEntityOneToManyProperties<TEntity, 'universalIdentifiers'> &
   AddSuffixToEntityManyToOneProperties<
     TEntity,
@@ -40,10 +42,10 @@ export type UniversalFlatEntityExtraProperties<
 
 export type UniversalFlatEntityFrom<
   TEntity extends SyncableEntity,
-  TMetadataName extends
-    AllMetadataName = FromMetadataEntityToMetadataName<TEntity>,
+  TMetadataName extends AllMetadataName =
+    FromMetadataEntityToMetadataName<TEntity>,
 > = Omit<
-  TEntity,
+  MakeWasRemovedInUpgradePropertiesOptional<TEntity>,
   | 'applicationId'
   | 'workspaceId'
   | 'id'

@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileCorePictureResolver } from 'src/engine/core-modules/file/file-core-picture/resolvers/file-core-picture.resolver';
@@ -12,18 +10,21 @@ import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 @Module({
   imports: [
     JwtModule,
-    TypeOrmModule.forFeature([FileEntity, WorkspaceEntity, ApplicationEntity]),
+    TypeOrmModule.forFeature([FileEntity, WorkspaceEntity]),
     PermissionsModule,
     FileStorageModule,
-    ApplicationModule,
     FileUrlModule,
     SecureHttpClientModule,
   ],
-  providers: [FileCorePictureService, FileCorePictureResolver],
+  providers: [
+    FileCorePictureService,
+    FileCorePictureResolver,
+    provideWorkspaceScopedRepository(FileEntity),
+  ],
   exports: [FileCorePictureService],
 })
 export class FileCorePictureModule {}

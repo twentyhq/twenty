@@ -1,5 +1,7 @@
-import { styled } from '@linaria/react';
+import { clsx } from 'clsx';
 import { type ReactNode } from 'react';
+
+import styles from './AutogrowWrapper.module.scss';
 
 type AutogrowWrapperProps = {
   children: ReactNode;
@@ -7,33 +9,15 @@ type AutogrowWrapperProps = {
   className?: string;
 };
 
-const StyledNodeWrapper = styled.span`
-  pointer-events: none;
-  visibility: hidden;
-  white-space: pre;
-`;
-
-const StyledContainer = styled.div`
-  max-width: 100%;
-  position: relative;
-`;
-
-const StyledChildWrapper = styled.div`
-  left: 0;
-  top: 0;
-  position: absolute;
-  width: 100%;
-`;
-
 export const AutogrowWrapper = ({
   children,
   node = children,
   className,
 }: AutogrowWrapperProps) => {
   return (
-    <StyledContainer className={className}>
-      <StyledNodeWrapper>{node}</StyledNodeWrapper>
-      <StyledChildWrapper>{children}</StyledChildWrapper>
-    </StyledContainer>
+    <div className={clsx(styles.container, className)}>
+      <span className={styles.nodeWrapper}>{node}</span>
+      <div className={styles.childWrapper}>{children}</div>
+    </div>
   );
 };

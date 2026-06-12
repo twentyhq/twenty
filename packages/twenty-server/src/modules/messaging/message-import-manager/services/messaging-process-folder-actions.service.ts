@@ -1,16 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import {
-  MessageFolderPendingSyncAction,
-  MessageFolderWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
 import { MessagingDeleteFolderMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-delete-folder-messages.service';
 
 @Injectable()
@@ -21,12 +19,14 @@ export class MessagingProcessFolderActionsService {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    @InjectRepository(MessageFolderEntity)
+    private readonly messageFolderRepository: Repository<MessageFolderEntity>,
     private readonly messagingDeleteFolderMessagesService: MessagingDeleteFolderMessagesService,
   ) {}
 
   async processFolderActions(
-    messageChannel: MessageChannelWorkspaceEntity,
-    messageFolders: MessageFolderWorkspaceEntity[],
+    messageChannel: MessageChannelEntity,
+    messageFolders: MessageFolderEntity[],
     workspaceId: string,
   ): Promise<void> {
     const foldersWithPendingActions = messageFolders.filter(
@@ -91,43 +91,30 @@ export class MessagingProcessFolderActionsService {
 
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
-          const workspaceDataSource =
-            await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+          if (processedFolderIds.length > 0) {
+            await this.messageFolderRepository.update(
+              { id: In(processedFolderIds), workspaceId },
+              { pendingSyncAction: MessageFolderPendingSyncAction.NONE },
+            );
 
-          await workspaceDataSource?.transaction(
-            async (transactionManager: WorkspaceEntityManager) => {
-              const messageFolderRepository =
-                await this.globalWorkspaceOrmManager.getRepository<MessageFolderWorkspaceEntity>(
-                  workspaceId,
-                  'messageFolder',
-                );
+            this.logger.debug(
+              `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Reset pendingSyncAction to NONE for ${processedFolderIds.length} folders`,
+            );
+          }
 
-              if (processedFolderIds.length > 0) {
-                await messageFolderRepository.update(
-                  { id: In(processedFolderIds) },
-                  { pendingSyncAction: MessageFolderPendingSyncAction.NONE },
-                  transactionManager,
-                );
+          if (folderIdsToDelete.length > 0) {
+            await this.messageFolderRepository.delete({
+              id: In(folderIdsToDelete),
+              workspaceId,
+            });
 
-                this.logger.debug(
-                  `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Reset pendingSyncAction to NONE for ${processedFolderIds.length} folders`,
-                );
-              }
-
-              if (folderIdsToDelete.length > 0) {
-                await messageFolderRepository.delete(
-                  { id: In(folderIdsToDelete) },
-                  transactionManager,
-                );
-
-                this.logger.log(
-                  `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Deleted ${folderIdsToDelete.length} folders`,
-                );
-              }
-            },
-          );
+            this.logger.log(
+              `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Deleted ${folderIdsToDelete.length} folders`,
+            );
+          }
         },
         authContext,
+        { lite: true },
       );
     }
   }

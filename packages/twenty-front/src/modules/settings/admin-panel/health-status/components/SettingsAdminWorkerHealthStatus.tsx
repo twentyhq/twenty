@@ -2,9 +2,9 @@ import { SettingsAdminWorkerQueueMetricsSection } from '@/settings/admin-panel/h
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { AdminPanelHealthServiceStatus } from '~/generated-metadata/graphql';
+import { AdminPanelHealthServiceStatus } from '~/generated-admin/graphql';
 import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/health-status/contexts/SettingsAdminIndicatorHealthContext';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledErrorMessage = styled.div`
   color: ${themeCssVariables.color.red};

@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useUpdateManyRecords } from '@/object-record/hooks/useUpdateManyRecords';
+import { UPDATE_MESSAGE_FOLDERS } from '@/settings/accounts/graphql/mutations/updateMessageFolders';
+import { useApolloClient } from '@apollo/client/react';
 
 type UpdateMessageFoldersSyncStatusArgs = {
   messageFolderIds: string[];
@@ -9,25 +9,35 @@ type UpdateMessageFoldersSyncStatusArgs = {
 };
 
 export const useUpdateMessageFoldersSyncStatus = () => {
-  const { updateManyRecords } = useUpdateManyRecords({
-    objectNameSingular: CoreObjectNameSingular.MessageFolder,
-    recordGqlFields: {
-      id: true,
-      isSynced: true,
-    },
-  });
+  const apolloClient = useApolloClient();
 
   const updateMessageFoldersSyncStatus = useCallback(
     async ({
       messageFolderIds,
       isSynced,
     }: UpdateMessageFoldersSyncStatusArgs) => {
-      await updateManyRecords({
-        recordIdsToUpdate: messageFolderIds,
-        updateOneRecordInput: { isSynced },
+      if (messageFolderIds.length === 0) {
+        return;
+      }
+
+      await apolloClient.mutate({
+        mutation: UPDATE_MESSAGE_FOLDERS,
+        variables: {
+          input: {
+            ids: messageFolderIds,
+            update: { isSynced },
+          },
+        },
+        optimisticResponse: {
+          updateMessageFolders: messageFolderIds.map((id) => ({
+            __typename: 'MessageFolder',
+            id,
+            isSynced,
+          })),
+        },
       });
     },
-    [updateManyRecords],
+    [apolloClient],
   );
 
   return { updateMessageFoldersSyncStatus };

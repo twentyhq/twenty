@@ -1,47 +1,38 @@
-import { InjectRepository } from '@nestjs/typeorm';
-
 import { Command, Option } from 'nest-commander';
 import {
   ALL_METADATA_NAME,
   type AllMetadataName,
 } from 'twenty-shared/metadata';
-import { Repository } from 'typeorm';
 
 import {
-  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-  type ActiveOrSuspendedWorkspacesMigrationCommandOptions,
-} from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+  ActiveOrSuspendedWorkspaceCommandRunner,
+  type ActiveOrSuspendedWorkspaceCommandOptions,
+} from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
-type FlatCacheFlushCommandOptions =
-  ActiveOrSuspendedWorkspacesMigrationCommandOptions & {
-    allMetadata?: boolean;
-  };
+type FlatCacheFlushCommandOptions = ActiveOrSuspendedWorkspaceCommandOptions & {
+  metadataName?: string[];
+  allMetadata?: boolean;
+};
 
 @Command({
   name: 'cache:flat-cache-invalidate',
   description:
     'Flush flat entity cache for specific metadata names and workspaces',
 })
-export class FlatCacheInvalidateCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner<FlatCacheFlushCommandOptions> {
-  private metadataNames: string[] = [];
+export class FlatCacheInvalidateCommand extends ActiveOrSuspendedWorkspaceCommandRunner<FlatCacheFlushCommandOptions> {
   private flatMapsKeysToFlush: (keyof AllFlatEntityMaps)[] = [];
 
   constructor(
-    @InjectRepository(WorkspaceEntity)
-    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
-    protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    protected readonly dataSourceService: DataSourceService,
+    protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
   ) {
-    super(workspaceRepository, globalWorkspaceOrmManager, dataSourceService);
+    super(workspaceIteratorService);
   }
 
   @Option({
@@ -50,10 +41,12 @@ export class FlatCacheInvalidateCommand extends ActiveOrSuspendedWorkspacesMigra
       'Metadata name(s) to flush cache for. Can be specified multiple times.',
     required: false,
   })
-  parseMetadataName(val: string): string[] {
-    this.metadataNames.push(val);
+  parseMetadataName(val: string, previous?: string[]): string[] {
+    const accumulator = previous ?? [];
 
-    return this.metadataNames;
+    accumulator.push(val);
+
+    return accumulator;
   }
 
   @Option({
@@ -66,11 +59,13 @@ export class FlatCacheInvalidateCommand extends ActiveOrSuspendedWorkspacesMigra
     return true;
   }
 
-  override async runMigrationCommand(
+  override async run(
     passedParams: string[],
     options: FlatCacheFlushCommandOptions,
   ): Promise<void> {
-    if (!options.allMetadata && this.metadataNames.length === 0) {
+    const metadataNames = options.metadataName ?? [];
+
+    if (!options.allMetadata && metadataNames.length === 0) {
       this.logger.error(
         'Either --all-metadata or at least one --metadataName must be provided.',
       );
@@ -79,7 +74,7 @@ export class FlatCacheInvalidateCommand extends ActiveOrSuspendedWorkspacesMigra
     }
 
     const validatedMetadataNames = this.validateAndExpandMetadataNames({
-      inputMetadataNames: this.metadataNames,
+      inputMetadataNames: metadataNames,
       allMetadata: options.allMetadata,
     });
 
@@ -95,7 +90,7 @@ export class FlatCacheInvalidateCommand extends ActiveOrSuspendedWorkspacesMigra
       `Will flush cache for the following flat maps keys: ${this.flatMapsKeysToFlush.join(', ')}`,
     );
 
-    await super.runMigrationCommand(passedParams, options);
+    await super.run(passedParams, options);
   }
 
   override async runOnWorkspace({

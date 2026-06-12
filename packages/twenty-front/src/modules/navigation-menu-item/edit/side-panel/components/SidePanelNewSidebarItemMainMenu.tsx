@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   Avatar,
@@ -6,19 +7,18 @@ import {
   IconFolder,
   IconLink,
   IconTable,
-} from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+  TintedIconTile,
+} from 'twenty-ui-deprecated/display';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemStyleIcon';
-import { NavigationMenuItemType } from 'twenty-shared/types';
-import { addMenuItemInsertionContextState } from '@/navigation-menu-item/common/states/addMenuItemInsertionContextState';
+import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
+import { useAddFolderToNavigationMenu } from '@/navigation-menu-item/edit/side-panel/hooks/useAddFolderToNavigationMenu';
+import { useAddLinkToNavigationMenu } from '@/navigation-menu-item/edit/side-panel/hooks/useAddLinkToNavigationMenu';
 import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/SidePanelItemWithAddToNavigationDrag';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { useAddFolderToNavigationMenu } from '@/navigation-menu-item/edit/side-panel/hooks/useAddFolderToNavigationMenu';
-import { useAddLinkToNavigationMenu } from '@/navigation-menu-item/edit/side-panel/hooks/useAddLinkToNavigationMenu';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -42,16 +42,15 @@ export const SidePanelNewSidebarItemMainMenu = ({
   onSelectRecord,
 }: SidePanelNewSidebarItemMainMenuProps) => {
   const { t } = useLingui();
-  const addMenuItemInsertionContext = useAtomStateValue(
-    addMenuItemInsertionContextState,
+  const pendingInsertionNavigationMenuItem = useAtomStateValue(
+    pendingInsertionNavigationMenuItemState,
   );
   const { handleAddFolder } = useAddFolderToNavigationMenu();
   const { handleAddLink } = useAddLinkToNavigationMenu();
 
   const isAddingToFolder = isDefined(
-    addMenuItemInsertionContext?.targetFolderId,
+    pendingInsertionNavigationMenuItem?.folderId,
   );
-  const isDragDisabled = addMenuItemInsertionContext?.disableDrag === true;
   const selectableItemIds = isAddingToFolder
     ? MAIN_MENU_ITEM_TYPES.filter(
         (type) => type !== NavigationMenuItemType.FOLDER,
@@ -61,7 +60,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
   return (
     <SidePanelAddToNavigationDroppable>
       {({ innerRef, droppableProps, placeholder }) => (
-        <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
+        <SidePanelList selectableItemIds={selectableItemIds}>
           {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           <div ref={innerRef} {...droppableProps}>
             <SidePanelGroup heading={t`Data`}>
@@ -71,7 +70,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
               >
                 <CommandMenuItem
                   Icon={() => (
-                    <NavigationMenuItemStyleIcon
+                    <TintedIconTile
                       Icon={IconBuildingSkyscraper}
                       color="blue"
                     />
@@ -87,12 +86,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
                 onEnter={onSelectView}
               >
                 <CommandMenuItem
-                  Icon={() => (
-                    <NavigationMenuItemStyleIcon
-                      Icon={IconTable}
-                      color="gray"
-                    />
-                  )}
+                  Icon={() => <TintedIconTile Icon={IconTable} />}
                   label={t`View`}
                   id={NavigationMenuItemType.VIEW}
                   hasSubMenu={true}
@@ -128,14 +122,13 @@ export const SidePanelNewSidebarItemMainMenu = ({
                   label={t`Folder`}
                   id={NavigationMenuItemType.FOLDER}
                   onClick={handleAddFolder}
-                  dragIndex={isDragDisabled ? undefined : 3}
+                  dragIndex={3}
                   payload={{
                     type: NavigationMenuItemType.FOLDER,
                     folderId: 'new',
                     name: t`New folder`,
                   }}
                   disabled={isAddingToFolder}
-                  disableDrag={isDragDisabled}
                 />
               </SelectableListItem>
               <SelectableListItem
@@ -147,14 +140,13 @@ export const SidePanelNewSidebarItemMainMenu = ({
                   label={t`Link`}
                   id={NavigationMenuItemType.LINK}
                   onClick={handleAddLink}
-                  dragIndex={isDragDisabled ? undefined : 4}
+                  dragIndex={4}
                   payload={{
                     type: NavigationMenuItemType.LINK,
                     linkId: 'new',
                     name: t`Link label`,
                     link: 'https://www.example.com',
                   }}
-                  disableDrag={isDragDisabled}
                 />
               </SelectableListItem>
             </SidePanelGroup>

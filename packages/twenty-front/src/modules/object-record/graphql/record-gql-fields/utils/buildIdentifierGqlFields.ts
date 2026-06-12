@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const buildIdentifierGqlFields = (
   objectMetadata: Pick<
-    ObjectMetadataItem,
+    EnrichedObjectMetadataItem,
     | 'fields'
     | 'labelIdentifierFieldMetadataId'
     | 'imageIdentifierFieldMetadataId'

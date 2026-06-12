@@ -1,10 +1,13 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { type ObjectPermission } from '~/generated-metadata/graphql';
 
 export type IsObjectReadOnlyParams = {
   objectPermissions: ObjectPermission;
-  objectMetadataItem: Pick<ObjectMetadataItem, 'isUIReadOnly' | 'isRemote'>;
+  objectMetadataItem: Pick<
+    EnrichedObjectMetadataItem,
+    'isUIReadOnly' | 'isRemote'
+  >;
   isRecordDeleted: boolean;
 };
 

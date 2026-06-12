@@ -14,7 +14,6 @@ describe('Custom object renaming', () => {
   const STANDARD_OBJECT_RELATIONS = [
     'noteTarget',
     'attachment',
-    'favorite',
     'taskTarget',
     'timelineActivity',
   ];
@@ -37,9 +36,7 @@ describe('Custom object renaming', () => {
     nameSingular
   `,
     input: {
-      filter: {
-        isCustom: { isNot: true },
-      },
+      filter: {},
       paging: { first: 1000 },
     },
   });

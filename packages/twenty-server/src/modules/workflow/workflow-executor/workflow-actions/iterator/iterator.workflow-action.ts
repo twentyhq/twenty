@@ -55,7 +55,7 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
     if (!Array.isArray(parsedItems)) {
       throw new WorkflowStepExecutorException(
         'Iterator input items must be an array',
-        WorkflowStepExecutorExceptionCode.INTERNAL_ERROR,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
     }
 

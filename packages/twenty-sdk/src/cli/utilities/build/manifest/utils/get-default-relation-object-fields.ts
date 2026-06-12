@@ -1,6 +1,6 @@
-import { generateDefaultFieldUniversalIdentifier } from '@/cli/utilities/build/manifest/utils/generate-default-field-universal-identifier';
-import { RelationType } from '@/sdk';
-import type { ObjectConfig } from '@/sdk/objects/object-config';
+import { generateDefaultFieldUniversalIdentifier } from '@/sdk/define/objects/generate-default-field-universal-identifier';
+import { RelationType } from '@/sdk/define';
+import type { ObjectConfig } from '@/sdk/define/objects/object-config';
 import {
   type FieldManifest,
   type ObjectFieldManifest,
@@ -40,15 +40,6 @@ const DEFAULT_RELATION_CONFIGS = [
     targetFieldType: FieldMetadataType.MORPH_RELATION,
     standardObjectKey: 'timelineActivity',
     morphId: STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
-  },
-  {
-    ...DEFAULT_DEFAULT_RELATION,
-    fieldName: 'favorites',
-    label: 'Favorites',
-    icon: 'IconBuildingSkyscraper',
-    targetIcon: 'IconHeart',
-    targetFieldType: FieldMetadataType.RELATION,
-    standardObjectKey: 'favorite',
   },
   {
     ...DEFAULT_DEFAULT_RELATION,
@@ -139,13 +130,13 @@ export const getDefaultRelationObjectFields = (
 
     const forwardFieldUniversalIdentifier =
       generateDefaultFieldUniversalIdentifier({
-        objectConfig,
+        objectUniversalIdentifier: objectConfig.universalIdentifier,
         fieldName: config.fieldName,
       });
 
     const reverseFieldUniversalIdentifier =
       generateDefaultFieldUniversalIdentifier({
-        objectConfig,
+        objectUniversalIdentifier: objectConfig.universalIdentifier,
         fieldName: `${config.fieldName}Inverse`,
       });
 

@@ -6,9 +6,10 @@ import {
   IllustrationIconNumbers,
   IllustrationIconOneToMany,
   IllustrationIconTag,
+  IllustrationIconTags,
   IllustrationIconText,
-} from 'twenty-ui/display';
-import { type SelectOption } from 'twenty-ui/input';
+} from 'twenty-ui-deprecated/display';
+import { type SelectOption } from 'twenty-ui-deprecated/input';
 
 export const FORM_SELECT_FIELD_TYPE_OPTIONS: SelectOption<WorkflowFormFieldType>[] =
   [
@@ -36,5 +37,10 @@ export const FORM_SELECT_FIELD_TYPE_OPTIONS: SelectOption<WorkflowFormFieldType>
       label: 'Select',
       value: FieldMetadataType.SELECT,
       Icon: IllustrationIconTag,
+    },
+    {
+      label: 'Multi-Select',
+      value: FieldMetadataType.MULTI_SELECT,
+      Icon: IllustrationIconTags,
     },
   ];

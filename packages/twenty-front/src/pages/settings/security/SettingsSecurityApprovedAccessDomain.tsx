@@ -2,15 +2,15 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui-deprecated/display';
+import { Section } from 'twenty-ui-deprecated/layout';
 import { z } from 'zod';
 import { useMutation } from '@apollo/client/react';
 import { CreateApprovedAccessDomainDocument } from '~/generated-metadata/graphql';
@@ -66,7 +66,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
           enqueueSuccessSnackBar({
             message: t`Please check your email for a verification link.`,
           });
-          navigate(SettingsPath.Domains);
+          navigate(SettingsPath.WorkspaceMembersPage);
         },
         onError: (error) => {
           enqueueErrorSnackBar({
@@ -83,22 +83,22 @@ export const SettingsSecurityApprovedAccessDomain = () => {
 
   return (
     <form onSubmit={form.handleSubmit(handleSave)}>
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={t`New Approved Access Domain`}
         actionButton={
           <SaveAndCancelButtons
-            onCancel={() => navigate(SettingsPath.Domains)}
+            onCancel={() => navigate(SettingsPath.WorkspaceMembersPage)}
             isSaveDisabled={form.formState.isSubmitting}
           />
         }
         links={[
           {
             children: <Trans>Workspace</Trans>,
-            href: getSettingsPath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.General),
           },
           {
-            children: <Trans>Domains</Trans>,
-            href: getSettingsPath(SettingsPath.Domains),
+            children: <Trans>Members</Trans>,
+            href: getSettingsPath(SettingsPath.WorkspaceMembersPage),
           },
           { children: <Trans>New Approved Access Domain</Trans> },
         ]}
@@ -154,7 +154,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
             />
           </Section>
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     </form>
   );
 };

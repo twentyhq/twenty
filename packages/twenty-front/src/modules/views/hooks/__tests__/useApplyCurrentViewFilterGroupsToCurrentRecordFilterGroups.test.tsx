@@ -16,13 +16,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { type ViewFilterGroup as GqlViewFilterGroup } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
 import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 
 const mockObjectMetadataItemNameSingular = 'company';
 
 describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
-  const mockObjectMetadataItem = generatedMockObjectMetadataItems.find(
+  const mockObjectMetadataItem = getTestEnrichedObjectMetadataItemsMock().find(
     (item) => item.nameSingular === mockObjectMetadataItemNameSingular,
   );
 

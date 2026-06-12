@@ -1,4 +1,5 @@
 import { UPSERT_FIELDS_WIDGET } from '@/page-layout/graphql/mutations/upsertFieldsWidget';
+import { useHasFieldsWidgetChanges } from '@/page-layout/hooks/useHasFieldsWidgetChanges';
 import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
 import { fieldsWidgetEditorModePersistedComponentState } from '@/page-layout/states/fieldsWidgetEditorModePersistedComponentState';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
@@ -20,10 +21,16 @@ export const useSaveFieldsWidgetGroups = () => {
     { input: UpsertFieldsWidgetInput }
   >(UPSERT_FIELDS_WIDGET);
 
+  const { hasFieldsWidgetChanges } = useHasFieldsWidgetChanges();
+
   const store = useStore();
 
   const saveFieldsWidgetGroups = useCallback(
     async (pageLayoutId: string) => {
+      if (!hasFieldsWidgetChanges(pageLayoutId)) {
+        return;
+      }
+
       const allDraftGroups = store.get(
         fieldsWidgetGroupsDraftComponentState.atomFamily({
           instanceId: pageLayoutId,
@@ -66,19 +73,15 @@ export const useSaveFieldsWidgetGroups = () => {
                   name: group.name,
                   position: group.position,
                   isVisible: group.isVisible,
-                  fields: group.fields.flatMap((field) => {
-                    if (!isDefined(field.viewFieldId)) {
-                      return [];
-                    }
-
-                    return [
-                      {
-                        viewFieldId: field.viewFieldId,
-                        isVisible: field.isVisible,
-                        position: field.position,
-                      },
-                    ];
-                  }),
+                  fields: group.fields.map((field) => ({
+                    ...(isDefined(field.viewFieldId)
+                      ? { viewFieldId: field.viewFieldId }
+                      : {
+                          fieldMetadataId: field.fieldMetadataItem.id,
+                        }),
+                    isVisible: field.isVisible,
+                    position: field.position,
+                  })),
                 })),
               },
             },
@@ -90,19 +93,15 @@ export const useSaveFieldsWidgetGroups = () => {
             variables: {
               input: {
                 widgetId,
-                fields: ungroupedFields.flatMap((field) => {
-                  if (!isDefined(field.viewFieldId)) {
-                    return [];
-                  }
-
-                  return [
-                    {
-                      viewFieldId: field.viewFieldId,
-                      isVisible: field.isVisible,
-                      position: field.position,
-                    },
-                  ];
-                }),
+                fields: ungroupedFields.map((field) => ({
+                  ...(isDefined(field.viewFieldId)
+                    ? { viewFieldId: field.viewFieldId }
+                    : {
+                        fieldMetadataId: field.fieldMetadataItem.id,
+                      }),
+                  isVisible: field.isVisible,
+                  position: field.position,
+                })),
               },
             },
           });
@@ -128,7 +127,7 @@ export const useSaveFieldsWidgetGroups = () => {
         allEditorModes,
       );
     },
-    [store, upsertFieldsWidgetMutation],
+    [hasFieldsWidgetChanges, store, upsertFieldsWidgetMutation],
   );
 
   return { saveFieldsWidgetGroups };

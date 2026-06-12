@@ -1,6 +1,10 @@
-import { filterSuggestionItems } from '@blocknote/core/extensions';
+import {
+  filterSuggestionItems,
+  SuggestionMenu,
+} from '@blocknote/core/extensions';
 import { BlockNoteView } from '@blocknote/mantine';
 import { SuggestionMenuController } from '@blocknote/react';
+import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { type ClipboardEvent, useContext } from 'react';
 import { type BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
@@ -12,7 +16,11 @@ import {
   type SuggestionItem,
 } from '@/blocknote-editor/components/CustomSlashMenu';
 import { useMentionMenu } from '@/mention/hooks/useMentionMenu';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconX } from 'twenty-ui-deprecated/display';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 interface BlockEditorProps {
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
@@ -130,6 +138,14 @@ const StyledEditor = styled.div`
     font-size: 0.9rem;
     padding: 2px 4px;
   }
+
+  & .bn-mantine {
+    container-type: inline-size;
+  }
+
+  & .bn-mantine .bn-panel {
+    width: min(500px, 100cqi);
+  }
 `;
 
 export const BlockEditor = ({
@@ -141,9 +157,29 @@ export const BlockEditor = ({
   readonly,
 }: BlockEditorProps) => {
   const { colorScheme } = useContext(ThemeContext);
+  const { t } = useLingui();
 
   const blockNoteTheme = colorScheme === 'light' ? 'light' : 'dark';
   const getMentionItems = useMentionMenu(editor);
+
+  const getSlashMenuItems = async (query: string) => {
+    const filtered = filterSuggestionItems<SuggestionItem>(
+      getSlashMenu(editor),
+      query,
+    );
+
+    if (filtered.length > 0) {
+      return filtered;
+    }
+
+    return [
+      {
+        title: t`Close menu`,
+        Icon: IconX,
+        onItemClick: () => editor.getExtension(SuggestionMenu)?.closeMenu(),
+      },
+    ];
+  };
 
   const handleFocus = () => {
     onFocus?.();
@@ -177,9 +213,7 @@ export const BlockEditor = ({
         <CustomSideMenu editor={editor} />
         <SuggestionMenuController
           triggerCharacter="/"
-          getItems={async (query) =>
-            filterSuggestionItems<SuggestionItem>(getSlashMenu(editor), query)
-          }
+          getItems={getSlashMenuItems}
           suggestionMenuComponent={CustomSlashMenu}
         />
         <SuggestionMenuController

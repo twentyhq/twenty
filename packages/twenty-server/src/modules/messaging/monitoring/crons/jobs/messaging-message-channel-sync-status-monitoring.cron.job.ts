@@ -10,9 +10,9 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
 
 export const MESSAGING_MESSAGE_CHANNEL_SYNC_STATUS_MONITORING_CRON_PATTERN =
@@ -25,6 +25,8 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly messagingMonitoringService: MessagingMonitoringService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
@@ -51,13 +53,9 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
 
         await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
           async () => {
-            const messageChannelRepository =
-              await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
-                activeWorkspace.id,
-                'messageChannel',
-              );
-            const messageChannels = await messageChannelRepository.find({
+            const messageChannels = await this.messageChannelRepository.find({
               select: ['id', 'syncStatus', 'connectedAccountId'],
+              where: { workspaceId: activeWorkspace.id },
             });
 
             for (const messageChannel of messageChannels) {
@@ -76,6 +74,7 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
             }
           },
           authContext,
+          { lite: true },
         );
       } catch (error) {
         this.exceptionHandlerService.captureExceptions([error], {

@@ -16,6 +16,7 @@ import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/co
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import { getGroupLimit } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/get-group-limit.util';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
@@ -23,6 +24,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
+import { applyRowLevelPermissionPredicates } from 'src/engine/twenty-orm/utils/apply-row-level-permission-predicates.util';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 const RECORDS_PER_GROUP_LIMIT = 10;
@@ -82,6 +84,14 @@ export class GroupByWithRecordsService {
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+    });
+
+    applyRowLevelPermissionPredicates({
+      queryBuilder: queryBuilderWithFiltersAndWithoutGroupBy,
+      objectMetadata: flatObjectMetadata,
+      internalContext: queryBuilderWithFiltersAndWithoutGroupBy.internalContext,
+      authContext: queryBuilderWithFiltersAndWithoutGroupBy.authContext,
+      featureFlagMap: queryBuilderWithFiltersAndWithoutGroupBy.featureFlagMap,
     });
 
     const queryBuilderWithPartitionBy = this.addPartitionByToQueryBuilder({
@@ -264,12 +274,21 @@ export class GroupByWithRecordsService {
         flatFieldMetadataMaps,
       );
 
-      const orderByRawSQL = graphqlQueryParser.getOrderByRawSQL(
-        orderByForRecords,
-        flatObjectMetadata.nameSingular,
-      );
+      const { orderByRawSQL, relationJoins } =
+        graphqlQueryParser.getOrderByRawSQL(
+          orderByForRecords,
+          flatObjectMetadata.nameSingular,
+        );
 
       if (isNonEmptyString(orderByRawSQL)) {
+        for (const joinInfo of relationJoins) {
+          addRelationJoinAliasToQueryBuilder({
+            queryBuilder,
+            parentAlias: flatObjectMetadata.nameSingular,
+            relationName: joinInfo.joinAlias,
+          });
+        }
+
         return queryBuilder.addSelect(
           `ROW_NUMBER() OVER (PARTITION BY ${groupByExpressions} ${orderByRawSQL})`,
           'record_row_number',

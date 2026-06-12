@@ -13,6 +13,8 @@ export const filterVisibleWidgets = ({
 }: FilterVisibleWidgetsParams): PageLayoutTab['widgets'] => {
   return widgets.filter((widget) => {
     return evaluateWidgetVisibility({
+      conditionalAvailabilityExpression:
+        widget.conditionalAvailabilityExpression,
       conditionalDisplay: widget.conditionalDisplay,
       context,
     });

@@ -1,8 +1,10 @@
-import { styled } from '@linaria/react';
+import { clsx } from 'clsx';
+import { type ComponentPropsWithoutRef, forwardRef } from 'react';
 
 import { IconCheck } from '@ui/display';
-import { themeCssVariables } from '@ui/theme-constants';
 import { type MenuItemAccent } from '../../types/MenuItemAccent';
+
+import styles from './StyledMenuItemBase.module.scss';
 
 export type MenuItemBaseProps = {
   accent?: MenuItemAccent;
@@ -13,253 +15,160 @@ export type MenuItemBaseProps = {
   focused?: boolean;
 };
 
-export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
-  --horizontal-padding: ${themeCssVariables.spacing[1]};
-  --vertical-padding: ${themeCssVariables.spacing[2]};
-  align-items: center;
+// The deprecated Linaria styled components forwarded refs and arbitrary
+// native props, so the ports preserve that contract.
+type StyledMenuItemBaseElementProps = MenuItemBaseProps &
+  ComponentPropsWithoutRef<'div'>;
 
-  border-radius: ${themeCssVariables.border.radius.sm};
-  cursor: pointer;
-
-  display: flex;
-
-  flex-direction: row;
-
-  font-size: ${themeCssVariables.font.size.sm};
-
-  gap: ${themeCssVariables.spacing[2]};
-
-  height: calc(32px - 2 * var(--vertical-padding));
-  justify-content: space-between;
-
-  padding: var(--vertical-padding) var(--horizontal-padding);
-
-  background: ${({ isKeySelected, focused }) =>
-    isKeySelected || focused
-      ? themeCssVariables.background.transparent.light
-      : 'transparent'};
-
-  transition: ${({ isHoverBackgroundDisabled, disabled }) =>
-    disabled || isHoverBackgroundDisabled ? 'none' : 'background 0.1s ease'};
-
-  color: ${({ accent, disabled }) => {
-    if (disabled !== undefined && disabled !== false) {
-      return themeCssVariables.font.color.tertiary;
-    }
-    switch (accent) {
-      case 'danger':
-        return themeCssVariables.font.color.danger;
-      case 'placeholder':
-        return themeCssVariables.font.color.tertiary;
-      case 'default':
-      default:
-        return themeCssVariables.font.color.secondary;
-    }
-  }};
-
-  &:hover {
-    background: ${({
+export const StyledMenuItemBase = forwardRef<
+  HTMLDivElement,
+  StyledMenuItemBaseElementProps
+>(
+  (
+    {
       accent,
-      disabled,
-      isHoverBackgroundDisabled,
       isKeySelected,
+      isHoverBackgroundDisabled,
+      hovered: _hovered,
+      disabled,
       focused,
-    }) => {
-      if (disabled === true)
-        return isKeySelected || focused
-          ? themeCssVariables.background.transparent.light
-          : 'transparent';
-      if (accent === 'danger')
-        return themeCssVariables.background.transparent.danger;
-      if (isHoverBackgroundDisabled === true) return 'transparent';
-      return themeCssVariables.background.transparent.light;
-    }};
-  }
+      className,
+      children,
+      ...rest
+    },
+    ref,
+  ) => (
+    <div
+      ref={ref}
+      className={clsx(styles.menuItemBase, className)}
+      data-accent={accent}
+      data-key-selected={isKeySelected || undefined}
+      data-hover-background-disabled={isHoverBackgroundDisabled || undefined}
+      data-disabled={disabled || undefined}
+      data-focused={focused || undefined}
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...rest}
+    >
+      {children}
+    </div>
+  ),
+);
 
-  position: relative;
-  user-select: none;
+StyledMenuItemBase.displayName = 'StyledMenuItemBase';
 
-  width: calc(100% - 2 * var(--horizontal-padding));
-`;
+type StyledStaticDivProps = ComponentPropsWithoutRef<'div'>;
 
-export const StyledMenuItemLabel = styled.div`
-  display: flex;
-  flex-direction: row;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
+const createStyledDiv = (classNameFromModule: string, displayName: string) => {
+  const StyledDiv = forwardRef<HTMLDivElement, StyledStaticDivProps>(
+    ({ className, children, ...rest }, ref) => (
+      <div
+        ref={ref}
+        className={clsx(classNameFromModule, className)}
+        // oxlint-disable-next-line react/jsx-props-no-spreading
+        {...rest}
+      >
+        {children}
+      </div>
+    ),
+  );
 
-  overflow: hidden;
+  StyledDiv.displayName = displayName;
 
-  white-space: nowrap;
-`;
+  return StyledDiv;
+};
 
-export const StyledMenuItemLabelLight = styled.div`
-  color: ${themeCssVariables.font.color.light};
-  display: flex;
-  flex-direction: row;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  overflow: hidden;
-  white-space: nowrap;
-`;
+export const StyledMenuItemLabel = createStyledDiv(
+  styles.menuItemLabel,
+  'StyledMenuItemLabel',
+);
 
-export const StyledNoIconFiller = styled.div`
-  width: ${themeCssVariables.spacing[1]};
-`;
+export const StyledMenuItemLabelLight = createStyledDiv(
+  styles.menuItemLabelLight,
+  'StyledMenuItemLabelLight',
+);
 
-export const StyledMenuItemLeftContent = styled.div`
-  align-items: center;
-  display: flex;
+export const StyledNoIconFiller = createStyledDiv(
+  styles.noIconFiller,
+  'StyledNoIconFiller',
+);
 
-  flex-direction: row;
+export const StyledMenuItemLeftContent = createStyledDiv(
+  styles.menuItemLeftContent,
+  'StyledMenuItemLeftContent',
+);
 
-  gap: ${themeCssVariables.spacing[2]};
-  min-width: 0;
-  width: 100%;
+export const StyledMenuItemRightContent = createStyledDiv(
+  styles.menuItemRightContent,
+  'StyledMenuItemRightContent',
+);
 
-  & svg {
-    flex-shrink: 0;
-  }
-`;
-
-export const StyledMenuItemRightContent = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  gap: ${themeCssVariables.spacing[2]};
-
-  & svg {
-    flex-shrink: 0;
-  }
-`;
-
-export const StyledDraggableItem = styled.div`
-  cursor: grab;
-
-  align-items: center;
-  display: flex;
-`;
+export const StyledDraggableItem = createStyledDiv(
+  styles.draggableItem,
+  'StyledDraggableItem',
+);
 
 type HoverableMenuItemBaseProps = {
   isIconDisplayedOnHoverOnly?: boolean;
   cursor?: 'drag' | 'default';
 } & MenuItemBaseProps;
 
-export const StyledHoverableMenuItemBase = styled.div<HoverableMenuItemBaseProps>`
-  --horizontal-padding: ${themeCssVariables.spacing[1]};
-  --vertical-padding: ${themeCssVariables.spacing[2]};
-  align-items: center;
-  border-radius: ${themeCssVariables.border.radius.sm};
-  display: flex;
-  flex-direction: row;
-  font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing[2]};
-  height: calc(32px - 2 * var(--vertical-padding));
-  justify-content: space-between;
-  padding: var(--vertical-padding) var(--horizontal-padding);
-  background: ${({ isKeySelected, focused }) =>
-    isKeySelected || focused
-      ? themeCssVariables.background.transparent.light
-      : 'transparent'};
-  transition: ${({ isHoverBackgroundDisabled, disabled }) =>
-    disabled || isHoverBackgroundDisabled ? 'none' : 'background 0.1s ease'};
-  color: ${({ accent, disabled }) => {
-    if (disabled !== undefined && disabled !== false) {
-      return themeCssVariables.font.color.tertiary;
-    }
-    switch (accent) {
-      case 'danger':
-        return themeCssVariables.font.color.danger;
-      case 'placeholder':
-        return themeCssVariables.font.color.tertiary;
-      case 'default':
-      default:
-        return themeCssVariables.font.color.secondary;
-    }
-  }};
-  &:hover {
-    background: ${({
+type StyledHoverableMenuItemBaseElementProps = HoverableMenuItemBaseProps &
+  ComponentPropsWithoutRef<'div'>;
+
+export const StyledHoverableMenuItemBase = forwardRef<
+  HTMLDivElement,
+  StyledHoverableMenuItemBaseElementProps
+>(
+  (
+    {
       accent,
-      disabled,
-      isHoverBackgroundDisabled,
       isKeySelected,
+      isHoverBackgroundDisabled,
+      hovered: _hovered,
+      disabled,
       focused,
-    }) => {
-      if (disabled === true)
-        return isKeySelected || focused
-          ? themeCssVariables.background.transparent.light
-          : 'transparent';
-      if (accent === 'danger')
-        return themeCssVariables.background.transparent.danger;
-      if (isHoverBackgroundDisabled === true) return 'transparent';
-      return themeCssVariables.background.transparent.light;
-    }};
-    & .hoverable-buttons {
-      opacity: 1;
-    }
-    & .grip-swap-default-icon {
-      opacity: 0;
-    }
-    & .grip-swap-hover-icon {
-      opacity: 1;
-    }
-  }
-  position: relative;
-  user-select: none;
-  width: calc(100% - 2 * var(--horizontal-padding));
-  & .hoverable-buttons {
-    opacity: ${({ isIconDisplayedOnHoverOnly }) =>
-      isIconDisplayedOnHoverOnly === true ? '0' : '1'};
-    right: ${({ isIconDisplayedOnHoverOnly }) =>
-      isIconDisplayedOnHoverOnly === true
-        ? themeCssVariables.spacing[2]
-        : 'auto'};
-    transition: opacity
-      calc(${themeCssVariables.animation.duration.instant} * 1s) ease;
-  }
-  cursor: ${({ cursor, disabled }) => {
-    if (disabled !== undefined && disabled !== false) {
-      return 'default';
-    }
-    switch (cursor) {
-      case 'drag':
-        return 'grab';
-      default:
-        return 'pointer';
-    }
-  }};
-`;
-
-const StyledMenuItemIconCheckContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-shrink: 0;
-  margin-right: ${themeCssVariables.spacing[1]};
-`;
-
-export const StyledMenuItemIconCheck = ({ size }: { size?: number }) => (
-  <StyledMenuItemIconCheckContainer>
-    <IconCheck size={size} />
-  </StyledMenuItemIconCheckContainer>
+      isIconDisplayedOnHoverOnly,
+      cursor,
+      className,
+      children,
+      ...rest
+    },
+    ref,
+  ) => (
+    <div
+      ref={ref}
+      className={clsx(styles.hoverableMenuItemBase, className)}
+      data-accent={accent}
+      data-key-selected={isKeySelected || undefined}
+      data-hover-background-disabled={isHoverBackgroundDisabled || undefined}
+      data-disabled={disabled || undefined}
+      data-focused={focused || undefined}
+      data-icon-displayed-on-hover-only={
+        isIconDisplayedOnHoverOnly || undefined
+      }
+      data-cursor={cursor}
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...rest}
+    >
+      {children}
+    </div>
+  ),
 );
 
-export const StyledMenuItemContextualText = styled.div`
-  color: ${themeCssVariables.font.color.light};
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  padding-left: ${themeCssVariables.spacing[1]};
-  flex-shrink: 1;
-  overflow: hidden;
-`;
+StyledHoverableMenuItemBase.displayName = 'StyledHoverableMenuItemBase';
 
-export const StyledRightMenuItemContextualText = styled.div`
-  color: ${themeCssVariables.font.color.light};
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  padding-left: ${themeCssVariables.spacing[1]};
-  flex-shrink: 1;
-  overflow: hidden;
-  text-align: right;
-`;
+export const StyledMenuItemIconCheck = ({ size }: { size?: number }) => (
+  <div className={styles.menuItemIconCheckContainer}>
+    <IconCheck size={size} />
+  </div>
+);
+
+export const StyledMenuItemContextualText = createStyledDiv(
+  styles.menuItemContextualText,
+  'StyledMenuItemContextualText',
+);
+
+export const StyledRightMenuItemContextualText = createStyledDiv(
+  styles.rightMenuItemContextualText,
+  'StyledRightMenuItemContextualText',
+);

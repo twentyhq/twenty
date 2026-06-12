@@ -13,9 +13,9 @@ import {
   IconPencil,
   IconX,
   TooltipDelay,
-} from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -44,6 +44,9 @@ const StyledActionButtonContainer = styled.div`
   height: 100%;
   justify-content: center;
 `;
+
+const EMAIL_EDIT_DISABLED_TOOLTIP_ANCHOR_ID =
+  'profile-email-edit-disabled-tooltip-anchor';
 
 export const EmailField = () => {
   const { t } = useLingui();
@@ -90,9 +93,8 @@ export const EmailField = () => {
   };
 
   const currentUserId = currentUser?.id;
-  const emailEditTooltipAnchorId = 'profile-email-edit-disabled-tooltip-anchor';
   const shouldShowWorkspaceLimitTooltip =
-    !isEditing && !canEdit && isBlockedByWorkspaceLimit;
+    !isEditing && isBlockedByWorkspaceLimit;
 
   return (
     <StyledContainer>
@@ -135,7 +137,7 @@ export const EmailField = () => {
             <StyledActionButtonContainer
               id={
                 shouldShowWorkspaceLimitTooltip
-                  ? emailEditTooltipAnchorId
+                  ? EMAIL_EDIT_DISABLED_TOOLTIP_ANCHOR_ID
                   : undefined
               }
             >
@@ -150,7 +152,7 @@ export const EmailField = () => {
             </StyledActionButtonContainer>
             {shouldShowWorkspaceLimitTooltip && (
               <AppTooltip
-                anchorSelect={`#${emailEditTooltipAnchorId}`}
+                anchorSelect={`#${EMAIL_EDIT_DISABLED_TOOLTIP_ANCHOR_ID}`}
                 content={t`You can't change your email because you belong to 2 or more workspaces.`}
                 delay={TooltipDelay.noDelay}
                 place="top"

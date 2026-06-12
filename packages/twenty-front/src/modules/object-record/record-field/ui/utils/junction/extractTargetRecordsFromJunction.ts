@@ -1,15 +1,18 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isObjectWithId } from '@/object-record/record-field/ui/utils/junction/isObjectWithId';
 import { type ExtractedTargetRecord } from '@/object-record/record-field/ui/utils/junction/types/ExtractedTargetRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
+import {
+  computeMorphRelationGqlFieldName,
+  isDefined,
+} from 'twenty-shared/utils';
 
 type ExtractTargetRecordsFromJunctionArgs = {
   junctionRecords: ObjectRecord[] | undefined | null;
   targetFields: FieldMetadataItem[];
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
   includeRecord?: boolean;
 };
 
@@ -35,7 +38,7 @@ const tryExtractFromField = (
 const extractFromTargetFields = (
   junctionRecord: ObjectRecord,
   targetFields: FieldMetadataItem[],
-  objectMetadataItems: ObjectMetadataItem[],
+  objectMetadataItems: EnrichedObjectMetadataItem[],
   includeRecord: boolean,
 ): ExtractedTargetRecord | null => {
   for (const targetField of targetFields) {
@@ -75,7 +78,7 @@ const extractFromTargetFields = (
 const extractFromMorphRelationField = (
   junctionRecord: ObjectRecord,
   targetField: FieldMetadataItem,
-  objectMetadataItems: ObjectMetadataItem[],
+  objectMetadataItems: EnrichedObjectMetadataItem[],
   includeRecord: boolean,
 ): ExtractedTargetRecord | null => {
   const morphRelations = targetField.morphRelations;
@@ -85,7 +88,7 @@ const extractFromMorphRelationField = (
   }
 
   for (const morphRelation of morphRelations) {
-    const computedFieldName = computeMorphRelationFieldName({
+    const computedFieldName = computeMorphRelationGqlFieldName({
       fieldName: morphRelation.sourceFieldMetadata.name,
       relationType: morphRelation.type,
       targetObjectMetadataNameSingular:

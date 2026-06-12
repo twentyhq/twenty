@@ -49,7 +49,10 @@ export const getPageLayoutWidgetDataSeedsV2 = (
 
   const companyIdFieldId = getFieldId(companyObject, 'id');
   const companyCreatedAtFieldId = getFieldId(companyObject, 'createdAt');
-  const companyArrFieldId = getFieldId(companyObject, 'annualRecurringRevenue');
+  const companyAnnualRevenueFieldId = getFieldId(
+    companyObject,
+    'annualRevenue',
+  );
   const companyNameFieldId = getFieldId(companyObject, 'name');
   const companyLinkedinLinkFieldId = getFieldId(companyObject, 'linkedinLink');
 
@@ -133,7 +136,7 @@ export const getPageLayoutWidgetDataSeedsV2 = (
       : null,
 
     // PIE chart: Revenue Distribution (Customer Analytics)
-    isDefined(companyArrFieldId) && isDefined(companyNameFieldId)
+    isDefined(companyAnnualRevenueFieldId) && isDefined(companyNameFieldId)
       ? ({
           id: generateSeedId(
             workspaceId,
@@ -155,44 +158,10 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           },
           configuration: {
             configurationType: WidgetConfigurationType.PIE_CHART,
-            aggregateFieldMetadataId: companyArrFieldId,
+            aggregateFieldMetadataId: companyAnnualRevenueFieldId,
             aggregateOperation: AggregateOperations.SUM,
             groupByFieldMetadataId: companyNameFieldId,
             orderBy: GraphOrderBy.VALUE_DESC,
-            displayDataLabel: true,
-            timezone: 'UTC',
-            firstDayOfTheWeek: CalendarStartDay.MONDAY,
-          },
-          objectMetadataId: companyObject?.id ?? null,
-          overrides: null,
-        } satisfies SeederFlatPageLayoutWidget)
-      : null,
-
-    // GAUGE chart: Average ARR (Customer Analytics)
-    isDefined(companyArrFieldId)
-      ? ({
-          id: generateSeedId(
-            workspaceId,
-            PAGE_LAYOUT_WIDGET_SEEDS.CUSTOMER_AVERAGE_ARR,
-          ),
-          pageLayoutTabId: generateSeedId(
-            workspaceId,
-            PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_ANALYTICS,
-          ),
-          title: 'Average ARR',
-          type: WidgetType.GRAPH,
-          gridPosition: { row: 0, column: 7, rowSpan: 6, columnSpan: 5 },
-          position: {
-            layoutMode: PageLayoutTabLayoutMode.GRID,
-            row: 0,
-            column: 7,
-            rowSpan: 6,
-            columnSpan: 5,
-          },
-          configuration: {
-            configurationType: WidgetConfigurationType.GAUGE_CHART,
-            aggregateFieldMetadataId: companyArrFieldId,
-            aggregateOperation: AggregateOperations.AVG,
             displayDataLabel: true,
             timezone: 'UTC',
             firstDayOfTheWeek: CalendarStartDay.MONDAY,

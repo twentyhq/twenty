@@ -14,7 +14,7 @@ export const buildSubscription = ({
   planKey = BillingPlanKey.PRO,
   interval = SubscriptionInterval.Month,
   licensedPriceId = LICENSE_PRICE_PRO_MONTH_ID,
-  meteredPriceId = METER_PRICE_PRO_MONTH_ID,
+  resourceCreditPriceId = METER_PRICE_PRO_MONTH_ID,
   seats = 1,
   workspaceId = 'ws_1',
   stripeSubscriptionId = 'sub_1',
@@ -23,7 +23,7 @@ export const buildSubscription = ({
   planKey?: BillingPlanKey;
   interval?: SubscriptionInterval;
   licensedPriceId?: string;
-  meteredPriceId?: string;
+  resourceCreditPriceId?: string;
   seats?: number;
   workspaceId?: string;
   stripeSubscriptionId?: string;
@@ -51,13 +51,13 @@ export const buildSubscription = ({
         },
       },
       {
-        stripeSubscriptionItemId: 'si_metered',
-        stripeProductId: 'prod_metered',
-        stripePriceId: meteredPriceId,
+        stripeSubscriptionItemId: 'si_resource_credit',
+        stripeProductId: 'prod_resource_credit',
+        stripePriceId: resourceCreditPriceId,
         billingProduct: {
           metadata: {
             planKey,
-            productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
+            productKey: BillingProductKey.RESOURCE_CREDIT,
             priceUsageBased: BillingUsageType.METERED,
           },
         },

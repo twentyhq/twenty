@@ -1,11 +1,11 @@
 import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 
 export const convertAggregateOperationForDateField = (
   configuration: ChartConfiguration,
-  objectMetadataItem: ObjectMetadataItem | undefined,
+  objectMetadataItem: EnrichedObjectMetadataItem | undefined,
 ): AggregateOperations | undefined => {
   if (!isDefined(objectMetadataItem)) {
     return undefined;

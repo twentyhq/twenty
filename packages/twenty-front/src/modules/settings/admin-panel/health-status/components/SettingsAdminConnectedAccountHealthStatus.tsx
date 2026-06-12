@@ -3,8 +3,8 @@ import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/heal
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AdminPanelHealthServiceStatus } from '~/generated-metadata/graphql';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { AdminPanelHealthServiceStatus } from '~/generated-admin/graphql';
 
 const StyledErrorMessage = styled.div`
   color: ${themeCssVariables.color.red};

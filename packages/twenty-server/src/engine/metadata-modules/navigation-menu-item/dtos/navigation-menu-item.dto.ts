@@ -66,6 +66,11 @@ export class NavigationMenuItemDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   folderId?: string;
 
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  pageLayoutId?: string | null;
+
   @IsNumber()
   @IsNotEmpty()
   @Field()

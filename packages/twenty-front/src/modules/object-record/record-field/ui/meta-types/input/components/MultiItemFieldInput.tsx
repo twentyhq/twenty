@@ -22,9 +22,9 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { CustomError, isDefined } from 'twenty-shared/utils';
-import { IconCheck, IconPlus } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { IconCheck, IconPlus } from 'twenty-ui-deprecated/display';
+import { LightIconButton } from 'twenty-ui-deprecated/input';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
@@ -91,13 +91,20 @@ export const MultiItemFieldInput = <T,>({
       ) {
         return;
       }
-      const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
 
-      if (!isValid) {
+      if (isInputDisplayed) {
+        const { isValid, updatedItems } = validateInputAndComputeUpdatedItems();
+
+        if (!isValid) {
+          return;
+        }
+
+        onChange(updatedItems);
+        onClickOutside(updatedItems, event);
+
         return;
       }
 
-      onChange(updatedItems);
       onClickOutside(items, event);
     },
     listenerId: instanceId,

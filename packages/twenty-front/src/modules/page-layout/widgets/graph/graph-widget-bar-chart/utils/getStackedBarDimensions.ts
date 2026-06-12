@@ -74,45 +74,64 @@ export const getStackedBarDimensions = ({
   const valuePixelDelta =
     stackRange === 0 ? 0 : stackValueToPixel(Math.abs(value));
 
+  const clampToAxis = (pixel: number) =>
+    Math.max(0, Math.min(valueAxisLength, pixel));
+
   if (isVertical && isNegative) {
+    const newStack = negativeStackPixel - valuePixelDelta;
+    const clampedCurrent = clampToAxis(negativeStackPixel);
+    const clampedNew = clampToAxis(newStack);
+
     return {
       x: categoryPosition,
-      y: valueAxisLength - negativeStackPixel,
+      y: valueAxisLength - clampedCurrent,
       width: barThickness,
-      height: valuePixelDelta,
+      height: clampedCurrent - clampedNew,
       newPositiveStackPixel: positiveStackPixel,
-      newNegativeStackPixel: negativeStackPixel - valuePixelDelta,
+      newNegativeStackPixel: newStack,
     };
   }
 
   if (isVertical) {
+    const newStack = positiveStackPixel + valuePixelDelta;
+    const clampedCurrent = clampToAxis(positiveStackPixel);
+    const clampedNew = clampToAxis(newStack);
+
     return {
       x: categoryPosition,
-      y: valueAxisLength - (positiveStackPixel + valuePixelDelta),
+      y: valueAxisLength - clampedNew,
       width: barThickness,
-      height: valuePixelDelta,
-      newPositiveStackPixel: positiveStackPixel + valuePixelDelta,
+      height: clampedNew - clampedCurrent,
+      newPositiveStackPixel: newStack,
       newNegativeStackPixel: negativeStackPixel,
     };
   }
 
   if (isNegative) {
+    const newStack = negativeStackPixel - valuePixelDelta;
+    const clampedCurrent = clampToAxis(negativeStackPixel);
+    const clampedNew = clampToAxis(newStack);
+
     return {
-      x: negativeStackPixel - valuePixelDelta,
+      x: clampedNew,
       y: categoryPosition,
-      width: valuePixelDelta,
+      width: clampedCurrent - clampedNew,
       height: barThickness,
       newPositiveStackPixel: positiveStackPixel,
-      newNegativeStackPixel: negativeStackPixel - valuePixelDelta,
+      newNegativeStackPixel: newStack,
     };
   }
 
+  const newStack = positiveStackPixel + valuePixelDelta;
+  const clampedCurrent = clampToAxis(positiveStackPixel);
+  const clampedNew = clampToAxis(newStack);
+
   return {
-    x: positiveStackPixel,
+    x: clampedCurrent,
     y: categoryPosition,
-    width: valuePixelDelta,
+    width: clampedNew - clampedCurrent,
     height: barThickness,
-    newPositiveStackPixel: positiveStackPixel + valuePixelDelta,
+    newPositiveStackPixel: newStack,
     newNegativeStackPixel: negativeStackPixel,
   };
 };

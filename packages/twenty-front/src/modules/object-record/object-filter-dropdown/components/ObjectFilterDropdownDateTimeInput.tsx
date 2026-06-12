@@ -103,9 +103,13 @@ export const ObjectFilterDropdownDateTimeInput = () => {
 
   const internalZonedDateTime =
     !isRelativeDateFilter && isNonEmptyString(stringFilterValue)
-      ? Temporal.Instant.from(stringFilterValue).toZonedDateTimeISO(
-          timeZone ?? userTimezone,
-        )
+      ? stringFilterValue.includes('T')
+        ? Temporal.Instant.from(stringFilterValue).toZonedDateTimeISO(
+            timeZone ?? userTimezone,
+          )
+        : Temporal.PlainDate.from(stringFilterValue).toZonedDateTime(
+            timeZone ?? userTimezone,
+          )
       : null;
 
   return (

@@ -17,7 +17,7 @@ import {
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-} from 'twenty-ui/layout';
+} from 'twenty-ui-deprecated/layout';
 
 export const DashboardWidgetPlaceholder = () => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
@@ -43,7 +43,7 @@ export const DashboardWidgetPlaceholder = () => {
       setIsPageLayoutInEditMode(true);
     }
     navigatePageLayoutSidePanel({
-      sidePanelPage: SidePanelPages.PageLayoutWidgetTypeSelect,
+      sidePanelPage: SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
       resetNavigationStack: true,
     });
   };

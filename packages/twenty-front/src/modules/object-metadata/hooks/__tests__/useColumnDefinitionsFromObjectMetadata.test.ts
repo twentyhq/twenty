@@ -1,11 +1,13 @@
 import { renderHook } from '@testing-library/react';
 
-import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
-import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
+import {
+  AUTO_SELECT_FAST_MODEL_ID,
+  AUTO_SELECT_SMART_MODEL_ID,
+} from 'twenty-shared/constants';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   SubscriptionInterval,
@@ -13,7 +15,7 @@ import {
   WorkspaceActivationStatus,
 } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const Wrapper = getJestMetadataAndApolloMocksAndCommandMenuWrapper({
   apolloMocks: [],
@@ -27,12 +29,12 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       workspaceCustomApplication: {
         id: CUSTOM_WORKSPACE_APPLICATION_MOCK.id,
       },
+      installedApplications: [],
       id: '1',
       featureFlags: [],
       allowImpersonation: false,
       subdomain: 'test',
       activationStatus: WorkspaceActivationStatus.ACTIVE,
-      hasValidEnterpriseKey: false,
       hasValidSignedEnterpriseKey: false,
       hasValidEnterpriseValidityToken: false,
       metadataVersion: 1,
@@ -68,20 +70,19 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       isTwoFactorAuthenticationEnforced: false,
       trashRetentionDays: 14,
       eventLogRetentionDays: 365 * 3,
-      fastModel: DEFAULT_FAST_MODEL,
-      smartModel: DEFAULT_SMART_MODEL,
-      autoEnableNewAiModels: true,
-      disabledAiModelIds: [],
+      fastModel: AUTO_SELECT_FAST_MODEL_ID,
+      smartModel: AUTO_SELECT_SMART_MODEL_ID,
       enabledAiModelIds: [],
       useRecommendedModels: true,
+      isInternalMessagesImportEnabled: false,
     });
 
-    const companyObjectMetadata = generatedMockObjectMetadataItems.find(
+    const companyObjectMetadata = getTestEnrichedObjectMetadataItemsMock().find(
       (item) => item.nameSingular === 'company',
     );
 
     const { result } = renderHook(
-      (objectMetadataItem: ObjectMetadataItem) => {
+      (objectMetadataItem: EnrichedObjectMetadataItem) => {
         return useColumnDefinitionsFromObjectMetadata(objectMetadataItem);
       },
       {
@@ -92,6 +93,6 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
 
     const { columnDefinitions } = result.current;
 
-    expect(columnDefinitions.length).toBe(25);
+    expect(columnDefinitions.length).toBe(24);
   });
 });

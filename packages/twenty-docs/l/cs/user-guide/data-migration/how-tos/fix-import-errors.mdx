@@ -140,12 +140,12 @@ Data neodpovídají očekávanému formátu pro tento typ pole.
 #### Datum
 
 **Problém:** Nerozpoznaný formát data
-**Řešení:** Používejte jednotný formát v celém souboru
+**Řešení:** Používejte formát `YYYY-MM-DD` jednotně v celém souboru
 
 ```
-✓ 2024-03-15        (YYYY-MM-DD - recommended)
-✓ 03/15/2024        (MM/DD/YYYY)
-✓ 15/03/2024        (DD/MM/YYYY)
+✓ 2024-03-15        (YYYY-MM-DD)
+❌ 03/15/2024        (MM/DD/YYYY)
+❌ 15/03/2024        (DD/MM/YYYY)
 ```
 
 #### Telefon

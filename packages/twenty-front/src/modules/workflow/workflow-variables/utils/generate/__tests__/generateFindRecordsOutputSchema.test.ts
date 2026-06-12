@@ -1,9 +1,9 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { generateFindRecordsOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateFindRecordsOutputSchema';
 
 const createMockObjectMetadataItem = (
-  overrides: Partial<ObjectMetadataItem> = {},
-): ObjectMetadataItem =>
+  overrides: Partial<EnrichedObjectMetadataItem> = {},
+): EnrichedObjectMetadataItem =>
   ({
     id: 'test-object-id',
     nameSingular: 'testObject',
@@ -13,7 +13,7 @@ const createMockObjectMetadataItem = (
     icon: 'IconTest',
     fields: [],
     ...overrides,
-  }) as ObjectMetadataItem;
+  }) as EnrichedObjectMetadataItem;
 
 describe('generateFindRecordsOutputSchema', () => {
   it('should generate schema with first, all, and totalCount properties', () => {

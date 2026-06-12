@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { PermissionFlagType } from 'twenty-shared/constants';
+import {
+  PermissionFlagType,
+  SystemPermissionFlag,
+} from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
@@ -12,11 +15,6 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
-import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
-import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
-import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { TOOL_PERMISSION_FLAGS } from 'src/engine/metadata-modules/permissions/constants/tool-permission-flags';
 import {
   PermissionsException,
@@ -27,6 +25,8 @@ import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permi
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -35,8 +35,8 @@ export class PermissionsService {
     private readonly userRoleService: UserRoleService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
-    @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
+    @InjectWorkspaceScopedRepository(RoleEntity)
+    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {}
@@ -71,7 +71,7 @@ export class PermissionsService {
 
     const defaultSettingsPermissions =
       this.getDefaultUserWorkspacePermissions().permissionFlags;
-    const permissionFlags = Object.keys(PermissionFlagType).reduce(
+    const permissionFlags = Object.values(PermissionFlagType).reduce(
       (acc, feature) => {
         const hasBasePermission = this.isToolPermission(feature)
           ? roleOfUserWorkspace.canAccessAllTools
@@ -81,9 +81,7 @@ export class PermissionsService {
           ...acc,
           [feature]:
             hasBasePermission ||
-            roleOfUserWorkspace.permissionFlags.some(
-              (permissionFlag) => permissionFlag.flag === feature,
-            ),
+            this.roleHasPermissionFlag(roleOfUserWorkspace, feature),
         };
       },
       defaultSettingsPermissions,
@@ -134,48 +132,6 @@ export class PermissionsService {
       objectsPermissions: {},
     }) as const satisfies UserWorkspacePermissions;
 
-  // TODO: this could likely be handled in the ORM layer
-  public async resolveRolePermissionConfigFromAuthContext(
-    authContext: WorkspaceAuthContext,
-  ): Promise<RolePermissionConfig | null> {
-    const workspaceId = authContext.workspace.id;
-
-    if (isSystemAuthContext(authContext)) {
-      return { shouldBypassPermissionChecks: true };
-    }
-
-    if (isApiKeyAuthContext(authContext)) {
-      const roleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
-        authContext.apiKey.id,
-        workspaceId,
-      );
-
-      return { intersectionOf: [roleId] };
-    }
-
-    if (
-      isApplicationAuthContext(authContext) &&
-      isDefined(authContext.application.defaultRoleId)
-    ) {
-      return { intersectionOf: [authContext.application.defaultRoleId] };
-    }
-
-    if (isUserAuthContext(authContext)) {
-      const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
-        userWorkspaceId: authContext.userWorkspaceId,
-        workspaceId,
-      });
-
-      if (!isDefined(roleId)) {
-        return null;
-      }
-
-      return { intersectionOf: [roleId] };
-    }
-
-    return null;
-  }
-
   public async userHasWorkspaceSettingPermission({
     userWorkspaceId,
     workspaceId,
@@ -195,9 +151,12 @@ export class PermissionsService {
         workspaceId,
       );
 
-      const role = await this.roleRepository.findOne({
-        where: { id: roleId, workspaceId },
-        relations: ['permissionFlags'],
+      const role = await this.roleRepository.findOne(workspaceId, {
+        where: { id: roleId },
+        relations: [
+          'rolePermissionFlags',
+          'rolePermissionFlags.permissionFlag',
+        ],
       });
 
       if (!isDefined(role)) {
@@ -248,9 +207,12 @@ export class PermissionsService {
 
       const applicationRoleId = application.defaultRoleId;
 
-      const role = await this.roleRepository.findOne({
-        where: { id: applicationRoleId, workspaceId },
-        relations: ['permissionFlags'],
+      const role = await this.roleRepository.findOne(workspaceId, {
+        where: { id: applicationRoleId },
+        relations: [
+          'rolePermissionFlags',
+          'rolePermissionFlags.permissionFlag',
+        ],
       });
 
       if (!isDefined(role)) {
@@ -287,10 +249,21 @@ export class PermissionsService {
       return true;
     }
 
-    const permissionFlags = role.permissionFlags ?? [];
+    return this.roleHasPermissionFlag(role, setting);
+  }
 
-    return permissionFlags.some(
-      (permissionFlag) => permissionFlag.flag === setting,
+  private roleHasPermissionFlag(
+    role: RoleEntity,
+    flag: PermissionFlagType,
+  ): boolean {
+    const rolePermissionFlags = role.rolePermissionFlags ?? [];
+
+    const permissionFlagUniversalIdentifier = SystemPermissionFlag[flag];
+
+    return rolePermissionFlags.some(
+      (rolePermissionFlag) =>
+        rolePermissionFlag.permissionFlag.universalIdentifier ===
+        permissionFlagUniversalIdentifier,
     );
   }
 
@@ -318,8 +291,8 @@ export class PermissionsService {
       throw new Error('No role IDs provided');
     }
 
-    const roles = await this.roleRepository.find({
-      where: { id: In(roleIds), workspaceId },
+    const roles = await this.roleRepository.find(workspaceId, {
+      where: { id: In(roleIds) },
       relations,
     });
 
@@ -339,7 +312,7 @@ export class PermissionsService {
       const result = await this.getRolesFromPermissionConfig(
         rolePermissionConfig,
         workspaceId,
-        ['permissionFlags'],
+        ['rolePermissionFlags', 'rolePermissionFlags.permissionFlag'],
       );
 
       if (result === null) {
@@ -365,7 +338,7 @@ export class PermissionsService {
       const result = await this.getRolesFromPermissionConfig(
         rolePermissionConfig,
         workspaceId,
-        ['permissionFlags'],
+        ['rolePermissionFlags', 'rolePermissionFlags.permissionFlag'],
       );
 
       if (result === null) {
@@ -379,11 +352,7 @@ export class PermissionsService {
           return true;
         }
 
-        const permissionFlags = role.permissionFlags ?? [];
-
-        return permissionFlags.some(
-          (permissionFlag) => permissionFlag.flag === flag,
-        );
+        return this.roleHasPermissionFlag(role, flag);
       };
 
       return useIntersection

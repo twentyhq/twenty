@@ -1,0 +1,60 @@
+---
+title: Anahtar döndürme
+icon: rotate
+---
+
+Twenty'nin iki bağımsız anahtar ailesi vardır:
+
+* **JWT imzalama anahtarları** — asimetrik ES256 anahtar çiftleri (`kid` etiketli) `core."signingKey"` içinde saklanır ve erişim/yenileme belirteçlerini imzalamak ve doğrulamak için kullanılır.
+* **Bekleme hâlindeki şifreleme anahtarı** — OAuth belirteçlerini, uygulama değişkenlerini, imzalama anahtarlarının gizli anahtarlarını, hassas yapılandırma değerlerini ve `enc:v2:` zarfı içindeki TOTP gizli anahtarlarını şifrelemek için kullanılan `ENCRYPTION_KEY`.
+
+`APP_SECRET`, geriye dönük uyumluluk için tutulan eski bir gizlidir: `ENCRYPTION_KEY` ayarlanmamış olduğunda bekleme hâlindeki şifreleme / oturum çerezi geri dönüşü olarak davranır ve hâlâ önceden var olan HS256 erişim belirteçlerini doğrular. Kullanımdan kaldırılacaktır.
+
+## JWT imzalama anahtarları
+
+Her anahtar bir `publicKey` (önceden verilmiş belirteçleri doğrulayabilmesi için süresiz olarak saklanır), şifrelenmiş bir `privateKey` (yalnızca anahtar geçerli iken kullanılır), bir `isCurrent` bayrağı (aynı anda tam olarak bir satır) ve isteğe bağlı bir `revokedAt` taşır.
+
+### Geçerli anahtarı döndür
+
+Etkinleştirmek için `SIGNING_KEY_ROTATION_DAYS` değerini ayarlayın: günlük bir cron görevi, mevcut anahtar bu eşikten daha eski olduğunda yeni bir güncel anahtar oluşturur. Önceki anahtarlar *iptal edilmez*, bu nedenle onlarla imzalanmış belirteçler doğrulanmaya devam eder. Otomatik döndürmeyi devre dışı bırakmak için değişkeni ayarlamadan bırakın.
+
+<Note>Otomatik döndürme v2.6+ ile birlikte gelir.</Note>
+
+### Bir anahtarı iptal et (yalnızca sızıntı / acil durum için)
+
+Geçerli olmayan bir satırda **Settings → Admin Panel → Signing keys → Revoke**. Şifrelenmiş özel materyali siler, `revokedAt` değerini ayarlar ve o `kid` ile imzalanmış mevcut tüm belirteçleri reddeder.
+
+## `ENCRYPTION_KEY` anahtarını döndür
+
+<Note>Aşağıda açıklanan `secret-encryption:rotate` komutu v2.6+ ile birlikte gelir.</Note>
+
+Her şifrelenmiş değer `enc:v2:\<keyId>:\<payload>` olarak sarılır; burada `\<keyId>`, ham anahtardan türetilen 8 onaltılık önekidir. Döndürme çevrimiçi ve kaldığı yerden devam ettirilebilir.
+
+1. **Yeni bir anahtar oluşturun**: `openssl rand -base64 32`.
+
+2. `.env` içinde **her iki anahtarı yan yana yapılandırın**, ardından yeniden başlatın:
+   ```ini
+   ENCRYPTION_KEY=NEW_VALUE
+   FALLBACK_ENCRYPTION_KEY=OLD_VALUE
+   ```
+   Yeni yazmalar yeni anahtarı kullanır, mevcut satırlar hâlâ geri dönüş anahtarıyla şifresi çözülerek okunur.
+
+3. **Mevcut satırları yeniden şifreleyin**:
+
+   ```bash
+   docker exec -it {server_container} yarn command:prod secret-encryption:rotate
+   ```
+
+   Komut altı siteyi dolaşır (`connected-account-tokens`, `application-variable`, `application-registration-variable`, `signing-key-private-keys`, `sensitive-config-storage`, `totp-secrets`). Bir SQL filtresi, zaten yeni `\<keyId>` üzerinde olan satırları atlar, bu nedenle komut idempotenttir: gerektiğinde yarıda kesip yeniden çalıştırın. Herhangi bir satır başarısız olursa sıfır olmayan kodla çıkar — yeniden denemek için tekrar çalıştırın.
+
+   | Bayrak                                   | Açıklama                                                           |
+   | ---------------------------------------- | ------------------------------------------------------------------ |
+   | `-s, --site \<site>`    | Yalnızca tek bir siteyle sınırla.                                  |
+   | `-b, --batch-size \<n>` | Her yığın başına satır sayısı (varsayılan `200`, en fazla `5000`). |
+   | `-d, --dry-run`                          | Şifresini çöz + bellekte yeniden şifrele, `UPDATE` işlemini atla.  |
+
+4. `--dry-run` sıfır kalan satır gösterdiğinde **geri dönüş anahtarını bırakın**: `FALLBACK_ENCRYPTION_KEY` değerini kaldırın ve yeniden başlatın.
+
+## Eski `APP_SECRET` desteği
+
+Hiç `ENCRYPTION_KEY` ayarlamamış eski örnekler, `APP_SECRET` değerini bekleme hâlindeki şifreleme anahtarı (ve ondan türetilen oturum çerezi gizli anahtarı) olarak kullanır. Bu yol, geriye dönük uyumluluk için korunmuştur ancak **kullanımdan kaldırılmıştır** — özel bir `ENCRYPTION_KEY` ayarlayın ve ondan çıkmak için yukarıdaki döndürme prosedürünü izleyin. `APP_SECRET`in kendisi eski HS256 erişim belirteçlerini doğrulamak için kullanılmaya devam eder.

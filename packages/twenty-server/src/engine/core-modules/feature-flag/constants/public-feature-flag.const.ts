@@ -21,12 +21,11 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     },
   },
   {
-    key: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED,
+    key: FeatureFlagKey.IS_SETTINGS_DISCOVERY_HERO_ENABLED,
     metadata: {
-      label: 'Row Level Permissions',
-      description: 'Enable row level permission',
-      imagePath:
-        'https://twenty.com/images/lab/is-row-level-permission-predicates-enabled.png',
+      label: 'Settings Discovery Hero',
+      description:
+        'Show the per-page hero illustration + video walkthrough modal on settings pages',
     },
   },
   ...(process.env.CLOUDFLARE_API_KEY

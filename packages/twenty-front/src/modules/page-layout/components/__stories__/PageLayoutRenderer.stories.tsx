@@ -47,7 +47,6 @@ const validatePageLayoutContent = async (canvasElement: HTMLElement) => {
   const canvas = within(canvasElement);
 
   await expect(await canvas.findByText('Revenue')).toBeVisible();
-  await expect(await canvas.findByText('Goal Progress')).toBeVisible();
   await expect(await canvas.findByText('Revenue Sources')).toBeVisible();
   await expect(await canvas.findByText('Quarterly Comparison')).toBeVisible();
 };
@@ -64,17 +63,19 @@ const mixedGraphsPageLayoutMocks = {
   tabs: [
     {
       __typename: 'PageLayoutTab',
+      isActive: true,
       id: 'mixed-tab',
       title: 'Mixed Graphs',
       position: 0,
       pageLayoutId: 'mixed-graphs-layout',
-      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
+          isActive: true,
           id: 'number-widget',
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
@@ -93,39 +94,14 @@ const mixedGraphsPageLayoutMocks = {
             aggregateOperation: AggregateOperations.COUNT,
             aggregateFieldMetadataId: idField.id,
           },
-          isOverridden: false,
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
           deletedAt: null,
         } satisfies PageLayoutWidget,
         {
           __typename: 'PageLayoutWidget',
-          id: 'gauge-widget',
-          pageLayoutTabId: 'mixed-tab',
-          type: WidgetType.GRAPH,
-          title: 'Goal Progress',
-          objectMetadataId: mockPersonObjectMetadataItem.id,
-          gridPosition: {
-            __typename: 'GridPosition',
-            row: 0,
-            column: 3,
-            rowSpan: 4,
-            columnSpan: 3,
-          },
-          configuration: {
-            __typename: 'GaugeChartConfiguration',
-            configurationType: WidgetConfigurationType.GAUGE_CHART,
-            aggregateOperation: AggregateOperations.COUNT,
-            aggregateFieldMetadataId: idField.id,
-            displayDataLabel: false,
-          },
-          isOverridden: false,
-          createdAt: '2024-01-01T00:00:00Z',
-          updatedAt: '2024-01-01T00:00:00Z',
-          deletedAt: null,
-        } satisfies PageLayoutWidget,
-        {
-          __typename: 'PageLayoutWidget',
+          applicationId: '',
+          isActive: true,
           id: 'pie-widget',
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
@@ -146,13 +122,14 @@ const mixedGraphsPageLayoutMocks = {
             groupByFieldMetadataId: createdAtField.id,
             orderBy: GraphOrderBy.VALUE_DESC,
           },
-          isOverridden: false,
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
           deletedAt: null,
         } satisfies PageLayoutWidget,
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
+          isActive: true,
           id: 'bar-widget',
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
@@ -176,7 +153,6 @@ const mixedGraphsPageLayoutMocks = {
             axisNameDisplay: AxisNameDisplay.BOTH,
             displayDataLabel: false,
           } satisfies BarChartConfiguration,
-          isOverridden: false,
           createdAt: '2024-01-01T00:00:00Z',
           updatedAt: '2024-01-01T00:00:00Z',
           deletedAt: null,

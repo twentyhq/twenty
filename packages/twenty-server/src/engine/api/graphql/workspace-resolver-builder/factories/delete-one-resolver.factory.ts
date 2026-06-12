@@ -16,9 +16,7 @@ import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver
 import { createQueryRunnerContext } from 'src/engine/api/graphql/workspace-resolver-builder/utils/create-query-runner-context.util';
 
 @Injectable()
-export class DeleteOneResolverFactory
-  implements WorkspaceResolverBuilderFactoryInterface
-{
+export class DeleteOneResolverFactory implements WorkspaceResolverBuilderFactoryInterface {
   public static methodName = RESOLVER_METHOD_NAMES.DELETE_ONE;
 
   constructor(
@@ -30,7 +28,7 @@ export class DeleteOneResolverFactory
   ): Resolver<DeleteOneResolverArgs> {
     const internalContext = context;
 
-    return async (_source, args, requestContext, info) => {
+    return async (_source, args, _requestContext, info) => {
       const selectedFields = graphqlFields(info);
 
       const resolverContext = createQueryRunnerContext({
@@ -38,10 +36,11 @@ export class DeleteOneResolverFactory
       });
 
       try {
-        const record = await this.commonDeleteOneQueryRunnerService.execute(
-          { ...args, selectedFields },
-          resolverContext,
-        );
+        const { results: record } =
+          await this.commonDeleteOneQueryRunnerService.execute(
+            { ...args, selectedFields },
+            resolverContext,
+          );
 
         const typeORMObjectRecordsParser =
           new ObjectRecordsToGraphqlConnectionHelper(

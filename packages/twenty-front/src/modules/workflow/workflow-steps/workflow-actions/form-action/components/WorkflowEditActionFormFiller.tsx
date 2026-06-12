@@ -6,6 +6,7 @@ import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldM
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { type WorkflowFormAction } from '@/workflow/types/Workflow';
+import { WorkflowRunSSESubscribeEffect } from '@/workflow/workflow-diagram/components/WorkflowRunSSESubscribeEffect';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { useUpdateWorkflowRunStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowRunStep';
 import { WorkflowFormFieldInput } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowFormFieldInput';
@@ -100,6 +101,7 @@ export const WorkflowEditActionFormFiller = ({
 
   return (
     <>
+      <WorkflowRunSSESubscribeEffect workflowRunId={workflowRunId} />
       <WorkflowStepBody>
         {formData.map((field) => {
           if (field.type === 'RECORD') {
@@ -130,7 +132,7 @@ export const WorkflowEditActionFormFiller = ({
             );
           }
 
-          if (field.type === 'SELECT') {
+          if (field.type === 'SELECT' || field.type === 'MULTI_SELECT') {
             const selectedFieldId = field.settings?.selectedFieldId;
 
             if (!isDefined(selectedFieldId)) {

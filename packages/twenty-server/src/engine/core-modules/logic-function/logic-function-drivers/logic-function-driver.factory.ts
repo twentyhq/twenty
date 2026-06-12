@@ -7,28 +7,36 @@ import {
   LogicFunctionDriverType,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { DisabledDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/disabled.driver';
 import { LambdaDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda.driver';
 import { LocalDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local.driver';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
+import { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
+import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionDriver> {
   constructor(
     twentyConfigService: TwentyConfigService,
+    configGroupHashService: ConfigGroupHashService,
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
+    private readonly sdkClientArchiveService: SdkClientArchiveService,
+    private readonly cacheLockService: CacheLockService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {
-    super(twentyConfigService);
+    super(twentyConfigService, configGroupHashService);
   }
 
   protected buildConfigKey(): string {
     const driverType = this.twentyConfigService.get('LOGIC_FUNCTION_TYPE');
 
     if (driverType === LogicFunctionDriverType.LAMBDA) {
-      return `lambda|${this.getConfigGroupHash(ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG)}`;
+      return `lambda|${this.configGroupHashService.computeHash(ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG)}`;
     }
 
     return driverType;
@@ -44,6 +52,9 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
       case LogicFunctionDriverType.LOCAL:
         return new LocalDriver({
           logicFunctionResourceService: this.logicFunctionResourceService,
+          sdkClientArchiveService: this.sdkClientArchiveService,
+          cacheLockService: this.cacheLockService,
+          workspaceCacheService: this.workspaceCacheService,
         });
 
       case LogicFunctionDriverType.LAMBDA: {
@@ -74,6 +85,8 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
 
         return new LambdaDriver({
           logicFunctionResourceService: this.logicFunctionResourceService,
+          cacheLockService: this.cacheLockService,
+          workspaceCacheService: this.workspaceCacheService,
           credentials: accessKeyId
             ? { accessKeyId, secretAccessKey }
             : fromNodeProviderChain({ clientConfig: { region } }),
@@ -82,6 +95,7 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
           subhostingRole,
           layerBucket,
           layerBucketRegion,
+          sdkClientArchiveService: this.sdkClientArchiveService,
         });
       }
 

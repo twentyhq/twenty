@@ -2,10 +2,12 @@ import { gql, InMemoryCache } from '@apollo/client';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
-import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
-import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
 import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
+import {
+  AUTO_SELECT_FAST_MODEL_ID,
+  AUTO_SELECT_SMART_MODEL_ID,
+} from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from '~/generated-metadata/graphql';
 
 enableFetchMocks();
@@ -25,6 +27,13 @@ jest.mock('@/auth/services/AuthService', () => {
     ),
   };
 });
+
+jest.mock('@/apollo/utils/getTokenPair', () => ({
+  getTokenPair: jest.fn().mockReturnValue({
+    accessOrWorkspaceAgnosticToken: { token: 'testAccessToken', expiresAt: '' },
+    refreshToken: { token: 'testRefreshToken', expiresAt: '' },
+  }),
+}));
 
 const mockOnError = jest.fn();
 const mockOnNetworkError = jest.fn();
@@ -58,7 +67,6 @@ const mockWorkspace = {
   isGoogleAuthBypassEnabled: false,
   isPasswordAuthBypassEnabled: false,
   isMicrosoftAuthBypassEnabled: false,
-  hasValidEnterpriseKey: false,
   hasActivatedAndValidEnterpriseKey: false,
   hasValidSignedEnterpriseKey: false,
   hasValidEnterpriseValidityToken: false,
@@ -71,15 +79,15 @@ const mockWorkspace = {
   isTwoFactorAuthenticationEnforced: false,
   trashRetentionDays: 14,
   eventLogRetentionDays: 365 * 3,
-  fastModel: DEFAULT_FAST_MODEL,
-  smartModel: DEFAULT_SMART_MODEL,
+  fastModel: AUTO_SELECT_FAST_MODEL_ID,
+  smartModel: AUTO_SELECT_SMART_MODEL_ID,
   routerModel: 'auto',
-  autoEnableNewAiModels: true,
-  disabledAiModelIds: [],
   enabledAiModelIds: [],
   useRecommendedModels: true,
+  isInternalMessagesImportEnabled: false,
   workspaceCustomApplication: CUSTOM_WORKSPACE_APPLICATION_MOCK,
   workspaceCustomApplicationId: CUSTOM_WORKSPACE_APPLICATION_MOCK.id,
+  installedApplications: [],
 };
 
 const createMockOptions = (): Options => ({

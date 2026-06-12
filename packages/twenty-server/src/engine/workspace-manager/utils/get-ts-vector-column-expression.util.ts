@@ -2,15 +2,15 @@ import {
   FieldMetadataType,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
+import type { SearchableFieldType } from 'twenty-shared/utils';
 
 import {
   computeColumnName,
   computeCompositeColumnName,
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
-import { type SearchableFieldType } from 'src/engine/workspace-manager/utils/is-searchable-field.util';
 import { isSearchableSubfield } from 'src/engine/workspace-manager/utils/is-searchable-subfield.util';
+import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 export type FieldTypeAndNameMetadata = {
   name: string;
@@ -125,6 +125,9 @@ const getColumnExpression = (
 
     case FieldMetadataType.PHONES:
       return `COALESCE(${quotedColumnName}, '')`;
+
+    case FieldMetadataType.UUID:
+      return `COALESCE(${quotedColumnName}::text, '')`;
 
     default:
       return `COALESCE(public.unaccent_immutable(${quotedColumnName}), '')`;

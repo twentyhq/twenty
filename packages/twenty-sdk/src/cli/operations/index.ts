@@ -11,6 +11,10 @@ export { appBuild } from './build';
 export type { AppBuildOptions, AppBuildResult } from './build';
 export { appDeploy } from './deploy';
 export type { AppDeployOptions, AppDeployResult } from './deploy';
+export { appDevOnce } from './dev-once';
+export type { AppDevOnceOptions, AppDevOnceResult } from './dev-once';
+export { appInstall } from './install';
+export type { AppInstallOptions } from './install';
 export { appPublish } from './publish';
 export type { AppPublishOptions, AppPublishResult } from './publish';
 export { appUninstall } from './uninstall';
@@ -20,11 +24,35 @@ export type { AppUninstallOptions } from './uninstall';
 export { functionExecute } from './execute';
 export type { FunctionExecuteOptions } from './execute';
 
+// Server
+export { serverStart } from './server-start';
+export type { ServerStartOptions, ServerStartResult } from './server-start';
+export { serverUpgrade } from './server-upgrade';
+export type {
+  ServerUpgradeOptions,
+  ServerUpgradeResult,
+} from './server-upgrade';
+export { detectLocalServer } from '@/cli/utilities/server/detect-local-server';
+export {
+  checkDockerRunning,
+  containerExists,
+  getContainerDigest,
+  getImageDigest,
+  getImageForVersion,
+} from '@/cli/utilities/server/docker-container';
+
+// Config
+export { ConfigService } from '@/cli/utilities/config/config-service';
+
+// Constants
+export { DEV_API_KEY, DEV_API_URL } from '@/cli/constants/dev-api-key';
+
 // Shared types and error codes
 export {
   APP_ERROR_CODES,
   AUTH_ERROR_CODES,
   FUNCTION_ERROR_CODES,
+  SERVER_ERROR_CODES,
 } from '@/cli/types';
 export type {
   AuthListRemote,

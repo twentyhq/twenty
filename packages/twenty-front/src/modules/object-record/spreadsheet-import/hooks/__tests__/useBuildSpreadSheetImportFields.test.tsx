@@ -1,14 +1,14 @@
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui-deprecated/display';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type IndexMetadataItem } from '@/object-metadata/types/IndexMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useBuildSpreadsheetImportFields } from '@/object-record/spreadsheet-import/hooks/useBuildSpreadSheetImportFields';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
@@ -20,7 +20,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
   );
 };
 
-jest.mock('twenty-ui/display', () => ({
+jest.mock('twenty-ui-deprecated/display', () => ({
   useIcons: jest.fn(),
 }));
 
@@ -56,8 +56,8 @@ describe('useBuildSpreadSheetImportFields', () => {
   });
 
   const createMockObjectMetadataItem = (
-    overrides: Partial<ObjectMetadataItem> = {},
-  ): ObjectMetadataItem =>
+    overrides: Partial<EnrichedObjectMetadataItem> = {},
+  ): EnrichedObjectMetadataItem =>
     ({
       id: 'test-object-id',
       universalIdentifier: 'test-object-id',
@@ -77,7 +77,7 @@ describe('useBuildSpreadSheetImportFields', () => {
       updatedAt: '2023-01-01',
       fields: [],
       ...overrides,
-    }) as ObjectMetadataItem;
+    }) as EnrichedObjectMetadataItem;
 
   it('should build importFields for basic field types', () => {
     const { result } = renderHook(() => useBuildSpreadsheetImportFields(), {

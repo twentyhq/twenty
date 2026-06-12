@@ -1,6 +1,6 @@
 import { NavigationDrawerItemForObjectMetadataItem } from '@/navigation-menu-item/display/object/components/NavigationDrawerItemForObjectMetadataItem';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
@@ -25,26 +25,26 @@ const ORDERED_LAST_STANDARD_OBJECTS: string[] = [
 
 type NavigationDrawerSectionForObjectMetadataItemsProps = {
   sectionTitle: string;
-  isRemote: boolean;
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
   rightIcon?: React.ReactNode;
   selectedObjectMetadataItemId?: string | null;
-  onObjectMetadataItemClick?: (objectMetadataItem: ObjectMetadataItem) => void;
+  onObjectMetadataItemClick?: (
+    objectMetadataItem: EnrichedObjectMetadataItem,
+  ) => void;
   onActiveObjectMetadataItemClick?: (
-    objectMetadataItem: ObjectMetadataItem,
+    objectMetadataItem: EnrichedObjectMetadataItem,
   ) => void;
 };
 
 export const NavigationDrawerSectionForObjectMetadataItems = ({
   sectionTitle,
-  isRemote,
   objectMetadataItems,
   rightIcon,
   selectedObjectMetadataItemId = null,
   onObjectMetadataItemClick,
   onActiveObjectMetadataItemClick,
 }: NavigationDrawerSectionForObjectMetadataItemsProps) => {
-  const navigationSectionId = 'Objects' + (isRemote ? 'Remote' : 'Workspace');
+  const navigationSectionId = 'ObjectsWorkspace';
   const { toggleNavigationSection } = useNavigationSection(navigationSectionId);
   const isNavigationSectionOpen = useAtomFamilyStateValue(
     isNavigationSectionOpenFamilyState,

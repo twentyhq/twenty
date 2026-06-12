@@ -46,26 +46,31 @@ export const NumberFormatSelect = ({
       dropdownWidthAuto
       fullWidth
       value={value}
+      pinnedOption={{
+        label: t`System settings`,
+        value: NumberFormat.SYSTEM,
+        contextualText: systemNumberFormatLabel,
+      }}
       options={[
         {
-          label: t`System Settings - ${systemNumberFormatLabel}`,
-          value: NumberFormat.SYSTEM,
-        },
-        {
-          label: t`Commas and dot - ${commasAndDotExample}`,
+          label: t`Commas and dot`,
           value: NumberFormat.COMMAS_AND_DOT,
+          contextualText: commasAndDotExample,
         },
         {
-          label: t`Spaces and comma - ${spacesAndCommaExample}`,
+          label: t`Spaces and comma`,
           value: NumberFormat.SPACES_AND_COMMA,
+          contextualText: spacesAndCommaExample,
         },
         {
-          label: t`Dots and comma - ${dotsAndCommaExample}`,
+          label: t`Dots and comma`,
           value: NumberFormat.DOTS_AND_COMMA,
+          contextualText: dotsAndCommaExample,
         },
         {
-          label: t`Apostrophe and dot - ${apostropheAndDotExample}`,
+          label: t`Apostrophe and dot`,
           value: NumberFormat.APOSTROPHE_AND_DOT,
+          contextualText: apostropheAndDotExample,
         },
       ]}
       onChange={onChange}

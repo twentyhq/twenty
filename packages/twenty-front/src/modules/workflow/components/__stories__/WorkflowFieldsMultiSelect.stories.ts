@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
@@ -63,7 +63,7 @@ const fields = [
   },
 ];
 
-const mockObjectMetadataItem: ObjectMetadataItem = {
+const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
   id: '1',
   universalIdentifier: '1',
   nameSingular: 'company',

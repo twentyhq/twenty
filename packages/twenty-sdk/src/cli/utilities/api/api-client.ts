@@ -1,6 +1,8 @@
 import { ConfigService } from '@/cli/utilities/config/config-service';
+import { isNonEmptyString } from '@sniptt/guards';
 import axios, { type AxiosInstance } from 'axios';
 import chalk from 'chalk';
+import { isDefined } from 'twenty-shared/utils';
 
 export class ApiClient {
   readonly client: AxiosInstance;
@@ -12,8 +14,14 @@ export class ApiClient {
     disableInterceptors?: boolean;
     serverUrl?: string;
     token?: string;
+    skipAuth?: boolean;
   }) {
-    const { disableInterceptors = false, serverUrl, token } = options || {};
+    const {
+      disableInterceptors = false,
+      serverUrl,
+      token,
+      skipAuth = false,
+    } = options || {};
     this.configService = new ConfigService();
     this.tokenOverride = token;
     this.serverUrlOverride = serverUrl;
@@ -24,7 +32,7 @@ export class ApiClient {
 
       config.baseURL = this.serverUrlOverride ?? twentyConfig.apiUrl;
 
-      if (!config.headers.Authorization) {
+      if (!config.headers.Authorization && !skipAuth) {
         const authToken = await this.resolveAuthToken();
 
         if (authToken) {
@@ -45,7 +53,7 @@ export class ApiClient {
         if (error.response?.status === 401) {
           console.error(
             chalk.red(
-              'Authentication failed. Run `twenty remote add` to authenticate.',
+              'Authentication failed. Run `yarn twenty remote:add` to authenticate.',
             ),
           );
         } else if (error.response?.status === 403) {
@@ -62,6 +70,74 @@ export class ApiClient {
         throw error;
       },
     );
+  }
+
+  async getFrontendUrl(): Promise<string | null> {
+    try {
+      const response = await this.client.get(
+        '/.well-known/oauth-authorization-server',
+        { headers: { Accept: 'application/json' } },
+      );
+      const authorizationEndpoint = response.data?.authorization_endpoint;
+
+      if (!isNonEmptyString(authorizationEndpoint)) {
+        return null;
+      }
+
+      return new URL(authorizationEndpoint).origin;
+    } catch {
+      return null;
+    }
+  }
+
+  async getWorkspaceFrontendUrl(): Promise<string | null> {
+    const workspaceFrontendUrl = await this.getCurrentWorkspaceFrontendUrl();
+
+    if (isDefined(workspaceFrontendUrl)) {
+      return workspaceFrontendUrl;
+    }
+
+    return this.getFrontendUrl();
+  }
+
+  private async getCurrentWorkspaceFrontendUrl(): Promise<string | null> {
+    try {
+      const query = `
+        query CurrentWorkspaceForFrontendUrl {
+          currentWorkspace {
+            workspaceUrls {
+              subdomainUrl
+              customUrl
+            }
+          }
+        }
+      `;
+
+      const response = await this.client.post(
+        '/metadata',
+        { query },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      const workspaceUrls =
+        response.data?.data?.currentWorkspace?.workspaceUrls;
+      const workspaceFrontendUrl = isNonEmptyString(workspaceUrls?.customUrl)
+        ? workspaceUrls.customUrl
+        : workspaceUrls?.subdomainUrl;
+
+      if (!isNonEmptyString(workspaceFrontendUrl)) {
+        return null;
+      }
+
+      return new URL(workspaceFrontendUrl).origin;
+    } catch {
+      return null;
+    }
   }
 
   async validateAuth(): Promise<{ authValid: boolean; serverUp: boolean }> {
@@ -109,23 +185,26 @@ export class ApiClient {
   async refreshToken(): Promise<string | null> {
     const config = await this.configService.getConfig();
 
-    if (!config.refreshToken || !config.oauthClientId) {
+    if (
+      !config.twentyCLIRefreshToken ||
+      !config.twentyCLIRegistrationClientId
+    ) {
       return null;
     }
 
     try {
       const tokenResponse = await axios.post(`${config.apiUrl}/oauth/token`, {
         grant_type: 'refresh_token',
-        refresh_token: config.refreshToken,
-        client_id: config.oauthClientId,
+        refresh_token: config.twentyCLIRefreshToken,
+        client_id: config.twentyCLIRegistrationClientId,
       });
 
       const { access_token: newAccessToken, refresh_token: newRefreshToken } =
         tokenResponse.data;
 
       await this.configService.setConfig({
-        accessToken: newAccessToken,
-        ...(newRefreshToken ? { refreshToken: newRefreshToken } : {}),
+        twentyCLIAccessToken: newAccessToken,
+        ...(newRefreshToken ? { twentyCLIRefreshToken: newRefreshToken } : {}),
       });
 
       return newAccessToken;
@@ -139,16 +218,10 @@ export class ApiClient {
       return this.tokenOverride;
     }
 
-    const envToken = process.env.TWENTY_TOKEN;
-
-    if (envToken) {
-      return envToken;
-    }
-
     const config = await this.configService.getConfig();
-    const accessToken = config.accessToken;
+    const cliToken = config.twentyCLIAccessToken;
 
-    if (accessToken && this.isTokenExpired(accessToken)) {
+    if (cliToken && this.isTokenExpired(cliToken)) {
       const refreshed = await this.refreshToken();
 
       if (refreshed) {
@@ -156,7 +229,7 @@ export class ApiClient {
       }
     }
 
-    return accessToken ?? config.apiKey;
+    return cliToken ?? config.apiKey;
   }
 
   private isTokenExpired(token: string): boolean {

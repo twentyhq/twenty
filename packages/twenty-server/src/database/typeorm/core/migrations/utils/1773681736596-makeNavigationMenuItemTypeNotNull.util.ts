@@ -8,6 +8,9 @@ export const makeNavigationMenuItemTypeNotNullQueries = async (
   );
 
   await queryRunner.query(
+    `ALTER TABLE "core"."navigationMenuItem" DROP CONSTRAINT IF EXISTS "CHK_navigation_menu_item_type_fields"`,
+  );
+  await queryRunner.query(
     `ALTER TABLE "core"."navigationMenuItem" ADD CONSTRAINT "CHK_navigation_menu_item_type_fields" CHECK (
       ("type" = 'FOLDER')
       OR ("type" = 'OBJECT' AND "targetObjectMetadataId" IS NOT NULL)

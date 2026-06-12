@@ -1,13 +1,16 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { getJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getJoinColumnName';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
+import {
+  computeMorphRelationGqlFieldJoinColumnName,
+  computeRelationGqlFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 
 type GetSourceJoinColumnNameArgs = {
-  sourceField: Pick<FieldMetadataItem, 'type' | 'morphRelations' | 'settings'>;
+  sourceField: Pick<FieldMetadataItem, 'name' | 'type' | 'morphRelations'>;
   sourceObjectMetadata: Pick<
-    ObjectMetadataItem,
+    EnrichedObjectMetadataItem,
     'id' | 'nameSingular' | 'namePlural'
   >;
 };
@@ -25,15 +28,13 @@ export const getSourceJoinColumnName = ({
       return undefined;
     }
 
-    const computedFieldName = computeMorphRelationFieldName({
+    return computeMorphRelationGqlFieldJoinColumnName({
       fieldName: morphRelation.sourceFieldMetadata.name,
       relationType: morphRelation.type,
       targetObjectMetadataNameSingular: sourceObjectMetadata.nameSingular,
       targetObjectMetadataNamePlural: sourceObjectMetadata.namePlural,
     });
-
-    return `${computedFieldName}Id`;
   }
 
-  return getJoinColumnName(sourceField.settings);
+  return computeRelationGqlFieldJoinColumnName({ name: sourceField.name });
 };

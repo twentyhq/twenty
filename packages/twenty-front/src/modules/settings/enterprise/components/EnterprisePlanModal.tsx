@@ -1,6 +1,6 @@
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit';
+import { SubscriptionBenefit } from '@/settings/billing/components/SubscriptionBenefit';
 import { ENTERPRISE_CHECKOUT_SESSION } from '@/settings/enterprise/graphql/queries/enterpriseCheckoutSession';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
@@ -9,10 +9,10 @@ import { useApolloClient } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { Loader } from 'twenty-ui/feedback';
-import { CardPicker, MainButton } from 'twenty-ui/input';
-import { ModalContent } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Loader } from 'twenty-ui-deprecated/feedback';
+import { CardPicker, MainButton } from 'twenty-ui-deprecated/input';
+import { ModalContent } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 export const ENTERPRISE_PLAN_MODAL_ID = 'enterprise-plan-modal';
 
@@ -71,8 +71,19 @@ const StyledIntervalContainer = styled.div`
   width: 100%;
 `;
 
+const StyledIntervalCardContent = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 const StyledIntervalTitle = styled.div`
   color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.md};
+  margin-bottom: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledIntervalSubtitle = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.md};
 `;
 
@@ -89,8 +100,8 @@ export const EnterprisePlanModal = () => {
     t`SSO (SAML / OIDC)`,
     t`Row-level security`,
     t`Audit logs`,
-    t`Custom objects`,
-    t`API & Webhooks`,
+    t`Advanced Encryption`,
+    t`Custom AI Models`,
   ];
 
   const price = selectedInterval === 'monthly' ? MONTHLY_PRICE : YEARLY_PRICE;
@@ -132,7 +143,7 @@ export const EnterprisePlanModal = () => {
   return (
     <ModalStatefulWrapper
       modalInstanceId={ENTERPRISE_PLAN_MODAL_ID}
-      size="small"
+      size="medium"
       padding="none"
       isClosable
     >
@@ -157,13 +168,19 @@ export const EnterprisePlanModal = () => {
             checked={selectedInterval === 'monthly'}
             handleChange={() => setSelectedInterval('monthly')}
           >
-            <StyledIntervalTitle>{t`Monthly subscription`}</StyledIntervalTitle>
+            <StyledIntervalCardContent>
+              <StyledIntervalTitle>{t`Monthly`}</StyledIntervalTitle>
+              <StyledIntervalSubtitle>{`$${MONTHLY_PRICE} / ${t`seat / month`}`}</StyledIntervalSubtitle>
+            </StyledIntervalCardContent>
           </CardPicker>
           <CardPicker
             checked={selectedInterval === 'yearly'}
             handleChange={() => setSelectedInterval('yearly')}
           >
-            <StyledIntervalTitle>{t`Yearly subscription`}</StyledIntervalTitle>
+            <StyledIntervalCardContent>
+              <StyledIntervalTitle>{t`Yearly`}</StyledIntervalTitle>
+              <StyledIntervalSubtitle>{`$${YEARLY_PRICE} / ${t`seat / month`}`}</StyledIntervalSubtitle>
+            </StyledIntervalCardContent>
           </CardPicker>
         </StyledIntervalContainer>
 

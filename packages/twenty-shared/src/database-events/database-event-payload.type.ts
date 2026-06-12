@@ -37,19 +37,11 @@ type SimplifiedFlatObjectMetadata = {
   viewUniversalIdentifiers: string[];
 };
 
-type WorkspaceEventBatch<WorkspaceEvent> = {
+type DatabaseEventMetadata = {
   name: string;
   workspaceId: string;
   objectMetadata: SimplifiedFlatObjectMetadata;
-  userId: string;
-  userWorkspaceId: string;
-  workspaceMemberId: string;
-  recordId: string;
-  events: WorkspaceEvent[];
 };
 
-export type DatabaseEventPayload<T = ObjectRecordEvent> = Omit<
-  WorkspaceEventBatch<T>,
-  'events'
-> &
-  T;
+export type DatabaseEventPayload<T = ObjectRecordEvent> =
+  DatabaseEventMetadata & T;

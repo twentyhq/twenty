@@ -1,11 +1,11 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { buildSortsForChartFieldOrderBy } from '@/page-layout/widgets/graph/utils/buildSortsForChartFieldOrderBy';
 import { type NormalizedChartConfigurationFields } from '@/page-layout/widgets/graph/utils/normalizeChartConfigurationFields';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { GraphOrderBy } from '~/generated-metadata/graphql';
 
 describe('buildSortsForChartFieldOrderBy', () => {
-  const mockObjectMetadataItem: ObjectMetadataItem = {
+  const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
     id: 'obj-1',
     nameSingular: 'opportunity',
     namePlural: 'opportunities',
@@ -29,7 +29,7 @@ describe('buildSortsForChartFieldOrderBy', () => {
         label: 'Address',
       },
     ],
-  } as ObjectMetadataItem;
+  } as EnrichedObjectMetadataItem;
 
   it('should return ASC sort for FIELD_ASC orderBy', () => {
     const normalizedFields: NormalizedChartConfigurationFields = {

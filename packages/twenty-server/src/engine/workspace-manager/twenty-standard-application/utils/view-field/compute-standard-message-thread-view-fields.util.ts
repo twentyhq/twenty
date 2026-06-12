@@ -8,6 +8,18 @@ export const computeStandardMessageThreadViewFields = (
   args: Omit<CreateStandardViewFieldArgs<'messageThread'>, 'context'>,
 ): Record<string, FlatViewField> => {
   return {
+    allMessageThreadsSubject: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'messageThread',
+      context: {
+        viewName: 'allMessageThreads',
+        viewFieldName: 'subject',
+        fieldName: 'subject',
+        position: 0,
+        isVisible: true,
+        size: 300,
+      },
+    }),
     allMessageThreadsMessages: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'messageThread',
@@ -15,9 +27,21 @@ export const computeStandardMessageThreadViewFields = (
         viewName: 'allMessageThreads',
         viewFieldName: 'messages',
         fieldName: 'messages',
-        position: 0,
+        position: 1,
         isVisible: true,
-        size: 180,
+        size: 150,
+      },
+    }),
+    allMessageThreadsUpdatedAt: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'messageThread',
+      context: {
+        viewName: 'allMessageThreads',
+        viewFieldName: 'updatedAt',
+        fieldName: 'updatedAt',
+        position: 2,
+        isVisible: true,
+        size: 150,
       },
     }),
     allMessageThreadsCreatedAt: createStandardViewFieldFlatMetadata({
@@ -27,7 +51,7 @@ export const computeStandardMessageThreadViewFields = (
         viewName: 'allMessageThreads',
         viewFieldName: 'createdAt',
         fieldName: 'createdAt',
-        position: 1,
+        position: 3,
         isVisible: true,
         size: 150,
       },

@@ -8,7 +8,7 @@ import {
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { isAggregationEnabled } from '@/object-metadata/utils/isAggregationEnabled';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
@@ -27,8 +27,12 @@ import {
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
 import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
-import { capitalize, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
+import {
+  getConnectionTypename,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
   RecordGqlOperationVariables & {
@@ -58,7 +62,7 @@ type UseFindManyRecordsStateParams<
       TFetchVars
     >,
   ): Promise<ApolloClient.QueryResult<TFetchData>>;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
 };
 
 export const useLazyFetchMoreRecordsWithPagination = <
@@ -143,9 +147,9 @@ export const useLazyFetchMoreRecordsWithPagination = <
 
               return Object.assign({}, prev, {
                 [objectMetadataItem.namePlural]: {
-                  __typename: `${capitalize(
+                  __typename: getConnectionTypename(
                     objectMetadataItem.nameSingular,
-                  )}Connection`,
+                  ),
                   edges: newEdges,
                   pageInfo:
                     fetchMoreResult?.[objectMetadataItem.namePlural].pageInfo,

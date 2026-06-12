@@ -34,38 +34,38 @@ export const DateTimeSettingsDateFormatSelect = ({
   return (
     <Select
       dropdownId="datetime-settings-date-format"
-      dropdownWidth={218}
+      dropdownWidth={320}
       label={t`Date format`}
       fullWidth
-      dropdownWidthAuto
       value={value}
+      pinnedOption={{
+        label: t`System settings`,
+        value: DateFormat.SYSTEM,
+        contextualText: systemDateFormatLabel,
+      }}
       options={[
         {
-          label: t`System settings - ${systemDateFormatLabel}`,
-          value: DateFormat.SYSTEM,
-        },
-        {
-          label: `${formatInTimeZone(
+          label: formatInTimeZone(
             Date.now(),
             usedTimeZone,
             DateFormat.MONTH_FIRST,
-          )}`,
+          ),
           value: DateFormat.MONTH_FIRST,
         },
         {
-          label: `${formatInTimeZone(
+          label: formatInTimeZone(
             Date.now(),
             usedTimeZone,
             DateFormat.DAY_FIRST,
-          )}`,
+          ),
           value: DateFormat.DAY_FIRST,
         },
         {
-          label: `${formatInTimeZone(
+          label: formatInTimeZone(
             Date.now(),
             usedTimeZone,
             DateFormat.YEAR_FIRST,
-          )}`,
+          ),
           value: DateFormat.YEAR_FIRST,
         },
       ]}

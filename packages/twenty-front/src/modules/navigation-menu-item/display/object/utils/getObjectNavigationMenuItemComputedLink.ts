@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type View } from '@/views/types/View';
 import { ViewKey } from '@/views/types/ViewKey';
 import { AppPath } from 'twenty-shared/types';
@@ -7,7 +7,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export const getObjectNavigationMenuItemComputedLink = (
   item: Pick<NavigationMenuItem, 'targetObjectMetadataId'>,
-  objectMetadataItems: ObjectMetadataItem[],
+  objectMetadataItems: EnrichedObjectMetadataItem[],
   views: Pick<View, 'id' | 'objectMetadataId' | 'key'>[],
 ): string => {
   const objectMetadataItem = objectMetadataItems.find(

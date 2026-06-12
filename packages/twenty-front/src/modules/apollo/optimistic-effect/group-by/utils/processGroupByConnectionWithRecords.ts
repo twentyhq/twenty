@@ -1,5 +1,5 @@
 import { doesRecordBelongToGroup } from '@/apollo/optimistic-effect/group-by/utils/doesRecordBelongToGroup';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { createCacheEdgeWithRecordRef } from '@/object-record/cache/utils/createCacheEdgeWithRecordRef';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
@@ -26,7 +26,7 @@ type ProcessGroupByConnectionWithRecordsArgs = {
   groupByConfig?:
     | Array<Record<string, boolean | Record<string, string>>>
     | Record<string, boolean | Record<string, string>>;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   readField: ReadFieldFunction;
   toReference: ToReferenceFunction;
 };

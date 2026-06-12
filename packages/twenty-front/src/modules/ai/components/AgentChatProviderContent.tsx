@@ -1,7 +1,6 @@
-import { AgentChatDataEffect } from '@/ai/components/AgentChatDataEffect';
-import { AgentChatContext } from '@/ai/contexts/AgentChatContext';
-import { useAgentChatData } from '@/ai/hooks/useAgentChatData';
-import { AgentChatComponentInstanceContext } from '@/ai/states/AgentChatComponentInstanceContext';
+import { AgentChatRuntimeEffects } from '@/ai/components/AgentChatRuntimeEffects';
+import { AgentChatThreadInitializationEffect } from '@/ai/components/AgentChatThreadInitializationEffect';
+import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { Suspense } from 'react';
 
 export const AgentChatProviderContent = ({
@@ -9,25 +8,15 @@ export const AgentChatProviderContent = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { ensureThreadForDraft, threadsLoading, messagesLoading } =
-    useAgentChatData();
-
-  const contextValue = {
-    ensureThreadForDraft,
-    threadsLoading,
-    messagesLoading,
-  };
-
   return (
     <Suspense fallback={null}>
-      <AgentChatContext.Provider value={contextValue}>
-        <AgentChatComponentInstanceContext.Provider
-          value={{ instanceId: 'agentChatComponentInstance' }}
-        >
-          <AgentChatDataEffect />
-          {children}
-        </AgentChatComponentInstanceContext.Provider>
-      </AgentChatContext.Provider>
+      <AgentChatComponentInstanceContext.Provider
+        value={{ instanceId: 'agentChatComponentInstance' }}
+      >
+        <AgentChatThreadInitializationEffect />
+        <AgentChatRuntimeEffects />
+        {children}
+      </AgentChatComponentInstanceContext.Provider>
     </Suspense>
   );
 };

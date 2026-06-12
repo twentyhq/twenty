@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type ObjectRecordCountDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-record-count.dto';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { computeTableName } from 'src/engine/utils/compute-table-name.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 @Injectable()
@@ -57,12 +57,7 @@ export class ObjectRecordCountService {
     return flatObjectMetadatas.map((flatObjectMetadata) => ({
       objectNamePlural: flatObjectMetadata.namePlural,
       totalCount:
-        countByTableName.get(
-          computeTableName(
-            flatObjectMetadata.nameSingular,
-            flatObjectMetadata.isCustom,
-          ),
-        ) ?? 0,
+        countByTableName.get(computeObjectTargetTable(flatObjectMetadata)) ?? 0,
     }));
   }
 }

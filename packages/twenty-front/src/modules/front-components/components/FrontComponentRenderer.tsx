@@ -1,4 +1,5 @@
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
+import { FrontComponentRendererWithSdkClient } from '@/front-components/components/FrontComponentRendererWithSdkClient';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
 import { frontComponentApplicationTokenPairComponentState } from '@/front-components/states/frontComponentApplicationTokenPairComponentState';
@@ -7,9 +8,9 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
 import { useCallback, useContext, useEffect } from 'react';
-import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-sdk/front-component-renderer';
+import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useQuery } from '@apollo/client/react';
 import { FindOneFrontComponentDocument } from '~/generated-metadata/graphql';
@@ -17,11 +18,13 @@ import { FindOneFrontComponentDocument } from '~/generated-metadata/graphql';
 type FrontComponentRendererProps = {
   frontComponentId: string;
   commandMenuItemId?: string;
+  selectedRecordIds?: string[];
 };
 
 export const FrontComponentRenderer = ({
   frontComponentId,
   commandMenuItemId,
+  selectedRecordIds,
 }: FrontComponentRendererProps) => {
   const { colorScheme } = useContext(ThemeContext);
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -32,7 +35,11 @@ export const FrontComponentRenderer = ({
   );
 
   const { executionContext, frontComponentHostCommunicationApi } =
-    useFrontComponentExecutionContext({ frontComponentId, commandMenuItemId });
+    useFrontComponentExecutionContext({
+      frontComponentId,
+      commandMenuItemId,
+      selectedRecordIds,
+    });
 
   const handleError = useCallback(
     (error?: Error) => {
@@ -73,11 +80,6 @@ export const FrontComponentRenderer = ({
     frontComponentId,
   });
 
-  const componentUrl = getFrontComponentUrl({
-    frontComponentId,
-    checksum: data?.frontComponent?.builtComponentChecksum,
-  });
-
   const applicationTokenPair =
     data?.frontComponent?.applicationTokenPair ?? null;
 
@@ -89,17 +91,47 @@ export const FrontComponentRenderer = ({
     return null;
   }
 
+  const componentUrl = getFrontComponentUrl({
+    frontComponentId,
+    checksum: data.frontComponent.builtComponentChecksum,
+  });
+
+  const usesSdkClient = data.frontComponent.usesSdkClient;
+
+  const accessToken = applicationTokenPair.applicationAccessToken.token;
+
+  const applicationVariables =
+    data.frontComponent.applicationVariables ?? undefined;
+
+  if (usesSdkClient) {
+    return (
+      <FrontComponentRendererProvider frontComponentId={frontComponentId}>
+        <FrontComponentRendererWithSdkClient
+          colorScheme={colorScheme}
+          componentUrl={componentUrl}
+          applicationAccessToken={accessToken}
+          applicationId={data.frontComponent.applicationId}
+          executionContext={executionContext}
+          frontComponentHostCommunicationApi={
+            frontComponentHostCommunicationApi
+          }
+          applicationVariables={applicationVariables}
+          onError={handleError}
+        />
+      </FrontComponentRendererProvider>
+    );
+  }
+
   return (
     <FrontComponentRendererProvider frontComponentId={frontComponentId}>
       <SharedFrontComponentRenderer
         colorScheme={colorScheme}
         componentUrl={componentUrl}
-        applicationAccessToken={
-          applicationTokenPair.applicationAccessToken.token
-        }
+        applicationAccessToken={accessToken}
         apiUrl={REACT_APP_SERVER_BASE_URL}
         executionContext={executionContext}
         frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
+        applicationVariables={applicationVariables}
         onError={handleError}
       />
     </FrontComponentRendererProvider>

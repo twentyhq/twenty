@@ -3,5 +3,5 @@ import { SidePanelPages } from 'twenty-shared/types';
 
 export const sidePanelPageState = createAtomState<SidePanelPages>({
   key: 'side-panel/sidePanelPageState',
-  defaultValue: SidePanelPages.Root,
+  defaultValue: SidePanelPages.CommandMenuDisplay,
 });

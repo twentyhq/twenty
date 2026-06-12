@@ -1,45 +1,37 @@
 /* @license Enterprise */
 
-import { InjectRepository } from '@nestjs/typeorm';
-
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
-import { Repository } from 'typeorm';
 
-import { ActiveOrSuspendedWorkspacesMigrationCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspaces-migration.command-runner';
+import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @Command({
   name: 'billing:sync-customer-data',
   description: 'Sync customer data from Stripe for all active workspaces',
 })
-export class BillingSyncCustomerDataCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
+export class BillingSyncCustomerDataCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(
-    @InjectRepository(WorkspaceEntity)
-    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
+    protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly stripeSubscriptionService: StripeSubscriptionService,
-    @InjectRepository(BillingCustomerEntity)
-    protected readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
-    protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    protected readonly dataSourceService: DataSourceService,
+    @InjectWorkspaceScopedRepository(BillingCustomerEntity)
+    protected readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
   ) {
-    super(workspaceRepository, globalWorkspaceOrmManager, dataSourceService);
+    super(workspaceIteratorService);
   }
 
   override async runOnWorkspace({
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const billingCustomer = await this.billingCustomerRepository.findOne({
-      where: {
-        workspaceId,
-      },
-    });
+    const billingCustomer = await this.billingCustomerRepository.findOne(
+      workspaceId,
+      { where: {} },
+    );
 
     if (!options.dryRun && !billingCustomer) {
       const stripeCustomerId =
@@ -49,13 +41,9 @@ export class BillingSyncCustomerDataCommand extends ActiveOrSuspendedWorkspacesM
 
       if (typeof stripeCustomerId === 'string') {
         await this.billingCustomerRepository.upsert(
-          {
-            stripeCustomerId,
-            workspaceId,
-          },
-          {
-            conflictPaths: ['workspaceId'],
-          },
+          workspaceId,
+          { stripeCustomerId },
+          { conflictPaths: ['workspaceId'] },
         );
       }
     }

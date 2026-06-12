@@ -1,3 +1,4 @@
+import { ChartFiltersDeletedFieldsWarning } from '@/side-panel/pages/page-layout/components/ChartFiltersDeletedFieldsWarning';
 import { ChartFiltersSettingsInitializeStateEffect } from '@/side-panel/pages/page-layout/components/ChartFiltersSettingsInitializeStateEffect';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
@@ -5,7 +6,7 @@ import { type ChartWidget } from '@/side-panel/pages/page-layout/types/ChartWidg
 import { type ChartWidgetConfiguration } from '@/side-panel/pages/page-layout/types/ChartWidgetConfiguration';
 import { getChartFiltersSettingsInstanceId } from '@/side-panel/pages/page-layout/utils/getChartFiltersSettingsInstanceId';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { AdvancedFilterSidePanelContainer } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelContainer';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
@@ -16,6 +17,7 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
+import { useMemo } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledChartFiltersPageContainer = styled.div`
@@ -28,7 +30,7 @@ const StyledChartFiltersPageContainer = styled.div`
 `;
 
 export type ChartFiltersSettingsProps = {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   widget: ChartWidget;
 };
 
@@ -59,6 +61,16 @@ export const ChartFiltersSettings = ({
   const store = useStore();
   const chartWidgetConfiguration = widget.configuration;
 
+  const validFieldMetadataIds = useMemo(
+    () =>
+      new Set(
+        objectMetadataItem.fields
+          .filter((fieldMetadataItem) => fieldMetadataItem.isActive)
+          .map((fieldMetadataItem) => fieldMetadataItem.id),
+      ),
+    [objectMetadataItem.fields],
+  );
+
   const handleFiltersUpdate = () => {
     const existingRecordFilters = store.get(currentRecordFilters);
     const existingRecordFilterGroups = store.get(currentRecordFilterGroups);
@@ -84,6 +96,9 @@ export const ChartFiltersSettings = ({
           <RecordFiltersComponentInstanceContext.Provider
             value={{ instanceId }}
           >
+            <ChartFiltersDeletedFieldsWarning
+              validFieldMetadataIds={validFieldMetadataIds}
+            />
             <AdvancedFilterSidePanelContainer
               onUpdate={handleFiltersUpdate}
               objectMetadataItem={objectMetadataItem}

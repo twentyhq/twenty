@@ -1,11 +1,11 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { generateRecordEventOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateRecordEventOutputSchema';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { DatabaseEventAction } from '~/generated-metadata/graphql';
 
 const createMockObjectMetadataItem = (
-  overrides: Partial<ObjectMetadataItem> = {},
-): ObjectMetadataItem =>
+  overrides: Partial<EnrichedObjectMetadataItem> = {},
+): EnrichedObjectMetadataItem =>
   ({
     id: 'test-object-id',
     nameSingular: 'testObject',
@@ -15,7 +15,7 @@ const createMockObjectMetadataItem = (
     icon: 'IconTest',
     fields: [],
     ...overrides,
-  }) as ObjectMetadataItem;
+  }) as EnrichedObjectMetadataItem;
 
 describe('generateRecordEventOutputSchema', () => {
   describe('CREATED action', () => {

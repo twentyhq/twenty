@@ -1,21 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
-import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MicrosoftOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client.provider';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface';
 
 @Injectable()
 export class MicrosoftFetchByBatchService {
   constructor(
-    private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
+    private readonly microsoftOAuth2ClientProvider: MicrosoftOAuth2ClientProvider,
   ) {}
 
   async fetchAllByBatches(
     messageIds: string[],
-    connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      'accessToken' | 'refreshToken' | 'id' | 'provider'
-    >,
+    connectedAccount: Pick<ConnectedAccountEntity, 'id' | 'provider'>,
   ): Promise<{
     messageIdsByBatch: string[][];
     batchResponses: MicrosoftGraphBatchResponse[];
@@ -24,10 +21,9 @@ export class MicrosoftFetchByBatchService {
     const batchResponses: MicrosoftGraphBatchResponse[] = [];
     const messageIdsByBatch: string[][] = [];
 
-    const client =
-      await this.oAuth2ClientManagerService.getMicrosoftOAuth2Client(
-        connectedAccount,
-      );
+    const client = await this.microsoftOAuth2ClientProvider.getClient(
+      connectedAccount.id,
+    );
 
     for (let i = 0; i < messageIds.length; i += batchLimit) {
       const batchMessageIds = messageIds.slice(i, i + batchLimit);

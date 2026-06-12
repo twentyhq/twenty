@@ -1,14 +1,14 @@
 import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { UPDATE_CALENDAR_CHANNEL } from '@/settings/accounts/graphql/mutations/updateCalendarChannel';
+import { useMutation } from '@apollo/client/react';
 import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Section } from '@react-email/components';
-import { H2Title, IconUserPlus } from 'twenty-ui/display';
-import { Card } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title, IconUserPlus } from 'twenty-ui-deprecated/display';
+import { Card } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { type CalendarChannelVisibility } from '~/generated/graphql';
 
 const StyledDetailsContainer = styled.div`
@@ -27,26 +27,20 @@ type SettingsAccountsCalendarChannelDetailsProps = {
 export const SettingsAccountsCalendarChannelDetails = ({
   calendarChannel,
 }: SettingsAccountsCalendarChannelDetailsProps) => {
-  const { updateOneRecord } = useUpdateOneRecord();
+  const [updateMetadataChannel] = useMutation(UPDATE_CALENDAR_CHANNEL);
 
-  const handleVisibilityChange = (value: CalendarChannelVisibility) => {
-    updateOneRecord({
-      objectNameSingular: CoreObjectNameSingular.CalendarChannel,
-      idToUpdate: calendarChannel.id,
-      updateOneRecordInput: {
-        visibility: value,
-      },
+  const updateChannel = (update: Record<string, unknown>) => {
+    updateMetadataChannel({
+      variables: { input: { id: calendarChannel.id, update } },
     });
   };
 
+  const handleVisibilityChange = (value: CalendarChannelVisibility) => {
+    updateChannel({ visibility: value });
+  };
+
   const handleContactAutoCreationToggle = (value: boolean) => {
-    updateOneRecord({
-      objectNameSingular: CoreObjectNameSingular.CalendarChannel,
-      idToUpdate: calendarChannel.id,
-      updateOneRecordInput: {
-        isContactAutoCreationEnabled: value,
-      },
-    });
+    updateChannel({ isContactAutoCreationEnabled: value });
   };
 
   return (

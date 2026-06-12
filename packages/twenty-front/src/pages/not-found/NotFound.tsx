@@ -1,9 +1,9 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { lazy, Suspense } from 'react';
 
-const SignInBackgroundMockPage = lazy(() =>
-  import('@/sign-in-background-mock/components/SignInBackgroundMockPage').then(
-    (module) => ({ default: module.SignInBackgroundMockPage }),
+const BackgroundMockPage = lazy(() =>
+  import('@/sign-in-background-mock/components/BackgroundMockPage').then(
+    (module) => ({ default: module.BackgroundMockPage }),
   ),
 );
 import { AppPath } from 'twenty-shared/types';
@@ -11,16 +11,16 @@ import { AppPath } from 'twenty-shared/types';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { styled } from '@linaria/react';
-import { MainButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MainButton } from 'twenty-ui-deprecated/input';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderErrorContainer,
   AnimatedPlaceholderErrorSubTitle,
   AnimatedPlaceholderErrorTitle,
-} from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+} from 'twenty-ui-deprecated/layout';
+import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
 
 const StyledBackDrop = styled.div`
   align-items: center;
@@ -69,7 +69,7 @@ export const NotFound = () => {
         </AnimatedPlaceholderErrorContainer>
       </StyledBackDrop>
       <Suspense fallback={null}>
-        <SignInBackgroundMockPage />
+        <BackgroundMockPage />
       </Suspense>
     </>
   );

@@ -15,7 +15,7 @@ import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFr
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 import { mockedWorkspaceMemberRecords } from '~/testing/mock-data/generated/data/workspaceMembers/mock-workspaceMembers-data';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const cache = new InMemoryCache();
 
@@ -142,7 +142,7 @@ describe('useActivityTargetObjectRecords', () => {
 
     setTestObjectMetadataItemsInMetadataStore(
       jotaiStore,
-      generatedMockObjectMetadataItems,
+      getTestEnrichedObjectMetadataItemsMock(),
     );
 
     const { result } = renderHook(

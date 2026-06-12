@@ -1,18 +1,18 @@
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemStyleIcon';
-import { getStandardObjectIconColor } from '@/navigation-menu-item/common/utils/getStandardObjectIconColor';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SidePanelObjectMenuItem } from '@/navigation-menu-item/edit/side-panel/components/SidePanelObjectMenuItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 
 type SidePanelObjectPickerItemProps = {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   isViewItem: boolean;
-  onSelectObjectForViewEdit?: (objectMetadataItem: ObjectMetadataItem) => void;
-  onChangeObject: (objectMetadataItem: ObjectMetadataItem) => void;
+  onSelectObjectForViewEdit?: (
+    objectMetadataItem: EnrichedObjectMetadataItem,
+  ) => void;
+  onChangeObject: (objectMetadataItem: EnrichedObjectMetadataItem) => void;
   objectMenuItemVariant?: 'add' | 'edit';
   dragIndex?: number;
   disableDrag?: boolean;
@@ -27,8 +27,6 @@ export const SidePanelObjectPickerItem = ({
   dragIndex,
   disableDrag = false,
 }: SidePanelObjectPickerItemProps) => {
-  const { getIcon } = useIcons();
-
   if (isViewItem && isDefined(onSelectObjectForViewEdit)) {
     return (
       <SelectableListItem
@@ -37,12 +35,7 @@ export const SidePanelObjectPickerItem = ({
       >
         <CommandMenuItem
           Icon={() => (
-            <NavigationMenuItemStyleIcon
-              Icon={getIcon(objectMetadataItem.icon)}
-              color={getStandardObjectIconColor(
-                objectMetadataItem.nameSingular,
-              )}
-            />
+            <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
           )}
           label={objectMetadataItem.labelPlural}
           id={objectMetadataItem.id}

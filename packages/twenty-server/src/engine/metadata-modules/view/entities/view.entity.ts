@@ -14,12 +14,15 @@ import {
 } from 'typeorm';
 import {
   AggregateOperations,
+  type SerializedRelation,
+  ViewCalendarLayout,
+  ViewKey,
   ViewOpenRecordIn,
   ViewType,
-  ViewKey,
   ViewVisibility,
 } from 'twenty-shared/types';
 
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -29,8 +32,24 @@ import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-g
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
-import { ViewCalendarLayout } from 'src/engine/metadata-modules/view/enums/view-calendar-layout.enum';
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
+
+export type ViewOverrides = {
+  name?: string;
+  type?: ViewType;
+  icon?: string;
+  position?: number;
+  isCompact?: boolean;
+  openRecordIn?: ViewOpenRecordIn;
+  kanbanAggregateOperation?: AggregateOperations | null;
+  kanbanAggregateOperationFieldMetadataId?: SerializedRelation | null;
+  anyFieldFilterValue?: string | null;
+  calendarLayout?: ViewCalendarLayout | null;
+  calendarFieldMetadataId?: SerializedRelation | null;
+  visibility?: ViewVisibility;
+  mainGroupByFieldMetadataId?: SerializedRelation | null;
+  shouldHideEmptyGroups?: boolean;
+};
 
 // We could refactor this type to be dynamic to view type
 @Entity({ name: 'view', schema: 'core' })
@@ -49,7 +68,10 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'CHK_VIEW_CALENDAR_INTEGRITY',
   `("type" != 'CALENDAR' OR ("calendarLayout" IS NOT NULL AND "calendarFieldMetadataId" IS NOT NULL))`,
 )
-export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
+export class ViewEntity
+  extends OverridableEntity<ViewOverrides>
+  implements Required<ViewEntity>
+{
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -215,3 +237,13 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
   )
   viewFilterGroups: Relation<ViewFilterGroupEntity[]>;
 }
+
+const VIEW_OVERRIDABLE_COLUMNS_UPGRADE_COMMAND_NAME =
+  '2.12.0_ViewOverridableEntityFastInstanceCommand_1781114009075';
+
+WasIntroducedInUpgrade({
+  upgradeCommandName: VIEW_OVERRIDABLE_COLUMNS_UPGRADE_COMMAND_NAME,
+})(ViewEntity.prototype, 'overrides');
+WasIntroducedInUpgrade({
+  upgradeCommandName: VIEW_OVERRIDABLE_COLUMNS_UPGRADE_COMMAND_NAME,
+})(ViewEntity.prototype, 'isActive');

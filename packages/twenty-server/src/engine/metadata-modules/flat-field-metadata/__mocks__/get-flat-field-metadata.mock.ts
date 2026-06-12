@@ -20,6 +20,7 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     viewFilterIds: [],
     kanbanAggregateOperationViewIds: [],
     viewFieldIds: [],
+    fieldPermissionIds: [],
     createdAt,
     mainGroupByFieldMetadataViewIds: [],
     updatedAt: createdAt,
@@ -31,7 +32,6 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     icon: 'icon',
     id: faker.string.uuid(),
     isActive: true,
-    isCustom: true,
     name: 'flatFieldMetadataName',
     label: 'flat field metadata label',
     isNullable: true,
@@ -50,6 +50,7 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     relationTargetFieldMetadataUniversalIdentifier: null,
     viewFilterUniversalIdentifiers: [],
     viewFieldUniversalIdentifiers: [],
+    fieldPermissionUniversalIdentifiers: [],
     kanbanAggregateOperationViewUniversalIdentifiers: [],
     calendarViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
@@ -65,7 +66,6 @@ export const getStandardFlatFieldMetadataMock = (
 ) => {
   return getFlatFieldMetadataMock({
     standardOverrides: {},
-    isCustom: false,
     isSystem: true,
     ...overrides,
   });

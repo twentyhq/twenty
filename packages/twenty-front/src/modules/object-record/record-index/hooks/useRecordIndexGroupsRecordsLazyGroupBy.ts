@@ -1,7 +1,7 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlEdge } from '@/object-record/graphql/types/RecordGqlEdge';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { generateGroupsRecordsGroupByQuery } from '@/object-record/record-aggregate/utils/generateGroupsRecordsGroupByQuery';
@@ -26,7 +26,7 @@ export const useRecordIndexGroupsRecordsLazyGroupBy = ({
   objectMetadataItem,
   groupByFieldMetadataItem,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   groupByFieldMetadataItem: Nullable<FieldMetadataItem>;
 }) => {
   const { objectMetadataItems } = useObjectMetadataItems();

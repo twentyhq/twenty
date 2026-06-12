@@ -9,4 +9,5 @@ export type EmailFormData = {
   subject: string;
   body: string;
   files: WorkflowAttachment[];
+  inReplyTo: string;
 };

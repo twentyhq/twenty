@@ -6,7 +6,6 @@ import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/
 
 export enum WidgetConfigurationType {
   AGGREGATE_CHART = GraphType.AGGREGATE_CHART,
-  GAUGE_CHART = GraphType.GAUGE_CHART,
   PIE_CHART = GraphType.PIE_CHART,
   BAR_CHART = GraphType.BAR_CHART,
   LINE_CHART = GraphType.LINE_CHART,
@@ -26,10 +25,11 @@ export enum WidgetConfigurationType {
   WORKFLOW_VERSION = 'WORKFLOW_VERSION',
   WORKFLOW_RUN = 'WORKFLOW_RUN',
   FRONT_COMPONENT = 'FRONT_COMPONENT',
+  RECORD_TABLE = 'RECORD_TABLE',
+  EMAIL_THREAD = 'EMAIL_THREAD',
 }
 export type AllGraphWidgetConfigurationType =
   | WidgetConfigurationType.AGGREGATE_CHART
-  | WidgetConfigurationType.GAUGE_CHART
   | WidgetConfigurationType.PIE_CHART
   | WidgetConfigurationType.BAR_CHART
   | WidgetConfigurationType.LINE_CHART;

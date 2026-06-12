@@ -1,44 +1,44 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from '@ui/theme-constants';
+import { clsx } from 'clsx';
 
-const StyledBanner = styled.div<{ variant?: BannerVariant }>`
-  align-items: center;
-  backdrop-filter: blur(5px);
-  background: ${({ variant }) =>
-    variant === 'danger'
-      ? themeCssVariables.color.red
-      : themeCssVariables.color.blue};
-  display: flex;
-  gap: ${themeCssVariables.spacing[3]};
-  height: 40px;
-  justify-content: center;
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
-  width: 100%;
-  color: ${themeCssVariables.font.color.inverted};
-  font-family: Inter;
-  font-size: ${themeCssVariables.font.size.md};
-  font-style: normal;
-  font-weight: ${themeCssVariables.font.weight.medium};
-  line-height: 150%;
-  box-sizing: border-box;
-`;
+import styles from './Banner.module.scss';
 
-export type BannerVariant = 'danger' | 'default';
+export type BannerColor = 'blue' | 'danger';
+
+export type BannerVariant = 'primary' | 'secondary';
+
+const BANNER_VARIANT_COLOR_CLASS_NAMES = {
+  primary: {
+    blue: styles.primaryBlue,
+    danger: styles.primaryDanger,
+  },
+  secondary: {
+    blue: styles.secondaryBlue,
+    danger: styles.secondaryDanger,
+  },
+} as const;
 
 type BannerProps = {
+  color?: BannerColor;
   variant?: BannerVariant;
   className?: string;
   children: React.ReactNode;
-} & React.HTMLAttributes<HTMLDivElement>;
+};
 
 export const Banner = ({
-  variant = 'default',
+  color = 'blue',
+  variant = 'primary',
   className,
   children,
 }: BannerProps) => {
   return (
-    <StyledBanner variant={variant} className={className}>
+    <div
+      className={clsx(
+        styles.banner,
+        BANNER_VARIANT_COLOR_CLASS_NAMES[variant][color],
+        className,
+      )}
+    >
       {children}
-    </StyledBanner>
+    </div>
   );
 };

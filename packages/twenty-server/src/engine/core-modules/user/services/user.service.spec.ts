@@ -6,12 +6,15 @@ import { type Repository, type UpdateResult } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { WorkspaceMemberTranspiler } from 'src/engine/core-modules/user/services/workspace-member-transpiler.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -19,6 +22,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -48,11 +52,18 @@ describe('UserService', () => {
             save: jest.fn(),
             softDelete: jest.fn(),
             update: jest.fn(),
+            manager: {
+              connection: { driver: { options: { type: 'postgres' } } },
+            },
+            metadata: { columns: [] },
           },
         },
         {
           provide: WorkspaceService,
-          useValue: { deleteWorkspace: jest.fn() },
+          useValue: {
+            deleteWorkspace: jest.fn(),
+            suspendWorkspace: jest.fn(),
+          },
         },
         {
           provide: WorkspaceDomainsService,
@@ -95,6 +106,24 @@ describe('UserService', () => {
           provide: ApplicationService,
           useValue: {},
         },
+        {
+          provide: CoreEntityCacheService,
+          useValue: {
+            invalidate: jest.fn(),
+          },
+        },
+        {
+          provide: WorkspaceMemberTranspiler,
+          useValue: {
+            generateSignedAvatarUrl: jest.fn().mockReturnValue(''),
+          },
+        },
+        {
+          provide: TwentyConfigService,
+          useValue: {
+            get: jest.fn().mockReturnValue(false),
+          },
+        },
       ],
     }).compile();
 
@@ -114,7 +143,7 @@ describe('UserService', () => {
       // isWorkspaceActiveOrSuspendedSpy.mockReturnValue(false);
 
       const res = await service.loadWorkspaceMember(
-        { id: 'u1' } as UserEntity,
+        { id: 'u1' } as Pick<AuthContextUser, 'id'>,
         { id: 'w1' } as WorkspaceEntity,
       );
 
@@ -133,7 +162,7 @@ describe('UserService', () => {
         .mockResolvedValue(mockWorkspaceMemberRepo);
 
       const res = await service.loadWorkspaceMember(
-        { id: 'u1' } as UserEntity,
+        { id: 'u1' } as Pick<AuthContextUser, 'id'>,
         {
           id: 'w1',
           activationStatus: WorkspaceActivationStatus.ACTIVE,
@@ -371,7 +400,8 @@ describe('UserService', () => {
 
       const res = await service.deleteUser('u2');
 
-      expect(workspaceService.deleteWorkspace).toHaveBeenCalledWith('w2');
+      expect(workspaceService.suspendWorkspace).toHaveBeenCalledWith('w2');
+      expect(workspaceService.deleteWorkspace).toHaveBeenCalledWith('w2', true);
       expect(res).toMatchObject({ id: 'u2' });
     });
 

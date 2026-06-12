@@ -16,7 +16,7 @@ export const computeFolderIdsForSyncToggle = ({
 
   const collectChildren = (id: string): string[] => {
     const folder = folderById.get(id);
-    const children = folder?.externalId
+    const children = folder
       ? allFolders.filter(
           (childFolder) => childFolder.parentFolderId === folder.externalId,
         )

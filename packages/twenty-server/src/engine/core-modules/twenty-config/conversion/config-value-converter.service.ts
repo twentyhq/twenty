@@ -76,7 +76,7 @@ export class ConfigValueConverterService {
         return appValue;
       }
 
-      // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       return transformer.toStorage(appValue as any, options);
     } catch (error) {
       if (error instanceof ConfigVariableException) {
@@ -107,6 +107,13 @@ export class ConfigValueConverterService {
     if (typeof defaultValue === 'boolean') return ConfigVariableType.BOOLEAN;
     if (typeof defaultValue === 'number') return ConfigVariableType.NUMBER;
     if (Array.isArray(defaultValue)) return ConfigVariableType.ARRAY;
+    if (
+      typeof defaultValue === 'object' &&
+      defaultValue !== null &&
+      !Array.isArray(defaultValue)
+    ) {
+      return ConfigVariableType.JSON;
+    }
 
     return ConfigVariableType.STRING;
   }

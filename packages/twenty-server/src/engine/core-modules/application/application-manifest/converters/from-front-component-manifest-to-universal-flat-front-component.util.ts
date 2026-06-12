@@ -21,6 +21,7 @@ export const fromFrontComponentManifestToUniversalFlatFrontComponent = ({
     componentName: frontComponentManifest.componentName,
     builtComponentChecksum: frontComponentManifest.builtComponentChecksum,
     isHeadless: frontComponentManifest.isHeadless ?? false,
+    usesSdkClient: frontComponentManifest.usesSdkClient ?? false,
     createdAt: now,
     updatedAt: now,
   };

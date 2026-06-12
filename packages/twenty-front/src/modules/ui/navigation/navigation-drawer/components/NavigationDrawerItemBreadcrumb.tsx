@@ -1,6 +1,9 @@
 import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 export type NavigationDrawerItemBreadcrumbProps = {
   state?: NavigationDrawerSubItemState;
@@ -12,6 +15,10 @@ const StyledNavigationDrawerItemBreadcrumbContainer = styled.div`
   margin-left: 7.5px;
   margin-right: ${themeCssVariables.spacing[2]};
   width: 9px;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    height: ${themeCssVariables.spacing[8]};
+  }
 `;
 
 const StyledGapVerticalLine = styled.div<{ darker: boolean }>`
@@ -37,6 +44,10 @@ const StyledSecondaryFullVerticalBar = styled.div<{ darker: boolean }>`
   position: relative;
   top: -17px;
   width: 1px;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    height: ${themeCssVariables.spacing[8]};
+  }
 `;
 
 const StyledRoundedProtrusion = styled.div<{ darker: boolean }>`

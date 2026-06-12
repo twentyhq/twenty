@@ -17,9 +17,6 @@ export const normalizeManifestForComparison = <T extends Manifest>(
     packageJsonChecksum: manifest.application.packageJsonChecksum
       ? '[checksum]'
       : null,
-    apiClientChecksum: manifest.application.apiClientChecksum
-      ? '[checksum]'
-      : null,
   },
   objects: sortById(
     manifest.objects.map((object) => ({
@@ -31,9 +28,12 @@ export const normalizeManifestForComparison = <T extends Manifest>(
   roles: sortById(manifest.roles),
   skills: sortById(manifest.skills),
   agents: sortById(manifest.agents),
+  connectionProviders: sortById(manifest.connectionProviders ?? []),
   views: sortById(manifest.views),
   navigationMenuItems: sortById(manifest.navigationMenuItems),
   pageLayouts: sortById(manifest.pageLayouts),
+  pageLayoutTabs: sortById(manifest.pageLayoutTabs ?? []),
+  commandMenuItems: sortById(manifest.commandMenuItems ?? []),
   logicFunctions: sortById(
     manifest.logicFunctions?.map((fn) => ({
       ...fn,

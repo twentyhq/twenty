@@ -27,9 +27,5 @@ export const getCurrentGraphTypeFromConfig = (
     return GraphType.AGGREGATE;
   }
 
-  if (isWidgetConfigurationOfType(configuration, 'GaugeChartConfiguration')) {
-    return GraphType.GAUGE;
-  }
-
   throw new Error(t`Unknown chart configuration type`);
 };

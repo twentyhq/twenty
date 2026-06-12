@@ -6,24 +6,26 @@ import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavi
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
-import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
+import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { viewableRecordIdState } from '@/object-record/record-side-panel/states/viewableRecordIdState';
 import { useOpenNewRecordTitleCell } from '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell';
-import { CoreObjectNameSingular, SidePanelPages } from 'twenty-shared/types';
+import {
+  ContextStorePageType,
+  CoreObjectNameSingular,
+  SidePanelPages,
+} from 'twenty-shared/types';
 
 import { useRunWorkflowRunOpeningInSidePanelEffects } from '@/workflow/hooks/useRunWorkflowRunOpeningInSidePanelEffects';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui-deprecated/display';
 import { v4 } from 'uuid';
 
 export const useOpenRecordInSidePanel = () => {
@@ -117,10 +119,10 @@ export const useOpenRecordInSidePanel = () => {
       );
 
       store.set(
-        contextStoreCurrentViewTypeComponentState.atomFamily({
+        contextStoreCurrentPageTypeComponentState.atomFamily({
           instanceId: pageComponentInstanceId,
         }),
-        ContextStoreViewType.ShowPage,
+        ContextStorePageType.Record,
       );
 
       store.set(
@@ -129,17 +131,6 @@ export const useOpenRecordInSidePanel = () => {
         }),
         store.get(
           contextStoreCurrentViewIdComponentState.atomFamily({
-            instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-          }),
-        ),
-      );
-
-      store.set(
-        contextStoreIsPageInEditModeComponentState.atomFamily({
-          instanceId: pageComponentInstanceId,
-        }),
-        store.get(
-          contextStoreIsPageInEditModeComponentState.atomFamily({
             instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           }),
         ),

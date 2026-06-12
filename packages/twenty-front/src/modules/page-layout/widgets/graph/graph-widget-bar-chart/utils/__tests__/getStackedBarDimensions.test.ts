@@ -114,4 +114,92 @@ describe('getStackedBarDimensions', () => {
       newNegativeStackPixel: 30,
     });
   });
+
+  it('clamps vertical positive bar when stack exceeds axis length', () => {
+    const ctx = createContext({ isVertical: true });
+
+    const dimensions = getStackedBarDimensions({
+      ctx,
+      layout,
+      categoryStart: 20,
+      value: 40,
+      positiveStackPixel: 80,
+      negativeStackPixel: 50,
+    });
+
+    expect(dimensions).toEqual({
+      x: 22,
+      y: 0,
+      width: 10,
+      height: 20,
+      newPositiveStackPixel: 120,
+      newNegativeStackPixel: 50,
+    });
+  });
+
+  it('clamps vertical negative bar when stack goes below zero', () => {
+    const ctx = createContext({ isVertical: true });
+
+    const dimensions = getStackedBarDimensions({
+      ctx,
+      layout,
+      categoryStart: 20,
+      value: -40,
+      positiveStackPixel: 50,
+      negativeStackPixel: 20,
+    });
+
+    expect(dimensions).toEqual({
+      x: 22,
+      y: 80,
+      width: 10,
+      height: 20,
+      newPositiveStackPixel: 50,
+      newNegativeStackPixel: -20,
+    });
+  });
+
+  it('clamps horizontal positive bar when stack exceeds axis length', () => {
+    const ctx = createContext({ isVertical: false });
+
+    const dimensions = getStackedBarDimensions({
+      ctx,
+      layout,
+      categoryStart: 20,
+      value: 40,
+      positiveStackPixel: 80,
+      negativeStackPixel: 50,
+    });
+
+    expect(dimensions).toEqual({
+      x: 80,
+      y: 22,
+      width: 20,
+      height: 10,
+      newPositiveStackPixel: 120,
+      newNegativeStackPixel: 50,
+    });
+  });
+
+  it('clamps horizontal negative bar when stack goes below zero', () => {
+    const ctx = createContext({ isVertical: false });
+
+    const dimensions = getStackedBarDimensions({
+      ctx,
+      layout,
+      categoryStart: 20,
+      value: -40,
+      positiveStackPixel: 50,
+      negativeStackPixel: 20,
+    });
+
+    expect(dimensions).toEqual({
+      x: 0,
+      y: 22,
+      width: 20,
+      height: 10,
+      newPositiveStackPixel: 50,
+      newNegativeStackPixel: -20,
+    });
+  });
 });

@@ -5,13 +5,10 @@ import { useState } from 'react';
 import { EventCardCalendarEvent } from '@/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent';
 import { EventCard } from '@/activities/timeline-activities/rows/components/EventCard';
 import { EventCardToggleButton } from '@/activities/timeline-activities/rows/components/EventCardToggleButton';
-import {
-  type EventRowDynamicComponentProps,
-  StyledEventRowItemAction,
-  StyledEventRowItemColumn,
-} from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
+import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
+import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
 import { isTimelineActivityWithLinkedRecord } from '@/activities/timeline-activities/types/TimelineActivity';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 type EventRowCalendarEventProps = EventRowDynamicComponentProps;
 
@@ -43,10 +40,10 @@ export const EventRowCalendarEvent = ({
   return (
     <StyledEventRowCalendarEventContainer>
       <StyledRowContainer>
-        <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
-        <StyledEventRowItemAction>
+        <EventRowItem>{authorFullName}</EventRowItem>
+        <EventRowItem variant="action">
           {t`linked a calendar event with ${labelIdentifierValue}`}
-        </StyledEventRowItemAction>
+        </EventRowItem>
         <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
       </StyledRowContainer>
       {isTimelineActivityWithLinkedRecord(event) && (

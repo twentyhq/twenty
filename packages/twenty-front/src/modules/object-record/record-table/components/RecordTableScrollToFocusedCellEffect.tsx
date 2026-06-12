@@ -2,6 +2,7 @@ import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { isRecordTableCellFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableCellFocusActiveComponentState';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
+import { getRecordTableCellId } from '@/object-record/record-table/utils/getRecordTableCellId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,7 +20,6 @@ export const RecordTableScrollToFocusedCellEffect = () => {
     recordTableId,
   );
 
-  // Handle cell focus
   useEffect(() => {
     if (!isRecordTableCellFocusActive) {
       return;
@@ -30,7 +30,11 @@ export const RecordTableScrollToFocusedCellEffect = () => {
     }
 
     const focusElement = document.getElementById(
-      `record-table-cell-${recordTableFocusPosition.column}-${recordTableFocusPosition.row}`,
+      getRecordTableCellId(
+        recordTableId,
+        recordTableFocusPosition.column,
+        recordTableFocusPosition.row,
+      ),
     );
 
     if (!focusElement) {
@@ -41,9 +45,11 @@ export const RecordTableScrollToFocusedCellEffect = () => {
 
     if (isSecondColumn) {
       const checkBoxColumnCell = document.getElementById(
-        `record-table-cell-0-0`,
+        getRecordTableCellId(recordTableId, 0, 0),
       );
-      const firstColumnCell = document.getElementById(`record-table-cell-1-0`);
+      const firstColumnCell = document.getElementById(
+        getRecordTableCellId(recordTableId, 1, 0),
+      );
 
       if (isDefined(checkBoxColumnCell) && isDefined(firstColumnCell)) {
         const checkBoxColumnWidth = checkBoxColumnCell.offsetWidth;
@@ -63,7 +69,7 @@ export const RecordTableScrollToFocusedCellEffect = () => {
         focusElement.style.scrollMarginBottom = '';
       }
     };
-  }, [recordTableFocusPosition, isRecordTableCellFocusActive]);
+  }, [recordTableId, recordTableFocusPosition, isRecordTableCellFocusActive]);
 
   return null;
 };

@@ -1,6 +1,7 @@
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { getRecordTableCellId } from '@/object-record/record-table/utils/getRecordTableCellId';
 import { focusedRecordTableRowIndexComponentState } from '@/object-record/record-table/states/focusedRecordTableRowIndexComponentState';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -42,7 +43,7 @@ export const RecordTableScrollToFocusedRowEffect = () => {
     }
 
     const focusElement = document.getElementById(
-      `record-table-cell-0-${focusedRecordTableRowIndex}`,
+      getRecordTableCellId(recordTableId, 0, focusedRecordTableRowIndex),
     );
 
     if (!focusElement) {
@@ -59,7 +60,12 @@ export const RecordTableScrollToFocusedRowEffect = () => {
         focusElement.style.scrollMarginBottom = '';
       }
     };
-  }, [focusedRecordTableRowIndex, isRecordTableRowFocusActive, allRecordIds]);
+  }, [
+    recordTableId,
+    focusedRecordTableRowIndex,
+    isRecordTableRowFocusActive,
+    allRecordIds,
+  ]);
 
   return null;
 };

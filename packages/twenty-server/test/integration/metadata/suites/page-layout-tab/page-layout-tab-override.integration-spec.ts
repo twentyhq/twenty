@@ -9,7 +9,6 @@ const TAB_OVERRIDE_GQL_FIELDS = `
   title
   position
   icon
-  isOverridden
   pageLayoutId
   createdAt
   updatedAt
@@ -79,7 +78,6 @@ describe('Page layout tab override behavior', () => {
     });
 
     expect(data.updatePageLayoutTab.title).toBe(overriddenTitle);
-    expect(data.updatePageLayoutTab.isOverridden).toBe(true);
   });
 
   it('should return the overridden title when querying the tab', async () => {
@@ -108,7 +106,6 @@ describe('Page layout tab override behavior', () => {
     });
 
     expect(data.updatePageLayoutTab.title).toBe(seededTabOriginalTitle);
-    expect(data.updatePageLayoutTab.isOverridden).toBe(false);
   });
 
   it('should override position on a seeded tab', async () => {

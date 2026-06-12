@@ -13,6 +13,8 @@ async function bootstrap() {
     if (shouldCaptureException(err)) {
       exceptionHandlerService.captureExceptions([err]);
     }
+
+    process.exitCode = 1;
   };
 
   const app = await CommandFactory.createWithoutRunning(CommandModule, {
@@ -29,6 +31,6 @@ async function bootstrap() {
 
   await CommandFactory.runApplication(app);
 
-  app.close();
+  await app.close();
 }
-bootstrap();
+void bootstrap();

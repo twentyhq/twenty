@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getUpdateManyRecordsMutationResponseField } from '@/object-record/utils/getUpdateManyRecordsMutationResponseField';
 import { gql } from '@apollo/client';
 import { capitalize } from 'twenty-shared/utils';
@@ -6,7 +6,7 @@ import { capitalize } from 'twenty-shared/utils';
 export const generateUpdateManyRecordsMutation = ({
   objectMetadataItem,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: EnrichedObjectMetadataItem;
 }) => {
   const capitalizedObjectNameSingular = capitalize(
     objectMetadataItem.nameSingular,

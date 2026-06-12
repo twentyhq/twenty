@@ -8,7 +8,7 @@ import {
   type FieldMetadataMultiItemSettings,
   type PartialFieldMetadataItemOption,
 } from 'twenty-shared/types';
-import { type ThemeColor } from 'twenty-ui/theme';
+import { type ThemeColor } from 'twenty-ui-deprecated/theme';
 import { type Field } from '~/generated-metadata/graphql';
 
 export type FieldMetadataItemOption = PartialFieldMetadataItemOption & {
@@ -20,12 +20,14 @@ export type FieldMetadataItem = Omit<
   | '__typename'
   | 'applicationId'
   | 'defaultValue'
+  | 'objectMetadataId'
   | 'options'
   | 'relation'
   | 'morphRelations'
 > & {
   __typename?: string;
   applicationId?: string;
+  objectMetadataId?: string;
   defaultValue?: any;
   options?: FieldMetadataItemOption[] | null;
   relation?: FieldMetadataItemRelation | null;

@@ -1,21 +1,23 @@
-import { isDefined } from 'twenty-shared/utils';
 import { msg } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 
-import { type BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
-import { type MeterBillingPriceTiers } from 'src/engine/core-modules/billing/types/meter-billing-price-tier.type';
+import { isNumber } from 'class-validator';
 import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { type BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { type BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { type BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { type BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
-import { type BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import {
   type LicensedBillingSubscriptionItem,
   type MeteredBillingSubscriptionItem,
 } from 'src/engine/core-modules/billing/types/billing-subscription-item.type';
 import { type BillingSubscriptionWithSubscriptionItems } from 'src/engine/core-modules/billing/types/billing-subscription-with-subscription-items';
+import { type MeterBillingPriceTiers } from 'src/engine/core-modules/billing/types/meter-billing-price-tier.type';
 
 const assertIsMeteredTiersSchemaOrThrow = (
   tiers: BillingPriceEntity['tiers'] | undefined | null,
@@ -148,6 +150,45 @@ const assertIsSubscription = (
   return;
 };
 
+// V2 validators — do not throw for V1 items; only used on V2 code paths
+
+const isLicensedResourceCreditItem = (
+  subscriptionItem: BillingSubscriptionItemEntity,
+): boolean => {
+  return (
+    subscriptionItem.billingProduct?.metadata?.productKey ===
+    BillingProductKey.RESOURCE_CREDIT
+  );
+};
+
+const assertIsLicensedResourceCreditPrice = (
+  price: BillingPriceEntity,
+): void => {
+  if (
+    price.billingProduct?.metadata?.productKey !==
+    BillingProductKey.RESOURCE_CREDIT
+  ) {
+    throw new BillingException(
+      'Price is not a RESOURCE_CREDIT licensed price',
+      BillingExceptionCode.BILLING_PRICE_INVALID,
+    );
+  }
+
+  const creditAmount = price.metadata?.credit_amount;
+
+  if (!isDefined(creditAmount) || !isNumber(Number(creditAmount))) {
+    throw new BillingException(
+      'RESOURCE_CREDIT price must have a credit_amount in metadata',
+      BillingExceptionCode.BILLING_PRICE_INVALID,
+    );
+  }
+};
+
+const getCapFromCreditMetadata = (price: BillingPriceEntity): number => {
+  assertIsLicensedResourceCreditPrice(price);
+  return Number(price.metadata?.credit_amount);
+};
+
 export const billingValidator: {
   assertIsMeteredTiersSchemaOrThrow: typeof assertIsMeteredTiersSchemaOrThrow;
   isMeteredTiersSchema: typeof isMeteredTiersSchema;
@@ -156,6 +197,9 @@ export const billingValidator: {
   assertIsMeteredPrice: typeof assertIsMeteredPrice;
   assertIsSubscription: typeof assertIsSubscription;
   isMeteredPrice: typeof isMeteredPrice;
+  assertIsLicensedResourceCreditPrice: typeof assertIsLicensedResourceCreditPrice;
+  isLicensedResourceCreditItem: typeof isLicensedResourceCreditItem;
+  getCapFromCreditMetadata: typeof getCapFromCreditMetadata;
 } = {
   assertIsMeteredTiersSchemaOrThrow,
   isMeteredTiersSchema,
@@ -164,4 +208,7 @@ export const billingValidator: {
   assertIsMeteredPrice,
   assertIsSubscription,
   isMeteredPrice,
+  assertIsLicensedResourceCreditPrice,
+  isLicensedResourceCreditItem,
+  getCapFromCreditMetadata,
 };

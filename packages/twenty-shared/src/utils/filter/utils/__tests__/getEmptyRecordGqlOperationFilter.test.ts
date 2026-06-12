@@ -97,6 +97,16 @@ describe('getEmptyRecordGqlOperationFilter', () => {
       });
     });
 
+    it('should handle UUID type', () => {
+      const result = getEmptyRecordGqlOperationFilter(
+        makeParams(FieldMetadataType.UUID),
+      );
+
+      expect(result).toEqual({
+        testField: { is: 'NULL' },
+      });
+    });
+
     it('should handle CURRENCY type', () => {
       const result = getEmptyRecordGqlOperationFilter(
         makeParams(FieldMetadataType.CURRENCY),

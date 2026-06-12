@@ -23,14 +23,14 @@ describe('resolveToolInput', () => {
 
   it('should unwrap execute_tool input', () => {
     const input = {
-      toolName: 'find_companies',
+      toolName: 'find_many_companies',
       arguments: { filter: { name: 'Acme' } },
     };
     const result = resolveToolInput(input, 'execute_tool');
 
     expect(result).toEqual({
       resolvedInput: { filter: { name: 'Acme' } },
-      resolvedToolName: 'find_companies',
+      resolvedToolName: 'find_many_companies',
     });
   });
 
@@ -86,16 +86,35 @@ describe('getToolDisplayMessage', () => {
     });
   });
 
+  describe('app_exa_web_search', () => {
+    it('should show the same searching-the-web message as native web_search', () => {
+      const message = getToolDisplayMessage(
+        { query: 'CRM tools' },
+        'app_exa_web_search',
+        false,
+      );
+
+      expect(message).toContain('Searching');
+      expect(message).toContain('CRM tools');
+    });
+
+    it('should handle missing query', () => {
+      const message = getToolDisplayMessage({}, 'app_exa_web_search', true);
+
+      expect(message).toContain('Searched the web');
+    });
+  });
+
   describe('learn_tools', () => {
     it('should show tool names when provided', () => {
       const message = getToolDisplayMessage(
-        { toolNames: ['find_companies', 'create_task'] },
+        { toolNames: ['find_many_companies', 'create_one_task'] },
         'learn_tools',
         true,
       );
 
       expect(message).toContain('Learned');
-      expect(message).toContain('find_companies, create_task');
+      expect(message).toContain('find_many_companies, create_one_task');
     });
 
     it('should show generic message without tool names', () => {
@@ -163,13 +182,13 @@ describe('getToolDisplayMessage', () => {
   describe('execute_tool wrapper', () => {
     it('should unwrap execute_tool and display inner tool name', () => {
       const message = getToolDisplayMessage(
-        { toolName: 'find_companies', arguments: { limit: 10 } },
+        { toolName: 'find_many_companies', arguments: { limit: 10 } },
         'execute_tool',
         true,
       );
 
       expect(message).toContain('Ran');
-      expect(message).toContain('find companies');
+      expect(message).toContain('find many companies');
     });
   });
 });

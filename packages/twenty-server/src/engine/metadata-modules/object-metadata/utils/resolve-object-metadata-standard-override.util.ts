@@ -23,6 +23,9 @@ export const resolveObjectMetadataStandardOverride = (
 ): string => {
   const safeLocale = locale ?? SOURCE_LOCALE;
 
+  // Custom object labels are user-authored: never overridden nor translated.
+  // Without this gate, a label colliding with a standard catalog string
+  // (e.g. "Company") would get translated against the user's intent.
   if (objectMetadata.isCustom) {
     return objectMetadata[labelKey] ?? '';
   }

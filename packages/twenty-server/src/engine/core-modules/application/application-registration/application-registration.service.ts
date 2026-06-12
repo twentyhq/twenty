@@ -4,8 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import crypto from 'crypto';
 
 import * as bcrypt from 'bcrypt';
+import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, type Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
@@ -23,6 +24,9 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
+import { MARKETPLACE_CURATED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-curated-applications.constant';
+
 const BCRYPT_SALT_ROUNDS = 10;
 
 @Injectable()
@@ -34,6 +38,7 @@ export class ApplicationRegistrationService {
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
   ) {}
 
   async findMany(
@@ -56,10 +61,7 @@ export class ApplicationRegistrationService {
     ownerWorkspaceId: string,
   ): Promise<ApplicationRegistrationEntity> {
     const registration = await this.applicationRegistrationRepository.findOne({
-      where: [
-        { id, ownerWorkspaceId },
-        { id, ownerWorkspaceId: IsNull() },
-      ],
+      where: { id, ownerWorkspaceId },
     });
 
     if (!registration) {
@@ -102,7 +104,7 @@ export class ApplicationRegistrationService {
   ): Promise<PublicApplicationRegistrationDTO | null> {
     const registration = await this.applicationRegistrationRepository.findOne({
       where: { oAuthClientId: clientId },
-      select: ['id', 'name', 'logoUrl', 'websiteUrl', 'oAuthScopes'],
+      select: ['id', 'name', 'manifest', 'oAuthScopes'],
     });
 
     if (!registration) {
@@ -112,22 +114,12 @@ export class ApplicationRegistrationService {
     return {
       id: registration.id,
       name: registration.name,
-      logoUrl: registration.logoUrl,
-      websiteUrl: registration.websiteUrl,
+      logoUrl: registration.manifest?.application?.logoUrl ?? null,
+      websiteUrl: registration.manifest?.application?.websiteUrl ?? null,
       oAuthScopes: registration.oAuthScopes,
     };
   }
 
-  async isOwnedByWorkspace(id: string, workspaceId: string): Promise<boolean> {
-    const registration = await this.applicationRegistrationRepository.findOne({
-      where: { id },
-      select: ['id', 'ownerWorkspaceId'],
-    });
-
-    return registration?.ownerWorkspaceId === workspaceId;
-  }
-
-  // Global lookup — used by app sync to find existing registrations
   async findOneByUniversalIdentifier(
     universalIdentifier: string,
   ): Promise<ApplicationRegistrationEntity | null> {
@@ -172,17 +164,12 @@ export class ApplicationRegistrationService {
       this.applicationRegistrationRepository.create({
         universalIdentifier,
         name: input.name,
-        description: input.description ?? null,
-        logoUrl: input.logoUrl ?? null,
-        author: input.author ?? null,
         oAuthClientId: clientId,
         oAuthClientSecretHash: clientSecretHash,
         oAuthRedirectUris: input.oAuthRedirectUris ?? [],
         oAuthScopes: input.oAuthScopes ?? [],
         createdByUserId,
         ownerWorkspaceId,
-        websiteUrl: input.websiteUrl ?? null,
-        termsUrl: input.termsUrl ?? null,
       });
 
     const saved = await this.applicationRegistrationRepository.save(
@@ -211,16 +198,10 @@ export class ApplicationRegistrationService {
     const updateData: Record<string, unknown> = {};
 
     if (isDefined(update.name)) updateData.name = update.name;
-    if (isDefined(update.description))
-      updateData.description = update.description;
-    if (isDefined(update.logoUrl)) updateData.logoUrl = update.logoUrl;
-    if (isDefined(update.author)) updateData.author = update.author;
     if (isDefined(update.oAuthRedirectUris))
       updateData.oAuthRedirectUris = update.oAuthRedirectUris;
     if (isDefined(update.oAuthScopes))
       updateData.oAuthScopes = update.oAuthScopes;
-    if (isDefined(update.websiteUrl)) updateData.websiteUrl = update.websiteUrl;
-    if (isDefined(update.termsUrl)) updateData.termsUrl = update.termsUrl;
     if (isDefined(update.isListed)) updateData.isListed = update.isListed;
 
     if (Object.keys(updateData).length > 0) {
@@ -228,6 +209,27 @@ export class ApplicationRegistrationService {
     }
 
     return this.findOneById(id, ownerWorkspaceId);
+  }
+
+  async updateFromManifest({
+    applicationRegistrationId,
+    manifest,
+    sourceType,
+  }: {
+    applicationRegistrationId: string;
+    manifest: Manifest;
+    sourceType?: ApplicationRegistrationSourceType;
+  }): Promise<void> {
+    const existing = await this.applicationRegistrationRepository.findOneOrFail(
+      { where: { id: applicationRegistrationId } },
+    );
+
+    await this.applicationRegistrationRepository.save({
+      ...existing,
+      name: manifest.application.displayName,
+      manifest,
+      ...(sourceType !== undefined && { sourceType }),
+    });
   }
 
   async delete(id: string, ownerWorkspaceId: string): Promise<boolean> {
@@ -269,63 +271,69 @@ export class ApplicationRegistrationService {
       ApplicationRegistrationEntity,
       | 'universalIdentifier'
       | 'name'
-      | 'description'
-      | 'author'
       | 'sourceType'
       | 'sourcePackage'
-      | 'logoUrl'
-      | 'websiteUrl'
-      | 'termsUrl'
       | 'latestAvailableVersion'
-      | 'isListed'
-      | 'isFeatured'
-      | 'marketplaceDisplayData'
-      | 'ownerWorkspaceId'
+      | 'manifest'
     >,
   ): Promise<void> {
     const existing = await this.findOneByUniversalIdentifier(
       params.universalIdentifier,
     );
 
+    const curatedIdentifiers = new Set(
+      MARKETPLACE_CURATED_APPLICATIONS.map(
+        (entry) => entry.universalIdentifier,
+      ),
+    );
+
+    const isFeatured = curatedIdentifiers.has(params.universalIdentifier);
+
     if (isDefined(existing)) {
       await this.applicationRegistrationRepository.save({
         ...existing,
         name: params.name,
-        description: params.description,
-        author: params.author,
         sourceType: params.sourceType,
         sourcePackage: params.sourcePackage,
-        logoUrl: params.logoUrl,
-        websiteUrl: params.websiteUrl,
-        termsUrl: params.termsUrl,
         latestAvailableVersion: params.latestAvailableVersion,
-        marketplaceDisplayData: params.marketplaceDisplayData,
+        manifest: params.manifest,
+        isFeatured,
+      });
+    } else {
+      const registration = this.applicationRegistrationRepository.create({
+        universalIdentifier: params.universalIdentifier,
+        name: params.name,
+        sourceType: params.sourceType,
+        sourcePackage: params.sourcePackage,
+        latestAvailableVersion: params.latestAvailableVersion,
+        isListed: true,
+        isFeatured,
+        manifest: params.manifest,
+        oAuthClientId: v4(),
+        oAuthRedirectUris: [],
+        oAuthScopes: [],
+        ownerWorkspaceId: null,
       });
 
+      await this.applicationRegistrationRepository.save(registration);
+    }
+
+    if (!isDefined(params.manifest?.application?.serverVariables)) {
       return;
     }
 
-    const registration = this.applicationRegistrationRepository.create({
-      universalIdentifier: params.universalIdentifier,
-      name: params.name,
-      description: params.description,
-      author: params.author,
-      sourceType: params.sourceType,
-      sourcePackage: params.sourcePackage,
-      logoUrl: params.logoUrl,
-      websiteUrl: params.websiteUrl,
-      termsUrl: params.termsUrl,
-      latestAvailableVersion: params.latestAvailableVersion,
-      isListed: params.isListed,
-      isFeatured: params.isFeatured,
-      marketplaceDisplayData: params.marketplaceDisplayData,
-      oAuthClientId: v4(),
-      oAuthRedirectUris: [],
-      oAuthScopes: [],
-      ownerWorkspaceId: params.ownerWorkspaceId,
-    });
+    const registration = await this.findOneByUniversalIdentifier(
+      params.universalIdentifier,
+    );
 
-    await this.applicationRegistrationRepository.save(registration);
+    if (!isDefined(registration)) {
+      return;
+    }
+
+    await this.applicationRegistrationVariableService.syncVariableSchemas(
+      registration.id,
+      params.manifest.application.serverVariables,
+    );
   }
 
   async createCliRegistrationIfNotExists(): Promise<ApplicationRegistrationEntity | null> {
@@ -341,7 +349,6 @@ export class ApplicationRegistrationService {
       universalIdentifier:
         TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
       name: TWENTY_CLI_APPLICATION_REGISTRATION.name,
-      description: TWENTY_CLI_APPLICATION_REGISTRATION.description,
       oAuthClientId: v4(),
       oAuthClientSecretHash: null,
       oAuthRedirectUris: [],
@@ -356,7 +363,10 @@ export class ApplicationRegistrationService {
 
   async findManyListed(): Promise<ApplicationRegistrationEntity[]> {
     return this.applicationRegistrationRepository.find({
-      where: { isListed: true },
+      where: {
+        isListed: true,
+        sourceType: ApplicationRegistrationSourceType.NPM,
+      },
     });
   }
 

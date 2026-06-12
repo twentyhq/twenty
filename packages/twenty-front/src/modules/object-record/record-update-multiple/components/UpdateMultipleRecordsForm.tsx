@@ -7,8 +7,9 @@ import { isUpdateRecordValueEmpty } from '@/object-record/record-update-multiple
 import { shouldDisplayFormMultiEditField } from '@/object-record/record-update-multiple/utils/shouldDisplayFormMultiEditField';
 import { styled } from '@linaria/react';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { computeRelationGqlFieldJoinColumnName } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledSectionContainer = styled.div`
   > * {
@@ -59,13 +60,17 @@ export const UpdateMultipleRecordsForm = ({
           const isRelation = isFieldRelation(fieldDefinition);
           const fieldNameOrRelationIdName =
             isRelation && fieldMetadataItem.type === FieldMetadataType.RELATION
-              ? (fieldMetadataItem.settings?.joinColumnName as string)
+              ? computeRelationGqlFieldJoinColumnName({
+                  name: fieldMetadataItem.name,
+                })
               : fieldName;
 
           const value = values[fieldNameOrRelationIdName];
 
           const handleValueChange = (newValue: any) => {
-            if (isUpdateRecordValueEmpty(newValue)) {
+            if (newValue === null) {
+              onChange(fieldNameOrRelationIdName, null);
+            } else if (isUpdateRecordValueEmpty(newValue)) {
               onChange(fieldNameOrRelationIdName, undefined);
             } else {
               onChange(fieldNameOrRelationIdName, newValue);
@@ -79,6 +84,7 @@ export const UpdateMultipleRecordsForm = ({
               field={fieldDefinition}
               defaultValue={value}
               onChange={handleValueChange}
+              onClear={() => onChange(fieldNameOrRelationIdName, undefined)}
             />
           );
         })}

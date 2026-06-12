@@ -1,7 +1,9 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type EntityTarget, type ObjectLiteral } from 'typeorm';
 
+import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
@@ -9,11 +11,13 @@ import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/
 import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { PageLayoutTabEntity } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
+import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
@@ -48,11 +52,15 @@ export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   logicFunction: LogicFunctionEntity,
   objectMetadata: ObjectMetadataEntity,
   objectPermission: ObjectPermissionEntity,
+  fieldPermission: FieldPermissionEntity,
   role: RoleEntity,
   agent: AgentEntity,
   commandMenuItem: CommandMenuItemEntity,
   navigationMenuItem: NavigationMenuItemEntity,
+  rolePermissionFlag: RolePermissionFlagEntity,
   permissionFlag: PermissionFlagEntity,
   webhook: WebhookEntity,
+  applicationVariable: ApplicationVariableEntity,
   viewSort: ViewSortEntity,
+  connectionProvider: ConnectionProviderEntity,
 } as const satisfies Record<AllMetadataName, EntityTarget<ObjectLiteral>>;

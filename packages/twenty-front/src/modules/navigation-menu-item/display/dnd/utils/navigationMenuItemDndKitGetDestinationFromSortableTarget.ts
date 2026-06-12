@@ -34,18 +34,24 @@ export const getDestinationFromSortableTarget = (
     isDefined(targetItem) && isNavigationMenuItemFolder(targetItem);
   const dropTargetId = getDndKitDropTargetId(destDroppableId, index);
 
-  const { folderHeaderPrefix } =
+  const { folderHeaderPrefix, orphanDroppableId } =
     NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG[navigationMenuItemSection];
+
+  const isTopLevelOrphanGroup = destDroppableId === orphanDroppableId;
 
   const effectiveDropTargetId = isTargetFolder
     ? getDndKitDropTargetId(`${folderHeaderPrefix}${target.id}`, 0)
     : dropTargetId;
-  const destination: DropDestination = {
-    droppableId: isTargetFolder
-      ? `${folderHeaderPrefix}${target.id}`
-      : destDroppableId,
-    index: isTargetFolder ? 0 : index,
-  };
+
+  const destination: DropDestination =
+    isTargetFolder && isTopLevelOrphanGroup
+      ? { droppableId: destDroppableId, index }
+      : isTargetFolder
+        ? {
+            droppableId: `${folderHeaderPrefix}${String(target.id)}`,
+            index: 0,
+          }
+        : { droppableId: destDroppableId, index };
   return {
     destination,
     effectiveDropTargetId,

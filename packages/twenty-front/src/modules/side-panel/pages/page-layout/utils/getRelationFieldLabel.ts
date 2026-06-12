@@ -1,5 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const getRelationFieldLabel = (
   field: FieldMetadataItem,
   subFieldName: string,
-  objectMetadataItems: ObjectMetadataItem[] | undefined,
+  objectMetadataItems: EnrichedObjectMetadataItem[] | undefined,
 ): string => {
   if (!isDefined(objectMetadataItems)) {
     return field.label;

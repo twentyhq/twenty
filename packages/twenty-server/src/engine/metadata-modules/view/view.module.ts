@@ -8,14 +8,18 @@ import { FlatViewModule } from 'src/engine/metadata-modules/flat-view/flat-view.
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { ViewFieldGroupModule } from 'src/engine/metadata-modules/view-field-group/view-field-group.module';
+import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-field.module';
+import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
 import { ViewPermissionsModule } from 'src/engine/metadata-modules/view-permissions/view-permissions.module';
 import { ViewSortModule } from 'src/engine/metadata-modules/view-sort/view-sort.module';
+import { ViewWidgetUpsertService } from 'src/engine/metadata-modules/view/services/view-widget-upsert.service';
 import { ViewController } from 'src/engine/metadata-modules/view/controllers/view.controller';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewResolver } from 'src/engine/metadata-modules/view/resolvers/view.resolver';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewToolsFactory } from 'src/engine/metadata-modules/view/tools/view-tools.factory';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
@@ -24,6 +28,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     TypeOrmModule.forFeature([ViewEntity]),
     ViewPermissionsModule,
     ViewFieldGroupModule,
+    ViewFieldModule,
+    ViewFilterModule,
     ViewSortModule,
     I18nModule,
     ApplicationModule,
@@ -40,6 +46,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ViewResolver,
     ViewQueryParamsService,
     ViewToolsFactory,
+    ViewWidgetUpsertService,
+    provideWorkspaceScopedRepository(ViewEntity),
   ],
   exports: [
     ViewService,

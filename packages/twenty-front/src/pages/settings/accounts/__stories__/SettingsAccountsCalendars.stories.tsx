@@ -32,109 +32,69 @@ export const TwoConnectedAccounts: Story = {
     msw: {
       handlers: [
         ...graphqlMocks.handlers,
-        graphql.query('FindManyConnectedAccounts', () => {
+        graphql.query('MyConnectedAccounts', () => {
           return HttpResponse.json({
             data: {
-              connectedAccounts: {
-                __typename: 'ConnectedAccountConnection',
-                totalCount: 1,
-                pageInfo: {
-                  __typename: 'PageInfo',
-                  hasNextPage: false,
-                  startCursor: '',
-                  endCursor: '',
+              myConnectedAccounts: [
+                {
+                  id: '20202020-954c-4d76-9a87-e5f072d4b7ef',
+                  handle: 'test.test@gmail.com',
+                  provider: 'google',
+                  authFailedAt: null,
+                  scopes: ['calendar'],
+                  handleAliases: '',
+                  lastSignedInAt: null,
+                  userWorkspaceId: '20202020-03f2-4d83-b0d5-2ec2bcee72d4',
+                  connectionProviderId: null,
+                  name: 'Test User',
+                  visibility: 'SHARE_EVERYTHING',
+                  lastCredentialsRefreshedAt: null,
+                  connectionParameters: null,
+                  createdAt: '2024-07-03T20:03:35.064Z',
+                  updatedAt: '2024-07-03T20:03:35.064Z',
                 },
-                edges: [
-                  {
-                    __typename: 'ConnectedAccountEdge',
-                    cursor: '',
-                    node: {
-                      __typename: 'ConnectedAccount',
-                      accessToken: '',
-                      refreshToken: '',
-                      updatedAt: '2024-07-03T20:03:35.064Z',
-                      createdAt: '2024-07-03T20:03:35.064Z',
-                      id: '20202020-954c-4d76-9a87-e5f072d4b7ef',
-                      provider: 'google',
-                      accountOwnerId: '20202020-03f2-4d83-b0d5-2ec2bcee72d4',
-                      lastSyncHistoryId: '',
-                      handleAliases: '',
-                      handle: 'test.test@gmail.com',
-                      authFailedAt: null,
-                    },
-                  },
-                ],
-              },
+              ],
             },
           });
         }),
-        graphql.query('FindManyCalendarChannels', () => {
+        graphql.query('MyCalendarChannels', () => {
           return HttpResponse.json({
             data: {
-              calendarChannels: {
-                __typename: 'CalendarChannelConnection',
-                totalCount: 2,
-                pageInfo: {
-                  __typename: 'PageInfo',
-                  hasNextPage: false,
-                  startCursor: '',
-                  endCursor: '',
+              myCalendarChannels: [
+                {
+                  id: '20202020-ef5a-4822-9e08-ce6e6a4dcb6f',
+                  handle: 'test.test@gmail.com',
+                  connectedAccountId: '20202020-954c-4d76-9a87-e5f072d4b7ef',
+                  isSyncEnabled: true,
+                  syncStage: 'CALENDAR_EVENT_LIST_FETCH_PENDING',
+                  syncStatus: 'COMPLETED',
+                  visibility: 'SHARE_EVERYTHING',
+                  contactAutoCreationPolicy: 'SENT',
+                  isContactAutoCreationEnabled: true,
+                  createdAt: '2024-07-03T20:03:11.903Z',
+                  updatedAt: '2024-07-03T20:03:11.903Z',
                 },
-                edges: [
-                  {
-                    __typename: 'CalendarChannelEdge',
-                    cursor: '',
-                    node: {
-                      __typename: 'CalendarChannel',
-                      handle: 'test.test@gmail.com',
-                      excludeNonProfessionalEmails: true,
-                      syncStageStartedAt: null,
-                      id: '20202020-ef5a-4822-9e08-ce6e6a4dcb6f',
-                      updatedAt: '2024-07-03T20:03:11.903Z',
-                      createdAt: '2024-07-03T20:03:11.903Z',
-                      connectedAccountId:
-                        '20202020-954c-4d76-9a87-e5f072d4b7ef',
-                      contactAutoCreationPolicy: 'SENT',
-                      syncStage: 'CALENDAR_EVENT_LIST_FETCH_PENDING',
-                      type: 'email',
-                      isContactAutoCreationEnabled: true,
-                      syncCursor: '1562764',
-                      excludeGroupEmails: true,
-                      throttleFailureCount: 0,
-                      isSyncEnabled: true,
-                      visibility: 'SHARE_EVERYTHING',
-                      syncStatus: 'COMPLETED',
-                      syncedAt: '2024-07-04T16:25:04.960Z',
-                    },
-                  },
-                  {
-                    __typename: 'CalendarChannelEdge',
-                    cursor: '',
-                    node: {
-                      __typename: 'CalendarChannel',
-                      handle: 'test.test2@gmail.com',
-                      excludeNonProfessionalEmails: true,
-                      syncStageStartedAt: null,
-                      id: '20202020-ef5a-4822-9e08-ce6e6a4dcb6a',
-                      updatedAt: '2024-07-03T20:03:11.903Z',
-                      createdAt: '2024-07-03T20:03:11.903Z',
-                      connectedAccountId:
-                        '20202020-954c-4d76-9a87-e5f072d4b7ef',
-                      contactAutoCreationPolicy: 'SENT',
-                      syncStage: 'PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING',
-                      type: 'email',
-                      isContactAutoCreationEnabled: true,
-                      syncCursor: '1562764',
-                      excludeGroupEmails: true,
-                      throttleFailureCount: 0,
-                      isSyncEnabled: true,
-                      visibility: 'SHARE_EVERYTHING',
-                      syncStatus: 'COMPLETED',
-                      syncedAt: '2024-07-04T16:25:04.960Z',
-                    },
-                  },
-                ],
-              },
+                {
+                  id: '20202020-ef5a-4822-9e08-ce6e6a4dcb6a',
+                  handle: 'test.test2@gmail.com',
+                  connectedAccountId: '20202020-954c-4d76-9a87-e5f072d4b7ef',
+                  isSyncEnabled: true,
+                  syncStage: 'PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING',
+                  syncStatus: 'COMPLETED',
+                  visibility: 'SHARE_EVERYTHING',
+                  contactAutoCreationPolicy: 'SENT',
+                  isContactAutoCreationEnabled: true,
+                  createdAt: '2024-07-03T20:03:11.903Z',
+                  updatedAt: '2024-07-03T20:03:11.903Z',
+                },
+              ],
+            },
+          });
+        }),
+        graphql.query('MyMessageChannels', () => {
+          return HttpResponse.json({
+            data: {
+              myMessageChannels: [],
             },
           });
         }),

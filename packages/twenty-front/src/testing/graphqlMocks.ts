@@ -15,19 +15,24 @@ import { mockedPublicWorkspaceDataBySubdomain } from '~/testing/mock-data/public
 import { mockedUserData } from '~/testing/mock-data/users';
 
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
-import { LIST_PLANS } from '@/billing/graphql/queries/listPlans';
+import { BILLING_PORTAL_SESSION } from '@/settings/billing/graphql/queries/billingPortalSession';
+import { GET_RESOURCE_CREDIT_USAGE } from '@/settings/billing/graphql/queries/getResourceCreditUsage';
+import { LIST_PLANS } from '@/settings/billing/graphql/queries/listPlans';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
-import { isDefined } from 'twenty-shared/utils';
 import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { mockedTaskRecords } from '~/testing/mock-data/generated/data/tasks/mock-tasks-data';
 import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/metadata/objects/mock-objects-metadata';
 import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
+import { mockedBackendCommandMenuItems } from '~/testing/mock-data/command-menu-items';
 
 import { type Task } from '@/activities/types/Task';
 import { FIND_MINIMAL_METADATA } from '@/metadata-store/graphql/queries/findMinimalMetadata';
-import { getConnectionTypename } from '@/object-record/cache/utils/getConnectionTypename';
-import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
+import {
+  getConnectionTypename,
+  getEdgeTypename,
+  isDefined,
+} from 'twenty-shared/utils';
 import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { mockedApiKeys } from '~/testing/mock-data/generated/metadata/api-keys/mock-api-keys-data';
@@ -192,6 +197,13 @@ export const graphqlMocks = {
         },
       });
     }),
+    metadataGraphql.query('FindTableWidgetViews', () => {
+      return HttpResponse.json({
+        data: {
+          getViews: mockedViews.filter((view) => view.type === 'TABLE_WIDGET'),
+        },
+      });
+    }),
     metadataGraphql.query('FindAllRecordPageLayouts', () => {
       return HttpResponse.json({
         data: { getPageLayouts: [] },
@@ -205,6 +217,11 @@ export const graphqlMocks = {
     metadataGraphql.query('FindManyNavigationMenuItems', () => {
       return HttpResponse.json({
         data: { navigationMenuItems: mockedNavigationMenuItems },
+      });
+    }),
+    metadataGraphql.query('FindManyCommandMenuItems', () => {
+      return HttpResponse.json({
+        data: { commandMenuItems: mockedBackendCommandMenuItems },
       });
     }),
     graphql.query('SearchPeople', () => {
@@ -511,6 +528,33 @@ export const graphqlMocks = {
     graphql.query(getOperationName(LIST_PLANS) ?? '', () => {
       return HttpResponse.json({
         data: mockBillingPlans,
+      });
+    }),
+    graphql.query(getOperationName(GET_RESOURCE_CREDIT_USAGE) ?? '', () => {
+      return HttpResponse.json({
+        data: {
+          getResourceCreditUsage: [
+            {
+              __typename: 'BillingResourceCreditUsage',
+              productKey: 'RESOURCE_CREDIT',
+              usedCredits: 1000,
+              grantedCredits: 500000,
+              rolloverCredits: 0,
+              totalGrantedCredits: 500000,
+              unitPriceCents: 1,
+            },
+          ],
+        },
+      });
+    }),
+    graphql.query(getOperationName(BILLING_PORTAL_SESSION) ?? '', () => {
+      return HttpResponse.json({
+        data: {
+          billingPortalSession: {
+            __typename: 'BillingSession',
+            url: 'https://billing.stripe.com/p/mock-portal-session',
+          },
+        },
       });
     }),
     http.get('https://chat-assets.frontapp.com/v1/chat.bundle.js', () => {

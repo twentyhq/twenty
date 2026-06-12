@@ -7,7 +7,7 @@ import { ExpandableList } from '@/ui/layout/expandable-list/components/Expandabl
 import { styled } from '@linaria/react';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { isDefined } from 'twenty-shared/utils';
-import { RoundedLink } from 'twenty-ui/navigation';
+import { RoundedLink } from 'twenty-ui-deprecated/navigation';
 import { logError } from '~/utils/logError';
 
 type PhonesDisplayProps = {
@@ -129,7 +129,7 @@ const parseAdditionalPhones = (additionalPhones?: any) => {
     try {
       return JSON.parse(additionalPhones);
     } catch (error) {
-      logError(t`Error parsing additional phones: ${error}`);
+      logError(t`Error parsing additional phones: ${String(error)}`);
     }
   }
 

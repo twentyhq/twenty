@@ -1,5 +1,5 @@
 import {
-  CoreObjectNameSingular,
+  type CoreObjectNameSingular,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
 
@@ -9,12 +9,9 @@ import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useActivityTargetsForTargetableObjects = ({
   objectNameSingular,
@@ -34,25 +31,11 @@ export const useActivityTargetsForTargetableObjects = ({
   activityTargetsOrderByVariables: RecordGqlOperationOrderBy;
   limit: number;
 }) => {
-  const objectMetadataItems = useAtomStateValue<ObjectMetadataItem[]>(
+  const objectMetadataItems = useAtomStateValue<EnrichedObjectMetadataItem[]>(
     objectMetadataItemsSelector,
   );
-  const isNoteTargetMigrated = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NOTE_TARGET_MIGRATED,
-  );
-  const isTaskTargetMigrated = useIsFeatureEnabled(
-    FeatureFlagKey.IS_TASK_TARGET_MIGRATED,
-  );
-  const isMorphRelation =
-    objectNameSingular === CoreObjectNameSingular.Task
-      ? isTaskTargetMigrated
-      : isNoteTargetMigrated;
-
   const activityTargetsFilter = getActivityTargetsFilter({
-    targetableObjects: targetableObjects,
-    activityObjectNameSingular: objectNameSingular,
-    objectMetadataItems,
-    isMorphRelation,
+    targetableObjects,
   });
 
   const FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE =

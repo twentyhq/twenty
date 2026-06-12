@@ -7,31 +7,36 @@ import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/const
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { MainNavigationDrawerItemsSkeletonLoader } from '~/loading/components/MainNavigationDrawerItemsSkeletonLoader';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledAnimatedContainer = styled(motion.div)`
-  align-items: center;
+  box-sizing: border-box;
   display: flex;
-  justify-content: end;
+  flex-direction: column;
+  flex-shrink: 0;
+  height: 100%;
+  overflow: hidden;
+  padding: ${themeCssVariables.spacing[3]} 0 ${themeCssVariables.spacing[4]}
+    ${themeCssVariables.spacing[2]};
 `;
 
 const StyledItemsContainer = styled.div`
-  align-items: center;
   display: flex;
   flex-direction: column;
   gap: 14px;
-  height: calc(100dvh - 32px);
-  margin-bottom: auto;
-  max-width: 204px;
-  min-width: 204px;
+  min-height: 0;
   overflow-y: auto;
+  width: 100%;
 `;
 
 const StyledSkeletonContainer = styled.div`
-  align-items: center;
   display: flex;
   flex-direction: column;
   gap: 32px;
+  width: 100%;
 `;
 
 const StyledSkeletonTitleContainer = styled.div`
@@ -41,9 +46,7 @@ const StyledSkeletonTitleContainer = styled.div`
   gap: 10px;
   height: 32px;
   justify-content: center;
-
-  max-width: 196px;
-  min-width: 196px;
+  width: 100%;
 `;
 
 export const LeftPanelSkeletonLoader = () => {
@@ -63,7 +66,7 @@ export const LeftPanelSkeletonLoader = () => {
       <StyledItemsContainer>
         <StyledSkeletonTitleContainer>
           <SkeletonTheme
-            baseColor={theme.background.tertiary}
+            baseColor={theme.background.quaternary}
             highlightColor={theme.background.transparent.lighter}
             borderRadius={4}
           >

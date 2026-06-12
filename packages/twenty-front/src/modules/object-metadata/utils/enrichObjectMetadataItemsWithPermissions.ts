@@ -3,11 +3,11 @@ import { getNonUpdatableFieldMetadataIdsFromObjectPermissions } from '@/object-m
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 type enrichObjectMetadataItemsWithPermissionsArgs = {
   objectMetadataItems: Omit<
-    ObjectMetadataItem,
+    EnrichedObjectMetadataItem,
     'readableFields' | 'updatableFields'
   >[];
   objectPermissionsByObjectMetadataId: Record<
@@ -20,7 +20,7 @@ export const enrichObjectMetadataItemsWithPermissions = ({
   objectMetadataItems,
   objectPermissionsByObjectMetadataId,
 }: enrichObjectMetadataItemsWithPermissionsArgs) => {
-  const formattedObjects: ObjectMetadataItem[] =
+  const formattedObjects: EnrichedObjectMetadataItem[] =
     objectMetadataItems.map((object) => {
       const objectPermissions = getObjectPermissionsFromMapByObjectMetadataId({
         objectPermissionsByObjectMetadataId,
@@ -50,7 +50,7 @@ export const enrichObjectMetadataItemsWithPermissions = ({
         updatableFields: fields.filter(
           (field) => !nonUpdatableFieldMetadataIds.includes(field.id),
         ),
-      } satisfies ObjectMetadataItem;
+      } satisfies EnrichedObjectMetadataItem;
     }) ?? [];
 
   return formattedObjects;

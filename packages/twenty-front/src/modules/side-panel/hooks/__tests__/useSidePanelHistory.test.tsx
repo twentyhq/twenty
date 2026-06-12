@@ -11,7 +11,7 @@ import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconList, IconSearch } from 'twenty-ui/display';
+import { IconList, IconSearch } from 'twenty-ui-deprecated/display';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
@@ -100,17 +100,50 @@ describe('useSidePanelHistory', () => {
 
     act(() => {
       result.current.commandMenuHistory.goBackFromSidePanel();
-      result.current.sidePanelCloseAnimationCompleteCleanup.sidePanelCloseAnimationCompleteCleanup();
     });
 
     expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([]);
-    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(SidePanelPages.Root);
+
+    act(() => {
+      result.current.sidePanelCloseAnimationCompleteCleanup.sidePanelCloseAnimationCompleteCleanup();
+    });
+    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
+      SidePanelPages.CommandMenuDisplay,
+    );
     expect(jotaiStore.get(sidePanelPageInfoState.atom)).toEqual({
       title: undefined,
       instanceId: '',
       Icon: undefined,
     });
     expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
+  });
+
+  it('should clear navigation stack immediately when closeSidePanelMenu is called', () => {
+    const { result } = renderHooks();
+
+    act(() => {
+      result.current.commandMenu.navigateSidePanelMenu({
+        page: SidePanelPages.ViewRecord,
+        pageTitle: 'Company',
+        pageIcon: IconList,
+        pageId: '1',
+      });
+    });
+
+    expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([
+      {
+        page: SidePanelPages.ViewRecord,
+        pageTitle: 'Company',
+        pageIcon: IconList,
+        pageId: '1',
+      },
+    ]);
+
+    act(() => {
+      result.current.commandMenu.closeSidePanelMenu();
+    });
+
+    expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toEqual([]);
   });
 
   it('should navigate to a page in history', () => {

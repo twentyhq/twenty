@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -16,6 +17,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 
 @Entity({ name: 'applicationRegistrationVariable', schema: 'core' })
 @ObjectType('ApplicationRegistrationVariable')
@@ -24,6 +26,13 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
   'applicationRegistrationId',
 ])
 @Index('IDX_APP_REG_VAR_APP_REGISTRATION_ID', ['applicationRegistrationId'])
+// Constrains `encryptedValue` to the unfilled default ('') or to the
+// versioned envelope. Registration variables are instance-scoped so the
+// envelope's HKDF info does not include a workspaceId.
+@Check(
+  'CHK_applicationRegistrationVariable_encryptedValue_encrypted',
+  `"encryptedValue" = '' OR "encryptedValue" LIKE 'enc:v2:%'`,
+)
 export class ApplicationRegistrationVariableEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
@@ -34,7 +43,7 @@ export class ApplicationRegistrationVariableEntity {
   key: string;
 
   @Column({ nullable: false, type: 'text', default: '' })
-  encryptedValue: string;
+  encryptedValue: EncryptedString | '';
 
   @Field()
   @Column({ nullable: false, type: 'text', default: '' })

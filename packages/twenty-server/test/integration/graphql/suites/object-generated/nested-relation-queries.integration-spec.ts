@@ -26,7 +26,7 @@ import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.
 
 const PERSON_GQL_FIELDS_WITH_COMPANY = `
   id
-  city
+  jobTitle
   company {
     id
   }
@@ -181,7 +181,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
       data: {
         id: TEST_PERSON_1_ID,
-        city: 'existing-record',
+        jobTitle: 'existing-record',
         companyId: TEST_COMPANY_1_ID,
       },
     });
@@ -202,9 +202,9 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
           },
         },
         {
-          id: TEST_PERSON_2_ID,
-          city: 'new-record',
-          company: {
+        id: TEST_PERSON_2_ID,
+        jobTitle: 'new-record',
+        company: {
             connect: {
               where: { domainName: { primaryLinkUrl: 'company1.com' } },
             },
@@ -228,10 +228,10 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     );
 
     expect(updatedPerson.company.id).toBe(TEST_COMPANY_2_ID);
-    expect(updatedPerson.city).toBe('existing-record');
+    expect(updatedPerson.jobTitle).toBe('existing-record');
 
     expect(insertedPerson.company.id).toBe(TEST_COMPANY_1_ID);
-    expect(insertedPerson.city).toBe('new-record');
+    expect(insertedPerson.jobTitle).toBe('new-record');
   });
 
   it('should connect to other records through a MANY-TO-ONE relation - update One', async () => {
@@ -240,7 +240,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
       gqlFields: PERSON_GQL_FIELDS_WITH_COMPANY,
       data: {
         id: TEST_PERSON_1_ID,
-        city: 'existing-record',
+        jobTitle: 'existing-record',
         companyId: TEST_COMPANY_1_ID,
       },
     });
@@ -264,7 +264,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
 
     expect(response.body.data.updatePerson).toBeDefined();
     expect(response.body.data.updatePerson.company.id).toBe(TEST_COMPANY_2_ID);
-    expect(response.body.data.updatePerson.city).toBe('existing-record');
+    expect(response.body.data.updatePerson.jobTitle).toBe('existing-record');
   });
 
   it('should connect to other records through a MANY-TO-ONE relation - update Many', async () => {
@@ -420,7 +420,7 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toBe(
-      'Field "name" is not defined by type "CompanyWhereUniqueInput".',
+      "Missing required fields: at least one unique constraint have to be fully populated for 'company'.",
     );
     expect(response.body.errors[0].extensions.code).toBe(
       ErrorCode.BAD_USER_INPUT,

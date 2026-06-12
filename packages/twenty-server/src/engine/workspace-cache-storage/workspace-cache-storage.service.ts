@@ -47,10 +47,10 @@ export class WorkspaceCacheStorageService {
   setORMEntitySchema(
     workspaceId: string,
     metadataVersion: number,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     entitySchemas: EntitySchemaOptions<any>[],
   ) {
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     return this.cacheStorageService.set<EntitySchemaOptions<any>[]>(
       `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.ORMEntitySchemas}:${workspaceId}:${metadataVersion}`,
       entitySchemas,
@@ -61,9 +61,9 @@ export class WorkspaceCacheStorageService {
   getORMEntitySchema(
     workspaceId: string,
     metadataVersion: number,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
   ): Promise<EntitySchemaOptions<any>[] | undefined> {
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     return this.cacheStorageService.get<EntitySchemaOptions<any>[]>(
       `${METADATA_VERSIONED_WORKSPACE_CACHE_KEY.ORMEntitySchemas}:${workspaceId}:${metadataVersion}`,
     );

@@ -83,26 +83,6 @@ exports[`Page layout widget restore via bulk update should succeed should handle
         {
           "configuration": {
             "configurationType": "IFRAME",
-            "url": "https://new.example.com",
-          },
-          "createdAt": Any<String>,
-          "deletedAt": null,
-          "gridPosition": {
-            "column": 0,
-            "columnSpan": 1,
-            "row": 2,
-            "rowSpan": 1,
-          },
-          "id": Any<String>,
-          "objectMetadataId": null,
-          "pageLayoutTabId": Any<String>,
-          "title": "Brand New Widget",
-          "type": "IFRAME",
-          "updatedAt": Any<String>,
-        },
-        {
-          "configuration": {
-            "configurationType": "IFRAME",
             "url": "https://updated.example.com",
           },
           "createdAt": Any<String>,
@@ -148,6 +128,26 @@ exports[`Page layout widget restore via bulk update should succeed should handle
           "pageLayoutTabId": Any<String>,
           "title": "Restored Widget",
           "type": "GRAPH",
+          "updatedAt": Any<String>,
+        },
+        {
+          "configuration": {
+            "configurationType": "IFRAME",
+            "url": "https://new.example.com",
+          },
+          "createdAt": Any<String>,
+          "deletedAt": null,
+          "gridPosition": {
+            "column": 0,
+            "columnSpan": 1,
+            "row": 2,
+            "rowSpan": 1,
+          },
+          "id": Any<String>,
+          "objectMetadataId": null,
+          "pageLayoutTabId": Any<String>,
+          "title": "Brand New Widget",
+          "type": "IFRAME",
           "updatedAt": Any<String>,
         },
       ],

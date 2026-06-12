@@ -3,12 +3,11 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   IconColumnInsertRight,
   OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 
-import { NavigationMenuItemType, SidePanelPages } from 'twenty-shared/types';
-import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
-import { SidePanelAskAIInfo } from '@/side-panel/components/SidePanelAskAIInfo';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
+import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
+import { SidePanelAskAiInfo } from '@/side-panel/components/SidePanelAskAiInfo';
 import { SidePanelFolderInfo } from '@/side-panel/components/SidePanelFolderInfo';
 import { SidePanelLinkInfo } from '@/side-panel/components/SidePanelLinkInfo';
 import { SidePanelMultipleRecordsInfo } from '@/side-panel/components/SidePanelMultipleRecordsInfo';
@@ -17,11 +16,16 @@ import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageIn
 import { SidePanelPageLayoutInfo } from '@/side-panel/components/SidePanelPageLayoutInfo';
 import { SidePanelRecordInfo } from '@/side-panel/components/SidePanelRecordInfo';
 import { SidePanelWorkflowStepInfo } from '@/side-panel/components/SidePanelWorkflowStepInfo';
+import { isPageLayoutSidePanelPage } from '@/side-panel/pages/page-layout/utils/isPageLayoutSidePanelPage';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { NavigationMenuItemType, SidePanelPages } from 'twenty-shared/types';
 
 import { type SidePanelContextChipProps } from '@/side-panel/components/SidePanelContextChip';
 import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 const StyledPageTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.sm};
@@ -34,10 +38,10 @@ type SidePanelPageInfoProps = {
 
 export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
   const { theme } = useContext(ThemeContext);
-  const selectedNavigationMenuItemInEditMode = useAtomStateValue(
-    selectedNavigationMenuItemInEditModeState,
+  const selectedNavigationMenuItemIdInEditMode = useAtomStateValue(
+    selectedNavigationMenuItemIdInEditModeState,
   );
-  const items = useNavigationMenuItemSectionItems();
+  const items = useNavigationMenuItemEditSectionItems();
 
   if (!isDefined(pageChip)) {
     return null;
@@ -46,7 +50,7 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
   const isNavigationMenuItemEditPage =
     pageChip.page?.page === SidePanelPages.NavigationMenuItemEdit;
   const selectedNavItem = isNavigationMenuItemEditPage
-    ? items.find((item) => item.id === selectedNavigationMenuItemInEditMode)
+    ? items.find((item) => item.id === selectedNavigationMenuItemIdInEditMode)
     : undefined;
 
   if (isNavigationMenuItemEditPage && isDefined(selectedNavItem)) {
@@ -95,13 +99,7 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
   }
 
   const isPageLayoutPage = pageChip.page?.page
-    ? [
-        SidePanelPages.PageLayoutWidgetTypeSelect,
-        SidePanelPages.PageLayoutGraphTypeSelect,
-        SidePanelPages.PageLayoutIframeSettings,
-        SidePanelPages.PageLayoutTabSettings,
-        SidePanelPages.PageLayoutFieldsSettings,
-      ].includes(pageChip.page?.page)
+    ? isPageLayoutSidePanelPage(pageChip.page.page)
     : false;
 
   if (isPageLayoutPage) {
@@ -119,10 +117,10 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
     );
   }
 
-  const isAskAIPage = pageChip.page?.page === SidePanelPages.AskAI;
+  const isAskAiPage = pageChip.page?.page === SidePanelPages.AskAI;
 
-  if (isAskAIPage) {
-    return <SidePanelAskAIInfo />;
+  if (isAskAiPage) {
+    return <SidePanelAskAiInfo />;
   }
 
   if (pageChip.page?.page === SidePanelPages.NavigationMenuAddItem) {

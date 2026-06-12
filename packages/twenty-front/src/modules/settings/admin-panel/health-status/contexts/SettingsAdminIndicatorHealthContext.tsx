@@ -3,7 +3,7 @@ import {
   AdminPanelHealthServiceStatus,
   HealthIndicatorId,
   type AdminPanelHealthServiceData,
-} from '~/generated-metadata/graphql';
+} from '~/generated-admin/graphql';
 
 type SettingsAdminIndicatorHealthContextType = {
   indicatorHealth: AdminPanelHealthServiceData;

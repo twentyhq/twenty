@@ -19,27 +19,36 @@ export const computeStandardCompanyViewFieldGroups = (
         isVisible: true,
       },
     }),
-    companyRecordPageFieldsAdditional: createStandardViewFieldGroupFlatMetadata(
-      {
-        ...args,
-        objectName: 'company',
-        context: {
-          viewName: 'companyRecordPageFields',
-          viewFieldGroupName: 'additional',
-          name: 'Additional',
-          position: 1,
-          isVisible: true,
-        },
-      },
-    ),
-    companyRecordPageFieldsOther: createStandardViewFieldGroupFlatMetadata({
+    companyRecordPageFieldsBusiness: createStandardViewFieldGroupFlatMetadata({
       ...args,
       objectName: 'company',
       context: {
         viewName: 'companyRecordPageFields',
-        viewFieldGroupName: 'other',
-        name: 'Other',
+        viewFieldGroupName: 'business',
+        name: 'Business',
+        position: 1,
+        isVisible: true,
+      },
+    }),
+    companyRecordPageFieldsContact: createStandardViewFieldGroupFlatMetadata({
+      ...args,
+      objectName: 'company',
+      context: {
+        viewName: 'companyRecordPageFields',
+        viewFieldGroupName: 'contact',
+        name: 'Contact',
         position: 2,
+        isVisible: true,
+      },
+    }),
+    companyRecordPageFieldsSystem: createStandardViewFieldGroupFlatMetadata({
+      ...args,
+      objectName: 'company',
+      context: {
+        viewName: 'companyRecordPageFields',
+        viewFieldGroupName: 'system',
+        name: 'System',
+        position: 3,
         isVisible: true,
       },
     }),

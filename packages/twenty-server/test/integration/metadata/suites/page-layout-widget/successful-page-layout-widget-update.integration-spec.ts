@@ -316,18 +316,6 @@ describe('Page layout widget update should succeed', () => {
           }),
         },
       },
-      {
-        title: 'update page layout widget to GAUGE_CHART configuration',
-        context: {
-          buildConfiguration: () => ({
-            configurationType: WidgetConfigurationType.GAUGE_CHART,
-            aggregateFieldMetadataId: testSetup.fieldMetadataId1,
-            aggregateOperation: AggregateOperations.SUM,
-            description: 'Completion percentage',
-            displayDataLabel: true,
-          }),
-        },
-      },
     ];
 
     beforeEach(async () => {

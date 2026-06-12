@@ -10,7 +10,7 @@ import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconDotsVertical } from 'twenty-ui/display';
+import { IconDotsVertical } from 'twenty-ui-deprecated/display';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
@@ -83,14 +83,16 @@ describe('useSidePanelMenu', () => {
 
     act(() => {
       result.current.commandMenu.navigateSidePanelMenu({
-        page: SidePanelPages.Root,
+        page: SidePanelPages.CommandMenuDisplay,
         pageTitle: 'First Page',
         pageIcon: IconDotsVertical,
         resetNavigationStack: false,
       });
     });
 
-    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(SidePanelPages.Root);
+    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
+      SidePanelPages.CommandMenuDisplay,
+    );
     expect(jotaiStore.get(sidePanelPageInfoState.atom).title).toBe(
       'First Page',
     );
@@ -109,14 +111,16 @@ describe('useSidePanelMenu', () => {
 
     act(() => {
       result.current.commandMenu.navigateSidePanelMenu({
-        page: SidePanelPages.Root,
+        page: SidePanelPages.CommandMenuDisplay,
         pageTitle: 'Reset Page',
         pageIcon: IconDotsVertical,
         resetNavigationStack: true,
       });
     });
 
-    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(SidePanelPages.Root);
+    expect(jotaiStore.get(sidePanelPageState.atom)).toBe(
+      SidePanelPages.CommandMenuDisplay,
+    );
     expect(jotaiStore.get(sidePanelPageInfoState.atom).title).toBe(
       'Reset Page',
     );

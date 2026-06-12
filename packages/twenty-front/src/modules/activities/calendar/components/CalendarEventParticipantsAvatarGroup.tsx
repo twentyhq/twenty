@@ -1,7 +1,7 @@
 import { type CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
 import { isTimelineCalendarEventParticipant } from '@/activities/calendar/types/guards/IsTimelineCalendarEventParticipant';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar, AvatarGroup } from 'twenty-ui/display';
+import { Avatar, AvatarGroup } from 'twenty-ui-deprecated/display';
 import { type TimelineCalendarEventParticipant } from '~/generated/graphql';
 
 type CalendarEventParticipantsAvatarGroupProps = {

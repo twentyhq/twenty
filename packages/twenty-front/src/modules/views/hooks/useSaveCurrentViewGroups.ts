@@ -67,9 +67,9 @@ export const useSaveCurrentViewGroups = () => {
         return;
       }
 
-      await performViewGroupAPIUpdate([
-        {
-          input: {
+      await performViewGroupAPIUpdate({
+        inputs: [
+          {
             id: existingField.id,
             update: {
               isVisible: viewGroupToSave.isVisible,
@@ -77,8 +77,8 @@ export const useSaveCurrentViewGroups = () => {
               fieldValue: viewGroupToSave.fieldValue,
             },
           },
-        },
-      ]);
+        ],
+      });
     },
     [
       store,
@@ -109,7 +109,7 @@ export const useSaveCurrentViewGroups = () => {
 
       const currentViewGroups = view.viewGroups;
 
-      const viewGroupsToUpdate = viewGroupsToSave
+      const viewGroupInputsToUpdate = viewGroupsToSave
         .map((viewGroupToSave) => {
           const existingField = currentViewGroups.find(
             (currentViewGroup) =>
@@ -136,13 +136,11 @@ export const useSaveCurrentViewGroups = () => {
           }
 
           return {
-            input: {
-              id: existingField.id,
-              update: {
-                isVisible: viewGroupToSave.isVisible,
-                position: viewGroupToSave.position,
-                fieldValue: viewGroupToSave.fieldValue,
-              },
+            id: existingField.id,
+            update: {
+              isVisible: viewGroupToSave.isVisible,
+              position: viewGroupToSave.position,
+              fieldValue: viewGroupToSave.fieldValue,
             },
           };
         })
@@ -152,7 +150,7 @@ export const useSaveCurrentViewGroups = () => {
         throw new Error('mainGroupByFieldMetadataId is required');
       }
 
-      await performViewGroupAPIUpdate(viewGroupsToUpdate);
+      await performViewGroupAPIUpdate({ inputs: viewGroupInputsToUpdate });
     },
     [
       store,

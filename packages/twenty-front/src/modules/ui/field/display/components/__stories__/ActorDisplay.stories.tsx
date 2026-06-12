@@ -3,7 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 import { ActorDisplay } from '@/ui/field/display/components/ActorDisplay';
-import { CatalogDecorator } from 'twenty-ui/testing';
+import { CatalogDecorator } from 'twenty-ui-deprecated/testing';
 
 const meta: Meta = {
   title: 'UI/Display/ActorDisplay',
@@ -27,7 +27,17 @@ export const Catalog: Story = {
       dimensions: [
         {
           name: 'source',
-          values: ['API', 'IMPORT', 'EMAIL', 'CALENDAR', 'MANUAL'],
+          values: [
+            'API',
+            'IMPORT',
+            'EMAIL',
+            'CALENDAR',
+            'WORKFLOW',
+            'WEBHOOK',
+            'APPLICATION',
+            'SYSTEM',
+            'MANUAL',
+          ],
           props: (source: string) => ({ source }),
         },
         {

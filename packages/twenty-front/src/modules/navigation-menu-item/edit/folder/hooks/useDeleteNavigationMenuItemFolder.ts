@@ -1,12 +1,12 @@
-import { useDeleteNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useDeleteNavigationMenuItem';
+import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 
 export const useDeleteNavigationMenuItemFolder = () => {
-  const { deleteNavigationMenuItem } = useDeleteNavigationMenuItem();
+  const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
 
   const deleteNavigationMenuItemFolder = async (
     folderId: string,
   ): Promise<void> => {
-    await deleteNavigationMenuItem(folderId);
+    await deleteManyNavigationMenuItems([folderId]);
   };
 
   return {

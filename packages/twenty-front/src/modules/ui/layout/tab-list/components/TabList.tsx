@@ -11,7 +11,9 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { styled } from '@linaria/react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TabButton } from 'twenty-ui/input';
+import { isDefined } from 'twenty-shared/utils';
+import { TabButton } from 'twenty-ui-deprecated/input';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { TabListDropdown } from './TabListDropdown';
 import { TabListFromUrlOptionalEffect } from './TabListFromUrlOptionalEffect';
 
@@ -22,6 +24,22 @@ const StyledContainer = styled.div`
   position: relative;
   user-select: none;
   width: 100%;
+
+  &::after {
+    background-color: ${themeCssVariables.border.color.light};
+    bottom: 0;
+    content: '';
+    height: 1px;
+    left: 0;
+    position: absolute;
+    right: 0;
+  }
+`;
+
+const StyledInnerContainer = styled.div`
+  display: flex;
+  flex: 1;
+  min-width: 0;
 `;
 
 const StyledDropdownContainer = styled.div`
@@ -37,6 +55,18 @@ const StyledTabContainer = styled.div`
   position: relative;
 `;
 
+const StyledNodeDimension = styled(NodeDimension)`
+  display: flex;
+  flex: 1;
+  min-width: 0;
+`;
+
+const StyledRightContainer = styled.div`
+  align-items: center;
+  display: flex;
+  margin-left: auto;
+`;
+
 export const TabList = ({
   tabs,
   loading,
@@ -45,6 +75,7 @@ export const TabList = ({
   className,
   componentInstanceId,
   onChangeTab,
+  rightComponent,
 }: TabListProps) => {
   const visibleTabs = tabs.filter((tab) => !tab.hide);
   const navigate = useNavigate();
@@ -127,49 +158,56 @@ export const TabList = ({
           />
         )}
 
-        <NodeDimension onDimensionChange={onContainerWidthChange}>
-          <StyledContainer className={className}>
-            <StyledTabContainer>
-              {visibleTabs.slice(0, visibleTabCount).map((tab) => (
-                <TabButton
-                  key={tab.id}
-                  id={tab.id}
-                  title={tab.title}
-                  LeftIcon={tab.Icon}
-                  logo={tab.logo}
-                  active={tab.id === activeTabId}
-                  disabled={tab.disabled ?? loading}
-                  pill={tab.pill}
-                  to={behaveAsLinks ? `#${tab.id}` : undefined}
-                  onClick={
-                    behaveAsLinks
-                      ? () => onChangeTab?.(tab.id)
-                      : () => handleTabSelect(tab.id)
-                  }
-                />
-              ))}
-            </StyledTabContainer>
+        <StyledContainer className={className}>
+          <StyledNodeDimension onDimensionChange={onContainerWidthChange}>
+            <StyledInnerContainer>
+              <StyledTabContainer>
+                {visibleTabs.slice(0, visibleTabCount).map((tab) => (
+                  <TabButton
+                    key={tab.id}
+                    id={tab.id}
+                    title={tab.title}
+                    LeftIcon={tab.Icon}
+                    logo={tab.logo}
+                    active={tab.id === activeTabId}
+                    disabled={tab.disabled ?? loading}
+                    pill={tab.pill}
+                    to={behaveAsLinks ? `#${tab.id}` : undefined}
+                    tooltipContent={tab.tooltipContent}
+                    onClick={
+                      behaveAsLinks
+                        ? () => onChangeTab?.(tab.id)
+                        : () => handleTabSelect(tab.id)
+                    }
+                  />
+                ))}
+              </StyledTabContainer>
 
-            {hasHiddenTabs && (
-              <StyledDropdownContainer>
-                <TabListDropdown
-                  dropdownId={dropdownId}
-                  onClose={() => {
-                    closeDropdown(dropdownId);
-                  }}
-                  overflow={{
-                    hiddenTabsCount,
-                    isActiveTabHidden,
-                  }}
-                  hiddenTabs={hiddenTabs}
-                  activeTabId={activeTabId || ''}
-                  onTabSelect={handleTabSelectFromDropdown}
-                  loading={loading}
-                />
-              </StyledDropdownContainer>
-            )}
-          </StyledContainer>
-        </NodeDimension>
+              {hasHiddenTabs && (
+                <StyledDropdownContainer>
+                  <TabListDropdown
+                    dropdownId={dropdownId}
+                    onClose={() => {
+                      closeDropdown(dropdownId);
+                    }}
+                    overflow={{
+                      hiddenTabsCount,
+                      isActiveTabHidden,
+                    }}
+                    hiddenTabs={hiddenTabs}
+                    activeTabId={activeTabId || ''}
+                    onTabSelect={handleTabSelectFromDropdown}
+                    loading={loading}
+                  />
+                </StyledDropdownContainer>
+              )}
+            </StyledInnerContainer>
+          </StyledNodeDimension>
+
+          {isDefined(rightComponent) && (
+            <StyledRightContainer>{rightComponent}</StyledRightContainer>
+          )}
+        </StyledContainer>
       </>
     </TabListComponentInstanceContext.Provider>
   );

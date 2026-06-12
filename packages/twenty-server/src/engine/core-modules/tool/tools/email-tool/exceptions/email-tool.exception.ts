@@ -11,6 +11,7 @@ export enum EmailToolExceptionCode {
   WORKSPACE_ID_NOT_FOUND = 'WORKSPACE_ID_NOT_FOUND',
   FILE_NOT_FOUND = 'FILE_NOT_FOUND',
   INVALID_FILE_ID = 'INVALID_FILE_ID',
+  TOO_MANY_RECIPIENTS = 'TOO_MANY_RECIPIENTS',
 }
 
 const getEmailToolExceptionUserFriendlyMessage = (
@@ -29,6 +30,8 @@ const getEmailToolExceptionUserFriendlyMessage = (
       return msg`File not found.`;
     case EmailToolExceptionCode.INVALID_FILE_ID:
       return msg`Invalid file ID.`;
+    case EmailToolExceptionCode.TOO_MANY_RECIPIENTS:
+      return msg`Too many recipients.`;
     default:
       assertUnreachable(code);
   }

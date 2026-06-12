@@ -23,7 +23,7 @@ describe('Agent creation should succeed', () => {
       input: {
         label: 'Test Agent',
         prompt: 'You are a helpful test assistant',
-        modelId: 'gpt-4.1',
+        modelId: 'openai/gpt-4.1',
       },
     });
 
@@ -36,7 +36,7 @@ describe('Agent creation should succeed', () => {
       icon: null,
       description: null,
       prompt: 'You are a helpful test assistant',
-      modelId: 'gpt-4.1',
+      modelId: 'openai/gpt-4.1',
       responseFormat: { type: 'text' },
       roleId: null,
       isCustom: true,
@@ -52,7 +52,7 @@ describe('Agent creation should succeed', () => {
       icon: 'IconRobot',
       description: 'A custom agent with all fields specified',
       prompt: 'You are a specialized assistant for testing',
-      modelId: 'gpt-5.2',
+      modelId: 'openai/gpt-5.2',
       responseFormat: { type: 'text' },
       modelConfiguration: {
         webSearch: {
@@ -88,7 +88,7 @@ describe('Agent creation should succeed', () => {
       input: {
         label: 'JSON Response Agent',
         prompt: 'Return structured JSON data',
-        modelId: 'gpt-4.1',
+        modelId: 'openai/gpt-4.1',
         responseFormat: {
           type: 'json',
           schema: {
@@ -127,7 +127,7 @@ describe('Agent creation should succeed', () => {
       input: {
         label: 'My Test Agent With Spaces',
         prompt: 'Testing name computation',
-        modelId: 'gpt-4.1',
+        modelId: 'openai/gpt-4.1',
       },
     });
 
@@ -149,7 +149,7 @@ describe('Agent creation should succeed', () => {
         icon: '  IconRobot  ',
         description: '  Description with spaces  ',
         prompt: '  Prompt with spaces  ',
-        modelId: 'gpt-4.1',
+        modelId: 'openai/gpt-4.1',
       },
     });
 
@@ -192,7 +192,7 @@ describe('Agent creation should succeed', () => {
       input: {
         label: 'Agent With Role',
         prompt: 'Agent with role assignment',
-        modelId: 'gpt-4.1',
+        modelId: 'openai/gpt-4.1',
         roleId: createdRoleId,
       },
     });
@@ -203,12 +203,20 @@ describe('Agent creation should succeed', () => {
       id: expect.any(String),
       label: 'Agent With Role',
       prompt: 'Agent with role assignment',
-      modelId: 'gpt-4.1',
+      modelId: 'openai/gpt-4.1',
       roleId: createdRoleId,
       isCustom: true,
     });
 
-    // Clean up the role
+    // Delete the agent first so its role_target is removed; otherwise
+    // deleting the role would refuse to orphan the agent (the workspace
+    // default role isn't agent-assignable).
+    await deleteOneAgent({
+      expectToFail: false,
+      input: { id: createdAgentId },
+    });
+    createdAgentId = '';
+
     await deleteOneRole({
       expectToFail: false,
       input: { idToDelete: createdRoleId },

@@ -5,7 +5,10 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledNameCell = styled.div`
   align-items: center;
@@ -35,7 +38,7 @@ export const SettingsConnectedAccountsTableRow = ({
 
   return (
     <StyledTableRowContainer>
-      <TableRow key={account.id} gridAutoColumns="332px 1fr">
+      <TableRow key={account.id} gridTemplateColumns="minmax(0, 1fr) auto">
         <TableCell>
           <StyledNameCell>
             <IconComponent

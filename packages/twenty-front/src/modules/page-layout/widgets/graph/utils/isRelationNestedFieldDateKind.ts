@@ -1,12 +1,12 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 
 type IsRelationNestedFieldDateKindParams = {
   relationField: FieldMetadataItem;
   relationNestedFieldName: string | undefined;
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
 };
 
 export const isRelationNestedFieldDateKind = ({

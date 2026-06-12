@@ -1,14 +1,15 @@
 import { getOrderByFieldForObjectMetadataItem } from '@/object-metadata/utils/getObjectOrderByField';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 describe('getObjectOrderByField', () => {
   it('should work as expected', () => {
-    const objectMetadataItem = generatedMockObjectMetadataItems.find(
+    const objectMetadataItem = getTestEnrichedObjectMetadataItemsMock().find(
       (item) => item.nameSingular === 'person',
     )!;
     const res = getOrderByFieldForObjectMetadataItem(objectMetadataItem);
     expect(res).toEqual([
-      { name: { firstName: 'AscNullsLast', lastName: 'AscNullsLast' } },
+      { name: { firstName: 'AscNullsLast' } },
+      { name: { lastName: 'AscNullsLast' } },
     ]);
   });
 });

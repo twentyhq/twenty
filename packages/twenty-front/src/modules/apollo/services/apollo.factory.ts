@@ -7,7 +7,7 @@ import {
 import { setContext } from '@apollo/client/link/context';
 import { ErrorLink } from '@apollo/client/link/error';
 import { RetryLink } from '@apollo/client/link/retry';
-import { from, switchMap } from 'rxjs';
+import { EMPTY, from, switchMap } from 'rxjs';
 import { RestLink } from 'apollo-link-rest';
 import UploadHttpLink from 'apollo-upload-client/UploadHttpLink.mjs';
 
@@ -34,7 +34,6 @@ import {
 import isEmpty from 'lodash.isempty';
 import { getGenericOperationName, isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { cookieStorage } from '~/utils/cookie-storage';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const logger = loggerLink(() => 'Twenty');
@@ -42,7 +41,7 @@ const logger = loggerLink(() => 'Twenty');
 // Shared across all ApolloFactory instances so concurrent
 // UNAUTHENTICATED errors from /graphql and /metadata clients
 // deduplicate into a single renewal request.
-let renewalPromise: Promise<void> | null = null;
+let renewalPromise: Promise<boolean> | null = null;
 
 const TOKEN_RENEWAL_MAX_RETRIES = 3;
 const TOKEN_RENEWAL_RETRY_DELAY_MS = 1000;
@@ -132,7 +131,7 @@ export class ApolloFactory implements ApolloManager {
             ...optionHeaders,
             authorization: token ? `Bearer ${token}` : '',
             'x-locale': locale,
-            ...(this.currentWorkspace?.metadataVersion && {
+            ...(isDefined(this.currentWorkspace?.metadataVersion) && {
               'X-Schema-Version': `${this.currentWorkspace.metadataVersion}`,
             }),
             ...(this.appVersion && { 'X-App-Version': this.appVersion }),
@@ -175,7 +174,6 @@ export class ApolloFactory implements ApolloManager {
 
         if (isDefined(tokens)) {
           onTokenPairChange?.(tokens);
-          cookieStorage.setItem('tokenPair', JSON.stringify(tokens));
         }
       };
 
@@ -183,21 +181,32 @@ export class ApolloFactory implements ApolloManager {
         operation: ApolloLink.Operation,
         forward: ApolloLink.ForwardFunction,
       ) => {
+        if (!getTokenPair()) {
+          onUnauthenticatedError?.();
+
+          return EMPTY;
+        }
+
         if (!renewalPromise) {
           renewalPromise = attemptTokenRenewal()
+            .then(() => true)
             .catch(() => {
               // oxlint-disable-next-line no-console
               console.log(
                 'Failed to renew token after retries, triggering unauthenticated error',
               );
               onUnauthenticatedError?.();
+
+              return false;
             })
             .finally(() => {
               renewalPromise = null;
             });
         }
 
-        return from(renewalPromise).pipe(switchMap(() => forward(operation)));
+        return from(renewalPromise).pipe(
+          switchMap((succeeded) => (succeeded ? forward(operation) : EMPTY)),
+        );
       };
 
       const sendToSentry = ({

@@ -1,5 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { getCompositeSubFieldKey } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetCompositeSubFieldKey';
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
@@ -13,7 +13,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import {
   getUniqueConstraintsFields,
   isDefined,
-  lowercaseUrlOriginAndRemoveTrailingSlash,
+  normalizeUrlOrigin,
 } from 'twenty-shared/utils';
 
 type Column = {
@@ -22,11 +22,11 @@ type Column = {
 };
 
 export const spreadsheetImportGetUnicityTableHook = (
-  objectMetadataItem: ObjectMetadataItem,
+  objectMetadataItem: EnrichedObjectMetadataItem,
 ) => {
   const uniqueConstraintsFields = getUniqueConstraintsFields<
     FieldMetadataItem,
-    ObjectMetadataItem
+    EnrichedObjectMetadataItem
   >(objectMetadataItem);
 
   const uniqueConstraintsWithColumnNames: Column[][] =
@@ -104,9 +104,7 @@ const getUniqueValues = (
             .primaryLinkUrl,
         )
       ) {
-        return lowercaseUrlOriginAndRemoveTrailingSlash(
-          row?.[columnName]?.toString().trim() || '',
-        );
+        return normalizeUrlOrigin(row?.[columnName]?.toString().trim() || '');
       }
 
       return row?.[columnName]?.toString().trim().toLowerCase();

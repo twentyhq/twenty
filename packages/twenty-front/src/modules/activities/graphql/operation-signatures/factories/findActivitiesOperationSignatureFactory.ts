@@ -1,12 +1,11 @@
 import { generateActivityTargetMorphFieldKeys } from '@/activities/utils/generateActivityTargetMorphFieldKeys';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
 
 type FindActivitiesOperationSignatureFactory = {
-  objectMetadataItems: ObjectMetadataItem[];
+  objectMetadataItems: EnrichedObjectMetadataItem[];
   objectNameSingular: CoreObjectNameSingular;
-  isMorphRelation: boolean;
 };
 
 export const findActivitiesOperationSignatureFactory: RecordGqlOperationSignatureFactory<
@@ -14,7 +13,6 @@ export const findActivitiesOperationSignatureFactory: RecordGqlOperationSignatur
 > = ({
   objectMetadataItems,
   objectNameSingular,
-  isMorphRelation,
 }: FindActivitiesOperationSignatureFactory) => {
   const body = {
     bodyV2: {
@@ -67,10 +65,7 @@ export const findActivitiesOperationSignatureFactory: RecordGqlOperationSignatur
               deletedAt: true,
               note: true,
               noteId: true,
-              ...generateActivityTargetMorphFieldKeys(
-                objectMetadataItems,
-                isMorphRelation,
-              ),
+              ...generateActivityTargetMorphFieldKeys(objectMetadataItems),
             },
           }
         : {
@@ -82,10 +77,7 @@ export const findActivitiesOperationSignatureFactory: RecordGqlOperationSignatur
               deletedAt: true,
               task: true,
               taskId: true,
-              ...generateActivityTargetMorphFieldKeys(
-                objectMetadataItems,
-                isMorphRelation,
-              ),
+              ...generateActivityTargetMorphFieldKeys(objectMetadataItems),
             },
           }),
     },

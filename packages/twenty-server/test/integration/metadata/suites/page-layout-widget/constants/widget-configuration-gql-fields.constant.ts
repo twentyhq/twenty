@@ -88,17 +88,6 @@ export const WIDGET_CONFIGURATION_GQL_FIELDS = `
     timezone
     firstDayOfTheWeek
   }
-  ... on GaugeChartConfiguration {
-    configurationType
-    aggregateFieldMetadataId
-    aggregateOperation
-    displayDataLabel
-    color
-    description
-    filter
-    timezone
-    firstDayOfTheWeek
-  }
   ... on IframeConfiguration {
     configurationType
     url

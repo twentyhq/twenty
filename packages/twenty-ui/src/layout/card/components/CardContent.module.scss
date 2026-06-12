@@ -1,0 +1,24 @@
+.cardContent {
+  background-color: var(--t-background-secondary);
+  padding: var(--t-spacing-4);
+
+  border-bottom: none;
+
+  cursor: default;
+
+  &[data-divider] {
+    border-bottom: 1px solid var(--t-border-color-medium);
+  }
+
+  &[data-clickable] {
+    cursor: pointer;
+  }
+
+  &:hover {
+    background: transparent;
+  }
+
+  &[data-hover-highlight]:hover {
+    background: var(--t-background-transparent-light);
+  }
+}

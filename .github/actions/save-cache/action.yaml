@@ -9,8 +9,11 @@ inputs:
 runs:
   using: "composite"
   steps:
+    # Fork PRs on pull_request already can't write to the base repo's cache (GitHub built-in).
+    # The fork guard is defense-in-depth for pull_request_target, which does have write access.
     - name: Save cache
-      uses: actions/cache/save@v4
+      if: ${{ format('{0}', github.event.pull_request.head.repo.fork) != 'true' }}
+      uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0 (save)
       with:
         key: ${{ inputs.key }}
         path: |

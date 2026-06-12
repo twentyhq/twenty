@@ -20,6 +20,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { type FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
 import { AssignIfIsGivenFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-if-is-given-field-metadata-type.type';
 import { AssignTypeIfIsMorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-type-if-is-morph-or-relation-field-metadata-type.type';
@@ -57,8 +58,8 @@ import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/v
 ])
 @Index('IDX_FIELD_METADATA_WORKSPACE_ID', ['workspaceId'])
 export class FieldMetadataEntity<
-    TFieldMetadataType extends FieldMetadataType = FieldMetadataType,
-  >
+  TFieldMetadataType extends FieldMetadataType = FieldMetadataType,
+>
   extends SyncableEntity
   implements Required<FieldMetadataEntity>
 {
@@ -106,8 +107,12 @@ export class FieldMetadataEntity<
   @Column('jsonb', { nullable: true })
   settings: JsonbProperty<FieldMetadataSettings<TFieldMetadataType>>;
 
-  @Column({ default: false })
-  isCustom: boolean;
+  @WasRemovedInUpgrade({
+    upgradeCommandName:
+      '2.12.0_DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand_1780579070012',
+  })
+  @Column({ type: 'boolean', default: false })
+  isCustom: WasRemovedInUpgrade<boolean>;
 
   @Column({ default: false })
   isActive: boolean;
@@ -122,8 +127,11 @@ export class FieldMetadataEntity<
   @Column({ nullable: true, default: true, type: 'boolean' })
   isNullable: boolean | null;
 
-  // Is this really nullable ?
-  @Column({ nullable: true, default: false, type: 'boolean' })
+  // Derived at flat-entity cache build time from the existence of a
+  // single-field UNIQUE IndexMetadata covering this field — never persisted
+  // on this entity. Kept on the type so flat-entity consumers continue to
+  // read field.isUnique without per-call derivation; the PG column was
+  // dropped by 1798300000000-drop-field-metadata-is-unique-column.ts.
   isUnique: boolean | null;
 
   @Column({ default: false })

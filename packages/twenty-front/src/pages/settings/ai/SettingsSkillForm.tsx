@@ -13,7 +13,7 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TitleInput } from '@/ui/input/components/TitleInput';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { t } from '@lingui/core/macro';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -26,10 +26,13 @@ import {
   IconRefresh,
   IconTrash,
   TooltipDelay,
-} from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { Card, Section } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { Card, Section } from 'twenty-ui-deprecated/layout';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { useMutation, useQuery } from '@apollo/client/react';
 import {
   ActivateSkillDocument,
@@ -422,7 +425,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
   );
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={title}
       actionButton={
         isCreateMode ? (
@@ -438,7 +441,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
         { children: breadcrumbText },
@@ -481,6 +484,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
                   textAreaId="skill-description-textarea"
                   placeholder={t`Write a description`}
                   minRows={3}
+                  maxRows={5}
                   value={formValues.description}
                   onChange={(value) =>
                     handleFieldChange('description', value ?? '')
@@ -601,6 +605,6 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
         confirmButtonText={t`Delete`}
         loading={isSubmitting}
       />
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

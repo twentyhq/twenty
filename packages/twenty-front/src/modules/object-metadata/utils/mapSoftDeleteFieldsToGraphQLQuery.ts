@@ -1,7 +1,7 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 export const mapSoftDeleteFieldsToGraphQLQuery = (
-  objectMetadataItem: Pick<ObjectMetadataItem, 'readableFields'>,
+  objectMetadataItem: Pick<EnrichedObjectMetadataItem, 'readableFields'>,
 ): string => {
   const softDeleteFields = ['deletedAt', 'id'];
 

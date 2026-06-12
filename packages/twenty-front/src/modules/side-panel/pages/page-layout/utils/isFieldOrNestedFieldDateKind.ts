@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isRelationNestedFieldDateKind } from '@/page-layout/widgets/graph/utils/isRelationNestedFieldDateKind';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
@@ -11,8 +11,8 @@ export const isFieldOrRelationNestedFieldDateKind = ({
 }: {
   fieldId: string | null;
   subFieldName: string | null;
-  objectMetadataItem?: ObjectMetadataItem;
-  objectMetadataItems?: ObjectMetadataItem[];
+  objectMetadataItem?: EnrichedObjectMetadataItem;
+  objectMetadataItems?: EnrichedObjectMetadataItem[];
 }): boolean => {
   if (!isDefined(fieldId) || !isDefined(objectMetadataItem)) {
     return false;

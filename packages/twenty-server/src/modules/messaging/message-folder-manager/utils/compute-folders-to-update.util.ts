@@ -1,12 +1,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import deepEqual from 'deep-equal';
+import { fastDeepEqual } from 'twenty-shared/utils';
 
 import {
   type DiscoveredMessageFolder,
   type MessageFolder,
 } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
-import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 
 export const computeFoldersToUpdate = ({
   discoveredFolders,
@@ -14,15 +14,12 @@ export const computeFoldersToUpdate = ({
 }: {
   discoveredFolders: DiscoveredMessageFolder[];
   existingFolders: MessageFolder[];
-}): Map<string, Partial<MessageFolderWorkspaceEntity>> => {
+}): Map<string, Partial<MessageFolderEntity>> => {
   const existingFoldersByExternalId = new Map(
     existingFolders.map((folder) => [folder.externalId, folder]),
   );
 
-  const foldersToUpdate = new Map<
-    string,
-    Partial<MessageFolderWorkspaceEntity>
-  >();
+  const foldersToUpdate = new Map<string, Partial<MessageFolderEntity>>();
 
   for (const discoveredFolder of discoveredFolders) {
     const existingFolder = existingFoldersByExternalId.get(
@@ -33,12 +30,14 @@ export const computeFoldersToUpdate = ({
       continue;
     }
 
+    const parentFolderId = isNonEmptyString(discoveredFolder.parentFolderId)
+      ? discoveredFolder.parentFolderId
+      : null;
+
     const discoveredFolderData = {
       name: discoveredFolder.name,
       isSentFolder: discoveredFolder.isSentFolder,
-      parentFolderId: isNonEmptyString(discoveredFolder.parentFolderId)
-        ? discoveredFolder.parentFolderId
-        : null,
+      parentFolderId,
     };
 
     const existingFolderData = {
@@ -49,7 +48,7 @@ export const computeFoldersToUpdate = ({
         : null,
     };
 
-    if (!deepEqual(discoveredFolderData, existingFolderData)) {
+    if (!fastDeepEqual(discoveredFolderData, existingFolderData)) {
       foldersToUpdate.set(existingFolder.id, discoveredFolderData);
     }
   }

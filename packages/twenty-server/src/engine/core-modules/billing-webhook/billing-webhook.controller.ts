@@ -15,8 +15,6 @@ import {
 import { type Response } from 'express';
 import Stripe from 'stripe';
 
-import { BillingWebhookAlertService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-alert.service';
-import { BillingWebhookCreditGrantService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-credit-grant.service';
 import { BillingWebhookCustomerService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-customer.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-entitlement.service';
 import { BillingWebhookInvoiceService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-invoice.service';
@@ -47,11 +45,9 @@ export class BillingWebhookController {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingWebhookProductService: BillingWebhookProductService,
     private readonly billingWebhookPriceService: BillingWebhookPriceService,
-    private readonly billingWebhookAlertService: BillingWebhookAlertService,
     private readonly billingWebhookInvoiceService: BillingWebhookInvoiceService,
     private readonly billingWebhookCustomerService: BillingWebhookCustomerService,
     private readonly billingWebhookSubscriptionScheduleService: BillingWebhookSubscriptionScheduleService,
-    private readonly billingWebhookCreditGrantService: BillingWebhookCreditGrantService,
   ) {}
 
   @Post(['webhooks/stripe'])
@@ -120,14 +116,10 @@ export class BillingWebhookController {
           event.data,
         );
 
-      case BillingWebhookEvent.ALERT_TRIGGERED:
-        return await this.billingWebhookAlertService.processStripeEvent(
-          event.data,
-        );
-
       case BillingWebhookEvent.INVOICE_FINALIZED:
+      case BillingWebhookEvent.INVOICE_PAID:
         return await this.billingWebhookInvoiceService.processStripeEvent(
-          event.data,
+          event,
         );
 
       case BillingWebhookEvent.CUSTOMER_CREATED:
@@ -150,25 +142,6 @@ export class BillingWebhookController {
         return await this.billingWebhookSubscriptionService.processStripeEvent(
           workspaceId,
           event,
-        );
-      }
-
-      case BillingWebhookEvent.CREDIT_GRANT_CREATED:
-      case BillingWebhookEvent.CREDIT_GRANT_UPDATED: {
-        const customer = event.data.object.customer;
-        // customer can be string ID, Customer object, or DeletedCustomer object
-        const stripeCustomerId =
-          typeof customer === 'string' ? customer : customer?.id;
-
-        if (!stripeCustomerId) {
-          throw new BillingException(
-            'Customer ID is required for credit grant events',
-            BillingExceptionCode.BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND,
-          );
-        }
-
-        return await this.billingWebhookCreditGrantService.processStripeEvent(
-          stripeCustomerId,
         );
       }
 

@@ -1,5 +1,4 @@
 import { useBasePageLayout } from '@/page-layout/hooks/useBasePageLayout';
-import { usePageLayoutWithRelationWidgets } from '@/page-layout/hooks/usePageLayoutWithRelationWidgets';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -20,15 +19,14 @@ type PageLayoutInitializationQueryEffectProps = {
   pageLayoutId: string;
 };
 
+// oxlint-disable-next-line twenty/effect-components
 export const PageLayoutInitializationQueryEffect = ({
   pageLayoutId,
 }: PageLayoutInitializationQueryEffectProps) => {
+  const pageLayout = useBasePageLayout(pageLayoutId);
+
   const [pageLayoutIsInitialized, setPageLayoutIsInitialized] =
     useAtomComponentState(pageLayoutIsInitializedComponentState);
-
-  const basePageLayout = useBasePageLayout(pageLayoutId);
-
-  const pageLayout = usePageLayoutWithRelationWidgets(basePageLayout);
 
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
@@ -46,8 +44,6 @@ export const PageLayoutInitializationQueryEffect = ({
 
   const initializePageLayout = useCallback(
     (layout: PageLayout) => {
-      const isRecordPageLayout = layout.type === PageLayoutType.RECORD_PAGE;
-
       const currentPersisted = store.get(
         pageLayoutPersistedComponentCallbackState,
       );
@@ -69,7 +65,9 @@ export const PageLayoutInitializationQueryEffect = ({
       const tabLayouts = convertPageLayoutToTabLayouts(layout);
       store.set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
 
-      if (!isRecordPageLayout) {
+      const isDashboardLayout = layout.type === PageLayoutType.DASHBOARD;
+
+      if (isDashboardLayout) {
         const shouldEnterDashboardEditMode = isPageLayoutEmpty(layout);
         setIsPageLayoutInEditMode(shouldEnterDashboardEditMode);
       }

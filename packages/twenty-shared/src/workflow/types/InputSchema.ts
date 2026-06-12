@@ -1,5 +1,5 @@
-import { type LeafType, type NodeType } from '@/workflow';
 import { type FieldMetadataType } from '@/types';
+import { type LeafType, type NodeType } from '@/workflow';
 
 export type InputSchemaPropertyType = LeafType | NodeType | FieldMetadataType;
 
@@ -8,6 +8,8 @@ export type InputSchemaProperty = {
   enum?: string[];
   items?: InputSchemaProperty;
   properties?: Properties;
+  multiline?: boolean;
+  label?: string;
 };
 
 type Properties = {

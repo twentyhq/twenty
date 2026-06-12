@@ -1,6 +1,6 @@
 import { conditionalAvailabilityTransformPlugin } from '@/cli/utilities/build/common/conditional-availability/conditional-availability-transform-plugin';
 import { pathExists, remove } from '@/cli/utilities/file/fs-utils';
-import { type ValidationResult } from '@/sdk';
+import { type ValidationResult } from '@/sdk/define';
 import * as esbuild from 'esbuild';
 import { createRequire } from 'module';
 import { mkdtemp, writeFile } from 'node:fs/promises';
@@ -8,7 +8,11 @@ import os from 'os';
 import path from 'path';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-const MANIFEST_MOCK_MODULES = ['twenty-sdk/ui', 'twenty-sdk/clients'];
+const MANIFEST_MOCK_MODULES = [
+  'twenty-sdk/ui',
+  'twenty-client-sdk/core',
+  'twenty-client-sdk/metadata',
+];
 
 const manifestMockPlugin: esbuild.Plugin = {
   name: 'manifest-mock',

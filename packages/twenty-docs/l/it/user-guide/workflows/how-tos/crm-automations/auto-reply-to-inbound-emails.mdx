@@ -1,0 +1,121 @@
+---
+title: Risposta automatica alle email in arrivo
+description: Crea un flusso di lavoro che utilizza l'IA per smistare le email in arrivo e inviare automaticamente risposte in thread.
+---
+
+Rispondi alle email in arrivo in pochi secondi — non ore. Questo flusso di lavoro utilizza un agente IA per filtrare il rumore (newsletter, spam, risposte automatiche) e redigere una risposta personalizzata ai messaggi reali, quindi la invia come risposta in thread all'interno della conversazione originale.
+
+## Come funziona il threading delle email
+
+Ogni email include un'intestazione nascosta `Message-ID` — un'impronta univoca assegnata dal server di posta del mittente. Quando rispondi a un'email, il tuo client di posta imposta un'intestazione `In-Reply-To` che fa riferimento a quell'impronta. È così che Gmail, Outlook e tutti gli altri client raggruppano i messaggi nei thread.
+
+In Twenty, quell'impronta è memorizzata come `headerMessageId` sull'oggetto Message. Il tuo flusso di lavoro la recupera e la passa al campo In-Reply-To dell'azione Send Email.
+
+## Creazione del flusso di lavoro
+
+### Passaggio 1: Crea un nuovo flusso di lavoro
+
+Vai a **Impostazioni -> Flussi di lavoro** e fai clic su **+ New Workflow**.
+
+### Passaggio 2: Imposta il trigger sui messaggi in arrivo
+
+Scegli **When a Record is Created** e seleziona **Messages**.
+
+Ogni volta che un'email arriva in Twenty, questo si attiva.
+
+<img src="/images/user-guide/workflows/auto-reply/workflow-overview.png" style={{width:'100%'}} />
+
+### Passaggio 3: Cerca chi l'ha inviato
+
+Aggiungi un'azione **Search Records**.
+
+L'indirizzo del mittente non è presente sul messaggio stesso — si trova nel record Message Participant correlato.
+
+| Campo       | Valore                          |
+| ----------- | ------------------------------- |
+| **Oggetto** | Partecipanti al messaggio       |
+| **Filtro**  | Message **is** `{{trigger.id}}` |
+| **Filtro**  | Role **is** From                |
+| **Limite**  | 1                               |
+
+Questo ti fornisce l'email del mittente in `handle` e il suo nome in `displayName`.
+
+<img src="/images/user-guide/workflows/auto-reply/find-sender.png" style={{width:'100%'}} />
+
+### Passaggio 4: Triage con AI e bozza di risposta
+
+Aggiungi un'azione **AI Agent**. Questo singolo passaggio fa due cose: decide se l'email merita una risposta e, in tal caso, ne scrive una.
+
+Usa un prompt come:
+
+```
+You are an email triage assistant for a sales team. Read the following
+inbound email and decide if it deserves a reply.
+
+Subject: {{trigger.subject}}
+Body: {{trigger.text}}
+From: {{Find Sender.first.displayName}} ({{Find Sender.first.handle}})
+
+If this email is spam, a newsletter, an automated notification, or
+otherwise does not need a human reply, respond with exactly: SKIP
+
+Otherwise, write a short, professional reply (3-4 sentences max) that:
+- Acknowledges their specific message
+- Lets them know someone from the team will follow up shortly
+- Is warm but not overly casual
+
+Respond with only the reply text, no subject line or greeting prefix.
+```
+
+AI Agent produce la sua risposta in un campo `response` a cui i passaggi successivi possono fare riferimento.
+
+<img src="/images/user-guide/workflows/auto-reply/ai-triage.png" style={{width:'100%'}} />
+
+### Passaggio 5: Ramifica in base alla decisione dell'AI
+
+Aggiungi un'azione **If/Else** per verificare se l'AI ha deciso di rispondere o saltare.
+
+| Campo          | Valore                                          |
+| -------------- | ----------------------------------------------- |
+| **Condizione** | AI Agent `response` **does not contain** `SKIP` |
+| **Se vero**    | Continua con Send Email                         |
+| **Altrimenti** | Non fare nulla (il flusso di lavoro termina)    |
+
+Spam, newsletter e messaggi generati automaticamente vengono scartati. Tutto il resto passa al passaggio successivo.
+
+<img src="/images/user-guide/workflows/auto-reply/should-reply.png" style={{width:'100%'}} />
+
+### Passaggio 6: Invia una risposta nello stesso thread
+
+Aggiungi un'azione **Send Email** nel ramo "if true". Fai clic su **Advanced options**, quindi su **Add In-Reply-To**.
+
+| Campo           | Valore                                 |
+| --------------- | -------------------------------------- |
+| **A**           | `{{Find Sender.first.handle}}`         |
+| **Oggetto**     | `Re: {{trigger.subject}}`              |
+| **Corpo**       | `{{AI Triage & Draft Reply.response}}` |
+| **In-Reply-To** | `{{trigger.headerMessageId}}`          |
+
+Il campo In-Reply-To è ciò che rende questo un messaggio di risposta invece di una nuova conversazione. Il destinatario lo vede nel thread sotto l'email originale in Gmail, Outlook o qualsiasi altro client.
+
+<img src="/images/user-guide/workflows/auto-reply/send-email.png" style={{width:'100%'}} />
+
+<Tip>
+**In-Reply-To** si aspetta un `message.headerMessageId` dal trigger — è l'impronta univoca dell'email, non un indirizzo del destinatario. Se lo lasci vuoto, l'email viene comunque inviata, solo come messaggio autonomo.
+</Tip>
+
+<Warning>
+Gmail usa l'oggetto per raggruppare i messaggi nei thread. L'oggetto **deve** iniziare con `Re:` (inclusi i due punti e lo spazio) affinché Gmail visualizzi la risposta all'interno del thread originale. Senza di esso, la risposta apparirà come una conversazione separata — anche se l'intestazione In-Reply-To è impostata correttamente.
+</Warning>
+
+### Passaggio 7: Testa e attiva
+
+Fai clic su **Test**, quindi controlla il tuo client di posta. La risposta dovrebbe comparire annidata sotto il messaggio originale.
+
+Attivalo quando sei soddisfatto.
+
+## Idee per sviluppare ulteriormente
+
+* **Rispondi solo ai VIP** — aggiungi un ramo che controlli il dominio del mittente o se esiste come Contatto in Twenty
+* **Instrada in base all'intento** — usa prompt distinti di AI Agent per gestire le richieste commerciali in modo diverso rispetto a quelle di supporto
+* **Arricchisci prima di rispondere** — aggiungi un passaggio Search Records per inserire nel prompt dell'AI l'azienda del mittente o la cronologia delle trattative per risposte più personalizzate

@@ -1,47 +1,37 @@
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
-import { IconFolder } from 'twenty-ui/display';
+import { NavigationMenuItemType } from 'twenty-shared/types';
+import { IconFolder } from 'twenty-ui-deprecated/display';
 
-import { useAddFolderToNavigationMenuDraft } from '@/navigation-menu-item/edit/folder/hooks/useAddFolderToNavigationMenuDraft';
-import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemsDraftState';
+import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
+import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
+import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
-import { addMenuItemInsertionContextState } from '@/navigation-menu-item/common/states/addMenuItemInsertionContextState';
-import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 export const useAddFolderToNavigationMenu = () => {
   const { t } = useLingui();
-  const { addFolderToDraft } = useAddFolderToNavigationMenuDraft();
-  const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
-  const navigationMenuItemsDraft = useAtomStateValue(
-    navigationMenuItemsDraftState,
-  );
+  const { createItem } = useNavigationMenuItemEditController();
   const { openNavigationMenuItemInSidePanel } =
     useOpenNavigationMenuItemInSidePanel();
-  const addMenuItemInsertionContext = useAtomStateValue(
-    addMenuItemInsertionContextState,
-  );
-  const setAddMenuItemInsertionContext = useSetAtomState(
-    addMenuItemInsertionContextState,
-  );
-
-  const currentDraft = isDefined(navigationMenuItemsDraft)
-    ? navigationMenuItemsDraft
-    : workspaceNavigationMenuItems;
+  const [
+    pendingInsertionNavigationMenuItem,
+    setPendingInsertionNavigationMenuItem,
+  ] = useAtomState(pendingInsertionNavigationMenuItemState);
 
   const handleAddFolder = () => {
-    const targetFolderId = addMenuItemInsertionContext?.targetFolderId ?? null;
-    const targetIndex = addMenuItemInsertionContext?.targetIndex;
-
-    const itemId = addFolderToDraft(
-      t`New folder`,
-      currentDraft,
-      targetFolderId,
-      targetIndex,
+    const itemId = createItem(
+      {
+        type: NavigationMenuItemType.FOLDER,
+        name: t`New folder`,
+        color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER,
+      },
+      {
+        targetFolderId: pendingInsertionNavigationMenuItem?.folderId ?? null,
+        targetIndex: pendingInsertionNavigationMenuItem?.position,
+      },
     );
 
-    setAddMenuItemInsertionContext(null);
+    setPendingInsertionNavigationMenuItem(null);
     openNavigationMenuItemInSidePanel({
       itemId,
       pageTitle: t`Edit folder`,

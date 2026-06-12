@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
 import type { NavigationMenuItemClickParams } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
-import type { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import type { EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import type { EditModeProps } from '@/object-metadata/components/EditModeProps';
@@ -14,11 +14,11 @@ export type NavigationMenuItemSectionContentProps = {
   folderChildrenById: Map<string, NavigationMenuItem[]>;
   folderCount: number;
   rightOptions?: ReactNode;
-  selectedNavigationMenuItemId?: string | null;
   onNavigationMenuItemClick?: (params: NavigationMenuItemClickParams) => void;
   onActiveObjectMetadataItemClick?: (
-    objectMetadataItem: ObjectMetadataItem,
+    objectMetadataItem: EnrichedObjectMetadataItem,
     navigationMenuItemId: string,
   ) => void;
   readOnly?: boolean;
+  orphanIndex?: number;
 };

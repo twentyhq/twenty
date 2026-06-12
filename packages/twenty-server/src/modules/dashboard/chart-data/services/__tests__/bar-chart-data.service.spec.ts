@@ -174,71 +174,6 @@ describe('BarChartDataService', () => {
       expect(result.data[2].amount).toBe(60);
     });
 
-    it('should filter by rangeMin when cumulative', async () => {
-      mockExecuteGroupByQuery.mockResolvedValue([
-        { groupByDimensionValues: ['a'], aggregateValue: 10 },
-        { groupByDimensionValues: ['b'], aggregateValue: 10 },
-        { groupByDimensionValues: ['c'], aggregateValue: 10 },
-      ]);
-
-      const result = await service.getBarChartData({
-        workspaceId,
-        objectMetadataId,
-        configuration: {
-          ...baseConfiguration,
-          isCumulative: true,
-          rangeMin: 15,
-        } as any,
-        authContext: mockAuthContext,
-      });
-
-      expect(result.data.map((d) => d.amount)).toEqual([]);
-    });
-
-    it('should filter by rangeMax when cumulative', async () => {
-      mockExecuteGroupByQuery.mockResolvedValue([
-        { groupByDimensionValues: ['a'], aggregateValue: 10 },
-        { groupByDimensionValues: ['b'], aggregateValue: 20 },
-        { groupByDimensionValues: ['c'], aggregateValue: 30 },
-      ]);
-
-      const result = await service.getBarChartData({
-        workspaceId,
-        objectMetadataId,
-        configuration: {
-          ...baseConfiguration,
-          isCumulative: true,
-          rangeMax: 25,
-        } as any,
-        authContext: mockAuthContext,
-      });
-
-      expect(result.data.map((d) => d.amount)).toEqual([10, 30]);
-    });
-
-    it('should filter by both rangeMin and rangeMax when cumulative', async () => {
-      mockExecuteGroupByQuery.mockResolvedValue([
-        { groupByDimensionValues: ['a'], aggregateValue: 5 },
-        { groupByDimensionValues: ['b'], aggregateValue: 15 },
-        { groupByDimensionValues: ['c'], aggregateValue: 25 },
-        { groupByDimensionValues: ['d'], aggregateValue: 35 },
-      ]);
-
-      const result = await service.getBarChartData({
-        workspaceId,
-        objectMetadataId,
-        configuration: {
-          ...baseConfiguration,
-          isCumulative: true,
-          rangeMin: 10,
-          rangeMax: 30,
-        } as any,
-        authContext: mockAuthContext,
-      });
-
-      expect(result.data.map((d) => d.amount)).toEqual([15, 40]);
-    });
-
     it('should handle null values when omitNullValues is true', async () => {
       mockExecuteGroupByQuery.mockResolvedValue([
         { groupByDimensionValues: [null], aggregateValue: 5 },
@@ -402,34 +337,6 @@ describe('BarChartDataService', () => {
       expect(result.data[1]['Closed']).toBe(30);
       expect(result.data[2]['Open']).toBe(60);
       expect(result.data[2]['Closed']).toBe(60);
-    });
-
-    it('should filter stacked two-dimensional cumulative data by rangeMax', async () => {
-      mockExecuteGroupByQuery.mockResolvedValue([
-        { groupByDimensionValues: ['a', 'open'], aggregateValue: 10 },
-        { groupByDimensionValues: ['a', 'closed'], aggregateValue: 20 },
-        { groupByDimensionValues: ['b', 'open'], aggregateValue: 5 },
-        { groupByDimensionValues: ['b', 'closed'], aggregateValue: 5 },
-        { groupByDimensionValues: ['c', 'open'], aggregateValue: 50 },
-        { groupByDimensionValues: ['c', 'closed'], aggregateValue: 30 },
-      ]);
-
-      const result = await service.getBarChartData({
-        workspaceId,
-        objectMetadataId,
-        configuration: {
-          ...twoDimConfiguration,
-          isCumulative: true,
-          rangeMax: 60,
-        } as any,
-        authContext: mockAuthContext,
-      });
-
-      expect(result.data.length).toBe(2);
-      expect(result.data[0]['Open']).toBe(10);
-      expect(result.data[0]['Closed']).toBe(20);
-      expect(result.data[1]['Open']).toBe(15);
-      expect(result.data[1]['Closed']).toBe(25);
     });
 
     it('should order keys correctly despite unordered raw results', async () => {

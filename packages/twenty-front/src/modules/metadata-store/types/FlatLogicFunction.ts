@@ -1,3 +1,3 @@
-import { type LogicFunction } from '@/settings/logic-functions/states/logicFunctionsState';
+import { type LogicFunction } from '@/logic-functions/types/LogicFunction';
 
 export type FlatLogicFunction = LogicFunction;

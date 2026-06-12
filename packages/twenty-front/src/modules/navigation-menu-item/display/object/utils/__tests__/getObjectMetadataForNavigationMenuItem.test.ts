@@ -1,19 +1,19 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type View } from '@/views/types/View';
 
-const mockObjectMetadataItems: ObjectMetadataItem[] = [
+const mockObjectMetadataItems: EnrichedObjectMetadataItem[] = [
   {
     id: 'metadata-1',
     nameSingular: 'person',
     namePlural: 'people',
-  } as ObjectMetadataItem,
+  } as EnrichedObjectMetadataItem,
   {
     id: 'metadata-2',
     nameSingular: 'company',
     namePlural: 'companies',
-  } as ObjectMetadataItem,
+  } as EnrichedObjectMetadataItem,
 ];
 
 const mockViews: View[] = [

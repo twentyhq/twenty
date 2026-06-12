@@ -1,0 +1,47 @@
+---
+title: Data Model
+description: Understand how Twenty structures your data with objects, fields, and relations.
+icon: "database"
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Everything in Twenty is built around **objects** and **fields** — the building blocks of your data model.
+
+## Objects
+
+Objects are the tables that hold your data. Twenty comes with standard objects out of the box:
+
+- **Companies** — Organizations you do business with
+- **People** — Individual contacts
+- **Opportunities** — Deals in your pipeline
+- **Tasks** — Action items for your team
+- **Notes** — Free-form text linked to records
+
+You can also create **custom objects** for anything your business needs — projects, support tickets, products, contracts, or anything else.
+
+## Fields
+
+Fields are the properties on each object. Twenty supports a wide range of field types:
+
+| Category | Types |
+|----------|-------|
+| **Basic** | Text, Number, Boolean, Date, Currency, Rating, Select |
+| **Composite** | Address (street, city, state, zip), Full Name, Links, Phones, Emails |
+| **Special** | Relation, File Attachment, JSON, Actor (who created/modified) |
+
+Every object also gets automatic system fields: `id`, `createdAt`, `updatedAt`, `createdBy`, and `position`.
+
+## Relations
+
+Objects connect to each other through relations. A Company has many People, an Opportunity belongs to a Company, and so on. You can create custom relations between any objects, including many-to-many relationships.
+
+## What makes this powerful
+
+Unlike traditional CRMs where you're limited to pre-defined fields on pre-defined objects, Twenty lets you model your data exactly the way your business works. Custom objects get the same first-class treatment as built-in ones — including API endpoints, views, permissions, and workflow triggers.
+
+<Card title="Deep dive into the Data Model" icon="arrow-right" href="/user-guide/data-model/overview">
+  Full reference on objects, fields, relations, and how to configure them.
+</Card>
+
+<VimeoEmbed videoId="1185511827" title="Data model" />

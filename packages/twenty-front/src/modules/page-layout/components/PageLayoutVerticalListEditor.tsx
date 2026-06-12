@@ -6,16 +6,16 @@ import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer'
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { styled } from '@linaria/react';
 import {
   DragDropContext,
   Draggable,
   Droppable,
   type DropResult,
 } from '@hello-pangea/dnd';
-import { useId } from 'react';
-import { useIsMobile } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from '@linaria/react';
+import { type ReactNode, useId } from 'react';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { useIsMobile } from 'twenty-ui-deprecated/utilities';
 
 const StyledVerticalListContainer = styled.div<{
   variant: PageLayoutVerticalListViewerVariant;
@@ -47,12 +47,14 @@ type PageLayoutVerticalListEditorProps = {
   widgets: PageLayoutWidget[];
   onReorder: (result: DropResult) => void;
   isReorderEnabled?: boolean;
+  trailingElement?: ReactNode;
 };
 
 export const PageLayoutVerticalListEditor = ({
   widgets,
   onReorder,
   isReorderEnabled = true,
+  trailingElement,
 }: PageLayoutVerticalListEditorProps) => {
   const droppableId = `page-layout-vertical-list-${useId()}`;
 
@@ -85,7 +87,7 @@ export const PageLayoutVerticalListEditor = ({
           <StyledVerticalListContainer
             ref={provided.innerRef}
             variant={variant}
-            shouldUseWhiteBackground={isMobile || isInSidePanel}
+            shouldUseWhiteBackground={!isInPinnedTab || isMobile}
             // oxlint-disable-next-line react/jsx-props-no-spreading
             {...provided.droppableProps}
           >
@@ -112,6 +114,7 @@ export const PageLayoutVerticalListEditor = ({
               </Draggable>
             ))}
             {provided.placeholder}
+            {trailingElement}
           </StyledVerticalListContainer>
         )}
       </Droppable>

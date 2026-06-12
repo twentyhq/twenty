@@ -13,7 +13,7 @@ import { LoadedDecorator } from '~/testing/decorators/LoadedDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
@@ -33,9 +33,9 @@ import {
   IconUser,
   IconUserCircle,
   IconUsers,
-} from 'twenty-ui/display';
-import { AdvancedSettingsToggle } from 'twenty-ui/navigation';
-import { getOsControlSymbol } from 'twenty-ui/utilities';
+} from 'twenty-ui-deprecated/display';
+import { AdvancedSettingsToggle } from 'twenty-ui-deprecated/navigation';
+import { getOsControlSymbol } from 'twenty-ui-deprecated/utilities';
 
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -58,7 +58,7 @@ const meta: Meta<typeof NavigationDrawer> = {
       useEffect(() => {
         setTestObjectMetadataItemsInMetadataStore(
           jotaiStore,
-          generatedMockObjectMetadataItems,
+          getTestEnrichedObjectMetadataItemsMock(),
         );
         setCurrentWorkspaceMember(mockedWorkspaceMemberData);
       }, [setCurrentWorkspaceMember]);
@@ -86,24 +86,19 @@ export const Default: Story = {
             label="Notifications"
             to="/inbox"
             Icon={IconBell}
-            soon={true}
+            modifier="soon"
           />
           <NavigationDrawerItem
             label="Search"
             Icon={IconSearch}
-            keyboard={[`${getOsControlSymbol()}`, 'K']}
+            modifier={{ keyboard: [`${getOsControlSymbol()}`, 'K'] }}
           />
           <NavigationDrawerItem
             label="Settings"
             to="/settings/profile"
             Icon={IconSettings}
           />
-          <NavigationDrawerItem
-            label="Tasks"
-            to="/tasks"
-            Icon={IconCheckbox}
-            count={2}
-          />
+          <NavigationDrawerItem label="Tasks" to="/tasks" Icon={IconCheckbox} />
         </NavigationDrawerSection>
 
         <NavigationDrawerSection>
@@ -169,7 +164,7 @@ export const Settings: Story = {
           <NavigationDrawerSectionTitle label="Workspace" />
           <NavigationDrawerItem
             label="General"
-            to={getSettingsPath(SettingsPath.Workspace)}
+            to={getSettingsPath(SettingsPath.General)}
             Icon={IconSettings}
           />
           <NavigationDrawerItem

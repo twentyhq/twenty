@@ -341,7 +341,6 @@ export class TimelineActivitySeederService {
         ...commonProperties,
         name: recordSeed.name,
         domainName: recordSeed.domainNamePrimaryLinkUrl,
-        employees: recordSeed.employees,
         city: recordSeed.addressAddressCity,
       }),
       person: () => ({

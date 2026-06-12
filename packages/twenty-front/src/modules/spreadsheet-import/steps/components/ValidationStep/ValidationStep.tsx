@@ -12,9 +12,7 @@ import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetC
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
-import { ModalContent } from 'twenty-ui/layout';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
   type Dispatch,
@@ -23,11 +21,14 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { ModalContent } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 // @ts-expect-error Todo: remove usage of react-data-grid`
 import { type RowsChangeData } from 'react-data-grid';
 import { isDefined } from 'twenty-shared/utils';
-import { IconTrash } from 'twenty-ui/display';
-import { Button, Toggle } from 'twenty-ui/input';
+import { IconTrash } from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { Toggle } from 'twenty-ui/input';
 import { generateColumns } from './components/columns';
 import { type ImportedStructuredRowMetadata } from './types';
 
@@ -80,6 +81,7 @@ const StyledScrollContainer = styled.div`
   flex-direction: column;
   flex-grow: 1;
   height: 0px;
+  overflow: auto;
   width: 100%;
 `;
 

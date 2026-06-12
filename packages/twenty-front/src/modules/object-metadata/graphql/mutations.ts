@@ -19,6 +19,7 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
       labelIdentifierFieldMetadataId
       imageIdentifierFieldMetadataId
       isLabelSyncedWithName
+      applicationId
       fieldsList {
         id
         universalIdentifier
@@ -207,6 +208,7 @@ export const UPDATE_ONE_OBJECT_METADATA_ITEM = gql`
       labelIdentifierFieldMetadataId
       imageIdentifierFieldMetadataId
       isLabelSyncedWithName
+      applicationId
     }
   }
 `;
@@ -230,6 +232,7 @@ export const DELETE_ONE_OBJECT_METADATA_ITEM = gql`
       labelIdentifierFieldMetadataId
       imageIdentifierFieldMetadataId
       isLabelSyncedWithName
+      applicationId
     }
   }
 `;
@@ -254,6 +257,38 @@ export const DELETE_ONE_FIELD_METADATA_ITEM = gql`
       object {
         id
       }
+    }
+  }
+`;
+
+export const CREATE_ONE_INDEX_METADATA_ITEM = gql`
+  mutation CreateOneIndexMetadataItem($input: CreateOneIndexInput!) {
+    createOneIndex(input: $input) {
+      id
+      name
+      indexType
+      isUnique
+      isCustom
+      indexWhereClause
+      createdAt
+      updatedAt
+      indexFieldMetadataList {
+        id
+        fieldMetadataId
+        subFieldName
+        createdAt
+        updatedAt
+        order
+      }
+    }
+  }
+`;
+
+export const DELETE_ONE_INDEX_METADATA_ITEM = gql`
+  mutation DeleteOneIndexMetadataItem($idToDelete: UUID!) {
+    deleteOneIndex(input: { id: $idToDelete }) {
+      id
+      name
     }
   }
 `;

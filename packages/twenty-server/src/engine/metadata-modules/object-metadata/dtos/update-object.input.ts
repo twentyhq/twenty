@@ -76,6 +76,11 @@ export class UpdateObjectPayload {
   @IsOptional()
   @Field({ nullable: true })
   isLabelSyncedWithName?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  isSearchable?: boolean;
 }
 
 @InputType()

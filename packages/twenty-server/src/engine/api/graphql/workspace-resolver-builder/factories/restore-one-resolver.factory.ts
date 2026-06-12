@@ -16,9 +16,7 @@ import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver
 import { createQueryRunnerContext } from 'src/engine/api/graphql/workspace-resolver-builder/utils/create-query-runner-context.util';
 
 @Injectable()
-export class RestoreOneResolverFactory
-  implements WorkspaceResolverBuilderFactoryInterface
-{
+export class RestoreOneResolverFactory implements WorkspaceResolverBuilderFactoryInterface {
   public static methodName = RESOLVER_METHOD_NAMES.RESTORE_ONE;
 
   constructor(
@@ -30,7 +28,7 @@ export class RestoreOneResolverFactory
   ): Resolver<RestoreOneResolverArgs> {
     const internalContext = context;
 
-    return async (_source, args, requestContext, info) => {
+    return async (_source, args, _requestContext, info) => {
       const selectedFields = graphqlFields(info);
 
       const resolverContext = createQueryRunnerContext({
@@ -38,10 +36,11 @@ export class RestoreOneResolverFactory
       });
 
       try {
-        const record = await this.commonRestoreOneQueryRunnerService.execute(
-          { ...args, selectedFields },
-          resolverContext,
-        );
+        const { results: record } =
+          await this.commonRestoreOneQueryRunnerService.execute(
+            { ...args, selectedFields },
+            resolverContext,
+          );
 
         const typeORMObjectRecordsParser =
           new ObjectRecordsToGraphqlConnectionHelper(

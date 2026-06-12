@@ -1,13 +1,13 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { getMissingDraftEmailScopes } from '@/accounts/utils/hasMissingDraftEmailScopes';
 import { WorkflowSendEmailAttachments } from '@/advanced-text-editor/components/WorkflowSendEmailAttachments';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
 import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { Select } from '@/ui/input/components/Select';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -15,7 +15,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { WORKFLOW_STEP_CONNECTED_ACCOUNT_HANDLE } from '@/workflow/graphql/queries/workflowStepConnectedAccountHandle';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowEmailAction } from '@/workflow/types/WorkflowEmailAction';
@@ -23,13 +23,14 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { useEmailForm } from '@/workflow/workflow-steps/workflow-actions/hooks/useEmailForm';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
+import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Callout, IconPlus } from 'twenty-ui/display';
-import { Button, type SelectOption } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { Callout, IconPlus } from 'twenty-ui-deprecated/display';
+import { Button, type SelectOption } from 'twenty-ui-deprecated/input';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const EMAIL_EDITOR_MIN_HEIGHT = 340;
@@ -52,7 +53,6 @@ export const WorkflowEditActionEmailBase = ({
   action,
   actionOptions,
 }: WorkflowEditActionEmailBaseProps) => {
-  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { triggerApisOAuth } = useTriggerApisOAuth();
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
@@ -75,12 +75,14 @@ export const WorkflowEditActionEmailBase = ({
   const [visibleAdvancedFields, setVisibleAdvancedFields] = useState<{
     cc: boolean;
     bcc: boolean;
+    inReplyTo: boolean;
   }>(() => {
     const inputRecipients = action.settings.input.recipients;
 
     return {
       cc: Boolean(inputRecipients?.cc),
       bcc: Boolean(inputRecipients?.bcc),
+      inReplyTo: Boolean(action.settings.input.inReplyTo),
     };
   });
 
@@ -89,7 +91,9 @@ export const WorkflowEditActionEmailBase = ({
   const advancedOptionsDropdownId = `${action.id}-email-advanced-options`;
 
   const hasAvailableAdvancedOptions =
-    !visibleAdvancedFields.cc || !visibleAdvancedFields.bcc;
+    !visibleAdvancedFields.cc ||
+    !visibleAdvancedFields.bcc ||
+    !visibleAdvancedFields.inReplyTo;
 
   const handleReauthorize = async () => {
     if (!isDefined(missingScopes)) {
@@ -106,56 +110,51 @@ export const WorkflowEditActionEmailBase = ({
     handleFieldChange('connectedAccountId', connectedAccountId);
   };
 
-  const filter: { or: object[] } = {
-    or: [
-      {
-        accountOwnerId: {
-          eq: currentWorkspaceMember?.id,
-        },
-      },
-    ],
-  };
+  const apolloCoreClient = useApolloCoreClient();
 
-  if (
-    isDefined(action.settings.input.connectedAccountId) &&
-    action.settings.input.connectedAccountId !== ''
-  ) {
-    filter.or.push({
-      id: {
-        eq: action.settings.input.connectedAccountId,
-      },
-    });
-  }
+  const { accounts: myAccounts, loading: myAccountsLoading } =
+    useMyConnectedAccounts();
 
-  const { records: accounts, loading } = useFindManyRecords<ConnectedAccount>({
-    objectNameSingular: 'connectedAccount',
-    filter,
-    recordGqlFields: {
-      id: true,
-      handle: true,
-      provider: true,
-      scopes: true,
-      accountOwnerId: true,
-      connectionParameters: true,
-    },
+  const configuredAccountId = formData.connectedAccountId;
+  const isConfiguredAccountMine = myAccounts.some(
+    (account) => account.id === configuredAccountId,
+  );
+
+  const { data: otherAccountData, loading: otherAccountLoading } = useQuery<{
+    workflowStepConnectedAccountHandle: Pick<
+      ConnectedAccount,
+      'id' | 'handle' | 'provider'
+    > | null;
+  }>(WORKFLOW_STEP_CONNECTED_ACCOUNT_HANDLE, {
+    client: apolloCoreClient,
+    variables: { connectedAccountId: configuredAccountId },
+    skip:
+      !isDefined(configuredAccountId) ||
+      configuredAccountId === '' ||
+      isConfiguredAccountMine,
   });
 
-  const selectedAccount = accounts.find(
-    (account) => account.id === formData.connectedAccountId,
+  const loading = myAccountsLoading || otherAccountLoading;
+
+  const otherAccount =
+    otherAccountData?.workflowStepConnectedAccountHandle ?? null;
+
+  const ownAccount = myAccounts.find(
+    (account) => account.id === configuredAccountId,
   );
 
   const missingDraftScopes =
-    action.type === 'DRAFT_EMAIL' && isDefined(selectedAccount)
-      ? getMissingDraftEmailScopes(selectedAccount)
+    action.type === 'DRAFT_EMAIL' && isDefined(ownAccount)
+      ? getMissingDraftEmailScopes(ownAccount)
       : [];
 
   const missingScopes =
-    isDefined(selectedAccount) &&
-    selectedAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
+    isDefined(ownAccount) &&
+    ownAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
     missingDraftScopes.length > 0
       ? {
-          provider: selectedAccount.provider,
-          loginHint: selectedAccount.handle,
+          provider: ownAccount.provider,
+          loginHint: ownAccount.handle,
         }
       : null;
 
@@ -165,7 +164,7 @@ export const WorkflowEditActionEmailBase = ({
   };
   const connectedAccountOptions: SelectOption<string | null>[] = [];
 
-  accounts.forEach((account) => {
+  myAccounts.forEach((account) => {
     if (
       account.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
       !isDefined(account.connectionParameters?.SMTP)
@@ -173,16 +172,18 @@ export const WorkflowEditActionEmailBase = ({
       return;
     }
 
-    const selectOption = {
+    connectedAccountOptions.push({
       label: account.handle,
       value: account.id,
-    };
-    if (account.accountOwnerId === currentWorkspaceMember?.id) {
-      connectedAccountOptions.push(selectOption);
-    } else {
-      emptyOption = selectOption;
-    }
+    });
   });
+
+  if (isDefined(otherAccount)) {
+    emptyOption = {
+      label: otherAccount.handle,
+      value: otherAccount.id,
+    };
+  }
 
   const navigate = useNavigateSettings();
 
@@ -276,6 +277,18 @@ export const WorkflowEditActionEmailBase = ({
               VariablePicker={WorkflowVariablePicker}
             />
           )}
+          {visibleAdvancedFields.inReplyTo && (
+            <FormTextFieldInput
+              label={t`In-Reply-To`}
+              placeholder={t`Enter Message-ID to reply to`}
+              readonly={actionOptions.readonly}
+              defaultValue={formData.inReplyTo}
+              onChange={(value) => {
+                handleFieldChange('inReplyTo', value);
+              }}
+              VariablePicker={WorkflowVariablePicker}
+            />
+          )}
           {!actionOptions.readonly && hasAvailableAdvancedOptions && (
             <Dropdown
               dropdownId={advancedOptionsDropdownId}
@@ -312,6 +325,18 @@ export const WorkflowEditActionEmailBase = ({
                           setVisibleAdvancedFields((prev) => ({
                             ...prev,
                             bcc: true,
+                          }));
+                          closeDropdown(advancedOptionsDropdownId);
+                        }}
+                      />
+                    )}
+                    {!visibleAdvancedFields.inReplyTo && (
+                      <MenuItem
+                        text={t`Add In-Reply-To`}
+                        onClick={() => {
+                          setVisibleAdvancedFields((prev) => ({
+                            ...prev,
+                            inReplyTo: true,
                           }));
                           closeDropdown(advancedOptionsDropdownId);
                         }}

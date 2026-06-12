@@ -1,5 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { buildRecordGqlFieldsAggregateForView } from '@/object-record/record-board/record-board-column/utils/buildRecordGqlFieldsAggregateForView';
 
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
@@ -29,7 +29,7 @@ describe('buildRecordGqlFieldsAggregateForView', () => {
     } as FieldMetadataItem,
   ];
 
-  const mockObjectMetadata: ObjectMetadataItem = {
+  const mockObjectMetadata: EnrichedObjectMetadataItem = {
     id: '123',
     universalIdentifier: '123',
     nameSingular: 'opportunity',

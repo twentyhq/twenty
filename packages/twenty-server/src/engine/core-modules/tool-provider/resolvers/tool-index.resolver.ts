@@ -28,6 +28,9 @@ export class ToolIndexEntryDTO {
   @Field({ nullable: true })
   objectName?: string;
 
+  @Field({ nullable: true })
+  icon?: string;
+
   @Field(() => graphqlTypeJson, { nullable: true })
   inputSchema?: object;
 }
@@ -81,12 +84,15 @@ export class ToolIndexResolver {
       return null;
     }
 
-    const schemas = await this.toolRegistryService.resolveSchemas([toolName], {
-      workspaceId: workspace.id,
-      roleId,
-      rolePermissionConfig: { unionOf: [roleId] },
-      userId: user?.id,
-      userWorkspaceId,
+    const schemas = await this.toolRegistryService.resolveSchemas({
+      toolNames: [toolName],
+      context: {
+        workspaceId: workspace.id,
+        roleId,
+        rolePermissionConfig: { unionOf: [roleId] },
+        userId: user?.id,
+        userWorkspaceId,
+      },
     });
 
     return schemas.get(toolName) ?? null;

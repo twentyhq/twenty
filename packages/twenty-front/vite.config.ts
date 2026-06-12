@@ -20,7 +20,6 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, __dirname, '');
 
   const {
-    REACT_APP_SERVER_BASE_URL,
     VITE_BUILD_SOURCEMAP,
     VITE_HOST,
     SSL_CERT_PATH,
@@ -88,6 +87,7 @@ export default defineConfig(({ mode }) => {
           include: [path.resolve(__dirname, 'src') + '/**/*.{ts,tsx}'],
           exclude: [
             '**/generated-metadata/**',
+            '**/generated-admin/**',
             '**/testing/mock-data/**',
             '**/testing/jest/**',
             '**/testing/hooks/**',
@@ -96,8 +96,6 @@ export default defineConfig(({ mode }) => {
             '**/testing/cache/**',
             '**/*.test.{ts,tsx}',
             '**/*.spec.{ts,tsx}',
-            '**/*.stories.{ts,tsx}',
-            '**/__stories__/**',
             '**/__tests__/**',
             '**/__mocks__/**',
             '**/types/**',
@@ -139,13 +137,14 @@ export default defineConfig(({ mode }) => {
         '../../node_modules/.vite',
         '../../node_modules/.cache',
         '../../node_modules/twenty-ui',
+        '../../node_modules/twenty-ui-deprecated',
       ],
     },
 
     build: {
       minify: 'esbuild',
       outDir: 'build',
-      sourcemap: VITE_BUILD_SOURCEMAP === 'true',
+      sourcemap: VITE_BUILD_SOURCEMAP === 'true' ? 'hidden' : false,
       chunkSizeWarningLimit: CHUNK_SIZE_WARNING_LIMIT,
       rollupOptions: {
         //  Don't use manual chunks as it causes many issue
@@ -233,11 +232,7 @@ export default defineConfig(({ mode }) => {
     envPrefix: 'REACT_APP_',
 
     define: {
-      _env_: {
-        REACT_APP_SERVER_BASE_URL,
-      },
       'process.env': {
-        REACT_APP_SERVER_BASE_URL,
         IS_DEBUG_MODE,
         IS_DEV_ENV: mode === 'development' ? 'true' : 'false',
       },
@@ -248,9 +243,14 @@ export default defineConfig(({ mode }) => {
       },
     },
     resolve: {
-      alias: {
-        path: 'rollup-plugin-node-polyfills/polyfills/path',
-      },
+      alias: [
+        // wyw-in-js 1.x resolves modules in its CSS evaluator via vite's
+        // resolve.alias (it no longer picks up vite-tsconfig-paths), so the
+        // `@/` and `~/` tsconfig path aliases must be mirrored here.
+        { find: /^@\//, replacement: path.resolve(__dirname, 'src/modules') + '/' },
+        { find: /^~\//, replacement: path.resolve(__dirname, 'src') + '/' },
+        { find: 'path', replacement: 'rollup-plugin-node-polyfills/polyfills/path' },
+      ],
     },
   };
 });

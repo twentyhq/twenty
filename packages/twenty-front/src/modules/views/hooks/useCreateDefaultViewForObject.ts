@@ -1,4 +1,4 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
 import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
@@ -11,13 +11,13 @@ const DEFAULT_VIEW_FIELD_SIZE = 180;
 const pendingViewCreations = new Set<string>();
 
 // TODO: This runtime fallback logic is temporary
-// System views will later be created declaratively in the database during twenty standard app installation.
+// System views will later be created declaratively in the database during Standard app installation.
 export const useCreateDefaultViewForObject = () => {
   const { performViewAPICreate } = usePerformViewAPIPersist();
   const { performViewFieldAPICreate } = usePerformViewFieldAPIPersist();
 
   const createDefaultViewForObject = useCallback(
-    async (objectMetadataItem: ObjectMetadataItem) => {
+    async (objectMetadataItem: EnrichedObjectMetadataItem) => {
       if (pendingViewCreations.has(objectMetadataItem.id)) {
         return;
       }

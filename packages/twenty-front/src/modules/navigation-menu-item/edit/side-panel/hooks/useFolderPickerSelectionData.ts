@@ -1,11 +1,11 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { useDraftNavigationMenuItemsAllFolders } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItemsAllFolders';
-import { useDraftNavigationMenuItemsWorkspaceFolders } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItemsWorkspaceFolders';
+import { useNavigationMenuItemSectionAllFolders } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemSectionAllFolders';
+import { useNavigationMenuItemSectionFolders } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemSectionFolders';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/edit/hooks/useSelectedNavigationMenuItemEditItem';
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -41,17 +41,17 @@ const excludeCurrentFolder = <T extends { id: string }>(
 export const useFolderPickerSelectionData = () => {
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { moveToFolder } = useNavigationMenuItemMoveRemove();
-  const selectedNavigationMenuItemInEditMode = useAtomStateValue(
-    selectedNavigationMenuItemInEditModeState,
+  const selectedNavigationMenuItemIdInEditMode = useAtomStateValue(
+    selectedNavigationMenuItemIdInEditModeState,
   );
   const { selectedItem } = useSelectedNavigationMenuItemEditItem();
   const selectedItemType = selectedItem?.type ?? null;
-  const { allFolders } = useDraftNavigationMenuItemsAllFolders();
-  const { workspaceFolders } = useDraftNavigationMenuItemsWorkspaceFolders();
+  const { allFolders } = useNavigationMenuItemSectionAllFolders();
+  const { sectionFolders } = useNavigationMenuItemSectionFolders();
 
   const selectedFolderId =
     selectedItemType === NavigationMenuItemType.FOLDER
-      ? selectedNavigationMenuItemInEditMode
+      ? selectedNavigationMenuItemIdInEditMode
       : null;
   const currentFolderId =
     selectedItemType === NavigationMenuItemType.FOLDER
@@ -83,11 +83,11 @@ export const useFolderPickerSelectionData = () => {
 
   const foldersToShow = includeNoFolderOption
     ? folders
-    : excludeCurrentFolder(workspaceFolders, currentFolderId);
+    : excludeCurrentFolder(sectionFolders, currentFolderId);
 
   const handleSelectFolder = (folderId: string | null) => {
-    if (isDefined(selectedNavigationMenuItemInEditMode)) {
-      moveToFolder(selectedNavigationMenuItemInEditMode, folderId);
+    if (isDefined(selectedNavigationMenuItemIdInEditMode)) {
+      void moveToFolder(selectedNavigationMenuItemIdInEditMode, folderId);
       closeSidePanelMenu();
     }
   };

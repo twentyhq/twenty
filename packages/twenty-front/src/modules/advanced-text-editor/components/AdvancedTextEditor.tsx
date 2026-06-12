@@ -4,7 +4,7 @@ import { TextBubbleMenu } from '@/advanced-text-editor/components/TextBubbleMenu
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/object-record/record-field/ui/form-types/constants/FormFieldPlaceholderStyles';
 import { styled } from '@linaria/react';
 import { EditorContent, type Editor } from '@tiptap/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledEditorContainer = styled.div<{
   readonly?: boolean;
@@ -29,7 +29,7 @@ const StyledEditorContainer = styled.div<{
     box-sizing: border-box;
     color: ${({ readonly }) =>
       readonly
-        ? themeCssVariables.font.color.light
+        ? themeCssVariables.font.color.secondary
         : themeCssVariables.font.color.primary};
     font-family: ${themeCssVariables.font.family};
     font-size: ${themeCssVariables.font.size.sm};

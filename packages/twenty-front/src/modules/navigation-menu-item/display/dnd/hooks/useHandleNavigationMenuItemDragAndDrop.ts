@@ -1,10 +1,11 @@
-import { type OnDragEndResponder } from '@hello-pangea/dnd';
 import { useStore } from 'jotai';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
 
+import type { NavigationMenuItemDropResult } from '@/navigation-menu-item/common/types/navigationMenuItemDropResult';
+
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { useUpdateNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useUpdateNavigationMenuItem';
+import { useUpdateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useUpdateManyNavigationMenuItems';
 import { NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG } from '@/navigation-menu-item/common/constants/NavigationMenuItemSectionDroppableConfig';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
@@ -29,7 +30,7 @@ export const useHandleNavigationMenuItemDragAndDrop = (
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     useNavigationMenuItemsData();
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
-  const { updateNavigationMenuItem } = useUpdateNavigationMenuItem();
+  const { updateManyNavigationMenuItems } = useUpdateManyNavigationMenuItems();
   const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftState,
   );
@@ -73,11 +74,12 @@ export const useHandleNavigationMenuItemDragAndDrop = (
         }),
       );
     } else {
-      await updateNavigationMenuItem({
-        id: draggableId,
-        position: newPosition,
-        ...folderUpdate,
-      });
+      await updateManyNavigationMenuItems([
+        {
+          id: draggableId,
+          update: { position: newPosition, ...folderUpdate },
+        },
+      ]);
     }
   };
 
@@ -114,10 +116,8 @@ export const useHandleNavigationMenuItemDragAndDrop = (
     });
   };
 
-  const handleNavigationMenuItemDragAndDrop: OnDragEndResponder = async (
-    result: Parameters<OnDragEndResponder>[0] & {
-      insertBeforeItemId?: string | null;
-    },
+  const handleNavigationMenuItemDragAndDrop = async (
+    result: NavigationMenuItemDropResult,
   ) => {
     const { destination, source, draggableId } = result;
 
@@ -175,37 +175,31 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       return;
     }
 
-    if (sourceFolderId === destinationFolderId) {
-      const sourceList = getSortedItems().filter((item) =>
-        matchesFolderId(item, sourceFolderId),
-      );
-
-      if (!sourceList.some((item) => item.id === draggableId)) return;
-
-      const insertBeforeIndex =
-        result.insertBeforeItemId != null
-          ? sourceList.findIndex(
-              (item) => item.id === result.insertBeforeItemId,
-            )
-          : -1;
-
-      await computeAndApplyReorder(
-        draggableId,
-        sourceList,
-        insertBeforeIndex >= 0 ? insertBeforeIndex : destination.index,
-      );
-      return;
-    }
+    const isSameFolder = sourceFolderId === destinationFolderId;
 
     const destinationList = getSortedItems().filter((item) =>
       matchesFolderId(item, destinationFolderId),
     );
 
+    if (
+      isSameFolder &&
+      !destinationList.some((item) => item.id === draggableId)
+    ) {
+      return;
+    }
+
+    const insertBeforeIndex =
+      result.insertBeforeItemId != null
+        ? destinationList.findIndex(
+            (item) => item.id === result.insertBeforeItemId,
+          )
+        : -1;
+
     await computeAndApplyReorder(
       draggableId,
       destinationList,
-      destination.index,
-      destinationFolderId ?? null,
+      insertBeforeIndex >= 0 ? insertBeforeIndex : destination.index,
+      isSameFolder ? undefined : (destinationFolderId ?? null),
     );
   };
 

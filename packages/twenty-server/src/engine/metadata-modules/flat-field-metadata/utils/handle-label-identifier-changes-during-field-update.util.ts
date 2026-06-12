@@ -1,5 +1,5 @@
 import { type FieldMetadataType, type FromTo } from 'twenty-shared/types';
-import { findOrThrow } from 'twenty-shared/utils';
+import { findOrThrow, type SearchableFieldType } from 'twenty-shared/utils';
 
 import {
   FieldMetadataException,
@@ -11,7 +11,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { type SearchableFieldType } from 'src/engine/workspace-manager/utils/is-searchable-field.util';
 
 type HandleLabelIdentifierChangesDuringFieldUpdateArgs = {
   flatObjectMetadata: FlatObjectMetadata;

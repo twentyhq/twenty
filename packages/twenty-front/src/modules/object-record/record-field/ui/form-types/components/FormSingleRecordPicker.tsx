@@ -16,11 +16,13 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useContext, useId } from 'react';
 import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
-import { IconChevronDown, IconForbid } from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconChevronDown, IconForbid } from 'twenty-ui-deprecated/display';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
@@ -45,11 +47,15 @@ type FormSingleRecordPickerValue =
   | {
       type: 'variable';
       value: Variable;
+    }
+  | {
+      type: 'no-record';
+      value: null;
     };
 
 export type FormSingleRecordPickerProps = {
   label?: string;
-  defaultValue?: RecordId | Variable;
+  defaultValue?: RecordId | Variable | null;
   onChange: (value: RecordId | Variable | null) => void;
   onClear?: () => void;
   objectNameSingulars: string[];
@@ -70,17 +76,12 @@ export const FormSingleRecordPicker = ({
 }: FormSingleRecordPickerProps) => {
   const { theme } = useContext(ThemeContext);
 
-  const draftValue: FormSingleRecordPickerValue = isStandaloneVariableString(
-    defaultValue,
-  )
-    ? {
-        type: 'variable',
-        value: defaultValue,
-      }
-    : {
-        type: 'static',
-        value: (defaultValue as string | undefined) ?? '',
-      };
+  const draftValue: FormSingleRecordPickerValue =
+    defaultValue === null
+      ? { type: 'no-record', value: null }
+      : isStandaloneVariableString(defaultValue)
+        ? { type: 'variable', value: defaultValue }
+        : { type: 'static', value: (defaultValue as string | undefined) ?? '' };
 
   if (objectNameSingulars.length === 0) {
     throw new CustomError(
@@ -117,13 +118,22 @@ export const FormSingleRecordPicker = ({
   const handleMorphItemSelected = (
     selectedMorphItem: RecordPickerPickableMorphItem | null | undefined,
   ) => {
-    if (!isNonEmptyString(selectedMorphItem?.recordId)) {
-      onClear?.();
+    if (!isDefined(selectedMorphItem) || selectedMorphItem === null) {
+      if (defaultValue === null) {
+        onClear?.();
+      } else {
+        onChange(null);
+      }
+      closeDropdown(dropdownId);
 
       return;
     }
 
-    onChange(selectedMorphItem.recordId);
+    if (defaultValue === selectedMorphItem.recordId) {
+      onClear?.();
+    } else {
+      onChange(selectedMorphItem.recordId);
+    }
     closeDropdown(dropdownId);
   };
 
@@ -142,8 +152,13 @@ export const FormSingleRecordPicker = ({
   );
 
   const handleOpenDropdown = () => {
+    if (defaultValue === null) {
+      setSingleRecordPickerSelectedId(undefined);
+      return;
+    }
+
     if (
-      isDefined(draftValue?.value) &&
+      isDefined(draftValue.value) &&
       !isStandaloneVariableString(draftValue.value)
     ) {
       setSingleRecordPickerSelectedId(draftValue.value);
@@ -208,7 +223,7 @@ export const FormSingleRecordPicker = ({
                 focusId={dropdownId}
                 componentInstanceId={dropdownId}
                 EmptyIcon={IconForbid}
-                emptyLabel={t`No records`}
+                emptyLabel={t`No record`}
                 onCancel={() => closeDropdown(dropdownId)}
                 onMorphItemSelected={handleMorphItemSelected}
                 objectNameSingulars={objectNameSingulars}

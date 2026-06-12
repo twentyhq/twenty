@@ -12,7 +12,7 @@ import {
   assertUnreachable,
   isDefined,
   isEmptyObject,
-  lowercaseUrlOriginAndRemoveTrailingSlash,
+  normalizeUrlOrigin,
 } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
@@ -185,7 +185,7 @@ export const buildRecordFromImportedStructuredRow = ({
     },
     [FieldMetadataType.LINKS]: {
       primaryLinkLabel: castToString,
-      primaryLinkUrl: lowercaseUrlOriginAndRemoveTrailingSlash,
+      primaryLinkUrl: normalizeUrlOrigin,
       secondaryLinks: linkArrayJSONSchema.parse,
     },
 
@@ -202,7 +202,7 @@ export const buildRecordFromImportedStructuredRow = ({
     },
 
     [FieldMetadataType.EMAILS]: {
-      primaryEmail: castToString,
+      primaryEmail: (value: unknown) => castToString(value).toLowerCase(),
       additionalEmails: stringArrayJSONSchema.parse,
     },
     [FieldMetadataType.FULL_NAME]: {

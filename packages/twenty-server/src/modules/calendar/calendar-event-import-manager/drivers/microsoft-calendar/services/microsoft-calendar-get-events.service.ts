@@ -8,27 +8,22 @@ import {
 
 import { parseMicrosoftCalendarError } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/utils/parse-microsoft-calendar-error.util';
 import { type GetCalendarEventsResponse } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
-import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MicrosoftOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client.provider';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 @Injectable()
 export class MicrosoftCalendarGetEventsService {
   constructor(
-    private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
+    private readonly microsoftOAuth2ClientProvider: MicrosoftOAuth2ClientProvider,
   ) {}
 
   public async getCalendarEvents(
-    connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      'provider' | 'accessToken' | 'refreshToken' | 'id'
-    >,
+    connectedAccount: Pick<ConnectedAccountEntity, 'provider' | 'id'>,
     syncCursor?: string,
   ): Promise<GetCalendarEventsResponse> {
     try {
       const microsoftClient =
-        await this.oAuth2ClientManagerService.getMicrosoftOAuth2Client(
-          connectedAccount,
-        );
+        await this.microsoftOAuth2ClientProvider.getClient(connectedAccount.id);
       const eventIds: string[] = [];
 
       const response: PageCollection = await microsoftClient

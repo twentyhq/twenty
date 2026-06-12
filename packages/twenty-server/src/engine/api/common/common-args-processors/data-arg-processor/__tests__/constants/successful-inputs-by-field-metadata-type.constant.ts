@@ -385,9 +385,19 @@ export const successfulInputsByFieldMetadataType: {
   ],
   [FieldMetadataType.RICH_TEXT]: [
     {
-      input: { richTextField: { blocknote: 'test', markdown: 'test' } },
+      input: {
+        richTextField: {
+          blocknote:
+            '[{"type":"paragraph","content":[{"type":"text","text":"test"}]}]',
+          markdown: 'test',
+        },
+      },
       expectedOutput: {
-        richTextField: { blocknote: 'test', markdown: 'test' },
+        richTextField: {
+          blocknote:
+            '[{"type":"paragraph","content":[{"type":"text","text":"test"}]}]',
+          markdown: 'test',
+        },
       },
     },
     {

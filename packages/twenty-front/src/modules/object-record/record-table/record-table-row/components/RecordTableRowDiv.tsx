@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledTr = styled.div<{
   isDragging: boolean;
@@ -15,7 +15,7 @@ const StyledTr = styled.div<{
     div.table-cell,
     div.table-cell-0-0 {
       &:not(:first-of-type) {
-        background-color: ${themeCssVariables.background.tertiary};
+        background-color: ${themeCssVariables.accent.quaternary};
         border-bottom: 1px solid ${themeCssVariables.border.color.medium};
         border-color: ${themeCssVariables.border.color.medium};
       }

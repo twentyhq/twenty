@@ -59,8 +59,10 @@ export const fromUniversalFlatIndexToFlatIndex = ({
           indexMetadataId,
           fieldMetadataId: fieldMetadata.id,
           order: universalFlatIndexFieldMetadata.order,
+          subFieldName: universalFlatIndexFieldMetadata.subFieldName,
           createdAt: now,
           updatedAt: now,
+          workspaceId,
         };
       },
     );

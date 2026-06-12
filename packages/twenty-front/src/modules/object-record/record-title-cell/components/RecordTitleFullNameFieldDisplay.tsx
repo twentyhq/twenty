@@ -8,8 +8,8 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { OverflowingTextWithTooltip } from 'twenty-ui-deprecated/display';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledDiv = styled.div`
   align-items: center;
@@ -24,7 +24,7 @@ const StyledDiv = styled.div`
   justify-content: center;
   overflow: hidden;
   padding: ${themeCssVariables.spacing[0]} 5px;
-  :hover {
+  &:hover {
     background: ${themeCssVariables.background.transparent.light};
   }
 `;

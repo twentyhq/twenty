@@ -1,14 +1,15 @@
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
-import { IconSparkles } from 'twenty-ui/display';
-import { SearchInput } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { MenuItemToggle } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconSparkles } from 'twenty-ui-deprecated/display';
+import { SearchInput } from 'twenty-ui-deprecated/input';
+import { Section } from 'twenty-ui-deprecated/layout';
+import { MenuItemToggle } from 'twenty-ui-deprecated/navigation';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { useMarketplaceApps } from '~/modules/marketplace/hooks/useMarketplaceApps';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
 
@@ -24,12 +25,6 @@ const StyledCardsGrid = styled.div`
   @media (max-width: 800px) {
     grid-template-columns: minmax(0, 1fr);
   }
-`;
-
-const StyledEmptyState = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  padding: ${themeCssVariables.spacing[4]};
-  text-align: center;
 `;
 
 const StyledHintLink = styled.button`
@@ -73,7 +68,7 @@ export const SettingsApplicationsAvailableTab = () => {
   if (isLoading) {
     return (
       <Section>
-        <StyledEmptyState>{t`Loading applications...`}</StyledEmptyState>
+        <SettingsEmptyPlaceholder padding="4">{t`Loading applications...`}</SettingsEmptyPlaceholder>
       </Section>
     );
   }
@@ -115,7 +110,7 @@ export const SettingsApplicationsAvailableTab = () => {
       </StyledSearchInputContainer>
 
       {filteredApplications.length === 0 ? (
-        <StyledEmptyState>
+        <SettingsEmptyPlaceholder padding="4">
           {showNonFeaturedHint
             ? t`No featured applications found. ${nonFeaturedCount} non-featured result(s) available — `
             : t`No applications available`}
@@ -124,7 +119,7 @@ export const SettingsApplicationsAvailableTab = () => {
               {t`show all`}
             </StyledHintLink>
           )}
-        </StyledEmptyState>
+        </SettingsEmptyPlaceholder>
       ) : (
         <StyledCardsGrid>
           {filteredApplications.map((application) => (

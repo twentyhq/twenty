@@ -17,7 +17,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { type ThemeColor, MAIN_COLOR_NAMES } from 'twenty-ui/theme';
+import { type ThemeColor, MAIN_COLOR_NAMES } from 'twenty-ui-deprecated/theme';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 type ColorOption = {
@@ -63,16 +63,12 @@ export const ChartColorSelectionDropdownContent = () => {
   const isBarOrLineChart =
     isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
     isWidgetConfigurationOfType(configuration, 'LineChartConfiguration');
-  const isGaugeChart = isWidgetConfigurationOfType(
-    configuration,
-    'GaugeChartConfiguration',
-  );
   const isPieChart = isWidgetConfigurationOfType(
     configuration,
     'PieChartConfiguration',
   );
 
-  if (!isBarOrLineChart && !isGaugeChart && !isPieChart) {
+  if (!isBarOrLineChart && !isPieChart) {
     return null;
   }
 
