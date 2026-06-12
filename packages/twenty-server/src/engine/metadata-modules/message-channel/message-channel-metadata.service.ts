@@ -19,6 +19,10 @@ import {
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import {
+  MESSAGE_CHANNEL_DELETED_EVENT,
+  type MessageChannelDeletedEvent,
+} from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
 import { CreateEmailGroupChannelOutput } from 'src/engine/metadata-modules/message-channel/dtos/create-email-group-channel.output';
 import { MessageChannelDTO } from 'src/engine/metadata-modules/message-channel/dtos/message-channel.dto';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -26,6 +30,7 @@ import {
   MessageChannelException,
   MessageChannelExceptionCode,
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { INBOUND_EMAIL_LOCAL_PART_PREFIX } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/constants/inbound-email-local-part-prefix.constant';
 import { INBOUND_EMAIL_LOCAL_PART_RANDOM_BYTES } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/constants/inbound-email-local-part-random-bytes.constant';
 
@@ -36,6 +41,7 @@ export class MessageChannelMetadataService {
     private readonly repository: Repository<MessageChannelEntity>,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
   async findAll(workspaceId: string): Promise<MessageChannelDTO[]> {
@@ -274,6 +280,12 @@ export class MessageChannelMetadataService {
     });
 
     await this.repository.delete({ id, workspaceId });
+
+    this.workspaceEventEmitter.emitCustomBatchEvent<MessageChannelDeletedEvent>(
+      MESSAGE_CHANNEL_DELETED_EVENT,
+      [{ messageChannelId: id }],
+      workspaceId,
+    );
 
     return messageChannel;
   }

@@ -12,9 +12,14 @@ import {
   CalendarChannelException,
   CalendarChannelExceptionCode,
 } from 'src/engine/metadata-modules/calendar-channel/calendar-channel.exception';
+import {
+  CALENDAR_CHANNEL_DELETED_EVENT,
+  type CalendarChannelDeletedEvent,
+} from 'src/engine/metadata-modules/calendar-channel/constants/calendar-channel-deleted.constant';
 import { CalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/calendar-channel.dto';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 @Injectable()
 export class CalendarChannelMetadataService {
@@ -22,6 +27,7 @@ export class CalendarChannelMetadataService {
     @InjectRepository(CalendarChannelEntity)
     private readonly repository: Repository<CalendarChannelEntity>,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
   async findAll(workspaceId: string): Promise<CalendarChannelDTO[]> {
@@ -182,6 +188,12 @@ export class CalendarChannelMetadataService {
     });
 
     await this.repository.delete({ id, workspaceId });
+
+    this.workspaceEventEmitter.emitCustomBatchEvent<CalendarChannelDeletedEvent>(
+      CALENDAR_CHANNEL_DELETED_EVENT,
+      [{ calendarChannelId: id }],
+      workspaceId,
+    );
 
     return calendarChannel;
   }

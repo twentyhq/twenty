@@ -4,13 +4,26 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
+import {
+  CALENDAR_CHANNEL_DELETED_EVENT,
+  type CalendarChannelDeletedEvent,
+} from 'src/engine/metadata-modules/calendar-channel/constants/calendar-channel-deleted.constant';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import {
+  CONNECTED_ACCOUNT_DELETED_EVENT,
+  type ConnectedAccountDeletedEvent,
+} from 'src/engine/metadata-modules/connected-account/constants/connected-account-deleted.constant';
 import {
   ConnectedAccountException,
   ConnectedAccountExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import {
+  MESSAGE_CHANNEL_DELETED_EVENT,
+  type MessageChannelDeletedEvent,
+} from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 @Injectable()
 export class ConnectedAccountMetadataService {
@@ -24,6 +37,7 @@ export class ConnectedAccountMetadataService {
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly appOAuthRevokeService: AppOAuthRevokeService,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
   async findByUserWorkspaceId({
@@ -164,22 +178,51 @@ export class ConnectedAccountMetadataService {
       where: { id, workspaceId },
     });
 
-    const [messageChannelCount, calendarChannelCount] = await Promise.all([
-      this.messageChannelRepository.count({
+    const [messageChannels, calendarChannels] = await Promise.all([
+      this.messageChannelRepository.find({
         where: { connectedAccountId: id, workspaceId },
+        select: { id: true },
       }),
-      this.calendarChannelRepository.count({
+      this.calendarChannelRepository.find({
         where: { connectedAccountId: id, workspaceId },
+        select: { id: true },
       }),
     ]);
 
     this.logger.log(
-      `WorkspaceId: ${workspaceId} Deleting connected account ${id} with ${messageChannelCount} message channel(s) and ${calendarChannelCount} calendar channel(s)`,
+      `WorkspaceId: ${workspaceId} Deleting connected account ${id} with ${messageChannels.length} message channel(s) and ${calendarChannels.length} calendar channel(s)`,
     );
 
     await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
 
     await this.repository.delete({ id, workspaceId });
+
+    this.workspaceEventEmitter.emitCustomBatchEvent<MessageChannelDeletedEvent>(
+      MESSAGE_CHANNEL_DELETED_EVENT,
+      messageChannels.map((messageChannel) => ({
+        messageChannelId: messageChannel.id,
+      })),
+      workspaceId,
+    );
+
+    this.workspaceEventEmitter.emitCustomBatchEvent<CalendarChannelDeletedEvent>(
+      CALENDAR_CHANNEL_DELETED_EVENT,
+      calendarChannels.map((calendarChannel) => ({
+        calendarChannelId: calendarChannel.id,
+      })),
+      workspaceId,
+    );
+
+    this.workspaceEventEmitter.emitCustomBatchEvent<ConnectedAccountDeletedEvent>(
+      CONNECTED_ACCOUNT_DELETED_EVENT,
+      [
+        {
+          connectedAccountId: id,
+          userWorkspaceId: connectedAccount.userWorkspaceId,
+        },
+      ],
+      workspaceId,
+    );
 
     return connectedAccount;
   }
