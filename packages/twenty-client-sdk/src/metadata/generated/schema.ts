@@ -2465,6 +2465,12 @@ export type CalendarChannelVisibility = 'METADATA' | 'SHARE_EVERYTHING'
 
 export type CalendarChannelContactAutoCreationPolicy = 'AS_PARTICIPANT_AND_ORGANIZER' | 'AS_PARTICIPANT' | 'AS_ORGANIZER' | 'NONE'
 
+export interface CalendarChannelOwner {
+    calendarChannelId: Scalars['UUID']
+    workspaceMemberId?: Scalars['UUID']
+    __typename: 'CalendarChannelOwner'
+}
+
 export interface MessageChannel {
     id: Scalars['UUID']
     visibility: MessageChannelVisibility
@@ -2625,6 +2631,7 @@ export interface Query {
     myMessageChannels: MessageChannel[]
     myConnectedAccounts: ConnectedAccountPublicDTO[]
     myCalendarChannels: CalendarChannel[]
+    calendarChannelOwners: CalendarChannelOwner[]
     minimalMetadata: MinimalMetadata
     appConnections: AppConnection[]
     appConnection: AppConnection
@@ -2671,7 +2678,7 @@ export interface Query {
 
 export type EventLogTable = 'WORKSPACE_EVENT' | 'PAGEVIEW' | 'OBJECT_EVENT' | 'USAGE_EVENT' | 'APPLICATION_LOG'
 
-export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH'
+export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING'
 
 export interface Mutation {
     addQueryToEventStream: Scalars['Boolean']
@@ -5524,6 +5531,13 @@ export interface CalendarChannelGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface CalendarChannelOwnerGenqlSelection{
+    calendarChannelId?: boolean | number
+    workspaceMemberId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface MessageChannelGenqlSelection{
     id?: boolean | number
     visibility?: boolean | number
@@ -5691,6 +5705,7 @@ export interface QueryGenqlSelection{
     myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
+    calendarChannelOwners?: (CalendarChannelOwnerGenqlSelection & { __args?: {calendarChannelIds?: (Scalars['UUID'][] | null)} })
     minimalMetadata?: MinimalMetadataGenqlSelection
     appConnections?: (AppConnectionGenqlSelection & { __args?: {filter?: (ListAppConnectionsInput | null)} })
     appConnection?: (AppConnectionGenqlSelection & { __args: {id: Scalars['ID']} })
@@ -8261,6 +8276,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const CalendarChannelOwner_possibleTypes: string[] = ['CalendarChannelOwner']
+    export const isCalendarChannelOwner = (obj?: { __typename?: any } | null): obj is CalendarChannelOwner => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCalendarChannelOwner"')
+      return CalendarChannelOwner_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const MessageChannel_possibleTypes: string[] = ['MessageChannel']
     export const isMessageChannel = (obj?: { __typename?: any } | null): obj is MessageChannel => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isMessageChannel"')
@@ -8984,7 +9007,8 @@ export const enumUsageOperationType = {
    AI_WORKFLOW_TOKEN: 'AI_WORKFLOW_TOKEN' as const,
    WORKFLOW_EXECUTION: 'WORKFLOW_EXECUTION' as const,
    CODE_EXECUTION: 'CODE_EXECUTION' as const,
-   WEB_SEARCH: 'WEB_SEARCH' as const
+   WEB_SEARCH: 'WEB_SEARCH' as const,
+   CALL_RECORDING: 'CALL_RECORDING' as const
 }
 
 export const enumWorkspaceMigrationActionType = {

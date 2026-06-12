@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/delete-flat-entity-from-flat-entity-maps-through-mutation-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { TWENTY_STANDARD_ALL_METADATA_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-all-metadata-name.constant';
 import { type TwentyStandardAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/types/twenty-standard-all-flat-entity-maps.type';
@@ -29,12 +30,14 @@ export type ComputeTwentyStandardApplicationAllFlatEntityMapsArgs = {
   now: string;
   workspaceId: string;
   twentyStandardApplicationId: string;
+  excludedFieldMetadataUniversalIdentifiers?: string[];
 };
 
 export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
   now,
   workspaceId,
   twentyStandardApplicationId,
+  excludedFieldMetadataUniversalIdentifiers = [],
 }: ComputeTwentyStandardApplicationAllFlatEntityMapsArgs): {
   allFlatEntityMaps: TwentyStandardAllFlatEntityMaps;
   // TODO remove once all metadatas has fully been universal migrated
@@ -62,6 +65,20 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     },
     twentyStandardApplicationId,
   });
+
+  for (const universalIdentifier of excludedFieldMetadataUniversalIdentifiers) {
+    const flatFieldMetadata =
+      flatFieldMetadataMaps.byUniversalIdentifier[universalIdentifier];
+
+    if (!isDefined(flatFieldMetadata)) {
+      continue;
+    }
+
+    deleteFlatEntityFromFlatEntityMapsThroughMutationOrThrow({
+      entityToDeleteId: flatFieldMetadata.id,
+      flatEntityMapsToMutate: flatFieldMetadataMaps,
+    });
+  }
 
   const flatIndexMaps = buildStandardFlatIndexMetadataMaps({
     dependencyFlatEntityMaps: {

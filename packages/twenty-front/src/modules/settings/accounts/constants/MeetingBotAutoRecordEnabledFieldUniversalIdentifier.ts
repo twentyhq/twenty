@@ -1,0 +1,3 @@
+// Declared by the twenty-meeting-bot app manifest.
+export const MEETING_BOT_AUTO_RECORD_ENABLED_FIELD_UNIVERSAL_IDENTIFIER =
+  '725dbbe5-94d9-4f98-811d-7cd57e83607f';
