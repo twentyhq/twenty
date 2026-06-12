@@ -219,6 +219,31 @@ if (!oldGeometry || !newGeometry) {
   } else {
     fail('stacked tab deck renders four tabs', 'fewer than 4 role=tab');
   }
+
+  // RATIFIED DIVERGENCE (user, 2026-06-12): the exit crossing hands off
+  // transparently like the entry; the old site faded through greys that
+  // matched neither surface. Asserting the difference keeps it deliberate.
+  const exitProgress =
+    (oldGeometry.height - VIEWPORT.height + (VIEWPORT.height - 32)) /
+    (oldGeometry.height - VIEWPORT.height);
+  await scrollToProgress(oldPage, oldGeometry, exitProgress);
+  await scrollToProgress(newPage, newGeometry, exitProgress);
+  const oldExit = await readHeroState(oldPage);
+  const newExit = await readHeroState(newPage);
+  const newExitTransparent =
+    newExit.menuBackground === 'rgba(0, 0, 0, 0)' ||
+    newExit.menuBackground === 'transparent';
+  if (newExitTransparent && newExit.menuBackground !== oldExit.menuBackground) {
+    ok(
+      'exit crossing hands off transparently (ledgered divergence)',
+      `old ${oldExit.menuBackground} vs new ${newExit.menuBackground}`,
+    );
+  } else {
+    fail(
+      'exit crossing hands off transparently (ledgered divergence)',
+      `old ${oldExit.menuBackground} vs new ${newExit.menuBackground}`,
+    );
+  }
 }
 
 await browser.close();

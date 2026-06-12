@@ -81,6 +81,19 @@ describe('computeHeroScrollModel', () => {
     expect(settled.menuElevated).toBe(false);
   });
 
+  it('should hand off transparently while the track bottom crosses the nav band', () => {
+    // Track bottom 32px into the viewport: the dark slab's edge is inside
+    // the nav band, so the menu shows the real surfaces beneath it.
+    const exiting = computeHeroScrollModel({
+      trackTop: 32 - TRACK,
+      trackHeight: TRACK,
+      viewportHeight: VIEWPORT,
+    });
+    expect(exiting.isCrossing).toBe(true);
+    expect(exiting.menuBackground).toBe('transparent');
+    expect(exiting.menuElevated).toBe(false);
+  });
+
   it('should release the menu as the track scrolls out', () => {
     // Track bottom above the viewport top: nav fully released.
     const out = computeHeroScrollModel({
