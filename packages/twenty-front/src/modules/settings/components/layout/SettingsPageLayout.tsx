@@ -12,6 +12,7 @@ type SettingsPageLayoutProps = {
   secondaryBar?: ReactNode;
   children: ReactNode;
   tag?: JSX.Element;
+  titleColor?: string;
 };
 
 export const SettingsPageLayout = ({
@@ -21,6 +22,7 @@ export const SettingsPageLayout = ({
   secondaryBar,
   children,
   tag,
+  titleColor,
 }: SettingsPageLayoutProps) => (
   <PageCardLayout
     header={
@@ -30,6 +32,7 @@ export const SettingsPageLayout = ({
         tag={tag}
         actionButton={actionButton}
         centerTitle
+        titleColor={titleColor}
       />
     }
     secondaryBar={
