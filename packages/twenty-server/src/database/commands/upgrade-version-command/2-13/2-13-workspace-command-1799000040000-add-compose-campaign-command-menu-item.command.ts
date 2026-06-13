@@ -10,8 +10,10 @@ import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const COMPOSE_CAMPAIGN_UNIVERSAL_IDENTIFIER =
-  STANDARD_COMMAND_MENU_ITEMS.composeCampaign.universalIdentifier;
+const COMPOSE_CAMPAIGN_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS = [
+  STANDARD_COMMAND_MENU_ITEMS.composeCampaign.universalIdentifier,
+  STANDARD_COMMAND_MENU_ITEMS.composeCampaignPinned.universalIdentifier,
+];
 
 @Command({
   name: 'upgrade:2-13:add-compose-campaign-command-menu-item',
@@ -48,15 +50,19 @@ export class AddComposeCampaignCommandMenuItemCommand extends ActiveOrSuspendedW
         'flatCommandMenuItemMaps',
       ]);
 
-    const alreadyExists = isDefined(
-      existingFlatCommandMenuItemMaps.byUniversalIdentifier[
-        COMPOSE_CAMPAIGN_UNIVERSAL_IDENTIFIER
-      ],
-    );
+    const missingUniversalIdentifiers =
+      COMPOSE_CAMPAIGN_COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIERS.filter(
+        (universalIdentifier) =>
+          !isDefined(
+            existingFlatCommandMenuItemMaps.byUniversalIdentifier[
+              universalIdentifier
+            ],
+          ),
+      );
 
-    if (alreadyExists) {
+    if (missingUniversalIdentifiers.length === 0) {
       this.logger.log(
-        `Compose campaign command already exists for workspace ${workspaceId}, skipping`,
+        `Compose campaign commands already exist for workspace ${workspaceId}, skipping`,
       );
 
       return;
@@ -69,14 +75,17 @@ export class AddComposeCampaignCommandMenuItemCommand extends ActiveOrSuspendedW
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
 
-    const itemToCreate =
-      standardAllFlatEntityMaps.flatCommandMenuItemMaps.byUniversalIdentifier[
-        COMPOSE_CAMPAIGN_UNIVERSAL_IDENTIFIER
-      ];
+    const itemsToCreate = missingUniversalIdentifiers
+      .map(
+        (universalIdentifier) =>
+          standardAllFlatEntityMaps.flatCommandMenuItemMaps
+            .byUniversalIdentifier[universalIdentifier],
+      )
+      .filter(isDefined);
 
-    if (!isDefined(itemToCreate)) {
+    if (itemsToCreate.length === 0) {
       this.logger.warn(
-        `Compose campaign command not found in standard application for workspace ${workspaceId}`,
+        `Compose campaign commands not found in standard application for workspace ${workspaceId}`,
       );
 
       return;
@@ -84,7 +93,7 @@ export class AddComposeCampaignCommandMenuItemCommand extends ActiveOrSuspendedW
 
     if (isDryRun) {
       this.logger.log(
-        `[DRY RUN] Would create compose campaign command for workspace ${workspaceId}`,
+        `[DRY RUN] Would create ${itemsToCreate.length} compose campaign command(s) for workspace ${workspaceId}`,
       );
 
       return;
@@ -95,7 +104,7 @@ export class AddComposeCampaignCommandMenuItemCommand extends ActiveOrSuspendedW
         {
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {
-              flatEntityToCreate: [itemToCreate],
+              flatEntityToCreate: itemsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },

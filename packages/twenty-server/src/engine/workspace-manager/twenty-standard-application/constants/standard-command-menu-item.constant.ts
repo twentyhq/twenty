@@ -723,6 +723,22 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.COMPOSE_CAMPAIGN,
     hotKeys: null,
   },
+  composeCampaignPinned: {
+    universalIdentifier: '7ad6f0c7-ac02-4062-b5cf-1f36e1664bc8',
+    label: 'Compose Campaign',
+    icon: 'IconSend',
+    isPinned: true,
+    position: 67,
+    shortLabel: 'Campaign',
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
+    conditionalAvailabilityExpression:
+      'pageType == "INDEX_PAGE" and featureFlags.IS_EMAIL_GROUP_ENABLED',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.messageCampaign.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.COMPOSE_CAMPAIGN,
+    hotKeys: null,
+  },
   goToSettings: {
     universalIdentifier: 'ef9aba44-0068-453e-930a-f8c182af18ee',
     label: 'Go to Settings',
