@@ -30,18 +30,27 @@ const SplitLayout = styled.div`
 const ContentStack = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  row-gap: ${spacing(10)};
+
+  & > * + * {
+    margin-top: ${spacing(10)};
+  }
 
   ${mediaUp('md')} {
     padding: ${spacing(15)};
-    row-gap: ${spacing(20)};
+
+    & > * + * {
+      margin-top: ${spacing(20)};
+    }
   }
 `;
 
 const PointList = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  row-gap: ${spacing(6)};
+
+  & > * + * {
+    margin-top: ${spacing(6)};
+  }
 
   ${mediaUp('md')} {
     max-width: 454px;
@@ -57,7 +66,10 @@ const PointDivider = styled.div`
 const PointStack = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  row-gap: ${spacing(2)};
+
+  & > * + * {
+    margin-top: ${spacing(2)};
+  }
 
   ${mediaUp('md')} {
     max-width: 380px;

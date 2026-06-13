@@ -63,7 +63,10 @@ const CardContent = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   padding: ${spacing(3)} ${spacing(4)} ${spacing(4)};
-  row-gap: ${spacing(2)};
+
+  & > * + * {
+    margin-top: ${spacing(2)};
+  }
 `;
 
 const CardTitleRow = styled.div`

@@ -72,12 +72,18 @@ const StepBlock = styled.div`
   grid-template-columns: 1fr;
   max-width: 454px;
   min-width: 0;
-  row-gap: ${spacing(4)};
+
+  & > * + * {
+    margin-top: ${spacing(4)};
+  }
 
   ${mediaUp('md')} {
     opacity: var(--step-opacity, 0);
-    row-gap: ${spacing(6)};
     transform: var(--step-transform, none);
+
+    & > * + * {
+      margin-top: ${spacing(6)};
+    }
   }
 `;
 
@@ -86,7 +92,10 @@ const SwipeStepBlock = styled.div`
   grid-template-columns: 1fr;
   max-width: 454px;
   min-width: 0;
-  row-gap: ${spacing(4)};
+
+  & > * + * {
+    margin-top: ${spacing(4)};
+  }
 `;
 
 const computeStepStyle = (

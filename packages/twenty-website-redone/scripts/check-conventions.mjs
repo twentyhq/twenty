@@ -79,6 +79,20 @@ const PUBLIC_SVG_BRAND_FILES = new Set([
   'public/images/shared/companies/logos/linear.svg',
   'public/images/shared/companies/logos/twenty.svg',
 ]);
+// Vertical rhythm rides margins ('& > * + *'), not row-gap: gap breaks
+// silently when a wrapper changes the child list. row-gap is allowed only
+// where layout is genuinely multi-axis (wrapping rows, multi-column
+// tracks) — listed here explicitly.
+const ROW_GAP_MULTI_AXIS_FILES = new Set([
+  'sections/faq/faq.tsx',
+  'sections/faq/faq-items.tsx',
+  'sections/problem/problem.tsx',
+  'sections/stepper/product-stepper.tsx',
+  'sections/stepper/stepper.tsx',
+  'sections/testimonials/testimonials-carousel.tsx',
+  'sections/trusted-by/trusted-by.tsx',
+]);
+
 const LITERAL_PATTERNS = [
   [/#[0-9a-fA-F]{3,8}\b/, 'hex color literal'],
   [/rgba?\(/, 'rgb/rgba literal'],
@@ -105,6 +119,17 @@ function walk(directory) {
 
     const content = fs.readFileSync(fullPath, 'utf8');
     const relativePath = path.relative(sourceRoot, fullPath);
+    const posixPath = relativePath.split(path.sep).join('/');
+
+    if (
+      (posixPath.startsWith('ui/') || posixPath.startsWith('sections/')) &&
+      /row-gap:/.test(content) &&
+      !ROW_GAP_MULTI_AXIS_FILES.has(posixPath)
+    ) {
+      failures.push(
+        `src/${relativePath}: row-gap in a flow stack — use '& > * + * { margin-top: … }' (or allowlist the file if the layout is genuinely multi-axis).`,
+      );
+    }
 
     if (
       !relativePath.startsWith('tokens' + path.sep) &&

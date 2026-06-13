@@ -87,7 +87,10 @@ const ExternalBadge = styled.span`
 const TextStack = styled.span`
   display: grid;
   min-width: 0;
-  row-gap: 3px;
+
+  & > * + * {
+    margin-top: 3px;
+  }
 `;
 
 const ItemLabel = styled.span`
@@ -145,7 +148,10 @@ const PreviewDescription = styled.span`
 
 const PreviewText = styled.div`
   display: grid;
-  row-gap: ${spacing(1)};
+
+  & > * + * {
+    margin-top: ${spacing(1)};
+  }
 `;
 
 export type MenuDropdownProps = {

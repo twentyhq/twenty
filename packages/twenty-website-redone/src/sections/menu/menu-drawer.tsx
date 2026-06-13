@@ -71,8 +71,11 @@ const DrawerNav = styled.nav`
   align-content: center;
   display: grid;
   grid-template-columns: 1fr;
-  row-gap: ${spacing(8)};
   width: 100%;
+
+  & > * + * {
+    margin-top: ${spacing(8)};
+  }
 `;
 
 const drawerItemStyles = `
@@ -120,8 +123,11 @@ const DrawerGroupToggle = styled.button`
 
 const DrawerGroupChildren = styled.div`
   display: grid;
-  row-gap: ${spacing(5)};
   padding-top: ${spacing(5)};
+
+  & > * + * {
+    margin-top: ${spacing(5)};
+  }
 `;
 
 const drawerChildStyles = `

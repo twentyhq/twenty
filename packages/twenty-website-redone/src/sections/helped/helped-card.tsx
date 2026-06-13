@@ -41,8 +41,11 @@ const CardRoot = styled.article`
   min-width: 0;
   padding: ${spacing(2.5)} ${spacing(4)} ${spacing(4)};
   position: relative;
-  row-gap: ${spacing(2.5)};
   width: 100%;
+
+  & > * + * {
+    margin-top: ${spacing(2.5)};
+  }
 `;
 
 const ShapeLayer = styled.div`
@@ -93,7 +96,10 @@ const VisualShell = styled.div`
 const CopyBlock = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  row-gap: ${spacing(2)};
+
+  & > * + * {
+    margin-top: ${spacing(2)};
+  }
 `;
 
 const CardHeading = styled.h3`

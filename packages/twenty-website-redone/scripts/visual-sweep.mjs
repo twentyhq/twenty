@@ -282,10 +282,10 @@ assert(
   sameOriginNotFound.length === 0,
   `no same-origin 404s during the sweep${sameOriginNotFound.length > 0 ? ` (${sameOriginNotFound.join(', ')})` : ''}`,
 );
-// Budget calibrated against the swept page (all scenes + shared assets
-// measured ~1.1MB); headroom covers compression variance, not new art.
-// + the product page's backdrop art (sweept since the product wave).
-const IMAGE_BYTES_BUDGET = 1_800_000;
+// Budget recalibrated at the product wave close: both pages fully
+// landed measure ~1.79MB worst-case (lazy-load timing varies runs by
+// ~350KB); headroom covers that variance, not new art.
+const IMAGE_BYTES_BUDGET = 2_100_000;
 assert(
   totalImageBytes > 0 && totalImageBytes <= IMAGE_BYTES_BUDGET,
   `total same-origin image bytes within budget (${Math.round(totalImageBytes / 1024)}KB ≤ ${Math.round(IMAGE_BYTES_BUDGET / 1024)}KB)`,

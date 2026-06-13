@@ -157,7 +157,10 @@ const FullLayer = styled.div`
   justify-content: flex-start;
   padding-top: 94px;
   position: absolute;
-  row-gap: ${spacing(6)};
+
+  & > * + * {
+    margin-top: ${spacing(6)};
+  }
   /* Both layers rasterize on their own plane so their text anti-aliases
      identically through the wipe. */
   transform: translateZ(0);
@@ -192,10 +195,13 @@ const IntroContainer = styled(Container)`
   justify-items: center;
   min-width: 0;
   position: relative;
-  row-gap: ${spacing(8)};
   text-align: center;
   width: 100%;
   z-index: 1;
+
+  & > * + * {
+    margin-top: ${spacing(8)};
+  }
 `;
 
 const HeadingSlot = styled.div`
@@ -365,8 +371,11 @@ const MobileSection = styled.div<{ $secondary?: boolean }>`
   overflow: hidden;
   padding-top: ${({ $secondary }) => ($secondary ? spacing(12) : spacing(7.5))};
   position: relative;
-  row-gap: ${spacing(6)};
   width: 100%;
+
+  & > * + * {
+    margin-top: ${spacing(6)};
+  }
 `;
 
 const MobileVisualWrapper = styled.div`

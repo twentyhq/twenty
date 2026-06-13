@@ -93,10 +93,13 @@ const HeadlineBlock = styled.div`
   justify-items: center;
   max-width: 688px;
   padding-inline: ${spacing(4)};
-  row-gap: ${spacing(6)};
   text-align: center;
   width: 100%;
   z-index: 1;
+
+  & > * + * {
+    margin-top: ${spacing(6)};
+  }
 `;
 
 const EyebrowExitTarget = styled.div`
