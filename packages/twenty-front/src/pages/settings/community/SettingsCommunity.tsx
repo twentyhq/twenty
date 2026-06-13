@@ -4,11 +4,10 @@ import { SettingsLabContent } from '@/settings/lab/components/SettingsLabContent
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 import {
   H2Title,
   IconBriefcase,
-  type IconComponent,
   Icon as IconByName,
   IconTransform,
 } from 'twenty-ui-deprecated/display';
@@ -23,26 +22,9 @@ type SettingsCommunityLink = {
   title: string;
   description: string;
   href: string;
-  Icon: IconComponent;
+  Icon: ReactNode;
   cardTitle: string;
 };
-
-const DiscordIcon: IconComponent = ({
-  className,
-  color,
-  size,
-  stroke,
-  style,
-}) => (
-  <IconByName
-    name="IconBrandDiscord"
-    className={className}
-    color={color}
-    size={size}
-    stroke={stroke}
-    style={style}
-  />
-);
 
 export const SettingsCommunity = () => {
   const { theme } = useContext(ThemeContext);
@@ -52,21 +34,37 @@ export const SettingsCommunity = () => {
       title: t`Partners`,
       description: t`Hire a partner to help you implement and customize Twenty.`,
       href: 'https://twenty.com/partners/list',
-      Icon: IconBriefcase,
+      Icon: (
+        <IconBriefcase
+          size={theme.icon.size.md}
+          stroke={theme.icon.stroke.sm}
+        />
+      ),
       cardTitle: t`Browse partners`,
     },
     {
       title: t`Discord`,
       description: t`Join our community to get help and share feedback.`,
       href: 'https://discord.com/invite/cx5n4Jzs57',
-      Icon: DiscordIcon,
+      Icon: (
+        <IconByName
+          name="IconBrandDiscord"
+          size={theme.icon.size.md}
+          stroke={theme.icon.stroke.sm}
+        />
+      ),
       cardTitle: t`Join our Discord`,
     },
     {
       title: t`Releases`,
       description: t`Check out our latest releases`,
       href: 'https://twenty.com/releases',
-      Icon: IconTransform,
+      Icon: (
+        <IconTransform
+          size={theme.icon.size.md}
+          stroke={theme.icon.stroke.sm}
+        />
+      ),
       cardTitle: t`Read changelog`,
     },
   ];
@@ -85,15 +83,7 @@ export const SettingsCommunity = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <SettingsCard
-                Icon={
-                  <Icon
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.sm}
-                  />
-                }
-                title={cardTitle}
-              />
+              <SettingsCard Icon={Icon} title={cardTitle} />
             </StyledCardLink>
           </Section>
         ))}

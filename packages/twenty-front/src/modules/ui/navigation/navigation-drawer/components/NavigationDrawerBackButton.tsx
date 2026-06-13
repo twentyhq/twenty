@@ -35,7 +35,6 @@ const StyledIconAndButtonContainer = styled.button`
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[2]};
   height: ${themeCssVariables.spacing[7]};
-  line-height: 1.4;
   padding: 2px ${themeCssVariables.spacing[1]} 2px 2px;
   width: fit-content;
   &:hover {
