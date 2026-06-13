@@ -77,6 +77,10 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
               association.calendarEventId === calendarEvents[i].id,
           );
 
+          if(associations.length === 0) {
+            continue;
+          }
+
           const calendarChannels = associations
             .map((association) =>
               calendarChannelMap.get(association.calendarChannelId),
