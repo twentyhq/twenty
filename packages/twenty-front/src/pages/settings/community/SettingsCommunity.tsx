@@ -8,9 +8,9 @@ import { useContext } from 'react';
 import {
   H2Title,
   IconBriefcase,
-  type IconComponent,
-  IconMessage,
   IconTransform,
+  type IconComponent,
+  useIcons,
 } from 'twenty-ui-deprecated/display';
 import { Section } from 'twenty-ui-deprecated/layout';
 import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
@@ -29,6 +29,8 @@ type SettingsCommunityLink = {
 
 export const SettingsCommunity = () => {
   const { theme } = useContext(ThemeContext);
+  const { getIcon } = useIcons();
+  const IconBrandDiscord = getIcon('IconBrandDiscord');
 
   const communityLinks: SettingsCommunityLink[] = [
     {
@@ -42,7 +44,7 @@ export const SettingsCommunity = () => {
       title: t`Discord`,
       description: t`Join our community to get help and share feedback.`,
       href: 'https://discord.com/invite/cx5n4Jzs57',
-      Icon: IconMessage,
+      Icon: IconBrandDiscord,
       cardTitle: t`Join our Discord`,
     },
     {
