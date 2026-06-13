@@ -148,6 +148,12 @@ export default defineConfig(({ mode }) => {
         'react-dom/client',
         'react/jsx-runtime',
         'react/jsx-dev-runtime',
+        // framer-motion must also stay a single instance: the Storybook test
+        // setup disables animations via MotionGlobalConfig.skipAnimations, which
+        // only applies if every component shares that instance. If the optimizer
+        // re-bundles it mid-run, animations resume and interaction assertions on
+        // animated components (dropdowns, date pickers, command menu) flake.
+        'framer-motion',
       ],
     },
 
