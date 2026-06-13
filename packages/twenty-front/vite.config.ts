@@ -139,6 +139,16 @@ export default defineConfig(({ mode }) => {
         '../../node_modules/twenty-ui',
         '../../node_modules/twenty-ui-deprecated',
       ],
+      // Pre-bundle React up front so Vite's dep optimizer doesn't re-bundle it
+      // mid-run during browser-mode Storybook tests — re-bundling rotates the
+      // optimized chunk hash and 404s in-flight dynamic imports (vite 8 / rolldown).
+      include: [
+        'react',
+        'react-dom',
+        'react-dom/client',
+        'react/jsx-runtime',
+        'react/jsx-dev-runtime',
+      ],
     },
 
     build: {
