@@ -51,10 +51,10 @@ export function launchBrowser() {
 export async function openPage(
   browser,
   url,
-  { reducedMotion = false, settleMs = 800 } = {},
+  { reducedMotion = false, settleMs = 800, viewport = VIEWPORT } = {},
 ) {
   const page = await browser.newPage({
-    viewport: VIEWPORT,
+    viewport: { width: viewport.width, height: viewport.height },
     reducedMotion: reducedMotion ? 'reduce' : 'no-preference',
   });
   await page.goto(url, { waitUntil: 'load', timeout: 240000 });

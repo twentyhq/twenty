@@ -18,6 +18,17 @@ import {
 //   node scripts/page-lock.mjs           verify against fixtures
 //   node scripts/page-lock.mjs --record  re-record fixtures
 const LOCKED_PAGES = ['/', '/product'];
+
+// One viewport inside each breakpoint tier (sm 768 / md 921 / lg 1281),
+// so every responsive variant of the approved pages is under lock —
+// phone stacks and swipe decks, the sm band, the md band where the
+// hero window crops, and the full desktop layout.
+const LOCKED_VIEWPORTS = [
+  { label: 'base-390', width: 390, height: 844 },
+  { label: 'sm-820', width: 820, height: 900 },
+  { label: 'md-1100', width: 1100, height: 900 },
+  { label: 'lg-1440', width: 1440, height: 900 },
+];
 const FIXTURES_DIR = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
   'locks',
@@ -154,20 +165,25 @@ const battery = createBattery('page-lock');
 const browser = await launchBrowser();
 
 for (const pagePath of LOCKED_PAGES) {
-  // eslint-disable-next-line no-await-in-loop
-  const page = await openPage(browser, `${NEW_BASE}${pagePath}`, {
-    settleMs: 1200,
-  });
-  // eslint-disable-next-line no-await-in-loop
-  const snapshot = await readPageSnapshot(page);
-  // eslint-disable-next-line no-await-in-loop
-  await page.close();
+  const snapshots = {};
+
+  for (const viewport of LOCKED_VIEWPORTS) {
+    // eslint-disable-next-line no-await-in-loop
+    const page = await openPage(browser, `${NEW_BASE}${pagePath}`, {
+      settleMs: 1200,
+      viewport,
+    });
+    // eslint-disable-next-line no-await-in-loop
+    snapshots[viewport.label] = await readPageSnapshot(page);
+    // eslint-disable-next-line no-await-in-loop
+    await page.close();
+  }
 
   if (isRecording) {
     fs.mkdirSync(FIXTURES_DIR, { recursive: true });
     fs.writeFileSync(
       fixturePath(pagePath),
-      `${JSON.stringify(snapshot, null, 2)}\n`,
+      `${JSON.stringify(snapshots, null, 2)}\n`,
     );
     battery.ok(`${pagePath} recorded`, fixturePath(pagePath));
     continue;
@@ -178,7 +194,21 @@ for (const pagePath of LOCKED_PAGES) {
     continue;
   }
   const expected = JSON.parse(fs.readFileSync(fixturePath(pagePath), 'utf8'));
-  diffSnapshots(battery, pagePath, expected, snapshot);
+  for (const viewport of LOCKED_VIEWPORTS) {
+    if (!expected[viewport.label]) {
+      battery.fail(
+        `${pagePath} ${viewport.label} lock exists`,
+        're-record (new viewport tier)',
+      );
+      continue;
+    }
+    diffSnapshots(
+      battery,
+      `${pagePath} @${viewport.label}`,
+      expected[viewport.label],
+      snapshots[viewport.label],
+    );
+  }
 }
 
 await battery.finish(browser);
