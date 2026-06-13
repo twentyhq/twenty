@@ -61,11 +61,43 @@ export const FrontComponentWorkerEffect = ({
   setError,
 }: FrontComponentWorkerEffectProps) => {
   const isInitializedRef = useRef(false);
+  const isMountedRef = useRef(false);
+  const seenWorkerErrorSignaturesRef = useRef(new Set<string>());
 
   useEffect(() => {
     if (isInitializedRef.current) {
       return;
     }
+
+    isMountedRef.current = true;
+
+    const reportWorkerError = (error: Error, label: string) => {
+      if (!isMountedRef.current || error.name === 'AbortError') {
+        return;
+      }
+
+      const errorSignature = `${label}:${error.name}:${error.message}`;
+
+      if (seenWorkerErrorSignaturesRef.current.has(errorSignature)) {
+        console.warn(`[FrontComponentRenderer] ${label} (duplicate)`, {
+          componentUrl,
+          frontComponentId,
+          errorName: error.name,
+          errorMessage: error.message,
+        });
+
+        return;
+      }
+
+      seenWorkerErrorSignaturesRef.current.add(errorSignature);
+
+      console.error(`[FrontComponentRenderer] ${label}`, {
+        componentUrl,
+        frontComponentId,
+        error,
+      });
+      setError(error);
+    };
 
     const newReceiver = new RemoteReceiver({ retain, release });
 
@@ -75,8 +107,19 @@ export const FrontComponentWorkerEffect = ({
       const workerError =
         event.error ?? new Error(event.message || 'Unknown worker error');
 
-      console.error('[FrontComponentRenderer] Worker error:', workerError);
-      setError(workerError);
+      reportWorkerError(workerError, 'Worker error');
+    };
+
+    worker.onmessageerror = (event: MessageEvent) => {
+      if (!isMountedRef.current) {
+        return;
+      }
+
+      console.warn('[FrontComponentRenderer] Worker message error', {
+        componentUrl,
+        frontComponentId,
+        data: event.data,
+      });
     };
 
     const thread = new ThreadWebWorker<
@@ -107,7 +150,7 @@ export const FrontComponentWorkerEffect = ({
           commandMenuItemConfirmationModalResultBrowserEventDetail.confirmationResult,
         )
         .catch((error: Error) => {
-          setError(error);
+          reportWorkerError(error, 'Failed to handle confirmation modal result');
         });
     };
 
@@ -127,7 +170,7 @@ export const FrontComponentWorkerEffect = ({
         applicationVariables,
       })
       .catch((error: Error) => {
-        setError(error);
+        reportWorkerError(error, 'Failed to render front component');
       });
 
     setReceiver(newReceiver);
@@ -139,8 +182,10 @@ export const FrontComponentWorkerEffect = ({
         handleCommandMenuItemConfirmationModalResultBrowserEvent as EventListener,
       );
       setThread(null);
+      isMountedRef.current = false;
       worker.terminate();
       isInitializedRef.current = false;
+      seenWorkerErrorSignaturesRef.current.clear();
     };
   }, [
     componentUrl,

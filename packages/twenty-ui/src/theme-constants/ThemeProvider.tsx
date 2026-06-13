@@ -47,11 +47,34 @@ export type ThemeContextType = {
   colorScheme: 'light' | 'dark';
 };
 
+const addLegacyThemeAliases = (theme: ThemeType): ThemeType => {
+  const legacyTextColors = {
+    textPrimary: theme.font.color.primary,
+    textSecondary: theme.font.color.secondary,
+    textTertiary: theme.font.color.tertiary,
+    textLight: theme.font.color.light,
+    textInverted: theme.font.color.inverted,
+    textDanger: theme.font.color.danger,
+  };
+
+  return {
+    ...theme,
+    text: {
+      ...theme.text,
+      ...legacyTextColors,
+    },
+    color: legacyTextColors,
+    colors: legacyTextColors,
+    textColor: legacyTextColors,
+    fontColor: legacyTextColors,
+  } as ThemeType;
+};
+
 const computeThemeFromCss = (): ThemeType => {
   const root = document?.documentElement;
 
   if (!root || typeof getComputedStyle !== 'function') {
-    return themeCssVariables as unknown as ThemeType;
+    return addLegacyThemeAliases(themeCssVariables as unknown as ThemeType);
   }
 
   const computedStyle = getComputedStyle(root);
@@ -77,9 +100,11 @@ const computeThemeFromCss = (): ThemeType => {
     return result;
   };
 
-  return resolve(
-    themeCssVariables as unknown as Record<string, unknown>,
-  ) as unknown as ThemeType;
+  return addLegacyThemeAliases(
+    resolve(
+      themeCssVariables as unknown as Record<string, unknown>,
+    ) as unknown as ThemeType,
+  );
 };
 
 const applyColorSchemeClass = (colorScheme: 'light' | 'dark') => {
@@ -90,7 +115,7 @@ const applyColorSchemeClass = (colorScheme: 'light' | 'dark') => {
 };
 
 export const ThemeContext = createContext<ThemeContextType>({
-  theme: themeCssVariables as unknown as ThemeType,
+  theme: addLegacyThemeAliases(themeCssVariables as unknown as ThemeType),
   colorScheme: 'light',
 });
 
