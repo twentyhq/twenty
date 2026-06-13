@@ -24,6 +24,11 @@ msgstr ""
 msgid "{0} case study"
 msgstr "Étude de cas {0}"
 
+#. js-lingui-id: jC5JCB
+#: src/sections/case-study-promo/case-study-promo.tsx
+msgid "{count} Case Studies"
+msgstr ""
+
 #. js-lingui-id: XUqxHW
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts

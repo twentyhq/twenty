@@ -18,15 +18,16 @@ import { CASE_STUDY_SLUGS } from './case-studies';
 import { PromoFrame } from './promo-frame';
 import { PromoMic } from './promo-mic';
 
-// The promo owns its own generous vertical breathing (the old site's framed
-// composition): the band-to-content gap reads larger than the standard rhythm,
-// and the section is a flush shell so the frame in the background can connect
-// up to the TrustedBy band while the content sits well below it.
+// The section is a flush shell so its background frame can connect up to the
+// TrustedBy band; the Grid is then the SOLE owner of the promo's generous
+// vertical breathing (the old site's framed composition). The bottom inset
+// runs deeper than the top because the frame's base line sits 48px up from the
+// section's edge, so the content needs more room beneath it to read balanced.
 const Grid = styled.div`
   align-items: center;
   display: grid;
   grid-template-columns: 1fr;
-  padding-block: ${spacing(16)};
+  padding-block: ${spacing(16)} ${spacing(28)};
   width: 100%;
 
   & > * + * {
@@ -38,7 +39,7 @@ const Grid = styled.div`
     grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
     /* Keep the content off the frame rails: without an internal inset the
        centred mic column shrinks onto the left rail as the viewport narrows. */
-    padding-block: ${spacing(20)};
+    padding-block: ${spacing(20)} ${spacing(36)};
     padding-inline: ${spacing(6)};
 
     & > * + * {
@@ -126,13 +127,14 @@ const BodyMeasure = styled.div`
 
 export function CaseStudyPromo() {
   const i18n = getServerI18n();
+  const count = CASE_STUDY_SLUGS.length;
 
   return (
     <SectionShell
       ariaLabel={i18n._(msg`Customer stories preview`)}
       background={<PromoFrame />}
       connectsUp
-      rhythm="section"
+      rhythm="flush"
       scheme="light"
     >
       <Grid>
@@ -142,7 +144,7 @@ export function CaseStudyPromo() {
             <CountChip aria-hidden>
               <CountLabel>
                 <PeopleGroupMark ink="blue" sizePx={12} />
-                {CASE_STUDY_SLUGS.length} Case Studies
+                {i18n._(msg`${count} Case Studies`)}
               </CountLabel>
             </CountChip>
           </VisualStage>

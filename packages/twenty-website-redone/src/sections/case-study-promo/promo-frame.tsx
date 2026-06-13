@@ -9,12 +9,11 @@ import {
   spacing,
 } from '@/tokens';
 
-const CORNER_SIZE_PX = 14;
-
 // The promo's decorative bracket (desktop only): two vertical rails and a base
-// line framing the content, with plus markers at the bottom corners. It is
-// open at the top so it reads as continuing up into the TrustedBy band above
-// — the old compactTop form, the only one the partners promo ever uses.
+// line, inset from the corners so each rail stops short of its plus marker (the
+// design's deliberate gap). Open at the top so it reads as continuing up into
+// the TrustedBy band above (the section connectsUp) — those top corners are
+// TrustedBy's own markers flowing in, so the promo only draws the bottom two.
 const Board = styled.div`
   display: none;
   inset: 0;
@@ -28,8 +27,6 @@ const Board = styled.div`
   }
 `;
 
-// Top at 0 so the rails meet the TrustedBy band's bottom corner markers right
-// at the seam (the section connectsUp, so that band sits one step above).
 const Frame = styled.div`
   bottom: ${spacing(12)};
   left: ${spacing(10)};
@@ -64,25 +61,23 @@ const RightLine = styled(Line)`
   width: 1px;
 `;
 
+// The rails are 1px child lines sitting on the frame's content edge (centre 0.5
+// inside it), not a border — so the marker is nudged half a pixel less than a
+// bordered host's to land its cross on the rails' centreline crossing.
 const Corner = styled.span`
-  align-items: center;
   color: ${color('blue')};
-  display: flex;
-  height: ${CORNER_SIZE_PX}px;
-  justify-content: center;
   line-height: 0;
   position: absolute;
-  width: ${CORNER_SIZE_PX}px;
 `;
 
 const CornerBottomLeft = styled(Corner)`
-  bottom: -7px;
-  left: -7px;
+  bottom: -6.5px;
+  left: -6.5px;
 `;
 
 const CornerBottomRight = styled(Corner)`
-  bottom: -7px;
-  right: -7px;
+  bottom: -6.5px;
+  right: -6.5px;
 `;
 
 export function PromoFrame() {
@@ -93,10 +88,10 @@ export function PromoFrame() {
         <LeftLine />
         <RightLine />
         <CornerBottomLeft>
-          <PlusMark sizePx={CORNER_SIZE_PX} />
+          <PlusMark sizePx={14} />
         </CornerBottomLeft>
         <CornerBottomRight>
-          <PlusMark sizePx={CORNER_SIZE_PX} />
+          <PlusMark sizePx={14} />
         </CornerBottomRight>
       </Frame>
     </Board>

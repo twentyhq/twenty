@@ -24,6 +24,11 @@ msgstr "...with AI that actually helps you *work faster*"
 msgid "{0} case study"
 msgstr "{0} case study"
 
+#. js-lingui-id: jC5JCB
+#: src/sections/case-study-promo/case-study-promo.tsx
+msgid "{count} Case Studies"
+msgstr "{count} Case Studies"
+
 #. js-lingui-id: XUqxHW
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
