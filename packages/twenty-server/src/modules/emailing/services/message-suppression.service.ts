@@ -14,14 +14,9 @@ import { MessageSuppressionEntity } from 'src/engine/core-modules/emailing-domai
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/message-suppression-source.type';
 import { type TopicOptOutState } from 'src/engine/core-modules/emailing-domain/types/topic-opt-out-state.type';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { MessageTopicWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-topic.workspace-entity';
-
-// Topics surfaced on the public preferences page.
-const PUBLIC_TOPIC_VISIBILITY = 'PUBLIC';
+import { MessageTopicService } from 'src/modules/emailing/services/message-topic.service';
 
 type SuppressArgs = {
   workspaceId: string;
@@ -55,9 +50,7 @@ export class MessageSuppressionService {
   constructor(
     @InjectWorkspaceScopedRepository(MessageSuppressionEntity)
     private readonly suppressionRepository: WorkspaceScopedRepository<MessageSuppressionEntity>,
-    // Only used to read the workspace messageTopic records backing the public
-    // preferences page; suppression rows themselves never touch workspace data.
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly messageTopicService: MessageTopicService,
   ) {}
 
   async getSuppressedAddresses(
@@ -195,7 +188,8 @@ export class MessageSuppressionService {
       return [];
     }
 
-    const visibleTopics = await this.findPublicTopics(workspaceId);
+    const visibleTopics =
+      await this.messageTopicService.findPublicTopics(workspaceId);
 
     if (!isNonEmptyArray(visibleTopics)) {
       return [];
@@ -276,31 +270,6 @@ export class MessageSuppressionService {
       topicId,
       reason: MessageSuppressionReason.UNSUBSCRIBE,
     });
-  }
-
-  // Topics are workspace records; the public preferences page has no user
-  // context, so this is the one read that still goes through the system-actor
-  // workspace machinery.
-  private async findPublicTopics(
-    workspaceId: string,
-  ): Promise<MessageTopicWorkspaceEntity[]> {
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const topicRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            MessageTopicWorkspaceEntity,
-            { shouldBypassPermissionChecks: true },
-          );
-
-        return topicRepository.find({
-          where: { visibility: PUBLIC_TOPIC_VISIBILITY },
-          // Stable checkbox order on the public preferences page.
-          order: { name: 'ASC' },
-        });
-      },
-      buildSystemAuthContext(workspaceId),
-    );
   }
 
   private normalizeEmailAddress(emailAddress: string): string {

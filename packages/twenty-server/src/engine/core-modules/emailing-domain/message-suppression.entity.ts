@@ -71,10 +71,9 @@ export class MessageSuppressionEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'varchar', nullable: true })
   providerEventId: string | null;
 
-  // References a workspace messageTopic record; plain uuid (no FK — workspace
-  // records live outside the core schema). Rows deliberately outlive their
-  // topic: orphaned opt-outs are inert (every read intersects live topics) and
-  // retaining them errs toward not emailing.
+  // References core.messageTopic (FK with ON DELETE CASCADE, added by the topic
+  // table instance command): deleting a group removes its per-topic opt-outs.
+  // NULL means a global block (every send), not a per-topic opt-out.
   @Column({ type: 'uuid', nullable: true })
   topicId: string | null;
 }

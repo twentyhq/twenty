@@ -63,6 +63,7 @@ import { DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand } from 'src/d
 import { DropEmailingDomainDriverColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-11/2-11-instance-command-fast-1780926908000-drop-emailing-domain-driver-column';
 import { AddEmailingDomainUnsubscribeHostFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1780088214774-add-emailing-domain-unsubscribe-host';
 import { CreateMessageSuppressionCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781250000000-create-message-suppression-core-table';
+import { CreateMessageTopicCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781260000000-create-message-topic-core-table';
 import { ViewOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-12/2-12-instance-command-fast-1781114009075-view-overridable-entity';
 
 export const INSTANCE_COMMANDS = [
@@ -130,4 +131,5 @@ export const INSTANCE_COMMANDS = [
   AddEmailingDomainUnsubscribeHostFastInstanceCommand,
   ViewOverridableEntityFastInstanceCommand,
   CreateMessageSuppressionCoreTableFastInstanceCommand,
+  CreateMessageTopicCoreTableFastInstanceCommand,
 ];
