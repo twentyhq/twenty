@@ -16,7 +16,8 @@ const meta: Meta<typeof SettingsGraphQLPlayground> = {
   // headless storybook test runner and throws unhandled async errors there
   // (Cannot read properties of undefined 'toUrl'). Exclude this 3rd-party-tool
   // wrapper from the vitest run; it is still available in the Storybook UI.
-  tags: ['no-tests'],
+  // (!test removes the auto-applied `test` tag the vitest addon filters on.)
+  tags: ['!test'],
   decorators: [
     (Story) => {
       jotaiStore.set(playgroundApiKeyState.atom, {
