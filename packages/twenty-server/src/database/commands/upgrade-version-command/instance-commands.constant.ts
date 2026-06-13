@@ -66,6 +66,7 @@ import { CreateMessageSuppressionCoreTableFastInstanceCommand } from 'src/databa
 import { CreateUnsubscribeTopicCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781260000000-create-unsubscribe-topic-core-table';
 import { ViewOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-12/2-12-instance-command-fast-1781114009075-view-overridable-entity';
 import { RenameIsUiReadOnlyToIsUiEditableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781277453604-rename-is-ui-read-only-to-is-ui-editable';
+import { BackfillNonUiCreatableStandardSystemObjectsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-slow-1781277480000-backfill-non-ui-creatable-standard-system-objects';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -134,4 +135,5 @@ export const INSTANCE_COMMANDS = [
   CreateMessageSuppressionCoreTableFastInstanceCommand,
   CreateUnsubscribeTopicCoreTableFastInstanceCommand,
   RenameIsUiReadOnlyToIsUiEditableFastInstanceCommand,
+  BackfillNonUiCreatableStandardSystemObjectsSlowInstanceCommand,
 ];

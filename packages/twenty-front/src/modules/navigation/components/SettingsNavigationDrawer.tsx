@@ -4,12 +4,14 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
+import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useIsMobile } from 'twenty-ui-deprecated/utilities';
@@ -17,9 +19,17 @@ import { AdvancedSettingsToggle } from 'twenty-ui-deprecated/navigation';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-const StyledAdvancedToggleWrapper = styled.div<{ isMobile: boolean }>`
+const StyledAdvancedToggleFixedContent = styled.div<{ isMobile: boolean }>`
+  flex-shrink: 0;
+  margin-top: auto;
+  padding-left: ${({ isMobile }) =>
+    isMobile ? themeCssVariables.spacing[5] : '0'};
   padding-right: ${({ isMobile }) =>
-    isMobile ? '0' : themeCssVariables.spacing[1]};
+    isMobile ? themeCssVariables.spacing[5] : '0'};
+`;
+
+const advancedSettingsToggleClassName = css`
+  padding-right: 0;
 `;
 
 export const SettingsNavigationDrawer = ({
@@ -42,7 +52,7 @@ export const SettingsNavigationDrawer = ({
     navigationDrawerActiveTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY;
 
   return (
-    <NavigationDrawer className={className} title={t`Exit Settings`}>
+    <NavigationDrawer className={className} title={t`Settings`}>
       {hasAiPermission && (
         <NavigationDrawerFixedContent>
           <MainNavigationDrawerTabsRow />
@@ -52,20 +62,22 @@ export const SettingsNavigationDrawer = ({
       <NavigationDrawerScrollableContent>
         <NavigationDrawerTabbedContent
           showAiChatContent={showAiChatContent}
+          shouldMountAiChatContent={hasAiPermission}
           navigationContent={<SettingsNavigationDrawerItems />}
         />
       </NavigationDrawerScrollableContent>
 
       {!showAiChatContent && (
-        <NavigationDrawerFixedContent>
-          <StyledAdvancedToggleWrapper isMobile={isMobile}>
+        <StyledAdvancedToggleFixedContent isMobile={isMobile}>
+          <NavigationDrawerSection>
             <AdvancedSettingsToggle
+              className={advancedSettingsToggleClassName}
               isAdvancedModeEnabled={isAdvancedModeEnabled}
               setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
               label={t`Advanced`}
             />
-          </StyledAdvancedToggleWrapper>
-        </NavigationDrawerFixedContent>
+          </NavigationDrawerSection>
+        </StyledAdvancedToggleFixedContent>
       )}
     </NavigationDrawer>
   );

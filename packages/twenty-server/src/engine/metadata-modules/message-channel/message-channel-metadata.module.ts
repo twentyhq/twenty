@@ -9,6 +9,7 @@ import { MessageChannelMetadataService } from 'src/engine/metadata-modules/messa
 import { MessageChannelResolver } from 'src/engine/metadata-modules/message-channel/resolvers/message-channel.resolver';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 
 @Module({
@@ -18,6 +19,7 @@ import { MessagingImportManagerModule } from 'src/modules/messaging/message-impo
     ConnectedAccountMetadataModule,
     MessagingImportManagerModule,
     EmailingDomainModule,
+    WorkspaceEventEmitterModule,
   ],
   providers: [
     MessageChannelMetadataService,
