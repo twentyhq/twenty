@@ -3,9 +3,9 @@
 import { fieldControlClassName } from './field-control-style';
 
 // A numeric amount field. It strips anything but digits and a decimal point on
-// input (so a typed "5,000" stores as "5000"), keeping the value clean for the
-// request body's parseFloat. Currency-symbol-free — the label names the amount.
-export function CurrencyField({
+// input (so a typed "5,000" stores as "5000"), keeping the value clean for a
+// consumer's parseFloat. Currency-agnostic — the label names the amount.
+export function NumberField({
   ariaLabel,
   name,
   onValueChange,

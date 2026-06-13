@@ -25,6 +25,17 @@ export {
   type HeadingSize,
 } from './heading';
 export { parseHeadingNotation, type HeadingSegment } from './heading-notation';
+export { Field } from './field';
+export { TextField } from './text-field';
+export { TextareaField } from './textarea-field';
+export { NumberField } from './number-field';
+export { TagInput } from './tag-input';
+export {
+  CategoryCardSelect,
+  type CategoryOption,
+} from './category-card-select';
+export { ChipMultiSelect, type ChipOption } from './chip-multi-select';
+export { ChipSingleSelect, type ChipChoice } from './chip-single-select';
 export { SectionIntro } from './section-intro';
 export { SectionStack } from './section-stack';
 export { VerticalDivider } from './vertical-divider';

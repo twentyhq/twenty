@@ -1,7 +1,5 @@
 'use client';
 
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 
@@ -14,7 +12,7 @@ import {
   typeRampDeclarations,
 } from '@/tokens';
 
-import { addSkill } from './add-skill';
+import { addTag } from './add-tag';
 import { chipClassName } from './chip-style';
 
 const TagBox = styled.div`
@@ -78,41 +76,45 @@ const SuggestionRow = styled.div`
   margin-top: ${spacing(2)};
 `;
 
-export function SkillsTagInput({
+// A free-text tag entry with suggestions: Enter or comma adds the draft, a
+// suggestion click adds it, Backspace on an empty draft removes the last tag.
+// Stays i18n-free — the consumer supplies a localized removeLabel(tag).
+export function TagInput({
   ariaLabel,
   onValuesChange,
   placeholder,
+  removeLabel,
   suggestions,
   values,
 }: {
   ariaLabel: string;
   onValuesChange: (values: string[]) => void;
   placeholder?: string;
+  removeLabel: (tag: string) => string;
   suggestions: readonly string[];
   values: readonly string[];
 }) {
-  const { i18n } = useLingui();
   const [draft, setDraft] = useState('');
 
   const commit = (raw: string) => {
-    const next = addSkill(values, raw);
+    const next = addTag(values, raw);
     if (next.length !== values.length) onValuesChange(next);
     setDraft('');
   };
-  const remove = (skill: string) =>
-    onValuesChange(values.filter((value) => value !== skill));
+  const remove = (tag: string) =>
+    onValuesChange(values.filter((value) => value !== tag));
 
-  const available = suggestions.filter((skill) => !values.includes(skill));
+  const available = suggestions.filter((tag) => !values.includes(tag));
 
   return (
     <div>
       <TagBox>
-        {values.map((skill) => (
-          <AddedChip key={skill}>
-            {skill}
+        {values.map((tag) => (
+          <AddedChip key={tag}>
+            {tag}
             <RemoveButton
-              aria-label={i18n._(msg`Remove ${skill}`)}
-              onClick={() => remove(skill)}
+              aria-label={removeLabel(tag)}
+              onClick={() => remove(tag)}
               type="button"
             >
               ×
@@ -141,14 +143,14 @@ export function SkillsTagInput({
       </TagBox>
       {available.length > 0 ? (
         <SuggestionRow>
-          {available.map((skill) => (
+          {available.map((tag) => (
             <button
               className={chipClassName}
-              key={skill}
-              onClick={() => commit(skill)}
+              key={tag}
+              onClick={() => commit(tag)}
               type="button"
             >
-              {skill}
+              {tag}
             </button>
           ))}
         </SuggestionRow>

@@ -1857,11 +1857,6 @@ msgstr "Notes de version"
 msgid "Releases"
 msgstr "Versions"
 
-#. js-lingui-id: OY7BZk
-#: src/partner-application/wizard/fields/skills-tag-input.tsx
-msgid "Remove {skill}"
-msgstr ""
-
 #. js-lingui-id: a/aGHe
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Rename, download, and delete attachments"
