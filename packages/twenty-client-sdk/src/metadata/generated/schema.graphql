@@ -1119,7 +1119,7 @@ type AggregateChartConfiguration {
   aggregateOperation: AggregateOperations!
   label: String
   displayDataLabel: Boolean
-  format: String
+  numberFormat: ChartNumberFormat
   description: String
   filter: JSON
   timezone: String
@@ -1152,6 +1152,12 @@ enum WidgetConfigurationType {
   FRONT_COMPONENT
   RECORD_TABLE
   EMAIL_THREAD
+}
+
+"""Format used to display the chart value"""
+enum ChartNumberFormat {
+  SHORT
+  FULL
 }
 
 type StandaloneRichTextConfiguration {
