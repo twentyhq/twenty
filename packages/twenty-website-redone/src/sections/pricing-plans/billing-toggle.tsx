@@ -1,14 +1,11 @@
 'use client';
 
-import { useLingui } from '@lingui/react';
 import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import { useLayoutEffect, useRef, useState } from 'react';
 
-import { observeElementSize } from '@/platform/motion';
 import {
   color,
-  EASING,
   FONT_WEIGHT,
   fontFamily,
   fontSize,
@@ -24,35 +21,19 @@ const ToggleTrack = styled.div`
   background-color: ${color('black-10')};
   border-radius: ${radius(20)};
   display: inline-flex;
-  overflow: hidden;
   padding: 2px;
-  position: relative;
 `;
 
-const ToggleHighlight = styled.div`
-  background-color: ${color('white')};
-  border-radius: ${radius(8)};
-  bottom: 2px;
-  left: 0;
-  pointer-events: none;
-  position: absolute;
-  top: 2px;
-  transition:
-    transform 0.24s ${EASING.spring},
-    width 0.24s ${EASING.spring},
-    opacity 0.18s ease;
-  will-change: transform, width;
-
-  ${REDUCED_MOTION} {
-    transition: none;
-  }
-`;
-
+// The active option carries the white pill, sized to its own content (so
+// Monthly stays narrow and Yearly holds its badge). It is driven by the
+// active period, not by measurement, so it is correct on the first paint
+// with no load-time jump; the pill crossfades when the period changes.
 const ToggleOption = styled.button`
   align-items: center;
-  background: none;
+  background-color: transparent;
   border: none;
   border-radius: ${radius(8)};
+  color: ${color('black-60')};
   column-gap: ${spacing(2)};
   cursor: pointer;
   display: flex;
@@ -63,10 +44,10 @@ const ToggleOption = styled.button`
   justify-content: center;
   line-height: 1.35;
   padding-left: ${spacing(3)};
-  position: relative;
-  transition: color 0.18s ease;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease;
   white-space: nowrap;
-  z-index: 1;
 
   &[data-period='monthly'] {
     padding-right: ${spacing(3)};
@@ -76,10 +57,13 @@ const ToggleOption = styled.button`
     padding-right: ${spacing(0.5)};
   }
 
-  color: ${color('black-60')};
-
   &[data-active] {
+    background-color: ${color('white')};
     color: ${color('black')};
+  }
+
+  ${REDUCED_MOTION} {
+    transition: none;
   }
 `;
 
@@ -97,14 +81,6 @@ const DiscountBadge = styled.span`
   padding-inline: ${spacing(1.5)};
 `;
 
-type HighlightState = {
-  ready: boolean;
-  width: number;
-  x: number;
-};
-
-// The active option carries a white pill that glides between the two
-// buttons; its geometry is measured, so locale-length labels just work.
 export function BillingToggle({
   billing,
   onBillingChange,
@@ -113,71 +89,14 @@ export function BillingToggle({
   onBillingChange: (billing: PlansBillingPeriod) => void;
 }) {
   const { i18n } = useLingui();
-  const trackRef = useRef<HTMLDivElement>(null);
-  const monthlyRef = useRef<HTMLButtonElement>(null);
-  const yearlyRef = useRef<HTMLButtonElement>(null);
-  const [highlight, setHighlight] = useState<HighlightState>({
-    ready: false,
-    width: 0,
-    x: 0,
-  });
-
-  useLayoutEffect(() => {
-    const track = trackRef.current;
-    const monthlyButton = monthlyRef.current;
-    const yearlyButton = yearlyRef.current;
-
-    if (!track || !monthlyButton || !yearlyButton) {
-      return undefined;
-    }
-
-    const syncHighlight = () => {
-      const activeButton = billing === 'monthly' ? monthlyButton : yearlyButton;
-      const trackRect = track.getBoundingClientRect();
-      const buttonRect = activeButton.getBoundingClientRect();
-      const next = {
-        ready: true,
-        width: buttonRect.width,
-        x: buttonRect.left - trackRect.left,
-      };
-      setHighlight((current) =>
-        current.ready === next.ready &&
-        current.width === next.width &&
-        current.x === next.x
-          ? current
-          : next,
-      );
-    };
-
-    syncHighlight();
-    const stops = [track, monthlyButton, yearlyButton].map((element) =>
-      observeElementSize(element, syncHighlight),
-    );
-    return () => {
-      for (const stop of stops) stop();
-    };
-  }, [billing]);
 
   return (
-    <ToggleTrack
-      aria-label={i18n._(msg`Billing period`)}
-      ref={trackRef}
-      role="radiogroup"
-    >
-      <ToggleHighlight
-        aria-hidden="true"
-        style={{
-          opacity: highlight.ready ? 1 : 0,
-          transform: `translateX(${highlight.x}px)`,
-          width: `${highlight.width}px`,
-        }}
-      />
+    <ToggleTrack aria-label={i18n._(msg`Billing period`)} role="radiogroup">
       <ToggleOption
         aria-checked={billing === 'monthly'}
         data-active={billing === 'monthly' ? '' : undefined}
         data-period="monthly"
         onClick={() => onBillingChange('monthly')}
-        ref={monthlyRef}
         role="radio"
         type="button"
       >
@@ -188,7 +107,6 @@ export function BillingToggle({
         data-active={billing === 'yearly' ? '' : undefined}
         data-period="yearly"
         onClick={() => onBillingChange('yearly')}
-        ref={yearlyRef}
         role="radio"
         type="button"
       >
