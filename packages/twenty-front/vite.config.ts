@@ -139,15 +139,22 @@ export default defineConfig(({ mode }) => {
         '../../node_modules/twenty-ui',
         '../../node_modules/twenty-ui-deprecated',
       ],
-      // Pre-bundle React up front so Vite's dep optimizer doesn't re-bundle it
-      // mid-run during browser-mode Storybook tests — re-bundling rotates the
-      // optimized chunk hash and 404s in-flight dynamic imports (vite 8 / rolldown).
+      // Pre-bundle React and the heavy libraries reached through lazy() chains
+      // (charts, rich-text editors). Otherwise a lazy story (e.g. a graph widget)
+      // makes Vite discover the dep mid-render, triggering a re-optimize + page
+      // reload that 404s every in-flight story import in browser-mode Storybook
+      // tests (vite 8 / rolldown).
       include: [
         'react',
         'react-dom',
         'react-dom/client',
         'react/jsx-runtime',
         'react/jsx-dev-runtime',
+        '@nivo/core',
+        '@nivo/pie',
+        '@nivo/line',
+        '@nivo/arcs',
+        'd3-shape',
       ],
     },
 
