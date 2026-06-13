@@ -8,7 +8,10 @@ import { type ExtendedAggregateOperations } from '@/object-record/record-table/t
 import { FieldMetadataType, type Nullable } from 'twenty-shared/types';
 import { formatToShortNumber, isDefined } from 'twenty-shared/utils';
 import { type AggregateOperations } from '~/generated-metadata/graphql';
-import { formatNumber } from '~/utils/format/formatNumber';
+import {
+  DEFAULT_DECIMAL_VALUE,
+  formatNumber,
+} from '~/utils/format/formatNumber';
 import { formatDateString } from '~/utils/string/formatDateString';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
@@ -48,14 +51,28 @@ export const transformAggregateRawValueIntoAggregateDisplayValue = ({
   } else {
     switch (aggregateFieldMetadataItem.type) {
       case FieldMetadataType.CURRENCY: {
-        return formatToShortNumber(Number(aggregateRawValue) / 1_000_000);
+        const amount = Number(aggregateRawValue) / 1_000_000;
+        const { format, decimals } = aggregateFieldMetadataItem.settings ?? {};
+
+        // Mirror the currency cell display: abbreviate unless the field is set to 'full'.
+        return format === 'full'
+          ? formatNumber(amount, {
+              decimals: decimals ?? DEFAULT_DECIMAL_VALUE,
+            })
+          : formatToShortNumber(amount);
       }
 
       case FieldMetadataType.NUMBER: {
         const castedValue = Number(aggregateRawValue);
         const { decimals, type } = aggregateFieldMetadataItem.settings ?? {};
-        return type === 'percentage'
-          ? `${formatNumber(castedValue * 100, { decimals })}%`
+
+        if (type === 'percentage') {
+          return `${formatNumber(castedValue * 100, { decimals })}%`;
+        }
+
+        // Mirror the number cell display: abbreviate only when the field uses 'shortNumber'.
+        return type === 'shortNumber'
+          ? formatToShortNumber(castedValue)
           : formatNumber(castedValue, { decimals });
       }
 
