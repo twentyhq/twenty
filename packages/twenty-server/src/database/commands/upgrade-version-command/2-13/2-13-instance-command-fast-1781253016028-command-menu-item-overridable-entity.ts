@@ -9,19 +9,13 @@ export class CommandMenuItemOverridableEntityFastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."commandMenuItem" ADD "overrides" jsonb',
-    );
-    await queryRunner.query(
-      'ALTER TABLE "core"."commandMenuItem" ADD "isActive" boolean NOT NULL DEFAULT true',
+      'ALTER TABLE "core"."commandMenuItem" ADD "overrides" jsonb, ADD "isActive" boolean NOT NULL DEFAULT true',
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."commandMenuItem" DROP COLUMN "isActive"',
-    );
-    await queryRunner.query(
-      'ALTER TABLE "core"."commandMenuItem" DROP COLUMN "overrides"',
+      'ALTER TABLE "core"."commandMenuItem" DROP COLUMN "isActive", DROP COLUMN "overrides"',
     );
   }
 }
