@@ -2,16 +2,10 @@ import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { GRADIENT, HERO_COMPOSITION, mediaUp } from '@/tokens';
+import { HERO_COMPOSITION, mediaUp } from '@/tokens';
 import { Body, Heading, HeadingPair, SectionShell } from '@/ui';
 
 import { WhyTwentyVisual } from './why-twenty-visual';
-
-const GradientBackdrop = styled.div`
-  background: ${GRADIENT.heroGlow};
-  inset: 0 -20%;
-  position: absolute;
-`;
 
 // No CTA here, so the visual hangs 68px below the intro (HERO_COMPOSITION) —
 // the same CTA-to-visual step the other heroes use. The heading takes the
@@ -35,7 +29,11 @@ const HeadingMeasure = styled.div`
 
 const BodyMeasure = styled.div`
   margin-inline: auto;
-  max-width: 443px;
+  max-width: 360px;
+
+  ${mediaUp('md')} {
+    max-width: 443px;
+  }
 `;
 
 const VisualStage = styled.div`
@@ -47,7 +45,7 @@ export function WhyTwentyHero() {
   const i18n = getServerI18n();
 
   return (
-    <SectionShell background={<GradientBackdrop />} rhythm="hero" scheme="dark">
+    <SectionShell rhythm="hero" scheme="dark">
       <IntroStack>
         <HeadingPair>
           <HeadingMeasure>

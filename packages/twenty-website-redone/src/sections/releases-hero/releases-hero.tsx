@@ -1,5 +1,5 @@
-import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import { msg } from '@lingui/core/macro';
 
 import { GitHubMark } from '@/icons';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
@@ -39,7 +39,11 @@ const HeadingMeasure = styled.div`
 
 const BodyMeasure = styled.div`
   margin-inline: auto;
-  max-width: 591px;
+  max-width: 360px;
+
+  ${mediaUp('md')} {
+    max-width: 450px;
+  }
 `;
 
 const CtaRow = styled.div`

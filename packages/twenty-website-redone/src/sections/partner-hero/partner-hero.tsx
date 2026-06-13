@@ -40,7 +40,11 @@ const HeadingMeasure = styled.div`
 
 const BodyMeasure = styled.div`
   margin-inline: auto;
-  max-width: 500px;
+  max-width: 360px;
+
+  ${mediaUp('md')} {
+    max-width: 500px;
+  }
 `;
 
 const CtaRow = styled.div`

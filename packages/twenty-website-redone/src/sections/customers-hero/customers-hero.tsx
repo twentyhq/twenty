@@ -32,7 +32,11 @@ const HeadingMeasure = styled.div`
 
 const BodyMeasure = styled.div`
   margin-inline: auto;
-  max-width: 550px;
+  max-width: 360px;
+
+  ${mediaUp('md')} {
+    max-width: 550px;
+  }
 `;
 
 export function CustomersHero() {
