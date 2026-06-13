@@ -1,7 +1,14 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { type MetadataRoute } from 'next';
 
-export type WebsiteRouteId = 'home' | 'partners' | 'pricing' | 'product';
+export type WebsiteRouteId =
+  | 'customers'
+  | 'home'
+  | 'partners'
+  | 'pricing'
+  | 'product'
+  | 'releases'
+  | 'whyTwenty';
 
 // Grows as content-driven families migrate ('articles', 'releases', ...).
 export type WebsiteRouteFamilyId = never;

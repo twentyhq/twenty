@@ -1,11 +1,12 @@
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
+import { GitHubMark } from '@/icons';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { GRADIENT, HERO_COMPOSITION, mediaUp, spacing } from '@/tokens';
 import { Body, Button, Heading, HeadingPair, SectionShell } from '@/ui';
 
-import { PartnerVisual } from './partner-visual';
+import { ReleasesVisual } from './releases-visual';
 
 const GradientBackdrop = styled.div`
   background: ${GRADIENT.heroGlow};
@@ -13,10 +14,8 @@ const GradientBackdrop = styled.div`
   position: absolute;
 `;
 
-// The hero reads as one composition on the shared hero rhythm (HomeHero /
-// PricingHero): Heading->Body 12px (HeadingPair), Body->CTA 32px, CTA->visual
-// 68px (HERO_COMPOSITION). The intro is centered; the halftone stage hangs
-// below at that single CTA-to-visual step.
+// The shared hero rhythm: Heading->Body 12px (HeadingPair), Body->CTA 32px,
+// CTA->visual 68px (HERO_COMPOSITION).
 const IntroStack = styled.div`
   align-items: center;
   display: flex;
@@ -40,7 +39,7 @@ const HeadingMeasure = styled.div`
 
 const BodyMeasure = styled.div`
   margin-inline: auto;
-  max-width: 500px;
+  max-width: 591px;
 `;
 
 const CtaRow = styled.div`
@@ -55,7 +54,7 @@ const VisualStage = styled.div`
   width: 100%;
 `;
 
-export function PartnerHero() {
+export function ReleasesHero() {
   const i18n = getServerI18n();
 
   return (
@@ -68,28 +67,28 @@ export function PartnerHero() {
         <HeadingPair>
           <HeadingMeasure>
             <Heading as="h1" size="lg" weight="light">
-              {i18n._(msg`Become\n*our partner*`)}
+              {i18n._(msg`Latest\n*Releases*`)}
             </Heading>
           </HeadingMeasure>
           <BodyMeasure>
             <Body muted size="sm">
               {i18n._(
-                msg`We're building the #1 Open Source CRM, but we can't do it alone. Join our partner ecosystem and grow with us.`,
+                msg`Discover the newest features and improvements in Twenty, the #1 Open Source CRM.`,
               )}
             </Body>
           </BodyMeasure>
         </HeadingPair>
         <CtaRow>
-          <Button label={i18n._(msg`Become a partner`)} />
           <Button
-            href="/partners/list"
-            label={i18n._(msg`Find a partner`)}
+            href="https://github.com/twentyhq/twenty/releases"
+            label={i18n._(msg`Technical notes`)}
+            leadingIcon={<GitHubMark size={14} />}
             variant="outlined"
           />
         </CtaRow>
       </IntroStack>
       <VisualStage>
-        <PartnerVisual />
+        <ReleasesVisual />
       </VisualStage>
     </SectionShell>
   );

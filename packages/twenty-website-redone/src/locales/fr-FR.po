@@ -376,6 +376,11 @@ msgstr ""
 msgid "CRM Engineer"
 msgstr "Ingénieur CRM"
 
+#. js-lingui-id: b7vNti
+#: src/sections/why-twenty-hero/why-twenty-hero.tsx
+msgid "CRM was a database you filled on Fridays. AI turned it into the system that runs your go-to-market. To differentiate, you have to build what your competitors can't buy."
+msgstr ""
+
 #. js-lingui-id: I6FFSA
 #: src/sections/product-feature/feature-tiles.ts
 msgid "CSV export anytime"
@@ -469,6 +474,11 @@ msgstr "Directeur du numérique et de l'information, Elevate Consulting"
 msgid "Discord (opens in new tab)"
 msgstr "Discord (ouvre un nouvel onglet)"
 
+#. js-lingui-id: old0Lj
+#: src/sections/releases-hero/releases-hero.tsx
+msgid "Discover the newest features and improvements in Twenty, the #1 Open Source CRM."
+msgstr ""
+
 #. js-lingui-id: W+b/DF
 #: src/sections/menu/menu.data.ts
 msgid "Discover what's new"
@@ -518,6 +528,11 @@ msgstr ""
 #: src/sections/stepper/stepper.data.ts
 msgid "Enjoy unlimited customization using the AI coding tools you already love. Adapt your CRM to fit the way your business grows and wins."
 msgstr "Profitez d'une personnalisation illimitée avec les outils de codage IA que vous aimez déjà. Adaptez votre CRM à la façon dont votre entreprise grandit et gagne."
+
+#. js-lingui-id: sQP1sF
+#: src/platform/routing/static-website-routes.ts
+msgid "Every new release of Twenty, the #1 Open Source CRM, with changelogs, demos, and the highlights teams care about most."
+msgstr ""
 
 #. js-lingui-id: rkZTD7
 #: src/sections/product-feature/feature-tiles.ts
@@ -694,6 +709,13 @@ msgstr "C'est fragile. La V1 sort vite, mais la maintenance et les évolutions d
 msgid "Justin Beadle"
 msgstr "Justin Beadle"
 
+#. js-lingui-id: WvrtRi
+#: src/sections/releases-hero/releases-hero.tsx
+msgid ""
+"Latest\n"
+"*Releases*"
+msgstr ""
+
 #. js-lingui-id: rdU729
 #: src/sections/stepper/product-stepper-data.ts
 msgid "Layout"
@@ -826,6 +848,11 @@ msgstr ""
 msgid "Own your CRM end to end"
 msgstr "Maîtrisez votre CRM de bout en bout"
 
+#. js-lingui-id: h/oMMb
+#: src/platform/routing/static-website-routes.ts
+msgid "Packaged CRMs make every company look the same. Twenty is the open source CRM teams shape around their workflow, with a modern UI and a developer-first platform."
+msgstr ""
+
 #. js-lingui-id: mPkInZ
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
@@ -900,6 +927,16 @@ msgstr ""
 msgid "Read the case"
 msgstr "Lire le cas client"
 
+#. js-lingui-id: zTY2by
+#: src/platform/routing/static-website-routes.ts
+msgid "Real customer stories from teams running their business on Twenty: how they migrated, what they customised, and what changed once their CRM finally fit."
+msgstr ""
+
+#. js-lingui-id: CH+Ona
+#: src/sections/customers-hero/customers-hero.tsx
+msgid "Real stories from real teams about how they shaped Twenty to fit their workflow and accelerated their growth."
+msgstr ""
+
 #. js-lingui-id: 4hc7hc
 #: src/sections/three-cards/product-three-cards-data.ts
 #: src/sections/product-feature/feature-tiles.ts
@@ -956,6 +993,13 @@ msgstr ""
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
 msgid "SAML/OIDC SSO"
+msgstr ""
+
+#. js-lingui-id: nmVU/t
+#: src/sections/customers-hero/customers-hero.tsx
+msgid ""
+"See how teams\n"
+"build *on Twenty*"
 msgstr ""
 
 #. js-lingui-id: JDp1bg
@@ -1105,6 +1149,11 @@ msgstr ""
 msgid "Team up with a Twenty expert"
 msgstr "Faites équipe avec un expert Twenty"
 
+#. js-lingui-id: vsdUaL
+#: src/sections/releases-hero/releases-hero.tsx
+msgid "Technical notes"
+msgstr ""
+
 #. js-lingui-id: Hevu8X
 #: src/app-preview/terminal/terminal-toggle.tsx
 msgid "Terminal mode"
@@ -1129,6 +1178,11 @@ msgstr "Le CRM open source nº 1 pour les équipes modernes. Modulaire, évoluti
 #: src/sections/testimonials/testimonials.data.ts
 msgid "The flexibility is really what made the difference. Our needs evolve very fast. I discover a new need and in two clicks I can address it. That is a real advantage when you are moving quickly."
 msgstr "C'est vraiment la flexibilité qui a fait la différence. Nos besoins évoluent très vite. Je découvre un nouveau besoin et en deux clics j'y réponds. C'est un vrai avantage quand on avance vite."
+
+#. js-lingui-id: SW9clW
+#: src/sections/why-twenty-hero/why-twenty-hero.tsx
+msgid "The future of CRM is built, *not bought.*"
+msgstr ""
 
 #. js-lingui-id: sm10Rg
 #: src/sections/problem/problem.data.ts
@@ -1220,6 +1274,11 @@ msgstr ""
 msgid "Twenty CRM Pricing — Plans from $9 per User per Month"
 msgstr ""
 
+#. js-lingui-id: D05UQH
+#: src/platform/routing/static-website-routes.ts
+msgid "Twenty Customers — How Modern Teams Run Their CRM"
+msgstr ""
+
 #. js-lingui-id: 0qyMhk
 #: src/sections/home-hero/home-hero.tsx
 msgid "Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves."
@@ -1246,6 +1305,11 @@ msgstr ""
 #: src/sections/menu/menu.data.ts
 msgid "Twenty release {0} — {1}"
 msgstr "Version {0} de Twenty — {1}"
+
+#. js-lingui-id: X1GHuJ
+#: src/platform/routing/static-website-routes.ts
+msgid "Twenty Releases — What's New in the Open Source CRM"
+msgstr ""
 
 #. js-lingui-id: V1lV7B
 #: src/sections/pricing-plans/plans-data.ts
@@ -1332,6 +1396,11 @@ msgstr "Pourquoi les équipes choisissent Twenty"
 #: src/sections/footer/footer.data.ts
 msgid "Why Twenty"
 msgstr "Pourquoi Twenty"
+
+#. js-lingui-id: DH7vVZ
+#: src/platform/routing/static-website-routes.ts
+msgid "Why Twenty — The Open Source CRM Built to Be Customised"
+msgstr ""
 
 #. js-lingui-id: tetjz4
 #: src/sections/menu/menu.data.ts
