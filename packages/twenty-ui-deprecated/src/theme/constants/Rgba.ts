@@ -1,9 +1,5 @@
 /* oxlint-disable twenty/no-hardcoded-colors */
 
-// Inlined hex -> r,g,b parsing (previously the `hex-rgb` package). hex-rgb is
-// ESM-only, which breaks rolldown's CJS interop in the vite 8 library build:
-// the emitted require()+__toESM mis-resolves its default export. Parsing the
-// hex channels directly avoids depending on that dependency entirely.
 export const RGBA = (hex: string, alpha: number) => {
   const normalized = hex.replace(/^#/, '');
   const expanded =
