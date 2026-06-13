@@ -56,11 +56,6 @@ export class AggregateChartConfigurationDTO implements AggregateChartConfigurati
   @IsOptional()
   displayDataLabel?: boolean;
 
-  @Field(() => String, { nullable: true })
-  @IsString()
-  @IsOptional()
-  format?: string;
-
   @Field(() => ChartNumberFormat, { nullable: true })
   @IsEnum(ChartNumberFormat)
   @IsOptional()

@@ -80,7 +80,6 @@ export const WIDGET_CONFIGURATION_GQL_FIELDS = `
     aggregateOperation
     label
     displayDataLabel
-    format
     numberFormat
     description
     filter

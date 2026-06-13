@@ -809,7 +809,6 @@ export interface AggregateChartConfiguration {
     aggregateOperation: AggregateOperations
     label?: Scalars['String']
     displayDataLabel?: Scalars['Boolean']
-    format?: Scalars['String']
     numberFormat?: ChartNumberFormat
     description?: Scalars['String']
     filter?: Scalars['JSON']
@@ -3822,7 +3821,6 @@ export interface AggregateChartConfigurationGenqlSelection{
     aggregateOperation?: boolean | number
     label?: boolean | number
     displayDataLabel?: boolean | number
-    format?: boolean | number
     numberFormat?: boolean | number
     description?: boolean | number
     filter?: boolean | number

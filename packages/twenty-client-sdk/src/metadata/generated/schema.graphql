@@ -1121,7 +1121,6 @@ type AggregateChartConfiguration {
   aggregateOperation: AggregateOperations!
   label: String
   displayDataLabel: Boolean
-  format: String
   numberFormat: ChartNumberFormat
   description: String
   filter: JSON

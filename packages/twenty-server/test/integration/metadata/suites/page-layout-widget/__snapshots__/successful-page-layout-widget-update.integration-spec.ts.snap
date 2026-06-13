@@ -10,7 +10,6 @@ exports[`Page layout widget update should succeed from a GRAPH widget should upd
     "displayDataLabel": true,
     "filter": null,
     "firstDayOfTheWeek": 1,
-    "format": null,
     "label": "Total Records",
     "numberFormat": "SHORT",
     "prefix": null,

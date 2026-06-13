@@ -121,7 +121,6 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         aggregateOperation
         label
         displayDataLabel
-        format
         numberFormat
         description
         filter
