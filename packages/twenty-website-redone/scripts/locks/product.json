@@ -12,7 +12,7 @@
       {
         "scheme": "light",
         "rhythm": "section",
-        "paddingTop": "0px",
+        "paddingTop": "6px",
         "paddingBottom": "48px",
         "background": "rgb(255, 255, 255)",
         "followsSameScheme": true
@@ -20,7 +20,7 @@
       {
         "scheme": "light",
         "rhythm": "section",
-        "paddingTop": "0px",
+        "paddingTop": "6px",
         "paddingBottom": "48px",
         "background": "rgb(255, 255, 255)",
         "followsSameScheme": true
@@ -194,7 +194,7 @@
       {
         "scheme": "light",
         "rhythm": "section",
-        "paddingTop": "0px",
+        "paddingTop": "6px",
         "paddingBottom": "48px",
         "background": "rgb(255, 255, 255)",
         "followsSameScheme": true
@@ -202,7 +202,7 @@
       {
         "scheme": "light",
         "rhythm": "section",
-        "paddingTop": "0px",
+        "paddingTop": "6px",
         "paddingBottom": "48px",
         "background": "rgb(255, 255, 255)",
         "followsSameScheme": true
@@ -376,7 +376,7 @@
       {
         "scheme": "light",
         "rhythm": "section",
-        "paddingTop": "0px",
+        "paddingTop": "6px",
         "paddingBottom": "64px",
         "background": "rgb(255, 255, 255)",
         "followsSameScheme": true
@@ -384,7 +384,7 @@
       {
         "scheme": "light",
         "rhythm": "section",
-        "paddingTop": "0px",
+        "paddingTop": "6px",
         "paddingBottom": "64px",
         "background": "rgb(255, 255, 255)",
         "followsSameScheme": true
@@ -558,7 +558,7 @@
       {
         "scheme": "light",
         "rhythm": "section",
-        "paddingTop": "0px",
+        "paddingTop": "6px",
         "paddingBottom": "64px",
         "background": "rgb(255, 255, 255)",
         "followsSameScheme": true
@@ -566,7 +566,7 @@
       {
         "scheme": "light",
         "rhythm": "section",
-        "paddingTop": "0px",
+        "paddingTop": "6px",
         "paddingBottom": "64px",
         "background": "rgb(255, 255, 255)",
         "followsSameScheme": true

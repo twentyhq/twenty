@@ -11,6 +11,7 @@ import {
 } from '@/platform/seo';
 import { CustomersHero } from '@/sections/customers-hero';
 import { Menu } from '@/sections/menu';
+import { TrustedBy } from '@/sections/trusted-by';
 
 export const generateMetadata = buildRouteMetadata('customers');
 
@@ -40,6 +41,7 @@ export default async function CustomersPage({
       <Menu communityStats={communityStats} scheme="muted" />
       <main>
         <CustomersHero />
+        <TrustedBy />
       </main>
     </>
   );
