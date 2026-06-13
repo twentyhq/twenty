@@ -130,12 +130,12 @@ export function PlanCard({
     <CardShell>
       <CardHeader>
         <CardHeaderInfo>
-          <Heading as="h3" size="xs" weight="light">
-            {`*${i18n._(tier.heading)}*`}
+          <Heading as="h3" family="sans" size="xs" weight="light">
+            {i18n._(tier.heading)}
           </Heading>
           <PriceLine>
-            <Heading as="h4" size="sm" weight="regular">
-              {`*${cell.price.prefix}${PRICE_NUMBER_FORMATTER.format(animatedPriceValue)}*`}
+            <Heading as="h4" family="sans" size="sm" weight="regular">
+              {`${cell.price.prefix}${PRICE_NUMBER_FORMATTER.format(animatedPriceValue)}`}
             </Heading>
             <Body as="span" size="sm">
               <PriceSuffix>{i18n._(cell.price.suffix)}</PriceSuffix>
