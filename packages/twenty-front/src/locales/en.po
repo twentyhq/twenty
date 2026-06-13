@@ -16015,6 +16015,11 @@ msgstr "This action can return up to {maxRecordsFormatted} records."
 msgid "This action cannot be undone."
 msgstr "This action cannot be undone."
 
+#. js-lingui-id: M0WyJi
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
+msgid "This action cannot be undone. This member will be removed and unassigned from their records. Their synced emails and calendars will stop syncing and be reassigned to you."
+msgstr "This action cannot be undone. This member will be removed and unassigned from their records. Their synced emails and calendars will stop syncing and be reassigned to you."
+
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
 msgid ""
@@ -16034,20 +16039,15 @@ msgstr "This action cannot be undone. This will permanently delete your agent.<0
 msgid "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
 msgstr "This action cannot be undone. This will permanently delete your entire workspace. <0/> Please type in your email to confirm."
 
-#. js-lingui-id: fTuKde
-#: src/pages/settings/members/SettingsWorkspaceMember.tsx
-msgid "This action cannot be undone. This will permanently remove this member from this workspace and remove them from all their assignments."
-msgstr "This action cannot be undone. This will permanently remove this member from this workspace and remove them from all their assignments."
-
-#. js-lingui-id: Ik52hF
-#: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid "This action cannot be undone. This will permanently remove your membership from this workspace."
-msgstr "This action cannot be undone. This will permanently remove your membership from this workspace."
-
 #. js-lingui-id: o5vUsG
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
 msgid "This action cannot be undone. This will permanently reset your two factor authentication method. <0/> Please type in your email to confirm."
 msgstr "This action cannot be undone. This will permanently reset your two factor authentication method. <0/> Please type in your email to confirm."
+
+#. js-lingui-id: kVRKMS
+#: src/modules/settings/profile/components/DeleteAccount.tsx
+msgid "This action cannot be undone. Your membership will be removed; synced emails and calendars stay with the workspace."
+msgstr "This action cannot be undone. Your membership will be removed; synced emails and calendars stay with the workspace."
 
 #. js-lingui-id: XxxrMw
 #. placeholder {2}: favoritesEdit.navigationMenuItemCount

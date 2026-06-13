@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 
 import { AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
 import { CALENDAR_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/calendar-channel/constants/calendar-channel-deleted.constant';
@@ -159,6 +159,61 @@ export class ConnectedAccountMetadataService {
     );
 
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
+  }
+
+  async transferOwnership({
+    fromUserWorkspaceId,
+    toUserWorkspaceId,
+    workspaceId,
+  }: {
+    fromUserWorkspaceId: string;
+    toUserWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const connectedAccounts = await this.repository.find({
+      where: { userWorkspaceId: fromUserWorkspaceId, workspaceId },
+    });
+
+    if (connectedAccounts.length === 0) {
+      return;
+    }
+
+    const connectedAccountIds = connectedAccounts.map((account) => account.id);
+
+    await this.repository.manager.transaction(async (entityManager) => {
+      await entityManager.update(
+        ConnectedAccountEntity,
+        { id: In(connectedAccountIds), workspaceId },
+        {
+          userWorkspaceId: toUserWorkspaceId,
+          accessToken: null,
+          refreshToken: null,
+          connectionParameters: null,
+        },
+      );
+
+      await entityManager.update(
+        ConnectedAccountEntity,
+        { id: In(connectedAccountIds), workspaceId, archivedAt: IsNull() },
+        { archivedAt: new Date() },
+      );
+
+      await entityManager.update(
+        MessageChannelEntity,
+        { connectedAccountId: In(connectedAccountIds), workspaceId },
+        { isSyncEnabled: false },
+      );
+
+      await entityManager.update(
+        CalendarChannelEntity,
+        { connectedAccountId: In(connectedAccountIds), workspaceId },
+        { isSyncEnabled: false },
+      );
+    });
+
+    for (const connectedAccount of connectedAccounts) {
+      await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
+    }
   }
 
   async delete({

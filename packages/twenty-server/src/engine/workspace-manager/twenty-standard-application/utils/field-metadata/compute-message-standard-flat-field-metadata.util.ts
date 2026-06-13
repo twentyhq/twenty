@@ -415,7 +415,7 @@ export const buildMessageStandardFlatFieldMetadatas = ({
           value: 'SKIPPED',
           label: i18nLabel(msg`Skipped`),
           position: 5,
-          color: 'gray',
+          color: 'yellow',
         },
       ],
     },

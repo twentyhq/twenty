@@ -104,6 +104,9 @@ export const buildNavigationFlatCommandMenuItem = ({
     availabilityObjectMetadataUniversalIdentifier: null,
     pageLayoutId: null,
     pageLayoutUniversalIdentifier: null,
+    isActive: true,
+    overrides: null,
+    universalOverrides: null,
     createdAt: now,
     updatedAt: now,
   };

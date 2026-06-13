@@ -11,7 +11,7 @@ import {
   FileFolder,
 } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { In, LessThanOrEqual, type Repository } from 'typeorm';
+import { In, IsNull, LessThanOrEqual, type Repository } from 'typeorm';
 import { z } from 'zod';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -97,7 +97,7 @@ export class EmailComposerService {
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const allAccounts = await this.connectedAccountRepository.find({
-          where: { workspaceId },
+          where: { workspaceId, archivedAt: IsNull() },
         });
 
         if (!allAccounts || allAccounts.length === 0) {

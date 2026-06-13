@@ -26,6 +26,7 @@ import { fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow } fr
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -198,6 +199,10 @@ export class CommandMenuItemService {
         updateCommandMenuItemInput: input,
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
         flatPageLayoutMaps: existingFlatPageLayoutMaps,
+        callerApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
       });
 
     const validateAndBuildResult =
@@ -260,14 +265,33 @@ export class CommandMenuItemService {
         commandMenuItemId: id,
       });
 
+    const shouldDeactivate = isCallerOverridingEntity({
+      callerApplicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
+      entityApplicationUniversalIdentifier:
+        flatCommandMenuItemToDelete.applicationUniversalIdentifier,
+      workspaceCustomApplicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
+    });
+
+    const deactivatedFlatCommandMenuItem = {
+      ...flatCommandMenuItemToDelete,
+      isActive: false,
+      updatedAt: new Date().toISOString(),
+    };
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {
               flatEntityToCreate: [],
-              flatEntityToDelete: [flatCommandMenuItemToDelete],
-              flatEntityToUpdate: [],
+              flatEntityToDelete: shouldDeactivate
+                ? []
+                : [flatCommandMenuItemToDelete],
+              flatEntityToUpdate: shouldDeactivate
+                ? [deactivatedFlatCommandMenuItem]
+                : [],
             },
           },
           workspaceId,
@@ -285,7 +309,9 @@ export class CommandMenuItemService {
     }
 
     return fromFlatCommandMenuItemToCommandMenuItemDto(
-      flatCommandMenuItemToDelete,
+      shouldDeactivate
+        ? deactivatedFlatCommandMenuItem
+        : flatCommandMenuItemToDelete,
     );
   }
 
