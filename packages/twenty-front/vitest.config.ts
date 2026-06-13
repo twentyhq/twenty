@@ -58,6 +58,11 @@ export default defineConfig({
           },
           setupFiles: ['./.storybook/vitest.setup.ts'],
           testTimeout: 5 * MINUTES_IN_MS,
+          // Story play functions run as a hook; under vite 8 the modules shard
+          // is heavier, so the default 30s hook timeout trips multi-step
+          // interactions (e.g. the Dropdown open/close cycles) on slower CI
+          // runners. Match testTimeout so play functions get the same budget.
+          hookTimeout: 5 * MINUTES_IN_MS,
         },
       },
     ],
