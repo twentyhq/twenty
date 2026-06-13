@@ -15,6 +15,7 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { useIsMobile } from 'twenty-ui-deprecated/utilities';
 
@@ -57,16 +58,33 @@ export const RecordTableCellHoveredPortalContent = () => {
 
   const isFirstColumn = recordTableHoverPosition?.column === 0;
 
-  const { isRecordFieldReadOnly: isReadOnly } = useContext(FieldContext);
+  const { isRecordFieldReadOnly: isReadOnly, fieldDefinition } =
+    useContext(FieldContext);
 
   const isFieldInputOnly = useIsFieldInputOnly() && !isReadOnly;
 
+  const fieldName = fieldDefinition.metadata.fieldName;
+  const objectMetadataNameSingular =
+    fieldDefinition.metadata.objectMetadataNameSingular;
+
+  // Activity target fields (noteTargets/taskTargets) on non-activity objects
+  // should show the edit button even though the field is read-only,
+  // because the button triggers create-note/task instead of inline edit
+  const isActivityTargetOnNonActivityObject =
+    (fieldName === 'noteTargets' &&
+      objectMetadataNameSingular !== CoreObjectNameSingular.Note) ||
+    (fieldName === 'taskTargets' &&
+      objectMetadataNameSingular !== CoreObjectNameSingular.Task);
+
   const showButton =
     !isFieldInputOnly &&
-    (!isReadOnly || isFirstColumn) &&
+    (!isReadOnly || isFirstColumn || isActivityTargetOnNonActivityObject) &&
     !(isMobile && isFirstColumn);
 
-  const showInteractiveStyle = !isReadOnly || (isFirstColumn && showButton);
+  const showInteractiveStyle =
+    !isReadOnly ||
+    (isFirstColumn && showButton) ||
+    isActivityTargetOnNonActivityObject;
 
   const { rowIndex } = useRecordTableRowContextOrThrow();
 
