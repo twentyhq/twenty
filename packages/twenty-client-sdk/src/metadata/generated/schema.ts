@@ -364,6 +364,8 @@ export interface Field {
     isCustom?: Scalars['Boolean']
     isActive?: Scalars['Boolean']
     isSystem?: Scalars['Boolean']
+    isUIEditable?: Scalars['Boolean']
+    /** @deprecated Use isUIEditable */
     isUIReadOnly?: Scalars['Boolean']
     isNullable?: Scalars['Boolean']
     isUnique?: Scalars['Boolean']
@@ -442,6 +444,9 @@ export interface Object {
     isRemote: Scalars['Boolean']
     isActive: Scalars['Boolean']
     isSystem: Scalars['Boolean']
+    isUIEditable: Scalars['Boolean']
+    isUICreatable: Scalars['Boolean']
+    /** @deprecated Use isUIEditable */
     isUIReadOnly: Scalars['Boolean']
     isSearchable: Scalars['Boolean']
     applicationId: Scalars['UUID']
@@ -2180,6 +2185,18 @@ export interface SendMessageCampaignOutputDTO {
     __typename: 'SendMessageCampaignOutputDTO'
 }
 
+export interface MessageTopic {
+    id: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    name?: Scalars['String']
+    description?: Scalars['String']
+    visibility: MessageTopicVisibility
+    __typename: 'MessageTopic'
+}
+
+export type MessageTopicVisibility = 'PUBLIC' | 'PRIVATE'
+
 export interface AutocompleteResult {
     text: Scalars['String']
     placeId: Scalars['String']
@@ -2636,6 +2653,7 @@ export interface Query {
     findManyAgents: Agent[]
     findOneAgent: Agent
     previewMessageCampaignAudience: CampaignAudiencePreviewDTO
+    messageTopics: MessageTopic[]
     myMessageChannels: MessageChannel[]
     getEmailingDomains: EmailingDomain[]
     myConnectedAccounts: ConnectedAccountPublicDTO[]
@@ -2798,6 +2816,9 @@ export interface Mutation {
     deleteOneAgent: Agent
     sendEmailViaEmailingDomain: SendEmailViaDomainOutput
     sendMessageCampaign: SendMessageCampaignOutputDTO
+    createMessageTopic: MessageTopic
+    updateMessageTopic: MessageTopic
+    deleteMessageTopic: Scalars['Boolean']
     updateMessageChannel: MessageChannel
     createEmailGroupChannel: CreateEmailGroupChannelOutput
     deleteEmailGroupChannel: MessageChannel
@@ -3294,6 +3315,8 @@ export interface FieldGenqlSelection{
     isCustom?: boolean | number
     isActive?: boolean | number
     isSystem?: boolean | number
+    isUIEditable?: boolean | number
+    /** @deprecated Use isUIEditable */
     isUIReadOnly?: boolean | number
     isNullable?: boolean | number
     isUnique?: boolean | number
@@ -3358,7 +3381,7 @@ first?: (Scalars['Int'] | null),
 /** Paginate last */
 last?: (Scalars['Int'] | null)}
 
-export interface ObjectFilter {and?: (ObjectFilter[] | null),or?: (ObjectFilter[] | null),id?: (UUIDFilterComparison | null),isRemote?: (BooleanFieldComparison | null),isActive?: (BooleanFieldComparison | null),isSystem?: (BooleanFieldComparison | null),isUIReadOnly?: (BooleanFieldComparison | null),isSearchable?: (BooleanFieldComparison | null)}
+export interface ObjectFilter {and?: (ObjectFilter[] | null),or?: (ObjectFilter[] | null),id?: (UUIDFilterComparison | null),isRemote?: (BooleanFieldComparison | null),isActive?: (BooleanFieldComparison | null),isSystem?: (BooleanFieldComparison | null),isUIEditable?: (BooleanFieldComparison | null),isUICreatable?: (BooleanFieldComparison | null),isUIReadOnly?: (BooleanFieldComparison | null),isSearchable?: (BooleanFieldComparison | null)}
 
 export interface UUIDFilterComparison {is?: (Scalars['Boolean'] | null),isNot?: (Scalars['Boolean'] | null),eq?: (Scalars['UUID'] | null),neq?: (Scalars['UUID'] | null),gt?: (Scalars['UUID'] | null),gte?: (Scalars['UUID'] | null),lt?: (Scalars['UUID'] | null),lte?: (Scalars['UUID'] | null),like?: (Scalars['UUID'] | null),notLike?: (Scalars['UUID'] | null),iLike?: (Scalars['UUID'] | null),notILike?: (Scalars['UUID'] | null),in?: (Scalars['UUID'][] | null),notIn?: (Scalars['UUID'][] | null)}
 
@@ -3394,6 +3417,9 @@ export interface ObjectGenqlSelection{
     isRemote?: boolean | number
     isActive?: boolean | number
     isSystem?: boolean | number
+    isUIEditable?: boolean | number
+    isUICreatable?: boolean | number
+    /** @deprecated Use isUIEditable */
     isUIReadOnly?: boolean | number
     isSearchable?: boolean | number
     applicationId?: boolean | number
@@ -3419,7 +3445,7 @@ export interface ObjectGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface FieldFilter {and?: (FieldFilter[] | null),or?: (FieldFilter[] | null),id?: (UUIDFilterComparison | null),isActive?: (BooleanFieldComparison | null),isSystem?: (BooleanFieldComparison | null),isUIReadOnly?: (BooleanFieldComparison | null),objectMetadataId?: (UUIDFilterComparison | null)}
+export interface FieldFilter {and?: (FieldFilter[] | null),or?: (FieldFilter[] | null),id?: (UUIDFilterComparison | null),isActive?: (BooleanFieldComparison | null),isSystem?: (BooleanFieldComparison | null),isUIEditable?: (BooleanFieldComparison | null),isUIReadOnly?: (BooleanFieldComparison | null),objectMetadataId?: (UUIDFilterComparison | null)}
 
 export interface IndexFilter {and?: (IndexFilter[] | null),or?: (IndexFilter[] | null),id?: (UUIDFilterComparison | null),isCustom?: (BooleanFieldComparison | null)}
 
@@ -5227,6 +5253,17 @@ export interface SendMessageCampaignOutputDTOGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface MessageTopicGenqlSelection{
+    id?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    name?: boolean | number
+    description?: boolean | number
+    visibility?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface AutocompleteResultGenqlSelection{
     text?: boolean | number
     placeId?: boolean | number
@@ -5725,6 +5762,7 @@ export interface QueryGenqlSelection{
     findManyAgents?: AgentGenqlSelection
     findOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
     previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
+    messageTopics?: MessageTopicGenqlSelection
     myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     getEmailingDomains?: EmailingDomainGenqlSelection
     myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
@@ -5918,6 +5956,9 @@ export interface MutationGenqlSelection{
     deleteOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
     sendEmailViaEmailingDomain?: (SendEmailViaDomainOutputGenqlSelection & { __args: {input: SendEmailViaDomainInput} })
     sendMessageCampaign?: (SendMessageCampaignOutputDTOGenqlSelection & { __args: {input: SendMessageCampaignInput} })
+    createMessageTopic?: (MessageTopicGenqlSelection & { __args: {input: CreateMessageTopicInput} })
+    updateMessageTopic?: (MessageTopicGenqlSelection & { __args: {input: UpdateMessageTopicInput} })
+    deleteMessageTopic?: { __args: {id: Scalars['String']} }
     updateMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateMessageChannelInput} })
     createEmailGroupChannel?: (CreateEmailGroupChannelOutputGenqlSelection & { __args: {input: CreateEmailGroupChannelInput} })
     deleteEmailGroupChannel?: (MessageChannelGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -6270,6 +6311,10 @@ export interface SendEmailViaDomainInput {emailingDomainId: Scalars['String'],to
 
 export interface SendMessageCampaignInput {listId: Scalars['String'],messageTopicId?: (Scalars['String'] | null),subject: Scalars['String'],body: Scalars['String'],fromAddress: Scalars['String']}
 
+export interface CreateMessageTopicInput {name: Scalars['String'],description?: (Scalars['String'] | null),visibility?: (MessageTopicVisibility | null)}
+
+export interface UpdateMessageTopicInput {id: Scalars['String'],name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),visibility?: (MessageTopicVisibility | null)}
+
 export interface UpdateMessageChannelInput {id: Scalars['UUID'],update: UpdateMessageChannelInputUpdates}
 
 export interface UpdateMessageChannelInputUpdates {visibility?: (MessageChannelVisibility | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),contactAutoCreationPolicy?: (MessageChannelContactAutoCreationPolicy | null),messageFolderImportPolicy?: (MessageFolderImportPolicy | null),isSyncEnabled?: (Scalars['Boolean'] | null),excludeNonProfessionalEmails?: (Scalars['Boolean'] | null),excludeGroupEmails?: (Scalars['Boolean'] | null)}
@@ -6316,7 +6361,7 @@ export interface CreateOneFieldMetadataInput {
 /** The record to create */
 field: CreateFieldInput}
 
-export interface CreateFieldInput {type: FieldMetadataType,name: Scalars['String'],label: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isCustom?: (Scalars['Boolean'] | null),isActive?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),defaultValue?: (Scalars['JSON'] | null),options?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),objectMetadataId: Scalars['UUID'],isLabelSyncedWithName?: (Scalars['Boolean'] | null),isRemoteCreation?: (Scalars['Boolean'] | null),relationCreationPayload?: (Scalars['JSON'] | null),morphRelationsCreationPayload?: (Scalars['JSON'][] | null)}
+export interface CreateFieldInput {type: FieldMetadataType,name: Scalars['String'],label: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isCustom?: (Scalars['Boolean'] | null),isActive?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIEditable?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),defaultValue?: (Scalars['JSON'] | null),options?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),objectMetadataId: Scalars['UUID'],isLabelSyncedWithName?: (Scalars['Boolean'] | null),isRemoteCreation?: (Scalars['Boolean'] | null),relationCreationPayload?: (Scalars['JSON'] | null),morphRelationsCreationPayload?: (Scalars['JSON'][] | null)}
 
 export interface UpdateOneFieldMetadataInput {
 /** The id of the record to update */
@@ -6324,7 +6369,7 @@ id: Scalars['UUID'],
 /** The record to update */
 update: UpdateFieldInput}
 
-export interface UpdateFieldInput {universalIdentifier?: (Scalars['String'] | null),name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),defaultValue?: (Scalars['JSON'] | null),options?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),objectMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),morphRelationsUpdatePayload?: (Scalars['JSON'][] | null)}
+export interface UpdateFieldInput {universalIdentifier?: (Scalars['String'] | null),name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),isSystem?: (Scalars['Boolean'] | null),isUIEditable?: (Scalars['Boolean'] | null),isUIReadOnly?: (Scalars['Boolean'] | null),isNullable?: (Scalars['Boolean'] | null),isUnique?: (Scalars['Boolean'] | null),defaultValue?: (Scalars['JSON'] | null),options?: (Scalars['JSON'] | null),settings?: (Scalars['JSON'] | null),objectMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),morphRelationsUpdatePayload?: (Scalars['JSON'][] | null)}
 
 export interface DeleteOneFieldInput {
 /** The id of the field to delete. */
@@ -8064,6 +8109,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const MessageTopic_possibleTypes: string[] = ['MessageTopic']
+    export const isMessageTopic = (obj?: { __typename?: any } | null): obj is MessageTopic => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageTopic"')
+      return MessageTopic_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const AutocompleteResult_possibleTypes: string[] = ['AutocompleteResult']
     export const isAutocompleteResult = (obj?: { __typename?: any } | null): obj is AutocompleteResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAutocompleteResult"')
@@ -8985,6 +9038,11 @@ export const enumMessageChannelSyncStage = {
    MESSAGES_IMPORT_SCHEDULED: 'MESSAGES_IMPORT_SCHEDULED' as const,
    MESSAGES_IMPORT_ONGOING: 'MESSAGES_IMPORT_ONGOING' as const,
    FAILED: 'FAILED' as const
+}
+
+export const enumMessageTopicVisibility = {
+   PUBLIC: 'PUBLIC' as const,
+   PRIVATE: 'PRIVATE' as const
 }
 
 export const enumCalendarChannelSyncStatus = {

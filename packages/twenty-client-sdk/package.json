@@ -49,7 +49,7 @@
   ],
   "dependencies": {
     "@genql/runtime": "^2.10.0",
-    "esbuild": "^0.28.0",
+    "esbuild": "^0.28.1",
     "graphql": "^16.8.1",
     "lodash": "^4.17.21",
     "prettier": "^3.8.3"

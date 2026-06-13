@@ -65,6 +65,7 @@ import { AddEmailingDomainUnsubscribeHostFastInstanceCommand } from 'src/databas
 import { CreateMessageSuppressionCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781250000000-create-message-suppression-core-table';
 import { CreateMessageTopicCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781260000000-create-message-topic-core-table';
 import { ViewOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-12/2-12-instance-command-fast-1781114009075-view-overridable-entity';
+import { RenameIsUiReadOnlyToIsUiEditableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781277453604-rename-is-ui-read-only-to-is-ui-editable';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -132,4 +133,5 @@ export const INSTANCE_COMMANDS = [
   ViewOverridableEntityFastInstanceCommand,
   CreateMessageSuppressionCoreTableFastInstanceCommand,
   CreateMessageTopicCoreTableFastInstanceCommand,
+  RenameIsUiReadOnlyToIsUiEditableFastInstanceCommand,
 ];

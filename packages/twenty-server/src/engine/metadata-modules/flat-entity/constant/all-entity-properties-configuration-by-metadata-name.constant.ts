@@ -108,8 +108,8 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    isUIReadOnly: {
-      toCompare: false,
+    isUIEditable: {
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
@@ -212,8 +212,13 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    isUIReadOnly: {
-      toCompare: false,
+    isUIEditable: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isUICreatable: {
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
