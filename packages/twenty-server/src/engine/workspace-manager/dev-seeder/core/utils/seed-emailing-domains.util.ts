@@ -49,7 +49,7 @@ export const seedEmailingDomains = async ({
         workspaceId,
         domain: verified,
         status: EmailingDomainStatus.VERIFIED,
-        verificationRecords: JSON.stringify([]),
+        verificationRecords: [],
         verifiedAt: new Date(),
         tenantStatus: EmailingDomainTenantStatus.ACTIVE,
       },
@@ -57,7 +57,7 @@ export const seedEmailingDomains = async ({
         workspaceId,
         domain: pending,
         status: EmailingDomainStatus.PENDING,
-        verificationRecords: JSON.stringify([
+        verificationRecords: [
           {
             type: 'TXT',
             key: `_amazonses.${pending}`,
@@ -68,7 +68,7 @@ export const seedEmailingDomains = async ({
             key: `seed1._domainkey.${pending}`,
             value: 'seed1.dkim.amazonses.com',
           },
-        ]),
+        ],
         verifiedAt: null,
         tenantStatus: EmailingDomainTenantStatus.ACTIVE,
       },
