@@ -46,6 +46,9 @@ const BillingToggleSlot = styled.div`
 
   ${mediaUp('md')} {
     grid-column: 2;
+    /* Nudged right of dead-centre so it does not read as left of the
+       Selfhosting control that sits on the row's right. */
+    transform: translateX(${spacing(3)});
   }
 `;
 
