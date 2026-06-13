@@ -1,30 +1,18 @@
-import { chromium } from 'playwright';
+import {
+  createBattery,
+  launchBrowser,
+  NEW_BASE,
+  OLD_BASE,
+  openPage,
+} from './battery-kit.mjs';
 
 // A/B battery for the product stepper: section chrome, the sticky scroll
 // choreography at pinned positions, the visual crossfade, and the three
 // interactive editors (entity drag, workflow beat, layout toggle+reorder).
-const OLD_BASE = process.env.MOCKUP_OLD_URL ?? 'http://localhost:3002';
-const NEW_BASE = process.env.VISUAL_BATTERY_URL ?? 'http://localhost:3004';
 
-const VIEWPORT = { width: 1440, height: 900 };
 const HEADING = 'Go the extra mile';
 
-const failures = [];
-const ok = (label, detail) =>
-  console.log(`  ✓ ${label}${detail ? ` (${detail})` : ''}`);
-const fail = (label, detail) => {
-  failures.push(`${label}: ${detail}`);
-  console.log(`  ✗ ${label}: ${detail}`);
-};
-const compare = (label, oldValue, newValue) => {
-  const oldText = JSON.stringify(oldValue);
-  const newText = JSON.stringify(newValue);
-  if (oldText === newText) {
-    ok(label, oldText.length > 90 ? undefined : oldText);
-  } else {
-    fail(label, `old ${oldText} vs new ${newText}`);
-  }
-};
+const { compare, fail, finish, ok } = createBattery('product-stepper-parity');
 
 // The old site tints the stepper section with 5% black over white; ours
 // bakes the same color as a solid token. Composite before comparing.
@@ -39,14 +27,7 @@ const compositeOverWhite = (cssColor) => {
   return `rgb(${channel(match[1])}, ${channel(match[2])}, ${channel(match[3])})`;
 };
 
-const browser = await chromium.launch({ channel: 'chrome', headless: true });
-
-async function openPage(base) {
-  const page = await browser.newPage({ viewport: VIEWPORT });
-  await page.goto(`${base}/product`, { waitUntil: 'load', timeout: 240000 });
-  await page.waitForTimeout(800);
-  return page;
-}
+const browser = await launchBrowser();
 
 // Scrolls the stepper section to a fraction of its own scrollable track.
 async function scrollSectionTo(page, trackFraction) {
@@ -158,8 +139,8 @@ function readDraggable(page, labelText) {
   }, labelText);
 }
 
-const oldPage = await openPage(OLD_BASE);
-const newPage = await openPage(NEW_BASE);
+const oldPage = await openPage(browser, `${OLD_BASE}/product`);
+const newPage = await openPage(browser, `${NEW_BASE}/product`);
 const pages = [
   ['old', oldPage],
   ['new', newPage],
@@ -338,11 +319,4 @@ for (const [name, page] of pages) {
   }
 }
 
-await browser.close();
-
-if (failures.length > 0) {
-  console.error(`product-stepper-parity: FAILED (${failures.length})`);
-  process.exitCode = 1;
-} else {
-  console.log('product-stepper-parity: OK');
-}
+await finish(browser);

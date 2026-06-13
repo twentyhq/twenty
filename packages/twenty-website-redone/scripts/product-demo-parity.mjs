@@ -1,31 +1,18 @@
-import { chromium } from 'playwright';
+import {
+  createBattery,
+  launchBrowser,
+  NEW_BASE,
+  OLD_BASE,
+  VIEWPORT,
+} from './battery-kit.mjs';
 
 // A/B battery for the product demo closer: centered intro, the emergent
 // two-line heading break, CTA chrome, the pattern backdrop, and the
 // static (terminal-less) mockup.
-const OLD_BASE = process.env.MOCKUP_OLD_URL ?? 'http://localhost:3002';
-const NEW_BASE = process.env.VISUAL_BATTERY_URL ?? 'http://localhost:3004';
 
-const VIEWPORT = { width: 1440, height: 900 };
+const { compare, fail, finish, ok } = createBattery('product-demo-parity');
 
-const failures = [];
-const ok = (label, detail) =>
-  console.log(`  ✓ ${label}${detail ? ` (${detail})` : ''}`);
-const fail = (label, detail) => {
-  failures.push(`${label}: ${detail}`);
-  console.log(`  ✗ ${label}: ${detail}`);
-};
-const compare = (label, oldValue, newValue) => {
-  const oldText = JSON.stringify(oldValue);
-  const newText = JSON.stringify(newValue);
-  if (oldText === newText) {
-    ok(label, oldText.length > 90 ? undefined : oldText);
-  } else {
-    fail(label, `old ${oldText} vs new ${newText}`);
-  }
-};
-
-const browser = await chromium.launch({ channel: 'chrome', headless: true });
+const browser = await launchBrowser();
 
 async function readDemo(base) {
   const page = await browser.newPage({ viewport: VIEWPORT });
@@ -178,11 +165,4 @@ if (!oldDemo || !newDemo) {
   }
 }
 
-await browser.close();
-
-if (failures.length > 0) {
-  console.error(`product-demo-parity: FAILED (${failures.length})`);
-  process.exitCode = 1;
-} else {
-  console.log('product-demo-parity: OK');
-}
+await finish(browser);

@@ -1,41 +1,22 @@
-import { chromium } from 'playwright';
+import {
+  createBattery,
+  launchBrowser,
+  NEW_BASE,
+  OLD_BASE,
+  openPage,
+} from './battery-kit.mjs';
 
 // A/B battery for the ProductFeature section: both sites are driven down
 // the tile grid and compared on lattice styles, tile content styles, the
 // counter format, the entrance fade, and the interactive visuals
 // (donut sweep, contacts checkbox + drag-scroll, kanban drag-drop-reorder
 // with FLIP).
-const OLD_URL = process.env.MOCKUP_OLD_URL ?? 'http://localhost:3002/product';
-const NEW_URL =
-  process.env.VISUAL_BATTERY_URL ?? 'http://localhost:3004/product';
+const OLD_URL = `${OLD_BASE}/product`;
+const NEW_URL = `${NEW_BASE}/product`;
 
-const VIEWPORT = { width: 1440, height: 900 };
+const { compare, fail, finish, ok } = createBattery('product-feature-parity');
 
-const failures = [];
-const ok = (label, detail) =>
-  console.log(`  ✓ ${label}${detail ? ` (${detail})` : ''}`);
-const fail = (label, detail) => {
-  failures.push(`${label}: ${detail}`);
-  console.log(`  ✗ ${label}: ${detail}`);
-};
-const compare = (label, oldValue, newValue) => {
-  const oldText = JSON.stringify(oldValue);
-  const newText = JSON.stringify(newValue);
-  if (oldText === newText) {
-    ok(label, oldText.length > 90 ? undefined : oldText);
-  } else {
-    fail(label, `old ${oldText} vs new ${newText}`);
-  }
-};
-
-const browser = await chromium.launch({ channel: 'chrome', headless: true });
-
-async function openPage(url) {
-  const page = await browser.newPage({ viewport: VIEWPORT });
-  await page.goto(url, { waitUntil: 'load', timeout: 240000 });
-  await page.waitForTimeout(800);
-  return page;
-}
+const browser = await launchBrowser();
 
 async function scrollToText(page, text, settleMs) {
   const found = await page.evaluate((needle) => {
@@ -247,8 +228,8 @@ function countFlipAnimations(page) {
   );
 }
 
-const oldPage = await openPage(OLD_URL);
-const newPage = await openPage(NEW_URL);
+const oldPage = await openPage(browser, OLD_URL);
+const newPage = await openPage(browser, NEW_URL);
 const pages = [
   ['old', oldPage],
   ['new', newPage],
@@ -470,11 +451,4 @@ for (const [name, page] of pages) {
   }
 }
 
-await browser.close();
-
-if (failures.length > 0) {
-  console.error(`product-feature-parity: FAILED (${failures.length})`);
-  process.exitCode = 1;
-} else {
-  console.log('product-feature-parity: OK');
-}
+await finish(browser);

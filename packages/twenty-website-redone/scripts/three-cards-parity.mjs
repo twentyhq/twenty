@@ -1,44 +1,24 @@
-import { chromium } from 'playwright';
+import {
+  createBattery,
+  launchBrowser,
+  NEW_BASE,
+  OLD_BASE,
+  openPage,
+} from './battery-kit.mjs';
 
 // A/B battery for the three-cards family: the home section's restored
 // scroll choreography (old == new at pinned scroll positions) and the
 // product variant's intro, section rhythm, and footerless cards.
-const OLD_BASE = process.env.MOCKUP_OLD_URL ?? 'http://localhost:3002';
-const NEW_BASE = process.env.VISUAL_BATTERY_URL ?? 'http://localhost:3004';
-
-const VIEWPORT = { width: 1440, height: 900 };
 
 const HOME_HEADING = 'Assemble, iterate and adapt a robust CRM,';
 const PRODUCT_HEADING = 'A modern CRM with';
 
-const failures = [];
-const ok = (label, detail) =>
-  console.log(`  ✓ ${label}${detail ? ` (${detail})` : ''}`);
-const fail = (label, detail) => {
-  failures.push(`${label}: ${detail}`);
-  console.log(`  ✗ ${label}: ${detail}`);
-};
-const compare = (label, oldValue, newValue) => {
-  const oldText = JSON.stringify(oldValue);
-  const newText = JSON.stringify(newValue);
-  if (oldText === newText) {
-    ok(label, oldText.length > 100 ? undefined : oldText);
-  } else {
-    fail(label, `old ${oldText} vs new ${newText}`);
-  }
-};
+const { compare, fail, finish, ok } = createBattery('three-cards-parity');
 
-const browser = await chromium.launch({ channel: 'chrome', headless: true });
+const browser = await launchBrowser();
 
-async function openPage(base, path, reducedMotion = false) {
-  const page = await browser.newPage({
-    viewport: VIEWPORT,
-    reducedMotion: reducedMotion ? 'reduce' : 'no-preference',
-  });
-  await page.goto(`${base}${path}`, { waitUntil: 'load', timeout: 240000 });
-  await page.waitForTimeout(900);
-  return page;
-}
+const openSitePage = (base, path, reducedMotion = false) =>
+  openPage(browser, `${base}${path}`, { reducedMotion, settleMs: 900 });
 
 // The grid + its will-change slots, found from the section's heading.
 function readSection(page, headingNeedle) {
@@ -107,8 +87,8 @@ async function scrollGridTo(page, gridTop, viewportFraction) {
 
 // --- HOME: restored scroll choreography --------------------------------
 {
-  const oldPage = await openPage(OLD_BASE, '/');
-  const newPage = await openPage(NEW_BASE, '/');
+  const oldPage = await openSitePage(OLD_BASE, '/');
+  const newPage = await openSitePage(NEW_BASE, '/');
 
   const oldRest = await readSection(oldPage, HOME_HEADING);
   const newRest = await readSection(newPage, HOME_HEADING);
@@ -190,8 +170,8 @@ async function scrollGridTo(page, gridTop, viewportFraction) {
 
   // RATIFIED DIVERGENCE: reduced motion settles the cards; the old site
   // animates regardless. Asserting the difference keeps it deliberate.
-  const oldReduced = await openPage(OLD_BASE, '/', true);
-  const newReduced = await openPage(NEW_BASE, '/', true);
+  const oldReduced = await openSitePage(OLD_BASE, '/', true);
+  const newReduced = await openSitePage(NEW_BASE, '/', true);
   const oldReducedRest = await readSection(oldReduced, HOME_HEADING);
   const newReducedRest = await readSection(newReduced, HOME_HEADING);
   await scrollGridTo(oldReduced, oldReducedRest.gridTop, 0.6);
@@ -216,8 +196,8 @@ async function scrollGridTo(page, gridTop, viewportFraction) {
 
 // --- PRODUCT: intro, rhythm, footerless cards ---------------------------
 {
-  const oldPage = await openPage(OLD_BASE, '/product');
-  const newPage = await openPage(NEW_BASE, '/product');
+  const oldPage = await openSitePage(OLD_BASE, '/product');
+  const newPage = await openSitePage(NEW_BASE, '/product');
 
   const oldSection = await readSection(oldPage, PRODUCT_HEADING);
   const newSection = await readSection(newPage, PRODUCT_HEADING);
@@ -225,7 +205,7 @@ async function scrollGridTo(page, gridTop, viewportFraction) {
   // The rhythm system owns section padding universally (ratified standard:
   // the old site padded each section's inner container ad hoc) — the
   // product section must carry exactly the home section's rhythm.
-  const newHomePage = await openPage(NEW_BASE, '/');
+  const newHomePage = await openSitePage(NEW_BASE, '/');
   const newHomeSection = await readSection(newHomePage, HOME_HEADING);
   compare(
     'product section rhythm equals home section rhythm (universal padding)',
@@ -278,11 +258,4 @@ async function scrollGridTo(page, gridTop, viewportFraction) {
   await newPage.close();
 }
 
-await browser.close();
-
-if (failures.length > 0) {
-  console.error(`three-cards-parity: FAILED (${failures.length})`);
-  process.exitCode = 1;
-} else {
-  console.log('three-cards-parity: OK');
-}
+await finish(browser);
