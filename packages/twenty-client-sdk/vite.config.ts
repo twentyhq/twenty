@@ -11,9 +11,9 @@ const entries = [
 ];
 
 const externalDeps = [
-  ...Object.keys((packageJson as any).dependencies || {}),
-  ...Object.keys((packageJson as any).devDependencies || {}).filter(
-    (dep: string) => dep !== 'twenty-shared',
+  ...Object.keys(packageJson.dependencies),
+  ...Object.keys(packageJson.devDependencies).filter(
+    (dep) => dep !== 'twenty-shared',
   ),
   'node:fs/promises',
   'node:fs',
