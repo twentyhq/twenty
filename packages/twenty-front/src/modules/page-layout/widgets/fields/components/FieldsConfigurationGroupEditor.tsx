@@ -1,4 +1,5 @@
 import { Droppable, type DraggableProvided } from '@hello-pangea/dnd';
+import { type CSSProperties } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
@@ -135,6 +136,7 @@ export const FieldsConfigurationGroupEditor = ({
       ref={draggableProvided.innerRef}
       // oxlint-disable-next-line react/jsx-props-no-spreading
       {...draggableProvided.draggableProps}
+      style={draggableProvided.draggableProps.style as CSSProperties}
       isDragging={isDragging}
     >
       {/* oxlint-disable-next-line react/jsx-props-no-spreading */}

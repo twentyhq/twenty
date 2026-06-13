@@ -8,7 +8,7 @@ import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useC
 import { useContext, type RefObject } from 'react';
 
 export type RecordBoardDragSelectProps = {
-  boardRef: RefObject<HTMLDivElement>;
+  boardRef: RefObject<HTMLDivElement | null>;
 };
 
 export const RecordBoardDragSelect = ({

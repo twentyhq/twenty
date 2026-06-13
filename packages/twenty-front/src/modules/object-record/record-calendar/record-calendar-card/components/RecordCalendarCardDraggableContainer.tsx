@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { Draggable } from '@hello-pangea/dnd';
+import { type CSSProperties } from 'react';
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
@@ -81,6 +82,7 @@ export const RecordCalendarCardDraggableContainer = ({
             {...draggableProvided?.dragHandleProps}
             // oxlint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided?.draggableProps}
+            style={draggableProvided?.draggableProps?.style as CSSProperties}
             data-selectable-id={recordId}
           >
             <RecordCalendarCard recordId={recordId} />

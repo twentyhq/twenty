@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 const CLICK_OUTSIDE_DEBUG_MODE = false;
 
 export type ClickOutsideListenerProps<T extends Element> = {
-  refs: Array<RefObject<T>>;
+  refs: Array<RefObject<T | null>>;
   excludedClickOutsideIds?: string[];
   callback: (event: MouseEvent | TouchEvent) => void;
   listenerId: string;

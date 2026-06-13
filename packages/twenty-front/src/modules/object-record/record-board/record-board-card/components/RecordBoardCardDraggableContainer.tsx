@@ -1,6 +1,6 @@
 import { Draggable } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
+import { type CSSProperties, useContext } from 'react';
 
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
@@ -72,6 +72,9 @@ export const RecordBoardCardDraggableContainer = ({
             {...draggableProvided?.dragHandleProps}
             // oxlint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided?.draggableProps}
+            // @hello-pangea/dnd's DraggingStyle is a closed interface that does not
+            // satisfy the `--radix-*` index signature augmented onto CSSProperties.
+            style={draggableProvided?.draggableProps?.style as CSSProperties}
             data-selectable-id={recordId}
             data-select-disable
           >

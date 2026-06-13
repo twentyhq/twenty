@@ -1,6 +1,6 @@
 import { Draggable } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
+import { type CSSProperties, useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 import { RecordBoardCardDraggableContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardDraggableContainer';
@@ -64,6 +64,7 @@ export const RecordBoardColumnCardsContainer = ({
             ref={draggableProvided.innerRef}
             // oxlint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided.draggableProps}
+            style={draggableProvided.draggableProps.style as CSSProperties}
           ></div>
         )}
       </Draggable>
