@@ -385,48 +385,48 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
   });
 
   it('should return calendar event when it has no calendar channel association (manually created via REST)', async () => {
-  const calendarEvents = [
-    createMockCalendarEvent('1', 'Orphan Event', 'Orphan Description'),
-  ];
+    const calendarEvents = [
+      createMockCalendarEvent('1', 'Orphan Event', 'Orphan Description'),
+    ];
 
-  // No associations exist for this event — simulates manual REST creation
-  mockCalendarEventAssociationRepository.find.mockResolvedValue([]);
-  mockCalendarChannelRepository.find.mockResolvedValue([]);
+    // No associations exist for this event — simulates manual REST creation
+    mockCalendarEventAssociationRepository.find.mockResolvedValue([]);
+    mockCalendarChannelRepository.find.mockResolvedValue([]);
 
-  const result = await service.applyCalendarEventsVisibilityRestrictions(
-    calendarEvents,
-    'test-workspace-id',
-    'user-id',
-  );
+    const result = await service.applyCalendarEventsVisibilityRestrictions(
+      calendarEvents,
+      'test-workspace-id',
+      'user-id',
+    );
 
-  expect(result).toHaveLength(1);
-  expect(result[0].id).toBe('1');
-  expect(result[0].title).toBe('Orphan Event');
-  expect(result[0].description).toBe('Orphan Description');
-  expect(mockConnectedAccountRepository.find).not.toHaveBeenCalled();
-  expect(mockUserWorkspaceRepository.findOne).not.toHaveBeenCalled();
-});
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe('1');
+    expect(result[0].title).toBe('Orphan Event');
+    expect(result[0].description).toBe('Orphan Description');
+    expect(mockConnectedAccountRepository.find).not.toHaveBeenCalled();
+    expect(mockUserWorkspaceRepository.findOne).not.toHaveBeenCalled();
+  });
 
-it('should return calendar event when it has no calendar channel association and userId is undefined (api key request)', async () => {
-  const calendarEvents = [
-    createMockCalendarEvent('1', 'Orphan Event', 'Orphan Description'),
-  ];
+  it('should return calendar event when it has no calendar channel association and userId is undefined (api key request)', async () => {
+    const calendarEvents = [
+      createMockCalendarEvent('1', 'Orphan Event', 'Orphan Description'),
+    ];
 
-  // No associations — simulates manual REST creation with API key
-  mockCalendarEventAssociationRepository.find.mockResolvedValue([]);
-  mockCalendarChannelRepository.find.mockResolvedValue([]);
+    // No associations — simulates manual REST creation with API key
+    mockCalendarEventAssociationRepository.find.mockResolvedValue([]);
+    mockCalendarChannelRepository.find.mockResolvedValue([]);
 
-  const result = await service.applyCalendarEventsVisibilityRestrictions(
-    calendarEvents,
-    'test-workspace-id',
-    undefined,
-  );
+    const result = await service.applyCalendarEventsVisibilityRestrictions(
+      calendarEvents,
+      'test-workspace-id',
+      undefined,
+    );
 
-  expect(result).toHaveLength(1);
-  expect(result[0].id).toBe('1');
-  expect(result[0].title).toBe('Orphan Event');
-  expect(result[0].description).toBe('Orphan Description');
-  expect(mockConnectedAccountRepository.find).not.toHaveBeenCalled();
-  expect(mockUserWorkspaceRepository.findOne).not.toHaveBeenCalled();
-});
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe('1');
+    expect(result[0].title).toBe('Orphan Event');
+    expect(result[0].description).toBe('Orphan Description');
+    expect(mockConnectedAccountRepository.find).not.toHaveBeenCalled();
+    expect(mockUserWorkspaceRepository.findOne).not.toHaveBeenCalled();
+  });
 });

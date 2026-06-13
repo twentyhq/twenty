@@ -77,7 +77,7 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
               association.calendarEventId === calendarEvents[i].id,
           );
 
-          if(associations.length === 0) {
+          if (associations.length === 0) {
             continue;
           }
 
