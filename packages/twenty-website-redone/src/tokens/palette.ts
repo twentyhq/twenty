@@ -10,6 +10,7 @@ export type PaletteToken =
   | 'pink'
   | 'green'
   | 'yellow'
+  | 'error'
   | 'ash'
   | 'fog'
   | 'charcoal';
@@ -30,6 +31,8 @@ export const PALETTE: Record<PaletteToken, string> = {
   pink: '#ed87fc',
   green: '#89fc9a',
   yellow: '#feffb7',
+  // form validation red, legible on the dark application surfaces.
+  error: '#ff9a9a',
   // artwork grays: monolith dash / stepper stage dash / footer dash
   ash: '#bababa',
   fog: '#dddddd',
