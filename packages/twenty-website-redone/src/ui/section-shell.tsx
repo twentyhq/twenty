@@ -81,6 +81,19 @@ const sectionShellClassName = css`
   &[data-scheme='dark']:not([data-rhythm='flush']) + &[data-scheme='dark'] {
     padding-top: ${spacing(1.5)};
   }
+
+  /* A section can declare that it connects up into the section above it — a
+     single continuous decorative frame across the seam (the partners promo
+     hanging off the TrustedBy band). The upper section drops its bottom rhythm
+     so its border meets the seam exactly, and shows overflow so its bottom
+     corner markers sit on that line instead of being clipped; z-index keeps
+     those markers above the section below. Same-scheme by intent — the
+     connecting section is responsible for sharing the surface. */
+  &:has(+ &[data-connect-up]) {
+    overflow: visible;
+    padding-bottom: 0;
+    z-index: 1;
+  }
 `;
 
 const backgroundLayerClassName = css`
@@ -101,6 +114,9 @@ export type SectionShellProps = {
   // Decorative full-bleed layer behind the content (gradients, visuals).
   background?: ReactNode;
   children: ReactNode;
+  // Forms one continuous frame with the section directly above (same scheme):
+  // that section yields its bottom rhythm so the two tuck together.
+  connectsUp?: boolean;
   rhythm?: 'section' | 'hero' | 'spacious' | 'flush';
   scheme?: Scheme;
 };
@@ -109,6 +125,7 @@ export function SectionShell({
   ariaLabel,
   background,
   children,
+  connectsUp = false,
   rhythm = 'section',
   scheme = 'light',
 }: SectionShellProps) {
@@ -116,6 +133,7 @@ export function SectionShell({
     <section
       aria-label={ariaLabel}
       className={sectionShellClassName}
+      data-connect-up={connectsUp ? '' : undefined}
       data-rhythm={rhythm}
       data-scheme={scheme}
     >

@@ -9,6 +9,7 @@ import {
   buildRouteMetadata,
   JsonLd,
 } from '@/platform/seo';
+import { CaseStudyPromo } from '@/sections/case-study-promo';
 import { Faq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
 import { PartnerHero } from '@/sections/partner-hero';
@@ -16,8 +17,8 @@ import { TrustedBy } from '@/sections/trusted-by';
 
 export const generateMetadata = buildRouteMetadata('partners');
 
-// Sections land in old-site order as their ports arrive: CaseStudyCatalogPromo,
-// PartnerTestimonials, and PartnerSignoff slot in between TrustedBy and the FAQ.
+// Sections land in old-site order as their ports arrive: PartnerTestimonials
+// and PartnerSignoff slot in between the promo and the FAQ.
 export default async function PartnerPage({
   params,
 }: {
@@ -44,6 +45,7 @@ export default async function PartnerPage({
       <main>
         <PartnerHero />
         <TrustedBy />
+        <CaseStudyPromo />
         <Faq />
       </main>
     </>

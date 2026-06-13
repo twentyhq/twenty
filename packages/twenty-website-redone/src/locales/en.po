@@ -428,6 +428,16 @@ msgstr "Custom fields, relationships, and a unified timeline for every contact a
 msgid "Customer stories"
 msgstr "Customer stories"
 
+#. js-lingui-id: YjXLAQ
+#: src/sections/case-study-promo/case-study-promo.tsx
+msgid "Customer Stories"
+msgstr "Customer Stories"
+
+#. js-lingui-id: BavWCk
+#: src/sections/case-study-promo/case-study-promo.tsx
+msgid "Customer stories preview"
+msgstr "Customer stories preview"
+
 #. js-lingui-id: NihQNk
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
@@ -557,6 +567,11 @@ msgstr "Everything updates in real time, with AI chat always ready to help you m
 msgid "Everything you need, *out of the box*"
 msgstr "Everything you need, *out of the box*"
 
+#. js-lingui-id: JTM5zS
+#: src/sections/case-study-promo/case-study-promo.tsx
+msgid "Explore customer stories"
+msgstr "Explore customer stories"
+
 #. js-lingui-id: akLvep
 #: src/sections/feature-cards/feature-cards.data.ts
 msgid "Familiar, modern interface"
@@ -676,6 +691,15 @@ msgstr "Home"
 msgid "How long does it take to get started?"
 msgstr "How long does it take to get started?"
 
+#. js-lingui-id: 5sWcC0
+#: src/sections/case-study-promo/case-study-promo.tsx
+msgid ""
+"How teams\n"
+"*built with Twenty*"
+msgstr ""
+"How teams\n"
+"*built with Twenty*"
+
 #. js-lingui-id: ZAKTS6
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Import your data with field mapping, including relations. Export anytime — your data is always yours."
@@ -786,6 +810,11 @@ msgstr "Master every corner of Twenty"
 #: src/sections/menu/menu.data.ts
 msgid "Meet the certified agencies and consultants implementing Twenty for teams worldwide."
 msgstr "Meet the certified agencies and consultants implementing Twenty for teams worldwide."
+
+#. js-lingui-id: ujYZ+f
+#: src/sections/case-study-promo/case-study-promo.tsx
+msgid "Meet the teams who shaped Twenty into their own CRM with self-hosted deployments, AI-assisted workflows, and API-first product stacks."
+msgstr "Meet the teams who shaped Twenty into their own CRM with self-hosted deployments, AI-assisted workflows, and API-first product stacks."
 
 #. js-lingui-id: briyJf
 #: src/sections/product-feature/feature-tiles.ts

@@ -426,6 +426,16 @@ msgstr ""
 msgid "Customer stories"
 msgstr ""
 
+#. js-lingui-id: YjXLAQ
+#: src/sections/case-study-promo/case-study-promo.tsx
+msgid "Customer Stories"
+msgstr ""
+
+#. js-lingui-id: BavWCk
+#: src/sections/case-study-promo/case-study-promo.tsx
+msgid "Customer stories preview"
+msgstr ""
+
 #. js-lingui-id: NihQNk
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
@@ -555,6 +565,11 @@ msgstr ""
 msgid "Everything you need, *out of the box*"
 msgstr ""
 
+#. js-lingui-id: JTM5zS
+#: src/sections/case-study-promo/case-study-promo.tsx
+msgid "Explore customer stories"
+msgstr ""
+
 #. js-lingui-id: akLvep
 #: src/sections/feature-cards/feature-cards.data.ts
 msgid "Familiar, modern interface"
@@ -674,6 +689,13 @@ msgstr ""
 msgid "How long does it take to get started?"
 msgstr ""
 
+#. js-lingui-id: 5sWcC0
+#: src/sections/case-study-promo/case-study-promo.tsx
+msgid ""
+"How teams\n"
+"*built with Twenty*"
+msgstr ""
+
 #. js-lingui-id: ZAKTS6
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Import your data with field mapping, including relations. Export anytime — your data is always yours."
@@ -781,6 +803,11 @@ msgstr ""
 #. js-lingui-id: bwCiCi
 #: src/sections/menu/menu.data.ts
 msgid "Meet the certified agencies and consultants implementing Twenty for teams worldwide."
+msgstr ""
+
+#. js-lingui-id: ujYZ+f
+#: src/sections/case-study-promo/case-study-promo.tsx
+msgid "Meet the teams who shaped Twenty into their own CRM with self-hosted deployments, AI-assisted workflows, and API-first product stacks."
 msgstr ""
 
 #. js-lingui-id: briyJf
