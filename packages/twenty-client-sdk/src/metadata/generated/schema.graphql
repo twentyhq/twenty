@@ -2264,6 +2264,7 @@ type ConnectedAccountPublicDTO {
   provider: String!
   lastCredentialsRefreshedAt: DateTime
   authFailedAt: DateTime
+  archivedAt: DateTime
   handleAliases: [String!]
   scopes: [String!]
   lastSignedInAt: DateTime

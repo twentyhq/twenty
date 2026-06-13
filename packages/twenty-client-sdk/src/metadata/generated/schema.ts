@@ -1910,6 +1910,7 @@ export interface ConnectedAccountPublicDTO {
     provider: Scalars['String']
     lastCredentialsRefreshedAt?: Scalars['DateTime']
     authFailedAt?: Scalars['DateTime']
+    archivedAt?: Scalars['DateTime']
     handleAliases?: Scalars['String'][]
     scopes?: Scalars['String'][]
     lastSignedInAt?: Scalars['DateTime']
@@ -4915,6 +4916,7 @@ export interface ConnectedAccountPublicDTOGenqlSelection{
     provider?: boolean | number
     lastCredentialsRefreshedAt?: boolean | number
     authFailedAt?: boolean | number
+    archivedAt?: boolean | number
     handleAliases?: boolean | number
     scopes?: boolean | number
     lastSignedInAt?: boolean | number

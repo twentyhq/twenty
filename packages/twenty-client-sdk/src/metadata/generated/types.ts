@@ -4420,6 +4420,9 @@ export default {
             "authFailedAt": [
                 4
             ],
+            "archivedAt": [
+                4
+            ],
             "handleAliases": [
                 1
             ],
