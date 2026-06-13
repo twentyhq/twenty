@@ -55,6 +55,10 @@ const convertProperty = (jsonSchema: InputJsonSchema): InputSchemaProperty => {
     property.label = jsonSchema.label;
   }
 
+  if (isNonEmptyString(jsonSchema.objectUniversalIdentifier)) {
+    property.objectUniversalIdentifier = jsonSchema.objectUniversalIdentifier;
+  }
+
   return property;
 };
 

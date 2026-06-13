@@ -17,4 +17,5 @@ export type InputJsonSchema = {
   maximum?: number;
   multiline?: boolean;
   label?: string;
+  objectUniversalIdentifier?: string;
 };

@@ -3,11 +3,14 @@ import {
   useLogicFunctionUpdateFormState,
 } from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useMemo } from 'react';
 import {
   getInputSchemaFromSourceCode,
   jsonSchemaToInputSchema,
   type InputJsonSchema,
 } from 'twenty-shared/logic-function';
+import { capitalize, isEmptyObject } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
 export const useLogicFunctionForm = ({
@@ -19,6 +22,19 @@ export const useLogicFunctionForm = ({
 
   const { formValues, setFormValues, logicFunction, loading } =
     useLogicFunctionUpdateFormState({ logicFunctionId });
+
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const knownObjectTypes = useMemo(
+    () =>
+      Object.fromEntries(
+        objectMetadataItems.map((objectMetadataItem) => [
+          capitalize(objectMetadataItem.nameSingular),
+          objectMetadataItem.universalIdentifier,
+        ]),
+      ),
+    [objectMetadataItems],
+  );
 
   const handleSave = useDebouncedCallback(async () => {
     await updateLogicFunction({
@@ -36,6 +52,13 @@ export const useLogicFunctionForm = ({
       if (key === 'sourceHandlerCode') {
         const inferredJsonSchema = await getInputSchemaFromSourceCode(
           value as LogicFunctionFormValues['sourceHandlerCode'],
+          { knownObjectTypes },
+        );
+
+        // Inference yields an empty schema for handlers typed with imported
+        // aliases; keep the stored schemas instead of wiping authored ones.
+        const hasInferredProperties = !isEmptyObject(
+          inferredJsonSchema.properties ?? {},
         );
 
         setFormValues((prevState: LogicFunctionFormValues) => ({
@@ -46,13 +69,17 @@ export const useLogicFunctionForm = ({
           toolTriggerSettings: prevState.toolTriggerSettings
             ? {
                 ...prevState.toolTriggerSettings,
-                inputSchema: inferredJsonSchema,
+                inputSchema: hasInferredProperties
+                  ? inferredJsonSchema
+                  : prevState.toolTriggerSettings.inputSchema,
               }
             : null,
           workflowActionTriggerSettings: prevState.workflowActionTriggerSettings
             ? {
                 ...prevState.workflowActionTriggerSettings,
-                inputSchema: jsonSchemaToInputSchema(inferredJsonSchema),
+                inputSchema: hasInferredProperties
+                  ? jsonSchemaToInputSchema(inferredJsonSchema)
+                  : prevState.workflowActionTriggerSettings.inputSchema,
               }
             : null,
         }));

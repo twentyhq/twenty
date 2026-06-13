@@ -14,3 +14,4 @@ export { getOutputSchemaFromValue } from './get-output-schema-from-value';
 export type { InputJsonSchema } from './input-json-schema.type';
 export { inputSchemaToOutputSchema } from './input-schema-to-output-schema';
 export { jsonSchemaToInputSchema } from './json-schema-to-input-schema';
+export { stripCustomInputJsonSchemaKeywords } from './strip-custom-input-json-schema-keywords';

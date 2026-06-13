@@ -10,6 +10,7 @@ export type InputSchemaProperty = {
   properties?: Properties;
   multiline?: boolean;
   label?: string;
+  objectUniversalIdentifier?: string;
 };
 
 type Properties = {
