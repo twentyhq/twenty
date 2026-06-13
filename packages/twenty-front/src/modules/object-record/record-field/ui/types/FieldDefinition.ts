@@ -13,5 +13,5 @@ export type FieldDefinition<T extends FieldMetadata> = {
   metadata: T;
   defaultValue?: any;
   editButtonIcon?: IconComponent;
-  isUIReadOnly?: boolean;
+  isUIEditable?: boolean;
 };
