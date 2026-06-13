@@ -19,10 +19,13 @@ declare global {
       extends React.JSX.ElementAttributesProperty {}
     interface ElementChildrenAttribute
       extends React.JSX.ElementChildrenAttribute {}
-    type LibraryManagedAttributes<C, P> = React.JSX.LibraryManagedAttributes<C, P>;
+    type LibraryManagedAttributes<C, P> = React.JSX.LibraryManagedAttributes<
+      C,
+      P
+    >;
     interface IntrinsicAttributes extends React.JSX.IntrinsicAttributes {}
-    interface IntrinsicClassAttributes<T>
-      extends React.JSX.IntrinsicClassAttributes<T> {}
+    interface IntrinsicClassAttributes<T> extends React.JSX
+      .IntrinsicClassAttributes<T> {}
     interface IntrinsicElements extends React.JSX.IntrinsicElements {}
   }
 }
