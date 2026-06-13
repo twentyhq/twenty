@@ -71,9 +71,10 @@ export class MessageSuppressionEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'varchar', nullable: true })
   providerEventId: string | null;
 
-  // References core.messageTopic (FK with ON DELETE CASCADE, added by the topic
-  // table instance command): deleting a group removes its per-topic opt-outs.
-  // NULL means a global block (every send), not a per-topic opt-out.
+  // References core.messageTopic by id (a plain column, not a modelled relation,
+  // so the schema matches TypeORM's entity model). Rows can outlive their topic —
+  // orphaned per-topic opt-outs are inert, since every read intersects live
+  // topics. NULL means a global block (every send), not a per-topic opt-out.
   @Column({ type: 'uuid', nullable: true })
   topicId: string | null;
 }

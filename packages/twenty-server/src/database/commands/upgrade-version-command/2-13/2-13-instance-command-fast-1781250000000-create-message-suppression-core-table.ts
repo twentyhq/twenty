@@ -26,7 +26,7 @@ export class CreateMessageSuppressionCoreTableFastInstanceCommand
         "topicId" uuid,
         "workspaceId" uuid NOT NULL,
         CONSTRAINT "PK_messageSuppression_id" PRIMARY KEY ("id"),
-        CONSTRAINT "FK_messageSuppression_workspaceId" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE
+        CONSTRAINT "FK_6eba121ed8e57afaa1f052cb685" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE
       )`,
     );
     await queryRunner.query(

@@ -72,7 +72,9 @@ export class MessageTopicService {
     });
   }
 
-  // The suppression.topicId FK cascades, so per-topic opt-outs go with it.
+  // Per-topic opt-out rows in messageSuppression reference this topic by id and
+  // are left as inert orphans on delete (every suppression read intersects live
+  // topics, so they never affect sends).
   async deleteMessageTopic(workspaceId: string, id: string): Promise<void> {
     await this.messageTopicRepository.delete(workspaceId, { id });
   }

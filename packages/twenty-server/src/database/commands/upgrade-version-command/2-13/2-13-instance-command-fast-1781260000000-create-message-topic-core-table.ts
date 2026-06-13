@@ -21,27 +21,18 @@ export class CreateMessageTopicCoreTableFastInstanceCommand
         "visibility" "core"."messageTopic_visibility_enum" NOT NULL DEFAULT 'PRIVATE',
         "workspaceId" uuid NOT NULL,
         CONSTRAINT "PK_messageTopic_id" PRIMARY KEY ("id"),
-        CONSTRAINT "FK_messageTopic_workspaceId" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE
+        -- FK name matches TypeORM's default for the WorkspaceRelatedEntity
+        -- workspace relation, so the schema matches the entity model (no drift).
+        CONSTRAINT "FK_605ae30368b0cbcbdd80098540c" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE
       )`,
     );
     await queryRunner.query(
       `CREATE INDEX "IDX_MESSAGE_TOPIC_WORKSPACE_ID"
         ON "core"."messageTopic" ("workspaceId")`,
     );
-    // Both tables are core now, so the per-topic opt-out can be a real FK:
-    // deleting a group removes its opt-outs (a per-topic row must never become a
-    // global block, which ON DELETE SET NULL would do).
-    await queryRunner.query(
-      `ALTER TABLE "core"."messageSuppression"
-        ADD CONSTRAINT "FK_messageSuppression_topicId"
-        FOREIGN KEY ("topicId") REFERENCES "core"."messageTopic"("id") ON DELETE CASCADE`,
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "core"."messageSuppression" DROP CONSTRAINT "FK_messageSuppression_topicId"`,
-    );
     await queryRunner.query(`DROP TABLE "core"."messageTopic"`);
     await queryRunner.query(`DROP TYPE "core"."messageTopic_visibility_enum"`);
   }
