@@ -34,6 +34,22 @@ trigger-agnostic core in `src/logic-functions/handlers/`:
 
 Run locally: `yarn twenty dev:function:exec -n enrich-person -p '{"records":[{"id":"<id>"}]}'`.
 
+### Billing
+
+Each **successful match** is billed to the workspace in Twenty credits via
+`chargeCredits` (`twenty-sdk/billing`), mirroring PDL's own model — PDL only consumes a
+credit on a `200` match, so `not_found`, errors, and skipped records are free:
+
+- Person match: **336,000 micro-credits** ($0.336 — PDL list price $0.28 + 20% margin)
+- Company match: **120,000 micro-credits** ($0.12 — PDL list price $0.10 + 20% margin)
+
+The charge is emitted once per PDL batch call (`src/logic-functions/utils/enrich-chunk.ts`)
+with `quantity` = number of matches and `resourceContext` `pdl/person` / `pdl/company`,
+at the moment PDL returns — a record whose subsequent write fails is still billed, since the
+PDL cost was already incurred. Prices live in `src/constants/*-match-cost-dollars.ts` and
+the margin in `src/constants/billing-margin-multiplier.ts`. Billing is non-fatal: a failed
+charge never fails the enrichment.
+
 ### Seeded workflows (post-install)
 
 > **Not currently wired up.** `post-install.function.ts` is a no-op
@@ -55,8 +71,7 @@ The intended seeding (`postInstallCore`) resolves each function's runtime id fro
 `universalIdentifier` via the metadata API, publishes the version
 (`activateWorkflowVersion`), and is **idempotent** (skips a workflow whose name already exists).
 
-**Deferred to a later PR:** enrichment metering/billing, and auto-enrichment
-triggers (on-create event + cron backfill).
+**Deferred to a later PR:** auto-enrichment triggers (on-create event + cron backfill).
 
 ---
 

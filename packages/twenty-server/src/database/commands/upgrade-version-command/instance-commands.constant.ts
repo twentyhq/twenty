@@ -63,6 +63,7 @@ import { DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand } from 'src/d
 import { AddArchivedAtToConnectedAccountFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781171103000-add-archived-at-to-connected-account';
 import { DropEmailingDomainDriverColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-11/2-11-instance-command-fast-1780926908000-drop-emailing-domain-driver-column';
 import { ViewOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-12/2-12-instance-command-fast-1781114009075-view-overridable-entity';
+import { RenameIsUiReadOnlyToIsUiEditableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781277453604-rename-is-ui-read-only-to-is-ui-editable';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -128,4 +129,5 @@ export const INSTANCE_COMMANDS = [
   DropEmailingDomainDriverColumnFastInstanceCommand,
   ViewOverridableEntityFastInstanceCommand,
   AddArchivedAtToConnectedAccountFastInstanceCommand,
+  RenameIsUiReadOnlyToIsUiEditableFastInstanceCommand,
 ];

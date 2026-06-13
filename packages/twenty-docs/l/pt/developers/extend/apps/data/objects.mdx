@@ -86,6 +86,17 @@ export default defineObject({
 **Os campos base são adicionados automaticamente.** Quando você define um objeto personalizado, o Twenty cria campos padrão como `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` e `deletedAt` para você. Você não precisa declará‑los no seu array `fields` — apenas seus campos personalizados. Você pode substituir um campo padrão declarando um com o mesmo nome, mas isso raramente é uma boa ideia.
 </Note>
 
+## Valores padrão
+
+Valores padrão de strings literais devem ser colocados entre aspas simples **dentro** da string — `defaultValue: "'Draft'"`, não `defaultValue: "Draft"`. É por isso que o campo `status` acima usa `` `'${PostCardStatus.DRAFT}'` ``.
+
+Strings sem aspas são reservadas para valores padrão computados, avaliados quando um registro é criado:
+
+* `'uuid'` — gera um UUID (para campos `UUID`)
+* `'now'` — o carimbo de data/hora atual (para campos `DATE_TIME`)
+
+A mesma convenção se aplica a subcampos de string de valores padrão compostos (por exemplo, `{ source: "'MANUAL'" }` em um campo `ACTOR`) e a valores de `SELECT`/`MULTI_SELECT`. Uma string literal padrão deixada sem aspas gera um aviso quando seu app é compilado.
+
 ## O que vem depois
 
 * **Conecte este objeto a outros** — veja [Relações](/l/pt/developers/extend/apps/data/relations) para o padrão de relação bidirecional.

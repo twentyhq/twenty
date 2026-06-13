@@ -2,6 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 
+import { ARGOS_CAPTURE_DISABLED } from '~/testing/constants/ArgosCaptureDisabled';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 import { HttpRequestExecutionResult } from '@/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult';
@@ -12,6 +13,7 @@ const meta: Meta<typeof HttpRequestExecutionResult> = {
   component: HttpRequestExecutionResult,
   decorators: [ComponentDecorator, SnackBarDecorator],
   parameters: {
+    argos: ARGOS_CAPTURE_DISABLED,
     layout: 'fullscreen',
   },
 };

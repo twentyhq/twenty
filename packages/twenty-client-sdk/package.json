@@ -1,6 +1,6 @@
 {
   "name": "twenty-client-sdk",
-  "version": "2.12.0",
+  "version": "2.13.0",
   "sideEffects": false,
   "license": "AGPL-3.0",
   "scripts": {
@@ -49,7 +49,7 @@
   ],
   "dependencies": {
     "@genql/runtime": "^2.10.0",
-    "esbuild": "^0.28.0",
+    "esbuild": "^0.28.1",
     "graphql": "^16.8.1",
     "lodash": "^4.17.21",
     "prettier": "^3.8.3"

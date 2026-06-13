@@ -1,10 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
-import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+import { TRIGGER_STEP_ID, WorkflowActionType } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
 import type { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step.input';
 import { type WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
-import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-type.enum';
 import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
@@ -85,7 +84,7 @@ const enrichResultWithNextStep = ({
       return {
         ...result,
         nextStep:
-          'This CODE step was created with a default placeholder function. You MUST now call update_logic_function_source with the logicFunctionId from this step to define the actual code.',
+          'This CODE step was created with a default placeholder function. You MUST now call update_logic_function_source with the logicFunctionId from this step to define the actual code. IMPORTANT: Also provide outputSchema (an example return value, e.g. { datePlus7: "2026-06-16" }) so downstream steps can reference this step\'s output variables via {{stepId.fieldName}}.',
       };
     default:
       return result;

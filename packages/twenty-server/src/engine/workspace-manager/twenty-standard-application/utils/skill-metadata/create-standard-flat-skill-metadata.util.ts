@@ -74,6 +74,11 @@ Always rely on tool schema definitions:
 - Follow schema definitions exactly for field names, types, and structures
 - Schema includes validation rules and common patterns
 
+## Validation
+
+The \`create_complete_workflow\` and \`update_workflow_version_step\` tools automatically run validation after their operation and include the results in the response. Review any reported errors and fix them before activating the workflow.
+
+
 ## Approach
 
 - Ask clarifying questions to understand user needs

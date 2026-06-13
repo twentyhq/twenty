@@ -6,6 +6,7 @@ import { EntityAddCommand } from './add';
 import { AppBuildCommand } from './build';
 import { AppDevCommand } from './dev';
 import { AppDevOnceCommand } from './dev-once';
+import { AppGenerateClientCommand } from './generate-client';
 import { AppTypecheckCommand } from './typecheck';
 import { registerDevFunctionCommands } from './function';
 
@@ -15,6 +16,7 @@ export const registerDevCommands = (program: Command): void => {
   const devOnceCommand = new AppDevOnceCommand();
   const typecheckCommand = new AppTypecheckCommand();
   const addCommand = new EntityAddCommand();
+  const generateClientCommand = new AppGenerateClientCommand();
 
   const devAction = async (
     appPath: string | undefined,
@@ -108,6 +110,17 @@ export const registerDevCommands = (program: Command): void => {
       const { CatalogSyncCommand } = await import('./catalog-sync');
       const cmd = new CatalogSyncCommand();
       await cmd.execute({ remote: options.remote });
+    });
+
+  program
+    .command('dev:generate-client [appPath]')
+    .description(
+      'Generate the typed API client from the active remote (no app definition required)',
+    )
+    .action(async (appPath) => {
+      await generateClientCommand.execute({
+        appPath: formatPath(appPath),
+      });
     });
 
   registerDevFunctionCommands(program);
