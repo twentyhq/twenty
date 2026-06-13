@@ -4376,6 +4376,93 @@ export default {
                 1
             ]
         },
+        "PublicConnectionParametersOutput": {
+            "host": [
+                1
+            ],
+            "port": [
+                11
+            ],
+            "username": [
+                1
+            ],
+            "secure": [
+                6
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "PublicImapSmtpCaldavConnectionParameters": {
+            "IMAP": [
+                236
+            ],
+            "SMTP": [
+                236
+            ],
+            "CALDAV": [
+                236
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "ConnectedAccountPublicDTO": {
+            "id": [
+                3
+            ],
+            "handle": [
+                1
+            ],
+            "provider": [
+                1
+            ],
+            "lastCredentialsRefreshedAt": [
+                4
+            ],
+            "authFailedAt": [
+                4
+            ],
+            "archivedAt": [
+                4
+            ],
+            "handleAliases": [
+                1
+            ],
+            "scopes": [
+                1
+            ],
+            "lastSignedInAt": [
+                4
+            ],
+            "userWorkspaceId": [
+                3
+            ],
+            "connectionProviderId": [
+                3
+            ],
+            "applicationId": [
+                3
+            ],
+            "name": [
+                1
+            ],
+            "visibility": [
+                1
+            ],
+            "createdAt": [
+                4
+            ],
+            "updatedAt": [
+                4
+            ],
+            "connectionParameters": [
+                237
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "DeleteTwoFactorAuthenticationMethod": {
             "success": [
                 6
@@ -4421,7 +4508,7 @@ export default {
         },
         "AvailableWorkspacesAndAccessTokens": {
             "tokens": [
-                240
+                243
             ],
             "availableWorkspaces": [
                 228
@@ -4476,7 +4563,7 @@ export default {
                 32
             ],
             "workspace": [
-                245
+                248
             ],
             "__typename": [
                 1
@@ -4525,7 +4612,7 @@ export default {
         },
         "AuthTokens": {
             "tokens": [
-                240
+                243
             ],
             "__typename": [
                 1
@@ -4566,7 +4653,7 @@ export default {
                 32
             ],
             "workspace": [
-                245
+                248
             ],
             "__typename": [
                 1
@@ -4588,7 +4675,7 @@ export default {
                 1
             ],
             "dailyUsage": [
-                256
+                259
             ],
             "__typename": [
                 1
@@ -4605,7 +4692,7 @@ export default {
                 197
             ],
             "timeSeries": [
-                256
+                259
             ],
             "periodStart": [
                 4
@@ -4614,7 +4701,7 @@ export default {
                 4
             ],
             "userDailyUsage": [
-                257
+                260
             ],
             "__typename": [
                 1
@@ -4779,90 +4866,6 @@ export default {
                 1
             ],
             "location": [
-                266
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "PublicConnectionParametersOutput": {
-            "host": [
-                1
-            ],
-            "port": [
-                11
-            ],
-            "username": [
-                1
-            ],
-            "secure": [
-                6
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "PublicImapSmtpCaldavConnectionParameters": {
-            "IMAP": [
-                268
-            ],
-            "SMTP": [
-                268
-            ],
-            "CALDAV": [
-                268
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "ConnectedAccountPublicDTO": {
-            "id": [
-                3
-            ],
-            "handle": [
-                1
-            ],
-            "provider": [
-                1
-            ],
-            "lastCredentialsRefreshedAt": [
-                4
-            ],
-            "authFailedAt": [
-                4
-            ],
-            "handleAliases": [
-                1
-            ],
-            "scopes": [
-                1
-            ],
-            "lastSignedInAt": [
-                4
-            ],
-            "userWorkspaceId": [
-                3
-            ],
-            "connectionProviderId": [
-                3
-            ],
-            "applicationId": [
-                3
-            ],
-            "name": [
-                1
-            ],
-            "visibility": [
-                1
-            ],
-            "createdAt": [
-                4
-            ],
-            "updatedAt": [
-                4
-            ],
-            "connectionParameters": [
                 269
             ],
             "__typename": [
@@ -5666,7 +5669,7 @@ export default {
                 4
             ],
             "connectedAccount": [
-                270
+                238
             ],
             "__typename": [
                 1
@@ -6243,7 +6246,7 @@ export default {
                 }
             ],
             "myConnectedAccounts": [
-                270
+                238
             ],
             "myCalendarChannels": [
                 304,
@@ -6331,7 +6334,7 @@ export default {
                 }
             ],
             "checkUserExists": [
-                253,
+                256,
                 {
                     "email": [
                         1,
@@ -6343,7 +6346,7 @@ export default {
                 }
             ],
             "checkWorkspaceInviteHashIsValid": [
-                254,
+                257,
                 {
                     "inviteHash": [
                         1,
@@ -6361,7 +6364,7 @@ export default {
                 }
             ],
             "validatePasswordResetToken": [
-                248,
+                251,
                 {
                     "passwordResetToken": [
                         1,
@@ -6512,7 +6515,7 @@ export default {
                 }
             ],
             "getAutoCompleteAddress": [
-                265,
+                268,
                 {
                     "address": [
                         1,
@@ -6531,7 +6534,7 @@ export default {
                 }
             ],
             "getAddressDetails": [
-                267,
+                270,
                 {
                     "placeId": [
                         1,
@@ -6544,7 +6547,7 @@ export default {
                 }
             ],
             "getUsageAnalytics": [
-                258,
+                261,
                 {
                     "input": [
                         337
@@ -6552,13 +6555,13 @@ export default {
                 }
             ],
             "findManyPublicDomains": [
-                264
+                267
             ],
             "findManyMarketplaceApps": [
-                262
+                265
             ],
             "findMarketplaceAppDetail": [
-                263,
+                266,
                 {
                     "universalIdentifier": [
                         1,
@@ -7883,7 +7886,7 @@ export default {
                 }
             ],
             "deleteConnectedAccount": [
-                270,
+                238,
                 {
                     "id": [
                         3,
@@ -8056,7 +8059,7 @@ export default {
                 }
             ],
             "getAuthorizationUrlForSSO": [
-                243,
+                246,
                 {
                     "input": [
                         451,
@@ -8065,7 +8068,7 @@ export default {
                 }
             ],
             "getLoginTokenFromCredentials": [
-                252,
+                255,
                 {
                     "email": [
                         1,
@@ -8091,7 +8094,7 @@ export default {
                 }
             ],
             "signIn": [
-                241,
+                244,
                 {
                     "email": [
                         1,
@@ -8113,7 +8116,7 @@ export default {
                 }
             ],
             "verifyEmailAndGetLoginToken": [
-                249,
+                252,
                 {
                     "emailVerificationToken": [
                         1,
@@ -8133,7 +8136,7 @@ export default {
                 }
             ],
             "verifyEmailAndGetWorkspaceAgnosticToken": [
-                241,
+                244,
                 {
                     "emailVerificationToken": [
                         1,
@@ -8149,7 +8152,7 @@ export default {
                 }
             ],
             "getAuthTokensFromOTP": [
-                251,
+                254,
                 {
                     "otp": [
                         1,
@@ -8169,7 +8172,7 @@ export default {
                 }
             ],
             "signUp": [
-                241,
+                244,
                 {
                     "email": [
                         1,
@@ -8191,7 +8194,7 @@ export default {
                 }
             ],
             "signUpInWorkspace": [
-                246,
+                249,
                 {
                     "email": [
                         1,
@@ -8222,13 +8225,13 @@ export default {
                 }
             ],
             "signUpInNewWorkspace": [
-                246
+                249
             ],
             "generateTransientToken": [
-                247
+                250
             ],
             "getAuthTokensFromLoginToken": [
-                251,
+                254,
                 {
                     "loginToken": [
                         1,
@@ -8241,7 +8244,7 @@ export default {
                 }
             ],
             "authorizeApp": [
-                239,
+                242,
                 {
                     "clientId": [
                         1,
@@ -8263,7 +8266,7 @@ export default {
                 }
             ],
             "renewToken": [
-                251,
+                254,
                 {
                     "appToken": [
                         1,
@@ -8272,7 +8275,7 @@ export default {
                 }
             ],
             "generateApiKeyToken": [
-                250,
+                253,
                 {
                     "apiKeyId": [
                         3,
@@ -8288,7 +8291,7 @@ export default {
                 32
             ],
             "emailPasswordResetLink": [
-                242,
+                245,
                 {
                     "email": [
                         1,
@@ -8300,7 +8303,7 @@ export default {
                 }
             ],
             "updatePasswordViaResetToken": [
-                244,
+                247,
                 {
                     "passwordResetToken": [
                         1,
@@ -8401,7 +8404,7 @@ export default {
                 }
             ],
             "initiateOTPProvisioning": [
-                237,
+                240,
                 {
                     "loginToken": [
                         1,
@@ -8414,10 +8417,10 @@ export default {
                 }
             ],
             "initiateOTPProvisioningForAuthenticatedUser": [
-                237
+                240
             ],
             "deleteTwoFactorAuthenticationMethod": [
-                236,
+                239,
                 {
                     "twoFactorAuthenticationMethodId": [
                         3,
@@ -8426,7 +8429,7 @@ export default {
                 }
             ],
             "verifyTwoFactorAuthenticationMethodForAuthenticatedUser": [
-                238,
+                241,
                 {
                     "otp": [
                         1,
@@ -8606,7 +8609,7 @@ export default {
                 }
             ],
             "impersonate": [
-                255,
+                258,
                 {
                     "userId": [
                         3,
@@ -8662,7 +8665,7 @@ export default {
                 }
             ],
             "createPublicDomain": [
-                264,
+                267,
                 {
                     "domain": [
                         1,
@@ -8674,7 +8677,7 @@ export default {
                 }
             ],
             "updatePublicDomain": [
-                264,
+                267,
                 {
                     "domain": [
                         1,
@@ -8740,7 +8743,7 @@ export default {
                 6
             ],
             "createDevelopmentApplication": [
-                259,
+                262,
                 {
                     "universalIdentifier": [
                         1,
@@ -8762,7 +8765,7 @@ export default {
                 }
             ],
             "syncApplication": [
-                260,
+                263,
                 {
                     "manifest": [
                         15,
@@ -8774,7 +8777,7 @@ export default {
                 }
             ],
             "uploadApplicationFile": [
-                261,
+                264,
                 {
                     "file": [
                         345,
