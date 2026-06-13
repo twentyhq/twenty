@@ -2,18 +2,22 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { In, IsNull } from 'typeorm';
+import { In, IsNull, QueryFailedError } from 'typeorm';
 
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import {
   GLOBAL_BLOCKING_SUPPRESSION_REASONS,
   HARD_SUPPRESSION_REASONS,
 } from 'src/engine/core-modules/emailing-domain/constants/hard-suppression-reasons.constant';
+import { MessageSuppressionEntity } from 'src/engine/core-modules/emailing-domain/message-suppression.entity';
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/message-suppression-source.type';
 import { type TopicOptOutState } from 'src/engine/core-modules/emailing-domain/types/topic-opt-out-state.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { MessageSuppressionWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-suppression.workspace-entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { MessageTopicWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-topic.workspace-entity';
 
 // Topics surfaced on the public preferences page.
@@ -41,22 +45,20 @@ type SetTopicOptOutsArgs = {
   keptTopicIds: string[];
 };
 
-// MessageSuppression is the single consent store: a row with topicId NULL is a
-// global block; a row with a topicId and reason UNSUBSCRIBE is a per-topic
-// opt-out. There is no opt-in subscription state.
+// Suppression is the single consent store, held in a core table (it is
+// compliance state keyed by email address, written only by webhook handlers and
+// the public unsubscribe controller — none of which run in a workspace/user
+// context). A row with topicId NULL is a global block; a row with a topicId and
+// reason UNSUBSCRIBE is a per-topic opt-out. There is no opt-in state.
 @Injectable()
 export class MessageSuppressionService {
   constructor(
+    @InjectWorkspaceScopedRepository(MessageSuppressionEntity)
+    private readonly suppressionRepository: WorkspaceScopedRepository<MessageSuppressionEntity>,
+    // Only used to read the workspace messageTopic records backing the public
+    // preferences page; suppression rows themselves never touch workspace data.
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
-
-  private getSuppressionRepository(workspaceId: string) {
-    return this.globalWorkspaceOrmManager.getRepository(
-      workspaceId,
-      MessageSuppressionWorkspaceEntity,
-      { shouldBypassPermissionChecks: true },
-    );
-  }
 
   async getSuppressedAddresses(
     workspaceId: string,
@@ -68,24 +70,15 @@ export class MessageSuppressionService {
       return new Set();
     }
 
-    const suppressedRecipients =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const suppressionRepository =
-            await this.getSuppressionRepository(workspaceId);
+    const suppressions = await this.suppressionRepository.find(workspaceId, {
+      where: {
+        emailAddress: In(normalizedAddresses),
+        reason: In(GLOBAL_BLOCKING_SUPPRESSION_REASONS),
+        topicId: IsNull(),
+      },
+    });
 
-          return suppressionRepository.find({
-            where: {
-              emailAddress: { primaryEmail: In(normalizedAddresses) },
-              reason: In(GLOBAL_BLOCKING_SUPPRESSION_REASONS),
-              topicId: IsNull(),
-            },
-          });
-        },
-        buildSystemAuthContext(workspaceId),
-      );
-
-    return this.toAddressSet(suppressedRecipients);
+    return new Set(suppressions.map((suppression) => suppression.emailAddress));
   }
 
   async getTopicSuppressedAddresses(
@@ -95,35 +88,28 @@ export class MessageSuppressionService {
   ): Promise<Set<string>> {
     const normalizedAddresses = this.normalizeAddresses(emailAddresses);
 
-    if (!isNonEmptyArray(normalizedAddresses)) {
+    // An undefined topicId would silently drop the key from the WHERE clause
+    // and return every topic's opt-outs (cross-topic over-suppression).
+    if (!isNonEmptyArray(normalizedAddresses) || !isNonEmptyString(topicId)) {
       return new Set();
     }
 
-    const suppressedRecipients =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const suppressionRepository =
-            await this.getSuppressionRepository(workspaceId);
+    const suppressions = await this.suppressionRepository.find(workspaceId, {
+      where: {
+        emailAddress: In(normalizedAddresses),
+        reason: MessageSuppressionReason.UNSUBSCRIBE,
+        topicId,
+      },
+    });
 
-          return suppressionRepository.find({
-            where: {
-              emailAddress: { primaryEmail: In(normalizedAddresses) },
-              reason: MessageSuppressionReason.UNSUBSCRIBE,
-              topicId,
-            },
-          });
-        },
-        buildSystemAuthContext(workspaceId),
-      );
-
-    return this.toAddressSet(suppressedRecipients);
+    return new Set(suppressions.map((suppression) => suppression.emailAddress));
   }
 
   // Records a suppression (global when topicId is null, per-topic otherwise).
-  // Race-safe against at-least-once SNS deliveries: a concurrent insert losing
-  // the unique-index race is reconciled by re-reading and escalating, so two
-  // deliveries can never create duplicate rows. Reasons only ever escalate
-  // (UNSUBSCRIBE -> BOUNCE/COMPLAINT), never downgrade.
+  // Race-safe against at-least-once SNS deliveries: losing the unique-index race
+  // on insert is reconciled by re-reading and escalating, so two deliveries can
+  // never create duplicate rows. Reasons only ever escalate (UNSUBSCRIBE ->
+  // BOUNCE/COMPLAINT), never downgrade.
   async suppress({
     workspaceId,
     emailAddress,
@@ -132,62 +118,69 @@ export class MessageSuppressionService {
     providerEventId = null,
     topicId = null,
   }: SuppressArgs): Promise<void> {
-    const normalizedEmailAddress = emailAddress.trim().toLowerCase();
+    const normalizedEmailAddress = this.normalizeEmailAddress(emailAddress);
 
     if (!isNonEmptyString(normalizedEmailAddress)) {
       return;
     }
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const suppressionRepository =
-        await this.getSuppressionRepository(workspaceId);
+    // Hard suppressions (delivery failures) are inherently address-level: a
+    // topic-scoped BOUNCE/COMPLAINT row would block nothing (reads filter
+    // per-topic rows to UNSUBSCRIBE) while occupying the (address, topic) slot.
+    const effectiveTopicId = HARD_SUPPRESSION_REASONS.includes(reason)
+      ? null
+      : topicId;
 
-      const whereKey = {
-        emailAddress: { primaryEmail: normalizedEmailAddress },
-        topicId: isDefined(topicId) ? topicId : IsNull(),
-      };
+    const whereKey = {
+      emailAddress: normalizedEmailAddress,
+      topicId: isDefined(effectiveTopicId) ? effectiveTopicId : IsNull(),
+    };
 
-      const escalateExisting = async (): Promise<boolean> => {
-        const existing = await suppressionRepository.findOneBy(whereKey);
+    const escalateExisting = async (): Promise<boolean> => {
+      const existing = await this.suppressionRepository.findOneBy(
+        workspaceId,
+        whereKey,
+      );
 
-        if (!isDefined(existing)) {
-          return false;
-        }
-
-        if (this.shouldEscalate(existing.reason, reason)) {
-          await suppressionRepository.update(existing.id, {
-            reason,
-            source,
-            providerEventId,
-          });
-        }
-
-        return true;
-      };
-
-      if (await escalateExisting()) {
-        return;
+      if (!isDefined(existing)) {
+        return false;
       }
 
-      try {
-        await suppressionRepository.insert({
-          emailAddress: {
-            primaryEmail: normalizedEmailAddress,
-            additionalEmails: null,
-          },
-          reason,
-          source,
-          providerEventId,
-          topicId,
-        });
-      } catch (error) {
-        // A concurrent delivery won the insert race. The unique index guarantees
-        // a single row now exists; reconcile against it instead of failing.
-        if (!(await escalateExisting())) {
-          throw error;
-        }
+      if (this.shouldEscalate(existing.reason, reason)) {
+        await this.suppressionRepository.update(
+          workspaceId,
+          { id: existing.id },
+          { reason, source, providerEventId },
+        );
       }
-    }, buildSystemAuthContext(workspaceId));
+
+      return true;
+    };
+
+    if (await escalateExisting()) {
+      return;
+    }
+
+    try {
+      await this.suppressionRepository.insert(workspaceId, {
+        emailAddress: normalizedEmailAddress,
+        reason,
+        source,
+        providerEventId,
+        topicId: effectiveTopicId,
+      });
+    } catch (error) {
+      // A concurrent delivery won the insert race. The unique index guarantees
+      // a single row now exists; reconcile against it instead of failing.
+      const isUniqueViolation =
+        error instanceof QueryFailedError &&
+        (error as QueryFailedErrorWithCode).code ===
+          POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION;
+
+      if (!isUniqueViolation || !(await escalateExisting())) {
+        throw error;
+      }
+    }
   }
 
   // For the public preferences page: every visible topic, flagged with whether
@@ -196,52 +189,35 @@ export class MessageSuppressionService {
     workspaceId,
     emailAddress,
   }: TopicOptOutStateArgs): Promise<TopicOptOutState[]> {
-    const normalizedEmailAddress = emailAddress.trim().toLowerCase();
+    const normalizedEmailAddress = this.normalizeEmailAddress(emailAddress);
 
     if (!isNonEmptyString(normalizedEmailAddress)) {
       return [];
     }
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const topicRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            MessageTopicWorkspaceEntity,
-            { shouldBypassPermissionChecks: true },
-          );
+    const visibleTopics = await this.findPublicTopics(workspaceId);
 
-        const visibleTopics = await topicRepository.find({
-          where: { visibility: PUBLIC_TOPIC_VISIBILITY },
-        });
+    if (!isNonEmptyArray(visibleTopics)) {
+      return [];
+    }
 
-        if (!isNonEmptyArray(visibleTopics)) {
-          return [];
-        }
-
-        const suppressionRepository =
-          await this.getSuppressionRepository(workspaceId);
-
-        const optOuts = await suppressionRepository.find({
-          where: {
-            emailAddress: { primaryEmail: normalizedEmailAddress },
-            reason: MessageSuppressionReason.UNSUBSCRIBE,
-            topicId: In(visibleTopics.map((topic) => topic.id)),
-          },
-        });
-
-        const optedOutTopicIds = new Set(
-          optOuts.map((suppression) => suppression.topicId),
-        );
-
-        return visibleTopics.map((topic) => ({
-          topicId: topic.id,
-          topicName: topic.name,
-          optedOut: optedOutTopicIds.has(topic.id),
-        }));
+    const optOuts = await this.suppressionRepository.find(workspaceId, {
+      where: {
+        emailAddress: normalizedEmailAddress,
+        reason: MessageSuppressionReason.UNSUBSCRIBE,
+        topicId: In(visibleTopics.map((topic) => topic.id)),
       },
-      buildSystemAuthContext(workspaceId),
+    });
+
+    const optedOutTopicIds = new Set(
+      optOuts.map((suppression) => suppression.topicId),
     );
+
+    return visibleTopics.map((topic) => ({
+      topicId: topic.id,
+      topicName: topic.name,
+      optedOut: optedOutTopicIds.has(topic.id),
+    }));
   }
 
   // For the public preferences form. The token proves control of the address, so
@@ -260,7 +236,15 @@ export class MessageSuppressionService {
     const keptTopicIdSet = new Set(keptTopicIds);
 
     for (const topicState of topicStates) {
-      if (keptTopicIdSet.has(topicState.topicId)) {
+      const shouldReceive = keptTopicIdSet.has(topicState.topicId);
+
+      // The usual submit changes 0-1 checkboxes; skip topics already in the
+      // requested state instead of issuing no-op writes.
+      if (shouldReceive === !topicState.optedOut) {
+        continue;
+      }
+
+      if (shouldReceive) {
         await this.liftTopicOptOut(
           workspaceId,
           emailAddress,
@@ -283,52 +267,63 @@ export class MessageSuppressionService {
     emailAddress: string,
     topicId: string,
   ): Promise<void> {
-    const normalizedEmailAddress = emailAddress.trim().toLowerCase();
+    const normalizedEmailAddress = this.normalizeEmailAddress(emailAddress);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const suppressionRepository =
-        await this.getSuppressionRepository(workspaceId);
+    // Only a recipient-driven opt-out is reversible — never a hard suppression,
+    // never a global block (those have topicId NULL and don't match).
+    await this.suppressionRepository.delete(workspaceId, {
+      emailAddress: normalizedEmailAddress,
+      topicId,
+      reason: MessageSuppressionReason.UNSUBSCRIBE,
+    });
+  }
 
-      // Only a recipient-driven opt-out is reversible — never a hard suppression.
-      const existing = await suppressionRepository.findOneBy({
-        emailAddress: { primaryEmail: normalizedEmailAddress },
-        topicId,
-        reason: MessageSuppressionReason.UNSUBSCRIBE,
-      });
+  // Topics are workspace records; the public preferences page has no user
+  // context, so this is the one read that still goes through the system-actor
+  // workspace machinery.
+  private async findPublicTopics(
+    workspaceId: string,
+  ): Promise<MessageTopicWorkspaceEntity[]> {
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const topicRepository =
+          await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            MessageTopicWorkspaceEntity,
+            { shouldBypassPermissionChecks: true },
+          );
 
-      if (isDefined(existing)) {
-        await suppressionRepository.delete(existing.id);
-      }
-    }, buildSystemAuthContext(workspaceId));
+        return topicRepository.find({
+          where: { visibility: PUBLIC_TOPIC_VISIBILITY },
+          // Stable checkbox order on the public preferences page.
+          order: { name: 'ASC' },
+        });
+      },
+      buildSystemAuthContext(workspaceId),
+    );
+  }
+
+  private normalizeEmailAddress(emailAddress: string): string {
+    return emailAddress.trim().toLowerCase();
   }
 
   private normalizeAddresses(emailAddresses: string[]): string[] {
     return [
       ...new Set(
-        emailAddresses.map((emailAddress) => emailAddress.trim().toLowerCase()),
+        emailAddresses.map((emailAddress) =>
+          this.normalizeEmailAddress(emailAddress),
+        ),
       ),
     ];
   }
 
-  private toAddressSet(
-    suppressions: MessageSuppressionWorkspaceEntity[],
-  ): Set<string> {
-    return new Set(
-      suppressions
-        .map((suppression) => suppression.emailAddress?.primaryEmail)
-        .filter(isNonEmptyString),
-    );
-  }
-
   private shouldEscalate(
-    existingReason: string,
+    existingReason: MessageSuppressionReason,
     incomingReason: MessageSuppressionReason,
   ): boolean {
-    const existingIsHard = HARD_SUPPRESSION_REASONS.some(
-      (hardReason) => hardReason === existingReason,
+    return (
+      !HARD_SUPPRESSION_REASONS.includes(existingReason) &&
+      HARD_SUPPRESSION_REASONS.includes(incomingReason)
     );
-    const incomingIsHard = HARD_SUPPRESSION_REASONS.includes(incomingReason);
-
-    return !existingIsHard && incomingIsHard;
   }
 }

@@ -869,53 +869,6 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
-  messageSuppression: {
-    universalIdentifier: 'cea7888b-2ad1-4ca8-839b-83702106b672',
-    fields: {
-      id: { universalIdentifier: '791385ed-9221-4631-b3c2-f4be27e8447d' },
-      createdAt: {
-        universalIdentifier: 'ef2892db-9ec7-42ea-93ae-b51f3c876c3e',
-      },
-      updatedAt: {
-        universalIdentifier: '96240a11-d0ac-4deb-9e01-eb91b3b02cfe',
-      },
-      deletedAt: {
-        universalIdentifier: 'fb06b296-0b9e-44f6-9347-e4c6bcea7459',
-      },
-      createdBy: {
-        universalIdentifier: '505ebad3-31d4-4e7e-bba1-56dbdbb8c431',
-      },
-      updatedBy: {
-        universalIdentifier: 'aa5c52c9-7500-498d-ac3c-02bae94661cc',
-      },
-      position: {
-        universalIdentifier: '69e4badf-d642-4ce1-bc4d-5c6cfbc866b6',
-      },
-      searchVector: {
-        universalIdentifier: '774b8d79-6f09-43b5-9afb-35e1ce2b3163',
-      },
-      emailAddress: {
-        universalIdentifier: '54455e77-7779-4399-8cdc-21c4790457d5',
-      },
-      reason: { universalIdentifier: 'e533b108-d406-4f29-a5c5-fa9063306ed7' },
-      source: { universalIdentifier: '29ba1dbc-d756-459c-833e-7cf22ca25a76' },
-      providerEventId: {
-        universalIdentifier: 'cc168a11-d6a4-46bc-9e2b-9fb925079761',
-      },
-      topic: { universalIdentifier: 'b7d2e90a-1f4c-4d8e-9a6b-2c3d4e5f6071' },
-    },
-    indexes: {
-      emailAddressGlobalUniqueIndex: {
-        universalIdentifier: 'd3e8a1c2-4b5f-4e6a-9c7d-8e0f1a2b3c4d',
-      },
-      emailAddressTopicUniqueIndex: {
-        universalIdentifier: '62397bbf-470d-466b-8a33-10bedc3f3ac3',
-      },
-      searchVectorGinIndex: {
-        universalIdentifier: 'cbf2f006-75ee-4868-8069-58d82188302a',
-      },
-    },
-  },
   messageTopic: {
     universalIdentifier: 'f8c9f0c1-335b-4c47-9291-4eaab9d0178c',
     fields: {
@@ -947,9 +900,6 @@ export const STANDARD_OBJECTS = {
       },
       visibility: {
         universalIdentifier: 'f654eb52-2ccc-4bc4-9f3d-6f04c45fec7b',
-      },
-      suppressions: {
-        universalIdentifier: 'c8e3f01b-2a5d-4e9f-8b7c-3d4e5f607182',
       },
       campaigns: {
         universalIdentifier: 'ddb2a585-1a7f-4063-8aa6-7b9d1e5fc0bd',

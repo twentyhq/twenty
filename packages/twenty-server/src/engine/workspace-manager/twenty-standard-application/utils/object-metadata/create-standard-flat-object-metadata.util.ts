@@ -239,39 +239,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
-  messageSuppression: ({
-    now,
-    workspaceId,
-    standardObjectMetadataRelatedEntityIds,
-    twentyStandardApplicationId,
-    dependencyFlatEntityMaps,
-  }: Omit<
-    CreateStandardObjectArgs<'messageSuppression'>,
-    'context' | 'objectName'
-  >) =>
-    createStandardObjectFlatMetadata({
-      objectName: 'messageSuppression',
-      dependencyFlatEntityMaps,
-      context: {
-        universalIdentifier:
-          STANDARD_OBJECTS.messageSuppression.universalIdentifier,
-        nameSingular: 'messageSuppression',
-        namePlural: 'messageSuppressions',
-        labelSingular: i18nLabel(msg`Email Suppression`),
-        labelPlural: i18nLabel(msg`Email Suppressions`),
-        description: i18nLabel(
-          msg`Email addresses blocked from receiving emails after a bounce, complaint, or unsubscribe`,
-        ),
-        icon: 'IconMailOff',
-        isSystem: true,
-        isUIReadOnly: true,
-        labelIdentifierFieldMetadataName: 'id',
-      },
-      workspaceId,
-      standardObjectMetadataRelatedEntityIds,
-      twentyStandardApplicationId,
-      now,
-    }),
   messageTopic: ({
     now,
     workspaceId,

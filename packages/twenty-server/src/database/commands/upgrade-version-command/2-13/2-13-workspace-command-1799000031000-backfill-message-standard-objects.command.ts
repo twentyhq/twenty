@@ -35,7 +35,6 @@ const MESSAGE_OBJECT_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.messageList.universalIdentifier,
   STANDARD_OBJECTS.messageListMember.universalIdentifier,
   STANDARD_OBJECTS.messageTopic.universalIdentifier,
-  STANDARD_OBJECTS.messageSuppression.universalIdentifier,
 ];
 
 // Fields the feature adds to PRE-EXISTING objects (person/timelineActivity/
@@ -59,7 +58,6 @@ const MESSAGE_FIELD_UNIVERSAL_IDENTIFIERS = [
   ...getUniversalIdentifiers(STANDARD_OBJECTS.messageList.fields),
   ...getUniversalIdentifiers(STANDARD_OBJECTS.messageListMember.fields),
   ...getUniversalIdentifiers(STANDARD_OBJECTS.messageTopic.fields),
-  ...getUniversalIdentifiers(STANDARD_OBJECTS.messageSuppression.fields),
   ...NEW_FIELDS_ON_EXISTING_OBJECTS_UNIVERSAL_IDENTIFIERS,
 ];
 
@@ -68,7 +66,6 @@ const MESSAGE_INDEX_UNIVERSAL_IDENTIFIERS = [
   ...getUniversalIdentifiers(STANDARD_OBJECTS.messageList.indexes),
   ...getUniversalIdentifiers(STANDARD_OBJECTS.messageListMember.indexes),
   ...getUniversalIdentifiers(STANDARD_OBJECTS.messageTopic.indexes),
-  ...getUniversalIdentifiers(STANDARD_OBJECTS.messageSuppression.indexes),
   STANDARD_OBJECTS.message.indexes.messageCampaignIdIndex.universalIdentifier,
   STANDARD_OBJECTS.messageParticipant.indexes.messageCampaignIdIndex
     .universalIdentifier,
@@ -126,7 +123,7 @@ const MESSAGE_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS = [
 @Command({
   name: 'upgrade:2-13:backfill-message-standard-objects',
   description:
-    'Create the message marketing standard objects (messageCampaign, messageList, messageListMember, messageTopic, messageSuppression) in existing workspaces',
+    'Create the message marketing standard objects (messageCampaign, messageList, messageListMember, messageTopic) in existing workspaces',
 })
 export class BackfillMessageStandardObjectsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(

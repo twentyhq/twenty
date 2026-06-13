@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { MessageSuppressionEntity } from 'src/engine/core-modules/emailing-domain/message-suppression.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageChannelMetadataModule } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.module';
@@ -20,7 +21,11 @@ import { MessageSuppressionService } from 'src/modules/emailing/services/message
     MessageChannelMetadataModule,
     FeatureFlagModule,
     PermissionsModule,
-    TypeOrmModule.forFeature([MessageChannelEntity, EmailingDomainEntity]),
+    TypeOrmModule.forFeature([
+      MessageChannelEntity,
+      EmailingDomainEntity,
+      MessageSuppressionEntity,
+    ]),
   ],
   controllers: [UnsubscribeController],
   providers: [
@@ -29,6 +34,7 @@ import { MessageSuppressionService } from 'src/modules/emailing/services/message
     EmailingDomainSenderService,
     EmailingSendResolver,
     provideWorkspaceScopedRepository(EmailingDomainEntity),
+    provideWorkspaceScopedRepository(MessageSuppressionEntity),
   ],
   exports: [
     EmailingDomainSenderService,

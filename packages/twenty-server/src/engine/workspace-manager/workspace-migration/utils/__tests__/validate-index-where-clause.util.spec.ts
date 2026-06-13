@@ -11,16 +11,6 @@ describe('validateAndReturnIndexWhereClause', () => {
     expect(validateAndReturnIndexWhereClause('"deletedAt" IS NULL')).toBe(
       '"deletedAt" IS NULL',
     );
-    expect(
-      validateAndReturnIndexWhereClause(
-        '"deletedAt" IS NULL AND "topicId" IS NULL',
-      ),
-    ).toBe('"deletedAt" IS NULL AND "topicId" IS NULL');
-    expect(
-      validateAndReturnIndexWhereClause(
-        '"deletedAt" IS NULL AND "topicId" IS NOT NULL',
-      ),
-    ).toBe('"deletedAt" IS NULL AND "topicId" IS NOT NULL');
   });
 
   it('should throw for clauses not in the allowlist', () => {

@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client/react';
 
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { PREVIEW_MESSAGE_CAMPAIGN_AUDIENCE } from '@/activities/emails/graphql/queries/previewMessageCampaignAudience';
+import { PREVIEW_MESSAGE_CAMPAIGN_AUDIENCE } from '@/activities/emails/graphql/metadata-queries/previewMessageCampaignAudience';
 import {
   type PreviewMessageCampaignAudienceQuery,
   type PreviewMessageCampaignAudienceQueryVariables,
