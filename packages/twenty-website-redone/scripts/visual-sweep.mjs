@@ -204,11 +204,22 @@ const TESTIMONIALS_GAP_PX = 56;
 
 const readSectionRhythms = (target) =>
   target.evaluate(() =>
-    [...document.querySelectorAll('section')].map((el) => ({
-      rhythm: el.getAttribute('data-rhythm'),
-      paddingTop: getComputedStyle(el).paddingTop,
-      paddingBottom: getComputedStyle(el).paddingBottom,
-    })),
+    [...document.querySelectorAll('section')].map((el) => {
+      const previous = el.previousElementSibling;
+      return {
+        rhythm: el.getAttribute('data-rhythm'),
+        paddingTop: getComputedStyle(el).paddingTop,
+        paddingBottom: getComputedStyle(el).paddingBottom,
+        // Same-scheme neighbors share one surface: the second section
+        // drops its top padding (flush neighbors contribute no spacing,
+        // so they never trigger the collapse).
+        collapsesTop:
+          previous?.tagName === 'SECTION' &&
+          previous.getAttribute('data-scheme') ===
+            el.getAttribute('data-scheme') &&
+          previous.getAttribute('data-rhythm') !== 'flush',
+      };
+    }),
   );
 const homeSections = await readSectionRhythms(page);
 const homeEyebrows = await readEyebrowGaps(page);
@@ -258,12 +269,13 @@ assert(
 const rhythmViolations = offRhythmSections.filter(
   (section) =>
     !(section.rhythm in RHYTHM_MD_PADDING) ||
-    section.paddingTop !== RHYTHM_MD_PADDING[section.rhythm] ||
+    section.paddingTop !==
+      (section.collapsesTop ? '0px' : RHYTHM_MD_PADDING[section.rhythm]) ||
     section.paddingBottom !== RHYTHM_MD_PADDING[section.rhythm],
 );
 assert(
   offRhythmSections.length > 0 && rhythmViolations.length === 0,
-  `every section carries token rhythm padding (${offRhythmSections.length} sections${rhythmViolations.length > 0 ? `; violations: ${JSON.stringify(rhythmViolations)}` : ''})`,
+  `every section carries token rhythm padding (same-scheme seams collapsed) (${offRhythmSections.length} sections${rhythmViolations.length > 0 ? `; violations: ${JSON.stringify(rhythmViolations)}` : ''})`,
 );
 
 assert(

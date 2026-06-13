@@ -69,6 +69,17 @@ const sectionShellClassName = css`
   &[data-scheme='dark'] {
     ${buildSchemeDeclarations('dark')}
   }
+
+  /* Same-scheme neighbors share one surface, so the seam carries a single
+     rhythm step: the second section drops its top padding (padding, not
+     margin collapsing — the surface color must fill the spacing). A flush
+     neighbor contributes no spacing of its own, so it never triggers the
+     collapse: the follower's padding IS the single step. */
+  &[data-scheme='light']:not([data-rhythm='flush']) + &[data-scheme='light'],
+  &[data-scheme='muted']:not([data-rhythm='flush']) + &[data-scheme='muted'],
+  &[data-scheme='dark']:not([data-rhythm='flush']) + &[data-scheme='dark'] {
+    padding-top: 0;
+  }
 `;
 
 const backgroundLayerClassName = css`
