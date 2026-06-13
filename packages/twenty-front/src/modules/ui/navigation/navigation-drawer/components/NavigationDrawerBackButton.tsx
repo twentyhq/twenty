@@ -46,8 +46,8 @@ const StyledIconAndButtonContainer = styled.button`
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
-  flex-shrink: 0;
   flex-direction: row;
+  flex-shrink: 0;
   height: ${themeCssVariables.spacing[8]};
   justify-content: space-between;
 `;

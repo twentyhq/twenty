@@ -27,8 +27,21 @@ type SettingsCommunityLink = {
   cardTitle: string;
 };
 
-const DiscordIcon: IconComponent = (props) => (
-  <IconByName name="IconBrandDiscord" {...props} />
+const DiscordIcon: IconComponent = ({
+  className,
+  color,
+  size,
+  stroke,
+  style,
+}) => (
+  <IconByName
+    name="IconBrandDiscord"
+    className={className}
+    color={color}
+    size={size}
+    stroke={stroke}
+    style={style}
+  />
 );
 
 export const SettingsCommunity = () => {

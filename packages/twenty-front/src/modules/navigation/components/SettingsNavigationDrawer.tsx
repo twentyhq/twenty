@@ -4,6 +4,7 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
+import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
@@ -17,9 +18,19 @@ import { AdvancedSettingsToggle } from 'twenty-ui-deprecated/navigation';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-const StyledAdvancedToggleWrapper = styled.div<{ isMobile: boolean }>`
+const StyledAdvancedToggleFixedContent = styled.div<{ isMobile: boolean }>`
+  flex-shrink: 0;
+  margin-top: auto;
+  padding-left: ${({ isMobile }) =>
+    isMobile ? themeCssVariables.spacing[5] : '0'};
   padding-right: ${({ isMobile }) =>
-    isMobile ? '0' : themeCssVariables.spacing[1]};
+    isMobile ? themeCssVariables.spacing[5] : '0'};
+`;
+
+const StyledAdvancedToggleWrapper = styled.div`
+  > label {
+    padding-right: 0;
+  }
 `;
 
 export const SettingsNavigationDrawer = ({
@@ -52,21 +63,23 @@ export const SettingsNavigationDrawer = ({
       <NavigationDrawerScrollableContent>
         <NavigationDrawerTabbedContent
           showAiChatContent={showAiChatContent}
-          shouldRenderAiChatContent={hasAiPermission}
+          shouldMountAiChatContent={hasAiPermission}
           navigationContent={<SettingsNavigationDrawerItems />}
         />
       </NavigationDrawerScrollableContent>
 
       {!showAiChatContent && (
-        <NavigationDrawerFixedContent>
-          <StyledAdvancedToggleWrapper isMobile={isMobile}>
-            <AdvancedSettingsToggle
-              isAdvancedModeEnabled={isAdvancedModeEnabled}
-              setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
-              label={t`Advanced`}
-            />
-          </StyledAdvancedToggleWrapper>
-        </NavigationDrawerFixedContent>
+        <StyledAdvancedToggleFixedContent isMobile={isMobile}>
+          <NavigationDrawerSection>
+            <StyledAdvancedToggleWrapper>
+              <AdvancedSettingsToggle
+                isAdvancedModeEnabled={isAdvancedModeEnabled}
+                setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
+                label={t`Advanced`}
+              />
+            </StyledAdvancedToggleWrapper>
+          </NavigationDrawerSection>
+        </StyledAdvancedToggleFixedContent>
       )}
     </NavigationDrawer>
   );

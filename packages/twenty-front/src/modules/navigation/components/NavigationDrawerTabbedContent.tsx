@@ -4,7 +4,7 @@ import { type ReactNode } from 'react';
 
 type NavigationDrawerTabbedContentProps = {
   showAiChatContent: boolean;
-  shouldRenderAiChatContent: boolean;
+  shouldMountAiChatContent: boolean;
   navigationContent: ReactNode;
 };
 
@@ -14,7 +14,7 @@ const StyledTabContent = styled.div<{ isHidden: boolean }>`
 
 export const NavigationDrawerTabbedContent = ({
   showAiChatContent,
-  shouldRenderAiChatContent,
+  shouldMountAiChatContent,
   navigationContent,
 }: NavigationDrawerTabbedContentProps) => {
   return (
@@ -22,7 +22,7 @@ export const NavigationDrawerTabbedContent = ({
       <StyledTabContent isHidden={showAiChatContent}>
         {navigationContent}
       </StyledTabContent>
-      {shouldRenderAiChatContent && (
+      {shouldMountAiChatContent && (
         <StyledTabContent isHidden={!showAiChatContent}>
           <NavigationDrawerAiChatContent />
         </StyledTabContent>

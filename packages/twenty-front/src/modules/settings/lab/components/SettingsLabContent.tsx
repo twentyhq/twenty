@@ -3,6 +3,7 @@ import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsO
 import { useLabPublicFeatureFlags } from '@/settings/lab/hooks/useLabPublicFeatureFlags';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import {
   IconRelationManyToMany,
@@ -48,18 +49,22 @@ export const SettingsLabContent = () => {
     setHasImageLoadingError((prev) => ({ ...prev, [key]: true }));
   };
 
-  const labPublicFeatureFlagsWithImage = labPublicFeatureFlags.filter(
-    (flag) => flag.metadata.imagePath,
+  const labPublicFeatureFlagsWithImage = labPublicFeatureFlags.filter((flag) =>
+    isNonEmptyString(flag.metadata.imagePath),
   );
   const labPublicFeatureFlagsWithoutImage = labPublicFeatureFlags.filter(
-    (flag) => !flag.metadata.imagePath,
+    (flag) => !isNonEmptyString(flag.metadata.imagePath),
   );
 
   return (
     currentWorkspace?.id && (
       <StyledCardGrid>
         {labPublicFeatureFlagsWithImage.map((flag) => (
-          <Card key={flag.key} rounded>
+          <Card
+            key={flag.key}
+            rounded
+            backgroundColor={themeCssVariables.background.secondary}
+          >
             {!hasImageLoadingError[flag.key] && (
               <StyledImage
                 src={flag.metadata.imagePath ?? undefined}
@@ -79,7 +84,10 @@ export const SettingsLabContent = () => {
         ))}
 
         {labPublicFeatureFlagsWithoutImage.length > 0 && (
-          <Card rounded>
+          <Card
+            rounded
+            backgroundColor={themeCssVariables.background.secondary}
+          >
             {labPublicFeatureFlagsWithoutImage.map((flag, index) => (
               <SettingsOptionCardContentToggle
                 key={flag.key}
