@@ -3,6 +3,7 @@ import { styled } from '@linaria/react';
 import { useCampaignAudiencePreview } from '@/activities/emails/hooks/useCampaignAudiencePreview';
 import { type useCampaignComposerState } from '@/activities/emails/hooks/useCampaignComposerState';
 import { useMessageTopics } from '@/activities/emails/hooks/useMessageTopics';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
@@ -64,6 +65,20 @@ export const CampaignComposerFields = ({
 }: CampaignComposerFieldsProps) => {
   const { channels } = useMyMessageChannels();
   const { messageTopics } = useMessageTopics();
+  const { createOneRecord: createMessageList } = useCreateOneRecord({
+    objectNameSingular: 'messageList',
+  });
+
+  const handleCreateList = async (searchInput?: string) => {
+    const listName = searchInput?.trim() ?? '';
+    const createdList = await createMessageList({
+      name: listName.length > 0 ? listName : t`Untitled list`,
+    });
+
+    if (isDefined(createdList)) {
+      campaignState.setListId(createdList.id);
+    }
+  };
 
   const audiencePreview = useCampaignAudiencePreview({
     listId: campaignState.listId,
@@ -99,6 +114,7 @@ export const CampaignComposerFields = ({
         objectNameSingulars={['messageList']}
         defaultValue={campaignState.listId}
         onChange={campaignState.setListId}
+        onCreate={handleCreateList}
       />
       {isDefined(audiencePreview) && (
         <StyledHint>{buildAudienceHint(audiencePreview)}</StyledHint>
