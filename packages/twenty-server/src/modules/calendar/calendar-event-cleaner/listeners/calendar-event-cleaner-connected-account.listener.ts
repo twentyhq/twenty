@@ -6,10 +6,8 @@ import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import {
-  CONNECTED_ACCOUNT_DELETED_EVENT,
-  type ConnectedAccountDeletedEvent,
-} from 'src/engine/metadata-modules/connected-account/constants/connected-account-deleted.constant';
+import { CONNECTED_ACCOUNT_DELETED_EVENT } from 'src/engine/metadata-modules/connected-account/constants/connected-account-deleted.constant';
+import { type ConnectedAccountDeletedEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-deleted.type';
 import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
 import {
   DeleteConnectedAccountAssociatedCalendarDataJob,

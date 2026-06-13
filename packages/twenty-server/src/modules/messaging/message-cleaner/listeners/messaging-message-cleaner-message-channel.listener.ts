@@ -6,10 +6,8 @@ import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import {
-  MESSAGE_CHANNEL_DELETED_EVENT,
-  type MessageChannelDeletedEvent,
-} from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
+import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
+import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
 import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
 import {
   MessagingMessageChannelDeletionCleanupJob,
