@@ -11,6 +11,7 @@ import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigatio
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useIsMobile } from 'twenty-ui-deprecated/utilities';
@@ -27,10 +28,8 @@ const StyledAdvancedToggleFixedContent = styled.div<{ isMobile: boolean }>`
     isMobile ? themeCssVariables.spacing[5] : '0'};
 `;
 
-const StyledAdvancedToggleWrapper = styled.div`
-  > label {
-    padding-right: 0;
-  }
+const advancedSettingsToggleClassName = css`
+  padding-right: 0;
 `;
 
 export const SettingsNavigationDrawer = ({
@@ -71,13 +70,12 @@ export const SettingsNavigationDrawer = ({
       {!showAiChatContent && (
         <StyledAdvancedToggleFixedContent isMobile={isMobile}>
           <NavigationDrawerSection>
-            <StyledAdvancedToggleWrapper>
-              <AdvancedSettingsToggle
-                isAdvancedModeEnabled={isAdvancedModeEnabled}
-                setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
-                label={t`Advanced`}
-              />
-            </StyledAdvancedToggleWrapper>
+            <AdvancedSettingsToggle
+              className={advancedSettingsToggleClassName}
+              isAdvancedModeEnabled={isAdvancedModeEnabled}
+              setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
+              label={t`Advanced`}
+            />
           </NavigationDrawerSection>
         </StyledAdvancedToggleFixedContent>
       )}
