@@ -20,8 +20,6 @@ export const useDeleteEmailGroupChannel = () => {
     DeleteEmailGroupChannelResult,
     DeleteEmailGroupChannelVariables
   >(DELETE_EMAIL_GROUP_CHANNEL, {
-    // Removing the last channel on a domain deletes the orphaned emailing
-    // domain server-side; refetch the domains query so it drops from the cache.
     refetchQueries: [
       { query: GET_MY_CONNECTED_ACCOUNTS },
       { query: GET_MY_MESSAGE_CHANNELS },

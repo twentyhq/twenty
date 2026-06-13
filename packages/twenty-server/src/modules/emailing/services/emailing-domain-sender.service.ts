@@ -237,8 +237,6 @@ export class EmailingDomainSenderService {
     primaryRecipient: string,
     unsubscribeTopicId: string | undefined,
   ): UnsubscribeContent {
-    // The LOG driver fakes delivery and provisions no unsubscribe hostname, so
-    // demo sends carry no unsubscribe content (and aren't gated on it).
     const isDemoMode =
       this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
       EmailingDomainDriver.LOG;

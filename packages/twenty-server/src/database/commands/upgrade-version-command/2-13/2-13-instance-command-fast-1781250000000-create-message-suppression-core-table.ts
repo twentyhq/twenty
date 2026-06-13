@@ -37,8 +37,6 @@ export class CreateMessageSuppressionCoreTableFastInstanceCommand implements Fas
         ON "core"."messageSuppression" ("workspaceId", "emailAddress", "unsubscribeTopicId")
         WHERE "unsubscribeTopicId" IS NOT NULL`,
     );
-    // The two unique indexes are partial, so neither serves the workspace
-    // ON DELETE CASCADE scan; this plain index does.
     await queryRunner.query(
       `CREATE INDEX "IDX_MESSAGE_SUPPRESSION_WORKSPACE_ID"
         ON "core"."messageSuppression" ("workspaceId")`,

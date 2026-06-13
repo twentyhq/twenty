@@ -15,7 +15,6 @@ type SettingsWorkspaceEmailChannelDomainStatusCellProps = {
 export const SettingsWorkspaceEmailChannelDomainStatusCell = ({
   item,
 }: SettingsWorkspaceEmailChannelDomainStatusCellProps) => {
-  // Apollo dedupes this query across rows, so it resolves to a single request.
   const { data } = useQuery(GetEmailingDomainsDocument);
 
   const channelDomain = getEmailChannelDomain(item.connectedAccount?.handle);

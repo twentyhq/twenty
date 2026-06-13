@@ -58,9 +58,6 @@ export class DeleteWorkspaceMemberConnectedAccountsCleanupJob {
         return;
       }
 
-      // Only the member's personal mailboxes. Shared/group accounts
-      // (visibility 'workspace') are workspace resources — e.g. the email-group
-      // sender behind campaign history — and must survive a member offboarding.
       await this.connectedAccountRepository.delete({
         userWorkspaceId: userWorkspace.id,
         workspaceId,

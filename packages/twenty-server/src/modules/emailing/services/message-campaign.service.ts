@@ -52,12 +52,10 @@ import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 type SendCampaignArgs = {
   workspaceId: string;
   userWorkspaceId: string;
-  // The list's hand-picked members are the recipients (the audience).
   listId: string;
   subject: string;
   html: string;
   fromAddress: string;
-  // Optional unsubscribe topic (per-topic suppression + link).
   unsubscribeTopicId?: string;
 };
 
@@ -67,8 +65,6 @@ type SendCampaignResult = {
   skipped: CampaignSkippedBreakdown;
 };
 
-// Disjoint pre-send audience breakdown (global opt-out takes precedence over a
-// topic opt-out, which takes precedence over sendable).
 type CampaignAudiencePreview = {
   totalMembers: number;
   withoutEmail: number;
@@ -78,7 +74,6 @@ type CampaignAudiencePreview = {
   sendable: number;
 };
 
-// A recipient paired with the deterministic message id materialized for it.
 type CampaignMessageRecipient = CampaignRecipient & { messageId: string };
 
 const toRawRecipient = (person: {
@@ -105,8 +100,6 @@ export class MessageCampaignService {
     private readonly messageSuppressionService: MessageSuppressionService,
   ) {}
 
-  // Repository bound to the request's acting user: the user-triggered send path
-  // reads the audience and creates the campaign under that user's permissions.
   private getUserRepository<T extends ObjectLiteral>(
     workspaceId: string,
     entity: Type<T>,
@@ -114,8 +107,6 @@ export class MessageCampaignService {
     return this.globalWorkspaceOrmManager.getRepository(workspaceId, entity);
   }
 
-  // Permission-bypassing repository for background jobs and webhook callbacks,
-  // which have no acting user and run as a system actor.
   private getSystemRepository<T extends ObjectLiteral>(
     workspaceId: string,
     entity: Type<T>,
@@ -125,10 +116,6 @@ export class MessageCampaignService {
     });
   }
 
-  // Resolves the audience under the caller's permissions, creates the campaign
-  // row, and enqueues a single fan-out job carrying only recipient refs. The
-  // request never materializes per-recipient messages nor enqueues per-recipient
-  // jobs, so it stays fast regardless of audience size.
   async send({
     workspaceId,
     userWorkspaceId,
@@ -158,8 +145,6 @@ export class MessageCampaignService {
         workspaceId,
       });
 
-    // No explicit auth context: the audience read and campaign creation run
-    // under the request's acting user, so they respect that user's permissions.
     const { campaignId, recipients, skipped } =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
@@ -205,10 +190,6 @@ export class MessageCampaignService {
     return { campaignId, queuedCount: recipients.length, skipped };
   }
 
-  // Fan-out: materializes one QUEUED message per recipient that doesn't have one
-  // yet (deterministic id => safe to re-run), then enqueues a per-recipient send
-  // job for every QUEUED message. Re-running reconciles messages orphaned by a
-  // crash mid-fan-out. Runs as a system actor (no acting user in a job).
   async processMaterializeJob(data: MaterializeCampaignJobData): Promise<void> {
     const {
       workspaceId,
@@ -232,8 +213,6 @@ export class MessageCampaignService {
         return;
       }
 
-      // Dedupe by the deterministic message id so a person listed twice yields a
-      // single message (and a single send job).
       const recipientsByMessageId = new Map<string, CampaignMessageRecipient>();
 
       for (const recipient of recipients) {
@@ -293,17 +272,10 @@ export class MessageCampaignService {
         );
       }
 
-      // Finalizes the campaign immediately when nothing was queued
-      // (zero-recipient case); otherwise the last send job finalizes it.
       await this.finalizeCampaignIfComplete(workspaceId, campaignId);
     }, buildSystemAuthContext(workspaceId));
   }
 
-  // Processes one recipient's send job: idempotent, renders the campaign
-  // template against the recipient, sends via the emailing-domain sender (keeps
-  // suppression + unsubscribe + reply-to), records per-message status, and
-  // finalizes the campaign once nothing remains queued. Send errors are rethrown
-  // so the queue retries the job; a successful retry flips FAILED back to SENT.
   async processSendJob(data: SendCampaignEmailJobData): Promise<void> {
     const {
       workspaceId,
@@ -324,9 +296,6 @@ export class MessageCampaignService {
         where: { id: messageId },
       });
 
-      // QUEUED is a first attempt, FAILED a previous attempt of this same job
-      // being retried by the queue. Everything else (SENT, BOUNCED, COMPLAINED,
-      // SKIPPED) is terminal: never send twice.
       if (
         message === null ||
         (message.deliveryStatus !== CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED &&
@@ -396,8 +365,6 @@ export class MessageCampaignService {
           const code =
             error instanceof EmailingDomainDriverException ? error.code : null;
 
-          // The recipient is suppressed (bounced/complained/unsubscribed): an
-          // intended skip, not a delivery failure, and never retryable.
           if (
             code === EmailingDomainDriverExceptionCode.ALL_RECIPIENTS_SUPPRESSED
           ) {
@@ -417,11 +384,6 @@ export class MessageCampaignService {
             }`,
           );
 
-          // Only transient failures are worth retrying. Deterministic ones
-          // (misconfiguration, suspended sending, unsubscribe domain not ready)
-          // fail identically on every attempt, so they stay terminally FAILED
-          // instead of burning the retry budget. Rethrowing triggers the retry;
-          // the persisted FAILED status makes a successful retry resume safely.
           const isRetryable =
             code === null ||
             code === EmailingDomainDriverExceptionCode.TEMPORARY_ERROR ||
@@ -434,9 +396,6 @@ export class MessageCampaignService {
           return;
         }
 
-        // Adopt the SES id as the message id so a reply (whose In-Reply-To
-        // references it) threads back onto this send, and persist the rendered
-        // (personalized) subject/body that the recipient actually received.
         await messageRepository.update(messageId, {
           deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENT,
           headerMessageId: result.messageId,
@@ -462,9 +421,6 @@ export class MessageCampaignService {
     }, buildSystemAuthContext(workspaceId));
   }
 
-  // Correlates an SES bounce/complaint (by the send's message id) to the
-  // campaign message and records BOUNCED/COMPLAINED on it. No-op when the id
-  // doesn't match a campaign send.
   async recordDeliveryFailureByProviderMessageId({
     workspaceId,
     providerMessageId,
@@ -488,8 +444,6 @@ export class MessageCampaignService {
         return;
       }
 
-      // BOUNCED/COMPLAINED are terminal; don't let a later event downgrade or
-      // flip an already-recorded failure (e.g. a complaint after a bounce).
       if (
         message.deliveryStatus === CAMPAIGN_MESSAGE_DELIVERY_STATUS.BOUNCED ||
         message.deliveryStatus === CAMPAIGN_MESSAGE_DELIVERY_STATUS.COMPLAINED
@@ -501,8 +455,6 @@ export class MessageCampaignService {
     }, buildSystemAuthContext(workspaceId));
   }
 
-  // Inserts the campaign row (no messages — the fan-out job materializes those).
-  // Must run inside an active workspace context.
   private async createCampaign({
     workspaceId,
     subject,
@@ -535,11 +487,6 @@ export class MessageCampaignService {
     return identifiers[0].id;
   }
 
-  // Creates the outbound messages (QUEUED) + threads, channel associations and
-  // from/to participants for the given recipients in ONE transaction. Each
-  // recipient's personId is set directly (no participant matching, no contact
-  // auto-creation). Message ids are deterministic (campaignId, personId), so a
-  // retry skips recipients already materialized. Runs as a system actor.
   private async materializeCampaignMessages({
     workspaceId,
     campaignId,
@@ -558,15 +505,11 @@ export class MessageCampaignService {
     recipients: CampaignMessageRecipient[];
   }): Promise<void> {
     const now = new Date();
-    // Placeholder body for the timeline before send; the send job overwrites it
-    // with the personalized render.
     const text = this.htmlToText(bodyTemplate);
     const rows = recipients.map((recipient) => ({
       recipient,
       messageId: recipient.messageId,
       threadId: v4(),
-      // Temporary id; the send job overwrites it with the SES id so the stored
-      // ids match what the recipient receives (reply-threading).
       temporaryExternalId: v4(),
     }));
 
@@ -651,10 +594,6 @@ export class MessageCampaignService {
     );
   }
 
-  // Finalizes the campaign once nothing remains QUEUED: SENT, or SENT_WITH_ERRORS
-  // when at least one recipient terminally FAILED. The status='SENDING' guard
-  // makes this a compare-and-swap so concurrent jobs finalize exactly once. Must
-  // run inside a workspace context.
   private async finalizeCampaignIfComplete(
     workspaceId: string,
     campaignId: string,
@@ -699,10 +638,6 @@ export class MessageCampaignService {
     );
   }
 
-  // Pre-send audience breakdown for the campaign composer. Reuses the send
-  // path's audience read + normalize + suppression lookups (no new data path),
-  // under the caller's permissions. Categories are disjoint: a global opt-out
-  // outranks a topic opt-out outranks sendable.
   async previewAudience({
     workspaceId,
     listId,
@@ -768,7 +703,6 @@ export class MessageCampaignService {
     );
   }
 
-  // Resolves the recipients of a campaign from a list's hand-picked members.
   private async resolveRecipientsFromList(
     workspaceId: string,
     listId: string,
@@ -808,7 +742,6 @@ export class MessageCampaignService {
     return people.map(toRawRecipient);
   }
 
-  // Per-recipient merge fields available to {{variable}} tokens in templates.
   private buildTemplateVariables(
     person: PersonWorkspaceEntity | null,
   ): Record<string, string> {

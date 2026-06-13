@@ -7,9 +7,6 @@ const tableName = 'emailingDomain';
 
 const DEV_EMAILING_DOMAIN = 'dev.twenty.local';
 
-// The two domains backing the seeded EMAIL_GROUP channels: one verified (used by
-// the support channel) and one still pending DNS verification (used by the
-// contact channel). Exported so the channel seed can mint matching handles.
 export const getSeededEmailGroupDomains = (workspaceId: string) => {
   const prefix = workspaceId.slice(0, 8);
 

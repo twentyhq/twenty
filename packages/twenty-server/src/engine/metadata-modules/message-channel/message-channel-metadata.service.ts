@@ -224,9 +224,6 @@ export class MessageChannelMetadataService {
       'INBOUND_EMAIL_DOMAIN',
     );
     const storageType = this.twentyConfigService.get('STORAGE_TYPE');
-    // Demo mode (LOG emailing driver): handles can be created and explored
-    // without inbound infrastructure; the forwarding address is minted on a
-    // reserved, non-routable domain since no mail can be received.
     const isEmailingDomainInDemoMode =
       this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
       EmailingDomainDriver.LOG;
@@ -242,8 +239,6 @@ export class MessageChannelMetadataService {
       );
     }
 
-    // The emailing domain is a child of the channel: adding a channel
-    // provisions its domain (verification + SES) if it doesn't exist yet.
     const sendDomain = getDomainFromEmail(handle)?.toLowerCase();
 
     if (isNonEmptyString(sendDomain)) {
@@ -293,9 +288,6 @@ export class MessageChannelMetadataService {
     return { messageChannel, forwardingAddress };
   }
 
-  // Resolves the workspace-owned email-group channel that sends from `fromAddress`
-  // (its connectedAccount.handle), creating it on demand. Used by campaign sends to
-  // persist + reply-thread their messages on a SHARE_EVERYTHING channel.
   async getOrCreateEmailGroupChannel({
     fromAddress,
     userWorkspaceId,
@@ -348,8 +340,6 @@ export class MessageChannelMetadataService {
     return messageChannel;
   }
 
-  // Deletes an email-group channel (its connected account) and, once no channel
-  // sends from its domain anymore, the now-orphaned emailing domain.
   async deleteEmailGroupChannel({
     id,
     userWorkspaceId,

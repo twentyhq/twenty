@@ -13,16 +13,10 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const COMPOSE_CAMPAIGN_UNIVERSAL_IDENTIFIER =
   STANDARD_COMMAND_MENU_ITEMS.composeCampaign.universalIdentifier;
 
-// Deliberately NOT registered in the upgrade sequence (no @RegisteredWorkspaceCommand):
-// the marketing-emails feature ships dark behind IS_EMAIL_GROUP_ENABLED, so existing
-// workspaces don't need the Compose Campaign menu item yet. It is run manually per
-// workspace (-w) during the progressive rollout. Re-register it under the
-// then-current version once the fleet has been migrated, so the standard upgrade
-// path covers stragglers and self-hosted instances. New workspaces get the menu
-// item from the standard application at provisioning and do not need this command.
 @Command({
   name: 'upgrade:2-13:add-compose-campaign-command-menu-item',
-  description: 'Add the Compose Campaign command menu item to existing workspaces',
+  description:
+    'Add the Compose Campaign command menu item to existing workspaces',
 })
 export class AddComposeCampaignCommandMenuItemCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(

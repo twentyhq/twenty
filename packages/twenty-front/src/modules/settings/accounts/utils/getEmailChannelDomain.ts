@@ -1,5 +1,3 @@
-// The sending domain of an email channel: everything after the last '@' of its
-// source address, lowercased. Mirrors the server's emailing-domain matching.
 export const getEmailChannelDomain = (
   handle: string | null | undefined,
 ): string | undefined => {

@@ -13,7 +13,6 @@ const PAGE_STYLE = `body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI'
 const buildTopicCheckbox = (topic: TopicOptOutState): string => {
   const label = escapeHtml(topic.topicName ?? 'Untitled topic');
   const value = escapeHtml(topic.unsubscribeTopicId);
-  // Checked = still receiving (no per-topic opt-out for this address).
   const checkedAttribute = topic.optedOut ? '' : ' checked';
 
   return `<label class="topic"><input type="checkbox" name="unsubscribeTopicId" value="${value}"${checkedAttribute} />${label}</label>`;

@@ -35,16 +35,9 @@ type TopicOptOutStateArgs = {
 type SetTopicOptOutsArgs = {
   workspaceId: string;
   emailAddress: string;
-  // Topics the recipient wants to keep receiving (checked boxes). Visible topics
-  // not in this set are opted out of; visible topics in it are re-opted-in.
   keptTopicIds: string[];
 };
 
-// Suppression is the single consent store, held in a core table (it is
-// compliance state keyed by email address, written only by webhook handlers and
-// the public unsubscribe controller — none of which run in a workspace/user
-// context). A row with unsubscribeTopicId NULL is a global block; a row with a unsubscribeTopicId and
-// reason UNSUBSCRIBE is a per-topic opt-out. There is no opt-in state.
 @Injectable()
 export class MessageSuppressionService {
   constructor(
@@ -81,8 +74,6 @@ export class MessageSuppressionService {
   ): Promise<Set<string>> {
     const normalizedAddresses = this.normalizeAddresses(emailAddresses);
 
-    // An undefined unsubscribeTopicId would silently drop the key from the WHERE clause
-    // and return every topic's opt-outs (cross-topic over-suppression).
     if (
       !isNonEmptyArray(normalizedAddresses) ||
       !isNonEmptyString(unsubscribeTopicId)
@@ -101,11 +92,6 @@ export class MessageSuppressionService {
     return new Set(suppressions.map((suppression) => suppression.emailAddress));
   }
 
-  // Records a suppression (global when unsubscribeTopicId is null, per-topic otherwise).
-  // Race-safe against at-least-once SNS deliveries: losing the unique-index race
-  // on insert is reconciled by re-reading and escalating, so two deliveries can
-  // never create duplicate rows. Reasons only ever escalate (UNSUBSCRIBE ->
-  // BOUNCE/COMPLAINT), never downgrade.
   async suppress({
     workspaceId,
     emailAddress,
@@ -168,8 +154,6 @@ export class MessageSuppressionService {
         unsubscribeTopicId: effectiveTopicId,
       });
     } catch (error) {
-      // A concurrent delivery won the insert race. The unique index guarantees
-      // a single row now exists; reconcile against it instead of failing.
       const isUniqueViolation =
         error instanceof QueryFailedError &&
         (error as QueryFailedErrorWithCode).code ===
@@ -181,8 +165,6 @@ export class MessageSuppressionService {
     }
   }
 
-  // For the public preferences page: every visible topic, flagged with whether
-  // this address currently has a per-topic opt-out.
   async getTopicOptOutState({
     workspaceId,
     emailAddress,
@@ -219,10 +201,6 @@ export class MessageSuppressionService {
     }));
   }
 
-  // For the public preferences form. The token proves control of the address, so
-  // recipient-driven re-opt-in is allowed: visible topics not in keptTopicIds get
-  // a per-topic opt-out, and re-checked topics have their per-topic UNSUBSCRIBE
-  // suppression lifted. Never lifts BOUNCE/COMPLAINT, never lifts global blocks.
   async setTopicOptOuts({
     workspaceId,
     emailAddress,
@@ -237,8 +215,6 @@ export class MessageSuppressionService {
     for (const topicState of topicStates) {
       const shouldReceive = keptTopicIdSet.has(topicState.unsubscribeTopicId);
 
-      // The usual submit changes 0-1 checkboxes; skip topics already in the
-      // requested state instead of issuing no-op writes.
       if (shouldReceive === !topicState.optedOut) {
         continue;
       }
@@ -268,8 +244,6 @@ export class MessageSuppressionService {
   ): Promise<void> {
     const normalizedEmailAddress = this.normalizeEmailAddress(emailAddress);
 
-    // Only a recipient-driven opt-out is reversible — never a hard suppression,
-    // never a global block (those have unsubscribeTopicId NULL and don't match).
     await this.suppressionRepository.delete(workspaceId, {
       emailAddress: normalizedEmailAddress,
       unsubscribeTopicId,

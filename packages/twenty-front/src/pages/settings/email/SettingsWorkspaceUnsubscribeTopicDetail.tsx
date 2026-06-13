@@ -45,9 +45,6 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  // Seed the editable fields once per topic — a refetch (e.g. after a
-  // blur-persist of the other field) must not clobber a field the user is
-  // still editing, so re-seed only when the topic id actually changes.
   const [seededTopicId, setSeededTopicId] = useState<string | null>(null);
 
   useEffect(() => {

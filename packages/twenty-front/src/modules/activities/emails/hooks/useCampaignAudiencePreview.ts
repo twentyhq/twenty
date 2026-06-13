@@ -13,8 +13,6 @@ type UseCampaignAudiencePreviewArgs = {
   unsubscribeTopicId: string | null;
 };
 
-// Fetches the pre-send audience breakdown for the composer once a list is
-// selected (re-runs when the topic changes). Returns null until a list is set.
 export const useCampaignAudiencePreview = ({
   listId,
   unsubscribeTopicId,

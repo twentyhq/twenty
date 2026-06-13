@@ -19,8 +19,7 @@ export class CreateUnsubscribeTopicCoreTableFastInstanceCommand implements FastI
         "visibility" "core"."unsubscribeTopic_visibility_enum" NOT NULL DEFAULT 'PRIVATE',
         "workspaceId" uuid NOT NULL,
         CONSTRAINT "PK_unsubscribeTopic_id" PRIMARY KEY ("id"),
-        -- FK name matches TypeORM's default for the WorkspaceRelatedEntity
-        -- workspace relation, so the schema matches the entity model (no drift).
+        -- FK name must match TypeORM's generated hash for WorkspaceRelatedEntity.workspace (schema drift otherwise).
         CONSTRAINT "FK_16d7bf6f90fac4745c89e1e8d56" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE
       )`,
     );

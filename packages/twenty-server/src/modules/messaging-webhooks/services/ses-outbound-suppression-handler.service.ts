@@ -38,8 +38,6 @@ export class SesOutboundSuppressionHandlerService {
       return;
     }
 
-    // Record the per-recipient campaign outcome by correlating the SES send id.
-    // Additive to the address-level suppression below.
     const providerMessageId = event.detail?.mail?.messageId;
 
     if (isDefined(providerMessageId)) {

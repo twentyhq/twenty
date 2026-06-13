@@ -3,8 +3,6 @@ import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migr
 import { type MessageListWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list.workspace-entity';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
-// Join object linking a person to a list (a hand-picked audience).
-// Twenty has no many-to-many, so this is the rock between Person and List.
 export class MessageListMemberWorkspaceEntity extends BaseWorkspaceEntity {
   list: EntityRelation<MessageListWorkspaceEntity>;
   listId: string;

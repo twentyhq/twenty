@@ -172,8 +172,6 @@ const seedConnectedAccounts = async ({
       userWorkspaceId: ids.userWorkspaceIds.JANE,
       workspaceId,
     },
-    // Email-group sending identities. Their handle domains match the seeded
-    // emailing domains so the channel list's domain-status column resolves.
     {
       id: ids.connectedAccountIds.SUPPORT_GROUP,
       handle: `support@${emailGroupDomains.verified}`,
@@ -309,9 +307,6 @@ const seedMessageChannels = async ({
       connectedAccountId: ids.connectedAccountIds.TIM,
       workspaceId,
     },
-    // Two shared sending channels: support on a verified domain, contact on a
-    // still-pending one. The handle here is the inbound forwarding address; the
-    // sending identity lives on the connected account.
     {
       id: ids.messageChannelIds.SUPPORT_GROUP,
       handle: 'emailgroup-support@demo.invalid',

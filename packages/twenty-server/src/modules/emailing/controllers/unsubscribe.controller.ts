@@ -29,8 +29,6 @@ const UNSUBSCRIBE_ALL_PATH = '/emailing/unsubscribe/all';
 
 const HTML_CONTENT_TYPE = 'text/html; charset=utf-8';
 
-// Preview tokens render the page normally but must never mutate state; the
-// opt-out POST handlers short-circuit to this page instead of suppressing.
 const PREVIEW_RESULT_PAGE = buildUnsubscribeResultPage(
   'Preview',
   'This is a preview — no changes were saved.',
@@ -49,8 +47,6 @@ export class UnsubscribeController {
     private readonly messageSuppressionService: MessageSuppressionService,
   ) {}
 
-  // RFC 8058 one-click: mail clients POST here with no user interaction, so it
-  // must unsubscribe immediately rather than render the preference page.
   @Post()
   @HttpCode(200)
   async handleOneClickUnsubscribe(@Query('t') token: string): Promise<void> {
@@ -60,7 +56,6 @@ export class UnsubscribeController {
       return;
     }
 
-    // Topic-scoped when the token carries a topic, global otherwise.
     await this.messageSuppressionService.suppress({
       workspaceId: payload.workspaceId,
       emailAddress: payload.emailAddress,
@@ -99,7 +94,6 @@ export class UnsubscribeController {
       return PREVIEW_RESULT_PAGE;
     }
 
-    // The checked boxes are the topics the recipient wants to keep receiving.
     await this.messageSuppressionService.setTopicOptOuts({
       workspaceId: payload.workspaceId,
       emailAddress: payload.emailAddress,

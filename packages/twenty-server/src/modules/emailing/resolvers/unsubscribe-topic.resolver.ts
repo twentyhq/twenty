@@ -21,8 +21,6 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
 
-// A neutral, non-routable placeholder address so the preview renders the
-// workspace's topics without referencing a real recipient.
 const UNSUBSCRIBE_PREVIEW_PLACEHOLDER_EMAIL = 'preview@example.com';
 
 @UseGuards(
@@ -49,9 +47,6 @@ export class UnsubscribeTopicResolver {
     );
   }
 
-  // Mints a preview token (placeholder recipient + preview claim) for the live
-  // unsubscribe page so admins can see exactly what recipients get. Opt-out
-  // POSTs are no-ops for preview tokens, so opening it never mutates state.
   @Query(() => String)
   @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
   unsubscribePagePreviewUrl(

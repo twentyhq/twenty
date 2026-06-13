@@ -36,9 +36,6 @@ const MESSAGE_OBJECT_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.messageListMember.universalIdentifier,
 ];
 
-// Fields the feature adds to PRE-EXISTING objects (person/timelineActivity/
-// message). These can collide with a custom field of the same name on the same
-// object, so the existing one is renamed before the standard field is created.
 const NEW_FIELDS_ON_EXISTING_OBJECTS_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.person.fields.listMemberships.universalIdentifier,
   STANDARD_OBJECTS.timelineActivity.fields.targetMessageList
@@ -47,7 +44,8 @@ const NEW_FIELDS_ON_EXISTING_OBJECTS_UNIVERSAL_IDENTIFIERS = [
     .universalIdentifier,
   STANDARD_OBJECTS.message.fields.messageCampaign.universalIdentifier,
   STANDARD_OBJECTS.message.fields.deliveryStatus.universalIdentifier,
-  STANDARD_OBJECTS.messageParticipant.fields.messageCampaign.universalIdentifier,
+  STANDARD_OBJECTS.messageParticipant.fields.messageCampaign
+    .universalIdentifier,
 ];
 
 const MESSAGE_FIELD_UNIVERSAL_IDENTIFIERS = [
@@ -94,8 +92,6 @@ const MESSAGE_RECORD_PAGE_WIDGET_UNIVERSAL_IDENTIFIERS =
     ),
   );
 
-// Widgets the feature adds to the pre-existing person record page (the
-// Topics/Lists junction pickers shown on the person detail page).
 const PERSON_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS = [
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.personRecordPage.tabs.home.widgets
     .listMemberships.universalIdentifier,
@@ -106,13 +102,6 @@ const MESSAGE_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS = [
   ...PERSON_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS,
 ];
 
-// Deliberately NOT registered in the upgrade sequence (no @RegisteredWorkspaceCommand):
-// the marketing-emails feature ships dark behind IS_EMAIL_GROUP_ENABLED, and this
-// command is heavy on large instances. It is run manually per workspace (-w) during
-// the progressive rollout. Re-register it under the then-current version once the
-// fleet has been migrated, so the standard upgrade path covers stragglers and
-// self-hosted instances. New workspaces get these entities from the standard
-// application at provisioning and do not need this command.
 @Command({
   name: 'upgrade:2-13:backfill-message-standard-objects',
   description:
@@ -153,9 +142,6 @@ export class BackfillMessageStandardObjectsCommand extends ActiveOrSuspendedWork
       'flatCommandMenuItemMaps',
     ]);
 
-    // The message objects' relations target person, message and timelineActivity.
-    // Unprovisioned workspaces (no standard objects yet) have none of them, so
-    // there is nothing to relate to — skip them.
     const hasPrerequisiteObjects = [
       STANDARD_OBJECTS.person.universalIdentifier,
       STANDARD_OBJECTS.message.universalIdentifier,
@@ -188,9 +174,6 @@ export class BackfillMessageStandardObjectsCommand extends ActiveOrSuspendedWork
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
 
-    // A custom field sharing a name with a standard field we are about to add
-    // to an existing object trips the per-object unique field name. Rename the
-    // existing one to "<name>Old" first so the standard field can be created.
     const fieldMetadataRenameUpdates =
       NEW_FIELDS_ON_EXISTING_OBJECTS_UNIVERSAL_IDENTIFIERS.flatMap(
         (universalIdentifier) => {
@@ -347,8 +330,6 @@ export class BackfillMessageStandardObjectsCommand extends ActiveOrSuspendedWork
       return;
     }
 
-    // Renames must commit before the create: a custom field sharing a name with
-    // a standard field about to be created trips the per-object unique name.
     const collisionRenameMigrations = fieldMetadataRenameUpdates.map(
       (flatFieldMetadata) => ({
         applicationUniversalIdentifier:
@@ -363,8 +344,6 @@ export class BackfillMessageStandardObjectsCommand extends ActiveOrSuspendedWork
       }),
     );
 
-    // Collisions can belong to different applications, so each rename runs as
-    // its own migration scoped to the colliding entity's application.
     for (const {
       applicationUniversalIdentifier,
       allFlatEntityOperationByMetadataName: renameOperations,

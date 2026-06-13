@@ -88,8 +88,6 @@ export class EmailingDomainService {
     );
   }
 
-  // Creates the emailing domain for a workspace only if it doesn't exist yet.
-  // Used when adding an email channel auto-provisions its domain.
   async ensureEmailingDomain(
     domain: string,
     workspaceId: string,
@@ -106,8 +104,6 @@ export class EmailingDomainService {
     await this.createEmailingDomain(domain, workspaceId);
   }
 
-  // Deletes the emailing domain for a workspace by its domain name, if present.
-  // Used to clean up a domain once its last email channel is removed.
   async deleteEmailingDomainByDomainIfExists(
     workspaceId: string,
     domain: string,

@@ -30,8 +30,6 @@ export type SesEventBridgeNotification = {
       feedbackId?: string;
       complainedRecipients?: SesEventBridgeRecipient[];
     };
-    // SES carries the original send's id (= EmailingDomainSendEmailResult.messageId)
-    // on bounce/complaint events, used to correlate the per-recipient message.
     mail?: {
       messageId?: string;
     };

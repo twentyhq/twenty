@@ -12,8 +12,5 @@ export type EmailingDomainEmailContent = {
   replyTo?: string[];
   attachments?: EmailingDomainAttachment[];
   headers?: EmailingDomainHeader[];
-  // When an email is sent under a topic, recipients who unsubscribed from that
-  // topic are dropped in addition to the globally suppressed ones, and the
-  // unsubscribe link is scoped to the topic.
   unsubscribeTopicId?: string;
 };

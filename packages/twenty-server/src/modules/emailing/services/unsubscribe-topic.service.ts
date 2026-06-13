@@ -18,9 +18,6 @@ type UpdateUnsubscribeTopicArgs = {
   visibility?: UnsubscribeTopicVisibility | null;
 };
 
-// Unsubscribe topics, curated by the workspace admin (Settings → Email) and
-// picked as a campaign's unsubscribe scope. A core entity — the public
-// unsubscribe page reads it without a workspace context.
 @Injectable()
 export class UnsubscribeTopicService {
   constructor(
@@ -36,7 +33,6 @@ export class UnsubscribeTopicService {
     });
   }
 
-  // Groups shown on the public unsubscribe preferences page.
   async findPublicTopics(
     workspaceId: string,
   ): Promise<UnsubscribeTopicEntity[]> {
@@ -76,9 +72,6 @@ export class UnsubscribeTopicService {
     });
   }
 
-  // Per-topic opt-out rows in messageSuppression reference this topic by id and
-  // are left as inert orphans on delete (every suppression read intersects live
-  // topics, so they never affect sends).
   async deleteUnsubscribeTopic(workspaceId: string, id: string): Promise<void> {
     await this.unsubscribeTopicRepository.delete(workspaceId, { id });
   }

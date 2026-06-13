@@ -5,9 +5,6 @@ import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { type UnsubscribeTokenPayload } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-token-payload.type';
 
-// Tokens travel in mail headers and public links, so the payload is encrypted
-// (AES-256-GCM), not just signed: the recipient address and workspace id stay
-// opaque to anyone holding the link.
 @Injectable()
 export class UnsubscribeTokenService {
   constructor(
@@ -45,8 +42,6 @@ export class UnsubscribeTokenService {
       return {
         workspaceId: decoded.workspaceId,
         emailAddress: decoded.emailAddress,
-        // Default to 0 for any token minted before issuedAt existed, so it still
-        // verifies (and reads as epoch-old) rather than being rejected.
         issuedAt: typeof decoded?.issuedAt === 'number' ? decoded.issuedAt : 0,
         ...(typeof decoded?.unsubscribeTopicId === 'string'
           ? { unsubscribeTopicId: decoded.unsubscribeTopicId }

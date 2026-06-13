@@ -7,7 +7,6 @@ export class SendMessageCampaignOutputDTO {
   @Field(() => String)
   campaignId: string;
 
-  // Recipients materialized as QUEUED messages and enqueued for async sending.
   @Field(() => Int)
   queuedCount: number;
 
