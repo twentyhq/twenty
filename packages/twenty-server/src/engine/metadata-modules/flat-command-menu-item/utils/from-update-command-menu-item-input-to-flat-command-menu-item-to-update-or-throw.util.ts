@@ -69,11 +69,12 @@ export const fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow 
       update: updatedEditableProperties,
     });
 
-    const flatCommandMenuItemToUpdate = {
+    const flatCommandMenuItemToUpdate: FlatCommandMenuItem = {
       ...mergedRecord,
-      overrides,
+      // sanitizeOverridableEntityInput returns a loosely-typed Record overrides
+      overrides: overrides as FlatCommandMenuItem['overrides'],
       updatedAt: new Date().toISOString(),
-    } as FlatCommandMenuItem;
+    };
 
     if (updatedEditableProperties.availabilityObjectMetadataId !== undefined) {
       const { availabilityObjectMetadataUniversalIdentifier } =
