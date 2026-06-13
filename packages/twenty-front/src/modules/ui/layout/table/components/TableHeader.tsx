@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { type ComponentPropsWithoutRef } from 'react';
+import { type ComponentPropsWithoutRef, type Ref, forwardRef } from 'react';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 type TableHeaderProps = Omit<ComponentPropsWithoutRef<'div'>, 'onClick'> & {
@@ -27,10 +27,13 @@ const StyledTableHeader = styled.div<TableHeaderProps>`
   text-align: ${({ align }) => align ?? 'left'};
 `;
 
-export const TableHeader = (props: TableHeaderProps) => (
-  <StyledTableHeader
-    // oxlint-disable-next-line react/jsx-props-no-spreading
-    {...props}
-    data-table-header
-  />
+export const TableHeader = forwardRef(
+  (props: TableHeaderProps, ref: Ref<HTMLDivElement>) => (
+    <StyledTableHeader
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...props}
+      ref={ref}
+      data-table-header
+    />
+  ),
 );
