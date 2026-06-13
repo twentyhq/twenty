@@ -345,6 +345,7 @@ type CommandMenuItem {
   pageLayoutId: UUID
   universalIdentifier: UUID
   applicationId: UUID
+  isActive: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
 }

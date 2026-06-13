@@ -76,7 +76,7 @@
     "chalk": "^5.3.0",
     "chokidar": "^4.0.0",
     "commander": "^12.0.0",
-    "esbuild": "^0.25.0",
+    "esbuild": "^0.28.1",
     "graphql": "^16.8.1",
     "graphql-sse": "^2.5.4",
     "ink": "^6.8.0",
@@ -104,7 +104,7 @@
     "tsx": "^4.7.0",
     "twenty-shared": "workspace:*",
     "twenty-ui-deprecated": "workspace:*",
-    "vite": "^7.0.0",
+    "vite": "^8.0.0",
     "vite-plugin-dts": "^4.5.4",
     "vite-tsconfig-paths": "^4.2.1",
     "wait-on": "^9.0.10"

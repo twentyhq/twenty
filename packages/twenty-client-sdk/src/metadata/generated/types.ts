@@ -769,6 +769,9 @@ export default {
             "applicationId": [
                 3
             ],
+            "isActive": [
+                6
+            ],
             "createdAt": [
                 4
             ],
