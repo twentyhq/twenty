@@ -4,4 +4,5 @@ export const QUEUE_WORKER_OPTIONS: Partial<
   Record<MessageQueue, { concurrency: number }>
 > = {
   [MessageQueue.aiStreamQueue]: { concurrency: 20 },
+  [MessageQueue.logicFunctionQueue]: { concurrency: 10 },
 };

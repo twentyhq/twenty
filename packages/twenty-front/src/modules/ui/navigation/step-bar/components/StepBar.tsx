@@ -3,7 +3,7 @@ import React from 'react';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT } from 'twenty-ui-deprecated/theme-constants';
 import { Step, type StepProps } from './Step';
 
 const StyledContainer = styled.div`
@@ -32,7 +32,7 @@ export const StepBar = ({ activeStep, children }: StepBarProps) => {
         }
 
         // If the child is not a Step, return it as-is
-        // oxlint-disable-next-line @typescripttypescript/ban-ts-comment
+        // oxlint-disable-next-line typescript/ban-ts-comment
         // @ts-expect-error
         if (child.type?.displayName !== Step.displayName) {
           return child;

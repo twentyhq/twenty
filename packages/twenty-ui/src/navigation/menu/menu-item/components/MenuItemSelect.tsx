@@ -1,5 +1,3 @@
-import { styled } from '@linaria/react';
-
 import { isString } from '@sniptt/guards';
 import {
   IconCheck,
@@ -8,8 +6,14 @@ import {
   type IconComponent,
 } from '@ui/display';
 import { type ThemeColor } from '@ui/theme';
-import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
-import { useContext, type ReactNode } from 'react';
+import { ThemeContext } from '@ui/theme-constants';
+import { clsx } from 'clsx';
+import {
+  type ComponentPropsWithoutRef,
+  forwardRef,
+  useContext,
+  type ReactNode,
+} from 'react';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
   StyledMenuItemLabel,
@@ -17,47 +21,34 @@ import {
   StyledRightMenuItemContextualText,
 } from '../internals/components/StyledMenuItemBase';
 
-export const StyledMenuItemSelect = styled.div<{
+import styles from './MenuItemSelect.module.scss';
+
+// The deprecated Linaria styled component forwarded refs and arbitrary
+// native props, so the port preserves that contract.
+type StyledMenuItemSelectProps = {
   disabled?: boolean;
   focused?: boolean;
   isKeySelected?: boolean;
-}>`
-  --horizontal-padding: ${themeCssVariables.spacing[1]};
-  --vertical-padding: ${themeCssVariables.spacing[2]};
-  align-items: center;
-  border-radius: ${themeCssVariables.border.radius.sm};
-  display: flex;
-  flex-direction: row;
-  font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing[2]};
-  height: calc(32px - 2 * var(--vertical-padding));
-  justify-content: space-between;
-  padding: var(--vertical-padding) var(--horizontal-padding);
-  position: relative;
-  user-select: none;
-  width: calc(100% - 2 * var(--horizontal-padding));
-  transition: background 0.1s ease;
-  background: ${({ disabled, focused, isKeySelected }) => {
-    if (disabled === true) {
-      return 'inherit';
-    }
-    if (focused === true || isKeySelected === true) {
-      return themeCssVariables.background.transparent.light;
-    }
-    return '';
-  }};
-  &:hover {
-    background: ${({ disabled }) =>
-      disabled === true
-        ? 'inherit'
-        : themeCssVariables.background.transparent.light};
-  }
-  color: ${({ disabled }) =>
-    disabled === true
-      ? themeCssVariables.font.color.tertiary
-      : themeCssVariables.font.color.secondary};
-  cursor: ${({ disabled }) => (disabled === true ? 'default' : 'pointer')};
-`;
+} & ComponentPropsWithoutRef<'div'>;
+
+export const StyledMenuItemSelect = forwardRef<
+  HTMLDivElement,
+  StyledMenuItemSelectProps
+>(({ disabled, focused, isKeySelected, className, children, ...rest }, ref) => (
+  <div
+    ref={ref}
+    className={clsx(styles.menuItemSelect, className)}
+    data-disabled={disabled || undefined}
+    data-focused={focused || undefined}
+    data-key-selected={isKeySelected || undefined}
+    // oxlint-disable-next-line react/jsx-props-no-spreading
+    {...rest}
+  >
+    {children}
+  </div>
+));
+
+StyledMenuItemSelect.displayName = 'StyledMenuItemSelect';
 
 type MenuItemSelectProps = {
   LeftIcon?: IconComponent | null | undefined;

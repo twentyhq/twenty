@@ -16,7 +16,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { Temporal } from 'temporal-polyfill';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined, turnJSDateToPlainDate } from 'twenty-shared/utils';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
   'date-picker-month-and-year-dropdown-month-select';
@@ -313,7 +316,11 @@ type DatePickerPropsType = ReactDatePickerLibProps<
 
 const ReactDatePicker = lazy<ComponentType<DatePickerPropsType>>(() =>
   import('react-datepicker').then((mod) => ({
-    default: mod.default as unknown as ComponentType<DatePickerPropsType>,
+    // react-datepicker ships CJS; under vite 8 this dynamic import's `default`
+    // can be the module namespace ({ default: Component }) rather than the
+    // component itself, so unwrap a nested default when present.
+    default: ((mod.default as any)?.default ??
+      mod.default) as unknown as ComponentType<DatePickerPropsType>,
   })),
 );
 

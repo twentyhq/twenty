@@ -1,7 +1,7 @@
-import { IconLock } from 'twenty-ui/display';
+import { IconLock } from 'twenty-ui-deprecated/display';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledPillContainer = styled.span`
   align-items: center;

@@ -121,4 +121,16 @@ export class WorkflowTriggerResolver {
       workspace.id,
     );
   }
+
+  @Mutation(() => WorkflowRunDTO)
+  async retryWorkflowRun(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('workflowRunId', { type: () => UUIDScalarType })
+    workflowRunId: string,
+  ) {
+    return this.workflowTriggerWorkspaceService.retryWorkflowRun(
+      workflowRunId,
+      workspace.id,
+    );
+  }
 }

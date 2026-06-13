@@ -17,7 +17,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconInfoCircle, IconLockOpen } from 'twenty-ui/display';
+import { IconInfoCircle, IconLockOpen } from 'twenty-ui-deprecated/display';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -241,7 +241,7 @@ export const SettingsWorkspaceMember = () => {
           <ConfirmationModal
             modalInstanceId={DELETE_MEMBER_MODAL_ID}
             title={t`Remove member from workspace`}
-            subtitle={t`This action cannot be undone. This will permanently remove this member from this workspace and remove them from all their assignments.`}
+            subtitle={t`This action cannot be undone. This member will be removed and unassigned from their records. Their synced emails and calendars will stop syncing and be reassigned to you.`}
             onConfirmClick={handleDeleteMember}
             confirmButtonText={t`Remove member`}
             loading={isDeleting}

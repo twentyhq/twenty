@@ -2,7 +2,10 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { GraphWidgetTestWrapper } from '@/page-layout/widgets/graph/__tests__/GraphWidgetTestWrapper';
 import { GraphWidgetBarChart } from '@/page-layout/widgets/graph/graph-widget-bar-chart/components/GraphWidgetBarChart';
-import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
+import {
+  CatalogDecorator,
+  ComponentDecorator,
+} from 'twenty-ui-deprecated/testing';
 import { BarChartLayout } from '~/generated-metadata/graphql';
 
 const meta: Meta<typeof GraphWidgetBarChart> = {

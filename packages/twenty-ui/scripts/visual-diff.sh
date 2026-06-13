@@ -35,7 +35,15 @@ npx http-server storybook-static --port 6007 --silent &
 HTTP_PID=$!
 trap "kill $HTTP_PID 2>/dev/null || true" EXIT
 
-for i in $(seq 1 30); do curl -sf http://localhost:6007 > /dev/null 2>&1 && break; sleep 1; done
+SERVER_UP=false
+for i in $(seq 1 30); do
+  if curl -sf http://localhost:6007 > /dev/null 2>&1; then SERVER_UP=true; break; fi
+  sleep 1
+done
+if [[ "$SERVER_UP" != "true" ]]; then
+  echo "Storybook static server did not start on http://localhost:6007 after 30s" >&2
+  exit 1
+fi
 
 export STORYBOOK_URL="http://localhost:6007"
 npx vitest run

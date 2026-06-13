@@ -60,7 +60,7 @@ export class GraphqlQueryFilterFieldParser {
     outerQueryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>,
     objectNameSingular: string,
     key: string,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     filterValue: any,
     isFirst = false,
     useDirectTableReference = false,
@@ -112,7 +112,7 @@ export class GraphqlQueryFilterFieldParser {
       throw new GraphqlQueryRunnerException(
         `Invalid filter value for field ${key}. Expected non-empty array`,
         GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-        { userFriendlyMessage: msg`Invalid filter value: "${value}"` },
+        { userFriendlyMessage: msg`Invalid filter value: "${String(value)}"` },
       );
     }
     const { sql, params } = computeWhereConditionParts({
@@ -214,7 +214,7 @@ export class GraphqlQueryFilterFieldParser {
     queryBuilder: WhereExpressionBuilder,
     fieldMetadata: FlatFieldMetadata,
     objectNameSingular: string,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     fieldValue: any,
     isFirst = false,
     useDirectTableReference = false,
@@ -243,7 +243,7 @@ export class GraphqlQueryFilterFieldParser {
       const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
 
       const [[operator, value]] = Object.entries(
-        // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         subFieldFilter as Record<string, any>,
       );
 
@@ -254,7 +254,9 @@ export class GraphqlQueryFilterFieldParser {
         throw new GraphqlQueryRunnerException(
           `Invalid filter value for field ${subFieldKey}. Expected non-empty array`,
           GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-          { userFriendlyMessage: msg`Invalid filter value: "${value}"` },
+          {
+            userFriendlyMessage: msg`Invalid filter value: "${String(value)}"`,
+          },
         );
       }
 

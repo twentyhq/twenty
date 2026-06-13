@@ -1,11 +1,11 @@
 import { motion, useAnimation } from 'framer-motion';
 import { useEffect, useMemo } from 'react';
 
-interface CircularProgressBarProps {
+type CircularProgressBarProps = {
   size?: number;
   barWidth?: number;
   barColor?: string;
-}
+};
 
 export const CircularProgressBar = ({
   size = 50,

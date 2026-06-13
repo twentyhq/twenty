@@ -3,7 +3,7 @@ import { ADVANCED_SETTINGS_ANIMATION_DURATION } from '@/settings/constants/Advan
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { AnimatedExpandableContainer } from 'twenty-ui-deprecated/layout';
 
 const StyledContent = styled.div`
   width: 100%;

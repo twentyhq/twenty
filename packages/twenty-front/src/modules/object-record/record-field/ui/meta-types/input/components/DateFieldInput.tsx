@@ -5,7 +5,7 @@ import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useContext } from 'react';
-import { type Nullable } from 'twenty-ui/utilities';
+import { type Nullable } from 'twenty-ui-deprecated/utilities';
 
 export const DateFieldInput = () => {
   const { fieldValue, setDraftValue } = useDateField();

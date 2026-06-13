@@ -118,6 +118,9 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
           pointOfContactForOpportunities: {
             universalIdentifier: '20202020-ac02-4002-8002-ae0a1ea11213',
           },
+          listMemberships: {
+            universalIdentifier: 'f344eb7d-23c1-457a-a29b-32fd548b6aba',
+          },
         },
       },
       timeline: {
@@ -444,6 +447,27 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
       },
     },
   },
+  callRecordingRecordPage: {
+    universalIdentifier: 'fa475fb3-3fe4-4ab8-8320-495eba5b2e58',
+    tabs: {
+      home: {
+        universalIdentifier: 'f61be659-f6f1-4f1f-b3f9-113370740f1b',
+        widgets: {
+          fields: {
+            universalIdentifier: 'e490d2dd-5b69-4518-b867-9dde815f9cb6',
+          },
+        },
+      },
+      timeline: {
+        universalIdentifier: '9fb360fa-bc10-430c-8425-25d4e9da4386',
+        widgets: {
+          timeline: {
+            universalIdentifier: '9347305a-73de-4651-a116-c67b2706beda',
+          },
+        },
+      },
+    },
+  },
   messageChannelMessageAssociationRecordPage: {
     universalIdentifier: '20202020-a111-4011-8011-a5c4a5110001',
     tabs: {
@@ -536,6 +560,44 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
         widgets: {
           emailThread: {
             universalIdentifier: '20202020-d57e-44cb-b220-69a881feb9c3',
+          },
+        },
+      },
+    },
+  },
+  messageListRecordPage: {
+    universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f60',
+    tabs: {
+      home: {
+        universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f61',
+        widgets: {
+          fields: {
+            universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f62',
+          },
+          members: {
+            universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f63',
+          },
+        },
+      },
+    },
+  },
+  messageCampaignRecordPage: {
+    universalIdentifier: '8704b091-94bd-4f8f-82b1-e2f3eab92217',
+    tabs: {
+      home: {
+        universalIdentifier: 'f16785cd-a5b7-4ec1-8f20-ff8b80fb94b9',
+        widgets: {
+          fields: {
+            universalIdentifier: '886296e0-a5b6-4054-b450-ad624180c2ef',
+          },
+          messages: {
+            universalIdentifier: 'a33b43f4-72a1-476d-9372-30e82f450377',
+          },
+          recipients: {
+            universalIdentifier: 'b667f20a-1d38-453e-b888-3ecab00a1044',
+          },
+          list: {
+            universalIdentifier: 'b04fb8a5-f471-49a7-b82c-8434ea8276c5',
           },
         },
       },

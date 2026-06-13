@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT } from 'twenty-ui-deprecated/theme-constants';
 import { SpreadSheetImportModalCloseButton } from './SpreadSheetImportModalCloseButton';
 
 const StyledInnerContainer = styled.div`

@@ -5,7 +5,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { Temporal } from 'temporal-polyfill';
-import { type Nullable } from 'twenty-ui/utilities';
+import { type Nullable } from 'twenty-ui-deprecated/utilities';
 import { useDateTimeField } from '@/object-record/record-field/ui/meta-types/hooks/useDateTimeField';
 
 export const DateTimeFieldInput = () => {

@@ -31,9 +31,9 @@ import {
   ChipAccent,
   ChipSize,
   ChipVariant,
-} from 'twenty-ui/components';
-import { IconCalendarEvent } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/components';
+import { IconCalendarEvent } from 'twenty-ui-deprecated/display';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 type CalendarEventDetailsProps = {
@@ -170,7 +170,7 @@ export const CalendarEventDetails = ({
       objectPermissions,
       fieldMetadataItem: {
         id: fieldMetadataItem.id,
-        isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+        isUIEditable: fieldMetadataItem.isUIEditable ?? true,
         isCustom: fieldMetadataItem.isCustom ?? false,
       },
       fieldDefinition,

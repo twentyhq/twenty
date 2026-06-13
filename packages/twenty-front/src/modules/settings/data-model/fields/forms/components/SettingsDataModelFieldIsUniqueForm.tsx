@@ -6,7 +6,7 @@ import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsO
 import { canBeUnique } from '@/settings/data-model/fields/forms/utils/canBeUnique';
 import { t } from '@lingui/core/macro';
 import { type FieldMetadataType } from 'twenty-shared/types';
-import { IconKey } from 'twenty-ui/display';
+import { IconKey } from 'twenty-ui-deprecated/display';
 import { Toggle } from 'twenty-ui/input';
 
 type SettingsDataModelFieldIsUniqueFormValues = {

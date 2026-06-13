@@ -147,7 +147,7 @@ export class BillingWebhookSubscriptionService {
 
     await this.billingUsageService.flushAvailableCreditsFromCache(workspace.id);
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
-      'billingSubscription',
+      'currentBillingSubscription',
     ]);
 
     const shouldSuspend = this.shouldSuspendWorkspace(data);
@@ -197,7 +197,6 @@ export class BillingWebhookSubscriptionService {
     const suspendedStatuses = [
       SubscriptionStatus.Canceled,
       SubscriptionStatus.Unpaid,
-      SubscriptionStatus.Paused, // TODO: remove this once paused subscriptions are deprecated
     ];
 
     if (suspendedStatuses.includes(status)) {
@@ -208,7 +207,16 @@ export class BillingWebhookSubscriptionService {
     const hasTrialJustEnded =
       timeSinceTrialEnd > 0 && timeSinceTrialEnd < 60 * 60 * 24;
 
-    return hasTrialJustEnded && status === SubscriptionStatus.PastDue;
+    const canceledDuringTrial =
+      data.object.cancel_at_period_end &&
+      isDefined(data.object.canceled_at) &&
+      isDefined(data.object.trial_end) &&
+      data.object.canceled_at <= data.object.trial_end;
+
+    return (
+      hasTrialJustEnded &&
+      (status === SubscriptionStatus.PastDue || canceledDuringTrial)
+    );
   }
 
   async updateBillingSubscriptionItems(

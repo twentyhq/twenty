@@ -1,6 +1,4 @@
-import { styled } from '@linaria/react';
-import { useIsMobile } from '@ui/utilities';
-import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSeparator';
+import { clsx } from 'clsx';
 import { type MotionProps, motion } from 'framer-motion';
 import React, { useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
@@ -8,18 +6,23 @@ import { Link } from 'react-router-dom';
 import { Pill } from '@ui/components/Pill/Pill';
 import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 import { GRAY_SCALE_LIGHT } from '@ui/theme/constants/GrayScaleLight';
+import { useIsMobile } from '@ui/utilities';
+import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSeparator';
 import {
   type ButtonAccent,
   type ButtonPosition,
   type ButtonProps,
-  type ButtonSize,
   type ButtonVariant,
 } from './Button/Button';
+
+import styles from './AnimatedButton.module.scss';
 
 export type AnimatedButtonProps = ButtonProps &
   Pick<MotionProps, 'animate' | 'transition'> & {
     animatedSvg: React.ReactNode;
     soonLabel?: string;
+    // Renders a square icon-only button (width matches the size-based height).
+    square?: boolean;
   };
 
 type AnimatedButtonDynamicStyles = {
@@ -304,120 +307,6 @@ const computeAnimatedButtonDynamicStyles = (
   return result;
 };
 
-const StyledButton = styled.button<
-  Pick<
-    ButtonProps,
-    | 'fullWidth'
-    | 'size'
-    | 'position'
-    | 'justify'
-    | 'to'
-    | 'target'
-    | 'dataClickOutsideId'
-    | 'dataGloballyPreventClickOutside'
-  >
->`
-  align-items: center;
-  background: var(--abtn-bg);
-  border-color: var(--abtn-border-color);
-  border-width: var(--abtn-border-width);
-  box-shadow: var(--abtn-box-shadow);
-  color: var(--abtn-color);
-
-  &:hover {
-    background: var(--abtn-hover-bg);
-  }
-  &:active {
-    background: var(--abtn-active-bg);
-  }
-
-  text-decoration: none;
-  border-radius: ${({ position }) => {
-    switch (position) {
-      case 'left':
-        return `${themeCssVariables.border.radius.sm} 0px 0px ${themeCssVariables.border.radius.sm}`;
-      case 'right':
-        return `0px ${themeCssVariables.border.radius.sm} ${themeCssVariables.border.radius.sm} 0px`;
-      case 'middle':
-        return '0px';
-      case 'standalone':
-        return themeCssVariables.border.radius.sm;
-    }
-    return '';
-  }};
-  border-style: solid;
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-  display: flex;
-  flex-direction: row;
-  font-family: ${themeCssVariables.font.family};
-  font-weight: 500;
-  font-size: ${themeCssVariables.font.size.md};
-  gap: ${themeCssVariables.spacing[1]};
-  height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
-  justify-content: ${({ justify }) => justify ?? ''};
-  padding: 0 ${themeCssVariables.spacing[2]};
-
-  transition: background 0.1s ease;
-
-  white-space: nowrap;
-
-  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
-
-  &:focus {
-    outline: none;
-  }
-`;
-
-const StyledSoonPillContainer = styled.span`
-  display: flex;
-  margin-left: auto;
-`;
-
-const StyledSeparator = styled.div<{
-  buttonSize: ButtonSize;
-  accent: ButtonAccent;
-}>`
-  background: ${({ accent }) => {
-    switch (accent) {
-      case 'blue':
-        return themeCssVariables.border.color.blue;
-      case 'danger':
-        return themeCssVariables.border.color.danger;
-      default:
-        return themeCssVariables.font.color.light;
-    }
-  }};
-  height: ${({ buttonSize }) =>
-    buttonSize === 'small'
-      ? themeCssVariables.spacing[2]
-      : themeCssVariables.spacing[4]};
-  margin: 0;
-  width: 1px;
-`;
-
-const StyledShortcutLabel = styled.div<{
-  variant: ButtonVariant;
-  accent: ButtonAccent;
-}>`
-  color: ${({ variant, accent }) => {
-    switch (accent) {
-      case 'blue':
-        return themeCssVariables.border.color.blue;
-      case 'danger':
-        return variant === 'primary'
-          ? themeCssVariables.border.color.danger
-          : themeCssVariables.color.red8;
-      default:
-        return themeCssVariables.font.color.light;
-    }
-  }};
-  font-weight: ${themeCssVariables.font.weight.medium};
-`;
-
-const StyledMotion = styled(motion.div)`
-  display: flex;
-`;
-
 export const AnimatedButton = ({
   className,
   Icon,
@@ -428,6 +317,7 @@ export const AnimatedButton = ({
   inverted = false,
   size = 'medium',
   accent = 'default',
+  square = false,
   position = 'standalone',
   soon = false,
   disabled = false,
@@ -450,7 +340,7 @@ export const AnimatedButton = ({
   const isDisabled = soon || disabled;
 
   const dynamicStyles = useMemo(() => {
-    const s = computeAnimatedButtonDynamicStyles(
+    const computedStyles = computeAnimatedButtonDynamicStyles(
       variant,
       inverted,
       accent,
@@ -459,28 +349,40 @@ export const AnimatedButton = ({
       position,
     );
     return {
-      '--abtn-bg': s.background,
-      '--abtn-border-color': s.borderColor,
-      '--abtn-border-width': s.borderWidthOverride || undefined,
-      '--abtn-box-shadow': s.boxShadow,
-      '--abtn-color': s.color,
-      '--abtn-hover-bg': s.hoverBackground,
-      '--abtn-active-bg': s.activeBackground,
+      '--abtn-bg': computedStyles.background,
+      '--abtn-border-color': computedStyles.borderColor,
+      '--abtn-border-width': computedStyles.borderWidthOverride || undefined,
+      '--abtn-box-shadow': computedStyles.boxShadow,
+      '--abtn-color': computedStyles.color,
+      '--abtn-hover-bg': computedStyles.hoverBackground,
+      '--abtn-active-bg': computedStyles.activeBackground,
     } as React.CSSProperties;
   }, [variant, inverted, accent, isDisabled, focus, position]);
 
-  const ButtonComponent = to ? Link : 'button';
+  // Replaces the legacy Linaria `as` polymorphism: react-router Link when a
+  // `to` is provided, a native button otherwise. Typed as any to forward all
+  // props untyped, exactly like the legacy `as` prop did.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const ButtonComponent: any = to ? Link : 'button';
 
   return (
-    <StyledButton
-      as={ButtonComponent}
-      fullWidth={fullWidth}
-      size={size}
-      position={position}
+    <ButtonComponent
+      className={clsx(
+        styles.button,
+        styles[size],
+        square && styles.square,
+        fullWidth && styles.fullWidth,
+        className,
+      )}
+      data-position={position}
+      data-disabled={isDisabled || undefined}
       disabled={isDisabled}
-      justify={justify}
-      className={className}
-      style={dynamicStyles}
+      style={
+        {
+          ...dynamicStyles,
+          '--abtn-justify': justify,
+        } as React.CSSProperties
+      }
       onClick={onClick}
       to={to}
       target={target}
@@ -490,29 +392,45 @@ export const AnimatedButton = ({
       data-globally-prevent-click-outside={dataGloballyPreventClickOutside}
     >
       {Icon && (
-        <StyledMotion animate={animate} transition={transition}>
+        <motion.div
+          className={styles.motion}
+          animate={animate}
+          transition={transition}
+        >
           <Icon size={theme.icon.size.sm} />
-        </StyledMotion>
+        </motion.div>
       )}
       {animatedSvg && (
-        <StyledMotion animate={animate} transition={transition}>
+        <motion.div
+          className={styles.motion}
+          animate={animate}
+          transition={transition}
+        >
           {animatedSvg}
-        </StyledMotion>
+        </motion.div>
       )}
       {title}
       {hotkeys && !isMobile && (
         <>
-          <StyledSeparator buttonSize={size} accent={accent} />
-          <StyledShortcutLabel variant={variant} accent={accent}>
+          <div
+            className={styles.separator}
+            data-size={size}
+            data-accent={accent}
+          />
+          <div
+            className={styles.shortcutLabel}
+            data-variant={variant}
+            data-accent={accent}
+          >
             {hotkeys.join(getOsShortcutSeparator())}
-          </StyledShortcutLabel>
+          </div>
         </>
       )}
       {soon && (
-        <StyledSoonPillContainer>
+        <span className={styles.soonPillContainer}>
           <Pill label={soonLabel} />
-        </StyledSoonPillContainer>
+        </span>
       )}
-    </StyledButton>
+    </ButtonComponent>
   );
 };

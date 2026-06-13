@@ -3,7 +3,10 @@ import { WorkflowEditActionFilter } from '@/workflow/workflow-steps/workflow-act
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 import { StepLogicalOperator, ViewFilterOperand } from 'twenty-shared/types';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import {
+  ComponentDecorator,
+  RouterDecorator,
+} from 'twenty-ui-deprecated/testing';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';

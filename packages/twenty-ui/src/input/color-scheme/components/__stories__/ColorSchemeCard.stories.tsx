@@ -1,17 +1,9 @@
-import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ComponentDecorator } from '@ui/testing';
-import { themeCssVariables } from '@ui/theme-constants';
 
 import { ColorSchemeCard } from '../ColorSchemeCard';
 
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  > * + * {
-    margin-left: ${themeCssVariables.spacing['4']};
-  }
-`;
+import styles from './ColorSchemeCard.stories.module.scss';
 
 const meta: Meta<typeof ColorSchemeCard> = {
   title: 'UI/Input/ColorScheme/ColorSchemeCard',
@@ -19,9 +11,9 @@ const meta: Meta<typeof ColorSchemeCard> = {
   decorators: [
     (Story) => {
       return (
-        <StyledContainer>
+        <div className={styles.container}>
           <Story />
-        </StyledContainer>
+        </div>
       );
     },
     ComponentDecorator,

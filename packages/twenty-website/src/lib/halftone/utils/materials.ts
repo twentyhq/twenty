@@ -446,7 +446,7 @@ const GLASS_ENVIRONMENT_INTENSITY_MULTIPLIER = 0.12;
 const GLASS_ENVIRONMENT_ZOOM = 1.55;
 const GLASS_TRANSMISSION_BACKGROUND = new THREE.Color(0x030303);
 const GLASS_TEXTURE_URLS = {
-  environment: '/halftone/materials/glass/environment.jpg',
+  environment: '/halftone/materials/glass/environment.webp',
 } as const;
 const MAX_TEXTURE_ANISOTROPY = 8;
 

@@ -20,8 +20,8 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
-import { IconCalendarX } from 'twenty-ui/display';
-import { MenuItemLeftContent } from 'twenty-ui/navigation';
+import { IconCalendarX } from 'twenty-ui-deprecated/display';
+import { MenuItemLeftContent } from 'twenty-ui-deprecated/navigation';
 
 import { useGetShiftedDateToSystemTimeZone } from '@/ui/input/components/internal/date/hooks/useGetShiftedDateToSystemTimeZone';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
@@ -34,7 +34,10 @@ export {
 } from '@/ui/input/components/internal/date/components/DatePicker';
 export { DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID } from '@/ui/input/components/internal/date/components/DateTimePickerHeader';
 
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledOuterWrapper = styled.div`
   align-items: flex-start;
@@ -350,7 +353,11 @@ type DatePickerPropsType = ReactDatePickerLibProps<
 
 const ReactDatePicker = lazy<ComponentType<DatePickerPropsType>>(() =>
   import('react-datepicker').then((mod) => ({
-    default: mod.default as unknown as ComponentType<DatePickerPropsType>,
+    // react-datepicker ships CJS; under vite 8 this dynamic import's `default`
+    // can be the module namespace ({ default: Component }) rather than the
+    // component itself, so unwrap a nested default when present.
+    default: ((mod.default as any)?.default ??
+      mod.default) as unknown as ComponentType<DatePickerPropsType>,
   })),
 );
 

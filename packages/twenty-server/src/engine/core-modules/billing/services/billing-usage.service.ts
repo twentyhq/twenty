@@ -3,14 +3,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { differenceInDays } from 'date-fns';
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { type BillingResourceCreditUsageDTO } from 'src/engine/core-modules/billing/dtos/billing-resource-credit-usage.dto';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -49,6 +52,7 @@ export class BillingUsageService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly clickHouseService: ClickHouseService,
     private readonly billingUsageCapService: BillingUsageCapService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   async canFeatureBeUsed(workspaceId: string): Promise<boolean> {
@@ -56,14 +60,14 @@ export class BillingUsageService {
       return true;
     }
 
-    const { billingSubscription } =
+    const { currentBillingSubscription } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'billingSubscription',
+        'currentBillingSubscription',
       ]);
 
     return (
-      isDefined(billingSubscription) &&
-      billingSubscription.status !== SubscriptionStatus.Canceled
+      currentBillingSubscription !== NO_BILLING_SUBSCRIPTION &&
+      currentBillingSubscription.status !== SubscriptionStatus.Canceled
     );
   }
 
@@ -285,11 +289,16 @@ export class BillingUsageService {
     workspaceId: string;
     usedCredits: number;
   }): Promise<number> {
-    const {
-      billingSubscription: { currentPeriodStart, currentPeriodEnd },
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'billingSubscription',
-    ]);
+    const { currentBillingSubscription } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'currentBillingSubscription',
+      ]);
+
+    if (currentBillingSubscription === NO_BILLING_SUBSCRIPTION) {
+      return 0;
+    }
+
+    const { currentPeriodStart, currentPeriodEnd } = currentBillingSubscription;
 
     const cachedAvailableCredits = await this.getAvailableCreditsFromCache(
       workspaceId,
@@ -348,10 +357,29 @@ export class BillingUsageService {
       return true;
     }
 
-    const { billingSubscription: subscription } =
+    const workspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      workspaceId,
+    );
+
+    if (
+      isDefined(workspace) &&
+      workspace.activationStatus === WorkspaceActivationStatus.SUSPENDED
+    ) {
+      return false;
+    }
+
+    const { currentBillingSubscription } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'billingSubscription',
+        'currentBillingSubscription',
       ]);
+
+    if (currentBillingSubscription === NO_BILLING_SUBSCRIPTION) {
+      return false;
+    }
+
+    const subscription = currentBillingSubscription;
+
     const cached = await this.getAvailableCreditsFromCache(
       subscription.workspaceId,
       subscription.currentPeriodStart,

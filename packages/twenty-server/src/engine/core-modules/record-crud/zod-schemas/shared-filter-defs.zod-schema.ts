@@ -217,6 +217,25 @@ export const PhonesFilterSchema = z
   })
   .optional();
 
+export const RichTextFilterSchema = z
+  .object({
+    markdown: z
+      .object({
+        eq: z.string().optional().describe('Equals'),
+        neq: z.string().optional().describe('Not equals'),
+        like: z.string().optional().describe('LIKE (% wildcard)'),
+        ilike: z
+          .string()
+          .optional()
+          .describe('ILIKE (% wildcard, case-insensitive)'),
+        startsWith: z.string().optional().describe('Starts with'),
+        endsWith: z.string().optional().describe('Ends with'),
+        is: NullCheckEnum.optional(),
+      })
+      .optional(),
+  })
+  .optional();
+
 export const CurrencyFilterSchema = z
   .object({
     amountMicros: z

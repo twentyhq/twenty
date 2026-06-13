@@ -19,11 +19,11 @@ import {
   IconPlus,
   IconRobot,
   IconSearch,
-} from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { MenuItemToggle } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { Section } from 'twenty-ui-deprecated/layout';
+import { MenuItemToggle } from 'twenty-ui-deprecated/navigation';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 

@@ -6,7 +6,7 @@ import {
   Chip,
   ChipVariant,
   LinkChip,
-} from 'twenty-ui/components';
+} from 'twenty-ui-deprecated/components';
 
 type MentionRecordChipProps = {
   recordId: string;

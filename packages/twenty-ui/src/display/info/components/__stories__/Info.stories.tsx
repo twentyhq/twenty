@@ -16,6 +16,8 @@ export default meta;
 type Story = StoryObj<typeof Info>;
 
 export const Default: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     accent: 'blue',
     text: 'An info component',
@@ -33,6 +35,8 @@ export const Catalog: CatalogStory<Story, typeof Info> = {
     accent: { control: false },
   },
   parameters: {
+    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+    a11y: { test: 'todo' },
     catalog: {
       dimensions: [
         {

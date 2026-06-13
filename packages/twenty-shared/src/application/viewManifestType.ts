@@ -74,6 +74,7 @@ export type ViewManifest = SyncableEntityOptions & {
   visibility?: ViewVisibility;
   openRecordIn?: ViewOpenRecordIn;
   mainGroupByFieldMetadataUniversalIdentifier?: string;
+  shouldHideEmptyGroups?: boolean;
   kanbanAggregateOperation?: AggregateOperations;
   kanbanAggregateOperationFieldMetadataUniversalIdentifier?: string;
   calendarLayout?: ViewCalendarLayout;

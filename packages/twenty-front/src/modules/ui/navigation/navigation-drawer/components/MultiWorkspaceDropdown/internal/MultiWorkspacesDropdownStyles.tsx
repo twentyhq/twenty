@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
-import { IconChevronDown } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconChevronDown } from 'twenty-ui-deprecated/display';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 export const StyledContainer = styled.div<{
   isNavigationDrawerExpanded: boolean;
@@ -15,6 +15,7 @@ export const StyledContainer = styled.div<{
   display: flex;
   gap: ${({ isNavigationDrawerExpanded }) =>
     isNavigationDrawerExpanded ? themeCssVariables.spacing[2] : '0'};
+  height: ${themeCssVariables.spacing[7]};
   max-width: 100%;
   min-width: 0;
   opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};

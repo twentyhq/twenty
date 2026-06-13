@@ -7,7 +7,7 @@ import {
 } from 'src/constants/summarize-person-recordings-universal-identifiers';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { useRecordId } from 'twenty-sdk/front-component';
-import { CoreApiClient } from 'twenty-sdk/clients';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-shared/utils';
 
 const SUMMARIZATION_SYSTEM_PROMPT = [

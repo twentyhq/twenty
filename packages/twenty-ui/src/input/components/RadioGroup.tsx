@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { type RadioProps } from './Radio';
 import { themeCssVariables } from '@ui/theme-constants';
+import { type RadioProps } from './Radio';
 
 type RadioGroupProps = React.PropsWithChildren & {
   value?: string;

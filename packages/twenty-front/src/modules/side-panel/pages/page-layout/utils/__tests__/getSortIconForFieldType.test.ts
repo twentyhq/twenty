@@ -6,7 +6,7 @@ import {
   IconSortDescending,
   IconSortDescendingLetters,
   IconSortDescendingNumbers,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 
 import { getSortIconForFieldType } from '@/side-panel/pages/page-layout/utils/getSortIconForFieldType';
 import { GraphOrderBy } from '~/generated-metadata/graphql';
