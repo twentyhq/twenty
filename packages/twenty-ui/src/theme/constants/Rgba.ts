@@ -2,8 +2,10 @@
 
 export const RGBA = (hex: string, alpha: number) => {
   const normalized = hex.replace(/^#/, '');
+  // Expand #RGB / #RGBA shorthand (3 or 4 chars) to its full form; longer
+  // values (6 or 8 chars) already carry full r/g/b channels.
   const expanded =
-    normalized.length < 6
+    normalized.length === 3 || normalized.length === 4
       ? normalized
           .split('')
           .map((channel) => channel + channel)
