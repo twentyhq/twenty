@@ -120,6 +120,86 @@ describe('transformAggregateRawValueIntoAggregateDisplayValue', () => {
     ).toBe('100,000,000');
   });
 
+  it('should return full currency value when the field format is set to full', () => {
+    const mockCurrencyFieldMetadataItem = {
+      ...mockCompanyEmployeesFieldMetadataItem,
+      type: FieldMetadataType.CURRENCY,
+      settings: { format: 'full' },
+    } as FieldMetadataItem;
+
+    expect(
+      transformAggregateRawValueIntoAggregateDisplayValue({
+        aggregateFieldMetadataItem: mockCurrencyFieldMetadataItem,
+        aggregateOperation: AggregateOperations.SUM,
+        aggregateRawValue: 230440000000,
+        dateFormat: DateFormat.DAY_FIRST,
+        timeFormat: TimeFormat.HOUR_24,
+        localeCatalog: enUS,
+        timeZone: 'UTC',
+      }),
+    ).toBe('230,440');
+  });
+
+  it('should return short currency value when the field format is set to short', () => {
+    const mockCurrencyFieldMetadataItem = {
+      ...mockCompanyEmployeesFieldMetadataItem,
+      type: FieldMetadataType.CURRENCY,
+      settings: { format: 'short' },
+    } as FieldMetadataItem;
+
+    expect(
+      transformAggregateRawValueIntoAggregateDisplayValue({
+        aggregateFieldMetadataItem: mockCurrencyFieldMetadataItem,
+        aggregateOperation: AggregateOperations.SUM,
+        aggregateRawValue: 230440000000,
+        dateFormat: DateFormat.DAY_FIRST,
+        timeFormat: TimeFormat.HOUR_24,
+        localeCatalog: enUS,
+        timeZone: 'UTC',
+      }),
+    ).toBe('230.4k');
+  });
+
+  it('should return short number value when the field type is shortNumber', () => {
+    const mockShortNumberFieldMetadataItem = {
+      ...mockCompanyEmployeesFieldMetadataItem,
+      type: FieldMetadataType.NUMBER,
+      settings: { type: 'shortNumber' },
+    } as FieldMetadataItem;
+
+    expect(
+      transformAggregateRawValueIntoAggregateDisplayValue({
+        aggregateFieldMetadataItem: mockShortNumberFieldMetadataItem,
+        aggregateOperation: AggregateOperations.SUM,
+        aggregateRawValue: 100000000,
+        dateFormat: DateFormat.DAY_FIRST,
+        timeFormat: TimeFormat.HOUR_24,
+        localeCatalog: enUS,
+        timeZone: 'UTC',
+      }),
+    ).toBe('100m');
+  });
+
+  it('should return full number value when the field type is number', () => {
+    const mockNumberFieldMetadataItem = {
+      ...mockCompanyEmployeesFieldMetadataItem,
+      type: FieldMetadataType.NUMBER,
+      settings: { type: 'number' },
+    } as FieldMetadataItem;
+
+    expect(
+      transformAggregateRawValueIntoAggregateDisplayValue({
+        aggregateFieldMetadataItem: mockNumberFieldMetadataItem,
+        aggregateOperation: AggregateOperations.SUM,
+        aggregateRawValue: 100000000,
+        dateFormat: DateFormat.DAY_FIRST,
+        timeFormat: TimeFormat.HOUR_24,
+        localeCatalog: enUS,
+        timeZone: 'UTC',
+      }),
+    ).toBe('100,000,000');
+  });
+
   it('should return correct DATE formatted value', () => {
     const mockDateFieldMetadataItem = {
       ...mockCompanyEmployeesFieldMetadataItem,
