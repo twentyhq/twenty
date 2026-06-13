@@ -23714,7 +23714,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:19.2.3":
+"@types/react-dom@npm:^19.2.0":
   version: 19.2.3
   resolution: "@types/react-dom@npm:19.2.3"
   peerDependencies:
@@ -23741,12 +23741,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:19.2.14":
-  version: 19.2.14
-  resolution: "@types/react@npm:19.2.14"
+"@types/react@npm:^19.2.0":
+  version: 19.2.17
+  resolution: "@types/react@npm:19.2.17"
   dependencies:
     csstype: "npm:^3.2.2"
-  checksum: 10c0/7d25bf41b57719452d86d2ac0570b659210402707313a36ee612666bf11275a1c69824f8c3ee1fdca077ccfe15452f6da8f1224529b917050eb2d861e52b59b7
+  checksum: 10c0/bc2c4af96b3e480604424de70d5ebda90c5f4b485df471858c0bc2d7d70364b606ec3c4d8579f94f01aa0c6c0591f56bcf14cba5689f5eea4b74250ccdc3a232
   languageName: node
   linkType: hard
 
@@ -48326,14 +48326,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:19.2.3":
-  version: 19.2.3
-  resolution: "react-dom@npm:19.2.3"
+"react-dom@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0, react-dom@npm:^19.2.0":
+  version: 19.2.7
+  resolution: "react-dom@npm:19.2.7"
   dependencies:
     scheduler: "npm:^0.27.0"
   peerDependencies:
-    react: ^19.2.3
-  checksum: 10c0/dc43f7ede06f46f3acc16ee83107c925530de9b91d1d0b3824583814746ff4c498ea64fd65cd83aba363205268adff52e2827c582634ae7b15069deaeabc4892
+    react: ^19.2.7
+  checksum: 10c0/970ff600f6e80d47d39e2f226f12f226173b3cba3382efc97c5f0cd663de9af38c7a4c11c213fb936094faeac83060d660247accaa96b752180d5b951b9cfecb
   languageName: node
   linkType: hard
 
@@ -48859,6 +48859,13 @@ __metadata:
   version: 19.2.3
   resolution: "react@npm:19.2.3"
   checksum: 10c0/094220b3ba3a76c1b668f972ace1dd15509b157aead1b40391d1c8e657e720c201d9719537375eff08f5e0514748c0319063392a6f000e31303aafc4471f1436
+  languageName: node
+  linkType: hard
+
+"react@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0, react@npm:^19.2.0":
+  version: 19.2.7
+  resolution: "react@npm:19.2.7"
+  checksum: 10c0/0bd0e2f1bbd4ba97561c6597bf8a5fec05e6476fe61e165c1065598d16668efc6715205599c94d3ddd49d36cb0f21cbf1b9bcc18ee840b805ce222c3e8d558ac
   languageName: node
   linkType: hard
 
@@ -54264,8 +54271,8 @@ __metadata:
     marked: "npm:^5.0.0"
     node-loader: "npm:^2.1.0"
     openai: "npm:^4.97.0"
-    react: "npm:^19.1.0"
-    react-dom: "npm:^19.1.0"
+    react: "npm:^19.2.0"
+    react-dom: "npm:^19.2.0"
     react-markdown: "npm:^10.1.0"
     style-loader: "npm:^3.3.4"
     zod: "npm:^3.25.76"
@@ -54302,8 +54309,8 @@ __metadata:
     "@react-email/components": "npm:^0.5.3"
     "@react-email/ui": "npm:6.5.0"
     "@tiptap/core": "npm:^3.4.2"
-    "@types/react": "npm:^19"
-    "@types/react-dom": "npm:^19"
+    "@types/react": "npm:^19.2.0"
+    "@types/react-dom": "npm:^19.2.0"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
     "@vitejs/plugin-react-swc": "npm:^4.3.1"
     react-email: "npm:6.5.0"
@@ -54545,8 +54552,8 @@ __metadata:
     "@prettier/sync": "npm:^0.5.2"
     "@sniptt/guards": "npm:^0.2.0"
     "@types/node": "npm:^24.0.0"
-    "@types/react": "npm:^19.0.0"
-    "@types/react-dom": "npm:^19.0.0"
+    "@types/react": "npm:^19.2.0"
+    "@types/react-dom": "npm:^19.2.0"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
     "@vitest/coverage-v8": "npm:^4.0.18"
     axios: "npm:^1.16.0"
@@ -54561,8 +54568,8 @@ __metadata:
     jsonc-parser: "npm:^3.2.0"
     preact: "npm:^10.28.3"
     prettier: "npm:^3.1.1"
-    react: "npm:^19.0.0"
-    react-dom: "npm:^19.0.0"
+    react: "npm:^19.2.0"
+    react-dom: "npm:^19.2.0"
     rollup-plugin-dts: "npm:^6.4.1"
     tinyglobby: "npm:^0.2.15"
     ts-morph: "npm:^25.0.0"
@@ -54768,8 +54775,8 @@ __metadata:
     postal-mime: "npm:^2.6.1"
     prettier: "npm:^3.1.1"
     psl: "npm:^1.9.0"
-    react: "npm:19.2.3"
-    react-dom: "npm:19.2.3"
+    react: "npm:^19.2.0"
+    react-dom: "npm:^19.2.0"
     redis: "npm:^4.7.0"
     reflect-metadata: "npm:0.2.2"
     rimraf: "npm:^5.0.5"
@@ -54997,8 +55004,8 @@ __metadata:
     "@tabler/icons-react": "npm:^3.41.1"
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^20"
-    "@types/react": "npm:^19"
-    "@types/react-dom": "npm:^19"
+    "@types/react": "npm:^19.2.0"
+    "@types/react-dom": "npm:^19.2.0"
     "@types/serialize-javascript": "npm:^5.0.4"
     "@types/three": "npm:^0.183.1"
     "@wyw-in-js/babel-preset": "npm:^0.8.1"
@@ -55009,8 +55016,8 @@ __metadata:
     jest-environment-node: "npm:^29.4.1"
     next: "npm:^16.2.6"
     next-with-linaria: "npm:^1.3.0"
-    react: "npm:19.2.3"
-    react-dom: "npm:19.2.3"
+    react: "npm:^19.2.0"
+    react-dom: "npm:^19.2.0"
     react-markdown: "npm:^10.1.0"
     remark-gfm: "npm:^4.0.1"
     serialize-javascript: "npm:^7.0.5"
