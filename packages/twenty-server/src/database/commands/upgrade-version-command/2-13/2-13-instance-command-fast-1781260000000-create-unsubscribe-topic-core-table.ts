@@ -7,10 +7,10 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 export class CreateUnsubscribeTopicCoreTableFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TYPE "core"."unsubscribeTopic_visibility_enum" AS ENUM ('PUBLIC', 'PRIVATE')`,
+      `DO $$ BEGIN CREATE TYPE "core"."unsubscribeTopic_visibility_enum" AS ENUM ('PUBLIC', 'PRIVATE'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
     );
     await queryRunner.query(
-      `CREATE TABLE "core"."unsubscribeTopic" (
+      `CREATE TABLE IF NOT EXISTS "core"."unsubscribeTopic" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
@@ -24,15 +24,15 @@ export class CreateUnsubscribeTopicCoreTableFastInstanceCommand implements FastI
       )`,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_UNSUBSCRIBE_TOPIC_WORKSPACE_ID"
+      `CREATE INDEX IF NOT EXISTS "IDX_UNSUBSCRIBE_TOPIC_WORKSPACE_ID"
         ON "core"."unsubscribeTopic" ("workspaceId")`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP TABLE "core"."unsubscribeTopic"`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "core"."unsubscribeTopic"`);
     await queryRunner.query(
-      `DROP TYPE "core"."unsubscribeTopic_visibility_enum"`,
+      `DROP TYPE IF EXISTS "core"."unsubscribeTopic_visibility_enum"`,
     );
   }
 }

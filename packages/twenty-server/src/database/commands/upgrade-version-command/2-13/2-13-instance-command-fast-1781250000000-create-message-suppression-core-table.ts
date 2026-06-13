@@ -7,13 +7,13 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 export class CreateMessageSuppressionCoreTableFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TYPE "core"."messageSuppression_reason_enum" AS ENUM ('BOUNCE', 'COMPLAINT', 'UNSUBSCRIBE')`,
+      `DO $$ BEGIN CREATE TYPE "core"."messageSuppression_reason_enum" AS ENUM ('BOUNCE', 'COMPLAINT', 'UNSUBSCRIBE'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
     );
     await queryRunner.query(
-      `CREATE TYPE "core"."messageSuppression_source_enum" AS ENUM ('WEBHOOK', 'SYSTEM')`,
+      `DO $$ BEGIN CREATE TYPE "core"."messageSuppression_source_enum" AS ENUM ('WEBHOOK', 'SYSTEM'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
     );
     await queryRunner.query(
-      `CREATE TABLE "core"."messageSuppression" (
+      `CREATE TABLE IF NOT EXISTS "core"."messageSuppression" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
@@ -28,28 +28,28 @@ export class CreateMessageSuppressionCoreTableFastInstanceCommand implements Fas
       )`,
     );
     await queryRunner.query(
-      `CREATE UNIQUE INDEX "IDX_MESSAGE_SUPPRESSION_GLOBAL_UNIQUE"
+      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_MESSAGE_SUPPRESSION_GLOBAL_UNIQUE"
         ON "core"."messageSuppression" ("workspaceId", "emailAddress")
         WHERE "unsubscribeTopicId" IS NULL`,
     );
     await queryRunner.query(
-      `CREATE UNIQUE INDEX "IDX_MESSAGE_SUPPRESSION_TOPIC_UNIQUE"
+      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_MESSAGE_SUPPRESSION_TOPIC_UNIQUE"
         ON "core"."messageSuppression" ("workspaceId", "emailAddress", "unsubscribeTopicId")
         WHERE "unsubscribeTopicId" IS NOT NULL`,
     );
     await queryRunner.query(
-      `CREATE INDEX "IDX_MESSAGE_SUPPRESSION_WORKSPACE_ID"
+      `CREATE INDEX IF NOT EXISTS "IDX_MESSAGE_SUPPRESSION_WORKSPACE_ID"
         ON "core"."messageSuppression" ("workspaceId")`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP TABLE "core"."messageSuppression"`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "core"."messageSuppression"`);
     await queryRunner.query(
-      `DROP TYPE "core"."messageSuppression_reason_enum"`,
+      `DROP TYPE IF EXISTS "core"."messageSuppression_reason_enum"`,
     );
     await queryRunner.query(
-      `DROP TYPE "core"."messageSuppression_source_enum"`,
+      `DROP TYPE IF EXISTS "core"."messageSuppression_source_enum"`,
     );
   }
 }
