@@ -1,0 +1,220 @@
+{
+  "sections": [
+    {
+      "scheme": "muted",
+      "rhythm": "hero",
+      "paddingTop": "48px",
+      "paddingBottom": "48px",
+      "background": "rgb(244, 244, 244)",
+      "followsSameScheme": false
+    },
+    {
+      "scheme": "light",
+      "rhythm": "section",
+      "paddingTop": "64px",
+      "paddingBottom": "64px",
+      "background": "rgb(255, 255, 255)",
+      "followsSameScheme": false
+    },
+    {
+      "scheme": "light",
+      "rhythm": "section",
+      "paddingTop": "0px",
+      "paddingBottom": "64px",
+      "background": "rgb(255, 255, 255)",
+      "followsSameScheme": true
+    },
+    {
+      "scheme": "light",
+      "rhythm": "section",
+      "paddingTop": "0px",
+      "paddingBottom": "64px",
+      "background": "rgb(255, 255, 255)",
+      "followsSameScheme": true
+    },
+    {
+      "scheme": "muted",
+      "rhythm": "section",
+      "paddingTop": "64px",
+      "paddingBottom": "64px",
+      "background": "rgb(244, 244, 244)",
+      "followsSameScheme": false
+    },
+    {
+      "scheme": "light",
+      "rhythm": "section",
+      "paddingTop": "64px",
+      "paddingBottom": "64px",
+      "background": "rgb(255, 255, 255)",
+      "followsSameScheme": false
+    },
+    {
+      "scheme": "muted",
+      "rhythm": "flush",
+      "paddingTop": "0px",
+      "paddingBottom": "0px",
+      "background": "rgb(244, 244, 244)",
+      "followsSameScheme": false
+    },
+    {
+      "scheme": "muted",
+      "rhythm": "spacious",
+      "paddingTop": "120px",
+      "paddingBottom": "120px",
+      "background": "rgb(244, 244, 244)",
+      "followsSameScheme": true
+    },
+    {
+      "scheme": "dark",
+      "rhythm": "spacious",
+      "paddingTop": "120px",
+      "paddingBottom": "120px",
+      "background": "rgb(28, 28, 28)",
+      "followsSameScheme": false
+    }
+  ],
+  "eyebrows": [
+    {
+      "label": "The Problem.",
+      "gapToHeading": 24,
+      "centered": true
+    },
+    {
+      "label": "Stop settling for trade-offs.",
+      "gapToHeading": 24,
+      "centered": true
+    },
+    {
+      "label": "In production.",
+      "gapToHeading": 24,
+      "centered": true
+    },
+    {
+      "label": "They are the real sales",
+      "gapToHeading": 56,
+      "centered": true
+    },
+    {
+      "label": "Any Questions?",
+      "gapToHeading": 24,
+      "centered": true
+    }
+  ],
+  "headings": [
+    {
+      "tag": "H1",
+      "text": "Build your Enterprise CRM at AI Speed",
+      "fontSize": "60px",
+      "fontWeight": "300",
+      "textAlign": "center"
+    },
+    {
+      "tag": "H2",
+      "text": "A custom CRM gives your org an edge, but building one comes ",
+      "fontSize": "48px",
+      "fontWeight": "300",
+      "textAlign": "start"
+    },
+    {
+      "tag": "H2",
+      "text": "Assemble, iterate and adapt a robust CRM, that's quick to fl",
+      "fontSize": "60px",
+      "fontWeight": "300",
+      "textAlign": "start"
+    },
+    {
+      "tag": "H2",
+      "text": "Make your GTM team happy with a CRM they'll love",
+      "fontSize": "60px",
+      "fontWeight": "300",
+      "textAlign": "center"
+    },
+    {
+      "tag": "H2",
+      "text": "Dev teams power company-wide change with Twenty",
+      "fontSize": "80px",
+      "fontWeight": "300",
+      "textAlign": "center"
+    },
+    {
+      "tag": "H2",
+      "text": "The flexibility is really what made the difference. Our need",
+      "fontSize": "48px",
+      "fontWeight": "300",
+      "textAlign": "start"
+    },
+    {
+      "tag": "H2",
+      "text": "We didn't want to patch over the problem. We wanted to build",
+      "fontSize": "48px",
+      "fontWeight": "300",
+      "textAlign": "start"
+    },
+    {
+      "tag": "H2",
+      "text": "It is just such a nicer experience than dealing with a Sales",
+      "fontSize": "48px",
+      "fontWeight": "300",
+      "textAlign": "start"
+    },
+    {
+      "tag": "H2",
+      "text": "Stop fighting custom. Start building, with Twenty",
+      "fontSize": "60px",
+      "fontWeight": "300",
+      "textAlign": "start"
+    }
+  ],
+  "visualSlots": [
+    "diamond",
+    "familiar-interface",
+    "faq",
+    "fast-path",
+    "flash",
+    "footer-backdrop",
+    "hero-bridge",
+    "hourglass",
+    "live-data",
+    "lock",
+    "money",
+    "monolith",
+    "spaceship",
+    "stepper-backdrop",
+    "target"
+  ],
+  "ctas": [
+    {
+      "label": "Get started",
+      "href": "https://app.twenty.com/welcome"
+    },
+    {
+      "label": "",
+      "href": "/customers/w3villa"
+    },
+    {
+      "label": "",
+      "href": "/customers/alternative-partners"
+    },
+    {
+      "label": "",
+      "href": "/customers/act-education"
+    },
+    {
+      "label": "Read the case",
+      "href": "/customers/w3villa"
+    },
+    {
+      "label": "Read the case",
+      "href": "/customers/act-education"
+    },
+    {
+      "label": "Read the case",
+      "href": "/customers/netzero"
+    },
+    {
+      "label": "Get started",
+      "href": "https://app.twenty.com/welcome"
+    }
+  ],
+  "sectionCount": 9
+}

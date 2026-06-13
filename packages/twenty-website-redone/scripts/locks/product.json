@@ -1,0 +1,182 @@
+{
+  "sections": [
+    {
+      "scheme": "light",
+      "rhythm": "section",
+      "paddingTop": "64px",
+      "paddingBottom": "64px",
+      "background": "rgb(255, 255, 255)",
+      "followsSameScheme": false
+    },
+    {
+      "scheme": "light",
+      "rhythm": "section",
+      "paddingTop": "0px",
+      "paddingBottom": "64px",
+      "background": "rgb(255, 255, 255)",
+      "followsSameScheme": true
+    },
+    {
+      "scheme": "light",
+      "rhythm": "section",
+      "paddingTop": "0px",
+      "paddingBottom": "64px",
+      "background": "rgb(255, 255, 255)",
+      "followsSameScheme": true
+    },
+    {
+      "scheme": "muted",
+      "rhythm": "section",
+      "paddingTop": "64px",
+      "paddingBottom": "64px",
+      "background": "rgb(244, 244, 244)",
+      "followsSameScheme": false
+    },
+    {
+      "scheme": "light",
+      "rhythm": "section",
+      "paddingTop": "64px",
+      "paddingBottom": "64px",
+      "background": "rgb(255, 255, 255)",
+      "followsSameScheme": false
+    },
+    {
+      "scheme": "dark",
+      "rhythm": "spacious",
+      "paddingTop": "120px",
+      "paddingBottom": "120px",
+      "background": "rgb(28, 28, 28)",
+      "followsSameScheme": false
+    }
+  ],
+  "eyebrows": [
+    {
+      "label": "Core Features",
+      "gapToHeading": 24,
+      "centered": true
+    },
+    {
+      "label": "Stop settling for trade-offs.",
+      "gapToHeading": 24,
+      "centered": true
+    },
+    {
+      "label": "Customization",
+      "gapToHeading": 24,
+      "centered": true
+    },
+    {
+      "label": "Try it live",
+      "gapToHeading": 24,
+      "centered": true
+    },
+    {
+      "label": "Any Questions?",
+      "gapToHeading": 24,
+      "centered": true
+    }
+  ],
+  "headings": [
+    {
+      "tag": "H1",
+      "text": "A CRM for teams that move fast",
+      "fontSize": "60px",
+      "fontWeight": "300",
+      "textAlign": "center"
+    },
+    {
+      "tag": "H2",
+      "text": "...with AI that actually helps you work faster",
+      "fontSize": "60px",
+      "fontWeight": "300",
+      "textAlign": "center"
+    },
+    {
+      "tag": "H1",
+      "text": "A CRM for teams that move fast",
+      "fontSize": "60px",
+      "fontWeight": "300",
+      "textAlign": "center"
+    },
+    {
+      "tag": "H2",
+      "text": "...with AI that actually helps you work faster",
+      "fontSize": "60px",
+      "fontWeight": "300",
+      "textAlign": "center"
+    },
+    {
+      "tag": "H2",
+      "text": "A CRM for teams that move fast",
+      "fontSize": "60px",
+      "fontWeight": "300",
+      "textAlign": "center"
+    },
+    {
+      "tag": "H2",
+      "text": "...with AI that actually helps you work faster",
+      "fontSize": "60px",
+      "fontWeight": "300",
+      "textAlign": "center"
+    },
+    {
+      "tag": "H2",
+      "text": "Everything you need, out of the box",
+      "fontSize": "60px",
+      "fontWeight": "300",
+      "textAlign": "center"
+    },
+    {
+      "tag": "H2",
+      "text": "A modern CRM with an intuitive interface",
+      "fontSize": "60px",
+      "fontWeight": "300",
+      "textAlign": "start"
+    },
+    {
+      "tag": "H2",
+      "text": "Go the extra mile with no-code",
+      "fontSize": "60px",
+      "fontWeight": "300",
+      "textAlign": "start"
+    },
+    {
+      "tag": "H2",
+      "text": "A demo worth a thousand words",
+      "fontSize": "60px",
+      "fontWeight": "300",
+      "textAlign": "center"
+    },
+    {
+      "tag": "H2",
+      "text": "Stop fighting custom. Start building, with Twenty",
+      "fontSize": "60px",
+      "fontWeight": "300",
+      "textAlign": "start"
+    }
+  ],
+  "visualSlots": ["eye", "faq", "footer-backdrop", "singleScreen", "speed"],
+  "ctas": [
+    {
+      "label": "Get started",
+      "href": "https://app.twenty.com/welcome"
+    },
+    {
+      "label": "Get started",
+      "href": "https://app.twenty.com/welcome"
+    },
+    {
+      "label": "Get started",
+      "href": "https://app.twenty.com/welcome"
+    },
+    {
+      "label": "Try Twenty Cloud",
+      "href": "https://app.twenty.com/welcome"
+    },
+    {
+      "label": "Get started",
+      "href": "https://app.twenty.com/welcome"
+    }
+  ],
+  "sectionCount": 6
+}
