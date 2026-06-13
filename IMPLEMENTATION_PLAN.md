@@ -296,7 +296,7 @@ erDiagram
 1. ✅ Fork and clone Twenty repo
 2. ✅ Create directory structure
 3. ✅ Define Project entity schema
-4. ⏳ **Install dependencies**: `cd /Users/bashir/workspace/02-Design/twenty-real-estate && yarn install`
+4. ⏳ **Install dependencies**: `cd twenty-real-estate && yarn install`
 5. ⏳ **Run locally**: `yarn start`
 6. ⏳ **Create Property entity** (similar to Project)
 7. ⏳ **Test multi-company** isolation
@@ -314,8 +314,8 @@ erDiagram
 
 ### Documentation
 - **Twenty Docs**: https://docs.twenty.com
-- **Twent GitHub**: https://github.com/twentyhq/twenty
-- **This Project**: `/Users/bashir/workspace/02-Design/twenty-real-estate/`
+- **Twenty GitHub**: https://github.com/twentyhq/twenty
+- **This Project**: `twenty-real-estate/`
 
 ### Key Contacts
 - **Project Lead**: Ahmed Hassan (ahmed@example.com)

@@ -38,7 +38,7 @@ docker --version
 
 ```bash
 # 1. Install dependencies
-cd /Users/bashir/workspace/02-Design/twenty-real-estate
+cd twenty-real-estate
 yarn install
 
 # 2. Start PostgreSQL and Redis via Docker (optional but recommended)

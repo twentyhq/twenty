@@ -67,10 +67,10 @@ npx nx start twenty-server   # Backend API (port 3000)
 
 ```bash
 # Initialize database
-npx nx run twenty-server:database:init:prod
+npx nx run twenty-server:database:init
 
 # Run migrations
-npx nx run twenty-server:database:migrate:prod
+npx nx run twenty-server:database:migrate
 
 # Reset database (WARNING: destroys all data)
 npx nx database:reset twenty-server

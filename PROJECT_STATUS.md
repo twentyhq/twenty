@@ -11,7 +11,7 @@
 ### Repository Setup
 - ✅ Forked Twenty CRM from `twentyhq/twenty`
 - ✅ Created fork at: https://github.com/ahmedhabibo/twenty-real-estate
-- ✅ Cloned to local: `/Users/bashir/workspace/02-Design/twenty-real-estate/`
+- ✅ Cloned to local: `<local-path>/twenty-real-estate/`
 - ✅ Configured Git remotes:
   - `origin` → upstream (twentyhq/twenty)
   - `fork` → your fork (ahmedhabibo/twenty-real-estate)
