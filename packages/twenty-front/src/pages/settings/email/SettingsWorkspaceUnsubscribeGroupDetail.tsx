@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useMessageTopics } from '@/activities/emails/hooks/useMessageTopics';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
@@ -13,7 +14,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SettingsPath } from 'twenty-shared/types';
+import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { MessageTopicVisibility } from '~/generated-metadata/graphql';
 import { H2Title, IconEye, IconTrash } from 'twenty-ui-deprecated/display';
@@ -33,6 +34,9 @@ export const SettingsWorkspaceUnsubscribeGroupDetail = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const { updateMessageTopic } = useUpdateMessageTopic();
   const { deleteMessageTopic, loading: deleting } = useDeleteMessageTopic();
+  const isEmailGroupEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
+  );
 
   const messageTopic = messageTopics.find(
     (topic) => topic.id === messageTopicId,
@@ -40,19 +44,24 @@ export const SettingsWorkspaceUnsubscribeGroupDetail = () => {
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  // Seed the editable fields once per topic — a refetch (e.g. after a
+  // blur-persist of the other field) must not clobber a field the user is
+  // still editing, so re-seed only when the topic id actually changes.
+  const [seededTopicId, setSeededTopicId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isDefined(messageTopic)) {
+    if (isDefined(messageTopic) && seededTopicId !== messageTopic.id) {
+      setSeededTopicId(messageTopic.id);
       setName(messageTopic.name ?? '');
       setDescription(messageTopic.description ?? '');
     }
-  }, [messageTopic]);
+  }, [messageTopic, seededTopicId]);
 
   if (loading) {
     return <SettingsSkeletonLoader />;
   }
 
-  if (!isDefined(messageTopic)) {
+  if (!isEmailGroupEnabled || !isDefined(messageTopic)) {
     return <NotFound />;
   }
 

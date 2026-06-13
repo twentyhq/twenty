@@ -2,17 +2,19 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback, useState } from 'react';
 
 import { useCreateMessageTopic } from '@/settings/unsubscribe-groups/hooks/useCreateMessageTopic';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { SettingsPath } from 'twenty-shared/types';
+import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { MessageTopicVisibility } from '~/generated-metadata/graphql';
 import { H2Title, IconEye } from 'twenty-ui-deprecated/display';
 import { Card, Section } from 'twenty-ui-deprecated/layout';
+import { NotFound } from '~/pages/not-found/NotFound';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsWorkspaceNewUnsubscribeGroup = () => {
@@ -20,6 +22,9 @@ export const SettingsWorkspaceNewUnsubscribeGroup = () => {
   const navigate = useNavigateSettings();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { createMessageTopic, loading } = useCreateMessageTopic();
+  const isEmailGroupEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
+  );
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -59,6 +64,10 @@ export const SettingsWorkspaceNewUnsubscribeGroup = () => {
     enqueueErrorSnackBar,
     t,
   ]);
+
+  if (!isEmailGroupEnabled) {
+    return <NotFound />;
+  }
 
   return (
     <SettingsPageLayout
