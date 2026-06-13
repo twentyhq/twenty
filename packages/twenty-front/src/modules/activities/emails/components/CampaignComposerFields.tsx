@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 
 import { useCampaignAudiencePreview } from '@/activities/emails/hooks/useCampaignAudiencePreview';
 import { type useCampaignComposerState } from '@/activities/emails/hooks/useCampaignComposerState';
+import { useMessageTopics } from '@/activities/emails/hooks/useMessageTopics';
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
@@ -62,6 +63,7 @@ export const CampaignComposerFields = ({
   campaignState,
 }: CampaignComposerFieldsProps) => {
   const { channels } = useMyMessageChannels();
+  const { messageTopics } = useMessageTopics();
 
   const audiencePreview = useCampaignAudiencePreview({
     listId: campaignState.listId,
@@ -75,6 +77,11 @@ export const CampaignComposerFields = ({
     .map((channel) => channel.connectedAccount?.handle)
     .filter(isDefined)
     .map((handle) => ({ label: handle, value: handle }));
+
+  const topicOptions: SelectOption<string>[] = messageTopics.map((topic) => ({
+    label: topic.name ?? t`Untitled group`,
+    value: topic.id,
+  }));
 
   return (
     <StyledFieldsContainer>
@@ -96,11 +103,16 @@ export const CampaignComposerFields = ({
       {isDefined(audiencePreview) && (
         <StyledHint>{buildAudienceHint(audiencePreview)}</StyledHint>
       )}
-      <FormSingleRecordPicker
+      <Select
+        dropdownId="campaign-composer-unsubscribe-group"
         label={t`Unsubscribe group`}
-        objectNameSingulars={['messageTopic']}
-        defaultValue={campaignState.messageTopicId}
-        onChange={campaignState.setMessageTopicId}
+        fullWidth
+        value={campaignState.messageTopicId ?? ''}
+        options={topicOptions}
+        emptyOption={{ label: t`No group`, value: '' }}
+        onChange={(value) =>
+          campaignState.setMessageTopicId(value === '' ? null : value)
+        }
       />
       <StyledHint>
         {t`The unsubscribe group this email belongs to. Recipients who opted out of it are skipped, and the unsubscribe link is scoped to it.`}

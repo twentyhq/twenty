@@ -30,6 +30,8 @@ export enum SettingsPath {
   WorkspaceEmail = 'email',
   EmailGroupChannelDetail = 'email/email-group/:messageChannelId',
   NewEmailGroupChannel = 'email/new-email-group',
+  NewUnsubscribeGroup = 'email/new-unsubscribe-group',
+  UnsubscribeGroupDetail = 'email/unsubscribe-group/:messageTopicId',
   PublicDomain = 'applications/public-domain',
   NewApprovedAccessDomain = 'security/approved-access-domain/new',
   Community = 'community',
