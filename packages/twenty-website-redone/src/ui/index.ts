@@ -1,4 +1,5 @@
 export { MarkedDivider } from './marked-divider';
+export { Modal, type ModalProps } from './modal';
 export { NotchedCardShape } from './notched-card-shape';
 export { GuideCrosshair, type GuideCrosshairProps } from './guide-crosshair';
 export { HeadingPair } from './heading-pair';
