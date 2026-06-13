@@ -1,17 +1,19 @@
+import { FICTION_PALETTE } from './fiction-palette';
+
 // The product stepper's authored light-window fiction (the no-code
 // editors floating over the dark dash stage) — verbatim from the old
 // stepper-visual-tokens plus the per-visual inks that lived inline.
 export const PRODUCT_STEPPER_SCENE = {
   shell: {
-    background: '#ffffff',
-    cardBackground: '#fcfcfc',
+    background: FICTION_PALETTE.white,
+    cardBackground: FICTION_PALETTE.cardBackground,
     text: '#333',
     textSecondary: '#6b7280',
     textTertiary: '#9ca3af',
-    textMuted: '#666',
-    borderMedium: '#ebebeb',
-    borderStrong: '#d6d6d6',
-    borderLight: '#f1f1f1',
+    textMuted: FICTION_PALETTE.inkMuted,
+    borderMedium: FICTION_PALETTE.borderMedium,
+    borderStrong: FICTION_PALETTE.borderStrong,
+    borderLight: FICTION_PALETTE.borderLight,
     borderSubtle: 'rgba(0, 0, 0, 0.08)',
     font: "'Inter', sans-serif",
     shadowSm: '0 1px 6px rgba(0, 0, 0, 0.05)',
@@ -20,7 +22,11 @@ export const PRODUCT_STEPPER_SCENE = {
     headerBorder: '#c6d4f9',
   },
   badges: {
-    standard: { background: '#f0f4ff', border: '#e6edfe', text: '#3e63dd' },
+    standard: {
+      background: '#f0f4ff',
+      border: '#e6edfe',
+      text: FICTION_PALETTE.accent,
+    },
     custom: { background: '#fff1e7', border: '#ffe8d7', text: '#f76808' },
   },
   entityTones: {
@@ -32,29 +38,29 @@ export const PRODUCT_STEPPER_SCENE = {
   workflow: {
     green: '#30a46c',
     amber: '#946800',
-    gray: '#999',
+    gray: FICTION_PALETTE.inkFaint,
     tealBackground: '#e7f9f5',
     grayBackground: '#f9f9f9',
   },
   navTints: {
-    gray: '#ebebeb',
+    gray: FICTION_PALETTE.borderMedium,
     indigo: '#d9e2fc',
     peach: '#ffdcc3',
     red: '#fdd8d8',
     teal: '#c7ebe5',
-    yellow: '#fef2a4',
+    yellow: FICTION_PALETTE.yellowWash,
   },
   layout: {
-    accent: '#3e63dd',
+    accent: FICTION_PALETTE.accent,
     panelAccent: '#4a38f5',
     glass: 'rgba(255, 255, 255, 0.9)',
     dragWash: 'rgba(59, 130, 246, 0.04)',
     chipWash: 'rgba(0, 0, 0, 0.02)',
     saveBorder: 'rgba(255, 255, 255, 0.7)',
-    fieldInk: '#666',
+    fieldInk: FICTION_PALETTE.inkMuted,
     navInk: '#555',
-    eyeInk: '#999',
-    eyeHiddenInk: '#b3b3b3',
+    eyeInk: FICTION_PALETTE.inkFaint,
+    eyeHiddenInk: FICTION_PALETTE.inkDisabled,
     letterSInk: '#35290f',
     stripeSInk: '#333',
   },

@@ -127,7 +127,7 @@ function walk(directory) {
       !ROW_GAP_MULTI_AXIS_FILES.has(posixPath)
     ) {
       failures.push(
-        `src/${relativePath}: row-gap in a flow stack — use '& > * + * { margin-top: … }' (or allowlist the file if the layout is genuinely multi-axis).`,
+        `src/${relativePath}: row-gap in a flow stack — use '& > * + * { margin-top: … }' (mind: unlike gap, the margin shifts absolutely-positioned non-first children; allowlist the file if the layout is genuinely multi-axis).`,
       );
     }
 

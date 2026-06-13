@@ -1,19 +1,20 @@
 import { fontFamily } from '../font-family';
+import { FICTION_PALETTE } from './fiction-palette';
 
 // The fast-path feature scene's authored inks, ported verbatim from the
 // old ThreeCards visual.
 export const FAST_PATH_SCENE = {
   colors: {
     black: '#111111',
-    border: '#ebebeb',
-    borderLight: '#f1f1f1',
-    muted: '#b3b3b3',
-    mutedStrong: '#999999',
+    border: FICTION_PALETTE.borderMedium,
+    borderLight: FICTION_PALETTE.borderLight,
+    muted: FICTION_PALETTE.inkDisabled,
+    mutedStrong: FICTION_PALETTE.inkFaint,
     offWhite: '#f8f7f2',
-    panel: '#ffffff',
+    panel: FICTION_PALETTE.white,
     shadow: 'rgba(241, 241, 241, 0.9)',
     surfaceHover: 'rgba(0, 0, 0, 0.04)',
-    textSecondary: '#666666',
+    textSecondary: FICTION_PALETTE.inkMuted,
     transparentMedium: 'rgba(0, 0, 0, 0.08)',
     shortcutKeyBorder: '#dddddd',
     panelShadow:
@@ -27,7 +28,7 @@ export const FAST_PATH_SCENE = {
     silver: '#bbb5ac',
     smoke: '#a6a095',
     softWhite: '#f7f4ee',
-    white: '#ffffff',
+    white: FICTION_PALETTE.white,
   },
   cursorInk: {
     fill: 'white',
@@ -39,12 +40,12 @@ export const FAST_PATH_SCENE = {
   backdrop: {
     activeHoverX: 0.16,
     activeHoverY: 0.46,
-    dashColor: '#777777',
+    dashColor: FICTION_PALETTE.inkSoft,
     flipImageY: true,
     halftonePower: 0.3,
     halftoneScalePx: 28,
     halftoneWidth: 0.3,
-    hoverDashColor: '#777777',
+    hoverDashColor: FICTION_PALETTE.inkSoft,
     hoverHalftoneRadius: 0.45,
     hoverLightIntensity: 0.85,
     hoverLightRadius: 0.6,

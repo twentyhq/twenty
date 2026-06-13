@@ -1,4 +1,5 @@
 import { PALETTE } from '../palette';
+import { FICTION_PALETTE } from './fiction-palette';
 
 // The product feature tiles' authored dark-window fiction (a distinct
 // stage from the light product mockup — its own inks, verbatim from the
@@ -23,7 +24,7 @@ export const PRODUCT_FEATURE_SCENE = {
     text: 'rgba(255, 255, 255, 0.88)',
     textSecondary: 'rgba(255, 255, 255, 0.55)',
     textTertiary: 'rgba(255, 255, 255, 0.35)',
-    accent: '#3e63dd',
+    accent: FICTION_PALETTE.accent,
     font: "'Inter', sans-serif",
     rowHoverWash: 'rgba(255, 255, 255, 0.02)',
   },
@@ -49,7 +50,7 @@ export const PRODUCT_FEATURE_SCENE = {
     strikethrough: 'rgba(255, 255, 255, 0.4)',
     buttonBorder: 'rgba(255, 255, 255, 0.15)',
     buttonBorderHover: 'rgba(255, 255, 255, 0.3)',
-    inkOnFill: '#ffffff',
+    inkOnFill: FICTION_PALETTE.white,
     taskCircleFill: '#3b82f6',
     taskCircleFillHover: '#2563eb',
     avatarInks: {

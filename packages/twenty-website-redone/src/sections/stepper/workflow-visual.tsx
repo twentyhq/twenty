@@ -1,12 +1,8 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import {
-  useRef,
-  useState,
-  type PointerEvent as ReactPointerEvent,
-} from 'react';
 
+import { usePointerDragPositions } from '@/platform/motion';
 import { PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-scene';
 
 import { DrawEdge } from './draw-edge';
@@ -180,65 +176,22 @@ function IteratorLoopPath({ positions }: { positions: NodePositions }) {
 // and the iteration label track them, and the active step beat ticks
 // check badges down the sequence while the slide is active.
 export function WorkflowVisual({ active }: { active: boolean }) {
-  const [positions, setPositions] = useState<NodePositions>(() =>
+  const {
+    canvasHandlers,
+    draggingId: dragging,
+    handlePointerDown,
+    positions,
+  } = usePointerDragPositions(() =>
     Object.fromEntries(
       WORKFLOW_GRAPH.nodes.map((node) => [node.id, { x: node.x, y: node.y }]),
     ),
   );
-  const [dragging, setDragging] = useState<string | null>(null);
-  const dragStartRef = useRef<{
-    nodeId: string;
-    positionX: number;
-    positionY: number;
-    startX: number;
-    startY: number;
-  } | null>(null);
 
   const activeNodes = useWorkflowAnimation(active);
 
-  const handlePointerDown = (
-    nodeId: string,
-    event: ReactPointerEvent<HTMLDivElement>,
-  ) => {
-    event.preventDefault();
-    event.currentTarget.setPointerCapture(event.pointerId);
-    const position = positions[nodeId];
-    dragStartRef.current = {
-      nodeId,
-      startX: event.clientX,
-      startY: event.clientY,
-      positionX: position.x,
-      positionY: position.y,
-    };
-    setDragging(nodeId);
-  };
-
-  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (!dragStartRef.current) {
-      return;
-    }
-    const { nodeId, startX, startY, positionX, positionY } =
-      dragStartRef.current;
-    const deltaX = event.clientX - startX;
-    const deltaY = event.clientY - startY;
-    setPositions((previous) => ({
-      ...previous,
-      [nodeId]: { x: positionX + deltaX, y: positionY + deltaY },
-    }));
-  };
-
-  const handlePointerUp = () => {
-    dragStartRef.current = null;
-    setDragging(null);
-  };
-
   return (
     <Shell active={active} title="Workflow Runs">
-      <Canvas
-        onPointerCancel={handlePointerUp}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-      >
+      <Canvas {...canvasHandlers}>
         <SvgLayer>
           {WORKFLOW_GRAPH.edges.map((edge) => {
             const fromPosition = positions[edge.from];

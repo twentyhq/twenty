@@ -1,4 +1,5 @@
 import { fontFamily } from '../font-family';
+import { FICTION_PALETTE } from './fiction-palette';
 import { CURSOR_GLYPH_SHADOW } from '../cursor-glyph';
 
 // The live-data feature scene's authored inks and motion, ported
@@ -14,18 +15,18 @@ export const LIVE_DATA_SCENE = {
     blueSurface: '#f5f9fd',
     green: '#18794e',
     greenSurface: '#ddf3e4',
-    muted: '#999999',
+    muted: FICTION_PALETTE.inkFaint,
     orange: '#ffb08d',
     purple: '#7869ff',
     text: '#333333',
-    textLight: '#b3b3b3',
-    textSecondary: '#666666',
-    white: '#ffffff',
+    textLight: FICTION_PALETTE.inkDisabled,
+    textSecondary: FICTION_PALETTE.inkMuted,
+    white: FICTION_PALETTE.white,
     yellow: '#fff6a5',
     panelBorderRing: '0 0 0 1px rgba(241, 241, 241, 0.9)',
     panelActiveShadow:
       '0 0 0 1px rgba(241, 241, 241, 0.9), 0 14px 28px rgba(15, 23, 42, 0.08)',
-    rowBorder: '#f1f1f1',
+    rowBorder: FICTION_PALETTE.borderLight,
     softWash: 'rgba(0, 0, 0, 0.04)',
     filterPressedInset: 'inset 0 0 0 1px rgba(25, 97, 237, 0.08)',
     filterPressedWash: 'rgba(25, 97, 237, 0.08)',
@@ -44,12 +45,12 @@ export const LIVE_DATA_SCENE = {
   backdrop: {
     activeHoverX: 0.16,
     activeHoverY: 0.46,
-    dashColor: '#777777',
+    dashColor: FICTION_PALETTE.inkSoft,
     flipImageY: false,
     halftonePower: -0.2,
     halftoneScalePx: 28,
     halftoneWidth: 0.4,
-    hoverDashColor: '#777777',
+    hoverDashColor: FICTION_PALETTE.inkSoft,
     hoverHalftoneRadius: 0.45,
     hoverLightIntensity: 0.85,
     hoverLightRadius: 0.6,

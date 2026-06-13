@@ -144,6 +144,13 @@ export function LayoutVisual({ active }: { active: boolean }) {
   };
 
   const handleDragEnd = () => setDraggingId(null);
+  // A stolen capture (alt-tab, gestures) must settle the drag too; the
+  // event bubbles up from the captured row.
+  const handleLostCapture = () => {
+    if (draggingId) {
+      setDraggingId(null);
+    }
+  };
   const sections = [...new Set(fields.map((field) => field.section))];
 
   return (
@@ -234,6 +241,7 @@ export function LayoutVisual({ active }: { active: boolean }) {
       </ActionsBar>
 
       <RightPanel
+        onLostPointerCapture={handleLostCapture}
         onPointerCancel={handleDragEnd}
         onPointerMove={handleDragMove}
         onPointerUp={handleDragEnd}

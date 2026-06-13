@@ -1,4 +1,5 @@
 import { fontFamily } from '../font-family';
+import { FICTION_PALETTE } from './fiction-palette';
 
 type TonePair = { background: string; color: string };
 
@@ -11,7 +12,7 @@ const TOKEN_TONES: Record<string, TonePair> = {
   purple: { background: '#ede9fe', color: '#6d28d9' },
   red: { background: '#fee2e2', color: '#b91c1c' },
   teal: { background: '#ccfbf1', color: '#0f766e' },
-  yellow: { background: '#fef2a4', color: '#35290f' },
+  yellow: { background: FICTION_PALETTE.yellowWash, color: '#35290f' },
 };
 
 // The familiar-interface feature scene's authored inks and motion,
@@ -20,28 +21,28 @@ const TOKEN_TONES: Record<string, TonePair> = {
 export const FAMILIAR_INTERFACE_SCENE = {
   colors: {
     backdrop: '#1b1b1b',
-    border: '#ebebeb',
-    borderLight: '#f1f1f1',
-    borderStrong: '#d6d6d6',
-    boardSurface: '#ffffff',
+    border: FICTION_PALETTE.borderMedium,
+    borderLight: FICTION_PALETTE.borderLight,
+    borderStrong: FICTION_PALETTE.borderStrong,
+    boardSurface: FICTION_PALETTE.white,
     boardRing: '0 0 0 1px rgba(255, 255, 255, 0.6)',
-    cardSurface: '#fcfcfc',
+    cardSurface: FICTION_PALETTE.cardBackground,
     cardShadow:
       '0px 0px 3.677px rgba(0, 0, 0, 0.08), 0px 1.839px 3.677px rgba(0, 0, 0, 0.04)',
     activeCardBorder: '#b5ccff',
     activeCardSurface: '#e8f1ff',
     imageAreaSurface: '#f5f5f3',
-    laneCount: '#999999',
+    laneCount: FICTION_PALETTE.inkFaint,
     laneLabelPink: '#d6409f',
     laneLabelPinkSurface: '#fce5f3',
     laneLabelPurple: '#8e4ec6',
     laneLabelPurpleSurface: '#ede9fe',
-    textLight: '#b3b3b3',
+    textLight: FICTION_PALETTE.inkDisabled,
     textPrimary: '#333333',
-    textSecondary: '#666666',
-    textTertiary: '#999999',
+    textSecondary: FICTION_PALETTE.inkMuted,
+    textTertiary: FICTION_PALETTE.inkFaint,
     checkboxStroke: '#C2C2C2',
-    ratingEmptyStar: '#d6d6d6',
+    ratingEmptyStar: FICTION_PALETTE.borderStrong,
     softWash: 'rgba(0, 0, 0, 0.04)',
   },
   tokenTones: TOKEN_TONES,
@@ -57,12 +58,12 @@ export const FAMILIAR_INTERFACE_SCENE = {
   backdrop: {
     activeHoverX: 0.16,
     activeHoverY: 0.46,
-    dashColor: '#777777',
+    dashColor: FICTION_PALETTE.inkSoft,
     flipImageY: true,
     halftonePower: -0.3,
     halftoneScalePx: 18,
     halftoneWidth: 0.3,
-    hoverDashColor: '#777777',
+    hoverDashColor: FICTION_PALETTE.inkSoft,
     hoverHalftoneRadius: 0.45,
     hoverLightIntensity: 0.85,
     hoverLightRadius: 0.6,

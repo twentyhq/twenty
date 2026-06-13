@@ -1,12 +1,9 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import {
-  useRef,
-  useState,
-  type PointerEvent as ReactPointerEvent,
-} from 'react';
+import { useState } from 'react';
 
+import { usePointerDragPositions } from '@/platform/motion';
 import { PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-scene';
 
 import { DATA_MODEL_GRAPH, type EntityConnection } from './data-model-data';
@@ -184,7 +181,12 @@ function getCardCenter(
 // SVG connectors track their centers (positions stay React state because
 // the edges are rendered paths).
 export function DataModelVisual({ active }: { active: boolean }) {
-  const [positions, setPositions] = useState<EntityPositions>(() =>
+  const {
+    canvasHandlers,
+    draggingId: dragging,
+    handlePointerDown,
+    positions,
+  } = usePointerDragPositions(() =>
     Object.fromEntries(
       DATA_MODEL_GRAPH.entities.map((entity) => [
         entity.id,
@@ -193,61 +195,13 @@ export function DataModelVisual({ active }: { active: boolean }) {
     ),
   );
   const [hoveredEntity, setHoveredEntity] = useState<string | null>(null);
-  const [dragging, setDragging] = useState<string | null>(null);
-  const dragStartRef = useRef<{
-    entityId: string;
-    positionX: number;
-    positionY: number;
-    startX: number;
-    startY: number;
-  } | null>(null);
-
-  const handlePointerDown = (
-    entityId: string,
-    event: ReactPointerEvent<HTMLDivElement>,
-  ) => {
-    event.preventDefault();
-    event.currentTarget.setPointerCapture(event.pointerId);
-    const position = positions[entityId];
-    dragStartRef.current = {
-      entityId,
-      startX: event.clientX,
-      startY: event.clientY,
-      positionX: position.x,
-      positionY: position.y,
-    };
-    setDragging(entityId);
-  };
-
-  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (!dragStartRef.current) {
-      return;
-    }
-    const { entityId, startX, startY, positionX, positionY } =
-      dragStartRef.current;
-    const deltaX = event.clientX - startX;
-    const deltaY = event.clientY - startY;
-    setPositions((previous) => ({
-      ...previous,
-      [entityId]: { x: positionX + deltaX, y: positionY + deltaY },
-    }));
-  };
-
-  const handlePointerUp = () => {
-    dragStartRef.current = null;
-    setDragging(null);
-  };
 
   const isConnectionHighlighted = (connection: EntityConnection) =>
     hoveredEntity === connection.from || hoveredEntity === connection.to;
 
   return (
     <Shell active={active} title="Data model">
-      <Canvas
-        onPointerCancel={handlePointerUp}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-      >
+      <Canvas {...canvasHandlers}>
         <SvgLayer>
           {DATA_MODEL_GRAPH.connections.map((connection) => (
             <DrawEdge

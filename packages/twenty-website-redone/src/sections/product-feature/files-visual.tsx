@@ -3,6 +3,7 @@
 import { styled } from '@linaria/react';
 import {
   type PointerEvent as ReactPointerEvent,
+  useEffect,
   useRef,
   useState,
 } from 'react';
@@ -250,6 +251,26 @@ export function FilesVisual({ active: _active }: { active: boolean }) {
     }
   };
 
+  // A stolen capture settles the drag; unmounting mid-drag releases it.
+  const handleLostCapture = () => {
+    dragStateRef.current = null;
+    setDraggedNumber(null);
+    activePointerRef.current = null;
+  };
+
+  useEffect(() => {
+    const root = rootRef.current;
+    return () => {
+      if (activePointerRef.current !== null && root) {
+        try {
+          root.releasePointerCapture(activePointerRef.current);
+        } catch {
+          // The pointer was already released by the browser.
+        }
+      }
+    };
+  }, []);
+
   const files = FILES.map((file, fileNumber) => ({ file, fileNumber }));
   const draggedFile = draggedNumber === null ? null : FILES[draggedNumber];
   const dragOrigin = dragStateRef.current;
@@ -257,6 +278,7 @@ export function FilesVisual({ active: _active }: { active: boolean }) {
   return (
     <Root
       ref={rootRef}
+      onLostPointerCapture={handleLostCapture}
       onPointerCancel={releasePointer}
       onPointerMove={handlePointerMove}
       onPointerUp={(event) => {
