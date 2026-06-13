@@ -5,6 +5,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { CreateEmailingDomainInput } from 'src/engine/core-modules/emailing-domain/dtos/create-emailing-domain.input';
 import { EmailingDomainDTO } from 'src/engine/core-modules/emailing-domain/dtos/emailing-domain.dto';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -30,12 +31,12 @@ export class EmailingDomainResolver {
   @Mutation(() => EmailingDomainDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
   async createEmailingDomain(
-    @Args('domain') domain: string,
+    @Args('input') input: CreateEmailingDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<EmailingDomainDTO> {
     const emailingDomain =
       await this.emailingDomainService.createEmailingDomain(
-        domain,
+        input.domain.trim().toLowerCase(),
         currentWorkspace.id,
       );
 
