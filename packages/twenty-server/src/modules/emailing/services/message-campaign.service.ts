@@ -138,13 +138,6 @@ export class MessageCampaignService {
       );
     }
 
-    const messageChannel =
-      await this.messageChannelMetadataService.getOrCreateEmailGroupChannel({
-        fromAddress,
-        userWorkspaceId,
-        workspaceId,
-      });
-
     const { campaignId, recipients, skipped } =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
@@ -174,6 +167,13 @@ export class MessageCampaignService {
           };
         },
       );
+
+    const messageChannel =
+      await this.messageChannelMetadataService.getOrCreateEmailGroupChannel({
+        fromAddress,
+        userWorkspaceId,
+        workspaceId,
+      });
 
     await this.messageQueueService.add<MaterializeCampaignJobData>(
       MATERIALIZE_CAMPAIGN_JOB,
