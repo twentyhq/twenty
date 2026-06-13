@@ -803,6 +803,23 @@ export type CalendarConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
+export type CampaignAudiencePreviewDto = {
+  __typename?: 'CampaignAudiencePreviewDTO';
+  duplicateEmails: Scalars['Int']['output'];
+  globallyUnsubscribed: Scalars['Int']['output'];
+  sendable: Scalars['Int']['output'];
+  topicUnsubscribed: Scalars['Int']['output'];
+  totalMembers: Scalars['Int']['output'];
+  withoutEmail: Scalars['Int']['output'];
+};
+
+export type CampaignSkippedRecipientsDto = {
+  __typename?: 'CampaignSkippedRecipientsDTO';
+  deduped: Scalars['Int']['output'];
+  noEmail: Scalars['Int']['output'];
+  overCap: Scalars['Int']['output'];
+};
+
 export type Captcha = {
   __typename?: 'Captcha';
   provider?: Maybe<CaptchaDriverType>;
@@ -869,8 +886,8 @@ export type ClientConfig = {
   isClickHouseConfigured: Scalars['Boolean']['output'];
   isCloudflareIntegrationEnabled: Scalars['Boolean']['output'];
   isConfigVariablesInDbEnabled: Scalars['Boolean']['output'];
-  isEmailGroupEnabled: Scalars['Boolean']['output'];
   isEmailVerificationRequired: Scalars['Boolean']['output'];
+  isEmailingDomainInDemoMode: Scalars['Boolean']['output'];
   isGoogleCalendarEnabled: Scalars['Boolean']['output'];
   isGoogleMessagingEnabled: Scalars['Boolean']['output'];
   isImapSmtpCaldavEnabled: Scalars['Boolean']['output'];
@@ -1047,6 +1064,10 @@ export type CreateEmailGroupChannelOutput = {
   messageChannel: MessageChannel;
 };
 
+export type CreateEmailingDomainInput = {
+  domain: Scalars['String']['input'];
+};
+
 export type CreateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
@@ -1203,6 +1224,12 @@ export type CreateSkillInput = {
   id?: InputMaybe<Scalars['UUID']['input']>;
   label: Scalars['String']['input'];
   name: Scalars['String']['input'];
+};
+
+export type CreateUnsubscribeTopicInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  visibility?: InputMaybe<UnsubscribeTopicVisibility>;
 };
 
 export type CreateViewFieldGroupInput = {
@@ -1494,6 +1521,7 @@ export enum EngineComponentKey {
   ADD_TO_FAVORITES = 'ADD_TO_FAVORITES',
   ASK_AI = 'ASK_AI',
   CANCEL_DASHBOARD_LAYOUT = 'CANCEL_DASHBOARD_LAYOUT',
+  COMPOSE_CAMPAIGN = 'COMPOSE_CAMPAIGN',
   COMPOSE_EMAIL = 'COMPOSE_EMAIL',
   CREATE_NEW_RECORD = 'CREATE_NEW_RECORD',
   CREATE_NEW_VIEW = 'CREATE_NEW_VIEW',
@@ -2432,6 +2460,7 @@ export type Mutation = {
   createPublicDomain: PublicDomain;
   createSAMLIdentityProvider: SetupSso;
   createSkill: Skill;
+  createUnsubscribeTopic: UnsubscribeTopic;
   createView: View;
   createViewField: ViewField;
   createViewFieldGroup: ViewFieldGroup;
@@ -2464,6 +2493,7 @@ export type Mutation = {
   deleteSSOIdentityProvider: DeleteSso;
   deleteSkill: Skill;
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethod;
+  deleteUnsubscribeTopic: Scalars['Boolean']['output'];
   deleteUser: User;
   deleteUserFromWorkspace: UserWorkspace;
   deleteView: Scalars['Boolean']['output'];
@@ -2526,6 +2556,7 @@ export type Mutation = {
   sendEmail: SendEmailOutput;
   sendEmailViaEmailingDomain: SendEmailViaDomainOutput;
   sendInvitations: SendInvitations;
+  sendMessageCampaign: SendMessageCampaignOutputDto;
   setEnterpriseKey: EnterpriseLicenseInfoDto;
   setResourceCreditSubscriptionPrice: BillingUpdate;
   signIn: AvailableWorkspacesAndAccessTokens;
@@ -2570,6 +2601,7 @@ export type Mutation = {
   updatePasswordViaResetToken: InvalidatePassword;
   updatePublicDomain: PublicDomain;
   updateSkill: Skill;
+  updateUnsubscribeTopic: UnsubscribeTopic;
   updateUserEmail: Scalars['Boolean']['output'];
   updateView: View;
   updateViewField: ViewField;
@@ -2697,7 +2729,7 @@ export type MutationCreateEmailGroupChannelArgs = {
 
 
 export type MutationCreateEmailingDomainArgs = {
-  domain: Scalars['String']['input'];
+  input: CreateEmailingDomainInput;
 };
 
 
@@ -2807,6 +2839,11 @@ export type MutationCreateSamlIdentityProviderArgs = {
 
 export type MutationCreateSkillArgs = {
   input: CreateSkillInput;
+};
+
+
+export type MutationCreateUnsubscribeTopicArgs = {
+  input: CreateUnsubscribeTopicInput;
 };
 
 
@@ -2962,6 +2999,11 @@ export type MutationDeleteSkillArgs = {
 
 export type MutationDeleteTwoFactorAuthenticationMethodArgs = {
   twoFactorAuthenticationMethodId: Scalars['UUID']['input'];
+};
+
+
+export type MutationDeleteUnsubscribeTopicArgs = {
+  id: Scalars['String']['input'];
 };
 
 
@@ -3266,6 +3308,11 @@ export type MutationSendInvitationsArgs = {
 };
 
 
+export type MutationSendMessageCampaignArgs = {
+  input: SendMessageCampaignInput;
+};
+
+
 export type MutationSetEnterpriseKeyArgs = {
   enterpriseKey: Scalars['String']['input'];
 };
@@ -3481,6 +3528,11 @@ export type MutationUpdatePublicDomainArgs = {
 
 export type MutationUpdateSkillArgs = {
   input: UpdateSkillInput;
+};
+
+
+export type MutationUpdateUnsubscribeTopicArgs = {
+  input: UpdateUnsubscribeTopicInput;
 };
 
 
@@ -4080,6 +4132,11 @@ export type PlaceDetailsResult = {
   street?: Maybe<Scalars['String']['output']>;
 };
 
+export type PreviewMessageCampaignAudienceInput = {
+  listId: Scalars['String']['input'];
+  unsubscribeTopicId?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type PublicApplicationRegistration = {
   __typename?: 'PublicApplicationRegistration';
   id: Scalars['UUID']['output'];
@@ -4241,8 +4298,11 @@ export type Query = {
   objectRecordCounts: Array<ObjectRecordCount>;
   objects: ObjectConnection;
   pieChartData: PieChartData;
+  previewMessageCampaignAudience: CampaignAudiencePreviewDto;
   skill?: Maybe<Skill>;
   skills: Array<Skill>;
+  unsubscribePagePreviewUrl: Scalars['String']['output'];
+  unsubscribeTopics: Array<UnsubscribeTopic>;
   validatePasswordResetToken: ValidatePasswordResetToken;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
@@ -4605,6 +4665,11 @@ export type QueryPieChartDataArgs = {
 };
 
 
+export type QueryPreviewMessageCampaignAudienceArgs = {
+  input: PreviewMessageCampaignAudienceInput;
+};
+
+
 export type QuerySkillArgs = {
   id: Scalars['UUID']['input'];
 };
@@ -4871,6 +4936,21 @@ export type SendInvitations = {
   success: Scalars['Boolean']['output'];
 };
 
+export type SendMessageCampaignInput = {
+  body: Scalars['String']['input'];
+  fromAddress: Scalars['String']['input'];
+  listId: Scalars['String']['input'];
+  subject: Scalars['String']['input'];
+  unsubscribeTopicId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type SendMessageCampaignOutputDto = {
+  __typename?: 'SendMessageCampaignOutputDTO';
+  campaignId: Scalars['String']['output'];
+  queuedCount: Scalars['Int']['output'];
+  skipped: CampaignSkippedRecipientsDto;
+};
+
 export type Sentry = {
   __typename?: 'Sentry';
   dsn?: Maybe<Scalars['String']['output']>;
@@ -5041,6 +5121,21 @@ export type UuidFilterComparison = {
   notIn?: InputMaybe<Array<Scalars['UUID']['input']>>;
   notLike?: InputMaybe<Scalars['UUID']['input']>;
 };
+
+export type UnsubscribeTopic = {
+  __typename?: 'UnsubscribeTopic';
+  createdAt: Scalars['DateTime']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+  visibility: UnsubscribeTopicVisibility;
+};
+
+export enum UnsubscribeTopicVisibility {
+  PRIVATE = 'PRIVATE',
+  PUBLIC = 'PUBLIC'
+}
 
 export type UpdateAgentInput = {
   description?: InputMaybe<Scalars['String']['input']>;
@@ -5328,6 +5423,13 @@ export type UpdateSkillInput = {
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateUnsubscribeTopicInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  visibility?: InputMaybe<UnsubscribeTopicVisibility>;
 };
 
 export type UpdateViewFieldGroupInput = {
@@ -6130,12 +6232,31 @@ export type WorkspaceUrlsAndId = {
   workspaceUrls: WorkspaceUrls;
 };
 
+export type PreviewMessageCampaignAudienceQueryVariables = Exact<{
+  input: PreviewMessageCampaignAudienceInput;
+}>;
+
+
+export type PreviewMessageCampaignAudienceQuery = { __typename?: 'Query', previewMessageCampaignAudience: { __typename?: 'CampaignAudiencePreviewDTO', totalMembers: number, withoutEmail: number, duplicateEmails: number, globallyUnsubscribed: number, topicUnsubscribed: number, sendable: number } };
+
+export type UnsubscribeTopicsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UnsubscribeTopicsQuery = { __typename?: 'Query', unsubscribeTopics: Array<{ __typename?: 'UnsubscribeTopic', id: string, name?: string | null, description?: string | null, visibility: UnsubscribeTopicVisibility }> };
+
 export type SendEmailMutationVariables = Exact<{
   input: SendEmailInput;
 }>;
 
 
 export type SendEmailMutation = { __typename?: 'Mutation', sendEmail: { __typename?: 'SendEmailOutput', success: boolean, error?: string | null } };
+
+export type SendMessageCampaignMutationVariables = Exact<{
+  input: SendMessageCampaignInput;
+}>;
+
+
+export type SendMessageCampaignMutation = { __typename?: 'Mutation', sendMessageCampaign: { __typename?: 'SendMessageCampaignOutputDTO', campaignId: string, queuedCount: number, skipped: { __typename?: 'CampaignSkippedRecipientsDTO', noEmail: number, deduped: number, overCap: number } } };
 
 export type AgentFieldsFragment = { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string };
 
@@ -7652,13 +7773,6 @@ export type FindManyPublicDomainsQueryVariables = Exact<{ [key: string]: never; 
 
 export type FindManyPublicDomainsQuery = { __typename?: 'Query', findManyPublicDomains: Array<{ __typename?: 'PublicDomain', id: string, domain: string, isValidated: boolean, applicationId?: string | null, createdAt: string }> };
 
-export type CreateEmailingDomainMutationVariables = Exact<{
-  domain: Scalars['String']['input'];
-}>;
-
-
-export type CreateEmailingDomainMutation = { __typename?: 'Mutation', createEmailingDomain: { __typename?: 'EmailingDomain', id: string, domain: string, status: EmailingDomainStatus, verifiedAt?: string | null, createdAt: string, updatedAt: string, verificationRecords?: Array<{ __typename?: 'VerificationRecord', type: string, key: string, value: string, priority?: number | null }> | null } };
-
 export type DeleteEmailingDomainMutationVariables = Exact<{
   id: Scalars['String']['input'];
 }>;
@@ -7893,6 +8007,32 @@ export type VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutationVaria
 
 
 export type VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutation = { __typename?: 'Mutation', verifyTwoFactorAuthenticationMethodForAuthenticatedUser: { __typename?: 'VerifyTwoFactorAuthenticationMethod', success: boolean } };
+
+export type CreateUnsubscribeTopicMutationVariables = Exact<{
+  input: CreateUnsubscribeTopicInput;
+}>;
+
+
+export type CreateUnsubscribeTopicMutation = { __typename?: 'Mutation', createUnsubscribeTopic: { __typename?: 'UnsubscribeTopic', id: string, name?: string | null, description?: string | null, visibility: UnsubscribeTopicVisibility } };
+
+export type DeleteUnsubscribeTopicMutationVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+
+export type DeleteUnsubscribeTopicMutation = { __typename?: 'Mutation', deleteUnsubscribeTopic: boolean };
+
+export type UpdateUnsubscribeTopicMutationVariables = Exact<{
+  input: UpdateUnsubscribeTopicInput;
+}>;
+
+
+export type UpdateUnsubscribeTopicMutation = { __typename?: 'Mutation', updateUnsubscribeTopic: { __typename?: 'UnsubscribeTopic', id: string, name?: string | null, description?: string | null, visibility: UnsubscribeTopicVisibility } };
+
+export type UnsubscribePagePreviewUrlQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UnsubscribePagePreviewUrlQuery = { __typename?: 'Query', unsubscribePagePreviewUrl: string };
 
 export type GetUsageAnalyticsQueryVariables = Exact<{
   input?: InputMaybe<UsageAnalyticsInput>;
@@ -8403,7 +8543,10 @@ export const ViewFilterGroupFragmentFragmentDoc = {"kind":"Document","definition
 export const ViewSortFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewSortFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewSort"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"direction"}},{"kind":"Field","name":{"kind":"Name","value":"subFieldName"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<ViewSortFragmentFragment, unknown>;
 export const ViewGroupFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"fieldValue"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}}]}}]} as unknown as DocumentNode<ViewGroupFragmentFragment, unknown>;
 export const ViewFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"View"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"objectMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isCompact"}},{"kind":"Field","name":{"kind":"Name","value":"openRecordIn"}},{"kind":"Field","name":{"kind":"Name","value":"kanbanAggregateOperation"}},{"kind":"Field","name":{"kind":"Name","value":"kanbanAggregateOperationFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"mainGroupByFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"shouldHideEmptyGroups"}},{"kind":"Field","name":{"kind":"Name","value":"anyFieldFilterValue"}},{"kind":"Field","name":{"kind":"Name","value":"calendarFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"calendarLayout"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}},{"kind":"Field","name":{"kind":"Name","value":"createdByUserWorkspaceId"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"viewFields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFieldFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"viewFieldGroups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFieldGroupFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"viewFilters"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFilterFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"viewFilterGroups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFilterGroupFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"viewSorts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewSortFragment"}}]}},{"kind":"Field","name":{"kind":"Name","value":"viewGroups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewGroupFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFieldFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewField"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"aggregateOperation"}},{"kind":"Field","name":{"kind":"Name","value":"viewFieldGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFieldGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewFieldGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}},{"kind":"Field","name":{"kind":"Name","value":"viewFields"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ViewFieldFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFilterFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewFilter"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"operand"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"viewFilterGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"positionInViewFilterGroup"}},{"kind":"Field","name":{"kind":"Name","value":"subFieldName"}},{"kind":"Field","name":{"kind":"Name","value":"relationTargetFieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewFilterGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewFilterGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"parentViewFilterGroupId"}},{"kind":"Field","name":{"kind":"Name","value":"logicalOperator"}},{"kind":"Field","name":{"kind":"Name","value":"positionInViewFilterGroup"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewSortFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewSort"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"fieldMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"direction"}},{"kind":"Field","name":{"kind":"Name","value":"subFieldName"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ViewGroupFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ViewGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isVisible"}},{"kind":"Field","name":{"kind":"Name","value":"fieldValue"}},{"kind":"Field","name":{"kind":"Name","value":"position"}},{"kind":"Field","name":{"kind":"Name","value":"viewId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}}]}}]} as unknown as DocumentNode<ViewFragmentFragment, unknown>;
+export const PreviewMessageCampaignAudienceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PreviewMessageCampaignAudience"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"PreviewMessageCampaignAudienceInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"previewMessageCampaignAudience"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalMembers"}},{"kind":"Field","name":{"kind":"Name","value":"withoutEmail"}},{"kind":"Field","name":{"kind":"Name","value":"duplicateEmails"}},{"kind":"Field","name":{"kind":"Name","value":"globallyUnsubscribed"}},{"kind":"Field","name":{"kind":"Name","value":"topicUnsubscribed"}},{"kind":"Field","name":{"kind":"Name","value":"sendable"}}]}}]}}]} as unknown as DocumentNode<PreviewMessageCampaignAudienceQuery, PreviewMessageCampaignAudienceQueryVariables>;
+export const UnsubscribeTopicsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UnsubscribeTopics"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"unsubscribeTopics"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}}]}}]}}]} as unknown as DocumentNode<UnsubscribeTopicsQuery, UnsubscribeTopicsQueryVariables>;
 export const SendEmailDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SendEmail"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SendEmailInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendEmail"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}},{"kind":"Field","name":{"kind":"Name","value":"error"}}]}}]}}]} as unknown as DocumentNode<SendEmailMutation, SendEmailMutationVariables>;
+export const SendMessageCampaignDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SendMessageCampaign"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SendMessageCampaignInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendMessageCampaign"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"campaignId"}},{"kind":"Field","name":{"kind":"Name","value":"queuedCount"}},{"kind":"Field","name":{"kind":"Name","value":"skipped"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"noEmail"}},{"kind":"Field","name":{"kind":"Name","value":"deduped"}},{"kind":"Field","name":{"kind":"Name","value":"overCap"}}]}}]}}]}}]} as unknown as DocumentNode<SendMessageCampaignMutation, SendMessageCampaignMutationVariables>;
 export const ActivateSkillDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ActivateSkill"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"activateSkill"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"SkillFields"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SkillFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Skill"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<ActivateSkillMutation, ActivateSkillMutationVariables>;
 export const ArchiveChatThreadDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ArchiveChatThread"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"archiveChatThread"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<ArchiveChatThreadMutation, ArchiveChatThreadMutationVariables>;
 export const AssignRoleToAgentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AssignRoleToAgent"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"agentId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roleId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"assignRoleToAgent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"agentId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"agentId"}}},{"kind":"Argument","name":{"kind":"Name","value":"roleId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roleId"}}}]}]}}]} as unknown as DocumentNode<AssignRoleToAgentMutation, AssignRoleToAgentMutationVariables>;
@@ -8572,7 +8715,6 @@ export const CreatePublicDomainDocument = {"kind":"Document","definitions":[{"ki
 export const DeletePublicDomainDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeletePublicDomain"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"domain"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deletePublicDomain"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"domain"},"value":{"kind":"Variable","name":{"kind":"Name","value":"domain"}}}]}]}}]} as unknown as DocumentNode<DeletePublicDomainMutation, DeletePublicDomainMutationVariables>;
 export const UpdatePublicDomainDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdatePublicDomain"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"domain"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"applicationId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updatePublicDomain"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"domain"},"value":{"kind":"Variable","name":{"kind":"Name","value":"domain"}}},{"kind":"Argument","name":{"kind":"Name","value":"applicationId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"applicationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"domain"}},{"kind":"Field","name":{"kind":"Name","value":"isValidated"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<UpdatePublicDomainMutation, UpdatePublicDomainMutationVariables>;
 export const FindManyPublicDomainsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindManyPublicDomains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findManyPublicDomains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"domain"}},{"kind":"Field","name":{"kind":"Name","value":"isValidated"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<FindManyPublicDomainsQuery, FindManyPublicDomainsQueryVariables>;
-export const CreateEmailingDomainDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateEmailingDomain"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"domain"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createEmailingDomain"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"domain"},"value":{"kind":"Variable","name":{"kind":"Name","value":"domain"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"domain"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"verifiedAt"}},{"kind":"Field","name":{"kind":"Name","value":"verificationRecords"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<CreateEmailingDomainMutation, CreateEmailingDomainMutationVariables>;
 export const DeleteEmailingDomainDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteEmailingDomain"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteEmailingDomain"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<DeleteEmailingDomainMutation, DeleteEmailingDomainMutationVariables>;
 export const VerifyEmailingDomainDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"VerifyEmailingDomain"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"verifyEmailingDomain"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"domain"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"verifiedAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<VerifyEmailingDomainMutation, VerifyEmailingDomainMutationVariables>;
 export const GetEmailingDomainsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEmailingDomains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getEmailingDomains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"domain"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"verifiedAt"}},{"kind":"Field","name":{"kind":"Name","value":"verificationRecords"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"priority"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<GetEmailingDomainsQuery, GetEmailingDomainsQueryVariables>;
@@ -8606,6 +8748,10 @@ export const ValidateApprovedAccessDomainDocument = {"kind":"Document","definiti
 export const GetApprovedAccessDomainsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetApprovedAccessDomains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getApprovedAccessDomains"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"domain"}},{"kind":"Field","name":{"kind":"Name","value":"isValidated"}}]}}]}}]} as unknown as DocumentNode<GetApprovedAccessDomainsQuery, GetApprovedAccessDomainsQueryVariables>;
 export const GetSsoIdentityProvidersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSSOIdentityProviders"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getSSOIdentityProviders"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"issuer"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]} as unknown as DocumentNode<GetSsoIdentityProvidersQuery, GetSsoIdentityProvidersQueryVariables>;
 export const VerifyTwoFactorAuthenticationMethodForAuthenticatedUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"verifyTwoFactorAuthenticationMethodForAuthenticatedUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"otp"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"verifyTwoFactorAuthenticationMethodForAuthenticatedUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"otp"},"value":{"kind":"Variable","name":{"kind":"Name","value":"otp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}}]}}]}}]} as unknown as DocumentNode<VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutation, VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutationVariables>;
+export const CreateUnsubscribeTopicDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateUnsubscribeTopic"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateUnsubscribeTopicInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createUnsubscribeTopic"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}}]}}]}}]} as unknown as DocumentNode<CreateUnsubscribeTopicMutation, CreateUnsubscribeTopicMutationVariables>;
+export const DeleteUnsubscribeTopicDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteUnsubscribeTopic"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteUnsubscribeTopic"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}]}}]} as unknown as DocumentNode<DeleteUnsubscribeTopicMutation, DeleteUnsubscribeTopicMutationVariables>;
+export const UpdateUnsubscribeTopicDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateUnsubscribeTopic"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateUnsubscribeTopicInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateUnsubscribeTopic"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"visibility"}}]}}]}}]} as unknown as DocumentNode<UpdateUnsubscribeTopicMutation, UpdateUnsubscribeTopicMutationVariables>;
+export const UnsubscribePagePreviewUrlDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UnsubscribePagePreviewUrl"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"unsubscribePagePreviewUrl"}}]}}]} as unknown as DocumentNode<UnsubscribePagePreviewUrlQuery, UnsubscribePagePreviewUrlQueryVariables>;
 export const GetUsageAnalyticsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUsageAnalytics"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"UsageAnalyticsInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getUsageAnalytics"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"usageByUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"creditsUsed"}}]}},{"kind":"Field","name":{"kind":"Name","value":"usageByOperationType"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"creditsUsed"}}]}},{"kind":"Field","name":{"kind":"Name","value":"usageByModel"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"creditsUsed"}}]}},{"kind":"Field","name":{"kind":"Name","value":"timeSeries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"creditsUsed"}}]}},{"kind":"Field","name":{"kind":"Name","value":"periodStart"}},{"kind":"Field","name":{"kind":"Name","value":"periodEnd"}},{"kind":"Field","name":{"kind":"Name","value":"userDailyUsage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userWorkspaceId"}},{"kind":"Field","name":{"kind":"Name","value":"dailyUsage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"creditsUsed"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetUsageAnalyticsQuery, GetUsageAnalyticsQueryVariables>;
 export const DeleteUserAccountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteUserAccount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DeleteUserAccountMutation, DeleteUserAccountMutationVariables>;
 export const DeleteUserWorkspaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteUserWorkspace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"workspaceMemberIdToDelete"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteUserFromWorkspace"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"workspaceMemberIdToDelete"},"value":{"kind":"Variable","name":{"kind":"Name","value":"workspaceMemberIdToDelete"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DeleteUserWorkspaceMutation, DeleteUserWorkspaceMutationVariables>;
