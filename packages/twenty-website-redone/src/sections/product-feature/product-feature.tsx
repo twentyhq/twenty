@@ -16,10 +16,17 @@ import { ScrollEntrance } from './scroll-entrance';
 import { TileContent } from './tile-content';
 import { TileVisual } from './tile-visual';
 
+/* Block flow, not grid: a grid would blockify the inline-flex eyebrow
+   and stretch it off-center. text-align centers every child as one
+   mechanism. */
 const IntroMeasure = styled.div`
   margin-inline: auto;
   max-width: 688px;
   text-align: center;
+
+  & > * + * {
+    margin-top: ${spacing(6)};
+  }
 `;
 
 const Grid = styled.div`

@@ -163,6 +163,45 @@ assert(
   `muted ink binds to black-60 (got "${composition.inkMuted}" vs "${composition.black60}")`,
 );
 
+// Universal eyebrow-to-heading measure: 24px everywhere the intro
+// grammar runs (testimonials' 56px carousel header is the authored
+// old-parity exception, asserted so drift is still caught).
+const readEyebrowGaps = (target) =>
+  target.evaluate(() =>
+    [...document.querySelectorAll('p')]
+      .filter(
+        (el) =>
+          el.querySelector('span[aria-hidden]') &&
+          el.textContent.trim().length < 40,
+      )
+      .map((row) => {
+        const block = row.parentElement;
+        const heading =
+          block.querySelector('h1, h2, h3') ??
+          block.parentElement.querySelector('h1, h2, h3');
+        const rect = row.getBoundingClientRect();
+        const parentRect = row.parentElement.getBoundingClientRect();
+        const centered =
+          getComputedStyle(row.parentElement).textAlign === 'center';
+        return {
+          label: row.textContent.trim(),
+          gap: heading
+            ? Math.round(heading.getBoundingClientRect().top - rect.bottom)
+            : null,
+          // Centered intros must center the row as one unit (a grid
+          // ancestor blockifying the inline-flex eyebrow broke this once).
+          misaligned:
+            centered &&
+            Math.abs(
+              rect.left - parentRect.left - (parentRect.right - rect.right),
+            ) > 2,
+        };
+      }),
+  );
+const EYEBROW_GAP_PX = 24;
+const TESTIMONIALS_EYEBROW = 'They are the real sales';
+const TESTIMONIALS_GAP_PX = 56;
+
 const readSectionRhythms = (target) =>
   target.evaluate(() =>
     [...document.querySelectorAll('section')].map((el) => ({
@@ -172,6 +211,7 @@ const readSectionRhythms = (target) =>
     })),
   );
 const homeSections = await readSectionRhythms(page);
+const homeEyebrows = await readEyebrowGaps(page);
 
 // The product page joins the 404 net (its slots/composition have their
 // own battery; the sweep guards asset integrity site-wide).
@@ -202,6 +242,19 @@ const offRhythmSections = [
   ...homeSections,
   ...(await readSectionRhythms(page)),
 ];
+const allEyebrows = [...homeEyebrows, ...(await readEyebrowGaps(page))];
+const eyebrowViolations = allEyebrows.filter(
+  (eyebrow) =>
+    eyebrow.misaligned ||
+    (eyebrow.label.startsWith(TESTIMONIALS_EYEBROW)
+      ? eyebrow.gap !== TESTIMONIALS_GAP_PX
+      : eyebrow.gap !== EYEBROW_GAP_PX),
+);
+assert(
+  allEyebrows.length > 0 && eyebrowViolations.length === 0,
+  `every eyebrow sits ${EYEBROW_GAP_PX}px above its heading, centered intros centered (${allEyebrows.length} eyebrows${eyebrowViolations.length > 0 ? `; violations: ${JSON.stringify(eyebrowViolations)}` : ''})`,
+);
+
 const rhythmViolations = offRhythmSections.filter(
   (section) =>
     !(section.rhythm in RHYTHM_MD_PADDING) ||

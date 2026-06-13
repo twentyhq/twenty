@@ -7,9 +7,14 @@ import { mediaUp, spacing } from '@/tokens';
 export const SectionStack = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  row-gap: ${spacing(10)};
+
+  & > * + * {
+    margin-top: ${spacing(10)};
+  }
 
   ${mediaUp('md')} {
-    row-gap: ${spacing(20)};
+    & > * + * {
+      margin-top: ${spacing(20)};
+    }
   }
 `;

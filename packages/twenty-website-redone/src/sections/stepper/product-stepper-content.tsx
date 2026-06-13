@@ -7,7 +7,7 @@ import { type CSSProperties } from 'react';
 
 import { INFORMATIVE_MARKS } from '@/icons';
 import { color, fontFamily, mediaUp, radius, spacing } from '@/tokens';
-import { Body, Eyebrow, Heading } from '@/ui';
+import { Body, Eyebrow, Heading, HeadingPair } from '@/ui';
 
 import {
   PRODUCT_STEPPER_STEPS,
@@ -45,12 +45,18 @@ const StepsColumn = styled.div`
   }
 `;
 
+// The intro takes the house grammar (24px eyebrow-to-heading via this
+// gap, 12px heading-to-body via HeadingPair) — a ratified divergence
+// from the old site's uniform 8px stack.
 const IntroBlock = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   margin-bottom: ${spacing(4)};
   margin-top: 0;
-  row-gap: ${spacing(2)};
+
+  & > * + * {
+    margin-top: ${spacing(6)};
+  }
 
   ${mediaUp('md')} {
     margin-top: calc(${spacing(2)} - ${spacing(26)});
@@ -61,7 +67,11 @@ const StepBlock = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   opacity: 1;
-  row-gap: ${spacing(2)};
+
+  & > * + * {
+    margin-top: ${spacing(2)};
+  }
+
   transition:
     opacity 0.4s ease,
     transform 0.4s ease;
@@ -75,7 +85,10 @@ const StepBlock = styled.div`
 const SwipeStepBlock = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  row-gap: ${spacing(2)};
+
+  & > * + * {
+    margin-top: ${spacing(2)};
+  }
 `;
 
 const StepRowHeader = styled.div`
@@ -166,14 +179,16 @@ export function ProductStepperContent({
       <StepsColumn>
         <IntroBlock>
           <Eyebrow>{i18n._(msg`Customization`)}</Eyebrow>
-          <Heading as="h2" size="lg" weight="light">
-            {i18n._(msg`Go the extra mile *with no-code*`)}
-          </Heading>
-          <Body size="sm">
-            {i18n._(
-              msg`Need a quick change? Skip the engineering ticket. Customize your workspace in minutes.`,
-            )}
-          </Body>
+          <HeadingPair>
+            <Heading as="h2" size="lg" weight="light">
+              {i18n._(msg`Go the extra mile *with no-code*`)}
+            </Heading>
+            <Body size="sm">
+              {i18n._(
+                msg`Need a quick change? Skip the engineering ticket. Customize your workspace in minutes.`,
+              )}
+            </Body>
+          </HeadingPair>
         </IntroBlock>
         {layoutMode === 'swipe' ? (
           <StepperSwipeDeck

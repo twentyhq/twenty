@@ -12,9 +12,10 @@ import {
 const EyebrowRow = styled.p`
   align-items: center;
   color: ${semanticColor.inkMuted};
-  display: flex;
-  /* Centered intros must not center the wrapped label: the text stays
-     flush against the marker (old-site contract). */
+  /* Inline-level so the intro's alignment governs the row as one unit
+     (the old site centers it in centered intros); the wrapped label
+     itself stays flush against the marker via text-align. */
+  display: inline-flex;
   text-align: start;
   font-family: ${fontFamily('sans')};
   ${typeRampDeclarations('eyebrow')}

@@ -28,12 +28,16 @@ const patternImageClassName = css`
   object-position: center top;
 `;
 
+/* Block flow, not grid: a grid would blockify the inline-flex eyebrow
+   and stretch it off-center. text-align centers every child as one
+   mechanism. */
 const IntroMeasure = styled.div`
-  display: grid;
-  justify-items: center;
   margin-inline: auto;
-  row-gap: ${spacing(6)};
   text-align: center;
+
+  & > * + * {
+    margin-top: ${spacing(6)};
+  }
 `;
 
 // The old site hard-breaks the heading after "a"; the measure makes the
@@ -49,8 +53,8 @@ const PreviewRoot = styled.div`
   width: 100%;
 `;
 
-// The frame fills its host; this scene box owns the geometry (the stage
-// token is the single source — the hero pins the same scene in px).
+// The frame fills its host; this scene box owns the geometry — the
+// stage token is the single source (the hero pins the same scene in px).
 const SceneBox = styled.div`
   aspect-ratio: ${APP_PREVIEW_STAGE.windowScene.widthPx} /
     ${APP_PREVIEW_STAGE.windowScene.heightPx};

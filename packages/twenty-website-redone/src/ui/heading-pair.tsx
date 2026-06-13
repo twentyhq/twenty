@@ -7,5 +7,8 @@ import { spacing } from '@/tokens';
 export const HeadingPair = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  row-gap: ${spacing(3)};
+
+  & > * + * {
+    margin-top: ${spacing(3)};
+  }
 `;
