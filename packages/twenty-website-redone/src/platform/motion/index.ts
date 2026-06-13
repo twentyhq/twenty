@@ -11,6 +11,7 @@ export { observeElementSize } from './observe-element-size';
 export { useScaleToFit } from './use-scale-to-fit';
 export { useMediaQuery } from './use-media-query';
 export { useHorizontalDragScroll } from './use-horizontal-drag-scroll';
+export { useAnimatedNumber } from './use-animated-number';
 export { usePointerDragPositions } from './use-pointer-drag-positions';
 export { useScheduledOnScroll } from './use-scheduled-on-scroll';
 export { usePrefersReducedMotion } from './use-prefers-reduced-motion';

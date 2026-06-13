@@ -24,6 +24,18 @@ msgstr ""
 msgid "{0} case study"
 msgstr "Étude de cas {0}"
 
+#. js-lingui-id: XUqxHW
+#: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plans/plans-data.ts
+msgid "/user/month"
+msgstr ""
+
 #. js-lingui-id: UEDohT
 #: src/sections/footer/footer-bottom.tsx
 msgid "© {year} – Twenty"
@@ -33,6 +45,16 @@ msgstr "© {year} – Twenty"
 #: src/sections/trusted-by/trusted-by.tsx
 msgid "+10k others"
 msgstr "+10k autres"
+
+#. js-lingui-id: 2ScEtE
+#: src/sections/pricing-plans/plans-data.ts
+msgid "5 workflow credits/month included"
+msgstr ""
+
+#. js-lingui-id: CiRGZ8
+#: src/sections/pricing-plans/plans-data.ts
+msgid "50 workflow credits/year included"
+msgstr ""
 
 #. js-lingui-id: SR9TmK
 #: src/sections/product-hero/product-hero.tsx
@@ -77,6 +99,12 @@ msgstr ""
 #. js-lingui-id: vZKKhf
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Aggregate, bar, line, and pie widgets"
+msgstr ""
+
+#. js-lingui-id: Rsxdfy
+#: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plans/plans-data.ts
+msgid "AI Agents with custom skills"
 msgstr ""
 
 #. js-lingui-id: TfV/y9
@@ -148,6 +176,11 @@ msgstr ""
 #: src/sections/stepper/stepper.data.ts
 msgid "Begin with production-grade *building blocks*"
 msgstr "Commencez avec des *briques* de niveau production"
+
+#. js-lingui-id: 8tzR0k
+#: src/sections/pricing-plans/billing-toggle.tsx
+msgid "Billing period"
+msgstr ""
 
 #. js-lingui-id: BpyJwa
 #: src/sections/menu/menu.data.ts
@@ -244,6 +277,11 @@ msgstr ""
 msgid "Community"
 msgstr "Communauté"
 
+#. js-lingui-id: 8CLnho
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Community support"
+msgstr ""
+
 #. js-lingui-id: Fkb+LW
 #: src/sections/three-cards/three-cards.tsx
 msgid "Compose your CRM and internal apps with a single extensibility toolkit."
@@ -304,6 +342,13 @@ msgstr ""
 msgid "Create apps on Twenty"
 msgstr "Créez des applications sur Twenty"
 
+#. js-lingui-id: yAL7FY
+#: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Create custom apps"
+msgstr ""
+
 #. js-lingui-id: oS1RiS
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Create tasks from records"
@@ -329,6 +374,11 @@ msgstr ""
 msgid "CSV import flow"
 msgstr ""
 
+#. js-lingui-id: lh6aPn
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Custom AI models"
+msgstr ""
+
 #. js-lingui-id: yBSEtR
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Custom deal stages for your process"
@@ -337,6 +387,11 @@ msgstr ""
 #. js-lingui-id: L+b7SB
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Custom deal stages, drag-and-drop boards, and real-time tracking so your pipeline reflects reality."
+msgstr ""
+
+#. js-lingui-id: GAD3Dx
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Custom domain"
 msgstr ""
 
 #. js-lingui-id: U1RB/7
@@ -457,6 +512,12 @@ msgstr "Profitez d'une personnalisation illimitée avec les outils de codage IA 
 msgid "Every thread, on the right record."
 msgstr ""
 
+#. js-lingui-id: kz/8m8
+#: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Everything in Pro"
+msgstr ""
+
 #. js-lingui-id: zoNk7e
 #: src/sections/feature-cards/feature-cards.data.ts
 msgid "Everything updates in real time, with AI chat always ready to help you move faster."
@@ -510,6 +571,13 @@ msgstr ""
 #. js-lingui-id: m1I5TY
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Full communication history in one place"
+msgstr ""
+
+#. js-lingui-id: wXgKOm
+#: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Full customization"
 msgstr ""
 
 #. js-lingui-id: S84RWl
@@ -681,6 +749,11 @@ msgstr ""
 msgid "Minimize"
 msgstr ""
 
+#. js-lingui-id: +8Nek/
+#: src/sections/pricing-plans/billing-toggle.tsx
+msgid "Monthly"
+msgstr ""
+
 #. js-lingui-id: dlKkNL
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Multi-file upload on records"
@@ -720,6 +793,11 @@ msgstr "Olivier Reinaud"
 #: src/sections/menu/menu.tsx
 msgid "Open menu"
 msgstr "Ouvrir le menu"
+
+#. js-lingui-id: ucgZ0o
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Organization"
+msgstr ""
 
 #. js-lingui-id: Bwsi7B
 #: src/sections/helped/helped.data.ts
@@ -764,10 +842,20 @@ msgstr "Navigation principale"
 msgid "Principal and Founder"
 msgstr "Dirigeant et fondateur"
 
+#. js-lingui-id: k62X/2
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Priority support"
+msgstr ""
+
 #. js-lingui-id: LcET2C
 #: src/sections/footer/footer.data.ts
 msgid "Privacy Policy"
 msgstr "Politique de confidentialité"
+
+#. js-lingui-id: 3fPjUY
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Pro"
+msgstr ""
 
 #. js-lingui-id: K47k8R
 #: src/sections/menu/menu.data.ts
@@ -836,6 +924,18 @@ msgstr ""
 msgid "Rich notes attached to records"
 msgstr ""
 
+#. js-lingui-id: Wdh41P
+#: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Row-level permissions"
+msgstr ""
+
+#. js-lingui-id: w9QWxz
+#: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plans/plans-data.ts
+msgid "SAML/OIDC SSO"
+msgstr ""
+
 #. js-lingui-id: JDp1bg
 #: src/sections/three-cards/product-three-cards-data.ts
 msgid "See updates as they happen. Work with your team and agents seamlessly."
@@ -851,6 +951,11 @@ msgstr "Découvrez les nouveautés de la {0}"
 #. placeholder {0}: company.name
 #: src/sections/product-feature/contacts-visual.tsx
 msgid "Select {0}"
+msgstr ""
+
+#. js-lingui-id: NaHz2o
+#: src/sections/pricing-plans/self-host-toggle.tsx
+msgid "Selfhosting"
 msgstr ""
 
 #. js-lingui-id: pi1oME
@@ -904,6 +1009,17 @@ msgstr "Des modèles intelligents, des raccourcis et des mises en page rendent l
 #: src/sections/footer/footer-bottom.tsx
 msgid "Social media"
 msgstr "Réseaux sociaux"
+
+#. js-lingui-id: uQl22y
+#: src/sections/pricing-plans/plans-data.ts
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Standard support"
+msgstr ""
+
+#. js-lingui-id: XO628f
+#: src/sections/pricing-plans/plan-card.tsx
+msgid "Start for free"
+msgstr ""
 
 #. js-lingui-id: sBOFB0
 #: src/sections/pricing-hero/pricing-hero.tsx
@@ -1104,6 +1220,11 @@ msgstr "Écosystème de partenaires Twenty"
 msgid "Twenty release {0} — {1}"
 msgstr "Version {0} de Twenty — {1}"
 
+#. js-lingui-id: V1lV7B
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Twenty team support"
+msgstr ""
+
 #. js-lingui-id: osa7Xg
 #: src/sections/menu/menu.data.ts
 msgid "Twenty user guide preview"
@@ -1112,6 +1233,11 @@ msgstr "Aperçu du guide d'utilisation de Twenty"
 #. js-lingui-id: Hix/m6
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Unified timeline (emails, events, tasks, notes, files)"
+msgstr ""
+
+#. js-lingui-id: aGpTSC
+#: src/sections/pricing-plans/plans-data.ts
+msgid "Up to 5 workspaces"
 msgstr ""
 
 #. js-lingui-id: 2vanwz
@@ -1190,6 +1316,11 @@ msgstr ""
 #: src/sections/footer/footer.data.ts
 msgid "X (opens in new tab)"
 msgstr "X (ouvre un nouvel onglet)"
+
+#. js-lingui-id: zkWmBh
+#: src/sections/pricing-plans/billing-toggle.tsx
+msgid "Yearly"
+msgstr ""
 
 #. js-lingui-id: bo6pUs
 #: src/sections/faq/faq.data.ts

@@ -86,6 +86,7 @@ const PUBLIC_SVG_BRAND_FILES = new Set([
 const ROW_GAP_MULTI_AXIS_FILES = new Set([
   'sections/faq/faq.tsx',
   'sections/faq/faq-items.tsx',
+  'sections/pricing-plans/pricing-plans.tsx',
   'sections/problem/problem.tsx',
   'sections/stepper/product-stepper.tsx',
   'sections/stepper/stepper.tsx',
