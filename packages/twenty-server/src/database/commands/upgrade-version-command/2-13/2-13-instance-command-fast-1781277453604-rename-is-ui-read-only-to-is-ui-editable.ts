@@ -12,9 +12,10 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 // previous release's pods keep serving while the schema changes — and they
 // still SELECT isUIReadOnly on every fieldMetadata read. Dropping it in the
 // same release that stops using it makes those pods throw "column isUIReadOnly
-// does not exist" until the rollout completes. The column is hidden from the
-// app via @WasRemovedInUpgrade on the entities and will be physically dropped
-// in a later release, once no running code references it.
+// does not exist" until the rollout completes. isUIReadOnly stays a plain
+// column on both entities (no longer @WasRemovedInUpgrade, so it isn't
+// dropped); its removal — decorator + physical drop — is deferred to a later
+// release once no running code references it (core-team-issues#2542).
 @RegisteredInstanceCommand('2.13.0', 1781277453604)
 export class RenameIsUiReadOnlyToIsUiEditableFastInstanceCommand
   implements FastInstanceCommand
