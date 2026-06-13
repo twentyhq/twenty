@@ -1,4 +1,5 @@
-import { useQuery } from '@apollo/client/react';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
@@ -7,9 +8,9 @@ import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/compo
 import { useDeleteEmailGroupChannel } from '@/settings/accounts/hooks/useDeleteEmailGroupChannel';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { getEmailChannelDomain } from '@/settings/accounts/utils/getEmailChannelDomain';
+import { SettingsDnsRecordsTable } from '@/settings/components/SettingsDnsRecordsTable';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { SettingsEmailingDomainVerificationRecords } from '@/settings/emailing-domains/components/SettingsEmailingDomainVerificationRecords';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -17,10 +18,14 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { GetEmailingDomainsDocument } from '~/generated-metadata/graphql';
+import {
+  GetEmailingDomainsDocument,
+  VerifyEmailingDomainDocument,
+} from '~/generated-metadata/graphql';
 import {
   H2Title,
   IconCopy,
+  IconRefresh,
   IconTrash,
   Status,
 } from 'twenty-ui-deprecated/display';
@@ -52,10 +57,13 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
   const { channels, loading } = useMyMessageChannels();
   const { copyToClipboard } = useCopyToClipboard();
   const { openModal } = useModal();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const { deleteEmailGroupChannel, loading: deleting } =
     useDeleteEmailGroupChannel();
   const { data: emailingDomainsData } = useQuery(GetEmailingDomainsDocument);
+  const [verifyEmailingDomain, { loading: isVerifyingDomain }] = useMutation(
+    VerifyEmailingDomainDocument,
+  );
 
   if (loading) {
     return <SettingsSkeletonLoader />;
@@ -86,6 +94,21 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
     } catch {
       enqueueErrorSnackBar({
         message: t`Failed to delete email channel.`,
+      });
+    }
+  };
+
+  const handleVerifyEmailingDomain = async () => {
+    if (!isDefined(emailingDomain)) {
+      return;
+    }
+
+    try {
+      await verifyEmailingDomain({ variables: { id: emailingDomain.id } });
+      enqueueSuccessSnackBar({ message: t`Started verification process` });
+    } catch (error) {
+      enqueueErrorSnackBar({
+        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
       });
     }
   };
@@ -122,14 +145,28 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
             <H2Title
               title={t`Sending domain`}
               description={t`Outbound mail from this channel is sent through this domain. It must be verified before email can be delivered.`}
+              adornment={
+                <Button
+                  onClick={handleVerifyEmailingDomain}
+                  isLoading={isVerifyingDomain}
+                  variant="secondary"
+                  Icon={IconRefresh}
+                  size="small"
+                  title={t`Check verification`}
+                  disabled={isVerifyingDomain}
+                />
+              }
             />
             <Status
               color={getColorByEmailingDomainStatus(emailingDomain.status)}
               text={getTextByEmailingDomainStatus(emailingDomain.status)}
             />
-            <SettingsEmailingDomainVerificationRecords
-              domain={emailingDomain}
-            />
+            {isDefined(emailingDomain.verificationRecords) &&
+              emailingDomain.verificationRecords.length > 0 && (
+                <SettingsDnsRecordsTable
+                  records={emailingDomain.verificationRecords}
+                />
+              )}
           </Section>
         )}
         <Section>

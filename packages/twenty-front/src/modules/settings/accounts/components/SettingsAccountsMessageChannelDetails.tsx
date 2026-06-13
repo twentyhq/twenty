@@ -89,6 +89,12 @@ export const SettingsAccountsMessageChannelDetails = ({
   const supportsFolderImportPolicy =
     messageChannel.type === MessageChannelType.EMAIL;
 
+  // The group-email blocklist (team@/support@/noreply@) is a personal-inbox
+  // sync filter; on a shared group mailbox it would drop the channel's own
+  // support@/contact@ conversations, so it is hidden there.
+  const isGroupMailbox =
+    messageChannel.type === MessageChannelType.EMAIL_GROUP;
+
   return (
     <StyledDetailsContainer>
       {supportsFolderImportPolicy && (
@@ -103,21 +109,23 @@ export const SettingsAccountsMessageChannelDetails = ({
           />
         </Section>
       )}
-      <Section>
-        <Card rounded>
-          <SettingsOptionCardContentToggle
-            Icon={IconUsers}
-            title={t`Exclude group emails`}
-            description={t`Don't sync emails from team@ support@ noreply@...`}
-            checked={messageChannel.excludeGroupEmails}
-            onChange={() =>
-              handleIsGroupEmailExcludedToggle(
-                !messageChannel.excludeGroupEmails,
-              )
-            }
-          />
-        </Card>
-      </Section>
+      {!isGroupMailbox && (
+        <Section>
+          <Card rounded>
+            <SettingsOptionCardContentToggle
+              Icon={IconUsers}
+              title={t`Exclude group emails`}
+              description={t`Don't sync emails from team@ support@ noreply@...`}
+              checked={messageChannel.excludeGroupEmails}
+              onChange={() =>
+                handleIsGroupEmailExcludedToggle(
+                  !messageChannel.excludeGroupEmails,
+                )
+              }
+            />
+          </Card>
+        </Section>
+      )}
       <Section>
         <H2Title
           title={t`Visibility`}
