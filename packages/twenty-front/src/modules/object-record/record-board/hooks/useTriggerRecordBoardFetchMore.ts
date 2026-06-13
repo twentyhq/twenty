@@ -75,12 +75,10 @@ export const useTriggerRecordBoardFetchMore = () => {
     };
 
     if (isAlreadyFetchingMore) {
-      return false;
+      return;
     }
 
     store.set(recordBoardIsFetchingMore, true);
-
-    let didFetchRecords = false;
 
     const currentOffset = store.get(
       recordBoardCurrentGroupByQueryOffsetCallbackState,
@@ -101,7 +99,7 @@ export const useTriggerRecordBoardFetchMore = () => {
     if (!isNonEmptyArray(recordGroupValuesThatShouldBeFetched)) {
       cleanStateBeforeExit();
 
-      return false;
+      return;
     }
 
     const recordGroupOptionsFilter = computeRecordGroupOptionsFilter({
@@ -109,12 +107,6 @@ export const useTriggerRecordBoardFetchMore = () => {
       recordGroupValues: recordGroupValuesThatShouldBeFetched,
     });
 
-    // Catch fetch errors so a rejection neither escapes unhandled nor skips the
-    // cleanup below — otherwise `recordBoardIsFetchingMore` stays true and the
-    // guard above blocks every further page, stalling pagination permanently.
-    // Resolving to null routes into the existing guard; the offset advances only
-    // on a defined result, so the failed page is retried on the next in-view
-    // signal rather than skipped.
     const recordIndexGroupsRecordsGroupByLazyQueryResult =
       await executeRecordIndexGroupsRecordsLazyGroupBy({
         variables: {
@@ -129,7 +121,7 @@ export const useTriggerRecordBoardFetchMore = () => {
     if (!isDefined(recordIndexGroupsRecordsGroupByLazyQueryResult)) {
       cleanStateBeforeExit();
 
-      return false;
+      return;
     }
 
     store.set(recordBoardCurrentGroupByQueryOffsetCallbackState, newOffset);
@@ -143,7 +135,7 @@ export const useTriggerRecordBoardFetchMore = () => {
     if (!isDefined(groups)) {
       cleanStateBeforeExit();
 
-      return false;
+      return;
     }
 
     const sortedRecordGroupDefinitions = recordGroupDefinitions.toSorted(
@@ -196,8 +188,6 @@ export const useTriggerRecordBoardFetchMore = () => {
 
       upsertRecordsInStore({ partialRecords: newRecords });
 
-      didFetchRecords = true;
-
       if (newRecords.length < RECORD_BOARD_QUERY_PAGE_SIZE) {
         store.set(
           recordBoardShouldFetchMoreInColumnFamilyCallbackState(
@@ -220,8 +210,6 @@ export const useTriggerRecordBoardFetchMore = () => {
     }
 
     cleanStateBeforeExit();
-
-    return didFetchRecords;
   }, [
     store,
     objectMetadataItem,
