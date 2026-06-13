@@ -1,9 +1,8 @@
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { isRecordTableCreateDisabled } from '@/object-record/record-table/utils/isRecordTableCreateDisabled';
+import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -54,9 +53,9 @@ export const RecordTableEmptyStateDisplay = (
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
-  const isReadOnly =
-    isLayoutCustomizationModeEnabled ||
-    isObjectMetadataReadOnly({
+  const canCreateRecords =
+    !isLayoutCustomizationModeEnabled &&
+    canCreateRecordsForObjectMetadataItem({
       objectPermissions,
       objectMetadataItem,
     });
@@ -83,9 +82,8 @@ export const RecordTableEmptyStateDisplay = (
         </AnimatedPlaceholderEmptyTextContainer>
         {'buttonComponent' in props && props.buttonComponent}
         {'buttonTitle' in props &&
-          !isReadOnly &&
-          !hasAnySoftDeleteFilterOnView &&
-          !isRecordTableCreateDisabled(objectMetadataItem) && (
+          canCreateRecords &&
+          !hasAnySoftDeleteFilterOnView && (
             <Button
               Icon={props.ButtonIcon}
               title={props.buttonTitle}

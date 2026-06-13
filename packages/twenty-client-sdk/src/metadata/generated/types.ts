@@ -916,6 +916,9 @@ export default {
             "isSystem": [
                 6
             ],
+            "isUIEditable": [
+                6
+            ],
             "isUIReadOnly": [
                 6
             ],
@@ -1085,6 +1088,12 @@ export default {
             "isSystem": [
                 53
             ],
+            "isUIEditable": [
+                53
+            ],
+            "isUICreatable": [
+                53
+            ],
             "isUIReadOnly": [
                 53
             ],
@@ -1239,6 +1248,12 @@ export default {
             "isSystem": [
                 6
             ],
+            "isUIEditable": [
+                6
+            ],
+            "isUICreatable": [
+                6
+            ],
             "isUIReadOnly": [
                 6
             ],
@@ -1316,6 +1331,9 @@ export default {
                 53
             ],
             "isSystem": [
+                53
+            ],
+            "isUIEditable": [
                 53
             ],
             "isUIReadOnly": [
@@ -10589,6 +10607,9 @@ export default {
             "isSystem": [
                 6
             ],
+            "isUIEditable": [
+                6
+            ],
             "isUIReadOnly": [
                 6
             ],
@@ -10657,6 +10678,9 @@ export default {
                 6
             ],
             "isSystem": [
+                6
+            ],
+            "isUIEditable": [
                 6
             ],
             "isUIReadOnly": [

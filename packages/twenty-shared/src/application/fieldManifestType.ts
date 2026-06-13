@@ -31,6 +31,8 @@ export type RegularFieldManifest<
   options?: FieldMetadataOptions<T>;
   universalSettings?: FieldMetadataUniversalSettings<T>;
   isNullable?: boolean;
+  // When false, this field is not editable through the generic UI
+  isUIEditable?: boolean;
   /**
    * @deprecated Use defineIndex({ isUnique: true, fields: [...] }) instead.
    * Indexes are the SDK primitive for uniqueness — they support both single-
