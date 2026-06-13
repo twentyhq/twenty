@@ -34,6 +34,7 @@ import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/ser
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import {
   IdentityProviderType,
+  SSOIdentityProviderStatus,
   WorkspaceSSOIdentityProviderEntity,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -138,7 +139,10 @@ export class SSOAuthController {
       });
 
     try {
-      if (!workspaceIdentityProvider) {
+      if (
+        !workspaceIdentityProvider ||
+        workspaceIdentityProvider.status !== SSOIdentityProviderStatus.Active
+      ) {
         throw new AuthException(
           'Identity provider not found',
           AuthExceptionCode.OAUTH_ACCESS_DENIED,
@@ -166,6 +170,13 @@ export class SSOAuthController {
           AuthExceptionCode.OAUTH_ACCESS_DENIED,
         ),
       );
+
+      if (currentWorkspace.id !== workspaceIdentityProvider.workspaceId) {
+        throw new AuthException(
+          'Identity provider does not belong to this workspace',
+          AuthExceptionCode.OAUTH_ACCESS_DENIED,
+        );
+      }
 
       const oidcTokenClaims =
         'oidcTokenClaims' in req.user ? req.user.oidcTokenClaims : undefined;

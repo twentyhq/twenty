@@ -43,6 +43,33 @@ yarn twenty dev:function:logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 这与 `yarn twenty docker:logs` 不同，后者显示的是 Docker 容器日志。 `yarn twenty dev:function:logs` 会显示来自 Twenty 服务器的应用函数执行日志。
 </Note>
 
+## 生成类型化客户端（`yarn twenty dev:generate-client`）
+
+根据当前远程的 schema 重新生成类型化 API 客户端（`twenty-client-sdk`），无需构建或同步应用。 在任何项目中使用它来获取一个类型化客户端——例如位于单独代码库中的后端服务——用于与您的 Twenty 实例通信：
+
+```bash filename="Terminal"
+# In your project (no Twenty app definition required)
+yarn add twenty-sdk twenty-client-sdk
+
+# Connect to the Twenty instance to generate the client from
+yarn twenty remote:add
+
+# Generate the typed client into node_modules/twenty-client-sdk
+yarn twenty dev:generate-client
+```
+
+然后在代码中导入该客户端：
+
+```typescript
+import { CoreApiClient } from 'twenty-client-sdk/core';
+```
+
+每当数据模型发生更改时，请重新运行该命令，以刷新生成的类型。
+
+<Note>
+客户端是在 `node_modules` 中生成的，因此不会随代码一起提交。 每次安装后运行 `yarn twenty dev:generate-client`（例如在 `postinstall` 脚本或 CI 中）。
+</Note>
+
 ## 卸载应用（`yarn twenty app:uninstall`）
 
 将你的应用从活动工作区中移除：

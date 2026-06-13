@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "2.11.0",
+  "version": "2.13.0",
   "sideEffects": false,
   "bin": {
     "twenty": "dist/cli.cjs"
@@ -76,7 +76,7 @@
     "chalk": "^5.3.0",
     "chokidar": "^4.0.0",
     "commander": "^12.0.0",
-    "esbuild": "^0.25.0",
+    "esbuild": "^0.28.1",
     "graphql": "^16.8.1",
     "graphql-sse": "^2.5.4",
     "ink": "^6.8.0",
@@ -88,7 +88,7 @@
     "tinyglobby": "^0.2.15",
     "twenty-client-sdk": "workspace:*",
     "typescript": "^5.9.3",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.2"
   },
   "devDependencies": {
     "@prettier/sync": "^0.5.2",
@@ -104,10 +104,10 @@
     "tsx": "^4.7.0",
     "twenty-shared": "workspace:*",
     "twenty-ui-deprecated": "workspace:*",
-    "vite": "^7.0.0",
+    "vite": "^8.0.0",
     "vite-plugin-dts": "^4.5.4",
     "vite-tsconfig-paths": "^4.2.1",
-    "wait-on": "^7.2.0"
+    "wait-on": "^9.0.10"
   },
   "engines": {
     "node": "^24.5.0",

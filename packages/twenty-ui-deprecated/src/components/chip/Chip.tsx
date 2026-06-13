@@ -63,6 +63,8 @@ const StyledContainer = styled.div<
   --chip-horizontal-padding: ${themeCssVariables.spacing[1]};
   --chip-vertical-padding: ${themeCssVariables.spacing[1]};
 
+  /* Height and max-width are sized against the content box. */
+  box-sizing: content-box;
   text-decoration: none;
   align-items: center;
 

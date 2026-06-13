@@ -41,7 +41,7 @@ export default async function HomePage({ params }: HomePageProps) {
       <link
         as="image"
         fetchPriority="high"
-        href="/illustrations/generated/home-background-bridge.png"
+        href="/illustrations/generated/home-background-bridge.webp"
         rel="preload"
       />
       <link

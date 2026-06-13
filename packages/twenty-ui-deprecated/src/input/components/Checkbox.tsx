@@ -153,11 +153,14 @@ const StyledCheckboxContainer = styled.div<InputProps>`
   }
 
   input + label:before {
+    box-sizing: content-box;
     background: var(--checkbox-bg);
     border-color: var(--checkbox-border-color);
     border-radius: var(--checkbox-border-radius);
     border-style: solid;
     border-width: var(--checkbox-border-width);
+    // The border sits outside the declared label size, so size against the content box.
+    box-sizing: content-box;
     content: '';
     cursor: var(--checkbox-cursor);
     display: inline-block;

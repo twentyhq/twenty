@@ -72,6 +72,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       this.layerManager,
       options.cacheLockService,
       options.logicFunctionResourceService,
+      options.workspaceCacheService,
     );
   }
 

@@ -43,6 +43,33 @@ yarn twenty dev:function:logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 Bu, Docker konteyner günlüklerini gösteren `yarn twenty docker:logs` komutundan farklıdır. `yarn twenty dev:function:logs`, uygulamanızın fonksiyon yürütme günlüklerini Twenty sunucusundan gösterir.
 </Note>
 
+## Tiplendirilmiş istemciyi oluşturma (`yarn twenty dev:generate-client`)
+
+Bir uygulamayı oluşturup eşitlemeden, etkin uzak sunucunun şemasından tiplendirilmiş API istemcisini (`twenty-client-sdk`) yeniden oluşturun. Bunu, Twenty örneğinizle iletişim kuran — örneğin ayrı bir depoda bulunan bir arka uç hizmeti — herhangi bir projede tiplendirilmiş bir istemci edinmek için kullanın:
+
+```bash filename="Terminal"
+# In your project (no Twenty app definition required)
+yarn add twenty-sdk twenty-client-sdk
+
+# Connect to the Twenty instance to generate the client from
+yarn twenty remote:add
+
+# Generate the typed client into node_modules/twenty-client-sdk
+yarn twenty dev:generate-client
+```
+
+Ardından istemciyi kodunuza içe aktarın:
+
+```typescript
+import { CoreApiClient } from 'twenty-client-sdk/core';
+```
+
+Oluşturulan türleri yenilemek için veri modeliniz her değiştiğinde komutu yeniden çalıştırın.
+
+<Note>
+İstemci `node_modules` içinde oluşturulur, bu nedenle kodunuzla birlikte commit edilmez. Her kurulumdan sonra (örneğin bir `postinstall` betiğinde veya CI içinde) `yarn twenty dev:generate-client` komutunu çalıştırın.
+</Note>
+
 ## Bir uygulamayı kaldırma (`yarn twenty app:uninstall`)
 
 Uygulamanızı etkin çalışma alanından kaldırın:

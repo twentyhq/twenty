@@ -16,6 +16,7 @@ import { MinimalMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata
 import { MinimalObjectMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-object-metadata.dto';
 import { MinimalViewDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-view.dto';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
+import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
@@ -77,13 +78,15 @@ export class MinimalMetadataService {
       .filter(isDefined)
       .filter((flatObjectMetadata) => flatObjectMetadata.isActive === true)
       .map((flatObjectMetadata) => {
+        const isCustom = !belongsToTwentyStandardApp(flatObjectMetadata);
+
         const objectMetadataForOverride = {
           labelPlural: flatObjectMetadata.labelPlural,
           labelSingular: flatObjectMetadata.labelSingular,
           description: flatObjectMetadata.description ?? undefined,
           icon: flatObjectMetadata.icon ?? undefined,
           color: flatObjectMetadata.color ?? undefined,
-          isCustom: flatObjectMetadata.isCustom,
+          isCustom,
           standardOverrides: flatObjectMetadata.standardOverrides ?? undefined,
         };
 
@@ -104,7 +107,7 @@ export class MinimalMetadataService {
             i18nInstance,
           ),
           icon: flatObjectMetadata.icon ?? undefined,
-          isCustom: flatObjectMetadata.isCustom,
+          isCustom,
           isActive: flatObjectMetadata.isActive,
           isSystem: flatObjectMetadata.isSystem,
           isRemote: flatObjectMetadata.isRemote,

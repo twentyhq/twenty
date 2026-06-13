@@ -20,6 +20,8 @@ export type AnimatedButtonProps = ButtonProps &
   Pick<MotionProps, 'animate' | 'transition'> & {
     animatedSvg: React.ReactNode;
     soonLabel?: string;
+    // Renders a square icon-only button (width matches the size-based height).
+    square?: boolean;
   };
 
 type AnimatedButtonDynamicStyles = {
@@ -315,7 +317,7 @@ const StyledButton = styled.button<
     | 'target'
     | 'dataClickOutsideId'
     | 'dataGloballyPreventClickOutside'
-  >
+  > & { square?: boolean }
 >`
   align-items: center;
   background: var(--abtn-bg);
@@ -354,14 +356,23 @@ const StyledButton = styled.button<
   font-size: ${themeCssVariables.font.size.md};
   gap: ${themeCssVariables.spacing[1]};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
-  justify-content: ${({ justify }) => justify ?? ''};
-  padding: 0 ${themeCssVariables.spacing[2]};
+  justify-content: ${({ justify, square }) =>
+    square ? 'center' : (justify ?? '')};
+  padding: ${({ square }) =>
+    square ? '0' : `0 ${themeCssVariables.spacing[2]}`};
 
   transition: background 0.1s ease;
 
   white-space: nowrap;
 
-  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
+  width: ${({ fullWidth, square, size }) =>
+    square
+      ? size === 'small'
+        ? '24px'
+        : '32px'
+      : fullWidth
+        ? '100%'
+        : 'auto'};
 
   &:focus {
     outline: none;
@@ -428,6 +439,7 @@ export const AnimatedButton = ({
   inverted = false,
   size = 'medium',
   accent = 'default',
+  square = false,
   position = 'standalone',
   soon = false,
   disabled = false,
@@ -476,6 +488,7 @@ export const AnimatedButton = ({
       as={ButtonComponent}
       fullWidth={fullWidth}
       size={size}
+      square={square}
       position={position}
       disabled={isDisabled}
       justify={justify}

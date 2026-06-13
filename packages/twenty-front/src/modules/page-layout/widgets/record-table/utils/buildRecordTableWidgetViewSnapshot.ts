@@ -30,6 +30,7 @@ export const buildRecordTableWidgetViewSnapshot = (
     openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
     visibility: ViewVisibility.UNLISTED,
     shouldHideEmptyGroups: false,
+    isActive: true,
   };
 
   const eligibleFields = objectMetadataItem.fields.filter(

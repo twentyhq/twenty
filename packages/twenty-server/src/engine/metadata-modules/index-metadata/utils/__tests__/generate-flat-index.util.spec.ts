@@ -1,3 +1,4 @@
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
@@ -15,7 +16,8 @@ describe('generateFlatIndexMetadataWithNameOrThrow', () => {
   const companyObject = {
     universalIdentifier: 'obj-company',
     nameSingular: 'company',
-    isCustom: false,
+    applicationUniversalIdentifier:
+      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   } as UniversalFlatObjectMetadata;
 
   const scalarUniqueField = {
@@ -61,8 +63,8 @@ describe('generateFlatIndexMetadataWithNameOrThrow', () => {
     objectMetadataUniversalIdentifier: companyObject.universalIdentifier,
     indexType: overrides.indexType,
     indexWhereClause: overrides.indexWhereClause ?? null,
-    isCustom: false,
     isUnique: overrides.isUnique,
+    isCustom: false,
     universalFlatIndexFieldMetadatas: overrides.fieldIds.map((id, order) => ({
       createdAt: now,
       updatedAt: now,

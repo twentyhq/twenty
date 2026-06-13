@@ -1,4 +1,6 @@
 import { msg } from '@lingui/core/macro';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import {
   DateDisplayFormat,
@@ -40,7 +42,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       icon: 'Icon123',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'uuid',
     },
     standardObjectMetadataRelatedEntityIds,
@@ -59,7 +61,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
@@ -81,7 +83,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarClock',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
@@ -103,7 +105,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isSystem: true,
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
       },
@@ -268,7 +270,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`The creator of the record`),
       icon: 'IconCreativeCommonsSa',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -293,7 +295,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       ),
       icon: 'IconUserCircle',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -366,7 +368,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       label: i18nLabel(msg`Tasks`),
       description: i18nLabel(msg`Tasks tied to the contact`),
       icon: 'IconCheckbox',
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: true,
       targetObjectName: 'taskTarget',
       targetFieldName: 'targetPerson',
@@ -389,7 +391,7 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       label: i18nLabel(msg`Notes`),
       description: i18nLabel(msg`Notes tied to the contact`),
       icon: 'IconNotes',
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: true,
       targetObjectName: 'noteTarget',
       targetFieldName: 'targetPerson',
@@ -484,6 +486,31 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  listMemberships: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'listMemberships',
+      label: i18nLabel(msg`Lists`),
+      description: i18nLabel(msg`Lists the contact belongs to`),
+      icon: 'IconUsersGroup',
+      isUIEditable: true,
+      isNullable: true,
+      targetObjectName: 'messageListMember',
+      targetFieldName: 'person',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+      junctionTargetFieldUniversalIdentifier:
+        STANDARD_OBJECTS.messageListMember.fields.list.universalIdentifier,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

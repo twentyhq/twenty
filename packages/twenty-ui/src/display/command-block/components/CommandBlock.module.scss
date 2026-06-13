@@ -1,0 +1,26 @@
+.container {
+  border-radius: var(--t-border-radius-sm);
+  border: 1px solid var(--t-border-color-medium);
+  background: var(--t-background-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--t-spacing-3);
+  gap: var(--t-spacing-3);
+}
+
+.commandContain {
+  font-family: var(--t-code-font-family);
+}
+
+.buttonContainer {
+  display: flex;
+}
+
+.lineStartSpan {
+  color: var(--t-code-text-orange);
+}
+
+.lineSpan {
+  color: var(--t-code-text-green);
+}

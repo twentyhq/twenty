@@ -1,8 +1,8 @@
-import { BLUR_LIGHT } from '@new-ui/theme/constants/BlurLight';
-import { COLOR_LIGHT } from '@new-ui/theme/constants/ColorsLight';
-import { GRAY_SCALE_LIGHT } from '@new-ui/theme/constants/GrayScaleLight';
-import { ILLUSTRATION_ICON_LIGHT } from '@new-ui/theme/constants/IllustrationIconLight';
-import { SNACK_BAR_LIGHT } from '@new-ui/theme/constants/SnackBarLight';
+import { BLUR_LIGHT } from '@ui/theme/constants/BlurLight';
+import { COLOR_LIGHT } from '@ui/theme/constants/ColorsLight';
+import { GRAY_SCALE_LIGHT } from '@ui/theme/constants/GrayScaleLight';
+import { ILLUSTRATION_ICON_LIGHT } from '@ui/theme/constants/IllustrationIconLight';
+import { SNACK_BAR_LIGHT } from '@ui/theme/constants/SnackBarLight';
 import { ACCENT_LIGHT } from './AccentLight';
 import { BACKGROUND_LIGHT } from './BackgroundLight';
 import { BORDER_LIGHT } from './BorderLight';

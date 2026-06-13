@@ -1,50 +1,79 @@
-import { type InputData } from 'src/utils/data.types';
+import { type FieldMetadataType } from 'twenty-shared/types';
+import { isFieldMetadataEnumKind } from 'twenty-shared/utils';
+import { type InputData, type Node } from 'src/utils/data.types';
 
-const OBJECT_SUBFIELD_NAMES = ['secondaryLinks', 'additionalPhones'];
+const RAW_JSON_SUBFIELD_NAMES = ['secondaryLinks', 'additionalPhones'];
 
-const formatArrayInputData = (
-  key: string,
-  arrayInputData: InputData,
-): string => {
-  if (OBJECT_SUBFIELD_NAMES.includes(key)) {
-    return `${arrayInputData[key].join('","')}`;
-  }
-  return `"${arrayInputData[key].join('","')}"`;
-};
+const isPlainObject = (value: unknown): value is InputData =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
 
-const handleQueryParams = (inputData: InputData): string => {
-  const formattedInputData: InputData = {};
-  Object.keys(inputData).forEach((key) => {
+const getFieldTypeByName = (node?: Node): Map<string, FieldMetadataType> =>
+  new Map(
+    (node?.fields.edges ?? []).map((edge) => [edge.node.name, edge.node.type]),
+  );
+
+const nestCompositeFields = (inputData: InputData): InputData => {
+  const nestedInputData: InputData = {};
+  for (const [key, value] of Object.entries(inputData)) {
     if (key.includes('__')) {
-      const [objectKey, nestedObjectKey] = key.split('__');
-      if (formattedInputData[objectKey]) {
-        formattedInputData[objectKey][nestedObjectKey] = inputData[key];
-      } else {
-        formattedInputData[objectKey] = { [nestedObjectKey]: inputData[key] };
-      }
+      const [fieldName, subFieldName] = key.split('__');
+      nestedInputData[fieldName] = {
+        ...nestedInputData[fieldName],
+        [subFieldName]: value,
+      };
     } else {
-      formattedInputData[key] = inputData[key];
+      nestedInputData[key] = value;
     }
-  });
-  let result = '';
-  Object.keys(formattedInputData).forEach((key) => {
-    let quote = '';
-    if (Array.isArray(formattedInputData[key])) {
-      result = result.concat(
-        `${key}: [${formatArrayInputData(key, formattedInputData)}], `,
-      );
-    } else if (typeof formattedInputData[key] === 'object') {
-      result = result.concat(
-        `${key}: {${handleQueryParams(formattedInputData[key])}}, `,
-      );
-    } else {
-      if (typeof formattedInputData[key] === 'string') quote = '"';
-      result = result.concat(
-        `${key}: ${quote}${formattedInputData[key]}${quote}, `,
-      );
-    }
-  });
-  if (result.length) result = result.slice(0, -2); // Remove the last ', '
-  return result;
+  }
+  return nestedInputData;
 };
+
+const isUnquotedField = (
+  fieldName: string,
+  fieldTypeByName: Map<string, FieldMetadataType>,
+): boolean => {
+  const fieldType = fieldTypeByName.get(fieldName);
+  return (
+    (fieldType !== undefined && isFieldMetadataEnumKind(fieldType)) ||
+    RAW_JSON_SUBFIELD_NAMES.includes(fieldName)
+  );
+};
+
+const serializeValue = (
+  fieldName: string,
+  value: unknown,
+  fieldTypeByName: Map<string, FieldMetadataType>,
+): string => {
+  if (Array.isArray(value)) {
+    const items = value.map((item) =>
+      serializeValue(fieldName, item, fieldTypeByName),
+    );
+    return `[${items.join(', ')}]`;
+  }
+  if (isPlainObject(value)) {
+    return `{${serializeFields(value, fieldTypeByName)}}`;
+  }
+  if (
+    typeof value === 'string' &&
+    !isUnquotedField(fieldName, fieldTypeByName)
+  ) {
+    return `"${value}"`;
+  }
+  return `${value}`;
+};
+
+const serializeFields = (
+  inputData: InputData,
+  fieldTypeByName: Map<string, FieldMetadataType>,
+): string =>
+  Object.entries(inputData)
+    .map(
+      ([key, value]) =>
+        `${key}: ${serializeValue(key, value, fieldTypeByName)}`,
+    )
+    .join(', ');
+
+const handleQueryParams = (inputData: InputData, node?: Node): string =>
+  serializeFields(nestCompositeFields(inputData), getFieldTypeByName(node));
+
 export default handleQueryParams;

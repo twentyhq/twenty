@@ -2,8 +2,9 @@ import { useStore } from 'jotai';
 
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
-import { useGetShouldInitializeRecordBoardForUpdateInputs } from '@/object-record/record-board/hooks/useGetShouldInitializeRecordBoardForUpdateInputs';
+import { useGetRecordBoardEffectsForUpdateInputs } from '@/object-record/record-board/hooks/useGetRecordBoardEffectsForUpdateInputs';
 import { useRemoveRecordsFromBoard } from '@/object-record/record-board/hooks/useRemoveRecordsFromBoard';
+import { useRepositionRecordsOnBoard } from '@/object-record/record-board/hooks/useRepositionRecordsOnBoard';
 import { useTriggerRecordBoardInitialQuery } from '@/object-record/record-board/hooks/useTriggerRecordBoardInitialQuery';
 import { recordGroupFromGroupValueComponentFamilySelector } from '@/object-record/record-group/states/selectors/recordGroupFromGroupValueComponentFamilySelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -14,15 +15,16 @@ import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/stat
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 export const RecordBoardDataChangedEffect = () => {
   const store = useStore();
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
   const { triggerRecordBoardInitialQuery } =
     useTriggerRecordBoardInitialQuery();
-  const { getShouldInitializeRecordBoardForUpdateInputs } =
-    useGetShouldInitializeRecordBoardForUpdateInputs();
+  const { getRecordBoardEffectsForUpdateInputs } =
+    useGetRecordBoardEffectsForUpdateInputs();
+  const { repositionRecordsOnBoard } = useRepositionRecordsOnBoard();
 
   const recordGroupFromGroupValueCallbackState =
     useAtomComponentFamilySelectorCallbackState(
@@ -53,17 +55,35 @@ export const RecordBoardDataChangedEffect = () => {
                 ? [objectRecordOperation.result.updateInput]
                 : objectRecordOperation.result.updateInputs;
 
-            const shouldInitializeForUpdateOperation =
-              getShouldInitializeRecordBoardForUpdateInputs(updateInputs);
+            const recordBoardUpdateEffect =
+              getRecordBoardEffectsForUpdateInputs(updateInputs);
 
-            if (shouldInitializeForUpdateOperation) {
-              triggerRecordBoardInitialQuery();
+            switch (recordBoardUpdateEffect) {
+              case 'trigger-initial-query': {
+                triggerRecordBoardInitialQuery({ shouldResetScroll: false });
+                break;
+              }
+              case 'reposition-records': {
+                const allRecordsRepositioned =
+                  repositionRecordsOnBoard(updateInputs);
+
+                if (!allRecordsRepositioned) {
+                  triggerRecordBoardInitialQuery({ shouldResetScroll: false });
+                }
+                break;
+              }
+              case 'none': {
+                break;
+              }
+              default: {
+                assertUnreachable(recordBoardUpdateEffect);
+              }
             }
           }
           break;
         case 'create-one': {
           if (objectRecordOperation.createdRecord.position === 'first') {
-            triggerRecordBoardInitialQuery();
+            triggerRecordBoardInitialQuery({ shouldResetScroll: false });
           } else {
             const createdRecordPosition =
               objectRecordOperation.createdRecord.position;
@@ -106,7 +126,7 @@ export const RecordBoardDataChangedEffect = () => {
             const groupIsEmpty = recordIdsWithoutCreatedRecord.length === 0;
 
             if (groupIsEmpty) {
-              triggerRecordBoardInitialQuery();
+              triggerRecordBoardInitialQuery({ shouldResetScroll: false });
               return;
             }
 
@@ -122,7 +142,7 @@ export const RecordBoardDataChangedEffect = () => {
             if (
               createdRecordPosition < (firstExistingRecordInGroup.position ?? 0)
             ) {
-              triggerRecordBoardInitialQuery();
+              triggerRecordBoardInitialQuery({ shouldResetScroll: false });
             }
           }
           break;
@@ -148,14 +168,15 @@ export const RecordBoardDataChangedEffect = () => {
           return;
         }
         default: {
-          triggerRecordBoardInitialQuery();
+          triggerRecordBoardInitialQuery({ shouldResetScroll: false });
         }
       }
     },
     [
       store,
       triggerRecordBoardInitialQuery,
-      getShouldInitializeRecordBoardForUpdateInputs,
+      getRecordBoardEffectsForUpdateInputs,
+      repositionRecordsOnBoard,
       recordIndexGroupFieldMetadataItem,
       recordGroupFromGroupValueCallbackState,
       recordIndexRecordIdsByGroupCallbackState,

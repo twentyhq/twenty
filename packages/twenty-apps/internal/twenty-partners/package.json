@@ -1,6 +1,6 @@
 {
   "name": "twenty-partners",
-  "version": "0.4.2",
+  "version": "0.5.1",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
@@ -25,7 +25,9 @@
     "import:apply": "IMPORT_APPLY=1 tsx src/scripts/import-from-tft.ts",
     "import:apply:prod": "ENV_FILE=.env.prod IMPORT_APPLY=1 tsx src/scripts/import-from-tft.ts",
     "migrate:partner-scope": "tsx src/scripts/migrate-partner-scope.ts",
-    "migrate:partner-scope:prod": "ENV_FILE=.env.prod tsx src/scripts/migrate-partner-scope.ts"
+    "migrate:partner-scope:prod": "ENV_FILE=.env.prod tsx src/scripts/migrate-partner-scope.ts",
+    "rls:configure": "tsx src/scripts/configure-partner-rls.ts",
+    "rls:configure:prod": "ENV_FILE=.env.prod tsx src/scripts/configure-partner-rls.ts"
   },
   "dependencies": {
     "twenty-client-sdk": "2.10.1",

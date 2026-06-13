@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlJobOnetCode',
   label: 'O*NET Code',
   description: 'O*NET occupation code returned by People Data Labs.',
+  icon: 'IconBarcode',
   isNullable: true,
 });
