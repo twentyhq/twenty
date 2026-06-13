@@ -1,5 +1,7 @@
 import { Draggable } from '@hello-pangea/dnd';
-import { type CSSProperties, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
+
+import { getCssCompatibleDraggableProps } from '@/ui/layout/draggable-list/utils/getCssCompatibleDraggableProps';
 
 type SidePanelAddToNavigationDraggablePlaceholderProps = {
   index: number;
@@ -19,8 +21,7 @@ export const SidePanelAddToNavigationDraggablePlaceholder = ({
       <div
         ref={provided.innerRef}
         // oxlint-disable-next-line react/jsx-props-no-spreading
-        {...provided.draggableProps}
-        style={provided.draggableProps.style as CSSProperties}
+        {...getCssCompatibleDraggableProps(provided.draggableProps)}
       >
         {children}
       </div>

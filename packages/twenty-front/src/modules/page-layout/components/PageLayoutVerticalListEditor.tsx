@@ -13,9 +13,11 @@ import {
   type DropResult,
 } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
-import { type CSSProperties, type ReactNode, useId } from 'react';
+import { type ReactNode, useId } from 'react';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { useIsMobile } from 'twenty-ui-deprecated/utilities';
+
+import { getCssCompatibleDraggableProps } from '@/ui/layout/draggable-list/utils/getCssCompatibleDraggableProps';
 
 const StyledVerticalListContainer = styled.div<{
   variant: PageLayoutVerticalListViewerVariant;
@@ -102,8 +104,7 @@ export const PageLayoutVerticalListEditor = ({
                   <StyledDraggableWrapper
                     ref={provided.innerRef}
                     // oxlint-disable-next-line react/jsx-props-no-spreading
-                    {...provided.draggableProps}
-                    style={provided.draggableProps.style as CSSProperties}
+                    {...getCssCompatibleDraggableProps(provided.draggableProps)}
                     isDragging={snapshot.isDragging}
                   >
                     {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
