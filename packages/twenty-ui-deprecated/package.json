@@ -47,7 +47,7 @@
     "vite-plugin-svgr": "^4.3.0"
   },
   "dependencies": {
-    "@linaria/react": "^6.2.1",
+    "@linaria/react": "^7.0.1",
     "@monaco-editor/react": "^4.7.0",
     "@radix-ui/colors": "^3.0.0",
     "@sniptt/guards": "^0.2.0",

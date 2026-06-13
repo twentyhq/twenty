@@ -1,13 +1,17 @@
 // React 19's @types/react removed the global `JSX` namespace (it now lives under
-// `React.JSX`). A number of our dependencies' published typings still reference the
-// global namespace — most importantly `@linaria/react`'s `styled.d.ts`, which types
-// every `styled.<tag>` via `keyof JSX.IntrinsicElements`. Without a global `JSX`,
-// those degrade to `any`, cascading into implicit-any errors across every styled
-// component. This shim re-exposes the global `JSX` namespace as an alias of
-// `React.JSX` for the duration of the React 19 transition.
+// `React.JSX`). Our own code still references the global namespace in ~25 files
+// (`JSX.Element`, `keyof JSX.IntrinsicElements`, ...), so this shim re-exposes the
+// global `JSX` namespace as an alias of `React.JSX` for the React 19 transition.
 //
-// Drop this once @linaria/react (and any other offenders) publish typings that use
-// `React.JSX` instead of the global namespace.
+// (@linaria/react — historically the other offender, via a `styled.d.ts` that typed
+// every `styled.<tag>` through `keyof JSX.IntrinsicElements` — is now on v7, which
+// targets `React.JSX` directly and self-provides its own shim, so it no longer
+// relies on this.)
+//
+// Drop this once our own code is migrated to a module-scoped `import { type JSX }
+// from 'react'` (or `React.JSX`). That is a separate mechanical pass: the repo
+// enforces no-duplicate-imports, so the JSX import must be merged into each file's
+// existing `react` import — best done with `types-react-codemod scoped-jsx`.
 import type * as React from 'react';
 
 declare global {
