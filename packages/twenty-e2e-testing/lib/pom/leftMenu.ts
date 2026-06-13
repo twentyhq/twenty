@@ -22,7 +22,9 @@ export class LeftMenu {
     this.workspaceDropdown = page.getByTestId('workspace-dropdown');
     this.leftMenu = page.getByRole('button').first();
     this.searchSubTab = page.getByText('Search');
-    this.settingsTab = page.getByRole('button', { name: 'Settings' });
+    // Since #21523 Settings lives inside the workspace switcher dropdown
+    // instead of the main navigation, so it must be opened first.
+    this.settingsTab = page.getByRole('link', { name: 'Settings' });
     this.peopleTab = page.getByRole('link', { name: 'People' });
     this.companiesTab = page.getByRole('link', { name: 'Companies' });
     this.opportunitiesTab = page.getByRole('link', { name: 'Opportunities' });
@@ -56,6 +58,7 @@ export class LeftMenu {
   }
 
   async goToSettings() {
+    await this.workspaceDropdown.click();
     await this.settingsTab.click();
   }
 
