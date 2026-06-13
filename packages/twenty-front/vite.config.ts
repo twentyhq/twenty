@@ -139,20 +139,22 @@ export default defineConfig(({ mode }) => {
         '../../node_modules/twenty-ui',
         '../../node_modules/twenty-ui-deprecated',
       ],
-      // Pre-bundle React up front so Vite's dep optimizer doesn't re-bundle it
-      // mid-run during browser-mode Storybook tests — re-bundling rotates the
-      // optimized chunk hash and 404s in-flight dynamic imports (vite 8 / rolldown).
+      // Pre-bundle shared singletons up front so Vite 8's dep optimizer doesn't
+      // create duplicate instances mid-run in browser-mode Storybook tests.
+      // Duplication breaks anything relying on a single instance: jotai atom
+      // state (dropdowns/pickers never receive their open state), floating-ui
+      // portal context, framer-motion's MotionGlobalConfig.skipAnimations, and
+      // it rotates React's optimized chunk hash (404-ing in-flight imports).
       include: [
         'react',
         'react-dom',
         'react-dom/client',
         'react/jsx-runtime',
         'react/jsx-dev-runtime',
-        // framer-motion must also stay a single instance: the Storybook test
-        // setup disables animations via MotionGlobalConfig.skipAnimations, which
-        // only applies if every component shares that instance. If the optimizer
-        // re-bundles it mid-run, animations resume and interaction assertions on
-        // animated components (dropdowns, date pickers, command menu) flake.
+        'jotai',
+        'jotai/utils',
+        'jotai/vanilla/store',
+        '@floating-ui/react',
         'framer-motion',
       ],
     },
