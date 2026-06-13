@@ -177,7 +177,8 @@ function walk(directory) {
     if (
       (relativePath.startsWith('sections' + path.sep) ||
         relativePath.startsWith('app-preview' + path.sep) ||
-        relativePath.startsWith('contact-cal' + path.sep)) &&
+        relativePath.startsWith('contact-cal' + path.sep) ||
+        relativePath.startsWith('partner-application' + path.sep)) &&
       /(?:aria-label|ariaLabel|aria-roledescription|placeholder|alt)="[A-Za-z]/.test(
         content,
       )
@@ -204,9 +205,11 @@ function walk(directory) {
     // Shared composite layers (the product mockup, the contact modal) sit
     // between sections and primitives: multiple sections consume them, so
     // they may reach only the pure and platform layers, never sections.
-    const sharedLayer = ['app-preview', 'contact-cal'].find((layer) =>
-      relativePath.startsWith(layer + path.sep),
-    );
+    const sharedLayer = [
+      'app-preview',
+      'contact-cal',
+      'partner-application',
+    ].find((layer) => relativePath.startsWith(layer + path.sep));
     if (sharedLayer) {
       const allowedLayers = new Set([
         'tokens',

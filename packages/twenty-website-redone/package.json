@@ -24,7 +24,8 @@
     "react-dom": "19.2.3",
     "server-only": "^0.0.1",
     "three": "^0.184.0",
-    "twenty-shared": "workspace:*"
+    "twenty-shared": "workspace:*",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@lingui/cli": "^5.1.2",

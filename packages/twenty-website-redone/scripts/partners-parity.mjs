@@ -113,8 +113,12 @@ const signoff = await partners.evaluate(() => {
   );
   const section = heading?.closest('section');
   const ctas = [...(section?.querySelectorAll('a, button') ?? [])];
-  const become = ctas.find((node) => /Become a partner/i.test(node.textContent ?? ''));
-  const find = ctas.find((node) => /Find a partner/i.test(node.textContent ?? ''));
+  const become = ctas.find((node) =>
+    /Become a partner/i.test(node.textContent ?? ''),
+  );
+  const find = ctas.find((node) =>
+    /Find a partner/i.test(node.textContent ?? ''),
+  );
   const body = [...(section?.querySelectorAll('p') ?? [])].find((node) =>
     /partner ecosystem/.test(node.textContent ?? ''),
   );
@@ -124,7 +128,9 @@ const signoff = await partners.evaluate(() => {
     becomeHref: become?.getAttribute('href') ?? null,
     findHref: find?.getAttribute('href') ?? '',
     bodyWidth: body ? Math.round(body.getBoundingClientRect().width) : 0,
-    sectionHeight: section ? Math.round(section.getBoundingClientRect().height) : 0,
+    sectionHeight: section
+      ? Math.round(section.getBoundingClientRect().height)
+      : 0,
     hasCrosshair: Boolean(section?.querySelector('[data-slot="plus"]')),
   };
 });
