@@ -7,6 +7,18 @@ const tableName = 'emailingDomain';
 
 const DEV_EMAILING_DOMAIN = 'dev.twenty.local';
 
+// The two domains backing the seeded EMAIL_GROUP channels: one verified (used by
+// the support channel) and one still pending DNS verification (used by the
+// contact channel). Exported so the channel seed can mint matching handles.
+export const getSeededEmailGroupDomains = (workspaceId: string) => {
+  const prefix = workspaceId.slice(0, 8);
+
+  return {
+    verified: `${prefix}.${DEV_EMAILING_DOMAIN}`,
+    pending: `${prefix}.pending.${DEV_EMAILING_DOMAIN}`,
+  };
+};
+
 type SeedEmailingDomainsArgs = {
   queryRunner: QueryRunner;
   schemaName: string;
@@ -18,7 +30,7 @@ export const seedEmailingDomains = async ({
   schemaName,
   workspaceId,
 }: SeedEmailingDomainsArgs) => {
-  const domain = `${workspaceId.slice(0, 8)}.${DEV_EMAILING_DOMAIN}`;
+  const { verified, pending } = getSeededEmailGroupDomains(workspaceId);
 
   await queryRunner.manager
     .createQueryBuilder()
@@ -35,10 +47,29 @@ export const seedEmailingDomains = async ({
     .values([
       {
         workspaceId,
-        domain,
+        domain: verified,
         status: EmailingDomainStatus.VERIFIED,
         verificationRecords: JSON.stringify([]),
         verifiedAt: new Date(),
+        tenantStatus: EmailingDomainTenantStatus.ACTIVE,
+      },
+      {
+        workspaceId,
+        domain: pending,
+        status: EmailingDomainStatus.PENDING,
+        verificationRecords: JSON.stringify([
+          {
+            type: 'TXT',
+            key: `_amazonses.${pending}`,
+            value: 'seed-verification-token',
+          },
+          {
+            type: 'CNAME',
+            key: `seed1._domainkey.${pending}`,
+            value: 'seed1.dkim.amazonses.com',
+          },
+        ]),
+        verifiedAt: null,
         tenantStatus: EmailingDomainTenantStatus.ACTIVE,
       },
     ])
