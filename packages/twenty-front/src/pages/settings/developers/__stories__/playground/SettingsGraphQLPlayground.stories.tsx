@@ -12,6 +12,11 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 const meta: Meta<typeof SettingsGraphQLPlayground> = {
   title: 'Pages/Settings/Playground/GraphQLPlayground',
   component: SettingsGraphQLPlayground,
+  // graphiql 5 renders a Monaco editor that cannot spin up web workers in the
+  // headless storybook test runner and throws unhandled async errors there
+  // (Cannot read properties of undefined 'toUrl'). Exclude this 3rd-party-tool
+  // wrapper from the vitest run; it is still available in the Storybook UI.
+  tags: ['no-tests'],
   decorators: [
     (Story) => {
       jotaiStore.set(playgroundApiKeyState.atom, {
