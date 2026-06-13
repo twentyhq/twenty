@@ -1,0 +1,41 @@
+packages/twenty-server/test/integration/messaging/suites/messaging-incremental-sync.integration-spec.ts
+  s_3226b097c1ff8f::t_7972432b4a4e01 85
+  s_3226b097c1ff8f::t_28a647b952f255 13
+packages/twenty-server/test/integration/calendar/suites/google-calendar-events-import.integration-spec.ts
+  s_3226b097c1ff8f::t_7bdc2f9e9abc9a 14-17
+  s_3226b097c1ff8f::t_28f48030a41a13 67,69
+  s_3226b097c1ff8f::t_32573e722e610a 93-95
+packages/twenty-server/test/integration/messaging/utils/google-calendar-mock.util.ts
+  s_3226b097c1ff8f::t_8fd5dae6d91fea 1-3,6-30,32-55
+  s_3226b097c1ff8f::t_df9e84ebfd1b56 58-59
+packages/twenty-server/test/integration/calendar/suites/calendar-connected-account-cleanup.integration-spec.ts
+  s_3226b097c1ff8f::t_bd2d1ae73443bd 35-44
+  s_3226b097c1ff8f::t_0f66e26ad323af 10-13
+packages/twenty-server/test/integration/calendar/suites/calendar-sync-failure-lifecycle.integration-spec.ts
+  s_3226b097c1ff8f::t_ecd18076b16cbb 19
+  s_3226b097c1ff8f::t_408a22bf8a4c3b 83,99
+packages/twenty-server/test/integration/messaging/utils/gmail-message-mock.util.ts
+  s_3226b097c1ff8f::t_ea1528532636c6 121-137
+packages/twenty-server/test/integration/calendar/suites/microsoft-calendar-events-import.integration-spec.ts
+  s_3226b097c1ff8f::t_af617026e849ae 69-71
+  s_3226b097c1ff8f::t_02dbf1d7e7cb2a 14-17
+  s_3226b097c1ff8f::t_a8cdfe25d33968 105-107
+packages/twenty-server/test/integration/messaging/utils/microsoft-calendar-mock.util.ts
+  s_3226b097c1ff8f::t_9612bf10b9bfb1 1-6,8-41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "e334551da934b55725ae6a39254eb3c9591a48ab",
+  "prompts": {},
+  "sessions": {
+    "s_3226b097c1ff8f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "37fe379b-1108-44f6-ae35-d2db6ea5c15c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
