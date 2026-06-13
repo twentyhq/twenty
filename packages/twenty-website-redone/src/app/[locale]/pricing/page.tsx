@@ -6,7 +6,6 @@ import {
 import { buildRouteMetadata } from '@/platform/seo';
 import { Faq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
-import { PricingHero } from '@/sections/pricing-hero';
 import { PricingPlans, PricingStateProvider } from '@/sections/pricing-plans';
 
 export const generateMetadata = buildRouteMetadata('pricing');
@@ -29,7 +28,6 @@ export default async function PricingPage({
     <>
       <Menu communityStats={communityStats} scheme="muted" />
       <main>
-        <PricingHero />
         <PricingStateProvider>
           <PricingPlans />
         </PricingStateProvider>
