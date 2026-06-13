@@ -45,10 +45,16 @@ export const OPPORTUNITY_DATA_SEED_COLUMNS: (keyof OpportunityDataSeed)[] = [
   'updatedByName',
 ];
 
+// Number of opportunities to seed. Sized so several Kanban stages hold well over
+// the board page size (PROPOSAL ~39, MEETING ~36, NEW ~30, all stages > 20), so
+// developers can exercise board column pagination / infinite scroll against dev
+// seed data without manually creating records.
+const OPPORTUNITY_DATA_SEED_COUNT = 150;
+
 const GENERATE_OPPORTUNITY_IDS = (): Record<string, string> => {
   const OPPORTUNITY_IDS: Record<string, string> = {};
 
-  for (let INDEX = 1; INDEX <= 50; INDEX++) {
+  for (let INDEX = 1; INDEX <= OPPORTUNITY_DATA_SEED_COUNT; INDEX++) {
     const HEX_INDEX = INDEX.toString(16).padStart(4, '0');
 
     OPPORTUNITY_IDS[`ID_${INDEX}`] =
@@ -173,7 +179,7 @@ const OPPORTUNITY_TEMPLATES = [
 const GENERATE_OPPORTUNITY_SEEDS = (): OpportunityDataSeed[] => {
   const OPPORTUNITY_SEEDS: OpportunityDataSeed[] = [];
 
-  for (let INDEX = 1; INDEX <= 50; INDEX++) {
+  for (let INDEX = 1; INDEX <= OPPORTUNITY_DATA_SEED_COUNT; INDEX++) {
     const TEMPLATE_INDEX = (INDEX - 1) % OPPORTUNITY_TEMPLATES.length;
     const TEMPLATE = OPPORTUNITY_TEMPLATES[TEMPLATE_INDEX];
 
