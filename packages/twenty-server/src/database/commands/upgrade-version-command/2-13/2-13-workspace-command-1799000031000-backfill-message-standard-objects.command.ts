@@ -34,7 +34,6 @@ const MESSAGE_OBJECT_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.messageCampaign.universalIdentifier,
   STANDARD_OBJECTS.messageList.universalIdentifier,
   STANDARD_OBJECTS.messageListMember.universalIdentifier,
-  STANDARD_OBJECTS.messageTopic.universalIdentifier,
 ];
 
 // Fields the feature adds to PRE-EXISTING objects (person/timelineActivity/
@@ -43,8 +42,6 @@ const MESSAGE_OBJECT_UNIVERSAL_IDENTIFIERS = [
 const NEW_FIELDS_ON_EXISTING_OBJECTS_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.person.fields.listMemberships.universalIdentifier,
   STANDARD_OBJECTS.timelineActivity.fields.targetMessageList
-    .universalIdentifier,
-  STANDARD_OBJECTS.timelineActivity.fields.targetMessageTopic
     .universalIdentifier,
   STANDARD_OBJECTS.timelineActivity.fields.targetMessageCampaign
     .universalIdentifier,
@@ -57,7 +54,6 @@ const MESSAGE_FIELD_UNIVERSAL_IDENTIFIERS = [
   ...getUniversalIdentifiers(STANDARD_OBJECTS.messageCampaign.fields),
   ...getUniversalIdentifiers(STANDARD_OBJECTS.messageList.fields),
   ...getUniversalIdentifiers(STANDARD_OBJECTS.messageListMember.fields),
-  ...getUniversalIdentifiers(STANDARD_OBJECTS.messageTopic.fields),
   ...NEW_FIELDS_ON_EXISTING_OBJECTS_UNIVERSAL_IDENTIFIERS,
 ];
 
@@ -65,7 +61,6 @@ const MESSAGE_INDEX_UNIVERSAL_IDENTIFIERS = [
   ...getUniversalIdentifiers(STANDARD_OBJECTS.messageCampaign.indexes),
   ...getUniversalIdentifiers(STANDARD_OBJECTS.messageList.indexes),
   ...getUniversalIdentifiers(STANDARD_OBJECTS.messageListMember.indexes),
-  ...getUniversalIdentifiers(STANDARD_OBJECTS.messageTopic.indexes),
   STANDARD_OBJECTS.message.indexes.messageCampaignIdIndex.universalIdentifier,
   STANDARD_OBJECTS.messageParticipant.indexes.messageCampaignIdIndex
     .universalIdentifier,
@@ -74,13 +69,11 @@ const MESSAGE_INDEX_UNIVERSAL_IDENTIFIERS = [
 const MESSAGE_NAVIGABLE_OBJECT_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.messageCampaign.universalIdentifier,
   STANDARD_OBJECTS.messageList.universalIdentifier,
-  STANDARD_OBJECTS.messageTopic.universalIdentifier,
 ];
 
 const MESSAGE_RECORD_PAGE_KEYS = [
   'messageCampaignRecordPage',
   'messageListRecordPage',
-  'messageTopicRecordPage',
 ] as const;
 
 const MESSAGE_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = MESSAGE_RECORD_PAGE_KEYS.map(
@@ -123,7 +116,7 @@ const MESSAGE_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS = [
 @Command({
   name: 'upgrade:2-13:backfill-message-standard-objects',
   description:
-    'Create the message marketing standard objects (messageCampaign, messageList, messageListMember, messageTopic) in existing workspaces',
+    'Create the message marketing standard objects (messageCampaign, messageList, messageListMember) in existing workspaces',
 })
 export class BackfillMessageStandardObjectsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(

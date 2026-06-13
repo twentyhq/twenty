@@ -3,9 +3,9 @@ import { QueryFailedError } from 'typeorm';
 import { type MessageSuppressionEntity } from 'src/engine/core-modules/emailing-domain/message-suppression.entity';
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/message-suppression-source.type';
-import { type GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
+import { type MessageTopicService } from 'src/modules/emailing/services/message-topic.service';
 
 const WORKSPACE_ID = 'workspace-1';
 
@@ -32,20 +32,15 @@ describe('MessageSuppressionService', () => {
       update: jest.fn().mockResolvedValue({ affected: 1 }),
       delete: jest.fn().mockResolvedValue({ affected: 1 }),
     };
-    const ormManager = {
-      executeInWorkspaceContext: jest.fn((callback: () => unknown) =>
-        callback(),
-      ),
-      getRepository: jest.fn().mockResolvedValue({
-        find: jest.fn().mockResolvedValue(publicTopics),
-      }),
+    const messageTopicService = {
+      findPublicTopics: jest.fn().mockResolvedValue(publicTopics),
     };
     const service = new MessageSuppressionService(
       repository as unknown as WorkspaceScopedRepository<MessageSuppressionEntity>,
-      ormManager as unknown as GlobalWorkspaceOrmManager,
+      messageTopicService as unknown as MessageTopicService,
     );
 
-    return { service, repository, ormManager };
+    return { service, repository, messageTopicService };
   };
 
   describe('suppress', () => {

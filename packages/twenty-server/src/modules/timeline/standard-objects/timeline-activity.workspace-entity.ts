@@ -8,7 +8,6 @@ import { type CompanyWorkspaceEntity } from 'src/modules/company/standard-object
 import { type DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 import { type MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { type MessageListWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list.workspace-entity';
-import { type MessageTopicWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-topic.workspace-entity';
 import { type NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -53,8 +52,6 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   targetDashboardId: string | null;
   targetMessageList: EntityRelation<MessageListWorkspaceEntity> | null;
   targetMessageListId: string | null;
-  targetMessageTopic: EntityRelation<MessageTopicWorkspaceEntity> | null;
-  targetMessageTopicId: string | null;
   targetMessageCampaign: EntityRelation<MessageCampaignWorkspaceEntity> | null;
   targetMessageCampaignId: string | null;
   custom: EntityRelation<CustomWorkspaceEntity>;

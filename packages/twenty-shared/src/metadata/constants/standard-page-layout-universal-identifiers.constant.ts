@@ -581,19 +581,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
       },
     },
   },
-  messageTopicRecordPage: {
-    universalIdentifier: '2f64395f-0217-4256-b731-2652cf1d3dd9',
-    tabs: {
-      home: {
-        universalIdentifier: '414da238-afd3-430c-8615-620f35991dd7',
-        widgets: {
-          fields: {
-            universalIdentifier: '8e47f920-94d8-4d85-9f56-975421ad56ce',
-          },
-        },
-      },
-    },
-  },
   messageCampaignRecordPage: {
     universalIdentifier: '8704b091-94bd-4f8f-82b1-e2f3eab92217',
     tabs: {
@@ -608,9 +595,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
           },
           recipients: {
             universalIdentifier: 'b667f20a-1d38-453e-b888-3ecab00a1044',
-          },
-          topic: {
-            universalIdentifier: '63ad0b98-4c5e-4fbd-bb4c-950eadc7e2a4',
           },
           list: {
             universalIdentifier: 'b04fb8a5-f471-49a7-b82c-8434ea8276c5',

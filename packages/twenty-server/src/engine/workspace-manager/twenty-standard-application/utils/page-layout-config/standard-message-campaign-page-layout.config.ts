@@ -29,17 +29,6 @@ const MESSAGE_CAMPAIGN_PAGE_TABS = {
             .tabs.home.widgets.fields.universalIdentifier,
         ...WIDGET_PROPS.fields,
       },
-      topic: {
-        universalIdentifier:
-          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage
-            .tabs.home.widgets.topic.universalIdentifier,
-        title: 'Topic',
-        type: WidgetType.FIELD,
-        gridPosition: GRID_POSITIONS.FULL_WIDTH,
-        position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
-        fieldUniversalIdentifier:
-          STANDARD_OBJECTS.messageCampaign.fields.topic.universalIdentifier,
-      },
       list: {
         universalIdentifier:
           STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageCampaignRecordPage

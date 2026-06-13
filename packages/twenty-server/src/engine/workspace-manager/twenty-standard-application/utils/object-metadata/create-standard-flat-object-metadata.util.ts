@@ -239,38 +239,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
-  messageTopic: ({
-    now,
-    workspaceId,
-    standardObjectMetadataRelatedEntityIds,
-    twentyStandardApplicationId,
-    dependencyFlatEntityMaps,
-  }: Omit<
-    CreateStandardObjectArgs<'messageTopic'>,
-    'context' | 'objectName'
-  >) =>
-    createStandardObjectFlatMetadata({
-      objectName: 'messageTopic',
-      dependencyFlatEntityMaps,
-      context: {
-        universalIdentifier: STANDARD_OBJECTS.messageTopic.universalIdentifier,
-        nameSingular: 'messageTopic',
-        namePlural: 'messageTopics',
-        labelSingular: i18nLabel(msg`Unsubscribe Group`),
-        labelPlural: i18nLabel(msg`Unsubscribe Groups`),
-        description: i18nLabel(
-          msg`An email category recipients can opt out of`,
-        ),
-        icon: 'IconMailbox',
-        isSystem: true,
-        isSearchable: true,
-        labelIdentifierFieldMetadataName: 'name',
-      },
-      workspaceId,
-      standardObjectMetadataRelatedEntityIds,
-      twentyStandardApplicationId,
-      now,
-    }),
   messageCampaign: ({
     now,
     workspaceId,

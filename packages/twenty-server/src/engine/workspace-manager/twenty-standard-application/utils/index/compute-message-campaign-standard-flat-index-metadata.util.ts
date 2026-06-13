@@ -22,7 +22,7 @@ export const buildMessageCampaignStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'topicIdIndex',
-      relatedFieldNames: ['topic'],
+      relatedFieldNames: ['topicId'],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

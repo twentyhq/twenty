@@ -4,7 +4,6 @@ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity
 import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type MessageListWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list.workspace-entity';
-import { type MessageTopicWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-topic.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
@@ -20,7 +19,8 @@ export class MessageCampaignWorkspaceEntity extends BaseWorkspaceEntity {
   fromAddress: EmailsMetadata | null;
   status: string;
   sentAt: Date | null;
-  topic: EntityRelation<MessageTopicWorkspaceEntity> | null;
+  // References core.messageTopic (the unsubscribe group); a plain scalar, not a
+  // relation, since the topic lives outside the workspace schema.
   topicId: string | null;
   list: EntityRelation<MessageListWorkspaceEntity> | null;
   listId: string | null;

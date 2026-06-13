@@ -270,24 +270,18 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         settings: { displayFormat: DateDisplayFormat.RELATIVE },
       },
     }),
-    topic: createStandardRelationFieldFlatMetadata({
+    topicId: createStandardFieldFlatMetadata({
       ...base,
       context: {
-        type: FieldMetadataType.RELATION,
-        morphId: null,
-        fieldName: 'topic',
-        label: i18nLabel(msg`Topic`),
-        description: i18nLabel(msg`The audience this campaign was sent to`),
+        fieldName: 'topicId',
+        type: FieldMetadataType.UUID,
+        label: i18nLabel(msg`Unsubscribe group id`),
+        description: i18nLabel(
+          msg`The unsubscribe group (core messageTopic) this campaign was sent under`,
+        ),
         icon: 'IconMailbox',
         isNullable: true,
         isUIReadOnly: true,
-        targetObjectName: 'messageTopic',
-        targetFieldName: 'campaigns',
-        settings: {
-          relationType: RelationType.MANY_TO_ONE,
-          onDelete: RelationOnDeleteAction.SET_NULL,
-          joinColumnName: 'topicId',
-        },
       },
     }),
     list: createStandardRelationFieldFlatMetadata({

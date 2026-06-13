@@ -869,51 +869,6 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
-  messageTopic: {
-    universalIdentifier: 'f8c9f0c1-335b-4c47-9291-4eaab9d0178c',
-    fields: {
-      id: { universalIdentifier: '0822eeff-a953-43db-a0e3-d8dd0e4d2d6d' },
-      createdAt: {
-        universalIdentifier: '918cb884-115e-45b0-a72b-71e4b7579684',
-      },
-      updatedAt: {
-        universalIdentifier: '67581ae7-7297-416e-8f55-b2fb1bb057bc',
-      },
-      deletedAt: {
-        universalIdentifier: '780d003c-ff47-4355-ac8d-4e65e3610396',
-      },
-      createdBy: {
-        universalIdentifier: '40c1373a-ef85-4f1b-a990-b1281b0c831c',
-      },
-      updatedBy: {
-        universalIdentifier: '83086212-f67c-4bd0-b56c-572ffa390864',
-      },
-      position: {
-        universalIdentifier: '7afaa059-cdb8-457f-ade1-970e17e7743e',
-      },
-      searchVector: {
-        universalIdentifier: '43324d01-0d5a-4d72-89ed-1d77eb9cbc5a',
-      },
-      name: { universalIdentifier: '67ed2d3c-4ba4-452c-bbbd-e038f4bfae7d' },
-      description: {
-        universalIdentifier: '67ce362d-b50b-4cfb-87da-786bd1074ac4',
-      },
-      visibility: {
-        universalIdentifier: 'f654eb52-2ccc-4bc4-9f3d-6f04c45fec7b',
-      },
-      campaigns: {
-        universalIdentifier: 'ddb2a585-1a7f-4063-8aa6-7b9d1e5fc0bd',
-      },
-      timelineActivities: {
-        universalIdentifier: 'c3d4e5f6-7081-4c92-8da3-14e5f6071829',
-      },
-    },
-    indexes: {
-      searchVectorGinIndex: {
-        universalIdentifier: '4bd721f1-cd95-4c74-b962-c5b1c50a32d9',
-      },
-    },
-  },
   messageCampaign: {
     universalIdentifier: '238acb94-dd4c-4036-bc55-19b99d821efd',
     fields: {
@@ -948,7 +903,7 @@ export const STANDARD_OBJECTS = {
       },
       status: { universalIdentifier: 'c7117256-3de6-48e1-87df-c99c32bad610' },
       sentAt: { universalIdentifier: 'e2315b4f-9edf-4df2-96b9-961e76368671' },
-      topic: { universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c' },
+      topicId: { universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c' },
       list: { universalIdentifier: 'cb24dcdf-f0e8-4c71-8cff-70b714e86530' },
       timelineActivities: {
         universalIdentifier: 'd4e5f607-1829-4da3-8eb4-25f607182930',
@@ -2387,9 +2342,6 @@ export const STANDARD_OBJECTS = {
       },
       targetMessageList: {
         universalIdentifier: 'd9f4a1b2-3c5e-4d70-8e91-0a2b3c4d5e6f',
-      },
-      targetMessageTopic: {
-        universalIdentifier: 'a1b2c3d4-5e6f-4a70-8b81-92c3d4e5f607',
       },
       targetMessageCampaign: {
         universalIdentifier: 'b2c3d4e5-6f70-4b81-8c92-03d4e5f60718',
