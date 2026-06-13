@@ -49,6 +49,10 @@ export class UnsubscribeController {
   async handleOneClickUnsubscribe(@Query('t') token: string): Promise<void> {
     const payload = this.verifyTokenOrThrow(token);
 
+    if (payload.preview === true) {
+      return;
+    }
+
     // Topic-scoped when the token carries a topic, global otherwise.
     await this.messageSuppressionService.suppress({
       workspaceId: payload.workspaceId,
@@ -84,6 +88,13 @@ export class UnsubscribeController {
   ): Promise<string> {
     const payload = this.verifyTokenOrThrow(body.t);
 
+    if (payload.preview === true) {
+      return buildUnsubscribeResultPage(
+        'Preview',
+        'This is a preview — no changes were saved.',
+      );
+    }
+
     // The checked boxes are the topics the recipient wants to keep receiving.
     await this.messageSuppressionService.setTopicOptOuts({
       workspaceId: payload.workspaceId,
@@ -103,6 +114,13 @@ export class UnsubscribeController {
     @Body() body: UnsubscribeFormBody,
   ): Promise<string> {
     const payload = this.verifyTokenOrThrow(body.t);
+
+    if (payload.preview === true) {
+      return buildUnsubscribeResultPage(
+        'Preview',
+        'This is a preview — no changes were saved.',
+      );
+    }
 
     await this.messageSuppressionService.suppress({
       workspaceId: payload.workspaceId,

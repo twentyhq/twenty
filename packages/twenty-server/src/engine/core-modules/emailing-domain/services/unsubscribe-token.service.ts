@@ -51,6 +51,7 @@ export class UnsubscribeTokenService {
         ...(typeof decoded?.messageTopicId === 'string'
           ? { messageTopicId: decoded.messageTopicId }
           : {}),
+        ...(decoded?.preview === true ? { preview: true } : {}),
       };
     } catch {
       return null;
