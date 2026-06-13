@@ -54,4 +54,6 @@ export type CurrentWorkspace = Pick<
 export const currentWorkspaceState = createAtomState<CurrentWorkspace | null>({
   key: 'currentWorkspaceState',
   defaultValue: null,
+  useLocalStorage: true,
+  localStorageOptions: { getOnInit: true },
 });
