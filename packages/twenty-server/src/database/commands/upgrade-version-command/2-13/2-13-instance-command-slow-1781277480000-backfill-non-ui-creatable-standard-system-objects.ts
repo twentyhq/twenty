@@ -1,7 +1,7 @@
-import { QueryRunner } from 'typeorm';
+import { DataSource, QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
-import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
+import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
 // The create-record UI affordance is now gated on isUICreatable alone (the
 // !isSystem clause was dropped). Standard system objects relied on that clause
@@ -26,12 +26,12 @@ const NON_UI_CREATABLE_STANDARD_SYSTEM_OBJECT_NAMES = [
   'workflowAutomatedTrigger',
 ];
 
-@RegisteredInstanceCommand('2.13.0', 1781277480000)
-export class BackfillNonUiCreatableStandardSystemObjectsFastInstanceCommand
-  implements FastInstanceCommand
+@RegisteredInstanceCommand('2.13.0', 1781277480000, { type: 'slow' })
+export class BackfillNonUiCreatableStandardSystemObjectsSlowInstanceCommand
+  implements SlowInstanceCommand
 {
-  public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
+  async runDataMigration(dataSource: DataSource): Promise<void> {
+    await dataSource.query(
       `UPDATE "core"."objectMetadata"
        SET "isUICreatable" = false
        WHERE "isSystem" = true
@@ -41,14 +41,11 @@ export class BackfillNonUiCreatableStandardSystemObjectsFastInstanceCommand
     );
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `UPDATE "core"."objectMetadata"
-       SET "isUICreatable" = true
-       WHERE "isSystem" = true
-         AND "isUICreatable" = false
-         AND "nameSingular" = ANY($1)`,
-      [NON_UI_CREATABLE_STANDARD_SYSTEM_OBJECT_NAMES],
-    );
+  public async up(_queryRunner: QueryRunner): Promise<void> {
+    return;
+  }
+
+  public async down(_queryRunner: QueryRunner): Promise<void> {
+    return;
   }
 }
