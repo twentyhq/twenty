@@ -6,7 +6,7 @@ import NextImage from 'next/image';
 import { AppPreview } from '@/app-preview/app-preview';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
-import { spacing } from '@/tokens';
+import { HERO_COMPOSITION, spacing } from '@/tokens';
 import { Button, Eyebrow, Heading, SectionIntro, SectionShell } from '@/ui';
 
 // The closer: the full product mockup in its static frame under a "try
@@ -49,7 +49,7 @@ const HeadingMeasure = styled.div`
 // The mockup hangs at the hero's CTA-to-window measure, not the stack
 // rhythm (user-ratified: the two CTA-over-mockup moments read the same).
 const PreviewRoot = styled.div`
-  margin-top: ${APP_PREVIEW_STAGE.windowScene.ctaGapPx}px;
+  margin-top: ${HERO_COMPOSITION.ctaToVisualGapPx}px;
   width: 100%;
 `;
 

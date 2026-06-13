@@ -2,8 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { GRADIENT, mediaUp, spacing } from '@/tokens';
-import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
+import { GRADIENT, HERO_COMPOSITION, mediaUp, spacing } from '@/tokens';
 import { Body, Button, Heading, HeadingPair, SectionShell } from '@/ui';
 
 import { PartnerVisual } from './partner-visual';
@@ -52,7 +51,7 @@ const CtaRow = styled.div`
 `;
 
 const VisualStage = styled.div`
-  margin-top: ${APP_PREVIEW_STAGE.windowScene.ctaGapPx}px;
+  margin-top: ${HERO_COMPOSITION.ctaToVisualGapPx}px;
   width: 100%;
 `;
 

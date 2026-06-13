@@ -9,7 +9,7 @@ import { styled } from '@linaria/react';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { SITE_URLS } from '@/platform/site-urls';
 import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
-import { GRADIENT, spacing } from '@/tokens';
+import { GRADIENT, HERO_COMPOSITION, spacing } from '@/tokens';
 import { Body, Button, Heading, HeadingPair, SectionShell } from '@/ui';
 
 const GradientBackdrop = styled.div`
@@ -60,7 +60,7 @@ const MockupStage = styled.div`
     0px,
     calc((100% - ${APP_PREVIEW_STAGE.windowScene.widthPx}px) / 2)
   );
-  margin-top: ${APP_PREVIEW_STAGE.windowScene.ctaGapPx}px;
+  margin-top: ${HERO_COMPOSITION.ctaToVisualGapPx}px;
   position: relative;
   width: ${APP_PREVIEW_STAGE.windowScene.widthPx}px;
 `;

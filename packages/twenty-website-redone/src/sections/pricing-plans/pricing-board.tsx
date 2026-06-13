@@ -3,8 +3,7 @@
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 
-import { mediaUp, spacing } from '@/tokens';
-import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
+import { HERO_COMPOSITION, mediaUp, spacing } from '@/tokens';
 
 import { BillingToggle } from './billing-toggle';
 import { PlanCard } from './plan-card';
@@ -63,7 +62,7 @@ const SelfHostToggleSlot = styled.div`
 const CardsGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  margin-top: ${APP_PREVIEW_STAGE.windowScene.ctaGapPx}px;
+  margin-top: ${HERO_COMPOSITION.ctaToVisualGapPx}px;
   row-gap: ${spacing(4)};
   width: 100%;
 
