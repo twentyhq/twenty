@@ -101,6 +101,59 @@ assert(
   panel.quoteFont !== '' && panel.quoteFont === panel.counterFont,
   `quote ${panel.quoteFont} / counter ${panel.counterFont}`,
 );
+
+// The closing sign-off: a tall centred panel whose heading carries both faces
+// (serif + sans accent). "Become a partner" stays an inert button until the
+// application modal lands; "Find a partner" links to the (Wave-B) marketplace,
+// the same dangle the hero already carries. The body is measure-constrained so
+// it breaks across two lines rather than running the panel width.
+const signoff = await partners.evaluate(() => {
+  const heading = [...document.querySelectorAll('h2')].find((node) =>
+    /Ready to grow/.test(node.textContent ?? ''),
+  );
+  const section = heading?.closest('section');
+  const ctas = [...(section?.querySelectorAll('a, button') ?? [])];
+  const become = ctas.find((node) => /Become a partner/i.test(node.textContent ?? ''));
+  const find = ctas.find((node) => /Find a partner/i.test(node.textContent ?? ''));
+  const body = [...(section?.querySelectorAll('p') ?? [])].find((node) =>
+    /partner ecosystem/.test(node.textContent ?? ''),
+  );
+  return {
+    headingText: (heading?.textContent ?? '').replace(/\s+/g, ' ').trim(),
+    becomeTag: become?.tagName.toLowerCase() ?? '',
+    becomeHref: become?.getAttribute('href') ?? null,
+    findHref: find?.getAttribute('href') ?? '',
+    bodyWidth: body ? Math.round(body.getBoundingClientRect().width) : 0,
+    sectionHeight: section ? Math.round(section.getBoundingClientRect().height) : 0,
+    hasCrosshair: Boolean(section?.querySelector('[data-slot="plus"]')),
+  };
+});
+assert(
+  'signoff heading carries both faces',
+  signoff.headingText.includes('Ready to grow') &&
+    signoff.headingText.includes('with Twenty?'),
+  signoff.headingText,
+);
+assert(
+  'signoff become-a-partner is inert pending the modal',
+  signoff.becomeTag === 'button' && signoff.becomeHref === null,
+  `${signoff.becomeTag} href=${signoff.becomeHref}`,
+);
+assert(
+  'signoff find-a-partner links to the marketplace',
+  signoff.findHref.endsWith('/partners/list'),
+  signoff.findHref,
+);
+assert(
+  'signoff body is measure-constrained',
+  signoff.bodyWidth > 0 && signoff.bodyWidth <= 410,
+  `${signoff.bodyWidth}px`,
+);
+assert(
+  'signoff is a tall centred panel',
+  signoff.sectionHeight >= 759 && signoff.hasCrosshair,
+  `${signoff.sectionHeight}px / crosshair ${signoff.hasCrosshair}`,
+);
 await partners.close();
 
 // Every hero renders its h1 (the shared hero composition holds across schemes).

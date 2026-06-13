@@ -187,6 +187,7 @@ msgstr ""
 "*our partner*"
 
 #. js-lingui-id: 6ZCRfT
+#: src/sections/partner-signoff/partner-signoff.tsx
 #: src/sections/partner-hero/partner-hero.tsx
 msgid "Become a partner"
 msgstr "Become a partner"
@@ -614,6 +615,7 @@ msgid "Find a certified Twenty partner to migrate, customise, and operate your o
 msgstr "Find a certified Twenty partner to migrate, customise, and operate your open source CRM, or join the ecosystem and grow your practice with us."
 
 #. js-lingui-id: TJ7HQl
+#: src/sections/partner-signoff/partner-signoff.tsx
 #: src/sections/partner-hero/partner-hero.tsx
 msgid "Find a partner"
 msgstr "Find a partner"
@@ -760,6 +762,11 @@ msgstr "It's fragile. V1 ships quickly, but maintaining and making changes is a 
 #: src/sections/testimonials/partner-testimonials-carousel.tsx
 msgid "Join our growing partner ecosystem"
 msgstr "Join our growing partner ecosystem"
+
+#. js-lingui-id: VQIurp
+#: src/sections/partner-signoff/partner-signoff.tsx
+msgid "Join our partner ecosystem and help businesses take control of their CRM."
+msgstr "Join our partner ecosystem and help businesses take control of their CRM."
 
 #. js-lingui-id: qrYDGE
 #: src/sections/testimonials/testimonials.data.ts
@@ -1012,6 +1019,15 @@ msgstr "Proprietary languages, slow deployment cycles, and \"black box\" logic."
 #: src/sections/helped/helped-card.tsx
 msgid "Read the case"
 msgstr "Read the case"
+
+#. js-lingui-id: TqQ08B
+#: src/sections/partner-signoff/partner-signoff.tsx
+msgid ""
+"Ready to grow\n"
+"*with Twenty?*"
+msgstr ""
+"Ready to grow\n"
+"*with Twenty?*"
 
 #. js-lingui-id: zTY2by
 #: src/platform/routing/static-website-routes.ts

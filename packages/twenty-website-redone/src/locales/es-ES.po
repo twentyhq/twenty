@@ -185,6 +185,7 @@ msgid ""
 msgstr ""
 
 #. js-lingui-id: 6ZCRfT
+#: src/sections/partner-signoff/partner-signoff.tsx
 #: src/sections/partner-hero/partner-hero.tsx
 msgid "Become a partner"
 msgstr ""
@@ -612,6 +613,7 @@ msgid "Find a certified Twenty partner to migrate, customise, and operate your o
 msgstr ""
 
 #. js-lingui-id: TJ7HQl
+#: src/sections/partner-signoff/partner-signoff.tsx
 #: src/sections/partner-hero/partner-hero.tsx
 msgid "Find a partner"
 msgstr ""
@@ -755,6 +757,11 @@ msgstr ""
 #. js-lingui-id: 1qiriB
 #: src/sections/testimonials/partner-testimonials-carousel.tsx
 msgid "Join our growing partner ecosystem"
+msgstr ""
+
+#. js-lingui-id: VQIurp
+#: src/sections/partner-signoff/partner-signoff.tsx
+msgid "Join our partner ecosystem and help businesses take control of their CRM."
 msgstr ""
 
 #. js-lingui-id: qrYDGE
@@ -1005,6 +1012,13 @@ msgstr ""
 #. js-lingui-id: gSQVmr
 #: src/sections/helped/helped-card.tsx
 msgid "Read the case"
+msgstr ""
+
+#. js-lingui-id: TqQ08B
+#: src/sections/partner-signoff/partner-signoff.tsx
+msgid ""
+"Ready to grow\n"
+"*with Twenty?*"
 msgstr ""
 
 #. js-lingui-id: zTY2by
