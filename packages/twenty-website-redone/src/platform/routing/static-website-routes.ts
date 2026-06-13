@@ -21,4 +21,13 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     priority: 0.8,
     title: msg`Twenty CRM Features — Modern Open Source CRM Platform`,
   },
+  {
+    changeFrequency: 'monthly',
+    description: msg`Cloud Pro starts at $9/user/month with unlimited custom objects. Self-host the open source core for free, or upgrade to Organization for SSO and row-level permissions.`,
+    id: 'pricing',
+    indexed: true,
+    path: '/pricing',
+    priority: 0.9,
+    title: msg`Twenty CRM Pricing — Plans from $9 per User per Month`,
+  },
 ];

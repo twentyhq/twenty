@@ -46,16 +46,14 @@ function fixturePath(pagePath) {
 // — except headings, which ARE content under lock).
 function readPageSnapshot(page) {
   return page.evaluate(() => {
-    const style = (el) => getComputedStyle(el);
-
     const sections = [...document.querySelectorAll('section')].map((el) => {
       const previous = el.previousElementSibling;
       return {
         scheme: el.getAttribute('data-scheme'),
         rhythm: el.getAttribute('data-rhythm'),
-        paddingTop: style(el).paddingTop,
-        paddingBottom: style(el).paddingBottom,
-        background: style(el).backgroundColor,
+        paddingTop: getComputedStyle(el).paddingTop,
+        paddingBottom: getComputedStyle(el).paddingBottom,
+        background: getComputedStyle(el).backgroundColor,
         followsSameScheme:
           previous?.tagName === 'SECTION' &&
           previous.getAttribute('data-scheme') ===
@@ -89,7 +87,7 @@ function readPageSnapshot(page) {
       });
 
     const headings = [...document.querySelectorAll('h1, h2')].map((el) => {
-      const headingStyle = style(el);
+      const headingStyle = getComputedStyle(el);
       return {
         tag: el.tagName,
         text: el.textContent.trim().slice(0, 60),
@@ -101,7 +99,7 @@ function readPageSnapshot(page) {
 
     const visualSlots = [...document.querySelectorAll('[data-illustration]')]
       .map((el) => el.getAttribute('data-illustration'))
-      .sort();
+      .toSorted();
 
     const ctas = [...document.querySelectorAll('main a')]
       .filter((el) => el.querySelector('svg, span[aria-hidden]'))

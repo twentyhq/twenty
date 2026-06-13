@@ -224,6 +224,11 @@ msgstr "Close menu"
 msgid "Cloud Pro is $9/user/month (yearly). Organization is $19/user/month and unlocks SSO and row-level permissions for teams that need finer access control."
 msgstr "Cloud Pro is $9/user/month (yearly). Organization is $19/user/month and unlocks SSO and row-level permissions for teams that need finer access control."
 
+#. js-lingui-id: WYgF8M
+#: src/platform/routing/static-website-routes.ts
+msgid "Cloud Pro starts at $9/user/month with unlimited custom objects. Self-host the open source core for free, or upgrade to Organization for SSO and row-level permissions."
+msgstr "Cloud Pro starts at $9/user/month with unlimited custom objects. Self-host the open source core for free, or upgrade to Organization for SSO and row-level permissions."
+
 #. js-lingui-id: 1YncLF
 #: src/sections/testimonials/testimonials.data.ts
 msgid "Co-founder at NetZero"
@@ -868,6 +873,20 @@ msgstr "Show changes"
 msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our 4-hour Onboarding Packs or certified partners get you live in 1–2 weeks."
 msgstr "Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our 4-hour Onboarding Packs or certified partners get you live in 1–2 weeks."
 
+#. js-lingui-id: qTFDyz
+#: src/sections/pricing-hero/pricing-hero.tsx
+msgid ""
+"Simple\n"
+"*Pricing*"
+msgstr ""
+"Simple\n"
+"*Pricing*"
+
+#. js-lingui-id: Kalumm
+#: src/sections/pricing-hero/pricing-hero.tsx
+#~ msgid "Simple *Pricing*"
+#~ msgstr "Simple *Pricing*"
+
 #. js-lingui-id: V9dFwD
 #: src/sections/footer/footer.data.ts
 msgid "Sitemap"
@@ -887,6 +906,20 @@ msgstr "Smart patterns, shortcuts, and layouts make everyday tasks faster and ea
 #: src/sections/footer/footer-bottom.tsx
 msgid "Social media"
 msgstr "Social media"
+
+#. js-lingui-id: sBOFB0
+#: src/sections/pricing-hero/pricing-hero.tsx
+msgid ""
+"Start your free trial today\n"
+"without credit card."
+msgstr ""
+"Start your free trial today\n"
+"without credit card."
+
+#. js-lingui-id: wqCUZG
+#: src/sections/pricing-hero/pricing-hero.tsx
+#~ msgid "Start your free trial today without credit card."
+#~ msgstr "Start your free trial today without credit card."
 
 #. js-lingui-id: ThcPyu
 #: src/sections/stepper/stepper.data.ts
@@ -1047,6 +1080,11 @@ msgstr "Twenty | #1 Open Source CRM"
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty CRM Features — Modern Open Source CRM Platform"
 msgstr "Twenty CRM Features — Modern Open Source CRM Platform"
+
+#. js-lingui-id: 8zCqPL
+#: src/platform/routing/static-website-routes.ts
+msgid "Twenty CRM Pricing — Plans from $9 per User per Month"
+msgstr "Twenty CRM Pricing — Plans from $9 per User per Month"
 
 #. js-lingui-id: 0qyMhk
 #: src/sections/home-hero/home-hero.tsx

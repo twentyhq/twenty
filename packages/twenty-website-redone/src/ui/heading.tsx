@@ -92,15 +92,16 @@ export function Heading({
   weight = 'regular',
 }: HeadingProps) {
   // Keys are the segment's character offset in the heading: data-derived,
-  // unique even when the same word appears twice.
+  // unique even when the same word appears twice (breaks count one).
   let offset = 0;
   const keyedSegments = parseHeadingNotation(children).map((segment) => {
+    const text = segment.kind === 'break' ? '' : segment.text;
     const keyed = {
       key: `${segment.kind}-${offset}`,
       kind: segment.kind,
-      text: segment.text,
+      text,
     };
-    offset += segment.text.length;
+    offset += text.length + (segment.kind === 'break' ? 1 : 0);
     return keyed;
   });
 
@@ -116,6 +117,8 @@ export function Heading({
           <span data-accent key={segment.key}>
             {segment.text}
           </span>
+        ) : segment.kind === 'break' ? (
+          <br key={segment.key} />
         ) : (
           <Fragment key={segment.key}>{segment.text}</Fragment>
         ),
