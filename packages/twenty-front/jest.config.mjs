@@ -90,9 +90,6 @@ const jestConfig = {
   maxWorkers: 3,
   workerIdleMemoryLimit: '512MB',
   errorOnDeprecated: true,
-  // React 19 + Apollo MockedProvider renders carry more per-update overhead in
-  // jsdom, pushing several async hook tests past Jest's 5s default on slower CI
-  // runners (they pass, just slowly). Raise the ceiling to keep them green.
   testTimeout: 30000,
 };
 
