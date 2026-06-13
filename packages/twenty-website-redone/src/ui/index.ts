@@ -30,12 +30,14 @@ export { TextField } from './text-field';
 export { TextareaField } from './textarea-field';
 export { NumberField } from './number-field';
 export { TagInput } from './tag-input';
+export { Combobox, type ComboboxItem } from './combobox';
 export {
   CategoryCardSelect,
   type CategoryOption,
 } from './category-card-select';
 export { ChipMultiSelect, type ChipOption } from './chip-multi-select';
 export { ChipSingleSelect, type ChipChoice } from './chip-single-select';
+export { StepIndicator } from './step-indicator';
 export { SectionIntro } from './section-intro';
 export { SectionStack } from './section-stack';
 export { VerticalDivider } from './vertical-divider';

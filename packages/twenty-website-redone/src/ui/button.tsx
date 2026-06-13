@@ -96,6 +96,11 @@ const buttonClassName = css`
     outline-offset: 1px;
   }
 
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
   [data-slot='hover-layer'] {
     --button-fill: var(--button-hover-fill);
     --button-stroke: transparent;
@@ -148,6 +153,7 @@ export type ButtonSize = 'regular' | 'small';
 export type ButtonVariant = 'filled' | 'outlined';
 
 export type ButtonProps = {
+  disabled?: boolean;
   href?: string;
   label: string;
   leadingIcon?: ReactNode;
@@ -158,6 +164,7 @@ export type ButtonProps = {
 };
 
 export function Button({
+  disabled = false,
   href,
   label,
   leadingIcon,
@@ -192,7 +199,13 @@ export function Button({
 
   if (href === undefined) {
     return (
-      <button {...sharedAttributes} onClick={onClick} type={type}>
+      <button
+        {...sharedAttributes}
+        aria-busy={disabled ? true : undefined}
+        disabled={disabled}
+        onClick={onClick}
+        type={type}
+      >
         {inner}
       </button>
     );

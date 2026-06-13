@@ -46,15 +46,30 @@ msgstr "/user/month"
 msgid "© {year} – Twenty"
 msgstr "© {year} – Twenty"
 
+#. js-lingui-id: 2ygf/L
+#: src/partner-application/partner-application-copy.ts
+msgid "← Back"
+msgstr "← Back"
+
 #. js-lingui-id: iK+ikF
 #: src/sections/trusted-by/trusted-by.tsx
 msgid "+10k others"
 msgstr "+10k others"
 
+#. js-lingui-id: 2szX5S
+#: src/partner-application/partner-application-copy.ts
+msgid "150"
+msgstr "150"
+
 #. js-lingui-id: 2ScEtE
 #: src/sections/pricing-plans/plans-data.ts
 msgid "5 workflow credits/month included"
 msgstr "5 workflow credits/month included"
+
+#. js-lingui-id: hIKxCy
+#: src/partner-application/partner-application-copy.ts
+msgid "5,000"
+msgstr "5,000"
 
 #. js-lingui-id: CiRGZ8
 #: src/sections/pricing-plans/plans-data.ts
@@ -182,6 +197,11 @@ msgstr "Antigua & Barbuda 🇦🇬"
 msgid "Any Questions?"
 msgstr "Any Questions?"
 
+#. js-lingui-id: lgSvgF
+#: src/partner-application/partner-application-copy.ts
+msgid "Anything else we should know?"
+msgstr "Anything else we should know?"
+
 #. js-lingui-id: pkMjbA
 #: src/partner-application/data/partner-scope-options.ts
 msgid "Anything that needs a developer."
@@ -196,6 +216,15 @@ msgstr "Anything that needs devops skills."
 #: src/sections/menu/menu.data.ts
 msgid "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data."
 msgstr "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data."
+
+#. js-lingui-id: k8I7/G
+#: src/partner-application/partner-application-copy.ts
+msgid ""
+"Apply to build\n"
+"*the future of CRM*"
+msgstr ""
+"Apply to build\n"
+"*the future of CRM*"
 
 #. js-lingui-id: 8HV3WN
 #: src/partner-application/data/partner-language-options.ts
@@ -412,6 +441,11 @@ msgstr "Burkina Faso 🇧🇫"
 msgid "Burundi 🇧🇮"
 msgstr "Burundi 🇧🇮"
 
+#. js-lingui-id: L40Ae7
+#: src/partner-application/partner-application-copy.ts
+msgid "Calendar / booking link"
+msgstr "Calendar / booking link"
+
 #. js-lingui-id: 4yFkf9
 #: src/partner-application/data/partner-country-options.ts
 msgid "Cambodia 🇰🇭"
@@ -483,6 +517,11 @@ msgstr "Chinese"
 msgid "Choose a language"
 msgstr "Choose a language"
 
+#. js-lingui-id: 3wV73y
+#: src/partner-application/partner-application-copy.ts
+msgid "City"
+msgstr "City"
+
 #. js-lingui-id: yz7wBu
 #: src/app-preview/stage/traffic-lights.tsx
 msgid "Close"
@@ -518,6 +557,11 @@ msgstr "Colombia 🇨🇴"
 msgid "Column-to-field mapping (including relations)"
 msgstr "Column-to-field mapping (including relations)"
 
+#. js-lingui-id: OnPROL
+#: src/partner-application/partner-application-copy.ts
+msgid "Commercials"
+msgstr "Commercials"
+
 #. js-lingui-id: chL5IG
 #: src/sections/menu/menu-social.tsx
 msgid "Community"
@@ -532,6 +576,11 @@ msgstr "Community support"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Comoros 🇰🇲"
 msgstr "Comoros 🇰🇲"
+
+#. js-lingui-id: SHjhDC
+#: src/partner-application/partner-application-copy.ts
+msgid "Company or brand *"
+msgstr "Company or brand *"
 
 #. js-lingui-id: Fkb+LW
 #: src/sections/three-cards/three-cards.tsx
@@ -592,6 +641,11 @@ msgstr "Core Features"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Costa Rica 🇨🇷"
 msgstr "Costa Rica 🇨🇷"
+
+#. js-lingui-id: cRA2/z
+#: src/partner-application/partner-application-copy.ts
+msgid "Country *"
+msgstr "Country *"
 
 #. js-lingui-id: Xn2Nlq
 #: src/sections/stepper/product-stepper-data.ts
@@ -838,6 +892,11 @@ msgstr "Drag-and-drop deals between stages"
 msgid "Dutch"
 msgstr "Dutch"
 
+#. js-lingui-id: 6r6pDf
+#: src/partner-application/partner-application-copy.ts
+msgid "e.g. React, Postgres, n8n…"
+msgstr "e.g. React, Postgres, n8n…"
+
 #. js-lingui-id: hEtClO
 #: src/partner-application/data/partner-country-options.ts
 msgid "Ecuador 🇪🇨"
@@ -877,6 +936,16 @@ msgstr "English"
 #: src/sections/stepper/stepper.data.ts
 msgid "Enjoy unlimited customization using the AI coding tools you already love. Adapt your CRM to fit the way your business grows and wins."
 msgstr "Enjoy unlimited customization using the AI coding tools you already love. Adapt your CRM to fit the way your business grows and wins."
+
+#. js-lingui-id: xoqD/n
+#: src/partner-application/partner-application-copy.ts
+msgid "Enter a valid email address."
+msgstr "Enter a valid email address."
+
+#. js-lingui-id: /OVUD6
+#: src/partner-application/partner-application-copy.ts
+msgid "Enter a valid URL (starting with http:// or https://)."
+msgstr "Enter a valid URL (starting with http:// or https://)."
 
 #. js-lingui-id: c0nqfC
 #: src/partner-application/data/partner-country-options.ts
@@ -928,6 +997,11 @@ msgstr "Everything updates in real time, with AI chat always ready to help you m
 #: src/sections/product-feature/product-feature.tsx
 msgid "Everything you need, *out of the box*"
 msgstr "Everything you need, *out of the box*"
+
+#. js-lingui-id: uZRQi+
+#: src/partner-application/partner-application-copy.ts
+msgid "Expertise & experience"
+msgstr "Expertise & experience"
 
 #. js-lingui-id: JTM5zS
 #: src/sections/case-study-promo/case-study-promo.tsx
@@ -1083,6 +1157,11 @@ msgstr "GitHub (opens in new tab)"
 msgid "Go the extra mile *with no-code*"
 msgstr "Go the extra mile *with no-code*"
 
+#. js-lingui-id: Zh0acB
+#: src/partner-application/partner-application-copy.ts
+msgid "Grab 30 minutes so we can get to know your team."
+msgstr "Grab 30 minutes so we can get to know your team."
+
 #. js-lingui-id: +tDN2S
 #: src/partner-application/data/partner-country-options.ts
 msgid "Greece 🇬🇷"
@@ -1159,6 +1238,11 @@ msgstr "Honduras 🇭🇳"
 msgid "Hosting & Infrastructure"
 msgstr "Hosting & Infrastructure"
 
+#. js-lingui-id: Ivq5+7
+#: src/partner-application/partner-application-copy.ts
+msgid "Hourly rate"
+msgstr "Hourly rate"
+
 #. js-lingui-id: OIwpKt
 #: src/sections/faq/faq.data.ts
 msgid "How long does it take to get started?"
@@ -1178,10 +1262,20 @@ msgstr ""
 msgid "Hungary 🇭🇺"
 msgstr "Hungary 🇭🇺"
 
+#. js-lingui-id: T6wyby
+#: src/partner-application/partner-application-copy.ts
+msgid "I'll book later →"
+msgstr "I'll book later →"
+
 #. js-lingui-id: RYDa0v
 #: src/partner-application/data/partner-country-options.ts
 msgid "Iceland 🇮🇸"
 msgstr "Iceland 🇮🇸"
+
+#. js-lingui-id: ePYQjq
+#: src/partner-application/partner-application-copy.ts
+msgid "Identity"
+msgstr "Identity"
 
 #. js-lingui-id: ZAKTS6
 #: src/sections/product-feature/feature-tiles.ts
@@ -1273,6 +1367,11 @@ msgstr "Japan 🇯🇵"
 msgid "Japanese"
 msgstr "Japanese"
 
+#. js-lingui-id: Lsf2+K
+#: src/partner-application/partner-application-copy.ts
+msgid "Join our ecosystem and help businesses take control of their customer data with open-source primitives."
+msgstr "Join our ecosystem and help businesses take control of their customer data with open-source primitives."
+
 #. js-lingui-id: 1qiriB
 #: src/sections/testimonials/partner-testimonials-carousel.tsx
 msgid "Join our growing partner ecosystem"
@@ -1322,6 +1421,11 @@ msgstr "Kuwait 🇰🇼"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Kyrgyzstan 🇰🇬"
 msgstr "Kyrgyzstan 🇰🇬"
+
+#. js-lingui-id: u6jooT
+#: src/partner-application/partner-application-copy.ts
+msgid "Languages spoken"
+msgstr "Languages spoken"
 
 #. js-lingui-id: YHacTY
 #: src/partner-application/data/partner-country-options.ts
@@ -1392,6 +1496,11 @@ msgstr "LinkedIn"
 #: src/sections/footer/footer.data.ts
 msgid "LinkedIn (opens in new tab)"
 msgstr "LinkedIn (opens in new tab)"
+
+#. js-lingui-id: Gg69LR
+#: src/partner-application/partner-application-copy.ts
+msgid "LinkedIn URL"
+msgstr "LinkedIn URL"
 
 #. js-lingui-id: 2WIZYd
 #: src/partner-application/data/partner-country-options.ts
@@ -1519,6 +1628,11 @@ msgstr "Mike Babiy"
 msgid "Minimize"
 msgstr "Minimize"
 
+#. js-lingui-id: FFFENV
+#: src/partner-application/partner-application-copy.ts
+msgid "Minimum project budget"
+msgstr "Minimum project budget"
+
 #. js-lingui-id: 6m8rMT
 #: src/partner-application/data/partner-country-options.ts
 msgid "Moldova 🇲🇩"
@@ -1604,6 +1718,11 @@ msgstr "NetZero runs a modular Twenty setup across carbon credits, ag products, 
 msgid "New Zealand 🇳🇿"
 msgstr "New Zealand 🇳🇿"
 
+#. js-lingui-id: GY6uSc
+#: src/partner-application/partner-application-copy.ts
+msgid "Next →"
+msgstr "Next →"
+
 #. js-lingui-id: awYrJD
 #: src/sections/testimonials/testimonials-carousel.tsx
 #: src/sections/testimonials/partner-testimonials-carousel.tsx
@@ -1624,6 +1743,11 @@ msgstr "Niger 🇳🇪"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Nigeria 🇳🇬"
 msgstr "Nigeria 🇳🇬"
+
+#. js-lingui-id: 6tRXQ4
+#: src/partner-application/partner-application-copy.ts
+msgid "No matching country."
+msgstr "No matching country."
 
 #. js-lingui-id: SiZ/7E
 #: src/sections/faq/faq.data.ts
@@ -1731,6 +1855,11 @@ msgstr "Peru 🇵🇪"
 msgid "Philippines 🇵🇭"
 msgstr "Philippines 🇵🇭"
 
+#. js-lingui-id: we6gj5
+#: src/partner-application/partner-application-copy.ts
+msgid "Pick every category that applies."
+msgstr "Pick every category that applies."
+
 #. js-lingui-id: FFkjaT
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Pipeline Management"
@@ -1740,6 +1869,11 @@ msgstr "Pipeline Management"
 #: src/platform/routing/static-website-routes.ts
 msgid "Pipelines, custom objects, AI assistants, and a native API on top of Postgres. Twenty is the open source CRM with the modern UX teams actually want to use."
 msgstr "Pipelines, custom objects, AI assistants, and a native API on top of Postgres. Twenty is the open source CRM with the modern UX teams actually want to use."
+
+#. js-lingui-id: z7gnI9
+#: src/partner-application/partner-application-copy.ts
+msgid "Please complete all required fields before continuing."
+msgstr "Please complete all required fields before continuing."
 
 #. js-lingui-id: AFr2a5
 #: src/partner-application/data/partner-country-options.ts
@@ -1760,6 +1894,11 @@ msgstr "Portugal 🇵🇹"
 #: src/partner-application/data/partner-language-options.ts
 msgid "Portuguese"
 msgstr "Portuguese"
+
+#. js-lingui-id: z87IFG
+#: src/partner-application/partner-application-copy.ts
+msgid "Press Enter or comma to add a skill."
+msgstr "Press Enter or comma to add a skill."
 
 #. js-lingui-id: LZoO8F
 #: src/sections/testimonials/testimonials-carousel.tsx
@@ -1815,6 +1954,11 @@ msgstr "Product"
 msgid "Production grade quality"
 msgstr "Production grade quality"
 
+#. js-lingui-id: vERlcd
+#: src/partner-application/partner-application-copy.ts
+msgid "Profile"
+msgstr "Profile"
+
 #. js-lingui-id: a24q7E
 #: src/sections/problem/problem.data.ts
 msgid "Proprietary languages, slow deployment cycles, and \"black box\" logic."
@@ -1864,6 +2008,11 @@ msgstr "Release Notes"
 #: src/sections/menu/menu.data.ts
 msgid "Releases"
 msgstr "Releases"
+
+#. js-lingui-id: OY7BZk
+#: src/partner-application/partner-application-copy.ts
+msgid "Remove {skill}"
+msgstr "Remove {skill}"
 
 #. js-lingui-id: a/aGHe
 #: src/sections/product-feature/feature-tiles.ts
@@ -1962,6 +2111,11 @@ msgstr "São Tomé & Príncipe 🇸🇹"
 msgid "Saudi Arabia 🇸🇦"
 msgstr "Saudi Arabia 🇸🇦"
 
+#. js-lingui-id: vk6sVR
+#: src/partner-application/partner-application-copy.ts
+msgid "Search a country…"
+msgstr "Search a country…"
+
 #. js-lingui-id: nmVU/t
 #: src/sections/customers-hero/customers-hero.tsx
 msgid ""
@@ -1987,6 +2141,11 @@ msgstr "See what shipped in {0}"
 #: src/sections/product-feature/contacts-visual.tsx
 msgid "Select {0}"
 msgstr "Select {0}"
+
+#. js-lingui-id: 6p/m5q
+#: src/partner-application/partner-application-copy.ts
+msgid "Select your country"
+msgstr "Select your country"
 
 #. js-lingui-id: QFK/45
 #: src/partner-application/data/partner-scope-options.ts
@@ -2162,6 +2321,11 @@ msgstr "Stay in control with our *open-source software*"
 msgid "Stay in Flow"
 msgstr "Stay in Flow"
 
+#. js-lingui-id: GdGiNi
+#: src/partner-application/partner-application-copy.ts
+msgid "Step {current} of {total}"
+msgstr "Step {current} of {total}"
+
 #. js-lingui-id: bxgoJR
 #: src/sections/menu/menu.data.ts
 msgid "Step-by-step guides and playbooks to help your team get the most out of their workspace."
@@ -2177,6 +2341,16 @@ msgstr "Stop fighting custom. *Start building, with Twenty*"
 #: src/sections/three-cards/product-three-cards.tsx
 msgid "Stop settling for trade-offs."
 msgstr "Stop settling for trade-offs."
+
+#. js-lingui-id: H5/rZQ
+#: src/partner-application/partner-application-copy.ts
+msgid "Submit application"
+msgstr "Submit application"
+
+#. js-lingui-id: MDqQmP
+#: src/partner-application/partner-application-copy.ts
+msgid "Submitting…"
+msgstr "Submitting…"
 
 #. js-lingui-id: 8Z1557
 #: src/partner-application/data/partner-country-options.ts
@@ -2247,6 +2421,11 @@ msgstr "Team up with a Twenty expert"
 msgid "Technical notes"
 msgstr "Technical notes"
 
+#. js-lingui-id: y+bLyB
+#: src/partner-application/partner-application-copy.ts
+msgid "Technical skills"
+msgstr "Technical skills"
+
 #. js-lingui-id: Hevu8X
 #: src/app-preview/terminal/terminal-toggle.tsx
 msgid "Terminal mode"
@@ -2266,6 +2445,15 @@ msgstr "Testimonials"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Thailand 🇹🇭"
 msgstr "Thailand 🇹🇭"
+
+#. js-lingui-id: Pa/Y6/
+#: src/partner-application/partner-application-copy.ts
+msgid ""
+"Thanks, you're in.\n"
+"*Now book your intro call.*"
+msgstr ""
+"Thanks, you're in.\n"
+"*Now book your intro call.*"
 
 #. js-lingui-id: zXlFuT
 #: src/platform/routing/static-website-routes.ts
@@ -2479,6 +2667,11 @@ msgstr "Twenty team support"
 msgid "Twenty user guide preview"
 msgstr "Twenty user guide preview"
 
+#. js-lingui-id: O+vc/1
+#: src/partner-application/partner-application-copy.ts
+msgid "Type of team *"
+msgstr "Type of team *"
+
 #. js-lingui-id: HqFilh
 #: src/partner-application/data/partner-country-options.ts
 msgid "UAE 🇦🇪"
@@ -2590,6 +2783,11 @@ msgstr "W3villa Technologies"
 msgid "W3villa used Twenty as a production-grade framework for the data model, permissions, authentication, and workflow engine they would otherwise have rebuilt themselves."
 msgstr "W3villa used Twenty as a production-grade framework for the data model, permissions, authentication, and workflow engine they would otherwise have rebuilt themselves."
 
+#. js-lingui-id: 8CHatv
+#: src/partner-application/partner-application-copy.ts
+msgid "We could not submit your application. Please try again in a moment."
+msgstr "We could not submit your application. Please try again in a moment."
+
 #. js-lingui-id: MjWeUE
 #: src/sections/testimonials/testimonials.data.ts
 msgid "We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
@@ -2600,6 +2798,11 @@ msgstr "We didn't want to patch over the problem. We wanted to build something i
 msgid "We're building the #1 Open Source CRM, but we can't do it alone. Join our partner ecosystem and grow with us."
 msgstr "We're building the #1 Open Source CRM, but we can't do it alone. Join our partner ecosystem and grow with us."
 
+#. js-lingui-id: hgDePr
+#: src/partner-application/partner-application-copy.ts
+msgid "Website or GitHub"
+msgstr "Website or GitHub"
+
 #. js-lingui-id: Lx0cVD
 #: src/partner-application/data/partner-scope-options.ts
 msgid "What an admin can do without writing code."
@@ -2609,6 +2812,11 @@ msgstr "What an admin can do without writing code."
 #: src/sections/faq/faq.data.ts
 msgid "What does Twenty cost?"
 msgstr "What does Twenty cost?"
+
+#. js-lingui-id: QCHIzm
+#: src/partner-application/partner-application-copy.ts
+msgid "What you cover *"
+msgstr "What you cover *"
 
 #. js-lingui-id: DJlSwA
 #: src/sections/menu/menu.data.ts
@@ -2639,6 +2847,16 @@ msgstr "Why Twenty illustration"
 #: src/app-preview/stage/traffic-lights.tsx
 msgid "Window controls"
 msgstr "Window controls"
+
+#. js-lingui-id: OX5bbs
+#: src/partner-application/partner-application-copy.ts
+msgid "Work email *"
+msgstr "Work email *"
+
+#. js-lingui-id: bwECg/
+#: src/partner-application/partner-application-copy.ts
+msgid "Workspace URL, customer references, relevant links…"
+msgstr "Workspace URL, customer references, relevant links…"
 
 #. js-lingui-id: p3ZD6C
 #: src/sections/menu/menu.data.ts
@@ -2675,6 +2893,11 @@ msgstr "Yes. Import your data via CSV, or use our API for 50,000+ records. Our p
 #: src/sections/faq/faq.data.ts
 msgid "Yes. Twenty is the #1 Open Source CRM on GitHub. You can self-host to fully own your infrastructure, or run it on our managed cloud for a zero-ops setup."
 msgstr "Yes. Twenty is the #1 Open Source CRM on GitHub. You can self-host to fully own your infrastructure, or run it on our managed cloud for a zero-ops setup."
+
+#. js-lingui-id: pEQiCY
+#: src/partner-application/partner-application-copy.ts
+msgid "Your name *"
+msgstr "Your name *"
 
 #. js-lingui-id: fQATWn
 #: src/sections/product-feature/feature-tiles.ts

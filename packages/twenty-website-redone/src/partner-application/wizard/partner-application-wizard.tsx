@@ -1,0 +1,257 @@
+'use client';
+
+import { useLingui } from '@lingui/react';
+import { styled } from '@linaria/react';
+import { type FormEvent, useCallback, useEffect } from 'react';
+
+import { color, fontFamily, fontSize, semanticColor, spacing } from '@/tokens';
+import { Body, Button, Heading, StepIndicator } from '@/ui';
+
+import { buildPartnerApplicationRequestBody } from '../build-partner-application-request-body';
+import { PARTNER_APPLICATION_STEP_IDS } from '../data/partner-application-step-ids';
+import { getCurrentStepId } from '../get-current-step-id';
+import { PARTNER_APPLICATION_COPY } from '../partner-application-copy';
+import {
+  type PartnerApplicationController,
+  usePartnerApplicationState,
+} from '../use-partner-application-state';
+import { PartnerApplicationSuccess } from './partner-application-success';
+import { CommercialsStep } from './steps/commercials-step';
+import { ExpertiseStep } from './steps/expertise-step';
+import { IdentityStep } from './steps/identity-step';
+import { ProfileStep } from './steps/profile-step';
+
+const COPY = PARTNER_APPLICATION_COPY;
+const STEPS = PARTNER_APPLICATION_STEP_IDS;
+
+const WizardRoot = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  & > * + * {
+    margin-top: ${spacing(4)};
+  }
+`;
+
+const TitleBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  & > * + * {
+    margin-top: ${spacing(3)};
+  }
+`;
+
+const HeaderStrip = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${spacing(3)};
+  justify-content: space-between;
+`;
+
+const HeaderLabel = styled.span`
+  color: ${semanticColor.inkMuted};
+  font-family: ${fontFamily('mono')};
+  font-size: ${fontSize(3)};
+  text-transform: uppercase;
+`;
+
+const FieldsStack = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  & > * + * {
+    margin-top: ${spacing(4)};
+  }
+`;
+
+const Footer = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  & > * + * {
+    margin-top: ${spacing(2)};
+  }
+`;
+
+const FooterControls = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const ErrorBanner = styled.p`
+  color: ${color('error')};
+  font-family: ${fontFamily('sans')};
+  font-size: ${fontSize(3)};
+  margin: 0;
+`;
+
+function StepRenderer({
+  controller,
+}: {
+  controller: PartnerApplicationController;
+}) {
+  switch (getCurrentStepId(controller.state)) {
+    case 'identity':
+      return <IdentityStep controller={controller} />;
+    case 'profile':
+      return <ProfileStep controller={controller} />;
+    case 'expertise':
+      return <ExpertiseStep controller={controller} />;
+    case 'commercials':
+      return <CommercialsStep controller={controller} />;
+  }
+}
+
+export function PartnerApplicationWizard({
+  onSuccess,
+  resetSignal,
+}: {
+  onSuccess: () => void;
+  resetSignal: number;
+}) {
+  const { i18n } = useLingui();
+  const controller = usePartnerApplicationState();
+  const {
+    goBack,
+    goNext,
+    reset,
+    setSubmitError,
+    setSubmitted,
+    setSubmitting,
+    state,
+  } = controller;
+
+  useEffect(() => {
+    reset();
+  }, [resetSignal, reset]);
+
+  const stepId = getCurrentStepId(state);
+  const stepIndex = state.stepIndex;
+  const isLastStep = stepIndex === STEPS.length - 1;
+  const errorValues = Object.values(state.fieldErrors);
+  const hasFieldErrors = errorValues.length > 0;
+  const fieldErrorMessage = errorValues.includes('invalid_email')
+    ? COPY.validation.invalidEmail
+    : errorValues.includes('invalid_url')
+      ? COPY.validation.invalidUrl
+      : COPY.validation.incompleteForm;
+
+  const handleSubmit = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      if (!isLastStep) {
+        goNext();
+        return;
+      }
+      if (state.isSubmitting) return;
+
+      const payload = buildPartnerApplicationRequestBody(state);
+      setSubmitError(null);
+      setSubmitting(true);
+      try {
+        const response = await fetch('/api/partner-application', {
+          body: JSON.stringify(payload),
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+        });
+        if (!response.ok) {
+          setSubmitError(i18n._(COPY.validation.submitFailed));
+          return;
+        }
+        setSubmitted();
+      } catch {
+        setSubmitError(i18n._(COPY.validation.submitFailed));
+      } finally {
+        setSubmitting(false);
+      }
+    },
+    [
+      goNext,
+      i18n,
+      isLastStep,
+      setSubmitError,
+      setSubmitted,
+      setSubmitting,
+      state,
+    ],
+  );
+
+  if (state.isSubmitted) {
+    return (
+      <PartnerApplicationSuccess
+        company={state.company}
+        email={state.email}
+        name={state.name}
+        onDismiss={onSuccess}
+      />
+    );
+  }
+
+  const stepLabel = `${i18n._(
+    COPY.stepProgressLabel(stepIndex + 1, STEPS.length),
+  )} · ${i18n._(COPY.stepHeaders[stepId])}`;
+
+  return (
+    <WizardRoot>
+      <TitleBlock>
+        {stepIndex === 0 ? (
+          <>
+            <Heading as="h2" size="lg" weight="light">
+              {i18n._(COPY.title)}
+            </Heading>
+            <Body muted size="md">
+              {i18n._(COPY.subtitle)}
+            </Body>
+          </>
+        ) : null}
+        <HeaderStrip>
+          <HeaderLabel>{stepLabel}</HeaderLabel>
+          <StepIndicator activeStepIndex={stepIndex} stepCount={STEPS.length} />
+        </HeaderStrip>
+      </TitleBlock>
+
+      <form autoComplete="off" noValidate onSubmit={handleSubmit}>
+        <FieldsStack>
+          <StepRenderer controller={controller} />
+          <Footer>
+            {state.submitError !== null ? (
+              <ErrorBanner role="alert">{state.submitError}</ErrorBanner>
+            ) : null}
+            {hasFieldErrors ? (
+              <ErrorBanner role="alert">
+                {i18n._(fieldErrorMessage)}
+              </ErrorBanner>
+            ) : null}
+            <FooterControls>
+              {stepIndex > 0 ? (
+                <Button
+                  label={i18n._(COPY.back)}
+                  onClick={goBack}
+                  type="button"
+                  variant="outlined"
+                />
+              ) : (
+                <span />
+              )}
+              <Button
+                disabled={state.isSubmitting}
+                label={
+                  isLastStep
+                    ? state.isSubmitting
+                      ? i18n._(COPY.submitInFlight)
+                      : i18n._(COPY.submit)
+                    : i18n._(COPY.next)
+                }
+                type="submit"
+                variant="filled"
+              />
+            </FooterControls>
+          </Footer>
+        </FieldsStack>
+      </form>
+    </WizardRoot>
+  );
+}
