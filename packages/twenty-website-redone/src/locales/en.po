@@ -196,6 +196,16 @@ msgstr "Become a partner"
 msgid "Begin with production-grade *building blocks*"
 msgstr "Begin with production-grade *building blocks*"
 
+#. js-lingui-id: SYfuGP
+#: src/sections/testimonials/partner-testimonials.data.ts
+msgid "Benjamin Reynolds"
+msgstr "Benjamin Reynolds"
+
+#. js-lingui-id: YfjrMq
+#: src/sections/testimonials/partner-testimonials.data.ts
+msgid "Bertrams"
+msgstr "Bertrams"
+
 #. js-lingui-id: 8tzR0k
 #: src/sections/pricing-plans/billing-toggle.tsx
 msgid "Billing period"
@@ -248,6 +258,7 @@ msgstr "Can I migrate from Salesforce or HubSpot?"
 
 #. js-lingui-id: qLBo3s
 #: src/sections/testimonials/testimonials-carousel.tsx
+#: src/sections/testimonials/partner-testimonials-carousel.tsx
 msgid "carousel"
 msgstr "carousel"
 
@@ -622,6 +633,16 @@ msgstr "Fly through your workspace with shortcuts and short load times."
 msgid "Footer"
 msgstr "Footer"
 
+#. js-lingui-id: UCoxP5
+#: src/sections/testimonials/partner-testimonials.data.ts
+msgid "Founder, Nine Dots Ventures"
+msgstr "Founder, Nine Dots Ventures"
+
+#. js-lingui-id: IPaRlc
+#: src/sections/testimonials/partner-testimonials.data.ts
+msgid "Founder, Wintactix"
+msgstr "Founder, Wintactix"
+
 #. js-lingui-id: Iuxc00
 #: src/sections/product-feature/feature-tiles.ts
 msgid "From CSV to CRM in minutes."
@@ -735,6 +756,11 @@ msgstr "It is just such a nicer experience than dealing with a Salesforce or a H
 msgid "It's fragile. V1 ships quickly, but maintaining and making changes is a long term burden."
 msgstr "It's fragile. V1 ships quickly, but maintaining and making changes is a long term burden."
 
+#. js-lingui-id: 1qiriB
+#: src/sections/testimonials/partner-testimonials-carousel.tsx
+msgid "Join our growing partner ecosystem"
+msgstr "Join our growing partner ecosystem"
+
 #. js-lingui-id: qrYDGE
 #: src/sections/testimonials/testimonials.data.ts
 msgid "Justin Beadle"
@@ -826,6 +852,11 @@ msgstr "Meet the teams who shaped Twenty into their own CRM with self-hosted dep
 msgid "Metrics you can actually trust."
 msgstr "Metrics you can actually trust."
 
+#. js-lingui-id: izddzp
+#: src/sections/testimonials/partner-testimonials.data.ts
+msgid "Mike Babiy"
+msgstr "Mike Babiy"
+
 #. js-lingui-id: 3TSz9S
 #: src/app-preview/stage/traffic-lights.tsx
 msgid "Minimize"
@@ -858,6 +889,7 @@ msgstr "NetZero runs a modular Twenty setup across carbon credits, ag products, 
 
 #. js-lingui-id: awYrJD
 #: src/sections/testimonials/testimonials-carousel.tsx
+#: src/sections/testimonials/partner-testimonials-carousel.tsx
 msgid "Next testimonial"
 msgstr "Next testimonial"
 
@@ -891,6 +923,11 @@ msgstr "Own your CRM end to end"
 msgid "Packaged CRMs make every company look the same. Twenty is the open source CRM teams shape around their workflow, with a modern UI and a developer-first platform."
 msgstr "Packaged CRMs make every company look the same. Twenty is the open source CRM teams shape around their workflow, with a modern UI and a developer-first platform."
 
+#. js-lingui-id: dRIK0d
+#: src/sections/testimonials/partner-testimonials-carousel.tsx
+msgid "Partner testimonials"
+msgstr "Partner testimonials"
+
 #. js-lingui-id: mPkInZ
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
@@ -907,8 +944,14 @@ msgstr "Pipeline Management"
 msgid "Pipelines, custom objects, AI assistants, and a native API on top of Postgres. Twenty is the open source CRM with the modern UX teams actually want to use."
 msgstr "Pipelines, custom objects, AI assistants, and a native API on top of Postgres. Twenty is the open source CRM with the modern UX teams actually want to use."
 
+#. js-lingui-id: /LAeug
+#: src/sections/testimonials/partner-testimonials-carousel.tsx
+msgid "Portrait of {authorName}"
+msgstr "Portrait of {authorName}"
+
 #. js-lingui-id: LZoO8F
 #: src/sections/testimonials/testimonials-carousel.tsx
+#: src/sections/testimonials/partner-testimonials-carousel.tsx
 msgid "Previous testimonial"
 msgstr "Previous testimonial"
 
@@ -928,6 +971,11 @@ msgstr "Primary"
 #: src/sections/three-cards/three-cards.data.ts
 msgid "Principal and Founder"
 msgstr "Principal and Founder"
+
+#. js-lingui-id: kXBQYM
+#: src/sections/testimonials/partner-testimonials.data.ts
+msgid "Principal and Founder, Alternative Partners"
+msgstr "Principal and Founder, Alternative Partners"
 
 #. js-lingui-id: k62X/2
 #: src/sections/pricing-plans/plans-data.ts
@@ -1093,11 +1141,6 @@ msgstr ""
 "Simple\n"
 "*Pricing*"
 
-#. js-lingui-id: Kalumm
-#: src/sections/pricing-hero/pricing-hero.tsx
-#~ msgid "Simple *Pricing*"
-#~ msgstr "Simple *Pricing*"
-
 #. js-lingui-id: V9dFwD
 #: src/sections/footer/footer.data.ts
 msgid "Sitemap"
@@ -1137,11 +1180,6 @@ msgid ""
 msgstr ""
 "Start your free trial today\n"
 "without credit card."
-
-#. js-lingui-id: wqCUZG
-#: src/sections/pricing-hero/pricing-hero.tsx
-#~ msgid "Start your free trial today without credit card."
-#~ msgstr "Start your free trial today without credit card."
 
 #. js-lingui-id: ThcPyu
 #: src/sections/stepper/stepper.data.ts
@@ -1217,6 +1255,11 @@ msgstr "Testimonials"
 #: src/platform/routing/static-website-routes.ts
 msgid "The #1 Open Source CRM for modern teams. Modular, scalable, and built to fit your business."
 msgstr "The #1 Open Source CRM for modern teams. Modular, scalable, and built to fit your business."
+
+#. js-lingui-id: kCUcnD
+#: src/sections/testimonials/partner-testimonials.data.ts
+msgid "The flexibility is just amazing. Literally, there's nothing you cannot do. You can create objects, access everything through the API, pull notes and send them to the portal. Try doing that in HubSpot. No way. It's the true ability to build exactly what's actually needed."
+msgstr "The flexibility is just amazing. Literally, there's nothing you cannot do. You can create objects, access everything through the API, pull notes and send them to the portal. Try doing that in HubSpot. No way. It's the true ability to build exactly what's actually needed."
 
 #. js-lingui-id: MaHqAc
 #: src/sections/testimonials/testimonials.data.ts
@@ -1308,6 +1351,11 @@ msgstr "Try Twenty Cloud"
 msgid "Twenty | #1 Open Source CRM"
 msgstr "Twenty | #1 Open Source CRM"
 
+#. js-lingui-id: NalB1c
+#: src/sections/testimonials/partner-testimonials.data.ts
+msgid "Twenty Apps opens the door to building products, not just implementations. For example, we're developing a WhatsApp Business integration that any Twenty's client could get. That's a recurring revenue stream we wouldn't have if we were just configuring someone else's platform."
+msgstr "Twenty Apps opens the door to building products, not just implementations. For example, we're developing a WhatsApp Business integration that any Twenty's client could get. That's a recurring revenue stream we wouldn't have if we were just configuring someone else's platform."
+
 #. js-lingui-id: neM1Ol
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty CRM Features — Modern Open Source CRM Platform"
@@ -1327,6 +1375,11 @@ msgstr "Twenty Customers — How Modern Teams Run Their CRM"
 #: src/sections/home-hero/home-hero.tsx
 msgid "Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves."
 msgstr "Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves."
+
+#. js-lingui-id: jVhq41
+#: src/sections/testimonials/partner-testimonials.data.ts
+msgid "Twenty gives you the kind of flexibility that actually changes what you can offer your clients. The dev experience is clean, the APIs are open, and when something needs to be customized, you can just do it. There's no fighting the platform."
+msgstr "Twenty gives you the kind of flexibility that actually changes what you can offer your clients. The dev experience is clean, the APIs are open, and when something needs to be customized, you can just do it. There's no fighting the platform."
 
 #. js-lingui-id: AxT+g4
 #: src/sections/feature-cards/feature-cards.data.ts

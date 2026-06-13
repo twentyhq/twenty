@@ -47,6 +47,60 @@ assert(
   `overflow-y ${seam.overflow}`,
 );
 assert('case-study count renders', seam.hasCount, 'no "N Case Studies"');
+
+// Partner testimonials: a dark notched panel on a light section. The notch
+// reveals the section's WHITE surface (the gray-notch defect we fixed), the
+// panel fill is the dark scheme surface, and the carousel adopts the dark
+// scheme so its content ink resolves to light — the half-applied scheme that
+// left the name/quote/counter invisible (vars set, `color` not) is what this
+// guards. The counter is centred and the quote runs sans, both matching the
+// home testimonials (the quote shares the counter's sans family).
+const panel = await partners.evaluate(() => {
+  const carousel = document.querySelector(
+    '[aria-label="Partner testimonials"]',
+  );
+  const section = carousel?.closest('section');
+  const shape = section?.querySelector('[data-card-scheme]');
+  const bodyFill = shape?.lastElementChild;
+  const counter = [...(section?.querySelectorAll('p') ?? [])].find((node) =>
+    /^\d+\/\d+$/.test((node.textContent ?? '').trim()),
+  );
+  const quote = section?.querySelector('h2');
+  return {
+    surface: section ? getComputedStyle(section).backgroundColor : '',
+    cardScheme: shape?.getAttribute('data-card-scheme') ?? '',
+    fill: bodyFill ? getComputedStyle(bodyFill).backgroundColor : '',
+    ink: carousel ? getComputedStyle(carousel).color : '',
+    counterAlign: counter ? getComputedStyle(counter).textAlign : '',
+    counterFont: counter ? getComputedStyle(counter).fontFamily : '',
+    quoteFont: quote ? getComputedStyle(quote).fontFamily : '',
+  };
+});
+assert(
+  'testimonials notch reveals a white surface',
+  panel.surface === 'rgb(255, 255, 255)',
+  panel.surface,
+);
+assert(
+  'testimonials panel fills with the dark surface',
+  panel.cardScheme === 'dark' && panel.fill === 'rgb(28, 28, 28)',
+  `${panel.cardScheme} / ${panel.fill}`,
+);
+assert(
+  'testimonials content adopts the light ink',
+  panel.ink === 'rgb(255, 255, 255)',
+  panel.ink,
+);
+assert(
+  'testimonials counter is centred',
+  panel.counterAlign === 'center',
+  panel.counterAlign,
+);
+assert(
+  'testimonials quote shares the counter sans family',
+  panel.quoteFont !== '' && panel.quoteFont === panel.counterFont,
+  `quote ${panel.quoteFont} / counter ${panel.counterFont}`,
+);
 await partners.close();
 
 // Every hero renders its h1 (the shared hero composition holds across schemes).

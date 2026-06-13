@@ -15,9 +15,13 @@ const iconButtonClassName = css`
   justify-content: center;
   width: var(--icon-button-size, 40px);
 
+  /* The disabled glyph rides the scheme's strong line tone (its 20% value):
+     identical black-20 on light surfaces, the matching white-20 on dark ones,
+     so a disabled arrow stays faintly legible on a dark panel instead of
+     vanishing into it. */
   &:disabled {
     border-color: ${semanticColor.line};
-    color: ${color('black-20')};
+    color: ${semanticColor.lineStrong};
     cursor: default;
   }
 

@@ -90,6 +90,7 @@ const ROW_GAP_MULTI_AXIS_FILES = new Set([
   'sections/problem/problem.tsx',
   'sections/stepper/product-stepper.tsx',
   'sections/stepper/stepper.tsx',
+  'sections/testimonials/partner-testimonials-carousel.tsx',
   'sections/testimonials/testimonials-carousel.tsx',
   'sections/trusted-by/trusted-by.tsx',
 ]);

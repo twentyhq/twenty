@@ -1,0 +1,261 @@
+'use client';
+
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
+import NextImage from 'next/image';
+import { useState } from 'react';
+
+import { ArrowLeft, ArrowRight } from '@/icons';
+import {
+  EASING,
+  FONT_WEIGHT,
+  fontFamily,
+  mediaUp,
+  radius,
+  semanticColor,
+  spacing,
+  typeRampDeclarations,
+} from '@/tokens';
+import { Body, Eyebrow, Heading, IconButton, MarkedDivider } from '@/ui';
+
+import { type PartnerTestimonialRecord } from './partner-testimonials.data';
+
+const CarouselGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  position: relative;
+  row-gap: ${spacing(8)};
+  z-index: 0;
+
+  ${mediaUp('md')} {
+    align-items: stretch;
+    column-gap: ${spacing(15)};
+    grid-template-columns: minmax(0, 328px) auto minmax(0, 1fr);
+    row-gap: 0;
+  }
+`;
+
+// Portrait and meta sit at the top of the column, the counter at the bottom.
+const LeftColumn = styled.div`
+  display: grid;
+  row-gap: ${spacing(6)};
+
+  ${mediaUp('md')} {
+    align-content: space-between;
+    min-height: 580px;
+    row-gap: ${spacing(12)};
+  }
+`;
+
+const AuthorCard = styled.div`
+  display: grid;
+  justify-items: start;
+  row-gap: ${spacing(6)};
+`;
+
+const PortraitFrame = styled.div`
+  aspect-ratio: 1;
+  border-radius: ${radius(2)};
+  max-width: 328px;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+`;
+
+const AuthorMeta = styled.div`
+  max-width: 253px;
+`;
+
+// The name leads; the designation follows it behind a hairline, wrapping
+// beneath when the row runs out of width.
+const NameRow = styled.div`
+  align-items: center;
+  column-gap: ${spacing(2)};
+  display: flex;
+  flex-wrap: wrap;
+`;
+
+const designationClassName = css`
+  border-left: 1px solid ${semanticColor.lineStrong};
+  padding-left: ${spacing(2)};
+`;
+
+const CounterText = styled.p`
+  ${typeRampDeclarations('headingMd')}
+  font-family: ${fontFamily('sans')};
+  font-weight: ${FONT_WEIGHT.light};
+  margin: 0;
+  white-space: nowrap;
+
+  ${mediaUp('md')} {
+    text-align: center;
+  }
+`;
+
+// The quote reads as plain heading text at normal tracking, matching the home
+// testimonials (the Heading sans variant otherwise tracks -0.04em).
+const quoteClassName = css`
+  &&& {
+    letter-spacing: normal;
+  }
+`;
+
+const SeparatorSlot = styled.div`
+  /* The section draws its divider at the strong tier. */
+  --marked-divider-line: ${semanticColor.lineStrong};
+
+  width: 100%;
+
+  ${mediaUp('md')} {
+    height: 100%;
+    width: auto;
+  }
+`;
+
+const RightColumn = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto auto;
+  min-width: 0;
+  row-gap: ${spacing(8)};
+
+  ${mediaUp('md')} {
+    grid-template-rows: auto minmax(392px, 1fr) auto;
+    min-height: 642px;
+    row-gap: ${spacing(14)};
+  }
+`;
+
+const QuoteStack = styled.div`
+  display: grid;
+  min-width: 0;
+`;
+
+const QuoteSlide = styled.div`
+  grid-area: 1 / 1;
+  max-width: 900px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition:
+    opacity 0.5s ${EASING.gentle},
+    transform 0.5s ${EASING.gentle};
+  visibility: hidden;
+
+  &[data-active] {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    visibility: visible;
+  }
+`;
+
+const FooterRow = styled.div`
+  align-self: end;
+`;
+
+const NavGroup = styled.div`
+  column-gap: ${spacing(2)};
+  display: grid;
+  grid-auto-flow: column;
+  justify-content: start;
+`;
+
+export function PartnerTestimonialsCarousel({
+  testimonials,
+}: {
+  testimonials: readonly PartnerTestimonialRecord[];
+}) {
+  const { i18n } = useLingui();
+  const [index, setIndex] = useState(0);
+  const total = testimonials.length;
+  const hasPrevious = index > 0;
+  const hasNext = index < total - 1;
+  const current = testimonials[index];
+  const authorName = i18n._(current.author.name);
+
+  return (
+    <CarouselGrid
+      aria-label={i18n._(msg`Partner testimonials`)}
+      aria-roledescription={i18n._(msg`carousel`)}
+      role="region"
+    >
+      <LeftColumn>
+        <AuthorCard>
+          <PortraitFrame>
+            <NextImage
+              alt={i18n._(msg`Portrait of ${authorName}`)}
+              fill
+              sizes="328px"
+              src={current.author.portraitSrc}
+              style={{ objectFit: 'cover' }}
+            />
+          </PortraitFrame>
+          <AuthorMeta>
+            <NameRow>
+              <Body as="span" size="sm" weight="medium">
+                {authorName}
+              </Body>
+              <span className={designationClassName}>
+                <Body as="span" muted size="sm">
+                  {i18n._(current.author.designation)}
+                </Body>
+              </span>
+            </NameRow>
+          </AuthorMeta>
+        </AuthorCard>
+        <CounterText aria-live="polite">
+          {index + 1}/{total}
+        </CounterText>
+      </LeftColumn>
+
+      <SeparatorSlot>
+        <MarkedDivider />
+      </SeparatorSlot>
+
+      <RightColumn>
+        <Eyebrow>{i18n._(msg`Join our growing partner ecosystem`)}</Eyebrow>
+        <QuoteStack>
+          {testimonials.map((testimonial, testimonialIndex) => (
+            <QuoteSlide
+              data-active={testimonialIndex === index ? '' : undefined}
+              key={testimonial.author.name.id}
+            >
+              <Heading
+                as="h2"
+                className={quoteClassName}
+                family="sans"
+                size="md"
+                weight="light"
+              >
+                {i18n._(testimonial.quote)}
+              </Heading>
+            </QuoteSlide>
+          ))}
+        </QuoteStack>
+        <FooterRow>
+          <NavGroup>
+            <IconButton
+              ariaLabel={i18n._(msg`Previous testimonial`)}
+              disabled={!hasPrevious}
+              onClick={() => hasPrevious && setIndex(index - 1)}
+              sizePx={48}
+            >
+              <ArrowLeft sizePx={14} />
+            </IconButton>
+            <IconButton
+              ariaLabel={i18n._(msg`Next testimonial`)}
+              disabled={!hasNext}
+              onClick={() => hasNext && setIndex(index + 1)}
+              sizePx={48}
+            >
+              <ArrowRight sizePx={14} />
+            </IconButton>
+          </NavGroup>
+        </FooterRow>
+      </RightColumn>
+    </CarouselGrid>
+  );
+}

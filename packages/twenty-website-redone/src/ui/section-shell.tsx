@@ -2,7 +2,7 @@ import { css } from '@linaria/core';
 import { type ReactNode } from 'react';
 
 import {
-  buildSchemeDeclarations,
+  buildSchemeContext,
   mediaUp,
   RHYTHM,
   type Scheme,
@@ -17,7 +17,6 @@ import { Container } from './container';
 // no per-section padding, no background props.
 const sectionShellClassName = css`
   background-color: ${semanticColor.surface};
-  color: ${semanticColor.ink};
   min-width: 0;
   overflow: clip;
   position: relative;
@@ -59,15 +58,15 @@ const sectionShellClassName = css`
   }
 
   &[data-scheme='light'] {
-    ${buildSchemeDeclarations('light')}
+    ${buildSchemeContext('light')}
   }
 
   &[data-scheme='muted'] {
-    ${buildSchemeDeclarations('muted')}
+    ${buildSchemeContext('muted')}
   }
 
   &[data-scheme='dark'] {
-    ${buildSchemeDeclarations('dark')}
+    ${buildSchemeContext('dark')}
   }
 
   /* Same-scheme neighbours share one surface, so the follower trims its top

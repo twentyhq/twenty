@@ -18,6 +18,7 @@ export { MAX_CONTENT_WIDTH_PX } from './max-content-width';
 export { mediaUp } from './media-up';
 export { MENU_WIPE } from './menu-wipe';
 export { MODAL_SURFACE } from './modal-surface';
+export { buildSchemeContext } from './build-scheme-context';
 export { buildSchemeDeclarations } from './build-scheme-declarations';
 export { PALETTE, type PaletteToken } from './palette';
 export { PRODUCT_HERO_SCENE } from './product-hero-scene';

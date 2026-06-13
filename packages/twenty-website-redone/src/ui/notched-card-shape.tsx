@@ -1,13 +1,16 @@
 import { styled } from '@linaria/react';
 
-import { color } from '@/tokens';
+import { buildSchemeDeclarations, type Scheme, semanticColor } from '@/tokens';
 
-// A white card with the sculpted notched top edge — shared by the footer
-// stage card and the testimonials card. The old site stretched one 1360px-wide path
-// with preserveAspectRatio="none", distorting the notch slopes at every
-// other width. Here the slopes keep their authored geometry (fixed-width
-// SVG caps extracted from the original path) and only the flat runs flex,
-// in the original 344 : 518 : 343 proportions.
+// A card with the sculpted notched top edge — shared by the footer stage card
+// and the testimonials card. The card presents a surface scheme: its fill is
+// that scheme's surface (light → white, dark → black). On a light section a
+// dark card reads as a dark panel whose notch reveals the white surface behind
+// it. The old site stretched one 1360px-wide path with
+// preserveAspectRatio="none", distorting the notch slopes at every other width.
+// Here the slopes keep their authored geometry (fixed-width SVG caps extracted
+// from the original path) and only the flat runs flex, in the original
+// 344 : 518 : 343 proportions.
 const CAP_HEIGHT_PX = 20;
 
 const LEFT_SLOPE_WIDTH_PX = 74;
@@ -35,17 +38,15 @@ const ShapeRow = styled.div`
 `;
 
 const FlatRun = styled.div`
-  background-color: ${color('white')};
+  background-color: ${semanticColor.surface};
   flex-basis: 0;
   min-width: 0;
 
   &[data-edge='left'] {
-    border-top-left-radius: 4px;
     flex-grow: 344;
   }
 
   &[data-edge='right'] {
-    border-top-right-radius: 4px;
     flex-grow: 343;
   }
 `;
@@ -57,9 +58,7 @@ const Plateau = styled.div`
 `;
 
 const BodyFill = styled.div`
-  background-color: ${color('white')};
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
+  background-color: ${semanticColor.surface};
   bottom: 0;
   left: 0;
   position: absolute;
@@ -68,16 +67,36 @@ const BodyFill = styled.div`
   top: ${CAP_HEIGHT_PX - 1}px;
 `;
 
+// The card carries its own surface scheme so its fill is independent of the
+// host section's scheme — a white card on a muted section, a black card on a
+// light one. The shape draws no text, so it adopts only the scheme variables
+// (it reads `surface`); the ink colour belongs to its content, not the shape.
 const ShapeLayer = styled.div`
   inset: 0;
   pointer-events: none;
   position: absolute;
   z-index: -1;
+
+  &[data-card-scheme='light'] {
+    ${buildSchemeDeclarations('light')}
+  }
+
+  &[data-card-scheme='muted'] {
+    ${buildSchemeDeclarations('muted')}
+  }
+
+  &[data-card-scheme='dark'] {
+    ${buildSchemeDeclarations('dark')}
+  }
 `;
 
-export function NotchedCardShape() {
+export function NotchedCardShape({
+  cardScheme = 'light',
+}: {
+  cardScheme?: Scheme;
+}) {
   return (
-    <ShapeLayer aria-hidden>
+    <ShapeLayer aria-hidden data-card-scheme={cardScheme}>
       <ShapeRow>
         <FlatRun data-edge="left" />
         <svg
@@ -88,7 +107,7 @@ export function NotchedCardShape() {
           width={LEFT_SLOPE_WIDTH_PX}
           xmlns="http://www.w3.org/2000/svg"
         >
-          <path d={LEFT_SLOPE_PATH} fill={color('white')} />
+          <path d={LEFT_SLOPE_PATH} fill={semanticColor.surface} />
         </svg>
         <Plateau />
         <svg
@@ -99,7 +118,7 @@ export function NotchedCardShape() {
           width={RIGHT_SLOPE_WIDTH_PX}
           xmlns="http://www.w3.org/2000/svg"
         >
-          <path d={RIGHT_SLOPE_PATH} fill={color('white')} />
+          <path d={RIGHT_SLOPE_PATH} fill={semanticColor.surface} />
         </svg>
         <FlatRun data-edge="right" />
       </ShapeRow>

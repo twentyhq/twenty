@@ -13,6 +13,7 @@ import { CaseStudyPromo } from '@/sections/case-study-promo';
 import { Faq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
 import { PartnerHero } from '@/sections/partner-hero';
+import { PartnerTestimonials } from '@/sections/testimonials';
 import { TrustedBy } from '@/sections/trusted-by';
 
 export const generateMetadata = buildRouteMetadata('partners');
@@ -49,6 +50,7 @@ export default async function PartnerPage({
             don't separate or reorder them. */}
         <TrustedBy />
         <CaseStudyPromo />
+        <PartnerTestimonials />
         <Faq />
       </main>
     </>
