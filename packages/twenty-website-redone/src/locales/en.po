@@ -172,6 +172,20 @@ msgstr "Automation"
 msgid "Back to inbox"
 msgstr "Back to inbox"
 
+#. js-lingui-id: kWm0dC
+#: src/sections/partner-hero/partner-hero.tsx
+msgid ""
+"Become\n"
+"*our partner*"
+msgstr ""
+"Become\n"
+"*our partner*"
+
+#. js-lingui-id: 6ZCRfT
+#: src/sections/partner-hero/partner-hero.tsx
+msgid "Become a partner"
+msgstr "Become a partner"
+
 #. js-lingui-id: 83Wi6G
 #: src/sections/stepper/stepper.data.ts
 msgid "Begin with production-grade *building blocks*"
@@ -547,6 +561,16 @@ msgstr "Files"
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Filtered metrics from any object"
 msgstr "Filtered metrics from any object"
+
+#. js-lingui-id: sRUAXp
+#: src/platform/routing/static-website-routes.ts
+msgid "Find a certified Twenty partner to migrate, customise, and operate your open source CRM, or join the ecosystem and grow your practice with us."
+msgstr "Find a certified Twenty partner to migrate, customise, and operate your open source CRM, or join the ecosystem and grow your practice with us."
+
+#. js-lingui-id: TJ7HQl
+#: src/sections/partner-hero/partner-hero.tsx
+msgid "Find a partner"
+msgstr "Find a partner"
 
 #. js-lingui-id: MD032e
 #: src/sections/menu/menu.data.ts
@@ -979,7 +1003,7 @@ msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larg
 msgstr "Sign up for Cloud in under a minute and start your 30-day trial. For larger rollouts, our 4-hour Onboarding Packs or certified partners get you live in 1–2 weeks."
 
 #. js-lingui-id: qTFDyz
-#: src/sections/pricing-hero/pricing-hero.tsx
+#: src/sections/pricing-plans/pricing-intro.tsx
 msgid ""
 "Simple\n"
 "*Pricing*"
@@ -1024,7 +1048,7 @@ msgid "Start for free"
 msgstr "Start for free"
 
 #. js-lingui-id: sBOFB0
-#: src/sections/pricing-hero/pricing-hero.tsx
+#: src/sections/pricing-plans/pricing-intro.tsx
 msgid ""
 "Start your free trial today\n"
 "without credit card."
@@ -1217,6 +1241,11 @@ msgstr "Twenty makes it simple. It's clean, intuitive, and built to feel like No
 msgid "Twenty partner ecosystem"
 msgstr "Twenty partner ecosystem"
 
+#. js-lingui-id: 4SJucz
+#: src/platform/routing/static-website-routes.ts
+msgid "Twenty Partners — Certified Open Source CRM Implementers"
+msgstr "Twenty Partners — Certified Open Source CRM Implementers"
+
 #. js-lingui-id: vD7S1X
 #. placeholder {0}: LATEST_RELEASE.release
 #. placeholder {1}: LATEST_RELEASE.title
@@ -1284,6 +1313,11 @@ msgstr "W3villa used Twenty as a production-grade framework for the data model, 
 #: src/sections/testimonials/testimonials.data.ts
 msgid "We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
 msgstr "We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
+
+#. js-lingui-id: d5CWI6
+#: src/sections/partner-hero/partner-hero.tsx
+msgid "We're building the #1 Open Source CRM, but we can't do it alone. Join our partner ecosystem and grow with us."
+msgstr "We're building the #1 Open Source CRM, but we can't do it alone. Join our partner ecosystem and grow with us."
 
 #. js-lingui-id: phiBjc
 #: src/sections/faq/faq.data.ts

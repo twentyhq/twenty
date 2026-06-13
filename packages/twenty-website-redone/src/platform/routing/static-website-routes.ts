@@ -30,4 +30,13 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     priority: 0.9,
     title: msg`Twenty CRM Pricing — Plans from $9 per User per Month`,
   },
+  {
+    changeFrequency: 'monthly',
+    description: msg`Find a certified Twenty partner to migrate, customise, and operate your open source CRM, or join the ecosystem and grow your practice with us.`,
+    id: 'partners',
+    indexed: true,
+    path: '/partners',
+    priority: 0.7,
+    title: msg`Twenty Partners — Certified Open Source CRM Implementers`,
+  },
 ];

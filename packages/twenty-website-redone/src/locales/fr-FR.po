@@ -172,6 +172,18 @@ msgstr ""
 msgid "Back to inbox"
 msgstr ""
 
+#. js-lingui-id: kWm0dC
+#: src/sections/partner-hero/partner-hero.tsx
+msgid ""
+"Become\n"
+"*our partner*"
+msgstr ""
+
+#. js-lingui-id: 6ZCRfT
+#: src/sections/partner-hero/partner-hero.tsx
+msgid "Become a partner"
+msgstr ""
+
 #. js-lingui-id: 83Wi6G
 #: src/sections/stepper/stepper.data.ts
 msgid "Begin with production-grade *building blocks*"
@@ -546,6 +558,16 @@ msgstr ""
 #. js-lingui-id: iabLgo
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Filtered metrics from any object"
+msgstr ""
+
+#. js-lingui-id: sRUAXp
+#: src/platform/routing/static-website-routes.ts
+msgid "Find a certified Twenty partner to migrate, customise, and operate your open source CRM, or join the ecosystem and grow your practice with us."
+msgstr ""
+
+#. js-lingui-id: TJ7HQl
+#: src/sections/partner-hero/partner-hero.tsx
+msgid "Find a partner"
 msgstr ""
 
 #. js-lingui-id: MD032e
@@ -979,7 +1001,7 @@ msgid "Sign up for Cloud in under a minute and start your 30-day trial. For larg
 msgstr "Inscrivez-vous au Cloud en moins d'une minute et commencez votre essai de 30 jours. Pour les déploiements plus larges, nos packs d'onboarding de 4 heures ou nos partenaires certifiés vous mettent en production en 1 à 2 semaines."
 
 #. js-lingui-id: qTFDyz
-#: src/sections/pricing-hero/pricing-hero.tsx
+#: src/sections/pricing-plans/pricing-intro.tsx
 msgid ""
 "Simple\n"
 "*Pricing*"
@@ -1022,7 +1044,7 @@ msgid "Start for free"
 msgstr ""
 
 #. js-lingui-id: sBOFB0
-#: src/sections/pricing-hero/pricing-hero.tsx
+#: src/sections/pricing-plans/pricing-intro.tsx
 msgid ""
 "Start your free trial today\n"
 "without credit card."
@@ -1213,6 +1235,11 @@ msgstr "Twenty rend les choses simples. C'est épuré, intuitif et conçu pour r
 msgid "Twenty partner ecosystem"
 msgstr "Écosystème de partenaires Twenty"
 
+#. js-lingui-id: 4SJucz
+#: src/platform/routing/static-website-routes.ts
+msgid "Twenty Partners — Certified Open Source CRM Implementers"
+msgstr ""
+
 #. js-lingui-id: vD7S1X
 #. placeholder {0}: LATEST_RELEASE.release
 #. placeholder {1}: LATEST_RELEASE.title
@@ -1280,6 +1307,11 @@ msgstr "W3villa a utilisé Twenty comme framework de niveau production pour le m
 #: src/sections/testimonials/testimonials.data.ts
 msgid "We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
 msgstr "Nous ne voulions pas rafistoler le problème. Nous voulions construire quelque chose sur lequel des institutions pourraient compter à grande échelle, et cela exigeait une fondation assez solide pour porter toute la complexité de notre vision."
+
+#. js-lingui-id: d5CWI6
+#: src/sections/partner-hero/partner-hero.tsx
+msgid "We're building the #1 Open Source CRM, but we can't do it alone. Join our partner ecosystem and grow with us."
+msgstr ""
 
 #. js-lingui-id: phiBjc
 #: src/sections/faq/faq.data.ts
