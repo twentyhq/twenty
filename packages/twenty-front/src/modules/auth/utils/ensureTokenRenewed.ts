@@ -19,7 +19,7 @@ export const ensureTokenRenewed = (
 
   const tokenPair = store.get(tokenPairState.atom);
 
-  if (!isDefined(tokenPair)) {
+  if (!isDefined(tokenPair?.refreshToken?.token)) {
     return Promise.resolve(false);
   }
 

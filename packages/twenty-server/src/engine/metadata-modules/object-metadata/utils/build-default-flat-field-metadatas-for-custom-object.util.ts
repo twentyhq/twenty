@@ -134,7 +134,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
           isNullable: true,
           isActive: true,
           isSystem: false,
-          isUIReadOnly: false,
+          isUIEditable: true,
           defaultValue: null,
           createdAt: now,
           updatedAt: now,
