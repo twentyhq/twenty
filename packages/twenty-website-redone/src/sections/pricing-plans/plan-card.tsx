@@ -2,11 +2,12 @@
 
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
 
 import { useAnimatedNumber } from '@/platform/motion';
-import { color, radius, semanticColor, spacing } from '@/tokens';
+import { color, mediaUp, radius, semanticColor, spacing } from '@/tokens';
 import { Body, Button, Heading } from '@/ui';
 
 import {
@@ -56,18 +57,39 @@ const CardHeaderInfo = styled.div`
   }
 `;
 
+// The title and price guard against long localized strings: they ellipsis
+// (or, for the price line, hold one line) on desktop where the two cards
+// share the row width. Ported from the old card.
+const titleClassName = css`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 const PriceLine = styled.div`
   align-items: baseline;
   column-gap: ${spacing(1)};
   display: flex;
   flex-wrap: wrap;
   min-width: 0;
+
+  ${mediaUp('md')} {
+    flex-wrap: nowrap;
+    overflow: hidden;
+    white-space: nowrap;
+  }
 `;
 
-const PriceSuffix = styled.span`
+const priceSuffixClassName = css`
   color: ${color('black-60')};
   display: block;
   min-width: 0;
+
+  ${mediaUp('md')} {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 `;
 
 const CardRule = styled.div`
@@ -130,15 +152,21 @@ export function PlanCard({
     <CardShell>
       <CardHeader>
         <CardHeaderInfo>
-          <Heading as="h3" family="sans" size="xs" weight="light">
+          <Heading
+            as="h3"
+            className={titleClassName}
+            family="sans"
+            size="xs"
+            weight="light"
+          >
             {i18n._(tier.heading)}
           </Heading>
           <PriceLine>
             <Heading as="h4" family="sans" size="sm" weight="regular">
               {`${cell.price.prefix}${PRICE_NUMBER_FORMATTER.format(animatedPriceValue)}`}
             </Heading>
-            <Body as="span" size="sm">
-              <PriceSuffix>{i18n._(cell.price.suffix)}</PriceSuffix>
+            <Body as="span" className={priceSuffixClassName} size="sm">
+              {i18n._(cell.price.suffix)}
             </Body>
           </PriceLine>
         </CardHeaderInfo>

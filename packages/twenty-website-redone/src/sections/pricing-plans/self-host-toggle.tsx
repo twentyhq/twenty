@@ -13,6 +13,8 @@ import {
   spacing,
 } from '@/tokens';
 
+import { CheckMark } from '@/icons';
+
 import { type PlansHostingMode } from './pricing-state-context';
 
 const ToggleRow = styled.label`
@@ -38,6 +40,7 @@ const Checkbox = styled.span`
 
   &[data-checked] {
     background-color: ${color('blue')};
+    color: ${color('white')};
   }
 `;
 
@@ -75,24 +78,7 @@ export function SelfHostToggle({
       />
       <LabelText>{i18n._(msg`Selfhosting`)}</LabelText>
       <Checkbox data-checked={isSelfHost ? '' : undefined}>
-        {isSelfHost ? (
-          <svg
-            aria-hidden
-            fill="none"
-            height="10"
-            viewBox="0 0 12 12"
-            width="10"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m2.5 6 2.5 2.5 4.5-5"
-              stroke={color('white')}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="1.5"
-            />
-          </svg>
-        ) : null}
+        {isSelfHost ? <CheckMark /> : null}
       </Checkbox>
     </ToggleRow>
   );

@@ -2,6 +2,7 @@ export { AppleRainbowMark } from './apple-rainbow-mark';
 export { ArrowLeft, type ArrowLeftProps } from './arrow-left';
 export { ArrowRight, type ArrowRightProps } from './arrow-right';
 export { ArrowUpRight, type ArrowUpRightProps } from './arrow-up-right';
+export { CheckMark, type CheckMarkProps } from './check-mark';
 export { ClaudeMark } from './claude-mark';
 export { DiscordMark, type DiscordMarkProps } from './discord-mark';
 export { FastPathIcon, type FastPathIconProps } from './fast-path';
