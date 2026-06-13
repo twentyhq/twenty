@@ -16,7 +16,7 @@ import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domai
 import { type TopicOptOutState } from 'src/engine/core-modules/emailing-domain/types/topic-opt-out-state.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { MessageTopicService } from 'src/modules/emailing/services/message-topic.service';
+import { UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
 
 type SuppressArgs = {
   workspaceId: string;
@@ -24,7 +24,7 @@ type SuppressArgs = {
   reason: MessageSuppressionReason;
   source: MessageSuppressionSource;
   providerEventId?: string | null;
-  topicId?: string | null;
+  unsubscribeTopicId?: string | null;
 };
 
 type TopicOptOutStateArgs = {
@@ -43,14 +43,14 @@ type SetTopicOptOutsArgs = {
 // Suppression is the single consent store, held in a core table (it is
 // compliance state keyed by email address, written only by webhook handlers and
 // the public unsubscribe controller — none of which run in a workspace/user
-// context). A row with topicId NULL is a global block; a row with a topicId and
+// context). A row with unsubscribeTopicId NULL is a global block; a row with a unsubscribeTopicId and
 // reason UNSUBSCRIBE is a per-topic opt-out. There is no opt-in state.
 @Injectable()
 export class MessageSuppressionService {
   constructor(
     @InjectWorkspaceScopedRepository(MessageSuppressionEntity)
     private readonly suppressionRepository: WorkspaceScopedRepository<MessageSuppressionEntity>,
-    private readonly messageTopicService: MessageTopicService,
+    private readonly unsubscribeTopicService: UnsubscribeTopicService,
   ) {}
 
   async getSuppressedAddresses(
@@ -67,7 +67,7 @@ export class MessageSuppressionService {
       where: {
         emailAddress: In(normalizedAddresses),
         reason: In(GLOBAL_BLOCKING_SUPPRESSION_REASONS),
-        topicId: IsNull(),
+        unsubscribeTopicId: IsNull(),
       },
     });
 
@@ -77,13 +77,16 @@ export class MessageSuppressionService {
   async getTopicSuppressedAddresses(
     workspaceId: string,
     emailAddresses: string[],
-    topicId: string,
+    unsubscribeTopicId: string,
   ): Promise<Set<string>> {
     const normalizedAddresses = this.normalizeAddresses(emailAddresses);
 
-    // An undefined topicId would silently drop the key from the WHERE clause
+    // An undefined unsubscribeTopicId would silently drop the key from the WHERE clause
     // and return every topic's opt-outs (cross-topic over-suppression).
-    if (!isNonEmptyArray(normalizedAddresses) || !isNonEmptyString(topicId)) {
+    if (
+      !isNonEmptyArray(normalizedAddresses) ||
+      !isNonEmptyString(unsubscribeTopicId)
+    ) {
       return new Set();
     }
 
@@ -91,14 +94,14 @@ export class MessageSuppressionService {
       where: {
         emailAddress: In(normalizedAddresses),
         reason: MessageSuppressionReason.UNSUBSCRIBE,
-        topicId,
+        unsubscribeTopicId,
       },
     });
 
     return new Set(suppressions.map((suppression) => suppression.emailAddress));
   }
 
-  // Records a suppression (global when topicId is null, per-topic otherwise).
+  // Records a suppression (global when unsubscribeTopicId is null, per-topic otherwise).
   // Race-safe against at-least-once SNS deliveries: losing the unique-index race
   // on insert is reconciled by re-reading and escalating, so two deliveries can
   // never create duplicate rows. Reasons only ever escalate (UNSUBSCRIBE ->
@@ -109,7 +112,7 @@ export class MessageSuppressionService {
     reason,
     source,
     providerEventId = null,
-    topicId = null,
+    unsubscribeTopicId = null,
   }: SuppressArgs): Promise<void> {
     const normalizedEmailAddress = this.normalizeEmailAddress(emailAddress);
 
@@ -122,11 +125,13 @@ export class MessageSuppressionService {
     // per-topic rows to UNSUBSCRIBE) while occupying the (address, topic) slot.
     const effectiveTopicId = HARD_SUPPRESSION_REASONS.includes(reason)
       ? null
-      : topicId;
+      : unsubscribeTopicId;
 
     const whereKey = {
       emailAddress: normalizedEmailAddress,
-      topicId: isDefined(effectiveTopicId) ? effectiveTopicId : IsNull(),
+      unsubscribeTopicId: isDefined(effectiveTopicId)
+        ? effectiveTopicId
+        : IsNull(),
     };
 
     const escalateExisting = async (): Promise<boolean> => {
@@ -160,7 +165,7 @@ export class MessageSuppressionService {
         reason,
         source,
         providerEventId,
-        topicId: effectiveTopicId,
+        unsubscribeTopicId: effectiveTopicId,
       });
     } catch (error) {
       // A concurrent delivery won the insert race. The unique index guarantees
@@ -189,7 +194,7 @@ export class MessageSuppressionService {
     }
 
     const visibleTopics =
-      await this.messageTopicService.findPublicTopics(workspaceId);
+      await this.unsubscribeTopicService.findPublicTopics(workspaceId);
 
     if (!isNonEmptyArray(visibleTopics)) {
       return [];
@@ -199,16 +204,16 @@ export class MessageSuppressionService {
       where: {
         emailAddress: normalizedEmailAddress,
         reason: MessageSuppressionReason.UNSUBSCRIBE,
-        topicId: In(visibleTopics.map((topic) => topic.id)),
+        unsubscribeTopicId: In(visibleTopics.map((topic) => topic.id)),
       },
     });
 
     const optedOutTopicIds = new Set(
-      optOuts.map((suppression) => suppression.topicId),
+      optOuts.map((suppression) => suppression.unsubscribeTopicId),
     );
 
     return visibleTopics.map((topic) => ({
-      topicId: topic.id,
+      unsubscribeTopicId: topic.id,
       topicName: topic.name,
       optedOut: optedOutTopicIds.has(topic.id),
     }));
@@ -230,7 +235,7 @@ export class MessageSuppressionService {
     const keptTopicIdSet = new Set(keptTopicIds);
 
     for (const topicState of topicStates) {
-      const shouldReceive = keptTopicIdSet.has(topicState.topicId);
+      const shouldReceive = keptTopicIdSet.has(topicState.unsubscribeTopicId);
 
       // The usual submit changes 0-1 checkboxes; skip topics already in the
       // requested state instead of issuing no-op writes.
@@ -242,7 +247,7 @@ export class MessageSuppressionService {
         await this.liftTopicOptOut(
           workspaceId,
           emailAddress,
-          topicState.topicId,
+          topicState.unsubscribeTopicId,
         );
       } else {
         await this.suppress({
@@ -250,7 +255,7 @@ export class MessageSuppressionService {
           emailAddress,
           reason: MessageSuppressionReason.UNSUBSCRIBE,
           source: MessageSuppressionSource.SYSTEM,
-          topicId: topicState.topicId,
+          unsubscribeTopicId: topicState.unsubscribeTopicId,
         });
       }
     }
@@ -259,15 +264,15 @@ export class MessageSuppressionService {
   private async liftTopicOptOut(
     workspaceId: string,
     emailAddress: string,
-    topicId: string,
+    unsubscribeTopicId: string,
   ): Promise<void> {
     const normalizedEmailAddress = this.normalizeEmailAddress(emailAddress);
 
     // Only a recipient-driven opt-out is reversible — never a hard suppression,
-    // never a global block (those have topicId NULL and don't match).
+    // never a global block (those have unsubscribeTopicId NULL and don't match).
     await this.suppressionRepository.delete(workspaceId, {
       emailAddress: normalizedEmailAddress,
-      topicId,
+      unsubscribeTopicId,
       reason: MessageSuppressionReason.UNSUBSCRIBE,
     });
   }

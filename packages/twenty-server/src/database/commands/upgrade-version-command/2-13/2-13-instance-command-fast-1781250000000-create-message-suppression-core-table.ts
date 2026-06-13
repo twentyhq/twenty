@@ -4,9 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.13.0', 1781250000000)
-export class CreateMessageSuppressionCoreTableFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class CreateMessageSuppressionCoreTableFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `CREATE TYPE "core"."messageSuppression_reason_enum" AS ENUM ('BOUNCE', 'COMPLAINT', 'UNSUBSCRIBE')`,
@@ -23,7 +21,7 @@ export class CreateMessageSuppressionCoreTableFastInstanceCommand
         "reason" "core"."messageSuppression_reason_enum" NOT NULL,
         "source" "core"."messageSuppression_source_enum" NOT NULL,
         "providerEventId" character varying,
-        "topicId" uuid,
+        "unsubscribeTopicId" uuid,
         "workspaceId" uuid NOT NULL,
         CONSTRAINT "PK_messageSuppression_id" PRIMARY KEY ("id"),
         CONSTRAINT "FK_6eba121ed8e57afaa1f052cb685" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE
@@ -32,12 +30,12 @@ export class CreateMessageSuppressionCoreTableFastInstanceCommand
     await queryRunner.query(
       `CREATE UNIQUE INDEX "IDX_MESSAGE_SUPPRESSION_GLOBAL_UNIQUE"
         ON "core"."messageSuppression" ("workspaceId", "emailAddress")
-        WHERE "topicId" IS NULL`,
+        WHERE "unsubscribeTopicId" IS NULL`,
     );
     await queryRunner.query(
       `CREATE UNIQUE INDEX "IDX_MESSAGE_SUPPRESSION_TOPIC_UNIQUE"
-        ON "core"."messageSuppression" ("workspaceId", "emailAddress", "topicId")
-        WHERE "topicId" IS NOT NULL`,
+        ON "core"."messageSuppression" ("workspaceId", "emailAddress", "unsubscribeTopicId")
+        WHERE "unsubscribeTopicId" IS NOT NULL`,
     );
     // The two unique indexes are partial, so neither serves the workspace
     // ON DELETE CASCADE scan; this plain index does.

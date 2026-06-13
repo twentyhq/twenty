@@ -57,8 +57,8 @@ type SendCampaignArgs = {
   subject: string;
   html: string;
   fromAddress: string;
-  // Optional topic for unsubscribe grouping (per-topic suppression + link).
-  messageTopicId?: string;
+  // Optional unsubscribe topic (per-topic suppression + link).
+  unsubscribeTopicId?: string;
 };
 
 type SendCampaignResult = {
@@ -132,7 +132,7 @@ export class MessageCampaignService {
   async send({
     workspaceId,
     userWorkspaceId,
-    messageTopicId,
+    unsubscribeTopicId,
     subject,
     html,
     fromAddress,
@@ -178,7 +178,7 @@ export class MessageCampaignService {
             subject,
             html,
             fromAddress,
-            messageTopicId,
+            unsubscribeTopicId,
             listId,
           });
 
@@ -374,7 +374,7 @@ export class MessageCampaignService {
       );
       const text = this.htmlToText(html);
       const fromAddress = campaign.fromAddress?.primaryEmail ?? '';
-      const messageTopicId = campaign.topicId ?? undefined;
+      const unsubscribeTopicId = campaign.unsubscribeTopicId ?? undefined;
 
       try {
         let result: EmailingDomainSendEmailResult;
@@ -389,7 +389,7 @@ export class MessageCampaignService {
               subject,
               text,
               html,
-              messageTopicId,
+              unsubscribeTopicId,
             },
           );
         } catch (error) {
@@ -508,14 +508,14 @@ export class MessageCampaignService {
     subject,
     html,
     fromAddress,
-    messageTopicId,
+    unsubscribeTopicId,
     listId,
   }: {
     workspaceId: string;
     subject: string;
     html: string;
     fromAddress: string;
-    messageTopicId?: string;
+    unsubscribeTopicId?: string;
     listId: string;
   }): Promise<string> {
     const campaignRepository = await this.getUserRepository(
@@ -528,7 +528,7 @@ export class MessageCampaignService {
       bodyTemplate: html,
       fromAddress: { primaryEmail: fromAddress, additionalEmails: null },
       status: CAMPAIGN_STATUS.SENDING,
-      topicId: messageTopicId ?? null,
+      unsubscribeTopicId: unsubscribeTopicId ?? null,
       listId,
     });
 
@@ -706,11 +706,11 @@ export class MessageCampaignService {
   async previewAudience({
     workspaceId,
     listId,
-    messageTopicId,
+    unsubscribeTopicId,
   }: {
     workspaceId: string;
     listId: string;
-    messageTopicId?: string;
+    unsubscribeTopicId?: string;
   }): Promise<CampaignAudiencePreview> {
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
@@ -732,11 +732,11 @@ export class MessageCampaignService {
             workspaceId,
             emails,
           );
-        const topicSuppressed = isNonEmptyString(messageTopicId)
+        const topicSuppressed = isNonEmptyString(unsubscribeTopicId)
           ? await this.messageSuppressionService.getTopicSuppressedAddresses(
               workspaceId,
               emails,
-              messageTopicId,
+              unsubscribeTopicId,
             )
           : new Set<string>();
 

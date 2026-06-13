@@ -48,8 +48,8 @@ export class UnsubscribeTokenService {
         // Default to 0 for any token minted before issuedAt existed, so it still
         // verifies (and reads as epoch-old) rather than being rejected.
         issuedAt: typeof decoded?.issuedAt === 'number' ? decoded.issuedAt : 0,
-        ...(typeof decoded?.messageTopicId === 'string'
-          ? { messageTopicId: decoded.messageTopicId }
+        ...(typeof decoded?.unsubscribeTopicId === 'string'
+          ? { unsubscribeTopicId: decoded.unsubscribeTopicId }
           : {}),
         ...(decoded?.preview === true ? { preview: true } : {}),
       };

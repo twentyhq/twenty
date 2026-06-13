@@ -9,10 +9,10 @@ export class PreviewMessageCampaignAudienceInput {
   @IsUUID('4')
   listId: string;
 
-  // Optional unsubscribe-group topic: recipients opted out of it are counted
+  // Optional unsubscribe topic: recipients opted out of it are counted
   // separately. When omitted, only the global opt-outs are counted.
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsUUID('4')
-  messageTopicId?: string;
+  unsubscribeTopicId?: string;
 }

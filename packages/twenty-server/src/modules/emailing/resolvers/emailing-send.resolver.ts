@@ -63,7 +63,7 @@ export class EmailingSendResolver {
     return this.messageCampaignService.send({
       workspaceId: currentWorkspace.id,
       userWorkspaceId,
-      messageTopicId: input.messageTopicId,
+      unsubscribeTopicId: input.unsubscribeTopicId,
       listId: input.listId,
       subject: input.subject,
       html: input.body,
@@ -80,7 +80,7 @@ export class EmailingSendResolver {
     return this.messageCampaignService.previewAudience({
       workspaceId: currentWorkspace.id,
       listId: input.listId,
-      messageTopicId: input.messageTopicId,
+      unsubscribeTopicId: input.unsubscribeTopicId,
     });
   }
 }

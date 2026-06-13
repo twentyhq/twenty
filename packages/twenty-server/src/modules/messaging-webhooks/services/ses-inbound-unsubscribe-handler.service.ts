@@ -37,6 +37,11 @@ export class SesInboundUnsubscribeHandlerService {
       return;
     }
 
+    // Preview tokens are read-only (mirrors the HTTP handlers): never suppress.
+    if (payload.preview === true) {
+      return;
+    }
+
     // Topic-scoped when the token carries a topic (mirrors the one-click HTTP
     // controller), global otherwise.
     await this.messageSuppressionService.suppress({
@@ -44,7 +49,7 @@ export class SesInboundUnsubscribeHandlerService {
       emailAddress: payload.emailAddress,
       reason: MessageSuppressionReason.UNSUBSCRIBE,
       source: MessageSuppressionSource.SYSTEM,
-      topicId: payload.messageTopicId ?? null,
+      unsubscribeTopicId: payload.unsubscribeTopicId ?? null,
     });
   }
 }

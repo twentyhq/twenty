@@ -29,9 +29,16 @@ const UNSUBSCRIBE_ALL_PATH = '/emailing/unsubscribe/all';
 
 const HTML_CONTENT_TYPE = 'text/html; charset=utf-8';
 
+// Preview tokens render the page normally but must never mutate state; the
+// opt-out POST handlers short-circuit to this page instead of suppressing.
+const PREVIEW_RESULT_PAGE = buildUnsubscribeResultPage(
+  'Preview',
+  'This is a preview — no changes were saved.',
+);
+
 type UnsubscribeFormBody = {
   t?: string;
-  topicId?: string | string[];
+  unsubscribeTopicId?: string | string[];
 };
 
 @Controller('emailing/unsubscribe')
@@ -59,7 +66,7 @@ export class UnsubscribeController {
       emailAddress: payload.emailAddress,
       reason: MessageSuppressionReason.UNSUBSCRIBE,
       source: MessageSuppressionSource.SYSTEM,
-      topicId: payload.messageTopicId ?? null,
+      unsubscribeTopicId: payload.unsubscribeTopicId ?? null,
     });
   }
 
@@ -89,17 +96,14 @@ export class UnsubscribeController {
     const payload = this.verifyTokenOrThrow(body.t);
 
     if (payload.preview === true) {
-      return buildUnsubscribeResultPage(
-        'Preview',
-        'This is a preview — no changes were saved.',
-      );
+      return PREVIEW_RESULT_PAGE;
     }
 
     // The checked boxes are the topics the recipient wants to keep receiving.
     await this.messageSuppressionService.setTopicOptOuts({
       workspaceId: payload.workspaceId,
       emailAddress: payload.emailAddress,
-      keptTopicIds: this.normalizeTopicIds(body.topicId),
+      keptTopicIds: this.normalizeTopicIds(body.unsubscribeTopicId),
     });
 
     return buildUnsubscribeResultPage(
@@ -116,10 +120,7 @@ export class UnsubscribeController {
     const payload = this.verifyTokenOrThrow(body.t);
 
     if (payload.preview === true) {
-      return buildUnsubscribeResultPage(
-        'Preview',
-        'This is a preview — no changes were saved.',
-      );
+      return PREVIEW_RESULT_PAGE;
     }
 
     await this.messageSuppressionService.suppress({
@@ -135,12 +136,14 @@ export class UnsubscribeController {
     );
   }
 
-  private normalizeTopicIds(topicId: string | string[] | undefined): string[] {
-    if (Array.isArray(topicId)) {
-      return topicId.filter(isNonEmptyString);
+  private normalizeTopicIds(
+    unsubscribeTopicId: string | string[] | undefined,
+  ): string[] {
+    if (Array.isArray(unsubscribeTopicId)) {
+      return unsubscribeTopicId.filter(isNonEmptyString);
     }
 
-    return isNonEmptyString(topicId) ? [topicId] : [];
+    return isNonEmptyString(unsubscribeTopicId) ? [unsubscribeTopicId] : [];
   }
 
   private verifyTokenOrThrow(

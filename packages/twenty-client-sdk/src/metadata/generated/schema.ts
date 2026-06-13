@@ -2185,17 +2185,17 @@ export interface SendMessageCampaignOutputDTO {
     __typename: 'SendMessageCampaignOutputDTO'
 }
 
-export interface MessageTopic {
+export interface UnsubscribeTopic {
     id: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     name?: Scalars['String']
     description?: Scalars['String']
-    visibility: MessageTopicVisibility
-    __typename: 'MessageTopic'
+    visibility: UnsubscribeTopicVisibility
+    __typename: 'UnsubscribeTopic'
 }
 
-export type MessageTopicVisibility = 'PUBLIC' | 'PRIVATE'
+export type UnsubscribeTopicVisibility = 'PUBLIC' | 'PRIVATE'
 
 export interface AutocompleteResult {
     text: Scalars['String']
@@ -2653,7 +2653,7 @@ export interface Query {
     findManyAgents: Agent[]
     findOneAgent: Agent
     previewMessageCampaignAudience: CampaignAudiencePreviewDTO
-    messageTopics: MessageTopic[]
+    unsubscribeTopics: UnsubscribeTopic[]
     myMessageChannels: MessageChannel[]
     getEmailingDomains: EmailingDomain[]
     myConnectedAccounts: ConnectedAccountPublicDTO[]
@@ -2816,9 +2816,9 @@ export interface Mutation {
     deleteOneAgent: Agent
     sendEmailViaEmailingDomain: SendEmailViaDomainOutput
     sendMessageCampaign: SendMessageCampaignOutputDTO
-    createMessageTopic: MessageTopic
-    updateMessageTopic: MessageTopic
-    deleteMessageTopic: Scalars['Boolean']
+    createUnsubscribeTopic: UnsubscribeTopic
+    updateUnsubscribeTopic: UnsubscribeTopic
+    deleteUnsubscribeTopic: Scalars['Boolean']
     updateMessageChannel: MessageChannel
     createEmailGroupChannel: CreateEmailGroupChannelOutput
     deleteEmailGroupChannel: MessageChannel
@@ -5253,7 +5253,7 @@ export interface SendMessageCampaignOutputDTOGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface MessageTopicGenqlSelection{
+export interface UnsubscribeTopicGenqlSelection{
     id?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
@@ -5762,7 +5762,7 @@ export interface QueryGenqlSelection{
     findManyAgents?: AgentGenqlSelection
     findOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
     previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
-    messageTopics?: MessageTopicGenqlSelection
+    unsubscribeTopics?: UnsubscribeTopicGenqlSelection
     myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     getEmailingDomains?: EmailingDomainGenqlSelection
     myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
@@ -5838,7 +5838,7 @@ export interface AgentIdInput {
 /** The id of the agent. */
 id: Scalars['UUID']}
 
-export interface PreviewMessageCampaignAudienceInput {listId: Scalars['String'],messageTopicId?: (Scalars['String'] | null)}
+export interface PreviewMessageCampaignAudienceInput {listId: Scalars['String'],unsubscribeTopicId?: (Scalars['String'] | null)}
 
 export interface ListAppConnectionsInput {providerName?: (Scalars['String'] | null),userWorkspaceId?: (Scalars['String'] | null),visibility?: (Scalars['String'] | null)}
 
@@ -5956,9 +5956,9 @@ export interface MutationGenqlSelection{
     deleteOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
     sendEmailViaEmailingDomain?: (SendEmailViaDomainOutputGenqlSelection & { __args: {input: SendEmailViaDomainInput} })
     sendMessageCampaign?: (SendMessageCampaignOutputDTOGenqlSelection & { __args: {input: SendMessageCampaignInput} })
-    createMessageTopic?: (MessageTopicGenqlSelection & { __args: {input: CreateMessageTopicInput} })
-    updateMessageTopic?: (MessageTopicGenqlSelection & { __args: {input: UpdateMessageTopicInput} })
-    deleteMessageTopic?: { __args: {id: Scalars['String']} }
+    createUnsubscribeTopic?: (UnsubscribeTopicGenqlSelection & { __args: {input: CreateUnsubscribeTopicInput} })
+    updateUnsubscribeTopic?: (UnsubscribeTopicGenqlSelection & { __args: {input: UpdateUnsubscribeTopicInput} })
+    deleteUnsubscribeTopic?: { __args: {id: Scalars['String']} }
     updateMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateMessageChannelInput} })
     createEmailGroupChannel?: (CreateEmailGroupChannelOutputGenqlSelection & { __args: {input: CreateEmailGroupChannelInput} })
     deleteEmailGroupChannel?: (MessageChannelGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -6309,11 +6309,11 @@ export interface UpdateAgentInput {id: Scalars['UUID'],name?: (Scalars['String']
 
 export interface SendEmailViaDomainInput {emailingDomainId: Scalars['String'],to: Scalars['String'][],cc?: (Scalars['String'][] | null),bcc?: (Scalars['String'][] | null),subject: Scalars['String'],text: Scalars['String'],html?: (Scalars['String'] | null),from: Scalars['String'],replyTo?: (Scalars['String'][] | null)}
 
-export interface SendMessageCampaignInput {listId: Scalars['String'],messageTopicId?: (Scalars['String'] | null),subject: Scalars['String'],body: Scalars['String'],fromAddress: Scalars['String']}
+export interface SendMessageCampaignInput {listId: Scalars['String'],unsubscribeTopicId?: (Scalars['String'] | null),subject: Scalars['String'],body: Scalars['String'],fromAddress: Scalars['String']}
 
-export interface CreateMessageTopicInput {name: Scalars['String'],description?: (Scalars['String'] | null),visibility?: (MessageTopicVisibility | null)}
+export interface CreateUnsubscribeTopicInput {name: Scalars['String'],description?: (Scalars['String'] | null),visibility?: (UnsubscribeTopicVisibility | null)}
 
-export interface UpdateMessageTopicInput {id: Scalars['String'],name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),visibility?: (MessageTopicVisibility | null)}
+export interface UpdateUnsubscribeTopicInput {id: Scalars['String'],name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),visibility?: (UnsubscribeTopicVisibility | null)}
 
 export interface UpdateMessageChannelInput {id: Scalars['UUID'],update: UpdateMessageChannelInputUpdates}
 
@@ -8109,10 +8109,10 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const MessageTopic_possibleTypes: string[] = ['MessageTopic']
-    export const isMessageTopic = (obj?: { __typename?: any } | null): obj is MessageTopic => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageTopic"')
-      return MessageTopic_possibleTypes.includes(obj.__typename)
+    const UnsubscribeTopic_possibleTypes: string[] = ['UnsubscribeTopic']
+    export const isUnsubscribeTopic = (obj?: { __typename?: any } | null): obj is UnsubscribeTopic => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUnsubscribeTopic"')
+      return UnsubscribeTopic_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -9040,7 +9040,7 @@ export const enumMessageChannelSyncStage = {
    FAILED: 'FAILED' as const
 }
 
-export const enumMessageTopicVisibility = {
+export const enumUnsubscribeTopicVisibility = {
    PUBLIC: 'PUBLIC' as const,
    PRIVATE: 'PRIVATE' as const
 }

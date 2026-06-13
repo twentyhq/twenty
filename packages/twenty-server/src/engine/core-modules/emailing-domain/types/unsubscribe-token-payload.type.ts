@@ -1,7 +1,7 @@
 export type UnsubscribeTokenPayload = {
   workspaceId: string;
   emailAddress: string;
-  messageTopicId?: string;
+  unsubscribeTopicId?: string;
   // True for tokens minted by the in-app preview action; the page renders
   // normally but opt-out POSTs are no-ops, so a preview never mutates state.
   preview?: boolean;

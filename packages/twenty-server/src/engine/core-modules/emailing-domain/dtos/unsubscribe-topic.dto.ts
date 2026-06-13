@@ -3,14 +3,14 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { MessageTopicVisibility } from 'src/engine/core-modules/emailing-domain/types/message-topic-visibility.type';
+import { UnsubscribeTopicVisibility } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-topic-visibility.type';
 
-registerEnumType(MessageTopicVisibility, {
-  name: 'MessageTopicVisibility',
+registerEnumType(UnsubscribeTopicVisibility, {
+  name: 'UnsubscribeTopicVisibility',
 });
 
-@ObjectType('MessageTopic')
-export class MessageTopicDTO {
+@ObjectType('UnsubscribeTopic')
+export class UnsubscribeTopicDTO {
   @IDField(() => UUIDScalarType)
   id: string;
 
@@ -26,6 +26,6 @@ export class MessageTopicDTO {
   @Field(() => String, { nullable: true })
   description: string | null;
 
-  @Field(() => MessageTopicVisibility)
-  visibility: MessageTopicVisibility;
+  @Field(() => UnsubscribeTopicVisibility)
+  visibility: UnsubscribeTopicVisibility;
 }

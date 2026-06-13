@@ -16,7 +16,7 @@ import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-s
 import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/calendar-channel-seed-ids.constant';
 import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
 import { MESSAGE_FOLDER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-folder-seed-ids.constant';
-import { MessageTopicVisibility } from 'src/engine/core-modules/emailing-domain/types/message-topic-visibility.type';
+import { UnsubscribeTopicVisibility } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-topic-visibility.type';
 import { getSeededEmailGroupDomains } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-emailing-domains.util';
 import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
 
@@ -65,13 +65,13 @@ const YC_MESSAGE_FOLDER_IDS = {
   JANE_SENT: '30303030-1234-4567-8901-abcdef012348',
 } as const;
 
-const APPLE_MESSAGE_TOPIC_IDS = {
+const APPLE_UNSUBSCRIBE_TOPIC_IDS = {
   PRODUCT_UPDATES: '20202020-7b1c-4a2d-8e3f-300000000001',
   NEWSLETTER: '20202020-7b1c-4a2d-8e3f-300000000002',
   TRANSACTIONAL: '20202020-7b1c-4a2d-8e3f-300000000003',
 } as const;
 
-const YC_MESSAGE_TOPIC_IDS = {
+const YC_UNSUBSCRIBE_TOPIC_IDS = {
   PRODUCT_UPDATES: '30303030-7b1c-4a2d-8e3f-300000000001',
   NEWSLETTER: '30303030-7b1c-4a2d-8e3f-300000000002',
   TRANSACTIONAL: '30303030-7b1c-4a2d-8e3f-300000000003',
@@ -90,7 +90,7 @@ const getSeedIds = (workspaceId: string) => {
       messageChannelIds: YC_MESSAGE_CHANNEL_IDS,
       calendarChannelIds: YC_CALENDAR_CHANNEL_IDS,
       messageFolderIds: YC_MESSAGE_FOLDER_IDS,
-      messageTopicIds: YC_MESSAGE_TOPIC_IDS,
+      unsubscribeTopicIds: YC_UNSUBSCRIBE_TOPIC_IDS,
     };
   }
 
@@ -105,7 +105,7 @@ const getSeedIds = (workspaceId: string) => {
     messageChannelIds: MESSAGE_CHANNEL_DATA_SEED_IDS,
     calendarChannelIds: CALENDAR_CHANNEL_DATA_SEED_IDS,
     messageFolderIds: MESSAGE_FOLDER_DATA_SEED_IDS,
-    messageTopicIds: APPLE_MESSAGE_TOPIC_IDS,
+    unsubscribeTopicIds: APPLE_UNSUBSCRIBE_TOPIC_IDS,
   };
 };
 
@@ -123,7 +123,7 @@ export const seedMetadataEntities = async ({
 
   await seedConnectedAccounts({ queryRunner, schemaName, workspaceId });
   await seedMessageChannels({ queryRunner, schemaName, workspaceId });
-  await seedMessageTopics({ queryRunner, schemaName, workspaceId });
+  await seedUnsubscribeTopics({ queryRunner, schemaName, workspaceId });
   await seedCalendarChannels({ queryRunner, schemaName, workspaceId });
   await seedMessageFolders({ queryRunner, schemaName, workspaceId });
 };
@@ -370,33 +370,33 @@ const seedMessageChannels = async ({
     .execute();
 };
 
-const seedMessageTopics = async ({
+const seedUnsubscribeTopics = async ({
   queryRunner,
   schemaName,
   workspaceId,
 }: SeedMetadataEntitiesArgs) => {
   const ids = getSeedIds(workspaceId);
 
-  const messageTopics = [
+  const unsubscribeTopics = [
     {
-      id: ids.messageTopicIds.PRODUCT_UPDATES,
+      id: ids.unsubscribeTopicIds.PRODUCT_UPDATES,
       name: 'Product updates',
       description: 'New features and product announcements.',
-      visibility: MessageTopicVisibility.PUBLIC,
+      visibility: UnsubscribeTopicVisibility.PUBLIC,
       workspaceId,
     },
     {
-      id: ids.messageTopicIds.NEWSLETTER,
+      id: ids.unsubscribeTopicIds.NEWSLETTER,
       name: 'Newsletter',
       description: 'Our periodic company newsletter.',
-      visibility: MessageTopicVisibility.PUBLIC,
+      visibility: UnsubscribeTopicVisibility.PUBLIC,
       workspaceId,
     },
     {
-      id: ids.messageTopicIds.TRANSACTIONAL,
+      id: ids.unsubscribeTopicIds.TRANSACTIONAL,
       name: 'Transactional',
       description: 'Internal-only category, hidden from the preferences page.',
-      visibility: MessageTopicVisibility.PRIVATE,
+      visibility: UnsubscribeTopicVisibility.PRIVATE,
       workspaceId,
     },
   ];
@@ -404,7 +404,7 @@ const seedMessageTopics = async ({
   await queryRunner.manager
     .createQueryBuilder()
     .insert()
-    .into(`${schemaName}.messageTopic`, [
+    .into(`${schemaName}.unsubscribeTopic`, [
       'id',
       'name',
       'description',
@@ -412,7 +412,7 @@ const seedMessageTopics = async ({
       'workspaceId',
     ])
     .orIgnore()
-    .values(messageTopics)
+    .values(unsubscribeTopics)
     .execute();
 };
 

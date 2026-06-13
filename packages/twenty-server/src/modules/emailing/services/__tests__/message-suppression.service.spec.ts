@@ -5,7 +5,7 @@ import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domai
 import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/message-suppression-source.type';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
-import { type MessageTopicService } from 'src/modules/emailing/services/message-topic.service';
+import { type UnsubscribeTopicService } from 'src/modules/emailing/services/unsubscribe-topic.service';
 
 const WORKSPACE_ID = 'workspace-1';
 
@@ -32,15 +32,15 @@ describe('MessageSuppressionService', () => {
       update: jest.fn().mockResolvedValue({ affected: 1 }),
       delete: jest.fn().mockResolvedValue({ affected: 1 }),
     };
-    const messageTopicService = {
+    const unsubscribeTopicService = {
       findPublicTopics: jest.fn().mockResolvedValue(publicTopics),
     };
     const service = new MessageSuppressionService(
       repository as unknown as WorkspaceScopedRepository<MessageSuppressionEntity>,
-      messageTopicService as unknown as MessageTopicService,
+      unsubscribeTopicService as unknown as UnsubscribeTopicService,
     );
 
-    return { service, repository, messageTopicService };
+    return { service, repository, unsubscribeTopicService };
   };
 
   describe('suppress', () => {
@@ -52,19 +52,19 @@ describe('MessageSuppressionService', () => {
         emailAddress: '  User@Example.COM ',
         reason: MessageSuppressionReason.UNSUBSCRIBE,
         source: MessageSuppressionSource.SYSTEM,
-        topicId: 'topic-1',
+        unsubscribeTopicId: 'topic-1',
       });
 
       expect(repository.insert).toHaveBeenCalledWith(
         WORKSPACE_ID,
         expect.objectContaining({
           emailAddress: 'user@example.com',
-          topicId: 'topic-1',
+          unsubscribeTopicId: 'topic-1',
         }),
       );
     });
 
-    it('records hard reasons as global blocks even when a topicId is passed', async () => {
+    it('records hard reasons as global blocks even when a unsubscribeTopicId is passed', async () => {
       const { service, repository } = setUp();
 
       await service.suppress({
@@ -72,12 +72,12 @@ describe('MessageSuppressionService', () => {
         emailAddress: 'user@example.com',
         reason: MessageSuppressionReason.BOUNCE,
         source: MessageSuppressionSource.WEBHOOK,
-        topicId: 'topic-1',
+        unsubscribeTopicId: 'topic-1',
       });
 
       expect(repository.insert).toHaveBeenCalledWith(
         WORKSPACE_ID,
-        expect.objectContaining({ topicId: null }),
+        expect.objectContaining({ unsubscribeTopicId: null }),
       );
     });
 
@@ -163,7 +163,7 @@ describe('MessageSuppressionService', () => {
   });
 
   describe('getTopicSuppressedAddresses', () => {
-    it('returns an empty set without querying when topicId is missing', async () => {
+    it('returns an empty set without querying when unsubscribeTopicId is missing', async () => {
       const { service, repository } = setUp();
 
       const result = await service.getTopicSuppressedAddresses(
@@ -187,7 +187,9 @@ describe('MessageSuppressionService', () => {
       const { service, repository } = setUp({ publicTopics: topics });
 
       // Existing opt-out only for topic-rechecked.
-      repository.find.mockResolvedValue([{ topicId: 'topic-rechecked' }]);
+      repository.find.mockResolvedValue([
+        { unsubscribeTopicId: 'topic-rechecked' },
+      ]);
 
       await service.setTopicOptOuts({
         workspaceId: WORKSPACE_ID,
@@ -200,12 +202,12 @@ describe('MessageSuppressionService', () => {
       expect(repository.delete).toHaveBeenCalledTimes(1);
       expect(repository.delete).toHaveBeenCalledWith(
         WORKSPACE_ID,
-        expect.objectContaining({ topicId: 'topic-rechecked' }),
+        expect.objectContaining({ unsubscribeTopicId: 'topic-rechecked' }),
       );
       expect(repository.insert).toHaveBeenCalledTimes(1);
       expect(repository.insert).toHaveBeenCalledWith(
         WORKSPACE_ID,
-        expect.objectContaining({ topicId: 'topic-unchecked' }),
+        expect.objectContaining({ unsubscribeTopicId: 'topic-unchecked' }),
       );
     });
   });

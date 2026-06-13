@@ -10,14 +10,14 @@ import {
 
 type UseCampaignAudiencePreviewArgs = {
   listId: string | null;
-  messageTopicId: string | null;
+  unsubscribeTopicId: string | null;
 };
 
 // Fetches the pre-send audience breakdown for the composer once a list is
 // selected (re-runs when the topic changes). Returns null until a list is set.
 export const useCampaignAudiencePreview = ({
   listId,
-  messageTopicId,
+  unsubscribeTopicId,
 }: UseCampaignAudiencePreviewArgs) => {
   const { data } = useQuery<
     PreviewMessageCampaignAudienceQuery,
@@ -27,7 +27,7 @@ export const useCampaignAudiencePreview = ({
     variables: {
       input: {
         listId: listId ?? '',
-        messageTopicId: messageTopicId ?? undefined,
+        unsubscribeTopicId: unsubscribeTopicId ?? undefined,
       },
     },
     fetchPolicy: 'cache-and-network',

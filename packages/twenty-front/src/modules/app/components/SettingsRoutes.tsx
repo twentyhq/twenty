@@ -128,18 +128,18 @@ const SettingsWorkspaceEmailGroupChannelDetail = lazy(() =>
   ),
 );
 
-const SettingsWorkspaceNewUnsubscribeGroup = lazy(() =>
-  import('~/pages/settings/email/SettingsWorkspaceNewUnsubscribeGroup').then(
+const SettingsWorkspaceNewUnsubscribeTopic = lazy(() =>
+  import('~/pages/settings/email/SettingsWorkspaceNewUnsubscribeTopic').then(
     (module) => ({
-      default: module.SettingsWorkspaceNewUnsubscribeGroup,
+      default: module.SettingsWorkspaceNewUnsubscribeTopic,
     }),
   ),
 );
 
-const SettingsWorkspaceUnsubscribeGroupDetail = lazy(() =>
-  import('~/pages/settings/email/SettingsWorkspaceUnsubscribeGroupDetail').then(
+const SettingsWorkspaceUnsubscribeTopicDetail = lazy(() =>
+  import('~/pages/settings/email/SettingsWorkspaceUnsubscribeTopicDetail').then(
     (module) => ({
-      default: module.SettingsWorkspaceUnsubscribeGroupDetail,
+      default: module.SettingsWorkspaceUnsubscribeTopicDetail,
     }),
   ),
 );
@@ -657,12 +657,12 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsWorkspaceEmailGroupChannelDetail />}
         />
         <Route
-          path={SettingsPath.NewUnsubscribeGroup}
-          element={<SettingsWorkspaceNewUnsubscribeGroup />}
+          path={SettingsPath.NewUnsubscribeTopic}
+          element={<SettingsWorkspaceNewUnsubscribeTopic />}
         />
         <Route
-          path={SettingsPath.UnsubscribeGroupDetail}
-          element={<SettingsWorkspaceUnsubscribeGroupDetail />}
+          path={SettingsPath.UnsubscribeTopicDetail}
+          element={<SettingsWorkspaceUnsubscribeTopicDetail />}
         />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
         <Route path={SettingsPath.Usage} element={<SettingsUsage />} />

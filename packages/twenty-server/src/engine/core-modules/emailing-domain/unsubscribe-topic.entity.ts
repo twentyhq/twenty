@@ -7,17 +7,17 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { MessageTopicVisibility } from 'src/engine/core-modules/emailing-domain/types/message-topic-visibility.type';
+import { UnsubscribeTopicVisibility } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-topic-visibility.type';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
-// An unsubscribe group: an email category recipients can opt out of. Lives in
+// An unsubscribe topic: an email category recipients can opt out of. Lives in
 // core alongside emailingDomain and messageSuppression so the whole consent
 // domain (groups + suppressions + the public unsubscribe page) is reachable
 // from the unauthenticated webhook/controller paths without a workspace context.
 // Curated by the workspace admin through the Settings → Email section.
-@Entity({ name: 'messageTopic', schema: 'core' })
-@Index('IDX_MESSAGE_TOPIC_WORKSPACE_ID', ['workspaceId'])
-export class MessageTopicEntity extends WorkspaceRelatedEntity {
+@Entity({ name: 'unsubscribeTopic', schema: 'core' })
+@Index('IDX_UNSUBSCRIBE_TOPIC_WORKSPACE_ID', ['workspaceId'])
+export class UnsubscribeTopicEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -37,9 +37,9 @@ export class MessageTopicEntity extends WorkspaceRelatedEntity {
   // usable as a campaign's unsubscribe scope but hidden from recipients.
   @Column({
     type: 'enum',
-    enum: Object.values(MessageTopicVisibility),
-    default: MessageTopicVisibility.PRIVATE,
+    enum: Object.values(UnsubscribeTopicVisibility),
+    default: UnsubscribeTopicVisibility.PRIVATE,
     nullable: false,
   })
-  visibility: MessageTopicVisibility;
+  visibility: UnsubscribeTopicVisibility;
 }

@@ -12,7 +12,7 @@ import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domai
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 // Compliance state, not CRM data: which addresses must not be emailed (global
-// block when topicId is NULL, per-topic opt-out otherwise). Written only by
+// block when unsubscribeTopicId is NULL, per-topic opt-out otherwise). Written only by
 // webhook handlers and the public unsubscribe controller — both run outside any
 // workspace/user context — so it lives in core, like emailingDomain.
 //
@@ -31,13 +31,13 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
   ['workspaceId', 'emailAddress'],
   {
     unique: true,
-    where: '"topicId" IS NULL',
+    where: '"unsubscribeTopicId" IS NULL',
   },
 )
 @Index(
   'IDX_MESSAGE_SUPPRESSION_TOPIC_UNIQUE',
-  ['workspaceId', 'emailAddress', 'topicId'],
-  { unique: true, where: '"topicId" IS NOT NULL' },
+  ['workspaceId', 'emailAddress', 'unsubscribeTopicId'],
+  { unique: true, where: '"unsubscribeTopicId" IS NOT NULL' },
 )
 @Index('IDX_MESSAGE_SUPPRESSION_WORKSPACE_ID', ['workspaceId'])
 export class MessageSuppressionEntity extends WorkspaceRelatedEntity {
@@ -71,10 +71,10 @@ export class MessageSuppressionEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'varchar', nullable: true })
   providerEventId: string | null;
 
-  // References core.messageTopic by id (a plain column, not a modelled relation,
+  // References core.unsubscribeTopic by id (a plain column, not a modelled relation,
   // so the schema matches TypeORM's entity model). Rows can outlive their topic —
   // orphaned per-topic opt-outs are inert, since every read intersects live
   // topics. NULL means a global block (every send), not a per-topic opt-out.
   @Column({ type: 'uuid', nullable: true })
-  topicId: string | null;
+  unsubscribeTopicId: string | null;
 }

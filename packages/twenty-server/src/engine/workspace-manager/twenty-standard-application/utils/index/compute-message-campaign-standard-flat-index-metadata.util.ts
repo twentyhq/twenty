@@ -17,12 +17,12 @@ export const buildMessageCampaignStandardFlatIndexMetadatas = ({
   AllStandardObjectIndexName<'messageCampaign'>,
   FlatIndexMetadata
 > => ({
-  topicIdIndex: createStandardIndexFlatMetadata({
+  unsubscribeTopicIdIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      indexName: 'topicIdIndex',
-      relatedFieldNames: ['topicId'],
+      indexName: 'unsubscribeTopicIdIndex',
+      relatedFieldNames: ['unsubscribeTopicId'],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

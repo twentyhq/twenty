@@ -903,7 +903,9 @@ export const STANDARD_OBJECTS = {
       },
       status: { universalIdentifier: 'c7117256-3de6-48e1-87df-c99c32bad610' },
       sentAt: { universalIdentifier: 'e2315b4f-9edf-4df2-96b9-961e76368671' },
-      topicId: { universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c' },
+      unsubscribeTopicId: {
+        universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c',
+      },
       list: { universalIdentifier: 'cb24dcdf-f0e8-4c71-8cff-70b714e86530' },
       timelineActivities: {
         universalIdentifier: 'd4e5f607-1829-4da3-8eb4-25f607182930',
@@ -914,7 +916,7 @@ export const STANDARD_OBJECTS = {
       },
     },
     indexes: {
-      topicIdIndex: {
+      unsubscribeTopicIdIndex: {
         universalIdentifier: 'efe8c20e-d12b-4475-969e-e86e0bbfe444',
       },
       listIdIndex: {

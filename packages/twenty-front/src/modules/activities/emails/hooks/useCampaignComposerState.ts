@@ -9,7 +9,9 @@ type UseCampaignComposerStateArgs = {
 export const useCampaignComposerState = ({
   onSent,
 }: UseCampaignComposerStateArgs) => {
-  const [messageTopicId, setMessageTopicId] = useState<string | null>(null);
+  const [unsubscribeTopicId, setUnsubscribeTopicId] = useState<string | null>(
+    null,
+  );
   const [listId, setListId] = useState<string | null>(null);
   const [fromAddress, setFromAddress] = useState('');
   const [subject, setSubject] = useState('');
@@ -30,7 +32,7 @@ export const useCampaignComposerState = ({
 
     const success = await sendMessageCampaign({
       listId,
-      messageTopicId: messageTopicId ?? undefined,
+      unsubscribeTopicId: unsubscribeTopicId ?? undefined,
       subject,
       body,
       fromAddress: fromAddress.trim(),
@@ -42,8 +44,8 @@ export const useCampaignComposerState = ({
   };
 
   return {
-    messageTopicId,
-    setMessageTopicId,
+    unsubscribeTopicId,
+    setUnsubscribeTopicId,
     listId,
     setListId,
     fromAddress,

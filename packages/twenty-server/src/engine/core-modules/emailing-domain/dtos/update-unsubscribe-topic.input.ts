@@ -8,10 +8,10 @@ import {
   MaxLength,
 } from 'class-validator';
 
-import { MessageTopicVisibility } from 'src/engine/core-modules/emailing-domain/types/message-topic-visibility.type';
+import { UnsubscribeTopicVisibility } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-topic-visibility.type';
 
 @InputType()
-export class UpdateMessageTopicInput {
+export class UpdateUnsubscribeTopicInput {
   @Field(() => String)
   @IsUUID('4')
   id: string;
@@ -28,8 +28,8 @@ export class UpdateMessageTopicInput {
   @MaxLength(1024)
   description?: string;
 
-  @Field(() => MessageTopicVisibility, { nullable: true })
+  @Field(() => UnsubscribeTopicVisibility, { nullable: true })
   @IsOptional()
-  @IsEnum(MessageTopicVisibility)
-  visibility?: MessageTopicVisibility;
+  @IsEnum(UnsubscribeTopicVisibility)
+  visibility?: UnsubscribeTopicVisibility;
 }

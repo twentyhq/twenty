@@ -2539,16 +2539,16 @@ type SendMessageCampaignOutputDTO {
   skipped: CampaignSkippedRecipientsDTO!
 }
 
-type MessageTopic {
+type UnsubscribeTopic {
   id: UUID!
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String
   description: String
-  visibility: MessageTopicVisibility!
+  visibility: UnsubscribeTopicVisibility!
 }
 
-enum MessageTopicVisibility {
+enum UnsubscribeTopicVisibility {
   PUBLIC
   PRIVATE
 }
@@ -3042,7 +3042,7 @@ type Query {
   findManyAgents: [Agent!]!
   findOneAgent(input: AgentIdInput!): Agent!
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
-  messageTopics: [MessageTopic!]!
+  unsubscribeTopics: [UnsubscribeTopic!]!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
   getEmailingDomains: [EmailingDomain!]!
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
@@ -3125,7 +3125,7 @@ input AgentIdInput {
 
 input PreviewMessageCampaignAudienceInput {
   listId: String!
-  messageTopicId: String
+  unsubscribeTopicId: String
 }
 
 input ListAppConnectionsInput {
@@ -3292,9 +3292,9 @@ type Mutation {
   deleteOneAgent(input: AgentIdInput!): Agent!
   sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
-  createMessageTopic(input: CreateMessageTopicInput!): MessageTopic!
-  updateMessageTopic(input: UpdateMessageTopicInput!): MessageTopic!
-  deleteMessageTopic(id: String!): Boolean!
+  createUnsubscribeTopic(input: CreateUnsubscribeTopicInput!): UnsubscribeTopic!
+  updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
+  deleteUnsubscribeTopic(id: String!): Boolean!
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
   createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
   deleteEmailGroupChannel(id: UUID!): MessageChannel!
@@ -4069,23 +4069,23 @@ input SendEmailViaDomainInput {
 
 input SendMessageCampaignInput {
   listId: String!
-  messageTopicId: String
+  unsubscribeTopicId: String
   subject: String!
   body: String!
   fromAddress: String!
 }
 
-input CreateMessageTopicInput {
+input CreateUnsubscribeTopicInput {
   name: String!
   description: String
-  visibility: MessageTopicVisibility
+  visibility: UnsubscribeTopicVisibility
 }
 
-input UpdateMessageTopicInput {
+input UpdateUnsubscribeTopicInput {
   id: String!
   name: String
   description: String
-  visibility: MessageTopicVisibility
+  visibility: UnsubscribeTopicVisibility
 }
 
 input UpdateMessageChannelInput {

@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 
 import { useCampaignAudiencePreview } from '@/activities/emails/hooks/useCampaignAudiencePreview';
 import { type useCampaignComposerState } from '@/activities/emails/hooks/useCampaignComposerState';
-import { useMessageTopics } from '@/activities/emails/hooks/useMessageTopics';
+import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
@@ -45,7 +45,7 @@ const buildAudienceHint = (preview: CampaignAudiencePreview): string => {
     parts.push(t`${preview.globallyUnsubscribed} unsubscribed from everything`);
   }
   if (preview.topicUnsubscribed > 0) {
-    parts.push(t`${preview.topicUnsubscribed} opted out of this group`);
+    parts.push(t`${preview.topicUnsubscribed} opted out of this topic`);
   }
 
   const breakdown = parts.length > 0 ? ` (${parts.join(', ')})` : '';
@@ -64,7 +64,7 @@ export const CampaignComposerFields = ({
   campaignState,
 }: CampaignComposerFieldsProps) => {
   const { channels } = useMyMessageChannels();
-  const { messageTopics } = useMessageTopics();
+  const { unsubscribeTopics } = useUnsubscribeTopics();
   const { createOneRecord: createMessageList } = useCreateOneRecord({
     objectNameSingular: 'messageList',
   });
@@ -82,7 +82,7 @@ export const CampaignComposerFields = ({
 
   const audiencePreview = useCampaignAudiencePreview({
     listId: campaignState.listId,
-    messageTopicId: campaignState.messageTopicId,
+    unsubscribeTopicId: campaignState.unsubscribeTopicId,
   });
 
   // Campaigns send from the workspace's shared email channels (the verified
@@ -93,10 +93,12 @@ export const CampaignComposerFields = ({
     .filter(isDefined)
     .map((handle) => ({ label: handle, value: handle }));
 
-  const topicOptions: SelectOption<string>[] = messageTopics.map((topic) => ({
-    label: topic.name ?? t`Untitled group`,
-    value: topic.id,
-  }));
+  const topicOptions: SelectOption<string>[] = unsubscribeTopics.map(
+    (topic) => ({
+      label: topic.name ?? t`Untitled topic`,
+      value: topic.id,
+    }),
+  );
 
   return (
     <StyledFieldsContainer>
@@ -120,18 +122,18 @@ export const CampaignComposerFields = ({
         <StyledHint>{buildAudienceHint(audiencePreview)}</StyledHint>
       )}
       <Select
-        dropdownId="campaign-composer-unsubscribe-group"
-        label={t`Unsubscribe group`}
+        dropdownId="campaign-composer-unsubscribe-topic"
+        label={t`Unsubscribe topic`}
         fullWidth
-        value={campaignState.messageTopicId ?? ''}
+        value={campaignState.unsubscribeTopicId ?? ''}
         options={topicOptions}
-        emptyOption={{ label: t`No group`, value: '' }}
+        emptyOption={{ label: t`No topic`, value: '' }}
         onChange={(value) =>
-          campaignState.setMessageTopicId(value === '' ? null : value)
+          campaignState.setUnsubscribeTopicId(value === '' ? null : value)
         }
       />
       <StyledHint>
-        {t`The unsubscribe group this email belongs to. Recipients who opted out of it are skipped, and the unsubscribe link is scoped to it.`}
+        {t`The unsubscribe topic this email belongs to. Recipients who opted out of it are skipped, and the unsubscribe link is scoped to it.`}
       </StyledHint>
       <FormTextFieldInput
         label={t`Subject`}

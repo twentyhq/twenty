@@ -2,10 +2,10 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { IsEnum, IsOptional, IsString, MaxLength } from 'class-validator';
 
-import { MessageTopicVisibility } from 'src/engine/core-modules/emailing-domain/types/message-topic-visibility.type';
+import { UnsubscribeTopicVisibility } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-topic-visibility.type';
 
 @InputType()
-export class CreateMessageTopicInput {
+export class CreateUnsubscribeTopicInput {
   @Field(() => String)
   @IsString()
   @MaxLength(256)
@@ -17,8 +17,8 @@ export class CreateMessageTopicInput {
   @MaxLength(1024)
   description?: string;
 
-  @Field(() => MessageTopicVisibility, { nullable: true })
+  @Field(() => UnsubscribeTopicVisibility, { nullable: true })
   @IsOptional()
-  @IsEnum(MessageTopicVisibility)
-  visibility?: MessageTopicVisibility;
+  @IsEnum(UnsubscribeTopicVisibility)
+  visibility?: UnsubscribeTopicVisibility;
 }

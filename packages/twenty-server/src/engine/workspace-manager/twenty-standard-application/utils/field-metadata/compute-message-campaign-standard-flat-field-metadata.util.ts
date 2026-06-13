@@ -270,14 +270,14 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         settings: { displayFormat: DateDisplayFormat.RELATIVE },
       },
     }),
-    topicId: createStandardFieldFlatMetadata({
+    unsubscribeTopicId: createStandardFieldFlatMetadata({
       ...base,
       context: {
-        fieldName: 'topicId',
+        fieldName: 'unsubscribeTopicId',
         type: FieldMetadataType.UUID,
-        label: i18nLabel(msg`Unsubscribe group id`),
+        label: i18nLabel(msg`Unsubscribe topic id`),
         description: i18nLabel(
-          msg`The unsubscribe group (core messageTopic) this campaign was sent under`,
+          msg`The unsubscribe topic this campaign was sent under`,
         ),
         icon: 'IconMailbox',
         isNullable: true,

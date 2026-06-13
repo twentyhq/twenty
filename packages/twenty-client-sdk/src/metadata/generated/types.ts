@@ -4959,7 +4959,7 @@ export default {
                 1
             ]
         },
-        "MessageTopic": {
+        "UnsubscribeTopic": {
             "id": [
                 3
             ],
@@ -4982,7 +4982,7 @@ export default {
                 1
             ]
         },
-        "MessageTopicVisibility": {},
+        "UnsubscribeTopicVisibility": {},
         "AutocompleteResult": {
             "text": [
                 1
@@ -6239,7 +6239,7 @@ export default {
                     ]
                 }
             ],
-            "messageTopics": [
+            "unsubscribeTopics": [
                 280
             ],
             "myMessageChannels": [
@@ -6683,7 +6683,7 @@ export default {
             "listId": [
                 1
             ],
-            "messageTopicId": [
+            "unsubscribeTopicId": [
                 1
             ],
             "__typename": [
@@ -7700,25 +7700,25 @@ export default {
                     ]
                 }
             ],
-            "createMessageTopic": [
+            "createUnsubscribeTopic": [
                 280,
                 {
                     "input": [
                         422,
-                        "CreateMessageTopicInput!"
+                        "CreateUnsubscribeTopicInput!"
                     ]
                 }
             ],
-            "updateMessageTopic": [
+            "updateUnsubscribeTopic": [
                 280,
                 {
                     "input": [
                         423,
-                        "UpdateMessageTopicInput!"
+                        "UpdateUnsubscribeTopicInput!"
                     ]
                 }
             ],
-            "deleteMessageTopic": [
+            "deleteUnsubscribeTopic": [
                 6,
                 {
                     "id": [
@@ -10419,7 +10419,7 @@ export default {
             "listId": [
                 1
             ],
-            "messageTopicId": [
+            "unsubscribeTopicId": [
                 1
             ],
             "subject": [
@@ -10435,7 +10435,7 @@ export default {
                 1
             ]
         },
-        "CreateMessageTopicInput": {
+        "CreateUnsubscribeTopicInput": {
             "name": [
                 1
             ],
@@ -10449,7 +10449,7 @@ export default {
                 1
             ]
         },
-        "UpdateMessageTopicInput": {
+        "UpdateUnsubscribeTopicInput": {
             "id": [
                 1
             ],

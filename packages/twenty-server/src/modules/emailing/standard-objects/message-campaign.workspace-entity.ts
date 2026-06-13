@@ -19,9 +19,9 @@ export class MessageCampaignWorkspaceEntity extends BaseWorkspaceEntity {
   fromAddress: EmailsMetadata | null;
   status: string;
   sentAt: Date | null;
-  // References core.messageTopic (the unsubscribe group); a plain scalar, not a
+  // References core.unsubscribeTopic (the unsubscribe topic); a plain scalar, not a
   // relation, since the topic lives outside the workspace schema.
-  topicId: string | null;
+  unsubscribeTopicId: string | null;
   list: EntityRelation<MessageListWorkspaceEntity> | null;
   listId: string | null;
   messages: EntityRelation<MessageWorkspaceEntity[]>;

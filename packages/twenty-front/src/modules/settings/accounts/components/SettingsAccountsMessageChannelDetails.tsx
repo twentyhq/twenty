@@ -92,8 +92,7 @@ export const SettingsAccountsMessageChannelDetails = ({
   // The group-email blocklist (team@/support@/noreply@) is a personal-inbox
   // sync filter; on a shared group mailbox it would drop the channel's own
   // support@/contact@ conversations, so it is hidden there.
-  const isGroupMailbox =
-    messageChannel.type === MessageChannelType.EMAIL_GROUP;
+  const isGroupMailbox = messageChannel.type === MessageChannelType.EMAIL_GROUP;
 
   return (
     <StyledDetailsContainer>

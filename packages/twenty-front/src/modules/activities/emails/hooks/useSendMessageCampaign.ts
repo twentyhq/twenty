@@ -11,7 +11,7 @@ import {
 
 type SendMessageCampaignParams = {
   listId: string;
-  messageTopicId?: string;
+  unsubscribeTopicId?: string;
   subject: string;
   body: string;
   fromAddress: string;

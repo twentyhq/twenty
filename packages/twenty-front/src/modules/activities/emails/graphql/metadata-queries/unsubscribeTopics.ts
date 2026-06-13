@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
-export const MESSAGE_TOPICS = gql`
-  query MessageTopics {
-    messageTopics {
+export const UNSUBSCRIBE_TOPICS = gql`
+  query UnsubscribeTopics {
+    unsubscribeTopics {
       id
       name
       description

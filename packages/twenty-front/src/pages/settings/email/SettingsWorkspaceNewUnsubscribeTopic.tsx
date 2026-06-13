@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useState } from 'react';
 
-import { useCreateMessageTopic } from '@/settings/unsubscribe-groups/hooks/useCreateMessageTopic';
+import { useCreateUnsubscribeTopic } from '@/settings/unsubscribe-topics/hooks/useCreateUnsubscribeTopic';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
@@ -11,17 +11,17 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { MessageTopicVisibility } from '~/generated-metadata/graphql';
+import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
 import { H2Title, IconEye } from 'twenty-ui-deprecated/display';
 import { Card, Section } from 'twenty-ui-deprecated/layout';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-export const SettingsWorkspaceNewUnsubscribeGroup = () => {
+export const SettingsWorkspaceNewUnsubscribeTopic = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { createMessageTopic, loading } = useCreateMessageTopic();
+  const { createUnsubscribeTopic, loading } = useCreateUnsubscribeTopic();
   const isEmailGroupEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
   );
@@ -34,29 +34,29 @@ export const SettingsWorkspaceNewUnsubscribeGroup = () => {
 
   const handleSave = useCallback(async () => {
     try {
-      const result = await createMessageTopic({
+      const result = await createUnsubscribeTopic({
         name,
         description: description || null,
         visibility: isPublic
-          ? MessageTopicVisibility.PUBLIC
-          : MessageTopicVisibility.PRIVATE,
+          ? UnsubscribeTopicVisibility.PUBLIC
+          : UnsubscribeTopicVisibility.PRIVATE,
       });
-      const messageTopicId = result.data?.createMessageTopic.id;
+      const unsubscribeTopicId = result.data?.createUnsubscribeTopic.id;
 
-      if (messageTopicId) {
-        navigate(SettingsPath.UnsubscribeGroupDetail, {
-          messageTopicId,
+      if (unsubscribeTopicId) {
+        navigate(SettingsPath.UnsubscribeTopicDetail, {
+          unsubscribeTopicId,
         });
       } else {
         navigate(SettingsPath.WorkspaceEmail);
       }
     } catch {
       enqueueErrorSnackBar({
-        message: t`Failed to create unsubscribe group.`,
+        message: t`Failed to create unsubscribe topic.`,
       });
     }
   }, [
-    createMessageTopic,
+    createUnsubscribeTopic,
     name,
     description,
     isPublic,
@@ -71,7 +71,7 @@ export const SettingsWorkspaceNewUnsubscribeGroup = () => {
 
   return (
     <SettingsPageLayout
-      title={t`New Unsubscribe Group`}
+      title={t`New Unsubscribe Topic`}
       links={[
         {
           children: t`Workspace`,
@@ -81,7 +81,7 @@ export const SettingsWorkspaceNewUnsubscribeGroup = () => {
           children: t`Email`,
           href: getSettingsPath(SettingsPath.WorkspaceEmail),
         },
-        { children: t`New Unsubscribe Group` },
+        { children: t`New Unsubscribe Topic` },
       ]}
       actionButton={
         <SaveAndCancelButtons
@@ -97,10 +97,10 @@ export const SettingsWorkspaceNewUnsubscribeGroup = () => {
         <Section>
           <H2Title
             title={t`Name`}
-            description={t`The name recipients see for this group of emails.`}
+            description={t`The name recipients see for this topic.`}
           />
           <SettingsTextInput
-            instanceId="unsubscribe-group-name"
+            instanceId="unsubscribe-topic-name"
             label={t`Name`}
             placeholder={t`Newsletters`}
             value={name}
@@ -115,7 +115,7 @@ export const SettingsWorkspaceNewUnsubscribeGroup = () => {
             description={t`Optional context shown to recipients on the preferences page.`}
           />
           <SettingsTextInput
-            instanceId="unsubscribe-group-description"
+            instanceId="unsubscribe-topic-description"
             label={t`Description`}
             value={description}
             onChange={setDescription}
@@ -126,13 +126,13 @@ export const SettingsWorkspaceNewUnsubscribeGroup = () => {
         <Section>
           <H2Title
             title={t`Visibility`}
-            description={t`Control whether recipients can find and manage this group.`}
+            description={t`Control whether recipients can find and manage this topic.`}
           />
           <Card rounded>
             <SettingsOptionCardContentToggle
               Icon={IconEye}
               title={t`Listed on the unsubscribe page`}
-              description={t`Public groups appear on the recipient preferences page.`}
+              description={t`Public topics appear on the recipient preferences page.`}
               checked={isPublic}
               onChange={setIsPublic}
             />

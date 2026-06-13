@@ -22,7 +22,7 @@ export class SendMessageCampaignInput {
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsUUID('4')
-  messageTopicId?: string;
+  unsubscribeTopicId?: string;
 
   @Field(() => String)
   @IsString()

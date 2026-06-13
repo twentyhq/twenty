@@ -69,7 +69,7 @@ export class EmailingDomainSenderService {
       workspaceId,
       emailingDomain,
       recipients.to[0],
-      emailContent.messageTopicId,
+      emailContent.unsubscribeTopicId,
     );
 
     const replyTo = await this.resolveReplyTo(workspaceId, emailContent);
@@ -187,7 +187,7 @@ export class EmailingDomainSenderService {
     const listUnsubscribedAddresses = await this.getListUnsubscribedAddresses(
       workspaceId,
       allRecipients,
-      emailContent.messageTopicId,
+      emailContent.unsubscribeTopicId,
     );
 
     const isDeliverable = (address: string): boolean => {
@@ -218,16 +218,16 @@ export class EmailingDomainSenderService {
   private async getListUnsubscribedAddresses(
     workspaceId: string,
     recipients: string[],
-    messageTopicId: string | undefined,
+    unsubscribeTopicId: string | undefined,
   ): Promise<Set<string>> {
-    if (!isNonEmptyString(messageTopicId)) {
+    if (!isNonEmptyString(unsubscribeTopicId)) {
       return new Set();
     }
 
     return this.messageSuppressionService.getTopicSuppressedAddresses(
       workspaceId,
       recipients,
-      messageTopicId,
+      unsubscribeTopicId,
     );
   }
 
@@ -235,7 +235,7 @@ export class EmailingDomainSenderService {
     workspaceId: string,
     emailingDomain: EmailingDomainEntity,
     primaryRecipient: string,
-    messageTopicId: string | undefined,
+    unsubscribeTopicId: string | undefined,
   ): UnsubscribeContent {
     // The LOG driver fakes delivery and provisions no unsubscribe hostname, so
     // demo sends carry no unsubscribe content (and aren't gated on it).
@@ -261,7 +261,7 @@ export class EmailingDomainSenderService {
     const token = this.unsubscribeTokenService.sign({
       workspaceId,
       emailAddress: primaryRecipient,
-      ...(isNonEmptyString(messageTopicId) ? { messageTopicId } : {}),
+      ...(isNonEmptyString(unsubscribeTopicId) ? { unsubscribeTopicId } : {}),
     });
 
     const unsubscribeUrls = buildUnsubscribeUrls({
