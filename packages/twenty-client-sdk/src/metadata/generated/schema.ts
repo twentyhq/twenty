@@ -809,7 +809,7 @@ export interface AggregateChartConfiguration {
     aggregateOperation: AggregateOperations
     label?: Scalars['String']
     displayDataLabel?: Scalars['Boolean']
-    format?: Scalars['String']
+    numberFormat?: ChartNumberFormat
     description?: Scalars['String']
     filter?: Scalars['JSON']
     timezone?: Scalars['String']
@@ -821,6 +821,10 @@ export interface AggregateChartConfiguration {
 }
 
 export type WidgetConfigurationType = 'AGGREGATE_CHART' | 'PIE_CHART' | 'BAR_CHART' | 'LINE_CHART' | 'IFRAME' | 'STANDALONE_RICH_TEXT' | 'VIEW' | 'FIELD' | 'FIELDS' | 'TIMELINE' | 'TASKS' | 'NOTES' | 'FILES' | 'EMAILS' | 'CALENDAR' | 'FIELD_RICH_TEXT' | 'WORKFLOW' | 'WORKFLOW_VERSION' | 'WORKFLOW_RUN' | 'FRONT_COMPONENT' | 'RECORD_TABLE' | 'EMAIL_THREAD'
+
+
+/** Format used to display the chart value */
+export type ChartNumberFormat = 'SHORT' | 'FULL'
 
 export interface StandaloneRichTextConfiguration {
     configurationType: WidgetConfigurationType
@@ -3817,7 +3821,7 @@ export interface AggregateChartConfigurationGenqlSelection{
     aggregateOperation?: boolean | number
     label?: boolean | number
     displayDataLabel?: boolean | number
-    format?: boolean | number
+    numberFormat?: boolean | number
     description?: boolean | number
     filter?: boolean | number
     timezone?: boolean | number
@@ -8822,6 +8826,11 @@ export const enumWidgetConfigurationType = {
    FRONT_COMPONENT: 'FRONT_COMPONENT' as const,
    RECORD_TABLE: 'RECORD_TABLE' as const,
    EMAIL_THREAD: 'EMAIL_THREAD' as const
+}
+
+export const enumChartNumberFormat = {
+   SHORT: 'SHORT' as const,
+   FULL: 'FULL' as const
 }
 
 export const enumObjectRecordGroupByDateGranularity = {
