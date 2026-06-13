@@ -301,7 +301,11 @@ function formatCompositeFieldValue(
     case FieldMetadataType.CURRENCY: {
       if (compositePropertyName === 'amountMicros') {
         if (isNonEmptyString(value)) {
-          return parseInt(value);
+          return parseInt(value) / 1_000_000;
+        }
+
+        if (typeof value === 'number') {
+          return value / 1_000_000;
         }
 
         return value;
