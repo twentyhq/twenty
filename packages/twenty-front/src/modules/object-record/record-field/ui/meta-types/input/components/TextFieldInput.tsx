@@ -10,6 +10,8 @@ import { FieldInputContainer } from '@/ui/field/input/components/FieldInputConta
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
 
@@ -25,32 +27,43 @@ export const TextFieldInput = () => {
   );
 
   const { enqueueErrorSnackBar } = useSnackBar();
+  const { t } = useLingui();
 
-  const setIsFieldInError = useSetAtomComponentState(
+  const setRecordFieldInputIsFieldInError = useSetAtomComponentState(
     recordFieldInputIsFieldInErrorComponentState,
   );
 
-  const validationPattern = fieldDefinition.metadata.settings?.validationPattern;
-  const validationErrorMessage =
-    fieldDefinition.metadata.settings?.validationErrorMessage ??
-    'Value does not match the required format';
+  const validationPattern =
+    fieldDefinition.metadata.settings?.validationPattern;
+  const customValidationErrorMessage =
+    fieldDefinition.metadata.settings?.validationErrorMessage;
 
-  const validate = (text: string): boolean => {
-    const trimmed = text.trim();
+  const isTextValid = (text: string) => {
+    const trimmedText = text.trim();
 
-    if (validationPattern && trimmed) {
-      const regex = new RegExp(validationPattern);
-
-      if (!regex.test(trimmed)) {
-        enqueueErrorSnackBar({ message: validationErrorMessage });
-        return false;
-      }
+    if (!isNonEmptyString(validationPattern) || trimmedText === '') {
+      return true;
     }
-    return true;
+
+    return new RegExp(validationPattern).test(trimmedText);
+  };
+
+  const validateAndNotifyOnError = (text: string) => {
+    const isValid = isTextValid(text);
+
+    if (!isValid) {
+      enqueueErrorSnackBar({
+        message: isNonEmptyString(customValidationErrorMessage)
+          ? customValidationErrorMessage
+          : t`Value does not match the required format`,
+      });
+    }
+
+    return isValid;
   };
 
   const handleEnter = (newText: string) => {
-    if (validate(newText)) {
+    if (validateAndNotifyOnError(newText)) {
       onEnter?.({ newValue: newText.trim() });
     }
   };
@@ -63,7 +76,7 @@ export const TextFieldInput = () => {
     event: MouseEvent | TouchEvent,
     newText: string,
   ) => {
-    if (validate(newText)) {
+    if (validateAndNotifyOnError(newText)) {
       onClickOutside?.({
         newValue: newText.trim(),
         event,
@@ -72,25 +85,19 @@ export const TextFieldInput = () => {
   };
 
   const handleTab = (newText: string) => {
-    if (validate(newText)) {
+    if (validateAndNotifyOnError(newText)) {
       onTab?.({ newValue: newText.trim() });
     }
   };
 
   const handleShiftTab = (newText: string) => {
-    if (validate(newText)) {
+    if (validateAndNotifyOnError(newText)) {
       onShiftTab?.({ newValue: newText.trim() });
     }
   };
 
   const handleChange = (newText: string) => {
-    if (validationPattern && newText.trim()) {
-      const regex = new RegExp(validationPattern);
-
-      setIsFieldInError(!regex.test(newText.trim()));
-    } else {
-      setIsFieldInError(false);
-    }
+    setRecordFieldInputIsFieldInError(!isTextValid(newText));
     setDraftValue(turnIntoUndefinedIfWhitespacesOnly(newText));
   };
 

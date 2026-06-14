@@ -79,8 +79,11 @@ export const SettingsDataModelFieldTextForm = ({
   const { fieldMetadataItem: existingFieldMetadataItem } =
     useFieldMetadataItemById(existingFieldMetadataId);
 
-  const { control, formState: { errors } } = useFormContext<SettingsDataModelFieldTextFormValues>();
-  const patternError = (errors as any)?.settings?.validationPattern?.message as string | undefined;
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<SettingsDataModelFieldTextFormValues>();
+  const patternError = errors.settings?.validationPattern?.message;
 
   const [validationEnabled, setValidationEnabled] = useState(
     !!existingFieldMetadataItem?.settings?.validationPattern,

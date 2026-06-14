@@ -1,9 +1,11 @@
 import { inspect } from 'util';
 
 import { msg } from '@lingui/core/macro';
-import { isNull } from '@sniptt/guards';
-import { type FieldMetadataSettingsMapping } from 'twenty-shared/types';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { isNonEmptyString, isNull } from '@sniptt/guards';
+import {
+  type FieldMetadataSettingsMapping,
+  type FieldMetadataType,
+} from 'twenty-shared/types';
 
 import {
   CommonQueryRunnerException,
@@ -26,23 +28,29 @@ export const validateTextFieldOrThrow = (
   }
 
   if (
-    typeof value === 'string' &&
-    value.trim() !== '' &&
-    settings?.validationPattern
+    typeof value !== 'string' ||
+    value.trim() === '' ||
+    !isNonEmptyString(settings?.validationPattern)
   ) {
-    const regex = new RegExp(settings.validationPattern);
+    return value;
+  }
 
-    if (!regex.test(value)) {
-      const errorMessage =
-        settings.validationErrorMessage ??
-        `Value does not match required pattern`;
+  const doesValueMatchPattern = new RegExp(settings.validationPattern).test(
+    value,
+  );
 
-      throw new CommonQueryRunnerException(
-        `Field "${fieldName}" value does not match pattern ${settings.validationPattern}`,
-        CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
-        { userFriendlyMessage: msg`${errorMessage}` },
-      );
-    }
+  if (!doesValueMatchPattern) {
+    const customErrorMessage = settings.validationErrorMessage;
+
+    throw new CommonQueryRunnerException(
+      `Field "${fieldName}" value does not match pattern ${settings.validationPattern}`,
+      CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+      {
+        userFriendlyMessage: isNonEmptyString(customErrorMessage)
+          ? msg`${customErrorMessage}`
+          : msg`Value does not match the required format`,
+      },
+    );
   }
 
   return value;

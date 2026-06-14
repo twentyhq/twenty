@@ -127,6 +127,8 @@ type SettingsExpectedResult =
     }
   | {
       displayedMaxRows?: number | undefined;
+      validationPattern?: string | undefined;
+      validationErrorMessage?: string | undefined;
       __JsonbPropertyBrand__?: undefined;
     }
   | null;

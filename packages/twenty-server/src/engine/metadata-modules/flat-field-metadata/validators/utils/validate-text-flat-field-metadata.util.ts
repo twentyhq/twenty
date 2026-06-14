@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type FieldMetadataType } from 'twenty-shared/types';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
@@ -10,10 +11,9 @@ export const validateTextFlatFieldMetadata = ({
 }: FlatFieldMetadataTypeValidationArgs<FieldMetadataType.TEXT>): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
 
-  const pattern =
-    flatEntityToValidate?.universalSettings?.validationPattern;
+  const pattern = flatEntityToValidate?.universalSettings?.validationPattern;
 
-  if (pattern != null) {
+  if (isNonEmptyString(pattern)) {
     try {
       new RegExp(pattern);
     } catch {

@@ -19,6 +19,38 @@ describe('validateTextFieldOrThrow', () => {
 
       expect(result).toBe('hello world');
     });
+
+    it('should return the string when it matches the validation pattern', () => {
+      const result = validateTextFieldOrThrow('ABC123', 'testField', {
+        validationPattern: '^[A-Z]{3}[0-9]{3}$',
+      });
+
+      expect(result).toBe('ABC123');
+    });
+
+    it('should not enforce the pattern when value is an empty string', () => {
+      const result = validateTextFieldOrThrow('', 'testField', {
+        validationPattern: '^[A-Z]{3}[0-9]{3}$',
+      });
+
+      expect(result).toBe('');
+    });
+
+    it('should not enforce the pattern when value is whitespace only', () => {
+      const result = validateTextFieldOrThrow('   ', 'testField', {
+        validationPattern: '^[A-Z]{3}[0-9]{3}$',
+      });
+
+      expect(result).toBe('   ');
+    });
+
+    it('should not enforce the pattern when validationPattern is an empty string', () => {
+      const result = validateTextFieldOrThrow('anything', 'testField', {
+        validationPattern: '',
+      });
+
+      expect(result).toBe('anything');
+    });
   });
 
   describe('invalid inputs', () => {
@@ -63,6 +95,16 @@ describe('validateTextFieldOrThrow', () => {
         validateTextFieldOrThrow({ key: 'value' }, 'testField'),
       ).toThrow(
         'Invalid string value { key: \'value\' } for text field "testField"',
+      );
+    });
+
+    it('should throw when value does not match the validation pattern', () => {
+      expect(() =>
+        validateTextFieldOrThrow('not-a-match', 'testField', {
+          validationPattern: '^[A-Z]{3}[0-9]{3}$',
+        }),
+      ).toThrow(
+        'Field "testField" value does not match pattern ^[A-Z]{3}[0-9]{3}$',
       );
     });
   });
