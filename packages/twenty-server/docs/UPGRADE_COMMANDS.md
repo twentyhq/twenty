@@ -12,7 +12,7 @@ Both are registered via decorators and automatically discovered by the upgrade p
 ### Generating an instance command
 
 ```bash
-npx nx run twenty-server:database:migrate:generate --name <name> --type <fast|slow>
+npx nx run twenty-server:database:upgrade:generate --name <name> --type <fast|slow>
 ```
 
 This generates a timestamped file and auto-registers it in `instance-commands.constant.ts` — do not edit that file manually.

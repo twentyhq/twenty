@@ -70,7 +70,7 @@ npx nx run twenty-front:graphql:generate    # Generate GraphQL types
 # Database
 npx nx database:reset twenty-server         # Reset database
 npx nx run twenty-server:database:init:prod # Initialize database
-npx nx run twenty-server:database:migrate:prod # Run migrations
+npx nx run twenty-server:database:upgrade:run  # Run instance commands (migrate:prod is deprecated)
 
 # Development
 npx nx run twenty-server:start             # Start the server
@@ -82,7 +82,7 @@ npx nx run twenty-server:test              # Run unit tests
 npx nx run twenty-server:test:integration:with-db-reset # Run integration tests
 
 # Upgrade commands (instance + workspace)
-npx nx run twenty-server:database:migrate:generate --name <name> --type <fast|slow>
+npx nx run twenty-server:database:upgrade:generate --name <name> --type <fast|slow>
 ```
 
 ## Usage Guidelines
