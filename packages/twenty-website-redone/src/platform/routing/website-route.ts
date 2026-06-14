@@ -8,8 +8,10 @@ export type WebsiteRouteId =
   | 'partnersApply'
   | 'partnersList'
   | 'pricing'
+  | 'privacyPolicy'
   | 'product'
   | 'releases'
+  | 'terms'
   | 'whyTwenty';
 
 // Grows as content-driven families migrate ('articles', 'releases', ...).

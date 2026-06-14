@@ -1848,6 +1848,11 @@ msgstr ""
 "How teams\n"
 "*built with Twenty*"
 
+#. js-lingui-id: Z3Cabh
+#: src/platform/routing/static-website-routes.ts
+msgid "How Twenty collects, uses, and protects your data — our GDPR- and CCPA-compliant privacy policy."
+msgstr "How Twenty collects, uses, and protects your data — our GDPR- and CCPA-compliant privacy policy."
+
 #. js-lingui-id: htrFcw
 #: src/partner-application/data/partner-country-options.ts
 msgid "Hungary 🇭🇺"
@@ -2842,8 +2847,14 @@ msgstr "Priority support"
 
 #. js-lingui-id: LcET2C
 #: src/sections/footer/footer.data.ts
+#: src/app/[locale]/(site)/privacy-policy/page.tsx
 msgid "Privacy Policy"
 msgstr "Privacy Policy"
+
+#. js-lingui-id: DJ3uVe
+#: src/platform/routing/static-website-routes.ts
+msgid "Privacy Policy | Twenty"
+msgstr "Privacy Policy | Twenty"
 
 #. js-lingui-id: 3fPjUY
 #: src/sections/pricing-plans/plans-data.ts
@@ -2963,6 +2974,7 @@ msgid "Release Notes"
 msgstr "Release Notes"
 
 #. js-lingui-id: 5icoS1
+#: src/sections/releases-feed/releases-feed.tsx
 #: src/sections/menu/menu.data.ts
 msgid "Releases"
 msgstr "Releases"
@@ -3553,6 +3565,16 @@ msgstr "Terminal mode"
 msgid "Terms and Conditions"
 msgstr "Terms and Conditions"
 
+#. js-lingui-id: xowcRf
+#: src/app/[locale]/(site)/terms/page.tsx
+msgid "Terms of Service"
+msgstr "Terms of Service"
+
+#. js-lingui-id: BEX1RA
+#: src/platform/routing/static-website-routes.ts
+msgid "Terms of Service | Twenty"
+msgstr "Terms of Service | Twenty"
+
 #. js-lingui-id: VUZDlr
 #: src/sections/testimonials/testimonials-carousel.tsx
 msgid "Testimonials"
@@ -3661,6 +3683,11 @@ msgstr "The side panel now opens next to your content rather than above it, givi
 #: src/sections/menu/menu.data.ts
 msgid "The story behind Twenty"
 msgstr "The story behind Twenty"
+
+#. js-lingui-id: axo4rg
+#: src/platform/routing/static-website-routes.ts
+msgid "The terms governing your use of Twenty and its open source CRM services."
+msgstr "The terms governing your use of Twenty and its open source CRM services."
 
 #. js-lingui-id: xCAT8U
 #: src/platform/releases/release-notes.tsx

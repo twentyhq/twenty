@@ -1842,6 +1842,11 @@ msgid ""
 "*built with Twenty*"
 msgstr ""
 
+#. js-lingui-id: Z3Cabh
+#: src/platform/routing/static-website-routes.ts
+msgid "How Twenty collects, uses, and protects your data — our GDPR- and CCPA-compliant privacy policy."
+msgstr ""
+
 #. js-lingui-id: htrFcw
 #: src/partner-application/data/partner-country-options.ts
 msgid "Hungary 🇭🇺"
@@ -2834,7 +2839,13 @@ msgstr ""
 
 #. js-lingui-id: LcET2C
 #: src/sections/footer/footer.data.ts
+#: src/app/[locale]/(site)/privacy-policy/page.tsx
 msgid "Privacy Policy"
+msgstr ""
+
+#. js-lingui-id: DJ3uVe
+#: src/platform/routing/static-website-routes.ts
+msgid "Privacy Policy | Twenty"
 msgstr ""
 
 #. js-lingui-id: 3fPjUY
@@ -2953,6 +2964,7 @@ msgid "Release Notes"
 msgstr ""
 
 #. js-lingui-id: 5icoS1
+#: src/sections/releases-feed/releases-feed.tsx
 #: src/sections/menu/menu.data.ts
 msgid "Releases"
 msgstr ""
@@ -3537,6 +3549,16 @@ msgstr ""
 msgid "Terms and Conditions"
 msgstr ""
 
+#. js-lingui-id: xowcRf
+#: src/app/[locale]/(site)/terms/page.tsx
+msgid "Terms of Service"
+msgstr ""
+
+#. js-lingui-id: BEX1RA
+#: src/platform/routing/static-website-routes.ts
+msgid "Terms of Service | Twenty"
+msgstr ""
+
 #. js-lingui-id: VUZDlr
 #: src/sections/testimonials/testimonials-carousel.tsx
 msgid "Testimonials"
@@ -3642,6 +3664,11 @@ msgstr ""
 #. js-lingui-id: gXGp3Q
 #: src/sections/menu/menu.data.ts
 msgid "The story behind Twenty"
+msgstr ""
+
+#. js-lingui-id: axo4rg
+#: src/platform/routing/static-website-routes.ts
+msgid "The terms governing your use of Twenty and its open source CRM services."
 msgstr ""
 
 #. js-lingui-id: xCAT8U

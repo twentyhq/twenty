@@ -86,4 +86,22 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     priority: 0.7,
     title: msg`Twenty Customers — How Modern Teams Run Their CRM`,
   },
+  {
+    changeFrequency: 'yearly',
+    description: msg`How Twenty collects, uses, and protects your data — our GDPR- and CCPA-compliant privacy policy.`,
+    id: 'privacyPolicy',
+    indexed: true,
+    path: '/privacy-policy',
+    priority: 0.3,
+    title: msg`Privacy Policy | Twenty`,
+  },
+  {
+    changeFrequency: 'yearly',
+    description: msg`The terms governing your use of Twenty and its open source CRM services.`,
+    id: 'terms',
+    indexed: true,
+    path: '/terms',
+    priority: 0.3,
+    title: msg`Terms of Service | Twenty`,
+  },
 ];
