@@ -178,7 +178,8 @@ function walk(directory) {
       (relativePath.startsWith('sections' + path.sep) ||
         relativePath.startsWith('app-preview' + path.sep) ||
         relativePath.startsWith('contact-cal' + path.sep) ||
-        relativePath.startsWith('partner-application' + path.sep)) &&
+        relativePath.startsWith('partner-application' + path.sep) ||
+        relativePath.startsWith('partners-marketplace' + path.sep)) &&
       /(?:aria-label|ariaLabel|aria-roledescription|placeholder|alt)="[A-Za-z]/.test(
         content,
       )
@@ -209,6 +210,7 @@ function walk(directory) {
       'app-preview',
       'contact-cal',
       'partner-application',
+      'partners-marketplace',
     ].find((layer) => relativePath.startsWith(layer + path.sep));
     if (sharedLayer) {
       const allowedLayers = new Set([
