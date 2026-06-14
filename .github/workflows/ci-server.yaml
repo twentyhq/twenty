@@ -378,13 +378,6 @@ jobs:
           tasks: 'test:integration'
           configuration: 'with-db-reset'
           args: --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
-      - name: Server / Print jest+reset logs on failure (diagnostic)
-        if: failure()
-        run: |
-          echo "===== jest-out.log (failures + summary) ====="
-          grep -aE "✕|✓|FAIL |PASS |Tests:|Test Suites:|● |Snapshot|Error|Cannot|heap|exceeded" packages/twenty-server/jest-out.log | grep -avE "install-perf" | tail -200 || echo "no jest-out.log"
-          echo "===== jest-out.log RAW TAIL ====="
-          tail -120 packages/twenty-server/jest-out.log || echo "no jest-out.log"
 
   ci-server-status-check:
     if: always() && !cancelled()

@@ -22,7 +22,6 @@ const jestConfig: JestConfigWithTsJest = {
   // Prettier v3 should be supported in jest v30 https://github.com/jestjs/jest/releases/tag/v30.0.0-alpha.1
   prettierPath: null,
   silent: false,
-  verbose: true,
   errorOnDeprecated: true,
   maxConcurrency: 1,
   moduleFileExtensions: ['js', 'json', 'ts'],
@@ -33,12 +32,7 @@ const jestConfig: JestConfigWithTsJest = {
     ...(isClickhouseEnabled ? [] : ['<rootDir>/test/integration/audit']),
   ],
   testRegex: '\\.integration-spec\\.ts$',
-  // `.local-storage` holds per-test generated application/dependency packages whose
-  // package.json `name` fields collide in jest-haste-map when two such tests land in
-  // the same shard. It is runtime test output, never a resolvable module, so keep it
-  // out of the haste map.
-  modulePathIgnorePatterns: ['<rootDir>/dist', '<rootDir>/.local-storage'],
-  watchPathIgnorePatterns: ['<rootDir>/.local-storage'],
+  modulePathIgnorePatterns: ['<rootDir>/dist'],
   globalSetup: '<rootDir>/test/integration/utils/setup-test.ts',
   globalTeardown: '<rootDir>/test/integration/utils/teardown-test.ts',
   testTimeout: 20000,
