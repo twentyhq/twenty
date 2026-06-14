@@ -353,7 +353,9 @@ export const FormArrayFieldInput = ({
                 }}
                 clickableComponent={
                   <StyledDisplayModeContainer data-open={isDropdownOpen}>
-                    <ArrayDisplay value={draftValue.value.map((i) => i.value)} />
+                    <ArrayDisplay
+                      value={draftValue.value.map((i) => i.value)}
+                    />
                   </StyledDisplayModeContainer>
                 }
                 clickableComponentWidth="100%"

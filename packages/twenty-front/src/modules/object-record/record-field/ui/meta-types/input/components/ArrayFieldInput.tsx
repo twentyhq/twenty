@@ -55,7 +55,6 @@ export const ArrayFieldInput = () => {
   };
 
   const handleChange = (newValue: string[]) => {
-
     setStableIds((prevIds) => {
       if (newValue.length > prevIds.length) {
         const newIds = [...prevIds];
