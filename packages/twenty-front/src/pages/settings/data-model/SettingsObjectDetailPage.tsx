@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ObjectFields } from '@/settings/data-model/object-details/components/tabs/ObjectFields';
@@ -135,6 +136,7 @@ export const SettingsObjectDetailPage = () => {
   return (
     <SettingsPageLayout
       title={objectMetadataItem.labelPlural}
+      icon={<ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />}
       links={[
         {
           children: t`Workspace`,
