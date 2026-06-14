@@ -1,0 +1,47 @@
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/services/__tests__/imap-smtp-caldav-connection.service.spec.ts
+  s_ff3d5b0bd294f3::t_bf7cfc2db42a3f 6
+  s_ff3d5b0bd294f3::t_ef30e5cd69615c 78,120,127,138,149
+packages/twenty-front/src/modules/settings/accounts/hooks/useImapSmtpCaldavConnectionForm.ts
+  s_ff3d5b0bd294f3::t_eb94f26efce341 12
+  s_ff3d5b0bd294f3::t_d8aab2c462ff36 42-47,53-59
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type.ts
+  s_ff3d5b0bd294f3::t_a5c2c7eaad7aba 27
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.input.ts
+  s_ff3d5b0bd294f3::t_48c0a2f482f397 3
+  s_ff3d5b0bd294f3::t_b8fed1d6410f83 29
+  s_ff3d5b0bd294f3::t_ca575912e0d06c 1,4-7
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/utils/build-smtp-tls-options.util.ts
+  s_ff3d5b0bd294f3::t_36d981750b29dc 1,12,14,16
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connected-account.dto.ts
+  s_ff3d5b0bd294f3::t_3287a819acda34 5
+  s_ff3d5b0bd294f3::t_b8a9d7078bb1fe 20
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum.ts
+  s_ff3d5b0bd294f3::t_3e2bdc919b64e8 1-5
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/utils/build-imap-tls-options.util.ts
+  s_ff3d5b0bd294f3::t_e066f9b76c951b 1,12,14,16
+packages/twenty-server/src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto.ts
+  s_ff3d5b0bd294f3::t_6b65bb308e153b 19
+  s_ff3d5b0bd294f3::t_400a1b23f6c52a 5
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/utils/__tests__/build-imap-tls-options.util.spec.ts
+  s_ff3d5b0bd294f3::t_23238334db4a92 1,6-8,12-14,18
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/schemas/connection-parameters.schema.ts
+  s_ff3d5b0bd294f3::t_d3230dd936eece 1,11-12
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/utils/__tests__/build-smtp-tls-options.util.spec.ts
+  s_ff3d5b0bd294f3::t_a16310d6f5de8c 1,6-8,12-14,18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "4a588e9b70eb337e532b6b9db71b2da07ea3bfb9",
+  "prompts": {},
+  "sessions": {
+    "s_ff3d5b0bd294f3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc6a7753-6313-4145-9c09-a0d3d40ac9aa",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
