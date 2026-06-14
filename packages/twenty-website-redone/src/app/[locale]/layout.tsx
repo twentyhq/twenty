@@ -12,7 +12,6 @@ import { I18nProvider } from '@/platform/i18n/i18n-provider';
 import { localeToUrlSegment } from '@/platform/i18n/locale-to-url-segment';
 import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
 import { WEBSITE_LOCALE_LIST } from '@/platform/i18n/website-locale-list';
-import { Footer } from '@/sections/footer';
 import { color, fontFamily, tokenCssVariables } from '@/tokens';
 
 const hostGrotesk = Host_Grotesk({
@@ -90,10 +89,7 @@ const LocaleLayout = async ({
         className={`${tokenCssVariables} ${globalStyles} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable}`}
       >
         <I18nProvider locale={locale} messages={getLocaleMessages(locale)}>
-          <ContactCalModalRoot>
-            {children}
-            <Footer />
-          </ContactCalModalRoot>
+          <ContactCalModalRoot>{children}</ContactCalModalRoot>
         </I18nProvider>
       </body>
     </html>
