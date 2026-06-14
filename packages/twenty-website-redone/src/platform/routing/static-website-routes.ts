@@ -40,6 +40,15 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     title: msg`Twenty Partners — Certified Open Source CRM Implementers`,
   },
   {
+    changeFrequency: 'weekly',
+    description: msg`Browse Twenty's certified partners — agencies and experts who migrate, customise, host, and support the open source CRM across regions, languages, and deployment models.`,
+    id: 'partnersList',
+    indexed: true,
+    path: '/partners/list',
+    priority: 0.6,
+    title: msg`Find a Twenty Partner — Open Source CRM Marketplace`,
+  },
+  {
     // The application form: noindex (a utility route, excluded from the
     // sitemap by getIndexedWebsiteRoutes), reachable from the partner CTAs.
     changeFrequency: 'yearly',
