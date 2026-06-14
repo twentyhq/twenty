@@ -13,7 +13,8 @@ export type PaletteToken =
   | 'error'
   | 'ash'
   | 'fog'
-  | 'charcoal';
+  | 'charcoal'
+  | 'stone';
 
 // The illustration accents and artwork grays are the RATIFIED authored
 // halftone palette (2026-06-11): dash colors of the WebGL artwork.
@@ -37,4 +38,6 @@ export const PALETTE: Record<PaletteToken, string> = {
   ash: '#bababa',
   fog: '#dddddd',
   charcoal: '#2a2a2a',
+  // partner hero halftone dash
+  stone: '#959595',
 };

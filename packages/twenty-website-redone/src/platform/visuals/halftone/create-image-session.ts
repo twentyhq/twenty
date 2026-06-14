@@ -48,6 +48,9 @@ export type ImageSessionSettings = {
     lightRadius: number;
     // Fades the hover light toward the top/bottom canvas edges (0 = off).
     lightVerticalFade?: number;
+    // Hover radii authored at this preview distance, scaled each frame to the
+    // live framing (the partner hero's getHoverScale); omit to keep them fixed.
+    radiusReferenceDistance?: number;
     fadeIn: number;
     fadeOut: number;
   };
@@ -185,6 +188,50 @@ function getImageFootprintScale({
     viewportWidth,
     viewportHeight,
     zoom: 1,
+  });
+  const currentArea = currentRect ? currentRect.width * currentRect.height : 0;
+  const referenceArea = referenceRect
+    ? referenceRect.width * referenceRect.height
+    : 0;
+  if (currentArea <= 0 || referenceArea <= 0) {
+    return 1;
+  }
+  return Math.max(Math.sqrt(currentArea / referenceArea), MIN_FOOTPRINT_SCALE);
+}
+
+// Hover radii are authored at a source framing and scale to the live one: the
+// partner hero grows its hover radius as the image fills more of the frame.
+function getRelativeImageScale({
+  imageWidth,
+  imageHeight,
+  viewportWidth,
+  viewportHeight,
+  previewDistance,
+  referencePreviewDistance,
+}: {
+  imageWidth: number;
+  imageHeight: number;
+  viewportWidth: number;
+  viewportHeight: number;
+  previewDistance: number;
+  referencePreviewDistance: number;
+}) {
+  const currentRect = getContainedImageRect({
+    imageFit: 'contain',
+    imageWidth,
+    imageHeight,
+    viewportWidth,
+    viewportHeight,
+    zoom: REFERENCE_PREVIEW_DISTANCE / Math.max(previewDistance, 0.001),
+  });
+  const referenceRect = getContainedImageRect({
+    imageFit: 'contain',
+    imageWidth,
+    imageHeight,
+    viewportWidth,
+    viewportHeight,
+    zoom:
+      REFERENCE_PREVIEW_DISTANCE / Math.max(referencePreviewDistance, 0.001),
   });
   const currentArea = currentRect ? currentRect.width * currentRect.height : 0;
   const referenceArea = referenceRect
@@ -470,6 +517,21 @@ export function createImageSession({
       .lightEnabled
       ? settings.hover.lightIntensity * pointer.hoverStrength
       : 0;
+
+    if (settings.hover.radiusReferenceDistance !== undefined) {
+      const radiusScale = getRelativeImageScale({
+        imageWidth: image.naturalWidth,
+        imageHeight: image.naturalHeight,
+        viewportWidth: getVirtualWidth(),
+        viewportHeight: getVirtualHeight(),
+        previewDistance: settings.previewDistance,
+        referencePreviewDistance: settings.hover.radiusReferenceDistance,
+      });
+      halftoneMaterial.uniforms.hoverHalftoneRadius.value =
+        settings.hover.halftoneRadius * radiusScale;
+      halftoneMaterial.uniforms.hoverLightRadius.value =
+        settings.hover.lightRadius * radiusScale;
+    }
 
     if (settings.responsiveFrame) {
       const frame = settings.responsiveFrame();

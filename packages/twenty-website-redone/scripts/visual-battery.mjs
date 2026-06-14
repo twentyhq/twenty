@@ -194,6 +194,16 @@ const VISUALS = {
     interactive: true,
     settle: { cardReveal: true },
   },
+  // The partner hero halftone: stone dashes (#959595) at rest are hueless;
+  // the cursor turns nearby dashes blue and shifts the band (interactive).
+  'partner-hero': {
+    slotSelector: '[data-illustration="partner-hero"]',
+    path: '/partners',
+    hueRangeDegrees: null,
+    minCoverage: 0.02,
+    animated: false,
+    interactive: true,
+  },
 };
 
 const MOTION_DIFF_FLOOR = 0.005;
@@ -511,7 +521,7 @@ const runVisual = async (browser, key, spec) => {
     deviceScaleFactor: 1,
     reducedMotion: 'reduce',
   });
-  await reducedPage.goto(BASE_URL, {
+  await reducedPage.goto(new URL(spec.path ?? '', BASE_URL).href, {
     waitUntil: 'networkidle',
     timeout: 180000,
   });
