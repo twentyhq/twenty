@@ -8,6 +8,7 @@ export const cssVariableName: {
   fontBase: string;
   ink: string;
   inkMuted: string;
+  inkSubtle: string;
   line: string;
   lineStrong: string;
   radiusBase: string;
@@ -19,6 +20,7 @@ export const cssVariableName: {
   fontBase: '--font-base',
   ink: '--ink',
   inkMuted: '--ink-muted',
+  inkSubtle: '--ink-subtle',
   line: '--line',
   lineStrong: '--line-strong',
   radiusBase: '--radius-base',
