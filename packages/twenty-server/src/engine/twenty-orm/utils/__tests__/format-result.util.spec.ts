@@ -18,7 +18,11 @@ describe('formatCompositeFieldValue', () => {
 
   it('should parse addressLat/addressLng returned as strings into numbers', () => {
     expect(
-      formatCompositeFieldValue('40.7532256', 'addressLat', addressFieldMetadata),
+      formatCompositeFieldValue(
+        '40.7532256',
+        'addressLat',
+        addressFieldMetadata,
+      ),
     ).toBe(40.7532256);
     expect(
       formatCompositeFieldValue(
@@ -37,7 +41,11 @@ describe('formatCompositeFieldValue', () => {
 
   it('should not coerce text address subfields that look numeric', () => {
     expect(
-      formatCompositeFieldValue('10001', 'addressPostcode', addressFieldMetadata),
+      formatCompositeFieldValue(
+        '10001',
+        'addressPostcode',
+        addressFieldMetadata,
+      ),
     ).toBe('10001');
   });
 
