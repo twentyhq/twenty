@@ -8,6 +8,10 @@ import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/co
 import { RecordTableCellButtons } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButtons';
 import { useGetSecondaryRecordTableCellButton } from '@/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
+import {
+  isNoteTargetOnNonActivityObject,
+  isTaskTargetOnNonActivityObject,
+} from '@/object-record/record-table/record-table-cell/utils/isActivityTargetOnNonActivityObject';
 import { useContext } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -30,19 +34,26 @@ export const RecordTableCellEditButton = () => {
   const secondaryButton = useGetSecondaryRecordTableCellButton();
 
   const fieldName = fieldDefinition.metadata.fieldName;
-  const isNoteTargetField =
-    fieldName === 'noteTargets' &&
-    objectNameSingular !== CoreObjectNameSingular.Note;
-  const isTaskTargetField =
-    fieldName === 'taskTargets' &&
-    objectNameSingular !== CoreObjectNameSingular.Task;
+  const isNoteTargetField = isNoteTargetOnNonActivityObject(
+    fieldName,
+    objectNameSingular,
+  );
+  const isTaskTargetField = isTaskTargetOnNonActivityObject(
+    fieldName,
+    objectNameSingular,
+  );
   const isActivityTargetOnNonActivityObject =
     isNoteTargetField || isTaskTargetField;
 
+  const getActivityObjectNameSingular = () => {
+    if (isNoteTargetField) {
+      return CoreObjectNameSingular.Note;
+    }
+    return CoreObjectNameSingular.Task;
+  };
+
   const openCreateActivity = useOpenCreateActivityDrawer({
-    activityObjectNameSingular: isNoteTargetField
-      ? CoreObjectNameSingular.Note
-      : CoreObjectNameSingular.Task,
+    activityObjectNameSingular: getActivityObjectNameSingular(),
   });
 
   const getMainButtonIcon = () => {
