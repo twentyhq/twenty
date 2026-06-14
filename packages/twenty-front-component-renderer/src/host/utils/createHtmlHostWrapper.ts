@@ -424,10 +424,16 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
             // `action="javascript:void(0)"` guard.)
             onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
               event.preventDefault();
-              const remoteOnSubmit = reactProps.onSubmit as
-                | ((event: React.FormEvent<HTMLFormElement>) => void)
-                | undefined;
-              remoteOnSubmit?.(event);
+              const remoteOnSubmit = reactProps.onSubmit;
+              // The remote prop is untrusted across the remote-dom boundary, so
+              // it may not be a function — guard before invoking.
+              if (typeof remoteOnSubmit === 'function') {
+                (
+                  remoteOnSubmit as (
+                    event: React.FormEvent<HTMLFormElement>,
+                  ) => void
+                )(event);
+              }
             },
           }
         : undefined;

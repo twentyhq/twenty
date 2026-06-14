@@ -18,6 +18,7 @@ import { Link } from 'react-router-dom';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, useIcons } from 'twenty-ui-deprecated/display';
+import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
 import {
   ThemeContext,
   themeCssVariables,
@@ -122,6 +123,11 @@ export const SettingsObjectRelationItemTableRow = ({
 
   const { activateMetadataField } = useFieldMetadataItem();
   const { deleteOneFieldMetadataItem } = useDeleteOneFieldMetadataItem();
+
+  const linkToNavigate = getSettingsPath(SettingsPath.ObjectFieldEdit, {
+    objectNamePlural: objectMetadataItem.namePlural,
+    fieldName: fieldMetadataItem.name,
+  });
 
   // oxlint-disable-next-line twenty/no-navigate-prefer-link
   const navigateToFieldEdit = () =>
@@ -228,12 +234,21 @@ export const SettingsObjectRelationItemTableRow = ({
         padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
       >
         {fieldMetadataItem.isActive ? (
-          <StyledIconChevronRightContainer>
-            <IconChevronRight
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.sm}
-            />
-          </StyledIconChevronRightContainer>
+          // The row navigates via onClick (it can't be a Link because it
+          // contains a nested link to the related object). This chevron is a
+          // real link to the same destination so keyboard users can still reach
+          // field edit; stopPropagation avoids firing the row onClick too.
+          <UndecoratedLink
+            to={linkToNavigate}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <StyledIconChevronRightContainer>
+              <IconChevronRight
+                size={theme.icon.size.md}
+                stroke={theme.icon.stroke.sm}
+              />
+            </StyledIconChevronRightContainer>
+          </UndecoratedLink>
         ) : (
           <SettingsObjectFieldInactiveActionDropdown
             isCustomField={fieldMetadataItem.isCustom === true}
