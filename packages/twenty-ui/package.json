@@ -31,7 +31,7 @@
   "devDependencies": {
     "@argos-ci/storybook": "^6.0.6",
     "@prettier/sync": "^0.5.2",
-    "@size-limit/preset-small-lib": "^11.1.6",
+    "@size-limit/preset-small-lib": "^12.1.0",
     "@storybook-community/storybook-addon-cookie": "^5.0.0",
     "@storybook/addon-a11y": "^10.3.3",
     "@storybook/addon-coverage": "^3.0.0",
@@ -54,7 +54,7 @@
     "prettier": "^3.1.1",
     "sass": "^1.83.0",
     "sass-embedded": "^1.83.0",
-    "size-limit": "^11.1.6",
+    "size-limit": "^12.1.0",
     "slash": "^5.1.0",
     "storybook-addon-pseudo-states": "^10.3.3",
     "ts-jest": "^29.1.1",
