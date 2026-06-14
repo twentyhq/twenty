@@ -378,6 +378,11 @@ jobs:
           tasks: 'test:integration'
           configuration: 'with-db-reset'
           args: --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
+      - name: Server / Print reset logs on failure (diagnostic)
+        if: failure()
+        run: |
+          echo "===== reset-logs.log ====="
+          cat packages/twenty-server/reset-logs.log || echo "no reset-logs.log"
 
   ci-server-status-check:
     if: always() && !cancelled()
