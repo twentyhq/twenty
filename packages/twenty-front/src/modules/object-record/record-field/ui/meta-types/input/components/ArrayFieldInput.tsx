@@ -35,12 +35,13 @@ export const ArrayFieldInput = () => {
       if (arrayItems.length === prevIds.length) {
         return prevIds;
       }
-      const newIds = [...prevIds];
       if (arrayItems.length > prevIds.length) {
-        for (let i = prevIds.length; i < arrayItems.length; i++) {
-          newIds.push(v4());
-        }
-        return newIds;
+        return [
+          ...prevIds,
+          ...Array.from({ length: arrayItems.length - prevIds.length }, () =>
+            v4(),
+          ),
+        ];
       }
       return prevIds.slice(0, arrayItems.length);
     });
@@ -57,16 +58,19 @@ export const ArrayFieldInput = () => {
   const handleChange = (newValue: string[]) => {
     setStableIds((prevIds) => {
       if (newValue.length > prevIds.length) {
-        const newIds = [...prevIds];
-        for (let i = prevIds.length; i < newValue.length; i++) {
-          newIds.push(v4());
-        }
-        return newIds;
+        return [
+          ...prevIds,
+          ...Array.from({ length: newValue.length - prevIds.length }, () =>
+            v4(),
+          ),
+        ];
       }
       return prevIds;
     });
 
-    if (!isDefined(newValue)) setDraftValue(null);
+    if (!isDefined(newValue)) {
+      setDraftValue(null);
+    }
 
     const nextValue = parseStringArrayToArrayValue(newValue);
 

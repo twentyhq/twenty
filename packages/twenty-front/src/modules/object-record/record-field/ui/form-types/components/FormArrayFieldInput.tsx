@@ -259,10 +259,8 @@ export const FormArrayFieldInput = ({
 
     const items = draftValue.value;
 
-    // FIXED: Add bounds check and safe optional chaining
     const itemToEdit = items[itemToEditIndex];
     if (!isAddingNewItem && !isDefined(itemToEdit)) {
-      // Item was deleted while editing, treat as new item
       setIsInputDisplayed(false);
       setInputValue('');
       setItemToEditIndex(-1);
