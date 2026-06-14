@@ -14,6 +14,7 @@ import {
 } from '@/tokens';
 
 import { partnerChipClassName } from './partner-chip-style';
+import { titleCaseFallback } from './title-case-fallback';
 
 const Row = styled.dl`
   align-items: flex-start;
@@ -67,16 +68,6 @@ type PartnerChipRowProps<TValue extends string> = {
   values: readonly TValue[];
   valueLabels: Record<TValue, MessageDescriptor>;
 };
-
-// Falls back when the CRM stores a value the website doesn't yet know about
-// (e.g. a new language). Turns "TAMIL" → "Tamil", "SELF_HOST" → "Self host".
-const titleCaseFallback = (raw: string): string =>
-  raw
-    .toLowerCase()
-    .split(/[_\s]+/)
-    .filter(Boolean)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
 
 export function PartnerChipRow<TValue extends string>({
   label,

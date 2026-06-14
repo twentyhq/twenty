@@ -88,8 +88,11 @@ const CardHeader = styled.div`
 const HeaderText = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${spacing(1)};
   min-width: 0;
+
+  & > * + * {
+    margin-top: ${spacing(1)};
+  }
 `;
 
 const NameRow = styled.div`
@@ -177,7 +180,10 @@ const Divider = styled.hr`
 const ChipRows = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${spacing(3)};
+
+  & > * + * {
+    margin-top: ${spacing(3)};
+  }
 `;
 
 // The price row pins to the card bottom (margin-top: auto), so the button —

@@ -41,7 +41,7 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
   },
   {
     changeFrequency: 'weekly',
-    description: msg`Browse Twenty's certified partners — agencies and experts who migrate, customise, host, and support the open source CRM across regions, languages, and deployment models.`,
+    description: msg`Browse Twenty's certified partners — the agencies and individuals who migrate, customise, host, and support the open source CRM across regions, languages, and deployment models.`,
     id: 'partnersList',
     indexed: true,
     path: '/partners/list',

@@ -174,7 +174,13 @@ export function Button({
   onClick,
 }: ButtonProps) {
   const heightPx = BUTTON_HEIGHT_PX[size];
-  const isExternal = href !== undefined && !href.startsWith('/');
+  // mailto:/tel: open in place (mail client, dialer) — forcing target=_blank
+  // would leave an orphan blank tab, so they render as a plain anchor.
+  const isProtocolLink =
+    href !== undefined &&
+    (href.startsWith('mailto:') || href.startsWith('tel:'));
+  const isExternal =
+    href !== undefined && !href.startsWith('/') && !isProtocolLink;
 
   const inner = (
     <>
@@ -208,6 +214,14 @@ export function Button({
       >
         {inner}
       </button>
+    );
+  }
+
+  if (isProtocolLink) {
+    return (
+      <a {...sharedAttributes} href={href}>
+        {inner}
+      </a>
     );
   }
 

@@ -4,13 +4,14 @@ import { type MarketplacePartner } from './marketplace-partner';
 // partners API is wired. Not shipped behaviour: load-marketplace-partners only
 // uses this when no API env is set. Delete this file (and the no-env branch in
 // load-marketplace-partners.ts) once the backend is live. The data is invented;
-// names/links are placeholders.
+// names/links are placeholders. Introductions are deliberately verb-led so they
+// read naturally whether a partner is a firm or a single person.
 export const MARKETPLACE_PARTNERS_FIXTURE: readonly MarketplacePartner[] = [
   {
     slug: 'northwind-studio',
     name: 'Northwind Studio',
     introduction:
-      'A product studio that implements and customizes Twenty end to end — from data model to bespoke workflows — for fast-moving teams.',
+      'Implements and customizes Twenty end to end — from data model to bespoke workflows — for fast-moving teams.',
     calendarLink: 'https://cal.com/northwind/intro',
     partnerScope: ['DEVELOPMENT', 'SOLUTIONING'],
     region: ['EUROPE'],
@@ -28,7 +29,7 @@ export const MARKETPLACE_PARTNERS_FIXTURE: readonly MarketplacePartner[] = [
     slug: 'meridian-advisory',
     name: 'Meridian Advisory',
     introduction:
-      'RevOps advisors who help teams design their CRM process before a line of config is written. Strategy, not just setup.',
+      'Helps teams design their CRM process before a line of config is written. Strategy, not just setup.',
     calendarLink: 'https://cal.com/meridian/30min',
     partnerScope: ['ADVISORY'],
     region: ['US'],
@@ -46,7 +47,7 @@ export const MARKETPLACE_PARTNERS_FIXTURE: readonly MarketplacePartner[] = [
     slug: 'pampa-labs',
     name: 'Pampa Labs',
     introduction:
-      'An engineering shop building API-first integrations and self-hosted Twenty deployments for LATAM scale-ups.',
+      'Builds API-first integrations and self-hosted Twenty deployments for LATAM scale-ups.',
     calendarLink: '',
     partnerScope: ['DEVELOPMENT', 'HOSTING'],
     region: ['LATAM'],
@@ -64,7 +65,7 @@ export const MARKETPLACE_PARTNERS_FIXTURE: readonly MarketplacePartner[] = [
     slug: 'sakura-systems',
     name: 'Sakura Systems',
     introduction:
-      'Solution architects pairing Twenty with the wider stack — automations, GraphQL services, and clean handovers.',
+      'Pairs Twenty with the rest of your stack — automations, GraphQL services, and clean handovers.',
     calendarLink: 'https://cal.com/sakura/intro',
     partnerScope: ['ADVISORY', 'SOLUTIONING'],
     region: ['APAC'],
@@ -82,7 +83,7 @@ export const MARKETPLACE_PARTNERS_FIXTURE: readonly MarketplacePartner[] = [
     slug: 'atlas-cloud',
     name: 'Atlas Cloud',
     introduction:
-      'Self-hosting and support specialists who run Twenty securely on your own infrastructure, with SLAs.',
+      'Runs Twenty securely on your own infrastructure, with self-hosting, support, and SLAs.',
     calendarLink: 'https://cal.com/atlas-cloud/call',
     partnerScope: ['HOSTING', 'SUPPORT'],
     region: ['MENA'],
@@ -100,7 +101,7 @@ export const MARKETPLACE_PARTNERS_FIXTURE: readonly MarketplacePartner[] = [
     slug: 'baobab-collective',
     name: 'Baobab Collective',
     introduction:
-      'A developer collective building and supporting Twenty rollouts for teams across East Africa, with hands-on training.',
+      'Builds and supports Twenty rollouts for teams across East Africa, with hands-on training.',
     calendarLink: '',
     partnerScope: ['DEVELOPMENT', 'SUPPORT'],
     region: ['AFRICA'],
@@ -118,7 +119,7 @@ export const MARKETPLACE_PARTNERS_FIXTURE: readonly MarketplacePartner[] = [
     slug: 'rheinwerk',
     name: 'Rheinwerk',
     introduction:
-      'Data-modeling and migration experts who move teams onto Twenty without losing a record — or their history.',
+      'Moves teams onto Twenty without losing a record — or their history. Data modeling and migration, done right.',
     calendarLink: 'https://cal.com/rheinwerk/intro',
     partnerScope: ['SOLUTIONING', 'DEVELOPMENT'],
     region: ['EUROPE'],
@@ -136,7 +137,7 @@ export const MARKETPLACE_PARTNERS_FIXTURE: readonly MarketplacePartner[] = [
     slug: 'compass-partners',
     name: 'Compass Partners',
     introduction:
-      'Change-management and enablement advisors who get whole organizations actually using their new CRM.',
+      'Gets whole organizations actually using their new CRM, with change management and enablement.',
     calendarLink: 'https://cal.com/compass/30min',
     partnerScope: ['ADVISORY', 'SUPPORT'],
     region: ['US', 'EUROPE', 'LATAM'],
@@ -154,7 +155,7 @@ export const MARKETPLACE_PARTNERS_FIXTURE: readonly MarketplacePartner[] = [
     slug: 'jun-park',
     name: 'Jun Park',
     introduction:
-      'An independent developer building focused Twenty customizations and automations for early-stage teams.',
+      'Builds focused Twenty customizations and automations for early-stage teams.',
     calendarLink: '',
     partnerScope: ['DEVELOPMENT'],
     region: ['APAC'],

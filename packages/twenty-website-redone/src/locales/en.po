@@ -18,6 +18,12 @@ msgstr ""
 msgid "...with AI that actually helps you *work faster*"
 msgstr "...with AI that actually helps you *work faster*"
 
+#. js-lingui-id: Z6mKXu
+#. placeholder {0}: partner.name
+#: src/app/[locale]/(site)/partners/profile/[slug]/page.tsx
+msgid "{0} — Twenty Partner"
+msgstr "{0} — Twenty Partner"
+
 #. js-lingui-id: sGt3Jm
 #. placeholder {0}: i18n._(card.attribution.company)
 #: src/sections/three-cards/illustration-card.tsx
@@ -30,6 +36,7 @@ msgid "{count} Case Studies"
 msgstr "{count} Case Studies"
 
 #. js-lingui-id: NSO/FI
+#: src/partners-marketplace/partner-rates-panel.tsx
 #: src/partners-marketplace/partner-money-row.tsx
 msgid "{hourly}/hr"
 msgstr "{hourly}/hr"
@@ -66,6 +73,11 @@ msgstr "© {year} – Twenty"
 #: src/partner-application/partner-application-copy.ts
 msgid "← Back"
 msgstr "← Back"
+
+#. js-lingui-id: 9j/bUt
+#: src/partners-marketplace/back-to-marketplace-link.tsx
+msgid "← Twenty partners"
+msgstr "← Twenty partners"
 
 #. js-lingui-id: iK+ikF
 #: src/sections/trusted-by/trusted-by.tsx
@@ -344,6 +356,11 @@ msgstr "Bangladesh 🇧🇩"
 msgid "Barbados 🇧🇧"
 msgstr "Barbados 🇧🇧"
 
+#. js-lingui-id: RownlY
+#: src/partners-marketplace/partner-facts-list.tsx
+msgid "Based in"
+msgstr "Based in"
+
 #. js-lingui-id: kWm0dC
 #: src/sections/partner-hero/partner-hero.tsx
 msgid ""
@@ -424,6 +441,11 @@ msgstr "Blue developer illustration with branching arrows"
 msgid "Bolivia 🇧🇴"
 msgstr "Bolivia 🇧🇴"
 
+#. js-lingui-id: MkvsWx
+#: src/partners-marketplace/partner-profile-ctas.tsx
+msgid "Book a call"
+msgstr "Book a call"
+
 #. js-lingui-id: Wzdd8u
 #: src/partner-application/data/partner-country-options.ts
 msgid "Bosnia & Herzegovina 🇧🇦"
@@ -439,10 +461,10 @@ msgstr "Botswana 🇧🇼"
 msgid "Brazil 🇧🇷"
 msgstr "Brazil 🇧🇷"
 
-#. js-lingui-id: sJ6p0z
+#. js-lingui-id: bmk2dj
 #: src/platform/routing/static-website-routes.ts
-msgid "Browse Twenty's certified partners — agencies and experts who migrate, customise, host, and support the open source CRM across regions, languages, and deployment models."
-msgstr "Browse Twenty's certified partners — agencies and experts who migrate, customise, host, and support the open source CRM across regions, languages, and deployment models."
+msgid "Browse Twenty's certified partners — the agencies and individuals who migrate, customise, host, and support the open source CRM across regions, languages, and deployment models."
+msgstr "Browse Twenty's certified partners — the agencies and individuals who migrate, customise, host, and support the open source CRM across regions, languages, and deployment models."
 
 #. js-lingui-id: VX4eI/
 #: src/partner-application/data/partner-country-options.ts
@@ -541,6 +563,7 @@ msgid "Catalan"
 msgstr "Catalan"
 
 #. js-lingui-id: NUrY9o
+#: src/partners-marketplace/partner-facts-list.tsx
 #: src/partners-marketplace/partner-card.tsx
 #: src/partners-marketplace/filter-bar.tsx
 msgid "Categories"
@@ -682,6 +705,11 @@ msgstr "Connect Google or Microsoft accounts"
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Connect Google or Microsoft accounts and see emails and events linked to CRM records automatically."
 msgstr "Connect Google or Microsoft accounts and see emails and events linked to CRM records automatically."
+
+#. js-lingui-id: GsUBlG
+#: src/partners-marketplace/partner-profile-ctas.tsx
+msgid "Contact {partnerName}"
+msgstr "Contact {partnerName}"
 
 #. js-lingui-id: Oii3vg
 #: src/sections/product-feature/feature-tiles.ts
@@ -1338,6 +1366,11 @@ msgstr "Halftone generator"
 msgid "Help"
 msgstr "Help"
 
+#. js-lingui-id: LiWOgh
+#: src/partners-marketplace/partner-profile-ctas.tsx
+msgid "Hey, I'm interested in meeting. Here's my project:"
+msgstr "Hey, I'm interested in meeting. Here's my project:"
+
 #. js-lingui-id: EhWatX
 #: src/app-preview/terminal/diff/diff-pill.tsx
 msgid "Hide changes"
@@ -1365,6 +1398,11 @@ msgstr "Honduras 🇭🇳"
 #: src/partner-application/data/partner-scope-options.ts
 msgid "Hosting & Infrastructure"
 msgstr "Hosting & Infrastructure"
+
+#. js-lingui-id: SHZNBm
+#: src/partners-marketplace/partner-rates-panel.tsx
+msgid "Hourly"
+msgstr "Hourly"
 
 #. js-lingui-id: Ivq5+7
 #: src/partner-application/partner-application-copy.ts
@@ -1434,6 +1472,11 @@ msgstr "Indonesia 🇮🇩"
 #: src/partners-marketplace/spoken-language-labels.ts
 msgid "Indonesian"
 msgstr "Indonesian"
+
+#. js-lingui-id: +83cJG
+#: src/partners-marketplace/partner-profile-ctas.tsx
+msgid "Interested in meeting {partnerName}"
+msgstr "Interested in meeting {partnerName}"
 
 #. js-lingui-id: FtgjCv
 #: src/partner-application/data/partner-country-options.ts
@@ -1563,6 +1606,7 @@ msgid "Kyrgyzstan 🇰🇬"
 msgstr "Kyrgyzstan 🇰🇬"
 
 #. js-lingui-id: GAmD3h
+#: src/partners-marketplace/partner-facts-list.tsx
 #: src/partners-marketplace/partner-card.tsx
 #: src/partners-marketplace/filter-bar.tsx
 msgid "Languages"
@@ -2020,6 +2064,16 @@ msgstr "Paraguay 🇵🇾"
 msgid "Partner application"
 msgstr "Partner application"
 
+#. js-lingui-id: mYGIvm
+#: src/partners-marketplace/partner-profile.tsx
+msgid "Partner facts and contact"
+msgstr "Partner facts and contact"
+
+#. js-lingui-id: 4RPECg
+#: src/app/[locale]/(site)/partners/profile/[slug]/page.tsx
+msgid "Partner not found — Twenty Partners"
+msgstr "Partner not found — Twenty Partners"
+
 #. js-lingui-id: dRIK0d
 #: src/sections/testimonials/partner-testimonials-carousel.tsx
 msgid "Partner testimonials"
@@ -2152,6 +2206,11 @@ msgstr "Production grade quality"
 msgid "Profile"
 msgstr "Profile"
 
+#. js-lingui-id: PaHxQd
+#: src/partners-marketplace/partner-rates-panel.tsx
+msgid "Project minimum"
+msgstr "Project minimum"
+
 #. js-lingui-id: a24q7E
 #: src/sections/problem/problem.data.ts
 msgid "Proprietary languages, slow deployment cycles, and \"black box\" logic."
@@ -2166,6 +2225,16 @@ msgstr "Punjabi"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Qatar 🇶🇦"
 msgstr "Qatar 🇶🇦"
+
+#. js-lingui-id: 3XOwjg
+#: src/partners-marketplace/partner-rates-panel.tsx
+msgid "Rates"
+msgstr "Rates"
+
+#. js-lingui-id: DnWJal
+#: src/partners-marketplace/partner-profile-ctas.tsx
+msgid "Reach out"
+msgstr "Reach out"
 
 #. js-lingui-id: gSQVmr
 #: src/sections/helped/helped-card.tsx
@@ -2441,6 +2510,11 @@ msgstr "Singapore 🇸🇬"
 #: src/sections/footer/footer.data.ts
 msgid "Sitemap"
 msgstr "Sitemap"
+
+#. js-lingui-id: PCSkw2
+#: src/partners-marketplace/partner-profile.tsx
+msgid "Skills"
+msgstr "Skills"
 
 #. js-lingui-id: t6ComU
 #: src/sections/feature-cards/feature-cards.tsx
@@ -2950,6 +3024,11 @@ msgstr "Twenty's certified partners help teams migrate, customise, and operate t
 msgid "Type of team *"
 msgstr "Type of team *"
 
+#. js-lingui-id: P+R1Lc
+#: src/partners-marketplace/partner-rates-panel.tsx
+msgid "Typical project"
+msgstr "Typical project"
+
 #. js-lingui-id: HqFilh
 #: src/partner-application/data/partner-country-options.ts
 msgid "UAE 🇦🇪"
@@ -3062,6 +3141,11 @@ msgstr "Vietnamese"
 msgid "View {0} on LinkedIn"
 msgstr "View {0} on LinkedIn"
 
+#. js-lingui-id: ITdNGt
+#: src/partners-marketplace/partner-profile-ctas.tsx
+msgid "View on LinkedIn"
+msgstr "View on LinkedIn"
+
 #. js-lingui-id: 73lp8c
 #: src/partners-marketplace/partner-card.tsx
 msgid "View profile"
@@ -3122,10 +3206,20 @@ msgstr "What an admin can do without writing code."
 msgid "What does Twenty cost?"
 msgstr "What does Twenty cost?"
 
+#. js-lingui-id: kRfFDB
+#: src/partners-marketplace/partner-profile.tsx
+msgid "What they do"
+msgstr "What they do"
+
 #. js-lingui-id: QCHIzm
 #: src/partner-application/partner-application-copy.ts
 msgid "What you cover *"
 msgstr "What you cover *"
+
+#. js-lingui-id: 2O07UN
+#: src/partners-marketplace/partner-profile.tsx
+msgid "Where & how"
+msgstr "Where & how"
 
 #. js-lingui-id: DJlSwA
 #: src/sections/menu/menu.data.ts
