@@ -88,6 +88,7 @@ const ROW_GAP_MULTI_AXIS_FILES = new Set([
   'sections/faq/faq-items.tsx',
   'sections/pricing-plans/pricing-board.tsx',
   'sections/problem/problem.tsx',
+  'sections/releases-feed/releases-feed.tsx',
   'sections/stepper/product-stepper.tsx',
   'sections/stepper/stepper.tsx',
   'sections/testimonials/partner-testimonials-carousel.tsx',

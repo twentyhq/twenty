@@ -10,6 +10,7 @@ import {
   JsonLd,
 } from '@/platform/seo';
 import { Menu } from '@/sections/menu';
+import { ReleasesFeed } from '@/sections/releases-feed';
 import { ReleasesHero } from '@/sections/releases-hero';
 
 export const generateMetadata = buildRouteMetadata('releases');
@@ -40,6 +41,7 @@ export default async function ReleasesPage({
       <Menu communityStats={communityStats} />
       <main>
         <ReleasesHero />
+        <ReleasesFeed locale={locale} />
       </main>
     </>
   );
