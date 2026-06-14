@@ -25,9 +25,7 @@ export const isMatchingSelectFilter = ({
       return value !== selectFilter.neq;
     }
     default: {
-      throw new Error(
-        `Unexpected value for select filter : ${JSON.stringify(selectFilter)}`,
-      );
+      return false;
     }
   }
 };

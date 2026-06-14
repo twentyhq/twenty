@@ -73,13 +73,13 @@ describe('isMatchingSelectFilter', () => {
   });
 
   describe('default', () => {
-    it('should throw for unexpected filter', () => {
-      expect(() =>
+    it('should return false for unexpected filter', () => {
+      expect(
         isMatchingSelectFilter({
           selectFilter: {} as any,
           value: 'ACTIVE',
         }),
-      ).toThrow('Unexpected value for select filter');
+      ).toBe(false);
     });
   });
 });

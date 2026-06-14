@@ -10,9 +10,102 @@ import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/is
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { type ObjectPermissions } from 'twenty-shared/types';
+import { FieldMetadataType, type ObjectPermissions } from 'twenty-shared/types';
 import { getEdgeTypename, isDefined } from 'twenty-shared/utils';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
+
+const SUPPORTED_SELECT_FILTER_OPERATORS = new Set(['in', 'is', 'eq', 'neq']);
+
+const extractInvalidSelectFilterOperatorKeys = ({
+  filter,
+  selectFieldMetadataNames,
+}: {
+  filter: unknown;
+  selectFieldMetadataNames: Set<string>;
+}): string[] => {
+  if (!isDefined(filter) || typeof filter !== 'object') {
+    return [];
+  }
+
+  const invalidOperatorKeys = new Set<string>();
+
+  const extractFromNestedFilter = (nestedFilter: unknown) => {
+    for (const invalidOperatorKey of extractInvalidSelectFilterOperatorKeys({
+      filter: nestedFilter,
+      selectFieldMetadataNames,
+    })) {
+      invalidOperatorKeys.add(invalidOperatorKey);
+    }
+  };
+
+  for (const [filterKey, filterValue] of Object.entries(filter)) {
+    if (filterKey === 'and' || filterKey === 'or') {
+      if (Array.isArray(filterValue)) {
+        filterValue.forEach(extractFromNestedFilter);
+      }
+
+      continue;
+    }
+
+    if (filterKey === 'not') {
+      extractFromNestedFilter(filterValue);
+
+      continue;
+    }
+
+    if (!selectFieldMetadataNames.has(filterKey)) {
+      continue;
+    }
+
+    if (!isDefined(filterValue) || typeof filterValue !== 'object') {
+      continue;
+    }
+
+    for (const operatorKey of Object.keys(filterValue)) {
+      if (!SUPPORTED_SELECT_FILTER_OPERATORS.has(operatorKey)) {
+        invalidOperatorKeys.add(operatorKey);
+      }
+    }
+  }
+
+  return [...invalidOperatorKeys];
+};
+
+const captureInvalidSelectFilterComparatorWarning = ({
+  invalidOperatorKeys,
+  objectMetadataNameSingular,
+  storeFieldName,
+}: {
+  invalidOperatorKeys: string[];
+  objectMetadataNameSingular: string;
+  storeFieldName: string;
+}) => {
+  import('@sentry/react')
+    .then(({ captureException, withScope }) => {
+      withScope((scope) => {
+        scope.setLevel('warning');
+        scope.setFingerprint([
+          'optimistic-filter-matcher',
+          objectMetadataNameSingular,
+          ...invalidOperatorKeys,
+        ]);
+        scope.setTag('error-handler', 'optimistic-filter-invalid-operator');
+        scope.setTag('object-metadata', objectMetadataNameSingular);
+        scope.setExtra('invalidOperatorKeys', invalidOperatorKeys);
+        scope.setExtra('storeFieldName', storeFieldName);
+
+        captureException(new Error('Invalid select filter comparator'));
+      });
+    })
+    .catch((sentryError) => {
+      // oxlint-disable-next-line no-console
+      console.error(
+        'Failed to capture invalid select filter comparator with Sentry:',
+        sentryError,
+      );
+    });
+};
+
 // TODO: add extensive unit tests for this function
 // That will also serve as documentation
 export const triggerUpdateRecordOptimisticEffect = ({
@@ -74,6 +167,28 @@ export const triggerUpdateRecordOptimisticEffect = ({
 
         const rootQueryFilter = rootQueryVariables?.filter;
         const rootQueryOrderBy = rootQueryVariables?.orderBy;
+
+        const selectFieldMetadataNames = new Set(
+          objectMetadataItem.fields
+            .filter((fieldMetadataItem) => {
+              return fieldMetadataItem.type === FieldMetadataType.SELECT;
+            })
+            .map((fieldMetadataItem) => fieldMetadataItem.name),
+        );
+
+        const invalidSelectFilterOperatorKeys =
+          extractInvalidSelectFilterOperatorKeys({
+            filter: rootQueryFilter,
+            selectFieldMetadataNames,
+          });
+
+        if (invalidSelectFilterOperatorKeys.length > 0) {
+          captureInvalidSelectFilterComparatorWarning({
+            invalidOperatorKeys: invalidSelectFilterOperatorKeys,
+            objectMetadataNameSingular: objectMetadataItem.nameSingular,
+            storeFieldName,
+          });
+        }
 
         const updatedRecordMatchesThisRootQueryFilter = isRecordMatchingFilter({
           record: updatedRecord,
