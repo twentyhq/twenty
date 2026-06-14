@@ -6,10 +6,6 @@ const UPGRADE_COMMAND_MARKER = 'upgrade-version-command/';
 const FAST_INSTANCE_COMMAND_SEGMENT = 'instance-command-fast-';
 const SKIPPED_FILE_REGEX = /\.(spec|test)\.ts$/;
 
-// Statement-leading data-mutation keywords. Schema changes (ALTER/CREATE/DROP)
-// are the whole point of a fast command and stay allowed; "ON DELETE CASCADE"
-// or a column named "updatedAt" never match because we only test the start of
-// each comment-stripped statement.
 const DATA_MUTATION_STATEMENT_REGEX = /^(UPDATE|INSERT|DELETE|MERGE)\b/i;
 
 const isFastInstanceCommandFile = (filename: string): boolean => {
@@ -32,8 +28,6 @@ const isFastInstanceCommandFile = (filename: string): boolean => {
   return basename.includes(FAST_INSTANCE_COMMAND_SEGMENT);
 };
 
-// Only the up() path runs in the ArgoCD PreSync hook before the new pods roll.
-// A data mutation in down() is a legitimate rollback backfill, so it is allowed.
 const isInsideUpMethod = (node: any): boolean => {
   let current = node.parent;
 
