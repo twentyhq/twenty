@@ -61,6 +61,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    // isUnique is derived from IndexMetadata at cache build time and is
+    // not a column on the fieldMetadata table. It stays in
+    // propertiesToCompare so per-type validators see the proposed
+    // change (e.g. rejecting unique on FILES), but the field-metadata
+    // runner drops it before issuing the SQL UPDATE — the actual state
+    // change rides on the side-effect index create/delete.
     isUnique: {
       toCompare: true,
       toStringify: false,
@@ -97,18 +103,13 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    isCustom: {
-      toCompare: false,
-      toStringify: false,
-      universalProperty: undefined,
-    },
     isSystem: {
       toCompare: false,
       toStringify: false,
       universalProperty: undefined,
     },
-    isUIReadOnly: {
-      toCompare: false,
+    isUIEditable: {
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
@@ -201,11 +202,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: true,
       universalProperty: undefined,
     },
-    isCustom: {
-      toCompare: false,
-      toStringify: false,
-      universalProperty: undefined,
-    },
     isRemote: {
       toCompare: false,
       toStringify: false,
@@ -216,8 +212,13 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    isUIReadOnly: {
-      toCompare: false,
+    isUIEditable: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isUICreatable: {
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
@@ -242,9 +243,10 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     imageIdentifierFieldMetadataId: {
-      toCompare: false,
+      toCompare: true,
       toStringify: false,
-      universalProperty: undefined,
+      // @ts-expect-error remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
+      universalProperty: 'imageIdentifierFieldMetadataUniversalIdentifier',
     },
     targetTableName: {
       toCompare: false,
@@ -274,64 +276,101 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    name: { toCompare: true, toStringify: false, universalProperty: undefined },
-    type: { toCompare: true, toStringify: false, universalProperty: undefined },
-    icon: { toCompare: true, toStringify: false, universalProperty: undefined },
+    name: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
+    type: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
+    icon: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
     position: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     isCompact: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     openRecordIn: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     kanbanAggregateOperation: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     kanbanAggregateOperationFieldMetadataId: {
       toCompare: true,
       toStringify: false,
       universalProperty:
         'kanbanAggregateOperationFieldMetadataUniversalIdentifier',
+      isOverridable: true,
     },
     anyFieldFilterValue: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     calendarLayout: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     calendarFieldMetadataId: {
       toCompare: true,
       toStringify: false,
       universalProperty: 'calendarFieldMetadataUniversalIdentifier',
+      isOverridable: true,
     },
     visibility: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     mainGroupByFieldMetadataId: {
       toCompare: true,
       toStringify: false,
       universalProperty: 'mainGroupByFieldMetadataUniversalIdentifier',
+      isOverridable: true,
     },
     shouldHideEmptyGroups: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
+    },
+    isActive: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: false,
+    },
+    overrides: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: 'universalOverrides',
     },
     objectMetadataId: {
       toCompare: false,
@@ -575,17 +614,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    toolInputSchema: {
-      toCompare: true,
-      toStringify: true,
-      universalProperty: undefined,
-    },
-    isTool: {
+    isBuildUpToDate: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
-    isBuildUpToDate: {
+    executionMode: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
@@ -606,6 +640,16 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     httpRouteTriggerSettings: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    toolTriggerSettings: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    workflowActionTriggerSettings: {
       toCompare: true,
       toStringify: true,
       universalProperty: undefined,
@@ -667,6 +711,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+    },
+    relationTargetFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'relationTargetFieldMetadataUniversalIdentifier',
     },
     createdAt: {
       toCompare: false,
@@ -918,7 +967,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     pageLayoutTabId: {
-      toCompare: false,
+      toCompare: true,
       toStringify: false,
       universalProperty: 'pageLayoutTabUniversalIdentifier',
       isOverridable: true,
@@ -1047,27 +1096,37 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
-    icon: { toCompare: true, toStringify: false, universalProperty: undefined },
+    icon: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
     shortLabel: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     position: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     isPinned: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     availabilityType: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     conditionalAvailabilityExpression: {
       toCompare: true,
@@ -1078,6 +1137,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: 'availabilityObjectMetadataUniversalIdentifier',
+      isOverridable: true,
     },
     createdAt: {
       toCompare: false,
@@ -1098,6 +1158,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
+      isOverridable: true,
     },
     payload: {
       toCompare: true,
@@ -1108,6 +1169,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: true,
       universalProperty: undefined,
+      isOverridable: true,
     },
     workflowVersionId: {
       toCompare: false,
@@ -1118,6 +1180,18 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: false,
       toStringify: false,
       universalProperty: 'pageLayoutUniversalIdentifier',
+      isOverridable: true,
+    },
+    isActive: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: false,
+    },
+    overrides: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: 'universalOverrides',
     },
   },
   navigationMenuItem: {
@@ -1180,16 +1254,58 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'pageLayoutUniversalIdentifier',
     },
   },
-  permissionFlag: {
-    flag: {
+  rolePermissionFlag: {
+    permissionFlagId: {
       toCompare: true,
       toStringify: false,
-      universalProperty: undefined,
+      universalProperty: 'permissionFlagUniversalIdentifier',
     },
     roleId: {
       toCompare: true,
       toStringify: false,
       universalProperty: 'roleUniversalIdentifier',
+    },
+    flag: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
+  permissionFlag: {
+    key: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    label: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    description: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    icon: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    permissionType: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
     },
     createdAt: {
       toCompare: false,
@@ -1393,6 +1509,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    subFieldName: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     fieldMetadataId: {
       toCompare: true,
       toStringify: false,
@@ -1536,6 +1657,62 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     deletedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
+  applicationVariable: {
+    key: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    value: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    description: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isSecret: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
+  connectionProvider: {
+    name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    displayName: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    type: { toCompare: true, toStringify: false, universalProperty: undefined },
+    oauthConfig: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
       toCompare: false,
       toStringify: false,
       universalProperty: undefined,

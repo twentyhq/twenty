@@ -3,7 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { type RecordTableEmptyStateNoGroupNoRecordAtAll } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateNoGroupNoRecordAtAll';
 import { fireEvent, userEvent, within } from 'storybook/test';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { FileUploadDecorator } from '~/testing/decorators/FileUploadDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -60,6 +60,23 @@ export const HeaderMenuOpen: Story = {
     const headerMenuButton = await canvas.findByText('Domain Name');
 
     await userEvent.click(headerMenuButton);
+
+    await body.findByText('Move right');
+  },
+};
+
+export const HeaderMenuStaysOpenAfterMoveRight: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await canvas.findAllByText('Linkedin', {}, { timeout: 3000 });
+
+    const headerMenuButton = await canvas.findByText('Domain Name');
+    await userEvent.click(headerMenuButton);
+
+    const moveRightButton = await body.findByText('Move right');
+    await userEvent.click(moveRightButton);
 
     await body.findByText('Move right');
   },

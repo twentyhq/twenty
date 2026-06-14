@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { SelectFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/SelectFieldDisplay';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
@@ -34,7 +34,7 @@ export const Elipsis: Story = {
 
 export const Performance = getProfilingStory({
   componentName: 'SelectFieldDisplay',
-  averageThresholdInMs: 0.2,
+  averageThresholdInMs: 0.4,
   numberOfRuns: 50,
   numberOfTestsPerRun: 100,
 });

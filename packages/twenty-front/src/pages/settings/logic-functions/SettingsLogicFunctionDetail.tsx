@@ -6,7 +6,7 @@ import { SettingsLogicFunctionLabelContainer } from '@/settings/logic-functions/
 import { SettingsLogicFunctionSettingsTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionSettingsTab';
 import { SettingsLogicFunctionTestTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab';
 import { SettingsLogicFunctionTriggersTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -18,7 +18,7 @@ import {
   IconCode,
   IconPlayerPlay,
   IconSettings,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 import { useQuery } from '@apollo/client/react';
 import { FindOneApplicationDocument } from '~/generated-metadata/graphql';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -43,6 +43,11 @@ export const SettingsLogicFunctionDetail = () => {
   );
 
   const applicationName = data?.findOneApplication?.name;
+
+  const applicationVariableKeys =
+    data?.findOneApplication?.applicationVariables?.map(
+      (variable) => variable.key,
+    ) ?? [];
 
   const workspaceCustomApplicationId =
     currentWorkspace?.workspaceCustomApplication?.id;
@@ -89,38 +94,38 @@ export const SettingsLogicFunctionDetail = () => {
   const isTestTab = activeTabId === 'test';
 
   const breadcrumbLinks = isDefined(applicationId)
-    ? [
-        {
-          children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
-        },
-        {
-          children: t`Applications`,
-          href: getSettingsPath(SettingsPath.Applications),
-        },
-        {
-          children: `${applicationName}`,
-          href: getSettingsPath(
-            SettingsPath.ApplicationDetail,
-            {
-              applicationId,
-            },
-            undefined,
-            'content',
-          ),
-        },
-        { children: `${logicFunction?.name}` },
-      ]
+    ? (() => {
+        const applicationContentHref = getSettingsPath(
+          SettingsPath.ApplicationDetail,
+          { applicationId },
+          undefined,
+          'content',
+        );
+        return [
+          {
+            children: t`Workspace`,
+            href: getSettingsPath(SettingsPath.General),
+          },
+          {
+            children: t`Applications`,
+            href: getSettingsPath(SettingsPath.Applications),
+          },
+          { children: applicationName ?? '', href: applicationContentHref },
+          { children: t`Logic functions`, href: applicationContentHref },
+          { children: logicFunction?.name ?? '' },
+        ];
+      })()
     : [
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
           children: t`AI`,
           href: getSettingsPath(SettingsPath.AI),
         },
-        { children: `${logicFunction?.name}` },
+        { children: t`Logic functions` },
+        { children: logicFunction?.name ?? '' },
       ];
 
   const files = [
@@ -134,7 +139,7 @@ export const SettingsLogicFunctionDetail = () => {
   return (
     !loading &&
     !applicationLoading && (
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={
           <SettingsLogicFunctionLabelContainer
             value={formValues.name}
@@ -152,10 +157,16 @@ export const SettingsLogicFunctionDetail = () => {
               handleExecute={handleTestFunction}
               onChange={onChange('sourceHandlerCode')}
               isTesting={isExecuting}
+              applicationVariableKeys={applicationVariableKeys}
             />
           )}
-          {isTriggersTab && logicFunction && (
-            <SettingsLogicFunctionTriggersTab logicFunction={logicFunction} />
+          {isTriggersTab && (
+            <SettingsLogicFunctionTriggersTab
+              formValues={formValues}
+              onChange={onChange}
+              readonly={isReadonly}
+              applicationName={applicationName}
+            />
           )}
           {isSettingsTab && (
             <SettingsLogicFunctionSettingsTab
@@ -168,11 +179,12 @@ export const SettingsLogicFunctionDetail = () => {
             <SettingsLogicFunctionTestTab
               handleExecute={executeLogicFunction}
               logicFunctionId={logicFunctionId}
+              formValues={formValues}
               isTesting={isExecuting}
             />
           )}
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     )
   );
 };

@@ -1,13 +1,14 @@
 import { styled } from '@linaria/react';
 
 import { SettingsDevelopersWebhookTableRow } from '@/settings/developers/components/SettingsDevelopersWebhookTableRow';
+import { WEBHOOK_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/settings/developers/constants/WebhookTableRowGridTemplateColumns';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { useQuery } from '@apollo/client/react';
 import { GetWebhooksDocument } from '~/generated-metadata/graphql';
 
@@ -24,7 +25,7 @@ export const SettingsWebhooksTable = () => {
 
   return (
     <Table>
-      <TableRow gridTemplateColumns="444px 68px">
+      <TableRow gridTemplateColumns={WEBHOOK_TABLE_ROW_GRID_TEMPLATE_COLUMNS}>
         <TableHeader>URL</TableHeader>
         <TableHeader></TableHeader>
       </TableRow>

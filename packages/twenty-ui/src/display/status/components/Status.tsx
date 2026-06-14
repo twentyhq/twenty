@@ -1,49 +1,11 @@
-import { styled } from '@linaria/react';
+import { clsx } from 'clsx';
+
 import { Loader } from '@ui/feedback/loader/components/Loader';
 import { type ThemeColor } from '@ui/theme';
 import { themeCssVariables } from '@ui/theme-constants';
 import { parseThemeColor } from '@ui/utilities';
 
-const StyledStatus = styled.h3<{
-  color: ThemeColor;
-  weight: 'regular' | 'medium';
-  isLoaderVisible: boolean;
-}>`
-  align-items: center;
-  background: ${({ color }) => themeCssVariables.tag.background[color]};
-  border-radius: ${themeCssVariables.border.radius.pill};
-  color: ${({ color }) => themeCssVariables.tag.text[color]};
-  display: inline-flex;
-  font-size: ${themeCssVariables.font.size.md};
-  font-style: normal;
-  font-weight: ${({ weight }) => themeCssVariables.font.weight[weight]};
-  gap: ${themeCssVariables.spacing[1]};
-  height: ${themeCssVariables.spacing[5]};
-  margin: 0;
-  overflow: hidden;
-  padding: 0
-    ${({ isLoaderVisible }) =>
-      isLoaderVisible
-        ? themeCssVariables.spacing[1]
-        : themeCssVariables.spacing[2]}
-    0 ${themeCssVariables.spacing[2]};
-
-  &:before {
-    background-color: ${({ color }) => themeCssVariables.tag.text[color]};
-    border-radius: ${themeCssVariables.border.radius.rounded};
-    content: '';
-    display: block;
-    flex-shrink: 0;
-    height: ${themeCssVariables.spacing[1]};
-    width: ${themeCssVariables.spacing[1]};
-  }
-`;
-
-const StyledContent = styled.span`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
+import styles from './Status.module.scss';
 
 type StatusProps = {
   className?: string;
@@ -62,16 +24,22 @@ export const Status = ({
   onClick,
   weight = 'regular',
 }: StatusProps) => {
+  const parsedColor = parseThemeColor(color);
+
   return (
-    <StyledStatus
-      className={className}
-      color={parseThemeColor(color)}
+    <h3
+      className={clsx(styles.status, styles[weight], className)}
       onClick={onClick}
-      weight={weight}
-      isLoaderVisible={isLoaderVisible}
+      data-loader-visible={isLoaderVisible || undefined}
+      style={
+        {
+          '--status-background': themeCssVariables.tag.background[parsedColor],
+          '--status-text-color': themeCssVariables.tag.text[parsedColor],
+        } as React.CSSProperties
+      }
     >
-      <StyledContent>{text}</StyledContent>
+      <span className={styles.content}>{text}</span>
       {isLoaderVisible ? <Loader color={color} /> : null}
-    </StyledStatus>
+    </h3>
   );
 };

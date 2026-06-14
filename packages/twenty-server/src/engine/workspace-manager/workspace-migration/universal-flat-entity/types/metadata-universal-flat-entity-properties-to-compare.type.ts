@@ -16,10 +16,10 @@ type ExtractPropertyToCompare<
 
 export type MetadataUniversalFlatEntityPropertiesToCompare<
   T extends AllMetadataName,
-  MetadataConfig = (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T],
-  TComparedKeys extends
-    keyof MetadataConfig = MetadataEntityComparablePropertyName<T> &
-    keyof MetadataConfig,
+  MetadataConfig =
+    (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T],
+  TComparedKeys extends keyof MetadataConfig =
+    MetadataEntityComparablePropertyName<T> & keyof MetadataConfig,
 > = {
   [P in TComparedKeys]: ExtractPropertyToCompare<MetadataConfig, P>;
 }[TComparedKeys] &
@@ -40,6 +40,7 @@ type Assertions = [
       | 'options'
       | 'isUnique'
       | 'isLabelSyncedWithName'
+      | 'isUIEditable'
       | 'universalSettings'
     >
   >,
@@ -64,6 +65,8 @@ type Assertions = [
       | 'anyFieldFilterValue'
       | 'visibility'
       | 'createdByUserWorkspaceId'
+      | 'isActive'
+      | 'universalOverrides'
     >
   >,
 ];

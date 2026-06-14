@@ -1,63 +1,13 @@
-import { styled } from '@linaria/react';
-import { type ReactNode, useRef, useState } from 'react';
+import { type CSSProperties, type ReactNode, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { themeCssVariables } from '@ui/theme-constants';
-import { isDefined } from 'twenty-shared/utils';
+import { clsx } from 'clsx';
+import { LinkifiedText } from '@ui/display/components/LinkifiedText';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 import { AppTooltip, TooltipDelay } from './AppTooltip';
 
-const spacing4 = themeCssVariables.spacing[4];
-
-const StyledOverflowingMultilineText = styled.div<{
-  isContentOverflowing: boolean;
-  size: 'large' | 'small';
-  displayedMaxRows: number;
-}>`
-  cursor: ${({ isContentOverflowing }) =>
-    isContentOverflowing ? 'pointer' : 'inherit'};
-  font-family: inherit;
-  font-size: inherit;
-
-  font-weight: inherit;
-  max-width: 100%;
-  overflow: hidden;
-  text-decoration: inherit;
-
-  text-overflow: ellipsis;
-  height: ${({ size }) => (size === 'large' ? spacing4 : 'auto')};
-
-  -webkit-line-clamp: ${({ displayedMaxRows }) =>
-    displayedMaxRows ? displayedMaxRows.toString() : '1'};
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  white-space: pre-wrap;
-`;
-
-const StyledOverflowingText = styled.div<{
-  isContentOverflowing: boolean;
-  size: 'large' | 'small';
-}>`
-  cursor: ${({ isContentOverflowing }) =>
-    isContentOverflowing ? 'pointer' : 'inherit'};
-  font-family: inherit;
-  font-size: inherit;
-
-  font-weight: inherit;
-  max-width: 100%;
-  text-decoration: inherit;
-
-  text-overflow: ellipsis;
-  overflow: hidden;
-  height: ${({ size }) => (size === 'large' ? spacing4 : 'auto')};
-
-  white-space: nowrap;
-`;
-
-const StyledPre = styled.pre`
-  font-family: inherit;
-  white-space: pre-wrap;
-`;
+import styles from './OverflowingTextWithTooltip.module.scss';
 
 type OverflowingTextWithTooltipProps = {
   size?: 'large' | 'small';
@@ -121,30 +71,42 @@ export const OverflowingTextWithTooltip = ({
   return (
     <>
       {isDefined(displayedMaxRows) ? (
-        <StyledOverflowingMultilineText
+        <div
           data-testid="tooltip"
-          isContentOverflowing={isTitleOverflowing}
-          size={size}
-          displayedMaxRows={displayedMaxRows}
+          data-content-overflowing={isTitleOverflowing ? '' : undefined}
+          className={clsx(
+            styles.overflowingMultilineText,
+            size === 'large' && styles.large,
+          )}
+          style={
+            {
+              '--displayed-max-rows': displayedMaxRows
+                ? displayedMaxRows.toString()
+                : '1',
+            } as CSSProperties
+          }
           ref={textRef}
           id={textElementId}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          {text}
-        </StyledOverflowingMultilineText>
+          {isNonEmptyString(text) ? <LinkifiedText text={text} /> : text}
+        </div>
       ) : (
-        <StyledOverflowingText
+        <div
           data-testid="tooltip"
-          isContentOverflowing={isTitleOverflowing}
-          size={size}
+          data-content-overflowing={isTitleOverflowing ? '' : undefined}
+          className={clsx(
+            styles.overflowingText,
+            size === 'large' && styles.large,
+          )}
           ref={textRef}
           id={textElementId}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          {text}
-        </StyledOverflowingText>
+          {isNonEmptyString(text) ? <LinkifiedText text={text} /> : text}
+        </div>
       )}
 
       {shouldRenderTooltip &&
@@ -162,7 +124,7 @@ export const OverflowingTextWithTooltip = ({
               isOpen={true}
             >
               {isTooltipMultiline ? (
-                <StyledPre>{tooltipText}</StyledPre>
+                <pre className={styles.pre}>{tooltipText}</pre>
               ) : (
                 tooltipText
               )}

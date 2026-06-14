@@ -4,8 +4,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useAtomValue } from 'jotai';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCheck, IconPaint } from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconCheck, IconPaint } from 'twenty-ui-deprecated/display';
+import { GRAY_SCALE_LIGHT } from 'twenty-ui-deprecated/theme';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 import { LayoutCustomizationBarMenuDropdown } from '@/layout-customization/components/LayoutCustomizationBarMenuDropdown';
 import { LayoutCustomizationBarResetConfirmationModal } from '@/layout-customization/components/LayoutCustomizationBarResetConfirmationModal';
@@ -24,11 +28,24 @@ const StyledContainer = styled.div`
   align-items: center;
   background: ${themeCssVariables.color.blue};
   box-sizing: border-box;
-  color: ${themeCssVariables.font.color.inverted};
+  color: ${GRAY_SCALE_LIGHT.gray1};
   display: flex;
   justify-content: space-between;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
   width: 100%;
+
+  button,
+  button * {
+    color: ${GRAY_SCALE_LIGHT.gray1};
+  }
+
+  button {
+    --tw-button-color: ${GRAY_SCALE_LIGHT.gray1} !important;
+  }
+
+  button[type='submit']:not(:disabled):not(:focus) {
+    border-color: color(display-p3 1 1 1 / 0.5);
+  }
 `;
 
 const StyledLeftSection = styled.div`

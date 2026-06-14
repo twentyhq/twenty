@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -47,6 +48,11 @@ registerEnumType(MessageChannelPendingGroupEmailsAction, {
 });
 
 @Entity({ name: 'messageChannel', schema: 'core' })
+@Index('IDX_MESSAGE_CHANNEL_WORKSPACE_ID_SYNC_ENABLED_SYNC_STAGE', [
+  'workspaceId',
+  'isSyncEnabled',
+  'syncStage',
+])
 export class MessageChannelEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

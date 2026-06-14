@@ -1,3 +1,5 @@
+import { PermissionFlagType } from 'twenty-shared/constants';
+
 import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { type RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
@@ -19,7 +21,11 @@ export const fromRoleEntityToRoleDto = (role: RoleEntity): RoleDTO => {
     canBeAssignedToAgents: role.canBeAssignedToAgents,
     canBeAssignedToApiKeys: role.canBeAssignedToApiKeys,
     roleTargets: role.roleTargets,
-    permissionFlags: role.permissionFlags,
+    permissionFlags: role.rolePermissionFlags?.map((rolePermissionFlag) => ({
+      id: rolePermissionFlag.id,
+      roleId: rolePermissionFlag.roleId,
+      flag: rolePermissionFlag.permissionFlag.key as PermissionFlagType,
+    })),
     objectPermissions: role.objectPermissions,
     fieldPermissions: role.fieldPermissions,
   };

@@ -8,4 +8,5 @@ export type HostToWorkerRenderContext = {
   applicationAccessToken?: string;
   apiUrl?: string;
   sdkClientUrls?: SdkClientUrls;
+  applicationVariables?: Record<string, string>;
 };

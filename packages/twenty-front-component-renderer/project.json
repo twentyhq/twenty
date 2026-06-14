@@ -22,6 +22,7 @@
     },
     "typecheck": {},
     "lint": {},
+    "test": {},
     "generate-remote-dom-elements": {
       "executor": "nx:run-commands",
       "cache": true,
@@ -29,8 +30,8 @@
       "inputs": [
         "{projectRoot}/scripts/remote-dom/**/*",
         "{projectRoot}/src/constants/**/*",
-        "{workspaceRoot}/packages/twenty-ui/src/**/index.ts",
-        "{workspaceRoot}/packages/twenty-ui/src/**/*.tsx"
+        "{workspaceRoot}/packages/twenty-ui-deprecated/src/**/index.ts",
+        "{workspaceRoot}/packages/twenty-ui-deprecated/src/**/*.tsx"
       ],
       "outputs": [
         "{projectRoot}/src/host/generated/*",
@@ -57,7 +58,7 @@
         },
         {
           "target": "build:individual",
-          "projects": "twenty-ui"
+          "projects": "twenty-ui-deprecated"
         },
         {
           "target": "build:individual",
@@ -66,10 +67,16 @@
       ],
       "inputs": [
         "{projectRoot}/scripts/front-component-stories/**/*",
-        "{projectRoot}/src/__stories__/example-sources/*",
+        "{projectRoot}/src/__stories__/html-tag/**/*",
+        "{projectRoot}/src/__stories__/host-api/**/*",
+        "{projectRoot}/src/__stories__/showcase/**/*",
+        "{projectRoot}/src/__stories__/shared/front-components/**/*",
         "{workspaceRoot}/packages/twenty-sdk/src/cli/utilities/build/**/*"
       ],
-      "outputs": ["{projectRoot}/src/__stories__/example-sources-built/*"],
+      "outputs": [
+        "{projectRoot}/src/__stories__/example-sources-built/*",
+        "{projectRoot}/src/__stories__/example-sources-built-preact/*"
+      ],
       "options": {
         "command": "tsx {projectRoot}/scripts/front-component-stories/build-source-examples.ts"
       }

@@ -13,7 +13,7 @@ O sistema de permissões do Twenty permite que você controle o acesso a três �
 
 Para criar uma nova função:
 
-1. Vá para **Configurações → Funções**
+1. Vá para **Configurações → Membros → Funções**
 2. Em **Todas as Funções**, clique em **+ Criar Função**
 3. Digite um nome para a função
 4. Na aba padrão **Permissões**, [configure as permissões](#customize-permissions)
@@ -23,7 +23,7 @@ Para criar uma nova função:
 
 Para excluir uma função:
 
-1. Vá para **Configurações → Funções**
+1. Vá para **Configurações → Membros → Funções**
 2. Clique na função que deseja remover
 3. Abra a aba de **Configurações** e clique em **Excluir Função**
 4. Clique em **Confirmar** no modal
@@ -36,13 +36,13 @@ Se uma função for excluída, qualquer membro do espaço de trabalho atribuído
 
 ### Visualizar Atribuições Atuais
 
-* Vá para **Configurações → Funções**
+* Vá para **Configurações → Membros → Funções**
 * Veja todas as funções e quantos membros estão atribuídos a cada uma
 * Veja quais membros têm quais funções
 
 ### Atribuir uma Função a um Membro
 
-1. Vá para **Configurações → Funções**
+1. Vá para **Configurações → Membros → Funções**
 2. Clique na função que deseja atribuir
 3. Abra a aba de **Atribuição**
 4. Clique em **+ Atribuir a membro**
@@ -51,7 +51,7 @@ Se uma função for excluída, qualquer membro do espaço de trabalho atribuído
 
 ### Definir Função Padrão
 
-1. Vá para **Configurações → Funções**
+1. Vá para **Configurações → Membros → Funções**
 2. Na seção **Opções**, encontre **Função Padrão**
 3. Selecione qual função novos membros devem receber automaticamente
 4. Novos membros do espaço de trabalho serão atribuídos a essa função ao ingressar
@@ -97,6 +97,22 @@ Clique em **+ Adicionar regra** e selecione um objeto para criar uma exceção.
 | ----------------------------------------- | ------------------------------------------------------------------------- |
 | Oportunidades → desativar "Ver registros" | O estagiário não consegue ver o objeto Oportunidades.                     |
 | Pessoas → ativar "Editar registros"       | O estagiário pode editar registros de Pessoas (mas não de outros objetos) |
+
+### Permissões em Nível de Linha
+
+<Note>
+As permissões em nível de linha são um **recurso Premium** disponível no plano **Organization** (Cloud e Self-Hosted).
+</Note>
+
+As permissões em nível de linha permitem restringir quais registros individuais uma função pode ver ou editar, com base em critérios dinâmicos. Diferente das permissões de objeto (que se aplicam a todo um tipo de objeto), as permissões em nível de linha avaliam cada registro de forma independente.
+
+**Casos de uso de exemplo:**
+
+* Representantes de vendas só podem ver suas próprias oportunidades
+* Gerentes podem ver todos os registros em sua região
+* Agentes de suporte só podem visualizar tickets atribuídos a eles
+
+Para configurar permissões em nível de linha, abra uma função, navegue até a guia **Objects** e use a seção **Row-Level** para definir condições de filtro para um objeto específico.
 
 ### Permissões de Campos
 
@@ -168,7 +184,7 @@ Além dos membros do espaço de trabalho, funções também podem ser atribuída
 
 ### Atribuir uma função a uma chave de API
 
-1. Vá para **Configurações → Funções**
+1. Vá para **Configurações → Membros → Funções**
 2. Clique na função que deseja atribuir
 3. Abra a aba de **Atribuição**
 4. Em **Chaves de API**, clique em **+ Atribuir à chave de API**
@@ -183,7 +199,7 @@ Chaves de API sem uma função atribuída usam permissões padrão. Para maior s
 
 ### Atribuir uma função a um agente de IA
 
-1. Vá para **Configurações → Funções**
+1. Vá para **Configurações → Membros → Funções**
 2. Clique na função que deseja atribuir
 3. Abra a aba de **Atribuição**
 4. Em **Agentes de IA**, clique em **+ Atribuir ao agente de IA**

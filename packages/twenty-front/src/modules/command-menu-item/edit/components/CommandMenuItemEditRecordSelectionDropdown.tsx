@@ -16,9 +16,12 @@ import {
   IconChevronDown,
   IconSquareCheck,
   IconSquareX,
-} from 'twenty-ui/display';
-import { MenuItemSelect } from 'twenty-ui/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { MenuItemSelect } from 'twenty-ui-deprecated/navigation';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const DROPDOWN_ID = 'command-menu-edit-record-selection-dropdown';
 
@@ -83,7 +86,7 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
   const TriggerIcon = isNoneSelected ? IconSquareX : IconSquareCheck;
   const triggerLabel = isNoneSelected
     ? t`No record selected`
-    : t`Records selected`;
+    : t`Record(s) selected`;
 
   return (
     <Dropdown
@@ -108,6 +111,7 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
         </StyledClickableArea>
       }
       dropdownPlacement="bottom-start"
+      dropdownOffset={{ y: 4 }}
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Medium}>
           <StyledDropdownMenuContainer
@@ -122,7 +126,7 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
               />
               <MenuItemSelect
                 LeftIcon={IconSquareCheck}
-                text={t`Records selected`}
+                text={t`Record(s) selected`}
                 selected={!isNoneSelected}
                 onClick={() => handleSelectMode('selection')}
               />

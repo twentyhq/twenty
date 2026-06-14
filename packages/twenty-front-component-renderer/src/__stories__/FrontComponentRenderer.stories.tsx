@@ -1,9 +1,8 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
-import { FrontComponentRenderer } from '../host/components/FrontComponentRenderer';
-
-import { getBuiltStoryComponentPathForRender } from './utils/getBuiltStoryComponentPathForRender';
+import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
+import { getBuiltStoryComponentPathForRender } from '@/__stories__/utils/getBuiltStoryComponentPathForRender';
 
 const errorHandler = fn();
 
@@ -20,6 +19,7 @@ const meta: Meta<typeof FrontComponentRenderer> = {
       frontComponentId: 'storybook-test',
       userId: null,
       recordId: null,
+      selectedRecordIds: [],
     },
   },
   beforeEach: () => {
@@ -122,6 +122,7 @@ export const SdkContext: Story = {
       frontComponentId: 'sdk-context-test',
       userId: 'test-user-abc-123',
       recordId: null,
+      selectedRecordIds: [],
     },
   },
   play: async ({ canvasElement }) => {

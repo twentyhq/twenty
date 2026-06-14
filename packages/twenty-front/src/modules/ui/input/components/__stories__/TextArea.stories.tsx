@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { TextArea, type TextAreaProps } from '@/ui/input/components/TextArea';
 import { expect, userEvent, within } from 'storybook/test';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 
 type RenderProps = TextAreaProps;
 
@@ -22,7 +22,7 @@ const meta: Meta<typeof TextArea> = {
   title: 'UI/Input/TextArea',
   component: TextArea,
   decorators: [ComponentDecorator],
-  args: { minRows: 4, placeholder: 'Lorem Ipsum' },
+  args: { minRows: 4, maxRows: 5, placeholder: 'Lorem Ipsum' },
   render: Render,
 };
 
@@ -53,5 +53,22 @@ export const WithLabel: Story = {
     const input = await canvas.findByRole('textbox');
 
     expect(input).toHaveFocus();
+  },
+};
+
+export const Transparent: Story = {
+  args: {
+    variant: 'transparent',
+    value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+  },
+};
+
+export const TransparentUnbounded: Story = {
+  args: {
+    variant: 'transparent',
+    maxRows: undefined,
+    value: Array.from({ length: 10 }, (_, index) => `Line ${index + 1}`).join(
+      '\n',
+    ),
   },
 };

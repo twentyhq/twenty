@@ -15,7 +15,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { MenuItemSelect } from 'twenty-ui-deprecated/navigation';
 import {
   type FieldsConfiguration,
   type WidgetConfiguration,
@@ -67,8 +67,7 @@ const isChartConfiguration = (
     isWidgetConfigurationOfType(configuration, 'BarChartConfiguration') ||
     isWidgetConfigurationOfType(configuration, 'LineChartConfiguration') ||
     isWidgetConfigurationOfType(configuration, 'PieChartConfiguration') ||
-    isWidgetConfigurationOfType(configuration, 'AggregateChartConfiguration') ||
-    isWidgetConfigurationOfType(configuration, 'GaugeChartConfiguration')
+    isWidgetConfigurationOfType(configuration, 'AggregateChartConfiguration')
   );
 };
 

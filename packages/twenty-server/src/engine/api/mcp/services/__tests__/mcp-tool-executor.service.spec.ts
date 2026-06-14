@@ -1,15 +1,21 @@
 import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
+import { MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-closed-world-read-only-tool-annotations.const';
 import {
   MCP_PROGRESS_NOTIFICATION_METHOD,
   TOOL_CALL_PROGRESS_TOKEN_PREFIX,
 } from 'src/engine/api/mcp/constants/mcp-progress-notification.const';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
 
 describe('McpToolExecutorService', () => {
   let service: McpToolExecutorService;
 
   beforeEach(() => {
-    service = new McpToolExecutorService();
+    const metricsService = {
+      incrementCounterBy: jest.fn().mockResolvedValue(undefined),
+    } as unknown as MetricsService;
+
+    service = new McpToolExecutorService(metricsService);
   });
 
   describe('handleToolsListing', () => {
@@ -24,6 +30,7 @@ describe('McpToolExecutorService', () => {
               required: ['query'],
             },
           },
+          annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
         },
       } as any;
 
@@ -42,6 +49,7 @@ describe('McpToolExecutorService', () => {
                 properties: { query: { type: 'string' } },
                 required: ['query'],
               },
+              annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
             },
           ],
         },

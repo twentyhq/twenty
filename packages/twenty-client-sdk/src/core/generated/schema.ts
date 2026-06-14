@@ -1,2 +1,2 @@
-// Stub — overwritten by `twenty build` or `twenty dev`
+// Stub — overwritten by `twenty dev:build` or `twenty dev`
 export type CoreSchema = {};

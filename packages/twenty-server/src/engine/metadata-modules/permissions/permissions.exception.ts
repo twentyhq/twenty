@@ -48,6 +48,8 @@ export enum PermissionsExceptionCode {
   COMPOSITE_TYPE_NOT_FOUND = 'COMPOSITE_TYPE_NOT_FOUND',
   ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET = 'ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET',
   ROLE_CANNOT_BE_ASSIGNED_TO_USERS = 'ROLE_CANNOT_BE_ASSIGNED_TO_USERS',
+  ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS = 'ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS',
+  ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS = 'ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS',
   APPLICATION_ROLE_NOT_FOUND = 'APPLICATION_ROLE_NOT_FOUND',
   ROLE_BELONGS_TO_ANOTHER_APPLICATION = 'ROLE_BELONGS_TO_ANOTHER_APPLICATION',
 }
@@ -142,6 +144,10 @@ const getPermissionsExceptionUserFriendlyMessage = (
       return msg`Role must have at least one target.`;
     case PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_USERS:
       return msg`This role cannot be assigned to users.`;
+    case PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS:
+      return msg`This role cannot be assigned to API keys.`;
+    case PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS:
+      return msg`This role cannot be assigned to agents.`;
     case PermissionsExceptionCode.APPLICATION_ROLE_NOT_FOUND:
       return msg`No role assigned to the application.`;
     case PermissionsExceptionCode.ROLE_BELONGS_TO_ANOTHER_APPLICATION:

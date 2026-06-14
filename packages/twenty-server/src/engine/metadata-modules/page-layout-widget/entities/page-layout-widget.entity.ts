@@ -44,9 +44,9 @@ export type PageLayoutWidgetOverrides = {
 )
 @Index('IDX_PAGE_LAYOUT_WIDGET_OBJECT_METADATA_ID', ['objectMetadataId'])
 export class PageLayoutWidgetEntity<
-    TWidgetConfigurationType extends
-      WidgetConfigurationType = WidgetConfigurationType,
-  >
+  TWidgetConfigurationType extends WidgetConfigurationType =
+    WidgetConfigurationType,
+>
   extends OverridableEntity<PageLayoutWidgetOverrides>
   implements Required<PageLayoutWidgetEntity>
 {

@@ -1,24 +1,7 @@
-import { styled } from '@linaria/react';
+import { clsx } from 'clsx';
 import React from 'react';
 
-import { themeCssVariables } from '@ui/theme-constants';
-
-const StyledButtonLink = styled.a`
-  align-items: center;
-  color: ${themeCssVariables.font.color.light};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${themeCssVariables.spacing[1]};
-  padding: 0 ${themeCssVariables.spacing[1]};
-  text-decoration: none;
-  white-space: nowrap;
-
-  &:hover {
-    color: ${themeCssVariables.font.color.tertiary};
-    cursor: pointer;
-  }
-`;
+import styles from './ClickToActionLink.module.scss';
 
 type ClickToActionLinkProps = React.ComponentProps<'a'> & {
   className?: string;
@@ -26,14 +9,14 @@ type ClickToActionLinkProps = React.ComponentProps<'a'> & {
 
 export const ClickToActionLink = (props: ClickToActionLinkProps) => {
   return (
-    <StyledButtonLink
-      className={props.className}
+    <a
+      className={clsx(styles.root, props.className)}
       href={props.href}
       onClick={props.onClick}
       target={props.target}
       rel={props.rel}
     >
       {props.children}
-    </StyledButtonLink>
+    </a>
   );
 };

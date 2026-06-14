@@ -1,4 +1,3 @@
-import { styled } from '@linaria/react';
 import {
   Chip,
   ChipAccent,
@@ -11,6 +10,8 @@ import { type TriggerEventType, useMouseDownNavigation } from '@ui/utilities';
 import { type MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
 
+import styles from './LinkChip.module.scss';
+
 export type LinkChipProps = Omit<
   ChipProps,
   'onClick' | 'disabled' | 'clickable'
@@ -21,16 +22,6 @@ export type LinkChipProps = Omit<
   triggerEvent?: TriggerEventType;
   target?: '_blank' | '_self';
 };
-
-const StyledLinkContainer = styled.span`
-  display: inline-flex;
-  min-width: 0;
-  vertical-align: middle;
-
-  & > a {
-    text-decoration: none;
-  }
-`;
 
 export const LinkChip = ({
   to,
@@ -58,7 +49,7 @@ export const LinkChip = ({
     });
 
   return (
-    <StyledLinkContainer>
+    <span className={styles.linkContainer}>
       <Link
         to={to}
         onClick={(event) => {
@@ -86,6 +77,6 @@ export const LinkChip = ({
           emptyLabel={emptyLabel}
         />
       </Link>
-    </StyledLinkContainer>
+    </span>
   );
 };

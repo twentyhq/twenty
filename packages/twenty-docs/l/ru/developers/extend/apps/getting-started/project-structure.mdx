@@ -1,0 +1,40 @@
+---
+title: Структура проекта
+description: Что находится внутри сгенерированного приложения Twenty — файлы, папки и назначение каждого из них.
+icon: folder-tree
+---
+
+Новое приложение, сгенерированное с помощью `npx create-twenty-app`, выглядит так:
+
+```text filename="my-twenty-app/"
+my-twenty-app/
+  package.json
+  src/
+    application-config.ts                   # Required — your app's entry point
+    default-role.ts                         # Permissions for logic functions
+    constants/
+      universal-identifiers.ts              # Auto-generated UUIDs and metadata
+    __tests__/
+      setup-test.ts
+      app-install.integration-test.ts
+  .github/workflows/ci.yml                  # GitHub Actions
+  public/                                   # Static assets
+  vitest.config.ts                          # Test runner config
+  tsconfig.json, tsconfig.spec.json
+  .nvmrc, .yarnrc.yml, .oxlintrc.json
+  README.md, LLMS.md
+```
+
+## Ключевые файлы
+
+| Файл / Папка                             | Назначение                                                                           |
+| ---------------------------------------- | ------------------------------------------------------------------------------------ |
+| `src/application-config.ts`              | **Обязательно.** Основной файл конфигурации для вашего приложения.                   |
+| `src/default-role.ts`                    | Роль по умолчанию, контролирующая, к чему имеют доступ ваши логические функции.      |
+| `src/constants/universal-identifiers.ts` | Автоматически генерируемые UUID и метаданные (отображаемое имя, описание).           |
+| `src/__tests__/`                         | Интеграционные тесты (настройка + пример теста).                                     |
+| `public/`                                | Статические ресурсы (изображения, шрифты), обслуживаемые вместе с вашим приложением. |
+
+<Note>
+**Организация файлов — на ваше усмотрение.** Приведенные выше папки являются соглашениями — SDK обнаруживает сущности с помощью AST-анализа вызовов `export default defineEntity(...)` независимо от того, где расположен файл.
+</Note>

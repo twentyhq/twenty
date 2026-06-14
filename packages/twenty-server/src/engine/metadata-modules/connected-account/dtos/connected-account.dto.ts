@@ -10,7 +10,7 @@ import {
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ImapSmtpCaldavConnectionParametersDTO } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
+import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 
 @ObjectType('ConnectedAccountDTO')
 export class ConnectedAccountDTO {
@@ -45,6 +45,13 @@ export class ConnectedAccountDTO {
   @Field(() => Date, { nullable: true })
   authFailedAt: Date | null;
 
+  // Set when the account is frozen after its owner is removed from the
+  // workspace: synced data is kept but the account is read-only.
+  @IsDateString()
+  @IsOptional()
+  @Field(() => Date, { nullable: true })
+  archivedAt: Date | null;
+
   @IsArray()
   @IsOptional()
   @Field(() => [String], { nullable: true })
@@ -55,9 +62,8 @@ export class ConnectedAccountDTO {
   @Field(() => [String], { nullable: true })
   scopes: string[] | null;
 
-  @IsOptional()
-  @Field(() => ImapSmtpCaldavConnectionParametersDTO, { nullable: true })
-  connectionParameters: ImapSmtpCaldavConnectionParametersDTO | null;
+  @HideField()
+  connectionParameters: ImapSmtpCaldavParams | null;
 
   @IsDateString()
   @IsOptional()
@@ -71,6 +77,28 @@ export class ConnectedAccountDTO {
   @IsNotEmpty()
   @Field(() => UUIDScalarType)
   userWorkspaceId: string;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  connectionProviderId: string | null;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  applicationId: string | null;
+
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  name: string | null;
+
+  // 'user' = private to the connecting user.
+  // 'workspace' = shared with all members.
+  // Named `visibility` to disambiguate from the OAuth `scopes` array.
+  @IsString()
+  @Field(() => String)
+  visibility: string;
 
   @HideField()
   workspaceId: string;

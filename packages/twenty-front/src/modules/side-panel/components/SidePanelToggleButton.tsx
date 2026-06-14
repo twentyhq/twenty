@@ -1,6 +1,8 @@
 import { SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE } from '@/side-panel/constants/SidePanelTopBarHeightMobile';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderSidePanelButtonClickOutsideId';
@@ -9,10 +11,17 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { motion } from 'framer-motion';
 import { useContext } from 'react';
-import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/display';
-import { AnimatedButton } from 'twenty-ui/input';
-import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  AppTooltip,
+  TooltipDelay,
+  TooltipPosition,
+} from 'twenty-ui-deprecated/display';
+import { AnimatedButton } from 'twenty-ui-deprecated/input';
+import { useIsMobile } from 'twenty-ui-deprecated/utilities';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledButtonWrapper = styled.div<{ alignToTop: boolean }>`
   align-items: ${({ alignToTop }) => (alignToTop ? 'center' : 'initial')};
@@ -123,11 +132,22 @@ const AnimatedIcon = ({
 export const SidePanelToggleButton = () => {
   const { toggleSidePanelMenu } = useSidePanelMenu();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
+  const sidePanelPage = useAtomStateValue(sidePanelPageState);
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
 
   const isMobile = useIsMobile();
+
+  const isCommandMenuOpened =
+    isSidePanelOpened &&
+    [
+      SidePanelPages.CommandMenuDisplay,
+      SidePanelPages.CommandMenuEdit,
+      SidePanelPages.SearchRecords,
+    ].includes(sidePanelPage);
+
+  const showAsOpen = isSidePanelOpened && !isCommandMenuOpened;
 
   const alignWithSidePanelTopBar =
     isMobile && isLayoutCustomizationModeEnabled && isSidePanelOpened;
@@ -141,17 +161,17 @@ export const SidePanelToggleButton = () => {
     <StyledButtonWrapper alignToTop={alignWithSidePanelTopBar}>
       <div id="toggle-side-panel-button">
         <AnimatedButton
-          animatedSvg={<AnimatedIcon isSidePanelOpened={isSidePanelOpened} />}
+          animatedSvg={<AnimatedIcon isSidePanelOpened={showAsOpen} />}
           dataClickOutsideId={PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID}
           dataTestId="page-header-side-panel-button"
           size={isMobile ? 'medium' : 'small'}
+          square
           variant="secondary"
           accent="default"
-          hotkeys={[getOsControlSymbol(), 'K']}
           ariaLabel={ariaLabel}
           onClick={toggleSidePanelMenu}
           animate={{
-            rotate: isSidePanelOpened ? 90 : 0,
+            rotate: showAsOpen ? 90 : 0,
           }}
           transition={{
             duration: theme.animation.duration.normal,

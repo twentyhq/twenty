@@ -5,19 +5,24 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
-import { getImageAbsoluteURI, getSettingsPath } from 'twenty-shared/utils';
+import {
+  getImageAbsoluteURI,
+  getSettingsPath,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { SettingsAdminServerAdminAccess } from '@/settings/admin-panel/components/SettingsAdminServerAdminAccess';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
 import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
 import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpersonate';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -26,12 +31,13 @@ import {
   IconCalendar,
   IconEyeShare,
   IconId,
+  IconLock,
   IconMail,
   IconUser,
-} from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { Section } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   type UserLookupAdminPanelQuery,
@@ -64,9 +70,10 @@ export const SettingsAdminUserDetail = () => {
   const { handleImpersonate, impersonatingUserId } = useHandleImpersonate();
 
   const effectiveTabId = activeTabId || userLookupResult?.workspaces?.[0]?.id;
+  const user = userLookupResult?.user;
 
-  const userFullName = `${userLookupResult?.user.firstName || ''} ${
-    userLookupResult?.user.lastName || ''
+  const userFullName = `${user?.firstName || ''} ${
+    user?.lastName || ''
   }`.trim();
 
   const activeWorkspace = userLookupResult?.workspaces.find(
@@ -86,6 +93,8 @@ export const SettingsAdminUserDetail = () => {
         }) ?? '',
     })) ?? [];
 
+  const displayName = userFullName || userId || '';
+
   const userInfoItems = [
     {
       Icon: IconUser,
@@ -95,30 +104,42 @@ export const SettingsAdminUserDetail = () => {
     {
       Icon: IconMail,
       label: t`Email`,
-      value: userLookupResult?.user.email,
+      value: user?.email,
     },
     {
       Icon: IconId,
       label: t`ID`,
-      value: userLookupResult?.user.id,
+      value: user?.id,
     },
     {
       Icon: IconCalendar,
       label: t`Created`,
-      value: userLookupResult?.user.createdAt
-        ? new Date(userLookupResult.user.createdAt).toLocaleDateString()
+      value: user?.createdAt
+        ? new Date(user.createdAt).toLocaleDateString()
         : '',
     },
+    ...(currentUser?.canAccessFullAdminPanel && isDefined(userId)
+      ? [
+          {
+            Icon: IconLock,
+            label: t`Server access`,
+            value: (
+              <SettingsAdminServerAdminAccess
+                userId={userId}
+                userLabel={displayName}
+              />
+            ),
+          },
+        ]
+      : []),
   ];
-
-  const displayName = userFullName || userId || '';
 
   if (isLoading) {
     return <SettingsSkeletonLoader />;
   }
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       links={[
         {
           children: t`Other`,
@@ -159,34 +180,34 @@ export const SettingsAdminUserDetail = () => {
               <SettingsAdminWorkspaceContent
                 activeWorkspace={activeWorkspace}
               />
-              {currentUser?.canImpersonate && activeWorkspace && (
-                <StyledButtonContainer>
-                  <Button
-                    Icon={IconEyeShare}
-                    variant="primary"
-                    accent="default"
-                    title={
-                      activeWorkspace.allowImpersonation === false
-                        ? t`Impersonation is disabled for this workspace`
-                        : t`Impersonate`
-                    }
-                    onClick={() =>
-                      handleImpersonate(
-                        userLookupResult.user.id,
-                        activeWorkspace.id,
-                      )
-                    }
-                    disabled={
-                      impersonatingUserId !== null ||
-                      activeWorkspace.allowImpersonation === false
-                    }
-                  />
-                </StyledButtonContainer>
-              )}
+              {currentUser?.canImpersonate &&
+                activeWorkspace &&
+                isDefined(user) &&
+                user.id !== currentUser.id && (
+                  <StyledButtonContainer>
+                    <Button
+                      Icon={IconEyeShare}
+                      variant="primary"
+                      accent="default"
+                      title={
+                        activeWorkspace.allowImpersonation === false
+                          ? t`Impersonation is disabled for this workspace`
+                          : t`Impersonate`
+                      }
+                      onClick={() =>
+                        handleImpersonate(user.id, activeWorkspace.id)
+                      }
+                      disabled={
+                        impersonatingUserId !== null ||
+                        activeWorkspace.allowImpersonation === false
+                      }
+                    />
+                  </StyledButtonContainer>
+                )}
             </Section>
           </>
         )}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

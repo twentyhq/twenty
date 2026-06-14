@@ -7,6 +7,7 @@ import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
@@ -22,6 +23,7 @@ export class MarketplaceQueryService {
 
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -46,9 +48,14 @@ export class MarketplaceQueryService {
       return [];
     }
 
-    return registrations.map((registration) =>
-      this.toMarketplaceAppDTO(registration),
-    );
+    const configuredStatuses =
+      await this.applicationRegistrationVariableService.isConfiguredBatch(
+        registrations.map((registration) => registration.id),
+      );
+
+    return registrations
+      .filter((registration) => configuredStatuses.get(registration.id) ?? true)
+      .map((registration) => this.toMarketplaceAppDTO(registration));
   }
 
   async findMarketplaceAppDetail(
@@ -87,8 +94,7 @@ export class MarketplaceQueryService {
       id: registration.universalIdentifier,
       name: app?.displayName ?? registration.name,
       description: app?.description ?? '',
-      icon: app?.icon ?? 'IconApps',
-      author: app?.author ?? 'Unknown',
+      author: `${app?.author ?? 'Unknown'}`,
       category: app?.category ?? '',
       logo: app?.logoUrl ?? undefined,
       sourcePackage: registration.sourcePackage ?? undefined,

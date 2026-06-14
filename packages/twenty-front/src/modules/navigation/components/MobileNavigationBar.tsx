@@ -5,10 +5,12 @@ import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePat
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -18,8 +20,9 @@ import {
   IconList,
   IconMessageCirclePlus,
   IconSearch,
-} from 'twenty-ui/display';
-import { NavigationBar } from 'twenty-ui/navigation';
+} from 'twenty-ui-deprecated/display';
+import { NavigationBar } from 'twenty-ui-deprecated/navigation';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 type NavigationBarItemName = 'main' | 'search' | 'newAiChat';
 
@@ -27,6 +30,7 @@ export const MobileNavigationBar = () => {
   const navigate = useNavigate();
   const { defaultHomePagePath } = useDefaultHomePagePath();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
+  const navigationMemorizedUrl = useAtomStateValue(navigationMemorizedUrlState);
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
   const isSettingsPage = useIsSettingsPage();
@@ -37,6 +41,7 @@ export const MobileNavigationBar = () => {
   const { switchToNewChat } = useSwitchToNewAiChat();
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
+  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
   const setContextStoreCurrentObjectMetadataItemId = useSetAtomComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -65,7 +70,11 @@ export const MobileNavigationBar = () => {
         setCurrentMobileNavigationDrawer('main');
 
         if (isSettingsPage) {
-          navigate(defaultHomePagePath);
+          navigate(
+            navigationMemorizedUrl !== '/'
+              ? navigationMemorizedUrl
+              : defaultHomePagePath,
+          );
         }
       },
     },
@@ -89,15 +98,19 @@ export const MobileNavigationBar = () => {
         openRecordsSearchPage();
       },
     },
-    {
-      name: 'newAiChat' as const,
-      Icon: IconMessageCirclePlus,
-      onClick: () => {
-        setIsNavigationDrawerExpanded(false);
-        closeSidePanelMenu();
-        switchToNewChat();
-      },
-    },
+    ...(hasAiPermission
+      ? [
+          {
+            name: 'newAiChat' as const,
+            Icon: IconMessageCirclePlus,
+            onClick: () => {
+              setIsNavigationDrawerExpanded(false);
+              closeSidePanelMenu();
+              switchToNewChat();
+            },
+          },
+        ]
+      : []),
   ];
 
   return <NavigationBar activeItemName={activeItemName} items={items} />;

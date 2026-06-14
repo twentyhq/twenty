@@ -28,5 +28,11 @@ export const SidePanelRecordTableFieldsSubPage = () => {
     return null;
   }
 
-  return <RecordTableSettingsFieldVisibility viewId={viewId} />;
+  return (
+    <RecordTableSettingsFieldVisibility
+      viewId={viewId}
+      widgetId={widgetInEditMode.id}
+      pageLayoutId={pageLayoutId}
+    />
+  );
 };

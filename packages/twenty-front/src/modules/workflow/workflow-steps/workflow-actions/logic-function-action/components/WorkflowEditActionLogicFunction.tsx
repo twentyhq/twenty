@@ -27,8 +27,8 @@ import {
   Callout,
   IconPlayerPlay,
   IconSettingsAutomation,
-} from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 
 const INPUT_TAB_ID = 'input';
@@ -81,17 +81,14 @@ export const WorkflowEditActionLogicFunction = ({
   );
 
   const functionInput = useMemo(() => {
-    const toolInputSchema = logicFunction?.toolInputSchema;
+    const inputSchema =
+      logicFunction?.workflowActionTriggerSettings?.inputSchema;
 
-    if (!isDefined(toolInputSchema)) {
+    if (!isDefined(inputSchema)) {
       return action.settings.input.logicFunctionInput ?? {};
     }
 
-    const schemaArray = Array.isArray(toolInputSchema)
-      ? toolInputSchema
-      : [toolInputSchema];
-
-    const defaultInput = getFunctionInputFromInputSchema(schemaArray)[0];
+    const defaultInput = getFunctionInputFromInputSchema(inputSchema)[0];
 
     if (!isObject(defaultInput)) {
       return action.settings.input.logicFunctionInput ?? {};
@@ -102,7 +99,7 @@ export const WorkflowEditActionLogicFunction = ({
       oldInput: action.settings.input.logicFunctionInput ?? {},
     });
   }, [
-    logicFunction?.toolInputSchema,
+    logicFunction?.workflowActionTriggerSettings?.inputSchema,
     action.settings.input.logicFunctionInput,
   ]);
 
@@ -216,6 +213,9 @@ export const WorkflowEditActionLogicFunction = ({
           <>
             <WorkflowEditActionCodeFields
               functionInput={testInput}
+              inputSchema={
+                logicFunction?.workflowActionTriggerSettings?.inputSchema
+              }
               onInputChange={handleTestInputChange}
               readonly={actionOptions.readonly}
             />
@@ -240,6 +240,9 @@ export const WorkflowEditActionLogicFunction = ({
             {hasInputFields ? (
               <WorkflowEditActionCodeFields
                 functionInput={functionInput}
+                inputSchema={
+                  logicFunction?.workflowActionTriggerSettings?.inputSchema
+                }
                 readonly={actionOptions.readonly}
                 onInputChange={handleInputChange}
                 VariablePicker={WorkflowVariablePicker}

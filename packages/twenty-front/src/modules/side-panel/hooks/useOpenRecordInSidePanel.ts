@@ -7,7 +7,6 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
-import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
@@ -26,7 +25,7 @@ import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui-deprecated/display';
 import { v4 } from 'uuid';
 
 export const useOpenRecordInSidePanel = () => {
@@ -132,17 +131,6 @@ export const useOpenRecordInSidePanel = () => {
         }),
         store.get(
           contextStoreCurrentViewIdComponentState.atomFamily({
-            instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-          }),
-        ),
-      );
-
-      store.set(
-        contextStoreIsPageInEditModeComponentState.atomFamily({
-          instanceId: pageComponentInstanceId,
-        }),
-        store.get(
-          contextStoreIsPageInEditModeComponentState.atomFamily({
             instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
           }),
         ),

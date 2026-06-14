@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { MessageFolderImportPolicy } from 'twenty-shared/types';
 
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 type SettingsAccountsMessageFolderIconProps = {
   className?: string;
@@ -9,43 +9,58 @@ type SettingsAccountsMessageFolderIconProps = {
 };
 
 const StyledCardMedia = styled.div`
-  align-items: stretch;
-  border: 2px solid ${themeCssVariables.border.color.medium};
+  align-items: center;
+  background-color: ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.light};
+  box-sizing: border-box;
   display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing['0.5']};
-  height: ${themeCssVariables.spacing[8]};
+  height: 40px;
   justify-content: center;
-  padding: ${themeCssVariables.spacing['0.5']};
-  width: ${themeCssVariables.spacing[6]};
+  padding: 2px;
+  width: 32px;
+`;
+
+const StyledCardMediaContent = styled.div`
+  align-items: stretch;
+  background-color: ${themeCssVariables.background.secondary};
+  border-radius: 2px;
+  box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  height: 100%;
+  justify-content: center;
+  min-width: 0;
+  padding: 2px;
 `;
 
 const StyledFolderRow = styled.div`
   align-items: center;
   display: flex;
+  flex: 1 0 0;
   gap: 2px;
+  min-height: 0;
 `;
 
 const StyledFolderIcon = styled.div<{ isDisabled?: boolean }>`
   background-color: ${({ isDisabled }) =>
     isDisabled
-      ? themeCssVariables.background.quaternary
-      : themeCssVariables.accent.accent4060};
+      ? themeCssVariables.border.color.medium
+      : themeCssVariables.accent.accent7};
   border-radius: 1px;
-  height: 5px;
-  width: 5px;
+  height: 100%;
+  width: 4.8px;
 `;
 
 const StyledFolderLabel = styled.div<{ isDisabled?: boolean }>`
   background-color: ${({ isDisabled }) =>
     isDisabled
-      ? themeCssVariables.background.quaternary
-      : themeCssVariables.accent.accent4060};
+      ? themeCssVariables.border.color.medium
+      : themeCssVariables.accent.accent7};
   border-radius: 1px;
   flex: 1;
-  height: 5px;
+  height: 100%;
 `;
 
 export const SettingsAccountsMessageFolderIcon = ({
@@ -57,26 +72,28 @@ export const SettingsAccountsMessageFolderIcon = ({
 
   return (
     <StyledCardMedia className={className}>
-      <StyledFolderRow>
-        <StyledFolderIcon isDisabled={isSelectedFolders} />
-        <StyledFolderLabel isDisabled={isSelectedFolders} />
-      </StyledFolderRow>
-      <StyledFolderRow>
-        <StyledFolderIcon isDisabled={isSelectedFolders} />
-        <StyledFolderLabel isDisabled={isSelectedFolders} />
-      </StyledFolderRow>
-      <StyledFolderRow>
-        <StyledFolderIcon />
-        <StyledFolderLabel />
-      </StyledFolderRow>
-      <StyledFolderRow>
-        <StyledFolderIcon isDisabled={isSelectedFolders} />
-        <StyledFolderLabel isDisabled={isSelectedFolders} />
-      </StyledFolderRow>
-      <StyledFolderRow>
-        <StyledFolderIcon />
-        <StyledFolderLabel />
-      </StyledFolderRow>
+      <StyledCardMediaContent>
+        <StyledFolderRow>
+          <StyledFolderIcon isDisabled={isSelectedFolders} />
+          <StyledFolderLabel isDisabled={isSelectedFolders} />
+        </StyledFolderRow>
+        <StyledFolderRow>
+          <StyledFolderIcon isDisabled={isSelectedFolders} />
+          <StyledFolderLabel isDisabled={isSelectedFolders} />
+        </StyledFolderRow>
+        <StyledFolderRow>
+          <StyledFolderIcon />
+          <StyledFolderLabel />
+        </StyledFolderRow>
+        <StyledFolderRow>
+          <StyledFolderIcon isDisabled={isSelectedFolders} />
+          <StyledFolderLabel isDisabled={isSelectedFolders} />
+        </StyledFolderRow>
+        <StyledFolderRow>
+          <StyledFolderIcon />
+          <StyledFolderLabel />
+        </StyledFolderRow>
+      </StyledCardMediaContent>
     </StyledCardMedia>
   );
 };

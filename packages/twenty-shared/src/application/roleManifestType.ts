@@ -1,4 +1,3 @@
-import { type PermissionFlagType } from '@/constants';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 
 export type ObjectPermissionManifest = SyncableEntityOptions & {
@@ -16,10 +15,6 @@ export type FieldPermissionManifest = SyncableEntityOptions & {
   canUpdateFieldValue?: boolean;
 };
 
-export type PermissionFlagManifest = SyncableEntityOptions & {
-  flag: PermissionFlagType;
-};
-
 export type RoleManifest = SyncableEntityOptions & {
   label: string;
   description?: string;
@@ -35,5 +30,5 @@ export type RoleManifest = SyncableEntityOptions & {
   canBeAssignedToApiKeys?: boolean;
   objectPermissions?: ObjectPermissionManifest[];
   fieldPermissions?: FieldPermissionManifest[];
-  permissionFlags?: PermissionFlagManifest[];
+  permissionFlagUniversalIdentifiers?: string[];
 };

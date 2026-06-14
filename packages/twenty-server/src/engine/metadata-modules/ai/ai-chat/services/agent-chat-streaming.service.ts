@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { generateId } from 'ai';
 import {
@@ -8,7 +7,7 @@ import {
   isExtendedFileUIPart,
 } from 'twenty-shared/ai';
 import { FileFolder } from 'twenty-shared/types';
-import { In, Like, type Repository } from 'typeorm';
+import { In, Like } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
@@ -21,18 +20,20 @@ import {
   AgentMessageStatus,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartsToUIMessageParts';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
-
-export type StreamAgentChatOptions = {
+import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+type StreamAgentChatOptions = {
   threadId: string;
   userWorkspaceId: string;
   workspace: WorkspaceEntity;
@@ -40,7 +41,7 @@ export type StreamAgentChatOptions = {
   browsingContext: BrowsingContextType | null;
   modelId?: string;
   messageId?: string;
-  fileIds?: string[];
+  fileAttachments?: AiChatFileAttachment[];
 };
 
 @Injectable()
@@ -48,10 +49,10 @@ export class AgentChatStreamingService {
   private readonly logger = new Logger(AgentChatStreamingService.name);
 
   constructor(
-    @InjectRepository(AgentChatThreadEntity)
-    private readonly threadRepository: Repository<AgentChatThreadEntity>,
-    @InjectRepository(FileEntity)
-    private readonly fileRepository: Repository<FileEntity>,
+    @InjectWorkspaceScopedRepository(AgentChatThreadEntity)
+    private readonly threadRepository: WorkspaceScopedRepository<AgentChatThreadEntity>,
+    @InjectWorkspaceScopedRepository(FileEntity)
+    private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     @InjectMessageQueue(MessageQueue.aiStreamQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly agentChatService: AgentChatService,
@@ -67,9 +68,9 @@ export class AgentChatStreamingService {
     browsingContext,
     modelId,
     messageId,
-    fileIds,
+    fileAttachments,
   }: StreamAgentChatOptions): Promise<{ streamId: string; messageId: string }> {
-    const thread = await this.threadRepository.findOne({
+    const thread = await this.threadRepository.findOne(workspace.id, {
       where: {
         id: threadId,
         userWorkspaceId,
@@ -83,7 +84,10 @@ export class AgentChatStreamingService {
       );
     }
 
-    const fileParts = await this.buildFilePartsFromIds(fileIds, workspace.id);
+    const fileParts = await this.buildFilePartsFromAttachments(
+      fileAttachments,
+      workspace.id,
+    );
 
     const userMessageParts: ExtendedUIMessagePart[] = [
       { type: 'text' as const, text },
@@ -97,6 +101,12 @@ export class AgentChatStreamingService {
         role: AgentMessageRole.USER,
         parts: userMessageParts,
       },
+      workspaceId: workspace.id,
+    });
+
+    await this.agentChatService.notifyThreadActivityUpdated({
+      threadId,
+      userWorkspaceId,
       workspaceId: workspace.id,
     });
 
@@ -126,9 +136,11 @@ export class AgentChatStreamingService {
       },
     );
 
-    await this.threadRepository.update(thread.id, {
-      activeStreamId: streamId,
-    });
+    await this.threadRepository.update(
+      workspace.id,
+      { id: thread.id },
+      { activeStreamId: streamId },
+    );
 
     return { streamId, messageId: savedUserMessage.id };
   }
@@ -139,8 +151,19 @@ export class AgentChatStreamingService {
     workspaceId: string,
     hasTitle: boolean,
   ): Promise<void> {
-    const queuedMessages =
-      await this.agentChatService.getQueuedMessages(threadId);
+    const threadStatus = await this.threadRepository.findOne(workspaceId, {
+      where: { id: threadId },
+      select: ['id', 'deletedAt'],
+    });
+
+    if (!threadStatus || threadStatus.deletedAt) {
+      return;
+    }
+
+    const queuedMessages = await this.agentChatService.getQueuedMessages({
+      threadId,
+      workspaceId,
+    });
 
     const nextQueued = queuedMessages[0];
 
@@ -163,16 +186,19 @@ export class AgentChatStreamingService {
       );
 
     if (messageText === '' && fileParts.length === 0) {
-      await this.agentChatService.deleteQueuedMessage(nextQueued.id);
+      await this.agentChatService.deleteQueuedMessage({
+        messageId: nextQueued.id,
+        workspaceId,
+      });
 
       return;
     }
 
-    const turnId = await this.agentChatService.promoteQueuedMessage(
-      nextQueued.id,
+    const turnId = await this.agentChatService.promoteQueuedMessage({
+      messageId: nextQueued.id,
       threadId,
       workspaceId,
-    );
+    });
 
     if (turnId === null) {
       return;
@@ -192,7 +218,9 @@ export class AgentChatStreamingService {
 
     const [uiMessages, thread] = await Promise.all([
       this.loadMessagesFromDB(threadId, userWorkspaceId, workspaceId),
-      this.threadRepository.findOneByOrFail({ id: threadId }),
+      this.threadRepository.findOneOrFail(workspaceId, {
+        where: { id: threadId },
+      }),
     ]);
 
     const streamId = generateId();
@@ -221,9 +249,11 @@ export class AgentChatStreamingService {
       },
     );
 
-    await this.threadRepository.update(threadId, {
-      activeStreamId: streamId,
-    });
+    await this.threadRepository.update(
+      workspaceId,
+      { id: threadId },
+      { activeStreamId: streamId },
+    );
   }
 
   private async loadMessagesFromDB(
@@ -231,60 +261,76 @@ export class AgentChatStreamingService {
     userWorkspaceId: string,
     workspaceId: string,
   ) {
-    const allMessages = await this.agentChatService.getMessagesForThread(
+    const allMessages = await this.agentChatService.getMessagesForThread({
       threadId,
       userWorkspaceId,
+      workspaceId,
+    });
+
+    const filteredMessages = allMessages.filter(
+      (message) => message.status !== AgentMessageStatus.QUEUED,
     );
 
-    return allMessages
-      .filter((message) => message.status !== AgentMessageStatus.QUEUED)
-      .map((message) => ({
+    return Promise.all(
+      filteredMessages.map(async (message) => ({
         id: message.id,
         role: message.role as 'user' | 'assistant' | 'system',
-        parts: mapDBPartsToUIMessageParts(message.parts ?? []).map((part) => {
-          if (isExtendedFileUIPart(part as Record<string, unknown>)) {
-            const filePart = part as ExtendedFileUIPart;
+        parts: await Promise.all(
+          mapDBPartsToUIMessageParts(message.parts ?? []).map(async (part) => {
+            if (isExtendedFileUIPart(part as Record<string, unknown>)) {
+              const filePart = part as ExtendedFileUIPart;
 
-            return {
-              ...filePart,
-              url: this.fileUrlService.signFileByIdUrl({
-                fileId: filePart.fileId,
-                workspaceId,
-                fileFolder: FileFolder.AgentChat,
-              }),
-            } as ExtendedFileUIPart;
-          }
+              return {
+                ...filePart,
+                url: await this.fileUrlService.signFileByIdUrl({
+                  fileId: filePart.fileId,
+                  workspaceId,
+                  fileFolder: FileFolder.AgentChat,
+                }),
+              } as ExtendedFileUIPart;
+            }
 
-          return part;
-        }),
+            return part;
+          }),
+        ),
         createdAt: message.createdAt,
-      }));
+      })),
+    );
   }
 
-  private async buildFilePartsFromIds(
-    fileIds: string[] | undefined,
+  private async buildFilePartsFromAttachments(
+    fileAttachments: AiChatFileAttachment[] | undefined,
     workspaceId: string,
   ): Promise<ExtendedUIMessagePart[]> {
-    if (!fileIds || fileIds.length === 0) {
+    if (!fileAttachments || fileAttachments.length === 0) {
       return [];
     }
 
-    const files = await this.fileRepository.find({
+    const fileIds = fileAttachments.map((attachment) => attachment.id);
+
+    const validFiles = await this.fileRepository.find(workspaceId, {
       where: {
         id: In(fileIds),
-        workspaceId,
-        path: Like(`%/${FileFolder.AgentChat}/%`),
+        path: Like(`${FileFolder.AgentChat}/%`),
       },
     });
 
-    return files.map(
-      (file): ExtendedFileUIPart => ({
-        type: 'file' as const,
-        mediaType: file.mimeType,
-        filename: file.path.split('/').pop() ?? file.path,
-        url: '',
-        fileId: file.id,
-      }),
-    );
+    const validFileIds = new Set(validFiles.map((file) => file.id));
+
+    return fileAttachments
+      .filter((attachment) => validFileIds.has(attachment.id))
+      .map((attachment): ExtendedFileUIPart => {
+        const file = validFiles.find(
+          (validFile) => validFile.id === attachment.id,
+        );
+
+        return {
+          type: 'file' as const,
+          mediaType: file?.mimeType ?? 'application/octet-stream',
+          filename: attachment.filename,
+          url: '',
+          fileId: attachment.id,
+        };
+      });
   }
 }

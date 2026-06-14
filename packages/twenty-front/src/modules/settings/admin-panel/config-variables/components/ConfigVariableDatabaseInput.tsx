@@ -9,9 +9,9 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ConfigVariableValue } from 'twenty-shared/types';
 import { CustomError } from 'twenty-shared/utils';
-import { CodeEditor } from 'twenty-ui/input';
-import { MenuItemMultiSelect } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { CodeEditor } from 'twenty-ui-deprecated/input';
+import { MenuItemMultiSelect } from 'twenty-ui-deprecated/navigation';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { ConfigVariableType } from '~/generated-admin/graphql';
 import { type ConfigVariableOptions } from '@/settings/admin-panel/config-variables/types/ConfigVariableOptions';
 
@@ -156,6 +156,7 @@ export const ConfigVariableDatabaseInput = ({
             <TextArea
               textAreaId={jsonArrayTextAreaId}
               label={label}
+              maxRows={5}
               value={
                 Array.isArray(value)
                   ? JSON.stringify(value)

@@ -15,9 +15,11 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permission/object-permission.module';
 import { RoleTargetModule } from 'src/engine/metadata-modules/role-target/role-target.module';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
@@ -62,6 +64,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     DevSeederPermissionsService,
     DevSeederDataService,
     TimelineActivitySeederService,
+    provideWorkspaceScopedRepository(RoleEntity),
   ],
 })
 export class DevSeederModule {}

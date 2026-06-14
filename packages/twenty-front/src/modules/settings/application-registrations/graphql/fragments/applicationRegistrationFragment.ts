@@ -5,6 +5,7 @@ export const APPLICATION_REGISTRATION_FRAGMENT = gql`
     id
     universalIdentifier
     name
+    logoUrl
     oAuthClientId
     oAuthRedirectUris
     oAuthScopes
@@ -13,6 +14,8 @@ export const APPLICATION_REGISTRATION_FRAGMENT = gql`
     latestAvailableVersion
     isListed
     isFeatured
+    isPreInstalled
+    isConfigured
     ownerWorkspaceId
     createdAt
     updatedAt

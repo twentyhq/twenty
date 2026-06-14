@@ -23,7 +23,7 @@ import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingCon
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 import {
   ViewOpenRecordIn,
   ViewType,
@@ -138,6 +138,7 @@ const createPageLayoutWithWidget = (
   name: 'Mock Page Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectMetadataId,
+  universalIdentifier: '20202020-0000-0000-0000-000000000001',
   tabs: [
     {
       __typename: 'PageLayoutTab' as const,
@@ -203,6 +204,7 @@ const createView = (
   viewSorts: [],
   visibility: ViewVisibility.WORKSPACE,
   createdByUserWorkspaceId: null,
+  isActive: true,
   ...overrides,
 });
 

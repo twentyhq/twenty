@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Filter input validation - RELATION Gql filter input - failure RELATION field type - should fail with filter : {"manyToOneRelationField":{"eq":"6dd71a46-68fe-4420-82b3-0d5b00ad2642"}} 1`] = `"Cannot filter by relation field "manyToOneRelationField": use "manyToOneRelationFieldId" instead"`;
+exports[`Filter input validation - RELATION Gql filter input - failure RELATION field type - should fail with filter : {"manyToOneRelationField":{"eq":"6dd71a46-68fe-4420-82b3-0d5b00ad2642"}} 1`] = `"Object apiInputValidationTargetTestObject1 doesn't have any "eq" field."`;
 
 exports[`Filter input validation - RELATION Gql filter input - failure RELATION field type - should fail with filter : {"manyToOneRelationFieldId":{"eq":"invalid-uuid"}} 1`] = `"Invalid UUID value 'invalid-uuid' for field "manyToOneRelationFieldId""`;
 
@@ -10,7 +10,7 @@ exports[`Filter input validation - RELATION Gql filter input - failure RELATION 
 
 exports[`Filter input validation - RELATION Rest filter input - failure RELATION field type - should fail with filter : "manyToOneRelationField[eq]:\\"6dd71a46-68fe-4420-82b3-0d5b00ad2642\\"" 1`] = `
 [
-  "Cannot filter by relation field "manyToOneRelationField": use "manyToOneRelationFieldId" instead",
+  "Object apiInputValidationTargetTestObject1 doesn't have any "eq" field.",
 ]
 `;
 

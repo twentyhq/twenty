@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { type MessageOutboundDriver } from 'src/modules/messaging/message-outbound-manager/interfaces/message-outbound-driver.interface';
 
-import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
+import { MicrosoftOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client.provider';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { toMicrosoftRecipients } from 'src/modules/messaging/message-import-manager/utils/to-microsoft-recipients.util';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
@@ -13,17 +13,16 @@ import { isDefined } from 'twenty-shared/utils';
 @Injectable()
 export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
   constructor(
-    private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
+    private readonly microsoftOAuth2ClientProvider: MicrosoftOAuth2ClientProvider,
   ) {}
 
   async sendMessage(
     sendMessageInput: SendMessageInput,
     connectedAccount: ConnectedAccountEntity,
   ): Promise<SendMessageResult> {
-    const microsoftClient =
-      await this.oAuth2ClientManagerService.getMicrosoftOAuth2Client(
-        connectedAccount,
-      );
+    const microsoftClient = await this.microsoftOAuth2ClientProvider.getClient(
+      connectedAccount.id,
+    );
 
     const {
       id: messageId,
@@ -44,10 +43,9 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
     sendMessageInput: SendMessageInput,
     connectedAccount: ConnectedAccountEntity,
   ): Promise<void> {
-    const microsoftClient =
-      await this.oAuth2ClientManagerService.getMicrosoftOAuth2Client(
-        connectedAccount,
-      );
+    const microsoftClient = await this.microsoftOAuth2ClientProvider.getClient(
+      connectedAccount.id,
+    );
 
     await this.createDraftMessage(microsoftClient, sendMessageInput);
   }

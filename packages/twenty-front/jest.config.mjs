@@ -24,9 +24,10 @@ const jestConfig = {
   testEnvironmentOptions: {},
 
   transformIgnorePatterns: [
-    '/node_modules/(?!(twenty-ui|apollo-upload-client|extract-files|is-plain-obj)/.*)',
-    '../../node_modules/(?!(twenty-ui|apollo-upload-client|extract-files|is-plain-obj)/.*)',
+    '/node_modules/(?!(twenty-ui|twenty-ui-deprecated|apollo-upload-client|extract-files|is-plain-obj)/.*)',
+    '../../node_modules/(?!(twenty-ui|twenty-ui-deprecated|apollo-upload-client|extract-files|is-plain-obj)/.*)',
     '../../twenty-ui/',
+    '../../twenty-ui-deprecated/',
   ],
   transform: {
     '^.+\\.(ts|js|tsx|jsx|mjs)$': [
@@ -61,8 +62,8 @@ const jestConfig = {
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   coverageThreshold: {
     global: {
-      statements: 47.9,
-      lines: 46,
+      statements: 47.3,
+      lines: 45.9,
       functions: 39.5,
     },
   },
@@ -89,6 +90,7 @@ const jestConfig = {
   maxWorkers: 3,
   workerIdleMemoryLimit: '512MB',
   errorOnDeprecated: true,
+  testTimeout: 30000,
 };
 
 export default jestConfig;

@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { filterMorphRelationDuplicateFields } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
@@ -21,6 +22,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
+import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { resolveMorphRelationsFromFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-morph-relations-from-flat-field-metadata.util';
 import { resolveRelationFromFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-relation-from-flat-field-metadata.util';
@@ -36,6 +38,7 @@ import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-me
 import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { getTwentyStandardApplicationIdOrThrow } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id-or-throw.util';
 
 export type RelationMetadataLoaderPayload = {
   workspaceId: string;
@@ -111,11 +114,21 @@ export type ViewFilterGroupsByViewIdLoaderPayload = {
   viewId: string;
 };
 
+export type IsConfiguredLoaderPayload = {
+  applicationRegistrationId: string;
+};
+
+export type IsCustomLoaderPayload = {
+  workspaceId: string;
+  applicationId: string;
+};
+
 @Injectable()
 export class DataloaderService {
   constructor(
     private readonly i18nService: I18nService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
   ) {}
 
   createLoaders(): IDataloaders {
@@ -135,6 +148,8 @@ export class DataloaderService {
     const viewGroupsByViewIdLoader = this.createViewGroupsByViewIdLoader();
     const viewFilterGroupsByViewIdLoader =
       this.createViewFilterGroupsByViewIdLoader();
+    const isConfiguredLoader = this.createIsConfiguredLoader();
+    const isCustomLoader = this.createIsCustomLoader();
 
     return {
       relationLoader,
@@ -150,6 +165,8 @@ export class DataloaderService {
       viewSortsByViewIdLoader,
       viewGroupsByViewIdLoader,
       viewFilterGroupsByViewIdLoader,
+      isConfiguredLoader,
+      isCustomLoader,
     };
   }
 
@@ -320,7 +337,8 @@ export class DataloaderService {
                         label: flatFieldMetadata.label,
                         description: flatFieldMetadata.description ?? undefined,
                         icon: flatFieldMetadata.icon ?? undefined,
-                        isCustom: flatFieldMetadata.isCustom,
+                        isCustom:
+                          !belongsToTwentyStandardApp(flatFieldMetadata),
                         standardOverrides:
                           flatFieldMetadata.standardOverrides ?? undefined,
                       },
@@ -403,19 +421,20 @@ export class DataloaderService {
             return [];
           }
 
-          return indexMetadataEntity.flatIndexFieldMetadatas.map(
-            (indexFieldMetadata) => {
+          return [...indexMetadataEntity.flatIndexFieldMetadatas]
+            .sort((a, b) => a.order - b.order)
+            .map((indexFieldMetadata) => {
               return {
                 id: indexFieldMetadata.id,
                 fieldMetadataId: indexFieldMetadata.fieldMetadataId,
+                subFieldName: indexFieldMetadata.subFieldName ?? undefined,
                 order: indexFieldMetadata.order,
                 createdAt: new Date(indexFieldMetadata.createdAt),
                 updatedAt: new Date(indexFieldMetadata.updatedAt),
                 indexMetadataId,
                 workspaceId,
               };
-            },
-          );
+            });
         },
       );
     });
@@ -732,5 +751,45 @@ export class DataloaderService {
           .map(fromFlatViewFilterGroupToViewFilterGroupDto);
       });
     });
+  }
+
+  private createIsConfiguredLoader() {
+    return new DataLoader<IsConfiguredLoaderPayload, boolean>(
+      async (params: IsConfiguredLoaderPayload[]) => {
+        const ids = params.map((p) => p.applicationRegistrationId);
+
+        const resultMap =
+          await this.applicationRegistrationVariableService.isConfiguredBatch(
+            ids,
+          );
+
+        return params.map(
+          (p) => resultMap.get(p.applicationRegistrationId) ?? true,
+        );
+      },
+    );
+  }
+
+  private createIsCustomLoader() {
+    return new DataLoader<IsCustomLoaderPayload, boolean>(
+      async (dataLoaderParams: IsCustomLoaderPayload[]) => {
+        const workspaceId = dataLoaderParams[0].workspaceId;
+
+        const { flatApplicationMaps } =
+          await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            {
+              workspaceId,
+              flatMapsKeys: ['flatApplicationMaps'],
+            },
+          );
+
+        const twentyStandardApplicationId =
+          getTwentyStandardApplicationIdOrThrow(flatApplicationMaps);
+
+        return dataLoaderParams.map(
+          ({ applicationId }) => applicationId !== twentyStandardApplicationId,
+        );
+      },
+    );
   }
 }

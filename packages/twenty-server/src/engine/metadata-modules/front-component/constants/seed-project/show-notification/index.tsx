@@ -1,5 +1,8 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { enqueueSnackbar, unmountFrontComponent } from 'twenty-sdk/front-component';
+import {
+  enqueueSnackbar,
+  unmountFrontComponent,
+} from 'twenty-sdk/front-component';
 import { useEffect } from 'react';
 
 const ShowNotification = () => {

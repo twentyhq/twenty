@@ -13,6 +13,7 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
   name: 'Default Note Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectMetadataId: null,
+  universalIdentifier: '00000000-0000-0000-0000-000000000000',
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   deletedAt: null,
@@ -47,6 +48,11 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
             rowSpan: 12,
             columnSpan: 12,
           },
+          position: {
+            __typename: 'PageLayoutWidgetVerticalListPosition',
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index: 0,
+          },
           // Note: Configuration is null by default. For testing purposes,
           // use useTempNoteFieldsConfiguration() hook at runtime to get
           // a configuration with actual field metadata IDs from the backend.
@@ -74,6 +80,11 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 6,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetVerticalListPosition',
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index: 1,
           },
           configuration: {
             __typename: 'FieldsConfiguration',
@@ -123,6 +134,11 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
             rowSpan: 6,
             columnSpan: 12,
           },
+          position: {
+            __typename: 'PageLayoutWidgetVerticalListPosition',
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index: 0,
+          },
           configuration: {
             __typename: 'FieldsConfiguration',
             configurationType: WidgetConfigurationType.FIELDS,
@@ -171,6 +187,10 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
             rowSpan: 6,
             columnSpan: 12,
           },
+          position: {
+            __typename: 'PageLayoutWidgetCanvasPosition',
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
+          },
           configuration: {
             __typename: 'FieldsConfiguration',
             configurationType: WidgetConfigurationType.FIELDS,
@@ -211,6 +231,10 @@ export const DEFAULT_NOTE_RECORD_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 6,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetCanvasPosition',
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
           },
           configuration: {
             __typename: 'FieldsConfiguration',

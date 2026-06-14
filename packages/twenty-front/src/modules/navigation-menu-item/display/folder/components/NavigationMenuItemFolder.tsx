@@ -1,8 +1,15 @@
 import { Suspense, lazy, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, IconChevronRight, useIcons } from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { useIsMobile } from 'twenty-ui/utilities';
+import {
+  IconChevronDown,
+  IconChevronRight,
+  useIcons,
+} from 'twenty-ui-deprecated/display';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
+import { useIsMobile } from 'twenty-ui-deprecated/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
@@ -14,9 +21,9 @@ import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-it
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 
 const LazyNavigationMenuItemFolderDnd = lazy(() =>
-  import(
-    '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd'
-  ).then((module) => ({ default: module.NavigationMenuItemFolderDnd })),
+  import('@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd').then(
+    (module) => ({ default: module.NavigationMenuItemFolderDnd }),
+  ),
 );
 
 type NavigationMenuItemFolderProps = Pick<
@@ -116,7 +123,7 @@ const NavigationMenuItemFolderReadOnlyContent = ({
   const { theme } = useContext(ThemeContext);
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
 
-  const { isOpen, handleToggle, hasActiveChild } =
+  const { isOpen, handleToggle, hasActiveChild, activeChildIndex } =
     useNavigationMenuItemFolderOpenState({
       folderId,
       folderChildrenNavigationMenuItems: navigationMenuItems,
@@ -165,6 +172,7 @@ const NavigationMenuItemFolderReadOnlyContent = ({
           navigationMenuItem={navigationMenuItem}
           index={index}
           arrayLength={navigationMenuItems.length}
+          selectedIndex={activeChildIndex}
           isDragging={false}
         />
       ))}

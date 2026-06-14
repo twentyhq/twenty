@@ -6,7 +6,7 @@ import {
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 
 const handleActivateMockFunction = fn();
 const handleDeleteMockFunction = fn();

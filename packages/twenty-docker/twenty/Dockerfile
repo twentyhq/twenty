@@ -1,8 +1,27 @@
 # ===========================================================================
-# Shared build stages (used by both targets)
+# Dependency stages
 # ===========================================================================
 
-FROM node:24-alpine AS common-deps
+FROM node:24.16.0-alpine3.23@sha256:2bdb65ed1dab192432bc31c95f94155ca5ad7fc1392fb7eb7526ab682fa5bf14 AS front-deps
+
+WORKDIR /app
+
+COPY ./package.json ./yarn.lock ./.yarnrc.yml ./tsconfig.base.json ./nx.json /app/
+COPY ./.yarn/releases /app/.yarn/releases
+COPY ./.yarn/patches /app/.yarn/patches
+
+COPY ./packages/twenty-ui/package.json /app/packages/twenty-ui/
+COPY ./packages/twenty-ui-deprecated/package.json /app/packages/twenty-ui-deprecated/
+COPY ./packages/twenty-shared/package.json /app/packages/twenty-shared/
+COPY ./packages/twenty-front/package.json /app/packages/twenty-front/
+COPY ./packages/twenty-front-component-renderer/package.json /app/packages/twenty-front-component-renderer/
+COPY ./packages/twenty-sdk/package.json /app/packages/twenty-sdk/
+COPY ./packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
+
+RUN yarn workspaces focus twenty twenty-front twenty-front-component-renderer twenty-ui twenty-ui-deprecated twenty-shared twenty-sdk twenty-client-sdk && yarn cache clean && npx nx reset
+
+
+FROM node:24.16.0-alpine3.23@sha256:2bdb65ed1dab192432bc31c95f94155ca5ad7fc1392fb7eb7526ab682fa5bf14 AS server-deps
 
 WORKDIR /app
 
@@ -13,22 +32,16 @@ COPY ./.yarn/patches /app/.yarn/patches
 COPY ./packages/twenty-emails/package.json /app/packages/twenty-emails/
 COPY ./packages/twenty-server/package.json /app/packages/twenty-server/
 COPY ./packages/twenty-server/patches /app/packages/twenty-server/patches
-COPY ./packages/twenty-ui/package.json /app/packages/twenty-ui/
 COPY ./packages/twenty-shared/package.json /app/packages/twenty-shared/
-COPY ./packages/twenty-front/package.json /app/packages/twenty-front/
-COPY ./packages/twenty-front-component-renderer/package.json /app/packages/twenty-front-component-renderer/
-COPY ./packages/twenty-sdk/package.json /app/packages/twenty-sdk/
 COPY ./packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 
-RUN yarn && yarn cache clean && npx nx reset
+RUN yarn workspaces focus twenty twenty-server twenty-emails twenty-shared twenty-client-sdk && yarn cache clean && npx nx reset
 
 
-FROM common-deps AS twenty-server-build
+FROM server-deps AS twenty-server-build
 
 COPY ./packages/twenty-emails /app/packages/twenty-emails
 COPY ./packages/twenty-shared /app/packages/twenty-shared
-COPY ./packages/twenty-ui /app/packages/twenty-ui
-COPY ./packages/twenty-sdk /app/packages/twenty-sdk
 COPY ./packages/twenty-client-sdk /app/packages/twenty-client-sdk
 COPY ./packages/twenty-server /app/packages/twenty-server
 
@@ -44,16 +57,15 @@ RUN npx nx run twenty-server:build
 RUN find /app/packages/twenty-server/dist -name '*.d.ts' -delete \
  && rm -rf /app/packages/twenty-server/dist/packages/twenty-server/test
 
-RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-sdk twenty-client-sdk twenty-server
+RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-client-sdk twenty-server
 
 
-FROM common-deps AS twenty-front-build
-
-ARG REACT_APP_SERVER_BASE_URL
+FROM front-deps AS twenty-front-build
 
 COPY ./packages/twenty-front /app/packages/twenty-front
 COPY ./packages/twenty-front-component-renderer /app/packages/twenty-front-component-renderer
 COPY ./packages/twenty-ui /app/packages/twenty-ui
+COPY ./packages/twenty-ui-deprecated /app/packages/twenty-ui-deprecated
 COPY ./packages/twenty-shared /app/packages/twenty-shared
 COPY ./packages/twenty-sdk /app/packages/twenty-sdk
 COPY ./packages/twenty-client-sdk /app/packages/twenty-client-sdk
@@ -70,20 +82,26 @@ RUN if [ -d /app/packages/twenty-front/build ]; then \
 
 
 # ===========================================================================
-# Target: twenty (production)
-#   docker build --target twenty -f packages/twenty-docker/twenty/Dockerfile .
+# Target: twenty-server (server only, no frontend)
+#   docker build --target twenty-server -f packages/twenty-docker/twenty/Dockerfile .
 # ===========================================================================
 
-FROM node:24-alpine AS twenty
+FROM node:24.16.0-alpine3.23@sha256:2bdb65ed1dab192432bc31c95f94155ca5ad7fc1392fb7eb7526ab682fa5bf14 AS twenty-server
 
-RUN apk add --no-cache curl jq postgresql-client
+# Force the patched Alpine OpenSSL libs (base bakes 3.5.6-r0; repo ships
+# 3.5.7-r0). Node bundles its own OpenSSL, but psql/curl link these system
+# libs, so the upgrade hardens runtime TLS and clears the scanner.
+RUN apk add --no-cache \
+    'curl>=8.19.0-r0' \
+    'nghttp2-libs>=1.69.0-r0' \
+    'libcrypto3>=3.5.7-r0' \
+    'libssl3>=3.5.7-r0' \
+    'postgresql18-client>=18.4-r0' \
+    jq
 
 COPY ./packages/twenty-docker/twenty/entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 WORKDIR /app/packages/twenty-server
-
-ARG REACT_APP_SERVER_BASE_URL
-ENV REACT_APP_SERVER_BASE_URL=$REACT_APP_SERVER_BASE_URL
 
 ARG APP_VERSION
 ENV APP_VERSION=$APP_VERSION
@@ -104,17 +122,29 @@ COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-shared/package
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-shared/dist /app/packages/twenty-shared/dist
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-emails/package.json /app/packages/twenty-emails/
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-emails/dist /app/packages/twenty-emails/dist
-COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-sdk/package.json /app/packages/twenty-sdk/
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-client-sdk/dist /app/packages/twenty-client-sdk/dist
-COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-ui/package.json /app/packages/twenty-ui/
-COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-front/package.json /app/packages/twenty-front/
-
-# Frontend static build
-COPY --chown=1000 --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
 
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
-LABEL org.opencontainers.image.description="Production Twenty image with backend and frontend."
+LABEL org.opencontainers.image.description="Twenty server image (no frontend)."
+
+# Remove unused, unpatchable components the scanner flags (none are executed at
+# runtime, and none can be fixed by upgrading our deps or Node):
+#  - the bundled npm CLI: the app uses yarn via corepack and never invokes npm,
+#    and npm's bundled ip-address has no patched release;
+#  - example/ apps vendored inside dependencies, e.g. passport-microsoft's
+#    example/login ships a package-lock.json for an old Express demo
+#    (body-parser, ejs, express, ...) that is never installed or run.
+#  - the Node dev headers: only node-gyp needs them and native addons are
+#    compiled in the build stages; their vendored openssl/opensslv.h is what
+#    scanners fingerprint whenever OpenSSL patches ahead of Node releases.
+# TODO(2026-06-17): the node binary statically links OpenSSL 3.5.6 (June 9
+# OpenSSL advisory fixed in 3.5.7). Bump the pinned node:24-alpine base once
+# the announced June 17, 2026 Node security release ships a 24.x linking
+# OpenSSL >= 3.5.7 — check deps/openssl/openssl/VERSION.dat on the release tag.
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx \
+      /usr/local/include/node && \
+    find /app/node_modules -type d -name example -prune -exec rm -rf {} +
 
 RUN mkdir -p /app/.local-storage /app/packages/twenty-server/.local-storage && \
     chown 1000:1000 /app/.local-storage /app/packages/twenty-server/.local-storage
@@ -126,8 +156,32 @@ ENTRYPOINT ["/app/entrypoint.sh"]
 
 
 # ===========================================================================
-# Target: twenty-aws
-# docker build --target twenty-aws -f packages/twenty-docker/twenty/Dockerfile .
+# Target: twenty-server-aws (server only + aws-cli, no frontend)
+#   docker build --target twenty-server-aws -f packages/twenty-docker/twenty/Dockerfile .
+# ===========================================================================
+
+FROM twenty-server AS twenty-server-aws
+
+USER root
+RUN apk add --no-cache aws-cli
+USER 1000
+
+
+# ===========================================================================
+# Target: twenty (server + frontend)
+#   docker build --target twenty -f packages/twenty-docker/twenty/Dockerfile .
+# ===========================================================================
+
+FROM twenty-server AS twenty
+
+COPY --chown=1000 --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
+
+LABEL org.opencontainers.image.description="Twenty image with backend and frontend."
+
+
+# ===========================================================================
+# Target: twenty-aws (server + frontend + aws-cli)
+#   docker build --target twenty-aws -f packages/twenty-docker/twenty/Dockerfile .
 # ===========================================================================
 
 FROM twenty AS twenty-aws
@@ -162,7 +216,7 @@ RUN S6_ARCH=$(cat /tmp/s6arch) && \
     echo "$NOARCH_SUM  s6-overlay-noarch.tar.xz" | sha256sum -c - && \
     echo "$ARCH_SUM  s6-overlay-arch.tar.xz" | sha256sum -c -
 
-FROM node:24-alpine AS twenty-app-dev
+FROM node:24.16.0-alpine3.23@sha256:2bdb65ed1dab192432bc31c95f94155ca5ad7fc1392fb7eb7526ab682fa5bf14 AS twenty-app-dev
 
 # s6-overlay
 COPY --from=s6-fetch /tmp/s6-overlay-noarch.tar.xz /tmp/
@@ -171,9 +225,13 @@ RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz \
  && tar -C / -Jxpf /tmp/s6-overlay-arch.tar.xz \
  && rm /tmp/s6-overlay-*.tar.xz
 
+# See twenty-server above: patched Alpine OpenSSL libs (psql/curl/redis link
+# these system libs; Node bundles its own).
 RUN apk add --no-cache \
-    postgresql16 postgresql16-contrib \
+    postgresql18 postgresql18-contrib \
     redis \
+    'libcrypto3>=3.5.7-r0' \
+    'libssl3>=3.5.7-r0' \
     curl jq su-exec
 
 # Workspace root config
@@ -192,17 +250,16 @@ COPY --from=twenty-server-build /app/packages/twenty-shared/package.json /app/pa
 COPY --from=twenty-server-build /app/packages/twenty-shared/dist /app/packages/twenty-shared/dist
 COPY --from=twenty-server-build /app/packages/twenty-emails/package.json /app/packages/twenty-emails/
 COPY --from=twenty-server-build /app/packages/twenty-emails/dist /app/packages/twenty-emails/dist
-COPY --from=twenty-server-build /app/packages/twenty-sdk/package.json /app/packages/twenty-sdk/
 COPY --from=twenty-server-build /app/packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 COPY --from=twenty-server-build /app/packages/twenty-client-sdk/dist /app/packages/twenty-client-sdk/dist
-COPY --from=twenty-server-build /app/packages/twenty-ui/package.json /app/packages/twenty-ui/
-COPY --from=twenty-server-build /app/packages/twenty-front/package.json /app/packages/twenty-front/
 
 # Frontend static build
 COPY --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
 
-# Source maps are not needed in the dev image (no Sentry)
-RUN find /app/packages/twenty-server/dist -name '*.js.map' -delete
+# Source maps are not needed in the dev image (no Sentry). Node dev headers are
+# dropped for the same scanner-hygiene reasons as in twenty-server above.
+RUN find /app/packages/twenty-server/dist -name '*.js.map' -delete \
+ && rm -rf /usr/local/include/node
 
 # s6 service definitions
 COPY packages/twenty-docker/twenty-app-dev/rootfs/ /
@@ -211,7 +268,6 @@ RUN mkdir -p /data/postgres /data/redis /app/packages/twenty-server/.local-stora
  && chown -R postgres:postgres /data/postgres \
  && chown 1000:1000 /data/redis /app/packages/twenty-server/.local-storage
 
-ARG REACT_APP_SERVER_BASE_URL
 ARG APP_VERSION=0.0.0
 
 ENV S6_KEEP_ENV=1
@@ -220,7 +276,6 @@ ENV PG_DATABASE_URL=postgres://twenty:twenty@localhost:5432/default \
     REDIS_URL=redis://localhost:6379 \
     STORAGE_TYPE=local \
     APP_SECRET=twenty-app-dev-secret-not-for-production \
-    REACT_APP_SERVER_BASE_URL=$REACT_APP_SERVER_BASE_URL \
     APP_VERSION=$APP_VERSION \
     NODE_ENV=development \
     NODE_PORT=2020 \

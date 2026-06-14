@@ -2,6 +2,7 @@ import { RestPlayground } from '@/settings/playground/components/RestPlayground'
 import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
 import { FullScreenContainer } from '@/ui/layout/fullscreen/components/FullScreenContainer';
 import { Trans } from '@lingui/react/macro';
+import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -17,13 +18,17 @@ export const SettingsRestPlayground = () => {
     navigateSettings(SettingsPath.ApiWebhooks);
   };
 
+  const handleError = useCallback(() => {
+    navigateSettings(SettingsPath.ApiWebhooks);
+  }, [navigateSettings]);
+
   return (
     <FullScreenContainer
       exitFullScreen={handleExitFullScreen}
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
           children: <Trans>APIs & Webhooks</Trans>,
@@ -32,10 +37,7 @@ export const SettingsRestPlayground = () => {
         { children: <Trans>REST</Trans> },
       ]}
     >
-      <RestPlayground
-        schema={schema}
-        onError={() => navigateSettings(SettingsPath.ApiWebhooks)}
-      />
+      <RestPlayground schema={schema} onError={handleError} />
     </FullScreenContainer>
   );
 };

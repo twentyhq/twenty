@@ -8,14 +8,6 @@ export type GetMessageListsArgs = {
     MessageChannelEntity,
     'syncCursor' | 'id' | 'messageFolderImportPolicy'
   >;
-  connectedAccount: Pick<
-    ConnectedAccountEntity,
-    | 'provider'
-    | 'accessToken'
-    | 'refreshToken'
-    | 'id'
-    | 'handle'
-    | 'connectionParameters'
-  >;
+  connectedAccount: Pick<ConnectedAccountEntity, 'id' | 'provider' | 'handle'>;
   messageFolders: MessageFolder[];
 };

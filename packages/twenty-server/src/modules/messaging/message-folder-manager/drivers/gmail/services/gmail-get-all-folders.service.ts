@@ -8,7 +8,7 @@ import {
 } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
+import { GoogleOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client.provider';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GmailFoldersErrorHandlerService } from 'src/modules/messaging/message-folder-manager/drivers/gmail/services/gmail-folders-error-handler.service';
 import { extractGmailFolderName } from 'src/modules/messaging/message-folder-manager/drivers/gmail/utils/extract-gmail-folder-name.util';
@@ -21,22 +21,21 @@ export class GmailGetAllFoldersService implements MessageFolderDriver {
   private readonly logger = new Logger(GmailGetAllFoldersService.name);
 
   constructor(
-    private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
+    private readonly googleOAuth2ClientProvider: GoogleOAuth2ClientProvider,
     private readonly gmailFoldersErrorHandlerService: GmailFoldersErrorHandlerService,
   ) {}
 
   async getAllMessageFolders(
     connectedAccount: Pick<
       ConnectedAccountEntity,
-      'provider' | 'refreshToken' | 'accessToken' | 'id' | 'handle'
+      'provider' | 'id' | 'handle'
     >,
     messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,
   ): Promise<DiscoveredMessageFolder[]> {
     try {
-      const oAuth2Client =
-        await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
-          connectedAccount,
-        );
+      const oAuth2Client = await this.googleOAuth2ClientProvider.getClient(
+        connectedAccount.id,
+      );
 
       const gmailClient = google.gmail({
         version: 'v1',

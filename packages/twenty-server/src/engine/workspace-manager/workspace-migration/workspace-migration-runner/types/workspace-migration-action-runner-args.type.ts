@@ -19,8 +19,8 @@ export type WorkspaceMigrationActionRunnerArgs<
 
 export type WorkspaceMigrationActionRunnerContext<
   TFlatAction extends AllFlatWorkspaceMigrationAction,
-  TUniversalAction extends
-    AllUniversalWorkspaceMigrationAction = AllUniversalWorkspaceMigrationAction,
+  TUniversalAction extends AllUniversalWorkspaceMigrationAction =
+    AllUniversalWorkspaceMigrationAction,
 > = WorkspaceMigrationActionRunnerArgs<TUniversalAction> & {
   flatAction: TFlatAction;
 };

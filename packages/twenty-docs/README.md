@@ -72,11 +72,11 @@ Your content here...
 - `package.json` - Package dependencies and scripts (`docs:generate`, `docs:generate-navigation-template`, …).
 - `project.json` - Nx workspace configuration
 
-## 📦 Building
+## 📦 Validation
 
 ```bash
-# Build the documentation
-npx nx run twenty-docs:build
+# Validate the documentation build
+npx nx run twenty-docs:validate
 ```
 
 ## 🔗 Links
@@ -97,4 +97,3 @@ To contribute to the documentation:
 ## 📄 License
 
 This documentation is part of the Twenty project and is licensed under [AGPL-3.0](../../LICENSE).
-

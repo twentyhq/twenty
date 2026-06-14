@@ -8,11 +8,12 @@ Layout-Entitäten steuern, wie Ihre App innerhalb der Benutzeroberfläche von Tw
 
 ## Layout-Konzepte
 
-| Konzept                    | Was es steuert                                                                                         | Entität                    |
-| -------------------------- | ------------------------------------------------------------------------------------------------------ | -------------------------- |
-| **Ansicht**                | Eine gespeicherte Listen-Konfiguration für ein Objekt — sichtbare Felder, Reihenfolge, Filter, Gruppen | `defineView`               |
-| **Navigationsmenüeintrag** | Ein Eintrag in der linken Seitenleiste, der auf eine Ansicht oder eine externe URL verweist            | `defineNavigationMenuItem` |
-| **Seitenlayout**           | Die Tabs und Widgets, aus denen die Detailseite eines Datensatzes besteht                              | `definePageLayout`         |
+| Konzept                        | Was es steuert                                                                                                            | Entität                    |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| **Ansicht**                    | Eine gespeicherte Listen-Konfiguration für ein Objekt — sichtbare Felder, Reihenfolge, Filter, Gruppen                    | `defineView`               |
+| **Navigationsmenüeintrag**     | Ein Eintrag in der linken Seitenleiste, der auf eine Ansicht oder eine externe URL verweist                               | `defineNavigationMenuItem` |
+| **Seitenlayout**               | Die Tabs und Widgets, aus denen die Detailseite eines Datensatzes besteht                                                 | `definePageLayout`         |
+| **Seitenlayout-Registerkarte** | Eine eigenständige Registerkarte, die an ein vorhandenes Seitenlayout angehängt ist (Standard oder das Ihrer eigenen App) | `definePageLayoutTab`      |
 
 Ansichten, Navigationsmenüeinträge und Seitenlayouts verweisen über `universalIdentifier` aufeinander:
 
@@ -126,6 +127,52 @@ Hauptpunkte:
 * Jeder `tab` definiert einen Abschnitt der Seite mit `title`, `position` und `layoutMode` (`CANVAS` für ein freies Layout).
 * Jedes `widget` innerhalb eines Tabs kann eine Frontend-Komponente, eine Relationenliste oder andere eingebaute Widget-Typen rendern.
 * `position` auf Tabs steuert deren Reihenfolge. Verwenden Sie höhere Werte (z. B. 50), um benutzerdefinierte Tabs hinter den integrierten zu platzieren.
+
+</Accordion>
+<Accordion title="definePageLayoutTab" description="Eine Registerkarte zu einem bestehenden Seitenlayout hinzufügen">
+
+`definePageLayoutTab` ermöglicht es Ihrer App, eine einzelne Registerkarte — mit optionalen Widgets — an ein **bestehendes** Seitenlayout anzuhängen. Der häufigste Anwendungsfall ist das Hinzufügen einer benutzerdefinierten Registerkarte (z. B. einer Analytics- oder KI-Zusammenfassungs-Registerkarte) zu einer der in Twenty integrierten Datensatzseiten oder zu einem Seitenlayout, das Ihre eigene App bereits mitliefert.
+
+Das Zielseitenlayout muss entweder ein **Standard**-Seitenlayout von Twenty sein oder eines, das von **Ihrer eigenen App** definiert wird; appübergreifende Verweise auf Seitenlayouts, die einer anderen installierten App gehören, werden derzeit nicht unterstützt.
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  '20202020-ab01-4001-8001-c0aba11c0100';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+Hauptpunkte:
+* `pageLayoutUniversalIdentifier` ist **erforderlich** bei der Verwendung von `definePageLayoutTab` und muss auf ein Seitenlayout verweisen, das zum Installationszeitpunkt bereits existiert (Standard oder das Ihrer App). Wenn das übergeordnete Seitenlayout fehlt, schlägt die Installation mit einem eindeutigen Validierungsfehler fehl.
+* `widgets` sind ausschließlich auf diese Registerkarte beschränkt — sie verweisen auf Frontend-Komponenten, Ansichten usw., genau wie Widgets, die inline in `definePageLayout` definiert sind.
+* `position` steuert die Reihenfolge im Zielseitenlayout relativ zu den vorhandenen Registerkarten. Wählen Sie einen Wert, der Ihre Registerkarte relativ zu integrierten Registerkarten an die gewünschte Position bringt.
+* Verwenden Sie dies anstelle von `definePageLayout`, wenn Sie einem vorhandenen Layout nur etwas **hinzufügen** möchten. Verwenden Sie `definePageLayout`, wenn Sie das gesamte Layout besitzen (typischerweise eine `RECORD_PAGE` für ein Objekt, das Sie in Ihrer App ausliefern, oder eine `STANDALONE_PAGE`).
 
 </Accordion>
 </AccordionGroup>

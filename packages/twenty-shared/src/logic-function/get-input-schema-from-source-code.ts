@@ -7,9 +7,8 @@ import {
 export const getInputSchemaFromSourceCode = async (
   sourceCode: string,
 ): Promise<InputJsonSchema> => {
-  const { getFunctionInputSchema } = await import(
-    './get-function-input-schema'
-  );
+  const { getFunctionInputSchema } =
+    await import('./get-function-input-schema');
   const inputSchema = getFunctionInputSchema(sourceCode);
 
   // Logic functions take a single params object

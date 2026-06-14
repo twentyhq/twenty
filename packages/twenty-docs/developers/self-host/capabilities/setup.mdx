@@ -42,10 +42,25 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 
 <Warning>
 Each variable is documented with descriptions in your admin panel at **Settings → Admin Panel → Configuration Variables**.
-Some infrastructure settings like database connections (`PG_DATABASE_URL`), server URLs (`SERVER_URL`), and app secrets (`APP_SECRET`) can only be configured via `.env` file.
+Some infrastructure settings like database connections (`PG_DATABASE_URL`), server URLs (`SERVER_URL`), and secrets (`ENCRYPTION_KEY`, `FALLBACK_ENCRYPTION_KEY`) can only be configured via `.env` file.
 
 [Complete technical reference →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
+
+## Encryption keys
+
+Twenty uses two env-only encryption keys:
+
+| Variable | Purpose | Required |
+| --- | --- | --- |
+| `ENCRYPTION_KEY` | Primary key used to encrypt secrets at rest (OAuth tokens, application variables, signing-key private keys, TOTP secrets, sensitive config values). | Yes for new installs (legacy installs may instead rely on `APP_SECRET` — see below) |
+| `FALLBACK_ENCRYPTION_KEY` | Verification-only key. Set during a rotation to the *previous* `ENCRYPTION_KEY` so existing rows remain decryptable. | Only during rotation |
+
+For backward compatibility, if `ENCRYPTION_KEY` is unset, Twenty falls back to `APP_SECRET` for at-rest encryption — matching the legacy behaviour for older deployments. New installs should always set a dedicated `ENCRYPTION_KEY`.
+
+Generate values with `openssl rand -base64 32` and store them somewhere safe (a secrets manager, sealed config, etc.). Losing `ENCRYPTION_KEY` means losing access to every secret stored in the database.
+
+To rotate `ENCRYPTION_KEY` without downtime, see the [Key rotation guide](/developers/self-host/capabilities/key-rotation).
 
 ## 2. Environment-Only Configuration
 

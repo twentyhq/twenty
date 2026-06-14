@@ -34,25 +34,27 @@ has_schema=$(PGPASSWORD=twenty psql -h localhost -U twenty -d default -tAc \
   "SELECT EXISTS (SELECT 1 FROM information_schema.schemata WHERE schema_name = 'core')")
 
 if [ "$has_schema" = "f" ]; then
-  step_start "Running initial database setup"
-  NODE_OPTIONS="--max-old-space-size=1500" node ./dist/database/scripts/setup-db.js
+  step_start "Running initial database setup and migrations"
+  yarn database:init:prod
   step_done
 fi
 
-step_start "Running migrations"
-yarn database:migrate:prod --force
-step_done
-
 step_start "Flushing cache"
-yarn command:prod cache:flush
+if ! yarn command:prod cache:flush; then
+  echo "Warning: Failed to flush cache before upgrade, but continuing startup..."
+fi
 step_done
 
 step_start "Running upgrade"
-yarn command:prod upgrade
+if ! yarn command:prod upgrade; then
+  echo "Warning: Upgrade completed with errors. Some workspaces may not be fully migrated. Check logs for details."
+fi
 step_done
 
 step_start "Flushing cache"
-yarn command:prod cache:flush
+if ! yarn command:prod cache:flush; then
+  echo "Warning: Failed to flush cache after upgrade, but continuing startup..."
+fi
 step_done
 
 # Only seed on first boot — check if the dev workspace already exists

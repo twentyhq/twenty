@@ -1,7 +1,10 @@
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { useCallback } from 'react';
-import { type IconComponent, IconDotsVertical } from 'twenty-ui/display';
+import {
+  type IconComponent,
+  IconDotsVertical,
+} from 'twenty-ui-deprecated/display';
 import { useStore } from 'jotai';
 
 export const useUpdateSidePanelPageInfo = () => {

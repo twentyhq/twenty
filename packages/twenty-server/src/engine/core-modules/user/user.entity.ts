@@ -58,10 +58,6 @@ export class UserEntity {
   @Column()
   email: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  defaultAvatarUrl: string;
-
   @Field()
   @Column({ default: false })
   isEmailVerified: boolean;

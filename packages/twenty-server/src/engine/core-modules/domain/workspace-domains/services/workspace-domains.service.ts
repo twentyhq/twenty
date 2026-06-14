@@ -11,6 +11,7 @@ import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 @Injectable()
 export class WorkspaceDomainsService {
@@ -19,6 +20,8 @@ export class WorkspaceDomainsService {
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    // Request routing resolves workspace via the public domain registry.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(PublicDomainEntity)
     private readonly publicDomainRepository: Repository<PublicDomainEntity>,
   ) {}
@@ -73,11 +76,14 @@ export class WorkspaceDomainsService {
 
     if (workspaces.length > 1) {
       Logger.warn(
-        ` ${workspaces.length} workspaces found in database. In single-workspace mode, there should be only one workspace. Apple seed workspace will be used as fallback if it found.`,
+        `${workspaces.length} workspaces found in database. In single-workspace mode, there should be only one workspace. The Apple seed workspace will be used as fallback if present.`,
       );
     }
 
-    const foundWorkspace = workspaces[0];
+    const foundWorkspace =
+      workspaces.find(
+        (workspace) => workspace.id === SEED_APPLE_WORKSPACE_ID,
+      ) ?? workspaces[0];
 
     assertIsDefinedOrThrow(foundWorkspace, WorkspaceNotFoundDefaultError);
 
@@ -85,14 +91,34 @@ export class WorkspaceDomainsService {
   }
 
   async getWorkspaceByOriginOrDefaultWorkspace(origin: string) {
-    if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
-      return this.getDefaultWorkspace();
-    }
+    const { workspace } = await this.resolveWorkspaceAndPublicDomain(origin);
 
+    return workspace;
+  }
+
+  async resolveWorkspaceAndPublicDomain(origin: string): Promise<{
+    workspace: WorkspaceEntity | undefined;
+    publicDomain: PublicDomainEntity | null;
+  }> {
     const { subdomain, domain } =
       this.domainServerConfigService.getSubdomainAndDomainFromUrl(origin);
 
-    if (!domain && !subdomain) return;
+    if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
+      // Single-workspace: workspace is always the default. Still resolve a
+      // matching public domain so the route trigger can scope by application.
+      const publicDomain = isDefined(domain)
+        ? await this.publicDomainRepository.findOne({ where: { domain } })
+        : null;
+
+      return {
+        workspace: await this.getDefaultWorkspace(),
+        publicDomain: publicDomain ?? null,
+      };
+    }
+
+    if (!domain && !subdomain) {
+      return { workspace: undefined, publicDomain: null };
+    }
 
     const where = isDefined(domain) ? { customDomain: domain } : { subdomain };
 
@@ -103,18 +129,21 @@ export class WorkspaceDomainsService {
       })) ?? undefined;
 
     if (isDefined(workspaceFromCustomDomainOrSubdomain) || !isDefined(domain)) {
-      return workspaceFromCustomDomainOrSubdomain;
+      return {
+        workspace: workspaceFromCustomDomainOrSubdomain,
+        publicDomain: null,
+      };
     }
 
-    const publicDomainFromCustomDomain =
-      await this.publicDomainRepository.findOne({
-        where: {
-          domain,
-        },
-        relations: ['workspace', 'workspace.workspaceSSOIdentityProviders'],
-      });
+    const publicDomain = await this.publicDomainRepository.findOne({
+      where: { domain },
+      relations: ['workspace', 'workspace.workspaceSSOIdentityProviders'],
+    });
 
-    return publicDomainFromCustomDomain?.workspace;
+    return {
+      workspace: publicDomain?.workspace ?? undefined,
+      publicDomain: publicDomain ?? null,
+    };
   }
 
   private getCustomWorkspaceUrl(customDomain: string) {

@@ -8,7 +8,10 @@ export const usePlanByPriceId = () => {
     findOrThrow(
       listPlans(),
       (plan) =>
-        plan.licensedProducts.some((p) =>
+        plan.baseProducts.some((p) =>
+          p.prices?.some((price) => price.stripePriceId === priceId),
+        ) ||
+        plan.resourceCreditProducts.some((p) =>
           p.prices?.some((price) => price.stripePriceId === priceId),
         ) ||
         plan.meteredProducts.some((p) =>

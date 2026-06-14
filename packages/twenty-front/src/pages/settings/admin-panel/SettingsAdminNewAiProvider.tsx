@@ -7,8 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import { type AiSdkPackage, isDataResidency } from 'twenty-shared/ai';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, IconPlus, Info } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
+import { H2Title, IconPlus, Info } from 'twenty-ui-deprecated/display';
+import { Section } from 'twenty-ui-deprecated/layout';
 
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { DATA_RESIDENCY_OPTIONS } from '@/settings/admin-panel/ai/constants/DataResidencyOptions';
@@ -25,7 +25,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 
 type ModelsDevProvider = { id: string; modelCount: number; npm: AiSdkPackage };
 
@@ -229,7 +229,7 @@ export const SettingsAdminNewAiProvider = () => {
 
   return (
     <form onSubmit={form.handleSubmit(handleSave)}>
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={t`New AI Provider`}
         links={[
           {
@@ -444,7 +444,7 @@ export const SettingsAdminNewAiProvider = () => {
             </>
           )}
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     </form>
   );
 };

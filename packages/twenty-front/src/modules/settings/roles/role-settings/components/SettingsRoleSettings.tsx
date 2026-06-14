@@ -11,10 +11,10 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { H2Title } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title } from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { Section } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -87,6 +87,7 @@ export const SettingsRoleSettings = ({
         <TextArea
           textAreaId={descriptionTextAreaId}
           minRows={4}
+          maxRows={5}
           placeholder={t`Write a description`}
           value={settingsDraftRole.description || ''}
           onChange={(value: string) => {

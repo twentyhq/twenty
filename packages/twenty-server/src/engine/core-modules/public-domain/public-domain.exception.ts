@@ -8,6 +8,7 @@ export enum PublicDomainExceptionCode {
   PUBLIC_DOMAIN_ALREADY_REGISTERED = 'PUBLIC_DOMAIN_ALREADY_REGISTERED',
   DOMAIN_ALREADY_REGISTERED_AS_CUSTOM_DOMAIN = 'DOMAIN_ALREADY_REGISTERED_AS_CUSTOM_DOMAIN',
   PUBLIC_DOMAIN_NOT_FOUND = 'PUBLIC_DOMAIN_NOT_FOUND',
+  APPLICATION_NOT_FOUND = 'APPLICATION_NOT_FOUND',
 }
 
 const getPublicDomainExceptionUserFriendlyMessage = (
@@ -20,6 +21,8 @@ const getPublicDomainExceptionUserFriendlyMessage = (
       return msg`This domain is already registered as a custom domain.`;
     case PublicDomainExceptionCode.PUBLIC_DOMAIN_NOT_FOUND:
       return msg`Public domain not found.`;
+    case PublicDomainExceptionCode.APPLICATION_NOT_FOUND:
+      return msg`Application not found in this workspace.`;
     default:
       assertUnreachable(code);
   }

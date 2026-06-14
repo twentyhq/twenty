@@ -1,9 +1,9 @@
-import { agentChatIsScrolledToBottomSelector } from '@/ai/states/agentChatIsScrolledToBottomSelector';
+import { agentChatIsScrolledToBottomSelector } from '@/ai/states/selectors/agentChatIsScrolledToBottomSelector';
 import { scrollAiChatToBottom } from '@/ai/utils/scrollAiChatToBottom';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { IconArrowDown } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconArrowDown } from 'twenty-ui-deprecated/display';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledScrollToBottomButton = styled.button<{ isVisible: boolean }>`
   align-items: center;

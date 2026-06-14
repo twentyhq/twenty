@@ -24,7 +24,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -37,13 +37,13 @@ import {
   IconSettings,
   IconSwitchHorizontal,
   IconUserPlus,
-} from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
+} from 'twenty-ui-deprecated/display';
+import { LightIconButton } from 'twenty-ui-deprecated/input';
 import {
   MenuItem,
   MenuItemSelectAvatar,
   UndecoratedLink,
-} from 'twenty-ui/navigation';
+} from 'twenty-ui-deprecated/navigation';
 import { useMutation } from '@apollo/client/react';
 import {
   type AvailableWorkspace,
@@ -217,13 +217,20 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           onClick={() => setMultiWorkspaceDropdown('themes')}
         />
         <UndecoratedLink
-          to={getSettingsPath(SettingsPath.WorkspaceMembersPage)}
+          to={`${getSettingsPath(SettingsPath.WorkspaceMembersPage)}#invite`}
           onClick={() => {
             closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
           }}
         >
           <MenuItem LeftIcon={IconUserPlus} text={t`Invite user`} />
         </UndecoratedLink>
+        {isSupportChatConfigured && (
+          <MenuItem
+            LeftIcon={IconMessage}
+            text={t`Support`}
+            onClick={handleSupport}
+          />
+        )}
         <UndecoratedLink
           to={getSettingsPath(SettingsPath.ProfilePage)}
           onClick={() => {
@@ -233,13 +240,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
         >
           <MenuItem LeftIcon={IconSettings} text={t`Settings`} />
         </UndecoratedLink>
-        {isSupportChatConfigured && (
-          <MenuItem
-            LeftIcon={IconMessage}
-            text={t`Support`}
-            onClick={handleSupport}
-          />
-        )}
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

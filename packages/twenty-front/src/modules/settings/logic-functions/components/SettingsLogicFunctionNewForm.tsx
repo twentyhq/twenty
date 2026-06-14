@@ -1,13 +1,12 @@
 import { type LogicFunctionFormValues } from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { H2Title, IconClockHour8, IconTool } from 'twenty-ui/display';
-import { Card, Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title, IconClockHour8 } from 'twenty-ui-deprecated/display';
+import { Card, Section } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -49,20 +48,11 @@ export const SettingsLogicFunctionNewForm = ({
           textAreaId={descriptionTextAreaId}
           placeholder={t`Description`}
           minRows={4}
+          maxRows={5}
           value={formValues.description}
           onChange={onChange('description')}
           readOnly={readonly}
         />
-        <Card rounded>
-          <SettingsOptionCardContentToggle
-            Icon={IconTool}
-            title={t`Available as tool`}
-            description={t`When enabled, AI agents and workflow automations can discover and call this function`}
-            checked={formValues.isTool}
-            onChange={onChange('isTool')}
-            disabled={readonly}
-          />
-        </Card>
         <Card rounded>
           <SettingsOptionCardContentCounter
             Icon={IconClockHour8}

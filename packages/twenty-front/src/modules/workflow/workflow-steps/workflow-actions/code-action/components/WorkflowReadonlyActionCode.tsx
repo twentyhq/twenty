@@ -1,6 +1,7 @@
 import { useGetAvailablePackages } from '@/logic-functions/hooks/useGetAvailablePackages';
-import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { useGetLogicFunctionSourceCode } from '@/logic-functions/hooks/useGetLogicFunctionSourceCode';
+import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
+import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
 
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowEditActionCodeFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields';
@@ -9,7 +10,7 @@ import { styled } from '@linaria/react';
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
-import { CodeEditor } from 'twenty-ui/input';
+import { CodeEditor } from 'twenty-ui-deprecated/input';
 
 const StyledCodeEditorContainer = styled.div`
   display: flex;
@@ -26,6 +27,10 @@ export const WorkflowReadonlyActionCode = ({
   const logicFunctionId = action.settings.input.logicFunctionId;
 
   const { availablePackages } = useGetAvailablePackages({
+    id: logicFunctionId,
+  });
+
+  const { logicFunction } = useGetOneLogicFunction({
     id: logicFunctionId,
   });
 
@@ -55,6 +60,9 @@ export const WorkflowReadonlyActionCode = ({
       <WorkflowStepBody>
         <WorkflowEditActionCodeFields
           functionInput={action.settings.input.logicFunctionInput}
+          inputSchema={
+            logicFunction?.workflowActionTriggerSettings?.inputSchema
+          }
           readonly
         />
         <StyledCodeEditorContainer>

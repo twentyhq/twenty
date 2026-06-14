@@ -4,9 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('1.22.0', 1775804361516)
-export class DropObjectMetadataDataSourceFkFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class DropObjectMetadataDataSourceFkFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       'ALTER TABLE "core"."objectMetadata" DROP CONSTRAINT "FK_0b19dd17369574578bc18c405b2"',

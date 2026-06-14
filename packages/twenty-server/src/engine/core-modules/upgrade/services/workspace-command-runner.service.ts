@@ -5,6 +5,8 @@ import { type ParsedUpgradeCommandOptions } from 'src/database/commands/upgrade-
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
+import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
+import { formatUpgradeLog } from 'src/engine/core-modules/upgrade/utils/format-upgrade-log.util';
 
 type WorkspaceCommandEntry = Pick<
   RegisteredWorkspaceCommand,
@@ -24,6 +26,7 @@ export class WorkspaceCommandRunnerService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly upgradeMigrationService: UpgradeMigrationService,
+    private readonly upgradeStatusService: UpgradeStatusService,
   ) {}
 
   async runWorkspaceCommands({
@@ -33,24 +36,71 @@ export class WorkspaceCommandRunnerService {
   }: RunWorkspaceCommandsArgs): Promise<void> {
     const { workspaceId, index, total } = iteratorContext;
 
+    const dryRunPrefix = options.dryRun ? '(dry run) ' : '';
+
     this.logger.log(
-      `${options.dryRun ? '(dry run) ' : ''}Upgrading workspace ${workspaceId} ${index + 1}/${total}`,
+      formatUpgradeLog({
+        humanMessage: `${dryRunPrefix}Upgrading workspace ${workspaceId} ${index + 1}/${total}`,
+        event: 'workspace.start',
+        logFields: {
+          workspaceId,
+          index: index + 1,
+          total,
+          dryRun: options.dryRun ?? false,
+        },
+      }),
     );
 
     const executedByVersion =
       this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
-    for (const workspaceCommandEntry of workspaceCommands) {
-      await this.runSingleWorkspaceCommandOrThrow({
-        workspaceCommandEntry,
-        workspaceId,
-        executedByVersion,
-        options,
-        iteratorContext,
-      });
-    }
+    try {
+      for (const workspaceCommandEntry of workspaceCommands) {
+        await this.runSingleWorkspaceCommandOrThrow({
+          workspaceCommandEntry,
+          workspaceId,
+          executedByVersion,
+          options,
+          iteratorContext,
+        });
+      }
 
-    this.logger.log(`Upgrade for workspace ${workspaceId} completed.`);
+      this.logger.log(
+        formatUpgradeLog({
+          humanMessage: `Upgrade for workspace ${workspaceId} completed.`,
+          event: 'workspace.success',
+          logFields: {
+            workspaceId,
+            executedByVersion,
+            dryRun: options.dryRun ?? false,
+          },
+        }),
+      );
+    } finally {
+      if (!options.dryRun) {
+        await this.safeInvalidateWorkspace(workspaceId);
+      }
+    }
+  }
+
+  private async safeInvalidateWorkspace(workspaceId: string): Promise<void> {
+    try {
+      await this.upgradeStatusService.invalidateInstanceAndAllWorkspacesStatus();
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      this.logger.warn(
+        formatUpgradeLog({
+          humanMessage: `Failed to invalidate upgrade-status cache (triggered by workspace ${workspaceId}): ${errorMessage}`,
+          event: 'cache.invalidate.failed',
+          logFields: {
+            scope: 'instance-and-all-workspaces',
+            triggeredByWorkspaceId: workspaceId,
+          },
+        }),
+      );
+    }
   }
 
   private async runSingleWorkspaceCommandOrThrow({

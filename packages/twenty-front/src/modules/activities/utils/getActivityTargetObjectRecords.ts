@@ -10,7 +10,10 @@ import {
   FieldMetadataType,
   type Nullable,
 } from 'twenty-shared/types';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
+import {
+  computeMorphRelationGqlFieldName,
+  isDefined,
+} from 'twenty-shared/utils';
 
 type GetActivityTargetObjectRecordsProps = {
   activityRecord: Note | Task;
@@ -94,7 +97,7 @@ export const getActivityTargetObjectRecords = ({
         ) {
           const matchingMorphRelation = field.morphRelations.find(
             (morphRelation) => {
-              const morphFieldName = computeMorphRelationFieldName({
+              const morphFieldName = computeMorphRelationGqlFieldName({
                 fieldName: field.name,
                 relationType: morphRelation.type,
                 targetObjectMetadataNameSingular:
@@ -108,7 +111,7 @@ export const getActivityTargetObjectRecords = ({
           );
 
           if (isDefined(matchingMorphRelation)) {
-            matchingFieldName = computeMorphRelationFieldName({
+            matchingFieldName = computeMorphRelationGqlFieldName({
               fieldName: field.name,
               relationType: matchingMorphRelation.type,
               targetObjectMetadataNameSingular:

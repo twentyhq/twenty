@@ -100,7 +100,13 @@ export class CommandMenuItemDTO {
   workspaceId: string;
 
   @Field(() => UUIDScalarType, { nullable: true })
+  universalIdentifier?: string;
+
+  @Field(() => UUIDScalarType, { nullable: true })
   applicationId?: string;
+
+  @Field(() => Boolean, { nullable: false })
+  isActive: boolean;
 
   @IsDateString()
   @Field()

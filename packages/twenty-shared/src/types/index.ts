@@ -10,6 +10,7 @@
 export type { AllowedAddressSubField } from './AddressFieldsType';
 export { ALLOWED_ADDRESS_SUBFIELDS } from './AddressFieldsType';
 export { AggregateOperations } from './AggregateOperations';
+export type { AllowedFullNameSortSubField } from './AllowedFullNameSortSubField';
 export { AppBasePath } from './AppBasePath';
 export { AppPath } from './AppPath';
 export type { Arrayable } from './Arrayable';
@@ -62,6 +63,7 @@ export { ContextStorePageType } from './ContextStorePageType';
 export { CoreObjectNameSingular } from './CoreObjectNameSingular';
 export { CrudOperationType } from './CrudOperationType';
 export type { EmailAttachment } from './EmailAttachment';
+export type { EmptyObject } from './EmptyObject.type';
 export type {
   SnackBarVariant,
   EnqueueSnackbarParams,
@@ -104,6 +106,7 @@ export {
 } from './FieldMetadataOptions';
 export type {
   FieldNumberVariant,
+  FieldCurrencyFormat,
   FieldMetadataSettingsMapping,
   AllFieldMetadataSettings,
   FieldMetadataSettings,
@@ -132,6 +135,11 @@ export type { IsGreaterOrEqual } from './IsGreaterOrEqual.type';
 export type { IsNever } from './IsNever.type';
 export type { IsSerializedRelation } from './IsSerializedRelation.type';
 export type { LogicFunctionEvent } from './LogicFunctionEvent';
+export type { LogicFunctionHttpResponse } from './LogicFunctionResponse';
+export {
+  LOGIC_FUNCTION_HTTP_RESPONSE_MARKER,
+  isLogicFunctionHttpResponse,
+} from './LogicFunctionResponse';
 export { MessageChannelContactAutoCreationPolicy } from './MessageChannelContactAutoCreationPolicy';
 export { MessageChannelPendingGroupEmailsAction } from './MessageChannelPendingGroupEmailsAction';
 export { MessageChannelSyncStage } from './MessageChannelSyncStage';
@@ -172,7 +180,6 @@ export type {
 export type { GridPosition } from './page-layout/grid-position.type';
 export type {
   AggregateChartConfiguration,
-  GaugeChartConfiguration,
   PieChartConfiguration,
   BarChartConfiguration,
   LineChartConfiguration,
@@ -278,6 +285,7 @@ export type {
 } from './StepFilters';
 export { StepLogicalOperator } from './StepFilters';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
+export { UpgradeHealthEnum } from './UpgradeHealthEnum';
 export { IsValidGraphQLEnumName } from './validators/is-valid-graphql-enum-name.validator';
 export { ViewCalendarLayout } from './ViewCalendarLayout';
 export { ViewFilterGroupLogicalOperator } from './ViewFilterGroupLogicalOperator';

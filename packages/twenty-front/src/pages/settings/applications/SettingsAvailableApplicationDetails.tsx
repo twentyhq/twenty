@@ -1,15 +1,17 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
-import { useInstallMarketplaceApp } from '@/marketplace/hooks/useInstallMarketplaceApp';
+import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
+import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -17,20 +19,21 @@ import {
   IconBook,
   IconBox,
   IconCommand,
+  IconEyeOff,
   IconGraph,
   IconInfoCircle,
   IconLego,
   IconListDetails,
   IconLock,
   IconShield,
-} from 'twenty-ui/display';
+  InlineBanner,
+} from 'twenty-ui-deprecated/display';
 import {
   ApplicationRegistrationSourceType,
   FindMarketplaceAppDetailDocument,
   FindOneApplicationByUniversalIdentifierDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
-import { SettingsApplicationDetailTitle } from '~/pages/settings/applications/components/SettingsApplicationDetailTitle';
 import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
 import { SettingsApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailContentTab';
 import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications/tabs/SettingsApplicationPermissionsTab';
@@ -43,7 +46,9 @@ export const SettingsAvailableApplicationDetails = () => {
     availableApplicationId: string;
   }>();
 
-  const { install, isInstalling } = useInstallMarketplaceApp();
+  const navigateSettings = useNavigateSettings();
+  const { requestInstall, install, isInstalling, modalInstanceId } =
+    useInstallMarketplaceAppWithPermissionValidation();
   const { upgrade, isUpgrading } = useUpgradeApplication();
 
   const canInstallMarketplaceApps = useHasPermissionFlag(
@@ -98,9 +103,17 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const handleInstall = async () => {
     if (isDefined(detail)) {
-      await install({
+      const data = await install({
         universalIdentifier: detail.universalIdentifier,
       });
+
+      const applicationId = data?.installApplication?.id;
+
+      if (isDefined(applicationId)) {
+        navigateSettings(SettingsPath.ApplicationDetail, {
+          applicationId,
+        });
+      }
     }
   };
 
@@ -138,10 +151,9 @@ export const SettingsAvailableApplicationDetails = () => {
       icon: IconGraph,
       count: (manifest?.frontComponents ?? []).filter(
         (fc) =>
-          !isDefined(fc.command) &&
-          fc.universalIdentifier !==
-            manifest?.application
-              .settingsCustomTabFrontComponentUniversalIdentifier,
+          !(manifest?.commandMenuItems ?? [])
+            .map((cm) => cm.frontComponentUniversalIdentifier)
+            .includes(fc.universalIdentifier),
       ).length,
       one: t`widget`,
       many: t`widgets`,
@@ -149,7 +161,11 @@ export const SettingsAvailableApplicationDetails = () => {
     {
       icon: IconCommand,
       count: (manifest?.frontComponents ?? []).filter(
-        (fc) => isDefined(fc.command) && !fc.isHeadless,
+        (fc) =>
+          !fc.isHeadless &&
+          (manifest?.commandMenuItems ?? [])
+            .map((cm) => cm.frontComponentUniversalIdentifier)
+            .includes(fc.universalIdentifier),
       ).length,
       one: t`command`,
       many: t`commands`,
@@ -218,7 +234,7 @@ export const SettingsAvailableApplicationDetails = () => {
             }}
             isInstalled={isAlreadyInstalled}
             canInstallMarketplaceApps={canInstallMarketplaceApps}
-            onInstall={handleInstall}
+            onInstall={requestInstall}
             isInstalling={isInstalling}
             hasUpdate={hasUpdate}
             onUpgrade={handleUpgrade}
@@ -230,6 +246,11 @@ export const SettingsAvailableApplicationDetails = () => {
           <SettingsApplicationDetailContentTab
             applicationId={detail.universalIdentifier}
             manifestContent={manifest}
+            applicationInfo={{
+              name: displayName,
+              logo: app?.logoUrl,
+              universalIdentifier: detail.universalIdentifier,
+            }}
           />
         );
       case 'permissions':
@@ -251,11 +272,11 @@ export const SettingsAvailableApplicationDetails = () => {
 
   return (
     <CurrentApplicationContext.Provider value={application?.id ?? null}>
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         links={[
           {
             children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.General),
           },
           {
             children: t`Applications`,
@@ -263,28 +284,30 @@ export const SettingsAvailableApplicationDetails = () => {
           },
           { children: displayName },
         ]}
-        title={
-          <SettingsApplicationDetailTitle
-            displayName={displayName}
-            description={description}
-            logoUrl={app?.logoUrl}
-            applicationId={application?.id}
-            applicationName={application?.name}
-            universalIdentifier={detail.universalIdentifier}
-            isUnlisted={isUnlisted}
-          />
-        }
+        title={displayName}
       >
         <SettingsPageContainer>
+          {isUnlisted && (
+            <InlineBanner
+              LeftIcon={IconEyeOff}
+              message={t`Application not listed on the marketplace. It was shared via a direct link`}
+            />
+          )}
           <TabList
             tabs={tabs}
             componentInstanceId={AVAILABLE_APPLICATION_DETAIL_ID}
-            behaveAsLinks={false}
           />
-
           {renderActiveTabContent()}
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
+      <SettingsApplicationInstallPermissionValidationModal
+        modalInstanceId={modalInstanceId}
+        appDisplayName={displayName}
+        appLogoUrl={app?.logoUrl}
+        defaultRole={defaultRole}
+        onAuthorize={handleInstall}
+        isInstalling={isInstalling}
+      />
     </CurrentApplicationContext.Provider>
   );
 };

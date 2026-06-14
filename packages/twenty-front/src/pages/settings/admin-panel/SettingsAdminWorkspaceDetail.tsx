@@ -7,42 +7,50 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { billingState } from '@/client-config/states/billingState';
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { SettingsAdminWorkspaceBillingContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { GET_ADMIN_WORKSPACE_CHAT_THREADS } from '@/settings/admin-panel/graphql/queries/getAdminWorkspaceChatThreads';
 import { WORKSPACE_LOOKUP_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/workspaceLookupAdminPanel';
-import { useFeatureFlagState } from '@/settings/admin-panel/hooks/useFeatureFlagState';
+import { useAdminUpdateFeatureFlag } from '@/settings/admin-panel/hooks/useAdminUpdateFeatureFlag';
 import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpersonate';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
+  Avatar,
   H2Title,
+  IconCreditCard,
   IconEyeShare,
   IconFlag,
   IconMessage,
+  OverflowingTextWithTooltip,
   IconSettings2,
   IconUsers,
-} from 'twenty-ui/display';
-import { Button, Toggle } from 'twenty-ui/input';
-import { Card, Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { Toggle } from 'twenty-ui/input';
+import { Card, Section } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import {
   type FeatureFlagKey,
   type GetAdminWorkspaceChatThreadsQuery,
   type WorkspaceLookupAdminPanelQuery,
+  GetUpgradeStatusDocument,
   UpdateWorkspaceFeatureFlagDocument,
 } from '~/generated-admin/graphql';
 
@@ -50,6 +58,7 @@ const WORKSPACE_DETAIL_TABS_ID = 'settings-admin-workspace-detail-tabs';
 
 const WORKSPACE_DETAIL_TAB_IDS = {
   INFO: 'info',
+  BILLING: 'billing',
   MEMBERS: 'members',
   FEATURE_FLAGS: 'feature-flags',
   CHATS: 'chats',
@@ -66,12 +75,17 @@ export const SettingsAdminWorkspaceDetail = () => {
 
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const billing = useAtomStateValue(billingState);
+  const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { updateFeatureFlagState } = useFeatureFlagState();
+  const { updateFeatureFlagState } = useAdminUpdateFeatureFlag();
   const { handleImpersonate, impersonatingUserId } = useHandleImpersonate();
   const [updateFeatureFlag] = useMutation(UpdateWorkspaceFeatureFlagDocument, {
     client: apolloAdminClient,
+    refetchQueries: [
+      { query: WORKSPACE_LOOKUP_ADMIN_PANEL, variables: { workspaceId } },
+    ],
   });
 
   const { data: workspaceData, loading: isLoadingWorkspace } =
@@ -97,6 +111,15 @@ export const SettingsAdminWorkspaceDetail = () => {
           effectiveTabId !== WORKSPACE_DETAIL_TAB_IDS.CHATS,
       },
     );
+  const { data: workspaceUpgradeStatusData } = useQuery(
+    GetUpgradeStatusDocument,
+    {
+      client: apolloAdminClient,
+      variables: { workspaceIds: workspaceId ? [workspaceId] : [] },
+      skip: !workspaceId,
+      fetchPolicy: 'network-only',
+    },
+  );
 
   const threads = threadsData?.getAdminWorkspaceChatThreads ?? [];
 
@@ -134,6 +157,15 @@ export const SettingsAdminWorkspaceDetail = () => {
       title: t`Info`,
       Icon: IconSettings2,
     },
+    ...(isBillingEnabled
+      ? [
+          {
+            id: WORKSPACE_DETAIL_TAB_IDS.BILLING,
+            title: t`Billing`,
+            Icon: IconCreditCard,
+          },
+        ]
+      : []),
     ...(currentUser?.canImpersonate
       ? [
           {
@@ -170,7 +202,7 @@ export const SettingsAdminWorkspaceDetail = () => {
   }
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       links={[
         {
           children: t`Other`,
@@ -193,8 +225,19 @@ export const SettingsAdminWorkspaceDetail = () => {
         />
 
         {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.INFO && workspace && (
-          <SettingsAdminWorkspaceContent activeWorkspace={workspace} />
+          <SettingsAdminWorkspaceContent
+            activeWorkspace={workspace}
+            workspaceUpgradeStatus={workspaceUpgradeStatusData?.getUpgradeStatus?.find(
+              (status) => status?.workspaceId === workspaceId,
+            )}
+          />
         )}
+
+        {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.BILLING &&
+          isBillingEnabled &&
+          workspaceId && (
+            <SettingsAdminWorkspaceBillingContent workspaceId={workspaceId} />
+          )}
 
         {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.MEMBERS && workspace && (
           <Section>
@@ -219,26 +262,46 @@ export const SettingsAdminWorkspaceDetail = () => {
                         userId,
                       })}
                     >
-                      <TableCell color={themeCssVariables.font.color.primary}>
-                        {`${user.firstName || ''} ${user.lastName || ''}`.trim() ||
-                          '\u2014'}
+                      <TableCell
+                        color={themeCssVariables.font.color.primary}
+                        gap={themeCssVariables.spacing[2]}
+                        overflow="hidden"
+                      >
+                        <Avatar
+                          avatarUrl={user.avatarUrl}
+                          placeholder={
+                            `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+                            user.email
+                          }
+                          placeholderColorSeed={user.id}
+                          size="md"
+                          type="rounded"
+                        />
+                        <OverflowingTextWithTooltip
+                          text={
+                            `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+                            '\u2014'
+                          }
+                        />
                       </TableCell>
                       <TableCell>{user.email}</TableCell>
                       <TableCell align="right">
-                        {workspace.allowImpersonation && (
-                          <Button
-                            Icon={IconEyeShare}
-                            variant="secondary"
-                            size="small"
-                            title={t`Impersonate`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              handleImpersonate(userId, workspaceId!);
-                            }}
-                            disabled={impersonatingUserId === userId}
-                          />
-                        )}
+                        {workspace.allowImpersonation &&
+                          isDefined(currentUser?.id) &&
+                          userId !== currentUser.id && (
+                            <Button
+                              Icon={IconEyeShare}
+                              variant="secondary"
+                              size="small"
+                              title={t`Impersonate`}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleImpersonate(userId, workspaceId!);
+                              }}
+                              disabled={impersonatingUserId === userId}
+                            />
+                          )}
                       </TableCell>
                     </TableRow>
                   );
@@ -304,7 +367,7 @@ export const SettingsAdminWorkspaceDetail = () => {
               description={t`AI chat threads for this workspace`}
             />
             {isLoadingThreads ? (
-              <SettingsSkeletonLoader />
+              <SettingsSectionSkeletonLoader />
             ) : threads.length === 0 ? (
               <Card rounded>
                 <TableRow gridTemplateColumns="1fr">
@@ -351,6 +414,6 @@ export const SettingsAdminWorkspaceDetail = () => {
           </Section>
         )}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

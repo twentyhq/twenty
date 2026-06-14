@@ -6,7 +6,7 @@ export type Leaf = {
   icon?: string;
   label?: string;
   description?: string;
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   value: any;
   isCompositeSubField?: boolean;
 };

@@ -125,20 +125,15 @@ export class WorkflowCronTriggerCronJob {
       );
 
       for (const trigger of triggersToCache) {
-        await this.cacheStorageService.hashSet({
+        await this.cacheStorageService.hashSetWithExpire({
           key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
           field: trigger.workflowId,
           value: JSON.stringify(trigger),
+          ttlMs: WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS,
         });
+
         triggerCount++;
       }
-    }
-
-    if (triggerCount > 0) {
-      await this.cacheStorageService.expire(
-        WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-        WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS,
-      );
     }
 
     this.logger.log(`Cache rebuilt with ${triggerCount} cron triggers`);

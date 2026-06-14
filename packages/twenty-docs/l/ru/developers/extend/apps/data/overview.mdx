@@ -1,0 +1,97 @@
+---
+title: Обзор
+description: Определяйте структуру данных, которые ваше приложение добавляет в рабочее пространство — объекты, поля и связи.
+icon: database
+---
+
+**Уровень данных** приложения Twenty — это данные, которые ваше приложение *добавляет* в рабочее пространство: новые типы записей, которые оно объявляет, столбцы, которые оно добавляет к существующим объектам, и то, как эти записи связываются друг с другом.
+
+```text
+┌──────────────────────────────────────────────────┐
+│ Object — a record type, e.g. PostCard            │
+│    ├─ Field     (name, type, label)              │
+│    ├─ Field                                      │
+│    └─ Relation  (link to another object)         │
+└──────────────────────────────────────────────────┘
+            │
+            ├── lives in your app, OR
+            │
+            ▼
+┌──────────────────────────────────────────────────┐
+│ Standard / other apps' objects                   │
+│    └─ Field added by your app via defineField    │
+└──────────────────────────────────────────────────┘
+```
+
+## В этом разделе
+
+<CardGroup cols={2}>
+  <Card title="Объекты" icon="таблица" href="/l/ru/developers/extend/apps/data/objects">
+    `defineObject` — объявляйте новые типы записей с их собственными полями.
+  </Card>
+  <Card title="Расширение объектов" icon="wand-magic-sparkles" href="/l/ru/developers/extend/apps/data/extending-objects">
+    `defineField` — добавляйте поля к стандартным объектам или объектам других приложений.
+  </Card>
+  <Card title="Связи" icon="diagram-project" href="/l/ru/developers/extend/apps/data/relations">
+    Двусторонние связи `MANY_TO_ONE` / `ONE_TO_MANY` между объектами.
+  </Card>
+</CardGroup>
+
+## Сущности вкратце
+
+| Сущность   | Назначение                                                                                                                              | Определяется с помощью                 |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| **Объект** | Новый пользовательский тип записей (например, PostCard, Invoice) с собственными полями                                                  | `defineObject()`                       |
+| **Поле**   | Столбец в объекте. Отдельные поля могут расширять объекты, которые вы не создавали (например, добавьте `loyaltyTier` к объекту Company) | `defineField()`                        |
+| **Связь**  | Двусторонняя связь между двумя объектами — обе стороны объявлены как поля                                                               | `defineField()` с `FieldType.RELATION` |
+| **Индекс** | Индекс базы данных для ускорения повторяющегося запроса к одному из ваших объектов                                                      | `defineIndex()`                        |
+
+SDK обнаруживает их с помощью анализа AST во время сборки, поэтому организация файлов остается на ваше усмотрение — по соглашению используются `src/objects/`, `src/fields/` и `src/indexes/`. Стабильные UUID `universalIdentifier` связывают все воедино между развертываниями.
+
+## Индексы (необязательно)
+
+Приложения могут поставлять индексы вместе со своими объектами, чтобы повторяющиеся запросы выполнялись быстро. Наиболее распространенный случай — столбец статуса или внешнего ключа, к которому вы часто обращаетесь при чтении.
+
+```ts src/indexes/post-card-status.index.ts
+import { defineIndex } from 'twenty-sdk/define';
+
+import {
+  POST_CARD_UNIVERSAL_IDENTIFIER,
+  STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+} from '../objects/post-card.object';
+
+export default defineIndex({
+  universalIdentifier: 'b6e9d2a1-5a4c-46ca-9d52-42c8f02d1ff0',
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  fields: [
+    {
+      universalIdentifier: 'b6e9d2a1-5a4c-46ca-9d52-42c8f02d1ff1',
+      fieldUniversalIdentifier: STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+    },
+  ],
+});
+```
+
+### Уникальные индексы
+
+`defineIndex` принимает `isUnique: true` как для уникальности по одному столбцу, так и по нескольким столбцам. Это рекомендуемый примитив — `defineField({ isUnique: true })` устарел и будет удален в одном из будущих релизов.
+
+```ts
+defineIndex({
+  universalIdentifier: '…',
+  objectUniversalIdentifier: PERSON_UNIVERSAL_IDENTIFIER,
+  isUnique: true,
+  fields: [{ universalIdentifier: '…', fieldUniversalIdentifier: EMAIL_FIELD_UNIVERSAL_IDENTIFIER }],
+});
+```
+
+### Другие ограничения
+
+* Частичные предложения `WHERE` остаются под контролем администратора — приложения не могут объявлять их.
+* Для каждого объекта допускается не более 10 пользовательских индексов (индексы самого фреймворка не учитываются).
+
+Упорядочьте массив `fields` в том порядке, в котором Postgres должен его использовать — сначала самый левый столбец, как в телефонной книге. Индексы не бесплатны: при каждой записи в таблицу они обновляются. Добавляйте индекс только тогда, когда у вас есть запрос, которому он действительно нужен.
+
+<Note>
+Ищете **Application Config** или **Roles & Permissions**? Они описывают само приложение, а не данные, которые оно добавляет, — их можно найти в разделе [Config](/l/ru/developers/extend/apps/config/overview). Ищете **Connections** (Linear, GitHub, Slack OAuth)? Они существуют для вызова *из* логических функций и находятся в разделе [Logic](/l/ru/developers/extend/apps/logic/connections).
+</Note>

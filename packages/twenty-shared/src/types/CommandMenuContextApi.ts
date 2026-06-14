@@ -5,7 +5,8 @@ import { type ObjectRecord } from './ObjectRecord';
 export type CommandMenuContextApi = {
   pageType: ContextStorePageType;
   isInSidePanel: boolean;
-  isPageInEditMode: boolean;
+  isDashboardPageLayoutInEditMode: boolean;
+  isLayoutCustomizationModeEnabled: boolean;
   favoriteRecordIds: string[];
   isSelectAll: boolean;
   hasAnySoftDeleteFilterOnView: boolean;
@@ -13,8 +14,11 @@ export type CommandMenuContextApi = {
   objectPermissions: ObjectPermissions & { objectMetadataId: string };
   selectedRecords: ObjectRecord[];
   featureFlags: Record<string, boolean>;
+  permissionFlags: Record<string, boolean>;
   targetObjectReadPermissions: Record<string, boolean>;
   targetObjectWritePermissions: Record<string, boolean>;
+  canImpersonate: boolean;
+  canAccessFullAdminPanel: boolean;
   objectMetadataItem: Record<string, unknown>;
   objectMetadataLabel: string;
 };

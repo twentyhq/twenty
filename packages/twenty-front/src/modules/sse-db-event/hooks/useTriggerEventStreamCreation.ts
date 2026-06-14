@@ -5,6 +5,7 @@ import { useTriggerOptimisticEffectFromSseEvents } from '@/sse-db-event/hooks/us
 import { disposeFunctionForEventStreamState } from '@/sse-db-event/states/disposeFunctionByEventStreamMapState';
 import { isCreatingSseEventStreamState } from '@/sse-db-event/states/isCreatingSseEventStreamState';
 import { isDestroyingEventStreamState } from '@/sse-db-event/states/isDestroyingEventStreamState';
+import { lastSseEventReceivedTimestampState } from '@/sse-db-event/states/lastSseEventReceivedTimestampState';
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
@@ -81,6 +82,8 @@ export const useTriggerEventStreamCreation = () => {
             onEventSubscription: EventSubscription;
           }>,
         ) => {
+          store.set(lastSseEventReceivedTimestampState.atom, Date.now());
+
           if (isDefined(value?.errors) && Array.isArray(value.errors)) {
             const extensions = getGraphqlErrorExtensionsFromError(
               value.errors[0],
@@ -132,8 +135,11 @@ export const useTriggerEventStreamCreation = () => {
         },
         error: (error) => {
           captureException(error);
+          store.set(shouldDestroyEventStreamState.atom, true);
         },
-        complete: () => {},
+        complete: () => {
+          store.set(shouldDestroyEventStreamState.atom, true);
+        },
       },
       {
         message: ({ data, event }) => {
@@ -143,6 +149,8 @@ export const useTriggerEventStreamCreation = () => {
 
           try {
             if (event === 'next') {
+              store.set(lastSseEventReceivedTimestampState.atom, Date.now());
+
               if (isDefined(result?.errors)) {
                 const extensions = getGraphqlErrorExtensionsFromError(
                   result.errors[0],

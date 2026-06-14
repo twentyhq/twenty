@@ -26,6 +26,7 @@ export class SendEmailService {
         attachments: data.attachments,
         inReplyTo: data.inReplyTo,
         threadExternalId: data.threadExternalId,
+        references: data.references,
       },
       data.connectedAccount,
     );
@@ -41,10 +42,11 @@ export class SendEmailService {
         sendResult,
         subject: data.sanitizedSubject,
         body: data.plainTextBody,
-        recipients: data.recipients,
+        recipients: sendResult.deliveredRecipients ?? data.recipients,
         connectedAccount: data.connectedAccount,
         messageChannelId: data.messageChannelId!,
         inReplyTo: data.inReplyTo,
+        parentThreadExternalId: data.threadExternalId,
         workspaceId,
       });
     } catch (persistenceError) {

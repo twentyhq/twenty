@@ -4,6 +4,7 @@ import {
 } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { GraphqlQuerySelectedFieldsAggregateParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields-aggregate.parser';
 import { GraphqlQuerySelectedFieldsRelationParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields-relation.parser';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
@@ -16,11 +17,11 @@ import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export type GraphqlQuerySelectedFieldsResult = {
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   select: Record<string, any>;
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   relations: Record<string, any>;
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   aggregate: Record<string, any>;
   relationFieldsCount: number;
   hasAtLeastTwoNestedOneToManyRelations: boolean;
@@ -47,7 +48,7 @@ export class GraphqlQuerySelectedFieldsParser {
   }
 
   parse(
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     graphqlSelectedFields: Partial<Record<string, any>>,
     flatObjectMetadata: FlatObjectMetadata,
     isFromOneToManyRelation?: boolean,
@@ -89,7 +90,7 @@ export class GraphqlQuerySelectedFieldsParser {
   }
 
   private parseRecordFields(
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     graphqlSelectedFields: Partial<Record<string, any>>,
     flatObjectMetadata: FlatObjectMetadata,
     accumulator: GraphqlQuerySelectedFieldsResult,
@@ -104,12 +105,11 @@ export class GraphqlQuerySelectedFieldsParser {
       if (
         isFlatFieldMetadataOfType(fieldMetadata, FieldMetadataType.RELATION)
       ) {
-        const joinColumnName = fieldMetadata.settings?.joinColumnName;
+        const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+          name: fieldMetadata.name,
+        });
 
-        if (
-          isDefined(joinColumnName) &&
-          isDefined(graphqlSelectedFields[joinColumnName])
-        ) {
+        if (isDefined(graphqlSelectedFields[joinColumnName])) {
           accumulator.select[joinColumnName] = true;
         }
 
@@ -149,12 +149,11 @@ export class GraphqlQuerySelectedFieldsParser {
           continue;
         }
 
-        const joinColumnName = fieldMetadata.settings?.joinColumnName;
+        const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+          name: fieldMetadata.name,
+        });
 
-        if (
-          isDefined(joinColumnName) &&
-          isDefined(graphqlSelectedFields[joinColumnName])
-        ) {
+        if (isDefined(graphqlSelectedFields[joinColumnName])) {
           accumulator.select[joinColumnName] = true;
         }
 
@@ -204,7 +203,7 @@ export class GraphqlQuerySelectedFieldsParser {
   }
 
   private parseConnectionField(
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     graphqlSelectedFields: Partial<Record<string, any>>,
     flatObjectMetadata: FlatObjectMetadata,
     accumulator: GraphqlQuerySelectedFieldsResult,
@@ -228,7 +227,7 @@ export class GraphqlQuerySelectedFieldsParser {
   }
 
   private isRootConnection(
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     graphqlSelectedFields: Partial<Record<string, any>>,
   ): boolean {
     return Object.keys(graphqlSelectedFields).includes('edges');
@@ -236,9 +235,9 @@ export class GraphqlQuerySelectedFieldsParser {
 
   private parseCompositeField(
     fieldMetadata: FlatFieldMetadata,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     fieldValue: any,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
   ): Record<string, any> {
     const compositeType = compositeTypeDefinitions.get(
       fieldMetadata.type as CompositeFieldMetadataType,
@@ -270,7 +269,7 @@ export class GraphqlQuerySelectedFieldsParser {
 
           return acc;
         },
-        // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         {} as Record<string, any>,
       );
   }

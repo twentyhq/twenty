@@ -11,7 +11,7 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { DashboardWidgetPlaceholder } from '@/page-layout/widgets/components/DashboardWidgetPlaceholder';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
@@ -23,6 +23,7 @@ const mockPageLayout: PageLayout = {
   name: 'Test Layout',
   type: PageLayoutType.DASHBOARD,
   objectMetadataId: null,
+  universalIdentifier: '20202020-0000-0000-0000-000000000001',
   tabs: [],
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',

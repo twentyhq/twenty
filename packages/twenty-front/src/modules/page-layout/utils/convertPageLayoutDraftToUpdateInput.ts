@@ -1,6 +1,5 @@
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { isDynamicRelationWidget } from '@/page-layout/utils/isDynamicRelationWidget';
 import {
   PageLayoutTabLayoutMode,
   type UpdatePageLayoutWithTabsInput,
@@ -40,10 +39,7 @@ const buildWidgetPosition = (
 
 export const convertPageLayoutDraftToUpdateInput = (
   pageLayoutDraft: DraftPageLayout,
-  options?: { shouldFilterDynamicRelationWidgets?: boolean },
 ): UpdatePageLayoutWithTabsInput => {
-  const shouldFilter = options?.shouldFilterDynamicRelationWidgets ?? false;
-
   return {
     name: pageLayoutDraft.name,
     type: pageLayoutDraft.type,
@@ -51,17 +47,13 @@ export const convertPageLayoutDraftToUpdateInput = (
     tabs: pageLayoutDraft.tabs
       .filter((tab) => tab.isActive)
       .map((tab) => {
-        const widgets = shouldFilter
-          ? tab.widgets.filter((widget) => !isDynamicRelationWidget(widget))
-          : tab.widgets;
-
         return {
           id: tab.id,
           title: tab.title,
           position: tab.position,
           icon: tab.icon ?? null,
           layoutMode: tab.layoutMode,
-          widgets: widgets.map((widget, widgetIndex) => ({
+          widgets: tab.widgets.map((widget, widgetIndex) => ({
             id: widget.id,
             pageLayoutTabId: widget.pageLayoutTabId,
             title: widget.title,

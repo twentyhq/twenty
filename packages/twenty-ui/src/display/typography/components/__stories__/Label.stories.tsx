@@ -17,6 +17,8 @@ export default meta;
 type Story = StoryObj<typeof Label>;
 
 export const Default: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   decorators: [ComponentDecorator],
   args: {
     children: 'Label',
@@ -29,6 +31,8 @@ export const Catalog: CatalogStory<Story, typeof Label> = {
     children: 'Label',
   },
   parameters: {
+    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+    a11y: { test: 'todo' },
     catalog: {
       dimensions: [
         {

@@ -1,34 +1,40 @@
 import { UseGuards, UseInterceptors } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 
 import { Not, Repository } from 'typeorm';
 
-import {
-  MessageChannelPendingGroupEmailsAction,
-  MessageChannelSyncStage,
-  MessageFolderPendingSyncAction,
-} from 'twenty-shared/types';
-import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { buildPublicConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/build-public-connected-account.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto';
+import { CreateEmailGroupChannelInput } from 'src/engine/metadata-modules/message-channel/dtos/create-email-group-channel.input';
+import { CreateEmailGroupChannelOutput } from 'src/engine/metadata-modules/message-channel/dtos/create-email-group-channel.output';
 import { MessageChannelDTO } from 'src/engine/metadata-modules/message-channel/dtos/message-channel.dto';
 import { UpdateMessageChannelInput } from 'src/engine/metadata-modules/message-channel/dtos/update-message-channel.input';
+import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { MessageChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-channel/interceptors/message-channel-graphql-api-exception.interceptor';
+import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import {
   MessageChannelException,
   MessageChannelExceptionCode,
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
-import { MessageChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-channel/interceptors/message-channel-graphql-api-exception.interceptor';
-import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
+import {
+  MessageChannelPendingGroupEmailsAction,
+  MessageChannelSyncStage,
+  MessageChannelType,
+  MessageFolderPendingSyncAction,
+} from 'twenty-shared/types';
 
 @UseGuards(WorkspaceAuthGuard)
 @UseInterceptors(MessageChannelGraphqlApiExceptionInterceptor)
@@ -36,10 +42,38 @@ import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/
 export class MessageChannelResolver {
   constructor(
     private readonly messageChannelMetadataService: MessageChannelMetadataService,
+    private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     @InjectRepository(MessageFolderEntity)
     private readonly messageFolderRepository: Repository<MessageFolderEntity>,
     private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
   ) {}
+
+  @ResolveField('connectedAccount', () => ConnectedAccountPublicDTO, {
+    nullable: true,
+  })
+  async connectedAccount(
+    @Parent() messageChannel: MessageChannelDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<ConnectedAccountPublicDTO | null> {
+    if (messageChannel.type === MessageChannelType.EMAIL_GROUP) {
+      const account = await this.connectedAccountMetadataService.findById({
+        id: messageChannel.connectedAccountId,
+        workspaceId: workspace.id,
+      });
+
+      return buildPublicConnectedAccount(account);
+    }
+
+    const account =
+      await this.connectedAccountMetadataService.findByIdAndUserWorkspaceId({
+        id: messageChannel.connectedAccountId,
+        userWorkspaceId,
+        workspaceId: workspace.id,
+      });
+
+    return buildPublicConnectedAccount(account);
+  }
 
   @Query(() => [MessageChannelDTO])
   @UseGuards(NoPermissionGuard)
@@ -128,6 +162,34 @@ export class MessageChannelResolver {
       id: input.id,
       workspaceId: workspace.id,
       data: input.update,
+    });
+  }
+
+  @Mutation(() => CreateEmailGroupChannelOutput)
+  @UseGuards(NoPermissionGuard)
+  async createEmailGroupChannel(
+    @Args('input') input: CreateEmailGroupChannelInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<CreateEmailGroupChannelOutput> {
+    return this.messageChannelMetadataService.createEmailGroupChannel({
+      handle: input.handle,
+      userWorkspaceId,
+      workspaceId: workspace.id,
+    });
+  }
+
+  @Mutation(() => MessageChannelDTO)
+  @UseGuards(NoPermissionGuard)
+  async deleteEmailGroupChannel(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<MessageChannelDTO> {
+    return this.messageChannelMetadataService.deleteEmailGroupChannel({
+      id,
+      userWorkspaceId,
+      workspaceId: workspace.id,
     });
   }
 }

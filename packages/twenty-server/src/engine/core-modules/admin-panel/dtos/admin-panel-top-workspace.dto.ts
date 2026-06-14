@@ -7,6 +7,9 @@ export class AdminPanelTopWorkspaceDTO {
   @Field(() => UUIDScalarType)
   id: string;
 
+  @Field(() => String, { nullable: true })
+  logoUrl?: string | null;
+
   @Field(() => String)
   name: string;
 

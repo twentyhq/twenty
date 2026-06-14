@@ -34,9 +34,9 @@ export interface GraphQLContext extends YogaDriverServerContext<'express'> {
 }
 
 @Injectable()
-export class GraphQLConfigService
-  implements GqlOptionsFactory<YogaDriverConfig<'express'>>
-{
+export class GraphQLConfigService implements GqlOptionsFactory<
+  YogaDriverConfig<'express'>
+> {
   constructor(
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly twentyConfigService: TwentyConfigService,

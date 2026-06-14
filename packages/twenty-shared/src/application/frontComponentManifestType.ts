@@ -3,6 +3,7 @@ import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsT
 export type CommandMenuItemManifest = SyncableEntityOptions & {
   label: string;
   shortLabel?: string;
+  /** @deprecated icon will be ignored in favor of application icon */
   icon?: string;
   isPinned?: boolean;
   availabilityType?:
@@ -15,11 +16,6 @@ export type CommandMenuItemManifest = SyncableEntityOptions & {
   conditionalAvailabilityExpression?: string;
 };
 
-export type FrontComponentCommandManifest = Omit<
-  CommandMenuItemManifest,
-  'frontComponentUniversalIdentifier'
->;
-
 export type FrontComponentManifest = {
   universalIdentifier: string;
   name?: string;
@@ -30,5 +26,4 @@ export type FrontComponentManifest = {
   componentName: string;
   isHeadless?: boolean;
   usesSdkClient?: boolean;
-  command?: FrontComponentCommandManifest;
 };

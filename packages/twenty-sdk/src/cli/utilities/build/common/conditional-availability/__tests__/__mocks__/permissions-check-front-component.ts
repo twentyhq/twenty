@@ -1,15 +1,13 @@
-import { defineFrontComponent } from '@/sdk/define';
-import { isInSidePanel, objectPermissions } from '@/sdk/front-component';
+import {
+  defineCommandMenuItem,
+  isInSidePanel,
+  objectPermissions,
+} from '@/sdk/define';
 
-const MyComponent = () => null;
-
-export default defineFrontComponent({
-  universalIdentifier: 'permissions-check',
-  component: MyComponent,
-  command: {
-    universalIdentifier: 'permissions-check-cmd',
-    label: 'Permissions Check',
-    conditionalAvailabilityExpression:
-      objectPermissions.canUpdateObjectRecords && !isInSidePanel,
-  },
+export default defineCommandMenuItem({
+  universalIdentifier: 'permissions-check-cmd',
+  label: 'Permissions Check',
+  frontComponentUniversalIdentifier: 'permissions-check',
+  conditionalAvailabilityExpression:
+    objectPermissions.canUpdateObjectRecords && !isInSidePanel,
 });

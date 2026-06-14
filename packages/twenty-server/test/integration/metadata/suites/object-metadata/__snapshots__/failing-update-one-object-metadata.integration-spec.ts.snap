@@ -1,4 +1,21 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Object metadata update should fail when imageIdentifier is not a uuid 1`] = `
+[
+  {
+    "extensions": {
+      "code": "GRAPHQL_VALIDATION_FAILED",
+      "http": {
+        "status": 400,
+      },
+      "userFriendlyMessage": "An error occurred.",
+      "value": "not-a-uuid",
+    },
+    "message": "Invalid UUID: 'not-a-uuid'",
+    "name": "ValidationError",
+  },
+]
+`;
 
 exports[`Object metadata update should fail when labelIdentifier is not a TEXT or NAME field 1`] = `
 [
@@ -30,7 +47,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
         "objectMetadata": 1,
         "totalErrors": 1,
       },
-      "userFriendlyMessage": "Metadata validation failed",
+      "userFriendlyMessage": "Field cannot be used as label identifier due to its type: should be of type UUID, text or full name",
     },
     "message": "Multiple validation errors occurred while updating object",
     "name": "GraphQLError",

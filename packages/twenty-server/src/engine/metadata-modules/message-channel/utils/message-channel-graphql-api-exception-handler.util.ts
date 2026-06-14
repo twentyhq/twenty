@@ -2,6 +2,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
   ForbiddenError,
+  InternalServerError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -23,6 +24,8 @@ export const messageChannelGraphqlApiExceptionHandler = (error: Error) => {
         throw new UserInputError(error);
       case MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION:
         throw new ForbiddenError(error);
+      case MessageChannelExceptionCode.EMAIL_GROUP_NOT_CONFIGURED:
+        throw new InternalServerError(error);
       default: {
         return assertUnreachable(error.code);
       }

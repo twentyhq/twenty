@@ -5,7 +5,8 @@ export const useListProducts = () => {
 
   const listProducts = () =>
     listPlans().flatMap((plan) => [
-      ...plan.licensedProducts,
+      ...plan.baseProducts,
+      ...plan.resourceCreditProducts,
       ...plan.meteredProducts,
     ]);
 

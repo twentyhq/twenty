@@ -72,10 +72,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
       input: {
         name: 'cost',
         label: 'Cost',
-        defaultValue: {
-          amountMicros: null,
-          currencyCode: "''",
-        },
+        defaultValue: null,
       },
     },
   },

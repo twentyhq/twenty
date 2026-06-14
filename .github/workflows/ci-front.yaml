@@ -3,12 +3,14 @@ name: CI Front
 on:
   pull_request:
   merge_group:
+  push:
+    branches: [main]
 
 permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}${{ github.ref == 'refs/heads/main' && format('-{0}', github.sha) || '' }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 env:
@@ -18,7 +20,7 @@ env:
 
 jobs:
   changed-files-check:
-    if: github.event_name != 'merge_group'
+    if: github.event_name == 'pull_request'
     uses: ./.github/workflows/changed-files.yaml
     with:
       files: |
@@ -27,23 +29,23 @@ jobs:
         packages/twenty-front/**
         packages/twenty-front-component-renderer/**
         packages/twenty-ui/**
+        packages/twenty-ui-deprecated/**
         packages/twenty-shared/**
         packages/twenty-sdk/**
         !packages/twenty-sdk/package.json
   front-sb-build:
     needs: changed-files-check
-    if: needs.changed-files-check.outputs.any_changed == 'true'
+    if: >-
+      always() &&
+      (github.event_name == 'push' ||
+      needs.changed-files-check.outputs.any_changed == 'true')
     timeout-minutes: 30
     runs-on: ubuntu-latest-8-cores
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ github.token }}
       - name: Fetch local actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
@@ -55,7 +57,7 @@ jobs:
       - name: Front / Build storybook
         run: npx nx storybook:build twenty-front
       - name: Upload storybook build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: storybook-static
           path: packages/twenty-front/storybook-static
@@ -68,18 +70,19 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     needs: front-sb-build
+    if: always() && needs.front-sb-build.result == 'success'
     strategy:
       fail-fast: false
       matrix:
         shard: [1, 2, 3, 4]
-        storybook_scope: [modules, pages, performance]
+        storybook_scope: ${{ github.event_name == 'push' && fromJSON('["modules", "pages"]') || fromJSON('["modules", "pages", "performance"]') }}
     env:
       SHARD_COUNTER: 4
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
       STORYBOOK_URL: http://localhost:6006
     steps:
       - name: Fetch local actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
@@ -94,16 +97,27 @@ jobs:
         run: |
           npx nx build twenty-shared
           npx nx build twenty-ui
+          npx nx build twenty-ui-deprecated
           npx nx build twenty-front-component-renderer
       - name: Download storybook build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: storybook-static
           path: packages/twenty-front/storybook-static
+      - name: Resolve Playwright version
+        id: playwright-version
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: v4-playwright-browsers-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
       - name: Install Playwright
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: |
           cd packages/twenty-front
-          npx playwright install
+          npx playwright install chromium
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
       - name: Serve storybook & run tests
@@ -111,6 +125,14 @@ jobs:
           npx http-server packages/twenty-front/storybook-static --port 6006 --silent &
           timeout 30 bash -c 'until curl -sf http://localhost:6006 > /dev/null 2>&1; do sleep 1; done'
           npx nx storybook:test twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
+      - name: Upload screenshots for visual regression
+        if: always() && !cancelled() && matrix.storybook_scope != 'performance'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: argos-screenshots-twenty-front-${{ matrix.storybook_scope }}-${{ matrix.shard }}
+          path: packages/twenty-front/screenshots
+          retention-days: 1
+          overwrite: true
       # - name: Rename coverage file
       #   run: |
       #     if [ -f "packages/twenty-front/coverage/storybook/coverage-final.json" ]; then
@@ -121,7 +143,7 @@ jobs:
       #       exit 1
       #     fi
       # - name: Upload coverage artifact
-      #   uses: actions/upload-artifact@v4
+      #   uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       #   with:
       #     retention-days: 1
       #     name: coverage-artifacts-${{ matrix.storybook_scope }}-${{ github.run_id }}-${{ matrix.shard }}
@@ -136,12 +158,12 @@ jobs:
   #     matrix:
   #       storybook_scope: [modules, pages, performance]
   #   steps:
-  #     - uses: actions/checkout@v4
+  #     - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
   #       with:
   #         fetch-depth: 10
   #     - name: Install dependencies
   #       uses: ./.github/actions/yarn-install
-  #     - uses: actions/download-artifact@v4
+  #     - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
   #       with:
   #         pattern: coverage-artifacts-${{ matrix.storybook_scope }}-${{ github.run_id }}-*
   #         merge-multiple: true
@@ -152,6 +174,25 @@ jobs:
   #         npx nyc merge coverage-artifacts ${{ env.PATH_TO_COVERAGE }}/coverage-storybook.json
   #     - name: Checking coverage
   #       run: npx nx storybook:coverage twenty-front --checkCoverage=true --configuration=${{ matrix.storybook_scope }}
+  front-sb-screenshots:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    needs: front-sb-test
+    if: always() && needs.front-sb-test.result == 'success'
+    steps:
+      - name: Download shard screenshot artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          pattern: argos-screenshots-twenty-front-*
+          merge-multiple: true
+          path: screenshots
+      - name: Upload merged screenshots artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: argos-screenshots-twenty-front
+          path: screenshots
+          retention-days: 1
+          overwrite: true
   front-task:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
@@ -164,12 +205,8 @@ jobs:
       matrix:
         task: [lint, typecheck, test]
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ github.token }}
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
@@ -203,12 +240,8 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=10240"
       ANALYZE: "true"
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ github.token }}
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
@@ -218,7 +251,7 @@ jobs:
       - name: Build frontend
         run: npx nx build twenty-front
       # - name: Upload frontend build artifact
-      #   uses: actions/upload-artifact@v4
+      #   uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       #   with:
       #     name: frontend-build
       #     path: packages/twenty-front/build
@@ -235,6 +268,7 @@ jobs:
         # merge-reports-and-check-coverage,
         front-sb-test,
         front-sb-build,
+        front-sb-screenshots,
       ]
     steps:
       - name: Fail job if any needs failed

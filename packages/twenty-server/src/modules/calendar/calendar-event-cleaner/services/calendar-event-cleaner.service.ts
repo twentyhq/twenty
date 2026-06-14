@@ -24,90 +24,98 @@ export class CalendarEventCleanerService {
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const calendarChannelEventAssociationRepository =
-        await this.globalWorkspaceOrmManager.getRepository(
-          workspaceId,
-          'calendarChannelEventAssociation',
-        );
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const calendarChannelEventAssociationRepository =
+          await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            'calendarChannelEventAssociation',
+          );
 
-      const workspaceDataSource =
-        await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+        const workspaceDataSource =
+          await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
-      await workspaceDataSource.transaction(async (manager) => {
-        const transactionManager = manager as WorkspaceEntityManager;
+        await workspaceDataSource.transaction(async (manager) => {
+          const transactionManager = manager as WorkspaceEntityManager;
 
-        await deleteUsingPagination(
-          workspaceId,
-          500,
-          async (
-            limit: number,
-            offset: number,
-            _workspaceId: string,
-            transactionManager?: WorkspaceEntityManager,
-          ) => {
-            const associations =
-              await calendarChannelEventAssociationRepository.find(
-                {
-                  where: { calendarChannelId },
-                  take: limit,
-                  skip: offset,
-                },
+          await deleteUsingPagination(
+            workspaceId,
+            500,
+            async (
+              limit: number,
+              offset: number,
+              _workspaceId: string,
+              transactionManager?: WorkspaceEntityManager,
+            ) => {
+              const associations =
+                await calendarChannelEventAssociationRepository.find(
+                  {
+                    where: { calendarChannelId },
+                    take: limit,
+                    skip: offset,
+                  },
+                  transactionManager,
+                );
+
+              return associations.map(({ id }) => id);
+            },
+            async (
+              ids: string[],
+              workspaceId: string,
+              transactionManager?: WorkspaceEntityManager,
+            ) => {
+              this.logger.log(
+                `WorkspaceId: ${workspaceId} Deleting ${ids.length} calendar channel event associations for channel ${calendarChannelId}`,
+              );
+              await calendarChannelEventAssociationRepository.delete(
+                ids,
                 transactionManager,
               );
-
-            return associations.map(({ id }) => id);
-          },
-          async (
-            ids: string[],
-            workspaceId: string,
-            transactionManager?: WorkspaceEntityManager,
-          ) => {
-            this.logger.log(
-              `WorkspaceId: ${workspaceId} Deleting ${ids.length} calendar channel event associations for channel ${calendarChannelId}`,
-            );
-            await calendarChannelEventAssociationRepository.delete(
-              ids,
-              transactionManager,
-            );
-          },
-          transactionManager,
-        );
-      });
-    }, authContext);
+            },
+            transactionManager,
+          );
+        });
+      },
+      authContext,
+      { lite: true },
+    );
   }
 
   public async cleanWorkspaceCalendarEvents(workspaceId: string) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const calendarEventRepository =
-        await this.globalWorkspaceOrmManager.getRepository(
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const calendarEventRepository =
+          await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            'calendarEvent',
+          );
+
+        await deleteUsingPagination(
           workspaceId,
-          'calendarEvent',
-        );
-
-      await deleteUsingPagination(
-        workspaceId,
-        500,
-        async (limit, offset) => {
-          const nonAssociatedCalendarEvents =
-            await calendarEventRepository.find({
-              where: {
-                calendarChannelEventAssociations: {
-                  id: IsNull(),
+          500,
+          async (limit, offset) => {
+            const nonAssociatedCalendarEvents =
+              await calendarEventRepository.find({
+                where: {
+                  calendarChannelEventAssociations: {
+                    id: IsNull(),
+                  },
                 },
-              },
-              take: limit,
-              skip: offset,
-            });
+                take: limit,
+                skip: offset,
+              });
 
-          return nonAssociatedCalendarEvents.map(({ id }) => id);
-        },
-        async (ids) => {
-          await calendarEventRepository.delete({ id: Any(ids) });
-        },
-      );
-    }, authContext);
+            return nonAssociatedCalendarEvents.map(({ id }) => id);
+          },
+          async (ids) => {
+            await calendarEventRepository.delete({ id: Any(ids) });
+          },
+        );
+      },
+      authContext,
+      { lite: true },
+    );
   }
 }

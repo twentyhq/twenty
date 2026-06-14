@@ -11,8 +11,12 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, IconEye, useIcons } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
+import {
+  IconChevronLeft,
+  IconEye,
+  useIcons,
+} from 'twenty-ui-deprecated/display';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
 import { v4 } from 'uuid';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
@@ -20,12 +24,19 @@ type RecordTableFieldsDropdownHiddenFieldsContentProps = {
   objectMetadataId: string;
   recordIndexId: string;
   onBack: () => void;
+  onFieldUpdated?: (
+    viewFieldId: string,
+    update: Partial<{ isVisible: boolean }>,
+  ) => void;
+  onFieldCreated?: (recordField: RecordField) => void;
 };
 
 export const RecordTableFieldsDropdownHiddenFieldsContent = ({
   objectMetadataId,
   recordIndexId,
   onBack,
+  onFieldUpdated,
+  onFieldCreated,
 }: RecordTableFieldsDropdownHiddenFieldsContentProps) => {
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataId,
@@ -61,6 +72,7 @@ export const RecordTableFieldsDropdownHiddenFieldsContent = ({
 
     if (isDefined(existingRecordField)) {
       updateRecordField(fieldMetadataId, { isVisible: true });
+      onFieldUpdated?.(existingRecordField.id, { isVisible: true });
     } else {
       const lastPosition =
         currentRecordFields.toSorted(sortByProperty('position', 'desc'))?.[0]
@@ -75,6 +87,7 @@ export const RecordTableFieldsDropdownHiddenFieldsContent = ({
       };
 
       upsertRecordField(newRecordField);
+      onFieldCreated?.(newRecordField);
     }
   };
 

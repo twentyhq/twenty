@@ -1,4 +1,3 @@
-import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 import { Toggle, type ToggleSize } from '@ui/input';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
@@ -7,13 +6,7 @@ import {
   StyledMenuItemRightContent,
 } from '../internals/components/StyledMenuItemBase';
 
-const StyledToggleContainer = styled.div`
-  align-items: center;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-`;
+import styles from './MenuItemToggle.module.scss';
 
 export type MenuItemToggleProps = {
   focused?: boolean;
@@ -51,7 +44,7 @@ export const MenuItemToggle = ({
       disabled={disabled}
       onClick={handleClick}
     >
-      <StyledToggleContainer>
+      <div className={styles.toggleContainer}>
         <MenuItemLeftContent
           LeftIcon={LeftIcon}
           text={text}
@@ -66,7 +59,7 @@ export const MenuItemToggle = ({
             disabled={disabled}
           />
         </StyledMenuItemRightContent>
-      </StyledToggleContainer>
+      </div>
     </StyledMenuItemBase>
   );
 };

@@ -5,10 +5,13 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconBrandX, IconWorld } from 'twenty-ui/display';
-import { Checkbox } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconBrandX, IconWorld } from 'twenty-ui-deprecated/display';
+import { Checkbox } from 'twenty-ui-deprecated/input';
+import { Section } from 'twenty-ui-deprecated/layout';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
   align-items: center;
@@ -69,7 +72,10 @@ export const SettingsAgentModelCapabilities = ({
     return null;
   }
 
-  if (!nativeCapabilities.webSearch && !nativeCapabilities.twitterSearch) {
+  const showNativeWebSearch = nativeCapabilities.webSearch;
+  const showNativeTwitterSearch = nativeCapabilities.twitterSearch;
+
+  if (!showNativeWebSearch && !showNativeTwitterSearch) {
     return null;
   }
 
@@ -91,7 +97,7 @@ export const SettingsAgentModelCapabilities = ({
   };
 
   const capabilities = [
-    ...(nativeCapabilities.webSearch
+    ...(showNativeWebSearch
       ? [
           {
             key: 'webSearch' as const,
@@ -101,7 +107,7 @@ export const SettingsAgentModelCapabilities = ({
           },
         ]
       : []),
-    ...(nativeCapabilities.twitterSearch
+    ...(showNativeTwitterSearch
       ? [
           {
             key: 'twitterSearch' as const,

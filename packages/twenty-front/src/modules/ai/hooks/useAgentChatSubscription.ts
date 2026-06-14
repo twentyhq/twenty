@@ -19,10 +19,11 @@ import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatI
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
+import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
+import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { sseClientState } from '@/sse-db-event/states/sseClientState';
 
 const THROTTLE_MS = 100;
 
@@ -310,6 +311,20 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           store.set(errorAtom, streamError);
 
           closeWriter();
+          store.set(isStreamingAtom, false);
+          break;
+        }
+
+        case 'credits-exhausted': {
+          const noMoreCreditsError = new Error(
+            'Chat stopped: no more available credits.',
+          ) as Error & { code?: string };
+
+          noMoreCreditsError.code = AiChatErrorCode.BILLING_CREDITS_EXHAUSTED;
+          store.set(errorAtom, noMoreCreditsError);
+
+          closeWriter();
+          dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
           store.set(isStreamingAtom, false);
           break;
         }

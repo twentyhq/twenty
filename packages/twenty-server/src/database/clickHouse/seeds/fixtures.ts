@@ -1,10 +1,10 @@
-import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/audit/utils/events/object-event/object-record-created';
-import { OBJECT_RECORD_DELETED_EVENT } from 'src/engine/core-modules/audit/utils/events/object-event/object-record-delete';
-import { OBJECT_RECORD_UPDATED_EVENT } from 'src/engine/core-modules/audit/utils/events/object-event/object-record-updated';
-import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
-import { CUSTOM_DOMAIN_DEACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-deactivated';
-import { type GenericTrackEvent } from 'src/engine/core-modules/audit/utils/events/workspace-event/track';
-import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
+import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-created';
+import { OBJECT_RECORD_DELETED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-delete';
+import { OBJECT_RECORD_UPDATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/object-event/object-record-updated';
+import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/custom-domain/custom-domain-activated';
+import { CUSTOM_DOMAIN_DEACTIVATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/custom-domain/custom-domain-deactivated';
+import { type GenericTrackEvent } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/track';
+import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 
@@ -17,6 +17,7 @@ export type ObjectEventFixture = GenericTrackEvent & {
 export type UsageEventFixture = {
   timestamp: string;
   workspaceId: string;
+  periodStart: string;
   userWorkspaceId: string;
   resourceType: string;
   operationType: string;
@@ -215,8 +216,17 @@ const buildUsageEventFixtures = (): UsageEventFixture[] => {
             : '';
 
           fixtures.push({
-            timestamp: formatDateForClickHouse(eventDate),
+            timestamp: formatDateTimeForClickHouse(eventDate),
             workspaceId: SEED_APPLE_WORKSPACE_ID,
+            periodStart: formatDateTimeForClickHouse(
+              new Date(
+                Date.UTC(
+                  eventDate.getUTCFullYear(),
+                  eventDate.getUTCMonth(),
+                  1,
+                ),
+              ),
+            ),
             userWorkspaceId: users[userIdx],
             resourceType: op.resourceType,
             operationType: op.operationType,

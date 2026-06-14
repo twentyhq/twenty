@@ -57,6 +57,8 @@ export class DraftEmailTool implements Tool {
           ccRecipients: data.recipients.cc,
           bccRecipients: data.recipients.bcc,
           subject: data.sanitizedSubject,
+          sanitizedHtmlBody: data.sanitizedHtmlBody,
+          plainTextBody: data.plainTextBody,
           connectedAccountId: data.connectedAccount.id,
           attachmentCount: data.attachments.length,
         },

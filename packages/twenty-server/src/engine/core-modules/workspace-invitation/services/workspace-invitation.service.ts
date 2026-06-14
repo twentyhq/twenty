@@ -314,17 +314,19 @@ export class WorkspaceInvitationService {
           );
         }
 
+        const logo = isDefined(workspace.logoFileId)
+          ? await this.fileUrlService.signFileByIdUrl({
+              fileId: workspace.logoFileId,
+              workspaceId: workspace.id,
+              fileFolder: FileFolder.CorePicture,
+            })
+          : undefined;
+
         const emailData = {
           link: link.toString(),
           workspace: {
             name: workspace.displayName,
-            logo: isDefined(workspace.logoFileId)
-              ? this.fileUrlService.signFileByIdUrl({
-                  fileId: workspace.logoFileId,
-                  workspaceId: workspace.id,
-                  fileFolder: FileFolder.CorePicture,
-                })
-              : undefined,
+            logo,
           },
           sender: {
             email: sender.userEmail,

@@ -1,6 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
 import { type Repository } from 'typeorm';
 
@@ -755,7 +756,7 @@ describe('FieldPermissionService', () => {
                 {
                   code: PermissionsExceptionCode.ROLE_NOT_EDITABLE,
                   message: 'Role is not editable',
-                  userFriendlyMessage: 'This role cannot be modified.',
+                  userFriendlyMessage: msg`This role cannot be modified.`,
                 },
               ],
             },

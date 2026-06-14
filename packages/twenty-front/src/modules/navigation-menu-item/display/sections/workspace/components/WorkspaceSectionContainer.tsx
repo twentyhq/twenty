@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import React, { lazy, Suspense, useContext } from 'react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -23,9 +23,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 
 const LazyWorkspaceSectionListDndKit = lazy(() =>
-  import(
-    '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListDndKit'
-  ).then((m) => ({ default: m.WorkspaceSectionListDndKit })),
+  import('@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListDndKit').then(
+    (m) => ({ default: m.WorkspaceSectionListDndKit }),
+  ),
 );
 
 const StyledWorkspaceSectionContentGapOffset = styled.div`

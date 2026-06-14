@@ -13,6 +13,7 @@ import { DataSource, QueryRunner, Repository } from 'typeorm';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -21,6 +22,11 @@ import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custo
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import {
+  EmailingDomainWorkspaceCleanupJob,
+  type EmailingDomainWorkspaceCleanupJobData,
+} from 'src/engine/core-modules/emailing-domain/jobs/emailing-domain-workspace-cleanup.job';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import {
   FileWorkspaceFolderDeletionJob,
@@ -29,6 +35,7 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
@@ -98,6 +105,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     enabledAiModelIds: PermissionFlagType.AI_SETTINGS,
     useRecommendedModels: PermissionFlagType.AI_SETTINGS,
+    isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
   };
 
   constructor(
@@ -119,6 +127,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly prefillLogicFunctionService: PrefillLogicFunctionService,
     private readonly applicationService: ApplicationService,
+    private readonly preInstalledAppsService: PreInstalledAppsService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly subdomainManagerService: SubdomainManagerService,
@@ -133,6 +142,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly upgradeMigrationService: UpgradeMigrationService,
     private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
+    private readonly sdkClientGenerationService: SdkClientGenerationService,
   ) {
     super(workspaceRepository);
   }
@@ -366,6 +376,18 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       displayName: data.displayName,
     });
 
+    try {
+      await this.sdkClientGenerationService.enqueueSdkClientGenerationForWorkspace(
+        workspace.id,
+      );
+    } catch (error) {
+      this.logger.error(
+        `failed to enqueue SDK client generation jobs for workspace ${workspace.id}`,
+        error,
+      );
+      this.exceptionHandlerService.captureExceptions([error as Error]);
+    }
+
     await this.coreEntityCacheService.invalidate(
       'workspaceEntity',
       workspace.id,
@@ -422,6 +444,13 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     }
   }
 
+  async suspendWorkspace(id: string) {
+    await this.workspaceRepository.update(id, {
+      activationStatus: WorkspaceActivationStatus.SUSPENDED,
+      suspendedAt: new Date(),
+    });
+  }
+
   async deleteWorkspace(id: string, softDelete = false) {
     const workspace = await this.workspaceRepository.findOne({
       where: { id },
@@ -448,17 +477,23 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
 
     this.logger.log(`workspace ${id} cache flushed`);
 
-    if (this.billingService.isBillingEnabled()) {
-      await this.billingSubscriptionService.deleteSubscriptions(workspace.id);
-    }
-
     if (softDelete) {
+      if (this.billingService.isBillingEnabled()) {
+        await this.billingSubscriptionService.cancelSubscription(workspace.id);
+      }
+
       await this.workspaceRepository.softDelete({ id });
       await this.coreEntityCacheService.invalidate('workspaceEntity', id);
 
       this.logger.log(`workspace ${id} soft deleted`);
 
       return workspace;
+    }
+
+    if (this.billingService.isBillingEnabled()) {
+      await this.billingSubscriptionService.assertSubscriptionCanceledOrNone(
+        workspace.id,
+      );
     }
 
     await this.deleteWorkspaceSyncableMetadataEntities(workspace);
@@ -476,6 +511,18 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     await this.messageQueueService.add<FileWorkspaceFolderDeletionJobData>(
       FileWorkspaceFolderDeletionJob.name,
       { workspaceId: id },
+    );
+
+    const emailingDomains = await this.coreDataSource
+      .getRepository(EmailingDomainEntity)
+      .find({ where: { workspaceId: id } });
+
+    await this.messageQueueService.add<EmailingDomainWorkspaceCleanupJobData>(
+      EmailingDomainWorkspaceCleanupJob.name,
+      {
+        workspaceId: id,
+        domains: emailingDomains.map((emailingDomain) => emailingDomain.domain),
+      },
     );
 
     if (workspace.customDomain) {
@@ -815,6 +862,16 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     } catch (error) {
       this.logger.error(
         `Non-critical: failed to prefill workflow command menu items for workspace ${workspaceId}`,
+        error,
+      );
+      this.exceptionHandlerService.captureExceptions([error as Error]);
+    }
+
+    try {
+      await this.preInstalledAppsService.installOnWorkspace(workspaceId);
+    } catch (error) {
+      this.logger.error(
+        `Non-critical: failed to install pre-installed apps for workspace ${workspaceId}`,
         error,
       );
       this.exceptionHandlerService.captureExceptions([error as Error]);

@@ -2,9 +2,11 @@ import { Transform } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
+  isDefined,
   IsEnum,
   IsNumber,
   IsObject,
+  isString,
   IsString,
 } from 'class-validator';
 
@@ -15,6 +17,7 @@ import {
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { type ConfigVariableOptions } from 'src/engine/core-modules/twenty-config/types/config-variable-options.type';
 import { configTransformers } from 'src/engine/core-modules/twenty-config/utils/config-transformers.util';
+import { tryParseJsonArray } from 'src/utils/try-parse-json-array';
 
 export interface TypeTransformer<T> {
   toApp: (value: unknown, options?: ConfigVariableOptions) => T | undefined;
@@ -28,7 +31,7 @@ export interface TypeTransformer<T> {
 
 export const typeTransformers: Record<
   ConfigVariableType,
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   TypeTransformer<any>
 > = {
   [ConfigVariableType.BOOLEAN]: {
@@ -193,7 +196,21 @@ export const typeTransformers: Record<
 
     getValidators: (): PropertyDecorator[] => [IsArray()],
 
-    getTransformers: (): PropertyDecorator[] => [],
+    getTransformers: (): PropertyDecorator[] => [
+      Transform(({ value }) => {
+        if (Array.isArray(value)) return value;
+        if (!isString(value)) return value;
+
+        const fromJson = tryParseJsonArray(value);
+
+        if (isDefined(fromJson)) return fromJson;
+
+        return value
+          .split(',')
+          .map((item) => item.trim())
+          .filter((item) => item.length > 0);
+      }),
+    ],
   },
 
   [ConfigVariableType.ENUM]: {

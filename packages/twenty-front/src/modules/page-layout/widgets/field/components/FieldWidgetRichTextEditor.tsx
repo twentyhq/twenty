@@ -8,14 +8,17 @@ import { styled } from '@linaria/react';
 import { lazy, Suspense, useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isUndefined } from '@sniptt/guards';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const RichTextFieldEditor = lazy(() =>
-  import(
-    '@/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor'
-  ).then((module) => ({
-    default: module.RichTextFieldEditor,
-  })),
+  import('@/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor').then(
+    (module) => ({
+      default: module.RichTextFieldEditor,
+    }),
+  ),
 );
 
 const StyledContainer = styled.div`

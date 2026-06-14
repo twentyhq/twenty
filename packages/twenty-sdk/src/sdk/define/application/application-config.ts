@@ -6,4 +6,10 @@ export type ApplicationConfig = Omit<
   | 'yarnLockChecksum'
   | 'postInstallLogicFunction'
   | 'preInstallLogicFunction'
->;
+  | 'defaultRoleUniversalIdentifier'
+> & {
+  /**
+   * @deprecated Use `defineApplicationRole()` in your role file instead.
+   */
+  defaultRoleUniversalIdentifier?: string;
+};

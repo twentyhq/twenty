@@ -16,9 +16,9 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
-import { HorizontalSeparator } from 'twenty-ui/display';
-import { type SelectOption } from 'twenty-ui/input';
+import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
+import { HorizontalSeparator } from 'twenty-ui-deprecated/display';
+import { type SelectOption } from 'twenty-ui-deprecated/input';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { RelationType } from '~/generated-metadata/graphql';
@@ -47,9 +47,8 @@ export const WorkflowEditActionUpdateRecord = ({
   const availableMetadata: Array<SelectOption<string>> =
     activeNonSystemObjectMetadataItems
       .filter((objectMetadataItem) =>
-        canObjectBeManagedByWorkflow({
+        canObjectBeManagedByAutomation({
           nameSingular: objectMetadataItem.nameSingular,
-          isSystem: objectMetadataItem.isSystem,
         }),
       )
       .map((item) => ({

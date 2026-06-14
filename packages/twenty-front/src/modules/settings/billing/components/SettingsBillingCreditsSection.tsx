@@ -1,12 +1,12 @@
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { MeteredPriceSelector } from '@/settings/billing/components/internal/MeteredPriceSelector';
+import { ResourceCreditPriceSelector } from '@/settings/billing/components/internal/ResourceCreditPriceSelector';
 import { SettingsBillingLabelValueItem } from '@/settings/billing/components/internal/SettingsBillingLabelValueItem';
 import { SubscriptionInfoContainer } from '@/settings/billing/components/SubscriptionInfoContainer';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBillingFlags';
-import { useCurrentMetered } from '@/settings/billing/hooks/useCurrentMetered';
-import { useGetWorkflowNodeExecutionUsage } from '@/settings/billing/hooks/useGetWorkflowNodeExecutionUsage';
+import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentResourceCredit';
+import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { styled } from '@linaria/react';
@@ -14,18 +14,21 @@ import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { DOCUMENTATION_PATHS } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
-import { formatToShortNumber, getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
 import {
   H2Title,
   HorizontalSeparator,
   IconChartBar,
   IconExternalLink,
-} from 'twenty-ui/display';
-import { ProgressBar } from 'twenty-ui/feedback';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { ProgressBar } from 'twenty-ui-deprecated/feedback';
+import { Button } from 'twenty-ui-deprecated/input';
+import { Section } from 'twenty-ui-deprecated/layout';
+import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { SubscriptionStatus } from '~/generated-metadata/graphql';
 
 const StyledCreditUsageFooterActions = styled.div`
@@ -47,33 +50,22 @@ export const SettingsBillingCreditsSection = ({
 
   const { isMonthlyPlan } = useCurrentBillingFlags();
 
-  const { getCurrentMeteredPricesByInterval } = useCurrentMetered();
+  const { getResourceCreditPricesByInterval } = useCurrentResourceCredit();
 
   const { getIntervalLabel } = useBillingWording();
 
   const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
 
-  const { getWorkflowNodeExecutionUsage } = useGetWorkflowNodeExecutionUsage();
+  const { getResourceCreditUsage } = useGetResourceCreditUsage();
 
-  const {
-    usedCredits,
-    grantedCredits,
-    totalGrantedCredits,
-    unitPriceCents,
-    rolloverCredits,
-  } = getWorkflowNodeExecutionUsage();
+  const { usedCredits, grantedCredits, totalGrantedCredits, rolloverCredits } =
+    getResourceCreditUsage();
 
   const progressBarValue = (usedCredits / totalGrantedCredits) * 100;
 
   const intervalLabel = getIntervalLabel(isMonthlyPlan);
 
-  const extraCreditsUsed = Math.max(0, usedCredits - totalGrantedCredits);
-
-  const costPerExtraCredits = unitPriceCents / 100;
-
-  const costExtraCredits = (extraCreditsUsed * unitPriceCents) / 100;
-
-  const meteredBillingPrices = getCurrentMeteredPricesByInterval(
+  const resourceCreditPrices = getResourceCreditPricesByInterval(
     currentBillingSubscription.interval,
   );
 
@@ -128,20 +120,6 @@ export const SettingsBillingCreditsSection = ({
                   })}
                 />
               )}
-              <HorizontalSeparator noMargin color={theme.background.tertiary} />
-              <SettingsBillingLabelValueItem
-                label={t`Extra Credits Used`}
-                value={`${formatToShortNumber(extraCreditsUsed)}`}
-              />
-              <SettingsBillingLabelValueItem
-                label={t`Cost per Extra Credits`}
-                value={`$${formatNumber(costPerExtraCredits, { abbreviate: true, decimals: 2 })}`}
-              />
-              <SettingsBillingLabelValueItem
-                label={t`Cost`}
-                isValueInPrimaryColor={true}
-                value={`$${formatNumber(costExtraCredits, { decimals: 2 })}`}
-              />
             </>
           )}
         </SubscriptionInfoContainer>
@@ -170,8 +148,8 @@ export const SettingsBillingCreditsSection = ({
         </StyledCreditUsageFooterActions>
       </Section>
       <Section>
-        <MeteredPriceSelector
-          meteredBillingPrices={meteredBillingPrices}
+        <ResourceCreditPriceSelector
+          resourceCreditPrices={resourceCreditPrices}
           isTrialing={isTrialing}
         />
       </Section>

@@ -18,7 +18,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { type MouseEvent, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 import { BarChartLayout } from '~/generated-metadata/graphql';
 type BarChartProps = {
   data: BarChartDatum[];

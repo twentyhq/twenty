@@ -17,6 +17,7 @@ export const DEFAULT_WORKFLOW_PAGE_LAYOUT: PageLayout = {
   name: 'Default Workflow Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectMetadataId: null,
+  universalIdentifier: '00000000-0000-0000-0000-000000000000',
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   deletedAt: null,
@@ -51,6 +52,10 @@ export const DEFAULT_WORKFLOW_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 12,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetCanvasPosition',
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
           },
           configuration: {
             __typename: 'FieldsConfiguration',

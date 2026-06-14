@@ -1,0 +1,192 @@
+---
+title: Bağlantılar
+description: Uygulamanızın, OAuth aracılığıyla üçüncü taraf hizmetlerde kullanıcı adına işlem yapmasına izin verin.
+icon: plug
+---
+
+Bağlantılar, bir kullanıcının harici bir hizmet için (Linear, GitHub, Slack, ...) sahip olduğu kimlik bilgileridir. Uygulamanız bu kimlik bilgilerinin **nasıl** elde edildiğini — bir **bağlantı sağlayıcısı** — bildirir ve çalışma zamanında üçüncü taraf API'sine kimlik doğrulamalı çağrılar yapmak için bunları kullanır.
+
+Bugün yalnızca OAuth 2.0 destekleniyor. Gelecekteki kimlik bilgisi türleri (kişisel erişim belirteçleri, API anahtarları, basic auth) aynı yüzeye bağlanacak — halihazırda `defineConnectionProvider({ type: 'oauth', ... })` kullanan uygulamaların geçiş yapması gerekmeyecek.
+
+<AccordionGroup>
+
+<Accordion title="defineConnectionProvider" description="Uygulamanızın bağlantılarının nasıl elde edildiğini belirtin">
+
+Bir bağlantı sağlayıcısı, uygulamanızın ihtiyaç duyduğu OAuth el sıkışmasını açıklar. Kullanıcı, uygulamanızın ayarlarında "Bağlantı ekle"ye tıklar, sağlayıcının izin ekranını tamamlar ve çalışma alanında bir `ConnectedAccount` satırı oluşturulur.
+
+Çalışan bir kurulum **iki dosya** gerektirir — bağlantı sağlayıcısı ve OAuth istemci kimlik bilgilerini tutan `defineApplication` üzerindeki eşleşen bir `serverVariables` bildirimi.
+
+```ts src/connection-providers/linear-connection.ts
+import { defineConnectionProvider } from 'twenty-sdk/define';
+
+export default defineConnectionProvider({
+  universalIdentifier: '9c7d1f5e-6a0b-4d44-be0c-3f8b5a9d4e6f',
+  name: 'linear',
+  displayName: 'Linear',
+  icon: 'IconBrandLinear',
+  type: 'oauth',
+  oauth: {
+    authorizationEndpoint: 'https://linear.app/oauth/authorize',
+    tokenEndpoint: 'https://api.linear.app/oauth/token',
+    scopes: ['read', 'write'],
+    // These must match keys in `defineApplication.serverVariables` below.
+    clientIdVariable: 'LINEAR_CLIENT_ID',
+    clientSecretVariable: 'LINEAR_CLIENT_SECRET',
+    // Optional: defaults to 'json'. Some providers (Linear, Slack) want
+    // 'form-urlencoded' for the token request.
+    tokenRequestContentType: 'form-urlencoded',
+    // Optional: defaults to true. Disable only if the provider rejects PKCE.
+    usePkce: false,
+    // Optional: extra query params on the authorize URL.
+    // authorizationParams: { prompt: 'consent' },
+    // Optional: provider's RFC 7009 token revocation endpoint, called on disconnect.
+    // revokeEndpoint: 'https://example.com/oauth/revoke',
+  },
+});
+```
+
+```ts src/application.config.ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: '...',
+  displayName: 'Linear',
+  description: 'Connect Linear to Twenty.',
+  // OAuth client credentials live on the app registration (one OAuth app per
+  // Twenty server, configured by the admin) — not per-workspace. Declare them
+  // as serverVariables so the admin can fill them in once for all installs.
+  serverVariables: {
+    LINEAR_CLIENT_ID: {
+      description: 'OAuth client ID from your Linear OAuth application.',
+      isSecret: false,
+      isRequired: true,
+    },
+    LINEAR_CLIENT_SECRET: {
+      description: 'OAuth client secret from your Linear OAuth application.',
+      isSecret: true,
+      isRequired: true,
+    },
+  },
+});
+```
+
+Önemli noktalar:
+
+* `name`, `listConnections({ providerName })` içinde kullanılan benzersiz tanımlayıcı dizedir (kebab-case, `^[a-z][a-z0-9-]*$` ile eşleşmelidir).
+* `displayName` uygulama başına ayarlar sekmesinde ve Yapay Zeka araç listesinde gösterilir.
+* `clientIdVariable` / `clientSecretVariable` değer değil, **isimdir** — `defineApplication.serverVariables` içinde bildirilen anahtarlarla eşleşmelidir. Gerçek `client_id` ve `client_secret`, sunucu yöneticisi tarafından uygulama kayıt arayüzü üzerinden girilir; deponuza asla commit edilmez.
+* `serverVariables` kullanın (`applicationVariables` değil) — OAuth kimlik bilgileri sunucu genelidir ve her Twenty sunucusu için bir OAuth uygulaması vardır.
+* Her iki `serverVariables` da doldurulana kadar, uygulama başına ayarlar sekmesi "sunucu yöneticisine ihtiyaç var" ipucunu gösterir ve "Bağlantı ekle" düğmesi devre dışı bırakılır.
+* `type: 'oauth'` bugün desteklenen tek değerdir. Ayırt edici alan ileriye dönük uyumludur: gelecekteki türler (`'pat'`, `'api-key'`, ...) `oauth` yanında yeni alt yapılandırma blokları eklenecektir.
+
+Sağlayıcınızın beyaz listeye alması gereken OAuth geri çağrı URL'si şudur:
+
+```
+https://<your-twenty-server>/apps/oauth/callback
+```
+
+</Accordion>
+
+<Accordion title="listConnections / getConnection" description="Bir mantık işlevinden bağlantıları kullanın">
+
+Bir mantık işlevi işleyicisi içinde, `listConnections({ providerName })`, verilen sağlayıcı için bu uygulamanın `ConnectedAccount` satırlarını, yenilenmiş erişim belirteçleriyle döndürür.
+
+```ts src/logic-functions/handlers/create-linear-issue-handler.ts
+import { listConnections } from 'twenty-sdk/logic-function';
+
+export const createLinearIssueHandler = async (input: {
+  teamId?: string;
+  title?: string;
+}) => {
+  if (!input.teamId || !input.title) {
+    return { success: false, error: 'teamId and title are required' };
+  }
+
+  const connections = await listConnections({ providerName: 'linear' });
+
+  // Workspace-shared credentials win when present; fall back to the first
+  // user-visibility one. For HTTP-route triggers you typically pick the
+  // request user's connection via event.userWorkspaceId instead.
+  const connection =
+    connections.find((c) => c.visibility === 'workspace') ?? connections[0];
+
+  if (!connection) {
+    return {
+      success: false,
+      error:
+        'Linear is not connected. Open the app settings and click "Add connection".',
+    };
+  }
+
+  // Use connection.accessToken to call the third-party API.
+  const response = await fetch('https://api.linear.app/graphql', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${connection.accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: `mutation { issueCreate(input: { teamId: "${input.teamId}", title: "${input.title}" }) { success } }`,
+    }),
+  });
+
+  return { success: response.ok };
+};
+```
+
+Her bağlantı şunlara sahiptir:
+
+| Alan              | Açıklama                                                                                                                     |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `id`              | Tekil satır kimliği; tek bir tanesini yeniden getirmek için `getConnection(id)` işlevine iletin                              |
+| `visibility`      | `'user'` (bir çalışma alanı üyesine özel) veya `'workspace'` (tüm üyelerle paylaşılan)                                       |
+| `scopes`          | Üst sağlayıcı tarafından verilen OAuth izinleri (`visibility` ile karıştırılmamalıdır — bunlar ilişkili değildir)            |
+| `userWorkspaceId` | Sahibinin userWorkspace kimliği — HTTP rota tetikleyicilerinde "istek kullanıcısının bağlantısını" seçmek için kullanışlıdır |
+| `accessToken`     | Yeni OAuth erişim belirteci (süresi dolmuşsa otomatik olarak yenilenir)                                                      |
+| `name` / `handle` | Bağlantının görünen adı (OAuth geri çağrısında otomatik türetilir, kullanıcı tarafından yeniden adlandırılabilir)            |
+| `authFailedAt`    | En son yenileme başarısız olduğunda ayarlanır; kullanıcı yeniden bağlanmalıdır                                               |
+
+Önemli noktalar:
+
+* Sağlayıcıya göre filtrelemek için `{ providerName }` iletin; bu uygulamanın tüm sağlayıcılardaki tüm bağlantılarını almak için bunu atlayın.
+* Sunucu, döndürmeden önce erişim belirtecini şeffaf bir şekilde yeniler. İşleyiciniz her zaman kullanılabilir bir belirteç görür (veya `authFailedAt` ayarlanmıştır).
+* `getConnection(id)`, tek satırlık karşılığıdır.
+
+</Accordion>
+
+<Accordion title="Kullanıcıya özel ve çalışma alanı paylaşımlı görünürlük" description="Kullanıcıların özel ve paylaşılan kimlik bilgileri arasında nasıl seçim yaptığı">
+
+Bir kullanıcı "Bağlantı ekle"ye tıkladığında, bir görünürlük seçmesi istenir:
+
+* **Yalnızca benim için** — kimlik bilgisi, bağlanan kullanıcıya özeldir. Adlarına çağrılan herhangi bir mantık işlevi (`isAuthRequired: true` ile HTTP rota tetikleyicisi) bunu görür; cron tetikleyicileri ve veritabanı olayları görmez.
+* **Çalışma alanı paylaşımlı** — herhangi bir çalışma alanı üyesi bu kimlik bilgisini kullanabilir. Cron / veritabanı tetikleyicileri de görür, çünkü istek kullanıcısı yoktur.
+
+Her işleyici için doğru olanı kullanın:
+
+```ts
+// HTTP-route trigger — prefer the request user's own connection.
+const conn =
+  connections.find((c) => c.userWorkspaceId === event.userWorkspaceId) ??
+  connections.find((c) => c.visibility === 'workspace');
+
+// Cron trigger — no request user; only shared credentials are sensible.
+const conn = connections.find((c) => c.visibility === 'workspace');
+```
+
+Kullanıcı ve sağlayıcı başına birden çok bağlantıya izin verilir; böylece aynı kullanıcı "Personal Linear" ve "Work Linear" bağlantılarını yan yana tutabilir.
+
+</Accordion>
+
+<Accordion title="Tek seferlik sağlayıcı kurulumu" description="OAuth uygulamanızı üçüncü taraf hizmete kaydedin">
+
+Her bağlantı sağlayıcısı için, sunucu yöneticisinin önce üçüncü tarafta bir OAuth uygulaması kaydetmesi gerekir.
+
+1. Sağlayıcının geliştirici ayarlarına gidin (örn. https://linear.app/settings/api/applications/new).
+2. **Redirect URI**'yi `\<SERVER_URL>/apps/oauth/callback` olarak ayarlayın.
+3. Oluşturulan **Client ID** ve **Client Secret**'ı kopyalayın.
+4. Yüklü uygulamayı Twenty'de bir sunucu yöneticisi olarak açın → karşılık gelen `serverVariables` üzerinde değerleri ayarlayın.
+5. Ardından çalışma alanı üyeleri, uygulama başına **Bağlantılar** bölümünden bağlantılar ekleyebilir.
+
+</Accordion>
+
+</AccordionGroup>

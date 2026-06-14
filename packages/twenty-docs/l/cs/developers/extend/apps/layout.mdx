@@ -8,11 +8,12 @@ Prvky rozvržení řídí, jak se vaše aplikace zobrazuje v uživatelském rozh
 
 ## Pojmy rozvržení
 
-| Pojem                         | Co řídí                                                                        | Entita                     |
-| ----------------------------- | ------------------------------------------------------------------------------ | -------------------------- |
-| **Pohled**                    | Uložené nastavení seznamu pro objekt — viditelná pole, pořadí, filtry, skupiny | `defineView`               |
-| **Položka navigační nabídky** | Položka v levém postranním panelu, která odkazuje na pohled nebo externí URL   | `defineNavigationMenuItem` |
-| **Rozvržení stránky**         | Karty a widgety, které tvoří stránku s podrobnostmi záznamu                    | `definePageLayout`         |
+| Pojem                         | Co řídí                                                                                                         | Entita                     |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| **Pohled**                    | Uložené nastavení seznamu pro objekt — viditelná pole, pořadí, filtry, skupiny                                  | `defineView`               |
+| **Položka navigační nabídky** | Položka v levém postranním panelu, která odkazuje na pohled nebo externí URL                                    | `defineNavigationMenuItem` |
+| **Rozvržení stránky**         | Karty a widgety, které tvoří stránku s podrobnostmi záznamu                                                     | `definePageLayout`         |
+| **Karta Rozložení stránky**   | Samostatná karta připojená k existujícímu rozložení stránky (standardnímu nebo rozložení vaší vlastní aplikace) | `definePageLayoutTab`      |
 
 Pohledy, položky navigační nabídky a rozvržení stránek se na sebe odkazují pomocí `universalIdentifier`:
 
@@ -126,6 +127,52 @@ Hlavní body:
 * Každá `tab` definuje sekci stránky s `title`, `position` a `layoutMode` (`CANVAS` pro volné rozvržení).
 * Každý `widget` uvnitř karty může vykreslit frontendovou komponentu, seznam relací nebo jiné vestavěné typy widgetů.
 * `position` na kartách určuje jejich pořadí. Použijte vyšší hodnoty (např. 50) pro umístění vlastních karet za vestavěné.
+
+</Accordion>
+<Accordion title="definePageLayoutTab" description="Přidat kartu do existujícího rozvržení stránky">
+
+`definePageLayoutTab` umožňuje vaší aplikaci připojit jednu kartu — s volitelnými widgety — k **existujícímu** rozvržení stránky. Nejčastějším případem použití je přidání vlastní karty (například karty s analytikou nebo souhrnem AI) na jednu z vestavěných stránek záznamů Twenty nebo do rozvržení stránky, které vaše vlastní aplikace již dodává.
+
+Cílové rozvržení stránky musí být buď **standardní** rozvržení stránky Twenty, nebo takové, které je definované **vaší vlastní aplikací**; křížové odkazy na rozvržení stránek, která vlastní jiná nainstalovaná aplikace, dnes nejsou podporovány.
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  '20202020-ab01-4001-8001-c0aba11c0100';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+Hlavní body:
+* `pageLayoutUniversalIdentifier` je při použití `definePageLayoutTab` **povinný** a musí odkazovat na rozvržení stránky, které již existuje v době instalace (standardní nebo vaší aplikace). Pokud nadřazené rozvržení stránky chybí, instalace selže s jasnou validační chybou.
+* `widgets` mají rozsah pouze pro tuto kartu — odkazují na frontendové komponenty, zobrazení apod. úplně stejně jako widgety definované přímo v `definePageLayout`.
+* `position` určuje pořadí vzhledem ke stávajícím kartám v cílovém rozvržení. Zvolte hodnotu, která umístí vaši kartu tam, kde ji chcete mít, relativně k vestavěným kartám.
+* Použijte to místo `definePageLayout`, když chcete pouze **přidat** do existujícího rozvržení. Použijte `definePageLayout`, když vlastníte celé rozvržení (typicky `RECORD_PAGE` pro objekt, který ve své aplikaci dodáváte, nebo `STANDALONE_PAGE`).
 
 </Accordion>
 </AccordionGroup>

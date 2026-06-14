@@ -19,6 +19,7 @@ export class PublicDomainExceptionFilter implements ExceptionFilter {
       case PublicDomainExceptionCode.DOMAIN_ALREADY_REGISTERED_AS_CUSTOM_DOMAIN:
         throw new UserInputError(exception);
       case PublicDomainExceptionCode.PUBLIC_DOMAIN_NOT_FOUND:
+      case PublicDomainExceptionCode.APPLICATION_NOT_FOUND:
         throw new NotFoundError(exception);
       default:
         assertUnreachable(exception.code);

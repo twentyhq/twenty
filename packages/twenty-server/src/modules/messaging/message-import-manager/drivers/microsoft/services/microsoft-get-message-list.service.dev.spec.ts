@@ -7,37 +7,26 @@ import {
   MessageFolderPendingSyncAction,
 } from 'twenty-shared/types';
 
-import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
-import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
-import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
+import { MicrosoftOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client.provider';
 import { microsoftGraphWithMessagesDeltaLink } from 'src/modules/messaging/message-import-manager/drivers/microsoft/mocks/microsoft-api-examples';
 import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/folders';
 
 import { MicrosoftGetMessageListService } from './microsoft-get-message-list.service';
 import { MicrosoftMessageListFetchErrorHandler } from './microsoft-message-list-fetch-error-handler.service';
 
-// in case you have "Please provide a valid token" it may be because you need to pass the env varible to the .env.test file
-const accessToken = 'replace-with-your-access-token';
-const refreshToken = 'replace-with-your-refresh-token';
 const syncCursor = `replace-with-your-sync-cursor`;
 const mockConnectedAccount: Pick<
   ConnectedAccountEntity,
-  | 'provider'
-  | 'accessToken'
-  | 'refreshToken'
-  | 'id'
-  | 'handle'
-  | 'connectionParameters'
+  'provider' | 'id' | 'handle'
 > = {
   id: 'connected-account-id',
   provider: ConnectedAccountProvider.MICROSOFT,
-  accessToken: accessToken,
-  refreshToken: refreshToken,
-  handle: 'test@gmail.com',
-  connectionParameters: {},
+  handle: 'test@outlook.com',
 };
 
 const mockMessageChannel: Pick<
@@ -57,13 +46,16 @@ xdescribe('Microsoft dev tests : get message list service', () => {
       imports: [TwentyConfigModule.forRoot()],
       providers: [
         MicrosoftGetMessageListService,
-        OAuth2ClientManagerService,
+        {
+          provide: MicrosoftOAuth2ClientProvider,
+          useValue: { getClient: jest.fn() },
+        },
         {
           provide: MicrosoftMessageListFetchErrorHandler,
           useValue: { handleError: jest.fn() },
         },
-        MicrosoftOAuth2ClientManagerService,
         ConfigService,
+        { provide: ConnectedAccountTokenEncryptionService, useValue: {} },
       ],
     }).compile();
 
@@ -91,36 +83,6 @@ xdescribe('Microsoft dev tests : get message list service', () => {
     });
 
     expect(result[0].messageExternalIds.length).toBeGreaterThan(0);
-  });
-
-  it('Should throw token error', async () => {
-    const mockConnectedAccountUnvalid = {
-      id: 'connected-account-id',
-      provider: ConnectedAccountProvider.MICROSOFT,
-      accessToken: 'invalid-token',
-      refreshToken: 'invalid-token',
-      handle: 'test@microsoft.com',
-      connectionParameters: {},
-    };
-
-    await expect(
-      service.getMessageLists({
-        connectedAccount: mockConnectedAccountUnvalid,
-        messageChannel: mockMessageChannel,
-        messageFolders: [
-          {
-            id: 'inbox-folder-id',
-            name: MessageFolderName.INBOX,
-            syncCursor: 'inbox-sync-cursor',
-            isSynced: false,
-            isSentFolder: false,
-            externalId: null,
-            parentFolderId: null,
-            pendingSyncAction: MessageFolderPendingSyncAction.NONE,
-          },
-        ],
-      }),
-    ).rejects.toThrowError('Access token is undefined or empty');
   });
 
   // if you need to run this test, you need to manually update the syncCursor to a valid one
@@ -229,13 +191,16 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
       imports: [TwentyConfigModule.forRoot()],
       providers: [
         MicrosoftGetMessageListService,
-        OAuth2ClientManagerService,
+        {
+          provide: MicrosoftOAuth2ClientProvider,
+          useValue: { getClient: jest.fn() },
+        },
         {
           provide: MicrosoftMessageListFetchErrorHandler,
           useValue: { handleError: jest.fn() },
         },
-        MicrosoftOAuth2ClientManagerService,
         ConfigService,
+        { provide: ConnectedAccountTokenEncryptionService, useValue: {} },
       ],
     }).compile();
 
@@ -251,7 +216,7 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
     };
 
     jest
-      .spyOn(OAuth2ClientManagerService.prototype, 'getMicrosoftOAuth2Client')
+      .spyOn(MicrosoftOAuth2ClientProvider.prototype, 'getClient')
       .mockResolvedValue(mockMicrosoftClient as any);
   });
 

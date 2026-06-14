@@ -43,41 +43,45 @@ export class MessagingMessagesImportJob {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageChannel = await this.messageChannelRepository.findOne({
-        where: {
-          id: messageChannelId,
-          workspaceId,
-        },
-        relations: { connectedAccount: true, messageFolders: true },
-      });
-
-      if (!messageChannel) {
-        await this.messagingMonitoringService.track({
-          eventName: 'messages_import.error.message_channel_not_found',
-          messageChannelId,
-          workspaceId,
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const messageChannel = await this.messageChannelRepository.findOne({
+          where: {
+            id: messageChannelId,
+            workspaceId,
+          },
+          relations: { connectedAccount: true, messageFolders: true },
         });
 
-        return;
-      }
+        if (!messageChannel) {
+          await this.messagingMonitoringService.track({
+            eventName: 'messages_import.error.message_channel_not_found',
+            messageChannelId,
+            workspaceId,
+          });
 
-      if (!messageChannel?.isSyncEnabled) {
-        return;
-      }
+          return;
+        }
 
-      if (
-        messageChannel.syncStage !==
-        MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED
-      ) {
-        return;
-      }
+        if (!messageChannel?.isSyncEnabled) {
+          return;
+        }
 
-      await this.messagingMessagesImportService.processMessageBatchImport(
-        messageChannel,
-        messageChannel.connectedAccount,
-        workspaceId,
-      );
-    }, authContext);
+        if (
+          messageChannel.syncStage !==
+          MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED
+        ) {
+          return;
+        }
+
+        await this.messagingMessagesImportService.processMessageBatchImport(
+          messageChannel,
+          messageChannel.connectedAccount,
+          workspaceId,
+        );
+      },
+      authContext,
+      { lite: true },
+    );
   }
 }

@@ -78,6 +78,7 @@ export const fromIndexMetadataEntityToFlatIndexMetadata = ({
 
         return {
           order: indexFieldMetadata.order,
+          subFieldName: indexFieldMetadata.subFieldName,
           createdAt: indexFieldMetadata.createdAt.toISOString(),
           updatedAt: indexFieldMetadata.updatedAt.toISOString(),
           indexMetadataUniversalIdentifier:

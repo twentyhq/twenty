@@ -4,16 +4,17 @@ import { FindOneAdminApplicationRegistrationDocument } from '~/generated-admin/g
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { useLingui } from '@lingui/react/macro';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { APPLICATION_REGISTRATION_ADMIN_PATH } from '@/settings/admin-panel/apps/constants/ApplicationRegistrationAdminPath';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
+  Avatar,
   IconInfoCircle,
   IconKey,
   IconSettings,
   IconWorld,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 import { SettingsApplicationRegistrationConfigTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab';
 import { SettingsApplicationRegistrationOAuthTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab';
 import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';
@@ -21,9 +22,17 @@ import { SettingsApplicationRegistrationGeneralTab } from '~/pages/settings/appl
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { styled } from '@linaria/react';
 
 const REGISTRATION_DETAIL_TAB_LIST_ID =
   'admin-application-registration-detail-tab-list';
+
+const StyledTitleContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+`;
 
 export const SettingsAdminApplicationRegistrationDetail = () => {
   const { t } = useLingui();
@@ -66,6 +75,7 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
         return (
           <SettingsApplicationRegistrationConfigTab
             registration={registration}
+            fromAdmin
           />
         );
       case 'oauth':
@@ -92,8 +102,19 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
-      title={registration.name}
+    <SettingsPageLayout
+      title={
+        <StyledTitleContainer>
+          <Avatar
+            type="app"
+            size="md"
+            avatarUrl={registration.logoUrl ?? undefined}
+            placeholder={registration.name}
+            placeholderColorSeed={registration.name}
+          />
+          {registration.name}
+        </StyledTitleContainer>
+      }
       links={[
         {
           children: t`Other`,
@@ -113,6 +134,6 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
         />
         {renderActiveTabContent()}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

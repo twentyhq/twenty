@@ -20,10 +20,13 @@ import {
   IconRefresh,
   TooltipDelay,
   InlineBanner,
-} from 'twenty-ui/display';
-import { Card } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { parseThemeColor } from 'twenty-ui/utilities';
+} from 'twenty-ui-deprecated/display';
+import { Card } from 'twenty-ui-deprecated/layout';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
+import { parseThemeColor } from 'twenty-ui-deprecated/utilities';
 import { type StringKeyOf } from 'type-fest';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { computeMetadataNamesFromLabels } from '~/pages/settings/data-model/utils/computeMetadataNamesFromLabels';
@@ -246,6 +249,7 @@ export const SettingsDataModelObjectAboutForm = ({
             textAreaId={descriptionTextAreaId}
             placeholder={t`Write a description`}
             minRows={4}
+            maxRows={5}
             value={value ?? undefined}
             onChange={(nextValue) => onChange(nextValue ?? null)}
             onBlur={() => onNewDirtyField?.()}

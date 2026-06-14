@@ -4,11 +4,11 @@ import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/components/SettingsAccountsCalendarChannelDetails';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconDeviceFloppy } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
+import { IconDeviceFloppy } from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
 
 type SettingsAccountsConfigurationStepCalendarProps = {
   calendarChannel: CalendarChannel;
@@ -29,7 +29,7 @@ export const SettingsAccountsConfigurationStepCalendar = ({
   const stepTitle = t`${stepNumber}. Calendar`;
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={stepTitle}
       links={[
         {
@@ -61,6 +61,6 @@ export const SettingsAccountsConfigurationStepCalendar = ({
           calendarChannel={calendarChannel}
         />
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

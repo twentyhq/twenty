@@ -7,8 +7,8 @@ import { Repository } from 'typeorm';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { MONITORING_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/monitoring/monitoring';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
+import { IMPERSONATION_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/impersonation/impersonation';
 import {
   AuthException,
   AuthExceptionCode,
@@ -24,7 +24,7 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 @Injectable()
 export class ImpersonationService {
   constructor(
-    private readonly auditService: AuditService,
+    private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly loginTokenService: LoginTokenService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -60,6 +60,15 @@ export class ImpersonationService {
       throw new AuthException(
         'User not found in workspace or impersonation not enabled',
         AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    if (
+      toImpersonateUserWorkspace.userId === impersonatorUserWorkspace.userId
+    ) {
+      throw new AuthException(
+        'User cannot impersonate themselves',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
 
@@ -127,6 +136,21 @@ export class ImpersonationService {
       );
     }
 
+    const targetHasAdminPrivileges =
+      toImpersonateUserWorkspace.user.canImpersonate === true ||
+      toImpersonateUserWorkspace.user.canAccessFullAdminPanel === true;
+
+    const impersonatorHasAdminPrivileges =
+      impersonatorUserWorkspace.user.canImpersonate === true ||
+      impersonatorUserWorkspace.user.canAccessFullAdminPanel === true;
+
+    if (targetHasAdminPrivileges && !impersonatorHasAdminPrivileges) {
+      throw new AuthException(
+        'Cannot impersonate a user with admin privileges. Only administrators can impersonate other administrators.',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
     return this.generateImpersonationLoginToken(
       impersonatorUserWorkspace,
       toImpersonateUserWorkspace,
@@ -139,19 +163,21 @@ export class ImpersonationService {
     toImpersonateUserWorkspace: UserWorkspaceEntity,
     impersonationLevel: 'server' | 'workspace',
   ) {
-    const auditService = this.auditService.createContext({
+    const eventLogContext = this.eventLogEmitterService.createContext({
       workspaceId: impersonatorUserWorkspace.workspace.id,
       userId: impersonatorUserWorkspace.userId,
     });
 
-    auditService.insertWorkspaceEvent(MONITORING_EVENT, {
-      eventName: `${impersonationLevel}.impersonation.attempt`,
+    void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
+      level: impersonationLevel,
+      action: 'attempt',
       message: `Impersonation attempt: targetUserId=${toImpersonateUserWorkspace.user.id}, workspaceId=${toImpersonateUserWorkspace.workspace.id}, impersonatorUserId=${impersonatorUserWorkspace.user.id}`,
     });
 
     try {
-      auditService.insertWorkspaceEvent(MONITORING_EVENT, {
-        eventName: `${impersonationLevel}.impersonation.login_token_attempt`,
+      void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
+        level: impersonationLevel,
+        action: 'login_token_attempt',
         message: `Impersonation token generation attempt for user ${toImpersonateUserWorkspace.user.id}`,
       });
 
@@ -164,8 +190,9 @@ export class ImpersonationService {
         },
       );
 
-      auditService.insertWorkspaceEvent(MONITORING_EVENT, {
-        eventName: `${impersonationLevel}.impersonation.login_token_generated`,
+      void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
+        level: impersonationLevel,
+        action: 'login_token_generated',
         message: `Impersonation token generated successfully for user ${toImpersonateUserWorkspace.user.id}`,
       });
 
@@ -179,8 +206,9 @@ export class ImpersonationService {
         loginToken,
       };
     } catch {
-      auditService.insertWorkspaceEvent(MONITORING_EVENT, {
-        eventName: `${impersonationLevel}.impersonation.login_token_failed`,
+      void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
+        level: impersonationLevel,
+        action: 'login_token_failed',
         message: `Impersonation token generation failed for targetUserId=${toImpersonateUserWorkspace.user.id}`,
       });
       throw new AuthException(

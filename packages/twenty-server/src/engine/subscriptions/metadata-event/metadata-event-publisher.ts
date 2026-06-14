@@ -6,6 +6,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
+import { FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-standard-overrides-properties.constant';
 import { OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-standard-overrides-properties.constant';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
@@ -80,25 +81,37 @@ export class MetadataEventPublisher {
       );
 
     const enrichedEvents = metadataEventBatch.events.map((event) => {
+      const enrichedProperties = { ...event.properties };
+
       if (
-        !('after' in event.properties) ||
-        !isDefined(event.properties.after)
+        'before' in enrichedProperties &&
+        isDefined(enrichedProperties.before)
       ) {
-        return event;
+        enrichedProperties.before = this.applyStandardOverridesToMetadataRecord(
+          enrichedProperties.before as Record<string, unknown>,
+          FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES,
+        ) as typeof enrichedProperties.before;
       }
 
-      const enrichedAfter = enrichFieldMetadataEventWithRelations({
-        record: event.properties.after as Record<string, unknown>,
-        flatFieldMetadataMaps,
-        flatObjectMetadataMaps,
-      });
+      if (
+        'after' in enrichedProperties &&
+        isDefined(enrichedProperties.after)
+      ) {
+        const enrichedAfter = enrichFieldMetadataEventWithRelations({
+          record: enrichedProperties.after as Record<string, unknown>,
+          flatFieldMetadataMaps,
+          flatObjectMetadataMaps,
+        });
+
+        enrichedProperties.after = this.applyStandardOverridesToMetadataRecord(
+          enrichedAfter,
+          FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES,
+        ) as typeof enrichedProperties.after;
+      }
 
       return {
         ...event,
-        properties: {
-          ...event.properties,
-          after: enrichedAfter,
-        },
+        properties: enrichedProperties,
       } as typeof event;
     });
 
@@ -204,20 +217,20 @@ export class MetadataEventPublisher {
         'before' in enrichedProperties &&
         isDefined(enrichedProperties.before)
       ) {
-        enrichedProperties.before =
-          this.applyStandardOverridesToObjectMetadataRecord(
-            enrichedProperties.before as Record<string, unknown>,
-          ) as typeof enrichedProperties.before;
+        enrichedProperties.before = this.applyStandardOverridesToMetadataRecord(
+          enrichedProperties.before as Record<string, unknown>,
+          OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES,
+        ) as typeof enrichedProperties.before;
       }
 
       if (
         'after' in enrichedProperties &&
         isDefined(enrichedProperties.after)
       ) {
-        enrichedProperties.after =
-          this.applyStandardOverridesToObjectMetadataRecord(
-            enrichedProperties.after as Record<string, unknown>,
-          ) as typeof enrichedProperties.after;
+        enrichedProperties.after = this.applyStandardOverridesToMetadataRecord(
+          enrichedProperties.after as Record<string, unknown>,
+          OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES,
+        ) as typeof enrichedProperties.after;
       }
 
       return { ...event, properties: enrichedProperties } as typeof event;
@@ -226,8 +239,9 @@ export class MetadataEventPublisher {
     return { ...metadataEventBatch, events: enrichedEvents };
   }
 
-  private applyStandardOverridesToObjectMetadataRecord(
+  private applyStandardOverridesToMetadataRecord(
     record: Record<string, unknown>,
+    standardOverrideProperties: readonly string[],
   ): Record<string, unknown> {
     const standardOverrides = record.standardOverrides as
       | Record<string, unknown>
@@ -240,7 +254,7 @@ export class MetadataEventPublisher {
 
     const resolved = { ...record };
 
-    for (const key of OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES) {
+    for (const key of standardOverrideProperties) {
       if (isDefined(standardOverrides[key])) {
         resolved[key] = standardOverrides[key];
       }

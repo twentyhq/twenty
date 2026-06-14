@@ -3,13 +3,15 @@ import { type ReactNode } from 'react';
 
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { OverflowingTextWithTooltip } from 'twenty-ui-deprecated/display';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
+import { AppChip } from '@/applications/components/AppChip';
 
 export type SettingsToolTableRowProps = {
   leftIcon: ReactNode;
   name: string;
-  appLabel: string;
+  applicationId: string;
   action?: ReactNode;
   link?: string;
 };
@@ -25,7 +27,7 @@ const StyledIconContainer = styled.div`
 export const SettingsToolTableRow = ({
   leftIcon,
   name,
-  appLabel,
+  applicationId,
   action,
   link,
 }: SettingsToolTableRowProps) => {
@@ -43,9 +45,9 @@ export const SettingsToolTableRow = ({
         <StyledIconContainer>{leftIcon}</StyledIconContainer>
         <OverflowingTextWithTooltip text={name} />
       </TableCell>
-      <TableCell minWidth="0" overflow="hidden">
-        <OverflowingTextWithTooltip text={appLabel} />
-      </TableCell>
+      <StyledNameTableCell minWidth="0" overflow="hidden">
+        <AppChip applicationId={applicationId} />
+      </StyledNameTableCell>
       <TableCell
         align="right"
         padding={`0 ${themeCssVariables.spacing[2]} 0 0`}

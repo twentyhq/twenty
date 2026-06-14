@@ -7,9 +7,9 @@ import { Repository } from 'typeorm';
 
 import { type ObjectRecordGroupBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
-import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
+import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 
 import {
   AuthException,
@@ -20,12 +20,14 @@ import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-u
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { CreateManyRecordsService } from 'src/engine/core-modules/record-crud/services/create-many-records.service';
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
+import { DeleteManyRecordsService } from 'src/engine/core-modules/record-crud/services/delete-many-records.service';
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { GroupByRecordsService } from 'src/engine/core-modules/record-crud/services/group-by-records.service';
-import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { UpdateManyRecordsService } from 'src/engine/core-modules/record-crud/services/update-many-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
+import { UpsertManyRecordsService } from 'src/engine/core-modules/record-crud/services/upsert-many-records.service';
+import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
@@ -48,7 +50,9 @@ export class ToolExecutorService {
     private readonly createManyRecordsService: CreateManyRecordsService,
     private readonly updateRecordService: UpdateRecordService,
     private readonly updateManyRecordsService: UpdateManyRecordsService,
+    private readonly upsertManyRecordsService: UpsertManyRecordsService,
     private readonly deleteRecordService: DeleteRecordService,
+    private readonly deleteManyRecordsService: DeleteManyRecordsService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectRepository(UserEntity)
@@ -89,8 +93,8 @@ export class ToolExecutorService {
       context.authContext ?? (await this.buildAuthContext(context));
 
     switch (ref.operation) {
-      case 'find': {
-        const { limit, offset, orderBy, ...filter } = args;
+      case 'find_many': {
+        const { limit, offset, orderBy, select, ...filter } = args;
 
         return this.findRecordsService.execute({
           objectName: ref.objectNameSingular,
@@ -98,21 +102,28 @@ export class ToolExecutorService {
           orderBy: orderBy as FindRecordsParams['orderBy'],
           limit: limit as number | undefined,
           offset: offset as number | undefined,
+          select: select as string[],
+          shouldBuildEffectiveSelectFields: true,
           authContext,
           rolePermissionConfig: context.rolePermissionConfig,
         });
       }
 
-      case 'find_one':
+      case 'find_one': {
+        const { select, id } = args;
+
         return this.findRecordsService.execute({
           objectName: ref.objectNameSingular,
-          filter: { id: { eq: args.id } },
+          filter: { id: { eq: id } },
           limit: 1,
+          select: select as string[],
+          shouldBuildEffectiveSelectFields: isDefined(select),
           authContext,
           rolePermissionConfig: context.rolePermissionConfig,
         });
+      }
 
-      case 'create':
+      case 'create_one':
         return this.createRecordService.execute({
           objectName: ref.objectNameSingular,
           objectRecord: args,
@@ -132,7 +143,7 @@ export class ToolExecutorService {
           slimResponse: true,
         });
 
-      case 'update': {
+      case 'update_one': {
         const { id, ...fields } = args;
         const objectRecord = Object.fromEntries(
           Object.entries(fields).filter(([, value]) => value !== undefined),
@@ -158,13 +169,31 @@ export class ToolExecutorService {
           slimResponse: true,
         });
 
-      case 'delete':
+      case 'upsert_many':
+        return this.upsertManyRecordsService.execute({
+          objectName: ref.objectNameSingular,
+          objectRecords: args.records as Record<string, unknown>[],
+          authContext,
+          rolePermissionConfig: context.rolePermissionConfig,
+          createdBy: context.actorContext,
+          slimResponse: true,
+        });
+
+      case 'delete_one':
         return this.deleteRecordService.execute({
           objectName: ref.objectNameSingular,
           objectRecordId: args.id as string,
           authContext,
           rolePermissionConfig: context.rolePermissionConfig,
           soft: true,
+        });
+
+      case 'delete_many':
+        return this.deleteManyRecordsService.execute({
+          objectName: ref.objectNameSingular,
+          filter: args.filter as Record<string, unknown>,
+          authContext,
+          rolePermissionConfig: context.rolePermissionConfig,
         });
 
       case 'group_by': {

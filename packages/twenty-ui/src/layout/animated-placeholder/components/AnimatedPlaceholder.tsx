@@ -1,30 +1,14 @@
-import { styled } from '@linaria/react';
+import { clsx } from 'clsx';
+import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
+import { useContext, useEffect } from 'react';
+
 import { BACKGROUND } from '@ui/layout/animated-placeholder/constants/Background';
 import { DARK_BACKGROUND } from '@ui/layout/animated-placeholder/constants/DarkBackground';
 import { DARK_MOVING_IMAGE } from '@ui/layout/animated-placeholder/constants/DarkMovingImage';
 import { MOVING_IMAGE } from '@ui/layout/animated-placeholder/constants/MovingImage';
 import { ThemeContext } from '@ui/theme-constants';
-import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
-import { useContext, useEffect } from 'react';
 
-const StyledContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  min-height: 100px;
-`;
-
-interface StyledImageProps {
-  type: string;
-}
-
-const StyledBackgroundImage = styled.img<StyledImageProps>`
-  max-height: ${({ type }) =>
-    type === 'error500' || type === 'error404' ? '245px' : '160px'};
-  max-width: ${({ type }) =>
-    type === 'error500' || type === 'error404' ? '245px' : '160px'};
-`;
+import styles from './AnimatedPlaceholder.module.scss';
 
 const getMovingImageSize = (type: string) =>
   type === 'error500' || type === 'error404' ? '185px' : '130px';
@@ -33,9 +17,9 @@ export type AnimatedPlaceholderType =
   | keyof typeof BACKGROUND
   | keyof typeof MOVING_IMAGE;
 
-interface AnimatedPlaceholderProps {
+type AnimatedPlaceholderProps = {
   type: AnimatedPlaceholderType;
-}
+};
 
 export const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
   const { colorScheme } = useContext(ThemeContext);
@@ -82,11 +66,15 @@ export const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
   }, [x, y]);
 
   return (
-    <StyledContainer>
-      <StyledBackgroundImage
+    <div className={styles.container}>
+      <img
         src={colorScheme === 'dark' ? DARK_BACKGROUND[type] : BACKGROUND[type]}
         alt=""
-        type={type}
+        className={clsx(
+          styles.backgroundImage,
+          (type === 'error500' || type === 'error404') &&
+            styles.backgroundImageLarge,
+        )}
       />
       <motion.img
         src={
@@ -103,6 +91,6 @@ export const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
         }}
         transition={{ type: 'spring', stiffness: 100, damping: 10 }}
       />
-    </StyledContainer>
+    </div>
   );
 };

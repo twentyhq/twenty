@@ -4,9 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('1.21.0', 1775165049548)
-export class MigrateMessagingCalendarToCoreFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class MigrateMessagingCalendarToCoreFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TABLE "core"."messageFolder" ALTER COLUMN "parentFolderId" TYPE character varying`,

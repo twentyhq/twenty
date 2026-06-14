@@ -55,7 +55,7 @@ jobs:
       TWENTY_API_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ1c2VySWQiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtNDYzZi00MzViLTgyOGMtMTA3ZTAwN2EyNzExIiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWU3Yy00M2Q5LWE1ZGItNjg1YjUwNjlkODE2IiwidHlwZSI6IkFDQ0VTUyIsImF1dGhQcm92aWRlciI6InBhc3N3b3JkIiwiaWF0IjoxNzUxMjgxNzA0LCJleHAiOjIwNjY4NTc3MDR9.HMGqCsVlOAPVUBhKSGlD1X86VoHKt4LIUtET3CGIdik
     steps:
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
 
@@ -105,7 +105,7 @@ jobs:
           create-twenty-app --version
           mkdir -p /tmp/e2e-test-workspace
           cd /tmp/e2e-test-workspace
-          create-twenty-app test-app --display-name "Test scaffolded app" --description "E2E test scaffolded app" --skip-local-instance
+          create-twenty-app test-app --display-name "Test scaffolded app" --description "E2E test scaffolded app" --url http://localhost:3000
 
       - name: Install scaffolded app dependencies
         run: |
@@ -120,7 +120,7 @@ jobs:
           echo "--- Checking package.json references correct SDK version ---"
           node -e "
             const pkg = require('./package.json');
-            const sdkVersion = pkg.dependencies['twenty-sdk'];
+            const sdkVersion = pkg.devDependencies['twenty-sdk'];
             if (!sdkVersion.startsWith('0.0.0-ci.')) {
               console.error('Expected twenty-sdk version to start with 0.0.0-ci., got:', sdkVersion);
               process.exit(1);
@@ -153,7 +153,7 @@ jobs:
       - name: Authenticate with twenty-server
         run: |
           cd /tmp/e2e-test-workspace/test-app
-          npx --no-install twenty remote add --api-key ${{ env.TWENTY_API_KEY }} --api-url ${{ env.TWENTY_API_URL }}
+          npx --no-install twenty remote:add --api-key ${{ env.TWENTY_API_KEY }} --url ${{ env.TWENTY_API_URL }}
 
       - name: Run scaffolded app integration test (deploys, installs, and verifies the app)
         run: |

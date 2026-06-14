@@ -1,109 +1,17 @@
-import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { clsx } from 'clsx';
+import { useContext } from 'react';
+import { isDefined } from '@ui/utilities/utils/isDefined';
+
 import {
   AppTooltip,
   TooltipDelay,
   TooltipPosition,
   type IconComponent,
 } from '@ui/display';
-import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
-import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext } from '@ui/theme-constants';
 
-const StyledMenuPicker = styled.button<{
-  selected: boolean;
-  disabled: boolean;
-}>`
-  box-sizing: border-box;
-  background: none;
-  font: inherit;
-  outline: inherit;
-  color: inherit;
-  align-items: center;
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-  justify-content: center;
-  min-height: ${themeCssVariables.spacing[8]};
-  padding: ${themeCssVariables.spacing[1.5]} ${themeCssVariables.spacing[1]};
-  transition: all calc(${themeCssVariables.animation.duration.instant} * 1s)
-    ease;
-  user-select: none;
-  width: 100%;
-
-  background: ${({ disabled }) =>
-    disabled ? themeCssVariables.background.secondary : 'transparent'};
-
-  border-color: ${({ selected, disabled }) => {
-    if (disabled) {
-      return themeCssVariables.border.color.medium;
-    }
-    if (selected) {
-      return themeCssVariables.color.blue;
-    }
-    return themeCssVariables.border.color.medium;
-  }};
-
-  color: ${({ selected, disabled }) => {
-    if (disabled) {
-      return themeCssVariables.font.color.extraLight;
-    }
-    if (selected) {
-      return themeCssVariables.color.blue;
-    }
-    return themeCssVariables.font.color.tertiary;
-  }};
-
-  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
-
-  &:hover {
-    background: ${({ selected, disabled }) => {
-      if (disabled) {
-        return themeCssVariables.background.secondary;
-      }
-      if (selected) {
-        return themeCssVariables.background.transparent.primary;
-      }
-      return themeCssVariables.background.transparent.light;
-    }};
-  }
-`;
-
-const StyledIconContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-shrink: 0;
-  height: calc(${themeCssVariables.icon.size.md} * 1px);
-  justify-content: center;
-  width: calc(${themeCssVariables.icon.size.md} * 1px);
-`;
-
-const StyledLabel = styled.div<{
-  disabled: boolean;
-  selected: boolean;
-}>`
-  color: ${({ selected, disabled }) => {
-    if (disabled) {
-      return themeCssVariables.font.color.extraLight;
-    }
-    if (selected) {
-      return themeCssVariables.color.blue;
-    }
-    return themeCssVariables.font.color.tertiary;
-  }};
-  font-family: ${themeCssVariables.font.family};
-  font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  max-width: 100%;
-  overflow: hidden;
-  text-align: center;
-  text-overflow: ellipsis;
-
-  white-space: nowrap;
-`;
+import styles from './MenuPicker.module.scss';
 
 export type MenuPickerProps = {
   id: string;
@@ -138,27 +46,31 @@ export const MenuPicker = ({
 
   return (
     <>
-      <StyledMenuPicker
+      <button
         id={id}
-        selected={selected}
         disabled={disabled}
         onClick={onClick}
-        className={className}
+        className={clsx(styles.menuPicker, className)}
         data-testid={testId}
+        data-selected={selected ? '' : undefined}
         aria-pressed={selected}
         aria-disabled={disabled}
         aria-label={label}
       >
-        <StyledIconContainer>
+        <div className={styles.iconContainer}>
           <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        </StyledIconContainer>
+        </div>
 
         {isDefined(label) && showLabel && (
-          <StyledLabel selected={selected} disabled={disabled}>
+          <div
+            className={styles.label}
+            data-selected={selected ? '' : undefined}
+            data-disabled={disabled ? '' : undefined}
+          >
             {label}
-          </StyledLabel>
+          </div>
         )}
-      </StyledMenuPicker>
+      </button>
 
       {isNonEmptyString(tooltipContent) && (
         <AppTooltip

@@ -8,6 +8,7 @@ import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -20,7 +21,12 @@ import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entit
     ]),
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
-  providers: [WorkspaceFlatNavigationMenuItemMapCacheService],
+  providers: [
+    WorkspaceFlatNavigationMenuItemMapCacheService,
+    provideWorkspaceScopedRepository(NavigationMenuItemEntity),
+    provideWorkspaceScopedRepository(ViewEntity),
+    provideWorkspaceScopedRepository(PageLayoutEntity),
+  ],
   exports: [WorkspaceFlatNavigationMenuItemMapCacheService],
 })
 export class FlatNavigationMenuItemModule {}

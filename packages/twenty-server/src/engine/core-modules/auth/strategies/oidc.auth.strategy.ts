@@ -46,8 +46,8 @@ export class OIDCAuthStrategy extends PassportStrategy(
     });
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
-  async authenticate(req: Request, options: any) {
+  // oxlint-disable-next-line typescript/no-explicit-any
+  authenticate(req: Request, options: any) {
     return super.authenticate(req, {
       ...options,
       state: JSON.stringify({
@@ -86,7 +86,7 @@ export class OIDCAuthStrategy extends PassportStrategy(
   async validate(
     req: Request,
     tokenset: TokenSet,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     done: (err: any, user?: OIDCRequest['user']) => void,
   ) {
     try {

@@ -1,7 +1,6 @@
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { convertPageLayoutDraftToUpdateInput } from '@/page-layout/utils/convertPageLayoutDraftToUpdateInput';
-import { DYNAMIC_RELATION_WIDGET_ID_PREFIX } from '@/page-layout/utils/isDynamicRelationWidget';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
@@ -348,83 +347,6 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
       column: 0,
       rowSpan: 2,
       columnSpan: 6,
-    });
-  });
-
-  describe('shouldFilterDynamicRelationWidgets', () => {
-    it('should filter out dynamic relation widgets when shouldFilterDynamicRelationWidgets is true', () => {
-      const regularWidget = makeWidget({ id: 'w1' });
-      const dynamicWidget = makeWidget({
-        id: `${DYNAMIC_RELATION_WIDGET_ID_PREFIX}relation-1`,
-        type: WidgetType.VIEW,
-      });
-
-      const draft = makeDraft([
-        makeTab('tab-1', [regularWidget, dynamicWidget]),
-      ]);
-
-      const result = convertPageLayoutDraftToUpdateInput(draft, {
-        shouldFilterDynamicRelationWidgets: true,
-      });
-
-      expect(result.tabs[0].widgets).toHaveLength(1);
-      expect(result.tabs[0].widgets[0].id).toBe('w1');
-    });
-
-    it('should keep all non-dynamic widgets when shouldFilterDynamicRelationWidgets is true and multiple widget types exist', () => {
-      const fieldsWidget = makeWidget({ id: 'w1', type: WidgetType.FIELDS });
-      const timelineWidget = makeWidget({
-        id: 'w2',
-        type: WidgetType.TIMELINE,
-      });
-      const dynamicWidget = makeWidget({
-        id: `${DYNAMIC_RELATION_WIDGET_ID_PREFIX}rel`,
-      });
-
-      const draft = makeDraft([
-        makeTab('tab-1', [fieldsWidget, dynamicWidget, timelineWidget]),
-      ]);
-
-      const result = convertPageLayoutDraftToUpdateInput(draft, {
-        shouldFilterDynamicRelationWidgets: true,
-      });
-
-      expect(result.tabs[0].widgets).toHaveLength(2);
-      expect(result.tabs[0].widgets.map((w) => w.id)).toEqual(['w1', 'w2']);
-    });
-
-    it('should not filter dynamic relation widgets when shouldFilterDynamicRelationWidgets is false', () => {
-      const regularWidget = makeWidget({ id: 'w1' });
-      const dynamicWidget = makeWidget({
-        id: `${DYNAMIC_RELATION_WIDGET_ID_PREFIX}relation-1`,
-        type: WidgetType.VIEW,
-      });
-
-      const draft = makeDraft([
-        makeTab('tab-1', [regularWidget, dynamicWidget]),
-      ]);
-
-      const result = convertPageLayoutDraftToUpdateInput(draft, {
-        shouldFilterDynamicRelationWidgets: false,
-      });
-
-      expect(result.tabs[0].widgets).toHaveLength(2);
-    });
-
-    it('should not filter dynamic relation widgets by default', () => {
-      const regularWidget = makeWidget({ id: 'w1' });
-      const dynamicWidget = makeWidget({
-        id: `${DYNAMIC_RELATION_WIDGET_ID_PREFIX}relation-1`,
-        type: WidgetType.VIEW,
-      });
-
-      const draft = makeDraft([
-        makeTab('tab-1', [regularWidget, dynamicWidget]),
-      ]);
-
-      const result = convertPageLayoutDraftToUpdateInput(draft);
-
-      expect(result.tabs[0].widgets).toHaveLength(2);
     });
   });
 });

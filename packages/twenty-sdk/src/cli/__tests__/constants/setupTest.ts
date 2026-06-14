@@ -14,7 +14,7 @@ beforeAll(async () => {
   if (!apiUrl || !token) {
     throw new Error(
       'TWENTY_API_URL and TWENTY_API_KEY must be set.\n' +
-        'Run: twenty server start --test\n' +
+        'Run: twenty docker:start --test\n' +
         'Or set them in vitest env config.',
     );
   }
@@ -24,7 +24,7 @@ beforeAll(async () => {
   if (!response?.ok) {
     throw new Error(
       `Twenty server not reachable at ${apiUrl}. ` +
-        'Run: twenty server start --test',
+        'Run: twenty docker:start --test',
     );
   }
 

@@ -1,4 +1,7 @@
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useLingui } from '@lingui/react/macro';
+import { useRef } from 'react';
 import {
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
@@ -17,17 +20,22 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui-deprecated/display';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+
+const FRONT_COMPONENT_CLIPBOARD_MAX_LENGTH = 64 * 1024;
+const FRONT_COMPONENT_CLIPBOARD_RATE_LIMIT_MS = 1000;
+const FRONT_COMPONENT_CLIPBOARD_PREVIEW_LENGTH = 30;
 
 export const useFrontComponentExecutionContext = ({
   frontComponentId,
   commandMenuItemId,
-  recordId,
+  selectedRecordIds,
 }: {
   frontComponentId: string;
   commandMenuItemId?: string;
-  recordId?: string;
+  selectedRecordIds?: string[];
 }): {
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
@@ -49,6 +57,10 @@ export const useFrontComponentExecutionContext = ({
     enqueueWarningSnackBar,
   } = useSnackBar();
   const { closeSidePanelMenu } = useSidePanelMenu();
+  const { copyToClipboard: copyToClipboardWithSnackbar } = useCopyToClipboard();
+  const { t } = useLingui();
+  // oxlint-disable-next-line twenty/no-state-useref
+  const lastCopyToClipboardCallAtRef = useRef<number>(Number.NEGATIVE_INFINITY);
   const setCommandMenuItemProgress = useSetAtomFamilyState(
     commandMenuItemProgressFamilyState,
     commandMenuItemId ?? '',
@@ -127,7 +139,8 @@ export const useFrontComponentExecutionContext = ({
   const executionContext: FrontComponentExecutionContext = {
     frontComponentId,
     userId: currentUser?.id ?? null,
-    recordId: recordId ?? null,
+    recordId: selectedRecordIds?.length === 1 ? selectedRecordIds[0] : null,
+    selectedRecordIds: selectedRecordIds ?? [],
   };
 
   const unmountFrontComponent: FrontComponentHostCommunicationApi['unmountFrontComponent'] =
@@ -151,6 +164,36 @@ export const useFrontComponentExecutionContext = ({
       setCommandMenuItemProgress(Math.max(0, Math.min(100, progress)));
     };
 
+  const copyToClipboard: FrontComponentHostCommunicationApi['copyToClipboard'] =
+    async (text) => {
+      if (!isNonEmptyString(text)) {
+        return;
+      }
+
+      if (text.length > FRONT_COMPONENT_CLIPBOARD_MAX_LENGTH) {
+        return;
+      }
+
+      const now = Date.now();
+      if (
+        now - lastCopyToClipboardCallAtRef.current <
+        FRONT_COMPONENT_CLIPBOARD_RATE_LIMIT_MS
+      ) {
+        return;
+      }
+      lastCopyToClipboardCallAtRef.current = now;
+
+      const preview =
+        text.length > FRONT_COMPONENT_CLIPBOARD_PREVIEW_LENGTH
+          ? `${text.slice(0, FRONT_COMPONENT_CLIPBOARD_PREVIEW_LENGTH)}…`
+          : text;
+
+      await copyToClipboardWithSnackbar(
+        text,
+        t`Application copied "${preview}" to your clipboard`,
+      );
+    };
+
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
       navigate,
@@ -161,6 +204,7 @@ export const useFrontComponentExecutionContext = ({
       unmountFrontComponent,
       closeSidePanel,
       updateProgress,
+      copyToClipboard,
     };
 
   return {

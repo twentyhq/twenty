@@ -18,12 +18,12 @@ import {
   type FieldPhonesValue,
   type PhoneRecord,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { phonesSchema } from '@/object-record/record-field/ui/types/guards/isFieldPhonesValue';
+import { phonesFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/phonesFieldValueSchema';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { useContext } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
@@ -103,7 +103,7 @@ export const PhonesFieldInput = () => {
       primaryPhoneCallingCode: nextPrimaryPhone?.callingCode ?? '',
       additionalPhones: nextAdditionalPhones,
     };
-    const parseResponse = phonesSchema.safeParse(nextValue);
+    const parseResponse = phonesFieldValueSchema.safeParse(nextValue);
     if (parseResponse.success) {
       return parseResponse.data;
     }

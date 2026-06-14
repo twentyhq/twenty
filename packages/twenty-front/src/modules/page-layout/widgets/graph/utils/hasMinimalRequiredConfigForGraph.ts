@@ -27,8 +27,7 @@ export const hasMinimalRequiredConfigForGraph = (
   }
 
   if (
-    isWidgetConfigurationOfType(configuration, 'AggregateChartConfiguration') ||
-    isWidgetConfigurationOfType(configuration, 'GaugeChartConfiguration')
+    isWidgetConfigurationOfType(configuration, 'AggregateChartConfiguration')
   ) {
     return isDefined(configuration.aggregateFieldMetadataId);
   }

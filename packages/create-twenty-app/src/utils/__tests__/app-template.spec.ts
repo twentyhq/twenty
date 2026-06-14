@@ -17,6 +17,7 @@ const UNIVERSAL_IDENTIFIERS_PATH = join(
   'constants',
   'universal-identifiers.ts',
 );
+const YARNRC_PATH = 'yarnrc.yml';
 
 // Template content matching template/src/constants/universal-identifiers.ts
 const TEMPLATE_UNIVERSAL_IDENTIFIERS = `export const APP_DISPLAY_NAME = 'DISPLAY-NAME-TO-BE-GENERATED';
@@ -32,8 +33,10 @@ const TEMPLATE_PACKAGE_JSON = {
   license: 'MIT',
   scripts: { twenty: 'twenty' },
   dependencies: {
-    'twenty-sdk': '0.0.0',
     'twenty-client-sdk': '0.0.0',
+  },
+  devDependencies: {
+    'twenty-sdk': '0.0.0',
   },
 };
 
@@ -76,10 +79,15 @@ describe('copyBaseApplicationProject', () => {
       appDirectory: testAppDirectory,
     });
 
-    expect(fs.copy).toHaveBeenCalledTimes(1);
+    // Two fs.copy calls: (1) the template directory, (2) AGENTS.md → CLAUDE.md
+    expect(fs.copy).toHaveBeenCalledTimes(2);
     expect(fs.copy).toHaveBeenCalledWith(
       expect.stringContaining('template'),
       testAppDirectory,
+    );
+    expect(fs.copy).toHaveBeenCalledWith(
+      join(testAppDirectory, 'AGENTS.md'),
+      join(testAppDirectory, 'CLAUDE.md'),
     );
   });
 
@@ -141,7 +149,7 @@ describe('copyBaseApplicationProject', () => {
       join(testAppDirectory, 'package.json'),
     );
     expect(packageJson.name).toBe('my-test-app');
-    expect(packageJson.dependencies['twenty-sdk']).toBe(
+    expect(packageJson.devDependencies['twenty-sdk']).toBe(
       createTwentyAppPackageJson.version,
     );
     expect(packageJson.dependencies['twenty-client-sdk']).toBe(
@@ -166,6 +174,27 @@ describe('copyBaseApplicationProject', () => {
 
     const publicDirectoryContents = await fs.readdir(publicDirectoryPath);
     expect(publicDirectoryContents).toHaveLength(0);
+  });
+
+  it('should rename yarnrc.yml to .yarnrc.yml in the scaffolded project', async () => {
+    await fs.writeFile(
+      join(testAppDirectory, YARNRC_PATH),
+      'nodeLinker: node-modules',
+    );
+
+    await copyBaseApplicationProject({
+      appName: 'my-test-app',
+      appDisplayName: 'My Test App',
+      appDescription: 'A test application',
+      appDirectory: testAppDirectory,
+    });
+
+    expect(await fs.pathExists(join(testAppDirectory, YARNRC_PATH))).toBe(
+      false,
+    );
+    expect(await fs.pathExists(join(testAppDirectory, '.yarnrc.yml'))).toBe(
+      true,
+    );
   });
 
   it('should handle empty description', async () => {

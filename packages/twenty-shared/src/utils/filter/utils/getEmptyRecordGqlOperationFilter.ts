@@ -15,6 +15,7 @@ import {
   type RelationFilter,
   type SelectFilter,
   type StringFilter,
+  type UUIDFilter,
 } from '@/types';
 import { CustomError } from '@/utils/errors';
 import { computeEmptyGqlOperationFilterForEmails } from '@/utils/filter/computeEmptyGqlOperationFilterForEmails';
@@ -306,6 +307,11 @@ export const getEmptyRecordGqlOperationFilter = ({
     case 'SELECT':
       emptyRecordFilter = {
         [correspondingField.name]: { is: 'NULL' } as SelectFilter,
+      };
+      break;
+    case 'UUID':
+      emptyRecordFilter = {
+        [correspondingField.name]: { is: 'NULL' } as UUIDFilter,
       };
       break;
     case 'MULTI_SELECT':

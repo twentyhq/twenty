@@ -1,3 +1,5 @@
+import { currentUserState } from '@/auth/states/currentUserState';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
@@ -6,6 +8,7 @@ import { CommandMenuItemEditButton } from '@/command-menu-item/edit/components/C
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -16,7 +19,7 @@ import {
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
-import { useIsMobile } from 'twenty-ui/utilities';
+import { useIsMobile } from 'twenty-ui-deprecated/utilities';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 export const StandalonePageCommandMenu = () => {
@@ -24,7 +27,12 @@ export const StandalonePageCommandMenu = () => {
   const isMobile = useIsMobile();
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
+  const currentUser = useAtomStateValue(currentUserState);
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const commandMenuContextApi = useMemo<CommandMenuContextApi>(() => {
@@ -32,6 +40,12 @@ export const StandalonePageCommandMenu = () => {
 
     for (const flag of currentWorkspace?.featureFlags ?? []) {
       featureFlags[flag.key] = flag.value === true;
+    }
+
+    const permissionFlags: Record<string, boolean> = {};
+
+    for (const flag of currentUserWorkspace?.permissionFlags ?? []) {
+      permissionFlags[flag] = true;
     }
 
     const targetObjectReadPermissions: Record<string, boolean> = {};
@@ -52,7 +66,8 @@ export const StandalonePageCommandMenu = () => {
     return {
       pageType: ContextStorePageType.Standalone,
       isInSidePanel: false,
-      isPageInEditMode: false,
+      isDashboardPageLayoutInEditMode: false,
+      isLayoutCustomizationModeEnabled,
       favoriteRecordIds: [],
       isSelectAll: false,
       hasAnySoftDeleteFilterOnView: false,
@@ -69,12 +84,23 @@ export const StandalonePageCommandMenu = () => {
       },
       selectedRecords: [],
       featureFlags,
+      permissionFlags,
       targetObjectReadPermissions,
       targetObjectWritePermissions,
+      canImpersonate: currentUser?.canImpersonate === true,
+      canAccessFullAdminPanel: currentUser?.canAccessFullAdminPanel === true,
       objectMetadataItem: {},
       objectMetadataLabel: '',
     };
-  }, [currentWorkspace?.featureFlags, objectMetadataItems, store]);
+  }, [
+    currentWorkspace?.featureFlags,
+    currentUserWorkspace?.permissionFlags,
+    currentUser?.canImpersonate,
+    currentUser?.canAccessFullAdminPanel,
+    isLayoutCustomizationModeEnabled,
+    objectMetadataItems,
+    store,
+  ]);
 
   const filteredCommandMenuItems = useMemo(() => {
     return commandMenuItems
@@ -105,6 +131,7 @@ export const StandalonePageCommandMenu = () => {
         containerType: 'standalone-page-header',
         commandMenuItems: filteredCommandMenuItems,
         commandMenuContextApi,
+        isInPreviewMode: false,
       }}
     >
       {!isMobile && <PinnedCommandMenuItemButtons />}

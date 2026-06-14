@@ -2,7 +2,7 @@ import { type IconComponent, TintedIconTile } from '@ui/display';
 import { type ThemeColor } from '@ui/theme';
 import { ThemeContext } from '@ui/theme-constants';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';
 
 export type MenuItemIconProps = {

@@ -1,6 +1,6 @@
 import { createContext, type MouseEvent } from 'react';
 
-import { type TriggerEventType } from 'twenty-ui/utilities';
+import { type TriggerEventType } from 'twenty-ui-deprecated/utilities';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 

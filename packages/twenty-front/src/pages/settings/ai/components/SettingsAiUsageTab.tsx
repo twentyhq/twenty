@@ -7,16 +7,16 @@ import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/Setting
 import { UsageBreakdownPieSection } from '@/settings/usage/components/UsageBreakdownPieSection';
 import { UsageByUserTableSection } from '@/settings/usage/components/UsageByUserTableSection';
 import { UsageDailyChartSection } from '@/settings/usage/components/UsageDailyChartSection';
+import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSkeleton';
 import { AI_OPERATION_TYPES } from '@/settings/usage/constants/AiOperationTypes';
 import { useUsageAnalyticsData } from '@/settings/usage/hooks/useUsageAnalyticsData';
-import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSkeleton';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/components';
-import { H2Title, IconLock } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui-deprecated/display';
+import { Section } from 'twenty-ui-deprecated/layout';
+import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
 export const SettingsAiUsageTab = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -25,7 +25,8 @@ export const SettingsAiUsageTab = () => {
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
 
   const hasEnterpriseAccess =
-    isBillingEnabled || currentWorkspace?.hasValidEnterpriseKey === true;
+    isBillingEnabled ||
+    currentWorkspace?.hasValidEnterpriseValidityToken === true;
 
   const shouldSkipQuery = !hasEnterpriseAccess || !isClickHouseConfigured;
 
@@ -40,14 +41,7 @@ export const SettingsAiUsageTab = () => {
         <H2Title
           title={t`AI Usage`}
           description={t`Track AI consumption across your workspace.`}
-          adornment={
-            <Tag
-              text={t`Enterprise`}
-              color="transparent"
-              Icon={IconLock}
-              variant="border"
-            />
-          }
+          adornment={<OrganizationAdornment />}
         />
         <SettingsEnterpriseFeatureGateCard
           title={t`Enterprise feature`}

@@ -136,7 +136,6 @@ export class SystemPromptBuilderService {
     toolCatalog: ToolIndexEntry[],
     skillCatalog: FlatSkill[],
     preloadedTools: string[],
-    contextString?: string,
     storedFiles?: Array<{
       filename: string;
       fileId: string;
@@ -146,6 +145,7 @@ export class SystemPromptBuilderService {
   ): string {
     const parts: string[] = [
       CHAT_SYSTEM_PROMPTS.BASE,
+      CHAT_SYSTEM_PROMPTS.BROWSING_CONTEXT_INSTRUCTION,
       CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT,
     ];
 
@@ -162,12 +162,6 @@ export class SystemPromptBuilderService {
 
     if (storedFiles && storedFiles.length > 0) {
       parts.push(this.buildUploadedFilesSection(storedFiles));
-    }
-
-    if (contextString) {
-      parts.push(
-        `\nCONTEXT (what the user is currently viewing):\n${contextString}`,
-      );
     }
 
     return parts.join('\n');
@@ -287,7 +281,16 @@ ${preloadedList}
 
       const categoryLabel = this.getCategoryLabel(category);
 
-      sections.push(`
+      if (category === ToolCategory.DATABASE_CRUD) {
+        sections.push(
+          this.buildDatabaseCrudCatalogSection(
+            tools,
+            preloadedSet,
+            categoryLabel,
+          ),
+        );
+      } else {
+        sections.push(`
 #### ${categoryLabel} (${tools.length} tools)
 ${tools
   .map((tool) => {
@@ -296,6 +299,7 @@ ${tools
     return `- \`${tool.name}\`${status}`;
   })
   .join('\n')}`);
+      }
     }
 
     sections.push(`
@@ -304,6 +308,69 @@ ${tools
 2. **Other tools**: First call \`${LEARN_TOOLS_TOOL_NAME}({toolNames: ["tool_name"]})\` to learn the schema, then call \`${EXECUTE_TOOL_TOOL_NAME}({toolName: "tool_name", arguments: {...}})\` to run it`);
 
     return sections.join('\n');
+  }
+
+  private buildDatabaseCrudCatalogSection(
+    tools: ToolIndexEntry[],
+    preloadedSet: Set<string>,
+    categoryLabel: string,
+  ): string {
+    const operationOrder: string[] = [];
+    const seenOps = new Set<string>();
+
+    const objectToolsMap = new Map<string, string[]>();
+    const standaloneTools: ToolIndexEntry[] = [];
+
+    for (const tool of tools) {
+      if (tool.objectName && tool.operation) {
+        const ops = objectToolsMap.get(tool.objectName) ?? [];
+
+        ops.push(tool.operation);
+        objectToolsMap.set(tool.objectName, ops);
+
+        if (!seenOps.has(tool.operation)) {
+          seenOps.add(tool.operation);
+          operationOrder.push(tool.operation);
+        }
+      } else {
+        standaloneTools.push(tool);
+      }
+    }
+
+    const lines: string[] = [`\n#### ${categoryLabel} (${tools.length} tools)`];
+
+    if (objectToolsMap.size > 0) {
+      const objectNames = [...objectToolsMap.keys()].sort();
+
+      lines.push(`Operations per object:`);
+      lines.push(...operationOrder.map((op) => `- \`${op}_{object}\``));
+
+      lines.push(`\nObjects (${objectNames.length}):`);
+      lines.push(...objectNames.map((name) => `- \`${name}\``));
+
+      const findManyExample = tools.find((t) => t.operation === 'find_many');
+      const findOneExample = tools.find(
+        (t) =>
+          t.operation === 'find_one' &&
+          t.objectName === findManyExample?.objectName,
+      );
+      const examplePart =
+        findManyExample && findOneExample
+          ? ` e.g. \`${findManyExample.name}\` / \`${findOneExample.name}\``
+          : '';
+
+      lines.push(
+        `\nTool name = operation + object name. *_many_* operations use the plural form, *_one_* use the singular form.${examplePart}`,
+      );
+    }
+
+    for (const tool of standaloneTools) {
+      const status = preloadedSet.has(tool.name) ? ' ✓' : '';
+
+      lines.push(`- \`${tool.name}\`${status}`);
+    }
+
+    return lines.join('\n');
   }
 
   private getCategoryLabel(category: ToolCategory): string {
@@ -317,15 +384,15 @@ ${tools
       case ToolCategory.METADATA:
         return 'Metadata Tools (schema management)';
       case ToolCategory.VIEW:
-        return 'View Tools (manage views, filters, and sorts)';
+        return 'View Tools (manage views, fields, filters, and sorts)';
       case ToolCategory.DASHBOARD:
         return 'Dashboard Tools (create/manage dashboards)';
       case ToolCategory.LOGIC_FUNCTION:
         return 'Logic Functions (custom tools)';
-      case ToolCategory.NATIVE_MODEL:
-        return 'Native Model Capabilities (e.g. web search)';
-      case ToolCategory.VIEW_FIELD:
-        return 'View Field Tools (manage view columns)';
+      case ToolCategory.NAVIGATION_MENU_ITEM:
+        return 'Navigation Menu Item Tools (sidebar entries, folders, and user favorites)';
+      case ToolCategory.WEBHOOK:
+        return 'Webhook Tools (outgoing webhooks)';
       default:
         return assertUnreachable(category);
     }

@@ -1,24 +1,7 @@
-import { styled } from '@linaria/react';
+import { clsx } from 'clsx';
 import { type ReactNode } from 'react';
 
-import { themeCssVariables } from '@ui/theme-constants';
-
-const StyledIconContainerBase = styled.div`
-  align-items: flex-start;
-  border-radius: ${themeCssVariables.border.radius.sm};
-  display: flex;
-  flex-direction: column;
-  padding: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledIconContainerWithBackground = styled.div`
-  align-items: flex-start;
-  background: ${themeCssVariables.background.transparent.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  display: flex;
-  flex-direction: column;
-  padding: ${themeCssVariables.spacing[1]};
-`;
+import styles from './MenuItemIconBoxContainer.module.scss';
 
 export const StyledIconContainer = ({
   children,
@@ -28,12 +11,16 @@ export const StyledIconContainer = ({
   children?: ReactNode;
   className?: string;
   hasBackground?: boolean;
-}) => {
-  const Component = hasBackground
-    ? StyledIconContainerWithBackground
-    : StyledIconContainerBase;
-
-  return <Component className={className}>{children}</Component>;
-};
+}) => (
+  <div
+    className={clsx(
+      styles.iconContainer,
+      hasBackground && styles.withBackground,
+      className,
+    )}
+  >
+    {children}
+  </div>
+);
 
 export { StyledIconContainer as MenuItemIconBoxContainer };

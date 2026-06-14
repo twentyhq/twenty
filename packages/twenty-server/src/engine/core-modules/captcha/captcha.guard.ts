@@ -32,7 +32,7 @@ export class CaptchaGuard implements CanActivate {
     if (result.success) {
       return true;
     } else {
-      await this.metricsService.incrementCounter({
+      await this.metricsService.incrementCounterForEvent({
         key: MetricsKeys.InvalidCaptcha,
         eventId: token || '',
         ...(result.error ? { attributes: { error: result.error } } : {}),

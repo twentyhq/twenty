@@ -46,6 +46,15 @@ describe('extractDefineEntity', () => {
     expect(result).toBe('defineRole');
   });
 
+  it('should detect defineApplicationRole in default export', () => {
+    const fileContent = `
+      import { defineApplicationRole } from 'twenty-sdk/define';
+      export default defineApplicationRole({ universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061', label: 'Default function role' });
+    `;
+    const result = extractDefineEntity(fileContent);
+    expect(result).toBe('defineApplicationRole');
+  });
+
   it('should detect defineFrontComponent in default export', () => {
     const fileContent = `
       import { defineFrontComponent } from 'twenty-sdk/define';

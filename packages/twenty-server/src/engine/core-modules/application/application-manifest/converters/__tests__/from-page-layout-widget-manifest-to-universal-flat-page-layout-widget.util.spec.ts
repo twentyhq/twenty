@@ -1,5 +1,7 @@
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
+
 import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-widget-manifest-to-universal-flat-page-layout-widget.util';
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 
 describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
   const now = '2026-01-01T00:00:00.000Z';
@@ -33,8 +35,8 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
     expect(result.gridPosition).toEqual({
       row: 0,
       column: 0,
-      rowSpan: 1,
-      columnSpan: 1,
+      rowSpan: DEFAULT_WIDGET_SIZE.default.h,
+      columnSpan: DEFAULT_WIDGET_SIZE.default.w,
     });
     expect(result.position).toBeNull();
     expect(result.universalConfiguration).toEqual({
@@ -65,8 +67,8 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
     expect(result.gridPosition).toEqual({
       row: 0,
       column: 0,
-      rowSpan: 1,
-      columnSpan: 1,
+      rowSpan: DEFAULT_WIDGET_SIZE.default.h,
+      columnSpan: DEFAULT_WIDGET_SIZE.default.w,
     });
     expect(result.universalConfiguration).toEqual({
       configurationType: 'IFRAME',

@@ -10,7 +10,7 @@ import { t } from '@lingui/core/macro';
 import { useCallback, useContext, useEffect } from 'react';
 import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useQuery } from '@apollo/client/react';
 import { FindOneFrontComponentDocument } from '~/generated-metadata/graphql';
@@ -18,13 +18,13 @@ import { FindOneFrontComponentDocument } from '~/generated-metadata/graphql';
 type FrontComponentRendererProps = {
   frontComponentId: string;
   commandMenuItemId?: string;
-  recordId?: string;
+  selectedRecordIds?: string[];
 };
 
 export const FrontComponentRenderer = ({
   frontComponentId,
   commandMenuItemId,
-  recordId,
+  selectedRecordIds,
 }: FrontComponentRendererProps) => {
   const { colorScheme } = useContext(ThemeContext);
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -38,7 +38,7 @@ export const FrontComponentRenderer = ({
     useFrontComponentExecutionContext({
       frontComponentId,
       commandMenuItemId,
-      recordId,
+      selectedRecordIds,
     });
 
   const handleError = useCallback(
@@ -100,6 +100,9 @@ export const FrontComponentRenderer = ({
 
   const accessToken = applicationTokenPair.applicationAccessToken.token;
 
+  const applicationVariables =
+    data.frontComponent.applicationVariables ?? undefined;
+
   if (usesSdkClient) {
     return (
       <FrontComponentRendererProvider frontComponentId={frontComponentId}>
@@ -112,6 +115,7 @@ export const FrontComponentRenderer = ({
           frontComponentHostCommunicationApi={
             frontComponentHostCommunicationApi
           }
+          applicationVariables={applicationVariables}
           onError={handleError}
         />
       </FrontComponentRendererProvider>
@@ -127,6 +131,7 @@ export const FrontComponentRenderer = ({
         apiUrl={REACT_APP_SERVER_BASE_URL}
         executionContext={executionContext}
         frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
+        applicationVariables={applicationVariables}
         onError={handleError}
       />
     </FrontComponentRendererProvider>

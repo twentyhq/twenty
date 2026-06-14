@@ -14,6 +14,7 @@ import {
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -22,9 +23,10 @@ import { generateWorkspaceSchemaDdl } from 'src/database/commands/workspace-expo
 import { buildInsertPrefix } from 'src/database/commands/workspace-export/utils/build-insert-prefix.util';
 import { buildWorkspaceTableColumnSets } from 'src/database/commands/workspace-export/utils/build-workspace-table-column-sets.util';
 import { formatSqlValue } from 'src/database/commands/workspace-export/utils/format-sql-value.util';
-import { generateInsertStatement } from 'src/database/commands/workspace-export/utils/generate-insert-statement.util';
+import { formatPgCopyField } from './utils/format-pg-copy-value.util';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
-const BATCH_SIZE = 5000;
+const BATCH_SIZE = 10_000;
 
 type WorkspaceExportParams = {
   workspaceId: string;
@@ -76,6 +78,7 @@ export class WorkspaceExportService {
 
     const objectMetadatas = await this.objectMetadataRepository.find({
       where: { workspaceId },
+      relations: { application: true },
     });
 
     const fieldMetadatas = await this.fieldMetadataRepository.find({
@@ -219,47 +222,103 @@ export class WorkspaceExportService {
     excludedColumns,
   }: WriteRowsOptions): Promise<void> {
     const whereFragment = whereClause ? ` WHERE ${whereClause}` : '';
-
-    const [{ count: totalCount }] = await queryRunner.query(
-      `SELECT COUNT(*)::int as count FROM "${schemaName}"."${tableName}"${whereFragment}`,
-      queryParameters,
-    );
-
-    if (totalCount === 0) return;
-
-    this.logger.log(`  ${displayName}: ${totalCount} rows`);
-
+    let columnNames: string[] | undefined;
     let insertPrefix: string | undefined;
+    let totalRows = 0;
 
-    for (let offset = 0; offset < totalCount; offset += BATCH_SIZE) {
+    for (let offset = 0; ; offset += BATCH_SIZE) {
       const rows: Record<string, unknown>[] = await queryRunner.query(
         `SELECT * FROM "${schemaName}"."${tableName}"${whereFragment} ORDER BY "id" LIMIT ${BATCH_SIZE} OFFSET ${offset}`,
         queryParameters,
       );
 
-      const batchStatements: string[] = [];
+      if (!isNonEmptyArray(rows)) break;
 
-      for (const row of rows) {
-        const columnNames = Object.keys(row).filter(
+      if (!columnNames) {
+        columnNames = Object.keys(rows[0]).filter(
           (columnName) => !excludedColumns?.has(columnName),
         );
+        insertPrefix = buildInsertPrefix(schemaName, tableName, columnNames);
+      }
 
-        if (!insertPrefix) {
-          insertPrefix = buildInsertPrefix(schemaName, tableName, columnNames);
-        }
+      totalRows += rows.length;
 
+      const valueTuples: string[] = [];
+
+      for (const row of rows) {
         const formattedValues = columnNames.map((columnName) =>
           formatSqlValue(row[columnName], jsonColumns?.has(columnName)),
         );
 
-        batchStatements.push(
-          generateInsertStatement(insertPrefix, formattedValues),
+        valueTuples.push(`(${formattedValues.join(', ')})`);
+      }
+
+      const statement = `${insertPrefix}${valueTuples.join(', ')};\n`;
+
+      if (!stream.write(statement)) {
+        await once(stream, 'drain');
+      }
+
+      if (rows.length < BATCH_SIZE) break;
+    }
+
+    if (totalRows > 0) {
+      this.logger.log(`  ${displayName}: ${totalRows} rows`);
+    }
+  }
+
+  private async writeCopyRows({
+    schemaName,
+    tableName,
+    displayName,
+    queryRunner,
+    stream,
+    jsonColumns,
+    excludedColumns,
+  }: Omit<WriteRowsOptions, 'whereClause' | 'queryParameters'>): Promise<void> {
+    let columnNames: string[] | undefined;
+    let totalRows = 0;
+
+    for (let offset = 0; ; offset += BATCH_SIZE) {
+      const rows: Record<string, unknown>[] = await queryRunner.query(
+        `SELECT * FROM "${schemaName}"."${tableName}" ORDER BY "id" LIMIT ${BATCH_SIZE} OFFSET ${offset}`,
+      );
+
+      if (!isNonEmptyArray(rows)) break;
+
+      if (!columnNames) {
+        columnNames = Object.keys(rows[0]).filter(
+          (columnName) => !excludedColumns?.has(columnName),
+        );
+
+        const escapedColumns = columnNames.map(escapeIdentifier).join(', ');
+
+        stream.write(
+          `COPY ${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)} (${escapedColumns}) FROM stdin;\n`,
         );
       }
 
-      if (!stream.write(batchStatements.join(''))) {
-        await once(stream, 'drain');
+      totalRows += rows.length;
+
+      for (const row of rows) {
+        const values = columnNames.map((columnName) =>
+          formatPgCopyField(row[columnName], jsonColumns?.has(columnName)),
+        );
+
+        if (!stream.write(values.join('\t') + '\n')) {
+          await once(stream, 'drain');
+        }
       }
+
+      if (rows.length < BATCH_SIZE) break;
+    }
+
+    if (isNonEmptyArray(columnNames)) {
+      stream.write('\\.\n\n');
+    }
+
+    if (totalRows > 0) {
+      this.logger.log(`  ${displayName}: ${totalRows} rows`);
     }
   }
 
@@ -302,7 +361,8 @@ export class WorkspaceExportService {
 
       const tableName = computeTableName(
         objectMetadata.nameSingular,
-        objectMetadata.isCustom,
+        objectMetadata.application?.universalIdentifier !==
+          TWENTY_STANDARD_APPLICATION.universalIdentifier,
       );
 
       if (tableFilter && !tableFilter.includes(objectMetadata.nameSingular)) {
@@ -319,7 +379,7 @@ export class WorkspaceExportService {
       );
 
       try {
-        await this.writeRows({
+        await this.writeCopyRows({
           schemaName,
           tableName,
           displayName: objectMetadata.nameSingular,

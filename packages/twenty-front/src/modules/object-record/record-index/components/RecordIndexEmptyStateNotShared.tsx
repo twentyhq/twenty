@@ -9,7 +9,7 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/layout';
+} from 'twenty-ui-deprecated/layout';
 
 const StyledEmptyPlaceholderOuterContainer = styled.div`
   height: 100%;

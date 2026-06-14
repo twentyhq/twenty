@@ -1,7 +1,7 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { enUS } from 'date-fns/locale';
 import { subDays } from 'date-fns';
+import { enUS } from 'date-fns/locale';
 import { formatDateString } from '~/utils/string/formatDateString';
 
 describe('formatDateString', () => {
@@ -111,5 +111,99 @@ describe('formatDateString', () => {
     });
 
     expect(result).toBe(mockFormattedDate);
+  });
+
+  describe('date-only values across user timezones', () => {
+    it('should render the same calendar date for a UTC user', () => {
+      const result = formatDateString({
+        ...defaultParams,
+        value: '2022-01-01',
+        timeZone: 'UTC',
+        localeCatalog: enUS,
+      });
+
+      expect(result).toBe('1 Jan, 2022');
+    });
+
+    it('should render the same calendar date for a negative-offset user', () => {
+      const result = formatDateString({
+        ...defaultParams,
+        value: '2022-01-01',
+        timeZone: 'America/Los_Angeles',
+        localeCatalog: enUS,
+      });
+
+      expect(result).toBe('1 Jan, 2022');
+    });
+
+    it('should render the same calendar date for a positive-offset user', () => {
+      const result = formatDateString({
+        ...defaultParams,
+        value: '2022-01-01',
+        timeZone: 'Asia/Tokyo',
+        localeCatalog: enUS,
+      });
+
+      expect(result).toBe('1 Jan, 2022');
+    });
+
+    it('should render a date-only value with CUSTOM displayFormat without timezone shift', () => {
+      const result = formatDateString({
+        ...defaultParams,
+        value: '2022-01-01',
+        timeZone: 'America/Los_Angeles',
+        dateFieldSettings: {
+          displayFormat: FieldDateDisplayFormat.CUSTOM,
+          customUnicodeDateFormat: 'yyyy-MM-dd',
+        },
+        localeCatalog: enUS,
+      });
+
+      expect(result).toBe('2022-01-01');
+    });
+  });
+
+  describe('date-only values with RELATIVE displayFormat across timezones', () => {
+    beforeAll(() => {
+      jest.useFakeTimers();
+    });
+
+    afterAll(() => {
+      jest.useRealTimers();
+    });
+
+    it('should return "Tomorrow" when the target value is the next calendar day in the user timezone', () => {
+      // 2026-05-18 13:00 UTC: today in UTC is May 18, so "2026-05-19" is tomorrow.
+      jest.setSystemTime(new Date('2026-05-18T13:00:00Z'));
+
+      const result = formatDateString({
+        ...defaultParams,
+        value: '2026-05-19',
+        timeZone: 'UTC',
+        dateFieldSettings: {
+          displayFormat: FieldDateDisplayFormat.RELATIVE,
+        },
+        localeCatalog: enUS,
+      });
+
+      expect(result).toBe('Tomorrow');
+    });
+
+    it('should return "Today" for the same value when the user timezone has already rolled over', () => {
+      // 2026-05-18 21:00 UTC = 2026-05-19 06:00 in Asia/Tokyo, so "2026-05-19" is today there.
+      jest.setSystemTime(new Date('2026-05-18T21:00:00Z'));
+
+      const result = formatDateString({
+        ...defaultParams,
+        value: '2026-05-19',
+        timeZone: 'Asia/Tokyo',
+        dateFieldSettings: {
+          displayFormat: FieldDateDisplayFormat.RELATIVE,
+        },
+        localeCatalog: enUS,
+      });
+
+      expect(result).toBe('Today');
+    });
   });
 });

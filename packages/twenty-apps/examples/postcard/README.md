@@ -28,12 +28,6 @@ yarn install
 yarn twenty dev
 ```
 
-Or use it as a template via create-twenty-app:
-
-```bash
-npx create-twenty-app@latest my-app --example postcard
-```
-
 ## Learn more
 
 - [Getting Started](https://docs.twenty.com/developers/extend/apps/getting-started)

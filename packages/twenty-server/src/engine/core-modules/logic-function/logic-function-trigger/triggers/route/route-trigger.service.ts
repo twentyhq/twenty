@@ -5,7 +5,7 @@ import { Request } from 'express';
 import { match } from 'path-to-regexp';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Repository } from 'typeorm';
-import { HTTPMethod } from 'twenty-shared/types';
+import { HTTPMethod, isLogicFunctionHttpResponse } from 'twenty-shared/types';
 
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -25,6 +25,26 @@ import {
   LogicFunctionExecutorService,
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { CustomException } from 'src/utils/custom-exception';
+
+export type RouteTriggerResponse = {
+  statusCode: number;
+  headers: Record<string, string>;
+  body: unknown;
+};
+
+export const buildRouteTriggerResponse = (
+  data: unknown,
+): RouteTriggerResponse => {
+  if (isLogicFunctionHttpResponse(data)) {
+    return {
+      statusCode: data.status ?? 200,
+      headers: data.headers ?? {},
+      body: data.body,
+    };
+  }
+
+  return { statusCode: 200, headers: {}, body: data };
+};
 
 @Injectable()
 export class RouteTriggerService {
@@ -50,10 +70,8 @@ export class RouteTriggerService {
   }> {
     const host = `${request.protocol}://${request.get('host')}`;
 
-    const workspace =
-      await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
-        host,
-      );
+    const { workspace, publicDomain } =
+      await this.workspaceDomainsService.resolveWorkspaceAndPublicDomain(host);
 
     assertIsDefinedOrThrow(
       workspace,
@@ -63,11 +81,15 @@ export class RouteTriggerService {
       ),
     );
 
+    // App-scoped public domain → restrict matches to that app's logic functions.
+    const applicationId = publicDomain?.applicationId ?? null;
+
     const logicFunctionsWithHttpRouteTrigger =
       await this.logicFunctionRepository.find({
         where: {
           workspaceId: workspace.id,
           httpRouteTriggerSettings: Not(IsNull()),
+          ...(isDefined(applicationId) ? { applicationId } : {}),
         },
       });
 
@@ -166,17 +188,24 @@ export class RouteTriggerService {
 
     const httpRouteSettings = logicFunction.httpRouteTriggerSettings;
 
+    let userWorkspaceId: string | null = null;
+    let userId: string | null = null;
+
     if (httpRouteSettings?.isAuthRequired) {
-      await this.validateWorkspaceFromRequest({
+      const authContext = await this.validateWorkspaceFromRequest({
         request,
         workspaceId: logicFunction.workspaceId,
       });
+
+      userWorkspaceId = authContext.userWorkspaceId ?? null;
+      userId = authContext.user?.id ?? null;
     }
 
     const event = buildLogicFunctionEvent({
       request,
       pathParameters: pathParams,
       forwardedRequestHeaders: httpRouteSettings?.forwardedRequestHeaders ?? [],
+      userWorkspaceId,
     });
 
     let result;
@@ -186,6 +215,8 @@ export class RouteTriggerService {
         logicFunctionId: logicFunction.id,
         workspaceId: logicFunction.workspaceId,
         payload: event,
+        ...(userId ? { userId } : {}),
+        ...(userWorkspaceId ? { userWorkspaceId } : {}),
       });
     } catch (error) {
       if (error instanceof RouteTriggerException) {
@@ -212,7 +243,7 @@ export class RouteTriggerService {
     }
 
     if (!isDefined(result)) {
-      return result;
+      return buildRouteTriggerResponse(result);
     }
 
     if (result.error) {
@@ -222,6 +253,6 @@ export class RouteTriggerService {
       );
     }
 
-    return result.data;
+    return buildRouteTriggerResponse(result.data);
   }
 }

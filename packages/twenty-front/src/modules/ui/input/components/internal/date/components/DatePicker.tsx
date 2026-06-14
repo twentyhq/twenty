@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { lazy, Suspense, useContext, type ComponentType } from 'react';
-import type { ReactDatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
+import type { DatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
@@ -24,9 +24,12 @@ import {
   turnJSDateToPlainDate,
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
-import { IconCalendarX } from 'twenty-ui/display';
-import { MenuItemLeftContent } from 'twenty-ui/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconCalendarX } from 'twenty-ui-deprecated/display';
+import { MenuItemLeftContent } from 'twenty-ui-deprecated/navigation';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
   'date-picker-month-and-year-dropdown-month-select';
@@ -331,14 +334,27 @@ type DatePickerProps = {
   hideCalendar?: boolean;
 };
 
-type DatePickerPropsType = ReactDatePickerLibProps<
-  boolean | undefined,
-  boolean | undefined
->;
+// react-datepicker v9 types its props as a discriminated union keyed on
+// selectsRange/selectsMultiple. We drive selectsMultiple dynamically, which TS
+// cannot narrow to a single union branch, so collapse the discriminants to plain
+// optionals (selectedDates is accepted but ignored by the library at runtime).
+type DatePickerPropsType = Omit<
+  ReactDatePickerLibProps,
+  'selectsRange' | 'selectsMultiple' | 'onChange' | 'formatMultipleDates'
+> & {
+  selectsRange?: boolean;
+  selectsMultiple?: boolean;
+  selectedDates?: Date[];
+  onChange?: (date: Date | null) => void;
+};
 
 const ReactDatePicker = lazy<ComponentType<DatePickerPropsType>>(() =>
   import('react-datepicker').then((mod) => ({
-    default: mod.default as unknown as ComponentType<DatePickerPropsType>,
+    // react-datepicker ships CJS; under vite 8 this dynamic import's `default`
+    // can be the module namespace ({ default: Component }) rather than the
+    // component itself, so unwrap a nested default when present.
+    default: ((mod.default as any)?.default ??
+      mod.default) as unknown as ComponentType<DatePickerPropsType>,
   })),
 );
 
@@ -403,13 +419,19 @@ export const DatePicker = ({
     onChange?.(newDate?.toString() ?? null);
   };
 
-  const handleDateChange = (datePicked: Date) => {
+  const handleDateChange = (datePicked: Date | null) => {
+    if (!isDefined(datePicked)) {
+      return;
+    }
     const plainDatePicked = turnJSDateToPlainDate(datePicked);
 
     onChange?.(plainDatePicked.toString());
   };
 
-  const handleDateSelect = (datePicked: Date) => {
+  const handleDateSelect = (datePicked: Date | null) => {
+    if (!isDefined(datePicked)) {
+      return;
+    }
     const plainDatePicked = turnJSDateToPlainDate(datePicked);
 
     handleClose?.(plainDatePicked.toString());
@@ -486,7 +508,9 @@ export const DatePicker = ({
             openToDate={dateForDatePicker ?? undefined}
             disabledKeyboardNavigation
             onChange={handleDateChange}
-            calendarStartDay={calendarStartDay}
+            calendarStartDay={
+              calendarStartDay as 0 | 1 | 2 | 3 | 4 | 5 | 6 | undefined
+            }
             renderCustomHeader={({
               prevMonthButtonDisabled,
               nextMonthButtonDisabled,

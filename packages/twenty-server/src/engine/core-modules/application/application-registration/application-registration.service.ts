@@ -6,7 +6,7 @@ import crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, type Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
@@ -25,6 +25,8 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
+import { MARKETPLACE_CURATED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-curated-applications.constant';
+
 const BCRYPT_SALT_ROUNDS = 10;
 
 @Injectable()
@@ -59,10 +61,7 @@ export class ApplicationRegistrationService {
     ownerWorkspaceId: string,
   ): Promise<ApplicationRegistrationEntity> {
     const registration = await this.applicationRegistrationRepository.findOne({
-      where: [
-        { id, ownerWorkspaceId },
-        { id, ownerWorkspaceId: IsNull() },
-      ],
+      where: { id, ownerWorkspaceId },
     });
 
     if (!registration) {
@@ -212,10 +211,15 @@ export class ApplicationRegistrationService {
     return this.findOneById(id, ownerWorkspaceId);
   }
 
-  async updateFromManifest(
-    applicationRegistrationId: string,
-    manifest: Manifest,
-  ): Promise<void> {
+  async updateFromManifest({
+    applicationRegistrationId,
+    manifest,
+    sourceType,
+  }: {
+    applicationRegistrationId: string;
+    manifest: Manifest;
+    sourceType?: ApplicationRegistrationSourceType;
+  }): Promise<void> {
     const existing = await this.applicationRegistrationRepository.findOneOrFail(
       { where: { id: applicationRegistrationId } },
     );
@@ -224,6 +228,7 @@ export class ApplicationRegistrationService {
       ...existing,
       name: manifest.application.displayName,
       manifest,
+      ...(sourceType !== undefined && { sourceType }),
     });
   }
 
@@ -269,15 +274,20 @@ export class ApplicationRegistrationService {
       | 'sourceType'
       | 'sourcePackage'
       | 'latestAvailableVersion'
-      | 'isListed'
-      | 'isFeatured'
       | 'manifest'
-      | 'ownerWorkspaceId'
     >,
   ): Promise<void> {
     const existing = await this.findOneByUniversalIdentifier(
       params.universalIdentifier,
     );
+
+    const curatedIdentifiers = new Set(
+      MARKETPLACE_CURATED_APPLICATIONS.map(
+        (entry) => entry.universalIdentifier,
+      ),
+    );
+
+    const isFeatured = curatedIdentifiers.has(params.universalIdentifier);
 
     if (isDefined(existing)) {
       await this.applicationRegistrationRepository.save({
@@ -287,8 +297,7 @@ export class ApplicationRegistrationService {
         sourcePackage: params.sourcePackage,
         latestAvailableVersion: params.latestAvailableVersion,
         manifest: params.manifest,
-        isListed: params.isListed,
-        isFeatured: params.isFeatured,
+        isFeatured,
       });
     } else {
       const registration = this.applicationRegistrationRepository.create({
@@ -297,13 +306,13 @@ export class ApplicationRegistrationService {
         sourceType: params.sourceType,
         sourcePackage: params.sourcePackage,
         latestAvailableVersion: params.latestAvailableVersion,
-        isListed: params.isListed,
-        isFeatured: params.isFeatured,
+        isListed: true,
+        isFeatured,
         manifest: params.manifest,
         oAuthClientId: v4(),
         oAuthRedirectUris: [],
         oAuthScopes: [],
-        ownerWorkspaceId: params.ownerWorkspaceId,
+        ownerWorkspaceId: null,
       });
 
       await this.applicationRegistrationRepository.save(registration);

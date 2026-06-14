@@ -15,8 +15,10 @@ import { useStatusIcon } from '@/cli/utilities/dev/ui/dev-ui-hooks';
 import { useInk } from '@/cli/utilities/dev/ui/dev-ui-ink-context';
 import {
   DevUiEntitySection,
+  DevUiEntitySummary,
   ENTITY_ORDER,
 } from '@/cli/utilities/dev/ui/components/dev-ui-entity-section';
+import { DevUiVersionRow } from '@/cli/utilities/dev/ui/components/dev-ui-version-row';
 import React from 'react';
 
 export const DevUiSyncStatusIndicator = ({
@@ -61,8 +63,10 @@ export const DevUiStepStatusLabel = ({
 
 export const DevUiApplicationPanel = ({
   state,
+  verbose = false,
 }: {
   state: OrchestratorState;
+  verbose?: boolean;
 }): React.ReactElement => {
   const { Box, Text } = useInk();
   const groupedEntities = groupEntitiesByType(state.entities);
@@ -96,6 +100,7 @@ export const DevUiApplicationPanel = ({
             </Text>
           </Box>
         )}
+        <DevUiVersionRow versionInfo={state.versionInfo} />
       </Box>
 
       <Box marginLeft={2} flexDirection="column" marginTop={1}>
@@ -109,13 +114,17 @@ export const DevUiApplicationPanel = ({
       </Box>
 
       <Box marginLeft={2} flexDirection="column">
-        {ENTITY_ORDER.map((type) => {
-          const entities = groupedEntities.get(type) ?? [];
+        {verbose ? (
+          ENTITY_ORDER.map((type) => {
+            const entities = groupedEntities.get(type) ?? [];
 
-          return (
-            <DevUiEntitySection key={type} type={type} entities={entities} />
-          );
-        })}
+            return (
+              <DevUiEntitySection key={type} type={type} entities={entities} />
+            );
+          })
+        ) : (
+          <DevUiEntitySummary entities={Array.from(state.entities.values())} />
+        )}
       </Box>
     </Box>
   );

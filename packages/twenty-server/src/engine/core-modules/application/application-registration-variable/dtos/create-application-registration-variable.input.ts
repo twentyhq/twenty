@@ -8,6 +8,8 @@ import {
   MaxLength,
 } from 'class-validator';
 
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
+
 @InputType()
 export class CreateApplicationRegistrationVariableInput {
   @Field()
@@ -19,10 +21,10 @@ export class CreateApplicationRegistrationVariableInput {
   @MaxLength(256)
   key: string;
 
-  @Field()
+  @Field(() => String)
   @IsString()
   @MaxLength(10000)
-  value: string;
+  value: PlaintextString;
 
   @Field({ nullable: true })
   @IsString()

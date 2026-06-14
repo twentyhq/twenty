@@ -33,7 +33,7 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { createPortal } from 'react-dom';
 import {
-  computeMorphRelationFieldName,
+  computeMorphRelationGqlFieldName,
   CustomError,
 } from 'twenty-shared/utils';
 import {
@@ -42,10 +42,10 @@ import {
   IconTrash,
   IconUnlink,
   type IconComponent,
-} from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
-import { AnimatedEaseInOut } from 'twenty-ui/utilities';
+} from 'twenty-ui-deprecated/display';
+import { LightIconButton } from 'twenty-ui-deprecated/input';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { AnimatedEaseInOut } from 'twenty-ui-deprecated/utilities';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 const StyledClickableZone = styled.div`
@@ -153,7 +153,7 @@ export const RecordDetailRelationRecordsListItem = ({
     relationFieldMetadataItem?.type === FieldMetadataType.MORPH_RELATION;
 
   const computedName = relationFieldMetadataItem
-    ? computeMorphRelationFieldName({
+    ? computeMorphRelationGqlFieldName({
         fieldName: relationFieldMetadataItem.name,
         relationType: relationFieldMetadataItem.settings.relationType,
         targetObjectMetadataNameSingular: objectMetadataItem.nameSingular,

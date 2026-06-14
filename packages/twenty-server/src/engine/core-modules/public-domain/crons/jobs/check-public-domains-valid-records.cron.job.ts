@@ -14,6 +14,8 @@ export const CHECK_PUBLIC_DOMAINS_VALID_RECORDS_CRON_PATTERN = '0 * * * *';
 @Processor(MessageQueue.cronQueue)
 export class CheckPublicDomainsValidRecordsCronJob {
   constructor(
+    // Cron sweeps unvalidated domains across every workspace.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(PublicDomainEntity)
     private readonly publicDomainRepository: Repository<PublicDomainEntity>,
     private readonly publicDomainService: PublicDomainService,

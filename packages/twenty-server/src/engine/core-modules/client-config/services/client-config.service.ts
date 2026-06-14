@@ -2,13 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { type AiSdkPackage } from 'twenty-shared/ai';
 
-import {
-  AI_SDK_ANTHROPIC,
-  AI_SDK_BEDROCK,
-  AI_SDK_OPENAI,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
@@ -16,9 +10,9 @@ import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/main
 import {
   type ClientAiModelConfig,
   type ClientConfig,
-  type NativeModelCapabilities,
 } from 'src/engine/core-modules/client-config/client-config.entity';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
@@ -26,6 +20,7 @@ import {
   AUTO_SELECT_SMART_MODEL_ID,
 } from 'twenty-shared/constants';
 import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
+import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
 @Injectable()
@@ -36,19 +31,6 @@ export class ClientConfigService {
     private aiModelRegistryService: AiModelRegistryService,
     private maintenanceModeService: MaintenanceModeService,
   ) {}
-
-  private deriveNativeCapabilities(
-    sdkPackage?: AiSdkPackage,
-  ): NativeModelCapabilities | undefined {
-    switch (sdkPackage) {
-      case AI_SDK_OPENAI:
-      case AI_SDK_ANTHROPIC:
-      case AI_SDK_BEDROCK:
-        return { webSearch: true };
-      default:
-        return undefined;
-    }
-  }
 
   private isCloudflareIntegrationEnabled(): boolean {
     return (
@@ -63,6 +45,10 @@ export class ClientConfigService {
     const calendarBookingPageId = this.twentyConfigService.get(
       'CALENDAR_BOOKING_PAGE_ID',
     );
+
+    const isEmailingDomainInDemoMode =
+      this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
+      EmailingDomainDriver.LOG;
 
     const availableModels =
       this.aiModelRegistryService.getAdminFilteredModels();
@@ -95,7 +81,7 @@ export class ClientConfigService {
           sdkPackage: registeredModel.sdkPackage,
           providerName,
           providerLabel: getProviderLabel(providerName),
-          nativeCapabilities: this.deriveNativeCapabilities(
+          nativeCapabilities: getNativeModelCapabilities(
             registeredModel.sdkPackage,
           ),
           inputCostPerMillionTokens: modelConfig?.inputCostPerMillionTokens,
@@ -135,6 +121,9 @@ export class ClientConfigService {
             defaultPerformanceModel?.providerName,
           ),
           sdkPackage: defaultPerformanceModel?.sdkPackage ?? null,
+          nativeCapabilities: getNativeModelCapabilities(
+            defaultPerformanceModel?.sdkPackage,
+          ),
           inputCostPerMillionTokens:
             defaultPerformanceModelConfig?.inputCostPerMillionTokens,
           outputCostPerMillionTokens:
@@ -153,6 +142,9 @@ export class ClientConfigService {
           providerName: defaultSpeedModel?.providerName,
           providerLabel: getProviderLabel(defaultSpeedModel?.providerName),
           sdkPackage: defaultSpeedModel?.sdkPackage ?? null,
+          nativeCapabilities: getNativeModelCapabilities(
+            defaultSpeedModel?.sdkPackage,
+          ),
           inputCostPerMillionTokens:
             defaultSpeedModelConfig?.inputCostPerMillionTokens,
           outputCostPerMillionTokens:
@@ -247,6 +239,7 @@ export class ClientConfigService {
       isImapSmtpCaldavEnabled: this.twentyConfigService.get(
         'IS_IMAP_SMTP_CALDAV_ENABLED',
       ),
+      isEmailingDomainInDemoMode,
       allowRequestsToTwentyIcons: this.twentyConfigService.get(
         'ALLOW_REQUESTS_TO_TWENTY_ICONS',
       ),

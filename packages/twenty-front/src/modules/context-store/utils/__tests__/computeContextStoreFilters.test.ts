@@ -29,6 +29,7 @@ describe('computeContextStoreFilters', () => {
       contextStoreFilters: [],
       contextStoreFilterGroups: [],
       objectMetadataItem: personObjectMetadataItem,
+      fieldMetadataItems: personObjectMetadataItem.fields,
       filterValueDependencies: mockFilterValueDependencies,
       contextStoreAnyFieldFilterValue: '',
     });
@@ -73,6 +74,7 @@ describe('computeContextStoreFilters', () => {
       contextStoreFilters,
       contextStoreFilterGroups: [],
       objectMetadataItem: personObjectMetadataItem,
+      fieldMetadataItems: personObjectMetadataItem.fields,
       filterValueDependencies: mockFilterValueDependencies,
       contextStoreAnyFieldFilterValue: '',
     });

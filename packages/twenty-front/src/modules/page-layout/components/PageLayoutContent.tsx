@@ -9,10 +9,8 @@ import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/u
 import { useReorderPageLayoutWidgets } from '@/page-layout/hooks/useReorderPageLayoutWidgets';
 import { StandaloneWidgetPlaceholder } from '@/page-layout/widgets/components/StandaloneWidgetPlaceholder';
 import { RecordPageAddWidgetSection } from '@/page-layout/widgets/components/RecordPageAddWidgetSection';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import {
-  FeatureFlagKey,
   PageLayoutTabLayoutMode,
   PageLayoutType,
 } from '~/generated-metadata/graphql';
@@ -38,10 +36,6 @@ export const PageLayoutContent = () => {
   const isRecordPageLayout =
     currentPageLayout.type === PageLayoutType.RECORD_PAGE;
 
-  const isRecordPageGlobalEditionEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED,
-  );
-
   const isCanvasLayout = layoutMode === PageLayoutTabLayoutMode.CANVAS;
   const isVerticalList = layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
 
@@ -62,19 +56,13 @@ export const PageLayoutContent = () => {
   }
 
   if (isVerticalList) {
-    if (
-      isPageLayoutInEditMode &&
-      isRecordPageLayout &&
-      isRecordPageGlobalEditionEnabled
-    ) {
+    if (isPageLayoutInEditMode && isRecordPageLayout) {
       return (
         <PageLayoutVerticalListEditor
           widgets={activeTab.widgets}
           onReorder={reorderWidgets}
           isReorderEnabled={true}
-          trailingElement={
-            isRecordPageLayout ? <RecordPageAddWidgetSection /> : undefined
-          }
+          trailingElement={<RecordPageAddWidgetSection />}
         />
       );
     }

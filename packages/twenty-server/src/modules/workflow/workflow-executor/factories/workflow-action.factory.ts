@@ -12,16 +12,18 @@ import { DelayWorkflowAction } from 'src/modules/workflow/workflow-executor/work
 import { EmptyWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/empty/empty.workflow-action';
 import { FilterWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/filter.workflow-action';
 import { FormWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/form.workflow-action';
+import { HttpRequestWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/http-request/http-request.workflow-action';
 import { IfElseWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/if-else.workflow-action';
 import { IteratorWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/iterator.workflow-action';
 import { LogicFunctionWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/logic-function/logic-function.workflow-action';
+import { DraftEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/draft-email.workflow-action';
+import { SendEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email.workflow-action';
 import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/create-record.workflow-action';
 import { DeleteRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/delete-record.workflow-action';
 import { FindRecordsWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/find-records.workflow-action';
 import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/update-record.workflow-action';
 import { UpsertRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/upsert-record.workflow-action';
-import { ToolExecutorWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/tool-executor-workflow-action';
-import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { WorkflowActionType } from 'twenty-shared/workflow';
 
 @Injectable()
 export class WorkflowActionFactory {
@@ -37,7 +39,9 @@ export class WorkflowActionFactory {
     private readonly filterWorkflowAction: FilterWorkflowAction,
     private readonly ifElseWorkflowAction: IfElseWorkflowAction,
     private readonly iteratorWorkflowAction: IteratorWorkflowAction,
-    private readonly toolExecutorWorkflowAction: ToolExecutorWorkflowAction,
+    private readonly httpRequestWorkflowAction: HttpRequestWorkflowAction,
+    private readonly sendEmailWorkflowAction: SendEmailWorkflowAction,
+    private readonly draftEmailWorkflowAction: DraftEmailWorkflowAction,
     private readonly aiAgentWorkflowAction: AiAgentWorkflowAction,
     private readonly emptyWorkflowAction: EmptyWorkflowAction,
     private readonly delayWorkflowAction: DelayWorkflowAction,
@@ -50,9 +54,9 @@ export class WorkflowActionFactory {
       case WorkflowActionType.LOGIC_FUNCTION:
         return this.logicFunctionWorkflowAction;
       case WorkflowActionType.SEND_EMAIL:
-        return this.toolExecutorWorkflowAction;
+        return this.sendEmailWorkflowAction;
       case WorkflowActionType.DRAFT_EMAIL:
-        return this.toolExecutorWorkflowAction;
+        return this.draftEmailWorkflowAction;
       case WorkflowActionType.CREATE_RECORD:
         return this.createRecordWorkflowAction;
       case WorkflowActionType.UPSERT_RECORD:
@@ -72,7 +76,7 @@ export class WorkflowActionFactory {
       case WorkflowActionType.ITERATOR:
         return this.iteratorWorkflowAction;
       case WorkflowActionType.HTTP_REQUEST:
-        return this.toolExecutorWorkflowAction;
+        return this.httpRequestWorkflowAction;
       case WorkflowActionType.AI_AGENT:
         return this.aiAgentWorkflowAction;
       case WorkflowActionType.EMPTY:

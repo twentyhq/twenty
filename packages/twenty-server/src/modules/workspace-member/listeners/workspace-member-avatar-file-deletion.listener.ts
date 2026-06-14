@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { EntityNotFoundError } from 'typeorm/error/EntityNotFoundError';
+
 import {
   ObjectRecordDeleteEvent,
   ObjectRecordDestroyEvent,
@@ -29,7 +31,7 @@ export class WorkspaceMemberAvatarFileDeletionListener {
   ) {
     const fileIdsToDelete = this.getFileIdsToDeleteFromUpdateEvent(payload);
 
-    this.deleteCorePictures(fileIdsToDelete, payload.workspaceId);
+    await this.deleteCorePictures(fileIdsToDelete, payload.workspaceId);
   }
 
   @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.DESTROYED)
@@ -51,10 +53,17 @@ export class WorkspaceMemberAvatarFileDeletionListener {
     workspaceId: string,
   ): Promise<void> {
     for (const fileId of fileIds) {
-      await this.fileCorePictureService.deleteCorePicture({
-        workspaceId,
-        fileId,
-      });
+      try {
+        await this.fileCorePictureService.deleteCorePicture({
+          workspaceId,
+          fileId,
+        });
+      } catch (error) {
+        if (error instanceof EntityNotFoundError) {
+          continue;
+        }
+        throw error;
+      }
     }
   }
 

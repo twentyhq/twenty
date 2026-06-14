@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import {
   IconApi,
   IconAt,
+  IconCode,
   IconDownload,
   IconFileExport,
   IconFileImport,
@@ -12,7 +13,7 @@ import {
   IconSparkles,
   IconTable,
   IconUser,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 type UseActionRolePermissionFlagConfigParams = {
@@ -85,6 +86,16 @@ export const useActionRolePermissionFlagConfig = ({
         isRelevantForAgents: true,
         isRelevantForApiKeys: false,
         isRelevantForUsers: false,
+      },
+      {
+        key: PermissionFlagType.CODE_INTERPRETER_TOOL,
+        name: t`Code Interpreter`,
+        description: t`Run code to analyze files and data`,
+        Icon: IconCode,
+        isToolPermission: true,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: false,
+        isRelevantForUsers: true,
       },
       {
         key: PermissionFlagType.IMPORT_CSV,

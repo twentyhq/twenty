@@ -36,6 +36,7 @@ export class CalendarGetCalendarEventsService {
       | 'id'
       | 'connectionParameters'
       | 'handle'
+      | 'workspaceId'
     >,
     syncCursor?: string,
   ): Promise<GetCalendarEventsResponse> {
@@ -52,7 +53,7 @@ export class CalendarGetCalendarEventsService {
         );
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
         return this.caldavCalendarGetEventsService.getCalendarEvents(
-          connectedAccount,
+          connectedAccount.id,
           syncCursor,
         );
       default:

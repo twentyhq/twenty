@@ -249,9 +249,9 @@ describe('Page layout with tabs update should fail', () => {
       expect(firstError.message).toContain(
         'Please remove or replace this filter rule.',
       );
-      expect(
-        String(firstError.extensions.userFriendlyMessage),
-      ).toContain(`Chart "${chartTitle}":`);
+      expect(String(firstError.extensions.userFriendlyMessage)).toContain(
+        `Chart "${chartTitle}":`,
+      );
     });
   });
 });

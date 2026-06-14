@@ -93,7 +93,7 @@ yarn install
 # Register your local Twenty server as a remote (interactive prompt).
 # When asked for the URL use http://localhost:2021 and paste an API key
 # from Settings -> Developers in the Twenty UI.
-yarn twenty remote add
+yarn twenty remote:add
 
 # Build, install, and watch for changes.
 yarn twenty dev
@@ -107,8 +107,8 @@ watching `src/`. Edit any file and the change is re-synced within seconds.
 ```bash
 cd packages/twenty-apps/community/github-connector
 yarn install
-yarn twenty remote add        # same prompts as above
-yarn twenty install           # builds and installs once
+yarn twenty remote:add        # same prompts as above
+yarn twenty app:install       # builds and installs once
 ```
 
 ## Configure authentication

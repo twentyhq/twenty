@@ -96,7 +96,7 @@ exports[`Field permission upsert should fail when role is not editable (system r
       "fieldPermission": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Cannot target a role owned by another application.",
   },
   "message": "Validation errors occurred while upserting field permissions",
   "name": "GraphQLError",

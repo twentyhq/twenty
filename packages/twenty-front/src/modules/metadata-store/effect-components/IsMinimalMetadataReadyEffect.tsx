@@ -28,20 +28,23 @@ export const IsMinimalMetadataReadyEffect = () => {
   );
 
   useEffect(() => {
+    if (!hasAccessTokenPair) {
+      setIsMinimalMetadataReady(true);
+      return;
+    }
+
     const hasActiveWorkspace = isWorkspaceActiveOrSuspended(currentWorkspace);
 
     const areObjectsLoaded = metadataStore.status === 'up-to-date';
     const areViewsLoaded = metadataStoreViews.status === 'up-to-date';
 
-    const isReady = !areObjectsLoaded
-      ? false
-      : !hasAccessTokenPair ||
-        (isDefined(currentUser) && (!hasActiveWorkspace || areViewsLoaded));
-
     if (!areObjectsLoaded) {
       setIsMinimalMetadataReady(false);
       return;
     }
+
+    const isReady =
+      isDefined(currentUser) && (!hasActiveWorkspace || areViewsLoaded);
 
     if (isReady) {
       setIsMinimalMetadataReady(true);

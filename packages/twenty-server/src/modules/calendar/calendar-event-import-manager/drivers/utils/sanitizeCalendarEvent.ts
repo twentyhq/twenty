@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-// oxlint-disable-next-line @typescripttypescript/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export const sanitizeCalendarEvent = <T extends Record<string, any>>(
   event: T,
   propertiesToSanitize: (keyof T)[],

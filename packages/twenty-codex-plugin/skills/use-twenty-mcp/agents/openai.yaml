@@ -1,0 +1,4 @@
+interface:
+  display_name: "Use Twenty MCP"
+  short_description: "Query Twenty MCP and format readable records."
+  default_prompt: "Use $use-twenty-mcp to connect Codex to Twenty MCP or retrieve readable workspace data."

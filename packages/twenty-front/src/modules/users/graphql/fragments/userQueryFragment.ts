@@ -60,7 +60,6 @@ export const USER_QUERY_FRAGMENT = gql`
       isPasswordAuthBypassEnabled
       subdomain
       customDomain
-      hasValidEnterpriseKey
       hasValidSignedEnterpriseKey
       hasValidEnterpriseValidityToken
       workspaceCustomApplication {
@@ -70,6 +69,7 @@ export const USER_QUERY_FRAGMENT = gql`
         id
         name
         universalIdentifier
+        logo
       }
       isCustomDomainEnabled
       workspaceUrls {
@@ -103,6 +103,7 @@ export const USER_QUERY_FRAGMENT = gql`
       trashRetentionDays
       eventLogRetentionDays
       editableProfileFields
+      isInternalMessagesImportEnabled
     }
     availableWorkspaces {
       ...AvailableWorkspacesFragment

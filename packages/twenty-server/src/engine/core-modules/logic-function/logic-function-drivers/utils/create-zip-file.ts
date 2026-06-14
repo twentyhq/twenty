@@ -15,7 +15,7 @@ export const createZipFile = async (
   const p = pipeline(archive, output);
 
   archive.directory(sourceDir, false);
-  archive.finalize();
+  void archive.finalize();
 
   return p;
 };

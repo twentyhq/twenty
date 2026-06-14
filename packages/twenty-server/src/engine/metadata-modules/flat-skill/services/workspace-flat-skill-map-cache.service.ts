@@ -10,6 +10,8 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatSkillMaps } from 'src/engine/metadata-modules/flat-skill/types/flat-skill-maps.type';
 import { fromSkillEntityToFlatSkill } from 'src/engine/metadata-modules/flat-skill/utils/from-skill-entity-to-flat-skill.util';
 import { SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
@@ -18,8 +20,8 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 @WorkspaceCache('flatSkillMaps')
 export class WorkspaceFlatSkillMapCacheService extends WorkspaceCacheProvider<FlatSkillMaps> {
   constructor(
-    @InjectRepository(SkillEntity)
-    private readonly skillRepository: Repository<SkillEntity>,
+    @InjectWorkspaceScopedRepository(SkillEntity)
+    private readonly skillRepository: WorkspaceScopedRepository<SkillEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {
@@ -28,8 +30,7 @@ export class WorkspaceFlatSkillMapCacheService extends WorkspaceCacheProvider<Fl
 
   async computeForCache(workspaceId: string): Promise<FlatSkillMaps> {
     const [skills, applications] = await Promise.all([
-      this.skillRepository.find({
-        where: { workspaceId },
+      this.skillRepository.find(workspaceId, {
         withDeleted: true,
       }),
       this.applicationRepository.find({

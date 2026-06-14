@@ -7,9 +7,12 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS } from '@/views/constants/ViewBarFilterBottomMenuItemIds';
 
+import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
+import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
 import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
@@ -20,10 +23,10 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Pill } from 'twenty-ui/components';
-import { IconFilter } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Pill } from 'twenty-ui-deprecated/components';
+import { IconFilter } from 'twenty-ui-deprecated/display';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { v4 } from 'uuid';
 
 const StyledPillContainer = styled.span`
@@ -34,7 +37,17 @@ const StyledPillContainer = styled.span`
 `;
 
 export const ViewBarFilterDropdownAdvancedFilterButton = () => {
-  const advancedFilterQuerySubFilterCount = 0; // TODO
+  const rootRecordFilterGroup = useAtomComponentSelectorValue(
+    rootLevelRecordFilterGroupComponentSelector,
+  );
+
+  const { childRecordFiltersAndRecordFilterGroups } =
+    useChildRecordFiltersAndRecordFilterGroups({
+      recordFilterGroupId: rootRecordFilterGroup?.id,
+    });
+
+  const advancedFilterQuerySubFilterCount =
+    childRecordFiltersAndRecordFilterGroups.length;
 
   const { t } = useLingui();
 
@@ -134,12 +147,14 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
         onClick={handleClick}
         LeftIcon={IconFilter}
         focused={isSelectedItemId}
+        RightComponent={
+          advancedFilterQuerySubFilterCount > 0 ? (
+            <StyledPillContainer>
+              <Pill label={advancedFilterQuerySubFilterCount.toString()} />
+            </StyledPillContainer>
+          ) : undefined
+        }
       />
-      {advancedFilterQuerySubFilterCount > 0 && (
-        <StyledPillContainer>
-          <Pill label={advancedFilterQuerySubFilterCount.toString()} />
-        </StyledPillContainer>
-      )}
     </SelectableListItem>
   );
 };

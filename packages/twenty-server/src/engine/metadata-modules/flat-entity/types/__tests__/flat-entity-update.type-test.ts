@@ -22,6 +22,7 @@ type Assertions = [
       | 'settings'
       | 'isUnique'
       | 'isLabelSyncedWithName'
+      | 'isUIEditable'
       | 'universalSettings'
     >
   >,
@@ -49,7 +50,11 @@ type Assertions = [
       | 'labelPlural'
       | 'labelIdentifierFieldMetadataId'
       | 'labelIdentifierFieldMetadataUniversalIdentifier'
+      | 'imageIdentifierFieldMetadataId'
+      | 'imageIdentifierFieldMetadataUniversalIdentifier'
       | 'isSearchable'
+      | 'isUIEditable'
+      | 'isUICreatable'
     >
   >,
 
@@ -58,6 +63,7 @@ type Assertions = [
       FlatEntityUpdate<'objectMetadata'>,
       {
         labelIdentifierFieldMetadataUniversalIdentifier?: never;
+        imageIdentifierFieldMetadataUniversalIdentifier?: never;
       }
     >
   >,

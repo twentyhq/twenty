@@ -161,7 +161,6 @@ export const responseData = {
         allowImpersonation: false,
         activationStatus: 'active',
         isPublicInviteLinkEnabled: false,
-        hasValidEnterpriseKey: false,
         hasValidSignedEnterpriseKey: false,
         hasValidEnterpriseValidityToken: false,
         isGoogleAuthEnabled: true,

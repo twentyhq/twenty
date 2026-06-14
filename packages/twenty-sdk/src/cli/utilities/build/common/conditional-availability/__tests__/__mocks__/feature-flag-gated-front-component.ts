@@ -1,16 +1,14 @@
-import { defineFrontComponent } from '@/sdk/define';
-import { featureFlags, objectPermissions } from '@/sdk/front-component';
+import {
+  defineCommandMenuItem,
+  featureFlags,
+  objectPermissions,
+} from '@/sdk/define';
 
-const MyComponent = () => null;
-
-export default defineFrontComponent({
-  universalIdentifier: 'feature-flag-gated',
-  component: MyComponent,
-  command: {
-    universalIdentifier: 'feature-flag-gated-cmd',
-    label: 'Feature Flag Gated',
-    conditionalAvailabilityExpression:
-      featureFlags.IS_JUNCTION_RELATIONS_ENABLED &&
-      objectPermissions.canReadObjectRecords,
-  },
+export default defineCommandMenuItem({
+  universalIdentifier: 'feature-flag-gated-cmd',
+  label: 'Feature Flag Gated',
+  frontComponentUniversalIdentifier: 'feature-flag-gated',
+  conditionalAvailabilityExpression:
+    featureFlags.IS_JUNCTION_RELATIONS_ENABLED &&
+    objectPermissions.canReadObjectRecords,
 });

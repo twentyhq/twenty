@@ -19,7 +19,7 @@ import {
 } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { getSafeUrl, isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 
 const TextWithRecordLinks = ({ text }: { text: string }) => {
   const parts: React.ReactNode[] = [];
@@ -121,6 +121,24 @@ const MarkdownRenderer = lazy(async () => {
           li: ({ children }) => (
             <li>{processChildrenForRecordLinks(children)}</li>
           ),
+          h1: ({ children }) => (
+            <h1>{processChildrenForRecordLinks(children)}</h1>
+          ),
+          h2: ({ children }) => (
+            <h2>{processChildrenForRecordLinks(children)}</h2>
+          ),
+          h3: ({ children }) => (
+            <h3>{processChildrenForRecordLinks(children)}</h3>
+          ),
+          h4: ({ children }) => (
+            <h4>{processChildrenForRecordLinks(children)}</h4>
+          ),
+          h5: ({ children }) => (
+            <h5>{processChildrenForRecordLinks(children)}</h5>
+          ),
+          h6: ({ children }) => (
+            <h6>{processChildrenForRecordLinks(children)}</h6>
+          ),
           a: ({ children, href, title, node: _node }) => (
             <a
               className="markdown-link"
@@ -188,7 +206,10 @@ const LoadingSkeleton = () => {
 
 export const LazyMarkdownRenderer = ({ text }: { text: string }) => {
   return (
-    <StyledMarkdownContainer className="markdown-section">
+    <StyledMarkdownContainer
+      className="markdown-section"
+      data-replay-ignore-mutations="true"
+    >
       <Suspense fallback={<LoadingSkeleton />}>
         <MarkdownRenderer
           TableScrollContainer={StyledTableScrollContainer}

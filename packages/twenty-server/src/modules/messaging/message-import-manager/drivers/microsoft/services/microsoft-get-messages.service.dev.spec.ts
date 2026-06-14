@@ -4,8 +4,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
-import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
-import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
+import { MicrosoftOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client.provider';
 import { MicrosoftFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-fetch-by-batch.service';
 import { MicrosoftGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service';
 
@@ -31,8 +30,10 @@ xdescribe('Microsoft dev tests : get messages service', () => {
           provide: MicrosoftMessagesImportErrorHandler,
           useValue: { handleError: jest.fn() },
         },
-        OAuth2ClientManagerService,
-        MicrosoftOAuth2ClientManagerService,
+        {
+          provide: MicrosoftOAuth2ClientProvider,
+          useValue: { getClient: jest.fn() },
+        },
         MicrosoftFetchByBatchService,
         ConfigService,
       ],
@@ -50,6 +51,7 @@ xdescribe('Microsoft dev tests : get messages service', () => {
     handleAliases: [] as string[],
     accessToken: accessToken,
     refreshToken: refreshToken,
+    workspaceId: 'workspace-id',
   };
 
   it('should fetch and format messages successfully', async () => {

@@ -52,6 +52,10 @@ describe('UserWorkspaceService', () => {
             exists: jest.fn(),
             findOne: jest.fn(),
             findOneOrFail: jest.fn(),
+            manager: {
+              connection: { driver: { options: { type: 'postgres' } } },
+            },
+            metadata: { columns: [] },
           },
         },
         {
@@ -248,7 +252,6 @@ describe('UserWorkspaceService', () => {
         email: 'test@example.com',
         firstName: 'John',
         lastName: 'Doe',
-        defaultAvatarUrl: 'avatar-url',
         locale: 'en',
         isEmailVerified: false,
         disabled: false,

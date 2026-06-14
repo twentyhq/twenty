@@ -1,7 +1,9 @@
 import { useCallback, useRef } from 'react';
 import { useStore } from 'jotai';
 
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { MultipleRecordPickerItemsDisplay } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerItemsDisplay';
 import { MultipleRecordPickerOnClickOutsideEffect } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerOnClickOutsideEffect';
 import { MultipleRecordPickerSearchInput } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerSearchInput';
@@ -20,7 +22,7 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { t } from '@lingui/core/macro';
-import { IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui-deprecated/display';
 
 type MultipleRecordPickerProps = {
   onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
@@ -104,12 +106,26 @@ export const MultipleRecordPicker = ({
     onCreate?.(recordPickerSearchFilter);
   }, [multipleRecordPickerSearchFilterState, onCreate, store]);
 
-  const hasCreatePermissionOnObjectForCreate = useObjectPermissionsForObject(
+  const objectPermissionsForCreate = useObjectPermissionsForObject(
     objectMetadataItemIdForCreate ?? '',
-  ).canUpdateObjectRecords;
+  );
+
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const objectMetadataItemForCreate = objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.id === objectMetadataItemIdForCreate,
+  );
+
+  const canCreateRecordForCreate =
+    isDefined(objectMetadataItemForCreate) &&
+    canCreateRecordsForObjectMetadataItem({
+      objectPermissions: objectPermissionsForCreate,
+      objectMetadataItem: objectMetadataItemForCreate,
+    });
 
   const createNewButtonSection =
-    isDefined(onCreate) && hasCreatePermissionOnObjectForCreate ? (
+    isDefined(onCreate) && canCreateRecordForCreate ? (
       <DropdownMenuItemsContainer scrollable={false}>
         <CreateNewButton
           onClick={handleCreateNewButtonClick}

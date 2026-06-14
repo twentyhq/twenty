@@ -20,6 +20,7 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   universalIdentifier: '20202020-81ee-42da-a281-668632f32fe7',
   name: 'Workspace Custom Application',
   description: null,
+  logo: null,
   version: null,
   workspaceId: 'workspace-id',
   sourceType: ApplicationRegistrationSourceType.LOCAL,
@@ -73,7 +74,6 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
               description: 'Company pets',
               icon: 'IconCat',
               type: FieldMetadataType.RELATION,
-              isCustom: true,
               isSystem: false,
               isUnique: false,
               relationCreationPayload: {
@@ -108,7 +108,6 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
               description: 'Company pets',
               icon: 'IconCat',
               type: FieldMetadataType.RELATION,
-              isCustom: true,
               isSystem: false,
               isUnique: false,
               relationCreationPayload: {
@@ -143,7 +142,6 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
               description: 'Company pets',
               icon: 'IconCat',
               type: FieldMetadataType.RELATION,
-              isCustom: false,
               isSystem: true,
               isUnique: true,
               relationCreationPayload: {
@@ -179,7 +177,6 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
               description: 'Morph relation to pet',
               icon: 'IconCat',
               type: FieldMetadataType.MORPH_RELATION,
-              isCustom: false,
               isSystem: true,
               isUnique: false,
               relationCreationPayload: {
@@ -215,7 +212,6 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
               description: 'Morph relation to pet',
               icon: 'IconCat',
               type: FieldMetadataType.MORPH_RELATION,
-              isCustom: false,
               isSystem: true,
               isUnique: false,
               relationCreationPayload: {
@@ -251,7 +247,6 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
               description: 'Morph relation to pet',
               icon: 'IconCat',
               type: FieldMetadataType.RELATION,
-              isCustom: false,
               isSystem: true,
               isUnique: false,
               relationCreationPayload: {
@@ -362,7 +357,6 @@ describe('generate Morph Or Relation Flat Field Metadata Pair test suite', () =>
           description: 'Company pets',
           icon: 'IconCat',
           type: FieldMetadataType.RELATION,
-          isCustom: true,
           isSystem: false,
           isUnique: false,
           universalIdentifier: sourceUniversalIdentifier,

@@ -51,11 +51,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
     title: 'links field default value with empty values',
     context: {
       input: {
-        defaultValue: {
-          primaryLinkLabel: "''",
-          primaryLinkUrl: "''",
-          secondaryLinks: null,
-        },
+        defaultValue: null,
       },
     },
   },

@@ -33,6 +33,7 @@ export const VIEW_SORT_GQL_FIELDS = `
     id
     fieldMetadataId
     direction
+    subFieldName
     viewId
     createdAt
     updatedAt

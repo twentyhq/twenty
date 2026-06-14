@@ -80,6 +80,9 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
       disabled: { type: 'boolean', optional: true },
       checked: { type: 'boolean', optional: true },
       readOnly: { type: 'boolean', optional: true },
+      accept: { type: 'string', optional: true },
+      multiple: { type: 'boolean', optional: true },
+      capture: { type: 'string', optional: true },
     },
   },
   {

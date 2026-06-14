@@ -2,7 +2,7 @@ import { AiChatBanner } from '@/ai/components/AiChatBanner';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
-import { useGetNextMeteredBillingPrice } from '@/settings/billing/hooks/useGetNextMeteredBillingPrice';
+import { useGetNextResourceCreditPrice } from '@/settings/billing/hooks/useGetNextResourceCreditPrice';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -14,7 +14,7 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   PermissionFlagType,
-  SetMeteredSubscriptionPriceDocument,
+  SetResourceCreditSubscriptionPriceDocument,
   SubscriptionInterval,
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
@@ -29,7 +29,9 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
   const { openModal } = useModal();
   const { endTrialPeriod, isLoading: isEndTrialLoading } =
     useEndSubscriptionTrialPeriod();
-  const nextMeteredBillingPrice = useGetNextMeteredBillingPrice();
+
+  const nextPrice = useGetNextResourceCreditPrice();
+
   const { formatNumber } = useNumberFormat();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
@@ -37,9 +39,8 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
     currentWorkspaceState,
   );
 
-  const [setMeteredSubscriptionPrice, { loading: isUpgrading }] = useMutation(
-    SetMeteredSubscriptionPriceDocument,
-  );
+  const [setResourceCreditSubscriptionPrice, { loading: isUpgrading }] =
+    useMutation(SetResourceCreditSubscriptionPriceDocument);
 
   const { [PermissionFlagType.WORKSPACE]: hasPermissionToManageBilling } =
     usePermissionFlagMap();
@@ -50,59 +51,59 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
 
   const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
 
-  const nextTierCredits = isDefined(nextMeteredBillingPrice)
-    ? formatNumber(nextMeteredBillingPrice.tiers[0].upTo, {
+  const nextResourceCreditsAmount = isDefined(nextPrice)
+    ? formatNumber(nextPrice.creditAmount ?? 0, {
         abbreviate: true,
         decimals: 2,
       })
     : null;
 
-  const nextTierPrice = isDefined(nextMeteredBillingPrice)
-    ? formatNumber(nextMeteredBillingPrice.tiers[0].flatAmount / 100)
+  const nextResourceCreditPrice = isDefined(nextPrice)
+    ? formatNumber((nextPrice.unitAmount ?? 0) / 100)
     : null;
 
-  const nextTierInterval = isDefined(nextMeteredBillingPrice)
-    ? nextMeteredBillingPrice.recurringInterval === SubscriptionInterval.Month
+  const nextTierInterval = isDefined(nextPrice)
+    ? nextPrice.recurringInterval === SubscriptionInterval.Month
       ? t`month`
       : t`year`
     : null;
 
   const message = isTrialing
     ? t`You've hit your usage limit. Subscribe for more usage.`
-    : isDefined(nextMeteredBillingPrice)
-      ? t`You've hit your usage limit. \nUpgrade to ${nextTierCredits} credits for $${nextTierPrice}/${nextTierInterval}.`
+    : isDefined(nextPrice)
+      ? t`You've hit your usage limit. \nUpgrade to ${nextResourceCreditsAmount ?? ''} credits for $${nextResourceCreditPrice ?? ''}/${nextTierInterval ?? ''}.`
       : t`You've hit your usage limit. \nReach to our support team to upgrade.`;
 
   const buttonTitle = isTrialing
     ? t`Subscribe Now`
-    : isDefined(nextMeteredBillingPrice)
+    : isDefined(nextPrice)
       ? t`Upgrade`
       : undefined;
 
   const handleButtonClick = isTrialing
     ? () => openModal(AI_CHAT_END_TRIAL_PERIOD_MODAL_ID)
-    : isDefined(nextMeteredBillingPrice)
+    : isDefined(nextPrice)
       ? () => openModal(AI_CHAT_UPGRADE_CREDIT_PLAN_MODAL_ID)
       : undefined;
 
   const handleUpgradeConfirm = async () => {
-    if (!isDefined(nextMeteredBillingPrice)) return;
+    if (!isDefined(nextPrice)) return;
     try {
-      const { data } = await setMeteredSubscriptionPrice({
-        variables: { priceId: nextMeteredBillingPrice.stripePriceId },
+      const { data } = await setResourceCreditSubscriptionPrice({
+        variables: { priceId: nextPrice.stripePriceId },
       });
       if (
         isDefined(
-          data?.setMeteredSubscriptionPrice.currentBillingSubscription,
+          data?.setResourceCreditSubscriptionPrice.currentBillingSubscription,
         ) &&
         isDefined(currentWorkspace)
       ) {
         setCurrentWorkspace({
           ...currentWorkspace,
           currentBillingSubscription:
-            data.setMeteredSubscriptionPrice.currentBillingSubscription,
+            data.setResourceCreditSubscriptionPrice.currentBillingSubscription,
           billingSubscriptions:
-            data.setMeteredSubscriptionPrice.billingSubscriptions,
+            data.setResourceCreditSubscriptionPrice.billingSubscriptions,
         });
       }
       enqueueSuccessSnackBar({ message: t`Credit plan upgraded.` });
@@ -137,7 +138,7 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
         <ConfirmationModal
           modalInstanceId={AI_CHAT_UPGRADE_CREDIT_PLAN_MODAL_ID}
           title={t`Get more credits`}
-          subtitle={t`Upgrade to ${nextTierCredits} credits for $${nextTierPrice}/${nextTierInterval}.`}
+          subtitle={t`Upgrade to ${nextResourceCreditsAmount ?? ''} credits for $${nextResourceCreditPrice ?? ''}/${nextTierInterval ?? ''}.`}
           onConfirmClick={handleUpgradeConfirm}
           confirmButtonText={t`Upgrade`}
           confirmButtonAccent="blue"

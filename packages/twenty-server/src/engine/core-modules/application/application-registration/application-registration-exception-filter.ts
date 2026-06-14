@@ -22,6 +22,9 @@ export class ApplicationRegistrationExceptionFilter implements ExceptionFilter {
       case ApplicationRegistrationExceptionCode.INVALID_REDIRECT_URI:
       case ApplicationRegistrationExceptionCode.SOURCE_CHANNEL_MISMATCH:
       case ApplicationRegistrationExceptionCode.UNIVERSAL_IDENTIFIER_ALREADY_CLAIMED:
+      case ApplicationRegistrationExceptionCode.SERVER_VERSION_INCOMPATIBLE:
+      case ApplicationRegistrationExceptionCode.VERSION_ALREADY_EXISTS:
+      case ApplicationRegistrationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT:
         throw new UserInputError(exception);
       default:
         throw new InternalServerError(exception);

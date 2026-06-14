@@ -1,9 +1,12 @@
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
+import { DEFAULT_RECORD_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultRecordPageLayoutId';
 import { PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH } from '@/page-layout/constants/PageLayoutLeftPanelContainerWidth';
+import { WIDGET_TYPE_TO_RELATION_FIELD_NAME } from '@/page-layout/constants/WidgetTypeToRelationFieldName';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { usePageLayoutAddTabStrategy } from '@/page-layout/hooks/usePageLayoutAddTabStrategy';
@@ -20,11 +23,11 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
+import { useMemo } from 'react';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useIsMobile } from 'twenty-ui/utilities';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { useIsMobile } from 'twenty-ui-deprecated/utilities';
 
 const StyledContainer = styled.div<{ hasPinnedTab: boolean }>`
   display: grid;
@@ -71,11 +74,35 @@ export const PageLayoutTabsRenderer = () => {
     currentPageLayout.id,
   );
 
-  const isMobile = useIsMobile();
+  const { objectMetadataItems } = useObjectMetadataItems();
 
-  const isRecordPageGlobalEditionEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED,
-  );
+  const inactiveRelationFieldNames = useMemo(() => {
+    if (!isDefined(targetRecordIdentifier)) {
+      return new Set<string>();
+    }
+
+    const objectMetadataItem = objectMetadataItems.find(
+      (item) =>
+        item.nameSingular === targetRecordIdentifier.targetObjectNameSingular,
+    );
+
+    if (!isDefined(objectMetadataItem)) {
+      return new Set<string>();
+    }
+
+    return new Set(
+      objectMetadataItem.fields
+        .filter(
+          (field) =>
+            !field.isActive &&
+            (field.type === FieldMetadataType.RELATION ||
+              field.type === FieldMetadataType.MORPH_RELATION),
+        )
+        .map((field) => field.name),
+    );
+  }, [objectMetadataItems, targetRecordIdentifier]);
+
+  const isMobile = useIsMobile();
 
   const metadataStore = useAtomFamilyStateValue(
     metadataStoreState,
@@ -90,10 +117,7 @@ export const PageLayoutTabsRenderer = () => {
 
   const canEnableTabEditing =
     isPageLayoutInEditMode &&
-    shouldEnableTabEditingFeatures(
-      currentPageLayout.type,
-      isRecordPageGlobalEditionEnabled,
-    );
+    shouldEnableTabEditingFeatures(currentPageLayout.type);
 
   const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
     tabs: currentPageLayout.tabs,
@@ -104,11 +128,15 @@ export const PageLayoutTabsRenderer = () => {
 
   const SYSTEM_OBJECT_TABS = ['Home', 'Timeline', 'Overview', 'Flow'];
 
-  const tabsForCurrentObject = isSystemObject
-    ? tabsWithVisibleWidgets.filter((tab) =>
-        SYSTEM_OBJECT_TABS.includes(tab.title),
-      )
-    : tabsWithVisibleWidgets;
+  const isUsingDefaultRecordPageLayout =
+    currentPageLayout.id === DEFAULT_RECORD_PAGE_LAYOUT_ID;
+
+  const tabsForCurrentObject =
+    isSystemObject && isUsingDefaultRecordPageLayout
+      ? tabsWithVisibleWidgets.filter((tab) =>
+          SYSTEM_OBJECT_TABS.includes(tab.title),
+        )
+      : tabsWithVisibleWidgets;
 
   const { tabsToRenderInTabList, pinnedLeftTab } = getTabsByDisplayMode({
     tabs: tabsForCurrentObject,
@@ -118,6 +146,22 @@ export const PageLayoutTabsRenderer = () => {
   });
 
   const sortedTabs = sortTabsByPosition(tabsToRenderInTabList);
+
+  const sortedActiveTabs = useMemo(
+    () =>
+      sortedTabs.filter((tab) => {
+        const widgetTypes = tab.widgets.map((widget) => widget.type);
+        return !widgetTypes.some((widgetType) => {
+          const relationFieldName =
+            WIDGET_TYPE_TO_RELATION_FIELD_NAME[widgetType];
+          return (
+            isDefined(relationFieldName) &&
+            inactiveRelationFieldNames.has(relationFieldName)
+          );
+        });
+      }),
+    [sortedTabs, inactiveRelationFieldNames],
+  );
 
   const activeTabExistsInCurrentPageLayout = currentPageLayout.tabs.some(
     (tab) => tab.id === activeTabId,
@@ -131,16 +175,16 @@ export const PageLayoutTabsRenderer = () => {
 
       <StyledTabsAndDashboardContainer>
         <PageLayoutTabListEffect
-          tabs={sortedTabs}
+          tabs={sortedActiveTabs}
           componentInstanceId={tabListInstanceId}
           defaultTabToFocusOnMobileAndSidePanelId={
             currentPageLayout.defaultTabToFocusOnMobileAndSidePanelId ??
             undefined
           }
         />
-        {(sortedTabs.length > 1 || isPageLayoutInEditMode) && (
+        {(sortedActiveTabs.length > 1 || isPageLayoutInEditMode) && (
           <PageLayoutTabList
-            tabs={sortedTabs}
+            tabs={sortedActiveTabs}
             behaveAsLinks={!isInSidePanel && !isPageLayoutInEditMode}
             isInSidePanel={isInSidePanel}
             componentInstanceId={tabListInstanceId}

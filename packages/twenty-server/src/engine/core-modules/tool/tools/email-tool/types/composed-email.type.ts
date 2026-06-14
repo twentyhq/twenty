@@ -13,4 +13,5 @@ export type ComposedEmail = {
   shouldPersistMessage: boolean;
   inReplyTo?: string;
   threadExternalId?: string;
+  references?: string[];
 };

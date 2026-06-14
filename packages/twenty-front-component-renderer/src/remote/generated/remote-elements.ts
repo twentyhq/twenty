@@ -3,8 +3,12 @@ import {
   RemoteRootElement,
   RemoteFragmentElement,
   type RemoteEvent,
+  type RemoteElementEventListenerDefinition,
+  type RemoteElementEventListenersDefinition,
 } from '@remote-dom/core/elements';
-import { type SerializedEventData } from '@/constants/SerializedEventData';
+import { applySerializedEventProperties } from '@/constants/applySerializedEventProperties';
+import { applySerializedEventTargetProperties } from '@/constants/applySerializedEventTargetProperties';
+import { type SerializedEventData } from '@/types/SerializedEventData';
 
 export type HtmlCommonProperties = {
   id?: string;
@@ -22,10 +26,19 @@ export type HtmlCommonEvents = {
   dblclick(event: RemoteEvent<SerializedEventData>): void;
   mousedown(event: RemoteEvent<SerializedEventData>): void;
   mouseup(event: RemoteEvent<SerializedEventData>): void;
+  mousemove(event: RemoteEvent<SerializedEventData>): void;
   mouseover(event: RemoteEvent<SerializedEventData>): void;
   mouseout(event: RemoteEvent<SerializedEventData>): void;
   mouseenter(event: RemoteEvent<SerializedEventData>): void;
   mouseleave(event: RemoteEvent<SerializedEventData>): void;
+  pointerdown(event: RemoteEvent<SerializedEventData>): void;
+  pointerup(event: RemoteEvent<SerializedEventData>): void;
+  pointermove(event: RemoteEvent<SerializedEventData>): void;
+  pointerover(event: RemoteEvent<SerializedEventData>): void;
+  pointerout(event: RemoteEvent<SerializedEventData>): void;
+  pointerenter(event: RemoteEvent<SerializedEventData>): void;
+  pointerleave(event: RemoteEvent<SerializedEventData>): void;
+  pointercancel(event: RemoteEvent<SerializedEventData>): void;
   keydown(event: RemoteEvent<SerializedEventData>): void;
   keyup(event: RemoteEvent<SerializedEventData>): void;
   keypress(event: RemoteEvent<SerializedEventData>): void;
@@ -45,10 +58,19 @@ const HTML_COMMON_EVENTS_ARRAY = [
   'dblclick',
   'mousedown',
   'mouseup',
+  'mousemove',
   'mouseover',
   'mouseout',
   'mouseenter',
   'mouseleave',
+  'pointerdown',
+  'pointerup',
+  'pointermove',
+  'pointerover',
+  'pointerout',
+  'pointerenter',
+  'pointerleave',
+  'pointercancel',
   'keydown',
   'keyup',
   'keypress',
@@ -62,6 +84,33 @@ const HTML_COMMON_EVENTS_ARRAY = [
   'contextmenu',
   'drag',
 ] as const;
+const createSerializedEventConfig = (
+  eventType: string,
+): RemoteElementEventListenerDefinition => ({
+  dispatchEvent(this: Element, eventData: SerializedEventData) {
+    applySerializedEventTargetProperties(
+      this as unknown as Record<string, unknown>,
+      eventData,
+    );
+
+    const event = new CustomEvent(eventType, {
+      detail: eventData,
+    }) as RemoteEvent<SerializedEventData>;
+
+    applySerializedEventProperties(
+      event as unknown as Record<string, unknown>,
+      eventData,
+    );
+
+    return event;
+  },
+});
+const HTML_COMMON_EVENTS_CONFIG = Object.fromEntries(
+  HTML_COMMON_EVENTS_ARRAY.map((eventType) => [
+    eventType,
+    createSerializedEventConfig(eventType),
+  ]),
+) as RemoteElementEventListenersDefinition<HtmlCommonEvents>;
 const HTML_COMMON_PROPERTIES_CONFIG = {
   id: { type: String },
   className: { type: String },
@@ -80,7 +129,9 @@ export const HtmlDivElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlSpanElement = createRemoteElement<
   HtmlCommonProperties,
@@ -89,7 +140,9 @@ export const HtmlSpanElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlSectionElement = createRemoteElement<
   HtmlCommonProperties,
@@ -98,7 +151,9 @@ export const HtmlSectionElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlArticleElement = createRemoteElement<
   HtmlCommonProperties,
@@ -107,7 +162,9 @@ export const HtmlArticleElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlHeaderElement = createRemoteElement<
   HtmlCommonProperties,
@@ -116,7 +173,9 @@ export const HtmlHeaderElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlFooterElement = createRemoteElement<
   HtmlCommonProperties,
@@ -125,7 +184,9 @@ export const HtmlFooterElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlMainElement = createRemoteElement<
   HtmlCommonProperties,
@@ -134,7 +195,9 @@ export const HtmlMainElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlNavElement = createRemoteElement<
   HtmlCommonProperties,
@@ -143,7 +206,9 @@ export const HtmlNavElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlAsideElement = createRemoteElement<
   HtmlCommonProperties,
@@ -152,7 +217,9 @@ export const HtmlAsideElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlPElement = createRemoteElement<
   HtmlCommonProperties,
@@ -161,7 +228,9 @@ export const HtmlPElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlH1Element = createRemoteElement<
   HtmlCommonProperties,
@@ -170,7 +239,9 @@ export const HtmlH1Element = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlH2Element = createRemoteElement<
   HtmlCommonProperties,
@@ -179,7 +250,9 @@ export const HtmlH2Element = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlH3Element = createRemoteElement<
   HtmlCommonProperties,
@@ -188,7 +261,9 @@ export const HtmlH3Element = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlH4Element = createRemoteElement<
   HtmlCommonProperties,
@@ -197,7 +272,9 @@ export const HtmlH4Element = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlH5Element = createRemoteElement<
   HtmlCommonProperties,
@@ -206,7 +283,9 @@ export const HtmlH5Element = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlH6Element = createRemoteElement<
   HtmlCommonProperties,
@@ -215,7 +294,9 @@ export const HtmlH6Element = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlStrongElement = createRemoteElement<
   HtmlCommonProperties,
@@ -224,7 +305,9 @@ export const HtmlStrongElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlEmElement = createRemoteElement<
   HtmlCommonProperties,
@@ -233,7 +316,9 @@ export const HtmlEmElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlSmallElement = createRemoteElement<
   HtmlCommonProperties,
@@ -242,7 +327,9 @@ export const HtmlSmallElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlCodeElement = createRemoteElement<
   HtmlCommonProperties,
@@ -251,7 +338,9 @@ export const HtmlCodeElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlPreElement = createRemoteElement<
   HtmlCommonProperties,
@@ -260,7 +349,9 @@ export const HtmlPreElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlBlockquoteElement = createRemoteElement<
   HtmlCommonProperties,
@@ -269,7 +360,9 @@ export const HtmlBlockquoteElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlAProperties = HtmlCommonProperties & {
@@ -290,7 +383,9 @@ export const HtmlAElement = createRemoteElement<
     target: { type: String },
     rel: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlImgProperties = HtmlCommonProperties & {
@@ -313,7 +408,9 @@ export const HtmlImgElement = createRemoteElement<
     width: { type: Number },
     height: { type: Number },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlUlElement = createRemoteElement<
   HtmlCommonProperties,
@@ -322,7 +419,9 @@ export const HtmlUlElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlOlElement = createRemoteElement<
   HtmlCommonProperties,
@@ -331,7 +430,9 @@ export const HtmlOlElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlLiElement = createRemoteElement<
   HtmlCommonProperties,
@@ -340,7 +441,9 @@ export const HtmlLiElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlFormProperties = HtmlCommonProperties & {
@@ -359,7 +462,9 @@ export const HtmlFormElement = createRemoteElement<
     action: { type: String },
     method: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlLabelProperties = HtmlCommonProperties & {
@@ -376,7 +481,9 @@ export const HtmlLabelElement = createRemoteElement<
     ...HTML_COMMON_PROPERTIES_CONFIG,
     htmlFor: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlInputProperties = HtmlCommonProperties & {
@@ -387,6 +494,9 @@ export type HtmlInputProperties = HtmlCommonProperties & {
   disabled?: boolean;
   checked?: boolean;
   readOnly?: boolean;
+  accept?: string;
+  multiple?: boolean;
+  capture?: string;
 };
 
 export const HtmlInputElement = createRemoteElement<
@@ -404,8 +514,13 @@ export const HtmlInputElement = createRemoteElement<
     disabled: { type: Boolean },
     checked: { type: Boolean },
     readOnly: { type: Boolean },
+    accept: { type: String },
+    multiple: { type: Boolean },
+    capture: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlTextareaProperties = HtmlCommonProperties & {
@@ -434,7 +549,9 @@ export const HtmlTextareaElement = createRemoteElement<
     rows: { type: Number },
     cols: { type: Number },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlSelectProperties = HtmlCommonProperties & {
@@ -457,7 +574,9 @@ export const HtmlSelectElement = createRemoteElement<
     disabled: { type: Boolean },
     multiple: { type: Boolean },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlOptionProperties = HtmlCommonProperties & {
@@ -478,7 +597,9 @@ export const HtmlOptionElement = createRemoteElement<
     disabled: { type: Boolean },
     selected: { type: Boolean },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlButtonProperties = HtmlCommonProperties & {
@@ -497,7 +618,9 @@ export const HtmlButtonElement = createRemoteElement<
     type: { type: String },
     disabled: { type: Boolean },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlTableElement = createRemoteElement<
   HtmlCommonProperties,
@@ -506,7 +629,9 @@ export const HtmlTableElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlTheadElement = createRemoteElement<
   HtmlCommonProperties,
@@ -515,7 +640,9 @@ export const HtmlTheadElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlTbodyElement = createRemoteElement<
   HtmlCommonProperties,
@@ -524,7 +651,9 @@ export const HtmlTbodyElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlTfootElement = createRemoteElement<
   HtmlCommonProperties,
@@ -533,7 +662,9 @@ export const HtmlTfootElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlTrElement = createRemoteElement<
   HtmlCommonProperties,
@@ -542,7 +673,9 @@ export const HtmlTrElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlThProperties = HtmlCommonProperties & {
@@ -561,7 +694,9 @@ export const HtmlThElement = createRemoteElement<
     colSpan: { type: Number },
     rowSpan: { type: Number },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlTdProperties = HtmlCommonProperties & {
@@ -580,7 +715,9 @@ export const HtmlTdElement = createRemoteElement<
     colSpan: { type: Number },
     rowSpan: { type: Number },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlBrElement = createRemoteElement<
   HtmlCommonProperties,
@@ -589,7 +726,9 @@ export const HtmlBrElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlHrElement = createRemoteElement<
   HtmlCommonProperties,
@@ -598,7 +737,9 @@ export const HtmlHrElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlIframeProperties = HtmlCommonProperties & {
@@ -633,7 +774,9 @@ export const HtmlIframeElement = createRemoteElement<
     referrerPolicy: { type: String },
     srcDoc: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlVideoProperties = HtmlCommonProperties & {
@@ -694,28 +837,28 @@ export const HtmlVideoElement = createRemoteElement<
     disablePictureInPicture: { type: Boolean },
     disableRemotePlayback: { type: Boolean },
   },
-  events: [
-    ...HTML_COMMON_EVENTS_ARRAY,
-    'timeupdate',
-    'play',
-    'pause',
-    'ended',
-    'loadedmetadata',
-    'loadeddata',
-    'volumechange',
-    'seeking',
-    'seeked',
-    'error',
-    'canplay',
-    'canplaythrough',
-    'waiting',
-    'progress',
-    'durationchange',
-    'ratechange',
-    'stalled',
-    'suspend',
-    'emptied',
-  ],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+    timeupdate: createSerializedEventConfig('timeupdate'),
+    play: createSerializedEventConfig('play'),
+    pause: createSerializedEventConfig('pause'),
+    ended: createSerializedEventConfig('ended'),
+    loadedmetadata: createSerializedEventConfig('loadedmetadata'),
+    loadeddata: createSerializedEventConfig('loadeddata'),
+    volumechange: createSerializedEventConfig('volumechange'),
+    seeking: createSerializedEventConfig('seeking'),
+    seeked: createSerializedEventConfig('seeked'),
+    error: createSerializedEventConfig('error'),
+    canplay: createSerializedEventConfig('canplay'),
+    canplaythrough: createSerializedEventConfig('canplaythrough'),
+    waiting: createSerializedEventConfig('waiting'),
+    progress: createSerializedEventConfig('progress'),
+    durationchange: createSerializedEventConfig('durationchange'),
+    ratechange: createSerializedEventConfig('ratechange'),
+    stalled: createSerializedEventConfig('stalled'),
+    suspend: createSerializedEventConfig('suspend'),
+    emptied: createSerializedEventConfig('emptied'),
+  },
 });
 
 export type HtmlAudioProperties = HtmlCommonProperties & {
@@ -764,28 +907,28 @@ export const HtmlAudioElement = createRemoteElement<
     preload: { type: String },
     crossOrigin: { type: String },
   },
-  events: [
-    ...HTML_COMMON_EVENTS_ARRAY,
-    'timeupdate',
-    'play',
-    'pause',
-    'ended',
-    'loadedmetadata',
-    'loadeddata',
-    'volumechange',
-    'seeking',
-    'seeked',
-    'error',
-    'canplay',
-    'canplaythrough',
-    'waiting',
-    'progress',
-    'durationchange',
-    'ratechange',
-    'stalled',
-    'suspend',
-    'emptied',
-  ],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+    timeupdate: createSerializedEventConfig('timeupdate'),
+    play: createSerializedEventConfig('play'),
+    pause: createSerializedEventConfig('pause'),
+    ended: createSerializedEventConfig('ended'),
+    loadedmetadata: createSerializedEventConfig('loadedmetadata'),
+    loadeddata: createSerializedEventConfig('loadeddata'),
+    volumechange: createSerializedEventConfig('volumechange'),
+    seeking: createSerializedEventConfig('seeking'),
+    seeked: createSerializedEventConfig('seeked'),
+    error: createSerializedEventConfig('error'),
+    canplay: createSerializedEventConfig('canplay'),
+    canplaythrough: createSerializedEventConfig('canplaythrough'),
+    waiting: createSerializedEventConfig('waiting'),
+    progress: createSerializedEventConfig('progress'),
+    durationchange: createSerializedEventConfig('durationchange'),
+    ratechange: createSerializedEventConfig('ratechange'),
+    stalled: createSerializedEventConfig('stalled'),
+    suspend: createSerializedEventConfig('suspend'),
+    emptied: createSerializedEventConfig('emptied'),
+  },
 });
 
 export type HtmlSourceProperties = HtmlCommonProperties & {
@@ -814,7 +957,9 @@ export const HtmlSourceElement = createRemoteElement<
     width: { type: Number },
     height: { type: Number },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlBElement = createRemoteElement<
   HtmlCommonProperties,
@@ -823,7 +968,9 @@ export const HtmlBElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlIElement = createRemoteElement<
   HtmlCommonProperties,
@@ -832,7 +979,9 @@ export const HtmlIElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlUElement = createRemoteElement<
   HtmlCommonProperties,
@@ -841,7 +990,9 @@ export const HtmlUElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlSElement = createRemoteElement<
   HtmlCommonProperties,
@@ -850,7 +1001,9 @@ export const HtmlSElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlMarkElement = createRemoteElement<
   HtmlCommonProperties,
@@ -859,7 +1012,9 @@ export const HtmlMarkElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlSubElement = createRemoteElement<
   HtmlCommonProperties,
@@ -868,7 +1023,9 @@ export const HtmlSubElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlSupElement = createRemoteElement<
   HtmlCommonProperties,
@@ -877,7 +1034,9 @@ export const HtmlSupElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlAbbrElement = createRemoteElement<
   HtmlCommonProperties,
@@ -886,7 +1045,9 @@ export const HtmlAbbrElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlCiteElement = createRemoteElement<
   HtmlCommonProperties,
@@ -895,7 +1056,9 @@ export const HtmlCiteElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlKbdElement = createRemoteElement<
   HtmlCommonProperties,
@@ -904,7 +1067,9 @@ export const HtmlKbdElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlSampElement = createRemoteElement<
   HtmlCommonProperties,
@@ -913,7 +1078,9 @@ export const HtmlSampElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlVarElement = createRemoteElement<
   HtmlCommonProperties,
@@ -922,7 +1089,9 @@ export const HtmlVarElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlDfnElement = createRemoteElement<
   HtmlCommonProperties,
@@ -931,7 +1100,9 @@ export const HtmlDfnElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlBdiElement = createRemoteElement<
   HtmlCommonProperties,
@@ -940,7 +1111,9 @@ export const HtmlBdiElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlBdoProperties = HtmlCommonProperties & {
@@ -957,7 +1130,9 @@ export const HtmlBdoElement = createRemoteElement<
     ...HTML_COMMON_PROPERTIES_CONFIG,
     dir: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlDataProperties = HtmlCommonProperties & {
@@ -974,7 +1149,9 @@ export const HtmlDataElement = createRemoteElement<
     ...HTML_COMMON_PROPERTIES_CONFIG,
     value: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlDelProperties = HtmlCommonProperties & {
@@ -993,7 +1170,9 @@ export const HtmlDelElement = createRemoteElement<
     cite: { type: String },
     dateTime: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlInsProperties = HtmlCommonProperties & {
@@ -1012,7 +1191,9 @@ export const HtmlInsElement = createRemoteElement<
     cite: { type: String },
     dateTime: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlQProperties = HtmlCommonProperties & {
@@ -1029,7 +1210,9 @@ export const HtmlQElement = createRemoteElement<
     ...HTML_COMMON_PROPERTIES_CONFIG,
     cite: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlTimeProperties = HtmlCommonProperties & {
@@ -1046,7 +1229,9 @@ export const HtmlTimeElement = createRemoteElement<
     ...HTML_COMMON_PROPERTIES_CONFIG,
     dateTime: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlRubyElement = createRemoteElement<
   HtmlCommonProperties,
@@ -1055,7 +1240,9 @@ export const HtmlRubyElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlRtElement = createRemoteElement<
   HtmlCommonProperties,
@@ -1064,7 +1251,9 @@ export const HtmlRtElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlRpElement = createRemoteElement<
   HtmlCommonProperties,
@@ -1073,7 +1262,9 @@ export const HtmlRpElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlDlElement = createRemoteElement<
   HtmlCommonProperties,
@@ -1082,7 +1273,9 @@ export const HtmlDlElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlDtElement = createRemoteElement<
   HtmlCommonProperties,
@@ -1091,7 +1284,9 @@ export const HtmlDtElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlDdElement = createRemoteElement<
   HtmlCommonProperties,
@@ -1100,7 +1295,9 @@ export const HtmlDdElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlFigureElement = createRemoteElement<
   HtmlCommonProperties,
@@ -1109,7 +1306,9 @@ export const HtmlFigureElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlFigcaptionElement = createRemoteElement<
   HtmlCommonProperties,
@@ -1118,7 +1317,9 @@ export const HtmlFigcaptionElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlDetailsProperties = HtmlCommonProperties & {
@@ -1135,7 +1336,9 @@ export const HtmlDetailsElement = createRemoteElement<
     ...HTML_COMMON_PROPERTIES_CONFIG,
     open: { type: Boolean },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlSummaryElement = createRemoteElement<
   HtmlCommonProperties,
@@ -1144,7 +1347,9 @@ export const HtmlSummaryElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlAddressElement = createRemoteElement<
   HtmlCommonProperties,
@@ -1153,7 +1358,9 @@ export const HtmlAddressElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlDialogProperties = HtmlCommonProperties & {
@@ -1170,7 +1377,9 @@ export const HtmlDialogElement = createRemoteElement<
     ...HTML_COMMON_PROPERTIES_CONFIG,
     open: { type: Boolean },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlHgroupElement = createRemoteElement<
   HtmlCommonProperties,
@@ -1179,7 +1388,9 @@ export const HtmlHgroupElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlSearchElement = createRemoteElement<
   HtmlCommonProperties,
@@ -1188,7 +1399,9 @@ export const HtmlSearchElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlCaptionElement = createRemoteElement<
   HtmlCommonProperties,
@@ -1197,7 +1410,9 @@ export const HtmlCaptionElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlColgroupProperties = HtmlCommonProperties & {
@@ -1214,7 +1429,9 @@ export const HtmlColgroupElement = createRemoteElement<
     ...HTML_COMMON_PROPERTIES_CONFIG,
     span: { type: Number },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlColProperties = HtmlCommonProperties & {
@@ -1231,7 +1448,9 @@ export const HtmlColElement = createRemoteElement<
     ...HTML_COMMON_PROPERTIES_CONFIG,
     span: { type: Number },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlFieldsetProperties = HtmlCommonProperties & {
@@ -1250,7 +1469,9 @@ export const HtmlFieldsetElement = createRemoteElement<
     disabled: { type: Boolean },
     name: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlLegendElement = createRemoteElement<
   HtmlCommonProperties,
@@ -1259,7 +1480,9 @@ export const HtmlLegendElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlOutputProperties = HtmlCommonProperties & {
@@ -1278,7 +1501,9 @@ export const HtmlOutputElement = createRemoteElement<
     name: { type: String },
     htmlFor: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlProgressProperties = HtmlCommonProperties & {
@@ -1297,7 +1522,9 @@ export const HtmlProgressElement = createRemoteElement<
     value: { type: Number },
     max: { type: Number },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlMeterProperties = HtmlCommonProperties & {
@@ -1324,7 +1551,9 @@ export const HtmlMeterElement = createRemoteElement<
     high: { type: Number },
     optimum: { type: Number },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlOptgroupProperties = HtmlCommonProperties & {
@@ -1343,7 +1572,9 @@ export const HtmlOptgroupElement = createRemoteElement<
     label: { type: String },
     disabled: { type: Boolean },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlDatalistElement = createRemoteElement<
   HtmlCommonProperties,
@@ -1352,7 +1583,9 @@ export const HtmlDatalistElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlPictureElement = createRemoteElement<
   HtmlCommonProperties,
@@ -1361,7 +1594,9 @@ export const HtmlPictureElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlTrackProperties = HtmlCommonProperties & {
@@ -1386,7 +1621,9 @@ export const HtmlTrackElement = createRemoteElement<
     label: { type: String },
     default: { type: Boolean },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlWbrElement = createRemoteElement<
   HtmlCommonProperties,
@@ -1395,7 +1632,9 @@ export const HtmlWbrElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlMenuElement = createRemoteElement<
   HtmlCommonProperties,
@@ -1404,7 +1643,9 @@ export const HtmlMenuElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlSvgProperties = HtmlCommonProperties & {
@@ -1465,7 +1706,9 @@ export const HtmlSvgElement = createRemoteElement<
     height: { type: String },
     preserveAspectRatio: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlGProperties = HtmlCommonProperties & {
@@ -1516,7 +1759,9 @@ export const HtmlGElement = createRemoteElement<
     filter: { type: String },
     pointerEvents: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlDefsElement = createRemoteElement<
   HtmlCommonProperties,
@@ -1525,7 +1770,9 @@ export const HtmlDefsElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlSymbolProperties = HtmlCommonProperties & {
@@ -1542,7 +1789,9 @@ export const HtmlSymbolElement = createRemoteElement<
     ...HTML_COMMON_PROPERTIES_CONFIG,
     viewBox: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlUseProperties = HtmlCommonProperties & {
@@ -1567,7 +1816,9 @@ export const HtmlUseElement = createRemoteElement<
     width: { type: String },
     height: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlClipPathProperties = HtmlCommonProperties & {
@@ -1584,7 +1835,9 @@ export const HtmlClipPathElement = createRemoteElement<
     ...HTML_COMMON_PROPERTIES_CONFIG,
     clipPathUnits: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlMaskProperties = HtmlCommonProperties & {
@@ -1601,7 +1854,9 @@ export const HtmlMaskElement = createRemoteElement<
     ...HTML_COMMON_PROPERTIES_CONFIG,
     maskUnits: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlCircleProperties = HtmlCommonProperties & {
@@ -1658,7 +1913,9 @@ export const HtmlCircleElement = createRemoteElement<
     cy: { type: String },
     r: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlEllipseProperties = HtmlCommonProperties & {
@@ -1717,7 +1974,9 @@ export const HtmlEllipseElement = createRemoteElement<
     rx: { type: String },
     ry: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlRectProperties = HtmlCommonProperties & {
@@ -1780,7 +2039,9 @@ export const HtmlRectElement = createRemoteElement<
     rx: { type: String },
     ry: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlLineProperties = HtmlCommonProperties & {
@@ -1839,7 +2100,9 @@ export const HtmlLineElement = createRemoteElement<
     x2: { type: String },
     y2: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlPathProperties = HtmlCommonProperties & {
@@ -1892,7 +2155,9 @@ export const HtmlPathElement = createRemoteElement<
     pointerEvents: { type: String },
     d: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlPolygonProperties = HtmlCommonProperties & {
@@ -1945,7 +2210,9 @@ export const HtmlPolygonElement = createRemoteElement<
     pointerEvents: { type: String },
     points: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlPolylineProperties = HtmlCommonProperties & {
@@ -1998,7 +2265,9 @@ export const HtmlPolylineElement = createRemoteElement<
     pointerEvents: { type: String },
     points: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlTextProperties = HtmlCommonProperties & {
@@ -2061,7 +2330,9 @@ export const HtmlTextElement = createRemoteElement<
     textAnchor: { type: String },
     dominantBaseline: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlTspanProperties = HtmlCommonProperties & {
@@ -2120,7 +2391,9 @@ export const HtmlTspanElement = createRemoteElement<
     dx: { type: String },
     dy: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlLinearGradientProperties = HtmlCommonProperties & {
@@ -2147,7 +2420,9 @@ export const HtmlLinearGradientElement = createRemoteElement<
     gradientUnits: { type: String },
     gradientTransform: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlRadialGradientProperties = HtmlCommonProperties & {
@@ -2176,7 +2451,9 @@ export const HtmlRadialGradientElement = createRemoteElement<
     gradientUnits: { type: String },
     gradientTransform: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlStopProperties = HtmlCommonProperties & {
@@ -2197,7 +2474,9 @@ export const HtmlStopElement = createRemoteElement<
     stopColor: { type: String },
     stopOpacity: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlPatternProperties = HtmlCommonProperties & {
@@ -2224,7 +2503,9 @@ export const HtmlPatternElement = createRemoteElement<
     patternUnits: { type: String },
     patternTransform: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlImageProperties = HtmlCommonProperties & {
@@ -2251,7 +2532,9 @@ export const HtmlImageElement = createRemoteElement<
     height: { type: String },
     preserveAspectRatio: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlForeignObjectProperties = HtmlCommonProperties & {
@@ -2274,7 +2557,9 @@ export const HtmlForeignObjectElement = createRemoteElement<
     width: { type: String },
     height: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type HtmlMarkerProperties = HtmlCommonProperties & {
@@ -2301,7 +2586,9 @@ export const HtmlMarkerElement = createRemoteElement<
     orient: { type: String },
     markerUnits: { type: String },
   },
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 export const HtmlTitleElement = createRemoteElement<
   HtmlCommonProperties,
@@ -2310,7 +2597,9 @@ export const HtmlTitleElement = createRemoteElement<
   HtmlCommonEvents
 >({
   properties: HTML_COMMON_PROPERTIES_CONFIG,
-  events: [...HTML_COMMON_EVENTS_ARRAY],
+  events: {
+    ...HTML_COMMON_EVENTS_CONFIG,
+  },
 });
 
 export type RemoteStyleProperties = {

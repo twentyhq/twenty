@@ -4,7 +4,7 @@ import {
   MenuItem,
 } from '@ui/navigation/menu/menu-item/components/MenuItem';
 import { type MouseEvent, type ReactNode } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 import { type MenuItemAccent } from '../types/MenuItemAccent';
 
 export type MenuItemAvatarProps = {

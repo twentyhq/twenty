@@ -38,7 +38,7 @@ export const CustomArcsLayer = ({
       {transition((_, datum) => {
         const isDimmed =
           isDefined(graphWidgetHighlightedLegendId) &&
-          String(graphWidgetHighlightedLegendId) !== String(datum.id);
+          String(graphWidgetHighlightedLegendId) !== String(datum.data.id);
         const arcLength = datum.arc.endAngle - datum.arc.startAngle;
         const padAngleRadians = (padAngle * Math.PI) / 180;
         const clampedPadAngle = Math.min(

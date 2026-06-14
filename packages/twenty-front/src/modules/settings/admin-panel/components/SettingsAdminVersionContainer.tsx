@@ -2,7 +2,7 @@ import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminVersionDisplay } from '@/settings/admin-panel/components/SettingsAdminVersionDisplay';
 import { t } from '@lingui/core/macro';
-import { IconCircleDot, IconStatusChange } from 'twenty-ui/display';
+import { IconCircleDot, IconStatusChange } from 'twenty-ui-deprecated/display';
 import { useQuery } from '@apollo/client/react';
 import { GetVersionInfoDocument } from '~/generated-admin/graphql';
 

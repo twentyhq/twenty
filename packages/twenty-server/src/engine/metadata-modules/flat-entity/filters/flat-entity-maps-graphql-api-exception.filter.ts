@@ -11,9 +11,7 @@ import {
 
 @Catch(FlatEntityMapsException)
 @Injectable()
-export class FlatEntityMapsGraphqlApiExceptionFilter
-  implements ExceptionFilter
-{
+export class FlatEntityMapsGraphqlApiExceptionFilter implements ExceptionFilter {
   catch(exception: FlatEntityMapsException) {
     switch (exception.code) {
       case FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND:

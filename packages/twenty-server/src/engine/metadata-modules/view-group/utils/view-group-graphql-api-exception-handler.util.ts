@@ -1,5 +1,3 @@
-import { type I18n } from '@lingui/core';
-
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
   ViewGroupException,
@@ -7,10 +5,7 @@ import {
 } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import { viewGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception-handler.util';
 
-export const viewGroupGraphqlApiExceptionHandler = (
-  error: Error,
-  i18n: I18n,
-) => {
+export const viewGroupGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof ViewGroupException) {
     if (
       error.code ===
@@ -22,5 +17,5 @@ export const viewGroupGraphqlApiExceptionHandler = (
     }
   }
 
-  return viewGraphqlApiExceptionHandler(error, i18n);
+  return viewGraphqlApiExceptionHandler(error);
 };

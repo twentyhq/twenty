@@ -1,5 +1,8 @@
 import { setProjectAnnotations } from '@storybook/react-vite';
+import { MotionGlobalConfig } from 'framer-motion';
 import * as projectAnnotations from './preview';
+
+MotionGlobalConfig.skipAnimations = true;
 
 // Pre-warm the dynamic import used by WorkflowStepDecorator so the
 // module is cached before any test runs (avoids flaky timeouts in CI).

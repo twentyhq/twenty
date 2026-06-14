@@ -1,4 +1,4 @@
-import { SettingsAdminTabSkeletonLoader } from '@/settings/admin-panel/components/SettingsAdminTabSkeletonLoader';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { ConfigVariableFilterContainer } from '@/settings/admin-panel/config-variables/components/ConfigVariableFilterContainer';
 import { ConfigVariableFilterDropdown } from '@/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown';
@@ -10,8 +10,8 @@ import { showHiddenGroupVariablesState } from '@/settings/admin-panel/config-var
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
-import { H2Title } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui-deprecated/display';
+import { Section } from 'twenty-ui-deprecated/layout';
 import { useQuery } from '@apollo/client/react';
 import {
   ConfigSource,
@@ -160,7 +160,7 @@ export const SettingsAdminConfigVariables = () => {
   }, [filteredVariables, allGroups]);
 
   if (configVariablesLoading) {
-    return <SettingsAdminTabSkeletonLoader />;
+    return <SettingsSectionSkeletonLoader />;
   }
 
   return (

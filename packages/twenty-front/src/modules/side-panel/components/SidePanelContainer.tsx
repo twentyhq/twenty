@@ -11,7 +11,7 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledSidePanelContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
@@ -22,6 +22,7 @@ const StyledSidePanelContainer = styled.div<{ isMobile: boolean }>`
 
     return `calc(100% - ${mobileOffset})`;
   }};
+  min-height: 0;
 `;
 
 type SidePanelContainerProps = {

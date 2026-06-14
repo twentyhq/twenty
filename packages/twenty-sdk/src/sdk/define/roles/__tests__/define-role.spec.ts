@@ -1,4 +1,4 @@
-import { defineRole } from '@/sdk/define';
+import { SystemPermissionFlag, defineRole } from '@/sdk/define';
 
 describe('defineRole', () => {
   const validConfig = {
@@ -32,16 +32,19 @@ describe('defineRole', () => {
     expect(result.config?.canReadAllObjectRecords).toBe(true);
   });
 
-  it('should accept permissionFlags', () => {
+  it('should accept permissionFlagUniversalIdentifiers', () => {
     const config = {
       ...validConfig,
-      permissionFlags: ['UPLOAD_FILE', 'DOWNLOAD_FILE'],
+      permissionFlagUniversalIdentifiers: [
+        SystemPermissionFlag.UPLOAD_FILE,
+        SystemPermissionFlag.DOWNLOAD_FILE,
+      ],
     };
 
-    const result = defineRole(config as any);
+    const result = defineRole(config);
 
     expect(result.success).toBe(true);
-    expect(result.config?.permissionFlags).toHaveLength(2);
+    expect(result.config?.permissionFlagUniversalIdentifiers).toHaveLength(2);
   });
 
   it('should return error when universalIdentifier is missing', () => {

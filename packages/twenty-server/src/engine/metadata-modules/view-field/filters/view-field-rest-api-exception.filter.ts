@@ -16,7 +16,7 @@ import {
   ViewFieldExceptionCode,
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
-import { fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseError } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/from-workspace-migration-builder-exception-to-metadata-validation-response-error.util';
+import { workspaceMigrationBuilderRestApiExceptionHandler } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/workspace-migration-builder-rest-api-exception-handler.util';
 import {
   type CustomException,
   UnknownException,
@@ -38,19 +38,10 @@ export class ViewFieldRestApiExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
 
     if (exception instanceof WorkspaceMigrationBuilderException) {
-      const i18n = this.i18nService.getI18nInstance(SOURCE_LOCALE);
-      const { errors, summary } =
-        fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseError(
-          exception,
-          i18n,
-        );
-
-      return response.status(400).json({
-        statusCode: 400,
-        error: 'METADATA_VALIDATION_ERROR',
-        message: exception.message || 'Validation failed',
-        errors,
-        summary,
+      return workspaceMigrationBuilderRestApiExceptionHandler({
+        exception,
+        response,
+        i18n: this.i18nService.getI18nInstance(SOURCE_LOCALE),
       });
     }
 
