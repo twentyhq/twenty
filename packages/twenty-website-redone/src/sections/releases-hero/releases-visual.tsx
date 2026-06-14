@@ -1,12 +1,15 @@
 import { styled } from '@linaria/react';
 
+import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/halftone-image-backdrop';
 import { color, mediaUp, radius } from '@/tokens';
 
-// The release-notes WebGL scene sits in a fixed-height stage. The interactive
-// visual lands in the later visual pass; for now the stage reserves its
-// 462/360 footprint so the hero rhythm is already correct.
+import { RELEASES_VISUAL } from './releases-visual-config';
+
+// The release-notes milestone halftone sits in a fixed-height stage: the WebGL
+// backdrop fills it, and the halftone's transparent areas read against the iron
+// (#777777) panel — the old Milestone scene's background.
 const VisualFrame = styled.div`
-  background-color: ${color('neutral')};
+  background-color: ${color('iron')};
   border-radius: ${radius(1)};
   height: 360px;
   overflow: hidden;
@@ -19,5 +22,13 @@ const VisualFrame = styled.div`
 `;
 
 export function ReleasesVisual() {
-  return <VisualFrame />;
+  return (
+    <VisualFrame data-illustration="release-notes-milestone">
+      <HalftoneImageBackdrop
+        imageUrl={RELEASES_VISUAL.imageUrl}
+        priority
+        settings={RELEASES_VISUAL.settings}
+      />
+    </VisualFrame>
+  );
 }
