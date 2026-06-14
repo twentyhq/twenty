@@ -18,9 +18,6 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
   const [loadedViewId, setLoadedViewId] = useState<string | undefined>(
     undefined,
   );
-  const [syncedViewFieldsSignature, setSyncedViewFieldsSignature] = useState<
-    string | undefined
-  >(undefined);
 
   const view = useAtomFamilySelectorValue(viewFromViewIdFamilySelector, {
     viewId: contextStoreCurrentViewId ?? '',
@@ -30,49 +27,34 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
 
   const { createDefaultViewForObject } = useCreateDefaultViewForObject();
 
-  const viewFieldsSignature = isDefined(view)
-    ? JSON.stringify(
-        view.viewFields.map((viewField) => ({
-          aggregateOperation: viewField.aggregateOperation,
-          fieldMetadataId: viewField.fieldMetadataId,
-          id: viewField.id,
-          isVisible: viewField.isVisible,
-          position: viewField.position,
-          size: viewField.size,
-        })),
-      )
-    : undefined;
-
   useEffect(() => {
     if (!isDefined(objectMetadataItem)) {
       return;
     }
 
-    if (isDefined(view)) {
-      if (loadedViewId !== contextStoreCurrentViewId) {
-        loadRecordIndexStates(view, objectMetadataItem);
-        setLoadedViewId(contextStoreCurrentViewId);
-        setSyncedViewFieldsSignature(viewFieldsSignature);
-        return;
-      }
-
-      if (syncedViewFieldsSignature !== viewFieldsSignature) {
-        syncRecordIndexViewFields(view, objectMetadataItem);
-        setSyncedViewFieldsSignature(viewFieldsSignature);
-      }
-    } else {
+    if (!isDefined(view)) {
       createDefaultViewForObject(objectMetadataItem);
+      return;
     }
+
+    if (loadedViewId !== contextStoreCurrentViewId) {
+      loadRecordIndexStates(view, objectMetadataItem);
+      setLoadedViewId(contextStoreCurrentViewId);
+      return;
+    }
+
+    // Re-sync record index fields when viewFields change after the initial
+    // load (e.g. arriving late via SSE while AI is still creating metadata).
+    // syncRecordIndexViewFields is idempotent, so it no-ops when unchanged.
+    syncRecordIndexViewFields(view, objectMetadataItem);
   }, [
     contextStoreCurrentViewId,
+    createDefaultViewForObject,
     loadRecordIndexStates,
     loadedViewId,
     objectMetadataItem,
-    syncedViewFieldsSignature,
     syncRecordIndexViewFields,
     view,
-    viewFieldsSignature,
-    createDefaultViewForObject,
   ]);
 
   return <></>;
