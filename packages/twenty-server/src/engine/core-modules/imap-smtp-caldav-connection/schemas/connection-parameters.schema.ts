@@ -6,5 +6,7 @@ export const connectionParametersSchema = z.object({
   port: z.int().positive('Port must be a positive number'),
   username: z.string().optional(),
   password: plaintextStringSchema.min(1, 'Password is required'),
-  secure: z.boolean().optional(),
+  connectionSecurity: z
+    .enum(['NONE', 'STARTTLS', 'SSL_TLS'])
+    .default('SSL_TLS'),
 });

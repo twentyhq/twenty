@@ -69,6 +69,7 @@ import { ViewOverridableEntityFastInstanceCommand } from 'src/database/commands/
 import { RenameIsUiReadOnlyToIsUiEditableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781277453604-rename-is-ui-read-only-to-is-ui-editable';
 import { BackfillNonUiCreatableStandardSystemObjectsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-slow-1781277480000-backfill-non-ui-creatable-standard-system-objects';
 import { CommandMenuItemOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781253016028-command-menu-item-overridable-entity';
+import { BackfillConnectionSecuritySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-slow-1781461753981-backfill-connection-security';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -140,4 +141,5 @@ export const INSTANCE_COMMANDS = [
   RenameIsUiReadOnlyToIsUiEditableFastInstanceCommand,
   BackfillNonUiCreatableStandardSystemObjectsSlowInstanceCommand,
   CommandMenuItemOverridableEntityFastInstanceCommand,
+  BackfillConnectionSecuritySlowInstanceCommand,
 ];

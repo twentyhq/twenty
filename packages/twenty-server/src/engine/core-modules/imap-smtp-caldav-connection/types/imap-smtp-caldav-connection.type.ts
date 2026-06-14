@@ -24,6 +24,10 @@ export type ConnectionParametersUpdate<Pwd extends string = string> = Omit<
 
 export type AccountType = (typeof ACCOUNT_TYPES)[number];
 
+export type EmailConnectionSecurity = z.infer<
+  typeof connectionParametersSchema
+>['connectionSecurity'];
+
 export type ImapSmtpCaldavParams<Pwd extends string = string> = {
   IMAP?: ConnectionParameters<Pwd>;
   SMTP?: ConnectionParameters<Pwd>;

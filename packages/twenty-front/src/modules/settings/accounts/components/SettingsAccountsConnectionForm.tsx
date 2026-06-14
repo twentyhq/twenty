@@ -192,18 +192,18 @@ export const SettingsAccountsConnectionForm = ({
 
             <StyledFieldGroup>
               <Controller
-                name="IMAP.secure"
+                name="IMAP.connectionSecurity"
                 control={control}
                 render={({ field }) => (
                   <Select
-                    label={t`IMAP Encryption`}
+                    label={t`IMAP Connection security`}
                     options={[
-                      { label: 'SSL/TLS', value: true },
-                      { label: 'None', value: false },
+                      { label: 'None', value: 'NONE' },
+                      { label: 'SSL/TLS', value: 'SSL_TLS' },
                     ]}
                     value={field.value}
                     onChange={field.onChange}
-                    dropdownId="imap-secure-dropdown"
+                    dropdownId="imap-connection-security-dropdown"
                   />
                 )}
               />
@@ -287,18 +287,19 @@ export const SettingsAccountsConnectionForm = ({
 
             <StyledFieldGroup>
               <Controller
-                name="SMTP.secure"
+                name="SMTP.connectionSecurity"
                 control={control}
                 render={({ field }) => (
                   <Select
-                    label={t`SMTP Encryption`}
+                    label={t`SMTP Connection security`}
                     options={[
-                      { label: 'SSL/TLS', value: true },
-                      { label: 'STARTTLS', value: false },
+                      { label: 'None', value: 'NONE' },
+                      { label: 'STARTTLS', value: 'STARTTLS' },
+                      { label: 'SSL/TLS', value: 'SSL_TLS' },
                     ]}
                     value={field.value}
                     onChange={field.onChange}
-                    dropdownId="smtp-secure-dropdown"
+                    dropdownId="smtp-connection-security-dropdown"
                   />
                 )}
               />

@@ -94,7 +94,7 @@ export class ImapClientProvider {
     const client = new ImapFlow({
       host: validatedImapHost,
       port: imapParams.port || 993,
-      secure: imapParams.secure,
+      secure: imapParams.connectionSecurity === 'SSL_TLS',
       auth: {
         user: isDefined(imapParams.username)
           ? imapParams.username

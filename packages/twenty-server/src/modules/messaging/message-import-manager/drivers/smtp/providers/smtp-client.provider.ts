@@ -9,6 +9,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { mapConnectionSecurityToTransport } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/map-connection-security-to-transport.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
@@ -52,6 +53,7 @@ export class SmtpClientProvider {
     const options: SMTPConnection.Options = {
       host: validatedSmtpHost,
       port: smtpParams.port,
+      ...mapConnectionSecurityToTransport(smtpParams.connectionSecurity),
       auth: {
         user: smtpParams.username ?? connectedAccount.handle ?? '',
         pass: smtpParams.password,

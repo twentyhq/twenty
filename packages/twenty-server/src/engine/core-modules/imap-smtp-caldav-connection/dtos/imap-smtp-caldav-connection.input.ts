@@ -1,5 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 
+import { type EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+
 @InputType()
 export class AccountType {
   @Field(() => String)
@@ -20,8 +22,8 @@ export class ConnectionParametersInput {
   @Field(() => String, { nullable: true })
   password?: string;
 
-  @Field(() => Boolean, { nullable: true })
-  secure?: boolean;
+  @Field(() => String, { nullable: true })
+  connectionSecurity?: EmailConnectionSecurity;
 }
 
 @InputType('EmailAccountConnectionParameters')

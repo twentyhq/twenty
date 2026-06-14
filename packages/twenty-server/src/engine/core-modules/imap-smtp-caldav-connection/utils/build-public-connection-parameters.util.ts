@@ -1,13 +1,16 @@
 import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+import {
+  type EmailConnectionSecurity,
+  type ImapSmtpCaldavParams,
+} from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 
 type PublicConnectionParams = {
   host: string;
   port: number;
   username?: string;
-  secure?: boolean;
+  connectionSecurity?: EmailConnectionSecurity;
 };
 
 type PublicConnectionParameters = {

@@ -2,6 +2,8 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
+import { type EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @ObjectType('ImapSmtpCaldavPublicConnectionParams')
@@ -15,8 +17,8 @@ class PublicConnectionParamsDTO {
   @Field(() => String, { nullable: true })
   username?: string;
 
-  @Field(() => Boolean, { nullable: true })
-  secure?: boolean;
+  @Field(() => String, { nullable: true })
+  connectionSecurity?: EmailConnectionSecurity;
 }
 
 @ObjectType('ImapSmtpCaldavPublicConnectionParameters')
