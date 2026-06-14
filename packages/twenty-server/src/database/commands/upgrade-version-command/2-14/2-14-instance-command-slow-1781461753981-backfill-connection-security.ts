@@ -10,7 +10,7 @@ import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 // opportunistic STARTTLS otherwise (-> STARTTLS); CalDAV is TLS over its https
 // host (-> SSL_TLS). STARTTLS stays opportunistic so no account is forced onto
 // a stricter handshake than it already used.
-@RegisteredInstanceCommand('2.13.0', 1781461753981, { type: 'slow' })
+@RegisteredInstanceCommand('2.14.0', 1781461753981, { type: 'slow' })
 export class BackfillConnectionSecuritySlowInstanceCommand
   implements SlowInstanceCommand
 {
