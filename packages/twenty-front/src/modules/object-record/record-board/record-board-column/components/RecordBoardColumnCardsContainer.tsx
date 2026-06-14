@@ -19,8 +19,11 @@ const StyledColumnCardsContainer = styled.div<{ isDropProcessing: boolean }>`
   display: flex;
   flex: 1;
   flex-direction: column;
-  pointer-events: ${({ isDropProcessing }) =>
-    isDropProcessing ? 'none' : 'auto'};
+
+  & [data-selectable-id] {
+    pointer-events: ${({ isDropProcessing }) =>
+      isDropProcessing ? 'none' : 'auto'};
+  }
 `;
 
 const StyledNewButtonContainer = styled.div`
