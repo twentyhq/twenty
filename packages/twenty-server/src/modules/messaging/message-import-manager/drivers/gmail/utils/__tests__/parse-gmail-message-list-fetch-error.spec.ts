@@ -136,6 +136,7 @@ describe('parseGmailApiError', () => {
         headers: new Headers(),
         config: { url: oauthUrl, headers: new Headers() },
         request: { responseURL: oauthUrl.toString() },
+        bodyUsed: true,
       } as unknown as GaxiosResponse,
     );
     const exception = parseGmailApiError(error);

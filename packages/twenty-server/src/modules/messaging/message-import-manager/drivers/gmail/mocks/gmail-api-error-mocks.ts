@@ -89,8 +89,10 @@ export const getGmailApiError = ({
       headers: new Headers(),
       config: { url: mockUrl, headers: new Headers() },
       request: { responseURL: mockUrl.toString() },
-      // gaxios v7 GaxiosResponse extends the fetch Response interface; the test
-      // only reads status/data, so the remaining Response members are unused.
+      // gaxios v7's GaxiosError constructor only keeps response.data when
+      // bodyUsed is truthy (it mirrors a consumed fetch Response); real error
+      // responses have it set, so the mock must too or data is dropped.
+      bodyUsed: true,
     } as unknown as GaxiosResponse,
   );
 };

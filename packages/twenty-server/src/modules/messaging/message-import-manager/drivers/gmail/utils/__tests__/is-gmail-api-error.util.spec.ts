@@ -14,6 +14,7 @@ describe('isGmailApiError', () => {
         headers: new Headers(),
         config: { url: mockUrl, headers: new Headers() },
         request: { responseURL: mockUrl.toString() },
+        bodyUsed: true,
         data: {
           error: {
             errors: [
