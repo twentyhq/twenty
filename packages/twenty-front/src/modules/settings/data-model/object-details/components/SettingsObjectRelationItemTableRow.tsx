@@ -158,6 +158,9 @@ export const SettingsObjectRelationItemTableRow = ({
   return (
     <TableRow
       gridTemplateColumns={OBJECT_RELATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
+      // The row can't be a Link: it contains a nested link to the related
+      // object, and <a> inside <a> is invalid HTML (React 19 errors on it).
+      // oxlint-disable-next-line twenty/no-navigate-prefer-link
       onClick={navigateToFieldEdit}
       cursor="pointer"
     >
