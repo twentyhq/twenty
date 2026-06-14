@@ -347,7 +347,7 @@ export const FormArrayFieldInput = ({
         />
       );
     }
-    
+
     return (
       <DropdownMenuItemsContainer>
         <MenuItem
