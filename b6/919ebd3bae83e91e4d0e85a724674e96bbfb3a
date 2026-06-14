@@ -1,0 +1,46 @@
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/utils/build-smtp-tls-options.util.ts
+  s_ff3d5b0bd294f3::t_47104164bd9ba3 3,8,10
+  s_ff3d5b0bd294f3::t_b4049ebc6b02e8 15
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider.ts
+  s_ff3d5b0bd294f3::t_30c75404f4ac01 9
+  s_ff3d5b0bd294f3::t_ce9ee7760a1c88 98
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/services/__tests__/imap-smtp-caldav-connection.service.spec.ts
+  s_ff3d5b0bd294f3::t_cca271f2c3b84c 134,141
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider.ts
+  s_ff3d5b0bd294f3::t_dc82136e870315 12
+  s_ff3d5b0bd294f3::t_7e60196622388d 56
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+  s_ff3d5b0bd294f3::t_caaaa83a667c80 119
+  s_ff3d5b0bd294f3::t_9484c8b283995b 17-18
+  s_ff3d5b0bd294f3::t_1ea711210fc6e7 46
+packages/twenty-front/src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+  s_ff3d5b0bd294f3::t_88fddd7714ac22 202
+packages/twenty-server/src/database/commands/upgrade-version-command/2-13/2-13-instance-command-slow-1781461753981-backfill-connection-security.ts
+  s_ff3d5b0bd294f3::t_974b07328e69fc 39
+  s_ff3d5b0bd294f3::t_40c483c741e017 7-12
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/utils/build-imap-tls-options.util.ts
+  s_ff3d5b0bd294f3::t_959dbf340c25f0 1-14,16-19
+  s_ff3d5b0bd294f3::t_0c1394319ca21d 15
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/utils/__tests__/build-smtp-tls-options.util.spec.ts
+  s_ff3d5b0bd294f3::t_c405faf44ad4c9 1,3,5,13
+  s_ff3d5b0bd294f3::t_fc9b8686ccdd12 4,8-9,12
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/utils/__tests__/build-imap-tls-options.util.spec.ts
+  s_ff3d5b0bd294f3::t_443d00bdce8983 1-3,5-7,10-11,13-18
+  s_ff3d5b0bd294f3::t_c85aee73420d78 4,8-9,12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "b6919ebd3bae83e91e4d0e85a724674e96bbfb3a",
+  "prompts": {},
+  "sessions": {
+    "s_ff3d5b0bd294f3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc6a7753-6313-4145-9c09-a0d3d40ac9aa",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
