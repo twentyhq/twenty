@@ -24,6 +24,22 @@ const buildFieldManifest = (
   }) as FieldManifest & { objectUniversalIdentifier: string };
 
 describe('fromFieldManifestToUniversalFlatFieldMetadata', () => {
+  describe('settings mapping', () => {
+    it('keeps universalSettings undefined when omitted from the manifest', () => {
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({
+          type: FieldMetadataType.NUMBER,
+          name: 'amount',
+          label: 'Amount',
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.universalSettings).toBeUndefined();
+    });
+  });
+
   describe('composite defaultValue normalization', () => {
     it('normalizes empty-name actor defaults to the canonical four-key shape', () => {
       const result = fromFieldManifestToUniversalFlatFieldMetadata({
