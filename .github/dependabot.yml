@@ -3,7 +3,7 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     exclude-paths:
-      - "packages/twenty-apps/community/**"
+      - "packages/twenty-apps/**"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 3
