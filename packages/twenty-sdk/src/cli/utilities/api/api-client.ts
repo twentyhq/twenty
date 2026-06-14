@@ -66,9 +66,9 @@ export class ApiClient {
           );
 
           if (hasAuthError) {
-            const authError: Error & { response: typeof response } = new Error(
+            const authError = new Error(
               'Authentication failed: GraphQL auth error in response',
-            );
+            ) as Error & { response: typeof response };
             authError.response = response;
             throw authError;
           }
