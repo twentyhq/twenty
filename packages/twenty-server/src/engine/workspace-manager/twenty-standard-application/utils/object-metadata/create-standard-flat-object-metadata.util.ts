@@ -245,6 +245,96 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
+  messageCampaign: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'messageCampaign'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'messageCampaign',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.messageCampaign.universalIdentifier,
+        nameSingular: 'messageCampaign',
+        namePlural: 'messageCampaigns',
+        labelSingular: i18nLabel(msg`Campaign`),
+        labelPlural: i18nLabel(msg`Campaigns`),
+        description: i18nLabel(
+          msg`A bulk email send to an audience, with delivery stats`,
+        ),
+        icon: 'IconSend',
+        isSystem: true,
+        isUICreatable: false,
+        labelIdentifierFieldMetadataName: 'subject',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
+  messageList: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'messageList'>, 'context' | 'objectName'>) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'messageList',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier: STANDARD_OBJECTS.messageList.universalIdentifier,
+        nameSingular: 'messageList',
+        namePlural: 'messageLists',
+        labelSingular: i18nLabel(msg`List`),
+        labelPlural: i18nLabel(msg`Lists`),
+        description: i18nLabel(msg`A hand-picked audience of people`),
+        icon: 'IconUsersGroup',
+        isSystem: true,
+        isSearchable: true,
+        labelIdentifierFieldMetadataName: 'name',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
+  messageListMember: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'messageListMember'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'messageListMember',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.messageListMember.universalIdentifier,
+        nameSingular: 'messageListMember',
+        namePlural: 'messageListMembers',
+        labelSingular: i18nLabel(msg`List Member`),
+        labelPlural: i18nLabel(msg`List Members`),
+        description: i18nLabel(msg`A person's membership in a list`),
+        icon: 'IconUser',
+        isSystem: true,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
   messageChannelMessageAssociation: ({
     now,
     workspaceId,

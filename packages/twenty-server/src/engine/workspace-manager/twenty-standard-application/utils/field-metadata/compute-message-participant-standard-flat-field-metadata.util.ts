@@ -356,4 +356,31 @@ export const buildMessageParticipantStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  messageCampaign: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'messageCampaign',
+      label: i18nLabel(msg`Campaign`),
+      description: i18nLabel(
+        msg`The campaign this participant was a recipient of`,
+      ),
+      icon: 'IconSend',
+      isNullable: true,
+      isUIEditable: false,
+      targetObjectName: 'messageCampaign',
+      targetFieldName: 'recipients',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.SET_NULL,
+        joinColumnName: 'messageCampaignId',
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
 });

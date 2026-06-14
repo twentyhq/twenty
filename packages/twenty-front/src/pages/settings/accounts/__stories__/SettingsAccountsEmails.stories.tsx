@@ -42,6 +42,7 @@ export const TwoConnectedAccounts: Story = {
                   handle: 'test.test@gmail.com',
                   provider: 'google',
                   authFailedAt: null,
+                  archivedAt: null,
                   scopes: ['email'],
                   handleAliases: '',
                   lastSignedInAt: null,
