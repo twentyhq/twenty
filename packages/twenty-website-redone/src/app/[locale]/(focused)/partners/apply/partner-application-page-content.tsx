@@ -36,7 +36,7 @@ export function PartnerApplicationPageContent() {
     <ApplyBackground data-scheme="dark">
       <ApplyContainer>
         <PartnerApplicationWizard
-          onSuccess={() => router.push('/partners')}
+          onSuccess={() => router.push('/partners/list')}
           resetSignal={0}
         />
       </ApplyContainer>
