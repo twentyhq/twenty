@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 type SettingsPageLayoutProps = {
   links: BreadcrumbProps['links'];
   title?: ReactNode;
+  icon?: ReactNode;
   actionButton?: ReactNode;
   secondaryBar?: ReactNode;
   children: ReactNode;
@@ -18,6 +19,7 @@ type SettingsPageLayoutProps = {
 export const SettingsPageLayout = ({
   links,
   title,
+  icon,
   actionButton,
   secondaryBar,
   children,
@@ -29,6 +31,7 @@ export const SettingsPageLayout = ({
       <PageCardHeader
         links={links}
         title={title}
+        icon={icon}
         tag={tag}
         actionButton={actionButton}
         centerTitle

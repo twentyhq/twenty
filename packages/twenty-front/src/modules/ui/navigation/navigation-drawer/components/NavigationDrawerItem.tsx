@@ -205,7 +205,7 @@ const StyledIcon = styled.div`
 
 const StyledIconBackgroundTile = styled.div`
   align-items: center;
-  background-color: ${themeCssVariables.background.tertiary};
+  background-color: ${themeCssVariables.grayScale.gray3};
   border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-shrink: 0;
