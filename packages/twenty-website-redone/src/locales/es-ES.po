@@ -224,6 +224,11 @@ msgid ""
 "*the future of CRM*"
 msgstr ""
 
+#. js-lingui-id: LJCDxT
+#: src/platform/routing/static-website-routes.ts
+msgid "Apply to join the Twenty partner ecosystem and grow your practice with the #1 open source CRM."
+msgstr ""
+
 #. js-lingui-id: 8HV3WN
 #: src/partner-application/data/partner-language-options.ts
 msgid "Arabic"
@@ -315,6 +320,11 @@ msgstr ""
 #: src/sections/partner-signoff/partner-signoff.tsx
 #: src/sections/partner-hero/partner-hero.tsx
 msgid "Become a partner"
+msgstr ""
+
+#. js-lingui-id: j+1dcz
+#: src/platform/routing/static-website-routes.ts
+msgid "Become a Twenty Partner — Apply"
 msgstr ""
 
 #. js-lingui-id: 83Wi6G

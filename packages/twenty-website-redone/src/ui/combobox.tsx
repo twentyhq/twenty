@@ -5,9 +5,11 @@ import { styled } from '@linaria/react';
 
 import { ChevronDown } from '@/icons';
 import {
+  buildSchemeDeclarations,
   color,
   fontFamily,
   radius,
+  type Scheme,
   semanticColor,
   SHADOW,
   spacing,
@@ -70,6 +72,20 @@ const Trigger = styled(BaseCombobox.Trigger)`
 const Positioner = styled(BaseCombobox.Positioner)`
   width: var(--anchor-width);
   z-index: ${Z_INDEX.portal};
+
+  /* The popup portals to <body>, escaping the consumer's scheme vars, so it
+     re-declares them from the scheme prop (NotchedCardShape precedent). */
+  &[data-scheme='light'] {
+    ${buildSchemeDeclarations('light')}
+  }
+
+  &[data-scheme='muted'] {
+    ${buildSchemeDeclarations('muted')}
+  }
+
+  &[data-scheme='dark'] {
+    ${buildSchemeDeclarations('dark')}
+  }
 `;
 
 const Popup = styled(BaseCombobox.Popup)`
@@ -116,6 +132,7 @@ export function Combobox<TValue extends string>({
   items,
   onValueChange,
   placeholder,
+  scheme = 'light',
   searchPlaceholder,
   value,
 }: {
@@ -125,6 +142,7 @@ export function Combobox<TValue extends string>({
   items: readonly ComboboxItem<TValue>[];
   onValueChange: (value: TValue | '') => void;
   placeholder: string;
+  scheme?: Scheme;
   searchPlaceholder: string;
   value: TValue | '';
 }) {
@@ -147,7 +165,7 @@ export function Combobox<TValue extends string>({
         </Trigger>
       </Group>
       <BaseCombobox.Portal>
-        <Positioner sideOffset={4}>
+        <Positioner data-scheme={scheme} sideOffset={4}>
           <Popup>
             <Empty>{emptyLabel}</Empty>
             <BaseCombobox.List>

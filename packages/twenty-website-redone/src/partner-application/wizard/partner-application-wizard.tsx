@@ -38,6 +38,17 @@ const TitleBlock = styled.div`
   flex-direction: column;
 
   & > * + * {
+    margin-top: ${spacing(6)};
+  }
+`;
+
+// The title + subtitle are one tight group; the step header sits further below
+// (matching the old site's larger intro→header separation).
+const IntroGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  & > * + * {
     margin-top: ${spacing(3)};
   }
 `;
@@ -198,14 +209,14 @@ export function PartnerApplicationWizard({
     <WizardRoot>
       <TitleBlock>
         {stepIndex === 0 ? (
-          <>
+          <IntroGroup>
             <Heading as="h2" size="lg" weight="light">
               {i18n._(COPY.title)}
             </Heading>
             <Body muted size="md">
               {i18n._(COPY.subtitle)}
             </Body>
-          </>
+          </IntroGroup>
         ) : null}
         <HeaderStrip>
           <HeaderLabel>{stepLabel}</HeaderLabel>

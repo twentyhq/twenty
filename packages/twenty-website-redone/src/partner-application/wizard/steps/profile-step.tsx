@@ -79,6 +79,7 @@ export function ProfileStep({
           items={countryItems}
           onValueChange={(value) => setField('country', value)}
           placeholder={i18n._(FIELDS.countryPlaceholder)}
+          scheme="dark"
           searchPlaceholder={i18n._(FIELDS.countrySearchPlaceholder)}
           value={state.country}
         />

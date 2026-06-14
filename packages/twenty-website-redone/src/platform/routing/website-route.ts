@@ -5,6 +5,7 @@ export type WebsiteRouteId =
   | 'customers'
   | 'home'
   | 'partners'
+  | 'partnersApply'
   | 'pricing'
   | 'product'
   | 'releases'

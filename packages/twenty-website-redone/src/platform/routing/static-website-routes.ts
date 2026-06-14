@@ -40,6 +40,17 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     title: msg`Twenty Partners — Certified Open Source CRM Implementers`,
   },
   {
+    // The application form: noindex (a utility route, excluded from the
+    // sitemap by getIndexedWebsiteRoutes), reachable from the partner CTAs.
+    changeFrequency: 'yearly',
+    description: msg`Apply to join the Twenty partner ecosystem and grow your practice with the #1 open source CRM.`,
+    id: 'partnersApply',
+    indexed: false,
+    path: '/partners/apply',
+    priority: 0.3,
+    title: msg`Become a Twenty Partner — Apply`,
+  },
+  {
     changeFrequency: 'monthly',
     description: msg`Packaged CRMs make every company look the same. Twenty is the open source CRM teams shape around their workflow, with a modern UI and a developer-first platform.`,
     id: 'whyTwenty',
