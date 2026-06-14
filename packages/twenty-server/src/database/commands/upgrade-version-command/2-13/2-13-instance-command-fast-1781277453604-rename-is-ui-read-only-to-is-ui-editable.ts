@@ -17,9 +17,7 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 // dropped); its removal — decorator + physical drop — is deferred to a later
 // release once no running code references it (core-team-issues#2542).
 @RegisteredInstanceCommand('2.13.0', 1781277453604)
-export class RenameIsUiReadOnlyToIsUiEditableFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class RenameIsUiReadOnlyToIsUiEditableFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       'ALTER TABLE "core"."objectMetadata" ADD COLUMN IF NOT EXISTS "isUIEditable" boolean NOT NULL DEFAULT true',

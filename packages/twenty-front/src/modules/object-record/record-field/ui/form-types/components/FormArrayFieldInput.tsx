@@ -113,10 +113,12 @@ export const FormArrayFieldInput = ({
       };
     }
 
-    const defaultArray =
-      isDefined(defaultValue) && isNonEmptyArray(defaultValue)
-        ? defaultValue
-        : [];
+    const defaultArray = (() => {
+      if (isDefined(defaultValue) && isNonEmptyArray(defaultValue)) {
+        return defaultValue;
+      }
+      return [];
+    })();
 
     return {
       type: 'static' as const,
@@ -150,7 +152,7 @@ export const FormArrayFieldInput = ({
   );
 
   const preventContainerFocusStackUpdate =
-    draftValue.type === 'static' && draftValue.value.length >= 1;
+    draftValue.type === 'static' && isNonEmptyArray(draftValue.value);
 
   const formFieldInputInstanceId = `form-array-field-container-${instanceId}`;
   const newItemInputInstanceId = `array-field-input-new-item-${instanceId}`;
@@ -207,7 +209,7 @@ export const FormArrayFieldInput = ({
     });
     onChange(updatedItems.map((item) => item.value));
 
-    const isDropdownGoingToBeHiddenNext = updatedItems.length === 0;
+    const isDropdownGoingToBeHiddenNext = !isNonEmptyArray(updatedItems);
     if (isDropdownGoingToBeHiddenNext) {
       closeDropdown(dropdownId);
     }
@@ -359,31 +361,41 @@ export const FormArrayFieldInput = ({
     );
   };
 
+  const getOnRemoveHandler = () => {
+    if (readonly) {
+      return undefined;
+    }
+    return handleUnlinkVariable;
+  };
+
   const renderInnerContent = () => {
     if (draftValue.type !== 'static') {
       return (
         <VariableChipStandalone
           rawVariableName={draftValue.value}
-          onRemove={readonly ? undefined : handleUnlinkVariable}
+          onRemove={getOnRemoveHandler()}
         />
       );
     }
 
     if (readonly) {
+      if (isNonEmptyArray(draftValue.value)) {
+        return (
+          <StyledDisplayModeReadonlyContainer>
+            <ArrayDisplay value={draftValue.value.map((i) => i.value)} />
+          </StyledDisplayModeReadonlyContainer>
+        );
+      }
       return (
         <StyledDisplayModeReadonlyContainer>
-          {draftValue.value.length > 0 ? (
-            <ArrayDisplay value={draftValue.value.map((i) => i.value)} />
-          ) : (
-            <StyledPlaceholderContainer>
-              <FormFieldPlaceholder />
-            </StyledPlaceholderContainer>
-          )}
+          <StyledPlaceholderContainer>
+            <FormFieldPlaceholder />
+          </StyledPlaceholderContainer>
         </StyledDisplayModeReadonlyContainer>
       );
     }
 
-    if (draftValue.value.length === 0) {
+    if (!isNonEmptyArray(draftValue.value)) {
       return (
         <StyledInputContainer>
           <TextInput
@@ -440,9 +452,16 @@ export const FormArrayFieldInput = ({
     );
   };
 
+  const renderLabel = () => {
+    if (label) {
+      return <InputLabel>{label}</InputLabel>;
+    }
+    return null;
+  };
+
   return (
     <FormFieldInputContainer data-testid={testId}>
-      {label ? <InputLabel>{label}</InputLabel> : null}
+      {renderLabel()}
 
       <FormFieldInputRowContainer>
         <FormFieldInputInnerContainer
