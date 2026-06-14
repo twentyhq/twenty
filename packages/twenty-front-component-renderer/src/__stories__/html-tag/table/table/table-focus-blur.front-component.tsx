@@ -23,7 +23,7 @@ const TableFocusBlurFrontComponent = () => {
         tabIndex={0}
         style={FILL_RECT_STYLE}
       >
-        table
+        <caption>table</caption>
       </table>
       <span data-testid="front-component-value">{interactionCount}</span>
       <EventLog entries={entries} />
