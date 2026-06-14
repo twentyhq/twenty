@@ -140,8 +140,8 @@ export const FormArrayFieldInput = ({
   const [newItemDraftValue, setNewItemDraftValue] = useState('');
   const [inputValue, setInputValue] = useState('');
   const [isInputDisplayed, setIsInputDisplayed] = useState(false);
-  const [itemToEditIndex, setItemToEditIndex] = useState(-1);
-  const isAddingNewItem = itemToEditIndex === -1;
+  const [itemToEditId, setItemToEditId] = useState<string | null>(null);
+  const isAddingNewItem = itemToEditId === null;
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -189,17 +189,20 @@ export const FormArrayFieldInput = ({
     });
   };
 
-  const handleEditItem = (index: number) => {
+  const handleEditItem = (id: string, value: string) => {
     if (draftValue.type !== 'static') return;
-    setInputValue(draftValue.value[index].value);
-    setItemToEditIndex(index);
+    setInputValue(value);
+    setItemToEditId(id);
     setIsInputDisplayed(true);
   };
 
-  const handleDeleteItem = (index: number) => {
+  const handleDeleteItem = (id: string) => {
     if (draftValue.type !== 'static') {
       throw new Error('Cannot delete item when value is a variable.');
     }
+
+    const index = draftValue.value.findIndex((item) => item.id === id);
+    if (index === -1) return;
 
     const updatedItems = toSpliced(draftValue.value, index, 1);
 
@@ -261,23 +264,26 @@ export const FormArrayFieldInput = ({
     }
 
     if (sanitizedInput === '' && !isAddingNewItem) {
-      handleDeleteItem(itemToEditIndex);
+      handleDeleteItem(itemToEditId!);
       return;
     }
 
     const items = draftValue.value;
+    const itemToEditIndex = items.findIndex((item) => item.id === itemToEditId);
+    const itemToEdit =
+      itemToEditIndex !== -1 ? items[itemToEditIndex] : undefined;
 
-    const itemToEdit = items[itemToEditIndex];
     if (!isAddingNewItem && !isDefined(itemToEdit)) {
       setIsInputDisplayed(false);
       setInputValue('');
-      setItemToEditIndex(-1);
+      setItemToEditId(null);
       return;
     }
 
     if (!isAddingNewItem && sanitizedInput === itemToEdit?.value) {
       setIsInputDisplayed(false);
       setInputValue('');
+      setItemToEditId(null);
       return;
     }
 
@@ -287,7 +293,7 @@ export const FormArrayFieldInput = ({
       updatedItems = [...items, { id: v4(), value: sanitizedInput }];
     } else {
       updatedItems = toSpliced(items, itemToEditIndex, 1, {
-        id: itemToEdit.id,
+        id: itemToEdit!.id,
         value: sanitizedInput,
       });
     }
@@ -300,7 +306,7 @@ export const FormArrayFieldInput = ({
 
     setIsInputDisplayed(false);
     setInputValue('');
-    setItemToEditIndex(-1);
+    setItemToEditId(null);
 
     removeFocusItemFromFocusStackById({
       focusId: newItemInputInstanceId,
@@ -308,7 +314,7 @@ export const FormArrayFieldInput = ({
   };
 
   const handleAddItemButtonClick = () => {
-    setItemToEditIndex(-1);
+    setItemToEditId(null);
     setIsInputDisplayed(true);
   };
 
@@ -428,16 +434,16 @@ export const FormArrayFieldInput = ({
           <DropdownContent ref={containerRef}>
             <DropdownMenuItemsContainer hasMaxHeight>
               {draftValue.type === 'static' &&
-                draftValue.value.map((item, index) => (
+                draftValue.value.map((item) => (
                   <ArrayFieldMenuItem
                     key={item.id}
                     dropdownId={`array-field-input-${instanceId}-${item.id}`}
                     value={item.value}
                     onEdit={() => {
-                      handleEditItem(index);
+                      handleEditItem(item.id, item.value);
                     }}
                     onDelete={() => {
-                      handleDeleteItem(index);
+                      handleDeleteItem(item.id);
                     }}
                   />
                 ))}
