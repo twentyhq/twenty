@@ -29,10 +29,12 @@ export const ArrayFieldInput = () => {
     FieldInputEventContext,
   );
 
-  const arrayItems = useMemo<Array<string>>(
-    () => (Array.isArray(draftValue) ? draftValue : []),
-    [draftValue],
-  );
+  const arrayItems = useMemo<Array<string>>(() => {
+    if (Array.isArray(draftValue)) {
+      return draftValue;
+    }
+    return [];
+  }, [draftValue]);
 
   const [stableIds, setStableIds] = useState<string[]>(() =>
     arrayItems.map(() => v4()),

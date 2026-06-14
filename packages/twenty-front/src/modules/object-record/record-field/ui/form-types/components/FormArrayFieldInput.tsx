@@ -279,12 +279,16 @@ export const FormArrayFieldInput = ({
       return;
     }
 
-    const updatedItems = isAddingNewItem
-      ? [...items, { id: v4(), value: sanitizedInput }]
-      : toSpliced(items, itemToEditIndex, 1, {
-          id: itemToEdit.id,
-          value: sanitizedInput,
-        });
+    let updatedItems;
+
+    if (isAddingNewItem) {
+      updatedItems = [...items, { id: v4(), value: sanitizedInput }];
+    } else {
+      updatedItems = toSpliced(items, itemToEditIndex, 1, {
+        id: itemToEdit.id,
+        value: sanitizedInput,
+      });
+    }
 
     setDraftValue({
       type: 'static',
@@ -324,6 +328,35 @@ export const FormArrayFieldInput = ({
     setNewItemDraftValue('');
 
     onChange([]);
+  };
+
+  const renderDropdownInputOrButton = () => {
+    if (isInputDisplayed) {
+      return (
+        <MultiItemBaseInput
+          instanceId={newItemInputInstanceId}
+          autoFocus
+          placeholder={placeholder}
+          value={inputValue}
+          onFocus={handleNewItemInputFocus}
+          onBlur={handleNewItemInputBlur}
+          onEscape={handleNewItemInputEscape}
+          onChange={handleNewItemInputChange}
+          onEnter={handleNewItemInputSubmit}
+          hasItem
+        />
+      );
+    }
+    
+    return (
+      <DropdownMenuItemsContainer>
+        <MenuItem
+          onClick={handleAddItemButtonClick}
+          LeftIcon={IconPlus}
+          text={t`Add item`}
+        />
+      </DropdownMenuItemsContainer>
+    );
   };
 
   const renderInnerContent = () => {
@@ -400,28 +433,7 @@ export const FormArrayFieldInput = ({
 
             <DropdownMenuSeparator />
 
-            {isInputDisplayed ? (
-              <MultiItemBaseInput
-                instanceId={newItemInputInstanceId}
-                autoFocus
-                placeholder={placeholder}
-                value={inputValue}
-                onFocus={handleNewItemInputFocus}
-                onBlur={handleNewItemInputBlur}
-                onEscape={handleNewItemInputEscape}
-                onChange={handleNewItemInputChange}
-                onEnter={handleNewItemInputSubmit}
-                hasItem
-              />
-            ) : (
-              <DropdownMenuItemsContainer>
-                <MenuItem
-                  onClick={handleAddItemButtonClick}
-                  LeftIcon={IconPlus}
-                  text={t`Add item`}
-                />
-              </DropdownMenuItemsContainer>
-            )}
+            {renderDropdownInputOrButton()}
           </DropdownContent>
         }
       />
