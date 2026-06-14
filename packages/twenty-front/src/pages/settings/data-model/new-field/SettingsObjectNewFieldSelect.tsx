@@ -3,6 +3,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsWizardStepBar } from '@/settings/components/layout/SettingsWizardStepBar';
 import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
+import { SettingsObjectNewFieldHeaderIcon } from '@/settings/data-model/fields/components/SettingsObjectNewFieldHeaderIcon';
 import { SettingsObjectNewFieldSelector } from '@/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector';
 import { type FieldType } from '@/settings/data-model/types/FieldType';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
@@ -67,6 +68,11 @@ export const SettingsObjectNewFieldSelect = () => {
     >
       <SettingsPageLayout
         title={activeObjectMetadataItem.labelPlural}
+        icon={
+          <SettingsObjectNewFieldHeaderIcon
+            objectMetadataItem={activeObjectMetadataItem}
+          />
+        }
         titleColor={themeCssVariables.font.color.tertiary}
         links={[
           {
