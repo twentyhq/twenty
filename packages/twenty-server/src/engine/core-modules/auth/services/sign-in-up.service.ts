@@ -9,7 +9,9 @@ import { Repository, type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
-import { MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/auth/constants/max-workspaces-without-enterprise-key.constants';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
+import { USER_SIGNUP_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/user/user-signup';
+import { WORKSPACE_CREATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/workspace/workspace-created';
 import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import {
@@ -21,6 +23,7 @@ import {
   compareHash,
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
+import { MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/auth/constants/max-workspaces-without-enterprise-key.constants';
 import {
   type AuthProviderWithPasswordType,
   type ExistingUserOrPartialUserWithPicture,
@@ -44,7 +47,7 @@ import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/worksp
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
+import { getDomainFromEmailOrThrow } from 'src/utils/get-domain-from-email-or-throw';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
@@ -67,6 +70,7 @@ export class SignInUpService {
     private readonly applicationService: ApplicationService,
     private readonly fileCorePictureService: FileCorePictureService,
     private readonly enterprisePlanService: EnterprisePlanService,
+    private readonly eventLogEmitterService: EventLogEmitterService,
     @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}
@@ -246,10 +250,10 @@ export class SignInUpService {
 
     if (!userWorkspaceExists) {
       throw new AuthException(
-        'User is not part of the workspace',
+        'Workspace is not ready to welcome new members',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
         {
-          userFriendlyMessage: msg`User is not part of the workspace`,
+          userFriendlyMessage: msg`Workspace is not ready to welcome new members`,
         },
       );
     }
@@ -381,7 +385,14 @@ export class SignInUpService {
       undefined,
     );
 
-    this.metricsService.incrementCounter({
+    void this.eventLogEmitterService
+      .createContext({
+        workspaceId: savedUser.currentWorkspace?.id,
+        userId: savedUser.id,
+      })
+      .insertWorkspaceEvent(USER_SIGNUP_EVENT, {});
+
+    void this.metricsService.incrementCounterForEvent({
       key: MetricsKeys.SignUpSuccess,
       shouldStoreInCache: false,
     });
@@ -499,110 +510,113 @@ export class SignInUpService {
 
     const workspaceId = v4();
     const workspaceCustomApplicationId = v4();
-    const queryRunner = this.dataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
 
     try {
-      const workspaceToCreate = this.workspaceRepository.create({
-        id: workspaceId,
-        subdomain: await this.subdomainManagerService.generateSubdomain(
-          isWorkEmailFound ? { userEmail: email } : {},
-        ),
-        workspaceCustomApplicationId,
-        displayName: '',
-        inviteHash: v4(),
-        activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
-      });
+      const { user, workspace } = await this.dataSource.transaction(
+        async (entityManager) => {
+          const queryRunner = entityManager.queryRunner as QueryRunner;
 
-      const workspace = await queryRunner.manager.save(
-        WorkspaceEntity,
-        workspaceToCreate,
-      );
-
-      const customApplication =
-        await this.applicationService.createWorkspaceCustomApplication(
-          {
-            workspaceId,
-            applicationId: workspaceCustomApplicationId,
-          },
-          queryRunner,
-        );
-
-      if (isWorkEmailFound) {
-        const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`;
-        const logoFile =
-          await this.fileCorePictureService.uploadWorkspaceLogoFromUrl({
-            imageUrl: logoUrl,
-            workspaceId,
-            applicationUniversalIdentifier:
-              customApplication.universalIdentifier,
-            queryRunner,
+          const workspaceToCreate = this.workspaceRepository.create({
+            id: workspaceId,
+            subdomain: await this.subdomainManagerService.generateSubdomain(
+              isWorkEmailFound ? { userEmail: email } : {},
+            ),
+            workspaceCustomApplicationId,
+            displayName: '',
+            inviteHash: v4(),
+            activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
           });
 
-        if (isDefined(logoFile)) {
-          await queryRunner.manager.update(
+          const workspace = await queryRunner.manager.save(
             WorkspaceEntity,
-            { id: workspaceId },
-            { logoFileId: logoFile.id },
+            workspaceToCreate,
           );
-        }
-      }
 
-      const isExistingUser = userData.type === 'existingUser';
-      const user = isExistingUser
-        ? userData.existingUser
-        : await this.saveNewUser(
-            userData.newUserWithPicture,
+          const customApplication =
+            await this.applicationService.createWorkspaceCustomApplication(
+              {
+                workspaceId,
+                applicationId: workspaceCustomApplicationId,
+              },
+              queryRunner,
+            );
+
+          if (isWorkEmailFound) {
+            const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainFromEmailOrThrow(email)}`;
+            const logoFile =
+              await this.fileCorePictureService.uploadWorkspaceLogoFromUrl({
+                imageUrl: logoUrl,
+                workspaceId,
+                applicationUniversalIdentifier:
+                  customApplication.universalIdentifier,
+                queryRunner,
+              });
+
+            if (isDefined(logoFile)) {
+              await queryRunner.manager.update(
+                WorkspaceEntity,
+                { id: workspaceId },
+                { logoFileId: logoFile.id },
+              );
+            }
+          }
+
+          const isExistingUser = userData.type === 'existingUser';
+          const user = isExistingUser
+            ? userData.existingUser
+            : await this.saveNewUser(
+                userData.newUserWithPicture,
+                {
+                  canImpersonate: shouldGrantServerAdmin,
+                  canAccessFullAdminPanel: shouldGrantServerAdmin,
+                },
+                queryRunner,
+              );
+
+          await this.userWorkspaceService.create(
             {
-              canImpersonate: shouldGrantServerAdmin,
-              canAccessFullAdminPanel: shouldGrantServerAdmin,
+              userId: user.id,
+              workspaceId: workspace.id,
+              isExistingUser,
+              pictureUrl: isExistingUser
+                ? undefined
+                : userData.newUserWithPicture.picture,
+              applicationUniversalIdentifier:
+                customApplication.universalIdentifier,
             },
             queryRunner,
           );
 
-      await this.userWorkspaceService.create(
-        {
-          userId: user.id,
-          workspaceId: workspace.id,
-          isExistingUser,
-          pictureUrl: isExistingUser
-            ? undefined
-            : userData.newUserWithPicture.picture,
-          applicationUniversalIdentifier: customApplication.universalIdentifier,
+          await this.activateOnboardingForUser(
+            {
+              user,
+              workspace,
+              shouldShowConnectAccountStep: true,
+            },
+            queryRunner,
+          );
+
+          await this.onboardingService.setOnboardingInviteTeamPending(
+            {
+              workspaceId: workspace.id,
+              value: true,
+            },
+            queryRunner,
+          );
+
+          return { user, workspace };
         },
-        queryRunner,
       );
 
-      await this.activateOnboardingForUser(
-        {
-          user,
-          workspace,
-          shouldShowConnectAccountStep: true,
-        },
-        queryRunner,
-      );
+      void this.eventLogEmitterService
+        .createContext({ workspaceId })
+        .insertWorkspaceEvent(WORKSPACE_CREATED_EVENT, {});
 
-      await this.onboardingService.setOnboardingInviteTeamPending(
-        {
-          workspaceId: workspace.id,
-          value: true,
-        },
-        queryRunner,
-      );
-
-      await queryRunner.commitTransaction();
+      return { user, workspace };
+    } finally {
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatApplicationMaps',
       ]);
-
-      return { user, workspace };
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await queryRunner.release();
     }
   }
 

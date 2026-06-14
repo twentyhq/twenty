@@ -1,7 +1,6 @@
-import { Logger } from '@nestjs/common';
 import { isPlainObject } from '@nestjs/common/utils/shared.utils';
 
-import { isNonEmptyString, isNull } from '@sniptt/guards';
+import { isNull } from '@sniptt/guards';
 import {
   FieldActorSource,
   FieldMetadataType,
@@ -24,45 +23,12 @@ import {
   type FieldMapsForObject,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { formatCompositeFieldValue } from 'src/engine/twenty-orm/utils/format-composite-field-value.util';
 import { getCompositeFieldMetadataCollection } from 'src/engine/twenty-orm/utils/get-composite-field-metadata-collection';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
-import { isQueryTimingEnabled } from 'src/engine/core-modules/graphql/storage/query-timing-context.storage';
-
-const formatResultLogger = new Logger('formatResult');
-
 export function formatResult<T>(
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
-  data: any,
-  flatObjectMetadata: FlatObjectMetadata | undefined,
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
-  fieldMapsForObject?: FieldMapsForObject,
-): T {
-  const timingEnabled = isQueryTimingEnabled();
-  const startTime = timingEnabled ? performance.now() : 0;
-  const result = formatResultInternal<T>(
-    data,
-    flatObjectMetadata,
-    flatObjectMetadataMaps,
-    flatFieldMetadataMaps,
-    fieldMapsForObject,
-  );
-
-  if (timingEnabled && isDefined(flatObjectMetadata)) {
-    const durationMs = (performance.now() - startTime).toFixed(2);
-    const recordCount = Array.isArray(data) ? data.length : 1;
-
-    formatResultLogger.log(
-      `${flatObjectMetadata.nameSingular} — ${durationMs}ms (${recordCount} records)`,
-    );
-  }
-
-  return result;
-}
-
-function formatResultInternal<T>(
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   data: any,
   flatObjectMetadata: FlatObjectMetadata | undefined,
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
@@ -76,7 +42,7 @@ function formatResultInternal<T>(
   if (!isPlainObject(data)) {
     if (Array.isArray(data)) {
       return data.map((item) =>
-        formatResultInternal(
+        formatResult(
           item,
           flatObjectMetadata,
           flatObjectMetadataMaps,
@@ -149,7 +115,7 @@ function formatResultInternal<T>(
       }
 
       // @ts-expect-error legacy noImplicitAny
-      newData[key] = formatResultInternal(
+      newData[key] = formatResult(
         value,
         targetObjectMetadata,
         flatObjectMetadataMaps,
@@ -182,8 +148,13 @@ function formatResultInternal<T>(
       continue;
     }
 
+    const formattedFieldValue = formatFieldMetadataValue(
+      value,
+      fieldMetadata.type,
+    );
+
     // @ts-expect-error legacy noImplicitAny
-    newData[key] = formatFieldMetadataValue(value, fieldMetadata.type);
+    newData[key] = formattedFieldValue;
   }
 
   // After assembling composite fields, handle those with missing required subfields
@@ -276,7 +247,7 @@ export function getCompositeFieldMetadataMap(
 }
 
 function formatFieldMetadataValue(
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   value: any,
   fieldMetadataType: FieldMetadataType,
 ) {
@@ -322,26 +293,6 @@ function transformCompositeFieldNullValue(
   );
 }
 
-function formatCompositeFieldValue(
-  value: unknown,
-  compositePropertyName: string,
-  fieldMetadata: FlatFieldMetadata,
-) {
-  switch (fieldMetadata.type) {
-    case FieldMetadataType.CURRENCY: {
-      if (compositePropertyName === 'amountMicros') {
-        if (isNonEmptyString(value)) {
-          return parseInt(value);
-        }
-
-        return value;
-      }
-    }
-  }
-
-  return value;
-}
-
 /**
  * Handles composite fields with missing required subfields.
  * - For nullable fields: sets to null if all required subfields are null
@@ -351,7 +302,7 @@ function formatCompositeFieldValue(
  * or records with incomplete data.
  */
 function handleEmptyCompositeFields(
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   data: Record<string, any>,
   flatObjectMetadata: FlatObjectMetadata,
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
@@ -374,7 +325,7 @@ function handleEmptyCompositeFields(
       continue;
     }
 
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     const typedFieldValue = fieldValue as Record<string, any>;
 
     // Check if all required properties are null/undefined
@@ -407,7 +358,7 @@ function handleEmptyCompositeFields(
  */
 function getDefaultCompositeFieldValue(
   fieldType: FieldMetadataType,
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
 ): Record<string, any> | null {
   switch (fieldType) {
     case FieldMetadataType.ACTOR:

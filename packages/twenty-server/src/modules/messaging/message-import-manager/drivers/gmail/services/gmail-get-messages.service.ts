@@ -5,12 +5,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type gmail_v1 as gmailV1, google } from 'googleapis';
 import { isDefined } from 'twenty-shared/utils';
 
-import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import {
-  type MessageChannelWorkspaceEntity,
-  MessageFolderImportPolicy,
-} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessageFolderImportPolicy } from 'twenty-shared/types';
+import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { GoogleOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client.provider';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GmailMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-messages-import-error-handler.service';
 import { filterGmailMessagesByFolderPolicy } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/filter-gmail-messages-by-folder-policy.util';
 import { parseAndFormatGmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-and-format-gmail-message.util';
@@ -21,30 +19,24 @@ const GMAIL_BATCH_REQUEST_MAX_SIZE = 50;
 @Injectable()
 export class GmailGetMessagesService {
   constructor(
-    private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
+    private readonly googleOAuth2ClientProvider: GoogleOAuth2ClientProvider,
     private readonly gmailMessagesImportErrorHandler: GmailMessagesImportErrorHandler,
   ) {}
 
   async getMessages(
     messageIds: string[],
     connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      | 'provider'
-      | 'accessToken'
-      | 'refreshToken'
-      | 'id'
-      | 'handle'
-      | 'handleAliases'
+      ConnectedAccountEntity,
+      'provider' | 'id' | 'handle' | 'handleAliases'
     >,
     messageChannel: Pick<
-      MessageChannelWorkspaceEntity,
+      MessageChannelEntity,
       'messageFolders' | 'messageFolderImportPolicy'
     >,
   ): Promise<MessageWithParticipants[]> {
-    const oAuth2Client =
-      await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
-        connectedAccount,
-      );
+    const oAuth2Client = await this.googleOAuth2ClientProvider.getClient(
+      connectedAccount.id,
+    );
 
     const batchedFetchImplementation = batchFetchImplementation({
       maxBatchSize: GMAIL_BATCH_REQUEST_MAX_SIZE,
@@ -169,10 +161,7 @@ export class GmailGetMessagesService {
   private async fetchMessages(
     gmailClient: gmailV1.Gmail,
     messageIds: string[],
-    connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      'handle' | 'handleAliases'
-    >,
+    connectedAccount: Pick<ConnectedAccountEntity, 'handle' | 'handleAliases'>,
   ): Promise<MessageWithParticipants[]> {
     const results = await Promise.all(
       messageIds.map((messageId) =>

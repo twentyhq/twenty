@@ -4,10 +4,11 @@ import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/con
 import { SubscriptionInfoContainer } from '@/settings/billing/components/SubscriptionInfoContainer';
 import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSkeleton';
 import { useUsageAnalyticsData } from '@/settings/usage/hooks/useUsageAnalyticsData';
+import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { Select } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
-import { H2Title } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui-deprecated/display';
+import { Section } from 'twenty-ui-deprecated/layout';
 import { type UsageOperationType } from '~/generated-metadata/graphql';
 import { formatDate } from '~/utils/date-utils';
 
@@ -41,6 +42,8 @@ export const UsageDailyChartSection = ({
       userWorkspaceId,
       skip,
     });
+
+  const { formatUsageValue } = useUsageValueFormatter();
 
   if (isInitialLoading) {
     return <UsageSectionSkeleton />;
@@ -96,6 +99,8 @@ export const UsageDailyChartSection = ({
               colorMode="automaticPalette"
               showLegend={false}
               enableArea
+              displayType="custom"
+              customFormatter={formatUsageValue}
             />
           </WidgetComponentInstanceContext.Provider>
         </StyledLineChartContainer>

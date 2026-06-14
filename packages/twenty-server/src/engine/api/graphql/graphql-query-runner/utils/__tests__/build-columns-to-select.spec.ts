@@ -36,7 +36,6 @@ describe('buildColumnsToSelect', () => {
       calendarViewIds: [],
       applicationId: null,
       label: overrides.name,
-      isCustom: false,
       isActive: true,
       isSystem: false,
       isUnique: false,
@@ -87,7 +86,6 @@ describe('buildColumnsToSelect', () => {
       description: 'A person',
       icon: 'IconUser',
       targetTableName: 'DEPRECATED',
-      isCustom: false,
       isRemote: false,
       isActive: true,
       isSystem: false,
@@ -338,56 +336,6 @@ describe('buildColumnsToSelect', () => {
     const flatFieldMetadataMaps = buildFlatFieldMetadataMaps([
       nameField,
       oneToManyCompanyField,
-    ]);
-    const flatObjectMetadataMaps = buildFlatObjectMetadataMaps([
-      flatObjectMetadata,
-      companyObjectMetadata,
-    ]);
-
-    const select = {
-      nameFirstName: true,
-    };
-
-    const relations = {
-      company: {},
-    };
-
-    const result = buildColumnsToSelect({
-      select,
-      relations,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    });
-
-    expect(result).toEqual({
-      nameFirstName: true,
-      id: true,
-    });
-  });
-
-  it('should handle relation field without joinColumnName', () => {
-    const noJoinColumnCompanyField = createMockField({
-      id: companyFieldId,
-      type: FieldMetadataType.RELATION,
-      name: 'company',
-      label: 'Company',
-      objectMetadataId: personObjectId,
-      defaultValue: null,
-      settings: {
-        relationType: RelationType.MANY_TO_ONE,
-        joinColumnName: null,
-      },
-      relationTargetObjectMetadataId: companyObjectId,
-    });
-
-    const flatObjectMetadata = buildMockFlatObjectMetadata([
-      nameFieldId,
-      companyFieldId,
-    ]);
-    const flatFieldMetadataMaps = buildFlatFieldMetadataMaps([
-      nameField,
-      noJoinColumnCompanyField,
     ]);
     const flatObjectMetadataMaps = buildFlatObjectMetadataMaps([
       flatObjectMetadata,

@@ -1,71 +1,55 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { type InputSchemaPropertyType } from 'twenty-shared/workflow';
 import { WorkflowVariablesDropdownStepItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems';
 import { WorkflowVariablesDropdownSteps } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps';
 import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/workflow-variables/constants/SearchVariablesDropdownId';
+import { type InputSchemaPropertyType } from 'twenty-shared/workflow';
 
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconVariablePlus } from 'twenty-ui/display';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
+import { IconVariablePlus } from 'twenty-ui-deprecated/display';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
+
 const StyledDropdownVariableButtonContainer = styled.div<{
-  isUnfolded?: boolean;
-  transparentBackground?: boolean;
   disabled?: boolean;
 }>`
   align-items: center;
-  background-color: ${({ transparentBackground }) =>
-    transparentBackground
-      ? 'transparent'
-      : themeCssVariables.background.transparent.lighter};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  background-color: transparent;
+  border-bottom-right-radius: ${themeCssVariables.border.radius.sm};
+  border-top-right-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.tertiary};
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
+  justify-content: center;
   padding: ${themeCssVariables.spacing[2]};
   user-select: none;
-  &:hover {
-    background: ${({ isUnfolded, transparentBackground }) =>
-      transparentBackground
-        ? 'transparent'
-        : isUnfolded
-          ? themeCssVariables.background.transparent.medium
-          : themeCssVariables.background.transparent.light};
-    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-  }
 `;
 
 export const WorkflowVariablesDropdown = ({
+  clickableComponent,
+  disabled,
+  fieldTypesToExclude,
   instanceId,
   onVariableSelect,
-  disabled,
   shouldDisplayRecordFields,
   shouldDisplayRecordObjects,
-  fieldTypesToExclude,
-  multiline,
-  clickableComponent,
 }: {
+  clickableComponent?: React.ReactNode;
+  disabled?: boolean;
+  fieldTypesToExclude?: InputSchemaPropertyType[];
   instanceId: string;
   onVariableSelect: (variableName: string) => void;
   shouldDisplayRecordFields: boolean;
   shouldDisplayRecordObjects: boolean;
-  fieldTypesToExclude?: InputSchemaPropertyType[];
-  disabled?: boolean;
-  multiline?: boolean;
-  clickableComponent?: React.ReactNode;
 }) => {
   const { theme } = useContext(ThemeContext);
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${instanceId}`;
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    dropdownId,
-  );
   const { closeDropdown } = useCloseDropdown();
   const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
     shouldDisplayRecordFields,
@@ -102,13 +86,9 @@ export const WorkflowVariablesDropdown = ({
 
   if (disabled === true || noAvailableVariables) {
     return (
-      <StyledDropdownVariableButtonContainer
-        isUnfolded={isDropdownOpen}
-        disabled={true}
-        transparentBackground
-      >
+      <StyledDropdownVariableButtonContainer disabled={true}>
         <IconVariablePlus
-          size={theme.icon.size.sm}
+          size={theme.icon.size.md}
           color={theme.font.color.light}
         />
       </StyledDropdownVariableButtonContainer>
@@ -121,11 +101,8 @@ export const WorkflowVariablesDropdown = ({
       isDropdownInModal={true}
       clickableComponent={
         clickableComponent ?? (
-          <StyledDropdownVariableButtonContainer
-            isUnfolded={isDropdownOpen}
-            transparentBackground
-          >
-            <IconVariablePlus size={theme.icon.size.sm} />
+          <StyledDropdownVariableButtonContainer>
+            <IconVariablePlus size={theme.icon.size.md} />
           </StyledDropdownVariableButtonContainer>
         )
       }
@@ -147,8 +124,7 @@ export const WorkflowVariablesDropdown = ({
       }
       dropdownPlacement="bottom-end"
       dropdownOffset={{
-        x: 2,
-        y: parseInt(theme.spacing[multiline ? 11 : 1], 10),
+        y: parseInt(theme.spacing[1], 10),
       }}
     />
   );

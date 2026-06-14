@@ -1,3 +1,4 @@
+import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { transformAggregateRawValueIntoAggregateDisplayValue } from '@/object-record/record-aggregate/utils/transformAggregateRawValueIntoAggregateDisplayValue';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
@@ -45,10 +46,14 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
 
   const dateLocale = useAtomStateValue(dateLocaleState);
 
+  const flattenedFieldMetadataItems = useAtomStateValue(
+    flattenedFieldMetadataItemsSelector,
+  );
+
   const { filterValueDependencies } = useFilterValueDependencies();
 
   const requestFilters = computeRecordGqlOperationFilter({
-    fields: objectMetadataItem.fields,
+    fieldMetadataItems: flattenedFieldMetadataItems,
     filterValueDependencies,
     recordFilterGroups: currentRecordFilterGroups,
     recordFilters: currentRecordFilters,

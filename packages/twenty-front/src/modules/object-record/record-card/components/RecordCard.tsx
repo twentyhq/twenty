@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledBoardCard = styled.div<{
   isDragging?: boolean;
@@ -37,16 +37,19 @@ const StyledBoardCard = styled.div<{
   }
 
   .checkbox-container {
+    flex-shrink: 0;
+    max-width: 0;
     opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
     transition: all ease-in-out 160ms;
   }
 
-  &[data-selected='true'] .checkbox-container {
-    opacity: 1;
-  }
-
+  &[data-selected='true'] .checkbox-container,
   &:hover .checkbox-container {
+    max-width: ${themeCssVariables.spacing[6]};
     opacity: 1;
+    pointer-events: auto;
   }
 
   .compact-icon-container {

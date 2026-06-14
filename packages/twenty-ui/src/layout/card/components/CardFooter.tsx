@@ -1,14 +1,7 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from '@ui/theme-constants';
+import { clsx } from 'clsx';
 import { type ComponentPropsWithoutRef } from 'react';
 
-const StyledCardFooter = styled.div<{ divider?: boolean }>`
-  background-color: ${themeCssVariables.background.primary};
-  border-top: ${({ divider = true }) =>
-    divider ? `1px solid ${themeCssVariables.border.color.medium}` : '0'};
-  font-size: ${themeCssVariables.font.size.sm};
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[4]};
-`;
+import styles from './CardFooter.module.scss';
 
 type CardFooterProps = ComponentPropsWithoutRef<'div'> & {
   divider?: boolean;
@@ -21,9 +14,13 @@ export const CardFooter = ({
   ...rest
 }: CardFooterProps) => {
   return (
-    // oxlint-disable-next-line react/jsx-props-no-spreading
-    <StyledCardFooter className={className} divider={divider} {...rest}>
+    <div
+      className={clsx(styles.cardFooter, className)}
+      data-no-divider={divider === false || undefined}
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      {...rest}
+    >
       {children}
-    </StyledCardFooter>
+    </div>
   );
 };

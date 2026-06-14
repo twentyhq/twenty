@@ -2,14 +2,16 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
+import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ImageInput } from '@/ui/input/components/ImageInput';
-import { isDefined } from 'twenty-shared/utils';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
+import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { UploadWorkspaceMemberProfilePictureDocument } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -32,7 +34,8 @@ export const WorkspaceMemberPictureUploader = ({
   const [uploadController, setUploadController] =
     useState<AbortController | null>(null);
 
-  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useAtomState(
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const setCurrentWorkspaceMember = useSetAtomState(
     currentWorkspaceMemberState,
   );
 
@@ -40,7 +43,7 @@ export const WorkspaceMemberPictureUploader = ({
     UploadWorkspaceMemberProfilePictureDocument,
   );
 
-  const { updateOneRecord } = useUpdateOneRecord();
+  const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
 
   const { canEdit: canEditProfilePicture } =
     useCanEditProfileField('profilePicture');
@@ -69,28 +72,27 @@ export const WorkspaceMemberPictureUploader = ({
         },
       });
 
-      const signedFile = data?.uploadWorkspaceMemberProfilePicture;
-      if (!isDefined(signedFile)) {
+      const uploadedFile = data?.uploadWorkspaceMemberProfilePicture;
+      if (!isDefined(uploadedFile)) {
         throw new Error('Avatar upload failed');
       }
 
-      await updateOneRecord({
-        objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-        idToUpdate: workspaceMemberId,
-        updateOneRecordInput: { avatarUrl: signedFile.url },
+      newAvatarUrl = `${REACT_APP_SERVER_BASE_URL}/file/${FileFolder.CorePicture}/${uploadedFile.id}`;
+      await updateWorkspaceMemberSettings({
+        workspaceMemberId,
+        update: { avatarUrl: newAvatarUrl },
       });
 
-      newAvatarUrl = signedFile.url;
+      const signedUrl = uploadedFile.url;
 
-      if (isEditingSelf && isDefined(currentWorkspaceMember)) {
-        setCurrentWorkspaceMember({
-          ...currentWorkspaceMember,
-          avatarUrl: newAvatarUrl,
-        });
+      if (isDefined(signedUrl) && isEditingSelf) {
+        setCurrentWorkspaceMember((previous) =>
+          previous ? { ...previous, avatarUrl: signedUrl } : previous,
+        );
       }
 
       if (isDefined(onAvatarUpdated)) {
-        onAvatarUpdated(newAvatarUrl);
+        onAvatarUpdated(signedUrl ?? newAvatarUrl);
       }
 
       setUploadController(null);
@@ -114,18 +116,10 @@ export const WorkspaceMemberPictureUploader = ({
     setErrorMessage(null);
 
     try {
-      await updateOneRecord({
-        objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-        idToUpdate: workspaceMemberId,
-        updateOneRecordInput: { avatarUrl: '' },
+      await updateWorkspaceMemberSettings({
+        workspaceMemberId,
+        update: { avatarUrl: null },
       });
-
-      if (isEditingSelf && isDefined(currentWorkspaceMember)) {
-        setCurrentWorkspaceMember({
-          ...currentWorkspaceMember,
-          avatarUrl: null,
-        });
-      }
 
       if (isDefined(onAvatarUpdated)) {
         onAvatarUpdated(null);

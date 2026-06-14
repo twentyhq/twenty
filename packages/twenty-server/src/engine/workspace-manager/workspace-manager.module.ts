@@ -3,11 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
-import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -17,6 +15,7 @@ import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-t
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { DevSeederModule } from 'src/engine/workspace-manager/dev-seeder/dev-seeder.module';
 import { TwentyStandardApplicationModule } from 'src/engine/workspace-manager/twenty-standard-application/twenty-standard-application.module';
@@ -30,7 +29,6 @@ import { WorkspaceManagerService } from './workspace-manager.service';
     WorkspaceMigrationModule,
     ObjectMetadataModule,
     DevSeederModule,
-    DataSourceModule,
     FeatureFlagModule,
     PermissionsModule,
     AiAgentModule,
@@ -40,7 +38,6 @@ import { WorkspaceManagerService } from './workspace-manager.service';
     RoleModule,
     UserRoleModule,
     ApplicationModule,
-    SdkClientModule,
     TypeOrmModule.forFeature([
       FieldMetadataEntity,
       RoleTargetEntity,
@@ -49,6 +46,9 @@ import { WorkspaceManagerService } from './workspace-manager.service';
     ]),
   ],
   exports: [WorkspaceManagerService],
-  providers: [WorkspaceManagerService],
+  providers: [
+    WorkspaceManagerService,
+    provideWorkspaceScopedRepository(RoleEntity),
+  ],
 })
 export class WorkspaceManagerModule {}

@@ -1,0 +1,55 @@
+---
+title: Prezentare generală
+description: TypeScript pe server care rulează în Twenty — declanșat de rute HTTP, programări cron, evenimente de bază de date, instrumente IA sau acțiuni de workflow.
+icon: bolt
+---
+
+**Stratul de logică** al unei aplicații Twenty este codul care *rulează* — handler-e TypeScript pe server care reacționează la cereri HTTP, programări cron și modificări ale înregistrărilor; abilități și agenți IA care trăiesc în workspace; și conexiuni OAuth care permit funcțiilor tale să acționeze în numele utilizatorului în servicii terțe.
+
+```text
+            ┌─ HTTP route      ──┐
+            │  Cron schedule     │
+            │  Database event    │      ┌────────────────────┐
+  triggers ─┤  AI tool call      ├─────▶│ Logic function     │
+            │  Workflow action   │      │ (your handler)     │
+            │  Manual exec       │      └────────────────────┘
+            └────────────────────┘                │
+                                                  ▼
+                                  ┌────────────────────────────┐
+                                  │ Twenty API (records)       │
+                                  │ Third-party API            │
+                                  │   (via Connection token)   │
+                                  └────────────────────────────┘
+```
+
+## În această secțiune
+
+<CardGroup cols={2}>
+  <Card title="Funcții logice" icon="bolt" href="/l/ro/developers/extend/apps/logic/logic-functions">
+    Blocul de bază — tipuri de declanșatoare, payload-uri și clientul API cu tipuri.
+  </Card>
+  <Card title="Abilități și agenți" icon="robot" href="/l/ro/developers/extend/apps/logic/skills-and-agents">
+    Instrucțiuni reutilizabile pentru agenți IA și asistenți cu prompturi de sistem personalizate.
+  </Card>
+  <Card title="Conexiuni" icon="plug" href="/l/ro/developers/extend/apps/logic/connections">
+    Credențiale OAuth pe care aplicația ta le deține pentru servicii terțe — Linear, GitHub, Slack și altele.
+  </Card>
+</CardGroup>
+
+## Tipuri de declanșatoare, dintr-o privire
+
+O funcție de logică alege unul sau mai multe declanșatoare — fiecare intrare de mai jos este un câmp separat pe `defineLogicFunction()`:
+
+| Declanșator                   | Când rulează                                                      | Setare                          |
+| ----------------------------- | ----------------------------------------------------------------- | ------------------------------- |
+| **Rută HTTP**                 | O cerere ajunge la endpointul tău `/s/\<path>`   | `httpRouteTriggerSettings`      |
+| **Cron**                      | O expresie CRON se potrivește                                     | `cronTriggerSettings`           |
+| **Eveniment de bază de date** | O înregistrare din workspace este creată, actualizată sau ștearsă | `databaseEventTriggerSettings`  |
+| **Instrument IA**             | O funcționalitate IA din Twenty decide să apeleze funcția ta      | `toolTriggerSettings`           |
+| **Acțiune Workflow**          | Un pas din workflow îți invocă funcția                            | `workflowActionTriggerSettings` |
+
+Funcțiile rulează în sandbox, în procese Node.js izolate și accesează workspace-ul printr-un client API cu tipuri, limitat la rolul declarat în [`defineApplication()`](/l/ro/developers/extend/apps/config/application).
+
+<Note>
+**Hook-uri de instalare** — cod care rulează înainte sau după instalare — folosesc același runtime, dar au propriile lor funcții define și se află sub [Config → Install Hooks](/l/ro/developers/extend/apps/config/install-hooks).
+</Note>

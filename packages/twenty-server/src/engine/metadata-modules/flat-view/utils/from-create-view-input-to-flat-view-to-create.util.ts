@@ -86,6 +86,8 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     universalIdentifier: createViewInput.universalIdentifier ?? v4(),
     visibility: createViewInput.visibility ?? ViewVisibility.WORKSPACE,
     createdByUserWorkspaceId: createdByUserWorkspaceId ?? null,
+    isActive: true,
+    universalOverrides: null,
     viewFieldUniversalIdentifiers: [],
     viewFilterUniversalIdentifiers: [],
     viewGroupUniversalIdentifiers: [],

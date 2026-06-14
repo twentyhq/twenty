@@ -2,6 +2,7 @@ import { useDeleteOneFieldMetadataItem } from '@/object-metadata/hooks/useDelete
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
+import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
@@ -13,6 +14,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useContext, useMemo } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -21,10 +23,13 @@ import {
   IconMinus,
   IconPlus,
   useIcons,
-} from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { LightIconButton } from 'twenty-ui-deprecated/input';
+import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { RelationType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
@@ -84,9 +89,12 @@ export const SettingsObjectFieldItemTableRow = ({
   const { fieldMetadataItem, objectMetadataItem } =
     settingsObjectDetailTableItem;
 
-  const readonly = isObjectMetadataReadOnly({
-    objectMetadataItem,
-  });
+  const isDDLLocked = useAtomStateValue(isDDLLockedState);
+
+  const readonly =
+    isObjectMetadataReadOnly({
+      objectMetadataItem,
+    }) || isDDLLocked;
 
   const navigate = useNavigateSettings();
 
@@ -253,6 +261,7 @@ export const SettingsObjectFieldItemTableRow = ({
         ) : mode === 'view' ? (
           <SettingsObjectFieldInactiveActionDropdown
             isCustomField={fieldMetadataItem.isCustom === true}
+            isSystemField={fieldMetadataItem.isSystem === true}
             readonly={readonly}
             fieldMetadataItemId={fieldMetadataItem.id}
             onEdit={navigateToFieldEdit}

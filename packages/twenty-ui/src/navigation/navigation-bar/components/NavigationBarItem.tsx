@@ -1,25 +1,9 @@
-import { styled } from '@linaria/react';
-import { type IconComponent } from '@ui/display/icon/types/IconComponent';
-import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 import { useContext } from 'react';
 
-const StyledIconButton = styled.div<{ isActive?: boolean }>`
-  align-items: center;
-  background-color: ${({ isActive }) =>
-    isActive ? themeCssVariables.background.transparent.light : 'none'};
-  border-radius: ${themeCssVariables.spacing[1]};
-  cursor: pointer;
-  display: flex;
-  height: ${themeCssVariables.spacing[10]};
-  justify-content: center;
-  transition: background-color
-    calc(${themeCssVariables.animation.duration.fast} * 1s) ease;
-  width: ${themeCssVariables.spacing[10]};
+import { type IconComponent } from '@ui/display/icon/types/IconComponent';
+import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 
-  &:hover {
-    background-color: ${themeCssVariables.background.transparent.light};
-  }
-`;
+import styles from './NavigationBarItem.module.scss';
 
 type NavigationBarItemProps = {
   Icon: IconComponent;
@@ -35,11 +19,15 @@ export const NavigationBarItem = ({
   const { theme } = useContext(ThemeContext);
 
   return (
-    <StyledIconButton isActive={isActive} onClick={onClick}>
+    <div
+      className={styles.iconButton}
+      data-active={isActive ? '' : undefined}
+      onClick={onClick}
+    >
       <Icon
         color={themeCssVariables.grayScale.gray10}
         size={theme.icon.size.lg}
       />
-    </StyledIconButton>
+    </div>
   );
 };

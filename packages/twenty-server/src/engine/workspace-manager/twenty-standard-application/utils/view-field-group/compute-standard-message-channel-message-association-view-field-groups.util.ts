@@ -23,14 +23,14 @@ export const computeStandardMessageChannelMessageAssociationViewFieldGroups = (
           isVisible: true,
         },
       }),
-    messageChannelMessageAssociationRecordPageFieldsOther:
+    messageChannelMessageAssociationRecordPageFieldsSystem:
       createStandardViewFieldGroupFlatMetadata({
         ...args,
         objectName: 'messageChannelMessageAssociation',
         context: {
           viewName: 'messageChannelMessageAssociationRecordPageFields',
-          viewFieldGroupName: 'other',
-          name: 'Other',
+          viewFieldGroupName: 'system',
+          name: 'System',
           position: 1,
           isVisible: true,
         },

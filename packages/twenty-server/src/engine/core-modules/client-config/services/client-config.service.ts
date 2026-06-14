@@ -1,30 +1,26 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { type AiSdkPackage } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 
-import {
-  AI_SDK_ANTHROPIC,
-  AI_SDK_BEDROCK,
-  AI_SDK_OPENAI,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
+import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/maintenance-mode.service';
 import {
-  type ClientAIModelConfig,
+  type ClientAiModelConfig,
   type ClientConfig,
-  type NativeModelCapabilities,
 } from 'src/engine/core-modules/client-config/client-config.entity';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import {
   AUTO_SELECT_FAST_MODEL_ID,
   AUTO_SELECT_SMART_MODEL_ID,
 } from 'twenty-shared/constants';
 import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
+import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
 @Injectable()
@@ -33,20 +29,8 @@ export class ClientConfigService {
     private twentyConfigService: TwentyConfigService,
     private domainServerConfigService: DomainServerConfigService,
     private aiModelRegistryService: AiModelRegistryService,
+    private maintenanceModeService: MaintenanceModeService,
   ) {}
-
-  private deriveNativeCapabilities(
-    sdkPackage?: AiSdkPackage,
-  ): NativeModelCapabilities | undefined {
-    switch (sdkPackage) {
-      case AI_SDK_OPENAI:
-      case AI_SDK_ANTHROPIC:
-      case AI_SDK_BEDROCK:
-        return { webSearch: true };
-      default:
-        return undefined;
-    }
-  }
 
   private isCloudflareIntegrationEnabled(): boolean {
     return (
@@ -62,18 +46,30 @@ export class ClientConfigService {
       'CALENDAR_BOOKING_PAGE_ID',
     );
 
+    const isEmailingDomainInDemoMode =
+      this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
+      EmailingDomainDriver.LOG;
+
     const availableModels =
       this.aiModelRegistryService.getAdminFilteredModels();
     const recommendedModelIds =
       this.aiModelRegistryService.getRecommendedModelIds();
+    const resolvedProviders =
+      this.aiModelRegistryService.getResolvedProvidersForAdmin();
 
-    const aiModels: ClientAIModelConfig[] = availableModels.map(
+    const getProviderLabel = (providerName?: string | null) =>
+      providerName
+        ? (resolvedProviders[providerName]?.label ?? providerName)
+        : undefined;
+
+    const aiModels: ClientAiModelConfig[] = availableModels.map(
       (registeredModel) => {
         const modelConfig = this.aiModelRegistryService.getModelConfig(
           registeredModel.modelId,
         );
 
         const modelFamily = modelConfig?.modelFamily;
+        const providerName = registeredModel.providerName;
 
         return {
           modelId: registeredModel.modelId,
@@ -83,20 +79,15 @@ export class ClientConfigService {
             ? MODEL_FAMILY_LABELS[modelFamily]
             : undefined,
           sdkPackage: registeredModel.sdkPackage,
-          providerName: registeredModel.providerName,
-          nativeCapabilities: this.deriveNativeCapabilities(
+          providerName,
+          providerLabel: getProviderLabel(providerName),
+          nativeCapabilities: getNativeModelCapabilities(
             registeredModel.sdkPackage,
           ),
-          inputCostPerMillionTokensInCredits: modelConfig
-            ? convertDollarsToBillingCredits(
-                modelConfig.inputCostPerMillionTokens,
-              )
-            : 0,
-          outputCostPerMillionTokensInCredits: modelConfig
-            ? convertDollarsToBillingCredits(
-                modelConfig.outputCostPerMillionTokens,
-              )
-            : 0,
+          inputCostPerMillionTokens: modelConfig?.inputCostPerMillionTokens,
+          outputCostPerMillionTokens: modelConfig?.outputCostPerMillionTokens,
+          contextWindowTokens: modelConfig?.contextWindowTokens,
+          maxOutputTokens: modelConfig?.maxOutputTokens,
           isDeprecated: modelConfig?.isDeprecated,
           isRecommended: recommendedModelIds.has(registeredModel.modelId),
           dataResidency: modelConfig?.dataResidency,
@@ -126,9 +117,20 @@ export class ClientConfigService {
             'Default',
           modelFamily: defaultPerformanceModelConfig?.modelFamily,
           providerName: defaultPerformanceModel?.providerName,
+          providerLabel: getProviderLabel(
+            defaultPerformanceModel?.providerName,
+          ),
           sdkPackage: defaultPerformanceModel?.sdkPackage ?? null,
-          inputCostPerMillionTokensInCredits: 0,
-          outputCostPerMillionTokensInCredits: 0,
+          nativeCapabilities: getNativeModelCapabilities(
+            defaultPerformanceModel?.sdkPackage,
+          ),
+          inputCostPerMillionTokens:
+            defaultPerformanceModelConfig?.inputCostPerMillionTokens,
+          outputCostPerMillionTokens:
+            defaultPerformanceModelConfig?.outputCostPerMillionTokens,
+          contextWindowTokens:
+            defaultPerformanceModelConfig?.contextWindowTokens,
+          maxOutputTokens: defaultPerformanceModelConfig?.maxOutputTokens,
         },
         {
           modelId: AUTO_SELECT_FAST_MODEL_ID,
@@ -138,9 +140,17 @@ export class ClientConfigService {
             'Default',
           modelFamily: defaultSpeedModelConfig?.modelFamily,
           providerName: defaultSpeedModel?.providerName,
+          providerLabel: getProviderLabel(defaultSpeedModel?.providerName),
           sdkPackage: defaultSpeedModel?.sdkPackage ?? null,
-          inputCostPerMillionTokensInCredits: 0,
-          outputCostPerMillionTokensInCredits: 0,
+          nativeCapabilities: getNativeModelCapabilities(
+            defaultSpeedModel?.sdkPackage,
+          ),
+          inputCostPerMillionTokens:
+            defaultSpeedModelConfig?.inputCostPerMillionTokens,
+          outputCostPerMillionTokens:
+            defaultSpeedModelConfig?.outputCostPerMillionTokens,
+          contextWindowTokens: defaultSpeedModelConfig?.contextWindowTokens,
+          maxOutputTokens: defaultSpeedModelConfig?.maxOutputTokens,
         },
       );
     }
@@ -229,6 +239,7 @@ export class ClientConfigService {
       isImapSmtpCaldavEnabled: this.twentyConfigService.get(
         'IS_IMAP_SMTP_CALDAV_ENABLED',
       ),
+      isEmailingDomainInDemoMode,
       allowRequestsToTwentyIcons: this.twentyConfigService.get(
         'ALLOW_REQUESTS_TO_TWENTY_ICONS',
       ),
@@ -237,7 +248,21 @@ export class ClientConfigService {
         : undefined,
       isCloudflareIntegrationEnabled: this.isCloudflareIntegrationEnabled(),
       isClickHouseConfigured: !!this.twentyConfigService.get('CLICKHOUSE_URL'),
+      isWorkspaceSchemaDDLLocked: this.twentyConfigService.get(
+        'WORKSPACE_SCHEMA_DDL_LOCKED',
+      ),
     };
+
+    const maintenanceMode =
+      await this.maintenanceModeService.getMaintenanceMode();
+
+    if (isDefined(maintenanceMode)) {
+      clientConfig.maintenance = {
+        startAt: new Date(maintenanceMode.startAt),
+        endAt: new Date(maintenanceMode.endAt),
+        link: maintenanceMode.link,
+      };
+    }
 
     return clientConfig;
   }

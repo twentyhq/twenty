@@ -37,16 +37,17 @@ export class RestApiCreateManyHandler extends RestApiBaseHandler {
         authContext,
       });
 
-      const records = await this.commonCreateManyQueryRunnerService.execute(
-        { data, selectedFields, upsert },
-        {
-          authContext,
-          flatObjectMetadata,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          objectIdByNameSingular,
-        },
-      );
+      const { results: records } =
+        await this.commonCreateManyQueryRunnerService.execute(
+          { data, selectedFields, upsert },
+          {
+            authContext,
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            objectIdByNameSingular,
+          },
+        );
 
       return this.formatRestResponse(records, flatObjectMetadata.namePlural);
     } catch (error) {

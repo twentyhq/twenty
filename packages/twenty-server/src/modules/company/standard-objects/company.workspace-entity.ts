@@ -9,7 +9,6 @@ import {
 import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
-import { type FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { type NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -35,12 +34,9 @@ export class CompanyWorkspaceEntity {
   // Company-specific fields
   name: string | null;
   domainName: LinksMetadata;
-  employees: number | null;
   linkedinLink: LinksMetadata | null;
-  xLink: LinksMetadata | null;
-  annualRecurringRevenue: CurrencyMetadata | null;
+  annualRevenue: CurrencyMetadata | null;
   address: AddressMetadata;
-  idealCustomerProfile: boolean;
   position: number;
   createdBy: ActorMetadata;
   updatedBy: ActorMetadata;
@@ -55,7 +51,6 @@ export class CompanyWorkspaceEntity {
   taskTargets: EntityRelation<TaskTargetWorkspaceEntity[]>;
   noteTargets: EntityRelation<NoteTargetWorkspaceEntity[]>;
   opportunities: EntityRelation<OpportunityWorkspaceEntity[]>;
-  favorites: EntityRelation<FavoriteWorkspaceEntity[]>;
   attachments: EntityRelation<AttachmentWorkspaceEntity[]>;
   timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;
 }

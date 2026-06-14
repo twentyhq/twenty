@@ -15,7 +15,7 @@ export const createListLogicFunctionToolsTool = (
 ) => ({
   name: 'list_logic_function_tools' as const,
   description:
-    'List all logic functions marked as tools that can be added as LOGIC_FUNCTION steps in workflows. Returns their IDs, names, and descriptions.',
+    'List all logic functions exposed as workflow actions, which can be added as LOGIC_FUNCTION steps in workflows. Returns their IDs, names, and descriptions.',
   inputSchema: listLogicFunctionToolsSchema,
   execute: async () => {
     const { flatLogicFunctionMaps } =
@@ -26,18 +26,21 @@ export const createListLogicFunctionToolsTool = (
         },
       );
 
-    const toolFunctions = Object.values(
+    const workflowActionFunctions = Object.values(
       flatLogicFunctionMaps.byUniversalIdentifier,
     ).filter(
       (fn): fn is FlatLogicFunction =>
-        isDefined(fn) && fn.isTool === true && fn.deletedAt === null,
+        isDefined(fn) &&
+        isDefined(fn.workflowActionTriggerSettings) &&
+        fn.deletedAt === null,
     );
 
     return {
       success: true,
-      logicFunctions: toolFunctions.map((fn) => ({
+      logicFunctions: workflowActionFunctions.map((fn) => ({
         id: fn.id,
         name: fn.name,
+        displayName: fn.workflowActionTriggerSettings?.label ?? fn.name,
         description: fn.description,
       })),
     };

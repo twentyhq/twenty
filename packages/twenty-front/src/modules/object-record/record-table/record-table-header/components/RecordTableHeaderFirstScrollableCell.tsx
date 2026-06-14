@@ -1,5 +1,4 @@
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
-import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnHead } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHead';
@@ -21,7 +20,7 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
-import { filterOutByProperty, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RecordTableHeaderFirstScrollableCell = () => {
   const { objectMetadataItem, visibleRecordFields } =
@@ -45,14 +44,7 @@ export const RecordTableHeaderFirstScrollableCell = () => {
     0,
   );
 
-  const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
-
-  const recordField = visibleRecordFields.filter(
-    filterOutByProperty(
-      'fieldMetadataItemId',
-      labelIdentifierFieldMetadataItem?.id,
-    ),
-  )[0] as RecordField | undefined;
+  const recordField = visibleRecordFields[1] as RecordField | undefined;
 
   const isRecordTableRowFocusActive = useAtomComponentStateValue(
     isRecordTableRowFocusActiveComponentState,

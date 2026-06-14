@@ -17,9 +17,7 @@ import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver
 import { createQueryRunnerContext } from 'src/engine/api/graphql/workspace-resolver-builder/utils/create-query-runner-context.util';
 
 @Injectable()
-export class CreateManyResolverFactory
-  implements WorkspaceResolverBuilderFactoryInterface
-{
+export class CreateManyResolverFactory implements WorkspaceResolverBuilderFactoryInterface {
   public static methodName = RESOLVER_METHOD_NAMES.CREATE_MANY;
 
   constructor(
@@ -39,10 +37,11 @@ export class CreateManyResolverFactory
       });
 
       try {
-        const records = await this.commonCreateManyQueryRunnerService.execute(
-          { ...args, selectedFields },
-          resolverContext,
-        );
+        const { results: records } =
+          await this.commonCreateManyQueryRunnerService.execute(
+            { ...args, selectedFields },
+            resolverContext,
+          );
 
         const typeORMObjectRecordsParser =
           new ObjectRecordsToGraphqlConnectionHelper(

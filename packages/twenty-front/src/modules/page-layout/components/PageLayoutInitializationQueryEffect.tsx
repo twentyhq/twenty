@@ -1,5 +1,4 @@
 import { useBasePageLayout } from '@/page-layout/hooks/useBasePageLayout';
-import { usePageLayoutWithRelationWidgets } from '@/page-layout/hooks/usePageLayoutWithRelationWidgets';
 import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLayoutInEditMode';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -10,34 +9,24 @@ import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLa
 import { isPageLayoutEmpty } from '@/page-layout/utils/isPageLayoutEmpty';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey, PageLayoutType } from '~/generated-metadata/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type PageLayoutInitializationQueryEffectProps = {
   pageLayoutId: string;
 };
 
+// oxlint-disable-next-line twenty/effect-components
 export const PageLayoutInitializationQueryEffect = ({
   pageLayoutId,
 }: PageLayoutInitializationQueryEffectProps) => {
+  const pageLayout = useBasePageLayout(pageLayoutId);
+
   const [pageLayoutIsInitialized, setPageLayoutIsInitialized] =
     useAtomComponentState(pageLayoutIsInitializedComponentState);
-
-  const featureFlags = useFeatureFlagsMap();
-  const isRecordPageLayoutEditingEnabled =
-    featureFlags[FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED];
-
-  const basePageLayout = useBasePageLayout(pageLayoutId);
-  const pageLayoutWithRelationWidgets =
-    usePageLayoutWithRelationWidgets(basePageLayout);
-
-  const pageLayout = isRecordPageLayoutEditingEnabled
-    ? basePageLayout
-    : pageLayoutWithRelationWidgets;
 
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
@@ -55,8 +44,6 @@ export const PageLayoutInitializationQueryEffect = ({
 
   const initializePageLayout = useCallback(
     (layout: PageLayout) => {
-      const isRecordPageLayout = layout.type === PageLayoutType.RECORD_PAGE;
-
       const currentPersisted = store.get(
         pageLayoutPersistedComponentCallbackState,
       );
@@ -78,7 +65,9 @@ export const PageLayoutInitializationQueryEffect = ({
       const tabLayouts = convertPageLayoutToTabLayouts(layout);
       store.set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
 
-      if (!isRecordPageLayout) {
+      const isDashboardLayout = layout.type === PageLayoutType.DASHBOARD;
+
+      if (isDashboardLayout) {
         const shouldEnterDashboardEditMode = isPageLayoutEmpty(layout);
         setIsPageLayoutInEditMode(shouldEnterDashboardEditMode);
       }

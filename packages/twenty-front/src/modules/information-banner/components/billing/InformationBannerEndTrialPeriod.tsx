@@ -1,5 +1,5 @@
-import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
+import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useLingui } from '@lingui/react/macro';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -14,7 +14,8 @@ export const InformationBannerEndTrialPeriod = () => {
   return (
     <InformationBanner
       componentInstanceId="information-banner-end-trial-period"
-      variant="danger"
+      color="danger"
+      variant="secondary"
       message={
         hasPermissionToEndTrialPeriod
           ? t`End trial period to continue using Workflow or AI features.`

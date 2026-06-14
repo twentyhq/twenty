@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { DEFAULT_NUMBER_OF_GROUPS_LIMIT } from 'twenty-shared/constants';
 
+import { GroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/group-by-arg-processor.service';
 import { CommonGroupByQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-group-by-query-runner.service';
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/handlers/rest-api-base.handler';
 import { parseAggregateFieldsRestRequest } from 'src/engine/api/rest/input-request-parsers/aggregate-fields-parser-utils/parse-aggregate-fields-rest-request.util';
@@ -19,6 +20,7 @@ import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest
 export class RestApiGroupByHandler extends RestApiBaseHandler {
   constructor(
     private readonly commonGroupByQueryRunnerService: CommonGroupByQueryRunnerService,
+    private readonly groupByArgProcessor: GroupByArgProcessorService,
   ) {
     super();
   }
@@ -41,7 +43,7 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
         limit,
       } = await this.parseRequestArgs(request);
 
-      return await this.commonGroupByQueryRunnerService.execute(
+      const { results } = await this.commonGroupByQueryRunnerService.execute(
         {
           filter,
           orderBy,
@@ -60,6 +62,8 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
           objectIdByNameSingular,
         },
       );
+
+      return results;
     } catch (error) {
       return workspaceQueryRunnerRestApiExceptionHandler(error);
     }
@@ -82,6 +86,17 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
     const groupBy = parseGroupByRestRequest(request);
     const includeRecords = parseIncludeRecordsSampleRestRequest(request);
     const aggregateFields = parseAggregateFieldsRestRequest(request);
+    const availableAggregations =
+      this.groupByArgProcessor.getAvailableAggregations({
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      });
+
+    this.groupByArgProcessor.validateAggregateFieldKeysOrThrow({
+      aggregateFieldKeys: Object.keys(aggregateFields),
+      availableAggregations,
+    });
+
     const limit = parseLimitRestRequest(
       request,
       DEFAULT_NUMBER_OF_GROUPS_LIMIT,

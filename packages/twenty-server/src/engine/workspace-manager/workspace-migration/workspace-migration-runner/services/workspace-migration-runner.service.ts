@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -35,6 +36,7 @@ export class WorkspaceMigrationRunnerService {
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly logger: LoggerService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   private getLegacyCacheInvalidationPromises({
@@ -88,7 +90,7 @@ export class WorkspaceMigrationRunnerService {
     const shouldInvalidateRolesPermissionsCache =
       flatMapsKeysSet.has('flatObjectPermissionMaps') ||
       flatMapsKeysSet.has('flatFieldPermissionMaps') ||
-      flatMapsKeysSet.has('flatPermissionFlagMaps');
+      flatMapsKeysSet.has('flatRolePermissionFlagMaps');
 
     if (
       shouldIncrementMetadataGraphqlSchemaVersion ||
@@ -104,6 +106,14 @@ export class WorkspaceMigrationRunnerService {
           'ORMEntityMetadatas',
           'flatRoleTargetByAgentIdMaps',
           'graphQLResolverNameMap',
+        ]),
+      );
+    }
+
+    if (flatMapsKeysSet.has('flatApplicationVariableMaps')) {
+      asyncOperations.push(
+        this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+          'applicationVariableMaps',
         ]),
       );
     }
@@ -157,6 +167,36 @@ export class WorkspaceMigrationRunnerService {
     );
   }
 
+  // TODO(install-perf): temporary, remove. Snapshots blocking DB sessions on a fresh connection.
+  private async logBlockingDbActivity(): Promise<void> {
+    try {
+      // Metadata only (no query text) to avoid logging literals from other sessions.
+      const rows = await this.coreDataSource.query(
+        `SELECT pid, state, wait_event_type, wait_event,
+                now() - query_start AS running_for, pg_blocking_pids(pid) AS blocked_by
+         FROM pg_stat_activity
+         WHERE datname = current_database()
+           AND state <> 'idle'
+           AND pid <> pg_backend_pid()
+         ORDER BY query_start ASC`,
+      );
+
+      this.logger.error(
+        `[install-perf] active DB sessions at failure: ${JSON.stringify(rows)}`,
+        'Runner',
+      );
+    } catch (snapshotError) {
+      this.logger.error(
+        `[install-perf] could not snapshot pg_stat_activity: ${
+          snapshotError instanceof Error
+            ? snapshotError.message
+            : String(snapshotError)
+        }`,
+        'Runner',
+      );
+    }
+  }
+
   run = async ({
     workspaceMigration: { actions, applicationUniversalIdentifier },
     workspaceId,
@@ -168,8 +208,18 @@ export class WorkspaceMigrationRunnerService {
     metadataEvents: MetadataEvent[];
     hasSchemaMetadataChanged: boolean;
   }> => {
+    if (this.twentyConfigService.get('WORKSPACE_SCHEMA_DDL_LOCKED')) {
+      throw new WorkspaceMigrationRunnerException({
+        message:
+          'Workspace schema DDL changes are locked. This is typically set during hot upgrades.',
+        code: WorkspaceMigrationRunnerExceptionCode.DDL_LOCKED,
+      });
+    }
+
     this.logger.time('Runner', 'Total execution');
     this.logger.time('Runner', 'Initial cache retrieval');
+
+    const initialCacheRetrievalStart = performance.now();
 
     const queryRunner = this.coreDataSource.createQueryRunner();
 
@@ -200,6 +250,14 @@ export class WorkspaceMigrationRunnerService {
 
     this.logger.timeEnd('Runner', 'Initial cache retrieval');
 
+    const initialCacheRetrievalMs =
+      performance.now() - initialCacheRetrievalStart;
+
+    this.logger.log(
+      `[install-perf] Runner initial cache retrieval (getOrRecomputeManyOrAllFlatEntityMaps) took ${initialCacheRetrievalMs.toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
+      'Runner',
+    );
+
     const { flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatApplicationMaps',
@@ -227,8 +285,18 @@ export class WorkspaceMigrationRunnerService {
 
     const allMetadataEvents: MetadataEvent[] = [];
 
+    // TODO(install-perf): temporary, remove.
+    const transactionStart = performance.now();
+    let slowestActionMs = 0;
+    let slowestActionLabel = 'n/a';
+    let actionCount = 0;
+
     try {
+      // TODO(install-perf): temporary, remove. Fail fast on lock waits (< 10s query_timeout) for a clear error.
+      await queryRunner.query(`SET LOCAL lock_timeout = '8s'`);
+
       for (const action of actions) {
+        const actionStart = performance.now();
         const { partialOptimisticCache, metadataEvents } =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
             {
@@ -243,6 +311,22 @@ export class WorkspaceMigrationRunnerService {
             },
           );
 
+        const actionMs = performance.now() - actionStart;
+
+        actionCount += 1;
+
+        if (actionMs > slowestActionMs) {
+          slowestActionMs = actionMs;
+          slowestActionLabel = `${action.type}:${action.metadataName}`;
+        }
+
+        if (actionMs > 50) {
+          this.logger.log(
+            `[install-perf] slow action ${action.type}:${action.metadataName} took ${actionMs.toFixed(1)}ms`,
+            'Runner',
+          );
+        }
+
         allFlatEntityMaps = {
           ...allFlatEntityMaps,
           ...partialOptimisticCache,
@@ -251,16 +335,44 @@ export class WorkspaceMigrationRunnerService {
         allMetadataEvents.push(...metadataEvents);
       }
 
+      const commitStart = performance.now();
+
       await queryRunner.commitTransaction();
+
+      const commitMs = performance.now() - commitStart;
+      const transactionMs = performance.now() - transactionStart;
+
+      this.logger.log(
+        `[install-perf] Runner transaction summary: ${actionCount} actions, total transaction ${transactionMs.toFixed(1)}ms (commit ${commitMs.toFixed(1)}ms), slowest action ${slowestActionLabel} ${slowestActionMs.toFixed(1)}ms`,
+        'Runner',
+      );
 
       this.logger.timeEnd('Runner', 'Transaction execution');
     } catch (error) {
-      await queryRunner.rollbackTransaction().catch((rollbackError) =>
-        // oxlint-disable-next-line no-console
-        console.trace(
-          `Failed to rollback transaction: ${rollbackError.message}`,
-        ),
+      // TODO(install-perf): temporary, remove. Logs the real cause + blockers and guards the rollback.
+      this.logger.error(
+        `[install-perf] migration failed after ${actionCount} action(s): ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+        'Runner',
       );
+      await this.logBlockingDbActivity();
+
+      if (queryRunner.isTransactionActive && !queryRunner.isReleased) {
+        await queryRunner
+          .rollbackTransaction()
+          .catch((rollbackError) =>
+            this.logger.error(
+              `[install-perf] rollback failed: ${rollbackError.message}`,
+              'Runner',
+            ),
+          );
+      } else {
+        this.logger.error(
+          `[install-perf] skipping rollback (txnActive=${queryRunner.isTransactionActive} released=${queryRunner.isReleased})`,
+          'Runner',
+        );
+      }
 
       const invertedActions = [...actions].reverse();
 
@@ -278,6 +390,18 @@ export class WorkspaceMigrationRunnerService {
         );
       }
 
+      try {
+        await this.invalidateCache({
+          allFlatEntityMapsKeys,
+          workspaceId,
+        });
+      } catch (cacheError) {
+        this.logger.error(
+          `Cache invalidation failed after rollback: ${cacheError}`,
+          'Runner',
+        );
+      }
+
       if (error instanceof WorkspaceMigrationRunnerException) {
         throw error;
       }
@@ -290,6 +414,8 @@ export class WorkspaceMigrationRunnerService {
       await queryRunner.release();
     }
 
+    const postCommitInvalidateStart = performance.now();
+
     try {
       await this.invalidateCache({
         allFlatEntityMapsKeys,
@@ -301,6 +427,14 @@ export class WorkspaceMigrationRunnerService {
         'Runner',
       );
     }
+
+    const postCommitInvalidateMs =
+      performance.now() - postCommitInvalidateStart;
+
+    this.logger.log(
+      `[install-perf] Runner post-commit invalidateCache took ${postCommitInvalidateMs.toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
+      'Runner',
+    );
 
     const hasSchemaMetadataChanged =
       allFlatEntityMapsKeys.includes('flatObjectMetadataMaps') ||

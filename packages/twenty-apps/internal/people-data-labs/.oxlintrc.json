@@ -1,0 +1,66 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "import", "unicorn"],
+  "categories": {
+    "correctness": "off"
+  },
+  "ignorePatterns": ["node_modules", "dist"],
+  "rules": {
+    "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
+    "no-control-regex": "off",
+    "no-debugger": "error",
+    "no-duplicate-imports": "error",
+    "no-undef": "off",
+    "no-unused-vars": "off",
+    "no-redeclare": "off",
+
+    "import/no-duplicates": "error",
+
+    "typescript/no-redeclare": "error",
+    "typescript/ban-ts-comment": "error",
+    "typescript/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports",
+        "fixStyle": "inline-type-imports"
+      }
+    ],
+    "typescript/explicit-function-return-type": "off",
+    "typescript/explicit-module-boundary-types": "off",
+    "typescript/no-empty-object-type": [
+      "error",
+      {
+        "allowInterfaces": "with-single-extends"
+      }
+    ],
+    "typescript/no-empty-function": "off",
+    "typescript/no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "typescript/no-explicit-any": "off"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.logic-function.ts", "**/logic-functions/**/*.ts"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["twenty-shared", "twenty-shared/*"],
+                "message": "Logic functions must not import from twenty-shared directly. Import runtime types and helpers from `twenty-sdk/logic-function` instead so the logic-function bundle stays minimal."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

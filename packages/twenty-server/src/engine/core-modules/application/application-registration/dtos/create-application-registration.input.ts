@@ -17,24 +17,6 @@ export class CreateApplicationRegistrationInput {
   name: string;
 
   @Field({ nullable: true })
-  @IsString()
-  @MaxLength(2000)
-  @IsOptional()
-  description?: string;
-
-  @Field({ nullable: true })
-  @IsString()
-  @MaxLength(2048)
-  @IsOptional()
-  logoUrl?: string;
-
-  @Field({ nullable: true })
-  @IsString()
-  @MaxLength(256)
-  @IsOptional()
-  author?: string;
-
-  @Field({ nullable: true })
   @IsUUID()
   @IsOptional()
   universalIdentifier?: string;
@@ -54,16 +36,4 @@ export class CreateApplicationRegistrationInput {
   @MaxLength(256, { each: true })
   @IsOptional()
   oAuthScopes?: string[];
-
-  @Field({ nullable: true })
-  @IsString()
-  @MaxLength(2048)
-  @IsOptional()
-  websiteUrl?: string;
-
-  @Field({ nullable: true })
-  @IsString()
-  @MaxLength(2048)
-  @IsOptional()
-  termsUrl?: string;
 }

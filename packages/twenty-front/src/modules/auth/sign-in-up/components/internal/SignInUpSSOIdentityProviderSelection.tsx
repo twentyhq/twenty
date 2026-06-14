@@ -1,21 +1,15 @@
 /* @license Enterprise */
 
+import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
 import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
 import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/guessSSOIdentityProviderIconByUrl';
-import { styled } from '@linaria/react';
 
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { HorizontalSeparator } from 'twenty-ui/display';
-import { MainButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { HorizontalSeparator } from 'twenty-ui-deprecated/display';
+import { MainButton } from 'twenty-ui-deprecated/input';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-
-const StyledContentContainer = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[8]};
-  margin-top: ${themeCssVariables.spacing[4]};
-`;
 
 export const SignInUpSSOIdentityProviderSelection = () => {
   const workspaceAuthProviders = useAtomStateValue(workspaceAuthProvidersState);
@@ -24,7 +18,7 @@ export const SignInUpSSOIdentityProviderSelection = () => {
 
   return (
     <>
-      <StyledContentContainer>
+      <StyledOnboardingContentContainer>
         {isDefined(workspaceAuthProviders?.sso) &&
           workspaceAuthProviders?.sso.map((idp) => (
             <React.Fragment key={idp.id}>
@@ -37,7 +31,7 @@ export const SignInUpSSOIdentityProviderSelection = () => {
               <HorizontalSeparator visible={false} />
             </React.Fragment>
           ))}
-      </StyledContentContainer>
+      </StyledOnboardingContentContainer>
     </>
   );
 };

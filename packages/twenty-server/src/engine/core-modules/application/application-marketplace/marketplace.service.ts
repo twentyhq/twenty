@@ -1,13 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import axios from 'axios';
-import { isDefined } from 'twenty-shared/utils';
+import { type Manifest } from 'twenty-shared/application';
 import { z } from 'zod';
 
-import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
+import { buildRegistryCdnUrl } from 'src/engine/core-modules/application/application-marketplace/utils/build-registry-cdn-url.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-const npmSearchResultSchema = z.object({
+export type RegistryPackageInfo = {
+  name: string;
+  version: string;
+  description: string;
+  author: string;
+  websiteUrl?: string;
+};
+
+const registrySearchResultSchema = z.object({
   objects: z.array(
     z.object({
       package: z.object({
@@ -16,7 +24,12 @@ const npmSearchResultSchema = z.object({
         description: z.string().optional(),
         keywords: z.array(z.string()).optional(),
         author: z.object({ name: z.string().optional() }).optional(),
-        links: z.object({ homepage: z.string().optional() }).optional(),
+        links: z
+          .object({
+            homepage: z.string().optional(),
+            npm: z.string().optional(),
+          })
+          .optional(),
       }),
     }),
   ),
@@ -28,7 +41,72 @@ export class MarketplaceService {
 
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  async fetchAppsFromNpmRegistry(): Promise<MarketplaceAppDTO[]> {
+  async fetchManifestFromRegistryCdn(
+    packageName: string,
+    version: string,
+  ): Promise<Manifest | null> {
+    const cdnBaseUrl = this.twentyConfigService.get('APP_REGISTRY_CDN_URL');
+    const url = buildRegistryCdnUrl({
+      cdnBaseUrl,
+      packageName,
+      version,
+      filePath: 'manifest.json',
+    });
+
+    try {
+      const { data } = await axios.get(url, {
+        headers: { 'User-Agent': 'Twenty-Marketplace' },
+        timeout: 5_000,
+      });
+
+      if (!data?.application) {
+        return null;
+      }
+
+      return data as Manifest;
+    } catch {
+      this.logger.debug(
+        `Could not fetch manifest from CDN for ${packageName}@${version}`,
+      );
+
+      return null;
+    }
+  }
+
+  async fetchReadmeFromRegistryCdn(
+    packageName: string,
+    version: string,
+  ): Promise<string | null> {
+    const cdnBaseUrl = this.twentyConfigService.get('APP_REGISTRY_CDN_URL');
+    const url = buildRegistryCdnUrl({
+      cdnBaseUrl,
+      packageName,
+      version,
+      filePath: 'README.md',
+    });
+
+    try {
+      const { data } = await axios.get(url, {
+        headers: { 'User-Agent': 'Twenty-Marketplace' },
+        timeout: 5_000,
+        responseType: 'text',
+      });
+
+      if (!data || data.trim().length === 0) {
+        return null;
+      }
+
+      return data;
+    } catch {
+      this.logger.debug(
+        `Could not fetch README from CDN for ${packageName}@${version}`,
+      );
+
+      return null;
+    }
+  }
+
+  async fetchAppsFromRegistry(): Promise<RegistryPackageInfo[]> {
     const registryUrl = this.twentyConfigService.get('APP_REGISTRY_URL');
 
     try {
@@ -40,53 +118,30 @@ export class MarketplaceService {
         },
       );
 
-      const parsed = npmSearchResultSchema.safeParse(data);
+      const parsed = registrySearchResultSchema.safeParse(data);
 
       if (!parsed.success) {
         this.logger.warn(
-          `Unexpected npm search response shape: ${parsed.error.message}`,
+          `Unexpected registry search response shape: ${parsed.error.message}`,
         );
 
         return [];
       }
 
-      return parsed.data.objects
-        .map((result) => {
-          const { name, version, description, author, links } = result.package;
-          const twentyKeyword = (result.package.keywords ?? []).find(
-            (keyword) => keyword.startsWith('twenty-uid:'),
-          );
+      return parsed.data.objects.map((result) => {
+        const { name, version, description, author, links } = result.package;
 
-          if (!isDefined(twentyKeyword)) {
-            return null;
-          }
-
-          const universalIdentifier = twentyKeyword.replace('twenty-uid:', '');
-
-          return {
-            id: universalIdentifier,
-            name,
-            description: description ?? '',
-            icon: 'IconApps',
-            version,
-            author: author?.name ?? 'Unknown',
-            category: '',
-            screenshots: [],
-            aboutDescription: description ?? '',
-            providers: [],
-            websiteUrl: links?.homepage,
-            objects: [],
-            fields: [],
-            logicFunctions: [],
-            frontComponents: [],
-            sourcePackage: name,
-            isFeatured: false,
-          };
-        })
-        .filter(isDefined);
+        return {
+          name,
+          version,
+          description: description ?? '',
+          author: author?.name ?? 'Unknown',
+          websiteUrl: links?.homepage ?? links?.npm,
+        };
+      });
     } catch (error) {
       this.logger.warn(
-        `Failed to fetch apps from npm registry: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to fetch apps from registry ${registryUrl}: ${error instanceof Error ? error.message : String(error)}`,
       );
 
       return [];

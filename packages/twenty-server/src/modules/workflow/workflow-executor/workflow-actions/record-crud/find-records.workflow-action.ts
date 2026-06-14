@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  type FieldMetadataComplexOption,
-  type FieldMetadataDefaultOption,
-} from 'twenty-shared/types';
-import {
   computeRecordGqlOperationFilter,
   isDefined,
   isRecordFilterValueValid,
@@ -14,7 +10,6 @@ import {
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
   WorkflowStepExecutorException,
@@ -63,37 +58,11 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
-    const { flatObjectMetadata, flatFieldMetadataMaps } =
+    const { flatFieldMetadataMaps } =
       await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
         workflowActionInput.objectName,
         workspaceId,
       );
-
-    const fields = flatObjectMetadata.fieldIds
-      .map((fieldId) => {
-        const field = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: fieldId,
-          flatEntityMaps: flatFieldMetadataMaps,
-        });
-
-        if (!field) {
-          return null;
-        }
-
-        return {
-          id: field.id,
-          name: field.name,
-          type: field.type,
-          label: field.label,
-          // Note: force cast is required until we deprecate the CreateFieldInput and UpdateFieldInput
-          // type derivation from the FieldMetadataDto
-          options: field.options as
-            | (FieldMetadataDefaultOption & { id: string })[]
-            | (FieldMetadataComplexOption & { id: string })[]
-            | null,
-        };
-      })
-      .filter(isDefined);
 
     if (workflowActionInput.filter?.recordFilters) {
       for (const filter of workflowActionInput.filter.recordFilters) {
@@ -110,7 +79,9 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       workflowActionInput.filter?.recordFilters &&
       workflowActionInput.filter?.recordFilterGroups
         ? computeRecordGqlOperationFilter({
-            fields,
+            fieldMetadataItems: Object.values(
+              flatFieldMetadataMaps.byUniversalIdentifier,
+            ).filter(isDefined),
             recordFilters: workflowActionInput.filter.recordFilters,
             recordFilterGroups: workflowActionInput.filter.recordFilterGroups,
             filterValueDependencies: {
@@ -124,8 +95,10 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       filter: gqlOperationFilter,
       orderBy: workflowActionInput.orderBy?.gqlOperationOrderBy,
       limit: workflowActionInput.limit,
+      offset: workflowActionInput.offset,
       authContext: executionContext.authContext,
       rolePermissionConfig: executionContext.rolePermissionConfig,
+      shouldBuildEffectiveSelectFields: false,
     });
 
     if (!toolOutput.success) {

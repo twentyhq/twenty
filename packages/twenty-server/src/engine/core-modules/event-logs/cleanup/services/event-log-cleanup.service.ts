@@ -5,14 +5,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EventLogTable } from 'twenty-shared/types';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
-import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
-
-const CLICKHOUSE_TABLE_NAMES: Record<EventLogTable, string> = {
-  [EventLogTable.WORKSPACE_EVENT]: 'workspaceEvent',
-  [EventLogTable.PAGEVIEW]: 'pageview',
-  [EventLogTable.OBJECT_EVENT]: 'objectEvent',
-  [EventLogTable.USAGE_EVENT]: 'usageEvent',
-};
+import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
+import { getClickHouseTableName } from 'src/engine/core-modules/event-logs/registry/event-log-registry';
 
 export type EventLogCleanupParams = {
   workspaceId: string;
@@ -42,16 +36,14 @@ export class EventLogCleanupService {
     cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
 
     for (const table of Object.values(EventLogTable)) {
-      const tableName = CLICKHOUSE_TABLE_NAMES[table];
+      const tableName = getClickHouseTableName(table);
 
       try {
-        // ClickHouse ALTER TABLE DELETE is async by default
-        // We use lightweight deletes (mutations) which are efficient
         const success = await this.clickHouseService.executeCommand(
           `ALTER TABLE ${tableName} DELETE WHERE "workspaceId" = {workspaceId:String} AND "timestamp" < {cutoffDate:DateTime64(3)}`,
           {
             workspaceId,
-            cutoffDate: formatDateForClickHouse(cutoffDate),
+            cutoffDate: formatDateTimeForClickHouse(cutoffDate),
           },
         );
 

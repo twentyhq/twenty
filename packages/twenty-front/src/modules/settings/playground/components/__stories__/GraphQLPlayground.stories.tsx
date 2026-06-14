@@ -7,14 +7,17 @@ import { action } from 'storybook/actions';
 import {
   ComponentDecorator,
   ComponentWithRouterDecorator,
-} from 'twenty-ui/testing';
+} from 'twenty-ui-deprecated/testing';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const PlaygroundApiKeySetterEffect = () => {
   const setPlaygroundApiKey = useSetAtomState(playgroundApiKeyState);
 
   useEffect(() => {
-    setPlaygroundApiKey('test-api-key-123');
+    setPlaygroundApiKey({
+      token: 'test-api-key-123',
+      expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+    });
   }, [setPlaygroundApiKey]);
 
   return null;

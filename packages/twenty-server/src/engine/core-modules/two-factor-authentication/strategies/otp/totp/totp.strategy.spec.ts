@@ -1,5 +1,6 @@
 import { authenticator } from 'otplib';
 
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 
 import { TotpStrategy } from './totp.strategy';
@@ -97,7 +98,7 @@ describe('TOTPStrategy Configuration', () => {
 
       context = {
         status: OTPStatus.VERIFIED,
-        secret,
+        secret: secret as PlaintextString,
       };
     });
 
@@ -143,7 +144,7 @@ describe('TOTPStrategy Configuration', () => {
     it('should handle invalid secret gracefully', () => {
       const invalidContext = {
         status: OTPStatus.VERIFIED,
-        secret: 'invalid-secret',
+        secret: 'invalid-secret' as PlaintextString,
       };
 
       // The authenticator.check method doesn't throw for invalid secrets,
@@ -156,7 +157,7 @@ describe('TOTPStrategy Configuration', () => {
     it('should handle empty secret gracefully', () => {
       const invalidContext = {
         status: OTPStatus.VERIFIED,
-        secret: '',
+        secret: '' as PlaintextString,
       };
 
       // The authenticator.check method doesn't throw for empty secrets,
@@ -195,7 +196,7 @@ describe('TOTPStrategy Configuration', () => {
     it('should handle empty token gracefully', () => {
       const context = {
         status: OTPStatus.VERIFIED,
-        secret,
+        secret: secret as PlaintextString,
       };
 
       const result = strategy.validate('', context);
@@ -207,7 +208,7 @@ describe('TOTPStrategy Configuration', () => {
     it('should handle null token gracefully', () => {
       const context = {
         status: OTPStatus.VERIFIED,
-        secret,
+        secret: secret as PlaintextString,
       };
 
       const result = strategy.validate(null as any, context);

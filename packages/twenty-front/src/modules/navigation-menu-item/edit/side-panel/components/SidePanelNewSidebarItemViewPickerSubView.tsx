@@ -1,8 +1,7 @@
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/edit/view/hooks/useAddViewToNavigationMenuDraft';
-import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
-import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataFromDraft';
+import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
+import { useNavigationMenuObjectMetadataForSection } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataForSection';
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
 import { isViewDisplayableInNavigationMenu } from '@/navigation-menu-item/edit/side-panel/utils/isViewDisplayableInNavigationMenu';
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
@@ -20,7 +19,7 @@ import { type View } from '@/views/types/View';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui-deprecated/display';
 
 type SidePanelNewSidebarItemViewPickerSubViewProps = {
   selectedObjectMetadataIdForView: string;
@@ -32,8 +31,7 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const [searchValue, setSearchValue] = useState('');
-  const { addViewToDraft } = useAddViewToNavigationMenuDraft();
-  const { currentDraft } = useDraftNavigationMenuItems();
+  const { currentItems, createItem } = useNavigationMenuItemEditController();
   const [
     pendingInsertionNavigationMenuItem,
     setPendingInsertionNavigationMenuItem,
@@ -41,7 +39,7 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
   const { openNavigationMenuItemInSidePanel } =
     useOpenNavigationMenuItemInSidePanel();
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { views } = useNavigationMenuObjectMetadataFromDraft(currentDraft);
+  const { views } = useNavigationMenuObjectMetadataForSection(currentItems);
 
   const viewsForSelectedObject = views
     .filter(
@@ -74,12 +72,16 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
     : undefined;
 
   const handleSelectView = (view: View) => {
-    const itemId = addViewToDraft(
-      view.id,
-      currentDraft,
-      pendingInsertionNavigationMenuItem?.folderId ?? null,
-      pendingInsertionNavigationMenuItem?.position,
-      selectedObjectIconColor,
+    const itemId = createItem(
+      {
+        type: NavigationMenuItemType.VIEW,
+        viewId: view.id,
+        color: selectedObjectIconColor,
+      },
+      {
+        targetFolderId: pendingInsertionNavigationMenuItem?.folderId ?? null,
+        targetIndex: pendingInsertionNavigationMenuItem?.position,
+      },
     );
     setPendingInsertionNavigationMenuItem(null);
     openNavigationMenuItemInSidePanel({
@@ -98,7 +100,6 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
       <SidePanelAddToNavigationDroppable>
         {({ innerRef, droppableProps, placeholder }) => (
           <SidePanelList
-            commandGroups={[]}
             selectableItemIds={selectableItemIds}
             noResults={isEmpty}
             noResultsText={noResultsText}

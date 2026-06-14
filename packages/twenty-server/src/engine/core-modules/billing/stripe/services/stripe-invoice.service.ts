@@ -40,4 +40,50 @@ export class StripeInvoiceService {
       auto_advance: true,
     });
   }
+
+  async createImmediateUpgradeInvoice({
+    stripeCustomerId,
+    stripeSubscriptionId,
+    diffAmountInCents,
+    currency,
+    description,
+  }: {
+    stripeCustomerId: string;
+    stripeSubscriptionId: string;
+    diffAmountInCents: number;
+    currency: string;
+    description: string;
+  }): Promise<void> {
+    await this.stripe.invoiceItems.create({
+      customer: stripeCustomerId,
+      subscription: stripeSubscriptionId,
+      amount: diffAmountInCents,
+      currency,
+      description,
+    });
+
+    const invoice = await this.stripe.invoices.create({
+      customer: stripeCustomerId,
+      subscription: stripeSubscriptionId,
+    });
+
+    await this.stripe.invoices.finalizeInvoice(invoice.id, {
+      auto_advance: true,
+    });
+
+    try {
+      await this.stripe.invoices.pay(invoice.id);
+    } catch (error) {
+      // With auto_advance Stripe may already have collected payment by the time
+      // we explicitly request it. Only swallow that case, rethrow real failures.
+      if (
+        !(
+          error instanceof this.stripe.errors.StripeInvalidRequestError &&
+          error.code === 'invoice_already_paid'
+        )
+      ) {
+        throw error;
+      }
+    }
+  }
 }

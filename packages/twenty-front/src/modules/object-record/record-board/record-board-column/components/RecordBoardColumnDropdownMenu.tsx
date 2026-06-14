@@ -2,7 +2,7 @@ import { useRecordGroupActions } from '@/object-record/record-group/hooks/useRec
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { ViewType } from '@/views/types/ViewType';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
 
 export const RecordBoardColumnDropdownMenu = () => {
   const recordGroupActions = useRecordGroupActions({

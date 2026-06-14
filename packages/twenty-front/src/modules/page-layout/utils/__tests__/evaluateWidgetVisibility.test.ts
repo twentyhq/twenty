@@ -5,6 +5,7 @@ import { evaluateWidgetVisibility } from '@/page-layout/utils/evaluateWidgetVisi
 describe('evaluateWidgetVisibility', () => {
   it('should return true (visible) when no conditionalDisplay is provided', () => {
     const result = evaluateWidgetVisibility({
+      conditionalAvailabilityExpression: undefined,
       conditionalDisplay: undefined,
       context: {
         device: 'DESKTOP',
@@ -24,6 +25,7 @@ describe('evaluateWidgetVisibility', () => {
     };
 
     const result = evaluateWidgetVisibility({
+      conditionalAvailabilityExpression: undefined,
       conditionalDisplay,
       context: {
         device: 'MOBILE',
@@ -43,6 +45,7 @@ describe('evaluateWidgetVisibility', () => {
     };
 
     const result = evaluateWidgetVisibility({
+      conditionalAvailabilityExpression: undefined,
       conditionalDisplay,
       context: {
         device: 'DESKTOP',
@@ -62,6 +65,7 @@ describe('evaluateWidgetVisibility', () => {
     };
 
     const result = evaluateWidgetVisibility({
+      conditionalAvailabilityExpression: undefined,
       conditionalDisplay,
       context: {
         device: 'DESKTOP',
@@ -81,6 +85,7 @@ describe('evaluateWidgetVisibility', () => {
     };
 
     const result = evaluateWidgetVisibility({
+      conditionalAvailabilityExpression: undefined,
       conditionalDisplay,
       context: {
         device: 'MOBILE',
@@ -103,6 +108,7 @@ describe('evaluateWidgetVisibility', () => {
     };
 
     const resultMobile = evaluateWidgetVisibility({
+      conditionalAvailabilityExpression: undefined,
       conditionalDisplay,
       context: {
         device: 'MOBILE',
@@ -110,6 +116,7 @@ describe('evaluateWidgetVisibility', () => {
     });
 
     const resultDesktop = evaluateWidgetVisibility({
+      conditionalAvailabilityExpression: undefined,
       conditionalDisplay,
       context: {
         device: 'DESKTOP',
@@ -127,11 +134,114 @@ describe('evaluateWidgetVisibility', () => {
 
     expect(() => {
       evaluateWidgetVisibility({
+        conditionalAvailabilityExpression: undefined,
         conditionalDisplay: invalidConditionalDisplay,
         context: {
           device: 'DESKTOP',
         },
       });
     }).toThrow();
+  });
+
+  describe('conditionalAvailabilityExpression', () => {
+    it('should return true when expression matches MOBILE device', () => {
+      const result = evaluateWidgetVisibility({
+        conditionalAvailabilityExpression: 'device == "MOBILE"',
+        conditionalDisplay: undefined,
+        context: {
+          device: 'MOBILE',
+        },
+      });
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false when expression does not match MOBILE device', () => {
+      const result = evaluateWidgetVisibility({
+        conditionalAvailabilityExpression: 'device == "MOBILE"',
+        conditionalDisplay: undefined,
+        context: {
+          device: 'DESKTOP',
+        },
+      });
+
+      expect(result).toBe(false);
+    });
+
+    it('should return true when expression matches DESKTOP device', () => {
+      const result = evaluateWidgetVisibility({
+        conditionalAvailabilityExpression: 'device == "DESKTOP"',
+        conditionalDisplay: undefined,
+        context: {
+          device: 'DESKTOP',
+        },
+      });
+
+      expect(result).toBe(true);
+    });
+
+    it('should take priority over conditionalDisplay when both are set', () => {
+      const conditionalDisplay: RulesLogic = {
+        and: [
+          {
+            '===': [{ var: 'device' }, 'DESKTOP'],
+          },
+        ],
+      };
+
+      const result = evaluateWidgetVisibility({
+        conditionalAvailabilityExpression: 'device == "MOBILE"',
+        conditionalDisplay,
+        context: {
+          device: 'DESKTOP',
+        },
+      });
+
+      // Expression says MOBILE only, so DESKTOP should be hidden
+      // even though conditionalDisplay says DESKTOP is visible
+      expect(result).toBe(false);
+    });
+
+    it('should fall through to conditionalDisplay when expression is null', () => {
+      const conditionalDisplay: RulesLogic = {
+        and: [
+          {
+            '===': [{ var: 'device' }, 'MOBILE'],
+          },
+        ],
+      };
+
+      const result = evaluateWidgetVisibility({
+        conditionalAvailabilityExpression: null,
+        conditionalDisplay,
+        context: {
+          device: 'DESKTOP',
+        },
+      });
+
+      // Expression is null, so conditionalDisplay takes over
+      // conditionalDisplay says MOBILE only → DESKTOP hidden
+      expect(result).toBe(false);
+    });
+
+    it('should fall through to conditionalDisplay when expression is undefined', () => {
+      const conditionalDisplay: RulesLogic = {
+        and: [
+          {
+            '===': [{ var: 'device' }, 'DESKTOP'],
+          },
+        ],
+      };
+
+      const result = evaluateWidgetVisibility({
+        conditionalAvailabilityExpression: undefined,
+        conditionalDisplay,
+        context: {
+          device: 'DESKTOP',
+        },
+      });
+
+      expect(result).toBe(true);
+    });
   });
 });

@@ -13,7 +13,6 @@ import {
   ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
@@ -39,6 +38,7 @@ import {
   countRelationFieldsInOrderBy,
   hasRelationFieldInOrderBy,
 } from 'src/engine/api/utils/validate-and-get-order-by.utils';
+import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
@@ -124,7 +124,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         isForwardPagination,
       );
 
-      appliedFilters = (args.filter
+      appliedFilters = (args.filter && Object.keys(args.filter).length > 0
         ? {
             and: [args.filter, { or: cursorArgFilter }],
           }
@@ -185,6 +185,8 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       orderByWithIdCondition,
       limit,
       isForwardPagination,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
     );
 
     if (!isForwardPagination) {
@@ -231,13 +233,21 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     args: CommonInput<FindManyQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<FindManyQueryArgs>> {
-    const { flatObjectMetadata, flatFieldMetadataMaps } = queryRunnerContext;
+    const {
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = queryRunnerContext;
 
     return {
       ...args,
+      orderBy: this.orderByArgProcessor.process({
+        orderBy: args.orderBy,
+      }),
       filter: this.filterArgProcessor.process({
         filter: args.filter,
         flatObjectMetadata,
+        flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       }),
     };
@@ -315,7 +325,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
   protected override computeQueryComplexity(
     selectedFieldsResult: CommonSelectedFieldsResult,
-    args: CommonInput<FindManyQueryArgs>,
+    args: CommonExtendedInput<FindManyQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): number {
     const baseComplexity = super.computeQueryComplexity(

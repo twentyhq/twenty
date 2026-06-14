@@ -12,6 +12,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
@@ -49,15 +50,12 @@ export class CommonRestoreManyQueryRunnerService extends CommonBaseQueryRunnerSe
       commonQueryParser,
     } = queryRunnerContext;
 
-    const queryBuilder = repository.createQueryBuilder(
-      flatObjectMetadata.nameSingular,
-    );
-
-    commonQueryParser.applyFilterToBuilder(
-      queryBuilder,
-      flatObjectMetadata.nameSingular,
-      args.filter,
-    );
+    const queryBuilder = buildMutationQueryBuilder({
+      repository,
+      alias: flatObjectMetadata.nameSingular,
+      filter: args.filter,
+      commonQueryParser,
+    });
 
     const columnsToReturn = buildColumnsToReturn({
       select: args.selectedFieldsResult.select,
@@ -100,13 +98,18 @@ export class CommonRestoreManyQueryRunnerService extends CommonBaseQueryRunnerSe
     args: CommonInput<RestoreManyQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<RestoreManyQueryArgs>> {
-    const { flatObjectMetadata, flatFieldMetadataMaps } = queryRunnerContext;
+    const {
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = queryRunnerContext;
 
     return {
       ...args,
       filter: this.filterArgProcessor.process({
         filter: args.filter,
         flatObjectMetadata,
+        flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       }),
     };

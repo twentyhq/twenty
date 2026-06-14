@@ -17,9 +17,7 @@ import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver
 import { createQueryRunnerContext } from 'src/engine/api/graphql/workspace-resolver-builder/utils/create-query-runner-context.util';
 
 @Injectable()
-export class GroupByResolverFactory
-  implements WorkspaceResolverBuilderFactoryInterface
-{
+export class GroupByResolverFactory implements WorkspaceResolverBuilderFactoryInterface {
   public static methodName = RESOLVER_METHOD_NAMES.GROUP_BY;
 
   constructor(
@@ -50,7 +48,7 @@ export class GroupByResolverFactory
             resolverContext.objectIdByNameSingular,
           );
 
-        const results = await this.commonGroupByQueryRunnerService.execute(
+        const { results } = await this.commonGroupByQueryRunnerService.execute(
           { ...args, selectedFields, includeRecords: shouldIncludeRecords },
           resolverContext,
         );

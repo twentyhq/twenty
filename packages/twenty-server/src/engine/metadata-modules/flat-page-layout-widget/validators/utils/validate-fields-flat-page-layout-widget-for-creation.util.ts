@@ -40,17 +40,42 @@ export const validateFieldsFlatPageLayoutWidgetForCreation = (
     return errors;
   }
 
-  const viewId = (
-    universalConfiguration as { configurationType: string; viewId?: unknown }
-  ).viewId;
+  const newFieldDefaultVisibility = (
+    universalConfiguration as {
+      configurationType: string;
+      newFieldDefaultVisibility?: unknown;
+    }
+  ).newFieldDefaultVisibility;
 
-  if (isDefined(viewId) && viewId !== null) {
-    if (typeof viewId !== 'string' || !uuidValidate(viewId)) {
+  if (
+    isDefined(newFieldDefaultVisibility) &&
+    typeof newFieldDefaultVisibility !== 'boolean'
+  ) {
+    errors.push({
+      code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      message: t`Invalid newFieldDefaultVisibility for fields widget "${widgetTitle}". Expected a boolean`,
+      userFriendlyMessage: msg`Invalid newFieldDefaultVisibility for fields widget`,
+      value: newFieldDefaultVisibility,
+    });
+  }
+
+  const viewUniversalIdentifier = (
+    universalConfiguration as {
+      configurationType: string;
+      viewUniversalIdentifier?: unknown;
+    }
+  ).viewUniversalIdentifier;
+
+  if (isDefined(viewUniversalIdentifier) && viewUniversalIdentifier !== null) {
+    if (
+      typeof viewUniversalIdentifier !== 'string' ||
+      !uuidValidate(viewUniversalIdentifier)
+    ) {
       errors.push({
         code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-        message: t`Invalid viewId for fields widget "${widgetTitle}". Expected a valid UUID`,
-        userFriendlyMessage: msg`Invalid viewId for fields widget`,
-        value: viewId,
+        message: t`Invalid viewUniversalIdentifier for fields widget "${widgetTitle}". Expected a valid UUID`,
+        userFriendlyMessage: msg`Invalid viewUniversalIdentifier for fields widget`,
+        value: viewUniversalIdentifier,
       });
     }
   }

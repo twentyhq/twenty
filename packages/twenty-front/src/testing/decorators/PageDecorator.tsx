@@ -2,7 +2,7 @@ import { ApolloProvider } from '@apollo/client/react';
 import { loadDevMessages } from '@apollo/client/dev';
 import { type Decorator } from '@storybook/react-vite';
 import { Provider as JotaiProvider } from 'jotai';
-import { HelmetProvider } from 'react-helmet-async';
+import { HelmetProvider } from '@dr.pogodin/react-helmet';
 import {
   createMemoryRouter,
   createRoutesFromElements,
@@ -16,10 +16,9 @@ import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks_
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { MinimalMetadataGater } from '@/metadata-store/components/MinimalMetadataGater';
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
-import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components/IsMinimalMetadataReadyEffect';
-import { MinimalMetadataLoadEffect } from '@/metadata-store/effect-components/MinimalMetadataLoadEffect';
+import { MockedMetadataLoadEffect } from '~/testing/decorators/MockedMetadataLoadEffect';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useState } from 'react';
+import { type JSX, useState } from 'react';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
@@ -31,7 +30,7 @@ import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProvide
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { IconsProvider } from 'twenty-ui/display';
+import { IconsProvider } from 'twenty-ui-deprecated/display';
 import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
@@ -39,6 +38,7 @@ export type PageDecoratorArgs = {
   routePath: string;
   routeParams: RouteParams;
   additionalRoutes?: string[];
+  searchParams?: RouteParams;
 };
 
 export type RouteParams = {
@@ -56,12 +56,18 @@ export const isRouteParams = (obj: any): obj is RouteParams => {
 export const computeLocation = (
   routePath: string,
   routeParams?: RouteParams,
+  searchParams?: RouteParams,
 ) => {
+  const search = searchParams
+    ? `?${new URLSearchParams(searchParams).toString()}`
+    : '';
+
   return {
     pathname: routePath.replace(
       /:(\w+)/g,
       (paramName) => routeParams?.[paramName] ?? '',
     ),
+    search,
   };
 };
 
@@ -87,8 +93,7 @@ const Providers = () => {
             <ClientConfigProviderEffect />
             <ClientConfigProvider>
               <UserMetadataProviderInitialEffect />
-              <MinimalMetadataLoadEffect />
-              <IsMinimalMetadataReadyEffect />
+              <MockedMetadataLoadEffect />
               <WorkspaceProviderEffect />
               <MinimalMetadataGater>
                 <ApolloCoreClientMockedProvider>
@@ -153,13 +158,16 @@ export const PageDecorator: Decorator<{
   routePath: string;
   routeParams: RouteParams;
   additionalRoutes?: string[];
+  searchParams?: RouteParams;
 }> = (Story, { args }) => {
   return (
     <RouterProvider
       router={createRouter({
         Story,
         args,
-        initialEntries: [computeLocation(args.routePath, args.routeParams)],
+        initialEntries: [
+          computeLocation(args.routePath, args.routeParams, args.searchParams),
+        ],
       })}
     />
   );

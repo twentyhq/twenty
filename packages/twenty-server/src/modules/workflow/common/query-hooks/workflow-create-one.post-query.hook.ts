@@ -18,9 +18,7 @@ import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standa
   key: `workflow.createOne`,
   type: WorkspaceQueryHookType.POST_HOOK,
 })
-export class WorkflowCreateOnePostQueryHook
-  implements WorkspacePostQueryHookInstance
-{
+export class WorkflowCreateOnePostQueryHook implements WorkspacePostQueryHookInstance {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,

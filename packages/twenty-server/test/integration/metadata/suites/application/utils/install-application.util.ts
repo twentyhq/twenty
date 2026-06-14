@@ -16,7 +16,7 @@ export const installApplication = async ({
   expectToFail?: boolean;
   token?: string;
 }): CommonResponseBody<{
-  installApplication: boolean;
+  installApplication: { id: string };
 }> => {
   const graphqlOperation = installApplicationQueryFactory({ input });
 

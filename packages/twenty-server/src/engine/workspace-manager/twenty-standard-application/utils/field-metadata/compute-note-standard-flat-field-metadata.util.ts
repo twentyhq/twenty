@@ -39,7 +39,7 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       icon: 'Icon123',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'uuid',
     },
     standardObjectMetadataRelatedEntityIds,
@@ -58,7 +58,7 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
@@ -80,7 +80,7 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarClock',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
@@ -102,7 +102,7 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isSystem: true,
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
       },
@@ -174,7 +174,7 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`The creator of the record`),
       icon: 'IconCreativeCommonsSa',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -199,7 +199,7 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       ),
       icon: 'IconUserCircle',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -294,28 +294,6 @@ export const buildNoteStandardFlatFieldMetadatas = ({
       isNullable: true,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'targetNote',
-      settings: {
-        relationType: RelationType.ONE_TO_MANY,
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  favorites: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'favorites',
-      label: i18nLabel(msg`Favorites`),
-      description: i18nLabel(msg`Favorites linked to the note`),
-      icon: 'IconHeart',
-      isNullable: false,
-      targetObjectName: 'favorite',
-      targetFieldName: 'note',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },

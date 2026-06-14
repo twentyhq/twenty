@@ -1,6 +1,7 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { computePossibleMorphGqlFieldForFieldName } from '@/object-record/cache/utils/computePossibleMorphGqlFieldForFieldName';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
+import { computeRelationGqlFieldJoinColumnName } from 'twenty-shared/utils';
 
 export const getFieldMetadataFromGqlField = ({
   objectMetadataItem,
@@ -12,7 +13,9 @@ export const getFieldMetadataFromGqlField = ({
   return (
     objectMetadataItem.fields.find((field) => field.name === gqlField) ??
     objectMetadataItem.fields.find(
-      (field) => field.settings?.joinColumnName === gqlField,
+      (field) =>
+        computeRelationGqlFieldJoinColumnName({ name: field.name }) ===
+        gqlField,
     ) ??
     objectMetadataItem.fields.filter(isFieldMorphRelation).find((field) => {
       const morphRelations = field.morphRelations;
@@ -27,7 +30,9 @@ export const getFieldMetadataFromGqlField = ({
       return possibleMorphRelationsNames
         .flatMap((possibleMorphRelationName) => [
           possibleMorphRelationName,
-          `${possibleMorphRelationName}Id`,
+          computeRelationGqlFieldJoinColumnName({
+            name: possibleMorphRelationName,
+          }),
         ])
         .includes(gqlField);
     })

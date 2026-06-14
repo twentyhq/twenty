@@ -3,15 +3,15 @@ import { styled } from '@linaria/react';
 import { type EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
 import { EventCardMessageBodyNotShared } from '@/activities/timeline-activities/rows/message/components/EventCardMessageBodyNotShared';
 import { EventCardMessageForbidden } from '@/activities/timeline-activities/rows/message/components/EventCardMessageForbidden';
-import { useOpenEmailThreadInSidePanel } from '@/side-panel/hooks/useOpenEmailThreadInSidePanel';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { isDefined } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { OverflowingTextWithTooltip } from 'twenty-ui-deprecated/display';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledEventCardMessageContainer = styled.div<{ canOpen?: boolean }>`
   cursor: ${({ canOpen }) => (canOpen ? 'pointer' : 'not-allowed')};
@@ -62,7 +62,7 @@ export const EventCardMessage = ({
   authorFullName: string;
 }) => {
   const { t } = useLingui();
-  const { openEmailThreadInSidePanel } = useOpenEmailThreadInSidePanel();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
   const {
     record: message,
@@ -133,7 +133,10 @@ export const EventCardMessage = ({
 
   const handleClick = () => {
     if (canOpen && isDefined(message.messageThreadId)) {
-      openEmailThreadInSidePanel(message.messageThreadId);
+      openRecordInSidePanel({
+        recordId: message.messageThreadId,
+        objectNameSingular: CoreObjectNameSingular.MessageThread,
+      });
     }
   };
 

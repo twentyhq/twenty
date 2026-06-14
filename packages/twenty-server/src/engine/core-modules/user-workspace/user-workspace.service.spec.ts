@@ -5,21 +5,21 @@ import { type DataSource, type Repository } from 'typeorm';
 
 import { type ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
-import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
@@ -52,6 +52,10 @@ describe('UserWorkspaceService', () => {
             exists: jest.fn(),
             findOne: jest.fn(),
             findOneOrFail: jest.fn(),
+            manager: {
+              connection: { driver: { options: { type: 'postgres' } } },
+            },
+            metadata: { columns: [] },
           },
         },
         {
@@ -76,12 +80,6 @@ describe('UserWorkspaceService', () => {
           provide: RoleValidationService,
           useValue: {
             validateRoleAssignableToUsersOrThrow: jest.fn(),
-          },
-        },
-        {
-          provide: DataSourceService,
-          useValue: {
-            getLastDataSourceMetadataFromWorkspaceIdOrFail: jest.fn(),
           },
         },
         {
@@ -126,7 +124,7 @@ describe('UserWorkspaceService', () => {
           useValue: {},
         },
         {
-          provide: FileService,
+          provide: FileUrlService,
           useValue: {},
         },
         {
@@ -143,6 +141,12 @@ describe('UserWorkspaceService', () => {
           provide: OnboardingService,
           useValue: {
             setOnboardingCreateProfilePending: jest.fn(),
+          },
+        },
+        {
+          provide: CoreEntityCacheService,
+          useValue: {
+            invalidate: jest.fn().mockResolvedValue(undefined),
           },
         },
         {
@@ -248,7 +252,6 @@ describe('UserWorkspaceService', () => {
         email: 'test@example.com',
         firstName: 'John',
         lastName: 'Doe',
-        defaultAvatarUrl: 'avatar-url',
         locale: 'en',
         isEmailVerified: false,
         disabled: false,

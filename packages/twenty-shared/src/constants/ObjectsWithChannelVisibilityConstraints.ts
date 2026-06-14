@@ -7,17 +7,13 @@
 // this list can be removed.
 export const OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS = [
   'blocklist',
-  'connectedAccount',
   'message',
   'messageThread',
-  'messageChannel',
   'messageParticipant',
-  'messageFolder',
   'messageChannelMessageAssociation',
   'messageChannelMessageAssociationMessageFolder',
   'messageThreadSubscriber',
   'calendarEvent',
-  'calendarChannel',
   'calendarChannelEventAssociation',
   'calendarEventParticipant',
 ] as const;

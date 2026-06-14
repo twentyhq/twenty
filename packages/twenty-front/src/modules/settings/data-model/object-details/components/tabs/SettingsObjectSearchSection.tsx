@@ -13,9 +13,12 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useMemo, useState } from 'react';
 
-import { IconEye, IconSearch, useIcons } from 'twenty-ui/display';
-import { Card } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconEye, IconSearch, useIcons } from 'twenty-ui-deprecated/display';
+import { Card } from 'twenty-ui-deprecated/layout';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 type SettingsObjectSearchSectionProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -135,8 +138,8 @@ export const SettingsObjectSearchSection = ({
         <Card rounded>
           <SettingsOptionCardContentToggle
             Icon={IconEye}
-            title={t`Include in default search`}
-            description={t`If disabled, use advanced search filters to find these records`}
+            title={t`Global search`}
+            description={t`Show this object's records in the command menu (⌘K).`}
             checked={isSearchable}
             advancedMode
             onChange={handleToggleSearchable}

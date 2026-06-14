@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
-import { AvatarOrIcon } from 'twenty-ui/components';
-import { MenuItemSuggestion } from 'twenty-ui/navigation';
+import { AvatarOrIcon } from 'twenty-ui-deprecated/components';
+import { MenuItemSuggestion } from 'twenty-ui-deprecated/navigation';
 
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
 import type { MentionSuggestionMenuProps } from '@/mention/types/MentionSuggestionMenuProps';

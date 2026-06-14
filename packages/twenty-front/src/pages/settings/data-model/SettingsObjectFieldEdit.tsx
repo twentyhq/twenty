@@ -12,6 +12,7 @@ import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdate
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFieldMetadataItemInput';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
+import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -24,10 +25,11 @@ import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFiel
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { shouldNavigateBackToMemorizedUrlOnSaveState } from '@/ui/navigation/states/shouldNavigateBackToMemorizedUrlOnSaveState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
@@ -37,10 +39,10 @@ import {
   IconArchive,
   IconArchiveOff,
   IconTrash,
-} from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { Section } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -85,9 +87,12 @@ export const SettingsObjectFieldEdit = () => {
   const objectMetadataItem =
     findObjectMetadataItemByNamePlural(objectNamePlural);
 
-  const readonly = isObjectMetadataReadOnly({
-    objectMetadataItem,
-  });
+  const isDDLLocked = useAtomStateValue(isDDLLockedState);
+
+  const readonly =
+    isObjectMetadataReadOnly({
+      objectMetadataItem,
+    }) || isDDLLocked;
 
   const {
     deactivateMetadataField,
@@ -306,12 +311,12 @@ export const SettingsObjectFieldEdit = () => {
     <>
       {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
       <FormProvider {...formConfig}>
-        <SubMenuTopBarContainer
+        <SettingsPageLayout
           title={fieldMetadataItem?.label}
           links={[
             {
               children: t`Workspace`,
-              href: getSettingsPath(SettingsPath.Workspace),
+              href: getSettingsPath(SettingsPath.General),
             },
             {
               children: t`Objects`,
@@ -424,7 +429,7 @@ export const SettingsObjectFieldEdit = () => {
               </Section>
             )}
           </SettingsPageContainer>
-        </SubMenuTopBarContainer>
+        </SettingsPageLayout>
       </FormProvider>
       {fieldMetadataItem?.isCustom && (
         <ConfirmationModal

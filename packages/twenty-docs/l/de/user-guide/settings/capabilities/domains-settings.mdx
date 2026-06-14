@@ -3,9 +3,11 @@ title: Domäneneinstellungen
 description: Konfigurieren Sie die Arbeitsbereichsdomäne, genehmigte Zugriffsdomänen und öffentliche Domänen.
 ---
 
-Konfigurieren Sie die Domäneneinstellungen unter **Einstellungen → Domänen**.
+Domain-Einstellungen befinden sich an drei Stellen, abhängig davon, was Sie konfigurieren.
 
 ## Arbeitsbereichsdomäne
+
+Konfigurieren Sie dies unter **Einstellungen → Allgemein → Arbeitsbereichs-Domain**.
 
 Bearbeiten Sie den Namen Ihrer Subdomäne oder legen Sie eine benutzerdefinierte Domäne für Ihren Arbeitsbereich fest.
 
@@ -18,6 +20,8 @@ Bearbeiten Sie den Namen Ihrer Subdomäne oder legen Sie eine benutzerdefinierte
 Für benutzerdefinierte Domänen müssen Sie die DNS-Einstellungen bei Ihrem Domänenanbieter konfigurieren.
 
 ## Genehmigte Domänen
+
+Konfigurieren Sie dies unter **Einstellungen → Mitglieder → Einladen**.
 
 Jede Person mit einer E-Mail-Adresse in diesen Domänen darf sich automatisch für diesen Arbeitsbereich registrieren.
 
@@ -35,13 +39,16 @@ Dies ist nützlich, um Ihrem gesamten Team die Selbstregistrierung zu ermöglich
 
 ## Öffentliche Domains
 
-Stellen Sie eine vollständige und sichere Hosting-Umgebung auf diesen Domains bereit.
+Konfigurieren Sie dies unter **Einstellungen → Apps → Entwickler**.
+
+Stellen Sie eine vollständige und sichere Hosting-Umgebung auf diesen Domains bereit. Eine öffentliche Domain kann an eine bestimmte App gebunden werden – wenn sie gebunden ist, sind unter dieser Domain nur die HTTP-gerouteten Logikfunktionen dieser App erreichbar. Lassen Sie die Bindung leer, um alle HTTP-Routen des Arbeitsbereichs bereitzustellen.
 
 ### Öffentliche Domäne hinzufügen
 
 1. Klicken Sie auf **Öffentliche Domäne hinzufügen**
 2. Geben Sie die Domäne ein, die Sie verwenden möchten
-3. Konfigurieren Sie die DNS-Einstellungen gemäß Anleitung
-4. Überprüfen Sie die Domäne
+3. Optional an eine App binden
+4. Konfigurieren Sie die DNS-Einstellungen gemäß Anleitung
+5. Überprüfen Sie die Domäne
 
 SSL-Zertifikate werden für öffentliche Domänen automatisch bereitgestellt.

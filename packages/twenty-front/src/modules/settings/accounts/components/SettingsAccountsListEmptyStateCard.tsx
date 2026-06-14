@@ -5,15 +5,22 @@ import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicros
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { SettingsCard } from '@/settings/components/SettingsCard';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useContext } from 'react';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconAt, IconGoogle, IconMicrosoft } from 'twenty-ui/display';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  IconAt,
+  IconGoogle,
+  IconMicrosoft,
+} from 'twenty-ui-deprecated/display';
+import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledCardsContainer = styled.div`
   display: flex;
@@ -26,6 +33,7 @@ export const SettingsAccountsListEmptyStateCard = () => {
   const { triggerApisOAuth } = useTriggerApisOAuth();
 
   const { t } = useLingui();
+
   const isGoogleMessagingEnabled = useAtomStateValue(
     isGoogleMessagingEnabledState,
   );
@@ -69,7 +77,7 @@ export const SettingsAccountsListEmptyStateCard = () => {
         >
           <SettingsCard
             Icon={<IconAt size={theme.icon.size.md} />}
-            title={t`Connect Account`}
+            title={t`Connect via IMAP/SMTP`}
           />
         </UndecoratedLink>
       )}

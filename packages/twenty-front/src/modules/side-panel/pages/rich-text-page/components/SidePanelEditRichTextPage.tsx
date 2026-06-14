@@ -5,7 +5,10 @@ import { styled } from '@linaria/react';
 import { lazy, Suspense, useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const ActivityRichTextEditor = lazy(() =>
   import('@/activities/components/ActivityRichTextEditor').then((module) => ({
@@ -14,11 +17,11 @@ const ActivityRichTextEditor = lazy(() =>
 );
 
 const RichTextFieldEditor = lazy(() =>
-  import(
-    '@/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor'
-  ).then((module) => ({
-    default: module.RichTextFieldEditor,
-  })),
+  import('@/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor').then(
+    (module) => ({
+      default: module.RichTextFieldEditor,
+    }),
+  ),
 );
 
 const StyledContainer = styled.div`

@@ -115,6 +115,13 @@ export class CommonSelectFieldsHelper {
           flatEntityId: flatField.relationTargetObjectMetadataId,
         });
 
+      if (
+        !objectsPermissions[relationTargetObjectMetadata.id]
+          ?.canReadObjectRecords
+      ) {
+        continue;
+      }
+
       const relationFieldSelectFields = getAllSelectableFields({
         restrictedFields:
           objectsPermissions[relationTargetObjectMetadata.id].restrictedFields,

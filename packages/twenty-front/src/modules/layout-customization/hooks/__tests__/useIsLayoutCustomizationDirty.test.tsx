@@ -24,6 +24,7 @@ const MOCK_PAGE_LAYOUT: PageLayout = {
   name: 'Test Layout',
   type: PageLayoutType.RECORD_PAGE,
   objectMetadataId: 'obj-1',
+  universalIdentifier: '20202020-0000-0000-0000-000000000001',
   tabs: [],
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',

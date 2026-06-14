@@ -20,9 +20,7 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
 import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.enum';
-import { type AiModelPreferences } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-preferences.type';
-import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
-import { loadDefaultModelPreferences } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-model-preferences.util';
+import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
 import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
@@ -44,6 +42,13 @@ import {
   ConfigVariableException,
   ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
+import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
+import {
+  DEFAULT_DISABLED_MODELS,
+  DEFAULT_FAST_MODELS,
+  DEFAULT_RECOMMENDED_MODELS,
+  DEFAULT_SMART_MODELS,
+} from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-model-preferences.util';
 
 export class ConfigVariables {
   @ConfigVariablesMetadata({
@@ -80,6 +85,16 @@ export class ConfigVariables {
   })
   @IsOptional()
   OUTBOUND_HTTP_SAFE_MODE_ENABLED = true;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Lock workspace schema DDL changes (for hot upgrades). Blocks sign-up, workspace deletion, and all metadata schema changes.',
+    isEnvOnly: true,
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  WORKSPACE_SCHEMA_DDL_LOCKED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,
@@ -167,6 +182,15 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
+      'Enable or disable the connection test when saving IMAP/SMTP/CALDAV accounts',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_IMAP_SMTP_CALDAV_CONNECTION_TEST_ENABLED = true;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
       "Enable or disable requests to twenty-icons to get companies' icons",
     type: ConfigVariableType.BOOLEAN,
   })
@@ -218,14 +242,16 @@ export class ConfigVariables {
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_APIS_CALLBACK_URL: string;
 
+  /**
+   * @deprecated Use is now GA - record page layouts are always seeded
+   */
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description:
-      'Enable or disable the seeding of standard record page layouts',
+    description: 'Deprecated - record page layouts are now always seeded (GA)',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
-  SHOULD_SEED_STANDARD_RECORD_PAGE_LAYOUTS = false;
+  SHOULD_SEED_STANDARD_RECORD_PAGE_LAYOUTS = true;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MICROSOFT_AUTH,
@@ -233,6 +259,16 @@ export class ConfigVariables {
     type: ConfigVariableType.BOOLEAN,
   })
   MESSAGING_PROVIDER_MICROSOFT_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Number of messages fetched per batch during message import, adjust incase of rate limiting caused by Gmail, Outlook or IMAP',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  MESSAGING_MESSAGES_GET_BATCH_SIZE = 400;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MICROSOFT_AUTH,
@@ -328,6 +364,16 @@ export class ConfigVariables {
   @IsDuration()
   @IsOptional()
   APPLICATION_REFRESH_TOKEN_EXPIRES_IN = '60d';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TOKENS_DURATION,
+    description:
+      'Duration for which a playground token (in-app REST/GraphQL playground bearer) is valid',
+    type: ConfigVariableType.STRING,
+  })
+  @IsDuration()
+  @IsOptional()
+  PLAYGROUND_TOKEN_EXPIRES_IN = '2h';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EMAIL_SETTINGS,
@@ -499,6 +545,16 @@ export class ConfigVariables {
   STORAGE_S3_PRESIGNED_URL_EXPIRES_IN: number = 900;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.STORAGE_CONFIG,
+    description:
+      'Maximum tarball upload size in bytes for application registration',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  MAX_TARBALL_UPLOAD_SIZE_BYTES: number = 100 * 1024 * 1024;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     description: 'Type of function execution (local or Lambda)',
     type: ConfigVariableType.ENUM,
@@ -510,15 +566,6 @@ export class ConfigVariables {
     process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT
       ? LogicFunctionDriverType.LOCAL
       : LogicFunctionDriverType.DISABLED;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
-    description:
-      'Configure whether console logs from logic functions are displayed in the terminal',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  LOGIC_FUNCTION_LOGS_ENABLED: false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
@@ -730,7 +777,8 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
-    description: 'Amount of credits for the free trial without credit card',
+    description:
+      'Amount of credits for the free trial without credit card (in microCredits)',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
@@ -739,7 +787,8 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
-    description: 'Amount of credits for the free trial with credit card',
+    description:
+      'Amount of credits for the free trial with credit card (in microCredits)',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
@@ -763,6 +812,15 @@ export class ConfigVariables {
   })
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
   BILLING_STRIPE_WEBHOOK_SECRET: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
+      'Use the ClickHouse-backed poller (instead of Stripe billing alerts) as the source of truth for metered-credit cap enforcement',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  BILLING_USAGE_CAP_CLICKHOUSE_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
@@ -875,6 +933,16 @@ export class ConfigVariables {
   )
   @IsOptional()
   SENTRY_ENVIRONMENT: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGGING,
+    description:
+      'Ordered list of sinks the unified event pipeline writes to (e.g. clickhouse). The first is the read store.',
+    type: ConfigVariableType.ARRAY,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  EVENT_SINKS: string[] = ['clickhouse'];
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SUPPORT_CHAT_CONFIG,
@@ -1055,6 +1123,40 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
+      'When enabled, the served frontend resolves the API base URL from ' +
+      "the browser's current origin (window.location) instead of the " +
+      'baked-in SERVER_URL. Useful for self-hosted deployments reachable ' +
+      'from multiple hostnames (Tailscale IP, LAN DNS, SSH tunnel, public ' +
+      'DNS), where pinning a single SERVER_URL would break every other ' +
+      'host with CORS or unreachable-host errors. Read at startup by ' +
+      'generate-front-config; SERVER_URL is still used for all server-side ' +
+      'URL generation.',
+    type: ConfigVariableType.BOOLEAN,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  FRONT_AUTO_BASE_URL = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Express "trust proxy" setting. Controls whether X-Forwarded-* ' +
+      'headers are honored — required for request.protocol to return ' +
+      '"https" when TLS is terminated upstream (reverse proxy, ingress, ' +
+      'Cloudflare, etc.). Default trusts loopback + RFC1918/ULA peers, ' +
+      'which is correct when NestJS runs behind a reverse proxy (our ' +
+      'recommended self-host setup). Set to "false" when NestJS is ' +
+      'exposed directly to the internet. Accepts any value Express ' +
+      'supports — see https://expressjs.com/en/guide/behind-proxies.html.',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  TRUST_PROXY: string = 'loopback, linklocal, uniquelocal';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
       'Unique identifier for this server instance, generated as UUID v4 during database seeding',
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
@@ -1079,6 +1181,38 @@ export class ConfigVariables {
     type: ConfigVariableType.STRING,
   })
   APP_SECRET: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    isSensitive: true,
+    description:
+      'Primary key for at-rest encryption of secrets. Falls back to APP_SECRET when unset.',
+    isEnvOnly: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  ENCRYPTION_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    isSensitive: true,
+    description:
+      'Verification-only fallback key. During rotation, set this to the previous ENCRYPTION_KEY so rows encrypted with the old key remain decryptable and session cookies signed under it still verify.',
+    isEnvOnly: true,
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  FALLBACK_ENCRYPTION_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Days the current JWT signing key stays valid before the rotation cron issues a new one. Leave unset to disable auto-rotation.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  SIGNING_KEY_ROTATION_DAYS?: number;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
@@ -1312,11 +1446,47 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'AI model admin preferences: disabled models, recommended models, and default fast/smart model lists. Managed via admin panel or env.',
-    type: ConfigVariableType.JSON,
+      'Storage path for the AI catalog override (e.g. config/ai-catalog.json). When set, the catalog is fetched from the configured storage backend at startup instead of using the built-in ai-providers.json.',
+    type: ConfigVariableType.STRING,
   })
   @IsOptional()
-  AI_MODEL_PREFERENCES: AiModelPreferences = loadDefaultModelPreferences();
+  AI_CATALOG_STORAGE_PATH?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'Ordered list of fast model IDs to use as defaults. Managed via admin panel or env.',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  AI_MODELS_DEFAULT_FAST: string[] = DEFAULT_FAST_MODELS;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'Ordered list of smart model IDs to use as defaults. Managed via admin panel or env.',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  AI_MODELS_DEFAULT_SMART: string[] = DEFAULT_SMART_MODELS;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'List of recommended model IDs shown to workspaces using curated model selection. Managed via admin panel or env.',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  AI_MODELS_DEFAULT_RECOMMENDED: string[] = DEFAULT_RECOMMENDED_MODELS;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'List of model IDs disabled by default. Disabled models cannot be used by any workspace. Managed via admin panel or env.',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  AI_MODELS_DEFAULT_DISABLED: string[] = DEFAULT_DISABLED_MODELS;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
@@ -1530,6 +1700,16 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AWS_SES_SETTINGS,
+    description:
+      'Driver used for the emailing domain feature — AWS_SES for production (requires AWS credentials), LOG fakes registration/verification/sends locally',
+    type: ConfigVariableType.ENUM,
+    options: Object.values(EmailingDomainDriver),
+  })
+  @CastToUpperSnakeCase()
+  EMAILING_DOMAIN_DRIVER: EmailingDomainDriver = EmailingDomainDriver.LOG;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AWS_SES_SETTINGS,
     description: 'AWS region',
     type: ConfigVariableType.STRING,
   })
@@ -1573,6 +1753,24 @@ export class ConfigVariables {
   AWS_SES_ACCOUNT_ID: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AWS_SES_SETTINGS,
+    description:
+      'Domain used for email group inbound mail (the right-hand side of ch_xxx@<domain>). Required to enable email group channels.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  INBOUND_EMAIL_DOMAIN: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AWS_SES_SETTINGS,
+    description:
+      'Comma-separated list of SNS topic ARNs accepted by the inbound-email webhook (e.g. arn:aws:sns:us-east-1:123:my-inbound).',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  SES_SNS_TOPIC_ARN_ALLOWLIST: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Timeout in milliseconds for primary database queries',
     type: ConfigVariableType.NUMBER,
@@ -1595,12 +1793,33 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
+      'Timeout in milliseconds for the search ILIKE fallback query per searchable object. Triggered only when the tsvector query returns 0 results on the first page (e.g. CJK input). When the timeout fires the fallback is skipped for that object.',
+    type: ConfigVariableType.NUMBER,
+    isEnvOnly: true,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  SEARCH_ILIKE_FALLBACK_TIMEOUT_MS: number = 2000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
       'Default npm registry URL for resolving app packages (e.g. https://registry.npmjs.org)',
     type: ConfigVariableType.STRING,
   })
   @IsUrl({ require_tld: false })
   @IsOptional()
   APP_REGISTRY_URL: string = 'https://registry.npmjs.org';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'CDN base URL for serving files from registry (e.g. https://unpkg.com)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsUrl({ require_tld: false })
+  @IsOptional()
+  APP_REGISTRY_CDN_URL: string = 'https://unpkg.com';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,

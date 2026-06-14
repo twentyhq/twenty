@@ -8,5 +8,6 @@ export enum CacheStorageNamespace {
   EngineHealth = 'engine:health',
   EngineMetrics = 'engine:metrics',
   EngineSubscriptions = 'engine:subscriptions',
+  EngineBillingUsage = 'engine:billing-usage',
   IntegrationTests = 'integration-tests',
 }

@@ -24,8 +24,12 @@ export type LoadSkillResult = {
 };
 
 export type LoadSkillFunction = (names: string[]) => Promise<FlatSkill[]>;
+export type ListAvailableSkillNamesFunction = () => Promise<string[]>;
 
-export const createLoadSkillTool = (loadSkills: LoadSkillFunction) => ({
+export const createLoadSkillTool = (
+  loadSkills: LoadSkillFunction,
+  listAvailableSkillNames: ListAvailableSkillNamesFunction,
+) => ({
   description:
     'Load specialized skills for complex tasks. Returns detailed step-by-step instructions for building workflows, dashboards, manipulating data, or managing metadata. Call this before attempting complex operations.',
   inputSchema: loadSkillInputSchema,
@@ -35,9 +39,16 @@ export const createLoadSkillTool = (loadSkills: LoadSkillFunction) => ({
     const skills = await loadSkills(skillNames);
 
     if (skills.length === 0) {
+      const availableNames = await listAvailableSkillNames();
+
+      const availableMessage =
+        availableNames.length > 0
+          ? `Available skills: ${availableNames.join(', ')}.`
+          : 'No skills are currently available in this workspace.';
+
       return {
         skills: [],
-        message: `No skills found with names: ${skillNames.join(', ')}. Available skills: workflow-building, data-manipulation, dashboard-building, metadata-building, research, code-interpreter, xlsx, pdf, docx, pptx.`,
+        message: `No skills found with names: ${skillNames.join(', ')}. ${availableMessage}`,
       };
     }
 

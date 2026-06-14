@@ -146,6 +146,7 @@ export class MessagingDeleteGroupEmailMessagesService {
         return totalDeletedCount;
       },
       authContext,
+      { lite: true },
     );
   }
 }

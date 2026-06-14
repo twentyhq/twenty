@@ -47,6 +47,14 @@ export enum KeyValuePairType {
     where: '"workspaceId" is NULL',
   },
 )
+@Index(
+  'IDX_KEY_VALUE_PAIR_KEY_NULL_USER_ID_NULL_WORKSPACE_ID_UNIQUE',
+  ['key'],
+  {
+    unique: true,
+    where: '"userId" is NULL AND "workspaceId" is NULL',
+  },
+)
 export class KeyValuePairEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')

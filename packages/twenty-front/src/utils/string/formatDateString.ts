@@ -31,6 +31,7 @@ export const formatDateString = ({
         isoDate: value,
         isDayMaximumPrecision: true,
         localeCatalog,
+        timeZone,
       });
     case FieldDateDisplayFormat.USER_SETTINGS:
       return formatDateISOStringToDate({

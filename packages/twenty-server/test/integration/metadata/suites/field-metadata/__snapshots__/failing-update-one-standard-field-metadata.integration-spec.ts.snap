@@ -94,7 +94,7 @@ exports[`Standard field with standard unique index update should fail on isUniqu
     },
     "userFriendlyMessage": "Validation failed for 0 object(s) and 0 field(s)",
   },
-  "message": "Validation errors occurred while updating field",
+  "message": "Multiple validation errors occurred while updating field",
   "name": "GraphQLError",
 }
 `;

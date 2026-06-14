@@ -103,12 +103,13 @@ export class MicrosoftAPIsAuthController {
         );
       }
 
-      const handle = emails[0].value;
+      const handle = emails[0].value.toLowerCase();
 
       const connectedAccountId =
         await this.microsoftAPIsService.refreshMicrosoftRefreshToken({
           handle,
-          workspaceMemberId: workspaceMemberId,
+          userId,
+          workspaceMemberId,
           workspaceId: workspaceId,
           accessToken,
           refreshToken,

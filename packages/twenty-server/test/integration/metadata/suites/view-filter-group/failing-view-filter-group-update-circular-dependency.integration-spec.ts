@@ -69,8 +69,7 @@ describe('View Filter Group update should fail with circular dependency', () => 
       },
     });
 
-    parentViewFilterGroupId =
-      parentFilterGroupData?.createViewFilterGroup?.id;
+    parentViewFilterGroupId = parentFilterGroupData?.createViewFilterGroup?.id;
     jestExpectToBeDefined(parentViewFilterGroupId);
 
     // Create child view filter group with parent reference for chain test
@@ -83,8 +82,7 @@ describe('View Filter Group update should fail with circular dependency', () => 
       },
     });
 
-    childViewFilterGroupId =
-      childFilterGroupData?.createViewFilterGroup?.id;
+    childViewFilterGroupId = childFilterGroupData?.createViewFilterGroup?.id;
     jestExpectToBeDefined(childViewFilterGroupId);
   });
 

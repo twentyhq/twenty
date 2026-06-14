@@ -6,7 +6,7 @@ import {
   FrontComponentRenderer as SharedFrontComponentRenderer,
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
-} from 'twenty-sdk/front-component-renderer';
+} from 'twenty-front-component-renderer';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 type FrontComponentRendererWithSdkClientProps = {
@@ -16,6 +16,7 @@ type FrontComponentRendererWithSdkClientProps = {
   applicationId: string;
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
+  applicationVariables?: Record<string, string>;
   onError: (error?: Error) => void;
 };
 
@@ -26,6 +27,7 @@ export const FrontComponentRendererWithSdkClient = ({
   applicationId,
   executionContext,
   frontComponentHostCommunicationApi,
+  applicationVariables,
   onError,
 }: FrontComponentRendererWithSdkClientProps) => {
   const sdkClientState = useAtomValue(
@@ -50,6 +52,7 @@ export const FrontComponentRendererWithSdkClient = ({
           frontComponentHostCommunicationApi={
             frontComponentHostCommunicationApi
           }
+          applicationVariables={applicationVariables}
           onError={onError}
         />
       )}

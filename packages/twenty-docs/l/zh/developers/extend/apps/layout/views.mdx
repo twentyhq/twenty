@@ -1,0 +1,97 @@
+---
+title: 视图
+description: 为你的应用中的对象提供预配置的已保存视图——列顺序、筛选器、分组。
+icon: list
+---
+
+**视图（view）** 是关于对象记录如何显示的已保存配置：包括显示哪些字段、它们的顺序、是否可见，以及应用的任何筛选器或分组。 使用 `defineView()` 为你的应用提供预配置视图——通常是你创建的每个自定义对象的默认索引视图。
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+## 关键点
+
+* `objectUniversalIdentifier` 指定此视图适用于哪个对象。 它可以是你定义的自定义对象，也可以是标准的 Twenty 对象。
+* `key` 决定视图类型——`ViewKey.INDEX` 是该对象的主列表视图。
+* `fields` 控制显示哪些列以及它们的顺序。 每个字段引用一个 `fieldMetadataUniversalIdentifier`。
+* 你还可以声明 `filters`、`filterGroups`、`groups` 和 `fieldGroups` 以进行更高级的配置。
+* 当同一对象存在多个视图时，`position` 控制其排序。
+
+## 过滤器
+
+视图可以附带预先应用的过滤器。 每个过滤器有三个坐标：被筛选的**字段**、**运算符**（如何比较）以及**值**（与之比较的内容）。 这三者必须全部对齐——在同步时，使用不适用于字段类型的运算符将会被拒绝。
+
+```ts
+import { ViewFilterOperand } from 'twenty-shared/types';
+
+filters: [
+  {
+    universalIdentifier: '...',
+    fieldMetadataUniversalIdentifier: STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+    operand: ViewFilterOperand.IS,
+    value: ['ACTIVE'],
+  },
+],
+```
+
+### 各字段类型支持的运算符
+
+| 字段类型                                                                                               | 受支持的运算符                                                                                                            |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `TEXT`, `EMAILS`, `FULL_NAME`, `ADDRESS`, `LINKS`, `PHONES`, `RAW_JSON`, `FILES`, `ACTOR`, `ARRAY` | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `ACTOR.source`, `ACTOR.workspaceMemberId`                                                          | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `SELECT`                                                                                           | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `MULTI_SELECT`                                                                                     | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `RELATION`                                                                                         | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `NUMBER`                                                                                           | `IS`, `IS_NOT`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `RATING`                                                                                           | `IS`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                                    |
+| `CURRENCY`, `CURRENCY.amountMicros`                                                                | `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `CURRENCY.currencyCode`                                                                            | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `DATE`, `DATE_TIME`                                                                                | `IS`, `IS_RELATIVE`, `IS_IN_PAST`, `IS_IN_FUTURE`, `IS_TODAY`, `IS_BEFORE`, `IS_AFTER`, `IS_EMPTY`, `IS_NOT_EMPTY` |
+| `BOOLEAN`                                                                                          | `IS`                                                                                                               |
+| `UUID`                                                                                             | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `TS_VECTOR`                                                                                        | `VECTOR_SEARCH`                                                                                                    |
+
+> 名称相似的字段类型可以使用完全不同的运算符 —— `SELECT` 和 `MULTI_SELECT` 就是常见情况。
+
+### 每个运算符对应的值结构
+
+`value` 字段始终是可序列化为 JSON 的值，但其期望的结构取决于所使用的运算符：
+
+| 运算符类别                                                 | 值结构                  | 示例                       |
+| ----------------------------------------------------- | -------------------- | ------------------------ |
+| `SELECT` 上的 `IS`, `IS_NOT`                            | 选项键（字符串）数组           | `['ACTIVE', 'PENDING']`  |
+| `MULTI_SELECT` 上的 `CONTAINS`, `DOES_NOT_CONTAIN`      | 选项键（字符串）数组           | `['TAG_A']`              |
+| `RELATION` 上的 `IS`, `IS_NOT`                          | 记录 ID（uuid）数组        | `['c5a1...']`            |
+| 文本类字段上的 `CONTAINS`, `DOES_NOT_CONTAIN`                | 字符串                  | `'acme'`                 |
+| `NUMBER` 上的 `IS`, `IS_NOT`                            | 字符串（该值）              | `'5'`                    |
+| `RATING` / `UUID` 上的 `IS`                             | 字符串（该值）              | `'5'`                    |
+| `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`         | 字符串（边界值）             | `'10'`                   |
+| `DATE` / `DATE_TIME` 上的 `IS`, `IS_BEFORE`, `IS_AFTER` | ISO 8601 字符串         | `'2025-01-01T00:00:00Z'` |
+| `IS_EMPTY`, `IS_NOT_EMPTY`                            | 空字符串                 | `''`                     |
+| `BOOLEAN` 上的 `IS`                                     | `'true'` 或 `'false'` | `'true'`                 |
+
+## 视图在 UI 中如何显示
+
+单独一个视图无法从侧边栏访问。 要让它显示在侧边栏中，请将其与类型为 `VIEW`、指向该视图 `universalIdentifier` 的[导航菜单项](/l/zh/developers/extend/apps/layout/navigation-menu-items)配对。 这是规范用法：每个自定义对象通常都会提供一个默认视图，以及一个在侧边栏中打开该视图的条目。

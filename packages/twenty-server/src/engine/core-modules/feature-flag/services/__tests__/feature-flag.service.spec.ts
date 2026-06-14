@@ -1,5 +1,4 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 
@@ -11,6 +10,7 @@ import {
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 jest.mock(
@@ -37,7 +37,7 @@ describe('FeatureFlagService', () => {
   };
 
   const workspaceId = 'workspace-id';
-  const featureFlag = FeatureFlagKey.IS_AI_ENABLED;
+  const featureFlag = FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -51,7 +51,7 @@ describe('FeatureFlagService', () => {
       providers: [
         FeatureFlagService,
         {
-          provide: getRepositoryToken(FeatureFlagEntity),
+          provide: getWorkspaceScopedRepositoryToken(FeatureFlagEntity),
           useValue: mockFeatureFlagRepository,
         },
         {
@@ -121,11 +121,11 @@ describe('FeatureFlagService', () => {
       // Prepare
       mockWorkspaceCacheService.getOrRecompute.mockResolvedValue({
         featureFlagsMap: {
-          [FeatureFlagKey.IS_AI_ENABLED]: false,
+          [FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED]: false,
         },
       });
       const mockFeatureFlags = [
-        { key: FeatureFlagKey.IS_AI_ENABLED, value: false },
+        { key: FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED, value: false },
       ];
 
       // Act
@@ -144,7 +144,11 @@ describe('FeatureFlagService', () => {
     it('should return a map of feature flags for a workspace', async () => {
       // Prepare
       const mockFeatureFlags = [
-        { key: FeatureFlagKey.IS_AI_ENABLED, value: false, workspaceId },
+        {
+          key: FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
+          value: false,
+          workspaceId,
+        },
       ];
 
       mockFeatureFlagRepository.find.mockResolvedValue(mockFeatureFlags);
@@ -154,7 +158,7 @@ describe('FeatureFlagService', () => {
 
       // Assert
       expect(result).toEqual({
-        [FeatureFlagKey.IS_AI_ENABLED]: false,
+        [FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED]: false,
       });
     });
   });
@@ -162,7 +166,7 @@ describe('FeatureFlagService', () => {
   describe('enableFeatureFlags', () => {
     it('should enable multiple feature flags for a workspace', async () => {
       // Prepare
-      const keys = [FeatureFlagKey.IS_AI_ENABLED];
+      const keys = [FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED];
 
       mockFeatureFlagRepository.upsert.mockResolvedValue({});
       mockWorkspaceCacheService.invalidateAndRecompute.mockResolvedValue(
@@ -174,7 +178,8 @@ describe('FeatureFlagService', () => {
 
       // Assert
       expect(mockFeatureFlagRepository.upsert).toHaveBeenCalledWith(
-        keys.map((key) => ({ workspaceId, key, value: true })),
+        workspaceId,
+        keys.map((key) => ({ key, value: true })),
         {
           conflictPaths: ['workspaceId', 'key'],
           skipUpdateIfNoValuesChanged: true,
@@ -214,10 +219,9 @@ describe('FeatureFlagService', () => {
 
       // Assert
       expect(result).toEqual(mockFeatureFlag);
-      expect(mockFeatureFlagRepository.save).toHaveBeenCalledWith({
+      expect(mockFeatureFlagRepository.save).toHaveBeenCalledWith(workspaceId, {
         key: FeatureFlagKey[featureFlag],
         value,
-        workspaceId,
       });
       expect(
         mockWorkspaceCacheService.invalidateAndRecompute,

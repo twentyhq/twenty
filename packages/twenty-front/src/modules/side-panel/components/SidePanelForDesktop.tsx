@@ -1,25 +1,25 @@
+import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
 import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
 import { SidePanelWidthEffect } from '@/side-panel/components/SidePanelWidthEffect';
 import { SIDE_PANEL_CLICK_OUTSIDE_ID } from '@/side-panel/constants/SidePanelClickOutsideId';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { SIDE_PANEL_CONSTRAINTS } from '@/side-panel/constants/SidePanelConstraints';
 import { useSidePanelCloseAnimationCompleteCleanup } from '@/side-panel/hooks/useSidePanelCloseAnimationCompleteCleanup';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import {
   SIDE_PANEL_WIDTH_VAR,
   sidePanelWidthState,
 } from '@/side-panel/states/sidePanelWidthState';
-import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
-import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
-import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
 import { ModalContainerContext } from '@/ui/layout/modal/contexts/ModalContainerContext';
-import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { ResizablePanelGap } from '@/ui/layout/resizable-panel/components/ResizablePanelGap';
-import { SIDE_PANEL_CONSTRAINTS } from '@/side-panel/constants/SidePanelConstraints';
+import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { useCallback, useState } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledSidePanelWrapper = styled.div<{
   isOpen: boolean;
@@ -31,14 +31,13 @@ const StyledSidePanelWrapper = styled.div<{
   transition: ${({ isResizing }) =>
     isResizing
       ? 'none'
-      : `width ${themeCssVariables.animation.duration.normal}s`};
+      : `width calc(${themeCssVariables.animation.duration.normal} * 1s)`};
   width: ${({ isOpen }) => (isOpen ? `var(${SIDE_PANEL_WIDTH_VAR})` : '0px')};
 `;
 
 const StyledSidePanel = styled.aside`
   background: ${themeCssVariables.background.primary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
+  border-left: 1px solid ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -57,8 +56,6 @@ const StyledModalContainer = styled.div`
   width: 100%;
   z-index: 1;
 `;
-
-const GAP_WIDTH = 8;
 
 export const SidePanelForDesktop = () => {
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
@@ -130,7 +127,7 @@ export const SidePanelForDesktop = () => {
         currentWidth={sidePanelWidth}
         onWidthChange={handleWidthChange}
         onCollapse={handleCollapse}
-        gapWidth={isSidePanelOpened ? GAP_WIDTH : 0}
+        gapWidth={0}
         cssVariableName={SIDE_PANEL_WIDTH_VAR}
         onResizeStart={handleResizeStart}
       />

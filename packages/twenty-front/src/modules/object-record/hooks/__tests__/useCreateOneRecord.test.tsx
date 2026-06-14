@@ -9,12 +9,13 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
-const personId = 'a7286b9a-c039-4a89-9567-2dfa7953cda9';
-const input = { name: { firstName: 'John', lastName: 'Doe' } };
+const PERSON_ID = 'a7286b9a-c039-4a89-9567-2dfa7953cda9';
 
 jest.mock('uuid', () => ({
-  v4: jest.fn(() => personId),
+  v4: jest.fn(() => 'a7286b9a-c039-4a89-9567-2dfa7953cda9'),
 }));
+
+const input = { name: { firstName: 'John', lastName: 'Doe' } };
 
 jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
 const mockRefetchAggregateQueries = jest.fn();
@@ -26,11 +27,11 @@ const mocks = [
   {
     request: {
       query,
-      variables: { input: { ...input, id: personId } },
+      variables: { input: { ...input, id: PERSON_ID } },
     },
     result: jest.fn(() => ({
       data: {
-        createPerson: { ...responseData, ...input, id: personId },
+        createPerson: { ...responseData, ...input, id: PERSON_ID },
       },
     })),
   },
@@ -58,7 +59,7 @@ describe('useCreateOneRecord', () => {
     await act(async () => {
       const res = await result.current.createOneRecord(input);
       expect(res).toBeDefined();
-      expect(res).toHaveProperty('id', personId);
+      expect(res).toHaveProperty('id', PERSON_ID);
     });
 
     expect(mocks[0].result).toHaveBeenCalled();

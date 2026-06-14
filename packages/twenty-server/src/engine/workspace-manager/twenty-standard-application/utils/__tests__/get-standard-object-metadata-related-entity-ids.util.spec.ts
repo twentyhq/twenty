@@ -1,3 +1,5 @@
+import { getStandardObjectMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-object-metadata-related-entity-ids.util';
+
 let uuidCounter = 0;
 
 jest.mock('uuid', () => ({
@@ -5,8 +7,6 @@ jest.mock('uuid', () => ({
     () => `00000000-0000-0000-0000-${String(++uuidCounter).padStart(12, '0')}`,
   ),
 }));
-
-import { getStandardObjectMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-object-metadata-related-entity-ids.util';
 
 describe('getStandardObjectMetadataRelatedEntityIds', () => {
   beforeEach(() => {

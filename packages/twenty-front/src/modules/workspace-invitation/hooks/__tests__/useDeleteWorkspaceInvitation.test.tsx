@@ -1,5 +1,6 @@
 import { useDeleteWorkspaceInvitation } from '@/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
 import { renderHook } from '@testing-library/react';
+import { GetWorkspaceInvitationsDocument } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const mutationCallSpy = jest.fn();
@@ -29,7 +30,8 @@ describe('useDeleteWorkspaceInvitation', () => {
     );
 
     expect(mutationCallSpy).toHaveBeenCalledWith({
-      onCompleted: expect.any(Function),
+      onError: expect.any(Function),
+      refetchQueries: [GetWorkspaceInvitationsDocument],
       variables: params,
     });
   });

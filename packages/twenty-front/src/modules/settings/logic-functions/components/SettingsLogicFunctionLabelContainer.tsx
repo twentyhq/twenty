@@ -1,7 +1,7 @@
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledHeaderTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};
@@ -17,11 +17,13 @@ const StyledHeaderTitle = styled.div`
 type SettingsLogicFunctionLabelContainerProps = {
   value: string;
   onChange: (value: string) => void;
+  readonly?: boolean;
 };
 
 export const SettingsLogicFunctionLabelContainer = ({
   value,
   onChange,
+  readonly = false,
 }: SettingsLogicFunctionLabelContainerProps) => {
   return (
     <StyledHeaderTitle>
@@ -31,6 +33,7 @@ export const SettingsLogicFunctionLabelContainer = ({
         value={value}
         onChange={onChange}
         placeholder={t`Function name`}
+        disabled={readonly}
       />
     </StyledHeaderTitle>
   );

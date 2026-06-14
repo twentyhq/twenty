@@ -50,6 +50,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     frontComponent: {
       foreignKey: 'frontComponentId',
     },
+    pageLayout: {
+      foreignKey: 'pageLayoutId',
+    },
   },
   navigationMenuItem: {
     workspace: null,
@@ -63,6 +66,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     },
     view: {
       foreignKey: 'viewId',
+    },
+    pageLayout: {
+      foreignKey: 'pageLayoutId',
     },
   },
   fieldMetadata: {
@@ -79,7 +85,6 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     },
   },
   objectMetadata: {
-    dataSource: null,
     workspace: null,
     application: null,
   },
@@ -127,6 +132,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     view: {
       foreignKey: 'viewId',
     },
+    relationTargetFieldMetadata: {
+      foreignKey: 'relationTargetFieldMetadataId',
+    },
     viewFilterGroup: {
       foreignKey: 'viewFilterGroupId',
     },
@@ -163,12 +171,19 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     workspace: null,
     application: null,
   },
-  permissionFlag: {
+  rolePermissionFlag: {
     workspace: null,
     application: null,
     role: {
       foreignKey: 'roleId',
     },
+    permissionFlag: {
+      foreignKey: 'permissionFlagId',
+    },
+  },
+  permissionFlag: {
+    workspace: null,
+    application: null,
   },
   objectPermission: {
     workspace: null,
@@ -270,6 +285,10 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     workspace: null,
     application: null,
   },
+  applicationVariable: {
+    workspace: null,
+    application: null,
+  },
   viewSort: {
     application: null,
     workspace: null,
@@ -279,6 +298,10 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     view: {
       foreignKey: 'viewId',
     },
+  },
+  connectionProvider: {
+    workspace: null,
+    application: null,
   },
 } as const satisfies ManyToOneMetadataRelationsProperties;
 

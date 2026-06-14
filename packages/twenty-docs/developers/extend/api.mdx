@@ -1,140 +1,55 @@
 ---
 title: APIs
-description: Query and modify your CRM data programmatically using REST or GraphQL.
+icon: "plug"
+description: REST and GraphQL APIs generated from your workspace schema.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-Twenty was built to be developer-friendly, offering powerful APIs that adapt to your custom data model. We provide four distinct API types to meet different integration needs.
+## Schema-per-tenant APIs
 
-## Developer-First Approach
+There is no static API reference for Twenty. Each workspace has its own schema — when you add a custom object (say `Invoice`), it immediately gets REST and GraphQL endpoints identical to built-in objects like `Company` or `Person`. The API is generated from the schema, so endpoints use your object and field names directly — no opaque IDs.
 
-Twenty generates APIs specifically for your data model:
-- **No long IDs required**: Use your object and field names directly in endpoints
-- **Standard and custom objects treated equally**: Your custom objects get the same API treatment as built-in ones
-- **Dedicated endpoints**: Each object and field gets its own API endpoint
-- **Custom documentation**: Generated specifically for your workspace's data model
+Your workspace-specific API documentation is available under **Settings → API & Webhooks** after creating an API key. It includes an interactive playground where you can execute real calls against your data.
 
-<Note>
-Your personalized API documentation is available under **Settings → API & Webhooks** after creating an API key. Since Twenty generates APIs that match your custom data model, the documentation is unique to your workspace.
-</Note>
+## Two APIs
 
-## The Two API Types
+**Core API** — `/rest/` and `/graphql/`
 
-### Core API
-Accessed on `/rest/` or `/graphql/`
+CRUD on records: People, Companies, Opportunities, your custom objects. Query, filter, traverse relations.
 
-Work with your actual **records** (the data):
-- Create, read, update, delete People, Companies, Opportunities, etc.
-- Query and filter data
-- Manage record relationships
+**Metadata API** — `/rest/metadata/` and `/metadata/`
 
-### Metadata API
-Accessed on `/rest/metadata/` or `/metadata/`
+Schema management: create/modify/delete objects, fields, and relations. This is how you programmatically change your data model.
 
-Manage your **workspace and data model**:
-- Create, modify, or delete objects and fields
-- Configure workspace settings
-- Define relationships between objects
+Both are available as REST and GraphQL. GraphQL adds batch upserts and the ability to traverse relations in a single query. Same underlying data either way.
 
-## REST vs GraphQL
-
-Both Core and Metadata APIs are available in REST and GraphQL formats:
-
-| Format | Available Operations |
-|--------|---------------------|
-| **REST** | CRUD, batch operations, upserts |
-| **GraphQL** | Same + **batch upserts**, relationship queries in one call |
-
-Choose based on your needs — both formats access the same data.
-
-## API Endpoints
+## Base URLs
 
 | Environment | Base URL |
 |-------------|----------|
-| **Cloud** | `https://api.twenty.com/` |
-| **Self-Hosted** | `https://{your-domain}/` |
+| Cloud | `https://api.twenty.com/` |
+| Self-Hosted | `https://{your-domain}/` |
 
 ## Authentication
-
-Every API request requires an API key in the header:
 
 ```
 Authorization: Bearer YOUR_API_KEY
 ```
 
-### Create an API Key
-
-1. Go to **Settings → APIs & Webhooks**
-2. Click **+ Create key**
-3. Configure:
-   - **Name**: Descriptive name for the key
-   - **Expiration Date**: When the key expires
-4. Click **Save**
-5. **Copy immediately** — the key is only shown once
+Create an API key in **Settings → API & Webhooks → + Create key**. Copy it immediately — it's shown once. Keys can be scoped to a specific role under **Settings → Members → Roles → Assignment tab** to limit what they can access.
 
 <VimeoEmbed videoId="928786722" title="Creating API key" />
 
-<Warning>
-Your API key grants access to sensitive data. Don't share it with untrusted services. If compromised, disable it immediately and generate a new one.
-</Warning>
+For OAuth-based access (external apps acting on behalf of users), see [OAuth](/developers/extend/oauth).
 
-### Assign a Role to an API Key
+## Batch operations
 
-For better security, assign a specific role to limit access:
+Both REST and GraphQL support batching up to 60 records per request — create, update, or delete. GraphQL also supports batch upsert (create-or-update in one call) using plural names like `CreateCompanies`.
 
-1. Go to **Settings → Roles**
-2. Click on the role to assign
-3. Open the **Assignment** tab
-4. Under **API Keys**, click **+ Assign to API key**
-5. Select the API key
-
-The key will inherit that role's permissions. See [Permissions](/user-guide/permissions-access/capabilities/permissions) for details.
-
-### Manage API Keys
-
-**Regenerate**: Settings → APIs & Webhooks → Click key → **Regenerate**
-
-**Delete**: Settings → APIs & Webhooks → Click key → **Delete**
-
-## API Playground
-
-Test your APIs directly in the browser with our built-in playground — available for both **REST** and **GraphQL**.
-
-### Access the Playground
-
-1. Go to **Settings → APIs & Webhooks**
-2. Create an API key (required)
-3. Click on **REST API** or **GraphQL API** to open the playground
-
-### What You Get
-
-- **Interactive documentation**: Generated for your specific data model
-- **Live testing**: Execute real API calls against your workspace
-- **Schema explorer**: Browse available objects, fields, and relationships
-- **Request builder**: Construct queries with autocomplete
-
-The playground reflects your custom objects and fields, so documentation is always accurate for your workspace.
-
-## Batch Operations
-
-Both REST and GraphQL support batch operations:
-- **Batch size**: Up to 60 records per request
-- **Operations**: Create, update, delete multiple records
-
-**GraphQL-only features:**
-- **Batch Upsert**: Create or update in one call
-- Use plural object names (e.g., `CreateCompanies` instead of `CreateCompany`)
-
-## Rate Limits
-
-API requests are throttled to ensure platform stability:
+## Rate limits
 
 | Limit | Value |
 |-------|-------|
-| **Requests** | 100 calls per minute |
-| **Batch size** | 60 records per call |
-
-<Tip>
-Use batch operations to maximize throughput — process up to 60 records in a single API call instead of making individual requests.
-</Tip>
+| Requests | 100 per minute |
+| Batch size | 60 records per call |

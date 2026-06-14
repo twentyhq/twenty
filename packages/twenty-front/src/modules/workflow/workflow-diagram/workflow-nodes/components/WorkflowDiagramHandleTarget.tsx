@@ -1,13 +1,16 @@
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_TARGET_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultTargetHandleId';
 import { styled } from '@linaria/react';
 import { Handle, Position } from '@xyflow/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 type WorkflowDiagramHandleTargetProps = {
   isConnectable?: boolean;
 };
 
 const StyledHandleContainer = styled.div`
+  inset: 0;
+  position: absolute;
+
   & .react-flow__handle {
     border-radius: ${themeCssVariables.border.radius.md};
     height: 100%;

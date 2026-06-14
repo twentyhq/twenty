@@ -1,14 +1,18 @@
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 
-import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
-import { JsonTree } from 'twenty-ui/json-visualizer';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconChevronDown, IconChevronUp } from 'twenty-ui-deprecated/display';
+import { JsonTree } from 'twenty-ui-deprecated/json-visualizer';
+import { AnimatedExpandableContainer } from 'twenty-ui-deprecated/layout';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 import { useLingui } from '@lingui/react/macro';
 import { type DataMessagePart } from 'twenty-shared/ai';
 import { type JsonValue } from 'type-fest';
+import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContainer = styled.div`
@@ -157,6 +161,7 @@ type TimingTabProps = {
 
 const TimingTab = ({ debug }: TimingTabProps) => {
   const { t } = useLingui();
+  const { formatUsageValue } = useUsageValueFormatter();
   const totalTime =
     debug.agentExecutionStartTimeMs !== undefined
       ? `${debug.agentExecutionStartTimeMs + (debug.agentExecutionTimeMs || 0)}ms`
@@ -164,7 +169,7 @@ const TimingTab = ({ debug }: TimingTabProps) => {
 
   const totalCost =
     debug.totalCostInCredits !== undefined
-      ? formatNumber(debug.totalCostInCredits)
+      ? formatUsageValue(debug.totalCostInCredits)
       : undefined;
 
   return (
@@ -231,10 +236,7 @@ const TimingTab = ({ debug }: TimingTabProps) => {
             : undefined
         }
       />
-      <TimingRow
-        label={t`Total cost`}
-        value={totalCost !== undefined ? t`${totalCost} credits` : undefined}
-      />
+      <TimingRow label={t`Total cost`} value={totalCost} />
     </StyledTimingSection>
   );
 };

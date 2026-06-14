@@ -15,6 +15,7 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
+import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 
 export const buildTaskTargetStandardFlatFieldMetadatas = ({
   now,
@@ -39,7 +40,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       icon: 'Icon123',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'uuid',
     },
     standardObjectMetadataRelatedEntityIds,
@@ -58,7 +59,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
@@ -80,7 +81,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarClock',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
@@ -102,7 +103,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isSystem: true,
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
       },
@@ -122,7 +123,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`The creator of the record`),
       icon: 'IconCreativeCommonsSa',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -147,7 +148,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       ),
       icon: 'IconUserCircle',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -189,6 +190,12 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
+      settings: {
+        generatedType: 'STORED',
+        asExpression: getTsVectorColumnExpressionFromFields([
+          { name: 'id', type: FieldMetadataType.UUID },
+        ]),
+      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -208,7 +215,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`TaskTarget task`),
       icon: 'IconCheckbox',
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       targetObjectName: 'task',
       targetFieldName: 'taskTargets',
       settings: {
@@ -233,7 +240,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`TaskTarget target`),
       icon: 'IconArrowUpRight',
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       targetObjectName: 'person',
       targetFieldName: 'taskTargets',
       settings: {
@@ -258,7 +265,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`TaskTarget target`),
       icon: 'IconArrowUpRight',
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       targetObjectName: 'company',
       targetFieldName: 'taskTargets',
       settings: {
@@ -283,7 +290,7 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`TaskTarget target`),
       icon: 'IconArrowUpRight',
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       targetObjectName: 'opportunity',
       targetFieldName: 'taskTargets',
       settings: {

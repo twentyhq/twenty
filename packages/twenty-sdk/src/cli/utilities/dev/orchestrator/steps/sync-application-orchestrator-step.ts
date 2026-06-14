@@ -7,7 +7,9 @@ import {
   type OrchestratorStateStepEvent,
   type OrchestratorStateSyncStatus,
 } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
-import { serializeError } from '@/cli/utilities/error/serialize-error';
+import { formatSyncActionsSummary } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
+import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
+import { getSyncErrorRecoveryHint } from '@/cli/utilities/error/get-sync-error-recovery-hint';
 import { type Manifest } from 'twenty-shared/application';
 
 export type SyncApplicationOrchestratorStepOutput = {
@@ -19,19 +21,23 @@ export class SyncApplicationOrchestratorStep {
   private apiService: ApiService;
   private state: OrchestratorState;
   private notify: () => void;
+  private verbose: boolean;
 
   constructor({
     apiService,
     state,
     notify,
+    verbose,
   }: {
     apiService: ApiService;
     state: OrchestratorState;
     notify: () => void;
+    verbose?: boolean;
   }) {
     this.apiService = apiService;
     this.state = state;
     this.notify = notify;
+    this.verbose = verbose ?? false;
   }
 
   async execute(input: {
@@ -64,6 +70,9 @@ export class SyncApplicationOrchestratorStep {
     const syncResult = await this.apiService.syncApplication(manifest);
 
     if (syncResult.success) {
+      const syncData = syncResult.data;
+
+      events.push(...formatSyncActionsSummary(syncData.actions));
       events.push({ message: '✓ Synced', status: 'success' });
       step.output = { syncStatus: 'synced', error: null };
       step.status = 'done';
@@ -74,12 +83,34 @@ export class SyncApplicationOrchestratorStep {
       return;
     }
 
-    const errorMessage = `Sync failed with error: ${serializeError(syncResult.error)}`;
+    const errorEvents = this.verbose
+      ? null
+      : formatManifestValidationErrors(syncResult.error);
 
-    events.push({ message: errorMessage, status: 'error' });
-    step.output = { syncStatus: 'error', error: errorMessage };
+    if (errorEvents) {
+      events.push(...errorEvents);
+      events.push({
+        message: 'Add --verbose to see full error log',
+        status: 'info',
+      });
+    } else {
+      events.push({
+        message: `Sync failed with error: ${syncResult.message ?? 'Sync failed'}`,
+        status: 'error',
+      });
+    }
+
+    const recoveryHint = getSyncErrorRecoveryHint(syncResult.message);
+
+    if (recoveryHint) {
+      events.push({ message: recoveryHint, status: 'info' });
+    }
+
+    const summaryMessage = errorEvents ? errorEvents[0].message : 'Sync failed';
+
+    step.output = { syncStatus: 'error', error: summaryMessage };
     step.status = 'error';
-    this.state.updatePipeline({ status: 'error', error: errorMessage });
+    this.state.updatePipeline({ status: 'error', error: summaryMessage });
     this.state.updateAllEntitiesStatus('error');
     this.state.applyStepEvents(events);
   }

@@ -1,11 +1,6 @@
-import { AgentChatAiSdkStreamEffect } from '@/ai/components/AgentChatAiSdkStreamEffect';
-import { AgentChatMessagesFetchEffect } from '@/ai/components/AgentChatMessagesFetchEffect';
-import { AgentChatSessionStartTimeEffect } from '@/ai/components/AgentChatSessionStartTimeEffect';
-
-import { AgentChatStreamingAutoScrollEffect } from '@/ai/components/AgentChatStreamingAutoScrollEffect';
-import { AgentChatStreamingPartsDiffSyncEffect } from '@/ai/components/AgentChatStreamingPartsDiffSyncEffect';
+import { AgentChatRuntimeEffects } from '@/ai/components/AgentChatRuntimeEffects';
 import { AgentChatThreadInitializationEffect } from '@/ai/components/AgentChatThreadInitializationEffect';
-import { AgentChatComponentInstanceContext } from '@/ai/states/AgentChatComponentInstanceContext';
+import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { Suspense } from 'react';
 
 export const AgentChatProviderContent = ({
@@ -19,11 +14,7 @@ export const AgentChatProviderContent = ({
         value={{ instanceId: 'agentChatComponentInstance' }}
       >
         <AgentChatThreadInitializationEffect />
-        <AgentChatMessagesFetchEffect />
-        <AgentChatAiSdkStreamEffect />
-        <AgentChatStreamingPartsDiffSyncEffect />
-        <AgentChatSessionStartTimeEffect />
-        <AgentChatStreamingAutoScrollEffect />
+        <AgentChatRuntimeEffects />
         {children}
       </AgentChatComponentInstanceContext.Provider>
     </Suspense>

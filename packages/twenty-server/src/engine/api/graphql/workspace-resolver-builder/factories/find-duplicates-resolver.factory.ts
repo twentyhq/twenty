@@ -17,9 +17,7 @@ import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver
 import { createQueryRunnerContext } from 'src/engine/api/graphql/workspace-resolver-builder/utils/create-query-runner-context.util';
 
 @Injectable()
-export class FindDuplicatesResolverFactory
-  implements WorkspaceResolverBuilderFactoryInterface
-{
+export class FindDuplicatesResolverFactory implements WorkspaceResolverBuilderFactoryInterface {
   public static methodName = RESOLVER_METHOD_NAMES.FIND_DUPLICATES;
 
   constructor(
@@ -39,7 +37,7 @@ export class FindDuplicatesResolverFactory
       });
 
       try {
-        const paginatedDuplicates =
+        const { results: paginatedDuplicates } =
           await this.commonFindDuplicatesQueryRunnerService.execute(
             { ...args, selectedFields },
             resolverContext,

@@ -5,6 +5,10 @@ import { FileApi } from '@/cli/utilities/api/file-api';
 import { LogicFunctionApi } from '@/cli/utilities/api/logic-function-api';
 import { SchemaApi } from '@/cli/utilities/api/schema-api';
 import { type Manifest } from 'twenty-shared/application';
+import {
+  type MetadataValidationErrorResponse,
+  type SyncAction,
+} from 'twenty-shared/metadata';
 
 type ApiServiceOptions = {
   disableInterceptors?: boolean;
@@ -32,6 +36,10 @@ export class ApiService {
     return this.apiClient.validateAuth();
   }
 
+  getWorkspaceFrontendUrl(): Promise<string | null> {
+    return this.apiClient.getWorkspaceFrontendUrl();
+  }
+
   refreshToken(): Promise<string | null> {
     return this.apiClient.refreshToken();
   }
@@ -52,26 +60,53 @@ export class ApiService {
     return this.applicationApi.createApplicationRegistration(...args);
   }
 
+  rotateApplicationRegistrationClientSecret(
+    ...args: Parameters<
+      ApplicationApi['rotateApplicationRegistrationClientSecret']
+    >
+  ) {
+    return this.applicationApi.rotateApplicationRegistrationClientSecret(
+      ...args,
+    );
+  }
+
   createDevelopmentApplication(
     ...args: Parameters<ApplicationApi['createDevelopmentApplication']>
   ) {
     return this.applicationApi.createDevelopmentApplication(...args);
   }
 
-  syncApplication(manifest: Manifest): Promise<ApiResponse> {
-    return this.applicationApi.syncApplication(manifest);
+  syncApplication(
+    manifest: Manifest,
+    options?: { dryRun?: boolean },
+  ): Promise<
+    ApiResponse<
+      {
+        applicationUniversalIdentifier: string;
+        actions: SyncAction[];
+      },
+      MetadataValidationErrorResponse
+    >
+  > {
+    return this.applicationApi.syncApplication(manifest, options);
   }
 
   uninstallApplication(universalIdentifier: string): Promise<ApiResponse> {
     return this.applicationApi.uninstallApplication(universalIdentifier);
   }
 
-  getSchema(options?: { authToken?: string }): Promise<ApiResponse<string>> {
+  syncMarketplaceCatalog(): Promise<ApiResponse<boolean>> {
+    return this.applicationApi.syncMarketplaceCatalog();
+  }
+
+  getSchema(options?: {
+    appAccessToken?: string;
+  }): Promise<ApiResponse<string>> {
     return this.schemaApi.getSchema(options);
   }
 
   getMetadataSchema(options?: {
-    authToken?: string;
+    appAccessToken?: string;
   }): Promise<ApiResponse<string>> {
     return this.schemaApi.getMetadataSchema(options);
   }

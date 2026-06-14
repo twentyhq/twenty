@@ -1,7 +1,7 @@
 import { type Request } from 'express';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { type RawAuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 
 export const bindDataToRequestObject = (
   data: RawAuthContext,
@@ -20,6 +20,7 @@ export const bindDataToRequestObject = (
   request.userWorkspaceId = data.userWorkspaceId;
   request.authProvider = data.authProvider;
   request.impersonationContext = data.impersonationContext;
+  request.tokenType = data.tokenType;
 
   request.locale =
     data.userWorkspace?.locale ??

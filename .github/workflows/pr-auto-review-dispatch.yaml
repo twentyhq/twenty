@@ -1,0 +1,26 @@
+name: PR Review Dispatch
+
+on:
+  pull_request_target:
+    types: [ready_for_review, synchronize]
+
+permissions: {}
+
+concurrency:
+  group: pr-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  dispatch:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Dispatch to ci-privileged
+        env:
+          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh api repos/twentyhq/ci-privileged/dispatches \
+            -f event_type=pr-review \
+            -f "client_payload[pr_number]=$PR_NUMBER"

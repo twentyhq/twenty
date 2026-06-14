@@ -73,6 +73,8 @@ export const createStandardNavigationMenuItemFlatMetadata = ({
     viewUniversalIdentifier: isObjectType ? null : flatView.universalIdentifier,
     folderId: null,
     folderUniversalIdentifier: null,
+    pageLayoutId: null,
+    pageLayoutUniversalIdentifier: null,
     name: null,
     link: null,
     icon: null,

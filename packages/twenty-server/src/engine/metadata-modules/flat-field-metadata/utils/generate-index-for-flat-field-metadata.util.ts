@@ -30,6 +30,7 @@ export const generateIndexForFlatFieldMetadata = ({
               flatFieldMetadata.universalIdentifier,
             indexMetadataUniversalIdentifier,
             order: 0,
+            subFieldName: null,
             updatedAt: createdAt,
           },
         ],

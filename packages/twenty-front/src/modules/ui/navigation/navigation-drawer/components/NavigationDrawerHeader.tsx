@@ -1,8 +1,11 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { IconSearch } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconSearch } from 'twenty-ui-deprecated/display';
+import { LightIconButton } from 'twenty-ui-deprecated/input';
+import {
+  MOBILE_VIEWPORT,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
@@ -16,11 +19,17 @@ const StyledContainer = styled.div<{ isExpanded: boolean }>`
   align-items: ${({ isExpanded }) => (isExpanded ? 'center' : 'flex-start')};
   display: flex;
   flex-direction: ${({ isExpanded }) => (isExpanded ? 'row' : 'column')};
+  flex-shrink: 0;
   gap: ${({ isExpanded }) => (isExpanded ? '0' : themeCssVariables.spacing[4])};
   min-height: ${PAGE_BAR_MIN_HEIGHT}px;
   padding-right: ${themeCssVariables.spacing[2]};
   transition: gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
   user-select: none;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    padding-left: ${themeCssVariables.spacing[5]};
+    padding-right: ${themeCssVariables.spacing[5]};
+  }
 `;
 
 const StyledRightActions = styled.div<{ isExpanded: boolean }>`
@@ -29,7 +38,8 @@ const StyledRightActions = styled.div<{ isExpanded: boolean }>`
   display: flex;
   flex-direction: ${({ isExpanded }) => (isExpanded ? 'row' : 'column')};
   flex-shrink: 0;
-  gap: ${({ isExpanded }) => (isExpanded ? '0' : themeCssVariables.spacing[1])};
+  gap: ${({ isExpanded }) =>
+    isExpanded ? '2px' : themeCssVariables.spacing[1]};
   margin-left: ${({ isExpanded }) => (isExpanded ? 'auto' : '0')};
   transition: gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
 `;
@@ -37,8 +47,16 @@ const StyledRightActions = styled.div<{ isExpanded: boolean }>`
 const StyledNavigationDrawerCollapseButtonContainer = styled.div`
   > * {
     height: ${themeCssVariables.spacing[6]};
-    padding-right: ${themeCssVariables.spacing[1]};
+    padding-right: 0;
     width: ${themeCssVariables.spacing[6]};
+  }
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    > * {
+      height: ${themeCssVariables.spacing[8]};
+      padding-right: 0;
+      width: ${themeCssVariables.spacing[8]};
+    }
   }
 `;
 
@@ -68,8 +86,8 @@ export const NavigationDrawerHeader = ({
       <StyledWorkspaceDropdownContainer>
         <MultiWorkspaceDropdownButton />
       </StyledWorkspaceDropdownContainer>
-      {!isMobile && (
-        <StyledRightActions isExpanded={isNavigationDrawerExpanded}>
+      <StyledRightActions isExpanded={isNavigationDrawerExpanded}>
+        {!isMobile && (
           <LightIconButton
             Icon={IconSearch}
             accent="secondary"
@@ -77,13 +95,13 @@ export const NavigationDrawerHeader = ({
             onClick={openRecordsSearchPage}
             aria-label={t`Search`}
           />
-          {isNavigationDrawerExpanded && showCollapseButton && (
-            <StyledNavigationDrawerCollapseButtonContainer>
-              <NavigationDrawerCollapseButton direction="left" />
-            </StyledNavigationDrawerCollapseButtonContainer>
-          )}
-        </StyledRightActions>
-      )}
+        )}
+        {isNavigationDrawerExpanded && showCollapseButton && (
+          <StyledNavigationDrawerCollapseButtonContainer>
+            <NavigationDrawerCollapseButton direction="left" />
+          </StyledNavigationDrawerCollapseButtonContainer>
+        )}
+      </StyledRightActions>
     </StyledContainer>
   );
 };

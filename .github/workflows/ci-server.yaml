@@ -25,6 +25,7 @@ jobs:
         packages/twenty-server/**
         packages/twenty-front/src/generated/**
         packages/twenty-front/src/generated-metadata/**
+        packages/twenty-front/src/generated-admin/**
         packages/twenty-client-sdk/**
         packages/twenty-emails/**
         packages/twenty-shared/**
@@ -36,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
@@ -64,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
@@ -77,21 +78,93 @@ jobs:
           tag: scope:backend
           tasks: lint,typecheck
 
+  server-previous-version-upgrade-mutation-guard:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 10
+      - name: Get changed upgrade-version-command files
+        id: changed-files
+        uses: tj-actions/changed-files@48d8f15b2aaa3d255ca5af3eba4870f807ce6b3c # v45.0.9
+        with:
+          files: |
+            packages/twenty-server/src/database/commands/upgrade-version-command/**
+      - name: Check upgrade version commands are in current version only
+        if: >
+          steps.changed-files.outputs.any_changed == 'true' &&
+          !contains(github.event.pull_request.labels.*.name, 'ci:allow-previous-version-upgrade-mutation')
+        run: |
+          VERSION_CONSTANT_FILE="packages/twenty-server/src/engine/core-modules/upgrade/constants/twenty-current-version.constant.ts"
+
+          CURRENT_VERSION=$(sed -n "s/.*TWENTY_CURRENT_VERSION = '\([0-9.]*\)'.*/\1/p" "$VERSION_CONSTANT_FILE")
+
+          if [ -z "$CURRENT_VERSION" ]; then
+            echo "::error::Could not extract TWENTY_CURRENT_VERSION from $VERSION_CONSTANT_FILE"
+            exit 1
+          fi
+
+          CURRENT_DIR=$(echo "$CURRENT_VERSION" | sed -E 's/^([0-9]+)\.([0-9]+)\..*/\1-\2/')
+
+          echo "Current version: $CURRENT_VERSION (directory: $CURRENT_DIR)"
+
+          ADDED_OFFENDERS=""
+          MODIFIED_OFFENDERS=""
+
+          check_files() {
+            local category="$1"
+            shift
+            for file in "$@"; do
+              VERSION_DIR=$(echo "$file" | sed -n 's|.*upgrade-version-command/\([0-9]*-[0-9]*\)/.*|\1|p')
+
+              if [ -n "$VERSION_DIR" ] && [ "$VERSION_DIR" != "$CURRENT_DIR" ]; then
+                if [ "$category" = "added" ]; then
+                  ADDED_OFFENDERS="$ADDED_OFFENDERS\n  - $file (version directory: $VERSION_DIR)"
+                else
+                  MODIFIED_OFFENDERS="$MODIFIED_OFFENDERS\n  - $file (version directory: $VERSION_DIR)"
+                fi
+              fi
+            done
+          }
+
+          check_files "added" ${{ steps.changed-files.outputs.added_files }}
+          check_files "modified" ${{ steps.changed-files.outputs.modified_files }}
+
+          if [ -n "$ADDED_OFFENDERS" ] || [ -n "$MODIFIED_OFFENDERS" ]; then
+            echo "This PR touches upgrade command files outside the current version directory ($CURRENT_DIR / $CURRENT_VERSION)."
+
+            if [ -n "$ADDED_OFFENDERS" ]; then
+              echo ""
+              echo "New files added to non-current version directories:"
+              echo -e "$ADDED_OFFENDERS"
+            fi
+
+            if [ -n "$MODIFIED_OFFENDERS" ]; then
+              echo ""
+              echo "Existing files modified in non-current version directories:"
+              echo -e "$MODIFIED_OFFENDERS"
+            fi
+
+            echo ""
+            echo "If this is intentional, add the label 'ci:allow-previous-version-upgrade-mutation' to this PR and re-run CI."
+            echo "Otherwise, please move your changes to the current version directory ($CURRENT_DIR)."
+
+            echo "::error::Upgrade commands were added or modified in non-current version directories."
+            exit 1
+          fi
+
   server-validation:
     needs: server-build
     timeout-minutes: 30
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: twentycrm/twenty-postgres-spilo
-        credentials:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        image: postgres:18
         env:
-          PGUSER_SUPERUSER: postgres
-          PGPASSWORD_SUPERUSER: postgres
-          ALLOW_NOSSL: 'true'
-          SPILO_PROVIDER: 'local'
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
         options: >-
@@ -101,14 +174,11 @@ jobs:
           --health-retries 5
       redis:
         image: redis
-        credentials:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
         ports:
           - 6379:6379
     steps:
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
@@ -152,15 +222,18 @@ jobs:
           exit 1
       - name: Server / Check for Pending Migrations
         run: |
-          CORE_MIGRATION_OUTPUT=$(npx nx run twenty-server:typeorm migration:generate core-migration-check -d src/database/typeorm/core/core.datasource.ts || true)
+          npx nx database:migrate:generate twenty-server -- --name pending-migration-check || true
 
-          CORE_MIGRATION_FILE=$(ls packages/twenty-server/*core-migration-check.ts 2>/dev/null || echo "")
+          if ! git diff --quiet; then
+            echo "::error::Unexpected migration files were generated. Please run 'npx nx database:migrate:generate twenty-server -- --name <migration-name>' and commit the result."
+            echo ""
+            echo "The following migration changes were detected:"
+            echo "==================================================="
+            git diff
+            echo "==================================================="
+            echo ""
 
-          if [ -n "$CORE_MIGRATION_FILE" ]; then
-            echo "::error::Unexpected migration files were generated. Please create a proper migration manually."
-            echo "$CORE_MIGRATION_OUTPUT"
-
-            rm -f packages/twenty-server/*core-migration-check.ts
+            git checkout -- .
 
             exit 1
           fi
@@ -170,13 +243,14 @@ jobs:
 
           npx nx run twenty-front:graphql:generate
           npx nx run twenty-front:graphql:generate --configuration=metadata
+          npx nx run twenty-front:graphql:generate --configuration=admin
 
-          if ! git diff --quiet -- packages/twenty-front/src/generated packages/twenty-front/src/generated-metadata; then
-            echo "::error::GraphQL schema changes detected. Please run 'npx nx run twenty-front:graphql:generate' and 'npx nx run twenty-front:graphql:generate --configuration=metadata' and commit the changes."
+          if ! git diff --quiet -- packages/twenty-front/src/generated packages/twenty-front/src/generated-metadata packages/twenty-front/src/generated-admin; then
+            echo "::error::GraphQL schema changes detected. Please run the three graphql:generate configurations ('data', 'metadata', 'admin') and commit the changes."
             echo ""
             echo "The following GraphQL schema changes were detected:"
             echo "==================================================="
-            git diff -- packages/twenty-front/src/generated packages/twenty-front/src/generated-metadata
+            git diff -- packages/twenty-front/src/generated packages/twenty-front/src/generated-metadata packages/twenty-front/src/generated-admin
             echo "==================================================="
             echo ""
             HAS_ERRORS=true
@@ -204,7 +278,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
@@ -231,15 +305,10 @@ jobs:
         shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     services:
       postgres:
-        image: twentycrm/twenty-postgres-spilo
-        credentials:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        image: postgres:18
         env:
-          PGUSER_SUPERUSER: postgres
-          PGPASSWORD_SUPERUSER: postgres
-          ALLOW_NOSSL: 'true'
-          SPILO_PROVIDER: 'local'
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
         options: >-
@@ -249,16 +318,10 @@ jobs:
           --health-retries 5
       redis:
         image: redis
-        credentials:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
         ports:
           - 6379:6379
       clickhouse:
         image: clickhouse/clickhouse-server:25.8.8
-        credentials:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
         env:
           CLICKHOUSE_PASSWORD: clickhousePassword
           CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
@@ -278,7 +341,7 @@ jobs:
       SHARD_COUNTER: 10
     steps:
       - name: Fetch custom Github Actions and base branch history
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
       - name: Install dependencies
@@ -325,6 +388,7 @@ jobs:
         changed-files-check,
         server-build,
         server-lint-typecheck,
+        server-previous-version-upgrade-mutation-guard,
         server-validation,
         server-test,
         server-integration-test,

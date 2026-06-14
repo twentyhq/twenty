@@ -1,11 +1,17 @@
 import { styled } from '@linaria/react';
 import { useContext, type ReactNode } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { IconGripVertical, type IconComponent } from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-
-import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemStyleIcon';
 import { NavigationMenuItemType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  IconGripVertical,
+  TintedIconTile,
+  type IconComponent,
+} from 'twenty-ui-deprecated/display';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
+
 import type { AddToNavigationDragPayload } from '@/navigation-menu-item/common/types/add-to-navigation-drag-payload';
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 
@@ -110,7 +116,7 @@ export const AddToNavigationDragHandle = ({
       ) : showCustomContentWithoutWrapper ? (
         customIconContent
       ) : hasBackgroundColor && icon ? (
-        <NavigationMenuItemStyleIcon Icon={icon} color={effectiveColor} />
+        <TintedIconTile Icon={icon} color={effectiveColor} />
       ) : (
         <AddToNavigationDragHandleIcon
           icon={icon}

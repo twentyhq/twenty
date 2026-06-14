@@ -3,15 +3,23 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
+import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
+import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
+import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { FieldWidgetDisplay } from '@/page-layout/widgets/field/components/FieldWidgetDisplay';
+import { FieldWidgetJunctionRelationCard } from '@/page-layout/widgets/field/components/FieldWidgetJunctionRelationCard';
+import { FieldWidgetJunctionRelationField } from '@/page-layout/widgets/field/components/FieldWidgetJunctionRelationField';
+import { FieldWidgetRichTextEditor } from '@/page-layout/widgets/field/components/FieldWidgetRichTextEditor';
 import { FieldWidgetMorphRelationCard } from '@/page-layout/widgets/field/components/FieldWidgetMorphRelationCard';
 import { FieldWidgetMorphRelationField } from '@/page-layout/widgets/field/components/FieldWidgetMorphRelationField';
 import { FieldWidgetRelationCard } from '@/page-layout/widgets/field/components/FieldWidgetRelationCard';
 import { FieldWidgetRelationField } from '@/page-layout/widgets/field/components/FieldWidgetRelationField';
+import { FieldWidgetRelationTable } from '@/page-layout/widgets/field/components/FieldWidgetRelationTable';
 import { assertFieldWidgetOrThrow } from '@/page-layout/widgets/field/utils/assertFieldWidgetOrThrow';
+import { FieldWidgetTextEditor } from '@/page-layout/widgets/field/components/FieldWidgetTextEditor';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
@@ -26,7 +34,7 @@ import {
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-} from 'twenty-ui/layout';
+} from 'twenty-ui-deprecated/layout';
 import { FieldDisplayMode } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
@@ -116,6 +124,32 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
   }
 
   if (isFieldRelation(fieldDefinition)) {
+    const isJunctionRelation = hasJunctionConfig(
+      fieldDefinition.metadata.settings,
+    );
+
+    if (isJunctionRelation) {
+      if (fieldDisplayMode === FieldDisplayMode.CARD) {
+        return (
+          <FieldWidgetJunctionRelationCard
+            fieldDefinition={fieldDefinition}
+            relationValue={record}
+            isInSidePanel={isInSidePanel}
+            sourceObjectMetadataId={objectMetadataItem.id}
+          />
+        );
+      }
+
+      return (
+        <FieldWidgetJunctionRelationField
+          fieldDefinition={fieldDefinition}
+          relationValue={record}
+          isInSidePanel={isInSidePanel}
+          sourceObjectMetadataId={objectMetadataItem.id}
+        />
+      );
+    }
+
     if (fieldDisplayMode === FieldDisplayMode.CARD) {
       return (
         <FieldWidgetRelationCard
@@ -126,11 +160,46 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
       );
     }
 
+    if (fieldDisplayMode === FieldDisplayMode.TABLE) {
+      return (
+        <FieldWidgetRelationTable
+          fieldDefinition={fieldDefinition}
+          recordId={targetRecord.id}
+        />
+      );
+    }
+
     return (
       <FieldWidgetRelationField
         fieldDefinition={fieldDefinition}
         relationValue={record}
         isInSidePanel={isInSidePanel}
+      />
+    );
+  }
+
+  if (
+    isFieldRichText(fieldDefinition) &&
+    fieldDisplayMode === FieldDisplayMode.EDITOR
+  ) {
+    return (
+      <FieldWidgetRichTextEditor
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+        recordId={targetRecord.id}
+      />
+    );
+  }
+
+  if (
+    isFieldText(fieldDefinition) &&
+    fieldDisplayMode === FieldDisplayMode.EDITOR
+  ) {
+    return (
+      <FieldWidgetTextEditor
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+        recordId={targetRecord.id}
       />
     );
   }

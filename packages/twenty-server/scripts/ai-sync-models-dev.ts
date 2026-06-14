@@ -142,9 +142,7 @@ const extractCost = (
     model.cacheCreationCostPerMillionTokens = cost.cache_write;
   }
 
-  const longCtx = cost.context_over_200k as
-    | Record<string, unknown>
-    | undefined;
+  const longCtx = cost.context_over_200k as Record<string, unknown> | undefined;
 
   if (longCtx && typeof longCtx.input === 'number') {
     model.longContextCost = {

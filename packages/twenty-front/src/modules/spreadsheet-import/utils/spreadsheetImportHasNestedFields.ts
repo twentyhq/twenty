@@ -1,12 +1,10 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { RelationType } from '~/generated-metadata/graphql';
 
 export const hasNestedFields = (fieldMetadata: FieldMetadataItem) => {
   return (
-    (fieldMetadata.type === FieldMetadataType.RELATION &&
-      fieldMetadata.relation?.type === RelationType.MANY_TO_ONE) ||
+    isManyToOneRelationField(fieldMetadata) ||
     isCompositeFieldType(fieldMetadata.type)
   );
 };

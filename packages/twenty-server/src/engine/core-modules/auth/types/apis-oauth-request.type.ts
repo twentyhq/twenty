@@ -1,7 +1,11 @@
 import { type Request } from 'express';
 
-import { type CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
-import { type MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  type CalendarChannelVisibility,
+  type MessageChannelVisibility,
+} from 'twenty-shared/types';
+
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 
 export type APIsOAuthRequest = Omit<
   Request,
@@ -13,8 +17,8 @@ export type APIsOAuthRequest = Omit<
     emails: { value: string }[];
     picture: string | null;
     workspaceInviteHash?: string;
-    accessToken: string;
-    refreshToken: string;
+    accessToken: PlaintextString;
+    refreshToken: PlaintextString;
     transientToken: string;
     redirectLocation?: string;
     calendarVisibility?: CalendarChannelVisibility;

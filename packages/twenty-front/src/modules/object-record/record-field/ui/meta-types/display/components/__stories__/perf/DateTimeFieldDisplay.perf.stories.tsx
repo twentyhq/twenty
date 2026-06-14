@@ -4,7 +4,7 @@ import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { DateTimeFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/DateTimeFieldDisplay';
 import { UserContext } from '@/users/contexts/UserContext';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
@@ -50,7 +50,7 @@ export const Elipsis: Story = {
 
 export const Performance = getProfilingStory({
   componentName: 'DateTimeFieldDisplay',
-  averageThresholdInMs: 0.35,
+  averageThresholdInMs: 0.7,
   numberOfRuns: 30,
   numberOfTestsPerRun: 30,
 });

@@ -44,6 +44,7 @@ export const fromCreatePageLayoutTabInputToFlatPageLayoutTabToCreate = ({
     id: pageLayoutTabId,
     title: createPageLayoutTabInput.title,
     position: createPageLayoutTabInput.position ?? 0,
+    isActive: true,
     pageLayoutId: createPageLayoutTabInput.pageLayoutId,
     pageLayoutUniversalIdentifier,
     workspaceId,

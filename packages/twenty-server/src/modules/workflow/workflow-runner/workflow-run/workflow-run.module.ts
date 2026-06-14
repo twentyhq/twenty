@@ -2,14 +2,16 @@ import { Module } from '@nestjs/common';
 
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
+import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { DeleteWorkflowRunsCommand } from 'src/modules/workflow/workflow-runner/workflow-run/command/delete-workflow-runs.command';
+import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 @Module({
@@ -22,9 +24,18 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
     RecordPositionModule,
     CacheLockModule,
     MetricsModule,
-    DataSourceModule,
+    WorkspaceIteratorModule,
+    FeatureFlagModule,
   ],
-  providers: [WorkflowRunWorkspaceService, DeleteWorkflowRunsCommand],
-  exports: [WorkflowRunWorkspaceService, DeleteWorkflowRunsCommand],
+  providers: [
+    WorkflowRunWorkspaceService,
+    WorkflowRunStepLogWorkspaceService,
+    DeleteWorkflowRunsCommand,
+  ],
+  exports: [
+    WorkflowRunWorkspaceService,
+    WorkflowRunStepLogWorkspaceService,
+    DeleteWorkflowRunsCommand,
+  ],
 })
 export class WorkflowRunModule {}

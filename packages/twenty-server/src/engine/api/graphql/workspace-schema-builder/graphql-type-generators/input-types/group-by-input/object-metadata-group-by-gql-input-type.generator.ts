@@ -9,7 +9,11 @@ import {
   isInputObjectType,
 } from 'graphql';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, pascalCase } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFieldMetadataSupportedInGroupBy,
+  pascalCase,
+} from 'twenty-shared/utils';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { GROUP_BY_DATE_GRANULARITY_INPUT_KEY } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/group-by-input/group-by-date-granularity-gql-input-type.generator';
@@ -62,6 +66,10 @@ export class ObjectMetadataGroupByGqlInputTypeGenerator {
     const allGeneratedFields: GraphQLInputFieldConfigMap = {};
 
     for (const fieldMetadata of fields) {
+      if (!isFieldMetadataSupportedInGroupBy(fieldMetadata)) {
+        continue;
+      }
+
       const generatedField = isMorphOrRelationFlatFieldMetadata(fieldMetadata)
         ? this.relationFieldMetadataGqlInputTypeGenerator.generateSimpleRelationFieldGroupByInputType(
             fieldMetadata,

@@ -3,10 +3,11 @@ import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/re
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { ViewType } from '@/views/types/ViewType';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledColumnContainer = styled.div`
   display: flex;
+  flex: 1;
 
   & > *:not(:first-of-type) {
     border-left: 1px solid ${themeCssVariables.border.color.light};

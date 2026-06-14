@@ -2,7 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 
 import { TransientTokenService } from './transient-token.service';
 
@@ -18,10 +18,9 @@ describe('TransientTokenService', () => {
         {
           provide: JwtWrapperService,
           useValue: {
-            sign: jest.fn(),
+            signAsyncOrThrow: jest.fn(),
             verifyJwtToken: jest.fn(),
             decode: jest.fn(),
-            generateAppSecret: jest.fn().mockReturnValue('mocked-secret'),
           },
         },
         {
@@ -55,7 +54,9 @@ describe('TransientTokenService', () => {
 
         return undefined;
       });
-      jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
+      jest
+        .spyOn(jwtWrapperService, 'signAsyncOrThrow')
+        .mockResolvedValue(mockToken);
 
       const result = await service.generateTransientToken({
         workspaceMemberId,
@@ -70,7 +71,7 @@ describe('TransientTokenService', () => {
       expect(twentyConfigService.get).toHaveBeenCalledWith(
         'SHORT_TERM_TOKEN_EXPIRES_IN',
       );
-      expect(jwtWrapperService.sign).toHaveBeenCalledWith(
+      expect(jwtWrapperService.signAsyncOrThrow).toHaveBeenCalledWith(
         {
           sub: workspaceMemberId,
           type: JwtTokenTypeEnum.LOGIN,
@@ -78,10 +79,7 @@ describe('TransientTokenService', () => {
           workspaceId,
           workspaceMemberId,
         },
-        expect.objectContaining({
-          secret: 'mocked-secret',
-          expiresIn: mockExpiresIn,
-        }),
+        { expiresIn: mockExpiresIn },
       );
     });
   });

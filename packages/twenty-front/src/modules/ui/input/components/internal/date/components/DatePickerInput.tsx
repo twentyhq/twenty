@@ -13,7 +13,7 @@ import { getDateMask } from '@/ui/input/components/internal/date/utils/getDateMa
 import { useParseDateInputStringToPlainDate } from '@/ui/input/components/internal/date/hooks/useParseDateInputStringToPlainDate';
 import { useParseJSDateToIMaskDateInputString } from '@/ui/input/components/internal/date/hooks/useParseJSDateToIMaskDateInputString';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -42,9 +42,14 @@ const StyledInput = styled.input<{ hasError?: boolean }>`
 type DatePickerInputProps = {
   onChange?: (date: string | null) => void;
   date: string | null;
+  readonly?: boolean;
 };
 
-export const DatePickerInput = ({ date, onChange }: DatePickerInputProps) => {
+export const DatePickerInput = ({
+  date,
+  onChange,
+  readonly = false,
+}: DatePickerInputProps) => {
   const { dateFormat } = useDateTimeFormat();
 
   const [internalDate, setInternalDate] = useState(date);
@@ -95,9 +100,13 @@ export const DatePickerInput = ({ date, onChange }: DatePickerInputProps) => {
   );
 
   useEffect(() => {
-    if (isDefined(date) && internalDate !== date) {
+    if (internalDate !== date) {
       setInternalDate(date);
-      setValue(parsePlainDateToDateInputString(date));
+      if (isDefined(date)) {
+        setValue(parsePlainDateToDateInputString(date));
+      } else {
+        setValue('');
+      }
     }
   }, [date, internalDate, parsePlainDateToDateInputString, setValue]);
 
@@ -105,6 +114,7 @@ export const DatePickerInput = ({ date, onChange }: DatePickerInputProps) => {
     <StyledInputContainer>
       <StyledInput
         type="text"
+        disabled={readonly}
         ref={ref as any}
         value={value}
         onChange={() => {}} // Prevent React warning

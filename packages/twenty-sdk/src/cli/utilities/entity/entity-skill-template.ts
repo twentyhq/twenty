@@ -10,7 +10,7 @@ export const getSkillBaseFile = ({
 }) => {
   const kebabCaseName = kebabCase(name);
 
-  return `import { defineSkill } from 'twenty-sdk';
+  return `import { defineSkill } from 'twenty-sdk/define';
 
 export const ${kebabCaseName.toUpperCase().replace(/-/g, '_')}_SKILL_UNIVERSAL_IDENTIFIER =
   '${universalIdentifier}';

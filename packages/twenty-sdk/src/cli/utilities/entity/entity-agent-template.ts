@@ -10,7 +10,7 @@ export const getAgentBaseFile = ({
 }) => {
   const kebabCaseName = kebabCase(name);
 
-  return `import { defineAgent } from 'twenty-sdk';
+  return `import { defineAgent } from 'twenty-sdk/define';
 
 export const ${kebabCaseName.toUpperCase().replace(/-/g, '_')}_AGENT_UNIVERSAL_IDENTIFIER =
   '${universalIdentifier}';
@@ -21,6 +21,7 @@ export default defineAgent({
   label: '${name}',
   description: 'Add a description for your agent',
   prompt: 'Add the agent system prompt here',
+  responseFormat: {type: 'text'},
 });
 `;
 };

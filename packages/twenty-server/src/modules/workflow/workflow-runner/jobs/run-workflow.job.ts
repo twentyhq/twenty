@@ -1,4 +1,4 @@
-import { Scope } from '@nestjs/common';
+import { Logger, Scope } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -24,6 +24,8 @@ import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types
 
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
 export class RunWorkflowJob {
+  private readonly logger = new Logger(RunWorkflowJob.name);
+
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly codeStepBuildService: CodeStepBuildService,
@@ -37,13 +39,23 @@ export class RunWorkflowJob {
   async handle({
     workflowRunId,
     lastExecutedStepId,
+    stepIdsToRetry,
     workspaceId,
   }: RunWorkflowJobData): Promise<void> {
+    this.logger.log(
+      `Running workflow run ${workflowRunId} in workspace ${workspaceId}`,
+    );
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       try {
-        if (lastExecutedStepId) {
+        if (isDefined(stepIdsToRetry)) {
+          await this.retryWorkflowExecution({
+            workspaceId,
+            workflowRunId,
+            stepIdsToRetry,
+          });
+        } else if (lastExecutedStepId) {
           await this.resumeWorkflowExecution({
             workspaceId,
             workflowRunId,
@@ -121,6 +133,32 @@ export class RunWorkflowJob {
 
     await this.workflowExecutorWorkspaceService.executeFromSteps({
       stepIds,
+      workflowRunId,
+      workspaceId,
+    });
+  }
+
+  private async retryWorkflowExecution({
+    workflowRunId,
+    stepIdsToRetry,
+    workspaceId,
+  }: {
+    workflowRunId: string;
+    stepIdsToRetry: string[];
+    workspaceId: string;
+  }): Promise<void> {
+    const workflowRun =
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+        workflowRunId,
+        workspaceId,
+      });
+
+    if (workflowRun.status !== WorkflowRunStatus.RUNNING) {
+      return;
+    }
+
+    await this.workflowExecutorWorkspaceService.executeFromSteps({
+      stepIds: stepIdsToRetry,
       workflowRunId,
       workspaceId,
     });
@@ -231,7 +269,7 @@ export class RunWorkflowJob {
         throw new Error('Invalid trigger type');
     }
 
-    await this.metricsService.incrementCounter({
+    await this.metricsService.incrementCounterForEvent({
       key,
       eventId: workflowRunId,
     });

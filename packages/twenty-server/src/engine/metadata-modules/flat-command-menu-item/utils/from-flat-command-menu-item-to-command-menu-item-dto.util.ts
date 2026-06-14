@@ -3,24 +3,37 @@ import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-comma
 
 export const fromFlatCommandMenuItemToCommandMenuItemDto = (
   flatCommandMenuItem: FlatCommandMenuItem,
-): CommandMenuItemDTO => ({
-  id: flatCommandMenuItem.id,
-  workflowVersionId: flatCommandMenuItem.workflowVersionId ?? undefined,
-  frontComponentId: flatCommandMenuItem.frontComponentId ?? undefined,
-  engineComponentKey: flatCommandMenuItem.engineComponentKey,
-  label: flatCommandMenuItem.label,
-  icon: flatCommandMenuItem.icon ?? undefined,
-  shortLabel: flatCommandMenuItem.shortLabel ?? undefined,
-  position: flatCommandMenuItem.position,
-  isPinned: flatCommandMenuItem.isPinned,
-  hotKeys: flatCommandMenuItem.hotKeys ?? undefined,
-  availabilityType: flatCommandMenuItem.availabilityType,
-  conditionalAvailabilityExpression:
-    flatCommandMenuItem.conditionalAvailabilityExpression ?? undefined,
-  availabilityObjectMetadataId:
-    flatCommandMenuItem.availabilityObjectMetadataId ?? undefined,
-  workspaceId: flatCommandMenuItem.workspaceId,
-  applicationId: flatCommandMenuItem.applicationId ?? undefined,
-  createdAt: new Date(flatCommandMenuItem.createdAt),
-  updatedAt: new Date(flatCommandMenuItem.updatedAt),
-});
+): CommandMenuItemDTO => {
+  const effectiveFlatCommandMenuItem = {
+    ...flatCommandMenuItem,
+    ...(flatCommandMenuItem.overrides ?? {}),
+  };
+
+  return {
+    id: effectiveFlatCommandMenuItem.id,
+    workflowVersionId:
+      effectiveFlatCommandMenuItem.workflowVersionId ?? undefined,
+    frontComponentId:
+      effectiveFlatCommandMenuItem.frontComponentId ?? undefined,
+    engineComponentKey: effectiveFlatCommandMenuItem.engineComponentKey,
+    label: effectiveFlatCommandMenuItem.label,
+    icon: effectiveFlatCommandMenuItem.icon ?? undefined,
+    shortLabel: effectiveFlatCommandMenuItem.shortLabel ?? undefined,
+    position: effectiveFlatCommandMenuItem.position,
+    isPinned: effectiveFlatCommandMenuItem.isPinned,
+    payload: effectiveFlatCommandMenuItem.payload ?? undefined,
+    hotKeys: effectiveFlatCommandMenuItem.hotKeys ?? undefined,
+    availabilityType: effectiveFlatCommandMenuItem.availabilityType,
+    conditionalAvailabilityExpression:
+      effectiveFlatCommandMenuItem.conditionalAvailabilityExpression ??
+      undefined,
+    availabilityObjectMetadataId:
+      effectiveFlatCommandMenuItem.availabilityObjectMetadataId ?? undefined,
+    pageLayoutId: effectiveFlatCommandMenuItem.pageLayoutId ?? undefined,
+    workspaceId: effectiveFlatCommandMenuItem.workspaceId,
+    applicationId: effectiveFlatCommandMenuItem.applicationId ?? undefined,
+    isActive: effectiveFlatCommandMenuItem.isActive,
+    createdAt: new Date(effectiveFlatCommandMenuItem.createdAt),
+    updatedAt: new Date(effectiveFlatCommandMenuItem.updatedAt),
+  };
+};

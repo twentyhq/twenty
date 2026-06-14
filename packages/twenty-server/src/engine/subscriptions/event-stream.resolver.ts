@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -16,6 +17,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { APPLICATION_KEEPALIVE_INTERVAL_MS } from 'src/engine/subscriptions/constants/application-keepalive-interval-ms.constant';
 import { EVENT_STREAM_TTL_MS } from 'src/engine/subscriptions/constants/event-stream-ttl.constant';
 import { AddQuerySubscriptionInput } from 'src/engine/subscriptions/dtos/add-query-subscription.input';
 import { EventSubscriptionDTO } from 'src/engine/subscriptions/dtos/event-subscription.dto';
@@ -39,6 +41,7 @@ export class EventStreamResolver {
   constructor(
     private readonly subscriptionService: SubscriptionService,
     private readonly eventStreamService: EventStreamService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @Subscription(() => EventSubscriptionDTO, {
@@ -64,16 +67,31 @@ export class EventStreamResolver {
   ) {
     const eventStreamChannelId = eventStreamIdToChannelId(eventStreamId);
 
-    const streamData = await this.eventStreamService.getStreamData(
+    const existingStreamData = await this.eventStreamService.getStreamData(
       workspace.id,
       eventStreamChannelId,
     );
 
-    if (isDefined(streamData)) {
-      throw new EventStreamException(
-        'Event stream already exists',
-        EventStreamExceptionCode.EVENT_STREAM_ALREADY_EXISTS,
-      );
+    if (isDefined(existingStreamData)) {
+      const isAuthorized = await this.eventStreamService.isAuthorized({
+        streamData: existingStreamData,
+        authContext: {
+          userWorkspaceId,
+          apiKeyId: apiKey?.id,
+        },
+      });
+
+      if (!isAuthorized) {
+        throw new EventStreamException(
+          'Event stream already exists',
+          EventStreamExceptionCode.EVENT_STREAM_ALREADY_EXISTS,
+        );
+      }
+
+      await this.eventStreamService.destroyEventStream({
+        workspaceId: workspace.id,
+        eventStreamChannelId,
+      });
     }
 
     await this.eventStreamService.createEventStream({
@@ -101,21 +119,45 @@ export class EventStreamResolver {
       throw error;
     }
 
+    let lastTtlRefreshAt = 0;
+
     return wrapAsyncIteratorWithLifecycle(iterator, {
       initialValue: {
         objectRecordEventsWithQueryIds: [],
         metadataEvents: [],
       },
-      onHeartbeat: () =>
-        this.eventStreamService.refreshEventStreamTTL({
+      onHeartbeat: async () => {
+        const now = Date.now();
+
+        if (now - lastTtlRefreshAt > EVENT_STREAM_TTL_MS / 5) {
+          lastTtlRefreshAt = now;
+          await this.eventStreamService.refreshEventStreamTTL({
+            workspaceId: workspace.id,
+            eventStreamChannelId,
+          });
+        }
+
+        await this.subscriptionService.publishToEventStream({
           workspaceId: workspace.id,
           eventStreamChannelId,
-        }),
-      heartbeatIntervalMs: EVENT_STREAM_TTL_MS / 5,
+          payload: {
+            objectRecordEventsWithQueryIds: [],
+            metadataEvents: [],
+          },
+        });
+
+        return true;
+      },
+      heartbeatIntervalMs: APPLICATION_KEEPALIVE_INTERVAL_MS,
       onCleanup: () =>
         this.eventStreamService.destroyEventStream({
           workspaceId: workspace.id,
           eventStreamChannelId,
+        }),
+      onCleanupError: (error) =>
+        this.exceptionHandlerService.captureExceptions([error], {
+          workspace: { id: workspace.id },
+          additionalData: { eventStreamChannelId },
         }),
     });
   }
@@ -136,11 +178,9 @@ export class EventStreamResolver {
     );
 
     if (!isDefined(streamData)) {
-      throw new EventStreamException(
-        'Event stream does not exist',
-        EventStreamExceptionCode.EVENT_STREAM_DOES_NOT_EXIST,
-      );
+      return false;
     }
+
     const isAuthorized = await this.eventStreamService.isAuthorized({
       streamData,
       authContext: {
@@ -155,6 +195,7 @@ export class EventStreamResolver {
         EventStreamExceptionCode.NOT_AUTHORIZED,
       );
     }
+
     await this.eventStreamService.addQuery({
       workspaceId: workspace.id,
       eventStreamChannelId,
@@ -182,10 +223,7 @@ export class EventStreamResolver {
     );
 
     if (!isDefined(streamData)) {
-      throw new EventStreamException(
-        'Event stream does not exist',
-        EventStreamExceptionCode.EVENT_STREAM_DOES_NOT_EXIST,
-      );
+      return false;
     }
 
     const isAuthorized = await this.eventStreamService.isAuthorized({

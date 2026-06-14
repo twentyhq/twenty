@@ -1,48 +1,10 @@
-import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
-import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import { ThemeContext } from '@ui/theme-constants';
+import { clsx } from 'clsx';
 import { useContext } from 'react';
 
-const StyledLabelContainer = styled.span<{
-  highlighting?: JsonNodeHighlighting;
-}>`
-  background-color: ${({ highlighting }) =>
-    highlighting === 'blue'
-      ? themeCssVariables.color.blue3
-      : highlighting === 'red'
-        ? themeCssVariables.background.danger
-        : themeCssVariables.background.transparent.lighter};
-  border-color: ${({ highlighting }) =>
-    highlighting === 'blue'
-      ? themeCssVariables.color.blue5
-      : highlighting === 'red'
-        ? themeCssVariables.border.color.danger
-        : themeCssVariables.border.color.medium};
-  color: ${({ highlighting }) =>
-    highlighting === 'blue'
-      ? themeCssVariables.color.blue
-      : highlighting === 'red'
-        ? themeCssVariables.font.color.danger
-        : themeCssVariables.font.color.primary};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  border-style: solid;
-  border-width: 1px;
-  column-gap: ${themeCssVariables.spacing[2]};
-  display: inline-flex;
-  align-items: center;
-  height: 24px;
-  box-sizing: border-box;
-  font-size: ${themeCssVariables.font.size.md};
-  white-space: nowrap;
-  padding-inline: ${themeCssVariables.spacing[2]};
-
-  > span {
-    align-items: center;
-    display: inline-flex;
-    line-height: 1;
-  }
-`;
+import styles from './JsonNodeLabel.module.scss';
 
 export const JsonNodeLabel = ({
   label,
@@ -56,7 +18,13 @@ export const JsonNodeLabel = ({
   const { theme } = useContext(ThemeContext);
 
   return (
-    <StyledLabelContainer highlighting={highlighting}>
+    <span
+      className={clsx(
+        styles.labelContainer,
+        highlighting === 'blue' && styles.blue,
+        highlighting === 'red' && styles.red,
+      )}
+    >
       <Icon
         size={theme.icon.size.md}
         color={
@@ -69,6 +37,6 @@ export const JsonNodeLabel = ({
       />
 
       <span>{label}</span>
-    </StyledLabelContainer>
+    </span>
   );
 };

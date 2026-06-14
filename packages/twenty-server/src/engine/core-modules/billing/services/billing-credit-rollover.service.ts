@@ -2,85 +2,42 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
-import { StripeCreditGrantService } from 'src/engine/core-modules/billing/stripe/services/stripe-credit-grant.service';
-
+import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @Injectable()
 export class BillingCreditRolloverService {
   constructor(
-    private readonly stripeCreditGrantService: StripeCreditGrantService,
-    private readonly stripeBillingMeterEventService: StripeBillingMeterEventService,
+    private readonly billingUsageService: BillingUsageService,
+    @InjectWorkspaceScopedRepository(BillingCustomerEntity)
+    private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
   ) {}
 
   async processRolloverOnPeriodTransition({
+    workspaceId,
     stripeCustomerId,
-    subscriptionId,
-    stripeMeterId,
-    previousPeriodStart,
-    previousPeriodEnd,
-    newPeriodEnd,
     tierQuantity,
-    unitPriceCents,
+    previousPeriodStart,
   }: {
+    workspaceId: string;
     stripeCustomerId: string;
-    subscriptionId: string;
-    stripeMeterId: string;
-    previousPeriodStart: Date;
-    previousPeriodEnd: Date;
-    newPeriodEnd: Date;
     tierQuantity: number;
-    unitPriceCents: number;
+    previousPeriodStart: Date;
   }): Promise<void> {
-    // Void any existing rollover grants before creating a new one
-    // This ensures only one rollover grant is active at a time
-    await this.voidExistingRolloverGrants(stripeCustomerId);
-
     const usedCredits =
-      await this.stripeBillingMeterEventService.sumMeterEvents(
-        stripeMeterId,
-        stripeCustomerId,
+      await this.billingUsageService.getCurrentPeriodCreditsUsed(
+        workspaceId,
         previousPeriodStart,
-        previousPeriodEnd,
       );
 
     const unusedCredits = Math.max(0, tierQuantity - usedCredits);
-
-    if (unusedCredits <= 0) {
-      return;
-    }
-
     const rolloverAmount = Math.min(unusedCredits, tierQuantity);
 
-    await this.stripeCreditGrantService.createCreditGrant({
-      customerId: stripeCustomerId,
-      creditUnits: rolloverAmount,
-      unitPriceCents,
-      expiresAt: newPeriodEnd,
-      metadata: {
-        type: 'rollover',
-        fromPeriodStart: previousPeriodStart.toISOString(),
-        fromPeriodEnd: previousPeriodEnd.toISOString(),
-        subscriptionId,
-      },
-    });
-  }
-
-  private async voidExistingRolloverGrants(
-    stripeCustomerId: string,
-  ): Promise<void> {
-    const existingGrants =
-      await this.stripeCreditGrantService.listCreditGrants(stripeCustomerId);
-
-    const rolloverGrants = existingGrants.filter(
-      (grant) => grant.metadata?.type === 'rollover' && !grant.voided_at,
+    await this.billingCustomerRepository.update(
+      workspaceId,
+      { stripeCustomerId },
+      { creditBalanceMicro: rolloverAmount },
     );
-
-    if (rolloverGrants.length === 0) {
-      return;
-    }
-
-    for (const grant of rolloverGrants) {
-      await this.stripeCreditGrantService.voidCreditGrant(grant.id);
-    }
   }
 }

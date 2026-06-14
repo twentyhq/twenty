@@ -7,11 +7,12 @@ import { useNavigate } from 'react-router-dom';
 import { type AiSdkPackage, isDataResidency } from 'twenty-shared/ai';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, IconPlus, Info } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
+import { H2Title, IconPlus, Info } from 'twenty-ui-deprecated/display';
+import { Section } from 'twenty-ui-deprecated/layout';
 
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { DATA_RESIDENCY_OPTIONS } from '@/settings/admin-panel/ai/constants/DataResidencyOptions';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { ADD_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/addAiProvider';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
@@ -24,7 +25,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 
 type ModelsDevProvider = { id: string; modelCount: number; npm: AiSdkPackage };
 
@@ -40,6 +41,7 @@ type FormValues = {
 };
 
 export const SettingsAdminNewAiProvider = () => {
+  const apolloAdminClient = useApolloAdminClient();
   const navigate = useNavigate();
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
@@ -49,11 +51,13 @@ export const SettingsAdminNewAiProvider = () => {
   );
   const [isCustomMode, setIsCustomMode] = useState(false);
 
-  const [addAiProvider] = useMutation(ADD_AI_PROVIDER);
+  const [addAiProvider] = useMutation(ADD_AI_PROVIDER, {
+    client: apolloAdminClient,
+  });
 
   const { data: modelsDevData } = useQuery<{
     getModelsDevProviders: ModelsDevProvider[];
-  }>(GET_MODELS_DEV_PROVIDERS);
+  }>(GET_MODELS_DEV_PROVIDERS, { client: apolloAdminClient });
 
   const modelsDevProviders = useMemo(
     () => modelsDevData?.getModelsDevProviders ?? [],
@@ -93,10 +97,10 @@ export const SettingsAdminNewAiProvider = () => {
   const hasSelected = selectedModelsDevId !== null || isCustomMode;
   const npmPackage = form.watch('npm');
   const isBedrock = npmPackage === '@ai-sdk/amazon-bedrock';
-  const isOpenAICompatible = npmPackage === '@ai-sdk/openai-compatible';
+  const isOpenAiCompatible = npmPackage === '@ai-sdk/openai-compatible';
   const needsApiKey = !isBedrock;
   const isModelsDevWithoutNativeSdk =
-    selectedModelsDevId !== null && isOpenAICompatible;
+    selectedModelsDevId !== null && isOpenAiCompatible;
 
   const handleProviderSelected = (providerId: string) => {
     setSelectedModelsDevId(providerId);
@@ -150,7 +154,7 @@ export const SettingsAdminNewAiProvider = () => {
         values.apiKey.trim() && {
           apiKey: values.apiKey.trim(),
         }),
-      ...(isOpenAICompatible &&
+      ...(isOpenAiCompatible &&
         values.baseUrl.trim() && {
           baseUrl: values.baseUrl.trim(),
         }),
@@ -178,7 +182,7 @@ export const SettingsAdminNewAiProvider = () => {
       }
     }
 
-    if (!isBedrock && !isOpenAICompatible && !values.apiKey.trim()) {
+    if (!isBedrock && !isOpenAiCompatible && !values.apiKey.trim()) {
       form.setError('apiKey', {
         type: 'manual',
         message: t`API key is required`,
@@ -187,7 +191,7 @@ export const SettingsAdminNewAiProvider = () => {
       return;
     }
 
-    if (isOpenAICompatible && !values.baseUrl.trim()) {
+    if (isOpenAiCompatible && !values.baseUrl.trim()) {
       form.setError('baseUrl', {
         type: 'manual',
         message: t`Base URL is required`,
@@ -225,7 +229,7 @@ export const SettingsAdminNewAiProvider = () => {
 
   return (
     <form onSubmit={form.handleSubmit(handleSave)}>
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={t`New AI Provider`}
         links={[
           {
@@ -325,7 +329,7 @@ export const SettingsAdminNewAiProvider = () => {
                 </Section>
               )}
 
-              {isOpenAICompatible && (
+              {isOpenAiCompatible && (
                 <Section>
                   <H2Title
                     title={t`Base URL`}
@@ -440,7 +444,7 @@ export const SettingsAdminNewAiProvider = () => {
             </>
           )}
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     </form>
   );
 };

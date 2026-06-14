@@ -4,20 +4,23 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { SettingsBillingCreditsSection } from '@/settings/billing/components/SettingsBillingCreditsSection';
 import { SettingsBillingSubscriptionInfo } from '@/settings/billing/components/SettingsBillingSubscriptionInfo';
-import { useGetWorkflowNodeExecutionUsage } from '@/settings/billing/hooks/useGetWorkflowNodeExecutionUsage';
+import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title, IconCircleX, IconCreditCard } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import {
+  H2Title,
+  IconCircleX,
+  IconCreditCard,
+} from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { Section } from 'twenty-ui-deprecated/layout';
 import {
   BillingPortalSessionDocument,
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
-
 export const SettingsBillingContent = () => {
   const { t } = useLingui();
 
@@ -31,8 +34,8 @@ export const SettingsBillingContent = () => {
 
   const subscriptionStatus = useSubscriptionStatus();
 
-  const { isGetMeteredProductsUsageQueryLoaded } =
-    useGetWorkflowNodeExecutionUsage();
+  const { isGetResourceCreditUsageQueryLoaded: isUsageQueryLoaded } =
+    useGetResourceCreditUsage();
 
   const hasNotCanceledCurrentSubscription =
     isDefined(subscriptionStatus) &&
@@ -69,7 +72,7 @@ export const SettingsBillingContent = () => {
       {hasNotCanceledCurrentSubscription &&
         currentWorkspace &&
         currentWorkspace.currentBillingSubscription &&
-        isGetMeteredProductsUsageQueryLoaded && (
+        isUsageQueryLoaded && (
           <SettingsBillingCreditsSection
             currentBillingSubscription={
               currentWorkspace.currentBillingSubscription

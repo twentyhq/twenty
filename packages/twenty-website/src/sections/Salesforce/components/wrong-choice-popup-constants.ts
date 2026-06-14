@@ -1,0 +1,1 @@
+export const WRONG_CHOICE_POPUP_WIDTH = 321;

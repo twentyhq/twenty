@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { fromCommandMenuItemOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-command-menu-item-overrides-to-universal-overrides.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import {
   FlatEntityMapsException,
@@ -12,6 +13,7 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = ({
   applicationIdToUniversalIdentifierMap,
   objectMetadataIdToUniversalIdentifierMap,
   frontComponentIdToUniversalIdentifierMap,
+  pageLayoutIdToUniversalIdentifierMap,
 }: FromEntityToFlatEntityArgs<'commandMenuItem'>): FlatCommandMenuItem => {
   const applicationUniversalIdentifier =
     applicationIdToUniversalIdentifierMap.get(
@@ -57,6 +59,35 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = ({
     }
   }
 
+  let pageLayoutUniversalIdentifier: string | null = null;
+
+  if (isDefined(commandMenuItemEntity.pageLayoutId)) {
+    pageLayoutUniversalIdentifier =
+      pageLayoutIdToUniversalIdentifierMap.get(
+        commandMenuItemEntity.pageLayoutId,
+      ) ?? null;
+
+    if (!isDefined(pageLayoutUniversalIdentifier)) {
+      throw new FlatEntityMapsException(
+        `PageLayout with id ${commandMenuItemEntity.pageLayoutId} not found for commandMenuItem ${commandMenuItemEntity.id}`,
+        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+  }
+
+  const universalOverrides = isDefined(commandMenuItemEntity.overrides)
+    ? fromCommandMenuItemOverridesToUniversalOverrides({
+        overrides: commandMenuItemEntity.overrides,
+        objectMetadataUniversalIdentifierById: Object.fromEntries(
+          objectMetadataIdToUniversalIdentifierMap.entries(),
+        ),
+        pageLayoutUniversalIdentifierById: Object.fromEntries(
+          pageLayoutIdToUniversalIdentifierMap.entries(),
+        ),
+        shouldThrowOnMissingIdentifier: false,
+      })
+    : null;
+
   return {
     id: commandMenuItemEntity.id,
     workflowVersionId: commandMenuItemEntity.workflowVersionId,
@@ -67,6 +98,7 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = ({
     shortLabel: commandMenuItemEntity.shortLabel,
     position: commandMenuItemEntity.position,
     isPinned: commandMenuItemEntity.isPinned,
+    payload: commandMenuItemEntity.payload,
     hotKeys: commandMenuItemEntity.hotKeys,
     availabilityType: commandMenuItemEntity.availabilityType,
     availabilityObjectMetadataId:
@@ -81,5 +113,10 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = ({
       commandMenuItemEntity.conditionalAvailabilityExpression,
     availabilityObjectMetadataUniversalIdentifier,
     frontComponentUniversalIdentifier,
+    pageLayoutId: commandMenuItemEntity.pageLayoutId,
+    pageLayoutUniversalIdentifier,
+    isActive: commandMenuItemEntity.isActive,
+    overrides: commandMenuItemEntity.overrides,
+    universalOverrides,
   };
 };

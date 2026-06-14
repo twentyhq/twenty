@@ -26,12 +26,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      # Pull base images through Google's Docker Hub mirror — avoids Docker Hub
+      # rate limits and needs no credentials (this repo is public).
+      - name: Configure Docker Hub mirror
+        run: |
+          echo '{"registry-mirrors":["https://mirror.gcr.io"]}' | sudo tee /etc/docker/daemon.json
+          sudo systemctl restart docker
       - name: Run compose
         run: |
           echo "Patching docker-compose.yml..."
@@ -101,12 +102,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      # Pull base images through Google's Docker Hub mirror — avoids Docker Hub
+      # rate limits and needs no credentials (this repo is public).
+      - name: Configure Docker Hub mirror
+        run: |
+          echo '{"registry-mirrors":["https://mirror.gcr.io"]}' | sudo tee /etc/docker/daemon.json
+          sudo systemctl restart docker
       - name: Create frontend placeholder
         run: |
           mkdir -p packages/twenty-front/build
@@ -121,7 +123,7 @@ jobs:
       - name: Start container
         run: |
           docker run -d --name twenty-app-dev \
-            -p 3000:3000 \
+            -p 2020:2020 \
             twenty-app-dev-ci
           docker logs twenty-app-dev -f &
       - name: Wait for server health
@@ -129,10 +131,10 @@ jobs:
           echo "Waiting for twenty-app-dev to become healthy..."
           count=0
           while true; do
-            status=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/healthz 2>/dev/null || echo "000")
+            status=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:2020/healthz 2>/dev/null || echo "000")
             if [ "$status" = "200" ]; then
               echo "Server is healthy!"
-              curl -s http://localhost:3000/healthz
+              curl -s http://localhost:2020/healthz
               break
             fi
 

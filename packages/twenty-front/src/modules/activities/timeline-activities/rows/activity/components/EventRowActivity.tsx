@@ -1,18 +1,18 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
-import {
-  type EventRowDynamicComponentProps,
-  StyledEventRowItemAction,
-  StyledEventRowItemColumn,
-} from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
+import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
+import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
 import { isTimelineActivityWithLinkedRecord } from '@/activities/timeline-activities/types/TimelineActivity';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { type CoreObjectNameSingular } from 'twenty-shared/types';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { isNonEmptyString } from '@sniptt/guards';
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { OverflowingTextWithTooltip } from 'twenty-ui-deprecated/display';
+import {
+  MOBILE_VIEWPORT,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 type EventRowActivityProps = EventRowDynamicComponentProps;
 
@@ -102,10 +102,10 @@ export const EventRowActivity = ({
     <StyledEventRow>
       <StyledRowContainer>
         <StyledRow>
-          <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
-          <StyledEventRowItemAction>
+          <EventRowItem>{authorFullName}</EventRowItem>
+          <EventRowItem variant="action">
             {t`${eventAction} a related ${eventObject}`}
-          </StyledEventRowItemAction>
+          </EventRowItem>
           <StyledLinkedActivity
             onClick={() =>
               openRecordInSidePanel({

@@ -1,6 +1,5 @@
 export const TOO_MANY_RELATION_QUERY_GQL_FIELDS = `
     id
-    city
     jobTitle
     avatarUrl
     intro
@@ -11,22 +10,6 @@ export const TOO_MANY_RELATION_QUERY_GQL_FIELDS = `
           id
           company {
             id
-          }
-        }
-      }
-    }
-    favorites {
-      edges {
-        node {
-          id
-          company {
-            id
-          }
-          person {
-            id
-            company {
-              id
-            }
           }
         }
       }
@@ -83,6 +66,19 @@ export const TOO_MANY_RELATION_QUERY_GQL_FIELDS = `
       people {
         edges {
           node {
+            id
+            company {
+              id
+            }
+          }
+        }
+      }
+    }
+    attachments {
+      edges {
+        node {
+          id
+          person {
             id
             company {
               id

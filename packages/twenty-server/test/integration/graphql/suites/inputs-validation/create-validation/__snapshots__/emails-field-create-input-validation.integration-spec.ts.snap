@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Create input validation - EMAILS Gql create input - failure EMAILS - should fail with : {"emailsField":"not-an-email"} 1`] = `"Expected type "EmailsCreateInput" to be an object."`;
+exports[`Create input validation - EMAILS Gql create input - failure EMAILS - should fail with : {"emailsField":"not-an-email"} 1`] = `"Invalid object value 'not-an-email' for field "emailsField""`;
 
 exports[`Create input validation - EMAILS Gql create input - failure EMAILS - should fail with : {"emailsField":{"additionalEmails":"not-an-email"}} 1`] = `"Invalid string value 'not-an-email' for email field "emailsField.additionalEmails""`;
 

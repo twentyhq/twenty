@@ -94,11 +94,13 @@ describe('ClientConfigController', () => {
         isGoogleCalendarEnabled: false,
         isConfigVariablesInDbEnabled: false,
         isImapSmtpCaldavEnabled: false,
+        isEmailingDomainInDemoMode: false,
         calendarBookingPageId: undefined,
         isTwoFactorAuthenticationEnabled: false,
         allowRequestsToTwentyIcons: true,
         isCloudflareIntegrationEnabled: false,
         isClickHouseConfigured: false,
+        isWorkspaceSchemaDDLLocked: false,
       };
 
       jest

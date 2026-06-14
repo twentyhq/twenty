@@ -2,17 +2,21 @@ import { styled } from '@linaria/react';
 
 import { type ReactNode, useContext } from 'react';
 import { t } from '@lingui/core/macro';
-import { Card, CardContent } from 'twenty-ui/layout';
-import { IconChevronRight } from 'twenty-ui/display';
-import { Pill } from 'twenty-ui/components';
+import { Card, CardContent } from 'twenty-ui-deprecated/layout';
+import { IconChevronRight } from 'twenty-ui-deprecated/display';
+import { Pill } from 'twenty-ui-deprecated/components';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 type SettingsCardProps = {
   description?: string;
   disabled?: boolean;
   soon?: boolean;
   Icon: ReactNode;
+  iconColor?: string;
   onClick?: () => void;
   title: string;
   className?: string;
@@ -79,8 +83,15 @@ const StyledDescription = styled.div`
   padding-left: ${themeCssVariables.spacing[7]};
 `;
 
-const StyledIconContainer = styled.div`
+const StyledIconContainer = styled.div<{
+  disabled?: boolean;
+  iconColor?: string;
+}>`
   align-items: center;
+  color: ${({ disabled, iconColor }) =>
+    disabled
+      ? themeCssVariables.font.color.extraLight
+      : (iconColor ?? 'inherit')};
   display: flex;
   height: 24px;
   justify-content: center;
@@ -92,6 +103,7 @@ export const SettingsCard = ({
   soon,
   disabled = soon,
   Icon,
+  iconColor,
   onClick,
   title,
   className,
@@ -109,7 +121,9 @@ export const SettingsCard = ({
         <StyledCardContentContainer>
           <CardContent>
             <StyledHeader>
-              <StyledIconContainer>{Icon}</StyledIconContainer>
+              <StyledIconContainer disabled={disabled} iconColor={iconColor}>
+                {Icon}
+              </StyledIconContainer>
               <StyledTitle disabled={disabled}>
                 {title}
                 {soon && <Pill label={t`Soon`} />}

@@ -6,6 +6,7 @@ import { validateAndTransformValueByFieldType } from './validate-and-transform-v
 import { validateArrayOperatorValueOrThrow } from './validate-array-operator-value-or-throw.util';
 import { validateIsEmptyArrayOperatorValueOrThrow } from './validate-is-empty-array-operator-value-or-throw.util';
 import { validateIsOperatorFilterValueOrThrow } from './validate-is-operator-filter-value-or-throw.util';
+import { validateStringOperatorValueOrThrow } from './validate-string-operator-value-or-throw.util';
 
 export const validateAndTransformValueOrThrow = (
   operator: FilterOperator,
@@ -49,6 +50,15 @@ export const validateAndTransformValueOrThrow = (
         fieldMetadata,
         fieldName,
       );
+
+    case 'like':
+    case 'ilike':
+    case 'startsWith':
+    case 'endsWith':
+    case 'containsIlike':
+      validateStringOperatorValueOrThrow(value, operator, fieldName);
+
+      return value;
 
     default:
       return value;

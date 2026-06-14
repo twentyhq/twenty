@@ -39,7 +39,7 @@ import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
-import { computeTableName } from 'src/engine/utils/compute-table-name.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
 export class WorkspaceUpdateQueryBuilder<
   T extends ObjectLiteral,
@@ -131,12 +131,11 @@ export class WorkspaceUpdateQueryBuilder<
         objectRecordsPermissions: this.objectRecordsPermissions,
       });
 
-      const tableName = computeTableName(
-        objectMetadata.nameSingular,
-        objectMetadata.isCustom,
-      );
+      const tableName = computeObjectTargetTable(objectMetadata);
 
-      const before = await eventSelectQueryBuilder.getMany();
+      const before = await eventSelectQueryBuilder.getMany({
+        noFormatting: true,
+      });
 
       if (before.length > QUERY_MAX_RECORDS) {
         throw new TwentyORMException(
@@ -236,7 +235,9 @@ export class WorkspaceUpdateQueryBuilder<
         await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
       }
 
-      const after = await eventSelectQueryBuilder.getMany();
+      const after = await eventSelectQueryBuilder.getMany({
+        noFormatting: true,
+      });
 
       const formattedAfter = formatResult<T[]>(
         after,
@@ -338,7 +339,9 @@ export class WorkspaceUpdateQueryBuilder<
         this.manyInputs.map((input) => input.criteria),
       );
 
-      const beforeRecords = await eventSelectQueryBuilder.getMany();
+      const beforeRecords = await eventSelectQueryBuilder.getMany({
+        noFormatting: true,
+      });
 
       const formattedBefore = formatResult<T[]>(
         beforeRecords,
@@ -447,7 +450,9 @@ export class WorkspaceUpdateQueryBuilder<
         await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
       }
 
-      const afterRecords = await eventSelectQueryBuilder.getMany();
+      const afterRecords = await eventSelectQueryBuilder.getMany({
+        noFormatting: true,
+      });
 
       const formattedAfter = formatResult<T[]>(
         afterRecords,

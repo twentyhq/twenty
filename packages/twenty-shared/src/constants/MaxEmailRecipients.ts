@@ -1,0 +1,1 @@
+export const MAX_EMAIL_RECIPIENTS = 100;

@@ -2,6 +2,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { availableFieldMetadataItemsForSortFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForSortFamilySelector';
+import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
@@ -30,7 +31,6 @@ import { hasInitializedCurrentRecordFieldsComponentFamilyState } from '@/views/s
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
 import { hasInitializedCurrentRecordSortsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordSortsComponentFamilyState';
 import { type View } from '@/views/types/View';
-import { getFilterableFields } from '@/views/utils/getFilterableFields';
 import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
@@ -74,7 +74,13 @@ export const useLoadRecordIndexStates = () => {
   const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
 
   const syncRecordIndexViewFields = useCallback(
-    (view: View, objectMetadataItem: EnrichedObjectMetadataItem) => {
+    (
+      view: View,
+      objectMetadataItem: EnrichedObjectMetadataItem,
+      options?: { skipGlobalIndexStates?: boolean },
+    ) => {
+      const skipGlobalIndexStates = options?.skipGlobalIndexStates ?? false;
+
       const activeFieldMetadataItems = objectMetadataItem.fields.filter(
         (field) => field.isActive && !isHiddenSystemField(field),
       );
@@ -146,13 +152,17 @@ export const useLoadRecordIndexStates = () => {
 
       store.set(
         atom(null, (get, batchSet) => {
-          const existingFieldDefs = get(recordIndexFieldDefinitionsState.atom);
-
-          if (!isDeeplyEqual(existingFieldDefs, newFieldDefinitions)) {
-            batchSet(
+          if (!skipGlobalIndexStates) {
+            const existingFieldDefs = get(
               recordIndexFieldDefinitionsState.atom,
-              newFieldDefinitions,
             );
+
+            if (!isDeeplyEqual(existingFieldDefs, newFieldDefinitions)) {
+              batchSet(
+                recordIndexFieldDefinitionsState.atom,
+                newFieldDefinitions,
+              );
+            }
           }
 
           for (const viewField of view.viewFields) {
@@ -199,17 +209,19 @@ export const useLoadRecordIndexStates = () => {
   );
 
   const loadRecordIndexStates = useCallback(
-    (view: View, objectMetadataItem: EnrichedObjectMetadataItem) => {
-      const filterableFieldMetadataItems = store.get(
-        availableFieldMetadataItemsForFilterFamilySelector.selectorFamily({
-          objectMetadataItemId: objectMetadataItem.id,
-        }),
-      );
+    (
+      view: View,
+      objectMetadataItem: EnrichedObjectMetadataItem,
+      options?: { skipGlobalIndexStates?: boolean },
+    ) => {
+      const skipGlobalIndexStates = options?.skipGlobalIndexStates ?? false;
 
-      const allFilterableFields = getFilterableFields(objectMetadataItem);
+      const flattenedFieldMetadataItems = store.get(
+        flattenedFieldMetadataItemsSelector.atom,
+      );
       const recordFilters = mapViewFiltersToFilters(
         view.viewFilters,
-        allFilterableFields,
+        flattenedFieldMetadataItems,
       );
 
       const recordFilterGroups = mapViewFilterGroupsToRecordFilterGroups(
@@ -218,7 +230,7 @@ export const useLoadRecordIndexStates = () => {
 
       const contextStoreFilters = mapViewFiltersToFilters(
         view.viewFilters,
-        filterableFieldMetadataItems,
+        flattenedFieldMetadataItems,
       );
 
       let recordIndexGroupFieldMetadataItemValue = undefined;
@@ -272,7 +284,9 @@ export const useLoadRecordIndexStates = () => {
           familyKey: { viewId: view.id },
         });
 
-      syncRecordIndexViewFields(view, objectMetadataItem);
+      syncRecordIndexViewFields(view, objectMetadataItem, {
+        skipGlobalIndexStates,
+      });
 
       store.set(
         atom(null, (get, batchSet) => {
@@ -289,13 +303,15 @@ export const useLoadRecordIndexStates = () => {
             filters: contextStoreFilters,
           });
 
-          batchSet(recordIndexViewTypeState.atom, view.type);
-          batchSet(recordIndexOpenRecordInState.atom, view.openRecordIn);
+          if (!skipGlobalIndexStates) {
+            batchSet(recordIndexViewTypeState.atom, view.type);
+            batchSet(recordIndexOpenRecordInState.atom, view.openRecordIn);
 
-          batchSet(
-            recordIndexCalendarFieldMetadataIdState.atom,
-            view.calendarFieldMetadataId ?? null,
-          );
+            batchSet(
+              recordIndexCalendarFieldMetadataIdState.atom,
+              view.calendarFieldMetadataId ?? null,
+            );
+          }
 
           batchSet(
             recordIndexShouldHideEmptyRecordGroupsAtom,

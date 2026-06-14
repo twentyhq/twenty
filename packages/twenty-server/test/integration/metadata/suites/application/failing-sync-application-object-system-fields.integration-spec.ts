@@ -1,6 +1,7 @@
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
+import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { type Manifest, type ObjectManifest } from 'twenty-shared/application';
@@ -67,6 +68,47 @@ const buildObjectWithLabelField = ({
           },
           ...additionalFields,
         ],
+      },
+    ],
+    fields: [],
+  };
+};
+
+const buildDefaultObjectWithModifiedSearchVector = ({
+  nameSingular,
+  namePlural,
+  labelSingular,
+  labelPlural,
+  description,
+  searchVectorOverrides,
+}: {
+  nameSingular: string;
+  namePlural: string;
+  labelSingular: string;
+  labelPlural: string;
+  description: string;
+  searchVectorOverrides: Partial<ObjectManifest['fields'][number]>;
+}): Pick<Manifest, 'objects' | 'fields'> => {
+  const defaultObject = buildDefaultObjectManifest({
+    nameSingular,
+    namePlural,
+    labelSingular,
+    labelPlural,
+    description,
+  });
+
+  return {
+    objects: [
+      {
+        ...defaultObject,
+        fields: defaultObject.fields.map((field) =>
+          field.name === 'searchVector'
+            ? ({
+                ...field,
+                ...searchVectorOverrides,
+              } as (typeof defaultObject.fields)[number])
+            : field,
+        ),
       },
     ],
     fields: [],
@@ -153,6 +195,75 @@ const failingSyncApplicationSystemFieldsTestCases: SyncApplicationTestingContext
         ),
       },
     },
+    {
+      title:
+        'when object has searchVector field with wrong type (TEXT instead of TS_VECTOR)',
+      context: {
+        manifest: buildManifest(
+          buildDefaultObjectWithModifiedSearchVector({
+            nameSingular: 'wrongSearchVectorType',
+            namePlural: 'wrongSearchVectorTypes',
+            labelSingular: 'Wrong SearchVector Type',
+            labelPlural: 'Wrong SearchVector Types',
+            description: 'Object with wrong searchVector field type',
+            searchVectorOverrides: {
+              type: FieldMetadataType.TEXT,
+            },
+          }),
+        ),
+      },
+    },
+    {
+      title:
+        'when object has TS_VECTOR field with wrong name (not searchVector)',
+      context: {
+        manifest: buildManifest(
+          buildDefaultObjectWithModifiedSearchVector({
+            nameSingular: 'wrongTsVectorName',
+            namePlural: 'wrongTsVectorNames',
+            labelSingular: 'Wrong TsVector Name',
+            labelPlural: 'Wrong TsVector Names',
+            description: 'Object with TS_VECTOR field named incorrectly',
+            searchVectorOverrides: {
+              name: 'wrongSearchVector',
+            },
+          }),
+        ),
+      },
+    },
+    {
+      title:
+        'when label identifier is non-searchable type (searchVector has no expression)',
+      context: (() => {
+        const nonSearchableFieldId = uuidv4();
+
+        return {
+          manifest: buildManifest({
+            objects: [
+              buildDefaultObjectManifest({
+                nameSingular: 'noSearchVectorExpression',
+                namePlural: 'noSearchVectorExpressions',
+                labelSingular: 'No SearchVector Expression',
+                labelPlural: 'No SearchVector Expressions',
+                description:
+                  'Object whose label identifier is non-searchable, so searchVector has no expression',
+                labelIdentifierFieldMetadataUniversalIdentifier:
+                  nonSearchableFieldId,
+                additionalFields: [
+                  {
+                    universalIdentifier: nonSearchableFieldId,
+                    type: FieldMetadataType.NUMBER,
+                    name: 'quantity',
+                    label: 'Quantity',
+                  },
+                ],
+              }),
+            ],
+            fields: [],
+          }),
+        };
+      })(),
+    },
   ];
 
 describe('Sync application should fail due to object system fields integrity', () => {
@@ -166,29 +277,9 @@ describe('Sync application should fail due to object system fields integrity', (
   }, 60000);
 
   afterAll(async () => {
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."role" WHERE "universalIdentifier" = $1`,
-      [TEST_ROLE_ID],
-    );
-
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."file" WHERE "applicationId" IN (
-        SELECT id FROM core."application" WHERE "universalIdentifier" = $1
-      )`,
-      [TEST_APP_ID],
-    );
-
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."application"
-       WHERE "universalIdentifier" = $1`,
-      [TEST_APP_ID],
-    );
-
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."applicationRegistration"
-       WHERE "universalIdentifier" = $1`,
-      [TEST_APP_ID],
-    );
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier: TEST_APP_ID,
+    });
   });
 
   it.each(
@@ -207,12 +298,25 @@ describe('Sync application should fail due to object system fields integrity', (
   );
 
   it('should fail when trying to delete a system field after a successful sync', async () => {
+    const labelIdentifierFieldUniversalIdentifier = uuidv4();
     const testObject = buildDefaultObjectManifest({
       nameSingular: 'deleteSystemFieldObject',
       namePlural: 'deleteSystemFieldObjects',
       labelSingular: 'Delete System Field Object',
       labelPlural: 'Delete System Field Objects',
       description: 'Object for testing system field deletion',
+      labelIdentifierFieldMetadataUniversalIdentifier:
+        labelIdentifierFieldUniversalIdentifier,
+      additionalFields: [
+        {
+          universalIdentifier: labelIdentifierFieldUniversalIdentifier,
+          type: FieldMetadataType.TEXT,
+          name: 'labelIdentifierField',
+          label: 'Label Identifier Field',
+          description: 'Label identifier field',
+          icon: 'IconTextCaption',
+        },
+      ],
     });
 
     const validManifest = buildManifest({
@@ -244,12 +348,25 @@ describe('Sync application should fail due to object system fields integrity', (
   }, 60000);
 
   it('should fail when trying to update a system field after a successful sync', async () => {
+    const labelIdentifierFieldUniversalIdentifier = uuidv4();
     const testObject = buildDefaultObjectManifest({
       nameSingular: 'updateSystemFieldObject',
       namePlural: 'updateSystemFieldObjects',
       labelSingular: 'Update System Field Object',
       labelPlural: 'Update System Field Objects',
       description: 'Object for testing system field update',
+      labelIdentifierFieldMetadataUniversalIdentifier:
+        labelIdentifierFieldUniversalIdentifier,
+      additionalFields: [
+        {
+          universalIdentifier: labelIdentifierFieldUniversalIdentifier,
+          type: FieldMetadataType.TEXT,
+          name: 'labelIdentifierField',
+          label: 'Label Identifier Field',
+          description: 'Label identifier field',
+          icon: 'IconTextCaption',
+        },
+      ],
     });
 
     const validManifest = buildManifest({

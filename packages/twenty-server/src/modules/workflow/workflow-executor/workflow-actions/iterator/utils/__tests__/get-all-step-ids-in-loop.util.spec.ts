@@ -207,6 +207,116 @@ describe('getAllStepIdsInLoop', () => {
     });
   });
 
+  describe('if-else branch looping back to enclosing iterator', () => {
+    it('should not stack overflow when an if-else branch points back to the enclosing iterator', () => {
+      const steps = [
+        createMockIteratorStep('iterator1', [], ['step1']),
+        createMockCodeStep('step1', ['ifElse1']),
+        createMockIfElseStep('ifElse1', [
+          {
+            id: 'branch-if',
+            filterGroupId: 'fg1',
+            nextStepIds: ['stepA'],
+          },
+          { id: 'branch-else', nextStepIds: ['iterator1'] },
+        ]),
+        createMockCodeStep('stepA', ['iterator1']),
+      ];
+
+      const result = getAllStepIdsInLoop({
+        iteratorStepId: 'iterator1',
+        initialLoopStepIds: ['step1'],
+        steps,
+      });
+
+      expect(result).toEqual(
+        expect.arrayContaining(['step1', 'ifElse1', 'stepA']),
+      );
+      expect(result).toHaveLength(3);
+      expect(result).not.toContain('iterator1');
+    });
+
+    it('should handle multiple if-else branches where some loop back to iterator and others continue', () => {
+      const steps = [
+        createMockIteratorStep('iterator1', ['exitStep'], ['step1']),
+        createMockCodeStep('step1', ['step2']),
+        createMockCodeStep('step2', ['ifElse1']),
+        createMockIfElseStep('ifElse1', [
+          {
+            id: 'branch-skip',
+            filterGroupId: 'fg1',
+            nextStepIds: ['iterator1'],
+          },
+          {
+            id: 'branch-create',
+            filterGroupId: 'fg2',
+            nextStepIds: ['stepCreate'],
+          },
+          { id: 'branch-default', nextStepIds: [] },
+        ]),
+        createMockCodeStep('stepCreate', ['stepSave']),
+        createMockCodeStep('stepSave', ['iterator1']),
+        createMockCodeStep('exitStep', []),
+      ];
+
+      const result = getAllStepIdsInLoop({
+        iteratorStepId: 'iterator1',
+        initialLoopStepIds: ['step1'],
+        steps,
+      });
+
+      expect(result).toEqual(
+        expect.arrayContaining([
+          'step1',
+          'step2',
+          'ifElse1',
+          'stepCreate',
+          'stepSave',
+        ]),
+      );
+      expect(result).toHaveLength(5);
+      expect(result).not.toContain('iterator1');
+      expect(result).not.toContain('exitStep');
+    });
+
+    it('should handle nested iterator inside if-else branch that also has a branch looping back to outer iterator', () => {
+      const steps = [
+        createMockIteratorStep('outerIterator', ['exitStep'], ['ifElse1']),
+        createMockIfElseStep('ifElse1', [
+          {
+            id: 'branch-nested',
+            filterGroupId: 'fg1',
+            nextStepIds: ['innerIterator'],
+          },
+          {
+            id: 'branch-skip',
+            nextStepIds: ['outerIterator'],
+          },
+        ]),
+        createMockIteratorStep(
+          'innerIterator',
+          ['outerIterator'],
+          ['innerStep'],
+        ),
+        createMockCodeStep('innerStep', ['innerIterator']),
+        createMockCodeStep('exitStep', []),
+      ];
+
+      const result = getAllStepIdsInLoop({
+        iteratorStepId: 'outerIterator',
+        initialLoopStepIds: ['ifElse1'],
+        steps,
+      });
+
+      expect(result).toEqual(
+        expect.arrayContaining(['ifElse1', 'innerIterator', 'innerStep']),
+      );
+      expect(result).toHaveLength(3);
+      expect(result).not.toContain('outerIterator');
+      expect(result).not.toContain('exitStep');
+    });
+  });
+
   describe('edge cases', () => {
     it('should handle empty initial loop step IDs', () => {
       const steps = [createMockIteratorStep('iterator1', ['step2'], [])];

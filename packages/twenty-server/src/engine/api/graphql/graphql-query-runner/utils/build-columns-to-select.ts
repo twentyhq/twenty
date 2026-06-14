@@ -1,19 +1,15 @@
-import { Logger } from '@nestjs/common';
-
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { isQueryTimingEnabled } from 'src/engine/core-modules/graphql/storage/query-timing-context.storage';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-
-const logger = new Logger('buildColumnsToSelect');
 
 export const buildColumnsToSelect = ({
   select,
@@ -28,9 +24,6 @@ export const buildColumnsToSelect = ({
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }) => {
-  const timingEnabled = isQueryTimingEnabled();
-  const startTime = timingEnabled ? performance.now() : 0;
-
   const requiredRelationColumns = getRequiredRelationColumns(
     relations,
     flatObjectMetadata,
@@ -49,14 +42,6 @@ export const buildColumnsToSelect = ({
   }
 
   const result = { ...fieldsToSelect, id: true };
-
-  if (timingEnabled) {
-    const durationMs = (performance.now() - startTime).toFixed(2);
-
-    logger.log(
-      `${flatObjectMetadata.nameSingular} — ${durationMs}ms (${Object.keys(select).length} select, ${flatObjectMetadata.fieldIds.length} fields)`,
-    );
-  }
 
   return result;
 };
@@ -80,13 +65,14 @@ const getRequiredRelationColumns = (
 
       if (
         !isDefined(relationValue) ||
-        !isDefined(fieldMetadata?.settings?.joinColumnName) ||
         fieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE
       ) {
         continue;
       }
 
-      requiredColumns.push(fieldMetadata.settings.joinColumnName);
+      requiredColumns.push(
+        computeMorphOrRelationFieldJoinColumnName({ name: fieldMetadata.name }),
+      );
     }
 
     if (
@@ -100,7 +86,7 @@ const getRequiredRelationColumns = (
         : undefined;
 
       if (
-        !fieldMetadata.settings?.relationType ||
+        fieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE ||
         !isDefined(targetObjectMetadata)
       ) {
         continue;
@@ -108,14 +94,13 @@ const getRequiredRelationColumns = (
 
       const relationValue = relations[fieldMetadata.name];
 
-      if (
-        !isDefined(relationValue) ||
-        !isDefined(fieldMetadata?.settings?.joinColumnName)
-      ) {
+      if (!isDefined(relationValue)) {
         continue;
       }
 
-      requiredColumns.push(fieldMetadata.settings.joinColumnName);
+      requiredColumns.push(
+        computeMorphOrRelationFieldJoinColumnName({ name: fieldMetadata.name }),
+      );
     }
   }
 

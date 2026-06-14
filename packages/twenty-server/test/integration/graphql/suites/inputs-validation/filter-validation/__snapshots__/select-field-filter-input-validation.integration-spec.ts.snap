@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Filter input validation - SELECT Gql filter input - failure SELECT field type - should fail with filter : {"selectField":{"eq":"not-a-select"}} 1`] = `"Value "not-a-select" does not exist in "ApiInputValidationTestObjectSelectFieldEnum" enum."`;
+exports[`Filter input validation - SELECT Gql filter input - failure SELECT field type - should fail with filter : {"selectField":{"eq":"not-a-select"}} 1`] = `"invalid input value for enum workspace_1wgvd1injqtife6y4rvfbu3h5."_apiInputValidationTestObject_selectField_enum": "not-a-select""`;
 
-exports[`Filter input validation - SELECT Gql filter input - failure SELECT field type - should fail with filter : {"selectField":{"eq":[]}} 1`] = `"Enum "ApiInputValidationTestObjectSelectFieldEnum" cannot represent non-string value: []."`;
+exports[`Filter input validation - SELECT Gql filter input - failure SELECT field type - should fail with filter : {"selectField":{"eq":[]}} 1`] = `"invalid input value for enum workspace_1wgvd1injqtife6y4rvfbu3h5."_apiInputValidationTestObject_selectField_enum": "{}""`;
 
-exports[`Filter input validation - SELECT Gql filter input - failure SELECT field type - should fail with filter : {"selectField":{"eq":{}}} 1`] = `"Enum "ApiInputValidationTestObjectSelectFieldEnum" cannot represent non-string value: {}."`;
+exports[`Filter input validation - SELECT Gql filter input - failure SELECT field type - should fail with filter : {"selectField":{"eq":{}}} 1`] = `"invalid input value for enum workspace_1wgvd1injqtife6y4rvfbu3h5."_apiInputValidationTestObject_selectField_enum": "{}""`;
 
-exports[`Filter input validation - SELECT Gql filter input - failure SELECT field type - should fail with filter : {"selectField":{"eq":true}} 1`] = `"Enum "ApiInputValidationTestObjectSelectFieldEnum" cannot represent non-string value: true."`;
+exports[`Filter input validation - SELECT Gql filter input - failure SELECT field type - should fail with filter : {"selectField":{"eq":true}} 1`] = `"invalid input value for enum workspace_1wgvd1injqtife6y4rvfbu3h5."_apiInputValidationTestObject_selectField_enum": "true""`;
 
 exports[`Filter input validation - SELECT Rest filter input - failure SELECT field type - should fail with filter : "selectField[eq]:\\"[]\\"" 1`] = `
 [

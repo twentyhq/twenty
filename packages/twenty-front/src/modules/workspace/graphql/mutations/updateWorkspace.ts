@@ -16,6 +16,7 @@ export const UPDATE_WORKSPACE = gql`
       isMicrosoftAuthEnabled
       isPasswordAuthEnabled
       isTwoFactorAuthenticationEnforced
+      isInternalMessagesImportEnabled
       defaultRole {
         ...RoleFragment
       }

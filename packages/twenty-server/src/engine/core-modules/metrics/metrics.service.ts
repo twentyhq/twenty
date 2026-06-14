@@ -6,6 +6,7 @@ import {
   type Meter,
   type MetricOptions,
   type ObservableGauge,
+  type ObservableResult,
 } from '@opentelemetry/api';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -43,15 +44,62 @@ export class MetricsService {
     callback: () => number | Promise<number>;
     cacheValue?: boolean;
   }): ObservableGauge {
+    return this.createObservableGaugeInternal({
+      metricName,
+      options,
+      callback,
+      cacheValue,
+      observeResult: (observableResult, result) => {
+        observableResult.observe(result);
+      },
+    });
+  }
+
+  createMultiObservableGauge({
+    metricName,
+    options,
+    callback,
+    cacheValue = false,
+  }: {
+    metricName: string;
+    options: MetricOptions;
+    callback: () => Promise<Array<{ value: number; attributes: Attributes }>>;
+    cacheValue?: boolean;
+  }): ObservableGauge {
+    return this.createObservableGaugeInternal({
+      metricName,
+      options,
+      callback,
+      cacheValue,
+      observeResult: (observableResult, observations) => {
+        for (const observation of observations) {
+          observableResult.observe(observation.value, observation.attributes);
+        }
+      },
+    });
+  }
+
+  private createObservableGaugeInternal<T>({
+    metricName,
+    options,
+    callback,
+    cacheValue,
+    observeResult,
+  }: {
+    metricName: string;
+    options: MetricOptions;
+    callback: () => T | Promise<T>;
+    cacheValue: boolean;
+    observeResult: (observableResult: ObservableResult, result: T) => void;
+  }): ObservableGauge {
     const gauge = this.getMeter().createObservableGauge(metricName, options);
 
     gauge.addCallback(async (observableResult) => {
       if (cacheValue) {
-        const cachedResult =
-          await this.healthCacheStorage.get<number>(metricName);
+        const cachedResult = await this.healthCacheStorage.get<T>(metricName);
 
         if (isDefined(cachedResult)) {
-          observableResult.observe(cachedResult);
+          observeResult(observableResult, cachedResult);
 
           return;
         }
@@ -60,7 +108,7 @@ export class MetricsService {
       try {
         const result = await callback();
 
-        observableResult.observe(result);
+        observeResult(observableResult, result);
 
         if (cacheValue) {
           await this.healthCacheStorage.set(
@@ -80,7 +128,41 @@ export class MetricsService {
     return gauge;
   }
 
-  async incrementCounter({
+  createInfoGauge({
+    metricName,
+    options,
+    attributesCallback,
+  }: {
+    metricName: string;
+    options: MetricOptions;
+    attributesCallback: () => Attributes | Promise<Attributes>;
+  }): ObservableGauge {
+    const normalizedName = metricName.endsWith('_info')
+      ? metricName
+      : `${metricName}_info`;
+
+    const gauge = this.getMeter().createObservableGauge(
+      normalizedName,
+      options,
+    );
+
+    gauge.addCallback(async (observableResult) => {
+      try {
+        const attributes = await attributesCallback();
+
+        observableResult.observe(1, attributes);
+      } catch (error) {
+        this.logger.error(
+          `Failed to collect info gauge ${normalizedName}`,
+          error,
+        );
+      }
+    });
+
+    return gauge;
+  }
+
+  async incrementCounterForEvent({
     key,
     eventId,
     attributes,
@@ -98,7 +180,11 @@ export class MetricsService {
     counter.add(1, attributes);
 
     if (shouldStoreInCache && eventId) {
-      this.metricsCacheService.updateCounter(key, [eventId]);
+      try {
+        await this.metricsCacheService.updateCounter(key, [eventId]);
+      } catch (error) {
+        this.logger.error(`Failed to update metrics cache for ${key}`, error);
+      }
     }
 
     if (isDefined(debugLog)) {
@@ -106,7 +192,7 @@ export class MetricsService {
     }
   }
 
-  async batchIncrementCounter({
+  async incrementCounterForEvents({
     key,
     eventIds,
     attributes,
@@ -122,8 +208,34 @@ export class MetricsService {
     counter.add(eventIds.length, attributes);
 
     if (shouldStoreInCache) {
-      this.metricsCacheService.updateCounter(key, eventIds);
+      await this.metricsCacheService.updateCounter(key, eventIds);
     }
+  }
+
+  incrementCounterBy({
+    key,
+    amount,
+    attributes,
+  }: {
+    key: MetricsKeys;
+    amount: number;
+    attributes?: Attributes;
+  }): void {
+    this.getMeter().createCounter(key).add(amount, attributes);
+  }
+
+  recordHistogram({
+    key,
+    value,
+    unit,
+    attributes,
+  }: {
+    key: MetricsKeys;
+    value: number;
+    unit?: string;
+    attributes?: Attributes;
+  }): void {
+    this.getMeter().createHistogram(key, { unit }).record(value, attributes);
   }
 
   async groupMetrics(

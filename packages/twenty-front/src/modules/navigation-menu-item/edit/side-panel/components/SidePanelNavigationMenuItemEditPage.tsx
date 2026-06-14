@@ -1,14 +1,13 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
-import { useDraftNavigationMenuItemsAllFolders } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItemsAllFolders';
-import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemsDraftState';
+import { useNavigationMenuItemSectionAllFolders } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemSectionAllFolders';
+import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/edit/hooks/useSelectedNavigationMenuItemEditItem';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
-import { parseThemeColor } from '@/navigation-menu-item/common/utils/parseThemeColor';
 import { useSelectedNavigationMenuItemEditItemLabel } from '@/navigation-menu-item/edit/hooks/useSelectedNavigationMenuItemEditItemLabel';
-import { useUpdateLinkInDraft } from '@/navigation-menu-item/edit/link/hooks/useUpdateLinkInDraft';
+import { buildNavigationMenuLinkUpdate } from '@/navigation-menu-item/common/utils/buildNavigationMenuLinkUpdate';
 import { SidePanelEditColorOption } from '@/navigation-menu-item/edit/side-panel/components/SidePanelEditColorOption';
 import { SidePanelEditLinkItemView } from '@/navigation-menu-item/edit/side-panel/components/SidePanelEditLinkItemView';
 import { SidePanelEditObjectViewBase } from '@/navigation-menu-item/edit/side-panel/components/SidePanelEditObjectViewBase';
@@ -26,8 +25,9 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconPlus } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconPlus } from 'twenty-ui-deprecated/display';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { parseThemeColor } from 'twenty-ui-deprecated/utilities';
 
 const ADD_ITEM_TO_FOLDER_ACTION_ID = 'add-item-to-folder';
 
@@ -49,7 +49,7 @@ export const SidePanelNavigationMenuItemEditPage = () => {
   const { selectedItemLabel } = useSelectedNavigationMenuItemEditItemLabel();
   const { selectedItem } = useSelectedNavigationMenuItemEditItem();
   const selectedItemType = selectedItem?.type ?? null;
-  const { allFolders } = useDraftNavigationMenuItemsAllFolders();
+  const { allFolders } = useNavigationMenuItemSectionAllFolders();
 
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
   const openFolderPicker = () =>
@@ -65,8 +65,7 @@ export const SidePanelNavigationMenuItemEditPage = () => {
     onAddAfter,
   } = useNavigationMenuItemEditOrganizeActions();
 
-  const { updateLinkInDraft } = useUpdateLinkInDraft();
-  const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
+  const { currentItems, updateItem } = useNavigationMenuItemEditController();
   const setPendingInsertionNavigationMenuItem = useSetAtomState(
     pendingInsertionNavigationMenuItemState,
   );
@@ -83,7 +82,7 @@ export const SidePanelNavigationMenuItemEditPage = () => {
     if (!selectedItem || selectedItem.type !== NavigationMenuItemType.FOLDER) {
       return;
     }
-    const folderItemCount = workspaceNavigationMenuItems.filter(
+    const folderItemCount = currentItems.filter(
       (item) => item.folderId === selectedItem.id,
     ).length;
     setPendingInsertionNavigationMenuItem({
@@ -143,9 +142,9 @@ export const SidePanelNavigationMenuItemEditPage = () => {
           <SidePanelEditLinkItemView
             key={selectedItem.id}
             selectedItem={selectedItem}
-            onUpdateLink={(linkId, updates) =>
-              updateLinkInDraft(linkId, updates)
-            }
+            onUpdateLink={(linkId, updates) => {
+              void updateItem(linkId, buildNavigationMenuLinkUpdate(updates));
+            }}
             onOpenFolderPicker={openFolderPicker}
             showMoveToFolder={canMoveToOtherFolder}
             canMoveUp={canMoveUp}
@@ -162,7 +161,6 @@ export const SidePanelNavigationMenuItemEditPage = () => {
     case NavigationMenuItemType.FOLDER:
       return (
         <SidePanelList
-          commandGroups={[]}
           selectableItemIds={[
             ADD_ITEM_TO_FOLDER_ACTION_ID,
             ...getOrganizeActionsSelectableItemIds(false),
@@ -203,7 +201,6 @@ export const SidePanelNavigationMenuItemEditPage = () => {
     default:
       return (
         <SidePanelList
-          commandGroups={[]}
           selectableItemIds={getOrganizeActionsSelectableItemIds(
             canMoveToOtherFolder,
           )}

@@ -19,10 +19,10 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { type IconComponent } from 'twenty-ui/display';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type IconComponent } from 'twenty-ui-deprecated/display';
+import { type SelectOption } from 'twenty-ui-deprecated/input';
+import { MenuItem, MenuItemSelect } from 'twenty-ui-deprecated/navigation';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 export type SelectSizeVariant = 'small' | 'default';
 
@@ -226,6 +226,7 @@ export const Select = <Value extends SelectValue>({
                 <DropdownMenuItemsContainer scrollable={false}>
                   <MenuItemSelect
                     LeftIcon={pinnedOption.Icon}
+                    leftIconColor={pinnedOption.iconThemeColor}
                     text={pinnedOption.label}
                     contextualText={pinnedOption.contextualText}
                     selected={
@@ -262,6 +263,7 @@ export const Select = <Value extends SelectValue>({
                       >
                         <MenuItemSelect
                           LeftIcon={option.Icon}
+                          leftIconColor={option.iconThemeColor}
                           text={option.label}
                           contextualText={option.contextualText}
                           selected={

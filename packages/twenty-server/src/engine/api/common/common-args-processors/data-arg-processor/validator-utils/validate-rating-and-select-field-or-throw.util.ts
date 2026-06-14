@@ -1,5 +1,3 @@
-import { inspect } from 'util';
-
 import { msg } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,13 +25,11 @@ export const validateRatingAndSelectFieldOrThrow = (
   }
 
   if (!isNull(preValidatedValue) && !options.includes(preValidatedValue)) {
-    const inspectedValue = inspect(value);
-
     throw new CommonQueryRunnerException(
-      `Invalid value ${inspectedValue} for field "${fieldName}"`,
+      `Invalid value "${preValidatedValue}" for field "${fieldName}". Valid values are: ${options.join(', ')}`,
       CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
       {
-        userFriendlyMessage: msg`Invalid value for select: "${inspectedValue}"`,
+        userFriendlyMessage: msg`Invalid value for field "${fieldName}"`,
       },
     );
   }

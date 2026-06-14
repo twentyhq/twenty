@@ -1,13 +1,20 @@
-import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
+import { RestPlaygroundSchemaFetchEffect } from '@/settings/playground/components/RestPlaygroundSchemaFetchEffect';
+import {
+  isPlaygroundApiKeyFresh,
+  playgroundApiKeyState,
+} from '@/settings/playground/states/playgroundApiKeyState';
 import { type PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useContext, lazy, Suspense } from 'react';
+import { useContext, useState, lazy, Suspense } from 'react';
 import { styled } from '@linaria/react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledContainer = styled.div`
   border: 1px solid ${themeCssVariables.border.color.medium};
@@ -37,7 +44,7 @@ const StyledContainer = styled.div`
 
 const ApiReferenceReact = lazy(() =>
   import('@scalar/api-reference-react').then((module) => {
-    import('@scalar/api-reference-react/style.css?inline');
+    import('@scalar/api-reference-react/style.css');
     return {
       default: module.ApiReferenceReact,
     };
@@ -52,50 +59,58 @@ type RestPlaygroundProps = {
 export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
   const { theme, colorScheme } = useContext(ThemeContext);
   const playgroundApiKey = useAtomStateValue(playgroundApiKeyState);
+  const [specContent, setSpecContent] = useState<object | null>(null);
 
-  if (!playgroundApiKey) {
+  if (!isPlaygroundApiKeyFresh(playgroundApiKey)) {
     onError();
     return null;
   }
 
+  const fallback = (
+    <SkeletonTheme
+      baseColor={theme.background.tertiary}
+      highlightColor={theme.background.transparent.lighter}
+      borderRadius={4}
+    >
+      <Skeleton width="100%" height="100%" />
+    </SkeletonTheme>
+  );
+
   return (
     <StyledContainer>
-      <Suspense
-        fallback={
-          <SkeletonTheme
-            baseColor={theme.background.tertiary}
-            highlightColor={theme.background.transparent.lighter}
-            borderRadius={4}
-          >
-            <Skeleton width="100%" height="100%" />
-          </SkeletonTheme>
-        }
-      >
-        <ApiReferenceReact
-          configuration={{
-            spec: {
-              url: `${REACT_APP_SERVER_BASE_URL}/rest/open-api/${schema}?token=${playgroundApiKey}`,
-            },
-            authentication: {
-              http: {
-                bearer: playgroundApiKey
-                  ? { token: playgroundApiKey }
-                  : undefined,
+      <RestPlaygroundSchemaFetchEffect
+        schema={schema}
+        apiKey={playgroundApiKey.token}
+        onSchemaLoaded={setSpecContent}
+        onError={onError}
+      />
+      {specContent === null ? (
+        fallback
+      ) : (
+        <Suspense fallback={fallback}>
+          <ApiReferenceReact
+            configuration={{
+              content: specContent,
+              authentication: {
+                preferredSecurityScheme: 'bearerAuth',
+                securitySchemes: {
+                  bearerAuth: { token: playgroundApiKey.token },
+                },
               },
-            },
-            baseServerURL: REACT_APP_SERVER_BASE_URL + '/' + schema,
-            forceDarkModeState: colorScheme === 'dark' ? 'dark' : 'light',
-            hideClientButton: true,
-            hideDarkModeToggle: true,
-            hideModels: schema === 'metadata',
-            pathRouting: {
-              basePath: getSettingsPath(SettingsPath.RestPlayground, {
-                schema,
-              }),
-            },
-          }}
-        />
-      </Suspense>
+              baseServerURL: REACT_APP_SERVER_BASE_URL + '/' + schema,
+              forceDarkModeState: colorScheme === 'dark' ? 'dark' : 'light',
+              hideClientButton: true,
+              hideDarkModeToggle: true,
+              hideModels: schema === 'metadata',
+              pathRouting: {
+                basePath: getSettingsPath(SettingsPath.RestPlayground, {
+                  schema,
+                }),
+              },
+            }}
+          />
+        </Suspense>
+      )}
     </StyledContainer>
   );
 };

@@ -1,5 +1,6 @@
 ---
 title: 设置
+icon: 齿轮
 ---
 
 # 配置管理
@@ -42,10 +43,25 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 
 <Warning>
 每个变量都在您的管理面板的**设置 → 管理员面板 → 配置变量**中记录了说明。
-某些基础设施设置如数据库连接 (`PG_DATABASE_URL`)、服务器 URL (`SERVER_URL`) 和应用程序密钥 (`APP_SECRET`) 只能通过 `.env` 文件配置。
+某些基础设施设置如数据库连接 (`PG_DATABASE_URL`)、服务器 URL (`SERVER_URL`) 和密钥（`ENCRYPTION_KEY`、`FALLBACK_ENCRYPTION_KEY`）只能通过 `.env` 文件配置。
 
 [完整技术参考→](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
+
+## 加密密钥
+
+Twenty 使用两个仅通过环境变量配置的加密密钥：
+
+| 变量                        | 目的                                                           | 必填                                    |
+| ------------------------- | ------------------------------------------------------------ | ------------------------------------- |
+| `ENCRYPTION_KEY`          | 用于对静态存储的机密信息（OAuth 令牌、应用程序变量、签名密钥的私钥、TOTP 密钥、敏感配置值）进行加密的主密钥。 | 新安装必须设置（旧安装可能依赖于 `APP_SECRET` —— 见下文） |
+| `FALLBACK_ENCRYPTION_KEY` | 仅用于验证的密钥。 在轮换期间，将其设置为*先前的* `ENCRYPTION_KEY`，以便现有行仍可解密。       | 仅在轮换期间                                |
+
+为保持向后兼容性，如果未设置 `ENCRYPTION_KEY`，Twenty 将回退为使用 `APP_SECRET` 进行静态数据加密——与旧部署的旧版行为一致。 新的安装应始终设置专用的 `ENCRYPTION_KEY`。
+
+使用 `openssl rand -base64 32` 生成值，并将其安全存储（如密钥管理器、加密配置等）。 丢失 `ENCRYPTION_KEY` 意味着将失去对数据库中存储的所有机密的访问权限。
+
+要在不停机的情况下轮换 `ENCRYPTION_KEY`，请参阅[密钥轮换指南](/l/zh/developers/self-host/capabilities/key-rotation)。
 
 ## 2. 仅限环境配置
 

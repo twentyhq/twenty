@@ -1,38 +1,53 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
-import crypto from 'crypto';
 
 import { msg } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { SendApprovedAccessDomainValidation } from 'twenty-emails';
-import { SettingsPath } from 'twenty-shared/types';
+import { FileFolder, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
   ApprovedAccessDomainException,
   ApprovedAccessDomainExceptionCode,
 } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.exception';
 import { approvedAccessDomainValidator } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.validate';
+import { type ApprovedAccessDomainJwtPayload } from 'src/engine/core-modules/auth/types/approved-access-domain-jwt-payload.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { decodeJwtHeader } from 'src/engine/core-modules/jwt/utils/decode-jwt-header.util';
+import { isAsymmetricJwtHeader } from 'src/engine/core-modules/jwt/utils/is-asymmetric-jwt-header.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 import { isWorkDomain } from 'src/utils/is-work-email';
+
+const APPROVED_ACCESS_DOMAIN_TOKEN_EXPIRES_IN = '7d';
 
 @Injectable()
 export class ApprovedAccessDomainService {
+  private readonly logger = new Logger(ApprovedAccessDomainService.name);
+
   constructor(
+    @InjectWorkspaceScopedRepository(ApprovedAccessDomainEntity)
+    private readonly approvedAccessDomainRepository: WorkspaceScopedRepository<ApprovedAccessDomainEntity>,
+    // Cross-workspace lookups for token validation and SSO discovery.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApprovedAccessDomainEntity)
-    private readonly approvedAccessDomainRepository: Repository<ApprovedAccessDomainEntity>,
+    private readonly approvedAccessDomainRepositoryUnscoped: Repository<ApprovedAccessDomainEntity>,
     private readonly emailService: EmailService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly fileService: FileService,
+    private readonly fileUrlService: FileUrlService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
+    private readonly jwtWrapperService: JwtWrapperService,
   ) {}
 
   async sendApprovedAccessDomainValidationEmail(
@@ -51,7 +66,7 @@ export class ApprovedAccessDomainService {
       );
     }
 
-    if (to.split('@')[1] !== approvedAccessDomain.domain) {
+    if (getDomainFromEmail(to) !== approvedAccessDomain.domain) {
       throw new ApprovedAccessDomainException(
         'Approved access domain does not match email domain',
         ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_DOES_NOT_MATCH_DOMAIN_EMAIL,
@@ -63,10 +78,13 @@ export class ApprovedAccessDomainService {
 
     const link = this.workspaceDomainsService.buildWorkspaceURL({
       workspace,
-      pathname: getSettingsPath(SettingsPath.Domains),
+      pathname: getSettingsPath(SettingsPath.WorkspaceMembersPage),
       searchParams: {
         wtdId: approvedAccessDomain.id,
-        validationToken: this.generateUniqueHash(approvedAccessDomain),
+        validationToken: await this.mintValidationToken({
+          approvedAccessDomain,
+          workspaceId: workspace.id,
+        }),
       },
     });
 
@@ -74,16 +92,19 @@ export class ApprovedAccessDomainService {
       throw new Error(`Sender ${sender.id} has an empty userEmail`);
     }
 
+    const logo = isDefined(workspace.logoFileId)
+      ? await this.fileUrlService.signFileByIdUrl({
+          fileId: workspace.logoFileId,
+          workspaceId: workspace.id,
+          fileFolder: FileFolder.CorePicture,
+        })
+      : undefined;
+
     const emailTemplate = SendApprovedAccessDomainValidation({
       link: link.toString(),
       workspace: {
         name: workspace.displayName,
-        logo: workspace.logo
-          ? this.fileService.signFileUrl({
-              url: workspace.logo,
-              workspaceId: workspace.id,
-            })
-          : workspace.logo,
+        logo,
       },
       domain: approvedAccessDomain.domain,
       sender: {
@@ -108,19 +129,62 @@ export class ApprovedAccessDomainService {
     });
   }
 
-  private generateUniqueHash(
-    approvedAccessDomain: ApprovedAccessDomainEntity,
-  ): string {
-    return crypto
-      .createHash('sha256')
-      .update(
-        JSON.stringify({
-          id: approvedAccessDomain.id,
-          domain: approvedAccessDomain.domain,
-          key: this.twentyConfigService.get('APP_SECRET'),
-        }),
-      )
-      .digest('hex');
+  private async mintValidationToken({
+    approvedAccessDomain,
+    workspaceId,
+  }: {
+    approvedAccessDomain: ApprovedAccessDomainEntity;
+    workspaceId: string;
+  }): Promise<string> {
+    return this.jwtWrapperService.signAsyncOrThrow(
+      {
+        sub: approvedAccessDomain.id,
+        type: JwtTokenTypeEnum.APPROVED_ACCESS_DOMAIN,
+        workspaceId,
+        approvedAccessDomainId: approvedAccessDomain.id,
+        domain: approvedAccessDomain.domain,
+      },
+      { expiresIn: APPROVED_ACCESS_DOMAIN_TOKEN_EXPIRES_IN },
+    );
+  }
+
+  private async verifyValidationTokenOrThrow(
+    validationToken: string,
+  ): Promise<ApprovedAccessDomainJwtPayload> {
+    if (!isAsymmetricJwtHeader(decodeJwtHeader(validationToken))) {
+      throw new ApprovedAccessDomainException(
+        'Invalid approved access domain validation token',
+        ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID,
+      );
+    }
+
+    let payload: ApprovedAccessDomainJwtPayload;
+
+    try {
+      payload = (await this.jwtWrapperService.verifyJwtToken(
+        validationToken,
+      )) as ApprovedAccessDomainJwtPayload;
+    } catch (error) {
+      this.logger.warn(
+        `Rejected approved-access-domain validation token: ${
+          error instanceof Error ? error.message : 'unknown reason'
+        }`,
+      );
+
+      throw new ApprovedAccessDomainException(
+        'Invalid approved access domain validation token',
+        ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID,
+      );
+    }
+
+    if (payload.type !== JwtTokenTypeEnum.APPROVED_ACCESS_DOMAIN) {
+      throw new ApprovedAccessDomainException(
+        'Invalid approved access domain validation token',
+        ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID,
+      );
+    }
+
+    return payload;
   }
 
   async validateApprovedAccessDomain({
@@ -130,12 +194,31 @@ export class ApprovedAccessDomainService {
     validationToken: string;
     approvedAccessDomainId: string;
   }) {
+    const payload = await this.verifyValidationTokenOrThrow(validationToken);
+
+    if (payload.approvedAccessDomainId !== approvedAccessDomainId) {
+      throw new ApprovedAccessDomainException(
+        'Invalid approved access domain validation token',
+        ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID,
+      );
+    }
+
     const approvedAccessDomain =
-      await this.approvedAccessDomainRepository.findOneBy({
+      await this.approvedAccessDomainRepositoryUnscoped.findOneBy({
         id: approvedAccessDomainId,
       });
 
     approvedAccessDomainValidator.assertIsDefinedOrThrow(approvedAccessDomain);
+
+    if (
+      payload.domain !== approvedAccessDomain.domain ||
+      payload.workspaceId !== approvedAccessDomain.workspaceId
+    ) {
+      throw new ApprovedAccessDomainException(
+        'Invalid approved access domain validation token',
+        ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID,
+      );
+    }
 
     if (approvedAccessDomain.isValidated) {
       throw new ApprovedAccessDomainException(
@@ -147,20 +230,10 @@ export class ApprovedAccessDomainService {
       );
     }
 
-    const isHashValid =
-      this.generateUniqueHash(approvedAccessDomain) === validationToken;
-
-    if (!isHashValid) {
-      throw new ApprovedAccessDomainException(
-        'Invalid approved access domain validation token',
-        ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID,
-      );
-    }
-
-    return await this.approvedAccessDomainRepository.save({
-      ...approvedAccessDomain,
-      isValidated: true,
-    });
+    return this.approvedAccessDomainRepository.save(
+      approvedAccessDomain.workspaceId,
+      { ...approvedAccessDomain, isValidated: true },
+    );
   }
 
   async createApprovedAccessDomain(
@@ -176,12 +249,12 @@ export class ApprovedAccessDomainService {
       );
     }
 
-    if (
-      await this.approvedAccessDomainRepository.findOneBy({
-        domain,
-        workspaceId: inWorkspace.id,
-      })
-    ) {
+    const existing = await this.approvedAccessDomainRepository.findOne(
+      inWorkspace.id,
+      { where: { domain } },
+    );
+
+    if (existing) {
       throw new ApprovedAccessDomainException(
         'Approved access domain already registered.',
         ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_REGISTERED,
@@ -192,10 +265,8 @@ export class ApprovedAccessDomainService {
     }
 
     const approvedAccessDomain = await this.approvedAccessDomainRepository.save(
-      {
-        workspaceId: inWorkspace.id,
-        domain,
-      },
+      inWorkspace.id,
+      { domain },
     );
 
     await this.sendApprovedAccessDomainValidationEmail(
@@ -213,30 +284,25 @@ export class ApprovedAccessDomainService {
     approvedAccessDomainId: string,
   ) {
     const approvedAccessDomain =
-      await this.approvedAccessDomainRepository.findOneBy({
-        id: approvedAccessDomainId,
-        workspaceId: workspace.id,
+      await this.approvedAccessDomainRepository.findOne(workspace.id, {
+        where: { id: approvedAccessDomainId },
       });
 
     approvedAccessDomainValidator.assertIsDefinedOrThrow(approvedAccessDomain);
 
-    await this.approvedAccessDomainRepository.delete({
+    await this.approvedAccessDomainRepository.delete(workspace.id, {
       id: approvedAccessDomain.id,
     });
   }
 
   async getApprovedAccessDomains(workspace: WorkspaceEntity) {
-    return await this.approvedAccessDomainRepository.find({
-      where: {
-        workspaceId: workspace.id,
-      },
-    });
+    return this.approvedAccessDomainRepository.find(workspace.id);
   }
 
   async findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain(
     domain: string,
   ) {
-    return await this.approvedAccessDomainRepository.find({
+    return this.approvedAccessDomainRepositoryUnscoped.find({
       relations: [
         'workspace',
         'workspace.workspaceSSOIdentityProviders',

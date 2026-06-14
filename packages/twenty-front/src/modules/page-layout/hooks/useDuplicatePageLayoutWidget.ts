@@ -1,3 +1,4 @@
+import { useDuplicateFieldsWidgetForPageLayout } from '@/page-layout/hooks/useDuplicateFieldsWidgetForPageLayout';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
@@ -45,6 +46,10 @@ export const useDuplicatePageLayoutWidget = (
 
   const store = useStore();
 
+  const { duplicateFieldsWidget } = useDuplicateFieldsWidgetForPageLayout({
+    pageLayoutId,
+  });
+
   const duplicateWidget = useCallback(
     (widgetId: string): string => {
       const pageLayoutDraft = store.get(pageLayoutDraftState);
@@ -71,10 +76,23 @@ export const useDuplicatePageLayoutWidget = (
 
       const newWidgetId = uuidv4();
 
+      const fieldsWidgetCopyResult = duplicateFieldsWidget({
+        sourceWidget,
+        newWidgetId,
+      });
+
+      const clonedConfiguration = isDefined(fieldsWidgetCopyResult)
+        ? {
+            ...sourceWidget.configuration,
+            viewId: fieldsWidgetCopyResult.newViewId,
+          }
+        : sourceWidget.configuration;
+
       const clonedWidget: PageLayoutWidget = {
         ...sourceWidget,
         id: newWidgetId,
         title: appendCopySuffix(sourceWidget.title),
+        configuration: clonedConfiguration,
         ...generateDuplicatedTimestamps(),
       };
 
@@ -137,6 +155,7 @@ export const useDuplicatePageLayoutWidget = (
       return newWidgetId;
     },
     [
+      duplicateFieldsWidget,
       pageLayoutCurrentLayoutsState,
       pageLayoutDraftState,
       setPageLayoutEditingWidgetId,

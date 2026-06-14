@@ -1,23 +1,26 @@
+import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 
 import {
-  type MessageChannel,
   type MessageChannelContactAutoCreationPolicy,
+  MessageChannelType,
   type MessageFolderImportPolicy,
-} from '@/accounts/types/MessageChannel';
-import { CoreObjectNameSingular, FeatureFlagKey } from 'twenty-shared/types';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { UPDATE_MESSAGE_CHANNEL } from '@/settings/accounts/graphql/mutations/updateMessageChannel';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
-import { useMutation } from '@apollo/client/react';
+} from 'twenty-shared/types';
+import {
+  H2Title,
+  IconBriefcase,
+  IconUsers,
+} from 'twenty-ui-deprecated/display';
+import { Card, Section } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+
+import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/components/SettingsAccountsMessageAutoCreationCard';
 import { SettingsAccountsMessageFolderCard } from '@/settings/accounts/components/SettingsAccountsMessageFolderCard';
 import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/components/SettingsAccountsMessageVisibilityCard';
+import { UPDATE_MESSAGE_CHANNEL } from '@/settings/accounts/graphql/mutations/updateMessageChannel';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { t } from '@lingui/core/macro';
-import { H2Title, IconBriefcase, IconUsers } from 'twenty-ui/display';
-import { Card, Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type MessageChannelVisibility } from '~/generated/graphql';
 
 type SettingsAccountsMessageChannelDetailsProps = {
@@ -29,10 +32,18 @@ type SettingsAccountsMessageChannelDetailsProps = {
     | 'excludeNonProfessionalEmails'
     | 'excludeGroupEmails'
     | 'isSyncEnabled'
-    | 'messageFolders'
     | 'messageFolderImportPolicy'
+    | 'type'
   >;
 };
+
+type MessageChannelUpdateInput = Partial<{
+  visibility: MessageChannelVisibility;
+  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy;
+  excludeGroupEmails: boolean;
+  excludeNonProfessionalEmails: boolean;
+  messageFolderImportPolicy: MessageFolderImportPolicy;
+}>;
 
 const StyledDetailsContainer = styled.div`
   display: flex;
@@ -43,25 +54,12 @@ const StyledDetailsContainer = styled.div`
 export const SettingsAccountsMessageChannelDetails = ({
   messageChannel,
 }: SettingsAccountsMessageChannelDetailsProps) => {
-  const featureFlagsMap = useFeatureFlagsMap();
-  const isMigrated =
-    featureFlagsMap[FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED] ?? false;
+  const [updateMessageChannel] = useMutation(UPDATE_MESSAGE_CHANNEL);
 
-  const { updateOneRecord } = useUpdateOneRecord();
-  const [updateMetadataChannel] = useMutation(UPDATE_MESSAGE_CHANNEL);
-
-  const updateChannel = (update: Record<string, unknown>) => {
-    if (isMigrated) {
-      updateMetadataChannel({
-        variables: { input: { id: messageChannel.id, update } },
-      });
-    } else {
-      updateOneRecord({
-        objectNameSingular: CoreObjectNameSingular.MessageChannel,
-        idToUpdate: messageChannel.id,
-        updateOneRecordInput: update,
-      });
-    }
+  const updateChannel = (update: MessageChannelUpdateInput) => {
+    updateMessageChannel({
+      variables: { input: { id: messageChannel.id, update } },
+    });
   };
 
   const handleVisibilityChange = (value: MessageChannelVisibility) => {
@@ -88,33 +86,42 @@ export const SettingsAccountsMessageChannelDetails = ({
     updateChannel({ messageFolderImportPolicy: value });
   };
 
+  const supportsFolderImportPolicy =
+    messageChannel.type === MessageChannelType.EMAIL;
+
+  const isGroupMailbox = messageChannel.type === MessageChannelType.EMAIL_GROUP;
+
   return (
     <StyledDetailsContainer>
-      <Section>
-        <H2Title
-          title={t`Import`}
-          description={t`Emails from the blocklist will be ignored. Manage blocklist on the "Accounts" setting page.`}
-        />
-        <SettingsAccountsMessageFolderCard
-          onChange={handleMessageFolderImportPolicyChange}
-          value={messageChannel.messageFolderImportPolicy}
-        />
-      </Section>
-      <Section>
-        <Card rounded>
-          <SettingsOptionCardContentToggle
-            Icon={IconUsers}
-            title={t`Exclude group emails`}
-            description={t`Don't sync emails from team@ support@ noreply@...`}
-            checked={messageChannel.excludeGroupEmails}
-            onChange={() =>
-              handleIsGroupEmailExcludedToggle(
-                !messageChannel.excludeGroupEmails,
-              )
-            }
+      {supportsFolderImportPolicy && (
+        <Section>
+          <H2Title
+            title={t`Import`}
+            description={t`Emails from the blocklist will be ignored. Manage blocklist on the "Accounts" setting page.`}
           />
-        </Card>
-      </Section>
+          <SettingsAccountsMessageFolderCard
+            onChange={handleMessageFolderImportPolicyChange}
+            value={messageChannel.messageFolderImportPolicy}
+          />
+        </Section>
+      )}
+      {!isGroupMailbox && (
+        <Section>
+          <Card rounded>
+            <SettingsOptionCardContentToggle
+              Icon={IconUsers}
+              title={t`Exclude group emails`}
+              description={t`Don't sync emails from team@ support@ noreply@...`}
+              checked={messageChannel.excludeGroupEmails}
+              onChange={() =>
+                handleIsGroupEmailExcludedToggle(
+                  !messageChannel.excludeGroupEmails,
+                )
+              }
+            />
+          </Card>
+        </Section>
+      )}
       <Section>
         <H2Title
           title={t`Visibility`}

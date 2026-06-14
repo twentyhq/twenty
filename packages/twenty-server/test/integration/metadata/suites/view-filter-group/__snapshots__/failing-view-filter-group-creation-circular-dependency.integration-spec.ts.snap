@@ -40,7 +40,7 @@ exports[`View Filter Group creation should fail with circular dependency when ma
       "totalErrors": 1,
       "viewFilterGroup": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "View filter group hierarchy exceeds maximum depth of 2",
   },
   "message": "Multiple validation errors occurred while creating view filter group",
   "name": "GraphQLError",

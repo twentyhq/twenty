@@ -9,9 +9,12 @@ import {
   IconListSearch,
   IconPlus,
   IconSquarePlus,
-} from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledContainer = styled.div`
   border: 1px solid transparent;
@@ -36,6 +39,7 @@ const StyledHeader = styled.div`
 `;
 
 const StyledMenuItemList = styled.div`
+  background-color: ${themeCssVariables.background.secondary};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
   margin-top: ${themeCssVariables.spacing[2]};

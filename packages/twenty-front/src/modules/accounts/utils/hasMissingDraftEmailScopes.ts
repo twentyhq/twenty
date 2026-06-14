@@ -5,7 +5,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 export const getMissingDraftEmailScopes = (
-  connectedAccount: ConnectedAccount,
+  connectedAccount: Pick<ConnectedAccount, 'provider' | 'scopes'>,
 ): string[] => {
   const scopes = connectedAccount.scopes;
 
@@ -27,6 +27,8 @@ export const getMissingDraftEmailScopes = (
     case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
     case ConnectedAccountProvider.OIDC:
     case ConnectedAccountProvider.SAML:
+    case ConnectedAccountProvider.EMAIL_GROUP:
+    case ConnectedAccountProvider.APP:
       return [];
     default:
       assertUnreachable(

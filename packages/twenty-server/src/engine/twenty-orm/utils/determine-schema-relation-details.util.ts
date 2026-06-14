@@ -1,4 +1,8 @@
-import { type FieldMetadataType } from 'twenty-shared/types';
+import {
+  type FieldMetadataType,
+  RelationType as TwentyRelationType,
+} from 'twenty-shared/types';
+
 import { type RelationType } from 'typeorm/metadata/types/RelationTypes';
 
 import {
@@ -10,6 +14,7 @@ import {
   type EntitySchemaFieldMetadataMaps,
   type EntitySchemaObjectMetadataMaps,
 } from 'src/engine/twenty-orm/global-workspace-datasource/types/entity-schema-metadata.type';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { converRelationTypeToTypeORMRelationType } from 'src/engine/twenty-orm/utils/convert-relation-type-to-typeorm-relation-type.util';
 
 interface RelationDetails {
@@ -65,12 +70,19 @@ export function determineSchemaRelationDetails(
     throw new Error('Target field metadata not found');
   }
 
+  const isManyToOne =
+    fieldMetadata.settings.relationType === TwentyRelationType.MANY_TO_ONE;
+
   return {
     relationType,
     target: targetObjectMetadata.nameSingular,
     inverseSide: targetFieldMetadata.name,
-    joinColumn: fieldMetadata.settings.joinColumnName
-      ? { name: fieldMetadata.settings.joinColumnName }
+    joinColumn: isManyToOne
+      ? {
+          name: computeMorphOrRelationFieldJoinColumnName({
+            name: fieldMetadata.name,
+          }),
+        }
       : undefined,
   };
 }

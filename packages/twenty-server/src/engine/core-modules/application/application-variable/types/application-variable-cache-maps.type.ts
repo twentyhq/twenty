@@ -1,6 +1,5 @@
-import { type FlatApplicationVariable } from 'src/engine/core-modules/application/application-variable/types/flat-application-variable.type';
+import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
+import type { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 
-export type ApplicationVariableCacheMaps = {
-  byId: Partial<Record<string, FlatApplicationVariable>>;
-  byApplicationId: Partial<Record<string, FlatApplicationVariable[]>>;
-};
+export type ApplicationVariableCacheMaps =
+  FlatEntityMaps<FlatApplicationVariable>;

@@ -1,15 +1,15 @@
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
 import { type RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { OverflowingTextWithTooltip } from 'twenty-ui-deprecated/display';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledDiv = styled.div`
   align-items: center;
@@ -24,7 +24,7 @@ const StyledDiv = styled.div`
   justify-content: center;
   overflow: hidden;
   padding: ${themeCssVariables.spacing[0]} 5px;
-  :hover {
+  &:hover {
     background: ${themeCssVariables.background.transparent.light};
   }
 `;

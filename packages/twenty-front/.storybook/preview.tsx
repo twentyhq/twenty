@@ -5,15 +5,23 @@ import { initialize, mswLoader } from 'msw-storybook-addon';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 // oxlint-disable-next-line no-restricted-imports
+import { DateFormat } from '../src/modules/localization/constants/DateFormat';
+// oxlint-disable-next-line no-restricted-imports
+import { TimeFormat } from '../src/modules/localization/constants/TimeFormat';
+// oxlint-disable-next-line no-restricted-imports
+import { FileUploadProvider } from '../src/modules/file-upload/components/FileUploadProvider';
+// oxlint-disable-next-line no-restricted-imports
 import { RootDecorator } from '../src/testing/decorators/RootDecorator';
 // oxlint-disable-next-line no-restricted-imports
 import { resetJotaiStore } from '../src/modules/ui/utilities/state/jotai/jotaiStore';
+// oxlint-disable-next-line no-restricted-imports
+import { UserContext } from '../src/modules/users/contexts/UserContext';
 
 import 'react-loading-skeleton/dist/skeleton.css';
-import 'twenty-ui/style.css';
-import 'twenty-ui/theme-light.css';
-import 'twenty-ui/theme-dark.css';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import 'twenty-ui-deprecated/style.css';
+import 'twenty-ui-deprecated/theme-light.css';
+import 'twenty-ui-deprecated/theme-dark.css';
+import { ThemeProvider } from 'twenty-ui-deprecated/theme-constants';
 // oxlint-disable-next-line no-restricted-imports
 import { messages as enMessages } from '../src/locales/generated/en';
 
@@ -57,17 +65,31 @@ initialize({
   quiet: true,
 });
 
+// Mirrors production's MinimalMetadataGater so any story rendering a
+// date-aware component (DateTimeDisplay, etc.) sees a real IANA timeZone
+// instead of UserContext's default `{}`. Stories needing a specific timezone
+// can still override by nesting their own UserContext.Provider.
+const STORYBOOK_DEFAULT_USER_CONTEXT = {
+  dateFormat: DateFormat.DAY_FIRST,
+  timeFormat: TimeFormat.HOUR_24,
+  timeZone: 'UTC',
+};
+
 const preview: Preview = {
   decorators: [
     (Story) => {
       return (
         <I18nProvider i18n={i18n}>
           <ThemeProvider colorScheme="light">
-            <ClickOutsideListenerContext.Provider
-              value={{ excludedClickOutsideId: undefined }}
-            >
-              <Story />
-            </ClickOutsideListenerContext.Provider>
+            <FileUploadProvider>
+              <ClickOutsideListenerContext.Provider
+                value={{ excludedClickOutsideId: undefined }}
+              >
+                <UserContext.Provider value={STORYBOOK_DEFAULT_USER_CONTEXT}>
+                  <Story />
+                </UserContext.Provider>
+              </ClickOutsideListenerContext.Provider>
+            </FileUploadProvider>
           </ThemeProvider>
         </I18nProvider>
       );

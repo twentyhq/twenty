@@ -3,9 +3,9 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconFilter, IconPlus } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconFilter, IconPlus } from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';

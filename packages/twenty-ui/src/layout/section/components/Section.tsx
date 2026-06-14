@@ -1,6 +1,7 @@
+import { clsx } from 'clsx';
 import { type ReactNode } from 'react';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from '@ui/theme-constants';
+
+import styles from './Section.module.scss';
 
 type SectionProps = {
   children: ReactNode;
@@ -21,21 +22,6 @@ export enum SectionFontColor {
   Tertiary = 'tertiary',
 }
 
-const StyledSection = styled.div<{
-  alignment: SectionAlignment;
-  fullWidth: boolean;
-  fontColor: SectionFontColor;
-}>`
-  color: ${({ fontColor }) =>
-    fontColor === 'primary'
-      ? themeCssVariables.font.color.primary
-      : fontColor === 'secondary'
-        ? themeCssVariables.font.color.secondary
-        : themeCssVariables.font.color.tertiary};
-  text-align: ${({ alignment }) => alignment};
-  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
-`;
-
 export const Section = ({
   children,
   className,
@@ -44,13 +30,16 @@ export const Section = ({
   fontColor = SectionFontColor.Primary,
 }: SectionProps) => {
   return (
-    <StyledSection
-      className={className}
-      alignment={alignment}
-      fullWidth={fullWidth}
-      fontColor={fontColor}
+    <div
+      className={clsx(
+        styles.section,
+        styles[alignment],
+        styles[fontColor],
+        fullWidth && styles.fullWidth,
+        className,
+      )}
     >
       {children}
-    </StyledSection>
+    </div>
   );
 };

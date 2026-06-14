@@ -12,7 +12,6 @@ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity
 import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 export {
   CalendarChannelContactAutoCreationPolicy,
@@ -55,7 +54,6 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   syncedAt: string | null;
   syncStageStartedAt: string | null;
   throttleFailureCount: number;
-  connectedAccount: EntityRelation<ConnectedAccountWorkspaceEntity>;
   connectedAccountId: string;
   calendarChannelEventAssociations: EntityRelation<
     CalendarChannelEventAssociationWorkspaceEntity[]

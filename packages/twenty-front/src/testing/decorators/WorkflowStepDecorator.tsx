@@ -1,6 +1,6 @@
 import { sidePanelWorkflowIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowIdComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
-import { useLoadMockedMetadata } from '@/metadata-store/hooks/useLoadMockedMetadata';
+import { useLoadMockedMetadata } from '~/testing/hooks/useLoadMockedMetadata';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';

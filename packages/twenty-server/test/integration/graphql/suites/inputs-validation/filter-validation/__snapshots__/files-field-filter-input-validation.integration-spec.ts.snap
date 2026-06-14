@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Filter input validation - FILES Gql filter input - failure FILES field type - should fail with filter : {"filesField":{"containsIlike":[]}} 1`] = `"Field "containsIlike" is not defined by type "RawJsonFilter"."`;
+exports[`Filter input validation - FILES Gql filter input - failure FILES field type - should fail with filter : {"filesField":{"containsIlike":[]}} 1`] = `"Operator "containsIlike" is not valid for field "filesField" of type FILES - Allowed operators: is, like"`;
 
-exports[`Filter input validation - FILES Gql filter input - failure FILES field type - should fail with filter : {"filesField":{"containsIlike":{}}} 1`] = `"Field "containsIlike" is not defined by type "RawJsonFilter"."`;
+exports[`Filter input validation - FILES Gql filter input - failure FILES field type - should fail with filter : {"filesField":{"containsIlike":{}}} 1`] = `"Operator "containsIlike" is not valid for field "filesField" of type FILES - Allowed operators: is, like"`;
 
-exports[`Filter input validation - FILES Gql filter input - failure FILES field type - should fail with filter : {"filesField":{"containsIlike":2}} 1`] = `"Field "containsIlike" is not defined by type "RawJsonFilter"."`;
+exports[`Filter input validation - FILES Gql filter input - failure FILES field type - should fail with filter : {"filesField":{"containsIlike":2}} 1`] = `"Operator "containsIlike" is not valid for field "filesField" of type FILES - Allowed operators: is, like"`;
 
-exports[`Filter input validation - FILES Gql filter input - failure FILES field type - should fail with filter : {"filesField":{"containsIlike":true}} 1`] = `"Field "containsIlike" is not defined by type "RawJsonFilter"."`;
+exports[`Filter input validation - FILES Gql filter input - failure FILES field type - should fail with filter : {"filesField":{"containsIlike":true}} 1`] = `"Operator "containsIlike" is not valid for field "filesField" of type FILES - Allowed operators: is, like"`;
 
 exports[`Filter input validation - FILES Rest filter input - failure FILES field type - should fail with filter : "filesField[containsAny]:\\"[]\\"" 1`] = `
 [

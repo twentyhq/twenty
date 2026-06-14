@@ -1,27 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { In, IsNull, Not, Repository } from 'typeorm';
+import { In, IsNull, Not } from 'typeorm';
 
 import {
-  AgentException,
-  AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @Injectable()
 export class AiAgentRoleService {
   constructor(
-    @InjectRepository(AgentEntity)
-    private readonly agentRepository: Repository<AgentEntity>,
-    @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
+    @InjectWorkspaceScopedRepository(AgentEntity)
+    private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
+    @InjectWorkspaceScopedRepository(RoleEntity)
+    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
+    @InjectWorkspaceScopedRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     private readonly roleTargetService: RoleTargetService,
   ) {}
 
@@ -61,17 +61,19 @@ export class AiAgentRoleService {
     workspaceId: string;
     agentId: string;
   }): Promise<void> {
-    const existingRoleTarget = await this.roleTargetRepository.findOne({
-      where: {
-        agentId,
-        workspaceId,
+    const existingRoleTarget = await this.roleTargetRepository.findOne(
+      workspaceId,
+      {
+        where: {
+          agentId,
+        },
       },
-    });
+    );
 
     if (!isDefined(existingRoleTarget)) {
-      throw new AgentException(
+      throw new AiException(
         `Role target not found for agent ${agentId}`,
-        AgentExceptionCode.ROLE_NOT_FOUND,
+        AiExceptionCode.ROLE_NOT_FOUND,
       );
     }
 
@@ -85,10 +87,9 @@ export class AiAgentRoleService {
     roleId: string,
     workspaceId: string,
   ): Promise<AgentEntity[]> {
-    const roleTargets = await this.roleTargetRepository.find({
+    const roleTargets = await this.roleTargetRepository.find(workspaceId, {
       where: {
         roleId,
-        workspaceId,
         agentId: Not(IsNull()),
       },
     });
@@ -101,11 +102,8 @@ export class AiAgentRoleService {
       return [];
     }
 
-    const agents = await this.agentRepository.find({
-      where: {
-        id: In(agentIds),
-        workspaceId,
-      },
+    const agents = await this.agentRepository.find(workspaceId, {
+      where: { id: In(agentIds) },
     });
 
     return agents;
@@ -120,42 +118,44 @@ export class AiAgentRoleService {
     workspaceId: string;
     roleId: string;
   }) {
-    const agent = await this.agentRepository.findOne({
-      where: { id: agentId, workspaceId },
+    const agent = await this.agentRepository.findOne(workspaceId, {
+      where: { id: agentId },
     });
 
     if (!agent) {
-      throw new AgentException(
+      throw new AiException(
         `Agent with id ${agentId} not found in workspace`,
-        AgentExceptionCode.AGENT_NOT_FOUND,
+        AiExceptionCode.AGENT_NOT_FOUND,
       );
     }
 
-    const role = await this.roleRepository.findOne({
-      where: { id: roleId, workspaceId },
+    const role = await this.roleRepository.findOne(workspaceId, {
+      where: { id: roleId },
     });
 
     if (!role) {
-      throw new AgentException(
+      throw new AiException(
         `Role with id ${roleId} not found in workspace`,
-        AgentExceptionCode.ROLE_NOT_FOUND,
+        AiExceptionCode.ROLE_NOT_FOUND,
       );
     }
 
     if (!role.canBeAssignedToAgents) {
-      throw new AgentException(
+      throw new AiException(
         `Role "${role.label}" cannot be assigned to agents`,
-        AgentExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS,
+        AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS,
       );
     }
 
-    const existingRoleTarget = await this.roleTargetRepository.findOne({
-      where: {
-        agentId,
-        roleId,
-        workspaceId,
+    const existingRoleTarget = await this.roleTargetRepository.findOne(
+      workspaceId,
+      {
+        where: {
+          agentId,
+          roleId,
+        },
       },
-    });
+    );
 
     return {
       roleToAssignIsSameAsCurrentRole: Boolean(existingRoleTarget),
@@ -171,8 +171,8 @@ export class AiAgentRoleService {
     roleTargetId: string;
     workspaceId: string;
   }): Promise<void> {
-    const role = await this.roleRepository.findOne({
-      where: { id: roleId, workspaceId },
+    const role = await this.roleRepository.findOne(workspaceId, {
+      where: { id: roleId },
     });
 
     if (
@@ -184,16 +184,18 @@ export class AiAgentRoleService {
       return;
     }
 
-    const remainingAssignments = await this.roleTargetRepository.count({
-      where: {
-        roleId,
-        workspaceId,
-        id: Not(roleTargetId),
+    const remainingAssignments = await this.roleTargetRepository.count(
+      workspaceId,
+      {
+        where: {
+          roleId,
+          id: Not(roleTargetId),
+        },
       },
-    });
+    );
 
     if (remainingAssignments === 0) {
-      await this.roleRepository.delete({ id: roleId, workspaceId });
+      await this.roleRepository.delete(workspaceId, { id: roleId });
     }
   }
 }

@@ -21,13 +21,16 @@ export const createDefaultFieldsWidget = ({
   return {
     __typename: 'PageLayoutWidget',
     id,
+    applicationId: '',
     pageLayoutTabId,
     title: 'Fields',
+    isActive: true,
     type: WidgetType.FIELDS,
     configuration: {
       __typename: 'FieldsConfiguration',
       configurationType: WidgetConfigurationType.FIELDS,
       viewId,
+      newFieldDefaultVisibility: true,
     },
     gridPosition: {
       __typename: 'GridPosition',
@@ -42,7 +45,6 @@ export const createDefaultFieldsWidget = ({
       index: positionIndex,
     },
     objectMetadataId: objectMetadataId ?? null,
-    isOverridden: false,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     deletedAt: null,

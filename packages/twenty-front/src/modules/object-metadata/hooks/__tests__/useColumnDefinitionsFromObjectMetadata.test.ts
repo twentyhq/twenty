@@ -29,12 +29,12 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       workspaceCustomApplication: {
         id: CUSTOM_WORKSPACE_APPLICATION_MOCK.id,
       },
+      installedApplications: [],
       id: '1',
       featureFlags: [],
       allowImpersonation: false,
       subdomain: 'test',
       activationStatus: WorkspaceActivationStatus.ACTIVE,
-      hasValidEnterpriseKey: false,
       hasValidSignedEnterpriseKey: false,
       hasValidEnterpriseValidityToken: false,
       metadataVersion: 1,
@@ -74,6 +74,7 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       smartModel: AUTO_SELECT_SMART_MODEL_ID,
       enabledAiModelIds: [],
       useRecommendedModels: true,
+      isInternalMessagesImportEnabled: false,
     });
 
     const companyObjectMetadata = getTestEnrichedObjectMetadataItemsMock().find(
@@ -92,6 +93,6 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
 
     const { columnDefinitions } = result.current;
 
-    expect(columnDefinitions.length).toBe(25);
+    expect(columnDefinitions.length).toBe(24);
   });
 });

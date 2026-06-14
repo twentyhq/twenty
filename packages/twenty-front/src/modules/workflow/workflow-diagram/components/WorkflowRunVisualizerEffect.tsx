@@ -20,7 +20,8 @@ import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useSte
 import { useStore } from 'jotai';
 import { useCallback, useContext, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
+
+import { useIcons } from 'twenty-ui-deprecated/display';
 
 export const WorkflowRunVisualizerEffect = ({
   workflowRunId,
@@ -68,7 +69,8 @@ export const WorkflowRunVisualizerEffect = ({
 
   const { populateStepsOutputSchema } = useStepsOutputSchema();
 
-  const { isInSidePanel } = useContext(CommandMenuContext);
+  const { commandMenuContextApi } = useContext(CommandMenuContext);
+  const isInSidePanel = commandMenuContextApi.isInSidePanel;
 
   const store = useStore();
 
@@ -121,12 +123,37 @@ export const WorkflowRunVisualizerEffect = ({
         steps: workflowRunState.flow.steps,
       });
 
-      const { diagram: baseWorkflowRunDiagram, stepToOpenByDefault } =
+      const { diagram: generatedWorkflowRunDiagram, stepToOpenByDefault } =
         generateWorkflowRunDiagram({
           trigger: workflowRunState.flow.trigger,
           steps: workflowRunState.flow.steps,
           stepInfos: workflowRunState.stepInfos,
         });
+
+      const previousNodesById = new Map(
+        (store.get(workflowDiagram)?.nodes ?? []).map((node) => [
+          node.id,
+          node,
+        ]),
+      );
+
+      const baseWorkflowRunDiagram = {
+        ...generatedWorkflowRunDiagram,
+        nodes: generatedWorkflowRunDiagram.nodes.map((node) => {
+          const previousNode = previousNodesById.get(node.id);
+
+          if (!isDefined(previousNode?.measured)) {
+            return node;
+          }
+
+          return {
+            ...node,
+            measured: previousNode.measured,
+            width: previousNode.width,
+            height: previousNode.height,
+          };
+        }),
+      };
 
       if (workflowDiagramStatus !== 'done') {
         store.set(workflowDiagramStatusState, 'computing-dimensions');

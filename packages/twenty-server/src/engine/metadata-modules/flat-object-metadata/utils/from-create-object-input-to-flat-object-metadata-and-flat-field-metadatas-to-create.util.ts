@@ -75,11 +75,11 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       icon: createObjectInput.icon ?? null,
       isActive: true,
       isAuditLogged: true,
-      isCustom: true,
       isLabelSyncedWithName: createObjectInput.isLabelSyncedWithName ?? false,
       isRemote: createObjectInput.isRemote ?? false,
       isSearchable: true,
-      isUIReadOnly: false,
+      isUIEditable: true,
+      isUICreatable: true,
       isSystem: false,
       labelPlural: capitalize(createObjectInput.labelPlural),
       labelSingular: capitalize(createObjectInput.labelSingular),
@@ -101,6 +101,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
     const {
       standardSourceFlatFieldMetadatas,
       standardTargetFlatFieldMetadatas,
+      standardTargetFlatIndexMetadatas,
     } = buildDefaultRelationFlatFieldMetadatasForCustomObject({
       existingFlatObjectMetadataMaps,
       sourceFlatObjectMetadata: universalFlatObjectMetadataToCreate,
@@ -120,9 +121,10 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
 
     return {
       flatObjectMetadataToCreate: universalFlatObjectMetadataToCreate,
-      flatIndexMetadataToCreate: Object.values(
-        defaultIndexesForCustomObject.indexes,
-      ),
+      flatIndexMetadataToCreate: [
+        ...Object.values(defaultIndexesForCustomObject.indexes),
+        ...standardTargetFlatIndexMetadatas,
+      ],
       relationTargetFlatFieldMetadataToCreate: standardTargetFlatFieldMetadatas,
       flatFieldMetadataToCreateOnObject: objectFlatFieldMetadatas,
     };

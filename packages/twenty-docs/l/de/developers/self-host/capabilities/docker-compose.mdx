@@ -1,5 +1,6 @@
 ---
-title: 1-Klick mit Docker Compose
+title: Docker Compose
+icon: docker
 ---
 
 <Warning>
@@ -50,7 +51,7 @@ Befolgen Sie diese Schritte für eine manuelle Einrichtung.
    curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
    ```
 
-2. **Erstellen Sie geheime Tokens**
+2. **Einen Verschlüsselungsschlüssel generieren**
 
    Führen Sie den folgenden Befehl aus, um eine eindeutige Zufallszeichenfolge zu generieren:
 
@@ -58,15 +59,17 @@ Befolgen Sie diese Schritte für eine manuelle Einrichtung.
    openssl rand -base64 32
    ```
 
-   **Wichtig:** Bewahren Sie diesen Wert geheim auf / teilen Sie ihn nicht.
+   **Wichtig:** Bewahren Sie diesen Wert geheim auf / teilen Sie ihn nicht. Der Verlust von `ENCRYPTION_KEY` bedeutet den Verlust des Zugriffs auf alle in der Datenbank gespeicherten Secrets (OAuth-Tokens, Anwendungsvariablen, TOTP-Secrets usw.).
 
 3. **Aktualisieren Sie die `.env`**
 
    Ersetzen Sie den Platzhalterwert in Ihrer .env-Datei durch das generierte Token:
 
    ```ini
-   APP_SECRET=erster_zufälliger_string
+   ENCRYPTION_KEY=random_string
    ```
+
+   Weitere Informationen findest du im [Leitfaden zur Schlüsselrotation](/l/de/developers/self-host/capabilities/key-rotation) mit Anweisungen zur Rotation ohne Ausfallzeit.
 
 4. **Setzen Sie das Postgres-Passwort**
 

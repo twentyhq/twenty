@@ -1,7 +1,7 @@
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/object-record/record-field/ui/form-types/constants/FormFieldPlaceholderStyles';
 import { styled } from '@linaria/react';
 import { EditorContent, type Editor } from '@tiptap/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledEditor = styled.div<{
   multiline?: boolean;
@@ -9,16 +9,16 @@ const StyledEditor = styled.div<{
 }>`
   box-sizing: border-box;
   display: flex;
+  height: 100%;
   padding-right: ${({ multiline }) =>
-    multiline ? themeCssVariables.spacing[4] : '0'};
+    multiline ? themeCssVariables.spacing[8] : '0'};
   width: 100%;
-
   .editor-content {
     width: 100%;
   }
 
   .tiptap {
-    align-items: ${({ multiline }) => (multiline ? 'top' : 'center')};
+    align-items: ${({ multiline }) => (multiline ? 'flex-start' : 'center')};
     border: none !important;
     box-sizing: border-box;
     color: ${({ readonly }) =>
@@ -31,9 +31,9 @@ const StyledEditor = styled.div<{
     &::-webkit-scrollbar {
       display: none;
     }
-    height: 100%;
+    height: ${({ multiline }) => (multiline ? 'auto' : '100%')};
     overflow-x: auto;
-    overflow-y: ${({ multiline }) => (multiline ? 'auto' : 'hidden')};
+    overflow-y: hidden;
     padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
     scrollbar-width: none;
     white-space: ${({ multiline }) => (multiline ? 'pre' : 'nowrap')};

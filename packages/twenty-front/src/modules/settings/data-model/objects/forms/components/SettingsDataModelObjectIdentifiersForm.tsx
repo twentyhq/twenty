@@ -1,19 +1,28 @@
+import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFieldMetadataItems';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { Select } from '@/ui/input/components/Select';
-import { styled } from '@linaria/react';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { isLabelIdentifierFieldMetadataTypes } from 'twenty-shared/utils';
-import { IconCircleOff, IconPlus, useIcons } from 'twenty-ui/display';
-import { type SelectOption } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  isLabelIdentifierFieldMetadataTypes,
+  isSearchableFieldType,
+} from 'twenty-shared/utils';
+import {
+  IconCircleOff,
+  IconPlus,
+  useIcons,
+} from 'twenty-ui-deprecated/display';
+import { type SelectOption } from 'twenty-ui-deprecated/input';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { type z } from 'zod';
 
 export const settingsDataModelObjectIdentifiersFormSchema =
@@ -43,9 +52,12 @@ const StyledContainer = styled.div`
 export const SettingsDataModelObjectIdentifiersForm = ({
   objectMetadataItem,
 }: SettingsDataModelObjectIdentifiersFormProps) => {
-  const readonly = isObjectMetadataReadOnly({
-    objectMetadataItem,
-  });
+  const isDDLLocked = useAtomStateValue(isDDLLockedState);
+
+  const readonly =
+    isObjectMetadataReadOnly({
+      objectMetadataItem,
+    }) || isDDLLocked;
   const formConfig = useForm<SettingsDataModelObjectIdentifiersFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(settingsDataModelObjectIdentifiersFormSchema),
@@ -71,7 +83,8 @@ export const SettingsDataModelObjectIdentifiersForm = ({
       getActiveFieldMetadataItems(objectMetadataItem)
         .filter(
           ({ id, type }) =>
-            isLabelIdentifierFieldMetadataTypes(type) ||
+            (isLabelIdentifierFieldMetadataTypes(type) &&
+              isSearchableFieldType(type)) ||
             objectMetadataItem.labelIdentifierFieldMetadataId === id,
         )
         .map<SelectOption<string | null>>((fieldMetadataItem) => ({

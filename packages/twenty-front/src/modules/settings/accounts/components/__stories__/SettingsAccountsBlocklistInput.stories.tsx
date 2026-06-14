@@ -6,7 +6,7 @@ import {
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { SettingsAccountsBlocklistInput } from '@/settings/accounts/components/SettingsAccountsBlocklistInput';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 
 const updateBlockedEmailListJestFn = fn();
 
@@ -55,8 +55,8 @@ export const AddToBlocklist: Story = {
     await userEvent.click(addToBlocklistButton);
 
     expect(updateBlockedEmailListJestFn).toHaveBeenCalledTimes(1);
-    expect(updateBlockedEmailListJestFn).toHaveBeenCalledWith(
+    expect(updateBlockedEmailListJestFn).toHaveBeenCalledWith([
       'test@twenty.com',
-    );
+    ]);
   },
 };

@@ -1,3 +1,4 @@
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -14,7 +15,7 @@ import {
   GetApiKeysDocument,
 } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledLoadingContainer = styled.div`
   padding: ${themeCssVariables.spacing[2]};
@@ -33,12 +34,6 @@ const StyledDropdownItem = styled.div`
 const StyledItemName = styled.div`
   color: ${themeCssVariables.font.color.secondary};
   font-weight: ${themeCssVariables.font.weight.medium};
-`;
-
-const StyledEmptyState = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  padding: ${themeCssVariables.spacing[2]};
-  text-align: center;
 `;
 
 type EntityData = Agent | ApiKeyForRole;
@@ -138,7 +133,9 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
             </StyledDropdownItem>
           ))
         ) : (
-          <StyledEmptyState>{getEmptyStateMessage()}</StyledEmptyState>
+          <SettingsEmptyPlaceholder padding="2">
+            {getEmptyStateMessage()}
+          </SettingsEmptyPlaceholder>
         )}
       </DropdownMenuItemsContainer>
     </DropdownContent>

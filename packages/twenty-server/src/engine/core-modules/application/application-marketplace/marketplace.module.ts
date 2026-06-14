@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { MarketplaceCatalogSyncCronCommand } from 'src/engine/core-modules/application/application-marketplace/crons/commands/marketplace-catalog-sync.cron.command';
@@ -11,9 +12,11 @@ import { MarketplaceService } from 'src/engine/core-modules/application/applicat
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { MarketplaceCatalogSyncCommand } from 'src/engine/core-modules/application/application-marketplace/crons/commands/marketplace-catalog-sync.command';
 
 @Module({
   imports: [
+    ApplicationModule,
     ApplicationRegistrationModule,
     ApplicationInstallModule,
     FeatureFlagModule,
@@ -26,12 +29,14 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     MarketplaceQueryService,
     MarketplaceCatalogSyncCronJob,
     MarketplaceCatalogSyncCronCommand,
+    MarketplaceCatalogSyncCommand,
     MarketplaceResolver,
   ],
   exports: [
     MarketplaceCatalogSyncService,
     MarketplaceQueryService,
     MarketplaceCatalogSyncCronCommand,
+    MarketplaceService,
   ],
 })
 export class MarketplaceModule {}

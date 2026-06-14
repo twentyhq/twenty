@@ -1,6 +1,6 @@
-export * from 'twenty-ui';
-export * from 'twenty-ui/accessibility';
-export * from 'twenty-ui/components';
+export * from 'twenty-ui-deprecated';
+export * from 'twenty-ui-deprecated/accessibility';
+export * from 'twenty-ui-deprecated/components';
 
 // Selective re-export from twenty-ui/display:
 // IconsProvider, useIcons, and iconsState are excluded to avoid bundling
@@ -489,7 +489,7 @@ export {
   ThinkingOrbitLoaderIcon,
   TooltipDelay,
   TooltipPosition,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 export type {
   AnimatedCheckmarkProps,
   AppTooltipProps,
@@ -497,6 +497,7 @@ export type {
   AvatarProps,
   AvatarSize,
   AvatarType,
+  BannerColor,
   BannerVariant,
   CalloutProps,
   CalloutVariant,
@@ -511,12 +512,12 @@ export type {
   LabelVariant,
   SidePanelInformationBannerProps,
   TablerIconsProps,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 
-export * from 'twenty-ui/feedback';
-export * from 'twenty-ui/input';
-export * from 'twenty-ui/json-visualizer';
-export * from 'twenty-ui/layout';
-export * from 'twenty-ui/navigation';
-export * from 'twenty-ui/theme-constants';
-export * from 'twenty-ui/utilities';
+export * from 'twenty-ui-deprecated/feedback';
+export * from 'twenty-ui-deprecated/input';
+export * from 'twenty-ui-deprecated/json-visualizer';
+export * from 'twenty-ui-deprecated/layout';
+export * from 'twenty-ui-deprecated/navigation';
+export * from 'twenty-ui-deprecated/theme-constants';
+export * from 'twenty-ui-deprecated/utilities';

@@ -5,9 +5,7 @@ import { createFrontComponent } from 'test/integration/metadata/suites/front-com
 import { deleteFrontComponent } from 'test/integration/metadata/suites/front-component/utils/delete-front-component.util';
 import { seedBuiltFrontComponentFile } from 'test/integration/metadata/suites/front-component/utils/seed-built-front-component-file.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
@@ -20,12 +18,6 @@ describe('CommandMenuItem creation should succeed', () => {
   let personObjectMetadataId: string;
 
   beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
     const { cleanup } = await seedBuiltFrontComponentFile({
       builtComponentPath: 'src/front-components/index.mjs',
     });
@@ -62,12 +54,6 @@ describe('CommandMenuItem creation should succeed', () => {
 
   afterAll(async () => {
     cleanupBuiltFile?.();
-
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
   });
 
   afterEach(async () => {
@@ -185,6 +171,50 @@ describe('CommandMenuItem creation should succeed', () => {
       workflowVersionId,
       label: 'Global Command',
       availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    });
+  });
+
+  it('should create NAVIGATION command menu item with path payload', async () => {
+    const { data } = await createCommandMenuItem({
+      expectToFail: false,
+      input: {
+        engineComponentKey: EngineComponentKey.NAVIGATION,
+        label: 'Go to Settings',
+        payload: { path: '/settings/accounts' },
+      },
+    });
+
+    createdCommandMenuItemId = data?.createCommandMenuItem?.id;
+
+    expect(data.createCommandMenuItem).toMatchObject({
+      id: expect.any(String),
+      engineComponentKey: EngineComponentKey.NAVIGATION,
+      label: 'Go to Settings',
+      payload: {
+        path: '/settings/accounts',
+      },
+    });
+  });
+
+  it('should create NAVIGATION command menu item with objectMetadataItemId payload', async () => {
+    const { data } = await createCommandMenuItem({
+      expectToFail: false,
+      input: {
+        engineComponentKey: EngineComponentKey.NAVIGATION,
+        label: 'Go to Companies',
+        payload: { objectMetadataItemId: companyObjectMetadataId },
+      },
+    });
+
+    createdCommandMenuItemId = data?.createCommandMenuItem?.id;
+
+    expect(data.createCommandMenuItem).toMatchObject({
+      id: expect.any(String),
+      engineComponentKey: EngineComponentKey.NAVIGATION,
+      label: 'Go to Companies',
+      payload: {
+        objectMetadataItemId: companyObjectMetadataId,
+      },
     });
   });
 

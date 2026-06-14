@@ -25,6 +25,7 @@ const MOCK_FLAT_APPLICATION: FlatApplication = {
   universalIdentifier: '20202020-81ee-42da-a281-668632f32fe7',
   name: 'Workspace Custom Application',
   description: null,
+  logo: null,
   workspaceId: 'workspace-id',
   version: null,
   sourceType: ApplicationRegistrationSourceType.LOCAL,

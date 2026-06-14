@@ -69,6 +69,22 @@ export const fromViewFilterEntityToFlatViewFilter = ({
     );
   }
 
+  let relationTargetFieldMetadataUniversalIdentifier: string | null = null;
+
+  if (isDefined(viewFilterEntity.relationTargetFieldMetadataId)) {
+    relationTargetFieldMetadataUniversalIdentifier =
+      fieldMetadataIdToUniversalIdentifierMap.get(
+        viewFilterEntity.relationTargetFieldMetadataId,
+      ) ?? null;
+
+    if (!isDefined(relationTargetFieldMetadataUniversalIdentifier)) {
+      throw new FlatEntityMapsException(
+        `FieldMetadata with id ${viewFilterEntity.relationTargetFieldMetadataId} not found for viewFilter ${viewFilterEntity.id} (relation target)`,
+        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+  }
+
   return {
     ...viewFilterEntityWithoutRelations,
     createdAt: viewFilterEntity.createdAt.toISOString(),
@@ -77,6 +93,7 @@ export const fromViewFilterEntityToFlatViewFilter = ({
     universalIdentifier: viewFilterEntityWithoutRelations.universalIdentifier,
     applicationUniversalIdentifier,
     fieldMetadataUniversalIdentifier,
+    relationTargetFieldMetadataUniversalIdentifier,
     viewFilterGroupUniversalIdentifier,
     viewUniversalIdentifier,
   };

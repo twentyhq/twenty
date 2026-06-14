@@ -64,11 +64,8 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     TActionType,
     TMetadataName
   >,
-  TFlatAction extends
-    AllFlatWorkspaceMigrationAction = AllFlatWorkspaceMigrationAction<
-    TActionType,
-    TMetadataName
-  >,
+  TFlatAction extends AllFlatWorkspaceMigrationAction =
+    AllFlatWorkspaceMigrationAction<TActionType, TMetadataName>,
 > {
   public actionType: TActionType;
   public metadataName: TMetadataName;

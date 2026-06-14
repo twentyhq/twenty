@@ -8,10 +8,11 @@ import { Controller, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title, IconPlus } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title, IconPlus } from 'twenty-ui-deprecated/display';
+import { Section } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { ADD_MODEL_TO_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/addModelToProvider';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
@@ -22,8 +23,9 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { Checkbox, Toggle } from 'twenty-ui/input';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { Checkbox } from 'twenty-ui-deprecated/input';
+import { Toggle } from 'twenty-ui/input';
 
 const StyledComboInputContainer = styled.div`
   display: flex;
@@ -79,14 +81,19 @@ type FormValues = {
 
 export const SettingsAdminNewAiModel = () => {
   const { providerName } = useParams<{ providerName: string }>();
+  const apolloAdminClient = useApolloAdminClient();
   const navigate = useNavigate();
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCustomModelId, setIsCustomModelId] = useState(false);
 
-  const { data: providersData } =
-    useQuery<GetAiProvidersResult>(GET_AI_PROVIDERS);
+  const { data: providersData } = useQuery<GetAiProvidersResult>(
+    GET_AI_PROVIDERS,
+    {
+      client: apolloAdminClient,
+    },
+  );
 
   const provider =
     providerName && providersData?.getAiProviders
@@ -98,6 +105,7 @@ export const SettingsAdminNewAiModel = () => {
   const { data: suggestionsData } = useQuery<{
     getModelsDevSuggestions: ModelSuggestion[];
   }>(GET_MODELS_DEV_SUGGESTIONS, {
+    client: apolloAdminClient,
     variables: { providerType: modelsDevName ?? '' },
     skip: !modelsDevName,
   });
@@ -122,7 +130,9 @@ export const SettingsAdminNewAiModel = () => {
     label: `${suggestion.name} (${suggestion.modelId})`,
   }));
 
-  const [addModelToProvider] = useMutation(ADD_MODEL_TO_PROVIDER);
+  const [addModelToProvider] = useMutation(ADD_MODEL_TO_PROVIDER, {
+    client: apolloAdminClient,
+  });
 
   const form = useForm<FormValues>({
     mode: 'onSubmit',
@@ -269,7 +279,7 @@ export const SettingsAdminNewAiModel = () => {
 
   return (
     <form onSubmit={form.handleSubmit(handleSave)}>
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={t`New Model`}
         links={[
           {
@@ -530,7 +540,7 @@ export const SettingsAdminNewAiModel = () => {
             />
           </Section>
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     </form>
   );
 };

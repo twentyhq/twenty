@@ -7,7 +7,7 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { mockedBlocklist } from '@/settings/accounts/components/__stories__/mockedBlocklist';
 import { SettingsAccountsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsBlocklistTable';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 
 const handleBlockedEmailRemoveJestFn = fn();

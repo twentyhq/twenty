@@ -1,139 +1,214 @@
-import { InjectRepository } from '@nestjs/typeorm';
+import { Command, CommandRunner, Option } from 'nest-commander';
+import { isDefined } from 'twenty-shared/utils';
 
-import { Command } from 'nest-commander';
-import { type Repository } from 'typeorm';
+import { CommandLogger } from 'src/database/commands/logger';
+import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
+import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
+import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
+import { formatUpgradeLog } from 'src/engine/core-modules/upgrade/utils/format-upgrade-log.util';
 
-import { type ActiveOrSuspendedWorkspacesMigrationCommandOptions } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import {
-  type AllCommands,
-  UpgradeCommandRunner,
-  type VersionCommands,
-} from 'src/database/commands/command-runners/upgrade.command-runner';
-import { CoreMigrationRunnerService } from 'src/database/commands/core-migration-runner/services/core-migration-runner.service';
-import { AddMissingSystemFieldsToStandardObjectsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-add-missing-system-fields-to-standard-objects.command';
-import { BackfillMessageChannelMessageAssociationMessageFolderCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-message-channel-message-association-message-folder.command';
-import { BackfillMissingStandardViewsCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-missing-standard-views.command';
-import { BackfillSystemFieldsIsSystemCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-backfill-system-fields-is-system.command';
-import { FixInvalidStandardUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-fix-invalid-standard-universal-identifiers.command';
-import { SeedServerIdCommand } from 'src/database/commands/upgrade-version-command/1-19/1-19-seed-server-id.command';
-import { BackfillCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-command-menu-items.command';
-import { BackfillNavigationMenuItemTypeCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-navigation-menu-item-type.command';
-import { BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-page-layouts-and-fields-widget-view-fields.command';
-import { IdentifyFieldPermissionMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-identify-field-permission-metadata.command';
-import { BackfillSelectFieldOptionIdsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-backfill-select-field-option-ids.command';
-import { DeleteOrphanNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-delete-orphan-navigation-menu-items.command';
-import { IdentifyObjectPermissionMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-identify-object-permission-metadata.command';
-import { IdentifyPermissionFlagMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-identify-permission-flag-metadata.command';
-import { MakeFieldPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-make-field-permission-universal-identifier-and-application-id-not-nullable-migration.command';
-import { MakeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-make-object-permission-universal-identifier-and-application-id-not-nullable-migration.command';
-import { MakePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-make-permission-flag-universal-identifier-and-application-id-not-nullable-migration.command';
-import { MakeWorkflowSearchableCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-make-workflow-searchable.command';
-import { MigrateMessagingInfrastructureToMetadataCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-migrate-messaging-infrastructure-to-metadata.command';
-import { MigrateRichTextToTextCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-migrate-rich-text-to-text.command';
-import { SeedCliApplicationRegistrationCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-seed-cli-application-registration.command';
-import { UpdateStandardIndexViewNamesCommand } from 'src/database/commands/upgrade-version-command/1-20/1-20-update-standard-index-view-names.command';
-import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
+type RawUpgradeCommandOptions = {
+  workspaceId?: Set<string>;
+  startFromWorkspaceId?: string;
+  workspaceCountLimit?: number;
+  dryRun?: boolean;
+  verbose?: boolean;
+};
+
+export type ParsedUpgradeCommandOptions = {
+  workspaceIds?: string[];
+  startFromWorkspaceId?: string;
+  workspaceCountLimit?: number;
+  dryRun?: boolean;
+  verbose?: boolean;
+};
 
 @Command({
   name: 'upgrade',
   description: 'Upgrade workspaces to the latest version',
 })
-export class UpgradeCommand extends UpgradeCommandRunner {
-  override allCommands: AllCommands;
+export class UpgradeCommand extends CommandRunner {
+  protected logger: CommandLogger;
 
   constructor(
-    @InjectRepository(WorkspaceEntity)
-    protected readonly workspaceRepository: Repository<WorkspaceEntity>,
-    protected readonly twentyConfigService: TwentyConfigService,
-    protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    protected readonly dataSourceService: DataSourceService,
-    protected readonly coreEngineVersionService: CoreEngineVersionService,
-    protected readonly workspaceVersionService: WorkspaceVersionService,
-    protected readonly coreMigrationRunnerService: CoreMigrationRunnerService,
-
-    // 1.19 Commands
-    protected readonly backfillSystemFieldsIsSystemCommand: BackfillSystemFieldsIsSystemCommand,
-    protected readonly addMissingSystemFieldsToStandardObjectsCommand: AddMissingSystemFieldsToStandardObjectsCommand,
-    protected readonly backfillMessageChannelMessageAssociationMessageFolderCommand: BackfillMessageChannelMessageAssociationMessageFolderCommand,
-    protected readonly backfillMissingStandardViewsCommand: BackfillMissingStandardViewsCommand,
-    protected readonly fixRoleAndAgentUniversalIdentifiersCommand: FixInvalidStandardUniversalIdentifiersCommand,
-    protected readonly seedServerIdCommand: SeedServerIdCommand,
-
-    // 1.20 Commands
-    protected readonly identifyPermissionFlagMetadataCommand: IdentifyPermissionFlagMetadataCommand,
-    protected readonly makePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-    protected readonly identifyObjectPermissionMetadataCommand: IdentifyObjectPermissionMetadataCommand,
-    protected readonly makeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-    protected readonly identifyFieldPermissionMetadataCommand: IdentifyFieldPermissionMetadataCommand,
-    protected readonly makeFieldPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand: MakeFieldPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-    protected readonly backfillNavigationMenuItemTypeCommand: BackfillNavigationMenuItemTypeCommand,
-    protected readonly backfillCommandMenuItemsCommand: BackfillCommandMenuItemsCommand,
-    protected readonly deleteOrphanNavigationMenuItemsCommand: DeleteOrphanNavigationMenuItemsCommand,
-    protected readonly backfillPageLayoutsAndFieldsWidgetViewFieldsCommand: BackfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
-    protected readonly seedCliApplicationRegistrationCommand: SeedCliApplicationRegistrationCommand,
-    protected readonly migrateRichTextToTextCommand: MigrateRichTextToTextCommand,
-    protected readonly migrateMessagingInfrastructureToMetadataCommand: MigrateMessagingInfrastructureToMetadataCommand,
-    protected readonly backfillSelectFieldOptionIdsCommand: BackfillSelectFieldOptionIdsCommand,
-    protected readonly updateStandardIndexViewNamesCommand: UpdateStandardIndexViewNamesCommand,
-    protected readonly makeWorkflowSearchableCommand: MakeWorkflowSearchableCommand,
+    protected readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
+    protected readonly upgradeSequenceRunnerService: UpgradeSequenceRunnerService,
+    protected readonly upgradeStatusService: UpgradeStatusService,
   ) {
-    super(
-      workspaceRepository,
-      twentyConfigService,
-      globalWorkspaceOrmManager,
-      dataSourceService,
-      coreEngineVersionService,
-      workspaceVersionService,
-      coreMigrationRunnerService,
-    );
-
-    const commands_1190: VersionCommands = [
-      this.fixRoleAndAgentUniversalIdentifiersCommand,
-      this.backfillSystemFieldsIsSystemCommand,
-      this.addMissingSystemFieldsToStandardObjectsCommand,
-      this.backfillMessageChannelMessageAssociationMessageFolderCommand,
-      this.backfillMissingStandardViewsCommand,
-      this.fixRoleAndAgentUniversalIdentifiersCommand,
-      this.seedServerIdCommand,
-    ];
-
-    const commands_1200: VersionCommands = [
-      this.identifyPermissionFlagMetadataCommand,
-      this
-        .makePermissionFlagUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-      this.identifyObjectPermissionMetadataCommand,
-      this
-        .makeObjectPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-      this.identifyFieldPermissionMetadataCommand,
-      this
-        .makeFieldPermissionUniversalIdentifierAndApplicationIdNotNullableMigrationCommand,
-      this.backfillNavigationMenuItemTypeCommand,
-      this.migrateRichTextToTextCommand,
-      this.deleteOrphanNavigationMenuItemsCommand,
-      this.backfillCommandMenuItemsCommand,
-      this.backfillPageLayoutsAndFieldsWidgetViewFieldsCommand,
-      this.seedCliApplicationRegistrationCommand,
-      this.migrateMessagingInfrastructureToMetadataCommand,
-      this.backfillSelectFieldOptionIdsCommand,
-      this.updateStandardIndexViewNamesCommand,
-      this.makeWorkflowSearchableCommand,
-    ];
-
-    this.allCommands = {
-      '1.19.0': commands_1190,
-      '1.20.0': commands_1200,
-    };
+    super();
+    this.logger = new CommandLogger({
+      verbose: false,
+      constructorName: this.constructor.name,
+    });
   }
 
-  override async runMigrationCommand(
-    passedParams: string[],
-    options: ActiveOrSuspendedWorkspacesMigrationCommandOptions,
+  @Option({
+    flags: '-d, --dry-run',
+    description: 'Simulate the command without making actual changes',
+    required: false,
+  })
+  parseDryRun(): boolean {
+    return true;
+  }
+
+  @Option({
+    flags: '-v, --verbose',
+    description: 'Verbose output',
+    required: false,
+  })
+  parseVerbose(): boolean {
+    return true;
+  }
+
+  @Option({
+    flags: '-w, --workspace-id [workspace_id]',
+    description:
+      'workspace id. Command runs on all active/suspended workspaces if not provided.',
+    required: false,
+  })
+  parseWorkspaceId(val: string, previous?: Set<string>): Set<string> {
+    const accumulator = previous ?? new Set<string>();
+
+    accumulator.add(val);
+
+    return accumulator;
+  }
+
+  @Option({
+    flags: '--start-from-workspace-id [workspace_id]',
+    description:
+      'Start from a specific workspace id. Workspaces are processed in ascending order of id.',
+    required: false,
+  })
+  parseStartFromWorkspaceId(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '--workspace-count-limit [count]',
+    description:
+      'Limit the number of workspaces to process. Workspaces are processed in ascending order of id.',
+    required: false,
+  })
+  parseWorkspaceCountLimit(val: string): number {
+    const limit = parseInt(val);
+
+    if (isNaN(limit)) {
+      throw new Error('Workspace count limit must be a number');
+    }
+
+    if (limit <= 0) {
+      throw new Error('Workspace count limit must be greater than 0');
+    }
+
+    return limit;
+  }
+
+  override async run(
+    _passedParams: string[],
+    options: RawUpgradeCommandOptions,
   ): Promise<void> {
-    return await super.runMigrationCommand(passedParams, options);
+    if (options.verbose) {
+      this.logger = new CommandLogger({
+        verbose: true,
+        constructorName: this.constructor.name,
+      });
+    }
+
+    if (
+      isDefined(options.workspaceId) &&
+      isDefined(options.startFromWorkspaceId)
+    ) {
+      throw new Error(
+        'Cannot use --start-from-workspace-id together with -w/--workspace-id',
+      );
+    }
+
+    try {
+      const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
+
+      this.logger.log(
+        formatUpgradeLog({
+          humanMessage: `Initialized upgrade sequence: ${sequence.length} step(s)`,
+          event: 'sequence.initialized',
+          logFields: {
+            stepCount: sequence.length,
+            dryRun: options.dryRun ?? false,
+          },
+        }),
+      );
+
+      for (const [index, step] of sequence.entries()) {
+        this.logger.verbose(
+          formatUpgradeLog({
+            humanMessage: `  [${index}] ${step.kind} — ${step.name} (${step.version})`,
+            event: 'sequence.step',
+            logFields: {
+              index,
+              kind: step.kind,
+              name: step.name,
+              version: step.version,
+            },
+          }),
+        );
+      }
+
+      const { totalSuccesses, totalFailures } =
+        await this.upgradeSequenceRunnerService.run({
+          sequence,
+          options: {
+            ...options,
+            workspaceIds: isDefined(options.workspaceId)
+              ? Array.from(options.workspaceId)
+              : undefined,
+          },
+        });
+
+      this.logger.log(
+        formatUpgradeLog({
+          humanMessage: `Upgrade summary: ${totalSuccesses} workspace(s) succeeded, ${totalFailures} workspace(s) failed`,
+          event: 'summary',
+          logFields: {
+            totalSuccesses,
+            totalFailures,
+            dryRun: options.dryRun ?? false,
+          },
+        }),
+      );
+
+      if (totalFailures > 0) {
+        throw new Error(
+          `Upgrade completed with ${totalFailures} workspace failure(s)`,
+        );
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      this.logger.error(
+        formatUpgradeLog({
+          humanMessage: `Upgrade failed: ${errorMessage}`,
+          event: 'aborted',
+        }),
+      );
+      throw error;
+    } finally {
+      await this.safeInvalidateUpgradeStatusCache();
+    }
+  }
+
+  private async safeInvalidateUpgradeStatusCache(): Promise<void> {
+    try {
+      await this.upgradeStatusService.invalidateInstanceAndAllWorkspacesStatus();
+    } catch (error) {
+      this.logger.error(
+        formatUpgradeLog({
+          humanMessage: `Failed to invalidate upgrade-status cache: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+          event: 'cache.invalidate.failed',
+        }),
+      );
+    }
   }
 }

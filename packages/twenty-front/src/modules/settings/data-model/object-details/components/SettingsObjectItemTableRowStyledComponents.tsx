@@ -1,11 +1,14 @@
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { styled } from '@linaria/react';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import React from 'react';
 
 export const SETTINGS_OBJECT_TABLE_COLUMN_WIDTH = '98.7px';
 
-export const SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS = `180px ${SETTINGS_OBJECT_TABLE_COLUMN_WIDTH} ${SETTINGS_OBJECT_TABLE_COLUMN_WIDTH} ${SETTINGS_OBJECT_TABLE_COLUMN_WIDTH} 36px`;
+export const SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS = `minmax(180px, 1fr) 140px 80px 100px 36px`;
 
 export const SETTINGS_OBJECT_TABLE_ROW_MOBILE_MIN_WIDTH = '520px';
 

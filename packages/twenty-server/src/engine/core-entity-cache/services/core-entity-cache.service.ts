@@ -7,10 +7,6 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { CoreEntityCacheProvider } from 'src/engine/core-entity-cache/interfaces/core-entity-cache-provider.service';
 
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
 import { CORE_ENTITY_CACHE_KEY } from 'src/engine/core-entity-cache/decorators/core-entity-cache.decorator';
 import {
   CORE_ENTITY_CACHE_KEYS,
@@ -18,6 +14,10 @@ import {
   type CoreEntityCacheDataMap,
 } from 'src/engine/core-entity-cache/types/core-entity-cache-key.type';
 import { type CoreEntityLocalCacheEntry } from 'src/engine/core-entity-cache/types/core-entity-local-cache-entry.type';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
 
 const LOCAL_TTL_MS = 100; // 100ms
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes

@@ -1,12 +1,12 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { type ReactNode, useContext } from 'react';
 
-import { styled } from '@linaria/react';
 import {
   type IconComponent,
   IconGripVertical,
   OverflowingTextWithTooltip,
 } from '@ui/display';
+import { type ThemeColor } from '@ui/theme';
 import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 import { type MenuItemDraggableGripMode } from '../../types/MenuItemDraggableGripMode';
 import { MenuItemIcon } from './MenuItemIcon';
@@ -20,28 +20,13 @@ import {
   StyledRightMenuItemContextualText,
 } from './StyledMenuItemBase';
 
-const StyledMainText = styled.div`
-  flex-shrink: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
-`;
-
-const StyledMenuItemLabelRight = styled.div`
-  display: flex;
-  flex-direction: row;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  overflow: hidden;
-  white-space: nowrap;
-  margin-left: auto;
-`;
+import styles from './MenuItemLeftContent.module.scss';
 
 type MenuItemLeftContentProps = {
   className?: string;
   LeftComponent?: ReactNode;
   LeftIcon: IconComponent | null | undefined;
+  iconThemeColor?: ThemeColor | null;
   withIconContainer?: boolean;
   withIconContainerBackground?: boolean;
   gripMode?: MenuItemDraggableGripMode;
@@ -55,6 +40,7 @@ export const MenuItemLeftContent = ({
   className,
   LeftComponent,
   LeftIcon,
+  iconThemeColor,
   withIconContainer = false,
   withIconContainerBackground = true,
   text,
@@ -96,12 +82,14 @@ export const MenuItemLeftContent = ({
       {gripMode === 'onHover' ? (
         <MenuItemIconWithGripSwap
           LeftIcon={LeftIcon}
+          iconThemeColor={iconThemeColor}
           withIconContainer={withIconContainer}
           gripIconColor={gripIconColor}
         />
       ) : (
         <MenuItemIcon
           Icon={LeftIcon}
+          iconThemeColor={iconThemeColor}
           withContainer={withIconContainer}
           withContainerBackground={withIconContainerBackground}
         />
@@ -109,9 +97,9 @@ export const MenuItemLeftContent = ({
       {LeftComponent}
       <StyledMenuItemLabel>
         {isString(text) ? (
-          <StyledMainText>
+          <div className={styles.mainText}>
             <OverflowingTextWithTooltip text={text} />
-          </StyledMainText>
+          </div>
         ) : (
           text
         )}
@@ -131,7 +119,7 @@ export const MenuItemLeftContent = ({
         )}
       </StyledMenuItemLabel>
       {contextualTextPosition === 'right' && (
-        <StyledMenuItemLabelRight>
+        <div className={styles.menuItemLabelRight}>
           <StyledRightMenuItemContextualText>
             {isString(contextualText) ? (
               <OverflowingTextWithTooltip text={contextualText} />
@@ -139,7 +127,7 @@ export const MenuItemLeftContent = ({
               contextualText
             )}
           </StyledRightMenuItemContextualText>
-        </StyledMenuItemLabelRight>
+        </div>
       )}
     </StyledMenuItemLeftContent>
   );

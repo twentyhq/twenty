@@ -1,0 +1,60 @@
+---
+title: Rotirea cheilor
+icon: rotate
+---
+
+Twenty are două familii de chei independente:
+
+* **Chei de semnare JWT** — perechi de chei asimetrice ES256 (etichetate cu `kid`) stocate în `core."signingKey"`, folosite pentru a semna și verifica tokenurile de acces / reîmprospătare.
+* **Cheia de criptare pentru date în repaus** — `ENCRYPTION_KEY`, folosită pentru a cripta token-urile OAuth, variabilele aplicației, cheile private de semnare, valorile de configurare sensibile și secretele TOTP în interiorul unui înveliș `enc:v2:`.
+
+`APP_SECRET` este un secret vechi păstrat pentru compatibilitate retroactivă: când `ENCRYPTION_KEY` nu este setată, acționează ca mecanism de rezervă pentru criptarea datelor în repaus / cookie-urile de sesiune și încă verifică token-urile de acces HS256 existente anterior. Va fi marcat ca învechit.
+
+## Chei de semnare JWT
+
+Fiecare cheie are un `publicKey` (păstrat pe termen nelimitat pentru a putea verifica token-urile emise anterior), un `privateKey` criptat (folosit doar cât timp cheia este curentă), un indicator `isCurrent` (exact un rând la un moment dat) și un câmp opțional `revokedAt`.
+
+### Rotește cheia curentă
+
+Setați `SIGNING_KEY_ROTATION_DAYS` pentru a activa rotația automată: un job cron zilnic va emite o nouă cheie curentă odată ce cea existentă este mai veche decât acest prag. Cheile anterioare *nu* sunt revocate, astfel încât token-urile semnate cu ele continuă să fie verificate. Lăsați variabila nesetată pentru a dezactiva rotația automată.
+
+<Note>Rotația automată este disponibilă începând cu versiunea v2.6+.</Note>
+
+### Revocă o cheie (numai în caz de scurgere / urgență)
+
+**Settings → Admin Panel → Signing keys → Revoke** pe un rând care nu este curent. Șterge materialul privat criptat, setează `revokedAt` și respinge fiecare token existent semnat sub acel `kid`.
+
+## Rotește `ENCRYPTION_KEY`
+
+<Note>Comanda `secret-encryption:rotate` descrisă mai jos este disponibilă în v2.6+.</Note>
+
+Fiecare valoare criptată este încapsulată ca `enc:v2:\<keyId>:\<payload>`, unde `\<keyId>` este un prefix hexazecimal de 8 caractere derivat din cheia brută. Rotirea are loc online și poate fi reluată.
+
+1. **Generează o cheie nouă**: `openssl rand -base64 32`.
+
+2. **Configurează ambele chei în paralel** în `.env`, apoi repornește:
+   ```ini
+   ENCRYPTION_KEY=NEW_VALUE
+   FALLBACK_ENCRYPTION_KEY=OLD_VALUE
+   ```
+   Noile scrieri folosesc noua cheie, rândurile existente încă sunt decriptate prin mecanismul de rezervă.
+
+3. **Re-criptează rândurile existente**:
+
+   ```bash
+   docker exec -it {server_container} yarn command:prod secret-encryption:rotate
+   ```
+
+   Comanda parcurge șase locații (`connected-account-tokens`, `application-variable`, `application-registration-variable`, `signing-key-private-keys`, `sensitive-config-storage`, `totp-secrets`). Un filtru SQL omite rândurile care sunt deja pe noul `\<keyId>`, astfel încât comanda este idempotentă: întrerupe și rulează din nou după nevoie. Iese cu un cod de eroare nenul dacă vreun rând eșuează — rulează din nou pentru a reîncerca.
+
+   | Opțiune                                  | Descriere                                              |
+   | ---------------------------------------- | ------------------------------------------------------ |
+   | `-s, --site \<site>`    | Limitează la o singură locație.                        |
+   | `-b, --batch-size \<n>` | Rânduri per lot (implicit `200`, maxim `5000`).        |
+   | `-d, --dry-run`                          | Decriptează + re-criptează în memorie, omite `UPDATE`. |
+
+4. **Elimină mecanismul de rezervă** odată ce `--dry-run` arată zero rânduri rămase: elimină `FALLBACK_ENCRYPTION_KEY` și repornește.
+
+## Compatibilitate veche pentru `APP_SECRET`
+
+Instanțele mai vechi care nu au setat niciodată `ENCRYPTION_KEY` folosesc `APP_SECRET` ca cheie de criptare pentru date în repaus (și ca secret pentru cookie-urile de sesiune, derivat din aceasta). Acest mecanism este păstrat pentru compatibilitate retroactivă, dar este **învechit** — setează o `ENCRYPTION_KEY` dedicată și urmează procedura de rotire de mai sus pentru a migra de la el. `APP_SECRET` în sine rămâne în uz pentru a verifica token-urile de acces HS256 vechi.

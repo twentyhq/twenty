@@ -1,16 +1,18 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
+import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { SettingsObjectRelationsTable } from '@/settings/data-model/object-details/components/SettingsObjectRelationsTable';
 import { styled } from '@linaria/react';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, IconPlus } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title, IconPlus } from 'twenty-ui-deprecated/display';
+import { Button } from 'twenty-ui-deprecated/input';
+import { Section } from 'twenty-ui-deprecated/layout';
+import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { SettingsObjectFieldTable } from '~/pages/settings/data-model/SettingsObjectFieldTable';
 
 const StyledButtonContainer = styled.div`
@@ -25,9 +27,12 @@ type ObjectFieldsProps = {
 
 export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
   const { t } = useLingui();
-  const readonly = isObjectMetadataReadOnly({
-    objectMetadataItem,
-  });
+  const isDDLLocked = useAtomStateValue(isDDLLockedState);
+
+  const readonly =
+    isObjectMetadataReadOnly({
+      objectMetadataItem,
+    }) || isDDLLocked;
 
   const objectLabelSingular = objectMetadataItem.labelSingular;
 

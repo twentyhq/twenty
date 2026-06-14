@@ -8,15 +8,24 @@ import { VariableChipStandalone } from '@/object-record/record-field/ui/form-typ
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
 import { t } from '@lingui/core/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { isDefined } from 'twenty-shared/utils';
+import { IconForbid } from 'twenty-ui-deprecated/display';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledRecordChipContainer = styled.div`
   margin: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledPlaceholderContainer = styled.div`
+  margin: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledNoRecordContainer = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.font.color.primary};
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
   margin: ${themeCssVariables.spacing[2]};
 `;
 
@@ -29,6 +38,10 @@ type FormSingleRecordFieldChipProps = {
     | {
         type: 'variable';
         value: Variable;
+      }
+    | {
+        type: 'no-record';
+        value: null;
       };
   selectedRecord?: ObjectRecord;
   objectNameSingular: string;
@@ -53,6 +66,15 @@ export const FormSingleRecordFieldChip = ({
         onRemove={disabled ? undefined : onRemove}
         isFullRecord
       />
+    );
+  }
+
+  if (draftValue.type === 'no-record') {
+    return (
+      <StyledNoRecordContainer>
+        <IconForbid size={12} />
+        {t`No record`}
+      </StyledNoRecordContainer>
     );
   }
 

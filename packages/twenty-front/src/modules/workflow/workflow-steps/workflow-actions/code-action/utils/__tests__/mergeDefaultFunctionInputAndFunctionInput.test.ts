@@ -24,4 +24,28 @@ describe('mergeDefaultFunctionInputAndFunctionInput', () => {
       }),
     ).toEqual(expectedResult);
   });
+
+  it('should preserve array values without recursing into them as nested objects', () => {
+    const newInput = { briefs: [], b: null };
+    const oldInput = { briefs: [], b: 5 };
+
+    expect(
+      mergeDefaultFunctionInputAndFunctionInput({
+        newInput,
+        oldInput,
+      }),
+    ).toEqual({ briefs: [], b: 5 });
+  });
+
+  it('should keep an array typed by the user instead of resetting it', () => {
+    const newInput = { briefs: [], b: null };
+    const oldInput = { briefs: '["a", "b"]', b: null };
+
+    expect(
+      mergeDefaultFunctionInputAndFunctionInput({
+        newInput,
+        oldInput,
+      }),
+    ).toEqual({ briefs: '["a", "b"]', b: null });
+  });
 });

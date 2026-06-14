@@ -1,24 +1,27 @@
 {
   "tabs": {
+    "gettingStarted": {
+      "label": "Başlarken",
+      "groups": {
+        "welcome": {
+          "label": "Hoş geldiniz"
+        },
+        "coreConcepts": {
+          "label": "Temel Kavramlar"
+        }
+      }
+    },
     "userGuide": {
       "label": "Kullanıcı Rehberi",
       "groups": {
-        "discoverTwenty": {
-          "label": "Twenty'yi Keşfedin",
-          "groups": {
-            "gettingStartedCapabilities": {
-              "label": "Yetkinlikler"
-            },
-            "gettingStartedHowTos": {
-              "label": "Nasıl Yapılırlar"
-            }
-          }
+        "userGuideOverview": {
+          "label": "Genel Bakış"
         },
         "dataModel": {
           "label": "Veri modeli",
           "groups": {
-            "dataModelCapabilities": {
-              "label": "Yetkinlikler"
+            "dataModelReference": {
+              "label": "Başvuru"
             },
             "dataModelHowTos": {
               "label": "Nasıl Yapılırlar"
@@ -28,8 +31,8 @@
         "dataMigration": {
           "label": "Veri Geçişi",
           "groups": {
-            "dataMigrationCapabilities": {
-              "label": "Yetkinlikler"
+            "dataMigrationReference": {
+              "label": "Başvuru"
             },
             "dataMigrationHowTos": {
               "label": "Nasıl Yapılırlar"
@@ -39,8 +42,8 @@
         "calendarEmails": {
           "label": "Takvim ve E-postalar",
           "groups": {
-            "calendarEmailsCapabilities": {
-              "label": "Yetkinlikler"
+            "calendarEmailsReference": {
+              "label": "Başvuru"
             },
             "calendarEmailsHowTos": {
               "label": "Nasıl Yapılırlar"
@@ -50,8 +53,8 @@
         "workflows": {
           "label": "İş Akışları",
           "groups": {
-            "workflowsCapabilities": {
-              "label": "Yetkinlikler"
+            "workflowsReference": {
+              "label": "Başvuru"
             },
             "workflowsHowTos": {
               "label": "Nasıl Yapılırlar",
@@ -75,21 +78,26 @@
         "ai": {
           "label": "AI",
           "groups": {
-            "aiCapabilities": {
-              "label": "Yetkinlikler"
+            "aiReference": {
+              "label": "Başvuru"
             },
             "aiHowTos": {
               "label": "Nasıl Yapılırlar"
             }
           }
         },
-        "viewsPipelines": {
-          "label": "Görünümler ve Boru Hatları",
+        "layout": {
+          "label": "Düzen",
           "groups": {
-            "viewsPipelinesCapabilities": {
-              "label": "Yetkinlikler"
+            "layoutReference": {
+              "label": "Başvuru",
+              "groups": {
+                "layoutViews": {
+                  "label": "Görünümler"
+                }
+              }
             },
-            "viewsPipelinesHowTos": {
+            "layoutHowTos": {
               "label": "Nasıl Yapılırlar"
             }
           }
@@ -97,8 +105,8 @@
         "dashboards": {
           "label": "Gösterge Panelleri",
           "groups": {
-            "dashboardsCapabilities": {
-              "label": "Yetkinlikler"
+            "dashboardsReference": {
+              "label": "Başvuru"
             },
             "dashboardsHowTos": {
               "label": "Nasıl Yapılırlar"
@@ -108,8 +116,8 @@
         "permissionsAccess": {
           "label": "İzinler ve Erişim",
           "groups": {
-            "permissionsAccessCapabilities": {
-              "label": "Yetkinlikler"
+            "permissionsAccessReference": {
+              "label": "Başvuru"
             },
             "permissionsAccessHowTos": {
               "label": "Nasıl Yapılırlar"
@@ -119,8 +127,8 @@
         "billing": {
           "label": "Faturalandırma",
           "groups": {
-            "billingCapabilities": {
-              "label": "Yetkinlikler"
+            "billingReference": {
+              "label": "Başvuru"
             },
             "billingHowTos": {
               "label": "Nasıl Yapılırlar"
@@ -130,8 +138,8 @@
         "settings": {
           "label": "Ayarlar",
           "groups": {
-            "settingsCapabilities": {
-              "label": "Yetkinlikler"
+            "settingsReference": {
+              "label": "Başvuru"
             },
             "settingsHowTos": {
               "label": "Nasıl Yapılırlar"
@@ -143,59 +151,40 @@
     "developers": {
       "label": "Geliştiriciler",
       "groups": {
-        "developersGroup": {
-          "label": "Geliştiriciler"
+        "developersOverview": {
+          "label": "Genel Bakış"
         },
-        "extend": {
-          "label": "Genişlet",
+        "apps": {
+          "label": "Uygulamalar",
           "groups": {
-            "apps": {
-              "label": "Uygulamalar"
+            "appsGettingStarted": {
+              "label": "Başlarken"
+            },
+            "appsConfig": {
+              "label": "Yapılandırma"
+            },
+            "appsData": {
+              "label": "Veri"
+            },
+            "appsLogic": {
+              "label": "Mantık"
+            },
+            "appsLayout": {
+              "label": "Düzen"
+            },
+            "appsOperations": {
+              "label": "İşlemler"
             }
           }
+        },
+        "api": {
+          "label": "API"
         },
         "selfHost": {
-          "label": "Kendi Kendine Barındırma",
-          "groups": {
-            "selfHostCapabilities": {
-              "label": "Yetkinlikler"
-            }
-          }
+          "label": "Kendi Kendine Barındırma"
         },
         "contribute": {
-          "label": "Katkıda Bulunun",
-          "groups": {
-            "contributeCapabilities": {
-              "label": "Yetkinlikler",
-              "groups": {
-                "frontendDevelopment": {
-                  "label": "Frontend Geliştirme",
-                  "groups": {
-                    "twentyUi": {
-                      "label": "Twenty UI",
-                      "groups": {
-                        "display": {
-                          "label": "Görüntüle"
-                        },
-                        "feedback": {
-                          "label": "Geri Bildirim"
-                        },
-                        "input": {
-                          "label": "Girdi"
-                        },
-                        "navigation": {
-                          "label": "Gezinme"
-                        }
-                      }
-                    }
-                  }
-                },
-                "backendDevelopment": {
-                  "label": "Backend Geliştirme"
-                }
-              }
-            }
-          }
+          "label": "Katkıda Bulunun"
         }
       }
     }

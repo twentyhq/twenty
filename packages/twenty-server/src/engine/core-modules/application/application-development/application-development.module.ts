@@ -5,8 +5,10 @@ import { ApplicationManifestModule } from 'src/engine/core-modules/application/a
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationDevelopmentResolver } from 'src/engine/core-modules/application/application-development/application-development.resolver';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
+import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
+import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
@@ -16,11 +18,13 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
     ApplicationModule,
     ApplicationManifestModule,
     ApplicationRegistrationModule,
+    CacheLockModule,
     FeatureFlagModule,
     SdkClientModule,
     TokenModule,
     FileStorageModule,
     PermissionsModule,
+    ThrottlerModule,
   ],
   providers: [
     ApplicationDevelopmentResolver,

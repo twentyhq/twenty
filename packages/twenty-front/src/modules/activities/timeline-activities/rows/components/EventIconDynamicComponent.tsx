@@ -1,12 +1,12 @@
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import {
   IconCirclePlus,
   IconEditCircle,
   IconRestore,
   IconTrash,
-  useIcons,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 
 export const EventIconDynamicComponent = ({
   event,
@@ -15,7 +15,6 @@ export const EventIconDynamicComponent = ({
   event: TimelineActivity;
   linkedObjectMetadataItem: EnrichedObjectMetadataItem | null;
 }) => {
-  const { getIcon } = useIcons();
   const [, eventAction] = event.name.split('.');
 
   if (eventAction === 'created') {
@@ -31,7 +30,5 @@ export const EventIconDynamicComponent = ({
     return <IconRestore />;
   }
 
-  const IconComponent = getIcon(linkedObjectMetadataItem?.icon);
-
-  return <IconComponent />;
+  return <ObjectMetadataIcon objectMetadataItem={linkedObjectMetadataItem} />;
 };

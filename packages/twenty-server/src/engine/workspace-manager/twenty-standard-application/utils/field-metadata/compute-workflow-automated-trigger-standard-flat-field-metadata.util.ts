@@ -14,6 +14,7 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
+import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 
 export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
   now,
@@ -40,7 +41,7 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       icon: 'Icon123',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'uuid',
     },
     standardObjectMetadataRelatedEntityIds,
@@ -59,7 +60,7 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
@@ -79,7 +80,7 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarClock',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
@@ -99,7 +100,7 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isSystem: true,
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -117,7 +118,7 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`The creator of the record`),
       icon: 'IconCreativeCommonsSa',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -142,7 +143,7 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       ),
       icon: 'IconUserCircle',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -184,6 +185,12 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
+      settings: {
+        generatedType: 'STORED',
+        asExpression: getTsVectorColumnExpressionFromFields([
+          { name: 'id', type: FieldMetadataType.UUID },
+        ]),
+      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -200,7 +207,7 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`The workflow automated trigger type`),
       icon: 'IconSettingsAutomation',
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: "'DATABASE_EVENT'",
       options: [
         {
@@ -234,7 +241,7 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`The workflow automated trigger settings`),
       icon: 'IconSettings',
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -252,7 +259,7 @@ export const buildWorkflowAutomatedTriggerStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`WorkflowAutomatedTrigger workflow`),
       icon: 'IconSettingsAutomation',
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       targetObjectName: 'workflow',
       targetFieldName: 'automatedTriggers',
       settings: {

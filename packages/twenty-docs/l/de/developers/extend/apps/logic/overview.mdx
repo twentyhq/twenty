@@ -1,0 +1,55 @@
+---
+title: Übersicht
+description: Serverseitiges TypeScript, das innerhalb von Twenty ausgeführt wird – ausgelöst durch HTTP-Routen, Cron-Zeitpläne, Datenbankereignisse, KI-Tools oder Workflow-Aktionen.
+icon: bolt
+---
+
+Die **Logikschicht** einer Twenty-App ist der Code, der *ausgeführt wird* – serverseitige TypeScript-Handler, die auf HTTP-Anfragen, Cron-Zeitpläne und Datensatzänderungen reagieren; KI-Skills und -Agenten, die innerhalb des Workspaces leben; und OAuth-Verbindungen, die es Ihren Funktionen ermöglichen, im Namen eines Benutzers in Drittanbieterdiensten zu agieren.
+
+```text
+            ┌─ HTTP route      ──┐
+            │  Cron schedule     │
+            │  Database event    │      ┌────────────────────┐
+  triggers ─┤  AI tool call      ├─────▶│ Logic function     │
+            │  Workflow action   │      │ (your handler)     │
+            │  Manual exec       │      └────────────────────┘
+            └────────────────────┘                │
+                                                  ▼
+                                  ┌────────────────────────────┐
+                                  │ Twenty API (records)       │
+                                  │ Third-party API            │
+                                  │   (via Connection token)   │
+                                  └────────────────────────────┘
+```
+
+## In diesem Abschnitt
+
+<CardGroup cols={2}>
+  <Card title="Logikfunktionen" icon="bolt" href="/l/de/developers/extend/apps/logic/logic-functions">
+    Der zentrale Baustein – Auslösertypen, Payloads und der typisierte API-Client.
+  </Card>
+  <Card title="Skills & Agenten" icon="robot" href="/l/de/developers/extend/apps/logic/skills-and-agents">
+    Wiederverwendbare Anweisungen für KI-Agenten und Assistenten mit benutzerdefinierten System-Prompts.
+  </Card>
+  <Card title="Verbindungen" icon="plug" href="/l/de/developers/extend/apps/logic/connections">
+    OAuth-Anmeldedaten, die Ihre App für Dienste von Drittanbietern verwaltet – Linear, GitHub, Slack und mehr.
+  </Card>
+</CardGroup>
+
+## Auslösertypen im Überblick
+
+Eine Logikfunktion wählt einen oder mehrere Auslöser – jeder Eintrag unten ist ein eigenes Feld auf `defineLogicFunction()`:
+
+| Auslöser              | Wann sie ausgeführt wird                                           | Einstellung                     |
+| --------------------- | ------------------------------------------------------------------ | ------------------------------- |
+| **HTTP-Route**        | Eine Anfrage erreicht Ihren `/s/\<path>`-Endpunkt | `httpRouteTriggerSettings`      |
+| **Cron**              | Ein CRON-Ausdruck trifft zu                                        | `cronTriggerSettings`           |
+| **Datenbankereignis** | Ein Workspace-Datensatz wird erstellt, aktualisiert oder gelöscht  | `databaseEventTriggerSettings`  |
+| **KI-Tool**           | Eine Twenty-KI-Funktion entscheidet sich, Ihre Funktion aufzurufen | `toolTriggerSettings`           |
+| **Workflow-Aktion**   | Ein Workflow-Schritt ruft Ihre Funktion auf                        | `workflowActionTriggerSettings` |
+
+Funktionen werden in isolierten Node.js-Prozessen in einer Sandbox ausgeführt und greifen über einen typisierten API-Client, der auf die in [`defineApplication()`](/l/de/developers/extend/apps/config/application) deklarierte Rolle beschränkt ist, auf den Workspace zu.
+
+<Note>
+**Installations-Hooks** – Code, der vor oder nach der Installation ausgeführt wird – teilen sich diese Laufzeitumgebung, verwenden jedoch eigene Define-Funktionen und befinden sich unter [Config → Install Hooks](/l/de/developers/extend/apps/config/install-hooks).
+</Note>

@@ -3,19 +3,22 @@ import { Injectable } from '@nestjs/common';
 import { google } from 'googleapis';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
-} from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
-import { type ConnectedAccountTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
+} from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
 import { parseGoogleOAuthError } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/utils/parse-google-oauth-error.util';
+import { type ConnectedAccountPlaintextTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 
 @Injectable()
 export class GoogleAPIRefreshAccessTokenService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  async refreshTokens(refreshToken: string): Promise<ConnectedAccountTokens> {
+  async refreshTokens(
+    refreshToken: PlaintextString,
+  ): Promise<ConnectedAccountPlaintextTokens> {
     const oAuth2Client = new google.auth.OAuth2(
       this.twentyConfigService.get('AUTH_GOOGLE_CLIENT_ID'),
       this.twentyConfigService.get('AUTH_GOOGLE_CLIENT_SECRET'),
@@ -35,7 +38,7 @@ export class GoogleAPIRefreshAccessTokenService {
       }
 
       return {
-        accessToken: token,
+        accessToken: token as PlaintextString,
         refreshToken,
       };
     } catch (error) {

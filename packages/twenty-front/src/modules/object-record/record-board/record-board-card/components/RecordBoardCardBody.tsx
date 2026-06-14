@@ -28,6 +28,7 @@ export const RecordBoardCardBody = () => {
   const {
     labelIdentifierFieldMetadataItem,
     fieldDefinitionByFieldMetadataItemId,
+    objectPermissionsByObjectMetadataId,
   } = useRecordIndexContextOrThrow();
 
   const useUpdateOneRecordHook: RecordUpdateHook = () => {
@@ -77,12 +78,14 @@ export const RecordBoardCardBody = () => {
                   objectPermissions,
                   fieldMetadataItem: {
                     id: recordField.fieldMetadataItemId,
-                    isUIReadOnly:
-                      correspondingFieldDefinition.metadata.isUIReadOnly ??
-                      false,
+                    isUIEditable:
+                      correspondingFieldDefinition.metadata.isUIEditable ??
+                      true,
                     isCustom:
                       correspondingFieldDefinition.metadata.isCustom ?? false,
                   },
+                  fieldDefinition: correspondingFieldDefinition,
+                  objectPermissionsByObjectMetadataId,
                 }),
                 fieldDefinition: correspondingFieldDefinition,
                 useUpdateRecord: useUpdateOneRecordHook,

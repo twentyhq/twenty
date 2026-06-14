@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { resolveInput } from 'twenty-shared/utils';
+import { isDefined, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -65,6 +65,13 @@ export class LogicFunctionWorkflowAction implements WorkflowAction {
     if (!logicFunction) {
       throw new WorkflowStepExecutorException(
         `Logic function with id ${workflowActionInput.logicFunctionId} not found`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+      );
+    }
+
+    if (!isDefined(logicFunction.workflowActionTriggerSettings)) {
+      throw new WorkflowStepExecutorException(
+        `Logic function ${logicFunction.name} is not exposed as a workflow action`,
         WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
       );
     }

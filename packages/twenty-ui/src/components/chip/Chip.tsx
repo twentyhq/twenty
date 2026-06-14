@@ -1,10 +1,11 @@
-import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
-import { themeCssVariables } from '@ui/theme-constants';
-import { isDefined } from 'twenty-shared/utils';
+import { clsx } from 'clsx';
+import { isDefined } from '@ui/utilities/utils/isDefined';
+
+import styles from './Chip.module.scss';
 
 export enum ChipSize {
   Large = 'large',
@@ -29,6 +30,8 @@ export type ChipProps = {
   disabled?: boolean;
   clickable?: boolean;
   label: string;
+  tooltipLabel?: string;
+  alwaysShowTooltip?: boolean;
   isLabelHidden?: boolean;
   isBold?: boolean;
   maxWidth?: number;
@@ -41,110 +44,6 @@ export type ChipProps = {
   forceEmptyText?: boolean;
   emptyLabel?: string;
 };
-
-const StyledDiv = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-`;
-
-const StyledContainer = styled.div<
-  Pick<
-    ChipProps,
-    | 'accent'
-    | 'clickable'
-    | 'disabled'
-    | 'isBold'
-    | 'maxWidth'
-    | 'size'
-    | 'variant'
-  >
->`
-  --chip-horizontal-padding: ${themeCssVariables.spacing[1]};
-  --chip-vertical-padding: ${themeCssVariables.spacing[1]};
-
-  text-decoration: none;
-  align-items: center;
-
-  color: ${({ accent, disabled }) =>
-    disabled
-      ? themeCssVariables.font.color.light
-      : accent === ChipAccent.TextPrimary
-        ? themeCssVariables.font.color.primary
-        : themeCssVariables.font.color.secondary};
-
-  cursor: ${({ clickable, disabled, variant }) =>
-    variant === ChipVariant.Transparent
-      ? 'inherit'
-      : clickable
-        ? 'pointer'
-        : disabled
-          ? 'not-allowed'
-          : 'inherit'};
-
-  display: inline-flex;
-  justify-content: flex-start;
-  gap: ${themeCssVariables.spacing[1]};
-  height: ${({ size }) =>
-    size === ChipSize.Large
-      ? themeCssVariables.spacing[4]
-      : themeCssVariables.spacing[3]};
-  max-width: ${({ maxWidth }) =>
-    maxWidth
-      ? `calc(${maxWidth}px - 2 * var(--chip-horizontal-padding))`
-      : '100%'};
-  overflow: hidden;
-  padding: var(--chip-vertical-padding) var(--chip-horizontal-padding);
-  user-select: none;
-
-  font-weight: ${({ accent, isBold }) =>
-    isBold || accent === ChipAccent.TextSecondary
-      ? themeCssVariables.font.weight.medium
-      : 'inherit'};
-
-  &:hover {
-    background-color: ${({ variant, disabled }) =>
-      variant === ChipVariant.Regular && !disabled
-        ? themeCssVariables.background.transparent.light
-        : variant === ChipVariant.Highlighted
-          ? themeCssVariables.background.transparent.medium
-          : variant === ChipVariant.Static
-            ? themeCssVariables.background.transparent.light
-            : 'inherit'};
-  }
-
-  &:active {
-    background-color: ${({ disabled, variant }) =>
-      variant === ChipVariant.Regular && !disabled
-        ? themeCssVariables.background.transparent.medium
-        : variant === ChipVariant.Highlighted
-          ? themeCssVariables.background.transparent.strong
-          : variant === ChipVariant.Static
-            ? themeCssVariables.background.transparent.light
-            : 'inherit'};
-  }
-
-  background-color: ${({ variant }) =>
-    variant === ChipVariant.Highlighted || variant === ChipVariant.Static
-      ? themeCssVariables.background.transparent.light
-      : 'inherit'};
-
-  border: none;
-
-  border-radius: ${themeCssVariables.border.radius.sm};
-
-  & > svg {
-    flex-shrink: 0;
-  }
-
-  padding-left: ${({ variant }) =>
-    variant === ChipVariant.Transparent
-      ? themeCssVariables.spacing[0]
-      : 'var(--chip-horizontal-padding)'};
-`;
-
-const StyledRightComponentDivider = styled.div`
-  align-self: stretch;
-  border-left: 1px solid ${themeCssVariables.border.color.light};
-`;
 
 const renderRightComponent = (
   rightComponent: (() => ReactNode) | ReactNode | null,
@@ -160,7 +59,7 @@ const renderRightComponent = (
   if (rightComponentDivider === true) {
     return (
       <>
-        <StyledRightComponentDivider />
+        <div className={styles.rightComponentDivider} />
         {rendered}
       </>
     );
@@ -172,6 +71,8 @@ const renderRightComponent = (
 export const Chip = ({
   size = ChipSize.Small,
   label,
+  tooltipLabel,
+  alwaysShowTooltip = false,
   isLabelHidden = false,
   isBold = false,
   disabled = false,
@@ -186,27 +87,63 @@ export const Chip = ({
   forceEmptyText = false,
   emptyLabel = 'Untitled',
 }: ChipProps) => {
+  // Cursor precedence mirrors the Linaria ternary:
+  // transparent > clickable > disabled > inherit.
+  const cursorClass =
+    variant === ChipVariant.Transparent
+      ? undefined
+      : clickable
+        ? styles.cursorPointer
+        : disabled
+          ? styles.cursorNotAllowed
+          : undefined;
+
+  const backgroundClass =
+    variant === ChipVariant.Highlighted
+      ? styles.backgroundHighlighted
+      : variant === ChipVariant.Static
+        ? styles.backgroundStatic
+        : variant === ChipVariant.Regular && !disabled && clickable
+          ? styles.interactiveRegular
+          : undefined;
+
   return (
-    <StyledContainer
+    <div
       data-testid="chip"
-      accent={accent}
-      clickable={clickable}
-      disabled={disabled}
-      isBold={isBold}
-      size={size}
-      variant={variant}
-      className={className}
-      maxWidth={maxWidth}
+      className={clsx(
+        styles.chip,
+        size === ChipSize.Large ? styles.sizeLarge : styles.sizeSmall,
+        accent === ChipAccent.TextPrimary
+          ? styles.accentTextPrimary
+          : styles.accentTextSecondary,
+        disabled && styles.disabled,
+        (isBold || accent === ChipAccent.TextSecondary) && styles.fontMedium,
+        cursorClass,
+        backgroundClass,
+        maxWidth ? styles.hasMaxWidth : undefined,
+        variant === ChipVariant.Transparent && styles.paddingLeftNone,
+        className,
+      )}
+      style={
+        maxWidth
+          ? ({ '--chip-max-width': `${maxWidth}px` } as React.CSSProperties)
+          : undefined
+      }
     >
       {leftComponent}
       {!isLabelHidden && isDefined(label) && isNonEmptyString(label) ? (
-        <OverflowingTextWithTooltip size={size} text={label} />
+        <OverflowingTextWithTooltip
+          size={size}
+          text={label}
+          tooltipContent={tooltipLabel}
+          alwaysShowTooltip={alwaysShowTooltip}
+        />
       ) : !forceEmptyText && !isLabelHidden ? (
-        <StyledDiv>{emptyLabel}</StyledDiv>
+        <div className={styles.emptyLabel}>{emptyLabel}</div>
       ) : (
         ''
       )}
       {renderRightComponent(rightComponent, rightComponentDivider)}
-    </StyledContainer>
+    </div>
   );
 };

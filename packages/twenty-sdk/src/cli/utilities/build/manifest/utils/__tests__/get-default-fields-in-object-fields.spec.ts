@@ -1,7 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 import { getDefaultObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-object-fields';
-import type { ObjectConfig } from '@/sdk/objects/object-config';
+import type { ObjectConfig } from '@/sdk/define/objects/object-config';
 import { getDefaultRelationObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-relation-object-fields';
 import { type ObjectFieldManifest } from 'twenty-shared/application';
 
@@ -176,7 +176,7 @@ describe('getDefaultFieldsInObjectFields', () => {
   it('should return reverse relation fields for each default relation', () => {
     const { fields } = getDefaultFieldsInObjectFields(baseObjectConfig);
 
-    expect(fields).toHaveLength(5);
+    expect(fields).toHaveLength(4);
 
     const fieldNames = fields.map((f) => f.name);
 

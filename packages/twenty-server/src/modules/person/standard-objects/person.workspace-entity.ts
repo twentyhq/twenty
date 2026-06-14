@@ -14,7 +14,7 @@ import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migr
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { type CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
-import { type FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
+import { type MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
@@ -37,12 +37,10 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   name: FullNameMetadata | null;
   emails: EmailsMetadata;
   linkedinLink: LinksMetadata | null;
-  xLink: LinksMetadata | null;
   jobTitle: string | null;
   /** @deprecated Use `phones` field instead */
   phone: string | null;
   phones: PhonesMetadata;
-  city: string | null;
   /** @deprecated Use `avatarFile` field instead */
   avatarUrl: string | null;
   avatarFile: FileOutput[] | null;
@@ -54,12 +52,12 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   pointOfContactForOpportunities: EntityRelation<OpportunityWorkspaceEntity[]>;
   taskTargets: EntityRelation<TaskTargetWorkspaceEntity[]>;
   noteTargets: EntityRelation<NoteTargetWorkspaceEntity[]>;
-  favorites: EntityRelation<FavoriteWorkspaceEntity[]>;
   attachments: EntityRelation<AttachmentWorkspaceEntity[]>;
   messageParticipants: EntityRelation<MessageParticipantWorkspaceEntity[]>;
   calendarEventParticipants: EntityRelation<
     CalendarEventParticipantWorkspaceEntity[]
   >;
   timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;
+  listMemberships: EntityRelation<MessageListMemberWorkspaceEntity[]>;
   searchVector: string;
 }

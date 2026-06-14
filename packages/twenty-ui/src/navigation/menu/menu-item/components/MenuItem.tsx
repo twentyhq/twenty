@@ -9,11 +9,11 @@ import {
   useContext,
 } from 'react';
 
-import { styled } from '@linaria/react';
 import { MenuItemHotKeys } from '@ui/navigation/menu/menu-item/components/MenuItemHotKeys';
+import { type ThemeColor } from '@ui/theme';
 import { ThemeContext } from '@ui/theme-constants';
-import { motion } from 'framer-motion';
-import { type Nullable } from 'twenty-shared/types';
+import { clsx } from 'clsx';
+import { type Nullable } from '@ui/utilities/types/Nullable';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
   StyledHoverableMenuItemBase,
@@ -21,10 +21,13 @@ import {
 } from '../internals/components/StyledMenuItemBase';
 import { type MenuItemAccent } from '../types/MenuItemAccent';
 
+import styles from './MenuItem.module.scss';
+
 export type MenuItemIconButton = {
   Wrapper?: FunctionComponent<{ iconButton: ReactElement }>;
   Icon: IconComponent;
   accent?: LightIconButtonProps['accent'];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onClick?: (event: MouseEvent<any>) => void;
   ariaLabel?: string;
   dataTestId?: string;
@@ -39,6 +42,7 @@ export type MenuItemProps = {
   isIconDisplayedOnHoverOnly?: boolean;
   isTooltipOpen?: boolean;
   LeftIcon?: IconComponent | null;
+  iconThemeColor?: ThemeColor | null;
   LeftComponent?: ReactNode;
   RightIcon?: IconComponent | null;
   RightComponent?: ReactNode;
@@ -57,12 +61,6 @@ export type MenuItemProps = {
   isSubMenuOpened?: boolean;
 };
 
-const StyledSubMenuIcon = styled(motion.div)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
 export const MenuItem = ({
   accent = 'default',
   className,
@@ -71,6 +69,7 @@ export const MenuItem = ({
   iconButtons,
   isIconDisplayedOnHoverOnly = true,
   LeftIcon,
+  iconThemeColor,
   LeftComponent,
   RightIcon,
   RightComponent,
@@ -113,6 +112,7 @@ export const MenuItem = ({
     >
       <MenuItemLeftContent
         LeftIcon={LeftIcon ?? undefined}
+        iconThemeColor={iconThemeColor}
         LeftComponent={LeftComponent}
         withIconContainer={withIconContainer}
         withIconContainerBackground={withIconContainerBackground}
@@ -135,18 +135,19 @@ export const MenuItem = ({
           <RightIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         )}
         {RightComponent}
-        {hasSubMenu && !disabled && (
-          <StyledSubMenuIcon
-            animate={{ rotate: isSubMenuOpened ? 90 : 0 }}
-            transition={{
-              duration: theme.animation.duration.normal,
-            }}
+        {hasSubMenu && (
+          <div
+            className={clsx(
+              styles.subMenuIcon,
+              isSubMenuOpened && styles.subMenuIconOpened,
+            )}
+            style={{ visibility: disabled ? 'hidden' : 'visible' }}
           >
             <IconChevronRight
               size={theme.icon.size.sm}
               color={theme.font.color.light}
             />
-          </StyledSubMenuIcon>
+          </div>
         )}
       </StyledMenuItemRightContent>
     </StyledHoverableMenuItemBase>

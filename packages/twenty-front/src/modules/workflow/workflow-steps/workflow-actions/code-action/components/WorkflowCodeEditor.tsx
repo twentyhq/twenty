@@ -3,9 +3,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
-import { IconMaximize } from 'twenty-ui/display';
-import { CodeEditor, LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconMaximize } from 'twenty-ui-deprecated/display';
+import { CodeEditor, LightIconButton } from 'twenty-ui-deprecated/input';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const CODE_EDITOR_MIN_HEIGHT = 343;
 

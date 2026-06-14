@@ -1,38 +1,27 @@
-import { styled } from '@linaria/react';
-import { type IconComponent, IconGripVertical } from '@ui/display';
-import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import {
+  type IconComponent,
+  IconGripVertical,
+  TintedIconTile,
+} from '@ui/display';
+import { type ThemeColor } from '@ui/theme';
+import { ThemeContext } from '@ui/theme-constants';
+import { clsx } from 'clsx';
 import { useContext } from 'react';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 import { MenuItemIconBoxContainer } from './MenuItemIconBoxContainer';
 
-const StyledIconSwapContainer = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const StyledDefaultIcon = styled.div`
-  display: flex;
-  transition: opacity calc(${themeCssVariables.animation.duration.instant} * 1s)
-    ease;
-`;
-
-const StyledHoverIcon = styled.div`
-  position: absolute;
-  display: flex;
-  opacity: 0;
-  transition: opacity calc(${themeCssVariables.animation.duration.instant} * 1s)
-    ease;
-`;
+import styles from './MenuItemIconWithGripSwap.module.scss';
 
 export type MenuItemIconWithGripSwapProps = {
   LeftIcon: IconComponent | null | undefined;
+  iconThemeColor?: ThemeColor | null;
   withIconContainer?: boolean;
   gripIconColor: string;
 };
 
 export const MenuItemIconWithGripSwap = ({
   LeftIcon,
+  iconThemeColor,
   withIconContainer = false,
   gripIconColor,
 }: MenuItemIconWithGripSwapProps) => {
@@ -43,21 +32,30 @@ export const MenuItemIconWithGripSwap = ({
   }
 
   const iconContent = (
-    <StyledIconSwapContainer>
-      <StyledDefaultIcon className="grip-swap-default-icon">
-        <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-      </StyledDefaultIcon>
-      <StyledHoverIcon className="grip-swap-hover-icon">
+    <div className={styles.iconSwapContainer}>
+      <div className={clsx(styles.defaultIcon, 'grip-swap-default-icon')}>
+        {isDefined(iconThemeColor) ? (
+          <TintedIconTile
+            Icon={LeftIcon}
+            color={iconThemeColor}
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+          />
+        ) : (
+          <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+        )}
+      </div>
+      <div className={clsx(styles.hoverIcon, 'grip-swap-hover-icon')}>
         <IconGripVertical
           size={theme.icon.size.md}
           stroke={theme.icon.stroke.sm}
           color={gripIconColor}
         />
-      </StyledHoverIcon>
-    </StyledIconSwapContainer>
+      </div>
+    </div>
   );
 
-  if (withIconContainer) {
+  if (withIconContainer && !isDefined(iconThemeColor)) {
     return <MenuItemIconBoxContainer>{iconContent}</MenuItemIconBoxContainer>;
   }
 

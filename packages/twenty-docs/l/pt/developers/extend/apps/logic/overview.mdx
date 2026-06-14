@@ -1,0 +1,55 @@
+---
+title: Visão Geral
+description: TypeScript do lado do servidor que é executado dentro do Twenty — acionado por rotas HTTP, agendamentos cron, eventos de banco de dados, ferramentas de IA ou ações de fluxos de trabalho.
+icon: bolt
+---
+
+A **camada de lógica** de um app do Twenty é o código que *é executado* — manipuladores TypeScript do lado do servidor que reagem a solicitações HTTP, agendamentos CRON e alterações de registros; habilidades e agentes de IA que vivem dentro do workspace; e conexões OAuth que permitem que suas funções ajam em nome de um usuário em serviços de terceiros.
+
+```text
+            ┌─ HTTP route      ──┐
+            │  Cron schedule     │
+            │  Database event    │      ┌────────────────────┐
+  triggers ─┤  AI tool call      ├─────▶│ Logic function     │
+            │  Workflow action   │      │ (your handler)     │
+            │  Manual exec       │      └────────────────────┘
+            └────────────────────┘                │
+                                                  ▼
+                                  ┌────────────────────────────┐
+                                  │ Twenty API (records)       │
+                                  │ Third-party API            │
+                                  │   (via Connection token)   │
+                                  └────────────────────────────┘
+```
+
+## Nesta seção
+
+<CardGroup cols={2}>
+  <Card title="Funções lógicas" icon="bolt" href="/l/pt/developers/extend/apps/logic/logic-functions">
+    O bloco de construção principal — tipos de gatilho, payloads e o cliente de API tipado.
+  </Card>
+  <Card title="Habilidades e agentes" icon="robot" href="/l/pt/developers/extend/apps/logic/skills-and-agents">
+    Instruções reutilizáveis para agentes de IA e assistentes com prompts de sistema personalizados.
+  </Card>
+  <Card title="Conexões" icon="plug" href="/l/pt/developers/extend/apps/logic/connections">
+    Credenciais OAuth que seu app mantém para serviços de terceiros — Linear, GitHub, Slack e outros.
+  </Card>
+</CardGroup>
+
+## Tipos de gatilho em resumo
+
+Uma função de lógica escolhe um ou mais gatilhos — cada entrada abaixo é um campo separado em `defineLogicFunction()`:
+
+| Disparador                    | Quando é executado                                                | Configuração                    |
+| ----------------------------- | ----------------------------------------------------------------- | ------------------------------- |
+| **Rota HTTP**                 | Uma solicitação atinge seu endpoint `/s/\<path>` | `httpRouteTriggerSettings`      |
+| **Cron**                      | Uma expressão CRON corresponde                                    | `cronTriggerSettings`           |
+| **Evento de banco de dados**  | Um registro do workspace é criado, atualizado ou excluído         | `databaseEventTriggerSettings`  |
+| **Ferramenta de IA**          | Um recurso de IA do Twenty decide chamar sua função               | `toolTriggerSettings`           |
+| **Ação de fluxo de trabalho** | Uma etapa de fluxo de trabalho invoca sua função                  | `workflowActionTriggerSettings` |
+
+As funções são executadas em sandbox, em processos Node.js isolados, e acessam o workspace por meio de um cliente de API tipado, com escopo definido pelo papel declarado em [`defineApplication()`](/l/pt/developers/extend/apps/config/application).
+
+<Note>
+**Ganchos de instalação** — código que é executado antes ou depois da instalação — compartilham esse runtime, mas usam suas próprias funções define e ficam em [Config → Install Hooks](/l/pt/developers/extend/apps/config/install-hooks).
+</Note>

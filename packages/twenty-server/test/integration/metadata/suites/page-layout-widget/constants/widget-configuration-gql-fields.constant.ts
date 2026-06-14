@@ -80,22 +80,11 @@ export const WIDGET_CONFIGURATION_GQL_FIELDS = `
     aggregateOperation
     label
     displayDataLabel
-    format
+    numberFormat
     description
     filter
     prefix
     suffix
-    timezone
-    firstDayOfTheWeek
-  }
-  ... on GaugeChartConfiguration {
-    configurationType
-    aggregateFieldMetadataId
-    aggregateOperation
-    displayDataLabel
-    color
-    description
-    filter
     timezone
     firstDayOfTheWeek
   }

@@ -14,8 +14,11 @@ import {
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-} from 'twenty-ui/layout';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/layout';
+import {
+  MOBILE_VIEWPORT,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledMainContainer = styled.div`
   align-items: flex-start;
@@ -48,12 +51,16 @@ const StyledSidePanelPlaceholderWrapper = styled.div`
 export const TimelineCard = () => {
   const targetRecord = useTargetRecord();
   const { isInSidePanel } = useLayoutRenderingContext();
-  const { timelineActivities, loading, fetchMoreRecords } =
-    useTimelineActivities(targetRecord);
+  const {
+    timelineActivities,
+    firstQueryLoading,
+    loadingMore,
+    fetchMoreRecords,
+  } = useTimelineActivities(targetRecord);
 
   const isTimelineActivitiesEmpty = timelineActivities.length === 0;
 
-  if (loading === true) {
+  if (firstQueryLoading === true) {
     return <SkeletonLoader withSubSections />;
   }
 
@@ -92,7 +99,7 @@ export const TimelineCard = () => {
         events={timelineActivities ?? []}
       />
       <CustomResolverFetchMoreLoader
-        loading={loading}
+        loading={loadingMore}
         onLastRowVisible={fetchMoreRecords}
       />
     </StyledMainContainer>

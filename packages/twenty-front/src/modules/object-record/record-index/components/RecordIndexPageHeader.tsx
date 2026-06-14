@@ -1,5 +1,4 @@
 import { RecordIndexCommandMenu } from '@/command-menu-item/components/RecordIndexCommandMenu';
-import { CommandMenuItemMoreActionsButton } from '@/command-menu-item/server-items/display/components/CommandMenuItemMoreActionsButton';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
@@ -7,16 +6,14 @@ import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/st
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { RecordIndexPageHeaderIcon } from '@/object-record/record-index/components/RecordIndexPageHeaderIcon';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { PageHeaderToggleSidePanelButton } from '@/ui/layout/page-header/components/PageHeaderToggleSidePanelButton';
-import { PageHeader } from '@/ui/layout/page/components/PageHeader';
+import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
+import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledTitleWithSelectedRecords = styled.div`
   display: flex;
@@ -69,29 +66,21 @@ export const RecordIndexPageHeader = () => {
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
-  const isCommandMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-  );
 
   return (
-    <PageHeader
-      title={pageHeaderTitle}
-      Icon={() => (
+    <PageCardHeader
+      icon={
         <RecordIndexPageHeaderIcon objectMetadataItem={objectMetadataItem} />
-      )}
-    >
-      {isDefined(contextStoreCurrentViewId) && (
-        <>
-          <RecordIndexCommandMenu />
-          {isCommandMenuItemEnabled ? (
-            !isLayoutCustomizationModeEnabled && (
-              <CommandMenuItemMoreActionsButton />
-            )
-          ) : (
-            <PageHeaderToggleSidePanelButton />
-          )}
-        </>
-      )}
-    </PageHeader>
+      }
+      title={pageHeaderTitle}
+      actionButton={
+        isDefined(contextStoreCurrentViewId) ? (
+          <>
+            <RecordIndexCommandMenu />
+            {!isLayoutCustomizationModeEnabled && <SidePanelToggleButton />}
+          </>
+        ) : undefined
+      }
+    />
   );
 };

@@ -9,11 +9,8 @@ import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import {
-  AppPath,
-  ConnectedAccountProvider,
-  FeatureFlagKey,
-} from 'twenty-shared/types';
+import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
+import { isNonEmptyString } from '@sniptt/guards';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
@@ -22,7 +19,8 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
+import { IMPERSONATION_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/impersonation/impersonation';
 import {
   AuthException,
   AuthExceptionCode,
@@ -48,10 +46,8 @@ import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
-import {
-  AuthContextUser,
-  JwtTokenTypeEnum,
-} from 'src/engine/core-modules/auth/types/auth-context.type';
+import { AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import {
   type AuthProviderWithPasswordType,
   type ExistingUserOrNewUser,
@@ -75,6 +71,7 @@ import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/worksp
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 // import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
 
 @Injectable()
@@ -103,7 +100,7 @@ export class AuthService {
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly i18nService: I18nService,
-    private readonly auditService: AuditService,
+    private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly createSSOConnectedAccountService: CreateSSOConnectedAccountService,
@@ -431,13 +428,14 @@ export class AuthService {
   }): Promise<AuthTokens> {
     const correlationId = randomUUID();
 
-    const analytics = this.auditService.createContext({
+    const eventLogContext = this.eventLogEmitterService.createContext({
       workspaceId,
       userId: _impersonatorUserId,
     });
 
-    analytics.insertWorkspaceEvent('Monitoring', {
-      eventName: 'workspace.impersonation.attempted',
+    void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
+      level: 'workspace',
+      action: 'attempted',
       message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
 
@@ -462,8 +460,9 @@ export class AuthService {
       true,
     );
 
-    analytics.insertWorkspaceEvent('Monitoring', {
-      eventName: 'workspace.impersonation.issued',
+    void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
+      level: 'workspace',
+      action: 'issued',
       message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
 
@@ -524,6 +523,19 @@ export class AuthService {
     if (!authorizeAppInput.redirectUrl) {
       throw new AuthException(
         `redirectUrl not provided for '${clientId}'`,
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    // OAuth 2.1 / MCP auth spec: PKCE is mandatory for public clients
+    // (clients registered with token_endpoint_auth_method=none, i.e. no
+    // client secret hash). Confidential clients are authenticated at the
+    // token endpoint instead.
+    const isPublicClient = !applicationRegistration.oAuthClientSecretHash;
+
+    if (isPublicClient && !codeChallenge) {
+      throw new AuthException(
+        `code_challenge is required for public clients (PKCE S256, per OAuth 2.1)`,
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
@@ -752,10 +764,12 @@ export class AuthService {
     loginToken,
     workspace,
     billingCheckoutSessionState,
+    returnToPath,
   }: {
     loginToken: string;
     workspace: WorkspaceDomainConfig;
     billingCheckoutSessionState?: string;
+    returnToPath?: string;
   }) {
     const url = this.workspaceDomainsService.buildWorkspaceURL({
       workspace,
@@ -763,6 +777,9 @@ export class AuthService {
       searchParams: {
         loginToken,
         ...(billingCheckoutSessionState ? { billingCheckoutSessionState } : {}),
+        ...(isNonEmptyString(returnToPath) && returnToPath.startsWith('/')
+          ? { returnToPath }
+          : {}),
       },
     });
 
@@ -880,7 +897,8 @@ export class AuthService {
     if (
       workspace?.approvedAccessDomains.some(
         (trustDomain) =>
-          trustDomain.isValidated && trustDomain.domain === email.split('@')[1],
+          trustDomain.isValidated &&
+          trustDomain.domain === getDomainFromEmail(email),
       )
     ) {
       return;
@@ -935,6 +953,7 @@ export class AuthService {
       billingCheckoutSessionState,
       action,
       locale,
+      returnToPath,
     }: MicrosoftRequest['user'] | GoogleRequest['user'],
     authProvider: AuthProviderEnum.Google | AuthProviderEnum.Microsoft,
   ): Promise<string> {
@@ -986,6 +1005,9 @@ export class AuthService {
               targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
             }),
           }),
+          ...(isNonEmptyString(returnToPath) && returnToPath.startsWith('/')
+            ? { returnToPath }
+            : {}),
         },
       });
 
@@ -1057,6 +1079,7 @@ export class AuthService {
         loginToken: loginToken.token,
         workspace,
         billingCheckoutSessionState,
+        returnToPath,
       });
     } catch (error) {
       return this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
@@ -1081,19 +1104,6 @@ export class AuthService {
     oidcTokenClaims?: Record<string, unknown>;
     connectedAccountProvider?: ConnectedAccountProvider;
   }): Promise<void> {
-    const isConnectedAccountMigrated =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED,
-        input.workspaceId,
-      );
-
-    // const willBeEnabledByDefault = DEFAULT_FEATURE_FLAGS.includes(FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED);
-    const willBeEnabledByDefault = false;
-
-    if (!isConnectedAccountMigrated && !willBeEnabledByDefault) {
-      return;
-    }
-
     const provider =
       input.connectedAccountProvider ??
       this.mapAuthProviderToConnectedAccountProvider(input.authProvider);
@@ -1143,6 +1153,9 @@ export class AuthService {
       case ConnectedAccountProvider.SAML:
         return [];
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
+        return [];
+      case ConnectedAccountProvider.EMAIL_GROUP:
+      case ConnectedAccountProvider.APP:
         return [];
       default:
         throw new Error(

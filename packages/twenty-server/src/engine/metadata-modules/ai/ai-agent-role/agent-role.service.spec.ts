@@ -1,26 +1,24 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-
-import { type Repository } from 'typeorm';
 
 import {
-  AgentException,
-  AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
+import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { AiAgentRoleService } from './ai-agent-role.service';
 
 describe('AiAgentRoleService', () => {
   let service: AiAgentRoleService;
-  let agentRepository: Repository<AgentEntity>;
-  let roleRepository: Repository<RoleEntity>;
-  let roleTargetRepository: Repository<RoleTargetEntity>;
+  let agentRepository: WorkspaceScopedRepository<AgentEntity>;
+  let roleRepository: WorkspaceScopedRepository<RoleEntity>;
+  let roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>;
   let roleTargetService: RoleTargetService;
 
   const testWorkspaceId = 'test-workspace-id';
@@ -33,26 +31,28 @@ describe('AiAgentRoleService', () => {
       providers: [
         AiAgentRoleService,
         {
-          provide: getRepositoryToken(AgentEntity),
+          provide: getWorkspaceScopedRepositoryToken(AgentEntity),
+          useValue: {
+            findOne: jest.fn(),
+            find: jest.fn(),
+            save: jest.fn(),
+          },
+        },
+        {
+          provide: getWorkspaceScopedRepositoryToken(RoleEntity),
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(RoleEntity),
-          useValue: {
-            findOne: jest.fn(),
-            save: jest.fn(),
-          },
-        },
-        {
-          provide: getRepositoryToken(RoleTargetEntity),
+          provide: getWorkspaceScopedRepositoryToken(RoleTargetEntity),
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
             delete: jest.fn(),
             find: jest.fn(),
+            count: jest.fn(),
           },
         },
         {
@@ -66,15 +66,15 @@ describe('AiAgentRoleService', () => {
     }).compile();
 
     service = module.get<AiAgentRoleService>(AiAgentRoleService);
-    agentRepository = module.get<Repository<AgentEntity>>(
-      getRepositoryToken(AgentEntity),
+    agentRepository = module.get<WorkspaceScopedRepository<AgentEntity>>(
+      getWorkspaceScopedRepositoryToken(AgentEntity),
     );
-    roleRepository = module.get<Repository<RoleEntity>>(
-      getRepositoryToken(RoleEntity),
+    roleRepository = module.get<WorkspaceScopedRepository<RoleEntity>>(
+      getWorkspaceScopedRepositoryToken(RoleEntity),
     );
-    roleTargetRepository = module.get<Repository<RoleTargetEntity>>(
-      getRepositoryToken(RoleTargetEntity),
-    );
+    roleTargetRepository = module.get<
+      WorkspaceScopedRepository<RoleTargetEntity>
+    >(getWorkspaceScopedRepositoryToken(RoleTargetEntity));
     roleTargetService = module.get<RoleTargetService>(RoleTargetService);
 
     // Setup test data
@@ -148,19 +148,21 @@ describe('AiAgentRoleService', () => {
       });
 
       // Assert
-      expect(agentRepository.findOne).toHaveBeenCalledWith({
-        where: { id: testAgent.id, workspaceId: testWorkspaceId },
+      expect(agentRepository.findOne).toHaveBeenCalledWith(testWorkspaceId, {
+        where: { id: testAgent.id },
       });
-      expect(roleRepository.findOne).toHaveBeenCalledWith({
-        where: { id: testRole.id, workspaceId: testWorkspaceId },
+      expect(roleRepository.findOne).toHaveBeenCalledWith(testWorkspaceId, {
+        where: { id: testRole.id },
       });
-      expect(roleTargetRepository.findOne).toHaveBeenCalledWith({
-        where: {
-          agentId: testAgent.id,
-          roleId: testRole.id,
-          workspaceId: testWorkspaceId,
+      expect(roleTargetRepository.findOne).toHaveBeenCalledWith(
+        testWorkspaceId,
+        {
+          where: {
+            agentId: testAgent.id,
+            roleId: testRole.id,
+          },
         },
-      });
+      );
       expect(roleTargetService.create).toHaveBeenCalledWith({
         createRoleTargetInput: {
           roleId: testRole.id,
@@ -226,7 +228,7 @@ describe('AiAgentRoleService', () => {
       expect(roleTargetService.create).not.toHaveBeenCalled();
     });
 
-    it('should throw AgentException when agent does not exist', async () => {
+    it('should throw AiException when agent does not exist', async () => {
       // Arrange
       const nonExistentAgentId = 'non-existent-agent-id';
 
@@ -239,7 +241,7 @@ describe('AiAgentRoleService', () => {
           agentId: nonExistentAgentId,
           roleId: testRole.id,
         }),
-      ).rejects.toThrow(AgentException);
+      ).rejects.toThrow(AiException);
 
       await expect(
         service.assignRoleToAgent({
@@ -248,12 +250,12 @@ describe('AiAgentRoleService', () => {
           roleId: testRole.id,
         }),
       ).rejects.toMatchObject({
-        code: AgentExceptionCode.AGENT_NOT_FOUND,
+        code: AiExceptionCode.AGENT_NOT_FOUND,
         message: `Agent with id ${nonExistentAgentId} not found in workspace`,
       });
     });
 
-    it('should throw AgentException when role does not exist', async () => {
+    it('should throw AiException when role does not exist', async () => {
       // Arrange
       const nonExistentRoleId = 'non-existent-role-id';
 
@@ -267,7 +269,7 @@ describe('AiAgentRoleService', () => {
           agentId: testAgent.id,
           roleId: nonExistentRoleId,
         }),
-      ).rejects.toThrow(AgentException);
+      ).rejects.toThrow(AiException);
 
       await expect(
         service.assignRoleToAgent({
@@ -276,12 +278,12 @@ describe('AiAgentRoleService', () => {
           roleId: nonExistentRoleId,
         }),
       ).rejects.toMatchObject({
-        code: AgentExceptionCode.ROLE_NOT_FOUND,
+        code: AiExceptionCode.ROLE_NOT_FOUND,
         message: `Role with id ${nonExistentRoleId} not found in workspace`,
       });
     });
 
-    it('should throw AgentException when agent belongs to different workspace', async () => {
+    it('should throw AiException when agent belongs to different workspace', async () => {
       // Arrange
       const differentWorkspaceId = 'different-workspace-id';
 
@@ -294,7 +296,7 @@ describe('AiAgentRoleService', () => {
           agentId: testAgent.id,
           roleId: testRole.id,
         }),
-      ).rejects.toThrow(AgentException);
+      ).rejects.toThrow(AiException);
 
       await expect(
         service.assignRoleToAgent({
@@ -303,7 +305,7 @@ describe('AiAgentRoleService', () => {
           roleId: testRole.id,
         }),
       ).rejects.toMatchObject({
-        code: AgentExceptionCode.AGENT_NOT_FOUND,
+        code: AiExceptionCode.AGENT_NOT_FOUND,
         message: `Agent with id ${testAgent.id} not found in workspace`,
       });
     });
@@ -333,12 +335,14 @@ describe('AiAgentRoleService', () => {
       });
 
       // Assert
-      expect(roleTargetRepository.findOne).toHaveBeenCalledWith({
-        where: {
-          agentId: testAgent.id,
-          workspaceId: testWorkspaceId,
+      expect(roleTargetRepository.findOne).toHaveBeenCalledWith(
+        testWorkspaceId,
+        {
+          where: {
+            agentId: testAgent.id,
+          },
         },
-      });
+      );
       expect(roleTargetService.delete).toHaveBeenCalledWith({
         id: existingRoleTarget.id,
         workspaceId: testWorkspaceId,
@@ -355,7 +359,7 @@ describe('AiAgentRoleService', () => {
           workspaceId: testWorkspaceId,
           agentId: testAgent.id,
         }),
-      ).rejects.toThrow(AgentException);
+      ).rejects.toThrow(AiException);
 
       await expect(
         service.removeRoleFromAgent({
@@ -363,7 +367,7 @@ describe('AiAgentRoleService', () => {
           agentId: testAgent.id,
         }),
       ).rejects.toMatchObject({
-        code: AgentExceptionCode.ROLE_NOT_FOUND,
+        code: AiExceptionCode.ROLE_NOT_FOUND,
         message: `Role target not found for agent ${testAgent.id}`,
       });
     });

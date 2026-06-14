@@ -2,31 +2,21 @@
   "name": "twenty-front",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "tags": [
-    "scope:frontend"
-  ],
+  "tags": ["scope:frontend"],
   "targets": {
     "build": {
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "{projectRoot}/build"
       },
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "build:sourcemaps": {
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "{projectRoot}/build"
       },
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "serve": {
       "executor": "nx:run-commands",
@@ -51,12 +41,8 @@
     },
     "reset:env": {
       "executor": "nx:run-commands",
-      "inputs": [
-        "{projectRoot}/.env.example"
-      ],
-      "outputs": [
-        "{projectRoot}/.env"
-      ],
+      "inputs": ["{projectRoot}/.env.example"],
+      "outputs": ["{projectRoot}/.env"],
       "cache": true,
       "options": {
         "cwd": "{projectRoot}",
@@ -77,23 +63,24 @@
       ],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "npx oxlint --type-aware -c .oxlintrc.json src/ && (prettier src/ --check --cache --cache-location ../../.cache/prettier/{projectRoot} --cache-strategy metadata || (echo 'ERROR: Prettier formatting check failed! Fix with: npx nx lint twenty-front --configuration=fix' && false))"
+        "command": "npx oxlint --type-aware -c .oxlintrc.json src/ && (npx oxfmt --check src/ || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint twenty-front --configuration=fix' && false))"
       },
       "configurations": {
         "fix": {
-          "command": "npx oxlint --type-aware --fix -c .oxlintrc.json src/ && prettier src/ --write --cache --cache-location ../../.cache/prettier/{projectRoot} --cache-strategy metadata"
+          "command": "npx oxlint --type-aware --fix -c .oxlintrc.json src/ && npx oxfmt src/"
         }
       }
     },
     "lint:diff-with-main": {
       "executor": "nx:run-commands",
+      "dependsOn": ["twenty-oxlint-rules:build"],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "FILES=$(git diff --name-only --relative --diff-filter=d main...HEAD -- src/ | grep -E '\\.(ts|tsx)$'); [ -z \"$FILES\" ] && echo 'No changed files.' || (npx oxlint --type-aware -c .oxlintrc.json $FILES && (prettier --check $FILES || (echo 'ERROR: Prettier formatting check failed! Fix with: npx nx lint:diff-with-main twenty-front --configuration=fix' && false)))"
+        "command": "FILES=$(git diff --name-only --relative --diff-filter=d main...HEAD -- src/ | grep -E '\\.(ts|tsx)$'); [ -z \"$FILES\" ] && echo 'No changed files.' || (npx oxlint --type-aware -c .oxlintrc.json $FILES && (npx oxfmt --check $FILES || (echo 'ERROR: oxfmt formatting check failed! Fix with: npx nx lint:diff-with-main twenty-front --configuration=fix' && false)))"
       },
       "configurations": {
         "fix": {
-          "command": "FILES=$(git diff --name-only --relative --diff-filter=d main...HEAD -- src/ | grep -E '\\.(ts|tsx)$'); [ -z \"$FILES\" ] && echo 'No changed files.' || (npx oxlint --type-aware --fix -c .oxlintrc.json $FILES && prettier --write $FILES)"
+          "command": "FILES=$(git diff --name-only --relative --diff-filter=d main...HEAD -- src/ | grep -E '\\.(ts|tsx)$'); [ -z \"$FILES\" ] && echo 'No changed files.' || (npx oxlint --type-aware --fix -c .oxlintrc.json $FILES && npx oxfmt $FILES)"
         }
       }
     },
@@ -275,6 +262,9 @@
         },
         "metadata": {
           "config": "codegen-metadata.cjs"
+        },
+        "admin": {
+          "config": "codegen-admin.cjs"
         }
       }
     },
@@ -283,11 +273,6 @@
       "options": {
         "cwd": "{projectRoot}",
         "command": "dotenv npx vite-node scripts/generate-mock-data.ts"
-      }
-    },
-    "chromatic": {
-      "configurations": {
-        "ci": {}
       }
     },
     "lingui:extract": {

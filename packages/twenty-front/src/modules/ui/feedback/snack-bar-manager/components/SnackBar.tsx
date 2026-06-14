@@ -9,21 +9,25 @@ import {
   useContext,
   useMemo,
 } from 'react';
-import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  HorizontalSeparator,
   IconAlertTriangle,
   IconInfoCircle,
   IconSquareRoundedCheck,
   IconX,
-} from 'twenty-ui/display';
-import { ProgressBar, useProgressAnimation } from 'twenty-ui/feedback';
-import { LightButton, LightIconButton } from 'twenty-ui/input';
+} from 'twenty-ui-deprecated/display';
+import {
+  ProgressBar,
+  useProgressAnimation,
+} from 'twenty-ui-deprecated/feedback';
+import { LightButton, LightIconButton } from 'twenty-ui-deprecated/input';
+import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/theme-constants';
 
 export enum SnackBarVariant {
   Default = 'default',
@@ -39,9 +43,9 @@ export type SnackBarProps = Pick<ComponentPropsWithoutRef<'div'>, 'id'> & {
   duration?: number;
   icon?: ReactNode;
   message: string;
-  actionText?: string;
-  actionOnClick?: () => void;
-  actionTo?: string;
+  buttonLabel?: string;
+  buttonOnClick?: () => void;
+  buttonTo?: string;
   detailedMessage?: string;
   onCancel?: () => void;
   onClose?: () => void;
@@ -56,9 +60,9 @@ const StyledContainer = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
   box-shadow: ${themeCssVariables.boxShadow.strong};
   box-sizing: border-box;
-  cursor: pointer;
   margin-top: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]}
+    ${themeCssVariables.spacing[1]};
   position: relative;
   width: 296px;
 
@@ -70,12 +74,15 @@ const StyledContainer = styled.div`
 
 const StyledProgressBarContainer = styled.div`
   bottom: 0;
-  height: auto;
   left: 0;
   pointer-events: none;
   position: absolute;
   right: 0;
   top: 0;
+
+  & > [role='progressbar'] {
+    height: 100%;
+  }
 `;
 
 const StyledHeader = styled.div`
@@ -112,24 +119,15 @@ const StyledDescription = styled.div`
   width: 200px;
 `;
 
-const StyledLinkContainer = styled.div`
-  > a {
-    color: ${themeCssVariables.font.color.tertiary};
-    display: block;
-    font-size: ${themeCssVariables.font.size.sm};
-    max-width: 200px;
-    overflow: hidden;
-    padding-left: ${themeCssVariables.spacing[6]};
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    &:hover {
-      color: ${themeCssVariables.font.color.secondary};
-    }
-  }
+const StyledBottomActionContainer = styled.div`
+  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledActionButton = styled.div`
-  padding-left: ${themeCssVariables.spacing[6]};
+const StyledBottomAction = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+  padding-top: ${themeCssVariables.spacing[1]};
 `;
 
 const defaultAriaLabelByVariant: Record<
@@ -151,9 +149,9 @@ export const SnackBar = ({
   id,
   message,
   detailedMessage,
-  actionText,
-  actionOnClick,
-  actionTo,
+  buttonLabel,
+  buttonOnClick,
+  buttonTo,
   onCancel,
   onClose,
   role = 'status',
@@ -205,15 +203,11 @@ export const SnackBar = ({
   }, [iconComponent, variant, i18n, theme.icon.size.md, theme.snackBar]);
 
   const handleMouseEnter = () => {
-    if (progressAnimation?.state === 'running') {
-      progressAnimation.pause();
-    }
+    progressAnimation?.pause();
   };
 
   const handleMouseLeave = () => {
-    if (progressAnimation?.state === 'paused') {
-      progressAnimation.play();
-    }
+    progressAnimation?.play();
   };
 
   const sanitizedMessage = sanitizeMessageToRenderInSnackbar(message);
@@ -251,16 +245,21 @@ export const SnackBar = ({
       {isDefined(sanitizedDetailedMessage) && (
         <StyledDescription>{sanitizedDetailedMessage}</StyledDescription>
       )}
-      {actionText && actionTo && (
-        <StyledLinkContainer>
-          <Link to={actionTo}>{actionText}</Link>
-        </StyledLinkContainer>
-      )}
-      {actionText && actionOnClick && !actionTo && (
-        <StyledActionButton>
-          <LightButton title={actionText} onClick={actionOnClick} />
-        </StyledActionButton>
-      )}
+      {isDefined(buttonLabel) &&
+        (isDefined(buttonOnClick) || isDefined(buttonTo)) && (
+          <StyledBottomActionContainer>
+            <HorizontalSeparator noMargin />
+            <StyledBottomAction>
+              {isDefined(buttonTo) ? (
+                <UndecoratedLink to={buttonTo}>
+                  <LightButton title={buttonLabel} />
+                </UndecoratedLink>
+              ) : (
+                <LightButton title={buttonLabel} onClick={buttonOnClick} />
+              )}
+            </StyledBottomAction>
+          </StyledBottomActionContainer>
+        )}
     </StyledContainer>
   );
 };

@@ -67,11 +67,10 @@ describe('Destroy core view', () => {
     expect(deleteErrors).toBeUndefined();
     expect(deleteData.deleteView).toBe(true);
 
-    const { data: destroyData, errors: destroyErrors } =
-      await destroyOneView({
-        viewId: view.id,
-        expectToFail: false,
-      });
+    const { data: destroyData, errors: destroyErrors } = await destroyOneView({
+      viewId: view.id,
+      expectToFail: false,
+    });
 
     expect(destroyErrors).toBeUndefined();
     expect(destroyData.destroyView).toBe(true);

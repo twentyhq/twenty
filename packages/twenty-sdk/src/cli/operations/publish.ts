@@ -1,4 +1,4 @@
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 
 import { runSafe } from '@/cli/utilities/run-safe';
 import { appBuild } from './build';
@@ -30,20 +30,35 @@ const innerAppPublish = async (
 
   onProgress?.('Publishing to npm...');
 
-  const tagArg = options.npmTag ? ` --tag ${options.npmTag}` : '';
+  if (options.npmTag && !/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(options.npmTag)) {
+    return {
+      success: false,
+      error: {
+        code: APP_ERROR_CODES.PUBLISH_FAILED,
+        message: `Invalid npm tag: ${options.npmTag}`,
+      },
+    };
+  }
+
+  const publishArgs = [
+    'publish',
+    ...(options.npmTag ? ['--tag', options.npmTag] : []),
+  ];
+
+  const isWindows = process.platform === 'win32';
 
   try {
-    execSync(`npm publish${tagArg}`, {
+    execFileSync(isWindows ? 'npm.cmd' : 'npm', publishArgs, {
       cwd: buildResult.data.outputDir,
       stdio: 'inherit',
+      shell: isWindows,
     });
   } catch {
     return {
       success: false,
       error: {
         code: APP_ERROR_CODES.PUBLISH_FAILED,
-        message:
-          'npm publish failed. Make sure you are logged in (`npm login`) and the package name is available.',
+        message: `npm publish failed`,
       },
     };
   }

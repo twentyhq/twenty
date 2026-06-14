@@ -1,0 +1,493 @@
+---
+title: 数据模型
+description: 使用 Twenty SDK 定义对象、字段、角色和应用程序元数据。
+icon: database
+---
+
+`twenty-sdk` 包提供 `defineEntity` 函数，用于声明应用的数据模型。 你必须使用 `export default defineEntity({...})`，这样 SDK 才能检测到你的实体。 这些函数会在构建时校验你的配置，并提供 IDE 自动补全和类型安全。
+
+<Note>
+  **文件组织由你决定。**
+  实体检测基于 AST——无论文件位于何处，SDK 都能找到 `export default defineEntity(...)` 的调用。 按类型对文件分组（例如 `logic-functions/`、`roles/`）只是代码组织的一种约定，并非必需。
+</Note>
+
+<AccordionGroup>
+<Accordion title="defineRole" description="配置角色权限和对象访问">
+
+角色封装了对你的工作空间对象与操作的权限。
+
+```ts restricted-company-role.ts
+import {
+  defineRole,
+  PermissionFlag,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+export default defineRole({
+  universalIdentifier: '2c80f640-2083-4803-bb49-003e38279de6',
+  label: 'My new role',
+  description: 'A role that can be used in your workspace',
+  canReadAllObjectRecords: false,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+      canSoftDeleteObjectRecords: false,
+      canDestroyObjectRecords: false,
+    },
+  ],
+  fieldPermissions: [
+    {
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+      fieldUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier,
+      canReadFieldValue: false,
+      canUpdateFieldValue: false,
+    },
+  ],
+  permissionFlags: [PermissionFlag.APPLICATIONS],
+});
+```
+
+</Accordion>
+<Accordion title="defineApplication" description="配置应用元数据（必需，每个应用一个）">
+
+每个应用必须且只能有一个 `defineApplication` 调用，用于描述：
+
+* **应用的身份**：标识符、显示名称和描述。
+* **权限**：其函数和前端组件所使用的角色。
+* **（可选）变量**：以环境变量形式提供给函数的键值对。
+* **（可选）安装前/安装后函数**：在安装之前或之后运行的逻辑函数。
+
+```ts src/application-config.ts
+import { defineApplication } from 'twenty-sdk/define';
+import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
+
+export default defineApplication({
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
+  displayName: 'My Twenty App',
+  description: 'My first Twenty app',
+  applicationVariables: {
+    DEFAULT_RECIPIENT_NAME: {
+      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      description: 'Default recipient name for postcards',
+      value: 'Jane Doe',
+      isSecret: false,
+    },
+  },
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+});
+```
+
+备注：
+* `universalIdentifier` 字段是你拥有的确定性 ID。 只需生成一次，并在多次同步过程中保持稳定不变。
+* `applicationVariables` 会变成你的函数和前端组件可用的环境变量（例如，`DEFAULT_RECIPIENT_NAME` 可作为 `process.env.DEFAULT_RECIPIENT_NAME` 使用）。
+* `defaultRoleUniversalIdentifier` 必须引用使用 `defineRole()` 定义的角色（见上文）。
+* 在构建清单时会自动检测安装前/安装后函数——无需在 `defineApplication()` 中引用它们。
+
+#### 应用市场元数据
+
+如果你计划[发布你的应用](/l/zh/developers/extend/apps/publishing)，这些可选字段将控制你的应用在应用市场中的展示：
+
+| 字段                 | 描述                                                             |
+| ------------------ | -------------------------------------------------------------- |
+| `作者`               | 作者或公司名称                                                        |
+| `类别`               | 用于应用市场筛选的应用类别                                                  |
+| `logoUrl`          | 应用徽标的路径（例如 `public/logo.png`）                                  |
+| `screenshots`      | 截图路径数组（例如 `public/screenshot-1.png`）                           |
+| `aboutDescription` | 用于“关于”选项卡的更长的 Markdown 描述。 如果省略，市场将使用该软件包在 npm 上的 `README.md`。 |
+| `websiteUrl`       | 你的网站链接                                                         |
+| `termsUrl`         | 服务条款链接                                                         |
+| `emailSupport`     | 支持电子邮件地址                                                       |
+| `issueReportUrl`   | 问题跟踪器链接                                                        |
+
+#### 角色和权限
+
+`application-config.ts` 中的 `defaultRoleUniversalIdentifier` 字段指定你的应用的逻辑函数和前端组件所使用的默认角色。 详见上文的 `defineRole`。
+
+* 作为 `TWENTY_APP_ACCESS_TOKEN` 注入的运行时令牌来源于该角色。
+* 类型化客户端将受限于该角色授予的权限。
+* 遵循最小权限原则：创建一个仅包含你的函数所需权限的专用角色。
+
+##### 默认函数角色
+
+当你使用脚手架创建新应用时，CLI 会创建一个默认角色文件：
+
+```ts src/roles/default-role.ts
+import { defineRole, PermissionFlag } from 'twenty-sdk/define';
+
+export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'b648f87b-1d26-4961-b974-0908fd991061';
+
+export default defineRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [],
+  fieldPermissions: [],
+  permissionFlags: [],
+});
+```
+
+该角色的 `universalIdentifier` 会在 `application-config.ts` 中被引用为 `defaultRoleUniversalIdentifier`：
+
+* **\*.role.ts** 定义该角色可以执行的操作。
+* **application-config.ts** 指向该角色，使你的函数继承其权限。
+
+备注：
+* 从脚手架生成的角色开始，然后按照最小权限原则逐步收紧权限。
+* 将 `objectPermissions` 和 `fieldPermissions` 替换为你的函数所需的对象/字段。
+* `permissionFlags` 控制对平台级能力的访问。 尽量保持最小化。
+* 查看一个可运行示例：[`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts)。
+
+</Accordion>
+<Accordion title="defineObject" description="定义带字段的自定义对象">
+
+自定义对象同时描述工作空间中记录的架构与行为。 使用 `defineObject()` 以内置校验定义对象：
+
+```ts postCard.object.ts
+import { defineObject, FieldType } from 'twenty-sdk/define';
+
+enum PostCardStatus {
+  DRAFT = 'DRAFT',
+  SENT = 'SENT',
+  DELIVERED = 'DELIVERED',
+  RETURNED = 'RETURNED',
+}
+
+export default defineObject({
+  universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+  nameSingular: 'postCard',
+  namePlural: 'postCards',
+  labelSingular: 'Post Card',
+  labelPlural: 'Post Cards',
+  description: 'A post card object',
+  icon: 'IconMail',
+  fields: [
+    {
+      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+      name: 'content',
+      type: FieldType.TEXT,
+      label: 'Content',
+      description: "Postcard's content",
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
+      name: 'recipientName',
+      type: FieldType.FULL_NAME,
+      label: 'Recipient name',
+      icon: 'IconUser',
+    },
+    {
+      universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
+      name: 'recipientAddress',
+      type: FieldType.ADDRESS,
+      label: 'Recipient address',
+      icon: 'IconHome',
+    },
+    {
+      universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+      name: 'status',
+      type: FieldType.SELECT,
+      label: 'Status',
+      icon: 'IconSend',
+      defaultValue: `'${PostCardStatus.DRAFT}'`,
+      options: [
+        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
+        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
+        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
+        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+      ],
+    },
+    {
+      universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
+      name: 'deliveredAt',
+      type: FieldType.DATE_TIME,
+      label: 'Delivered at',
+      icon: 'IconCheck',
+      isNullable: true,
+      defaultValue: null,
+    },
+  ],
+});
+```
+
+关键点：
+
+* 使用 `defineObject()` 以获得内置校验和更好的 IDE 支持。
+* `universalIdentifier` 必须在各次部署间保持唯一且稳定。
+* 每个字段都需要 `name`、`type`、`label` 以及其自身稳定的 `universalIdentifier`。
+* `fields` 数组是可选的——你可以定义没有自定义字段的对象。
+* 你可以使用 `yarn twenty add` 脚手架创建新对象，它会引导你完成命名、字段和关系。
+
+<Note>
+**基础字段会自动创建。** 当你定义自定义对象时，Twenty 会自动添加标准字段
+例如 `id`、`name`、`createdAt`、`updatedAt`、`createdBy`、`updatedBy` 和 `deletedAt`。
+你无需在 `fields` 数组中定义这些字段——只需添加你的自定义字段。
+你可以通过在你的 `fields` 数组中定义一个同名字段来覆盖默认字段，
+但不建议这样做。
+</Note>
+
+</Accordion>
+<Accordion title="defineField — 标准字段" description="为现有对象扩展额外字段">
+
+使用 `defineField()` 向你不拥有的对象添加字段——例如标准的 Twenty 对象（Person、Company 等）。 或来自其他应用的对象。 与在 `defineObject()` 中的内联字段不同，独立字段需要一个 `objectUniversalIdentifier` 来指定它们要扩展的对象：
+
+```ts src/fields/company-loyalty-tier.field.ts
+import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'f2a1b3c4-d5e6-7890-abcd-ef1234567890',
+  objectUniversalIdentifier: '701aecb9-eb1c-4d84-9d94-b954b231b64b', // Company object
+  name: 'loyaltyTier',
+  type: FieldType.SELECT,
+  label: 'Loyalty Tier',
+  icon: 'IconStar',
+  options: [
+    { value: 'BRONZE', label: 'Bronze', position: 0, color: 'orange' },
+    { value: 'SILVER', label: 'Silver', position: 1, color: 'gray' },
+    { value: 'GOLD', label: 'Gold', position: 2, color: 'yellow' },
+  ],
+});
+```
+
+关键点：
+* `objectUniversalIdentifier` 用于标识目标对象。 对于标准对象，请使用从 `twenty-sdk` 导出的 `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`。
+* 在 `defineObject()` 中以内联方式定义字段时，你不需要 `objectUniversalIdentifier`——它会从父对象继承。
+* `defineField()` 是为非通过 `defineObject()` 创建的对象添加字段的唯一方式。
+
+</Accordion>
+<Accordion title="defineField — 关联字段" description="使用双向关系将对象连接在一起">
+
+关系用于将对象彼此连接。 在 Twenty 中，关系始终是双向的——你需要定义两侧，每一侧都引用另一侧。
+
+关系有两种类型：
+
+| 关系类型          | 描述                  | 是否有外键？              |
+| ------------- | ------------------- | ------------------- |
+| `MANY_TO_ONE` | 该对象的多条记录指向目标对象的一条记录 | 是（`joinColumnName`） |
+| `ONE_TO_MANY` | 该对象的一条记录拥有目标对象的多条记录 | 否（反向侧）              |
+
+#### 关系如何工作
+
+每个关系都需要两个相互引用的字段：
+
+1. **MANY_TO_ONE** 侧——位于持有外键的对象上
+2. **ONE_TO_MANY** 侧——位于拥有集合的对象上
+
+两个字段都使用 `FieldType.RELATION`，并通过 `relationTargetFieldMetadataUniversalIdentifier` 相互交叉引用。
+
+#### 示例：Post Card 拥有多个收件人
+
+假设一个 `PostCard` 可以发送到多个 `PostCardRecipient` 记录。 每个收件人只隶属于一张 Post Card。
+
+**步骤 1：在 PostCard 上定义 ONE_TO_MANY 侧**（“一”侧）：
+
+```ts src/fields/post-card-recipients-on-post-card.field.ts
+import { defineField, FieldType, RelationType } from 'twenty-sdk/define';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
+
+// Export so the other side can reference it
+export const POST_CARD_RECIPIENTS_FIELD_ID = 'a1111111-1111-1111-1111-111111111111';
+// Import from the other side
+import { POST_CARD_FIELD_ID } from './post-card-on-post-card-recipient.field';
+
+export default defineField({
+  universalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCardRecipients',
+  label: 'Post Card Recipients',
+  icon: 'IconUsers',
+  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+  },
+});
+```
+
+**步骤 2：在 PostCardRecipient 上定义 MANY_TO_ONE 侧**（“多”侧——持有外键）：
+
+```ts src/fields/post-card-on-post-card-recipient.field.ts
+import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk/define';
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
+
+// Export so the other side can reference it
+export const POST_CARD_FIELD_ID = 'b2222222-2222-2222-2222-222222222222';
+// Import from the other side
+import { POST_CARD_RECIPIENTS_FIELD_ID } from './post-card-recipients-on-post-card.field';
+
+export default defineField({
+  universalIdentifier: POST_CARD_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCard',
+  label: 'Post Card',
+  icon: 'IconMail',
+  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.MANY_TO_ONE,
+    onDelete: OnDeleteAction.CASCADE,
+    joinColumnName: 'postCardId',
+  },
+});
+```
+
+<Note>
+\*\*循环导入：\*\*两个关系字段相互引用彼此的 `universalIdentifier`。 为避免循环导入问题，请在各自文件中将字段 ID 作为具名常量导出，并在另一个文件中导入它们。 构建系统会在编译时解析这些引用。
+</Note>
+
+#### 与标准对象建立关系
+
+要与内置的 Twenty 对象（Person、Company 等）建立关系，请使用 `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`：
+
+```ts src/fields/person-on-self-hosting-user.field.ts
+import {
+  defineField,
+  FieldType,
+  RelationType,
+  OnDeleteAction,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
+
+export const PERSON_FIELD_ID = 'c3333333-3333-3333-3333-333333333333';
+export const SELF_HOSTING_USER_REVERSE_FIELD_ID = 'd4444444-4444-4444-4444-444444444444';
+
+export default defineField({
+  universalIdentifier: PERSON_FIELD_ID,
+  objectUniversalIdentifier: SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'person',
+  label: 'Person',
+  description: 'Person matching with the self hosting user',
+  isNullable: true,
+  relationTargetObjectMetadataUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  relationTargetFieldMetadataUniversalIdentifier: SELF_HOSTING_USER_REVERSE_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.MANY_TO_ONE,
+    onDelete: OnDeleteAction.SET_NULL,
+    joinColumnName: 'personId',
+  },
+});
+```
+
+#### 关系字段属性
+
+| 属性                                                | 必填               | 描述                                                             |
+| ------------------------------------------------- | ---------------- | -------------------------------------------------------------- |
+| `类型`                                              | 是                | 必须为 `FieldType.RELATION`                                       |
+| `relationTargetObjectMetadataUniversalIdentifier` | 是                | 目标对象的 `universalIdentifier`                                    |
+| `relationTargetFieldMetadataUniversalIdentifier`  | 是                | 目标对象上匹配字段的 `universalIdentifier`                               |
+| `universalSettings.relationType`                  | 是                | `RelationType.MANY_TO_ONE` 或 `RelationType.ONE_TO_MANY`        |
+| `universalSettings.onDelete`                      | 仅适用于 MANY_TO_ONE | 当被引用的记录被删除时的处理方式：`CASCADE`、`SET_NULL`、`RESTRICT` 或 `NO_ACTION` |
+| `universalSettings.joinColumnName`                | 仅适用于 MANY_TO_ONE | 外键的数据库列名（例如，`postCardId`）                                      |
+
+#### 在 defineObject 中内联关系字段
+
+你也可以直接在 `defineObject()` 内定义关系字段。 在这种情况下，省略 `objectUniversalIdentifier`——它会从父对象继承：
+
+```ts
+export default defineObject({
+  universalIdentifier: '...',
+  nameSingular: 'postCardRecipient',
+  // ...
+  fields: [
+    {
+      universalIdentifier: POST_CARD_FIELD_ID,
+      type: FieldType.RELATION,
+      name: 'postCard',
+      label: 'Post Card',
+      relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+      relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+      universalSettings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: OnDeleteAction.CASCADE,
+        joinColumnName: 'postCardId',
+      },
+    },
+    // ... other fields
+  ],
+});
+```
+</Accordion>
+</AccordionGroup>
+
+## 使用 `yarn twenty add` 脚手架生成实体
+
+无需手动创建实体文件，你可以使用交互式脚手架：
+
+```bash filename="Terminal"
+yarn twenty add
+```
+
+它会提示你选择实体类型，并引导你完成必填字段。 它会生成一个可直接使用的文件，包含稳定的 `universalIdentifier` 以及正确的 `defineEntity()` 调用。
+
+你也可以直接传入实体类型以跳过第一个提示：
+
+```bash filename="Terminal"
+yarn twenty add object
+yarn twenty add logicFunction
+yarn twenty add frontComponent
+```
+
+### 可用的实体类型
+
+| 实体类型  | 命令                                   | 生成的文件                                                   |
+| ----- | ------------------------------------ | ------------------------------------------------------- |
+| 对象    | `yarn twenty add object`             | `src/objects/\<name>.ts`               |
+| 字段    | `yarn twenty add field`              | `src/fields/\<name>.ts`                |
+| 逻辑函数  | `yarn twenty add logicFunction`      | `src/logic-functions/\<name>.ts`       |
+| 前端组件  | `yarn twenty add frontComponent`     | `src/front-components/\<name>.tsx`     |
+| 角色    | `yarn twenty add role`               | `src/roles/\<name>.ts`                 |
+| 技能    | `yarn twenty add skill`              | `src/skills/\<name>.ts`                |
+| 代理    | `yarn twenty add agent`              | `src/agents/\<name>.ts`                |
+| 视图    | `yarn twenty add view`               | `src/views/\<name>.ts`                 |
+| 导航菜单项 | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
+| 页面布局  | `yarn twenty add pageLayout`         | `src/page-layouts/\<name>.ts`          |
+
+### 脚手架生成的内容
+
+每种实体类型都有其自己的模板。 例如，`yarn twenty add object` 会询问：
+
+1. **名称（单数）**——例如，`invoice`
+2. **名称（复数）**——例如，`invoices`
+3. **标签（单数）**——根据名称自动填充（例如，`Invoice`）
+4. **标签（复数）**——自动填充（例如，`Invoices`）
+5. **创建视图和导航项？**——如果你选择是，脚手架还会为新对象生成相应的视图和侧边栏链接。
+
+其他实体类型的提示更简单——大多只会询问名称。
+
+`field` 实体类型更为详细：它会询问字段名称、标签、类型（从所有可用字段类型列表中选择，如 `TEXT`、`NUMBER`、`SELECT`、`RELATION` 等），以及目标对象的 `universalIdentifier`。
+
+### 自定义输出路径
+
+使用 `--path` 标志将生成的文件放置在自定义位置：
+
+```bash filename="Terminal"
+yarn twenty add logicFunction --path src/custom-folder
+```
