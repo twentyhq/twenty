@@ -89,7 +89,7 @@ export class GoogleCalendarGetEventsService {
       error,
     );
     if (
-      error.code &&
+      typeof error.code === 'string' &&
       [
         'ECONNRESET',
         'ENOTFOUND',

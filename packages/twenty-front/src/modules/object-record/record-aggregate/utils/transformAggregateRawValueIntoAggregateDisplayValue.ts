@@ -1,3 +1,5 @@
+import { type Locale } from 'date-fns';
+
 import { type DateFormat } from '@/localization/constants/DateFormat';
 import { type TimeFormat } from '@/localization/constants/TimeFormat';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';

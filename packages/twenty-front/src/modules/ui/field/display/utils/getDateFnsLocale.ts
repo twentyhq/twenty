@@ -1,3 +1,4 @@
+import { type Locale } from 'date-fns';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 
 type AppLocale = keyof typeof APP_LOCALES;
@@ -71,6 +72,6 @@ export const getDateFnsLocaleImport = (locale: AppLocale) => {
 
 export const getDateFnsLocale = async (localeString?: string | null) => {
   return getDateFnsLocaleImport(localeString as AppLocale)
-    .then((m) => m.default as unknown as Locale)
+    .then((m) => Object.values(m)[0] as unknown as Locale)
     .catch((_e) => undefined);
 };

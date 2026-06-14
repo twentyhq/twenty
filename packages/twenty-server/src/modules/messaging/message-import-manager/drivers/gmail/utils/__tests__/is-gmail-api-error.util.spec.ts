@@ -1,18 +1,19 @@
-import { GaxiosError } from 'gaxios';
+import { GaxiosError, type GaxiosResponse } from 'gaxios';
 
 import { isGmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-api-error.util';
 
 describe('isGmailApiError', () => {
   it('should detect Gmail API error shape even when instanceof GaxiosError fails', () => {
+    const mockUrl = new URL('https://gmail.googleapis.com/mocks');
     const originalError = new GaxiosError(
       'Rate limit exceeded',
-      {},
+      { url: mockUrl, headers: new Headers() },
       {
         status: 429,
         statusText: 'Too Many Requests',
-        headers: {},
-        config: {},
-        request: { responseURL: '' },
+        headers: new Headers(),
+        config: { url: mockUrl, headers: new Headers() },
+        request: { responseURL: mockUrl.toString() },
         data: {
           error: {
             errors: [
@@ -20,7 +21,7 @@ describe('isGmailApiError', () => {
             ],
           },
         },
-      },
+      } as unknown as GaxiosResponse,
     );
 
     const serialized = JSON.parse(JSON.stringify(originalError));

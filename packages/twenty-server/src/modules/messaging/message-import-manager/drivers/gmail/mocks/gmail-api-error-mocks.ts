@@ -1,4 +1,4 @@
-import { GaxiosError } from 'gaxios';
+import { GaxiosError, type GaxiosResponse } from 'gaxios';
 
 type ErrorConfig = {
   reason: string;
@@ -66,9 +66,11 @@ export const getGmailApiError = ({
 
   const errorMessage = message ?? config.message;
 
+  const mockUrl = new URL('https://gmail.googleapis.com/mocks');
+
   return new GaxiosError(
     errorMessage,
-    { url: 'https://gmail.googleapis.com/mocks' },
+    { url: mockUrl, headers: new Headers() },
     {
       status: code,
       statusText: config.message,
@@ -84,9 +86,11 @@ export const getGmailApiError = ({
           ],
         },
       },
-      headers: {},
-      config: { url: 'https://gmail.googleapis.com/mocks' },
-      request: { responseURL: 'https://gmail.googleapis.com/mocks' },
-    },
+      headers: new Headers(),
+      config: { url: mockUrl, headers: new Headers() },
+      request: { responseURL: mockUrl.toString() },
+      // gaxios v7 GaxiosResponse extends the fetch Response interface; the test
+      // only reads status/data, so the remaining Response members are unused.
+    } as unknown as GaxiosResponse,
   );
 };
