@@ -27,13 +27,13 @@ export const ArrayFieldInput = () => {
   const isInternalUpdateRef = useRef(false);
   const prevArrayItemsRef = useRef(arrayItems);
 
-  const stableIdsRef = useRef<string[]>(
-    arrayItems.map(() => v4())
+  const [stableIds, setStableIds] = useState<string[]>(() =>
+    arrayItems.map(() => v4()),
   );
 
   if (prevArrayItemsRef.current !== arrayItems) {
     if (!isInternalUpdateRef.current) {
-      stableIdsRef.current = arrayItems.map(() => v4());
+      setStableIds(arrayItems.map(() => v4()));
     }
     isInternalUpdateRef.current = false;
     prevArrayItemsRef.current = arrayItems;
@@ -50,15 +50,16 @@ export const ArrayFieldInput = () => {
   const handleChange = (newValue: string[]) => {
     isInternalUpdateRef.current = true;
 
-    if (newValue.length > stableIdsRef.current.length) {
-      const newIds = [...stableIdsRef.current];
-      for (let i = stableIdsRef.current.length; i < newValue.length; i++) {
-        newIds.push(v4());
+    setStableIds((prevIds) => {
+      if (newValue.length > prevIds.length) {
+        const newIds = [...prevIds];
+        for (let i = prevIds.length; i < newValue.length; i++) {
+          newIds.push(v4());
+        }
+        return newIds;
       }
-      stableIdsRef.current = newIds;
-    } else if (newValue.length < stableIdsRef.current.length) {
-      stableIdsRef.current = stableIdsRef.current.slice(0, newValue.length);
-    }
+      return prevIds;
+    });
 
     if (!isDefined(newValue)) setDraftValue(null);
 
@@ -103,12 +104,12 @@ export const ArrayFieldInput = () => {
       fieldMetadataType={FieldMetadataType.ARRAY}
       renderItem={({ value, index, handleEdit, handleDelete }) => (
         <ArrayFieldMenuItem
-          key={stableIdsRef.current[index] || index}
-          dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${stableIdsRef.current[index] || index}`}
+          key={stableIds[index] || index}
+          dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${stableIds[index] || index}`}
           value={value}
           onEdit={handleEdit}
           onDelete={() => {
-            stableIdsRef.current = toSpliced(stableIdsRef.current, index, 1);
+            setStableIds((prevIds) => toSpliced(prevIds, index, 1));
             handleDelete();
           }}
         />
