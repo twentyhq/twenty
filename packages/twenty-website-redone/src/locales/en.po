@@ -1527,6 +1527,11 @@ msgstr "Live data and AI built"
 msgid "Loading form…"
 msgstr "Loading form…"
 
+#. js-lingui-id: Pwqkdw
+#: src/partner-application/partner-application-modal.tsx
+msgid "Loading…"
+msgstr "Loading…"
+
 #. js-lingui-id: sQia9P
 #: src/sections/menu/menu.tsx
 #: src/sections/menu/menu-drawer.tsx
@@ -1843,6 +1848,11 @@ msgstr "Papua New Guinea 🇵🇬"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Paraguay 🇵🇾"
 msgstr "Paraguay 🇵🇾"
+
+#. js-lingui-id: cLitIC
+#: src/partner-application/partner-application-modal.tsx
+msgid "Partner application"
+msgstr "Partner application"
 
 #. js-lingui-id: dRIK0d
 #: src/sections/testimonials/partner-testimonials-carousel.tsx

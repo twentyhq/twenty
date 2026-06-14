@@ -1,3 +1,4 @@
+import { PartnerApplicationModalRoot } from '@/partner-application';
 import { getCommunityStats } from '@/platform/community';
 import {
   getRouteI18n,
@@ -32,7 +33,7 @@ export default async function PartnerPage({
   const locale = resolveLocaleParam((await params).locale);
 
   return (
-    <>
+    <PartnerApplicationModalRoot>
       <JsonLd
         data={buildBreadcrumbListJsonLd(
           [
@@ -54,6 +55,6 @@ export default async function PartnerPage({
         <PartnerSignoff />
         <Faq />
       </main>
-    </>
+    </PartnerApplicationModalRoot>
   );
 }

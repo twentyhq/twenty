@@ -1519,6 +1519,11 @@ msgstr "Données en direct et IA intégrée"
 msgid "Loading form…"
 msgstr ""
 
+#. js-lingui-id: Pwqkdw
+#: src/partner-application/partner-application-modal.tsx
+msgid "Loading…"
+msgstr ""
+
 #. js-lingui-id: sQia9P
 #: src/sections/menu/menu.tsx
 #: src/sections/menu/menu-drawer.tsx
@@ -1834,6 +1839,11 @@ msgstr ""
 #. js-lingui-id: kb3PhK
 #: src/partner-application/data/partner-country-options.ts
 msgid "Paraguay 🇵🇾"
+msgstr ""
+
+#. js-lingui-id: cLitIC
+#: src/partner-application/partner-application-modal.tsx
+msgid "Partner application"
 msgstr ""
 
 #. js-lingui-id: dRIK0d

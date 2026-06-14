@@ -103,10 +103,10 @@ assert(
 );
 
 // The closing sign-off: a tall centred panel whose heading carries both faces
-// (serif + sans accent). "Become a partner" stays an inert button until the
-// application modal lands; "Find a partner" links to the (Wave-B) marketplace,
-// the same dangle the hero already carries. The body is measure-constrained so
-// it breaks across two lines rather than running the panel width.
+// (serif + sans accent). "Become a partner" is the application-modal trigger (a
+// button, no href); "Find a partner" links to the (Wave-B) marketplace, the
+// same dangle the hero already carries. The body is measure-constrained so it
+// breaks across two lines rather than running the panel width.
 const signoff = await partners.evaluate(() => {
   const heading = [...document.querySelectorAll('h2')].find((node) =>
     /Ready to grow/.test(node.textContent ?? ''),
@@ -141,7 +141,7 @@ assert(
   signoff.headingText,
 );
 assert(
-  'signoff become-a-partner is inert pending the modal',
+  'signoff become-a-partner is a modal trigger, not a link',
   signoff.becomeTag === 'button' && signoff.becomeHref === null,
   `${signoff.becomeTag} href=${signoff.becomeHref}`,
 );
@@ -159,6 +159,60 @@ assert(
   'signoff is a tall centred panel',
   signoff.sectionHeight >= 759 && signoff.hasCrosshair,
   `${signoff.sectionHeight}px / crosshair ${signoff.hasCrosshair}`,
+);
+
+// The application modal: clicking "Become a partner" opens a dark dialog that
+// hosts the deferred wizard. The dialog carries the wizard's "Apply to build"
+// title on the near-black panel, runs on the dark scheme, and its width is set
+// up to ease between the form (<=720) and booking widths rather than snapping.
+await partners.evaluate(() => {
+  const become = [...document.querySelectorAll('button')].find((node) =>
+    /Become a partner/i.test(node.textContent ?? ''),
+  );
+  become?.click();
+});
+const modal = await partners
+  .waitForFunction(
+    () =>
+      /Apply to build/.test(
+        document.querySelector('[role="dialog"]')?.textContent ?? '',
+      ),
+    { timeout: 5000 },
+  )
+  .then(() =>
+    partners.evaluate(() => {
+      const dialog = document.querySelector('[role="dialog"]');
+      const style = dialog ? getComputedStyle(dialog) : null;
+      return {
+        opened: Boolean(dialog),
+        darkScope: Boolean(dialog?.querySelector('[data-scheme="dark"]')),
+        panel: style?.backgroundColor ?? '',
+        transition: style?.transitionProperty ?? '',
+        width: dialog ? Math.round(dialog.getBoundingClientRect().width) : 0,
+      };
+    }),
+  )
+  .catch(() => ({
+    opened: false,
+    darkScope: false,
+    panel: '',
+    transition: '',
+    width: 0,
+  }));
+assert(
+  'become-a-partner opens the dark application modal',
+  modal.opened && modal.darkScope,
+  `opened=${modal.opened} darkScope=${modal.darkScope}`,
+);
+assert(
+  'application modal sits on the near-black panel',
+  modal.panel === 'rgb(12, 12, 12)',
+  modal.panel,
+);
+assert(
+  'application modal eases between form and booking widths',
+  /width/.test(modal.transition) && modal.width <= 720,
+  `transition="${modal.transition}" width=${modal.width}`,
 );
 await partners.close();
 

@@ -1,6 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
+import { BecomePartnerButton } from '@/partner-application';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { GRADIENT, HERO_COMPOSITION, mediaUp, spacing } from '@/tokens';
 import { Body, Button, Heading, HeadingPair, SectionShell } from '@/ui';
@@ -84,7 +85,7 @@ export function PartnerHero() {
           </BodyMeasure>
         </HeadingPair>
         <CtaRow>
-          <Button label={i18n._(msg`Become a partner`)} />
+          <BecomePartnerButton label={msg`Become a partner`} />
           <Button
             href="/partners/list"
             label={i18n._(msg`Find a partner`)}

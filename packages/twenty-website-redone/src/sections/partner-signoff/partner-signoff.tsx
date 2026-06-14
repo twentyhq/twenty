@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
 
+import { BecomePartnerButton } from '@/partner-application';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { mediaUp, spacing } from '@/tokens';
 import { Body, Button, GuideCrosshair, Heading, SectionShell } from '@/ui';
@@ -62,7 +63,10 @@ export function PartnerSignoff() {
           </Body>
         </Subline>
         <Actions>
-          <Button label={i18n._(msg`Become a partner`)} variant="outlined" />
+          <BecomePartnerButton
+            label={msg`Become a partner`}
+            variant="outlined"
+          />
           <Button href="/partners/list" label={i18n._(msg`Find a partner`)} />
         </Actions>
       </SignoffStack>

@@ -139,9 +139,11 @@ function StepRenderer({
 }
 
 export function PartnerApplicationWizard({
+  onSubmitted,
   onSuccess,
   resetSignal,
 }: {
+  onSubmitted?: () => void;
   onSuccess: () => void;
   resetSignal: number;
 }) {
@@ -195,6 +197,7 @@ export function PartnerApplicationWizard({
           return;
         }
         setSubmitted();
+        onSubmitted?.();
       } catch {
         setSubmitError(i18n._(COPY.validation.submitFailed));
       } finally {
@@ -205,6 +208,7 @@ export function PartnerApplicationWizard({
       goNext,
       i18n,
       isLastStep,
+      onSubmitted,
       setSubmitError,
       setSubmitted,
       setSubmitting,
