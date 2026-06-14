@@ -5,17 +5,12 @@ import chalk from 'chalk';
 import { isDefined } from 'twenty-shared/utils';
 import { promptForReauthentication } from '@/cli/utilities/auth/reauth-helper';
 
-declare module 'axios' {
-  interface InternalAxiosRequestConfig {
-    _reauthAttempted?: boolean;
-  }
-}
-
 export class ApiClient {
   readonly client: AxiosInstance;
   readonly configService: ConfigService;
   private readonly tokenOverride?: string;
   readonly serverUrlOverride?: string;
+  private reauthAttempted: boolean = false;
 
   constructor(options?: {
     disableInterceptors?: boolean;
@@ -55,14 +50,39 @@ export class ApiClient {
     }
 
     this.client.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        // Handle auth errors returned as GraphQL errors in HTTP 200 responses
+        if (
+          response.status === 200 &&
+          response.data?.errors &&
+          Array.isArray(response.data.errors)
+        ) {
+          const hasAuthError = response.data.errors.some(
+            (error: { message?: string; extensions?: { code?: string } }) =>
+              error.extensions?.code === 'UNAUTHENTICATED' ||
+              error.extensions?.code === 'FORBIDDEN' ||
+              (typeof error.message === 'string' &&
+                error.message.toLowerCase().includes('unauthenticated')),
+          );
+
+          if (hasAuthError) {
+            const authError = new Error(
+              'Authentication failed: GraphQL auth error in response',
+            );
+            (authError as { response: typeof response }).response = response;
+            throw authError;
+          }
+        }
+
+        return response;
+      },
       async (error) => {
         if (error.response?.status === 401 && error.config) {
-          // Prevent recursion: only attempt reauth once per request
-          if (error.config._reauthAttempted) {
+          // Prevent recursion: only attempt reauth once
+          if (this.reauthAttempted) {
             throw error;
           }
-          error.config._reauthAttempted = true;
+          this.reauthAttempted = true;
 
           const remoteName = ConfigService.getActiveRemote();
           console.error(`Authentication failed on remote "${remoteName}"`);
