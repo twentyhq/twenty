@@ -9,14 +9,18 @@ import { RecordBoardColumnNewRecordButton } from '@/object-record/record-board/r
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 
 import { RecordBoardColumnLoadingSkeletonCards } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnLoadingSkeletonCards';
+import { isRecordBoardDropProcessingComponentState } from '@/object-record/record-board/states/isRecordBoardDropProcessingComponentState';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-const StyledColumnCardsContainer = styled.div`
+const StyledColumnCardsContainer = styled.div<{ isDropProcessing: boolean }>`
   display: flex;
   flex: 1;
   flex-direction: column;
+  pointer-events: ${({ isDropProcessing }) =>
+    isDropProcessing ? 'none' : 'auto'};
 `;
 
 const StyledNewButtonContainer = styled.div`
@@ -42,8 +46,15 @@ export const RecordBoardColumnCardsContainer = ({
     recordBoardColumnId,
   );
 
+  const isRecordBoardDropProcessing = useAtomComponentStateValue(
+    isRecordBoardDropProcessingComponentState,
+  );
+
   return (
-    <StyledColumnCardsContainer data-replay-ignore-mutations="true">
+    <StyledColumnCardsContainer
+      isDropProcessing={isRecordBoardDropProcessing}
+      data-replay-ignore-mutations="true"
+    >
       {recordIndexRecordIdsByGroup.map((recordId, index) => (
         <RecordBoardCardDraggableContainer
           key={recordId}

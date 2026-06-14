@@ -10,15 +10,11 @@ import { RecordBoardCardMultiDragPreview } from '@/object-record/record-board/re
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
-import { isRecordBoardDropProcessingComponentState } from '@/object-record/record-board/states/isRecordBoardDropProcessingComponentState';
 import { DragAndDropLibraryLegacyReRenderBreaker } from '@/ui/drag-and-drop/components/DragAndDropReRenderBreaker';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-const StyledDraggableContainer = styled.div<{
-  isDragDisabled: boolean;
-}>`
-  cursor: ${({ isDragDisabled }) => (isDragDisabled ? 'default' : 'grab')};
+const StyledDraggableContainer = styled.div`
+  cursor: grab;
   position: relative;
   scroll-margin-left: 8px;
   scroll-margin-right: 8px;
@@ -39,10 +35,6 @@ export const RecordBoardCardDraggableContainer = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
-  const isRecordBoardDropProcessing = useAtomComponentStateValue(
-    isRecordBoardDropProcessingComponentState,
-  );
-
   const { columnIndex } = useContext(RecordBoardColumnContext);
 
   const isRecordBoardCardFocused = useAtomComponentFamilyStateValue(
@@ -57,15 +49,9 @@ export const RecordBoardCardDraggableContainer = ({
     <RecordBoardCardContext.Provider
       value={{ recordId, isRecordReadOnly, rowIndex, columnIndex }}
     >
-      <Draggable
-        key={recordId}
-        draggableId={recordId}
-        index={rowIndex}
-        isDragDisabled={isRecordBoardDropProcessing}
-      >
+      <Draggable key={recordId} draggableId={recordId} index={rowIndex}>
         {(draggableProvided) => (
           <StyledDraggableContainer
-            isDragDisabled={isRecordBoardDropProcessing}
             id={`record-board-card-${columnIndex}-${rowIndex}`}
             ref={draggableProvided?.innerRef}
             // oxlint-disable-next-line react/jsx-props-no-spreading
