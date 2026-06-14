@@ -8,10 +8,6 @@ import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { AllMetadataName } from '~/generated-metadata/graphql';
 
-// View fields can arrive after the record index has already loaded (e.g. while
-// AI is still creating metadata). We re-sync the record index fields directly
-// on the viewField metadata event rather than reactively, reading the current
-// view from the store at call time so it reflects the just-applied change.
 export const RecordIndexViewFieldsSSESyncEffect = () => {
   const store = useStore();
 
