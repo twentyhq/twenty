@@ -28,7 +28,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ai-sdk/anthropic@npm:3.0.72, @ai-sdk/anthropic@npm:^3.0.72":
+"@ai-sdk/anthropic@npm:3.0.72":
   version: 3.0.72
   resolution: "@ai-sdk/anthropic@npm:3.0.72"
   dependencies:
@@ -37,6 +37,18 @@ __metadata:
   peerDependencies:
     zod: ^3.25.76 || ^4.1.8
   checksum: 10c0/3646f75dd0ae0accd747963c9c1a6e0901df6971931e0947f9cc5f31f7a680ba1ca65ef28c3dd10e586569d64b8f155d8eae3af9aa9e21eff114c59fb23f95c1
+  languageName: node
+  linkType: hard
+
+"@ai-sdk/anthropic@npm:^3.0.72":
+  version: 3.0.83
+  resolution: "@ai-sdk/anthropic@npm:3.0.83"
+  dependencies:
+    "@ai-sdk/provider": "npm:3.0.10"
+    "@ai-sdk/provider-utils": "npm:4.0.28"
+  peerDependencies:
+    zod: ^3.25.76 || ^4.1.8
+  checksum: 10c0/712ed862e77be1275eb20512032f6d08b727a3a6fe73981c01cd224cff06e77da52180cb53bdbb517d79e89995019fd20ff352b1ea4dcbf86992bdcbbcd14e71
   languageName: node
   linkType: hard
 
@@ -153,6 +165,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ai-sdk/provider-utils@npm:4.0.28":
+  version: 4.0.28
+  resolution: "@ai-sdk/provider-utils@npm:4.0.28"
+  dependencies:
+    "@ai-sdk/provider": "npm:3.0.10"
+    "@standard-schema/spec": "npm:^1.1.0"
+    eventsource-parser: "npm:^3.0.8"
+  peerDependencies:
+    zod: ^3.25.76 || ^4.1.8
+  checksum: 10c0/5166341ae375acc178b5d113f2165bfb3593a57ac482cbdc4fc066c0d733498e98296d647e4350d2c12f596fd4ff20427d3fed5a34378b5bdefb4373cc998426
+  languageName: node
+  linkType: hard
+
 "@ai-sdk/provider-utils@npm:4.0.5":
   version: 4.0.5
   resolution: "@ai-sdk/provider-utils@npm:4.0.5"
@@ -163,6 +188,15 @@ __metadata:
   peerDependencies:
     zod: ^3.25.76 || ^4.1.8
   checksum: 10c0/f9dcf27fe0640681f89ac4347184a5eb5f9428d1f7fece6ea1b53b0fc1872d4bfd5756fb70e18428a42ede37ea75b48f62c5441b420618e143a120594a5d2cb5
+  languageName: node
+  linkType: hard
+
+"@ai-sdk/provider@npm:3.0.10":
+  version: 3.0.10
+  resolution: "@ai-sdk/provider@npm:3.0.10"
+  dependencies:
+    json-schema: "npm:^0.4.0"
+  checksum: 10c0/c9b162165c3fd4684e4f7a1c041db3ad75785c841d904bac577006b7b2299d1b465557b1d32e3f59b6d8536a0ef5741b195aad86fc3e0e1d2a39f077062a83c4
   languageName: node
   linkType: hard
 
