@@ -1,19 +1,18 @@
 import { type EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 
-type NodemailerTlsOptions = {
+type SmtpTlsOptions = {
   secure: boolean;
-  requireTLS?: boolean;
   ignoreTLS?: boolean;
 };
 
-export const mapConnectionSecurityToTransport = (
+export const buildSmtpTlsOptions = (
   connectionSecurity: EmailConnectionSecurity,
-): NodemailerTlsOptions => {
+): SmtpTlsOptions => {
   switch (connectionSecurity) {
     case 'SSL_TLS':
       return { secure: true };
     case 'STARTTLS':
-      return { secure: false, requireTLS: true };
+      return { secure: false };
     case 'NONE':
       return { secure: false, ignoreTLS: true };
   }

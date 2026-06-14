@@ -199,6 +199,7 @@ export const SettingsAccountsConnectionForm = ({
                     label={t`IMAP Connection security`}
                     options={[
                       { label: 'None', value: 'NONE' },
+                      { label: 'STARTTLS', value: 'STARTTLS' },
                       { label: 'SSL/TLS', value: 'SSL_TLS' },
                     ]}
                     value={field.value}

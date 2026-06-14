@@ -131,14 +131,14 @@ describe('ImapSmtpCaldavService', () => {
       );
     });
 
-    it('requires STARTTLS when connectionSecurity is STARTTLS', async () => {
+    it('upgrades opportunistically via STARTTLS', async () => {
       await service.testSmtpConnection('user@example.com', {
         ...params,
         connectionSecurity: 'STARTTLS',
       });
 
       expect(createTransport).toHaveBeenCalledWith(
-        expect.objectContaining({ secure: false, requireTLS: true }),
+        expect.objectContaining({ secure: false }),
       );
     });
 

@@ -4,8 +4,12 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
 // Replaces the legacy `secure` boolean with the `connectionSecurity` enum,
-// preserving the previously deployed behavior: SMTP derived implicit TLS from
-// port 465 (STARTTLS elsewhere), while IMAP/CalDAV honored `secure` directly.
+// preserving the previously deployed on-wire behavior exactly. SMTP used
+// implicit TLS on port 465 (-> SSL_TLS) and opportunistic STARTTLS elsewhere
+// (-> STARTTLS); IMAP used implicit TLS when secure (-> SSL_TLS) and
+// opportunistic STARTTLS otherwise (-> STARTTLS); CalDAV is TLS over its https
+// host (-> SSL_TLS). STARTTLS stays opportunistic so no account is forced onto
+// a stricter handshake than it already used.
 @RegisteredInstanceCommand('2.13.0', 1781461753981, { type: 'slow' })
 export class BackfillConnectionSecuritySlowInstanceCommand
   implements SlowInstanceCommand
@@ -32,7 +36,7 @@ export class BackfillConnectionSecuritySlowInstanceCommand
          '{IMAP,connectionSecurity}',
          to_jsonb(
            CASE WHEN "connectionParameters"->'IMAP'->>'secure' = 'false'
-                THEN 'NONE' ELSE 'SSL_TLS' END
+                THEN 'STARTTLS' ELSE 'SSL_TLS' END
          )
        )
        WHERE "connectionParameters" ? 'IMAP'

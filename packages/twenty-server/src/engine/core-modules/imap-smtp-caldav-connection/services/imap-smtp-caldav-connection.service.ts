@@ -14,7 +14,8 @@ import {
   type ConnectionParameters,
   type PlaintextImapSmtpCaldavParams,
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
-import { mapConnectionSecurityToTransport } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/map-connection-security-to-transport.util';
+import { buildImapTlsOptions } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/build-imap-tls-options.util';
+import { buildSmtpTlsOptions } from 'src/engine/core-modules/imap-smtp-caldav-connection/utils/build-smtp-tls-options.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { CalDavClientService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-client.service';
@@ -42,7 +43,7 @@ export class ImapSmtpCaldavService {
     const client = new ImapFlow({
       host: validatedHost,
       port: params.port,
-      secure: params.connectionSecurity === 'SSL_TLS',
+      ...buildImapTlsOptions(params.connectionSecurity),
       auth: {
         user: params.username ?? handle,
         pass: params.password,
@@ -115,7 +116,7 @@ export class ImapSmtpCaldavService {
     const transport = createTransport({
       host: validatedHost,
       port: params.port,
-      ...mapConnectionSecurityToTransport(params.connectionSecurity),
+      ...buildSmtpTlsOptions(params.connectionSecurity),
       auth: {
         user: params.username ?? handle,
         pass: params.password,
