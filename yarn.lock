@@ -53,15 +53,28 @@ __metadata:
   linkType: hard
 
 "@ai-sdk/azure@npm:^3.0.55":
-  version: 3.0.55
-  resolution: "@ai-sdk/azure@npm:3.0.55"
+  version: 3.0.73
+  resolution: "@ai-sdk/azure@npm:3.0.73"
   dependencies:
-    "@ai-sdk/openai": "npm:3.0.54"
-    "@ai-sdk/provider": "npm:3.0.9"
-    "@ai-sdk/provider-utils": "npm:4.0.24"
+    "@ai-sdk/deepseek": "npm:2.0.37"
+    "@ai-sdk/openai": "npm:3.0.70"
+    "@ai-sdk/provider": "npm:3.0.10"
+    "@ai-sdk/provider-utils": "npm:4.0.28"
   peerDependencies:
     zod: ^3.25.76 || ^4.1.8
-  checksum: 10c0/c0738ac36dbfffcfe903edaa57b497996a87fa45eabb2ebebfa72e7e1cda6705355cac7d595e2012f831a80e50db5e20222ee4af3c53c416ccb1051eff9612dd
+  checksum: 10c0/5521edbc93ba66ced39029dc2dffd268f63f0ae48e8b7dc9da8955473acbcb707bfee069e2a7af7a58e115cb1b021af15e006c14a158488e7ceb6b0c880fa76a
+  languageName: node
+  linkType: hard
+
+"@ai-sdk/deepseek@npm:2.0.37":
+  version: 2.0.37
+  resolution: "@ai-sdk/deepseek@npm:2.0.37"
+  dependencies:
+    "@ai-sdk/provider": "npm:3.0.10"
+    "@ai-sdk/provider-utils": "npm:4.0.28"
+  peerDependencies:
+    zod: ^3.25.76 || ^4.1.8
+  checksum: 10c0/6e370ba2ba181b7c54d1212b41e1b2d0d27b9b471720cd9bc30b0c228bc30d84487df4c0f76993a3d0595a4d76883cf0542d5d3614f1e634fc6dc756609aa3a4
   languageName: node
   linkType: hard
 
@@ -127,7 +140,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ai-sdk/openai@npm:3.0.54, @ai-sdk/openai@npm:^3.0.54":
+"@ai-sdk/openai@npm:3.0.70":
+  version: 3.0.70
+  resolution: "@ai-sdk/openai@npm:3.0.70"
+  dependencies:
+    "@ai-sdk/provider": "npm:3.0.10"
+    "@ai-sdk/provider-utils": "npm:4.0.28"
+  peerDependencies:
+    zod: ^3.25.76 || ^4.1.8
+  checksum: 10c0/c263597dd5683a4e45c29c38c5985acc69a75849d5a8e525afd69ac537b6c8c76f89a7664558fd6b4f5777a543966b503c96ba8e0af2a98e0256d18e6c40d906
+  languageName: node
+  linkType: hard
+
+"@ai-sdk/openai@npm:^3.0.54":
   version: 3.0.54
   resolution: "@ai-sdk/openai@npm:3.0.54"
   dependencies:
