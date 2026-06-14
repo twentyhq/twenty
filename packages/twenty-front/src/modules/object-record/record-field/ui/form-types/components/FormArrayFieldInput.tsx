@@ -259,7 +259,17 @@ export const FormArrayFieldInput = ({
 
     const items = draftValue.value;
 
-    if (!isAddingNewItem && sanitizedInput === items[itemToEditIndex]?.value) {
+    // FIXED: Add bounds check and safe optional chaining
+    const itemToEdit = items[itemToEditIndex];
+    if (!isAddingNewItem && !isDefined(itemToEdit)) {
+      // Item was deleted while editing, treat as new item
+      setIsInputDisplayed(false);
+      setInputValue('');
+      setItemToEditIndex(-1);
+      return;
+    }
+
+    if (!isAddingNewItem && sanitizedInput === itemToEdit?.value) {
       setIsInputDisplayed(false);
       setInputValue('');
       return;
@@ -268,7 +278,7 @@ export const FormArrayFieldInput = ({
     const updatedItems = isAddingNewItem
       ? [...items, { id: v4(), value: sanitizedInput }]
       : toSpliced(items, itemToEditIndex, 1, {
-          id: items[itemToEditIndex]?.id ?? v4(),
+          id: itemToEdit.id,
           value: sanitizedInput,
         });
 
@@ -280,6 +290,7 @@ export const FormArrayFieldInput = ({
 
     setIsInputDisplayed(false);
     setInputValue('');
+    setItemToEditIndex(-1);
 
     removeFocusItemFromFocusStackById({
       focusId: newItemInputInstanceId,
