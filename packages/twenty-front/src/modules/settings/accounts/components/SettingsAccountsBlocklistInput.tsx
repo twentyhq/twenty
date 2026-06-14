@@ -9,8 +9,8 @@ import { z } from 'zod';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray, isValidHostname } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Button } from 'twenty-ui-deprecated/input';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;

@@ -48,6 +48,30 @@ export class ObjectMetadataResolver {
     private readonly i18nService: I18nService,
   ) {}
 
+  @ResolveField(() => Boolean, {
+    deprecationReason:
+      'isCustom is derived from the owning application and will be removed; an object is custom when it does not belong to the twenty-standard application.',
+  })
+  async isCustom(
+    @Parent() objectMetadata: ObjectMetadataDTO,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Context() context: { loaders: IDataloaders },
+  ): Promise<boolean> {
+    return context.loaders.isCustomLoader.load({
+      workspaceId,
+      applicationId: objectMetadata.applicationId,
+    });
+  }
+
+  @ResolveField(() => Boolean, {
+    deprecationReason: 'Use isUIEditable',
+  })
+  async isUIReadOnly(
+    @Parent() objectMetadata: ObjectMetadataDTO,
+  ): Promise<boolean> {
+    return !objectMetadata.isUIEditable;
+  }
+
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   @Query(() => [ObjectRecordCountDTO])
   async objectRecordCounts(

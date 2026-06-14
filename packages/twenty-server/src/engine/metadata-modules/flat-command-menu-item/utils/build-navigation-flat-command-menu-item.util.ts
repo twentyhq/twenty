@@ -23,6 +23,10 @@ const NAVIGATION_FEATURE_FLAG_GATE_BY_OBJECT_UNIVERSAL_IDENTIFIER: Partial<
 > = {
   [STANDARD_OBJECTS.callRecording.universalIdentifier]:
     FeatureFlagKey.IS_CALL_RECORDING_ENABLED,
+  [STANDARD_OBJECTS.messageCampaign.universalIdentifier]:
+    FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
+  [STANDARD_OBJECTS.messageList.universalIdentifier]:
+    FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
 };
 
 export const buildNavigationConditionalAvailabilityExpression = ({
@@ -100,6 +104,9 @@ export const buildNavigationFlatCommandMenuItem = ({
     availabilityObjectMetadataUniversalIdentifier: null,
     pageLayoutId: null,
     pageLayoutUniversalIdentifier: null,
+    isActive: true,
+    overrides: null,
+    universalOverrides: null,
     createdAt: now,
     updatedAt: now,
   };

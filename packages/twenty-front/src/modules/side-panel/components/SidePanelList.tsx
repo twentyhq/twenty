@@ -9,7 +9,10 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 export type SidePanelListProps = {
   selectableItemIds: string[];
@@ -26,7 +29,7 @@ const StyledInnerList = styled.div`
   padding-left: ${themeCssVariables.spacing[2]};
   padding-right: ${themeCssVariables.spacing[2]};
   padding-top: ${themeCssVariables.spacing[2]};
-  width: calc(100% - ${themeCssVariables.spacing[4]});
+  width: 100%;
 
   @media (min-width: ${MOBILE_VIEWPORT}px) {
     max-height: calc(

@@ -3,11 +3,11 @@ import {
   RelationType,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
+import { shouldExcludeFieldFromAgentToolSchema } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
 import { generateFieldFilterZodSchema } from 'src/engine/core-modules/record-crud/zod-schemas/field-filters.zod-schema';
-import { shouldExcludeFieldFromAgentToolSchema } from 'src/engine/metadata-modules/field-metadata/utils/should-exclude-field-from-agent-tool-schema.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 // Builds the per-field filter shape and full recursive filter schema
@@ -28,11 +28,11 @@ export const generateRecordFilterSchema = ({
 
   objectMetadata.fields.forEach((field) => {
     if (
-      shouldExcludeFieldFromAgentToolSchema(
-        field,
-        true,
+      shouldExcludeFieldFromAgentToolSchema({
+        fieldName: field.name,
+        isSystem: field.isSystem,
         additionalExcludedFieldNames,
-      )
+      })
     ) {
       return;
     }
@@ -48,7 +48,8 @@ export const generateRecordFilterSchema = ({
     }
 
     const isManyToOneRelationField =
-      isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
+      (isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) ||
+        isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION)) &&
       field.settings?.relationType === RelationType.MANY_TO_ONE;
 
     filterShape[isManyToOneRelationField ? `${field.name}Id` : field.name] =

@@ -27,6 +27,8 @@ import {
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
 import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
+import { buildRetryStepInfos } from 'src/modules/workflow/workflow-runner/utils/build-retry-step-infos.util';
+import { getRunnableStepIds } from 'src/modules/workflow/workflow-runner/utils/get-runnable-step-ids.util';
 import {
   WorkflowRunEnqueueJob,
   type WorkflowRunEnqueueJobData,
@@ -209,55 +211,165 @@ export class WorkflowRunnerWorkspaceService {
     ];
 
     if (!stoppableStatuses.includes(workflowRun.status)) {
-      throw new WorkflowRunException(
-        'Workflow run cannot be stopped',
-        WorkflowRunExceptionCode.INVALID_OPERATION,
-        {
-          userFriendlyMessage: msg`Workflow run cannot be stopped in its current status`,
-        },
-      );
+      return {
+        id: workflowRun.id,
+        status: workflowRun.status,
+      };
     }
+
+    const wasNotStarted = workflowRun.status === WorkflowRunStatus.NOT_STARTED;
 
     let newStatus: WorkflowRunStatus;
 
-    const stepInfos = workflowRun.state.stepInfos;
-    const steps = workflowRun.state.flow.steps;
-
-    if (workflowHasRunningSteps({ stepInfos, steps })) {
-      const stoppedIteratorStepInfos = setAllIteratorsStepInfosAsStopped({
-        stepInfos,
-        steps,
-      });
-
-      const mergedStepInfos = {
-        ...stepInfos,
-        ...stoppedIteratorStepInfos,
-      };
-
-      await this.workflowRunWorkspaceService.updateWorkflowRun({
-        workflowRunId,
-        workspaceId,
-        partialUpdate: {
-          status: WorkflowRunStatus.STOPPING,
-          state: {
-            ...workflowRun.state,
-            stepInfos: mergedStepInfos,
-          },
-        },
-      });
-      newStatus = WorkflowRunStatus.STOPPING;
-    } else {
+    if (!isDefined(workflowRun.state)) {
       await this.workflowRunWorkspaceService.endWorkflowRun({
         workflowRunId,
         workspaceId,
         status: WorkflowRunStatus.STOPPED,
       });
       newStatus = WorkflowRunStatus.STOPPED;
+    } else {
+      const stepInfos = workflowRun.state.stepInfos;
+      const steps = workflowRun.state.flow.steps;
+
+      if (workflowHasRunningSteps({ stepInfos, steps })) {
+        const stoppedIteratorStepInfos = setAllIteratorsStepInfosAsStopped({
+          stepInfos,
+          steps,
+        });
+
+        const mergedStepInfos = {
+          ...stepInfos,
+          ...stoppedIteratorStepInfos,
+        };
+
+        await this.workflowRunWorkspaceService.updateWorkflowRun({
+          workflowRunId,
+          workspaceId,
+          partialUpdate: {
+            status: WorkflowRunStatus.STOPPING,
+            state: {
+              ...workflowRun.state,
+              stepInfos: mergedStepInfos,
+            },
+          },
+        });
+        newStatus = WorkflowRunStatus.STOPPING;
+      } else {
+        await this.workflowRunWorkspaceService.endWorkflowRun({
+          workflowRunId,
+          workspaceId,
+          status: WorkflowRunStatus.STOPPED,
+        });
+        newStatus = WorkflowRunStatus.STOPPED;
+      }
+    }
+
+    // Release the cached not-started slot only after the stop has been
+    // persisted, so a persistence failure can't desync the throttle counter.
+    if (wasNotStarted) {
+      await this.workflowThrottlingWorkspaceService.decreaseWorkflowRunNotStartedCount(
+        workspaceId,
+      );
     }
 
     return {
       id: workflowRun.id,
       status: newStatus,
+    };
+  }
+
+  async retryWorkflowRun(workspaceId: string, workflowRunId: string) {
+    const workflowRun =
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+        workflowRunId,
+        workspaceId,
+      });
+
+    if (workflowRun.status !== WorkflowRunStatus.FAILED) {
+      return {
+        id: workflowRun.id,
+        status: workflowRun.status,
+      };
+    }
+
+    if (!isDefined(workflowRun.state)) {
+      throw new WorkflowRunException(
+        'Cannot retry a workflow run without state',
+        WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
+      );
+    }
+
+    const steps = workflowRun.state.flow.steps;
+
+    const { stepInfosToUpdate, stepIdsToRetry } = buildRetryStepInfos({
+      steps,
+      stepInfos: workflowRun.state.stepInfos,
+    });
+
+    const mergedStepInfos = {
+      ...workflowRun.state.stepInfos,
+      ...stepInfosToUpdate,
+    };
+
+    const runnableStepIds = getRunnableStepIds({
+      steps,
+      stepInfos: mergedStepInfos,
+    });
+
+    const stepIdsToRun = Array.from(
+      new Set([...stepIdsToRetry, ...runnableStepIds]),
+    );
+
+    if (stepIdsToRun.length === 0) {
+      return {
+        id: workflowRun.id,
+        status: workflowRun.status,
+      };
+    }
+
+    await this.workflowRunWorkspaceService.updateWorkflowRun({
+      workflowRunId,
+      workspaceId,
+      partialUpdate: {
+        status: WorkflowRunStatus.RUNNING,
+        endedAt: null,
+        state: {
+          ...workflowRun.state,
+          stepInfos: mergedStepInfos,
+          workflowRunError: undefined,
+        },
+      },
+    });
+
+    try {
+      await this.messageQueueService.add<RunWorkflowJobData>(
+        RunWorkflowJob.name,
+        {
+          workspaceId,
+          workflowRunId,
+          stepIdsToRetry: stepIdsToRun,
+        },
+      );
+    } catch (error) {
+      // The job couldn't be enqueued: revert to the previous failed state so
+      // the run isn't left stuck as RUNNING without a worker job.
+      await this.workflowRunWorkspaceService.updateWorkflowRun({
+        workflowRunId,
+        workspaceId,
+        partialUpdate: {
+          status: WorkflowRunStatus.FAILED,
+          endedAt: workflowRun.endedAt,
+          state: workflowRun.state,
+        },
+      });
+
+      throw error;
+    }
+
+    return {
+      id: workflowRun.id,
+      status: WorkflowRunStatus.RUNNING,
     };
   }
 

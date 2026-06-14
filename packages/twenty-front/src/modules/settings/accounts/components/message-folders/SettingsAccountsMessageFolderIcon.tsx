@@ -4,9 +4,9 @@ import {
   IconFolderRoot,
   IconInbox,
   IconSend,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
 type SettingsAccountsMessageFolderIconProps = {
   folder: MessageFolder;
   isChildFolder?: boolean;

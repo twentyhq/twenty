@@ -1,8 +1,8 @@
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { IconPlus } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
+import { IconPlus } from 'twenty-ui-deprecated/display';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
 
 type AddSelectOptionMenuItemProps = {
   name: string;

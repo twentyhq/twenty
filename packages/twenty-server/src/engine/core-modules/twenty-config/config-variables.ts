@@ -20,6 +20,7 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
 import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.enum';
+import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
 import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
@@ -1696,6 +1697,16 @@ export class ConfigVariables {
   })
   @IsOptional()
   MINTLIFY_SUBDOMAIN: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AWS_SES_SETTINGS,
+    description:
+      'Driver used for the emailing domain feature — AWS_SES for production (requires AWS credentials), LOG fakes registration/verification/sends locally',
+    type: ConfigVariableType.ENUM,
+    options: Object.values(EmailingDomainDriver),
+  })
+  @CastToUpperSnakeCase()
+  EMAILING_DOMAIN_DRIVER: EmailingDomainDriver = EmailingDomainDriver.LOG;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AWS_SES_SETTINGS,

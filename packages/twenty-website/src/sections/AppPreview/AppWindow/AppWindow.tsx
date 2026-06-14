@@ -18,8 +18,6 @@ const MIN_WIDTH = 640;
 const MIN_HEIGHT = 420;
 const MIN_EDGE_GAP = 0;
 const INITIAL_MAX_WIDTH = 1040;
-const INITIAL_ASPECT_RATIO = 1280 / 832;
-const MOBILE_PARENT_BREAKPOINT = 640;
 
 const Shell = styled.div<{
   $isResizing: boolean;
@@ -139,22 +137,8 @@ export const AppWindow = ({ children }: AppWindowProps) => {
     }
     const parentRect = parent.getBoundingClientRect();
 
-    if (parentRect.width < MOBILE_PARENT_BREAKPOINT) {
-      const mobileWidth = parentRect.width;
-      const mobileHeight = Math.min(
-        parentRect.height,
-        mobileWidth / INITIAL_ASPECT_RATIO,
-      );
-      setSize({ width: mobileWidth, height: mobileHeight });
-      setPosition({ left: 0, top: 0 });
-      return;
-    }
-
-    const newWidth = Math.min(parentRect.width, INITIAL_MAX_WIDTH);
-    const newHeight = Math.min(
-      parentRect.height,
-      newWidth / INITIAL_ASPECT_RATIO,
-    );
+    const newWidth = INITIAL_MAX_WIDTH;
+    const newHeight = parentRect.height;
 
     setSize({ width: newWidth, height: newHeight });
     setPosition({

@@ -4,7 +4,6 @@ import {
   AlreadyExistsException,
   CreateConfigurationSetCommand,
   CreateConfigurationSetEventDestinationCommand,
-  CreateContactListCommand,
   CreateTenantResourceAssociationCommand,
   PutEmailIdentityMailFromAttributesCommand,
 } from '@aws-sdk/client-sesv2';
@@ -12,13 +11,11 @@ import { type AwsSesDriverConfig } from 'src/engine/core-modules/emailing-domain
 
 import { AWS_SES_EVENT_BUS_NAME } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-event-bus-name.constant';
 import { AWS_SES_MAIL_FROM_SUBDOMAIN } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-mail-from-subdomain.constant';
-import { AWS_SES_MARKETING_TOPIC_NAME } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-marketing-topic-name.constant';
 import { AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
 
 type ProvisionWorkspaceInput = {
   tenantName: string;
   configurationSetName: string;
-  contactListName: string;
 };
 
 @Injectable()
@@ -42,7 +39,7 @@ export class AwsSesRegisterDomainService {
           ConfigurationSetName: input.configurationSetName,
           ReputationOptions: { ReputationMetricsEnabled: true },
           SendingOptions: { SendingEnabled: true },
-          SuppressionOptions: { SuppressedReasons: ['BOUNCE', 'COMPLAINT'] },
+          SuppressionOptions: { SuppressedReasons: [] },
           Tags: [{ Key: 'managed-by', Value: 'twenty' }],
         }),
       )
@@ -71,26 +68,6 @@ export class AwsSesRegisterDomainService {
             ],
             EventBridgeDestination: { EventBusArn: eventBusArn },
           },
-        }),
-      )
-      .catch((error) => {
-        if (!(error instanceof AlreadyExistsException)) {
-          throw error;
-        }
-      });
-
-    await sesClient
-      .send(
-        new CreateContactListCommand({
-          ContactListName: input.contactListName,
-          Topics: [
-            {
-              TopicName: AWS_SES_MARKETING_TOPIC_NAME,
-              DisplayName: 'Marketing',
-              DefaultSubscriptionStatus: 'OPT_IN',
-            },
-          ],
-          Tags: [{ Key: 'managed-by', Value: 'twenty' }],
         }),
       )
       .catch((error) => {

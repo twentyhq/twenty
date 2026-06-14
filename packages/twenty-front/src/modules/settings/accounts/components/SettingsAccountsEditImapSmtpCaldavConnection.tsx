@@ -8,7 +8,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsPath } from 'twenty-shared/types';
 
-import { Loader } from 'twenty-ui/feedback';
+import { Loader } from 'twenty-ui-deprecated/feedback';
 
 import { getSettingsPath } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';

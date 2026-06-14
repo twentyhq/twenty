@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from '@ui/theme-constants';
-import { motion } from 'framer-motion';
+import { clsx } from 'clsx';
+
+import styles from './ProgressBar.module.scss';
 
 export type ProgressBarProps = {
   value: number;
@@ -16,27 +16,6 @@ export type StyledBarProps = {
   withBorderRadius?: boolean;
 };
 
-const StyledBar = styled.div<StyledBarProps>`
-  height: ${themeCssVariables.spacing[2]};
-  background-color: ${({ backgroundColor }) => backgroundColor ?? ''};
-  border-radius: ${({ withBorderRadius }) =>
-    withBorderRadius ? themeCssVariables.border.radius.xxl : '0'};
-  overflow: hidden;
-  width: 100%;
-`;
-
-const StyledBarFilling = styled.div<{
-  barColor?: string;
-  withBorderRadius?: boolean;
-}>`
-  background-color: ${({ barColor }) =>
-    barColor ?? themeCssVariables.font.color.primary};
-  border-radius: ${({ withBorderRadius }) =>
-    withBorderRadius ? themeCssVariables.border.radius.md : '0'};
-  height: 100%;
-  width: 100%;
-`;
-
 const MIN_BAR_WIDTH_PX = 12;
 
 export const ProgressBar = ({
@@ -46,25 +25,34 @@ export const ProgressBar = ({
   backgroundColor = 'none',
   withBorderRadius = false,
 }: ProgressBarProps) => (
-  <StyledBar
-    className={className}
-    backgroundColor={backgroundColor}
-    withBorderRadius={withBorderRadius}
+  <div
+    className={clsx(styles.bar, className)}
+    data-with-border-radius={withBorderRadius || undefined}
     role="progressbar"
     aria-valuenow={Math.ceil(value)}
+    style={
+      {
+        '--progress-bar-background-color': backgroundColor,
+      } as React.CSSProperties
+    }
   >
-    <motion.div
+    <div
       style={{
         height: '100%',
         minWidth: value > 0 ? MIN_BAR_WIDTH_PX : 0,
+        width: `${Math.ceil(value)}%`,
+        transition: 'width 0.3s linear',
       }}
-      animate={{ width: `${Math.ceil(value)}%` }}
-      transition={{ duration: 0.3, ease: 'linear' }}
     >
-      <StyledBarFilling
-        barColor={barColor}
-        withBorderRadius={withBorderRadius}
+      <div
+        className={styles.barFilling}
+        data-with-border-radius={withBorderRadius || undefined}
+        style={
+          barColor
+            ? ({ '--progress-bar-color': barColor } as React.CSSProperties)
+            : undefined
+        }
       />
-    </motion.div>
-  </StyledBar>
+    </div>
+  </div>
 );

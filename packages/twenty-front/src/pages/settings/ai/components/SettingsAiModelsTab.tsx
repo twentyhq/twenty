@@ -27,11 +27,14 @@ import {
   IconBrain,
   IconPrompt,
   IconStar,
-} from 'twenty-ui/display';
-import { SearchInput } from 'twenty-ui/input';
-import { Card, Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { SearchInput } from 'twenty-ui-deprecated/input';
+import { Card, Section } from 'twenty-ui-deprecated/layout';
+import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { GetAiSystemPromptPreviewDocument } from '~/generated-metadata/graphql';
 import { useSettingsAiModelsActions } from '~/pages/settings/ai/hooks/useSettingsAiModelsActions';
 import { formatNumber } from '~/utils/format/formatNumber';
@@ -126,6 +129,7 @@ export const SettingsAiModelsTab = () => {
             Icon={IconBrain}
             title={t`Smart Model`}
             description={t`Used for chats, agents, and complex reasoning`}
+            divider
           >
             <Select
               dropdownId="models-tab-smart-model-select"

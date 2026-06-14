@@ -1,11 +1,16 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from '@ui/theme-constants';
+import { clsx } from 'clsx';
+import { forwardRef } from 'react';
 
-// oxlint-disable-next-line twenty/styled-components-prefixed-with-styled
-export const IllustrationIconWrapper = styled.div`
-  background-color: ${themeCssVariables.background.primary};
-  border: 0.75px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  display: flex;
-  justify-content: center;
-`;
+import styles from './IllustrationIconWrapper.module.scss';
+
+// The deprecated Linaria styled.div forwarded refs and accepted all native
+// div props, so the port preserves that contract.
+export const IllustrationIconWrapper = forwardRef<
+  HTMLDivElement,
+  React.ComponentPropsWithoutRef<'div'>
+>(({ className, ...props }, ref) => (
+  // oxlint-disable-next-line react/jsx-props-no-spreading
+  <div ref={ref} className={clsx(styles.root, className)} {...props} />
+));
+
+IllustrationIconWrapper.displayName = 'IllustrationIconWrapper';

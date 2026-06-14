@@ -1,6 +1,6 @@
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
 
 type WorkflowAiAgentPermissionsObjectRowProps = {
   objectMetadata: Pick<

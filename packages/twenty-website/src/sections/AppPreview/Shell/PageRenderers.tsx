@@ -2,17 +2,8 @@
 
 import { styled } from '@linaria/react';
 import dynamic from 'next/dynamic';
-import type { ReactNode } from 'react';
 
-import type {
-  DashboardPageDefinition,
-  KanbanPageDefinition,
-  PageDefinition,
-  PageType,
-  RecordPageDefinition,
-  TablePageDefinition,
-  WorkflowPageDefinition,
-} from '../types';
+import type { PageDefinition } from '../types';
 import { KanbanPage } from '../Pages/Kanban/KanbanPage';
 import { RecordPage } from '../Pages/Record/RecordPage';
 import { TablePage } from '../Pages/Table/TablePage';
@@ -48,43 +39,31 @@ const SalesDashboardPage = dynamic(
   },
 );
 
-const PAGE_RENDERERS = {
-  table: (page: TablePageDefinition) => <TablePage page={page} />,
-  kanban: (page: KanbanPageDefinition) => <KanbanPage page={page} />,
-  dashboard: (page: DashboardPageDefinition) => (
-    <DashboardViewport
-      aria-label={`Interactive preview of the ${page.header.title.toLowerCase()}`}
-    >
-      <SalesDashboardPage page={page} />
-    </DashboardViewport>
-  ),
-  record: (page: RecordPageDefinition) => <RecordPage page={page} />,
-  workflow: (page: WorkflowPageDefinition) => <WorkflowPage page={page} />,
-} satisfies {
-  [K in PageType]: (page: Extract<PageDefinition, { type: K }>) => ReactNode;
-};
-
 export function renderPageDefinition(
   page: PageDefinition,
-  onNavigateToLabel?: (label: string) => void,
-  pageKey?: string,
+  onNavigateToPageItemId?: (itemId: string) => void,
 ) {
   switch (page.type) {
     case 'table':
       return (
         <TablePage
-          key={pageKey}
           page={page}
-          onNavigateToLabel={onNavigateToLabel}
+          onNavigateToPageItemId={onNavigateToPageItemId}
         />
       );
     case 'kanban':
-      return PAGE_RENDERERS.kanban(page);
+      return <KanbanPage page={page} />;
     case 'dashboard':
-      return PAGE_RENDERERS.dashboard(page);
+      return (
+        <DashboardViewport
+          aria-label={`Interactive preview of the ${page.header.title.toLowerCase()}`}
+        >
+          <SalesDashboardPage page={page} />
+        </DashboardViewport>
+      );
     case 'record':
-      return PAGE_RENDERERS.record(page);
+      return <RecordPage page={page} />;
     case 'workflow':
-      return PAGE_RENDERERS.workflow(page);
+      return <WorkflowPage page={page} />;
   }
 }

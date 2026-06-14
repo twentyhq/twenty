@@ -9,6 +9,10 @@ export type ObjectManifest = SyncableEntityOptions & {
   description?: string;
   icon?: string;
   isSearchable?: boolean;
+  // When false, the generic UI shows no affordance to create records of this object
+  isUICreatable?: boolean;
+  // When false, records of this object are not editable through the generic UI
+  isUIEditable?: boolean;
   fields: ObjectFieldManifest[];
   labelIdentifierFieldMetadataUniversalIdentifier: string;
 };

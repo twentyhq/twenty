@@ -16,6 +16,9 @@ import { type ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/obj
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
+import { RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME } from 'src/engine/metadata-modules/object-metadata/constants/rename-is-ui-read-only-to-is-ui-editable-upgrade-command-name.constant';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
@@ -69,8 +72,12 @@ export class ObjectMetadataEntity
   @Column({ nullable: false })
   targetTableName: string;
 
-  @Column({ default: false })
-  isCustom: boolean;
+  @WasRemovedInUpgrade({
+    upgradeCommandName:
+      '2.12.0_DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand_1780579070012',
+  })
+  @Column({ type: 'boolean', default: false })
+  isCustom: WasRemovedInUpgrade<boolean>;
 
   @Column({ default: false })
   isRemote: boolean;
@@ -81,8 +88,26 @@ export class ObjectMetadataEntity
   @Column({ default: false })
   isSystem: boolean;
 
-  @Column({ default: false })
-  isUIReadOnly: boolean;
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ default: true })
+  isUIEditable: boolean;
+
+  @WasRemovedInUpgrade({
+    upgradeCommandName:
+      RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'boolean', default: false })
+  isUIReadOnly: WasRemovedInUpgrade<boolean>;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ default: true })
+  isUICreatable: boolean;
 
   @Column({ default: true })
   isAuditLogged: boolean;

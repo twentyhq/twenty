@@ -16,5 +16,6 @@ export default defineField({
   label: 'Employee Count by Country',
   description:
     'Employee count broken down by country returned by People Data Labs.',
+  icon: 'IconMapPins',
   isNullable: true,
 });

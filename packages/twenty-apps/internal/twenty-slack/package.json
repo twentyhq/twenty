@@ -11,7 +11,7 @@
   "keywords": [
     "twenty-app"
   ],
-  "packageManager": "yarn@4.9.2",
+  "packageManager": "yarn@4.13.0",
   "scripts": {
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",
@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@slack/web-api": "^7.8.0",
-    "twenty-sdk": "2.4.0"
+    "twenty-sdk": "2.10.1"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
@@ -30,6 +30,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "typescript": "^5.9.3",
-    "vitest": "^3.1.1"
+    "vitest": "^3.2.6"
   }
 }

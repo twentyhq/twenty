@@ -13,6 +13,8 @@ import { useTerminalWindowLayout } from './hooks/use-terminal-window-layout';
 import type { TerminalToggleValue } from './types/terminal-toggle-types';
 import { TERMINAL_TOKENS } from './utils/terminal-tokens';
 
+const HIDE_BELOW_VIEWPORT_WIDTH = 1350;
+
 const Shell = styled.div<{
   $isDragging: boolean;
   $isResizing: boolean;
@@ -36,6 +38,10 @@ const Shell = styled.div<{
   position: absolute;
   top: 0;
   touch-action: none;
+
+  @media (max-width: ${HIDE_BELOW_VIEWPORT_WIDTH - 0.02}px) {
+    display: none;
+  }
 
   @media (min-width: ${theme.breakpoints.md}px) {
     box-shadow: ${({ $isDragging, $isResizing }) =>

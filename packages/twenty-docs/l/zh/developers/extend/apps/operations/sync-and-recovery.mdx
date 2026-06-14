@@ -1,0 +1,111 @@
+---
+title: 同步与恢复
+description: 何时使用哪个命令、如何解读同步输出，以及在本地元数据发生漂移时的恢复阶梯——在不得不执行完全重置之前。
+icon: compass
+---
+
+本地应用开发围绕着**同步**展开：CLI 会重建你的 manifest，而服务器只会应用它与工作区中已存在元数据之间的差异。 本页介绍在不同情况下应使用哪个命令、如何阅读同步修改内容，以及当本地状态看起来不一致时——按顺序——应该怎么做。
+
+## 在什么情况下用哪个命令
+
+<Note>
+在日常本地迭代中，你几乎总是需要 `yarn twenty dev`。 Deploy 和 publish 用于发布版本，**而不是**用于本地循环。
+</Note>
+
+| 如果你想要……            | 命令                                  | 备注                                                                                               |
+| ------------------ | ----------------------------------- | ------------------------------------------------------------------------------------------------ |
+| 使用实时同步进行本地迭代       | `yarn twenty dev`                   | 监视你的文件，并在每次更改时执行同步。                                                                              |
+| 同步一次后退出（CI、脚本、钩子）  | `yarn twenty dev --once`            | 执行一次构建和同步，然后退出。                                                                                  |
+| 在**不应用变更**的前提下预览更改 | `yarn twenty dev --once --dry-run`  | 计算并打印 diff；不写入任何内容。                                                                              |
+| 从工作区中移除该应用         | `yarn twenty app:uninstall`         | 添加 `--yes` 以跳过提示。                                                                                |
+| 将 tar 包发送到服务器      | `yarn twenty app:publish --private` | 需要一个**严格更高的** `package.json` 版本——参见 [Publishing](/l/zh/developers/extend/apps/operations/publishing)。 |
+| 发布到应用市场（npm）       | `yarn twenty app:publish`           | —                                                                                                |
+| 安装 / 升级已部署的版本      | `yarn twenty app:install`           | 安装当前已部署的版本。                                                                                      |
+| 清空本地服务器并重新开始       | `yarn twenty docker:reset`          | 删除**所有**本地数据——最后的手段。                                                                             |
+
+### 本地同步不需要提升版本号
+
+严格递增的 `version` 规则（在 deploy 时为 `VERSION_ALREADY_EXISTS`，在 install 时为 `APP_ALREADY_INSTALLED` / `CANNOT_DOWNGRADE_APPLICATION`）适用于 **`app:publish` / `app:install`**——即发布路径。 `yarn twenty dev` 就地同步你的 manifest，且从不要求修改版本，因此你无需为了迭代去改动 `package.json`。 如果你发现自己为了测试本地改动而不断提升版本号，说明你在想要使用开发循环时却走了发布路径。
+
+## 阅读同步输出
+
+每次同步都会打印它实际应用的（或在使用 `--dry-run` 时将要应用的）元数据更改：
+
+```text filename="Terminal"
+Metadata changes: 2 created, 1 updated, 1 deleted
+  created objectMetadata rocket
+  created fieldMetadata timelineActivities
+  updated fieldMetadata launchedAt
+  deleted pageLayout legacyTab
+✓ Synced
+```
+
+这是你的首要诊断工具：它会准确告诉你哪些对象、字段和布局发生了变化，这样你就可以在查看 UI 之前确认同步是否按预期进行。
+
+当同步在某个实体上失败时，错误信息会给出有问题的实体及其 `universalIdentifier`，例如：
+
+```text
+Migration action 'create' for 'fieldMetadata' (universalIdentifier: 2020...4337) failed
+```
+
+使用该标识符在 manifest 中（以及在需要时在工作区中）定位该实体，而不是猜测哪个实体发生了冲突。
+
+## 预览更改（干跑 / dry run）
+
+`yarn twenty dev --once --dry-run` 会构建你的 manifest，向服务器请求迁移计划并打印出来——**不会实际应用任何内容**。 这是在真正执行前，以安全方式回答“这次同步会改动什么？”的办法。
+
+```bash filename="Terminal"
+yarn twenty dev --once --dry-run
+```
+
+```text filename="Terminal"
+Building manifest...
+Computing metadata diff (dry run, nothing will be applied)...
+Metadata changes: 1 created, 1 updated
+  created fieldMetadata timelineActivities
+  updated objectMetadata rocket
+✓ Dry run complete for My App — no changes were applied
+```
+
+一次 dry run：
+
+* **不会写入任何内容**——不会进行元数据迁移、不会更新应用记录、不会更改默认角色/标签，也不会生成 API 客户端。
+* 返回与真实同步将要应用的**相同 diff**，这样你可以预先审查将被创建 / 更新 / 删除的实体。
+* 在执行高风险改动之前、在审查 AI 生成的改动时，或在某些如果即将落地意外变更就应当失败的脚本中，dry run 都非常有用。
+
+<Note>
+dry run 只会预览**元数据**更改，并且要求应用至少已经同步过一次（这样工作区才知道它的存在）。 如果你在一个从未同步过的应用上运行它，服务器会报告该应用尚未安装——先运行一次 `yarn twenty dev`。
+</Note>
+
+## 恢复梯子
+
+当本地元数据看起来不对时，按以下顺序逐步升级，并在问题解决后立即停止。 每一步都比前一步更具破坏性。
+
+1. **重新同步。** 再次运行 `yarn twenty dev --once`。 同步是幂等的——在干净的 manifest 上重新运行是安全的，并且通常可以解决瞬时故障。
+2. **预览计划。** 运行 `yarn twenty dev --once --dry-run`，在不应用变更的前提下，准确查看下一次同步打算修改什么。
+3. **阅读具名错误。** 如果同步失败，记录消息中的元数据类型和 `universalIdentifier`（见上），并在 manifest 中定位该实体。 冲突通常指向重复或被重复使用的标识符。
+4. **卸载并重新安装。** 先执行 `yarn twenty app:uninstall`，然后再次同步（`yarn twenty dev`）。 这会在保留你工作区其余部分不变的情况下，从零重建该应用的元数据。
+5. **完全重置（最后手段）。** 执行 `yarn twenty docker:reset`，然后重新播种并重新同步。
+
+<Warning>
+`yarn twenty docker:reset` 会删除本地实例中的**所有**数据——包括每个工作区、记录和应用。 只有在前面步骤全部无效时才使用它。
+</Warning>
+
+<Note>
+遇到元数据错误了吗？ 请[提交 issue](https://github.com/twentyhq/twenty/issues/new/choose)，并附上失败的迁移消息（包含其中的元数据类型和 `universalIdentifier`）、同步时的 `Metadata changes` 输出，以及你执行过的命令。
+</Note>
+
+## 避免在同一工作区上并发同步
+
+同步会应用元数据迁移。 在**同一个工作区同时**运行多个同步、部署或安装操作——例如多个终端或多个 AI 代理并行迭代——会让这些迁移交错执行，从而让元数据处于部分应用的状态。
+
+服务器会按工作区串行化同步以防止这种情况，但你仍然应当通过**单一**进程来处理敏感的元数据操作，而不要并发触发。 如果你使用多个代理来编排开发，请将它们的同步 / 部署 / 安装调用通过一个队列进行排队，这样任何时刻只有一个操作在运行。
+
+## 区分不同类型的失败
+
+当出现问题时，元数据 diff 和具名错误可以帮助你定位失败位置：
+
+* **Manifest 构建错误**——CLI 在同步前失败（`MANIFEST_BUILD_FAILED`、`TYPECHECK_FAILED`）；请修复你的应用源代码。
+* **同步 / 迁移错误**——构建成功，但在应用 diff 时失败，并给出实体名称和 `universalIdentifier`；请修复冲突的元数据。
+* **应用代码运行时错误** — 同步成功，但你的逻辑函数或组件在运行时行为异常；请检查[函数日志](/l/zh/developers/extend/apps/operations/cli)。
+* **本地实例状态** — 不属于以上任何一种情况，但工作区仍然显示异常；请按照恢复步骤逐级排查。

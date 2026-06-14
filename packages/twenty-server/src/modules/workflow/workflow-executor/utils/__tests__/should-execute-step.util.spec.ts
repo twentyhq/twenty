@@ -1,4 +1,4 @@
-import { StepStatus } from 'twenty-shared/workflow';
+import { StepStatus, WorkflowActionType } from 'twenty-shared/workflow';
 
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import {
@@ -6,10 +6,7 @@ import {
   createMockIfElseStep,
 } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
-import {
-  type WorkflowAction,
-  WorkflowActionType,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 describe('shouldExecuteStep', () => {
   const steps = [

@@ -1,7 +1,10 @@
-import { styled } from '@linaria/react';
-import { type IconComponent } from '@ui/display';
-import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import { clsx } from 'clsx';
 import { type ComponentProps, type MouseEvent, useContext } from 'react';
+
+import { type IconComponent } from '@ui/display';
+import { ThemeContext } from '@ui/theme-constants';
+
+import styles from './LightIconButton.module.scss';
 
 export type LightIconButtonAccent = 'secondary' | 'tertiary';
 export type LightIconButtonSize = 'small' | 'medium';
@@ -19,79 +22,6 @@ export type LightIconButtonProps = {
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
 } & Pick<ComponentProps<'button'>, 'aria-label' | 'title'>;
 
-const StyledButton = styled.button<
-  Pick<LightIconButtonProps, 'accent' | 'active' | 'size' | 'focus'>
->`
-  align-items: center;
-  background: transparent;
-  border: none;
-
-  border: ${({ disabled, focus }) =>
-    !disabled && focus ? `1px solid ${themeCssVariables.color.blue}` : 'none'};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  box-shadow: ${({ disabled, focus }) =>
-    !disabled && focus ? `0 0 0 3px ${themeCssVariables.color.blue3}` : 'none'};
-  color: ${({ accent, active, disabled, focus }) => {
-    switch (accent) {
-      case 'secondary':
-        return active || focus
-          ? themeCssVariables.color.blue
-          : !disabled
-            ? themeCssVariables.font.color.secondary
-            : themeCssVariables.font.color.extraLight;
-      case 'tertiary':
-        return active || focus
-          ? themeCssVariables.color.blue
-          : !disabled
-            ? themeCssVariables.font.color.tertiary
-            : themeCssVariables.font.color.extraLight;
-    }
-    return '';
-  }};
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-  display: flex;
-  flex-direction: row;
-
-  font-family: ${themeCssVariables.font.family};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  gap: ${themeCssVariables.spacing[1]};
-  height: ${({ size }) =>
-    size === 'small'
-      ? themeCssVariables.spacing[6]
-      : themeCssVariables.spacing[8]};
-  justify-content: center;
-  padding: ${themeCssVariables.spacing[1]};
-  transition: background 0.1s ease;
-
-  white-space: nowrap;
-  width: ${({ size }) =>
-    size === 'small'
-      ? themeCssVariables.spacing[6]
-      : themeCssVariables.spacing[8]};
-  min-width: ${({ size }) =>
-    size === 'small'
-      ? themeCssVariables.spacing[6]
-      : themeCssVariables.spacing[8]};
-
-  &:hover {
-    background: ${({ disabled }) =>
-      !disabled
-        ? themeCssVariables.background.transparent.light
-        : 'transparent'};
-  }
-
-  &:focus {
-    outline: none;
-  }
-
-  &:active {
-    background: ${({ disabled }) =>
-      !disabled
-        ? themeCssVariables.background.transparent.medium
-        : 'transparent'};
-  }
-`;
-
 export const LightIconButton = ({
   'aria-label': ariaLabel,
   className,
@@ -108,16 +38,16 @@ export const LightIconButton = ({
   const { theme } = useContext(ThemeContext);
 
   return (
-    <StyledButton
+    <button
       data-testid={testId}
       aria-label={ariaLabel}
       onClick={onClick}
       disabled={disabled}
-      focus={focus && !disabled}
-      accent={accent}
-      className={className}
-      size={size}
-      active={active}
+      className={clsx(styles.button, styles[size], className)}
+      data-accent={accent}
+      data-active={active || undefined}
+      data-disabled={disabled || undefined}
+      data-focus={(focus && !disabled) || undefined}
       title={title}
     >
       {Icon && (
@@ -125,6 +55,6 @@ export const LightIconButton = ({
           size={size === 'medium' ? theme.icon.size.md : theme.icon.size.sm}
         />
       )}
-    </StyledButton>
+    </button>
   );
 };

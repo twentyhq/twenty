@@ -1,30 +1,8 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from '@ui/theme-constants';
-import { motion } from 'framer-motion';
-import { type ComponentProps, type ReactNode } from 'react';
+import { clsx } from 'clsx';
+import { type HTMLMotionProps, motion } from 'framer-motion';
+import { type ReactNode } from 'react';
 
-const StyledCardContentBase = styled.div<{
-  divider?: boolean;
-  isClickable?: boolean;
-  hasHoverHighlight?: boolean;
-}>`
-  background-color: ${themeCssVariables.background.secondary};
-  padding: ${themeCssVariables.spacing[4]};
-
-  border-bottom: ${({ divider }) =>
-    divider ? `1px solid ${themeCssVariables.border.color.medium}` : 'none'};
-
-  cursor: ${({ isClickable }) => (isClickable ? 'pointer' : 'default')};
-
-  &:hover {
-    background: ${({ hasHoverHighlight }) =>
-      hasHoverHighlight
-        ? themeCssVariables.background.transparent.light
-        : 'transparent'};
-  }
-`;
-
-const MotionCardContent = motion.create(StyledCardContentBase);
+import styles from './CardContent.module.scss';
 
 type CardContentProps = {
   children?: ReactNode;
@@ -32,7 +10,7 @@ type CardContentProps = {
   divider?: boolean;
   isClickable?: boolean;
   hasHoverHighlight?: boolean;
-} & Omit<ComponentProps<typeof MotionCardContent>, 'theme'>;
+} & Omit<HTMLMotionProps<'div'>, 'theme'>;
 
 export const CardContent = ({
   children,
@@ -43,15 +21,15 @@ export const CardContent = ({
   ...rest
 }: CardContentProps) => {
   return (
-    <MotionCardContent
-      className={className}
-      divider={divider}
-      isClickable={isClickable}
-      hasHoverHighlight={hasHoverHighlight}
+    <motion.div
+      className={clsx(styles.cardContent, className)}
+      data-divider={divider || undefined}
+      data-clickable={isClickable || undefined}
+      data-hover-highlight={hasHoverHighlight || undefined}
       // oxlint-disable-next-line react/jsx-props-no-spreading
       {...rest}
     >
       {children}
-    </MotionCardContent>
+    </motion.div>
   );
 };

@@ -1,25 +1,15 @@
-import { styled } from '@linaria/react';
-import { type IconComponent } from '@ui/display';
+import { clsx } from 'clsx';
 import { type MouseEvent } from 'react';
+
+import { type IconComponent } from '@ui/display';
 
 import {
   FloatingIconButton,
   type FloatingIconButtonPosition,
   type FloatingIconButtonProps,
 } from './FloatingIconButton';
-import { themeCssVariables } from '@ui/theme-constants';
 
-const StyledFloatingIconButtonGroupContainer = styled.div`
-  backdrop-filter: blur(20px);
-  background-color: ${themeCssVariables.background.primary};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  box-shadow:
-    0px 2px 4px 0px ${themeCssVariables.background.transparent.light},
-    0px 0px 4px 0px ${themeCssVariables.background.transparent.medium};
-  display: inline-flex;
-  gap: 2px;
-  padding: 2px;
-`;
+import styles from './FloatingIconButtonGroup.module.scss';
 
 export type FloatingIconButtonGroupProps = Pick<
   FloatingIconButtonProps,
@@ -27,6 +17,7 @@ export type FloatingIconButtonGroupProps = Pick<
 > & {
   iconButtons: {
     Icon: IconComponent;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onClick?: (event: MouseEvent<any>) => void;
     isActive?: boolean;
   }[];
@@ -38,7 +29,7 @@ export const FloatingIconButtonGroup = ({
   className,
 }: FloatingIconButtonGroupProps) => {
   return (
-    <StyledFloatingIconButtonGroupContainer className={className}>
+    <div className={clsx(styles.container, className)}>
       {iconButtons.map(({ Icon, onClick, isActive }, index) => {
         const position: FloatingIconButtonPosition =
           iconButtons.length === 1
@@ -62,6 +53,6 @@ export const FloatingIconButtonGroup = ({
           />
         );
       })}
-    </StyledFloatingIconButtonGroupContainer>
+    </div>
   );
 };

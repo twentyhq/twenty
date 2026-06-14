@@ -30,5 +30,6 @@ export const COMMAND_MENU_ITEM_FRAGMENT = gql`
     availabilityType
     availabilityObjectMetadataId
     pageLayoutId
+    isActive
   }
 `;

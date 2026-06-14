@@ -18,6 +18,9 @@ export const resolveFieldMetadataStandardOverride = (
 ): string => {
   const safeLocale = locale ?? SOURCE_LOCALE;
 
+  // Custom field labels are user-authored: never overridden nor translated.
+  // Without this gate, a label colliding with a standard catalog string
+  // (e.g. "Status") would get translated against the user's intent.
   if (fieldMetadata.isCustom) {
     return fieldMetadata[labelKey] ?? '';
   }
