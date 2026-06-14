@@ -73,7 +73,7 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
     try {
       await this.refresh();
     } catch (error) {
-      this.logger.log(
+      this.logger.warn(
         `[upgrade-metadata] initial refresh skipped (core.upgradeMigration not readable yet): ${
           error instanceof Error ? error.message : String(error)
         }`,
@@ -82,21 +82,20 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
   }
 
   async refresh(): Promise<void> {
-    const lastAttempted =
-      await this.upgradeMigrationService.getLastAttemptedInstanceCommand();
+    const completedCommandNames =
+      await this.upgradeMigrationService.getCompletedInstanceCommandNames();
 
-    let nextCursor: number;
+    const completedIndexes = completedCommandNames
+      .map((commandName) => this.stepNameToIndex.get(commandName))
+      .filter(isDefined);
 
-    if (!isDefined(lastAttempted)) {
-      nextCursor = 0;
-    } else {
-      const index = this.stepNameToIndex.get(lastAttempted.name);
+    const nextCursor =
+      completedIndexes.length > 0 ? Math.max(...completedIndexes) + 1 : 0;
 
-      if (!isDefined(index)) {
-        nextCursor = 0;
-      } else {
-        nextCursor = lastAttempted.status === 'completed' ? index + 1 : index;
-      }
+    if (nextCursor < this.currentCursor) {
+      this.logger.warn(
+        `[upgrade-metadata] cursor-regression previous=${this.currentCursor} next=${nextCursor}`,
+      );
     }
 
     if (nextCursor === this.currentCursor) {

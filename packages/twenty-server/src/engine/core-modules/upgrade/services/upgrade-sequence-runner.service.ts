@@ -60,11 +60,12 @@ export class UpgradeSequenceRunnerService {
       try {
         await this.upgradeAwareEntityMetadataAdapter.refresh();
       } catch (refreshError) {
-        this.logger.error(
-          `Failed to refresh upgrade-aware entity metadata after run`,
-          refreshError instanceof Error
-            ? refreshError.stack
-            : String(refreshError),
+        this.logger.warn(
+          `Failed to refresh upgrade-aware entity metadata after run: ${
+            refreshError instanceof Error
+              ? refreshError.message
+              : String(refreshError)
+          }`,
         );
       }
     }
