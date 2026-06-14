@@ -8,7 +8,7 @@ const SKIPPED_FILE_REGEX = /\.(spec|test)\.ts$/;
 
 const DATA_MUTATION_STATEMENT_REGEX = /^(UPDATE|INSERT|DELETE|MERGE)\b/i;
 const CTE_DATA_MUTATION_REGEX =
-  /^WITH\b[\s\S]*\b(UPDATE|INSERT|DELETE|MERGE)\b/i;
+  /^WITH\b[\s\S]*[()]\s*(UPDATE|INSERT|DELETE|MERGE)\b/i;
 
 const isFastInstanceCommandFile = (filename: string): boolean => {
   const markerIndex = filename.indexOf(UPGRADE_COMMAND_MARKER);

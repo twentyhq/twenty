@@ -32,6 +32,11 @@ ruleTester.run(RULE_NAME, rule, {
       filename: FAST_FILE,
       code: `class C { async up(q) { await q.query(\`WITH recent AS (SELECT "id" FROM "core"."x") SELECT count(*) FROM recent\`); } }`,
     },
+    // A read-only CTE that only mentions a keyword in a string is not flagged.
+    {
+      filename: FAST_FILE,
+      code: `class C { async up(q) { await q.query(\`WITH note AS (SELECT 'needs update later' AS msg) SELECT msg FROM note\`); } }`,
+    },
     // Rollback DML lives in down() and is allowed (incl. via a CTE).
     {
       filename: FAST_FILE,
