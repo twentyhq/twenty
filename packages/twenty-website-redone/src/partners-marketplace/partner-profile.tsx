@@ -144,13 +144,7 @@ const Divider = styled.hr`
   height: 1px;
 `;
 
-export function PartnerProfile({
-  partner,
-  locale,
-}: {
-  partner: MarketplacePartner;
-  locale: string;
-}) {
+export function PartnerProfile({ partner }: { partner: MarketplacePartner }) {
   const i18n = getServerI18n();
 
   return (
@@ -162,7 +156,7 @@ export function PartnerProfile({
       <ProfileInner>
         <ContentGrid>
           <MainColumn>
-            <BackToMarketplaceLink locale={locale} />
+            <BackToMarketplaceLink />
             <PartnerProfileHeader partner={partner} />
             <PartnerProfileIntro introduction={partner.introduction} />
             {partner.skills.length > 0 && (

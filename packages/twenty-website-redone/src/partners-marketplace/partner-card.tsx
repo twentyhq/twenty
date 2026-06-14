@@ -4,9 +4,9 @@ import { IconBrandLinkedin } from '@tabler/icons-react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import Link from 'next/link';
 import { type CSSProperties } from 'react';
 
+import { LocalizedLink } from '@/platform/i18n/localized-link';
 import {
   color,
   EASING,
@@ -116,7 +116,7 @@ const PartnerName = styled.h3`
 // entire <article>. Other anchors inside the card (LinkedIn icon, View
 // profile) sit above this overlay via z-index, so each stays an independent
 // click target without illegal nested <a> elements.
-const NameLink = styled(Link)`
+const NameLink = styled(LocalizedLink)`
   color: inherit;
   text-decoration: none;
 
@@ -204,14 +204,14 @@ const CtaWrapper = styled.div`
 type PartnerCardProps = {
   partner: MarketplacePartner;
   index: number;
-  locale: string;
 };
 
-export function PartnerCard({ partner, index, locale }: PartnerCardProps) {
+export function PartnerCard({ partner, index }: PartnerCardProps) {
   const { i18n } = useLingui();
   const headingId = `partner-card-heading-${partner.slug}`;
   const style: PartnerCardStyle = { '--partner-card-index': index };
-  const profileHref = `/${locale}/partners/profile/${partner.slug}`;
+  // Unprefixed; LocalizedLink (the name link) and the Button add the locale.
+  const profileHref = `/partners/profile/${partner.slug}`;
 
   const firstGeo = partner.region[0];
   const countryLine = firstGeo

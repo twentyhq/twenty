@@ -77,7 +77,7 @@ export default async function PartnerProfilePage({
       />
       <Menu communityStats={communityStats} scheme="muted" />
       <main aria-labelledby="partner-name">
-        <PartnerProfile locale={locale} partner={partner} />
+        <PartnerProfile partner={partner} />
       </main>
     </>
   );

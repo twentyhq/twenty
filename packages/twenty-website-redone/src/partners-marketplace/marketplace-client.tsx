@@ -19,10 +19,8 @@ const Results = styled.div`
 
 export function MarketplaceClient({
   partners,
-  locale,
 }: {
   partners: readonly MarketplacePartner[];
-  locale: string;
 }) {
   const {
     criteria,
@@ -52,7 +50,7 @@ export function MarketplaceClient({
       />
       <Results>
         {filteredPartners.length > 0 ? (
-          <MarketplaceGrid partners={filteredPartners} locale={locale} />
+          <MarketplaceGrid partners={filteredPartners} />
         ) : (
           <MarketplaceEmptyState onClearFilters={clearAll} />
         )}

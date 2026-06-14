@@ -46,7 +46,7 @@ export default async function PartnersMarketplacePage({
       <main>
         <MarketplaceHeader />
         <Suspense fallback={null}>
-          <MarketplaceClient partners={partners} locale={locale} />
+          <MarketplaceClient partners={partners} />
         </Suspense>
       </main>
     </>

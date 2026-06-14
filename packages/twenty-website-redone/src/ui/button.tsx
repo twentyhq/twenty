@@ -1,7 +1,7 @@
 import { css } from '@linaria/core';
-import Link from 'next/link';
 import { type ReactNode } from 'react';
 
+import { LocalizedLink } from '@/platform/i18n/localized-link';
 import {
   EASING,
   color,
@@ -238,9 +238,11 @@ export function Button({
     );
   }
 
+  // Internal links route through LocalizedLink so an unprefixed href ("/x")
+  // carries the active locale (/fr/x), and the source locale stays unprefixed.
   return (
-    <Link {...sharedAttributes} href={href}>
+    <LocalizedLink {...sharedAttributes} href={href}>
       {inner}
-    </Link>
+    </LocalizedLink>
   );
 }
