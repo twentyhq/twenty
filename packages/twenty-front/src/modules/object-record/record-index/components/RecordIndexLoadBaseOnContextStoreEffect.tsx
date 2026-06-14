@@ -9,8 +9,7 @@ import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordIndexLoadBaseOnContextStoreEffect = () => {
-  const { loadRecordIndexStates, syncRecordIndexViewFields } =
-    useLoadRecordIndexStates();
+  const { loadRecordIndexStates } = useLoadRecordIndexStates();
   const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
   );
@@ -28,33 +27,30 @@ export const RecordIndexLoadBaseOnContextStoreEffect = () => {
   const { createDefaultViewForObject } = useCreateDefaultViewForObject();
 
   useEffect(() => {
+    if (
+      isDefined(contextStoreCurrentViewId) &&
+      loadedViewId === contextStoreCurrentViewId
+    ) {
+      return;
+    }
+
     if (!isDefined(objectMetadataItem)) {
       return;
     }
 
-    if (!isDefined(view)) {
-      createDefaultViewForObject(objectMetadataItem);
-      return;
-    }
-
-    if (loadedViewId !== contextStoreCurrentViewId) {
+    if (isDefined(view)) {
       loadRecordIndexStates(view, objectMetadataItem);
       setLoadedViewId(contextStoreCurrentViewId);
-      return;
+    } else {
+      createDefaultViewForObject(objectMetadataItem);
     }
-
-    // Re-sync record index fields when viewFields change after the initial
-    // load (e.g. arriving late via SSE while AI is still creating metadata).
-    // syncRecordIndexViewFields is idempotent, so it no-ops when unchanged.
-    syncRecordIndexViewFields(view, objectMetadataItem);
   }, [
     contextStoreCurrentViewId,
-    createDefaultViewForObject,
     loadRecordIndexStates,
     loadedViewId,
     objectMetadataItem,
-    syncRecordIndexViewFields,
     view,
+    createDefaultViewForObject,
   ]);
 
   return <></>;
