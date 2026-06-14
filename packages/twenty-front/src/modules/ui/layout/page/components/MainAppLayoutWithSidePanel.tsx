@@ -61,7 +61,10 @@ const MainAppLayoutOutlet = () => {
           key={routeSection}
           initial={{ opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -4 }}
+          // The outgoing page shares this grid cell with the incoming one, so it
+          // must not capture pointer/scroll events — including when AnimatePresence
+          // leaves a stale exit node mounted on top of the active page.
+          exit={{ opacity: 0, y: -4, pointerEvents: 'none' }}
           transition={{
             duration: APP_TO_SETTINGS_TRANSITION_DURATION_IN_SECONDS,
             ease: 'easeInOut',
