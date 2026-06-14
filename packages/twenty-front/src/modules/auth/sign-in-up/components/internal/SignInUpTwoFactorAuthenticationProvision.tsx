@@ -67,6 +67,9 @@ const StyledCopySetupKeyLink = styled.button`
   }
 `;
 
+const QRCodeComponent =
+  (QRCode as { default?: typeof QRCode }).default ?? QRCode;
+
 export const SignInUpTwoFactorAuthenticationProvision = () => {
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
@@ -98,7 +101,7 @@ export const SignInUpTwoFactorAuthenticationProvision = () => {
           </Trans>
         </StyledTextContainer>
         <StyledMainContentContainer>
-          {!qrCode ? <Loader /> : <QRCode value={qrCode} />}
+          {!qrCode ? <Loader /> : <QRCodeComponent value={qrCode} />}
           {qrCode && (
             <StyledCopySetupKeyLink onClick={handleCopySetupKey}>
               <IconCopy size={theme.icon.size.sm} />

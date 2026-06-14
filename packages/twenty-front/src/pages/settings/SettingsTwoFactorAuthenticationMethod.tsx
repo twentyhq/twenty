@@ -82,6 +82,9 @@ const StyledDivider = styled.div`
   width: 100%;
 `;
 
+const QRCodeComponent =
+  (QRCode as { default?: typeof QRCode }).default ?? QRCode;
+
 export const SettingsTwoFactorAuthenticationMethod = () => {
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
@@ -158,7 +161,7 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
                   <>
                     <StyledQRCodeWrapper>
                       <StyledQRCodeSizer>
-                        <QRCode value={qrCode} />
+                        <QRCodeComponent value={qrCode} />
                       </StyledQRCodeSizer>
                     </StyledQRCodeWrapper>
                     <StyledCopySetupKeyText>
