@@ -1,3 +1,4 @@
+import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
 import { plaintextStringSchema } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { z } from 'zod';
 
@@ -7,6 +8,6 @@ export const connectionParametersSchema = z.object({
   username: z.string().optional(),
   password: plaintextStringSchema.min(1, 'Password is required'),
   connectionSecurity: z
-    .enum(['NONE', 'STARTTLS', 'SSL_TLS'])
-    .default('SSL_TLS'),
+    .nativeEnum(EmailConnectionSecurity)
+    .default(EmailConnectionSecurity.SSL_TLS),
 });

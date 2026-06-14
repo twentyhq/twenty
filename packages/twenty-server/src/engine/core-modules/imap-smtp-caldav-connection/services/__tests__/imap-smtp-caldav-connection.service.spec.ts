@@ -3,6 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { createTransport } from 'nodemailer';
 import { type DAVClient } from 'tsdav';
 
+import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
 import { ImapSmtpCaldavValidatorService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service';
 import { ImapSmtpCaldavService } from 'src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service';
 import { type ConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
@@ -74,7 +75,7 @@ describe('ImapSmtpCaldavService', () => {
       port: 443,
       username: 'user@example.com',
       password: 'password123',
-      connectionSecurity: 'SSL_TLS',
+      connectionSecurity: EmailConnectionSecurity.SSL_TLS,
     };
 
     it('builds a CalDAV client and lists its event calendars', async () => {
@@ -116,14 +117,14 @@ describe('ImapSmtpCaldavService', () => {
       port: 587,
       username: 'user@example.com',
       password: 'password123',
-      connectionSecurity: 'STARTTLS',
+      connectionSecurity: EmailConnectionSecurity.STARTTLS,
     };
 
     it('uses implicit TLS when connectionSecurity is SSL_TLS', async () => {
       await service.testSmtpConnection('user@example.com', {
         ...params,
         port: 465,
-        connectionSecurity: 'SSL_TLS',
+        connectionSecurity: EmailConnectionSecurity.SSL_TLS,
       });
 
       expect(createTransport).toHaveBeenCalledWith(
@@ -134,7 +135,7 @@ describe('ImapSmtpCaldavService', () => {
     it('upgrades opportunistically via STARTTLS', async () => {
       await service.testSmtpConnection('user@example.com', {
         ...params,
-        connectionSecurity: 'STARTTLS',
+        connectionSecurity: EmailConnectionSecurity.STARTTLS,
       });
 
       expect(createTransport).toHaveBeenCalledWith(
@@ -145,7 +146,7 @@ describe('ImapSmtpCaldavService', () => {
     it('disables TLS when connectionSecurity is NONE', async () => {
       await service.testSmtpConnection('user@example.com', {
         ...params,
-        connectionSecurity: 'NONE',
+        connectionSecurity: EmailConnectionSecurity.NONE,
       });
 
       expect(createTransport).toHaveBeenCalledWith(

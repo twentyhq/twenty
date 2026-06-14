@@ -9,6 +9,7 @@ import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   type ConnectionParametersInput,
+  EmailConnectionSecurity,
   SaveImapSmtpCaldavAccountDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -38,15 +39,25 @@ export type ConnectionFormData = {
 } & ImapSmtpCaldavAccountInput;
 
 const DEFAULT_PROTOCOL_VALUES: Record<string, ConnectionParametersInput> = {
-  IMAP: { host: '', port: 993, password: '', connectionSecurity: 'SSL_TLS' },
+  IMAP: {
+    host: '',
+    port: 993,
+    password: '',
+    connectionSecurity: EmailConnectionSecurity.SSL_TLS,
+  },
   SMTP: {
     host: '',
     username: '',
     port: 587,
     password: '',
-    connectionSecurity: 'STARTTLS',
+    connectionSecurity: EmailConnectionSecurity.STARTTLS,
   },
-  CALDAV: { host: '', port: 443, password: '', connectionSecurity: 'SSL_TLS' },
+  CALDAV: {
+    host: '',
+    port: 443,
+    password: '',
+    connectionSecurity: EmailConnectionSecurity.SSL_TLS,
+  },
 };
 
 export const useImapSmtpCaldavConnectionForm = ({

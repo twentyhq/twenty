@@ -1,4 +1,4 @@
-import { type EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
 
 type ImapTlsOptions = {
   secure: boolean;
@@ -9,11 +9,11 @@ export const buildImapTlsOptions = (
   connectionSecurity: EmailConnectionSecurity,
 ): ImapTlsOptions => {
   switch (connectionSecurity) {
-    case 'SSL_TLS':
+    case EmailConnectionSecurity.SSL_TLS:
       return { secure: true };
-    case 'STARTTLS':
+    case EmailConnectionSecurity.STARTTLS:
       return { secure: false };
-    case 'NONE':
+    case EmailConnectionSecurity.NONE:
       return { secure: false, doSTARTTLS: false };
   }
 };

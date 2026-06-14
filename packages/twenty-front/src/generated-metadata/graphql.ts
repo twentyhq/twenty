@@ -986,7 +986,7 @@ export type ConnectedImapSmtpCaldavAccount = {
 };
 
 export type ConnectionParametersInput = {
-  connectionSecurity?: InputMaybe<Scalars['String']['input']>;
+  connectionSecurity?: InputMaybe<EmailConnectionSecurity>;
   host: Scalars['String']['input'];
   password?: InputMaybe<Scalars['String']['input']>;
   port: Scalars['Float']['input'];
@@ -1486,6 +1486,12 @@ export type EmailAccountConnectionParameters = {
   IMAP?: InputMaybe<ConnectionParametersInput>;
   SMTP?: InputMaybe<ConnectionParametersInput>;
 };
+
+export enum EmailConnectionSecurity {
+  NONE = 'NONE',
+  SSL_TLS = 'SSL_TLS',
+  STARTTLS = 'STARTTLS'
+}
 
 export type EmailPasswordResetLink = {
   __typename?: 'EmailPasswordResetLink';
@@ -1987,7 +1993,7 @@ export type ImapSmtpCaldavPublicConnectionParameters = {
 
 export type ImapSmtpCaldavPublicConnectionParams = {
   __typename?: 'ImapSmtpCaldavPublicConnectionParams';
-  connectionSecurity?: Maybe<Scalars['String']['output']>;
+  connectionSecurity?: Maybe<EmailConnectionSecurity>;
   host: Scalars['String']['output'];
   port: Scalars['Float']['output'];
   username?: Maybe<Scalars['String']['output']>;
@@ -4154,7 +4160,7 @@ export type PublicApplicationRegistration = {
 
 export type PublicConnectionParametersOutput = {
   __typename?: 'PublicConnectionParametersOutput';
-  connectionSecurity?: Maybe<Scalars['String']['output']>;
+  connectionSecurity?: Maybe<EmailConnectionSecurity>;
   host: Scalars['String']['output'];
   port: Scalars['Float']['output'];
   username?: Maybe<Scalars['String']['output']>;
@@ -7454,7 +7460,7 @@ export type GetConnectedImapSmtpCaldavAccountQueryVariables = Exact<{
 }>;
 
 
-export type GetConnectedImapSmtpCaldavAccountQuery = { __typename?: 'Query', getConnectedImapSmtpCaldavAccount: { __typename?: 'ConnectedImapSmtpCaldavAccount', id: string, handle: string, provider: string, userWorkspaceId: string, connectionParameters?: { __typename?: 'ImapSmtpCaldavPublicConnectionParameters', IMAP?: { __typename?: 'ImapSmtpCaldavPublicConnectionParams', host: string, port: number, connectionSecurity?: string | null, username?: string | null } | null, SMTP?: { __typename?: 'ImapSmtpCaldavPublicConnectionParams', host: string, username?: string | null, port: number, connectionSecurity?: string | null } | null, CALDAV?: { __typename?: 'ImapSmtpCaldavPublicConnectionParams', host: string, port: number, connectionSecurity?: string | null, username?: string | null } | null } | null } };
+export type GetConnectedImapSmtpCaldavAccountQuery = { __typename?: 'Query', getConnectedImapSmtpCaldavAccount: { __typename?: 'ConnectedImapSmtpCaldavAccount', id: string, handle: string, provider: string, userWorkspaceId: string, connectionParameters?: { __typename?: 'ImapSmtpCaldavPublicConnectionParameters', IMAP?: { __typename?: 'ImapSmtpCaldavPublicConnectionParams', host: string, port: number, connectionSecurity?: EmailConnectionSecurity | null, username?: string | null } | null, SMTP?: { __typename?: 'ImapSmtpCaldavPublicConnectionParams', host: string, username?: string | null, port: number, connectionSecurity?: EmailConnectionSecurity | null } | null, CALDAV?: { __typename?: 'ImapSmtpCaldavPublicConnectionParams', host: string, port: number, connectionSecurity?: EmailConnectionSecurity | null, username?: string | null } | null } | null } };
 
 export type MyCalendarChannelsQueryVariables = Exact<{
   connectedAccountId?: InputMaybe<Scalars['UUID']['input']>;
@@ -7466,7 +7472,7 @@ export type MyCalendarChannelsQuery = { __typename?: 'Query', myCalendarChannels
 export type MyConnectedAccountsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MyConnectedAccountsQuery = { __typename?: 'Query', myConnectedAccounts: Array<{ __typename?: 'ConnectedAccountPublicDTO', id: string, handle: string, provider: string, authFailedAt?: string | null, archivedAt?: string | null, scopes?: Array<string> | null, handleAliases?: Array<string> | null, lastSignedInAt?: string | null, userWorkspaceId: string, connectionProviderId?: string | null, name?: string | null, visibility: string, lastCredentialsRefreshedAt?: string | null, createdAt: string, updatedAt: string, connectionParameters?: { __typename?: 'PublicImapSmtpCaldavConnectionParameters', IMAP?: { __typename?: 'PublicConnectionParametersOutput', host: string, port: number, connectionSecurity?: string | null, username?: string | null } | null, SMTP?: { __typename?: 'PublicConnectionParametersOutput', host: string, port: number, connectionSecurity?: string | null, username?: string | null } | null, CALDAV?: { __typename?: 'PublicConnectionParametersOutput', host: string, username?: string | null } | null } | null }> };
+export type MyConnectedAccountsQuery = { __typename?: 'Query', myConnectedAccounts: Array<{ __typename?: 'ConnectedAccountPublicDTO', id: string, handle: string, provider: string, authFailedAt?: string | null, archivedAt?: string | null, scopes?: Array<string> | null, handleAliases?: Array<string> | null, lastSignedInAt?: string | null, userWorkspaceId: string, connectionProviderId?: string | null, name?: string | null, visibility: string, lastCredentialsRefreshedAt?: string | null, createdAt: string, updatedAt: string, connectionParameters?: { __typename?: 'PublicImapSmtpCaldavConnectionParameters', IMAP?: { __typename?: 'PublicConnectionParametersOutput', host: string, port: number, connectionSecurity?: EmailConnectionSecurity | null, username?: string | null } | null, SMTP?: { __typename?: 'PublicConnectionParametersOutput', host: string, port: number, connectionSecurity?: EmailConnectionSecurity | null, username?: string | null } | null, CALDAV?: { __typename?: 'PublicConnectionParametersOutput', host: string, username?: string | null } | null } | null }> };
 
 export type MyMessageChannelsQueryVariables = Exact<{
   connectedAccountId?: InputMaybe<Scalars['UUID']['input']>;
