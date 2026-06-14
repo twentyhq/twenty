@@ -12,6 +12,16 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { toSpliced } from '~/utils/array/toSpliced';
 import { v4 } from 'uuid';
 
+const getExtendedIds = (prevIds: string[], targetLength: number): string[] => {
+  if (targetLength <= prevIds.length) {
+    return prevIds;
+  }
+  return [
+    ...prevIds,
+    ...Array.from({ length: targetLength - prevIds.length }, () => v4()),
+  ];
+};
+
 export const ArrayFieldInput = () => {
   const { setDraftValue, draftValue, fieldDefinition } = useArrayField();
 
@@ -32,18 +42,10 @@ export const ArrayFieldInput = () => {
   if (prevArrayItems !== arrayItems) {
     setPrevArrayItems(arrayItems);
     setStableIds((prevIds) => {
-      if (arrayItems.length === prevIds.length) {
-        return prevIds;
+      if (arrayItems.length < prevIds.length) {
+        return prevIds.slice(0, arrayItems.length);
       }
-      if (arrayItems.length > prevIds.length) {
-        return [
-          ...prevIds,
-          ...Array.from({ length: arrayItems.length - prevIds.length }, () =>
-            v4(),
-          ),
-        ];
-      }
-      return prevIds.slice(0, arrayItems.length);
+      return getExtendedIds(prevIds, arrayItems.length);
     });
   }
 
@@ -56,17 +58,7 @@ export const ArrayFieldInput = () => {
   };
 
   const handleChange = (newValue: string[]) => {
-    setStableIds((prevIds) => {
-      if (newValue.length > prevIds.length) {
-        return [
-          ...prevIds,
-          ...Array.from({ length: newValue.length - prevIds.length }, () =>
-            v4(),
-          ),
-        ];
-      }
-      return prevIds;
-    });
+    setStableIds((prevIds) => getExtendedIds(prevIds, newValue.length));
 
     if (!isDefined(newValue)) {
       setDraftValue(null);
