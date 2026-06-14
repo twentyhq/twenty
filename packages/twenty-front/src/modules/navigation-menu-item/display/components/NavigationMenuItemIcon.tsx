@@ -98,11 +98,11 @@ export const NavigationMenuItemIcon = ({
   }
 
   if (navigationMenuItem.type === NavigationMenuItemType.LINK) {
-    const computedLink = getNavigationMenuItemComputedLink(
-      navigationMenuItem,
+    const computedLink = getNavigationMenuItemComputedLink({
+      item: navigationMenuItem,
       objectMetadataItems,
       views,
-    );
+    });
     return (
       <LinkIconWithLinkOverlay
         link={computedLink}
