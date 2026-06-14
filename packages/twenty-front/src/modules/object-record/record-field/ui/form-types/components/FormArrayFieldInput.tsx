@@ -105,6 +105,25 @@ export const FormArrayFieldInput = ({
   const { closeDropdown } = useCloseDropdown();
   const { openDropdown } = useOpenDropdown();
 
+  const getInitialDraftValue = () => {
+    if (isStandaloneVariableString(defaultValue)) {
+      return {
+        type: 'variable' as const,
+        value: defaultValue,
+      };
+    }
+
+    const defaultArray =
+      isDefined(defaultValue) && isNonEmptyArray(defaultValue)
+        ? defaultValue
+        : [];
+
+    return {
+      type: 'static' as const,
+      value: defaultArray.map((val) => ({ id: v4(), value: val })),
+    };
+  };
+
   const [draftValue, setDraftValue] = useState<
     | {
         type: 'static';
@@ -114,20 +133,7 @@ export const FormArrayFieldInput = ({
         type: 'variable';
         value: string;
       }
-  >(
-    isStandaloneVariableString(defaultValue)
-      ? {
-          type: 'variable',
-          value: defaultValue,
-        }
-      : {
-          type: 'static',
-          value: (isDefined(defaultValue) && isNonEmptyArray(defaultValue)
-            ? defaultValue
-            : []
-          ).map((val) => ({ id: v4(), value: val })),
-        },
-  );
+  >(getInitialDraftValue);
 
   const [newItemDraftValue, setNewItemDraftValue] = useState('');
   const [inputValue, setInputValue] = useState('');
@@ -320,6 +326,108 @@ export const FormArrayFieldInput = ({
     onChange([]);
   };
 
+  const renderInnerContent = () => {
+    if (draftValue.type !== 'static') {
+      return (
+        <VariableChipStandalone
+          rawVariableName={draftValue.value}
+          onRemove={readonly ? undefined : handleUnlinkVariable}
+        />
+      );
+    }
+
+    if (readonly) {
+      return (
+        <StyledDisplayModeReadonlyContainer>
+          {draftValue.value.length > 0 ? (
+            <ArrayDisplay value={draftValue.value.map((i) => i.value)} />
+          ) : (
+            <StyledPlaceholderContainer>
+              <FormFieldPlaceholder />
+            </StyledPlaceholderContainer>
+          )}
+        </StyledDisplayModeReadonlyContainer>
+      );
+    }
+
+    if (draftValue.value.length === 0) {
+      return (
+        <StyledInputContainer>
+          <TextInput
+            instanceId={formFieldInputInstanceId}
+            placeholder={t`Enter an item`}
+            value={newItemDraftValue}
+            copyButton={false}
+            onChange={handleFirstItemInputChange}
+            onEnter={handleFirstItemInputEnter}
+            shouldTrim={false}
+          />
+        </StyledInputContainer>
+      );
+    }
+
+    return (
+      <Dropdown
+        dropdownId={dropdownId}
+        dropdownPlacement="bottom-start"
+        dropdownOffset={{
+          y: parseSpacingValueAsNumber(theme.spacing[1]),
+        }}
+        clickableComponent={
+          <StyledDisplayModeContainer data-open={isDropdownOpen}>
+            <ArrayDisplay value={draftValue.value.map((i) => i.value)} />
+          </StyledDisplayModeContainer>
+        }
+        clickableComponentWidth="100%"
+        dropdownComponents={
+          <DropdownContent ref={containerRef}>
+            <DropdownMenuItemsContainer hasMaxHeight>
+              {draftValue.type === 'static' &&
+                draftValue.value.map((item, index) => (
+                  <ArrayFieldMenuItem
+                    key={item.id}
+                    dropdownId={`array-field-input-${instanceId}-${item.id}`}
+                    value={item.value}
+                    onEdit={() => {
+                      handleEditItem(index);
+                    }}
+                    onDelete={() => {
+                      handleDeleteItem(index);
+                    }}
+                  />
+                ))}
+            </DropdownMenuItemsContainer>
+
+            <DropdownMenuSeparator />
+
+            {isInputDisplayed ? (
+              <MultiItemBaseInput
+                instanceId={newItemInputInstanceId}
+                autoFocus
+                placeholder={placeholder}
+                value={inputValue}
+                onFocus={handleNewItemInputFocus}
+                onBlur={handleNewItemInputBlur}
+                onEscape={handleNewItemInputEscape}
+                onChange={handleNewItemInputChange}
+                onEnter={handleNewItemInputSubmit}
+                hasItem
+              />
+            ) : (
+              <DropdownMenuItemsContainer>
+                <MenuItem
+                  onClick={handleAddItemButtonClick}
+                  LeftIcon={IconPlus}
+                  text={t`Add item`}
+                />
+              </DropdownMenuItemsContainer>
+            )}
+          </DropdownContent>
+        }
+      />
+    );
+  };
+
   return (
     <FormFieldInputContainer data-testid={testId}>
       {label ? <InputLabel>{label}</InputLabel> : null}
@@ -330,97 +438,7 @@ export const FormArrayFieldInput = ({
           preventFocusStackUpdate={preventContainerFocusStackUpdate}
           hasRightElement={isDefined(VariablePicker) && !readonly}
         >
-          {draftValue.type === 'static' ? (
-            readonly ? (
-              <StyledDisplayModeReadonlyContainer>
-                {draftValue.value.length > 0 ? (
-                  <ArrayDisplay value={draftValue.value.map((i) => i.value)} />
-                ) : (
-                  <StyledPlaceholderContainer>
-                    <FormFieldPlaceholder />
-                  </StyledPlaceholderContainer>
-                )}
-              </StyledDisplayModeReadonlyContainer>
-            ) : draftValue.value.length === 0 ? (
-              <StyledInputContainer>
-                <TextInput
-                  instanceId={formFieldInputInstanceId}
-                  placeholder={t`Enter an item`}
-                  value={newItemDraftValue}
-                  copyButton={false}
-                  onChange={handleFirstItemInputChange}
-                  onEnter={handleFirstItemInputEnter}
-                  shouldTrim={false}
-                />
-              </StyledInputContainer>
-            ) : (
-              <Dropdown
-                dropdownId={dropdownId}
-                dropdownPlacement="bottom-start"
-                dropdownOffset={{
-                  y: parseSpacingValueAsNumber(theme.spacing[1]),
-                }}
-                clickableComponent={
-                  <StyledDisplayModeContainer data-open={isDropdownOpen}>
-                    <ArrayDisplay
-                      value={draftValue.value.map((i) => i.value)}
-                    />
-                  </StyledDisplayModeContainer>
-                }
-                clickableComponentWidth="100%"
-                dropdownComponents={
-                  <DropdownContent ref={containerRef}>
-                    <DropdownMenuItemsContainer hasMaxHeight>
-                      {draftValue.type === 'static' &&
-                        draftValue.value.map((item, index) => (
-                          <ArrayFieldMenuItem
-                            key={item.id}
-                            dropdownId={`array-field-input-${instanceId}-${item.id}`}
-                            value={item.value}
-                            onEdit={() => {
-                              handleEditItem(index);
-                            }}
-                            onDelete={() => {
-                              handleDeleteItem(index);
-                            }}
-                          />
-                        ))}
-                    </DropdownMenuItemsContainer>
-
-                    <DropdownMenuSeparator />
-
-                    {isInputDisplayed ? (
-                      <MultiItemBaseInput
-                        instanceId={newItemInputInstanceId}
-                        autoFocus
-                        placeholder={placeholder}
-                        value={inputValue}
-                        onFocus={handleNewItemInputFocus}
-                        onBlur={handleNewItemInputBlur}
-                        onEscape={handleNewItemInputEscape}
-                        onChange={handleNewItemInputChange}
-                        onEnter={handleNewItemInputSubmit}
-                        hasItem
-                      />
-                    ) : (
-                      <DropdownMenuItemsContainer>
-                        <MenuItem
-                          onClick={handleAddItemButtonClick}
-                          LeftIcon={IconPlus}
-                          text={t`Add item`}
-                        />
-                      </DropdownMenuItemsContainer>
-                    )}
-                  </DropdownContent>
-                }
-              />
-            )
-          ) : (
-            <VariableChipStandalone
-              rawVariableName={draftValue.value}
-              onRemove={readonly ? undefined : handleUnlinkVariable}
-            />
-          )}
+          {renderInnerContent()}
         </FormFieldInputInnerContainer>
 
         {VariablePicker && !readonly && (
