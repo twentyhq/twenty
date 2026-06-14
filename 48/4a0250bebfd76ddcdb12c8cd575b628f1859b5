@@ -1,0 +1,70 @@
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/schemas/connection-parameters.schema.ts
+  s_ff3d5b0bd294f3::t_63bba712de8628 9-11
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/utils/__tests__/map-connection-security-to-transport.util.spec.ts
+  s_ff3d5b0bd294f3::t_29fddbaca29a38 1-23
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/utils/map-connection-security-to-transport.util.ts
+  s_ff3d5b0bd294f3::t_419ae60ec281cc 1
+  s_ff3d5b0bd294f3::t_eca5bf719803b8 2-20
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connected-account.dto.ts
+  s_ff3d5b0bd294f3::t_61715ebcb25886 20-21
+  s_ff3d5b0bd294f3::t_803827013e84ac 5-6
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type.ts
+  s_ff3d5b0bd294f3::t_be4ea9ee49894c 27-30
+packages/twenty-server/src/modules/connected-account/services/imap-smtp-caldav-apis.service.spec.ts
+  s_ff3d5b0bd294f3::t_27ad0bc2d6a747 248,254,345,475,510,546,552,588,594,601,683
+packages/twenty-front/src/modules/settings/accounts/graphql/queries/getMyConnectedAccounts.ts
+  s_ff3d5b0bd294f3::t_abd3672b0e71d2 23,29
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider.ts
+  s_ff3d5b0bd294f3::t_64d98f25d476b7 56
+  s_ff3d5b0bd294f3::t_63157de0d151c6 12
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_ff3d5b0bd294f3::t_92773aea783ef2 989,1990,4157,7457,7469,8679,8681
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_ff3d5b0bd294f3::t_6726ec7f34f139 72,144
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/utils/build-public-connection-parameters.util.ts
+  s_ff3d5b0bd294f3::t_b894f83ff5e434 4-7,13
+packages/twenty-front/src/modules/settings/accounts/validation-schemas/connectionImapSmtpCalDav.ts
+  s_ff3d5b0bd294f3::t_6337a9f6ff77a3 16-18
+packages/twenty-front/src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+  s_ff3d5b0bd294f3::t_05a5d8cc23f4b4 195,199,201-202,206
+  s_ff3d5b0bd294f3::t_8a490084e1f4c7 290,294,296-298,302
+packages/twenty-server/src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto.ts
+  s_ff3d5b0bd294f3::t_bd1659f126f047 5
+  s_ff3d5b0bd294f3::t_0fd26f16b3b500 19-20
+packages/twenty-server/src/database/commands/upgrade-version-command/2-13/2-13-instance-command-slow-1781461753981-backfill-connection-security.ts
+  s_ff3d5b0bd294f3::t_cbe20bbd8d6e75 6-8,14-51,54-56,58-60
+  s_ff3d5b0bd294f3::t_67294fc6fe74a5 10-12,53,57
+  s_ff3d5b0bd294f3::t_6726ec7f34f139 1-5,9,13,52,61
+packages/twenty-front/src/modules/settings/accounts/graphql/queries/getConnectedImapSmtpCaldavAccount.ts
+  s_ff3d5b0bd294f3::t_def32614c2b488 14,21,26
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider.ts
+  s_ff3d5b0bd294f3::t_79a627e29fd2e0 97
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/services/__tests__/imap-smtp-caldav-connection.service.spec.ts
+  s_ff3d5b0bd294f3::t_dea1c0e0ec001d 119-152
+  s_ff3d5b0bd294f3::t_a31a1a72fd0a7d 77
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+  s_ff3d5b0bd294f3::t_a28daf748b9b9f 45
+  s_ff3d5b0bd294f3::t_f7741251b0c692 17
+  s_ff3d5b0bd294f3::t_988a5402f36051 118
+packages/twenty-front/src/modules/settings/accounts/hooks/useImapSmtpCaldavConnectionForm.ts
+  s_ff3d5b0bd294f3::t_3fac27af938cf0 41-49
+packages/twenty-server/src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.input.ts
+  s_ff3d5b0bd294f3::t_83557c2e260c3f 25-26
+  s_ff3d5b0bd294f3::t_8b6e585aa1e7dd 3-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "484a0250bebfd76ddcdb12c8cd575b628f1859b5",
+  "prompts": {},
+  "sessions": {
+    "s_ff3d5b0bd294f3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc6a7753-6313-4145-9c09-a0d3d40ac9aa",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
