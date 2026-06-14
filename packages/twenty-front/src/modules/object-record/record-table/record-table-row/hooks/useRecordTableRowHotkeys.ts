@@ -1,4 +1,5 @@
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
@@ -9,6 +10,7 @@ import { useFocusRecordTableCell } from '@/object-record/record-table/record-tab
 import { getRecordTableCellFocusId } from '@/object-record/record-table/record-table-cell/utils/getRecordTableCellFocusId';
 import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
 import { isAtLeastOneTableRowSelectedSelector } from '@/object-record/record-table/record-table-row/states/isAtLeastOneTableRowSelectedSelector';
+import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -131,6 +133,37 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
     callback: handleEscape,
     focusId,
     dependencies: [handleEscape],
+  });
+
+  const selectedRowIds = useAtomComponentSelectorValue(
+    selectedRowIdsComponentSelector,
+    recordTableId,
+  );
+
+  const { deleteManyRecords } = useDeleteManyRecords({
+    objectNameSingular,
+  });
+
+  const handleDeleteSelectedRecords = async () => {
+    if (!isAtLeastOneRecordSelected || selectedRowIds.length === 0) {
+      return;
+    }
+
+    await deleteManyRecords({
+      recordIdsToDelete: selectedRowIds,
+    });
+
+    resetTableRowSelection();
+  };
+
+  useHotkeysOnFocusedElement({
+    keys: [Key.Delete, Key.Backspace],
+    callback: handleDeleteSelectedRecords,
+    focusId,
+    dependencies: [handleDeleteSelectedRecords],
+    options: {
+      enableOnFormTags: false,
+    },
   });
 
   const { selectAllRows } = useSelectAllRows();

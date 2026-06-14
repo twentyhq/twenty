@@ -22,4 +22,10 @@ export const KEYBOARD_SHORTCUTS_TABLE: Shortcut[] = [
     firstHotKey: 'esc',
     areSimultaneous: true,
   },
+  {
+    label: 'Delete selected records',
+    type: ShortcutType.Table,
+    firstHotKey: 'del',
+    areSimultaneous: true,
+  },
 ];
