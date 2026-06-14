@@ -155,37 +155,64 @@ export class SyncStandardUiCapabilityFlagsCommand extends ActiveOrSuspendedWorks
       .filter((field) => !field.isUIEditable)
       .map((field) => field.id);
 
-    if (fieldIdsToSetEditable.length > 0) {
-      await this.coreDataSource.query(
-        `UPDATE "core"."fieldMetadata" SET "isUIEditable" = true, "updatedAt" = now() WHERE "id" = ANY($1)`,
-        [fieldIdsToSetEditable],
-      );
-    }
+    // All writes for a workspace run in one transaction so a mid-run failure
+    // can't leave the flags partially applied.
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
-    if (fieldIdsToSetNonEditable.length > 0) {
-      await this.coreDataSource.query(
-        `UPDATE "core"."fieldMetadata" SET "isUIEditable" = false, "updatedAt" = now() WHERE "id" = ANY($1)`,
-        [fieldIdsToSetNonEditable],
-      );
-    }
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    for (const objectToUpdate of objectsToUpdate) {
-      await this.coreDataSource.query(
-        `UPDATE "core"."objectMetadata" SET "isUICreatable" = $1, "isUIEditable" = $2, "updatedAt" = now() WHERE "id" = $3`,
-        [
-          objectToUpdate.isUICreatable,
-          objectToUpdate.isUIEditable,
-          objectToUpdate.id,
-        ],
-      );
+    try {
+      if (fieldIdsToSetEditable.length > 0) {
+        await queryRunner.query(
+          `UPDATE "core"."fieldMetadata" SET "isUIEditable" = true, "updatedAt" = now() WHERE "id" = ANY($1)`,
+          [fieldIdsToSetEditable],
+        );
+      }
+
+      if (fieldIdsToSetNonEditable.length > 0) {
+        await queryRunner.query(
+          `UPDATE "core"."fieldMetadata" SET "isUIEditable" = false, "updatedAt" = now() WHERE "id" = ANY($1)`,
+          [fieldIdsToSetNonEditable],
+        );
+      }
+
+      for (const objectToUpdate of objectsToUpdate) {
+        await queryRunner.query(
+          `UPDATE "core"."objectMetadata" SET "isUICreatable" = $1, "isUIEditable" = $2, "updatedAt" = now() WHERE "id" = $3`,
+          [
+            objectToUpdate.isUICreatable,
+            objectToUpdate.isUIEditable,
+            objectToUpdate.id,
+          ],
+        );
+      }
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
 
     // The raw writes bypass the metadata cache, so invalidate the flat maps the
-    // app reads these flags from.
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'flatObjectMetadataMaps',
-      'flatFieldMetadataMaps',
-    ]);
+    // app reads these flags from (after the transaction has committed). The
+    // flags are already persisted, so a cache hiccup must not fail the upgrade —
+    // a stale cache self-heals on the next flush / version bump.
+    try {
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+      ]);
+    } catch (cacheError) {
+      this.logger.warn(
+        `Synced UI capability flags for workspace ${workspaceId} but failed to invalidate the metadata cache: ${
+          cacheError instanceof Error ? cacheError.message : String(cacheError)
+        }`,
+      );
+    }
 
     this.logger.log(
       `Successfully synced UI capability flags on ${objectsToUpdate.length} standard object(s) and ${fieldsToUpdate.length} standard field(s) for workspace ${workspaceId}`,
