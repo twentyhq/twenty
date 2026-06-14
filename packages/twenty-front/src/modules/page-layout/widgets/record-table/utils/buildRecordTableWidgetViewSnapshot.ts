@@ -33,8 +33,11 @@ export const buildRecordTableWidgetViewSnapshot = (
     isActive: true,
   };
 
-  const eligibleFields = objectMetadataItem.fields.filter(
-    filterFieldsForRecordTableViewCreation,
+  const eligibleFields = objectMetadataItem.fields.filter((field) =>
+    filterFieldsForRecordTableViewCreation(
+      field,
+      objectMetadataItem.labelIdentifierFieldMetadataId,
+    ),
   );
 
   const sortedFields = eligibleFields.toSorted(
