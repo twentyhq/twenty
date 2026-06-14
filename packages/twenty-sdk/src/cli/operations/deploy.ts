@@ -2,7 +2,6 @@ import fs from 'fs';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
-import { promptForReauthentication } from '@/cli/utilities/auth/reauth-helper';
 import { runSafe } from '@/cli/utilities/run-safe';
 import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
 
@@ -41,25 +40,6 @@ const innerAppDeploy = async (
   const uploadResult = await apiService.uploadAppTarball({ tarballBuffer });
 
   if (!uploadResult.success) {
-    const { authValid } = await apiService.validateAuth();
-
-    if (uploadResult.isAuthError || !authValid) {
-      const remoteName = ConfigService.getActiveRemote();
-
-      console.error(`Authentication failed on remote "${remoteName}"`);
-      const outcome = await promptForReauthentication(remoteName);
-
-      if (outcome === 'reauthenticated') {
-        const retryResult = await apiService.uploadAppTarball({
-          tarballBuffer,
-        });
-
-        if (retryResult.success) {
-          return { success: true, data: retryResult.data };
-        }
-      }
-    }
-
     return {
       success: false,
       error: {
