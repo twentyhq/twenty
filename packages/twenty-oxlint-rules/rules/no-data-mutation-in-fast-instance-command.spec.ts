@@ -27,10 +27,19 @@ ruleTester.run(RULE_NAME, rule, {
       filename: FAST_FILE,
       code: `class C { async up(q) { await q.query('ALTER TABLE "core"."x" ADD COLUMN "updatedAt" timestamptz'); } }`,
     },
-    // Rollback backfills live in down() and are allowed.
+    // A read-only CTE has no data mutation.
+    {
+      filename: FAST_FILE,
+      code: `class C { async up(q) { await q.query(\`WITH recent AS (SELECT "id" FROM "core"."x") SELECT count(*) FROM recent\`); } }`,
+    },
+    // Rollback DML lives in down() and is allowed (incl. via a CTE).
     {
       filename: FAST_FILE,
       code: `class C { async down(q) { await q.query(\`UPDATE "core"."x" SET "y" = false WHERE "z" = true\`); } }`,
+    },
+    {
+      filename: FAST_FILE,
+      code: `class C { async down(q) { await q.query(\`WITH ids AS (SELECT "id" FROM "core"."x") UPDATE "core"."x" SET "y" = true\`); } }`,
     },
     // A slow command is the correct home for a data migration.
     {
@@ -60,6 +69,18 @@ ruleTester.run(RULE_NAME, rule, {
     {
       filename: FAST_FILE,
       code: `class C { async up(q) { await q.query('DELETE FROM "core"."x" WHERE "t" = 1'); } }`,
+      errors: [{ messageId: 'dataMutationInFastInstanceCommand' }],
+    },
+    // Data mutation moved into a helper called by up() is still forbidden.
+    {
+      filename: FAST_FILE,
+      code: `class C { async backfill(q) { await q.query('DELETE FROM "core"."x" WHERE 1 = 1'); } }`,
+      errors: [{ messageId: 'dataMutationInFastInstanceCommand' }],
+    },
+    // CTE-wrapped data mutation in up().
+    {
+      filename: FAST_FILE,
+      code: `class C { async up(q) { await q.query(\`WITH ids AS (SELECT "id" FROM "core"."x") UPDATE "core"."x" SET "y" = false\`); } }`,
       errors: [{ messageId: 'dataMutationInFastInstanceCommand' }],
     },
   ],

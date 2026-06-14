@@ -7,6 +7,8 @@ const FAST_INSTANCE_COMMAND_SEGMENT = 'instance-command-fast-';
 const SKIPPED_FILE_REGEX = /\.(spec|test)\.ts$/;
 
 const DATA_MUTATION_STATEMENT_REGEX = /^(UPDATE|INSERT|DELETE|MERGE)\b/i;
+const CTE_DATA_MUTATION_REGEX =
+  /^WITH\b[\s\S]*\b(UPDATE|INSERT|DELETE|MERGE)\b/i;
 
 const isFastInstanceCommandFile = (filename: string): boolean => {
   const markerIndex = filename.indexOf(UPGRADE_COMMAND_MARKER);
@@ -28,14 +30,14 @@ const isFastInstanceCommandFile = (filename: string): boolean => {
   return basename.includes(FAST_INSTANCE_COMMAND_SEGMENT);
 };
 
-const isInsideUpMethod = (node: any): boolean => {
+const isInsideDownMethod = (node: any): boolean => {
   let current = node.parent;
 
   while (current) {
     if (
       current.type === 'MethodDefinition' &&
       current.key?.type === 'Identifier' &&
-      current.key.name === 'up'
+      current.key.name === 'down'
     ) {
       return true;
     }
@@ -64,7 +66,10 @@ const findDataMutationKeyword = (sql: string): string | null => {
     .replace(/\/\*[\s\S]*?\*\//g, '');
 
   for (const statement of withoutComments.split(';')) {
-    const match = statement.trim().match(DATA_MUTATION_STATEMENT_REGEX);
+    const trimmed = statement.trim();
+    const match =
+      trimmed.match(DATA_MUTATION_STATEMENT_REGEX) ??
+      trimmed.match(CTE_DATA_MUTATION_REGEX);
 
     if (match) {
       return match[1].toUpperCase();
@@ -79,12 +84,12 @@ export const rule = defineRule({
     type: 'problem',
     docs: {
       description:
-        'Disallow data mutations (UPDATE/INSERT/DELETE) in the up() of a fast instance command; backfills belong in a slow instance command',
+        'Disallow data mutations (UPDATE/INSERT/DELETE) in a fast instance command outside down(); backfills belong in a slow instance command',
     },
     schema: [],
     messages: {
       dataMutationInFastInstanceCommand:
-        "Fast instance command up() must not run data mutations (found '{{ keyword }}'). A bulk write held in the same transaction as ADD/ALTER COLUMN keeps an ACCESS EXCLUSIVE lock and can stall reads on hot tables during the deploy. Move the backfill into a slow instance command's runDataMigration().",
+        "Fast instance commands must not run data mutations outside down() (found '{{ keyword }}'). A bulk write held in the same transaction as ADD/ALTER COLUMN keeps an ACCESS EXCLUSIVE lock and can stall reads during the deploy. Put backfills in a slow instance command's runDataMigration(); rollback writes belong in down().",
     },
   },
   create: (context) => {
@@ -104,7 +109,7 @@ export const rule = defineRule({
           return;
         }
 
-        if (!isInsideUpMethod(node)) {
+        if (isInsideDownMethod(node)) {
           return;
         }
 
