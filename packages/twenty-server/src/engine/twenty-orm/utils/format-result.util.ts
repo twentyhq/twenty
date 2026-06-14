@@ -1,6 +1,6 @@
 import { isPlainObject } from '@nestjs/common/utils/shared.utils';
 
-import { isNonEmptyString, isNull } from '@sniptt/guards';
+import { isNull } from '@sniptt/guards';
 import {
   FieldActorSource,
   FieldMetadataType,
@@ -23,6 +23,7 @@ import {
   type FieldMapsForObject,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { formatCompositeFieldValue } from 'src/engine/twenty-orm/utils/format-composite-field-value.util';
 import { getCompositeFieldMetadataCollection } from 'src/engine/twenty-orm/utils/get-composite-field-metadata-collection';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
@@ -290,40 +291,6 @@ function transformCompositeFieldNullValue(
       compositePropertyName
     ] ?? value
   );
-}
-
-export function formatCompositeFieldValue(
-  value: unknown,
-  compositePropertyName: string,
-  fieldMetadata: FlatFieldMetadata,
-) {
-  switch (fieldMetadata.type) {
-    case FieldMetadataType.CURRENCY: {
-      if (compositePropertyName === 'amountMicros') {
-        if (isNonEmptyString(value)) {
-          return parseInt(value);
-        }
-
-        return value;
-      }
-      break;
-    }
-    case FieldMetadataType.ADDRESS: {
-      if (
-        compositePropertyName === 'addressLat' ||
-        compositePropertyName === 'addressLng'
-      ) {
-        if (isNonEmptyString(value)) {
-          return parseFloat(value);
-        }
-
-        return value;
-      }
-      break;
-    }
-  }
-
-  return value;
 }
 
 /**

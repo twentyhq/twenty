@@ -1,7 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
-import { formatCompositeFieldValue } from 'src/engine/twenty-orm/utils/format-result.util';
+import { formatCompositeFieldValue } from 'src/engine/twenty-orm/utils/format-composite-field-value.util';
 
 describe('formatCompositeFieldValue', () => {
   const addressFieldMetadata = getFlatFieldMetadataMock({
