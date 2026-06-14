@@ -4,7 +4,6 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import NextImage from 'next/image';
 import { useState } from 'react';
 
 import { ArrowLeft, ArrowRight } from '@/icons';
@@ -20,6 +19,7 @@ import {
 } from '@/tokens';
 import { Body, Eyebrow, Heading, IconButton, MarkedDivider } from '@/ui';
 
+import { PartnerPortrait } from './partner-portrait';
 import { type PartnerTestimonialRecord } from './partner-testimonials.data';
 
 const CarouselGrid = styled.div`
@@ -185,12 +185,9 @@ export function PartnerTestimonialsCarousel({
       <LeftColumn>
         <AuthorCard>
           <PortraitFrame>
-            <NextImage
+            <PartnerPortrait
               alt={i18n._(msg`Portrait of ${authorName}`)}
-              fill
-              sizes="328px"
               src={current.author.portraitSrc}
-              style={{ objectFit: 'cover' }}
             />
           </PortraitFrame>
           <AuthorMeta>

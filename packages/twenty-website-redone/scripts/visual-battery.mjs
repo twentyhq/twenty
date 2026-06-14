@@ -214,6 +214,16 @@ const VISUALS = {
     animated: false,
     interactive: true,
   },
+  // The testimonial author portrait: white dashes (hueless) on the dark panel;
+  // the cursor shifts the band and adds a light (interactive).
+  'partner-portrait': {
+    slotSelector: '[data-illustration="partner-portrait"]',
+    path: '/partners',
+    hueRangeDegrees: null,
+    minCoverage: 0.02,
+    animated: false,
+    interactive: true,
+  },
 };
 
 const MOTION_DIFF_FLOOR = 0.005;
