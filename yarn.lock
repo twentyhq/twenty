@@ -16272,10 +16272,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@preact/signals-core@npm:^1.8.0":
-  version: 1.12.2
-  resolution: "@preact/signals-core@npm:1.12.2"
-  checksum: 10c0/25ccf7639522179452ee4636290cd70573048c613bc1fffaa5f5deecd0a750611c170c954769ba3c71fca97aa4b951edcdd3a2b2c96b172c87e4ba3bc81ddccd
+"@preact/signals-core@npm:^1.14.0":
+  version: 1.14.2
+  resolution: "@preact/signals-core@npm:1.14.2"
+  checksum: 10c0/898e6e22a5d2a11bd3d5b109c8d9bacff0e9bc9f23c01455901b7feab8c441dc03fdd53cfd7b5f9275b0df052fcaeb8c8928f537cebb190d9e02a6f2a3ac441e
   languageName: node
   linkType: hard
 
@@ -16499,26 +16499,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quilted/events@npm:^2.1.3":
-  version: 2.1.3
-  resolution: "@quilted/events@npm:2.1.3"
+"@quilted/events@npm:^2.1.4":
+  version: 2.1.4
+  resolution: "@quilted/events@npm:2.1.4"
   dependencies:
-    "@preact/signals-core": "npm:^1.8.0"
-  checksum: 10c0/7f0906c7f15d956f0e9aaa7e736c97b0a130e7cf651efb3b64ffc5868b352197d029acfd55787a36abf41064608421c5653de958b1490e6fb00948a942ee829d
+    "@preact/signals-core": "npm:^1.14.0"
+  checksum: 10c0/847791e117cf26b59eebfa4a61817236c09b31ad096ba9fd0ef40136d2f1b1be71a5d90f91dbbbc21e5f94139ab86369f3ecf6cb38aa34ca7011ac484a1a8dde
   languageName: node
   linkType: hard
 
 "@quilted/threads@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "@quilted/threads@npm:4.0.1"
+  version: 4.0.2
+  resolution: "@quilted/threads@npm:4.0.2"
   dependencies:
-    "@quilted/events": "npm:^2.1.3"
+    "@quilted/events": "npm:^2.1.4"
   peerDependencies:
-    "@preact/signals-core": ^1.8.0
+    "@preact/signals-core": ^1.14.0
   peerDependenciesMeta:
     "@preact/signals-core":
       optional: true
-  checksum: 10c0/6156b008e82aeb41aac101777f61da17911e75380acb11fa823155828fa51f4d1f7563b801ffdbb72acff64915be9204e404d5fd8c739a03d90f6593ae75caed
+  checksum: 10c0/5e7f22279f5b63fe7199ccebdbd1a78da74331029423fb6d6fe39a39d1632fef6f3d88c4b19039bdfad6589851310743745467a349d9ff31f080e17e5f48aba4
   languageName: node
   linkType: hard
 
