@@ -75,7 +75,7 @@ export const useLoadRecordIndexStates = () => {
 
   const syncRecordIndexViewFields = useCallback(
     (
-      view: View,
+      view: Pick<View, 'id' | 'viewFields'>,
       objectMetadataItem: EnrichedObjectMetadataItem,
       options?: { skipGlobalIndexStates?: boolean },
     ) => {
