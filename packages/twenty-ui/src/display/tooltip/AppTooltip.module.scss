@@ -1,0 +1,62 @@
+.positioner {
+  // the tooltip never intercepts pointer events unless clickable,
+  // like react-tooltip's core styles
+  pointer-events: none;
+  z-index: var(--t-last-layer-z-index);
+}
+
+.tooltip {
+  backdrop-filter: var(--t-blur-strong);
+  background-color: var(--t-color-transparent-gray11);
+  border-radius: var(--t-border-radius-sm);
+  box-shadow: var(--t-box-shadow-light);
+  color: var(--t-gray-scale-gray1);
+  font-size: var(--t-font-size-sm);
+  font-weight: var(--t-font-weight-regular);
+  overflow: visible;
+  padding: var(--t-spacing-2);
+  word-break: break-word;
+  width: max-content;
+  max-width: 100%;
+  // react-tooltip showed tooltips at 0.9 opacity with 0.15s fades
+  opacity: 0.9;
+  will-change: opacity;
+  transition: opacity 0.15s ease-out;
+
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+  }
+
+  &[data-ending-style] {
+    transition-timing-function: ease-in;
+  }
+}
+
+.clickable {
+  pointer-events: auto;
+}
+
+.arrow {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: inherit;
+  transform: rotate(45deg);
+
+  &[data-side='top'] {
+    bottom: -4px;
+  }
+
+  &[data-side='bottom'] {
+    top: -4px;
+  }
+
+  &[data-side='left'] {
+    right: -4px;
+  }
+
+  &[data-side='right'] {
+    left: -4px;
+  }
+}

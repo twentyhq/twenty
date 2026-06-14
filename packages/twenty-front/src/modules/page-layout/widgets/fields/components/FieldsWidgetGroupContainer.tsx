@@ -1,8 +1,14 @@
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
-import { IconChevronDown } from 'twenty-ui/display';
-import { AnimatedExpandableContainer, Section } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconChevronDown } from 'twenty-ui-deprecated/display';
+import {
+  AnimatedExpandableContainer,
+  Section,
+} from 'twenty-ui-deprecated/layout';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledHeader = styled.header`
   align-items: center;

@@ -1,14 +1,10 @@
-import { styled } from '@linaria/react';
+import { clsx } from 'clsx';
 import React, { type ReactNode } from 'react';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type ButtonPosition, type ButtonProps } from './Button/Button';
-import { themeCssVariables } from '@ui/theme-constants';
-import { isDefined } from 'twenty-shared/utils';
 
-const StyledButtonGroupContainer = styled.div`
-  border-radius: ${themeCssVariables.border.radius.md};
-  display: flex;
-`;
+import styles from './ButtonGroup.module.scss';
 
 export type ButtonGroupProps = Partial<
   Pick<ButtonProps, 'variant' | 'size' | 'accent'>
@@ -25,7 +21,7 @@ export const ButtonGroup = ({
   accent,
 }: ButtonGroupProps) => {
   return (
-    <StyledButtonGroupContainer className={className}>
+    <div className={clsx(styles.container, className)}>
       {React.Children.map(children, (child, index) => {
         if (!React.isValidElement(child)) return null;
 
@@ -39,6 +35,7 @@ export const ButtonGroup = ({
           position = 'middle';
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const additionalProps: any = { position, variant, accent, size };
 
         if (isDefined(variant)) {
@@ -55,6 +52,6 @@ export const ButtonGroup = ({
 
         return React.cloneElement(child, additionalProps);
       })}
-    </StyledButtonGroupContainer>
+    </div>
   );
 };

@@ -11,6 +11,8 @@ export enum EmailingDomainDriverExceptionCode {
   INSUFFICIENT_PERMISSIONS = 'INSUFFICIENT_PERMISSIONS',
   CONFIGURATION_ERROR = 'CONFIGURATION_ERROR',
   SENDING_SUSPENDED = 'SENDING_SUSPENDED',
+  ALL_RECIPIENTS_SUPPRESSED = 'ALL_RECIPIENTS_SUPPRESSED',
+  UNSUBSCRIBE_NOT_READY = 'UNSUBSCRIBE_NOT_READY',
   UNKNOWN = 'UNKNOWN',
 }
 
@@ -26,6 +28,10 @@ const getEmailingDomainDriverExceptionUserFriendlyMessage = (
       return msg`Email domain configuration error.`;
     case EmailingDomainDriverExceptionCode.SENDING_SUSPENDED:
       return msg`Sending is currently suspended for this email domain.`;
+    case EmailingDomainDriverExceptionCode.ALL_RECIPIENTS_SUPPRESSED:
+      return msg`All recipients are suppressed for this email domain.`;
+    case EmailingDomainDriverExceptionCode.UNSUBSCRIBE_NOT_READY:
+      return msg`Marketing sending is on hold until the unsubscribe domain is verified.`;
     case EmailingDomainDriverExceptionCode.TEMPORARY_ERROR:
     case EmailingDomainDriverExceptionCode.UNKNOWN:
       return STANDARD_ERROR_MESSAGE;

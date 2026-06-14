@@ -17,9 +17,12 @@ import { useContext, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, IconSearch } from 'twenty-ui/display';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title, IconSearch } from 'twenty-ui-deprecated/display';
+import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldTypeFormValues } from '~/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect';
 
@@ -58,6 +61,11 @@ const StyledCardContainer = styled.div`
 
 const StyledSearchInputContainer = styled.div`
   width: 100%;
+`;
+
+const StyledFieldTypeIconContainer = styled.span`
+  display: flex;
+  opacity: 0.64;
 `;
 
 export const SettingsObjectNewFieldSelector = ({
@@ -161,10 +169,12 @@ export const SettingsObjectNewFieldSelector = ({
                           <SettingsCard
                             key={key}
                             Icon={
-                              <config.Icon
-                                size={theme.icon.size.xl}
-                                stroke={theme.icon.stroke.sm}
-                              />
+                              <StyledFieldTypeIconContainer>
+                                <config.Icon
+                                  size={theme.icon.size.xl}
+                                  stroke={theme.icon.stroke.sm}
+                                />
+                              </StyledFieldTypeIconContainer>
                             }
                             title={config.label}
                           />

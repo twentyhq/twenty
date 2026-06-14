@@ -5,7 +5,7 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { useMutation } from '@apollo/client/react';
 import { UpdateApiKeyDocument } from '~/generated-metadata/graphql';
 

@@ -4,7 +4,7 @@ import { type FieldAddressDraftValue } from '@/object-record/record-field/ui/typ
 
 export const useFocusManagement = (
   inputRefs: {
-    [key in keyof FieldAddressDraftValue]?: RefObject<HTMLInputElement>;
+    [key in keyof FieldAddressDraftValue]?: RefObject<HTMLInputElement | null>;
   },
   internalValue: FieldAddressDraftValue,
   onTab?: (newAddress: FieldAddressDraftValue) => void,

@@ -52,6 +52,10 @@ describe('UserWorkspaceService', () => {
             exists: jest.fn(),
             findOne: jest.fn(),
             findOneOrFail: jest.fn(),
+            manager: {
+              connection: { driver: { options: { type: 'postgres' } } },
+            },
+            metadata: { columns: [] },
           },
         },
         {

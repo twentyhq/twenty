@@ -1,17 +1,13 @@
-import { styled } from '@linaria/react';
 import { Pill } from '@ui/components';
 
-const StyledSoonPillContainer = styled.span`
-  display: flex;
-  margin-left: auto;
-`;
+import styles from './ButtonSoon.module.scss';
 
 type ButtonSoonProps = {
   label?: string;
 };
 
 export const ButtonSoon = ({ label = 'Soon' }: ButtonSoonProps) => (
-  <StyledSoonPillContainer>
+  <span className={styles.soonPillContainer}>
     <Pill label={label} />
-  </StyledSoonPillContainer>
+  </span>
 );

@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlJobStartDate',
   label: 'Job Start Date',
   description: 'Current job start date returned by People Data Labs.',
+  icon: 'IconCalendarTime',
   isNullable: true,
 });

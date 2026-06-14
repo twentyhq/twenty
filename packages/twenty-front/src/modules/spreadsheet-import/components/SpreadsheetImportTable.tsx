@@ -1,9 +1,11 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-// @ts-expect-error  // Todo: remove usage of react-data-grid
-import DataGrid, { type DataGridProps } from 'react-data-grid';
+import { DataGrid, type DataGridProps } from 'react-data-grid';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledDataGridContainer = styled.div<{ headerRowHeight?: number }>`
   --rdg-background-color: ${themeCssVariables.background.primary};
@@ -24,6 +26,8 @@ const StyledDataGridContainer = styled.div<{ headerRowHeight?: number }>`
   --rdg-warning-cell-background-color: ${themeCssVariables.color.orange};
   --row-selected-hover-background-color: ${themeCssVariables.background
     .secondary};
+  flex: 1;
+  min-height: 0;
 
   > * {
     border: none;
@@ -113,7 +117,7 @@ type SpreadsheetImportTableProps<Data> = Pick<
   | 'rows'
 > &
   Partial<
-    Pick<DataGridProps<Data>, 'onRowClick' | 'components' | 'onRowsChange'>
+    Pick<DataGridProps<Data>, 'onCellClick' | 'renderers' | 'onRowsChange'>
   > & {
     className?: string;
     rowHeight?: number;
@@ -123,12 +127,12 @@ type SpreadsheetImportTableProps<Data> = Pick<
 export const SpreadsheetImportTable = <Data,>({
   className,
   columns,
-  components,
+  renderers,
   headerRowHeight,
   rowKeyGetter,
   rows,
   onRowsChange,
-  onRowClick,
+  onCellClick,
   onSelectedRowsChange,
   selectedRows,
 }: SpreadsheetImportTableProps<Data>) => {
@@ -140,7 +144,7 @@ export const SpreadsheetImportTable = <Data,>({
   if (!rows?.length || !columns?.length) return null;
 
   return (
-    <StyledDataGridContainer headerRowHeight={headerRowHeight}>
+    <StyledDataGridContainer headerRowHeight={headerRowHeight ?? undefined}>
       <DataGrid
         direction={rtl ? 'rtl' : 'ltr'}
         rowHeight={40}
@@ -151,8 +155,8 @@ export const SpreadsheetImportTable = <Data,>({
           rowKeyGetter,
           onRowsChange,
           rows,
-          components,
-          onRowClick,
+          renderers,
+          onCellClick,
           onSelectedRowsChange,
           selectedRows,
         }}

@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { In } from 'typeorm';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -10,6 +12,10 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -27,11 +33,12 @@ import {
   WorkflowStatus,
   type WorkflowWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { WorkflowActionType } from 'twenty-shared/workflow';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
+import { getWorkflowCommandMenuItemLabel } from 'src/modules/workflow/workflow-trigger/utils/get-workflow-command-menu-item-label.util';
 
 export type ObjectMetadataInfo = {
   flatObjectMetadata: FlatObjectMetadata;
@@ -98,6 +105,77 @@ export class WorkflowCommonWorkspaceService {
     }
 
     return { ...workflowVersion, trigger: workflowVersion.trigger };
+  }
+
+  async syncCommandMenuItemLabelForWorkflows(
+    workflowIds: string[],
+    authContext: WorkspaceAuthContext,
+  ): Promise<void> {
+    const workspaceId = authContext.workspace?.id;
+
+    if (!isDefined(workspaceId) || workflowIds.length === 0) {
+      return;
+    }
+
+    const workflows =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          const workflowRepository =
+            await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+              workspaceId,
+              'workflow',
+              { shouldBypassPermissionChecks: true },
+            );
+
+          return workflowRepository.find({
+            where: { id: In(workflowIds) },
+          });
+        },
+        authContext,
+      );
+
+    await Promise.all(
+      workflows.map((workflow) =>
+        this.syncCommandMenuItemLabelForWorkflow(workflow, workspaceId),
+      ),
+    );
+  }
+
+  private async syncCommandMenuItemLabelForWorkflow(
+    workflow: WorkflowWorkspaceEntity,
+    workspaceId: string,
+  ): Promise<void> {
+    if (!isDefined(workflow.lastPublishedVersionId)) {
+      return;
+    }
+
+    const existingCommandMenuItem =
+      await this.commandMenuItemService.findByWorkflowVersionId(
+        workflow.lastPublishedVersionId,
+        workspaceId,
+      );
+
+    if (!isDefined(existingCommandMenuItem)) {
+      return;
+    }
+
+    const label = getWorkflowCommandMenuItemLabel(workflow);
+
+    if (
+      existingCommandMenuItem.label === label &&
+      existingCommandMenuItem.shortLabel === label
+    ) {
+      return;
+    }
+
+    await this.commandMenuItemService.update(
+      {
+        id: existingCommandMenuItem.id,
+        label,
+        shortLabel: label,
+      },
+      workspaceId,
+    );
   }
 
   async getFlatEntityMaps(workspaceId: string): Promise<{
@@ -387,10 +465,22 @@ export class WorkflowCommonWorkspaceService {
             continue;
           }
 
-          await this.logicFunctionFromSourceService.deleteOneWithSource({
-            id: logicFunctionId,
-            workspaceId,
-          });
+          await this.logicFunctionFromSourceService
+            .deleteOneWithSource({
+              id: logicFunctionId,
+              workspaceId,
+            })
+            .catch((error) => {
+              if (
+                error instanceof LogicFunctionException &&
+                error.code ===
+                  LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
+              ) {
+                return;
+              }
+
+              throw error;
+            });
         }
       }
     }

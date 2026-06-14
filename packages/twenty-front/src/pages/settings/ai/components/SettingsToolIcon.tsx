@@ -14,8 +14,11 @@ import {
   IconTrash,
   useIcons,
   type IconComponent,
-} from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 type ApplicationInfo = {
   name: string;
@@ -148,7 +151,7 @@ export const SettingsToolIcon = ({
           <OperationIcon
             size="12px"
             stroke={theme.icon.stroke.md}
-            color={themeCssVariables.grayScale.gray10}
+            color={theme.font.color.tertiary}
           />
         </StyledOperationOverlay>
       </StyledCompositeContainer>
@@ -172,5 +175,11 @@ export const SettingsToolIcon = ({
     );
   }
 
-  return <MainIcon size={16} />;
+  return (
+    <MainIcon
+      size={16}
+      stroke={theme.icon.stroke.md}
+      color={theme.font.color.tertiary}
+    />
+  );
 };

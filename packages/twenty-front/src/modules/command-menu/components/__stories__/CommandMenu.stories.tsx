@@ -44,7 +44,7 @@ import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconDotsVertical, IconPlus } from 'twenty-ui/display';
+import { IconDotsVertical, IconPlus } from 'twenty-ui-deprecated/display';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 
 const openTimeout = 50;
@@ -273,6 +273,10 @@ export const NoResultsSearchFallback: Story = {
 export const SubPageNavigation: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+
+    // Let the side panel finish opening before interacting, otherwise the
+    // click can land mid-transition and the sub-page navigation is dropped.
+    await sleep(openTimeout);
 
     const objectButton = await canvas.findByText('Object');
     expect(objectButton).toBeVisible();

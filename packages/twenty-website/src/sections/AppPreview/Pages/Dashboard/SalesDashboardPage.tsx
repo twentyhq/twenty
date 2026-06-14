@@ -1,40 +1,93 @@
-import type { DashboardChartImage, DashboardPageDefinition } from '../../types';
-import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import { VISUAL_TOKENS } from '../../Shared/utils/app-preview-tokens';
+import { IconTrendingDown, IconTrendingUp } from '@tabler/icons-react';
 
-const APP_FONT = VISUAL_TOKENS.font.family;
-const CARD_BACKGROUND = VISUAL_TOKENS.background.secondary;
-const CARD_BORDER = VISUAL_TOKENS.border.color.light;
+import type { DashboardKpi, DashboardPageDefinition } from '../../types';
+import { theme } from '@/theme';
+import {
+  SkeletonBar,
+  SkeletonBlock,
+} from '../../Shared/components/PreviewSkeleton';
+import { APP_FONT, COLORS } from '../../Shared/utils/app-preview-theme';
+import {
+  DashboardBarChart,
+  DashboardDonutChart,
+  DashboardLineChart,
+} from './DashboardCharts';
+
+const TREND_UP_COLOR = '#53b9ab';
+const TREND_DOWN_COLOR = '#eb8e90';
 
 const DashboardGrid = styled.div`
   display: grid;
   gap: 8px;
   grid-template-areas:
-    'metrics'
-    'visits'
-    'revenue'
-    'distribution';
+    'kpis'
+    'line'
+    'bar'
+    'donut';
   grid-template-columns: minmax(0, 1fr);
-  min-width: 0;
+  height: 100%;
+  min-height: 0;
   padding: 8px;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     grid-template-areas:
-      'metrics visits visits'
-      'revenue revenue distribution';
-    grid-template-columns: minmax(168px, 252px) minmax(0, 1fr) minmax(
-        168px,
-        252px
+      'kpis line line'
+      'bar bar donut';
+    grid-template-columns: minmax(176px, 248px) minmax(0, 1fr) minmax(
+        176px,
+        248px
       );
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
   }
 `;
 
-const MetricStack = styled.div`
-  align-self: stretch;
+const WidgetCard = styled.div`
+  animation: dashboardWidgetAppear 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  background: ${COLORS.backgroundSecondary};
+  border: 1px solid ${COLORS.borderLight};
+  border-radius: 8px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  overflow: hidden;
+  padding: 8px;
+
+  @keyframes dashboardWidgetAppear {
+    from {
+      opacity: 0;
+      transform: translateY(6px) scale(0.99);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+`;
+
+const WidgetTitle = styled.span`
+  color: ${COLORS.text};
+  flex-shrink: 0;
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  overflow: hidden;
+  padding: 0 2px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const KpiStack = styled.div`
   display: grid;
   gap: 8px;
-  grid-area: metrics;
+  grid-area: kpis;
   min-width: 0;
 
   @media (min-width: ${theme.breakpoints.md}px) {
@@ -42,76 +95,87 @@ const MetricStack = styled.div`
   }
 `;
 
-const MetricCard = styled.div`
-  background: ${CARD_BACKGROUND};
-  border: 1px solid ${CARD_BORDER};
-  border-radius: 8px;
+const KpiCard = styled(WidgetCard)`
+  gap: 6px;
+  justify-content: center;
+`;
+
+const KpiValueRow = styled.div`
+  align-items: baseline;
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  gap: 8px;
   justify-content: space-between;
-  min-height: 92px;
-  padding: 12px;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    min-height: 0;
-  }
 `;
 
-const MetricTitle = styled.span`
-  color: ${VISUAL_TOKENS.font.color.primary};
+const KpiValue = styled.span`
+  color: ${COLORS.text};
   font-family: ${APP_FONT};
-  font-size: 13px;
-  font-weight: ${theme.font.weight.medium};
-  line-height: 1.4;
-`;
-
-const MetricValue = styled.span`
-  color: ${VISUAL_TOKENS.font.color.primary};
-  font-family: ${APP_FONT};
-  font-size: 24px;
+  font-size: 25px;
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.1;
 `;
 
-const VisitsChart = styled.div`
-  grid-area: visits;
-  min-width: 0;
+const KpiTrend = styled.span<{ $up: boolean }>`
+  align-items: center;
+  color: ${({ $up }) => ($up ? TREND_UP_COLOR : TREND_DOWN_COLOR)};
+  display: inline-flex;
+  flex-shrink: 0;
+  font-family: ${APP_FONT};
+  font-size: 12px;
+  font-weight: 500;
+  gap: 2px;
 `;
 
-const RevenueChart = styled.div`
-  grid-area: revenue;
-  min-width: 0;
+const LineCard = styled(WidgetCard)`
+  grid-area: line;
 `;
 
-const DistributionChart = styled.div`
-  grid-area: distribution;
-  min-width: 0;
+const BarCard = styled(WidgetCard)`
+  grid-area: bar;
 `;
 
-const ChartImage = styled.img`
-  display: block;
-  height: auto;
-  max-width: 100%;
-  width: 100%;
+const DonutCard = styled(WidgetCard)`
+  grid-area: donut;
 `;
 
-function DashboardChart({
-  chart,
-  className,
-}: {
-  chart: DashboardChartImage;
-  className?: string;
-}) {
+function KpiWidget({ kpi }: { kpi: DashboardKpi }) {
+  const isUp = kpi.trend?.direction === 'up';
+
   return (
-    <ChartImage
-      alt={chart.alt}
-      className={className}
-      height={chart.height}
-      loading="eager"
-      src={chart.src}
-      width={chart.width}
-    />
+    <KpiCard>
+      <WidgetTitle>{kpi.title}</WidgetTitle>
+      <KpiValueRow>
+        <KpiValue>{kpi.value}</KpiValue>
+        {kpi.trend ? (
+          <KpiTrend $up={isUp}>
+            {isUp ? (
+              <IconTrendingUp size={14} stroke={2} />
+            ) : (
+              <IconTrendingDown size={14} stroke={2} />
+            )}
+            {kpi.trend.value}
+          </KpiTrend>
+        ) : null}
+      </KpiValueRow>
+    </KpiCard>
+  );
+}
+
+function KpiSkeleton() {
+  return (
+    <KpiCard>
+      <SkeletonBar $height={11} $width="55%" />
+      <SkeletonBar $height={20} $width="45%" />
+    </KpiCard>
+  );
+}
+
+function ChartSkeleton() {
+  return (
+    <>
+      <SkeletonBar $height={11} $width="48%" />
+      <SkeletonBlock />
+    </>
   );
 }
 
@@ -120,28 +184,60 @@ export function SalesDashboardPage({
 }: {
   page: DashboardPageDefinition;
 }) {
+  const { kpis, lineChart, barChart, donutChart, generating } = page.dashboard;
+
   return (
     <DashboardGrid>
-      <MetricStack>
-        {page.dashboard.metrics.map((metric) => (
-          <MetricCard key={metric.id}>
-            <MetricTitle>{metric.title}</MetricTitle>
-            <MetricValue>{metric.value}</MetricValue>
-          </MetricCard>
-        ))}
-      </MetricStack>
+      {kpis.length > 0 ? (
+        <KpiStack>
+          {kpis.map((kpi) =>
+            generating ? (
+              <KpiSkeleton key={kpi.id} />
+            ) : (
+              <KpiWidget key={kpi.id} kpi={kpi} />
+            ),
+          )}
+        </KpiStack>
+      ) : null}
 
-      <VisitsChart>
-        <DashboardChart chart={page.dashboard.visitsChart} />
-      </VisitsChart>
+      {lineChart ? (
+        <LineCard>
+          {generating ? (
+            <ChartSkeleton />
+          ) : (
+            <>
+              <WidgetTitle>{lineChart.title}</WidgetTitle>
+              <DashboardLineChart data={lineChart} />
+            </>
+          )}
+        </LineCard>
+      ) : null}
 
-      <RevenueChart>
-        <DashboardChart chart={page.dashboard.revenueChart} />
-      </RevenueChart>
+      {barChart ? (
+        <BarCard>
+          {generating ? (
+            <ChartSkeleton />
+          ) : (
+            <>
+              <WidgetTitle>{barChart.title}</WidgetTitle>
+              <DashboardBarChart data={barChart} />
+            </>
+          )}
+        </BarCard>
+      ) : null}
 
-      <DistributionChart>
-        <DashboardChart chart={page.dashboard.distributionChart} />
-      </DistributionChart>
+      {donutChart ? (
+        <DonutCard>
+          {generating ? (
+            <ChartSkeleton />
+          ) : (
+            <>
+              <WidgetTitle>{donutChart.title}</WidgetTitle>
+              <DashboardDonutChart data={donutChart} />
+            </>
+          )}
+        </DonutCard>
+      ) : null}
     </DashboardGrid>
   );
 }

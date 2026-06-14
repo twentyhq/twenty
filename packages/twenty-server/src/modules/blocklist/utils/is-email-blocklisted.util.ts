@@ -1,3 +1,5 @@
+import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
+
 export const isEmailBlocklisted = (
   channelHandle: string[],
   email: string | null | undefined,
@@ -7,11 +9,15 @@ export const isEmailBlocklisted = (
     return false;
   }
 
+  const domain = getDomainFromEmail(email);
+
   return blocklist.some((item) => {
     if (item.startsWith('@')) {
-      const domain = email.split('@')[1];
+      const bareDomain = item.slice(1);
 
-      return domain === item.slice(1) || domain.endsWith(`.${item.slice(1)}`);
+      return (
+        domain === bareDomain || (domain?.endsWith(`.${bareDomain}`) ?? false)
+      );
     }
 
     return email === item;

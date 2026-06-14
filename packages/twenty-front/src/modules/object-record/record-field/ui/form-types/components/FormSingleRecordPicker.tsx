@@ -18,8 +18,11 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useCallback, useContext, useId } from 'react';
 import { CustomError, isDefined, isValidUuid } from 'twenty-shared/utils';
-import { IconChevronDown, IconForbid } from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconChevronDown, IconForbid } from 'twenty-ui-deprecated/display';
+import {
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
@@ -55,6 +58,7 @@ export type FormSingleRecordPickerProps = {
   defaultValue?: RecordId | Variable | null;
   onChange: (value: RecordId | Variable | null) => void;
   onClear?: () => void;
+  onCreate?: (searchInput?: string) => void | Promise<void>;
   objectNameSingulars: string[];
   disabled?: boolean;
   testId?: string;
@@ -67,6 +71,7 @@ export const FormSingleRecordPicker = ({
   objectNameSingulars,
   onChange,
   onClear,
+  onCreate,
   disabled,
   testId,
   VariablePicker,
@@ -131,6 +136,11 @@ export const FormSingleRecordPicker = ({
     } else {
       onChange(selectedMorphItem.recordId);
     }
+    closeDropdown(dropdownId);
+  };
+
+  const handleCreateRecord = async (searchInput?: string) => {
+    await onCreate?.(searchInput);
     closeDropdown(dropdownId);
   };
 
@@ -222,6 +232,7 @@ export const FormSingleRecordPicker = ({
                 EmptyIcon={IconForbid}
                 emptyLabel={t`No record`}
                 onCancel={() => closeDropdown(dropdownId)}
+                onCreate={isDefined(onCreate) ? handleCreateRecord : undefined}
                 onMorphItemSelected={handleMorphItemSelected}
                 objectNameSingulars={objectNameSingulars}
                 recordPickerInstanceId={dropdownId}

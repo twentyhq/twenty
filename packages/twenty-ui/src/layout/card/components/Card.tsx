@@ -1,23 +1,8 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from '@ui/theme-constants';
-import { type ComponentPropsWithoutRef } from 'react';
+import { clsx } from 'clsx';
+import { type ComponentPropsWithoutRef, type CSSProperties } from 'react';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
-const StyledCard = styled.div<{
-  fullWidth?: boolean;
-  rounded?: boolean;
-  backgroundColor?: string;
-}>`
-  background-color: ${({ backgroundColor }) =>
-    backgroundColor ?? 'transparent'};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${({ rounded }) =>
-    rounded
-      ? themeCssVariables.border.radius.md
-      : themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.secondary};
-  overflow: hidden;
-  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
-`;
+import styles from './Card.module.scss';
 
 type CardProps = ComponentPropsWithoutRef<'div'> & {
   fullWidth?: boolean;
@@ -31,18 +16,26 @@ export const Card = ({
   fullWidth,
   rounded,
   backgroundColor,
+  style,
   ...rest
 }: CardProps) => {
   return (
-    <StyledCard
-      className={className}
-      fullWidth={fullWidth}
-      rounded={rounded}
-      backgroundColor={backgroundColor}
+    <div
+      className={clsx(styles.card, className)}
+      data-full-width={fullWidth || undefined}
+      data-rounded={rounded || undefined}
+      style={
+        isDefined(backgroundColor)
+          ? ({
+              ...style,
+              '--card-background-color': backgroundColor,
+            } as CSSProperties)
+          : style
+      }
       // oxlint-disable-next-line react/jsx-props-no-spreading
       {...rest}
     >
       {children}
-    </StyledCard>
+    </div>
   );
 };

@@ -3,8 +3,8 @@ import { RecordGroupDefinitionType } from '@/object-record/record-group/types/Re
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui/navigation';
-import { Tag } from 'twenty-ui/components';
+import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { Tag } from 'twenty-ui-deprecated/components';
 
 const StyledMenuItemContainer = styled.div`
   width: calc(100% - 2 * var(--horizontal-padding));

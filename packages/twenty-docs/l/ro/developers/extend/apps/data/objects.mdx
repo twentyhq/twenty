@@ -86,6 +86,17 @@ export default defineObject({
 **Câmpurile de bază sunt adăugate automat.** Când definiți un obiect personalizat, Twenty creează pentru dvs. câmpuri standard precum `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` și `deletedAt`. Nu trebuie să le declarați în tabloul `fields` — doar câmpurile dvs. personalizate. Puteți suprascrie un câmp implicit declarând unul cu același nume, dar acest lucru este rareori o idee bună.
 </Note>
 
+## Valori implicite
+
+Valorile implicite de tip șir literal trebuie să fie încadrate în ghilimele simple **în interiorul** șirului — `defaultValue: "'Draft'"`, nu `defaultValue: "Draft"`. De aceea câmpul `status` de mai sus folosește `` `'${PostCardStatus.DRAFT}'` ``.
+
+Șirurile fără ghilimele sunt rezervate pentru valorile implicite calculate, evaluate atunci când este creată o înregistrare:
+
+* `'uuid'` — generează un UUID (pentru câmpurile `UUID`)
+* `'now'` — marcajul temporal curent (pentru câmpurile `DATE_TIME`)
+
+Aceeași convenție se aplică și subcâmpurilor de tip șir de caractere ale valorilor implicite compuse (de ex. `{ source: "'MANUAL'" }` pe un câmp `ACTOR`) și valorilor `SELECT`/`MULTI_SELECT`. O valoare implicită literală de tip șir de caractere lăsată neîncadrată în ghilimele generează un avertisment atunci când aplicația este construită.
+
 ## Ce urmează
 
 * **Conectați acest obiect la altele** — consultați [Relații](/l/ro/developers/extend/apps/data/relations) pentru modelul de relație bidirecțională.

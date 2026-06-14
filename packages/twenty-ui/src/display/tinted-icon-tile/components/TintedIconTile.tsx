@@ -4,7 +4,7 @@ import { getIconTileColorShades } from '@ui/display/tinted-icon-tile/utils/getIc
 import { DEFAULT_THEME_COLOR_FALLBACK } from '@ui/theme';
 import { ThemeContext } from '@ui/theme-constants';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 export type TintedIconTileProps = {
   Icon: IconComponent;

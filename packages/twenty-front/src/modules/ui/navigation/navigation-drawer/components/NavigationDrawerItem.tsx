@@ -10,10 +10,10 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ReactNode, useContext } from 'react';
+import { type JSX, type ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { Pill } from 'twenty-ui/components';
+import { Pill } from 'twenty-ui-deprecated/components';
 import {
   AppTooltip,
   type IconComponent,
@@ -23,16 +23,16 @@ import {
   TintedIconTile,
   TooltipDelay,
   TooltipPosition,
-} from 'twenty-ui/display';
+} from 'twenty-ui-deprecated/display';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/theme-constants';
 import {
   type TriggerEventType,
   useMouseDownNavigation,
-} from 'twenty-ui/utilities';
+} from 'twenty-ui-deprecated/utilities';
 const DEFAULT_INDENTATION_LEVEL = 1;
 
 export type NavigationDrawerItemIndentationLevel = 1 | 2;
@@ -205,7 +205,7 @@ const StyledIcon = styled.div`
 
 const StyledIconBackgroundTile = styled.div`
   align-items: center;
-  background-color: ${themeCssVariables.background.tertiary};
+  background-color: ${themeCssVariables.grayScale.gray3};
   border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-shrink: 0;

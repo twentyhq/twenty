@@ -25,18 +25,17 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
-import { Tag } from 'twenty-ui/components';
 import {
   H2Title,
   IconClockHour8,
   IconHistory,
-  IconLock,
   IconMail,
   IconTrash,
-} from 'twenty-ui/display';
-import { Card, Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+} from 'twenty-ui-deprecated/display';
+import { Card, Section } from 'twenty-ui-deprecated/layout';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
+import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -190,14 +189,7 @@ export const SettingsSecuritySettings = () => {
             <H2Title
               title={t`SSO`}
               description={t`Configure an SSO connection`}
-              adornment={
-                <Tag
-                  text={t`Enterprise`}
-                  color="transparent"
-                  Icon={IconLock}
-                  variant="border"
-                />
-              }
+              adornment={<OrganizationAdornment />}
             />
             <SettingsSSOIdentitiesProvidersListCard />
           </Section>
@@ -246,14 +238,7 @@ export const SettingsSecuritySettings = () => {
           <H2Title
             title={t`Audit Logs`}
             description={t`Configure how long audit logs are retained`}
-            adornment={
-              <Tag
-                text={t`Enterprise`}
-                color="transparent"
-                Icon={IconLock}
-                variant="border"
-              />
-            }
+            adornment={<OrganizationAdornment />}
           />
           {hasEnterpriseAccess ? (
             <Card rounded>

@@ -1,32 +1,6 @@
-import { styled } from '@linaria/react';
-import React from 'react';
-import { themeCssVariables } from '@ui/theme-constants';
+import { clsx } from 'clsx';
 
-const StyledContent = styled.div<{
-  isVerticallyCentered?: boolean;
-  isHorizontallyCentered?: boolean;
-  noPadding?: boolean;
-  overflowHidden?: boolean;
-  gap?: number;
-  contentPadding?: number;
-}>`
-  align-items: ${({ isVerticallyCentered }) =>
-    isVerticallyCentered ? 'center' : 'stretch'};
-  display: flex;
-  flex: 1 1 0%;
-  flex-direction: column;
-  gap: ${({ gap }) =>
-    gap !== undefined ? `var(--t-spacing-${gap})` : 'unset'};
-  justify-content: ${({ isHorizontallyCentered }) =>
-    isHorizontallyCentered ? 'center' : 'flex-start'};
-  overflow: ${({ overflowHidden }) => (overflowHidden ? 'hidden' : 'visible')};
-  padding: ${({ noPadding, contentPadding }) => {
-    if (noPadding === true) return '0';
-    if (contentPadding !== undefined)
-      return `var(--t-spacing-${contentPadding})`;
-    return themeCssVariables.spacing[10];
-  }};
-`;
+import styles from './ModalContent.module.scss';
 
 export type ModalContentProps = React.PropsWithChildren & {
   isVerticallyCentered?: boolean;
@@ -46,14 +20,25 @@ export const ModalContent = ({
   gap,
   contentPadding,
 }: ModalContentProps) => (
-  <StyledContent
-    isVerticallyCentered={isVerticallyCentered}
-    isHorizontallyCentered={isHorizontallyCentered}
-    noPadding={noPadding}
-    overflowHidden={overflowHidden}
-    gap={gap}
-    contentPadding={contentPadding}
+  <div
+    className={clsx(
+      styles.content,
+      isVerticallyCentered && styles.verticallyCentered,
+      isHorizontallyCentered && styles.horizontallyCentered,
+      overflowHidden && styles.overflowHidden,
+      contentPadding !== undefined && styles.withContentPadding,
+      noPadding && styles.noPadding,
+    )}
+    style={
+      {
+        gap: gap !== undefined ? `var(--t-spacing-${gap})` : undefined,
+        '--modal-content-padding':
+          contentPadding !== undefined
+            ? `var(--t-spacing-${contentPadding})`
+            : undefined,
+      } as React.CSSProperties
+    }
   >
     {children}
-  </StyledContent>
+  </div>
 );

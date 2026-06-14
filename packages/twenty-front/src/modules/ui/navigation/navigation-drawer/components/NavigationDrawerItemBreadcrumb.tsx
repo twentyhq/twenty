@@ -1,6 +1,9 @@
 import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { styled } from '@linaria/react';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  themeCssVariables,
+} from 'twenty-ui-deprecated/theme-constants';
 
 export type NavigationDrawerItemBreadcrumbProps = {
   state?: NavigationDrawerSubItemState;
@@ -37,13 +40,13 @@ const StyledSecondaryFullVerticalBar = styled.div<{ darker: boolean }>`
       ? themeCssVariables.font.color.tertiary
       : themeCssVariables.border.color.strong};
 
-  height: 28px;
+  height: calc(${themeCssVariables.spacing[7]} + 1px);
   position: relative;
   top: -17px;
   width: 1px;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    height: ${themeCssVariables.spacing[8]};
+    height: calc(${themeCssVariables.spacing[8]} + 1px);
   }
 `;
 

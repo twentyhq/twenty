@@ -1,7 +1,7 @@
 import { CHART_CONFIGURATION_SETTING_LABELS } from '@/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
 import { type ChartSettingsItem } from '@/side-panel/pages/page-layout/types/ChartSettingsGroup';
-import { IconTextCaption } from 'twenty-ui/display';
+import { IconTextCaption } from 'twenty-ui-deprecated/display';
 
 export const SHOW_LEGEND_SETTING: ChartSettingsItem = {
   isBoolean: true,

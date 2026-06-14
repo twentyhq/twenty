@@ -1,7 +1,9 @@
 import { FieldType, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS, defineField } from 'twenty-sdk/define';
 
+export const OPPORTUNITY_DESIGN_DOC_STATUS_FIELD_ID = 'cc6b8a59-f860-493f-8b9a-f138c078fbf1';
+
 export default defineField({
-  universalIdentifier: 'cc6b8a59-f860-493f-8b9a-f138c078fbf1',
+  universalIdentifier: OPPORTUNITY_DESIGN_DOC_STATUS_FIELD_ID,
   objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.universalIdentifier,
   type: FieldType.SELECT,
   name: 'designDocStatus',

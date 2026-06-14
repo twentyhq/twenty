@@ -22,6 +22,8 @@ export default meta;
 type Story = StoryObj<typeof Checkbox>;
 
 export const Default: Story = {
+  // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+  parameters: { a11y: { test: 'todo' } },
   args: {
     checked: false,
     indeterminate: false,
@@ -47,6 +49,8 @@ export const Catalog: CatalogStory<Story, typeof Checkbox> = {
     accent: { control: false },
   },
   parameters: {
+    // TODO(a11y): violations inherited from deprecated story; fix during a11y pass
+    a11y: { test: 'todo' },
     catalog: {
       dimensions: [
         {

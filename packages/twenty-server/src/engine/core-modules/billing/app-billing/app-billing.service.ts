@@ -3,6 +3,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type ChargeDto } from 'src/engine/core-modules/billing/app-billing/dtos/charge.dto';
+import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -52,13 +53,15 @@ export class AppBillingService {
     let periodStart: Date | undefined;
 
     if (this.billingService.isBillingEnabled()) {
-      const {
-        billingSubscription: { currentPeriodStart },
-      } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'billingSubscription',
-      ]);
+      const { currentBillingSubscription } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'currentBillingSubscription',
+        ]);
 
-      periodStart = currentPeriodStart;
+      periodStart =
+        currentBillingSubscription === NO_BILLING_SUBSCRIPTION
+          ? undefined
+          : currentBillingSubscription.currentPeriodStart;
     }
 
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(

@@ -246,7 +246,6 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
               .filter((item) => item.showInDrawer)
               .map((item, index) => {
                 const IconComponent = SOCIAL_ICONS[item.icon];
-                if (!IconComponent) return null;
 
                 return (
                   <React.Fragment key={item.href}>

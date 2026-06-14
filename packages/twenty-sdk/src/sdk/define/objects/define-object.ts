@@ -1,5 +1,6 @@
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
+import { getFieldDefaultValueWarnings } from '@/sdk/define/fields/get-field-default-value-warnings';
 import { validateFields } from '@/sdk/define/fields/validate-fields';
 import { type ObjectConfig } from '@/sdk/define/objects/object-config';
 import { isDefined } from 'twenty-shared/utils';
@@ -44,8 +45,11 @@ export const defineObject: DefineEntity<ObjectConfig> = (config) => {
     );
   }
 
+  const warnings = getFieldDefaultValueWarnings(config.fields);
+
   return createValidationResult({
     config,
     errors,
+    warnings,
   });
 };

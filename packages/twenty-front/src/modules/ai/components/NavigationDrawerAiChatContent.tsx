@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
 import { AiChatThreadFilterDropdown } from '@/ai/components/AiChatThreadFilterDropdown';
@@ -27,8 +27,7 @@ const StyledThreadList = styled.div`
   flex: 1;
   flex-direction: column;
   min-height: 0;
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[0]};
-  width: calc(100% - ${themeCssVariables.spacing[2]});
+  width: 100%;
 `;
 
 const StyledSectionsContainer = styled.div`

@@ -1,8 +1,9 @@
-import { styled } from '@linaria/react';
-import { motion } from 'framer-motion';
+import { Radio as RadioPrimitive } from '@base-ui/react/radio';
+import { RadioGroup as RadioGroupPrimitive } from '@base-ui/react/radio-group';
+import { clsx } from 'clsx';
 import * as React from 'react';
 
-import { themeCssVariables } from '@ui/theme-constants';
+import styles from './Radio.module.scss';
 import { RadioGroup } from './RadioGroup';
 
 export enum RadioSize {
@@ -14,100 +15,6 @@ export enum LabelPosition {
   Left = 'left',
   Right = 'right',
 }
-
-const StyledContainer = styled.div<{ labelPosition?: LabelPosition }>`
-  ${({ labelPosition }) =>
-    labelPosition === LabelPosition.Left
-      ? `
-    flex-direction: row-reverse;
-  `
-      : `
-    flex-direction: row;
-  `};
-  align-items: center;
-  display: inline-flex;
-`;
-
-type RadioInputProps = {
-  'radio-size'?: RadioSize;
-};
-
-const StyledRadioInputBase = styled.input<RadioInputProps>`
-  -webkit-appearance: none;
-  appearance: none;
-  background-color: transparent;
-  border: 1px solid ${themeCssVariables.font.color.secondary};
-  border-radius: ${themeCssVariables.border.radius.rounded};
-  height: ${({ 'radio-size': radioSize }) =>
-    radioSize === RadioSize.Large ? '18px' : '16px'};
-  margin: 0;
-  margin-left: 3px;
-  position: relative;
-  width: ${({ 'radio-size': radioSize }) =>
-    radioSize === RadioSize.Large ? '18px' : '16px'};
-
-  :hover {
-    background-color: ${({ checked }) => {
-      if (!checked) {
-        return themeCssVariables.background.tertiary;
-      }
-      return '';
-    }};
-    outline: 4px solid
-      ${({ checked }) => {
-        if (!checked) {
-          return themeCssVariables.background.tertiary;
-        }
-        return themeCssVariables.color.transparent.blue2;
-      }};
-  }
-
-  &:checked {
-    background-color: ${themeCssVariables.color.blue};
-    border: none;
-    &::after {
-      background-color: ${themeCssVariables.grayScale.gray1};
-      border-radius: 50%;
-      content: '';
-      height: ${({ 'radio-size': radioSize }) =>
-        radioSize === RadioSize.Large ? '8px' : '6px'};
-      left: 50%;
-      position: absolute;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      width: ${({ 'radio-size': radioSize }) =>
-        radioSize === RadioSize.Large ? '8px' : '6px'};
-    }
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.12;
-  }
-`;
-
-const StyledRadioInput = motion.create(StyledRadioInputBase);
-
-type LabelProps = {
-  disabled?: boolean;
-  labelPosition?: LabelPosition;
-};
-
-const StyledLabel = styled.label<LabelProps>`
-  color: ${themeCssVariables.font.color.primary};
-  cursor: pointer;
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  margin-left: ${({ labelPosition }) =>
-    labelPosition === LabelPosition.Right
-      ? themeCssVariables.spacing[2]
-      : '0px'};
-  margin-right: ${({ labelPosition }) =>
-    labelPosition === LabelPosition.Left
-      ? themeCssVariables.spacing[2]
-      : '0px'};
-  opacity: ${({ disabled }) => (disabled ? 0.32 : 1)};
-`;
 
 export type RadioProps = {
   checked?: boolean;
@@ -135,40 +42,51 @@ export const Radio = ({
   size = RadioSize.Small,
   value,
 }: RadioProps) => {
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onChange?.(event);
-    onCheckedChange?.(event.target.checked);
-  };
-
   const optionId = React.useId();
 
+  // 'on' mimics the native input value default when neither value nor label is set.
+  const radioValue = value || label || 'on';
+
   return (
-    <StyledContainer className={className} labelPosition={labelPosition}>
-      <StyledRadioInput
-        type="radio"
+    <RadioGroupPrimitive
+      className={clsx(
+        styles.container,
+        labelPosition === LabelPosition.Left && styles.containerLabelLeft,
+        className,
+      )}
+      name={name}
+      value={checked === undefined ? undefined : checked ? radioValue : ''}
+      onValueChange={(_newValue, eventDetails) => {
+        const inputElement = eventDetails.event
+          .target as HTMLInputElement | null;
+        onChange?.(
+          eventDetails.event as unknown as React.ChangeEvent<HTMLInputElement>,
+        );
+        onCheckedChange?.(inputElement?.checked ?? true);
+      }}
+    >
+      <RadioPrimitive.Root
         id={optionId}
-        name={name}
-        data-testid="input-radio"
-        tabIndex={-1}
-        checked={checked}
-        value={value || label}
-        radio-size={size}
+        value={radioValue}
         disabled={disabled}
-        onChange={handleChange}
-        initial={{ scale: 0.95 }}
-        animate={{ scale: checked ? 1.05 : 0.95 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+        data-testid="input-radio"
+        className={clsx(styles.radio, styles[size])}
       />
       {label && (
-        <StyledLabel
+        <label
           htmlFor={optionId}
-          labelPosition={labelPosition}
-          disabled={disabled}
+          className={clsx(
+            styles.label,
+            labelPosition === LabelPosition.Left
+              ? styles.labelLeft
+              : styles.labelRight,
+          )}
+          data-disabled={disabled || undefined}
         >
           {label}
-        </StyledLabel>
+        </label>
       )}
-    </StyledContainer>
+    </RadioGroupPrimitive>
   );
 };
 

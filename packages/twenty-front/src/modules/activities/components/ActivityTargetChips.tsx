@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { type ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 type ActivityTargetChipsProps = {
   activityTargetObjectRecords: ActivityTargetWithTargetRecord[];
