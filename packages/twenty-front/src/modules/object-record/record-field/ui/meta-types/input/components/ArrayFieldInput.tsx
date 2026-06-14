@@ -5,10 +5,22 @@ import { ArrayFieldMenuItem } from '@/object-record/record-field/ui/meta-types/i
 import { MultiItemFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInput';
 import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
 import { arrayFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/arrayFieldValueSchema';
-import { useContext, useMemo } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { toSpliced } from '~/utils/array/toSpliced';
+import { v4 } from 'uuid';
+
+const getExtendedIds = (prevIds: string[], targetLength: number): string[] => {
+  if (targetLength <= prevIds.length) {
+    return prevIds;
+  }
+  return [
+    ...prevIds,
+    ...Array.from({ length: targetLength - prevIds.length }, () => v4()),
+  ];
+};
 
 export const ArrayFieldInput = () => {
   const { setDraftValue, draftValue, fieldDefinition } = useArrayField();
@@ -17,10 +29,28 @@ export const ArrayFieldInput = () => {
     FieldInputEventContext,
   );
 
-  const arrayItems = useMemo<Array<string>>(
-    () => (Array.isArray(draftValue) ? draftValue : []),
-    [draftValue],
+  const arrayItems = useMemo<Array<string>>(() => {
+    if (Array.isArray(draftValue)) {
+      return draftValue;
+    }
+    return [];
+  }, [draftValue]);
+
+  const [stableIds, setStableIds] = useState<string[]>(() =>
+    arrayItems.map(() => v4()),
   );
+  const [prevArrayItems, setPrevArrayItems] = useState(arrayItems);
+
+  if (prevArrayItems !== arrayItems) {
+    setPrevArrayItems(arrayItems);
+    setStableIds((prevIds) => {
+      if (arrayItems.length < prevIds.length) {
+        return prevIds.slice(0, arrayItems.length);
+      }
+      return getExtendedIds(prevIds, arrayItems.length);
+    });
+  }
+
   const parseStringArrayToArrayValue = (arrayItems: string[]) => {
     const parseResponse = arrayFieldValueSchema.safeParse(arrayItems);
 
@@ -30,7 +60,11 @@ export const ArrayFieldInput = () => {
   };
 
   const handleChange = (newValue: string[]) => {
-    if (!isDefined(newValue)) setDraftValue(null);
+    setStableIds((prevIds) => getExtendedIds(prevIds, newValue.length));
+
+    if (!isDefined(newValue)) {
+      setDraftValue(null);
+    }
 
     const nextValue = parseStringArrayToArrayValue(newValue);
 
@@ -73,11 +107,14 @@ export const ArrayFieldInput = () => {
       fieldMetadataType={FieldMetadataType.ARRAY}
       renderItem={({ value, index, handleEdit, handleDelete }) => (
         <ArrayFieldMenuItem
-          key={index}
-          dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${index}`}
+          key={stableIds[index] || index}
+          dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${stableIds[index] || index}`}
           value={value}
           onEdit={handleEdit}
-          onDelete={handleDelete}
+          onDelete={() => {
+            setStableIds((prevIds) => toSpliced(prevIds, index, 1));
+            handleDelete();
+          }}
         />
       )}
       maxItemCount={maxNumberOfValues}
