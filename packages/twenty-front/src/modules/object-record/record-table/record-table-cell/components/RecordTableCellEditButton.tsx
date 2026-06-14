@@ -45,15 +45,23 @@ export const RecordTableCellEditButton = () => {
       : CoreObjectNameSingular.Task,
   });
 
-  const mainButtonIcon = isFirstColumn
-    ? IconArrowUpRight
-    : isNoteTargetField
-      ? IconNotes
-      : isTaskTargetField
-        ? IconCheckbox
-        : isDefined(customButtonIcon)
-          ? customButtonIcon
-          : IconPencil;
+  const getMainButtonIcon = () => {
+    if (isFirstColumn) {
+      return IconArrowUpRight;
+    }
+    if (isNoteTargetField) {
+      return IconNotes;
+    }
+    if (isTaskTargetField) {
+      return IconCheckbox;
+    }
+    if (isDefined(customButtonIcon)) {
+      return customButtonIcon;
+    }
+    return IconPencil;
+  };
+
+  const mainButtonIcon = getMainButtonIcon();
 
   const handleMainButtonClick = () => {
     if (isActivityTargetOnNonActivityObject) {

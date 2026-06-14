@@ -38,12 +38,15 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
 
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
-  outline: ${({ showInteractiveStyle, isRecordTableRowActive }) =>
-    isRecordTableRowActive
-      ? 'none'
-      : showInteractiveStyle
-        ? `1px solid ${themeCssVariables.font.color.extraLight}`
-        : `1px solid ${themeCssVariables.border.color.medium}`};
+  outline: ${({ showInteractiveStyle, isRecordTableRowActive }) => {
+    if (isRecordTableRowActive) {
+      return 'none';
+    }
+    if (showInteractiveStyle) {
+      return `1px solid ${themeCssVariables.font.color.extraLight}`;
+    }
+    return `1px solid ${themeCssVariables.border.color.medium}`;
+  }};
   outline-offset: -1px;
 
   user-select: none;
