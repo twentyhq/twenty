@@ -2229,7 +2229,7 @@ type PublicConnectionParametersOutput {
   host: String!
   port: Float!
   username: String
-  secure: Boolean
+  connectionSecurity: String
 }
 
 type PublicImapSmtpCaldavConnectionParameters {
@@ -2584,7 +2584,7 @@ type ImapSmtpCaldavPublicConnectionParams {
   host: String!
   port: Float!
   username: String
-  secure: Boolean
+  connectionSecurity: String
 }
 
 type ImapSmtpCaldavPublicConnectionParameters {
@@ -4539,7 +4539,7 @@ input ConnectionParametersInput {
   port: Float!
   username: String
   password: String
-  secure: Boolean
+  connectionSecurity: String
 }
 
 input UpdateLabPublicFeatureFlagInput {

@@ -4337,8 +4337,8 @@ export default {
             "username": [
                 1
             ],
-            "secure": [
-                6
+            "connectionSecurity": [
+                1
             ],
             "__typename": [
                 1
@@ -5046,8 +5046,8 @@ export default {
             "username": [
                 1
             ],
-            "secure": [
-                6
+            "connectionSecurity": [
+                1
             ],
             "__typename": [
                 1
@@ -11501,8 +11501,8 @@ export default {
             "password": [
                 1
             ],
-            "secure": [
-                6
+            "connectionSecurity": [
+                1
             ],
             "__typename": [
                 1
