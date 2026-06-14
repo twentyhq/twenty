@@ -2,7 +2,6 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { RecordTableCellArrowKeysEffect } from '@/object-record/record-table/record-table-cell/components/RecordTableCellArrowKeysEffect';
 import { RecordTableCellEditModePortal } from '@/object-record/record-table/record-table-cell/components/RecordTableCellEditModePortal';
 import { RecordTableCellFocusedPortal } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFocusedPortal';
-import { RecordTableCellHoveredPortal } from '@/object-record/record-table/record-table-cell/components/RecordTableCellHoveredPortal';
 import { useCurrentlyFocusedRecordTableCellFocusId } from '@/object-record/record-table/record-table-cell/hooks/useCurrentlyFocusedRecordTableCellFocusId';
 import { isRecordTableCellFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableCellFocusActiveComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -20,7 +19,6 @@ export const RecordTableCellPortals = () => {
 
   return (
     <>
-      <RecordTableCellHoveredPortal />
       <RecordTableCellFocusedPortal />
       {isRecordTableCellFocusActive && (
         <>

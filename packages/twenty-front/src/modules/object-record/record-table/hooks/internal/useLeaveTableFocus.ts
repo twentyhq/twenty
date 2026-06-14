@@ -5,7 +5,6 @@ import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/use
 import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
-import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
@@ -16,11 +15,6 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
   );
 
   const { resetTableRowSelection } = useResetTableRowSelection();
-
-  const setRecordTableHoverPosition = useSetAtomComponentState(
-    recordTableHoverPositionComponentState,
-    recordTableIdFromContext,
-  );
 
   const setRecordTableFocusPosition = useSetAtomComponentState(
     recordTableFocusPositionComponentState,
@@ -50,7 +44,6 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
 
     deactivateRecordTableRow();
 
-    setRecordTableHoverPosition(null);
     setRecordTableFocusPosition(null);
 
     resetFocusStackToRecordIndex();

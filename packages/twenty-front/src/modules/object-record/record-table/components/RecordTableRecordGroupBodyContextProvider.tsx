@@ -2,14 +2,12 @@ import { RecordTableBodyContextProvider } from '@/object-record/record-table/con
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableMoveFocusedCell } from '@/object-record/record-table/hooks/useRecordTableMoveFocusedCell';
 import { useCloseRecordTableCellInGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellInGroup';
-import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
 import {
   type OpenTableCellArgs,
   useOpenRecordTableCell,
 } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
 import { useTriggerCommandMenuDropdown } from '@/object-record/record-table/record-table-cell/hooks/useTriggerCommandMenuDropdown';
 import { type MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
-import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { type ReactNode } from 'react';
 
 type RecordTableRecordGroupBodyContextProviderProps = {
@@ -40,12 +38,6 @@ export const RecordTableRecordGroupBodyContextProvider = ({
     closeTableCellInGroup();
   };
 
-  const { moveHoverToCurrentCell } = useMoveHoverToCurrentCell(recordTableId);
-
-  const handleMoveHoverToCurrentCell = (cellPosition: TableCellPosition) => {
-    moveHoverToCurrentCell(cellPosition);
-  };
-
   const { triggerCommandMenuDropdown } = useTriggerCommandMenuDropdown({
     recordTableId,
   });
@@ -63,7 +55,6 @@ export const RecordTableRecordGroupBodyContextProvider = ({
         onOpenTableCell: handleOpenTableCell,
         onMoveFocus: handleMoveFocus,
         onCloseTableCell: handlecloseTableCellInGroup,
-        onMoveHoverToCurrentCell: handleMoveHoverToCurrentCell,
         onCommandMenuDropdownOpened: handleCommandMenuDropdown,
       }}
     >

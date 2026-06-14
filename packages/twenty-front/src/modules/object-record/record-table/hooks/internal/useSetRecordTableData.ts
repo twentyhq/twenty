@@ -13,14 +13,12 @@ import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-t
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
-import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 
 import { recordIdByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -58,11 +56,6 @@ export const useSetRecordTableData = ({
 
   const recordIdByRealIndex = useAtomComponentStateCallbackState(
     recordIdByRealIndexComponentState,
-    recordTableId,
-  );
-
-  const setRecordTableHoverPosition = useSetAtomComponentState(
-    recordTableHoverPositionComponentState,
     recordTableId,
   );
 
@@ -106,7 +99,6 @@ export const useSetRecordTableData = ({
       if (!isDeeplyEqual(currentRowIds, recordIds)) {
         unfocusRecordTableCell();
         unfocusRecordTableRow();
-        setRecordTableHoverPosition(null);
 
         if (isAllRowsSelected) {
           for (const rowId of recordIds) {
@@ -152,7 +144,6 @@ export const useSetRecordTableData = ({
       hasUserSelectedAllRows,
       unfocusRecordTableCell,
       unfocusRecordTableRow,
-      setRecordTableHoverPosition,
       isRowSelectedFamilyState,
       recordIdByRealIndex,
       isRecordTableInitialLoading,

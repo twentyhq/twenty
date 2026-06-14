@@ -3,7 +3,6 @@ import { RecordTableCellFocusedPortalContent } from '@/object-record/record-tabl
 import { RecordTableCellPortalRootContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalRootContainer';
 import { RecordTableCellPortalWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellPortalWrapper';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
-import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -12,17 +11,7 @@ export const RecordTableCellFocusedPortal = () => {
     recordTableFocusPositionComponentState,
   );
 
-  const recordTableHoverPosition = useAtomComponentStateValue(
-    recordTableHoverPositionComponentState,
-  );
-
-  const isUnderHoveredPortal =
-    isDefined(recordTableHoverPosition) &&
-    isDefined(recordTableFocusPosition) &&
-    recordTableHoverPosition.column === recordTableFocusPosition.column &&
-    recordTableHoverPosition.row === recordTableFocusPosition.row;
-
-  if (!isDefined(recordTableFocusPosition) || isUnderHoveredPortal) {
+  if (!isDefined(recordTableFocusPosition)) {
     return null;
   }
 
