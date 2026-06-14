@@ -23,6 +23,7 @@ export const mapDBPartToUIMessagePart = (
         type: 'reasoning',
         text: part.reasoningContent!,
         state: part.state as ReasoningUIPart['state'],
+        providerMetadata: part.providerMetadata ?? undefined,
       };
     case 'file':
       return {
