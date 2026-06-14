@@ -292,7 +292,7 @@ function transformCompositeFieldNullValue(
   );
 }
 
-function formatCompositeFieldValue(
+export function formatCompositeFieldValue(
   value: unknown,
   compositePropertyName: string,
   fieldMetadata: FlatFieldMetadata,
@@ -306,6 +306,20 @@ function formatCompositeFieldValue(
 
         return value;
       }
+      break;
+    }
+    case FieldMetadataType.ADDRESS: {
+      if (
+        compositePropertyName === 'addressLat' ||
+        compositePropertyName === 'addressLng'
+      ) {
+        if (isNonEmptyString(value)) {
+          return parseFloat(value);
+        }
+
+        return value;
+      }
+      break;
     }
   }
 
