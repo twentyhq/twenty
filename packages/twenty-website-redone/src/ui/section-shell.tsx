@@ -74,10 +74,15 @@ const sectionShellClassName = css`
      the same colour. The upper section keeps its full bottom rhythm; the
      follower's 6px (not 0) leaves room for frame decorations that overflow its
      top edge — TrustedBy's corner markers. Flush scenes own their own edges
-     and opt out. */
-  &[data-scheme='light']:not([data-rhythm='flush']) + &[data-scheme='light'],
-  &[data-scheme='muted']:not([data-rhythm='flush']) + &[data-scheme='muted'],
-  &[data-scheme='dark']:not([data-rhythm='flush']) + &[data-scheme='dark'] {
+     and opt out, as does a section with keepsTopRhythm — one whose own top
+     padding is load-bearing (an editorial's top-anchored crosshair needs the
+     room below it). */
+  &[data-scheme='light']:not([data-rhythm='flush'])
+    + &[data-scheme='light']:not([data-keep-top-rhythm]),
+  &[data-scheme='muted']:not([data-rhythm='flush'])
+    + &[data-scheme='muted']:not([data-keep-top-rhythm]),
+  &[data-scheme='dark']:not([data-rhythm='flush'])
+    + &[data-scheme='dark']:not([data-keep-top-rhythm]) {
     padding-top: ${spacing(1.5)};
   }
 
@@ -116,6 +121,9 @@ export type SectionShellProps = {
   // Forms one continuous frame with the section directly above (same scheme):
   // that section yields its bottom rhythm so the two tuck together.
   connectsUp?: boolean;
+  // Keeps its own full top rhythm instead of collapsing under a same-scheme
+  // predecessor — for sections whose top padding is load-bearing.
+  keepsTopRhythm?: boolean;
   rhythm?: 'section' | 'hero' | 'spacious' | 'flush';
   scheme?: Scheme;
 };
@@ -125,6 +133,7 @@ export function SectionShell({
   background,
   children,
   connectsUp = false,
+  keepsTopRhythm = false,
   rhythm = 'section',
   scheme = 'light',
 }: SectionShellProps) {
@@ -133,6 +142,7 @@ export function SectionShell({
       aria-label={ariaLabel}
       className={sectionShellClassName}
       data-connect-up={connectsUp ? '' : undefined}
+      data-keep-top-rhythm={keepsTopRhythm ? '' : undefined}
       data-rhythm={rhythm}
       data-scheme={scheme}
     >

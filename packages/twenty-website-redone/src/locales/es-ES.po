@@ -149,6 +149,11 @@ msgstr ""
 msgid "A new maintenance mode helps admins pause workspace changes during sensitive operations."
 msgstr ""
 
+#. js-lingui-id: r9Msiv
+#: src/sections/why-twenty-editorial/editorials.data.ts
+msgid "A year ago, customizing your CRM meant hiring a Salesforce consultant, learning Apex, waiting months. The gap between \"I want this\" and \"it's live\" was measured in quarters and invoices. So people settled. They bent their process to fit the tool and called it adoption."
+msgstr ""
+
 #. js-lingui-id: H1lDvm
 #: src/platform/releases/release-notes.tsx
 msgid "Ability to set User and Admin permissions for each user. Admins can edit workspace settings, while Users can only edit records. Custom permission creation will be available in a future update."
@@ -268,6 +273,11 @@ msgstr ""
 #. js-lingui-id: HURF9k
 #: src/platform/releases/release-notes.tsx
 msgid "Aggregates"
+msgstr ""
+
+#. js-lingui-id: WGXwzu
+#: src/sections/why-twenty-editorial/editorials.data.ts
+msgid "AI agents are starting to draft outreach, score leads, research accounts, write follow-ups, update deal stages. Every one of these actions reads from and writes to the CRM. The scoreboard became the playbook. The database became the brain."
 msgstr ""
 
 #. js-lingui-id: Rsxdfy
@@ -605,6 +615,11 @@ msgstr ""
 #. js-lingui-id: Utc5RF
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Build custom dashboards from live CRM data. Aggregate anything — deals, accounts, activity — into charts your team actually reads."
+msgstr ""
+
+#. js-lingui-id: rdvFK9
+#: src/sections/why-twenty-editorial/editorials.data.ts
+msgid "Build it in an afternoon. *AI made the gap that small.*"
 msgstr ""
 
 #. js-lingui-id: e1u+Zh
@@ -999,6 +1014,11 @@ msgstr ""
 msgid "CRM was a database you filled on Fridays. AI turned it into the system that runs your go-to-market. To differentiate, you have to build what your competitors can't buy."
 msgstr ""
 
+#. js-lingui-id: ntHvtU
+#: src/sections/why-twenty-editorial/editorials.data.ts
+msgid "CRM was a ledger. *AI turned it into an operating system.*"
+msgstr ""
+
 #. js-lingui-id: OACAVp
 #: src/partner-application/data/partner-country-options.ts
 msgid "Croatia 🇭🇷"
@@ -1200,6 +1220,11 @@ msgstr ""
 #. js-lingui-id: canH5K
 #: src/platform/releases/release-notes.tsx
 msgid "Developers can now use webhooks to synchronize customer data updates in real-time across applications."
+msgstr ""
+
+#. js-lingui-id: ohFj56
+#: src/sections/why-twenty-editorial/editorials.data.ts
+msgid "Differentiation now *lives in the code you own.*"
 msgstr ""
 
 #. js-lingui-id: Wuqvfz
@@ -1610,6 +1635,11 @@ msgstr ""
 #. js-lingui-id: qwJuVW
 #: src/sections/footer/footer-nav.tsx
 msgid "Footer"
+msgstr ""
+
+#. js-lingui-id: yAJC9c
+#: src/sections/why-twenty-editorial/editorials.data.ts
+msgid "For twenty years, CRM meant the same thing: a place to log calls, track deals, and pull reports on Friday. The real work happened in people's heads, in Slack threads, in hallway conversations. The CRM kept score. Nobody expected more from it."
 msgstr ""
 
 #. js-lingui-id: UCoxP5
@@ -2609,6 +2639,11 @@ msgstr ""
 #. js-lingui-id: iDNBZe
 #: src/platform/releases/release-notes.tsx
 msgid "Notifications"
+msgstr ""
+
+#. js-lingui-id: k3T2mM
+#: src/sections/why-twenty-editorial/editorials.data.ts
+msgid "Now a developer can describe what they want to Claude Code and have a working app in an afternoon. A custom object, a scoring workflow, a new view, an integration. The bottleneck isn't building anymore. It's whether your platform lets you."
 msgstr ""
 
 #. js-lingui-id: l/1LQc
@@ -3631,6 +3666,11 @@ msgstr ""
 msgid "The new Rating field represents a numeric value from zero to five, it can be useful for various use-cases such as scoring leads."
 msgstr ""
 
+#. js-lingui-id: q1kKLq
+#: src/sections/why-twenty-editorial/editorials.data.ts
+msgid "The opportunity"
+msgstr ""
+
 #. js-lingui-id: 80f4ed
 #: src/sections/menu/menu.data.ts
 msgid "The principles and product philosophy behind the open source CRM."
@@ -3654,6 +3694,11 @@ msgstr ""
 #. js-lingui-id: 9CCRtB
 #: src/platform/releases/release-notes.tsx
 msgid "The search node now lets you customize the result limit above 1, enabling you to retrieve multiple records in a single search operation. This enhancement works seamlessly with the iterator node for processing search results."
+msgstr ""
+
+#. js-lingui-id: 1tN3qf
+#: src/sections/why-twenty-editorial/editorials.data.ts
+msgid "The shift"
 msgstr ""
 
 #. js-lingui-id: iW6MjB
@@ -3779,6 +3824,11 @@ msgstr ""
 #. js-lingui-id: E/hGy3
 #: src/sections/product-demo/product-demo.tsx
 msgid "Try Twenty Cloud"
+msgstr ""
+
+#. js-lingui-id: D5Kf4t
+#: src/sections/why-twenty-editorial/editorials.data.ts
+msgid "Tuesday your team learns that deals with a technical champion close 3x faster. Wednesday you add the field, wire up the scoring, adjust the workflow. By Thursday your agents are acting on it. That feedback loop is the edge. And it only works if the CRM is yours."
 msgstr ""
 
 #. js-lingui-id: y4UxlS
@@ -4165,6 +4215,11 @@ msgstr ""
 msgid "What they do"
 msgstr ""
 
+#. js-lingui-id: aYRqmz
+#: src/sections/why-twenty-editorial/editorials.data.ts
+msgid "What this means"
+msgstr ""
+
 #. js-lingui-id: QCHIzm
 #: src/partner-application/partner-application-copy.ts
 msgid "What you cover *"
@@ -4404,6 +4459,11 @@ msgstr ""
 #. js-lingui-id: XEEpNj
 #: src/platform/releases/release-notes.tsx
 msgid "You can now visualize your records in a monthly calendar view. This new view type makes it easy to track time-based data like events, deadlines, and scheduled activities directly within any object."
+msgstr ""
+
+#. js-lingui-id: LJ3sTb
+#: src/sections/why-twenty-editorial/editorials.data.ts
+msgid "You don't buy your deployment pipeline off the shelf. You don't rent your data warehouse from a vendor who decides the schema. You build it, you own it, you iterate on it every week. CRM is going the same way. The teams that treat it as infrastructure they own will compound an advantage every quarter."
 msgstr ""
 
 #. js-lingui-id: AUzqeZ

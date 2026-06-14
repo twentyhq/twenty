@@ -94,6 +94,7 @@ const ROW_GAP_MULTI_AXIS_FILES = new Set([
   'sections/testimonials/partner-testimonials-carousel.tsx',
   'sections/testimonials/testimonials-carousel.tsx',
   'sections/trusted-by/trusted-by.tsx',
+  'sections/why-twenty-editorial/editorial.tsx',
 ]);
 
 const LITERAL_PATTERNS = [

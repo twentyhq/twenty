@@ -10,11 +10,11 @@ import {
   JsonLd,
 } from '@/platform/seo';
 import { Menu } from '@/sections/menu';
+import { WhyTwentyEditorials } from '@/sections/why-twenty-editorial';
 import { WhyTwentyHero } from '@/sections/why-twenty-hero';
 
 export const generateMetadata = buildRouteMetadata('whyTwenty');
 
-// Hero only for now; the argument sections land below it as their ports arrive.
 export default async function WhyTwentyPage({
   params,
 }: {
@@ -40,6 +40,7 @@ export default async function WhyTwentyPage({
       <Menu communityStats={communityStats} scheme="dark" />
       <main>
         <WhyTwentyHero />
+        <WhyTwentyEditorials />
       </main>
     </>
   );

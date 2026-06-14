@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { type CSSProperties } from 'react';
 
-import { color, mediaUp, semanticColor } from '@/tokens';
+import { color, MAX_CONTENT_WIDTH_PX, mediaUp, semanticColor } from '@/tokens';
 
 // Decorative guide lines crossing at a point, with a gap and a blue plus at
 // the intersection — desktop only. Position arrives via CSS variables.
@@ -16,7 +16,7 @@ const CrosshairRoot = styled.div`
   }
 
   [data-line] {
-    background-color: ${color('black-10')};
+    background-color: ${semanticColor.line};
     position: absolute;
   }
 
@@ -96,18 +96,30 @@ const CrosshairRoot = styled.div`
 `;
 
 export type GuideCrosshairProps = {
+  // Bounds the lines to the content max-width instead of the full section, so
+  // they stay within the content column rather than bleeding into the gutters.
+  contained?: boolean;
   crossX: string;
   crossY: string;
   // Scenes that draw their own full-height vertical guide disable these.
   verticalLines?: boolean;
 };
 
+const CrosshairBounds = styled.div`
+  height: 100%;
+  margin-inline: auto;
+  max-width: ${MAX_CONTENT_WIDTH_PX}px;
+  position: relative;
+  width: 100%;
+`;
+
 export function GuideCrosshair({
+  contained = false,
   crossX,
   crossY,
   verticalLines = true,
 }: GuideCrosshairProps) {
-  return (
+  const crosshair = (
     <CrosshairRoot
       aria-hidden
       style={
@@ -126,4 +138,6 @@ export function GuideCrosshair({
       <span data-slot="plus" />
     </CrosshairRoot>
   );
+
+  return contained ? <CrosshairBounds>{crosshair}</CrosshairBounds> : crosshair;
 }
