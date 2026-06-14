@@ -1,3 +1,10 @@
+// Grandfathered: this 2.13 command already shipped to cloud and is recorded
+// complete there, so per "never rewrite a committed instance command" it is
+// frozen as-is. Its up() does ADD COLUMN + bulk UPDATE in one transaction — the
+// exact pattern that held an ACCESS EXCLUSIVE lock and stalled prod reads, and
+// the reason no-data-mutation-in-fast-instance-command exists. This is an
+// exception, not a precedent: new backfills go in a slow instance command.
+/* oxlint-disable twenty/no-data-mutation-in-fast-instance-command */
 import { QueryRunner } from 'typeorm';
 
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
