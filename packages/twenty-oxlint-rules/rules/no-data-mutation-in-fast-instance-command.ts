@@ -35,7 +35,8 @@ const isInsideDownMethod = (node: any): boolean => {
 
   while (current) {
     if (
-      current.type === 'MethodDefinition' &&
+      (current.type === 'MethodDefinition' ||
+        current.type === 'PropertyDefinition') &&
       current.key?.type === 'Identifier' &&
       current.key.name === 'down'
     ) {

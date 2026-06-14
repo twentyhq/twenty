@@ -51,6 +51,11 @@ ruleTester.run(RULE_NAME, rule, {
       filename: FAST_FILE,
       code: `class C { async down(q) { await q.query(\`WITH ids AS (SELECT "id" FROM "core"."x") UPDATE "core"."x" SET "y" = true\`); } }`,
     },
+    // down() written as an arrow-function property is also recognized.
+    {
+      filename: FAST_FILE,
+      code: `class C { down = async (q) => { await q.query('DELETE FROM "core"."x" WHERE 1 = 1'); }; }`,
+    },
     // A slow command is the correct home for a data migration.
     {
       filename: SLOW_FILE,
