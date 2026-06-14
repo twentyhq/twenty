@@ -1,0 +1,23 @@
+packages/twenty-server/test/integration/upgrade/suites/2-14-instance-command-slow-1781461753981-backfill-connection-security.integration-spec.ts
+  s_ff3d5b0bd294f3::t_d1c676e3267969 1-102,104-108,110-114,116-136,138-144,146-151,154,157-164,166-180,183-189
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_ff3d5b0bd294f3::t_a41ebe1de08746 72
+packages/twenty-server/src/database/commands/upgrade-version-command/2-14/2-14-instance-command-slow-1781461753981-backfill-connection-security.ts
+  s_ff3d5b0bd294f3::t_8a528987769953 13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "b819f14593ab5b36a0ceb191f96ace4e59b48614",
+  "prompts": {},
+  "sessions": {
+    "s_ff3d5b0bd294f3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc6a7753-6313-4145-9c09-a0d3d40ac9aa",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
