@@ -9,7 +9,7 @@ export const PARTNER_HERO_VISUAL: Pick<
   HalftoneImageBackdropProps,
   'imageUrl' | 'settings'
 > = {
-  imageUrl: '/images/partner/hero/partners-hero.webp',
+  imageUrl: '/images/partners/hero/partners-hero.webp',
   settings: {
     previewDistance: 3.2,
     imageFit: 'contain',

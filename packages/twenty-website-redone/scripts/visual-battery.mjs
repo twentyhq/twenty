@@ -204,6 +204,16 @@ const VISUALS = {
     animated: false,
     interactive: true,
   },
+  // The promo mic: iron dashes (#777) at rest are hueless on the light panel;
+  // the hover light brightens the dashes near the cursor (interactive).
+  'promo-mic': {
+    slotSelector: '[data-illustration="promo-mic"]',
+    path: '/partners',
+    hueRangeDegrees: null,
+    minCoverage: 0.02,
+    animated: false,
+    interactive: true,
+  },
 };
 
 const MOTION_DIFF_FLOOR = 0.005;

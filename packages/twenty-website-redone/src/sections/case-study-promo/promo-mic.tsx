@@ -1,10 +1,13 @@
 import { styled } from '@linaria/react';
 
+import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/halftone-image-backdrop';
 import { color, radius, semanticColor } from '@/tokens';
 
-// The square halftone "mic" visual fills the promo's stage. The interactive
-// WebGL canvas lands in the later visual pass; for now the framed surface
-// reserves its footprint.
+import { PROMO_MIC_VISUAL } from './promo-mic-config';
+
+// The square halftone fills the promo's stage: iron dashes form the meeting
+// photo on the light panel (toneTarget dark), turning blue under the cursor's
+// hover light.
 const MicFrame = styled.div`
   background-color: ${color('neutral')};
   border: 1px solid ${semanticColor.line};
@@ -16,5 +19,12 @@ const MicFrame = styled.div`
 `;
 
 export function PromoMic() {
-  return <MicFrame aria-hidden />;
+  return (
+    <MicFrame aria-hidden data-illustration="promo-mic">
+      <HalftoneImageBackdrop
+        imageUrl={PROMO_MIC_VISUAL.imageUrl}
+        settings={PROMO_MIC_VISUAL.settings}
+      />
+    </MicFrame>
+  );
 }
