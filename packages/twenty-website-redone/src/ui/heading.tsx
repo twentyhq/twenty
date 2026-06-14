@@ -23,6 +23,13 @@ const headingClassName = css`
     letter-spacing: -0.04em;
   }
 
+  /* A quote set at heading size reads at the page's natural tracking, not
+     the family's tightened default — placed after the family rules so it
+     wins the equal-specificity tie. */
+  &[data-tracking='normal'] {
+    letter-spacing: normal;
+  }
+
   &[data-weight='light'] {
     font-weight: ${FONT_WEIGHT.light};
   }
@@ -72,6 +79,7 @@ const headingClassName = css`
 export type HeadingLevel = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 export type HeadingSize = 'xl' | 'lg' | 'md' | 'sm' | 'xs';
 export type HeadingFamily = 'serif' | 'sans';
+export type HeadingTracking = 'tight' | 'normal';
 
 export type HeadingProps = {
   as?: HeadingLevel;
@@ -79,6 +87,7 @@ export type HeadingProps = {
   className?: string;
   family?: HeadingFamily;
   size?: HeadingSize;
+  tracking?: HeadingTracking;
   weight?: FontWeightToken;
 };
 
@@ -88,6 +97,7 @@ export function Heading({
   className,
   family = 'serif',
   size = 'md',
+  tracking = 'tight',
   weight = 'regular',
 }: HeadingProps) {
   // Keys are the segment's character offset in the heading: data-derived,
@@ -109,6 +119,7 @@ export function Heading({
       className={[headingClassName, className].filter(Boolean).join(' ')}
       data-family={family}
       data-size={size}
+      data-tracking={tracking}
       data-weight={weight}
     >
       {keyedSegments.map((segment) =>

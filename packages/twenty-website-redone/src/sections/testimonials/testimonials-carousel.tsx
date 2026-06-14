@@ -4,7 +4,6 @@ import { msg } from '@lingui/core/macro';
 
 import { ArrowLeft, ArrowRight } from '@/icons';
 import { useLingui } from '@lingui/react';
-import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 
@@ -74,16 +73,6 @@ const VisualSlot = styled.div`
     height: 476px;
     order: 1;
     width: 336px;
-  }
-`;
-
-// The old site's quote is plain heading text with no HeadingPart: it
-// inherits the page sans at NORMAL tracking (unlike notation sans,
-// which tracks -0.04em).
-const quoteClassName = css`
-  /* Outranks the component's [data-family='sans'] tracking. */
-  &&& {
-    letter-spacing: normal;
   }
 `;
 
@@ -230,9 +219,9 @@ export function TestimonialsCarousel({
             >
               <Heading
                 as="h2"
-                className={quoteClassName}
                 family="sans"
                 size="md"
+                tracking="normal"
                 weight="light"
               >
                 {i18n._(testimonial.quote)}

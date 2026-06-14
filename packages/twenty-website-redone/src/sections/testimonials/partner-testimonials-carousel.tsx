@@ -94,14 +94,6 @@ const CounterText = styled.p`
   }
 `;
 
-// The quote reads as plain heading text at normal tracking, matching the home
-// testimonials (the Heading sans variant otherwise tracks -0.04em).
-const quoteClassName = css`
-  &&& {
-    letter-spacing: normal;
-  }
-`;
-
 const SeparatorSlot = styled.div`
   /* The section draws its divider at the strong tier. */
   --marked-divider-line: ${semanticColor.lineStrong};
@@ -263,9 +255,9 @@ export function PartnerTestimonialsCarousel({
               >
                 <Heading
                   as="h2"
-                  className={quoteClassName}
                   family="sans"
                   size="md"
+                  tracking="normal"
                   weight="light"
                 >
                   {i18n._(testimonial.quote)}

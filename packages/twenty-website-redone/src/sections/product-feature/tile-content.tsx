@@ -1,9 +1,16 @@
-import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 
 import { INFORMATIVE_MARKS } from '@/icons';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { color, fontFamily, fontSize, mediaUp, spacing } from '@/tokens';
+import {
+  color,
+  FONT_WEIGHT,
+  fontFamily,
+  fontSize,
+  mediaUp,
+  spacing,
+  typeRampDeclarations,
+} from '@/tokens';
 import { Body, Heading } from '@/ui';
 
 import { type FeatureTile } from './feature-tiles';
@@ -93,13 +100,12 @@ const BulletIconSlot = styled.span`
   flex-shrink: 0;
 `;
 
-// Outranks the Body component's data-variant declarations.
-const bulletTextClassName = css`
-  &&& {
-    display: block;
-    overflow-wrap: anywhere;
-    color: ${color('black-80')};
-  }
+const BulletText = styled.span`
+  ${typeRampDeclarations('bodySm')}
+  color: ${color('black-80')};
+  font-family: ${fontFamily('sans')};
+  font-weight: ${FONT_WEIGHT.regular};
+  overflow-wrap: anywhere;
 `;
 
 export function TileContent({
@@ -156,9 +162,7 @@ export function TileContent({
                   strokeWidth={BULLET_ICON_STROKE_WIDTH}
                 />
               </BulletIconSlot>
-              <Body className={bulletTextClassName} size="sm">
-                {i18n._(bullet.text)}
-              </Body>
+              <BulletText>{i18n._(bullet.text)}</BulletText>
             </BulletItem>
           );
         })}
