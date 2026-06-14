@@ -17,6 +17,8 @@ import { type ReactNode, useId } from 'react';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { useIsMobile } from 'twenty-ui-deprecated/utilities';
 
+import { getCssCompatibleDraggableProps } from '@/ui/layout/draggable-list/utils/getCssCompatibleDraggableProps';
+
 const StyledVerticalListContainer = styled.div<{
   variant: PageLayoutVerticalListViewerVariant;
   shouldUseWhiteBackground: boolean;
@@ -102,7 +104,7 @@ export const PageLayoutVerticalListEditor = ({
                   <StyledDraggableWrapper
                     ref={provided.innerRef}
                     // oxlint-disable-next-line react/jsx-props-no-spreading
-                    {...provided.draggableProps}
+                    {...getCssCompatibleDraggableProps(provided.draggableProps)}
                     isDragging={snapshot.isDragging}
                   >
                     {/* oxlint-disable-next-line react/jsx-props-no-spreading */}

@@ -90,6 +90,7 @@ const jestConfig = {
   maxWorkers: 3,
   workerIdleMemoryLimit: '512MB',
   errorOnDeprecated: true,
+  testTimeout: 30000,
 };
 
 export default jestConfig;

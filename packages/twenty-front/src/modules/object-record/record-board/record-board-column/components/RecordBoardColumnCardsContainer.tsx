@@ -3,6 +3,7 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
+import { getCssCompatibleDraggableProps } from '@/ui/layout/draggable-list/utils/getCssCompatibleDraggableProps';
 import { RecordBoardCardDraggableContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardDraggableContainer';
 
 import { RecordBoardColumnNewRecordButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton';
@@ -63,7 +64,9 @@ export const RecordBoardColumnCardsContainer = ({
           <div
             ref={draggableProvided.innerRef}
             // oxlint-disable-next-line react/jsx-props-no-spreading
-            {...draggableProvided.draggableProps}
+            {...getCssCompatibleDraggableProps(
+              draggableProvided.draggableProps,
+            )}
           ></div>
         )}
       </Draggable>

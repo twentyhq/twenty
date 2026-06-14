@@ -1,5 +1,5 @@
 import { type JSONContent } from '@tiptap/core';
-import { Fragment, type ReactNode } from 'react';
+import { type JSX, Fragment, type ReactNode } from 'react';
 import { TIPTAP_NODE_TYPES, type TipTapNodeType } from 'twenty-shared/utils';
 import { bulletList } from '@/utils/email-renderer/nodes/bullet-list';
 import { hardBreak } from '@/utils/email-renderer/nodes/hard-break';
