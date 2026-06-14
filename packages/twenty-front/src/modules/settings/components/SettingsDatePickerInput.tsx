@@ -16,6 +16,7 @@ import {
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared/utils';
@@ -63,7 +64,7 @@ const StyledIconContainer = styled.div`
 `;
 
 const StyledFloatingContainer = styled.div`
-  z-index: 1000;
+  z-index: ${RootStackingContextZIndices.DropdownPortalBelowModal};
 `;
 
 export type SettingsDatePickerInputProps = {
