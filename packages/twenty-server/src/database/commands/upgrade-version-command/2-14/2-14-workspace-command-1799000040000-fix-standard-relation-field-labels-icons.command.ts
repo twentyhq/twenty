@@ -26,9 +26,9 @@ const DEFAULT_RELATION_TARGET_UNIVERSAL_IDENTIFIERS = new Set<string>(
   ),
 );
 
-@RegisteredWorkspaceCommand('2.9.0', 1799000040000)
+@RegisteredWorkspaceCommand('2.14.0', 1799000040000)
 @Command({
-  name: 'upgrade:2-9:fix-standard-relation-field-labels-icons',
+  name: 'upgrade:2-14:fix-standard-relation-field-labels-icons',
   description:
     "Re-sync standard objects' default relation field labels/icons (note/task/attachment/timeline) against the source of truth, healing drift such as the Company timelineActivities IconIconTimelineEvent typo.",
 })
