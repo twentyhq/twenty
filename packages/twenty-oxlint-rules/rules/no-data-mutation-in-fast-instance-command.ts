@@ -61,11 +61,13 @@ const getSqlText = (argument: any): string | null => {
 };
 
 const findDataMutationKeyword = (sql: string): string | null => {
-  const withoutComments = sql
+  const normalized = sql
     .replace(/--[^\n]*/g, '')
-    .replace(/\/\*[\s\S]*?\*\//g, '');
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/'(?:[^']|'')*'/g, "''")
+    .replace(/"(?:[^"]|"")*"/g, '""');
 
-  for (const statement of withoutComments.split(';')) {
+  for (const statement of normalized.split(';')) {
     const trimmed = statement.trim();
     const match =
       trimmed.match(DATA_MUTATION_STATEMENT_REGEX) ??
