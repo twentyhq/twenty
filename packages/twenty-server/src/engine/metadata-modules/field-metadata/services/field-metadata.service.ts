@@ -25,14 +25,9 @@ import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/met
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
 import { fromUpdateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util';
 import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-modules/flat-field-metadata/utils/throw-on-field-input-transpilations-error.util';
-import {
-  computeRelationWidgetConfigurationType,
-  isRelationFieldWithDefaultPageLayoutWidget,
-} from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-relation-widget-configuration-type.util';
+import { computeRelationFieldDefaultWidgetConfigurationType } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-relation-field-default-widget-configuration-type.util';
 import { computeFlatViewFieldsFromFieldsWidgets } from 'src/engine/metadata-modules/flat-view-field/utils/compute-flat-view-fields-from-fields-widgets.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
-import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -158,70 +153,54 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           deletedFieldIds.has(widget.configuration.fieldMetadataId),
       );
 
-    const deletedFlatFieldMetadataObjectMetadataId =
-      deletedFlatFieldMetadata.objectMetadataId;
-    const deletedRelationWidgetConfigurationType =
-      computeRelationWidgetConfigurationType({
-        relationTargetFieldMetadataName: deletedFlatFieldMetadata.name,
-      });
-
-    const isRelationWithDefaultWidget =
-      isRelationFieldWithDefaultPageLayoutWidget({
-        fieldMetadataType: deletedFlatFieldMetadata.type,
-        name: deletedFlatFieldMetadata.name,
-      });
-
-    let relationPageLayoutWidgetsToDelete: FlatPageLayoutWidget[] = [];
-    let relationPageLayoutTabsToDelete: FlatPageLayoutTab[] = [];
-
-    if (
-      isRelationWithDefaultWidget &&
-      isDefined(deletedRelationWidgetConfigurationType)
-    ) {
-      relationPageLayoutWidgetsToDelete = Object.values(
-        existingFlatPageLayoutWidgetMaps.byUniversalIdentifier,
-      )
-        .filter(isDefined)
-        .filter(
-          (widget) =>
-            !isDefined(widget.deletedAt) &&
-            widget.objectMetadataId ===
-              deletedFlatFieldMetadataObjectMetadataId &&
-            widget.configuration?.configurationType ===
-              deletedRelationWidgetConfigurationType,
-        );
-
-      const widgetsCountByPageLayoutTabIds =
-        relationPageLayoutWidgetsToDelete.reduce(
-          (acc, widget) => {
-            if (isDefined(widget.pageLayoutTabId)) {
-              acc[widget.pageLayoutTabId] =
-                (acc[widget.pageLayoutTabId] || 0) + 1;
-            }
-            return acc;
-          },
-          {} as Record<string, number>,
-        );
-
-      const relationPageLayoutTabIds = new Set(
-        relationPageLayoutWidgetsToDelete
-          .filter(
-            (widget) =>
-              widgetsCountByPageLayoutTabIds[widget.pageLayoutTabId] === 1,
-          )
-          .map((widget) => widget.pageLayoutTabId)
-          .filter(isDefined),
+    const relationDefaultWidgetConfigurationType =
+      computeRelationFieldDefaultWidgetConfigurationType(
+        deletedFlatFieldMetadata,
       );
 
-      relationPageLayoutTabsToDelete = Object.values(
-        existingFlatPageLayoutTabMaps.byUniversalIdentifier,
-      )
+    const activeWidgets = Object.values(
+      existingFlatPageLayoutWidgetMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter((widget) => !isDefined(widget.deletedAt));
+
+    const relationPageLayoutWidgetsToDelete = isDefined(
+      relationDefaultWidgetConfigurationType,
+    )
+      ? activeWidgets.filter(
+          (widget) =>
+            widget.objectMetadataId ===
+              deletedFlatFieldMetadata.objectMetadataId &&
+            widget.configuration?.configurationType ===
+              relationDefaultWidgetConfigurationType,
+        )
+      : [];
+
+    const deletedWidgetIds = new Set(
+      relationPageLayoutWidgetsToDelete.map((widget) => widget.id),
+    );
+
+    // Only delete a tab once every widget it holds is being removed, so a tab a
+    // user has added other widgets to is kept rather than left dangling.
+    const emptiedPageLayoutTabIds = new Set(
+      relationPageLayoutWidgetsToDelete
+        .map((widget) => widget.pageLayoutTabId)
         .filter(isDefined)
-        .filter(
-          (tab) =>
-            !isDefined(tab.deletedAt) && relationPageLayoutTabIds.has(tab.id),
-        );
-    }
+        .filter((pageLayoutTabId) =>
+          activeWidgets
+            .filter((widget) => widget.pageLayoutTabId === pageLayoutTabId)
+            .every((widget) => deletedWidgetIds.has(widget.id)),
+        ),
+    );
+
+    const relationPageLayoutTabsToDelete = Object.values(
+      existingFlatPageLayoutTabMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter(
+        (tab) =>
+          !isDefined(tab.deletedAt) && emptiedPageLayoutTabIds.has(tab.id),
+      );
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
