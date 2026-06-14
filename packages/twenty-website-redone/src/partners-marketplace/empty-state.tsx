@@ -27,7 +27,6 @@ const Title = styled.h2`
   font-size: ${fontSize(4.5)};
   font-weight: ${FONT_WEIGHT.medium};
   line-height: ${fontSize(6)};
-  margin: 0;
 `;
 
 const Subtitle = styled.p`

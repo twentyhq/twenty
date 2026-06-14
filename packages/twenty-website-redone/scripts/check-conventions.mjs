@@ -133,6 +133,21 @@ function walk(directory) {
       );
     }
 
+    // The global * reset (layout.tsx) already zeroes every element's margin,
+    // so a component's own 'margin: 0' is redundant — and it ties with the
+    // owl rhythm ('& > * + * { margin-top }', equal specificity), silently
+    // collapsing the gap by source order (this broke a heading once). Cancel
+    // an owl gap deliberately with the specific 'margin-top: 0' instead.
+    if (
+      posixPath !== 'app/[locale]/layout.tsx' &&
+      !relativePath.includes('.test.') &&
+      /^[ \t]*margin:[ \t]*0;[ \t]*$/m.test(content)
+    ) {
+      failures.push(
+        `src/${relativePath}: redundant 'margin: 0' — the global * reset zeroes margins and it ties with the owl rhythm; remove it (use 'margin-top: 0' to deliberately cancel an owl gap).`,
+      );
+    }
+
     if (
       !relativePath.startsWith('tokens' + path.sep) &&
       !relativePath.includes('.test.') &&

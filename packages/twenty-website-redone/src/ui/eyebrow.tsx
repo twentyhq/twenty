@@ -22,7 +22,6 @@ const EyebrowRow = styled.p`
   font-weight: ${FONT_WEIGHT.medium};
   letter-spacing: -0.04em;
   gap: ${spacing(2)};
-  margin: 0;
 `;
 
 // The marker is a plain rounded rectangle — CSS, not an SVG asset.

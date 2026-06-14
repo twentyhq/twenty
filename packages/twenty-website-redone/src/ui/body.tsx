@@ -11,7 +11,6 @@ import {
 
 const bodyClassName = css`
   font-family: ${fontFamily('sans')};
-  margin: 0;
 
   &[data-weight='light'] {
     font-weight: ${FONT_WEIGHT.light};

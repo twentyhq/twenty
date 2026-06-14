@@ -33,7 +33,6 @@ const Paragraph = styled.p`
   font-family: ${APP_PREVIEW_STAGE.terminalFont.ui};
   font-size: 13px;
   line-height: 20px;
-  margin: 0;
 `;
 
 const CardWrap = styled.div<{ $instant: boolean }>`

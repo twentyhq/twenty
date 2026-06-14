@@ -37,7 +37,6 @@ const FeatureList = styled.ul`
   display: flex;
   flex-direction: column;
   list-style: none;
-  margin: 0;
   min-width: 0;
   padding: 0;
   width: 100%;

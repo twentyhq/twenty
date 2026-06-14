@@ -11,7 +11,6 @@ import {
 import { parseHeadingNotation } from './heading-notation';
 
 const headingClassName = css`
-  margin: 0;
   text-wrap: balance;
 
   &[data-family='serif'] {

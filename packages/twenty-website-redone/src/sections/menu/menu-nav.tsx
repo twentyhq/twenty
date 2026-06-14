@@ -30,7 +30,6 @@ import { type MenuNavItem } from './menu.data';
 const NavList = styled(NavigationMenu.List)`
   display: none;
   list-style: none;
-  margin: 0;
   padding: 0;
 
   ${mediaUp('md')} {

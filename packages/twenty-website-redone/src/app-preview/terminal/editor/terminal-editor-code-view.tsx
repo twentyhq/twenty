@@ -70,7 +70,6 @@ const CodeText = styled.pre`
   font-family: ${APP_PREVIEW_STAGE.terminalFont.mono};
   font-size: 13px;
   line-height: 20px;
-  margin: 0;
   padding: 0;
   white-space: pre;
 `;

@@ -48,7 +48,6 @@ const RemoveButton = styled.button`
   cursor: pointer;
   display: inline-flex;
   flex-shrink: 0;
-  margin: 0;
   padding: 0;
   transition: color 100ms ease;
 

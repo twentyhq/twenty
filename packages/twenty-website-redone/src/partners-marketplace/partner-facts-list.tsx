@@ -33,7 +33,6 @@ const FactLabel = styled.dt`
   font-family: ${fontFamily('mono')};
   font-size: ${fontSize(3)};
   letter-spacing: 0.08em;
-  margin: 0;
   text-transform: uppercase;
   width: 100px;
 `;
@@ -42,7 +41,6 @@ const FactValue = styled.dd`
   color: ${color('black-80')};
   font-family: ${fontFamily('sans')};
   font-size: ${fontSize(4)};
-  margin: 0;
 `;
 
 function resolveLabels<TValue extends string>(

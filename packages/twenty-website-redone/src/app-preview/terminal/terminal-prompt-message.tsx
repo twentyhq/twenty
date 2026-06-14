@@ -23,7 +23,6 @@ const PromptText = styled.p<{ $isPlaceholder?: boolean }>`
   font-size: 13px;
   font-weight: 400;
   line-height: 18px;
-  margin: 0;
   overflow-wrap: anywhere;
   transition: color 0.18s ease;
   white-space: normal;

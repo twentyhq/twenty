@@ -298,7 +298,6 @@ const DetailContent = styled.p`
   color: ${scene.inkDetail};
   font-size: 11px;
   line-height: 1.6;
-  margin: 0;
 `;
 
 const ThreadMessage = styled.div`

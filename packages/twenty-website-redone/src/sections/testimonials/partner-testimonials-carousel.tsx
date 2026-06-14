@@ -87,7 +87,6 @@ const CounterText = styled.p`
   ${typeRampDeclarations('headingMd')}
   font-family: ${fontFamily('sans')};
   font-weight: ${FONT_WEIGHT.light};
-  margin: 0;
   white-space: nowrap;
 
   ${mediaUp('md')} {

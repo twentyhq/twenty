@@ -7,7 +7,6 @@ const Prose = styled.p`
   font-family: ${fontFamily('sans')};
   font-size: ${fontSize(5)};
   line-height: ${fontSize(7)};
-  margin: 0;
   max-width: 62ch;
   text-wrap: pretty;
   white-space: pre-wrap;

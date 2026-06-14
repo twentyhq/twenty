@@ -117,7 +117,6 @@ const RowTrigger = styled.button`
   font: inherit;
   grid-column: 1 / -1;
   grid-template-columns: subgrid;
-  margin: 0;
   padding: 0;
   position: relative;
   text-align: left;
@@ -189,7 +188,6 @@ const Header = styled.h3`
   display: grid;
   grid-column: 1 / -1;
   grid-template-columns: subgrid;
-  margin: 0;
   position: relative;
 `;
 

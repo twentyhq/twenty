@@ -118,7 +118,6 @@ const ErrorBanner = styled.p`
   color: ${color('error')};
   font-family: ${fontFamily('sans')};
   font-size: ${fontSize(3)};
-  margin: 0;
 `;
 
 function StepRenderer({

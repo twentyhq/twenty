@@ -82,7 +82,6 @@ const PointHeading = styled.h3`
   letter-spacing: -0.04em;
   font-weight: ${FONT_WEIGHT.regular};
   line-height: 1.35;
-  margin: 0;
 `;
 
 export function Problem() {

@@ -12,6 +12,5 @@ export const ProfileEyebrow = styled.p`
   font-weight: ${FONT_WEIGHT.medium};
   letter-spacing: 0.08em;
   line-height: ${fontSize(4)};
-  margin: 0;
   text-transform: uppercase;
 `;

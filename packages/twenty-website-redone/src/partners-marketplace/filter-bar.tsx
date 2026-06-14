@@ -59,7 +59,6 @@ const ResultCount = styled.p`
   font-family: ${fontFamily('sans')};
   font-size: ${fontSize(3)};
   line-height: ${fontSize(4)};
-  margin: 0;
 `;
 
 export function FilterBar({

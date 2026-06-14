@@ -56,7 +56,6 @@ const FilePath = styled.p`
   flex: 1 1 auto;
   font-family: ${APP_PREVIEW_STAGE.terminalFont.mono};
   font-size: 12px;
-  margin: 0;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;

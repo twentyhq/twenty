@@ -108,7 +108,6 @@ const PartnerName = styled.h3`
   font-weight: ${FONT_WEIGHT.light};
   letter-spacing: -0.02em;
   line-height: ${fontSize(7)};
-  margin: 0;
 `;
 
 // The card's whole-surface link uses the "stretched link" pattern: an inline
@@ -165,7 +164,6 @@ const Introduction = styled.p`
   font-family: ${fontFamily('sans')};
   font-size: ${fontSize(4)};
   line-height: ${fontSize(5.5)};
-  margin: 0;
   overflow: hidden;
 `;
 
@@ -173,7 +171,6 @@ const Divider = styled.hr`
   background-color: ${semanticColor.line};
   border: 0;
   height: 1px;
-  margin: 0;
   width: 100%;
 `;
 

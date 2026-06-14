@@ -21,7 +21,6 @@ const Row = styled.dl`
   display: flex;
   flex-direction: column;
   gap: ${spacing(2)};
-  margin: 0;
 
   ${mediaUp('md')} {
     // Align the label to the first chip's baseline rather than the row's
@@ -41,7 +40,6 @@ const RowLabel = styled.dt`
   font-weight: ${FONT_WEIGHT.medium};
   letter-spacing: 0.08em;
   line-height: ${fontSize(4)};
-  margin: 0;
   text-transform: uppercase;
 
   ${mediaUp('md')} {
@@ -50,16 +48,11 @@ const RowLabel = styled.dt`
   }
 `;
 
-const ChipListWrapper = styled.dd`
-  margin: 0;
-`;
-
 const ChipList = styled.ul`
   display: flex;
   flex-wrap: wrap;
   gap: ${spacing(2)};
   list-style: none;
-  margin: 0;
   padding: 0;
 `;
 
@@ -79,7 +72,7 @@ export function PartnerChipRow<TValue extends string>({
   return (
     <Row>
       <RowLabel>{i18n._(label)}</RowLabel>
-      <ChipListWrapper>
+      <dd>
         <ChipList>
           {values.map((value) => {
             const descriptor = valueLabels[value];
@@ -93,7 +86,7 @@ export function PartnerChipRow<TValue extends string>({
             );
           })}
         </ChipList>
-      </ChipListWrapper>
+      </dd>
     </Row>
   );
 }

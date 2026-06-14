@@ -107,7 +107,6 @@ const CardHeading = styled.h3`
   color: ${semanticColor.ink};
   font-family: ${fontFamily('sans')};
   font-weight: ${FONT_WEIGHT.medium};
-  margin: 0;
 `;
 
 const CtaRow = styled.div`

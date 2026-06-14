@@ -33,7 +33,6 @@ const DropdownList = styled.ul`
   grid-auto-rows: min-content;
   grid-template-columns: 1fr;
   list-style: none;
-  margin: 0;
   padding: ${spacing(2)};
 `;
 

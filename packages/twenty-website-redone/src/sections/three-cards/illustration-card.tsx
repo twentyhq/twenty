@@ -45,7 +45,6 @@ const CardHeading = styled.h3`
   ${typeRampDeclarations('headingXs')}
   font-family: ${fontFamily('sans')};
   font-weight: ${FONT_WEIGHT.medium};
-  margin: 0;
 `;
 
 const CardRule = styled.div`

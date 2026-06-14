@@ -234,7 +234,6 @@ const ContentLayer = styled.div`
 const BodyText = styled.div`
   font-size: ${fontSize(4)};
   line-height: 1.55;
-  margin: 0;
   max-width: 360px;
   position: relative;
   width: 100%;

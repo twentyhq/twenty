@@ -57,7 +57,6 @@ const LinkList = styled.ul`
   flex-direction: column;
   gap: ${spacing(2)};
   list-style: none;
-  margin: 0;
   padding: 0;
 `;
 

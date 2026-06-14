@@ -110,7 +110,6 @@ const Checkbox = styled.input`
   cursor: pointer;
   flex-shrink: 0;
   height: 14px;
-  margin: 0;
   width: 14px;
 `;
 
