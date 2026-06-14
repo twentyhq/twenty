@@ -20,6 +20,7 @@ import {
 import { Body, Eyebrow, Heading, IconButton, MarkedDivider } from '@/ui';
 
 import { PartnerPortrait } from './partner-portrait';
+import { PartnerQuoteVisual } from './partner-quote-visual';
 import { type PartnerTestimonialRecord } from './partner-testimonials.data';
 
 const CarouselGrid = styled.div`
@@ -131,6 +132,8 @@ const RightColumn = styled.div`
 const QuoteStack = styled.div`
   display: grid;
   min-width: 0;
+  position: relative;
+  z-index: 1;
 `;
 
 const QuoteSlide = styled.div`
@@ -149,6 +152,44 @@ const QuoteSlide = styled.div`
     pointer-events: auto;
     transform: translateY(0);
     visibility: visible;
+  }
+`;
+
+const QuoteArea = styled.div`
+  isolation: isolate;
+  min-width: 0;
+  position: relative;
+
+  ${mediaUp('md')} {
+    min-height: 392px;
+  }
+`;
+
+// The quote-mark sits behind the text (desktop only): a fixed 646x544 window,
+// top-right, that clips the upscaled GLB.
+const QuoteDecoration = styled.div`
+  display: none;
+
+  ${mediaUp('md')} {
+    display: block;
+    height: 544px;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    top: 56px;
+    width: 646px;
+    z-index: 0;
+  }
+`;
+
+const QuoteDecorationVisual = styled.div`
+  ${mediaUp('md')} {
+    position: absolute;
+    right: 0;
+    top: -112px;
+    transform: scale(1.9);
+    transform-origin: top right;
   }
 `;
 
@@ -214,24 +255,31 @@ export function PartnerTestimonialsCarousel({
 
       <RightColumn>
         <Eyebrow>{i18n._(msg`Join our growing partner ecosystem`)}</Eyebrow>
-        <QuoteStack>
-          {testimonials.map((testimonial, testimonialIndex) => (
-            <QuoteSlide
-              data-active={testimonialIndex === index ? '' : undefined}
-              key={testimonial.author.name.id}
-            >
-              <Heading
-                as="h2"
-                className={quoteClassName}
-                family="sans"
-                size="md"
-                weight="light"
+        <QuoteArea>
+          <QuoteStack>
+            {testimonials.map((testimonial, testimonialIndex) => (
+              <QuoteSlide
+                data-active={testimonialIndex === index ? '' : undefined}
+                key={testimonial.author.name.id}
               >
-                {i18n._(testimonial.quote)}
-              </Heading>
-            </QuoteSlide>
-          ))}
-        </QuoteStack>
+                <Heading
+                  as="h2"
+                  className={quoteClassName}
+                  family="sans"
+                  size="md"
+                  weight="light"
+                >
+                  {i18n._(testimonial.quote)}
+                </Heading>
+              </QuoteSlide>
+            ))}
+          </QuoteStack>
+          <QuoteDecoration aria-hidden>
+            <QuoteDecorationVisual>
+              <PartnerQuoteVisual />
+            </QuoteDecorationVisual>
+          </QuoteDecoration>
+        </QuoteArea>
         <FooterRow>
           <NavGroup>
             <IconButton

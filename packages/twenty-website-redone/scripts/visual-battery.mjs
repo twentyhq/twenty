@@ -224,6 +224,16 @@ const VISUALS = {
     animated: false,
     interactive: true,
   },
+  // The decorative quote-mark GLB behind the text: blue (#4a38f5) band
+  // halftone with a slow breathe; desktop-only + aria-hidden.
+  'partner-quote': {
+    slotSelector: '[data-illustration="partner-quote"]',
+    path: '/partners',
+    hueRangeDegrees: [200, 260],
+    minCoverage: 0.01,
+    animated: false,
+    interactive: false,
+  },
 };
 
 const MOTION_DIFF_FLOOR = 0.005;
