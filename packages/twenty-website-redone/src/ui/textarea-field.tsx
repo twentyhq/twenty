@@ -4,12 +4,14 @@ import { styled } from '@linaria/react';
 
 import { fieldControlClassName } from './field-control-style';
 
+// A multi-line text control sharing the typed-control look, but growing from a
+// min-height rather than the fixed single-line control height.
 const Textarea = styled.textarea`
-  min-height: 96px;
+  height: auto;
+  min-height: clamp(80px, 18vh, 185px);
   resize: vertical;
 `;
 
-// A multi-line text control sharing the typed-control look.
 export function TextareaField({
   ariaLabel,
   name,

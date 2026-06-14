@@ -2256,6 +2256,11 @@ msgstr "Social media"
 msgid "Solo"
 msgstr "Solo"
 
+#. js-lingui-id: FX2oa1
+#: src/partner-application/partner-application-copy.ts
+msgid "Solo or agency?"
+msgstr "Solo or agency?"
+
 #. js-lingui-id: TcZtfs
 #: src/partner-application/data/partner-country-options.ts
 msgid "Solomon Islands 🇸🇧"

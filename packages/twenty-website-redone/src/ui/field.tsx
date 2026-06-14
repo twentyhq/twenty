@@ -17,12 +17,12 @@ const FieldRoot = styled.div`
   flex-direction: column;
 
   & > * + * {
-    margin-top: ${spacing(2)};
+    margin-top: ${spacing(1.5)};
   }
 `;
 
 const Label = styled.span`
-  ${typeRampDeclarations('bodySm')}
+  ${typeRampDeclarations('bodyXs')}
   color: ${semanticColor.ink};
   font-family: ${fontFamily('sans')};
   font-weight: ${FONT_WEIGHT.medium};
@@ -46,8 +46,8 @@ export function Field({
   return (
     <FieldRoot>
       {label !== undefined ? <Label>{label}</Label> : null}
-      {hint !== undefined ? <Hint>{hint}</Hint> : null}
       {children}
+      {hint !== undefined ? <Hint>{hint}</Hint> : null}
     </FieldRoot>
   );
 }

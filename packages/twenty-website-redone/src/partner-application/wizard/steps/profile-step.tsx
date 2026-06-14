@@ -2,14 +2,7 @@
 
 import { useLingui } from '@lingui/react';
 
-import {
-  ChipMultiSelect,
-  ChipSingleSelect,
-  Combobox,
-  type ComboboxItem,
-  Field,
-  TextField,
-} from '@/ui';
+import { ChipMultiSelect, Field, Select, TextField } from '@/ui';
 
 import { PARTNER_COUNTRY_OPTIONS } from '../../data/partner-country-options';
 import { PARTNER_LANGUAGE_OPTIONS } from '../../data/partner-language-options';
@@ -35,9 +28,7 @@ export function ProfileStep({
     label: i18n._(option.label),
     value: option.value,
   }));
-  const countryItems: readonly ComboboxItem<
-    (typeof PARTNER_COUNTRY_OPTIONS)[number]['value']
-  >[] = PARTNER_COUNTRY_OPTIONS.map((option) => ({
+  const countryOptions = PARTNER_COUNTRY_OPTIONS.map((option) => ({
     label: i18n._(option.label),
     value: option.value,
   }));
@@ -45,10 +36,13 @@ export function ProfileStep({
   return (
     <>
       <Field label={i18n._(FIELDS.typeOfTeam)}>
-        <ChipSingleSelect
+        <Select
           ariaLabel={i18n._(FIELDS.typeOfTeam)}
-          onSelect={(value) => setField('typeOfTeam', value)}
+          invalid={state.fieldErrors.typeOfTeam !== undefined}
+          onValueChange={(value) => setField('typeOfTeam', value)}
           options={teamOptions}
+          placeholder={i18n._(FIELDS.typeOfTeamPlaceholder)}
+          scheme="dark"
           value={state.typeOfTeam}
         />
       </Field>
@@ -72,14 +66,15 @@ export function ProfileStep({
         />
       </Field>
       <Field>
-        <Combobox
+        <Select
           ariaLabel={i18n._(FIELDS.country)}
           emptyLabel={i18n._(FIELDS.countrySearchEmpty)}
           invalid={state.fieldErrors.country !== undefined}
-          items={countryItems}
           onValueChange={(value) => setField('country', value)}
+          options={countryOptions}
           placeholder={i18n._(FIELDS.countryPlaceholder)}
           scheme="dark"
+          searchable
           searchPlaceholder={i18n._(FIELDS.countrySearchPlaceholder)}
           value={state.country}
         />

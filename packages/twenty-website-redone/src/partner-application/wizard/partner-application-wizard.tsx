@@ -4,7 +4,14 @@ import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { type FormEvent, useCallback, useEffect } from 'react';
 
-import { color, fontFamily, fontSize, semanticColor, spacing } from '@/tokens';
+import {
+  color,
+  fontFamily,
+  fontSize,
+  radius,
+  semanticColor,
+  spacing,
+} from '@/tokens';
 import { Body, Button, Heading, StepIndicator } from '@/ui';
 
 import { buildPartnerApplicationRequestBody } from '../build-partner-application-request-body';
@@ -83,6 +90,21 @@ const Footer = styled.div`
   & > * + * {
     margin-top: ${spacing(2)};
   }
+`;
+
+// The Back control: a plain bordered mono rectangle (the old secondary button),
+// distinct from the primary's angled ButtonShape.
+const SecondaryButton = styled.button`
+  background: none;
+  border: 1px solid ${semanticColor.lineStrong};
+  border-radius: ${radius(2)};
+  color: ${semanticColor.ink};
+  cursor: pointer;
+  font-family: ${fontFamily('mono')};
+  font-size: ${fontSize(3)};
+  height: ${spacing(10)};
+  padding: 0 ${spacing(4)};
+  text-transform: uppercase;
 `;
 
 const FooterControls = styled.div`
@@ -238,12 +260,9 @@ export function PartnerApplicationWizard({
             ) : null}
             <FooterControls>
               {stepIndex > 0 ? (
-                <Button
-                  label={i18n._(COPY.back)}
-                  onClick={goBack}
-                  type="button"
-                  variant="outlined"
-                />
+                <SecondaryButton onClick={goBack} type="button">
+                  {i18n._(COPY.back)}
+                </SecondaryButton>
               ) : (
                 <span />
               )}

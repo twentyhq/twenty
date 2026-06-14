@@ -18,5 +18,6 @@ export { LiveDataIcon, type LiveDataIconProps } from './live-data';
 export { MinusMark, type MinusMarkProps } from './minus-mark';
 export { PlusMark, type PlusMarkProps } from './plus-mark';
 export { RatingStar, type RatingStarProps } from './rating-star';
+export { Search, type SearchProps } from './search';
 export { TwentyLogo, type TwentyLogoProps } from './twenty-logo';
 export { type IconComponent } from './icon-component';

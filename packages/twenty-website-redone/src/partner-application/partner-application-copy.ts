@@ -35,6 +35,7 @@ export const PARTNER_APPLICATION_COPY = {
     countrySearchEmpty: msg`No matching country.`,
     languages: msg`Languages spoken`,
     typeOfTeam: msg`Type of team *`,
+    typeOfTeamPlaceholder: msg`Solo or agency?`,
     partnerScope: msg`What you cover *`,
     partnerScopeHint: msg`Pick every category that applies.`,
     skills: msg`Technical skills`,

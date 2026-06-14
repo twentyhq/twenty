@@ -32,7 +32,7 @@ const CardGroup = styled.div`
 const Card = styled.button`
   align-items: flex-start;
   background: none;
-  border: 1px solid ${semanticColor.line};
+  border: 1px solid ${semanticColor.lineStrong};
   border-radius: ${radius(2)};
   column-gap: ${spacing(2)};
   cursor: pointer;
@@ -42,6 +42,7 @@ const Card = styled.button`
   width: 100%;
 
   &[data-selected] {
+    background: ${color('blue-10')};
     border-color: ${color('blue')};
   }
 
@@ -50,16 +51,16 @@ const Card = styled.button`
   }
 
   &:focus-visible {
-    outline: 1px solid ${color('blue')};
-    outline-offset: 1px;
+    outline: 2px solid ${color('blue')};
+    outline-offset: 2px;
   }
 `;
 
 const Indicator = styled.span`
   align-items: center;
-  border: 1px solid ${semanticColor.lineStrong};
+  border: 1.5px solid ${semanticColor.divider};
   border-radius: ${radius(1)};
-  color: ${color('white')};
+  color: ${color('black')};
   display: flex;
   flex: none;
   height: 18px;
@@ -91,16 +92,15 @@ const Title = styled.span`
 `;
 
 const Description = styled.span`
-  ${typeRampDeclarations('bodySm')}
+  ${typeRampDeclarations('bodyXs')}
   color: ${semanticColor.inkMuted};
   font-family: ${fontFamily('sans')};
 `;
 
 const Examples = styled.span`
   ${typeRampDeclarations('bodyXs')}
-  color: ${semanticColor.inkMuted};
+  color: ${semanticColor.inkSubtle};
   font-family: ${fontFamily('sans')};
-  opacity: 0.7;
 `;
 
 export function CategoryCardSelect<TValue extends string>({
@@ -135,7 +135,7 @@ export function CategoryCardSelect<TValue extends string>({
             <Texts>
               <Title>{option.label}</Title>
               <Description>{option.description}</Description>
-              <Examples>{option.examples}</Examples>
+              <Examples>ex. {option.examples}</Examples>
             </Texts>
           </Card>
         );

@@ -25,6 +25,7 @@ export function CommercialsStep({
           name="hourlyRate"
           onValueChange={(value) => setField('hourlyRate', value)}
           placeholder={i18n._(FIELDS.hourlyRatePlaceholder)}
+          prefix="$"
           value={state.hourlyRate}
         />
       </Field>
@@ -34,6 +35,7 @@ export function CommercialsStep({
           name="projectBudgetMin"
           onValueChange={(value) => setField('projectBudgetMin', value)}
           placeholder={i18n._(FIELDS.projectBudgetMinPlaceholder)}
+          prefix="$"
           value={state.projectBudgetMin}
         />
       </Field>

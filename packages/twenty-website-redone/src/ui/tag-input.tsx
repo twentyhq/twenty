@@ -1,28 +1,45 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { type KeyboardEvent, useId, useState } from 'react';
 
 import {
   color,
   fontFamily,
+  fontSize,
   radius,
   semanticColor,
+  SHADOW,
   spacing,
-  typeRampDeclarations,
+  Z_INDEX,
 } from '@/tokens';
 
 import { addTag } from './add-tag';
-import { chipClassName } from './chip-style';
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  & > * + * {
+    margin-top: ${spacing(2)};
+  }
+`;
+
+const ComboBox = styled.div`
+  position: relative;
+`;
 
 const TagBox = styled.div`
   align-items: center;
-  border: 1px solid ${semanticColor.line};
+  border: 1px solid ${semanticColor.lineStrong};
   border-radius: ${radius(2)};
+  box-sizing: border-box;
   display: flex;
   flex-wrap: wrap;
   gap: ${spacing(1.5)};
-  padding: ${spacing(2)};
+  min-height: clamp(40px, 5.5vh, 56px);
+  padding: ${spacing(1.5)} ${spacing(2)};
+  width: 100%;
 
   &:focus-within {
     border-color: ${color('blue')};
@@ -30,21 +47,21 @@ const TagBox = styled.div`
 `;
 
 const AddedChip = styled.span`
-  ${typeRampDeclarations('bodySm')}
   align-items: center;
-  background: ${color('blue')};
-  border-radius: ${radius(2)};
-  color: ${color('white')};
+  background: ${color('blue-20')};
+  border-radius: ${radius(8)};
+  color: ${semanticColor.ink};
   column-gap: ${spacing(1)};
   display: inline-flex;
   font-family: ${fontFamily('sans')};
+  font-size: ${fontSize(3.5)};
   padding: ${spacing(0.5)} ${spacing(2)};
 `;
 
 const RemoveButton = styled.button`
   background: none;
   border: none;
-  color: inherit;
+  color: ${semanticColor.inkMuted};
   cursor: pointer;
   font: inherit;
   line-height: 1;
@@ -52,16 +69,16 @@ const RemoveButton = styled.button`
 `;
 
 const TagInputControl = styled.input`
-  ${typeRampDeclarations('bodySm')}
   background: none;
   border: none;
   color: ${semanticColor.ink};
-  flex: 1 0 80px;
+  flex: 1 1 120px;
   font-family: ${fontFamily('sans')};
-  min-width: 80px;
+  font-size: ${fontSize(4)};
+  min-width: 120px;
 
   &::placeholder {
-    color: ${semanticColor.inkMuted};
+    color: ${semanticColor.inkSubtle};
   }
 
   &:focus {
@@ -69,16 +86,78 @@ const TagInputControl = styled.input`
   }
 `;
 
-const SuggestionRow = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${spacing(2)};
-  margin-top: ${spacing(2)};
+const Menu = styled.ul`
+  background: ${semanticColor.surface};
+  border: 1px solid ${semanticColor.lineStrong};
+  border-radius: ${radius(2)};
+  box-shadow: ${SHADOW.popupDark};
+  left: 0;
+  list-style: none;
+  margin: ${spacing(1)} 0 0;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: ${spacing(1)};
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: ${Z_INDEX.portal};
 `;
 
-// A free-text tag entry with suggestions: Enter or comma adds the draft, a
-// suggestion click adds it, Backspace on an empty draft removes the last tag.
-// Stays i18n-free — the consumer supplies a localized removeLabel(tag).
+const MenuItem = styled.li`
+  border-radius: ${radius(1)};
+  color: ${semanticColor.ink};
+  cursor: pointer;
+  font-family: ${fontFamily('sans')};
+  font-size: ${fontSize(4)};
+  padding: ${spacing(2)};
+
+  &[data-active] {
+    background: ${color('blue-20')};
+  }
+`;
+
+const SuggestRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${spacing(1.5)};
+`;
+
+const Ghost = styled.button`
+  background: none;
+  border: 1px dashed ${semanticColor.lineStrong};
+  border-radius: ${radius(8)};
+  color: ${semanticColor.inkMuted};
+  cursor: pointer;
+  font-family: ${fontFamily('sans')};
+  font-size: ${fontSize(3)};
+  padding: ${spacing(1)} ${spacing(2)};
+
+  &:hover {
+    border-color: ${semanticColor.divider};
+    color: ${semanticColor.ink};
+  }
+`;
+
+// Suggestions matching the typed draft (case-insensitive substring), excluding
+// the ones already added. Empty draft → no menu.
+function matchingSuggestions(
+  pool: readonly string[],
+  selected: readonly string[],
+  query: string,
+): string[] {
+  const trimmed = query.trim().toLowerCase();
+  if (trimmed === '') return [];
+  const taken = new Set(selected.map((value) => value.toLowerCase()));
+  return pool.filter(
+    (value) =>
+      !taken.has(value.toLowerCase()) && value.toLowerCase().includes(trimmed),
+  );
+}
+
+// A free-text tag entry with suggestions: type to filter the dropdown menu,
+// Enter/comma adds the draft (or the highlighted match), Backspace on an empty
+// draft removes the last tag, and the remaining suggestions show as quick-add
+// ghost chips. Stays i18n-free — the consumer supplies a localized removeLabel.
 export function TagInput({
   ariaLabel,
   onValuesChange,
@@ -95,66 +174,110 @@ export function TagInput({
   values: readonly string[];
 }) {
   const [draft, setDraft] = useState('');
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const listId = useId();
+
+  const menuMatches = matchingSuggestions(suggestions, values, draft);
+  const menuOpen = menuMatches.length > 0;
 
   const commit = (raw: string) => {
     const next = addTag(values, raw);
     if (next.length !== values.length) onValuesChange(next);
     setDraft('');
+    setActiveIndex(-1);
   };
   const remove = (tag: string) =>
     onValuesChange(values.filter((value) => value !== tag));
 
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (menuOpen && event.key === 'ArrowDown') {
+      event.preventDefault();
+      setActiveIndex((index) => (index + 1) % menuMatches.length);
+      return;
+    }
+    if (menuOpen && event.key === 'ArrowUp') {
+      event.preventDefault();
+      setActiveIndex((index) =>
+        index <= 0 ? menuMatches.length - 1 : index - 1,
+      );
+      return;
+    }
+    if (event.key === 'Enter' || event.key === ',') {
+      event.preventDefault();
+      commit(menuOpen && activeIndex >= 0 ? menuMatches[activeIndex] : draft);
+      return;
+    }
+    if (event.key === 'Escape') {
+      setActiveIndex(-1);
+      return;
+    }
+    if (event.key === 'Backspace' && draft === '' && values.length > 0) {
+      remove(values[values.length - 1]);
+    }
+  };
+
   const available = suggestions.filter((tag) => !values.includes(tag));
 
   return (
-    <div>
-      <TagBox>
-        {values.map((tag) => (
-          <AddedChip key={tag}>
-            {tag}
-            <RemoveButton
-              aria-label={removeLabel(tag)}
-              onClick={() => remove(tag)}
-              type="button"
-            >
-              ×
-            </RemoveButton>
-          </AddedChip>
-        ))}
-        <TagInputControl
-          aria-label={ariaLabel}
-          autoComplete="off"
-          onChange={(event) => setDraft(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' || event.key === ',') {
-              event.preventDefault();
-              commit(draft);
-            } else if (
-              event.key === 'Backspace' &&
-              draft === '' &&
-              values.length > 0
-            ) {
-              remove(values[values.length - 1]);
-            }
-          }}
-          placeholder={values.length === 0 ? placeholder : undefined}
-          value={draft}
-        />
-      </TagBox>
-      {available.length > 0 ? (
-        <SuggestionRow>
-          {available.map((tag) => (
-            <button
-              className={chipClassName}
-              key={tag}
-              onClick={() => commit(tag)}
-              type="button"
-            >
+    <Container>
+      <ComboBox>
+        <TagBox>
+          {values.map((tag) => (
+            <AddedChip key={tag}>
               {tag}
-            </button>
+              <RemoveButton
+                aria-label={removeLabel(tag)}
+                onClick={() => remove(tag)}
+                type="button"
+              >
+                ×
+              </RemoveButton>
+            </AddedChip>
           ))}
-        </SuggestionRow>
+          <TagInputControl
+            aria-controls={listId}
+            aria-expanded={menuOpen}
+            aria-label={ariaLabel}
+            autoComplete="off"
+            onBlur={() => commit(draft)}
+            onChange={(event) => {
+              setDraft(event.target.value);
+              setActiveIndex(-1);
+            }}
+            onKeyDown={handleKeyDown}
+            placeholder={values.length === 0 ? placeholder : undefined}
+            role="combobox"
+            value={draft}
+          />
+        </TagBox>
+        {menuOpen ? (
+          <Menu id={listId} role="listbox">
+            {menuMatches.map((match, index) => (
+              <MenuItem
+                aria-selected={index === activeIndex}
+                data-active={index === activeIndex ? '' : undefined}
+                key={match}
+                onMouseDown={(event) => {
+                  event.preventDefault();
+                  commit(match);
+                }}
+                role="option"
+              >
+                {match}
+              </MenuItem>
+            ))}
+          </Menu>
+        ) : null}
+      </ComboBox>
+      {available.length > 0 ? (
+        <SuggestRow>
+          {available.map((tag) => (
+            <Ghost key={tag} onClick={() => commit(tag)} type="button">
+              + {tag}
+            </Ghost>
+          ))}
+        </SuggestRow>
       ) : null}
-    </div>
+    </Container>
   );
 }
