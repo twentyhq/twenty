@@ -34,6 +34,7 @@ import {
 } from 'twenty-ui-deprecated/theme-constants';
 import { MenuItem } from 'twenty-ui-deprecated/navigation';
 import { toSpliced } from '~/utils/array/toSpliced';
+import { v4 } from 'uuid';
 
 type FormArrayFieldInputProps = {
   label?: string;
@@ -107,7 +108,7 @@ export const FormArrayFieldInput = ({
   const [draftValue, setDraftValue] = useState<
     | {
         type: 'static';
-        value: FieldArrayValue;
+        value: { id: string; value: string }[];
       }
     | {
         type: 'variable';
@@ -121,10 +122,10 @@ export const FormArrayFieldInput = ({
         }
       : {
           type: 'static',
-          value:
-            isDefined(defaultValue) && isNonEmptyArray(defaultValue)
-              ? defaultValue
-              : [],
+          value: (isDefined(defaultValue) && isNonEmptyArray(defaultValue)
+            ? defaultValue
+            : []
+          ).map((val) => ({ id: v4(), value: val })),
         },
   );
 
@@ -153,12 +154,21 @@ export const FormArrayFieldInput = ({
   };
 
   const handleFirstItemInputEnter = () => {
+    if (draftValue.type !== 'static') {
+      return;
+    }
+
+    const newItems = [
+      ...draftValue.value,
+      { id: v4(), value: newItemDraftValue },
+    ];
+
     setDraftValue({
       type: 'static',
-      value: [...draftValue.value, newItemDraftValue],
+      value: newItems,
     });
 
-    onChange([...draftValue.value, newItemDraftValue]);
+    onChange(newItems.map((item) => item.value));
 
     setNewItemDraftValue('');
 
@@ -172,7 +182,8 @@ export const FormArrayFieldInput = ({
   };
 
   const handleEditItem = (index: number) => {
-    setInputValue(draftValue.value[index]);
+    if (draftValue.type !== 'static') return;
+    setInputValue(draftValue.value[index].value);
     setItemToEditIndex(index);
     setIsInputDisplayed(true);
   };
@@ -188,7 +199,7 @@ export const FormArrayFieldInput = ({
       type: 'static',
       value: updatedItems,
     });
-    onChange(updatedItems);
+    onChange(updatedItems.map((item) => item.value));
 
     const isDropdownGoingToBeHiddenNext = updatedItems.length === 0;
     if (isDropdownGoingToBeHiddenNext) {
@@ -248,21 +259,24 @@ export const FormArrayFieldInput = ({
 
     const items = draftValue.value;
 
-    if (!isAddingNewItem && sanitizedInput === items[itemToEditIndex]) {
+    if (!isAddingNewItem && sanitizedInput === items[itemToEditIndex]?.value) {
       setIsInputDisplayed(false);
       setInputValue('');
       return;
     }
 
     const updatedItems = isAddingNewItem
-      ? [...items, sanitizedInput]
-      : toSpliced(items, itemToEditIndex, 1, sanitizedInput);
+      ? [...items, { id: v4(), value: sanitizedInput }]
+      : toSpliced(items, itemToEditIndex, 1, {
+          id: items[itemToEditIndex]?.id ?? v4(),
+          value: sanitizedInput,
+        });
 
     setDraftValue({
       type: 'static',
       value: updatedItems,
     });
-    onChange(updatedItems);
+    onChange(updatedItems.map((item) => item.value));
 
     setIsInputDisplayed(false);
     setInputValue('');
@@ -311,7 +325,7 @@ export const FormArrayFieldInput = ({
             readonly ? (
               <StyledDisplayModeReadonlyContainer>
                 {draftValue.value.length > 0 ? (
-                  <ArrayDisplay value={draftValue.value} />
+                  <ArrayDisplay value={draftValue.value.map((i) => i.value)} />
                 ) : (
                   <StyledPlaceholderContainer>
                     <FormFieldPlaceholder />
@@ -339,7 +353,7 @@ export const FormArrayFieldInput = ({
                 }}
                 clickableComponent={
                   <StyledDisplayModeContainer data-open={isDropdownOpen}>
-                    <ArrayDisplay value={draftValue.value} />
+                    <ArrayDisplay value={draftValue.value.map((i) => i.value)} />
                   </StyledDisplayModeContainer>
                 }
                 clickableComponentWidth="100%"
@@ -347,11 +361,11 @@ export const FormArrayFieldInput = ({
                   <DropdownContent ref={containerRef}>
                     <DropdownMenuItemsContainer hasMaxHeight>
                       {draftValue.type === 'static' &&
-                        draftValue.value.map((value, index) => (
+                        draftValue.value.map((item, index) => (
                           <ArrayFieldMenuItem
-                            key={index}
-                            dropdownId={`array-field-input-${instanceId}-${index}`}
-                            value={value}
+                            key={item.id}
+                            dropdownId={`array-field-input-${instanceId}-${item.id}`}
+                            value={item.value}
                             onEdit={() => {
                               handleEditItem(index);
                             }}
