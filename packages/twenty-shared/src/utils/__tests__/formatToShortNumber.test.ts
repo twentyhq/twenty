@@ -30,6 +30,13 @@ describe('formatToShortNumber', () => {
     expect(formatToShortNumber(0)).toBe('0');
   });
 
+  it('promotes to the next unit when rounding carries over to 1000', () => {
+    expect(formatToShortNumber(999999)).toBe('1m');
+    expect(formatToShortNumber(999999999)).toBe('1b');
+    expect(formatToShortNumber(999.95)).toBe('1k');
+    expect(formatToShortNumber(-999999)).toBe('-1m');
+  });
+
   describe('negative numbers', () => {
     it('formats negative numbers less than 1000 correctly', () => {
       expect(formatToShortNumber(-500)).toBe('-500');
