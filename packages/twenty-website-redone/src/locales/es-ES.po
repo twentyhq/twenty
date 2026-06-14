@@ -34,6 +34,17 @@ msgstr ""
 msgid "{hourly}/hr"
 msgstr ""
 
+#. js-lingui-id: rAP+km
+#: src/partners-marketplace/filter-dropdown.tsx
+msgid "{labelText} filter"
+msgstr ""
+
+#. js-lingui-id: 7hlEpj
+#. placeholder {0}: selected.size
+#: src/partners-marketplace/filter-dropdown.tsx
+msgid "{labelText} filter, {0} selected"
+msgstr ""
+
 #. js-lingui-id: XUqxHW
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
@@ -114,6 +125,11 @@ msgstr ""
 #. js-lingui-id: J+A83M
 #: src/sections/helped/helped.data.ts
 msgid "AC&T replaced a shuttered vendor CRM with self-hosted Twenty and cut CRM costs by more than 90%."
+msgstr ""
+
+#. js-lingui-id: Yyn/dP
+#: src/partners-marketplace/active-filter-pills.tsx
+msgid "Active filters"
 msgstr ""
 
 #. js-lingui-id: woOp+c
@@ -522,6 +538,7 @@ msgstr ""
 
 #. js-lingui-id: NUrY9o
 #: src/partners-marketplace/partner-card.tsx
+#: src/partners-marketplace/filter-bar.tsx
 msgid "Categories"
 msgstr ""
 
@@ -564,6 +581,12 @@ msgstr ""
 #. js-lingui-id: 3wV73y
 #: src/partner-application/partner-application-copy.ts
 msgid "City"
+msgstr ""
+
+#. js-lingui-id: u8JHrO
+#: src/partners-marketplace/filter-bar.tsx
+#: src/partners-marketplace/empty-state.tsx
+msgid "Clear filters"
 msgstr ""
 
 #. js-lingui-id: yz7wBu
@@ -1095,6 +1118,11 @@ msgstr ""
 msgid "Files"
 msgstr ""
 
+#. js-lingui-id: bOidm7
+#: src/partners-marketplace/filter-bar.tsx
+msgid "Filter partners"
+msgstr ""
+
 #. js-lingui-id: iabLgo
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Filtered metrics from any object"
@@ -1530,6 +1558,7 @@ msgstr ""
 
 #. js-lingui-id: GAmD3h
 #: src/partners-marketplace/partner-card.tsx
+#: src/partners-marketplace/filter-bar.tsx
 msgid "Languages"
 msgstr ""
 
@@ -1883,6 +1912,11 @@ msgstr ""
 msgid "No matching country."
 msgstr ""
 
+#. js-lingui-id: UxK4so
+#: src/partners-marketplace/empty-state.tsx
+msgid "No partners match your filters"
+msgstr ""
+
 #. js-lingui-id: SiZ/7E
 #: src/sections/faq/faq.data.ts
 msgid "No. Build custom objects, fields, views, and no-code workflows straight from Settings. Unlimited, no extra charge."
@@ -2155,6 +2189,7 @@ msgstr ""
 
 #. js-lingui-id: q45OlW
 #: src/partners-marketplace/partner-card.tsx
+#: src/partners-marketplace/filter-bar.tsx
 msgid "Regions"
 msgstr ""
 
@@ -2166,6 +2201,12 @@ msgstr ""
 #. js-lingui-id: 5icoS1
 #: src/sections/menu/menu.data.ts
 msgid "Releases"
+msgstr ""
+
+#. js-lingui-id: BkBq/5
+#. placeholder {0}: pill.text
+#: src/partners-marketplace/active-filter-pills.tsx
+msgid "Remove {0} filter"
 msgstr ""
 
 #. js-lingui-id: OY7BZk
@@ -2348,6 +2389,16 @@ msgstr ""
 #. js-lingui-id: Ta0ts5
 #: src/app-preview/terminal/diff/diff-pill.tsx
 msgid "Show changes"
+msgstr ""
+
+#. js-lingui-id: RhU4bB
+#: src/partners-marketplace/filter-bar.tsx
+msgid "Showing {visibleCount} of {totalCount} partners"
+msgstr ""
+
+#. js-lingui-id: I89wN/
+#: src/partners-marketplace/filter-bar.tsx
+msgid "Showing all {totalCount} partners"
 msgstr ""
 
 #. js-lingui-id: yhyNch
@@ -2762,6 +2813,11 @@ msgstr ""
 #. js-lingui-id: eslLQF
 #: src/sections/product-demo/product-demo.tsx
 msgid "Try it live"
+msgstr ""
+
+#. js-lingui-id: qhmtws
+#: src/partners-marketplace/empty-state.tsx
+msgid "Try removing some filters or browse all partners."
 msgstr ""
 
 #. js-lingui-id: E/hGy3

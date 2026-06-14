@@ -34,6 +34,17 @@ msgstr "{count} Case Studies"
 msgid "{hourly}/hr"
 msgstr "{hourly}/hr"
 
+#. js-lingui-id: rAP+km
+#: src/partners-marketplace/filter-dropdown.tsx
+msgid "{labelText} filter"
+msgstr "{labelText} filter"
+
+#. js-lingui-id: 7hlEpj
+#. placeholder {0}: selected.size
+#: src/partners-marketplace/filter-dropdown.tsx
+msgid "{labelText} filter, {0} selected"
+msgstr "{labelText} filter, {0} selected"
+
 #. js-lingui-id: XUqxHW
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
@@ -115,6 +126,11 @@ msgstr "AC&T moved to a self-hosted Twenty instance with no vendor risk, no forc
 #: src/sections/helped/helped.data.ts
 msgid "AC&T replaced a shuttered vendor CRM with self-hosted Twenty and cut CRM costs by more than 90%."
 msgstr "AC&T replaced a shuttered vendor CRM with self-hosted Twenty and cut CRM costs by more than 90%."
+
+#. js-lingui-id: Yyn/dP
+#: src/partners-marketplace/active-filter-pills.tsx
+msgid "Active filters"
+msgstr "Active filters"
 
 #. js-lingui-id: woOp+c
 #: src/sections/stepper/product-stepper-data.ts
@@ -526,6 +542,7 @@ msgstr "Catalan"
 
 #. js-lingui-id: NUrY9o
 #: src/partners-marketplace/partner-card.tsx
+#: src/partners-marketplace/filter-bar.tsx
 msgid "Categories"
 msgstr "Categories"
 
@@ -569,6 +586,12 @@ msgstr "Choose a language"
 #: src/partner-application/partner-application-copy.ts
 msgid "City"
 msgstr "City"
+
+#. js-lingui-id: u8JHrO
+#: src/partners-marketplace/filter-bar.tsx
+#: src/partners-marketplace/empty-state.tsx
+msgid "Clear filters"
+msgstr "Clear filters"
 
 #. js-lingui-id: yz7wBu
 #: src/app-preview/stage/traffic-lights.tsx
@@ -1099,6 +1122,11 @@ msgstr "Fiji 🇫🇯"
 msgid "Files"
 msgstr "Files"
 
+#. js-lingui-id: bOidm7
+#: src/partners-marketplace/filter-bar.tsx
+msgid "Filter partners"
+msgstr "Filter partners"
+
 #. js-lingui-id: iabLgo
 #: src/sections/product-feature/feature-tiles.ts
 msgid "Filtered metrics from any object"
@@ -1536,6 +1564,7 @@ msgstr "Kyrgyzstan 🇰🇬"
 
 #. js-lingui-id: GAmD3h
 #: src/partners-marketplace/partner-card.tsx
+#: src/partners-marketplace/filter-bar.tsx
 msgid "Languages"
 msgstr "Languages"
 
@@ -1891,6 +1920,11 @@ msgstr "Nigeria 🇳🇬"
 msgid "No matching country."
 msgstr "No matching country."
 
+#. js-lingui-id: UxK4so
+#: src/partners-marketplace/empty-state.tsx
+msgid "No partners match your filters"
+msgstr "No partners match your filters"
+
 #. js-lingui-id: SiZ/7E
 #: src/sections/faq/faq.data.ts
 msgid "No. Build custom objects, fields, views, and no-code workflows straight from Settings. Unlimited, no extra charge."
@@ -2165,6 +2199,7 @@ msgstr "Real-time data"
 
 #. js-lingui-id: q45OlW
 #: src/partners-marketplace/partner-card.tsx
+#: src/partners-marketplace/filter-bar.tsx
 msgid "Regions"
 msgstr "Regions"
 
@@ -2177,6 +2212,12 @@ msgstr "Release Notes"
 #: src/sections/menu/menu.data.ts
 msgid "Releases"
 msgstr "Releases"
+
+#. js-lingui-id: BkBq/5
+#. placeholder {0}: pill.text
+#: src/partners-marketplace/active-filter-pills.tsx
+msgid "Remove {0} filter"
+msgstr "Remove {0} filter"
 
 #. js-lingui-id: OY7BZk
 #: src/partner-application/partner-application-copy.ts
@@ -2361,6 +2402,16 @@ msgstr "Ship a product on Twenty"
 #: src/app-preview/terminal/diff/diff-pill.tsx
 msgid "Show changes"
 msgstr "Show changes"
+
+#. js-lingui-id: RhU4bB
+#: src/partners-marketplace/filter-bar.tsx
+msgid "Showing {visibleCount} of {totalCount} partners"
+msgstr "Showing {visibleCount} of {totalCount} partners"
+
+#. js-lingui-id: I89wN/
+#: src/partners-marketplace/filter-bar.tsx
+msgid "Showing all {totalCount} partners"
+msgstr "Showing all {totalCount} partners"
 
 #. js-lingui-id: yhyNch
 #: src/partner-application/data/partner-country-options.ts
@@ -2781,6 +2832,11 @@ msgstr "Trusted by leading organizations"
 #: src/sections/product-demo/product-demo.tsx
 msgid "Try it live"
 msgstr "Try it live"
+
+#. js-lingui-id: qhmtws
+#: src/partners-marketplace/empty-state.tsx
+msgid "Try removing some filters or browse all partners."
+msgstr "Try removing some filters or browse all partners."
 
 #. js-lingui-id: E/hGy3
 #: src/sections/product-demo/product-demo.tsx

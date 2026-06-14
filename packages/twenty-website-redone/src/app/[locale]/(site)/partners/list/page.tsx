@@ -1,10 +1,12 @@
+import { Suspense } from 'react';
+
 import { getCommunityStats } from '@/platform/community';
 import {
   getRouteI18n,
   type LocaleRouteParams,
 } from '@/platform/i18n/get-route-i18n';
 import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
-import { MarketplaceGrid } from '@/partners-marketplace/marketplace-grid';
+import { MarketplaceClient } from '@/partners-marketplace/marketplace-client';
 import { MarketplaceHeader } from '@/partners-marketplace/marketplace-header';
 import { loadMarketplacePartners } from '@/partners-marketplace/load-marketplace-partners';
 import {
@@ -13,7 +15,6 @@ import {
   JsonLd,
 } from '@/platform/seo';
 import { Menu } from '@/sections/menu';
-import { SectionShell } from '@/ui';
 
 export const generateMetadata = buildRouteMetadata('partnersList');
 
@@ -44,9 +45,9 @@ export default async function PartnersMarketplacePage({
       <Menu communityStats={communityStats} scheme="light" />
       <main>
         <MarketplaceHeader />
-        <SectionShell rhythm="section" scheme="light">
-          <MarketplaceGrid partners={partners} locale={locale} />
-        </SectionShell>
+        <Suspense fallback={null}>
+          <MarketplaceClient partners={partners} locale={locale} />
+        </Suspense>
       </main>
     </>
   );
