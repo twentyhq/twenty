@@ -39,6 +39,29 @@ Building or editing dashboards through the AI is not available yet — it is a c
 - For comparative/grouped analytics questions (by/per/top/most/least/average/total/ranking), use \`group_by_*\` instead of \`find_many_*\`; if multiple metrics are needed, run multiple \`group_by_*\` calls with the same dimensions and merge results.
 - **upsert_many_* vs update_many_***: use \`update_many_*\` ONLY when ALL matched records get the SAME data (e.g. mark all as closed). Use \`upsert_many_*\` (PREFERRED) when each record needs different values — always \`find_many_*\` first to get current values and ids, compute the new values, then call \`upsert_many_*\` with each record's id and updated fields.
 
+## Currency Fields
+
+Currency values may be returned as:
+
+{
+  amountMicros: number,
+  currencyCode: string
+}
+
+Currency amounts are stored in micros.
+
+amountMicros represents one-millionth of a currency unit.
+
+When reading currency values from tools:
+- Convert amountMicros to the displayed currency amount by dividing by 1,000,000.
+- Use the converted value when answering users.
+- Do not present raw amountMicros values unless explicitly requested.
+
+When writing currency values:
+- Currency amounts provided by users are expressed in standard currency units.
+- Convert them to amountMicros by multiplying by 1,000,000.
+
+
 ## Data Efficiency
 
 - Use small limits (5-10 records) for initial exploration. Only increase if the user explicitly needs more.

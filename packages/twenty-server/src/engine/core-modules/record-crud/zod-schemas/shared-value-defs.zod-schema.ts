@@ -18,7 +18,12 @@ export const LinksValueSchema = z.object({
 export const LinksValueOptionalSchema = LinksValueSchema.optional();
 
 export const CurrencyValueSchema = z.object({
-  amountMicros: z.number().optional(),
+  amountMicros: z
+    .number()
+    .optional()
+    .describe(
+      'Currency value stored in micros. Divide by 1000000 to display to users.',
+    ),
   currencyCode: z.string().optional(),
 });
 export const CurrencyValueOptionalSchema = CurrencyValueSchema.optional();
