@@ -122,6 +122,49 @@ describe('submit-partner-application handler — upsert', () => {
     expect(personNode?.name?.lastName).toBe('Lovelace');
   });
 
+  it('reuses an existing company that already owns the applicant domain instead of failing on the unique domain index', async () => {
+    // A company with this domain already exists (e.g. seeded by the TFT import,
+    // with no Partner/Person attached). Company.domainName is uniquely indexed,
+    // so a blind createCompany would throw "duplicate entry" and the whole
+    // submission would 502. The handler must reuse this company instead.
+    const domain = 'https://reuse-domain-case.example.com';
+    const created = await client.mutation({
+      createCompany: {
+        __args: { data: { name: 'Pre-existing Co', domainName: { primaryLinkUrl: domain } } },
+        id: true,
+      },
+    });
+    const existingCompanyId = created.createCompany?.id;
+    expect(existingCompanyId).toBeDefined();
+    if (existingCompanyId === undefined) return;
+    createdCompanyIds.push(existingCompanyId);
+
+    const result = await handler(
+      authedEvent(
+        baseInput({
+          email: 'reuse.domain@example.com',
+          companyName: 'Applicant Co',
+          domainName: domain,
+        }),
+      ),
+    );
+    await trackCreated(result);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.created).toBe(true);
+
+    const partner = await client.query({
+      partner: {
+        __args: { filter: { id: { eq: result.partnerId } } },
+        company: { id: true, name: true },
+      },
+    });
+    // Reused the existing company (same id) and left its name untouched.
+    expect(partner.partner?.company?.id).toBe(existingCompanyId);
+    expect(partner.partner?.company?.name).toBe('Pre-existing Co');
+  });
+
   it('returns created: false and updates fields on resubmission for the same email', async () => {
     const first = await handler(authedEvent(baseInput({ email: 'update.case@example.com', city: 'London' })));
     await trackCreated(first);

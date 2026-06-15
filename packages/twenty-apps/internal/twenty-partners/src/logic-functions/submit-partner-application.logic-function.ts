@@ -106,6 +106,50 @@ function buildPartnerFields(input: SubmitPartnerApplicationInput): PartnerFields
   return fields;
 }
 
+// Company.domainName has a UNIQUE index, so a blind createCompany throws
+// "duplicate entry" whenever a company with the applicant's domain already
+// exists — which is common, since the TFT import seeds companies. Reuse that
+// company instead of creating a second one; only create when no domain matches.
+// We never rename the matched company: the CRM's existing name wins over the
+// applicant's free-text companyName.
+// ponytail: matches active rows only. A soft-deleted company still holds the
+// unique index and would re-collide — clear those with `yarn purge:prod`.
+async function findOrCreateCompanyId(
+  client: CoreApiClient,
+  input: SubmitPartnerApplicationInput,
+): Promise<string> {
+  const domain = isNonEmptyString(input.domainName)
+    ? input.domainName.trim()
+    : undefined;
+
+  if (domain !== undefined) {
+    const existing = await client.query({
+      companies: {
+        __args: {
+          filter: { domainName: { primaryLinkUrl: { eq: domain } } },
+          first: 1,
+        },
+        edges: { node: { id: true } },
+      },
+    });
+    const existingId = existing.companies?.edges?.[0]?.node?.id;
+    if (existingId !== undefined) return existingId;
+  }
+
+  const companyData: CoreSchema.CompanyCreateInput = {
+    name: input.companyName.trim(),
+  };
+  if (domain !== undefined) companyData.domainName = { primaryLinkUrl: domain };
+  const companyResult = await client.mutation({
+    createCompany: { __args: { data: companyData }, id: true },
+  });
+  const companyId = companyResult.createCompany?.id;
+  if (companyId === undefined) {
+    throw new Error('createCompany did not return an id');
+  }
+  return companyId;
+}
+
 type SubmitPartnerApplicationEvent = {
   headers?: Record<string, string | undefined>;
   body?: unknown;
@@ -191,17 +235,7 @@ export const handler = async (
       return { ok: true, created: false, partnerId };
     }
 
-    const companyData: CoreSchema.CompanyCreateInput = { name: input.companyName.trim() };
-    if (isNonEmptyString(input.domainName)) {
-      companyData.domainName = { primaryLinkUrl: input.domainName.trim() };
-    }
-    const companyResult = await client.mutation({
-      createCompany: { __args: { data: companyData }, id: true },
-    });
-    const companyId = companyResult.createCompany?.id;
-    if (companyId === undefined) {
-      throw new Error('createCompany did not return an id');
-    }
+    const companyId = await findOrCreateCompanyId(client, input);
 
     const partnerResult = await client.mutation({
       createPartner: {
