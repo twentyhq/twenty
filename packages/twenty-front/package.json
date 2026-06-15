@@ -94,6 +94,7 @@
     "graphql": "16.8.1",
     "graphql-sse": "^2.5.4",
     "graphql-tag": "^2.12.6",
+    "idb-keyval": "^6.2.5",
     "immer": "^10.1.1",
     "input-otp": "^1.4.2",
     "jotai": "^2.17.1",

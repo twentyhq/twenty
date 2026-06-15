@@ -1,19 +1,26 @@
+import { clear, del, entries, set } from 'idb-keyval';
+
 import { createIndexedDbBackedJotaiStorage } from '@/ui/utilities/state/jotai/utils/createIndexedDbBackedJotaiStorage';
-import {
-  idbClear,
-  idbDelete,
-  idbGetAllEntries,
-  idbSet,
-  isIndexedDbAvailable,
-} from '@/ui/utilities/state/jotai/utils/indexedDbKeyValStore';
 
-jest.mock('@/ui/utilities/state/jotai/utils/indexedDbKeyValStore');
+jest.mock('idb-keyval', () => ({
+  createStore: jest.fn(() => ({ store: 'mock' })),
+  set: jest.fn(() => Promise.resolve()),
+  del: jest.fn(() => Promise.resolve()),
+  clear: jest.fn(() => Promise.resolve()),
+  entries: jest.fn(() => Promise.resolve([])),
+}));
 
-const mockedIsIndexedDbAvailable = jest.mocked(isIndexedDbAvailable);
-const mockedIdbGetAllEntries = jest.mocked(idbGetAllEntries);
-const mockedIdbSet = jest.mocked(idbSet);
-const mockedIdbDelete = jest.mocked(idbDelete);
-const mockedIdbClear = jest.mocked(idbClear);
+const mockedSet = jest.mocked(set);
+const mockedDel = jest.mocked(del);
+const mockedClear = jest.mocked(clear);
+const mockedEntries = jest.mocked(entries);
+
+const setIndexedDbAvailability = (isAvailable: boolean) => {
+  Object.defineProperty(globalThis, 'indexedDB', {
+    configurable: true,
+    value: isAvailable ? {} : undefined,
+  });
+};
 
 type Item = { value: number };
 
@@ -23,11 +30,8 @@ describe('createIndexedDbBackedJotaiStorage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     localStorage.clear();
-    mockedIsIndexedDbAvailable.mockReturnValue(true);
-    mockedIdbGetAllEntries.mockResolvedValue([]);
-    mockedIdbSet.mockResolvedValue(undefined);
-    mockedIdbDelete.mockResolvedValue(undefined);
-    mockedIdbClear.mockResolvedValue(undefined);
+    setIndexedDbAvailability(true);
+    mockedEntries.mockResolvedValue([]);
   });
 
   it('should read synchronously from the in-memory map', () => {
@@ -45,11 +49,15 @@ describe('createIndexedDbBackedJotaiStorage', () => {
 
     storage.setItem('k', { value: 2 });
 
-    expect(mockedIdbSet).toHaveBeenCalledWith('k', { value: 2 });
+    expect(mockedSet).toHaveBeenCalledWith(
+      'k',
+      { value: 2 },
+      expect.anything(),
+    );
   });
 
   it('should hydrate the in-memory map from IndexedDB', async () => {
-    mockedIdbGetAllEntries.mockResolvedValue([['k', { value: 7 }]]);
+    mockedEntries.mockResolvedValue([['k', { value: 7 }]]);
 
     const { storage, hydrate } = createIndexedDbBackedJotaiStorage<Item>();
 
@@ -68,13 +76,17 @@ describe('createIndexedDbBackedJotaiStorage', () => {
     await hydrate();
 
     expect(storage.getItem('legacy', INITIAL)).toEqual({ value: 42 });
-    expect(mockedIdbSet).toHaveBeenCalledWith('legacy', { value: 42 });
+    expect(mockedSet).toHaveBeenCalledWith(
+      'legacy',
+      { value: 42 },
+      expect.anything(),
+    );
     // localStorage quota is freed once IndexedDB owns the data.
     expect(localStorage.getItem('legacy')).toBeNull();
   });
 
   it('should not overwrite existing IndexedDB data with legacy localStorage, but still free it', async () => {
-    mockedIdbGetAllEntries.mockResolvedValue([['legacy', { value: 99 }]]);
+    mockedEntries.mockResolvedValue([['legacy', { value: 99 }]]);
     localStorage.setItem('legacy', JSON.stringify({ value: 1 }));
 
     const { storage, hydrate } = createIndexedDbBackedJotaiStorage<Item>({
@@ -84,7 +96,7 @@ describe('createIndexedDbBackedJotaiStorage', () => {
     await hydrate();
 
     expect(storage.getItem('legacy', INITIAL)).toEqual({ value: 99 });
-    expect(mockedIdbSet).not.toHaveBeenCalled();
+    expect(mockedSet).not.toHaveBeenCalled();
     expect(localStorage.getItem('legacy')).toBeNull();
   });
 
@@ -95,20 +107,21 @@ describe('createIndexedDbBackedJotaiStorage', () => {
     storage.removeItem('k');
 
     expect(storage.getItem('k', INITIAL)).toBe(INITIAL);
-    expect(mockedIdbDelete).toHaveBeenCalledWith('k');
+    expect(mockedDel).toHaveBeenCalledWith('k', expect.anything());
   });
 
   it('should clear the map and IndexedDB', async () => {
-    const { storage, clear } = createIndexedDbBackedJotaiStorage<Item>();
+    const { storage, clear: clearStorage } =
+      createIndexedDbBackedJotaiStorage<Item>();
 
     storage.setItem('k', { value: 1 });
-    await clear();
+    await clearStorage();
 
     expect(storage.getItem('k', INITIAL)).toBe(INITIAL);
-    expect(mockedIdbClear).toHaveBeenCalled();
+    expect(mockedClear).toHaveBeenCalled();
   });
 
-  it('should register and unregister cross-tab subscribers without throwing', () => {
+  it('should notify cross-tab subscribers and unregister cleanly', () => {
     const { storage } = createIndexedDbBackedJotaiStorage<Item>();
 
     const callback = jest.fn();
@@ -120,7 +133,7 @@ describe('createIndexedDbBackedJotaiStorage', () => {
 
   describe('when IndexedDB is unavailable', () => {
     beforeEach(() => {
-      mockedIsIndexedDbAvailable.mockReturnValue(false);
+      setIndexedDbAvailability(false);
     });
 
     it('should fall back to localStorage for persistence', () => {
@@ -128,7 +141,7 @@ describe('createIndexedDbBackedJotaiStorage', () => {
 
       storage.setItem('k', { value: 5 });
 
-      expect(mockedIdbSet).not.toHaveBeenCalled();
+      expect(mockedSet).not.toHaveBeenCalled();
       expect(localStorage.getItem('k')).toBe(JSON.stringify({ value: 5 }));
     });
 

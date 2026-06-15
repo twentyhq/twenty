@@ -1,20 +1,9 @@
-import { atom, type WritableAtom } from 'jotai';
+import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FamilyState } from '@/ui/utilities/state/jotai/types/FamilyState';
-
-// Jotai's synchronous storage contract (not re-exported from jotai/utils).
-type JotaiSyncStorage<ValueType> = {
-  getItem: (key: string, initialValue: ValueType) => ValueType;
-  setItem: (key: string, newValue: ValueType) => void;
-  removeItem: (key: string) => void;
-  subscribe?: (
-    key: string,
-    callback: (value: ValueType) => void,
-    initialValue: ValueType,
-  ) => () => void;
-};
+import { type JotaiSyncStorage } from '@/ui/utilities/state/jotai/types/JotaiSyncStorage';
 
 export const createAtomFamilyState = <ValueType, FamilyKey>({
   key,
@@ -50,30 +39,29 @@ export const createAtomFamilyState = <ValueType, FamilyKey>({
 
     const atomKey = `${key}__${cacheKey}`;
 
-    let baseAtom: WritableAtom<
-      ValueType,
-      [ValueType | ((prev: ValueType) => ValueType)],
-      void
-    >;
+    const buildBaseAtom = () => {
+      if (isDefined(storage)) {
+        return atomWithStorage<ValueType>(
+          atomKey,
+          defaultValue,
+          storage,
+          localStorageOptions ?? { getOnInit: true },
+        );
+      }
 
-    if (isDefined(storage)) {
-      baseAtom = atomWithStorage<ValueType>(
-        atomKey,
-        defaultValue,
-        storage,
-        localStorageOptions ?? { getOnInit: true },
-      ) as typeof baseAtom;
-    } else if (useLocalStorage) {
-      baseAtom = atomWithStorage<ValueType>(
-        atomKey,
-        defaultValue,
-        undefined,
-        localStorageOptions ?? undefined,
-      ) as typeof baseAtom;
-    } else {
-      baseAtom = atom(defaultValue) as typeof baseAtom;
-    }
+      if (useLocalStorage) {
+        return atomWithStorage<ValueType>(
+          atomKey,
+          defaultValue,
+          undefined,
+          localStorageOptions ?? undefined,
+        );
+      }
 
+      return atom(defaultValue);
+    };
+
+    const baseAtom = buildBaseAtom();
     baseAtom.debugLabel = atomKey;
     atomCache.set(cacheKey, baseAtom);
 

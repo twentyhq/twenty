@@ -1,34 +1,29 @@
 import {
-  idbClear,
-  idbDelete,
-  idbGetAllEntries,
-  idbSet,
-  isIndexedDbAvailable,
-} from '@/ui/utilities/state/jotai/utils/indexedDbKeyValStore';
+  clear as idbClear,
+  createStore,
+  del as idbDelete,
+  entries as idbEntries,
+  set as idbSet,
+  type UseStore,
+} from 'idb-keyval';
+import { isDefined, parseJson } from 'twenty-shared/utils';
 
-// Jotai's synchronous storage contract. We must stay synchronous (no Promise
-// from getItem) so consumers reading the atoms with useAtomValue never suspend.
-// `subscribe` is how atomWithStorage reactively syncs an atom when the backing
-// store changes — we use it to propagate cross-tab writes (the IndexedDB facade
-// has no equivalent of localStorage's `storage` event).
-type JotaiSyncStorage<ValueType> = {
-  getItem: (key: string, initialValue: ValueType) => ValueType;
-  setItem: (key: string, newValue: ValueType) => void;
-  removeItem: (key: string) => void;
-  subscribe?: (
-    key: string,
-    callback: (value: ValueType) => void,
-    initialValue: ValueType,
-  ) => () => void;
-};
+import { type JotaiSyncStorage } from '@/ui/utilities/state/jotai/types/JotaiSyncStorage';
 
+const INDEXED_DB_NAME = 'twenty-front-cache';
+const INDEXED_DB_STORE_NAME = 'keyval';
 const CROSS_TAB_SYNC_CHANNEL_NAME = 'twenty-front-cache-sync';
 
-type CrossTabMessage =
-  | { type: 'set'; key: string; value: unknown }
+type CrossTabMessage<ValueType> =
+  | { type: 'set'; key: string; value: ValueType }
   | { type: 'remove'; key: string };
 
-export type IndexedDbBackedJotaiStorage<ValueType> = {
+type CrossTabSubscriber<ValueType> = {
+  callback: (value: ValueType) => void;
+  initialValue: ValueType;
+};
+
+type IndexedDbBackedJotaiStorage<ValueType> = {
   storage: JotaiSyncStorage<ValueType>;
   // Loads the persisted snapshot into the in-memory map. Must be awaited before
   // the React tree mounts so that atoms with getOnInit:true hydrate from it.
@@ -37,10 +32,36 @@ export type IndexedDbBackedJotaiStorage<ValueType> = {
   clear: () => Promise<void>;
 };
 
+const isIndexedDbAvailable = (): boolean => {
+  try {
+    return typeof indexedDB !== 'undefined' && indexedDB !== null;
+  } catch {
+    // Accessing indexedDB can throw in sandboxed iframes / disabled storage.
+    return false;
+  }
+};
+
+const readLocalStorageItem = (key: string): string | null => {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+};
+
+const removeLocalStorageItem = (key: string): void => {
+  try {
+    localStorage.removeItem(key);
+  } catch {
+    // noop
+  }
+};
+
 // A synchronous Jotai storage whose source of truth is an in-memory map that is
 // hydrated once (asynchronously) from IndexedDB at boot and written through to
 // IndexedDB on every set. This lets us move a large cache off the 5MB
-// localStorage ceiling while keeping a fully synchronous read path.
+// localStorage ceiling (Safari's per-origin cap) while keeping a fully
+// synchronous read path, and keeps tabs in sync via a BroadcastChannel.
 //
 // When IndexedDB is unavailable (sandbox / disabled storage) we transparently
 // fall back to localStorage so persistence still works where it did before.
@@ -51,10 +72,19 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
 }): IndexedDbBackedJotaiStorage<ValueType> => {
   const memoryMap = new Map<string, ValueType>();
   const usesIndexedDb = isIndexedDbAvailable();
+  const idbStore: UseStore | undefined = usesIndexedDb
+    ? createStore(INDEXED_DB_NAME, INDEXED_DB_STORE_NAME)
+    : undefined;
   let isHydrated = false;
 
+  // Write failed (quota / blocked): the in-memory map keeps the session working
+  // and the value re-persists on the next change.
+  const persist = (operation: Promise<unknown>): void => {
+    void operation.catch(() => {});
+  };
+
   // Per-key subscribers used by atomWithStorage to react to cross-tab writes.
-  const subscribers = new Map<string, Set<(value: ValueType) => void>>();
+  const subscribers = new Map<string, Set<CrossTabSubscriber<ValueType>>>();
 
   // BroadcastChannel does not deliver a tab its own messages, so there is no
   // feedback loop. Absent in some environments (older jsdom) — guard it.
@@ -69,31 +99,30 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
   })();
 
   if (broadcastChannel !== null) {
-    broadcastChannel.onmessage = (event: MessageEvent<CrossTabMessage>) => {
+    broadcastChannel.onmessage = (
+      event: MessageEvent<CrossTabMessage<ValueType>>,
+    ) => {
       const message = event.data;
 
       if (message.type === 'set') {
-        memoryMap.set(message.key, message.value as ValueType);
+        memoryMap.set(message.key, message.value);
       } else {
         memoryMap.delete(message.key);
       }
 
       const keySubscribers = subscribers.get(message.key);
 
-      if (keySubscribers !== undefined) {
-        const nextValue =
-          message.type === 'set'
-            ? (message.value as ValueType)
-            : (memoryMap.get(message.key) as ValueType);
-
-        for (const callback of keySubscribers) {
-          callback(nextValue);
+      if (isDefined(keySubscribers)) {
+        for (const subscriber of keySubscribers) {
+          subscriber.callback(
+            message.type === 'set' ? message.value : subscriber.initialValue,
+          );
         }
       }
     };
   }
 
-  const broadcast = (message: CrossTabMessage): void => {
+  const broadcast = (message: CrossTabMessage<ValueType>): void => {
     try {
       broadcastChannel?.postMessage(message);
     } catch {
@@ -101,48 +130,48 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
     }
   };
 
-  const writeToLocalStorageFallback = (key: string, value: ValueType): void => {
-    try {
-      localStorage.setItem(key, JSON.stringify(value));
-    } catch {
-      // Quota exceeded / disabled: keep the in-memory value only.
-    }
-  };
-
   const storage: JotaiSyncStorage<ValueType> = {
-    getItem: (key, initialValue) =>
-      memoryMap.has(key) ? (memoryMap.get(key) as ValueType) : initialValue,
+    getItem: (key, initialValue) => {
+      const storedValue = memoryMap.get(key);
+
+      return storedValue === undefined ? initialValue : storedValue;
+    },
     setItem: (key, newValue) => {
       memoryMap.set(key, newValue);
       broadcast({ type: 'set', key, value: newValue });
 
-      if (usesIndexedDb) {
-        void idbSet(key, newValue);
+      if (isDefined(idbStore)) {
+        persist(idbSet(key, newValue, idbStore));
       } else {
-        writeToLocalStorageFallback(key, newValue);
+        // No IndexedDB: fall back to localStorage so persistence still works.
+        try {
+          localStorage.setItem(key, JSON.stringify(newValue));
+        } catch {
+          // Quota exceeded / disabled: keep the in-memory value only.
+        }
       }
     },
     removeItem: (key) => {
       memoryMap.delete(key);
       broadcast({ type: 'remove', key });
 
-      if (usesIndexedDb) {
-        void idbDelete(key);
+      if (isDefined(idbStore)) {
+        persist(idbDelete(key, idbStore));
       } else {
-        try {
-          localStorage.removeItem(key);
-        } catch {
-          // noop
-        }
+        removeLocalStorageItem(key);
       }
     },
-    subscribe: (key, callback) => {
+    subscribe: (key, callback, initialValue) => {
       const keySubscribers = subscribers.get(key) ?? new Set();
-      keySubscribers.add(callback);
+      const subscriber: CrossTabSubscriber<ValueType> = {
+        callback,
+        initialValue,
+      };
+      keySubscribers.add(subscriber);
       subscribers.set(key, keySubscribers);
 
       return () => {
-        keySubscribers.delete(callback);
+        keySubscribers.delete(subscriber);
 
         if (keySubscribers.size === 0) {
           subscribers.delete(key);
@@ -152,20 +181,8 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
   };
 
   const migrateLegacyLocalStorageKeys = (hasExistingIdbData: boolean): void => {
-    const legacyKeys = options?.migrateFromLocalStorageKeys;
-
-    if (legacyKeys === undefined) {
-      return;
-    }
-
-    for (const key of legacyKeys) {
-      let rawValue: string | null = null;
-
-      try {
-        rawValue = localStorage.getItem(key);
-      } catch {
-        continue;
-      }
+    for (const key of options?.migrateFromLocalStorageKeys ?? []) {
+      const rawValue = readLocalStorageItem(key);
 
       if (rawValue === null) {
         continue;
@@ -174,21 +191,16 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
       // Only adopt the legacy value when IndexedDB has no snapshot yet, so we
       // never clobber fresher IndexedDB data with stale localStorage data.
       if (!hasExistingIdbData) {
-        try {
-          const parsedValue = JSON.parse(rawValue) as ValueType;
+        const parsedValue = parseJson<ValueType>(rawValue);
+
+        if (isDefined(parsedValue) && isDefined(idbStore)) {
           memoryMap.set(key, parsedValue);
-          void idbSet(key, parsedValue);
-        } catch {
-          // Corrupted legacy value: drop it.
+          persist(idbSet(key, parsedValue, idbStore));
         }
       }
 
       // Always free the localStorage quota once IndexedDB is the source of truth.
-      try {
-        localStorage.removeItem(key);
-      } catch {
-        // noop
-      }
+      removeLocalStorageItem(key);
     }
   };
 
@@ -197,18 +209,14 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
       return;
     }
 
-    if (!usesIndexedDb) {
+    if (!isDefined(idbStore)) {
       // Fallback path: read the legacy localStorage snapshot into memory so
       // cache-first boot still works where IndexedDB is unavailable.
       for (const key of options?.migrateFromLocalStorageKeys ?? []) {
-        try {
-          const rawValue = localStorage.getItem(key);
+        const parsedValue = parseJson<ValueType>(readLocalStorageItem(key));
 
-          if (rawValue !== null) {
-            memoryMap.set(key, JSON.parse(rawValue) as ValueType);
-          }
-        } catch {
-          // Skip corrupted entries.
+        if (isDefined(parsedValue)) {
+          memoryMap.set(key, parsedValue);
         }
       }
 
@@ -216,13 +224,19 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
       return;
     }
 
-    const entries = await idbGetAllEntries();
+    let persistedEntries: [string, ValueType][] = [];
 
-    for (const [key, value] of entries) {
-      memoryMap.set(key, value as ValueType);
+    try {
+      persistedEntries = await idbEntries<string, ValueType>(idbStore);
+    } catch {
+      // Corrupted / inaccessible store: fall through to localStorage migration.
     }
 
-    migrateLegacyLocalStorageKeys(entries.length > 0);
+    for (const [key, value] of persistedEntries) {
+      memoryMap.set(key, value);
+    }
+
+    migrateLegacyLocalStorageKeys(persistedEntries.length > 0);
 
     isHydrated = true;
   };
@@ -230,8 +244,12 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
   const clear = async (): Promise<void> => {
     memoryMap.clear();
 
-    if (usesIndexedDb) {
-      await idbClear();
+    if (isDefined(idbStore)) {
+      try {
+        await idbClear(idbStore);
+      } catch {
+        // noop
+      }
     }
   };
 
