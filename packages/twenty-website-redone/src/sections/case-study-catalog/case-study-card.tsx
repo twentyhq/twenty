@@ -22,7 +22,7 @@ import { Body, Heading } from '@/ui';
 import { CaseStudyCardFooter } from './case-study-card-footer';
 import { CaseStudyCardKpis } from './case-study-card-kpis';
 import { CaseStudyCardThumbnail } from './case-study-card-thumbnail';
-import { type CaseStudyCatalogEntry } from './case-study-types';
+import { type CaseStudyCatalogEntry } from '@/case-studies';
 
 const CardLink = styled(LocalizedLink)`
   background-color: ${color('white')};

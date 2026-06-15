@@ -15,7 +15,7 @@ import {
   spacing,
 } from '@/tokens';
 
-import { type CaseStudyQuote } from './case-study-types';
+import { type CaseStudyQuote } from '@/case-studies';
 
 const Footer = styled.div`
   align-items: center;

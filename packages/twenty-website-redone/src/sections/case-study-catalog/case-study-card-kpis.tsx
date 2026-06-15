@@ -12,7 +12,7 @@ import {
   typeRampDeclarations,
 } from '@/tokens';
 
-import { type CaseStudyKpi } from './case-study-types';
+import { type CaseStudyKpi } from '@/case-studies';
 
 const KpiGrid = styled.div`
   border-top: 1px solid ${color('black-10')};

@@ -193,6 +193,7 @@ function walk(directory) {
     // localized, never string literals.
     if (
       (relativePath.startsWith('sections' + path.sep) ||
+        relativePath.startsWith('case-studies' + path.sep) ||
         relativePath.startsWith('app-preview' + path.sep) ||
         relativePath.startsWith('contact-cal' + path.sep) ||
         relativePath.startsWith('partner-application' + path.sep) ||
@@ -225,6 +226,7 @@ function walk(directory) {
     // they may reach only the pure and platform layers, never sections.
     const sharedLayer = [
       'app-preview',
+      'case-studies',
       'contact-cal',
       'partner-application',
       'partners-marketplace',

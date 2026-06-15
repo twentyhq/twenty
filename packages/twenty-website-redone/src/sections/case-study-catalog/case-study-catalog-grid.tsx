@@ -5,9 +5,9 @@ import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { mediaUp, spacing } from '@/tokens';
 import { ConnectingFrame, SectionShell } from '@/ui';
 
-import { CASE_STUDY_CATALOG } from './case-study-catalog';
+import { CASE_STUDY_CATALOG, getCaseStudyAccent } from '@/case-studies';
+
 import { CaseStudyCard } from './case-study-card';
-import { getCaseStudyAccent } from './case-study-palette';
 
 const CardGrid = styled.div`
   display: grid;

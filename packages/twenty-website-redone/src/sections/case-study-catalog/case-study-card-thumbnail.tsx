@@ -9,9 +9,11 @@ import {
   spacing,
 } from '@/tokens';
 
-import { ClientLogo } from './client-logo';
-import { type ClientLogoKey } from './client-logo-config';
-import { CustomerCasesCover } from './customer-cases-cover';
+import {
+  ClientLogo,
+  type ClientLogoKey,
+  CustomerCasesCover,
+} from '@/case-studies';
 
 const CATALOG_LOGO_WIDTHS: Record<ClientLogoKey, number> = {
   'nine-dots': 72,
