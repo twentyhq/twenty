@@ -470,15 +470,15 @@ export class ChatExecutionService {
             part.type === 'tool-result' &&
             (part.output as ToolOutput | undefined)?.success !== false;
 
-          void this.metricsService.incrementCounterForEvent({
+          this.metricsService.incrementCounterBy({
             key: succeeded
               ? MetricsKeys.AiChatToolExecutionSucceeded
               : MetricsKeys.AiChatToolExecutionFailed,
+            amount: 1,
             attributes: {
               model: registeredModel.modelId,
               tool: resolveToolName(part),
             },
-            shouldStoreInCache: false,
           });
         }
       },
