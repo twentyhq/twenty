@@ -1,0 +1,27 @@
+packages/twenty-front/src/modules/workflow/types/EmailFormData.ts
+  s_ad06bf65e6995b::t_1f7b653fd6bb8d 3,11
+packages/twenty-shared/src/workflow/schemas/send-email-action-settings-schema.ts
+  s_ad06bf65e6995b::t_770bc706eee903 5,28
+  s_ad06bf65e6995b::t_5c3a69964b49c3 15
+packages/twenty-front/src/modules/advanced-text-editor/components/WorkflowSendEmailAttachments.tsx
+  s_ad06bf65e6995b::t_f0b2251a4d6ae5 13,21-22
+packages/twenty-shared/src/workflow/index.ts
+  s_ad06bf65e6995b::t_4c59df89e7c495 51
+  s_ad06bf65e6995b::t_0994d0cc5983f5 53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "c6e13729b59e3dd06bdef04ad4ce8632e0e8bab2",
+  "prompts": {},
+  "sessions": {
+    "s_ad06bf65e6995b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "60236852-0858-4310-a82b-0f399a218d71",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
