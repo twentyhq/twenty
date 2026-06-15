@@ -1,5 +1,9 @@
 export { CASE_STUDY_CATALOG } from './case-study-catalog';
 export { getCaseStudyAccent } from './case-study-palette';
+export {
+  CaseStudyStatGrid,
+  type CaseStudyStatGridProps,
+} from './case-study-stat-grid';
 export { CASE_STUDY_STORIES } from './case-study-stories';
 export {
   type CaseStudyCatalogEntry,
