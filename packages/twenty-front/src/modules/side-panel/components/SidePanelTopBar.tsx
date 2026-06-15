@@ -23,10 +23,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { IconX } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const COMMAND_MENU_SIDE_PANEL_PAGES = [
   SidePanelPages.CommandMenuDisplay,

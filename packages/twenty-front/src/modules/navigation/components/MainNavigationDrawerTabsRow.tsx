@@ -6,10 +6,7 @@ import {
   IconMessageCirclePlus,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { useContext } from 'react';

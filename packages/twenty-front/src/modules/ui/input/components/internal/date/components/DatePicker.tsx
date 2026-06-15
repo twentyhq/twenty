@@ -26,10 +26,7 @@ import {
 } from 'twenty-shared/utils';
 import { IconCalendarX } from 'twenty-ui/display';
 import { MenuItemLeftContent } from 'twenty-ui/navigation';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
   'date-picker-month-and-year-dropdown-month-select';

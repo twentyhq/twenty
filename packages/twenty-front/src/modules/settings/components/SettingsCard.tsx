@@ -6,10 +6,7 @@ import { Card, CardContent } from 'twenty-ui/layout';
 import { IconChevronRight } from 'twenty-ui/display';
 import { Pill } from 'twenty-ui/components';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsCardProps = {
   description?: string;

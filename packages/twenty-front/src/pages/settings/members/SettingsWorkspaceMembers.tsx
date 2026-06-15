@@ -1,11 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  IconLock,
-  IconUserPlus,
-  IconUsers,
-} from 'twenty-ui/display';
+import { IconLock, IconUserPlus, IconUsers } from 'twenty-ui/display';
 
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';

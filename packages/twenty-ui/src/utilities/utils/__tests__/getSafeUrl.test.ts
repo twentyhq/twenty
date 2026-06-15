@@ -21,7 +21,9 @@ describe('getSafeUrl', () => {
   it('rejects dangerous schemes', () => {
     expect(getSafeUrl('javascript:alert(1)')).toBeUndefined();
     expect(getSafeUrl('JavaScript:alert(1)')).toBeUndefined();
-    expect(getSafeUrl('data:text/html,<script>alert(1)</script>')).toBeUndefined();
+    expect(
+      getSafeUrl('data:text/html,<script>alert(1)</script>'),
+    ).toBeUndefined();
     expect(getSafeUrl('vbscript:msgbox(1)')).toBeUndefined();
   });
 

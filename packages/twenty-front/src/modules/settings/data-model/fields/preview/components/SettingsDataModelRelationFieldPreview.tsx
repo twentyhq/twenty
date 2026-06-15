@@ -11,10 +11,7 @@ import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fiel
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
 import { useIcons } from 'twenty-ui/display';
 import { useContext } from 'react';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 

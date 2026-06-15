@@ -4,10 +4,7 @@ import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useContext } from 'react';
 import { type PieChartConfiguration } from '~/generated-metadata/graphql';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type PieChartCenterMetricProps = {
   objectMetadataItemId: string;

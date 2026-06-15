@@ -18,10 +18,7 @@ import {
   IconSquareX,
 } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const DROPDOWN_ID = 'command-menu-edit-record-selection-dropdown';
 

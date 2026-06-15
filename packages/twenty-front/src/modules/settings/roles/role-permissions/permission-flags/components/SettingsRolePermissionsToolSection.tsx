@@ -9,11 +9,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
 import { H2Title, IconTool } from 'twenty-ui/display';
-import {
-  AnimatedExpandableContainer,
-  Card,
-  Section,
-} from 'twenty-ui/layout';
+import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTable = styled.div`

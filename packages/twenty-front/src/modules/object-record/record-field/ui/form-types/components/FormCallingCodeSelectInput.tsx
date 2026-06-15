@@ -5,10 +5,7 @@ import { type VariablePickerComponent } from '@/object-record/record-field/ui/fo
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { t } from '@lingui/core/macro';
-import {
-  IconCircleOff,
-  type IconComponentProps,
-} from 'twenty-ui/display';
+import { IconCircleOff, type IconComponentProps } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 
 export type FormCallingCodeSelectInputUpdatedValue = {

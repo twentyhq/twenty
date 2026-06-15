@@ -8,10 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconBrandX, IconWorld } from 'twenty-ui/display';
 import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
   align-items: center;

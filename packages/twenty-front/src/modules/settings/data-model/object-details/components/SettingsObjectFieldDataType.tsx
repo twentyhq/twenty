@@ -3,15 +3,9 @@ import { Link } from 'react-router-dom';
 
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
-import {
-  type IconComponent,
-  IconTwentyStar,
-} from 'twenty-ui/display';
+import { type IconComponent, IconTwentyStar } from 'twenty-ui/display';
 import { useContext } from 'react';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsObjectFieldDataTypeProps = {
   to?: string;

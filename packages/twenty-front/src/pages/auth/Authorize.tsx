@@ -19,10 +19,7 @@ import {
   IconUserCircle,
 } from 'twenty-ui/display';
 import { ModalContent } from 'twenty-ui/layout';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AuthorizeAppDocument,
   FindApplicationRegistrationByClientIdDocument,

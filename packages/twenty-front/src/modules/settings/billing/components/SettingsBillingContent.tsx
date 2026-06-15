@@ -10,11 +10,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  H2Title,
-  IconCircleX,
-  IconCreditCard,
-} from 'twenty-ui/display';
+import { H2Title, IconCircleX, IconCreditCard } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {

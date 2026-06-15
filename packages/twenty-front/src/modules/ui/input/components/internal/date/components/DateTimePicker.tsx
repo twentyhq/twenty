@@ -34,10 +34,7 @@ export {
 } from '@/ui/input/components/internal/date/components/DatePicker';
 export { DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID } from '@/ui/input/components/internal/date/components/DateTimePickerHeader';
 
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledOuterWrapper = styled.div`
   align-items: flex-start;

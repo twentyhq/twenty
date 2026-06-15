@@ -11,10 +11,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useMemo, useState } from 'react';
 import { IconEyeOff, IconPlus } from 'twenty-ui/display';
 import { Button, SearchInput } from 'twenty-ui/input';
-import {
-  MenuItemToggle,
-  UndecoratedLink,
-} from 'twenty-ui/navigation';
+import { MenuItemToggle, UndecoratedLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { isNonEmptyString } from '@sniptt/guards';

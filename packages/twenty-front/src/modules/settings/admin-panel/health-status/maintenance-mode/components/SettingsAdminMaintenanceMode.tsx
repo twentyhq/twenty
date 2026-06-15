@@ -4,12 +4,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  H2Title,
-  IconLink,
-  IconTool,
-  Status,
-} from 'twenty-ui/display';
+import { H2Title, IconLink, IconTool, Status } from 'twenty-ui/display';
 import { Card, CardContent, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

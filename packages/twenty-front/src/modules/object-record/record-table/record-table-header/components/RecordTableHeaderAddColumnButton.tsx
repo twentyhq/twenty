@@ -19,10 +19,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { cx } from '@linaria/core';
 import { useContext } from 'react';
 import { IconPlus } from 'twenty-ui/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledPlusIconHeaderCell = styled.div<{
   shouldDisplayBorderBottom: boolean;

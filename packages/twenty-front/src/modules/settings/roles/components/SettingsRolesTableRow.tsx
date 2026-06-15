@@ -14,10 +14,7 @@ import {
   TooltipDelay,
   useIcons,
 } from 'twenty-ui/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 

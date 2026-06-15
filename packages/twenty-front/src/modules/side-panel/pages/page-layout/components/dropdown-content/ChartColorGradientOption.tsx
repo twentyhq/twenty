@@ -6,10 +6,7 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { ColorSample } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type ThemeColor } from 'twenty-ui/theme';
 type ChartColorGradientOptionProps = {
   colorOption: {

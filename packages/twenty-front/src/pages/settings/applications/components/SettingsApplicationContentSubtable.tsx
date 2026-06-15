@@ -12,10 +12,7 @@ import {
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { AppChip } from '@/applications/components/AppChip';
 
 export type ApplicationContentRow = {

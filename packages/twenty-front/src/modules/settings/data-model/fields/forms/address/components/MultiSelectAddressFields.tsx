@@ -13,10 +13,7 @@ import { t } from '@lingui/core/macro';
 import { type MouseEvent, useMemo, useState } from 'react';
 import { type IconComponent } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
-import {
-  MenuItem,
-  MenuItemMultiSelectTag,
-} from 'twenty-ui/navigation';
+import { MenuItem, MenuItemMultiSelectTag } from 'twenty-ui/navigation';
 
 type CallToActionButton = {
   text: string;

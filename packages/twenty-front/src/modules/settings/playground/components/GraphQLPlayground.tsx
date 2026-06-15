@@ -12,10 +12,7 @@ import { GraphiQL } from 'graphiql';
 import 'graphiql/style.css';
 import { useContext } from 'react';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type GraphQLPlaygroundProps = {
   onError(): void;

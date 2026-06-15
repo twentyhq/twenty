@@ -4,16 +4,9 @@ import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  AppTooltip,
-  IconTrash,
-  TooltipDelay,
-} from 'twenty-ui/display';
+import { AppTooltip, IconTrash, TooltipDelay } from 'twenty-ui/display';
 import { Checkbox, IconButton } from 'twenty-ui/input';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsAiModelHoverCard } from '@/settings/ai/components/SettingsAiModelHoverCard';
 import { type AiModelSummary } from '@/settings/ai/types/AiModelSummary';

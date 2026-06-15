@@ -17,10 +17,7 @@ import {
   sumByProperty,
 } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledFieldPlaceholderCell = styled.div<{ widthOfFields: number }>`

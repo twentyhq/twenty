@@ -11,10 +11,7 @@ import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconVariablePlus } from 'twenty-ui/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDropdownVariableButtonContainer = styled.div<{
   disabled?: boolean;

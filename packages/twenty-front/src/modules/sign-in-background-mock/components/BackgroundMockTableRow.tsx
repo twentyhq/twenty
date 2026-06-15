@@ -5,16 +5,8 @@ import { type BackgroundMockCompany } from '@/sign-in-background-mock/constants/
 import { BACKGROUND_MOCK_COLUMN_WIDTHS } from '@/sign-in-background-mock/constants/BackgroundMockColumnWidths';
 import { BACKGROUND_MOCK_TABLE_DIMENSIONS } from '@/sign-in-background-mock/constants/BackgroundMockTableDimensions';
 import { Avatar, IconLink } from 'twenty-ui/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
-import {
-  Chip,
-  ChipAccent,
-  ChipSize,
-  ChipVariant,
-} from 'twenty-ui/components';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Chip, ChipAccent, ChipSize, ChipVariant } from 'twenty-ui/components';
 import { Checkbox } from 'twenty-ui/input';
 import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
 

@@ -13,10 +13,7 @@ import {
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { Toggle } from 'twenty-ui/input';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSettingsCardToggleContent = styled.div<{ disabled?: boolean }>`
   align-items: center;

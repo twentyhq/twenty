@@ -8,10 +8,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowUpRight } from 'twenty-ui/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTooltip = styled.div`
   background: ${themeCssVariables.background.primary};

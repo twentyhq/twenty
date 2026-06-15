@@ -13,10 +13,7 @@ import { useContext, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDownload } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 
 const MS_OFFICE_EXTENSIONS = [

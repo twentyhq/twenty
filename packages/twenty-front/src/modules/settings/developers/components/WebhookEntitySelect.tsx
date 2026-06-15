@@ -27,10 +27,7 @@ import {
 } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const WEBHOOK_ENTITY_DROPDOWN_ID = 'webhook-entity-select';
 

@@ -8,11 +8,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import {
-  Button,
-  ButtonGroup,
-  type SelectOption,
-} from 'twenty-ui/input';
+import { Button, ButtonGroup, type SelectOption } from 'twenty-ui/input';
 import { styled } from '@linaria/react';
 import { SettingsDomainRecords } from '@/settings/domains/components/SettingsDomainRecords';
 import { useCheckPublicDomainValidRecords } from '@/settings/domains/hooks/useCheckPublicDomainValidRecords';

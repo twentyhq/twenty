@@ -20,11 +20,7 @@ import {
   IconWebhook,
   type IconComponent,
 } from 'twenty-ui/display';
-import {
-  Button,
-  CodeEditor,
-  CoreEditorHeader,
-} from 'twenty-ui/input';
+import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

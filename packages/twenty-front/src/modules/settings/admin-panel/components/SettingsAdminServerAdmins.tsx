@@ -17,10 +17,7 @@ import {
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetServerAdminsDocument } from '~/generated-admin/graphql';
 
 const SERVER_ADMINS_GRID_TEMPLATE_COLUMNS = '2fr 1fr 1fr 36px';

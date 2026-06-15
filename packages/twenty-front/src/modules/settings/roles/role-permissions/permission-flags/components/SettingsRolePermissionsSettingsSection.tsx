@@ -8,11 +8,7 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { H2Title, IconSettings } from 'twenty-ui/display';
-import {
-  AnimatedExpandableContainer,
-  Card,
-  Section,
-} from 'twenty-ui/layout';
+import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTable = styled.div`

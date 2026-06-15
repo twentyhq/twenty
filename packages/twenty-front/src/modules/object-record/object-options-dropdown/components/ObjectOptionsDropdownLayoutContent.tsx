@@ -35,11 +35,7 @@ import {
   IconTable,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
-import {
-  MenuItem,
-  MenuItemSelect,
-  MenuItemToggle,
-} from 'twenty-ui/navigation';
+import { MenuItem, MenuItemSelect, MenuItemToggle } from 'twenty-ui/navigation';
 import {
   ViewCalendarLayout,
   ViewOpenRecordIn,

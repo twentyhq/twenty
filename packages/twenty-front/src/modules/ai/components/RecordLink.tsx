@@ -3,11 +3,7 @@ import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  AvatarOrIcon,
-  ChipVariant,
-  LinkChip,
-} from 'twenty-ui/components';
+import { AvatarOrIcon, ChipVariant, LinkChip } from 'twenty-ui/components';
 
 type RecordLinkProps = {
   objectNameSingular: string;

@@ -23,10 +23,7 @@ import {
   LightIconButton,
 } from 'twenty-ui/input';
 import { type ThemeColor } from 'twenty-ui/theme';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
 import { ThemeColorPickerMenu } from '@/ui/input/components/ThemeColorPickerMenu';

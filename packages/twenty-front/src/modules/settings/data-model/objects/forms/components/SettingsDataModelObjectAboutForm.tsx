@@ -22,10 +22,7 @@ import {
   InlineBanner,
 } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { parseThemeColor } from 'twenty-ui/utilities';
 import { type StringKeyOf } from 'type-fest';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';

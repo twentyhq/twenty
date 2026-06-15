@@ -31,10 +31,7 @@ import {
 import { SearchInput } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetAiSystemPromptPreviewDocument } from '~/generated-metadata/graphql';
 import { useSettingsAiModelsActions } from '~/pages/settings/ai/hooks/useSettingsAiModelsActions';
 import { formatNumber } from '~/utils/format/formatNumber';

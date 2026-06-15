@@ -3,10 +3,7 @@ import { type ComponentProps } from 'react';
 
 import { GraphWidgetTestWrapper } from '@/page-layout/widgets/graph/__tests__/GraphWidgetTestWrapper';
 import { GraphWidgetLineChart } from '@/page-layout/widgets/graph/graph-widget-line-chart/components/GraphWidgetLineChart';
-import {
-  CatalogDecorator,
-  ComponentDecorator,
-} from 'twenty-ui/testing';
+import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof GraphWidgetLineChart> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetLineChart',

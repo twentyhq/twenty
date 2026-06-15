@@ -15,10 +15,7 @@ import {
   useIcons,
   type IconComponent,
 } from 'twenty-ui/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type ApplicationInfo = {
   name: string;

@@ -2,10 +2,7 @@ import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Avatar, IconRefresh } from 'twenty-ui/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type AppConnectionHeaderProps = {
   appLogoUrl?: string | null;

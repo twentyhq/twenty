@@ -11,11 +11,7 @@ import {
 } from '@blocknote/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import {
-  IconColorSwatch,
-  IconPlus,
-  IconTrash,
-} from 'twenty-ui/display';
+import { IconColorSwatch, IconPlus, IconTrash } from 'twenty-ui/display';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CustomSideMenuOptions } from '@/blocknote-editor/components/CustomSideMenuOptions';

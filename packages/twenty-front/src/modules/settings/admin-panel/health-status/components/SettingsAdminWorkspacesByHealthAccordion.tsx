@@ -4,10 +4,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  IconChevronDown,
-  IconChevronRight,
-} from 'twenty-ui/display';
+import { IconChevronDown, IconChevronRight } from 'twenty-ui/display';
 import { AnimatedExpandableContainer, Card } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

@@ -8,10 +8,7 @@ import { useContext } from 'react';
 import { ColorSample } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { getMainColorNameFromPaletteColorName } from 'twenty-ui/utilities';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type ThemeColor } from 'twenty-ui/theme';
 type ChartColorPaletteOptionProps = {
   selectedItemId: string | null;

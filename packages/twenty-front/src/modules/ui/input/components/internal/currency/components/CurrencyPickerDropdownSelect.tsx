@@ -8,10 +8,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import {
-  MenuItem,
-  MenuItemSelectAvatar,
-} from 'twenty-ui/navigation';
+import { MenuItem, MenuItemSelectAvatar } from 'twenty-ui/navigation';
 
 export const CurrencyPickerDropdownSelect = ({
   selectedCurrency,

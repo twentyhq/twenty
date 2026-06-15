@@ -12,10 +12,7 @@ import {
   type IconComponent,
   IconDotsVertical,
 } from 'twenty-ui/display';
-import {
-  LightIconButton,
-  type LightIconButtonProps,
-} from 'twenty-ui/input';
+import { LightIconButton, type LightIconButtonProps } from 'twenty-ui/input';
 import {
   type MenuItemAccent,
   MenuItemLeftContent,

@@ -10,11 +10,7 @@ import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpe
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import {
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-} from 'twenty-ui/layout';
+import { ModalContent, ModalFooter, ModalHeader } from 'twenty-ui/layout';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { sleep } from '~/utils/sleep';

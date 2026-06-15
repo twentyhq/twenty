@@ -9,10 +9,7 @@ import { getWorkflowRunAllStepInfoHistory } from '@/workflow/workflow-steps/util
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconChevronLeft,
-  IconChevronRight,
-} from 'twenty-ui/display';
+import { IconChevronLeft, IconChevronRight } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

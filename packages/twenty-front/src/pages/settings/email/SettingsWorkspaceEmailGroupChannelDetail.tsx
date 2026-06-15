@@ -19,12 +19,7 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { GetEmailingDomainsDocument } from '~/generated-metadata/graphql';
-import {
-  H2Title,
-  IconCopy,
-  IconTrash,
-  Status,
-} from 'twenty-ui/display';
+import { H2Title, IconCopy, IconTrash, Status } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';

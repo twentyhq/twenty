@@ -1,8 +1,5 @@
 import { styled } from '@linaria/react';
-import {
-  IconButtonGroup,
-  type IconButtonGroupProps,
-} from 'twenty-ui/input';
+import { IconButtonGroup, type IconButtonGroupProps } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledIconButtonGroupContainer = styled.div`

@@ -3,10 +3,7 @@ import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedT
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  ComponentDecorator,
-  RouterDecorator,
-} from 'twenty-ui/testing';
+import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';

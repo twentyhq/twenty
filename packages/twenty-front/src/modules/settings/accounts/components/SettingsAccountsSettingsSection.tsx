@@ -5,11 +5,7 @@ import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  H2Title,
-  IconCalendarEvent,
-  IconMailCog,
-} from 'twenty-ui/display';
+import { H2Title, IconCalendarEvent, IconMailCog } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import {

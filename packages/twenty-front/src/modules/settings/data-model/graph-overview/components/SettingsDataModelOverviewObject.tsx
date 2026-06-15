@@ -16,10 +16,7 @@ import '@xyflow/react/dist/style.css';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsDataModelOverviewObjectNode = Node<
   EnrichedObjectMetadataItem,

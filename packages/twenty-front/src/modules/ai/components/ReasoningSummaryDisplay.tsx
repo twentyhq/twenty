@@ -1,16 +1,9 @@
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 
-import {
-  IconBrain,
-  IconChevronDown,
-  IconChevronUp,
-} from 'twenty-ui/display';
+import { IconBrain, IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { t } from '@lingui/core/macro';

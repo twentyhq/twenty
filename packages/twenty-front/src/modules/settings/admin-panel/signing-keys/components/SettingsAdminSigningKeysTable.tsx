@@ -13,10 +13,7 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/components';
-import {
-  IconCopy,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
+import { IconCopy, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {

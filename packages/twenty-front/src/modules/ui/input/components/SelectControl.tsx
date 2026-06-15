@@ -8,10 +8,7 @@ import {
   TintedIconTile,
 } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SelectControlTextAccent = 'default' | 'placeholder';
 

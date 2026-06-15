@@ -25,10 +25,7 @@ import { ProgressBar } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SubscriptionStatus } from '~/generated-metadata/graphql';
 
 const StyledCreditUsageFooterActions = styled.div`

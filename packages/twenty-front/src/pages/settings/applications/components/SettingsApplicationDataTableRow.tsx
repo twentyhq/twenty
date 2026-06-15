@@ -9,10 +9,7 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, useIcons } from 'twenty-ui/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type ApplicationDataTableRow } from '~/pages/settings/applications/types/applicationDataTableRow';
 import { AppChip } from '@/applications/components/AppChip';

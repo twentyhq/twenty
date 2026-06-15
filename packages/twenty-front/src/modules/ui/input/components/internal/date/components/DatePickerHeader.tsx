@@ -5,10 +5,7 @@ import { Select } from '@/ui/input/components/Select';
 import { DatePickerInput } from '@/ui/input/components/internal/date/components/DatePickerInput';
 import { getMonthSelectOptions } from '@/ui/input/components/internal/date/utils/getMonthSelectOptions';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
-import {
-  IconChevronLeft,
-  IconChevronRight,
-} from 'twenty-ui/display';
+import { IconChevronLeft, IconChevronRight } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';

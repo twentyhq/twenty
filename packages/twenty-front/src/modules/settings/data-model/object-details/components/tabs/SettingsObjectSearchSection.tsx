@@ -15,10 +15,7 @@ import { useContext, useMemo, useState } from 'react';
 
 import { IconEye, IconSearch, useIcons } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsObjectSearchSectionProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;

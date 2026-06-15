@@ -6,12 +6,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  H2Title,
-  IconLock,
-  IconPuzzle,
-  IconTool,
-} from 'twenty-ui/display';
+import { H2Title, IconLock, IconPuzzle, IconTool } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MenuItemToggle } from 'twenty-ui/navigation';

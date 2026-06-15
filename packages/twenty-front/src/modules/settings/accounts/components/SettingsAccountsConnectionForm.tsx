@@ -11,10 +11,7 @@ import { type ConnectionFormData } from '@/settings/accounts/hooks/useImapSmtpCa
 import { type AccountType } from 'twenty-shared/constants';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import {
-  MOBILE_VIEWPORT,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFormContainer = styled.div`
   display: flex;

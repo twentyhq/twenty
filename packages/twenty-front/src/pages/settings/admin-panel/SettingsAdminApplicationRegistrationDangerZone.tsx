@@ -18,11 +18,7 @@ import {
   TooltipDelay,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import {
-  Section,
-  SectionAlignment,
-  SectionFontColor,
-} from 'twenty-ui/layout';
+import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import {
   type ApplicationRegistration,
   DeleteApplicationRegistrationDocument,

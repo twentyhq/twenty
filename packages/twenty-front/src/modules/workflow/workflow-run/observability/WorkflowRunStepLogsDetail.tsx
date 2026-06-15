@@ -3,10 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { workflowRunStepLogSchema } from 'twenty-shared/workflow';
 import { IconInfoCircle } from 'twenty-ui/display';
-import {
-  isTwoFirstDepths,
-  JsonTree,
-} from 'twenty-ui/json-visualizer';
+import { isTwoFirstDepths, JsonTree } from 'twenty-ui/json-visualizer';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type JsonValue } from 'type-fest';
 

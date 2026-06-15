@@ -9,10 +9,7 @@ import { type Editor } from '@tiptap/react';
 import { useContext, useId } from 'react';
 import { IconPilcrow } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledMenuItem = styled.button`
   align-items: center;

@@ -30,10 +30,7 @@ import {
   IconTrash,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 

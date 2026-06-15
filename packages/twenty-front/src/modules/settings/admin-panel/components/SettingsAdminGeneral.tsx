@@ -26,10 +26,7 @@ import {
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AdminPanelRecentUsersDocument,
   AdminPanelTopWorkspacesDocument,

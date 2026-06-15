@@ -5,10 +5,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { Checkbox } from 'twenty-ui/input';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const AVAILABLE_STANDARD_OBJECTS_GRID_TEMPLATE_COLUMNS =
   '28px 148px 256px 80px';

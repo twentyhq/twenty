@@ -12,10 +12,7 @@ import {
   IconPlus,
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import {
-  AVATAR_URL_MOCK,
-  ComponentDecorator,
-} from 'twenty-ui/testing';
+import { AVATAR_URL_MOCK, ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof DropdownMenuHeader> = {
   title: 'UI/Layout/Dropdown/DropdownMenuHeader',

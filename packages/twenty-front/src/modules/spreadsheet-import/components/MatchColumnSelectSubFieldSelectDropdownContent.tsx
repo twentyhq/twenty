@@ -10,10 +10,7 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useState } from 'react';
-import {
-  IconChevronLeft,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
+import { IconChevronLeft, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
 export const MatchColumnSelectSubFieldSelectDropdownContent = ({

@@ -15,10 +15,7 @@ import { type ApplicationWithoutRelation } from '~/pages/settings/applications/t
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 import { Section } from 'twenty-ui/layout';
 import { SearchInput } from 'twenty-ui/input';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
 
 const StyledTableRowsContainer = styled.div`

@@ -11,17 +11,10 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { motion } from 'framer-motion';
 import { useContext } from 'react';
-import {
-  AppTooltip,
-  TooltipDelay,
-  TooltipPosition,
-} from 'twenty-ui/display';
+import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/display';
 import { AnimatedButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledButtonWrapper = styled.div<{ alignToTop: boolean }>`
   align-items: ${({ alignToTop }) => (alignToTop ? 'center' : 'initial')};

@@ -9,10 +9,7 @@ import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowAttachment } from 'twenty-shared/workflow';
 import { IconUpload } from 'twenty-ui/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type WorkflowSendEmailAttachmentsProps = {
   files: WorkflowAttachment[];

@@ -5,10 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { IconChevronLeft } from 'twenty-ui/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type MobileBreadcrumbProps = {
   className?: string;

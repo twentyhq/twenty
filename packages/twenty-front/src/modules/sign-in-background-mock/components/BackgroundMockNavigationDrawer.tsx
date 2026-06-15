@@ -3,10 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconSearch, IconSettings } from 'twenty-ui/display';
-import {
-  getOsControlSymbol,
-  useIsMobile,
-} from 'twenty-ui/utilities';
+import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
 
 import { BACKGROUND_MOCK_WORKSPACE_ITEMS } from '@/sign-in-background-mock/constants/BackgroundMockNavigationItems';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';

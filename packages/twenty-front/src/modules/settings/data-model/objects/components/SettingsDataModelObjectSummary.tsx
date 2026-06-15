@@ -5,14 +5,8 @@ import { useContext } from 'react';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
-import {
-  IconBox,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { IconBox, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SettingsDataModelObjectPreviewProps = {
   className?: string;

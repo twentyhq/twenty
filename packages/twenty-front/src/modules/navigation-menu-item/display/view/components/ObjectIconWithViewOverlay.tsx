@@ -1,13 +1,7 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import {
-  type IconComponent,
-  getIconTileColorShades,
-} from 'twenty-ui/display';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { type IconComponent, getIconTileColorShades } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCompositeContainer = styled.div`
   align-items: center;

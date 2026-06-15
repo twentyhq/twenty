@@ -6,10 +6,7 @@ import {
   type IconComponent,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
-import {
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNonClickableStartIcon = styled.div`
   align-items: center;
