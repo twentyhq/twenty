@@ -3,7 +3,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
@@ -80,26 +79,22 @@ export class BillingWebhookSubscriptionService {
     });
 
     if (!workspace) {
-      throw new BillingException(
-        `Workspace not found for subscription event ${event.id} / workspaceId: ${workspaceId}`,
-        BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
-        {
-          userFriendlyMessage: msg`Workspace ${workspaceId} is not found.`,
-        },
+      this.logger.warn(
+        `Skipping subscription event ${event.id}: workspace ${workspaceId} not found`,
       );
+
+      return;
     }
 
     if (
       isDefined(workspace.deletedAt) &&
       type !== BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED
     ) {
-      throw new BillingException(
-        `Workspace not found for subscription event ${event.id} / workspaceId: ${workspaceId}`,
-        BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
-        {
-          userFriendlyMessage: msg`Workspace ${workspaceId} is not found.`,
-        },
+      this.logger.warn(
+        `Skipping subscription event ${event.id}: workspace ${workspaceId} is deleted`,
       );
+
+      return;
     }
 
     await this.billingCustomerRepository.upsert(
