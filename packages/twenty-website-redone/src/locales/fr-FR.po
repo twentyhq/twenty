@@ -793,6 +793,11 @@ msgstr ""
 msgid "carousel"
 msgstr "carrousel"
 
+#. js-lingui-id: C6wh0T
+#: src/sections/case-study-catalog/case-study-card.tsx
+msgid "Case"
+msgstr ""
+
 #. js-lingui-id: M1RLfx
 #: src/partners-marketplace/spoken-language-labels.ts
 msgid "Catalan"

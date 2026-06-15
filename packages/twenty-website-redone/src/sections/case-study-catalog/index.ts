@@ -1,4 +1,5 @@
 export { CASE_STUDY_CATALOG } from './case-study-catalog';
+export { CaseStudyCatalogGrid } from './case-study-catalog-grid';
 export { getCaseStudyAccent } from './case-study-palette';
 export {
   type CaseStudyCatalogEntry,

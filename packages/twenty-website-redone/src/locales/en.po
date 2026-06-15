@@ -799,6 +799,11 @@ msgstr "Cape Verde 🇨🇻"
 msgid "carousel"
 msgstr "carousel"
 
+#. js-lingui-id: C6wh0T
+#: src/sections/case-study-catalog/case-study-card.tsx
+msgid "Case"
+msgstr "Case"
+
 #. js-lingui-id: M1RLfx
 #: src/partners-marketplace/spoken-language-labels.ts
 msgid "Catalan"
