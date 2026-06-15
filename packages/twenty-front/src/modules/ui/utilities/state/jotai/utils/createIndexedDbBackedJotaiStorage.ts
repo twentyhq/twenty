@@ -1,14 +1,9 @@
-import {
-  clear as idbClear,
-  createStore,
-  del as idbDelete,
-  entries as idbEntries,
-  set as idbSet,
-  type UseStore,
-} from 'idb-keyval';
+import * as idb from 'idb-keyval';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type JotaiSyncStorage } from '@/ui/utilities/state/jotai/types/JotaiSyncStorage';
+import { isIndexedDbAvailable } from '@/ui/utilities/state/jotai/utils/isIndexedDbAvailable';
+import { logError } from '~/utils/logError';
 
 const INDEXED_DB_STORE_NAME = 'keyval';
 
@@ -27,11 +22,24 @@ type IndexedDbBackedJotaiStorage<ValueType> = {
   clear: () => Promise<void>;
 };
 
-const isIndexedDbAvailable = (): boolean => {
+const createIndexedDbStore = (cacheName: string): idb.UseStore | undefined => {
+  if (!isIndexedDbAvailable()) {
+    return undefined;
+  }
+
+  return idb.createStore(`twenty-front-${cacheName}`, INDEXED_DB_STORE_NAME);
+};
+
+const createCrossTabChannel = (cacheName: string): BroadcastChannel | null => {
+  if (typeof BroadcastChannel === 'undefined') {
+    return null;
+  }
+
   try {
-    return typeof indexedDB !== 'undefined' && indexedDB !== null;
-  } catch {
-    return false;
+    return new BroadcastChannel(`twenty-front-${cacheName}-sync`);
+  } catch (error) {
+    logError(error);
+    return null;
   }
 };
 
@@ -39,26 +47,14 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(
   cacheName: string,
 ): IndexedDbBackedJotaiStorage<ValueType> => {
   const memoryMap = new Map<string, ValueType>();
-  const idbStore: UseStore | undefined = isIndexedDbAvailable()
-    ? createStore(`twenty-front-${cacheName}`, INDEXED_DB_STORE_NAME)
-    : undefined;
+  const idbStore = createIndexedDbStore(cacheName);
+  const broadcastChannel = createCrossTabChannel(cacheName);
+  const subscribers = new Map<string, Set<CrossTabSubscriber<ValueType>>>();
   let isHydrated = false;
 
   const persist = (operation: Promise<unknown>): void => {
-    void operation.catch(() => {});
+    void operation.catch(logError);
   };
-
-  const subscribers = new Map<string, Set<CrossTabSubscriber<ValueType>>>();
-
-  const broadcastChannel: BroadcastChannel | null = (() => {
-    try {
-      return typeof BroadcastChannel !== 'undefined'
-        ? new BroadcastChannel(`twenty-front-${cacheName}-sync`)
-        : null;
-    } catch {
-      return null;
-    }
-  })();
 
   if (broadcastChannel !== null) {
     broadcastChannel.onmessage = (
@@ -87,7 +83,9 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(
   const broadcast = (message: CrossTabMessage<ValueType>): void => {
     try {
       broadcastChannel?.postMessage(message);
-    } catch {}
+    } catch (error) {
+      logError(error);
+    }
   };
 
   const storage: JotaiSyncStorage<ValueType> = {
@@ -98,7 +96,7 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(
       broadcast({ type: 'set', key, value: newValue });
 
       if (isDefined(idbStore)) {
-        persist(idbSet(key, newValue, idbStore));
+        persist(idb.set(key, newValue, idbStore));
       }
     },
     removeItem: (key) => {
@@ -106,7 +104,7 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(
       broadcast({ type: 'remove', key });
 
       if (isDefined(idbStore)) {
-        persist(idbDelete(key, idbStore));
+        persist(idb.del(key, idbStore));
       }
     },
     subscribe: (key, callback, initialValue) => {
@@ -129,18 +127,19 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(
   };
 
   const hydrate = async (): Promise<void> => {
-    if (isHydrated) {
+    if (isHydrated || !isDefined(idbStore)) {
+      isHydrated = true;
       return;
     }
 
-    if (isDefined(idbStore)) {
-      try {
-        const persistedEntries = await idbEntries<string, ValueType>(idbStore);
+    try {
+      const persistedEntries = await idb.entries<string, ValueType>(idbStore);
 
-        for (const [key, value] of persistedEntries) {
-          memoryMap.set(key, value);
-        }
-      } catch {}
+      for (const [key, value] of persistedEntries) {
+        memoryMap.set(key, value);
+      }
+    } catch (error) {
+      logError(error);
     }
 
     isHydrated = true;
@@ -149,10 +148,14 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(
   const clear = async (): Promise<void> => {
     memoryMap.clear();
 
-    if (isDefined(idbStore)) {
-      try {
-        await idbClear(idbStore);
-      } catch {}
+    if (!isDefined(idbStore)) {
+      return;
+    }
+
+    try {
+      await idb.clear(idbStore);
+    } catch (error) {
+      logError(error);
     }
   };
 

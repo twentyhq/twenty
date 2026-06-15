@@ -1,6 +1,8 @@
 import { clear, createStore, del, entries, set } from 'idb-keyval';
 
 import { createIndexedDbBackedJotaiStorage } from '@/ui/utilities/state/jotai/utils/createIndexedDbBackedJotaiStorage';
+import { isIndexedDbAvailable } from '@/ui/utilities/state/jotai/utils/isIndexedDbAvailable';
+import { logError } from '~/utils/logError';
 
 jest.mock('idb-keyval', () => ({
   createStore: jest.fn(() => ({ store: 'mock' })),
@@ -9,19 +11,18 @@ jest.mock('idb-keyval', () => ({
   clear: jest.fn(() => Promise.resolve()),
   entries: jest.fn(() => Promise.resolve([])),
 }));
+jest.mock('@/ui/utilities/state/jotai/utils/isIndexedDbAvailable');
+jest.mock('~/utils/logError');
 
 const mockedSet = jest.mocked(set);
 const mockedDel = jest.mocked(del);
 const mockedClear = jest.mocked(clear);
 const mockedEntries = jest.mocked(entries);
 const mockedCreateStore = jest.mocked(createStore);
+const mockedIsIndexedDbAvailable = jest.mocked(isIndexedDbAvailable);
+const mockedLogError = jest.mocked(logError);
 
-const setIndexedDbAvailability = (isAvailable: boolean) => {
-  Object.defineProperty(globalThis, 'indexedDB', {
-    configurable: true,
-    value: isAvailable ? {} : undefined,
-  });
-};
+const flushMicrotasks = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 type Item = { value: number };
 
@@ -31,7 +32,7 @@ describe('createIndexedDbBackedJotaiStorage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     localStorage.clear();
-    setIndexedDbAvailability(true);
+    mockedIsIndexedDbAvailable.mockReturnValue(true);
     mockedEntries.mockResolvedValue([]);
   });
 
@@ -120,9 +121,22 @@ describe('createIndexedDbBackedJotaiStorage', () => {
     expect(() => unsubscribe?.()).not.toThrow();
   });
 
+  it('should keep the value in memory and log when a persist fails', async () => {
+    mockedSet.mockRejectedValueOnce(new Error('write failed'));
+
+    const { storage } = createIndexedDbBackedJotaiStorage<Item>('test');
+
+    expect(() => storage.setItem('k', { value: 1 })).not.toThrow();
+    expect(storage.getItem('k', INITIAL)).toEqual({ value: 1 });
+
+    await flushMicrotasks();
+
+    expect(mockedLogError).toHaveBeenCalled();
+  });
+
   describe('when IndexedDB is unavailable', () => {
     beforeEach(() => {
-      setIndexedDbAvailability(false);
+      mockedIsIndexedDbAvailable.mockReturnValue(false);
     });
 
     it('should keep values in memory only, without persisting anywhere', () => {
@@ -131,6 +145,7 @@ describe('createIndexedDbBackedJotaiStorage', () => {
       storage.setItem('k', { value: 5 });
 
       expect(storage.getItem('k', INITIAL)).toEqual({ value: 5 });
+      expect(mockedCreateStore).not.toHaveBeenCalled();
       expect(mockedSet).not.toHaveBeenCalled();
       expect(localStorage.getItem('k')).toBeNull();
     });
