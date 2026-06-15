@@ -144,10 +144,7 @@ export const ArrayFieldInput = () => {
           dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${getStableId(index)}`}
           value={value}
           onEdit={handleEdit}
-          onDelete={() => {
-            setStableIds((prevIds) => toSpliced(prevIds, index, 1));
-            handleDelete();
-          }}
+          onDelete={handleDelete}
         />
       )}
       maxItemCount={getMaxNumberOfValues()}
