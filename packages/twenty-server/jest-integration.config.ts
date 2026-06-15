@@ -33,19 +33,16 @@ const jestConfig: JestConfigWithTsJest = {
   ],
   testRegex: '\\.integration-spec\\.ts$',
   modulePathIgnorePatterns: ['<rootDir>/dist'],
+  // msw (+ its ESM deps) and jsdom 29 (parse5, entities, tough-cookie,
+  // @exodus/bytes via html-encoding-sniffer, @csstools/@asamuzakjp css engine)
+  // ship ESM-only; let swc transform them (and .mjs below) so jest can require them.
   transformIgnorePatterns: [
-    '/node_modules/(?!(msw|@mswjs|until-async|@bundled-es-modules|@open-draft|strict-event-emitter|headers-polyfill|outvariant|is-node-process|tough-cookie|path-to-regexp|statuses|cookie|digest-fetch|md5|email-reply-parser)/)',
+    '/node_modules/(?!(msw|@mswjs|until-async|@bundled-es-modules|@open-draft|strict-event-emitter|headers-polyfill|outvariant|is-node-process|tough-cookie|path-to-regexp|statuses|cookie|digest-fetch|md5|email-reply-parser|jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|@csstools|@asamuzakjp)/)',
   ],
   globalSetup: '<rootDir>/test/integration/utils/setup-test.ts',
   globalTeardown: '<rootDir>/test/integration/utils/teardown-test.ts',
   testTimeout: 20000,
   maxWorkers: 1,
-  // jsdom 29 pulls ESM-only transitive deps (parse5, entities, tough-cookie,
-  // @exodus/bytes via html-encoding-sniffer, @csstools/@asamuzakjp css engine);
-  // let swc transform them (and .mjs below) so jest can require jsdom.
-  transformIgnorePatterns: [
-    '/node_modules/(?!(jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp)/)',
-  ],
   transform: {
     '^.+\\.(t|j|mj)s$': [
       '@swc/jest',
