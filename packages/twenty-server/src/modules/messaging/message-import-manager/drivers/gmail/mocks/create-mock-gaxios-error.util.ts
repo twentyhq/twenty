@@ -20,7 +20,6 @@ const createMockGaxiosResponse = <T>(
     type: 'default',
     url: MOCK_URL.toString(),
     body: null,
-    // real gaxios builds the error from a consumed fetch Response
     bodyUsed: true,
     arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)),
     blob: () => Promise.resolve(new Blob()),

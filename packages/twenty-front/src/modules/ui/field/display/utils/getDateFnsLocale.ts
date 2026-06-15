@@ -71,10 +71,6 @@ export const getDateFnsLocaleImport = (locale: AppLocale) => {
   }
 };
 
-// A date-fns locale entrypoint exposes the locale under both a named export and
-// `default`, but whether `default` is the locale or the module record depends on
-// the ESM/CJS interop of the runtime (Vite vs jest). Resolve by shape instead of
-// by key/position so it stays correct regardless of export order or interop.
 const isDateFnsLocale = (value: unknown): value is Locale =>
   isObject(value) && 'code' in value && 'formatLong' in value;
 
