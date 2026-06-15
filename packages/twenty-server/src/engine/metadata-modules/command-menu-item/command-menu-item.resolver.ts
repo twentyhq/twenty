@@ -138,6 +138,15 @@ export class CommandMenuItemResolver {
 
   @Mutation(() => CommandMenuItemDTO)
   @UseGuards(NoPermissionGuard)
+  async resetCommandMenuItem(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<CommandMenuItemDTO> {
+    return await this.commandMenuItemService.reset(id, workspace.id);
+  }
+
+  @Mutation(() => CommandMenuItemDTO)
+  @UseGuards(NoPermissionGuard)
   async deleteCommandMenuItem(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
