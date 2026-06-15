@@ -82,7 +82,7 @@ export function CaseStudyTextBlock({
   return (
     <Root id={sectionId}>
       <Eyebrow>{i18n._(section.eyebrow)}</Eyebrow>
-      <Heading size="md" weight="light">
+      <Heading size="md" weight="light" wrap="normal">
         {i18n._(section.heading)}
       </Heading>
       <Prose>

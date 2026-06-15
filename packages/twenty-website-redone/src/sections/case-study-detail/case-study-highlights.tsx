@@ -26,11 +26,11 @@ const Grid = styled.div`
   border-bottom: 1px solid ${color('black-20')};
   border-top: 1px solid ${color('black-20')};
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(min-content, 1fr));
   width: 100%;
 
   &[data-count='1'] {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(min-content, 1fr);
   }
 
   &[data-count='3'] > *:nth-child(n + 3),
@@ -40,11 +40,11 @@ const Grid = styled.div`
 
   ${mediaUp('md')} {
     &[data-count='3'] {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(min-content, 1fr));
     }
 
     &[data-count='4'] {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(min-content, 1fr));
     }
 
     &[data-count='3'] > *:nth-child(n + 3),
@@ -61,7 +61,6 @@ const Cell = styled.div`
   flex-direction: column;
   gap: ${spacing(1)};
   justify-content: center;
-  min-width: 0;
   padding: ${spacing(5)} ${spacing(4)};
 
   &:nth-child(odd) {
@@ -93,7 +92,6 @@ const Value = styled.span`
   font-weight: ${FONT_WEIGHT.light};
   letter-spacing: -0.015em;
   min-width: 0;
-  overflow-wrap: break-word;
   width: 100%;
 `;
 
