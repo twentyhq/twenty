@@ -882,6 +882,16 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
+    description:
+      'Emit performance instrumentation logs (LoggerService perf / perfTime / perfTimeEnd). Enabled by default; disable to silence the install-perf logs (e.g. in integration tests).',
+    type: ConfigVariableType.BOOLEAN,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  PERF_LOG_ENABLED = true;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGGING,
     description: 'Driver used for collect metrics (OpenTelemetry or Console)',
     type: ConfigVariableType.ARRAY,
     options: ['OpenTelemetry', 'Console'],
