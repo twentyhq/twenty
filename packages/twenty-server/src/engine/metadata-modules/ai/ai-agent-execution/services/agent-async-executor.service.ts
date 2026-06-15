@@ -22,6 +22,7 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/utils/estimate-tool-output-tokens.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -250,15 +251,26 @@ export class AgentAsyncExecutorService {
               part.type === 'tool-result' &&
               (part.output as ToolOutput | undefined)?.success !== false;
 
+            const toolAttributes = {
+              model: registeredModel.modelId,
+              tool: part.toolName,
+            };
+
             this.metricsService.incrementCounterBy({
               key: succeeded
                 ? MetricsKeys.WorkflowAgentToolExecutionSucceeded
                 : MetricsKeys.WorkflowAgentToolExecutionFailed,
               amount: 1,
-              attributes: {
-                model: registeredModel.modelId,
-                tool: part.toolName,
-              },
+              attributes: toolAttributes,
+            });
+
+            this.metricsService.recordHistogram({
+              key: MetricsKeys.WorkflowAgentToolOutputTokens,
+              value: estimateToolOutputTokens(
+                part.type === 'tool-result' ? part.output : part.error,
+              ),
+              unit: 'token',
+              attributes: toolAttributes,
             });
           }
         },

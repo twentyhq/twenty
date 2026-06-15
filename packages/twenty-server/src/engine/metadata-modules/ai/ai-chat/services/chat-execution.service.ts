@@ -34,6 +34,7 @@ import {
   LEARN_TOOLS_TOOL_NAME,
   LOAD_SKILL_TOOL_NAME,
 } from 'src/engine/core-modules/tool-provider/tools';
+import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/utils/estimate-tool-output-tokens.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
@@ -470,15 +471,26 @@ export class ChatExecutionService {
             part.type === 'tool-result' &&
             (part.output as ToolOutput | undefined)?.success !== false;
 
+          const toolAttributes = {
+            model: registeredModel.modelId,
+            tool: resolveToolName(part),
+          };
+
           this.metricsService.incrementCounterBy({
             key: succeeded
               ? MetricsKeys.AiChatToolExecutionSucceeded
               : MetricsKeys.AiChatToolExecutionFailed,
             amount: 1,
-            attributes: {
-              model: registeredModel.modelId,
-              tool: resolveToolName(part),
-            },
+            attributes: toolAttributes,
+          });
+
+          this.metricsService.recordHistogram({
+            key: MetricsKeys.AiChatToolOutputTokens,
+            value: estimateToolOutputTokens(
+              part.type === 'tool-result' ? part.output : part.error,
+            ),
+            unit: 'token',
+            attributes: toolAttributes,
           });
         }
       },

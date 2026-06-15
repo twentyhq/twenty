@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/utils/estimate-tool-output-tokens.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
 import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
@@ -71,6 +72,13 @@ export class McpToolExecutorService {
           ? MetricsKeys.McpToolExecutionSucceeded
           : MetricsKeys.McpToolExecutionFailed,
         amount: 1,
+        attributes: { tool: toolName },
+      });
+
+      this.metricsService.recordHistogram({
+        key: MetricsKeys.McpToolOutputTokens,
+        value: estimateToolOutputTokens(result),
+        unit: 'token',
         attributes: { tool: toolName },
       });
 
