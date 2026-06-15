@@ -55,11 +55,7 @@ const METADATA_STORE_ITEM_INITIAL_VALUE: MetadataStoreItem = {
 export const METADATA_STORE_KEY_PREFIX = 'metadataStoreState__';
 
 const { storage, hydrate, clear } =
-  createIndexedDbBackedJotaiStorage<MetadataStoreItem>({
-    legacyLocalStorageKeysToClear: ALL_METADATA_ENTITY_KEYS.map(
-      (entityKey) => `${METADATA_STORE_KEY_PREFIX}${entityKey}`,
-    ),
-  });
+  createIndexedDbBackedJotaiStorage<MetadataStoreItem>();
 
 export const hydrateMetadataStore = hydrate;
 

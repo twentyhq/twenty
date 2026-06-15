@@ -66,20 +66,6 @@ describe('createIndexedDbBackedJotaiStorage', () => {
     expect(storage.getItem('k', INITIAL)).toEqual({ value: 7 });
   });
 
-  it('should clear legacy localStorage keys on hydrate without migrating them', async () => {
-    localStorage.setItem('legacy', JSON.stringify({ value: 42 }));
-
-    const { storage, hydrate } = createIndexedDbBackedJotaiStorage<Item>({
-      legacyLocalStorageKeysToClear: ['legacy'],
-    });
-
-    await hydrate();
-
-    expect(localStorage.getItem('legacy')).toBeNull();
-    expect(mockedSet).not.toHaveBeenCalled();
-    expect(storage.getItem('legacy', INITIAL)).toBe(INITIAL);
-  });
-
   it('should delete from the map and IndexedDB on removeItem', () => {
     const { storage } = createIndexedDbBackedJotaiStorage<Item>();
 
@@ -124,18 +110,6 @@ describe('createIndexedDbBackedJotaiStorage', () => {
       expect(storage.getItem('k', INITIAL)).toEqual({ value: 5 });
       expect(mockedSet).not.toHaveBeenCalled();
       expect(localStorage.getItem('k')).toBeNull();
-    });
-
-    it('should still clear legacy localStorage keys on hydrate', async () => {
-      localStorage.setItem('legacy', JSON.stringify({ value: 11 }));
-
-      const { hydrate } = createIndexedDbBackedJotaiStorage<Item>({
-        legacyLocalStorageKeysToClear: ['legacy'],
-      });
-
-      await hydrate();
-
-      expect(localStorage.getItem('legacy')).toBeNull();
     });
   });
 });

@@ -37,15 +37,9 @@ const isIndexedDbAvailable = (): boolean => {
   }
 };
 
-const removeLocalStorageItem = (key: string): void => {
-  try {
-    localStorage.removeItem(key);
-  } catch {}
-};
-
-export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
-  legacyLocalStorageKeysToClear?: string[];
-}): IndexedDbBackedJotaiStorage<ValueType> => {
+export const createIndexedDbBackedJotaiStorage = <
+  ValueType,
+>(): IndexedDbBackedJotaiStorage<ValueType> => {
   const memoryMap = new Map<string, ValueType>();
   const idbStore: UseStore | undefined = isIndexedDbAvailable()
     ? createStore(INDEXED_DB_NAME, INDEXED_DB_STORE_NAME)
@@ -152,10 +146,6 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
           memoryMap.set(key, value);
         }
       } catch {}
-    }
-
-    for (const key of options?.legacyLocalStorageKeysToClear ?? []) {
-      removeLocalStorageItem(key);
     }
 
     isHydrated = true;
