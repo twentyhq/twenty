@@ -1,0 +1,34 @@
+packages/twenty-server/test/integration/metadata/suites/connected-account/successful-save-imap-smtp-caldav-account.integration-spec.ts
+  s_ff3d5b0bd294f3::t_fc59d100dc6296 5
+  s_ff3d5b0bd294f3::t_6f3a77a9feaf91 83,89,134,180,228,234
+  s_ff3d5b0bd294f3::t_6faaf645e010c7 140
+  s_ff3d5b0bd294f3::t_45ca8e09dfca28 18,25,54,61,109,161,202,209
+  s_ff3d5b0bd294f3::t_7b888765882111 115
+packages/twenty-server/test/integration/secret-encryption/connection-parameters-rotation.integration-spec.ts
+  s_ff3d5b0bd294f3::t_73ce45499d9f5e 84,91,98
+  s_ff3d5b0bd294f3::t_4838c80510a483 9
+  s_ff3d5b0bd294f3::t_521c9ed839f6ad 57-59
+packages/twenty-server/test/integration/metadata/suites/connected-account/utils/get-connected-imap-smtp-caldav-account.util.ts
+  s_ff3d5b0bd294f3::t_83a19ec12bfdb5 22,28,34
+packages/twenty-server/test/integration/metadata/suites/connected-account/failing-save-imap-smtp-caldav-account.integration-spec.ts
+  s_ff3d5b0bd294f3::t_e9551a66a0f2a4 43,57,71,85,99,113
+  s_ff3d5b0bd294f3::t_7aa09a9149187a 8-17,21-23
+packages/twenty-server/test/integration/metadata/suites/connected-account/utils/save-imap-smtp-caldav-account.util.ts
+  s_ff3d5b0bd294f3::t_355462fbfcd946 4-13,17-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "77e92fad32747f3b2fbd0576061ae139d69188bb",
+  "prompts": {},
+  "sessions": {
+    "s_ff3d5b0bd294f3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc6a7753-6313-4145-9c09-a0d3d40ac9aa",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
