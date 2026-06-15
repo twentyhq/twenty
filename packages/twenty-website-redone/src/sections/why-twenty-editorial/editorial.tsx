@@ -9,6 +9,10 @@ const Inner = styled.div`
   & > * + * {
     margin-top: ${spacing(12)};
   }
+
+  ${mediaUp('md')} {
+    padding-inline: ${spacing(9)};
+  }
 `;
 
 const Intro = styled.div`
