@@ -21,7 +21,6 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
@@ -105,7 +104,7 @@ export const FormArrayFieldInput = ({
   const { closeDropdown } = useCloseDropdown();
   const { openDropdown } = useOpenDropdown();
 
-  const getInitialDraftValue = (): 
+  const getInitialDraftValue = ():
     | {
         type: 'static';
         value: { id: string; value: string }[];
@@ -293,7 +292,11 @@ export const FormArrayFieldInput = ({
       return;
     }
 
-    if (!isAddingNewItem && isDefined(itemToEdit) && sanitizedInput === itemToEdit.value) {
+    if (
+      !isAddingNewItem &&
+      isDefined(itemToEdit) &&
+      sanitizedInput === itemToEdit.value
+    ) {
       setIsInputDisplayed(false);
       setInputValue('');
       setItemToEditId(null);

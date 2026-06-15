@@ -16,13 +16,13 @@ const getExtendedIds = (prevIds: string[], targetLength: number): string[] => {
   if (targetLength <= prevIds.length) {
     return prevIds;
   }
-  
+
   const idsToAdd = targetLength - prevIds.length;
   const newIds: string[] = [];
   for (let i = 0; i < idsToAdd; i++) {
     newIds.push(v4());
   }
-  
+
   return [...prevIds, ...newIds];
 };
 
@@ -62,7 +62,7 @@ export const ArrayFieldInput = () => {
     if (parseResponse.success) {
       return parseResponse.data;
     }
-    
+
     return undefined;
   };
 
@@ -144,4 +144,3 @@ export const ArrayFieldInput = () => {
     ></MultiItemFieldInput>
   );
 };
-
