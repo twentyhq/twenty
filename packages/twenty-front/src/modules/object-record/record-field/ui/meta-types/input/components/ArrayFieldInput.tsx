@@ -12,7 +12,8 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { toSpliced } from '~/utils/array/toSpliced';
 import { v4 } from 'uuid';
 
-const useArrayStableIds = (itemsLength: number) => {
+const useArrayStableIds = (items: string[]) => {
+  const itemsLength = items.length;
   const [stableIds, setStableIds] = useState<string[]>(() => {
     const initialIds: string[] = [];
     for (let i = 0; i < itemsLength; i++) {
@@ -21,20 +22,31 @@ const useArrayStableIds = (itemsLength: number) => {
     return initialIds;
   });
 
-  const [prevLength, setPrevLength] = useState(itemsLength);
+  const [prevItems, setPrevItems] = useState(items);
 
-  if (prevLength !== itemsLength) {
-    const diff = itemsLength - prevLength;
+  if (prevItems !== items) {
+    const diff = itemsLength - prevItems.length;
     if (diff > 0) {
       const newIds: string[] = [];
       for (let i = 0; i < diff; i++) {
         newIds.push(v4());
       }
       setStableIds([...stableIds, ...newIds]);
-    } else {
-      setStableIds(stableIds.slice(0, itemsLength));
+    } else if (diff < 0) {
+      if (itemsLength === 0) {
+        setStableIds([]);
+      } else {
+        let deletedIndex = prevItems.length - 1;
+        for (let i = 0; i < itemsLength; i++) {
+          if (prevItems[i] !== items[i]) {
+            deletedIndex = i;
+            break;
+          }
+        }
+        setStableIds(toSpliced(stableIds, deletedIndex, Math.abs(diff)));
+      }
     }
-    setPrevLength(itemsLength);
+    setPrevItems(items);
   }
 
   return { stableIds, setStableIds };
@@ -54,7 +66,7 @@ export const ArrayFieldInput = () => {
     return [];
   }, [draftValue]);
 
-  const { stableIds, setStableIds } = useArrayStableIds(arrayItems.length);
+  const { stableIds, setStableIds } = useArrayStableIds(arrayItems);
 
   const parseStringArrayToArrayValue = (items: string[]) => {
     const parseResponse = arrayFieldValueSchema.safeParse(items);
