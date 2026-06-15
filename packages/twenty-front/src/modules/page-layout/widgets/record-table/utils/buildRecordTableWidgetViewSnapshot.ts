@@ -28,7 +28,7 @@ export const buildRecordTableWidgetViewSnapshot = (
     isCompact: false,
     position: 0,
     openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
-    visibility: ViewVisibility.UNLISTED,
+    visibility: ViewVisibility.WORKSPACE,
     shouldHideEmptyGroups: false,
     isActive: true,
   };
