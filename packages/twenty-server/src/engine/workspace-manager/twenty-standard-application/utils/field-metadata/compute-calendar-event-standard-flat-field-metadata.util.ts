@@ -402,7 +402,7 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
     now,
   }),
   // Kept for the shipped 2.10 call-recording upgrade command. Current standard
-  // app sync excludes it, and 2.11 drops it from existing workspaces.
+  // app sync excludes it, and 2.14 drops it from existing workspaces.
   recordingPreference: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
