@@ -22,5 +22,5 @@ export type ModalProps = React.PropsWithChildren & {
   backdropClickOutsideId?: string;
   preventClickOutside?: boolean;
   onBackdropMouseDown?: (e: React.MouseEvent) => void;
-  modalRef?: React.RefObject<HTMLDivElement>;
+  modalRef?: React.RefObject<HTMLDivElement | null>;
 };
