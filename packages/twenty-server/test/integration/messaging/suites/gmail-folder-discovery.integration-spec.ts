@@ -4,8 +4,6 @@ import {
   MessageFolderImportPolicy,
 } from 'twenty-shared/types';
 
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessagingMessageListFetchCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-message-list-fetch.cron.job';
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
 import { setupGmailMock } from 'test/integration/messaging/utils/gmail-message-mock.util';
 import {
@@ -14,7 +12,7 @@ import {
   startChannelSync,
   updateMessageChannel,
 } from 'test/integration/messaging/utils/query-messaging.util';
-import { enqueueCronAndAwait } from 'test/integration/utils/run-sync-cron.util';
+import { runMessageChannelSync } from 'test/integration/utils/run-channel-sync.util';
 import { pollUntil } from 'test/integration/utils/poll-until.util';
 
 const HANDLE = 'gmail-folder-discovery@apple.dev';
@@ -40,12 +38,7 @@ describe('Gmail folder discovery (integration)', () => {
     );
   };
 
-  const runSyncCycle = () =>
-    enqueueCronAndAwait({
-      cronQueueName: MessageQueue.cronQueue,
-      cronJobName: MessagingMessageListFetchCronJob.name,
-      downstreamQueueName: MessageQueue.messagingQueue,
-    });
+  const runSyncCycle = () => runMessageChannelSync(channel.channelId);
 
   beforeAll(async () => {
     channel = await connectMessagingAccount({

@@ -3,9 +3,7 @@ import {
   MessageChannelSyncStage,
 } from 'twenty-shared/types';
 
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { MessagingMessageListFetchCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-message-list-fetch.cron.job';
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
 import {
   gmailMessage,
@@ -15,7 +13,7 @@ import {
   queryConnectedAccount,
   queryMessageChannel,
 } from 'test/integration/messaging/utils/query-messaging.util';
-import { enqueueCronAndAwait } from 'test/integration/utils/run-sync-cron.util';
+import { runMessageChannelSync } from 'test/integration/utils/run-channel-sync.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { pollUntil } from 'test/integration/utils/poll-until.util';
 
@@ -55,11 +53,7 @@ describe('Messaging token refresh (integration)', () => {
       { lastCredentialsRefreshedAt: EXPIRED_CREDENTIALS_AT },
     );
 
-    await enqueueCronAndAwait({
-      cronQueueName: MessageQueue.cronQueue,
-      cronJobName: MessagingMessageListFetchCronJob.name,
-      downstreamQueueName: MessageQueue.messagingQueue,
-    });
+    await runMessageChannelSync(channel.channelId);
 
     const account = await pollUntil(
       () => queryConnectedAccount(channel.connectedAccountId),

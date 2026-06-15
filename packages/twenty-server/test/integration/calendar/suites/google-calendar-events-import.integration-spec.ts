@@ -5,8 +5,6 @@ import {
   ConnectedAccountProvider,
 } from 'twenty-shared/types';
 
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { CalendarEventListFetchCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-event-list-fetch.cron.job';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
@@ -16,7 +14,7 @@ import {
   googleCalendarEventsHandler,
 } from 'test/integration/messaging/utils/google-calendar-mock.util';
 import { queryCalendarChannels } from 'test/integration/messaging/utils/query-messaging.util';
-import { enqueueCronAndAwait } from 'test/integration/utils/run-sync-cron.util';
+import { runCalendarChannelListFetch } from 'test/integration/utils/run-channel-sync.util';
 import { pollUntil } from 'test/integration/utils/poll-until.util';
 
 const HANDLE = 'google-calendar-events-import@apple.dev';
@@ -69,11 +67,7 @@ describe('Google calendar events import (integration)', () => {
       ]),
     );
 
-    await enqueueCronAndAwait({
-      cronQueueName: MessageQueue.cronQueue,
-      cronJobName: CalendarEventListFetchCronJob.name,
-      downstreamQueueName: MessageQueue.calendarQueue,
-    });
+    await runCalendarChannelListFetch(channel.calendarChannelId);
 
     const importedTitles = await pollUntil(
       () => findImportedEventTitles([eventTitle]),
@@ -100,11 +94,7 @@ describe('Google calendar events import (integration)', () => {
       ),
     );
 
-    await enqueueCronAndAwait({
-      cronQueueName: MessageQueue.cronQueue,
-      cronJobName: CalendarEventListFetchCronJob.name,
-      downstreamQueueName: MessageQueue.calendarQueue,
-    });
+    await runCalendarChannelListFetch(channel.calendarChannelId);
 
     const importedTitles = await pollUntil(
       () => findImportedEventTitles([newEventTitle]),

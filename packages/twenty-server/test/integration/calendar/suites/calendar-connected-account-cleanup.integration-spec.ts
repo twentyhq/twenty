@@ -2,8 +2,6 @@ import { randomUUID } from 'node:crypto';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { CalendarEventListFetchCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-event-list-fetch.cron.job';
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
 import {
   findRecordIdsByFilter,
@@ -15,7 +13,7 @@ import {
   googleCalendarEventsHandler,
 } from 'test/integration/messaging/utils/google-calendar-mock.util';
 import { deleteConnectedAccount } from 'test/integration/messaging/utils/query-messaging.util';
-import { enqueueCronAndAwait } from 'test/integration/utils/run-sync-cron.util';
+import { runCalendarChannelListFetch } from 'test/integration/utils/run-channel-sync.util';
 import { pollUntil } from 'test/integration/utils/poll-until.util';
 
 const HANDLE = 'calendar-cleanup@apple.dev';
@@ -47,11 +45,7 @@ describe('Calendar connected account cleanup (integration)', () => {
       ]),
     );
 
-    await enqueueCronAndAwait({
-      cronQueueName: MessageQueue.cronQueue,
-      cronJobName: CalendarEventListFetchCronJob.name,
-      downstreamQueueName: MessageQueue.calendarQueue,
-    });
+    await runCalendarChannelListFetch(channel.calendarChannelId);
 
     await pollUntil(
       () =>

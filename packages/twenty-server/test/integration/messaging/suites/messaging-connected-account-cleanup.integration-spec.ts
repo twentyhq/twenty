@@ -1,8 +1,6 @@
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessagingMessageListFetchCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-message-list-fetch.cron.job';
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
 import {
   findRecordIdsByFilter,
@@ -14,7 +12,7 @@ import {
   setupGmailMock,
 } from 'test/integration/messaging/utils/gmail-message-mock.util';
 import { deleteConnectedAccount } from 'test/integration/messaging/utils/query-messaging.util';
-import { enqueueCronAndAwait } from 'test/integration/utils/run-sync-cron.util';
+import { runMessageChannelSync } from 'test/integration/utils/run-channel-sync.util';
 import { pollUntil } from 'test/integration/utils/poll-until.util';
 
 const HANDLE = 'messaging-cleanup@apple.dev';
@@ -32,11 +30,7 @@ describe('Messaging connected account cleanup (integration)', () => {
       handle: HANDLE,
     });
 
-    await enqueueCronAndAwait({
-      cronQueueName: MessageQueue.cronQueue,
-      cronJobName: MessagingMessageListFetchCronJob.name,
-      downstreamQueueName: MessageQueue.messagingQueue,
-    });
+    await runMessageChannelSync(channel.channelId);
 
     const expectedSubjects = inbox.map(getGmailMessageSubject);
 

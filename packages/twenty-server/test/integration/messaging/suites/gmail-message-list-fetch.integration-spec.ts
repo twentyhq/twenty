@@ -1,7 +1,5 @@
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessagingMessageListFetchCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-message-list-fetch.cron.job';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
@@ -11,7 +9,7 @@ import {
   setupGmailMock,
 } from 'test/integration/messaging/utils/gmail-message-mock.util';
 import { queryMessageFolders } from 'test/integration/messaging/utils/query-messaging.util';
-import { enqueueCronAndAwait } from 'test/integration/utils/run-sync-cron.util';
+import { runMessageChannelSync } from 'test/integration/utils/run-channel-sync.util';
 import { pollUntil } from 'test/integration/utils/poll-until.util';
 
 const HANDLE = 'gmail-message-list-fetch@apple.dev';
@@ -51,11 +49,7 @@ describe('Gmail message list fetch (integration)', () => {
   });
 
   it('runs the full sync pipeline on the real worker: folders synced, messages imported', async () => {
-    await enqueueCronAndAwait({
-      cronQueueName: MessageQueue.cronQueue,
-      cronJobName: MessagingMessageListFetchCronJob.name,
-      downstreamQueueName: MessageQueue.messagingQueue,
-    });
+    await runMessageChannelSync(channel.channelId);
 
     const expectedSubjects = inbox.map(getGmailMessageSubject);
 

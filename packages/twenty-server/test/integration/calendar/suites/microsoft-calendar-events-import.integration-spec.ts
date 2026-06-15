@@ -5,9 +5,6 @@ import {
   ConnectedAccountProvider,
 } from 'twenty-shared/types';
 
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { CalendarEventListFetchCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-event-list-fetch.cron.job';
-import { CalendarEventsImportCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-events-import.cron.job';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
@@ -17,7 +14,10 @@ import {
 } from 'test/integration/messaging/utils/microsoft-calendar-mock.util';
 import { setupMicrosoftMock } from 'test/integration/messaging/utils/microsoft-message-mock.util';
 import { queryCalendarChannels } from 'test/integration/messaging/utils/query-messaging.util';
-import { enqueueCronAndAwait } from 'test/integration/utils/run-sync-cron.util';
+import {
+  runCalendarChannelEventsImport,
+  runCalendarChannelListFetch,
+} from 'test/integration/utils/run-channel-sync.util';
 import { pollUntil } from 'test/integration/utils/poll-until.util';
 
 const HANDLE = 'microsoft-calendar-events-import@apple.dev';
@@ -71,11 +71,7 @@ describe('Microsoft calendar events import (integration)', () => {
       ]),
     );
 
-    await enqueueCronAndAwait({
-      cronQueueName: MessageQueue.cronQueue,
-      cronJobName: CalendarEventListFetchCronJob.name,
-      downstreamQueueName: MessageQueue.calendarQueue,
-    });
+    await runCalendarChannelListFetch(channel.calendarChannelId);
 
     await pollUntil(
       () => queryCalendarChannels(channel.connectedAccountId),
@@ -84,11 +80,7 @@ describe('Microsoft calendar events import (integration)', () => {
         CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
     );
 
-    await enqueueCronAndAwait({
-      cronQueueName: MessageQueue.cronQueue,
-      cronJobName: CalendarEventsImportCronJob.name,
-      downstreamQueueName: MessageQueue.calendarQueue,
-    });
+    await runCalendarChannelEventsImport(channel.calendarChannelId);
 
     const importedTitles = await pollUntil(
       () => findImportedEventTitles([eventTitle]),
@@ -116,11 +108,7 @@ describe('Microsoft calendar events import (integration)', () => {
       ),
     );
 
-    await enqueueCronAndAwait({
-      cronQueueName: MessageQueue.cronQueue,
-      cronJobName: CalendarEventListFetchCronJob.name,
-      downstreamQueueName: MessageQueue.calendarQueue,
-    });
+    await runCalendarChannelListFetch(channel.calendarChannelId);
 
     await pollUntil(
       () => queryCalendarChannels(channel.connectedAccountId),
@@ -129,11 +117,7 @@ describe('Microsoft calendar events import (integration)', () => {
         CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
     );
 
-    await enqueueCronAndAwait({
-      cronQueueName: MessageQueue.cronQueue,
-      cronJobName: CalendarEventsImportCronJob.name,
-      downstreamQueueName: MessageQueue.calendarQueue,
-    });
+    await runCalendarChannelEventsImport(channel.calendarChannelId);
 
     const importedTitles = await pollUntil(
       () => findImportedEventTitles([newEventTitle]),
