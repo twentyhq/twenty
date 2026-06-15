@@ -15,6 +15,8 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
+import { CallRecordingRequestStatus } from 'src/modules/call-recording/common/enums/call-recording-request-status.enum';
+import { CallRecordingStatus } from 'src/modules/call-recording/common/enums/call-recording-status.enum';
 
 export const buildCallRecordingStandardFlatFieldMetadatas = ({
   now,
@@ -133,48 +135,82 @@ export const buildCallRecordingStandardFlatFieldMetadatas = ({
       icon: 'IconProgress',
       isNullable: false,
       isUIReadOnly: true,
-      defaultValue: "'SCHEDULED'",
+      defaultValue: `'${CallRecordingStatus.SCHEDULED}'`,
       options: [
         {
           id: '7fa515ba-e3cb-48f7-914f-e1f664d5d920',
-          value: 'SCHEDULED',
+          value: CallRecordingStatus.SCHEDULED,
           label: i18nLabel(msg`Scheduled`),
           position: 0,
           color: 'sky',
         },
         {
           id: '96844ba3-364b-4975-8abc-886cca92ec99',
-          value: 'JOINING',
+          value: CallRecordingStatus.JOINING,
           label: i18nLabel(msg`Joining`),
           position: 1,
           color: 'blue',
         },
         {
           id: 'eccdad8b-8424-48ba-ad7f-f38517fa83fc',
-          value: 'RECORDING',
+          value: CallRecordingStatus.RECORDING,
           label: i18nLabel(msg`Recording`),
           position: 2,
           color: 'red',
         },
         {
           id: 'c8222203-5b44-4ac6-8142-0a7eb2074d7b',
-          value: 'PROCESSING',
+          value: CallRecordingStatus.PROCESSING,
           label: i18nLabel(msg`Processing`),
           position: 3,
           color: 'orange',
         },
         {
           id: 'd17faf71-af3c-4260-9021-2ffaaa5648c4',
-          value: 'COMPLETED',
+          value: CallRecordingStatus.COMPLETED,
           label: i18nLabel(msg`Completed`),
           position: 4,
           color: 'green',
         },
         {
           id: '4800777e-54a8-4464-9c01-07d6eefd04da',
-          value: 'FAILED_UNKNOWN',
+          value: CallRecordingStatus.FAILED_UNKNOWN,
           label: i18nLabel(msg`Failed`),
           position: 5,
+          color: 'gray',
+        },
+      ],
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  recordingRequestStatus: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'recordingRequestStatus',
+      type: FieldMetadataType.SELECT,
+      label: i18nLabel(msg`Request Status`),
+      description: i18nLabel(msg`Recording request status`),
+      icon: 'IconCircleCheck',
+      isNullable: false,
+      isUIReadOnly: true,
+      defaultValue: `'${CallRecordingRequestStatus.REQUESTED}'`,
+      options: [
+        {
+          id: 'fe992923-2f51-494d-bb32-42e96a703778',
+          value: CallRecordingRequestStatus.REQUESTED,
+          label: i18nLabel(msg`Requested`),
+          position: 0,
+          color: 'sky',
+        },
+        {
+          id: '485767c2-2dda-4b83-91d8-6025cdb4b9df',
+          value: CallRecordingRequestStatus.CANCELED,
+          label: i18nLabel(msg`Canceled`),
+          position: 1,
           color: 'gray',
         },
       ],

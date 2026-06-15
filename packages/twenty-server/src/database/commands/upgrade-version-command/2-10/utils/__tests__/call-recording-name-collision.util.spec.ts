@@ -305,11 +305,6 @@ describe('findCalendarEventFieldNameCollisionsForCallRecording', () => {
   it('finds calendarEvent fields that use a name reserved by CallRecording', () => {
     const maps = buildFlatFieldMetadataMaps([
       getCalendarEventFieldMetadataMock({
-        universalIdentifier: 'colliding-recording-preference',
-        name: 'recordingPreference',
-        label: 'Recording Preference',
-      }),
-      getCalendarEventFieldMetadataMock({
         universalIdentifier: 'colliding-call-recordings',
         name: 'callRecordings',
         label: 'Call Recordings',
@@ -320,17 +315,11 @@ describe('findCalendarEventFieldNameCollisionsForCallRecording', () => {
       findCalendarEventFieldNameCollisionsForCallRecording(maps).map(
         (fieldMetadata) => fieldMetadata.universalIdentifier,
       ),
-    ).toEqual(['colliding-recording-preference', 'colliding-call-recordings']);
+    ).toEqual(['colliding-call-recordings']);
   });
 
   it('excludes the CallRecording standard calendarEvent fields', () => {
     const maps = buildFlatFieldMetadataMaps([
-      getCalendarEventFieldMetadataMock({
-        universalIdentifier:
-          STANDARD_OBJECTS.calendarEvent.fields.recordingPreference
-            .universalIdentifier,
-        name: 'recordingPreference',
-      }),
       getCalendarEventFieldMetadataMock({
         universalIdentifier:
           STANDARD_OBJECTS.calendarEvent.fields.callRecordings
@@ -351,8 +340,8 @@ describe('findCalendarEventFieldNameCollisionsForCallRecording', () => {
         objectMetadataId: 'other-object-id',
         objectMetadataUniversalIdentifier: 'other-object',
         type: FieldMetadataType.TEXT,
-        name: 'recordingPreference',
-        label: 'Recording Preference',
+        name: 'callRecordings',
+        label: 'Call Recordings',
       }),
     ]);
 
@@ -367,36 +356,36 @@ describe('resolveAvailableOldCalendarEventFieldName', () => {
     const maps = buildFlatFieldMetadataMaps([
       getCalendarEventFieldMetadataMock({
         universalIdentifier: 'colliding-field',
-        name: 'recordingPreference',
+        name: 'callRecordings',
       }),
     ]);
 
     expect(
       resolveAvailableOldCalendarEventFieldName({
         flatFieldMetadataMaps: maps,
-        originalFieldName: 'recordingPreference',
+        originalFieldName: 'callRecordings',
       }),
-    ).toBe('recordingPreferenceOld');
+    ).toBe('callRecordingsOld');
   });
 
   it('advances to the next discriminator when the Old field name is taken', () => {
     const maps = buildFlatFieldMetadataMaps([
       getCalendarEventFieldMetadataMock({
         universalIdentifier: 'colliding-field',
-        name: 'recordingPreference',
+        name: 'callRecordings',
       }),
       getCalendarEventFieldMetadataMock({
         universalIdentifier: 'old-field-name-taken',
-        name: 'recordingPreferenceOld',
+        name: 'callRecordingsOld',
       }),
     ]);
 
     expect(
       resolveAvailableOldCalendarEventFieldName({
         flatFieldMetadataMaps: maps,
-        originalFieldName: 'recordingPreference',
+        originalFieldName: 'callRecordings',
       }),
-    ).toBe('recordingPreferenceOld2');
+    ).toBe('callRecordingsOld2');
   });
 
   it('skips Old field names provided as already reserved', () => {
@@ -422,8 +411,8 @@ describe('buildCalendarEventFieldRenameUpdates', () => {
     const maps = buildFlatFieldMetadataMaps([
       getCalendarEventFieldMetadataMock({
         universalIdentifier: 'colliding-field',
-        name: 'recordingPreference',
-        label: 'Recording Preference',
+        name: 'callRecordings',
+        label: 'Call Recordings',
       }),
     ]);
 
@@ -435,8 +424,8 @@ describe('buildCalendarEventFieldRenameUpdates', () => {
     ).toMatchObject([
       {
         universalIdentifier: 'colliding-field',
-        name: 'recordingPreferenceOld',
-        label: 'Recording Preference (Old)',
+        name: 'callRecordingsOld',
+        label: 'Call Recordings (Old)',
         isLabelSyncedWithName: false,
         updatedAt: NOW,
       },
@@ -447,13 +436,13 @@ describe('buildCalendarEventFieldRenameUpdates', () => {
     const maps = buildFlatFieldMetadataMaps([
       getCalendarEventFieldMetadataMock({
         universalIdentifier: 'colliding-field-one',
-        name: 'recordingPreference',
-        label: 'Recording Preference',
+        name: 'callRecordings',
+        label: 'Call Recordings',
       }),
       getCalendarEventFieldMetadataMock({
         universalIdentifier: 'colliding-field-two',
-        name: 'recordingPreference',
-        label: 'Recording Preference',
+        name: 'callRecordings',
+        label: 'Call Recordings',
       }),
     ]);
 
@@ -462,6 +451,6 @@ describe('buildCalendarEventFieldRenameUpdates', () => {
         flatFieldMetadataMaps: maps,
         now: NOW,
       }).map((fieldMetadata) => fieldMetadata.name),
-    ).toEqual(['recordingPreferenceOld', 'recordingPreferenceOld2']);
+    ).toEqual(['callRecordingsOld', 'callRecordingsOld2']);
   });
 });
