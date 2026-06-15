@@ -33,6 +33,7 @@ exports[`getRecordFilterOperands CURRENCY returns amountMicros operands when sub
   "LESS_THAN_OR_EQUAL",
   "IS",
   "IS_NOT",
+  "IS_BETWEEN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]
@@ -44,6 +45,7 @@ exports[`getRecordFilterOperands CURRENCY returns amountMicros operands when sub
   "LESS_THAN_OR_EQUAL",
   "IS",
   "IS_NOT",
+  "IS_BETWEEN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]
@@ -105,6 +107,7 @@ exports[`getRecordFilterOperands returns the expected operands for filterType=DA
   "IS_TODAY",
   "IS_BEFORE",
   "IS_AFTER",
+  "IS_BETWEEN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]
@@ -161,6 +164,7 @@ exports[`getRecordFilterOperands returns the expected operands for filterType=NU
   "IS_NOT",
   "GREATER_THAN_OR_EQUAL",
   "LESS_THAN_OR_EQUAL",
+  "IS_BETWEEN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]

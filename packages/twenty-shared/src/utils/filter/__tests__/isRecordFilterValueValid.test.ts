@@ -117,4 +117,78 @@ describe('isRecordFilterValueValid', () => {
       ).toBe(true);
     });
   });
+
+  describe('IS_BETWEEN operand', () => {
+    it('should return true for valid "min,max" value', () => {
+      expect(
+        isRecordFilterValueValid({
+          operand: ViewFilterOperand.IS_BETWEEN,
+          value: '100,500',
+        }),
+      ).toBe(true);
+    });
+
+    it('should return true for decimal range "min,max" value', () => {
+      expect(
+        isRecordFilterValueValid({
+          operand: ViewFilterOperand.IS_BETWEEN,
+          value: '1.5,99.99',
+        }),
+      ).toBe(true);
+    });
+
+    it('should return false for empty string', () => {
+      expect(
+        isRecordFilterValueValid({
+          operand: ViewFilterOperand.IS_BETWEEN,
+          value: '',
+        }),
+      ).toBe(false);
+    });
+
+    it('should return false for undefined', () => {
+      expect(
+        isRecordFilterValueValid({
+          operand: ViewFilterOperand.IS_BETWEEN,
+          value: undefined as unknown as string,
+        }),
+      ).toBe(false);
+    });
+
+    it('should return false when no comma separator', () => {
+      expect(
+        isRecordFilterValueValid({
+          operand: ViewFilterOperand.IS_BETWEEN,
+          value: '100',
+        }),
+      ).toBe(false);
+    });
+
+    it('should return false when min is missing', () => {
+      expect(
+        isRecordFilterValueValid({
+          operand: ViewFilterOperand.IS_BETWEEN,
+          value: ',500',
+        }),
+      ).toBe(false);
+    });
+
+    it('should return false when max is missing', () => {
+      expect(
+        isRecordFilterValueValid({
+          operand: ViewFilterOperand.IS_BETWEEN,
+          value: '100,',
+        }),
+      ).toBe(false);
+    });
+
+    it('should return true when parts are non-numeric strings (e.g. ISO date instants)', () => {
+      expect(
+        isRecordFilterValueValid({
+          operand: ViewFilterOperand.IS_BETWEEN,
+          value: '2024-01-01T00:00:00Z,2024-12-31T00:00:00Z',
+        }),
+      ).toBe(true);
+    });
+  });
 });

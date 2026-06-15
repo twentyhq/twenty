@@ -23,6 +23,7 @@ describe('isRecordFilterOperandExpectingValue', () => {
     ViewFilterOperand.IS_AFTER,
     ViewFilterOperand.IS_RELATIVE,
     ViewFilterOperand.VECTOR_SEARCH,
+    ViewFilterOperand.IS_BETWEEN,
   ];
 
   it.each(operandsNotExpectingValue)(

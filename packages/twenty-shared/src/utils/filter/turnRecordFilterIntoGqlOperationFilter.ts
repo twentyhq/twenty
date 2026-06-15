@@ -49,6 +49,7 @@ import {
   resolveDateFilter,
   resolveDateTimeFilter,
   resolveRelativeDateFilterStringified,
+  parseRecordFilterBetweenValue,
   type RecordFilter,
 } from '@/utils';
 import { arrayOfStringsOrVariablesSchema } from '@/utils/filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
@@ -475,6 +476,34 @@ const buildDirectFieldGqlOperationFilter = ({
           };
         }
 
+        if (recordFilter.operand === RecordFilterOperand.IS_BETWEEN) {
+          const { startValue: startStr, endValue: endStr } =
+            parseRecordFilterBetweenValue(recordFilter.value);
+          if (!startStr || !endStr) return undefined;
+
+          try {
+            const startInstant = Temporal.Instant.from(startStr).toString();
+            const endInstant = Temporal.Instant.from(endStr).toString();
+
+            return {
+              and: [
+                {
+                  [fieldMetadataItem.name]: {
+                    gte: startInstant,
+                  } as DateTimeFilter,
+                },
+                {
+                  [fieldMetadataItem.name]: {
+                    lte: endInstant,
+                  } as DateTimeFilter,
+                },
+              ],
+            };
+          } catch {
+            return undefined;
+          }
+        }
+
         const resolvedDateTime = Temporal.Instant.from(recordFilter.value);
 
         switch (recordFilter.operand) {
@@ -564,6 +593,27 @@ const buildDirectFieldGqlOperationFilter = ({
               } as FloatFilter,
             },
           };
+        case RecordFilterOperand.IS_BETWEEN: {
+          const { startValue: minStr, endValue: maxStr } =
+            parseRecordFilterBetweenValue(recordFilter.value);
+          const minValue = parseFloat(minStr);
+          const maxValue = parseFloat(maxStr);
+          if (isNaN(minValue) || isNaN(maxValue)) return undefined;
+          return {
+            and: [
+              {
+                [fieldMetadataItem.name]: {
+                  lte: maxValue,
+                },
+              },
+              {
+                [fieldMetadataItem.name]: {
+                  gte: minValue,
+                },
+              },
+            ],
+          };
+        }
         default:
           throw new Error(
             `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
@@ -697,6 +747,27 @@ const buildDirectFieldGqlOperationFilter = ({
                 } as CurrencyFilter,
               },
             };
+          case RecordFilterOperand.IS_BETWEEN: {
+            const { startValue: minStr, endValue: maxStr } =
+              parseRecordFilterBetweenValue(recordFilter.value);
+            const minAmount = parseFloat(minStr);
+            const maxAmount = parseFloat(maxStr);
+            if (isNaN(minAmount) || isNaN(maxAmount)) return undefined;
+            return {
+              and: [
+                {
+                  [fieldMetadataItem.name]: {
+                    amountMicros: { gte: Math.round(minAmount) * 1000000 },
+                  } as CurrencyFilter,
+                },
+                {
+                  [fieldMetadataItem.name]: {
+                    amountMicros: { lte: Math.round(maxAmount) * 1000000 },
+                  } as CurrencyFilter,
+                },
+              ],
+            };
+          }
           default:
             throw new Error(
               `Unknown operand ${recordFilter.operand} for ${filterType} / ${subFieldName}  filter`,

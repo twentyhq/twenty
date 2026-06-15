@@ -44,6 +44,8 @@ export const getOperandLabel = (
       return t`Is in future`;
     case ViewFilterOperand.IS_TODAY:
       return t`Is today${timeZoneAbbreviationSuffix}`;
+    case ViewFilterOperand.IS_BETWEEN:
+      return t`Is between`;
     default:
       return '';
   }

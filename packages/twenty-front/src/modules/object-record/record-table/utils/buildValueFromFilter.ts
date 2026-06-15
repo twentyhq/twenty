@@ -104,6 +104,7 @@ const computeValueFromFilterDate = (
     case ViewFilterOperand.IS_RELATIVE:
       return new Date();
     case ViewFilterOperand.IS_EMPTY:
+    case ViewFilterOperand.IS_BETWEEN:
       return undefined;
     default:
       assertUnreachable(operand);
@@ -125,6 +126,7 @@ const computeValueFromFilterNumber = (
       return Number(value);
     case ViewFilterOperand.IS_NOT:
     case ViewFilterOperand.IS_EMPTY:
+    case ViewFilterOperand.IS_BETWEEN:
       return undefined;
     default:
       assertUnreachable(operand);

@@ -37,3 +37,4 @@ export * from './utils/isMatchingUUIDFilter';
 export * from './utils/validation-schemas/arrayOfStringsOrVariablesSchema';
 export * from './utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
 export * from './utils/validation-schemas/jsonRelationFilterValueSchema';
+export * from './parseRecordFilterBetweenValue';

@@ -20,6 +20,7 @@ describe('getOperandsForFilterType', () => {
     RecordFilterOperand.IS_NOT,
     RecordFilterOperand.GREATER_THAN_OR_EQUAL,
     RecordFilterOperand.LESS_THAN_OR_EQUAL,
+    RecordFilterOperand.IS_BETWEEN,
   ];
 
   const currencyAmountMicrosOperands = [
@@ -27,6 +28,7 @@ describe('getOperandsForFilterType', () => {
     RecordFilterOperand.LESS_THAN_OR_EQUAL,
     RecordFilterOperand.IS,
     RecordFilterOperand.IS_NOT,
+    RecordFilterOperand.IS_BETWEEN,
   ];
 
   const currencyCurrencyCodeOperands = [
@@ -48,6 +50,8 @@ describe('getOperandsForFilterType', () => {
     RecordFilterOperand.IS_BEFORE,
     RecordFilterOperand.IS_AFTER,
   ];
+
+  const dateTimeOperands = [...dateOperands, RecordFilterOperand.IS_BETWEEN];
 
   const relationOperand = [RecordFilterOperand.IS, RecordFilterOperand.IS_NOT];
 
@@ -74,7 +78,7 @@ describe('getOperandsForFilterType', () => {
     ],
     ['NUMBER', [...numberOperands, ...emptyOperands]],
     ['DATE', [...dateOperands, ...emptyOperands]],
-    ['DATE_TIME', [...dateOperands, ...emptyOperands]],
+    ['DATE_TIME', [...dateTimeOperands, ...emptyOperands]],
     ['RELATION', [...relationOperand, ...emptyOperands]],
   ] satisfies (
     | [FieldType, RecordFilterOperand[], CompositeFieldSubFieldName]

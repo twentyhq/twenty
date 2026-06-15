@@ -42,6 +42,7 @@ exports[`getStepFilterOperands CURRENCY returns amountMicros operands when subFi
   "LESS_THAN_OR_EQUAL",
   "IS",
   "IS_NOT",
+  "IS_BETWEEN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]
@@ -53,6 +54,7 @@ exports[`getStepFilterOperands CURRENCY returns amountMicros operands when subFi
   "LESS_THAN_OR_EQUAL",
   "IS",
   "IS_NOT",
+  "IS_BETWEEN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]
@@ -100,6 +102,7 @@ exports[`getStepFilterOperands returns the expected operands for filterType=DATE
   "IS_TODAY",
   "IS_BEFORE",
   "IS_AFTER",
+  "IS_BETWEEN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]
@@ -114,6 +117,7 @@ exports[`getStepFilterOperands returns the expected operands for filterType=DATE
   "IS_TODAY",
   "IS_BEFORE",
   "IS_AFTER",
+  "IS_BETWEEN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]
@@ -161,6 +165,7 @@ exports[`getStepFilterOperands returns the expected operands for filterType=NUMB
   "IS_NOT",
   "GREATER_THAN_OR_EQUAL",
   "LESS_THAN_OR_EQUAL",
+  "IS_BETWEEN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]
@@ -172,6 +177,7 @@ exports[`getStepFilterOperands returns the expected operands for filterType=NUME
   "IS_NOT",
   "GREATER_THAN_OR_EQUAL",
   "LESS_THAN_OR_EQUAL",
+  "IS_BETWEEN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]
@@ -276,6 +282,7 @@ exports[`getStepFilterOperands returns the expected operands for filterType=numb
   "IS_NOT",
   "GREATER_THAN_OR_EQUAL",
   "LESS_THAN_OR_EQUAL",
+  "IS_BETWEEN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]

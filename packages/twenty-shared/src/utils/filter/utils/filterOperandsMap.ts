@@ -51,6 +51,7 @@ export const FILTER_OPERANDS_MAP = {
   CURRENCY: [
     ViewFilterOperand.GREATER_THAN_OR_EQUAL,
     ViewFilterOperand.LESS_THAN_OR_EQUAL,
+    ViewFilterOperand.IS_BETWEEN,
     ...emptyOperands,
   ],
   NUMBER: [
@@ -58,6 +59,7 @@ export const FILTER_OPERANDS_MAP = {
     ViewFilterOperand.IS_NOT,
     ViewFilterOperand.GREATER_THAN_OR_EQUAL,
     ViewFilterOperand.LESS_THAN_OR_EQUAL,
+    ViewFilterOperand.IS_BETWEEN,
     ...emptyOperands,
   ],
   RAW_JSON: [
@@ -78,6 +80,7 @@ export const FILTER_OPERANDS_MAP = {
     ViewFilterOperand.IS_TODAY,
     ViewFilterOperand.IS_BEFORE,
     ViewFilterOperand.IS_AFTER,
+    ViewFilterOperand.IS_BETWEEN,
     ...emptyOperands,
   ],
   DATE: [

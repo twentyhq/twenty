@@ -5932,6 +5932,7 @@ export enum ViewFilterOperand {
   IS = 'IS',
   IS_AFTER = 'IS_AFTER',
   IS_BEFORE = 'IS_BEFORE',
+  IS_BETWEEN = 'IS_BETWEEN',
   IS_EMPTY = 'IS_EMPTY',
   IS_IN_FUTURE = 'IS_IN_FUTURE',
   IS_IN_PAST = 'IS_IN_PAST',

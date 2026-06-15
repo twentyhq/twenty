@@ -19,6 +19,7 @@ import { DEFAULT_RELATIVE_DATE_FILTER_VALUE } from 'twenty-shared/constants';
 import {
   isDefined,
   relativeDateFilterStringifiedSchema,
+  parseRecordFilterBetweenValue,
 } from 'twenty-shared/utils';
 
 export const useApplyObjectFilterDropdownOperand = () => {
@@ -66,6 +67,27 @@ export const useApplyObjectFilterDropdownOperand = () => {
         ...objectFilterDropdownCurrentRecordFilter,
         operand: newOperand,
       } satisfies RecordFilter;
+
+      const previousOperand = objectFilterDropdownCurrentRecordFilter?.operand;
+      const isLeavingBetweenOperand =
+        previousOperand === RecordFilterOperand.IS_BETWEEN &&
+        newOperand !== RecordFilterOperand.IS_BETWEEN;
+
+      if (isLeavingBetweenOperand) {
+        const { startValue } = parseRecordFilterBetweenValue(
+          objectFilterDropdownCurrentRecordFilter.value,
+        );
+
+        const firstBetweenValue = startValue !== '' ? startValue : null;
+
+        if (isNonEmptyString(firstBetweenValue)) {
+          recordFilterToUpsert.value = firstBetweenValue;
+          recordFilterToUpsert.displayValue = firstBetweenValue;
+        } else {
+          recordFilterToUpsert.value = '';
+          recordFilterToUpsert.displayValue = '';
+        }
+      }
     } else if (isValuelessOperand) {
       if (!isDefined(fieldMetadataItemUsedInDropdown)) {
         throw new Error(

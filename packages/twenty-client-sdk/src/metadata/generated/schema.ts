@@ -544,7 +544,7 @@ export interface ViewFilter {
     __typename: 'ViewFilter'
 }
 
-export type ViewFilterOperand = 'IS' | 'IS_NOT_NULL' | 'IS_NOT' | 'LESS_THAN_OR_EQUAL' | 'GREATER_THAN_OR_EQUAL' | 'IS_BEFORE' | 'IS_AFTER' | 'CONTAINS' | 'DOES_NOT_CONTAIN' | 'IS_EMPTY' | 'IS_NOT_EMPTY' | 'IS_RELATIVE' | 'IS_IN_PAST' | 'IS_IN_FUTURE' | 'IS_TODAY' | 'VECTOR_SEARCH'
+export type ViewFilterOperand = 'IS' | 'IS_NOT_NULL' | 'IS_NOT' | 'LESS_THAN_OR_EQUAL' | 'GREATER_THAN_OR_EQUAL' | 'IS_BEFORE' | 'IS_AFTER' | 'CONTAINS' | 'DOES_NOT_CONTAIN' | 'IS_EMPTY' | 'IS_NOT_EMPTY' | 'IS_RELATIVE' | 'IS_IN_PAST' | 'IS_IN_FUTURE' | 'IS_TODAY' | 'VECTOR_SEARCH' | 'IS_BETWEEN'
 
 export interface ViewGroup {
     id: Scalars['UUID']
@@ -8721,7 +8721,8 @@ export const enumViewFilterOperand = {
    IS_IN_PAST: 'IS_IN_PAST' as const,
    IS_IN_FUTURE: 'IS_IN_FUTURE' as const,
    IS_TODAY: 'IS_TODAY' as const,
-   VECTOR_SEARCH: 'VECTOR_SEARCH' as const
+   VECTOR_SEARCH: 'VECTOR_SEARCH' as const,
+   IS_BETWEEN: 'IS_BETWEEN' as const
 }
 
 export const enumViewSortDirection = {
