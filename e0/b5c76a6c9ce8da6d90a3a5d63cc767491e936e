@@ -1,0 +1,19 @@
+packages/twenty-server/src/engine/core-modules/file/services/file.service.ts
+  s_ad06bf65e6995b::t_c15439d26aa3af 113,117-118
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "e0b5c76a6c9ce8da6d90a3a5d63cc767491e936e",
+  "prompts": {},
+  "sessions": {
+    "s_ad06bf65e6995b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "60236852-0858-4310-a82b-0f399a218d71",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
