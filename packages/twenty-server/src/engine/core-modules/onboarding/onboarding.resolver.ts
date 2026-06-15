@@ -26,10 +26,6 @@ export class OnboardingResolver {
     private readonly onboardingInviteSuggestionsService: OnboardingInviteSuggestionsService,
   ) {}
 
-  // Teammates discovered from the user's freshly connected calendar, used to
-  // prefill the invite step. Computed asynchronously on account connection, so
-  // this returns an empty list until that background job has populated the
-  // cache (the client polls).
   @Query(() => [InviteSuggestionDTO])
   @UseGuards(NoPermissionGuard)
   async getInviteSuggestions(

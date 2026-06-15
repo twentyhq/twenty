@@ -14,8 +14,6 @@ export class CalendarAttendeesService {
     private readonly microsoftCalendarAttendeesService: MicrosoftCalendarAttendeesService,
   ) {}
 
-  // Dispatches to the right provider driver. Providers without a calendar
-  // integration (e.g. IMAP/CalDav) yield no suggestions.
   async getRecentAttendees(
     connectedAccount: Pick<ConnectedAccountEntity, 'provider' | 'id'>,
   ): Promise<RawCalendarAttendee[]> {

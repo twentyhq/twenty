@@ -103,9 +103,6 @@ export class OnboardingService {
         workspace.id,
       );
 
-    // When invite suggestions are enabled we surface the account connection
-    // step before profile creation, so the calendar sync gets a head start and
-    // we can prefill teammates by the time the invite step is reached.
     if (isInviteSuggestionsEnabled) {
       if (isConnectAccountPending) {
         return OnboardingStatus.SYNC_EMAIL;
@@ -167,9 +164,6 @@ export class OnboardingService {
     return value === true;
   }
 
-  // Whether completing this account connection should trigger the fast
-  // teammate lookup used to prefill the invite step. Only true while the user
-  // is still on the onboarding connect step and the feature is enabled.
   async shouldComputeInviteSuggestionsOnConnect({
     userId,
     workspaceId,

@@ -353,8 +353,6 @@ export class GoogleAPIsService {
           }
         }
 
-        // During onboarding, kick off a fast same-domain teammate lookup from
-        // the freshly connected calendar so the invite step can prefill them.
         if (
           shouldComputeInviteSuggestions &&
           isCalendarEnabled &&

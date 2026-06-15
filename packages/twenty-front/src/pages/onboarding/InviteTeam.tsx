@@ -11,7 +11,7 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Controller,
   type SubmitHandler,
@@ -99,7 +99,7 @@ export const InviteTeam = () => {
     FeatureFlagKey.IS_ONBOARDING_INVITE_SUGGESTIONS_ENABLED,
   );
 
-  const hasPrefilledSuggestionsRef = useRef(false);
+  const [hasPrefilledSuggestions, setHasPrefilledSuggestions] = useState(false);
 
   const {
     data: inviteSuggestionsData,
@@ -111,11 +111,12 @@ export const InviteTeam = () => {
     notifyOnNetworkStatusChange: true,
   });
 
-  const inviteSuggestions = inviteSuggestionsData?.getInviteSuggestions ?? [];
+  const inviteSuggestions = useMemo(
+    () => inviteSuggestionsData?.getInviteSuggestions ?? [],
+    [inviteSuggestionsData],
+  );
   const hasInviteSuggestions = inviteSuggestions.length > 0;
 
-  // Suggestions are computed asynchronously after the calendar connects, so we
-  // briefly poll to let them warm up, then give up if none arrive.
   useEffect(() => {
     if (!isInviteSuggestionsEnabled || hasInviteSuggestions) {
       stopPolling();
@@ -133,25 +134,25 @@ export const InviteTeam = () => {
     stopPolling,
   ]);
 
-  // Prefill the form once with discovered teammates, unless the user has
-  // already started typing.
   useEffect(() => {
-    if (
-      hasPrefilledSuggestionsRef.current ||
-      !hasInviteSuggestions ||
-      isDirty
-    ) {
+    if (hasPrefilledSuggestions || !hasInviteSuggestions || isDirty) {
       return;
     }
 
-    hasPrefilledSuggestionsRef.current = true;
+    setHasPrefilledSuggestions(true);
     reset({
       emails: [
         ...inviteSuggestions.map((suggestion) => ({ email: suggestion.email })),
         { email: '' },
       ],
     });
-  }, [hasInviteSuggestions, inviteSuggestions, isDirty, reset]);
+  }, [
+    hasPrefilledSuggestions,
+    hasInviteSuggestions,
+    inviteSuggestions,
+    isDirty,
+    reset,
+  ]);
 
   watch(({ emails }) => {
     if (!emails) {

@@ -16,6 +16,7 @@ import {
 } from 'src/modules/onboarding-invite-suggestions/constants/onboarding-invite-suggestions.constants';
 import { CalendarAttendeesService } from 'src/modules/onboarding-invite-suggestions/services/calendar-attendees.service';
 import { type InviteSuggestion } from 'src/modules/onboarding-invite-suggestions/types/invite-suggestion.type';
+import { type RawCalendarAttendee } from 'src/modules/onboarding-invite-suggestions/types/raw-calendar-attendee.type';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
 type ComputeAndCacheSuggestionsArgs = {
@@ -43,15 +44,13 @@ export class OnboardingInviteSuggestionsService {
     workspaceId: string;
     userId: string;
   }): Promise<InviteSuggestion[]> {
-    const cached = await this.cacheStorageService.get<InviteSuggestion[]>(
-      getOnboardingInviteSuggestionsCacheKey(workspaceId, userId),
-    );
+    const cachedSuggestions = await this.cacheStorageService.get<
+      InviteSuggestion[]
+    >(getOnboardingInviteSuggestionsCacheKey(workspaceId, userId));
 
-    return cached ?? [];
+    return cachedSuggestions ?? [];
   }
 
-  // Derives likely teammates (same work-email domain) from the freshly
-  // connected calendar and caches them so the invite step can prefill them.
   async computeAndCacheSuggestions({
     workspaceId,
     userId,
@@ -70,11 +69,9 @@ export class OnboardingInviteSuggestionsService {
       return;
     }
 
-    const selfHandle = connectedAccount.handle.toLowerCase();
+    const connectedAccountHandle = connectedAccount.handle.toLowerCase();
 
-    // Personal mailboxes (gmail.com, etc.) have no meaningful "same company"
-    // signal, so we never suggest anyone.
-    if (!isWorkEmail(selfHandle)) {
+    if (!isWorkEmail(connectedAccountHandle)) {
       await this.cacheStorageService.set<InviteSuggestion[]>(
         cacheKey,
         [],
@@ -84,15 +81,17 @@ export class OnboardingInviteSuggestionsService {
       return;
     }
 
-    const selfDomain = getDomainNameFromHandle(selfHandle);
-    const selfHandles = new Set<string>([
-      selfHandle,
+    const connectedAccountDomain = getDomainNameFromHandle(
+      connectedAccountHandle,
+    );
+    const ownEmailHandles = new Set<string>([
+      connectedAccountHandle,
       ...(connectedAccount.handleAliases ?? []).map((alias) =>
         alias.toLowerCase(),
       ),
     ]);
 
-    let attendees: { email: string; displayName?: string }[] = [];
+    let attendees: RawCalendarAttendee[] = [];
 
     try {
       attendees =
@@ -107,39 +106,43 @@ export class OnboardingInviteSuggestionsService {
       );
     }
 
-    const suggestionsByEmail = new Map<
+    const eventCountByColleagueEmail = new Map<
       string,
-      { count: number; displayName?: string }
+      { eventCount: number; displayName?: string }
     >();
 
     for (const attendee of attendees) {
-      const email = attendee.email.toLowerCase();
+      const attendeeEmail = attendee.email.toLowerCase();
 
-      if (selfHandles.has(email)) {
+      const isOwnEmail = ownEmailHandles.has(attendeeEmail);
+      const isSameCompanyColleague =
+        getDomainNameFromHandle(attendeeEmail) === connectedAccountDomain;
+
+      if (isOwnEmail || !isSameCompanyColleague) {
         continue;
       }
 
-      // Only same-company colleagues, never external contacts.
-      if (getDomainNameFromHandle(email) !== selfDomain) {
-        continue;
+      const colleagueTally = eventCountByColleagueEmail.get(attendeeEmail) ?? {
+        eventCount: 0,
+      };
+
+      colleagueTally.eventCount += 1;
+
+      if (
+        !isDefined(colleagueTally.displayName) &&
+        isDefined(attendee.displayName)
+      ) {
+        colleagueTally.displayName = attendee.displayName;
       }
 
-      const existing = suggestionsByEmail.get(email) ?? { count: 0 };
-
-      existing.count += 1;
-
-      if (!isDefined(existing.displayName) && isDefined(attendee.displayName)) {
-        existing.displayName = attendee.displayName;
-      }
-
-      suggestionsByEmail.set(email, existing);
+      eventCountByColleagueEmail.set(attendeeEmail, colleagueTally);
     }
 
-    // Most-frequent colleagues first — they are the most likely teammates.
-    const suggestions: InviteSuggestion[] = Array.from(
-      suggestionsByEmail.entries(),
-    )
-      .sort(([, a], [, b]) => b.count - a.count)
+    const mostFrequentColleaguesFirst = Array.from(
+      eventCountByColleagueEmail.entries(),
+    ).sort(([, left], [, right]) => right.eventCount - left.eventCount);
+
+    const suggestions: InviteSuggestion[] = mostFrequentColleaguesFirst
       .slice(0, ONBOARDING_INVITE_SUGGESTIONS_MAX_COUNT)
       .map(([email, { displayName }]) => ({ email, displayName }));
 

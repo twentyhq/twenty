@@ -18,10 +18,12 @@ type MicrosoftEmailAddress = {
 type MicrosoftCalendarViewResponse = {
   value?: {
     organizer?: { emailAddress?: MicrosoftEmailAddress | null } | null;
-    attendees?: {
-      type?: string | null;
-      emailAddress?: MicrosoftEmailAddress | null;
-    }[] | null;
+    attendees?:
+      | {
+          type?: string | null;
+          emailAddress?: MicrosoftEmailAddress | null;
+        }[]
+      | null;
   }[];
 };
 
@@ -31,10 +33,6 @@ export class MicrosoftCalendarAttendeesService {
     private readonly microsoftOAuth2ClientProvider: MicrosoftOAuth2ClientProvider,
   ) {}
 
-  // Fetches a single bounded page of recent calendar-view events and returns
-  // every attendee/organizer handle we can see. Errors propagate to the caller,
-  // which owns the best-effort policy. Filtering down to actual teammates
-  // happens upstream.
   async getRecentAttendees(
     connectedAccountId: string,
   ): Promise<RawCalendarAttendee[]> {
@@ -71,8 +69,9 @@ export class MicrosoftCalendarAttendeesService {
       }
 
       for (const attendee of event.attendees ?? []) {
-        // Skip rooms and other non-human resources.
-        if (!attendee.emailAddress?.address || attendee.type === 'resource') {
+        const isRoomOrResource = attendee.type === 'resource';
+
+        if (!attendee.emailAddress?.address || isRoomOrResource) {
           continue;
         }
 

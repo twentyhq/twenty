@@ -40,8 +40,6 @@ const getNextOnboardingStatus = ({
   const isSoloWorkspace = currentWorkspace?.workspaceMembersCount === 1;
 
   if (onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION) {
-    // With invite suggestions, connect the account first so the calendar sync
-    // gets a head start before the invite step.
     if (isInviteSuggestionsEnabled && isAccountSyncEnabled) {
       return OnboardingStatus.SYNC_EMAIL;
     }
@@ -62,7 +60,6 @@ const getNextOnboardingStatus = ({
     if (!isSoloWorkspace) {
       return OnboardingStatus.COMPLETED;
     }
-    // In the suggestions flow the account is already connected before profile.
     if (isInviteSuggestionsEnabled) {
       return OnboardingStatus.INVITE_TEAM;
     }

@@ -18,10 +18,6 @@ export class GoogleCalendarAttendeesService {
     private readonly googleOAuth2ClientProvider: GoogleOAuth2ClientProvider,
   ) {}
 
-  // Fetches a single bounded page of recent primary-calendar events and returns
-  // every attendee/organizer handle we can see. Errors propagate to the caller,
-  // which owns the best-effort policy. Filtering down to actual teammates
-  // happens upstream.
   async getRecentAttendees(
     connectedAccountId: string,
   ): Promise<RawCalendarAttendee[]> {
@@ -60,8 +56,9 @@ export class GoogleCalendarAttendeesService {
       }
 
       for (const attendee of event.attendees ?? []) {
-        // Skip rooms and other non-human resources.
-        if (!attendee.email || attendee.resource === true) {
+        const isRoomOrResource = attendee.resource === true;
+
+        if (!attendee.email || isRoomOrResource) {
           continue;
         }
 
