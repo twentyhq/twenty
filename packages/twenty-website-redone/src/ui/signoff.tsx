@@ -71,7 +71,7 @@ export function Signoff({
         ) : undefined
       }
       keepsTopRhythm={!centered}
-      rhythm={centered ? 'flush' : 'section'}
+      rhythm={centered ? 'flush' : 'spacious'}
       scheme={scheme}
     >
       <SignoffStack data-centered={centered ? '' : undefined}>

@@ -8,6 +8,7 @@ export type TypeStep = { size: number; lineHeight: number | null };
 export type TypeRamp = { base: TypeStep; md: TypeStep };
 
 export const TYPE_SCALE: Record<
+  | 'display'
   | 'headingXl'
   | 'headingLg'
   | 'headingMd'
@@ -19,6 +20,13 @@ export const TYPE_SCALE: Record<
   | 'bodyXs',
   TypeRamp
 > = {
+  // Decorative display tier (the marquee's loud rows) — 2x headingLg, so it
+  // keeps the system's proportions and line-height. Mobile (base) is tuned
+  // independently of the desktop step.
+  display: {
+    base: { size: 20, lineHeight: 23 },
+    md: { size: 30, lineHeight: 33 },
+  },
   headingXl: {
     base: { size: 15, lineHeight: 16.5 },
     md: { size: 20, lineHeight: 21.5 },

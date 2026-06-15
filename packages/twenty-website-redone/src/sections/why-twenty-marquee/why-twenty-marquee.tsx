@@ -20,17 +20,19 @@ type MarqueeSegment = {
   family: 'sans' | 'serif';
   id: string;
   label: MessageDescriptor;
+  tier: 'lg' | 'sm';
   transform: 'lowercase' | 'uppercase';
 };
 
-// One size for every segment (headingLg) — the contrast reads from family and
-// the accent colour, not from three different viewport-fluid sizes.
+// Two stepped tiers — the loud rows (display, 120px) and the quieter
+// 'same output' (headingLg, 60px); family and the accent colour carry the rest.
 const MARQUEE_SEGMENTS: readonly MarqueeSegment[] = [
   {
     accent: false,
     family: 'serif',
     id: 'crm',
     label: msg`Same CRM`,
+    tier: 'lg',
     transform: 'uppercase',
   },
   {
@@ -38,6 +40,7 @@ const MARQUEE_SEGMENTS: readonly MarqueeSegment[] = [
     family: 'sans',
     id: 'output',
     label: msg`Same output`,
+    tier: 'sm',
     transform: 'lowercase',
   },
   {
@@ -45,6 +48,7 @@ const MARQUEE_SEGMENTS: readonly MarqueeSegment[] = [
     family: 'sans',
     id: 'results',
     label: msg`Same results`,
+    tier: 'lg',
     transform: 'uppercase',
   },
 ];
@@ -106,10 +110,17 @@ const Phrase = styled.div`
 `;
 
 const Segment = styled.span`
-  ${typeRampDeclarations('headingLg')}
   flex-shrink: 0;
   font-weight: ${FONT_WEIGHT.light};
   white-space: nowrap;
+
+  &[data-tier='lg'] {
+    ${typeRampDeclarations('display')}
+  }
+
+  &[data-tier='sm'] {
+    ${typeRampDeclarations('headingLg')}
+  }
 
   &[data-family='serif'] {
     font-family: ${fontFamily('serif')};
@@ -143,6 +154,7 @@ export function WhyTwentyMarquee() {
             <Segment
               data-accent={segment.accent ? '' : undefined}
               data-family={segment.family}
+              data-tier={segment.tier}
               data-transform={segment.transform}
               key={segment.id}
             >
@@ -164,7 +176,7 @@ export function WhyTwentyMarquee() {
   // Decorative restatement of the editorials' argument — hidden from the
   // accessibility tree (the prose above carries it).
   return (
-    <SectionShell fullBleed keepsTopRhythm scheme="dark">
+    <SectionShell fullBleed keepsTopRhythm rhythm="spacious" scheme="dark">
       <Viewport aria-hidden>
         <Row>{renderTrack(false)}</Row>
         <Row>{renderTrack(true)}</Row>
