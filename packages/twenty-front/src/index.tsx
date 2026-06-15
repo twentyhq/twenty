@@ -24,8 +24,6 @@ const renderApp = () => {
   root.render(<App />);
 };
 
-// Hydrate the IndexedDB-backed metadata cache into memory before mounting so the
-// metadata atoms (getOnInit:true) read the persisted snapshot synchronously and
-// keep the cache-first boot. Render anyway if hydration fails — the app then
-// falls back to fetching metadata from the network.
+// Hydrate the metadata cache before mounting so getOnInit atoms read it
+// synchronously; render regardless if hydration fails.
 hydrateMetadataStore().then(renderApp, renderApp);

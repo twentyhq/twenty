@@ -1,7 +1,5 @@
-// Jotai's synchronous storage contract (not re-exported from jotai/utils). We
-// rely on it staying synchronous (no Promise from getItem) so consumers reading
-// the atoms with useAtomValue never suspend. `subscribe` is how atomWithStorage
-// reactively syncs an atom when the backing store changes.
+// Jotai's synchronous storage contract (not exported from jotai/utils). Must
+// stay synchronous so consumers reading atoms with useAtomValue never suspend.
 export type JotaiSyncStorage<ValueType> = {
   getItem: (key: string, initialValue: ValueType) => ValueType;
   setItem: (key: string, newValue: ValueType) => void;

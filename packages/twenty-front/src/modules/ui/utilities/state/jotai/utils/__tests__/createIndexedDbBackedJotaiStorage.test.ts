@@ -66,38 +66,19 @@ describe('createIndexedDbBackedJotaiStorage', () => {
     expect(storage.getItem('k', INITIAL)).toEqual({ value: 7 });
   });
 
-  it('should migrate legacy localStorage keys when IndexedDB is empty, then free them', async () => {
+  it('should clear legacy localStorage keys on hydrate without migrating them', async () => {
     localStorage.setItem('legacy', JSON.stringify({ value: 42 }));
 
     const { storage, hydrate } = createIndexedDbBackedJotaiStorage<Item>({
-      migrateFromLocalStorageKeys: ['legacy'],
+      legacyLocalStorageKeysToClear: ['legacy'],
     });
 
     await hydrate();
 
-    expect(storage.getItem('legacy', INITIAL)).toEqual({ value: 42 });
-    expect(mockedSet).toHaveBeenCalledWith(
-      'legacy',
-      { value: 42 },
-      expect.anything(),
-    );
-    // localStorage quota is freed once IndexedDB owns the data.
     expect(localStorage.getItem('legacy')).toBeNull();
-  });
-
-  it('should not overwrite existing IndexedDB data with legacy localStorage, but still free it', async () => {
-    mockedEntries.mockResolvedValue([['legacy', { value: 99 }]]);
-    localStorage.setItem('legacy', JSON.stringify({ value: 1 }));
-
-    const { storage, hydrate } = createIndexedDbBackedJotaiStorage<Item>({
-      migrateFromLocalStorageKeys: ['legacy'],
-    });
-
-    await hydrate();
-
-    expect(storage.getItem('legacy', INITIAL)).toEqual({ value: 99 });
+    // Not migrated into IndexedDB; the atom re-fetches from the network.
     expect(mockedSet).not.toHaveBeenCalled();
-    expect(localStorage.getItem('legacy')).toBeNull();
+    expect(storage.getItem('legacy', INITIAL)).toBe(INITIAL);
   });
 
   it('should delete from the map and IndexedDB on removeItem', () => {
@@ -121,7 +102,7 @@ describe('createIndexedDbBackedJotaiStorage', () => {
     expect(mockedClear).toHaveBeenCalled();
   });
 
-  it('should notify cross-tab subscribers and unregister cleanly', () => {
+  it('should register and unregister cross-tab subscribers cleanly', () => {
     const { storage } = createIndexedDbBackedJotaiStorage<Item>();
 
     const callback = jest.fn();
@@ -136,27 +117,26 @@ describe('createIndexedDbBackedJotaiStorage', () => {
       setIndexedDbAvailability(false);
     });
 
-    it('should fall back to localStorage for persistence', () => {
+    it('should keep values in memory only, without persisting anywhere', () => {
       const { storage } = createIndexedDbBackedJotaiStorage<Item>();
 
       storage.setItem('k', { value: 5 });
 
+      expect(storage.getItem('k', INITIAL)).toEqual({ value: 5 });
       expect(mockedSet).not.toHaveBeenCalled();
-      expect(localStorage.getItem('k')).toBe(JSON.stringify({ value: 5 }));
+      expect(localStorage.getItem('k')).toBeNull();
     });
 
-    it('should hydrate from the legacy localStorage snapshot', async () => {
+    it('should still clear legacy localStorage keys on hydrate', async () => {
       localStorage.setItem('legacy', JSON.stringify({ value: 11 }));
 
-      const { storage, hydrate } = createIndexedDbBackedJotaiStorage<Item>({
-        migrateFromLocalStorageKeys: ['legacy'],
+      const { hydrate } = createIndexedDbBackedJotaiStorage<Item>({
+        legacyLocalStorageKeysToClear: ['legacy'],
       });
 
       await hydrate();
 
-      expect(storage.getItem('legacy', INITIAL)).toEqual({ value: 11 });
-      // Without IndexedDB we keep the localStorage data as the fallback store.
-      expect(localStorage.getItem('legacy')).not.toBeNull();
+      expect(localStorage.getItem('legacy')).toBeNull();
     });
   });
 });

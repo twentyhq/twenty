@@ -6,7 +6,7 @@ import {
   set as idbSet,
   type UseStore,
 } from 'idb-keyval';
-import { isDefined, parseJson } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type JotaiSyncStorage } from '@/ui/utilities/state/jotai/types/JotaiSyncStorage';
 
@@ -25,10 +25,7 @@ type CrossTabSubscriber<ValueType> = {
 
 type IndexedDbBackedJotaiStorage<ValueType> = {
   storage: JotaiSyncStorage<ValueType>;
-  // Loads the persisted snapshot into the in-memory map. Must be awaited before
-  // the React tree mounts so that atoms with getOnInit:true hydrate from it.
   hydrate: () => Promise<void>;
-  // Wipes both the in-memory map and the persisted store (used on logout).
   clear: () => Promise<void>;
 };
 
@@ -36,16 +33,8 @@ const isIndexedDbAvailable = (): boolean => {
   try {
     return typeof indexedDB !== 'undefined' && indexedDB !== null;
   } catch {
-    // Accessing indexedDB can throw in sandboxed iframes / disabled storage.
+    // Accessing indexedDB throws when storage is disabled / sandboxed.
     return false;
-  }
-};
-
-const readLocalStorageItem = (key: string): string | null => {
-  try {
-    return localStorage.getItem(key);
-  } catch {
-    return null;
   }
 };
 
@@ -57,37 +46,28 @@ const removeLocalStorageItem = (key: string): void => {
   }
 };
 
-// A synchronous Jotai storage whose source of truth is an in-memory map that is
-// hydrated once (asynchronously) from IndexedDB at boot and written through to
-// IndexedDB on every set. This lets us move a large cache off the 5MB
-// localStorage ceiling (Safari's per-origin cap) while keeping a fully
-// synchronous read path, and keeps tabs in sync via a BroadcastChannel.
-//
-// When IndexedDB is unavailable (sandbox / disabled storage) we transparently
-// fall back to localStorage so persistence still works where it did before.
+// Synchronous Jotai storage backed by an in-memory map (so useAtomValue readers
+// never suspend), hydrated once from IndexedDB at boot and written through on
+// every set. Moves large caches off Safari's ~5MB localStorage cap and keeps
+// tabs in sync via a BroadcastChannel.
 export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
-  // Legacy localStorage keys to migrate into IndexedDB once, then delete to free
-  // up the localStorage quota.
-  migrateFromLocalStorageKeys?: string[];
+  legacyLocalStorageKeysToClear?: string[];
 }): IndexedDbBackedJotaiStorage<ValueType> => {
   const memoryMap = new Map<string, ValueType>();
-  const usesIndexedDb = isIndexedDbAvailable();
-  const idbStore: UseStore | undefined = usesIndexedDb
+  const idbStore: UseStore | undefined = isIndexedDbAvailable()
     ? createStore(INDEXED_DB_NAME, INDEXED_DB_STORE_NAME)
     : undefined;
   let isHydrated = false;
 
-  // Write failed (quota / blocked): the in-memory map keeps the session working
-  // and the value re-persists on the next change.
+  // Persist failures (quota / blocked) are non-fatal: the in-memory map remains
+  // the source of truth for the session.
   const persist = (operation: Promise<unknown>): void => {
     void operation.catch(() => {});
   };
 
-  // Per-key subscribers used by atomWithStorage to react to cross-tab writes.
   const subscribers = new Map<string, Set<CrossTabSubscriber<ValueType>>>();
 
-  // BroadcastChannel does not deliver a tab its own messages, so there is no
-  // feedback loop. Absent in some environments (older jsdom) — guard it.
+  // BroadcastChannel never delivers a tab its own messages, so writes can't loop.
   const broadcastChannel: BroadcastChannel | null = (() => {
     try {
       return typeof BroadcastChannel !== 'undefined'
@@ -126,7 +106,7 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
     try {
       broadcastChannel?.postMessage(message);
     } catch {
-      // Value not structured-cloneable / channel closed: skip cross-tab sync.
+      // noop
     }
   };
 
@@ -142,13 +122,6 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
 
       if (isDefined(idbStore)) {
         persist(idbSet(key, newValue, idbStore));
-      } else {
-        // No IndexedDB: fall back to localStorage so persistence still works.
-        try {
-          localStorage.setItem(key, JSON.stringify(newValue));
-        } catch {
-          // Quota exceeded / disabled: keep the in-memory value only.
-        }
       }
     },
     removeItem: (key) => {
@@ -157,8 +130,6 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
 
       if (isDefined(idbStore)) {
         persist(idbDelete(key, idbStore));
-      } else {
-        removeLocalStorageItem(key);
       }
     },
     subscribe: (key, callback, initialValue) => {
@@ -180,63 +151,28 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
     },
   };
 
-  const migrateLegacyLocalStorageKeys = (hasExistingIdbData: boolean): void => {
-    for (const key of options?.migrateFromLocalStorageKeys ?? []) {
-      const rawValue = readLocalStorageItem(key);
-
-      if (rawValue === null) {
-        continue;
-      }
-
-      // Only adopt the legacy value when IndexedDB has no snapshot yet, so we
-      // never clobber fresher IndexedDB data with stale localStorage data.
-      if (!hasExistingIdbData) {
-        const parsedValue = parseJson<ValueType>(rawValue);
-
-        if (isDefined(parsedValue) && isDefined(idbStore)) {
-          memoryMap.set(key, parsedValue);
-          persist(idbSet(key, parsedValue, idbStore));
-        }
-      }
-
-      // Always free the localStorage quota once IndexedDB is the source of truth.
-      removeLocalStorageItem(key);
-    }
-  };
-
   const hydrate = async (): Promise<void> => {
     if (isHydrated) {
       return;
     }
 
-    if (!isDefined(idbStore)) {
-      // Fallback path: read the legacy localStorage snapshot into memory so
-      // cache-first boot still works where IndexedDB is unavailable.
-      for (const key of options?.migrateFromLocalStorageKeys ?? []) {
-        const parsedValue = parseJson<ValueType>(readLocalStorageItem(key));
+    if (isDefined(idbStore)) {
+      try {
+        const persistedEntries = await idbEntries<string, ValueType>(idbStore);
 
-        if (isDefined(parsedValue)) {
-          memoryMap.set(key, parsedValue);
+        for (const [key, value] of persistedEntries) {
+          memoryMap.set(key, value);
         }
+      } catch {
+        // noop
       }
-
-      isHydrated = true;
-      return;
     }
 
-    let persistedEntries: [string, ValueType][] = [];
-
-    try {
-      persistedEntries = await idbEntries<string, ValueType>(idbStore);
-    } catch {
-      // Corrupted / inaccessible store: fall through to localStorage migration.
+    // Free the quota held by the pre-IndexedDB localStorage snapshot. We don't
+    // migrate it — atoms re-fetch from the network instead.
+    for (const key of options?.legacyLocalStorageKeysToClear ?? []) {
+      removeLocalStorageItem(key);
     }
-
-    for (const [key, value] of persistedEntries) {
-      memoryMap.set(key, value);
-    }
-
-    migrateLegacyLocalStorageKeys(persistedEntries.length > 0);
 
     isHydrated = true;
   };

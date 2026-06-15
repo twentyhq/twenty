@@ -14,8 +14,6 @@ const getMetadataStoreKeys = (): string[] =>
 
 export const clearAllSessionLocalStorageKeys = () => {
   clearSessionLocalStorageKeys();
-  // The metadata cache now lives in IndexedDB; clear it too, plus any legacy
-  // localStorage snapshot that predates the migration.
   void clearMetadataStoreStorage();
   safeRemoveLocalStorageItems(getMetadataStoreKeys());
 };

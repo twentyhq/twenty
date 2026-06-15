@@ -16,8 +16,7 @@ export const createAtomFamilyState = <ValueType, FamilyKey>({
   defaultValue: ValueType;
   useLocalStorage?: boolean;
   localStorageOptions?: { getOnInit?: boolean };
-  // Custom synchronous storage (e.g. IndexedDB-backed). When provided it takes
-  // precedence over useLocalStorage and is shared across all family members.
+  // When provided, takes precedence over useLocalStorage.
   storage?: JotaiSyncStorage<ValueType>;
 }): FamilyState<ValueType, FamilyKey> => {
   const atomCache = new Map<

@@ -54,21 +54,19 @@ const METADATA_STORE_ITEM_INITIAL_VALUE: MetadataStoreItem = {
 
 export const METADATA_STORE_KEY_PREFIX = 'metadataStoreState__';
 
-// The metadata cache is persisted to IndexedDB (not localStorage) because it
-// grows with the workspace schema and large workspaces exceed Safari's ~5MB
-// localStorage cap. We migrate any pre-existing localStorage snapshot on boot.
+// Persisted to IndexedDB (not localStorage) so large workspace schemas don't hit
+// Safari's ~5MB localStorage cap.
 const { storage, hydrate, clear } =
   createIndexedDbBackedJotaiStorage<MetadataStoreItem>({
-    migrateFromLocalStorageKeys: ALL_METADATA_ENTITY_KEYS.map(
+    legacyLocalStorageKeysToClear: ALL_METADATA_ENTITY_KEYS.map(
       (entityKey) => `${METADATA_STORE_KEY_PREFIX}${entityKey}`,
     ),
   });
 
 // Must be awaited before the React tree mounts so atoms hydrate synchronously
-// from the loaded snapshot (atomWithStorage getOnInit:true).
+// (atomWithStorage getOnInit:true).
 export const hydrateMetadataStore = hydrate;
 
-// Wipes the persisted metadata cache (used on logout / session reset).
 export const clearMetadataStoreStorage = clear;
 
 export const metadataStoreState = createAtomFamilyState<
