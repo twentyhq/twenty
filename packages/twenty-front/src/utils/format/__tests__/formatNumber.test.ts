@@ -121,5 +121,43 @@ describe('formatNumber', () => {
         '-1.5k',
       );
     });
+
+    it('should promote to the next unit when rounding crosses the boundary', () => {
+      // 999_999 rounds to "1,000k" with the raw-value suffix, which should read "1M"
+      expect(formatNumber(999999, { abbreviate: true, decimals: 1 })).toEqual(
+        '1M',
+      );
+      expect(formatNumber(999950, { abbreviate: true, decimals: 1 })).toEqual(
+        '1M',
+      );
+      expect(formatNumber(999999, { abbreviate: true, decimals: 0 })).toEqual(
+        '1M',
+      );
+      expect(
+        formatNumber(999999999, { abbreviate: true, decimals: 1 }),
+      ).toEqual('1B');
+    });
+
+    it('should not promote just below the rounding boundary', () => {
+      expect(formatNumber(999499, { abbreviate: true, decimals: 1 })).toEqual(
+        '999.5k',
+      );
+      expect(formatNumber(999, { abbreviate: true, decimals: 1 })).toEqual(
+        '999',
+      );
+    });
+
+    it('should promote at the boundary for negative values', () => {
+      expect(formatNumber(-999999, { abbreviate: true, decimals: 1 })).toEqual(
+        '-1M',
+      );
+    });
+
+    it('should promote across the units boundary', () => {
+      // 999.9 rounds to "1,000" at 0 decimals, which should read "1k"
+      expect(formatNumber(999.9, { abbreviate: true, decimals: 0 })).toEqual(
+        '1k',
+      );
+    });
   });
 });

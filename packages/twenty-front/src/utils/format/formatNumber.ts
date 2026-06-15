@@ -4,6 +4,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const DEFAULT_DECIMAL_VALUE = 0;
 
+// Indexed by power of 1000: '' (units), 'k', 'M', 'B'
+const ABBREVIATION_SUFFIXES = ['', 'k', 'M', 'B'] as const;
+
 const FORMAT_LOCALE_MAP = {
   [NumberFormat.COMMAS_AND_DOT]: 'en-US',
   [NumberFormat.SPACES_AND_COMMA]: 'fr-FR',
@@ -59,27 +62,37 @@ export const formatNumber = (
 
   if (options.abbreviate) {
     const abs = Math.abs(value);
-    let suffix = '';
-    let divisor = 1;
+    let suffixIndex = 0;
 
     if (abs >= 1e9) {
-      suffix = 'B';
-      divisor = 1e9;
+      suffixIndex = 3;
     } else if (abs >= 1e6) {
-      suffix = 'M';
-      divisor = 1e6;
+      suffixIndex = 2;
     } else if (abs >= 1e3) {
-      suffix = 'k';
-      divisor = 1e3;
+      suffixIndex = 1;
     }
 
-    if (divisor !== 1) {
-      const base = value / divisor;
+    // The suffix is chosen from the raw value but the displayed base is rounded,
+    // so a value just below a power of 1000 can round up into the next unit.
+    // Promote while the rounded display value reaches 1000 (e.g. 999_999 rounds
+    // to "1,000k", which should read "1M").
+    const getRoundedBase = (index: number): number =>
+      Math.abs(Number((value / 1000 ** index).toFixed(options.decimals)));
+
+    while (
+      suffixIndex < ABBREVIATION_SUFFIXES.length - 1 &&
+      getRoundedBase(suffixIndex) >= 1000
+    ) {
+      suffixIndex += 1;
+    }
+
+    if (suffixIndex > 0) {
+      const base = value / 1000 ** suffixIndex;
       const formatted = base.toLocaleString(locale, {
         minimumFractionDigits: 0,
         maximumFractionDigits: options.decimals,
       });
-      return formatted + suffix;
+      return formatted + ABBREVIATION_SUFFIXES[suffixIndex];
     }
   }
 
