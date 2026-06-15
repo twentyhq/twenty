@@ -91,6 +91,28 @@ describe('dedupeMorphRelationFieldMetadataItems', () => {
     expect(result[0].id).toBe('z');
   });
 
+  it('should keep the active morph field over an inactive one', () => {
+    const fields = [
+      buildField({
+        id: 'a',
+        type: FieldMetadataType.MORPH_RELATION,
+        morphId: 'morph-1',
+        isActive: false,
+      }),
+      buildField({
+        id: 'z',
+        type: FieldMetadataType.MORPH_RELATION,
+        morphId: 'morph-1',
+        isActive: true,
+      }),
+    ];
+
+    const result = dedupeMorphRelationFieldMetadataItems(fields);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe('z');
+  });
+
   it('should dedupe each morphId independently', () => {
     const fields = [
       buildField({

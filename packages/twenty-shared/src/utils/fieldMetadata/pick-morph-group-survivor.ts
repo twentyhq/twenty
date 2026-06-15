@@ -1,3 +1,5 @@
+import { CustomError } from '@/utils/errors';
+
 type MorphGroupSurvivorCandidate = {
   id: string;
   isActive?: boolean | null;
@@ -9,8 +11,15 @@ const scoreMorphField = (field: MorphGroupSurvivorCandidate): number =>
 
 export const pickMorphGroupSurvivor = <T extends MorphGroupSurvivorCandidate>(
   group: T[],
-): T =>
-  group.reduce((best, current) => {
+): T => {
+  if (group.length === 0) {
+    throw new CustomError(
+      'pickMorphGroupSurvivor requires a non-empty morph group',
+      'EMPTY_MORPH_GROUP',
+    );
+  }
+
+  return group.reduce((best, current) => {
     const scoreDifference = scoreMorphField(current) - scoreMorphField(best);
 
     return scoreDifference > 0 ||
@@ -18,3 +27,4 @@ export const pickMorphGroupSurvivor = <T extends MorphGroupSurvivorCandidate>(
       ? current
       : best;
   });
+};

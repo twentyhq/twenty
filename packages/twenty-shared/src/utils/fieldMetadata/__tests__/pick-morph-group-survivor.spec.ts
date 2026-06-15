@@ -54,4 +54,8 @@ describe('pickMorphGroupSurvivor', () => {
       activeField,
     );
   });
+
+  it('should throw on an empty group', () => {
+    expect(() => pickMorphGroupSurvivor([])).toThrow();
+  });
 });
