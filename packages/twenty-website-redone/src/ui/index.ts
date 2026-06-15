@@ -41,3 +41,4 @@ export { SectionIntro } from './section-intro';
 export { SectionStack } from './section-stack';
 export { VerticalDivider } from './vertical-divider';
 export { SectionShell, type SectionShellProps } from './section-shell';
+export { Signoff, type SignoffProps } from './signoff';

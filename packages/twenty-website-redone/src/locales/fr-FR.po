@@ -597,6 +597,13 @@ msgstr ""
 msgid "Brunei 🇧🇳"
 msgstr ""
 
+#. js-lingui-id: 9sjOzN
+#: src/sections/why-twenty-signoff/why-twenty-signoff.tsx
+msgid ""
+"Build a CRM your competitors\n"
+"*can't buy.*"
+msgstr ""
+
 #. js-lingui-id: sbr0X/
 #: src/sections/product-hero/ai-hero-tabs.ts
 msgid "Build a dashboard of pipeline by stage"
@@ -1717,6 +1724,7 @@ msgid "Germany 🇩🇪"
 msgstr ""
 
 #. js-lingui-id: ZDIydz
+#: src/sections/why-twenty-signoff/why-twenty-signoff.tsx
 #: src/sections/product-hero/product-hero.tsx
 #: src/sections/menu/menu.tsx
 #: src/sections/menu/menu.tsx
@@ -2670,6 +2678,11 @@ msgstr ""
 #: src/sections/menu/menu.tsx
 msgid "Open menu"
 msgstr "Ouvrir le menu"
+
+#. js-lingui-id: 5RkmVr
+#: src/sections/why-twenty-signoff/why-twenty-signoff.tsx
+msgid "Open-source, AI-ready, and yours to shape."
+msgstr ""
 
 #. js-lingui-id: ucgZ0o
 #: src/sections/pricing-plans/plans-data.ts
