@@ -7,7 +7,7 @@ import {
 export const getInputSchemaFromSourceCode = async (
   sourceCode: string,
   options?: { knownObjectTypes?: Record<string, string> },
-): Promise<InputJsonSchema | undefined> => {
+): Promise<InputJsonSchema> => {
   const { getFunctionInputSchema } =
     await import('./get-function-input-schema');
   const inputSchema = getFunctionInputSchema(sourceCode, options);
@@ -21,9 +21,5 @@ export const getInputSchemaFromSourceCode = async (
     };
   }
 
-  if (inputSchema.length === 0) {
-    return DEFAULT_TOOL_INPUT_SCHEMA;
-  }
-
-  return undefined;
+  return DEFAULT_TOOL_INPUT_SCHEMA;
 };

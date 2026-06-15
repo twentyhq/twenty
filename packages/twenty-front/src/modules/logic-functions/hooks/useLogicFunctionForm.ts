@@ -11,7 +11,6 @@ import {
   jsonSchemaToInputSchema,
   type InputJsonSchema,
 } from 'twenty-shared/logic-function';
-import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
 export const useLogicFunctionForm = ({
@@ -56,17 +55,13 @@ export const useLogicFunctionForm = ({
           toolTriggerSettings: prevState.toolTriggerSettings
             ? {
                 ...prevState.toolTriggerSettings,
-                inputSchema: isDefined(inferredJsonSchema)
-                  ? inferredJsonSchema
-                  : prevState.toolTriggerSettings.inputSchema,
+                inputSchema: inferredJsonSchema,
               }
             : null,
           workflowActionTriggerSettings: prevState.workflowActionTriggerSettings
             ? {
                 ...prevState.workflowActionTriggerSettings,
-                inputSchema: isDefined(inferredJsonSchema)
-                  ? jsonSchemaToInputSchema(inferredJsonSchema)
-                  : prevState.workflowActionTriggerSettings.inputSchema,
+                inputSchema: jsonSchemaToInputSchema(inferredJsonSchema),
               }
             : null,
         }));
