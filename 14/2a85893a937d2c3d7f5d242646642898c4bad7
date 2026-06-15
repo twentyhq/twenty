@@ -1,0 +1,49 @@
+packages/twenty-server/test/integration/messaging/suites/messaging-connected-account-cleanup.integration-spec.ts
+  s_3226b097c1ff8f::t_80d9e9c6c1042e 33
+  s_3226b097c1ff8f::t_82864456d27195 15
+packages/twenty-server/test/integration/messaging/suites/messaging-token-refresh.integration-spec.ts
+  s_3226b097c1ff8f::t_82b46e5879e40f 56
+  s_3226b097c1ff8f::t_58236dd19b659a 16
+packages/twenty-server/test/integration/utils/run-channel-sync.util.ts
+  s_3226b097c1ff8f::t_167e562800bbcd 1-55,61-114
+  s_3226b097c1ff8f::t_92c79930a91b11 56-60
+packages/twenty-server/test/integration/messaging/suites/gmail-folder-discovery.integration-spec.ts
+  s_3226b097c1ff8f::t_43312866ba4a14 15
+  s_3226b097c1ff8f::t_dc94b28cf2d3e4 41
+packages/twenty-server/test/integration/calendar/suites/calendar-connected-account-cleanup.integration-spec.ts
+  s_3226b097c1ff8f::t_6c31b3d84092cf 48
+  s_3226b097c1ff8f::t_2e63c5326e8e0c 16
+packages/twenty-server/test/integration/messaging/suites/microsoft-folder-discovery.integration-spec.ts
+  s_3226b097c1ff8f::t_7c6862a76c4a65 6
+  s_3226b097c1ff8f::t_2d51780d87f795 37
+packages/twenty-server/test/integration/calendar/suites/google-calendar-events-import.integration-spec.ts
+  s_3226b097c1ff8f::t_62ed7f797001f5 17
+  s_3226b097c1ff8f::t_4a23fc244d0a27 70
+  s_3226b097c1ff8f::t_6538cd2768fa93 97
+packages/twenty-server/test/integration/messaging/suites/messaging-incremental-sync.integration-spec.ts
+  s_3226b097c1ff8f::t_34a4703e21add2 16
+  s_3226b097c1ff8f::t_18826263c5f17c 44
+packages/twenty-server/test/integration/messaging/suites/gmail-message-list-fetch.integration-spec.ts
+  s_3226b097c1ff8f::t_5c9adf54b4349b 52
+  s_3226b097c1ff8f::t_b07452940b8b0e 12
+packages/twenty-server/test/integration/calendar/suites/microsoft-calendar-events-import.integration-spec.ts
+  s_3226b097c1ff8f::t_859ad2b879ff9b 17-20
+  s_3226b097c1ff8f::t_747cee33120776 83,120
+  s_3226b097c1ff8f::t_ca3bc6a2487d42 74,111
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "142a85893a937d2c3d7f5d242646642898c4bad7",
+  "prompts": {},
+  "sessions": {
+    "s_3226b097c1ff8f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "37fe379b-1108-44f6-ae35-d2db6ea5c15c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
