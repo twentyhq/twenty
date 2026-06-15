@@ -38,8 +38,8 @@ describe('Calendar connected account cleanup (integration)', () => {
           id: eventId,
           summary: eventTitle,
           attendees: [
-            { email: 'organizer@example.com', organizer: true },
-            { email: 'attendee@example.com' },
+            { email: `organizer-${eventId}@example.com`, organizer: true },
+            { email: `attendee-${eventId}@example.com` },
           ],
         }),
       ]),

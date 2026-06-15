@@ -12,7 +12,48 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { CalendarEventListFetchJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 import { CalendarEventsImportJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-events-import.job';
 import { MessagingMessageListFetchJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
+import { startChannelSync } from 'test/integration/messaging/utils/query-messaging.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
+
+// Awaits every job currently queued on a sync queue, settling (resolve OR reject).
+const awaitQueueJobs = async (queueName: MessageQueue): Promise<void> => {
+  const connection = new IORedis(process.env.REDIS_URL ?? '', {
+    maxRetriesPerRequest: null,
+  });
+  const queue = new Queue(queueName, { connection });
+  const queueEvents = new QueueEvents(queueName, { connection });
+
+  try {
+    await queueEvents.waitUntilReady();
+
+    const jobs = await queue.getJobs([
+      'waiting',
+      'active',
+      'delayed',
+      'prioritized',
+    ]);
+
+    await Promise.all(
+      jobs.map((job) => job.waitUntilFinished(queueEvents).catch(() => undefined)),
+    );
+  } finally {
+    await queue.close();
+    await queueEvents.close();
+    await connection.quit();
+  }
+};
+
+// Runs the real onboarding trigger: the startChannelSync GraphQL mutation schedules
+// the account's PENDING_CONFIGURATION channels and enqueues their per-channel leaf
+// jobs (scoped to this account — no workspace-global scan). We then await those leaf
+// jobs natively. Exercises the startChannelSync resolver end to end.
+export const startChannelSyncAndAwait = async (
+  connectedAccountId: string,
+): Promise<void> => {
+  await startChannelSync(connectedAccountId);
+  await awaitQueueJobs(MessageQueue.messagingQueue);
+  await awaitQueueJobs(MessageQueue.calendarQueue);
+};
 
 // Drives a SINGLE channel's sync through its per-channel leaf job rather than the
 // workspace-global cron. The cron scans every active workspace's channels, so

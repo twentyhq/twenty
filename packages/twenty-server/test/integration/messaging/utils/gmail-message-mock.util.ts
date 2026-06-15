@@ -25,8 +25,8 @@ export const gmailMessage = (
     payload: {
       mimeType: 'text/plain',
       headers: [
-        { name: 'From', value: 'sender@example.com' },
-        { name: 'To', value: 'recipient@example.com' },
+        { name: 'From', value: `sender-${id}@example.com` },
+        { name: 'To', value: `recipient-${id}@example.com` },
         { name: 'Subject', value: `Subject ${id}` },
         { name: 'Message-ID', value: `<${id}@example.com>` },
         { name: 'Date', value: 'Wed, 15 Nov 2023 00:00:00 +0000' },

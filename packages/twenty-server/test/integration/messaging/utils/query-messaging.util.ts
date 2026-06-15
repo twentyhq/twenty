@@ -10,6 +10,7 @@ import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/m
 type MessageChannelUpdate = {
   messageFolderImportPolicy?: MessageFolderImportPolicy;
   isSyncEnabled?: boolean;
+  isContactAutoCreationEnabled?: boolean;
 };
 
 type MetadataAPIResponse = {
@@ -58,6 +59,7 @@ export type CalendarChannelDto = Pick<
 
 type CalendarChannelUpdate = {
   isSyncEnabled?: boolean;
+  isContactAutoCreationEnabled?: boolean;
 };
 
 export type ConnectedAccountDto = Pick<

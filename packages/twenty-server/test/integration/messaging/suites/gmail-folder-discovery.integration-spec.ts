@@ -9,10 +9,12 @@ import { setupGmailMock } from 'test/integration/messaging/utils/gmail-message-m
 import {
   queryMessageChannel,
   queryMessageFolders,
-  startChannelSync,
   updateMessageChannel,
 } from 'test/integration/messaging/utils/query-messaging.util';
-import { runMessageChannelSync } from 'test/integration/utils/run-channel-sync.util';
+import {
+  runMessageChannelSync,
+  startChannelSyncAndAwait,
+} from 'test/integration/utils/run-channel-sync.util';
 import { pollUntil } from 'test/integration/utils/poll-until.util';
 
 const HANDLE = 'gmail-folder-discovery@apple.dev';
@@ -57,14 +59,9 @@ describe('Gmail folder discovery (integration)', () => {
   });
 
   it('keeps the folders discovered at connect time synced under their original all-folders policy', async () => {
-    await startChannelSync(channel.connectedAccountId);
+    await startChannelSyncAndAwait(channel.connectedAccountId);
 
-    const syncStateByFolderName = await pollUntil(
-      getSyncStateByFolderName,
-      (state) => Object.keys(state).length === 3,
-    );
-
-    expect(syncStateByFolderName).toEqual({
+    expect(await getSyncStateByFolderName()).toEqual({
       INBOX: true,
       SENT: true,
       Work: true,
