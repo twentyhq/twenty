@@ -11,7 +11,6 @@ import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { buildWorkflowActorMetadata } from 'src/modules/workflow/workflow-executor/utils/build-workflow-actor-metadata.util';
 import { filterValidFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/filter-valid-fields-in-record.util';
-import { formatWorkflowRecordMorphRelationFields } from 'src/modules/workflow/workflow-executor/utils/format-workflow-record-morph-relation-fields.util';
 import { formatWorkflowRecordRelationFields } from 'src/modules/workflow/workflow-executor/utils/format-workflow-record-relation-fields.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { resolveRichTextFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/resolve-rich-text-fields-in-record.util';
@@ -60,16 +59,11 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
       context,
     ) as WorkflowCreateRecordActionInput;
 
-    const { formattedRecord: objectRecordWithMorphRelations } =
-      formatWorkflowRecordMorphRelationFields(
+    const { formattedRecord: formattedObjectRecord } =
+      formatWorkflowRecordRelationFields(
         workflowActionInput.objectRecord,
         objectMetadataInfo,
       );
-
-    const formattedObjectRecord = formatWorkflowRecordRelationFields(
-      objectRecordWithMorphRelations,
-      objectMetadataInfo,
-    );
 
     const filteredObjectRecord = filterValidFieldsInRecord(
       formattedObjectRecord,

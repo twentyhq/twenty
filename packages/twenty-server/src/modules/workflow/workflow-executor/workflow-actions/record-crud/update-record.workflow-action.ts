@@ -15,7 +15,6 @@ import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { buildWorkflowActorMetadata } from 'src/modules/workflow/workflow-executor/utils/build-workflow-actor-metadata.util';
 import { filterValidFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/filter-valid-fields-in-record.util';
-import { formatWorkflowRecordMorphRelationFields } from 'src/modules/workflow/workflow-executor/utils/format-workflow-record-morph-relation-fields.util';
 import { formatWorkflowRecordRelationFields } from 'src/modules/workflow/workflow-executor/utils/format-workflow-record-relation-fields.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { resolveRichTextFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/resolve-rich-text-fields-in-record.util';
@@ -84,15 +83,10 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
     }
 
     const {
-      formattedRecord: objectRecordWithMorphRelations,
+      formattedRecord: formattedObjectRecord,
       joinColumnNamesByMorphFieldName,
-    } = formatWorkflowRecordMorphRelationFields(
+    } = formatWorkflowRecordRelationFields(
       workflowActionInput.objectRecord,
-      objectMetadataInfo,
-    );
-
-    const formattedObjectRecord = formatWorkflowRecordRelationFields(
-      objectRecordWithMorphRelations,
       objectMetadataInfo,
     );
 
@@ -102,8 +96,6 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
       objectMetadataInfo.flatFieldMetadataMaps,
     );
 
-    // A morph relation field selected for update maps to several per-target join
-    // columns, so expand the user-facing field name into the concrete columns.
     const expandedFieldsToUpdate = workflowActionInput.fieldsToUpdate?.flatMap(
       (fieldName) => joinColumnNamesByMorphFieldName[fieldName] ?? [fieldName],
     );
