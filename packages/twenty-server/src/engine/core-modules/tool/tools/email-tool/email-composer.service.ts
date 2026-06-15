@@ -24,7 +24,6 @@ import { type ComposeEmailParams } from 'src/engine/core-modules/tool/tools/emai
 import { EmailComposerResult } from 'src/engine/core-modules/tool/tools/email-tool/types/email-composer-result.type';
 import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/email-tool/utils/parse-comma-separated-emails.util';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -33,7 +32,6 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 type ParentThreadContext = {
@@ -49,24 +47,18 @@ export class EmailComposerService {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly fileService: FileService,
   ) {}
 
-  // The sender id can be either a connected account id or a workspace member id
-  // (the latter coming from a resolved workflow variable). We try the connected
-  // account first, then fall back to resolving the workspace member's first
-  // connected account. The two id spaces never collide (distinct UUIDs).
-  private async resolveSenderConnectedAccount(
-    senderId: string,
+  private async getConnectedAccountOrThrow(
+    connectedAccountId: string,
     workspaceId: string,
   ): Promise<ConnectedAccountEntity> {
-    if (!isValidUuid(senderId)) {
+    if (!isValidUuid(connectedAccountId)) {
       throw new EmailToolException(
-        `Sender id is not a valid UUID`,
+        `Connected account id is not a valid UUID`,
         EmailToolExceptionCode.INVALID_CONNECTED_ACCOUNT_ID,
       );
     }
@@ -75,95 +67,26 @@ export class EmailComposerService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const connectedAccountById = await this.findConnectedAccountById(
-          senderId,
-          workspaceId,
-        );
+        const connectedAccount = await this.connectedAccountRepository.findOne({
+          where: { id: connectedAccountId, workspaceId },
+          relations: {
+            messageChannels: {
+              messageFolders: true,
+            },
+          },
+        });
 
-        if (isDefined(connectedAccountById)) {
-          return connectedAccountById;
-        }
-
-        const connectedAccountByMember =
-          await this.findFirstConnectedAccountByWorkspaceMemberId(
-            senderId,
-            workspaceId,
+        if (!isDefined(connectedAccount)) {
+          throw new EmailToolException(
+            `No connected account found for id '${connectedAccountId}'`,
+            EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
           );
-
-        if (isDefined(connectedAccountByMember)) {
-          return connectedAccountByMember;
         }
 
-        throw new EmailToolException(
-          `No connected account found for sender '${senderId}'`,
-          EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
-        );
+        return connectedAccount;
       },
       authContext,
     );
-  }
-
-  private async findConnectedAccountById(
-    connectedAccountId: string,
-    workspaceId: string,
-  ): Promise<ConnectedAccountEntity | null> {
-    return this.connectedAccountRepository.findOne({
-      where: { id: connectedAccountId, workspaceId },
-      relations: {
-        messageChannels: {
-          messageFolders: true,
-        },
-      },
-    });
-  }
-
-  private async findFirstConnectedAccountByWorkspaceMemberId(
-    workspaceMemberId: string,
-    workspaceId: string,
-  ): Promise<ConnectedAccountEntity | null> {
-    // Resolved within the workspace system context (see resolveSenderConnectedAccount),
-    // and the lookup is scoped to this workspace below. We intentionally keep
-    // permission checks enabled (no bypass) so this read stays least-privilege and
-    // consistent with the other reads in this service.
-    const workspaceMemberRepository =
-      await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-        workspaceId,
-        'workspaceMember',
-      );
-
-    const workspaceMember = await workspaceMemberRepository.findOne({
-      where: { id: workspaceMemberId },
-    });
-
-    if (!isDefined(workspaceMember)) {
-      return null;
-    }
-
-    const userWorkspace = await this.userWorkspaceRepository.findOne({
-      where: { userId: workspaceMember.userId, workspaceId },
-    });
-
-    if (!isDefined(userWorkspace)) {
-      return null;
-    }
-
-    // Exclude archived accounts and order deterministically so the resolved sender
-    // is stable across runs rather than depending on arbitrary row ordering.
-    const connectedAccounts = await this.connectedAccountRepository.find({
-      where: {
-        userWorkspaceId: userWorkspace.id,
-        workspaceId,
-        archivedAt: IsNull(),
-      },
-      relations: {
-        messageChannels: {
-          messageFolders: true,
-        },
-      },
-      order: { createdAt: 'ASC' },
-    });
-
-    return connectedAccounts[0] ?? null;
   }
 
   private async getOrThrowFirstConnectedAccountId(
@@ -434,7 +357,7 @@ export class EmailComposerService {
         await this.getOrThrowFirstConnectedAccountId(workspaceId);
     }
 
-    const connectedAccount = await this.resolveSenderConnectedAccount(
+    const connectedAccount = await this.getConnectedAccountOrThrow(
       connectedAccountId,
       workspaceId,
     );

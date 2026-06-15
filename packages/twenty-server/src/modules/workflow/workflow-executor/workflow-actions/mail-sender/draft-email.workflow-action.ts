@@ -8,6 +8,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { EmailWorkflowActionBase } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/email-workflow-action.base';
 import { isWorkflowDraftEmailAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/guards/is-workflow-draft-email-action.guard';
+import { WorkflowEmailSenderService } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/services/workflow-email-sender.service';
 import { type EmailStepLogMode } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/build-email-step-log.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
@@ -17,8 +18,13 @@ export class DraftEmailWorkflowAction extends EmailWorkflowActionBase {
   constructor(
     private readonly draftEmailTool: DraftEmailTool,
     workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
+    workflowEmailSenderService: WorkflowEmailSenderService,
   ) {
-    super(DraftEmailWorkflowAction.name, workflowRunStepLogService);
+    super(
+      DraftEmailWorkflowAction.name,
+      workflowRunStepLogService,
+      workflowEmailSenderService,
+    );
   }
 
   protected getTool(): Tool {
