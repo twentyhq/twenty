@@ -548,6 +548,16 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
 
       expect(result).toHaveProperty('not');
     });
+
+    it('should handle legacy scalar values', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter('f-select', RecordFilterOperand.IS, 'ACTIVE'),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({ status: { in: ['ACTIVE'] } });
+    });
   });
 
   describe('MULTI_SELECT filter', () => {
@@ -577,6 +587,20 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       });
 
       expect(result).toHaveProperty('or');
+    });
+
+    it('should handle legacy scalar values', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-multiselect',
+          RecordFilterOperand.CONTAINS,
+          'TAG1',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({ tags: { containsAny: ['TAG1'] } });
     });
   });
 

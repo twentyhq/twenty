@@ -45,7 +45,7 @@ describe('arrayOfStringsOrVariablesSchema', () => {
         }
       });
     });
-    it('should reject JSON array with non-string values', () => {
+    it('should fallback to a single token when value is not an array of strings', () => {
       const invalidArrays = [
         JSON.stringify([1, 2, 3]),
         JSON.stringify([true, false]),
@@ -56,7 +56,10 @@ describe('arrayOfStringsOrVariablesSchema', () => {
 
       invalidArrays.forEach((array) => {
         const result = arrayOfStringsOrVariablesSchema.safeParse(array);
-        expect(result.success).toBe(false);
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data).toEqual([array]);
+        }
       });
     });
   });
@@ -85,6 +88,14 @@ describe('arrayOfStringsOrVariablesSchema', () => {
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data).toEqual([]);
+      }
+    });
+
+    it('should support legacy scalar values', () => {
+      const result = arrayOfStringsOrVariablesSchema.safeParse('CLOSED_LOST');
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data).toEqual(['CLOSED_LOST']);
       }
     });
   });

@@ -10,6 +10,12 @@ import { ViewFilterOperand } from 'twenty-shared/types';
 
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
+const captureExceptionMock = jest.fn();
+
+jest.mock('@sentry/react', () => ({
+  captureException: captureExceptionMock,
+}));
+
 const baseFieldMetadataItem = {
   id: '05731f68-6e7a-4903-8374-c0b6a9063482',
   universalIdentifier: '05731f68-6e7a-4903-8374-c0b6a9063482',
@@ -21,6 +27,10 @@ const baseFieldMetadataItem = {
 };
 
 describe('mapViewFiltersToFilters', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should map each ViewFilter object to a corresponding Filter object', () => {
     const viewFilters: ViewFilter[] = [
       {
@@ -50,6 +60,29 @@ describe('mapViewFiltersToFilters', () => {
     expect(
       mapViewFiltersToFilters(viewFilters, [baseFieldMetadataItem]),
     ).toEqual(expectedFilters);
+    expect(captureExceptionMock).not.toHaveBeenCalled();
+  });
+
+  it('should capture legacy scalar select values once', () => {
+    const viewFilters: ViewFilter[] = [
+      {
+        id: 'legacy-filter-id',
+        fieldMetadataId: '05731f68-6e7a-4903-8374-c0b6a9063482',
+        value: 'CLOSED_LOST',
+        displayValue: 'Closed Lost',
+        operand: ViewFilterOperand.IS,
+      },
+    ];
+
+    const selectFieldMetadataItem = {
+      ...baseFieldMetadataItem,
+      type: FieldMetadataType.SELECT,
+    };
+
+    mapViewFiltersToFilters(viewFilters, [selectFieldMetadataItem]);
+    mapViewFiltersToFilters(viewFilters, [selectFieldMetadataItem]);
+
+    expect(captureExceptionMock).toHaveBeenCalledTimes(1);
   });
 });
 

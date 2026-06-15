@@ -1,19 +1,27 @@
 import { isValidVariable } from '@/utils';
 import { z } from 'zod';
 
-export const arrayOfStringsOrVariablesSchema = z
-  .string()
-  .transform((val) => {
-    if (val === '') return [];
-    if (isValidVariable(val) as boolean) {
-      return [val];
+export const arrayOfStringsOrVariablesSchema = z.string().transform((val) => {
+  if (val === '') {
+    return [];
+  }
+
+  if (isValidVariable(val) as boolean) {
+    return [val];
+  }
+
+  try {
+    const parsedValue = JSON.parse(val);
+
+    if (
+      Array.isArray(parsedValue) &&
+      parsedValue.every((item) => typeof item === 'string')
+    ) {
+      return parsedValue;
     }
-    return JSON.parse(val);
-  })
-  .refine(
-    (parsed) =>
-      Array.isArray(parsed) && parsed.every((item) => typeof item === 'string'),
-    {
-      error: 'Expected an array of strings',
-    },
-  );
+  } catch {
+    return [val];
+  }
+
+  return [val];
+});
