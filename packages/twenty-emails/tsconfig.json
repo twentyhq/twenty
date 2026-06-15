@@ -4,7 +4,6 @@
     "jsx": "react-jsx",
     "moduleResolution": "bundler",
     "allowJs": false,
-    "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "types": ["vite/client", "node"],
