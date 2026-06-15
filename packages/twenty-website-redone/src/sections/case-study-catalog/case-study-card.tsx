@@ -147,7 +147,12 @@ export function CaseStudyCard({ accent, entry, variant }: CaseStudyCardProps) {
       <ContentWrapper data-variant={variant}>
         <CardBody data-variant={variant}>
           <IndustryLabel>{i18n._(entry.industry)}</IndustryLabel>
-          <Heading as="h3" size={isLarge ? 'sm' : 'xs'} weight="light">
+          <Heading
+            as="h3"
+            size={isLarge ? 'sm' : 'xs'}
+            weight="light"
+            wrap="normal"
+          >
             {i18n._(entry.title)}
           </Heading>
           {hasQuote && entry.quote ? (

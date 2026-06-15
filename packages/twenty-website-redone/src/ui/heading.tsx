@@ -11,7 +11,13 @@ import {
 import { parseHeadingNotation } from './heading-notation';
 
 const headingClassName = css`
-  text-wrap: balance;
+  &[data-wrap='balance'] {
+    text-wrap: balance;
+  }
+
+  &[data-wrap='normal'] {
+    text-wrap: normal;
+  }
 
   &[data-family='serif'] {
     font-family: ${fontFamily('serif')};
@@ -80,6 +86,7 @@ export type HeadingLevel = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 export type HeadingSize = 'xl' | 'lg' | 'md' | 'sm' | 'xs';
 export type HeadingFamily = 'serif' | 'sans';
 export type HeadingTracking = 'tight' | 'normal';
+export type HeadingWrap = 'balance' | 'normal';
 
 export type HeadingProps = {
   as?: HeadingLevel;
@@ -89,6 +96,7 @@ export type HeadingProps = {
   size?: HeadingSize;
   tracking?: HeadingTracking;
   weight?: FontWeightToken;
+  wrap?: HeadingWrap;
 };
 
 export function Heading({
@@ -99,6 +107,7 @@ export function Heading({
   size = 'md',
   tracking = 'tight',
   weight = 'regular',
+  wrap = 'balance',
 }: HeadingProps) {
   // Keys are the segment's character offset in the heading: data-derived,
   // unique even when the same word appears twice (breaks count one).
@@ -121,6 +130,7 @@ export function Heading({
       data-size={size}
       data-tracking={tracking}
       data-weight={weight}
+      data-wrap={wrap}
     >
       {keyedSegments.map((segment) =>
         segment.kind === 'accent' ? (
