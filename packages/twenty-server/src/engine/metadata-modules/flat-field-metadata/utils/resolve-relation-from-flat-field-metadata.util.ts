@@ -1,5 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { pickMorphGroupSurvivor } from 'twenty-shared/utils';
+import { pickMorphGroupSurvivorOrThrow } from 'twenty-shared/utils';
 
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -64,7 +64,7 @@ export const resolveRelationFromFlatFieldMetadata = ({
       }),
     ];
 
-    const survivorMorphField = pickMorphGroupSurvivor(
+    const survivorMorphField = pickMorphGroupSurvivorOrThrow(
       allMorphFlatFieldMetadatas,
     );
 

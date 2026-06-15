@@ -1,19 +1,12 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, pickMorphGroupSurvivor } from 'twenty-shared/utils';
+import { isDefined, pickMorphGroupSurvivorOrThrow } from 'twenty-shared/utils';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
-type DedupableMorphFieldMetadataItem = Pick<
-  FieldMetadataItem,
-  'id' | 'type' | 'morphId' | 'isActive' | 'isSystem'
->;
-
-export const dedupeMorphRelationFieldMetadataItems = <
-  T extends DedupableMorphFieldMetadataItem,
->(
-  fieldMetadataItems: T[],
-): T[] => {
-  const morphGroupsByMorphId = new Map<string, T[]>();
+export const dedupeMorphRelationFieldMetadataItems = (
+  fieldMetadataItems: FieldMetadataItem[],
+): FieldMetadataItem[] => {
+  const morphGroupsByMorphId = new Map<string, FieldMetadataItem[]>();
 
   for (const fieldMetadataItem of fieldMetadataItems) {
     if (
@@ -32,7 +25,7 @@ export const dedupeMorphRelationFieldMetadataItems = <
   const survivorIdByMorphId = new Map<string, string>();
 
   for (const [morphId, group] of morphGroupsByMorphId) {
-    survivorIdByMorphId.set(morphId, pickMorphGroupSurvivor(group).id);
+    survivorIdByMorphId.set(morphId, pickMorphGroupSurvivorOrThrow(group).id);
   }
 
   return fieldMetadataItems.filter(

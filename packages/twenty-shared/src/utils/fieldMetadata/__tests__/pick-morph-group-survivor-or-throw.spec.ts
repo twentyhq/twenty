@@ -1,4 +1,4 @@
-import { pickMorphGroupSurvivor } from '@/utils/fieldMetadata/pick-morph-group-survivor';
+import { pickMorphGroupSurvivorOrThrow } from '@/utils/fieldMetadata/pick-morph-group-survivor-or-throw';
 
 const makeMorphField = (overrides: {
   id: string;
@@ -10,11 +10,11 @@ const makeMorphField = (overrides: {
   ...overrides,
 });
 
-describe('pickMorphGroupSurvivor', () => {
+describe('pickMorphGroupSurvivorOrThrow', () => {
   it('should return the only field when group has one element', () => {
     const field = makeMorphField({ id: 'a' });
 
-    expect(pickMorphGroupSurvivor([field])).toBe(field);
+    expect(pickMorphGroupSurvivorOrThrow([field])).toBe(field);
   });
 
   it('should prefer active non-system over active system', () => {
@@ -25,7 +25,7 @@ describe('pickMorphGroupSurvivor', () => {
     });
     const system = makeMorphField({ id: 'a', isActive: true, isSystem: true });
 
-    expect(pickMorphGroupSurvivor([system, standard])).toBe(standard);
+    expect(pickMorphGroupSurvivorOrThrow([system, standard])).toBe(standard);
   });
 
   it('should prefer active over inactive', () => {
@@ -36,26 +36,26 @@ describe('pickMorphGroupSurvivor', () => {
       isSystem: false,
     });
 
-    expect(pickMorphGroupSurvivor([inactive, active])).toBe(active);
+    expect(pickMorphGroupSurvivorOrThrow([inactive, active])).toBe(active);
   });
 
   it('should break ties by smallest id', () => {
     const fieldA = makeMorphField({ id: 'aaa' });
     const fieldB = makeMorphField({ id: 'bbb' });
 
-    expect(pickMorphGroupSurvivor([fieldB, fieldA])).toBe(fieldA);
+    expect(pickMorphGroupSurvivorOrThrow([fieldB, fieldA])).toBe(fieldA);
   });
 
   it('should treat nullish isActive/isSystem as falsy', () => {
     const nullishField = { id: 'a', isActive: null, isSystem: null };
     const activeField = makeMorphField({ id: 'b', isActive: true });
 
-    expect(pickMorphGroupSurvivor([nullishField, activeField])).toBe(
+    expect(pickMorphGroupSurvivorOrThrow([nullishField, activeField])).toBe(
       activeField,
     );
   });
 
   it('should throw on an empty group', () => {
-    expect(() => pickMorphGroupSurvivor([])).toThrow();
+    expect(() => pickMorphGroupSurvivorOrThrow([])).toThrow();
   });
 });

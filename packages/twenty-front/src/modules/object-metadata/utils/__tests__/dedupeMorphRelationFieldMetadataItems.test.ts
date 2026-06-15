@@ -3,20 +3,15 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { dedupeMorphRelationFieldMetadataItems } from '@/object-metadata/utils/dedupeMorphRelationFieldMetadataItems';
 
-type TestFieldMetadataItem = Pick<
-  FieldMetadataItem,
-  'id' | 'type' | 'morphId' | 'isActive' | 'isSystem'
->;
-
 const buildField = (
-  field: Partial<TestFieldMetadataItem> &
-    Pick<TestFieldMetadataItem, 'id' | 'type'>,
-): TestFieldMetadataItem => ({
-  isActive: true,
-  isSystem: false,
-  morphId: null,
-  ...field,
-});
+  field: Partial<FieldMetadataItem> & Pick<FieldMetadataItem, 'id' | 'type'>,
+): FieldMetadataItem =>
+  ({
+    isActive: true,
+    isSystem: false,
+    morphId: null,
+    ...field,
+  }) as FieldMetadataItem;
 
 describe('dedupeMorphRelationFieldMetadataItems', () => {
   it('should keep non-morph fields untouched', () => {

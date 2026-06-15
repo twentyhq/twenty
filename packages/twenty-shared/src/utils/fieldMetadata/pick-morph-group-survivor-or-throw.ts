@@ -9,12 +9,14 @@ type MorphGroupSurvivorCandidate = {
 const scoreMorphField = (field: MorphGroupSurvivorCandidate): number =>
   (field.isActive ? 2 : 0) + (field.isSystem ? 0 : 1);
 
-export const pickMorphGroupSurvivor = <T extends MorphGroupSurvivorCandidate>(
+export const pickMorphGroupSurvivorOrThrow = <
+  T extends MorphGroupSurvivorCandidate,
+>(
   group: T[],
 ): T => {
   if (group.length === 0) {
     throw new CustomError(
-      'pickMorphGroupSurvivor requires a non-empty morph group',
+      'pickMorphGroupSurvivorOrThrow requires a non-empty morph group',
       'EMPTY_MORPH_GROUP',
     );
   }
