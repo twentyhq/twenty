@@ -16,6 +16,7 @@ type SettingsCardProps = {
   disabled?: boolean;
   soon?: boolean;
   Icon: ReactNode;
+  iconColor?: string;
   onClick?: () => void;
   title: string;
   className?: string;
@@ -82,8 +83,15 @@ const StyledDescription = styled.div`
   padding-left: ${themeCssVariables.spacing[7]};
 `;
 
-const StyledIconContainer = styled.div`
+const StyledIconContainer = styled.div<{
+  disabled?: boolean;
+  iconColor?: string;
+}>`
   align-items: center;
+  color: ${({ disabled, iconColor }) =>
+    disabled
+      ? themeCssVariables.font.color.extraLight
+      : (iconColor ?? 'inherit')};
   display: flex;
   height: 24px;
   justify-content: center;
@@ -95,6 +103,7 @@ export const SettingsCard = ({
   soon,
   disabled = soon,
   Icon,
+  iconColor,
   onClick,
   title,
   className,
@@ -112,7 +121,9 @@ export const SettingsCard = ({
         <StyledCardContentContainer>
           <CardContent>
             <StyledHeader>
-              <StyledIconContainer>{Icon}</StyledIconContainer>
+              <StyledIconContainer disabled={disabled} iconColor={iconColor}>
+                {Icon}
+              </StyledIconContainer>
               <StyledTitle disabled={disabled}>
                 {title}
                 {soon && <Pill label={t`Soon`} />}

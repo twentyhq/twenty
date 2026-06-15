@@ -34,6 +34,7 @@ export const MainNavigationDrawer = ({ className }: { className?: string }) => {
       <NavigationDrawerScrollableContent>
         <NavigationDrawerTabbedContent
           showAiChatContent={showAiChatContent}
+          shouldMountAiChatContent={hasAiPermission}
           navigationContent={<MainNavigationDrawerNavigationContent />}
         />
       </NavigationDrawerScrollableContent>

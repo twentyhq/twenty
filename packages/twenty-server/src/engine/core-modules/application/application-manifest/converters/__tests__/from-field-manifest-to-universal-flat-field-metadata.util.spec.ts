@@ -105,4 +105,36 @@ describe('fromFieldManifestToUniversalFlatFieldMetadata', () => {
       expect(result.defaultValue).toBe("'todo'");
     });
   });
+
+  describe('isUIEditable', () => {
+    it('defaults to true when omitted from the manifest', () => {
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({}),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.isUIEditable).toBe(true);
+    });
+
+    it('uses the manifest value when set to false', () => {
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({ isUIEditable: false }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.isUIEditable).toBe(false);
+    });
+
+    it('uses the manifest value when set to true', () => {
+      const result = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: buildFieldManifest({ isUIEditable: true }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.isUIEditable).toBe(true);
+    });
+  });
 });

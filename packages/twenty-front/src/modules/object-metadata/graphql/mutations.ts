@@ -31,7 +31,7 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
         isCustom
         isActive
         isSystem
-        isUIReadOnly
+        isUIEditable
         isNullable
         isUnique
         createdAt

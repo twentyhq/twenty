@@ -21,7 +21,6 @@ describe('AwsSesSendEmailService', () => {
   const baseContext = {
     tenantName: 'twenty-workspace-ws1',
     configurationSetName: 'twenty-workspace-ws1',
-    contactListName: 'twenty-workspace-ws1',
   };
 
   const setUp = () => {
@@ -42,7 +41,7 @@ describe('AwsSesSendEmailService', () => {
     return { service, send, handleErrorService };
   };
 
-  it('should call SendEmail with tenant, config set, and list management options', async () => {
+  it('should call SendEmail with tenant and config set', async () => {
     const { service, send } = setUp();
 
     send.mockResolvedValue({ MessageId: 'msg-1' });
@@ -59,11 +58,8 @@ describe('AwsSesSendEmailService', () => {
       Destination: { ToAddresses: ['user@example.com'] },
       ConfigurationSetName: 'twenty-workspace-ws1',
       TenantName: 'twenty-workspace-ws1',
-      ListManagementOptions: {
-        ContactListName: 'twenty-workspace-ws1',
-        TopicName: 'marketing',
-      },
     });
+    expect(command.input.ListManagementOptions).toBeUndefined();
     expect(command.input.EmailTags).toEqual(
       expect.arrayContaining([
         { Name: 'workspace', Value: 'ws1' },

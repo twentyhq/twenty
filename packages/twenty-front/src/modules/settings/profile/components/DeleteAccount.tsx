@@ -22,8 +22,10 @@ import {
 const DELETE_ACCOUNT_MODAL_ID = 'delete-account-modal';
 const LEAVE_WORKSPACE_MODAL_ID = 'leave-workspace-modal';
 
-const StyledDiv = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[2]};
+const StyledDangerActions = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 export const DeleteAccount = () => {
@@ -75,38 +77,39 @@ export const DeleteAccount = () => {
             : t`Delete account and all the associated data`
         }
       />
-      {userHasMultipleWorkspaces && (
-        <StyledDiv>
+      <StyledDangerActions>
+        {userHasMultipleWorkspaces && (
           <Button
             accent="danger"
             onClick={() => openModal(LEAVE_WORKSPACE_MODAL_ID)}
             variant="secondary"
             title={t`Leave workspace`}
           />
-
-          <ConfirmationModal
-            confirmationValue={userEmail}
-            confirmationPlaceholder={userEmail ?? ''}
-            modalInstanceId={LEAVE_WORKSPACE_MODAL_ID}
-            title={t`Leave workspace`}
-            subtitle={
-              <>
-                {t`This action cannot be undone. This will permanently remove your membership from this workspace.`}
-                <br />
-                {t`Please type in your email to confirm.`}
-              </>
-            }
-            onConfirmClick={leaveWorkspace}
-            confirmButtonText={t`Leave workspace`}
-          />
-        </StyledDiv>
+        )}
+        <Button
+          accent="danger"
+          onClick={() => openModal(DELETE_ACCOUNT_MODAL_ID)}
+          variant="secondary"
+          title={t`Delete account`}
+        />
+      </StyledDangerActions>
+      {userHasMultipleWorkspaces && (
+        <ConfirmationModal
+          confirmationValue={userEmail}
+          confirmationPlaceholder={userEmail ?? ''}
+          modalInstanceId={LEAVE_WORKSPACE_MODAL_ID}
+          title={t`Leave workspace`}
+          subtitle={
+            <>
+              {t`This action cannot be undone. Your membership will be removed; synced emails and calendars stay with the workspace.`}
+              <br />
+              {t`Please type in your email to confirm.`}
+            </>
+          }
+          onConfirmClick={leaveWorkspace}
+          confirmButtonText={t`Leave workspace`}
+        />
       )}
-      <Button
-        accent="danger"
-        onClick={() => openModal(DELETE_ACCOUNT_MODAL_ID)}
-        variant="secondary"
-        title={t`Delete account`}
-      />
       <ConfirmationModal
         confirmationValue={userEmail}
         confirmationPlaceholder={userEmail ?? ''}

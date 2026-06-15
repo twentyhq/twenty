@@ -129,6 +129,7 @@ export const SettingsAiModelsTab = () => {
             Icon={IconBrain}
             title={t`Smart Model`}
             description={t`Used for chats, agents, and complex reasoning`}
+            divider
           >
             <Select
               dropdownId="models-tab-smart-model-select"

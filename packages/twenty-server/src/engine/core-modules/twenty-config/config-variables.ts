@@ -1701,12 +1701,12 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AWS_SES_SETTINGS,
     description:
-      'Driver used for the emailing domain feature — AWS_SES for production, LOG for local development (no AWS credentials needed)',
+      'Driver used for the emailing domain feature — AWS_SES for production (requires AWS credentials), LOG fakes registration/verification/sends locally',
     type: ConfigVariableType.ENUM,
     options: Object.values(EmailingDomainDriver),
   })
   @CastToUpperSnakeCase()
-  EMAILING_DOMAIN_DRIVER: EmailingDomainDriver = EmailingDomainDriver.AWS_SES;
+  EMAILING_DOMAIN_DRIVER: EmailingDomainDriver = EmailingDomainDriver.LOG;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AWS_SES_SETTINGS,

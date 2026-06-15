@@ -19,17 +19,18 @@ const StyledRoot = styled.div`
 `;
 
 const StyledMainCardWrapper = styled.div`
+  box-sizing: border-box;
   display: flex;
   flex: 1 1 0;
   min-width: 0;
+  padding-left: 1px;
   width: 0;
 `;
 
 const StyledCard = styled.div`
   background: ${themeCssVariables.background.primary};
-  border-left: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: 12px 0 0 12px;
-  border-right: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: 16px 0 0 0;
+  box-shadow: 0 0 0 1px ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
   display: flex;
   flex: 1;

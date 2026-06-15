@@ -98,11 +98,15 @@ export const SettingsAiOverviewTab = () => {
                 label: t`Conversations`,
                 value: stats ? stats.conversationsCount.toString() : '—',
               },
+            ],
+            [
               {
                 Icon: IconSparkles,
                 label: t`Skills`,
                 value: stats ? stats.skillsCount.toString() : '—',
               },
+            ],
+            [
               {
                 Icon: IconTool,
                 label: t`Tools`,

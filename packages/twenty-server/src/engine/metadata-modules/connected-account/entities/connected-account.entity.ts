@@ -65,6 +65,9 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'timestamptz', nullable: true })
   authFailedAt: Date | null;
 
+  @Column({ type: 'timestamptz', nullable: true })
+  archivedAt: Date | null;
+
   @Column({ type: 'varchar', array: true, nullable: true })
   handleAliases: string[] | null;
 

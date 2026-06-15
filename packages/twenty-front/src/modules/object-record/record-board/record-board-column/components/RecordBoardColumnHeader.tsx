@@ -14,6 +14,7 @@ import { RecordGroupDefinitionType } from '@/object-record/record-group/types/Re
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
+import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
@@ -91,7 +92,10 @@ export const RecordBoardColumnHeader = () => {
     objectMetadataItem.id,
   );
 
-  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
+  const canCreateRecords = canCreateRecordsForObjectMetadataItem({
+    objectPermissions,
+    objectMetadataItem,
+  });
 
   const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
     hasAnySoftDeleteFilterOnViewComponentSelector,
@@ -186,14 +190,13 @@ export const RecordBoardColumnHeader = () => {
                     });
                   }}
                 />
-                {hasObjectUpdatePermissions &&
-                  !hasAnySoftDeleteFilterOnView && (
-                    <LightIconButton
-                      accent="tertiary"
-                      Icon={IconPlus}
-                      onClick={handleCreateNewRecordClick}
-                    />
-                  )}
+                {canCreateRecords && !hasAnySoftDeleteFilterOnView && (
+                  <LightIconButton
+                    accent="tertiary"
+                    Icon={IconPlus}
+                    onClick={handleCreateNewRecordClick}
+                  />
+                )}
               </StyledHeaderActions>
             )}
           </StyledRightContainer>

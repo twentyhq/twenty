@@ -5,12 +5,14 @@ import {
   OBJECT_FIELD_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SettingsObjectFieldItemTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
+import { StyledSettingsDataModelTableBodyContainer } from '@/settings/data-model/components/SettingsDataModelTableBodyContainer';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
+import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
@@ -204,20 +206,24 @@ export const SettingsObjectFieldTable = ({
           ))}
           <TableHeader></TableHeader>
         </TableRow>
-        {filteredItems.map((objectSettingsDetailItem) => {
-          const status = objectSettingsDetailItem.fieldMetadataItem.isActive
-            ? 'active'
-            : 'disabled';
+        <StyledSettingsDataModelTableBodyContainer>
+          <TableBody>
+            {filteredItems.map((objectSettingsDetailItem) => {
+              const status = objectSettingsDetailItem.fieldMetadataItem.isActive
+                ? 'active'
+                : 'disabled';
 
-          return (
-            <SettingsObjectFieldItemTableRow
-              key={objectSettingsDetailItem.fieldMetadataItem.id}
-              settingsObjectDetailTableItem={objectSettingsDetailItem}
-              status={status}
-              mode={mode}
-            />
-          );
-        })}
+              return (
+                <SettingsObjectFieldItemTableRow
+                  key={objectSettingsDetailItem.fieldMetadataItem.id}
+                  settingsObjectDetailTableItem={objectSettingsDetailItem}
+                  status={status}
+                  mode={mode}
+                />
+              );
+            })}
+          </TableBody>
+        </StyledSettingsDataModelTableBodyContainer>
       </Table>
     </>
   );

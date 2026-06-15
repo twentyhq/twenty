@@ -1,4 +1,4 @@
-import { type ComponentType } from 'react';
+import { type ComponentType, type ReactNode } from 'react';
 
 import { styled } from '@linaria/react';
 
@@ -48,6 +48,7 @@ export type SettingsTableListSectionColumn<Item> = {
 type SettingsTableListSectionProps<Item extends { id: string }> = {
   title: string;
   description: string;
+  headerAdornment?: ReactNode;
   items: Item[];
   columns: SettingsTableListSectionColumn<Item>[];
   gridAutoColumns: string;
@@ -61,6 +62,7 @@ export const SettingsTableListSection = <
 >({
   title,
   description,
+  headerAdornment,
   items,
   columns,
   gridAutoColumns,
@@ -69,7 +71,11 @@ export const SettingsTableListSection = <
   onFooterButtonClick,
 }: SettingsTableListSectionProps<Item>) => (
   <Section>
-    <H2Title title={title} description={description} />
+    <H2Title
+      title={title}
+      description={description}
+      adornment={headerAdornment}
+    />
     {items.length > 0 && (
       <Table>
         <TableRow gridAutoColumns={gridAutoColumns}>

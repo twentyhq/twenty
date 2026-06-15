@@ -145,7 +145,7 @@ export const RawJsonFieldInput = () => {
     dependencies: [handleShiftTab, draftValue],
   });
 
-  const showEditingButton = !fieldDefinition.metadata.isUIReadOnly;
+  const showEditingButton = fieldDefinition.metadata.isUIEditable ?? true;
 
   const handleStartEditing = () => {
     setIsEditing(true);

@@ -7,6 +7,7 @@ export const GET_MY_CONNECTED_ACCOUNTS = gql`
       handle
       provider
       authFailedAt
+      archivedAt
       scopes
       handleAliases
       lastSignedInAt

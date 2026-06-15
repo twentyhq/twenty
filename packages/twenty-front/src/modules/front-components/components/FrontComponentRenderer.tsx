@@ -39,6 +39,7 @@ export const FrontComponentRenderer = ({
       frontComponentId,
       commandMenuItemId,
       selectedRecordIds,
+      colorScheme,
     });
 
   const handleError = useCallback(
