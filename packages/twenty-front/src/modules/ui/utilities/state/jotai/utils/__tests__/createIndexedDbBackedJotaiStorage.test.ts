@@ -1,4 +1,4 @@
-import { clear, del, entries, set } from 'idb-keyval';
+import { clear, createStore, del, entries, set } from 'idb-keyval';
 
 import { createIndexedDbBackedJotaiStorage } from '@/ui/utilities/state/jotai/utils/createIndexedDbBackedJotaiStorage';
 
@@ -14,6 +14,7 @@ const mockedSet = jest.mocked(set);
 const mockedDel = jest.mocked(del);
 const mockedClear = jest.mocked(clear);
 const mockedEntries = jest.mocked(entries);
+const mockedCreateStore = jest.mocked(createStore);
 
 const setIndexedDbAvailability = (isAvailable: boolean) => {
   Object.defineProperty(globalThis, 'indexedDB', {
@@ -34,8 +35,17 @@ describe('createIndexedDbBackedJotaiStorage', () => {
     mockedEntries.mockResolvedValue([]);
   });
 
+  it('should use a database namespaced to the cache name', () => {
+    createIndexedDbBackedJotaiStorage<Item>('metadata-store');
+
+    expect(mockedCreateStore).toHaveBeenCalledWith(
+      'twenty-front-metadata-store',
+      'keyval',
+    );
+  });
+
   it('should read synchronously from the in-memory map', () => {
-    const { storage } = createIndexedDbBackedJotaiStorage<Item>();
+    const { storage } = createIndexedDbBackedJotaiStorage<Item>('test');
 
     expect(storage.getItem('k', INITIAL)).toBe(INITIAL);
 
@@ -45,7 +55,9 @@ describe('createIndexedDbBackedJotaiStorage', () => {
   });
 
   it('should distinguish a stored undefined value from a missing key', () => {
-    const { storage } = createIndexedDbBackedJotaiStorage<number | undefined>();
+    const { storage } = createIndexedDbBackedJotaiStorage<number | undefined>(
+      'test',
+    );
 
     expect(storage.getItem('k', 0)).toBe(0);
 
@@ -55,7 +67,7 @@ describe('createIndexedDbBackedJotaiStorage', () => {
   });
 
   it('should write through to IndexedDB on set', () => {
-    const { storage } = createIndexedDbBackedJotaiStorage<Item>();
+    const { storage } = createIndexedDbBackedJotaiStorage<Item>('test');
 
     storage.setItem('k', { value: 2 });
 
@@ -69,7 +81,8 @@ describe('createIndexedDbBackedJotaiStorage', () => {
   it('should hydrate the in-memory map from IndexedDB', async () => {
     mockedEntries.mockResolvedValue([['k', { value: 7 }]]);
 
-    const { storage, hydrate } = createIndexedDbBackedJotaiStorage<Item>();
+    const { storage, hydrate } =
+      createIndexedDbBackedJotaiStorage<Item>('test');
 
     await hydrate();
 
@@ -77,7 +90,7 @@ describe('createIndexedDbBackedJotaiStorage', () => {
   });
 
   it('should delete from the map and IndexedDB on removeItem', () => {
-    const { storage } = createIndexedDbBackedJotaiStorage<Item>();
+    const { storage } = createIndexedDbBackedJotaiStorage<Item>('test');
 
     storage.setItem('k', { value: 1 });
     storage.removeItem('k');
@@ -88,7 +101,7 @@ describe('createIndexedDbBackedJotaiStorage', () => {
 
   it('should clear the map and IndexedDB', async () => {
     const { storage, clear: clearStorage } =
-      createIndexedDbBackedJotaiStorage<Item>();
+      createIndexedDbBackedJotaiStorage<Item>('test');
 
     storage.setItem('k', { value: 1 });
     await clearStorage();
@@ -98,7 +111,7 @@ describe('createIndexedDbBackedJotaiStorage', () => {
   });
 
   it('should register and unregister cross-tab subscribers cleanly', () => {
-    const { storage } = createIndexedDbBackedJotaiStorage<Item>();
+    const { storage } = createIndexedDbBackedJotaiStorage<Item>('test');
 
     const callback = jest.fn();
     const unsubscribe = storage.subscribe?.('k', callback, INITIAL);
@@ -113,7 +126,7 @@ describe('createIndexedDbBackedJotaiStorage', () => {
     });
 
     it('should keep values in memory only, without persisting anywhere', () => {
-      const { storage } = createIndexedDbBackedJotaiStorage<Item>();
+      const { storage } = createIndexedDbBackedJotaiStorage<Item>('test');
 
       storage.setItem('k', { value: 5 });
 

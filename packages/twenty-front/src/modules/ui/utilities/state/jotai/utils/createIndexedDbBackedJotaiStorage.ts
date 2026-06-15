@@ -10,9 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type JotaiSyncStorage } from '@/ui/utilities/state/jotai/types/JotaiSyncStorage';
 
-const INDEXED_DB_NAME = 'twenty-front-cache';
 const INDEXED_DB_STORE_NAME = 'keyval';
-const CROSS_TAB_SYNC_CHANNEL_NAME = 'twenty-front-cache-sync';
 
 type CrossTabMessage<ValueType> =
   | { type: 'set'; key: string; value: ValueType }
@@ -37,12 +35,12 @@ const isIndexedDbAvailable = (): boolean => {
   }
 };
 
-export const createIndexedDbBackedJotaiStorage = <
-  ValueType,
->(): IndexedDbBackedJotaiStorage<ValueType> => {
+export const createIndexedDbBackedJotaiStorage = <ValueType>(
+  cacheName: string,
+): IndexedDbBackedJotaiStorage<ValueType> => {
   const memoryMap = new Map<string, ValueType>();
   const idbStore: UseStore | undefined = isIndexedDbAvailable()
-    ? createStore(INDEXED_DB_NAME, INDEXED_DB_STORE_NAME)
+    ? createStore(`twenty-front-${cacheName}`, INDEXED_DB_STORE_NAME)
     : undefined;
   let isHydrated = false;
 
@@ -55,7 +53,7 @@ export const createIndexedDbBackedJotaiStorage = <
   const broadcastChannel: BroadcastChannel | null = (() => {
     try {
       return typeof BroadcastChannel !== 'undefined'
-        ? new BroadcastChannel(CROSS_TAB_SYNC_CHANNEL_NAME)
+        ? new BroadcastChannel(`twenty-front-${cacheName}-sync`)
         : null;
     } catch {
       return null;
