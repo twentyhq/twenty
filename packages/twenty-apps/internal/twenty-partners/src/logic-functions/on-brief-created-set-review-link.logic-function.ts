@@ -28,10 +28,13 @@ const setBriefReviewLink = async (briefId: string): Promise<boolean> => {
   const token = res.brief?.reviewToken;
   if (!token || res.brief?.reviewLink?.primaryLinkUrl) return false;
 
-  // ponytail: dev default keeps local working with no setup; prod sets
-  // REVIEW_PAGE_BASE_URL as a workspace app variable. `||` (not `??`) so an
-  // unset variable arrives as "" and still falls back to the dev default.
-  const base = (process.env.REVIEW_PAGE_BASE_URL || 'http://localhost:3003').replace(/\/+$/, '');
+  // Prod sets REVIEW_PAGE_BASE_URL as a workspace app variable; locally the dev
+  // server is the zero-config default. `||` (not `??`) because an unset variable
+  // arrives as "". Never persist a localhost link in production: if it's
+  // unconfigured there, skip rather than store an unusable link.
+  const configured = process.env.REVIEW_PAGE_BASE_URL?.replace(/\/+$/, '');
+  if (!configured && process.env.NODE_ENV === 'production') return false;
+  const base = configured || 'http://localhost:3003';
 
   await client.mutation({
     updateBrief: {

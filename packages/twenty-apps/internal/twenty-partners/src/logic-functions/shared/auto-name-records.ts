@@ -54,33 +54,39 @@ export const renameApplicationIfNeeded = async (
 
   const client = new CoreApiClient();
 
-  // Application → Brief → Opportunity is a two-hop relation; v2.5.1 resolves
-  // only a single hop per query, so we walk it explicitly.
-  const briefRes = await client.query({
-    brief: {
-      __args: { filter: { id: { eq: briefId } } },
-      opportunityId: true,
-    },
-  });
-  const opportunityId = briefRes.brief?.opportunityId;
-
-  let oppName = '';
-  if (opportunityId) {
+  // The Partner lookup is independent of the Brief→Opportunity chain, so run the
+  // two concurrently. Application → Brief → Opportunity is a two-hop relation;
+  // v2.5.1 resolves only a single hop per query, so that chain is walked
+  // explicitly (brief → opportunityId → opportunity).
+  const oppNamePromise = (async (): Promise<string> => {
+    const briefRes = await client.query({
+      brief: {
+        __args: { filter: { id: { eq: briefId } } },
+        opportunityId: true,
+      },
+    });
+    const opportunityId = briefRes.brief?.opportunityId;
+    if (!opportunityId) return '';
     const oppRes = await client.query({
       opportunity: {
         __args: { filter: { id: { eq: opportunityId } } },
         name: true,
       },
     });
-    oppName = oppRes.opportunity?.name ?? '';
-  }
+    return oppRes.opportunity?.name ?? '';
+  })();
 
-  const partnerRes = await client.query({
+  const partnerPromise = client.query({
     partner: {
       __args: { filter: { id: { eq: partnerId } } },
       name: true,
     },
   });
+
+  const [oppName, partnerRes] = await Promise.all([
+    oppNamePromise,
+    partnerPromise,
+  ]);
   const partnerName = partnerRes.partner?.name ?? '';
 
   if (!oppName && !partnerName) return false;

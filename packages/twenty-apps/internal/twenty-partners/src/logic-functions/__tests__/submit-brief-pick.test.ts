@@ -91,8 +91,7 @@ describe('submit-brief-pick', () => {
       });
     const res = await handler(ok('a1'));
     expect(res).toEqual({ ok: true, picked: 'a1' });
-    const calls = mutationMock.mock.calls.map((c) => c[0].updateApplication.__args);
-    expect(calls.find((a) => a.id === 'a1')?.data.state).toBe('INTRODUCED');
-    expect(calls.find((a) => a.id === 'a2')).toBeUndefined();
+    // True no-op: nothing is re-written, so selectedAt is never overwritten.
+    expect(mutationMock).not.toHaveBeenCalled();
   });
 });

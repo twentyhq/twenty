@@ -13,7 +13,6 @@ Built on [Twenty](https://twenty.com) with [`twenty-sdk`](https://www.npmjs.com/
 - **Opportunity extensions** — `matchStatus`, `designDocStatus`,
   `introSentAt`, `lastRelanceSentAt`, `tftId`, plus a `partner` relation.
 - **Logic functions**
-  - `on-opportunity-auto-match` — fires when `matchStatus` is set to `AUTO_MATCH`. Assigns the longest-idle available partner and flips status to `MATCHED`. If no partner is available, hands off to `MANUAL_MATCH` with an audit Note explaining why.
   - `list-available-partners` — surfaces matchable partners for a given opportunity.
   - `post-install` — first-run setup.
 - **Roles** (`src/roles/`)
@@ -21,7 +20,7 @@ Built on [Twenty](https://twenty.com) with [`twenty-sdk`](https://www.npmjs.com/
   - **Partner** — placeholder external-partner role. *Do not assign until Twenty ships
     row-level permissions* — it currently grants access to every record.
 - **Views** (`src/views/`)
-  - `Waiting for match` — opportunities awaiting human action (`matchStatus` is `TO_BE_MATCHED` or `MANUAL_MATCH`).
+  - `Waiting for match` — opportunities awaiting human action (`matchStatus` is `TO_BE_MATCHED`).
   - `Matches overview` — full matching funnel grouped by `matchStatus` (configure Kanban
     grouping manually in the UI).
   - `Opportunities` — replacement of the native opportunities view with the partner columns.
@@ -32,14 +31,11 @@ Built on [Twenty](https://twenty.com) with [`twenty-sdk`](https://www.npmjs.com/
 
 ## Match status pipeline
 
-`matchStatus` is a non-nullable SELECT field with a default of `TO_BE_MATCHED`. The 10 states follow the deal lifecycle:
+`matchStatus` is a non-nullable SELECT field with a default of `TO_BE_MATCHED`. The 7 states follow the deal lifecycle:
 
 | Status | Meaning |
 | --- | --- |
 | `TO_BE_MATCHED` | Default — deal entered, awaiting assignment |
-| `MANUAL_MATCH` | Needs a human to pick a partner |
-| `AUTO_MATCH` | Triggers automatic partner assignment |
-| `MATCHED` | Partner assigned |
 | `INTRODUCED_TO_A_PARTNER` | Customer intro sent |
 | `WORKING_WITH_A_PARTNER` | Engagement underway |
 | `IMPLEMENTING` | Active implementation |

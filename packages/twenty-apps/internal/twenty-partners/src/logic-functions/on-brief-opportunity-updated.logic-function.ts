@@ -20,7 +20,8 @@ export const handler = async (
 
   try {
     return { renamed: await renameBriefIfNeeded(after) };
-  } catch {
+  } catch (e) {
+    console.error('on-brief-opportunity-updated failed', e);
     return { renamed: false };
   }
 };

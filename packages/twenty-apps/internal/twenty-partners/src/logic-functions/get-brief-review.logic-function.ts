@@ -70,53 +70,56 @@ export const handler = async (input: {
     });
     const apps = (appsRes.applications?.edges ?? []).map((e) => e.node);
 
-    const candidates: Candidate[] = [];
-    let picked: string | null = null;
-    for (const app of apps) {
-      let partner: Candidate['partner'] = null;
-      if (app.partnerId) {
-        const pr = await client.query({
-          partner: {
-            __args: { filter: { id: { eq: app.partnerId } } },
-            name: true,
-            slug: true,
-            introduction: true,
-            country: true,
-            city: true,
-            region: true,
-            languagesSpoken: true,
-            skills: true,
-            hourlyRate: { amountMicros: true },
-            projectBudgetMin: { amountMicros: true },
-            profilePicture: { primaryLinkUrl: true },
-          },
-        });
-        partner = pr.partner
-          ? {
-              slug: pr.partner.slug ?? null,
-              name: pr.partner.name ?? null,
-              introduction: pr.partner.introduction ?? null,
-              country: pr.partner.country ?? null,
-              city: pr.partner.city ?? null,
-              region: pr.partner.region ?? null,
-              languagesSpoken: pr.partner.languagesSpoken ?? null,
-              skills: pr.partner.skills ?? null,
-              hourlyRateUsd: microsToUsd(pr.partner.hourlyRate),
-              projectBudgetMinUsd: microsToUsd(pr.partner.projectBudgetMin),
-              profilePictureUrl:
-                pr.partner.profilePicture?.primaryLinkUrl ?? null,
-            }
-          : null;
-      }
-      // At most one Application per Brief is INTRODUCED (enforced by submit-brief-pick).
-      if (app.state === 'INTRODUCED') picked = app.id;
-      candidates.push({
-        applicationId: app.id,
-        state: app.state,
-        pitch: app.pitch ?? null,
-        partner,
-      });
-    }
+    // One partner query per application (v2.5.1 resolves a single hop only), but
+    // they are independent, so fan them out concurrently instead of N sequential
+    // round-trips. Promise.all preserves order, so candidates stay stable.
+    const candidates: Candidate[] = await Promise.all(
+      apps.map(async (app): Promise<Candidate> => {
+        let partner: Candidate['partner'] = null;
+        if (app.partnerId) {
+          const pr = await client.query({
+            partner: {
+              __args: { filter: { id: { eq: app.partnerId } } },
+              name: true,
+              slug: true,
+              introduction: true,
+              country: true,
+              city: true,
+              region: true,
+              languagesSpoken: true,
+              skills: true,
+              hourlyRate: { amountMicros: true },
+              projectBudgetMin: { amountMicros: true },
+              profilePicture: { primaryLinkUrl: true },
+            },
+          });
+          partner = pr.partner
+            ? {
+                slug: pr.partner.slug ?? null,
+                name: pr.partner.name ?? null,
+                introduction: pr.partner.introduction ?? null,
+                country: pr.partner.country ?? null,
+                city: pr.partner.city ?? null,
+                region: pr.partner.region ?? null,
+                languagesSpoken: pr.partner.languagesSpoken ?? null,
+                skills: pr.partner.skills ?? null,
+                hourlyRateUsd: microsToUsd(pr.partner.hourlyRate),
+                projectBudgetMinUsd: microsToUsd(pr.partner.projectBudgetMin),
+                profilePictureUrl:
+                  pr.partner.profilePicture?.primaryLinkUrl ?? null,
+              }
+            : null;
+        }
+        return {
+          applicationId: app.id,
+          state: app.state,
+          pitch: app.pitch ?? null,
+          partner,
+        };
+      }),
+    );
+    // At most one Application per Brief is INTRODUCED (enforced by submit-brief-pick).
+    const picked = apps.find((app) => app.state === 'INTRODUCED')?.id ?? null;
 
     return {
       ok: true,
@@ -130,7 +133,10 @@ export const handler = async (input: {
       picked,
     };
   } catch (err) {
-    return { ok: false, reason: err instanceof Error ? err.message : String(err) };
+    // Public unauthenticated endpoint: log the detail server-side, return a
+    // generic reason so internals never leak to the client.
+    console.error('get-brief-review failed', err);
+    return { ok: false, reason: 'INTERNAL_ERROR' };
   }
 };
 

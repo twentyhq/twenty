@@ -55,7 +55,11 @@ export const handler = async (
       },
     });
     const apps = (appsRes.applications?.edges ?? []).map((e) => e.node);
-    if (!apps.some((a) => a.id === applicationId)) return { ok: false, reason: 'FORBIDDEN' };
+    const target = apps.find((a) => a.id === applicationId);
+    if (!target) return { ok: false, reason: 'FORBIDDEN' };
+    // Idempotent: a repeated pick of the already-chosen Application is a no-op,
+    // so retries don't overwrite selectedAt or re-shuffle the others.
+    if (target.state === 'INTRODUCED') return { ok: true, picked: applicationId };
 
     const now = new Date().toISOString();
     for (const app of apps) {
@@ -75,7 +79,9 @@ export const handler = async (
 
     return { ok: true, picked: applicationId };
   } catch (err) {
-    return { ok: false, reason: err instanceof Error ? err.message : String(err) };
+    // Public endpoint: log server-side, return a generic reason (no internals).
+    console.error('submit-brief-pick failed', err);
+    return { ok: false, reason: 'internal_error' };
   }
 };
 
