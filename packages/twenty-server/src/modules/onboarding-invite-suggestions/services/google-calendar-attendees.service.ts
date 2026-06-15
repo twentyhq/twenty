@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { google, type calendar_v3 as calendarV3 } from 'googleapis';
+import { google } from 'googleapis';
 
 import { GoogleOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client.provider';
 import {
@@ -18,15 +18,14 @@ export type RawCalendarAttendee = {
 
 @Injectable()
 export class GoogleCalendarAttendeesService {
-  private readonly logger = new Logger(GoogleCalendarAttendeesService.name);
-
   constructor(
     private readonly googleOAuth2ClientProvider: GoogleOAuth2ClientProvider,
   ) {}
 
-  // Fetches a single bounded page of recent primary-calendar events and
-  // returns every attendee/organizer handle we can see. Filtering down to
-  // actual teammates happens upstream.
+  // Fetches a single bounded page of recent primary-calendar events and returns
+  // every attendee/organizer handle we can see. Errors propagate to the caller,
+  // which owns the best-effort policy. Filtering down to actual teammates
+  // happens upstream.
   async getRecentAttendees(
     connectedAccountId: string,
   ): Promise<RawCalendarAttendee[]> {
@@ -40,35 +39,20 @@ export class GoogleCalendarAttendeesService {
 
     const now = Date.now();
 
-    let events: calendarV3.Schema$Event[] = [];
+    const response = await googleCalendarClient.events.list({
+      calendarId: 'primary',
+      singleEvents: true,
+      orderBy: 'startTime',
+      maxResults: ONBOARDING_INVITE_SUGGESTIONS_MAX_EVENTS,
+      timeMin: new Date(
+        now - ONBOARDING_INVITE_SUGGESTIONS_LOOKBACK_DAYS * MS_PER_DAY,
+      ).toISOString(),
+      timeMax: new Date(
+        now + ONBOARDING_INVITE_SUGGESTIONS_LOOKAHEAD_DAYS * MS_PER_DAY,
+      ).toISOString(),
+    });
 
-    try {
-      const response = await googleCalendarClient.events.list({
-        calendarId: 'primary',
-        singleEvents: true,
-        orderBy: 'startTime',
-        maxResults: ONBOARDING_INVITE_SUGGESTIONS_MAX_EVENTS,
-        timeMin: new Date(
-          now - ONBOARDING_INVITE_SUGGESTIONS_LOOKBACK_DAYS * MS_PER_DAY,
-        ).toISOString(),
-        timeMax: new Date(
-          now + ONBOARDING_INVITE_SUGGESTIONS_LOOKAHEAD_DAYS * MS_PER_DAY,
-        ).toISOString(),
-      });
-
-      events = response.data.items ?? [];
-    } catch (error) {
-      // A failed suggestion fetch must never break onboarding: degrade to no
-      // suggestions instead.
-      this.logger.warn(
-        `Failed to fetch calendar events for invite suggestions: ${
-          error instanceof Error ? error.message : 'unknown error'
-        }`,
-      );
-
-      return [];
-    }
-
+    const events = response.data.items ?? [];
     const attendees: RawCalendarAttendee[] = [];
 
     for (const event of events) {

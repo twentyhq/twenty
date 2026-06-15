@@ -2,17 +2,13 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Mutation, Query } from '@nestjs/graphql';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { InviteSuggestionDTO } from 'src/engine/core-modules/onboarding/dtos/invite-suggestion.dto';
 import { OnboardingStepSuccessDTO } from 'src/engine/core-modules/onboarding/dtos/onboarding-step-success.dto';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { getOnboardingInviteSuggestionsCacheKey } from 'src/modules/onboarding-invite-suggestions/constants/onboarding-invite-suggestions.constants';
-import { type InviteSuggestion } from 'src/modules/onboarding-invite-suggestions/types/invite-suggestion.type';
+import { OnboardingInviteSuggestionsService } from 'src/modules/onboarding-invite-suggestions/services/onboarding-invite-suggestions.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -27,8 +23,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 export class OnboardingResolver {
   constructor(
     private readonly onboardingService: OnboardingService,
-    @InjectCacheStorage(CacheStorageNamespace.EngineOnboardingInviteSuggestions)
-    private readonly cacheStorageService: CacheStorageService,
+    private readonly onboardingInviteSuggestionsService: OnboardingInviteSuggestionsService,
   ) {}
 
   // Teammates discovered from the user's freshly connected calendar, used to
@@ -41,11 +36,10 @@ export class OnboardingResolver {
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<InviteSuggestionDTO[]> {
-    const suggestions = await this.cacheStorageService.get<InviteSuggestion[]>(
-      getOnboardingInviteSuggestionsCacheKey(workspace.id, user.id),
-    );
-
-    return suggestions ?? [];
+    return this.onboardingInviteSuggestionsService.getCachedSuggestions({
+      workspaceId: workspace.id,
+      userId: user.id,
+    });
   }
 
   @Mutation(() => OnboardingStepSuccessDTO)
