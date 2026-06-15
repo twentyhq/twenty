@@ -253,6 +253,7 @@ export const FormFieldInput = ({
       defaultValue={defaultValue as FormMorphRelationToOneValue}
       onClear={onClear}
       onChange={onChange}
+      VariablePicker={VariablePicker}
       readonly={readonly}
     />
   ) : isFieldArray(field) ? (

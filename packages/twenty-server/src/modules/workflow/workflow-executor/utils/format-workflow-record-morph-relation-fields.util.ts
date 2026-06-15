@@ -110,29 +110,37 @@ export const formatWorkflowRecordMorphRelationFields = (
       continue;
     }
 
-    joinColumnNamesByMorphFieldName[key] = targetJoinColumns.map(
-      (targetJoinColumn) => targetJoinColumn.joinColumnName,
-    );
+    const registerJoinColumns = () => {
+      joinColumnNamesByMorphFieldName[key] = targetJoinColumns.map(
+        (targetJoinColumn) => targetJoinColumn.joinColumnName,
+      );
 
-    for (const { joinColumnName } of targetJoinColumns) {
-      formattedRecord[joinColumnName] = null;
+      for (const { joinColumnName } of targetJoinColumns) {
+        formattedRecord[joinColumnName] = null;
+      }
+    };
+
+    if (value === null) {
+      registerJoinColumns();
+      continue;
     }
 
     const morphValue = extractMorphValue(value);
 
-    if (!isDefined(morphValue)) {
+    const matchingTargetJoinColumn = isDefined(morphValue)
+      ? targetJoinColumns.find(
+          (targetJoinColumn) =>
+            targetJoinColumn.targetObjectMetadataId ===
+            morphValue.targetObjectMetadataId,
+        )
+      : undefined;
+
+    if (!isDefined(morphValue) || !isDefined(matchingTargetJoinColumn)) {
       continue;
     }
 
-    const matchingTargetJoinColumn = targetJoinColumns.find(
-      (targetJoinColumn) =>
-        targetJoinColumn.targetObjectMetadataId ===
-        morphValue.targetObjectMetadataId,
-    );
-
-    if (isDefined(matchingTargetJoinColumn)) {
-      formattedRecord[matchingTargetJoinColumn.joinColumnName] = morphValue.id;
-    }
+    registerJoinColumns();
+    formattedRecord[matchingTargetJoinColumn.joinColumnName] = morphValue.id;
   }
 
   return { formattedRecord, joinColumnNamesByMorphFieldName };

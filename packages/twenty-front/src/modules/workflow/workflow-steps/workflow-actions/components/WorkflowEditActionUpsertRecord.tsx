@@ -183,6 +183,15 @@ export const WorkflowEditActionUpsertRecord = ({
     saveAction(newFormData);
   };
 
+  const handleFieldClear = (fieldName: keyof UpsertRecordFormData) => {
+    const newFormData: UpsertRecordFormData = { ...formData };
+    delete newFormData[fieldName];
+
+    setFormData(newFormData);
+
+    saveAction(newFormData);
+  };
+
   const saveAction = useDebouncedCallback(
     async (formData: UpsertRecordFormData) => {
       if (actionOptions.readonly === true) {
@@ -269,6 +278,9 @@ export const WorkflowEditActionUpsertRecord = ({
                 onChange={(recordId) => {
                   handleFieldChange('id', recordId);
                 }}
+                onClear={() => {
+                  handleFieldClear('id');
+                }}
                 objectNameSingulars={
                   isDefined(objectNameSingular) ? [objectNameSingular] : []
                 }
@@ -298,6 +310,9 @@ export const WorkflowEditActionUpsertRecord = ({
               field={fieldDefinition}
               onChange={(value) => {
                 handleFieldChange(fieldDefinition.metadata.fieldName, value);
+              }}
+              onClear={() => {
+                handleFieldClear(fieldDefinition.metadata.fieldName);
               }}
               VariablePicker={WorkflowVariablePicker}
               readonly={isFormDisabled}
