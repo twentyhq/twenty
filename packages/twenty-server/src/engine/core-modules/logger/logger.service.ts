@@ -17,8 +17,6 @@ type LoggerDriverType = ConsoleLogger & {
 
 @Injectable()
 export class LoggerService implements LoggerServiceInterface {
-  // Tracks active perfTime() spans by `${category}::${label}` so perfTimeEnd()
-  // can emit the elapsed duration through the driver.
   private readonly perfTimers = new Map<string, number>();
 
   constructor(
@@ -70,9 +68,6 @@ export class LoggerService implements LoggerServiceInterface {
   setLogLevels(levels: LogLevel[]) {
     this.driver.setLogLevels?.apply(this.driver, [levels]);
   }
-
-  // Performance instrumentation, gated by PERF_LOG_ENABLED so it can be muted
-  // (e.g. in integration tests) while staying on by default everywhere else.
 
   // oxlint-disable-next-line typescript/no-explicit-any
   perf(message: any, category: string, ...optionalParams: any[]) {

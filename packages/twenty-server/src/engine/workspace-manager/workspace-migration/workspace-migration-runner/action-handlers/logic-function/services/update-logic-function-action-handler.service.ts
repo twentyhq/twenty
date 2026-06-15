@@ -106,7 +106,6 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     });
 
     if (builtPathChanged) {
-      // TODO(install-perf): temporary, remove.
       const deleteFileStart = performance.now();
 
       await this.fileStorageService.deleteFile({

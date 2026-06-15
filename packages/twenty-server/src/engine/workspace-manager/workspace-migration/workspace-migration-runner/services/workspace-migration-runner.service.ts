@@ -167,7 +167,6 @@ export class WorkspaceMigrationRunnerService {
     );
   }
 
-  // TODO(install-perf): temporary, remove. Snapshots blocking DB sessions on a fresh connection.
   private async logBlockingDbActivity(): Promise<void> {
     try {
       // Metadata only (no query text) to avoid logging literals from other sessions.
@@ -285,14 +284,12 @@ export class WorkspaceMigrationRunnerService {
 
     const allMetadataEvents: MetadataEvent[] = [];
 
-    // TODO(install-perf): temporary, remove.
     const transactionStart = performance.now();
     let slowestActionMs = 0;
     let slowestActionLabel = 'n/a';
     let actionCount = 0;
 
     try {
-      // TODO(install-perf): temporary, remove. Fail fast on lock waits (< 10s query_timeout) for a clear error.
       await queryRunner.query(`SET LOCAL lock_timeout = '8s'`);
 
       for (const action of actions) {
@@ -349,7 +346,6 @@ export class WorkspaceMigrationRunnerService {
 
       this.logger.perfTimeEnd('Runner', 'Transaction execution');
     } catch (error) {
-      // TODO(install-perf): temporary, remove. Logs the real cause + blockers and guards the rollback.
       this.logger.error(
         `[install-perf] migration failed after ${actionCount} action(s): ${
           error instanceof Error ? error.message : String(error)

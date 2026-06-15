@@ -368,7 +368,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     const { idByUniversalIdentifierByMetadataName, dryRun, ...buildArgs } =
       args;
 
-    // TODO(install-perf): temporary, remove.
     const buildStart = performance.now();
     const validateAndBuildResult =
       await this.workspaceMigrationBuildOrchestratorService

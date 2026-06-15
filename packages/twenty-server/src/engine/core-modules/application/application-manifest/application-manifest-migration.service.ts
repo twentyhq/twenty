@@ -178,7 +178,6 @@ export class ApplicationManifestMigrationService {
         { workspaceId },
       );
 
-    // TODO(install-perf): temporary, remove.
     const recomputeStart = performance.now();
     const cacheResult = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
