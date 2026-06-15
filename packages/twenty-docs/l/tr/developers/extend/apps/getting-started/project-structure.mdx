@@ -38,3 +38,24 @@ my-twenty-app/
 <Note>
 **Dosya organizasyonu size kalmış.** Yukarıdaki klasörler birer konvansiyondur — SDK, dosyanın nerede olduğundan bağımsız olarak `export default defineEntity(...)` çağrılarını AST analizi yoluyla algılar.
 </Note>
+
+## Bağımlılıklar
+
+Her iki Twenty SDK paketi de `dependencies` değil, `devDependencies` altında olmalıdır:
+
+```json filename="package.json"
+{
+  "dependencies": {},
+  "devDependencies": {
+    "twenty-client-sdk": "^2.13.0",
+    "twenty-sdk": "^2.13.0"
+  }
+}
+```
+
+* **`twenty-sdk`**, `twenty` CLI'yi ve derleme/iskelet oluşturma araçlarını sağlar. Yalnızca geliştirme ve derleme zamanında çalışır ve yayımlanmış uygulamanızın çalışma zamanında asla içe aktarılmaz.
+* **`twenty-client-sdk`** uygulama kodunuz tarafından (`CoreApiClient`, `MetadataApiClient`, `RestApiClient`) içe aktarılır, ancak Twenty bunu çalışma zamanında sağlar — mantık fonksiyonları bunu oluşturulan bir SDK katmanından alır ve ön yüz bileşenleri bunu sunucu tarafından sunulan modüllerden çözümler. Yüklediğiniz kopya yalnızca tür denetimi ve dağıtım zamanındaki derleme için kullanılır, bu yüzden dağıtılan paket ile birlikte gönderilmesine gerek yoktur.
+
+`dependencies` altında bu paketlerden herhangi birinin tutulması, onu kurulu uygulamanın çalışma zamanı paketine dahil eder ve orada gereksiz yük haline getirir. `twenty build`, bunlardan herhangi biri hâlâ `dependencies` altında listelendiğinde bir uyarı verir.
+
+Uygulamanızın kendi çalışma zamanı bağımlılıklarını (mantık fonksiyonlarınızın çalışma zamanında gerçekten içe aktardığı kütüphaneler) her zamanki gibi `dependencies` altına ekleyin.
