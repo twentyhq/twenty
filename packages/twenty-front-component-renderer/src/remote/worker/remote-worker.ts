@@ -165,6 +165,8 @@ const initializeHostCommunicationApi: WorkerExports['initializeHostCommunication
     frontComponentHostCommunicationApi.updateProgress = hostApi.updateProgress;
     frontComponentHostCommunicationApi.copyToClipboard =
       hostApi.copyToClipboard;
+    frontComponentHostCommunicationApi.readFrontComponentFile =
+      hostApi.readFrontComponentFile;
   };
 
 const onConfirmationModalResult: WorkerExports['onConfirmationModalResult'] =

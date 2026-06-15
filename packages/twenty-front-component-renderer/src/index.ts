@@ -4,6 +4,10 @@ export {
   type SetEditableFocused,
 } from './host/contexts/FrontComponentInputFocusContext';
 export { componentRegistry } from './host/generated/host-component-registry';
+export {
+  clearRegisteredFrontComponentFiles,
+  readRegisteredFrontComponentFileBytes,
+} from './host/utils/frontComponentFileRegistry';
 export { FrontComponentErrorEffect } from './remote/components/FrontComponentErrorEffect';
 export { FrontComponentInitializeHostCommunicationApiEffect } from './remote/components/FrontComponentInitializeHostCommunicationApiEffect';
 export { FrontComponentUpdateContextEffect } from './remote/components/FrontComponentUpdateContextEffect';

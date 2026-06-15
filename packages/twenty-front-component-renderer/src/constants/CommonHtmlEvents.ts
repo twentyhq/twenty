@@ -28,4 +28,8 @@ export const COMMON_HTML_EVENTS = [
   'wheel',
   'contextmenu',
   'drag',
+  'dragenter',
+  'dragover',
+  'dragleave',
+  'drop',
 ] as const;

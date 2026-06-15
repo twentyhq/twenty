@@ -37,6 +37,7 @@ export { enqueueSnackbar } from './functions/enqueueSnackbar';
 export { navigate } from './functions/navigate';
 export { openCommandConfirmationModal } from './functions/openCommandConfirmationModal';
 export { openSidePanelPage } from './functions/openSidePanelPage';
+export { readFrontComponentFile } from './functions/readFrontComponentFile';
 export { unmountFrontComponent } from './functions/unmountFrontComponent';
 export { updateProgress } from './functions/updateProgress';
 export { useColorScheme } from './hooks/useColorScheme';
@@ -57,6 +58,7 @@ export type {
   OpenCommandConfirmationModalFunction,
   OpenCommandConfirmationModalHostFunction,
   OpenSidePanelPageFunction,
+  ReadFrontComponentFileFunction,
   RequestAccessTokenRefreshFunction,
   UnmountFrontComponentFunction,
   UpdateProgressFunction,

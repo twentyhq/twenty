@@ -5,6 +5,7 @@ import {
   type NavigateFunction,
   type OpenCommandConfirmationModalHostFunction,
   type OpenSidePanelPageFunction,
+  type ReadFrontComponentFileFunction,
   type RequestAccessTokenRefreshFunction,
   type UnmountFrontComponentFunction,
   type UpdateProgressFunction,
@@ -20,4 +21,5 @@ export type FrontComponentHostCommunicationApi = {
   closeSidePanel: CloseSidePanelFunction;
   updateProgress: UpdateProgressFunction;
   copyToClipboard: CopyToClipboardFunction;
+  readFrontComponentFile: ReadFrontComponentFileFunction;
 };

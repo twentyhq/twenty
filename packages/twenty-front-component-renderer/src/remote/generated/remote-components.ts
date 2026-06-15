@@ -153,6 +153,10 @@ export const HtmlDiv = createRemoteComponent('html-div', HtmlDivElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlSpan = createRemoteComponent('html-span', HtmlSpanElement, {
@@ -186,6 +190,10 @@ export const HtmlSpan = createRemoteComponent('html-span', HtmlSpanElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlSection = createRemoteComponent(
@@ -222,6 +230,10 @@ export const HtmlSection = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -259,6 +271,10 @@ export const HtmlArticle = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -296,6 +312,10 @@ export const HtmlHeader = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -333,6 +353,10 @@ export const HtmlFooter = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -367,6 +391,10 @@ export const HtmlMain = createRemoteComponent('html-main', HtmlMainElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlNav = createRemoteComponent('html-nav', HtmlNavElement, {
@@ -400,6 +428,10 @@ export const HtmlNav = createRemoteComponent('html-nav', HtmlNavElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlAside = createRemoteComponent('html-aside', HtmlAsideElement, {
@@ -433,6 +465,10 @@ export const HtmlAside = createRemoteComponent('html-aside', HtmlAsideElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlP = createRemoteComponent('html-p', HtmlPElement, {
@@ -466,6 +502,10 @@ export const HtmlP = createRemoteComponent('html-p', HtmlPElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlH1 = createRemoteComponent('html-h1', HtmlH1Element, {
@@ -499,6 +539,10 @@ export const HtmlH1 = createRemoteComponent('html-h1', HtmlH1Element, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlH2 = createRemoteComponent('html-h2', HtmlH2Element, {
@@ -532,6 +576,10 @@ export const HtmlH2 = createRemoteComponent('html-h2', HtmlH2Element, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlH3 = createRemoteComponent('html-h3', HtmlH3Element, {
@@ -565,6 +613,10 @@ export const HtmlH3 = createRemoteComponent('html-h3', HtmlH3Element, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlH4 = createRemoteComponent('html-h4', HtmlH4Element, {
@@ -598,6 +650,10 @@ export const HtmlH4 = createRemoteComponent('html-h4', HtmlH4Element, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlH5 = createRemoteComponent('html-h5', HtmlH5Element, {
@@ -631,6 +687,10 @@ export const HtmlH5 = createRemoteComponent('html-h5', HtmlH5Element, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlH6 = createRemoteComponent('html-h6', HtmlH6Element, {
@@ -664,6 +724,10 @@ export const HtmlH6 = createRemoteComponent('html-h6', HtmlH6Element, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlStrong = createRemoteComponent(
@@ -700,6 +764,10 @@ export const HtmlStrong = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -734,6 +802,10 @@ export const HtmlEm = createRemoteComponent('html-em', HtmlEmElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlSmall = createRemoteComponent('html-small', HtmlSmallElement, {
@@ -767,6 +839,10 @@ export const HtmlSmall = createRemoteComponent('html-small', HtmlSmallElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlCode = createRemoteComponent('html-code', HtmlCodeElement, {
@@ -800,6 +876,10 @@ export const HtmlCode = createRemoteComponent('html-code', HtmlCodeElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlPre = createRemoteComponent('html-pre', HtmlPreElement, {
@@ -833,6 +913,10 @@ export const HtmlPre = createRemoteComponent('html-pre', HtmlPreElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlBlockquote = createRemoteComponent(
@@ -869,6 +953,10 @@ export const HtmlBlockquote = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -903,6 +991,10 @@ export const HtmlA = createRemoteComponent('html-a', HtmlAElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlImg = createRemoteComponent('html-img', HtmlImgElement, {
@@ -936,6 +1028,10 @@ export const HtmlImg = createRemoteComponent('html-img', HtmlImgElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlUl = createRemoteComponent('html-ul', HtmlUlElement, {
@@ -969,6 +1065,10 @@ export const HtmlUl = createRemoteComponent('html-ul', HtmlUlElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlOl = createRemoteComponent('html-ol', HtmlOlElement, {
@@ -1002,6 +1102,10 @@ export const HtmlOl = createRemoteComponent('html-ol', HtmlOlElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlLi = createRemoteComponent('html-li', HtmlLiElement, {
@@ -1035,6 +1139,10 @@ export const HtmlLi = createRemoteComponent('html-li', HtmlLiElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlForm = createRemoteComponent('html-form', HtmlFormElement, {
@@ -1068,6 +1176,10 @@ export const HtmlForm = createRemoteComponent('html-form', HtmlFormElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlLabel = createRemoteComponent('html-label', HtmlLabelElement, {
@@ -1101,6 +1213,10 @@ export const HtmlLabel = createRemoteComponent('html-label', HtmlLabelElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlInput = createRemoteComponent('html-input', HtmlInputElement, {
@@ -1134,6 +1250,10 @@ export const HtmlInput = createRemoteComponent('html-input', HtmlInputElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlTextarea = createRemoteComponent(
@@ -1170,6 +1290,10 @@ export const HtmlTextarea = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -1207,6 +1331,10 @@ export const HtmlSelect = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -1244,6 +1372,10 @@ export const HtmlOption = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -1281,6 +1413,10 @@ export const HtmlButton = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -1315,6 +1451,10 @@ export const HtmlTable = createRemoteComponent('html-table', HtmlTableElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlThead = createRemoteComponent('html-thead', HtmlTheadElement, {
@@ -1348,6 +1488,10 @@ export const HtmlThead = createRemoteComponent('html-thead', HtmlTheadElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlTbody = createRemoteComponent('html-tbody', HtmlTbodyElement, {
@@ -1381,6 +1525,10 @@ export const HtmlTbody = createRemoteComponent('html-tbody', HtmlTbodyElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlTfoot = createRemoteComponent('html-tfoot', HtmlTfootElement, {
@@ -1414,6 +1562,10 @@ export const HtmlTfoot = createRemoteComponent('html-tfoot', HtmlTfootElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlTr = createRemoteComponent('html-tr', HtmlTrElement, {
@@ -1447,6 +1599,10 @@ export const HtmlTr = createRemoteComponent('html-tr', HtmlTrElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlTh = createRemoteComponent('html-th', HtmlThElement, {
@@ -1480,6 +1636,10 @@ export const HtmlTh = createRemoteComponent('html-th', HtmlThElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlTd = createRemoteComponent('html-td', HtmlTdElement, {
@@ -1513,6 +1673,10 @@ export const HtmlTd = createRemoteComponent('html-td', HtmlTdElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlBr = createRemoteComponent('html-br', HtmlBrElement, {
@@ -1546,6 +1710,10 @@ export const HtmlBr = createRemoteComponent('html-br', HtmlBrElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlHr = createRemoteComponent('html-hr', HtmlHrElement, {
@@ -1579,6 +1747,10 @@ export const HtmlHr = createRemoteComponent('html-hr', HtmlHrElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlIframe = createRemoteComponent(
@@ -1615,6 +1787,10 @@ export const HtmlIframe = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -1649,6 +1825,10 @@ export const HtmlVideo = createRemoteComponent('html-video', HtmlVideoElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
     onTimeUpdate: { event: 'timeupdate' },
     onPlay: { event: 'play' },
     onPause: { event: 'pause' },
@@ -1701,6 +1881,10 @@ export const HtmlAudio = createRemoteComponent('html-audio', HtmlAudioElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
     onTimeUpdate: { event: 'timeupdate' },
     onPlay: { event: 'play' },
     onPause: { event: 'pause' },
@@ -1756,6 +1940,10 @@ export const HtmlSource = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -1790,6 +1978,10 @@ export const HtmlB = createRemoteComponent('html-b', HtmlBElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlI = createRemoteComponent('html-i', HtmlIElement, {
@@ -1823,6 +2015,10 @@ export const HtmlI = createRemoteComponent('html-i', HtmlIElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlU = createRemoteComponent('html-u', HtmlUElement, {
@@ -1856,6 +2052,10 @@ export const HtmlU = createRemoteComponent('html-u', HtmlUElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlS = createRemoteComponent('html-s', HtmlSElement, {
@@ -1889,6 +2089,10 @@ export const HtmlS = createRemoteComponent('html-s', HtmlSElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlMark = createRemoteComponent('html-mark', HtmlMarkElement, {
@@ -1922,6 +2126,10 @@ export const HtmlMark = createRemoteComponent('html-mark', HtmlMarkElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlSub = createRemoteComponent('html-sub', HtmlSubElement, {
@@ -1955,6 +2163,10 @@ export const HtmlSub = createRemoteComponent('html-sub', HtmlSubElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlSup = createRemoteComponent('html-sup', HtmlSupElement, {
@@ -1988,6 +2200,10 @@ export const HtmlSup = createRemoteComponent('html-sup', HtmlSupElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlAbbr = createRemoteComponent('html-abbr', HtmlAbbrElement, {
@@ -2021,6 +2237,10 @@ export const HtmlAbbr = createRemoteComponent('html-abbr', HtmlAbbrElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlCite = createRemoteComponent('html-cite', HtmlCiteElement, {
@@ -2054,6 +2274,10 @@ export const HtmlCite = createRemoteComponent('html-cite', HtmlCiteElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlKbd = createRemoteComponent('html-kbd', HtmlKbdElement, {
@@ -2087,6 +2311,10 @@ export const HtmlKbd = createRemoteComponent('html-kbd', HtmlKbdElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlSamp = createRemoteComponent('html-samp', HtmlSampElement, {
@@ -2120,6 +2348,10 @@ export const HtmlSamp = createRemoteComponent('html-samp', HtmlSampElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlVar = createRemoteComponent('html-var', HtmlVarElement, {
@@ -2153,6 +2385,10 @@ export const HtmlVar = createRemoteComponent('html-var', HtmlVarElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlDfn = createRemoteComponent('html-dfn', HtmlDfnElement, {
@@ -2186,6 +2422,10 @@ export const HtmlDfn = createRemoteComponent('html-dfn', HtmlDfnElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlBdi = createRemoteComponent('html-bdi', HtmlBdiElement, {
@@ -2219,6 +2459,10 @@ export const HtmlBdi = createRemoteComponent('html-bdi', HtmlBdiElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlBdo = createRemoteComponent('html-bdo', HtmlBdoElement, {
@@ -2252,6 +2496,10 @@ export const HtmlBdo = createRemoteComponent('html-bdo', HtmlBdoElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlData = createRemoteComponent('html-data', HtmlDataElement, {
@@ -2285,6 +2533,10 @@ export const HtmlData = createRemoteComponent('html-data', HtmlDataElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlDel = createRemoteComponent('html-del', HtmlDelElement, {
@@ -2318,6 +2570,10 @@ export const HtmlDel = createRemoteComponent('html-del', HtmlDelElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlIns = createRemoteComponent('html-ins', HtmlInsElement, {
@@ -2351,6 +2607,10 @@ export const HtmlIns = createRemoteComponent('html-ins', HtmlInsElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlQ = createRemoteComponent('html-q', HtmlQElement, {
@@ -2384,6 +2644,10 @@ export const HtmlQ = createRemoteComponent('html-q', HtmlQElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlTime = createRemoteComponent('html-time', HtmlTimeElement, {
@@ -2417,6 +2681,10 @@ export const HtmlTime = createRemoteComponent('html-time', HtmlTimeElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlRuby = createRemoteComponent('html-ruby', HtmlRubyElement, {
@@ -2450,6 +2718,10 @@ export const HtmlRuby = createRemoteComponent('html-ruby', HtmlRubyElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlRt = createRemoteComponent('html-rt', HtmlRtElement, {
@@ -2483,6 +2755,10 @@ export const HtmlRt = createRemoteComponent('html-rt', HtmlRtElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlRp = createRemoteComponent('html-rp', HtmlRpElement, {
@@ -2516,6 +2792,10 @@ export const HtmlRp = createRemoteComponent('html-rp', HtmlRpElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlDl = createRemoteComponent('html-dl', HtmlDlElement, {
@@ -2549,6 +2829,10 @@ export const HtmlDl = createRemoteComponent('html-dl', HtmlDlElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlDt = createRemoteComponent('html-dt', HtmlDtElement, {
@@ -2582,6 +2866,10 @@ export const HtmlDt = createRemoteComponent('html-dt', HtmlDtElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlDd = createRemoteComponent('html-dd', HtmlDdElement, {
@@ -2615,6 +2903,10 @@ export const HtmlDd = createRemoteComponent('html-dd', HtmlDdElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlFigure = createRemoteComponent(
@@ -2651,6 +2943,10 @@ export const HtmlFigure = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -2688,6 +2984,10 @@ export const HtmlFigcaption = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -2725,6 +3025,10 @@ export const HtmlDetails = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -2762,6 +3066,10 @@ export const HtmlSummary = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -2799,6 +3107,10 @@ export const HtmlAddress = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -2836,6 +3148,10 @@ export const HtmlDialog = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -2873,6 +3189,10 @@ export const HtmlHgroup = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -2910,6 +3230,10 @@ export const HtmlSearch = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -2947,6 +3271,10 @@ export const HtmlCaption = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -2984,6 +3312,10 @@ export const HtmlColgroup = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -3018,6 +3350,10 @@ export const HtmlCol = createRemoteComponent('html-col', HtmlColElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlFieldset = createRemoteComponent(
@@ -3054,6 +3390,10 @@ export const HtmlFieldset = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -3091,6 +3431,10 @@ export const HtmlLegend = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -3128,6 +3472,10 @@ export const HtmlOutput = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -3165,6 +3513,10 @@ export const HtmlProgress = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -3199,6 +3551,10 @@ export const HtmlMeter = createRemoteComponent('html-meter', HtmlMeterElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlOptgroup = createRemoteComponent(
@@ -3235,6 +3591,10 @@ export const HtmlOptgroup = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -3272,6 +3632,10 @@ export const HtmlDatalist = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -3309,6 +3673,10 @@ export const HtmlPicture = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -3343,6 +3711,10 @@ export const HtmlTrack = createRemoteComponent('html-track', HtmlTrackElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlWbr = createRemoteComponent('html-wbr', HtmlWbrElement, {
@@ -3376,6 +3748,10 @@ export const HtmlWbr = createRemoteComponent('html-wbr', HtmlWbrElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlMenu = createRemoteComponent('html-menu', HtmlMenuElement, {
@@ -3409,6 +3785,10 @@ export const HtmlMenu = createRemoteComponent('html-menu', HtmlMenuElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlSvg = createRemoteComponent('html-svg', HtmlSvgElement, {
@@ -3442,6 +3822,10 @@ export const HtmlSvg = createRemoteComponent('html-svg', HtmlSvgElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlG = createRemoteComponent('html-g', HtmlGElement, {
@@ -3475,6 +3859,10 @@ export const HtmlG = createRemoteComponent('html-g', HtmlGElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlDefs = createRemoteComponent('html-defs', HtmlDefsElement, {
@@ -3508,6 +3896,10 @@ export const HtmlDefs = createRemoteComponent('html-defs', HtmlDefsElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlSymbol = createRemoteComponent(
@@ -3544,6 +3936,10 @@ export const HtmlSymbol = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -3578,6 +3974,10 @@ export const HtmlUse = createRemoteComponent('html-use', HtmlUseElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlClipPath = createRemoteComponent(
@@ -3614,6 +4014,10 @@ export const HtmlClipPath = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -3648,6 +4052,10 @@ export const HtmlMask = createRemoteComponent('html-mask', HtmlMaskElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlCircle = createRemoteComponent(
@@ -3684,6 +4092,10 @@ export const HtmlCircle = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -3721,6 +4133,10 @@ export const HtmlEllipse = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -3755,6 +4171,10 @@ export const HtmlRect = createRemoteComponent('html-rect', HtmlRectElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlLine = createRemoteComponent('html-line', HtmlLineElement, {
@@ -3788,6 +4208,10 @@ export const HtmlLine = createRemoteComponent('html-line', HtmlLineElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlPath = createRemoteComponent('html-path', HtmlPathElement, {
@@ -3821,6 +4245,10 @@ export const HtmlPath = createRemoteComponent('html-path', HtmlPathElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlPolygon = createRemoteComponent(
@@ -3857,6 +4285,10 @@ export const HtmlPolygon = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -3894,6 +4326,10 @@ export const HtmlPolyline = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -3928,6 +4364,10 @@ export const HtmlText = createRemoteComponent('html-text', HtmlTextElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlTspan = createRemoteComponent('html-tspan', HtmlTspanElement, {
@@ -3961,6 +4401,10 @@ export const HtmlTspan = createRemoteComponent('html-tspan', HtmlTspanElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlLinearGradient = createRemoteComponent(
@@ -3997,6 +4441,10 @@ export const HtmlLinearGradient = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -4034,6 +4482,10 @@ export const HtmlRadialGradient = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -4068,6 +4520,10 @@ export const HtmlStop = createRemoteComponent('html-stop', HtmlStopElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlPattern = createRemoteComponent(
@@ -4104,6 +4560,10 @@ export const HtmlPattern = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -4138,6 +4598,10 @@ export const HtmlImage = createRemoteComponent('html-image', HtmlImageElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const HtmlForeignObject = createRemoteComponent(
@@ -4174,6 +4638,10 @@ export const HtmlForeignObject = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -4211,6 +4679,10 @@ export const HtmlMarker = createRemoteComponent(
       onWheel: { event: 'wheel' },
       onContextMenu: { event: 'contextmenu' },
       onDrag: { event: 'drag' },
+      onDragEnter: { event: 'dragenter' },
+      onDragOver: { event: 'dragover' },
+      onDragLeave: { event: 'dragleave' },
+      onDrop: { event: 'drop' },
     },
   },
 );
@@ -4245,6 +4717,10 @@ export const HtmlTitle = createRemoteComponent('html-title', HtmlTitleElement, {
     onWheel: { event: 'wheel' },
     onContextMenu: { event: 'contextmenu' },
     onDrag: { event: 'drag' },
+    onDragEnter: { event: 'dragenter' },
+    onDragOver: { event: 'dragover' },
+    onDragLeave: { event: 'dragleave' },
+    onDrop: { event: 'drop' },
   },
 });
 export const RemoteStyle = createRemoteComponent(
