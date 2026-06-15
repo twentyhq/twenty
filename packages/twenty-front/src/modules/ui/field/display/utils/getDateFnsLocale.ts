@@ -70,8 +70,20 @@ export const getDateFnsLocaleImport = (locale: AppLocale) => {
   }
 };
 
-export const getDateFnsLocale = async (localeString?: string | null) => {
+// A date-fns locale entrypoint exposes the locale under both a named export and
+// `default`, but whether `default` is the locale or the module record depends on
+// the ESM/CJS interop of the runtime (Vite vs jest). Resolve by shape instead of
+// by key/position so it stays correct regardless of export order or interop.
+const isDateFnsLocale = (value: unknown): value is Locale =>
+  typeof value === 'object' &&
+  value !== null &&
+  'code' in value &&
+  'formatLong' in value;
+
+export const getDateFnsLocale = async (
+  localeString?: string | null,
+): Promise<Locale | undefined> => {
   return getDateFnsLocaleImport(localeString as AppLocale)
-    .then((m) => Object.values(m)[0] as unknown as Locale)
-    .catch((_e) => undefined);
+    .then((localeModule) => Object.values(localeModule).find(isDateFnsLocale))
+    .catch(() => undefined);
 };

@@ -1,8 +1,5 @@
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 
-// Security regression guard for the jsdom 29 upgrade: SVG uploads are sanitized
-// through JSDOM + DOMPurify to strip active content. These assertions fail if
-// the jsdom/dompurify integration stops neutralizing XSS vectors.
 describe('sanitizeFile', () => {
   it('should strip <script> from an SVG string', () => {
     const malicious =

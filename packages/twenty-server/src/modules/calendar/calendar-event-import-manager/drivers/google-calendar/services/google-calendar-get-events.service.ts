@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isString } from '@sniptt/guards';
 import { type GaxiosError } from 'gaxios';
 import { google, type calendar_v3 as calendarV3 } from 'googleapis';
 
@@ -89,7 +90,7 @@ export class GoogleCalendarGetEventsService {
       error,
     );
     if (
-      typeof error.code === 'string' &&
+      isString(error.code) &&
       [
         'ECONNRESET',
         'ENOTFOUND',

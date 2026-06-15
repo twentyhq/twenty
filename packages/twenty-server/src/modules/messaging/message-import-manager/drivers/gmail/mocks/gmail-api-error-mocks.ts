@@ -1,4 +1,6 @@
-import { GaxiosError, type GaxiosResponse } from 'gaxios';
+import { type GaxiosError } from 'gaxios';
+
+import { createMockGaxiosError } from 'src/modules/messaging/message-import-manager/drivers/gmail/mocks/create-mock-gaxios-error.util';
 
 type ErrorConfig = {
   reason: string;
@@ -66,33 +68,21 @@ export const getGmailApiError = ({
 
   const errorMessage = message ?? config.message;
 
-  const mockUrl = new URL('https://gmail.googleapis.com/mocks');
-
-  return new GaxiosError(
-    errorMessage,
-    { url: mockUrl, headers: new Headers() },
-    {
-      status: code,
-      statusText: config.message,
-      data: {
-        error: {
-          code,
-          message: errorMessage,
-          errors: [
-            {
-              message: errorMessage,
-              reason: config.reason,
-            },
-          ],
-        },
+  return createMockGaxiosError({
+    message: errorMessage,
+    status: code,
+    statusText: config.message,
+    data: {
+      error: {
+        code,
+        message: errorMessage,
+        errors: [
+          {
+            message: errorMessage,
+            reason: config.reason,
+          },
+        ],
       },
-      headers: new Headers(),
-      config: { url: mockUrl, headers: new Headers() },
-      request: { responseURL: mockUrl.toString() },
-      // gaxios v7's GaxiosError constructor only keeps response.data when
-      // bodyUsed is truthy (it mirrors a consumed fetch Response); real error
-      // responses have it set, so the mock must too or data is dropped.
-      bodyUsed: true,
-    } as unknown as GaxiosResponse,
-  );
+    },
+  });
 };
