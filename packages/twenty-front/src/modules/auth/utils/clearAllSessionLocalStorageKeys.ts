@@ -1,10 +1,10 @@
 import { safeRemoveLocalStorageItems } from '@/auth/utils/safeRemoveLocalStorageItems';
 import {
   ALL_METADATA_ENTITY_KEYS,
-  clearMetadataStoreStorage,
   METADATA_STORE_KEY_PREFIX,
   type MetadataEntityKey,
 } from '@/metadata-store/states/metadataStoreState';
+import { clearMetadataStoreStorage } from '@/metadata-store/storage/metadataStoreStorage';
 import { clearSessionLocalStorageKeys } from './clearSessionLocalStorageKeys';
 
 const getMetadataStoreKeys = (): string[] =>

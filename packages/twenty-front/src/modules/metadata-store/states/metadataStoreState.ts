@@ -1,5 +1,5 @@
+import { metadataStoreStorage } from '@/metadata-store/storage/metadataStoreStorage';
 import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
-import { createIndexedDbBackedJotaiStorage } from '@/ui/utilities/state/jotai/utils/createIndexedDbBackedJotaiStorage';
 
 export type MetadataEntityStoreStatus =
   | 'empty'
@@ -54,19 +54,12 @@ const METADATA_STORE_ITEM_INITIAL_VALUE: MetadataStoreItem = {
 
 export const METADATA_STORE_KEY_PREFIX = 'metadataStoreState__';
 
-const { storage, hydrate, clear } =
-  createIndexedDbBackedJotaiStorage<MetadataStoreItem>();
-
-export const hydrateMetadataStore = hydrate;
-
-export const clearMetadataStoreStorage = clear;
-
 export const metadataStoreState = createAtomFamilyState<
   MetadataStoreItem,
   MetadataEntityKey
 >({
   key: 'metadataStoreState',
   defaultValue: METADATA_STORE_ITEM_INITIAL_VALUE,
-  storage,
+  storage: metadataStoreStorage,
   localStorageOptions: { getOnInit: true },
 });

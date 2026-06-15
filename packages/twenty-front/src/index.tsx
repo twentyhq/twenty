@@ -2,7 +2,7 @@ import ReactDOM from 'react-dom/client';
 
 import { App } from '@/app/components/App';
 import { migrateTokenPairCookieToLocalStorage } from '@/auth/utils/migrateTokenPairCookieToLocalStorage';
-import { hydrateMetadataStore } from '@/metadata-store/states/metadataStoreState';
+import { hydrateMetadataStore } from '@/metadata-store/storage/metadataStoreStorage';
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'twenty-ui-deprecated/style.css';
 import 'twenty-ui-deprecated/theme-light.css';
