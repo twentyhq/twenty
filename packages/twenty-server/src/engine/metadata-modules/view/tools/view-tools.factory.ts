@@ -13,6 +13,7 @@ import { z } from 'zod';
 import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
+import { isFlatFieldMetadataSupportedInGroupBy } from 'src/engine/metadata-modules/field-metadata/utils/is-supported-in-group-by.util';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
@@ -247,6 +248,12 @@ export class ViewToolsFactory {
     if (!isFieldMetadataDateKind(fieldMetadata.type)) {
       throw new Error(
         `Field "${fieldName}" has type "${fieldMetadata.type}" and cannot be used as a calendar field. Only DATE or DATE_TIME fields are supported.`,
+      );
+    }
+
+    if (!isFlatFieldMetadataSupportedInGroupBy(fieldMetadata)) {
+      throw new Error(
+        `Field "${fieldName}" cannot be used as a calendar field because it is not supported in groupBy.`,
       );
     }
 

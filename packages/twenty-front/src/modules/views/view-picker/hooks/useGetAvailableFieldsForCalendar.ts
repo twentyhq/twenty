@@ -26,8 +26,9 @@ export const useGetAvailableFieldsForCalendar = () => {
   );
 
   const availableFieldsForCalendar =
-    objectMetadataItem?.readableFields.filter((field) =>
-      isFieldMetadataDateKind(field.type),
+    objectMetadataItem?.readableFields.filter(
+      (field) =>
+        isFieldMetadataDateKind(field.type) && field.name !== 'deletedAt',
     ) ?? [];
 
   const navigate = useNavigateSettings();

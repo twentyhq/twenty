@@ -46,6 +46,62 @@ let renewalPromise: Promise<boolean> | null = null;
 const TOKEN_RENEWAL_MAX_RETRIES = 3;
 const TOKEN_RENEWAL_RETRY_DELAY_MS = 1000;
 
+type GraphQLErrorMonitoringLevel = 'warning' | 'error';
+
+const isInvalidArgsFilterError = (graphQLError: GraphQLFormattedError) =>
+  graphQLError.extensions?.subCode === 'INVALID_ARGS_FILTER';
+
+const isInvalidQueryInputError = (graphQLError: GraphQLFormattedError) =>
+  graphQLError.extensions?.subCode === 'INVALID_QUERY_INPUT';
+
+const collectStringValuesByKey = (
+  input: unknown,
+  key: string,
+  values: Set<string>,
+): void => {
+  if (!isDefined(input) || typeof input !== 'object') {
+    return;
+  }
+
+  if (Array.isArray(input)) {
+    for (const item of input) {
+      collectStringValuesByKey(item, key, values);
+    }
+
+    return;
+  }
+
+  for (const [entryKey, entryValue] of Object.entries(input)) {
+    if (entryKey === key && typeof entryValue === 'string') {
+      values.add(entryValue);
+      continue;
+    }
+
+    collectStringValuesByKey(entryValue, key, values);
+  }
+};
+
+const getGroupByFieldNamesFromOperation = (
+  operation: ApolloLink.Operation,
+): string[] => {
+  const groupBy = operation.variables?.groupBy;
+
+  if (!Array.isArray(groupBy)) {
+    return [];
+  }
+
+  return Array.from(
+    new Set(
+      groupBy
+        .filter(
+          (groupByField): groupByField is Record<string, unknown> =>
+            isDefined(groupByField) && typeof groupByField === 'object',
+        )
+        .flatMap((groupByField) => Object.keys(groupByField)),
+    ),
+  );
+};
+
 export interface Options {
   uri: string;
   cache: ApolloClient.Options['cache'];
@@ -212,9 +268,11 @@ export class ApolloFactory implements ApolloManager {
       const sendToSentry = ({
         graphQLError,
         operation,
+        level = 'error',
       }: {
         graphQLError: GraphQLFormattedError;
         operation: ApolloLink.Operation;
+        level?: GraphQLErrorMonitoringLevel;
       }) => {
         if (isDebugMode === true) {
           logDebug(
@@ -250,6 +308,45 @@ export class ApolloFactory implements ApolloManager {
                   fingerPrint.push(genericOperationName);
                 }
               }
+
+              const groupByFieldNames = getGroupByFieldNamesFromOperation(
+                operation,
+              );
+
+              if (groupByFieldNames.length > 0) {
+                scope.setTag(
+                  'graphql.group_by_field_names',
+                  groupByFieldNames.join(','),
+                );
+                scope.setExtra('graphql.groupByFieldNames', groupByFieldNames);
+              }
+
+              const filterFieldMetadataIds = new Set<string>();
+              collectStringValuesByKey(
+                operation.variables?.filter,
+                'fieldMetadataId',
+                filterFieldMetadataIds,
+              );
+
+              if (filterFieldMetadataIds.size > 0) {
+                scope.setTag(
+                  'graphql.filter_field_metadata_ids_count',
+                  `${filterFieldMetadataIds.size}`,
+                );
+                scope.setExtra(
+                  'graphql.filterFieldMetadataIds',
+                  Array.from(filterFieldMetadataIds),
+                );
+              }
+
+              const viewIds = new Set<string>();
+              collectStringValuesByKey(operation.variables, 'viewId', viewIds);
+
+              if (viewIds.size > 0) {
+                scope.setExtra('graphql.viewIds', Array.from(viewIds));
+              }
+
+              scope.setLevel(level);
 
               if (!isEmpty(fingerPrint)) {
                 scope.setFingerprint(fingerPrint);
@@ -298,10 +395,19 @@ export class ApolloFactory implements ApolloManager {
                 return;
               }
               case 'USER_INPUT_ERROR': {
-                if (graphQLError.extensions?.isExpected === true) {
+                if (
+                  graphQLError.extensions?.isExpected === true ||
+                  isInvalidArgsFilterError(graphQLError)
+                ) {
                   return;
                 }
-                sendToSentry({ graphQLError, operation });
+                sendToSentry({
+                  graphQLError,
+                  operation,
+                  level: isInvalidQueryInputError(graphQLError)
+                    ? 'warning'
+                    : 'error',
+                });
                 return;
               }
               case 'INTERNAL_SERVER_ERROR': {
