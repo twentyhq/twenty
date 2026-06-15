@@ -93,11 +93,8 @@ export const createIndexedDbBackedJotaiStorage = <
   };
 
   const storage: JotaiSyncStorage<ValueType> = {
-    getItem: (key, initialValue) => {
-      const storedValue = memoryMap.get(key);
-
-      return storedValue === undefined ? initialValue : storedValue;
-    },
+    getItem: (key, initialValue) =>
+      memoryMap.has(key) ? (memoryMap.get(key) as ValueType) : initialValue,
     setItem: (key, newValue) => {
       memoryMap.set(key, newValue);
       broadcast({ type: 'set', key, value: newValue });

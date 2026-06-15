@@ -44,6 +44,16 @@ describe('createIndexedDbBackedJotaiStorage', () => {
     expect(storage.getItem('k', INITIAL)).toEqual({ value: 1 });
   });
 
+  it('should distinguish a stored undefined value from a missing key', () => {
+    const { storage } = createIndexedDbBackedJotaiStorage<number | undefined>();
+
+    expect(storage.getItem('k', 0)).toBe(0);
+
+    storage.setItem('k', undefined);
+
+    expect(storage.getItem('k', 0)).toBeUndefined();
+  });
+
   it('should write through to IndexedDB on set', () => {
     const { storage } = createIndexedDbBackedJotaiStorage<Item>();
 
