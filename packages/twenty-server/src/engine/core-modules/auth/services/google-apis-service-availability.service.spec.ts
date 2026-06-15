@@ -77,6 +77,20 @@ describe('GoogleApisServiceAvailabilityService', () => {
         isMessagingAvailable: true,
         isCalendarAvailable: true,
       });
+
+      expect(google.gmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          version: 'v1',
+          fetchImplementation: expect.any(Function),
+        }),
+      );
+
+      expect(google.calendar).toHaveBeenCalledWith(
+        expect.objectContaining({
+          version: 'v3',
+          fetchImplementation: expect.any(Function),
+        }),
+      );
     });
 
     it('should return messaging unavailable when messaging provider is disabled', async () => {

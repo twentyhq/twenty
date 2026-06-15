@@ -67,16 +67,25 @@ export class GuardRedirectService {
         };
   }
 
-  private captureException(err: Error | CustomException, workspaceId?: string) {
+  private captureException(
+    err: Error | CustomException,
+    workspaceId?: string,
+    pathname?: string,
+  ) {
     if (
       err instanceof AuthException &&
       err.code !== AuthExceptionCode.INTERNAL_SERVER_ERROR
-    )
+    ) {
       return;
+    }
 
     this.exceptionHandlerService.captureExceptions([err], {
       workspace: {
         id: workspaceId,
+      },
+      additionalData: {
+        pathname,
+        authExceptionCode: err instanceof AuthException ? err.code : undefined,
       },
     });
   }
@@ -95,7 +104,7 @@ export class GuardRedirectService {
     };
     pathname: string;
   }) {
-    this.captureException(error, workspace.id);
+    this.captureException(error, workspace.id, pathname);
 
     const errorMessage =
       error instanceof AuthException

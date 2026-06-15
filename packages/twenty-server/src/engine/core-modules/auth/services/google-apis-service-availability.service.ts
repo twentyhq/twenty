@@ -4,6 +4,9 @@ import { google } from 'googleapis';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
+const googleApisFetchImplementation: typeof fetch = (...args) =>
+  globalThis.fetch(...args);
+
 export type GoogleApisServiceAvailability = {
   isMessagingAvailable: boolean;
   isCalendarAvailable: boolean;
@@ -51,6 +54,7 @@ export class GoogleApisServiceAvailabilityService {
       const gmailClient = google.gmail({
         version: 'v1',
         auth: oAuth2Client,
+        fetchImplementation: googleApisFetchImplementation,
       });
 
       await gmailClient.users.getProfile({ userId: 'me' });
@@ -82,6 +86,7 @@ export class GoogleApisServiceAvailabilityService {
       const calendarClient = google.calendar({
         version: 'v3',
         auth: oAuth2Client,
+        fetchImplementation: googleApisFetchImplementation,
       });
 
       await calendarClient.events.list({
