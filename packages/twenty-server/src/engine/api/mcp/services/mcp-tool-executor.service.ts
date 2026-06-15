@@ -3,8 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { type ToolSet } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
 import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
 import {
@@ -33,14 +34,14 @@ export class McpToolExecutorService {
     params: Record<string, unknown>,
     sseWriter?: (data: Record<string, unknown>) => void,
   ) {
-    const toolName = params.name as keyof typeof toolSet;
-    const tool = toolSet[toolName];
+    const toolName = String(params.name);
+    const tool = toolSet[toolName as keyof typeof toolSet];
 
     if (!isDefined(tool) || !isDefined(tool.execute)) {
       return wrapJsonRpcResponse(id, {
         error: {
           code: JSON_RPC_ERROR_CODE.INVALID_PARAMS,
-          message: `Unknown tool: ${String(params.name)}`,
+          message: `Unknown tool: ${toolName}`,
         },
       });
     }
@@ -63,9 +64,14 @@ export class McpToolExecutorService {
         messages: [],
       });
 
-      void this.metricsService.incrementCounterBy({
-        key: MetricsKeys.McpToolExecutionSucceeded,
+      const succeeded = (result as ToolOutput | undefined)?.success !== false;
+
+      this.metricsService.incrementCounterBy({
+        key: succeeded
+          ? MetricsKeys.McpToolExecutionSucceeded
+          : MetricsKeys.McpToolExecutionFailed,
         amount: 1,
+        attributes: { tool: toolName },
       });
 
       return wrapJsonRpcResponse(id, {
@@ -75,9 +81,10 @@ export class McpToolExecutorService {
         },
       });
     } catch (executionError) {
-      void this.metricsService.incrementCounterBy({
+      this.metricsService.incrementCounterBy({
         key: MetricsKeys.McpToolExecutionFailed,
         amount: 1,
+        attributes: { tool: toolName },
       });
 
       return wrapJsonRpcResponse(id, {
