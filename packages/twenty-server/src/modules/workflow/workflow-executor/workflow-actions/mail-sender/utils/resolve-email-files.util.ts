@@ -32,9 +32,11 @@ export const resolveEmailFiles = (
       const name =
         'id' in attachment
           ? attachment.name
-          : `${attachment.label}${attachment.extension}`;
+          : [attachment.label, attachment.extension]
+              .filter(isNonEmptyString)
+              .join('');
 
-      return { id, name };
+      return { id, name: isNonEmptyString(name) ? name : id };
     })
     .filter(isDefined);
 };

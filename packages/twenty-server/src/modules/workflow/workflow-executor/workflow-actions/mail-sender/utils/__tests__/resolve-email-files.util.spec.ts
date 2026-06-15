@@ -49,6 +49,12 @@ describe('resolveEmailFiles', () => {
     ]);
   });
 
+  it('falls back to the file id when no usable name is present', () => {
+    expect(resolveEmailFiles([{ id: 'file-1' }], {})).toEqual([
+      { id: 'file-1', name: 'file-1' },
+    ]);
+  });
+
   it('returns an empty array when there is nothing to attach', () => {
     expect(resolveEmailFiles(undefined, {})).toEqual([]);
     expect(resolveEmailFiles([], {})).toEqual([]);

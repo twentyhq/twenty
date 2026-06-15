@@ -6,7 +6,13 @@ export const workflowEmailFilesSchema = z
   .array(
     z.union([
       workflowFileSchema,
-      z.string().describe('A workflow variable reference resolving to files'),
+      z
+        .string()
+        .regex(
+          /^{{[^{}]+}}$/,
+          'Expected a workflow variable reference like {{stepId.path}}',
+        )
+        .describe('A workflow variable reference resolving to files'),
     ]),
   )
   .optional()

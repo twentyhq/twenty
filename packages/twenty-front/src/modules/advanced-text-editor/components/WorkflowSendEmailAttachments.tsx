@@ -4,8 +4,8 @@ import { useFileUpload } from '@/file-upload/hooks/useFileUpload';
 import { VariableChip } from '@/object-record/record-field/ui/form-types/components/VariableChip';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 
+import { isString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useId } from 'react';
@@ -141,7 +141,7 @@ export const WorkflowSendEmailAttachments = ({
           {files.length > 0 ? (
             <StyledChipsContainer>
               {files.map((file, index) =>
-                isStandaloneVariableString(file) ? (
+                isString(file) ? (
                   <StyledVariableChipWrapper
                     key={index}
                     onClick={(event) => event.stopPropagation()}
