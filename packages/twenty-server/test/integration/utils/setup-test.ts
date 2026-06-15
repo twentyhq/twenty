@@ -1,3 +1,4 @@
+import nodeFetch from 'node-fetch';
 import { type JestConfigWithTsJest } from 'ts-jest';
 import 'tsconfig-paths/register';
 
@@ -6,6 +7,9 @@ import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 import { createApp } from './create-app';
 
 export default async (_: unknown, projectConfig: JestConfigWithTsJest) => {
+  // node-fetch rides node:http, which MSW patches; native undici fetch escapes interception.
+  globalThis.fetch = nodeFetch as unknown as typeof globalThis.fetch;
+
   const app = await createApp({});
 
   if (!projectConfig.globals) {

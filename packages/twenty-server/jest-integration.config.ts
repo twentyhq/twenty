@@ -33,6 +33,9 @@ const jestConfig: JestConfigWithTsJest = {
   ],
   testRegex: '\\.integration-spec\\.ts$',
   modulePathIgnorePatterns: ['<rootDir>/dist'],
+  transformIgnorePatterns: [
+    '/node_modules/(?!(msw|@mswjs|until-async|@bundled-es-modules|@open-draft|strict-event-emitter|headers-polyfill|outvariant|is-node-process|tough-cookie|path-to-regexp|statuses|cookie|digest-fetch|md5|email-reply-parser)/)',
+  ],
   globalSetup: '<rootDir>/test/integration/utils/setup-test.ts',
   globalTeardown: '<rootDir>/test/integration/utils/teardown-test.ts',
   testTimeout: 20000,
