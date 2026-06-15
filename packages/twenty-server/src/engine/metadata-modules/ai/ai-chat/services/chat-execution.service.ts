@@ -58,6 +58,7 @@ import {
   getCallLevelCacheProviderOptions,
   injectCacheBreakpoint,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-cache-breakpoint.util';
+import { resolveToolName } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-tool-name.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
@@ -460,18 +461,23 @@ export class ChatExecutionService {
             `totalTokens=${step.usage.totalTokens ?? 0}`,
         );
 
-        for (const toolResult of step.toolResults) {
-          const output = toolResult.output as ToolOutput | undefined;
-
-          if (!isDefined(output?.success)) {
+        for (const part of step.content) {
+          if (part.type !== 'tool-result' && part.type !== 'tool-error') {
             continue;
           }
 
+          const succeeded =
+            part.type === 'tool-result' &&
+            (part.output as ToolOutput | undefined)?.success !== false;
+
           void this.metricsService.incrementCounterForEvent({
-            key: output.success
+            key: succeeded
               ? MetricsKeys.AiChatToolExecutionSucceeded
               : MetricsKeys.AiChatToolExecutionFailed,
-            attributes: { model: registeredModel.modelId },
+            attributes: {
+              model: registeredModel.modelId,
+              tool: resolveToolName(part),
+            },
             shouldStoreInCache: false,
           });
         }
