@@ -538,8 +538,8 @@ export const PARTNER_APPLICATION_STEP_REQUIRED_FIELDS: Record<
   PartnerApplicationStepId,
   ReadonlyArray<keyof PartnerApplicationState>
 > = {
-  identity: ['name', 'email', 'company'],
-  profile: ['country', 'typeOfTeam'],
+  identity: ['name', 'email', 'company', 'website'],
+  profile: ['country', 'typeOfTeam', 'city'],
   expertise: ['partnerScope'],
-  commercials: [],
+  commercials: ['hourlyRate', 'projectBudgetMin'],
 };

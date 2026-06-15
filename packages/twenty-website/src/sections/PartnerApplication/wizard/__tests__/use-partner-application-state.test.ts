@@ -8,6 +8,7 @@ const baseValidIdentity: Partial<PartnerApplicationState> = {
   name: 'Ada Lovelace',
   email: 'ada@example.com',
   company: 'Analytical Engines Ltd',
+  website: 'https://analyticalengines.example',
 };
 
 describe('partnerApplicationReducer', () => {
@@ -53,6 +54,7 @@ describe('partnerApplicationReducer', () => {
       'company',
       'email',
       'name',
+      'website',
     ]);
   });
 
@@ -126,7 +128,7 @@ describe('partnerApplicationReducer', () => {
     );
   });
 
-  it('GO_NEXT on Profile requires country and typeOfTeam', () => {
+  it('GO_NEXT on Profile requires country, typeOfTeam, and city', () => {
     const onProfile: PartnerApplicationState = {
       ...INITIAL_PARTNER_APPLICATION_STATE,
       stepIndex: 1,
@@ -135,9 +137,10 @@ describe('partnerApplicationReducer', () => {
     const blocked = partnerApplicationReducer(onProfile, { type: 'GO_NEXT' });
     expect(blocked.stepIndex).toBe(1);
     expect(blocked.fieldErrors.typeOfTeam).toBe('required');
+    expect(blocked.fieldErrors.city).toBe('required');
 
     const ok = partnerApplicationReducer(
-      { ...onProfile, typeOfTeam: 'SOLO' },
+      { ...onProfile, typeOfTeam: 'SOLO', city: 'Paris' },
       { type: 'GO_NEXT' },
     );
     expect(ok.stepIndex).toBe(2);

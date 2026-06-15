@@ -305,11 +305,13 @@ export function buildPartnerApplicationRequestBody(
     name: state.name.trim(),
     email: state.email.trim(),
     company: state.company.trim(),
+    website: state.website.trim(),
+    city: state.city.trim(),
+    hourlyRate: parseFloat(state.hourlyRate),
+    projectBudgetMin: parseFloat(state.projectBudgetMin),
   };
 
-  if (state.website.trim()) body.website = state.website.trim();
   if (state.linkedin.trim()) body.linkedin = state.linkedin.trim();
-  if (state.city.trim()) body.city = state.city.trim();
   if (state.country !== '') body.country = state.country;
   if (state.languages.length > 0) body.languages = state.languages;
   if (state.typeOfTeam !== '') body.typeOfTeam = state.typeOfTeam;
@@ -317,15 +319,6 @@ export function buildPartnerApplicationRequestBody(
   if (state.skills.length > 0) body.skills = state.skills;
   if (state.applicationNotes.trim())
     body.applicationNotes = state.applicationNotes.trim();
-
-  const hourlyRate = parseFloat(state.hourlyRate);
-  if (Number.isFinite(hourlyRate) && hourlyRate >= 0)
-    body.hourlyRate = hourlyRate;
-
-  const projectBudgetMin = parseFloat(state.projectBudgetMin);
-  if (Number.isFinite(projectBudgetMin) && projectBudgetMin >= 0)
-    body.projectBudgetMin = projectBudgetMin;
-
   if (state.calendarLink.trim()) body.calendarLink = state.calendarLink.trim();
 
   return body;

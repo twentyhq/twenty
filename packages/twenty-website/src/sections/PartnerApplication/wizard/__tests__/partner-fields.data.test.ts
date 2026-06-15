@@ -32,13 +32,24 @@ describe('partner-fields.data', () => {
     expect(PARTNER_SKILL_SUGGESTIONS).toContain('React');
   });
 
-  it('requires country + typeOfTeam on profile, partnerScope on expertise', () => {
+  it('requires country, typeOfTeam, and city on profile, partnerScope on expertise', () => {
+    expect([...PARTNER_APPLICATION_STEP_REQUIRED_FIELDS.identity]).toEqual([
+      'name',
+      'email',
+      'company',
+      'website',
+    ]);
     expect([...PARTNER_APPLICATION_STEP_REQUIRED_FIELDS.profile]).toEqual([
       'country',
       'typeOfTeam',
+      'city',
     ]);
     expect([...PARTNER_APPLICATION_STEP_REQUIRED_FIELDS.expertise]).toEqual([
       'partnerScope',
+    ]);
+    expect([...PARTNER_APPLICATION_STEP_REQUIRED_FIELDS.commercials]).toEqual([
+      'hourlyRate',
+      'projectBudgetMin',
     ]);
   });
 });
