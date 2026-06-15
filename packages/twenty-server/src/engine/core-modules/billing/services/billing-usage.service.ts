@@ -75,9 +75,13 @@ export class BillingUsageService {
     workspace: WorkspaceEntity,
   ): Promise<BillingResourceCreditUsageDTO[]> {
     const subscription =
-      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
-        { workspaceId: workspace.id },
-      );
+      await this.billingSubscriptionService.getCurrentBillingSubscription({
+        workspaceId: workspace.id,
+      });
+
+    if (!isDefined(subscription)) {
+      return [];
+    }
 
     const resourceCreditItemDetail =
       await this.billingSubscriptionItemService.getResourceCreditSubscriptionItemDetails(
