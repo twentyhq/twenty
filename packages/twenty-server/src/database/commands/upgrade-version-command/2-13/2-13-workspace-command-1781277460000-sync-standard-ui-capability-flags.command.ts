@@ -1,4 +1,7 @@
+import { InjectDataSource } from '@nestjs/typeorm';
+
 import { Command } from 'nest-commander';
+import { DataSource } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
@@ -8,7 +11,6 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 // Re-syncs the UI capability flags of standard objects and fields with their
 // standard-application definitions. Covers two cases the rename instance
@@ -30,8 +32,9 @@ export class SyncStandardUiCapabilityFlagsCommand extends ActiveOrSuspendedWorks
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
-    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {
     super(workspaceIteratorService);
   }
@@ -138,37 +141,76 @@ export class SyncStandardUiCapabilityFlagsCommand extends ActiveOrSuspendedWorks
       return;
     }
 
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            objectMetadata: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: objectsToUpdate,
-            },
-            fieldMetadata: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: fieldsToUpdate,
-            },
-          },
-          workspaceId,
-          // workflowRun, workflowVersion and workspaceMember are system
-          // objects; without a system build the validator rejects the update.
-          isSystemBuild: true,
-          applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
-        },
-      );
+    // isUIEditable/isUICreatable are UI-affordance flags stored directly on
+    // core.objectMetadata/core.fieldMetadata — changing them needs no
+    // workspace-schema migration. We write them straight to the metadata
+    // tables instead of going through validateBuildAndRunWorkspaceMigration:
+    // that pipeline enforces user-facing mutation guards (system-field and
+    // relation-field property allow-lists) that reject this trusted system
+    // backfill on cross-version-upgraded workspaces.
+    const fieldIdsToSetEditable = fieldsToUpdate
+      .filter((field) => field.isUIEditable)
+      .map((field) => field.id);
+    const fieldIdsToSetNonEditable = fieldsToUpdate
+      .filter((field) => !field.isUIEditable)
+      .map((field) => field.id);
 
-    if (validateAndBuildResult.status === 'fail') {
-      this.logger.error(
-        `Failed to sync standard UI capability flags:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
-      );
+    // All writes for a workspace run in one transaction so a mid-run failure
+    // can't leave the flags partially applied.
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
-      throw new Error(
-        `Failed to sync standard UI capability flags for workspace ${workspaceId}`,
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      if (fieldIdsToSetEditable.length > 0) {
+        await queryRunner.query(
+          `UPDATE "core"."fieldMetadata" SET "isUIEditable" = true, "updatedAt" = now() WHERE "id" = ANY($1)`,
+          [fieldIdsToSetEditable],
+        );
+      }
+
+      if (fieldIdsToSetNonEditable.length > 0) {
+        await queryRunner.query(
+          `UPDATE "core"."fieldMetadata" SET "isUIEditable" = false, "updatedAt" = now() WHERE "id" = ANY($1)`,
+          [fieldIdsToSetNonEditable],
+        );
+      }
+
+      for (const objectToUpdate of objectsToUpdate) {
+        await queryRunner.query(
+          `UPDATE "core"."objectMetadata" SET "isUICreatable" = $1, "isUIEditable" = $2, "updatedAt" = now() WHERE "id" = $3`,
+          [
+            objectToUpdate.isUICreatable,
+            objectToUpdate.isUIEditable,
+            objectToUpdate.id,
+          ],
+        );
+      }
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+
+    // The raw writes bypass the metadata cache, so invalidate the flat maps the
+    // app reads these flags from (after the transaction has committed). The
+    // flags are already persisted, so a cache hiccup must not fail the upgrade —
+    // a stale cache self-heals on the next flush / version bump.
+    try {
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+      ]);
+    } catch (cacheError) {
+      this.logger.warn(
+        `Synced UI capability flags for workspace ${workspaceId} but failed to invalidate the metadata cache: ${
+          cacheError instanceof Error ? cacheError.message : String(cacheError)
+        }`,
       );
     }
 

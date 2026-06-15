@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
+import { SettingsWorkspaceEmailChannelDomainStatusCell } from '@/settings/workspace/components/SettingsWorkspaceEmailChannelDomainStatusCell';
 import { SettingsWorkspaceEmailGroupForwardingCell } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupForwardingCell';
 import { SettingsWorkspaceEmailGroupSourceCell } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSourceCell';
 import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
@@ -19,7 +20,7 @@ export const SettingsWorkspaceEmailGroupSection = () => {
 
   return (
     <SettingsTableListSection<MessageChannel>
-      title={t`Email Handles`}
+      title={t`Email Channels`}
       description={t`Shared addresses your workspace uses to send and receive email.`}
       items={emailGroupChannels}
       columns={[
@@ -28,14 +29,19 @@ export const SettingsWorkspaceEmailGroupSection = () => {
           label: t`Forwarding address`,
           Cell: SettingsWorkspaceEmailGroupForwardingCell,
         },
+        {
+          label: t`Domain`,
+          align: 'right',
+          Cell: SettingsWorkspaceEmailChannelDomainStatusCell,
+        },
       ]}
-      gridAutoColumns="1fr 1fr"
+      gridAutoColumns="1fr 1fr 1fr"
       onRowClick={(channel) =>
         navigateSettings(SettingsPath.EmailGroupChannelDetail, {
           messageChannelId: channel.id,
         })
       }
-      footerButtonLabel={t`Add email handle`}
+      footerButtonLabel={t`Add email channel`}
       onFooterButtonClick={() =>
         navigateSettings(SettingsPath.NewEmailGroupChannel)
       }

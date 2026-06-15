@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { type JSX, createContext } from 'react';
 
 import { useSystemColorScheme } from '@/ui/theme/hooks/useSystemColorScheme';
 import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';

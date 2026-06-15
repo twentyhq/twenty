@@ -1,5 +1,5 @@
 import { GraphQLEnumType, GraphQLSchema, isEnumType } from 'graphql';
-import camelCase from 'lodash/camelCase';
+import camelCase from 'lodash/camelCase.js';
 
 import { type Config } from '../config';
 import { ensurePath, writeFileToPath } from '../helpers/files';

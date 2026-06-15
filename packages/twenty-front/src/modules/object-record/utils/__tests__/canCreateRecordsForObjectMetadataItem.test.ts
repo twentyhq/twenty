@@ -48,7 +48,7 @@ describe('canCreateRecordsForObjectMetadataItem', () => {
     expect(result).toBe(false);
   });
 
-  it('should return false when the object is a system object', () => {
+  it('should return true for a UI-creatable system object (isSystem only controls Data-Model visibility)', () => {
     const result = canCreateRecordsForObjectMetadataItem({
       objectPermissions: objectPermissionsAllowingUpdate,
       objectMetadataItem: {
@@ -57,7 +57,7 @@ describe('canCreateRecordsForObjectMetadataItem', () => {
       },
     });
 
-    expect(result).toBe(false);
+    expect(result).toBe(true);
   });
 
   it('should return false when the object is remote', () => {
