@@ -1,12 +1,13 @@
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useDebounce } from 'use-debounce';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { reportMalformedWorkspaceMembers } from '~/pages/settings/members/utils/reportMalformedWorkspaceMembers';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -19,7 +20,10 @@ import {
   CoreObjectNameSingular,
   SettingsPath,
 } from 'twenty-shared/types';
-import { generateILikeFiltersForCompositeFields } from 'twenty-shared/utils';
+import {
+  generateILikeFiltersForCompositeFields,
+  isNonEmptyString,
+} from 'twenty-shared/utils';
 import {
   AppTooltip,
   Avatar,
@@ -82,6 +86,17 @@ const StyledChevronWrapper = styled.div`
   width: 100%;
 `;
 
+const getWorkspaceMemberNameParts = (workspaceMember: WorkspaceMember) => {
+  const firstName = workspaceMember.name?.firstName ?? '';
+  const lastName = workspaceMember.name?.lastName ?? '';
+
+  return {
+    firstName,
+    lastName,
+    fullName: `${firstName} ${lastName}`.trim(),
+  };
+};
+
 export const SettingsWorkspaceMembersTeamTab = () => {
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
@@ -122,6 +137,28 @@ export const SettingsWorkspaceMembersTeamTab = () => {
     filter: searchServerFilter,
   });
 
+  const malformedWorkspaceMemberIds = useMemo(
+    () =>
+      workspaceMembers
+        .filter(
+          (workspaceMember) =>
+            !isNonEmptyString(workspaceMember.name?.firstName) &&
+            !isNonEmptyString(workspaceMember.name?.lastName),
+        )
+        .map((workspaceMember) => workspaceMember.id),
+    [workspaceMembers],
+  );
+
+  useEffect(() => {
+    if (malformedWorkspaceMemberIds.length === 0) {
+      return;
+    }
+
+    void reportMalformedWorkspaceMembers({
+      workspaceMemberIds: malformedWorkspaceMemberIds,
+    });
+  }, [malformedWorkspaceMemberIds]);
+
   const handleSearchChange = (text: string) => {
     setSearchFilter(text);
   };
@@ -147,18 +184,20 @@ export const SettingsWorkspaceMembersTeamTab = () => {
     const normalizedSearchTerm = normalizeSearchText(searchFilter);
     const searchTerms = normalizedSearchTerm.split(/\s+/);
 
-    return workspaceMembers.filter((member) => {
-      const firstName = normalizeSearchText(member.name.firstName);
-      const lastName = normalizeSearchText(member.name.lastName);
-      const email = normalizeSearchText(member.userEmail);
-      const fullName = `${firstName} ${lastName}`.trim();
+    return workspaceMembers.filter((workspaceMember) => {
+      const { firstName, lastName, fullName } =
+        getWorkspaceMemberNameParts(workspaceMember);
+      const normalizedFirstName = normalizeSearchText(firstName);
+      const normalizedLastName = normalizeSearchText(lastName);
+      const normalizedEmail = normalizeSearchText(workspaceMember.userEmail);
+      const normalizedFullName = normalizeSearchText(fullName);
 
       return searchTerms.every(
         (term) =>
-          firstName.includes(term) ||
-          lastName.includes(term) ||
-          fullName.includes(term) ||
-          email.includes(term),
+          normalizedFirstName.includes(term) ||
+          normalizedLastName.includes(term) ||
+          normalizedFullName.includes(term) ||
+          normalizedEmail.includes(term),
       );
     });
   }, [workspaceMembers, searchFilter]);
@@ -231,61 +270,66 @@ export const SettingsWorkspaceMembersTeamTab = () => {
           </TableRow>
           <StyledTableRows>
             {optimizedWorkspaceMembers.length > 0 ? (
-              optimizedWorkspaceMembers.map((workspaceMember) => (
-                <TableRow
-                  gridAutoColumns="150px 1fr 40px"
-                  mobileGridAutoColumns="100px 1fr 32px"
-                  key={workspaceMember.id}
-                  cursor="pointer"
-                  onClick={() => {
-                    if (currentWorkspaceMember?.id === workspaceMember.id) {
-                      return;
-                    }
-                    navigateSettings(SettingsPath.WorkspaceMemberPage, {
-                      workspaceMemberId: workspaceMember.id,
-                    });
-                  }}
-                >
-                  <TableCell>
-                    <StyledIconWrapper>
-                      <Avatar
-                        avatarUrl={workspaceMember.avatarUrl}
-                        placeholderColorSeed={workspaceMember.id}
-                        placeholder={workspaceMember.name.firstName ?? ''}
-                        type="rounded"
-                        size="sm"
+              optimizedWorkspaceMembers.map((workspaceMember) => {
+                const { firstName, fullName } =
+                  getWorkspaceMemberNameParts(workspaceMember);
+                const displayedName =
+                  isNonEmptyString(fullName) ? fullName : workspaceMember.userEmail;
+
+                return (
+                  <TableRow
+                    gridAutoColumns="150px 1fr 40px"
+                    mobileGridAutoColumns="100px 1fr 32px"
+                    key={workspaceMember.id}
+                    cursor="pointer"
+                    onClick={() => {
+                      if (currentWorkspaceMember?.id === workspaceMember.id) {
+                        return;
+                      }
+                      navigateSettings(SettingsPath.WorkspaceMemberPage, {
+                        workspaceMemberId: workspaceMember.id,
+                      });
+                    }}
+                  >
+                    <TableCell>
+                      <StyledIconWrapper>
+                        <Avatar
+                          avatarUrl={workspaceMember.avatarUrl}
+                          placeholderColorSeed={workspaceMember.id}
+                          placeholder={firstName || workspaceMember.userEmail}
+                          type="rounded"
+                          size="sm"
+                        />
+                      </StyledIconWrapper>
+                      <StyledTextContainerWithEllipsis
+                        id={`hover-text-${workspaceMember.id}`}
+                      >
+                        {displayedName}
+                      </StyledTextContainerWithEllipsis>
+                      <AppTooltip
+                        anchorSelect={`#hover-text-${workspaceMember.id}`}
+                        content={displayedName}
+                        noArrow
+                        place="top"
+                        positionStrategy="fixed"
+                        delay={TooltipDelay.shortDelay}
                       />
-                    </StyledIconWrapper>
-                    <StyledTextContainerWithEllipsis
-                      id={`hover-text-${workspaceMember.id}`}
-                    >
-                      {workspaceMember.name.firstName +
-                        ' ' +
-                        workspaceMember.name.lastName}
-                    </StyledTextContainerWithEllipsis>
-                    <AppTooltip
-                      anchorSelect={`#hover-text-${workspaceMember.id}`}
-                      content={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
-                      noArrow
-                      place="top"
-                      positionStrategy="fixed"
-                      delay={TooltipDelay.shortDelay}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <StyledTextContainerWithEllipsis>
-                      {workspaceMember.userEmail}
-                    </StyledTextContainerWithEllipsis>
-                  </TableCell>
-                  <TableCell align="right">
-                    <StyledChevronWrapper>
-                      {currentWorkspaceMember?.id !== workspaceMember.id && (
-                        <IconChevronRight size={theme.icon.size.sm} />
-                      )}
-                    </StyledChevronWrapper>
-                  </TableCell>
-                </TableRow>
-              ))
+                    </TableCell>
+                    <TableCell>
+                      <StyledTextContainerWithEllipsis>
+                        {workspaceMember.userEmail}
+                      </StyledTextContainerWithEllipsis>
+                    </TableCell>
+                    <TableCell align="right">
+                      <StyledChevronWrapper>
+                        {currentWorkspaceMember?.id !== workspaceMember.id && (
+                          <IconChevronRight size={theme.icon.size.sm} />
+                        )}
+                      </StyledChevronWrapper>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             ) : (
               <TableCell color={themeCssVariables.font.color.tertiary}>
                 {!searchFilter
