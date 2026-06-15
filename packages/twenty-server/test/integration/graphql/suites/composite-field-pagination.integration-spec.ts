@@ -10,8 +10,13 @@ import { createOneOperationFactory } from 'test/integration/graphql/utils/create
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+import { restoreSeededRecords } from 'test/integration/utils/restore-seeded-records';
 
 describe('GraphQL People Pagination with Composite Field Sorting', () => {
+  afterAll(async () => {
+    await restoreSeededRecords('person');
+  });
+
   beforeAll(async () => {
     await deleteAllRecords('person');
 

@@ -6,6 +6,7 @@ import {
 import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+import { restoreSeededRecords } from 'test/integration/utils/restore-seeded-records';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
 describe('Core REST API Update One endpoint', () => {
@@ -41,6 +42,11 @@ describe('Core REST API Update One endpoint', () => {
         companyId: TEST_COMPANY_1_ID,
       },
     });
+  });
+
+  afterAll(async () => {
+    await restoreSeededRecords('company');
+    await restoreSeededRecords('person');
   });
 
   it('should update an existing person (name, emails, and jobTitle)', async () => {

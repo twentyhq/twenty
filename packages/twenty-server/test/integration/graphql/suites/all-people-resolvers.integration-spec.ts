@@ -16,11 +16,16 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+import { restoreSeededRecords } from 'test/integration/utils/restore-seeded-records';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
 describe('people resolvers (integration)', () => {
   beforeAll(async () => {
     await deleteAllRecords('person');
+  });
+
+  afterAll(async () => {
+    await restoreSeededRecords('person');
   });
 
   it('1. should create and return people', async () => {

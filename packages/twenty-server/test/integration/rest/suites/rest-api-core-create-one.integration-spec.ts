@@ -6,6 +6,7 @@ import {
 } from 'test/integration/constants/test-primary-link-url.constant';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+import { restoreSeededRecords } from 'test/integration/utils/restore-seeded-records';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import { FieldActorSource } from 'twenty-shared/types';
 
@@ -28,8 +29,8 @@ describe('Core REST API Create One endpoint', () => {
   });
 
   afterAll(async () => {
-    await deleteAllRecords('person');
-    await deleteAllRecords('company');
+    await restoreSeededRecords('company');
+    await restoreSeededRecords('person');
   });
 
   it('should create a new person', async () => {

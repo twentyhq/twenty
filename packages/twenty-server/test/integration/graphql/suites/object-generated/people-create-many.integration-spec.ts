@@ -4,12 +4,17 @@ import { findManyOperationFactory } from 'test/integration/graphql/utils/find-ma
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+import { restoreSeededRecords } from 'test/integration/utils/restore-seeded-records';
 
 describe('people resolvers (integration)', () => {
   let person2Id: string;
 
   beforeAll(async () => {
     await deleteAllRecords('person');
+  });
+
+  afterAll(async () => {
+    await restoreSeededRecords('person');
   });
 
   it('should create many people', async () => {

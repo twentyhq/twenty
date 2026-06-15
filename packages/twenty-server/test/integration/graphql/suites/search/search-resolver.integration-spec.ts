@@ -26,6 +26,7 @@ import {
 import { createManyOperation } from 'test/integration/graphql/utils/create-many-operation.util';
 import { search } from 'test/integration/graphql/utils/search.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+import { restoreSeededRecords } from 'test/integration/utils/restore-seeded-records';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
@@ -164,7 +165,6 @@ describe('SearchResolver', () => {
   const [searchInput1Pet, searchInput2Pet, cafePet, naivePet, cjkPet] = pets;
 
   beforeAll(async () => {
-    // TODO refactor not a good practice, or should at least restore afterwards
     await deleteAllRecords('person');
     await deleteAllRecords('company');
     await deleteAllRecords('opportunity');
@@ -198,6 +198,20 @@ describe('SearchResolver', () => {
       gqlFields: COMPANY_GQL_FIELDS,
       data: companies,
     });
+  });
+
+  afterAll(async () => {
+    await restoreSeededRecords('company');
+    await restoreSeededRecords('person');
+    await restoreSeededRecords('opportunity');
+    await restoreSeededRecords('note');
+    await restoreSeededRecords('task');
+    await restoreSeededRecords('dashboard');
+    await restoreSeededRecords('_pet');
+    await restoreSeededRecords('_surveyResult');
+    await restoreSeededRecords('_rocket');
+    await restoreSeededRecords('noteTarget');
+    await restoreSeededRecords('taskTarget');
   });
 
   const testsUseCases: EachTestingContext<{

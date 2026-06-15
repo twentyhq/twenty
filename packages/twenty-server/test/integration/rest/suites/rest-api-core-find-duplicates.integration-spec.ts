@@ -7,8 +7,14 @@ import {
 import { TEST_PRIMARY_LINK_URL } from 'test/integration/constants/test-primary-link-url.constant';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+import { restoreSeededRecords } from 'test/integration/utils/restore-seeded-records';
 
 describe('Core REST API Find Duplicates endpoint', () => {
+  afterAll(async () => {
+    await restoreSeededRecords('company');
+    await restoreSeededRecords('person');
+  });
+
   beforeAll(async () => {
     await deleteAllRecords('person');
     await deleteAllRecords('company');

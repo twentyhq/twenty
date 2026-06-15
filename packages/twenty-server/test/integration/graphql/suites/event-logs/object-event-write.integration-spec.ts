@@ -14,6 +14,7 @@ import { createManyOperationFactory } from 'test/integration/graphql/utils/creat
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
+import { restoreSeededRecords } from 'test/integration/utils/restore-seeded-records';
 
 // End-to-end write path: creating a record fires an objectEvent through
 // entityEventsToDbQueue -> the consumer -> the ClickHouse sink.
@@ -54,7 +55,7 @@ describe('Object event write (integration)', () => {
   });
 
   afterAll(async () => {
-    await deleteAllRecords('person');
+    await restoreSeededRecords('person');
 
     if (clickHouseClient) {
       await clickHouseClient.close();
