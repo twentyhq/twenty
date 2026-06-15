@@ -8,11 +8,18 @@ import { UPDATE_COMMAND_MENU_ITEM } from '@/command-menu-item/graphql/mutations/
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type UpdateCommandMenuItemInput } from '~/generated-metadata/graphql';
+import {
+  type UpdateCommandMenuItemInput,
+  type UpdateCommandMenuItemMutation,
+  type UpdateCommandMenuItemMutationVariables,
+} from '~/generated-metadata/graphql';
 
 export const useSaveCommandMenuItemsDraft = () => {
   const store = useStore();
-  const [updateCommandMenuItem] = useMutation(UPDATE_COMMAND_MENU_ITEM);
+  const [updateCommandMenuItem] = useMutation<
+    UpdateCommandMenuItemMutation,
+    UpdateCommandMenuItemMutationVariables
+  >(UPDATE_COMMAND_MENU_ITEM);
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
@@ -45,7 +52,7 @@ export const useSaveCommandMenuItemsDraft = () => {
       return;
     }
 
-    await Promise.all(
+    const results = await Promise.all(
       changedItems.map((item) => {
         const input: UpdateCommandMenuItemInput = {
           id: item.id,
@@ -58,7 +65,11 @@ export const useSaveCommandMenuItemsDraft = () => {
       }),
     );
 
-    updateInDraft('commandMenuItems', changedItems);
+    const updatedItems = results
+      .map((result) => result.data?.updateCommandMenuItem)
+      .filter(isDefined);
+
+    updateInDraft('commandMenuItems', updatedItems);
     applyChanges();
   }, [
     store,

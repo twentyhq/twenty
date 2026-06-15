@@ -1,11 +1,16 @@
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/commandMenuItemsDraftState';
 import { RESET_COMMAND_MENU_ITEM } from '@/command-menu-item/graphql/mutations/resetCommandMenuItem';
+import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   type ResetCommandMenuItemMutation,
   type ResetCommandMenuItemMutationVariables,
@@ -18,32 +23,52 @@ export const useResetCommandMenuItemToDefault = () => {
     ResetCommandMenuItemMutationVariables
   >(RESET_COMMAND_MENU_ITEM);
   const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
+  const { handleMetadataError } = useMetadataErrorHandler();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const resetCommandMenuItemToDefault = useCallback(
     async (id: string) => {
-      const result = await resetCommandMenuItem({ variables: { id } });
+      try {
+        const result = await resetCommandMenuItem({ variables: { id } });
 
-      const resetItem = result.data?.resetCommandMenuItem;
+        const resetItem = result.data?.resetCommandMenuItem;
 
-      if (!isDefined(resetItem)) {
-        return;
-      }
+        if (!isDefined(resetItem)) {
+          return;
+        }
 
-      updateInDraft('commandMenuItems', [resetItem]);
-      applyChanges();
+        updateInDraft('commandMenuItems', [resetItem]);
+        applyChanges();
 
-      const draft = store.get(commandMenuItemsDraftState.atom);
+        const draft = store.get(commandMenuItemsDraftState.atom);
 
-      if (isDefined(draft)) {
-        store.set(
-          commandMenuItemsDraftState.atom,
-          draft.map((item) =>
-            item.id === id ? { ...item, ...resetItem } : item,
-          ),
-        );
+        if (isDefined(draft)) {
+          store.set(
+            commandMenuItemsDraftState.atom,
+            draft.map((item) =>
+              item.id === id ? { ...item, ...resetItem } : item,
+            ),
+          );
+        }
+      } catch (error) {
+        if (CombinedGraphQLErrors.is(error)) {
+          handleMetadataError(error, {
+            primaryMetadataName: 'commandMenuItem',
+            operationType: CrudOperationType.UPDATE,
+          });
+        } else {
+          enqueueErrorSnackBar({ message: t`An error occurred.` });
+        }
       }
     },
-    [resetCommandMenuItem, updateInDraft, applyChanges, store],
+    [
+      resetCommandMenuItem,
+      updateInDraft,
+      applyChanges,
+      store,
+      handleMetadataError,
+      enqueueErrorSnackBar,
+    ],
   );
 
   return { resetCommandMenuItemToDefault };

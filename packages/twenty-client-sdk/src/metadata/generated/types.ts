@@ -7585,6 +7585,15 @@ export default {
                     ]
                 }
             ],
+            "resetCommandMenuItem": [
+                35,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
             "deleteCommandMenuItem": [
                 35,
                 {
