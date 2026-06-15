@@ -59,26 +59,38 @@ export class MicrosoftCalendarAttendeesService {
     const attendees: RawCalendarAttendee[] = [];
 
     for (const event of events) {
-      const organizerEmail = event.organizer?.emailAddress?.address;
+      const displayNameByEmail = new Map<string, string | undefined>();
+
+      const organizerEmail =
+        event.organizer?.emailAddress?.address?.toLowerCase();
 
       if (organizerEmail) {
-        attendees.push({
-          email: organizerEmail,
-          displayName: event.organizer?.emailAddress?.name ?? undefined,
-        });
+        displayNameByEmail.set(
+          organizerEmail,
+          event.organizer?.emailAddress?.name ?? undefined,
+        );
       }
 
       for (const attendee of event.attendees ?? []) {
+        const attendeeEmail = attendee.emailAddress?.address?.toLowerCase();
         const isRoomOrResource = attendee.type === 'resource';
 
-        if (!attendee.emailAddress?.address || isRoomOrResource) {
+        if (
+          !attendeeEmail ||
+          isRoomOrResource ||
+          displayNameByEmail.has(attendeeEmail)
+        ) {
           continue;
         }
 
-        attendees.push({
-          email: attendee.emailAddress.address,
-          displayName: attendee.emailAddress.name ?? undefined,
-        });
+        displayNameByEmail.set(
+          attendeeEmail,
+          attendee.emailAddress?.name ?? undefined,
+        );
+      }
+
+      for (const [email, displayName] of displayNameByEmail) {
+        attendees.push({ email, displayName });
       }
     }
 

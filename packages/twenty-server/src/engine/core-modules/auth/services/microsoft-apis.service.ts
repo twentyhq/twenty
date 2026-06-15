@@ -321,14 +321,16 @@ export class MicrosoftAPIsService {
             shouldComputeInviteSuggestions &&
             syncableCalendarChannels.length > 0
           ) {
-            await this.calendarQueueService.add<FetchOnboardingInviteSuggestionsJobData>(
-              FetchOnboardingInviteSuggestionsJob.name,
-              {
-                workspaceId,
-                userId,
-                connectedAccountId: newOrExistingConnectedAccountId,
-              },
-            );
+            void this.calendarQueueService
+              .add<FetchOnboardingInviteSuggestionsJobData>(
+                FetchOnboardingInviteSuggestionsJob.name,
+                {
+                  workspaceId,
+                  userId,
+                  connectedAccountId: newOrExistingConnectedAccountId,
+                },
+              )
+              .catch(() => undefined);
           }
         }
 

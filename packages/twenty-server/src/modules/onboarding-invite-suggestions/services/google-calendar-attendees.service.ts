@@ -48,24 +48,37 @@ export class GoogleCalendarAttendeesService {
     const attendees: RawCalendarAttendee[] = [];
 
     for (const event of events) {
-      if (event.organizer?.email) {
-        attendees.push({
-          email: event.organizer.email,
-          displayName: event.organizer.displayName ?? undefined,
-        });
+      const displayNameByEmail = new Map<string, string | undefined>();
+
+      const organizerEmail = event.organizer?.email?.toLowerCase();
+
+      if (organizerEmail) {
+        displayNameByEmail.set(
+          organizerEmail,
+          event.organizer?.displayName ?? undefined,
+        );
       }
 
       for (const attendee of event.attendees ?? []) {
+        const attendeeEmail = attendee.email?.toLowerCase();
         const isRoomOrResource = attendee.resource === true;
 
-        if (!attendee.email || isRoomOrResource) {
+        if (
+          !attendeeEmail ||
+          isRoomOrResource ||
+          displayNameByEmail.has(attendeeEmail)
+        ) {
           continue;
         }
 
-        attendees.push({
-          email: attendee.email,
-          displayName: attendee.displayName ?? undefined,
-        });
+        displayNameByEmail.set(
+          attendeeEmail,
+          attendee.displayName ?? undefined,
+        );
+      }
+
+      for (const [email, displayName] of displayNameByEmail) {
+        attendees.push({ email, displayName });
       }
     }
 

@@ -175,17 +175,21 @@ export class OnboardingService {
       return false;
     }
 
-    const isConnectAccountPending =
-      await this.isOnboardingConnectAccountPending({ userId, workspaceId });
+    try {
+      const isConnectAccountPending =
+        await this.isOnboardingConnectAccountPending({ userId, workspaceId });
 
-    if (!isConnectAccountPending) {
+      if (!isConnectAccountPending) {
+        return false;
+      }
+
+      return await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_ONBOARDING_INVITE_SUGGESTIONS_ENABLED,
+        workspaceId,
+      );
+    } catch {
       return false;
     }
-
-    return this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_ONBOARDING_INVITE_SUGGESTIONS_ENABLED,
-      workspaceId,
-    );
   }
 
   async setOnboardingConnectAccountPending(

@@ -358,14 +358,16 @@ export class GoogleAPIsService {
           isCalendarEnabled &&
           isCalendarAvailable
         ) {
-          await this.calendarQueueService.add<FetchOnboardingInviteSuggestionsJobData>(
-            FetchOnboardingInviteSuggestionsJob.name,
-            {
-              workspaceId,
-              userId,
-              connectedAccountId: newOrExistingConnectedAccountId,
-            },
-          );
+          void this.calendarQueueService
+            .add<FetchOnboardingInviteSuggestionsJobData>(
+              FetchOnboardingInviteSuggestionsJob.name,
+              {
+                workspaceId,
+                userId,
+                connectedAccountId: newOrExistingConnectedAccountId,
+              },
+            )
+            .catch(() => undefined);
         }
 
         return newOrExistingConnectedAccountId;

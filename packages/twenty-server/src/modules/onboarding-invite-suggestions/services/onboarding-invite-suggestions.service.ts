@@ -66,6 +66,12 @@ export class OnboardingInviteSuggestionsService {
     });
 
     if (!isDefined(connectedAccount)) {
+      await this.cacheStorageService.set<InviteSuggestion[]>(
+        cacheKey,
+        [],
+        ONBOARDING_INVITE_SUGGESTIONS_CACHE_TTL_MS,
+      );
+
       return;
     }
 
