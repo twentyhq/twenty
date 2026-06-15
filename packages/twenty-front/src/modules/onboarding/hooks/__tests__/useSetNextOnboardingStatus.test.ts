@@ -15,6 +15,7 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
 import {
+  FeatureFlagKey,
   OnboardingStatus,
   PermissionFlagType,
   SubscriptionStatus,
@@ -32,6 +33,7 @@ const renderHooks = (
   withCurrentBillingSubscription: boolean,
   withOneWorkspaceMember = true,
   permissionFlags = mockedUserData.currentUserWorkspace.permissionFlags,
+  withInviteSuggestionsEnabled = false,
 ) => {
   const { result } = renderHook(
     () => {
@@ -70,6 +72,14 @@ const renderHooks = (
           }
         : undefined,
       workspaceMembersCount: withOneWorkspaceMember ? 1 : 2,
+      featureFlags: withInviteSuggestionsEnabled
+        ? [
+            {
+              key: FeatureFlagKey.IS_ONBOARDING_INVITE_SUGGESTIONS_ENABLED,
+              value: true,
+            },
+          ]
+        : [],
     });
   });
   act(() => {
@@ -136,5 +146,40 @@ describe('useSetNextOnboardingStatus', () => {
       true,
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
+  });
+
+  describe('when invite suggestions are enabled', () => {
+    it('should connect account right after workspace activation', () => {
+      const nextOnboardingStatus = renderHooks(
+        OnboardingStatus.WORKSPACE_ACTIVATION,
+        false,
+        true,
+        mockedUserData.currentUserWorkspace.permissionFlags,
+        true,
+      );
+      expect(nextOnboardingStatus).toEqual(OnboardingStatus.SYNC_EMAIL);
+    });
+
+    it('should create profile after syncing emails', () => {
+      const nextOnboardingStatus = renderHooks(
+        OnboardingStatus.SYNC_EMAIL,
+        false,
+        true,
+        mockedUserData.currentUserWorkspace.permissionFlags,
+        true,
+      );
+      expect(nextOnboardingStatus).toEqual(OnboardingStatus.PROFILE_CREATION);
+    });
+
+    it('should invite the team right after profile creation', () => {
+      const nextOnboardingStatus = renderHooks(
+        OnboardingStatus.PROFILE_CREATION,
+        false,
+        true,
+        mockedUserData.currentUserWorkspace.permissionFlags,
+        true,
+      );
+      expect(nextOnboardingStatus).toEqual(OnboardingStatus.INVITE_TEAM);
+    });
   });
 });

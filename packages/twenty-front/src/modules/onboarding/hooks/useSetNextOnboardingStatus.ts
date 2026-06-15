@@ -11,9 +11,11 @@ import {
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 import { useCallback } from 'react';
 import {
+  FeatureFlagKey,
   OnboardingStatus,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
@@ -24,6 +26,7 @@ type GetNextOnboardingStatusArgs = {
   currentWorkspace: CurrentWorkspace | null;
   calendarBookingPageId: string | null;
   isAccountSyncEnabled: boolean;
+  isInviteSuggestionsEnabled: boolean;
 };
 
 const getNextOnboardingStatus = ({
@@ -31,34 +34,54 @@ const getNextOnboardingStatus = ({
   currentWorkspace,
   calendarBookingPageId,
   isAccountSyncEnabled,
+  isInviteSuggestionsEnabled,
 }: GetNextOnboardingStatusArgs) => {
-  if (currentUser?.onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION) {
+  const onboardingStatus = currentUser?.onboardingStatus;
+  const isSoloWorkspace = currentWorkspace?.workspaceMembersCount === 1;
+
+  if (onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION) {
+    // With invite suggestions, connect the account first so the calendar sync
+    // gets a head start before the invite step.
+    if (isInviteSuggestionsEnabled && isAccountSyncEnabled) {
+      return OnboardingStatus.SYNC_EMAIL;
+    }
     return OnboardingStatus.PROFILE_CREATION;
   }
 
-  if (currentUser?.onboardingStatus === OnboardingStatus.PROFILE_CREATION) {
-    if (currentWorkspace?.workspaceMembersCount === 1) {
-      if (isAccountSyncEnabled) {
-        return OnboardingStatus.SYNC_EMAIL;
-      }
+  if (onboardingStatus === OnboardingStatus.SYNC_EMAIL) {
+    if (isInviteSuggestionsEnabled) {
+      return OnboardingStatus.PROFILE_CREATION;
+    }
+    if (isSoloWorkspace) {
       return OnboardingStatus.INVITE_TEAM;
     }
     return OnboardingStatus.COMPLETED;
   }
-  if (
-    currentUser?.onboardingStatus === OnboardingStatus.SYNC_EMAIL &&
-    currentWorkspace?.workspaceMembersCount === 1
-  ) {
+
+  if (onboardingStatus === OnboardingStatus.PROFILE_CREATION) {
+    if (!isSoloWorkspace) {
+      return OnboardingStatus.COMPLETED;
+    }
+    // In the suggestions flow the account is already connected before profile.
+    if (isInviteSuggestionsEnabled) {
+      return OnboardingStatus.INVITE_TEAM;
+    }
+    if (isAccountSyncEnabled) {
+      return OnboardingStatus.SYNC_EMAIL;
+    }
     return OnboardingStatus.INVITE_TEAM;
   }
-  if (currentUser?.onboardingStatus === OnboardingStatus.INVITE_TEAM) {
+
+  if (onboardingStatus === OnboardingStatus.INVITE_TEAM) {
     return isDefined(calendarBookingPageId)
       ? OnboardingStatus.BOOK_ONBOARDING
       : OnboardingStatus.COMPLETED;
   }
-  if (currentUser?.onboardingStatus === OnboardingStatus.BOOK_ONBOARDING) {
+
+  if (onboardingStatus === OnboardingStatus.BOOK_ONBOARDING) {
     return OnboardingStatus.COMPLETED;
   }
+
   return OnboardingStatus.COMPLETED;
 };
 
@@ -70,6 +93,9 @@ export const useSetNextOnboardingStatus = () => {
   const permissionMap = usePermissionFlagMap();
   const isAccountSyncEnabled =
     permissionMap[PermissionFlagType.CONNECTED_ACCOUNTS];
+  const isInviteSuggestionsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_ONBOARDING_INVITE_SUGGESTIONS_ENABLED,
+  );
 
   return useCallback(() => {
     const nextOnboardingStatus = getNextOnboardingStatus({
@@ -77,6 +103,7 @@ export const useSetNextOnboardingStatus = () => {
       currentWorkspace,
       calendarBookingPageId,
       isAccountSyncEnabled,
+      isInviteSuggestionsEnabled,
     });
     store.set(currentUserState.atom, (current) => {
       if (isDefined(current)) {
@@ -92,6 +119,7 @@ export const useSetNextOnboardingStatus = () => {
     currentWorkspace,
     calendarBookingPageId,
     isAccountSyncEnabled,
+    isInviteSuggestionsEnabled,
     store,
   ]);
 };

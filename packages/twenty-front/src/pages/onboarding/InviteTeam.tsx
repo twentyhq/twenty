@@ -11,7 +11,7 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { styled } from '@linaria/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import {
   Controller,
   type SubmitHandler,
@@ -19,6 +19,8 @@ import {
   useForm,
 } from 'react-hook-form';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useQuery } from '@apollo/client/react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCopy, SeparatorLineText } from 'twenty-ui-deprecated/display';
@@ -26,6 +28,10 @@ import { LightButton, MainButton } from 'twenty-ui-deprecated/input';
 import { ClickToActionLink } from 'twenty-ui-deprecated/navigation';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { z } from 'zod';
+import {
+  FeatureFlagKey,
+  GetInviteSuggestionsDocument,
+} from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
 
@@ -74,7 +80,8 @@ export const InviteTeam = () => {
     control,
     handleSubmit,
     watch,
-    formState: { isValid, isSubmitting },
+    reset,
+    formState: { isValid, isSubmitting, isDirty },
   } = useForm<FormInput>({
     mode: 'onChange',
     defaultValues: {
@@ -87,6 +94,64 @@ export const InviteTeam = () => {
     control,
     name: 'emails',
   });
+
+  const isInviteSuggestionsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_ONBOARDING_INVITE_SUGGESTIONS_ENABLED,
+  );
+
+  const hasPrefilledSuggestionsRef = useRef(false);
+
+  const {
+    data: inviteSuggestionsData,
+    startPolling,
+    stopPolling,
+  } = useQuery(GetInviteSuggestionsDocument, {
+    skip: !isInviteSuggestionsEnabled,
+    fetchPolicy: 'network-only',
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const inviteSuggestions = inviteSuggestionsData?.getInviteSuggestions ?? [];
+  const hasInviteSuggestions = inviteSuggestions.length > 0;
+
+  // Suggestions are computed asynchronously after the calendar connects, so we
+  // briefly poll to let them warm up, then give up if none arrive.
+  useEffect(() => {
+    if (!isInviteSuggestionsEnabled || hasInviteSuggestions) {
+      stopPolling();
+      return;
+    }
+
+    startPolling(2000);
+    const stopPollingTimeout = setTimeout(() => stopPolling(), 12000);
+
+    return () => clearTimeout(stopPollingTimeout);
+  }, [
+    isInviteSuggestionsEnabled,
+    hasInviteSuggestions,
+    startPolling,
+    stopPolling,
+  ]);
+
+  // Prefill the form once with discovered teammates, unless the user has
+  // already started typing.
+  useEffect(() => {
+    if (
+      hasPrefilledSuggestionsRef.current ||
+      !hasInviteSuggestions ||
+      isDirty
+    ) {
+      return;
+    }
+
+    hasPrefilledSuggestionsRef.current = true;
+    reset({
+      emails: [
+        ...inviteSuggestions.map((suggestion) => ({ email: suggestion.email })),
+        { email: '' },
+      ],
+    });
+  }, [hasInviteSuggestions, inviteSuggestions, isDirty, reset]);
 
   watch(({ emails }) => {
     if (!emails) {
@@ -170,7 +235,15 @@ export const InviteTeam = () => {
         <Trans>Invite your team</Trans>
       </Title>
       <SubTitle>
-        <Trans>Get the most out of your workspace by inviting your team.</Trans>
+        {hasInviteSuggestions ? (
+          <Trans>
+            We found teammates from your calendar. Review and invite them.
+          </Trans>
+        ) : (
+          <Trans>
+            Get the most out of your workspace by inviting your team.
+          </Trans>
+        )}
       </SubTitle>
       <StyledAnimatedContainer>
         {fields.map((field, index) => (

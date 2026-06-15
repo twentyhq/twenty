@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type QueryRunner, Repository } from 'typeorm';
 
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
@@ -33,6 +35,7 @@ export class OnboardingService {
     private readonly billingService: BillingService,
     private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly featureFlagService: FeatureFlagService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
@@ -94,12 +97,31 @@ export class OnboardingService {
       userVars.get(OnboardingStepKeys.ONBOARDING_BOOK_ONBOARDING_PENDING) ===
       true;
 
-    if (isProfileCreationPending) {
-      return OnboardingStatus.PROFILE_CREATION;
-    }
+    const isInviteSuggestionsEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_ONBOARDING_INVITE_SUGGESTIONS_ENABLED,
+        workspace.id,
+      );
 
-    if (isConnectAccountPending) {
-      return OnboardingStatus.SYNC_EMAIL;
+    // When invite suggestions are enabled we surface the account connection
+    // step before profile creation, so the calendar sync gets a head start and
+    // we can prefill teammates by the time the invite step is reached.
+    if (isInviteSuggestionsEnabled) {
+      if (isConnectAccountPending) {
+        return OnboardingStatus.SYNC_EMAIL;
+      }
+
+      if (isProfileCreationPending) {
+        return OnboardingStatus.PROFILE_CREATION;
+      }
+    } else {
+      if (isProfileCreationPending) {
+        return OnboardingStatus.PROFILE_CREATION;
+      }
+
+      if (isConnectAccountPending) {
+        return OnboardingStatus.SYNC_EMAIL;
+      }
     }
 
     if (isInviteTeamPending) {
@@ -127,6 +149,49 @@ export class OnboardingService {
     }
 
     return OnboardingStatus.COMPLETED;
+  }
+
+  async isOnboardingConnectAccountPending({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const value = await this.userVarsService.get({
+      userId,
+      workspaceId,
+      key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+    });
+
+    return value === true;
+  }
+
+  // Whether completing this account connection should trigger the fast
+  // teammate lookup used to prefill the invite step. Only true while the user
+  // is still on the onboarding connect step and the feature is enabled.
+  async shouldComputeInviteSuggestionsOnConnect({
+    userId,
+    workspaceId,
+  }: {
+    userId?: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    if (!isDefined(userId)) {
+      return false;
+    }
+
+    const isConnectAccountPending =
+      await this.isOnboardingConnectAccountPending({ userId, workspaceId });
+
+    if (!isConnectAccountPending) {
+      return false;
+    }
+
+    return this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_ONBOARDING_INVITE_SUGGESTIONS_ENABLED,
+      workspaceId,
+    );
   }
 
   async setOnboardingConnectAccountPending(
