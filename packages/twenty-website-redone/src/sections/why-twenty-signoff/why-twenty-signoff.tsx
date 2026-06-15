@@ -9,7 +9,8 @@ export function WhyTwentySignoff() {
   return (
     <Signoff
       body={i18n._(msg`Open-source, AI-ready, and yours to shape.`)}
-      heading={i18n._(msg`Build a CRM your competitors\n*can't buy.*`)}
+      crosshairSide="left"
+      heading={i18n._(msg`Build a CRM your\ncompetitors *can't buy.*`)}
       scheme="dark"
     >
       <Button

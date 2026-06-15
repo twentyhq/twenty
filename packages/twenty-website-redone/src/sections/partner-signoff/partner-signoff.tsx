@@ -12,7 +12,6 @@ export function PartnerSignoff() {
       body={i18n._(
         msg`Join our partner ecosystem and help businesses take control of their CRM.`,
       )}
-      centered
       heading={i18n._(msg`Ready to grow\n*with Twenty?*`)}
       scheme="light"
     >

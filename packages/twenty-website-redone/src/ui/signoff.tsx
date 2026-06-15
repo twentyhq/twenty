@@ -8,23 +8,25 @@ import { GuideCrosshair } from './guide-crosshair';
 import { Heading } from './heading';
 import { SectionShell } from './section-shell';
 
-// The centred variant's decorative crosshair has only ever anchored here.
-const CENTERED_CROSSHAIR = { crossX: 'calc(50% + 334px)', crossY: '198px' };
+type SignoffCrosshairSide = 'left' | 'right';
+
+const SIGNOFF_CROSSHAIR_Y = '198px';
+const SIGNOFF_CROSSHAIR_X: Record<SignoffCrosshairSide, string> = {
+  left: 'calc(50% - 334px)',
+  right: 'calc(50% + 334px)',
+};
 
 const SignoffStack = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
+  padding-block: ${spacing(20)};
   text-align: center;
 
-  &[data-centered] {
-    padding-block: ${spacing(20)};
-
-    ${mediaUp('md')} {
-      justify-content: center;
-      min-height: 759px;
-      padding-block: 0;
-    }
+  ${mediaUp('md')} {
+    justify-content: center;
+    min-height: 759px;
+    padding-block: 0;
   }
 `;
 
@@ -45,36 +47,31 @@ const Actions = styled.div`
 
 export type SignoffProps = {
   body: string;
-  // Centred fills a tall panel with a decorative crosshair (flush, owns its
-  // height); otherwise it's a centred block on the standard section rhythm.
-  centered?: boolean;
   children: ReactNode;
+  crosshairSide?: SignoffCrosshairSide;
   heading: string;
   scheme?: Scheme;
 };
 
 export function Signoff({
   body,
-  centered = false,
   children,
+  crosshairSide = 'right',
   heading,
   scheme = 'light',
 }: SignoffProps) {
   return (
     <SectionShell
       background={
-        centered ? (
-          <GuideCrosshair
-            crossX={CENTERED_CROSSHAIR.crossX}
-            crossY={CENTERED_CROSSHAIR.crossY}
-          />
-        ) : undefined
+        <GuideCrosshair
+          crossX={SIGNOFF_CROSSHAIR_X[crosshairSide]}
+          crossY={SIGNOFF_CROSSHAIR_Y}
+        />
       }
-      keepsTopRhythm={!centered}
-      rhythm={centered ? 'flush' : 'spacious'}
+      rhythm="flush"
       scheme={scheme}
     >
-      <SignoffStack data-centered={centered ? '' : undefined}>
+      <SignoffStack>
         <Heading as="h2" size="lg" weight="light">
           {heading}
         </Heading>
