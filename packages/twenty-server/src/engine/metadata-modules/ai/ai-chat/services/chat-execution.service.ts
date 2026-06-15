@@ -17,7 +17,6 @@ import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/code-execution-stream-emitter.type';
@@ -35,6 +34,7 @@ import {
   LOAD_SKILL_TOOL_NAME,
 } from 'src/engine/core-modules/tool-provider/tools';
 import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/utils/estimate-tool-output-tokens.util';
+import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
 import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/resolve-tool-name.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
@@ -477,8 +477,7 @@ export class ChatExecutionService {
           }
 
           const succeeded =
-            part.type === 'tool-result' &&
-            (part.output as ToolOutput | undefined)?.success !== false;
+            part.type === 'tool-result' && isToolOutputSuccessful(part.output);
 
           const toolAttributes = {
             model: registeredModel.modelId,

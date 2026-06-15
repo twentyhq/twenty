@@ -23,7 +23,7 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/utils/estimate-tool-output-tokens.util';
-import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
@@ -249,7 +249,7 @@ export class AgentAsyncExecutorService {
 
             const succeeded =
               part.type === 'tool-result' &&
-              (part.output as ToolOutput | undefined)?.success !== false;
+              isToolOutputSuccessful(part.output);
 
             const toolAttributes = {
               model: registeredModel.modelId,

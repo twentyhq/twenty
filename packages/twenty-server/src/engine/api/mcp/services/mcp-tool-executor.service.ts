@@ -6,8 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/utils/estimate-tool-output-tokens.util';
+import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
 import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/resolve-tool-name.util';
-import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
 import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
 import {
@@ -71,7 +71,7 @@ export class McpToolExecutorService {
         messages: [],
       });
 
-      const succeeded = (result as ToolOutput | undefined)?.success !== false;
+      const succeeded = isToolOutputSuccessful(result);
 
       this.metricsService.incrementCounterBy({
         key: succeeded
