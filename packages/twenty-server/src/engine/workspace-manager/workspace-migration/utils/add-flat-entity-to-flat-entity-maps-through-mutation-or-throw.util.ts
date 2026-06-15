@@ -45,12 +45,11 @@ export const addFlatEntityToFlatEntityMapsThroughMutationOrThrow = <
         flatEntity.applicationId
       ];
 
+    // The throw above guarantees this universalIdentifier is absent from the
+    // maps, so it cannot already be in this application's list — push directly
+    // instead of scanning, which would make building the maps O(n²).
     if (isDefined(existingUniversalIdentifiers)) {
-      if (
-        !existingUniversalIdentifiers.includes(flatEntity.universalIdentifier)
-      ) {
-        existingUniversalIdentifiers.push(flatEntity.universalIdentifier);
-      }
+      existingUniversalIdentifiers.push(flatEntity.universalIdentifier);
     } else {
       flatEntityMapsToMutate.universalIdentifiersByApplicationId[
         flatEntity.applicationId
