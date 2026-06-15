@@ -15,7 +15,7 @@
     "typeorm": "../../node_modules/typeorm/.bin/typeorm"
   },
   "dependencies": {
-    "@ai-sdk/amazon-bedrock": "^4.0.97",
+    "@ai-sdk/amazon-bedrock": "^4.0.116",
     "@ai-sdk/anthropic": "^3.0.72",
     "@ai-sdk/azure": "^3.0.55",
     "@ai-sdk/google": "^3.0.65",

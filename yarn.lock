@@ -12,35 +12,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ai-sdk/amazon-bedrock@npm:^4.0.97":
-  version: 4.0.97
-  resolution: "@ai-sdk/amazon-bedrock@npm:4.0.97"
+"@ai-sdk/amazon-bedrock@npm:^4.0.116":
+  version: 4.0.116
+  resolution: "@ai-sdk/amazon-bedrock@npm:4.0.116"
   dependencies:
-    "@ai-sdk/anthropic": "npm:3.0.72"
-    "@ai-sdk/provider": "npm:3.0.9"
-    "@ai-sdk/provider-utils": "npm:4.0.24"
+    "@ai-sdk/anthropic": "npm:3.0.83"
+    "@ai-sdk/openai": "npm:3.0.70"
+    "@ai-sdk/provider": "npm:3.0.10"
+    "@ai-sdk/provider-utils": "npm:4.0.28"
     "@smithy/eventstream-codec": "npm:^4.0.1"
     "@smithy/util-utf8": "npm:^4.0.0"
     aws4fetch: "npm:^1.0.20"
   peerDependencies:
     zod: ^3.25.76 || ^4.1.8
-  checksum: 10c0/f084b27c7b004925295be58f7b13e9a0c9d6c4d1df4c7317f90fe946deb3e695dff73564d84a0556ea638aa4ba7ba577b2a781626fc5f343d2d632033a5dd749
+  checksum: 10c0/6c5c29c4e74d481983196ae91eae3ed0ff12c7c50d22b31a3a26837a451295372d1bde2845e806cbb285fb3db7ccc3e102edddd6ce387763f19c90b92fc16c9e
   languageName: node
   linkType: hard
 
-"@ai-sdk/anthropic@npm:3.0.72":
-  version: 3.0.72
-  resolution: "@ai-sdk/anthropic@npm:3.0.72"
-  dependencies:
-    "@ai-sdk/provider": "npm:3.0.9"
-    "@ai-sdk/provider-utils": "npm:4.0.24"
-  peerDependencies:
-    zod: ^3.25.76 || ^4.1.8
-  checksum: 10c0/3646f75dd0ae0accd747963c9c1a6e0901df6971931e0947f9cc5f31f7a680ba1ca65ef28c3dd10e586569d64b8f155d8eae3af9aa9e21eff114c59fb23f95c1
-  languageName: node
-  linkType: hard
-
-"@ai-sdk/anthropic@npm:^3.0.72":
+"@ai-sdk/anthropic@npm:3.0.83, @ai-sdk/anthropic@npm:^3.0.72":
   version: 3.0.83
   resolution: "@ai-sdk/anthropic@npm:3.0.83"
   dependencies:
@@ -53509,7 +53498,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-server@workspace:packages/twenty-server"
   dependencies:
-    "@ai-sdk/amazon-bedrock": "npm:^4.0.97"
+    "@ai-sdk/amazon-bedrock": "npm:^4.0.116"
     "@ai-sdk/anthropic": "npm:^3.0.72"
     "@ai-sdk/azure": "npm:^3.0.55"
     "@ai-sdk/google": "npm:^3.0.65"
