@@ -40,7 +40,7 @@ const getNextOnboardingStatus = ({
   const isSoloWorkspace = currentWorkspace?.workspaceMembersCount === 1;
 
   if (onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION) {
-    if (isInviteSuggestionsEnabled && isAccountSyncEnabled) {
+    if (isInviteSuggestionsEnabled) {
       return OnboardingStatus.SYNC_EMAIL;
     }
     return OnboardingStatus.PROFILE_CREATION;

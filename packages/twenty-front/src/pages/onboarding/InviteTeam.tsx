@@ -60,9 +60,6 @@ const StyledActionSkipLinkContainer = styled.div`
   margin: ${themeCssVariables.spacing[3]} 0 0;
 `;
 
-const INVITE_SUGGESTIONS_POLL_INTERVAL_MS = 2000;
-const INVITE_SUGGESTIONS_POLL_TIMEOUT_MS = 12000;
-
 const validationSchema = z.object({
   emails: z.array(z.object({ email: z.union([z.literal(''), z.email()]) })),
 });
@@ -103,17 +100,12 @@ export const InviteTeam = () => {
   );
 
   const [hasPrefilledSuggestions, setHasPrefilledSuggestions] = useState(false);
-  const [suggestionsPollIntervalMs, setSuggestionsPollIntervalMs] = useState(
-    isInviteSuggestionsEnabled ? INVITE_SUGGESTIONS_POLL_INTERVAL_MS : 0,
-  );
 
   const { data: inviteSuggestionsData } = useQuery(
     GetInviteSuggestionsDocument,
     {
       skip: !isInviteSuggestionsEnabled,
       fetchPolicy: 'network-only',
-      pollInterval: suggestionsPollIntervalMs,
-      notifyOnNetworkStatusChange: true,
     },
   );
 
@@ -122,25 +114,6 @@ export const InviteTeam = () => {
     [inviteSuggestionsData],
   );
   const hasInviteSuggestions = inviteSuggestions.length > 0;
-
-  useEffect(() => {
-    if (hasInviteSuggestions) {
-      setSuggestionsPollIntervalMs(0);
-    }
-  }, [hasInviteSuggestions]);
-
-  useEffect(() => {
-    if (!isInviteSuggestionsEnabled) {
-      return;
-    }
-
-    const stopPollingTimeout = setTimeout(
-      () => setSuggestionsPollIntervalMs(0),
-      INVITE_SUGGESTIONS_POLL_TIMEOUT_MS,
-    );
-
-    return () => clearTimeout(stopPollingTimeout);
-  }, [isInviteSuggestionsEnabled]);
 
   useEffect(() => {
     if (hasPrefilledSuggestions || !hasInviteSuggestions || isDirty) {
