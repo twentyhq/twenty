@@ -1,4 +1,4 @@
-import { type LogLevel, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 
 import { plainToClass } from 'class-transformer';
 import {
@@ -23,7 +23,10 @@ import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.en
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
-import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
+import {
+  LoggerDriverType,
+  type TwentyLogLevel,
+} from 'src/engine/core-modules/logger/interfaces';
 import { type MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
 import { CastToLogLevelArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-log-level-array.decorator';
 import { CastToMeterDriverArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-meter-driver.decorator';
@@ -871,24 +874,15 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
-    description: 'Levels of logging to be captured',
+    description:
+      'Levels of logging to be captured. The "performance" level emits LoggerService perf / perfTime / perfTimeEnd instrumentation.',
     type: ConfigVariableType.ARRAY,
-    options: ['log', 'error', 'warn', 'debug'],
+    options: ['log', 'error', 'warn', 'debug', 'verbose', 'performance'],
     isEnvOnly: true,
   })
   @CastToLogLevelArray()
   @IsOptional()
-  LOG_LEVELS: LogLevel[] = ['log', 'error', 'warn'];
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LOGGING,
-    description:
-      'Emit performance instrumentation logs (LoggerService perf / perfTime / perfTimeEnd). Enabled by default; disable to silence the install-perf logs (e.g. in integration tests).',
-    type: ConfigVariableType.BOOLEAN,
-    isEnvOnly: true,
-  })
-  @IsOptional()
-  PERF_LOG_ENABLED = true;
+  LOG_LEVELS: TwentyLogLevel[] = ['log', 'error', 'warn', 'performance'];
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,

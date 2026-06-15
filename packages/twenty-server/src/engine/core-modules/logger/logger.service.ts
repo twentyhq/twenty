@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 
 import { LOGGER_DRIVER } from 'src/engine/core-modules/logger/logger.constants';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type TwentyLogLevel } from 'src/engine/core-modules/logger/interfaces';
 
 type LoggerDriverType = ConsoleLogger & {
   options?: {
@@ -19,13 +19,14 @@ type LoggerDriverType = ConsoleLogger & {
 export class LoggerService implements LoggerServiceInterface {
   private readonly perfTimers = new Map<string, number>();
 
-  constructor(
-    @Inject(LOGGER_DRIVER) private driver: LoggerDriverType,
-    private readonly twentyConfigService: TwentyConfigService,
-  ) {}
+  constructor(@Inject(LOGGER_DRIVER) private driver: LoggerDriverType) {}
 
   private isPerfLoggingEnabled() {
-    return this.twentyConfigService.get('PERF_LOG_ENABLED');
+    return (
+      (
+        this.driver.options?.logLevels as TwentyLogLevel[] | undefined
+      )?.includes('performance') ?? false
+    );
   }
 
   // oxlint-disable-next-line typescript/no-explicit-any

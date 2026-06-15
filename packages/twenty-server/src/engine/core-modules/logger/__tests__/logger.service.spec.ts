@@ -2,15 +2,14 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { LOGGER_DRIVER } from 'src/engine/core-modules/logger/logger.constants';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 describe('LoggerService', () => {
   let service: LoggerService;
-  const driver = { log: jest.fn() };
-  const get = jest.fn();
+  const driver = { log: jest.fn(), options: { logLevels: [] as string[] } };
 
   beforeEach(async () => {
     jest.clearAllMocks();
+    driver.options.logLevels = ['log', 'error', 'warn'];
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -18,10 +17,6 @@ describe('LoggerService', () => {
         {
           provide: LOGGER_DRIVER,
           useValue: driver,
-        },
-        {
-          provide: TwentyConfigService,
-          useValue: { get },
         },
       ],
     }).compile();
@@ -34,16 +29,16 @@ describe('LoggerService', () => {
   });
 
   describe('perf', () => {
-    it('should log through the driver when PERF_LOG_ENABLED is true', () => {
-      get.mockReturnValue(true);
+    it('should log through the driver when the performance level is enabled', () => {
+      driver.options.logLevels = ['log', 'performance'];
 
       service.perf('message', 'Category');
 
       expect(driver.log).toHaveBeenCalledWith('message', 'Category');
     });
 
-    it('should not log when PERF_LOG_ENABLED is false', () => {
-      get.mockReturnValue(false);
+    it('should not log when the performance level is disabled', () => {
+      driver.options.logLevels = ['log', 'error', 'warn'];
 
       service.perf('message', 'Category');
 
@@ -52,8 +47,8 @@ describe('LoggerService', () => {
   });
 
   describe('perfTime / perfTimeEnd', () => {
-    it('should log the elapsed duration for a started span when enabled', () => {
-      get.mockReturnValue(true);
+    it('should log the elapsed duration when the performance level is enabled', () => {
+      driver.options.logLevels = ['performance'];
 
       service.perfTime('Category', 'label');
       service.perfTimeEnd('Category', 'label');
@@ -65,8 +60,8 @@ describe('LoggerService', () => {
       );
     });
 
-    it('should not log when PERF_LOG_ENABLED is false', () => {
-      get.mockReturnValue(false);
+    it('should not log when the performance level is disabled', () => {
+      driver.options.logLevels = ['log'];
 
       service.perfTime('Category', 'label');
       service.perfTimeEnd('Category', 'label');
