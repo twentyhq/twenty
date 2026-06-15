@@ -1,0 +1,19 @@
+packages/twenty-front/src/modules/advanced-text-editor/components/WorkflowSendEmailAttachments.tsx
+  s_ad06bf65e6995b::t_352550f28f456e 38,42-45,51,104,120,124,135,139,141-142,148,157,172
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "2b8c9e09dc0927c15e8d3d813302b286abe2f46a",
+  "prompts": {},
+  "sessions": {
+    "s_ad06bf65e6995b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "60236852-0858-4310-a82b-0f399a218d71",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
