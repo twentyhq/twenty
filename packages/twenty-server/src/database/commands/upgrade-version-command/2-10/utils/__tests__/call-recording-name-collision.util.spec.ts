@@ -6,6 +6,7 @@ import {
   buildCallRecordingObjectRenameUpdates,
   findCalendarEventFieldNameCollisionsForCallRecording,
   findCallRecordingObjectNameCollisions,
+  LEGACY_CALENDAR_EVENT_RECORDING_PREFERENCE_FIELD_UNIVERSAL_IDENTIFIER,
   resolveAvailableOldCalendarEventFieldName,
   resolveAvailableOldCallRecordingObjectNames,
 } from 'src/database/commands/upgrade-version-command/2-10/utils/call-recording-name-collision.util';
@@ -327,8 +328,7 @@ describe('findCalendarEventFieldNameCollisionsForCallRecording', () => {
     const maps = buildFlatFieldMetadataMaps([
       getCalendarEventFieldMetadataMock({
         universalIdentifier:
-          STANDARD_OBJECTS.calendarEvent.fields.recordingPreference
-            .universalIdentifier,
+          LEGACY_CALENDAR_EVENT_RECORDING_PREFERENCE_FIELD_UNIVERSAL_IDENTIFIER,
         name: 'recordingPreference',
       }),
       getCalendarEventFieldMetadataMock({
