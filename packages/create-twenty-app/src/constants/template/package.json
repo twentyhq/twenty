@@ -16,15 +16,14 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
-  "dependencies": {
-    "twenty-client-sdk": "TO-BE-GENERATED"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "^24.7.2",
     "@types/react": "^19.0.0",
     "oxlint": "^0.16.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "twenty-client-sdk": "TO-BE-GENERATED",
     "twenty-sdk": "TO-BE-GENERATED",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
