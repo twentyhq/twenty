@@ -1,6 +1,8 @@
 import ReactDOM from 'react-dom/client';
 
 import { App } from '@/app/components/App';
+import { migrateTokenPairCookieToLocalStorage } from '@/auth/utils/migrateTokenPairCookieToLocalStorage';
+import { hydrateMetadataStore } from '@/metadata-store/storage/metadataStoreStorage';
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'twenty-ui-deprecated/style.css';
 import 'twenty-ui-deprecated/theme-light.css';
@@ -10,8 +12,16 @@ import 'twenty-ui-deprecated/theme-dark.css';
 import 'twenty-ui/style.css';
 import './index.css';
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') ?? document.body,
-);
+// TODO: REMOVE this after 2026-12-12 — temporary migration of tokenPair from the
+// legacy cookie to localStorage (legacy cookie has a 180-day expiry).
+migrateTokenPairCookieToLocalStorage();
 
-root.render(<App />);
+const renderApp = () => {
+  const root = ReactDOM.createRoot(
+    document.getElementById('root') ?? document.body,
+  );
+
+  root.render(<App />);
+};
+
+hydrateMetadataStore().then(renderApp, renderApp);

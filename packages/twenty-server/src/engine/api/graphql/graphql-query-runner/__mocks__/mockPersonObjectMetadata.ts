@@ -163,7 +163,8 @@ export const mockPersonFlatObjectMetadata = (
   shortcut: null,
   description: null,
   standardOverrides: null,
-  isUIReadOnly: false,
+  isUIEditable: true,
+  isUICreatable: true,
   applicationUniversalIdentifier: 'test-application-id',
   fieldUniversalIdentifiers: mockFieldMetadatas.map(
     (field) => field.universalIdentifier,

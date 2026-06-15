@@ -11,7 +11,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 type RecordTableBodyFocusClickOutsideEffectProps = {
-  tableBodyRef: React.RefObject<HTMLDivElement>;
+  tableBodyRef: React.RefObject<HTMLDivElement | null>;
 };
 
 export const RecordTableBodyFocusClickOutsideEffect = ({

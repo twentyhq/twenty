@@ -18,8 +18,8 @@
     "@emotion/styled": "^11.11.0",
     "react-loading-skeleton": "^3.5.0",
     "react-markdown": "^10.1.0",
-    "twenty-client-sdk": "2.10.1",
-    "twenty-sdk": "2.10.1"
+    "twenty-client-sdk": "2.13.0",
+    "twenty-sdk": "2.13.0"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",

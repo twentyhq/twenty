@@ -2,7 +2,7 @@
 import { GraphQLUnionType } from 'graphql'
 import { RenderContext } from '../common/RenderContext'
 import { FieldMap } from '../../runtime/types'
-import uniq from 'lodash/uniq'
+import uniq from 'lodash/uniq.js'
 
 export const unionType = (type: GraphQLUnionType, _: RenderContext) => {
     const types = type.getTypes()

@@ -149,7 +149,7 @@ export function MarkdownProse({ markdown }: MarkdownProseProps) {
               alt={alt ?? ''}
               decoding="async"
               loading="lazy"
-              src={resolveAssetUrl(src)}
+              src={resolveAssetUrl(typeof src === 'string' ? src : undefined)}
               // oxlint-disable-next-line react/jsx-props-no-spreading -- ReactMarkdown component overrides
               {...props}
             />

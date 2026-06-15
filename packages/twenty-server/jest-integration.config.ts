@@ -24,7 +24,7 @@ const jestConfig: JestConfigWithTsJest = {
   silent: false,
   errorOnDeprecated: true,
   maxConcurrency: 1,
-  moduleFileExtensions: ['js', 'json', 'ts'],
+  moduleFileExtensions: ['js', 'mjs', 'json', 'ts'],
   rootDir: '.',
   testEnvironment: 'node',
   testPathIgnorePatterns: [
@@ -40,8 +40,14 @@ const jestConfig: JestConfigWithTsJest = {
   globalTeardown: '<rootDir>/test/integration/utils/teardown-test.ts',
   testTimeout: 20000,
   maxWorkers: 1,
+  // jsdom 29 pulls ESM-only transitive deps (parse5, entities, tough-cookie,
+  // @exodus/bytes via html-encoding-sniffer, @csstools/@asamuzakjp css engine);
+  // let swc transform them (and .mjs below) so jest can require jsdom.
+  transformIgnorePatterns: [
+    '/node_modules/(?!(jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp)/)',
+  ],
   transform: {
-    '^.+\\.(t|j)s$': [
+    '^.+\\.(t|j|mj)s$': [
       '@swc/jest',
       {
         jsc: {

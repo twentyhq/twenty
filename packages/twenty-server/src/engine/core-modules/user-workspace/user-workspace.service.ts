@@ -41,7 +41,7 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
-import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
+import { getDomainFromEmailOrThrow } from 'src/utils/get-domain-from-email-or-throw';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntity> {
   private readonly logger = new Logger(UserWorkspaceService.name);
@@ -357,7 +357,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
 
     const workspacesFromApprovedAccessDomain = (
       await this.approvedAccessDomainService.findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain(
-        getDomainNameByEmail(email),
+        getDomainFromEmailOrThrow(email),
       )
     )
       .filter(

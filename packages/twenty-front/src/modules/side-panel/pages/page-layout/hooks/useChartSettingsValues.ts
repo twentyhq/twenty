@@ -5,6 +5,7 @@ import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/
 import { findChartGroupByFieldMetadataItem } from '@/side-panel/pages/page-layout/utils/findChartGroupByFieldMetadataItem';
 import { getChartAxisNameDisplayOptions } from '@/side-panel/pages/page-layout/utils/getChartAxisNameDisplayOptions';
 import { getChartFilterRulesCount } from '@/side-panel/pages/page-layout/utils/getChartFilterRulesCount';
+import { getChartNumberFormatLabel } from '@/side-panel/pages/page-layout/utils/getChartNumberFormatLabel';
 import { getDateGranularityLabel } from '@/side-panel/pages/page-layout/utils/getDateGranularityLabel';
 import { getFieldLabelWithSubField } from '@/side-panel/pages/page-layout/utils/getFieldLabelWithSubField';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
@@ -298,6 +299,11 @@ export const useChartSettingsValues = ({
         return isBarOrLineChart || isPieChart
           ? (configuration.displayLegend ?? true)
           : true;
+      case CHART_CONFIGURATION_SETTING_IDS.FORMAT:
+        return configuration.__typename === 'AggregateChartConfiguration' &&
+          isDefined(configuration.numberFormat)
+          ? getChartNumberFormatLabel(configuration.numberFormat)
+          : undefined;
       case CHART_CONFIGURATION_SETTING_IDS.PREFIX:
         return configuration.__typename === 'AggregateChartConfiguration'
           ? (configuration.prefix ?? '')

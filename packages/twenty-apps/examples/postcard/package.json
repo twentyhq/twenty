@@ -16,20 +16,24 @@
     "lint": "oxlint -c .oxlintrc.json .",
     "lint:fix": "oxlint --fix -c .oxlintrc.json .",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
-    "twenty-client-sdk": "2.10.1",
-    "twenty-sdk": "2.10.1"
+    "twenty-client-sdk": "2.13.0",
+    "twenty-sdk": "2.13.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@types/node": "^24.7.2",
     "@types/react": "^19.0.0",
     "oxlint": "^0.16.0",
+    "playwright": "^1.60.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
-    "vitest": "^3.2.6"
+    "vitest": "^4.0.0"
   }
 }

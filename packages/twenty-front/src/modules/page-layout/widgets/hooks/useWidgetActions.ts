@@ -84,7 +84,7 @@ export const useWidgetActions = ({
     }),
     fieldMetadataItem: {
       id: fieldMetadataItem.id,
-      isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+      isUIEditable: fieldMetadataItem.isUIEditable ?? true,
       isCustom: fieldMetadataItem.isCustom ?? false,
     },
     fieldDefinition,

@@ -40,7 +40,7 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       icon: 'Icon123',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'uuid',
     },
     standardObjectMetadataRelatedEntityIds,
@@ -59,7 +59,7 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
@@ -81,7 +81,7 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarClock',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
@@ -103,7 +103,7 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isSystem: true,
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
       },
@@ -123,7 +123,7 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`The creator of the record`),
       icon: 'IconCreativeCommonsSa',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -148,7 +148,7 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       ),
       icon: 'IconUserCircle',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -214,7 +214,7 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`Handle`),
       icon: 'IconAt',
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -234,7 +234,7 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`WorkspaceMember`),
       icon: 'IconCircleUser',
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'blocklist',
       settings: {
