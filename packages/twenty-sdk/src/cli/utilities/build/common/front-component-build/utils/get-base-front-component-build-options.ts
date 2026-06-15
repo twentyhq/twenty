@@ -13,5 +13,5 @@ export const getBaseFrontComponentBuildOptions = (): esbuild.BuildOptions => ({
   sourcemap: true,
   metafile: true,
   logLevel: 'silent',
-  plugins: [...getFrontComponentBuildPlugins()],
+  plugins: [...getFrontComponentBuildPlugins({ usePreact: true })],
 });
