@@ -13,6 +13,7 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 import { setPgDateTypeParser } from 'src/database/pg/set-pg-date-type-parser';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { getSessionStorageOptions } from 'src/engine/core-modules/session-storage/session-storage.module-factory';
+import { handleFatalError } from 'src/engine/utils/handle-fatal-error.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { configTransformers } from 'src/engine/core-modules/twenty-config/utils/config-transformers.util';
 import { UnhandledExceptionFilter } from 'src/filters/unhandled-exception.filter';
@@ -93,4 +94,11 @@ const bootstrap = async () => {
   await app.listen(twentyConfigService.get('NODE_PORT'));
 };
 
-void bootstrap();
+void bootstrap().catch((error: unknown) => {
+  handleFatalError({
+    error,
+    context: 'MainBootstrap',
+  });
+
+  process.exit(1);
+});

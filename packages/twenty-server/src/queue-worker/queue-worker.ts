@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
+import { handleFatalError } from 'src/engine/utils/handle-fatal-error.util';
 import 'src/instrument';
 import { QueueWorkerModule } from 'src/queue-worker/queue-worker.module';
 
@@ -21,7 +22,12 @@ async function bootstrap() {
     // Inject our logger
     app.useLogger(loggerService ?? false);
   } catch (err) {
-    loggerService?.error(err?.message, err?.name);
+    handleFatalError({
+      error: err,
+      context: 'QueueWorkerBootstrap',
+      logger: loggerService,
+      captureInSentry: false,
+    });
 
     if (shouldCaptureException(err)) {
       exceptionHandlerService?.captureExceptions([err]);
@@ -30,4 +36,7 @@ async function bootstrap() {
     throw err;
   }
 }
-void bootstrap();
+
+void bootstrap().catch(() => {
+  process.exit(1);
+});
