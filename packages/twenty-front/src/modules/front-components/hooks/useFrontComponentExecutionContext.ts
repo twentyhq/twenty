@@ -1,6 +1,10 @@
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
+import { useStore } from 'jotai';
 import { useRef } from 'react';
 import {
   type FrontComponentExecutionContext,
@@ -66,12 +70,37 @@ export const useFrontComponentExecutionContext = ({
     commandMenuItemId ?? '',
   );
 
+  const parentViewState = useAtomComponentStateCallbackState(
+    contextStoreRecordShowParentViewComponentState,
+    MAIN_CONTEXT_STORE_INSTANCE_ID,
+  );
+  const store = useStore();
+
   const navigate: FrontComponentHostCommunicationApi['navigate'] = async (
     to,
     params,
     queryParams,
     options,
   ) => {
+    if (to === AppPath.RecordShowPage) {
+      const targetObjectNameSingular =
+        typeof params === 'object' &&
+        params !== null &&
+        'objectNameSingular' in params &&
+        typeof params.objectNameSingular === 'string'
+          ? params.objectNameSingular
+          : undefined;
+
+      const parentView = store.get(parentViewState);
+
+      if (
+        isDefined(parentView) &&
+        parentView.parentViewObjectNameSingular !== targetObjectNameSingular
+      ) {
+        store.set(parentViewState, undefined);
+      }
+    }
+
     navigateApp(
       to as AppPath,
       params as Parameters<typeof navigateApp>[1],

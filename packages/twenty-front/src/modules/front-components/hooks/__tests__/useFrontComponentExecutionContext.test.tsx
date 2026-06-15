@@ -1,9 +1,9 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
+import { AppPath } from 'twenty-shared/types';
 
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
-
 const mockNavigateApp = jest.fn();
 const mockRequestAccessTokenRefresh = jest.fn();
 const mockOpenConfirmationModal = jest.fn();
@@ -18,6 +18,9 @@ const mockEnqueueWarningSnackBar = jest.fn();
 const mockCloseSidePanelMenu = jest.fn();
 const mockSetCommandMenuItemProgress = jest.fn();
 const mockCopyToClipboard = jest.fn();
+const mockParentViewState = Symbol('parent-view-state');
+const mockStoreGet = jest.fn();
+const mockStoreSet = jest.fn();
 
 let mockCurrentUser: { id: string } | null = { id: 'user-123' };
 
@@ -92,6 +95,20 @@ jest.mock('~/hooks/useCopyToClipboard', () => ({
   }),
 }));
 
+jest.mock(
+  '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState',
+  () => ({
+    useAtomComponentStateCallbackState: () => mockParentViewState,
+  }),
+);
+
+jest.mock('jotai', () => ({
+  useStore: () => ({
+    get: mockStoreGet,
+    set: mockStoreSet,
+  }),
+}));
+
 const renderUseFrontComponentExecutionContext = (
   params: Parameters<typeof useFrontComponentExecutionContext>[0],
 ) =>
@@ -106,6 +123,7 @@ describe('useFrontComponentExecutionContext', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockCurrentUser = { id: 'user-123' };
+    mockStoreGet.mockReturnValue(undefined);
   });
 
   describe('executionContext', () => {
@@ -188,6 +206,50 @@ describe('useFrontComponentExecutionContext', () => {
         { tab: 'general' },
         { replace: true },
       );
+    });
+
+    it('should clear parent view state when navigating to a record show page of a different object', async () => {
+      mockStoreGet.mockReturnValue({
+        parentViewObjectNameSingular: 'company',
+      });
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.navigate(
+          AppPath.RecordShowPage as never,
+          {
+            objectNameSingular: 'person',
+            objectRecordId: 'record-1',
+          } as never,
+        );
+      });
+
+      expect(mockStoreSet).toHaveBeenCalledWith(mockParentViewState, undefined);
+    });
+
+    it('should keep parent view state when navigating to a record show page of the same object', async () => {
+      mockStoreGet.mockReturnValue({
+        parentViewObjectNameSingular: 'company',
+      });
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.navigate(
+          AppPath.RecordShowPage as never,
+          {
+            objectNameSingular: 'company',
+            objectRecordId: 'record-1',
+          } as never,
+        );
+      });
+
+      expect(mockStoreSet).not.toHaveBeenCalled();
     });
   });
 
