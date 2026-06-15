@@ -1,3 +1,8 @@
+// Force module scope: this file uses dynamic import() and global jest, so it
+// has no top-level import/export. Without this, tsc treats it as a global
+// script and its top-level bindings collide with the sibling route tests.
+export {};
+
 const ORIGINAL_FETCH = global.fetch;
 const ORIGINAL_BASE = process.env.BRIEF_REVIEW_BASE_URL;
 const ORIGINAL_SECRET = process.env.PARTNER_APPLICATION_SECRET;
