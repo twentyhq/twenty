@@ -6,9 +6,21 @@ type PackageJsonDependencies = {
   dependencies?: Record<string, string>;
 };
 
-// twenty-sdk ships the CLI and build/scaffolding tooling used only at dev and
-// build time — it is never imported by the published app's runtime. Keeping it
-// in "dependencies" ships dead weight, so it must live in "devDependencies".
+// Neither Twenty SDK package needs to be resolved by the published app at
+// runtime, so both must live in "devDependencies":
+// - twenty-sdk ships the CLI and build/scaffolding tooling used only at dev and
+//   build time, and is never imported by the published app's runtime.
+// - twenty-client-sdk is imported by app code but is provided at runtime by
+//   Twenty's injected SDK (Lambda SDK layer / server-served modules), so the
+//   app's installed copy is only needed for typecheck/build.
+// Keeping either under "dependencies" pulls it into the Lambda deps layer.
+const BUILD_TIME_DEPENDENCY_WARNINGS: Record<string, string> = {
+  'twenty-sdk':
+    '"twenty-sdk" is listed under "dependencies" in package.json. It is a build-time only tool and should be moved to "devDependencies".',
+  'twenty-client-sdk':
+    '"twenty-client-sdk" is listed under "dependencies" in package.json. It is provided at runtime by Twenty\'s injected SDK and should be moved to "devDependencies".',
+};
+
 export const validatePackageJsonDependencies = async (
   appPath: string,
 ): Promise<string[]> => {
@@ -20,11 +32,9 @@ export const validatePackageJsonDependencies = async (
 
   const packageJson = await readJson<PackageJsonDependencies>(packageJsonPath);
 
-  if (isDefined(packageJson.dependencies?.['twenty-sdk'])) {
-    return [
-      '"twenty-sdk" is listed under "dependencies" in package.json. It is a build-time only tool and should be moved to "devDependencies".',
-    ];
-  }
-
-  return [];
+  return Object.entries(BUILD_TIME_DEPENDENCY_WARNINGS)
+    .filter(([packageName]) =>
+      isDefined(packageJson.dependencies?.[packageName]),
+    )
+    .map(([, warning]) => warning);
 };
