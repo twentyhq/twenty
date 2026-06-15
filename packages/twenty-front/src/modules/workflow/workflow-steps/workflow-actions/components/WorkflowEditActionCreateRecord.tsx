@@ -166,6 +166,15 @@ export const WorkflowEditActionCreateRecord = ({
     saveAction(newFormData);
   };
 
+  const handleFieldClear = (fieldName: keyof CreateRecordFormData) => {
+    const newFormData: CreateRecordFormData = { ...formData };
+    delete newFormData[fieldName];
+
+    setFormData(newFormData);
+
+    saveAction(newFormData);
+  };
+
   const saveAction = useDebouncedCallback(
     async (formData: CreateRecordFormData) => {
       if (actionOptions.readonly === true) {
@@ -241,6 +250,9 @@ export const WorkflowEditActionCreateRecord = ({
               field={fieldDefinition}
               onChange={(value) => {
                 handleFieldChange(fieldDefinition.metadata.fieldName, value);
+              }}
+              onClear={() => {
+                handleFieldClear(fieldDefinition.metadata.fieldName);
               }}
               VariablePicker={WorkflowVariablePicker}
               readonly={isFormDisabled}
