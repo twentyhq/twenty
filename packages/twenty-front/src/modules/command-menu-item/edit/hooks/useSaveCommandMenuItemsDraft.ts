@@ -52,7 +52,7 @@ export const useSaveCommandMenuItemsDraft = () => {
       return;
     }
 
-    const results = await Promise.all(
+    await Promise.all(
       changedItems.map((item) => {
         const input: UpdateCommandMenuItemInput = {
           id: item.id,
@@ -65,11 +65,7 @@ export const useSaveCommandMenuItemsDraft = () => {
       }),
     );
 
-    const updatedItems = results
-      .map((result) => result.data?.updateCommandMenuItem)
-      .filter(isDefined);
-
-    updateInDraft('commandMenuItems', updatedItems);
+    updateInDraft('commandMenuItems', changedItems);
     applyChanges();
   }, [
     store,
