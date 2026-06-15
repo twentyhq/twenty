@@ -1,3 +1,4 @@
+import { isObject } from '@sniptt/guards';
 import { type Locale } from 'date-fns';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 
@@ -75,10 +76,7 @@ export const getDateFnsLocaleImport = (locale: AppLocale) => {
 // the ESM/CJS interop of the runtime (Vite vs jest). Resolve by shape instead of
 // by key/position so it stays correct regardless of export order or interop.
 const isDateFnsLocale = (value: unknown): value is Locale =>
-  typeof value === 'object' &&
-  value !== null &&
-  'code' in value &&
-  'formatLong' in value;
+  isObject(value) && 'code' in value && 'formatLong' in value;
 
 export const getDateFnsLocale = async (
   localeString?: string | null,

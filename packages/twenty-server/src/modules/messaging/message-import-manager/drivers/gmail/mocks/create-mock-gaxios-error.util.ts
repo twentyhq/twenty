@@ -20,7 +20,8 @@ const createMockGaxiosResponse = <T>(
     type: 'default',
     url: MOCK_URL.toString(),
     body: null,
-    bodyUsed: false,
+    // real gaxios builds the error from a consumed fetch Response
+    bodyUsed: true,
     arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)),
     blob: () => Promise.resolve(new Blob()),
     bytes: () => Promise.resolve(new Uint8Array()),
@@ -44,13 +45,9 @@ export const createMockGaxiosError = <T>({
   statusText?: string;
   data: T;
 }): GaxiosError<T> => {
-  const error = new GaxiosError<T>(message, {
-    url: MOCK_URL,
-    headers: new Headers(),
-  });
-
-  error.response = createMockGaxiosResponse(status, statusText, data);
-  error.status = status;
-
-  return error;
+  return new GaxiosError<T>(
+    message,
+    { url: MOCK_URL, headers: new Headers() },
+    createMockGaxiosResponse(status, statusText, data),
+  );
 };
