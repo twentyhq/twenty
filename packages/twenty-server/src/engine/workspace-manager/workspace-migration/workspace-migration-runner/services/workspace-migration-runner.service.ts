@@ -7,6 +7,7 @@ import { DataSource } from 'typeorm';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { isInstallPerfLoggingEnabled } from 'src/engine/utils/log-install-perf.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -253,10 +254,12 @@ export class WorkspaceMigrationRunnerService {
     const initialCacheRetrievalMs =
       performance.now() - initialCacheRetrievalStart;
 
-    this.logger.log(
-      `[install-perf] Runner initial cache retrieval (getOrRecomputeManyOrAllFlatEntityMaps) took ${initialCacheRetrievalMs.toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
-      'Runner',
-    );
+    if (isInstallPerfLoggingEnabled()) {
+      this.logger.log(
+        `[install-perf] Runner initial cache retrieval (getOrRecomputeManyOrAllFlatEntityMaps) took ${initialCacheRetrievalMs.toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
+        'Runner',
+      );
+    }
 
     const { flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -320,7 +323,7 @@ export class WorkspaceMigrationRunnerService {
           slowestActionLabel = `${action.type}:${action.metadataName}`;
         }
 
-        if (actionMs > 50) {
+        if (actionMs > 50 && isInstallPerfLoggingEnabled()) {
           this.logger.log(
             `[install-perf] slow action ${action.type}:${action.metadataName} took ${actionMs.toFixed(1)}ms`,
             'Runner',
@@ -342,10 +345,12 @@ export class WorkspaceMigrationRunnerService {
       const commitMs = performance.now() - commitStart;
       const transactionMs = performance.now() - transactionStart;
 
-      this.logger.log(
-        `[install-perf] Runner transaction summary: ${actionCount} actions, total transaction ${transactionMs.toFixed(1)}ms (commit ${commitMs.toFixed(1)}ms), slowest action ${slowestActionLabel} ${slowestActionMs.toFixed(1)}ms`,
-        'Runner',
-      );
+      if (isInstallPerfLoggingEnabled()) {
+        this.logger.log(
+          `[install-perf] Runner transaction summary: ${actionCount} actions, total transaction ${transactionMs.toFixed(1)}ms (commit ${commitMs.toFixed(1)}ms), slowest action ${slowestActionLabel} ${slowestActionMs.toFixed(1)}ms`,
+          'Runner',
+        );
+      }
 
       this.logger.timeEnd('Runner', 'Transaction execution');
     } catch (error) {
@@ -431,10 +436,12 @@ export class WorkspaceMigrationRunnerService {
     const postCommitInvalidateMs =
       performance.now() - postCommitInvalidateStart;
 
-    this.logger.log(
-      `[install-perf] Runner post-commit invalidateCache took ${postCommitInvalidateMs.toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
-      'Runner',
-    );
+    if (isInstallPerfLoggingEnabled()) {
+      this.logger.log(
+        `[install-perf] Runner post-commit invalidateCache took ${postCommitInvalidateMs.toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
+        'Runner',
+      );
+    }
 
     const hasSchemaMetadataChanged =
       allFlatEntityMapsKeys.includes('flatObjectMetadataMaps') ||

@@ -11,6 +11,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 
 import type { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+import { isInstallPerfLoggingEnabled } from 'src/engine/utils/log-install-perf.util';
 import {
   LogicFunctionEntity,
   LogicFunctionExecutionMode,
@@ -118,10 +119,12 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
 
       const deleteFileMs = performance.now() - deleteFileStart;
 
-      this.logger.log(
-        `[install-perf] update logicFunction fileStorageService.deleteFile took ${deleteFileMs.toFixed(1)}ms (fnId=${entityId})`,
-        UpdateLogicFunctionActionHandlerService.name,
-      );
+      if (isInstallPerfLoggingEnabled()) {
+        this.logger.log(
+          `[install-perf] update logicFunction fileStorageService.deleteFile took ${deleteFileMs.toFixed(1)}ms (fnId=${entityId})`,
+          UpdateLogicFunctionActionHandlerService.name,
+        );
+      }
     }
   }
 

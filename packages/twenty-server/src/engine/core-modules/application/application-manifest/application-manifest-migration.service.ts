@@ -15,6 +15,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { isInstallPerfLoggingEnabled } from 'src/engine/utils/log-install-perf.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -190,9 +191,11 @@ export class ApplicationManifestMigrationService {
     );
     const recomputeMs = performance.now() - recomputeStart;
 
-    this.logger.log(
-      `[install-perf] syncMetadataFromManifest ALL_METADATA_NAME getOrRecompute flat-maps took ${recomputeMs.toFixed(1)}ms (logicFunctions=${manifest.logicFunctions.length})`,
-    );
+    if (isInstallPerfLoggingEnabled()) {
+      this.logger.log(
+        `[install-perf] syncMetadataFromManifest ALL_METADATA_NAME getOrRecompute flat-maps took ${recomputeMs.toFixed(1)}ms (logicFunctions=${manifest.logicFunctions.length})`,
+      );
+    }
 
     const { featureFlagsMap, ...existingAllFlatEntityMaps } = cacheResult;
 
@@ -240,9 +243,11 @@ export class ApplicationManifestMigrationService {
       );
     const validateBuildRunMs = performance.now() - validateBuildRunStart;
 
-    this.logger.log(
-      `[install-perf] syncMetadataFromManifest validateBuildAndRunWorkspaceMigrationFromTo took ${validateBuildRunMs.toFixed(1)}ms (dryRun=${dryRun}, actions=${validateAndBuildResult.status === 'success' ? validateAndBuildResult.workspaceMigration.actions.length : 'n/a-failed'})`,
-    );
+    if (isInstallPerfLoggingEnabled()) {
+      this.logger.log(
+        `[install-perf] syncMetadataFromManifest validateBuildAndRunWorkspaceMigrationFromTo took ${validateBuildRunMs.toFixed(1)}ms (dryRun=${dryRun}, actions=${validateAndBuildResult.status === 'success' ? validateAndBuildResult.workspaceMigration.actions.length : 'n/a-failed'})`,
+      );
+    }
 
     if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(

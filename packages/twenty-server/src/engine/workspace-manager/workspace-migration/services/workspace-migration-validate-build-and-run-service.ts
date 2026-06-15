@@ -22,6 +22,7 @@ import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-e
 import { getMetadataRelatedMetadataNamesForValidation } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names-for-validation.util';
 import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-ids-or-throw.util';
 import { MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
+import { isInstallPerfLoggingEnabled } from 'src/engine/utils/log-install-perf.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { WorkspaceMigrationV2Exception } from 'src/engine/workspace-manager/workspace-migration.exception';
@@ -383,9 +384,11 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         });
     const buildMs = performance.now() - buildStart;
 
-    this.logger.log(
-      `[install-perf] buildWorkspaceMigration took ${buildMs.toFixed(1)}ms (status=${validateAndBuildResult.status})`,
-    );
+    if (isInstallPerfLoggingEnabled()) {
+      this.logger.log(
+        `[install-perf] buildWorkspaceMigration took ${buildMs.toFixed(1)}ms (status=${validateAndBuildResult.status})`,
+      );
+    }
 
     if (validateAndBuildResult.status === 'fail') {
       if (this.isDebugEnabled) {
@@ -418,9 +421,11 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         (actionCountsByTypeAndMetadataName[key] ?? 0) + 1;
     }
 
-    this.logger.log(
-      `[install-perf] validateBuildAndRunWorkspaceMigrationFromTo running ${workspaceMigration.actions.length} actions: ${JSON.stringify(actionCountsByTypeAndMetadataName)}`,
-    );
+    if (isInstallPerfLoggingEnabled()) {
+      this.logger.log(
+        `[install-perf] validateBuildAndRunWorkspaceMigrationFromTo running ${workspaceMigration.actions.length} actions: ${JSON.stringify(actionCountsByTypeAndMetadataName)}`,
+      );
+    }
 
     const runStart = performance.now();
     const { hasSchemaMetadataChanged, metadataEvents } =
@@ -430,9 +435,11 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       });
     const runMs = performance.now() - runStart;
 
-    this.logger.log(
-      `[install-perf] workspaceMigrationRunnerService.run took ${runMs.toFixed(1)}ms for ${workspaceMigration.actions.length} actions`,
-    );
+    if (isInstallPerfLoggingEnabled()) {
+      this.logger.log(
+        `[install-perf] workspaceMigrationRunnerService.run took ${runMs.toFixed(1)}ms for ${workspaceMigration.actions.length} actions`,
+      );
+    }
 
     this.metadataEventEmitter.emitMetadataEvents({
       metadataEvents: metadataEvents,
