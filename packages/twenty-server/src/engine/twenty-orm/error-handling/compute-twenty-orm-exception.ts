@@ -18,6 +18,9 @@ interface QueryFailedErrorWithCode extends QueryFailedError {
   code?: string;
 }
 
+const POSTGRES_DATA_EXCEPTION_CLASS = '22';
+const POSTGRES_INTEGRITY_CONSTRAINT_VIOLATION_CLASS = '23';
+
 export const computeTwentyORMException = async (
   error: Error,
   objectMetadata?: FlatObjectMetadata,
@@ -62,6 +65,18 @@ export const computeTwentyORMException = async (
       isDefined(errorCode) &&
       Object.values(POSTGRESQL_ERROR_CODES).includes(errorCode)
     ) {
+      const sqlStateClass = errorCode.slice(0, 2);
+
+      if (
+        sqlStateClass === POSTGRES_DATA_EXCEPTION_CLASS ||
+        sqlStateClass === POSTGRES_INTEGRITY_CONSTRAINT_VIOLATION_CLASS
+      ) {
+        return new TwentyORMException(
+          error.message,
+          TwentyORMExceptionCode.INVALID_INPUT,
+        );
+      }
+
       throw new PostgresException('Data validation error.', errorCode);
     }
     throw error;
