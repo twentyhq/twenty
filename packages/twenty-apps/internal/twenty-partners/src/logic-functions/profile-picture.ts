@@ -7,9 +7,5 @@ type FileItemRead = { url?: string | null } | null | undefined;
 export function firstFileUrl(
   files: ReadonlyArray<FileItemRead> | null | undefined,
 ): string | null {
-  if (!files) return null;
-  for (const file of files) {
-    if (file?.url) return file.url;
-  }
-  return null;
+  return files?.find((file) => file?.url)?.url ?? null;
 }

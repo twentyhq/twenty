@@ -264,6 +264,7 @@ export const handler = async (
 
     const companyId = await findOrCreateCompanyId(client, input);
 
+    const region = deriveRegion(input.country);
     const partnerResult = await client.mutation({
       createPartner: {
         __args: {
@@ -275,9 +276,7 @@ export const handler = async (
             partnerTier: 'NEW',
             companyId,
             deploymentExpertise: deriveDeploymentExpertise(input.partnerScope) as CoreSchema.PartnerDeploymentExpertiseEnum[],
-            ...(deriveRegion(input.country)
-              ? { region: [deriveRegion(input.country)] as CoreSchema.PartnerRegionEnum[] }
-              : {}),
+            ...(region ? { region: [region] as CoreSchema.PartnerRegionEnum[] } : {}),
           },
         },
         id: true,
