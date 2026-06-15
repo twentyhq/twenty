@@ -13,6 +13,10 @@ import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/reco
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import {
+  isNoteTargetOnNonActivityObject,
+  isTaskTargetOnNonActivityObject,
+} from '@/object-record/record-table/record-table-cell/utils/isActivityTargetOnNonActivityObject';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
@@ -37,12 +41,15 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
 
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
 
-  outline: ${({ showInteractiveStyle, isRecordTableRowActive }) =>
-    isRecordTableRowActive
-      ? 'none'
-      : showInteractiveStyle
-        ? `1px solid ${themeCssVariables.font.color.extraLight}`
-        : `1px solid ${themeCssVariables.border.color.medium}`};
+  outline: ${({ showInteractiveStyle, isRecordTableRowActive }) => {
+    if (isRecordTableRowActive) {
+      return 'none';
+    }
+    if (showInteractiveStyle) {
+      return `1px solid ${themeCssVariables.font.color.extraLight}`;
+    }
+    return `1px solid ${themeCssVariables.border.color.medium}`;
+  }};
   outline-offset: -1px;
 
   user-select: none;
@@ -57,16 +64,31 @@ export const RecordTableCellHoveredPortalContent = () => {
 
   const isFirstColumn = recordTableHoverPosition?.column === 0;
 
-  const { isRecordFieldReadOnly: isReadOnly } = useContext(FieldContext);
+  const { isRecordFieldReadOnly: isReadOnly, fieldDefinition } =
+    useContext(FieldContext);
 
   const isFieldInputOnly = useIsFieldInputOnly() && !isReadOnly;
 
+  const fieldName = fieldDefinition.metadata.fieldName;
+  const objectMetadataNameSingular =
+    fieldDefinition.metadata.objectMetadataNameSingular;
+
+  // Activity target fields (noteTargets/taskTargets) on non-activity objects
+  // should show the edit button even though the field is read-only,
+  // because the button triggers create-note/task instead of inline edit
+  const isActivityTargetOnNonActivityObject =
+    isNoteTargetOnNonActivityObject(fieldName, objectMetadataNameSingular) ||
+    isTaskTargetOnNonActivityObject(fieldName, objectMetadataNameSingular);
+
   const showButton =
     !isFieldInputOnly &&
-    (!isReadOnly || isFirstColumn) &&
+    (!isReadOnly || isFirstColumn || isActivityTargetOnNonActivityObject) &&
     !(isMobile && isFirstColumn);
 
-  const showInteractiveStyle = !isReadOnly || (isFirstColumn && showButton);
+  const showInteractiveStyle =
+    !isReadOnly ||
+    (isFirstColumn && showButton) ||
+    isActivityTargetOnNonActivityObject;
 
   const { rowIndex } = useRecordTableRowContextOrThrow();
 
