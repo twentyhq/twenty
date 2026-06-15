@@ -37,6 +37,7 @@ type MultiItemFieldInputProps<T> = {
   onEscape: (newItemsValue: T[]) => void;
   onEnter: (newItemsValue: T[]) => void;
   onClickOutside: (newItemsValue: T[], event: MouseEvent | TouchEvent) => void;
+  onItemDeleted?: (index: number) => void;
   onError?: (hasError: boolean, values: any[]) => void;
   placeholder: string;
   validateInput?: (input: string) => { isValid: boolean; errorMessage: string };
@@ -72,6 +73,7 @@ export const MultiItemFieldInput = <T,>({
   fieldMetadataType,
   renderInput,
   onClickOutside,
+  onItemDeleted,
   maxItemCount,
 }: MultiItemFieldInputProps<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -288,6 +290,7 @@ export const MultiItemFieldInput = <T,>({
   const handleDeleteItem = (index: number) => {
     const updatedItems = toSpliced(items, index, 1);
     onChange(updatedItems);
+    onItemDeleted?.(index);
     showInputIfNoItemsRemain(updatedItems);
   };
 

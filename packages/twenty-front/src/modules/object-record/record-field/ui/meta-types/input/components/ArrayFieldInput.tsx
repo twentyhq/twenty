@@ -22,10 +22,10 @@ const useArrayStableIds = (items: string[]) => {
     return initialIds;
   });
 
-  const [prevItems, setPrevItems] = useState(items);
+  const [prevItemsLength, setPrevItemsLength] = useState(itemsLength);
 
-  if (prevItems !== items) {
-    const diff = itemsLength - prevItems.length;
+  if (prevItemsLength !== itemsLength) {
+    const diff = itemsLength - prevItemsLength;
     if (diff > 0) {
       const newIds: string[] = [];
       for (let i = 0; i < diff; i++) {
@@ -35,18 +35,13 @@ const useArrayStableIds = (items: string[]) => {
     } else if (diff < 0) {
       if (itemsLength === 0) {
         setStableIds([]);
-      } else {
-        let deletedIndex = prevItems.length - 1;
-        for (let i = 0; i < itemsLength; i++) {
-          if (prevItems[i] !== items[i]) {
-            deletedIndex = i;
-            break;
-          }
-        }
-        setStableIds(toSpliced(stableIds, deletedIndex, Math.abs(diff)));
+      } else if (itemsLength < stableIds.length) {
+        // Fallback: outside mutation caused array to shrink without triggering onItemDeleted.
+        // We just slice from the end to maintain length parity.
+        setStableIds(stableIds.slice(0, itemsLength));
       }
     }
-    setPrevItems(items);
+    setPrevItemsLength(itemsLength);
   }
 
   return { stableIds, setStableIds };
@@ -136,6 +131,9 @@ export const ArrayFieldInput = () => {
       onEnter={handleEnter}
       onEscape={handleEscape}
       onClickOutside={handleClickOutside}
+      onItemDeleted={(index) => {
+        setStableIds((prevIds) => toSpliced(prevIds, index, 1));
+      }}
       placeholder={t`Enter value`}
       fieldMetadataType={FieldMetadataType.ARRAY}
       renderItem={({ value, index, handleEdit, handleDelete }) => (
