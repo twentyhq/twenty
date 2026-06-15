@@ -4,6 +4,8 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 import { useRecordId } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-shared/utils';
 
+import { CARD_TEST_IDS } from './card-test-ids';
+
 export const CARD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
   '88c15ae2-5f87-4a6b-b48f-1974bbe62eb7';
 
@@ -19,13 +21,6 @@ const STATUS_COLORS: Record<string, string> = {
   DELIVERED: '#4caf50',
   RETURNED: '#e05252',
 };
-
-export const CARD_TEST_IDS = {
-  root: 'postcard-card',
-  name: 'postcard-card-name',
-  status: 'postcard-card-status',
-  content: 'postcard-card-content',
-} as const;
 
 const CardDisplay = ({
   name,

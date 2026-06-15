@@ -15,17 +15,20 @@ const isVisible = async (locator: Locator) =>
 
 setup('authenticate', async ({ page }) => {
   await page.goto('/');
-  await page.waitForLoadState('networkidle');
 
   // A fresh load shows the auth provider choice even when credentials are prefilled.
   const continueWithEmail = page.getByRole('button', {
     name: 'Continue with Email',
   });
+  const emailField = page.getByPlaceholder('Email');
+
+  // Wait on the concrete auth UI rather than networkidle (flaky per Playwright).
+  await expect(continueWithEmail.or(emailField).first()).toBeVisible();
+
   if (await isVisible(continueWithEmail)) {
     await continueWithEmail.click();
   }
 
-  const emailField = page.getByPlaceholder('Email');
   if (await isVisible(emailField)) {
     await emailField.fill(LOGIN);
     await page.getByRole('button', { name: 'Continue', exact: true }).click();
@@ -37,19 +40,16 @@ setup('authenticate', async ({ page }) => {
 
   const signInButton = page.getByRole('button', { name: 'Sign in' });
   await expect(signInButton).toBeEnabled();
-  await passwordField.press('Enter');
+  await signInButton.click();
 
+  // Multi-workspace logins land on a picker; single-workspace logins skip it.
   const workspacePicker = page.getByText('Choose a workspace');
   const reachedPicker = await workspacePicker
     .waitFor({ state: 'visible', timeout: 10_000 })
     .then(() => true)
     .catch(() => false);
 
-  if (!reachedPicker && (await isVisible(signInButton))) {
-    await signInButton.click();
-  }
-
-  if (await isVisible(workspacePicker)) {
+  if (reachedPicker) {
     await page.getByText(WORKSPACE_NAME, { exact: true }).click();
     await page.waitForFunction(() => window.location.href.includes('verify'));
     await page.waitForFunction(() => !window.location.href.includes('verify'));

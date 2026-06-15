@@ -2,18 +2,13 @@ import { expect, test } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
 
+import { CARD_TEST_IDS } from '../src/components/card-test-ids';
+
 // Seeded postcard record the preview should display.
 const RECORD_ID = process.env.E2E_POSTCARD_RECORD_ID;
 const EXPECTED_NAME = process.env.E2E_POSTCARD_NAME;
 const EXPECTED_STATUS = process.env.E2E_POSTCARD_STATUS;
 const EXPECTED_CONTENT = process.env.E2E_POSTCARD_CONTENT;
-
-const CARD_TEST_IDS = {
-  root: 'postcard-card',
-  name: 'postcard-card-name',
-  status: 'postcard-card-status',
-  content: 'postcard-card-content',
-} as const;
 
 const STATUS_BADGE_BACKGROUND: Record<string, string> = {
   DRAFT: 'rgb(153, 153, 153)',
