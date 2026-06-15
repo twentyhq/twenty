@@ -5,6 +5,7 @@ import {
   type NavigateFunction,
   type OpenCommandConfirmationModalFunction,
   type OpenSidePanelPageFunction,
+  type ReadFrontComponentFileFunction,
   type RequestAccessTokenRefreshFunction,
   type UnmountFrontComponentFunction,
   type UpdateProgressFunction,
@@ -22,6 +23,7 @@ type FrontComponentHostCommunicationApiStore = {
   closeSidePanel?: CloseSidePanelFunction;
   updateProgress?: UpdateProgressFunction;
   copyToClipboard?: CopyToClipboardFunction;
+  readFrontComponentFile?: ReadFrontComponentFileFunction;
 };
 
 (globalThis as Record<string, unknown>)[

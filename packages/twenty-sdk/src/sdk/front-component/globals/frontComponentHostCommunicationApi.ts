@@ -45,6 +45,10 @@ export type RequestAccessTokenRefreshFunction = () => Promise<string>;
 
 export type CopyToClipboardFunction = (text: string) => Promise<void>;
 
+export type ReadFrontComponentFileFunction = (
+  token: string,
+) => Promise<ArrayBuffer | null>;
+
 export type OpenCommandConfirmationModalHostFunction = (
   params: Parameters<OpenCommandConfirmationModalFunction>[0],
 ) => Promise<void>;
@@ -59,6 +63,7 @@ export type FrontComponentHostCommunicationApiStore = {
   closeSidePanel?: CloseSidePanelFunction;
   updateProgress?: UpdateProgressFunction;
   copyToClipboard?: CopyToClipboardFunction;
+  readFrontComponentFile?: ReadFrontComponentFileFunction;
 };
 
 import { FRONT_COMPONENT_HOST_COMMUNICATION_API_KEY } from '../constants/front-component-host-communication-api-key';

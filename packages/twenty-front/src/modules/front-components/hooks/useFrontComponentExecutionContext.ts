@@ -5,6 +5,7 @@ import { useRef } from 'react';
 import {
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
+  readRegisteredFrontComponentFileBytes,
 } from 'twenty-front-component-renderer';
 import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
 
@@ -207,6 +208,19 @@ export const useFrontComponentExecutionContext = ({
       );
     };
 
+  // Hand the worker the bytes of a file the user picked/dropped inside the
+  // component, keyed by the opaque token the host stamped onto the file metadata.
+  // The registry (and its size ceiling + TTL) lives in twenty-front-component-
+  // renderer alongside where the file was captured.
+  const readFrontComponentFile: FrontComponentHostCommunicationApi['readFrontComponentFile'] =
+    async (token) => {
+      if (!isNonEmptyString(token)) {
+        return null;
+      }
+
+      return readRegisteredFrontComponentFileBytes(token);
+    };
+
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
       navigate,
@@ -218,6 +232,7 @@ export const useFrontComponentExecutionContext = ({
       closeSidePanel,
       updateProgress,
       copyToClipboard,
+      readFrontComponentFile,
     };
 
   return {

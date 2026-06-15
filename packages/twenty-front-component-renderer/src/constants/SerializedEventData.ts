@@ -3,6 +3,11 @@ export type SerializedFileData = {
   size: number;
   type: string;
   lastModified: number;
+  // Opaque handle to the real File held on the host. The worker passes it to the
+  // `readFrontComponentFile` host RPC to pull the bytes on demand. Absent when the
+  // host can't register the file (e.g. an older host); callers treat that as
+  // "bytes unavailable".
+  token?: string;
 };
 
 export type SerializedEventData = {

@@ -30,6 +30,7 @@ const HOST_COMMUNICATION_API_NOOP_INITIALIZATION: FrontComponentHostCommunicatio
     closeSidePanel: noopAsync,
     updateProgress: noopAsync,
     copyToClipboard: noopAsync,
+    readFrontComponentFile: async () => null,
   };
 
 type FrontComponentWorkerEffectProps = {

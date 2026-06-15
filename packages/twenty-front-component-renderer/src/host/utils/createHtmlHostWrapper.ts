@@ -19,6 +19,7 @@ import {
   FrontComponentInputFocusContext,
   type SetEditableFocused,
 } from '@/host/contexts/FrontComponentInputFocusContext';
+import { registerFrontComponentFile } from '@/host/utils/frontComponentFileRegistry';
 
 const INTERNAL_PROPS = new Set(['element', 'receiver', 'components']);
 
@@ -109,6 +110,10 @@ const serializeFileList = (
       size: fileRecord.size,
       type: fileRecord.type,
       lastModified: fileRecord.lastModified,
+      // Stash the real File on the host and hand the worker an opaque token it can
+      // exchange for the bytes via the `readFrontComponentFile` host RPC. The bytes
+      // themselves never cross here — only this handle does.
+      token: registerFrontComponentFile(file),
     });
   }
 
@@ -272,11 +277,43 @@ const serializeEvent = (event: unknown): SerializedEventData => {
     }
   }
 
+  // Drag-and-drop: dropped files live on event.dataTransfer.files, not on a form
+  // target. Surface them through the same `files` channel so a component reads
+  // e.target.files uniformly across the file-input and drop paths.
+  if (!isDefined(serialized.files)) {
+    const dataTransfer = domEvent.dataTransfer;
+    if (isObject(dataTransfer)) {
+      const droppedFiles = serializeFileList(
+        (dataTransfer as Record<string, unknown>).files,
+      );
+      if (isDefined(droppedFiles) && droppedFiles.length > 0) {
+        serialized.files = droppedFiles;
+      }
+    }
+  }
+
   return serialized;
 };
 
+// A worker component can't preventDefault on the real host DOM event, so the host
+// must do it for these: without preventDefault on dragenter/dragover the browser
+// never fires `drop`, and without it on `drop` the browser navigates away to open
+// the file. Preventing the default here is what makes a front-component a valid
+// drop target at all.
+const DRAG_EVENTS_TO_PREVENT_DEFAULT = new Set(['dragenter', 'dragover', 'drop']);
+
 const wrapEventHandler = (handler: (detail: SerializedEventData) => void) => {
   return (event: unknown) => {
+    if (isObject(event)) {
+      const rawEvent = event as Record<string, unknown>;
+      if (
+        isString(rawEvent.type) &&
+        DRAG_EVENTS_TO_PREVENT_DEFAULT.has(rawEvent.type) &&
+        isFunction(rawEvent.preventDefault)
+      ) {
+        (rawEvent.preventDefault as () => void)();
+      }
+    }
     handler(serializeEvent(event));
   };
 };

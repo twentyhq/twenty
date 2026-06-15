@@ -52,6 +52,10 @@ export type HtmlCommonEvents = {
   wheel(event: RemoteEvent<SerializedEventData>): void;
   contextmenu(event: RemoteEvent<SerializedEventData>): void;
   drag(event: RemoteEvent<SerializedEventData>): void;
+  dragenter(event: RemoteEvent<SerializedEventData>): void;
+  dragover(event: RemoteEvent<SerializedEventData>): void;
+  dragleave(event: RemoteEvent<SerializedEventData>): void;
+  drop(event: RemoteEvent<SerializedEventData>): void;
 };
 
 const HTML_COMMON_EVENTS_ARRAY = [
@@ -84,6 +88,10 @@ const HTML_COMMON_EVENTS_ARRAY = [
   'wheel',
   'contextmenu',
   'drag',
+  'dragenter',
+  'dragover',
+  'dragleave',
+  'drop',
 ] as const;
 const createSerializedEventConfig = (
   eventType: string,
