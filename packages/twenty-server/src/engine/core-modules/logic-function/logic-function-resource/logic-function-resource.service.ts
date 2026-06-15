@@ -324,21 +324,16 @@ export class LogicFunctionResourceService {
 
     const packagesToRemove = ['twenty-sdk', 'twenty-client-sdk'];
 
-    const removedAnyPackage = packagesToRemove.reduce(
-      (removed, packageName) => {
-        if (!isDefined(dependencies[packageName])) {
-          return removed;
-        }
-
-        delete dependencies[packageName];
-
-        return true;
-      },
-      false,
+    const packagesToRemoveFromDependencies = packagesToRemove.filter(
+      (packageName) => isDefined(dependencies[packageName]),
     );
 
-    if (!removedAnyPackage) {
+    if (packagesToRemoveFromDependencies.length === 0) {
       return;
+    }
+
+    for (const packageName of packagesToRemoveFromDependencies) {
+      delete dependencies[packageName];
     }
 
     await fs.writeFile(
