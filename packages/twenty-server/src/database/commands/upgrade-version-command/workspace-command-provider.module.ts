@@ -13,7 +13,8 @@ import { V2_7_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-
 import { V2_8_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-8/2-8-upgrade-version-command.module';
 import { V2_9_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-9/2-9-upgrade-version-command.module';
 import { V2_10_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-10/2-10-upgrade-version-command.module';
-import { V2_12_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-12/2-12-upgrade-version-command.module';
+import { V2_13_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-13/2-13-upgrade-version-command.module';
+import { V2_14_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-14/2-14-upgrade-version-command.module';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { V2_12_UpgradeVersionCommandModule } from 'src/database/commands/upgrade
     V2_8_UpgradeVersionCommandModule,
     V2_9_UpgradeVersionCommandModule,
     V2_10_UpgradeVersionCommandModule,
-    V2_12_UpgradeVersionCommandModule,
+    V2_13_UpgradeVersionCommandModule,
+    V2_14_UpgradeVersionCommandModule,
   ],
 })
 export class WorkspaceCommandProviderModule {}

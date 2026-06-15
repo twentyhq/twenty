@@ -86,6 +86,17 @@ export default defineObject({
 **Basisfelder werden automatisch hinzugefügt.** Wenn Sie ein benutzerdefiniertes Objekt definieren, erstellt Twenty Standardfelder wie `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` und `deletedAt` für Sie. Sie müssen diese nicht in Ihrem `fields`-Array deklarieren – nur Ihre benutzerdefinierten Felder. Sie können ein Standardfeld überschreiben, indem Sie eines mit demselben Namen deklarieren, aber das ist nur selten eine gute Idee.
 </Note>
 
+## Standardwerte
+
+Wörtliche Zeichenfolgen-Standardwerte müssen in einfache Anführungszeichen **innerhalb** der Zeichenfolge eingeschlossen werden — `defaultValue: "'Draft'"`, nicht `defaultValue: "Draft"`. Deshalb verwendet das `status`-Feld oben `` `'${PostCardStatus.DRAFT}'` ``.
+
+Nicht in Anführungszeichen gesetzte Zeichenfolgen sind für berechnete Standardwerte reserviert, die ausgewertet werden, wenn ein Datensatz erstellt wird:
+
+* `'uuid'` — generiert eine UUID (für `UUID`-Felder)
+* `'now'` — der aktuelle Zeitstempel (für `DATE_TIME`-Felder)
+
+Dieselbe Konvention gilt für Zeichenketten-Unterfelder zusammengesetzter Standardwerte (z. B. `{ source: "'MANUAL'" }` in einem `ACTOR`-Feld) und für `SELECT`-/`MULTI_SELECT`-Werte. Ein wörtlicher Zeichenfolgen-Standardwert, der nicht in Anführungszeichen gesetzt ist, löst beim Build deiner App eine Warnung aus.
+
 ## Was kommt als Nächstes
 
 * **Verbinden Sie dieses Objekt mit anderen** – siehe [Relationen](/l/de/developers/extend/apps/data/relations) für das bidirektionale Relationsmuster.

@@ -86,6 +86,17 @@ export default defineObject({
 **Base fields are added automatically.** When you define a custom object, Twenty creates standard fields like `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy`, and `deletedAt` for you. You don't need to declare them in your `fields` array — only your custom fields. You can override a default field by declaring one with the same name, but this is rarely a good idea.
 </Note>
 
+## Default values
+
+Literal string defaults must be wrapped in single quotes **inside** the string — `defaultValue: "'Draft'"`, not `defaultValue: "Draft"`. That's why the `status` field above uses `` `'${PostCardStatus.DRAFT}'` ``.
+
+Unquoted strings are reserved for computed defaults, evaluated when a record is created:
+
+- `'uuid'` — generates a UUID (for `UUID` fields)
+- `'now'` — the current timestamp (for `DATE_TIME` fields)
+
+The same convention applies to string sub-fields of composite defaults (e.g. `{ source: "'MANUAL'" }` on an `ACTOR` field) and to `SELECT`/`MULTI_SELECT` values. A literal string default left unquoted raises a warning when your app is built.
+
 ## What's next
 
 - **Connect this object to others** — see [Relations](/developers/extend/apps/data/relations) for the bidirectional relation pattern.

@@ -22,6 +22,7 @@ import {
   ViewVisibility,
 } from 'twenty-shared/types';
 
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -236,3 +237,13 @@ export class ViewEntity
   )
   viewFilterGroups: Relation<ViewFilterGroupEntity[]>;
 }
+
+const VIEW_OVERRIDABLE_COLUMNS_UPGRADE_COMMAND_NAME =
+  '2.12.0_ViewOverridableEntityFastInstanceCommand_1781114009075';
+
+WasIntroducedInUpgrade({
+  upgradeCommandName: VIEW_OVERRIDABLE_COLUMNS_UPGRADE_COMMAND_NAME,
+})(ViewEntity.prototype, 'overrides');
+WasIntroducedInUpgrade({
+  upgradeCommandName: VIEW_OVERRIDABLE_COLUMNS_UPGRADE_COMMAND_NAME,
+})(ViewEntity.prototype, 'isActive');

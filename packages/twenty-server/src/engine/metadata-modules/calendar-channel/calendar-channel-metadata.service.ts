@@ -14,12 +14,15 @@ import {
   CalendarChannelException,
   CalendarChannelExceptionCode,
 } from 'src/engine/metadata-modules/calendar-channel/calendar-channel.exception';
+import { CALENDAR_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/calendar-channel/constants/calendar-channel-deleted.constant';
 import { CalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/calendar-channel.dto';
 import { CalendarChannelOwnerDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/calendar-channel-owner.dto';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { type CalendarChannelDeletedEvent } from 'src/engine/metadata-modules/calendar-channel/types/calendar-channel-deleted.type';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
@@ -31,6 +34,7 @@ export class CalendarChannelMetadataService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
   async findAll(workspaceId: string): Promise<CalendarChannelDTO[]> {
@@ -289,6 +293,12 @@ export class CalendarChannelMetadataService {
     });
 
     await this.repository.delete({ id, workspaceId });
+
+    this.workspaceEventEmitter.emitCustomBatchEvent<CalendarChannelDeletedEvent>(
+      CALENDAR_CHANNEL_DELETED_EVENT,
+      [{ calendarChannelId: id }],
+      workspaceId,
+    );
 
     return calendarChannel;
   }

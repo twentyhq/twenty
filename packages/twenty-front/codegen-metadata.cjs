@@ -31,6 +31,7 @@ module.exports = {
 
     './src/modules/page-layout/widgets/**/graphql/**/*.{ts,tsx}',
     './src/modules/activities/emails/graphql/mutations/**/*.{ts,tsx}',
+    './src/modules/activities/emails/graphql/metadata-queries/**/*.{ts,tsx}',
 
     './src/modules/dashboards/graphql/**/*.{ts,tsx}',
     './src/modules/page-layout/graphql/**/*.{ts,tsx}',

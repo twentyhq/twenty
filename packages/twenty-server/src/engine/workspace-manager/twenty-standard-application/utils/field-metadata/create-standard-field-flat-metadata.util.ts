@@ -29,7 +29,7 @@ export type CreateStandardFieldArgs<
     isSystem?: boolean;
     isNullable?: boolean;
     isUnique?: boolean;
-    isUIReadOnly?: boolean;
+    isUIEditable?: boolean;
     defaultValue?: FieldMetadataDefaultValue<T>;
     settings?: FieldMetadataSettings<T>;
     options?:
@@ -54,7 +54,7 @@ export const createStandardFieldFlatMetadata = <
     isSystem = false,
     isNullable = true,
     isUnique = false,
-    isUIReadOnly = false,
+    isUIEditable = true,
     defaultValue,
     settings,
     options: fieldOptions = null,
@@ -84,7 +84,7 @@ export const createStandardFieldFlatMetadata = <
     isSystem,
     isNullable,
     isUnique,
-    isUIReadOnly,
+    isUIEditable,
     isLabelSyncedWithName: false,
     standardOverrides: null,
     defaultValue: defaultValue ?? null,

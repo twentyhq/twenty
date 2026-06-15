@@ -87,9 +87,9 @@ export const RecordCalendarCardBody = ({
                   objectPermissions,
                   fieldMetadataItem: {
                     id: recordField.fieldMetadataItemId,
-                    isUIReadOnly:
-                      correspondingFieldDefinition.metadata.isUIReadOnly ??
-                      false,
+                    isUIEditable:
+                      correspondingFieldDefinition.metadata.isUIEditable ??
+                      true,
                     isCustom:
                       correspondingFieldDefinition.metadata.isCustom ?? false,
                   },

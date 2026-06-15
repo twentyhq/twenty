@@ -441,7 +441,7 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
     label: 'Timeline Activities',
     defaultValue: null,
     description: 'Timeline Activities linked to the company',
-    icon: 'IconIconTimelineEvent',
+    icon: 'IconTimelineEvent',
     standardOverrides: null,
     options: null,
     settings: { relationType: RelationType.ONE_TO_MANY },

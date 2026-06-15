@@ -11,7 +11,7 @@ import {
   FileFolder,
 } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { In, LessThanOrEqual, type Repository } from 'typeorm';
+import { In, IsNull, LessThanOrEqual, type Repository } from 'typeorm';
 import { z } from 'zod';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -97,7 +97,7 @@ export class EmailComposerService {
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const allAccounts = await this.connectedAccountRepository.find({
-          where: { workspaceId },
+          where: { workspaceId, archivedAt: IsNull() },
         });
 
         if (!allAccounts || allAccounts.length === 0) {
@@ -362,9 +362,12 @@ export class EmailComposerService {
       workspaceId,
     );
 
-    const messageChannel = connectedAccount.messageChannels.find(
-      (channel) => channel.handle === connectedAccount.handle,
-    );
+    const messageChannel =
+      connectedAccount.provider === ConnectedAccountProvider.EMAIL_GROUP
+        ? connectedAccount.messageChannels[0]
+        : connectedAccount.messageChannels.find(
+            (channel) => channel.handle === connectedAccount.handle,
+          );
 
     const isSmtpOnlyAccount =
       connectedAccount.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV &&

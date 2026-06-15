@@ -1,5 +1,6 @@
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
+import { WorkflowDiagramStepNodeLogicFunctionIcon } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeLogicFunctionIcon';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui-deprecated/display';
 import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
@@ -40,6 +41,13 @@ export const WorkflowDiagramStepNodeIcon = ({
               size={theme.icon.size.md}
               color={theme.color.red}
               stroke={theme.icon.stroke.sm}
+            />
+          );
+        }
+        case 'LOGIC_FUNCTION': {
+          return (
+            <WorkflowDiagramStepNodeLogicFunctionIcon
+              logicFunctionId={data.logicFunctionId}
             />
           );
         }
