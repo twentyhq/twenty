@@ -28,7 +28,7 @@
     "@types/lodash.escaperegexp": "^4.1.9",
     "@types/qs": "6.9.16",
     "@types/uuid": "^9.0.2",
-    "@typescript/native-preview": "^7.0.0-dev.20260116.1",
+    "@typescript/native-preview": "^7.0.0-dev.20260611.2",
     "babel-plugin-module-resolver": "^5.0.2",
     "glob": "^11.1.0",
     "jest": "29.7.0",

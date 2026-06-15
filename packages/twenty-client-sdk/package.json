@@ -56,7 +56,7 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.17.15",
-    "@typescript/native-preview": "^7.0.0-dev.20260116.1",
+    "@typescript/native-preview": "^7.0.0-dev.20260611.2",
     "tsc-alias": "^1.8.16",
     "twenty-shared": "workspace:*",
     "typescript": "^5.9.3",
