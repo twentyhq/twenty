@@ -55,7 +55,6 @@ describe('addFlatEntityToFlatEntityMapsThroughMutationOrThrow', () => {
       flatEntityMapsToMutate.universalIdentifiersByApplicationId['app-1'];
 
     expect(universalIdentifiers).toEqual(['uid-1', 'uid-2']);
-    // Distinct entities, so each universalIdentifier appears exactly once
     expect(new Set(universalIdentifiers).size).toBe(
       universalIdentifiers?.length,
     );
