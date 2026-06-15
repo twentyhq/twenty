@@ -8,6 +8,35 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
+type SentryEventExceptionValue = {
+  value?: string;
+};
+
+type SentryEvent = {
+  exception?: {
+    values?: SentryEventExceptionValue[];
+  };
+  tags?: Record<string, string>;
+};
+
+const getExceptionValues = (event: SentryEvent) => {
+  return event.exception?.values ?? [];
+};
+
+const isMaximumUpdateDepthEvent = (event: SentryEvent) => {
+  return getExceptionValues(event).some(
+    (exception) =>
+      exception.value?.includes('Maximum update depth exceeded') ?? false,
+  );
+};
+
+const isDuplicateMaximumUpdateDepthEvent = (event: SentryEvent) => {
+  return (
+    isMaximumUpdateDepthEvent(event) &&
+    event.tags?.['react-error-type'] !== 'maximum-update-depth'
+  );
+};
+
 export const SentryInitEffect = () => {
   const sentryConfig = useAtomStateValue(sentryConfigState);
 
@@ -54,6 +83,13 @@ export const SentryInitEffect = () => {
             tracesSampleRate: 1.0,
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
+            beforeSend: (event) => {
+              if (isDuplicateMaximumUpdateDepthEvent(event)) {
+                return null;
+              }
+
+              return event;
+            },
           });
 
           setIsSentryInitialized(true);

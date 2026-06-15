@@ -16,6 +16,22 @@ const hasErrorCode = (
   return 'code' in error && isDefined(error.code);
 };
 
+const isMaximumUpdateDepthError = (error: Error | CustomError) => {
+  return error.message.includes('Maximum update depth exceeded');
+};
+
+const getReactErrorBoundaryComponentName = (info: ErrorInfo) => {
+  const firstComponentLine = info.componentStack
+    .split('\n')
+    .find((line) => line.trim().startsWith('at '));
+
+  if (!isDefined(firstComponentLine)) {
+    return null;
+  }
+
+  return firstComponentLine.replace('at ', '').trim().split(' ')[0] ?? null;
+};
+
 export const AppErrorBoundary = ({
   children,
   FallbackComponent,
@@ -29,6 +45,27 @@ export const AppErrorBoundary = ({
 
         const fingerprint = hasErrorCode(error) ? error.code : error.message;
         scope.setFingerprint([fingerprint]);
+
+        if (isMaximumUpdateDepthError(error)) {
+          const componentName = getReactErrorBoundaryComponentName(info);
+
+          scope.setTag('react-error-type', 'maximum-update-depth');
+
+          if (isDefined(componentName)) {
+            scope.setTag('react-component', componentName);
+            scope.setFingerprint([
+              'react-runtime-error',
+              'maximum-update-depth',
+              componentName,
+            ]);
+          } else {
+            scope.setFingerprint([
+              'react-runtime-error',
+              'maximum-update-depth',
+            ]);
+          }
+        }
+
         error.name = error.message;
         return scope;
       });

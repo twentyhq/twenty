@@ -24,8 +24,12 @@ import {
   useFloating,
 } from '@floating-ui/react';
 import { styled } from '@linaria/react';
-import { type MouseEvent, type ReactNode, useCallback } from 'react';
-import { flushSync } from 'react-dom';
+import {
+  type MouseEvent,
+  type ReactNode,
+  useCallback,
+  useRef,
+} from 'react';
 import { type Keys } from 'react-hotkeys-hook';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -122,6 +126,12 @@ export const Dropdown = ({
     dropdownId,
   );
 
+  const latestDropdownSizeRef = useRef<{
+    maxHeight: number;
+    maxWidth: number;
+    yPosition: number;
+  } | null>(null);
+
   const isMobile = useIsMobile();
   const bottomAutoresizePadding = isMobile
     ? (middlewareBoundaryPadding.bottomMobile ??
@@ -149,21 +159,35 @@ export const Dropdown = ({
       }),
       size({
         apply: ({ availableHeight, availableWidth, y: floatingY }) => {
-          flushSync(() => {
-            const maxHeightToApply =
-              availableHeight < DROPDOWN_RESIZE_MIN_HEIGHT
-                ? DROPDOWN_RESIZE_MIN_HEIGHT
-                : availableHeight;
+          const maxHeightToApply =
+            availableHeight < DROPDOWN_RESIZE_MIN_HEIGHT
+              ? DROPDOWN_RESIZE_MIN_HEIGHT
+              : availableHeight;
 
-            const maxWidthToApply =
-              availableWidth < DROPDOWN_RESIZE_MIN_WIDTH
-                ? DROPDOWN_RESIZE_MIN_WIDTH
-                : availableWidth;
+          const maxWidthToApply =
+            availableWidth < DROPDOWN_RESIZE_MIN_WIDTH
+              ? DROPDOWN_RESIZE_MIN_WIDTH
+              : availableWidth;
 
-            setDropdownMaxHeight(maxHeightToApply);
-            setDropdownMaxWidth(maxWidthToApply);
-            setDropdownYPosition(floatingY);
-          });
+          const yPositionToApply = floatingY;
+
+          if (
+            latestDropdownSizeRef.current?.maxHeight === maxHeightToApply &&
+            latestDropdownSizeRef.current?.maxWidth === maxWidthToApply &&
+            latestDropdownSizeRef.current?.yPosition === yPositionToApply
+          ) {
+            return;
+          }
+
+          latestDropdownSizeRef.current = {
+            maxHeight: maxHeightToApply,
+            maxWidth: maxWidthToApply,
+            yPosition: yPositionToApply,
+          };
+
+          setDropdownMaxHeight(maxHeightToApply);
+          setDropdownMaxWidth(maxWidthToApply);
+          setDropdownYPosition(yPositionToApply);
         },
         ...boundaryOptions,
       }),
