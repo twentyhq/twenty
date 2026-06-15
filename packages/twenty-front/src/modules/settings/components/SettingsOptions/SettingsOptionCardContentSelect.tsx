@@ -5,6 +5,7 @@ import {
   StyledSettingsCardTextContainer,
   StyledSettingsCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
+import { Separator } from '@/settings/components/Separator';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import { styled } from '@linaria/react';
 import {
@@ -16,6 +17,7 @@ type SettingsOptionCardContentSelectProps = {
   Icon?: IconComponent;
   title: React.ReactNode;
   description?: string;
+  divider?: boolean;
   disabled?: boolean;
   children?: React.ReactNode;
 };
@@ -31,25 +33,29 @@ export const SettingsOptionCardContentSelect = ({
   Icon,
   title,
   description,
+  divider,
   disabled = false,
   children,
 }: SettingsOptionCardContentSelectProps) => {
   return (
-    <StyledSettingsCardContent disabled={disabled}>
-      {Icon && (
-        <StyledSettingsCardIcon>
-          <SettingsOptionIconCustomizer Icon={Icon} />
-        </StyledSettingsCardIcon>
-      )}
-      <StyledSettingsCardTextContainer>
-        <StyledSettingsCardTitle>{title}</StyledSettingsCardTitle>
-        {description && (
-          <StyledSettingsCardDescription>
-            <OverflowingTextWithTooltip text={description} />
-          </StyledSettingsCardDescription>
+    <>
+      <StyledSettingsCardContent disabled={disabled}>
+        {Icon && (
+          <StyledSettingsCardIcon>
+            <SettingsOptionIconCustomizer Icon={Icon} />
+          </StyledSettingsCardIcon>
         )}
-      </StyledSettingsCardTextContainer>
-      <StyledSelectContainer>{children}</StyledSelectContainer>
-    </StyledSettingsCardContent>
+        <StyledSettingsCardTextContainer>
+          <StyledSettingsCardTitle>{title}</StyledSettingsCardTitle>
+          {description && (
+            <StyledSettingsCardDescription>
+              <OverflowingTextWithTooltip text={description} />
+            </StyledSettingsCardDescription>
+          )}
+        </StyledSettingsCardTextContainer>
+        <StyledSelectContainer>{children}</StyledSelectContainer>
+      </StyledSettingsCardContent>
+      {divider && <Separator />}
+    </>
   );
 };

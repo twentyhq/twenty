@@ -24,12 +24,14 @@ type AdvancedSettingsToggleProps = {
   isAdvancedModeEnabled: boolean;
   setIsAdvancedModeEnabled: (enabled: boolean) => void;
   label?: string;
+  className?: string;
 };
 
 export const AdvancedSettingsToggle = ({
   isAdvancedModeEnabled,
   setIsAdvancedModeEnabled,
   label = 'Advanced',
+  className,
 }: AdvancedSettingsToggleProps) => {
   const { theme } = useContext(ThemeContext);
 
@@ -39,7 +41,7 @@ export const AdvancedSettingsToggle = ({
   const instanceId = useId();
 
   return (
-    <StyledContainer htmlFor={instanceId}>
+    <StyledContainer className={className} htmlFor={instanceId}>
       <StyledText>{label}</StyledText>
       <Toggle
         id={instanceId}

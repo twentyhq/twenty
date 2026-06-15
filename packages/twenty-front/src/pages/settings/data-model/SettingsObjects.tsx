@@ -108,7 +108,7 @@ export const SettingsObjects = () => {
             <Button
               title={t`Visualize`}
               variant="secondary"
-              size="small"
+              size="medium"
               Icon={IconEye}
             />
           </UndecoratedLink>

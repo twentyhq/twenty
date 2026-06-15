@@ -1,9 +1,10 @@
 import { NavigationDrawerAiChatContent } from '@/ai/components/NavigationDrawerAiChatContent';
 import { styled } from '@linaria/react';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode } from 'react';
 
 type NavigationDrawerTabbedContentProps = {
   showAiChatContent: boolean;
+  shouldMountAiChatContent: boolean;
   navigationContent: ReactNode;
 };
 
@@ -13,20 +14,15 @@ const StyledTabContent = styled.div<{ isHidden: boolean }>`
 
 export const NavigationDrawerTabbedContent = ({
   showAiChatContent,
+  shouldMountAiChatContent,
   navigationContent,
 }: NavigationDrawerTabbedContentProps) => {
-  const [hasOpenedAiChat, setHasOpenedAiChat] = useState(showAiChatContent);
-
-  if (showAiChatContent && !hasOpenedAiChat) {
-    setHasOpenedAiChat(true);
-  }
-
   return (
     <>
       <StyledTabContent isHidden={showAiChatContent}>
         {navigationContent}
       </StyledTabContent>
-      {hasOpenedAiChat && (
+      {shouldMountAiChatContent && (
         <StyledTabContent isHidden={!showAiChatContent}>
           <NavigationDrawerAiChatContent />
         </StyledTabContent>

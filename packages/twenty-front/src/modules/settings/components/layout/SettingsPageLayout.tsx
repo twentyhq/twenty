@@ -8,28 +8,34 @@ import { isDefined } from 'twenty-shared/utils';
 type SettingsPageLayoutProps = {
   links: BreadcrumbProps['links'];
   title?: ReactNode;
+  icon?: ReactNode;
   actionButton?: ReactNode;
   secondaryBar?: ReactNode;
   children: ReactNode;
   tag?: JSX.Element;
+  titleColor?: string;
 };
 
 export const SettingsPageLayout = ({
   links,
   title,
+  icon,
   actionButton,
   secondaryBar,
   children,
   tag,
+  titleColor,
 }: SettingsPageLayoutProps) => (
   <PageCardLayout
     header={
       <PageCardHeader
         links={links}
         title={title}
+        icon={icon}
         tag={tag}
         actionButton={actionButton}
         centerTitle
+        titleColor={titleColor}
       />
     }
     secondaryBar={

@@ -22,7 +22,7 @@ const makeFieldMetadata = (
     type: overrides.type,
     isActive: true,
     isSystem: false,
-    isUIReadOnly: false,
+    isUIEditable: true,
     isNullable: true,
     isUnique: false,
     isLabelSyncedWithName: false,

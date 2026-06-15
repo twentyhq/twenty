@@ -46,14 +46,14 @@ export const shouldDisplayFormField = ({
     case 'UPDATE_RECORD':
       return (
         !isNotSupportedRelation &&
-        !fieldMetadataItem.isUIReadOnly &&
+        (fieldMetadataItem.isUIEditable ?? true) &&
         !isHiddenSystemField(fieldMetadataItem) &&
         fieldMetadataItem.isActive
       );
     case 'UPSERT_RECORD':
       return (
         (!isNotSupportedRelation &&
-          !fieldMetadataItem.isUIReadOnly &&
+          (fieldMetadataItem.isUIEditable ?? true) &&
           !isHiddenSystemField(fieldMetadataItem) &&
           fieldMetadataItem.isActive) ||
         isIdField

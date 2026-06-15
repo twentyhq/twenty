@@ -875,6 +875,145 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
+  messageCampaign: {
+    universalIdentifier: '238acb94-dd4c-4036-bc55-19b99d821efd',
+    fields: {
+      id: { universalIdentifier: '819a9eb4-2738-49df-a302-76d2dc7d7114' },
+      createdAt: {
+        universalIdentifier: '2c7eb5f4-03f8-4101-9486-b2bdf69175d8',
+      },
+      updatedAt: {
+        universalIdentifier: '73c44e3a-9b67-4d1b-887b-d8820cfe6aa5',
+      },
+      deletedAt: {
+        universalIdentifier: 'f7ee084e-7a8e-4b60-a68a-0eb16230589d',
+      },
+      createdBy: {
+        universalIdentifier: 'a75b85d6-12da-4726-9568-3f32f3e3a249',
+      },
+      updatedBy: {
+        universalIdentifier: 'd85c0ce2-5971-4afb-a5b0-e542c7cfda9e',
+      },
+      position: {
+        universalIdentifier: 'ba053d00-e5ef-41ff-9cb1-c87fc9c85081',
+      },
+      searchVector: {
+        universalIdentifier: 'c51f1455-3c56-40b9-80ff-7ffcbdef9609',
+      },
+      subject: { universalIdentifier: '7251544c-b07a-4f0d-9d0a-48514367f230' },
+      bodyTemplate: {
+        universalIdentifier: 'b3a69d08-31ca-4a8d-8359-5ca462899342',
+      },
+      fromAddress: {
+        universalIdentifier: '91e1a33c-c1ff-411a-b720-9085e13c05db',
+      },
+      status: { universalIdentifier: 'c7117256-3de6-48e1-87df-c99c32bad610' },
+      sentAt: { universalIdentifier: 'e2315b4f-9edf-4df2-96b9-961e76368671' },
+      unsubscribeTopicId: {
+        universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c',
+      },
+      list: { universalIdentifier: 'cb24dcdf-f0e8-4c71-8cff-70b714e86530' },
+      timelineActivities: {
+        universalIdentifier: 'd4e5f607-1829-4da3-8eb4-25f607182930',
+      },
+      messages: { universalIdentifier: 'e5a177a7-512b-4778-928e-69777a528f7c' },
+      recipients: {
+        universalIdentifier: '05a3271c-5b91-493c-8f30-2d27b31d019e',
+      },
+    },
+    indexes: {
+      unsubscribeTopicIdIndex: {
+        universalIdentifier: 'efe8c20e-d12b-4475-969e-e86e0bbfe444',
+      },
+      listIdIndex: {
+        universalIdentifier: '17bffd6a-714a-458d-a547-f9e2183d9520',
+      },
+      searchVectorGinIndex: {
+        universalIdentifier: '975823ad-9b97-4f39-b2c7-fbd7d77f4bd1',
+      },
+    },
+  },
+  messageList: {
+    universalIdentifier: '826561ea-4816-411c-baa0-eec5e6ca8866',
+    fields: {
+      id: { universalIdentifier: 'd91c62db-28d1-4e96-83f9-2639dcdcc443' },
+      createdAt: {
+        universalIdentifier: '8cf4126b-135c-4f73-a0c1-a59709274e97',
+      },
+      updatedAt: {
+        universalIdentifier: '78f06ca3-7a5e-4b42-8a18-c8011ae49933',
+      },
+      deletedAt: {
+        universalIdentifier: 'a52447c9-69de-4598-80a7-88fdec58d7f2',
+      },
+      createdBy: {
+        universalIdentifier: '7efc932e-d245-49ef-802a-8f7177278d9a',
+      },
+      updatedBy: {
+        universalIdentifier: '184589db-8fee-4262-b4ee-2ba771a8cdbe',
+      },
+      position: {
+        universalIdentifier: 'e2d4e45d-e510-466f-92e6-d7cea80ea256',
+      },
+      searchVector: {
+        universalIdentifier: '1c6f5064-6e99-4ac9-ac1f-1b8060edf9bc',
+      },
+      name: { universalIdentifier: '69b9ed8b-7b26-4108-894f-05700ef7e8ee' },
+      members: {
+        universalIdentifier: '92df3493-91cf-4665-8587-1b08917d299b',
+      },
+      campaigns: {
+        universalIdentifier: 'e098d838-31ab-4812-91a8-f055f45a6832',
+      },
+      timelineActivities: {
+        universalIdentifier: 'e0a5b2c3-4d6f-4e81-9a02-1b3c4d5e6f70',
+      },
+    },
+    indexes: {
+      searchVectorGinIndex: {
+        universalIdentifier: '8e205171-ed74-4620-b7d2-674aab85033a',
+      },
+    },
+  },
+  messageListMember: {
+    universalIdentifier: '27773d24-8ce3-40f8-aa6c-1f590f2c08d2',
+    fields: {
+      id: { universalIdentifier: '606769a6-1783-4c2b-9e44-1d8389647f7c' },
+      createdAt: {
+        universalIdentifier: '7ae090b9-a48f-435c-aa89-9882f17950a1',
+      },
+      updatedAt: {
+        universalIdentifier: '959473a9-37d6-4708-a0a6-d6b7c6b11907',
+      },
+      deletedAt: {
+        universalIdentifier: '804e56f4-ab42-40dd-bcf5-754d25051daf',
+      },
+      createdBy: {
+        universalIdentifier: '12772bfa-8f0e-411e-a526-b66ef83b34ca',
+      },
+      updatedBy: {
+        universalIdentifier: 'd4586b18-7dd1-43b7-8d26-e58fc8f169f7',
+      },
+      position: {
+        universalIdentifier: '3e169614-c440-4603-bec6-08bbda7c849d',
+      },
+      searchVector: {
+        universalIdentifier: '37f86c8d-6097-4ccd-9f08-027c1d40e9d6',
+      },
+      person: { universalIdentifier: '34288425-8805-42fb-8b98-ee13d09be3d3' },
+      list: {
+        universalIdentifier: 'd5402005-e8f9-4fbe-8696-b6723cd85018',
+      },
+    },
+    indexes: {
+      listIdIndex: {
+        universalIdentifier: '61188470-6dcb-4b2a-b1a9-baeb688bccae',
+      },
+      personListUniqueIndex: {
+        universalIdentifier: 'e5497dc2-1d72-418c-a389-a0645ca0195a',
+      },
+    },
+  },
   messageChannelMessageAssociation: {
     universalIdentifier: '20202020-ad1e-4127-bccb-d83ae04d2ccb',
     fields: {
@@ -1107,6 +1246,9 @@ export const STANDARD_OBJECTS = {
       workspaceMember: {
         universalIdentifier: '20202020-77a7-4845-99ed-1bcbb478be6f',
       },
+      messageCampaign: {
+        universalIdentifier: '5bc768db-919f-41da-8c43-df08084d526f',
+      },
       createdBy: {
         universalIdentifier: 'e0e6aa04-6ad5-4d12-8799-6febf00452c1',
       },
@@ -1129,6 +1271,9 @@ export const STANDARD_OBJECTS = {
       },
       workspaceMemberIdIndex: {
         universalIdentifier: 'ce1e3a9e-afe9-439d-abb7-6cc98a6fa405',
+      },
+      messageCampaignIdIndex: {
+        universalIdentifier: 'e9bcdd77-cc8b-4532-833c-124dfdc8e5ff',
       },
     },
     views: {
@@ -1280,6 +1425,12 @@ export const STANDARD_OBJECTS = {
       messageChannelMessageAssociations: {
         universalIdentifier: '20202020-3cef-43a3-82c6-50e7cfbc9ae4',
       },
+      messageCampaign: {
+        universalIdentifier: '77cff00b-a0ba-48d6-80de-0d5ccf14e45b',
+      },
+      deliveryStatus: {
+        universalIdentifier: '209254fa-2b89-429d-a72a-c401c4bd5a78',
+      },
       createdBy: {
         universalIdentifier: '6e52bde4-ed41-4462-aa70-121e496270b4',
       },
@@ -1296,6 +1447,9 @@ export const STANDARD_OBJECTS = {
     indexes: {
       messageThreadIdIndex: {
         universalIdentifier: '7a05b45e-7aa6-4a7e-9bbc-299cbed53c96',
+      },
+      messageCampaignIdIndex: {
+        universalIdentifier: '79e777ca-7008-46c5-b3a6-3108b7c7dfb6',
       },
     },
     views: {
@@ -1745,6 +1899,9 @@ export const STANDARD_OBJECTS = {
       timelineActivities: {
         universalIdentifier: '20202020-a43e-4873-9c23-e522de906ce5',
       },
+      listMemberships: {
+        universalIdentifier: '8b8d1be0-4c94-4413-a2c9-c7ede205a81d',
+      },
       searchVector: {
         universalIdentifier: '57d1d7ad-fa10-44fc-82f3-ad0959ec2534',
       },
@@ -2190,6 +2347,12 @@ export const STANDARD_OBJECTS = {
       },
       targetDashboard: {
         universalIdentifier: '20202020-7864-48f5-af7c-9e4b60140948',
+      },
+      targetMessageList: {
+        universalIdentifier: 'd9f4a1b2-3c5e-4d70-8e91-0a2b3c4d5e6f',
+      },
+      targetMessageCampaign: {
+        universalIdentifier: 'b2c3d4e5-6f70-4b81-8c92-03d4e5f60718',
       },
       linkedRecordCachedName: {
         universalIdentifier: '20202020-cfdb-4bef-bbce-a29f41230934',

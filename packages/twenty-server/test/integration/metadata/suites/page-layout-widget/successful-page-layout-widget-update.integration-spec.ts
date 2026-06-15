@@ -20,6 +20,7 @@ import { AggregateOperations } from 'twenty-shared/types';
 
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
+import { ChartNumberFormat } from 'src/engine/metadata-modules/page-layout-widget/enums/chart-number-format.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
@@ -230,7 +231,7 @@ describe('Page layout widget update should succeed', () => {
             aggregateOperation: AggregateOperations.COUNT,
             label: 'Total Records',
             description: 'Count of all records',
-            format: '0,0',
+            numberFormat: ChartNumberFormat.SHORT,
             displayDataLabel: true,
           }),
         },
