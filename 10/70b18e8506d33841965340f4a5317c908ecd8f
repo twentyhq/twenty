@@ -1,0 +1,20 @@
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/__tests__/resolve-email-files.util.spec.ts
+  s_ad06bf65e6995b::t_533e90e7414e60 1-29,31-64
+  s_ad06bf65e6995b::t_65912c144108fe 30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "1070b18e8506d33841965340f4a5317c908ecd8f",
+  "prompts": {},
+  "sessions": {
+    "s_ad06bf65e6995b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "60236852-0858-4310-a82b-0f399a218d71",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
