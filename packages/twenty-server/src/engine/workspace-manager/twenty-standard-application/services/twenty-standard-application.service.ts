@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
@@ -12,10 +11,6 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
-
-const DEPRECATED_STANDARD_FIELD_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_OBJECTS.calendarEvent.fields.recordingPreference.universalIdentifier,
-];
 
 // TODO completely deprecate this file once we've created the twenty-standard twenty-app manifest
 @Injectable()
@@ -51,8 +46,6 @@ export class TwentyStandardApplicationService {
       now: new Date().toISOString(),
       workspaceId,
       twentyStandardApplicationId: twentyStandardFlatApplication.id,
-      excludedFieldMetadataUniversalIdentifiers:
-        DEPRECATED_STANDARD_FIELD_UNIVERSAL_IDENTIFIERS,
     });
 
     const fromToAllFlatEntityMaps: FromToAllUniversalFlatEntityMaps = {};
