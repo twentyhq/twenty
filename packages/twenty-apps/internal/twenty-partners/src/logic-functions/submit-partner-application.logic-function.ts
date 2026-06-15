@@ -3,6 +3,8 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 import { z } from 'zod';
 
 import { slugify } from '../scripts/slugify';
+import { deriveDeploymentExpertise } from './derive-deployment-expertise';
+import { deriveRegion } from './derive-region';
 
 export const SUBMIT_PARTNER_APPLICATION_LOGIC_FUNCTION_ID =
   '7b1e2c5f-3a14-4f7d-8e91-0b5e2a3c4d76';
@@ -69,6 +71,7 @@ function buildApplicationNotes(input: SubmitPartnerApplicationInput): string | n
 type PartnerFieldsForUpsert = {
   name: string;
   linkedin?: { primaryLinkUrl: string };
+  website?: { primaryLinkUrl: string };
   city?: string;
   country?: CoreSchema.PartnerCountryEnum;
   languagesSpoken?: CoreSchema.PartnerLanguagesSpokenEnum[];
@@ -86,6 +89,7 @@ function buildPartnerFields(input: SubmitPartnerApplicationInput): PartnerFields
     name: input.companyName.trim(),
   };
   if (isNonEmptyString(input.linkedin)) fields.linkedin = { primaryLinkUrl: input.linkedin.trim() };
+  if (isNonEmptyString(input.domainName)) fields.website = { primaryLinkUrl: input.domainName.trim() };
   if (isNonEmptyString(input.city)) fields.city = input.city.trim();
   // validate() has already checked these against the allowed value sets, so
   // narrowing the validated strings to their enum types here is sound.
@@ -270,6 +274,10 @@ export const handler = async (
             reviewed: false,
             partnerTier: 'NEW',
             companyId,
+            deploymentExpertise: deriveDeploymentExpertise(input.partnerScope) as CoreSchema.PartnerDeploymentExpertiseEnum[],
+            ...(deriveRegion(input.country)
+              ? { region: [deriveRegion(input.country)] as CoreSchema.PartnerRegionEnum[] }
+              : {}),
           },
         },
         id: true,
