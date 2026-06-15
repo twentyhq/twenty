@@ -35,7 +35,7 @@ import { CODE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constant
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import {
   getOutputSchemaFromValue,
@@ -103,15 +103,61 @@ export const WorkflowEditActionCode = ({
   );
   const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
 
+  // Several handlers below update different parts of the action settings
+  // (code input, function input, output schema). They all funnel through a
+  // single debounced persist call. To avoid a late-firing update built from a
+  // stale `action` snapshot reverting a more recent change (e.g. an input edit
+  // wiping the freshly inferred output schema back to its LINK placeholder,
+  // which makes referencing variables resolve to "Not found"), we accumulate
+  // partial settings deltas and always merge them against the latest action.
+  const latestActionRef = useRef(action);
+  latestActionRef.current = action;
+
+  const pendingSettingsUpdateRef = useRef<
+    Partial<WorkflowCodeAction['settings']>
+  >({});
+
+  const flushActionUpdate = useDebouncedCallback(() => {
+    const pendingSettingsUpdate = pendingSettingsUpdateRef.current;
+    pendingSettingsUpdateRef.current = {};
+
+    if (
+      actionOptions.readonly === true ||
+      Object.keys(pendingSettingsUpdate).length === 0
+    ) {
+      return;
+    }
+
+    actionOptions.onActionUpdate({
+      ...latestActionRef.current,
+      settings: {
+        ...latestActionRef.current.settings,
+        ...pendingSettingsUpdate,
+      },
+    });
+  }, 500);
+
+  const updateActionSettings = (
+    settingsUpdate: Partial<WorkflowCodeAction['settings']>,
+  ) => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
+
+    pendingSettingsUpdateRef.current = {
+      ...pendingSettingsUpdateRef.current,
+      ...settingsUpdate,
+    };
+
+    flushActionUpdate();
+  };
+
   const updateOutputSchemaFromTestResult = async (testResult: object) => {
     if (actionOptions.readonly === true) {
       return;
     }
     const newOutputSchema = getOutputSchemaFromValue(testResult);
-    updateAction({
-      ...action,
-      settings: { ...action.settings, outputSchema: newOutputSchema },
-    });
+    updateActionSettings({ outputSchema: newOutputSchema });
   };
 
   const { formValues, loading, onChange } = useLogicFunctionForm({
@@ -165,23 +211,19 @@ export const WorkflowEditActionCode = ({
 
       updateLogicFunctionInput(newMergedTestInput);
 
-      updateAction({
-        ...action,
-        settings: {
-          ...action.settings,
-          outputSchema: {
-            link: {
-              isLeaf: true,
-              icon: 'IconVariable',
-              tab: 'test',
-              label: t`Generate Function Output`,
-            },
-            _outputSchemaType: 'LINK',
+      updateActionSettings({
+        outputSchema: {
+          link: {
+            isLeaf: true,
+            icon: 'IconVariable',
+            tab: 'test',
+            label: t`Generate Function Output`,
           },
-          input: {
-            ...action.settings.input,
-            logicFunctionInput: newMergedInput,
-          },
+          _outputSchemaType: 'LINK',
+        },
+        input: {
+          ...latestActionRef.current.settings.input,
+          logicFunctionInput: newMergedInput,
         },
       });
     },
@@ -193,14 +235,10 @@ export const WorkflowEditActionCode = ({
 
     setFunctionInput(updatedFunctionInput);
 
-    updateAction({
-      ...action,
-      settings: {
-        ...action.settings,
-        input: {
-          ...action.settings.input,
-          logicFunctionInput: updatedFunctionInput,
-        },
+    updateActionSettings({
+      input: {
+        ...latestActionRef.current.settings.input,
+        logicFunctionInput: updatedFunctionInput,
       },
     });
   };
@@ -224,6 +262,12 @@ export const WorkflowEditActionCode = ({
       return;
     }
 
+    // A pending schema-inference update would reset the output schema back to
+    // its LINK placeholder. If it fired after the test result resolved the real
+    // output schema, variables would resolve to "Not found". Cancel it so the
+    // test result is the source of truth for the output schema.
+    handleUpdateFunctionInputSchema.cancel();
+
     await executeLogicFunction();
   };
 
@@ -239,20 +283,6 @@ export const WorkflowEditActionCode = ({
       debounceDuration: 0,
     });
   };
-
-  const updateAction = useDebouncedCallback(
-    (actionUpdate: Partial<WorkflowCodeAction>) => {
-      if (actionOptions.readonly === true) {
-        return;
-      }
-
-      actionOptions.onActionUpdate({
-        ...action,
-        ...actionUpdate,
-      });
-    },
-    500,
-  );
 
   const handleCodeChange = async (newCode: string) => {
     if (actionOptions.readonly === true || !isDefined(workflow)) {
