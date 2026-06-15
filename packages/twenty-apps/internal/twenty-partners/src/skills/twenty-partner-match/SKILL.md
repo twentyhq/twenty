@@ -1,3 +1,9 @@
+---
+name: twenty-partner-match
+description: Match a qualified lead to Twenty partners and generate all intro emails in one run. Use when a lead folder exists and you need to find the right implementation partner, either after running twenty-partner-design-doc or standalone when partner-match-criteria.md is already present. Chains back into twenty-lead-intro-call-summary and twenty-partner-design-doc if the criteria file is missing.
+trigger: /twenty-partner-match
+---
+
 # twenty-partner-match
 
 Match a qualified lead to Twenty partners and generate all intro emails in one run.
@@ -57,22 +63,31 @@ If the brief is thin on any of these axes, say so and ask targeted follow-up que
 Query the partners API:
 
 ```graphql
-partners(filter: {
-  validationStage: { eq: VALIDATED }
-  availability: { eq: AVAILABLE }
-}) {
-  edges {
-    node {
-      id name slug languagesSpoken skills deploymentExpertise
-      partnerScope partnerTier country region city introduction
-      persons { edges { node { name { firstName lastName } emails { primaryEmail } } } }
-      company { id name }
+query ListPartners($after: String) {
+  partners(
+    filter: {
+      validationStage: { eq: VALIDATED }
+      availability: { eq: AVAILABLE }
+    }
+    after: $after
+  ) {
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    edges {
+      node {
+        id name slug languagesSpoken skills deploymentExpertise
+        partnerScope partnerTier country region city introduction
+        persons { edges { node { name { firstName lastName } emails { primaryEmail } } } }
+        company { id name }
+      }
     }
   }
 }
 ```
 
-Use cursor pagination to fetch all pages. Endpoint: `$TWENTY_PARTNERS_API_URL/graphql`.
+Paginate until `pageInfo.hasNextPage` is false, passing `pageInfo.endCursor` as `$after` each iteration. Endpoint: `$TWENTY_PARTNERS_API_URL/graphql`.
 
 ### 1b. Evaluate and rank
 
@@ -145,11 +160,16 @@ For each confirmed partner, generate three email types. For N confirmed partners
 Open all emails sequentially with a 1.5s delay between each. Use Python:
 
 ```python
-import subprocess, urllib.parse, time
+import subprocess, urllib.parse, time, sys
 params = {"view": "cm", "fs": "1", "to": to, "su": subject, "body": body}
 if cc: params["cc"] = cc
 url = "https://mail.google.com/mail/?" + urllib.parse.urlencode(params)
-subprocess.run(["open", "-a", "Google Chrome", url])
+if sys.platform == "darwin":
+    subprocess.run(["open", "-a", "Google Chrome", url])
+else:
+    # Linux / Windows: fall back to the system default browser
+    import webbrowser
+    webbrowser.open(url)
 time.sleep(1.5)
 ```
 

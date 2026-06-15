@@ -122,7 +122,7 @@ In `--full` mode the fourth canonical flag is active: `🔮 inf.` (modelling inf
 - One line per paragraph: **no mid-sentence hard wraps** (they render as broken lines).
 - **Never use em dashes (the long dash).** Restructure the sentence, or use a colon, comma, parentheses, or a period instead.
 - **Never a bare `~`** for "approximately": GitHub markdown pairs `~...~` into strikethrough. Write "around" / "about".
-- **Flags are the four emoji + text pairs only** (`🔮 inf.`, `**❓ open**`, `**⚠️ heavy**`, `**🛑 blocker**`). Don't swap the emoji or drop the text label.
+- **Flags in default mode: three emoji + text pairs** (`**❓ open**`, `**⚠️ heavy**`, `**🛑 blocker**`). In `--full` mode a fourth is added: `🔮 inf.`. Don't swap the emoji or drop the text label.
 - **Section cross-references are functional anchor links** (`[§N](#n-section-slug)`), never bare `§N`.
 - Mark unverified capability claims `**❓ open**`, never as fact.
 
