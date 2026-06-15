@@ -25,6 +25,8 @@ export enum MetricsKeys {
   WorkflowRunSystemError = 'workflow-run/system-error',
   AiChatToolExecutionSucceeded = 'ai-chat/tool-execution-succeeded',
   AiChatToolExecutionFailed = 'ai-chat/tool-execution-failed',
+  WorkflowAgentToolExecutionSucceeded = 'workflow-agent/tool-execution-succeeded',
+  WorkflowAgentToolExecutionFailed = 'workflow-agent/tool-execution-failed',
   McpToolExecutionSucceeded = 'mcp/tool-execution-succeeded',
   McpToolExecutionFailed = 'mcp/tool-execution-failed',
   AiChatInputTokens = 'ai-chat/input-tokens',

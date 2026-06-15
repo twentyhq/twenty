@@ -18,8 +18,11 @@ import { type Repository } from 'typeorm';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
@@ -80,6 +83,7 @@ export class AgentAsyncExecutorService {
     private readonly nativeToolBinder: NativeToolBinderService,
     private readonly aiBillingService: AiBillingService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly metricsService: MetricsService,
     @InjectWorkspaceScopedRepository(RoleTargetEntity)
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     @InjectRepository(WorkspaceEntity)
@@ -235,6 +239,27 @@ export class AgentAsyncExecutorService {
 
           if (stepHasNoMoreAvailableCredits) {
             hasNoMoreAvailableCredits = true;
+          }
+
+          for (const part of step.content) {
+            if (part.type !== 'tool-result' && part.type !== 'tool-error') {
+              continue;
+            }
+
+            const succeeded =
+              part.type === 'tool-result' &&
+              (part.output as ToolOutput | undefined)?.success !== false;
+
+            this.metricsService.incrementCounterBy({
+              key: succeeded
+                ? MetricsKeys.WorkflowAgentToolExecutionSucceeded
+                : MetricsKeys.WorkflowAgentToolExecutionFailed,
+              amount: 1,
+              attributes: {
+                model: registeredModel.modelId,
+                tool: part.toolName,
+              },
+            });
           }
         },
         experimental_repairToolCall: async ({
