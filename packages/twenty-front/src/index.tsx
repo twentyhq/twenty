@@ -2,6 +2,7 @@ import ReactDOM from 'react-dom/client';
 
 import { App } from '@/app/components/App';
 import { migrateTokenPairCookieToLocalStorage } from '@/auth/utils/migrateTokenPairCookieToLocalStorage';
+import { hydrateMetadataStore } from '@/metadata-store/states/metadataStoreState';
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'twenty-ui-deprecated/style.css';
 import 'twenty-ui-deprecated/theme-light.css';
@@ -15,8 +16,16 @@ import './index.css';
 // legacy cookie to localStorage (legacy cookie has a 180-day expiry).
 migrateTokenPairCookieToLocalStorage();
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') ?? document.body,
-);
+const renderApp = () => {
+  const root = ReactDOM.createRoot(
+    document.getElementById('root') ?? document.body,
+  );
 
-root.render(<App />);
+  root.render(<App />);
+};
+
+// Hydrate the IndexedDB-backed metadata cache into memory before mounting so the
+// metadata atoms (getOnInit:true) read the persisted snapshot synchronously and
+// keep the cache-first boot. Render anyway if hydration fails — the app then
+// falls back to fetching metadata from the network.
+hydrateMetadataStore().then(renderApp, renderApp);
