@@ -46,9 +46,6 @@ export class SendEmailWorkflowAction extends EmailWorkflowActionBase {
     return 'SEND';
   }
 
-  // Workspace-member sender resolution is not implemented for send yet; send
-  // uses the connected account id as-is via the base no-op postprocessInput.
-
   protected assertStep(step: WorkflowAction): void {
     if (!isWorkflowSendEmailAction(step)) {
       throw new WorkflowStepExecutorException(

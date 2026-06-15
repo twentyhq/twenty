@@ -94,10 +94,6 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
     workspaceMemberId: string,
     workspaceId: string,
   ): Promise<WorkspaceMemberWorkspaceEntity | null> {
-    // Runs in a system auth context (no user role), so permission checks must be
-    // bypassed to read the workspaceMember. Access stays safe because the lookup
-    // is workspace-scoped at every step (member -> userWorkspace ->
-    // connectedAccount) and the email actions are permission-gated upstream.
     const workspaceMemberRepository =
       await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
@@ -122,8 +118,6 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
       return null;
     }
 
-    // Exclude archived accounts and order deterministically so the resolved
-    // sender is stable across runs rather than depending on row ordering.
     const connectedAccount = await this.connectedAccountRepository.findOne({
       where: {
         userWorkspaceId: userWorkspace.id,

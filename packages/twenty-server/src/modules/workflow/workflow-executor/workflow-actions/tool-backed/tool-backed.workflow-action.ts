@@ -42,9 +42,6 @@ export abstract class ToolBackedWorkflowAction<
     return rawInput;
   }
 
-  // Runs after workflow variables have been resolved, so the input holds
-  // concrete values. Use it for resolution that depends on the workspace id
-  // (e.g. turning a resolved id into another entity reference).
   protected async postprocessInput(
     resolvedInput: TInput,
     _workspaceId: string,
