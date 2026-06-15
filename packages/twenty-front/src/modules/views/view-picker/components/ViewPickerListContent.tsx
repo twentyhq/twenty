@@ -146,6 +146,7 @@ export const ViewPickerListContent = () => {
               onDragEnd={handleWorkspaceDragEnd}
               draggableItems={workspaceViews.map((view, index) => {
                 const isIndexView = view.key === 'INDEX';
+                const isCurrentView = currentView?.id === view.id;
                 return (
                   <DraggableItem
                     key={view.id}
@@ -159,6 +160,7 @@ export const ViewPickerListContent = () => {
                         isIndexView={isIndexView}
                         isLastView={isLastView}
                         onEdit={handleEditViewButtonClick}
+                        isCurrentView={isCurrentView}
                       />
                     }
                   />
@@ -179,6 +181,7 @@ export const ViewPickerListContent = () => {
               onDragEnd={handleUnlistedDragEnd}
               draggableItems={unlistedViews.map((view, index) => {
                 const isIndexView = view.key === 'INDEX';
+                const isCurrentView = currentView?.id === view.id;
                 return (
                   <DraggableItem
                     key={view.id}
@@ -192,6 +195,7 @@ export const ViewPickerListContent = () => {
                         isIndexView={isIndexView}
                         isLastView={isLastView}
                         onEdit={handleEditViewButtonClick}
+                        isCurrentView={isCurrentView}
                       />
                     }
                   />

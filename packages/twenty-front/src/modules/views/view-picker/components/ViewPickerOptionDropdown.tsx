@@ -15,6 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import {
   IconHeart,
+  IconHeartOff,
   IconLock,
   IconPencil,
   IconTrash,
@@ -25,6 +26,7 @@ import {
   PermissionFlagType,
   ViewVisibility,
 } from '~/generated-metadata/graphql';
+import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 
 type ViewPickerOptionDropdownProps = {
   isIndexView: boolean;
@@ -35,6 +37,7 @@ type ViewPickerOptionDropdownProps = {
   >;
   onEdit: (event: React.MouseEvent<HTMLElement>, viewId: string) => void;
   handleViewSelect: (viewId: string) => void;
+  isCurrentView: boolean;
 };
 
 export const ViewPickerOptionDropdown = ({
@@ -43,6 +46,7 @@ export const ViewPickerOptionDropdown = ({
   onEdit,
   view,
   handleViewSelect,
+  isCurrentView = false,
 }: ViewPickerOptionDropdownProps) => {
   const dropdownId = `view-picker-options-${view.id}`;
 
@@ -59,16 +63,19 @@ export const ViewPickerOptionDropdown = ({
   const { navigationMenuItems, currentUserWorkspaceId } =
     useNavigationMenuItemsData();
 
+  const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
+
   // Users with VIEWS permission can edit all views
   // Users without VIEWS permission can only edit unlisted views (which are always their own, filtered by backend)
   const canEditView =
     hasViewsPermission || view.visibility === ViewVisibility.UNLISTED;
 
-  const isFavorite = navigationMenuItems.some(
+  const currentNavigationMenuItem = navigationMenuItems.find(
     (item) =>
       item.viewId === view.id &&
       item.userWorkspaceId === currentUserWorkspaceId,
   );
+  const isFavorite = isDefined(currentNavigationMenuItem);
 
   const handleDelete = () => {
     setViewPickerReferenceViewId(view.id);
@@ -76,7 +83,7 @@ export const ViewPickerOptionDropdown = ({
     closeDropdown(dropdownId);
   };
 
-  const handleAddToFavorites = () => {
+  const handleFavorite = () => {
     if (!isFavorite) {
       const relevantItems = navigationMenuItems.filter(
         (item) => !isDefined(item.folderId) && isDefined(item.userWorkspaceId),
@@ -96,6 +103,8 @@ export const ViewPickerOptionDropdown = ({
           position: maxPosition + 1,
         },
       ]);
+    } else {
+      deleteManyNavigationMenuItems([currentNavigationMenuItem.id]);
     }
     closeDropdown(dropdownId);
   };
@@ -120,21 +129,22 @@ export const ViewPickerOptionDropdown = ({
         RightIcon={getVisibilityIcon()}
         dropdownPlacement="bottom-start"
         dropdownId={`view-picker-options-${view.id}`}
+        selected={isCurrentView}
         dropdownContent={
           <DropdownContent>
             <DropdownMenuItemsContainer>
               {isIndexView ? (
                 <MenuItem
-                  LeftIcon={IconHeart}
-                  text={isFavorite ? t`Manage favorite` : t`Add to Favorite`}
-                  onClick={handleAddToFavorites}
+                  LeftIcon={isFavorite ? IconHeartOff : IconHeart}
+                  text={isFavorite ? t`Remove Favorite` : t`Add to Favorite`}
+                  onClick={handleFavorite}
                 />
               ) : (
                 <>
                   <MenuItem
-                    LeftIcon={IconHeart}
-                    text={isFavorite ? t`Manage favorite` : t`Add to Favorite`}
-                    onClick={handleAddToFavorites}
+                    LeftIcon={isFavorite ? IconHeartOff : IconHeart}
+                    text={isFavorite ? t`Remove Favorite` : t`Add to Favorite`}
+                    onClick={handleFavorite}
                   />
 
                   {canEditView && (
