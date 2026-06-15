@@ -43,7 +43,6 @@ const CALL_RECORDING_OBJECT_METADATA_UNIVERSAL_IDENTIFIERS = [
 
 const CALL_RECORDING_FIELD_METADATA_UNIVERSAL_IDENTIFIERS = [
   ...getUniversalIdentifiers(STANDARD_OBJECTS.callRecording.fields),
-  STANDARD_OBJECTS.calendarEvent.fields.recordingPreference.universalIdentifier,
   STANDARD_OBJECTS.calendarEvent.fields.callRecordings.universalIdentifier,
 ];
 
