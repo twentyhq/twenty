@@ -121,11 +121,14 @@ export class EmailComposerService {
     workspaceMemberId: string,
     workspaceId: string,
   ): Promise<ConnectedAccountEntity | null> {
+    // Resolved within the workspace system context (see resolveSenderConnectedAccount),
+    // and the lookup is scoped to this workspace below. We intentionally keep
+    // permission checks enabled (no bypass) so this read stays least-privilege and
+    // consistent with the other reads in this service.
     const workspaceMemberRepository =
       await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
         'workspaceMember',
-        { shouldBypassPermissionChecks: true },
       );
 
     const workspaceMember = await workspaceMemberRepository.findOne({
@@ -144,13 +147,20 @@ export class EmailComposerService {
       return null;
     }
 
+    // Exclude archived accounts and order deterministically so the resolved sender
+    // is stable across runs rather than depending on arbitrary row ordering.
     const connectedAccounts = await this.connectedAccountRepository.find({
-      where: { userWorkspaceId: userWorkspace.id, workspaceId },
+      where: {
+        userWorkspaceId: userWorkspace.id,
+        workspaceId,
+        archivedAt: IsNull(),
+      },
       relations: {
         messageChannels: {
           messageFolders: true,
         },
       },
+      order: { createdAt: 'ASC' },
     });
 
     return connectedAccounts[0] ?? null;

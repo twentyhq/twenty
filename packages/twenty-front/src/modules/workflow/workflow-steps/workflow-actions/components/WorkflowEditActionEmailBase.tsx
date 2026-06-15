@@ -193,6 +193,7 @@ export const WorkflowEditActionEmailBase = ({
       <>
         <WorkflowStepBody>
           <FormSelectFieldInput
+            key={`connected-account-${formData.connectedAccountId ?? 'none'}`}
             label={t`Account`}
             defaultValue={formData.connectedAccountId}
             options={connectedAccountOptions}

@@ -1,4 +1,5 @@
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { IsNull } from 'typeorm';
 
 import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
 
@@ -98,9 +99,34 @@ describe('EmailComposerService sender resolution', () => {
     );
     expect(connectedAccountRepository.find).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { userWorkspaceId: USER_WORKSPACE_ID, workspaceId: WORKSPACE_ID },
+        where: {
+          userWorkspaceId: USER_WORKSPACE_ID,
+          workspaceId: WORKSPACE_ID,
+          archivedAt: IsNull(),
+        },
+        order: { createdAt: 'ASC' },
       }),
     );
+  });
+
+  it('skips archived accounts and resolves deterministically by creation date', async () => {
+    connectedAccountRepository.findOne.mockResolvedValue(null);
+    workspaceMemberRepository.findOne.mockResolvedValue({ userId: USER_ID });
+    userWorkspaceRepository.findOne.mockResolvedValue({ id: USER_WORKSPACE_ID });
+    connectedAccountRepository.find.mockResolvedValue([
+      buildAccount(MEMBER_ACCOUNT_ID),
+    ]);
+
+    await service.composeEmail(
+      { ...baseParams, connectedAccountId: WORKSPACE_MEMBER_ID },
+      context,
+      { attachmentsFileFolder: 'Workflow' as never },
+    );
+
+    const findArgs = connectedAccountRepository.find.mock.calls[0][0];
+
+    expect(findArgs.where.archivedAt).toEqual(IsNull());
+    expect(findArgs.order).toEqual({ createdAt: 'ASC' });
   });
 
   it('throws when the id matches neither a connected account nor a workspace member', async () => {

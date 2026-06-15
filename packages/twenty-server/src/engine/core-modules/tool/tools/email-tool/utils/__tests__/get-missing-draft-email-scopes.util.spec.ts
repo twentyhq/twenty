@@ -55,14 +55,15 @@ describe('getMissingDraftEmailScopes', () => {
     });
   });
 
-  describe('other providers', () => {
-    it('never requires scopes for IMAP/SMTP accounts', () => {
-      expect(
-        getMissingDraftEmailScopes({
-          provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-          scopes: null,
-        }),
-      ).toEqual([]);
+  describe('non-OAuth providers', () => {
+    it.each([
+      ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+      ConnectedAccountProvider.EMAIL_GROUP,
+      ConnectedAccountProvider.APP,
+      ConnectedAccountProvider.OIDC,
+      ConnectedAccountProvider.SAML,
+    ])('never requires scopes for %s accounts', (provider) => {
+      expect(getMissingDraftEmailScopes({ provider, scopes: null })).toEqual([]);
     });
   });
 });
