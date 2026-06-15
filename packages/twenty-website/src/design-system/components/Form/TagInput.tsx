@@ -152,7 +152,9 @@ export function FormTagInput({
   const listId = useId();
 
   const searchableSuggestions =
-    suggestions !== undefined ? [...suggestions, ...(searchPool ?? [])] : undefined;
+    suggestions !== undefined
+      ? [...suggestions, ...(searchPool ?? [])]
+      : undefined;
 
   const menuMatches =
     searchableSuggestions !== undefined

@@ -49,7 +49,9 @@ export const partnerApplicationRequestSchema = z.strictObject({
 
   // Commercials
   hourlyRate: z.number({ error: 'Hourly rate is required.' }).nonnegative(),
-  projectBudgetMin: z.number({ error: 'Minimum project budget is required.' }).nonnegative(),
+  projectBudgetMin: z
+    .number({ error: 'Minimum project budget is required.' })
+    .nonnegative(),
   calendarLink: optionalUrl,
 });
 

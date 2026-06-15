@@ -24,13 +24,17 @@ function Harness() {
 describe('FormTagInput searchPool', () => {
   it('shows only `suggestions` as ghost chips, not the pool', () => {
     render(<Harness />);
-    expect(screen.getByRole('button', { name: '+ Workflows' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: '+ Workflows' }),
+    ).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: '+ Kubernetes' })).toBeNull();
   });
 
   it('autocompletes against the pool', async () => {
     render(<Harness />);
     await userEvent.type(screen.getByRole('combobox'), 'kuber');
-    expect(screen.getByRole('option', { name: 'Kubernetes' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('option', { name: 'Kubernetes' }),
+    ).toBeInTheDocument();
   });
 });

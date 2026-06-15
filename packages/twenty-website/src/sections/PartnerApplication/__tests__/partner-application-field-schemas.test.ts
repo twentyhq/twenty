@@ -14,14 +14,18 @@ const validBody: Record<string, unknown> = {
 
 describe('partnerApplicationRequestSchema required fields', () => {
   it('accepts a complete body', () => {
-    expect(partnerApplicationRequestSchema.safeParse(validBody).success).toBe(true);
+    expect(partnerApplicationRequestSchema.safeParse(validBody).success).toBe(
+      true,
+    );
   });
 
   it.each(['website', 'city', 'hourlyRate', 'projectBudgetMin'])(
     'rejects a body missing %s',
     (field) => {
       const { [field]: _omitted, ...rest } = validBody;
-      expect(partnerApplicationRequestSchema.safeParse(rest).success).toBe(false);
+      expect(partnerApplicationRequestSchema.safeParse(rest).success).toBe(
+        false,
+      );
     },
   );
 });
