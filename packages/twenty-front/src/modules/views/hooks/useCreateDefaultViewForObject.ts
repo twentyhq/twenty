@@ -2,6 +2,8 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
 import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { v4 } from 'uuid';
 import { ViewType } from '~/generated-metadata/graphql';
@@ -15,9 +17,23 @@ const pendingViewCreations = new Set<string>();
 export const useCreateDefaultViewForObject = () => {
   const { performViewAPICreate } = usePerformViewAPIPersist();
   const { performViewFieldAPICreate } = usePerformViewFieldAPIPersist();
+  const store = useStore();
 
   const createDefaultViewForObject = useCallback(
     async (objectMetadataItem: EnrichedObjectMetadataItem) => {
+      // Idempotency guard: never auto-create a view for an object that already
+      // has one. The caller fires whenever the requested view id isn't resolved
+      // yet — including the warm, cache-first load window — and each creation
+      // mints a fresh view id that never matches the requested one, so without
+      // this guard it re-creates a view (and its view fields) on every load.
+      const objectAlreadyHasView = store
+        .get(viewsSelector.atom)
+        .some((view) => view.objectMetadataId === objectMetadataItem.id);
+
+      if (objectAlreadyHasView) {
+        return;
+      }
+
       if (pendingViewCreations.has(objectMetadataItem.id)) {
         return;
       }
@@ -77,7 +93,7 @@ export const useCreateDefaultViewForObject = () => {
         pendingViewCreations.delete(objectMetadataItem.id);
       }
     },
-    [performViewAPICreate, performViewFieldAPICreate],
+    [performViewAPICreate, performViewFieldAPICreate, store],
   );
 
   return {
