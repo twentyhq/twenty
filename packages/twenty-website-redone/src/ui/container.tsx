@@ -16,4 +16,8 @@ export const Container = styled.div`
   ${mediaUp('md')} {
     padding-inline: ${spacing(GUTTER.md)};
   }
+
+  &[data-flush-inline] {
+    padding-inline: 0;
+  }
 `;

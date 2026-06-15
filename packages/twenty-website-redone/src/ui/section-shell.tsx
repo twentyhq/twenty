@@ -121,9 +121,10 @@ export type SectionShellProps = {
   // Forms one continuous frame with the section directly above (same scheme):
   // that section yields its bottom rhythm so the two tuck together.
   connectsUp?: boolean;
-  // Renders content full-bleed (no max-width, no gutter) for edge-to-edge
-  // scrolling content — the marquee. Most sections never want this.
-  fullBleed?: boolean;
+  // Removes the Container's horizontal gutter (the max-width cap and centring
+  // stay) — for content that runs edge-to-edge within the content column,
+  // like the marquee. Most sections keep the gutter.
+  flushInline?: boolean;
   // Keeps its own full top rhythm instead of collapsing under a same-scheme
   // predecessor — for sections whose top padding is load-bearing.
   keepsTopRhythm?: boolean;
@@ -136,7 +137,7 @@ export function SectionShell({
   background,
   children,
   connectsUp = false,
-  fullBleed = false,
+  flushInline = false,
   keepsTopRhythm = false,
   rhythm = 'section',
   scheme = 'light',
@@ -155,11 +156,12 @@ export function SectionShell({
           {background}
         </div>
       )}
-      {fullBleed ? (
-        <div className={contentLayerClassName}>{children}</div>
-      ) : (
-        <Container className={contentLayerClassName}>{children}</Container>
-      )}
+      <Container
+        className={contentLayerClassName}
+        data-flush-inline={flushInline ? '' : undefined}
+      >
+        {children}
+      </Container>
     </section>
   );
 }

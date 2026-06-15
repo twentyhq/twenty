@@ -176,7 +176,7 @@ export function WhyTwentyMarquee() {
   // Decorative restatement of the editorials' argument — hidden from the
   // accessibility tree (the prose above carries it).
   return (
-    <SectionShell fullBleed keepsTopRhythm rhythm="spacious" scheme="dark">
+    <SectionShell flushInline keepsTopRhythm rhythm="spacious" scheme="dark">
       <Viewport aria-hidden>
         <Row>{renderTrack(false)}</Row>
         <Row>{renderTrack(true)}</Row>
