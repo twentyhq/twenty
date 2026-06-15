@@ -4,7 +4,7 @@ import { Logo } from '@/auth/components/Logo';
 import {
   ComponentDecorator,
   RouterDecorator,
-} from 'twenty-ui-deprecated/testing';
+} from 'twenty-ui/testing';
 
 const logoUrl = 'https://picsum.photos/192/192';
 

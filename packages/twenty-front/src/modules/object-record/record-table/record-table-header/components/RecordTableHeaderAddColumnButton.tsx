@@ -18,11 +18,11 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
 import { useContext } from 'react';
-import { IconPlus } from 'twenty-ui-deprecated/display';
+import { IconPlus } from 'twenty-ui/display';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 const StyledPlusIconHeaderCell = styled.div<{
   shouldDisplayBorderBottom: boolean;

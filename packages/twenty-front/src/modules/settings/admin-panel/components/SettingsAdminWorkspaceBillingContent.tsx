@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui-deprecated/components';
+import { Tag } from 'twenty-ui/components';
 import {
   H2Title,
   IconBox,
@@ -16,10 +16,10 @@ import {
   IconStatusChange,
   IconTag,
   IconUsers,
-} from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
-import { type ThemeColor } from 'twenty-ui-deprecated/theme';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
+import { type ThemeColor } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';

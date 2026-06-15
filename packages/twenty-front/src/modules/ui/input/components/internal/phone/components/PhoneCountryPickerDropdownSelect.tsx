@@ -12,8 +12,8 @@ import 'react-phone-number-input/style.css';
 import {
   MenuItem,
   MenuItemSelectAvatar,
-} from 'twenty-ui-deprecated/navigation';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledIconContainer = styled.div`
   align-items: center;

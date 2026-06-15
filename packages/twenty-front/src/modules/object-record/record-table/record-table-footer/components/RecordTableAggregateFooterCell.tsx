@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import {
   MOBILE_VIEWPORT,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 import {
   RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR,

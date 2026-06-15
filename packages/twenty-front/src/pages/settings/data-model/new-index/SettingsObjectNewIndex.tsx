@@ -21,8 +21,8 @@ import {
   Callout,
   H2Title,
   IconAlertTriangle,
-} from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
+} from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 import { IndexType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';

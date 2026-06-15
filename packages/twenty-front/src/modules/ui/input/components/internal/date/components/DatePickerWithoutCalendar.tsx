@@ -19,7 +19,7 @@ import { isDefined, turnJSDateToPlainDate } from 'twenty-shared/utils';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
   'date-picker-month-and-year-dropdown-month-select';

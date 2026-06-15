@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   ComponentDecorator,
   RouterDecorator,
-} from 'twenty-ui-deprecated/testing';
+} from 'twenty-ui/testing';
 import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
 
 const SettingsRoleAssignmentWrapper = (

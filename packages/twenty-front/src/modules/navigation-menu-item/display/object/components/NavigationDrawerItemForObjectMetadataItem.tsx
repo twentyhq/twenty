@@ -26,11 +26,11 @@ import {
   NavigationMenuItemType,
 } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { Avatar, IconLock, useIcons } from 'twenty-ui-deprecated/display';
+import { Avatar, IconLock, useIcons } from 'twenty-ui/display';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export type NavigationDrawerItemForObjectMetadataItemProps = {

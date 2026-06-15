@@ -17,12 +17,12 @@ import { useContext } from 'react';
 import {
   IconCalendar,
   OverflowingTextWithTooltip,
-} from 'twenty-ui-deprecated/display';
-import { Checkbox, CheckboxShape } from 'twenty-ui-deprecated/input';
+} from 'twenty-ui/display';
+import { Checkbox, CheckboxShape } from 'twenty-ui/input';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
 
 const StyledTaskBody = styled.div`

@@ -14,8 +14,8 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-} from 'twenty-ui-deprecated/layout';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+} from 'twenty-ui/layout';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { sleep } from '~/utils/sleep';
 

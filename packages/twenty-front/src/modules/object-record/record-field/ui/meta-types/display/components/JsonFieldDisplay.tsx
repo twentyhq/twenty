@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   isTwoFirstDepths,
   JsonTree,
-} from 'twenty-ui-deprecated/json-visualizer';
+} from 'twenty-ui/json-visualizer';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const JsonFieldDisplay = () => {

@@ -4,7 +4,7 @@ import { SkeletonTheme } from 'react-loading-skeleton';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';

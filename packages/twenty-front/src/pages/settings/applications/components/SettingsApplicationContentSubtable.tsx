@@ -11,11 +11,11 @@ import {
   IconChevronRight,
   OverflowingTextWithTooltip,
   useIcons,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 import { AppChip } from '@/applications/components/AppChip';
 
 export type ApplicationContentRow = {

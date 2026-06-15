@@ -18,14 +18,14 @@ import {
   type IconComponent,
   IconEye,
   IconEyeOff,
-} from 'twenty-ui-deprecated/display';
-import { AutogrowWrapper } from 'twenty-ui-deprecated/utilities';
+} from 'twenty-ui/display';
+import { AutogrowWrapper } from 'twenty-ui/utilities';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
   box-sizing: border-box;
   display: inline-flex;

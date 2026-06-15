@@ -1,11 +1,11 @@
-import { type IconComponent } from 'twenty-ui-deprecated/display';
+import { type IconComponent } from 'twenty-ui/display';
 import React, { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 type SubscriptionInfoRowContainerProps = {
   Icon: IconComponent;

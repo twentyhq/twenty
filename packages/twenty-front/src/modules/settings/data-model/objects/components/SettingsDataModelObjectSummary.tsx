@@ -8,11 +8,11 @@ import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import {
   IconBox,
   OverflowingTextWithTooltip,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 export type SettingsDataModelObjectPreviewProps = {
   className?: string;

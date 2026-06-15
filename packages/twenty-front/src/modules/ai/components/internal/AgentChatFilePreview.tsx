@@ -14,10 +14,10 @@ import {
   AvatarOrIcon,
   Chip,
   ChipVariant,
-} from 'twenty-ui-deprecated/components';
-import { type IconComponent, IconX } from 'twenty-ui-deprecated/display';
-import { Loader } from 'twenty-ui-deprecated/feedback';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/components';
+import { type IconComponent, IconX } from 'twenty-ui/display';
+import { Loader } from 'twenty-ui/feedback';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledClickableContainer = styled.div<{ clickable: boolean }>`
   cursor: ${({ clickable }: { clickable: boolean }) =>

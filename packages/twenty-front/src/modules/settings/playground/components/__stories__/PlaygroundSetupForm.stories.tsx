@@ -4,7 +4,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import {
   ComponentDecorator,
   RouterDecorator,
-} from 'twenty-ui-deprecated/testing';
+} from 'twenty-ui/testing';
 
 const meta: Meta<typeof PlaygroundSetupForm> = {
   title: 'Modules/Settings/Playground/PlaygroundSetupForm',

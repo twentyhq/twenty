@@ -17,7 +17,7 @@ import {
   IconArrowUpRight,
   IconCopy,
   IconMail,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const useGetSecondaryRecordTableCellButton = () => {

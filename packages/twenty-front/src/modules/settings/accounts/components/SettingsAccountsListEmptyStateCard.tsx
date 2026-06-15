@@ -15,12 +15,12 @@ import {
   IconAt,
   IconGoogle,
   IconMicrosoft,
-} from 'twenty-ui-deprecated/display';
-import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/display';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 const StyledCardsContainer = styled.div`
   display: flex;

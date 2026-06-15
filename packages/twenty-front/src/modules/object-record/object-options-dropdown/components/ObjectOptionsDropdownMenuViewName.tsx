@@ -18,11 +18,11 @@ import { Key } from 'ts-key-enum';
 import {
   OverflowingTextWithTooltip,
   useIcons,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 
 const StyledDropdownMenuIconAndNameContainer = styled.div`

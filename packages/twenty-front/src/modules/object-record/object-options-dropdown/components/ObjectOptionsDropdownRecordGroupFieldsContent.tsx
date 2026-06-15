@@ -27,12 +27,12 @@ import {
   IconChevronLeft,
   IconSettings,
   useIcons,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import {
   MenuItem,
   MenuItemSelect,
   UndecoratedLink,
-} from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {

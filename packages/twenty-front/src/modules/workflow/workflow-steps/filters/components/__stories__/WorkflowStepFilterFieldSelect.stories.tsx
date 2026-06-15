@@ -2,7 +2,7 @@ import { WorkflowStepFilterFieldSelect } from '@/workflow/workflow-steps/filters
 import { WorkflowStepFilterDecorator } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/decorators/WorkflowStepFilterDecorator';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { type StepFilter, ViewFilterOperand } from 'twenty-shared/types';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';

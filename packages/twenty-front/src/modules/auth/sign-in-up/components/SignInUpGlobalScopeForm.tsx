@@ -7,7 +7,7 @@ import { FormProvider } from 'react-hook-form';
 import {
   ClickToActionLink,
   UndecoratedLink,
-} from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/navigation';
 
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/SignInUpWithCredentials';
@@ -32,11 +32,11 @@ import {
   HorizontalSeparator,
   IconChevronRight,
   IconPlus,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 

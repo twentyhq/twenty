@@ -18,7 +18,7 @@ import {
   IconBolt,
   IconSettingsAutomation,
   useIcons,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 

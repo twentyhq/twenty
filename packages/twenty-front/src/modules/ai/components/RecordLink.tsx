@@ -7,7 +7,7 @@ import {
   AvatarOrIcon,
   ChipVariant,
   LinkChip,
-} from 'twenty-ui-deprecated/components';
+} from 'twenty-ui/components';
 
 type RecordLinkProps = {
   objectNameSingular: string;

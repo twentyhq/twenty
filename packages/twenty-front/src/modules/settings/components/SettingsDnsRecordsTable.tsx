@@ -8,8 +8,8 @@ import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
   OverflowingTextWithTooltip,
   Status,
-} from 'twenty-ui-deprecated/display';
-import { type ThemeColor } from 'twenty-ui-deprecated/theme';
+} from 'twenty-ui/display';
+import { type ThemeColor } from 'twenty-ui/theme';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 type RecordStatus = {

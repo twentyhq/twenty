@@ -11,8 +11,8 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui-deprecated/display';
-import { MenuItemSelectAvatar } from 'twenty-ui-deprecated/navigation';
+import { Avatar } from 'twenty-ui/display';
+import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
 
 type SingleRecordPickerMenuItemProps = {
   morphItem: RecordPickerPickableMorphItem;

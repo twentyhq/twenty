@@ -12,9 +12,9 @@ import {
   IconArchive,
   IconDotsVertical,
   IconTrash,
-} from 'twenty-ui-deprecated/display';
-import { LightIconButton } from 'twenty-ui-deprecated/input';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { MenuItem } from 'twenty-ui/navigation';
 import { SsoIdentityProviderStatus } from '~/generated-metadata/graphql';
 
 type SettingsSecuritySSORowDropdownMenuProps = {

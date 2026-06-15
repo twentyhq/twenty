@@ -10,7 +10,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import {
   MOBILE_VIEWPORT,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 import { SnackBar } from './SnackBar';
 
 const StyledSnackBarContainer = styled.div`

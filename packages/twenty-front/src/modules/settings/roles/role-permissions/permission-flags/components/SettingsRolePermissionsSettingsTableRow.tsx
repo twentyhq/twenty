@@ -5,12 +5,12 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
-import { Checkbox } from 'twenty-ui-deprecated/input';
+import { Checkbox } from 'twenty-ui/input';
 import { useContext } from 'react';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 
 const StyledName = styled.span`

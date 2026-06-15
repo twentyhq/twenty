@@ -5,12 +5,12 @@ import {
   IconBrain,
   IconChevronDown,
   IconChevronUp,
-} from 'twenty-ui-deprecated/display';
-import { AnimatedExpandableContainer } from 'twenty-ui-deprecated/layout';
+} from 'twenty-ui/display';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
 import { t } from '@lingui/core/macro';

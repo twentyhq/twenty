@@ -14,9 +14,9 @@ import {
   H2Title,
   type IconComponent,
   IconKey,
-} from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { IdentityProviderType } from '~/generated-metadata/graphql';
 
 const StyledInputsContainer = styled.div`

@@ -27,8 +27,8 @@ import {
   Callout,
   IconPlayerPlay,
   IconSettingsAutomation,
-} from 'twenty-ui-deprecated/display';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 
 const INPUT_TAB_ID = 'input';

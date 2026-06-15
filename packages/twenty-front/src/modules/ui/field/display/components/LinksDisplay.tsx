@@ -12,7 +12,7 @@ import {
   LinkType,
   RoundedLink,
   SocialLink,
-} from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/navigation';
 import { checkUrlType } from '~/utils/checkUrlType';
 
 type LinksDisplayProps = {

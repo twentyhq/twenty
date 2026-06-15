@@ -8,8 +8,8 @@ import { type ReactNode, useContext } from 'react';
 import {
   IconTrash,
   OverflowingTextWithTooltip,
-} from 'twenty-ui-deprecated/display';
-import { IconButton } from 'twenty-ui-deprecated/input';
+} from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
 
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { WidgetGrip } from '@/page-layout/widgets/widget-card/components/WidgetGrip';
@@ -18,7 +18,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   themeCssVariables,
   ThemeContext,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 export type WidgetCardHeaderProps = {
   variant: WidgetCardVariant;
   widgetId: string;

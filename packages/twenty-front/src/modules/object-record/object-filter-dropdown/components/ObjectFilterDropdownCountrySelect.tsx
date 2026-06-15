@@ -19,7 +19,7 @@ import { isDefined, parseJson } from 'twenty-shared/utils';
 import {
   MenuItem,
   MenuItemMultiSelectAvatar,
-} from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/navigation';
 import { z } from 'zod';
 
 export const EMPTY_FILTER_VALUE = '[]';

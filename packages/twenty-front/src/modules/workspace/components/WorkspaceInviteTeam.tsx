@@ -20,12 +20,12 @@ import {
   IconUser,
   useIcons,
   type IconComponent,
-} from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
+} from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import {
   MOBILE_VIEWPORT,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: center;

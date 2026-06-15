@@ -9,12 +9,12 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { useContext } from 'react';
-import { IconX } from 'twenty-ui-deprecated/display';
-import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
+import { IconX } from 'twenty-ui/display';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 type NavigationDrawerBackButtonProps = {
   title: string;

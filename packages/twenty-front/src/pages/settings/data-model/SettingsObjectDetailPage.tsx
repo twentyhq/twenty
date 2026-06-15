@@ -29,9 +29,9 @@ import {
   IconListDetails,
   IconPlus,
   IconSettings,
-} from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
-import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';

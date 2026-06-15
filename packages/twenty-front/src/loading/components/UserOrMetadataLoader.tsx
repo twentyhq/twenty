@@ -6,8 +6,8 @@ import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/const
 import {
   MOBILE_VIEWPORT,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
-import { ModalBackdrop } from 'twenty-ui-deprecated/layout';
+} from 'twenty-ui/theme-constants';
+import { ModalBackdrop } from 'twenty-ui/layout';
 import { LeftPanelSkeletonLoader } from '~/loading/components/LeftPanelSkeletonLoader';
 import { PageContentSkeletonLoader } from '~/loading/components/PageContentSkeletonLoader';
 

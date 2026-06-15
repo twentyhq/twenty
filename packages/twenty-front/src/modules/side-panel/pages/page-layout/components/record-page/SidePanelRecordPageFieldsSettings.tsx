@@ -20,7 +20,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronDown,
   IconLayoutSidebarRight,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import { type FieldsConfiguration } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`

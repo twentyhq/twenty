@@ -15,7 +15,7 @@ import { useContext } from 'react';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 const StyledDragDropHeaderCell = styled.div<{
   shouldDisplayBorderBottom: boolean;

@@ -21,12 +21,12 @@ import { useStore } from 'jotai';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useCallback, useContext, useRef } from 'react';
-import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui-deprecated/components';
+import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
-import { useIsMobile } from 'twenty-ui-deprecated/utilities';
+} from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui/utilities';
 const StyledCommandMenuBase = styled.div`
   background: ${themeCssVariables.background.primary};
   border-left: 1px solid ${themeCssVariables.border.color.medium};

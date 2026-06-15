@@ -10,8 +10,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCopyPlus, IconTrash } from 'twenty-ui-deprecated/display';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { IconCopyPlus, IconTrash } from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export const WidgetSettingsFooter = ({
   pageLayoutId,

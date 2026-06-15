@@ -4,8 +4,8 @@ import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import {
   IconMail,
   OverflowingTextWithTooltip,
-} from 'twenty-ui-deprecated/display';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNameCell = styled.div`
   align-items: center;

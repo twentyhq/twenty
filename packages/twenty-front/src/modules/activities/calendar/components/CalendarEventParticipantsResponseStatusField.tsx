@@ -10,11 +10,11 @@ import {
   IconCheck,
   IconQuestionMark,
   IconX,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 const StyledInlineCellBaseContainer = styled.div`
   align-items: center;

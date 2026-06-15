@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { H2Title, IconCopy } from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
-import { Card, CardContent, Section } from 'twenty-ui-deprecated/layout';
+import { H2Title, IconCopy } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { Card, CardContent, Section } from 'twenty-ui/layout';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 

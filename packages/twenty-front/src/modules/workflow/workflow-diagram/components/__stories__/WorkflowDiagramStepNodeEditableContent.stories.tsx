@@ -11,7 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   CatalogDecorator,
   type CatalogStory,
-} from 'twenty-ui-deprecated/testing';
+} from 'twenty-ui/testing';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 

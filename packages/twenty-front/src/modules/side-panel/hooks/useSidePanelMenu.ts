@@ -20,7 +20,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   IconColumnInsertRight,
   IconDotsVertical,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 
 export const useSidePanelMenu = () => {
   const store = useStore();

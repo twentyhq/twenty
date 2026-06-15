@@ -15,12 +15,12 @@ import {
   type IconComponent,
   IconDatabase,
   IconUserCircle,
-} from 'twenty-ui-deprecated/display';
-import { ModalContent } from 'twenty-ui-deprecated/layout';
+} from 'twenty-ui/display';
+import { ModalContent } from 'twenty-ui/layout';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 import {
   AuthorizeAppDocument,
   FindApplicationRegistrationByClientIdDocument,

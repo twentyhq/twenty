@@ -8,9 +8,9 @@ import {
   IconDotsVertical,
   IconPencil,
   IconTrash,
-} from 'twenty-ui-deprecated/display';
-import { IconButton } from 'twenty-ui-deprecated/input';
-import { MenuItem, UndecoratedLink } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
+import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
 
 type SettingsRolePermissionsObjectLevelTableRowOptionsDropdownProps = {
   roleId: string;

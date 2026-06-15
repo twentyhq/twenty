@@ -1,6 +1,6 @@
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { Select } from '@/ui/input/components/Select';
-import { type IconComponent, useIcons } from 'twenty-ui-deprecated/display';
+import { type IconComponent, useIcons } from 'twenty-ui/display';
 
 type SettingsDevelopersRoleSelectorProps = {
   value?: string | null | undefined;

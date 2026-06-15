@@ -10,7 +10,7 @@ import { useContext } from 'react';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 import { useQuery } from '@apollo/client/react';
 import {
   QueueMetricsTimeRange,

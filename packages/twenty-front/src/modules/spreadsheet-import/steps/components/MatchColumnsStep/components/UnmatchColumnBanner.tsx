@@ -4,12 +4,12 @@ import {
   Banner,
   IconChevronDown,
   IconInfoCircle,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import { useContext } from 'react';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 const StyledBannerContainer = styled.div<{ allMatched: boolean }>`
   > div {

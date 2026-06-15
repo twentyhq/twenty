@@ -9,7 +9,7 @@ import { isRecordTableCreateDisabled } from '@/object-record/record-table/utils/
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
-import { IconPlus } from 'twenty-ui-deprecated/display';
+import { IconPlus } from 'twenty-ui/display';
 
 export const RecordTableRecordGroupSectionAddNew = () => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();

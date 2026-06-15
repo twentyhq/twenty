@@ -26,7 +26,7 @@ import {
   IconLockOpen,
   IconSettings,
   IconUserPlus,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getDirtyFields } from '~/utils/getDirtyFields';

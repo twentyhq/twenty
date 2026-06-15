@@ -6,7 +6,7 @@ import { GraphWidgetPieChart } from '@/page-layout/widgets/graph/graph-widget-pi
 import {
   CatalogDecorator,
   ComponentDecorator,
-} from 'twenty-ui-deprecated/testing';
+} from 'twenty-ui/testing';
 import {
   AggregateOperations,
   WidgetConfigurationType,

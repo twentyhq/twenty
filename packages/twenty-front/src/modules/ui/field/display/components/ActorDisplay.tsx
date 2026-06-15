@@ -6,7 +6,7 @@ import {
   AvatarOrIcon,
   Chip,
   ChipVariant,
-} from 'twenty-ui-deprecated/components';
+} from 'twenty-ui/components';
 import {
   IconApi,
   IconCalendar,
@@ -21,7 +21,7 @@ import {
   IconUpload,
   IconWebhook,
   type IconComponent,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 
 type ActorDisplayProps = Partial<FieldActorValue> & {
   avatarUrl?: string | null;

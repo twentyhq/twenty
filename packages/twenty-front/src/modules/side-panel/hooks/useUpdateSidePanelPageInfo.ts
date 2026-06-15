@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import {
   type IconComponent,
   IconDotsVertical,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import { useStore } from 'jotai';
 
 export const useUpdateSidePanelPageInfo = () => {

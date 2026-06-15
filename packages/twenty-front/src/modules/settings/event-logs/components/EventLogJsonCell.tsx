@@ -9,8 +9,8 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   isTwoFirstDepths,
   JsonTree,
-} from 'twenty-ui-deprecated/json-visualizer';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/json-visualizer';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 type EventLogJsonCellProps = {

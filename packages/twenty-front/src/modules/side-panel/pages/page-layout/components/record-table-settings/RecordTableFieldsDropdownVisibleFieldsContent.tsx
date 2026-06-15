@@ -13,11 +13,11 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { type DropResult } from '@hello-pangea/dnd';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconEyeOff, useIcons } from 'twenty-ui-deprecated/display';
+import { IconEyeOff, useIcons } from 'twenty-ui/display';
 import {
   MenuItemDraggable,
   MenuItemNavigate,
-} from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/navigation';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 type RecordTableFieldsDropdownVisibleFieldsContentProps = {

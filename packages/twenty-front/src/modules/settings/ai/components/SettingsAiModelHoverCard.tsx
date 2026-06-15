@@ -6,7 +6,7 @@ import {
   ChipAccent,
   ChipSize,
   ChipVariant,
-} from 'twenty-ui-deprecated/components';
+} from 'twenty-ui/components';
 import {
   IconBolt,
   IconBuildingSkyscraper,
@@ -15,11 +15,11 @@ import {
   IconUsers,
   IconWindow,
   type IconComponent,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 import { type AiModelSummary } from '@/settings/ai/types/AiModelSummary';
 import { getDataResidencyDisplay } from '@/settings/ai/utils/getDataResidencyDisplay';

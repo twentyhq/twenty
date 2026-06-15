@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { Icon123, useIcons } from 'twenty-ui-deprecated/display';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { Icon123, useIcons } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventFieldDiffLabelProps = {
   fieldMetadataItem: FieldMetadataItem;

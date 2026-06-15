@@ -13,8 +13,8 @@ import { useState } from 'react';
 import {
   IconChevronLeft,
   OverflowingTextWithTooltip,
-} from 'twenty-ui-deprecated/display';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 
 export const MatchColumnSelectSubFieldSelectDropdownContent = ({
   fieldMetadataItem,

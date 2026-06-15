@@ -25,7 +25,7 @@ import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
 import { expect, userEvent, within } from 'storybook/test';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';

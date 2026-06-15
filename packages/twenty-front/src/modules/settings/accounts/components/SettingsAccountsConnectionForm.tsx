@@ -9,12 +9,12 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SettingsAccountsPasswordController } from '@/settings/accounts/components/SettingsAccountsPasswordController';
 import { type ConnectionFormData } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
 import { type AccountType } from 'twenty-shared/constants';
-import { H2Title } from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 import {
   MOBILE_VIEWPORT,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 const StyledFormContainer = styled.div`
   display: flex;

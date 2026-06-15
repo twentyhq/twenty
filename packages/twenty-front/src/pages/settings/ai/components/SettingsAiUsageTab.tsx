@@ -14,9 +14,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui-deprecated/components';
-import { H2Title, IconLock } from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
+import { Tag } from 'twenty-ui/components';
+import { H2Title, IconLock } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 export const SettingsAiUsageTab = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);

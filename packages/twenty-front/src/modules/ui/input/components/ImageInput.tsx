@@ -9,12 +9,12 @@ import {
   IconTrash,
   IconUpload,
   IconX,
-} from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
+} from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 const StyledContainer = styled.div`
   display: flex;

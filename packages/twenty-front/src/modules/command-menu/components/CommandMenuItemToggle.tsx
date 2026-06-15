@@ -3,7 +3,7 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import {
   MenuItemToggle,
   type MenuItemToggleProps,
-} from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/navigation';
 
 export type CommandMenuItemToggleProps = MenuItemToggleProps & {
   id: string;

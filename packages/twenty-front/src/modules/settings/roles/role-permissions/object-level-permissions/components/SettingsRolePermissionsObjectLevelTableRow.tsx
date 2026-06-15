@@ -11,11 +11,11 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui-deprecated/display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 const StyledNameLabel = styled.div`
   overflow: hidden;

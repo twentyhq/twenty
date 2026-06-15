@@ -18,15 +18,15 @@ import {
   H2Title,
   IconChevronRight,
   IconPinned,
-} from 'twenty-ui-deprecated/display';
-import { SearchInput } from 'twenty-ui-deprecated/input';
-import { Section } from 'twenty-ui-deprecated/layout';
-import { MenuItemToggle } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/display';
+import { SearchInput } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import { MenuItemToggle } from 'twenty-ui/navigation';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
-import { Tag } from 'twenty-ui-deprecated/components';
+} from 'twenty-ui/theme-constants';
+import { Tag } from 'twenty-ui/components';
 import {
   type ApplicationRegistrationFragmentFragment,
   ApplicationRegistrationSourceType,

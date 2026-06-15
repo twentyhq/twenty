@@ -18,8 +18,8 @@ import {
   IconHistory,
   IconKey,
   IconSettings,
-} from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
+} from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const SETTINGS_GENERAL_TABS_INSTANCE_ID = 'settings-general-tabs';

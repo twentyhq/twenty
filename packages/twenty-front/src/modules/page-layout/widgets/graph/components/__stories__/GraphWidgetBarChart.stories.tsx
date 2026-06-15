@@ -5,7 +5,7 @@ import { GraphWidgetBarChart } from '@/page-layout/widgets/graph/graph-widget-ba
 import {
   CatalogDecorator,
   ComponentDecorator,
-} from 'twenty-ui-deprecated/testing';
+} from 'twenty-ui/testing';
 import { BarChartLayout } from '~/generated-metadata/graphql';
 
 const meta: Meta<typeof GraphWidgetBarChart> = {

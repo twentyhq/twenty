@@ -13,8 +13,8 @@ import {
   IconCode,
   IconDownload,
   IconPlug,
-} from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
+} from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 import coverDark from '~/pages/settings/applications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/applications/assets/cover-light.png';
 import {

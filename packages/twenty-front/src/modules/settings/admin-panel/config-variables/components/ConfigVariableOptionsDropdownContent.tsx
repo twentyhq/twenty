@@ -14,10 +14,10 @@ import {
   IconChevronLeft,
   IconEye,
   IconEyeOff,
-} from 'twenty-ui-deprecated/display';
-import { MenuItem, MenuItemSelectTag } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/display';
+import { MenuItem, MenuItemSelectTag } from 'twenty-ui/navigation';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 type ConfigVariableOptionsDropdownContentProps = {
   selectedCategory: ConfigVariableFilterCategory | null;
   onSelectCategory: (category: ConfigVariableFilterCategory | null) => void;

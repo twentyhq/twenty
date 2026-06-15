@@ -44,7 +44,7 @@ import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { HttpResponse, graphql } from 'msw';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconDotsVertical, IconPlus } from 'twenty-ui-deprecated/display';
+import { IconDotsVertical, IconPlus } from 'twenty-ui/display';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 
 const openTimeout = 50;

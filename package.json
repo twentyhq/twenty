@@ -62,7 +62,6 @@
       "packages/twenty-server",
       "packages/twenty-emails",
       "packages/twenty-ui",
-      "packages/twenty-ui-deprecated",
       "packages/twenty-utils",
       "packages/twenty-zapier",
       "packages/twenty-website",

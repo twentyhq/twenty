@@ -8,12 +8,12 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconCpu,
-} from 'twenty-ui-deprecated/display';
-import { AnimatedExpandableContainer } from 'twenty-ui-deprecated/layout';
+} from 'twenty-ui/display';
+import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;

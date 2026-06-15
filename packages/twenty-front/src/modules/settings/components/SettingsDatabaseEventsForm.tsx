@@ -9,9 +9,9 @@ import {
   IconNorthStar,
   IconPlus,
   IconTrash,
-} from 'twenty-ui-deprecated/display';
-import { IconButton, type SelectOption } from 'twenty-ui-deprecated/input';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { IconButton, type SelectOption } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const OBJECT_DROPDOWN_WIDTH = 240;
 const ACTION_DROPDOWN_WIDTH = 240;

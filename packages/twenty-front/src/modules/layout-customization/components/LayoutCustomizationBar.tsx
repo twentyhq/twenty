@@ -4,12 +4,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useAtomValue } from 'jotai';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCheck, IconPaint } from 'twenty-ui-deprecated/display';
-import { GRAY_SCALE_LIGHT } from 'twenty-ui-deprecated/theme';
+import { IconCheck, IconPaint } from 'twenty-ui/display';
+import { GRAY_SCALE_LIGHT } from 'twenty-ui/theme';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 import { LayoutCustomizationBarMenuDropdown } from '@/layout-customization/components/LayoutCustomizationBarMenuDropdown';
 import { LayoutCustomizationBarResetConfirmationModal } from '@/layout-customization/components/LayoutCustomizationBarResetConfirmationModal';

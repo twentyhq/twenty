@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconPlug, Status } from 'twenty-ui-deprecated/display';
+import { IconPlug, Status } from 'twenty-ui/display';
 
 import { type AiProviderItem } from '@/settings/admin-panel/ai/types/AiProviderItem';
 import { getProviderIcon } from '@/settings/admin-panel/ai/utils/getProviderIcon';

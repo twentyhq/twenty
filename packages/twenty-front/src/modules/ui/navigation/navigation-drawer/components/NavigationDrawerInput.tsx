@@ -10,7 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type IconComponent,
   type TablerIconsProps,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 
 type NavigationDrawerInputProps = {
   className?: string;

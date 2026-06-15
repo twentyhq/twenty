@@ -4,7 +4,7 @@ import { useRowSelection, type Column, type FormatterProps } from 'react-data-gr
 
 import { t } from '@lingui/core/macro';
 import { type ImportedRow } from '@/spreadsheet-import/types';
-import { Radio } from 'twenty-ui-deprecated/input';
+import { Radio } from 'twenty-ui/input';
 
 const SELECT_COLUMN_KEY = 'select-row';
 

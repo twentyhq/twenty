@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import React from 'react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledPanel = styled.div`
   background: ${themeCssVariables.background.primary};

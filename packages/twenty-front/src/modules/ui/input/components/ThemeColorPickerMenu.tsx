@@ -7,8 +7,8 @@ import { useState } from 'react';
 import {
   DEFAULT_COLOR_LABELS,
   MenuItemSelectColor,
-} from 'twenty-ui-deprecated/navigation';
-import { type ThemeColor, MAIN_COLOR_NAMES } from 'twenty-ui-deprecated/theme';
+} from 'twenty-ui/navigation';
+import { type ThemeColor, MAIN_COLOR_NAMES } from 'twenty-ui/theme';
 
 type ThemeColorPickerMenuProps = {
   selectedColor: ThemeColor;

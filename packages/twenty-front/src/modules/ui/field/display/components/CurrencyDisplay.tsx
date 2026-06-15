@@ -5,8 +5,8 @@ import {
   AppTooltip,
   TooltipDelay,
   TooltipPosition,
-} from 'twenty-ui-deprecated/display';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 import { isDefined, formatToShortNumber } from 'twenty-shared/utils';
 
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';

@@ -7,11 +7,11 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
   OverflowingTextWithTooltip,
   useIcons,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 import { type Agent } from '~/generated-metadata/graphql';
 
 export type SettingsAiAgentTableRowProps = {

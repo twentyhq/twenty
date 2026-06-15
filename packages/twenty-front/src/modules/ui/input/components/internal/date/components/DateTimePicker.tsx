@@ -20,8 +20,8 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
-import { IconCalendarX } from 'twenty-ui-deprecated/display';
-import { MenuItemLeftContent } from 'twenty-ui-deprecated/navigation';
+import { IconCalendarX } from 'twenty-ui/display';
+import { MenuItemLeftContent } from 'twenty-ui/navigation';
 
 import { useGetShiftedDateToSystemTimeZone } from '@/ui/input/components/internal/date/hooks/useGetShiftedDateToSystemTimeZone';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
@@ -37,7 +37,7 @@ export { DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID } from '@/ui/input/compon
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 const StyledOuterWrapper = styled.div`
   align-items: flex-start;

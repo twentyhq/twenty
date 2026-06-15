@@ -12,7 +12,7 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 const StyledLoadingSkeletonContainer = styled.div`
   display: flex;
   flex-direction: column;

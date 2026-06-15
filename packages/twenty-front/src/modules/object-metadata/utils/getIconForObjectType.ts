@@ -2,7 +2,7 @@ import {
   IconCheckbox,
   type IconComponent,
   IconNotes,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 export const getIconForObjectType = (
   objectType: string,
 ): IconComponent | undefined => {

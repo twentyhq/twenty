@@ -28,9 +28,9 @@ import { Position } from '@xyflow/react';
 import { useContext } from 'react';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
-import { IconCheck, IconX, useIcons } from 'twenty-ui-deprecated/display';
-import { Loader } from 'twenty-ui-deprecated/feedback';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { IconCheck, IconX, useIcons } from 'twenty-ui/display';
+import { Loader } from 'twenty-ui/feedback';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNodeLabelWithCounterPart = styled.div`
   align-items: center;

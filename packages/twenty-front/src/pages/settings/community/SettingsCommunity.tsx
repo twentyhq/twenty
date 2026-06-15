@@ -11,9 +11,9 @@ import {
   type IconComponent,
   IconMessage,
   IconTransform,
-} from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledCardLink = styled.a`
   text-decoration: none;

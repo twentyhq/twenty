@@ -21,8 +21,8 @@ import {
   IconChevronLeft,
   OverflowingTextWithTooltip,
   useIcons,
-} from 'twenty-ui-deprecated/display';
-import { MenuItemSelect } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/display';
+import { MenuItemSelect } from 'twenty-ui/navigation';
 
 type WorkflowVariablesDropdownStepItemsProps = {
   step: StepOutputSchemaV2;

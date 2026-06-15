@@ -7,7 +7,7 @@ import { type PieChartConfiguration } from '~/generated-metadata/graphql';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 type PieChartCenterMetricProps = {
   objectMetadataItemId: string;

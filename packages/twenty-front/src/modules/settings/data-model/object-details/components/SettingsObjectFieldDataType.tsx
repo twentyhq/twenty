@@ -6,12 +6,12 @@ import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSetti
 import {
   type IconComponent,
   IconTwentyStar,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import { useContext } from 'react';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 type SettingsObjectFieldDataTypeProps = {
   to?: string;

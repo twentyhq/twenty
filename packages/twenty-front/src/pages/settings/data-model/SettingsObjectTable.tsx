@@ -31,14 +31,14 @@ import {
   IconArchive,
   IconChevronRight,
   IconSettings,
-} from 'twenty-ui-deprecated/display';
-import { SearchInput } from 'twenty-ui-deprecated/input';
-import { MenuItemToggle } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/display';
+import { SearchInput } from 'twenty-ui/input';
+import { MenuItemToggle } from 'twenty-ui/navigation';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import type { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';

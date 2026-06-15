@@ -6,14 +6,14 @@ import {
   IconKey,
   IconRobot,
   IconUsers,
-} from 'twenty-ui-deprecated/display';
-import { Checkbox } from 'twenty-ui-deprecated/input';
-import { Section } from 'twenty-ui-deprecated/layout';
+} from 'twenty-ui/display';
+import { Checkbox } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { useContext } from 'react';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
   align-items: center;

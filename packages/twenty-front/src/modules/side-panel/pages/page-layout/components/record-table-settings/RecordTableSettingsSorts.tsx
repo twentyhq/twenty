@@ -10,9 +10,9 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui-deprecated/display';
-import { type SelectOption } from 'twenty-ui-deprecated/input';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { useIcons } from 'twenty-ui/display';
+import { type SelectOption } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 
 const StyledSortSettingsContainer = styled.div`

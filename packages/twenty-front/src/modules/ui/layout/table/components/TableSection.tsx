@@ -5,11 +5,11 @@ import {
   IconChevronDown,
   IconChevronUp,
   Label,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 type TableSectionProps = {
   children: ReactNode;

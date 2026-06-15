@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { IconTransform } from 'twenty-ui-deprecated/display';
+import { IconTransform } from 'twenty-ui/display';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 const StyledIndicatorContainer = styled.div`
   align-items: center;

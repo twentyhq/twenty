@@ -9,13 +9,13 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useMemo, useState } from 'react';
-import { IconEyeOff, IconPlus } from 'twenty-ui-deprecated/display';
-import { Button, SearchInput } from 'twenty-ui-deprecated/input';
+import { IconEyeOff, IconPlus } from 'twenty-ui/display';
+import { Button, SearchInput } from 'twenty-ui/input';
 import {
   MenuItemToggle,
   UndecoratedLink,
-} from 'twenty-ui-deprecated/navigation';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';

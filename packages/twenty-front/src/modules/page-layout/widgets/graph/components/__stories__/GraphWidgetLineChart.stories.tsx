@@ -6,7 +6,7 @@ import { GraphWidgetLineChart } from '@/page-layout/widgets/graph/graph-widget-l
 import {
   CatalogDecorator,
   ComponentDecorator,
-} from 'twenty-ui-deprecated/testing';
+} from 'twenty-ui/testing';
 
 const meta: Meta<typeof GraphWidgetLineChart> = {
   title: 'Modules/PageLayout/Widgets/GraphWidgetLineChart',

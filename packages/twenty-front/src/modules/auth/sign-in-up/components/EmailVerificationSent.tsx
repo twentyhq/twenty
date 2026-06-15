@@ -15,10 +15,10 @@ import {
   IconMail,
   IconMailX,
   IconMicrosoft,
-} from 'twenty-ui-deprecated/display';
-import { MainButton } from 'twenty-ui-deprecated/input';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
-import { AnimatedEaseIn } from 'twenty-ui-deprecated/utilities';
+} from 'twenty-ui/display';
+import { MainButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { AnimatedEaseIn } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div`
   align-items: center;

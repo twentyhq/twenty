@@ -4,8 +4,8 @@ import {
   AppTooltip,
   IconInfoCircle,
   TooltipDelay,
-} from 'twenty-ui-deprecated/display';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsBillingLabelValueItemProps = {
   label: string;

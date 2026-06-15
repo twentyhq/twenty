@@ -1,12 +1,12 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { IconFolder } from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
+import { IconFolder } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 import { useContext } from 'react';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 const StyledEmptyState = styled.div`
   align-items: center;

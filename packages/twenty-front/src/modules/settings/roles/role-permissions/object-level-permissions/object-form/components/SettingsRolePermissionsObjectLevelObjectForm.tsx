@@ -18,7 +18,7 @@ import {
   isDefined,
   isRecordFilterValueValid,
 } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui-deprecated/input';
+import { Button } from 'twenty-ui/input';
 import { useQuery } from '@apollo/client/react';
 import {
   type BillingEntitlement,

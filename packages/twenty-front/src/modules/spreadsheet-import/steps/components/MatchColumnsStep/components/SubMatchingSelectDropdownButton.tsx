@@ -12,10 +12,10 @@ import { useContext } from 'react';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
-import { Tag, type TagColor } from 'twenty-ui-deprecated/components';
-import { IconChevronDown } from 'twenty-ui-deprecated/display';
-import { type SelectOption } from 'twenty-ui-deprecated/input';
+} from 'twenty-ui/theme-constants';
+import { Tag, type TagColor } from 'twenty-ui/components';
+import { IconChevronDown } from 'twenty-ui/display';
+import { type SelectOption } from 'twenty-ui/input';
 const StyledIconChevronDownContainer = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;

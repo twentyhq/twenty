@@ -8,8 +8,8 @@ import { t } from '@lingui/core/macro';
 import {
   IconCircleOff,
   type IconComponentProps,
-} from 'twenty-ui-deprecated/display';
-import { type SelectOption } from 'twenty-ui-deprecated/input';
+} from 'twenty-ui/display';
+import { type SelectOption } from 'twenty-ui/input';
 
 export type FormCallingCodeSelectInputUpdatedValue = {
   callingCode: string;

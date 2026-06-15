@@ -6,7 +6,7 @@ import { t } from '@lingui/core/macro';
 import {
   MOBILE_VIEWPORT,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 type EventRowMainObjectProps = EventRowDynamicComponentProps;
 

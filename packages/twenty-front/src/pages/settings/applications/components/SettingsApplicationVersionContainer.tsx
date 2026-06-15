@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { SettingsAdminVersionDisplay } from '@/settings/admin-panel/components/SettingsAdminVersionDisplay';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
@@ -9,8 +9,8 @@ import {
   IconCircleDot,
   IconStatusChange,
   IconUpload,
-} from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
+} from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import {
   ApplicationRegistrationSourceType,
   type Application,

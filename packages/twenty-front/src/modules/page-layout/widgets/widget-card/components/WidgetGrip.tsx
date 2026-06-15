@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
-import { IconGripVertical } from 'twenty-ui-deprecated/display';
+import { IconGripVertical } from 'twenty-ui/display';
 import {
   themeCssVariables,
   ThemeContext,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
 
 const StyledGripContainerBase = styled.div`

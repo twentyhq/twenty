@@ -6,8 +6,8 @@ import {
   IconLayoutSidebarRight,
   IconPlus,
   TintedIconTile,
-} from 'twenty-ui-deprecated/display';
-import { Button, LightIconButton } from 'twenty-ui-deprecated/input';
+} from 'twenty-ui/display';
+import { Button, LightIconButton } from 'twenty-ui/input';
 
 import { BackgroundMockTable } from '@/sign-in-background-mock/components/BackgroundMockTable';
 import { BackgroundMockViewBar } from '@/sign-in-background-mock/components/BackgroundMockViewBar';

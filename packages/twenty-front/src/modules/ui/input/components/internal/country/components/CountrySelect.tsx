@@ -7,8 +7,8 @@ import { Select } from '@/ui/input/components/Select';
 import {
   IconCircleOff,
   type IconComponentProps,
-} from 'twenty-ui-deprecated/display';
-import { type SelectOption } from 'twenty-ui-deprecated/input';
+} from 'twenty-ui/display';
+import { type SelectOption } from 'twenty-ui/input';
 
 export const CountrySelect = ({
   label,

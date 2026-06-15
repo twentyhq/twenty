@@ -12,7 +12,7 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { ComponentDecorator } from 'twenty-ui-deprecated/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import {
   fieldValue,
   relationFromManyFieldDisplayMock,

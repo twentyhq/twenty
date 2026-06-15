@@ -9,7 +9,7 @@ name: Visual Regression Dispatch
 
 on:
   workflow_run:
-    workflows: ['CI UI', 'CI New UI', 'CI Front']
+    workflows: ['CI New UI', 'CI Front']
     types: [completed]
 
 permissions:
@@ -38,11 +38,10 @@ jobs:
           script: |
             const name = context.payload.workflow_run.name;
             const projectByWorkflow = {
-              'CI UI': 'twenty-ui',
               'CI New UI': 'twenty-new-ui',
               'CI Front': 'twenty-front',
             };
-            const project = projectByWorkflow[name] ?? 'twenty-ui';
+            const project = projectByWorkflow[name] ?? 'twenty-front';
             const artifactName = `argos-screenshots-${project}`;
             core.setOutput('workflow_name', name);
             core.setOutput('project', project);
@@ -173,76 +172,6 @@ jobs:
           if [ -n "$PR_NUMBER" ]; then
             ARGS+=(-f "client_payload[pr_number]=$PR_NUMBER")
           fi
-          if [ -n "$REFERENCE_COMMIT" ]; then
-            ARGS+=(-f "client_payload[reference_commit]=$REFERENCE_COMMIT")
-          fi
-
-          gh api repos/twentyhq/ci-privileged/dispatches "${ARGS[@]}"
-
-  # ── Dispatch: cross-comparison baseline (CI UI on main → twenty-ui-vs-new-ui) ──
-  dispatch-comparison-baseline:
-    needs: resolve-context
-    if: >-
-      needs.resolve-context.outputs.workflow_name == 'CI UI' &&
-      needs.resolve-context.outputs.has_artifact == 'true' &&
-      github.event.workflow_run.event == 'push' &&
-      github.event.workflow_run.head_branch == 'main'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Dispatch to ci-privileged (comparison baseline)
-        env:
-          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
-          WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id }}
-          REPOSITORY: ${{ github.repository }}
-          BRANCH: ${{ github.event.workflow_run.head_branch }}
-          COMMIT: ${{ github.event.workflow_run.head_sha }}
-          ARTIFACT_NAME: ${{ needs.resolve-context.outputs.artifact_name }}
-        run: |
-          gh api repos/twentyhq/ci-privileged/dispatches \
-            --method POST \
-            -f event_type=visual-regression \
-            -f "client_payload[project]=twenty-ui-vs-new-ui" \
-            -f "client_payload[artifact_name]=$ARTIFACT_NAME" \
-            -f "client_payload[run_id]=$WORKFLOW_RUN_ID" \
-            -f "client_payload[repo]=$REPOSITORY" \
-            -f "client_payload[branch]=$BRANCH" \
-            -f "client_payload[commit]=$COMMIT"
-
-  # ── Dispatch: cross-comparison PR (CI New UI on PRs → twenty-ui-vs-new-ui) ──
-  dispatch-comparison-pr:
-    needs: resolve-context
-    if: >-
-      needs.resolve-context.outputs.workflow_name == 'CI New UI' &&
-      needs.resolve-context.outputs.has_artifact == 'true' &&
-      needs.resolve-context.outputs.is_pr == 'true' &&
-      github.event.workflow_run.event == 'pull_request'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Dispatch to ci-privileged (comparison PR)
-        env:
-          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
-          WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id }}
-          REPOSITORY: ${{ github.repository }}
-          BRANCH: ${{ github.event.workflow_run.head_branch }}
-          COMMIT: ${{ github.event.workflow_run.head_sha }}
-          PR_NUMBER: ${{ needs.resolve-context.outputs.pr_number }}
-          REFERENCE_COMMIT: ${{ needs.resolve-context.outputs.merge_base_sha }}
-          ARTIFACT_NAME: ${{ needs.resolve-context.outputs.artifact_name }}
-        run: |
-          ARGS=(
-            --method POST
-            -f event_type=visual-regression
-            -f "client_payload[project]=twenty-ui-vs-new-ui"
-            -f "client_payload[artifact_name]=$ARTIFACT_NAME"
-            -f "client_payload[run_id]=$WORKFLOW_RUN_ID"
-            -f "client_payload[repo]=$REPOSITORY"
-            -f "client_payload[branch]=$BRANCH"
-            -f "client_payload[commit]=$COMMIT"
-            -f "client_payload[pr_number]=$PR_NUMBER"
-          )
-
           if [ -n "$REFERENCE_COMMIT" ]; then
             ARGS+=(-f "client_payload[reference_commit]=$REFERENCE_COMMIT")
           fi

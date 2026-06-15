@@ -37,7 +37,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   MOBILE_VIEWPORT,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 const MAX_COLUMNS = 100;
 

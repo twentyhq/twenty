@@ -20,12 +20,12 @@ import {
   IconInfoCircle,
   IconRefresh,
   TooltipDelay,
-} from 'twenty-ui-deprecated/display';
-import { Card } from 'twenty-ui-deprecated/layout';
+} from 'twenty-ui/display';
+import { Card } from 'twenty-ui/layout';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
 
 export const settingsDataModelFieldIconLabelFormSchema = (

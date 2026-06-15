@@ -50,7 +50,7 @@ import {
   IconHistory,
   IconSearch,
   IconSparkles,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<

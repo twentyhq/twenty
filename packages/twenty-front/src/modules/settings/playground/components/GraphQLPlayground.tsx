@@ -15,7 +15,7 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 type GraphQLPlaygroundProps = {
   onError(): void;

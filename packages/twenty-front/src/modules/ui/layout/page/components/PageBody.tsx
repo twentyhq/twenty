@@ -5,7 +5,7 @@ import { PagePanel } from './PagePanel';
 import {
   MOBILE_VIEWPORT,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 type PageBodyProps = {
   children: ReactNode;

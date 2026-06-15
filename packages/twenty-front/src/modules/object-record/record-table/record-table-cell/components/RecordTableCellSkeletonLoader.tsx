@@ -5,7 +5,7 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 const StyledSkeletonContainer = styled.div`
   padding-left: ${themeCssVariables.spacing[2]};

@@ -15,12 +15,12 @@ import {
   IconColorSwatch,
   IconPlus,
   IconTrash,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CustomSideMenuOptions } from '@/blocknote-editor/components/CustomSideMenuOptions';
 import { type DASHBOARD_BLOCK_SCHEMA } from '@/page-layout/widgets/standalone-rich-text/constants/DashboardBlockSchema';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type DashboardEditorSideMenuProps = {
   editor: typeof DASHBOARD_BLOCK_SCHEMA.BlockNoteEditor;

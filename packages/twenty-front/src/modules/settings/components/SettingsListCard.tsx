@@ -3,12 +3,12 @@ import { type ComponentType, useContext } from 'react';
 
 import { SettingsListSkeletonCard } from '@/settings/components/SettingsListSkeletonCard';
 
-import { type IconComponent, IconPlus } from 'twenty-ui-deprecated/display';
-import { Card, CardFooter } from 'twenty-ui-deprecated/layout';
+import { type IconComponent, IconPlus } from 'twenty-ui/display';
+import { Card, CardFooter } from 'twenty-ui/layout';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 import { SettingsListItemCardContent } from './SettingsListItemCardContent';
 
 const StyledFooterContainer = styled.div`

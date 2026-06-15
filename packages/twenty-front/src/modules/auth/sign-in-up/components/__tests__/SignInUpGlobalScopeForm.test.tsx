@@ -3,7 +3,7 @@ import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { ThemeProvider } from 'twenty-ui-deprecated/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGlobalScopeForm';
 import {

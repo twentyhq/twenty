@@ -9,14 +9,14 @@ import {
   H2Title,
   IconCalendarEvent,
   IconMailCog,
-} from 'twenty-ui-deprecated/display';
-import { Section } from 'twenty-ui-deprecated/layout';
-import { UndecoratedLink } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 const StyledCardsContainer = styled.div`
   display: flex;

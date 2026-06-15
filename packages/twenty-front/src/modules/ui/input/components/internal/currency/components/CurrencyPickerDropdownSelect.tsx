@@ -11,7 +11,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import {
   MenuItem,
   MenuItemSelectAvatar,
-} from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/navigation';
 
 export const CurrencyPickerDropdownSelect = ({
   selectedCurrency,

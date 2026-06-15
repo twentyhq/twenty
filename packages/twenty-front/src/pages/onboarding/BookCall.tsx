@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { ModalContent, ModalFooter } from 'twenty-ui-deprecated/layout';
+import { ModalContent, ModalFooter } from 'twenty-ui/layout';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -13,10 +13,10 @@ import { AppPath } from 'twenty-shared/types';
 import {
   IconChevronLeft,
   IconChevronRightPipe,
-} from 'twenty-ui-deprecated/display';
-import { LightButton } from 'twenty-ui-deprecated/input';
-import { ThemeContext } from 'twenty-ui-deprecated/theme-constants';
-import { useIsMobile } from 'twenty-ui-deprecated/utilities';
+} from 'twenty-ui/display';
+import { LightButton } from 'twenty-ui/input';
+import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { useMutation } from '@apollo/client/react';
 import {
   OnboardingStatus,

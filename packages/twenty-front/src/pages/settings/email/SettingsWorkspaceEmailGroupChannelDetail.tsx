@@ -13,11 +13,11 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title, IconCopy, IconTrash } from 'twenty-ui-deprecated/display';
-import { Loader } from 'twenty-ui-deprecated/feedback';
-import { Button } from 'twenty-ui-deprecated/input';
-import { Section } from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { H2Title, IconCopy, IconTrash } from 'twenty-ui/display';
+import { Loader } from 'twenty-ui/feedback';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';

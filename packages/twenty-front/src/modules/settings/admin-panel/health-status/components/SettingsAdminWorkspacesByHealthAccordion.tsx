@@ -7,9 +7,9 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import {
   IconChevronDown,
   IconChevronRight,
-} from 'twenty-ui-deprecated/display';
-import { AnimatedExpandableContainer, Card } from 'twenty-ui-deprecated/layout';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { AnimatedExpandableContainer, Card } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledAccordionHeaderButton = styled.button`
   align-items: center;

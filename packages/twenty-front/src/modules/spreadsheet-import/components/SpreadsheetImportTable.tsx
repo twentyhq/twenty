@@ -6,7 +6,7 @@ import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpre
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 const StyledDataGridContainer = styled.div<{ headerRowHeight?: number }>`
   --rdg-background-color: ${themeCssVariables.background.primary};

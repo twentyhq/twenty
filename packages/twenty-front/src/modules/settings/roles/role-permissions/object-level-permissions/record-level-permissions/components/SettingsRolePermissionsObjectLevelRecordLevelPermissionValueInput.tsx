@@ -9,7 +9,7 @@ import {
   AppTooltip,
   IconEraser,
   TooltipDelay,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 import { type JsonValue } from 'type-fest';
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
@@ -31,7 +31,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   align-items: stretch;

@@ -28,12 +28,12 @@ import {
   IconGripVertical,
   IconPlus,
   IconTrash,
-} from 'twenty-ui-deprecated/display';
-import { LightIconButton } from 'twenty-ui-deprecated/input';
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 

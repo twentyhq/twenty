@@ -1,7 +1,7 @@
 import {
   type AvatarType,
   type IconComponent,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 
 export type SelectableItem<T = object> = T & {
   id: string;

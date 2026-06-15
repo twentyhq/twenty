@@ -3,7 +3,7 @@ import { useCallback, useContext } from 'react';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
@@ -37,10 +37,10 @@ import {
   isDefined,
   sumByProperty,
 } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui-deprecated/components';
-import { IconChevronDown } from 'twenty-ui-deprecated/display';
-import { AnimatedLightIconButton } from 'twenty-ui-deprecated/input';
-import { useIsMobile } from 'twenty-ui-deprecated/utilities';
+import { Tag } from 'twenty-ui/components';
+import { IconChevronDown } from 'twenty-ui/display';
+import { AnimatedLightIconButton } from 'twenty-ui/input';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledTrContainer = styled.div`
   cursor: pointer;

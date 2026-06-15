@@ -9,12 +9,12 @@ import {
   IconListSearch,
   IconPlus,
   IconSquarePlus,
-} from 'twenty-ui-deprecated/display';
-import { MenuItem } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/display';
+import { MenuItem } from 'twenty-ui/navigation';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   border: 1px solid transparent;

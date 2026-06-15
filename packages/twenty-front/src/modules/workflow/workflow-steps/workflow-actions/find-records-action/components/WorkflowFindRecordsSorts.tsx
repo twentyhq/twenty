@@ -8,11 +8,11 @@ import {
   IconArrowsSort,
   IconTrash,
   useIcons,
-} from 'twenty-ui-deprecated/display';
-import { Button, type SelectOption } from 'twenty-ui-deprecated/input';
+} from 'twenty-ui/display';
+import { Button, type SelectOption } from 'twenty-ui/input';
 import { v4 as uuidv4 } from 'uuid';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
   display: flex;

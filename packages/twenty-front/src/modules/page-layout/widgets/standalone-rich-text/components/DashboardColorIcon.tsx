@@ -4,7 +4,7 @@ import { type BlockNoteColor } from '@/page-layout/widgets/standalone-rich-text/
 import {
   themeCssVariables,
   ThemeContext,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 import { useContext } from 'react';
 const StyledColorIcon = styled.div<{
   textColorValue: string;

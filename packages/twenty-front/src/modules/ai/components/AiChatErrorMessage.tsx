@@ -1,14 +1,14 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { IconAlertCircle } from 'twenty-ui-deprecated/display';
+import { IconAlertCircle } from 'twenty-ui/display';
 import { useContext } from 'react';
 
 import { type AiChatError } from '@/ai/types/AiChatError';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 const StyledErrorContainer = styled.div`

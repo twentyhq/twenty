@@ -5,12 +5,12 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronRight,
   type IconComponent,
-} from 'twenty-ui-deprecated/display';
-import { CardContent } from 'twenty-ui-deprecated/layout';
+} from 'twenty-ui/display';
+import { CardContent } from 'twenty-ui/layout';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 const StyledRowContainer = styled.div`
   > * {

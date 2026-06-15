@@ -7,7 +7,7 @@ import { expect, within } from 'storybook/test';
 import {
   CatalogDecorator,
   type CatalogStory,
-} from 'twenty-ui-deprecated/testing';
+} from 'twenty-ui/testing';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';

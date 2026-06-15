@@ -12,8 +12,8 @@ import {
   AppTooltip,
   TooltipDelay,
   TooltipPosition,
-} from 'twenty-ui-deprecated/display';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventRelationFieldDiffValuesProps = {
   fieldDiff: { before: unknown; after: unknown };

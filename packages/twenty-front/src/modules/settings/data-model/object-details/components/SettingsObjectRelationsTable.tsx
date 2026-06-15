@@ -22,10 +22,10 @@ import {
   IconFilter,
   IconSearch,
   IconSettings,
-} from 'twenty-ui-deprecated/display';
-import { Button } from 'twenty-ui-deprecated/input';
-import { MenuItemToggle } from 'twenty-ui-deprecated/navigation';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { MenuItemToggle } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {

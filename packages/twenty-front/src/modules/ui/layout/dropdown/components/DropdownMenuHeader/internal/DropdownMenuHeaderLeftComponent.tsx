@@ -4,12 +4,12 @@ import {
   type Avatar,
   type AvatarProps,
   type IconComponent,
-} from 'twenty-ui-deprecated/display';
-import { LightIconButton } from 'twenty-ui-deprecated/input';
+} from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 
 const StyledNonClickableStartIcon = styled.div`
   align-items: center;

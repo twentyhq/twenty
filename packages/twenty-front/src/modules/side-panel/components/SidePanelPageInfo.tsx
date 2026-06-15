@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   IconColumnInsertRight,
   OverflowingTextWithTooltip,
-} from 'twenty-ui-deprecated/display';
+} from 'twenty-ui/display';
 
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
@@ -25,7 +25,7 @@ import { useContext } from 'react';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 const StyledPageTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.sm};

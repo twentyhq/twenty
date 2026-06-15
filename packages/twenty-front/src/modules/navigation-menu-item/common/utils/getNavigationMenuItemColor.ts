@@ -9,7 +9,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
   DEFAULT_THEME_COLOR_FALLBACK,
   type ThemeColor,
-} from 'twenty-ui-deprecated/theme';
+} from 'twenty-ui/theme';
 
 export const getNavigationMenuItemColor = (
   navigationMenuItem: {

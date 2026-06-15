@@ -13,8 +13,8 @@ import {
   IconX,
   OverflowingTextWithTooltip,
   useIcons,
-} from 'twenty-ui-deprecated/display';
-import { MenuItem, MenuItemSelect } from 'twenty-ui-deprecated/navigation';
+} from 'twenty-ui/display';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 
 type WorkflowVariablesDropdownStepsProps = {
   dropdownId: string;

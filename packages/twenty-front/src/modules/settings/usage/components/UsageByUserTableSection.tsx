@@ -13,13 +13,13 @@ import {
   Avatar,
   H2Title,
   IconChevronRight,
-} from 'twenty-ui-deprecated/display';
-import { SearchInput } from 'twenty-ui-deprecated/input';
-import { Section } from 'twenty-ui-deprecated/layout';
+} from 'twenty-ui/display';
+import { SearchInput } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import {
   ThemeContext,
   themeCssVariables,
-} from 'twenty-ui-deprecated/theme-constants';
+} from 'twenty-ui/theme-constants';
 import { type UsageOperationType } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
