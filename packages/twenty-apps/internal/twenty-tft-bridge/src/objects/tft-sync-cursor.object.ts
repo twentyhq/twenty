@@ -1,0 +1,70 @@
+import { FieldType, defineObject } from 'twenty-sdk/define';
+import {
+  TFT_SYNC_CURSOR_LAST_CURSOR_AT_FIELD_UUID,
+  TFT_SYNC_CURSOR_LAST_ERROR_FIELD_UUID,
+  TFT_SYNC_CURSOR_LAST_RUN_AT_FIELD_UUID,
+  TFT_SYNC_CURSOR_NAME_FIELD_UUID,
+  TFT_SYNC_CURSOR_OBJECT_UUID,
+  TFT_SYNC_CURSOR_STATUS_FIELD_UUID,
+} from 'src/constants/universal-identifiers';
+
+export default defineObject({
+  universalIdentifier: TFT_SYNC_CURSOR_OBJECT_UUID,
+  nameSingular: 'tftSyncCursor',
+  namePlural: 'tftSyncCursors',
+  labelSingular: 'TFT Sync Cursor',
+  labelPlural: 'TFT Sync Cursors',
+  description: 'Singleton cursor state for the TFT ↔ Partners reconciliation cron (technical)',
+  icon: 'IconBookmark',
+  labelIdentifierFieldMetadataUniversalIdentifier: TFT_SYNC_CURSOR_NAME_FIELD_UUID,
+  fields: [
+    {
+      universalIdentifier: TFT_SYNC_CURSOR_NAME_FIELD_UUID,
+      type: FieldType.TEXT,
+      name: 'name',
+      label: 'Name',
+      description: 'Singleton key — always "primary"',
+      icon: 'IconAbc',
+      defaultValue: "'primary'",
+    },
+    {
+      universalIdentifier: TFT_SYNC_CURSOR_LAST_CURSOR_AT_FIELD_UUID,
+      type: FieldType.DATE_TIME,
+      name: 'lastCursorAt',
+      label: 'Last cursor at',
+      description: 'Watermark: pull TFT opportunities modified after this timestamp',
+      icon: 'IconArrowBigRight',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: TFT_SYNC_CURSOR_LAST_RUN_AT_FIELD_UUID,
+      type: FieldType.DATE_TIME,
+      name: 'lastRunAt',
+      label: 'Last run at',
+      description: 'When the reconciliation cron last completed',
+      icon: 'IconClock',
+      isNullable: true,
+    },
+    {
+      universalIdentifier: TFT_SYNC_CURSOR_STATUS_FIELD_UUID,
+      type: FieldType.SELECT,
+      name: 'status',
+      label: 'Status',
+      icon: 'IconStatusChange',
+      options: [
+        { id: 'b8f3a5e2-6c9d-4b3f-8e2a-5d8b3c6f9a4e', value: 'IDLE', label: 'Idle', position: 0, color: 'gray' },
+        { id: 'c2a6d8f5-9b3e-4c6a-9f5d-8a2c6f3d9b1e', value: 'RUNNING', label: 'Running', position: 1, color: 'yellow' },
+        { id: 'd5b9e2a8-3c6f-4d9b-8a8e-1f5d9c2b4e7a', value: 'FAILED', label: 'Failed', position: 2, color: 'red' },
+      ],
+    },
+    {
+      universalIdentifier: TFT_SYNC_CURSOR_LAST_ERROR_FIELD_UUID,
+      type: FieldType.TEXT,
+      name: 'lastError',
+      label: 'Last error',
+      description: 'Error from the most recent failed reconciliation run',
+      icon: 'IconAlertCircle',
+      isNullable: true,
+    },
+  ],
+});
