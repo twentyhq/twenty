@@ -1,0 +1,19 @@
+packages/twenty-server/jest-integration.config.ts
+  s_3226b097c1ff8f::t_4967f8ea61c51a 36-38,40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "030450875ce3cd41ea621d73632ff15d507cb212",
+  "prompts": {},
+  "sessions": {
+    "s_3226b097c1ff8f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "37fe379b-1108-44f6-ae35-d2db6ea5c15c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
