@@ -449,11 +449,12 @@ export default defineObject({
     },
     {
       universalIdentifier: '40d730e3-2785-45c8-aa5f-cc724b1b08e0',
-      type: FieldType.LINKS,
+      type: FieldType.FILES,
       name: 'profilePicture',
       label: 'Profile Picture',
       icon: 'IconPhoto',
       isNullable: true,
+      universalSettings: { maxNumberOfValues: 1 },
     },
     {
       universalIdentifier: 'a0000008-0000-4000-8000-000000000008',

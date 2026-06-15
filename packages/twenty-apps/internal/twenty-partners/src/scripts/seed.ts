@@ -26,8 +26,6 @@ const usd = (dollars: number) => ({
   amountMicros: dollars * 1_000_000,
   currencyCode: 'USD',
 });
-// Deterministic placeholder avatars; pravatar returns a stable image per `u` seed.
-const avatar = (slug: string) => `https://i.pravatar.cc/300?u=${slug}`;
 const linkedin = (slug: string) =>
   `https://www.linkedin.com/company/${slug}`;
 
@@ -133,7 +131,6 @@ async function main() {
       country: p.country, city: p.city,
       skills: p.skills,
       linkedin: { primaryLinkUrl: linkedin(p.slug) },
-      profilePicture: { primaryLinkUrl: avatar(p.slug) },
       ...(p.hourlyRateUsd != null ? { hourlyRate: usd(p.hourlyRateUsd) } : {}),
       ...(p.projectBudgetMinUsd != null ? { projectBudgetMin: usd(p.projectBudgetMinUsd) } : {}),
     };

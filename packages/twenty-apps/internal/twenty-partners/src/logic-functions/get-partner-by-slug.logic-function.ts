@@ -1,6 +1,8 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
+import { firstFileUrl } from './profile-picture';
+
 export const GET_PARTNER_BY_SLUG_LOGIC_FUNCTION_ID =
   '5e3e7b88-2cf2-4f56-9a4a-46c4c1d6b0bb';
 
@@ -65,7 +67,7 @@ const handler = async (input: {
             hourlyRate: { amountMicros: true, currencyCode: true },
             projectBudgetMin: { amountMicros: true, currencyCode: true },
             linkedin: { primaryLinkUrl: true },
-            profilePicture: { primaryLinkUrl: true },
+            profilePicture: { url: true },
             skills: true,
             city: true,
             country: true,
@@ -74,12 +76,21 @@ const handler = async (input: {
       },
     } as any);
 
-    const edges = (result?.partners?.edges ?? []) as Array<{ node: Partner }>;
-    const partner = edges[0]?.node;
+    const rawEdges = (result?.partners?.edges ?? []) as Array<{
+      node: Omit<Partner, 'profilePicture'> & {
+        profilePicture: ReadonlyArray<{ url?: string | null }> | null;
+      };
+    }>;
+    const rawNode = rawEdges[0]?.node;
 
-    if (!partner) {
+    if (!rawNode) {
       return { ok: false, reason: 'NOT_FOUND' };
     }
+
+    const partner: Partner = {
+      ...rawNode,
+      profilePicture: { primaryLinkUrl: firstFileUrl(rawNode.profilePicture) },
+    };
 
     return { ok: true, partner };
   } catch (err) {

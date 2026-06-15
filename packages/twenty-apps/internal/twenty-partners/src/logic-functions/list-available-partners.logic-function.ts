@@ -1,6 +1,8 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
+import { firstFileUrl } from './profile-picture';
+
 export const LIST_AVAILABLE_PARTNERS_LOGIC_FUNCTION_ID =
   '0f91164f-f492-41e8-9bb0-481be5a3d5b9';
 
@@ -34,7 +36,9 @@ const queryAvailablePartners = (client: CoreApiClient) =>
           hourlyRate: { amountMicros: true, currencyCode: true },
           projectBudgetMin: { amountMicros: true, currencyCode: true },
           linkedin: { primaryLinkUrl: true },
-          profilePicture: { primaryLinkUrl: true },
+          // profilePicture is a FILES field; the generated client types this as
+          // FileObjectGenqlSelection which exposes `url` directly.
+          profilePicture: { url: true },
           skills: true,
           city: true,
           country: true,
@@ -43,9 +47,13 @@ const queryAvailablePartners = (client: CoreApiClient) =>
     },
   });
 
-type AvailablePartner = NonNullable<
+type AvailablePartnerRaw = NonNullable<
   Awaited<ReturnType<typeof queryAvailablePartners>>['partners']
 >['edges'][number]['node'];
+
+type AvailablePartner = Omit<AvailablePartnerRaw, 'profilePicture'> & {
+  profilePicture: { primaryLinkUrl: string | null };
+};
 
 type ListAvailablePartnersResult =
   | { ok: true; count: number; partners: AvailablePartner[] }
@@ -55,7 +63,12 @@ const handler = async (): Promise<ListAvailablePartnersResult> => {
   try {
     const client = new CoreApiClient();
     const result = await queryAvailablePartners(client);
-    const partners = (result.partners?.edges ?? []).map((edge) => edge.node);
+    const partners: AvailablePartner[] = (result.partners?.edges ?? []).map(
+      (edge) => ({
+        ...edge.node,
+        profilePicture: { primaryLinkUrl: firstFileUrl(edge.node.profilePicture) },
+      }),
+    );
 
     return { ok: true, count: partners.length, partners };
   } catch (err) {
