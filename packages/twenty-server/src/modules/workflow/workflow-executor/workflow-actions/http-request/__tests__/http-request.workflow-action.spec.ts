@@ -1,12 +1,10 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { WorkflowActionType } from 'twenty-shared/workflow';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { HttpRequestWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/http-request/http-request.workflow-action';
 import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
-import {
-  type WorkflowAction,
-  WorkflowActionType,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 
 const baseSettings: WorkflowActionSettings = {

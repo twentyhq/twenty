@@ -14,5 +14,6 @@ export default defineField({
   name: 'pdlGithubUrl',
   label: 'GitHub',
   description: 'GitHub profile returned by People Data Labs.',
+  icon: 'IconBrandGithub',
   isNullable: true,
 });

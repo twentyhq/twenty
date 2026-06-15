@@ -394,26 +394,24 @@ export class WorkflowDatabaseEventTriggerListener {
     if (action === DatabaseEventAction.UPDATED) {
       const settings = eventListener.settings as UpdateEventTriggerSettings;
       const updateEventPayload = eventPayload as ObjectRecordUpdateEvent;
+      const updatedFields = updateEventPayload?.properties?.updatedFields ?? [];
 
       return (
         !settings.fields ||
         settings.fields.length === 0 ||
-        settings.fields.some((field) =>
-          updateEventPayload?.properties?.updatedFields?.includes(field),
-        )
+        settings.fields.some((field) => updatedFields.includes(field))
       );
     }
 
     if (action === DatabaseEventAction.UPSERTED) {
       const settings = eventListener.settings as UpsertEventTriggerSettings;
       const upsertEventPayload = eventPayload as ObjectRecordUpsertEvent;
+      const updatedFields = upsertEventPayload?.properties?.updatedFields ?? [];
 
       return (
         !settings.fields ||
         settings.fields.length === 0 ||
-        settings.fields.some((field) =>
-          upsertEventPayload?.properties?.updatedFields?.includes(field),
-        )
+        settings.fields.some((field) => updatedFields.includes(field))
       );
     }
 

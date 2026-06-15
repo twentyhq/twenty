@@ -41,10 +41,13 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "engineComponentKey",
       "payload",
       "hotKeys",
+      "isActive",
+      "universalOverrides",
     ],
     "propertiesToStringify": [
       "payload",
       "hotKeys",
+      "universalOverrides",
     ],
   },
   "connectionProvider": {
@@ -71,6 +74,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "options",
       "standardOverrides",
       "universalSettings",
+      "isUIEditable",
     ],
     "propertiesToStringify": [
       "defaultValue",
@@ -165,6 +169,8 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "nameSingular",
       "labelIdentifierFieldMetadataUniversalIdentifier",
       "standardOverrides",
+      "isUIEditable",
+      "isUICreatable",
       "isSearchable",
       "imageIdentifierFieldMetadataUniversalIdentifier",
     ],
@@ -327,8 +333,12 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "visibility",
       "mainGroupByFieldMetadataUniversalIdentifier",
       "shouldHideEmptyGroups",
+      "isActive",
+      "universalOverrides",
     ],
-    "propertiesToStringify": [],
+    "propertiesToStringify": [
+      "universalOverrides",
+    ],
   },
   "viewField": {
     "propertiesToCompare": [

@@ -150,7 +150,7 @@ export const AdvancedFilterCompositeSubFieldSelectMenu = ({
                     });
                   }}
                   LeftIcon={getIcon(fieldMetadataItemUsedInDropdown.icon)}
-                  text={t`Any ${fieldLabel} field`}
+                  text={t`Any ${fieldLabel ?? ''} field`}
                 />
               </SelectableListItem>
             )}

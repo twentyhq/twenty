@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { fromCommandMenuItemOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-command-menu-item-overrides-to-universal-overrides.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import {
   FlatEntityMapsException,
@@ -74,6 +75,19 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = ({
     }
   }
 
+  const universalOverrides = isDefined(commandMenuItemEntity.overrides)
+    ? fromCommandMenuItemOverridesToUniversalOverrides({
+        overrides: commandMenuItemEntity.overrides,
+        objectMetadataUniversalIdentifierById: Object.fromEntries(
+          objectMetadataIdToUniversalIdentifierMap.entries(),
+        ),
+        pageLayoutUniversalIdentifierById: Object.fromEntries(
+          pageLayoutIdToUniversalIdentifierMap.entries(),
+        ),
+        shouldThrowOnMissingIdentifier: false,
+      })
+    : null;
+
   return {
     id: commandMenuItemEntity.id,
     workflowVersionId: commandMenuItemEntity.workflowVersionId,
@@ -101,5 +115,8 @@ export const fromCommandMenuItemEntityToFlatCommandMenuItem = ({
     frontComponentUniversalIdentifier,
     pageLayoutId: commandMenuItemEntity.pageLayoutId,
     pageLayoutUniversalIdentifier,
+    isActive: commandMenuItemEntity.isActive,
+    overrides: commandMenuItemEntity.overrides,
+    universalOverrides,
   };
 };

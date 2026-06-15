@@ -4,7 +4,7 @@ import {
   extractCodeStepLogicFunctionIdsFromWorkflowSteps,
   type NonCodeStepForLogicFunctionIdExtraction,
 } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/utils/extract-code-step-logic-function-ids-from-workflow-steps.util';
-import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { WorkflowActionType } from 'twenty-shared/workflow';
 
 const buildCodeStep = (
   logicFunctionId: string,

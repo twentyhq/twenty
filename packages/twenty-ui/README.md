@@ -1,23 +1,28 @@
 # twenty-ui
 
-> **Status:** Phase 0 — Foundations in progress. The package is scaffolded and builds
-> on SCSS Modules + Base UI; the theme layer is ported from `twenty-ui` with a parity
-> test, and the size/Storybook/a11y harnesses are wired up. Remaining Phase 0 work: the
-> CI diff-table workflow, the `twenty-ui` component inventory, and the `modules/ui` triage.
-> The sections below remain the design document for the full effort.
+> **Status:** Phases 0–3 complete (June 2026). All 192 components and all 70 stories were
+> migrated from `twenty-ui-deprecated` with full public-API parity (export-identifier diff:
+> 0 missing / 0 extra across all 13 subpath modules) and byte-identical story titles for the
+> Argos cross-package diff. Gates green: typecheck, lint, jest, build, storybook:build,
+> storybook:test (225 stories incl. play functions + live axe gate), size.
+> Remaining: the Argos visual-parity triage, the a11y fix pass (119 stories carry
+> inherited-violation `a11y: 'todo'` overrides), the CI diff-table workflow, the
+> `modules/ui` triage (Phase 4), and the publish pipeline (Phase 5).
+> The sections below remain the design document for the full effort; see
+> [Migration outcomes](#migration-outcomes-june-2026) for decisions taken during the port.
 
-`twenty-ui` is the next generation of Twenty's UI library, replacing [`twenty-ui`](../twenty-ui).
+`twenty-ui` is the next generation of Twenty's UI library, replacing [`twenty-ui-deprecated`](../twenty-ui-deprecated).
 It is built on a headless component library and a zero-runtime, CSS-variable styling layer.
 
 ## Goals
 
 1. Publish as a standalone, versioned **npm package**.
 2. Replace `twenty-ui` in `twenty-front` with **no visual change** (same design, token for token).
-3. **Migrate every component** currently exported by `twenty-ui`.
+3. **Migrate every component** currently exported by `twenty-ui-deprecated`. *(Done — June 2026.)*
 4. **Absorb the generic, reusable UI** currently living in `twenty-front/src/modules/ui` (dropdowns, modals, tab lists, side panels, navigation, field inputs/displays, etc.), decoupling it from application concerns so it ships from the library.
 5. Enforce a **quality bar in CI**: bundle size, render/load time, and accessibility, measured against the old library.
 
-## Current state (`twenty-ui`)
+## Current state (`twenty-ui-deprecated`)
 
 | Aspect | Today |
 | --- | --- |
@@ -26,10 +31,10 @@ It is built on a headless component library and a zero-runtime, CSS-variable sty
 | Behavior | Hand-rolled (modals, menus, tooltips, selects, etc.); `react-tooltip` for tooltips |
 | Build | Vite library mode, dual ESM/CJS, `vite-plugin-dts`, auto-generated barrels |
 | Icons | `@tabler/icons-react` re-exports + custom icons + Jotai-backed `IconsProvider` |
-| Consumption | ~1,721 files in `twenty-front` import it (mostly `display` and `theme-constants`); imported by package name |
+| Consumption | ~1,730 files in `twenty-front` import it (mostly `display` and `theme-constants`), plus `twenty-front-component-renderer` and `twenty-sdk`; imported by package name |
 | Published | No (`private: true`) |
 
-`twenty-front/src/modules/ui/` (application-level UI) consumes `twenty-ui` today. Its **generic, reusable**
+`twenty-front/src/modules/ui/` (application-level UI) consumes `twenty-ui-deprecated` today. Its **generic, reusable**
 components are now **in scope** — they migrate into `twenty-ui` (see [Application-level UI migration](#application-level-ui-migration-twenty-frontsrcmodulesui)).
 
 ## Decision 1 — Headless library: Base UI
@@ -98,30 +103,32 @@ packages/twenty-ui/
 ```
 
 **Public API parity.** Keep the same subpath exports, component names, and prop signatures as
-`twenty-ui` so the final swap is a codemod + dependency rename, not a rewrite of 1,721 files.
-Keep auto-generated barrels and dual ESM/CJS + `dts` output.
+`twenty-ui-deprecated` so the final swap is a codemod + dependency rename, not a rewrite of ~1,730 files.
+Keep auto-generated barrels and dual ESM/CJS + `dts` output. *(Achieved: the export-identifier sets of
+all 13 module barrels are identical between the two packages.)*
 
-**Internal changes vs `twenty-ui`:** Linaria → SCSS Modules; hand-rolled behavior + `react-tooltip`
+**Internal changes vs `twenty-ui-deprecated`:** Linaria → SCSS Modules; hand-rolled behavior + `react-tooltip`
 → Base UI; prefer Base UI/CSS transitions over `framer-motion` where possible; keep the icon system
-as-is.
+as-is. The internal path alias is `@ui/*` (same convention as the deprecated package, so ported files
+diff cleanly against their sources).
 
 ## Theming
 
 `theme-constants` has ~943 importers and must be a drop-in replacement.
 
 - Keep the public API identical: `ThemeProvider`, `ThemeContext`, `useTheme`, the `themeCssVariables` shape, `ThemeType`, color helpers, and the `theme-light.css` / `theme-dark.css` exports.
-- Reuse `twenty-ui`'s token values verbatim to guarantee identical design.
-- Tokens live in `src/theme/` (`THEME_LIGHT` / `THEME_DARK`); the `--t-*` CSS variables and the `themeCssVariables` accessor are static files mirrored token-for-token from `twenty-ui` (matching `twenty-ui`'s own static-CSS approach).
-- A theme parity test asserts the theme CSS and `themeCssVariables` stay identical to `twenty-ui`'s `--t-*` values.
+- Reuse `twenty-ui-deprecated`'s token values verbatim to guarantee identical design.
+- Tokens live in `src/theme/` (`THEME_LIGHT` / `THEME_DARK`); the `--t-*` CSS variables and the `themeCssVariables` accessor are static files mirrored token-for-token from `twenty-ui-deprecated` (matching its own static-CSS approach).
+- A theme parity test asserts the theme CSS and `themeCssVariables` stay identical to `twenty-ui-deprecated`'s `--t-*` values.
 
 ## Component migration map
 
-A full component-by-component inventory with prop signatures is a Phase 0 deliverable. Components
-split into two buckets.
+Components split into two buckets. *(The migration is complete; see
+[Migration outcomes](#migration-outcomes-june-2026) below for where reality diverged from this map.)*
 
 **Backed by a Base UI primitive (behavioral):**
 
-| `twenty-ui` | Base UI |
+| `twenty-ui-deprecated` | Base UI |
 | --- | --- |
 | `Modal` | `Dialog` / `AlertDialog` |
 | `AppTooltip`, `OverflowingTextWithTooltip` | `Tooltip` (removes `react-tooltip`) |
@@ -141,15 +148,43 @@ split into two buckets.
 `ColorSample`, `Checkmark`, placeholders, the icon system, `CodeEditor` (Monaco), `json-visualizer`,
 and the `utilities` / `theme` / `testing` / `accessibility` helpers.
 
+### Migration outcomes (June 2026)
+
+Decisions taken during the port where reality diverged from the map above (public API parity won every time):
+
+- **`MenuItem` family and `TabButton` did NOT move to Base UI** Menu/Tabs — those primitives require a
+  `Root` context the deprecated standalone APIs don't have. They are pure presentation with `data-*` state.
+  The Base UI `Menu` mapping applies to the Phase-4 `modules/ui` dropdown instead.
+- **`AnimatedExpandableContainer` kept framer-motion** (sanctioned fallback): its exported utils are framer
+  variant factories whose signatures are public API, and Collapsible/grid-rows could not match scrollHeight
+  mid-animation retargeting or initial-mount animation.
+- **`Avatar`'s `invalidAvatarUrlsAtomV2` and the icon system's `iconsState` Jotai atoms were kept** — both are
+  public `display` exports, overriding this doc's earlier "Jotai → local state" idea.
+- **`CardContent` kept framer-motion**: its motion props are part of the public prop type and twenty-front's
+  `CalendarDayCardContent` passes them.
+- **`ProgressBar` is pure SCSS** (Base UI Progress was optional and not needed for parity); `useProgressAnimation`
+  keeps framer motion-values verbatim (public hook).
+- **Known behavior deltas to watch in QA:** `AppTooltip` and `Modal` (without an explicit `container`) now portal
+  to `document.body` (Base UI), so overflow-clipping ancestors no longer clip them and `AppTooltip`'s default
+  `maxWidth: '40%'` resolves against the body; `Checkbox`/`Radio` test ids moved from the hidden input to the
+  visible Base UI control.
+- **The Storybook axe gate was inert until this migration** — `.storybook/vitest.setup.ts` did not register the
+  a11y addon annotations, so `a11y.test: 'error'` never ran. It is now live; 119 ported stories carry
+  story-level `a11y: { test: 'todo' }` overrides (`// TODO(a11y)` comments) pending a dedicated fix pass.
+- The canonical styling pattern is established in `src/input/button/components/Button/Button.tsx` +
+  `Button.module.scss`: `data-variant/accent/position/inverted` attributes, Sass maps + `@each` assigning
+  `--btn-*` custom properties, all declarations on a flat `(0,1,0)` class so `styled(Component)` consumer
+  overrides keep working.
+
 ## Application-level UI migration (`twenty-front/src/modules/ui`)
 
-`twenty-front/src/modules/ui` holds ~250 application-level UI building blocks that consume `twenty-ui`
+`twenty-front/src/modules/ui` holds ~250 application-level UI building blocks that consume `twenty-ui-deprecated`
 today: `display`, `feedback` (snackbar/dialog managers), `field` (input + display), `input`
 (incl. relation picker), `layout` (dropdown, modal, tab-list, side-panel, page, table, resizable-panel,
 expandable-list, selectable-list, top-bar, …), `navigation` (drawer, breadcrumb, step-bar, menu-item),
 `drag-and-drop`, `suggestion`, `theme`, and `utilities` (hotkey, scroll, focus, responsive, drag-select, …).
 
-These are a **different kind of migration** than the `twenty-ui` swap: they are stateful and
+These are a **different kind of migration** than the `twenty-ui-deprecated` swap: they are stateful and
 app-coupled — Jotai atoms, hooks, contexts, and (in places) GraphQL/router/Recoil-style state — rather
 than pure presentation. The goal is to extract the **generic, reusable** parts into `twenty-ui`
 while leaving genuinely app-specific wiring in `twenty-front`.
@@ -165,14 +200,14 @@ while leaving genuinely app-specific wiring in `twenty-front`.
 workspace/router/permission logic, and anything whose only consumer is a single feature screen.
 
 A component-by-component triage of `modules/ui` (generic / app-specific / hybrid, with target subpath
-and state-decoupling notes) is a **Phase 0 deliverable**, alongside the `twenty-ui` inventory.
+and state-decoupling notes) is the remaining **Phase 4 prerequisite** (the `twenty-ui-deprecated` inventory itself is complete — every component is migrated).
 
 ## Hardest components to migrate (risk hotspots)
 
 A predicted ranking of where the effort and risk concentrate, to inform sequencing and staffing. This
 is a hypothesis to validate during the Phase 0 inventory/triage, not a final list.
 
-### In `twenty-ui`
+### In `twenty-ui-deprecated` *(all migrated — predictions held; see Migration outcomes)*
 
 | Component | Why it's hard | Migration shape |
 | --- | --- | --- |
@@ -215,23 +250,23 @@ Apollo error formatting, and the icon/theme-color pickers tied to Twenty's icon 
 - **Workbench** — Storybook (`@storybook/react-vite`). Every component has stories covering variants, sizes, and states (via `storybook-addon-pseudo-states`), in light and dark, with `autodocs`.
 - **Functional** — component/interaction tests via `@storybook/addon-vitest` (real browser); unit tests (Jest) for hooks/utilities; coverage gate via `@storybook/addon-coverage`.
 - **Accessibility** — Storybook a11y addon (axe-core) with `parameters.a11y.test = 'error'` so violations fail CI.
-- **Visual parity** — visual regression via Argos (self-hosted) plus a cross-package comparison project that diffs `twenty-ui` stories against `twenty-ui` stories with identical names; a pixel-diff threshold is the per-component acceptance gate. See [Visual regression](#visual-regression) below.
-- **Performance & size** — `size-limit` per entry point with budgets; tree-shaking fixtures (importing one component must not pull the library); build-time tracking; render benchmarks via React Profiler; load-time via Lighthouse/Playwright on the built Storybook. As one concrete benchmark, a dedicated **stress story** renders a very large number of a single component (e.g. 10,000 buttons) and measures total render time — compared against the `twenty-ui` equivalent and gated against a budget to catch per-instance overhead regressions.
+- **Visual parity** — visual regression via Argos (self-hosted) plus a cross-package comparison project that diffs `twenty-ui` stories against `twenty-ui-deprecated` stories with identical names; a pixel-diff threshold is the per-component acceptance gate. See [Visual regression](#visual-regression) below.
+- **Performance & size** — `size-limit` per entry point with budgets; tree-shaking fixtures (importing one component must not pull the library); build-time tracking; render benchmarks via React Profiler; load-time via Lighthouse/Playwright on the built Storybook. As one concrete benchmark, a dedicated **stress story** renders a very large number of a single component (e.g. 10,000 buttons) and measures total render time — compared against the `twenty-ui-deprecated` equivalent and gated against a budget to catch per-instance overhead regressions. *(Stress story not yet built.)*
 
-CI surfaces a per-PR diff table (`twenty-ui` vs `twenty-ui`) for size, a11y, and visual changes.
+CI surfaces a per-PR diff table (`twenty-ui-deprecated` vs `twenty-ui`) for size, a11y, and visual changes. *(Not yet built.)*
 
 ## Visual regression
 
 Two Argos projects (on argos.twenty-internal.com) provide visual regression in CI:
 
 1. **`twenty-ui`** — pixel diff of `twenty-ui` stories against the `main` branch baseline. Catches regressions introduced by a PR.
-2. **`twenty-ui-vs-new-ui`** — cross-package comparison. The baseline is always `twenty-ui` screenshots from `main`; PR builds upload `twenty-ui` screenshots and diff them against the `twenty-ui` baseline. This shows exactly which components still differ between the two implementations.
+2. **`twenty-ui-vs-new-ui`** — cross-package comparison. The baseline is always `twenty-ui-deprecated` screenshots from `main`; PR builds upload `twenty-ui` screenshots and diff them against that baseline. This shows exactly which components still differ between the two implementations.
 
-For the cross-package comparison to produce meaningful diffs, stories in `twenty-ui` must use the **same title hierarchy** as `twenty-ui` (e.g. `UI/Input/Toggle`).
+For the cross-package comparison to produce meaningful diffs, stories in `twenty-ui` must use the **same title hierarchy** as `twenty-ui-deprecated` (e.g. `UI/Input/Toggle/Toggle`). *(Done: all 70 story titles are byte-identical.)*
 
 ### Local visual diff
 
-Run a pixel diff of `twenty-ui` components against `twenty-ui` using the self-hosted Argos instance.
+Run a pixel diff of `twenty-ui` components against `twenty-ui-deprecated` using the self-hosted Argos instance.
 
 **Prerequisites:**
 - AWS SSO configured and logged in (`aws sso login --profile twenty-dev`)
@@ -262,10 +297,10 @@ This builds Storybook, captures screenshots of every story, and uploads
 them to Argos with build name `<username>/twenty-ui`. The diff
 compares against the latest approved baseline.
 
-To run `twenty-ui`'s visual diff in the same Argos instance (to build the
+To run `twenty-ui-deprecated`'s visual diff in the same Argos instance (to build the
 cross-package comparison baseline):
 
-    npx nx storybook:visual-diff twenty-ui
+    npx nx storybook:visual-diff twenty-ui-deprecated
 
 **4. View results**
 
@@ -276,28 +311,28 @@ to review diffs.
 
 - Vite library mode, dual ESM/CJS, `vite-plugin-dts`, `vite-plugin-svgr`; SCSS via Vite's built-in `sass`; no Babel.
 - `sideEffects: ["**/*.css", "**/*.scss"]`; emit per-entry CSS plus `style.css` / `theme-light.css` / `theme-dark.css`.
-- Public package (remove `private`); ships as `twenty-ui` until cut-over, then claims the `twenty-ui` name once the old package is removed.
+- Public package (remove `private`); ships as `twenty-ui` (the old package already moved to the `twenty-ui-deprecated` name and is removed after cut-over).
 - **Changesets** for semver + changelog; GitHub Actions release with `npm publish --provenance`.
 - Declare `react` / `react-dom` as peer dependencies; validate the `exports`/types map with `publint` + `@arethetypeswrong/cli`.
 - Publish the Storybook as living documentation.
 
 ## Migration & rollout
 
-1. Build `twenty-ui` to parity with the same API surface and design, validated by the parity, a11y, and size suites.
+1. ~~Build `twenty-ui` to parity with the same API surface and design~~ **Done** — validated by the export-parity diff, a11y, and size suites; visual-parity triage via Argos still pending.
 2. Dogfood on a few non-critical `twenty-front` screens behind a temporary alias.
-3. Codemod imports `twenty-ui` → `twenty-ui` across `twenty-front` (subpaths preserved); handle any changed APIs explicitly.
+3. Codemod imports `twenty-ui-deprecated` → `twenty-ui` (subpaths preserved) across `twenty-front` (~1,730 files), `twenty-front-component-renderer`, and `twenty-sdk`; handle any changed APIs explicitly.
 4. Swap the dependency, run the full test suite + visual diffs, ship.
-5. Deprecate and remove `twenty-ui` after a soak period.
+5. Remove `twenty-ui-deprecated` after a soak period.
 
 ## Roadmap
 
-- **Phase 0 — Foundations:** scaffold package + tooling; port the theme layer with parity test; stand up the benchmark/parity/a11y CI harness first; complete the component inventory **and the `modules/ui` triage** (generic / app-specific / hybrid).
-- **Phase 1 — Primitives:** icons, typography, button family, status/tag/chip/pill; establish the canonical component pattern.
-- **Phase 2 — Behavioral:** Modal, Tooltip, Menu, Tabs, Checkbox, Radio, Switch, inputs/Field, Progress, Avatar, Collapsible.
-- **Phase 3 — Long tail:** banners/callout/info, card/section/separator, loader, color/card pickers, code editor, json-visualizer, placeholders, utilities/testing/accessibility.
+- ~~**Phase 0 — Foundations**~~ ✅ scaffolding, tooling, theme parity, harnesses. Still open from Phase 0: the CI diff-table workflow and the `modules/ui` triage (moved under Phase 4).
+- ~~**Phase 1 — Primitives**~~ ✅ done June 2026 (canonical pattern: `Button.tsx` + data-attribute Sass matrix).
+- ~~**Phase 2 — Behavioral**~~ ✅ done June 2026 (Base UI where mapped; see Migration outcomes for exceptions).
+- ~~**Phase 3 — Long tail**~~ ✅ done June 2026. Follow-up debt: the a11y fix pass for the 119 `a11y: 'todo'` stories, and the Argos visual-parity triage.
 - **Phase 4 — Application-level UI:** migrate the generic/hybrid components from `twenty-front/src/modules/ui` per the triage — decouple state, split headless cores, swap each behind its existing `@/ui/...` import path.
 - **Phase 5 — Hardening & publish:** close gaps; finalize release pipeline; cut `1.0.0`; publish docs.
-- **Phase 6 — Cut-over:** dogfood → codemod → swap → remove `twenty-ui`.
+- **Phase 6 — Cut-over:** dogfood → codemod → swap → remove `twenty-ui-deprecated`.
 
 A component is done only with: stories (all states, light/dark), passing interaction + a11y tests,
 a passing visual-parity diff, and a within-budget size entry.
@@ -316,10 +351,10 @@ a passing visual-parity diff, and a within-budget size entry.
 
 ## Open questions
 
-1. Published package name: `twenty-ui` now, renamed to `twenty-ui` at cut-over (Phase 6).
-2. Styling: confirm SCSS Modules vs vanilla-extract vs plain CSS Modules.
-3. Variants helper: `clsx` + `data-*` vs `cva`.
+1. ~~Published package name.~~ **Resolved:** the rename already happened — this package owns `twenty-ui`; the old one is `twenty-ui-deprecated`.
+2. ~~Styling: SCSS Modules vs vanilla-extract vs plain CSS Modules.~~ **Resolved:** SCSS Modules, proven across all 192 components.
+3. ~~Variants helper: `clsx` + `data-*` vs `cva`.~~ **Resolved:** `clsx` + `data-*` attributes with Sass maps/`@each` (canonical pattern in `Button.module.scss`); `cva` not needed.
 4. ~~Visual regression tooling: Chromatic vs self-hosted image snapshots.~~ **Resolved:** Argos (self-hosted at argos.twenty-internal.com). See [Visual regression](#visual-regression).
-5. How aggressively to drop `framer-motion` in favor of CSS/Base UI transitions.
-6. Scope of `assets` / `testing` / `json-visualizer`: port verbatim or modernize.
-7. Where to draw the generic-vs-app-specific line for `modules/ui`, and whether hybrid components live as a headless core in `twenty-ui` with a thin app wrapper in `twenty-front`.
+5. ~~How aggressively to drop `framer-motion`.~~ **Resolved:** keep it where animation is the public contract (`utilities/animation`, `AnimatedButton`, `AnimatedCheckmark`, `AnimatedExpandableContainer`, `useProgressAnimation`, `CardContent`); converted to CSS/Base UI transitions everywhere it was an internal micro-transition.
+6. ~~Scope of `assets` / `testing` / `json-visualizer`.~~ **Resolved:** ported — assets byte-identical, testing decorators converted to SCSS, json-visualizer recursion verbatim with CSS/Collapsible animations.
+7. Where to draw the generic-vs-app-specific line for `modules/ui`, and whether hybrid components live as a headless core in `twenty-ui` with a thin app wrapper in `twenty-front`. **(Still open — Phase 4.)**

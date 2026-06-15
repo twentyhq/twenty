@@ -1,6 +1,7 @@
 type CompactConfig = {
   stripWhenNullish?: string[];
   stripWhenFalse?: string[];
+  stripWhenTrue?: string[];
 };
 
 export const compactMetadataOutput = (
@@ -17,6 +18,12 @@ export const compactMetadataOutput = (
 
   for (const key of config.stripWhenFalse ?? []) {
     if (result[key] === false) {
+      delete result[key];
+    }
+  }
+
+  for (const key of config.stripWhenTrue ?? []) {
+    if (result[key] === true) {
       delete result[key];
     }
   }

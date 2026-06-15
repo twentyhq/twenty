@@ -11,6 +11,7 @@ export default defineField({
   type: FieldType.RELATION,
   name: 'partner',
   label: 'Partner',
+  icon: 'IconBuildingStore',
   isNullable: true,
   relationTargetObjectMetadataUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
   relationTargetFieldMetadataUniversalIdentifier: OPPORTUNITIES_ON_PARTNER_FIELD_ID,

@@ -19,6 +19,7 @@ import {
   isRecordFilterValueValid,
 } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui-deprecated/input';
+import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 import { useQuery } from '@apollo/client/react';
 import {
   type BillingEntitlement,
@@ -149,6 +150,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
   return (
     <SettingsPageLayout
       title={headerTitle}
+      titleColor={themeCssVariables.font.color.tertiary}
       links={breadcrumbLinks}
       secondaryBar={
         <SettingsWizardStepBar

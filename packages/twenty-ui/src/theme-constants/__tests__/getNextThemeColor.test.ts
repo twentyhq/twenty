@@ -1,7 +1,7 @@
 import {
   MAIN_COLOR_NAMES,
   type ThemeColor,
-} from '@new-ui/theme/constants/MainColorNames';
+} from '@ui/theme/constants/MainColorNames';
 
 import { getNextThemeColor } from '../getNextThemeColor';
 

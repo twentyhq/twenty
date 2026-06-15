@@ -1,0 +1,18 @@
+.iconButton {
+  align-items: center;
+  border-radius: var(--t-spacing-1);
+  cursor: pointer;
+  display: flex;
+  height: var(--t-spacing-10);
+  justify-content: center;
+  transition: background-color duration(fast) ease;
+  width: var(--t-spacing-10);
+
+  &[data-active] {
+    background-color: var(--t-background-transparent-light);
+  }
+
+  &:hover {
+    background-color: var(--t-background-transparent-light);
+  }
+}

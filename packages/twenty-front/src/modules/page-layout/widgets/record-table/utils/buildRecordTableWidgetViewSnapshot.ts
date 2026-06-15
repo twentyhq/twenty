@@ -30,10 +30,14 @@ export const buildRecordTableWidgetViewSnapshot = (
     openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
     visibility: ViewVisibility.UNLISTED,
     shouldHideEmptyGroups: false,
+    isActive: true,
   };
 
-  const eligibleFields = objectMetadataItem.fields.filter(
-    filterFieldsForRecordTableViewCreation,
+  const eligibleFields = objectMetadataItem.fields.filter((field) =>
+    filterFieldsForRecordTableViewCreation(
+      field,
+      objectMetadataItem.labelIdentifierFieldMetadataId,
+    ),
   );
 
   const sortedFields = eligibleFields.toSorted(

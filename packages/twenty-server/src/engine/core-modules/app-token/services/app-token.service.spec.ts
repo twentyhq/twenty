@@ -13,7 +13,12 @@ describe('AppTokenService', () => {
         AppTokenService,
         {
           provide: getRepositoryToken(AppTokenEntity),
-          useValue: {},
+          useValue: {
+            manager: {
+              connection: { driver: { options: { type: 'postgres' } } },
+            },
+            metadata: { columns: [] },
+          },
         },
       ],
     }).compile();

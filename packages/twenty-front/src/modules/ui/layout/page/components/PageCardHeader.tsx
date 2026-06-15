@@ -19,6 +19,8 @@ type PageCardHeaderProps = {
   title?: ReactNode;
   tag?: ReactNode;
   actionButton?: ReactNode;
+  centerTitle?: boolean;
+  titleColor?: string;
 };
 
 const StyledHeader = styled.div`
@@ -30,6 +32,7 @@ const StyledHeader = styled.div`
   gap: ${themeCssVariables.spacing[2]};
   min-height: ${SIDE_PANEL_TOP_BAR_HEIGHT}px;
   padding: 0 ${themeCssVariables.spacing[3]};
+  position: relative;
   width: 100%;
 `;
 
@@ -41,14 +44,24 @@ const StyledLeft = styled.div`
   overflow: hidden;
 `;
 
-const StyledTitle = styled.div`
+const StyledTitle = styled.div<{ titleColor?: string }>`
   align-items: center;
-  color: ${themeCssVariables.font.color.primary};
+  color: ${({ titleColor }) =>
+    titleColor ?? themeCssVariables.font.color.primary};
   display: flex;
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.semiBold};
   gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
+`;
+
+const StyledCenteredTitle = styled(StyledTitle)`
+  bottom: 0;
+  justify-content: center;
+  left: 50%;
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
 `;
 
 const StyledRight = styled.div`
@@ -67,9 +80,22 @@ export const PageCardHeader = ({
   title,
   tag,
   actionButton,
+  centerTitle = false,
+  titleColor,
 }: PageCardHeaderProps) => {
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
+
+  const hasTitleContent =
+    !isMobile && (isDefined(icon) || isDefined(title) || isDefined(tag));
+
+  const titleContent = (
+    <>
+      {icon}
+      {isDefined(title) && title}
+      {tag}
+    </>
+  );
 
   return (
     <StyledHeader>
@@ -80,15 +106,15 @@ export const PageCardHeader = ({
         {isDefined(breadcrumb)
           ? breadcrumb
           : isDefined(links) && <Breadcrumb links={links} />}
-        {!isMobile &&
-          (isDefined(icon) || isDefined(title) || isDefined(tag)) && (
-            <StyledTitle>
-              {icon}
-              {isDefined(title) && title}
-              {tag}
-            </StyledTitle>
-          )}
+        {!centerTitle && hasTitleContent && (
+          <StyledTitle titleColor={titleColor}>{titleContent}</StyledTitle>
+        )}
       </StyledLeft>
+      {centerTitle && hasTitleContent && (
+        <StyledCenteredTitle titleColor={titleColor}>
+          {titleContent}
+        </StyledCenteredTitle>
+      )}
       <StyledRight
         data-click-outside-id={PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID}
       >

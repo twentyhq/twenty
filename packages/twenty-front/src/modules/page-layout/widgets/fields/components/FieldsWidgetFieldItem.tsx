@@ -82,7 +82,7 @@ export const FieldsWidgetFieldItem = ({
           }),
           fieldMetadataItem: {
             id: fieldMetadataItem.id,
-            isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+            isUIEditable: fieldMetadataItem.isUIEditable ?? true,
             isCustom: fieldMetadataItem.isCustom ?? false,
           },
           fieldDefinition,

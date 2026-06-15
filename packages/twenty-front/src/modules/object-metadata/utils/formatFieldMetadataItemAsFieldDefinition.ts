@@ -49,7 +49,7 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
     settings: field.settings,
     isNullable: field.isNullable,
     isCustom: field.isCustom ?? false,
-    isUIReadOnly: field.isUIReadOnly ?? false,
+    isUIEditable: field.isUIEditable ?? true,
   };
 
   return {
