@@ -1,7 +1,9 @@
+import { isDefined } from 'twenty-shared/utils';
+
 const CHARS_PER_TOKEN = 4;
 
 export const estimateToolOutputTokens = (output: unknown): number => {
-  if (output === undefined || output === null) {
+  if (!isDefined(output)) {
     return 0;
   }
 
