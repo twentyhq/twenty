@@ -4,11 +4,33 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 export const GET_BRIEF_REVIEW_LOGIC_FUNCTION_ID =
   '7c2a9e10-3b4d-4f81-9a2c-1e5d8b6f0a21';
 
+const microsToUsd = (
+  currency: { amountMicros?: number | null } | null | undefined,
+): number | null =>
+  currency && typeof currency.amountMicros === 'number'
+    ? Math.round(currency.amountMicros / 1_000_000)
+    : null;
+
+// Profile-grade partner summary so the client can actually compare candidates.
+// Enum arrays (region/languages/scope) are returned raw; the website humanizes
+// them with its existing chip-label maps.
 type Candidate = {
   applicationId: string;
   state: string;
   pitch: string | null;
-  partner: { name: string | null; skills: string[] | null; country: string | null } | null;
+  partner: {
+    slug: string | null;
+    name: string | null;
+    introduction: string | null;
+    country: string | null;
+    city: string | null;
+    region: string[] | null;
+    languagesSpoken: string[] | null;
+    skills: string[] | null;
+    hourlyRateUsd: number | null;
+    projectBudgetMinUsd: number | null;
+    profilePictureUrl: string | null;
+  } | null;
 };
 
 type Result =
@@ -57,15 +79,32 @@ export const handler = async (input: {
           partner: {
             __args: { filter: { id: { eq: app.partnerId } } },
             name: true,
-            skills: true,
+            slug: true,
+            introduction: true,
             country: true,
+            city: true,
+            region: true,
+            languagesSpoken: true,
+            skills: true,
+            hourlyRate: { amountMicros: true },
+            projectBudgetMin: { amountMicros: true },
+            profilePicture: { primaryLinkUrl: true },
           },
         });
         partner = pr.partner
           ? {
+              slug: pr.partner.slug ?? null,
               name: pr.partner.name ?? null,
-              skills: pr.partner.skills ?? null,
+              introduction: pr.partner.introduction ?? null,
               country: pr.partner.country ?? null,
+              city: pr.partner.city ?? null,
+              region: pr.partner.region ?? null,
+              languagesSpoken: pr.partner.languagesSpoken ?? null,
+              skills: pr.partner.skills ?? null,
+              hourlyRateUsd: microsToUsd(pr.partner.hourlyRate),
+              projectBudgetMinUsd: microsToUsd(pr.partner.projectBudgetMin),
+              profilePictureUrl:
+                pr.partner.profilePicture?.primaryLinkUrl ?? null,
             }
           : null;
       }

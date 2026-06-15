@@ -26,5 +26,9 @@ export default defineView({
     { universalIdentifier: 'c0a8b150-0000-4000-8000-000000000013', fieldMetadataUniversalIdentifier: 'c0a8b101-0000-4000-8000-000000000005', position: 2, isVisible: true },
     { universalIdentifier: 'c0a8b150-0000-4000-8000-000000000014', fieldMetadataUniversalIdentifier: 'c0a8b101-0000-4000-8000-000000000003', position: 3, isVisible: true },
     { universalIdentifier: 'c0a8b150-0000-4000-8000-000000000015', fieldMetadataUniversalIdentifier: 'c0a8b101-0000-4000-8000-000000000004', position: 4, isVisible: true },
+    // reviewToken — surfaced here so you can grab the magic-link token from the record side panel (kept out of the table to avoid UUID clutter).
+    { universalIdentifier: 'c0a8b150-0000-4000-8000-000000000016', fieldMetadataUniversalIdentifier: 'c0a8b101-0000-4000-8000-000000000007', position: 5, isVisible: true },
+    // reviewLink — the ready-to-send client review URL, clickable straight from the side panel.
+    { universalIdentifier: 'c0a8b150-0000-4000-8000-000000000017', fieldMetadataUniversalIdentifier: 'c0a8b101-0000-4000-8000-000000000008', position: 6, isVisible: true },
   ],
 });

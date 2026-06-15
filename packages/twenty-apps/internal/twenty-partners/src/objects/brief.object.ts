@@ -98,5 +98,13 @@ export default defineObject({
       icon: 'IconLink',
       defaultValue: 'uuid',
     },
+    {
+      universalIdentifier: 'c0a8b101-0000-4000-8000-000000000008',
+      type: FieldType.LINKS,
+      name: 'reviewLink',
+      label: 'Review Link',
+      icon: 'IconExternalLink',
+      isNullable: true,
+    },
   ],
 });

@@ -29,5 +29,11 @@ export default defineApplication({
         'Workspace front-end base URL (e.g. https://partners.twenty.com), used to build the clickable Partner record link in the Discord notification. Set per-workspace in Settings → Apps → Twenty Partners → Variables.',
       isSecret: false,
     },
+    REVIEW_PAGE_BASE_URL: {
+      universalIdentifier: '5d2f8a91-7c34-4e0b-9a6d-1f8b3c4e7a20',
+      description:
+        'Website origin hosting the client review page (e.g. https://twenty.com), no trailing slash. Used to build each Brief\'s reviewLink as {base}/partners/review/{reviewToken}. Defaults to http://localhost:3003 in dev when unset. Set per-workspace in Settings → Apps → Twenty Partners → Variables.',
+      isSecret: false,
+    },
   },
 });
