@@ -50,14 +50,9 @@ export const useLogicFunctionForm = ({
           { knownObjectTypes },
         );
 
-        // Inference returns undefined when the params type cannot be derived
-        // (e.g. an imported alias); keep the stored schemas instead of wiping
-        // authored ones. An inferred empty schema still clears stale inputs.
         setFormValues((prevState: LogicFunctionFormValues) => ({
           ...prevState,
           sourceHandlerCode: value as string,
-          // Re-infer schemas for any active surface so they stay in sync
-          // with the source code.
           toolTriggerSettings: prevState.toolTriggerSettings
             ? {
                 ...prevState.toolTriggerSettings,
