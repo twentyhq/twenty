@@ -10,7 +10,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type WorkflowSendEmailFiles } from 'twenty-shared/workflow';
+import { type WorkflowEmailFiles } from 'twenty-shared/workflow';
 import { IconUpload } from 'twenty-ui-deprecated/display';
 import {
   ThemeContext,
@@ -18,8 +18,8 @@ import {
 } from 'twenty-ui-deprecated/theme-constants';
 
 type WorkflowSendEmailAttachmentsProps = {
-  files: WorkflowSendEmailFiles;
-  onChange: (files: WorkflowSendEmailFiles) => void;
+  files: WorkflowEmailFiles;
+  onChange: (files: WorkflowEmailFiles) => void;
   label?: string;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;

@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
 import { workflowFileSchema } from './workflow-file-action-schema';
 
-export const workflowSendEmailFilesSchema = z
+export const workflowEmailFilesSchema = z
   .array(
     z.union([
       workflowFileSchema,
@@ -12,9 +12,7 @@ export const workflowSendEmailFilesSchema = z
   .optional()
   .default([]);
 
-export type WorkflowSendEmailFiles = z.infer<
-  typeof workflowSendEmailFilesSchema
->;
+export type WorkflowEmailFiles = z.infer<typeof workflowEmailFilesSchema>;
 
 export const workflowSendEmailActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
@@ -27,7 +25,7 @@ export const workflowSendEmailActionSettingsSchema =
       }),
       subject: z.string().optional(),
       body: z.string().optional(),
-      files: workflowSendEmailFilesSchema,
+      files: workflowEmailFilesSchema,
       inReplyTo: z.string().trim().optional(),
     }),
   });

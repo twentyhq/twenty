@@ -1,6 +1,6 @@
 import {
   type EmailRecipients,
-  type WorkflowSendEmailFiles,
+  type WorkflowEmailFiles,
 } from 'twenty-shared/workflow';
 
 export type EmailFormData = {
@@ -8,6 +8,6 @@ export type EmailFormData = {
   recipients: Required<EmailRecipients>;
   subject: string;
   body: string;
-  files: WorkflowSendEmailFiles;
+  files: WorkflowEmailFiles;
   inReplyTo: string;
 };
