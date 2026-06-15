@@ -34,6 +34,7 @@ import {
 } from 'twenty-ui-deprecated/theme-constants';
 import { MenuItem } from 'twenty-ui-deprecated/navigation';
 import { toSpliced } from '~/utils/array/toSpliced';
+import { v4 } from 'uuid';
 
 type FormArrayFieldInputProps = {
   label?: string;
@@ -128,11 +129,22 @@ export const FormArrayFieldInput = ({
         },
   );
 
+  const [stableIds, setStableIds] = useState<string[]>(() => {
+    if (isStandaloneVariableString(defaultValue)) {
+      return [];
+    }
+    const initialItems =
+      isDefined(defaultValue) && isNonEmptyArray(defaultValue)
+        ? defaultValue
+        : [];
+    return initialItems.map(() => v4());
+  });
+
   const [newItemDraftValue, setNewItemDraftValue] = useState('');
   const [inputValue, setInputValue] = useState('');
   const [isInputDisplayed, setIsInputDisplayed] = useState(false);
-  const [itemToEditIndex, setItemToEditIndex] = useState(-1);
-  const isAddingNewItem = itemToEditIndex === -1;
+  const [itemToEditId, setItemToEditId] = useState<string | null>(null);
+  const isAddingNewItem = itemToEditId === null;
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -153,12 +165,18 @@ export const FormArrayFieldInput = ({
   };
 
   const handleFirstItemInputEnter = () => {
+    if (draftValue.type !== 'static') {
+      return;
+    }
+
+    const updatedItems = [...draftValue.value, newItemDraftValue];
     setDraftValue({
       type: 'static',
-      value: [...draftValue.value, newItemDraftValue],
+      value: updatedItems,
     });
+    setStableIds((prev) => [...prev, v4()]);
 
-    onChange([...draftValue.value, newItemDraftValue]);
+    onChange(updatedItems);
 
     setNewItemDraftValue('');
 
@@ -171,23 +189,36 @@ export const FormArrayFieldInput = ({
     });
   };
 
-  const handleEditItem = (index: number) => {
-    setInputValue(draftValue.value[index]);
-    setItemToEditIndex(index);
-    setIsInputDisplayed(true);
+  const handleEditItem = (id: string) => {
+    if (draftValue.type !== 'static') {
+      return;
+    }
+    const index = stableIds.indexOf(id);
+    if (index !== -1) {
+      setInputValue(draftValue.value[index]);
+      setItemToEditId(id);
+      setIsInputDisplayed(true);
+    }
   };
 
-  const handleDeleteItem = (index: number) => {
+  const handleDeleteItem = (id: string) => {
     if (draftValue.type !== 'static') {
       throw new Error('Cannot delete item when value is a variable.');
     }
 
+    const index = stableIds.indexOf(id);
+    if (index === -1) {
+      return;
+    }
+
     const updatedItems = toSpliced(draftValue.value, index, 1);
+    const updatedIds = toSpliced(stableIds, index, 1);
 
     setDraftValue({
       type: 'static',
       value: updatedItems,
     });
+    setStableIds(updatedIds);
     onChange(updatedItems);
 
     const isDropdownGoingToBeHiddenNext = updatedItems.length === 0;
@@ -242,27 +273,40 @@ export const FormArrayFieldInput = ({
     }
 
     if (sanitizedInput === '' && !isAddingNewItem) {
-      handleDeleteItem(itemToEditIndex);
+      if (isDefined(itemToEditId)) {
+        handleDeleteItem(itemToEditId);
+      }
       return;
     }
 
     const items = draftValue.value;
 
-    if (!isAddingNewItem && sanitizedInput === items[itemToEditIndex]) {
-      setIsInputDisplayed(false);
-      setInputValue('');
-      return;
+    if (!isAddingNewItem && isDefined(itemToEditId)) {
+      const index = stableIds.indexOf(itemToEditId);
+      if (index !== -1) {
+        if (sanitizedInput === items[index]) {
+          setIsInputDisplayed(false);
+          setInputValue('');
+          return;
+        }
+
+        const updatedItems = toSpliced(items, index, 1, sanitizedInput);
+
+        setDraftValue({
+          type: 'static',
+          value: updatedItems,
+        });
+        onChange(updatedItems);
+      }
+    } else {
+      const updatedItems = [...items, sanitizedInput];
+      setDraftValue({
+        type: 'static',
+        value: updatedItems,
+      });
+      setStableIds((prev) => [...prev, v4()]);
+      onChange(updatedItems);
     }
-
-    const updatedItems = isAddingNewItem
-      ? [...items, sanitizedInput]
-      : toSpliced(items, itemToEditIndex, 1, sanitizedInput);
-
-    setDraftValue({
-      type: 'static',
-      value: updatedItems,
-    });
-    onChange(updatedItems);
 
     setIsInputDisplayed(false);
     setInputValue('');
@@ -273,7 +317,7 @@ export const FormArrayFieldInput = ({
   };
 
   const handleAddItemButtonClick = () => {
-    setItemToEditIndex(-1);
+    setItemToEditId(null);
     setIsInputDisplayed(true);
   };
 
@@ -291,15 +335,164 @@ export const FormArrayFieldInput = ({
       type: 'static',
       value: [],
     });
+    setStableIds([]);
 
     setNewItemDraftValue('');
 
     onChange([]);
   };
 
+  const renderLabel = () => {
+    if (isDefined(label)) {
+      return <InputLabel>{label}</InputLabel>;
+    }
+    return null;
+  };
+
+  const renderReadonlyDisplay = (items: string[]) => {
+    if (items.length > 0) {
+      return <ArrayDisplay value={items} />;
+    }
+    return (
+      <StyledPlaceholderContainer>
+        <FormFieldPlaceholder />
+      </StyledPlaceholderContainer>
+    );
+  };
+
+  const renderEmptyInput = () => {
+    return (
+      <StyledInputContainer>
+        <TextInput
+          instanceId={formFieldInputInstanceId}
+          placeholder={t`Enter an item`}
+          value={newItemDraftValue}
+          copyButton={false}
+          onChange={handleFirstItemInputChange}
+          onEnter={handleFirstItemInputEnter}
+          shouldTrim={false}
+        />
+      </StyledInputContainer>
+    );
+  };
+
+  const renderDropdownMenuItems = (items: string[]) => {
+    return (
+      <DropdownMenuItemsContainer hasMaxHeight>
+        {items.map((value, index) => {
+          const id = stableIds[index] || index.toString();
+          return (
+            <ArrayFieldMenuItem
+              key={id}
+              dropdownId={`array-field-input-${instanceId}-${id}`}
+              value={value}
+              onEdit={() => {
+                handleEditItem(id);
+              }}
+              onDelete={() => {
+                handleDeleteItem(id);
+              }}
+            />
+          );
+        })}
+      </DropdownMenuItemsContainer>
+    );
+  };
+
+  const renderNewItemInputOrAddButton = () => {
+    if (isInputDisplayed) {
+      return (
+        <MultiItemBaseInput
+          instanceId={newItemInputInstanceId}
+          autoFocus
+          placeholder={placeholder}
+          value={inputValue}
+          onFocus={handleNewItemInputFocus}
+          onBlur={handleNewItemInputBlur}
+          onEscape={handleNewItemInputEscape}
+          onChange={handleNewItemInputChange}
+          onEnter={handleNewItemInputSubmit}
+          hasItem
+        />
+      );
+    }
+    return (
+      <DropdownMenuItemsContainer>
+        <MenuItem
+          onClick={handleAddItemButtonClick}
+          LeftIcon={IconPlus}
+          text={t`Add item`}
+        />
+      </DropdownMenuItemsContainer>
+    );
+  };
+
+  const renderDropdown = (items: string[]) => {
+    return (
+      <Dropdown
+        dropdownId={dropdownId}
+        dropdownPlacement="bottom-start"
+        dropdownOffset={{
+          y: parseSpacingValueAsNumber(theme.spacing[1]),
+        }}
+        clickableComponent={
+          <StyledDisplayModeContainer data-open={isDropdownOpen}>
+            <ArrayDisplay value={items} />
+          </StyledDisplayModeContainer>
+        }
+        clickableComponentWidth="100%"
+        dropdownComponents={
+          <DropdownContent ref={containerRef}>
+            {renderDropdownMenuItems(items)}
+            <DropdownMenuSeparator />
+            {renderNewItemInputOrAddButton()}
+          </DropdownContent>
+        }
+      />
+    );
+  };
+
+  const renderStaticContent = (items: string[]) => {
+    if (readonly) {
+      return (
+        <StyledDisplayModeReadonlyContainer>
+          {renderReadonlyDisplay(items)}
+        </StyledDisplayModeReadonlyContainer>
+      );
+    }
+    if (items.length === 0) {
+      return renderEmptyInput();
+    }
+    return renderDropdown(items);
+  };
+
+  const renderInnerContent = () => {
+    if (draftValue.type === 'static') {
+      return renderStaticContent(draftValue.value);
+    }
+    return (
+      <VariableChipStandalone
+        rawVariableName={draftValue.value}
+        onRemove={readonly ? undefined : handleUnlinkVariable}
+      />
+    );
+  };
+
+  const renderVariablePicker = () => {
+    if (isDefined(VariablePicker) && !readonly) {
+      return (
+        <VariablePicker
+          instanceId={instanceId}
+          onVariableSelect={handleVariableTagInsert}
+        />
+      );
+    }
+    return null;
+  };
+
   return (
     <FormFieldInputContainer data-testid={testId}>
-      {label ? <InputLabel>{label}</InputLabel> : null}
+      {renderLabel()}
 
       <FormFieldInputRowContainer>
         <FormFieldInputInnerContainer
@@ -307,103 +500,10 @@ export const FormArrayFieldInput = ({
           preventFocusStackUpdate={preventContainerFocusStackUpdate}
           hasRightElement={isDefined(VariablePicker) && !readonly}
         >
-          {draftValue.type === 'static' ? (
-            readonly ? (
-              <StyledDisplayModeReadonlyContainer>
-                {draftValue.value.length > 0 ? (
-                  <ArrayDisplay value={draftValue.value} />
-                ) : (
-                  <StyledPlaceholderContainer>
-                    <FormFieldPlaceholder />
-                  </StyledPlaceholderContainer>
-                )}
-              </StyledDisplayModeReadonlyContainer>
-            ) : draftValue.value.length === 0 ? (
-              <StyledInputContainer>
-                <TextInput
-                  instanceId={formFieldInputInstanceId}
-                  placeholder={t`Enter an item`}
-                  value={newItemDraftValue}
-                  copyButton={false}
-                  onChange={handleFirstItemInputChange}
-                  onEnter={handleFirstItemInputEnter}
-                  shouldTrim={false}
-                />
-              </StyledInputContainer>
-            ) : (
-              <Dropdown
-                dropdownId={dropdownId}
-                dropdownPlacement="bottom-start"
-                dropdownOffset={{
-                  y: parseSpacingValueAsNumber(theme.spacing[1]),
-                }}
-                clickableComponent={
-                  <StyledDisplayModeContainer data-open={isDropdownOpen}>
-                    <ArrayDisplay value={draftValue.value} />
-                  </StyledDisplayModeContainer>
-                }
-                clickableComponentWidth="100%"
-                dropdownComponents={
-                  <DropdownContent ref={containerRef}>
-                    <DropdownMenuItemsContainer hasMaxHeight>
-                      {draftValue.type === 'static' &&
-                        draftValue.value.map((value, index) => (
-                          <ArrayFieldMenuItem
-                            key={index}
-                            dropdownId={`array-field-input-${instanceId}-${index}`}
-                            value={value}
-                            onEdit={() => {
-                              handleEditItem(index);
-                            }}
-                            onDelete={() => {
-                              handleDeleteItem(index);
-                            }}
-                          />
-                        ))}
-                    </DropdownMenuItemsContainer>
-
-                    <DropdownMenuSeparator />
-
-                    {isInputDisplayed ? (
-                      <MultiItemBaseInput
-                        instanceId={newItemInputInstanceId}
-                        autoFocus
-                        placeholder={placeholder}
-                        value={inputValue}
-                        onFocus={handleNewItemInputFocus}
-                        onBlur={handleNewItemInputBlur}
-                        onEscape={handleNewItemInputEscape}
-                        onChange={handleNewItemInputChange}
-                        onEnter={handleNewItemInputSubmit}
-                        hasItem
-                      />
-                    ) : (
-                      <DropdownMenuItemsContainer>
-                        <MenuItem
-                          onClick={handleAddItemButtonClick}
-                          LeftIcon={IconPlus}
-                          text={t`Add item`}
-                        />
-                      </DropdownMenuItemsContainer>
-                    )}
-                  </DropdownContent>
-                }
-              />
-            )
-          ) : (
-            <VariableChipStandalone
-              rawVariableName={draftValue.value}
-              onRemove={readonly ? undefined : handleUnlinkVariable}
-            />
-          )}
+          {renderInnerContent()}
         </FormFieldInputInnerContainer>
 
-        {VariablePicker && !readonly && (
-          <VariablePicker
-            instanceId={instanceId}
-            onVariableSelect={handleVariableTagInsert}
-          />
-        )}
+        {renderVariablePicker()}
       </FormFieldInputRowContainer>
     </FormFieldInputContainer>
   );
