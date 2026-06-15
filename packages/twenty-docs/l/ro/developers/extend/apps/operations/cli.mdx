@@ -43,6 +43,33 @@ yarn twenty dev:function:logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 Acest lucru este diferit de `yarn twenty docker:logs`, care afișează jurnalele containerului Docker. `yarn twenty dev:function:logs` afișează jurnalele de execuție ale funcțiilor aplicației de pe serverul Twenty.
 </Note>
 
+## Generarea clientului tipizat (`yarn twenty dev:generate-client`)
+
+Regenerați clientul tipizat al API-ului (`twenty-client-sdk`) din schema remote-ului activ, fără a construi sau sincroniza o aplicație. Folosiți-l pentru a obține un client tipizat în orice proiect — cum ar fi un serviciu backend aflat într-un repository separat — care comunică cu instanța dvs. Twenty:
+
+```bash filename="Terminal"
+# In your project (no Twenty app definition required)
+yarn add twenty-sdk twenty-client-sdk
+
+# Connect to the Twenty instance to generate the client from
+yarn twenty remote:add
+
+# Generate the typed client into node_modules/twenty-client-sdk
+yarn twenty dev:generate-client
+```
+
+Apoi importați clientul în codul dvs.:
+
+```typescript
+import { CoreApiClient } from 'twenty-client-sdk/core';
+```
+
+Rulați din nou comanda ori de câte ori se schimbă modelul de date pentru a reîmprospăta tipurile generate.
+
+<Note>
+Clientul este generat în interiorul `node_modules`, astfel încât nu este inclus în commit împreună cu codul dvs. Rulați `yarn twenty dev:generate-client` după fiecare instalare (de exemplu, într-un script `postinstall` sau în CI).
+</Note>
+
 ## Dezinstalarea unei aplicații (`yarn twenty app:uninstall`)
 
 Eliminați aplicația din spațiul de lucru activ:

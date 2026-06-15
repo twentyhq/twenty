@@ -1,3 +1,4 @@
+import { type JSX } from 'react';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from '@ui/theme-constants';

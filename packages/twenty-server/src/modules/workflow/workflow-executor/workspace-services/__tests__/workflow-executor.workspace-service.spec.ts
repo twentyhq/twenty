@@ -126,7 +126,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
           provide: WorkspaceCacheService,
           useValue: {
             getOrRecompute: jest.fn().mockResolvedValue({
-              billingSubscription: {
+              currentBillingSubscription: {
                 currentPeriodStart: new Date('2026-04-01T00:00:00Z'),
               },
             }),

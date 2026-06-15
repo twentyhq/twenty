@@ -274,6 +274,10 @@ export const SubPageNavigation: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    // Let the side panel finish opening before interacting, otherwise the
+    // click can land mid-transition and the sub-page navigation is dropped.
+    await sleep(openTimeout);
+
     const objectButton = await canvas.findByText('Object');
     expect(objectButton).toBeVisible();
 

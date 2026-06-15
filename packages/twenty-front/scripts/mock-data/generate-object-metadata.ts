@@ -23,7 +23,8 @@ const METADATA_QUERY = `
           isRemote
           isActive
           isSystem
-          isUIReadOnly
+          isUIEditable
+          isUICreatable
           createdAt
           updatedAt
           labelIdentifierFieldMetadataId
@@ -64,7 +65,7 @@ const METADATA_QUERY = `
             isCustom
             isActive
             isSystem
-            isUIReadOnly
+            isUIEditable
             isNullable
             isUnique
             createdAt

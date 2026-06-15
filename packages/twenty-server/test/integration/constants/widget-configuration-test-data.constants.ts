@@ -8,6 +8,7 @@ import { type PieChartConfigurationDTO } from 'src/engine/metadata-modules/page-
 import { type StandaloneRichTextConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/standalone-rich-text-configuration.dto';
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
+import { ChartNumberFormat } from 'src/engine/metadata-modules/page-layout-widget/enums/chart-number-format.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 
@@ -103,7 +104,7 @@ export const TEST_NUMBER_CHART_CONFIG: AggregateChartConfigurationDTO = {
   aggregateOperation: AggregateOperations.COUNT,
   label: 'Total Records',
   description: 'Count of all records',
-  format: '0,0',
+  numberFormat: ChartNumberFormat.SHORT,
   displayDataLabel: true,
 };
 
