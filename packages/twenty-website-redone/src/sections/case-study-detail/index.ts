@@ -1,3 +1,4 @@
+export { CaseStudyBody, type CaseStudyBodyProps } from './case-study-body';
 export { CaseStudyHero, type CaseStudyHeroProps } from './case-study-hero';
 export {
   CaseStudyHighlights,
