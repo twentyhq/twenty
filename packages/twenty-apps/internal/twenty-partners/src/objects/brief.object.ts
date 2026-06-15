@@ -90,5 +90,13 @@ export default defineObject({
         { id: 'c0a8b101-0000-4000-8000-000000000062', value: 'CLOSED', label: 'Closed', position: 1, color: 'gray' },
       ],
     },
+    {
+      universalIdentifier: 'c0a8b101-0000-4000-8000-000000000007',
+      type: FieldType.UUID,
+      name: 'reviewToken',
+      label: 'Review Token',
+      icon: 'IconLink',
+      defaultValue: 'uuid',
+    },
   ],
 });
