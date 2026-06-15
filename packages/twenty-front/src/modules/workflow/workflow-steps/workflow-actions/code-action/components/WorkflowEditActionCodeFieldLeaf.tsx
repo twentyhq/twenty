@@ -7,6 +7,7 @@ import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
+import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { getWorkflowCodeFieldsEnumSelectOptions } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWorkflowCodeFieldsEnumSelectOptions';
 import { getWorkflowCodeFieldsLeafKind } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWorkflowCodeFieldsLeafKind';
 import { t } from '@lingui/core/macro';
@@ -91,11 +92,10 @@ export const WorkflowEditActionCodeFieldLeaf = ({
       <FormBooleanFieldInput
         label={label}
         defaultValue={
-          !isDefined(inputValue)
-            ? undefined
-            : typeof inputValue === 'boolean' || typeof inputValue === 'string'
-              ? inputValue
-              : undefined
+          typeof inputValue === 'boolean' ||
+          isStandaloneVariableString(inputValue)
+            ? inputValue
+            : undefined
         }
         readonly={readonly}
         onChange={onChange}
