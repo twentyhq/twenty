@@ -1,5 +1,4 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { getObjectMetadataItemByUniversalIdentifier } from '@/object-metadata/utils/getObjectMetadataItemByUniversalIdentifier';
 import { FormBooleanFieldInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldInput';
 import { FormMultiRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormMultiRecordPicker';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
@@ -43,10 +42,11 @@ export const WorkflowEditActionCodeFieldLeaf = ({
         : schemaProperty?.items?.objectUniversalIdentifier;
 
     const recordObjectMetadataItem = isNonEmptyString(objectUniversalIdentifier)
-      ? getObjectMetadataItemByUniversalIdentifier({
-          objectMetadataItems,
-          objectUniversalIdentifier,
-        })
+      ? objectMetadataItems.find(
+          (objectMetadataItem) =>
+            objectMetadataItem.universalIdentifier ===
+            objectUniversalIdentifier,
+        )
       : undefined;
 
     if (isDefined(recordObjectMetadataItem)) {
