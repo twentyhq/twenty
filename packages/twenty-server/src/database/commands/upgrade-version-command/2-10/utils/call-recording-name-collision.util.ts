@@ -9,17 +9,21 @@ const CALL_RECORDING_NAME_SINGULAR = 'callRecording';
 const CALL_RECORDING_NAME_PLURAL = 'callRecordings';
 const CALL_RECORDING_OLD_NAME_SINGULAR = 'callRecordingOld';
 const CALL_RECORDING_OLD_NAME_PLURAL = 'callRecordingsOld';
+const CALENDAR_EVENT_RECORDING_PREFERENCE_FIELD_NAME = 'recordingPreference';
 const CALENDAR_EVENT_CALL_RECORDINGS_FIELD_NAME = 'callRecordings';
 const FIELD_OLD_NAME_SUFFIX = 'Old';
 const FIELD_OLD_LABEL_SUFFIX = ' (Old)';
 const MAX_OLD_NAME_ATTEMPTS = 100;
 
 const CALL_RECORDING_CALENDAR_EVENT_FIELD_NAMES = [
+  CALENDAR_EVENT_RECORDING_PREFERENCE_FIELD_NAME,
   CALENDAR_EVENT_CALL_RECORDINGS_FIELD_NAME,
 ];
 
 const CALL_RECORDING_CALENDAR_EVENT_FIELD_UNIVERSAL_IDENTIFIERS =
   new Set<string>([
+    STANDARD_OBJECTS.calendarEvent.fields.recordingPreference
+      .universalIdentifier,
     STANDARD_OBJECTS.calendarEvent.fields.callRecordings.universalIdentifier,
   ]);
 

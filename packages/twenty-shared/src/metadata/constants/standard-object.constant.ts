@@ -480,6 +480,9 @@ export const STANDARD_OBJECTS = {
       calendarEventParticipants: {
         universalIdentifier: '20202020-e07e-4ccb-88f5-6f3d00458eec',
       },
+      recordingPreference: {
+        universalIdentifier: '1d231e7e-9bbe-410b-8007-ea7678a83e58',
+      },
       callRecordings: {
         universalIdentifier: '48d6d151-18e2-4111-b405-d85fb9d860d8',
       },
