@@ -5,7 +5,7 @@ import { ArrayFieldMenuItem } from '@/object-record/record-field/ui/meta-types/i
 import { MultiItemFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInput';
 import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
 import { arrayFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/arrayFieldValueSchema';
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useMemo, useState, useEffect } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -16,10 +16,14 @@ const getExtendedIds = (prevIds: string[], targetLength: number): string[] => {
   if (targetLength <= prevIds.length) {
     return prevIds;
   }
-  return [
-    ...prevIds,
-    ...Array.from({ length: targetLength - prevIds.length }, () => v4()),
-  ];
+  
+  const idsToAdd = targetLength - prevIds.length;
+  const newIds: string[] = [];
+  for (let i = 0; i < idsToAdd; i++) {
+    newIds.push(v4());
+  }
+  
+  return [...prevIds, ...newIds];
 };
 
 export const ArrayFieldInput = () => {
@@ -39,24 +43,27 @@ export const ArrayFieldInput = () => {
   const [stableIds, setStableIds] = useState<string[]>(() =>
     arrayItems.map(() => v4()),
   );
-  const [prevArrayItems, setPrevArrayItems] = useState(arrayItems);
 
-  if (prevArrayItems !== arrayItems) {
-    setPrevArrayItems(arrayItems);
+  useEffect(() => {
     setStableIds((prevIds) => {
+      if (arrayItems.length === prevIds.length) {
+        return prevIds;
+      }
       if (arrayItems.length < prevIds.length) {
         return prevIds.slice(0, arrayItems.length);
       }
       return getExtendedIds(prevIds, arrayItems.length);
     });
-  }
+  }, [arrayItems.length]);
 
-  const parseStringArrayToArrayValue = (arrayItems: string[]) => {
-    const parseResponse = arrayFieldValueSchema.safeParse(arrayItems);
+  const parseStringArrayToArrayValue = (items: string[]) => {
+    const parseResponse = arrayFieldValueSchema.safeParse(items);
 
     if (parseResponse.success) {
       return parseResponse.data;
     }
+    
+    return undefined;
   };
 
   const handleChange = (newValue: string[]) => {
@@ -77,23 +84,39 @@ export const ArrayFieldInput = () => {
     newValue: string[],
     event: MouseEvent | TouchEvent,
   ) => {
-    onClickOutside?.({
-      newValue: parseStringArrayToArrayValue(newValue),
-      event,
-    });
+    if (isDefined(onClickOutside)) {
+      onClickOutside({
+        newValue: parseStringArrayToArrayValue(newValue),
+        event,
+      });
+    }
   };
 
   const handleEscape = (newValue: string[]) => {
-    onEscape?.({ newValue: parseStringArrayToArrayValue(newValue) });
+    if (isDefined(onEscape)) {
+      onEscape({ newValue: parseStringArrayToArrayValue(newValue) });
+    }
   };
 
   const handleEnter = (newValue: string[]) => {
-    onEnter?.({ newValue: parseStringArrayToArrayValue(newValue) });
+    if (isDefined(onEnter)) {
+      onEnter({ newValue: parseStringArrayToArrayValue(newValue) });
+    }
   };
 
-  const maxNumberOfValues =
-    fieldDefinition.metadata.settings?.maxNumberOfValues ??
-    MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
+  const getMaxNumberOfValues = () => {
+    if (isDefined(fieldDefinition.metadata.settings?.maxNumberOfValues)) {
+      return fieldDefinition.metadata.settings.maxNumberOfValues;
+    }
+    return MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
+  };
+
+  const getStableId = (index: number) => {
+    if (isDefined(stableIds[index])) {
+      return stableIds[index];
+    }
+    return index.toString();
+  };
 
   return (
     <MultiItemFieldInput
@@ -107,8 +130,8 @@ export const ArrayFieldInput = () => {
       fieldMetadataType={FieldMetadataType.ARRAY}
       renderItem={({ value, index, handleEdit, handleDelete }) => (
         <ArrayFieldMenuItem
-          key={stableIds[index] || index}
-          dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${stableIds[index] || index}`}
+          key={getStableId(index)}
+          dropdownId={`${MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX}-${fieldDefinition.metadata.fieldName}-${getStableId(index)}`}
           value={value}
           onEdit={handleEdit}
           onDelete={() => {
@@ -117,7 +140,8 @@ export const ArrayFieldInput = () => {
           }}
         />
       )}
-      maxItemCount={maxNumberOfValues}
+      maxItemCount={getMaxNumberOfValues()}
     ></MultiItemFieldInput>
   );
 };
+

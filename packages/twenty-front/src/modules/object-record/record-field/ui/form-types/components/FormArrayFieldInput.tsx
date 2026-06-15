@@ -105,24 +105,33 @@ export const FormArrayFieldInput = ({
   const { closeDropdown } = useCloseDropdown();
   const { openDropdown } = useOpenDropdown();
 
-  const getInitialDraftValue = () => {
-    if (isStandaloneVariableString(defaultValue)) {
-      return {
-        type: 'variable' as const,
-        value: defaultValue,
-      };
-    }
-
-    const defaultArray = (() => {
-      if (isDefined(defaultValue) && isNonEmptyArray(defaultValue)) {
-        return defaultValue;
+  const getInitialDraftValue = (): 
+    | {
+        type: 'static';
+        value: { id: string; value: string }[];
       }
-      return [];
-    })();
+    | {
+        type: 'variable';
+        value: string;
+      } => {
+    if (isDefined(defaultValue)) {
+      if (typeof defaultValue === 'string') {
+        return {
+          type: 'variable' as const,
+          value: defaultValue,
+        };
+      }
+      if (isNonEmptyArray(defaultValue)) {
+        return {
+          type: 'static' as const,
+          value: defaultValue.map((val) => ({ id: v4(), value: val })),
+        };
+      }
+    }
 
     return {
       type: 'static' as const,
-      value: defaultArray.map((val) => ({ id: v4(), value: val })),
+      value: [],
     };
   };
 
@@ -264,14 +273,18 @@ export const FormArrayFieldInput = ({
     }
 
     if (sanitizedInput === '' && !isAddingNewItem) {
-      handleDeleteItem(itemToEditId!);
+      if (isDefined(itemToEditId)) {
+        handleDeleteItem(itemToEditId);
+      }
       return;
     }
 
     const items = draftValue.value;
     const itemToEditIndex = items.findIndex((item) => item.id === itemToEditId);
-    const itemToEdit =
-      itemToEditIndex !== -1 ? items[itemToEditIndex] : undefined;
+    let itemToEdit;
+    if (itemToEditIndex !== -1) {
+      itemToEdit = items[itemToEditIndex];
+    }
 
     if (!isAddingNewItem && !isDefined(itemToEdit)) {
       setIsInputDisplayed(false);
@@ -280,7 +293,7 @@ export const FormArrayFieldInput = ({
       return;
     }
 
-    if (!isAddingNewItem && sanitizedInput === itemToEdit?.value) {
+    if (!isAddingNewItem && isDefined(itemToEdit) && sanitizedInput === itemToEdit.value) {
       setIsInputDisplayed(false);
       setInputValue('');
       setItemToEditId(null);
@@ -291,11 +304,13 @@ export const FormArrayFieldInput = ({
 
     if (isAddingNewItem) {
       updatedItems = [...items, { id: v4(), value: sanitizedInput }];
-    } else {
+    } else if (isDefined(itemToEdit)) {
       updatedItems = toSpliced(items, itemToEditIndex, 1, {
-        id: itemToEdit!.id,
+        id: itemToEdit.id,
         value: sanitizedInput,
       });
+    } else {
+      updatedItems = items;
     }
 
     setDraftValue({
@@ -374,6 +389,26 @@ export const FormArrayFieldInput = ({
     return handleUnlinkVariable;
   };
 
+  const renderArrayItems = () => {
+    if (draftValue.type !== 'static') {
+      return null;
+    }
+
+    return draftValue.value.map((item) => (
+      <ArrayFieldMenuItem
+        key={item.id}
+        dropdownId={`array-field-input-${instanceId}-${item.id}`}
+        value={item.value}
+        onEdit={() => {
+          handleEditItem(item.id, item.value);
+        }}
+        onDelete={() => {
+          handleDeleteItem(item.id);
+        }}
+      />
+    ));
+  };
+
   const renderInnerContent = () => {
     if (draftValue.type !== 'static') {
       return (
@@ -433,20 +468,7 @@ export const FormArrayFieldInput = ({
         dropdownComponents={
           <DropdownContent ref={containerRef}>
             <DropdownMenuItemsContainer hasMaxHeight>
-              {draftValue.type === 'static' &&
-                draftValue.value.map((item) => (
-                  <ArrayFieldMenuItem
-                    key={item.id}
-                    dropdownId={`array-field-input-${instanceId}-${item.id}`}
-                    value={item.value}
-                    onEdit={() => {
-                      handleEditItem(item.id, item.value);
-                    }}
-                    onDelete={() => {
-                      handleDeleteItem(item.id);
-                    }}
-                  />
-                ))}
+              {renderArrayItems()}
             </DropdownMenuItemsContainer>
 
             <DropdownMenuSeparator />
@@ -465,6 +487,23 @@ export const FormArrayFieldInput = ({
     return null;
   };
 
+  const renderVariablePicker = () => {
+    if (isDefined(VariablePicker) && !readonly) {
+      return (
+        <VariablePicker
+          instanceId={instanceId}
+          onVariableSelect={handleVariableTagInsert}
+        />
+      );
+    }
+    return null;
+  };
+
+  let hasRightElement = false;
+  if (isDefined(VariablePicker) && !readonly) {
+    hasRightElement = true;
+  }
+
   return (
     <FormFieldInputContainer data-testid={testId}>
       {renderLabel()}
@@ -473,17 +512,12 @@ export const FormArrayFieldInput = ({
         <FormFieldInputInnerContainer
           formFieldInputInstanceId={formFieldInputInstanceId}
           preventFocusStackUpdate={preventContainerFocusStackUpdate}
-          hasRightElement={isDefined(VariablePicker) && !readonly}
+          hasRightElement={hasRightElement}
         >
           {renderInnerContent()}
         </FormFieldInputInnerContainer>
 
-        {VariablePicker && !readonly && (
-          <VariablePicker
-            instanceId={instanceId}
-            onVariableSelect={handleVariableTagInsert}
-          />
-        )}
+        {renderVariablePicker()}
       </FormFieldInputRowContainer>
     </FormFieldInputContainer>
   );
