@@ -108,6 +108,16 @@ describe('createIndexedDbBackedJotaiStorage', () => {
     expect(mockedIdbClear).toHaveBeenCalled();
   });
 
+  it('should register and unregister cross-tab subscribers without throwing', () => {
+    const { storage } = createIndexedDbBackedJotaiStorage<Item>();
+
+    const callback = jest.fn();
+    const unsubscribe = storage.subscribe?.('k', callback, INITIAL);
+
+    expect(typeof unsubscribe).toBe('function');
+    expect(() => unsubscribe?.()).not.toThrow();
+  });
+
   describe('when IndexedDB is unavailable', () => {
     beforeEach(() => {
       mockedIsIndexedDbAvailable.mockReturnValue(false);

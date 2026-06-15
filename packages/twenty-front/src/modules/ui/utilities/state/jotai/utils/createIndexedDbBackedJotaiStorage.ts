@@ -8,11 +8,25 @@ import {
 
 // Jotai's synchronous storage contract. We must stay synchronous (no Promise
 // from getItem) so consumers reading the atoms with useAtomValue never suspend.
+// `subscribe` is how atomWithStorage reactively syncs an atom when the backing
+// store changes — we use it to propagate cross-tab writes (the IndexedDB facade
+// has no equivalent of localStorage's `storage` event).
 type JotaiSyncStorage<ValueType> = {
   getItem: (key: string, initialValue: ValueType) => ValueType;
   setItem: (key: string, newValue: ValueType) => void;
   removeItem: (key: string) => void;
+  subscribe?: (
+    key: string,
+    callback: (value: ValueType) => void,
+    initialValue: ValueType,
+  ) => () => void;
 };
+
+const CROSS_TAB_SYNC_CHANNEL_NAME = 'twenty-front-cache-sync';
+
+type CrossTabMessage =
+  | { type: 'set'; key: string; value: unknown }
+  | { type: 'remove'; key: string };
 
 export type IndexedDbBackedJotaiStorage<ValueType> = {
   storage: JotaiSyncStorage<ValueType>;
@@ -39,6 +53,54 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
   const usesIndexedDb = isIndexedDbAvailable();
   let isHydrated = false;
 
+  // Per-key subscribers used by atomWithStorage to react to cross-tab writes.
+  const subscribers = new Map<string, Set<(value: ValueType) => void>>();
+
+  // BroadcastChannel does not deliver a tab its own messages, so there is no
+  // feedback loop. Absent in some environments (older jsdom) — guard it.
+  const broadcastChannel: BroadcastChannel | null = (() => {
+    try {
+      return typeof BroadcastChannel !== 'undefined'
+        ? new BroadcastChannel(CROSS_TAB_SYNC_CHANNEL_NAME)
+        : null;
+    } catch {
+      return null;
+    }
+  })();
+
+  if (broadcastChannel !== null) {
+    broadcastChannel.onmessage = (event: MessageEvent<CrossTabMessage>) => {
+      const message = event.data;
+
+      if (message.type === 'set') {
+        memoryMap.set(message.key, message.value as ValueType);
+      } else {
+        memoryMap.delete(message.key);
+      }
+
+      const keySubscribers = subscribers.get(message.key);
+
+      if (keySubscribers !== undefined) {
+        const nextValue =
+          message.type === 'set'
+            ? (message.value as ValueType)
+            : (memoryMap.get(message.key) as ValueType);
+
+        for (const callback of keySubscribers) {
+          callback(nextValue);
+        }
+      }
+    };
+  }
+
+  const broadcast = (message: CrossTabMessage): void => {
+    try {
+      broadcastChannel?.postMessage(message);
+    } catch {
+      // Value not structured-cloneable / channel closed: skip cross-tab sync.
+    }
+  };
+
   const writeToLocalStorageFallback = (key: string, value: ValueType): void => {
     try {
       localStorage.setItem(key, JSON.stringify(value));
@@ -52,6 +114,7 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
       memoryMap.has(key) ? (memoryMap.get(key) as ValueType) : initialValue,
     setItem: (key, newValue) => {
       memoryMap.set(key, newValue);
+      broadcast({ type: 'set', key, value: newValue });
 
       if (usesIndexedDb) {
         void idbSet(key, newValue);
@@ -61,6 +124,7 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
     },
     removeItem: (key) => {
       memoryMap.delete(key);
+      broadcast({ type: 'remove', key });
 
       if (usesIndexedDb) {
         void idbDelete(key);
@@ -71,6 +135,19 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
           // noop
         }
       }
+    },
+    subscribe: (key, callback) => {
+      const keySubscribers = subscribers.get(key) ?? new Set();
+      keySubscribers.add(callback);
+      subscribers.set(key, keySubscribers);
+
+      return () => {
+        keySubscribers.delete(callback);
+
+        if (keySubscribers.size === 0) {
+          subscribers.delete(key);
+        }
+      };
     },
   };
 
