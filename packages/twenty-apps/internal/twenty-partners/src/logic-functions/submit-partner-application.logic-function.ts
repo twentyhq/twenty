@@ -130,30 +130,24 @@ async function findOrCreateCompanyId(
   const host = normalizeDomainHost(domain);
 
   if (host !== undefined) {
-    // eq for bare-domain forms; anchored ilike for any protocol/path variant.
-    // Each pattern is host-anchored so first:1 is safe — false positives can't
-    // page out the real match.
+    // Broad ilike catches all stored URL forms (bare domain, any protocol, paths,
+    // www variants). Client-side normalization filters false positives.
+    // first:20 is a safe bound — a specific domain substring appears in at most
+    // one or two CRM records in practice, so the real match is never paged out.
     const existing = await client.query({
       companies: {
         __args: {
-          filter: {
-            or: [
-              { domainName: { primaryLinkUrl: { eq: host } } },
-              { domainName: { primaryLinkUrl: { eq: `www.${host}` } } },
-              { domainName: { primaryLinkUrl: { ilike: `%://${host}` } } },
-              { domainName: { primaryLinkUrl: { ilike: `%://${host}/%` } } },
-              { domainName: { primaryLinkUrl: { ilike: `%://www.${host}` } } },
-              { domainName: { primaryLinkUrl: { ilike: `%://www.${host}/%` } } },
-            ],
-          },
-          first: 1,
+          filter: { domainName: { primaryLinkUrl: { ilike: `%${host}%` } } },
+          first: 20,
         },
-        edges: { node: { id: true } },
+        edges: { node: { id: true, domainName: { primaryLinkUrl: true } } },
       },
     });
-    const match = existing.companies?.edges?.[0]?.node;
+    const match = existing.companies?.edges?.find(
+      (edge) => normalizeDomainHost(edge.node.domainName?.primaryLinkUrl) === host,
+    );
     if (match !== undefined) {
-      return match.id;
+      return match.node.id;
     }
   }
 
