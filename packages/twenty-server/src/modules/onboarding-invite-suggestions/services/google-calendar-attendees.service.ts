@@ -8,13 +8,9 @@ import {
   ONBOARDING_INVITE_SUGGESTIONS_LOOKBACK_DAYS,
   ONBOARDING_INVITE_SUGGESTIONS_MAX_EVENTS,
 } from 'src/modules/onboarding-invite-suggestions/constants/onboarding-invite-suggestions.constants';
+import { type RawCalendarAttendee } from 'src/modules/onboarding-invite-suggestions/types/raw-calendar-attendee.type';
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
-
-export type RawCalendarAttendee = {
-  email: string;
-  displayName?: string;
-};
 
 @Injectable()
 export class GoogleCalendarAttendeesService {

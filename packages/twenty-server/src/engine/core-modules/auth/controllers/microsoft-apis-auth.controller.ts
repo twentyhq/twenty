@@ -105,6 +105,14 @@ export class MicrosoftAPIsAuthController {
 
       const handle = emails[0].value.toLowerCase();
 
+      // Read before clearing the connect-account onboarding step below, so we
+      // only compute invite suggestions for connections made during onboarding.
+      const shouldComputeInviteSuggestions =
+        await this.onboardingService.shouldComputeInviteSuggestionsOnConnect({
+          userId,
+          workspaceId,
+        });
+
       const connectedAccountId =
         await this.microsoftAPIsService.refreshMicrosoftRefreshToken({
           handle,
@@ -116,6 +124,7 @@ export class MicrosoftAPIsAuthController {
           calendarVisibility,
           messageVisibility,
           skipMessageChannelConfiguration,
+          shouldComputeInviteSuggestions,
         });
 
       if (userId) {

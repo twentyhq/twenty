@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -15,7 +14,7 @@ import {
   ONBOARDING_INVITE_SUGGESTIONS_MAX_COUNT,
   getOnboardingInviteSuggestionsCacheKey,
 } from 'src/modules/onboarding-invite-suggestions/constants/onboarding-invite-suggestions.constants';
-import { GoogleCalendarAttendeesService } from 'src/modules/onboarding-invite-suggestions/services/google-calendar-attendees.service';
+import { CalendarAttendeesService } from 'src/modules/onboarding-invite-suggestions/services/calendar-attendees.service';
 import { type InviteSuggestion } from 'src/modules/onboarding-invite-suggestions/types/invite-suggestion.type';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
@@ -32,7 +31,7 @@ export class OnboardingInviteSuggestionsService {
   constructor(
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    private readonly googleCalendarAttendeesService: GoogleCalendarAttendeesService,
+    private readonly calendarAttendeesService: CalendarAttendeesService,
     @InjectCacheStorage(CacheStorageNamespace.EngineOnboardingInviteSuggestions)
     private readonly cacheStorageService: CacheStorageService,
   ) {}
@@ -71,11 +70,6 @@ export class OnboardingInviteSuggestionsService {
       return;
     }
 
-    // Google-only for now; other providers fall back to no suggestions.
-    if (connectedAccount.provider !== ConnectedAccountProvider.GOOGLE) {
-      return;
-    }
-
     const selfHandle = connectedAccount.handle.toLowerCase();
 
     // Personal mailboxes (gmail.com, etc.) have no meaningful "same company"
@@ -102,8 +96,8 @@ export class OnboardingInviteSuggestionsService {
 
     try {
       attendees =
-        await this.googleCalendarAttendeesService.getRecentAttendees(
-          connectedAccountId,
+        await this.calendarAttendeesService.getRecentAttendees(
+          connectedAccount,
         );
     } catch (error) {
       this.logger.warn(
