@@ -25,8 +25,7 @@ const isBetterMorphSurvivor = (
   const scoreDifference = scoreMorphField(candidate) - scoreMorphField(current);
 
   return (
-    scoreDifference > 0 ||
-    (scoreDifference === 0 && candidate.id < current.id)
+    scoreDifference > 0 || (scoreDifference === 0 && candidate.id < current.id)
   );
 };
 
