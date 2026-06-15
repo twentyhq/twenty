@@ -2110,9 +2110,7 @@ export type InvalidatePassword = {
 
 export type InviteSuggestion = {
   __typename?: 'InviteSuggestion';
-  /** Display name of the suggested teammate, when known */
   displayName?: Maybe<Scalars['String']['output']>;
-  /** Email address of a suggested teammate to invite */
   email: Scalars['String']['output'];
 };
 

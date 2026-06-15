@@ -1618,10 +1618,7 @@ type BillingUpdate {
 }
 
 type InviteSuggestion {
-  """Email address of a suggested teammate to invite"""
   email: String!
-
-  """Display name of the suggested teammate, when known"""
   displayName: String
 }
 

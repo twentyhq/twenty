@@ -1268,9 +1268,7 @@ export interface BillingUpdate {
 }
 
 export interface InviteSuggestion {
-    /** Email address of a suggested teammate to invite */
     email: Scalars['String']
-    /** Display name of the suggested teammate, when known */
     displayName?: Scalars['String']
     __typename: 'InviteSuggestion'
 }
@@ -4289,9 +4287,7 @@ export interface BillingUpdateGenqlSelection{
 }
 
 export interface InviteSuggestionGenqlSelection{
-    /** Email address of a suggested teammate to invite */
     email?: boolean | number
-    /** Display name of the suggested teammate, when known */
     displayName?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
