@@ -6,6 +6,7 @@ import { appDevOnce, appUninstall } from 'twenty-sdk/cli';
 
 const APP_PATH = process.cwd();
 const CONFIG_DIR = path.join(os.homedir(), '.twenty');
+const CONFIG_PATH = path.join(CONFIG_DIR, 'config.test.json');
 
 function validateEnv(): { apiUrl: string; apiKey: string } {
   const apiUrl = process.env.TWENTY_API_URL;
@@ -52,7 +53,11 @@ function writeConfig(apiUrl: string, apiKey: string) {
   );
 
   fs.mkdirSync(CONFIG_DIR, { recursive: true });
-  fs.writeFileSync(path.join(CONFIG_DIR, 'config.test.json'), payload);
+  fs.writeFileSync(CONFIG_PATH, payload);
+}
+
+function removeConfig() {
+  fs.rmSync(CONFIG_PATH, { force: true });
 }
 
 export async function setup() {
@@ -77,11 +82,19 @@ export async function setup() {
 }
 
 export async function teardown() {
-  const uninstallResult = await appUninstall({ appPath: APP_PATH });
+  try {
+    const uninstallResult = await appUninstall({ appPath: APP_PATH });
 
-  if (!uninstallResult.success) {
+    if (!uninstallResult.success) {
+      console.warn(
+        `App uninstall failed: ${uninstallResult.error?.message ?? 'Unknown error'}`,
+      );
+    }
+  } catch (error) {
     console.warn(
-      `App uninstall failed: ${uninstallResult.error?.message ?? 'Unknown error'}`,
+      `App uninstall failed: ${error instanceof Error ? error.message : String(error)}`,
     );
+  } finally {
+    removeConfig();
   }
 }
