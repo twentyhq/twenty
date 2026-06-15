@@ -10,6 +10,10 @@
 export { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from './constants/CaptureAllVariableTagInnerRegex';
 export { CONTENT_TYPE_VALUES_HTTP_REQUEST } from './constants/ContentTypeValuesHttpRequest';
 export { IF_ELSE_BRANCH_POSITION_OFFSETS } from './constants/IfElseBranchPositionOffsets';
+export {
+  WORKFLOW_TRIGGER_METADATA_KEY,
+  WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY,
+} from './constants/ManualTriggerMetadata';
 export { OBJECTS_BLOCKED_FROM_AUTOMATION } from './constants/ObjectsBlockedFromAutomation';
 export { TRIGGER_STEP_ID } from './constants/TriggerStepId';
 export { workflowAiAgentActionSchema } from './schemas/ai-agent-action-schema';
@@ -157,6 +161,10 @@ export type {
   OutputSchemaV2,
   VariableSearchResult,
 } from './workflow-schema/types/output-schema.type';
+export {
+  buildManualTriggerMetadataNode,
+  buildManualTriggerMetadataRecordField,
+} from './workflow-schema/utils/build-manual-trigger-metadata';
 export { collectOutputSchemaPaths } from './workflow-schema/utils/collect-output-schema-paths';
 export type { OutputSchemaPathFailure } from './workflow-schema/utils/find-output-schema-path-failure';
 export { findOutputSchemaPathFailure } from './workflow-schema/utils/find-output-schema-path-failure';

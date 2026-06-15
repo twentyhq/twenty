@@ -8,6 +8,7 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -26,11 +27,12 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Callout } from 'twenty-ui-deprecated/display';
+import { Callout, IconPlus } from 'twenty-ui-deprecated/display';
 import { Button, type SelectOption } from 'twenty-ui-deprecated/input';
 import { MenuItem } from 'twenty-ui-deprecated/navigation';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const EMAIL_EDITOR_MIN_HEIGHT = 340;
 
@@ -110,6 +112,10 @@ export const WorkflowEditActionEmailBase = ({
   };
 
   const apolloCoreClient = useApolloCoreClient();
+
+  const navigate = useNavigateSettings();
+
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   const { accounts: myAccounts, loading: myAccountsLoading } =
     useMyConnectedAccounts();
@@ -200,6 +206,14 @@ export const WorkflowEditActionEmailBase = ({
             onChange={handleConnectedAccountChange}
             VariablePicker={WorkflowVariablePicker}
             readonly={actionOptions.readonly}
+            callToActionButton={{
+              onClick: () => {
+                closeSidePanelMenu();
+                navigate(SettingsPath.NewAccount);
+              },
+              Icon: IconPlus,
+              text: t`Add account`,
+            }}
           />
           {isDefined(missingScopes) && (
             <>

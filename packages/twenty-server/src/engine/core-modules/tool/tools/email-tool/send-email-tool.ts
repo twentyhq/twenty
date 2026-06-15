@@ -86,8 +86,7 @@ export class SendEmailTool implements Tool {
           success: false,
           message: 'Failed to send email due to insufficient permissions',
           error:
-            'The connected email account does not have permission to send emails. ' +
-            'The user should disconnect and reconnect their account in Settings > Accounts to grant the required permissions.',
+            'The connected email account does not have permission to send emails.',
         };
       }
 

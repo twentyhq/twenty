@@ -276,8 +276,6 @@ export const VariableSender: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // The sender is set to a variable, so the account is rendered as a
-    // removable variable chip instead of the connected-account select.
     expect(await canvas.findByText('Account')).toBeVisible();
     expect(
       await canvas.findByLabelText('Remove variable'),

@@ -53,8 +53,7 @@ export class DraftEmailTool implements Tool {
           success: false,
           message: 'Failed to create draft due to insufficient permissions',
           error:
-            'The connected email account does not have permission to create drafts. ' +
-            'The user should disconnect and reconnect their account in Settings > Accounts to grant the required permissions.',
+            'The connected email account does not have permission to create drafts.',
         };
       }
 
@@ -94,8 +93,7 @@ export class DraftEmailTool implements Tool {
           success: false,
           message: 'Failed to create draft due to insufficient permissions',
           error:
-            'The connected email account does not have permission to create drafts. ' +
-            'The user should disconnect and reconnect their account in Settings > Accounts to grant the required permissions.',
+            'The connected email account does not have permission to create drafts.',
         };
       }
 

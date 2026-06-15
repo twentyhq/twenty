@@ -4,11 +4,11 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 const GMAIL_COMPOSE_SCOPE = 'https://www.googleapis.com/auth/gmail.compose';
 const MICROSOFT_SEND_SCOPE = 'Mail.Send';
 
-// Server-side counterpart of the front-end getMissingDraftEmailScopes: returns
-// the OAuth scopes that are required to draft an email but are missing from the
-// connected account. Providers are enumerated exhaustively so that adding a new
-// provider forces an explicit decision here instead of silently skipping the
-// missing-scope enforcement.
+// Returns the OAuth scopes needed to draft an email that the connected account
+// does not currently have (empty array when nothing is missing). Google and
+// Microsoft each require a specific scope; other providers (e.g. SMTP/IMAP) do
+// not use OAuth scopes for drafting. The switch is exhaustive so a newly added
+// provider has to be handled here explicitly.
 export const getMissingDraftEmailScopes = (connectedAccount: {
   provider: ConnectedAccountProvider;
   scopes: string[] | null;

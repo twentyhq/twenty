@@ -4,12 +4,15 @@ import { isString } from '@sniptt/guards';
 import { isDefined, isValidVariable } from 'twenty-shared/utils';
 import {
   BaseOutputSchemaV2,
+  buildManualTriggerMetadataNode,
+  buildManualTriggerMetadataRecordField,
   BulkRecordsAvailability,
   extractRawVariableNamePart,
   GlobalAvailability,
   navigateOutputSchemaProperty,
   SingleRecordAvailability,
   TRIGGER_STEP_ID,
+  WORKFLOW_TRIGGER_METADATA_KEY,
   WorkflowActionType,
 } from 'twenty-shared/workflow';
 
@@ -20,7 +23,6 @@ import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { DEFAULT_ITERATOR_CURRENT_ITEM } from 'src/modules/workflow/workflow-builder/workflow-schema/constants/default-iterator-current-item.const';
 import {
-  type FieldOutputSchema,
   Leaf,
   Node,
   type OutputSchema,
@@ -34,32 +36,9 @@ import { inferArrayItemSchema } from 'src/modules/workflow/workflow-builder/work
 import { type FormFieldMetadata } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
-  WORKFLOW_TRIGGER_METADATA_KEY,
-  WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY,
-} from 'src/modules/workflow/workflow-trigger/constants/manual-trigger-metadata.const';
-import {
   WorkflowTrigger,
   WorkflowTriggerType,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-
-const buildManualTriggerMetadataNode = (): Node => ({
-  isLeaf: false,
-  type: 'object',
-  label: 'Metadata',
-  value: {
-    [WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY]: {
-      isLeaf: true,
-      type: 'string',
-      label: 'Workspace Member ID',
-      value: '',
-    },
-  },
-});
-
-const buildManualTriggerMetadataRecordField = (): FieldOutputSchema => ({
-  ...buildManualTriggerMetadataNode(),
-  fieldMetadataId: WORKFLOW_TRIGGER_METADATA_KEY,
-});
 
 @Injectable()
 export class WorkflowSchemaWorkspaceService {
