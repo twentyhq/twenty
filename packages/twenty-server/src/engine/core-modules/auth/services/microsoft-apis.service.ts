@@ -301,34 +301,35 @@ export class MicrosoftAPIsService {
             },
           });
 
-          for (const calendarChannel of calendarChannels) {
-            if (
+          const syncableCalendarChannels = calendarChannels.filter(
+            (calendarChannel) =>
               calendarChannel.syncStage !==
-              CalendarChannelSyncStage.PENDING_CONFIGURATION
-            ) {
-              await this.calendarQueueService.add<CalendarEventListFetchJobData>(
-                CalendarEventListFetchJob.name,
-                {
-                  calendarChannelId: calendarChannel.id,
-                  workspaceId,
-                },
-              );
-            }
-          }
-        }
-
-        if (
-          shouldComputeInviteSuggestions &&
-          this.twentyConfigService.get('CALENDAR_PROVIDER_MICROSOFT_ENABLED')
-        ) {
-          await this.calendarQueueService.add<FetchOnboardingInviteSuggestionsJobData>(
-            FetchOnboardingInviteSuggestionsJob.name,
-            {
-              workspaceId,
-              userId,
-              connectedAccountId: newOrExistingConnectedAccountId,
-            },
+              CalendarChannelSyncStage.PENDING_CONFIGURATION,
           );
+
+          for (const calendarChannel of syncableCalendarChannels) {
+            await this.calendarQueueService.add<CalendarEventListFetchJobData>(
+              CalendarEventListFetchJob.name,
+              {
+                calendarChannelId: calendarChannel.id,
+                workspaceId,
+              },
+            );
+          }
+
+          if (
+            shouldComputeInviteSuggestions &&
+            syncableCalendarChannels.length > 0
+          ) {
+            await this.calendarQueueService.add<FetchOnboardingInviteSuggestionsJobData>(
+              FetchOnboardingInviteSuggestionsJob.name,
+              {
+                workspaceId,
+                userId,
+                connectedAccountId: newOrExistingConnectedAccountId,
+              },
+            );
+          }
         }
 
         return newOrExistingConnectedAccountId;
