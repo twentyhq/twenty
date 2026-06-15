@@ -29,6 +29,9 @@ interface RequestAndParams {
   params: Record<string, string | undefined>;
 }
 
+const POSTGRES_DATA_EXCEPTION_CLASS = '22';
+const POSTGRES_INTEGRITY_CONSTRAINT_VIOLATION_CLASS = '23';
+
 const getErrorNameFromStatusCode = (statusCode: number) => {
   switch (statusCode) {
     case 400:
@@ -106,8 +109,18 @@ export class HttpExceptionHandlerService {
     }
 
     if (exception instanceof PostgresException) {
-      exception = new InternalServerErrorException(exception.message);
-      statusCode = 500;
+      const sqlStateClass = exception.code.slice(0, 2);
+      const isClientDataError =
+        sqlStateClass === POSTGRES_DATA_EXCEPTION_CLASS ||
+        sqlStateClass === POSTGRES_INTEGRITY_CONSTRAINT_VIOLATION_CLASS;
+
+      if (isClientDataError) {
+        exception = new BadRequestException(exception.message);
+        statusCode = 400;
+      } else {
+        exception = new InternalServerErrorException(exception.message);
+        statusCode = 500;
+      }
     }
 
     handleException({
