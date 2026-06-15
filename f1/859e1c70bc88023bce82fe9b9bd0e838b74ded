@@ -1,0 +1,56 @@
+packages/twenty-server/src/engine/core-modules/file/services/file.service.ts
+  s_ad06bf65e6995b::t_e1d293b292d2c7 18
+  s_ad06bf65e6995b::t_e0d4a445f4cfdb 115-116,118-120
+packages/twenty-server/src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
+  s_ad06bf65e6995b::t_7921f1855532ed 383
+  s_ad06bf65e6995b::t_157cb5ffd12866 193,200-202,213-214,217,223
+  s_ad06bf65e6995b::t_de36cbe99de3f4 231
+packages/twenty-front/src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+  s_ad06bf65e6995b::t_42731db5e71fe4 388,392
+packages/twenty-shared/src/workflow/index.ts
+  s_ad06bf65e6995b::t_dfc33f96a947f5 51,54
+  s_ad06bf65e6995b::t_16242d9642ca53 52-53,55
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/mail-sender/email-workflow-action.base.ts
+  s_ad06bf65e6995b::t_08ca507a8e77c6 12
+packages/twenty-front/src/modules/advanced-text-editor/components/WorkflowSendEmailAttachments.tsx
+  s_ad06bf65e6995b::t_93ba1beba612b1 4,38,49,54,73-76,99,109,114,124-129,140,144,146-167,180
+  s_ad06bf65e6995b::t_d4334c7ec79cf3 13
+  s_ad06bf65e6995b::t_73a2998e0cb938 45
+  s_ad06bf65e6995b::t_dbf4ebcaadd82c 21-22
+  s_ad06bf65e6995b::t_a00c2899cbac5b 93
+  s_ad06bf65e6995b::t_51f9b5018bf40d 177
+  s_ad06bf65e6995b::t_d5e5655a7bda92 5,7,24-25,33-37,41-44,46-48,51,90-91,100,115-117,132-133,138-139,141-143,145,168-175,178,181-183
+  s_ad06bf65e6995b::t_0b710839896cff 11
+  s_ad06bf65e6995b::t_86972353d1ca0c 179
+packages/twenty-shared/src/workflow/schemas/send-email-action-settings-schema.ts
+  s_ad06bf65e6995b::t_d6410d43a0b533 15-17
+  s_ad06bf65e6995b::t_4e9177769b2f2d 6-11
+  s_ad06bf65e6995b::t_f4458bfa54d766 5,12-14,18,30
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/resolve-email-files.util.ts
+  s_ad06bf65e6995b::t_7df8bca3e0bf31 13-14,18-19,21-32,45
+  s_ad06bf65e6995b::t_527a1319e8d7df 1,3
+  s_ad06bf65e6995b::t_f0787600bafe5c 2,4-12,15-17,20,33-44,46
+packages/twenty-front/src/modules/workflow/types/EmailFormData.ts
+  s_ad06bf65e6995b::t_1afa74283db0cf 3,11
+packages/twenty-server/src/engine/core-modules/file/utils/get-file-folder-from-file-entity-path.utils.ts
+  s_ad06bf65e6995b::t_5d3abc9585530c 1-2,6-7,11
+  s_ad06bf65e6995b::t_a85e2ad11afd3e 3-5,8-10
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-input.type.ts
+  s_ad06bf65e6995b::t_d687434adbbc99 1,9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "f1859e1c70bc88023bce82fe9b9bd0e838b74ded",
+  "prompts": {},
+  "sessions": {
+    "s_ad06bf65e6995b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "60236852-0858-4310-a82b-0f399a218d71",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
