@@ -639,6 +639,11 @@ msgstr "Automation"
 msgid "Azerbaijan 🇦🇿"
 msgstr "Azerbaijan 🇦🇿"
 
+#. js-lingui-id: iH8pgl
+#: src/sections/case-study-detail/case-study-hero.tsx
+msgid "Back"
+msgstr "Back"
+
 #. js-lingui-id: dGEega
 #: src/sections/product-feature/emails-visual.tsx
 msgid "Back to inbox"
@@ -1394,6 +1399,16 @@ msgstr "Customer Stories"
 msgid "Customer stories preview"
 msgstr "Customer stories preview"
 
+#. js-lingui-id: 0fgCyk
+#: src/sections/case-study-detail/case-study-hero.tsx
+msgid "Customer story"
+msgstr "Customer story"
+
+#. js-lingui-id: zKLqOg
+#: src/app/[locale]/(site)/customers/[slug]/page.tsx
+msgid "Customer story not found — Twenty"
+msgstr "Customer story not found — Twenty"
+
 #. js-lingui-id: NihQNk
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
@@ -2115,6 +2130,7 @@ msgstr "Germany 🇩🇪"
 #: src/sections/footer/footer.data.ts
 #: src/sections/faq/faq.tsx
 #: src/sections/customers-catalog-signoff/customers-catalog-signoff.tsx
+#: src/sections/case-study-detail/customers-case-study-signoff.tsx
 msgid "Get started"
 msgstr "Get started"
 
@@ -2416,6 +2432,11 @@ msgstr "Indonesia 🇮🇩"
 msgid "Indonesian"
 msgstr "Indonesian"
 
+#. js-lingui-id: S8gy7K
+#: src/sections/case-study-detail/case-study-highlights.tsx
+msgid "Industry"
+msgstr "Industry"
+
 #. js-lingui-id: AHWM9N
 #: src/case-studies/case-study-stories.ts
 msgid "Integration"
@@ -2561,6 +2582,7 @@ msgstr "Join our partner ecosystem and help businesses take control of their CRM
 
 #. js-lingui-id: m/pXki
 #: src/sections/customers-catalog-signoff/customers-catalog-signoff.tsx
+#: src/sections/case-study-detail/customers-case-study-signoff.tsx
 msgid "Join the teams that chose to own their CRM. Start building with Twenty today."
 msgstr "Join the teams that chose to own their CRM. Start building with Twenty today."
 
@@ -3573,6 +3595,7 @@ msgstr ""
 
 #. js-lingui-id: TqQ08B
 #: src/sections/partner-signoff/partner-signoff.tsx
+#: src/sections/case-study-detail/customers-case-study-signoff.tsx
 msgid ""
 "Ready to grow\n"
 "*with Twenty?*"
@@ -4256,6 +4279,7 @@ msgstr "Take control of your running workflows with the new Stop Workflow button
 #: src/sections/footer/footer.data.ts
 #: src/sections/faq/faq.tsx
 #: src/sections/customers-catalog-signoff/customers-catalog-signoff.tsx
+#: src/sections/case-study-detail/customers-case-study-signoff.tsx
 #: src/contact-cal/contact-cal-modal.tsx
 msgid "Talk to us"
 msgstr "Talk to us"

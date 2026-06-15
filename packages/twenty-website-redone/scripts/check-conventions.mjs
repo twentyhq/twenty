@@ -84,6 +84,7 @@ const PUBLIC_SVG_BRAND_FILES = new Set([
 // where layout is genuinely multi-axis (wrapping rows, multi-column
 // tracks) — listed here explicitly.
 const ROW_GAP_MULTI_AXIS_FILES = new Set([
+  'sections/case-study-detail/case-study-hero.tsx',
   'sections/faq/faq.tsx',
   'sections/faq/faq-items.tsx',
   'sections/pricing-plans/pricing-board.tsx',

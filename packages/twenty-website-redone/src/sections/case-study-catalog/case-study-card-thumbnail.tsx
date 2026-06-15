@@ -10,19 +10,12 @@ import {
 } from '@/tokens';
 
 import {
+  CLIENT_LOGO_DISPLAY_WIDTHS,
   ClientLogo,
   type ClientLogoKey,
   CustomerCasesCover,
 } from '@/case-studies';
 
-const CATALOG_LOGO_WIDTHS: Record<ClientLogoKey, number> = {
-  'nine-dots': 72,
-  'alternative-partners': 220,
-  netzero: 180,
-  'act-education': 110,
-  w3villa: 150,
-  'elevate-consulting': 160,
-};
 const LARGE_LOGO_SCALE = 1.4;
 
 const Thumbnail = styled.div`
@@ -96,7 +89,7 @@ export function CaseStudyCardThumbnail({
   coverImageSrc,
   variant,
 }: CaseStudyCardThumbnailProps) {
-  const baseWidth = CATALOG_LOGO_WIDTHS[clientIcon];
+  const baseWidth = CLIENT_LOGO_DISPLAY_WIDTHS[clientIcon];
   const logoWidth =
     variant === 'large' ? baseWidth * LARGE_LOGO_SCALE : baseWidth;
 

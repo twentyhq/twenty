@@ -631,6 +631,11 @@ msgstr ""
 msgid "Azerbaijan 🇦🇿"
 msgstr ""
 
+#. js-lingui-id: iH8pgl
+#: src/sections/case-study-detail/case-study-hero.tsx
+msgid "Back"
+msgstr ""
+
 #. js-lingui-id: dGEega
 #: src/sections/product-feature/emails-visual.tsx
 msgid "Back to inbox"
@@ -1382,6 +1387,16 @@ msgstr ""
 msgid "Customer stories preview"
 msgstr ""
 
+#. js-lingui-id: 0fgCyk
+#: src/sections/case-study-detail/case-study-hero.tsx
+msgid "Customer story"
+msgstr ""
+
+#. js-lingui-id: zKLqOg
+#: src/app/[locale]/(site)/customers/[slug]/page.tsx
+msgid "Customer story not found — Twenty"
+msgstr ""
+
 #. js-lingui-id: NihQNk
 #: src/sections/menu/menu.data.ts
 #: src/sections/footer/footer.data.ts
@@ -2101,6 +2116,7 @@ msgstr ""
 #: src/sections/footer/footer.data.ts
 #: src/sections/faq/faq.tsx
 #: src/sections/customers-catalog-signoff/customers-catalog-signoff.tsx
+#: src/sections/case-study-detail/customers-case-study-signoff.tsx
 msgid "Get started"
 msgstr "Commencer"
 
@@ -2400,6 +2416,11 @@ msgstr ""
 msgid "Indonesian"
 msgstr ""
 
+#. js-lingui-id: S8gy7K
+#: src/sections/case-study-detail/case-study-highlights.tsx
+msgid "Industry"
+msgstr ""
+
 #. js-lingui-id: AHWM9N
 #: src/case-studies/case-study-stories.ts
 msgid "Integration"
@@ -2545,6 +2566,7 @@ msgstr ""
 
 #. js-lingui-id: m/pXki
 #: src/sections/customers-catalog-signoff/customers-catalog-signoff.tsx
+#: src/sections/case-study-detail/customers-case-study-signoff.tsx
 msgid "Join the teams that chose to own their CRM. Start building with Twenty today."
 msgstr ""
 
@@ -3553,6 +3575,7 @@ msgstr ""
 
 #. js-lingui-id: TqQ08B
 #: src/sections/partner-signoff/partner-signoff.tsx
+#: src/sections/case-study-detail/customers-case-study-signoff.tsx
 msgid ""
 "Ready to grow\n"
 "*with Twenty?*"
@@ -4228,6 +4251,7 @@ msgstr ""
 #: src/sections/footer/footer.data.ts
 #: src/sections/faq/faq.tsx
 #: src/sections/customers-catalog-signoff/customers-catalog-signoff.tsx
+#: src/sections/case-study-detail/customers-case-study-signoff.tsx
 #: src/contact-cal/contact-cal-modal.tsx
 msgid "Talk to us"
 msgstr "Parlez-nous"

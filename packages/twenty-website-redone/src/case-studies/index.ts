@@ -10,6 +10,7 @@ export {
 } from './case-study-types';
 export { ClientLogo, type ClientLogoProps } from './client-logo';
 export { type ClientLogoKey } from './client-logo-config';
+export { CLIENT_LOGO_DISPLAY_WIDTHS } from './client-logo-widths';
 export {
   CustomerCasesCover,
   type CustomerCasesCoverProps,
