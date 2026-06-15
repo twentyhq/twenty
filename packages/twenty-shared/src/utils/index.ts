@@ -58,6 +58,7 @@ export { isFieldMetadataNumericKind } from './fieldMetadata/isFieldMetadataNumer
 export { isFieldMetadataSelectKind } from './fieldMetadata/isFieldMetadataSelectKind';
 export { isFieldMetadataSupportedInGroupBy } from './fieldMetadata/isFieldMetadataSupportedInGroupBy';
 export { isFieldMetadataTextKind } from './fieldMetadata/isFieldMetadataTextKind';
+export { pickMorphGroupSurvivor } from './fieldMetadata/pick-morph-group-survivor';
 export { shouldExcludeFieldFromAgentToolSchema } from './fieldMetadata/shouldExcludeFieldFromAgentToolSchema';
 export { extractFolderPathFilenameAndTypeOrThrow } from './files/extractFolderPathFilenameAndTypeOrThrow.util';
 export { checkIfShouldComputeEmptinessFilter } from './filter/checkIfShouldComputeEmptinessFilter';
