@@ -1,9 +1,12 @@
 import { Test, type TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { WorkflowActionType } from 'twenty-shared/workflow';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { SendEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email.workflow-action';
-import { WorkflowEmailSenderService } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/services/workflow-email-sender.service';
 import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
@@ -66,12 +69,19 @@ describe('SendEmailWorkflowAction', () => {
           useValue: { setStepLog: jest.fn() },
         },
         {
-          provide: WorkflowEmailSenderService,
+          provide: GlobalWorkspaceOrmManager,
           useValue: {
-            resolveSenderConnectedAccountId: jest
-              .fn()
-              .mockImplementation((senderId: string) => senderId),
+            executeInWorkspaceContext: jest.fn((callback) => callback()),
+            getRepository: jest.fn(),
           },
+        },
+        {
+          provide: getRepositoryToken(ConnectedAccountEntity),
+          useValue: { findOne: jest.fn() },
+        },
+        {
+          provide: getRepositoryToken(UserWorkspaceEntity),
+          useValue: { findOne: jest.fn() },
         },
       ],
     }).compile();

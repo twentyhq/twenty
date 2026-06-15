@@ -6,7 +6,6 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { DraftEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/draft-email.workflow-action';
 import { SendEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email.workflow-action';
-import { WorkflowEmailSenderService } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/services/workflow-email-sender.service';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 
 @Module({
@@ -15,11 +14,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     WorkflowRunModule,
     TypeOrmModule.forFeature([ConnectedAccountEntity, UserWorkspaceEntity]),
   ],
-  providers: [
-    SendEmailWorkflowAction,
-    DraftEmailWorkflowAction,
-    WorkflowEmailSenderService,
-  ],
+  providers: [SendEmailWorkflowAction, DraftEmailWorkflowAction],
   exports: [SendEmailWorkflowAction, DraftEmailWorkflowAction],
 })
 export class MailSenderActionModule {}

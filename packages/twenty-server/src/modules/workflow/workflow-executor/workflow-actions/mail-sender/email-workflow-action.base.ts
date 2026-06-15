@@ -1,9 +1,17 @@
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { IsNull, type Repository } from 'typeorm';
 
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { WorkflowEmailSenderService } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/services/workflow-email-sender.service';
+import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import {
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
+} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowSendEmailActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-input.type';
 import {
   buildEmailStepLog,
@@ -12,12 +20,15 @@ import {
 import { resolveEmailBody } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/resolve-email-body.util';
 import { ToolBackedWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/tool-backed/tool-backed.workflow-action';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<WorkflowSendEmailActionInput> {
   protected constructor(
     loggerName: string,
     workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
-    private readonly workflowEmailSenderService: WorkflowEmailSenderService,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {
     super(loggerName, workflowRunStepLogService);
   }
@@ -37,21 +48,92 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
     return { ...rawInput, body: renderedBody };
   }
 
-  protected override async postprocessInput(
-    resolvedInput: WorkflowSendEmailActionInput,
+  // The sender configured on an email step is either a connected account id
+  // (static pick) or a workspace member id (from a resolved workflow variable).
+  // When it is a workspace member id, resolve that member's first connected
+  // account; otherwise return it unchanged so the regular connected account
+  // flow applies. Only meaningful inside workflow email actions.
+  protected async resolveSenderConnectedAccountId(
+    senderId: string,
     workspaceId: string,
-  ): Promise<WorkflowSendEmailActionInput> {
-    if (!isDefined(resolvedInput.connectedAccountId)) {
-      return resolvedInput;
+  ): Promise<string> {
+    if (!isValidUuid(senderId)) {
+      return senderId;
     }
 
-    const connectedAccountId =
-      await this.workflowEmailSenderService.resolveSenderConnectedAccountId(
-        resolvedInput.connectedAccountId,
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workspaceMember = await this.findWorkspaceMemberById(
+        senderId,
         workspaceId,
       );
 
-    return { ...resolvedInput, connectedAccountId };
+      if (!isDefined(workspaceMember)) {
+        return senderId;
+      }
+
+      const connectedAccountId =
+        await this.findFirstConnectedAccountIdByWorkspaceMember(
+          workspaceMember,
+          workspaceId,
+        );
+
+      if (!isDefined(connectedAccountId)) {
+        throw new WorkflowStepExecutorException(
+          `No connected account found for workspace member '${senderId}'`,
+          WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+        );
+      }
+
+      return connectedAccountId;
+    }, authContext);
+  }
+
+  private async findWorkspaceMemberById(
+    workspaceMemberId: string,
+    workspaceId: string,
+  ): Promise<WorkspaceMemberWorkspaceEntity | null> {
+    // Runs in a system auth context (no user role), so permission checks must be
+    // bypassed to read the workspaceMember. Access stays safe because the lookup
+    // is workspace-scoped at every step (member -> userWorkspace ->
+    // connectedAccount) and the email actions are permission-gated upstream.
+    const workspaceMemberRepository =
+      await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        workspaceId,
+        'workspaceMember',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    return workspaceMemberRepository.findOne({
+      where: { id: workspaceMemberId },
+    });
+  }
+
+  private async findFirstConnectedAccountIdByWorkspaceMember(
+    workspaceMember: WorkspaceMemberWorkspaceEntity,
+    workspaceId: string,
+  ): Promise<string | null> {
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { userId: workspaceMember.userId, workspaceId },
+    });
+
+    if (!isDefined(userWorkspace)) {
+      return null;
+    }
+
+    // Exclude archived accounts and order deterministically so the resolved
+    // sender is stable across runs rather than depending on row ordering.
+    const connectedAccount = await this.connectedAccountRepository.findOne({
+      where: {
+        userWorkspaceId: userWorkspace.id,
+        workspaceId,
+        archivedAt: IsNull(),
+      },
+      order: { createdAt: 'ASC' },
+    });
+
+    return connectedAccount?.id ?? null;
   }
 
   protected buildStepLog({

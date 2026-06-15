@@ -1,15 +1,22 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { isDefined } from 'twenty-shared/utils';
+import { type Repository } from 'typeorm';
 
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { EmailWorkflowActionBase } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/email-workflow-action.base';
 import { isWorkflowDraftEmailAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/guards/is-workflow-draft-email-action.guard';
-import { WorkflowEmailSenderService } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/services/workflow-email-sender.service';
 import { type EmailStepLogMode } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/build-email-step-log.util';
+import { type WorkflowSendEmailActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-input.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 
@@ -18,12 +25,18 @@ export class DraftEmailWorkflowAction extends EmailWorkflowActionBase {
   constructor(
     private readonly draftEmailTool: DraftEmailTool,
     workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
-    workflowEmailSenderService: WorkflowEmailSenderService,
+    globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    @InjectRepository(ConnectedAccountEntity)
+    connectedAccountRepository: Repository<ConnectedAccountEntity>,
+    @InjectRepository(UserWorkspaceEntity)
+    userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {
     super(
       DraftEmailWorkflowAction.name,
       workflowRunStepLogService,
-      workflowEmailSenderService,
+      globalWorkspaceOrmManager,
+      connectedAccountRepository,
+      userWorkspaceRepository,
     );
   }
 
@@ -33,6 +46,22 @@ export class DraftEmailWorkflowAction extends EmailWorkflowActionBase {
 
   protected getMode(): EmailStepLogMode {
     return 'DRAFT';
+  }
+
+  protected override async postprocessInput(
+    resolvedInput: WorkflowSendEmailActionInput,
+    workspaceId: string,
+  ): Promise<WorkflowSendEmailActionInput> {
+    if (!isDefined(resolvedInput.connectedAccountId)) {
+      return resolvedInput;
+    }
+
+    const connectedAccountId = await this.resolveSenderConnectedAccountId(
+      resolvedInput.connectedAccountId,
+      workspaceId,
+    );
+
+    return { ...resolvedInput, connectedAccountId };
   }
 
   protected assertStep(step: WorkflowAction): void {
