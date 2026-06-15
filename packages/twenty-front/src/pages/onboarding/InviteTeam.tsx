@@ -60,6 +60,9 @@ const StyledActionSkipLinkContainer = styled.div`
   margin: ${themeCssVariables.spacing[3]} 0 0;
 `;
 
+const INVITE_SUGGESTIONS_POLL_INTERVAL_MS = 2000;
+const INVITE_SUGGESTIONS_POLL_TIMEOUT_MS = 12000;
+
 const validationSchema = z.object({
   emails: z.array(z.object({ email: z.union([z.literal(''), z.email()]) })),
 });
@@ -100,16 +103,19 @@ export const InviteTeam = () => {
   );
 
   const [hasPrefilledSuggestions, setHasPrefilledSuggestions] = useState(false);
+  const [suggestionsPollIntervalMs, setSuggestionsPollIntervalMs] = useState(
+    isInviteSuggestionsEnabled ? INVITE_SUGGESTIONS_POLL_INTERVAL_MS : 0,
+  );
 
-  const {
-    data: inviteSuggestionsData,
-    startPolling,
-    stopPolling,
-  } = useQuery(GetInviteSuggestionsDocument, {
-    skip: !isInviteSuggestionsEnabled,
-    fetchPolicy: 'network-only',
-    notifyOnNetworkStatusChange: true,
-  });
+  const { data: inviteSuggestionsData } = useQuery(
+    GetInviteSuggestionsDocument,
+    {
+      skip: !isInviteSuggestionsEnabled,
+      fetchPolicy: 'network-only',
+      pollInterval: suggestionsPollIntervalMs,
+      notifyOnNetworkStatusChange: true,
+    },
+  );
 
   const inviteSuggestions = useMemo(
     () => inviteSuggestionsData?.getInviteSuggestions ?? [],
@@ -118,21 +124,23 @@ export const InviteTeam = () => {
   const hasInviteSuggestions = inviteSuggestions.length > 0;
 
   useEffect(() => {
-    if (!isInviteSuggestionsEnabled || hasInviteSuggestions) {
-      stopPolling();
+    if (hasInviteSuggestions) {
+      setSuggestionsPollIntervalMs(0);
+    }
+  }, [hasInviteSuggestions]);
+
+  useEffect(() => {
+    if (!isInviteSuggestionsEnabled) {
       return;
     }
 
-    startPolling(2000);
-    const stopPollingTimeout = setTimeout(() => stopPolling(), 12000);
+    const stopPollingTimeout = setTimeout(
+      () => setSuggestionsPollIntervalMs(0),
+      INVITE_SUGGESTIONS_POLL_TIMEOUT_MS,
+    );
 
     return () => clearTimeout(stopPollingTimeout);
-  }, [
-    isInviteSuggestionsEnabled,
-    hasInviteSuggestions,
-    startPolling,
-    stopPolling,
-  ]);
+  }, [isInviteSuggestionsEnabled]);
 
   useEffect(() => {
     if (hasPrefilledSuggestions || !hasInviteSuggestions || isDirty) {
@@ -236,7 +244,7 @@ export const InviteTeam = () => {
         <Trans>Invite your team</Trans>
       </Title>
       <SubTitle>
-        {hasInviteSuggestions ? (
+        {hasPrefilledSuggestions ? (
           <Trans>
             We found teammates from your calendar. Review and invite them.
           </Trans>
