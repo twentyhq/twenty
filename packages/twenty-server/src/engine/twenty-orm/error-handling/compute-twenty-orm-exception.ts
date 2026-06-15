@@ -18,8 +18,10 @@ interface QueryFailedErrorWithCode extends QueryFailedError {
   code?: string;
 }
 
-const POSTGRES_DATA_EXCEPTION_CLASS = '22';
-const POSTGRES_INTEGRITY_CONSTRAINT_VIOLATION_CLASS = '23';
+const CLIENT_CAUSED_SQL_STATE_CLASSES = [
+  POSTGRESQL_ERROR_CODES.DATA_EXCEPTION,
+  POSTGRESQL_ERROR_CODES.INTEGRITY_CONSTRAINT_VIOLATION,
+].map((sqlState) => sqlState.slice(0, 2));
 
 export const computeTwentyORMException = async (
   error: Error,
@@ -65,12 +67,7 @@ export const computeTwentyORMException = async (
       isDefined(errorCode) &&
       Object.values(POSTGRESQL_ERROR_CODES).includes(errorCode)
     ) {
-      const sqlStateClass = errorCode.slice(0, 2);
-
-      if (
-        sqlStateClass === POSTGRES_DATA_EXCEPTION_CLASS ||
-        sqlStateClass === POSTGRES_INTEGRITY_CONSTRAINT_VIOLATION_CLASS
-      ) {
+      if (CLIENT_CAUSED_SQL_STATE_CLASSES.includes(errorCode.slice(0, 2))) {
         return new TwentyORMException(
           error.message,
           TwentyORMExceptionCode.INVALID_INPUT,
