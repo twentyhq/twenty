@@ -1,3 +1,4 @@
+import { useResetCommandMenuItemToDefault } from '@/command-menu-item/edit/hooks/useResetCommandMenuItemToDefault';
 import { useUpdateCommandMenuItemInDraft } from '@/command-menu-item/edit/hooks/useUpdateCommandMenuItemInDraft';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -34,14 +35,13 @@ export const CommandMenuItemOptionsDropdown = ({
   const dropdownId = getCommandMenuItemOptionsDropdownId(itemId);
   const { closeDropdown } = useCloseDropdown();
   const { updateCommandMenuItemInDraft } = useUpdateCommandMenuItemInDraft();
+  const { resetCommandMenuItemToDefault } = useResetCommandMenuItemToDefault();
 
   const normalizedServerShortLabel = serverShortLabel ?? null;
   const normalizedShortLabel = shortLabel ?? null;
   const hasNoShortLabel = normalizedServerShortLabel === null;
   const isLabelHidden =
     normalizedShortLabel === null && isDefined(normalizedServerShortLabel);
-  const hasShortLabelOverride =
-    normalizedShortLabel !== normalizedServerShortLabel;
 
   const handleToggleHideLabel = (toggled: boolean) => {
     updateCommandMenuItemInDraft(itemId, {
@@ -49,11 +49,9 @@ export const CommandMenuItemOptionsDropdown = ({
     });
   };
 
-  const handleResetLabelToDefault = () => {
-    updateCommandMenuItemInDraft(itemId, {
-      shortLabel: normalizedServerShortLabel,
-    });
+  const handleResetToDefault = async () => {
     closeDropdown(dropdownId);
+    await resetCommandMenuItemToDefault(itemId);
   };
 
   return (
@@ -74,10 +72,9 @@ export const CommandMenuItemOptionsDropdown = ({
             />
             <MenuItem
               LeftIcon={IconRefresh}
-              onClick={handleResetLabelToDefault}
+              onClick={handleResetToDefault}
               accent="default"
-              text={t`Reset label to default`}
-              disabled={!hasShortLabelOverride}
+              text={t`Reset to default`}
             />
           </DropdownMenuItemsContainer>
         </DropdownContent>
