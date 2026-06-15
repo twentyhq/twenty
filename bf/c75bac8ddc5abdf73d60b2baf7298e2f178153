@@ -1,0 +1,29 @@
+packages/twenty-server/test/integration/messaging/suites/gmail-folder-discovery.integration-spec.ts
+  s_3226b097c1ff8f::t_2e1fc5f881692b 62,64
+  s_3226b097c1ff8f::t_65e302d07ab01c 14-17
+packages/twenty-server/test/integration/utils/run-channel-sync.util.ts
+  s_3226b097c1ff8f::t_6917481c03f5eb 15,18-56
+packages/twenty-server/test/integration/messaging/utils/query-messaging.util.ts
+  s_3226b097c1ff8f::t_ae1e13f494f9da 62
+  s_3226b097c1ff8f::t_035dbf1f2a770d 13
+packages/twenty-server/test/integration/messaging/utils/gmail-message-mock.util.ts
+  s_3226b097c1ff8f::t_8d1d2875c28943 28-29
+packages/twenty-server/test/integration/calendar/suites/calendar-connected-account-cleanup.integration-spec.ts
+  s_3226b097c1ff8f::t_b252ce732fcb62 41-42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "bfc75bac8ddc5abdf73d60b2baf7298e2f178153",
+  "prompts": {},
+  "sessions": {
+    "s_3226b097c1ff8f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "37fe379b-1108-44f6-ae35-d2db6ea5c15c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
