@@ -36608,6 +36608,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"idb-keyval@npm:^6.2.5":
+  version: 6.2.5
+  resolution: "idb-keyval@npm:6.2.5"
+  checksum: 10c0/58055106e2447cd4a91c62f1c6d4122d8e6d141c86c6e79860dbb6af0c6462bc9520e84c1d56dc9e5fb66c817dffd04b2a2432efada1273b89db955fc49d374b
+  languageName: node
+  linkType: hard
+
 "identifier-regex@npm:^1.0.0":
   version: 1.0.1
   resolution: "identifier-regex@npm:1.0.1"
@@ -53509,6 +53516,7 @@ __metadata:
     graphql: "npm:16.8.1"
     graphql-sse: "npm:^2.5.4"
     graphql-tag: "npm:^2.12.6"
+    idb-keyval: "npm:^6.2.5"
     immer: "npm:^10.1.1"
     input-otp: "npm:^1.4.2"
     jest: "npm:29.7.0"
