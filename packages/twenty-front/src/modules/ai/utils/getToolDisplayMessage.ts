@@ -4,6 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { z } from 'zod';
 
 import { type ToolInput } from '@/ai/types/ToolInput';
+import { formatToolDisplayName } from '@/ai/utils/formatToolDisplayName';
 import { isDefined } from 'twenty-shared/utils';
 
 const DirectQuerySchema = z.object({ query: z.string() });
@@ -63,17 +64,15 @@ export const resolveToolInput = (
 const extractLearnToolNames = (input: ToolInput): string => {
   const parsed = LearnToolsSchema.safeParse(input);
 
-  return parsed.success ? parsed.data.toolNames.join(', ') : '';
+  return parsed.success
+    ? parsed.data.toolNames.map(formatToolDisplayName).join(', ')
+    : '';
 };
 
 const extractSkillNames = (input: ToolInput): string => {
   const parsed = LoadSkillsSchema.safeParse(input);
 
   return parsed.success ? parsed.data.skillNames.join(', ') : '';
-};
-
-const formatToolName = (toolName: string): string => {
-  return toolName.replace(/_/g, ' ');
 };
 
 export const getToolDisplayMessage = (
@@ -128,7 +127,7 @@ export const getToolDisplayMessage = (
     return customMessage;
   }
 
-  const formattedName = formatToolName(resolvedToolName);
+  const formattedName = formatToolDisplayName(resolvedToolName);
 
   return byStatus(t`Ran ${formattedName}`, t`Running ${formattedName}`);
 };

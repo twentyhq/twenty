@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
 
+import { formatToolDisplayName } from '@/ai/utils/formatToolDisplayName';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -49,12 +50,17 @@ export const SettingsAgentToolsTab = () => {
   const isCustom = (tool: SettingsAgentToolItem) =>
     isDefined(tool.applicationId);
 
+  const getToolDisplayName = (tool: SettingsAgentToolItem) =>
+    isDefined(tool.category) ? formatToolDisplayName(tool.name) : tool.name;
+
   const filteredTools = allTools
     .filter((tool) => {
       const searchNormalized = normalizeSearchText(searchTerm);
+      const toolDisplayName = getToolDisplayName(tool);
 
       const matchesSearch =
         normalizeSearchText(tool.name).includes(searchNormalized) ||
+        normalizeSearchText(toolDisplayName).includes(searchNormalized) ||
         normalizeSearchText(tool.description ?? '').includes(searchNormalized);
 
       if (!matchesSearch) {
@@ -71,7 +77,7 @@ export const SettingsAgentToolsTab = () => {
 
       return showCustomTools;
     })
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort((a, b) => getToolDisplayName(a).localeCompare(getToolDisplayName(b)));
 
   return (
     <Section>

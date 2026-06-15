@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
+import { formatToolDisplayName } from '@/ai/utils/formatToolDisplayName';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -78,6 +79,9 @@ export const SettingsAgentToolsTable = ({
                   application.universalIdentifier,
                 )
               : undefined;
+            const toolDisplayName = isDefined(tool.category)
+              ? formatToolDisplayName(tool.name)
+              : tool.name;
 
             return (
               <SettingsToolTableRow
@@ -91,7 +95,7 @@ export const SettingsAgentToolsTable = ({
                     marketplaceApp={marketplaceApp}
                   />
                 }
-                name={tool.name}
+                name={toolDisplayName}
                 applicationId={getToolApplicationId(tool, currentWorkspace)}
                 action={
                   <IconChevronRight
