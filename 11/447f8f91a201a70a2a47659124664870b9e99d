@@ -1,0 +1,81 @@
+packages/twenty-server/test/integration/utils/run-sync-cron.util.ts
+  s_3226b097c1ff8f::t_dbea4ebc49cd3c 1,4,7-15,19-22,25-34,40-48,54-59
+  s_3226b097c1ff8f::t_d3edfd3b0a0b72 36-39,49-51
+packages/twenty-server/test/integration/calendar/suites/google-calendar-events-import.integration-spec.ts
+  s_3226b097c1ff8f::t_4bf0ea5c9874ee 72-76,103-107
+  s_3226b097c1ff8f::t_bf10d5b634af5e 19
+packages/twenty-server/test/integration/calendar/suites/microsoft-calendar-events-import.integration-spec.ts
+  s_3226b097c1ff8f::t_fb6f0cb8603d2b 87-91,132-136
+  s_3226b097c1ff8f::t_27f131d152a764 20
+  s_3226b097c1ff8f::t_0f25257d3a2e19 74-78,119-123
+packages/twenty-server/test/integration/messaging/suites/microsoft-folder-discovery.integration-spec.ts
+  s_3226b097c1ff8f::t_a0d89d97febbef 8
+  s_3226b097c1ff8f::t_c02c94053cc55d 39-43
+packages/twenty-server/test/integration/calendar/suites/calendar-sync-failure-lifecycle.integration-spec.ts
+  s_3226b097c1ff8f::t_d24f92bc116e78 25
+  s_3226b097c1ff8f::t_8967778cab40a0 171-175
+  s_3226b097c1ff8f::t_5d418d5f568809 41-45
+packages/twenty-server/test/integration/calendar/suites/calendar-stale-sync.integration-spec.ts
+  s_3226b097c1ff8f::t_d09507cb910ab5 69-73
+  s_3226b097c1ff8f::t_53585e77a163e2 13
+packages/twenty-server/test/integration/calendar/suites/calendar-connected-account-cleanup.integration-spec.ts
+  s_3226b097c1ff8f::t_efb783b2698279 18
+  s_3226b097c1ff8f::t_9b401344bb7370 68
+  s_3226b097c1ff8f::t_e1486e9300686d 67,69-70
+  s_3226b097c1ff8f::t_7bbf503e33877a 72-86,89,96
+  s_3226b097c1ff8f::t_e62118703f4db4 102-128
+  s_3226b097c1ff8f::t_11f87c57749b03 50-54
+  s_3226b097c1ff8f::t_9874703ad4a507 8-11
+packages/twenty-server/test/integration/messaging/suites/gmail-message-list-fetch.integration-spec.ts
+  s_3226b097c1ff8f::t_79146eee29eecc 54-58
+  s_3226b097c1ff8f::t_4d6d9e66c43100 14
+packages/twenty-server/test/integration/messaging/suites/messaging-incremental-sync.integration-spec.ts
+  s_3226b097c1ff8f::t_080f9952f44b8d 92
+  s_3226b097c1ff8f::t_7abccc69596088 18
+  s_3226b097c1ff8f::t_1871eb0f7e2d4c 69-71
+  s_3226b097c1ff8f::t_69745c004ea4b2 47-51
+packages/twenty-server/test/integration/messaging/suites/messaging-stale-sync.integration-spec.ts
+  s_3226b097c1ff8f::t_0eb6b88754a328 13
+  s_3226b097c1ff8f::t_5f96c1db6fb726 81-85
+packages/twenty-server/test/integration/messaging/suites/messaging-sync-failure-lifecycle.integration-spec.ts
+  s_3226b097c1ff8f::t_c1c3501ca5c883 52-56
+  s_3226b097c1ff8f::t_c2544305307756 27
+  s_3226b097c1ff8f::t_115dd387889367 195-199
+packages/twenty-server/test/integration/utils/http-mock.ts
+  s_3226b097c1ff8f::t_ed49ad3a3769e2 24
+  s_3226b097c1ff8f::t_88f7304d40f6f3 35
+packages/twenty-server/test/integration/messaging/suites/messaging-token-refresh.integration-spec.ts
+  s_3226b097c1ff8f::t_5cacf8a0c93294 18
+  s_3226b097c1ff8f::t_bdfce9b43a3825 58-62
+packages/twenty-server/test/integration/messaging/suites/gmail-folder-discovery.integration-spec.ts
+  s_3226b097c1ff8f::t_ccd6f3146bdec4 17
+  s_3226b097c1ff8f::t_8f307d1fd06cb2 44-48
+packages/twenty-server/test/integration/messaging/suites/messaging-connected-account-cleanup.integration-spec.ts
+  s_3226b097c1ff8f::t_78b9326705daf2 2,7-10
+  s_3226b097c1ff8f::t_64f04309f85963 17
+  s_3226b097c1ff8f::t_6b3e99070868d3 59-91,96,101,106
+  s_3226b097c1ff8f::t_8652cb2d4225b3 112-151
+  s_3226b097c1ff8f::t_534ebc99820dba 45-49
+  s_3226b097c1ff8f::t_a40a63ceccaa37 54,56-57
+  s_3226b097c1ff8f::t_c12225b82fcae2 55
+  s_3226b097c1ff8f::t_09a7035d05c2b2 35-39
+packages/twenty-server/test/integration/messaging/utils/find-records-by-filter.util.ts
+  s_3226b097c1ff8f::t_9d7c573b15ed92 19-20,22-26
+  s_3226b097c1ff8f::t_01fe378340ca54 4,7,9,14,21,28-41,43-44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "11447f8f91a201a70a2a47659124664870b9e99d",
+  "prompts": {},
+  "sessions": {
+    "s_3226b097c1ff8f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "37fe379b-1108-44f6-ae35-d2db6ea5c15c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
