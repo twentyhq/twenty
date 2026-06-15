@@ -20,17 +20,14 @@ type TestContext = {
 
 type TestSetup = {
   testRoleId: string;
-  existingRoleLabelForDuplicate: string;
   nonEditableRoleId: string;
 };
 
 type GlobalTestContext = {
-  existingRoleLabelForDuplicate: string;
   nonEditableRoleId: string;
 };
 
 const globalTestContext: GlobalTestContext = {
-  existingRoleLabelForDuplicate: 'Existing Role For Duplicate Test',
   nonEditableRoleId: '',
 };
 
@@ -38,29 +35,12 @@ type UpdateOneRoleTestingContext = EachTestingContext<TestContext>[];
 
 describe('Role update should fail', () => {
   let testRoleId: string;
-  let existingRoleIdForDuplicate: string;
 
   beforeAll(async () => {
     // Get a non-editable system role (Admin) for testing
     const adminRole = await findOneRoleByLabel({ label: 'Admin' });
 
     globalTestContext.nonEditableRoleId = adminRole.id;
-
-    // Create a role that will be used to test duplicate label validation
-    const { data: duplicateData } = await createOneRole({
-      expectToFail: false,
-      input: {
-        label: globalTestContext.existingRoleLabelForDuplicate,
-        canUpdateAllSettings: false,
-        canAccessAllTools: false,
-        canReadAllObjectRecords: true,
-        canUpdateAllObjectRecords: false,
-        canSoftDeleteAllObjectRecords: false,
-        canDestroyAllObjectRecords: false,
-      },
-    });
-
-    existingRoleIdForDuplicate = duplicateData.createOneRole.id;
   });
 
   beforeEach(async () => {
@@ -90,13 +70,6 @@ describe('Role update should fail', () => {
     await deleteOneRole({
       expectToFail: false,
       input: { idToDelete: testRoleId },
-    });
-  });
-
-  afterAll(async () => {
-    await deleteOneRole({
-      expectToFail: false,
-      input: { idToDelete: existingRoleIdForDuplicate },
     });
   });
 
@@ -147,17 +120,6 @@ describe('Role update should fail', () => {
   });
 
   const failingRoleUpdateTestCases: UpdateOneRoleTestingContext = [
-    {
-      title: 'when updating label to one that already exists',
-      context: {
-        input: (testSetup) => ({
-          idToUpdate: testSetup.testRoleId,
-          updatePayload: {
-            label: testSetup.existingRoleLabelForDuplicate,
-          },
-        }),
-      },
-    },
     {
       title: 'when updating a non-editable system role',
       context: {
@@ -230,8 +192,6 @@ describe('Role update should fail', () => {
     async ({ context }) => {
       const testSetup: TestSetup = {
         testRoleId,
-        existingRoleLabelForDuplicate:
-          globalTestContext.existingRoleLabelForDuplicate,
         nonEditableRoleId: globalTestContext.nonEditableRoleId,
       };
 

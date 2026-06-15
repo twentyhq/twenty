@@ -22,7 +22,6 @@ export enum PermissionsExceptionCode {
   API_KEY_ROLE_NOT_FOUND = 'API_KEY_ROLE_NOT_FOUND',
   NO_AUTHENTICATION_CONTEXT = 'NO_AUTHENTICATION_CONTEXT',
   INVALID_ARG = 'INVALID_ARG_PERMISSIONS',
-  ROLE_LABEL_ALREADY_EXISTS = 'ROLE_LABEL_ALREADY_EXISTS',
   DEFAULT_ROLE_NOT_FOUND = 'DEFAULT_ROLE_NOT_FOUND',
   OBJECT_METADATA_NOT_FOUND = 'OBJECT_METADATA_NOT_FOUND_PERMISSIONS',
   INVALID_SETTING = 'INVALID_SETTING_PERMISSIONS',
@@ -92,8 +91,6 @@ const getPermissionsExceptionUserFriendlyMessage = (
       return msg`Authentication is required.`;
     case PermissionsExceptionCode.INVALID_ARG:
       return msg`Invalid argument provided.`;
-    case PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS:
-      return msg`A role with this label already exists.`;
     case PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND:
       return msg`Default role not found.`;
     case PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND:
@@ -181,7 +178,6 @@ export enum PermissionsExceptionMessage {
   NO_ROLE_FOUND_FOR_USER_WORKSPACE = 'No role found for userWorkspace',
   API_KEY_ROLE_NOT_FOUND = 'API key has no role assigned',
   NO_AUTHENTICATION_CONTEXT = 'No valid authentication context found',
-  ROLE_LABEL_ALREADY_EXISTS = 'A role with this label already exists',
   DEFAULT_ROLE_NOT_FOUND = 'Default role not found',
   OBJECT_METADATA_NOT_FOUND = 'Object metadata not found',
   INVALID_SETTING = 'Invalid permission setting (unknown value)',

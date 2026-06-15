@@ -11,7 +11,6 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { validateRoleIsEditable } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-editable.util';
-import { validateRoleLabelUniqueness } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util';
 import { validateRoleReadWritePermissionsConsistency } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-read-write-permissions-consistency.util';
 import { validateRoleRequiredPropertiesAreDefined } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util';
 
@@ -19,9 +18,6 @@ import { validateRoleRequiredPropertiesAreDefined } from 'src/engine/workspace-m
 export class FlatRoleValidatorService {
   public validateFlatRoleCreation({
     flatEntityToValidate,
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-      flatRoleMaps: optimisticFlatRoleMaps,
-    },
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.role
   >): FailedFlatEntityValidation<'role', 'create'> {
@@ -34,20 +30,9 @@ export class FlatRoleValidatorService {
       type: 'create',
     });
 
-    const existingRoles = Object.values(
-      optimisticFlatRoleMaps.byUniversalIdentifier,
-    ).filter(isDefined);
-
     validationResult.errors.push(
       ...validateRoleRequiredPropertiesAreDefined({
         flatRole: flatEntityToValidate,
-      }),
-    );
-
-    validationResult.errors.push(
-      ...validateRoleLabelUniqueness({
-        label: flatEntityToValidate.label,
-        existingFlatRoles: existingRoles,
       }),
     );
 
@@ -153,21 +138,6 @@ export class FlatRoleValidatorService {
         flatRole: toFlatRole,
       }),
     );
-
-    const flatRoleLabelUpdate = flatEntityUpdate.label;
-
-    if (isDefined(flatRoleLabelUpdate)) {
-      const existingRoles = Object.values(
-        optimisticFlatRoleMaps.byUniversalIdentifier,
-      ).filter(isDefined);
-
-      validationResult.errors.push(
-        ...validateRoleLabelUniqueness({
-          label: flatRoleLabelUpdate,
-          existingFlatRoles: existingRoles,
-        }),
-      );
-    }
 
     validationResult.errors.push(
       ...validateRoleReadWritePermissionsConsistency({

@@ -70,6 +70,7 @@ import { RenameIsUiReadOnlyToIsUiEditableFastInstanceCommand } from 'src/databas
 import { BackfillNonUiCreatableStandardSystemObjectsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-slow-1781277480000-backfill-non-ui-creatable-standard-system-objects';
 import { CommandMenuItemOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-13/2-13-instance-command-fast-1781253016028-command-menu-item-overridable-entity';
 import { SetTableWidgetViewsVisibilityToWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-14/2-14-instance-command-slow-1781515653781-set-table-widget-views-visibility-to-workspace';
+import { RemoveRoleLabelWorkspaceUniqueConstraintFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-14/2-14-instance-command-fast-1799000050000-remove-role-label-workspace-unique-constraint';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -142,4 +143,5 @@ export const INSTANCE_COMMANDS = [
   BackfillNonUiCreatableStandardSystemObjectsSlowInstanceCommand,
   CommandMenuItemOverridableEntityFastInstanceCommand,
   SetTableWidgetViewsVisibilityToWorkspaceSlowInstanceCommand,
+  RemoveRoleLabelWorkspaceUniqueConstraintFastInstanceCommand,
 ];

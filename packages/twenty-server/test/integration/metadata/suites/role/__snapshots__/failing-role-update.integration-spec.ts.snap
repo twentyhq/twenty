@@ -187,41 +187,6 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
 }
 `;
 
-exports[`Role update should fail when updating label to one that already exists 1`] = `
-{
-  "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "role": [
-        {
-          "errors": [
-            {
-              "code": "ROLE_LABEL_ALREADY_EXISTS",
-              "message": "A role with this label already exists",
-              "userFriendlyMessage": "A role with this label already exists.",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "role",
-          "status": "fail",
-          "type": "update",
-        },
-      ],
-    },
-    "message": "Validation failed for 1 role",
-    "summary": {
-      "role": 1,
-      "totalErrors": 1,
-    },
-    "userFriendlyMessage": "A role with this label already exists.",
-  },
-  "message": "Multiple validation errors occurred while updating role",
-  "name": "GraphQLError",
-}
-`;
-
 exports[`Role update should fail when updating to enable write permissions without read permission 1`] = `
 {
   "extensions": {

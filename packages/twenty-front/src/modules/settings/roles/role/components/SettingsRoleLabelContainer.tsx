@@ -1,7 +1,10 @@
+import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { InputHint } from '@/ui/input/components/InputHint';
 import { TitleInput } from '@/ui/input/components/TitleInput';
+import { isNonEmptyString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
@@ -30,6 +33,20 @@ const StyledHeaderTitle = styled.div`
   }
 `;
 
+const StyledContainer = styled.div`
+  position: relative;
+`;
+
+const StyledHint = styled.div`
+  left: 100%;
+  margin-left: ${themeCssVariables.spacing[2]};
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+`;
+
 type SettingsRoleLabelContainerProps = {
   roleId: string;
 };
@@ -46,6 +63,16 @@ export const SettingsRoleLabelContainer = ({
     roleId,
   );
 
+  const allRoles = useSettingsAllRoles();
+
+  const normalizedLabel = settingsDraftRole.label;
+
+  const hasDuplicateLabel =
+    isNonEmptyString(normalizedLabel) &&
+    allRoles.some(
+      (role) => role.id !== roleId && role.label === normalizedLabel,
+    );
+
   const handleChange = (newValue: string) => {
     setSettingsDraftRole({
       ...settingsDraftRole,
@@ -54,15 +81,24 @@ export const SettingsRoleLabelContainer = ({
   };
 
   return (
-    <StyledHeaderTitle>
-      <TitleInput
-        instanceId="role-label-input"
-        disabled={!settingsDraftRole.isEditable}
-        sizeVariant="sm"
-        value={settingsDraftRole.label}
-        onChange={handleChange}
-        placeholder={t`Role name`}
-      />
-    </StyledHeaderTitle>
+    <StyledContainer>
+      <StyledHeaderTitle>
+        <TitleInput
+          instanceId="role-label-input"
+          disabled={!settingsDraftRole.isEditable}
+          sizeVariant="sm"
+          value={settingsDraftRole.label}
+          onChange={handleChange}
+          placeholder={t`Role name`}
+        />
+      </StyledHeaderTitle>
+      {hasDuplicateLabel && (
+        <StyledHint>
+          <InputHint
+            danger
+          >{t`Another role already uses this name.`}</InputHint>
+        </StyledHint>
+      )}
+    </StyledContainer>
   );
 };

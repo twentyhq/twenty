@@ -144,42 +144,6 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but mul
 }
 `;
 
-exports[`Role creation should fail when label already exists 1`] = `
-{
-  "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "role": [
-        {
-          "errors": [
-            {
-              "code": "ROLE_LABEL_ALREADY_EXISTS",
-              "message": "A role with this label already exists",
-              "userFriendlyMessage": "A role with this label already exists.",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "label": "Existing Test Role",
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "role",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
-    },
-    "message": "Validation failed for 1 role",
-    "summary": {
-      "role": 1,
-      "totalErrors": 1,
-    },
-    "userFriendlyMessage": "A role with this label already exists.",
-  },
-  "message": "Multiple validation errors occurred while creating role",
-  "name": "GraphQLError",
-}
-`;
-
 exports[`Role creation should fail when label is missing 1`] = `
 {
   "extensions": {
