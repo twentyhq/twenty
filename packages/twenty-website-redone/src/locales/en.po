@@ -3132,6 +3132,21 @@ msgstr "Saint Lucia 🇱🇨"
 msgid "Saint Vincent 🇻🇨"
 msgstr "Saint Vincent 🇻🇨"
 
+#. js-lingui-id: CADlRK
+#: src/sections/why-twenty-marquee/why-twenty-marquee.tsx
+msgid "Same CRM"
+msgstr "Same CRM"
+
+#. js-lingui-id: 60i6S+
+#: src/sections/why-twenty-marquee/why-twenty-marquee.tsx
+msgid "Same output"
+msgstr "Same output"
+
+#. js-lingui-id: xl2tJ9
+#: src/sections/why-twenty-marquee/why-twenty-marquee.tsx
+msgid "Same results"
+msgstr "Same results"
+
 #. js-lingui-id: w9QWxz
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts

@@ -12,6 +12,7 @@ import {
 import { Menu } from '@/sections/menu';
 import { WhyTwentyEditorials } from '@/sections/why-twenty-editorial';
 import { WhyTwentyHero } from '@/sections/why-twenty-hero';
+import { WhyTwentyMarquee } from '@/sections/why-twenty-marquee';
 
 export const generateMetadata = buildRouteMetadata('whyTwenty');
 
@@ -41,6 +42,7 @@ export default async function WhyTwentyPage({
       <main>
         <WhyTwentyHero />
         <WhyTwentyEditorials />
+        <WhyTwentyMarquee />
       </main>
     </>
   );
