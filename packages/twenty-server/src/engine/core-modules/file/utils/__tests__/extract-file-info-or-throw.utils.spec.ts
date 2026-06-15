@@ -1,3 +1,5 @@
+import { FileTypeParser } from 'file-type';
+
 import { extractFileInfoOrThrow } from '../extract-file-info-or-throw.utils';
 
 const pngBuffer = Buffer.from([
@@ -9,6 +11,10 @@ const textBuffer = Buffer.from('Hello, world!', 'utf-8');
 const zipBuffer = Buffer.from([0x50, 0x4b, 0x03, 0x04]);
 
 describe('extractFileInfoOrThrow', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it.each([
     {
       name: 'PNG',
@@ -120,5 +126,22 @@ describe('extractFileInfoOrThrow', () => {
         expect(result.mimeType).toBe(expectedMime);
       },
     );
+  });
+
+  describe('when file-type parser throws', () => {
+    it('should throw FileStorageException', async () => {
+      jest
+        .spyOn(FileTypeParser.prototype, 'fromBuffer')
+        .mockRejectedValue(new Error('Non-whitespace before first tag.'));
+
+      await expect(
+        extractFileInfoOrThrow({
+          file: pdfBuffer,
+          filename: 'test.pdf',
+        }),
+      ).rejects.toThrow(
+        /File content detection failed: Non-whitespace before first tag./,
+      );
+    });
   });
 });
