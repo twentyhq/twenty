@@ -1,5 +1,5 @@
 import { EXECUTE_TOOL_TOOL_NAME } from 'src/engine/core-modules/tool-provider/tools';
-import { resolveToolName } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-tool-name.util';
+import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/resolve-tool-name.util';
 
 describe('resolveToolName', () => {
   it('returns the inner toolName when the wrapper is execute_tool', () => {
