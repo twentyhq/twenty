@@ -118,7 +118,7 @@ function normalizeDomainHost(
     .toLowerCase()
     .replace(/^https?:\/\//, '')
     .replace(/^www\./, '')
-    .replace(/[/:].*$/, '');
+    .replace(/[/:?#].*$/, '');
   return host.length > 0 ? host : undefined;
 }
 
@@ -134,7 +134,8 @@ function normalizeDomainHost(
 // free-text companyName.
 // ponytail: matches active rows only (a soft-deleted company still holds the
 // unique index — clear those with `yarn purge:prod`), and caps the prefilter at
-// 20 candidates, which is ample for a single real host.
+// 100 candidates — far more than the handful of URLs that can share one real
+// host, so the exact-host match is never paged out in practice.
 async function findOrCreateCompanyId(
   client: CoreApiClient,
   input: SubmitPartnerApplicationInput,
@@ -149,7 +150,7 @@ async function findOrCreateCompanyId(
       companies: {
         __args: {
           filter: { domainName: { primaryLinkUrl: { ilike: `%${host}%` } } },
-          first: 20,
+          first: 100,
         },
         edges: { node: { id: true, domainName: { primaryLinkUrl: true } } },
       },
