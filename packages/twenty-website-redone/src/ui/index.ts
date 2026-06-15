@@ -11,6 +11,7 @@ export {
   type ButtonVariant,
 } from './button';
 export { ButtonShape, type ButtonShapeProps } from './button-shape';
+export { ConnectingFrame } from './connecting-frame';
 export { Container } from './container';
 export { ExternalArrow } from './external-arrow';
 export { ExternalLink } from './external-link';

@@ -12,10 +12,16 @@ import {
   semanticColor,
   spacing,
 } from '@/tokens';
-import { Body, Button, Eyebrow, Heading, SectionShell } from '@/ui';
+import {
+  Body,
+  Button,
+  ConnectingFrame,
+  Eyebrow,
+  Heading,
+  SectionShell,
+} from '@/ui';
 
 import { CASE_STUDY_SLUGS } from './case-studies';
-import { PromoFrame } from './promo-frame';
 import { PromoMic } from './promo-mic';
 
 // The section is a flush shell so its background frame can connect up to the
@@ -132,7 +138,7 @@ export function CaseStudyPromo() {
   return (
     <SectionShell
       ariaLabel={i18n._(msg`Customer stories preview`)}
-      background={<PromoFrame />}
+      background={<ConnectingFrame />}
       connectsUp
       rhythm="flush"
       scheme="light"

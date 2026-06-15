@@ -9,13 +9,15 @@ import {
   buildRouteMetadata,
   JsonLd,
 } from '@/platform/seo';
+import { CaseStudyCatalogGrid } from '@/sections/case-study-catalog';
+import { CustomersCatalogSignoff } from '@/sections/customers-catalog-signoff';
 import { CustomersHero } from '@/sections/customers-hero';
+import { Faq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
 import { TrustedBy } from '@/sections/trusted-by';
 
 export const generateMetadata = buildRouteMetadata('customers');
 
-// Hero only for now; the case-study catalog lands below it as its port arrives.
 export default async function CustomersPage({
   params,
 }: {
@@ -41,7 +43,10 @@ export default async function CustomersPage({
       <Menu communityStats={communityStats} scheme="muted" />
       <main>
         <CustomersHero />
-        <TrustedBy />
+        <TrustedBy scheme="muted" />
+        <CaseStudyCatalogGrid />
+        <CustomersCatalogSignoff />
+        <Faq />
       </main>
     </>
   );

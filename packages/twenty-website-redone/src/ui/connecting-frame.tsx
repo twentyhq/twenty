@@ -3,17 +3,19 @@ import { styled } from '@linaria/react';
 import { PlusMark } from '@/icons';
 import {
   color,
+  GUTTER,
   MAX_CONTENT_WIDTH_PX,
   mediaUp,
   semanticColor,
   spacing,
 } from '@/tokens';
 
-// The promo's decorative bracket (desktop only): two vertical rails and a base
-// line, inset from the corners so each rail stops short of its plus marker (the
-// design's deliberate gap). Open at the top so it reads as continuing up into
-// the TrustedBy band above (the section connectsUp) — those top corners are
-// TrustedBy's own markers flowing in, so the promo only draws the bottom two.
+// The bracket that joins a section to the bordered band directly above it: two
+// side rails + a base line + the bottom two plus-markers, open at the top so the
+// band's own bottom markers complete the frame. Use it in a SectionShell
+// `background` on a section that `connectsUp` and shares the band's scheme — the
+// band yields its bottom rhythm and the rails ride the shared gutter, so the two
+// read as one continuous frame. Desktop only; mobile drops the frame.
 const Board = styled.div`
   display: none;
   inset: 0;
@@ -29,9 +31,9 @@ const Board = styled.div`
 
 const Frame = styled.div`
   bottom: ${spacing(12)};
-  left: ${spacing(10)};
+  left: ${spacing(GUTTER.md)};
   position: absolute;
-  right: ${spacing(10)};
+  right: ${spacing(GUTTER.md)};
   top: 0;
 `;
 
@@ -61,9 +63,9 @@ const RightLine = styled(Line)`
   width: 1px;
 `;
 
-// The rails are 1px child lines sitting on the frame's content edge (centre 0.5
-// inside it), not a border — so the marker is nudged half a pixel less than a
-// bordered host's to land its cross on the rails' centreline crossing.
+// The rails are 1px child lines on the frame's content edge (centre 0.5 inside
+// it), so the marker is nudged half a pixel less than a bordered host's to land
+// its cross on the rails' centreline crossing.
 const Corner = styled.span`
   color: ${color('blue')};
   line-height: 0;
@@ -80,7 +82,7 @@ const CornerBottomRight = styled(Corner)`
   right: -6.5px;
 `;
 
-export function PromoFrame() {
+export function ConnectingFrame() {
   return (
     <Board aria-hidden>
       <Frame>

@@ -1223,6 +1223,7 @@ msgstr "Custom sidebar"
 
 #. js-lingui-id: 5xK1jE
 #: src/sections/helped/helped-scene.tsx
+#: src/sections/case-study-catalog/case-study-catalog-grid.tsx
 msgid "Customer stories"
 msgstr "Customer stories"
 
@@ -1879,6 +1880,7 @@ msgstr "Germany 🇩🇪"
 #: src/sections/home-hero/home-hero.tsx
 #: src/sections/footer/footer.data.ts
 #: src/sections/faq/faq.tsx
+#: src/sections/customers-catalog-signoff/customers-catalog-signoff.tsx
 msgid "Get started"
 msgstr "Get started"
 
@@ -2246,6 +2248,11 @@ msgstr "Join our growing partner ecosystem"
 #: src/sections/partner-signoff/partner-signoff.tsx
 msgid "Join our partner ecosystem and help businesses take control of their CRM."
 msgstr "Join our partner ecosystem and help businesses take control of their CRM."
+
+#. js-lingui-id: m/pXki
+#: src/sections/customers-catalog-signoff/customers-catalog-signoff.tsx
+msgid "Join the teams that chose to own their CRM. Start building with Twenty today."
+msgstr "Join the teams that chose to own their CRM. Start building with Twenty today."
 
 #. js-lingui-id: QbxNys
 #: src/partner-application/data/partner-country-options.ts
@@ -3175,6 +3182,15 @@ msgstr "Reach out"
 msgid "Read the case"
 msgstr "Read the case"
 
+#. js-lingui-id: /6qiAz
+#: src/sections/customers-catalog-signoff/customers-catalog-signoff.tsx
+msgid ""
+"Ready to build\n"
+"*your own story?*"
+msgstr ""
+"Ready to build\n"
+"*your own story?*"
+
 #. js-lingui-id: TqQ08B
 #: src/sections/partner-signoff/partner-signoff.tsx
 msgid ""
@@ -3814,6 +3830,7 @@ msgstr "Take control of your running workflows with the new Stop Workflow button
 #: src/sections/home-hero/home-hero.tsx
 #: src/sections/footer/footer.data.ts
 #: src/sections/faq/faq.tsx
+#: src/sections/customers-catalog-signoff/customers-catalog-signoff.tsx
 #: src/contact-cal/contact-cal-modal.tsx
 msgid "Talk to us"
 msgstr "Talk to us"

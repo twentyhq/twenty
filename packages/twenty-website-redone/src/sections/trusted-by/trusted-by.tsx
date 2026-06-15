@@ -7,12 +7,12 @@ import NextImage from 'next/image';
 import { type CSSProperties } from 'react';
 
 import {
-  color,
   FONT_WEIGHT,
   fontFamily,
   fontSize,
   mediaUp,
   radius,
+  type Scheme,
   semanticColor,
   spacing,
 } from '@/tokens';
@@ -23,7 +23,7 @@ import { TRUSTED_BY_LOGOS, type TrustedByLogo } from './trusted-by.data';
 
 const Card = styled.div`
   align-items: stretch;
-  background-color: ${color('white')};
+  background-color: ${semanticColor.surface};
   border: 1px solid ${semanticColor.line};
   border-radius: ${radius(2)};
   display: flex;
@@ -159,11 +159,14 @@ function Logo({
   );
 }
 
-export function TrustedBy() {
+export function TrustedBy({ scheme = 'light' }: { scheme?: Scheme }) {
   const i18n = getServerI18n();
 
   return (
-    <SectionShell ariaLabel={i18n._(msg`Trusted by leading organizations`)}>
+    <SectionShell
+      ariaLabel={i18n._(msg`Trusted by leading organizations`)}
+      scheme={scheme}
+    >
       <Card>
         <CornerMarkers />
         <LabelCell>

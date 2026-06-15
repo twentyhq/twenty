@@ -1217,6 +1217,7 @@ msgstr ""
 
 #. js-lingui-id: 5xK1jE
 #: src/sections/helped/helped-scene.tsx
+#: src/sections/case-study-catalog/case-study-catalog-grid.tsx
 msgid "Customer stories"
 msgstr ""
 
@@ -1873,6 +1874,7 @@ msgstr ""
 #: src/sections/home-hero/home-hero.tsx
 #: src/sections/footer/footer.data.ts
 #: src/sections/faq/faq.tsx
+#: src/sections/customers-catalog-signoff/customers-catalog-signoff.tsx
 msgid "Get started"
 msgstr ""
 
@@ -2237,6 +2239,11 @@ msgstr ""
 #. js-lingui-id: VQIurp
 #: src/sections/partner-signoff/partner-signoff.tsx
 msgid "Join our partner ecosystem and help businesses take control of their CRM."
+msgstr ""
+
+#. js-lingui-id: m/pXki
+#: src/sections/customers-catalog-signoff/customers-catalog-signoff.tsx
+msgid "Join the teams that chose to own their CRM. Start building with Twenty today."
 msgstr ""
 
 #. js-lingui-id: QbxNys
@@ -3165,6 +3172,13 @@ msgstr ""
 msgid "Read the case"
 msgstr ""
 
+#. js-lingui-id: /6qiAz
+#: src/sections/customers-catalog-signoff/customers-catalog-signoff.tsx
+msgid ""
+"Ready to build\n"
+"*your own story?*"
+msgstr ""
+
 #. js-lingui-id: TqQ08B
 #: src/sections/partner-signoff/partner-signoff.tsx
 msgid ""
@@ -3796,6 +3810,7 @@ msgstr ""
 #: src/sections/home-hero/home-hero.tsx
 #: src/sections/footer/footer.data.ts
 #: src/sections/faq/faq.tsx
+#: src/sections/customers-catalog-signoff/customers-catalog-signoff.tsx
 #: src/contact-cal/contact-cal-modal.tsx
 msgid "Talk to us"
 msgstr ""
