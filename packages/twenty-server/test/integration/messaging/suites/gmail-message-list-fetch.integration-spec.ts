@@ -11,7 +11,7 @@ import {
   setupGmailMock,
 } from 'test/integration/messaging/utils/gmail-message-mock.util';
 import { queryMessageFolders } from 'test/integration/messaging/utils/query-messaging.util';
-import { enqueueJob } from 'test/integration/utils/enqueue-job.util';
+import { enqueueCronAndAwait } from 'test/integration/utils/run-sync-cron.util';
 import { pollUntil } from 'test/integration/utils/poll-until.util';
 
 const HANDLE = 'gmail-message-list-fetch@apple.dev';
@@ -51,11 +51,11 @@ describe('Gmail message list fetch (integration)', () => {
   });
 
   it('runs the full sync pipeline on the real worker: folders synced, messages imported', async () => {
-    await enqueueJob(
-      MessageQueue.cronQueue,
-      MessagingMessageListFetchCronJob,
-      {},
-    );
+    await enqueueCronAndAwait({
+      cronQueueName: MessageQueue.cronQueue,
+      cronJobName: MessagingMessageListFetchCronJob.name,
+      downstreamQueueName: MessageQueue.messagingQueue,
+    });
 
     const expectedSubjects = inbox.map(getGmailMessageSubject);
 

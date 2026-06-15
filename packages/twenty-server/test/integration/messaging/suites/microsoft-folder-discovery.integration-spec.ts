@@ -5,7 +5,7 @@ import { MessagingMessageListFetchCronJob } from 'src/modules/messaging/message-
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
 import { setupMicrosoftMock } from 'test/integration/messaging/utils/microsoft-message-mock.util';
 import { queryMessageFolders } from 'test/integration/messaging/utils/query-messaging.util';
-import { enqueueJob } from 'test/integration/utils/enqueue-job.util';
+import { enqueueCronAndAwait } from 'test/integration/utils/run-sync-cron.util';
 import { pollUntil } from 'test/integration/utils/poll-until.util';
 
 const HANDLE = 'microsoft-folder-discovery@apple.dev';
@@ -36,11 +36,11 @@ describe('Microsoft folder discovery (integration)', () => {
   });
 
   it('discovers Microsoft mail folders through the Graph delta sync', async () => {
-    await enqueueJob(
-      MessageQueue.cronQueue,
-      MessagingMessageListFetchCronJob,
-      {},
-    );
+    await enqueueCronAndAwait({
+      cronQueueName: MessageQueue.cronQueue,
+      cronJobName: MessagingMessageListFetchCronJob.name,
+      downstreamQueueName: MessageQueue.messagingQueue,
+    });
 
     const folderNames = await pollUntil(
       getFolderNames,

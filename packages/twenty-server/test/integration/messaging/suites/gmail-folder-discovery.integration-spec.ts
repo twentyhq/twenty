@@ -14,7 +14,7 @@ import {
   startChannelSync,
   updateMessageChannel,
 } from 'test/integration/messaging/utils/query-messaging.util';
-import { enqueueJob } from 'test/integration/utils/enqueue-job.util';
+import { enqueueCronAndAwait } from 'test/integration/utils/run-sync-cron.util';
 import { pollUntil } from 'test/integration/utils/poll-until.util';
 
 const HANDLE = 'gmail-folder-discovery@apple.dev';
@@ -41,7 +41,11 @@ describe('Gmail folder discovery (integration)', () => {
   };
 
   const runSyncCycle = () =>
-    enqueueJob(MessageQueue.cronQueue, MessagingMessageListFetchCronJob, {});
+    enqueueCronAndAwait({
+      cronQueueName: MessageQueue.cronQueue,
+      cronJobName: MessagingMessageListFetchCronJob.name,
+      downstreamQueueName: MessageQueue.messagingQueue,
+    });
 
   beforeAll(async () => {
     channel = await connectMessagingAccount({

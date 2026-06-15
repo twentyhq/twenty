@@ -15,7 +15,7 @@ import {
   queryConnectedAccount,
   queryMessageChannel,
 } from 'test/integration/messaging/utils/query-messaging.util';
-import { enqueueJob } from 'test/integration/utils/enqueue-job.util';
+import { enqueueCronAndAwait } from 'test/integration/utils/run-sync-cron.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { pollUntil } from 'test/integration/utils/poll-until.util';
 
@@ -55,11 +55,11 @@ describe('Messaging token refresh (integration)', () => {
       { lastCredentialsRefreshedAt: EXPIRED_CREDENTIALS_AT },
     );
 
-    await enqueueJob(
-      MessageQueue.cronQueue,
-      MessagingMessageListFetchCronJob,
-      {},
-    );
+    await enqueueCronAndAwait({
+      cronQueueName: MessageQueue.cronQueue,
+      cronJobName: MessagingMessageListFetchCronJob.name,
+      downstreamQueueName: MessageQueue.messagingQueue,
+    });
 
     const account = await pollUntil(
       () => queryConnectedAccount(channel.connectedAccountId),

@@ -22,7 +22,7 @@ import {
   queryConnectedAccount,
   updateCalendarChannel,
 } from 'test/integration/messaging/utils/query-messaging.util';
-import { enqueueJob } from 'test/integration/utils/enqueue-job.util';
+import { enqueueCronAndAwait } from 'test/integration/utils/run-sync-cron.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { pollUntil } from 'test/integration/utils/poll-until.util';
 
@@ -38,7 +38,11 @@ describe('Calendar sync failure lifecycle (integration)', () => {
   let revokedChannel: Awaited<ReturnType<typeof connectMessagingAccount>>;
 
   const runSyncCycle = () =>
-    enqueueJob(MessageQueue.cronQueue, CalendarEventListFetchCronJob, {});
+    enqueueCronAndAwait({
+      cronQueueName: MessageQueue.cronQueue,
+      cronJobName: CalendarEventListFetchCronJob.name,
+      downstreamQueueName: MessageQueue.calendarQueue,
+    });
 
   const getThrottledChannel = async () => {
     const [calendarChannel] = await queryCalendarChannels(
@@ -164,11 +168,11 @@ describe('Calendar sync failure lifecycle (integration)', () => {
   }, 60000);
 
   it('relaunches the unknown-failure channel and leaves the permissions-failure channel untouched', async () => {
-    await enqueueJob(
-      MessageQueue.cronQueue,
-      CalendarRelaunchFailedCalendarChannelsCronJob,
-      {},
-    );
+    await enqueueCronAndAwait({
+      cronQueueName: MessageQueue.cronQueue,
+      cronJobName: CalendarRelaunchFailedCalendarChannelsCronJob.name,
+      downstreamQueueName: MessageQueue.calendarQueue,
+    });
 
     const relaunchedChannel = await pollUntil(
       getThrottledChannel,

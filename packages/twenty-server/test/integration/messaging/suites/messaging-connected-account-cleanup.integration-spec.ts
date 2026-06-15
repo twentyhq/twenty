@@ -1,16 +1,20 @@
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessagingMessageListFetchCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-message-list-fetch.cron.job';
 import { connectMessagingAccount } from 'test/integration/messaging/utils/connect-messaging-account.util';
-import { findRecordIdsByFilter } from 'test/integration/messaging/utils/find-records-by-filter.util';
+import {
+  findRecordIdsByFilter,
+  findRecordNodesByFilter,
+} from 'test/integration/messaging/utils/find-records-by-filter.util';
 import {
   getGmailMessageSubject,
   gmailMessage,
   setupGmailMock,
 } from 'test/integration/messaging/utils/gmail-message-mock.util';
 import { deleteConnectedAccount } from 'test/integration/messaging/utils/query-messaging.util';
-import { enqueueJob } from 'test/integration/utils/enqueue-job.util';
+import { enqueueCronAndAwait } from 'test/integration/utils/run-sync-cron.util';
 import { pollUntil } from 'test/integration/utils/poll-until.util';
 
 const HANDLE = 'messaging-cleanup@apple.dev';
@@ -28,107 +32,122 @@ describe('Messaging connected account cleanup (integration)', () => {
       handle: HANDLE,
     });
 
-    await enqueueJob(
-      MessageQueue.cronQueue,
-      MessagingMessageListFetchCronJob,
-      {},
-    );
+    await enqueueCronAndAwait({
+      cronQueueName: MessageQueue.cronQueue,
+      cronJobName: MessagingMessageListFetchCronJob.name,
+      downstreamQueueName: MessageQueue.messagingQueue,
+    });
 
     const expectedSubjects = inbox.map(getGmailMessageSubject);
 
     await pollUntil(
       () =>
-        findRecordIdsByFilter('message', 'messages', {
-          messageChannelMessageAssociations: {
-            messageChannelId: { eq: channel.channelId },
-          },
-        }),
+        findRecordIdsByFilter(
+          'messageChannelMessageAssociation',
+          'messageChannelMessageAssociations',
+          { messageChannelId: { eq: channel.channelId } },
+        ),
       (ids) => ids.length === expectedSubjects.length,
     );
   }, 60000);
 
+  afterAll(async () => {
+    await channel?.cleanup().catch(() => undefined);
+  });
+
   it('deletes all associated messaging data when the connected account is removed', async () => {
-    expect(
-      await findRecordIdsByFilter(
-        'messageChannelMessageAssociation',
-        'messageChannelMessageAssociations',
-        { messageChannelId: { eq: channel.channelId } },
-      ),
-    ).not.toHaveLength(0);
+    const associations = await findRecordNodesByFilter<{
+      id: string;
+      messageId: string;
+    }>(
+      'messageChannelMessageAssociation',
+      'messageChannelMessageAssociations',
+      `id
+        messageId`,
+      { messageChannelId: { eq: channel.channelId } },
+    );
+
+    expect(associations).not.toHaveLength(0);
+
+    const associationIds = associations.map((association) => association.id);
+    const messageIds = associations.map((association) => association.messageId);
+
+    const messages = await findRecordNodesByFilter<{
+      id: string;
+      messageThreadId: string | null;
+    }>(
+      'message',
+      'messages',
+      `id
+        messageThreadId`,
+      { id: { in: messageIds } },
+    );
+
+    expect(messages).not.toHaveLength(0);
+
+    const threadIds = [
+      ...new Set(messages.map((message) => message.messageThreadId)),
+    ].filter(isDefined);
+
     expect(
       await findRecordIdsByFilter(
         'messageChannelMessageAssociationMessageFolder',
         'messageChannelMessageAssociationMessageFolders',
-        {
-          messageChannelMessageAssociation: {
-            messageChannelId: { eq: channel.channelId },
-          },
-        },
+        { messageChannelMessageAssociationId: { in: associationIds } },
       ),
     ).not.toHaveLength(0);
     expect(
       await findRecordIdsByFilter('messageParticipant', 'messageParticipants', {
-        message: {
-          messageChannelMessageAssociations: {
-            messageChannelId: { eq: channel.channelId },
-          },
-        },
+        messageId: { in: messageIds },
       }),
     ).not.toHaveLength(0);
     expect(
       await findRecordIdsByFilter('messageThread', 'messageThreads', {
-        messages: {
-          messageChannelMessageAssociations: {
-            messageChannelId: { eq: channel.channelId },
-          },
-        },
+        id: { in: threadIds },
       }),
     ).not.toHaveLength(0);
 
     await deleteConnectedAccount(channel.connectedAccountId);
 
-    expect(
-      await findRecordIdsByFilter('message', 'messages', {
-        messageChannelMessageAssociations: {
-          messageChannelId: { eq: channel.channelId },
-        },
-      }),
-    ).toHaveLength(0);
-    expect(
-      await findRecordIdsByFilter(
-        'messageChannelMessageAssociation',
-        'messageChannelMessageAssociations',
-        { messageChannelId: { eq: channel.channelId } },
-      ),
-    ).toHaveLength(0);
-    expect(
-      await findRecordIdsByFilter(
-        'messageChannelMessageAssociationMessageFolder',
-        'messageChannelMessageAssociationMessageFolders',
-        {
-          messageChannelMessageAssociation: {
-            messageChannelId: { eq: channel.channelId },
-          },
-        },
-      ),
-    ).toHaveLength(0);
-    expect(
-      await findRecordIdsByFilter('messageParticipant', 'messageParticipants', {
-        message: {
-          messageChannelMessageAssociations: {
-            messageChannelId: { eq: channel.channelId },
-          },
-        },
-      }),
-    ).toHaveLength(0);
-    expect(
-      await findRecordIdsByFilter('messageThread', 'messageThreads', {
-        messages: {
-          messageChannelMessageAssociations: {
-            messageChannelId: { eq: channel.channelId },
-          },
-        },
-      }),
-    ).toHaveLength(0);
+    await pollUntil(
+      async () => {
+        const [
+          remainingMessages,
+          remainingAssociations,
+          remainingFolders,
+          remainingParticipants,
+          remainingThreads,
+        ] = await Promise.all([
+          findRecordIdsByFilter('message', 'messages', {
+            id: { in: messageIds },
+          }),
+          findRecordIdsByFilter(
+            'messageChannelMessageAssociation',
+            'messageChannelMessageAssociations',
+            { messageChannelId: { eq: channel.channelId } },
+          ),
+          findRecordIdsByFilter(
+            'messageChannelMessageAssociationMessageFolder',
+            'messageChannelMessageAssociationMessageFolders',
+            { messageChannelMessageAssociationId: { in: associationIds } },
+          ),
+          findRecordIdsByFilter('messageParticipant', 'messageParticipants', {
+            messageId: { in: messageIds },
+          }),
+          findRecordIdsByFilter('messageThread', 'messageThreads', {
+            id: { in: threadIds },
+          }),
+        ]);
+
+        return (
+          remainingMessages.length +
+          remainingAssociations.length +
+          remainingFolders.length +
+          remainingParticipants.length +
+          remainingThreads.length
+        );
+      },
+      (remaining) => remaining === 0,
+    );
   }, 60000);
 });

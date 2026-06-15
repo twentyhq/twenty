@@ -16,7 +16,7 @@ import {
   googleCalendarEventsHandler,
 } from 'test/integration/messaging/utils/google-calendar-mock.util';
 import { queryCalendarChannels } from 'test/integration/messaging/utils/query-messaging.util';
-import { enqueueJob } from 'test/integration/utils/enqueue-job.util';
+import { enqueueCronAndAwait } from 'test/integration/utils/run-sync-cron.util';
 import { pollUntil } from 'test/integration/utils/poll-until.util';
 
 const HANDLE = 'google-calendar-events-import@apple.dev';
@@ -69,7 +69,11 @@ describe('Google calendar events import (integration)', () => {
       ]),
     );
 
-    await enqueueJob(MessageQueue.cronQueue, CalendarEventListFetchCronJob, {});
+    await enqueueCronAndAwait({
+      cronQueueName: MessageQueue.cronQueue,
+      cronJobName: CalendarEventListFetchCronJob.name,
+      downstreamQueueName: MessageQueue.calendarQueue,
+    });
 
     const importedTitles = await pollUntil(
       () => findImportedEventTitles([eventTitle]),
@@ -96,7 +100,11 @@ describe('Google calendar events import (integration)', () => {
       ),
     );
 
-    await enqueueJob(MessageQueue.cronQueue, CalendarEventListFetchCronJob, {});
+    await enqueueCronAndAwait({
+      cronQueueName: MessageQueue.cronQueue,
+      cronJobName: CalendarEventListFetchCronJob.name,
+      downstreamQueueName: MessageQueue.calendarQueue,
+    });
 
     const importedTitles = await pollUntil(
       () => findImportedEventTitles([newEventTitle]),

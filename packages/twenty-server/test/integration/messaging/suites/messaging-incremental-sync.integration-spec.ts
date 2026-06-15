@@ -15,7 +15,7 @@ import {
   setupGmailMock,
 } from 'test/integration/messaging/utils/gmail-message-mock.util';
 import { queryMessageChannel } from 'test/integration/messaging/utils/query-messaging.util';
-import { enqueueJob } from 'test/integration/utils/enqueue-job.util';
+import { enqueueCronAndAwait } from 'test/integration/utils/run-sync-cron.util';
 import { pollUntil } from 'test/integration/utils/poll-until.util';
 
 const HANDLE = 'messaging-incremental-sync@apple.dev';
@@ -44,7 +44,11 @@ describe('Messaging incremental sync (integration)', () => {
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
 
   const runSyncCycle = () =>
-    enqueueJob(MessageQueue.cronQueue, MessagingMessageListFetchCronJob, {});
+    enqueueCronAndAwait({
+      cronQueueName: MessageQueue.cronQueue,
+      cronJobName: MessagingMessageListFetchCronJob.name,
+      downstreamQueueName: MessageQueue.messagingQueue,
+    });
 
   beforeAll(async () => {
     channel = await connectMessagingAccount({
@@ -62,12 +66,9 @@ describe('Messaging incremental sync (integration)', () => {
 
     const initialSubject = getGmailMessageSubject(inbox[0]);
 
-    const importedSubjects = await pollUntil(
-      () => findImportedSubjects([initialSubject]),
-      (subjects) => subjects.length === 1,
-    );
-
-    expect(importedSubjects).toEqual([initialSubject]);
+    expect(await findImportedSubjects([initialSubject])).toEqual([
+      initialSubject,
+    ]);
   }, 60000);
 
   it('imports a newly arrived message through the history-based incremental sync', async () => {
@@ -88,11 +89,6 @@ describe('Messaging incremental sync (integration)', () => {
 
     const newSubject = getGmailMessageSubject(newMessage);
 
-    const importedSubjects = await pollUntil(
-      () => findImportedSubjects([newSubject]),
-      (subjects) => subjects.length === 1,
-    );
-
-    expect(importedSubjects).toEqual([newSubject]);
+    expect(await findImportedSubjects([newSubject])).toEqual([newSubject]);
   }, 60000);
 });

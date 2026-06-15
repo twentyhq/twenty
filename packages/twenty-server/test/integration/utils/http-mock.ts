@@ -1,8 +1,6 @@
 import { http, passthrough, type RequestHandler } from 'msw';
 import { setupServer } from 'msw/node';
 
-import { drainMessageQueues } from 'test/integration/utils/drain-message-queues.util';
-
 const localhostPassthroughHandlers = [
   http.all('http://127.0.0.1*', () => passthrough()),
   http.all('http://localhost*', () => passthrough()),
@@ -23,9 +21,8 @@ export const setupHttpMock = (...baseHandlers: MswHandler[]): HttpMock => {
     }
   };
 
-  beforeAll(async () => {
+  beforeAll(() => {
     jest.useRealTimers();
-    await drainMessageQueues();
     server.listen({ onUnhandledRequest: 'error' });
     applyBaseHandlers();
   });
@@ -35,8 +32,7 @@ export const setupHttpMock = (...baseHandlers: MswHandler[]): HttpMock => {
     applyBaseHandlers();
   });
 
-  afterAll(async () => {
-    await drainMessageQueues();
+  afterAll(() => {
     server.close();
   });
 

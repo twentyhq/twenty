@@ -10,7 +10,7 @@ import { connectMessagingAccount } from 'test/integration/messaging/utils/connec
 import { googleAccountIdentityHandlers } from 'test/integration/messaging/utils/google-auth-mock.util';
 import { setupGmailMock } from 'test/integration/messaging/utils/gmail-message-mock.util';
 import { queryMessageChannel } from 'test/integration/messaging/utils/query-messaging.util';
-import { enqueueJob } from 'test/integration/utils/enqueue-job.util';
+import { enqueueCronAndAwait } from 'test/integration/utils/run-sync-cron.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { pollUntil } from 'test/integration/utils/poll-until.util';
 
@@ -78,7 +78,11 @@ describe('Messaging stale-sync recovery (integration)', () => {
       },
     );
 
-    await enqueueJob(MessageQueue.cronQueue, MessagingOngoingStaleCronJob, {});
+    await enqueueCronAndAwait({
+      cronQueueName: MessageQueue.cronQueue,
+      cronJobName: MessagingOngoingStaleCronJob.name,
+      downstreamQueueName: MessageQueue.messagingQueue,
+    });
 
     const staleChannelAfter = await pollUntil(
       () =>

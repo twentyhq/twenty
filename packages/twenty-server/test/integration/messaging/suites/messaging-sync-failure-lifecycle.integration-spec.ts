@@ -24,7 +24,7 @@ import {
   queryMessageChannel,
   updateMessageChannel,
 } from 'test/integration/messaging/utils/query-messaging.util';
-import { enqueueJob } from 'test/integration/utils/enqueue-job.util';
+import { enqueueCronAndAwait } from 'test/integration/utils/run-sync-cron.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { pollUntil } from 'test/integration/utils/poll-until.util';
 
@@ -49,7 +49,11 @@ describe('Messaging sync failure lifecycle (integration)', () => {
   let revokedChannel: Awaited<ReturnType<typeof connectMessagingAccount>>;
 
   const runSyncCycle = () =>
-    enqueueJob(MessageQueue.cronQueue, MessagingMessageListFetchCronJob, {});
+    enqueueCronAndAwait({
+      cronQueueName: MessageQueue.cronQueue,
+      cronJobName: MessagingMessageListFetchCronJob.name,
+      downstreamQueueName: MessageQueue.messagingQueue,
+    });
 
   const getThrottledChannel = () =>
     queryMessageChannel(
@@ -188,11 +192,11 @@ describe('Messaging sync failure lifecycle (integration)', () => {
   }, 60000);
 
   it('relaunches the unknown-failure channel and leaves the permissions-failure channel untouched', async () => {
-    await enqueueJob(
-      MessageQueue.cronQueue,
-      MessagingRelaunchFailedMessageChannelsCronJob,
-      {},
-    );
+    await enqueueCronAndAwait({
+      cronQueueName: MessageQueue.cronQueue,
+      cronJobName: MessagingRelaunchFailedMessageChannelsCronJob.name,
+      downstreamQueueName: MessageQueue.messagingQueue,
+    });
 
     const relaunchedChannel = await pollUntil(
       getThrottledChannel,
