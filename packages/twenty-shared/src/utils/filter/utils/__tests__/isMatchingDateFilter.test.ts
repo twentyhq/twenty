@@ -158,4 +158,54 @@ describe('isMatchingDateFilter', () => {
       ).toBe(false);
     });
   });
+
+  describe('null values', () => {
+    it('returns false for eq when value is null', () => {
+      expect(
+        isMatchingDateFilter({
+          dateFilter: { eq: testDate },
+          value: null as any,
+        }),
+      ).toBe(false);
+    });
+
+    it('returns true for neq when value is null', () => {
+      expect(
+        isMatchingDateFilter({
+          dateFilter: { neq: testDate },
+          value: null as any,
+        }),
+      ).toBe(true);
+    });
+
+    it('returns false for comparison operands when value is null', () => {
+      expect(
+        isMatchingDateFilter({
+          dateFilter: { gt: testDate },
+          value: null as any,
+        }),
+      ).toBe(false);
+
+      expect(
+        isMatchingDateFilter({
+          dateFilter: { gte: testDate },
+          value: null as any,
+        }),
+      ).toBe(false);
+
+      expect(
+        isMatchingDateFilter({
+          dateFilter: { lt: testDate },
+          value: null as any,
+        }),
+      ).toBe(false);
+
+      expect(
+        isMatchingDateFilter({
+          dateFilter: { lte: testDate },
+          value: null as any,
+        }),
+      ).toBe(false);
+    });
+  });
 });

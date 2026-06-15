@@ -8,6 +8,43 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
+type SentryEventExceptionValue = {
+  type?: string;
+  value?: string;
+  stacktrace?: {
+    frames?: {
+      function?: string;
+    }[];
+  };
+};
+
+type SentryEvent = {
+  exception?: {
+    values?: SentryEventExceptionValue[];
+  };
+  fingerprint?: string[];
+  tags?: Record<string, string>;
+};
+
+const isOptimisticDateFilterNullParseEvent = (event: SentryEvent) => {
+  return (
+    event.exception?.values?.some((exception) => {
+      if (
+        exception.type !== 'TypeError' ||
+        !exception.value?.includes("Cannot read properties of null (reading 'split')")
+      ) {
+        return false;
+      }
+
+      return (
+        exception.stacktrace?.frames?.some(
+          (frame) => frame.function === 'isMatchingDateFilter',
+        ) ?? false
+      );
+    }) ?? false
+  );
+};
+
 export const SentryInitEffect = () => {
   const sentryConfig = useAtomStateValue(sentryConfigState);
 
@@ -54,6 +91,25 @@ export const SentryInitEffect = () => {
             tracesSampleRate: 1.0,
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
+            beforeSend: (event) => {
+              if (!isOptimisticDateFilterNullParseEvent(event)) {
+                return event;
+              }
+
+              event.fingerprint = [
+                'optimistic-create',
+                'date-filter',
+                'null-parse',
+              ];
+              event.tags = {
+                ...event.tags,
+                feature: 'optimistic-create',
+                component: 'record-filter-matcher',
+                cause: 'date-null-parse',
+              };
+
+              return event;
+            },
           });
 
           setIsSentryInitialized(true);
