@@ -4,6 +4,11 @@ import {
   type WorkflowTrigger,
 } from '@/workflow/types/Workflow';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
+import {
+  WORKFLOW_TRIGGER_METADATA_KEY,
+  WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY,
+} from '@/workflow/workflow-variables/constants/ManualTriggerMetadata';
+import { type RecordFieldNode } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
 import { type OutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { generateFindRecordsOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateFindRecordsOutputSchema';
 import { generateFormOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateFormOutputSchema';
@@ -11,7 +16,39 @@ import { generateRecordEventOutputSchema } from '@/workflow/workflow-variables/u
 import { generateRecordOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateRecordOutputSchema';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { type Node } from 'twenty-shared/workflow';
 import { DatabaseEventAction } from '~/generated-metadata/graphql';
+
+const buildManualTriggerMetadataNode = (): Node => ({
+  isLeaf: false,
+  type: 'object',
+  label: 'Metadata',
+  value: {
+    [WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY]: {
+      isLeaf: true,
+      type: 'string',
+      label: 'Workspace Member ID',
+      value: '',
+    },
+  },
+});
+
+const buildManualTriggerMetadataRecordField = (): RecordFieldNode => ({
+  isLeaf: false,
+  type: FieldMetadataType.RAW_JSON,
+  label: 'Metadata',
+  fieldMetadataId: WORKFLOW_TRIGGER_METADATA_KEY,
+  value: {
+    [WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY]: {
+      isLeaf: true,
+      type: FieldMetadataType.UUID,
+      label: 'Workspace Member ID',
+      value: '',
+      fieldMetadataId: WORKFLOW_TRIGGER_METADATA_KEY,
+      isCompositeSubField: true,
+    },
+  },
+});
 
 const PERSISTED_OUTPUT_SCHEMA_TYPES = [
   'AI_AGENT',
@@ -101,7 +138,9 @@ export const computeStepOutputSchema = ({
       }
 
       if (availability.type === 'GLOBAL') {
-        return {};
+        return {
+          [WORKFLOW_TRIGGER_METADATA_KEY]: buildManualTriggerMetadataNode(),
+        };
       }
 
       if (
@@ -118,7 +157,17 @@ export const computeStepOutputSchema = ({
         }
 
         if (availability.type === 'SINGLE_RECORD') {
-          return generateRecordOutputSchema(objectMetadataItem);
+          const recordOutputSchema =
+            generateRecordOutputSchema(objectMetadataItem);
+
+          return {
+            ...recordOutputSchema,
+            fields: {
+              ...recordOutputSchema.fields,
+              [WORKFLOW_TRIGGER_METADATA_KEY]:
+                buildManualTriggerMetadataRecordField(),
+            },
+          };
         }
 
         // BULK_RECORDS - return array indicator
@@ -129,6 +178,7 @@ export const computeStepOutputSchema = ({
             type: 'array',
             value: `Array of ${objectMetadataItem.labelPlural}`,
           },
+          [WORKFLOW_TRIGGER_METADATA_KEY]: buildManualTriggerMetadataNode(),
         };
       }
 

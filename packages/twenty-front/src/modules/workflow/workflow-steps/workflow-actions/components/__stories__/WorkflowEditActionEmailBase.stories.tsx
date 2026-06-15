@@ -131,6 +131,36 @@ const DEFAULT_DRAFT_EMAIL_ACTION: WorkflowDraftEmailAction = {
   },
 };
 
+const VARIABLE_SENDER_SEND_EMAIL_ACTION: WorkflowSendEmailAction = {
+  id: getWorkflowNodeIdMock(),
+  name: 'Send Email',
+  type: 'SEND_EMAIL',
+  valid: true,
+  settings: {
+    input: {
+      connectedAccountId: '{{trigger._metadata.workspaceMemberId}}',
+      recipients: {
+        to: 'test@twenty.com',
+        cc: '',
+        bcc: '',
+      },
+      subject: 'Welcome to Twenty!',
+      body: 'Hello',
+      files: [],
+      inReplyTo: '',
+    },
+    outputSchema: {},
+    errorHandlingOptions: {
+      retryOnFailure: {
+        value: false,
+      },
+      continueOnFailure: {
+        value: false,
+      },
+    },
+  },
+};
+
 const meta: Meta<typeof WorkflowEditActionEmailBase> = {
   title: 'Modules/Workflow/Actions/Email/EditAction',
   component: WorkflowEditActionEmailBase,
@@ -233,5 +263,24 @@ export const DraftEmail: Story = {
     expect(await canvas.findByText('Subject')).toBeVisible();
     expect(await canvas.findByText('Body')).toBeVisible();
     expect(await canvas.findByText('Advanced options')).toBeVisible();
+  },
+};
+
+export const VariableSender: Story = {
+  args: {
+    action: VARIABLE_SENDER_SEND_EMAIL_ACTION,
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // The sender is set to a variable, so the account is rendered as a
+    // removable variable chip instead of the connected-account select.
+    expect(await canvas.findByText('Account')).toBeVisible();
+    expect(
+      await canvas.findByLabelText('Remove variable'),
+    ).toBeInTheDocument();
   },
 };
