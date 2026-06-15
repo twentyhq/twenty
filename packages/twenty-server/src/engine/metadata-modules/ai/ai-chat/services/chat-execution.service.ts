@@ -85,6 +85,11 @@ export type ChatExecutionResult = {
   hasNoMoreAvailableCredits: () => boolean;
 };
 
+const METRICS_EXCLUDED_TOOL_NAMES = new Set<string>([
+  LEARN_TOOLS_TOOL_NAME,
+  LOAD_SKILL_TOOL_NAME,
+]);
+
 @Injectable()
 export class ChatExecutionService {
   private readonly logger = new Logger(ChatExecutionService.name);
@@ -464,6 +469,10 @@ export class ChatExecutionService {
 
         for (const part of step.content) {
           if (part.type !== 'tool-result' && part.type !== 'tool-error') {
+            continue;
+          }
+
+          if (METRICS_EXCLUDED_TOOL_NAMES.has(part.toolName)) {
             continue;
           }
 
