@@ -1,3 +1,4 @@
+import '@/settings/playground/utils/setupGraphiqlMonacoWorkers';
 import {
   isPlaygroundApiKeyFresh,
   playgroundApiKeyState,
