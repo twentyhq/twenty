@@ -12,7 +12,7 @@ import {
   type UIMessage,
   type UITools,
 } from 'ai';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, FileFolder } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -25,6 +25,7 @@ import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-pr
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import {
   createExecuteToolTool,
@@ -58,6 +59,7 @@ import {
   getCallLevelCacheProviderOptions,
   injectCacheBreakpoint,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-cache-breakpoint.util';
+import { inlineFilePartsAsBase64 } from 'src/engine/metadata-modules/ai/ai-chat/utils/inline-file-parts-as-base64.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
@@ -100,6 +102,7 @@ export class ChatExecutionService {
     private readonly nativeToolBinder: NativeToolBinderService,
     private readonly messagePruningService: MessagePruningService,
     private readonly metricsService: MetricsService,
+    private readonly fileService: FileService,
   ) {}
 
   async streamChat({
@@ -263,7 +266,19 @@ export class ChatExecutionService {
       providerOptions: getCacheProviderOptions(registeredModel.sdkPackage),
     };
 
-    const rawModelMessages = await convertToModelMessages(processedMessages);
+    const messagesWithInlinedFiles = await inlineFilePartsAsBase64(
+      processedMessages,
+      (fileId) =>
+        this.fileService.getFileContentById({
+          fileId,
+          workspaceId: workspace.id,
+          fileFolder: FileFolder.AgentChat,
+        }),
+    );
+
+    const rawModelMessages = await convertToModelMessages(
+      messagesWithInlinedFiles,
+    );
 
     const pruningResult =
       this.messagePruningService.pruneIfOverContextWindowLimit(

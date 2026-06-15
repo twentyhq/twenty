@@ -4,13 +4,11 @@ import { generateId } from 'ai';
 import {
   type ExtendedFileUIPart,
   type ExtendedUIMessagePart,
-  isExtendedFileUIPart,
 } from 'twenty-shared/ai';
 import { FileFolder } from 'twenty-shared/types';
 import { In, Like } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -57,7 +55,6 @@ export class AgentChatStreamingService {
     private readonly messageQueueService: MessageQueueService,
     private readonly agentChatService: AgentChatService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
-    private readonly fileUrlService: FileUrlService,
   ) {}
 
   async streamAgentChat({
@@ -271,31 +268,12 @@ export class AgentChatStreamingService {
       (message) => message.status !== AgentMessageStatus.QUEUED,
     );
 
-    return Promise.all(
-      filteredMessages.map(async (message) => ({
-        id: message.id,
-        role: message.role as 'user' | 'assistant' | 'system',
-        parts: await Promise.all(
-          mapDBPartsToUIMessageParts(message.parts ?? []).map(async (part) => {
-            if (isExtendedFileUIPart(part as Record<string, unknown>)) {
-              const filePart = part as ExtendedFileUIPart;
-
-              return {
-                ...filePart,
-                url: await this.fileUrlService.signFileByIdUrl({
-                  fileId: filePart.fileId,
-                  workspaceId,
-                  fileFolder: FileFolder.AgentChat,
-                }),
-              } as ExtendedFileUIPart;
-            }
-
-            return part;
-          }),
-        ),
-        createdAt: message.createdAt,
-      })),
-    );
+    return filteredMessages.map((message) => ({
+      id: message.id,
+      role: message.role as 'user' | 'assistant' | 'system',
+      parts: mapDBPartsToUIMessageParts(message.parts),
+      createdAt: message.createdAt,
+    }));
   }
 
   private async buildFilePartsFromAttachments(
