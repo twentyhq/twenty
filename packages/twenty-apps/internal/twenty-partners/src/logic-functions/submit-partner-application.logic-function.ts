@@ -106,14 +106,35 @@ function buildPartnerFields(input: SubmitPartnerApplicationInput): PartnerFields
   return fields;
 }
 
+// Reduce a URL to a comparable host key: lowercase, no protocol, no leading
+// "www.", no port/path. Lets http/https, www, casing and trailing-slash
+// variants of the same real domain resolve to one company.
+function normalizeDomainHost(
+  value: string | null | undefined,
+): string | undefined {
+  if (!isNonEmptyString(value)) return undefined;
+  const host = value
+    .trim()
+    .toLowerCase()
+    .replace(/^https?:\/\//, '')
+    .replace(/^www\./, '')
+    .replace(/[/:].*$/, '');
+  return host.length > 0 ? host : undefined;
+}
+
 // Company.domainName has a UNIQUE index, so a blind createCompany throws
 // "duplicate entry" whenever a company with the applicant's domain already
 // exists — which is common, since the TFT import seeds companies. Reuse that
 // company instead of creating a second one; only create when no domain matches.
-// We never rename the matched company: the CRM's existing name wins over the
-// applicant's free-text companyName.
-// ponytail: matches active rows only. A soft-deleted company still holds the
-// unique index and would re-collide — clear those with `yarn purge:prod`.
+// We dedupe on the normalized host (not the raw URL) so protocol/www/case
+// variants still match. The stored URLs are raw, so we prefilter server-side
+// with a broad ilike on the host, then confirm with an exact host comparison
+// in code (the ilike alone would match unrelated substrings). We never rename
+// the matched company: the CRM's existing name wins over the applicant's
+// free-text companyName.
+// ponytail: matches active rows only (a soft-deleted company still holds the
+// unique index — clear those with `yarn purge:prod`), and caps the prefilter at
+// 20 candidates, which is ample for a single real host.
 async function findOrCreateCompanyId(
   client: CoreApiClient,
   input: SubmitPartnerApplicationInput,
@@ -121,19 +142,22 @@ async function findOrCreateCompanyId(
   const domain = isNonEmptyString(input.domainName)
     ? input.domainName.trim()
     : undefined;
+  const host = normalizeDomainHost(domain);
 
-  if (domain !== undefined) {
+  if (host !== undefined) {
     const existing = await client.query({
       companies: {
         __args: {
-          filter: { domainName: { primaryLinkUrl: { eq: domain } } },
-          first: 1,
+          filter: { domainName: { primaryLinkUrl: { ilike: `%${host}%` } } },
+          first: 20,
         },
-        edges: { node: { id: true } },
+        edges: { node: { id: true, domainName: { primaryLinkUrl: true } } },
       },
     });
-    const existingId = existing.companies?.edges?.[0]?.node?.id;
-    if (existingId !== undefined) return existingId;
+    const match = existing.companies?.edges?.find(
+      (edge) => normalizeDomainHost(edge.node.domainName?.primaryLinkUrl) === host,
+    );
+    if (match !== undefined) return match.node.id;
   }
 
   const companyData: CoreSchema.CompanyCreateInput = {

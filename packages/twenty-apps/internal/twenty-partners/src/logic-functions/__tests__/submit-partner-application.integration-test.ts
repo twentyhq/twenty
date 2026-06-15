@@ -122,15 +122,18 @@ describe('submit-partner-application handler — upsert', () => {
     expect(personNode?.name?.lastName).toBe('Lovelace');
   });
 
-  it('reuses an existing company that already owns the applicant domain instead of failing on the unique domain index', async () => {
+  it('reuses an existing company for a protocol/www/case domain variant instead of failing on the unique domain index', async () => {
     // A company with this domain already exists (e.g. seeded by the TFT import,
     // with no Partner/Person attached). Company.domainName is uniquely indexed,
     // so a blind createCompany would throw "duplicate entry" and the whole
-    // submission would 502. The handler must reuse this company instead.
-    const domain = 'https://reuse-domain-case.example.com';
+    // submission would 502. The applicant submits a www/case/trailing-slash
+    // variant of the same real domain — the handler must still reuse the
+    // existing company via normalized-host matching.
+    const storedDomain = 'https://reuse-domain-case.example.com';
+    const submittedVariant = 'https://www.Reuse-Domain-Case.example.com/';
     const created = await client.mutation({
       createCompany: {
-        __args: { data: { name: 'Pre-existing Co', domainName: { primaryLinkUrl: domain } } },
+        __args: { data: { name: 'Pre-existing Co', domainName: { primaryLinkUrl: storedDomain } } },
         id: true,
       },
     });
@@ -144,7 +147,7 @@ describe('submit-partner-application handler — upsert', () => {
         baseInput({
           email: 'reuse.domain@example.com',
           companyName: 'Applicant Co',
-          domainName: domain,
+          domainName: submittedVariant,
         }),
       ),
     );
