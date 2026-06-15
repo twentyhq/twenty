@@ -31,3 +31,17 @@ export type CaseStudyCatalogEntry = {
   kpis: readonly CaseStudyKpi[];
   quote?: CaseStudyQuote;
 };
+
+export type CaseStudyStorySection = {
+  eyebrow: MessageDescriptor;
+  heading: MessageDescriptor;
+  paragraphs: readonly MessageDescriptor[];
+  callout?: CaseStudyQuote;
+};
+
+export type CaseStudyStory = {
+  meta: { title: MessageDescriptor; description: MessageDescriptor };
+  heroTitle: MessageDescriptor;
+  sections: readonly CaseStudyStorySection[];
+  tableOfContents: readonly MessageDescriptor[];
+};
