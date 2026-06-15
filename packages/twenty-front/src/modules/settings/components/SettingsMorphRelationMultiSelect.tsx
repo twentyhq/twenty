@@ -70,6 +70,7 @@ const StyledLabel = styled.span`
 const StyledDescription = styled.span`
   color: ${themeCssVariables.font.color.light};
   font-size: ${themeCssVariables.font.size.sm};
+  line-height: ${themeCssVariables.text.lineHeight.sm};
 `;
 
 const StyledError = styled.span`

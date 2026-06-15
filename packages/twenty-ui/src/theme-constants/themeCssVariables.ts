@@ -39,6 +39,7 @@ export const themeCssVariables = {
     lineHeight: {
       lg: 'var(--t-text-line-height-lg)',
       md: 'var(--t-text-line-height-md)',
+      sm: 'var(--t-text-line-height-sm)',
     },
     iconSizeMedium: 'var(--t-text-icon-size-medium)',
     iconSizeSmall: 'var(--t-text-icon-size-small)',
