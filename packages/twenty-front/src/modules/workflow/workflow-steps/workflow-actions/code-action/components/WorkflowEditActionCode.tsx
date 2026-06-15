@@ -199,7 +199,7 @@ export const WorkflowEditActionCode = ({
 
       const newMergedInput = mergeDefaultFunctionInputAndFunctionInput({
         newInput: newFunctionInput,
-        oldInput: action.settings.input.logicFunctionInput,
+        oldInput: latestActionRef.current.settings.input.logicFunctionInput,
       });
 
       const newMergedTestInput = mergeDefaultFunctionInputAndFunctionInput({
@@ -264,9 +264,14 @@ export const WorkflowEditActionCode = ({
 
     // A pending schema-inference update would reset the output schema back to
     // its LINK placeholder. If it fired after the test result resolved the real
-    // output schema, variables would resolve to "Not found". Cancel it so the
-    // test result is the source of truth for the output schema.
+    // output schema, variables would resolve to "Not found". Cancel the
+    // debounced inference and drop any output-schema reset already queued in
+    // the accumulator so the test result stays the source of truth.
     handleUpdateFunctionInputSchema.cancel();
+
+    const remainingPendingUpdate = { ...pendingSettingsUpdateRef.current };
+    delete remainingPendingUpdate.outputSchema;
+    pendingSettingsUpdateRef.current = remainingPendingUpdate;
 
     await executeLogicFunction();
   };
