@@ -30,11 +30,14 @@ const setBriefReviewLink = async (briefId: string): Promise<boolean> => {
 
   // Prod sets REVIEW_PAGE_BASE_URL as a workspace app variable; locally the dev
   // server is the zero-config default. `||` (not `??`) because an unset variable
-  // arrives as "". Never persist a localhost link in production: if it's
-  // unconfigured there, skip rather than store an unusable link.
-  const configured = process.env.REVIEW_PAGE_BASE_URL?.replace(/\/+$/, '');
-  if (!configured && process.env.NODE_ENV === 'production') return false;
-  const base = configured || 'http://localhost:3003';
+  // arrives as "".
+  // ponytail: an unset var is the same empty state locally and on prod, and the
+  // logic-function runtime doesn't reliably expose NODE_ENV — so there's no
+  // env-detection-free way to gate the default. Ceiling: if prod is ever left
+  // unconfigured the link points at localhost (useless but harmless, recoverable
+  // by setting the var and re-saving). The deploy runbook sets it; upgrade path
+  // is to require the var once the feature is in real prod use.
+  const base = (process.env.REVIEW_PAGE_BASE_URL || 'http://localhost:3003').replace(/\/+$/, '');
 
   await client.mutation({
     updateBrief: {
