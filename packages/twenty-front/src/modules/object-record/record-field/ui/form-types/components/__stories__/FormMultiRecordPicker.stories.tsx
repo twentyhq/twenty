@@ -26,6 +26,7 @@ const meta: Meta<typeof FormMultiRecordPicker> = {
     ComponentDecorator,
     WorkspaceDecorator,
     SnackBarDecorator,
+    RouterDecorator,
   ],
 };
 
@@ -96,13 +97,7 @@ export const WithVariable: Story = {
     onChange: fn(),
     VariablePicker: () => <div>VariablePicker</div>,
   },
-  decorators: [
-    WorkflowStepDecorator,
-    ComponentDecorator,
-    ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
-    RouterDecorator,
-  ],
+  decorators: [WorkflowStepDecorator],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
