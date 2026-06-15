@@ -26,6 +26,7 @@ type FormSelectFieldInputProps = {
   VariablePicker?: VariablePickerComponent;
   options: SelectOption[];
   readonly?: boolean;
+  isNullable?: boolean;
 };
 
 export const FormSelectFieldInput = ({
@@ -36,6 +37,7 @@ export const FormSelectFieldInput = ({
   VariablePicker,
   options,
   readonly,
+  isNullable = true,
 }: FormSelectFieldInputProps) => {
   const { theme } = useContext(ThemeContext);
   const instanceId = useId();
@@ -95,11 +97,13 @@ export const FormSelectFieldInput = ({
     (option) => option.value === draftValue.value,
   );
 
-  const defaultEmptyOption = {
-    label: label ? t`No ${label}` : t`No value`,
-    value: '',
-    icon: IconCircleOff,
-  };
+  const emptyOption = !isNullable
+    ? undefined
+    : {
+        label: label ? t`No ${label}` : t`No value`,
+        value: '',
+        icon: IconCircleOff,
+      };
 
   const handleUnlinkVariable = () => {
     setDraftValue({
@@ -138,7 +142,7 @@ export const FormSelectFieldInput = ({
             options={options}
             value={selectedOption?.value}
             onChange={onSelect}
-            emptyOption={defaultEmptyOption}
+            emptyOption={emptyOption}
             fullWidth
             hasRightElement={isDefined(VariablePicker) && !readonly}
             withSearchInput
