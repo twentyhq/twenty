@@ -18,10 +18,16 @@ interface QueryFailedErrorWithCode extends QueryFailedError {
   code?: string;
 }
 
-const CLIENT_CAUSED_SQL_STATE_CLASSES = [
-  POSTGRESQL_ERROR_CODES.DATA_EXCEPTION,
-  POSTGRESQL_ERROR_CODES.INTEGRITY_CONSTRAINT_VIOLATION,
-].map((sqlState) => sqlState.slice(0, 2));
+const CLIENT_CAUSED_ERROR_CODES = [
+  POSTGRESQL_ERROR_CODES.INVALID_TEXT_REPRESENTATION,
+  POSTGRESQL_ERROR_CODES.NOT_NULL_VIOLATION,
+  POSTGRESQL_ERROR_CODES.FOREIGN_KEY_VIOLATION,
+  POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION,
+  POSTGRESQL_ERROR_CODES.CHECK_VIOLATION,
+  POSTGRESQL_ERROR_CODES.NUMERIC_VALUE_OUT_OF_RANGE,
+  POSTGRESQL_ERROR_CODES.INVALID_DATETIME_FORMAT,
+  POSTGRESQL_ERROR_CODES.DATETIME_FIELD_OVERFLOW,
+];
 
 export const computeTwentyORMException = async (
   error: Error,
@@ -56,9 +62,9 @@ export const computeTwentyORMException = async (
       );
     }
 
-    if (errorCode === POSTGRESQL_ERROR_CODES.INVALID_TEXT_REPRESENTATION) {
+    if (isDefined(errorCode) && CLIENT_CAUSED_ERROR_CODES.includes(errorCode)) {
       return new TwentyORMException(
-        error.message, // safe and useful
+        error.message,
         TwentyORMExceptionCode.INVALID_INPUT,
       );
     }
@@ -67,13 +73,6 @@ export const computeTwentyORMException = async (
       isDefined(errorCode) &&
       Object.values(POSTGRESQL_ERROR_CODES).includes(errorCode)
     ) {
-      if (CLIENT_CAUSED_SQL_STATE_CLASSES.includes(errorCode.slice(0, 2))) {
-        return new TwentyORMException(
-          error.message,
-          TwentyORMExceptionCode.INVALID_INPUT,
-        );
-      }
-
       throw new PostgresException('Data validation error.', errorCode);
     }
     throw error;
