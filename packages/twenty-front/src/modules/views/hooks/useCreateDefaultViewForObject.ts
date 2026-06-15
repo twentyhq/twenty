@@ -2,6 +2,8 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
 import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { v4 } from 'uuid';
 import { ViewType } from '~/generated-metadata/graphql';
@@ -15,9 +17,18 @@ const pendingViewCreations = new Set<string>();
 export const useCreateDefaultViewForObject = () => {
   const { performViewAPICreate } = usePerformViewAPIPersist();
   const { performViewFieldAPICreate } = usePerformViewFieldAPIPersist();
+  const store = useStore();
 
   const createDefaultViewForObject = useCallback(
     async (objectMetadataItem: EnrichedObjectMetadataItem) => {
+      const objectAlreadyHasView = store
+        .get(viewsSelector.atom)
+        .some((view) => view.objectMetadataId === objectMetadataItem.id);
+
+      if (objectAlreadyHasView) {
+        return;
+      }
+
       if (pendingViewCreations.has(objectMetadataItem.id)) {
         return;
       }
@@ -77,7 +88,7 @@ export const useCreateDefaultViewForObject = () => {
         pendingViewCreations.delete(objectMetadataItem.id);
       }
     },
-    [performViewAPICreate, performViewFieldAPICreate],
+    [performViewAPICreate, performViewFieldAPICreate, store],
   );
 
   return {
