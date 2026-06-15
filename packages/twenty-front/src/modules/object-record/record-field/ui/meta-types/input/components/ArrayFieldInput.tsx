@@ -5,7 +5,7 @@ import { ArrayFieldMenuItem } from '@/object-record/record-field/ui/meta-types/i
 import { MultiItemFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInput';
 import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
 import { arrayFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/arrayFieldValueSchema';
-import { useContext, useMemo, useState, useEffect } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -44,17 +44,16 @@ export const ArrayFieldInput = () => {
     arrayItems.map(() => v4()),
   );
 
-  useEffect(() => {
-    setStableIds((prevIds) => {
-      if (arrayItems.length === prevIds.length) {
-        return prevIds;
-      }
-      if (arrayItems.length < prevIds.length) {
-        return prevIds.slice(0, arrayItems.length);
-      }
-      return getExtendedIds(prevIds, arrayItems.length);
-    });
-  }, [arrayItems.length]);
+  let currentStableIds = stableIds;
+
+  if (arrayItems.length !== stableIds.length) {
+    if (arrayItems.length < stableIds.length) {
+      currentStableIds = stableIds.slice(0, arrayItems.length);
+    } else {
+      currentStableIds = getExtendedIds(stableIds, arrayItems.length);
+    }
+    setStableIds(currentStableIds);
+  }
 
   const parseStringArrayToArrayValue = (items: string[]) => {
     const parseResponse = arrayFieldValueSchema.safeParse(items);
@@ -112,8 +111,8 @@ export const ArrayFieldInput = () => {
   };
 
   const getStableId = (index: number) => {
-    if (isDefined(stableIds[index])) {
-      return stableIds[index];
+    if (isDefined(currentStableIds[index])) {
+      return currentStableIds[index];
     }
     return index.toString();
   };

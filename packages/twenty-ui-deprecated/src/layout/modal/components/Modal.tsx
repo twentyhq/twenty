@@ -158,7 +158,7 @@ export const Modal = ({
           isInContainer={isInContainer}
         >
           <AnimatedModalDiv
-            ref={resolvedRef}
+            ref={resolvedRef as React.Ref<HTMLDivElement>}
             size={size}
             padding={padding}
             initial="hidden"
