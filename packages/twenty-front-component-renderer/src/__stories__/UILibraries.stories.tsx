@@ -20,6 +20,7 @@ const meta: Meta<typeof FrontComponentRenderer> = {
       userId: null,
       recordId: null,
       selectedRecordIds: [],
+      colorScheme: 'light',
     },
   },
   beforeEach: () => {
