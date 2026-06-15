@@ -52,7 +52,7 @@
     "@radix-ui/colors": "^3.0.0",
     "@sniptt/guards": "^0.2.0",
     "@tabler/icons-react": "^3.31.0",
-    "date-fns": "^2.30.0",
+    "date-fns": "^4.4.0",
     "framer-motion": "^11.18.0",
     "glob": "^11.1.0",
     "jotai": "^2.17.1",
