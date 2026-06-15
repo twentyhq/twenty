@@ -24,6 +24,4 @@ const renderApp = () => {
   root.render(<App />);
 };
 
-// Hydrate the metadata cache before mounting so getOnInit atoms read it
-// synchronously; render regardless if hydration fails.
 hydrateMetadataStore().then(renderApp, renderApp);

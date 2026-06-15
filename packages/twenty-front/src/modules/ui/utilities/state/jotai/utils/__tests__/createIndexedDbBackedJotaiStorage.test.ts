@@ -76,7 +76,6 @@ describe('createIndexedDbBackedJotaiStorage', () => {
     await hydrate();
 
     expect(localStorage.getItem('legacy')).toBeNull();
-    // Not migrated into IndexedDB; the atom re-fetches from the network.
     expect(mockedSet).not.toHaveBeenCalled();
     expect(storage.getItem('legacy', INITIAL)).toBe(INITIAL);
   });

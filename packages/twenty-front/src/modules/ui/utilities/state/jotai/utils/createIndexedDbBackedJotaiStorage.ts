@@ -33,7 +33,6 @@ const isIndexedDbAvailable = (): boolean => {
   try {
     return typeof indexedDB !== 'undefined' && indexedDB !== null;
   } catch {
-    // Accessing indexedDB throws when storage is disabled / sandboxed.
     return false;
   }
 };
@@ -41,15 +40,9 @@ const isIndexedDbAvailable = (): boolean => {
 const removeLocalStorageItem = (key: string): void => {
   try {
     localStorage.removeItem(key);
-  } catch {
-    // noop
-  }
+  } catch {}
 };
 
-// Synchronous Jotai storage backed by an in-memory map (so useAtomValue readers
-// never suspend), hydrated once from IndexedDB at boot and written through on
-// every set. Moves large caches off Safari's ~5MB localStorage cap and keeps
-// tabs in sync via a BroadcastChannel.
 export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
   legacyLocalStorageKeysToClear?: string[];
 }): IndexedDbBackedJotaiStorage<ValueType> => {
@@ -59,15 +52,12 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
     : undefined;
   let isHydrated = false;
 
-  // Persist failures (quota / blocked) are non-fatal: the in-memory map remains
-  // the source of truth for the session.
   const persist = (operation: Promise<unknown>): void => {
     void operation.catch(() => {});
   };
 
   const subscribers = new Map<string, Set<CrossTabSubscriber<ValueType>>>();
 
-  // BroadcastChannel never delivers a tab its own messages, so writes can't loop.
   const broadcastChannel: BroadcastChannel | null = (() => {
     try {
       return typeof BroadcastChannel !== 'undefined'
@@ -105,9 +95,7 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
   const broadcast = (message: CrossTabMessage<ValueType>): void => {
     try {
       broadcastChannel?.postMessage(message);
-    } catch {
-      // noop
-    }
+    } catch {}
   };
 
   const storage: JotaiSyncStorage<ValueType> = {
@@ -163,13 +151,9 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
         for (const [key, value] of persistedEntries) {
           memoryMap.set(key, value);
         }
-      } catch {
-        // noop
-      }
+      } catch {}
     }
 
-    // Free the quota held by the pre-IndexedDB localStorage snapshot. We don't
-    // migrate it — atoms re-fetch from the network instead.
     for (const key of options?.legacyLocalStorageKeysToClear ?? []) {
       removeLocalStorageItem(key);
     }
@@ -183,9 +167,7 @@ export const createIndexedDbBackedJotaiStorage = <ValueType>(options?: {
     if (isDefined(idbStore)) {
       try {
         await idbClear(idbStore);
-      } catch {
-        // noop
-      }
+      } catch {}
     }
   };
 

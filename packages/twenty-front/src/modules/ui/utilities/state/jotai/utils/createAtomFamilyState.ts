@@ -16,7 +16,6 @@ export const createAtomFamilyState = <ValueType, FamilyKey>({
   defaultValue: ValueType;
   useLocalStorage?: boolean;
   localStorageOptions?: { getOnInit?: boolean };
-  // When provided, takes precedence over useLocalStorage.
   storage?: JotaiSyncStorage<ValueType>;
 }): FamilyState<ValueType, FamilyKey> => {
   const atomCache = new Map<

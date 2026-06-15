@@ -54,8 +54,6 @@ const METADATA_STORE_ITEM_INITIAL_VALUE: MetadataStoreItem = {
 
 export const METADATA_STORE_KEY_PREFIX = 'metadataStoreState__';
 
-// Persisted to IndexedDB (not localStorage) so large workspace schemas don't hit
-// Safari's ~5MB localStorage cap.
 const { storage, hydrate, clear } =
   createIndexedDbBackedJotaiStorage<MetadataStoreItem>({
     legacyLocalStorageKeysToClear: ALL_METADATA_ENTITY_KEYS.map(
@@ -63,8 +61,6 @@ const { storage, hydrate, clear } =
     ),
   });
 
-// Must be awaited before the React tree mounts so atoms hydrate synchronously
-// (atomWithStorage getOnInit:true).
 export const hydrateMetadataStore = hydrate;
 
 export const clearMetadataStoreStorage = clear;
