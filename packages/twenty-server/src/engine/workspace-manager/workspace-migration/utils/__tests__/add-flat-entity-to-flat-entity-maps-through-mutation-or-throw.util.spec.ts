@@ -94,7 +94,7 @@ describe('addFlatEntityToFlatEntityMapsThroughMutationOrThrow', () => {
     );
   });
 
-  it('should build an application list in linear time for many entities', () => {
+  it('should retain every identifier when many entities share an applicationId', () => {
     const flatEntityMapsToMutate = createMaps();
     const entityCount = 20_000;
 
