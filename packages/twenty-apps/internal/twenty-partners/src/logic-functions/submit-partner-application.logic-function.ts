@@ -130,22 +130,21 @@ async function findOrCreateCompanyId(
   const host = normalizeDomainHost(domain);
 
   if (host !== undefined) {
-    const urlVariants = [
-      host,
-      `http://${host}`,
-      `https://${host}`,
-      `http://www.${host}`,
-      `https://www.${host}`,
-      `http://${host}/`,
-      `https://${host}/`,
-      `http://www.${host}/`,
-      `https://www.${host}/`,
-    ];
+    // eq for bare-domain forms; anchored ilike for any protocol/path variant.
+    // Each pattern is host-anchored so first:1 is safe — false positives can't
+    // page out the real match.
     const existing = await client.query({
       companies: {
         __args: {
           filter: {
-            or: urlVariants.map((v) => ({ domainName: { primaryLinkUrl: { eq: v } } })),
+            or: [
+              { domainName: { primaryLinkUrl: { eq: host } } },
+              { domainName: { primaryLinkUrl: { eq: `www.${host}` } } },
+              { domainName: { primaryLinkUrl: { ilike: `%://${host}` } } },
+              { domainName: { primaryLinkUrl: { ilike: `%://${host}/%` } } },
+              { domainName: { primaryLinkUrl: { ilike: `%://www.${host}` } } },
+              { domainName: { primaryLinkUrl: { ilike: `%://www.${host}/%` } } },
+            ],
           },
           first: 1,
         },
