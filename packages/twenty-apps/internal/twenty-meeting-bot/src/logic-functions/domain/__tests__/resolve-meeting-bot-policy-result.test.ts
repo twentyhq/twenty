@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { MeetingBotPreference } from 'src/logic-functions/constants/meeting-bot-preference';
+import { MeetingBotPreference } from 'src/constants/meeting-bot-preference';
 import { resolveMeetingBotPolicyResult } from 'src/logic-functions/domain/resolve-meeting-bot-policy-result.util';
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
@@ -10,35 +10,33 @@ const PAST_STARTS_AT = '2026-01-01T09:00:00.000Z';
 const PAST_ENDS_AT = '2026-01-01T10:00:00.000Z';
 
 describe('resolveMeetingBotPolicyResult', () => {
-  it('requires a bot when preference is ON and the event is upcoming', () => {
+  it('requires a bot when preference is AUTO and the event is upcoming', () => {
     expect(
       resolveMeetingBotPolicyResult({
         input: {
-          meetingBotPreference: MeetingBotPreference.ON,
+          meetingBotPreference: MeetingBotPreference.AUTO,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
           conferenceLinkUrl: 'https://meet.example.com/team-sync',
-          hasAutoRecordChannelOwner: false,
         },
         now: NOW,
       }),
     ).toEqual({
       shouldRequestBot: true,
-      reason: 'PREFERENCE_ON',
+      reason: 'WORKSPACE_AUTO_RECORD',
     });
   });
 
-  it('does not request a bot for ON when the meeting has no conference link', () => {
+  it('does not request a bot for AUTO when the meeting has no conference link', () => {
     expect(
       resolveMeetingBotPolicyResult({
         input: {
-          meetingBotPreference: MeetingBotPreference.ON,
+          meetingBotPreference: MeetingBotPreference.AUTO,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
           conferenceLinkUrl: undefined,
-          hasAutoRecordChannelOwner: true,
         },
         now: NOW,
       }),
@@ -48,7 +46,7 @@ describe('resolveMeetingBotPolicyResult', () => {
     });
   });
 
-  it('requires a bot without an override when a participating member has auto-record enabled', () => {
+  it('requires a bot without an event preference override', () => {
     expect(
       resolveMeetingBotPolicyResult({
         input: {
@@ -57,36 +55,16 @@ describe('resolveMeetingBotPolicyResult', () => {
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
           conferenceLinkUrl: 'https://meet.example.com/team-sync',
-          hasAutoRecordChannelOwner: true,
         },
         now: NOW,
       }),
     ).toEqual({
       shouldRequestBot: true,
-      reason: 'MEMBER_AUTO_RECORD',
+      reason: 'WORKSPACE_AUTO_RECORD',
     });
   });
 
-  it('does not request a bot without an override when no participating member has auto-record enabled', () => {
-    expect(
-      resolveMeetingBotPolicyResult({
-        input: {
-          meetingBotPreference: undefined,
-          isCanceled: false,
-          startsAt: FUTURE_STARTS_AT,
-          endsAt: FUTURE_ENDS_AT,
-          conferenceLinkUrl: 'https://meet.example.com/team-sync',
-          hasAutoRecordChannelOwner: false,
-        },
-        now: NOW,
-      }),
-    ).toEqual({
-      shouldRequestBot: false,
-      reason: 'NO_MEMBER_AUTO_RECORD',
-    });
-  });
-
-  it('lets an OFF override win over a member auto-record setting', () => {
+  it('lets an OFF event preference opt out of workspace auto-recording', () => {
     expect(
       resolveMeetingBotPolicyResult({
         input: {
@@ -95,7 +73,6 @@ describe('resolveMeetingBotPolicyResult', () => {
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
           conferenceLinkUrl: 'https://meet.example.com/team-sync',
-          hasAutoRecordChannelOwner: true,
         },
         now: NOW,
       }),
@@ -114,7 +91,6 @@ describe('resolveMeetingBotPolicyResult', () => {
           startsAt: PAST_STARTS_AT,
           endsAt: PAST_ENDS_AT,
           conferenceLinkUrl: 'https://meet.example.com/team-sync',
-          hasAutoRecordChannelOwner: true,
         },
         now: NOW,
       }),
@@ -124,7 +100,7 @@ describe('resolveMeetingBotPolicyResult', () => {
     });
   });
 
-  it('does not request a bot for a canceled meeting even with auto-record participants', () => {
+  it('does not request a bot for a canceled meeting', () => {
     expect(
       resolveMeetingBotPolicyResult({
         input: {
@@ -133,7 +109,6 @@ describe('resolveMeetingBotPolicyResult', () => {
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
           conferenceLinkUrl: 'https://meet.example.com/team-sync',
-          hasAutoRecordChannelOwner: true,
         },
         now: NOW,
       }),

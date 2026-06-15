@@ -7,8 +7,4 @@ export type MeetingBotPolicyCalendarEventInput = {
   iCalUid: string | undefined;
   conferenceLinkUrl: string | undefined;
   meetingBotPreference: string | undefined;
-  calendarChannelOwners: {
-    workspaceMemberId: string | undefined;
-    workspaceMemberMeetingBotAutoRecordEnabled: boolean;
-  }[];
 };

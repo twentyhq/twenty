@@ -1,3 +1,1 @@
-export type MeetingBotPolicyRequiredReason =
-  | 'PREFERENCE_ON'
-  | 'MEMBER_AUTO_RECORD';
+export type MeetingBotPolicyRequiredReason = 'WORKSPACE_AUTO_RECORD';

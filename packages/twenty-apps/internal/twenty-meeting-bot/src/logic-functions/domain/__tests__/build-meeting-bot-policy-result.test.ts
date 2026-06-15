@@ -15,46 +15,33 @@ const buildCalendarEventInput = (
   iCalUid: 'ical-uid-1',
   conferenceLinkUrl: 'https://meet.example.com/customer-sync',
   meetingBotPreference: undefined,
-  calendarChannelOwners: [],
   ...overrides,
 });
 
 describe('buildMeetingBotPolicyResult', () => {
-  it('treats the AUTO wire value as no override and follows channel owner auto-record settings', () => {
+  it('requests a bot for the AUTO wire value', () => {
     const policyResult = buildMeetingBotPolicyResult(
       buildCalendarEventInput({
         meetingBotPreference: 'AUTO',
-        calendarChannelOwners: [
-          {
-            workspaceMemberId: 'workspace-member-1',
-            workspaceMemberMeetingBotAutoRecordEnabled: true,
-          },
-        ],
       }),
       NOW,
     );
 
-    expect(policyResult.meetingBotPreference).toBeUndefined();
+    expect(policyResult.meetingBotPreference).toBe('AUTO');
     expect(policyResult.shouldRequestBot).toBe(true);
-    expect(policyResult.reason).toBe('MEMBER_AUTO_RECORD');
+    expect(policyResult.reason).toBe('WORKSPACE_AUTO_RECORD');
   });
 
-  it('does not request a bot for AUTO when no syncing member has auto-record enabled', () => {
+  it('does not request a bot for the OFF wire value', () => {
     const policyResult = buildMeetingBotPolicyResult(
       buildCalendarEventInput({
-        meetingBotPreference: 'AUTO',
-        calendarChannelOwners: [
-          {
-            workspaceMemberId: 'workspace-member-1',
-            workspaceMemberMeetingBotAutoRecordEnabled: false,
-          },
-        ],
+        meetingBotPreference: 'OFF',
       }),
       NOW,
     );
 
-    expect(policyResult.meetingBotPreference).toBeUndefined();
+    expect(policyResult.meetingBotPreference).toBe('OFF');
     expect(policyResult.shouldRequestBot).toBe(false);
-    expect(policyResult.reason).toBe('NO_MEMBER_AUTO_RECORD');
+    expect(policyResult.reason).toBe('PREFERENCE_OFF');
   });
 });

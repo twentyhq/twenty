@@ -3,7 +3,6 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
-import { MeetingBotPreference } from 'src/logic-functions/constants/meeting-bot-preference';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { type MeetingBotPolicyResultForMeeting } from 'src/logic-functions/types/meeting-bot-policy-result-for-meeting.type';
@@ -23,7 +22,6 @@ import { fetchCalendarEventsByStartsAtValues } from 'src/logic-functions/data/fe
 import { findCallRecordingsByCalendarEventIds } from 'src/logic-functions/data/find-call-recordings-by-calendar-event-ids.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
-import { isWithinMeetingBotAutoRecordJoinWindow } from 'src/logic-functions/domain/is-within-meeting-bot-auto-record-join-window.util';
 import { rescheduleCallRecordingBot } from 'src/logic-functions/flows/reschedule-call-recording-bot.util';
 import {
   updateCallRecording,
@@ -52,7 +50,6 @@ export const reconcileMeetingBotForCalendarEventIds = async ({
     client,
     meetingPolicyResults,
     removedOccurrences,
-    now,
   });
 };
 
@@ -161,12 +158,10 @@ const reconcileMeetingBotForMeetingOccurrences = async ({
   client,
   meetingPolicyResults,
   removedOccurrences = [],
-  now,
 }: {
   client: CoreApiClient;
   meetingPolicyResults: MeetingBotPolicyResultForMeeting[];
   removedOccurrences?: RemovedMeetingBotOccurrence[];
-  now: Date;
 }): Promise<MeetingBotReconciliationResult[]> => {
   const removedCalendarEventIdsByMeetingKey =
     buildRemovedCalendarEventIdsByMeetingKey(removedOccurrences);
@@ -193,7 +188,6 @@ const reconcileMeetingBotForMeetingOccurrences = async ({
               client,
               meetingPolicyResult,
               removedCalendarEventIds,
-              now,
             })
           : await reconcileCanceledMeeting({
               client,
@@ -223,12 +217,10 @@ const reconcileActiveMeeting = async ({
   client,
   meetingPolicyResult,
   removedCalendarEventIds,
-  now,
 }: {
   client: CoreApiClient;
   meetingPolicyResult: MeetingBotPolicyResultForMeeting;
   removedCalendarEventIds: string[];
-  now: Date;
 }): Promise<MeetingBotReconciliationResult> => {
   const representativeCalendarEventId = getUniqueSortedIds(
     meetingPolicyResult.requestingCalendarEventIds,
@@ -276,17 +268,6 @@ const reconcileActiveMeeting = async ({
     };
   }
 
-  if (
-    representativeCalendarEvent.meetingBotPreference !==
-      MeetingBotPreference.ON &&
-    !isWithinMeetingBotAutoRecordJoinWindow({
-      startsAt: representativeCalendarEvent.startsAt,
-      now,
-    })
-  ) {
-    return buildSkippedResult(meetingPolicyResult.realMeetingKey);
-  }
-
   return createPolicyManagedCallRecording({
     client,
     callRecordingId,
@@ -314,6 +295,10 @@ const updatePolicyManagedCallRecording = async ({
     }),
   });
   await rescheduleCallRecordingBot(client, {
+    callRecording: existingCallRecording,
+    calendarEvent: representativeCalendarEvent,
+  });
+  await ensureMeetingBot(client, {
     callRecording: existingCallRecording,
     calendarEvent: representativeCalendarEvent,
   });

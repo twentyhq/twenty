@@ -36,7 +36,7 @@ export const rescheduleCallRecordingBot = async (
     return;
   }
 
-  // The bot vanished externally; drop the id so the convergence cron re-creates it as the single writer.
+  // The caller re-runs ensureMeetingBot so this botless REQUESTED row is re-created by the single writer.
   if (rescheduleResult.status === RECALL_BOT_NOT_FOUND_STATUS) {
     await updateCallRecording(client, {
       id: callRecording.id,

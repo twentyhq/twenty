@@ -1,4 +1,4 @@
-import { MeetingBotPreference } from 'src/logic-functions/constants/meeting-bot-preference';
+import { MeetingBotPreference } from 'src/constants/meeting-bot-preference';
 import { type MeetingBotPolicyCalendarEventInput } from 'src/logic-functions/types/meeting-bot-policy-calendar-event-input.type';
 import { type MeetingBotPolicyResultForCalendarEvent } from 'src/logic-functions/types/meeting-bot-policy-result-for-calendar-event.type';
 import { computeRealMeetingKey } from 'src/logic-functions/domain/compute-real-meeting-key.util';
@@ -15,10 +15,6 @@ export const buildMeetingBotPolicyResult = (
     startsAt: calendarEvent.startsAt,
   });
 
-  const hasAutoRecordChannelOwner = calendarEvent.calendarChannelOwners.some(
-    (channelOwner) =>
-      channelOwner.workspaceMemberMeetingBotAutoRecordEnabled === true,
-  );
   const meetingBotPreference = normalizeMeetingBotPreference(
     calendarEvent.meetingBotPreference,
   );
@@ -30,7 +26,6 @@ export const buildMeetingBotPolicyResult = (
       startsAt: calendarEvent.startsAt,
       endsAt: calendarEvent.endsAt,
       conferenceLinkUrl: calendarEvent.conferenceLinkUrl,
-      hasAutoRecordChannelOwner,
     },
     now,
   });

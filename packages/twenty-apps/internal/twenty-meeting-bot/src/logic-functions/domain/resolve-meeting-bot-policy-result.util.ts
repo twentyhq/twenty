@@ -1,4 +1,4 @@
-import { MeetingBotPreference } from 'src/logic-functions/constants/meeting-bot-preference';
+import { MeetingBotPreference } from 'src/constants/meeting-bot-preference';
 import { type MeetingBotPolicyInput } from 'src/logic-functions/types/meeting-bot-policy-input.type';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import { type MeetingBotPolicyNotRequiredReason } from 'src/logic-functions/types/meeting-bot-policy-not-required-reason.type';
@@ -36,15 +36,7 @@ export const resolveMeetingBotPolicyResult = ({
     return botNotRequired('EVENT_NOT_UPCOMING');
   }
 
-  if (input.meetingBotPreference === MeetingBotPreference.ON) {
-    return botRequired('PREFERENCE_ON');
-  }
-
-  if (input.hasAutoRecordChannelOwner) {
-    return botRequired('MEMBER_AUTO_RECORD');
-  }
-
-  return botNotRequired('NO_MEMBER_AUTO_RECORD');
+  return botRequired('WORKSPACE_AUTO_RECORD');
 };
 
 const isCalendarEventInFuture = ({

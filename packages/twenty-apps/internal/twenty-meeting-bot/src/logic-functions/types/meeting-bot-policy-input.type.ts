@@ -1,4 +1,4 @@
-import { type MeetingBotPreference } from 'src/logic-functions/constants/meeting-bot-preference';
+import { type MeetingBotPreference } from 'src/constants/meeting-bot-preference';
 
 export type MeetingBotPolicyInput = {
   meetingBotPreference: MeetingBotPreference | undefined;
@@ -6,5 +6,4 @@ export type MeetingBotPolicyInput = {
   startsAt: string | undefined;
   endsAt: string | undefined;
   conferenceLinkUrl: string | undefined;
-  hasAutoRecordChannelOwner: boolean;
 };
