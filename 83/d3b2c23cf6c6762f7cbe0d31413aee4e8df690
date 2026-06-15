@@ -1,0 +1,39 @@
+packages/twenty-front/src/modules/workflow/types/EmailFormData.ts
+  s_ad06bf65e6995b::t_6bc33efe217deb 3,11
+packages/twenty-server/src/engine/core-modules/tool/tools/email-tool/constants/email-attachment-file-folders.const.ts
+  s_ad06bf65e6995b::t_6bc33efe217deb 1-7
+packages/twenty-front/src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
+  s_ad06bf65e6995b::t_6bc33efe217deb 388,392
+packages/twenty-server/src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
+  s_ad06bf65e6995b::t_6bc33efe217deb 18,226,391
+packages/twenty-server/src/engine/core-modules/file/services/file.service.ts
+  s_ad06bf65e6995b::t_6bc33efe217deb 84,88,100-105,124
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/mail-sender/email-workflow-action.base.ts
+  s_ad06bf65e6995b::t_6bc33efe217deb 12,22,24-26,28
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-input.type.ts
+  s_ad06bf65e6995b::t_6bc33efe217deb 1,9
+packages/twenty-front/src/modules/advanced-text-editor/components/WorkflowSendEmailAttachments.tsx
+  s_ad06bf65e6995b::t_6bc33efe217deb 4-5,7,11,13,21-22,24-25,33-38,41-48,50,72-75,89-90,92,111-114,121-126,129-130,135-180
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/resolve-email-files.util.ts
+  s_ad06bf65e6995b::t_6bc33efe217deb 1-40
+packages/twenty-shared/src/workflow/schemas/send-email-action-settings-schema.ts
+  s_ad06bf65e6995b::t_6bc33efe217deb 5-18,30
+packages/twenty-shared/src/workflow/index.ts
+  s_ad06bf65e6995b::t_6bc33efe217deb 51-55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "83d3b2c23cf6c6762f7cbe0d31413aee4e8df690",
+  "prompts": {},
+  "sessions": {
+    "s_ad06bf65e6995b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "60236852-0858-4310-a82b-0f399a218d71",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}

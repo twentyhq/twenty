@@ -1,0 +1,26 @@
+packages/twenty-front/src/modules/advanced-text-editor/components/WorkflowSendEmailAttachments.tsx
+  s_ad06bf65e6995b::t_f2def2b7c897e7 144
+  s_ad06bf65e6995b::t_d3d8b0b2317d81 8
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/resolve-email-files.util.ts
+  s_ad06bf65e6995b::t_0c2ed87065b070 35-37,39
+packages/twenty-server/src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/__tests__/resolve-email-files.util.spec.ts
+  s_ad06bf65e6995b::t_b2702175ae8e59 52-57
+packages/twenty-shared/src/workflow/schemas/send-email-action-settings-schema.ts
+  s_ad06bf65e6995b::t_733893c5139156 9-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "31949315b8fe56938d3921c40d5d6779317367b8",
+  "prompts": {},
+  "sessions": {
+    "s_ad06bf65e6995b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "60236852-0858-4310-a82b-0f399a218d71",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
