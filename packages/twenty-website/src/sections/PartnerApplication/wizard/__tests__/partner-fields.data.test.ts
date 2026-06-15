@@ -2,6 +2,7 @@ import {
   PARTNER_SCOPE_VALUES,
   PARTNER_SCOPE_OPTIONS,
   PARTNER_SKILL_SUGGESTIONS,
+  PARTNER_SKILL_POOL,
   PARTNER_APPLICATION_STEP_REQUIRED_FIELDS,
 } from '@/sections/PartnerApplication/wizard/partner-fields.data';
 
@@ -29,7 +30,12 @@ describe('partner-fields.data', () => {
 
   it('ships a non-empty starter skills suggestion pool', () => {
     expect(PARTNER_SKILL_SUGGESTIONS.length).toBeGreaterThan(0);
-    expect(PARTNER_SKILL_SUGGESTIONS).toContain('React');
+    expect(PARTNER_SKILL_SUGGESTIONS).toContain('Data migration');
+  });
+
+  it('ships a non-empty searchable skill pool containing technical entries', () => {
+    expect(PARTNER_SKILL_POOL.length).toBeGreaterThan(0);
+    expect(PARTNER_SKILL_POOL).toContain('React');
   });
 
   it('requires country, typeOfTeam, and city on profile, partnerScope on expertise', () => {

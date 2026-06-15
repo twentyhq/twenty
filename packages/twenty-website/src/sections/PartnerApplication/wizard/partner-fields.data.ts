@@ -71,25 +71,30 @@ export const PARTNER_SCOPE_OPTIONS: ReadonlyArray<{
   },
 ];
 
+// Shown as ghost chips by default — a short, mixed (technical + PLM) starter set.
 export const PARTNER_SKILL_SUGGESTIONS: ReadonlyArray<string> = [
-  'React',
-  'TypeScript',
-  'Node.js',
-  'Python',
-  'PostgreSQL',
-  'GraphQL',
-  'n8n',
-  'Zapier',
-  'Make',
-  'Salesforce',
-  'HubSpot',
-  'SAP',
-  'Shopify',
-  'Stripe',
-  'Docker',
-  'Kubernetes',
-  'AWS',
-  'GCP',
+  'Data migration',
+  'Workflows',
+  'Integrations',
+  'Custom development',
+  'Self-hosting',
+  'Data modeling',
+  'CRM strategy',
+  'Change management',
+  'Training & onboarding',
+  'AI / agents',
+];
+
+// Searchable-only (autocomplete) — broad coverage incl. non-technical / PLM.
+// Not rendered as chips; surfaced when the applicant types a match.
+export const PARTNER_SKILL_POOL: ReadonlyArray<string> = [
+  'React', 'TypeScript', 'Node.js', 'Python', 'PostgreSQL', 'GraphQL', 'Docker', 'Kubernetes', 'AWS', 'GCP',
+  'n8n', 'Zapier', 'Make', 'Salesforce', 'HubSpot', 'Salesforce migration', 'HubSpot migration', 'SAP', 'Shopify', 'Stripe',
+  'SSO / SCIM', 'Dashboards & reporting', 'Pipelines', 'Multi-language',
+  'RevOps', 'Sales ops', 'Requirements gathering', 'Process mapping', 'Vendor selection', 'CRM audit',
+  'Solution architecture', 'Managed services', 'L1/L2 support', 'Documentation', 'Onboarding', 'Adoption',
+  'GDPR / data privacy', 'Compliance', 'Enterprise support', 'Scaling', 'Monitoring', 'Security',
+  'Real estate', 'B2B SaaS',
 ];
 
 export const PARTNER_COUNTRY_VALUES = [
