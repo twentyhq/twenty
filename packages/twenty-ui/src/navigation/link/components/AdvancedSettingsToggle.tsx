@@ -1,4 +1,3 @@
-import { IconPoint } from '@ui/display';
 import { Toggle } from '@ui/input';
 import { ThemeContext } from '@ui/theme-constants';
 import { clsx } from 'clsx';
@@ -16,7 +15,7 @@ type AdvancedSettingsToggleProps = {
 export const AdvancedSettingsToggle = ({
   isAdvancedModeEnabled,
   setIsAdvancedModeEnabled,
-  label = 'Advanced:',
+  label = 'Advanced',
   className,
 }: AdvancedSettingsToggleProps) => {
   const { theme } = useContext(ThemeContext);
@@ -26,23 +25,15 @@ export const AdvancedSettingsToggle = ({
   };
   const instanceId = useId();
 
-  const yellowColor = theme.color.yellow;
-
   return (
-    <div className={clsx(styles.container, className)}>
-      <div className={styles.iconContainer}>
-        <IconPoint size={12} color={yellowColor} fill={yellowColor} />
-      </div>
-      <label className={styles.toggleContainer} htmlFor={instanceId}>
-        <div className={styles.text}>{label}</div>
-
-        <Toggle
-          id={instanceId}
-          onChange={onChange}
-          color={yellowColor}
-          value={isAdvancedModeEnabled}
-        />
-      </label>
-    </div>
+    <label className={clsx(styles.container, className)} htmlFor={instanceId}>
+      <div className={styles.text}>{label}</div>
+      <Toggle
+        id={instanceId}
+        onChange={onChange}
+        color={theme.color.yellow}
+        value={isAdvancedModeEnabled}
+      />
+    </label>
   );
 };
