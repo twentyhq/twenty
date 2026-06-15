@@ -50,11 +50,12 @@ import {
   type ViewManifest,
 } from 'twenty-shared/application';
 import {
+  buildKnownObjectTypes,
   getInputSchemaFromSourceCode,
   jsonSchemaToInputSchema,
 } from 'twenty-shared/logic-function';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { assertUnreachable, capitalize } from 'twenty-shared/utils';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -460,22 +461,18 @@ export const buildManifest = async (
     }
   }
 
-  const knownObjectTypes = {
-    ...Object.fromEntries(
-      Object.entries(STANDARD_OBJECTS).map(
-        ([nameSingular, standardObject]) => [
-          capitalize(nameSingular),
-          standardObject.universalIdentifier,
-        ],
-      ),
+  const knownObjectTypes = buildKnownObjectTypes([
+    ...Object.entries(STANDARD_OBJECTS).map(
+      ([nameSingular, standardObject]) => ({
+        nameSingular,
+        universalIdentifier: standardObject.universalIdentifier,
+      }),
     ),
-    ...Object.fromEntries(
-      objects.map((object) => [
-        capitalize(object.nameSingular),
-        object.universalIdentifier,
-      ]),
-    ),
-  };
+    ...objects.map((object) => ({
+      nameSingular: object.nameSingular,
+      universalIdentifier: object.universalIdentifier,
+    })),
+  ]);
 
   for (const {
     config: pendingConfig,

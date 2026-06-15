@@ -6,11 +6,12 @@ import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogic
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useMemo } from 'react';
 import {
+  buildKnownObjectTypes,
   getInputSchemaFromSourceCode,
   jsonSchemaToInputSchema,
   type InputJsonSchema,
 } from 'twenty-shared/logic-function';
-import { capitalize, isEmptyObject } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
 export const useLogicFunctionForm = ({
@@ -26,13 +27,7 @@ export const useLogicFunctionForm = ({
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const knownObjectTypes = useMemo(
-    () =>
-      Object.fromEntries(
-        objectMetadataItems.map((objectMetadataItem) => [
-          capitalize(objectMetadataItem.nameSingular),
-          objectMetadataItem.universalIdentifier,
-        ]),
-      ),
+    () => buildKnownObjectTypes(objectMetadataItems),
     [objectMetadataItems],
   );
 
@@ -55,12 +50,9 @@ export const useLogicFunctionForm = ({
           { knownObjectTypes },
         );
 
-        // Inference yields an empty schema for handlers typed with imported
-        // aliases; keep the stored schemas instead of wiping authored ones.
-        const hasInferredProperties = !isEmptyObject(
-          inferredJsonSchema.properties ?? {},
-        );
-
+        // Inference returns undefined when the params type cannot be derived
+        // (e.g. an imported alias); keep the stored schemas instead of wiping
+        // authored ones. An inferred empty schema still clears stale inputs.
         setFormValues((prevState: LogicFunctionFormValues) => ({
           ...prevState,
           sourceHandlerCode: value as string,
@@ -69,7 +61,7 @@ export const useLogicFunctionForm = ({
           toolTriggerSettings: prevState.toolTriggerSettings
             ? {
                 ...prevState.toolTriggerSettings,
-                inputSchema: hasInferredProperties
+                inputSchema: isDefined(inferredJsonSchema)
                   ? inferredJsonSchema
                   : prevState.toolTriggerSettings.inputSchema,
               }
@@ -77,7 +69,7 @@ export const useLogicFunctionForm = ({
           workflowActionTriggerSettings: prevState.workflowActionTriggerSettings
             ? {
                 ...prevState.workflowActionTriggerSettings,
-                inputSchema: hasInferredProperties
+                inputSchema: isDefined(inferredJsonSchema)
                   ? jsonSchemaToInputSchema(inferredJsonSchema)
                   : prevState.workflowActionTriggerSettings.inputSchema,
               }

@@ -18,9 +18,8 @@ import {
 } from 'typescript';
 
 import { type InputJsonSchema } from '@/logic-function';
+import { type KnownObjectTypes } from '@/logic-function/known-object-types';
 import { isDefined } from '@/utils/validation/isDefined';
-
-export type KnownObjectTypes = Record<string, string>;
 
 const getTypeString = (
   typeNode: TypeNode,

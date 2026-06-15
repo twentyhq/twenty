@@ -4,10 +4,13 @@ import {
   type InputJsonSchema,
 } from '@/logic-function';
 
+// Returns the inferred params object schema, or undefined when the params type
+// cannot be inferred (e.g. an imported type alias). Callers must treat undefined
+// as "leave the existing schema untouched" and an empty schema as "no inputs".
 export const getInputSchemaFromSourceCode = async (
   sourceCode: string,
   options?: { knownObjectTypes?: Record<string, string> },
-): Promise<InputJsonSchema> => {
+): Promise<InputJsonSchema | undefined> => {
   const { getFunctionInputSchema } =
     await import('./get-function-input-schema');
   const inputSchema = getFunctionInputSchema(sourceCode, options);
@@ -22,5 +25,9 @@ export const getInputSchemaFromSourceCode = async (
     };
   }
 
-  return DEFAULT_TOOL_INPUT_SCHEMA;
+  if (inputSchema.length === 0) {
+    return DEFAULT_TOOL_INPUT_SCHEMA;
+  }
+
+  return undefined;
 };

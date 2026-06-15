@@ -149,7 +149,7 @@ export const WorkflowEditActionCodeFieldLeaf = ({
     <FormTextFieldInput
       label={label}
       placeholder={t`Enter value`}
-      defaultValue={inputValue ? `${inputValue}` : ''}
+      defaultValue={isDefined(inputValue) ? `${inputValue}` : ''}
       readonly={readonly}
       onChange={onChange}
       VariablePicker={VariablePicker}

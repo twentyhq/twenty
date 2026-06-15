@@ -13,10 +13,21 @@ describe('getInputSchemaFromSourceCode', () => {
     const result = await getInputSchemaFromSourceCode(fileContent);
     expect(result).toEqual(DEFAULT_TOOL_INPUT_SCHEMA);
   });
-  it('should return empty input if wrong parameter', async () => {
+  it('should return undefined for a non-object parameter type', async () => {
     const fileContent = 'function testFunction(params: string) { return }';
     const result = await getInputSchemaFromSourceCode(fileContent);
-    expect(result).toEqual(DEFAULT_TOOL_INPUT_SCHEMA);
+    expect(result).toBeUndefined();
+  });
+  it('should return undefined when the params type cannot be inferred', async () => {
+    const fileContent =
+      'function testFunction(params: ImportedAlias) { return }';
+    const result = await getInputSchemaFromSourceCode(fileContent);
+    expect(result).toBeUndefined();
+  });
+  it('should return an empty schema for an inline empty params object', async () => {
+    const fileContent = 'function testFunction(params: {}) { return }';
+    const result = await getInputSchemaFromSourceCode(fileContent);
+    expect(result).toEqual({ type: 'object', properties: {} });
   });
   it('should forward known object types to the schema inference', async () => {
     const fileContent = `
