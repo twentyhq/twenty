@@ -30,6 +30,7 @@ const StyledTableContainer = styled.div`
   flex-direction: column;
   height: 100%;
   width: fit-content;
+  position: relative;
 `;
 
 export interface RecordTableContentProps {
