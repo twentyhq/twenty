@@ -774,6 +774,12 @@ export enum CalendarChannelContactAutoCreationPolicy {
   NONE = 'NONE'
 }
 
+export type CalendarChannelOwner = {
+  __typename?: 'CalendarChannelOwner';
+  calendarChannelId: Scalars['UUID']['output'];
+  workspaceMemberId?: Maybe<Scalars['UUID']['output']>;
+};
+
 export enum CalendarChannelSyncStage {
   CALENDAR_EVENTS_IMPORT_ONGOING = 'CALENDAR_EVENTS_IMPORT_ONGOING',
   CALENDAR_EVENTS_IMPORT_PENDING = 'CALENDAR_EVENTS_IMPORT_PENDING',
@@ -4217,6 +4223,7 @@ export type Query = {
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']['output']>;
   barChartData: BarChartData;
   billingPortalSession: BillingSession;
+  calendarChannelOwners: Array<CalendarChannelOwner>;
   chatMessages: Array<AgentMessage>;
   chatStreamCatchupChunks: ChatStreamCatchupChunks;
   chatThread: AgentChatThread;
@@ -4352,6 +4359,11 @@ export type QueryBarChartDataArgs = {
 
 export type QueryBillingPortalSessionArgs = {
   returnUrlPath?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryCalendarChannelOwnersArgs = {
+  calendarChannelIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
 };
 
 

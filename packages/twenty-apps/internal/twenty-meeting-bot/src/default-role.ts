@@ -11,7 +11,7 @@ export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: `${APP_DISPLAY_NAME} default role`,
   description:
-    'Reads calendar events, their calendar channel associations, and workspace member auto-record settings to decide whether the meeting bot should attend a meeting; writes and converges the resulting CallRecording records and serves the transcript viewer front component.',
+    'Reads calendar events, their calendar channel associations, and workspace member auto-record settings to decide whether the meeting bot should attend a meeting; writes the resulting CallRecording records.',
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
@@ -57,10 +57,6 @@ export default defineApplicationRole({
     },
   ],
   fieldPermissions: [],
-  // UPLOAD_FILE: media ingestion uploads Recall artifacts into FILES fields.
   // CONNECTED_ACCOUNTS: calendarChannelOwners resolves whose calendar synced a meeting.
-  permissionFlagUniversalIdentifiers: [
-    SystemPermissionFlag.UPLOAD_FILE,
-    SystemPermissionFlag.CONNECTED_ACCOUNTS,
-  ],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.CONNECTED_ACCOUNTS],
 });
