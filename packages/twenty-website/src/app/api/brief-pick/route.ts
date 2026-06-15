@@ -7,11 +7,15 @@ import {
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
-// z.url() (not z.httpUrl) so localhost destinations are accepted in dev.
+// z.url() (not z.httpUrl) so localhost destinations are accepted in dev, but
+// constrain the scheme to http(s) so a misconfigured base fails fast.
 const pickUrlSchema = z
   .string()
   .trim()
-  .pipe(z.url({ error: 'Invalid pick URL.' }));
+  .pipe(z.url({ error: 'Invalid pick URL.' }))
+  .refine((value) => /^https?:\/\//i.test(value), {
+    error: 'Pick URL must use http or https.',
+  });
 const secretSchema = z.string().trim().min(1);
 const bodySchema = z.object({
   token: z.string().trim().min(1),

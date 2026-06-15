@@ -20,7 +20,7 @@ import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { IconArrowUpRight, IconCheck } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export type Candidate = {
   applicationId: string;
@@ -623,14 +623,6 @@ export function BriefReviewPageContent({
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Clear the in-flight flag once fresh server data arrives after a pick
-  // (router.refresh updates `data`), so the other cards re-enable instead of
-  // staying stuck on "Saving…".
-  const pickedId = data.ok ? data.picked : null;
-  useEffect(() => {
-    setPendingId(null);
-  }, [pickedId]);
-
   if (!data.ok) {
     return (
       <Page>
@@ -663,12 +655,15 @@ export function BriefReviewPageContent({
       });
       if (!res.ok) {
         setError('We could not record your choice. Please try again.');
-        setPendingId(null);
         return;
       }
+      // Pull fresh server data (the picked state), then clear the in-flight flag
+      // unconditionally — never relies on `picked` changing, so re-picking the
+      // same partner can't leave a card stuck on "Saving…".
       router.refresh();
     } catch {
       setError('We could not record your choice. Please try again.');
+    } finally {
       setPendingId(null);
     }
   };
