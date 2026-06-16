@@ -130,25 +130,31 @@ async function findOrCreateCompanyId(
   const host = normalizeDomainHost(domain);
 
   if (host !== undefined) {
-    // Broad ilike catches all stored URL forms (bare domain, any protocol, paths,
-    // www variants). Client-side normalization filters false positives.
-    // first:20 is a safe bound — a specific domain substring appears in at most
-    // one or two CRM records in practice, so the real match is never paged out.
-    const existing = await client.query({
-      companies: {
-        __args: {
-          filter: { domainName: { primaryLinkUrl: { ilike: `%${host}%` } } },
-          first: 20,
+    // Broad ilike catches every stored URL form (bare, any protocol, paths, www).
+    // Paginate to exhaustion so the real match is never paged out; client-side
+    // normalization rejects false positives on each page.
+    let cursor: string | null = null;
+    do {
+      const existing = await client.query({
+        companies: {
+          __args: {
+            filter: { domainName: { primaryLinkUrl: { ilike: `%${host}%` } } },
+            first: 20,
+            ...(cursor !== null ? { after: cursor } : {}),
+          },
+          pageInfo: { hasNextPage: true, endCursor: true },
+          edges: { node: { id: true, domainName: { primaryLinkUrl: true } } },
         },
-        edges: { node: { id: true, domainName: { primaryLinkUrl: true } } },
-      },
-    });
-    const match = existing.companies?.edges?.find(
-      (edge) => normalizeDomainHost(edge.node.domainName?.primaryLinkUrl) === host,
-    );
-    if (match !== undefined) {
-      return match.node.id;
-    }
+      });
+      const match = existing.companies?.edges?.find(
+        (edge) => normalizeDomainHost(edge.node.domainName?.primaryLinkUrl) === host,
+      );
+      if (match !== undefined) {
+        return match.node.id;
+      }
+      const pageInfo = existing.companies?.pageInfo;
+      cursor = pageInfo?.hasNextPage ? (pageInfo.endCursor ?? null) : null;
+    } while (cursor !== null);
   }
 
   const companyData: CoreSchema.CompanyCreateInput = {
