@@ -127,6 +127,35 @@ export const CodeEditor = ({
     setCodeEditorTheme(monaco, theme, colorScheme);
   }, [colorScheme, monaco, theme]);
 
+  // Drive the container height from Monaco's content height; the editor's
+  // default automaticLayout then re-fits the canvas (no manual layout needed).
+  useEffect(() => {
+    if (!shouldAutoHeight || !isDefined(editor)) {
+      setAutoHeightContentHeight(undefined);
+      return;
+    }
+
+    const updateAutoHeight = () => {
+      const nextHeight = editor.getContentHeight();
+
+      if (!Number.isFinite(nextHeight) || nextHeight <= 0) {
+        return;
+      }
+
+      setAutoHeightContentHeight((currentHeight) =>
+        currentHeight === nextHeight ? currentHeight : nextHeight,
+      );
+    };
+
+    updateAutoHeight();
+
+    const disposable = editor.onDidContentSizeChange(updateAutoHeight);
+
+    return () => {
+      disposable.dispose();
+    };
+  }, [editor, shouldAutoHeight]);
+
   return isLoading ? (
     <div
       className={styles.editorLoader}
@@ -172,25 +201,6 @@ export const CodeEditor = ({
             editor.onDidBlurEditorWidget(() => {
               setIsEditorFocused(false);
             });
-
-            if (shouldAutoHeight) {
-              // Drive the container height from Monaco's content height; the
-              // editor's default automaticLayout then re-fits the canvas.
-              const updateAutoHeight = () => {
-                const nextHeight = editor.getContentHeight();
-
-                if (!Number.isFinite(nextHeight) || nextHeight <= 0) {
-                  return;
-                }
-
-                setAutoHeightContentHeight((currentHeight) =>
-                  currentHeight === nextHeight ? currentHeight : nextHeight,
-                );
-              };
-
-              updateAutoHeight();
-              editor.onDidContentSizeChange(updateAutoHeight);
-            }
 
             onMount?.(editor, monaco);
             setModelMarkers(editor, monaco);
