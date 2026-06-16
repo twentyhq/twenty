@@ -268,12 +268,21 @@ export class ChatExecutionService {
 
     const messagesWithInlinedFiles = await inlineFilePartsAsBase64(
       processedMessages,
-      (fileId) =>
-        this.fileService.getFileContentById({
+      async (fileId) => {
+        const content = await this.fileService.getFileContentById({
           fileId,
           workspaceId: workspace.id,
           fileFolder: FileFolder.AgentChat,
-        }),
+        });
+
+        if (!isDefined(content)) {
+          this.logger.warn(
+            `Could not load AI chat attachment ${fileId} for workspace ${workspace.id}; it will be marked as unavailable in the prompt.`,
+          );
+        }
+
+        return content;
+      },
     );
 
     const rawModelMessages = await convertToModelMessages(

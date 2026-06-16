@@ -28,7 +28,12 @@ export const inlineFilePartsAsBase64 = async (
           const content = await loadFileContent(part.fileId);
 
           if (!isDefined(content)) {
-            return null;
+            return {
+              type: 'text' as const,
+              text: `[Attachment${
+                part.filename ? ` "${part.filename}"` : ''
+              } could not be loaded and is unavailable.]`,
+            };
           }
 
           return {
@@ -43,7 +48,7 @@ export const inlineFilePartsAsBase64 = async (
 
       return {
         ...message,
-        parts: inlinedParts.filter(isDefined),
+        parts: inlinedParts,
       };
     }),
   );
