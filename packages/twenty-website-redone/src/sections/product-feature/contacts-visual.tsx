@@ -3,20 +3,32 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
+import {
+  IconBuildingFactory2,
+  IconBuildingSkyscraper,
+  IconCheck,
+  IconLink,
+  IconMapPin,
+  IconMoneybag,
+  IconPlus,
+  IconTarget,
+  IconUser,
+  IconUserCircle,
+  IconX,
+} from '@tabler/icons-react';
 import { useState } from 'react';
 
 import { useHorizontalDragScroll } from '@/platform/motion';
 import { EASING } from '@/tokens';
-import { PRODUCT_FEATURE_SCENE } from '@/tokens/feature-scenes/product-feature-scene';
+import { PRODUCT_FEATURE_PALETTE } from '@/tokens/feature-scenes/product-feature-palette';
 
-const card = PRODUCT_FEATURE_SCENE.card;
-const contactsScene = PRODUCT_FEATURE_SCENE.contacts;
+const palette = PRODUCT_FEATURE_PALETTE;
 
 const Root = styled.div`
-  background: ${card.background};
+  background-color: ${palette.background};
   display: flex;
   flex-direction: column;
-  font-family: ${card.font};
+  font-family: ${palette.font};
   height: 100%;
   overflow: hidden;
   width: 100%;
@@ -24,7 +36,7 @@ const Root = styled.div`
 
 const ViewHeader = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${card.border};
+  border-bottom: 1px solid ${palette.border};
   display: flex;
   gap: 4px;
   height: 34px;
@@ -32,13 +44,13 @@ const ViewHeader = styled.div`
 `;
 
 const ViewTitle = styled.span`
-  color: ${card.text};
+  color: ${palette.textPrimary};
   font-size: 13px;
   font-weight: 500;
 `;
 
 const ViewCount = styled.span`
-  color: ${card.textTertiary};
+  color: ${palette.textTertiary};
   font-size: 13px;
 `;
 
@@ -50,7 +62,7 @@ const TableShell = styled.div`
 `;
 
 const GripRail = styled.div`
-  background: ${card.background};
+  background-color: ${palette.background};
   display: grid;
   flex: 0 0 12px;
   grid-auto-rows: 32px;
@@ -58,7 +70,7 @@ const GripRail = styled.div`
 `;
 
 const GripCell = styled.div`
-  border-bottom: 1px solid ${card.border};
+  border-bottom: 1px solid ${palette.borderLight};
 `;
 
 const TableViewport = styled.div`
@@ -106,9 +118,9 @@ const HeaderRow = styled.div`
 
 const Cell = styled.div<{ $width: number }>`
   align-items: center;
-  background: ${card.background};
-  border-bottom: 1px solid ${card.border};
-  border-right: 1px solid ${card.border};
+  background-color: ${palette.background};
+  border-bottom: 1px solid ${palette.borderLight};
+  border-right: 1px solid ${palette.borderLight};
   box-sizing: border-box;
   display: flex;
   flex: 0 0 ${({ $width }) => `${$width}px`};
@@ -124,7 +136,7 @@ const DataRow = styled.div<{ $index: number }>`
   display: flex;
 
   &:hover > div {
-    background-color: ${contactsScene.cellHoverBackground};
+    background-color: ${palette.rowHoverBackground};
   }
 
   @keyframes rowIn {
@@ -149,7 +161,7 @@ const HeaderContent = styled.div`
 `;
 
 const HeaderLabel = styled.span`
-  color: ${card.textTertiary};
+  color: ${palette.textTertiary};
   font-size: 13px;
   font-weight: 500;
   overflow: hidden;
@@ -159,7 +171,7 @@ const HeaderLabel = styled.span`
 
 const HeaderIcon = styled.span`
   align-items: center;
-  color: ${card.textTertiary};
+  color: ${palette.textTertiary};
   display: inline-flex;
   flex-shrink: 0;
   height: 16px;
@@ -167,7 +179,7 @@ const HeaderIcon = styled.span`
 `;
 
 const EdgePlus = styled.span`
-  color: ${card.textTertiary};
+  color: ${palette.textTertiary};
   display: inline-flex;
   margin-left: auto;
 `;
@@ -184,13 +196,13 @@ const Chip = styled.div`
   padding: 0 4px;
 
   &[data-highlighted] {
-    background: ${contactsScene.chipHighlightWash};
+    background-color: ${palette.rowHoverBackground};
   }
 `;
 
 const ChipLabel = styled.span`
-  color: ${card.text};
-  font-family: ${card.font};
+  color: ${palette.textPrimary};
+  font-family: ${palette.font};
   font-size: 13px;
   font-weight: 400;
   max-width: 100%;
@@ -206,8 +218,8 @@ const ChipLabel = styled.span`
 
 const LinkChip = styled.div`
   align-items: center;
-  background: ${contactsScene.linkChipWash};
-  border: 1px solid ${contactsScene.linkChipBorder};
+  background-color: ${palette.sunkenBackground};
+  border: 1px solid ${palette.border};
   border-radius: 999px;
   display: inline-flex;
   gap: 4px;
@@ -219,8 +231,8 @@ const LinkChip = styled.div`
 `;
 
 const LinkLabel = styled.span`
-  color: ${card.textSecondary};
-  font-family: ${card.font};
+  color: ${palette.textSecondary};
+  font-family: ${palette.font};
   font-size: 13px;
   max-width: 100%;
   min-width: 0;
@@ -248,20 +260,20 @@ const FaviconImage = styled.img`
 `;
 
 const FaviconFallback = styled(FaviconFrame)`
-  background: ${contactsScene.faviconFallbackWash};
-  color: ${contactsScene.faviconFallbackInk};
+  background-color: ${palette.sunkenBackground};
+  color: ${palette.textSecondary};
   font-size: 8px;
   font-weight: 600;
 `;
 
 const PersonBadge = styled.div<{ $ink: string; $wash: string }>`
   align-items: center;
-  background: ${({ $wash }) => $wash};
+  background-color: ${({ $wash }) => $wash};
   border-radius: 999px;
   color: ${({ $ink }) => $ink};
   display: flex;
   flex: 0 0 14px;
-  font-family: ${card.font};
+  font-family: ${palette.font};
   font-size: 9px;
   font-weight: 500;
   height: 14px;
@@ -273,11 +285,11 @@ const PersonBadge = styled.div<{ $ink: string; $wash: string }>`
 
 const TagChip = styled.span`
   align-items: center;
-  background: ${contactsScene.tagWash};
+  background-color: ${palette.sunkenBackground};
   border-radius: 4px;
-  color: ${card.textSecondary};
+  color: ${palette.textSecondary};
   display: inline-flex;
-  font-family: ${card.font};
+  font-family: ${palette.font};
   font-size: 13px;
   height: 20px;
   max-width: 100%;
@@ -290,12 +302,13 @@ const TagChip = styled.span`
 
 const BooleanRow = styled.span`
   align-items: center;
+  color: ${palette.textSecondary};
   display: inline-flex;
   gap: 4px;
 `;
 
 const BooleanText = styled.span`
-  color: ${card.textSecondary};
+  color: ${palette.textSecondary};
   font-size: 13px;
 `;
 
@@ -311,27 +324,27 @@ const CheckboxWrap = styled.div`
 
 const CheckboxBox = styled.div`
   align-items: center;
-  border: 1px solid ${contactsScene.checkboxBorder};
+  border: 1px solid ${palette.borderStrong};
   border-radius: 3px;
   display: flex;
   height: 14px;
   justify-content: center;
   transition:
-    background 0.1s,
+    background-color 0.1s,
     border-color 0.1s;
   width: 14px;
 
   &:hover,
   &[data-checked] {
-    border-color: ${contactsScene.checkboxCheckedBorder};
+    border-color: ${palette.accent};
   }
 
   &[data-checked] {
-    background: ${contactsScene.checkboxCheckedWash};
+    background-color: ${palette.accentSurfaceSoft};
   }
 `;
 
-type ContactTone = keyof typeof contactsScene.personTones;
+type ContactTone = 'amber' | 'blue' | 'gray' | 'pink' | 'purple' | 'teal';
 
 type ContactPerson = {
   name: string;
@@ -471,20 +484,16 @@ const COMPANIES: ContactCompany[] = [
   },
 ];
 
-// Authored scene artwork (mini tabler-style header glyphs, verbatim).
-const HEADER_ICON_PATHS: Record<ContactColumnId, string> = {
-  company: 'M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6',
-  url: 'M10 14a3.5 3.5 0 0 0 5 0l4-4a3.5 3.5 0 0 0-5-5l-.5.5M14 10a3.5 3.5 0 0 0-5 0l-4 4a3.5 3.5 0 0 0 5 5l.5-.5',
-  createdBy:
-    'M12 12m-9 0a9 9 0 1 0 18 0 9 9 0 1 0 -18 0M12 10m-3 0a3 3 0 1 0 6 0 3 3 0 1 0 -6 0M6.168 18.849A4 4 0 0 1 10 16h4a4 4 0 0 1 3.834 2.855',
-  address:
-    'M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z',
-  accountOwner:
-    'M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2',
-  icp: 'M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0M12 12m-5 0a5 5 0 1 0 10 0a5 5 0 1 0 -10 0M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0',
-  arr: 'M17 8V5L12 3 7 5v3M3 10a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V10zM12 13v3',
-  industry:
-    'M4 21V11l4-4 4 4v10M12 21V7l4-4 4 4v14M8 14v.01M8 17v.01M16 11v.01M16 14v.01M16 17v.01',
+// The product's column-header glyphs, by field type.
+const HEADER_ICONS: Record<ContactColumnId, typeof IconUser> = {
+  company: IconBuildingSkyscraper,
+  url: IconLink,
+  createdBy: IconUserCircle,
+  address: IconMapPin,
+  accountOwner: IconUser,
+  icp: IconTarget,
+  arr: IconMoneybag,
+  industry: IconBuildingFactory2,
 };
 
 const GRIP_CELL_COUNT = 11;
@@ -505,6 +514,8 @@ function Favicon({ domain, name }: { domain: string; name: string }) {
     <FaviconFrame>
       <FaviconImage
         alt={`${name} logo`}
+        fetchPriority="low"
+        loading="lazy"
         src={url}
         onError={() => setFailed(true)}
       />
@@ -513,7 +524,7 @@ function Favicon({ domain, name }: { domain: string; name: string }) {
 }
 
 function PersonChipBadge({ person }: { person: ContactPerson }) {
-  const tone = contactsScene.personTones[person.tone];
+  const tone = palette.tones[person.tone];
   const initials = person.name
     .split(' ')
     .map((word) => word[0])
@@ -522,7 +533,7 @@ function PersonChipBadge({ person }: { person: ContactPerson }) {
     .toUpperCase();
 
   return (
-    <PersonBadge $ink={tone.color} $wash={tone.background}>
+    <PersonBadge $ink={tone.text} $wash={tone.background}>
       {initials}
     </PersonBadge>
   );
@@ -568,21 +579,11 @@ function CellValue({
     case 'icp':
       return (
         <BooleanRow>
-          <svg
-            fill="none"
-            height="11"
-            stroke={card.textSecondary}
-            strokeLinecap="round"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-            width="11"
-          >
-            {company.icp ? (
-              <path d="M5 12l5 5L20 7" />
-            ) : (
-              <path d="M18 6L6 18M6 6l12 12" />
-            )}
-          </svg>
+          {company.icp ? (
+            <IconCheck size={11} stroke={2} />
+          ) : (
+            <IconX size={11} stroke={2} />
+          )}
           <BooleanText>{company.icp ? 'True' : 'False'}</BooleanText>
         </BooleanRow>
       );
@@ -642,47 +643,30 @@ export function ContactsVisual({ active: _active }: { active: boolean }) {
         >
           <TableCanvas $width={TOTAL_WIDTH}>
             <HeaderRow>
-              {COLUMNS.map((column) => (
-                <Cell $width={column.width} key={column.id}>
-                  <HeaderContent>
-                    {column.isFirstColumn ? (
-                      <CheckboxWrap aria-hidden>
-                        <CheckboxBox />
-                      </CheckboxWrap>
-                    ) : null}
-                    <HeaderIcon>
-                      <svg
-                        fill="none"
-                        height="16"
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="1.6"
-                        viewBox="0 0 24 24"
-                        width="16"
-                      >
-                        <path d={HEADER_ICON_PATHS[column.id]} />
-                      </svg>
-                    </HeaderIcon>
-                    <HeaderLabel>{column.label}</HeaderLabel>
-                    {column.isFirstColumn ? (
-                      <EdgePlus>
-                        <svg
-                          fill="none"
-                          height="12"
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeWidth="1.6"
-                          viewBox="0 0 16 16"
-                          width="12"
-                        >
-                          <path d="M8 3v10M3 8h10" />
-                        </svg>
-                      </EdgePlus>
-                    ) : null}
-                  </HeaderContent>
-                </Cell>
-              ))}
+              {COLUMNS.map((column) => {
+                const HeaderColumnIcon = HEADER_ICONS[column.id];
+
+                return (
+                  <Cell $width={column.width} key={column.id}>
+                    <HeaderContent>
+                      {column.isFirstColumn ? (
+                        <CheckboxWrap aria-hidden>
+                          <CheckboxBox />
+                        </CheckboxWrap>
+                      ) : null}
+                      <HeaderIcon>
+                        <HeaderColumnIcon size={16} stroke={1.6} />
+                      </HeaderIcon>
+                      <HeaderLabel>{column.label}</HeaderLabel>
+                      {column.isFirstColumn ? (
+                        <EdgePlus>
+                          <IconPlus size={12} stroke={1.6} />
+                        </EdgePlus>
+                      ) : null}
+                    </HeaderContent>
+                  </Cell>
+                );
+              })}
             </HeaderRow>
 
             {rows.map(({ company, rowNumber }) => {
@@ -712,19 +696,11 @@ export function ContactsVisual({ active: _active }: { active: boolean }) {
                               data-checked={isChecked ? '' : undefined}
                             >
                               {isChecked ? (
-                                <svg
-                                  fill="none"
-                                  height="9"
-                                  viewBox="0 0 12 12"
-                                  width="9"
-                                >
-                                  <path
-                                    d="M3 6.5L5 8.5L9 4"
-                                    stroke={card.accent}
-                                    strokeLinecap="round"
-                                    strokeWidth="1.5"
-                                  />
-                                </svg>
+                                <IconCheck
+                                  color={palette.accent}
+                                  size={9}
+                                  stroke={2}
+                                />
                               ) : null}
                             </CheckboxBox>
                           </CheckboxWrap>
