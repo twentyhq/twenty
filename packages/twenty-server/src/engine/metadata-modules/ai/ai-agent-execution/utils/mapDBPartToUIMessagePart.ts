@@ -4,6 +4,7 @@ import {
 } from 'twenty-shared/ai';
 
 import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
+import { sanitizeToolPartPayload } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/sanitize-tool-part-payload.util';
 
 // Maps TypeORM entity fields to UI message parts.
 // A parallel mapping for GraphQL DTOs exists in the frontend at:
@@ -57,13 +58,20 @@ export const mapDBPartToUIMessagePart = (
       return null;
     default: {
       if (part.type.includes('tool-') && part.toolCallId) {
+        const sanitizedToolPartPayload = sanitizeToolPartPayload({
+          state: part.state,
+          input: part.toolInput,
+          output: part.toolOutput,
+          errorText: part.errorMessage,
+        });
+
         return {
           type: part.type,
           toolCallId: part.toolCallId,
-          input: part.toolInput ?? {},
-          output: part.toolOutput,
-          errorText: part.errorMessage ?? '',
-          state: part.state,
+          input: sanitizedToolPartPayload.input,
+          output: sanitizedToolPartPayload.output,
+          errorText: sanitizedToolPartPayload.errorText ?? '',
+          state: sanitizedToolPartPayload.state,
           ...(part.providerExecuted != null && {
             providerExecuted: part.providerExecuted,
           }),

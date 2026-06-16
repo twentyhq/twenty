@@ -5,6 +5,7 @@ import {
 } from 'twenty-shared/ai';
 
 import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
+import { sanitizeToolPartPayload } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/sanitize-tool-part-payload.util';
 
 const isToolPart = (part: ExtendedUIMessagePart): part is ToolUIPart => {
   return part.type.includes('tool-') && 'toolCallId' in part;
@@ -84,14 +85,20 @@ export const mapUIMessagePartsToDBParts = (
           {
             if (isToolPart(part)) {
               const { toolCallId, input, output, errorText, state } = part;
+              const sanitizedToolPartPayload = sanitizeToolPartPayload({
+                state,
+                input,
+                output,
+                errorText,
+              });
 
               return {
                 ...basePart,
                 toolCallId: toolCallId,
-                toolInput: input,
-                toolOutput: output,
-                errorMessage: errorText,
-                state,
+                toolInput: sanitizedToolPartPayload.input,
+                toolOutput: sanitizedToolPartPayload.output,
+                errorMessage: sanitizedToolPartPayload.errorText,
+                state: sanitizedToolPartPayload.state,
                 providerExecuted: part.providerExecuted ?? null,
               };
             }

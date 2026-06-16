@@ -16,6 +16,8 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
 import {
   AgentMessageRole,
   AgentMessageStatus,
@@ -58,6 +60,7 @@ export class AgentChatStreamingService {
     private readonly agentChatService: AgentChatService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly fileUrlService: FileUrlService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   async streamAgentChat({
@@ -257,6 +260,43 @@ export class AgentChatStreamingService {
     const filteredMessages = allMessages.filter(
       (message) => message.status !== AgentMessageStatus.QUEUED,
     );
+
+    const malformedToolParts = filteredMessages.flatMap((message) =>
+      (message.parts ?? [])
+        .filter(
+          (part) =>
+            part.type.includes('tool-') &&
+            part.toolCallId &&
+            ((part.state?.startsWith('output-') && part.toolOutput == null) ||
+              part.toolInput == null),
+        )
+        .map((part) => ({
+          messageId: message.id,
+          partId: part.id,
+          type: part.type,
+          state: part.state,
+          toolCallId: part.toolCallId,
+        })),
+    );
+
+    if (malformedToolParts.length > 0) {
+      const malformedToolPartCount = malformedToolParts.length;
+
+      this.logger.warn(
+        `Detected ${malformedToolPartCount} malformed tool part(s) while loading thread history`,
+      );
+
+      this.exceptionHandlerService.captureExceptions([
+        new Error('Malformed agent message tool parts detected'),
+      ], {
+        additionalData: {
+          threadId,
+          workspaceId,
+          userWorkspaceId,
+          malformedToolParts,
+        },
+      });
+    }
 
     return Promise.all(
       filteredMessages.map(async (message) => ({
