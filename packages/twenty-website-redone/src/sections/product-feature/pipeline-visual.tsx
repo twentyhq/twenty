@@ -2,6 +2,18 @@
 
 import { styled } from '@linaria/react';
 import {
+  IconBuildingSkyscraper,
+  IconCalendarEvent,
+  IconCurrencyDollar,
+  IconId,
+  IconLayoutKanban,
+  IconPlus,
+  IconStar,
+  IconStarFilled,
+  IconUser,
+  IconUserCircle,
+} from '@tabler/icons-react';
+import {
   type PointerEvent as ReactPointerEvent,
   useEffect,
   useLayoutEffect,
@@ -12,7 +24,7 @@ import {
 import { sharedAssetUrls } from '@/app-preview/data/shared-asset-urls';
 import { clampToRange } from '@/platform/motion';
 import { EASING } from '@/tokens';
-import { PRODUCT_FEATURE_SCENE } from '@/tokens/feature-scenes/product-feature-scene';
+import { PRODUCT_FEATURE_PALETTE } from '@/tokens/feature-scenes/product-feature-palette';
 
 import {
   movePipelineCard,
@@ -21,26 +33,20 @@ import {
   type PipelineLanes,
 } from './pipeline-move-card';
 
-const card = PRODUCT_FEATURE_SCENE.card;
-const pipelineScene = PRODUCT_FEATURE_SCENE.pipeline;
+const palette = PRODUCT_FEATURE_PALETTE;
 
 const CARD_DROP_MS = 300;
 
-type PipelineTone = keyof typeof pipelineScene.tones;
-type PipelineLaneKey = keyof typeof pipelineScene.laneStyles;
-
 type PersonData = {
-  avatarUrl?: string;
+  avatarUrl: string;
   initials: string;
   name: string;
-  tone: PipelineTone;
 };
 
 type CompanyData = {
   initials: string;
-  logoSrc?: string;
+  logoSrc: string;
   name: string;
-  tone: PipelineTone;
 };
 
 type DealData = {
@@ -48,11 +54,11 @@ type DealData = {
   company: CompanyData;
   contact: PersonData;
   date: string;
-  header: CompanyData;
   id: PipelineCardId;
   owner: PersonData;
   rating: number;
   recordId: string;
+  title: string;
 };
 
 const PEOPLE_AVATARS = sharedAssetUrls.peopleAvatars;
@@ -67,116 +73,100 @@ const companyLogo = (domain: string): string => {
   return logoUrl;
 };
 
-// Mock fiction deal cards (product-screenshot copy, English).
+// Mock fiction deal cards (product-screenshot copy, English). Each company's
+// contact is its real founder; owners are the workspace's account owners.
 const CARDS: Record<PipelineCardId, DealData> = {
   github: {
-    id: 'github',
-    header: {
-      initials: 'G',
-      logoSrc: companyLogo('github.com'),
-      name: 'Github',
-      tone: 'gray',
-    },
     amount: '$6,562.04',
     company: {
       initials: 'G',
       logoSrc: companyLogo('github.com'),
       name: 'Github',
-      tone: 'gray',
     },
-    owner: {
-      avatarUrl: PEOPLE_AVATARS.eddyCue,
-      initials: 'E',
-      name: 'Eddy Cue',
-      tone: 'amber',
-    },
-    rating: 2,
-    date: 'Jun 16, 2023',
     contact: {
       avatarUrl: PEOPLE_AVATARS.chrisWanstrath,
       initials: 'C',
       name: 'Chris Wanstrath',
-      tone: 'gray',
     },
+    date: 'Jun 16, 2023',
+    id: 'github',
+    owner: {
+      avatarUrl: PEOPLE_AVATARS.eddyCue,
+      initials: 'E',
+      name: 'Eddy Cue',
+    },
+    rating: 2,
     recordId: 'OPP-1',
+    title: 'Platform Expansion',
   },
   figma: {
-    id: 'figma',
-    header: {
-      initials: 'F',
-      logoSrc: companyLogo('figma.com'),
-      name: 'Figma',
-      tone: 'purple',
-    },
-    amount: '$6,562.04',
+    amount: '$8,250.00',
     company: {
       initials: 'F',
       logoSrc: companyLogo('figma.com'),
       name: 'Figma',
-      tone: 'purple',
     },
-    owner: {
-      avatarUrl: PEOPLE_AVATARS.jeffWilliams,
-      initials: 'J',
-      name: 'Jeff Williams',
-      tone: 'blue',
-    },
-    rating: 2,
-    date: 'Jun 21, 2023',
     contact: {
       avatarUrl: PEOPLE_AVATARS.dylanField,
       initials: 'D',
       name: 'Dylan Field',
-      tone: 'pink',
     },
+    date: 'Jun 21, 2023',
+    id: 'figma',
+    owner: {
+      avatarUrl: PEOPLE_AVATARS.jeffWilliams,
+      initials: 'J',
+      name: 'Jeff Williams',
+    },
+    rating: 2,
     recordId: 'OPP-2',
+    title: 'Design Tooling',
   },
   airbnb: {
-    id: 'airbnb',
-    header: {
-      initials: 'A',
-      logoSrc: companyLogo('airbnb.com'),
-      name: 'Airbnb',
-      tone: 'pink',
-    },
     amount: '$2,433.89',
     company: {
       initials: 'A',
       logoSrc: companyLogo('airbnb.com'),
       name: 'Airbnb',
-      tone: 'pink',
     },
+    contact: {
+      avatarUrl: PEOPLE_AVATARS.brianChesky,
+      initials: 'B',
+      name: 'Brian Chesky',
+    },
+    date: 'Jun 6, 2023',
+    id: 'airbnb',
     owner: {
       avatarUrl: PEOPLE_AVATARS.katherineAdams,
       initials: 'K',
       name: 'Katherine Adams',
-      tone: 'red',
     },
     rating: 3,
-    date: 'Jun 6, 2023',
-    contact: { initials: 'I', name: 'Ivan Zhao', tone: 'gray' },
     recordId: 'OPP-8',
+    title: 'Travel Partnership',
   },
   notion: {
-    id: 'notion',
-    header: {
-      initials: 'N',
-      logoSrc: companyLogo('notion.com'),
-      name: 'Notion',
-      tone: 'gray',
-    },
     amount: '$2,650',
     company: {
       initials: 'N',
       logoSrc: companyLogo('notion.com'),
       name: 'Notion',
-      tone: 'gray',
     },
-    owner: { initials: 'A', name: 'Airbnb', tone: 'yellow' },
+    contact: {
+      avatarUrl: PEOPLE_AVATARS.ivanZhao,
+      initials: 'I',
+      name: 'Ivan Zhao',
+    },
+    date: 'Jun 28, 2023',
+    id: 'notion',
+    owner: {
+      avatarUrl: PEOPLE_AVATARS.sundarPichai,
+      initials: 'S',
+      name: 'Sundar Pichai',
+    },
     rating: 2,
-    date: 'Jun 6, 2023',
-    contact: { initials: 'I', name: 'Ivan Zhao', tone: 'gray' },
     recordId: 'OPP-6',
+    title: 'Workspace Rollout',
   },
 };
 
@@ -185,9 +175,9 @@ const INITIAL_LANES: PipelineLanes = [
   ['airbnb', 'notion'],
 ];
 
-const LANES_META: { key: PipelineLaneKey; label: string }[] = [
-  { key: 'pink', label: 'Identified' },
-  { key: 'purple', label: 'Qualified' },
+const LANES_META: { label: string; tone: 'pink' | 'purple' }[] = [
+  { label: 'Identified', tone: 'pink' },
+  { label: 'Qualified', tone: 'purple' },
 ];
 
 const STAR_COUNT = 5;
@@ -197,11 +187,14 @@ const STAR_NUMBERS = Array.from(
   (_, starNumber) => starNumber,
 );
 
+const STAR_FILLED = palette.tones.yellow.text;
+const STAR_EMPTY = palette.borderStrong;
+
 const Root = styled.div`
-  background: ${card.background};
+  background-color: ${palette.background};
   display: flex;
   flex-direction: column;
-  font-family: ${card.font};
+  font-family: ${palette.font};
   height: 100%;
   overflow: hidden;
   position: relative;
@@ -210,27 +203,29 @@ const Root = styled.div`
 
 const BoardHeader = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${card.border};
+  border-bottom: 1px solid ${palette.borderLight};
   display: flex;
+  flex-shrink: 0;
   gap: 4px;
   height: 34px;
   padding: 0 14px;
 `;
 
 const BoardTitle = styled.span`
-  color: ${card.text};
+  color: ${palette.textPrimary};
   font-size: 13px;
   font-weight: 500;
 `;
 
 const BoardCount = styled.span`
-  color: ${card.textTertiary};
+  color: ${palette.textTertiary};
   font-size: 13px;
 `;
 
 const ColumnsHeaderGrid = styled.div`
-  border-bottom: 1px solid ${card.border};
+  border-bottom: 1px solid ${palette.borderLight};
   display: grid;
+  flex-shrink: 0;
   grid-template-columns: 1fr 1fr;
 `;
 
@@ -243,7 +238,7 @@ const LaneHeader = styled.div`
 
 const LanePill = styled.span<{ $ink: string; $wash: string }>`
   align-items: center;
-  background: ${({ $wash }) => $wash};
+  background-color: ${({ $wash }) => $wash};
   border-radius: 4px;
   color: ${({ $ink }) => $ink};
   display: inline-flex;
@@ -254,7 +249,7 @@ const LanePill = styled.span<{ $ink: string; $wash: string }>`
 `;
 
 const LaneCount = styled.span`
-  color: ${card.textTertiary};
+  color: ${palette.textTertiary};
   font-size: 12px;
 `;
 
@@ -267,7 +262,7 @@ const ColumnsGrid = styled.div`
 `;
 
 const LaneBody = styled.div`
-  border-right: 1px solid ${card.border};
+  border-right: 1px solid ${palette.borderLight};
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -281,9 +276,10 @@ const LaneBody = styled.div`
 `;
 
 const DealCardShell = styled.div`
-  background: ${pipelineScene.cardBackground};
-  border: 1px solid ${pipelineScene.cardBorder};
+  background-color: ${palette.background};
+  border: 1px solid ${palette.border};
   border-radius: 8px;
+  box-shadow: ${palette.shadow.light};
   cursor: grab;
   display: flex;
   flex-direction: column;
@@ -306,6 +302,17 @@ const CardHeader = styled.div`
   padding: 8px 8px 4px;
 `;
 
+const CardTitle = styled.span`
+  color: ${palette.textPrimary};
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 const CardFields = styled.div`
   display: flex;
   flex-direction: column;
@@ -319,9 +326,9 @@ const FieldRow = styled.div`
   min-height: 22px;
 `;
 
-const FieldIcon = styled.div`
+const FieldIconBox = styled.div`
   align-items: center;
-  color: ${card.textTertiary};
+  color: ${palette.textTertiary};
   display: flex;
   flex: 0 0 14px;
   height: 14px;
@@ -337,7 +344,7 @@ const FieldValue = styled.div`
 `;
 
 const ValueText = styled.span`
-  color: ${card.text};
+  color: ${palette.textPrimary};
   font-size: 11.5px;
   line-height: 1.4;
   overflow: hidden;
@@ -347,25 +354,21 @@ const ValueText = styled.span`
 
 const TokenChip = styled.span`
   align-items: center;
+  background-color: ${palette.rowHoverBackground};
   border-radius: 4px;
   display: inline-flex;
   gap: 4px;
   height: 18px;
   max-width: 100%;
   overflow: hidden;
-  padding: 2px 4px 2px 0;
-
-  &[data-soft] {
-    background: ${pipelineScene.softChipWash};
-    padding: 2px 4px;
-  }
+  padding: 2px 4px;
 `;
 
-const TokenMark = styled.span<{ $ink: string; $wash: string }>`
+const TokenMark = styled.span`
   align-items: center;
-  background: ${({ $wash }) => $wash};
+  background-color: ${palette.sunkenBackground};
   border-radius: 3px;
-  color: ${({ $ink }) => $ink};
+  color: ${palette.textSecondary};
   display: inline-flex;
   flex: 0 0 14px;
   font-size: 8px;
@@ -388,27 +391,12 @@ const TokenImage = styled.img`
 `;
 
 const TokenLabel = styled.span`
-  color: ${card.text};
+  color: ${palette.textPrimary};
   font-size: 11.5px;
   line-height: 1.4;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-`;
-
-const HeaderTokenChip = styled.span`
-  align-items: center;
-  border-radius: 4px;
-  display: inline-flex;
-  gap: 4px;
-  height: 22px;
-  max-width: 100%;
-  overflow: hidden;
-  padding: 4px;
-`;
-
-const HeaderTokenLabel = styled(TokenLabel)`
-  font-weight: 500;
 `;
 
 const RatingRow = styled.div`
@@ -418,7 +406,7 @@ const RatingRow = styled.div`
 
 const AddCardRow = styled.div`
   align-items: center;
-  color: ${card.textTertiary};
+  color: ${palette.textTertiary};
   display: flex;
   font-size: 11px;
   gap: 4px;
@@ -432,7 +420,7 @@ const InteractionLayer = styled.div`
 `;
 
 const FloatingCardShell = styled.div`
-  box-shadow: ${pipelineScene.floatingShadow};
+  box-shadow: ${palette.shadow.strong};
   left: 0;
   pointer-events: none;
   position: absolute;
@@ -444,14 +432,13 @@ const FloatingCardShell = styled.div`
 
 function CompanyMark({ data }: { data: CompanyData }) {
   const [failed, setFailed] = useState(false);
-  const tone = pipelineScene.tones[data.tone];
 
   return (
-    <TokenMark $ink={tone.color} $wash={tone.background}>
-      {data.logoSrc && !failed ? (
-        <TokenImage alt="" src={data.logoSrc} onError={() => setFailed(true)} />
-      ) : (
+    <TokenMark>
+      {failed ? (
         data.initials
+      ) : (
+        <TokenImage alt="" src={data.logoSrc} onError={() => setFailed(true)} />
       )}
     </TokenMark>
   );
@@ -459,105 +446,54 @@ function CompanyMark({ data }: { data: CompanyData }) {
 
 function PersonMark({ data }: { data: PersonData }) {
   const [failed, setFailed] = useState(false);
-  const tone = pipelineScene.tones[data.tone];
 
   return (
-    <TokenMark $ink={tone.color} $wash={tone.background} data-round="">
-      {data.avatarUrl && !failed ? (
+    <TokenMark data-round="">
+      {failed ? (
+        data.initials
+      ) : (
         <TokenImage
           alt=""
           src={data.avatarUrl}
           onError={() => setFailed(true)}
         />
-      ) : (
-        data.initials
       )}
     </TokenMark>
   );
 }
 
-function StarIcon({ filled }: { filled: boolean }) {
-  return (
-    <svg
-      fill={filled ? pipelineScene.starFilled : 'none'}
-      height="11"
-      stroke={filled ? pipelineScene.starFilled : pipelineScene.starEmpty}
-      strokeWidth="1.5"
-      viewBox="0 0 24 24"
-      width="11"
-    >
-      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z" />
-    </svg>
-  );
-}
-
-// The deal card's body, shared by lane cards and the drag ghost. The
-// field glyphs are authored scene artwork, verbatim.
+// The deal card's body, shared by lane cards and the drag ghost. The deal
+// title heads the card; the fields mirror the product's opportunity record.
 function OpportunityCard({ data }: { data: DealData }) {
   return (
     <>
       <CardHeader>
-        <HeaderTokenChip>
-          <CompanyMark data={data.header} />
-          <HeaderTokenLabel>{data.header.name}</HeaderTokenLabel>
-        </HeaderTokenChip>
+        <CardTitle>{data.title}</CardTitle>
       </CardHeader>
       <CardFields>
         <FieldRow>
-          <FieldIcon>
-            <svg
-              fill="none"
-              height="14"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeWidth="1.6"
-              viewBox="0 0 24 24"
-              width="14"
-            >
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-            </svg>
-          </FieldIcon>
+          <FieldIconBox>
+            <IconCurrencyDollar size={14} stroke={1.6} />
+          </FieldIconBox>
           <FieldValue>
             <ValueText>{data.amount}</ValueText>
           </FieldValue>
         </FieldRow>
         <FieldRow>
-          <FieldIcon>
-            <svg
-              fill="none"
-              height="14"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeWidth="1.6"
-              viewBox="0 0 24 24"
-              width="14"
-            >
-              <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6" />
-            </svg>
-          </FieldIcon>
+          <FieldIconBox>
+            <IconBuildingSkyscraper size={14} stroke={1.6} />
+          </FieldIconBox>
           <FieldValue>
-            <TokenChip data-soft="">
+            <TokenChip>
               <CompanyMark data={data.company} />
               <TokenLabel>{data.company.name}</TokenLabel>
             </TokenChip>
           </FieldValue>
         </FieldRow>
         <FieldRow>
-          <FieldIcon>
-            <svg
-              fill="none"
-              height="14"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeWidth="1.6"
-              viewBox="0 0 24 24"
-              width="14"
-            >
-              <circle cx="12" cy="12" r="9" />
-              <circle cx="12" cy="10" r="3" />
-              <path d="M6.168 18.849A4 4 0 0 1 10 16h4a4 4 0 0 1 3.834 2.855" />
-            </svg>
-          </FieldIcon>
+          <FieldIconBox>
+            <IconUserCircle size={14} stroke={1.6} />
+          </FieldIconBox>
           <FieldValue>
             <TokenChip>
               <PersonMark data={data.owner} />
@@ -566,82 +502,53 @@ function OpportunityCard({ data }: { data: DealData }) {
           </FieldValue>
         </FieldRow>
         <FieldRow>
-          <FieldIcon>
-            <svg
-              fill="none"
-              height="14"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeWidth="1.6"
-              viewBox="0 0 24 24"
-              width="14"
-            >
-              <path d="M3 12h2l2-4 3 8 2-4h2" />
-            </svg>
-          </FieldIcon>
+          <FieldIconBox>
+            <IconStar size={14} stroke={1.6} />
+          </FieldIconBox>
           <FieldValue>
             <RatingRow>
-              {STAR_NUMBERS.map((starNumber) => (
-                <StarIcon filled={starNumber < data.rating} key={starNumber} />
-              ))}
+              {STAR_NUMBERS.map((starNumber) =>
+                starNumber < data.rating ? (
+                  <IconStarFilled
+                    color={STAR_FILLED}
+                    key={starNumber}
+                    size={12}
+                  />
+                ) : (
+                  <IconStar
+                    color={STAR_EMPTY}
+                    key={starNumber}
+                    size={12}
+                    stroke={1.5}
+                  />
+                ),
+              )}
             </RatingRow>
           </FieldValue>
         </FieldRow>
         <FieldRow>
-          <FieldIcon>
-            <svg
-              fill="none"
-              height="14"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeWidth="1.6"
-              viewBox="0 0 24 24"
-              width="14"
-            >
-              <rect height="16" rx="2" width="18" x="3" y="5" />
-              <path d="M16 3v4M8 3v4M3 9h18" />
-            </svg>
-          </FieldIcon>
+          <FieldIconBox>
+            <IconCalendarEvent size={14} stroke={1.6} />
+          </FieldIconBox>
           <FieldValue>
             <ValueText>{data.date}</ValueText>
           </FieldValue>
         </FieldRow>
         <FieldRow>
-          <FieldIcon>
-            <svg
-              fill="none"
-              height="14"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeWidth="1.6"
-              viewBox="0 0 24 24"
-              width="14"
-            >
-              <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0-8 0M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
-            </svg>
-          </FieldIcon>
+          <FieldIconBox>
+            <IconUser size={14} stroke={1.6} />
+          </FieldIconBox>
           <FieldValue>
-            <TokenChip data-soft="">
+            <TokenChip>
               <PersonMark data={data.contact} />
               <TokenLabel>{data.contact.name}</TokenLabel>
             </TokenChip>
           </FieldValue>
         </FieldRow>
         <FieldRow>
-          <FieldIcon>
-            <svg
-              fill="none"
-              height="14"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeWidth="1.6"
-              viewBox="0 0 24 24"
-              width="14"
-            >
-              <rect height="14" rx="3" width="18" x="3" y="5" />
-              <path d="M7 9h10M7 13h6" />
-            </svg>
-          </FieldIcon>
+          <FieldIconBox>
+            <IconId size={14} stroke={1.6} />
+          </FieldIconBox>
           <FieldValue>
             <ValueText>{data.recordId}</ValueText>
           </FieldValue>
@@ -915,28 +822,18 @@ export function PipelineVisual({ active: _active }: { active: boolean }) {
   return (
     <Root>
       <BoardHeader>
-        <svg
-          fill="none"
-          height="14"
-          stroke={card.textTertiary}
-          strokeLinecap="round"
-          strokeWidth="1.6"
-          viewBox="0 0 24 24"
-          width="14"
-        >
-          <path d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
+        <IconLayoutKanban color={palette.textTertiary} size={14} stroke={1.6} />
         <BoardTitle>All opportunities</BoardTitle>
         <BoardCount>· 4</BoardCount>
       </BoardHeader>
 
       <ColumnsHeaderGrid>
         {laneHeaders.map(({ laneNumber, meta }) => {
-          const style = pipelineScene.laneStyles[meta.key];
+          const tone = palette.tones[meta.tone];
 
           return (
-            <LaneHeader key={meta.key}>
-              <LanePill $ink={style.text} $wash={style.pill}>
+            <LaneHeader key={meta.tone}>
+              <LanePill $ink={tone.text} $wash={tone.background}>
                 {meta.label}
               </LanePill>
               <LaneCount>{lanes[laneNumber].length}</LaneCount>
@@ -966,17 +863,7 @@ export function PipelineVisual({ active: _active }: { active: boolean }) {
               </DealCardShell>
             ))}
             <AddCardRow>
-              <svg
-                fill="none"
-                height="12"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeWidth="1.6"
-                viewBox="0 0 16 16"
-                width="12"
-              >
-                <path d="M8 3v10M3 8h10" />
-              </svg>
+              <IconPlus size={12} stroke={1.6} />
               New
             </AddCardRow>
           </LaneBody>
