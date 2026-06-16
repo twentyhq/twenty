@@ -1,3 +1,6 @@
+import { AppChip } from '@/applications/components/AppChip';
+import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
+import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
 import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { sidePanelWorkflowStepIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowStepIdComponentState';
@@ -20,7 +23,7 @@ import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTrigge
 import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
 import { CoreObjectNameSingular, SidePanelPages } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { findById, isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui-deprecated/display';
 import { SidePanelPageInfoLayout } from './SidePanelPageInfoLayout';
@@ -35,6 +38,8 @@ export const SidePanelWorkflowStepInfo = ({
   const { getIcon } = useIcons();
 
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
+
+  const logicFunctions = useAtomStateValue(logicFunctionsSelector);
 
   const workflowId = useSidePanelWorkflowIdOrThrow();
 
@@ -84,6 +89,20 @@ export const SidePanelWorkflowStepInfo = ({
       : undefined;
 
   const isTrigger = stepDefinition?.type === 'trigger';
+
+  const logicFunctionId =
+    stepDefinition?.type === 'action' &&
+    stepDefinition.definition.type === 'LOGIC_FUNCTION'
+      ? stepDefinition.definition.settings.input.logicFunctionId
+      : undefined;
+
+  const logicFunctionApplicationId = isDefined(logicFunctionId)
+    ? logicFunctions.find(findById(logicFunctionId))?.applicationId
+    : undefined;
+
+  const isThirdPartyApplication = useIsThirdPartyApplication(
+    logicFunctionApplicationId,
+  );
 
   const agentId = getAgentIdFromStep(stepDefinition);
   const { updateAgentLabel } = useUpdateAgentLabel(agentId);
@@ -169,11 +188,17 @@ export const SidePanelWorkflowStepInfo = ({
   return (
     <SidePanelPageInfoLayout
       icon={
-        headerIcon ? (
+        isThirdPartyApplication ? (
+          <AppChip
+            applicationId={logicFunctionApplicationId}
+            size="md"
+            chipOnly
+          />
+        ) : headerIcon ? (
           <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         ) : undefined
       }
-      iconColor={headerIconColor}
+      iconColor={isThirdPartyApplication ? undefined : headerIconColor}
       title={
         <TitleInput
           instanceId={`workflow-step-title-${sidePanelPageInstanceId}`}
