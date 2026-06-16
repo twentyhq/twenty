@@ -223,7 +223,20 @@ export class UpgradeSequenceRunnerService {
           workspaceSliceBounds,
         });
 
-        return workspaceSliceBounds.startCursor;
+        // When resuming at a workspace segment, scan backward through instance
+        // commands that precede it to catch any that were inserted into earlier
+        // version slots by a retroactive fix (e.g. PR #20664). Such commands
+        // have an earlier timestamp than the existing completed commands, so the
+        // cursor jumps over them when the workspace step is the resume point.
+        // Instance-command runner already guards against double-execution via
+        // isLastAttemptCompleted, so this is safe to run unconditionally.
+        const pendingInstanceCursor =
+          await this.findEarliestPendingInstanceCommandBefore({
+            sequence,
+            beforeCursor: workspaceSliceBounds.startCursor,
+          });
+
+        return pendingInstanceCursor ?? workspaceSliceBounds.startCursor;
       }
       default:
         assertUnreachable(lastAttemptedStep);
@@ -407,6 +420,40 @@ export class UpgradeSequenceRunnerService {
     }
 
     return workspaceIds;
+  }
+
+  // Scans backward from beforeCursor (exclusive) through contiguous instance
+  // commands, stopping at any workspace step or the start of the sequence.
+  // Returns the index of the earliest unrun instance command, or null if all
+  // preceding instance commands have already been completed.
+  private async findEarliestPendingInstanceCommandBefore({
+    sequence,
+    beforeCursor,
+  }: {
+    sequence: UpgradeStep[];
+    beforeCursor: number;
+  }): Promise<number | null> {
+    let earliestPending: number | null = null;
+
+    for (let i = beforeCursor - 1; i >= 0; i--) {
+      const step = sequence[i];
+
+      if (step.kind === 'workspace') {
+        break;
+      }
+
+      const isCompleted =
+        await this.upgradeMigrationService.isLastAttemptCompleted({
+          name: step.name,
+          workspaceId: null,
+        });
+
+      if (!isCompleted) {
+        earliestPending = i;
+      }
+    }
+
+    return earliestPending;
   }
 
   private enforceWorkspacesCompletedPreviousWorkspaceSegment({
