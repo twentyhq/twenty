@@ -183,6 +183,10 @@ export const WorkflowEditActionLogicFunction = ({
 
   const hasInputFields = Object.keys(functionInput).length > 0;
 
+  const isLogicFunctionFromApp = isDefined(logicFunction?.applicationId);
+
+  const isTestTabActive = !isLogicFunctionFromApp && activeTabId === TEST_TAB_ID;
+
   const tabs = [
     {
       id: INPUT_TAB_ID,
@@ -199,17 +203,19 @@ export const WorkflowEditActionLogicFunction = ({
   return (
     <>
       <LogicFunctionTestInputInitEffect logicFunctionId={logicFunctionId} />
-      <StyledTabListContainer>
-        <TabList
-          tabs={tabs}
-          behaveAsLinks={false}
-          componentInstanceId={
-            WORKFLOW_LOGIC_FUNCTION_ACTION_TAB_LIST_COMPONENT_ID
-          }
-        />
-      </StyledTabListContainer>
+      {!isLogicFunctionFromApp && (
+        <StyledTabListContainer>
+          <TabList
+            tabs={tabs}
+            behaveAsLinks={false}
+            componentInstanceId={
+              WORKFLOW_LOGIC_FUNCTION_ACTION_TAB_LIST_COMPONENT_ID
+            }
+          />
+        </StyledTabListContainer>
+      )}
       <WorkflowStepBody>
-        {activeTabId === TEST_TAB_ID ? (
+        {isTestTabActive ? (
           <>
             <WorkflowEditActionCodeFields
               functionInput={testInput}
@@ -262,7 +268,7 @@ export const WorkflowEditActionLogicFunction = ({
         <WorkflowStepFooter
           stepId={action.id}
           additionalActions={
-            activeTabId === TEST_TAB_ID
+            isTestTabActive
               ? [
                   <WorkflowStepCmdEnterButton
                     title={t`Test`}
