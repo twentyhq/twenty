@@ -1,3 +1,4 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
 import { LogicFunctionLogs } from '@/logic-functions/components/LogicFunctionLogs';
 import { LogicFunctionTestInputInitEffect } from '@/logic-functions/components/LogicFunctionTestInputInitEffect';
@@ -7,6 +8,7 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type WorkflowLogicFunctionAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components/WorkflowStepCmdEnterButton';
@@ -74,6 +76,8 @@ export const WorkflowEditActionLogicFunction = ({
   const { logicFunction, loading } = useGetOneLogicFunction({
     id: logicFunctionId,
   });
+
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
@@ -183,10 +187,15 @@ export const WorkflowEditActionLogicFunction = ({
 
   const hasInputFields = Object.keys(functionInput).length > 0;
 
-  const isLogicFunctionFromApp = isDefined(logicFunction?.applicationId);
+  const workspaceCustomApplicationId =
+    currentWorkspace?.workspaceCustomApplication?.id;
+
+  const isManagedLogicFunction =
+    isDefined(logicFunction?.applicationId) &&
+    logicFunction.applicationId !== workspaceCustomApplicationId;
 
   const isTestTabActive =
-    !isLogicFunctionFromApp && activeTabId === TEST_TAB_ID;
+    !isManagedLogicFunction && activeTabId === TEST_TAB_ID;
 
   const tabs = [
     {
@@ -204,7 +213,7 @@ export const WorkflowEditActionLogicFunction = ({
   return (
     <>
       <LogicFunctionTestInputInitEffect logicFunctionId={logicFunctionId} />
-      {!isLogicFunctionFromApp && (
+      {!isManagedLogicFunction && (
         <StyledTabListContainer>
           <TabList
             tabs={tabs}
