@@ -5,20 +5,15 @@ import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
 
 import { NavigationDrawerAiChatThreadItem } from '@/ai/components/NavigationDrawerAiChatThreadItem';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
+import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
-
-const StyledSection = styled.section`
-  display: flex;
-  flex-direction: column;
-`;
 
 const StyledThreadList = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing['0.5']};
-  padding-top: ${themeCssVariables.betweenSiblingsGap};
 `;
 
 export type NavigationDrawerAiChatThreadSectionProps = {
@@ -44,7 +39,7 @@ export const NavigationDrawerAiChatThreadSection = ({
     useNavigationSection(sectionId);
 
   return (
-    <StyledSection>
+    <NavigationDrawerSection>
       <NavigationDrawerAnimatedCollapseWrapper>
         <NavigationDrawerSectionTitle
           label={title}
@@ -74,6 +69,6 @@ export const NavigationDrawerAiChatThreadSection = ({
           </StyledThreadList>
         </AnimatedExpandableContainer>
       ) : null}
-    </StyledSection>
+    </NavigationDrawerSection>
   );
 };

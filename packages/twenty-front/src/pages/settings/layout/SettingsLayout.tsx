@@ -1,5 +1,6 @@
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
+import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsLayoutItemsStats } from '@/settings/layout/components/SettingsLayoutItemsStats';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -70,16 +71,6 @@ export const SettingsLayout = () => {
   return (
     <SettingsPageLayout
       title={t`Layout`}
-      actionButton={
-        <Button
-          title={t`Customize`}
-          variant="primary"
-          accent="blue"
-          size="small"
-          Icon={IconPencil}
-          onClick={handleCustomize}
-        />
-      }
       links={[
         {
           children: t`Workspace`,
@@ -96,6 +87,23 @@ export const SettingsLayout = () => {
             instanceIdPrefix={SETTINGS_LAYOUT_HERO_INSTANCE_ID_PREFIX}
             tabs={heroTabs}
             playButtonAriaLabel={t`Watch customization demo`}
+            footer={
+              <SettingsOptionCardContentButton
+                Icon={IconLayoutDashboard}
+                title={t`Customize layout`}
+                description={t`Customize how your workspace looks.`}
+                Button={
+                  <Button
+                    title={t`Customize`}
+                    variant="primary"
+                    accent="blue"
+                    size="small"
+                    Icon={IconPencil}
+                    onClick={handleCustomize}
+                  />
+                }
+              />
+            }
           />
         </Section>
         <Section>

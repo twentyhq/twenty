@@ -53,10 +53,9 @@
     "express": "^4.18.2",
     "marked": "^5.0.0",
     "openai": "^4.97.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "react-markdown": "^10.1.0",
-    "simplemde": "^1.11.2",
     "zod": "^3.25.76"
   }
 }

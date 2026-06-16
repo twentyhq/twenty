@@ -22,6 +22,7 @@ type Assertions = [
       | 'settings'
       | 'isUnique'
       | 'isLabelSyncedWithName'
+      | 'isUIEditable'
       | 'universalSettings'
     >
   >,
@@ -52,6 +53,8 @@ type Assertions = [
       | 'imageIdentifierFieldMetadataId'
       | 'imageIdentifierFieldMetadataUniversalIdentifier'
       | 'isSearchable'
+      | 'isUIEditable'
+      | 'isUICreatable'
     >
   >,
 

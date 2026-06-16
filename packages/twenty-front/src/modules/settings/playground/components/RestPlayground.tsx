@@ -44,7 +44,7 @@ const StyledContainer = styled.div`
 
 const ApiReferenceReact = lazy(() =>
   import('@scalar/api-reference-react').then((module) => {
-    import('@scalar/api-reference-react/style.css?inline');
+    import('@scalar/api-reference-react/style.css');
     return {
       default: module.ApiReferenceReact,
     };
@@ -90,12 +90,11 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
         <Suspense fallback={fallback}>
           <ApiReferenceReact
             configuration={{
-              spec: {
-                content: specContent,
-              },
+              content: specContent,
               authentication: {
-                http: {
-                  bearer: { token: playgroundApiKey.token },
+                preferredSecurityScheme: 'bearerAuth',
+                securitySchemes: {
+                  bearerAuth: { token: playgroundApiKey.token },
                 },
               },
               baseServerURL: REACT_APP_SERVER_BASE_URL + '/' + schema,

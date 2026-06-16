@@ -10,13 +10,20 @@ import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadat
 export const resolveFieldMetadataStandardOverride = (
   fieldMetadata: Pick<
     FieldMetadataDTO,
-    'label' | 'description' | 'icon' | 'standardOverrides'
+    'label' | 'description' | 'icon' | 'isCustom' | 'standardOverrides'
   >,
   labelKey: 'label' | 'description' | 'icon',
   locale: keyof typeof APP_LOCALES | undefined,
   i18nInstance: I18n,
 ): string => {
   const safeLocale = locale ?? SOURCE_LOCALE;
+
+  // Custom field labels are user-authored: never overridden nor translated.
+  // Without this gate, a label colliding with a standard catalog string
+  // (e.g. "Status") would get translated against the user's intent.
+  if (fieldMetadata.isCustom) {
+    return fieldMetadata[labelKey] ?? '';
+  }
 
   if (labelKey === 'icon' && isDefined(fieldMetadata.standardOverrides?.icon)) {
     return fieldMetadata.standardOverrides.icon;

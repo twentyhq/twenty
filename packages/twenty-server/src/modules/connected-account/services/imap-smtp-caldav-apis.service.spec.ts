@@ -245,13 +245,13 @@ describe('ImapSmtpCalDavAPIService', () => {
         IMAP: {
           host: 'imap.example.com',
           port: 993,
-          secure: true,
+          connectionSecurity: 'SSL_TLS',
           password: 'password' as PlaintextString,
         },
         SMTP: {
           host: 'smtp.example.com',
           port: 587,
-          secure: true,
+          connectionSecurity: 'SSL_TLS',
           username: 'test@example.com',
           password: 'password' as PlaintextString,
         },
@@ -342,7 +342,7 @@ describe('ImapSmtpCalDavAPIService', () => {
           CALDAV: {
             host: 'caldav.example.com',
             port: 443,
-            secure: true,
+            connectionSecurity: 'SSL_TLS',
             username: 'test@example.com',
             password: 'password' as PlaintextString,
           },
@@ -472,7 +472,7 @@ describe('ImapSmtpCalDavAPIService', () => {
           IMAP: {
             host: 'imap.example.com',
             port: 993,
-            secure: true,
+            connectionSecurity: 'SSL_TLS',
             password: 'password' as PlaintextString,
           },
         } as PlaintextImapSmtpCaldavParams,
@@ -507,7 +507,7 @@ describe('ImapSmtpCalDavAPIService', () => {
           CALDAV: {
             host: 'caldav.example.com',
             port: 443,
-            secure: true,
+            connectionSecurity: 'SSL_TLS',
             username: 'test@example.com',
             password: 'password' as PlaintextString,
           },
@@ -543,13 +543,13 @@ describe('ImapSmtpCalDavAPIService', () => {
           IMAP: {
             host: 'imap.example.com',
             port: 993,
-            secure: true,
+            connectionSecurity: 'SSL_TLS',
             password: 'password' as PlaintextString,
           },
           SMTP: {
             host: 'smtp.example.com',
             port: 587,
-            secure: true,
+            connectionSecurity: 'SSL_TLS',
             username: 'test@example.com',
             password: 'password' as PlaintextString,
           },
@@ -585,20 +585,20 @@ describe('ImapSmtpCalDavAPIService', () => {
           IMAP: {
             host: 'imap.example.com',
             port: 993,
-            secure: true,
+            connectionSecurity: 'SSL_TLS',
             password: 'password' as PlaintextString,
           },
           SMTP: {
             host: 'smtp.example.com',
             port: 587,
-            secure: true,
+            connectionSecurity: 'SSL_TLS',
             username: 'test@example.com',
             password: 'password' as PlaintextString,
           },
           CALDAV: {
             host: 'caldav.example.com',
             port: 443,
-            secure: true,
+            connectionSecurity: 'SSL_TLS',
             username: 'test@example.com',
             password: 'password' as PlaintextString,
           },
@@ -680,7 +680,7 @@ describe('ImapSmtpCalDavAPIService', () => {
           SMTP: {
             host: 'smtp.example.com',
             port: 587,
-            secure: true,
+            connectionSecurity: 'SSL_TLS',
             username: 'test@example.com',
             password: 'password' as PlaintextString,
           },

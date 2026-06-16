@@ -63,6 +63,15 @@ export class ObjectMetadataResolver {
     });
   }
 
+  @ResolveField(() => Boolean, {
+    deprecationReason: 'Use isUIEditable',
+  })
+  async isUIReadOnly(
+    @Parent() objectMetadata: ObjectMetadataDTO,
+  ): Promise<boolean> {
+    return !objectMetadata.isUIEditable;
+  }
+
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   @Query(() => [ObjectRecordCountDTO])
   async objectRecordCounts(

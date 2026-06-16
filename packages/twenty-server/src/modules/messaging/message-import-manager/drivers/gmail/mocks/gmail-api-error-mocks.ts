@@ -1,4 +1,6 @@
-import { GaxiosError } from 'gaxios';
+import { type GaxiosError } from 'gaxios';
+
+import { createMockGaxiosError } from 'src/modules/messaging/message-import-manager/drivers/gmail/mocks/create-mock-gaxios-error.util';
 
 type ErrorConfig = {
   reason: string;
@@ -66,27 +68,21 @@ export const getGmailApiError = ({
 
   const errorMessage = message ?? config.message;
 
-  return new GaxiosError(
-    errorMessage,
-    { url: 'https://gmail.googleapis.com/mocks' },
-    {
-      status: code,
-      statusText: config.message,
-      data: {
-        error: {
-          code,
-          message: errorMessage,
-          errors: [
-            {
-              message: errorMessage,
-              reason: config.reason,
-            },
-          ],
-        },
+  return createMockGaxiosError({
+    message: errorMessage,
+    status: code,
+    statusText: config.message,
+    data: {
+      error: {
+        code,
+        message: errorMessage,
+        errors: [
+          {
+            message: errorMessage,
+            reason: config.reason,
+          },
+        ],
       },
-      headers: {},
-      config: { url: 'https://gmail.googleapis.com/mocks' },
-      request: { responseURL: 'https://gmail.googleapis.com/mocks' },
     },
-  );
+  });
 };

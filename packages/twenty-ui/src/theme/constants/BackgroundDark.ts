@@ -1,6 +1,6 @@
 import * as RadixColors from '@radix-ui/colors';
 
-import { COLOR_DARK } from '@new-ui/theme/constants/ColorsDark';
+import { COLOR_DARK } from '@ui/theme/constants/ColorsDark';
 import { GRAY_SCALE_DARK } from './GrayScaleDark';
 import { TRANSPARENT_COLORS_DARK } from './TransparentColorsDark';
 

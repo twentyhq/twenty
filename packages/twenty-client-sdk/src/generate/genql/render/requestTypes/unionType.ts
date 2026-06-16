@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { GraphQLUnionType } from 'graphql'
-import uniq from 'lodash/uniq'
+import uniq from 'lodash/uniq.js'
 import { typeComment } from '../common/comment'
 import { RenderContext } from '../common/RenderContext'
 import { requestTypeName } from './requestTypeName'
