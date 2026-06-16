@@ -1,12 +1,14 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, MaxLength } from 'class-validator';
 
 @InputType()
 export class SignUpInNewWorkspaceInput {
+  // Bounded to guard against persisting an unbounded user-supplied name.
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
+  @MaxLength(100)
   displayName?: string;
 
   @Field(() => String, { nullable: true })
