@@ -97,7 +97,7 @@ export const createStandardIndexFlatMetadata = <
       indexWhereClause,
       isCustom: false,
       isUnique,
-      isSystemSideEffect: false,
+      isSystemSideEffect: true,
       objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,
       universalIdentifier: indexDefinition.universalIdentifier,
       updatedAt: now,

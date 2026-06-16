@@ -71,7 +71,7 @@ export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
         position: lowestViewFieldPosition - 1,
         isVisible: true,
         isActive: true,
-        isSystemSideEffect: false,
+        isSystemSideEffect: flatView.isSystemSideEffect,
         size: DEFAULT_VIEW_FIELD_SIZE,
         viewId: flatView.id,
         viewUniversalIdentifier: flatView.universalIdentifier,
