@@ -35,6 +35,7 @@ export type LearnToolsResultEntry = {
 export type LearnToolsResult = {
   tools: LearnToolsResultEntry[];
   notFound: string[];
+  suggestions?: Record<string, string[]>;
   message: string;
 };
 
@@ -63,10 +64,26 @@ export const createLearnToolsTool = (
     const notFound = toolNames.filter((name) => !foundNames.has(name));
 
     if (notFound.length > 0) {
+      const suggestions = await toolRegistry.suggestSimilarToolNames(
+        notFound,
+        context,
+      );
+
+      const notFoundDescription = notFound
+        .map((name) => {
+          const similarToolNames = suggestions[name];
+
+          return similarToolNames?.length
+            ? `${name} (did you mean: ${similarToolNames.join(', ')}?)`
+            : name;
+        })
+        .join('; ');
+
       return {
         tools: toolInfos,
         notFound,
-        message: `Learned ${toolInfos.length} tool(s). Could not find: ${notFound.join(', ')}.`,
+        ...(Object.keys(suggestions).length > 0 && { suggestions }),
+        message: `Learned ${toolInfos.length} tool(s). Could not find: ${notFoundDescription}.`,
       };
     }
 
