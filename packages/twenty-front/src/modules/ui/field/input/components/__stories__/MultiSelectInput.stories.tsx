@@ -210,6 +210,12 @@ export const SingleSelection: Story = {
 
       expect(checkboxes).toHaveLength(0);
     });
+
+    await userEvent.unhover(canvas.getByText('Professional Network'));
+
+    await waitFor(() => {
+      expect(canvas.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
   },
 };
 

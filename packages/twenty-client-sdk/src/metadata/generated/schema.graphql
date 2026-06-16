@@ -1617,6 +1617,11 @@ type BillingUpdate {
   billingSubscriptions: [BillingSubscription!]!
 }
 
+type InviteSuggestion {
+  email: String!
+  displayName: String
+}
+
 type OnboardingStepSuccess {
   """Boolean that confirms query was dispatched"""
   success: Boolean!
@@ -2229,7 +2234,13 @@ type PublicConnectionParametersOutput {
   host: String!
   port: Float!
   username: String
-  secure: Boolean
+  connectionSecurity: EmailConnectionSecurity
+}
+
+enum EmailConnectionSecurity {
+  NONE
+  STARTTLS
+  SSL_TLS
 }
 
 type PublicImapSmtpCaldavConnectionParameters {
@@ -2595,7 +2606,7 @@ type ImapSmtpCaldavPublicConnectionParams {
   host: String!
   port: Float!
   username: String
-  secure: Boolean
+  connectionSecurity: EmailConnectionSecurity
 }
 
 type ImapSmtpCaldavPublicConnectionParameters {
@@ -3015,6 +3026,8 @@ type Query {
   getViewFieldGroup(id: String!): ViewFieldGroup
   apiKeys: [ApiKey!]!
   apiKey(input: GetApiKeyInput!): ApiKey
+  getInviteSuggestions: [InviteSuggestion!]!
+  applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   billingPortalSession(returnUrlPath: String): BillingSession!
   listPlans: [BillingPlan!]!
   getResourceCreditUsage: [BillingResourceCreditUsage!]!
@@ -3024,7 +3037,6 @@ type Query {
   getPageLayoutTab(id: String!): PageLayoutTab!
   getPageLayouts(objectMetadataId: String, pageLayoutType: PageLayoutType): [PageLayout!]!
   getPageLayout(id: String!): PageLayout
-  applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   getPageLayoutWidgets(pageLayoutTabId: String!): [PageLayoutWidget!]!
   getPageLayoutWidget(id: String!): PageLayoutWidget!
   findOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
@@ -3266,6 +3278,7 @@ type Mutation {
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
   skipSyncEmailOnboardingStep: OnboardingStepSuccess!
   skipBookOnboardingStep: OnboardingStepSuccess!
+  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   switchSubscriptionInterval: BillingUpdate!
   switchBillingPlan: BillingUpdate!
@@ -3290,7 +3303,6 @@ type Mutation {
   resetPageLayoutToDefault(id: String!): PageLayout!
   resetPageLayoutWidgetToDefault(id: String!): PageLayoutWidget!
   resetPageLayoutTabToDefault(id: String!): PageLayoutTab!
-  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
   updatePageLayoutWidget(id: String!, input: UpdatePageLayoutWidgetInput!): PageLayoutWidget!
   destroyPageLayoutWidget(id: String!): Boolean!
@@ -4558,7 +4570,7 @@ input ConnectionParametersInput {
   port: Float!
   username: String
   password: String
-  secure: Boolean
+  connectionSecurity: EmailConnectionSecurity
 }
 
 input UpdateLabPublicFeatureFlagInput {
