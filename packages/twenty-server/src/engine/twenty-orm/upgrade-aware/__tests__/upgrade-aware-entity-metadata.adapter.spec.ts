@@ -63,7 +63,7 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
         {
           provide: UpgradeMigrationService,
           useValue: {
-            getLastAttemptedInstanceCommand: jest.fn().mockResolvedValue(null),
+            getCompletedInstanceCommandNames: jest.fn().mockResolvedValue([]),
           },
         },
         {
@@ -113,10 +113,9 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
         {
           provide: UpgradeMigrationService,
           useValue: {
-            getLastAttemptedInstanceCommand: jest.fn().mockResolvedValue({
-              name: REMOVE_STEP,
-              status: 'completed',
-            }),
+            getCompletedInstanceCommandNames: jest
+              .fn()
+              .mockResolvedValue([REMOVE_STEP]),
           },
         },
         {
@@ -153,5 +152,60 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
     expect(visibleColumn.isUpdate).toBe(true);
 
     expect(metadata.columns).toEqual([visibleColumn]);
+  });
+
+  it('keeps a removed column hidden when a lower-index step is completed out of order after a higher-index removal', async () => {
+    const introducedColumn = buildColumn('introducedColumn');
+    const removedColumn = buildColumn('removedColumn');
+    const visibleColumn = buildColumn('visibleColumn');
+
+    const metadata = {
+      target: EntityWithHideableColumns,
+      tableName: 'entityWithHideableColumns',
+      tablePath: 'core.entityWithHideableColumns',
+      givenTableName: 'entityWithHideableColumns',
+      schema: 'core',
+      columns: [introducedColumn, removedColumn, visibleColumn],
+    } as unknown as EntityMetadata;
+
+    const dataSource = {
+      entityMetadatas: [metadata],
+    } as unknown as DataSource;
+
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        UpgradeAwareEntityMetadataAdapter,
+        {
+          provide: UpgradeMigrationService,
+          useValue: {
+            getCompletedInstanceCommandNames: jest
+              .fn()
+              .mockResolvedValue([REMOVE_STEP, INTRODUCE_STEP]),
+          },
+        },
+        {
+          provide: UpgradeSequenceReaderService,
+          useValue: {
+            getUpgradeSequence: jest
+              .fn()
+              .mockReturnValue([
+                { name: INTRODUCE_STEP },
+                { name: REMOVE_STEP },
+              ]),
+          },
+        },
+        { provide: getDataSourceToken(), useValue: dataSource },
+      ],
+    }).compile();
+
+    const adapter = moduleRef.get(UpgradeAwareEntityMetadataAdapter);
+
+    await adapter.onModuleInit();
+
+    await adapter.refresh();
+
+    expect(removedColumn.isSelect).toBe(false);
+    expect(introducedColumn.isSelect).toBe(true);
+    expect(metadata.columns).toEqual([introducedColumn, visibleColumn]);
   });
 });

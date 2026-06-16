@@ -39,7 +39,7 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
         {
           provide: UpgradeMigrationService,
           useValue: {
-            getLastAttemptedInstanceCommand: jest.fn().mockResolvedValue(null),
+            getCompletedInstanceCommandNames: jest.fn().mockResolvedValue([]),
           },
         },
         {

@@ -378,6 +378,26 @@ export class UpgradeMigrationService {
     };
   }
 
+  async getCompletedInstanceCommandNames(): Promise<string[]> {
+    const migrations = await this.upgradeMigrationRepository
+      .createQueryBuilder('migration')
+      .select(['migration.name'])
+      .where('migration."workspaceId" IS NULL')
+      .andWhere('migration."isInitial" = false')
+      .andWhere(`migration.status = 'completed'`)
+      .andWhere(
+        `migration.attempt = (
+          SELECT MAX(sub.attempt)
+          FROM core."upgradeMigration" sub
+          WHERE sub.name = migration.name
+          AND sub."workspaceId" IS NULL
+        )`,
+      )
+      .getMany();
+
+    return migrations.map((migration) => migration.name);
+  }
+
   async getLastAttemptedInstanceCommandOrThrow(): Promise<{
     name: string;
     status: UpgradeMigrationStatus;
