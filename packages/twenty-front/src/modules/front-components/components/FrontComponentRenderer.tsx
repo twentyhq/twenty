@@ -7,7 +7,7 @@ import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponent
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
-import { useCallback, useContext, useEffect } from 'react';
+import { useCallback, useContext, useEffect, useRef } from 'react';
 import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
@@ -41,6 +41,68 @@ export const FrontComponentRenderer = ({
       selectedRecordIds,
     });
 
+  const { data, loading, error } = useQuery(FindOneFrontComponentDocument, {
+    variables: { id: frontComponentId },
+  });
+
+  const lastCapturedErrorSignatureRef = useRef<string | null>(null);
+
+  const captureFrontComponentError = useCallback(
+    async (error: Error) => {
+      const isAbortError = error.name === 'AbortError';
+
+      if (isAbortError) {
+        return;
+      }
+
+      const frontComponent = data?.frontComponent;
+      const errorSignature = [
+        frontComponentId,
+        frontComponent?.applicationId ?? 'unknown-application-id',
+        String(frontComponent?.usesSdkClient ?? false),
+        error.message,
+      ].join(':');
+
+      if (lastCapturedErrorSignatureRef.current === errorSignature) {
+        return;
+      }
+
+      lastCapturedErrorSignatureRef.current = errorSignature;
+
+      try {
+        const { captureException } = await import('@sentry/react');
+
+        captureException(error, (scope) => {
+          scope.setTag('error-handler', 'front-component-renderer');
+          scope.setTag('front-component-id', frontComponentId);
+
+          if (isDefined(frontComponent)) {
+            scope.setTag(
+              'front-component-application-id',
+              frontComponent.applicationId,
+            );
+            scope.setTag(
+              'front-component-uses-sdk-client',
+              String(frontComponent.usesSdkClient),
+            );
+          }
+
+          scope.setFingerprint([
+            'front-component-renderer',
+            frontComponentId,
+            error.message,
+          ]);
+
+          return scope;
+        });
+      } catch (sentryError) {
+        // oxlint-disable-next-line no-console
+        console.error('Failed to capture exception with Sentry:', sentryError);
+      }
+    },
+    [data?.frontComponent, frontComponentId],
+  );
+
   const handleError = useCallback(
     (error?: Error) => {
       if (!isDefined(error)) {
@@ -52,13 +114,11 @@ export const FrontComponentRenderer = ({
       enqueueErrorSnackBar({
         message: t`Failed to load front component: ${errorMessage}`,
       });
-    },
-    [enqueueErrorSnackBar],
-  );
 
-  const { data, loading, error } = useQuery(FindOneFrontComponentDocument, {
-    variables: { id: frontComponentId },
-  });
+      void captureFrontComponentError(error);
+    },
+    [captureFrontComponentError, enqueueErrorSnackBar],
+  );
 
   useEffect(() => {
     if (error) {
