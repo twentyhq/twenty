@@ -6,14 +6,14 @@ import {
 import { buildRouteMetadata } from '@/platform/seo';
 import { Faq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
+import { PricingEngagementBand } from '@/sections/pricing-engagement-band';
 import { PricingPlans, PricingStateProvider } from '@/sections/pricing-plans';
 
 export const generateMetadata = buildRouteMetadata('pricing');
 
-// Sections land in old-site order as their ports arrive:
-// EngagementBand, PlanTable, Salesforce. The provider will widen to
-// wrap them (the plan table pivots on the same hosting state). The FAQ JSON-LD rides the Faq
-// section itself.
+// PlanTable and Salesforce land next, in old-site order; the provider widens to
+// wrap PlanTable too (it pivots on the same hosting state). The FAQ JSON-LD
+// rides the Faq section itself.
 export default async function PricingPage({
   params,
 }: {
@@ -30,6 +30,7 @@ export default async function PricingPage({
       <main>
         <PricingStateProvider>
           <PricingPlans />
+          <PricingEngagementBand />
         </PricingStateProvider>
         <Faq />
       </main>

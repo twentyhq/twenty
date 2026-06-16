@@ -1969,6 +1969,7 @@ msgid "Find a certified Twenty partner to migrate, customise, and operate your o
 msgstr ""
 
 #. js-lingui-id: TJ7HQl
+#: src/sections/pricing-engagement-band/pricing-engagement-band.tsx
 #: src/sections/partner-signoff/partner-signoff.tsx
 #: src/sections/partner-hero/partner-hero.tsx
 msgid "Find a partner"
@@ -1982,6 +1983,11 @@ msgstr ""
 #. js-lingui-id: S6CEQ9
 #: src/platform/routing/static-website-routes.ts
 msgid "Find a Twenty Partner — Open Source CRM Marketplace"
+msgstr ""
+
+#. js-lingui-id: wHyJkT
+#: src/sections/pricing-engagement-band/pricing-engagement-band.tsx
+msgid "Find the right partner to implement, customize, and tailor Twenty to your team."
 msgstr ""
 
 #. js-lingui-id: 5asqas
@@ -3122,6 +3128,11 @@ msgstr ""
 #. js-lingui-id: LfNsfa
 #: src/sections/stepper/product-stepper-content.tsx
 msgid "Need a quick change? Skip the engineering ticket. Customize your workspace in minutes."
+msgstr ""
+
+#. js-lingui-id: 4sbgPq
+#: src/sections/pricing-engagement-band/pricing-engagement-band.tsx
+msgid "Need help with customization?"
 msgstr ""
 
 #. js-lingui-id: LNVNNE
