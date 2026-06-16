@@ -31,6 +31,27 @@ export class CodeInterpreterService implements CodeInterpreterDriver {
     );
   }
 
+  async releaseThreadSandbox(
+    workspaceId: string,
+    threadId: string,
+  ): Promise<void> {
+    await this.codeInterpreterDriverFactory
+      .getCurrentDriver()
+      .releaseSession?.(`${workspaceId}:${threadId}`);
+  }
+
+  async sweepExpiredSandboxes(): Promise<number> {
+    const maxAgeMs = this.twentyConfigService.get(
+      'CODE_INTERPRETER_SESSION_MAX_AGE_MS',
+    );
+
+    return (
+      (await this.codeInterpreterDriverFactory
+        .getCurrentDriver()
+        .sweepExpiredSessions?.(maxAgeMs)) ?? 0
+    );
+  }
+
   execute(
     code: string,
     files?: InputFile[],
