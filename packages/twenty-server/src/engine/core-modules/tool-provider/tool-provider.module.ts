@@ -2,13 +2,14 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
+import { RecordQueryLanguageModule } from 'src/engine/core-modules/record-query-language/record-query-language.module';
+import { QueryToolProvider } from 'src/engine/core-modules/record-query-language/tools/query-tool.provider';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { ActionToolProvider } from 'src/engine/core-modules/tool-provider/providers/action-tool.provider';
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
 import { MetadataToolProvider } from 'src/engine/core-modules/tool-provider/providers/metadata-tool.provider';
 import { NavigationMenuItemToolProvider } from 'src/engine/core-modules/tool-provider/providers/navigation-menu-item-tool.provider';
-import { QueryToolProvider } from 'src/engine/core-modules/tool-provider/providers/query-tool.provider';
 import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
 import { WebhookToolProvider } from 'src/engine/core-modules/tool-provider/providers/webhook-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
@@ -48,6 +49,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
   imports: [
     ToolModule,
     RecordCrudModule,
+    RecordQueryLanguageModule,
     AiModelsModule,
     forwardRef(() => AiAgentExecutionModule),
     ObjectMetadataModule,
@@ -70,7 +72,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
     ToolExecutorService,
     ActionToolProvider,
     DatabaseToolProvider,
-    QueryToolProvider,
     MetadataToolProvider,
     NavigationMenuItemToolProvider,
     LogicFunctionToolProvider,

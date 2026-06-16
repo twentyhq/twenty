@@ -4,7 +4,7 @@ import { ToolCategory } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
-import { QueryToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/query-tool.zod-schema';
+import { QueryInputSchema } from 'src/engine/core-modules/record-query-language/schemas/query-input.zod-schema';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
@@ -63,7 +63,7 @@ export class QueryToolProvider implements ToolProvider {
         description: QUERY_TOOL_DESCRIPTION,
         category: ToolCategory.QUERY,
         ...(includeSchema && {
-          inputSchema: toToolJsonSchema(QueryToolInputSchema),
+          inputSchema: toToolJsonSchema(QueryInputSchema),
         }),
         executionRef: { kind: 'query' },
         operation: 'query',

@@ -1,8 +1,8 @@
 import { FieldMetadataType, OrderByDirection } from 'twenty-shared/types';
 
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
-import { type QueryAst } from 'src/engine/core-modules/record-crud/types/query-tool-ast.type';
-import { compileQuery } from 'src/engine/core-modules/record-crud/utils/compile-query.util';
+import { type QueryAst } from 'src/engine/core-modules/record-query-language/types/query-ast.type';
+import { compileQuery } from 'src/engine/core-modules/record-query-language/compiler/compile-query.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 

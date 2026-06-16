@@ -7,14 +7,14 @@ import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-c
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { GroupByRecordsService } from 'src/engine/core-modules/record-crud/services/group-by-records.service';
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
-import { type QueryAst } from 'src/engine/core-modules/record-crud/types/query-tool-ast.type';
-import { type QueryRecordsParams } from 'src/engine/core-modules/record-crud/types/query-records-params.type';
-import { compileQuery } from 'src/engine/core-modules/record-crud/utils/compile-query.util';
+import { type QueryAst } from 'src/engine/core-modules/record-query-language/types/query-ast.type';
+import { type QueryRecordsParams } from 'src/engine/core-modules/record-query-language/types/query-records-params.type';
+import { compileQuery } from 'src/engine/core-modules/record-query-language/compiler/compile-query.util';
 import {
   formatQueryCompileErrors,
   formatQueryInputIssues,
-} from 'src/engine/core-modules/record-crud/utils/format-query-compile-errors.util';
-import { QueryToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/query-tool.zod-schema';
+} from 'src/engine/core-modules/record-query-language/utils/format-query-compile-errors.util';
+import { QueryInputSchema } from 'src/engine/core-modules/record-query-language/schemas/query-input.zod-schema';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
 // Backs the single `query` AI tool. Validates and lowers the AST, then reuses
@@ -31,7 +31,7 @@ export class QueryRecordsService {
   async execute(params: QueryRecordsParams): Promise<ToolOutput> {
     const { input, authContext, rolePermissionConfig } = params;
 
-    const parsedInput = QueryToolInputSchema.safeParse(input);
+    const parsedInput = QueryInputSchema.safeParse(input);
 
     if (!parsedInput.success) {
       return {

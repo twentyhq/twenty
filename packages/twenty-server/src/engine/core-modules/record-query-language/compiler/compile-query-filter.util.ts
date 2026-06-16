@@ -1,9 +1,9 @@
-import { type QueryCompileError } from 'src/engine/core-modules/record-crud/types/compile-query-result.type';
-import { type QueryFilterNode } from 'src/engine/core-modules/record-crud/types/query-tool-ast.type';
+import { type QueryCompileError } from 'src/engine/core-modules/record-query-language/types/query-compile-result.type';
+import { type QueryFilterNode } from 'src/engine/core-modules/record-query-language/types/query-ast.type';
 import {
   buildNestedTree,
   type QueryFieldResolver,
-} from 'src/engine/core-modules/record-crud/utils/resolve-query-field.util';
+} from 'src/engine/core-modules/record-query-language/compiler/resolve-query-field.util';
 
 export type CompiledFilterNode = {
   filter?: Record<string, unknown>;

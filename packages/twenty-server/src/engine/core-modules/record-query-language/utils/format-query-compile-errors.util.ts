@@ -1,6 +1,6 @@
 import { type z } from 'zod';
 
-import { type QueryCompileError } from 'src/engine/core-modules/record-crud/types/compile-query-result.type';
+import { type QueryCompileError } from 'src/engine/core-modules/record-query-language/types/query-compile-result.type';
 
 // Renders compile errors as a short bullet list the model can act on directly.
 export const formatQueryCompileErrors = (errors: QueryCompileError[]): string =>

@@ -7,7 +7,7 @@ import { z } from 'zod';
 import {
   type QueryFilterNode,
   QUERY_FILTER_OPERATORS,
-} from 'src/engine/core-modules/record-crud/types/query-tool-ast.type';
+} from 'src/engine/core-modules/record-query-language/types/query-ast.type';
 
 const operatorEnum = z.enum(QUERY_FILTER_OPERATORS);
 
@@ -92,7 +92,7 @@ const aggregateSchema = z
   })
   .strict();
 
-export const QueryToolInputSchema = z
+export const QueryInputSchema = z
   .object({
     from: z
       .string()

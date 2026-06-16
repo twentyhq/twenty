@@ -3,7 +3,7 @@ import { shouldExcludeFieldFromAgentToolSchema } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
-import { type QueryCompileError } from 'src/engine/core-modules/record-crud/types/compile-query-result.type';
+import { type QueryCompileError } from 'src/engine/core-modules/record-query-language/types/query-compile-result.type';
 import { generateFieldFilterZodSchema } from 'src/engine/core-modules/record-crud/zod-schemas/field-filters.zod-schema';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';

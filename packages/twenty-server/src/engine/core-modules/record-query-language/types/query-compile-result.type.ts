@@ -1,8 +1,4 @@
-import {
-  type ObjectRecordFilter,
-  type ObjectRecordGroupBy,
-  type ObjectRecordOrderBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type CompiledQuery } from 'src/engine/core-modules/record-query-language/types/compiled-query.type';
 
 export type QueryCompileErrorCode =
   | 'unknown_field'
@@ -21,26 +17,6 @@ export type QueryCompileError = {
   // Closest valid identifier when the failure is a typo.
   suggestion?: string;
 };
-
-export type CompiledFindQuery = {
-  kind: 'find';
-  filter: ObjectRecordFilter;
-  orderBy: ObjectRecordOrderBy;
-  select: string[];
-  limit?: number;
-  offset?: number;
-};
-
-export type CompiledAggregateQuery = {
-  kind: 'aggregate';
-  filter: ObjectRecordFilter;
-  groupBy: ObjectRecordGroupBy;
-  operation: string;
-  field?: string;
-  limit?: number;
-};
-
-export type CompiledQuery = CompiledFindQuery | CompiledAggregateQuery;
 
 export type QueryCompileResult =
   | { ok: true; query: CompiledQuery; warnings: string[] }

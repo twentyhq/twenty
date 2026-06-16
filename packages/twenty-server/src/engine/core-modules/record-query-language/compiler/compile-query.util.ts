@@ -10,18 +10,18 @@ import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record
 import {
   type QueryCompileError,
   type QueryCompileResult,
-} from 'src/engine/core-modules/record-crud/types/compile-query-result.type';
+} from 'src/engine/core-modules/record-query-language/types/query-compile-result.type';
 import {
   type QueryAst,
   type QueryGroupByItem,
   type QueryOrderByItem,
-} from 'src/engine/core-modules/record-crud/types/query-tool-ast.type';
-import { compileQueryFilterNode } from 'src/engine/core-modules/record-crud/utils/compile-query-filter.util';
+} from 'src/engine/core-modules/record-query-language/types/query-ast.type';
+import { compileQueryFilterNode } from 'src/engine/core-modules/record-query-language/compiler/compile-query-filter.util';
 import {
   buildNestedTree,
   createQueryFieldResolver,
   type QueryFieldResolver,
-} from 'src/engine/core-modules/record-crud/utils/resolve-query-field.util';
+} from 'src/engine/core-modules/record-query-language/compiler/resolve-query-field.util';
 
 const toOrderByDirection = (
   direction: 'asc' | 'desc',
