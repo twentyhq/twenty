@@ -95,7 +95,8 @@ export const MultiItemFieldInput = <T,>({
       }
 
       if (isInputDisplayed) {
-        const { isValid, updatedItems, deletedIndex } = validateInputAndComputeUpdatedItems();
+        const { isValid, updatedItems, deletedIndex } =
+          validateInputAndComputeUpdatedItems();
 
         if (!isValid) {
           return;
@@ -224,7 +225,8 @@ export const MultiItemFieldInput = <T,>({
   };
 
   const handleEnter = () => {
-    const { isValid, updatedItems, deletedIndex } = validateInputAndComputeUpdatedItems();
+    const { isValid, updatedItems, deletedIndex } =
+      validateInputAndComputeUpdatedItems();
     if (!isValid) {
       return;
     }
@@ -233,7 +235,7 @@ export const MultiItemFieldInput = <T,>({
     if (isDefined(deletedIndex)) {
       onItemDeleted?.(deletedIndex);
     }
-    
+
     if (shouldAutoEnterBecauseOnlyOneItemIsAllowed) {
       onEnter(updatedItems);
     }
@@ -285,7 +287,11 @@ export const MultiItemFieldInput = <T,>({
 
     if (isItemDeletion) {
       showInputIfNoItemsRemain(updatedItems);
-      return { isValid: true, updatedItems, deletedIndex: editingIndex as number };
+      return {
+        isValid: true,
+        updatedItems,
+        deletedIndex: editingIndex as number,
+      };
     }
 
     return { isValid: true, updatedItems };
