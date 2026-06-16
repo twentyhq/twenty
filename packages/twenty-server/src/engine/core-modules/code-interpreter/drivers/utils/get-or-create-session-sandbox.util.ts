@@ -10,6 +10,7 @@ type GetOrCreateSessionSandboxArgs = {
   sandboxApi: SandboxApi;
   apiKey: string;
   sessionId: string;
+  timeoutMs: number;
   idleTimeoutMs: number;
 };
 
@@ -18,10 +19,19 @@ const listSandboxesForSession = async (
   apiKey: string,
   sessionId: string,
 ) => {
-  const sandboxes = await sandboxApi.list({
+  const paginator = sandboxApi.list({
     apiKey,
-    query: { metadata: { [SESSION_SANDBOX_METADATA_KEY]: sessionId } },
+    query: {
+      state: ['running', 'paused'],
+      metadata: { [SESSION_SANDBOX_METADATA_KEY]: sessionId },
+    },
   });
+
+  const sandboxes: Awaited<ReturnType<typeof paginator.nextItems>> = [];
+
+  while (paginator.hasNext) {
+    sandboxes.push(...(await paginator.nextItems()));
+  }
 
   // Re-check the tag client-side so a loose server-side match can never reuse
   // another tenant's sandbox.
@@ -34,7 +44,7 @@ const connectAndKeepAlive = async (
   sandboxApi: SandboxApi,
   apiKey: string,
   sandboxId: string,
-  idleTimeoutMs: number,
+  timeoutMs: number,
 ): Promise<Sandbox | undefined> => {
   const sandbox = await sandboxApi
     .connect(sandboxId, { apiKey })
@@ -45,7 +55,7 @@ const connectAndKeepAlive = async (
   }
 
   try {
-    await sandbox.setTimeout(idleTimeoutMs);
+    await sandbox.setTimeout(timeoutMs);
 
     return sandbox;
   } catch {
@@ -60,21 +70,18 @@ const killSandboxById = (
   sandboxApi: SandboxApi,
   apiKey: string,
   sandboxId: string,
-) =>
-  sandboxApi
-    .connect(sandboxId, { apiKey })
-    .then((sandbox) => sandbox.kill())
-    .catch(() => undefined);
+) => sandboxApi.kill(sandboxId, { apiKey }).catch(() => undefined);
 
 const createSessionSandbox = (
   sandboxApi: SandboxApi,
   apiKey: string,
   sessionId: string,
-  idleTimeoutMs: number,
+  timeoutMs: number,
 ) =>
   sandboxApi.create({
     apiKey,
-    timeoutMs: idleTimeoutMs,
+    timeoutMs,
+    lifecycle: { onTimeout: 'pause', autoResume: true },
     metadata: { [SESSION_SANDBOX_METADATA_KEY]: sessionId },
   });
 
@@ -82,11 +89,16 @@ export const getOrCreateSessionSandbox = async ({
   sandboxApi,
   apiKey,
   sessionId,
+  timeoutMs,
   idleTimeoutMs,
 }: GetOrCreateSessionSandboxArgs): Promise<{
   sandbox: Sandbox;
   isReused: boolean;
 }> => {
+  // The sandbox must outlive a single execution and the idle window before it
+  // auto-pauses, so take the larger of the two.
+  const aliveTimeoutMs = Math.max(timeoutMs, idleTimeoutMs);
+
   const sessionSandboxes = await listSandboxesForSession(
     sandboxApi,
     apiKey,
@@ -101,7 +113,7 @@ export const getOrCreateSessionSandbox = async ({
       sandboxApi,
       apiKey,
       sandboxId,
-      idleTimeoutMs,
+      aliveTimeoutMs,
     );
 
     if (isDefined(sandbox)) {
@@ -125,7 +137,7 @@ export const getOrCreateSessionSandbox = async ({
     sandboxApi,
     apiKey,
     sessionId,
-    idleTimeoutMs,
+    aliveTimeoutMs,
   );
 
   return { sandbox, isReused: false };

@@ -5426,12 +5426,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@e2b/code-interpreter@npm:^1.0.4":
-  version: 1.5.1
-  resolution: "@e2b/code-interpreter@npm:1.5.1"
+"@e2b/code-interpreter@npm:^2.6.0":
+  version: 2.6.0
+  resolution: "@e2b/code-interpreter@npm:2.6.0"
   dependencies:
-    e2b: "npm:^1.4.0"
-  checksum: 10c0/edb0aa6643749e91c2446aa5e124304066703cce2c41adb8647ad5a124340332f6f547758bf196c9a5400a171f1a295a13eb0946d4462d76b06106aed65913c2
+    e2b: "npm:^2.28.0"
+  checksum: 10c0/b772ae32285003669afe0cf07dadc5952f7c60aa120194c1b5876af2e034b195a51b148aa06c1b2b25f517d1ae9de9b5dae72bf386bd8f20fcd21abe52318e31
   languageName: node
   linkType: hard
 
@@ -31462,6 +31462,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dockerfile-ast@npm:^0.7.1":
+  version: 0.7.1
+  resolution: "dockerfile-ast@npm:0.7.1"
+  dependencies:
+    vscode-languageserver-textdocument: "npm:^1.0.8"
+    vscode-languageserver-types: "npm:^3.17.3"
+  checksum: 10c0/7afbef27bb7d59d677d3d0537016093207633ada351c83edcae225dda832de64df8271ae3df3a9b5199dfed37081849453b0984c71190a9d49675dbe386412df
+  languageName: node
+  linkType: hard
+
 "doctrine@npm:^3.0.0":
   version: 3.0.0
   resolution: "doctrine@npm:3.0.0"
@@ -31763,17 +31773,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"e2b@npm:^1.4.0":
-  version: 1.13.2
-  resolution: "e2b@npm:1.13.2"
+"e2b@npm:^2.28.0":
+  version: 2.29.1
+  resolution: "e2b@npm:2.29.1"
   dependencies:
     "@bufbuild/protobuf": "npm:^2.6.2"
     "@connectrpc/connect": "npm:2.0.0-rc.3"
     "@connectrpc/connect-web": "npm:2.0.0-rc.3"
+    chalk: "npm:^5.3.0"
     compare-versions: "npm:^6.1.0"
-    openapi-fetch: "npm:^0.9.7"
+    dockerfile-ast: "npm:^0.7.1"
+    glob: "npm:^11.1.0"
+    openapi-fetch: "npm:^0.14.1"
     platform: "npm:^1.3.6"
-  checksum: 10c0/5c6f6b15cf380331dae5561017bf4653aed38e7e7102542984997b2888390732c525a399aac06da5ad26bfe08cf99073b7174825c8f6d54a1b78a327456fccd6
+    tar: "npm:^7.5.11"
+    undici: "npm:^7.25.0"
+  checksum: 10c0/c75522c9497986eafe7b748e1bc8038b9fb2bdf67ab2cbdc741ee7b67b5543514ba735a5e66f4d7d058e4d2150c16070e2f25c7915356c00e1caa2e238bf244d
   languageName: node
   linkType: hard
 
@@ -44194,21 +44209,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"openapi-fetch@npm:^0.14.1":
+  version: 0.14.1
+  resolution: "openapi-fetch@npm:0.14.1"
+  dependencies:
+    openapi-typescript-helpers: "npm:^0.0.15"
+  checksum: 10c0/e1b5375f0461969ff08e951b6308a115a582cca84ed3e0ecc2e41919d44a86038144a7a0b2e217ddb1bb7160a6779f459a2ca0224ff7634a9e89f19afe2a83db
+  languageName: node
+  linkType: hard
+
 "openapi-fetch@npm:^0.17.0":
   version: 0.17.0
   resolution: "openapi-fetch@npm:0.17.0"
   dependencies:
     openapi-typescript-helpers: "npm:^0.1.0"
   checksum: 10c0/7e981d28c7839469662a73d44f3a85e05c1a5842a8afd5d6e36c75cbf085aa7f705862871cc7ce07c04605ddc936af3d5850c2cc66d193ee1fea07e7135da192
-  languageName: node
-  linkType: hard
-
-"openapi-fetch@npm:^0.9.7":
-  version: 0.9.8
-  resolution: "openapi-fetch@npm:0.9.8"
-  dependencies:
-    openapi-typescript-helpers: "npm:^0.0.8"
-  checksum: 10c0/a96590c3df4f3e6800003f1128bafd50a01113073f00ea32a6e21e8c1ec38f3dc88141448569e52e791c58088fdbee61ea4fc44b6856cc24da2768fc43fddb82
   languageName: node
   linkType: hard
 
@@ -44219,10 +44234,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openapi-typescript-helpers@npm:^0.0.8":
-  version: 0.0.8
-  resolution: "openapi-typescript-helpers@npm:0.0.8"
-  checksum: 10c0/b31a326c67d65f947732e32126f79976ecc67597f911f7ed43ea9ea23b1e2df7a012026327b6e39df5897a70781f9c57f9fcdd86f8a05c0f67ab2b23ee5d708a
+"openapi-typescript-helpers@npm:^0.0.15":
+  version: 0.0.15
+  resolution: "openapi-typescript-helpers@npm:0.0.15"
+  checksum: 10c0/5eb68d487b787e3e31266470b1a310726549dd45a1079655ab18066ab291b0b3c343fdf629991013706a2329b86964f8798d56ef0272b94b931fe6c19abd7a88
   languageName: node
   linkType: hard
 
@@ -52290,7 +52305,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tar@npm:^7.5.16, tar@npm:^7.5.4":
+"tar@npm:^7.5.11, tar@npm:^7.5.16, tar@npm:^7.5.4":
   version: 7.5.16
   resolution: "tar@npm:7.5.16"
   dependencies:
@@ -53659,7 +53674,7 @@ __metadata:
     "@azure/msal-node": "npm:^5.2.3"
     "@blocknote/server-util": "npm:^0.51.4"
     "@clickhouse/client": "npm:^1.18.1"
-    "@e2b/code-interpreter": "npm:^1.0.4"
+    "@e2b/code-interpreter": "npm:^2.6.0"
     "@envelop/core": "npm:4.0.3"
     "@faker-js/faker": "npm:9.8.0"
     "@file-type/pdf": "npm:^0.2.0"
@@ -55906,10 +55921,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"vscode-languageserver-textdocument@npm:^1.0.8":
+  version: 1.0.13
+  resolution: "vscode-languageserver-textdocument@npm:1.0.13"
+  checksum: 10c0/1de174f1de3bfa9e1660a4b3c1b1c711497196d761e33f4d00785fdbfc556ae5a1f440db04771cbc0f6bd66c2a6f303062bc17d8dc46e76820e39fa2d5626564
+  languageName: node
+  linkType: hard
+
 "vscode-languageserver-types@npm:^3.17.1":
   version: 3.17.5
   resolution: "vscode-languageserver-types@npm:3.17.5"
   checksum: 10c0/1e1260de79a2cc8de3e46f2e0182cdc94a7eddab487db5a3bd4ee716f67728e685852707d72c059721ce500447be9a46764a04f0611e94e4321ffa088eef36f8
+  languageName: node
+  linkType: hard
+
+"vscode-languageserver-types@npm:^3.17.3":
+  version: 3.18.0
+  resolution: "vscode-languageserver-types@npm:3.18.0"
+  checksum: 10c0/d8c51cd286cc55b4c1f333e87fa3cefc66d2aae8c65f6209e7ecf88032d3326308b333d62b05243c194be8a3304760445b87630b298116c6c612607f011b4de0
   languageName: node
   linkType: hard
 

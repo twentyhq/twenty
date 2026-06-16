@@ -77,6 +77,7 @@ export class E2BDriver implements CodeInterpreterDriver {
         sandboxApi: Sandbox,
         apiKey,
         sessionId,
+        timeoutMs,
         idleTimeoutMs,
       }));
     } else {
