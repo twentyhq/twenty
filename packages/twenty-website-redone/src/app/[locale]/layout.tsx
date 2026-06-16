@@ -1,5 +1,5 @@
 import { css } from '@linaria/core';
-import { Aleo, Azeret_Mono, Host_Grotesk } from 'next/font/google';
+import { Aleo, Azeret_Mono, Host_Grotesk, VT323 } from 'next/font/google';
 import { type ReactNode } from 'react';
 
 import { getLocaleMessages } from '@/platform/i18n/get-locale-messages';
@@ -32,6 +32,13 @@ const azeretMono = Azeret_Mono({
   subsets: ['latin'],
   weight: ['300', '500'],
   variable: '--font-mono',
+  display: 'swap',
+});
+
+const vt323 = VT323({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-retro',
   display: 'swap',
 });
 
@@ -86,7 +93,7 @@ const LocaleLayout = async ({
   return (
     <html lang={locale}>
       <body
-        className={`${tokenCssVariables} ${globalStyles} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable}`}
+        className={`${tokenCssVariables} ${globalStyles} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable} ${vt323.variable}`}
       >
         <I18nProvider locale={locale} messages={getLocaleMessages(locale)}>
           <ContactCalModalRoot>{children}</ContactCalModalRoot>
