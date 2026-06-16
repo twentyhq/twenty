@@ -38,6 +38,7 @@ export type FindRecordsInput = {
     gqlOperationOrderBy?: Partial<ObjectRecordOrderBy>;
   };
   limit?: number;
+  offset?: number;
 };
 
 export type UpsertRecordInput = {

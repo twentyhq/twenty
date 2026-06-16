@@ -155,7 +155,7 @@ export const SettingsApplicationDetailAboutTab = ({
           title={
             isUpgrading
               ? t`Upgrading...`
-              : t`Upgrade to ${latestAvailableVersion}`
+              : t`Upgrade to ${latestAvailableVersion ?? ''}`
           }
           variant={'secondary'}
           accent={'blue'}

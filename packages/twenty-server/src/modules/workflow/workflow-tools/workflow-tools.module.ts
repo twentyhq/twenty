@@ -5,6 +5,7 @@ import { WORKFLOW_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provid
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { WorkflowSchemaModule } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.module';
+import { WorkflowValidationModule } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-validation.module';
 import { WorkflowVersionEdgeModule } from 'src/modules/workflow/workflow-builder/workflow-version-edge/workflow-version-edge.module';
 import { WorkflowVersionStepModule } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.module';
 import { WorkflowVersionModule } from 'src/modules/workflow/workflow-builder/workflow-version/workflow-version.module';
@@ -22,6 +23,7 @@ import { WorkflowToolWorkspaceService } from './services/workflow-tool.workspace
     WorkflowVersionModule,
     WorkflowTriggerModule,
     WorkflowSchemaModule,
+    WorkflowValidationModule,
     RecordPositionModule,
     LogicFunctionModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,

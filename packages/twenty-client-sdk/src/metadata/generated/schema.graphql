@@ -345,6 +345,7 @@ type CommandMenuItem {
   pageLayoutId: UUID
   universalIdentifier: UUID
   applicationId: UUID
+  isActive: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -385,6 +386,7 @@ enum EngineComponentKey {
   SEE_VERSION_WORKFLOW_RUN
   SEE_WORKFLOW_WORKFLOW_RUN
   STOP_WORKFLOW_RUN
+  RETRY_WORKFLOW_RUN
   SEE_RUNS_WORKFLOW_VERSION
   SEE_WORKFLOW_WORKFLOW_VERSION
   USE_AS_DRAFT_WORKFLOW_VERSION
@@ -398,6 +400,7 @@ enum EngineComponentKey {
   FRONT_COMPONENT_RENDERER
   REPLY_TO_EMAIL_THREAD
   COMPOSE_EMAIL
+  COMPOSE_CAMPAIGN
   GO_TO_PEOPLE
   GO_TO_COMPANIES
   GO_TO_DASHBOARDS
@@ -476,10 +479,11 @@ type Field {
   description: String
   icon: String
   standardOverrides: StandardOverrides
-  isCustom: Boolean
+  isCustom: Boolean @deprecated(reason: "isCustom is derived from the owning application and will be removed; a field is custom when it does not belong to the twenty-standard application.")
   isActive: Boolean
   isSystem: Boolean
-  isUIReadOnly: Boolean
+  isUIEditable: Boolean
+  isUIReadOnly: Boolean @deprecated(reason: "Use isUIEditable")
   isNullable: Boolean
   isUnique: Boolean
   defaultValue: JSON
@@ -587,10 +591,11 @@ input ObjectFilter {
   and: [ObjectFilter!]
   or: [ObjectFilter!]
   id: UUIDFilterComparison
-  isCustom: BooleanFieldComparison
   isRemote: BooleanFieldComparison
   isActive: BooleanFieldComparison
   isSystem: BooleanFieldComparison
+  isUIEditable: BooleanFieldComparison
+  isUICreatable: BooleanFieldComparison
   isUIReadOnly: BooleanFieldComparison
   isSearchable: BooleanFieldComparison
 }
@@ -645,11 +650,13 @@ type Object {
   standardOverrides: ObjectStandardOverrides
   shortcut: String
   color: String
-  isCustom: Boolean!
+  isCustom: Boolean! @deprecated(reason: "isCustom is derived from the owning application and will be removed; an object is custom when it does not belong to the twenty-standard application.")
   isRemote: Boolean!
   isActive: Boolean!
   isSystem: Boolean!
-  isUIReadOnly: Boolean!
+  isUIEditable: Boolean!
+  isUICreatable: Boolean!
+  isUIReadOnly: Boolean! @deprecated(reason: "Use isUIEditable")
   isSearchable: Boolean!
   applicationId: UUID!
   createdAt: DateTime!
@@ -680,9 +687,9 @@ input FieldFilter {
   and: [FieldFilter!]
   or: [FieldFilter!]
   id: UUIDFilterComparison
-  isCustom: BooleanFieldComparison
   isActive: BooleanFieldComparison
   isSystem: BooleanFieldComparison
+  isUIEditable: BooleanFieldComparison
   isUIReadOnly: BooleanFieldComparison
   objectMetadataId: UUIDFilterComparison
 }
@@ -879,6 +886,7 @@ type View {
   viewFieldGroups: [ViewFieldGroup!]!
   visibility: ViewVisibility!
   createdByUserWorkspaceId: UUID
+  isActive: Boolean!
 }
 
 enum ViewType {
@@ -957,7 +965,6 @@ type Workspace {
   installedApplications: [Application!]!
   currentBillingSubscription: BillingSubscription
   billingEntitlements: [BillingEntitlement!]!
-  hasValidEnterpriseKey: Boolean!
   hasValidSignedEnterpriseKey: Boolean!
   hasValidEnterpriseValidityToken: Boolean!
   workspaceUrls: WorkspaceUrls!
@@ -1114,7 +1121,7 @@ type AggregateChartConfiguration {
   aggregateOperation: AggregateOperations!
   label: String
   displayDataLabel: Boolean
-  format: String
+  numberFormat: ChartNumberFormat
   description: String
   filter: JSON
   timezone: String
@@ -1147,6 +1154,12 @@ enum WidgetConfigurationType {
   FRONT_COMPONENT
   RECORD_TABLE
   EMAIL_THREAD
+}
+
+"""Format used to display the chart value"""
+enum ChartNumberFormat {
+  SHORT
+  FULL
 }
 
 type StandaloneRichTextConfiguration {
@@ -1432,34 +1445,6 @@ type EnterpriseSubscriptionStatusDTO {
   cancelAt: DateTime
   currentPeriodEnd: DateTime
   isCancellationScheduled: Boolean!
-}
-
-type VerificationRecord {
-  type: String!
-  key: String!
-  value: String!
-  priority: Float
-}
-
-type EmailingDomain {
-  id: UUID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  domain: String!
-  status: EmailingDomainStatus!
-  verificationRecords: [VerificationRecord!]
-  verifiedAt: DateTime
-}
-
-enum EmailingDomainStatus {
-  PENDING
-  VERIFIED
-  FAILED
-  TEMPORARY_FAILURE
-}
-
-type SendEmailViaDomainOutput {
-  messageId: String!
 }
 
 type ApprovedAccessDomain {
@@ -1958,7 +1943,7 @@ type ClientConfig {
   isGoogleCalendarEnabled: Boolean!
   isConfigVariablesInDbEnabled: Boolean!
   isImapSmtpCaldavEnabled: Boolean!
-  isEmailGroupEnabled: Boolean!
+  isEmailingDomainInDemoMode: Boolean!
   allowRequestsToTwentyIcons: Boolean!
   calendarBookingPageId: String
   isCloudflareIntegrationEnabled: Boolean!
@@ -2240,6 +2225,39 @@ type LogicFunctionLogs {
   logs: String!
 }
 
+type PublicConnectionParametersOutput {
+  host: String!
+  port: Float!
+  username: String
+  secure: Boolean
+}
+
+type PublicImapSmtpCaldavConnectionParameters {
+  IMAP: PublicConnectionParametersOutput
+  SMTP: PublicConnectionParametersOutput
+  CALDAV: PublicConnectionParametersOutput
+}
+
+type ConnectedAccountPublicDTO {
+  id: UUID!
+  handle: String!
+  provider: String!
+  lastCredentialsRefreshedAt: DateTime
+  authFailedAt: DateTime
+  archivedAt: DateTime
+  handleAliases: [String!]
+  scopes: [String!]
+  lastSignedInAt: DateTime
+  userWorkspaceId: UUID!
+  connectionProviderId: UUID
+  applicationId: UUID
+  name: String
+  visibility: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  connectionParameters: PublicImapSmtpCaldavConnectionParameters
+}
+
 type DeleteTwoFactorAuthenticationMethod {
   """Boolean that confirms query was dispatched"""
   success: Boolean!
@@ -2403,6 +2421,146 @@ type PublicDomain {
   createdAt: DateTime!
 }
 
+type VerificationRecord {
+  type: String!
+  key: String!
+  value: String!
+  priority: Float
+}
+
+type EmailingDomain {
+  id: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  domain: String!
+  status: EmailingDomainStatus!
+  verificationRecords: [VerificationRecord!]
+  verifiedAt: DateTime
+}
+
+enum EmailingDomainStatus {
+  PENDING
+  VERIFIED
+  FAILED
+  TEMPORARY_FAILURE
+}
+
+type MessageChannel {
+  id: UUID!
+  visibility: MessageChannelVisibility!
+  handle: String!
+  type: MessageChannelType!
+  isContactAutoCreationEnabled: Boolean!
+  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy!
+  messageFolderImportPolicy: MessageFolderImportPolicy!
+  excludeNonProfessionalEmails: Boolean!
+  excludeGroupEmails: Boolean!
+  pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction!
+  isSyncEnabled: Boolean!
+  syncedAt: DateTime
+  syncStatus: MessageChannelSyncStatus!
+  syncStage: MessageChannelSyncStage!
+  syncStageStartedAt: DateTime
+  throttleFailureCount: Float!
+  throttleRetryAfter: DateTime
+  connectedAccountId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  connectedAccount: ConnectedAccountPublicDTO
+}
+
+enum MessageChannelVisibility {
+  METADATA
+  SUBJECT
+  SHARE_EVERYTHING
+}
+
+enum MessageChannelType {
+  EMAIL
+  SMS
+  EMAIL_GROUP
+}
+
+enum MessageChannelContactAutoCreationPolicy {
+  SENT_AND_RECEIVED
+  SENT
+  NONE
+}
+
+enum MessageFolderImportPolicy {
+  ALL_FOLDERS
+  SELECTED_FOLDERS
+}
+
+enum MessageChannelPendingGroupEmailsAction {
+  GROUP_EMAILS_DELETION
+  GROUP_EMAILS_IMPORT
+  NONE
+}
+
+enum MessageChannelSyncStatus {
+  NOT_SYNCED
+  ONGOING
+  ACTIVE
+  FAILED_INSUFFICIENT_PERMISSIONS
+  FAILED_UNKNOWN
+}
+
+enum MessageChannelSyncStage {
+  PENDING_CONFIGURATION
+  MESSAGE_LIST_FETCH_PENDING
+  MESSAGE_LIST_FETCH_SCHEDULED
+  MESSAGE_LIST_FETCH_ONGOING
+  MESSAGES_IMPORT_PENDING
+  MESSAGES_IMPORT_SCHEDULED
+  MESSAGES_IMPORT_ONGOING
+  FAILED
+}
+
+type CreateEmailGroupChannelOutput {
+  messageChannel: MessageChannel!
+  forwardingAddress: String!
+}
+
+type CampaignAudiencePreviewDTO {
+  totalMembers: Int!
+  withoutEmail: Int!
+  duplicateEmails: Int!
+  globallyUnsubscribed: Int!
+  topicUnsubscribed: Int!
+  sendable: Int!
+}
+
+type SendEmailViaDomainOutput {
+  messageId: String!
+}
+
+type CampaignSkippedRecipientsDTO {
+  noEmail: Int!
+  deduped: Int!
+  overCap: Int!
+}
+
+type SendMessageCampaignOutputDTO {
+  campaignId: String!
+  queuedCount: Int!
+  skipped: CampaignSkippedRecipientsDTO!
+}
+
+type UnsubscribeTopic {
+  id: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String
+  description: String
+  visibility: UnsubscribeTopicVisibility!
+}
+
+enum UnsubscribeTopicVisibility {
+  PUBLIC
+  PRIVATE
+}
+
 type AutocompleteResult {
   text: String!
   placeId: String!
@@ -2420,38 +2578,6 @@ type PlaceDetailsResult {
   city: String
   country: String
   location: Location
-}
-
-type PublicConnectionParametersOutput {
-  host: String!
-  port: Float!
-  username: String
-  secure: Boolean
-}
-
-type PublicImapSmtpCaldavConnectionParameters {
-  IMAP: PublicConnectionParametersOutput
-  SMTP: PublicConnectionParametersOutput
-  CALDAV: PublicConnectionParametersOutput
-}
-
-type ConnectedAccountPublicDTO {
-  id: UUID!
-  handle: String!
-  provider: String!
-  lastCredentialsRefreshedAt: DateTime
-  authFailedAt: DateTime
-  handleAliases: [String!]
-  scopes: [String!]
-  lastSignedInAt: DateTime
-  userWorkspaceId: UUID!
-  connectionProviderId: UUID
-  applicationId: UUID
-  name: String
-  visibility: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  connectionParameters: PublicImapSmtpCaldavConnectionParameters
 }
 
 type ImapSmtpCaldavPublicConnectionParams {
@@ -2775,83 +2901,6 @@ enum CalendarChannelContactAutoCreationPolicy {
   NONE
 }
 
-type MessageChannel {
-  id: UUID!
-  visibility: MessageChannelVisibility!
-  handle: String!
-  type: MessageChannelType!
-  isContactAutoCreationEnabled: Boolean!
-  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy!
-  messageFolderImportPolicy: MessageFolderImportPolicy!
-  excludeNonProfessionalEmails: Boolean!
-  excludeGroupEmails: Boolean!
-  pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction!
-  isSyncEnabled: Boolean!
-  syncedAt: DateTime
-  syncStatus: MessageChannelSyncStatus!
-  syncStage: MessageChannelSyncStage!
-  syncStageStartedAt: DateTime
-  throttleFailureCount: Float!
-  throttleRetryAfter: DateTime
-  connectedAccountId: UUID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  connectedAccount: ConnectedAccountPublicDTO
-}
-
-enum MessageChannelVisibility {
-  METADATA
-  SUBJECT
-  SHARE_EVERYTHING
-}
-
-enum MessageChannelType {
-  EMAIL
-  SMS
-  EMAIL_GROUP
-}
-
-enum MessageChannelContactAutoCreationPolicy {
-  SENT_AND_RECEIVED
-  SENT
-  NONE
-}
-
-enum MessageFolderImportPolicy {
-  ALL_FOLDERS
-  SELECTED_FOLDERS
-}
-
-enum MessageChannelPendingGroupEmailsAction {
-  GROUP_EMAILS_DELETION
-  GROUP_EMAILS_IMPORT
-  NONE
-}
-
-enum MessageChannelSyncStatus {
-  NOT_SYNCED
-  ONGOING
-  ACTIVE
-  FAILED_INSUFFICIENT_PERMISSIONS
-  FAILED_UNKNOWN
-}
-
-enum MessageChannelSyncStage {
-  PENDING_CONFIGURATION
-  MESSAGE_LIST_FETCH_PENDING
-  MESSAGE_LIST_FETCH_SCHEDULED
-  MESSAGE_LIST_FETCH_ONGOING
-  MESSAGES_IMPORT_PENDING
-  MESSAGES_IMPORT_SCHEDULED
-  MESSAGES_IMPORT_ONGOING
-  FAILED
-}
-
-type CreateEmailGroupChannelOutput {
-  messageChannel: MessageChannel!
-  forwardingAddress: String!
-}
-
 type MessageFolder {
   id: UUID!
   name: String
@@ -2964,7 +3013,6 @@ type Query {
   getPageLayoutTab(id: String!): PageLayoutTab!
   getPageLayouts(objectMetadataId: String, pageLayoutType: PageLayoutType): [PageLayout!]!
   getPageLayout(id: String!): PageLayout
-  getEmailingDomains: [EmailingDomain!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   getPageLayoutWidgets(pageLayoutTabId: String!): [PageLayoutWidget!]!
   getPageLayoutWidget(id: String!): PageLayoutWidget!
@@ -3001,6 +3049,12 @@ type Query {
   ): IndexConnection!
   findManyAgents: [Agent!]!
   findOneAgent(input: AgentIdInput!): Agent!
+  previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
+  unsubscribeTopics: [UnsubscribeTopic!]!
+  unsubscribePagePreviewUrl: String!
+  myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
+  getEmailingDomains: [EmailingDomain!]!
+  myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   getRoles: [Role!]!
   getToolIndex: [ToolIndexEntry!]!
   getToolInputSchema(toolName: String!): JSON
@@ -3020,8 +3074,6 @@ type Query {
   getViewGroups(viewId: String): [ViewGroup!]!
   getViewGroup(id: String!): ViewGroup
   myMessageFolders(messageChannelId: UUID): [MessageFolder!]!
-  myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
-  myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   minimalMetadata: MinimalMetadata!
   appConnections(filter: ListAppConnectionsInput): [AppConnection!]!
@@ -3078,6 +3130,11 @@ input LogicFunctionIdInput {
 input AgentIdInput {
   """The id of the agent."""
   id: UUID!
+}
+
+input PreviewMessageCampaignAudienceInput {
+  listId: String!
+  unsubscribeTopicId: String
 }
 
 input ListAppConnectionsInput {
@@ -3220,10 +3277,6 @@ type Mutation {
   resetPageLayoutToDefault(id: String!): PageLayout!
   resetPageLayoutWidgetToDefault(id: String!): PageLayoutWidget!
   resetPageLayoutTabToDefault(id: String!): PageLayoutTab!
-  createEmailingDomain(domain: String!): EmailingDomain!
-  deleteEmailingDomain(id: String!): Boolean!
-  verifyEmailingDomain(id: String!): EmailingDomain!
-  sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
   updatePageLayoutWidget(id: String!, input: UpdatePageLayoutWidgetInput!): PageLayoutWidget!
@@ -3234,6 +3287,7 @@ type Mutation {
   updateOneLogicFunction(input: UpdateLogicFunctionFromSourceInput!): Boolean!
   createCommandMenuItem(input: CreateCommandMenuItemInput!): CommandMenuItem!
   updateCommandMenuItem(input: UpdateCommandMenuItemInput!): CommandMenuItem!
+  resetCommandMenuItem(id: UUID!): CommandMenuItem!
   deleteCommandMenuItem(id: UUID!): CommandMenuItem!
   createFrontComponent(input: CreateFrontComponentInput!): FrontComponent!
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
@@ -3246,6 +3300,18 @@ type Mutation {
   createOneAgent(input: CreateAgentInput!): Agent!
   updateOneAgent(input: UpdateAgentInput!): Agent!
   deleteOneAgent(input: AgentIdInput!): Agent!
+  sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!
+  sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
+  createUnsubscribeTopic(input: CreateUnsubscribeTopicInput!): UnsubscribeTopic!
+  updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
+  deleteUnsubscribeTopic(id: String!): Boolean!
+  updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
+  createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
+  deleteEmailGroupChannel(id: UUID!): MessageChannel!
+  createEmailingDomain(input: CreateEmailingDomainInput!): EmailingDomain!
+  deleteEmailingDomain(id: String!): Boolean!
+  verifyEmailingDomain(id: String!): EmailingDomain!
+  deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   updateWorkspaceMemberRole(workspaceMemberId: UUID!, roleId: UUID!): WorkspaceMember!
   createOneRole(createRoleInput: CreateRoleInput!): Role!
   updateOneRole(updateRoleInput: UpdateRoleInput!): Role!
@@ -3271,10 +3337,6 @@ type Mutation {
   destroyViewGroup(input: DestroyViewGroupInput!): ViewGroup!
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
-  updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
-  createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
-  deleteEmailGroupChannel(id: UUID!): MessageChannel!
-  deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
@@ -3786,18 +3848,6 @@ input GridPositionInput {
   columnSpan: Float!
 }
 
-input SendEmailViaDomainInput {
-  emailingDomainId: String!
-  to: [String!]!
-  cc: [String!]
-  bcc: [String!]
-  subject: String!
-  text: String!
-  html: String
-  from: String!
-  replyTo: [String!]
-}
-
 input CreatePageLayoutWidgetInput {
   pageLayoutTabId: UUID!
   title: String!
@@ -4015,6 +4065,62 @@ input UpdateAgentInput {
   evaluationInputs: [String!]
 }
 
+input SendEmailViaDomainInput {
+  emailingDomainId: String!
+  to: [String!]!
+  cc: [String!]
+  bcc: [String!]
+  subject: String!
+  text: String!
+  html: String
+  from: String!
+  replyTo: [String!]
+}
+
+input SendMessageCampaignInput {
+  listId: String!
+  unsubscribeTopicId: String
+  subject: String!
+  body: String!
+  fromAddress: String!
+}
+
+input CreateUnsubscribeTopicInput {
+  name: String!
+  description: String
+  visibility: UnsubscribeTopicVisibility
+}
+
+input UpdateUnsubscribeTopicInput {
+  id: String!
+  name: String
+  description: String
+  visibility: UnsubscribeTopicVisibility
+}
+
+input UpdateMessageChannelInput {
+  id: UUID!
+  update: UpdateMessageChannelInputUpdates!
+}
+
+input UpdateMessageChannelInputUpdates {
+  visibility: MessageChannelVisibility
+  isContactAutoCreationEnabled: Boolean
+  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy
+  messageFolderImportPolicy: MessageFolderImportPolicy
+  isSyncEnabled: Boolean
+  excludeNonProfessionalEmails: Boolean
+  excludeGroupEmails: Boolean
+}
+
+input CreateEmailGroupChannelInput {
+  handle: String!
+}
+
+input CreateEmailingDomainInput {
+  domain: String!
+}
+
 input CreateRoleInput {
   id: String
   label: String!
@@ -4152,6 +4258,7 @@ input CreateFieldInput {
   isCustom: Boolean
   isActive: Boolean
   isSystem: Boolean
+  isUIEditable: Boolean
   isUIReadOnly: Boolean
   isNullable: Boolean
   isUnique: Boolean
@@ -4181,6 +4288,7 @@ input UpdateFieldInput {
   icon: String
   isActive: Boolean
   isSystem: Boolean
+  isUIEditable: Boolean
   isUIReadOnly: Boolean
   isNullable: Boolean
   isUnique: Boolean
@@ -4242,25 +4350,6 @@ input UpdateMessageFolderInputUpdates {
 input UpdateMessageFoldersInput {
   ids: [UUID!]!
   update: UpdateMessageFolderInputUpdates!
-}
-
-input UpdateMessageChannelInput {
-  id: UUID!
-  update: UpdateMessageChannelInputUpdates!
-}
-
-input UpdateMessageChannelInputUpdates {
-  visibility: MessageChannelVisibility
-  isContactAutoCreationEnabled: Boolean
-  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy
-  messageFolderImportPolicy: MessageFolderImportPolicy
-  isSyncEnabled: Boolean
-  excludeNonProfessionalEmails: Boolean
-  excludeGroupEmails: Boolean
-}
-
-input CreateEmailGroupChannelInput {
-  handle: String!
 }
 
 input UpdateCalendarChannelInput {

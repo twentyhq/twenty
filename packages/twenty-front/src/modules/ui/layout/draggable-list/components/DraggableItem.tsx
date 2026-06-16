@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { Draggable } from '@hello-pangea/dnd';
 import { isFunction } from '@sniptt/guards';
-import { useContext } from 'react';
+import { type JSX, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

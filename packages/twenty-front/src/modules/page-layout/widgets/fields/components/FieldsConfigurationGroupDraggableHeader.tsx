@@ -9,6 +9,8 @@ import {
 
 const StyledContainer = styled.div`
   align-items: center;
+  /* Height below is sized against the content box. */
+  box-sizing: content-box;
   cursor: grab;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};

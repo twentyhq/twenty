@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { type Manifest } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
@@ -13,6 +13,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -23,15 +24,12 @@ import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migra
 
 @Injectable()
 export class ApplicationManifestMigrationService {
-  private readonly logger = new Logger(
-    ApplicationManifestMigrationService.name,
-  );
-
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
     private readonly computeManifestFlatEntityMapsService: ComputeApplicationManifestAllUniversalFlatEntityMapsService,
+    private readonly logger: LoggerService,
   ) {}
 
   async syncPreInstallLogicFunctionFromManifest({
@@ -155,6 +153,7 @@ export class ApplicationManifestMigrationService {
 
     this.logger.log(
       `Pre-install logic function synced for application ${ownerFlatApplication.universalIdentifier}`,
+      ApplicationManifestMigrationService.name,
     );
   }
 
@@ -179,12 +178,19 @@ export class ApplicationManifestMigrationService {
         { workspaceId },
       );
 
+    const recomputeStart = performance.now();
     const cacheResult = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
       [
         ...Object.values(ALL_METADATA_NAME).map(getMetadataFlatEntityMapsKey),
         'featureFlagsMap',
       ],
+    );
+    const recomputeMs = performance.now() - recomputeStart;
+
+    this.logger.perf(
+      `[install-perf] syncMetadataFromManifest ALL_METADATA_NAME getOrRecompute flat-maps took ${recomputeMs.toFixed(1)}ms (logicFunctions=${manifest.logicFunctions.length})`,
+      ApplicationManifestMigrationService.name,
     );
 
     const { featureFlagsMap, ...existingAllFlatEntityMaps } = cacheResult;
@@ -211,6 +217,7 @@ export class ApplicationManifestMigrationService {
       fromAllFlatEntityMaps: existingAllFlatEntityMaps,
     });
 
+    const validateBuildRunStart = performance.now();
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
         {
@@ -230,6 +237,12 @@ export class ApplicationManifestMigrationService {
           dryRun,
         },
       );
+    const validateBuildRunMs = performance.now() - validateBuildRunStart;
+
+    this.logger.perf(
+      `[install-perf] syncMetadataFromManifest validateBuildAndRunWorkspaceMigrationFromTo took ${validateBuildRunMs.toFixed(1)}ms (dryRun=${dryRun}, actions=${validateAndBuildResult.status === 'success' ? validateAndBuildResult.workspaceMigration.actions.length : 'n/a-failed'})`,
+      ApplicationManifestMigrationService.name,
+    );
 
     if (validateAndBuildResult.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
@@ -240,6 +253,7 @@ export class ApplicationManifestMigrationService {
 
     this.logger.log(
       `Metadata migration ${dryRun ? 'plan computed (dry run)' : 'completed'} for application ${ownerFlatApplication.universalIdentifier}`,
+      ApplicationManifestMigrationService.name,
     );
 
     if (!dryRun) {

@@ -1,3 +1,4 @@
+import { ChartFiltersDeletedFieldsWarning } from '@/side-panel/pages/page-layout/components/ChartFiltersDeletedFieldsWarning';
 import { ChartFiltersSettingsInitializeStateEffect } from '@/side-panel/pages/page-layout/components/ChartFiltersSettingsInitializeStateEffect';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
@@ -16,7 +17,8 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
-import { themeCssVariables } from 'twenty-ui-deprecated/theme-constants';
+import { useMemo } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledChartFiltersPageContainer = styled.div`
   display: flex;
@@ -59,6 +61,16 @@ export const ChartFiltersSettings = ({
   const store = useStore();
   const chartWidgetConfiguration = widget.configuration;
 
+  const validFieldMetadataIds = useMemo(
+    () =>
+      new Set(
+        objectMetadataItem.fields
+          .filter((fieldMetadataItem) => fieldMetadataItem.isActive)
+          .map((fieldMetadataItem) => fieldMetadataItem.id),
+      ),
+    [objectMetadataItem.fields],
+  );
+
   const handleFiltersUpdate = () => {
     const existingRecordFilters = store.get(currentRecordFilters);
     const existingRecordFilterGroups = store.get(currentRecordFilterGroups);
@@ -84,6 +96,9 @@ export const ChartFiltersSettings = ({
           <RecordFiltersComponentInstanceContext.Provider
             value={{ instanceId }}
           >
+            <ChartFiltersDeletedFieldsWarning
+              validFieldMetadataIds={validFieldMetadataIds}
+            />
             <AdvancedFilterSidePanelContainer
               onUpdate={handleFiltersUpdate}
               objectMetadataItem={objectMetadataItem}

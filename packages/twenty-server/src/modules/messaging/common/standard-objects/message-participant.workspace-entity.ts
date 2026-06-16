@@ -4,6 +4,7 @@ import {
 } from 'twenty-shared/types';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { type MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
@@ -25,4 +26,6 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   personId: string | null;
   workspaceMember: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
   workspaceMemberId: string | null;
+  messageCampaign: EntityRelation<MessageCampaignWorkspaceEntity> | null;
+  messageCampaignId: string | null;
 }

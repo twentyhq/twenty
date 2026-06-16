@@ -170,7 +170,7 @@ export const CalendarEventDetails = ({
       objectPermissions,
       fieldMetadataItem: {
         id: fieldMetadataItem.id,
-        isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+        isUIEditable: fieldMetadataItem.isUIEditable ?? true,
         isCustom: fieldMetadataItem.isCustom ?? false,
       },
       fieldDefinition,

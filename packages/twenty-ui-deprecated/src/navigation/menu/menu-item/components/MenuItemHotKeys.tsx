@@ -18,6 +18,7 @@ const StyledCommandText = styled.div`
 `;
 
 const StyledCommandKey = styled.div`
+  box-sizing: content-box;
   align-items: center;
   background-color: ${themeCssVariables.background.secondary};
   border: 1px solid ${themeCssVariables.border.color.strong};

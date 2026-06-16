@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Page layout widget restore via bulk update should succeed should create, delete, and restore a widget via bulk update 1`] = `
 {
@@ -30,8 +30,8 @@ exports[`Page layout widget restore via bulk update should succeed should create
             "displayDataLabel": true,
             "filter": null,
             "firstDayOfTheWeek": 1,
-            "format": null,
             "label": null,
+            "numberFormat": null,
             "prefix": null,
             "suffix": null,
             "timezone": "UTC",
@@ -109,8 +109,8 @@ exports[`Page layout widget restore via bulk update should succeed should handle
             "displayDataLabel": true,
             "filter": null,
             "firstDayOfTheWeek": 1,
-            "format": null,
             "label": null,
+            "numberFormat": null,
             "prefix": null,
             "suffix": null,
             "timezone": "UTC",

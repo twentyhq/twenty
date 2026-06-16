@@ -7,6 +7,7 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
+import { STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT } from 'src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import {
@@ -40,7 +41,7 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       icon: 'Icon123',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'uuid',
     },
     standardObjectMetadataRelatedEntityIds,
@@ -59,7 +60,7 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
@@ -81,7 +82,7 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarClock',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
@@ -103,7 +104,7 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       icon: 'IconCalendarMinus',
       isSystem: true,
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
       },
@@ -229,7 +230,7 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`The creator of the record`),
       icon: 'IconCreativeCommonsSa',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -254,7 +255,7 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       ),
       icon: 'IconUserCircle',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -347,10 +348,13 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'taskTargets',
-      label: i18nLabel(msg`Tasks`),
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.taskTarget.label,
+      ),
       description: i18nLabel(msg`Tasks tied to the company`),
-      icon: 'IconCheckbox',
-      isUIReadOnly: true,
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.taskTarget
+        .icon,
+      isUIEditable: false,
       isNullable: true,
       targetObjectName: 'taskTarget',
       targetFieldName: 'targetCompany',
@@ -370,10 +374,13 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'noteTargets',
-      label: i18nLabel(msg`Notes`),
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.noteTarget.label,
+      ),
       description: i18nLabel(msg`Notes tied to the company`),
-      icon: 'IconNotes',
-      isUIReadOnly: true,
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.noteTarget
+        .icon,
+      isUIEditable: false,
       isNullable: true,
       targetObjectName: 'noteTarget',
       targetFieldName: 'targetCompany',
@@ -415,9 +422,12 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'attachments',
-      label: i18nLabel(msg`Attachments`),
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.attachment.label,
+      ),
       description: i18nLabel(msg`Attachments linked to the company`),
-      icon: 'IconFileImport',
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.attachment
+        .icon,
       isNullable: true,
       targetObjectName: 'attachment',
       targetFieldName: 'targetCompany',
@@ -437,9 +447,13 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'timelineActivities',
-      label: i18nLabel(msg`Timeline Activities`),
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.timelineActivity
+          .label,
+      ),
       description: i18nLabel(msg`Timeline Activities linked to the company`),
-      icon: 'IconIconTimelineEvent',
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT
+        .timelineActivity.icon,
       isNullable: true,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'targetCompany',

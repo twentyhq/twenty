@@ -360,54 +360,6 @@ describe('manifestValidate', () => {
     });
   });
 
-  describe('agent responseFormat validation', () => {
-    it('should warn for each agent without a responseFormat', () => {
-      const result = manifestValidate({
-        ...validManifest,
-        agents: [
-          {
-            universalIdentifier: '550e8400-e29b-41d4-a716-446655440040',
-            name: 'agentWithoutFormat',
-            label: 'Agent Without Format',
-            prompt: 'Do something',
-          },
-          {
-            universalIdentifier: '550e8400-e29b-41d4-a716-446655440041',
-            name: 'anotherAgentWithoutFormat',
-            label: 'Another Agent Without Format',
-            prompt: 'Do something else',
-          },
-        ],
-      });
-
-      expect(result.warnings).toContain(
-        'Agent "agentWithoutFormat" has no responseFormat defined',
-      );
-      expect(result.warnings).toContain(
-        'Agent "anotherAgentWithoutFormat" has no responseFormat defined',
-      );
-    });
-
-    it('should not warn for an agent that has a responseFormat', () => {
-      const result = manifestValidate({
-        ...validManifest,
-        agents: [
-          {
-            universalIdentifier: '550e8400-e29b-41d4-a716-446655440042',
-            name: 'agentWithFormat',
-            label: 'Agent With Format',
-            prompt: 'Do something',
-            responseFormat: { type: 'text' },
-          },
-        ],
-      });
-
-      expect(result.warnings).not.toContain(
-        'Agent "agentWithFormat" has no responseFormat defined',
-      );
-    });
-  });
-
   describe('UUID version validation', () => {
     it('should pass with UUID v4 identifiers', () => {
       const result = manifestValidate({

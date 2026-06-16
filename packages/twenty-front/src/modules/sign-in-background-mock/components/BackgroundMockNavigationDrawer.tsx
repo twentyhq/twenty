@@ -8,7 +8,6 @@ import {
   useIsMobile,
 } from 'twenty-ui-deprecated/utilities';
 
-import { BACKGROUND_MOCK_OTHER_ITEMS } from '@/sign-in-background-mock/constants/BackgroundMockOtherItems';
 import { BACKGROUND_MOCK_WORKSPACE_ITEMS } from '@/sign-in-background-mock/constants/BackgroundMockNavigationItems';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -59,17 +58,6 @@ export const BackgroundMockNavigationDrawer = ({
             Icon={item.Icon}
             iconColor={item.color}
             active={index === 0}
-            onClick={() => {}}
-          />
-        ))}
-      </NavigationDrawerSection>
-      <NavigationDrawerSection>
-        <NavigationDrawerSectionTitle label={t`Other`} />
-        {BACKGROUND_MOCK_OTHER_ITEMS.map((item) => (
-          <NavigationDrawerItem
-            key={item.label}
-            label={item.label}
-            Icon={item.Icon}
             onClick={() => {}}
           />
         ))}

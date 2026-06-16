@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
 import { AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
 import { AwsSesRegisterDomainService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-register-domain.service';
 import { AwsSesHandleErrorService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-handle-error.service';
@@ -14,20 +15,33 @@ import { EmailingDomainResolver } from 'src/engine/core-modules/emailing-domain/
 import { EmailingDomainWorkspaceCleanupJob } from 'src/engine/core-modules/emailing-domain/jobs/emailing-domain-workspace-cleanup.job';
 import { EmailingDomainTenantStatusService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-tenant-status.service';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
+import { UnsubscribeHostnameService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-hostname.service';
+import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+
 @Module({
   imports: [
     TypeORMModule,
     NestjsQueryTypeOrmModule.forFeature([EmailingDomainEntity]),
     FeatureFlagModule,
     PermissionsModule,
+    DnsManagerModule,
+    SecretEncryptionModule,
   ],
-  exports: [EmailingDomainService, EmailingDomainTenantStatusService],
+  exports: [
+    EmailingDomainService,
+    EmailingDomainTenantStatusService,
+    EmailingDomainDriverFactory,
+    UnsubscribeTokenService,
+  ],
   providers: [
     EmailingDomainService,
     EmailingDomainTenantStatusService,
+    UnsubscribeTokenService,
+    UnsubscribeHostnameService,
     EmailingDomainResolver,
     EmailingDomainDriverFactory,
     EmailingDomainWorkspaceCleanupJob,
