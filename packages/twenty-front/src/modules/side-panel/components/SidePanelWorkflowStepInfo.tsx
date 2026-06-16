@@ -1,7 +1,5 @@
 import { AppChip } from '@/applications/components/AppChip';
-import { useApplicationChipData } from '@/applications/hooks/useApplicationChipData';
-import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
-import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
+import { useLogicFunctionThirdPartyApplication } from '@/logic-functions/hooks/useLogicFunctionThirdPartyApplication';
 import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { sidePanelWorkflowStepIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowStepIdComponentState';
@@ -39,8 +37,6 @@ export const SidePanelWorkflowStepInfo = ({
   const { getIcon } = useIcons();
 
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
-
-  const logicFunctions = useAtomStateValue(logicFunctionsSelector);
 
   const workflowId = useSidePanelWorkflowIdOrThrow();
 
@@ -97,19 +93,8 @@ export const SidePanelWorkflowStepInfo = ({
       ? stepDefinition.definition.settings.input.logicFunctionId
       : undefined;
 
-  const logicFunctionApplicationId = isDefined(logicFunctionId)
-    ? logicFunctions.find(
-        (logicFunction) => logicFunction.id === logicFunctionId,
-      )?.applicationId
-    : undefined;
-
-  const isThirdPartyApplication = useIsThirdPartyApplication(
-    logicFunctionApplicationId,
-  );
-
-  const { applicationChipData } = useApplicationChipData({
-    applicationId: logicFunctionApplicationId,
-  });
+  const thirdPartyApplication =
+    useLogicFunctionThirdPartyApplication(logicFunctionId);
 
   const agentId = getAgentIdFromStep(stepDefinition);
   const { updateAgentLabel } = useUpdateAgentLabel(agentId);
@@ -152,7 +137,9 @@ export const SidePanelWorkflowStepInfo = ({
 
   const headerType = isTrigger ? t`Trigger` : t`Action`;
 
-  const label = isThirdPartyApplication ? applicationChipData.name : headerType;
+  const label = isDefined(thirdPartyApplication)
+    ? thirdPartyApplication.name
+    : headerType;
 
   const Icon = getIcon(headerIcon ?? 'IconDefault');
 
@@ -197,9 +184,9 @@ export const SidePanelWorkflowStepInfo = ({
   return (
     <SidePanelPageInfoLayout
       icon={
-        isThirdPartyApplication ? (
+        isDefined(thirdPartyApplication) ? (
           <AppChip
-            applicationId={logicFunctionApplicationId}
+            applicationId={thirdPartyApplication.applicationId}
             size="md"
             chipOnly
           />
@@ -207,7 +194,7 @@ export const SidePanelWorkflowStepInfo = ({
           <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         ) : undefined
       }
-      iconColor={isThirdPartyApplication ? undefined : headerIconColor}
+      iconColor={isDefined(thirdPartyApplication) ? undefined : headerIconColor}
       title={
         <TitleInput
           instanceId={`workflow-step-title-${sidePanelPageInstanceId}`}
