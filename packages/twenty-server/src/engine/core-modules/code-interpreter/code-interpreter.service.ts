@@ -15,8 +15,13 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 @Injectable()
 export class CodeInterpreterService implements CodeInterpreterDriver {
-  // Tail of each session's execution chain, used to serialize calls that share
-  // a reused sandbox so concurrent tool calls don't race the same kernel.
+  // Serializes calls that share a reused sandbox so concurrent tool calls can't
+  // race the same kernel. In-process is sufficient: a thread has at most one
+  // active stream at a time (the chat resolver queues new messages while the
+  // thread's activeStreamId is set), and that stream runs as a single job in one
+  // worker process — so the only concurrency to guard is parallel tool calls
+  // within a single turn, which share this process. The session key is
+  // workspaceId:threadId, so distinct threads never contend for the same entry.
   private readonly sessionExecutionTails = new Map<string, Promise<void>>();
 
   constructor(
@@ -61,8 +66,8 @@ export class CodeInterpreterService implements CodeInterpreterDriver {
       .execute(code, files, context, callbacks);
   }
 
-  // In-process serialization: a conversation's turns run on a single worker, so
-  // chaining on a per-session tail is enough to prevent overlapping executions.
+  // Chains each new task on the session's previous one so executions sharing a
+  // session run strictly one after another.
   private async runSerializedPerSession<T>(
     sessionId: string,
     task: () => Promise<T>,

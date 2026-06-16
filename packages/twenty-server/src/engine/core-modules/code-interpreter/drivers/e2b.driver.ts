@@ -2,6 +2,7 @@ import { promises as fs } from 'fs';
 import { join } from 'path';
 
 import { Sandbox } from '@e2b/code-interpreter';
+import { Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -49,6 +50,8 @@ async function uploadDirectoryToSandbox(
 }
 
 export class E2BDriver implements CodeInterpreterDriver {
+  private readonly logger = new Logger(E2BDriver.name);
+
   constructor(private options: E2BDriverOptions) {}
 
   async execute(
@@ -99,16 +102,7 @@ export class E2BDriver implements CodeInterpreterDriver {
       // output directory so this run only returns the artifacts it produces.
       // Durable state (working files, kernel variables) is kept across calls.
       if (isReused) {
-        try {
-          await sandbox.files.remove('/home/user/output');
-        } catch {
-          // No output directory from a previous call.
-        }
-        try {
-          await sandbox.files.makeDir('/home/user/output');
-        } catch {
-          // Output directory already present.
-        }
+        await this.resetOutputDirectory(sandbox);
       }
 
       for (const file of files ?? []) {
@@ -187,6 +181,28 @@ export class E2BDriver implements CodeInterpreterDriver {
       if (!keepWarm) {
         await sandbox.kill();
       }
+    }
+  }
+
+  // Clear a reused sandbox's output directory before a run. A missing directory
+  // is the expected case (it hasn't produced output yet); any other failure
+  // means stale files could survive into this run's results, so it is logged
+  // instead of being silently swallowed.
+  private async resetOutputDirectory(sandbox: Sandbox): Promise<void> {
+    const outputDirectory = '/home/user/output';
+
+    try {
+      if (await sandbox.files.exists(outputDirectory)) {
+        await sandbox.files.remove(outputDirectory);
+      }
+
+      await sandbox.files.makeDir(outputDirectory);
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : String(error);
+
+      this.logger.warn(
+        `Failed to reset reused sandbox output directory; results may include stale files: ${reason}`,
+      );
     }
   }
 }
