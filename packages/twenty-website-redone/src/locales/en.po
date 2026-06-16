@@ -857,11 +857,6 @@ msgstr "Azerbaijan 🇦🇿"
 msgid "Back"
 msgstr "Back"
 
-#. js-lingui-id: dGEega
-#: src/sections/product-feature/emails-visual.tsx
-msgid "Back to inbox"
-msgstr "Back to inbox"
-
 #. js-lingui-id: wIoAQo
 #: src/partner-application/data/partner-country-options.ts
 msgid "Bahamas 🇧🇸"

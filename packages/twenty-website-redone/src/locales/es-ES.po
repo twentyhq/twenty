@@ -837,11 +837,6 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
-#. js-lingui-id: dGEega
-#: src/sections/product-feature/emails-visual.tsx
-msgid "Back to inbox"
-msgstr ""
-
 #. js-lingui-id: wIoAQo
 #: src/partner-application/data/partner-country-options.ts
 msgid "Bahamas 🇧🇸"
