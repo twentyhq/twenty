@@ -3,19 +3,30 @@ import { z } from 'zod';
 const DEFAULT_LOADING_MESSAGE_SCHEMA = z
   .string()
   .describe(
-    "A brief status message for the user describing what you're doing (e.g., 'Sending email to customer').",
+    "A brief present-tense status message shown to the user while the tool runs (e.g., 'Sending email to customer').",
   );
 
-// Wraps a flat Zod tool schema with loadingMessage for AI execution
+const DEFAULT_COMPLETED_MESSAGE_SCHEMA = z
+  .string()
+  .describe(
+    "A brief past-tense status message shown to the user after the tool finishes (e.g., 'Sent email to customer').",
+  );
+
+// Wraps a flat Zod tool schema with loading/completed messages for AI execution
 export const wrapSchemaForExecution = <T extends z.ZodRawShape>(
   schema: z.ZodObject<T>,
   customLoadingMessageSchema?: z.ZodString,
-): z.ZodObject<T & { loadingMessage: z.ZodString }> => {
+): z.ZodObject<
+  T & { loadingMessage: z.ZodString; completedMessage: z.ZodString }
+> => {
   return z.object({
     loadingMessage:
       customLoadingMessageSchema ?? DEFAULT_LOADING_MESSAGE_SCHEMA,
+    completedMessage: DEFAULT_COMPLETED_MESSAGE_SCHEMA,
     ...schema.shape,
-  }) as z.ZodObject<T & { loadingMessage: z.ZodString }>;
+  }) as z.ZodObject<
+    T & { loadingMessage: z.ZodString; completedMessage: z.ZodString }
+  >;
 };
 
 // For non-Zod schemas (logic functions with JSON Schema)
@@ -30,19 +41,29 @@ export const wrapJsonSchemaForExecution = (
     properties: {
       loadingMessage: {
         type: 'string',
-        description: 'A brief status message for the user.',
+        description:
+          "A brief present-tense status message shown to the user while the tool runs (e.g., 'Sending email to customer').",
+      },
+      completedMessage: {
+        type: 'string',
+        description:
+          "A brief past-tense status message shown to the user after the tool finishes (e.g., 'Sent email to customer').",
       },
       ...properties,
     },
-    required: ['loadingMessage', ...required],
+    required: ['loadingMessage', 'completedMessage', ...required],
   };
 };
 
-// Strips loadingMessage from parameters before passing to tool execute
+// Strips status messages from parameters before passing to tool execute
 export const stripLoadingMessage = <T extends Record<string, unknown>>(
   parameters: T,
-): Omit<T, 'loadingMessage'> => {
-  const { loadingMessage: _, ...rest } = parameters;
+): Omit<T, 'loadingMessage' | 'completedMessage'> => {
+  const {
+    loadingMessage: _loadingMessage,
+    completedMessage: _completedMessage,
+    ...rest
+  } = parameters;
 
   return rest;
 };

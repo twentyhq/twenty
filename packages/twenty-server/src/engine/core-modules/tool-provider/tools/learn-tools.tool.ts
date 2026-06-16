@@ -10,6 +10,16 @@ const learnToolsAspectSchema = z.enum(['description', 'schema']);
 export type LearnToolsAspect = z.infer<typeof learnToolsAspectSchema>;
 
 export const learnToolsInputSchema = z.object({
+  loadingMessage: z
+    .string()
+    .describe(
+      "A brief present-tense status message shown to the user while tools are being learned (e.g., 'Looking up company tools').",
+    ),
+  completedMessage: z
+    .string()
+    .describe(
+      "A brief past-tense status message shown to the user after tools are learned (e.g., 'Looked up company tools').",
+    ),
   toolNames: z
     .array(z.string())
     .describe(

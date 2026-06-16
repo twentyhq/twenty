@@ -143,12 +143,48 @@ describe('getToolDisplayMessage', () => {
     });
   });
 
-  describe('custom loading message', () => {
-    it('should use loadingMessage when provided', () => {
+  describe('custom status messages', () => {
+    it('should use loadingMessage for in-progress state', () => {
       const message = getToolDisplayMessage(
         { loadingMessage: 'Building dashboard...' },
         'some_tool',
         false,
+      );
+
+      expect(message).toBe('Building dashboard...');
+    });
+
+    it('should use completedMessage for finished state when provided', () => {
+      const message = getToolDisplayMessage(
+        {
+          loadingMessage: 'Building dashboard...',
+          completedMessage: 'Built dashboard',
+        },
+        'some_tool',
+        true,
+      );
+
+      expect(message).toBe('Built dashboard');
+    });
+
+    it('should keep loadingMessage for in-progress state even when completedMessage is provided', () => {
+      const message = getToolDisplayMessage(
+        {
+          loadingMessage: 'Building dashboard...',
+          completedMessage: 'Built dashboard',
+        },
+        'some_tool',
+        false,
+      );
+
+      expect(message).toBe('Building dashboard...');
+    });
+
+    it('should fall back to loadingMessage for finished state when completedMessage is missing', () => {
+      const message = getToolDisplayMessage(
+        { loadingMessage: 'Building dashboard...' },
+        'some_tool',
+        true,
       );
 
       expect(message).toBe('Building dashboard...');

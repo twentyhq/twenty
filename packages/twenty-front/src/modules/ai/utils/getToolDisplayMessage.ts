@@ -11,7 +11,10 @@ const DirectQuerySchema = z.object({ query: z.string() });
 const NestedQuerySchema = z.object({
   action: z.object({ query: z.string() }),
 });
-const CustomLoadingMessageSchema = z.object({ loadingMessage: z.string() });
+const CustomStatusMessageSchema = z.object({
+  loadingMessage: z.string(),
+  completedMessage: z.string().optional(),
+});
 const ExecuteToolSchema = z.object({
   toolName: z.coerce.string(),
   arguments: z.unknown(),
@@ -35,10 +38,19 @@ const extractSearchQuery = (input: ToolInput): string => {
   return '';
 };
 
-const extractCustomLoadingMessage = (input: ToolInput): string | null => {
-  const parsed = CustomLoadingMessageSchema.safeParse(input);
+const extractCustomStatusMessages = (
+  input: ToolInput,
+): { loadingMessage: string; completedMessage: string | null } | null => {
+  const parsed = CustomStatusMessageSchema.safeParse(input);
 
-  return parsed.success ? parsed.data.loadingMessage : null;
+  if (!parsed.success) {
+    return null;
+  }
+
+  return {
+    loadingMessage: parsed.data.loadingMessage,
+    completedMessage: parsed.data.completedMessage ?? null,
+  };
 };
 
 export const resolveToolInput = (
@@ -85,6 +97,17 @@ export const getToolDisplayMessage = (
   const byStatus = (finished: string, inProgress: string): string =>
     isFinished ? finished : inProgress;
 
+  const customMessages =
+    extractCustomStatusMessages(input) ??
+    extractCustomStatusMessages(resolvedInput);
+
+  if (isDefined(customMessages)) {
+    return byStatus(
+      customMessages.completedMessage ?? customMessages.loadingMessage,
+      customMessages.loadingMessage,
+    );
+  }
+
   if (
     resolvedToolName === 'web_search' ||
     resolvedToolName === 'app_exa_web_search'
@@ -119,12 +142,6 @@ export const getToolDisplayMessage = (
     }
 
     return byStatus(t`Loaded skills`, t`Loading skills...`);
-  }
-
-  const customMessage = extractCustomLoadingMessage(resolvedInput);
-
-  if (isDefined(customMessage)) {
-    return customMessage;
   }
 
   const formattedName = formatToolDisplayName(resolvedToolName);

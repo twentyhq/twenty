@@ -5,6 +5,16 @@ import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/fla
 export const LOAD_SKILL_TOOL_NAME = 'load_skills';
 
 export const loadSkillInputSchema = z.object({
+  loadingMessage: z
+    .string()
+    .describe(
+      "A brief present-tense status message shown to the user while skills are being loaded (e.g., 'Loading the workflow skill').",
+    ),
+  completedMessage: z
+    .string()
+    .describe(
+      "A brief past-tense status message shown to the user after skills are loaded (e.g., 'Loaded the workflow skill').",
+    ),
   skillNames: z
     .array(z.string())
     .describe(

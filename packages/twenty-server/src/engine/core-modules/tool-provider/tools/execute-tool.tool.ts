@@ -9,6 +9,16 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 export const EXECUTE_TOOL_TOOL_NAME = 'execute_tool';
 
 const executeToolInputZodSchema = z.object({
+  loadingMessage: z
+    .string()
+    .describe(
+      "A brief present-tense status message shown to the user while the tool runs (e.g., 'Looking up companies').",
+    ),
+  completedMessage: z
+    .string()
+    .describe(
+      "A brief past-tense status message shown to the user after the tool finishes (e.g., 'Looked up companies').",
+    ),
   toolName: z.string().describe('Exact tool name. Do not guess.'),
   arguments: z
     .record(z.string(), z.unknown())
