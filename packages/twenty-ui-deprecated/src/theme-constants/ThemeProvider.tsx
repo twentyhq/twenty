@@ -26,7 +26,7 @@ type NumericOverrides = {
     duration: { instant: number; fast: number; normal: number; slow: number };
   };
   text: {
-    lineHeight: { lg: number; md: number; sm: number };
+    lineHeight: { lg: number; md: number };
     iconSizeMedium: number;
     iconSizeSmall: number;
     iconStrikeLight: number;

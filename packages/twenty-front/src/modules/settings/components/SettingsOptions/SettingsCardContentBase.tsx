@@ -41,7 +41,7 @@ export const StyledSettingsCardTextContainer = styled.div`
 export const StyledSettingsCardDescription = styled.div`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.sm};
-  line-height: ${themeCssVariables.text.lineHeight.sm};
+  line-height: ${themeCssVariables.text.lineHeight.lg};
   overflow: hidden;
 
   a {
