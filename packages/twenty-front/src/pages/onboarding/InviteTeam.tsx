@@ -96,7 +96,7 @@ export const InviteTeam = () => {
   const { data: inviteSuggestionsData } = useQuery(
     GetInviteSuggestionsDocument,
     {
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'cache-first',
     },
   );
 

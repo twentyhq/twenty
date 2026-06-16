@@ -47,10 +47,6 @@ import {
   MessagingMessageListFetchJob,
   type MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
-import {
-  FetchOnboardingInviteSuggestionsJob,
-  type FetchOnboardingInviteSuggestionsJobData,
-} from 'src/modules/onboarding-invite-suggestions/jobs/fetch-onboarding-invite-suggestions.job';
 import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
@@ -93,7 +89,6 @@ export class GoogleAPIsService {
     calendarVisibility: CalendarChannelVisibility | undefined;
     messageVisibility: MessageChannelVisibility | undefined;
     skipMessageChannelConfiguration?: boolean;
-    shouldComputeInviteSuggestions?: boolean;
   }): Promise<string> {
     const {
       handle,
@@ -103,7 +98,6 @@ export class GoogleAPIsService {
       calendarVisibility,
       messageVisibility,
       skipMessageChannelConfiguration,
-      shouldComputeInviteSuggestions,
     } = input;
 
     const isCalendarEnabled = this.twentyConfigService.get(
@@ -351,23 +345,6 @@ export class GoogleAPIsService {
               }
             }
           }
-        }
-
-        if (
-          shouldComputeInviteSuggestions &&
-          isCalendarEnabled &&
-          isCalendarAvailable
-        ) {
-          void this.calendarQueueService
-            .add<FetchOnboardingInviteSuggestionsJobData>(
-              FetchOnboardingInviteSuggestionsJob.name,
-              {
-                workspaceId,
-                userId,
-                connectedAccountId: newOrExistingConnectedAccountId,
-              },
-            )
-            .catch(() => undefined);
         }
 
         return newOrExistingConnectedAccountId;

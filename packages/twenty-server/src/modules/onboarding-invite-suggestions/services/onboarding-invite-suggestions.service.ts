@@ -9,19 +9,13 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
+import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
 import { ONBOARDING_INVITE_SUGGESTIONS_CACHE_TTL_MS } from 'src/modules/onboarding-invite-suggestions/constants/onboarding-invite-suggestions-cache-ttl-ms.constant';
 import { ONBOARDING_INVITE_SUGGESTIONS_MAX_COUNT } from 'src/modules/onboarding-invite-suggestions/constants/onboarding-invite-suggestions-max-count.constant';
-import { getOnboardingInviteSuggestionsCacheKey } from 'src/modules/onboarding-invite-suggestions/utils/get-onboarding-invite-suggestions-cache-key.util';
-import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
 import { CalendarAttendeesService } from 'src/modules/onboarding-invite-suggestions/services/calendar-attendees.service';
 import { type CalendarAttendee } from 'src/modules/onboarding-invite-suggestions/types/calendar-attendee.type';
+import { getOnboardingInviteSuggestionsCacheKey } from 'src/modules/onboarding-invite-suggestions/utils/get-onboarding-invite-suggestions-cache-key.util';
 import { isWorkEmail } from 'src/utils/is-work-email';
-
-type ComputeAndCacheSuggestionsArgs = {
-  workspaceId: string;
-  userId: string;
-  connectedAccountId: string;
-};
 
 @Injectable()
 export class OnboardingInviteSuggestionsService {
@@ -35,54 +29,63 @@ export class OnboardingInviteSuggestionsService {
     private readonly cacheStorageService: CacheStorageService,
   ) {}
 
-  async getCachedSuggestions({
+  async getOrComputeSuggestions({
     workspaceId,
     userId,
+    userWorkspaceId,
   }: {
     workspaceId: string;
     userId: string;
+    userWorkspaceId: string;
   }): Promise<CalendarAttendee[]> {
-    const cachedSuggestions = await this.cacheStorageService.get<
-      CalendarAttendee[]
-    >(getOnboardingInviteSuggestionsCacheKey(workspaceId, userId));
-
-    return cachedSuggestions ?? [];
-  }
-
-  async computeAndCacheSuggestions({
-    workspaceId,
-    userId,
-    connectedAccountId,
-  }: ComputeAndCacheSuggestionsArgs): Promise<void> {
     const cacheKey = getOnboardingInviteSuggestionsCacheKey(
       workspaceId,
       userId,
     );
 
-    const connectedAccount = await this.connectedAccountRepository.findOne({
-      where: { id: connectedAccountId, workspaceId },
-    });
+    const cachedSuggestions =
+      await this.cacheStorageService.get<CalendarAttendee[]>(cacheKey);
 
-    if (!isDefined(connectedAccount)) {
-      await this.cacheStorageService.set<CalendarAttendee[]>(
-        cacheKey,
-        [],
-        ONBOARDING_INVITE_SUGGESTIONS_CACHE_TTL_MS,
-      );
-
-      return;
+    if (isDefined(cachedSuggestions)) {
+      return cachedSuggestions;
     }
 
-    const connectedAccountHandle = connectedAccount.handle.toLowerCase();
+    const suggestions = await this.computeSuggestionsFromConnectedAccount({
+      workspaceId,
+      userWorkspaceId,
+    });
+
+    await this.cacheStorageService.set<CalendarAttendee[]>(
+      cacheKey,
+      suggestions,
+      ONBOARDING_INVITE_SUGGESTIONS_CACHE_TTL_MS,
+    );
+
+    return suggestions;
+  }
+
+  private async computeSuggestionsFromConnectedAccount({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+  }): Promise<CalendarAttendee[]> {
+    const mostRecentlyConnectedAccount =
+      await this.connectedAccountRepository.findOne({
+        where: { userWorkspaceId, workspaceId },
+        order: { createdAt: 'DESC' },
+      });
+
+    if (!isDefined(mostRecentlyConnectedAccount)) {
+      return [];
+    }
+
+    const connectedAccountHandle =
+      mostRecentlyConnectedAccount.handle.toLowerCase();
 
     if (!isWorkEmail(connectedAccountHandle)) {
-      await this.cacheStorageService.set<CalendarAttendee[]>(
-        cacheKey,
-        [],
-        ONBOARDING_INVITE_SUGGESTIONS_CACHE_TTL_MS,
-      );
-
-      return;
+      return [];
     }
 
     const connectedAccountDomain = getDomainNameFromHandle(
@@ -90,7 +93,7 @@ export class OnboardingInviteSuggestionsService {
     );
     const ownEmailHandles = new Set<string>([
       connectedAccountHandle,
-      ...(connectedAccount.handleAliases ?? []).map((alias) =>
+      ...(mostRecentlyConnectedAccount.handleAliases ?? []).map((alias) =>
         alias.toLowerCase(),
       ),
     ]);
@@ -98,10 +101,9 @@ export class OnboardingInviteSuggestionsService {
     let attendees: CalendarAttendee[] = [];
 
     try {
-      attendees =
-        await this.calendarAttendeesService.getRecentAttendees(
-          connectedAccount,
-        );
+      attendees = await this.calendarAttendeesService.getRecentAttendees(
+        mostRecentlyConnectedAccount,
+      );
     } catch (error) {
       this.logger.warn(
         `Could not compute invite suggestions for workspace ${workspaceId}: ${
@@ -150,14 +152,8 @@ export class OnboardingInviteSuggestionsService {
       eventCountByColleagueEmail.entries(),
     ).sort(([, left], [, right]) => right.eventCount - left.eventCount);
 
-    const suggestions: CalendarAttendee[] = mostFrequentColleaguesFirst
+    return mostFrequentColleaguesFirst
       .slice(0, ONBOARDING_INVITE_SUGGESTIONS_MAX_COUNT)
       .map(([email, { displayName }]) => ({ email, displayName }));
-
-    await this.cacheStorageService.set<CalendarAttendee[]>(
-      cacheKey,
-      suggestions,
-      ONBOARDING_INVITE_SUGGESTIONS_CACHE_TTL_MS,
-    );
   }
 }
