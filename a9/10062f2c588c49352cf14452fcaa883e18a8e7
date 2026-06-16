@@ -1,0 +1,20 @@
+packages/twenty-server/src/modules/onboarding-invite-suggestions/services/onboarding-invite-suggestions.service.ts
+  s_e9139631d98ba0::t_3f9c87023e722d 17
+  s_e9139631d98ba0::t_cb053c38927576 128
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "a910062f2c588c49352cf14452fcaa883e18a8e7",
+  "prompts": {},
+  "sessions": {
+    "s_e9139631d98ba0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6549356a-e6ca-4c3c-912d-8a26bc82217f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
