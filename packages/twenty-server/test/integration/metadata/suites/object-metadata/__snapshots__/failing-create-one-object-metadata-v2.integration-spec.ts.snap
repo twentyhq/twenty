@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Object metadata creation should fail v2 when labelPlural contains only whitespace 1`] = `
 {
@@ -403,6 +403,29 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
           "type": "create",
         },
       ],
+      "searchFieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Object metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "searchFieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
       "view": [
         {
           "errors": [
@@ -533,12 +556,13 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
         },
       ],
     },
-    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices",
+    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices, 1 searchFieldMetadata",
     "summary": {
       "fieldMetadata": 17,
       "index": 5,
       "objectMetadata": 1,
-      "totalErrors": 29,
+      "searchFieldMetadata": 1,
+      "totalErrors": 30,
       "view": 1,
       "viewField": 5,
     },
@@ -952,6 +976,29 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
           "type": "create",
         },
       ],
+      "searchFieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Object metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "searchFieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
       "view": [
         {
           "errors": [
@@ -1082,12 +1129,13 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
         },
       ],
     },
-    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices",
+    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices, 1 searchFieldMetadata",
     "summary": {
       "fieldMetadata": 17,
       "index": 5,
       "objectMetadata": 1,
-      "totalErrors": 29,
+      "searchFieldMetadata": 1,
+      "totalErrors": 30,
       "view": 1,
       "viewField": 5,
     },
@@ -1512,6 +1560,29 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
           "type": "create",
         },
       ],
+      "searchFieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Object metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "searchFieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
       "view": [
         {
           "errors": [
@@ -1642,12 +1713,13 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
         },
       ],
     },
-    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices",
+    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices, 1 searchFieldMetadata",
     "summary": {
       "fieldMetadata": 17,
       "index": 5,
       "objectMetadata": 1,
-      "totalErrors": 29,
+      "searchFieldMetadata": 1,
+      "totalErrors": 30,
       "view": 1,
       "viewField": 5,
     },
@@ -2061,6 +2133,29 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
           "type": "create",
         },
       ],
+      "searchFieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Object metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "searchFieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
       "view": [
         {
           "errors": [
@@ -2191,12 +2286,13 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
         },
       ],
     },
-    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices",
+    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices, 1 searchFieldMetadata",
     "summary": {
       "fieldMetadata": 17,
       "index": 5,
       "objectMetadata": 1,
-      "totalErrors": 29,
+      "searchFieldMetadata": 1,
+      "totalErrors": 30,
       "view": 1,
       "viewField": 5,
     },
@@ -2645,6 +2741,29 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
           "type": "create",
         },
       ],
+      "searchFieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Object metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "searchFieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
       "view": [
         {
           "errors": [
@@ -2775,12 +2894,13 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
         },
       ],
     },
-    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices",
+    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices, 1 searchFieldMetadata",
     "summary": {
       "fieldMetadata": 17,
       "index": 5,
       "objectMetadata": 1,
-      "totalErrors": 29,
+      "searchFieldMetadata": 1,
+      "totalErrors": 30,
       "view": 1,
       "viewField": 5,
     },
@@ -3194,6 +3314,29 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
           "type": "create",
         },
       ],
+      "searchFieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Object metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "searchFieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
       "view": [
         {
           "errors": [
@@ -3324,12 +3467,13 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
         },
       ],
     },
-    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices",
+    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices, 1 searchFieldMetadata",
     "summary": {
       "fieldMetadata": 17,
       "index": 5,
       "objectMetadata": 1,
-      "totalErrors": 29,
+      "searchFieldMetadata": 1,
+      "totalErrors": 30,
       "view": 1,
       "viewField": 5,
     },
@@ -3743,6 +3887,29 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
           "type": "create",
         },
       ],
+      "searchFieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Object metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "searchFieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
       "view": [
         {
           "errors": [
@@ -3873,12 +4040,13 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
         },
       ],
     },
-    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices",
+    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices, 1 searchFieldMetadata",
     "summary": {
       "fieldMetadata": 17,
       "index": 5,
       "objectMetadata": 1,
-      "totalErrors": 29,
+      "searchFieldMetadata": 1,
+      "totalErrors": 30,
       "view": 1,
       "viewField": 5,
     },
@@ -4303,6 +4471,29 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
           "type": "create",
         },
       ],
+      "searchFieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Object metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "searchFieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
       "view": [
         {
           "errors": [
@@ -4433,12 +4624,13 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
         },
       ],
     },
-    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices",
+    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices, 1 searchFieldMetadata",
     "summary": {
       "fieldMetadata": 17,
       "index": 5,
       "objectMetadata": 1,
-      "totalErrors": 29,
+      "searchFieldMetadata": 1,
+      "totalErrors": 30,
       "view": 1,
       "viewField": 5,
     },
@@ -4876,6 +5068,29 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "type": "create",
         },
       ],
+      "searchFieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Object metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "searchFieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
       "view": [
         {
           "errors": [
@@ -5006,12 +5221,13 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
         },
       ],
     },
-    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices",
+    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices, 1 searchFieldMetadata",
     "summary": {
       "fieldMetadata": 17,
       "index": 5,
       "objectMetadata": 1,
-      "totalErrors": 29,
+      "searchFieldMetadata": 1,
+      "totalErrors": 30,
       "view": 1,
       "viewField": 5,
     },
@@ -5431,6 +5647,29 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
           "type": "create",
         },
       ],
+      "searchFieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Object metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "searchFieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
       "view": [
         {
           "errors": [
@@ -5561,12 +5800,13 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
         },
       ],
     },
-    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices",
+    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices, 1 searchFieldMetadata",
     "summary": {
       "fieldMetadata": 17,
       "index": 5,
       "objectMetadata": 1,
-      "totalErrors": 29,
+      "searchFieldMetadata": 1,
+      "totalErrors": 30,
       "view": 1,
       "viewField": 5,
     },
@@ -6004,6 +6244,29 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
           "type": "create",
         },
       ],
+      "searchFieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Object metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "searchFieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
       "view": [
         {
           "errors": [
@@ -6134,12 +6397,13 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
         },
       ],
     },
-    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices",
+    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices, 1 searchFieldMetadata",
     "summary": {
       "fieldMetadata": 17,
       "index": 5,
       "objectMetadata": 1,
-      "totalErrors": 29,
+      "searchFieldMetadata": 1,
+      "totalErrors": 30,
       "view": 1,
       "viewField": 5,
     },
@@ -6553,6 +6817,29 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
           "type": "create",
         },
       ],
+      "searchFieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Object metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "searchFieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
       "view": [
         {
           "errors": [
@@ -6683,12 +6970,13 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
         },
       ],
     },
-    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices",
+    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices, 1 searchFieldMetadata",
     "summary": {
       "fieldMetadata": 17,
       "index": 5,
       "objectMetadata": 1,
-      "totalErrors": 29,
+      "searchFieldMetadata": 1,
+      "totalErrors": 30,
       "view": 1,
       "viewField": 5,
     },
@@ -7137,6 +7425,29 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
           "type": "create",
         },
       ],
+      "searchFieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Object metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "searchFieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
       "view": [
         {
           "errors": [
@@ -7267,12 +7578,13 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
         },
       ],
     },
-    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices",
+    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices, 1 searchFieldMetadata",
     "summary": {
       "fieldMetadata": 17,
       "index": 5,
       "objectMetadata": 1,
-      "totalErrors": 29,
+      "searchFieldMetadata": 1,
+      "totalErrors": 30,
       "view": 1,
       "viewField": 5,
     },
@@ -7686,6 +7998,29 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
           "type": "create",
         },
       ],
+      "searchFieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Object metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "searchFieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
       "view": [
         {
           "errors": [
@@ -7816,12 +8151,13 @@ exports[`Object metadata creation should fail v2 when names are identical 1`] = 
         },
       ],
     },
-    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices",
+    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices, 1 searchFieldMetadata",
     "summary": {
       "fieldMetadata": 17,
       "index": 5,
       "objectMetadata": 1,
-      "totalErrors": 29,
+      "searchFieldMetadata": 1,
+      "totalErrors": 30,
       "view": 1,
       "viewField": 5,
     },
@@ -8235,6 +8571,29 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
           "type": "create",
         },
       ],
+      "searchFieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Object metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "searchFieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
       "view": [
         {
           "errors": [
@@ -8365,12 +8724,13 @@ exports[`Object metadata creation should fail v2 when names with whitespaces res
         },
       ],
     },
-    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices",
+    "message": "Validation failed for 17 fieldMetadata, 1 objectMetadata, 1 view, 5 viewFields, 5 indices, 1 searchFieldMetadata",
     "summary": {
       "fieldMetadata": 17,
       "index": 5,
       "objectMetadata": 1,
-      "totalErrors": 29,
+      "searchFieldMetadata": 1,
+      "totalErrors": 30,
       "view": 1,
       "viewField": 5,
     },

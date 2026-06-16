@@ -25,6 +25,24 @@ exports[`createOne FieldMetadataService name/label sync should return an error w
           "type": "create",
         },
       ],
+      "searchFieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "searchFieldMetadata",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
       "viewField": [
         {
           "errors": [
@@ -45,10 +63,11 @@ exports[`createOne FieldMetadataService name/label sync should return an error w
         },
       ],
     },
-    "message": "Validation failed for 1 fieldMetadata, 1 viewField",
+    "message": "Validation failed for 1 fieldMetadata, 1 viewField, 1 searchFieldMetadata",
     "summary": {
       "fieldMetadata": 1,
-      "totalErrors": 2,
+      "searchFieldMetadata": 1,
+      "totalErrors": 3,
       "viewField": 1,
     },
     "userFriendlyMessage": "Many validation errors",

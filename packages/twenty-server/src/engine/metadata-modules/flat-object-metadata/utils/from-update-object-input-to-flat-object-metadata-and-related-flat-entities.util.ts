@@ -30,6 +30,7 @@ type FromUpdateObjectInputToFlatObjectMetadataArgs = {
   | 'flatFieldMetadataMaps'
   | 'flatViewFieldMaps'
   | 'flatViewMaps'
+  | 'flatSearchFieldMetadataMaps'
 >;
 
 export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
@@ -40,6 +41,7 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
     flatFieldMetadataMaps,
     flatViewFieldMaps,
     flatViewMaps,
+    flatSearchFieldMetadataMaps,
   }: FromUpdateObjectInputToFlatObjectMetadataArgs): FlatObjectMetadataUpdateSideEffects & {
     flatObjectMetadataToUpdate: UniversalFlatObjectMetadata;
   } => {
@@ -109,6 +111,7 @@ export const fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities =
       flatIndexMaps,
       flatViewFieldMaps,
       flatViewMaps,
+      flatSearchFieldMetadataMaps,
     });
 
     return {

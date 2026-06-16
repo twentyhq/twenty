@@ -2,10 +2,11 @@ import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { recomputeIndexAfterFlatObjectMetadataSingularNameUpdate } from 'src/engine/metadata-modules/flat-object-metadata/utils/recompute-index-after-flat-object-metadata-singular-name-update.util';
-import { recomputeSearchVectorFieldAfterLabelIdentifierUpdate } from 'src/engine/metadata-modules/flat-object-metadata/utils/recompute-search-vector-field-after-label-identifier-update.util';
+import { recomputeSearchVectorFieldFromSearchFieldMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/recompute-search-vector-field-from-search-field-metadatas.util';
 import { recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate } from 'src/engine/metadata-modules/flat-object-metadata/utils/recompute-view-field-identifier-after-flat-object-identifier-update.util';
 import { renameRelatedMorphFieldOnObjectNamesUpdate } from 'src/engine/metadata-modules/flat-object-metadata/utils/rename-related-morph-field-on-object-names-update.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -31,6 +32,7 @@ type HandleFlatObjectMetadataUpdateSideEffectArgs = FromTo<
     | 'flatViewFieldMaps'
     | 'flatIndexMaps'
     | 'flatViewMaps'
+    | 'flatSearchFieldMetadataMaps'
   >;
 
 export const handleFlatObjectMetadataUpdateSideEffect = ({
@@ -39,6 +41,7 @@ export const handleFlatObjectMetadataUpdateSideEffect = ({
   flatObjectMetadataMaps,
   flatViewFieldMaps,
   flatViewMaps,
+  flatSearchFieldMetadataMaps,
   fromFlatObjectMetadata,
   toFlatObjectMetadata,
 }: HandleFlatObjectMetadataUpdateSideEffectArgs): FlatObjectMetadataUpdateSideEffects => {
@@ -95,12 +98,20 @@ export const handleFlatObjectMetadataUpdateSideEffect = ({
     fromFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier !==
       toFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier
   ) {
+    // Derive the searchVector from the object's current searchFieldMetadata rows
+    // (not just the label field) so the recompute never clobbers custom-field rows.
+    const searchFieldMetadatas = findManyFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityMaps: flatSearchFieldMetadataMaps,
+      flatEntityIds: fromFlatObjectMetadata.searchFieldMetadataIds,
+    });
+
     const updatedSearchVectorField =
-      recomputeSearchVectorFieldAfterLabelIdentifierUpdate({
-        existingFlatObjectMetadata: fromFlatObjectMetadata,
+      recomputeSearchVectorFieldFromSearchFieldMetadatas({
+        flatObjectMetadata: fromFlatObjectMetadata,
         flatFieldMetadataMaps,
-        labelIdentifierFieldMetadataUniversalIdentifier:
-          toFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
+        searchFieldMetadataFieldIds: searchFieldMetadatas.map(
+          (searchFieldMetadata) => searchFieldMetadata.fieldMetadataId,
+        ),
       });
 
     if (isDefined(updatedSearchVectorField)) {
